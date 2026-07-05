@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ProjectionError on handler failure
 # [TESTS] tests/test_event_store_stress.py
 # [A_module] module_id=MOD-DAT_projection_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ProjectionEngine — 事件折叠为当前状态（DW-0003）

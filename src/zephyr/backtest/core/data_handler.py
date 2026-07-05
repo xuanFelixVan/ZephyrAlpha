@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DataHandlerError
 # [TESTS]
 # [A_module] module_id=MOD-BT-001-data_handler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）
 
 职责:

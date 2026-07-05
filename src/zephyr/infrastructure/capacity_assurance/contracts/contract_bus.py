@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_contract_bus | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """ContractBus loader — 加载全部44条容量保障契约的Pydantic v2 Schema（DD-9三批迁移）.
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_ml_experiment_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """MLExperimentPipeline D_ML_TRAIN→实验跨层集成管道
 ============================================

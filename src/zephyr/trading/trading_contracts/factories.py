@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ValueError: 参数越界
 # [TESTS] tests/test_trading_contracts_factories.py
 # [A_module] module_id=MOD-UNK_factories | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """trading-contracts/factories.py — 交易域数据契约工厂方法
 

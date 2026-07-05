@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ImportError 模块缺失; TaskCreationError 任务创建失败
 # [TESTS] scripts/connect/fle_orc.py --trigger
 # [A_module] module_id=MOD-ORC_alert_handler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Orc 告警接收器 — handle_alert() 消费者
 
 CT-FLE-ORC-001: 接收 FLE 分派的 AlertEvent, 创建修复任务或阻断关联。

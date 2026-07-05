@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 反序列化失败抛ValidationError
 # [TESTS] tests/audit-orchestrator/test_models.py
 # [A_module] module_id=MOD-GOV_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 from datetime import datetime
 from enum import Enum
 from typing import Any

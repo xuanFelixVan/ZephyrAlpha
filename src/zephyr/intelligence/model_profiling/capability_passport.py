@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] PassportError;SerializationError
 # [TESTS] tests/test_model_profiler/
 # [A_module] module_id=MOD-RSC_capability_passport | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 CapabilityPassport --- AI 模型能力护照

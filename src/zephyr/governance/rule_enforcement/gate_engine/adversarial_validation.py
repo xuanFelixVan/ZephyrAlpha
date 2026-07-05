@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AdversarialValidationError on invalid input
 # [TESTS] tests/test_adversarial_validation_gate.py
 # [A_module] module_id=MOD-GOV_adversarial_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """AdversarialValidationGate — validates outputs against adversarial attacks."""
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] SyntaxError/OSError 时返回空 ExtractedReferences + 日志警告
 # [TESTS] tests/semantic-auditor/test_reference_extractor.py
 # [A_module] module_id=MOD-GOV_reference_extractor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-028 — 引用提取器 Stage 1
 

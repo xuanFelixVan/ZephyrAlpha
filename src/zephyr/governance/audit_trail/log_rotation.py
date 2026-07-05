@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 轮转失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_log_rotation.py
 # [A_module] module_id=MOD-GOV_log_rotation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import gzip
 import logging
 from datetime import datetime

@@ -10,7 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError on missing sub-module
 # [TESTS] tests/auto-fix-engine/
-# [TTL] task_bound
+# [TTL] permanent
 from zephyr.infrastructure.auto_fix_engine.alignment_syncer import AlignmentSyncer
 from zephyr.infrastructure.auto_fix_engine.all_completer import AllCompleter
 from zephyr.infrastructure.auto_fix_engine.batch_fixer import BatchFixer

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.capability_sync
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] returns int (count synced); never raises; logs on failure
 # [TESTS]
 # [A_module] module_id=MOD-ORC_capability_sync | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import logging
 from pathlib import Path
 from typing import Any

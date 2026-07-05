@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] plan_cycle returns empty list when no tasks available; mark_completed/mark_failed propagate transition errors
 # [TESTS] tests/test_conductor.py
 # [A_module] module_id=MOD-ORC_conductor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 Conductor — AI session 全自动指挥官。
 

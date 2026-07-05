@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] VMS不可用回退in-memory; 空records返回0
 # [TESTS] scripts/connect/ce_vms.py --trigger
 # [A_module] module_id=MOD-INT_context_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """VMS 上下文注入器 — ingest_context() 消费者
 
 CT-CE-VMS-001: 接收 CE 投递的上下文块, 向量化存储到 ChromaDB（Current: in-memory fallback）。

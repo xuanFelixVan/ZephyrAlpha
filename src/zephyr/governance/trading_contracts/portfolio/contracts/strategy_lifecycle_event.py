@@ -13,6 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-PRT_strategy_lifecycle_event | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event。"""
 from zephyr.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event import *  # noqa: F401,F403

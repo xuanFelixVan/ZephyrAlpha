@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Layer 1: 发现+身份 — Agent Card 模型, AGENTS.md 注册, JWT 身份验证"""
 
 from zephyr.shared.protocols.a2a.a2a_registry import AgentCapability, AgentCard

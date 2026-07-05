@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] bootstrap() never raises; returns GenesisState with error detail on failure
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
 # [A_module] module_id=MOD-SEC_genesis_bootstrap | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """GenesisBootstrap — RBAC系统启动引导器.
 
 依据蓝图 MOD-INF-018 §genesis:

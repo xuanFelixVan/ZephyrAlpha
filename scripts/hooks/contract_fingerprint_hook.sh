@@ -14,7 +14,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CONTRACT_DIR="src/zephyr/shared/contracts"
-CONTRACTS_YAML="docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
+CONTRACTS_YAML="architecture_model/contracts/cross_layer_contracts.yaml"
 BUILD_SCRIPT="scripts/arch_guard/_tools/build_ocp_manifest.py"
 MANIFEST_PATH="src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json"
 

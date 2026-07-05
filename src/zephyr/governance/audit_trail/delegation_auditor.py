@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 审计失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_delegation_auditor.py
 # [A_module] module_id=MOD-GOV_delegation_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import logging
 from typing import Any
 

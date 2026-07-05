@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AgentIdentity construction never raises; missing kwargs use defaults
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Agent identity — 角色与成熟度定义.
 
 依据蓝图 MOD-INF-018 §3:

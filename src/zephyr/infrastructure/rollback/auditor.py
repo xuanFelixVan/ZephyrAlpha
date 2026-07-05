@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] RollbackError;AuditError
 # [TESTS] tests/rollback/
 # [A_module] module_id=MOD-INF_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 

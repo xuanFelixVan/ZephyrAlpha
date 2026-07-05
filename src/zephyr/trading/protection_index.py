@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] query: BloomFilterError→fallback to Trie-only; rebuild: IOError→return partial stats
 # [TESTS] tests/test_behavioral_audit/test_protection_index.py
 # [A_module] module_id=MOD-ORC_protection_index | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

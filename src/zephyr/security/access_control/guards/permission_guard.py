@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check() never raises; returns GuardResult with decision
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_permission_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """PermissionGuard — 七层权限编排器.
 
 依据蓝图 MOD-INF-018 §3:

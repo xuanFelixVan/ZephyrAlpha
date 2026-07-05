@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.lifecycle_manager
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.governance.merkle_hourly; zephyr.governance.audit_trail.log_rotation; zephyr.governance.audit_trail.retention; zephyr.governance.audit_trail.tiered_storage; zephyr.governance.audit_trail.self_monitor; zephyr.governance.integrity; zephyr.infrastructure.auto_fix_engine.engine; zephyr.governance.semantic_audit.self_healer; zephyr.security.adversarial_validation.game_day_runner; zephyr.security.access_control.orphan_judge.judge
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
-# [MODIFY-GUARD] docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md;并发修改需通过任务卡通道+Owner批准;已知接口漂移回归bug(4次):L134 retention.enforce(dry_run=True)非retention.dry_run;L139 tiered.migrate(dry_run=False)非tiered.auto_migrate;L247删除start_scheduler调用(SelfMonitor无此方法);禁止AI自主修改
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md;并发修改需通过任务卡通道+Owner批准;已知接口漂移回归bug(4次):L134 retention.enforce(dry_run=True)非retention.dry_run;L139 tiered.migrate(dry_run=False)非tiered.auto_migrate;L247删除start_scheduler调用(SelfMonitor无此方法);禁止AI自主修改
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core

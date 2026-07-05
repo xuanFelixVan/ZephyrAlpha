@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DiscoveryError;ConnectionError
 # [TESTS] tests/test_model_profiler/
 # [A_module] module_id=MOD-RSC_model_discovery | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模型

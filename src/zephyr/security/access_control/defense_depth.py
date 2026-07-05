@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Stub module: zephyr.security.access_control.defense_depth — implementation pending."""
 
 DEFENSE_DEPTH = None  # stub constant

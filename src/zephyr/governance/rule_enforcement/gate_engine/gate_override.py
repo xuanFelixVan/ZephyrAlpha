@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_gate_override | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Owner 紧急旁路——时间限定的门禁临时绕过 + 审计追踪（beta）
 同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。"""

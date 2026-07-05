@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: simulation_broker has migrated to zephyr.execution.core.adapters.simulation_broker"""
 
 from zephyr.governance.adapters.simulation_broker import *  # noqa: F403

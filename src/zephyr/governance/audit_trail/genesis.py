@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 创世块损坏返回恢复失败
 # [TESTS] tests/audit-orchestrator/test_genesis.py
 # [A_module] module_id=MOD-GOV_genesis | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import hashlib
 import json
 import logging

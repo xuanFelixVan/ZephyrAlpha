@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] get_owasp_coverage never raises; always returns >=8 coverage entries
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_adversarial_resilience | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """AdversarialResilience — 对抗性韧性与 OWASP 覆盖.
 
 依据蓝图 MOD-INF-018 §3:

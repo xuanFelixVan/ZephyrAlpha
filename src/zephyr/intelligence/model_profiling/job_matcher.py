@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] JobMatcherError
 # [TESTS] tests/test_job_matcher.py
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 JobMatcher --- 模型岗位匹配器

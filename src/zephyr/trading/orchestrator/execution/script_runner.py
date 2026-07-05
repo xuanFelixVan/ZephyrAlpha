@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 脚本路径不存在返回RunResult(error=FILE_NOT_FOUND); 超时返回error=TIMEOUT
 # [TESTS] scripts/connect/orc_script.py --trigger
 # [A_module] module_id=MOD-ORC_script_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Orc→Script 脚本执行器 — run_audit() 生产者
 
 CT-ORC-SCRIPT-001: Orchestrator 接到审计任务后批量执行审计脚本, 按 RULE-SEVEN 并行。

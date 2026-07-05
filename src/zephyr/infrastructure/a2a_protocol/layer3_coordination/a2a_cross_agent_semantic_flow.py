@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_a2a_cross_agent_semantic_flow | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """A2A 跨 Agent 语义流追踪 — 知识+意图在 Agent 间传递
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_model_profiler/
 # [A_module] module_id=MOD-RSC_provider_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

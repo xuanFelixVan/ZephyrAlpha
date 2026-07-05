@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 熔断拒绝→call()返回False;error_budget耗尽→降级
 # [TESTS] tests/infrastructure/test_escalation_engine.py
 # [A_module] module_id=MOD-RES_circuit_breaker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Circuit Breaker — MOD-INF-022

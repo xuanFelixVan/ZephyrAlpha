@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 基础设施 Infrastructure — A2A Protocol 模块 (MOD-INF-025)
 

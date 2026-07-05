@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] TestCaseError
 # [TESTS] tests/test_exam_test_cases.py
 # [A_module] module_id=MOD-RSC_exam_test_cases | layer=module | stability=stable | safety=L | ai_autonomy=human_gated
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ExamTestCases --- v3.0.5 扩展考试题库（96 题 / 29 能力 / 5 难度）

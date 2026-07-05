@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] returns SchedulerResult; logs error on failure; never raises in daemon thread
 # [TESTS] tests/adversarial/test_rollback_scheduler.py
 # [A_module] module_id=MOD-INF_rollback_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 RollbackScheduler — 回滚系统自动运行调度器 (MOD-INF-021 §7 Phase 5.3).
 

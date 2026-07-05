@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] yaml.YAMLError; OSError; ValueError
 # [TESTS] tests/system-telemetry/test_schema.py
-# [TTL] task_bound
+# [TTL] permanent
 """SchemaSubsystem — Schema 版本管理与兼容性校验（MOD-INF-015 §5.1 · schema）.
 
 加载 config/metrics_schema.yaml，提供 get_version / check_compatibility / get_namespaces / validate_metric_name API。

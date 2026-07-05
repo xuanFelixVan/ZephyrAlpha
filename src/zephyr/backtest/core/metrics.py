@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] MetricsError
 # [TESTS]
 # [A_module] module_id=MOD-BT-001-metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """回测绩效指标计算模块
 
 职责:

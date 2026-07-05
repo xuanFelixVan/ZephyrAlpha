@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——IO/正则异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_doc_ref_broken_gate.py
 # [A_module] module_id=MOD-GOV-doc_ref_broken_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """doc_ref_broken_gate.py — 文档相对路径断裂引用阻断门禁（DOC-REF-BROKEN）
 
 检测 staged 新增 .md 文件中 markdown 链接的相对路径是否指向不存在文件——

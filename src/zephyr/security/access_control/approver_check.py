@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Stub module: zephyr.security.access_control.approver_check — implementation pending."""
 
 RESTRICTED_ACTIONS = None  # stub constant

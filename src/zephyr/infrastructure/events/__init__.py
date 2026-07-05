@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """core.events — event infrastructure.
 
 event_store: local implementation.

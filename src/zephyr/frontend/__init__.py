@@ -11,7 +11,7 @@ from __future__ import annotations
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 
 """D_FRONTEND Human-AI Interface
 =====================================

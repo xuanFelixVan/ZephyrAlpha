@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-AUT_autonomy_perm | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Autonomy Permission domain — Re-export wrapper (DM-298)
 
 All modules have been migrated to zephyr.governance.

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-DAT_reranker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T-MOD-KB-001-RERANKER）

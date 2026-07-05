@@ -12,6 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 # Module stub: zephyr.security.access_control.phase_executor
 # This module is a placeholder. Implementation pending.

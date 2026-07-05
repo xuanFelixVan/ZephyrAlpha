@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_canary_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Detector Canary Controller — 检测器金丝雀部署 §6.11。

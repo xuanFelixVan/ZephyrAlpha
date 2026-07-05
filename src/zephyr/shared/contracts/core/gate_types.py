@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_gate_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 # Lazy import to avoid circular dependency deadlock:
 # shared.contracts → governance.rule_enforcement → governance.__init__ → ... → governance (cycle)

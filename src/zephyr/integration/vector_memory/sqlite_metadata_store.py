@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INT_sqlite_metadata_store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 BM25)

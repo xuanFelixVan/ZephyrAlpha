@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: constitution_guard has migrated to zephyr.security.adversarial_validation.constitution_guard"""
 
 from zephyr.security.adversarial_validation.constitution_guard import *  # noqa: F403

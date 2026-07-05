@@ -2,5 +2,5 @@
 # [MODULE] zephyr.trading.orchestrator.fault_tolerance
 # [DOMAIN] D_TRADING
 # [A_module] module_id=MOD-ORC_fault_tolerance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """fault_tolerance — orchestrator fault_tolerance subpackage."""

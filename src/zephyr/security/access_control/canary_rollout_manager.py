@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] register/start_sampling never raise
 # [TESTS] tests/agent_rbac/test_permissions.py
 # [A_module] module_id=MOD-SEC_canary_rollout_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """CanaryRolloutManager — 灰度发布管理器.
 
 依据蓝图 MOD-INF-018 §3:

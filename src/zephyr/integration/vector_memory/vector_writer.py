@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] VMS不可用返回status=degraded+stored_count=0; 空blocks返回0
 # [TESTS] scripts/connect/ce_vms.py --trigger
 # [A_module] module_id=MOD-ORC_vector_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """CE 向量写入器 — vectorize_and_store() 生产者
 
 CT-CE-VMS-001: Context Engine 构建完成后将上下文块向量化存储到 VMS。

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 蓝图文件缺失返回status=partial; ContextAssembler不可用返回status=degraded
 # [TESTS] scripts/connect/orc_ce.py --trigger
 # [A_module] module_id=MOD-ORC_task_context_builder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """CE 任务上下文构建器 — build_from_task() 消费者
 
 CT-ORC-CE-001: 接收 Orc 的上下文请求, 四阶段构建可注入的执行上下文。

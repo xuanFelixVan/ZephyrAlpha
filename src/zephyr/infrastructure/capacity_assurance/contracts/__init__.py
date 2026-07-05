@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """capacity-assurance contracts — ContractBus 44条契约 Pydantic v2 Schema Enforcement."""
 
 from zephyr.infrastructure.capacity_assurance.contracts.contract_bus import ContractBusLoader

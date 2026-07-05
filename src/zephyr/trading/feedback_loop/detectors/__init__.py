@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_feedback_loop_imports.py
-# [TTL] task_bound
+# [TTL] permanent
 """feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分为5个逻辑子包(anomaly/correlation/drift/guard/reliability)。
 
 兼容垫片：旧导入路径 ``zephyr.trading.feedback_loop.detectors.<leaf>`` 继续可用，

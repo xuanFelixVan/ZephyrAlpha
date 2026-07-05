@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] verify_immutable_core_integrity() never raises; returns IntegrityResult with intact flag
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
 # [A_module] module_id=MOD-SEC_immutable_core | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
-# [TTL] task_bound
+# [TTL] permanent
 """ImmutableCore — 不可变核心验证器.
 
 依据蓝图 MOD-INF-018 §immutable_core:

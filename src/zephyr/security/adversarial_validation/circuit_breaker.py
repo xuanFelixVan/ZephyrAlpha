@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] CircuitBreakerOpenError when attempting to run while circuit is OPEN
 # [TESTS] tests/red_blue/test_circuit_breaker.py
 # [A_module] module_id=MOD-SEC_circuit_breaker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] detect_scope_creep never raises; returns {"exceeded": False} for unknown agent
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_context_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """ContextDriftDetector — 上下文漂移与范围蔓延检测.
 
 依据蓝图 MOD-INF-018 §3:

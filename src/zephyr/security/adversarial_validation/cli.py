@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] SystemExit on invalid subcommand
 # [TESTS] tests/red_blue/test_cli.py
 # [A_module] module_id=MOD-SEC_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 异常必须包含 agent_id 和 protocol_layer
 # [TESTS] tests/test_a2a_protocol.py
 # [A_module] module_id=MOD-INF_phase_hold | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md | §3
 

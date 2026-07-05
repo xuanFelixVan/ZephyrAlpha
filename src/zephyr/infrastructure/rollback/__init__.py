@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-INF_rollback | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
-# [TTL] task_bound
+# [TTL] permanent
 """
 MOD-INF-021 Rollback System — ZephyrAlpha 回滚/撤销基础设施。
 

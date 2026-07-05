@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """ZephyrAlpha — gates/task/ — 任务触发门禁"""
 
 __all__ = []

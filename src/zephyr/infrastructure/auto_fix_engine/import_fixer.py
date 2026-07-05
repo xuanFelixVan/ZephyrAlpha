@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ImportFixError
 # [TESTS] tests/auto-fix-engine/test_import_fixer.py
 # [A_module] module_id=MOD-INF_import_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

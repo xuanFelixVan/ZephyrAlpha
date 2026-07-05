@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-INF_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
-# [TTL] task_bound
+# [TTL] permanent
 """ZephyrAlpha Pipeline 模块 — M1-M11 双管线 + K8s Scheduling Framework + 跨层数据路由
 A区（M1-M5）生产管线 + B区（M6-M11）审计管线。
 GOV-AI-002 v2.0.0 决策树 + 插件化路由 + Agent 桥接 + Schema 校验。

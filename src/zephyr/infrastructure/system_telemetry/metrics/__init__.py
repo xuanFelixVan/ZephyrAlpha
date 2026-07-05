@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] JSONL写入失败→日志warning
 # [TESTS] tests/infrastructure/
-# [TTL] task_bound
+# [TTL] permanent
 """遥测 · metrics — SLI/SLO 与业务指标流"""
 
 __all__ = ["blueprint_metrics"]

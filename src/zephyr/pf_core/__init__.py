@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """D_PORTFOLIO_CORE Portfolio Construction — Package root"""
 
 from __future__ import annotations

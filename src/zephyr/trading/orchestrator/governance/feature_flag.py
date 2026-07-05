@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_feature_flag | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """FeatureFlag 管理器（CT-FEATUREFLAG-001）——CT-*运行时开关+audit_log。"""
 

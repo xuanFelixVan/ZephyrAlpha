@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] RollbackError;TypeError
 # [TESTS] tests/governance/
 # [A_module] module_id=MOD-INT_rollback_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-016-CONTRACTS | 03_modules/_cross_layer/shared-core/contracts_blueprint.md
 

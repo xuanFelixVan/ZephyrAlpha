@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] WriteError;DriftDetectionError
 # [TESTS] tests/test_model_profiler/
 # [A_module] module_id=MOD-RSC_results_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测）

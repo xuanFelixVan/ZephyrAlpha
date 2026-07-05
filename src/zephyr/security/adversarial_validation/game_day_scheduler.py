@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ScheduleConflictError on overlapping schedules; SchedulerNotInitializedError if state file missing
 # [TESTS] tests/red_blue/test_game_day_scheduler.py
 # [A_module] module_id=MOD-SEC_game_day_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

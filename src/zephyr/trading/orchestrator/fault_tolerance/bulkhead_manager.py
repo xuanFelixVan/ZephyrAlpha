@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_bulkhead_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Bulkhead 资源池隔舱管理器（CT-BULKHEAD-001）——12系统独立资源池。"""
 

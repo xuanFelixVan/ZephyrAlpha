@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_gate_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """门禁健康仪表板——per-gate SLI 报告、误报率、延迟分布、1人+AI运维视图（beta）"""
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] kill_task_processes 对已退出的 PID 不报错；cleanup_completed_tasks TaskRepository 不可用时返回空列表
 # [TESTS]
 # [A_module] module_id=MOD-ORC_ide_health_daemon | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程

@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "802b0e67f3deb8c1",
+      "hash": "2f92b48f6605d1ef",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "f8324b80c4066856",
+      "hash": "7b89011436980b26",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/rule_bridge/git_commit_gateway.py": {
-      "hash": "dbd4bf8fc9f873d2",
+      "hash": "8b832b9d52120579",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "a4633a40f9fa3cb4",
+      "hash": "df21cd2bebfd9826",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "43e12fae5a96d1db",
+      "hash": "1631f9fd2ac2bb9f",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -86,7 +86,7 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: bare_getenv_gate.py）"
     },
     "src/zephyr/governance/commit_gates/capability_overlap_gate.py": {
-      "hash": "aa9ffcb3418bd16e",
+      "hash": "1f0a6b9ac2ad8aaa",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: capability_overlap_gate.py）"
     },
@@ -129,6 +129,11 @@
       "hash": "316db94a53720ebe",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: file_copy_gate.py）"
+    },
+    "src/zephyr/governance/commit_gates/file_placement_ttl_gate.py": {
+      "hash": "374b0ffcb2632c5c",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: file_placement_ttl_gate.py）"
     },
     "src/zephyr/governance/commit_gates/function_dup_gate.py": {
       "hash": "1776e4f726950735",
@@ -196,6 +201,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: vocab_hardcode_gate.py）"
     }
   },
-  "registered_at": "2026-07-04T09:58:25.124121+00:00",
+  "registered_at": "2026-07-05T08:10:12.150968+00:00",
   "last_check_at": "2026-07-03T17:24:28.863589+00:00"
 }

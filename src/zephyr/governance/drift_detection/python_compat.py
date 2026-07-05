@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_python_compat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Python Compatibility Checker — Python版本兼容性漂移 D-023-30 · §6.22。

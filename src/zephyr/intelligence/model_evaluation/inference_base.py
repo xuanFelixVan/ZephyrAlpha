@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-RSC_inference_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 # MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and zephyr.ml_train.inference_base
 from zephyr.ml_train.inference_base import (

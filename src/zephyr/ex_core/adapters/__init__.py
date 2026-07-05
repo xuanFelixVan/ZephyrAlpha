@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-L06-001-adapters | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """D_EX_CORE adapters — 券商/风控适配器 re-export wrapper
 
 聚合 governance.trading_contracts.broker_interface、governance.adapters.* 与

@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """D_PORTFOLIO_CORE — Portfolio Construction Strategies
 
 Phase C 具体策略实现包。

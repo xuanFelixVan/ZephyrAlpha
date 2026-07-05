@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] FeedbackLoopError
 # [TESTS] tests/feedback-loop/
 # [A_module] module_id=MOD-UNK_template | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9
 

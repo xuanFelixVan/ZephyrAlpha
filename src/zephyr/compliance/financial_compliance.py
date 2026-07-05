@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: financial_compliance has migrated to zephyr.governance.financial_compliance"""
 
 from zephyr.governance.financial_governance.financial_compliance import *  # noqa: F403

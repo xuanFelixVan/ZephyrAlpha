@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError; RuntimeError
 # [TESTS] tests/system-telemetry/test_health.py
-# [TTL] task_bound
+# [TTL] permanent
 """health subsystem — 模块健康注册与 LifecycleManager 对接."""
 
 from __future__ import annotations

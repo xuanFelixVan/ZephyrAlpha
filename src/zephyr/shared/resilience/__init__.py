@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-RES_resilience | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [TTL] task_bound
+# [TTL] permanent
 """
 resilience/__init__.py — 韧性工具包入口（Phase 2 新增）
 

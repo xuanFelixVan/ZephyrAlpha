@@ -2,7 +2,7 @@
 """[BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model_capability_exam/blueprint.md
 
 # [MODULE] zephyr.infrastructure.model_capability_exam
-# [TTL] task_bound
+# [TTL] permanent
 
 [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 蓝图不存在时返回空 AlignmentReport（aligned=0, zombie=0, orphan=0）
 # [TESTS] tests/semantic-auditor/test_alignment_engine.py
 # [A_module] module_id=MOD-GOV_alignment_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-028 — 对齐引擎 Stage 4
 

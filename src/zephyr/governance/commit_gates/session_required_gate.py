@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——get_session 异常降级为放行（registry 故障不应卡死 commit 工作流）
 # [TESTS] tests/governance/rule_enforcement/test_session_required_gate.py
 # [A_module] module_id=MOD-GOV-session_required_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """session_required_gate.py — session 注册强制门禁（SESSION-REQUIRED，2026-07-01 治本 FP-ISO.4B 件1改）
 
 检测 commit 调用方是否注册了有效 session。session_id 为空/"unknown"/未注册时

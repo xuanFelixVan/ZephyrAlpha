@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_feedback_loop_imports.py
 # [A_module] module_id=MOD-UNK_anomaly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 # [GOV-DOC-018] 子包anomaly: 异常检测族（DW-244分类，原_anomaly.py聚合迁移而来）
 
 _SUBMODULES = [

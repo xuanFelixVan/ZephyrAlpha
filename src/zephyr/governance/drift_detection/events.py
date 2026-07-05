@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 定义所有漂移事件类型
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_events | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移事件定义.
 

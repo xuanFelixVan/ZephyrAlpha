@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_runtime_ports.py
 # [A_module] module_id=MOD-ORC_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Protocol-based interface layer for runtime→pipeline dependency abstraction.
 

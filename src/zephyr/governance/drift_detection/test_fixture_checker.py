@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_test_fixture_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Test Fixture Checker — 测试夹具漂移检测 D-023-28 · §6.20。

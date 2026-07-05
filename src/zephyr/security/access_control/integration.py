@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] register_all/health_check/verify_contracts never raise
 # [TESTS] tests/agent_rbac/test_integration_agent_rbac.py
 # [A_module] module_id=MOD-SEC_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """IntegrationManager — 系统集成注册与健康检查.
 
 依据蓝图 MOD-INF-018 §3:

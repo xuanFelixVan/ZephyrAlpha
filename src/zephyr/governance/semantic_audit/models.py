@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ValidationError on invalid severity/SafetyDecision
 # [TESTS] tests/semantic-auditor/test_models.py
 # [A_module] module_id=MOD-GOV_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """语义审计管线数据模型 — MOD-INF-028 §4.2
 
 所有 Stage 共享的类型定义：Severity / SafetyDecision / TriggerResult /

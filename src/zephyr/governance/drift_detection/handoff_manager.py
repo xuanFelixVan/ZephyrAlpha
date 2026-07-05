@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_handoff_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Cross-Session Handoff Manager — 跨Session修复上下文交接 §6.14。

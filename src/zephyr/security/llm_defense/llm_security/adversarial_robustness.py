@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_adversarial_robustness | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """adversarial_robustness.py — 对抗鲁棒性 (B8, DD82, TASK-015 beta w)"""
 

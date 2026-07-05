@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_baseline_poisoning_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。

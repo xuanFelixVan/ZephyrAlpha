@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """shared.schema — auto-generated package init."""
 
 __all__ = ["base_config", "execution_model", "schema_registry", "schemas", "severity_types"]

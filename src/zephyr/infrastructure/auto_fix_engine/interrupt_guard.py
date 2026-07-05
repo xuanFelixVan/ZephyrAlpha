@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] InterruptGuardError
 # [TESTS] tests/auto-fix-engine/test_interrupt_guard.py
 # [A_module] module_id=MOD-INF_interrupt_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

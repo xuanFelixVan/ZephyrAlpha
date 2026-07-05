@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] BridgeError;RollbackTriggerFailed
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_rollback_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 G-CT-006 契约：Drift → Rollback 漂移触发回滚."""

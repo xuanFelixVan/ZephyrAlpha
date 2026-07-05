@@ -8572,6 +8572,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.157 文档与代码同步深度（25个，第26轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=25(文档与代码同步深度需自动化同步机制)
+> **第42轮修复状态（2026-07-05）**：FIXED=14(5.157.1 AGENTS.md infra_runtime→infrastructure + 5.157.2 3文件_domain-infra_runtime→_domain_infra_runtime+runtime-integration→runtime_integration + 5.157.3 25文件BLUEPRINT头部auto-runtime-core→auto_runtime_core + 5.157.4 shared_quickref.yaml utc_now→now_utc + 5.157.5 api_index.py utc_now()→now_utc() + 5.157.6 shared_quickref.yaml version 0.22.0→2.0.0 + 5.157.7 blueprint.md target-architecture/architecture_model→architecture_model根目录 + 5.157.8 blueprint.md auto-runtime-core→auto_runtime_core + 5.157.9 blueprint.md configs→config单数 + 5.157.12 shared_quickref.yaml shared→shared_core + 5.157.17 shared_quickref.yaml l01_infrastructure/audit-trail→_domain_governance/audit_trail + 5.157.18 contract_fingerprint_hook.sh连字符路径→根目录architecture_model + 5.157.19 boot_hooks.py docstring 6个→5个 + 5.157.24 boot_hooks.py DEPENDENCIES去重), DRIFTED=7(5.157.10 README.md链接已修正为trae_028 + 5.157.11 README.md链接已修正为navigation_index + 5.157.20 deprecation.py不存在 + 5.157.21 api_client.py不存在 + 5.157.22 time_utils.py不存在 + 5.157.23 frontmatter_utils.py不存在 + 5.157.25 TODO DM-201247已被5.12.6清理), DEFERRED=4(5.157.13/14/15 shared_quickref.yaml shim条目标注需逐项确认 + 5.157.16 agent-rbac blueprint不存在需创建). 维度5.157全部清零.
 
 #### HIGH（9个：误导严重）
 

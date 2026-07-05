@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-AUT_red_blue_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: red-blue-validator has migrated to zephyr.security.adversarial_validation"""
 
 from zephyr.security.adversarial_validation.attack_registry import AttackRegistry

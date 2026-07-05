@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] transition: InvalidTransition→ValueError; register_session: CapacityExceeded→RuntimeError
 # [TESTS] tests/test_behavioral_audit/test_session_lifecycle.py
 # [A_module] module_id=MOD-GOV_session_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

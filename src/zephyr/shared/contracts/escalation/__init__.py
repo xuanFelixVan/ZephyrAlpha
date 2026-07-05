@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_budget_enforcer.py
-# [TTL] task_bound
+# [TTL] permanent
 
 from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert, BudgetSeverity, BudgetType
 

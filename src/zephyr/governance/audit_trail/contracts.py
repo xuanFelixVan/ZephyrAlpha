@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 违反契约抛ContractViolationError
 # [TESTS] tests/audit-orchestrator/test_contracts.py
 # [A_module] module_id=MOD-GOV_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any

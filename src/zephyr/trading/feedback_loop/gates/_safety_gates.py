@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.trading.feedback_loop.gates"
 # [A_module] module_id=MOD-UNK__safety_gates | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 SUBMODULES = [
     "parameterized_safety_gate",

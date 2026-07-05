@@ -10,7 +10,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] MoneyCurrencyMismatchError; MoneyPrecisionError
 # [TESTS] tests/trading/
-# [TTL] task_bound
+# [TTL] permanent
 
 from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
 from zephyr.trading.trading_contracts.portfolio.contracts.money import (

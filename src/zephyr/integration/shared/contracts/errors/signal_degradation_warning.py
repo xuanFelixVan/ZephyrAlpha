@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 # ==== BEGIN CODGEN:CTR-ERR-003 ====
 from dataclasses import dataclass, field
 

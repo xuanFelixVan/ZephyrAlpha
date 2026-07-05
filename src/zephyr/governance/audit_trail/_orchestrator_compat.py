@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/audit/test_orchestrator.py
-# [TTL] task_bound
+# [TTL] permanent
 """audit-orchestrator 兼容重导出层（ARCH-042 阶段4 修复双 MODULE，ARCH-043 Risk3 改名）
 
 历史：原 audit-orchestrator (MOD-INF-027) 实现 MAPE-K 五层自治循环。

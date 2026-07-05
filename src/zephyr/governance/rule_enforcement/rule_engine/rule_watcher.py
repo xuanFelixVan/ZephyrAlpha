@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Returns empty list on missing dir; never raises for missing files; logs errors to stdout
 # [TESTS] tests/test_rule_watcher.py
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 RuleWatcher — YAML 规则文件变更检测与自动同步

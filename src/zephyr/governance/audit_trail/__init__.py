@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure
 # [TESTS] tests/audit-orchestrator/
-# [TTL] task_bound
+# [TTL] permanent
 
 # ============================================================================
 # audit_trail 模块地图（ARCH-042 阶段4裁定：强化发现性，不建物理子目录）

@@ -2,5 +2,5 @@
 # [MODULE] zephyr.trading.orchestrator.contracts
 # [DOMAIN] D_TRADING
 # [A_module] module_id=MOD-ORC_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """contracts — orchestrator contracts subpackage."""

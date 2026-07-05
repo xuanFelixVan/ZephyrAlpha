@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] OSError; RuntimeError
 # [TESTS] tests/system-telemetry/test_watchdog.py
 # [A_module] module_id=MOD-INF_watchdog | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。
 

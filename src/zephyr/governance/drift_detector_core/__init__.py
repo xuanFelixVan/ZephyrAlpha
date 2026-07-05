@@ -5,7 +5,7 @@
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """MOD-INF-023 drift_detector core module.
 Migrated from drift_detection/ to resolve directory boundary with MOD-INF-033.
 """

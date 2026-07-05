@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 
 """zephyr.trading.trading_contracts — trading-domain data contracts.
 

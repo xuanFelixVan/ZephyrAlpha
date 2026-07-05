@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] GateError
 # [TESTS] tests/gates/
 # [A_module] module_id=MOD-GOV_ct_enforcement_mode_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
 

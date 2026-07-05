@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] MANIFEST_NOT_FOUND: 记录错误并返回空结果，不阻断守护进程循环;
 # [TESTS] test_speed_baseline_checker.py
 # [A_module] module_id=MOD-ORC_speed_baseline_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 import time
 from dataclasses import dataclass, field

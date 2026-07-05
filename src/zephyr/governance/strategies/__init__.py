@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-PRT_strategies | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: true source is zephyr.pf_core.default_equity_strategy.
 
 Uses lazy __getattr__ to avoid double-registration in StrategyRegistry

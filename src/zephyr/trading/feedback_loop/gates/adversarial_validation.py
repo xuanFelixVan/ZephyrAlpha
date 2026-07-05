@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] RedBlueImportError on import failure; returns degraded results
 # [TESTS] tests/test_adversarial_validation.py
 # [A_module] module_id=MOD-UNK_adversarial_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Adversarial Validation Gate — FLE-ADVERSARIAL-VALIDATION + RED-BLUE-GATE bridge.
 

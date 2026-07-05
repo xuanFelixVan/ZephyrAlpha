@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """orchestrator.resilience — auto-generated package init.
 
 5.159.4 修复: 死副本文件已删除 (deferred_queue/rollback_manager/hallucination_detector 与顶层重复).

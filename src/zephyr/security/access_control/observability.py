@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] all methods never raise; detect_* return AnomalyResult
 # [TESTS] tests/agent_rbac/test_observability_agent_rbac.py
 # [A_module] module_id=MOD-SEC_observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """ObservabilityReporter — 指标上报与异常检测.
 
 依据蓝图 MOD-INF-018 §observability:

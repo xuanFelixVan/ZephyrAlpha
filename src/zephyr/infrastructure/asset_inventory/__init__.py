@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 asset-inventory — MOD-INF-026 · 资产盘点系统：发现→分类→登记→对账→生命周期
 ==============================================================================

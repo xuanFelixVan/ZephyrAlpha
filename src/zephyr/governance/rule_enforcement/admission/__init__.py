@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """ZephyrAlpha — gates/admission/ — 模块准入门禁（MAD-001~004）"""
 
 __all__ = []

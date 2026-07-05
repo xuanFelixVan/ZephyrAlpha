@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-EXE_market | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 from .factor_monitor_report import *
 from .factor_signal import *
 from .instrument import *

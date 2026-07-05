@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_shared_contracts_security.py
-# [TTL] task_bound
+# [TTL] permanent
 
 __all__ = [
     "SecurityDecision",

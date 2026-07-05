@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-DAT_kb | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 __all__ = [
     "ACTIVE_DIR_NAME",

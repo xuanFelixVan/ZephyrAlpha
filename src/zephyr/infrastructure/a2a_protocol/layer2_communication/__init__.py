@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Layer 2: 通信+任务 — Task 状态机, Message/Part Schema, 上下文包"""
 
 from zephyr.shared.protocols.a2a.a2a_schemas import (

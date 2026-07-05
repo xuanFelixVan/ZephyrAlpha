@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] simulate()/impact_analysis() never raise; return DryRunResult/ImpactAnalysis
 # [TESTS] tests/agent_rbac/test_dry_run_agent_rbac.py
 # [A_module] module_id=MOD-SEC_dry_run | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """DryRun — 权限模拟与影响分析.
 
 依据蓝图 MOD-INF-018 §3:

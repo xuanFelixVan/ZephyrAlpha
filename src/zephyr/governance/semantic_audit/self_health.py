@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 自检异常时返回 CRITICAL 状态
 # [TESTS] tests/semantic-auditor/test_self_health.py
 # [A_module] module_id=MOD-GOV_self_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-028 — 自身健康监控
 

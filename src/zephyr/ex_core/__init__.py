@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """D_EXECUTION_CORE Trade Execution — Re-export wrapper (DM-298)
 
 All modules have been migrated to zephyr.execution_core.core.

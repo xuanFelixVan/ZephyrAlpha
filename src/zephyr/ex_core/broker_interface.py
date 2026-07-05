@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001
 # [MODULE] zephyr.ex_core.broker_interface
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.governance.broker_interface
+# [DEPENDENCIES] zephyr.governance.trading_contracts.broker_interface
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype

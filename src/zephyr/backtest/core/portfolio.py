@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] PortfolioError
 # [TESTS]
 # [A_module] module_id=MOD-BT-001-portfolio | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """回测持仓管理模块
 
 职责:

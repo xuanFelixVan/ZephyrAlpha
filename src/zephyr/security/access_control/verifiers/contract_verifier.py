@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] verify_all/verify_gct001/verify_gct004 never raise
 # [TESTS] tests/agent_rbac/test_integration_agent_rbac.py
 # [A_module] module_id=MOD-SEC_contract_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """ContractVerifier — 契约验证器.
 
 依据蓝图 MOD-INF-018 §3:

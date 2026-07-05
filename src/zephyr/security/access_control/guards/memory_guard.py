@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check_access never raises; returns {"allowed": bool}
 # [TESTS] tests/agent_rbac/test_crosscut_d.py
 # [A_module] module_id=MOD-SEC_memory_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """MemoryGuard — 内存访问守卫.
 
 依据蓝图 MOD-INF-018 §3:

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: security_gateway_base has migrated to zephyr.governance.security_governance.security_gateway_base"""
 
 from zephyr.governance.security_governance.security_gateway_base import *  # noqa: F403

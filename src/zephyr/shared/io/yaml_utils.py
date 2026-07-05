@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] FileNotFoundError(strict=True且文件不存在)
 # [TESTS] 手动测试：load_vocabulary_values("status_vocabulary.yaml") 返回3值
 # [A_module] module_id=MOD-SHR-io-yaml | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源）
 
 对标 SCRIPT-QUALITY-001 D-D-05（禁止跨脚本复制粘贴逻辑）

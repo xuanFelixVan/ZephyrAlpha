@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ConfigFixError
 # [TESTS] tests/auto-fix-engine/test_config_fixer.py
 # [A_module] module_id=MOD-INF_config_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

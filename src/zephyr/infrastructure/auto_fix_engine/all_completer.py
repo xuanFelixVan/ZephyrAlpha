@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AllCompletionError
 # [TESTS] tests/auto-fix-engine/test_all_completer.py
 # [A_module] module_id=MOD-INF_all_completer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

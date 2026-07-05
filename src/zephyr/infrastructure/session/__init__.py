@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: true source is zephyr.shared.session / zephyr.shared.session_continuity.
 
 Auto-generated stub; submodules migrated to shared/.

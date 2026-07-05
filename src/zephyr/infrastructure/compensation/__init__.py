@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: true source is zephyr.shared.compensation.
 
 Auto-generated stub; submodules migrated to shared/compensation/.

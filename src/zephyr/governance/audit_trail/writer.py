@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 写入失败抛IOError
 # [TESTS] tests/audit-orchestrator/test_writer.py
 # [A_module] module_id=MOD-GOV_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import hashlib
 import hmac
 import json

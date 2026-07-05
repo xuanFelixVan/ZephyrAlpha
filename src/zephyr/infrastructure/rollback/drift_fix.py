@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] RollbackError;DriftFixError
 # [TESTS] tests/rollback/;tests/drift/test_drift_fix.py
 # [A_module] module_id=MOD-INF_drift_fix | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

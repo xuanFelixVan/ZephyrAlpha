@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] TypeError if runtime implementation does not satisfy Protocol
 # [TESTS] tests/utils/test_shared_core.py
 # [A_module] module_id=MOD-INF_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ports — D-DATA 服务的 Protocol 定义

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] returns ShutdownResult; logs error on failure; never raises during shutdown; signal handler swallows exceptions
 # [TESTS] tests/test_f5_auto_shutdown.py
 # [A_module] module_id=MOD-RES_f5_shutdown_manager | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD-INF-022 §2).
 

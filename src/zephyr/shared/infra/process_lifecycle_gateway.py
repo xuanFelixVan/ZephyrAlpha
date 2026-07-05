@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] launch 返回 None 表示启动失败（调用方处理）；launch_daemon 返回 bool 表示成功/失败
 # [TESTS] tests/zephyr/shared/infra/test_process_lifecycle_gateway.py
 # [A_module] module_id=MOD-SHR_process_lifecycle_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ProcessLifecycleGateway — 进程生命周期统一入口

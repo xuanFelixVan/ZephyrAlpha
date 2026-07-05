@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 from zephyr.integration.shared.events.dlq import DeadLetter, DeadLetterQueue, attach_dlq_to_observer
 from zephyr.integration.shared.events.dlq_bridge import DLQEventBridge, make_dlq_event_handler
 from zephyr.integration.shared.events.dlq_bridge import attach_dlq_to_observer as dlq_bridge_attach

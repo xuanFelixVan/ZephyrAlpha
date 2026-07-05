@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.staging_area
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] StagingError on all failures; CONFLICT raised when file modified by another session
 # [TESTS] tests/test_staging_area.py
 # [A_module] module_id=MOD-ORC_staging_area | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 StagingArea — 多AI并发草稿写入+提交+冲突检测模块（CT-SESSION-CONFLICT-002）
 

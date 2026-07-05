@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] audit() never raises; individual stage failures are logged and skipped; returns partial report
 # [TESTS] tests/test_semantic_auditor.py
 # [A_module] module_id=MOD-GOV_semantic_audit_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """SemanticAuditor 编排器——9阶段管道统一调度.
 
 依据蓝图 MOD-INF-028 §3 架构设计:

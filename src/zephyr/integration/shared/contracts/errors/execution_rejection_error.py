@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 # ==== BEGIN CODGEN:CTR-ERR-005 ====
 from dataclasses import dataclass
 

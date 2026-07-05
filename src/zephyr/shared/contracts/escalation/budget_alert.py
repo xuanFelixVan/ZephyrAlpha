@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 异常必须包含 budget_context 和 operation_id
 # [TESTS] tests/test_budget_enforcer.py
 # [A_module] module_id=MOD-SHR_budget_alert | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

@@ -9,7 +9,7 @@
 # [CONSUMERS] zephyr.integration.agent_communication.layer3_coordination
 # [ERROR_CONTRACT] import errors only
 # [TESTS] tests/test_shared_protocols.py
-# [TTL] task_bound
+# [TTL] permanent
 
 """A2A Layer3 Coordination — shared Protocol interfaces and data contracts.
 

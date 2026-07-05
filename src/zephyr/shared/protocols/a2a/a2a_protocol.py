@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] Protocol violations caught at type-check time
 # [TESTS] tests/test_shared_protocols.py
 # [A_module] module_id=MOD-SHR_a2a_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Core A2A Protocol interface and governance data contracts.
 

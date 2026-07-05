@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-ORC_layer2_communication | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 # Re-export from shared protocols
 from zephyr.shared.protocols.a2a.a2a_schemas import *  # noqa: F403
 

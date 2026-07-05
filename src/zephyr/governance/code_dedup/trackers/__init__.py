@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/observability/test_hotspot_tracker.py等
 # [A_module] module_id=MOD-INF-017_trackers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """tracker 族子包 — 风险/盲点/热点跟踪器集合.
 
 从 code_dedup/ 根目录迁入以符合 GOV-DOC-018 阈值（根目录 ≤ 60）.

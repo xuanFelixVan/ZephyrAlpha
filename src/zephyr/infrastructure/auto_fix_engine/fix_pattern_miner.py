@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] PatternMiningError
 # [TESTS] tests/auto-fix-engine/test_fix_pattern_miner.py
 # [A_module] module_id=MOD-INF_fix_pattern_miner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

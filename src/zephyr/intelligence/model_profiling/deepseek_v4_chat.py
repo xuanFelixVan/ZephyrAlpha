@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] APIError;RateLimitError;CostLimitError
 # [TESTS] tests/test_model_profiler/
 # [A_module] module_id=MOD-RSC_deepseek_v4_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端

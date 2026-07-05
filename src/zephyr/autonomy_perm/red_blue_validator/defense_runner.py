@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: defense_runner has migrated to zephyr.security.adversarial_validation.defense_runner"""
 
 from zephyr.security.adversarial_validation.defense_runner import *  # noqa: F403

@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] RuntimeError
 # [TESTS] tests/system-telemetry/test_profiles.py
-# [TTL] task_bound
+# [TTL] permanent
 """ProfileSubsystem — 系统资源画像（MOD-INF-015 §6 · profiles）.
 
 提供轻量级 CPU/内存/磁盘使用率采集，支持 start/stop/snapshot API。

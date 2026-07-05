@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] returns BootResult; logs error on failure; never raises during boot
 # [TESTS] tests/adversarial/test_rollback_boot_integration.py
 # [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 §1.2).
 

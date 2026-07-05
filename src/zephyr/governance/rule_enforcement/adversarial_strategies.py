@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] StrategyError on invalid strategy usage
 # [TESTS] tests/test_adversarial_strategies.py
 # [A_module] module_id=MOD-GOV_adversarial_strategies | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Adversarial sample generator and 5 attack strategies for gate validation."""
 

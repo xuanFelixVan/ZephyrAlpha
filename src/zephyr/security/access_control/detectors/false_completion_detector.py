@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check_false_completion never raises; returns CompletionClaim(detected=False) on equal/greater size
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_false_completion_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """FalseCompletionDetector — 虚假完成检测.
 
 依据蓝图 MOD-INF-018 §3:

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ConvergenceFailureError on 3-round stagnation; EscalationTriggerError on escalation failure
 # [TESTS] tests/red_blue/test_convergence_checker.py
 # [A_module] module_id=MOD-SEC_convergence_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_domain-infra_runtime/task-system/blueprint.md
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_domain_infra_runtime/task-system/blueprint.md
 # [MODULE] zephyr.trading.task_gate
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport
@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_task_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 TaskGate --- 任务门控
 

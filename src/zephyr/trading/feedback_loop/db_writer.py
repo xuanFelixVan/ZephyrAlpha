@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DBConnectionError写入失败抛日志; 空输入返回0不报错
 # [TESTS] scripts/connect/fle_db.py --verify
 # [A_module] module_id=MOD-UNK_db_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQLite
 
 CT-FLE-DB-001: Feedback Loop 采集的指标和告警 → Database 持久化落地。

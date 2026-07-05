@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: compliance_rule has migrated to zephyr.portfolio.core.compliance_rule"""
 
 from zephyr.governance.rule_enforcement.compliance_rule import *  # noqa: F403

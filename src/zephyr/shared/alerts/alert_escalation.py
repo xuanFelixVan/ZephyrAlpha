@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """AlertEscalation — re-homed to eliminate shared->infrastructure circular import."""
 
 from __future__ import annotations

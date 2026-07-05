@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 ZephyrAlpha 容量保障体系 (Capacity Assurance) — MOD-INF-001 · 基础设施 Infrastructure.
 

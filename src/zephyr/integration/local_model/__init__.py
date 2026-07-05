@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 from zephyr.integration.local_model.cache_layer import CacheLayer
 from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] RuntimeError on submit after shutdown; PoolStats always returns current snapshot
 # [TESTS] tests/audit-orchestrator/
 # [A_module] module_id=MOD-GOV_resource_aware_pool | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

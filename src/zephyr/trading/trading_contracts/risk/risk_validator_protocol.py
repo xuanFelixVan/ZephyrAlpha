@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ValueError on negative limit_value
 # [TESTS] tests/risk/test_risk_validator.py; tests/ex_core/
 # [A_module] module_id=MOD-UNK_risk_validator_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

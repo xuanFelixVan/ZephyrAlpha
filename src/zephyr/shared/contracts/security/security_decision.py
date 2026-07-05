@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_shared_contracts_security.py
 # [A_module] module_id=MOD-SEC_security_decision | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from enum import Enum
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] exit 0=通过；exit 1=有违规（阻断 commit，PROMOTION_BLOCKED 或 FILE-PLACEMENT-TTL 冲突）
 # [TESTS] tests/governance/commit_gates/test_file_placement_ttl_gate.py
 # [A_module] module_id=MOD-GOV-file_placement_ttl_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 # [ARCH] ARCH-049
 """file_placement_ttl_gate.py — 文件放置与 TTL 一致性门禁（治本 #ARCH-049：防止临时文件乱放根目录）
 

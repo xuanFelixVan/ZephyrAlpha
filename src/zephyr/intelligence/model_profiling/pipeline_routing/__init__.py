@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Model Profiler — Pipeline Routing variant"""
 
 from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import (

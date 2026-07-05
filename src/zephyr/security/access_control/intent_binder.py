@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check_drift never raises; returns False when agent unknown or no actual operations recorded
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_intent_binder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """IntentBinder — 意图绑定与漂移检测.
 
 依据蓝图 MOD-INF-018 §3:

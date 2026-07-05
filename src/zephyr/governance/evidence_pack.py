@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 打包失败返回None
 # [TESTS] tests/audit-orchestrator/test_evidence_pack.py
 # [A_module] module_id=MOD-GOV_evidence_pack | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import hashlib
 import json
 import logging

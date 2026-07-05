@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] Protocol violations caught at type-check time; Pydantic validation on AgentCard
 # [TESTS] tests/test_shared_protocols.py
 # [A_module] module_id=MOD-SHR_a2a_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """A2A Registry and Agent Card contracts — discovery and identity interfaces.
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——subprocess 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_vocab_hardcode_gate.py
 # [A_module] module_id=MOD-GOV-vocab_hardcode_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """vocab_hardcode_gate.py — 新增 .py 文件词表硬编码阻断门禁（VOCAB-HARDCODE，2026-07-03 Phase 1）
 
 治本 --no-verify 绕过 GATE-VOCAB：check_vocab_hardcode.py 是 pre-commit hook，

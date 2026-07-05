@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 # Re-homed type definitions — eliminates circular import from shared -> infrastructure
 """Shared internal backpressure type definitions.
 Previously re-exported from infrastructure_runtime_integration.pipeline.backpressure_types.

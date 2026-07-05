@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] RedBlueValidationError
 # [TESTS] tests/red-blue-validator/
 # [A_module] module_id=MOD-SEC_attack_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

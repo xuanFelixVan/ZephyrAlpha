@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——git grep 超时/异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_orphan_module_gate.py
 # [A_module] module_id=MOD-GOV-orphan_module_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """orphan_module_gate.py — 孤儿模块（无 import 引用）阻断门禁（ORPHAN-MODULE）
 
 检测 staged 新增 .py 模块在代码库中无任何 import 引用——死代码 on creation，

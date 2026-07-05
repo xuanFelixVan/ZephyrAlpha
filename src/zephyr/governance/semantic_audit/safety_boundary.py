@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 配置加载失败时默认 HOLD 所有 TriggerResult
 # [TESTS] tests/semantic-auditor/test_safety_boundary.py
 # [A_module] module_id=MOD-GOV_safety_boundary | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-028 — 安全边界 Stage 3
 

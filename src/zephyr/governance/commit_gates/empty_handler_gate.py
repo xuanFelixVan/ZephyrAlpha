@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——AST/IO 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_empty_handler_gate.py
 # [A_module] module_id=MOD-GOV-empty_handler_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """empty_handler_gate.py — 空事件 handler 函数阻断门禁（EMPTY-HANDLER）
 
 检测 staged 新增 .py 文件中的事件订阅 handler 函数是否为空壳（函数体仅含

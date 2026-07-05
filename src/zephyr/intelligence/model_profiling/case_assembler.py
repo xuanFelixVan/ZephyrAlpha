@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_exam_test_cases.py
 # [A_module] module_id=MOD-RUB_case_assembler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 真实多文件注入装配器（Phase 3 极限深度）。
 

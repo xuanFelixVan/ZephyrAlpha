@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """D_FACTOR — Factors Package
 
 D_FACTOR 因子实现包。每个因子独立一个模块，@FactorRegistry.register 自动注册。

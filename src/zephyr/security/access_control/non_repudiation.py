@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] sign/verify never raise; verify returns {"verified": False} on tampered data or missing hmac_hash
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py; tests/agent_rbac/test_forensic_a.py
 # [A_module] module_id=MOD-SEC_non_repudiation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """NonRepudiation — 不可抵赖性审计签名.
 
 依据蓝图 MOD-INF-018 §3:

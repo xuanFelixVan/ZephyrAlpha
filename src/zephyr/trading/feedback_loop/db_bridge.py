@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DBConnectionError写入失败抛日志; 空输入返回0不报错
 # [TESTS] python -m pytest tests/test_db_bridge.py tests/test_fl_db_bridge.py -q
 # [A_module] module_id=MOD-UNK_db_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写入fle_metrics
 
 CT-FLE-DB-001: FLE采集的指标 → Database持久化落地。

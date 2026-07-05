@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """D_ML_TRAIN — ML Training Concrete Implementations"""
 
 from __future__ import annotations

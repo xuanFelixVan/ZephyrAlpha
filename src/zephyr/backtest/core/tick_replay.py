@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] TickReplayError
 # [TESTS]
 # [A_module] module_id=MOD-BT-001-tick_replay | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Tick 回放引擎模块（v1.1.0 新增，秒级做T专用）
 
 职责:

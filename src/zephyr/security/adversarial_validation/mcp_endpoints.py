@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] McpEndpointError on tool execution failure
 # [TESTS] tests/red_blue/test_mcp_endpoints.py
 # [A_module] module_id=MOD-SEC_mcp_endpoints | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

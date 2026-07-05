@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-DAT_atomic_transaction_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器 v2.0（ATM）。
 

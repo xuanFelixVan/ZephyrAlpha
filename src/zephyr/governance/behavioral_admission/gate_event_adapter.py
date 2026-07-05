@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] GateEventAdapterError on write failure
 # [TESTS] tests/test_event_store_stress.py
 # [A_module] module_id=MOD-DAT_gate_event_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 GateEventAdapter — GateRepo 事件适配器（DW-0006）

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] FileNotFoundError if _scenario-registry.yaml missing; Pydantic ValidationError on malformed scenarios
 # [TESTS] tests/red_blue/test_scenario_loader.py
 # [A_module] module_id=MOD-SEC_scenario_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: attack_registry has migrated to zephyr.security.adversarial_validation.attack_registry"""
 
 from zephyr.security.adversarial_validation.attack_registry import *  # noqa: F403

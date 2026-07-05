@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] EventStoreError on write failure; IntegrityError on verify_integrity failure
 # [TESTS] tests/test_event_store_stress.py
 # [A_module] module_id=MOD-DAT_event_store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 EventStore — Event Sourcing 事件追加与回放（DW-0002）

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 审计失败返回降级结果
 # [TESTS] tests/audit-orchestrator/test_external_tool_audit.py
 # [A_module] module_id=MOD-GOV_external_tool_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import logging
 import subprocess
 from pathlib import Path

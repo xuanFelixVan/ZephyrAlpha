@@ -18,7 +18,7 @@
 # [ERROR_CONTRACT]
 
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 
 # ---
 # domain: infra_ops

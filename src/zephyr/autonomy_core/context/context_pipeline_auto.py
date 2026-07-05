@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] RuntimeError when fuse ON blocks auto_run; pipeline errors recorded to KillSwitch
 # [TESTS] tests/context/test_context_pipeline_auto.py
 # [A_module] module_id=MOD-AUTONOMY_CONTEXT_PIPELINE_AUTO | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """context_pipeline_auto.py — ContextPipeline 三层自动化机制
 

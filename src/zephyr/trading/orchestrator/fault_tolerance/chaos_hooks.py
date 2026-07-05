@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ChaosHookError on hook execution failure
 # [TESTS] tests/test_chaos_hooks.py
 # [A_module] module_id=MOD-ORC_chaos_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """ChaosHook — integrates ChaosEngine with the orchestrator execution loop."""
 

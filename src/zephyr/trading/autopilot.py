@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] Returns None when no tasks available; logs warnings on DB connection issues
 # [TESTS] tests/test_autopilot.py
 # [A_module] module_id=MOD-ORC_autopilot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """AutoPilot — AI session 自动找活干、认领任务。
 
 职责边界：

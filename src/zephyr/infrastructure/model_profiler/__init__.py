@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ProfilerError;EvaluationError
 # [TESTS] tests/test_model_profiler/
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Model Profiler — 本地 + 远程模型性能基准测试

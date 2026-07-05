@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] from_jsonl() raises ValueError on malformed input; to_jsonl() never raises
 # [TESTS] tests/test_audit_finding_model.py
 # [A_module] module_id=MOD-UNK_finding_model | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

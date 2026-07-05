@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ValueError on unknown strategy
 # [TESTS] tests/lifecycle_manager/test_resource_optimization_engine.py
 # [A_module] module_id=MOD-INF_resource_optimization_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

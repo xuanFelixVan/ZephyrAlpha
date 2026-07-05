@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] establish_baseline();detect()->float;is_drifting()->bool
 # [TESTS]
 # [A_module] module_id=MOD-RES_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Drift Detector — 兼容别名，SSoT已迁移至 zephyr.governance.drift_detection (MOD-INF-023).
 

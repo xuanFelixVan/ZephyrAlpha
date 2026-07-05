@@ -523,7 +523,7 @@ class WorkDAG(BaseModel):
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\runtime\` | 24 子组件 Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\runtime\` | 测试用例 |
 | 启动脚本 | `D:\ZephyrAlpha\scripts\construction\start_brain.py` | 大脑启动入口 |
-| 容量配置 | `D:\ZephyrAlpha\configs\capacity_params.yaml` | 容量预算参数 |
+| 容量配置 | `D:\ZephyrAlpha\config\capacity_params.yaml` | 容量预算参数 |
 | 审计日志 | `D:\ZephyrAlpha\data\audit_logs\` | AI 行为审计 JSONL |
 | 能力卡片 | `D:\ZephyrAlpha\data\capability_cards\` | CapabilityCard YAML |
 | 工作 DAG | `D:\ZephyrAlpha\data\work_dags\` | WorkDAG 定义 |
@@ -557,10 +557,10 @@ class WorkDAG(BaseModel):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 确认 MOD-INF-035 v6.0.0 | 版本升级 |
+| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\architecture_model\module_id_registry.yaml` | 确认 MOD-INF-035 v6.0.0 | 版本升级 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 更新版本+generation+codification_level | 规格化完成 |
 | 3 | spec.md | 见本蓝图附录A | 追加容量需求章节 | spec 未含容量设计 |
-| 4 | capacity_params.yaml | `D:\ZephyrAlpha\configs\capacity_params.yaml` | 追加 brain_dream_cycle_memory_mb / boot_timeout_ms / recovery_timeout_ms | 容量升级参数 |
+| 4 | capacity_params.yaml | `D:\ZephyrAlpha\config\capacity_params.yaml` | 追加 brain_dream_cycle_memory_mb / boot_timeout_ms / recovery_timeout_ms | 容量升级参数 |
 
 ---
 
@@ -911,12 +911,12 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
 | 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
-| 9 | 详细规范 | — | `D:\ZephyrAlpha\specs\auto-runtime-core\spec.md` | SSoT 施工依据 |
-| 10 | 容量参数 | — | `D:\ZephyrAlpha\configs\capacity_params.yaml` | 容量预算配置 |
+| 9 | 详细规范 | — | `D:\ZephyrAlpha\specs\auto_runtime_core\spec.md` | SSoT 施工依据 |
+| 10 | 容量参数 | — | `D:\ZephyrAlpha\config\capacity_params.yaml` | 容量预算配置 |
 
 ---
 
@@ -936,7 +936,7 @@ STEP 3: 拆分后验证
 | 1 | runtime 包 | `D:\ZephyrAlpha\src\zephyr\runtime\` | 修改 | 容量升级组件新增 |
 | 2 | 测试目录 | `D:\ZephyrAlpha\tests\runtime\` | 修改 | 新增容量升级测试 |
 | 3 | 启动脚本 | `D:\ZephyrAlpha\scripts\construction\start_brain.py` | 读取 | 启动入口 |
-| 4 | 容量配置 | `D:\ZephyrAlpha\configs\capacity_params.yaml` | 修改 | 新增容量参数 |
+| 4 | 容量配置 | `D:\ZephyrAlpha\config\capacity_params.yaml` | 修改 | 新增容量参数 |
 | 5 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` | 修改 | 本文件 |
 
 ---

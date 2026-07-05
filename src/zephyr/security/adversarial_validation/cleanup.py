@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] CleanupVerificationError if residue remains after cleanup
 # [TESTS] tests/red_blue/test_cleanup.py
 # [A_module] module_id=MOD-SEC_cleanup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

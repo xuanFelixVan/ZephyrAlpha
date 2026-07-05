@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] scripts/connect/dlq_retry.py --trigger
 # [A_module] module_id=MOD-DAT_dlq_retry_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """DLQ 重试策略 — 指数退避自动重试"""
 
 from __future__ import annotations

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ImportError when orchestration layer unavailable; consumers MUST handle
 # [TESTS]
 # [A_module] module_id=MOD-SHR_orchestration_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

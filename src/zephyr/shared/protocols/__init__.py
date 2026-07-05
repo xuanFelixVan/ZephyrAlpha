@@ -9,7 +9,7 @@
 # [CONSUMERS] zephyr.integration.agent_communication; zephyr.infrastructure.a2a_protocol
 # [ERROR_CONTRACT] import errors only — no runtime exceptions from Protocol definitions
 # [TESTS] tests/test_shared_protocols.py
-# [TTL] task_bound
+# [TTL] permanent
 
 """Shared Protocols — cross-domain interface definitions.
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Stub module: zephyr.security.access_control.capability_check — implementation pending."""
 
 MAX_CAPABILITIES = None  # stub constant

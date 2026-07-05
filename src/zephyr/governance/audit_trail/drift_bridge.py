@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 桥接失败返回无漂移(false)
 # [TESTS] tests/audit-orchestrator/test_drift_bridge.py
 # [A_module] module_id=MOD-GOV_drift_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

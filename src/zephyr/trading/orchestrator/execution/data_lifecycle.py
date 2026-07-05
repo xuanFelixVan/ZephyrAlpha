@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_data_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """数据生命周期管理器（CT-DATA-LIFECYCLE-001）——8类数据保留策略+每日GC。"""
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] TypeError on unsupported format
 # [TESTS] tests/orphan-judge/test_report_generator.py
 # [A_module] module_id=MOD-SEC_report_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import json
 import logging
 

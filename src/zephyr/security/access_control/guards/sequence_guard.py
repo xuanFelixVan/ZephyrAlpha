@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] record() never raises; returns str|None
 # [TESTS] tests/agent_rbac/test_sequence_guard_agent_rbac.py
 # [A_module] module_id=MOD-SEC_sequence_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """SequenceGuard — 操作序列守卫.
 
 依据蓝图 MOD-INF-018 §3:

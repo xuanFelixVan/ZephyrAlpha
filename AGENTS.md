@@ -70,7 +70,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | AgentOrchestrator | `zephyr.trading.orchestrator` | Agent 生命周期管理 |
 | TaskRepository | `zephyr.governance.task_repo` | 任务状态机（10 状态） |
 | GitCommitGateway | `zephyr.governance.rule_bridge.git_commit_gateway` | 全项目唯一合法 git commit 入口（串行锁+stash隔离+GW标记） |
-| A2A Protocol | `zephyr.infra_runtime.a2a_protocol` | Agent 间通信与冲突解决（MOD-INF-025） |
+| A2A Protocol | `zephyr.infrastructure.a2a_protocol` | Agent 间通信与冲突解决（MOD-INF-025） |
 | LLM 安全网关（LSG） | `zephyr.security.llm_defense.llm_security.gateway` | L1-L8 十层纵深防御，所有 LLM 调用必经安检（RULE-LSG-001） |
 | MCP Servers（10 个） | [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json) | MCP 服务器注册表（含工具列表/安全等级/ACL/限流） |
 | Trigger Router（6 触发器） | [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml) | 事件驱动路由表（含 handler/优先级/重试策略） |
@@ -101,14 +101,14 @@ a2a_caps = registry.find_by_tags(["a2a", "coordination"])
 ### 4.1 Agent 间通信（A2A Protocol）
 
 ```python
-from zephyr.infra_runtime.a2a_protocol import a2a_card_registry
+from zephyr.infrastructure.a2a_protocol import a2a_card_registry
 agents = a2a_card_registry.discover(capability="write")
 
-from zephyr.infra_runtime.a2a_protocol.layer2_communication.a2a_schemas import A2AMessage, A2AMessagePart, PartType
+from zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_schemas import A2AMessage, A2AMessagePart, PartType
 msg = A2AMessage(from_agent="your-id", to_agent="target-id", task_id="t-1")
 
-from zephyr.infra_runtime.a2a_protocol.layer3_coordination.conflict_detector import ConflictDetector, ChangeSet
-from zephyr.infra_runtime.a2a_protocol.layer3_coordination.arbitrator import Arbitrator, AgentMeta, AgentRole
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.conflict_detector import ConflictDetector, ChangeSet
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import Arbitrator, AgentMeta, AgentRole
 ```
 
 ### 4.2 LLM 安全网关（RULE-LSG-001：强制调用）

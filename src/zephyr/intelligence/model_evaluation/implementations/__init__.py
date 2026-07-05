@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Intelligence — Model Evaluation Concrete Implementations
 
 Phase C 具体实现包。

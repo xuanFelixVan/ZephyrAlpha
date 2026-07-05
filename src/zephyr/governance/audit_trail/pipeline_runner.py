@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] run() never raises; individual script failures are logged and skipped
 # [TESTS] tests/test_audit_orchestrator_e2e.py
 # [A_module] module_id=MOD-GOV_pipeline_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

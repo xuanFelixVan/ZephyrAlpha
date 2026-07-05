@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 桥接失败返回空事件列表
 # [TESTS] tests/audit-orchestrator/test_delegation_bridge.py
 # [A_module] module_id=MOD-GOV_delegation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

@@ -4,7 +4,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Signal Capital Allocation sub-package"""
 
 from __future__ import annotations

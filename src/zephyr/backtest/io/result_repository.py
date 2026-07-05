@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ArtifactNotFoundError
 # [TESTS]
 # [A_module] module_id=MOD-BT-001-io-repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """result_repository · 回测产物持久化/检索模块（v1.3.0 新增，#ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_backtest/blueprint.md §16.7

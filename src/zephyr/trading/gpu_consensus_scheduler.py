@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] submit: GPUTimeout→LOCAL_GPU降级; submit: APIUnavailable→SINGLE_API降级; submit: AllFailed→ConsensusResult(failed)
 # [TESTS] tests/test_behavioral_audit/test_gpu_consensus_scheduler.py
 # [A_module] module_id=MOD-ORC_gpu_consensus_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

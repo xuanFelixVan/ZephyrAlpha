@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DispatchError 任务创建失败/DB 不可用
 # [TESTS] scripts/connect/fle_orc.py --trigger
 # [A_module] module_id=MOD-UNK_alert_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """FLE→Orc 告警分派器 — dispatch() 生产者
 
 CT-FLE-ORC-001: FLE 检测异常 → dispatch AlertEvent → Orc 创建修复任务。

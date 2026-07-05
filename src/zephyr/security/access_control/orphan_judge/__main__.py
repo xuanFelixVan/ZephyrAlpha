@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] SystemExit(1) on FileNotFound/invalid subcommand; exit 0 on success
 # [TESTS] tests/orphan-judge/test_main.py
 # [A_module] module_id=MOD-SEC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

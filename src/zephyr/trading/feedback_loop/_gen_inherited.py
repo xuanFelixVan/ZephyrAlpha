@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK__gen_inherited | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """One-shot skeleton generator for TASK-MOD-FEEDBACK_LOOP-0003 inherited subsystems."""
 

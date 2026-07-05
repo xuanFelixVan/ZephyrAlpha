@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.infrastructure.a2a_protocol.layer3_coordination"
 # [A_module] module_id=MOD-INF__security_and_economics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export bridge for layer3_coordination security and economics symbols.
 
 Aggregates 22 symbols from 10 source modules to preserve backward compatibility

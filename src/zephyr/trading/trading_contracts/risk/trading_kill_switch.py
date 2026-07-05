@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ValueError;RuntimeError
 # [TESTS] tests/test_rollback/
 # [A_module] module_id=MOD-INF_trading_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 # SRC-0041: Copy file -- keep independent implementation, pending future review
 #   shared/kill_switch.py is now the unified export SSoT; this file exported

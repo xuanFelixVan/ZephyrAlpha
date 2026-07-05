@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 存储失败返回False
 # [TESTS] tests/audit-orchestrator/test_tiered_storage.py
 # [A_module] module_id=MOD-GOV_tiered_storage | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import logging
 from datetime import datetime
 from pathlib import Path

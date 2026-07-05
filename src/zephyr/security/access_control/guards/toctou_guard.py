@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] snapshot() returns None on missing file; verify() returns (False, detail) on error, never raises
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_toctou_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """TOCTOUGuard — TOCTOU (Time-of-Check to Time-of-Use) 防护.
 
 依据蓝图 MOD-INF-018 §3:

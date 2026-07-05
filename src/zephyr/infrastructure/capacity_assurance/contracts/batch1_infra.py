@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_batch1_infra | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Batch1 基础设施层契约 — 15条 Pydantic v2 Schema（SLO/Error Budget/Token Budget/Kill Switch/Sandbox/Graceful Degradation）."""
 

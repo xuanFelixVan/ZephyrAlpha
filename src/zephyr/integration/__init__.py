@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INT_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from zephyr.integration.llm_bridge import LLMBridge
 from zephyr.integration.mcp_server import get_asset_summary

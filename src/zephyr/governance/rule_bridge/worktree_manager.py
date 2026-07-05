@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] WorktreeError on worktree 创建/删除/merge 失败；get_current_worktree 返回 None 表示不在任何 session worktree 内
 # [TESTS] tests/test_worktree_manager.py
 # [A_module] module_id=MOD-GOV-worktree_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """worktree_manager.py — session worktree 物理隔离管理器（阶段3 治本 stash 循环）
 
 根因（2026-06-30 A/A/A 决策）

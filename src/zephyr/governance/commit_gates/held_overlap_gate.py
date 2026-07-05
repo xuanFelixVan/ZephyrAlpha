@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——registry 读取异常降级为空集（other_held=set()）
 # [TESTS] tests/governance/commit_gates/test_held_overlap_gate.py
 # [A_module] module_id=MOD-GOV-held_overlap_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """held_overlap_gate.py — 搭便车防护门禁（HELD-OVERLAP，2026-06-30 治本）
 
 检测 commit 目标文件是否被其他**活跃** session 持有，命中则阻断

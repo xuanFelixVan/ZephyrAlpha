@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] derive never raises; returns hash string for any input
 # [TESTS] tests/agent_rbac/test_cross_model_consistency.py
 # [A_module] module_id=MOD-SEC_derive_rbac_roles | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """RBACRoleDeriver — RBAC 角色派生器.
 
 依据蓝图 MOD-INF-018 §3:

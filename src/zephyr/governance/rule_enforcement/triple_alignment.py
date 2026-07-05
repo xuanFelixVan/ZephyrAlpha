@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] TripleAlignmentError(list[AlignmentViolation])
 # [TESTS] tests/test_triple_alignment.py
 # [A_module] module_id=MOD-GOV_triple_alignment | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁

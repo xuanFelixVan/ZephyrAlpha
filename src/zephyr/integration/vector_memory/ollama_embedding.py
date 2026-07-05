@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INT_ollama_embedding | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 from zephyr.integration.local_model.ollama_embedding import OllamaEmbedder
 
 __all__ = ["OllamaEmbedder"]

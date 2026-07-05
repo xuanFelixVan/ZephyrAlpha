@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] InvalidFixTransitionError
 # [TESTS] tests/auto-fix-engine/test_state_machine.py
 # [A_module] module_id=MOD-INF_state_machine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

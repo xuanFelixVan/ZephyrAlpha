@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: risk_limits canonical at zephyr.governance.trading_contracts.risk.risk_limits"""
 
 from zephyr.governance.trading_contracts.risk.risk_limits import *  # noqa: F403

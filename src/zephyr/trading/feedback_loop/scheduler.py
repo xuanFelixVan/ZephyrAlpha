@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] _run_drift_scan 不抛异常; _auto_fix_drifts 不抛异常; _periodic_checks 不抛异常; _audit_trail_check 不抛异常
 # [TESTS]
 # [A_module] module_id=MOD-UNK_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """FLE 全链路调度器 —— collect→detect→diagnose→act→verify 闭环。
 

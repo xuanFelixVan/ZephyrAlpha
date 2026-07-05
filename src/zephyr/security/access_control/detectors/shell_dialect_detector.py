@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Stub module: zephyr.security.access_control.detectors.shell_dialect_detector — implementation pending."""
 
 DANGEROUS_SHELL_PATTERNS = None  # stub constant

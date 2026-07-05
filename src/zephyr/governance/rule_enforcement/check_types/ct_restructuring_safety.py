@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] GateError
 # [TESTS] tests/gates/
 # [A_module] module_id=MOD-GOV_ct_restructuring_safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-UNK_cross_asset | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Auto-created by DM-295 migration."""
 
 from .risk_manager import *

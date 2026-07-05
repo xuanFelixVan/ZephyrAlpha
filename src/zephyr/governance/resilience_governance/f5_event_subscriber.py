@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] returns SubscriptionResult; handle_event swallows all exceptions and logs; never raises during event dispatch
 # [TESTS] tests/test_f5_event_startup.py
 # [A_module] module_id=MOD-RES_f5_event_subscriber | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3).
 

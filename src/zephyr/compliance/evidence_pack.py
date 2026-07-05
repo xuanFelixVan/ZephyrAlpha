@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: evidence_pack has migrated to zephyr.governance.evidence_pack"""
 
 from zephyr.governance.evidence_pack import *  # noqa: F403

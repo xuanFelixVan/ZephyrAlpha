@@ -13,7 +13,7 @@ from zephyr.governance.rule_enforcement.invariants.post_doc_review_check import 
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 
 """ZephyrAlpha — Architectural Invariant Gates (EN-001 ~ EN-003)
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: bypass_recorder has migrated to zephyr.security.adversarial_validation.bypass_recorder"""
 
 from zephyr.security.adversarial_validation.bypass_recorder import *  # noqa: F403

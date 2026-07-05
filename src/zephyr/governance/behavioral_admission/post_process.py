@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/delegation/test_post_process_unit.py; tests/governance/delegation/test_post_process_root.py
 # [A_module] module_id=MOD-GOV_post_process | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 # ---
 # layer: governance

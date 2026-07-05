@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] GateError
 # [TESTS] tests/test_adversarial_gate_integration.py
 # [A_module] module_id=MOD-GOV_adversarial_validation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """AdversarialValidation check type handler — registers with check_type_registry."""
 

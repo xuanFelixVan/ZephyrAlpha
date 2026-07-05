@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ValueError; RuntimeError
 # [TESTS] tests/system-telemetry/test_health_probes.py
 # [A_module] module_id=MOD-INF_health_probes | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 三态健康探针协议（Health Probes — CT-HEALTH-001）

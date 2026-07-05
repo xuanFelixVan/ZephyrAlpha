@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK_backtest_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 L_BACKTEST — Backtest Engine Layer
 
@@ -47,8 +47,8 @@ from typing import Any, ClassVar
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] frozen dataclass; SSoT=cross_layer_contracts.yaml; DO NOT EDIT (codegen)
-# [TTL] task_bound
-# [TTL] task_bound
+# [TTL] permanent
+# [TTL] permanent
 # [MODIFY-GUARD] cross_layer_contracts.yaml; generate_contracts.py
 # [STABILITY] evolving
 # [SAFETY] L

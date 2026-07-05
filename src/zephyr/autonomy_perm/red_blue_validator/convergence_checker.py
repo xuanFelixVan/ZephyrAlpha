@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: convergence_checker has migrated to zephyr.security.adversarial_validation.convergence_checker"""
 
 from zephyr.security.adversarial_validation.convergence_checker import *  # noqa: F403

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] handler swallows all exceptions and logs; never raises during event dispatch
 # [TESTS] tests/test_drift_bridge.py
 # [A_module] module_id=MOD-GOV_drift_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).
 

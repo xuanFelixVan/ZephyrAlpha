@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] API失败时抛RuntimeError;JSON解析失败返回空dict
 # [TESTS] tests/test_integration/test_deepseek_chat.py
 # [A_module] module_id=MOD-INT_deepseek_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理（requests 实现）

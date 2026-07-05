@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] BudgetExceededError;CostLimitError
 # [TESTS] tests/test_budget_enforcer/
 # [A_module] module_id=MOD-RES_context_recycling | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

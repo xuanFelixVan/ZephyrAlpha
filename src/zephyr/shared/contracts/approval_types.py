@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
 # [TESTS] tests/governance/test_gct_004_escalation_to_rbac.py; tests/governance/test_p0_u1_contract_smoke.py
 # [A_module] module_id=MOD-INT_approval_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 G-CT-004 — ApprovalRequest Pydantic V2 BaseModel 审批请求数据结构.
 """

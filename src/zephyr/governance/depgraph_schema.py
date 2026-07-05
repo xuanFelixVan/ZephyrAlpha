@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on migration failure; OperationalError on DDL errors
 # [TESTS] tests/test_depgraph_schema.py
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 depgraph Schema DDL + 版本化迁移框架

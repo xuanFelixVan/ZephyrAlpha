@@ -22,7 +22,7 @@
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_behavioral_auditor_imports.py
 # [A_module] module_id=MOD-SEC__core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 from zephyr.governance.drift_detection.drift_engine import (
     build_report,
     load_detector_registry,

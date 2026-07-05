@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] trigger()/reset() never raise; return TriggerResult with success flag
 # [TESTS] tests/agent_rbac/test_kill_switch_agent_rbac.py
 # [A_module] module_id=MOD-SEC_kill_switch | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
-# [TTL] task_bound
+# [TTL] permanent
 """KillSwitch — 熔断器.
 
 依据蓝图 MOD-INF-018 §kill_switch:

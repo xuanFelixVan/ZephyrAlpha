@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] GateEvaluationError on unregistered gate; DefenseResult.passed=False on blocked attack
 # [TESTS] tests/red_blue/test_defense_runner.py
 # [A_module] module_id=MOD-SEC_defense_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

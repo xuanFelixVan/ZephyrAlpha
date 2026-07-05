@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] LLM 不可用时返回 success=False, error="LLM_UNAVAILABLE"
 # [TESTS] tests/semantic-auditor/test_llm_bridge.py
 # [A_module] module_id=MOD-GOV_llm_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-028 — LLM 桥接 Stage 6
 

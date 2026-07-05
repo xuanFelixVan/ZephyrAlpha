@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: merkle_hourly has migrated to zephyr.governance.merkle_hourly"""
 
 from zephyr.governance.merkle_hourly import *  # noqa: F403

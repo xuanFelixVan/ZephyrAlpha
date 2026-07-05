@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] FileWatcherError on invalid watch_dir; silent skip on permission denied
 # [TESTS] tests/file/test_file_watcher.py
 # [A_module] module_id=MOD-INF_file_watcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

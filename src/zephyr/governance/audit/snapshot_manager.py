@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] SnapshotError on write failure
 # [TESTS] tests/test_event_store_stress.py
 # [A_module] module_id=MOD-DAT_snapshot_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 SnapshotManager — Event Sourcing 快照管理（DW-0005）

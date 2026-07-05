@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] FaultTypeNotFoundError on unknown type lookup
 # [TESTS] tests/test_fault_types.py
 # [A_module] module_id=MOD-ORC_fault_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Fault type registry and preset templates for chaos engineering."""
 

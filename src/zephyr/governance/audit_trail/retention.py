@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 清理失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_retention.py
 # [A_module] module_id=MOD-GOV_retention | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path

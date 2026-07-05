@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] detect_formal_files swallows OSError; consumer thread swallows all + logs; CircuitBreakerOpenError->skip+retry
 # [TESTS] tests/red_blue/test_commit_trigger.py
 # [A_module] module_id=MOD-SEC_commit_trigger | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030).
 

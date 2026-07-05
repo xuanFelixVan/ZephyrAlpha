@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] MemoryBackendError on backend failure; WriteTraceMissing on missing provenance
 # [TESTS] tests/test_unified_memory_api.py; tests/test_vms_memory_backend.py
 # [A_module] module_id=MOD-DAT__backend_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Backend protocol & shared data classes for the unified memory layer.

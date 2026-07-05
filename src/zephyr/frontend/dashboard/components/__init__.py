@@ -11,7 +11,7 @@ from __future__ import annotations
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 
 # v2.2.0 新增5个组件（MiniQMT实盘+Tick回测仪表盘）
 # v3.0.0 新增 ChartFactory 图表统一工厂（#ARCH-047 Streamlit→Panel+HoloViz）

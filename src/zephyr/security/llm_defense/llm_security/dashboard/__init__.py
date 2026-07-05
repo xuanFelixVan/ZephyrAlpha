@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-SEC_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
-# [TTL] task_bound
+# [TTL] permanent
 """LLM Security Gateway Dashboard Module.
 
 Uses lazy __getattr__ for app submodule to avoid hard dependency on

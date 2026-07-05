@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: game_day_runner has migrated to zephyr.security.adversarial_validation.game_day_runner"""
 
 from zephyr.security.adversarial_validation.game_day_runner import *  # noqa: F403

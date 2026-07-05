@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AttackGenerationError on invalid payload generation
 # [TESTS] tests/red_blue/test_ai_attack_generator.py
 # [A_module] module_id=MOD-SEC_ai_attack_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

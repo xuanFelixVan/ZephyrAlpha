@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 注册失败返回空dict
 # [TESTS] tests/orphan-judge/test_mcp_integration.py
 # [A_module] module_id=MOD-SEC_mcp_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import logging
 from pathlib import Path
 from typing import Any

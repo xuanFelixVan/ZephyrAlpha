@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] register_defaults never raises; run returns list of dicts
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_permission_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """PermissionHooks — 权限钩子注册表.
 
 依据蓝图 MOD-INF-018 §3:

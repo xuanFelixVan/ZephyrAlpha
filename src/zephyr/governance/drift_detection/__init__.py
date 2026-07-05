@@ -68,7 +68,7 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_behavioral_auditor_imports.py
-# [TTL] task_bound
+# [TTL] permanent
 
 _SYMBOL_SOURCE = {
     "AIConstructionDetectors": "_analysis",

@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-SEC_llm_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from zephyr.security.llm_defense.llm_security.behavior_audit_logger import (
     AuditAction,

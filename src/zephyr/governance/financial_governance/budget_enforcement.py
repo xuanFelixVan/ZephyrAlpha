@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 # 代理模块：将 zephyr.governance.budget_enforcement 重定向到实际模块
 from zephyr.autonomy_core.skills.skill_executor import BudgetEnforcer
 from zephyr.governance.ops_governance.budget_models import BudgetDimension

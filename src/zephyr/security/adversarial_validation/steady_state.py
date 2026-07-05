@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] SteadyStateDriftError if drift_rate > 50% after attack
 # [TESTS] tests/red_blue/test_steady_state.py
 # [A_module] module_id=MOD-SEC_steady_state | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

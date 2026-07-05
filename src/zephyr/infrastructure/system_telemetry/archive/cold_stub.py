@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] gzip失败→跳过压缩保留原文;SQLite backup失败→日志warning不阻塞
 # [TESTS] tests/infrastructure/
 # [A_module] module_id=MOD-INF_cold_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """遥测 · archive/cold_stub — 冷存储归档管道。
 

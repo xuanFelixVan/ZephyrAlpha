@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] FeedbackLoopError
 # [TESTS] tests/feedback-loop/
 # [A_module] module_id=MOD-UNK_parameterized_safety_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-GATE_ENGINE | 03_modules/_cross_layer/gate-engine/blueprint.md | §
 

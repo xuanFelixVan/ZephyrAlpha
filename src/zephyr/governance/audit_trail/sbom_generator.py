@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_sbom_generator | layer=module | stability=stable | safety=L | ai_autonomy=immutable_core
-# [TTL] task_bound
+# [TTL] permanent
 
 """LicenseType 枚举——许可证类型定义（P3 价值审判退役残留）。
 

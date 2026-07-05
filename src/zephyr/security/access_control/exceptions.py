@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] construction never raises; all fields have defaults
 # [TESTS] tests/agent_rbac/test_exceptions_agent_rbac.py
 # [A_module] module_id=MOD-SEC_exceptions | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """AgentRbac 异常类型.
 
 依据蓝图 MOD-INF-018 §3:

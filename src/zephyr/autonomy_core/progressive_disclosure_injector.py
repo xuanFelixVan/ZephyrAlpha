@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_progressive_disclosure_injector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """progressive_disclosure_injector.py — 渐进式披露 (B7, DD81, TASK-015 beta w)"""
 

@@ -2,5 +2,5 @@
 # [MODULE] zephyr.trading.orchestrator.lifecycle
 # [DOMAIN] D_TRADING
 # [A_module] module_id=MOD-ORC_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """lifecycle — orchestrator lifecycle subpackage."""

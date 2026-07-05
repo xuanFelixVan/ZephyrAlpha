@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ValueError; RuntimeError
 # [TESTS] tests/system-telemetry/test_health_aggregator.py
 # [A_module] module_id=MOD-INF_health_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 健康聚合器（Health Aggregator）

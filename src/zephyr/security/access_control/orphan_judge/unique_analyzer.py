@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AST解析失败时返回 has_unique=False+is_uncertain=True,不抛异常
 # [TESTS] tests/orphan-judge/test_unique_analyzer.py
 # [A_module] module_id=MOD-SEC_unique_analyzer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-029 — L3 独特价值分析器
 

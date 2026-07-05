@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_durable_execution.py
 # [A_module] module_id=MOD-INT_durable_execution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import json
 import os
 import uuid

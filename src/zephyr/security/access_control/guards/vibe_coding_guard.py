@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] scan never raises; returns VibeCodingAudit
 # [TESTS] tests/agent_rbac/test_vibe_coding.py
 # [A_module] module_id=MOD-SEC_vibe_coding_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """VibeCodingGuard — Vibe Coding 攻击面检测.
 
 依据蓝图 MOD-INF-018 §vibe_coding_guard:

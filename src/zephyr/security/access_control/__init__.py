@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/agent_rbac/
-# [TTL] task_bound
+# [TTL] permanent
 """zephyr.security.access_control — Agent RBAC 权限强制执行器根包.
 
 依据蓝图 MOD-INF-018（Agent RBAC 七层纵深防御）：

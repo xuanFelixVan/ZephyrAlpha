@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——AST/subprocess 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_function_dup_gate.py
 # [A_module] module_id=MOD-GOV-function_dup_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """function_dup_gate.py — 重复函数实现阻断门禁（FUNCTION-DUP）
 
 检测 staged 新增 .py 文件中顶层函数是否在**同目录其他文件**中已存在相同

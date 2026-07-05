@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] now() never raises; always returns a float >= last returned value
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_monotonic_clock | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """MonotonicClock — 单调时钟.
 
 依据蓝图 MOD-INF-018 §3:

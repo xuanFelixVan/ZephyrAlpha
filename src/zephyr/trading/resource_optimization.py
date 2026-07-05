@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.resource_optimization
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.shared.lifecycle.daemon_registry; zephyr.shared.lifecycle.resource_optimization_models; zephyr.shared.io.io_cache; zephyr.shared.io.streaming_reader; zephyr.shared.infra.process_pool; zephyr.shared.lifecycle.lazy_loader; zephyr.shared.capacity_calibrator; zephyr.shared.capacity_digital_twin; zephyr.shared.capacity_fingerprint; zephyr.shared.capacity_governance_loop; zephyr.shared.capacity_runbook_generator; zephyr.shared.model_capacity_probe; zephyr.trading.__init__; zephyr.shared.event_bus; zephyr.governance.audit_trail.bridge
@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_resource_optimization | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 resource_optimization.py - MAPE-K autonomic resource optimization engine

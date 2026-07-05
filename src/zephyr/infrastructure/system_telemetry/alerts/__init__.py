@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] yaml.YAMLError; OSError; RuntimeError
 # [TESTS] tests/system-telemetry/test_alerts.py
-# [TTL] task_bound
+# [TTL] permanent
 """AlertSubsystem — 告警规则评估引擎（MOD-INF-015 §9 · alerts）.
 
 加载 config/alert_rules.yaml，提供 fire / health / evaluate / ack / pending API。

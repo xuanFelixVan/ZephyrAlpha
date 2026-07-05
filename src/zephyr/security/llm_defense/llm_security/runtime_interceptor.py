@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/llm_security/test_runtime_interceptor.py
 # [A_module] module_id=MOD-SEC_runtime_interceptor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 runtime_interceptor.py — 运行时 LLM 裸调拦截器（GATE-20 后备防线）
 

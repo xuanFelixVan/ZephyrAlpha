@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_model_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """LLM 模型注册表（CT-MODEL-REGISTRY）——deepseek/opus/gpt等模型版本+性能基线。"""
 

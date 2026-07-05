@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] Pydantic ValidationError on malformed scenarios; ValueError on invalid tier/severity
 # [TESTS] tests/red_blue/test_models.py
 # [A_module] module_id=MOD-SEC_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

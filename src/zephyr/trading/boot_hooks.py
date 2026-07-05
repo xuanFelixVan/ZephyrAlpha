@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.boot_hooks
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.event_bus; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] returns None; logs error on failure; writes hook_failure event on critical failure
 # [TESTS]
 # [A_module] module_id=MOD-ORC_boot_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 
@@ -50,15 +50,17 @@ _monitoring_modules_initialized = False
 
 
 def _init_shared_monitoring_modules() -> None:
-    """实例化6个被动库监控模块 — DM-201246.
+    """实例化5个被动库监控模块 — DM-201246.
 
     在系统启动时自动实例化，而非依赖手动调用：
     1. LongevityMonitor — 长寿监控
     2. HealthcheckService — 健康检查服务
-    3. AggregateHealth — 延迟到 health 就绪（需 LifecycleManager）
+    3. AggregateHealth — 延迟到 health 就绪（需 LifecycleManager，由 AutoRuntimeCore.boot() 负责）
     4. HealthDiscovery — 注册系统健康检查
     5. MetricsRegistry — 指标注册表（懒加载）
     6. AutonomyMonitor — 自治监控
+
+    注: AggregateHealth 延迟初始化, 本函数实际实例化5个模块 (5.157.19 修复docstring)
     """
     global _monitoring_modules_initialized
     if _monitoring_modules_initialized:

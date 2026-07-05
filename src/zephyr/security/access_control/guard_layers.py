@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] escalate never raises; returns list of action strings
 # [TESTS] tests/agent_rbac/test_permissions.py
 # [A_module] module_id=MOD-SEC_guard_layers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """GuardLayers — 权限守卫层组件.
 
 依据蓝图 MOD-INF-018 §guard_layers:

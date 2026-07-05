@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AST解析失败时返回 is_reachable=False,不抛异常
 # [TESTS] tests/orphan-judge/test_reference_graph_engine.py
 # [A_module] module_id=MOD-SEC_reference_graph_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-029 — L1 引用图引擎
 

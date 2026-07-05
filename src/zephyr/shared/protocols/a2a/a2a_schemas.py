@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] Pydantic validation errors on schema violation
 # [TESTS] tests/test_shared_protocols.py
 # [A_module] module_id=MOD-SHR_a2a_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """A2A data structure contracts — Message, Task, and StateMachine schemas.
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """L6 Observability Layer — security event logging, alerting, and reporting."""
 
 from __future__ import annotations

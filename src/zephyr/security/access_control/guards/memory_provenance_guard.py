@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] record_provenance/verify never raise
 # [TESTS] tests/agent_rbac/test_permissions.py
 # [A_module] module_id=MOD-SEC_memory_provenance_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """MemoryProvenanceGuard — 记忆来源溯源守卫.
 
 依据蓝图 MOD-INF-018 §3:

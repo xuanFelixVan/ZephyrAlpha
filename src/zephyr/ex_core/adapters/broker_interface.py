@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001
 # [MODULE] zephyr.ex_core.adapters.broker_interface
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.governance.adapters.broker_interface
+# [DEPENDENCIES] zephyr.governance.trading_contracts.broker_interface
 # [CONSUMERS] tests.test_trade_execution; tests.integration.test_e2e_pipeline
 # [STARTUP] imported
 # [MATURITY] production

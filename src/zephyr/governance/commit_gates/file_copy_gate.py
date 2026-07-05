@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——subprocess 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_file_copy_gate.py
 # [A_module] module_id=MOD-GOV-file_copy_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """file_copy_gate.py — 新增 .py 文件复制检测阻断门禁（FILE-COPY，2026-07-03 Phase 1 sub-task 3）
 
 治本文件复制检测无 commit-time 强制：check_code_duplication.py 是手动脚本，

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] load_config/verify_integrity/verify_static_constants never raise; attempt_unlock returns bool
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_cold_start_lock | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """ColdStartLock — 冷启动锁.
 
 依据蓝图 MOD-INF-018 §3:

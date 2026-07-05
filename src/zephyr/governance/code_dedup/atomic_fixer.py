@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/code_dedup/test_atomic_fixer.py
 # [A_module] module_id=MOD-UNK_atomic_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """原子性修复引擎 — WAL 式 PREFLIGHT → CHECKPOINT → APPLY → RECOVER.
 

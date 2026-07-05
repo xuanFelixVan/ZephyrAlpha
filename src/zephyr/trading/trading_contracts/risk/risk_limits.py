@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK_risk_limits | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 # ==== BEGIN CODGEN:CTR-003 ====
 from __future__ import annotations
 from dataclasses import dataclass, field

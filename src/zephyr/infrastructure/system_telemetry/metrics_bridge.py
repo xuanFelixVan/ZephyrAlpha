@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] TelemetryWriteError 磁盘满/DB 锁超时; ValueError 参数非法
 # [TESTS] scripts/connect/tele_fle.py --trigger
 # [A_module] module_id=MOD-INF_metrics_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """TELE→FLE 指标桥接 — emit_metrics() 生产者
 
 CT-TELE-FLE-001: SystemTelemetry → FeedbackLoop 数据管道。

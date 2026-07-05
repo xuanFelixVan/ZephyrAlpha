@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: performance_attribution_report has migrated to zephyr.portfolio.core.performance_attribution_report"""
 
 from zephyr.governance.performance_attribution_report import *  # noqa: F403

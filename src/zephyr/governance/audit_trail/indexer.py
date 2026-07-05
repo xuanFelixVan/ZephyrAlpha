@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 索引构建失败返回None
 # [TESTS] tests/audit-orchestrator/test_indexer.py
 # [A_module] module_id=MOD-GOV_indexer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import json
 import logging
 from pathlib import Path

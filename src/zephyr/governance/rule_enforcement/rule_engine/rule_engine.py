@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Returns empty list on missing rules; never raises for missing data
 # [TESTS] tests/test_rule_e2e.py
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 RuleLoader — 规则加载核心 API

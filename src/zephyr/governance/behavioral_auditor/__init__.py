@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-GOV_behavioral_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-# [TTL] task_bound
+# [TTL] permanent
 from __future__ import annotations
 
 """[BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md

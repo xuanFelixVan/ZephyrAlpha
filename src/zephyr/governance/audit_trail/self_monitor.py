@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 监控失败返回空指标
 # [TESTS] tests/audit-orchestrator/test_self_monitor.py
 # [A_module] module_id=MOD-GOV_self_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import logging
 import time
 from datetime import datetime

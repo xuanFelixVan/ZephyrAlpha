@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: compliance_manager has migrated to zephyr.governance.compliance_gate_a6.compliance_manager"""
 
 from zephyr.governance.compliance_gate_a6.compliance_manager import *  # noqa: F403

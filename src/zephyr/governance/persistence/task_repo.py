@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ValueError on template validation failure; GateViolationError on invalid state transitions; StaleClaimError on timeout recovery
 # [TESTS] tests/test_mcp_task_claim.py; tests/test_boot_hooks_unlock.py
 # [A_module] module_id=MOD-DAT_task_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 TaskRepository — 任务登记表 CRUD + 状态机（T-1-04）

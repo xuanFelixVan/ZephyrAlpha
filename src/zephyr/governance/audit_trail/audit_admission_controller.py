@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure; ImportError→module marked unavailable
 # [TESTS] tests/audit-orchestrator/
 # [A_module] module_id=MOD-GOV_audit_admission_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

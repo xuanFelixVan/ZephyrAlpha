@@ -13,7 +13,7 @@ from zephyr.trading.orchestrator.execution.script_runner import ScriptRunner
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Agent Orchestrator (Orc)
 =====================================
 

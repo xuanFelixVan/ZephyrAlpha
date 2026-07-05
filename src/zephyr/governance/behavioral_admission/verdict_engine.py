@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] evaluate: PermissionCheckTimeout→Verdict(RED); evaluate_batch: partial_failure→individual RED
 # [TESTS] tests/test_behavioral_audit/test_verdict_engine.py
 # [A_module] module_id=MOD-GOV_verdict_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

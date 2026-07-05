@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_agent_rbac.py
-# [TTL] task_bound
+# [TTL] permanent
 
 import importlib
 

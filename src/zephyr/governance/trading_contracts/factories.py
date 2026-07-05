@@ -13,6 +13,6 @@
 # [ERROR_CONTRACT] ValueError: 参数越界
 # [TESTS] tests/test_trading_contracts_factories.py
 # [A_module] module_id=MOD-EXE_factories | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.factories。"""
 from zephyr.trading.trading_contracts.factories import *  # noqa: F401,F403

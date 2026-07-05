@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_schemas.py; tests/db/test_task_repo.py
 # [A_module] module_id=MOD-INF_task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 task_types — 任务系统核心类型 re-export 层

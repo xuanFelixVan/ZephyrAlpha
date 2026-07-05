@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/autonomy/test_token_budget_unit.py; tests/autonomy/test_token_budget_root.py
 # [A_module] module_id=MOD-INF-001_token_budget | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 # SRC-0041 (P3 迁移恢复, 2026-07-02): 文件从 autonomy_core/token_budget.py 迁移至
 #   infrastructure/capacity_assurance/token_budget.py（blueprint actual_disk_path 真源）。
 #   注意：此模块与 zephyr.governance.ops_governance.token_budget (MOD-INF-024) 是

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ConcurrencyConflictError on blocked; ConflictResult/StashPlan on check
 # [TESTS] tests/rollback/test_concurrency_guard.py
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 concurrency_guard — 回滚操作并发安全守卫。

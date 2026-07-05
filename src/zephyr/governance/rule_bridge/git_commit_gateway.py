@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] GatewayError on lock timeout；CommitResult.status 暴露结果
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-git_commit_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2026062512 治本）
 
 阶段3 根除 stash 循环：每 AI session 分配独立 git worktree（.aidrafts/{session_id}/），

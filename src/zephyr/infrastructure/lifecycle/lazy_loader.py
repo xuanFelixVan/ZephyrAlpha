@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] KeyError on unregistered module; RuntimeError on not-yet-loaded module; re-raises Exception on import failure
 # [TESTS] tests/lifecycle_manager/test_lazy_loader.py
 # [A_module] module_id=MOD-INF_lazy_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

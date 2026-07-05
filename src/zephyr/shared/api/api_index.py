@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_api_index | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 shared/ API 索引 — AI session 冷启动时的"员工通讯录"
@@ -71,7 +71,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # ┌──────────────────────┬──────────────────────────────────────────────────┐
 # │ 符号                  │ 用途                                            │
 # ├──────────────────────┼──────────────────────────────────────────────────┤
-# │ utc_now() -> datetime │ 当前 UTC 时间（可 mock）                        │
+# │ now_utc() -> datetime │ 当前 UTC 时间（可 mock）                        │
 # │ now_iso() -> str      │ 当前 UTC ISO 8601 字符串                        │
 # │ default_now() -> dt   │ Pydantic Field(default_factory=...) 工厂        │
 # └──────────────────────┴──────────────────────────────────────────────────┘

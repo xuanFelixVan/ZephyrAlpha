@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 桥接失败返回 {"status": "bridge_unavailable"}
 # [TESTS] tests/orphan-judge/test_escalation_bridge.py
 # [A_module] module_id=MOD-SEC_escalation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

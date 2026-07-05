@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-016 | docs/03_modules/_cross_layer/shared/blueprint.md | §
+# blueprint: MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # module_id: MOD-INF-016
 # stability: evolving
 # safety_level: L
@@ -154,7 +154,7 @@ utilities:
     - ?Path(__file__).parents[N] 自己算——必须从 paths.py 导入
   time_utils:
     file: src/zephyr/shared/time_utils.py
-    entry_point: from zephyr.shared.utils.time_utils import now_iso, utc_now
+    entry_point: from zephyr.shared.utils.time_utils import now_iso, now_utc
     note: 时间函数 SSoT——禁止用 datetime.utcnow()（已废弃
   token_utils:
     file: src/zephyr/infrastructure/capacity_assurance/token_budget.py
@@ -326,7 +326,7 @@ dlq:
     note: 零侵入挂载DLQ到Observer——monkey-patch emit()
   anti_patterns:
   - ?handler ?catch Exception ?pass——事件丢失无痕，应用 DLQ 捕获
-version: 0.22.0
+version: 2.0.0
 health:
   file: src/zephyr/shared/health.py
   entry_point: from zephyr.shared.lifecycle.health import AggregateHealth, collect_health
@@ -1069,7 +1069,7 @@ common_traps:
 audit_trail:
   description: 不可变、密码学完整性保证的审计追踪链——记录每?AI 动作?who/when/what/why。JSONL SSoT + 哈希链防篡改
     + HMAC 签名 + Lamport 逻辑时钟 + 异常检?+ 漂移对账 + 三角闭环反馈
-  blueprint: docs/03_modules/l01_infrastructure/audit-trail/blueprint.md
+  blueprint: docs/03_modules/_domain_governance/audit_trail/blueprint.md
   code_root: src/zephyr/audit_trail/
   status: draft (0% 施工)
   architecture: JSONL SSoT (append-only + tamper-evident) ?SQLite 派生索引 (查询加? ?异常检测引

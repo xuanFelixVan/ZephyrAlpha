@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-GOV_check_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """[BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
 
 [MODULE] zephyr.governance.rule_enforcement.check_types.__init__

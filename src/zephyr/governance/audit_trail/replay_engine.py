@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 重放失败返回mismatch
 # [TESTS] tests/audit-orchestrator/test_replay_engine.py
 # [A_module] module_id=MOD-GOV_replay_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import hashlib
 import json
 import logging

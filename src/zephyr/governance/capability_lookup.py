@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] raises FileNotFoundError if YAML 真源缺失; returns empty list on scan errors; git 派生失败降级为空列表（不阻断查询）
 # [TESTS] tests/test_capability_lookup.py
 # [A_module] module_id=MOD-GOV_capability_lookup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 CapabilityLookup — 能力→真源文件反查注册表的查询 API + 扫描/派生逻辑（合一）

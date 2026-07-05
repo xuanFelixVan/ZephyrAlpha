@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 所有函数返回 dict（不抛异常）；registry 异常时 conflict=True + error 字段；session 不存在时返回 not_found=True
 # [TESTS] —（已废弃，无测试；generate_session_id 由 tests/governance/rule_bridge/test_session_worktree.py 间接覆盖）
 # [A_module] module_id=MOD-GOV-session_claim | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """session_claim.py — AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）
 
 .. deprecated:: 2026-07-04

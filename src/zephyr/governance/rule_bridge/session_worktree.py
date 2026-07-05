@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 所有函数返回 dict（不抛异常）；WorktreeManager/SessionRegistry 异常时返回 error 字段；worktree 不存在时返回 not_found=True
 # [TESTS] tests/governance/rule_bridge/test_session_worktree.py
 # [A_module] module_id=MOD-GOV-session_worktree | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """session_worktree.py — AI 对话 worktree 物理隔离 helper（FP-ISO.4C，2026-07-01 治本）
 
 41 个并发丢失案例分析结论：模式 A（git stash/reset/checkout 冲掉工作区）占 51%，

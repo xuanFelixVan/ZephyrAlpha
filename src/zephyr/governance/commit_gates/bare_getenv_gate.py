@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——AST/git 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_bare_getenv_gate.py
 # [A_module] module_id=MOD-GOV-bare_getenv_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """bare_getenv_gate.py — 裸 os.getenv 读密钥阻断门禁（NO-BARE-GETENV，§5.17.10 治本）
 
 检测 staged 新增 .py 文件中是否用裸 os.getenv / os.environ.get / os.environ["KEY"]

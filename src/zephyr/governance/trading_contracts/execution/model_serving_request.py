@@ -13,6 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_model_serving_request | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.execution.model_serving_request。"""
 from zephyr.trading.trading_contracts.execution.model_serving_request import *  # noqa: F401,F403

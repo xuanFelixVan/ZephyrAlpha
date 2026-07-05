@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: artifact_scanner has migrated to zephyr.governance.drift_detection.artifact_scanner"""
 
 from zephyr.governance.drift_detection.artifact_scanner import *  # noqa: F403

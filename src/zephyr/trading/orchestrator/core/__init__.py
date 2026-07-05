@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """orchestrator.core — auto-generated package init."""
 
 __all__ = ["agent_orchestrator", "task_queue", "wave_generator"]

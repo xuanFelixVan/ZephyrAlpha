@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 查询失败返回空结果而非抛异常
 # [TESTS] tests/audit-orchestrator/test_query.py
 # [A_module] module_id=MOD-GOV_query | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 import json
 import logging
 from datetime import datetime, timedelta

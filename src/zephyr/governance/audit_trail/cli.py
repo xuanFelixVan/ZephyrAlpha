@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] SystemExit on invalid subcommand; ImportError→module unavailable in output
 # [TESTS] tests/audit-orchestrator/
 # [A_module] module_id=MOD-GOV_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

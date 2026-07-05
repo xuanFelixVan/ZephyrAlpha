@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] CLIError
 # [TESTS] tests/auto-fix-engine/test_cli.py
 # [A_module] module_id=MOD-INF___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

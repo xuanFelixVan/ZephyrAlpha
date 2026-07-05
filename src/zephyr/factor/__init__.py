@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """ZephyrAlpha — D_FACTOR Alpha Factor Layer
 
 SSoT: cross_layer_contracts.yaml v3.0

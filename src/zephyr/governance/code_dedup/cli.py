@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] sys.exit with ExitCode enum values only
 # [TESTS] tests/test_code_dedup_engine.py
 # [A_module] module_id=MOD-GOV_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """code-dedup-engine CLI——子命令映射+退出码+扫描入口."""
 

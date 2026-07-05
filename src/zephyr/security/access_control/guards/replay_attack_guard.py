@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check never raises; returns {"allowed": False, "reason": ...} on invalid input
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_replay_attack_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """ReplayAttackGuard — 重放攻击防护.
 
 依据蓝图 MOD-INF-018 §3:

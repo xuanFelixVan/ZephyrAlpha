@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AbortThresholdError when bypass_count >= threshold at SYSTEM level
 # [TESTS] tests/red_blue/test_blast_radius.py
 # [A_module] module_id=MOD-SEC_blast_radius | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

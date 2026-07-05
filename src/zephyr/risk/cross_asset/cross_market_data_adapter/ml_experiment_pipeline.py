@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK_ml_experiment_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 # Re-export from shared SSoT — zephyr.shared._cross_layer.ml_experiment_pipeline
 from zephyr.shared._cross_layer.ml_experiment_pipeline import (

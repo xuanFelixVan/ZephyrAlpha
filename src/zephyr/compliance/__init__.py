@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """D_COMPLIANCE Compliance — Re-export wrapper (DM-291)
 
 All modules have been migrated to zephyr.governance.

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] issue() never raises; verify() returns dict, never raises
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
 # [A_module] module_id=MOD-SEC_emergency_override | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """EmergencyOverride — 紧急覆盖令牌管理.
 
 依据蓝图 MOD-INF-018 §3:

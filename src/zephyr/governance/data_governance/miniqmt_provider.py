@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] MiniQmtProviderError
 # [TESTS]
 # [A_module] module_id=MOD-L00-001-miniqmt_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """MiniQMT 实盘行情 Provider（Tick + 5档盘口）
 
 职责:

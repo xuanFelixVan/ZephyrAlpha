@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 无变更时返回 should_trigger=False, reason="no_changes"
 # [TESTS] tests/semantic-auditor/test_trigger_engine.py
 # [A_module] module_id=MOD-GOV_trigger_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-028 — 触发器引擎 Stage 2
 

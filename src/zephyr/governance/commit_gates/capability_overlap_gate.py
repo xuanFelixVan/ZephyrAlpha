@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check 永不抛异常——YAML/git diff 异常降级为 fail-loud warn（不阻断 commit 保留 warn-only 契约，但 logger.warning 告警检测器失效以防静默漂移）；warn-only gate 的 fail-closed 语义=告警而非阻断
 # [TESTS] tests/capability/test_capability_overlap_gate.py（P2-2 补全，11 用例覆盖 overlap/no-overlap/yaml/fail-open）
 # [A_module] module_id=MOD-GOV-capability_overlap_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """capability_overlap_gate.py — 新建 .py 文件 CapabilityLookup 提示门禁（warn-only，2026-06-30 治本）
 
 检测 commit 中新建的 .py 文件名是否与 capability_canonical_file_registry.yaml 已注册能力

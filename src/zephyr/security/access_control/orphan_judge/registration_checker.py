@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 注册表文件不可读时返回 is_registered=False,不抛异常
 # [TESTS] tests/orphan-judge/test_registration_checker.py
 # [A_module] module_id=MOD-SEC_registration_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-029 — L0 注册检查器
 

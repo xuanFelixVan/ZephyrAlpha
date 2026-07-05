@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] parse() never raises; individual line parse failures are silently skipped
 # [TESTS] tests/test_audit_full_pipeline_e2e.py
 # [A_module] module_id=MOD-GOV_text_to_finding_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] JSONL写入失败→日志warning;不阻塞调用方
 # [TESTS] tests/infrastructure/
 # [A_module] module_id=MOD-INF_blueprint_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 blueprint_metrics — 蓝图使用追踪 instrumentation

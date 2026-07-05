@@ -9,7 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Layer 3: 协调+仲裁 — Coordinator, Living Spec 同步, 死锁防护, 全量 25 模块落地"""
 
 from zephyr.infrastructure.a2a_protocol.layer3_coordination._consensus import (

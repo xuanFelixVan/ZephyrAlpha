@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] handler swallows all exceptions and logs; never raises during event dispatch
 # [TESTS] tests/red_blue/test_validator_event_bridge.py
 # [A_module] module_id=MOD-SEC_validator_event_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 ValidatorEventBridge — 红蓝验证器事件桥接 (MOD-SEC-030).
 

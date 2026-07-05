@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ChaosInjectError on injection failure; ChaosRecoverError on recovery failure
 # [TESTS] tests/test_chaos_engine.py
 # [A_module] module_id=MOD-ORC_chaos_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×月度执行。"""
 

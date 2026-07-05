@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] push_invalidation/process never raise; return InvalidationEvent/dict
 # [TESTS] tests/agent_rbac/test_enhanced_security.py
 # [A_module] module_id=MOD-SEC_cache_invalidation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """CacheInvalidation — 缓存失效事件管理.
 
 依据蓝图 MOD-INF-018 §3:
