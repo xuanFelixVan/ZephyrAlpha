@@ -74,6 +74,7 @@ domain_contracts:
   ml_experiment_domain:
     domain_id: ML-EXPERIMENT-DOMAIN-001
     blueprint: docs/03_modules/_ml_experiment_domain/blueprint.md
+    module_id: MOD-ML_EXPERIMENT_DOMAIN
     contracts:
       - domain_contract_id: ME-CT-FEATURE-001
         direction: "VMS/KB→D_ML_TRAIN"
