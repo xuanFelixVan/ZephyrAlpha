@@ -180,7 +180,7 @@ class FeedbackLoopScheduler:
             except Exception:
                 logger.warning(
                     "FLE-Scheduler: VectorBridge initialization failed, failure patterns will not persist to VMS"
-                , exc_info=True, exc_info=True)
+                , exc_info=True)
                 self.vector_bridge = None
 
     _instance: ClassVar[FeedbackLoopScheduler | None] = None

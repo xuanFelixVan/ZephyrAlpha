@@ -450,7 +450,7 @@ class PipelineOrchestrator:
             except Exception:
                 # 5.12.1 修复：原 except: pass 静默吞 rollback_exit 门禁决策失败（安全门禁失效不可见）
                 logger.warning("rollback_exit gate parse failed for task=%s exit_code=%s",
-                               task_card.task_id, exit_code, exc_info=True, exc_info=True)
+                               task_card.task_id, exit_code, exc_info=True)
 
         rbac_result = self._rbac_check(task_card)
         if rbac_result is not None and not rbac_result.passed:

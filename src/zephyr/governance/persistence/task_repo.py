@@ -1831,7 +1831,7 @@ class TaskRepository:
         except Exception as e:
             logger.warning(
                 "DM-202918: GitCommitGateway 异常，回退跳过 commit (task=%s): %s", task_id, e
-            , exc_info=True, exc_info=True)
+            , exc_info=True)
 
     def _run_circular_acceptance(
         self,
