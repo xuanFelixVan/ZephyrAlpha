@@ -973,10 +973,15 @@ def _pre_merge_gate_check(
             return True, []  # reset 失败，降级放行
 
         try:
-            # 用 worktree 路径作为 project_root（修复 gate 相对路径计算 bug）
+            # project_root 用 worktree 路径（修复 gate 相对路径计算 bug）
             # 原实现用 root（主工作区路径），gate 用 project_root 计算 rel 时
             # worktree 文件路径（.aidrafts/...）被误判为新文件，触发 module_id_collision
-            _gw = GitCommitGateway(project_root=wt_path)
+            #
+            # registry MUST 用主工作区的 SessionRegistry（修复 SESSION-REQUIRED 误判 bug，2026-07-06）
+            # 原实现用 wt_path 初始化 SessionRegistry，但 session 在 session_worktree_start
+            # 时用主工作区路径注册（_get_registry(root)），worktree 路径查不到注册的 session，
+            # 导致 SESSION-REQUIRED gate 误判"session 未注册"阻断 merge。
+            _gw = GitCommitGateway(project_root=wt_path, registry=SessionRegistry(root))
             # monkeypatch _run_git 重定向 cwd 到 worktree（使 git diff --cached 查 worktree index）
             _orig_run_git = _gw._run_git
 
