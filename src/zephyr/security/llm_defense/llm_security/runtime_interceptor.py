@@ -68,6 +68,7 @@ __all__ = [
     "is_installed",
     "grant_allowance",
     "revoke_allowance",
+    "reset_allowance_for_request",
     "allow_llm_call",
     "allow_llm_call_async",
     "is_allowance_active",
@@ -166,6 +167,20 @@ def revoke_allowance() -> None:
         _tls_set(None)
     except Exception as e:
         logger.critical("revoke_allowance: thread-local 清除失败(%s: %s)，同步路径放行令牌可能残留=授权绕过风险", type(e).__name__, e)
+
+
+def reset_allowance_for_request() -> None:
+    """5.132.1 修复: 请求边界重置放行令牌, 防止线程池复用导致跨请求安全上下文泄漏。
+
+    线程池复用线程时, 上一个请求的 _tls.allowance 可能未过期(默认30s TTL),
+    新请求会读到上一个请求的令牌——绕过 RULE-LSG-001 安全网关。
+
+    在请求中间件/拦截器入口调用本函数, 确保每个请求从干净状态开始。
+    与 revoke_allowance() 的区别: 本函数用于预防性重置(请求开始时),
+    revoke_allowance() 用于显式收尾(请求结束时)。
+    """
+    _ctx_allowance.set(None)
+    _tls_set(None)
 
 
 @contextmanager

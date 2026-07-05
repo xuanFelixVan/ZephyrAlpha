@@ -7381,6 +7381,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **第35轮修复状态（2026-07-05）**：FIXED=1(5.132.4 event_sink死代码thread-local已删除), STILL_VALID=3(5.132.1 runtime_interceptor _tls.allowance需请求边界reset/5.132.2 sqlite_metadata_store close()需遍历所有线程连接/5.132.3 span_stub _span_stack需改contextvars)
 
 > **第38轮修复状态（2026-07-05）**：FIXED=1(5.132.3 span_stub _THREAD_LOCAL._span_stack → contextvars.ContextVar,消除跨请求span栈泄漏,_push/_pop改用set()不可变语义), STILL_VALID=2(5.132.1 runtime_interceptor _tls.allowance需请求边界reset + 5.132.2 sqlite_metadata_store close()需遍历所有线程连接——均需专项工程)
+> **第39轮修复状态（2026-07-05）**：FIXED=2(5.132.1 新增reset_allowance_for_request()函数供请求边界重置_tls.allowance+contextvar,防止线程池复用跨请求安全上下文泄漏 / 5.132.2确认已在5.12.7修复:close()委托close_all()遍历_all_conns关闭所有线程连接)。本维度全部清零。
 
 #### 5.132.1 [HIGH] runtime_interceptor的_tls.allowance安全放行令牌跨请求泄漏
 
