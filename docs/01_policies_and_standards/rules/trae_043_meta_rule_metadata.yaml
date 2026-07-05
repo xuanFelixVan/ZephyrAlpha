@@ -537,9 +537,9 @@ sections:
     - 创建嵌套编号(如GOV-SEC-001-01)
     - 前缀长度超过2字符
     - 使用废弃格式(STD-NUM-001/STD-TASK-CARD-001/PSP-*等)
-    three_track_semantics:
-      title: module_id 三轨声明语义（P8-FIX-S0 v2.4.0，2026-06-30）
-      rationale: 单个治理文件中同时出现三种 module_id 声明，原语义未定义导致 AI 误判为冲突并反复"修复"。本节显式定义三轨语义为互补不冲突。
+    triple_declaration_semantics:
+      title: module_id 三声明轨道语义（P8-FIX-S0 v2.4.0，2026-06-30）
+      rationale: 单个治理文件中同时出现三种 module_id 声明，原语义未定义导致 AI 误判为冲突并反复"修复"。本节显式定义三声明轨道语义为互补不冲突。
       tracks:
       - track: header_config_id
         prefix: CFG-*
@@ -556,9 +556,9 @@ sections:
         location: 'YAML body frontmatter `module_id: PS-...`'
         semantic: 规则 ID（Rule ID）——标识文件作为规则文档，在 module_id_registry.yaml 注册
         example: PS-CTR-001 / GOV-AI-003 / TRAE-043
-      consistency_rule: 三轨必须语义一致——同属一个治理领域，但不要求字符串相同。CFG-* 标识文件作为配置实体，MOD-* 标识文件归属的模块，PS-*/GOV-* 标识文件作为规则文档。三者互补，非冲突。
-      validation: 由 module_id_consistency_reconciler（post-commit）自动校验三轨一致性。检查文件若同时有三轨声明，是否在 module_id_registry.yaml 中归属同一治理领域。不一致时仅告警（非阻断），记录到 .runtime/reconcile_reports/module_id_consistency_*.json。
-      prohibition: 禁止将三轨误判为冲突并删除任一轨——三轨各有独立语义，删除会丢失配置/归属/规则身份信息。
+      consistency_rule: 三声明轨道必须语义一致——同属一个治理领域，但不要求字符串相同。CFG-* 标识文件作为配置实体，MOD-* 标识文件归属的模块，PS-*/GOV-* 标识文件作为规则文档。三者互补，非冲突。
+      validation: 由 module_id_consistency_reconciler（post-commit）自动校验三声明轨道一致性。检查文件若同时有三声明轨道声明，是否在 module_id_registry.yaml 中归属同一治理领域。不一致时仅告警（非阻断），记录到 .runtime/reconcile_reports/module_id_consistency_*.json。
+      prohibition: 禁止将三声明轨道误判为冲突并删除任一轨——三声明轨道各有独立语义，删除会丢失配置/归属/规则身份信息。
   ps_std_001_ttl_vocabulary:
     title: ttl受控词表
     section_type: rule

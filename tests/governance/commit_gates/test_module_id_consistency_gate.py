@@ -6,12 +6,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 # [TTL] task_bound
-"""test_module_id_consistency_gate.py — module_id 三轨一致性 + count 派生 + 跨文件唯一性门禁单测
+"""test_module_id_consistency_gate.py — module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁单测
 
 权威依据：module_id_consistency_gate.py（make_module_id_consistency_gate）
 
 测试组：
-- TestThreeTrackConsistency: 三轨一致性（CFG/MOD/rule）单文件校验
+- TestTripleDeclarationConsistency: 三声明轨道一致性（CFG/MOD/rule）单文件校验
 - TestCountDerivation: total_registered/total_templates/total_dependencies count 派生
 - TestCrossFileUniqueness: 跨文件 module_id 唯一性（git grep 全仓检测）
 - TestGateSpecFields: gate_id / priority 字段正确
@@ -44,15 +44,15 @@ def _make_gateway(project_root: Path) -> MagicMock:
 
 
 # ============================================================
-# TestThreeTrackConsistency: 三轨一致性校验
+# TestTripleDeclarationConsistency: 三声明轨道一致性校验
 # ============================================================
 
 
-class TestThreeTrackConsistency:
-    """三轨一致性（CFG/MOD/rule）单文件校验。"""
+class TestTripleDeclarationConsistency:
+    """三声明轨道一致性（CFG/MOD/rule）单文件校验。"""
 
-    def test_three_track_consistent_passes(self, tmp_path):
-        """三轨一致（CFG+MOD+rule）→ 通过。"""
+    def test_triple_declaration_consistent_passes(self, tmp_path):
+        """三声明轨道一致（CFG+MOD+rule）→ 通过。"""
         gw = _make_gateway(tmp_path)
         gate = make_module_id_consistency_gate()
         target = tmp_path / _REGISTRY_REL
@@ -98,7 +98,7 @@ class TestThreeTrackConsistency:
         assert passed, f"两轨应通过，但: {detail}"
 
     def test_non_registry_file_skipped(self, tmp_path):
-        """非 registry 的 .yaml 文件 → 跳过三轨校验（通过）。"""
+        """非 registry 的 .yaml 文件 → 跳过三声明轨道校验（通过）。"""
         gw = _make_gateway(tmp_path)
         gate = make_module_id_consistency_gate()
         target = tmp_path / "some_other.yaml"

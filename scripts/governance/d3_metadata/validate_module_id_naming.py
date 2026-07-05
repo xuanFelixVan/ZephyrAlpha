@@ -22,7 +22,7 @@ module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 +
   - apply_depgraph.py（cmd_rename_domain / cmd_insert_domain / _validate_domain_naming NR-002）
 
 治本修订历史（2026-07-05 R2）：
-  - 废除 D-XXX-NNN 作为 module_id 派生轨的合法地位（原裁定#208 R1 三轨制之一）
+  - 废除 D-XXX-NNN 作为 module_id 派生轨的合法地位（原裁定#208 R1 旧派生轨之一，R2 修订前）
   - D-XXX-NNN 重定义为 submodule_id 专用（蓝图内部子模块编号，见 trae_028 gov_doc_009）
   - module_id 仅保留双轨：layer-master 轨 + domain-functional 派生轨（均为 MOD- 前缀）
 
@@ -73,7 +73,7 @@ MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")  
 # ---------------------------------------------------------------------------
 # submodule_id 正则（R2 治本修订，2026-07-05）
 # ---------------------------------------------------------------------------
-# 历史：原 MODULE_ID_D_PREFIX_RE 作为 module_id 派生轨之一（裁定#208 R1 三轨制）
+# 历史：原 MODULE_ID_D_PREFIX_RE 作为 module_id 派生轨之一（裁定#208 R1 旧制，R2 修订前）
 # 废除原因：D-XXX-NNN 与 MOD-{DOMAIN_FRAGMENT}[-NNN] 语义重叠导致 module_id 与
 #           submodule_id 混淆，depgraph.realization_detection 通过 blueprint_id 关联
 #           设计态与运营态时可能将子模块编号误识别为顶层蓝图

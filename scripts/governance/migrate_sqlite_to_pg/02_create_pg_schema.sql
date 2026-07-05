@@ -256,8 +256,8 @@ CREATE TABLE IF NOT EXISTS nodes (
     consumed_interfaces     TEXT,
     blueprint_id_invalid    INTEGER DEFAULT 0,
     blueprint_path          TEXT
-    -- 注意：blueprint_id 三轨制检查（MOD-*/D-*/SH-*/PLACEHOLDER*）由触发器实现，
-    -- 而非 CHECK 约束。原因：SQLite 历史数据存在不符合三轨制的 blueprint_id
+    -- 注意：blueprint_id 双轨制+历史兼容检查（MOD-*/D-*/SH-*/PLACEHOLDER*）由触发器实现，
+    -- 而非 CHECK 约束。原因：SQLite 历史数据存在不符合双轨制+历史兼容的 blueprint_id
     -- （如 GOV-FSTR-001），CHECK 约束会阻止迁移。触发器只对新 INSERT/UPDATE 生效，
     -- 历史数据保留。触发器定义见§6功能性触发器。
 );
@@ -584,19 +584,19 @@ CREATE TRIGGER readonly_registries_update
 --     AFTER DELETE ON nodes
 --     FOR EACH ROW EXECUTE FUNCTION cleanup_edges_on_node_delete();
 
--- 6.2 blueprint_id 三轨制检查（对应 SQLite chk_nodes_blueprint_id_insert/update）
+-- 6.2 blueprint_id 双轨制+历史兼容检查（对应 SQLite chk_nodes_blueprint_id_insert/update）
 -- 裁定#208：blueprint_id 必须匹配 MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER*（除非 blueprint_id_invalid=1）
 -- 治本 2026-07-02：扩展 SYS- 前缀为 SYS-MASTER-001 等系统级蓝图开路
--- 用触发器而非 CHECK 约束实现：历史数据可能不符合三轨制，CHECK 会阻止迁移；
+-- 用触发器而非 CHECK 约束实现：历史数据可能不符合双轨制+历史兼容，CHECK 会阻止迁移；
 -- 触发器只对新 INSERT/UPDATE 生效，历史数据保留。
-CREATE OR REPLACE FUNCTION check_blueprint_id_three_track()
+CREATE OR REPLACE FUNCTION check_blueprint_id_format()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.blueprint_id IS NOT NULL
        AND NEW.blueprint_id != ''
        AND NEW.blueprint_id_invalid = 0
        AND NEW.blueprint_id !~ '^(MOD-|D-|SH-|SYS-|PLACEHOLDER)' THEN
-        RAISE EXCEPTION 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)';
+        RAISE EXCEPTION 'nodes.blueprint_id format violation (裁定#208 双轨制+历史兼容: MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)';
     END IF;
     RETURN NEW;
 END;
@@ -604,11 +604,11 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER chk_nodes_blueprint_id_insert
     BEFORE INSERT ON nodes
-    FOR EACH ROW EXECUTE FUNCTION check_blueprint_id_three_track();
+    FOR EACH ROW EXECUTE FUNCTION check_blueprint_id_format();
 
 CREATE TRIGGER chk_nodes_blueprint_id_update
     BEFORE UPDATE OF blueprint_id ON nodes
-    FOR EACH ROW EXECUTE FUNCTION check_blueprint_id_three_track();
+    FOR EACH ROW EXECUTE FUNCTION check_blueprint_id_format();
 
 -- 6.3 edges 表三写分区硬约束（S1.3）
 -- 三写分区：

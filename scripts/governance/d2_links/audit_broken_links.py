@@ -470,7 +470,7 @@ def _check_audit_report_objects(content: str, source: Path) -> list[str]:
         if result:
             broken.append(result)
 
-    # 3. 正文 MODULE_ID（三轨制正则匹配）
+    # 3. 正文 MODULE_ID（双轨制+submodule_id 正则匹配）
     for m in _BODY_MODULE_ID_RE.finditer(content):
         mid = m.group(1)
         if mid in seen:

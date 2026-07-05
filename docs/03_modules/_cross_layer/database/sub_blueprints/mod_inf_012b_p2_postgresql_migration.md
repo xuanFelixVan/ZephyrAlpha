@@ -805,7 +805,7 @@ WHERE n.node_id IS NULL;
 
 #### 6.4.1 文件：`src/zephyr/governance/depgraph_schema.py`
 
-**当前状态**：depgraph的Schema DDL + 版本化迁移框架（v1-v18，v18 为 blueprint_id 三轨制 DB 触发器），23张表定义，18个索引，dep_cycles视图。
+**当前状态**：depgraph的Schema DDL + 版本化迁移框架（v1-v18，v18 为 blueprint_id 双轨制+历史兼容 DB 触发器），23张表定义，18个索引，dep_cycles视图。
 
 **修改清单**：
 
