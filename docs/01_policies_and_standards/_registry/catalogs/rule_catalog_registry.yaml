@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-05T15:38:08Z'
+generated_at: '2026-07-05T16:12:46Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 143
@@ -1484,7 +1484,7 @@ files:
   title: 架构议题注册表
   doc_type: register
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
