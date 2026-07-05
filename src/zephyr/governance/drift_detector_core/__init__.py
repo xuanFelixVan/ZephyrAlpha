@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md
+# [A_module] module_id=MOD-INF-023 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.governance.drift_detector_core
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [INVARIANTS] 7-file core subset migrated from drift_detection/ to resolve directory boundary with MOD-INF-033

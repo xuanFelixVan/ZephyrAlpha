@@ -1,18 +1,19 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/pre_commit/verify_dedup.py | §
+# [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
 # [MODULE] scripts.pre_commit.verify_dedup
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES]
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.governance.code_dedup.cli
+# [CONSUMERS] .pre-commit-config.yaml gate-dedup hook
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS]
-# [MODIFY-GUARD]
+# [INVARIANTS] 委托 cli.py verify，不自实现检测逻辑
+# [MODIFY-GUARD] code_dedup_engine blueprint §
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] subprocess returncode
 # [TESTS]
-# [TTL] task_bound
+# [A_module] module_id=MOD-INF-017_verify_dedup | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] permanent
 """pre_commit 验证脚本 — 委托给 code-dedup-engine CLI verify 子命令.
 
 在 pre_commit hook 中调用：
