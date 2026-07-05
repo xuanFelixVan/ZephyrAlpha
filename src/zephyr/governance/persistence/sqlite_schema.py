@@ -441,63 +441,16 @@ LIMIT 10
 """
 
 # ---------------------------------------------------------------------------
-# PRAGMA 配置
+# PRAGMA 配置 — re-export from SSoT (zephyr.shared.io.sqlite_factory)
+# 治本(2026-07-06): get_db_connection/_apply_pragmas/_PRAGMAS 的 canonical 文件
+# 已迁移到 shared/io/sqlite_factory.py，此处为 re-export shim 保持向后兼容。
 # ---------------------------------------------------------------------------
 
-_PRAGMAS = [
-    "PRAGMA journal_mode = WAL",
-    "PRAGMA synchronous = NORMAL",
-    "PRAGMA foreign_keys = ON",
-    "PRAGMA busy_timeout = 5000",
-    "PRAGMA temp_store = MEMORY",
-    "PRAGMA wal_autocheckpoint = 4096",
-]
-
-
-def _apply_pragmas(conn: sqlite3.Connection) -> None:
-    """对连接应用 KBG-0030 §4.3 PRAGMA 基线。"""
-    for pragma in _PRAGMAS:
-        conn.execute(pragma)
-
-
-# ---------------------------------------------------------------------------
-# 公共 API
-# ---------------------------------------------------------------------------
-
-
-def get_db_connection(
-    db_path: Path | str | None = None,
-    *,
-    check_same_thread: bool = False,
-    timeout: float = 30.0,
-) -> sqlite3.Connection:
-    """
-    返回配置好 PRAGMA 的 SQLite 连接。
-
-    参数
-    ----
-    db_path
-        数据库文件路径，默认 DB_PATH。
-    check_same_thread
-        传给 sqlite3.connect；默认 False 允许跨线程读（单 Writer 假设下安全）。
-    timeout
-        busy 等待超时（秒），默认 30s。
-
-    返回
-    ----
-    sqlite3.Connection
-        row_factory 已设为 sqlite3.Row，可按列名索引。
-    """
-    resolved: Path = Path(db_path) if db_path is not None else _DB_PATH
-    conn = sqlite3.connect(
-        str(resolved),
-        isolation_level=None,
-        check_same_thread=check_same_thread,
-        timeout=timeout,
-    )
-    conn.row_factory = sqlite3.Row
-    _apply_pragmas(conn)
-    return conn
+from zephyr.shared.io.sqlite_factory import (  # noqa: E402
+    _PRAGMAS,
+    _apply_pragmas,
+    get_db_connection,
+)
 
 
 # ---------------------------------------------------------------------------
