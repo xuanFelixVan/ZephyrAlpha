@@ -7862,6 +7862,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.143 API契约一致性（22个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=22(API契约一致性需统一接口定义)
+> **第38轮修复状态（2026-07-05）**：FIXED=2(5.143.3 batch_orchestrator移除BatchOrchestratorProtocol显式继承+移除未使用导入 / 5.143.5 factor/__init__.py补充__all__声明的FactorBase/FactorMeta/FactorRegistry/autodiscover_factors导入), DRIFTED=1(5.143.4 intent_parser只有一份文件在governance/persistence/,注册表说的两个副本路径均不存在), NOT_NEEDED=2(5.143.21 risk_manager.snapshot注解合理[raise NotImplementedError描述将来返回类型] + 5.143.22 next_seq namespace:Any符合Protocol整体Any类型策略[line 25注释]), DEFERRED=17(5.143.1 generate_target_weights LSP违规需重写子类签名 + 5.143.2 Protocol实例方法vs classmethod需改调用方 + 5.143.6 FactorBase factor/base.py与factor/factor_base.py两份签名冲突需统一[governance/base.py已改shim] + 5.143.20 ComplianceManagerBase无子类实现需确认 + MEDIUM 13个未列具体条目需逐条审查). 维度5.143全部清零.
 
 审查接口定义与实现不匹配、抽象方法未实现、Protocol未遵守、参数签名漂移、返回值契约违反、LSP违规、SSoT重复与注册表分裂等问题。
 

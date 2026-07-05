@@ -38,6 +38,9 @@ CTR 契约依赖声明（承重墙标记）
 
 from __future__ import annotations
 
+# 5.143.5 修复: 补充 __all__ 声明的符号导入, 避免调用方 ImportError
+from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry, autodiscover_factors
+
 __all__ = [
     "FactorBase",
     "FactorMeta",

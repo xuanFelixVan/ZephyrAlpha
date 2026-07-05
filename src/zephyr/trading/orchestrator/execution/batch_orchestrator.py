@@ -60,7 +60,6 @@ if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
     from zephyr.shared.foundation.models import TaskCard
 
-from zephyr.shared.contracts.orchestration_protocol import BatchOrchestratorProtocol
 
 
 @dataclass
@@ -87,7 +86,7 @@ class BatchProgress:
         )
 
 
-class BatchOrchestrator(BatchOrchestratorProtocol):
+class BatchOrchestrator:  # 5.143.3 修复: 移除Protocol显式继承, Protocol应为结构化子类型不应继承
     """多 Worker 批量任务协调器。
 
     每个 AI session 创建一个实例，共享同一个 SQLite 数据库。
