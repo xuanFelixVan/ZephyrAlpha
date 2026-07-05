@@ -137,6 +137,7 @@ def __dir__() -> list[str]:
 # 全面 monkey-patch，零手动代码。try/except 保活——patch 失败不阻塞 import。
 # 延迟到后台线程，不阻塞 import zephyr 冷启动。
 _auto_bootstrap_result = None
+_bootstrap_lock = threading.Lock()  # 5.165.1 修复: 保护 _auto_bootstrap_result 跨线程读写
 
 
 def _deferred_bootstrap():
@@ -144,10 +145,12 @@ def _deferred_bootstrap():
     try:
         from zephyr.infrastructure.system_telemetry.auto_bootstrap import bootstrap as _auto_bootstrap
 
-        _auto_bootstrap_result = _auto_bootstrap()
+        result = _auto_bootstrap()
     except Exception as exc:
         _log.warning("auto_bootstrap failed: %s", exc, exc_info=True)
-        _auto_bootstrap_result = None
+        result = None
+    with _bootstrap_lock:  # 5.165.1 修复: 加锁写入 global 变量
+        _auto_bootstrap_result = result
     # §5.17.14 治本：自动接入 secret_rotation 到 SecretProvider
     # 扫描 os.environ 中的密钥变量（KEY/TOKEN/SECRET/PASSWORD等）注册轮换调度，
     # 注入后所有 get_secret* 读取时前置 needs_rotation 检查（warn 不阻断）。

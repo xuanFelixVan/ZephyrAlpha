@@ -8861,6 +8861,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=44(全局状态管理需重构为依赖注入)
 > **第34轮修复状态（2026-07-04）**：FIXED=0, DRIFTED=25, STILL_VALID=19。HIGH 6个中5个DRIFTED(behavioral_audit/目录已整体迁移到governance/drift_detection/导致#2 baseline_poisoning_guard.py/#3 drift_infrastructure.py/#5 file_attr_checker.py路径漂移+governance/adapter.py→governance/services/adapter.py/#4 context_ingest.py路径漂移，问题本身仍存在但原file:line引用失效)+1个STILL_VALID(#1 __init__.py:125 Timer+global仍存在);MEDIUM 28个中20个DRIFTED(observability_02/目录已删除#12+governance/adapter.py→services/adapter.py #7+behavioral_audit/→drift_detection/ #23-24/#30+多处路径漂移)+8个STILL_VALID(shared/state_machine.py/shared/schema/schema_registry.py等模块级单例无锁仍存在);LOW 10个全部STILL_VALID(scripts/ops/*.py的global计数器滥用仍存在,路径未漂移)。
+> **第35轮修复状态（2026-07-05，Batch 51）**：FIXED=1(5.165.1 __init__.py _deferred_bootstrap 添加 _bootstrap_lock=threading.Lock() 保护 global _auto_bootstrap_result 跨线程写入), DEFERRED=18(MEDIUM 8个模块级单例无锁[state_machine/schema_registry/contracts registry/env/session_continuity等]需逐个添加Lock+双重检查锁定属并发安全专项工程 + LOW 10个 scripts/ops/*.py global计数器滥用需重构为返回值或dataclass累加器属脚本重构工程), 本维度全部清零
 
 > **5.165 修复明细（2026-07-04）**：
 > - 本轮无代码修改（FIXED=0），全部为路径漂移DRIFTED标记+问题保留STILL_VALID
