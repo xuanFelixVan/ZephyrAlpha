@@ -1321,7 +1321,8 @@ def sync_dataflow_registry(cur):
 
     # --- 同步 jobs（先 jobs，因为 datasets 的 produced_by_job 引用 job_name）---
     jobs = data.get("jobs", [])
-    job_name_to_id: dict[str, int] = {}  # job_name -> job_id（用于派生 edges）
+    job_name_to_id: dict[str, int] = {}  # job_name -> PG job_id（保留）
+    job_yaml_id_to_pg_id: dict[str, int] = {}  # YAML job_id(JOB-NNN) -> PG job_id（用于派生 edges）
     synced_jobs = 0
     for j in jobs:
         job_name = j.get("job_name", "")
@@ -1342,6 +1343,7 @@ def sync_dataflow_registry(cur):
         ))
         job_id = cur.fetchone()["job_id"]
         job_name_to_id[job_name] = job_id
+        job_yaml_id_to_pg_id[j.get("job_id", "")] = job_id
         synced_jobs += 1
 
     # --- 同步 datasets ---
@@ -1371,17 +1373,19 @@ def sync_dataflow_registry(cur):
         synced_datasets += 1
 
     # --- 派生 edges ---
+    # YAML 的 produced_by_job / consumed_by_jobs 字段使用 JOB-NNN 格式（YAML job_id），
+    # 不是 job_name（如 ingest.ifind_kline），故用 job_yaml_id_to_pg_id 映射查 PG job_id。
     # 1. Job→Dataset 产出（produced_by_job）→ edge_type=push
     synced_edges = 0
     for d in datasets:
         entity_name = d.get("entity_name", "")
         produced_by = d.get("produced_by_job")
-        if entity_name in dataset_name_to_id and produced_by in job_name_to_id:
+        if entity_name in dataset_name_to_id and produced_by in job_yaml_id_to_pg_id:
             cur.execute("""
                 INSERT INTO dataflow_edges
                     (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
                 VALUES (%s, %s, 'job', 'dataset', 'push', 'production', %s)
-            """, (job_name_to_id[produced_by], dataset_name_to_id[entity_name], now_iso))
+            """, (job_yaml_id_to_pg_id[produced_by], dataset_name_to_id[entity_name], now_iso))
             synced_edges += 1
 
     # 2. Dataset→Job 消费（consumed_by_jobs）→ edge_type=pull
@@ -1389,13 +1393,13 @@ def sync_dataflow_registry(cur):
         entity_name = d.get("entity_name", "")
         consumed_by = d.get("consumed_by_jobs", []) or []
         if entity_name in dataset_name_to_id:
-            for job_name in consumed_by:
-                if job_name in job_name_to_id:
+            for consumed_job_yaml_id in consumed_by:
+                if consumed_job_yaml_id in job_yaml_id_to_pg_id:
                     cur.execute("""
                         INSERT INTO dataflow_edges
                             (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
                         VALUES (%s, %s, 'dataset', 'job', 'pull', 'production', %s)
-                    """, (dataset_name_to_id[entity_name], job_name_to_id[job_name], now_iso))
+                    """, (dataset_name_to_id[entity_name], job_yaml_id_to_pg_id[consumed_job_yaml_id], now_iso))
                     synced_edges += 1
 
     print(f"  同步 {synced_jobs} 个 Job, {synced_datasets} 个 Dataset, {synced_edges} 条 edges")
