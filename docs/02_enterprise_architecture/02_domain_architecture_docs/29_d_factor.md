@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-05 16:09:51
+> 最后更新: 2026-07-05 19:29:29
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -25,7 +25,7 @@ ttl: permanent
 | 域名称 | 因子 | Domain Name | 因子 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 14 | Module Count | 14 |
-| 域内依赖 | 2 | Internal Dependencies | 2 |
+| 域内依赖 | 3 | Internal Dependencies | 3 |
 | 跨域入边 | 2 | Cross-domain Incoming | 2 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
@@ -62,8 +62,9 @@ graph TD
         src_zephyr_factor_services_init_py["src/zephyr/factor/services/__init__.py prototype"]
         src_zephyr_factor_value_factor_py["src/zephyr/factor/value_factor.py prototype"]
     end
-    src_zephyr_factor_value_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_momentum_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_init_py -->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_value_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL production"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|import_depends| D_FUNDAMENTAL_SIGNAL
     D_FUNDAMENTAL_SIGNAL -->|import_depends| src_zephyr_factor_factor_base_py
@@ -146,22 +147,23 @@ graph TD
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 2 条 / 2 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 3 条 / 3 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│        依赖关系图 / Dependency Graph (共 2 条 / 2 edges)         │
+│        依赖关系图 / Dependency Graph (共 3 条 / 3 edges)         │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 1                               │
-│   [import_depends]: 2 条 / edges                                 │
+│   [import_depends]: 3 条 / edges                                 │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (2 条 / edges)                  │
+│                 [import_depends] (3 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   value_factor.py → factor_base.py                               │
 │   momentum_factor.py → factor_base.py                            │
+│   __init__.py → factor_base.py                                   │
+│   value_factor.py → factor_base.py                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
