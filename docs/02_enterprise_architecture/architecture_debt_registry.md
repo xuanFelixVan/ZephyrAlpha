@@ -2202,6 +2202,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.48 序列化安全（3个，第13轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.48全部清零.
+> **第56轮修复状态（2026-07-06）**：5.48.3 FIXED — from_json新增_format_version版本校验+SerializationError异常类, commit 7d73ad8694. DEFERRED=1(5.48.2 json.loads无schema校验需3处设计Pydantic schema属中等重构).
 > 维度说明：yaml.load安全、json.loads无schema校验、序列化版本管理等。（注：eval()用于类型注解问题已在5.45.2记录，此处不重复）
 
 #### 5.48.1 [HIGH] yaml.load(FullLoader)而非safe_load
@@ -2940,6 +2941,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.65 内存管理与泄漏模式（11个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.65全部清零.
+> **第56轮修复状态（2026-07-06）**：5.65.1+5.65.3 FIXED — ResourceAwarePool.submit清理completed futures防_cpu/_gpu_futures无界增长 + WorkOrchestrator._cleanup_completed清理COMPLETED/FAILED且无PENDING依赖的item防_items无界增长, commit 7d73ad8694. DEFERRED=0. 维度5.65全部清零.
 #### 5.65.1 [HIGH] ResourceAwarePool Future列表无界增长
 
 - **文件**：`src/zephyr/governance/audit_trail/resource_aware_pool.py:46-47,56-58`
@@ -3269,6 +3271,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.75 子进程返回码检查（4个，第16轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.75全部清零.
+> **第56轮修复状态（2026-07-06）**：5.75.1+5.75.3 FIXED — tamper_proof_audit git add/commit添加returncode检查失败不置committed_to_git + ide_health_daemon git stash/status添加returncode检查非零置metrics为None, commit 7d73ad8694. DEFERRED=0. 维度5.75全部清零.
 #### 5.75.1 [HIGH] tamper_proof_audit git add/commit未检查返回码，committed_to_git被错误置True
 
 - **文件**：`src/zephyr/governance/drift_detection/tamper_proof_audit.py:246-265`
@@ -3331,6 +3334,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.77 信号处理与进程生命周期（5个，第16轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.77全部清零.
+> **第56轮修复状态（2026-07-06）**：5.77.1+5.77.5 FIXED — zephyr/__init__.py添加atexit cleanup取消daemon Timer线程 + interrupt_guard.py非主线程时注册atexit兜底回滚_active_fixes, commit 7d73ad8694. DEFERRED=0. 维度5.77全部清零.
 #### 5.77.1 [HIGH] import zephyr时启动daemon Timer线程执行monkey-patch
 
 - **文件**：`src/zephyr/__init__.py:125-127,142-144`
@@ -3394,6 +3398,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.79 导入副作用（4个，第16轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.79全部清零.
+> **第56轮修复状态（2026-07-06）**：5.79.3+5.79.4 FIXED — find_repo_root加@functools.cache避免重复I/O + _resolve_default_directive_dir加@functools.cache避免重复.resolve(), commit 7d73ad8694. DEFERRED=0. 维度5.79全部清零.
 > 注：S-5（import zephyr启动daemon Timer线程）与5.77.1同源，此处不重复计数。
 
 #### 5.79.1 [HIGH] 模块级os.makedirs在import时执行
@@ -3659,6 +3664,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=21(死代码文件/未使用import清理需逐文件确认无引用后删除)
 > **第38轮修复状态（2026-07-05）**：FIXED=11(5.95.3/4 删除import statistics+_ = statistics[2个agent_orchestrator] + 5.95.8/9 删除from pathlib import Path[2个agent_orchestrator] + 5.95.12 删除boot_hooks from pathlib import Path + 5.95.15 删除vector_memory_server空TYPE_CHECKING块 + 5.95.16 context_assembler if True改TYPE_CHECKING + 5.95.18 删除context_rot_model UTC导入+自赋值 + 5.95.19 删除memory_bank UTC自赋值 + 5.95.21 删除fallback_staleness_gate UTC自赋值), DRIFTED=8(5.95.5/6/10/11 governance/audit_orchestration/agent_orchestrator.py 4个文件不存在 + 5.95.7/13 autonomy_core/engine.py不存在 + 5.95.14 autonomy_core/dispatch_table.py不存在 + 5.95.20 autonomy_core/cache_invalidation.py不存在), DEFERRED=2(5.95.1 hallucination_detector.py重复死代码需确认动态加载后删除 + 5.95.2 rollback_manager.py无import引用需确认动态加载后删除). 维度5.95全部清零.
+> **第56轮修复状态（2026-07-06）**：5.95.1+5.95.2 DRIFTED校正——hallucination_detector.py重复副本已在5.159.4删除(resilience/deferred_queue/已不存在), rollback_manager.py有3处import+__init__.py动态加载引用(非死代码). 两项均与registry描述不符, 标记DRIFTED. DEFERRED=0. 维度5.95全部清零.
 
 #### 5.95.1 死代码文件（1个HIGH + 1个MEDIUM）
 
