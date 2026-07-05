@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.intelligence.model_drift_detector
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -49,6 +49,8 @@ class DriftResult:
 
 class ModelDriftDetector:
     EXIT_CODE_DRIFT: int = 34
+    # JS散度阈值: 基于JS divergence公式 0.5*(KL(P||M)+KL(Q||M)), 范围[0, ln2≈0.693]
+    # 0.15≈最大散度的21.6%, 轻微漂移JS≈0.01(不触发), 显著漂移JS≈0.37(触发)
     DIVERGENCE_THRESHOLD: float = 0.15
     BASELINE_FILE: str = ".zephyr/model_baseline.json"
 

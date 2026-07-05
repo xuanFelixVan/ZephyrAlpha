@@ -19,7 +19,7 @@
 职责:
   - Walk-Forward三模式切分(R-93/P1-29): 滚动(rolling)/锚定(anchored)/扩展(expanding)
   - White's Reality Check(P1-19): bootstrap多重比较偏差校正, 检验策略相对基准的显著超额收益
-  - CPCV v2配置预留(P1-18): 组合净化交叉验证, 消除PIT泄漏(配置项n_combinations)
+  - CPCV v2配置预留(P1-18): 组合净化交叉验证, 消除PIT泄漏(配置项待P1-18实现时添加)
 
 约束:
   - PIT铁律: 训练集严禁包含测试集数据, 切分时train_end <= test_start
