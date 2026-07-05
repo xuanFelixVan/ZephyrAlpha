@@ -22,7 +22,7 @@
 
 子模块
 ------
-- stop_loss.py      : 止损执行引擎（与 kill_switch）
+- stop_loss.py      : 止损兼容层（委托 default_stop_loss_engine）+ kill switch 事件记录
 - risk_limits.py    : 风险限额计算器 (RiskLimitsCalculator) — Phase B 骨架已生成
 - risk_validator.py : 风险校验器 (RiskValidator) — Phase B 骨架已生成
 

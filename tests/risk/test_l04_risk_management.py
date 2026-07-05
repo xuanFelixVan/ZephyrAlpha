@@ -39,7 +39,8 @@ from zephyr.risk.stop_loss import (
     reset_kill_switch,
     trigger_kill_switch,
 )
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits, RiskLimitsCalculator
+from zephyr.shared.contracts.risk_limits import RiskLimits
+from zephyr.risk.risk_limits import RiskLimitsCalculator
 
 
 class _ConcreteRiskManager(RiskManagerBase):

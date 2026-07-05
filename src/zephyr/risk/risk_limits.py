@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
 # [MODULE] zephyr.risk.risk_limits
 # [DOMAIN] D_RISK
-# [DEPENDENCIES] zephyr.trading.trading_contracts.risk.risk_limits
+# [DEPENDENCIES] zephyr.shared.contracts.risk_limits
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -49,7 +49,7 @@ import inspect
 from decimal import Decimal
 from typing import ClassVar
 
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
+from zephyr.shared.contracts.risk_limits import RiskLimits
 
 
 class RiskLimitsCalculator(abc.ABC):

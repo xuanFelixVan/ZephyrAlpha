@@ -7,8 +7,8 @@
 # [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [STABILITY] stable
-# [SAFETY] M
+# [STABILITY] evolving
+# [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
@@ -45,7 +45,7 @@ from __future__ import annotations
 
 import abc
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any, ClassVar
 
@@ -60,7 +60,7 @@ class RiskCheckResult:
     limit_value: Decimal
     actual_value: Decimal
     message: str = ""
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     severity: str = "info"
 
 

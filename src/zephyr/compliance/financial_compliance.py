@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.financial_compliance
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.governance.financial_compliance
+# [DEPENDENCIES] zephyr.governance.financial_governance.financial_compliance
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype

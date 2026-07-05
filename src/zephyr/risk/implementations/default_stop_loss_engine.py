@@ -82,15 +82,23 @@ class DefaultStopLossEngine(StopLossEngineBase):
     ) -> RiskCheckResult:
         check_id = f"sl-{symbol}-{int(datetime.now(UTC).timestamp())}"
         method = rules.get("method", self._rules.method)
-        stop_price = self._compute_stop_price(symbol, entry_price, current_price, method, rules)
-        triggered = current_price <= stop_price if position_qty > 0 else current_price >= stop_price
+
+        if method == "time_based":
+            triggered = self._check_time_based(rules)
+            stop_price = Decimal("0")
+        else:
+            stop_price = self._compute_stop_price(symbol, entry_price, current_price, method, rules)
+            triggered = current_price <= stop_price if position_qty > 0 else current_price >= stop_price
         self._stop_prices[symbol] = stop_price
 
-        pnl_pct = (
-            float((current_price - entry_price) / entry_price)
-            if position_qty > 0
-            else float((entry_price - current_price) / entry_price)
-        )
+        if entry_price > 0:
+            pnl_pct = (
+                float((current_price - entry_price) / entry_price)
+                if position_qty > 0
+                else float((entry_price - current_price) / entry_price)
+            )
+        else:
+            pnl_pct = 0.0
 
         return RiskCheckResult(
             check_id=check_id,
@@ -106,6 +114,20 @@ class DefaultStopLossEngine(StopLossEngineBase):
     def get_stop_price(self, symbol: str) -> Decimal | None:
         return self._stop_prices.get(symbol)
 
+    def _check_time_based(self, rules: dict[str, Any]) -> bool:
+        """时间止损：持仓超过 max_hold_days 即触发.
+
+        entry_date 优先从 rules 取，其次取 StopLossRules.entry_date。
+        """
+        max_days = rules.get("max_hold_days", self._rules.max_hold_days)
+        entry_date = rules.get("entry_date", self._rules.entry_date)
+        if entry_date is None:
+            return False
+        if isinstance(entry_date, str):
+            entry_date = datetime.fromisoformat(entry_date)
+        held_days = (datetime.now(UTC) - entry_date).days
+        return held_days > max_days
+
     def _compute_stop_price(
         self,
         symbol: str,
@@ -120,15 +142,16 @@ class DefaultStopLossEngine(StopLossEngineBase):
 
         if method == "trailing":
             trail_pct = Decimal(str(rules.get("trailing_pct", self._rules.trailing_pct)))
-            highest = max(
-                getattr(self, "_highest_since_entry", current_price),
-                current_price,
-            )
+            highest_from_rules = rules.get("highest_since_entry")
+            if highest_from_rules is not None:
+                highest = Decimal(str(highest_from_rules))
+            else:
+                highest = max(
+                    getattr(self, "_highest_since_entry", current_price),
+                    current_price,
+                )
             self._highest_since_entry = highest
             return highest * (Decimal("1") - trail_pct)
-
-        if method == "time_based":
-            return Decimal("0")  # 时间止损强制平仓
 
         if method == "volatility":
             vol = Decimal(str(rules.get("current_volatility", 0.02)))
