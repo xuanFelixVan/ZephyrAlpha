@@ -310,7 +310,7 @@ def migrate_kb_collection(
     return {"total": total, "migrated": migrated, "skipped": skipped}
 
 
-def main():
+def main() -> None:
     # 5.129.3 修复: basicConfig 移入 main(), 仅脚本直接执行时配置 root logger
     logging.basicConfig(level=logging.INFO, format="%(name)s [%(levelname)s] %(message)s")
     dry_run = "--dry-run" in sys.argv

@@ -60,7 +60,7 @@ def list_check_types() -> list[str]:
     return sorted(_REGISTRY.keys())
 
 
-def _auto_import():
+def _auto_import() -> None:
     import importlib
     import pkgutil
 

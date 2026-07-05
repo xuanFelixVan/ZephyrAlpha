@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -122,21 +123,21 @@ if __name__ == "__main__":
     sys.exit(main())
 
 
-def _cmd_budget(args):
+def _cmd_budget(args: Any) -> None:
     pass
 
 
-def _cmd_scan(args):
+def _cmd_scan(args: Any) -> None:
     pass
 
 
-def _cmd_list(args):
+def _cmd_list(args: Any) -> None:
     pass
 
 
-def _cmd_self_test(args):
+def _cmd_self_test(args: Any) -> None:
     pass
 
 
-def _cmd_status(args):
+def _cmd_status(args: Any) -> None:
     pass
