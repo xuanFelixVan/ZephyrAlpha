@@ -47,6 +47,7 @@ warn_only: false
 
 
 import argparse
+import functools
 import os
 import re
 import sys
@@ -288,6 +289,7 @@ def get_dir_description(dir_name: str, lang: str) -> str:
     return DIR_DESCRIPTIONS_EN.get(dir_name, "")
 
 
+@functools.lru_cache(maxsize=None)
 def get_dir_files(dir_rel_path: str) -> list[str]:
     """从文件系统读取目录下的直接文件（非递归），返回排序后的文件名列表。
 
@@ -531,12 +533,14 @@ def _extract_file_brief(file_path: Path) -> str:
 
     返回空字符串表示未提取到。最多返回100字符。
     """
+    suffix = file_path.suffix.lower()
+    if suffix not in (".py", ".yaml", ".yml", ".md"):
+        return ""
     try:
-        content = file_path.read_text(encoding="utf-8", errors="ignore")[:4096]
+        with file_path.open("r", encoding="utf-8", errors="ignore") as f:
+            content = f.read(4096)
     except OSError:
         return ""
-
-    suffix = file_path.suffix.lower()
 
     if suffix == ".py":
         # 提取 docstring 第一行（""" 或 '''）
