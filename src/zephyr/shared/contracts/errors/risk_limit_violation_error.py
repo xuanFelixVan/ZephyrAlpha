@@ -21,6 +21,9 @@ _TARGET_MODULE = "zephyr.trading.trading_contracts.risk.risk_limit_violation_err
 
 
 def __getattr__(name):
+    # dunder 属性（如 __all__）直接 raise，避免 from .xxx import * 触发循环 import
+    if name.startswith("__") and name.endswith("__"):
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
     mod = importlib.import_module(_TARGET_MODULE)
     if hasattr(mod, name):
         return getattr(mod, name)

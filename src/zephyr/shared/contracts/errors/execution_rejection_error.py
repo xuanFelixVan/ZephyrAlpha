@@ -21,6 +21,11 @@ _TARGET_MODULE = "zephyr.trading.trading_contracts.execution.execution_rejection
 
 
 def __getattr__(name):
+    # dunder 属性（如 __all__）直接 raise，避免 from .xxx import * 触发
+    # importlib.import_module 导致循环 import（governance.performance_attribution_report
+    # → shared.contracts → errors → trading.trading_contracts → governance 循环）
+    if name.startswith("__") and name.endswith("__"):
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
     mod = importlib.import_module(_TARGET_MODULE)
     if hasattr(mod, name):
         return getattr(mod, name)
