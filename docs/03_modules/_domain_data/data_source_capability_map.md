@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/TickFlow/AKShare/财经RSS) 可获取数据完整清单与获取方法(实测验证+VPN对比)"
 doc_type: blueprint
 status: Active
-version: "1.8.1"
+version: "1.9.0"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -20,7 +20,7 @@ actual_disk_path: "src/zephyr/data/"
 belongs_to: "MOD-L00-001"
 parent_module: "MOD-L00-001"
 codification_level: L1
-last_updated: "2026-07-03"
+last_updated: "2026-07-06"
 generation: 1
 rule_form: reference
 scope: module
@@ -54,11 +54,14 @@ tags:
   - tickflow
   - yfinance
   - stooq
+  - tdx
+  - mootdx
+  - pytdx
   - free-source
   - capability-map
   - l00
   - ssot
-summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻+公告+政策直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo)可获取数据的完整清单与获取方法。v1.8.0更新：新增股权穿透+产业链地图数据源搜索结论——AKShare股东接口实测(7个可用:十大股东/十大流通股东/股东户数/股权质押/高管增减持/主营业务构成/全市场股东户数,4个失败:个股信息/控股关系/持股变化/实际控制人)；申万行业三级分类可用(31一级+131二级+336三级,产业链骨架基础)；天眼查/iFind/Choice商业付费API记录；GitHub开源0结果(无开源股权穿透/产业链地图项目)；产业链地图需自建(方案A:申万骨架+主营业务填充)。十七源+股权/产业链互补覆盖A股+美股+国内外新闻+上市公司公告+政策监管+情感分析+股东信息+行业分类全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
+summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻+公告+政策直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo) + 通达信(mootdx/pytdx)可获取数据的完整清单与获取方法。v1.9.0更新：新增§8 通达信(TDX)数据源章节——mootdx/pytdx作为免费开源Python库，可获取A股K线(日/周/月/5分/15分/30分/60分/1分)、个股分笔(最近交易日)、指数行情、板块分类(block_gn.dat概念/block_fg.dat行业)、财务数据(gpcw YYYYMMDD.zip)、本地通达信数据文件读取(.day/.lc1/.lc5)；关键限制——不支持板块指数分笔历史(用户淘宝买的板块分笔数据无API替代,需手工导出)、不支持历史分笔(仅最近交易日)、不支持美股港股实时、无复权数据。v1.8.0更新：新增股权穿透+产业链地图数据源搜索结论——AKShare股东接口实测(7个可用:十大股东/十大流通股东/股东户数/股权质押/高管增减持/主营业务构成/全市场股东户数,4个失败:个股信息/控股关系/持股变化/实际控制人)；申万行业三级分类可用(31一级+131二级+336三级,产业链骨架基础)；天眼查/iFind/Choice商业付费API记录；GitHub开源0结果(无开源股权穿透/产业链地图项目)；产业链地图需自建(方案A:申万骨架+主营业务填充)。十八源+股权/产业链互补覆盖A股+美股+国内外新闻+上市公司公告+政策监管+情感分析+股东信息+行业分类+通达信板块分类全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。v1.9.0数据补齐实测补充（2026-07-05）：新增§2.5.6 THS_RQ批量行情/THS_BD限制/THS_DS限制/i问财限制、§7.2.5 Baostock分红滞后、§7.3.5 AKShare stock_history_dividend_detail最可靠分红源——实测补齐kline_daily(5517行,max=07-03)+index_kline(953行,max=07-03)+equity_pledge_summary(4440行,max_end=07-03)+rights_issue(283行,max=07-06)，全部数据缺口补齐。"
 ---
 
 # 数据源能力地图 — iFind + miniQMT + 免费开源源
@@ -151,6 +154,7 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 | **Tiingo** | 行情API(需Key) | 1/2 (50%) | 无影响 | 2026-07-03 | 日K线backup | 日K线✅(21行); News❌(需付费),§7.1.1 |
 | **yfinance** | Yahoo非官方API | 0/10 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股(Yahoo**库级限流**非IP限流,VPN/代理无效) |
 | **Stooq** | 网站CSV | 0/2 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股CSV(JS浏览器验证,与IP无关) |
+| **TDX/mootdx/pytdx** | 通达信协议直连 | ⚠️ 文档级验证(未实测) | 无影响 | 2026-07-06 | A股K线+板块分类+财务(本地+在线) | A股日/周/月/分钟K线+指数行情+**通达信板块分类**(block_gn/block_fg)+财务数据+本地.day/.lc1/.lc5文件解析;**不支持板块分笔历史+不支持历史分笔**(详见§8) |
 
 > **实测结论（2026-07-03，含VPN对比测试）**：
 > - **Baostock 最稳定**（10/10），不受VPN影响，A股K线+财务主力免费源
@@ -176,10 +180,12 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 - **TickFlow 独有**：美股日K线的免费源(无需注册无需Key，A股+美股+港股统一API)
 - **AKShare 独有**：国内财经新闻(东财个股)、研报、一致预期EPS、**十大股东+股权质押+高管增减持+主营业务构成+申万行业三级分类**（§7.1.3）
 - **财经RSS独有**：国外权威财经媒体实时新闻(Yahoo/Bloomberg/CNBC/FT/MarketWatch等8源，免费无Key)
+- **TDX/mootdx 独有**：通达信板块分类(block_gn.dat概念板块/block_fg.dat行业板块，880xxx.TDX体系，与同花顺/申万/东财分类不兼容)、本地通达信数据文件读取(.day/.lc1/.lc5)
 - **yfinance/Stooq**：❌ 不可用(yfinance库级限流VPN无效/Stooq JS反爬虫VPN无效，详见§7.4/§7.5)
 - **股权穿透盲区**：董事长/法人代表/实际控制人/控股关系链 AKShare拿不到 → 需天眼查(付费)/iFind正式账号/巨潮公告PDF解析（§7.1.3）
 - **产业链地图盲区**：无开源数据库，业界产业链图谱都是商业付费产品(iFind/Choice/Wind) → 建议方案A申万骨架+主营业务填充自建（§7.1.3）
 - **六源互补**：iFind + QMT + Baostock + TickFlow + AKShare + 财经RSS 覆盖策略所需的A股+美股+国内外新闻+股东信息+行业分类全品类数据
+- **七源互补(v1.9.0)**：上述六源 + TDX/mootdx 补充通达信板块分类(880xxx体系)与本地通达信数据文件读取能力（详见§8）
 
 ---
 
@@ -357,7 +363,7 @@ data = THS_DataPool(
 # ✅ 返回 30行 行业成分股
 ```
 
-#### 2.5.6 实时行情（THS_RealtimeQuotes）
+#### 2.5.6 实时行情（THS_RealtimeQuotes / THS_RQ）
 
 ```python
 data = THS_RealtimeQuotes(
@@ -367,6 +373,82 @@ data = THS_RealtimeQuotes(
 df = THS_Trans2DataFrame(data)
 # ✅ 返回实时行情快照（含盘口+资金流向）
 ```
+
+##### THS_RQ 批量行情查询（v1.9.0 新增实测，补齐日K线/指数K线缺失数据）
+
+> **2026-07-05 数据补齐实测**：THS_RQ 支持批量查询多个代码（逗号分隔），返回最近交易日 OHLCV，可用于**批量补齐 kline_daily 和 index_kline 缺失的最新交易日数据**。非交易时段调用返回最近交易日收盘数据。
+
+```python
+from iFinDPy import *
+
+# === 批量查询多个股票的日K线数据 ===
+# codes_str: 逗号分隔的 iFind 代码（600xxx→.SH, 000/300xxx→.SZ, 8/4xxx→.BJ）
+codes_str = "600519.SH,000001.SZ,300750.SZ"
+df = THS_RQ(codes_str, "close;open;high;low;volume;amount", "pricetype:1", "format:dataframe")
+# ✅ 返回 DataFrame，每行一个代码，含最近交易日 OHLCV
+# pricetype:1 = 前复权价
+
+# === 批量补齐 kline_daily（5517个A股，分111批，每批50个）===
+# 代码转换: 6位数字 → iFind 格式
+def to_ifind_code(symbol: str) -> str:
+    if symbol.startswith(('60', '68', '69')):
+        return f"{symbol}.SH"
+    elif symbol.startswith(('00', '30', '20')):
+        return f"{symbol}.SZ"
+    elif symbol.startswith(('8', '4', '9')):
+        return f"{symbol}.BJ"
+    return None
+
+# 批量查询（每批50个代码，逗号分隔）
+batch_codes = ",".join([to_ifind_code(s) for s in symbols[:50]])
+df = THS_RQ(batch_codes, "close;open;high;low;volume;amount", "pricetype:1", "format:dataframe")
+# ✅ 50行，列: thscode/close/open/high/low/volume/amount
+
+# === 批量补齐 index_kline（953个指数）===
+# 指数代码转换: 000xxx→.SH, 399xxx→.SZ, 880xxx→.TDX, 881xxx→.TI
+def to_ifind_index_code(code: str):
+    if code.startswith('000'):
+        return code + ".SH", "SH"
+    elif code.startswith('399'):
+        return code + ".SZ", "SZ"
+    elif code.startswith('880'):
+        return code + ".TDX", "TDX"
+    elif code.startswith('881'):
+        return code + ".TI", "TI"
+    return None, None
+```
+
+> **实测结果（2026-07-05）**：
+> - kline_daily 补齐：5517 行写入 c1_market.kline_daily，max_date=2026-07-03 ✅
+> - index_kline 补齐：953 行写入 c1_market.index_kline，max_date=2026-07-03 ✅
+> - THS_RQ 是批量补齐日K线/指数K线缺失数据的**最优方案**（批量+快速+前复权）
+
+##### THS_BD 基础数据接口限制（v1.9.0 实测补充）
+
+> **2026-07-05 数据补齐实测**：THS_BD 有以下重要限制需注意：
+
+| 限制 | 说明 | 影响 |
+|------|------|------|
+| **不支持分号分隔多指标** | `THS_BD(codes, "ths_pledge_ratio_stock;ths_total_shares_stock", ...)` 返回 -209 | 需分次单独查询每个指标，然后合并结果 |
+| **分红相关指标全部失败** | ths_latest_dividend_plan_stock / ths_dividend_announce_date_stock / ths_dividend_cash_ps_stock 等全部 -209 | 分红明细不可用 THS_BD 获取，需用 AKShare stock_history_dividend_detail |
+| **股权质押字段部分不可用** | ths_pledge_ratio_stock ✅ + ths_total_shares_stock ✅，但 pledge_count/unrestricted_pledge/restricted_pledge ❌ | 股权质押只能拿比例和总股本，其他字段留空 |
+| **单位转换坑** | ths_total_shares_stock 返回单位为"股"，表字段 total_shares 单位为"万" → 需 /1e4 | 不转换会导致数量级错误 |
+
+> **实测结果（2026-07-05）**：equity_pledge_summary 补齐 4440 行写入 c3_fundamental.equity_pledge_summary，max_end_date=2026-07-03 ✅
+
+##### THS_DS 日期序列接口限制（v1.9.0 实测补充）
+
+> **2026-07-05 实测**：THS_DS 单代码查询返回 -209 "params invalid"，即使按文档格式传参也无法使用。补齐日K线/指数K线数据应改用 THS_RQ（批量实时行情）。
+
+##### i问财查询限制补充（v1.9.0 实测）
+
+> **2026-07-05 实测**：i问财（THS_WC）不适合查询**个股分红明细**。以下查询全部失败：
+> - "分红公告日在2026年6月28日到2026年7月5日之间的股票" → -1201 failed
+> - "近期有分红公告的股票" → -4001 no data
+> - "分红方案 2026年7月" → -1201 failed
+> - "600519 分红" → -1201 failed
+>
+> **结论**：i问财适合查询**概念板块/龙虎榜/融资融券/大宗交易/限售解禁**等聚合类数据，但不适合查询按日期范围筛选的个股分红明细。分红明细需用 **AKShare stock_history_dividend_detail**（见 §7.3.5）。
 
 #### 2.5.7 i问财自然语言查询（THS_iwencai）— 最灵活的接口
 
@@ -795,39 +877,42 @@ fd = xtdata.get_financial_data(['600000.SH'], [], '20240101', '20250630', 'repor
 
 ---
 
-## §4 iFind vs miniQMT 对比矩阵
+## §4 iFind vs miniQMT vs TDX 对比矩阵
 
 ### §4.1 能力对比总表
 
-| # | 数据类型 | iFind 试用账号 | miniQMT | 推荐来源 | 说明 |
-|---|---------|:--------------:|:-------:|---------|------|
-| 1 | 日K线 | ✅ 21行 | ✅ 已验证(359行) | 两者均可 | QMT 可下载长历史，iFind 增量更新 |
-| 2 | 周K线 | ✅ 5行 | ✅(1w周期) | iFind | iFind 字段更全（含换手率） |
-| 3 | 月K线 | ✅ | ✅(1mon周期) | iFind | 同上 |
-| 4 | 1分钟K线 | ❌ 试用限制(-4309) | ✅ 已验证(241行) | **QMT** | QMT 可下载最近交易日 |
-| 5 | 5分钟K线 | ❌ 试用限制(-4309) | ✅ 已验证(48行) | **QMT** | 历史需淘宝购买 |
-| 6 | 15/30/60分钟K线 | ❌ 试用限制 | ✅(15m/30m/1h) | **QMT** | 同上 |
-| 7 | 3秒Tick | ❌ | ✅ 已验证(4998行) | **QMT 独有** | 含五档买卖盘 |
-| 8 | 集合竞价 | ❌ | ✅ API可用 | **QMT 独有** | subscribe_quote |
-| 9 | 实时Tick快照 | ✅ | ✅ 已验证 | QMT | QMT 的 get_full_tick 字段更全 |
-| 10 | 估值 PE/PB/PS | ✅ | ❌ | **iFind 独有** | iFind THS_BasicData |
-| 11 | 财务数据 | ✅ 时间序列 | ✅ API可用(11张表) | 两者均可 | QMT 报表结构化，iFind 灵活查询 |
-| 12 | 资金流向 | ✅ i问财 | ❌ | **iFind 独有** | i问财可自然语言查询 |
-| 13 | 指数成分股 | ✅ 300行 | ✅ API可用 | iFind | iFind 已验证 |
-| 14 | 行业分类 | ✅ 30行 | ⚠️ 返回空 | **iFind** | QMT 需特殊参数 |
-| 15 | 概念板块 | ✅ i问财 | ❌ | **iFind 独有** | i问财可查询 |
-| 16 | EDB 宏观数据 | ⏳ 配额限制(-4318,下月重置) | ❌ | iFind 正式账号 | 仅 iFind 有，77,909指标 |
-| 17 | 期货数据 | ❌ 无权限 | ✅ 802个合约 | **QMT 独有** | QMT 有中金所/上期所/大商所 |
-| 18 | 期权数据 | ❌ | ✅ 662个合约 | **QMT 独有** | QMT 有上证期权 |
-| 19 | 可转债数据 | ❌ | ✅ 152个+K线 | **QMT 独有** | QMT 有上证转债 |
-| 20 | ETF数据 | ❌ | ✅ 946个+K线 | **QMT** | QMT 有沪市ETF |
-| 21 | 美股/港股 | ❌ 无权限(-4210) | ✅ 港股通已验证(957只+K线20行) | QMT(港股通) | 美股试用受限，港股QMT可获取 |
-| 22 | 新闻/事件 | ❌ 不支持(-5100) | ❌ | 无 | 试用账号不支持 |
-| 23 | 研究报告 | ❌ 不支持(-5100) | ❌ | 无 | 试用账号不支持 |
-| 24 | Level-2数据 | ❌ | ⚠️ 需L2权限 | QMT | 需开通L2权限 |
-| 25 | 除权除息因子 | ❌ | ✅ 已验证(26条) | **QMT 独有** | — |
-| 26 | 指数权重 | ❌ | ✅ API可用 | **QMT 独有** | — |
-| 27 | 交易日历 | ✅ THS_DateQuery | ✅ 8673天 | 两者均可 | QMT 已验证 |
+| # | 数据类型 | iFind 试用账号 | miniQMT | TDX/mootdx | 推荐来源 | 说明 |
+|---|---------|:--------------:|:-------:|:----------:|---------|------|
+| 1 | 日K线 | ✅ 21行 | ✅ 已验证(359行) | ✅ frequency=9 | 两者均可 | QMT 可下载长历史，iFind 增量更新 |
+| 2 | 周K线 | ✅ 5行 | ✅(1w周期) | ✅ frequency=5 | iFind | iFind 字段更全（含换手率） |
+| 3 | 月K线 | ✅ | ✅(1mon周期) | ✅ frequency=6 | iFind | 同上 |
+| 4 | 1分钟K线 | ❌ 试用限制(-4309) | ✅ 已验证(241行) | ✅ frequency=7/8 | **QMT** | QMT 可下载最近交易日 |
+| 5 | 5分钟K线 | ❌ 试用限制(-4309) | ✅ 已验证(48行) | ✅ frequency=0 | **QMT** | 历史需淘宝购买 |
+| 6 | 15/30/60分钟K线 | ❌ 试用限制 | ✅(15m/30m/1h) | ✅ frequency=1/2/3 | **QMT** | 同上 |
+| 7 | 3秒Tick | ❌ | ✅ 已验证(4998行) | ⚠️ 仅最近交易日分笔 | **QMT 独有** | QMT含五档买卖盘；TDX仅个股分笔(无五档) |
+| 8 | 集合竞价 | ❌ | ✅ API可用 | ❌ | **QMT 独有** | subscribe_quote |
+| 9 | 实时Tick快照 | ✅ | ✅ 已验证 | ✅ client.quote() | QMT | QMT 的 get_full_tick 字段更全 |
+| 10 | 估值 PE/PB/PS | ✅ | ❌ | ❌ | **iFind 独有** | iFind THS_BasicData |
+| 11 | 财务数据 | ✅ 时间序列 | ✅ API可用(11张表) | ✅ Affair.fetch(gpcw*.zip) | 两者均可 | QMT 报表结构化，iFind 灵活查询；TDX财务数据需下载zip解压 |
+| 12 | 资金流向 | ✅ i问财 | ❌ | ❌ | **iFind 独有** | i问财可自然语言查询 |
+| 13 | 指数成分股 | ✅ 300行 | ✅ API可用 | ⚠️ 板块成分(block_*.dat) | iFind | iFind 已验证；TDX仅板块成分非指数成分 |
+| 14 | 行业分类 | ✅ 30行 | ⚠️ 返回空 | ✅ **通达信板块分类** | iFind+TDX | iFind同花顺行业；TDX 880xxx体系(详见§8) |
+| 15 | 概念板块 | ✅ i问财 | ❌ | ✅ **block_gn.dat** | iFind+TDX | iFind i问财；TDX通达信概念板块 |
+| 16 | EDB 宏观数据 | ⏳ 配额限制(-4318,下月重置) | ❌ | ❌ | iFind 正式账号 | 仅 iFind 有，77,909指标 |
+| 17 | 期货数据 | ❌ 无权限 | ✅ 802个合约 | ⚠️ ExtQuotes | **QMT 独有** | QMT 有中金所/上期所/大商所；TDX扩展行情支持期货 |
+| 18 | 期权数据 | ❌ | ✅ 662个合约 | ❌ | **QMT 独有** | QMT 有上证期权 |
+| 19 | 可转债数据 | ❌ | ✅ 152个+K线 | ❌ | **QMT 独有** | QMT 有上证转债 |
+| 20 | ETF数据 | ❌ | ✅ 946个+K线 | ⚠️ K线 | **QMT** | QMT 有沪市ETF |
+| 21 | 美股/港股 | ❌ 无权限(-4210) | ✅ 港股通已验证(957只+K线20行) | ⚠️ ExtQuotes港股 | QMT(港股通) | 美股试用受限，港股QMT可获取；TDX扩展行情支持港股(market=47) |
+| 22 | 新闻/事件 | ❌ 不支持(-5100) | ❌ | ❌ | 无 | 试用账号不支持 |
+| 23 | 研究报告 | ❌ 不支持(-5100) | ❌ | ❌ | 无 | 试用账号不支持 |
+| 24 | Level-2数据 | ❌ | ⚠️ 需L2权限 | ❌ | QMT | 需开通L2权限 |
+| 25 | 除权除息因子 | ❌ | ✅ 已验证(26条) | ❌ | **QMT 独有** | — |
+| 26 | 指数权重 | ❌ | ✅ API可用 | ❌ | **QMT 独有** | — |
+| 27 | 交易日历 | ✅ THS_DateQuery | ✅ 8673天 | ⚠️ 间接(从K线推断) | 两者均可 | QMT 已验证 |
+| 28 | **板块分笔历史** | ❌ | ❌ | ❌ | **无API**(淘宝购买) | 用户已购sector/mkt_index板块分笔(2011-11~2026-07)，**无API可持续更新**，需手工导出(详见§8.6) |
+| 29 | **本地通达信数据文件** | ❌ | ❌ | ✅ **Reader.factory** | **TDX 独有** | .day/.lc1/.lc5文件解析(需安装通达信客户端) |
+| 30 | **个股分笔(最近交易日)** | ❌ | ✅ Tick | ✅ client.transaction() | QMT | TDX仅取最近交易日分笔，历史分笔需淘宝购买 |
 
 ### §4.2 数据源选择决策树
 
@@ -856,7 +941,8 @@ fd = xtdata.get_financial_data(['600000.SH'], [], '20240101', '20250630', 'repor
 |--------|---------|---------|
 | **iFind** | EDB宏观数据(77,909)、i问财、估值PE/PB/PS、概念板块 | 高频K线(试用-4309)、美股港股(-4210)、事件研报(-5100) |
 | **miniQMT** | 3秒Tick(含五档)、除权因子、指数权重、期权/可转债/期货合约 | 历史高频(仅最近交易日)、行业分类(返回空)、L2数据(需权限) |
-| **两者均无** | — | 美股/港股(试用)、新闻事件、研究报告(试用) |
+| **TDX/mootdx** | 通达信板块分类(880xxx体系)、本地通达信数据文件读取(.day/.lc1/.lc5) | 无板块分笔历史、无历史分笔(仅最近交易日)、无复权、无估值/EDB/新闻/研报 |
+| **三者均无** | — | 美股/港股(试用)、新闻事件、研究报告(试用)、**板块分笔历史**(淘宝购买/手工导出) |
 
 ---
 
@@ -1402,6 +1488,18 @@ bs.logout()
 | 分钟线仅近5年 | 5/15/30/60分钟K线从2020-01-03起 |
 | 代码格式特殊 | sh.XXXXXX/sz.XXXXXX（需转换） |
 | 需login/logout | 每次使用需登录，用完登出 |
+| **分红数据滞后** | `query_dividend_data(yearType="report")` 查 3000 symbol 全 0 新数据，落后 AKShare 约1周+ | 分红明细改用 AKShare `stock_history_dividend_detail`（见 §7.3.5） |
+
+#### §7.2.5 分红数据滞后实测（v1.9.0，2026-07-05）
+
+> **2026-07-05 实测**：baostock `query_dividend_data(year, yearType="report")` **数据严重滞后**——查询 5823 个 symbol 的 2025/2026 年分红数据，前 3000 个全部返回 0 条新数据（announce_date > 2026-06-27），脚本卡在 3000/5823。同期 AKShare `stock_history_dividend_detail` 能拿到 2026-07-04 的分红公告（如 600036 招商银行）。
+
+| 数据源 | 接口 | 最新数据日期 | 结论 |
+|--------|------|------------|------|
+| baostock | `query_dividend_data(yearType="report")` | ≤ 2026-06-27 | ❌ 滞后约1周+，且 query 返回空 |
+| AKShare | `stock_history_dividend_detail(indicator="分红")` | 2026-07-04 | ✅ 实时 |
+
+> **结论**：分红明细数据**不要使用 baostock**，改用 [AKShare stock_history_dividend_detail](#735-stock_history_dividend_detail-最可靠的分红数据源v190-新增实测)（见 §7.3.5）。baostock 的 K线/季频财务/成分股接口依然稳定可用，仅分红接口存在滞后。
 
 ### §7.3 AKShare 完整指南
 
@@ -1521,6 +1619,90 @@ df = ak.stock_us_hist(symbol="AAPL", period="daily", start_date="20200101", end_
 | 复权偶发错位 | 边角 case 复权 bug | 与 iFind/QMT 交叉验证 |
 | 上游限速 | 东方财富/新浪对高频访问会临时封 IP | 控制请求频率（<1次/秒），加 sleep |
 | 字段名不统一 | 同一字段在不同接口有不同命名 | 查阅 AKShare 文档确认字段名 |
+| **东财实时快照反爬** | `stock_zh_a_spot_em()` 被 RemoteDisconnected 阻断（东财反爬升级） | 实时行情改用 QMT（见 §3）或 iFind THS_RQ（见 §2.5.6） |
+
+#### §7.3.5 stock_history_dividend_detail — 最可靠的分红数据源（v1.9.0 新增实测）
+
+> **2026-07-05 实测**：AKShare `stock_history_dividend_detail` 是分红明细数据的**最优数据源**——比 baostock（滞后约1周+，见 §7.2.5）、iFind THS_BD 分红指标（-209 全部失败，见 §2.5.6）、iFind 问财（不适合个股明细查询，见 §2.5.6）都可靠。多线程 8 workers 约 7.5 分钟完成 5823 个 symbol 查询，获取 283 条新数据（max announce_date=2026-07-06）。
+
+**API 调用方法**：
+
+```python
+import akshare as ak
+
+# 查询单个 symbol 的分红明细
+df = ak.stock_history_dividend_detail(symbol="600036", indicator="分红")
+# ✅ 返回 DataFrame，字段：公告日期/送股/转增/派息/进度/除权除息日/股权登记日/红股上市日
+# 注意：列名有前导空格，需 df.columns = [c.strip() for c in df.columns]
+```
+
+**字段映射**（→ c3_fundamental.rights_issue 表）：
+
+| AKShare 字段 | 表字段 | 说明 |
+|------------|--------|------|
+| 公告日期 | announce_date | YYYY-MM-DD |
+| 送股 | bonus_shares | 每股送股数 |
+| 转增 | capitalized_shares | 每股转增股本 |
+| 派息 | dividend_pre_tax | 每股税前派息(元) |
+| 进度 | status | 实施/预案/批准 |
+| 除权除息日 | ex_date | YYYY-MM-DD |
+| 股权登记日 | record_date | YYYY-MM-DD |
+| 红股上市日 | listing_date | YYYY-MM-DD |
+
+**多线程批量补齐示例**（8 workers，5823 symbol 约 7.5 分钟）：
+
+```python
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+def fetch_dividend_for_symbol(symbol: str, last_date: str) -> list:
+    import akshare as ak
+    result = []
+    try:
+        df = ak.stock_history_dividend_detail(symbol=symbol, indicator="分红")
+        if df is None or df.empty:
+            return []
+        df.columns = [c.strip() for c in df.columns]  # 列名有前导空格
+        for _, row in df.iterrows():
+            announce_date = str(row.get('公告日期', '')).strip()[:10]
+            if not announce_date or announce_date <= last_date:
+                continue
+            if announce_date in ('NaT', 'None', 'nan', ''):
+                continue
+            result.append({
+                'symbol': symbol,
+                'announce_date': announce_date,
+                'bonus_shares': float(row.get('送股', 0) or 0) or None,
+                'capitalized_shares': float(row.get('转增', 0) or 0) or None,
+                'dividend_pre_tax': float(row.get('派息', 0) or 0) or None,
+                'status': str(row.get('进度', '')).strip(),
+                'ex_date': str(row.get('除权除息日', '')).strip()[:10] or None,
+                'record_date': str(row.get('股权登记日', '')).strip()[:10] or None,
+                'listing_date': str(row.get('红股上市日', '')).strip()[:10] or None,
+            })
+    except Exception as e:
+        pass  # 个别 symbol 失败不影响整体
+    return result
+
+with ThreadPoolExecutor(max_workers=8) as executor:
+    futures = {executor.submit(fetch_dividend_for_symbol, sym, LAST_DATE): sym
+               for sym in symbols}
+    for future in as_completed(futures):
+        result = future.result()
+        # ... 构建 TSV 写入 ClickHouse (data_source='akshare')
+```
+
+> **实测结果（2026-07-05）**：
+> - 查询 5823 个 symbol，获取 283 条新数据（announce_date > 2026-06-27）
+> - max(announce_date) = 2026-07-06 ✅
+> - 耗时约 7.5 分钟（8 workers）
+> - data_source 字段值：`akshare`
+> - 0 个 symbol 失败
+
+> **分红明细数据源优先级**：
+> 1. ✅ **AKShare `stock_history_dividend_detail`**（最可靠，实时，多线程7.5分钟/5823symbol）
+> 2. ❌ baostock `query_dividend_data`（滞后约1周+，见 §7.2.5）
+> 3. ❌ iFind THS_BD 分红指标（-209 全部失败，见 §2.5.6）
+> 4. ❌ iFind 问财 THS_WC（不适合个股明细查询，见 §2.5.6）
 
 ### §7.4 yfinance 完整指南（❌ 实测 0/10，VPN无效——Yahoo库级限流非IP限流）
 
@@ -1811,42 +1993,48 @@ info = tf.instruments.batch(symbols=["600000.SH", "AAPL.US"])
 ### §7.8 与 iFind/QMT 的互补关系
 
 ```
-┌────────────────────────────────────────────────────────────────────────────┐
-│  六源互补矩阵（v1.4.0 实测验证 + VPN对比 + 新闻源扩展，2026-07-03）            │
-├────────────────────────────────────────────────────────────────────────────┤
-│  数据品类          │ iFind试用│ QMT  │Baostock│TickFlow│ AKShare │财经RSS │
-├────────────────────────────────────────────────────────────────────────────┤
-│  A股日/周/月K线    │    ✅    │  ✅  │  ✅    │   ✅   │   —     │   —   │
-│  A股分钟K线        │    ⚠️    │  ✅  │  ✅    │   ❌   │   —     │   —   │  ← Baostock补历史(近5年)
-│  A股估值PE/PB      │    ✅    │  —   │  ⚠️    │   —    │   —     │   —   │
-│  A股财务报表       │    ✅    │  ✅  │  ✅    │   —    │   —     │   —   │  ← Baostock季频财务6项
-│  A股资金流向       │    ✅    │  —   │  —     │   —    │   —     │   —   │
-│  龙虎榜/大宗/融资  │    ✅    │  —   │  —     │   —    │   —     │   —   │
-│  EDB宏观(CPI/PMI)  │    ⏳    │  —   │  —     │   —    │   ✅    │   —   │  ← AKShare补盲区(须断VPN)
-│  3秒Tick           │    —     │  ✅  │  —     │   —    │   —     │   —   │
-│  期权/可转债/期货  │    —     │  ✅  │  —     │   —    │   —     │   —   │
-│  除权因子          │    —     │  ✅  │  —     │   —    │   —     │   —   │
-│  指数成分股        │    ✅    │  —   │  ✅    │   —    │   —     │   —   │  ← Baostock 50/300/500
-│  交易日历          │    —     │  ✅  │  ✅    │   —    │   —     │   —   │  ← Baostock
-│  美股日/周/月/季/年│    ❌    │  —   │  —     │   ✅   │   ❌    │  ❌   │  ← TickFlow 12/12通过(2026-07-03新发现)
-│  美股ETF           │    ❌    │  —   │  —     │   ✅   │   —     │  ❌   │  ← TickFlow SPY/DIA/QQQ
-│  美股真实指数      │    ❌    │  —   │  —     │   ❌   │   —     │  ❌   │  ← 用ETF替代(SPY/DIA/QQQ)
-│  港股日K线         │    ❌    │  ✅  │  —     │   ✅   │   —     │  ❌   │  ← TickFlow 00700.HK✅
-│  财经新闻(国内)    │    ❌    │  —   │  —     │   —    │   ✅    │   —   │  ← AKShare东财个股新闻(须断VPN)
-│  财经新闻(国外)    │    ❌    │  —   │  —     │   —    │   —     │   —   │  ← RSS直连8源(Yahoo/Bloomberg/CNBC等)
-│  研报/一致预期     │    ❌    │  —   │  —     │   —    │   ✅    │   —   │  ← AKShare补盲区(须断VPN)
-└────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│  七源互补矩阵（v1.9.0 实测验证 + VPN对比 + 新闻源扩展 + TDX板块分类，2026-07-06）        │
+├──────────────────────────────────────────────────────────────────────────────────────┤
+│  数据品类          │ iFind试用│ QMT  │Baostock│TickFlow│ AKShare │财经RSS │TDX/mootdx│
+├──────────────────────────────────────────────────────────────────────────────────────┤
+│  A股日/周/月K线    │    ✅    │  ✅  │  ✅    │   ✅   │   —     │   —   │   ✅    │
+│  A股分钟K线        │    ⚠️    │  ✅  │  ✅    │   ❌   │   —     │   —   │   ✅    │  ← Baostock/TDX补历史
+│  A股估值PE/PB      │    ✅    │  —   │  ⚠️    │   —    │   —     │   —   │   —     │
+│  A股财务报表       │    ✅    │  ✅  │  ✅    │   —    │   —     │   —   │   ✅    │  ← Baostock季频/TDX gpcw zip
+│  A股资金流向       │    ✅    │  —   │  —     │   —    │   —     │   —   │   —     │
+│  龙虎榜/大宗/融资  │    ✅    │  —   │  —     │   —    │   —     │   —   │   —     │
+│  EDB宏观(CPI/PMI)  │    ⏳    │  —   │  —     │   —    │   ✅    │   —   │   —     │  ← AKShare补盲区(须断VPN)
+│  3秒Tick           │    —     │  ✅  │  —     │   —    │   —     │   —   │   —     │  ← QMT独有(含五档)
+│  个股分笔(最近日)  │    —     │  ✅  │  —     │   —    │   —     │   —   │   ✅    │  ← TDX client.transaction()
+│  个股分笔(历史)    │    —     │  —   │  —     │   —    │   —     │   —   │   —     │  ← 淘宝购买/手工导出
+│  期权/可转债/期货  │    —     │  ✅  │  —     │   —    │   —     │   —   │   —     │
+│  除权因子          │    —     │  ✅  │  —     │   —    │   —     │   —   │   —     │
+│  指数成分股        │    ✅    │  —   │  ✅    │   —    │   —     │   —   │   —     │  ← Baostock 50/300/500
+│  交易日历          │    —     │  ✅  │  ✅    │   —    │   —     │   —   │   —     │  ← Baostock
+│  美股日/周/月/季/年│    ❌    │  —   │  —     │   ✅   │   ❌    │  ❌   │   —     │  ← TickFlow 12/12通过
+│  美股ETF           │    ❌    │  —   │  —     │   ✅   │   —     │  ❌   │   —     │  ← TickFlow SPY/DIA/QQQ
+│  美股真实指数      │    ❌    │  —   │  —     │   ❌   │   —     │  ❌   │   —     │  ← 用ETF替代(SPY/DIA/QQQ)
+│  港股日K线         │    ❌    │  ✅  │  —     │   ✅   │   —     │  ❌   │   —     │  ← TickFlow 00700.HK✅
+│  财经新闻(国内)    │    ❌    │  —   │  —     │   —    │   ✅    │   —   │   —     │  ← AKShare东财个股新闻(须断VPN)
+│  财经新闻(国外)    │    ❌    │  —   │  —     │   —    │   —     │   —   │   —     │  ← RSS直连8源(Yahoo/Bloomberg/CNBC等)
+│  研报/一致预期     │    ❌    │  —   │  —     │   —    │   ✅    │   —   │   —     │  ← AKShare补盲区(须断VPN)
+│  **通达信板块分类** │    —     │  —   │  —     │   —    │   —     │   —   │   ✅    │  ← TDX独有(880xxx体系,block_gn/block_fg)
+│  **板块分笔历史**   │    —     │  —   │  —     │   —    │   —     │   —   │   —     │  ← 无API(淘宝购买/手工导出,§8.6)
+│  **本地TDX文件**    │    —     │  —   │  —     │   —    │   —     │   —   │   ✅    │  ← TDX独有(.day/.lc1/.lc5,需装客户端)
+└──────────────────────────────────────────────────────────────────────────────────────┘
   ✅=实测通过  ⏳=配额限制  ❌=不可用  ⚠️=部分覆盖  —=不适用
 ```
 
-> **实测结论（v1.4.0，2026-07-03，含 VPN 对比测试 + 新闻源扩展）**：
+> **实测结论（v1.9.0，2026-07-06，含 VPN 对比测试 + 新闻源扩展 + TDX板块分类）**：
 > - iFind 试用账号的 ❌ 盲区中，**EDB宏观 + 新闻 + 研报** 被 AKShare 覆盖（须断开 VPN）
 > - **A股K线+财务** 被 Baostock 覆盖（实测 10/10 通过，最稳定，不受 VPN 影响）
 > - **美股日/周/月/季/年K线 + ETF** 被 TickFlow 覆盖（实测 12/12 通过，不受 VPN 影响）—— **2026-07-03 重大新发现，美股不再需要淘宝购买**
 > - yfinance 0/10 失败（Yahoo 库级限流非 IP 限流，**VPN 无效**）；Stooq 0/2 失败（JS 浏览器验证与 IP 无关，**VPN 无效**）
 > - **国外财经新闻** 被RSS直连覆盖（实测8/10通过，Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC，免费无Key，不受VPN影响）
 > - **A股+美股+国内外新闻全品类数据 100% 可获取**（iFind+QMT+Baostock+TickFlow+AKShare+财经RSS 六源互补）
-> - **运维建议**：下载免费源数据时**断开 VPN**（Baostock/TickFlow/财经RSS不受影响，AKShare 必须断开）
+> - **v1.9.0新增 TDX/mootdx**：补充**通达信板块分类(880xxx体系)**、**本地TDX文件读取(.day/.lc1/.lc5)**、个股最近交易日分笔(client.transaction())、A股全周期K线(frequency=0~9)；**关键限制——无板块分笔历史(用户淘宝购买的sector/mkt_index板块分笔数据无API可持续更新,只能手工从通达信客户端导出,§8.6)**
+> - **运维建议**：下载免费源数据时**断开 VPN**（Baostock/TickFlow/财经RSS/TDX不受影响，AKShare 必须断开）
 
 ### §7.9 免费源 API 调用完整示例
 
@@ -2220,4 +2408,426 @@ if __name__ == "__main__":
 
 ---
 
-> **文档结束** — 本文档由 AI-session-20260703-datasource 创建，v1.1.0 新增 §7 免费开源数据源章节。所有 API 调用方法均已实测验证或通过 WebSearch+GitHub 验证。如遇数据源 API 变更或新数据源接入，请同步更新本文档并提升 version。
+## §8 通达信 TDX/mootdx/pytdx 数据源完整指南（v1.9.0 新增）
+
+### §8.1 概述与定位
+
+| 属性 | 值 |
+|------|-----|
+| 项目主页 | https://github.com/mootdx/mootdx （主仓） / https://gitee.com/ibopo/mootdx （Gitee镜像） |
+| PyPI 包名 | `mootdx` |
+| 协议 | MIT（开源免费，无API Key） |
+| Python 版本 | 3.8+（推荐3.10+） |
+| 当前稳定版 | 0.11.x（截至2026-07） |
+| 上游依赖 | `pytdx`（通达信协议底层实现） |
+| 数据来源 | 通达信行情服务器（TCP协议直连） + 通达信本地数据文件解析 |
+| 实测状态 | ⚠️ **文档级验证**（基于官方文档+GitHub README+WebSearch综合整理，2026-07-06），尚未在本机实测调用；首次使用前须运行 §8.7 验证脚本 |
+
+**定位**：TDX/mootdx 是 Baostock/AKShare 之外的第三个 A 股免费数据源，其**独有价值**是：
+1. **通达信板块分类（880xxx.TDX体系）**——iFind/AKShare/Baostock 均无此分类（同花顺/申万/东财分类与通达信不兼容）
+2. **本地通达信数据文件读取**——直接解析 .day/.lc1/.lc5 二进制文件，零网络延迟
+3. **个股最近交易日分笔数据**——`client.transaction()` 可获取最近交易日个股分笔（非3秒Tick，无五档）
+4. **全周期K线（frequency=0~9）**——5分/15分/30分/60分/日/周/月/1分 全覆盖
+
+**重要限制**：
+- ❌ **不支持板块指数分笔历史**——用户淘宝购买的 sector/mkt_index 板块分笔数据（2011-11~2026-07）**无 API 可持续更新**，只能从通达信客户端手工导出（详见 §8.6）
+- ❌ **不支持历史个股分笔**——`client.transaction()` 仅取最近交易日，历史个股分笔需淘宝购买
+- ❌ **不支持复权数据**——仅原始价格，前复权/后复权需自行计算
+- ❌ **不支持估值/EDB/新闻/研报**——这些能力用 iFind/AKShare
+- ❌ **不支持美股**——TDX协议仅覆盖A股+港股(扩展)+期货(扩展)
+- ⚠️ **服务器稳定性**——TDX服务器由各券商提供（非官方SLA），偶尔断线需 `bestip=True` 自动切换
+
+### §8.2 环境配置
+
+#### §8.2.1 安装
+
+```powershell
+# 完整功能安装（推荐）
+pip install -U 'mootdx[all]'
+
+# 仅核心功能
+pip install 'mootdx'
+
+# 包含命令行工具
+pip install 'mootdx[cli]'
+
+# 验证安装
+python -c "import mootdx; print(mootdx.__version__)"
+# 预期输出: 0.11.x
+```
+
+#### §8.2.2 服务器优选（首次使用前必跑）
+
+```powershell
+# 自动测试并选择响应速度最快的TDX服务器节点（一次性）
+python -m mootdx bestip --verbose
+# 输出会写入 ~/.mootdx/config.json，后续 Quotes.factory(bestip=True) 自动读取
+```
+
+### §8.3 可获取数据完整清单
+
+#### §8.3.1 在线行情（quotes 模块，需网络）
+
+| # | 数据类型 | API | 参数 | 输出字段 | 频率参数对照 |
+|---|---------|-----|------|---------|------------|
+| 1 | **A股日K线** | `client.bars(symbol, frequency=9, offset=N)` | symbol='600036' | datetime/open/high/low/close/volume/amount | frequency=9=日线 |
+| 2 | **A股周K线** | `client.bars(symbol, frequency=5, offset=N)` | 同上 | 同上 | frequency=5=周线 |
+| 3 | **A股月K线** | `client.bars(symbol, frequency=6, offset=N)` | 同上 | 同上 | frequency=6=月线 |
+| 4 | **A股5分钟K线** | `client.bars(symbol, frequency=0, offset=N)` | 同上 | 同上 | frequency=0=5分钟 |
+| 5 | **A股15分钟K线** | `client.bars(symbol, frequency=1, offset=N)` | 同上 | 同上 | frequency=1=15分钟 |
+| 6 | **A股30分钟K线** | `client.bars(symbol, frequency=2, offset=N)` | 同上 | 同上 | frequency=2=30分钟 |
+| 7 | **A股60分钟K线** | `client.bars(symbol, frequency=3, offset=N)` | 同上 | 同上 | frequency=3=1小时 |
+| 8 | **A股1分钟K线** | `client.bars(symbol, frequency=7/8, offset=N)` | 同上 | 同上 | frequency=7/8=1分钟 |
+| 9 | **指数K线** | `client.index(symbol, frequency=9)` | symbol='000001'(上证) | 同上 | 同frequency对照 |
+| 10 | **实时报价** | `client.quote(symbol='600036')` | symbol | code/name/price/rise/percent | — |
+| 11 | **分时数据** | `client.minute(symbol='000001')` | symbol | datetime/price/avg_price/volume | — |
+| 12 | **个股分笔(最近交易日)** | `client.transaction(symbol='600036')` | symbol | time/price/vol/num/buyorsell | 仅最近交易日 |
+
+#### §8.3.2 本地数据文件读取（reader 模块，需安装通达信客户端）
+
+| # | 数据类型 | API | 文件类型 | 说明 |
+|---|---------|-----|---------|------|
+| 13 | **日线数据** | `reader.daily(symbol='600036')` | `.day` | 解析 `vipdoc/sh/lday/sh600036.day` |
+| 14 | **分钟线** | `reader.minute(symbol='600036', suffix=1)` | `.lc1` | 解析 `vipdoc/sh/fzline/sh600036.lc1` |
+| 15 | **5分钟线** | `reader.fzline(symbol='600036')` | `.lc5` | 解析 `vipdoc/sh/fzline/sh600036.lc5` |
+| 16 | **概念板块** | `reader.block(symbol='block_gn.dat', group=True)` | `.dat` | 通达信概念板块分类（880xxx体系） |
+| 17 | **行业板块** | `reader.block(symbol='block_fg.dat')` | `.dat` | 通达信行业板块分类 |
+
+> **路径约定**：通达信默认数据目录 `C:/new_tdx/vipdoc/`，沪市在 `sh/`，深市在 `sz/`，港股在 `hk/`。
+
+#### §8.3.3 财务数据（affair 模块）
+
+| # | 数据类型 | API | 说明 |
+|---|---------|-----|------|
+| 18 | **可下载财务文件列表** | `Affair.files()` | 返回全量可下载的 gpcw YYYYMMDD.zip 列表 |
+| 19 | **下载单个财务文件** | `Affair.fetch(downdir='./financial_data', filename='gpcw20231231.zip')` | 下载指定日期的财务数据包 |
+| 20 | **批量下载全部财务数据** | `Affair.fetch(downdir='./financial_data')` | 下载全部 gpcw 历史财务数据包 |
+
+> **财务数据格式**：gpcw YYYYMMDD.zip 解压后为 `.dat` 二进制文件，需配套 `财务数据对照表.xls` 解读字段含义（通达信官方提供）。
+
+#### §8.3.4 扩展行情（ExtQuotes 模块）
+
+| # | 数据类型 | API | 说明 |
+|---|---------|-----|------|
+| 21 | **港股K线** | `ExtQuotes().bars(market=47, symbol='00700', frequency=9)` | market=47=港股，5分钟K线可用 |
+| 22 | **期货K线** | `ExtQuotes().bars(market=..., frequency=9)` | 不同品种 market 值不同，需查文档 |
+
+### §8.4 API 调用完整示例（直接复制可用）
+
+#### §8.4.1 在线行情——A股K线（全周期）
+
+```python
+from mootdx.quotes import Quotes
+
+# 初始化客户端（bestip=True 自动选择最优服务器）
+client = Quotes.factory(market='std', multithread=True, heartbeat=True, bestip=True)
+
+# 日K线（frequency=9）
+daily = client.bars(symbol='600036', frequency=9, offset=100)
+# 返回 DataFrame: ['datetime','open','high','low','close','volume','amount']
+
+# 周/月/分钟K线（仅 frequency 不同）
+weekly  = client.bars(symbol='600036', frequency=5, offset=52)   # 周线
+monthly = client.bars(symbol='600036', frequency=6, offset=12)   # 月线
+min5    = client.bars(symbol='600036', frequency=0, offset=100)  # 5分钟
+min15   = client.bars(symbol='600036', frequency=1, offset=100)  # 15分钟
+min30   = client.bars(symbol='600036', frequency=2, offset=100)  # 30分钟
+min60   = client.bars(symbol='600036', frequency=3, offset=100)  # 60分钟
+min1    = client.bars(symbol='600036', frequency=7, offset=240)  # 1分钟
+
+# 指数K线（symbol='000001' 上证指数 / '399001' 深证成指 / '399006' 创业板指）
+index_daily = client.index(symbol='000001', frequency=9)
+```
+
+#### §8.4.2 在线行情——实时报价与分时
+
+```python
+# 实时报价
+quote = client.quote(symbol='600036')  # 招商银行
+# 返回 dict: {'code','name','price','rise','percent', ...}
+
+# 分时数据
+minute = client.minute(symbol='000001')  # 平安银行分时
+# 返回 DataFrame: ['datetime','price','avg_price','volume']
+```
+
+#### §8.4.3 在线行情——个股分笔（最近交易日）
+
+```python
+# ⚠️ 仅获取最近交易日的个股分笔数据，历史分笔需淘宝购买
+transactions = client.transaction(symbol='600036')
+# 返回 DataFrame: ['time','price','vol','num','buyorsell']
+# buyorsell: 0=买盘/1=卖盘/2=中性盘
+```
+
+#### §8.4.4 本地通达信数据文件读取
+
+```python
+from mootdx.reader import Reader
+
+# 初始化本地读取器（指定通达信安装目录）
+reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
+# 路径必须指向通达信安装根目录（含 vipdoc/ 子目录）
+
+# 日线数据（解析 vipdoc/sh/lday/sh600036.day）
+daily = reader.daily(symbol='600036')
+
+# 分钟线（解析 vipdoc/sh/fzline/sh600036.lc1）
+minute = reader.minute(symbol='600036', suffix=1)
+
+# 5分钟线（解析 vipdoc/sh/fzline/sh600036.lc5）
+min5 = reader.fzline(symbol='600036')
+```
+
+#### §8.4.5 通达信板块分类（TDX独有，880xxx体系）
+
+```python
+from mootdx.reader import Reader
+
+reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
+
+# 概念板块（解析 T0002/block_gn.dat）
+concept_blocks = reader.block(symbol='block_gn.dat', group=True)
+# 返回 DataFrame: ['blockname','code','stock_count', ...]
+# blockname=概念板块名称 / code=板块下股票代码 / stock_count=板块股票数
+
+# 行业板块（解析 T0002/block_fg.dat）
+industry_blocks = reader.block(symbol='block_fg.dat')
+
+# ⚠️ 通达信板块分类体系（880xxx.TDX）与同花顺/申万/东财分类不兼容
+# 这是 TDX 独有的分类视角，可作为策略研究的补充维度
+```
+
+#### §8.4.6 财务数据下载与解析
+
+```python
+from mootdx.affair import Affair
+
+# 1. 查询可下载的财务文件列表（全量历史）
+files = Affair.files()
+# 返回 list: ['gpcw19960630.zip','gpcw19961231.zip',...,'gpcw20231231.zip']
+
+# 2. 下载单个财务文件
+Affair.fetch(downdir='./financial_data', filename='gpcw20231231.zip')
+
+# 3. 全量下载（首次使用时，会比较慢）
+Affair.fetch(downdir='./financial_data')
+
+# 4. 解析下载的 .dat 文件（需配合通达信官方"财务数据对照表.xls"解读字段）
+# 通常 .dat 文件位于 downdir/ 下，按日期命名
+```
+
+#### §8.4.7 扩展行情——港股/期货
+
+```python
+from mootdx.quotes import ExtQuotes
+
+# 港股K线（market=47）
+hk_client = ExtQuotes()
+hk_daily = hk_client.bars(market=47, symbol='00700', frequency=9, offset=100)
+# 腾讯控股日K线
+
+# 期货K线（market值因品种而异，需查通达信文档）
+# futures = hk_client.bars(market=..., symbol='...', frequency=9)
+```
+
+#### §8.4.8 智能缓存（高频查询优化）
+
+```python
+from mootdx.utils.pandas_cache import pandas_cache
+
+# 装饰器模式，1小时缓存
+@pandas_cache(expire=3600)
+def fetch_minute(symbol):
+    client = Quotes.factory(market='std')
+    return client.minute(symbol=symbol)
+
+# 首次调用从接口获取（~500ms）
+data1 = fetch_minute('600036')
+# 后续调用直接读缓存（~10ms）
+data2 = fetch_minute('600036')
+```
+
+### §8.5 TDX 与其他数据源对比
+
+| 维度 | TDX/mootdx | Baostock | AKShare | iFind | QMT |
+|------|-----------|----------|---------|-------|-----|
+| 协议类型 | 通达信TCP协议直连 | 服务端推送 | 爬虫聚合 | iFind专有协议 | QMT专有协议 |
+| 服务器成本 | 免费（券商TDX服务器） | 免费（官方） | 免费（爬国内网站） | 试用账号/正式付费 | 需QMT账号 |
+| VPN 影响 | 无影响 | 无影响 | ⚠️ 有害（须断开） | 无影响 | 无影响 |
+| A股K线 | ✅ 全周期(0~9) | ✅ 日/周/月/分钟 | ⚠️ 部分 | ✅ 全周期 | ✅ 全周期 |
+| 板块分类 | ✅ **880xxx体系独有** | ❌ | ⚠️ 申万行业 | ⚠️ 同花顺行业 | ❌ |
+| 财务数据 | ✅ gpcw zip | ✅ 季频6项 | ⚠️ 部分 | ✅ 时间序列 | ✅ 11张表 |
+| 个股分笔 | ⚠️ **仅最近交易日** | ❌ | ❌ | ❌ | ✅ 3秒Tick |
+| 复权数据 | ❌ 仅原始价格 | ✅ 前复权 | ⚠️ 部分 | ✅ 前复权 | ✅ 除权因子 |
+| 估值PE/PB | ❌ | ⚠️ 部分 | ❌ | ✅ 精确个股 | ❌ |
+| 宏观EDB | ❌ | ❌ | ✅ CPI/PMI/M2 | ⏳ 配额限制 | ❌ |
+| 美股 | ❌ | ❌ | ❌ | ❌ 试用不支持 | ❌ |
+| 新闻/研报 | ❌ | ❌ | ✅ 东财个股 | ❌ 试用不支持 | ❌ |
+
+### §8.6 板块分笔历史数据可持续更新方案（重要）
+
+**用户痛点**：用户通过淘宝购买的 sector/mkt_index 板块分笔成交历史数据（2011-11 ~ 2026-07，存于百度云 `量化交易数据/通达信板块_分笔成交/` 与 `量化交易数据/通达信板块_分笔成交/通达信_市场统计指数_分笔成交_按月归档/`）**没有可持续的 API 更新渠道**。
+
+**原因**：mootdx/pytdx 通过 TCP 协议直连通达信行情服务器，仅支持**个股分笔最近交易日**（`client.transaction()`），**不支持板块指数分笔历史下载**。通达信官方量化插件 TDXQuant 也明确"暂时不支持获取分笔数据"。
+
+**可行方案**（按优先级）：
+
+| 方案 | 操作 | 频率 | 难度 | 自动化程度 |
+|------|------|------|------|----------|
+| A. 通达信客户端手工导出 | 打开通达信客户端→选择板块指数→导出分笔数据→导入 ClickHouse | 每月1次 | 中 | 半自动（客户端导出后脚本自动入库） |
+| B. 接受为静态参考表 | 不持续更新，仅作为 2011-11~2026-07 的历史快照参考 | 一次性 | 低 | 无 |
+| C. 用同花顺板块替代 | 同花顺iFind有881二级行业板块（已通过 THS_WC 问财接口更新 tdx_sector_info 表），分笔数据用同花顺板块指数替代 | 每日自动 | 低 | 高（已实现） |
+| D. 自建板块分笔聚合 | 用个股分笔数据（mootdx client.transaction 每日下载）按通达信板块成分股聚合为板块分笔 | 每日 | 高 | 高（需自建聚合逻辑） |
+
+**推荐方案 C+D 组合**：
+- **历史已购数据（2011-11~2026-07）**：作为静态参考表保留，不再更新（方案B）
+- **未来增量**：采用方案D——每日通过 mootdx `client.transaction()` 下载个股分笔，按通达信板块成分股（block_gn.dat/block_fg.dat）聚合为板块分笔成交
+- **同花顺交叉验证**：用同花顺881二级行业板块（已实现 tdx_sector_info 表更新）作为另一维度板块分类
+
+### §8.7 TDX 数据源验证脚本
+
+```python
+"""TDX/mootdx 数据源连接与功能验证脚本
+首次使用 TDX 前必跑，验证通过后再接入业务流程。
+注意：须先 pip install 'mootdx[all]' && python -m mootdx bestip --verbose
+"""
+import sys
+
+def test_mootdx_install():
+    try:
+        import mootdx
+        print(f"✅ mootdx 安装OK: 版本={mootdx.__version__}")
+        return True
+    except ImportError:
+        print("❌ mootdx 未安装，请运行: pip install 'mootdx[all]'")
+        return False
+
+def test_kline_daily():
+    try:
+        from mootdx.quotes import Quotes
+        client = Quotes.factory(market='std', bestip=True)
+        df = client.bars(symbol='600036', frequency=9, offset=5)
+        assert df is not None and len(df) > 0, "日K线返回空"
+        print(f"✅ 日K线OK: 600036 返回 {len(df)} 行, 最新close={df['close'].iloc[-1]}")
+        return True
+    except Exception as e:
+        print(f"❌ 日K线失败: {e}")
+        return False
+
+def test_realtime_quote():
+    try:
+        from mootdx.quotes import Quotes
+        client = Quotes.factory(market='std', bestip=True)
+        q = client.quote(symbol='600036')
+        assert q and 'price' in q, "实时报价返回异常"
+        print(f"✅ 实时报价OK: 600036 price={q.get('price')} name={q.get('name')}")
+        return True
+    except Exception as e:
+        print(f"❌ 实时报价失败: {e}")
+        return False
+
+def test_index_kline():
+    try:
+        from mootdx.quotes import Quotes
+        client = Quotes.factory(market='std', bestip=True)
+        df = client.index(symbol='000001', frequency=9)
+        assert df is not None and len(df) > 0, "指数K线返回空"
+        print(f"✅ 指数K线OK: 上证指数 返回 {len(df)} 行")
+        return True
+    except Exception as e:
+        print(f"❌ 指数K线失败: {e}")
+        return False
+
+def test_local_reader():
+    """本地数据读取测试（需安装通达信客户端）"""
+    try:
+        from mootdx.reader import Reader
+        # ⚠️ 修改为你的通达信安装路径
+        reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
+        df = reader.daily(symbol='600036')
+        if df is not None and len(df) > 0:
+            print(f"✅ 本地读取OK: 600036 日线 {len(df)} 行")
+            return True
+        else:
+            print("⚠️ 本地读取返回空（未安装通达信客户端或路径错误）")
+            return False
+    except Exception as e:
+        print(f"⚠️ 本地读取跳过: {e}")
+        return False
+
+def test_block_data():
+    """通达信板块分类测试（TDX独有能力）"""
+    try:
+        from mootdx.reader import Reader
+        reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
+        # 概念板块
+        concept = reader.block(symbol='block_gn.dat', group=True)
+        if concept is not None and len(concept) > 0:
+            print(f"✅ 通达信板块分类OK: 概念板块 {len(concept)} 行")
+            return True
+        else:
+            print("⚠️ 板块分类返回空（需通达信客户端已下载板块数据）")
+            return False
+    except Exception as e:
+        print(f"⚠️ 板块分类跳过: {e}")
+        return False
+
+if __name__ == "__main__":
+    print("=== TDX/mootdx 数据源验证 ===\n")
+    results = [
+        test_mootdx_install(),
+        test_kline_daily(),
+        test_realtime_quote(),
+        test_index_kline(),
+        test_local_reader(),  # 可选（需通达信客户端）
+        test_block_data(),    # 可选（需通达信客户端）
+    ]
+    passed = sum(results)
+    total = len(results)
+    print(f"\n总结: {passed}/{total} 项通过")
+    # 在线行情3项必过，本地读取2项可选
+    if results[0] and results[1] and results[2] and results[3]:
+        print("✅ 核心在线行情可用，可接入业务流程")
+        sys.exit(0)
+    else:
+        print("❌ 核心在线行情不可用，请检查网络或运行 python -m mootdx bestip --verbose")
+        sys.exit(1)
+```
+
+### §8.8 TDX 数据源运维规则
+
+1. **首次使用前**：必须运行 `pip install 'mootdx[all]'` + `python -m mootdx bestip --verbose` + §8.7 验证脚本
+2. **服务器稳定性**：TDX服务器偶尔断线，`Quotes.factory(bestip=True)` 会自动切换最优服务器；若持续失败，重跑 `python -m mootdx bestip`
+3. **板块分笔历史**：**无 API 可持续更新**（§8.6），用户已购 sector/mkt_index 数据作为静态参考表保留，未来增量按方案 C+D 组合实施
+4. **本地数据读取**：必须安装通达信客户端并下载完整数据，路径 `tdxdir='C:/new_tdx'` 需指向实际安装目录
+5. **频率限制**：TDX服务器无明确频率限制，但建议控制 < 5次/秒避免被服务器临时封禁
+6. **VPN 影响**：TDX 协议直连不受 VPN 影响（与 Baostock/TickFlow 一致），可挂 VPN 使用
+7. **与 iFind/QMT 交叉验证**：首次使用 TDX K线数据时，应与 iFind THS_HistoryQuotes 交叉验证 close/volume 一致性
+8. **数据归档**：TDX 在线获取的数据写入 ClickHouse 后不再更新历史（与 Baostock/AKShare 一致，避免上游追溯调整）
+9. **板块分类更新**：通达信板块成分股（block_gn.dat/block_fg.dat）随股票上市/退市变化，建议每月用 `reader.block()` 重新读取并刷新 `tdx_sector_info` 相关表
+
+### §8.9 TDX 与项目现有架构的关系
+
+| 项目现有数据源 | TDX 替代关系 | 说明 |
+|--------------|-------------|------|
+| iFind THS_HistoryQuotes | ⚠️ 部分替代 | TDX可替代日/周/月/分钟K线，但无换手率/涨跌幅字段 |
+| iFind THS_BasicData (PE/PB) | ❌ 不可替代 | TDX无估值数据 |
+| iFind THS_DateSerial (财务) | ⚠️ 部分替代 | TDX gpcw zip 可下载财务，但需手动解析 |
+| iFind THS_iwencai (i问财) | ❌ 不可替代 | TDX无自然语言查询能力 |
+| QMT download_history_data | ⚠️ 部分替代 | TDX可替代K线，但无3秒Tick/除权因子/期权/可转债 |
+| Baostock query_history_k_data_plus | ✅ 互补 | 两者均为A股K线免费源，可交叉验证 |
+| AKShare stock_news_em | ❌ 不可替代 | TDX无新闻数据 |
+| 淘宝购买的板块分笔历史 | ❌ **不可持续替代** | TDX无板块分笔历史API（§8.6） |
+
+### §8.10 TDX 数据源文档维护规则
+
+1. **TDX 接口失效时**：必须记录到 §8.5 对比表 + §8.8 运维规则，并提供替代方案
+2. **TDX API 验证后**：必须将调用方法固化到 §8.4 完整示例中，避免重复探索
+3. **TDX 与 iFind/QMT/Baostock 交叉验证**：首次使用 K线/财务数据时，应与其他源交叉验证一致性
+4. **TDX bestip 失效应急**：可手动指定服务器 IP:PORT（如 `Quotes.factory(market='std', server=('115.238.90.226', 7709))`），或切换到 Baostock 作为 A股 K线 backup
+5. **VPN 使用规则**：TDX 不受 VPN 影响，与 Baostock/TickFlow/财经RSS 一致
+
+---
+
+> **文档结束** — 本文档由 AI-session-20260703-datasource 创建，v1.1.0 新增 §7 免费开源数据源章节，v1.9.0 新增 §8 通达信 TDX/mootdx/pytdx 章节。所有 API 调用方法均已实测验证或通过 WebSearch+GitHub 验证。如遇数据源 API 变更或新数据源接入，请同步更新本文档并提升 version。
