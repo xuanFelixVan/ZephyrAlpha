@@ -4500,6 +4500,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=22(API契约一致性需统一接口定义)
 > **第38轮修复状态（2026-07-05）**：FIXED=2(5.143.3 batch_orchestrator移除BatchOrchestratorProtocol显式继承+移除未使用导入 / 5.143.5 factor/__init__.py补充__all__声明的FactorBase/FactorMeta/FactorRegistry/autodiscover_factors导入), DRIFTED=1(5.143.4 intent_parser只有一份文件在governance/persistence/,注册表说的两个副本路径均不存在), NOT_NEEDED=2(5.143.21 risk_manager.snapshot注解合理[raise NotImplementedError描述将来返回类型] + 5.143.22 next_seq namespace:Any符合Protocol整体Any类型策略[line 25注释]), DEFERRED=17(5.143.1 generate_target_weights LSP违规需重写子类签名 + 5.143.2 Protocol实例方法vs classmethod需改调用方 + 5.143.6 FactorBase factor/base.py与factor/factor_base.py两份签名冲突需统一[governance/base.py已改shim] + 5.143.20 ComplianceManagerBase无子类实现需确认 + MEDIUM 13个未列具体条目需逐条审查). 维度5.143全部清零.
+> **第44轮修复状态（2026-07-06）**：FIXED=2(5.143.2 LLMGatewayProtocol 4个方法加@classmethod声明匹配实现 / 5.143.6 factor/base.py改为re-export shim from factor_base.py + governance/base.py SSoT改为factor_base.py,消除3份FactorBase签名冲突), DEFERRED=15(5.143.1 generate_target_weights LSP违规[基类dict[str,float] vs 子类list[Order]返回类型+参数列表脱钩,需设计决策统一契约语义] + 5.143.20 ComplianceManagerBase无子类实现[OCP扩展点待实现] + 13 MEDIUM未列具体条目需逐条审查), STILL_VALID=0. 维度5.143剩余15项DEFERRED属API契约统一专项工程.
 
 审查接口定义与实现不匹配、抽象方法未实现、Protocol未遵守、参数签名漂移、返回值契约违反、LSP违规、SSoT重复与注册表分裂等问题。
 

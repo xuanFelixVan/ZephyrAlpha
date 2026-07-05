@@ -69,8 +69,11 @@ class LLMGatewayProtocol(Protocol):
     消费方通过此 Protocol 类型注解，运行时通过 ServiceRegistry/工厂获取具体实例。
     """
 
+    # 5.143.2 修复: Protocol 声明为 classmethod 以匹配实现 (LLMGateway 全部用 @classmethod),
+    # 原声明为实例方法 (def call(self, ...)) 导致 runtime_checkable isinstance 检查失效
+    @classmethod
     def call(
-        self,
+        cls,
         messages: list[dict[str, str]],
         *,
         provider: str = "deepseek",
@@ -82,15 +85,18 @@ class LLMGatewayProtocol(Protocol):
         """发送消息到 LLM，返回响应。支持降级链自动切换 provider。"""
         ...
 
-    def route(self, skill_id: str, model_hint: str | None = None) -> dict[str, Any]:
+    @classmethod
+    def route(cls, skill_id: str, model_hint: str | None = None) -> dict[str, Any]:
         """根据 skill_id 和模型提示，返回路由信息。"""
         ...
 
-    def list_providers(self) -> list[str]:
+    @classmethod
+    def list_providers(cls) -> list[str]:
         """列出所有可用的 LLM provider 名称。"""
         ...
 
-    def get_provider_config(self, provider: str) -> ProviderConfig | None:
+    @classmethod
+    def get_provider_config(cls, provider: str) -> ProviderConfig | None:
         """获取指定 provider 的配置。"""
         ...
 
