@@ -8231,6 +8231,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.149 线程安全集合使用（25个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=25(线程安全集合使用需改用concurrent.futures.Queue等)
+> **第34轮修复状态（2026-07-05，Batch 45）**：FIXED=0, DRIFTED=7(5.149.3,4 event_bus.py EventBus类已从生产代码删除 + 5.149.8 graceful_shutdown.py文件已删除 + 5.149.10 config_reload_semantic.py文件已删除 + 5.149.14 trace_decorator.py已在Phase 2 P2修复 + 5.149.15 cold_start.py已在Phase 2 P2修复 + 5.149.23 layer_router.py文件不存在), DEFERRED=18(5.149.1,2 drift_infrastructure模块级dict + 5.149.5 skill_prompt_cache类级_cache + 5.149.6 pipeline_orchestrator _metrics/_latency_samples + 5.149.7 agent_quality无锁 + 5.149.9 backpressure_manager锁不一致 + 5.149.11 hook_dispatcher append与迭代竞态 + 5.149.12 metrics_bridge无锁单例 + 5.149.13 context_evictor无锁单例 + 5.149.16 local_model_scheduler Queue.qsize + 5.149.17 resource_aware_pool私有_work_queue + 5.149.18 git_commit_gateway os.environ + 5.149.19 registry无锁 + 5.149.20 circuit_breaker模块级REGISTRY + 5.149.21 bm25_index索引竞态 + 5.149.22 retrieval_feedback计数器 + 5.149.24 agent_orchestrator整体替换 + 5.149.25 PatternRegistry — 并发安全集合加锁属专项工程,需统一锁层次设计与死锁回归测试), 机械项已清零
 
 审查dict/list/set在多线程环境下的非原子操作、check-then-act竞态、Queue使用错误、collections误用等问题。
 
