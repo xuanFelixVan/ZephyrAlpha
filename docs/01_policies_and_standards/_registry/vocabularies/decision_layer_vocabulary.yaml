@@ -1,0 +1,87 @@
+# [A_config] module_id=CFG-decision_layer_vocabulary | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §decision-graph
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# decision_layer 受控词表
+# ZephyrAlpha 决策流图层级归属唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-07-05
+# 变更历史：
+#   v1.0.0 (2026-07-05): 初版，10 值（L0/L1/L2A/L2B/L2C/L2D/L3/L4/L5/L6）
+#
+# SSoT 链路（自顶向下）：
+#   - YAML 真源：architecture_model/domain/decision_graph_model.yaml 的 layers 定义
+#   - DB 真源：PostgreSQL decision_layers 表 layer_id 字段
+#   - 本词表：人类可读视图，与 DB 合法值集合保持一致
+#
+# 与 depgraph layer 的区别：
+#   - depgraph layer（4值 L0_infrastructure~L3_application）是架构物理分层
+#   - decision_layer（10值 L0~L6）是决策流水线逻辑分层
+#   - 两者正交：一个决策层可以跨多个架构层
+#
+# 对标标准：
+#   - DMN DRD：Decision 层级
+#   - QuantConnect Lean：5层 Algorithm Framework
+#   - A1 交易决策架构 v9.0：L0-L6 流水线
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-DEC-LAYER
+version: "1.0.0"
+title: "decision_layer 受控词表"
+status: active
+vocabulary_name: decision_layer
+total_values: 10
+depends_on:
+  - target: architecture_model/domain/decision_graph_model.yaml
+    at: "layers 定义"
+    why: "决策层定义真源"
+
+values:
+  - value: L0
+    definition: "数据接入与预处理层——多源行情数据标准化+持久化+质量门禁"
+    ai_keywords: ["数据接入", "data ingestion", "L0"]
+
+  - value: L1
+    definition: "因子计算层——因子工厂全生命周期管理+盘前全量/盘中增量双模计算"
+    ai_keywords: ["因子计算", "factor calc", "L1"]
+
+  - value: L2A
+    definition: "信号层——信号工厂+多策略投票+密度预测+时序增强"
+    ai_keywords: ["信号", "signal", "L2A"]
+
+  - value: L2B
+    definition: "主力行为层——六阶段识别+庄家画像+群体博弈模拟"
+    ai_keywords: ["主力行为", "main force", "L2B"]
+
+  - value: L2C
+    definition: "市场状态与大盘预测层——3×3矩阵+8态走势+体制转换检测"
+    ai_keywords: ["大盘预测", "market state", "L2C"]
+
+  - value: L2D
+    definition: "知识图谱与因果推演层——因果传导+GNN+Causal ML"
+    ai_keywords: ["因果推演", "causal inference", "L2D"]
+
+  - value: L3
+    definition: "策略组合层——多策略信号合成+资本分配+元策略路由"
+    ai_keywords: ["策略组合", "portfolio", "L3"]
+
+  - value: L4
+    definition: "风控层——Pre/Post-Trade风控+Kill Switch+止损"
+    ai_keywords: ["风控", "risk control", "L4"]
+
+  - value: L5
+    definition: "学习层——7阶段学习流水线+模块工厂+知识采集"
+    ai_keywords: ["学习", "learning", "L5"]
+
+  - value: L6
+    definition: "自评估层——LLM自评估+多模态推理+零幻觉锚定"
+    ai_keywords: ["自评估", "self evaluation", "L6"]
+
+deprecated_values: []

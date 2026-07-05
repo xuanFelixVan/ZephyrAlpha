@@ -376,6 +376,7 @@ def session_worktree_commit(
     message: str,
     project_root: str | Path | None = None,
     allow_overlap: bool = False,
+    allow_promote: bool = False,
 ) -> dict:
     """在 worktree 内提交修改（直接 git add + commit，绕过 GitCommitGateway）。
 
@@ -407,6 +408,9 @@ def session_worktree_commit(
         project_root: 项目根目录（默认 REPO_ROOT）。
         allow_overlap: True 时跳过 HELD-OVERLAP 检查（逃生通道，对标 GitCommitGateway
             的 ``--allow-overlap``）。默认 False（硬阻断）。
+        allow_promote: True 时允许新增文件进入永久区（对标 GitCommitGateway 的
+            ``allow_promote``）。用于 YAML 真源/规则/词表等合法永久文件准入。
+            默认 False（FILE-PLACEMENT-TTL gate 阻断永久区新文件）。
 
     Returns:
         {
@@ -664,7 +668,8 @@ def session_worktree_commit(
         try:
             _staged_abs = [str((root / rf).resolve()) for rf in rel_files]
             _gate_results = _gw._gate_registry.check_all(
-                _gw, _staged_abs, session_id=session_id
+                _gw, _staged_abs, session_id=session_id,
+                allow_promote=allow_promote,
             )
         finally:
             _gw._run_git = _orig_run_git

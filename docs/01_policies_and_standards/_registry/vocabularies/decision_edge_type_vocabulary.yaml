@@ -1,0 +1,58 @@
+# [A_config] module_id=CFG-decision_edge_type_vocabulary | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §decision-graph
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# decision_edge_type 受控词表
+# ZephyrAlpha 决策流图边类型唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-07-05
+# 变更历史：
+#   v1.0.0 (2026-07-05): 初版，4 值（triggering/informing/constraining/approving）
+#
+# SSoT 链路（自顶向下）：
+#   - YAML 真源：architecture_model/domain/decision_graph_model.yaml 的 edge_types 定义
+#   - DB 真源：PostgreSQL decision_edges 表 edge_type 字段 CHECK 约束
+#   - 本词表：人类可读视图，与 DB 合法值集合保持一致
+#
+# 对标标准：
+#   - MARIA OS Evidence Graph：4类 typed causal edges (T/I/C/A)
+#   - DMN DRD：Information Flow
+#   - OpenLineage：RunEvent 依赖关系
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-DEC-EDGE
+version: "1.0.0"
+title: "decision_edge_type 受控词表"
+status: active
+vocabulary_name: decision_edge_type
+total_values: 4
+depends_on:
+  - target: architecture_model/domain/decision_graph_model.yaml
+    at: "edge_types 定义"
+    why: "决策边类型定义真源"
+
+values:
+  - value: triggering
+    definition: "触发边——u 直接触发 v 的创建（如：风控 breach 触发再平衡）"
+    ai_keywords: ["触发", "triggering", "T"]
+
+  - value: informing
+    definition: "数据流入边——u 的输出是 v 的输入数据，但未直接触发 v（如：行情评估 informing 仓位决策）"
+    ai_keywords: ["数据流入", "informing", "I"]
+
+  - value: constraining
+    definition: "约束边——u 施加约束限制 v 的行动空间（如：合规策略 constraining 交易决策的可选标的）"
+    ai_keywords: ["约束", "constraining", "C"]
+
+  - value: approving
+    definition: "审批边——u 是人或系统审批，授权 v 继续（如：风控经理审批 approving 例外交易）"
+    ai_keywords: ["审批", "approving", "A"]
+
+deprecated_values: []

@@ -1,0 +1,323 @@
+# [A_config] module_id=CFG-decision_graph_model | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §decision-graph
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# decision_graph_model.yaml — 决策流图架构机器真源
+#
+# 定位：ZephyrAlpha architecture_model 的 decision-graph 分区
+# 借鉴：MARIA OS Evidence Graph（4类typed causal edges）+ DMN DRD（节点三分类）
+#       + QuantConnect Lean（5层节点类型）+ OpenLineage Facet（可扩展元数据）
+#
+# SSoT 链路（自顶向下）：
+#   - YAML 真源：本文件（机器可读，规则数据唯一真源）
+#   - DB 缓存：PostgreSQL decision_* 表（通过 sync 脚本单向同步，只读缓存）
+#   - MD 视图：docs/02_enterprise_architecture/06_decision_architecture/（人类可读，自动生成）
+#
+# 与 depgraph 的关系：
+#   - 同一个 PostgreSQL 数据库，不同的表（decision_* 前缀）
+#   - 通过 decision_nodes.module_id 关联 depgraph.nodes.blueprint_id
+#   - 三张图正交：depgraph（模块依赖）/ dataflowgraph（数据流）/ decisiongraph（决策流）
+#
+# 五条承重墙不变量（刻进 schema 的硬约束）：
+#   1. 风控一票否决：order 节点必须有至少一条 approving 入边来自 risk_check
+#   2. 信号仓位分离：signal 节点不能直接连 order 节点，必须经 portfolio_target
+#   3. DAG 无环：图中不能有环（反馈循环用螺旋结构——每次迭代创建新节点）
+#   4. 时间单调性：forall (u,v) in E, tau(u) <= tau(v)
+#   5. evidence_hash 必填：每个节点必须有证据哈希
+#
+# 变更历史：
+#   v1.0.0 (2026-07-05): 初版——4张表 + 10层 + 4轨 + 6节点类型 + 4边类型
+#
+
+schema_version: "1.0.0"
+doc_type: decision_graph_model
+module_id: CFG-decision_graph_model
+version: "1.0.0"
+title: "决策流图架构"
+status: active
+depends_on:
+  - target: src/zephyr/governance/depgraph_schema.py
+    at: "depgraph.nodes.blueprint_id 字段（通过 module_id 关联）"
+    why: "决策节点关联实现模块"
+  - target: architecture_model/domain/ddd_model.yaml
+    at: "Aggregate Root + Value Object"
+    why: "决策节点复用 DDD 聚合根"
+
+# === 四轨定义（借鉴 A1 四轨并行架构）===
+tracks:
+  - track_id: model_driven
+    track_name: 模型驱动轨
+    track_name_en: Model-Driven Track
+    description: >
+      传统 AI 信号链：L0数据→L1因子→L2-A信号→L2-B主力行为→L2-C大盘预测→L2-D因果推演→
+      L3策略组合→L4风控→L5学习→L6自评估
+    priority: 1
+    activation_condition: 正常运行时
+
+  - track_id: data_driven
+    track_name: 数据驱动轨
+    track_name_en: Data-Driven Track
+    description: >
+      端到端 DL 信号：原始数据→自动特征→买卖信号→密度预测PDF→AI信号融合→AI级决策信号
+    priority: 2
+    activation_condition: 模型驱动轨信号不足时补充
+
+  - track_id: human_override
+    track_name: 人工指令轨
+    track_name_en: Human Override Track
+    description: >
+      人工买入/卖出/调仓指令 + 人工风控干预 + 人工参数覆盖 + 指令审计链
+    priority: 3
+    activation_condition: 人工干预时
+
+  - track_id: emergency
+    track_name: 应急保命轨
+    track_name_en: Emergency Track
+    description: >
+      全系统降级到最简规则：L2失效→硬编码均线 / L3失效→固定比例仓位 / L4失效→硬编码10%上限 / 数据断流→仅执行卖出
+    priority: 4
+    activation_condition: 所有模型/策略/信号失效时
+
+# === 决策层定义（L0-L6，分层粒度）===
+# 粗粒度骨架，可下钻到细粒度子节点
+layers:
+  - layer_id: L0
+    layer_name: 数据接入与预处理层
+    layer_name_en: Data Ingestion & Preprocessing
+    track: model_driven
+    description: >
+      miniQMT + iFind + tushare + 另类数据源 → 事件总线 → 分层时序存储
+      产出：tick_data / ohlc_bar / factor_input_data
+    decision_frequency: tick
+    design_maturity: production
+    build_status: stable
+
+  - layer_id: L1
+    layer_name: 因子计算层
+    layer_name_en: Factor Calculation
+    track: model_driven
+    description: >
+      因子工厂全生命周期管理 → 盘前全量/盘中增量双模计算 → 因子池
+      产出：factor_value（带 PIT 合规标记）
+    decision_frequency: daily
+    design_maturity: production
+    build_status: stable
+
+  - layer_id: L2A
+    layer_name: 信号层
+    layer_name_en: Signal Generation
+    track: model_driven
+    description: >
+      信号工厂 → 多策略投票 → 收益率条件密度预测 → Transformer/Mamba时序增强 → 共形预测
+      产出：signal（Insight: direction/confidence/horizon）
+    decision_frequency: daily
+    design_maturity: design
+    build_status: planned
+
+  - layer_id: L2B
+    layer_name: 主力行为层
+    layer_name_en: Main Force Behavior Analysis
+    track: model_driven
+    description: >
+      六阶段识别 + 自迭代推演 + 庄家专项 + 群体博弈模拟
+      产出：main_force_signal（主力行为画像）
+    decision_frequency: daily
+    design_maturity: design
+    build_status: planned
+
+  - layer_id: L2C
+    layer_name: 市场状态与大盘预测层
+    layer_name_en: Market State & Index Prediction
+    track: model_driven
+    description: >
+      3×3矩阵 + 2叠加态 + 三层大盘预测 + T+1次日8态走势预测 + 体制转换检测(HMM/变点)
+      产出：market_state_prediction（大盘方向/波动率/体制判断）
+    decision_frequency: daily
+    design_maturity: design
+    build_status: planned
+
+  - layer_id: L2D
+    layer_name: 知识图谱与因果推演层
+    layer_name_en: Knowledge Graph & Causal Inference
+    track: model_driven
+    description: >
+      六类知识图谱 → 事件影响链分析 → 因果传导推演 → GNN股票关系建模 → Causal ML
+      产出：causal_inference_result（因果推断结果）
+    decision_frequency: daily
+    design_maturity: design
+    build_status: planned
+
+  - layer_id: L3
+    layer_name: 策略组合层
+    layer_name_en: Strategy & Portfolio Combination
+    track: model_driven
+    description: >
+      多策略信号合成 → 资本分配 → 元策略路由 → 组合构建
+      产出：portfolio_target（PortfolioTarget: 目标仓位）
+    decision_frequency: daily
+    design_maturity: design
+    build_status: planned
+
+  - layer_id: L4
+    layer_name: 风控层
+    layer_name_en: Risk Control
+    track: model_driven
+    description: >
+      Pre/Post-Trade 风控校验 + Kill Switch 熔断 + 止损评估
+      产出：risk_check（RiskDecision: approve/veto/adjust）
+    decision_frequency: realtime
+    design_maturity: production
+    build_status: stable
+
+  - layer_id: L5
+    layer_name: 学习层
+    layer_name_en: Learning & Optimization
+    track: model_driven
+    description: >
+      7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环
+      产出：learning_feedback（策略优化建议）
+    decision_frequency: weekly
+    design_maturity: design
+    build_status: planned
+
+  - layer_id: L6
+    layer_name: 自评估层
+    layer_name_en: Self Evaluation
+    track: model_driven
+    description: >
+      LLM 自评估(Judge+交叉验证) + 多模态金融推理 + VeNRA零幻觉锚定
+      产出：self_evaluation（决策质量评估）
+    decision_frequency: weekly
+    design_maturity: design
+    build_status: planned
+
+# === 决策节点类型定义（借鉴 QuantConnect Lean + DMN DRD）===
+node_types:
+  - type: signal
+    name: 信号节点
+    name_en: Signal Node
+    description: Alpha 层输出，含方向/置信度/时间跨度
+    output_contract: Insight
+    layer: L2A
+    cannot_directly_connect_to: [order]
+    dmn_equivalent: Decision
+
+  - type: portfolio_target
+    name: 组合目标节点
+    name_en: Portfolio Target Node
+    description: 组合构造层输出，目标仓位
+    output_contract: PortfolioTarget
+    layer: L3
+    cannot_directly_connect_to: []
+    dmn_equivalent: Decision
+
+  - type: risk_check
+    name: 风控检查节点
+    name_en: Risk Check Node
+    description: 风控层输出，含 approve/veto/adjust
+    output_contract: RiskDecision
+    layer: L4
+    cannot_directly_connect_to: []
+    dmn_equivalent: Decision
+    special_power: veto
+    veto_targets: [order, portfolio_target]
+
+  - type: order
+    name: 订单节点
+    name_en: Order Node
+    description: 执行层输出，订单指令
+    output_contract: Order
+    layer: L3
+    cannot_directly_connect_to: []
+    dmn_equivalent: Decision
+    requires_approving_from: [risk_check]
+
+  - type: compliance_check
+    name: 合规检查节点
+    name_en: Compliance Check Node
+    description: 合规层输出，合规审批
+    output_contract: ComplianceDecision
+    layer: L4
+    cannot_directly_connect_to: []
+    dmn_equivalent: Decision
+
+  - type: sell_decision
+    name: 卖出决策节点
+    name_en: Sell Decision Node
+    description: 卖出信号融合仲裁 + 卖出策略工厂
+    output_contract: SellDecision
+    layer: L2A
+    cannot_directly_connect_to: [order]
+    dmn_equivalent: Decision
+
+# === 决策边类型定义（借鉴 MARIA OS Evidence Graph 4类 typed causal edges）===
+edge_types:
+  - type: triggering
+    name: 触发边
+    name_en: Triggering Edge
+    description: u 直接触发 v 的创建（如：风控 breach 触发再平衡）
+    dmn_equivalent: Information Flow
+    example: risk_breach --triggering--> portfolio_rebalance
+
+  - type: informing
+    name: 数据流入边
+    name_en: Informing Edge
+    description: u 的输出是 v 的输入数据，但未直接触发 v（如：行情评估 informing 仓位决策）
+    dmn_equivalent: Information Flow
+    example: market_state --informing--> portfolio_target
+
+  - type: constraining
+    name: 约束边
+    name_en: Constraining Edge
+    description: u 施加约束限制 v 的行动空间（如：合规策略 constraining 交易决策的可选标的）
+    dmn_equivalent: Knowledge Source
+    example: compliance_policy --constraining--> order
+
+  - type: approving
+    name: 审批边
+    name_en: Approving Edge
+    description: u 是人或系统审批，授权 v 继续（如：风控经理审批 approving 例外交易）
+    dmn_equivalent: Knowledge Source
+    example: risk_check --approving--> order
+
+# === 不变量（五条承重墙）===
+invariants:
+  - id: DEC-INV-001
+    name: 风控一票否决
+    name_en: Risk Veto Mandatory
+    description: order 节点必须有至少一条 approving 入边来自 risk_check 节点
+    enforcement: DB trigger on decision_edges INSERT
+    violation_action: reject_insert
+
+  - id: DEC-INV-002
+    name: 信号仓位分离
+    name_en: Signal-Order Separation
+    description: signal 节点不能直接连 order 节点，必须经 portfolio_target 中转
+    enforcement: DB CHECK on decision_edges INSERT
+    violation_action: reject_insert
+
+  - id: DEC-INV-003
+    name: DAG 无环
+    name_en: DAG No-Cycle
+    description: 图中不能有环（反馈循环用螺旋结构——每次迭代创建新节点）
+    enforcement: Tarjan SCC algorithm (照搬 depgraph detect_cycles_tarjan)
+    violation_action: reject_graph
+
+  - id: DEC-INV-004
+    name: 时间单调性
+    name_en: Time Monotonicity
+    description: forall (u,v) in E, tau(u) <= tau(v)
+    enforcement: DB CHECK on decision_edges valid_since
+    violation_action: reject_insert
+
+  - id: DEC-INV-005
+    name: 证据哈希必填
+    name_en: Evidence Hash Required
+    description: 每个节点必须有 evidence_hash（决策时数据+模型版本哈希）
+    enforcement: DB NOT NULL on decision_nodes.evidence_hash
+    violation_action: reject_insert
