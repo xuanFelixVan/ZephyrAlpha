@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_assembler
 # [DOMAIN] D_AUTONOMY_CORE
@@ -40,7 +41,7 @@ from pydantic import BaseModel, Field
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
-from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry  # 5.12.10 修复：移除 if True: 死分支（条件import残留）
+from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry  # 5.12.10 修复：移除 if TYPE_CHECKING: 死分支（条件import残留）
 
 __all__ = [
     "AssembledContext",

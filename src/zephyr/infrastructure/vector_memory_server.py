@@ -37,9 +37,6 @@ import logging
 
 from typing import TYPE_CHECKING, Any
 
-if TYPE_CHECKING:
-    pass
-
 from zephyr.infrastructure._base_server import BaseMCPServer
 
 logger = logging.getLogger(__name__)

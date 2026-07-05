@@ -70,14 +70,12 @@ from __future__ import annotations
 
 import json
 import logging
-import statistics
 import time
 import uuid
 from collections import deque
 from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
-from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from typing import (
@@ -936,7 +934,4 @@ class AgentOrchestrator:
 
 
 # ---------------------------------------------------------------------------
-# 仅用于静态检查：statistics 被保留以便未来扩展 p50/p95；防止 ruff unused
-# ---------------------------------------------------------------------------
-_ = statistics
 _LITERAL_GUARD: Literal["orchestrator"] = "orchestrator"

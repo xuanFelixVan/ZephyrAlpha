@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import logging
 import threading
-from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 from zephyr.shared.events.event_bus import EventBus, EventType

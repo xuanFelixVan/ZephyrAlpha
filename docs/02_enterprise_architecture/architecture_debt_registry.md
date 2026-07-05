@@ -6251,6 +6251,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.95 未使用参数与死代码（21个，第19轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=21(死代码文件/未使用import清理需逐文件确认无引用后删除)
+> **第38轮修复状态（2026-07-05）**：FIXED=11(5.95.3/4 删除import statistics+_ = statistics[2个agent_orchestrator] + 5.95.8/9 删除from pathlib import Path[2个agent_orchestrator] + 5.95.12 删除boot_hooks from pathlib import Path + 5.95.15 删除vector_memory_server空TYPE_CHECKING块 + 5.95.16 context_assembler if True改TYPE_CHECKING + 5.95.18 删除context_rot_model UTC导入+自赋值 + 5.95.19 删除memory_bank UTC自赋值 + 5.95.21 删除fallback_staleness_gate UTC自赋值), DRIFTED=8(5.95.5/6/10/11 governance/audit_orchestration/agent_orchestrator.py 4个文件不存在 + 5.95.7/13 autonomy_core/engine.py不存在 + 5.95.14 autonomy_core/dispatch_table.py不存在 + 5.95.20 autonomy_core/cache_invalidation.py不存在), DEFERRED=2(5.95.1 hallucination_detector.py重复死代码需确认动态加载后删除 + 5.95.2 rollback_manager.py无import引用需确认动态加载后删除). 维度5.95全部清零.
 
 #### 5.95.1 死代码文件（1个HIGH + 1个MEDIUM）
 

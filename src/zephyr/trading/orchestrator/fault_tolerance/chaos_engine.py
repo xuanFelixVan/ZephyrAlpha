@@ -107,7 +107,6 @@ INJECTION_POINTS: list[dict[str, Any]] = [
 ]
 
 _ACTIVE_LATENCY_TIMERS: list[threading.Timer] = []
-_ORIGINAL_EXIT_CODE: int = 0
 
 
 def _cleanup_latency_timers() -> None:
