@@ -32,6 +32,8 @@ from dataclasses import dataclass
 from enum import Enum, IntEnum
 from typing import Any, Protocol, runtime_checkable
 
+from zephyr.governance.rule_enforcement.task_types import TaskStatus
+
 
 class AgentRole(IntEnum):
     """Agent role with arbitration priority (higher = more authority)."""
@@ -48,20 +50,6 @@ class AgentRole(IntEnum):
     def from_string(cls, s: str) -> AgentRole:
         mapping = {e.name.lower(): e for e in cls}
         return mapping.get(s.lower(), cls.OBSERVER)
-
-
-class TaskStatus(str, Enum):
-    """Multi-agent task status.
-
-    P2 修复（2026-07-05）：值已与 SSoT 对齐（zephyr.governance.rule_enforcement.task_types.TaskStatus）。
-    禁止在此重新定义状态值，新代码应直接导入 SSoT。
-    """
-
-    PENDING = "PENDING"
-    ASSIGNED = "ASSIGNED"
-    IN_PROGRESS = "IN_PROGRESS"
-    COMPLETED = "COMPLETED"
-    FAILED = "FAILED"
 
 
 class MergeStrategy(str, Enum):

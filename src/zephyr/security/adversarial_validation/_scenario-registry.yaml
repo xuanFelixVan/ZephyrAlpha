@@ -508,7 +508,7 @@ scenarios:
     tier: L2
     severity: high
     injection_vector: "circadian_scheduler_stale_recovery_disabled"
-    target_module: "boot_cron_jobs"
+    target_module: "auto_runtime_core"
     defense: "circadian_scheduler 已废除（2026-06-26），本攻击向量失效；Conductor.plan_cycle() 已事件驱动覆盖 recover_stale_claims"
     steady_state_verification: "N/A — circadian_scheduler task list 已不存在"
     status: deprecated
