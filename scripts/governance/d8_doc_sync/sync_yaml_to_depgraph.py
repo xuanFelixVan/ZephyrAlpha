@@ -1287,6 +1287,120 @@ def verify_readonly_table_comments(cur):
         print(f"\n[OK] S1.2 HB-001: {len(READONLY_TABLES)} 张 readonly 表 COMMENT 齐全且四要素完整")
 
 
+# ========== dataflowgraph 同步（ARCH-051） ==========
+
+
+def sync_dataflow_registry(cur):
+    """#175: dataflowgraph 数据流图注册表 → dataflow_datasets/jobs/edges 表（ARCH-051）
+
+    SSoT: docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml
+    ARCH-051 裁定建立，治本"跨层数据流无中央真源"的病根。
+    与 depgraph 同库不同表（表名前缀 dataflow_*），共享连接配置。
+
+    同步内容：
+    - jobs → dataflow_jobs（13个核心数据变换作业）
+    - datasets → dataflow_datasets（14个核心数据集）
+    - edges → dataflow_edges（由 produced_by_job/consumed_by_jobs 派生：push/pull）
+    """
+    # 显式 import dataflowgraph_schema（声明依赖关系，满足 ORPHAN-MODULE 门禁）
+    from zephyr.governance.persistence.dataflowgraph_schema import _DATAFLOW_CORE_TABLES  # noqa: F401
+    print("同步 #175: dataflowgraph 数据流图 → dataflow_datasets/jobs/edges...")
+    data = load_yaml("_registry/catalogs/dataflow_graph_registry.yaml")
+    if not data:
+        print("  跳过: dataflow_graph_registry.yaml 不存在或为空")
+        return
+
+    from datetime import datetime, UTC
+    now_iso = datetime.now(UTC).isoformat(timespec="seconds")
+
+    # --- 清空表（DELETE + INSERT 模式，与 sync_blueprint_links 一致）---
+    # 先 edges（FK 逻辑依赖），再 datasets/jobs
+    cur.execute("DELETE FROM dataflow_edges")
+    cur.execute("DELETE FROM dataflow_datasets")
+    cur.execute("DELETE FROM dataflow_jobs")
+
+    # --- 同步 jobs（先 jobs，因为 datasets 的 produced_by_job 引用 job_name）---
+    jobs = data.get("jobs", [])
+    job_name_to_id: dict[str, int] = {}  # job_name -> job_id（用于派生 edges）
+    synced_jobs = 0
+    for j in jobs:
+        job_name = j.get("job_name", "")
+        if not job_name:
+            continue
+        cur.execute("""
+            INSERT INTO dataflow_jobs
+                (job_name, entity_type, scope, source_code_ref, trigger_type,
+                 run_context, pit_relevance, description, design_maturity,
+                 build_status, last_updated)
+            VALUES (%s, 'job', %s, %s, %s, %s, %s, %s, 'production', 'generated', %s)
+            RETURNING job_id
+        """, (
+            job_name, j.get("scope", "production"),
+            j.get("source_code_ref"), j.get("trigger_type"),
+            j.get("run_context"), j.get("pit_relevance", "strict"),
+            j.get("description"), now_iso,
+        ))
+        job_id = cur.fetchone()[0]
+        job_name_to_id[job_name] = job_id
+        synced_jobs += 1
+
+    # --- 同步 datasets ---
+    datasets = data.get("datasets", [])
+    dataset_name_to_id: dict[str, int] = {}  # entity_name -> dataset_id（用于派生 edges）
+    synced_datasets = 0
+    for d in datasets:
+        entity_name = d.get("entity_name", "")
+        if not entity_name:
+            continue
+        cur.execute("""
+            INSERT INTO dataflow_datasets
+                (entity_name, entity_type, scope, contract_ref, physical_type,
+                 produced_by_job, domain_id, design_maturity, build_status,
+                 pit_policy, format_summary, valid_since, last_updated)
+            VALUES (%s, 'dataset', %s, %s, %s, %s, %s, 'production', 'generated', %s, %s, %s, %s)
+            RETURNING dataset_id
+        """, (
+            entity_name, d.get("scope", "production"),
+            d.get("contract_ref"), d.get("physical_type"),
+            d.get("produced_by_job"), d.get("domain_id"),
+            d.get("pit_policy", "strict"), d.get("format_summary"),
+            d.get("valid_since"), now_iso,
+        ))
+        dataset_id = cur.fetchone()[0]
+        dataset_name_to_id[entity_name] = dataset_id
+        synced_datasets += 1
+
+    # --- 派生 edges ---
+    # 1. Job→Dataset 产出（produced_by_job）→ edge_type=push
+    synced_edges = 0
+    for d in datasets:
+        entity_name = d.get("entity_name", "")
+        produced_by = d.get("produced_by_job")
+        if entity_name in dataset_name_to_id and produced_by in job_name_to_id:
+            cur.execute("""
+                INSERT INTO dataflow_edges
+                    (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
+                VALUES (%s, %s, 'job', 'dataset', 'push', 'production', %s)
+            """, (job_name_to_id[produced_by], dataset_name_to_id[entity_name], now_iso))
+            synced_edges += 1
+
+    # 2. Dataset→Job 消费（consumed_by_jobs）→ edge_type=pull
+    for d in datasets:
+        entity_name = d.get("entity_name", "")
+        consumed_by = d.get("consumed_by_jobs", []) or []
+        if entity_name in dataset_name_to_id:
+            for job_name in consumed_by:
+                if job_name in job_name_to_id:
+                    cur.execute("""
+                        INSERT INTO dataflow_edges
+                            (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
+                        VALUES (%s, %s, 'dataset', 'job', 'pull', 'production', %s)
+                    """, (dataset_name_to_id[entity_name], job_name_to_id[job_name], now_iso))
+                    synced_edges += 1
+
+    print(f"  同步 {synced_jobs} 个 Job, {synced_datasets} 个 Dataset, {synced_edges} 条 edges")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -1348,11 +1462,14 @@ def sync_all() -> bool:
         sync_domain_naming_rules(cur)  # #173
         sync_derived_identifier_registry(cur)  # #174 裁定#206 B-5/B-6 + #207 R3-4
 
+        # P6 优先级同步（ARCH-051 dataflowgraph 数据流图）
+        sync_dataflow_registry(cur)  # #175 ARCH-051 dataflowgraph（同库不同表）
+
         # 历史遗留清理：删除 sync 无法触及的 FK 违规孤立记录
         cleanup_legacy_fk_violations(cur)
 
         conn.commit()
-        print("\n[PASS] 19 项 YAML→DB 同步完成")
+        print("\n[PASS] 20 项 YAML→DB 同步完成")
 
         # S1.2: 验证 readonly 表 COMMENT（HB-001 table_comment_required）
         verify_readonly_table_comments(cur)

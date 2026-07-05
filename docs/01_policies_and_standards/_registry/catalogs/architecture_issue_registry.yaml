@@ -1305,3 +1305,120 @@ entries:
   status: decided
   created: '2026-07-05'
   last_updated: '2026-07-05'
+
+# --- #ARCH-051: dataflowgraph 数据流图架构建设（同库不同表 + Dataset/Job 双类型） ---
+- issue_id: '#ARCH-051'
+  title: dataflowgraph 数据流图架构建设——与 depgraph 正交的第三维度全景图（同库不同表，Dataset/Job 双类型，设计态+运营态）
+  severity: P1高
+  adjudication: |
+    ARCH-051 裁定：建设 dataflowgraph（数据流图）作为与 depgraph（依赖图）正交的第三维度全景图。
+    治本"跨层数据流无中央真源、靠 cross_layer_contracts.yaml flow 字段（描述文本）+ 散落各模块的隐式假设推断"的病根。
+
+    【病根（第一性原理推导）】
+    症状：用户询问"数据流向怎么样？不会产生数据循环或数据错位？"时，无单一权威答案。
+    Why-1：为什么无答案？因为项目中不存在 dataflowgraph/DataFlowGraph 任何形式（全项目零匹配）。
+    Why-2：为什么不复用 depgraph？因为 depgraph 是模块依赖图（node=file/module，edge=import/contract），
+           语义是"谁依赖谁"，不是"数据从哪流到哪"。两者是正交维度，合并会导致语义混淆。
+    Why-3：为什么不复用 cross_layer_contracts.yaml？因为该文件是契约定义（schema 层），
+           flow 字段是描述文本（如"Data Source → Alpha Factor"），不是可查询的结构化数据流图。
+    Why-4：为什么不靠 AST 扫描代码推断？因为静态扫描只能得到"显式调用"，得不到运行时数据流
+           （事件驱动/异步/动态分发），且无法表达 PIT 策略、回测内部数据流等设计态语义。
+    Why-5（根因）：数据流是无中央真源的隐式知识，散落在 cross_layer_contracts.yaml / 各模块文档 /
+           AI 推断中。100% AI 开发模式下，AI 每次推断数据流=幻觉温床（与 depgraph 缺失时的幻觉同构）。
+
+    【7项架构裁定（治本方案）】
+    裁定1：建设 dataflowgraph 作为第三维度全景图
+      - depgraph（依赖图，已有）：node=file/module, edge=import/contract, 语义="谁依赖谁"
+      - dataflowgraph（数据流图，本ARCH新建）：node=Dataset/Job, edge=data_flow, 语义="数据从哪流到哪"
+      - decisiongraph（决策流图，另一AI对话建设）：node=decision_point, edge=decision_flow, 语义="决策如何触发"
+      - 三图正交，通过 module_id 跨图关联（Job 节点的 source_code_ref 引用 depgraph 模块 path）
+      - 不合并，各自独立演化
+
+    裁定2：同库不同表（物理隔离方案）
+      - dataflowgraph 6张表与 depgraph 25张表同在 PostgreSQL depgraph 数据库
+      - 表名前缀 dataflow_*（dataflow_datasets/dataflow_jobs/dataflow_runs/dataflow_edges/
+        dataflow_datasets_metadata/dataflow_jobs_metadata）
+      - 共享连接配置（config/.env.postgres + get_depgraph_pg_connection() 模式）
+      - 不共享 schema 结构（无 FK 跨图引用，避免耦合）
+      - 写入互斥锁 key 不同：depgraph=424242, dataflowgraph=424243（避免互锁）
+
+    裁定3：Dataset + Job 双类型节点（对齐 OpenLineage/Marquez 业界标准）
+      - Dataset 节点：数据集（如 market_data.tick, factor.value_factor, backtest.tick_event）
+        字段：entity_name, scope(production/backtest_internal), contract_ref(CTR-ID),
+              physical_type, produced_by_job, domain_id, pit_policy, format_summary
+      - Job 节点：数据变换作业（如 ingest_ifind_kline, compute_value_factor, replay_ticks）
+        字段：job_name, source_code_ref(depgraph path), trigger_type, run_context,
+              inputs[], outputs[], pit_relevance
+      - 不设 Module 节点（模块已在 depgraph，通过 source_code_ref 关联）
+      - Run 节点：Job 的运行实例（run_type: daily_backtest/minute_backtest/tick_backtest/production_run）
+
+    裁定4：回测内部数据流纳入（通过 scope 字段区分）
+      - Dataset.scope = production：生产数据流（CTR-001~006 契约数据）
+      - Dataset.scope = backtest_internal：回测内部数据流（TickEvent/target_weights/fills/nav_series）
+      - 回测内部 Dataset 的 contract_ref 为 NULL，physical_type 指向具体类（如 tick_replay.py::TickEvent）
+      - 满足用户需求"未来回测也会有多个回测（日线回测分析大盘，分钟级回测找买卖点）"
+        → Run.run_type 支持多回测类型枚举
+
+    裁定5：三阶段渐进扫描策略（声明式 → AST → 运行时）
+      - Phase 1（本批）：声明式 YAML 真源（dataflow_graph_registry.yaml），人工声明 14 Dataset + 13 Job
+      - Phase 2（后续）：AST 扫描器，自动发现显式数据流（函数签名/contract 引用）
+      - Phase 3（后续）：运行时 instrumentation，捕获事件驱动/异步/动态分发数据流
+      - 三阶段渐进，不要求一次性完整（与 depgraph generate→apply→sync 三写模式一致）
+
+    裁定6：复用 cross_layer_contracts.yaml，不重新定义契约
+      - Dataset 节点的 contract_ref 字段引用 CTR-ID（如 CTR-001 NormalizedMarketData）
+      - 不破坏 frozen 契约（CTR-001~004 frozen: true）
+      - flow 字段（描述文本如"Data Source → Alpha Factor"）保留为派生属性，
+        dataflowgraph 用独立 edge_type（push/pull/sync/async/event_driven）表达结构化数据流
+      - 治本 cross_layer_contracts.yaml 未同步到 depgraph 的 contracts 表（schema_definition 列为空）
+        → Phase 2 补 sync_contracts_to_depgraph()
+
+    裁定7：设计态+运营态双态（对齐 depgraph 单表双态模式）
+      - design_maturity 字段：design(设计态) / production(运营态) / prototype(原型)
+      - build_status 字段：planned / generated / testing / stable / deprecated
+      - 设计态=人工 curated 声明，运营态=扫描器/runtime 产出的真实快照
+      - dataflow_datasets_metadata / dataflow_jobs_metadata 表保护人工 curated 字段
+        （对齐 depgraph 裁定#209 Stage 2 字段角色分离模式）
+
+    【业界对标】
+    - OpenLineage：RunEvent(运行态) + JobEvent/DatasetEvent(设计态) 三事件模型，业界标准
+    - Marquez：PostgreSQL 后端，Dataset/Job/Run 三实体，不可变版本化
+    - ZephyrAlpha独创：PG + AI 自动维护 + 门禁校验（depgraph 模式自然延伸，dataflowgraph 同模式）
+
+    【PIT 合规优先级】
+    dataflowgraph 定为 P1.5（中高位），FeatureStore 落地前必须建好骨架。
+    Two Sigma 事件警示：4.5年未发现的模型操纵导致$165M损失——证明独立审计轨迹的必要性。
+    dataflowgraph 为 PIT 审计提供"数据从哪来、经过什么变换、到哪去"的完整轨迹。
+
+    【关联】
+    - 裁定#208 R6——议题登记机制建立（本 ARCH 遵循铁律#6 登记）
+    - depgraph_schema.py——PG 连接配置模式参考（get_depgraph_pg_connection()）
+    - cross_layer_contracts.yaml——CTR-001~006 契约真源（Dataset.contract_ref 引用）
+    - apply_depgraph.py——CLI 风格参考（apply_dataflowgraph.py 对齐）
+    - sync_yaml_to_depgraph.py——sync 模式参考（sync_dataflow_registry() 扩展）
+    - 裁定#209 Stage 2——字段角色分离模式（nodes_metadata 模式复用）
+  fix_phase: |
+    Phase 1 全部施工（2026-07-06）：
+    (a) ARCH-051 条目登记（本条目）
+    (b) dataflow_graph_registry.yaml YAML 真源（14 Dataset + 13 Job）
+        - 生产 Dataset：DS-001~010（market_data.tick/factor/signal/risk/order/fill/position/backtest.result）
+        - 回测 Dataset：DS-011~014（tick_event/target_weights/fills/nav_series，scope=backtest_internal）
+        - 生产 Job：JOB-001~008（ingest/aggregate/compute/synthesize/check/generate/execute）
+        - 回测 Job：JOB-009~013（replay/run_event_driven/match/update_portfolio/calc_metrics）
+    (c) 03_create_dataflow_schema.sql PG 表 DDL（6张表）
+        - dataflow_datasets / dataflow_jobs / dataflow_runs / dataflow_edges
+        - dataflow_datasets_metadata / dataflow_jobs_metadata（字段角色分离）
+    (d) dataflowgraph_schema.py Python DDL + 连接入口（get_dataflowgraph_pg_connection，复用 _PG_ENV_PATH）
+    (e) apply_dataflowgraph.py CLI 修改入口（--add-design-dataset/--add-design-job/--add-design-edge/--list-ops）
+    (f) sync_yaml_to_depgraph.py 扩展 sync_dataflow_registry()（YAML→PG 只读缓存）
+    (g) generate_dataflow_diagram.py Mermaid 文档生成器（输出 docs/02_enterprise_architecture/generated/dataflows/）
+    (h) capability_canonical_file_registry.yaml 登记 dataflow_graph 能力
+    Phase 2 TODO（后续专项工程）：
+    - AST 扫描器（自动发现显式数据流）
+    - 运行时 instrumentation（捕获事件驱动/异步数据流）
+    - sync_contracts_to_depgraph()（治本 contracts 表 schema_definition 为空）
+    - 两套 EventType 统一（shared/events/ vs shared/infra/observer.py）
+  status: decided
+  related_adjudication: '#208'
+  created: '2026-07-06'
+  last_updated: '2026-07-06'

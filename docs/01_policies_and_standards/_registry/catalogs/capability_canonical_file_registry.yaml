@@ -2862,6 +2862,172 @@ capabilities:
       原 D_FUNDAMENTAL_SIGNAL 迁移至 D_SIGQC）。契约对齐 CTR-ERR-003。
       signal_fundamental/gen/__init__.py + signal_fundamental/__init__.py 跨域 re-export 向后兼容。
 
+  # --------------------------------------------------------------------------
+  # dataflowgraph 数据流图能力（ARCH-051，2026-07-06 新增）
+  # --------------------------------------------------------------------------
+  - capability_id: dataflow_graph_schema_management
+    canonical_override: src/zephyr/governance/persistence/dataflowgraph_schema.py
+    aliases:
+      - dataflowgraph_schema
+      - get_dataflowgraph_pg_connection
+      - dataflow_pg_connection
+      - init_dataflow_db
+      - dataflowgraph_ddl
+    description: >-
+      dataflowgraph（数据流图）PostgreSQL schema 管理与连接入口（ARCH-051，2026-07-06）。
+      canonical = src/zephyr/governance/persistence/dataflowgraph_schema.py。
+      与 depgraph 同库不同表（表名前缀 dataflow_*），共享 config/.env.postgres 配置
+      （复用 depgraph_schema._PG_ENV_PATH / _load_pg_config / _build_pg_dsn，配置真源唯一）。
+      连接入口独立：get_dataflowgraph_pg_connection()（与 depgraph 共享配置，但入口独立）。
+      写入互斥锁 key=424243（pg_advisory_lock，depgraph 用 424242，避免互锁）。
+      6张表：dataflow_datasets / dataflow_jobs / dataflow_runs / dataflow_edges /
+      dataflow_datasets_metadata / dataflow_jobs_metadata。
+      双态模式：design_maturity(design/production/prototype) + build_status(planned/generated/testing/stable/deprecated)。
+      解决发现性：新 AI 搜 "dataflowgraph/数据流图连接/dataflow schema" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止在别处新建 dataflowgraph 连接函数。
+    integrity_anchors:
+      - get_dataflowgraph_pg_connection  # PG 连接入口(删则 dataflowgraph 无连接)
+      - _DDL_DATAFLOW_ALL                # 全部 DDL 常量(篡改即 schema drift)
+      - _DATAFLOW_ADVISORY_LOCK_KEY      # 写入互斥锁 key=424243
+
+  # --------------------------------------------------------------------------
+  - capability_id: dataflow_graph_cli_modification
+    canonical_override: scripts/governance/apply_dataflowgraph.py
+    aliases:
+      - apply_dataflowgraph
+      - add_design_dataset
+      - add_design_job
+      - add_design_edge
+      - dataflowgraph_cli
+    description: >-
+      dataflowgraph 变更写入 CLI 工具（ARCH-051，2026-07-06）。
+      canonical = scripts/governance/apply_dataflowgraph.py（对齐 apply_depgraph.py 风格）。
+      命令：--add-design-dataset / --add-design-job / --add-design-edge /
+      --transition-build-status / --list-datasets / --list-jobs / --list-ops。
+      所有写入操作通过 pg_advisory_lock(424243) 互斥。
+      设计态门闸：--add-design-* 默认 design_maturity=design, build_status=planned。
+      解决发现性：新 AI 搜 "dataflowgraph CLI/新增 Dataset/新增 Job" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 CLI。
+    integrity_anchors:
+      - cmd_add_design_dataset       # 新增设计态 Dataset 命令
+      - cmd_add_design_job            # 新增设计态 Job 命令
+      - cmd_transition_build_status   # build_status 转换命令
+
+  # --------------------------------------------------------------------------
+  - capability_id: dataflow_graph_yaml_sync
+    canonical_override: scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+    aliases:
+      - sync_dataflow_registry
+      - dataflow_yaml_to_db_sync
+      - dataflow_graph_registry_sync
+    description: >-
+      dataflowgraph YAML→DB 同步能力（ARCH-051，2026-07-06）。
+      canonical = scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py 的 sync_dataflow_registry() 函数。
+      同步方向：dataflow_graph_registry.yaml → dataflow_* 表（单向，禁止反向）。
+      同步内容：datasets → dataflow_datasets / jobs → dataflow_jobs /
+      edges → dataflow_edges（由 produced_by_job/consumed_by_jobs 派生 push/pull 边）。
+      DELETE + INSERT 模式（与 sync_blueprint_links 一致），注册到 sync_all() P6 优先级。
+      解决发现性：新 AI 搜 "dataflowgraph sync/数据流图同步" 可定位真源。
+      解决防重建：sync 函数是唯一入口，禁止在其他脚本重建 dataflowgraph 同步逻辑。
+    integrity_anchors:
+      - sync_dataflow_registry  # YAML→DB 同步主函数(删则 dataflow_* 表不更新)
+
+  # --------------------------------------------------------------------------
+  - capability_id: dataflow_graph_documentation_generation
+    canonical_override: scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py
+    aliases:
+      - generate_dataflow_diagram
+      - dataflow_mermaid_generator
+      - dataflow_doc_generator
+    description: >-
+      dataflowgraph 文档生成器（Mermaid + Markdown，ARCH-051，2026-07-06）。
+      canonical = scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py。
+      从 dataflow_* 表读取数据，生成 Mermaid flowchart LR 图表（全景/生产/回测三视图）。
+      输出到 docs/02_enterprise_architecture/generated/dataflows/：
+      dataflow_overview.mmd / dataflow_production.mmd / dataflow_backtest.mmd / dataflow_index.md。
+      区分 scope（production=蓝色 / backtest_internal=橙色），Dataset 矩形 Job 圆角。
+      解决发现性：新 AI 搜 "数据流图生成/dataflow diagram/mermaid dataflowgraph" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类生成器。
+    integrity_anchors:
+      - _gen_mermaid      # Mermaid 图表生成函数(篡改即图表错乱)
+      - _gen_index_md     # 索引文档生成函数
+      - _fetch_dataflow_data  # PG 数据读取函数
+
+  # --------------------------------------------------------------------------
+  # decisiongraph 决策流图能力（TRAE-061，2026-07-06 新增）
+  # --------------------------------------------------------------------------
+  - capability_id: decisiongraph_schema_management
+    canonical_override: src/zephyr/governance/persistence/decisiongraph_schema.py
+    aliases:
+      - decisiongraph_schema
+      - get_decisiongraph_pg_connection
+      - decision_pg_connection
+      - init_decision_db
+      - decisiongraph_ddl
+    description: >-
+      decisiongraph（决策流图）PostgreSQL schema 管理与连接入口（TRAE-061，2026-07-06）。
+      canonical = src/zephyr/governance/persistence/decisiongraph_schema.py。
+      与 depgraph 同库不同表（表名前缀 decision_*），共享 config/.env.postgres 配置
+      （复用 depgraph_schema.get_depgraph_pg_connection()，配置真源唯一）。
+      连接入口：get_decisiongraph_pg_connection()（委托 depgraph 连接，无独立配置）。
+      4张表：decision_tracks / decision_layers / decision_nodes / decision_edges。
+      5索引 + 1触发器（DEC-INV-002 信号仓位分离强制）。
+      双态模式：design_maturity(design/production/prototype) + build_status(planned/generated/testing/stable/deprecated)。
+      五条承重墙不变量：DEC-INV-001~005（风险否决/信号订单分离/DAG无环/时间单调/证据哈希）。
+      解决发现性：新 AI 搜 "decisiongraph/决策流图连接/decision schema" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止在别处新建 decisiongraph 连接函数。
+    integrity_anchors:
+      - get_decisiongraph_pg_connection  # PG 连接入口(删则 decisiongraph 无连接)
+      - _DDL_DECISION_NODES               # decision_nodes DDL 常量(篡改即 schema drift)
+      - init_decision_db                  # 幂等验证函数(删则 schema 健康检查失效)
+
+  # --------------------------------------------------------------------------
+  - capability_id: decisiongraph_yaml_truth_source
+    canonical_override: architecture_model/domain/decision_graph_model.yaml
+    aliases:
+      - decision_graph_model
+      - decision_graph_yaml
+      - decisiongraph_model
+    description: >-
+      decisiongraph（决策流图）YAML 真源（TRAE-061，2026-07-06）。
+      canonical = architecture_model/domain/decision_graph_model.yaml。
+      定义 4 轨（model_driven/data_driven/human_override/emergency）+
+      10 层（L0-L6 含 L2A/L2B/L2C/L2D）+ 6 节点类型（signal/portfolio_target/
+      risk_check/order/compliance_check/sell_decision）+
+      4 边类型（triggering/informing/constraining/approving）+
+      5 承重墙不变量（DEC-INV-001~005）。
+      借鉴 MARIA OS Evidence Graph + DMN DRD + QuantConnect Lean Algorithm Framework。
+      与 depgraph 通过 module_id 关联，三张图正交（depgraph/dataflowgraph/decisiongraph）。
+      解决发现性：新 AI 搜 "决策流图/decision graph model/决策层" 可定位真源。
+      解决防重建：禁止在别处新建 decisiongraph YAML 真源。
+    integrity_anchors:
+      - tracks        # 4 轨定义(删则决策轨失效)
+      - layers        # 10 层定义(删则决策层失效)
+      - node_types    # 6 节点类型(删则节点分类失效)
+      - edge_types    # 4 边类型(删则因果边分类失效)
+      - invariants    # 5 承重墙不变量(删则约束失效)
+
+  # --------------------------------------------------------------------------
+  - capability_id: decisiongraph_vocabulary
+    canonical_override: docs/01_policies_and_standards/_registry/vocabularies/decision_layer_vocabulary.yaml
+    aliases:
+      - decision_layer_vocabulary
+      - decision_edge_type_vocabulary
+      - decision_layer_vocab
+      - decision_edge_vocab
+    description: >-
+      decisiongraph（决策流图）受控词表（TRAE-061，2026-07-06）。
+      canonical = docs/01_policies_and_standards/_registry/vocabularies/decision_layer_vocabulary.yaml。
+      两个词表文件：
+      (1) decision_layer_vocabulary.yaml — 10 值（L0/L1/L2A/L2B/L2C/L2D/L3/L4/L5/L6），
+          区别于 depgraph 的 layer（4 值物理层）和 architecture_layer_vocabulary。
+      (2) decision_edge_type_vocabulary.yaml — 4 值（triggering/informing/constraining/approving），
+          基于 MARIA OS Evidence Graph 4 typed causal edges。
+      解决发现性：新 AI 搜 "决策层词表/decision layer vocabulary/decision edge type" 可定位真源。
+      解决防重建：禁止在别处新建 decisiongraph 词表。
+    integrity_anchors:
+      - total_values  # 词表值数量(篡改即词表不完整)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -3335,6 +3501,42 @@ creation_tokens:
     token: "auto-backtest-result-repository-20260705"
     created_by: "session-sess-4172-20260705004316"
     capability: "backtest_result_repository"
+
+  # --- ARCH-051 dataflowgraph 数据流图架构（2026-07-06，session-sess-39852）---
+  - file: "src/zephyr/governance/persistence/dataflowgraph_schema.py"
+    token: "auto-dataflowgraph-schema-20260706"
+    created_by: "session-sess-39852-20260706041426"
+    capability: "dataflow_graph_schema_management"
+  - file: "scripts/governance/apply_dataflowgraph.py"
+    token: "auto-apply-dataflowgraph-20260706"
+    created_by: "session-sess-39852-20260706041426"
+    capability: "dataflow_graph_cli_modification"
+  - file: "scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py"
+    token: "auto-generate-dataflow-diagram-20260706"
+    created_by: "session-sess-39852-20260706041426"
+    capability: "dataflow_graph_documentation_generation"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml"
+    token: "auto-dataflow-graph-registry-20260706"
+    created_by: "session-sess-39852-20260706041426"
+    capability: "dataflow_graph_yaml_sync"
+
+  # --- TRAE-061 decisiongraph 决策流图架构（2026-07-06，session-sess-44736）---
+  - file: "src/zephyr/governance/persistence/decisiongraph_schema.py"
+    token: "auto-decisiongraph-schema-20260706"
+    created_by: "session-sess-44736-20260706042345"
+    capability: "decisiongraph_schema_management"
+  - file: "architecture_model/domain/decision_graph_model.yaml"
+    token: "auto-decision-graph-model-20260706"
+    created_by: "session-sess-44736-20260706042345"
+    capability: "decisiongraph_yaml_truth_source"
+  - file: "docs/01_policies_and_standards/_registry/vocabularies/decision_layer_vocabulary.yaml"
+    token: "auto-decision-layer-vocabulary-20260706"
+    created_by: "session-sess-44736-20260706042345"
+    capability: "decisiongraph_vocabulary"
+  - file: "docs/01_policies_and_standards/_registry/vocabularies/decision_edge_type_vocabulary.yaml"
+    token: "auto-decision-edge-type-vocabulary-20260706"
+    created_by: "session-sess-44736-20260706042345"
+    capability: "decisiongraph_vocabulary"
 
 # ============================================================================
 # 维护日志

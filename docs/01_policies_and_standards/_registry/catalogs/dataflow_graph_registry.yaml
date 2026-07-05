@@ -1,0 +1,446 @@
+# [A_config] module_id=CFG-dataflow-graph-registry | layer=config | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §dataflowgraph
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# arch_ref: #ARCH-051
+# --- 治理锚定结束 ---
+module_id: MOD-GOVERNANCE
+schema_version: "1.0"
+registry_id: REG-DATAFLOW-001
+name: 数据流图注册表
+description: >
+  数据流图（dataflowgraph）唯一真源（SSoT）。登记所有数据流节点（Dataset/Job）与边（data_flow）。
+  与 depgraph（依赖图）正交：depgraph 表达"谁依赖谁"（模块依赖），dataflowgraph 表达"数据从哪流到哪"（数据流向）。
+  通过 Job.source_code_ref 引用 depgraph 模块 path，建立跨图关联（不合并，各自独立演化）。
+  ARCH-051 裁定建立，治本"跨层数据流无中央真源、靠 cross_layer_contracts.yaml flow 字段+散落各模块隐式假设推断"的病根。
+  对齐业界标准 OpenLineage/Marquez（Dataset/Job/Run 三实体模型）。
+owner: MOD-INF-037
+tier: tier_1_governance
+status: active
+version: 1.0.0
+created: '2026-07-06'
+last_updated: '2026-07-06'
+related_arch: '#ARCH-051'
+
+# ============================================================
+# 数据流图模型说明（对齐 OpenLineage/Marquez）
+# ============================================================
+# Dataset：数据集节点（数据载体，如 market_data.tick）
+#   - scope=production：生产数据流（引用 CTR 契约）
+#   - scope=backtest_internal：回测内部数据流（physical_type 指向具体类，contract_ref=NULL）
+# Job：数据变换作业节点（数据加工，如 compute_value_factor）
+#   - source_code_ref 引用 depgraph 模块 path（跨图关联）
+# Run：Job 的运行实例（Phase 2 扩展，本文件不登记 Run，Run 由运行时生成）
+# Edge：数据流边（edge_type: push/pull/sync/async/event_driven）
+#   - Dataset→Job：消费（Job 读取 Dataset 作为输入）
+#   - Job→Dataset：产出（Job 写入 Dataset 作为输出）
+
+unique_key:
+- datasets.dataset_id
+- jobs.job_id
+
+# ============================================================
+# Dataset 节点 schema
+# ============================================================
+dataset_schema:
+  dataset_id: str          # DS-NNN
+  entity_name: str         # 命名空间.名称（如 market_data.tick）
+  entity_type: str         # dataset（固定值）
+  scope: str               # production | backtest_internal
+  contract_ref: str        # (可选) CTR-ID，回测内部为 NULL
+  physical_type: str       # 物理实现引用（如 src/.../market_data.py::NormalizedMarketData）
+  produced_by_job: str     # 产出该 Dataset 的 Job ID（JOB-NNN）
+  consumed_by_jobs: list   # 消费该 Dataset 的 Job ID 列表
+  domain_id: str           # 所属域（D_MKT_DATA/D_FACTOR/...）
+  pit_policy: str          # strict | loose | none（PIT 铁律适用性）
+  format_summary: str      # 数据格式摘要（人类可读）
+  valid_since: str          # 数据有效起始日期
+
+# ============================================================
+# Job 节点 schema
+# ============================================================
+job_schema:
+  job_id: str              # JOB-NNN
+  job_name: str            # 命名空间.名称（如 ingest.ifind_kline）
+  entity_type: str         # job（固定值）
+  scope: str               # production | backtest_internal
+  source_code_ref: str     # depgraph 模块 path（跨图关联，如 src/zephyr/data/ingest.py）
+  trigger_type: str        # event_driven | scheduled | manual | stream
+  run_context: str         # 运行上下文（如 production / backtest_daily / backtest_tick）
+  inputs: list             # 输入 Dataset ID 列表
+  outputs: list            # 输出 Dataset ID 列表
+  pit_relevance: str       # PIT 相关性（strict/loose/none）
+  description: str         # 作业描述
+
+# ============================================================
+# Datasets（14 个核心数据集）
+# ============================================================
+datasets:
+  # --- 生产数据流 Dataset（scope=production，引用 CTR 契约） ---
+
+  - dataset_id: DS-001
+    entity_name: market_data.tick
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-001
+    physical_type: src/zephyr/shared/contracts/market_data.py::NormalizedMarketData
+    produced_by_job: JOB-001
+    consumed_by_jobs: [JOB-002, JOB-009]
+    domain_id: D_MKT_DATA
+    pit_policy: strict
+    format_summary: "标准化Tick行情（symbol/timestamp/OHLCV/quality_score），CTR-001 NormalizedMarketData"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-002
+    entity_name: market_data.ohlc_bar
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-001
+    physical_type: src/zephyr/shared/contracts/market_data.py::NormalizedMarketData
+    produced_by_job: JOB-002
+    consumed_by_jobs: [JOB-003, JOB-004]
+    domain_id: D_MKT_DATA
+    pit_policy: strict
+    format_summary: "聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001 derived"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-003
+    entity_name: factor.value_factor
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-002
+    physical_type: src/zephyr/shared/contracts/factor_signal.py::FactorSignal
+    produced_by_job: JOB-003
+    consumed_by_jobs: [JOB-005]
+    domain_id: D_FACTOR
+    pit_policy: strict
+    format_summary: "价值因子信号（factor_id/symbol/as_of_date/raw_value/normalized_value），CTR-002 FactorSignal"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-004
+    entity_name: factor.momentum_20d
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-002
+    physical_type: src/zephyr/shared/contracts/factor_signal.py::FactorSignal
+    produced_by_job: JOB-004
+    consumed_by_jobs: [JOB-005]
+    domain_id: D_FACTOR
+    pit_policy: strict
+    format_summary: "20日动量因子信号（factor_id/symbol/as_of_date/raw_value/rank_pct），CTR-002 FactorSignal"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-005
+    entity_name: signal.composite
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-P1-015
+    physical_type: src/zephyr/shared/contracts/synthesized_signal.py::SynthesizedSignal
+    produced_by_job: JOB-005
+    consumed_by_jobs: [JOB-006, JOB-007]
+    domain_id: D_SIGLEGACY
+    pit_policy: strict
+    format_summary: "合成交易信号（多因子加权/截面排名/置信度），CTR-P1-015 SynthesizedSignal"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-006
+    entity_name: risk.limits
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-003
+    physical_type: src/zephyr/shared/contracts/risk_limits.py::RiskLimits
+    produced_by_job: JOB-006
+    consumed_by_jobs: [JOB-007]
+    domain_id: D_RISK
+    pit_policy: strict
+    format_summary: "风险限额（max_position/max_drawdown/exposure_limits），CTR-003 RiskLimits"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-007
+    entity_name: order.target
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-004
+    physical_type: src/zephyr/shared/contracts/order.py::Order
+    produced_by_job: JOB-007
+    consumed_by_jobs: [JOB-008]
+    domain_id: D_PF_CORE
+    pit_policy: strict
+    format_summary: "目标订单（symbol/side/quantity/price/order_type），CTR-004 Order"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-008
+    entity_name: fill.executed
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-005
+    physical_type: src/zephyr/shared/contracts/fill.py::Fill
+    produced_by_job: JOB-008
+    consumed_by_jobs: []
+    domain_id: D_EX_CORE
+    pit_policy: strict
+    format_summary: "成交回报（symbol/quantity/price/commission/timestamp），CTR-005 Fill"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-009
+    entity_name: position.snapshot
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-006
+    physical_type: src/zephyr/shared/contracts/position.py::PositionSnapshot
+    produced_by_job: JOB-008
+    consumed_by_jobs: []
+    domain_id: D_EX_CORE
+    pit_policy: strict
+    format_summary: "持仓快照（symbol/quantity/avg_cost/market_value/timestamp），CTR-006 PositionSnapshot"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-010
+    entity_name: backtest.result
+    entity_type: dataset
+    scope: production
+    contract_ref: CTR-P1-016
+    physical_type: src/zephyr/shared/contracts/backtest_result.py::BacktestResult
+    produced_by_job: JOB-013
+    consumed_by_jobs: []
+    domain_id: D_BACKTEST
+    pit_policy: strict
+    format_summary: "回测结果（nav_series/sharpe/max_drawdown/trades），CTR-P1-016 BacktestResult"
+    valid_since: '2020-01-01'
+
+  # --- 回测内部数据流 Dataset（scope=backtest_internal，contract_ref=NULL） ---
+
+  - dataset_id: DS-011
+    entity_name: backtest.tick_event
+    entity_type: dataset
+    scope: backtest_internal
+    contract_ref: null
+    physical_type: src/zephyr/backtest/tick_replay.py::TickEvent
+    produced_by_job: JOB-009
+    consumed_by_jobs: [JOB-010]
+    domain_id: D_BACKTEST
+    pit_policy: strict
+    format_summary: "回测Tick事件（历史tick重放，含timestamp/symbol/price/volume），回测内部类型"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-012
+    entity_name: backtest.target_weights
+    entity_type: dataset
+    scope: backtest_internal
+    contract_ref: null
+    physical_type: src/zephyr/backtest/strategy.py::TargetWeights
+    produced_by_job: JOB-010
+    consumed_by_jobs: [JOB-011]
+    domain_id: D_BACKTEST
+    pit_policy: strict
+    format_summary: "回测目标权重（symbol/target_weight/timestamp），策略根据tick事件生成"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-013
+    entity_name: backtest.fills
+    entity_type: dataset
+    scope: backtest_internal
+    contract_ref: null
+    physical_type: src/zephyr/backtest/matching_logic.py::SimulatedFill
+    produced_by_job: JOB-011
+    consumed_by_jobs: [JOB-012]
+    domain_id: D_BACKTEST
+    pit_policy: strict
+    format_summary: "回测模拟成交（symbol/quantity/price/commission/slippage），撮合引擎产出"
+    valid_since: '2020-01-01'
+
+  - dataset_id: DS-014
+    entity_name: backtest.nav_series
+    entity_type: dataset
+    scope: backtest_internal
+    contract_ref: null
+    physical_type: src/zephyr/backtest/portfolio.py::NavSeries
+    produced_by_job: JOB-012
+    consumed_by_jobs: [JOB-013]
+    domain_id: D_BACKTEST
+    pit_policy: strict
+    format_summary: "回测净值序列（timestamp/nav/cash/positions），组合更新产出"
+    valid_since: '2020-01-01'
+
+# ============================================================
+# Jobs（13 个核心数据变换作业）
+# ============================================================
+jobs:
+  # --- 生产数据流 Job（scope=production） ---
+
+  - job_id: JOB-001
+    job_name: ingest.ifind_kline
+    entity_type: job
+    scope: production
+    source_code_ref: src/zephyr/data/ingest_ifind.py
+    trigger_type: scheduled
+    run_context: production
+    inputs: []
+    outputs: [DS-001]
+    pit_relevance: strict
+    description: "从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick"
+
+  - job_id: JOB-002
+    job_name: aggregate.ohlc_bar
+    entity_type: job
+    scope: production
+    source_code_ref: src/zephyr/data/aggregator.py
+    trigger_type: event_driven
+    run_context: production
+    inputs: [DS-001]
+    outputs: [DS-002]
+    pit_relevance: strict
+    description: "将Tick数据聚合为OHLC K线（1m/5m/日线），产出DS-002 market_data.ohlc_bar"
+
+  - job_id: JOB-003
+    job_name: compute.value_factor
+    entity_type: job
+    scope: production
+    source_code_ref: src/zephyr/factor/value_factor.py
+    trigger_type: event_driven
+    run_context: production
+    inputs: [DS-002]
+    outputs: [DS-003]
+    pit_relevance: strict
+    description: "计算价值因子（PE/PB/股息率等），产出DS-003 factor.value_factor"
+
+  - job_id: JOB-004
+    job_name: compute.momentum_20d
+    entity_type: job
+    scope: production
+    source_code_ref: src/zephyr/factor/momentum.py
+    trigger_type: event_driven
+    run_context: production
+    inputs: [DS-002]
+    outputs: [DS-004]
+    pit_relevance: strict
+    description: "计算20日动量因子（收益率/相对强度），产出DS-004 factor.momentum_20d"
+
+  - job_id: JOB-005
+    job_name: synthesize.signal
+    entity_type: job
+    scope: production
+    source_code_ref: src/zephyr/signal_ashare/synthesizer.py
+    trigger_type: event_driven
+    run_context: production
+    inputs: [DS-003, DS-004]
+    outputs: [DS-005]
+    pit_relevance: strict
+    description: "合成多因子信号（加权/截面排名/置信度），产出DS-005 signal.composite"
+
+  - job_id: JOB-006
+    job_name: check.risk_limits
+    entity_type: job
+    scope: production
+    source_code_ref: src/zephyr/risk/risk_checker.py
+    trigger_type: event_driven
+    run_context: production
+    inputs: [DS-005]
+    outputs: [DS-006]
+    pit_relevance: strict
+    description: "风险限额检查（持仓/回撤/暴露度），产出DS-006 risk.limits"
+
+  - job_id: JOB-007
+    job_name: generate.order
+    entity_type: job
+    scope: production
+    source_code_ref: src/zephyr/pf_core/order_generator.py
+    trigger_type: event_driven
+    run_context: production
+    inputs: [DS-005, DS-006]
+    outputs: [DS-007]
+    pit_relevance: strict
+    description: "根据信号+风险限额生成目标订单，产出DS-007 order.target"
+
+  - job_id: JOB-008
+    job_name: execute.order
+    entity_type: job
+    scope: production
+    source_code_ref: src/zephyr/ex_core/executor.py
+    trigger_type: event_driven
+    run_context: production
+    inputs: [DS-007]
+    outputs: [DS-008, DS-009]
+    pit_relevance: strict
+    description: "执行订单（实盘/模拟），产出DS-008 fill.executed + DS-009 position.snapshot"
+
+  # --- 回测内部数据流 Job（scope=backtest_internal） ---
+
+  - job_id: JOB-009
+    job_name: backtest.replay_ticks
+    entity_type: job
+    scope: backtest_internal
+    source_code_ref: src/zephyr/backtest/tick_replay.py
+    trigger_type: manual
+    run_context: backtest_tick
+    inputs: [DS-001]
+    outputs: [DS-011]
+    pit_relevance: strict
+    description: "历史Tick重放（从DS-001读取历史tick，按时间顺序重放），产出DS-011 backtest.tick_event"
+
+  - job_id: JOB-010
+    job_name: backtest.run_event_driven
+    entity_type: job
+    scope: backtest_internal
+    source_code_ref: src/zephyr/backtest/event_engine.py
+    trigger_type: event_driven
+    run_context: backtest_tick
+    inputs: [DS-011]
+    outputs: [DS-012]
+    pit_relevance: strict
+    description: "事件驱动回测引擎（消费tick事件，运行策略生成目标权重），产出DS-012 backtest.target_weights"
+
+  - job_id: JOB-011
+    job_name: backtest.match_fills
+    entity_type: job
+    scope: backtest_internal
+    source_code_ref: src/zephyr/backtest/matching_logic.py
+    trigger_type: event_driven
+    run_context: backtest_tick
+    inputs: [DS-012]
+    outputs: [DS-013]
+    pit_relevance: strict
+    description: "回测撮合引擎（根据目标权重模拟成交，含滑点/手续费），产出DS-013 backtest.fills"
+
+  - job_id: JOB-012
+    job_name: backtest.update_portfolio
+    entity_type: job
+    scope: backtest_internal
+    source_code_ref: src/zephyr/backtest/portfolio.py
+    trigger_type: event_driven
+    run_context: backtest_tick
+    inputs: [DS-013]
+    outputs: [DS-014]
+    pit_relevance: strict
+    description: "回测组合更新（根据成交更新持仓/现金/净值），产出DS-014 backtest.nav_series"
+
+  - job_id: JOB-013
+    job_name: backtest.calc_metrics
+    entity_type: job
+    scope: backtest_internal
+    source_code_ref: src/zephyr/backtest/metrics.py
+    trigger_type: manual
+    run_context: backtest_tick
+    inputs: [DS-014]
+    outputs: [DS-010]
+    pit_relevance: strict
+    description: "回测指标计算（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验），产出DS-010 backtest.result"
+
+# ============================================================
+# 数据流边（edges，由 datasets 的 produced_by_job/consumed_by_jobs 派生）
+# ============================================================
+# 边类型说明：
+#   - Job→Dataset：产出（produces），edge_type=push
+#   - Dataset→Job：消费（consumes），edge_type=pull
+# edges 由 sync_dataflow_registry() 自动派生写入 dataflow_edges 表，无需手工登记
+# 未来扩展：event_driven/sync/async 边类型（Phase 3 运行时 instrumentation）
+edges_note: >
+  数据流边由 Dataset 的 produced_by_job/consumed_by_jobs 字段派生，无需手工维护。
+  sync_dataflow_registry() 读取 datasets/jobs 后自动生成 edges 写入 dataflow_edges 表。
+  边类型（edge_type）枚举：push（Job→Dataset 产出）/ pull（Dataset→Job 消费）/
+  sync（同步调用）/ async（异步消息）/ event_driven（事件驱动）。
+  Phase 1 仅生成 push/pull 两类；Phase 3 运行时 instrumentation 补充 sync/async/event_driven。
