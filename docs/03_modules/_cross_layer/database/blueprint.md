@@ -245,6 +245,35 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 ---
 
+## §decisiongraph 决策流图架构（TRAE-061，共库不同表）
+
+> **本节归属**：数据库蓝图补充——decisiongraph 与 depgraph 共用同一 PostgreSQL 实例，表前缀不同（2026-07-06 新增）。
+> 真源：[`decisiongraph_schema.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/decisiongraph_schema.py) + [`decision_graph_model.yaml`](file:///d:/ZephyrAlpha/architecture_model/domain/decision_graph_model.yaml)
+
+### 共库关系
+
+| 维度 | depgraph | decisiongraph |
+|------|----------|---------------|
+| PG 实例 | 同一个（localhost:5432） | 同一个 |
+| 表前缀 | `nodes`/`edges`/`domains`... | `decision_tracks`/`decision_layers`/`decision_nodes`/`decision_edges` |
+| 连接入口 | `get_depgraph_pg_connection()` | `get_decisiongraph_pg_connection()`（委托 depgraph，无独立配置） |
+| 写锁 | `pg_advisory_lock(424242)` | `pg_advisory_lock(424244)` |
+| YAML 真源 | 代码 AST 扫描 | `architecture_model/domain/decision_graph_model.yaml` |
+
+### DDL 真源
+
+- **文件**：`scripts/governance/migrate_sqlite_to_pg/03_create_decision_schema.sql`
+- **Schema Python 真源**：`src/zephyr/governance/persistence/decisiongraph_schema.py`
+- **变更协议**：Schema 变更先改 `decisiongraph_schema.py` + DDL 文件 → git commit → 执行 DDL → 校验。禁止直连 PG 手动 DDL。
+
+### 初始数据
+
+- `decision_tracks`：4 轨（model_driven/data_driven/human_override/emergency）
+- `decision_layers`：10 层（L0-L6，含 L2A/B/C/D）
+- `decision_nodes`/`decision_edges`：运行时由业务填充（回测适配器等）
+
+---
+
 ## ⚠️ Vibe Coding 蓝图编写铁律
 
 > **时态属性**：本节属于**施工声明**——AI 进入蓝图修改/施工时必读。不可改为链接引用——AI 不会主动跳转链接读取，删掉 = 失去防漂移防线。本节永久保留在蓝图中。

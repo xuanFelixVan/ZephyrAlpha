@@ -2065,6 +2065,47 @@ STEP 3: 拆分后验证
 
 ---
 
+## §19 决策流图架构（decisiongraph，TRAE-061）
+
+> **本节归属**：治理域决策流图基础设施（2026-07-06 新增，TRAE-061）。
+> decisiongraph 是继 depgraph（模块依赖图）、dataflowgraph（数据流图）之后的第三张架构图，管理 L0-L6 交易决策链。三图正交，通过 `module_id` 关联。
+
+### §19.1 归属模块
+
+| 文件 | 责任 | capability_id |
+|------|------|---------------|
+| `src/zephyr/governance/persistence/decisiongraph_schema.py` | PG schema + 连接入口（委托 depgraph 连接） | decisiongraph_schema_management |
+| `src/zephyr/governance/persistence/decision_graph_reader.py` | 只读查询 Reader（30+ 方法） | decisiongraph_reader |
+| `scripts/governance/extract_decisiongraph.py` | 只读提取 CLI（7 命令） | decisiongraph_extract_cli |
+| `scripts/governance/apply_decisiongraph.py` | 写入 CLI（7 操作，pg_advisory_lock=424244） | decisiongraph_apply_cli |
+| `scripts/governance/generate_decision_graph.py` | YAML→DB 同步生成器 | decisiongraph_generate_cli |
+
+### §19.2 真源与派生
+
+- **YAML 真源**：`architecture_model/domain/decision_graph_model.yaml`（4 轨 + 10 层 + 6 节点类型 + 4 边类型 + 5 不变量）
+- **DB 缓存**：`decision_tracks`/`decision_layers`/`decision_nodes`/`decision_edges`（与 depgraph 共库，表前缀 `decision_*`）
+- **派生方向**：YAML → DB 单向同步（`generate_decision_graph.py`），禁止反向
+- **词表**：`build_status_values`/`edge_type_values`/`node_type_values`/`track_ids` 从 YAML 动态加载（VOCAB-HARDCODE gate）
+
+### §19.3 五条承重墙不变量
+
+| 编号 | 不变量 | 强制点 |
+|------|--------|--------|
+| DEC-INV-001 | 风控一票否决：order 节点必有 risk_check→order 的 approving 边 | 应用层 finalize 校验 |
+| DEC-INV-002 | 信号仓位分离：signal 不能直接连 order | DB 触发器硬阻断 |
+| DEC-INV-003 | DAG 无环 | 应用层 Tarjan SCC |
+| DEC-INV-004 | 时间单调性：edges.valid_since ≥ from_node.created_at | DB CHECK |
+| DEC-INV-005 | evidence_hash 必填 | DB NOT NULL |
+
+### §19.4 访问协议
+
+- **禁止裸连 DB**：必须通过 `get_decisiongraph_pg_connection()`（委托 `get_depgraph_pg_connection()`，无独立配置）
+- **只读查询**：`DecisionGraphReader` 或 `extract_decisiongraph.py`
+- **写入设计态**：`apply_decisiongraph.py`（pg_advisory_lock=424244）
+- **可视化文档**：`docs/02_enterprise_architecture/06_decision_architecture/`（index + 3 Mermaid）
+
+---
+
 ## 治理信息
 
 ### SSoT 声明
