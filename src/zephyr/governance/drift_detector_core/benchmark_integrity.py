@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md
-# [MODULE] zephyr.governance.drift_detection.benchmark_integrity
+# [MODULE] zephyr.governance.drift_detector_core.benchmark_integrity
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS] MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020

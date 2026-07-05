@@ -1633,7 +1633,7 @@ capabilities:
       新AI 搜 "baseline_poisoning_guard" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同
       类功能前会被引导到本模块。
   - capability_id: drift_detection_benchmark_integrity
-    canonical_override: src/zephyr/governance/drift_detection/benchmark_integrity.py
+    canonical_override: src/zephyr/governance/drift_detector_core/benchmark_integrity.py
     aliases:
       - benchmark_integrity
     description: >-
@@ -1951,7 +1951,7 @@ capabilities:
       incremental_scanner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块
       。
   - capability_id: drift_detection_ml_engineering
-    canonical_override: src/zephyr/governance/drift_detection/ml_engineering.py
+    canonical_override: src/zephyr/governance/drift_detector_core/ml_engineering.py
     aliases:
       - ml_engineering
     description: >-
@@ -1960,7 +1960,7 @@ capabilities:
       AI 搜 "ml_engineering" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模
       块。
   - capability_id: drift_detection_model_drift_monitor
-    canonical_override: src/zephyr/governance/drift_detection/model_drift_monitor.py
+    canonical_override: src/zephyr/governance/drift_detector_core/model_drift_monitor.py
     aliases:
       - model_drift_monitor
     description: >-
@@ -1995,7 +1995,7 @@ capabilities:
       oduction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "orpha
       n_scanner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_performance_baseline
-    canonical_override: src/zephyr/governance/drift_detection/performance_baseline.py
+    canonical_override: src/zephyr/governance/drift_detector_core/performance_baseline.py
     aliases:
       - performance_baseline
     description: >-
@@ -2023,7 +2023,7 @@ capabilities:
       ift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "reconciler" 可定位本模块。 解决
       防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_regime_detector
-    canonical_override: src/zephyr/governance/drift_detection/regime_detector.py
+    canonical_override: src/zephyr/governance/drift_detector_core/regime_detector.py
     aliases:
       - regime_detector
     description: >-
@@ -3143,6 +3143,54 @@ capabilities:
       config/{policies,tasks,schedule}.yaml（per-source 策略 + 任务清单 + 5档时段）。
       与 governance/intelligence_governance/provider_base.py 的 LLM Provider
       同名不同义（class-name-alias 标记豁免），过渡期共存，阶段4 退役旧版。
+
+  # --------------------------------------------------------------------------
+  # kb 模块核心能力（P2-11，2026-07-06 审计补登——三真源重复治本）
+  # --------------------------------------------------------------------------
+  - capability_id: kb_gate_eval_task
+    canonical_override: src/zephyr/governance/kb/kb_gate_task.py
+    aliases:
+      - kb_gate_task
+      - build_kb_gate_eval_task
+      - kb_gate_eval
+    description: >-
+      KB 五阶段门禁 evaluate 用的最小合法 TaskCard 构造器。
+      canonical = src/zephyr/governance/kb/kb_gate_task.py 的 build_kb_gate_eval_task()。
+      kb_engine/kb_gate_task.py 和 migration/kb_gate_task.py 是 re-export shim。
+      解决发现性：新 AI 搜 "kb gate/kb门禁/kb evaluate task" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建 KB 门禁 TaskCard 构造器。
+
+  - capability_id: kb_batch_ingest
+    canonical_override: src/zephyr/governance/kb/pipeline/batch_ingest.py
+    aliases:
+      - batch_ingest
+      - BatchIngestor
+      - BatchIngestEntry
+      - BatchIngestReport
+      - kb_batch
+    description: >-
+      KB 批量入库引擎——scaffold P0/P1 知识候选批量入库。
+      canonical = src/zephyr/governance/kb/pipeline/batch_ingest.py 的 BatchIngestor。
+      kb/batch_ingest.py 是 re-export shim。
+      解决发现性：新 AI 搜 "批量入库/batch ingest/kb ingest" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建 KB 批量入库引擎。
+
+  - capability_id: kb_unified_memory
+    canonical_override: src/zephyr/governance/kb/storage/unified_memory_api.py
+    aliases:
+      - unified_memory_api
+      - UnifiedMemoryAPI
+      - MemoryBackend
+      - MemoryRecord
+      - MemoryBackendError
+      - InMemoryMemoryBackend
+      - VMSMemoryBackend
+    description: >-
+      KB 统一记忆 API——MemoryBackend Protocol + 统一记忆接口。
+      canonical = src/zephyr/governance/kb/storage/unified_memory_api.py。
+      kb/_backend_protocol.py 和 kb/unified_memory_api.py 是 re-export shim。
+      解决发现性：新 AI 搜 "unified memory/memory backend/kb storage" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建 KB 统一记忆 API。
 
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）

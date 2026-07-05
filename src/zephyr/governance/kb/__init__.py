@@ -1,3 +1,17 @@
+# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
+# [MODULE] zephyr.governance.kb
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES] aggregates 26 submodules (see __all__)
+# [CONSUMERS] zephyr.research.*; zephyr.knowledge.*
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] KB 知识引擎入口包——聚合子模块符号；新增子模块 MUST 在 __all__ 登记
+# [MODIFY-GUARD] 新增子模块 MUST 在 __all__ 登记；shim 文件禁止定义新符号
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 # [A_module] module_id=MOD-DAT_kb | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
