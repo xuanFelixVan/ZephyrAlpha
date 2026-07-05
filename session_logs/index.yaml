@@ -21,15 +21,10 @@
 # =====
 # index_version: 1.0  — 初始建立，覆盖 2026-05-04 的五轮架构审计 session
 
----
 index_version: '1.4'
 created: '2026-05-04'
 last_updated: '2026-07-05'
-# 派生数据状态（AI-03 审计 P2-1 修正，2026-07-05）：
-# 下方 by_date/by_module/by_contract 派生数据与 session_logs/2026/*/session-*.yaml 目录同步（30 个 session 全覆盖，截至 2026-05-08）。
-# 已知债务：派生 reconciler 缺失（无事件触发自动更新），未来新 session 落盘后需手动重新生成或补建 reconciler。
-# 真源为 session_logs/2026/*/session-*.yaml 文件本身；派生索引仅供快速反查，决策前应回查原文。
-total_sessions: 30
+total_sessions: 29
 stats:
   total_files_created: 104
   total_files_modified: 223
@@ -221,8 +216,6 @@ by_contract:
   EXT-001: []
   EXT-004: []
 by_date:
-  '2026-04-17':
-  - session-20260417-retrospective
   '2026-05-04':
   - session-20260504-001
   - session-20260504-002
