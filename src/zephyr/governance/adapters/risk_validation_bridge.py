@@ -35,7 +35,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
+
+if TYPE_CHECKING:
+    from zephyr.shared.contracts.risk_limits import RiskLimits
 
 
 @dataclass(frozen=True)
@@ -54,7 +57,7 @@ class RiskValidationPort(Protocol):
         symbol: str,
         target_weight: float,
         current_holdings: dict[str, float],
-        limits: Any,
+        limits: RiskLimits,
     ) -> list[RiskViolation]: ...
 
     def validate_portfolio(
@@ -62,7 +65,7 @@ class RiskValidationPort(Protocol):
         holdings: dict[str, float],
         market_values: dict[str, float],
         total_nav: Decimal,
-        limits: Any,
+        limits: RiskLimits,
     ) -> list[RiskViolation]: ...
 
 
@@ -83,7 +86,7 @@ class RiskValidationBridge:
         symbol: str,
         target_weight: float,
         current_holdings: dict[str, float],
-        limits: Any,
+        limits: RiskLimits,
     ) -> list[RiskViolation]:
         raw_violations = self._validator.validate_order(
             symbol=symbol,
@@ -98,7 +101,7 @@ class RiskValidationBridge:
         holdings: dict[str, float],
         market_values: dict[str, float],
         total_nav: Decimal,
-        limits: Any,
+        limits: RiskLimits,
     ) -> list[RiskViolation]:
         raw_violations = self._validator.validate_portfolio(
             holdings=holdings,

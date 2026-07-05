@@ -31,7 +31,7 @@ from zephyr.integration.agent_communication.layer2_communication import (
 from zephyr.integration.agent_communication.layer3_coordination import DeadlockGuard, Supervisor
 
 
-def setup_multi_agent_environment():
+def setup_multi_agent_environment() -> tuple[A2ARegistry, AgentCard, AgentCard, AgentCard]:
     """设置多 Agent 环境：架构师、开发者、测试员"""
     registry = A2ARegistry()
 
@@ -69,7 +69,7 @@ def setup_multi_agent_environment():
     return registry, architect, developer, tester
 
 
-def demo_task_coordination():
+def demo_task_coordination() -> None:
     """演示 A2A 任务协调流程"""
     print("=== A2A 协议协调任务演示 ===\n")
 

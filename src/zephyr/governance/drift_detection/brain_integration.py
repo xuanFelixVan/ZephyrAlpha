@@ -29,8 +29,12 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from zephyr.shared.utils.async_utils import run_sync
+
+if TYPE_CHECKING:
+    from zephyr.governance.drift_detection.cold_start import ColdStartResult
 
 logger = logging.getLogger(__name__)
 
@@ -495,7 +499,7 @@ def _l3_reconcile(result, scan_level="LIGHT"):
         result.status = ProbeStatus.FAIL
 
 
-def execute_full_probe(project_root="", scan_level="LIGHT"):
+def execute_full_probe(project_root: str = "", scan_level: str = "LIGHT") -> FullProbeResult:
     root = project_root or _PROJECT_ROOT
 
     result = FullProbeResult()
@@ -526,7 +530,7 @@ def execute_full_probe(project_root="", scan_level="LIGHT"):
     return result
 
 
-def session_entry_full_probe(project_root=""):
+def session_entry_full_probe(project_root: str = "") -> tuple[ColdStartResult, FullProbeResult | None]:
     from zephyr.governance.drift_detection.cold_start import session_entry_activate
 
     cold_result = session_entry_activate(project_root)

@@ -51,7 +51,11 @@ import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.shared.schema.task_types import TaskCard
+    from zephyr.infrastructure.queue.task_scheduler import TaskScheduler
 
 _log = logging.getLogger(__name__)
 
@@ -113,7 +117,7 @@ class ActionDispatcher:
 
     # ── 主分发入口 ──────────────────────────────────────
 
-    def dispatch(self, task: Any) -> ActionReport:
+    def dispatch(self, task: TaskCard) -> ActionReport:
         capability = task.capability
         result = task.result
         payload = task.payload or {}
@@ -147,7 +151,7 @@ class ActionDispatcher:
         except Exception as exc:
             return ActionReport(task.task_id, capability, "error", str(exc))
 
-    def drain_results(self, scheduler: Any) -> list[ActionReport]:
+    def drain_results(self, scheduler: TaskScheduler) -> list[ActionReport]:
         reports: list[ActionReport] = []
         with scheduler._lock:
             task_ids = list(scheduler._results.keys())

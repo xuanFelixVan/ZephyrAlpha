@@ -21,7 +21,7 @@ score = 0
 total = 0
 
 
-def check(name, condition, detail=""):
+def check(name: str, condition: bool, detail: str = "") -> None:
     global score, total
     total += 1
     if condition:

@@ -26,7 +26,7 @@ init_db()
 repo = TaskRepository()
 
 
-def safe_transition(tid, target):
+def safe_transition(tid: str, target: str) -> None:
     c = repo.get(tid)
     if c.status == TaskStatus(target):
         print(f"{tid}: already {target}")
