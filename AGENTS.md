@@ -78,6 +78,19 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 
 > MCP 服务器完整定义（工具清单/角色权限/熔断配置）见 [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json)。触发器路由表（6 触发器+处理器+安全等级）见 [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml)。
 
+### 因子信号域（D_FACTOR / D_FUNDAMENTAL_SIGNAL / D_SIGQC，2026-07-06 AI-08 补登）
+
+3 个平级信号子域（域注册表 `functional_domain_registry.yaml` L942/L956/L974）：
+
+| 域 | ssot_path | 职责 | 关键入口 |
+|----|-----------|------|----------|
+| D_FACTOR | `src/zephyr/factor/` | 因子抽象 + 注册表 + 示例因子 | [`factor_base.py`](file:///d:/ZephyrAlpha/src/zephyr/factor/factor_base.py)（FactorBase/FactorRegistry，compute(data)→Series 协议） |
+| D_FUNDAMENTAL_SIGNAL | `src/zephyr/signal_fundamental/` | 信号合成/聚合/资本分配管道 | [`pipeline.py`](file:///d:/ZephyrAlpha/src/zephyr/signal_fundamental/pipeline.py)（AlphaSignalPipeline，因子协议 compute(self)→list，非 FactorBase） |
+| D_SIGQC | `src/zephyr/signal_quality/` | 信号质量评估/降级监视/过滤/冲洗监视 | [`degradation_monitor_base.py`](file:///d:/ZephyrAlpha/src/zephyr/signal_quality/degradation_monitor_base.py)（DegradationMonitorBase，2026-07-06 从 D_FUNDAMENTAL_SIGNAL 迁入） |
+
+**关键契约**：CTR-ERR-003（SignalDegradationWarning，source_domain=D_SIGQC，[`cross_layer_contracts.yaml`](file:///d:/ZephyrAlpha/architecture_model/contracts/cross_layer_contracts.yaml) L421）。
+**capability 反查**：`factor_base_abstraction` / `alpha_signal_pipeline` / `signal_synthesizer_base` / `degradation_monitor_base`（[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)）。新 AI 实现因子/信号/降级监视器前 MUST 反查此 4 项 capability，禁止重复造轮子。
+
 ### config/ 发现契约（ARCH-038 P2）
 
 新 AI 需发现 `config/` 下有哪些配置文件、用途线索、消费者时，运行：

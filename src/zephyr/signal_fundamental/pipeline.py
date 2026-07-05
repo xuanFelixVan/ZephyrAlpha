@@ -195,13 +195,16 @@ class AlphaSignalPipeline:
             result.degraded = True
 
         if not self._factors:
+            # FactorBase 因子 compute(data) 需数据参数，与本管道 compute()→list 协议不兼容；
+            # 不自动发现 FactorBase 因子（避免 TypeError），因子须通过 register_factor() 显式注册。
+            # 原代码 getattr(FB,"discover_factors") 调用不存在的方法名，已修正为 FactorRegistry 查询。
             try:
-                from zephyr.factor.factor_base import FactorBase as FB
+                from zephyr.factor.factor_base import FactorRegistry
 
-                discovered = getattr(FB, "discover_factors", lambda: [])()
-                self._factors = list(discovered) if discovered else []
+                _ = FactorRegistry.list_all()  # 确认 registry 可达，供未来协议适配扩展
             except Exception:
-                self._factors = []
+                pass
+            self._factors = []
 
         if not self._factors:
             result.status = "no_factors"

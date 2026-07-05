@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain-signal/signal-generation-core/blueprint.md
 # [MODULE] zephyr.signal_fundamental.capital.capital_allocator
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
-# [DEPENDENCIES] zephyr.signal_fundamental.gen.aggregator_base; zephyr.trading.trading_contracts.execution.capital_allocation_result
+# [DEPENDENCIES] zephyr.signal_fundamental.strategy.capital_allocator
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -22,17 +22,18 @@
 # created: "2026-05-05"
 # ---
 
-"""D_SIGNAL — Capital Allocator（兼容导出）
+"""D_SIGNAL — Capital Allocator（兼容 re-export shim）
 
-``CapitalAllocatorBase`` 真源在 ``aggregator_base.py``（与 ``SignalAggregatorBase`` / ``DegradationMonitorBase`` 同文件）。
-``CapitalAllocationResult`` 真源在 ``zephyr.shared.contracts.capital_allocation_result``（CTR-P1-003）。
-
-本模块仅作向后兼容 re-export，禁止在此重复定义契约类型或 ABC。
+向后兼容入口。真源在 ``zephyr.signal_fundamental.strategy.capital_allocator``（同真源
+``aggregator_base.CapitalAllocatorBase`` + ``trading_contracts...CapitalAllocationResult``）。
+禁止在此重复定义契约类型或 ABC——多真源同步漂移根因。
 """
 
 from __future__ import annotations
 
-from zephyr.signal_fundamental.gen.aggregator_base import CapitalAllocatorBase
-from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
+from zephyr.signal_fundamental.strategy.capital_allocator import (
+    CapitalAllocationResult,
+    CapitalAllocatorBase,
+)
 
 __all__ = ["CapitalAllocationResult", "CapitalAllocatorBase"]

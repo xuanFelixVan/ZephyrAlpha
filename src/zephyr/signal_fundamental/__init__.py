@@ -44,7 +44,8 @@ def __getattr__(name):
     _lazy = {
         "SignalAggregatorBase": ".gen.aggregator_base",
         "CapitalAllocatorBase": ".gen.aggregator_base",
-        "DegradationMonitorBase": ".gen.aggregator_base",
+        # DegradationMonitorBase 真源已迁移至 D_SIGQC 域（2026-07-06 域边界修正）。
+        "DegradationMonitorBase": "zephyr.signal_quality.degradation_monitor_base",
         "SignalSynthesizerBase": ".synth.signal_synthesizer",
         "AlphaSignalPipeline": ".pipeline",
         "SynthesizedSignal": ".combiner.synthesized_signal",

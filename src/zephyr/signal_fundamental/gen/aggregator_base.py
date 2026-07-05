@@ -36,7 +36,8 @@ D_SIGNAL — Signal Generation Layer
 扩展点：
   - SignalAggregatorBase : OCP D_SIGNAL-AGG — 因子信号 → 合成信号
   - CapitalAllocatorBase  : OCP D_SIGNAL-ALC — 合成信号 → 资本配置
-  - DegradationMonitorBase: OCP D_SIGNAL-DEG — 信号质量降级检测
+  - DegradationMonitorBase: OCP D_SIGQC-DEG — 信号质量降级检测（真源已迁移至
+    zephyr.signal_quality.degradation_monitor_base，D_SIGQC 域；本模块 re-export 向后兼容）
 
 依赖方向：D_FACTOR → D_SIGNAL → D_RISK/D_PORTFOLIO_CORE
 """
@@ -97,25 +98,12 @@ class CapitalAllocatorBase(abc.ABC):
         ...
 
 
-class DegradationMonitorBase(abc.ABC):
-    """
-    信号质量降级监视器（OCP 扩展点 D_SIGNAL-DEG）
-
-    契约对齐：CTR-ERR-003（SignalDegradationWarning 出站）→ D_RISK, D_PORTFOLIO_CORE
-
-    当检测到信号质量下降时发布警告——不阻断流水线，但下游应据此降级处理。
-    """
-
-    _registry: ClassVar[dict[str, type[DegradationMonitorBase]]] = {}
-
-    @abc.abstractmethod
-    def evaluate(self, signals: list[SynthesizedSignal]) -> list[SignalDegradationWarning]:
-        """评估批量合成信号的质量，返回降级警告列表"""
-        ...
+# DegradationMonitorBase 已迁移至 zephyr.signal_quality.degradation_monitor_base
+# （D_SIGQC 域，2026-07-06 域边界修正）。本模块不再定义，通过 gen/__init__.py
+# 和 signal_fundamental/__init__.py 的 __getattr__ re-export 向后兼容。
 
 
 __all__ = [
     "CapitalAllocatorBase",
-    "DegradationMonitorBase",
     "SignalAggregatorBase",
 ]

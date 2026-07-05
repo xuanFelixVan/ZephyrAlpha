@@ -21,7 +21,9 @@ def __getattr__(name):
     _lazy = {
         "SignalAggregatorBase": ".aggregator_base",
         "CapitalAllocatorBase": ".aggregator_base",
-        "DegradationMonitorBase": ".aggregator_base",
+        # DegradationMonitorBase 真源已迁移至 D_SIGQC 域（2026-07-06 域边界修正），
+        # 此处跨域 re-export 向后兼容。
+        "DegradationMonitorBase": "zephyr.signal_quality.degradation_monitor_base",
     }
     if name in _lazy:
         import importlib

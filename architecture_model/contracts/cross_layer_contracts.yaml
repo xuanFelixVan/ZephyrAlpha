@@ -423,10 +423,10 @@ contracts:
     name: "SignalDegradationWarning / 信号质量下降警告"
     priority: P0
     frozen: true
-    source_domain: D_SIGLEGACY
+    source_domain: D_SIGQC
     target_domains: [D_RISK, D_PF_CORE]
-    flow: "Signal Generation → Risk/Portfolio（降级通知）"
-    physical_path: src/zephyr/shared/contracts/errors/signal_degradation_warning.py
+    flow: "Signal Quality → Risk/Portfolio（降级通知）"
+    physical_path: src/zephyr/trading/trading_contracts/market/signal_degradation_warning.py
     stability: locked-5yr
     schema_version: "1.0"
     description: "Signal 检测到信号质量显著下降时发出的警告。非致命，但 Risk/Portfolio 应据此调低仓位或暂停交易。"
