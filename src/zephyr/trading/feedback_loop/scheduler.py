@@ -45,6 +45,7 @@ if TYPE_CHECKING:
     from zephyr.trading.feedback_loop.detectors.anomaly.anomaly_detector import AnomalyEvent
     from zephyr.trading.feedback_loop.diagnosers.diagnosis.diagnosis_engine import Diagnosis
     from zephyr.trading.feedback_loop.verifiers.verification_engine import VerificationResult
+    from zephyr.shared.protocols.ports import VectorMemoryProtocol
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from zephyr.trading.feedback_loop.collectors.metrics_collector import (
     MetricsCollector,
@@ -118,6 +119,7 @@ class FeedbackLoopScheduler:
     feedback_collector: FeedbackCollector = field(default_factory=FeedbackCollector)
     protocol_adapter: Any | None = None
     vector_bridge: Any | None = None
+    vms: VectorMemoryProtocol | None = None
 
     health_reporter: HealthReporter = field(default_factory=HealthReporter)
     safety_gate_manager: SafetyGateManager = field(default_factory=SafetyGateManager)
@@ -171,9 +173,12 @@ class FeedbackLoopScheduler:
         if self.vector_bridge is None:
             try:
                 from zephyr.autonomy_core.context.vector_bridge import VectorBridge
-                from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
-                _vms = InProcessVectorMemory()
+                _vms = self.vms
+                if _vms is None:
+                    from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
+
+                    _vms = InProcessVectorMemory()
                 _vms.start()
                 self.vector_bridge = VectorBridge(_vms)
                 logger.info("FLE-Scheduler: VectorBridge auto-initialized")

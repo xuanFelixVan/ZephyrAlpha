@@ -35,9 +35,12 @@ from __future__ import annotations
 
 import logging
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from zephyr.integration.mcp._base_server import BaseMCPServer
+
+if TYPE_CHECKING:
+    from zephyr.shared.protocols.ports import VectorMemoryProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -60,9 +63,9 @@ class VectorMemoryServer(BaseMCPServer):
     VERSION = "1.0.0"
     DESCRIPTION = "全系统统一向量记忆体 — 8 Collection + HybridRetriever(Vector+BM25+RRF)"
 
-    def __init__(self, *, enable_rbac: bool = True) -> None:
+    def __init__(self, *, enable_rbac: bool = True, vms: VectorMemoryProtocol | None = None) -> None:
         super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION, enable_rbac=enable_rbac)
-        self._vms: Any = None
+        self._vms: Any = vms
         self._init_vms()
 
         self.register_tool(
@@ -160,6 +163,13 @@ class VectorMemoryServer(BaseMCPServer):
         )
 
     def _init_vms(self) -> None:
+        if self._vms is not None:
+            try:
+                self._vms.init_all_collections()
+                self._vms.start()
+            except Exception:
+                logger.warning("suppressed error in vector_memory_server", exc_info=True)
+            return
         try:
             from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 

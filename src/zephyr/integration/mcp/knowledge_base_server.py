@@ -43,10 +43,13 @@ import hashlib
 import re
 import threading
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from zephyr.integration.mcp._base_server import BaseMCPServer, MCPError
 from zephyr.shared.io.yaml_utils import load_vocabulary_values  # 治本 2026-06-30 SSoT 词表加载
+
+if TYPE_CHECKING:
+    from zephyr.shared.protocols.ports import VectorMemoryProtocol
 
 __all__ = ["KnowledgeBaseServer", "create_server"]
 
@@ -98,7 +101,7 @@ class KnowledgeBaseServer(BaseMCPServer):
     VERSION = "1.1.0"
     DESCRIPTION = "知识库语义检索（KE / 规则 / 蓝图 / 失败模式 + VMS 8 Collection）"
 
-    def __init__(self, *, enable_rbac: bool = True) -> None:
+    def __init__(self, *, enable_rbac: bool = True, vms: VectorMemoryProtocol | None = None) -> None:
         super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION, enable_rbac=enable_rbac)
         self._entries: dict[str, dict[str, Any]] = {}
         self._vms: Any = None
@@ -107,6 +110,15 @@ class KnowledgeBaseServer(BaseMCPServer):
         self._backend_mode: str = "unknown"
 
         self._init_backends()
+
+        # DI: 若注入 vms，在构造时初始化（_search 内的懒初始化兜底 None 情况）
+        if vms is not None:
+            try:
+                vms.init_all_collections()
+                vms.start()
+                self._vms = vms
+            except Exception:
+                logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
         self.register_tool(
             name="knowledge_base.search",
