@@ -1162,8 +1162,8 @@ def _audit_commit_history(
         if len(parts) < 2:
             continue
         commit_hash, subject = parts[0], parts[1]
-        # 跳过 merge commit（合并提交无作者意图）
-        if subject.startswith("Merge "):
+        # 跳过 merge commit（合并提交无作者意图；大小写不敏感以兼容 session_worktree 的小写 "merge session/..."）
+        if subject.lower().startswith("merge "):
             continue
         if gw_marker in subject:
             # subject 已含 [GW:（合法 commit），检测是否豁免通道使用
