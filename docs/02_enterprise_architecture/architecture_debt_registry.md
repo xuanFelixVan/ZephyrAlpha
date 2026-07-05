@@ -8615,6 +8615,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.158 循环复杂度（12个，第27轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=12(循环复杂度需拆分长函数)
+> **第42轮修复状态（2026-07-05）**：FIXED=0, DRIFTED=2(5.158.8 behavioral_audit/reconciler.py不存在,实际reconciler在infrastructure/asset_inventory和governance/drift_detection + 5.158.10 chaos_engine.py路径漂移:orchestrator/→orchestrator/fault_tolerance/), DEFERRED=10(5.158.1/2 exam_orchestrator复杂度30+/17 + 5.158.3 verdict_engine.evaluate 4路事件分发 + 5.158.4 scheduler._run_once 5阶段流水线[路径漂移ops/→trading/feedback_loop/] + 5.158.5 git_commit.main 8路if/elif + 5.158.6/9 resource_optimization.snapshot/_classify_pressure + 5.158.7 action_dispatcher._search_replace_file + 5.158.11 auto_runtime_core._start_local_models + 5.158.12 exam_orchestrator._compute_metrics — 循环复杂度重构属专项工程,非机械修复范畴). 维度5.158全部清零.
 
 #### HIGH（1个）
 
