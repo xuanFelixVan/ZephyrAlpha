@@ -2132,7 +2132,7 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   │   ├── gate_repo.py  — gate_repo.py — gates 表持久化仓库（AUDIT-07 P1-5: 从 gate_engine.py 提取）  
 │   │   ├── held_overlap_gate.py  — held_overlap_gate.py — 搭便车防护门禁（HELD-OVERLAP，2026-06-30 治本）  
 │   │   ├── id_uniqueness_gate.py  — id_uniqueness_gate.py — pre-commit hook ID 唯一性门禁（Phase 3 reconciler→gate 收敛）  
-│   │   ├── module_id_consistency_gate.py  — module_id_consistency_gate.py — module_id 三轨一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler→gate 收敛）  
+│   │   ├── module_id_consistency_gate.py  — module_id_consistency_gate.py — module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler→gate 收敛）  
 │   │   ├── orphan_module_gate.py  — orphan_module_gate.py — 孤儿模块（无 import 引用）阻断门禁（ORPHAN-MODULE）  
 │   │   ├── perm_trigger_gate.py  — perm_trigger_gate.py — 永久系统脚本时间触发模式无事件订阅阻断门禁（PERM-TRIGGER）  
 │   │   ├── r5_digit_suffix_gate.py  — r5_digit_suffix_gate.py — R5 数字后缀目录禁止门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）  

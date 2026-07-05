@@ -268,7 +268,7 @@ class GitCommitGateway:
         # Phase 3 reconciler→gate 收敛（2026-07-03）：3 个 B 类纯校验 reconciler 升级为 pre-commit 阻断 gate
         self._gate_registry.register(make_id_uniqueness_gate())  # priority=86 治本 same-repo 重复 pre-commit hook id（原 post-commit warn reconciler）
         self._gate_registry.register(make_exempt_zone_frontmatter_gate())  # priority=87 治本豁免区 frontmatter doc_type 误放（原 post-commit warn reconciler）
-        self._gate_registry.register(make_module_id_consistency_gate())  # priority=88 治本 module_id 三轨一致性 + count 派生（原 post-commit warn reconciler）
+        self._gate_registry.register(make_module_id_consistency_gate())  # priority=88 治本 module_id 三声明轨道一致性 + count 派生（原 post-commit warn reconciler）
         # Phase 1 AST 门禁扩展（DM-202953，2026-07-03）：5 个新 in-process gate 治本 5 病根
         self._gate_registry.register(make_perm_trigger_gate())  # priority=82 治本永久系统时间触发模式无事件订阅（病根：永久系统触发32）
         self._gate_registry.register(make_empty_handler_gate())  # priority=84 治本空 handler 函数体仅 logger/pass/return（病根：事件订阅空壳）

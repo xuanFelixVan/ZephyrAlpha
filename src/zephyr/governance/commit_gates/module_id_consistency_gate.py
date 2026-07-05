@@ -5,20 +5,20 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] fail-closed——三轨不一致或 count 不匹配或 module_id 跨文件撞车阻断
-# [MODIFY-GUARD] gate_id="MODULE-ID-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；三轨正则 + count 派生正则 + 跨文件唯一性 git grep
+# [INVARIANTS] fail-closed——三声明轨道不一致或 count 不匹配或 module_id 跨文件撞车阻断
+# [MODIFY-GUARD] gate_id="MODULE-ID-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；三声明轨道正则 + count 派生正则 + 跨文件唯一性 git grep
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] (True, msg)=通过；False=阻断（三轨不一致或 count_mismatch 或 module_id 跨文件撞车）；OSError/git grep 超时跳过单文件不阻断
+# [ERROR_CONTRACT] (True, msg)=通过；False=阻断（三声明轨道不一致或 count_mismatch 或 module_id 跨文件撞车）；OSError/git grep 超时跳过单文件不阻断
 # [TESTS] tests/governance/commit_gates/test_module_id_consistency_gate.py
 # [TTL] permanent
-"""module_id_consistency_gate.py — module_id 三轨一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler→gate 收敛）
+"""module_id_consistency_gate.py — module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler→gate 收敛）
 
 从 make_module_id_consistency_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
 
 三维校验：
-1. 三轨一致性（P8-FIX-S0）：单文件中 CFG-*/MOD-*/PS-* 三轨 module_id 声明是否一致
+1. 三声明轨道一致性（P8-FIX-S0）：单文件中 CFG-*/MOD-*/PS-* 三声明轨道 module_id 声明是否一致
 2. count 派生（P8-FIX-S1）：注册表声明的 total_registered/total_templates/total_dependencies
    与实际列表条目数是否匹配
 3. 跨文件唯一性（治本 2026-07-03）：staged .py 文件含 [A_*] module_id 头时，
@@ -26,7 +26,7 @@
 
 治本动机：原 reconciler 是 post-commit 非阻断 warn，不一致已入 git 历史仅告警。
 本 gate 在 commit() 内嵌等效校验，阻断新引入的不一致。
-第三维治本：原 gate 只检查单文件三轨一致性，不检测跨文件重复，12 组撞车漏检。
+第三维治本：原 gate 只检查单文件三声明轨道一致性，不检测跨文件重复，12 组撞车漏检。
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ _TEMPLATE_REGISTRY_REL = "docs/03_modules/template_registry.yaml"
 _DEP_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml"
 _CONTRACTS_DIR = "docs/01_policies_and_standards/_registry/contracts/"
 
-# 三轨正则
+# 三声明轨道正则
 _RE_HEADER_CFG = re.compile(r"^#\s*\[A_config\]\s*module_id=(CFG-\S+)", re.MULTILINE)
 _RE_ANCHOR_MOD = re.compile(r"^#\s*module_id:\s*(MOD-\S+)", re.MULTILINE)
 _RE_BODY_RULE = re.compile(r"^module_id:\s*([A-Z]+(?:-[A-Z]+)*-\w+)\s*$", re.MULTILINE)
@@ -113,7 +113,7 @@ def make_module_id_consistency_gate() -> GateSpec:
             except OSError:
                 continue
 
-            # === 三轨一致性校验 ===
+            # === 三声明轨道一致性校验 ===
             cfg_match = _RE_HEADER_CFG.search(content)
             mod_match = _RE_ANCHOR_MOD.search(content)
             rule_match = _RE_BODY_RULE.search(content)
@@ -153,7 +153,7 @@ def make_module_id_consistency_gate() -> GateSpec:
                     )
 
         # === 跨文件 module_id 唯一性校验（治本 2026-07-03）===
-        # 原 gate 只检查单文件三轨一致性 + count 派生，不检测跨文件 module_id 重复。
+        # 原 gate 只检查单文件三声明轨道一致性 + count 派生，不检测跨文件 module_id 重复。
         # 12 组撞车漏检根因。扩展：staged .py 含 module_id 头时，git grep 全仓检测重复。
         # 历史豁免（门禁只检测staged新增文件diff-filter=A，不触碰存量基线违规）：
         # cross-file 碰撞检查仅对 NEWLY ADDED（不在 HEAD）的文件生效；HEAD 中已存在的
