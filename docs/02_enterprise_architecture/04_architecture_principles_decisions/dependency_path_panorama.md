@@ -1513,7 +1513,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 - ✅ P0-5：dep_cycles 视图创建 + 数据修复（I7/I8）
 - ✅ P2：SQLite → PostgreSQL 16 迁移（2026-06-27，MVCC 行级锁，删除文件锁补丁）
 - ✅ P3：pgvector 改造/LISTEN-NOTIFY 删除/分区表删除/监控告警改造（2026-06-28）
-- ✅ v15-v18：schema dead column 清理 + 孤儿触发器/索引删除 + blueprint_id 三轨制 CHECK 触发器（裁定#ARCH-016/#208）
+- ✅ v15-v18：schema dead column 清理 + 孤儿触发器/索引删除 + blueprint_id 双轨制+历史兼容 CHECK 触发器（裁定#ARCH-016/#208）
 
 **已修复数据问题**：
 - ✅ I7：arch_directory_tree 空 domain_id（P0-5 施工时修复）
@@ -2280,10 +2280,10 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
 - **v17**（残留）: 删除陈旧索引 `idx_domains_can_build`
 - **状态**: ✅ 已执行（`_MIGRATIONS` v15/v16/v17）
 
-#### 裁定#208：blueprint_id 三轨制 CHECK 触发器（v18，2026-06-30）
+#### 裁定#208：blueprint_id 双轨制+历史兼容 CHECK 触发器（v18，2026-06-30）
 
 - **执行日期**: 2026-06-30
-- **背景**: blueprint_id 字段需强制三轨制格式（MOD-*/D-*/SH-*/PLACEHOLDER*）
+- **背景**: blueprint_id 字段需强制双轨制+历史兼容格式（MOD-*/D-*/SH-*/PLACEHOLDER*）
 - **变更**: 新增 BEFORE INSERT + BEFORE UPDATE OF blueprint_id 触发器，校验 blueprint_id 符合四类前缀之一
 - **状态**: ✅ 已执行（`_MIGRATIONS` v18）
 

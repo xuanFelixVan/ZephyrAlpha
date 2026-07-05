@@ -2991,7 +2991,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # DB node_id是INTEGER自增，需要通过path建立映射
         gen_node_id_to_path = {}
         # 治本 2026-07-02 (ARCH-033 Phase 2.2): 预过滤不合规blueprint_id
-        # DB触发器check_blueprint_id_three_track()正则: ^(MOD-|D-|SH-|SYS-|PLACEHOLDER)
+        # DB触发器check_blueprint_id_format()正则: ^(MOD-|D-|SH-|SYS-|PLACEHOLDER)
         # 不合规的blueprint_id会触发RAISE EXCEPTION导致整个事务回滚（连累合规节点）
         # 在INSERT前预过滤，不合规的跳过并记录WARN
         _BLUEPRINT_ID_VALID_RE = re.compile(r'^(MOD-|D-|SH-|SYS-|PLACEHOLDER)')

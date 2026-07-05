@@ -704,7 +704,7 @@ CREATE TRIGGER chk_nodes_blueprint_id_insert
               AND NEW.blueprint_id NOT GLOB 'SH-*'
               AND NEW.blueprint_id NOT GLOB 'PLACEHOLDER*'
             BEGIN
-                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
+                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 双轨制+历史兼容: MOD-*/D-*/SH-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
             END;
 
 -- trigger on nodes: chk_nodes_blueprint_id_update
@@ -718,7 +718,7 @@ CREATE TRIGGER chk_nodes_blueprint_id_update
               AND NEW.blueprint_id NOT GLOB 'SH-*'
               AND NEW.blueprint_id NOT GLOB 'PLACEHOLDER*'
             BEGIN
-                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
+                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 双轨制+历史兼容: MOD-*/D-*/SH-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
             END;
 
 -- trigger on nodes: trg_nodes_delete_cleanup_edges
