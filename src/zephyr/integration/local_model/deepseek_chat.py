@@ -48,7 +48,8 @@ from zephyr.shared.security.secrets import get_secret_or_default
 _log = logging.getLogger(__name__)
 
 DEFAULT_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
-DEFAULT_MODEL = "deepseek-v4-flash"
+# 5.141.1 修复: 模型名通过环境变量外部化, 避免硬编码
+DEFAULT_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash")
 INFERENCE_TEMPERATURE = 0.1
 INFERENCE_MAX_TOKENS = 1024
 INFERENCE_TIMEOUT_S = 60.0

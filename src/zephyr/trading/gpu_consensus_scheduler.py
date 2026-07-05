@@ -160,9 +160,9 @@ class GPUConsensusScheduler:
     def __init__(
         self,
         ollama_url: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
-        local_model: str = "qwen3:8b",
-        api_primary: str = "deepseek-v4-pro",
-        api_secondary: str = "claude-sonnet-4",
+        local_model: str = os.getenv("GPU_LOCAL_MODEL", "qwen3:8b"),
+        api_primary: str = os.getenv("GPU_API_PRIMARY_MODEL", "deepseek-v4-pro"),
+        api_secondary: str = os.getenv("GPU_API_SECONDARY_MODEL", "claude-sonnet-4"),
         gpu_timeout_s: float = 30.0,
         api_timeout_s: float = 15.0,
         max_queue_size: int = 50,

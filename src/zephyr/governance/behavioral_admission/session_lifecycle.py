@@ -29,13 +29,16 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from zephyr.shared.io.paths import REPO_ROOT  # 5.141.2 修复: 使用SSoT路径, 避免相对路径漂移
+
 logger = logging.getLogger(__name__)
 
 IDLE_TIMEOUT_S: int = 1800
 CLOSED_EXPIRY_S: int = 7776000
 GC_INTERVAL_S: int = 300
 
-_DEFAULT_DB_DIR = Path("data/behavioral-admission")
+# 5.141.2 修复: 使用 REPO_ROOT SSoT 构建绝对路径, 避免相对路径漂移
+_DEFAULT_DB_DIR = REPO_ROOT / "data" / "behavioral-admission"
 _DEFAULT_DB_NAME = "behavioral_audit_session.db"
 
 

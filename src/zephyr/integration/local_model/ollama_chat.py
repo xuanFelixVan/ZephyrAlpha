@@ -44,7 +44,8 @@ _log = logging.getLogger(__name__)
 
 DEFAULT_OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
-INFERENCE_MODEL = "qwen3:8b"
+# 5.141.1 修复: 模型名通过环境变量外部化, 避免硬编码
+INFERENCE_MODEL = os.getenv("OLLAMA_INFERENCE_MODEL", "qwen3:8b")
 INFERENCE_TEMPERATURE = 0.1
 INFERENCE_MAX_TOKENS = 1024
 INFERENCE_TIMEOUT_S = 60.0

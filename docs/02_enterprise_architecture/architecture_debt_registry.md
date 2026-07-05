@@ -7758,6 +7758,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.141 配置硬编码vs外部化（20个，第24轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=20(配置硬编码vs外部化需迁移到配置文件)
+> **第38轮修复状态（2026-07-05）**：FIXED=5(5.141.1 ollama_chat INFERENCE_MODEL+ollama_embedding model+deepseek_chat DEFAULT_MODEL+auto_runtime_core model+gpu_consensus_scheduler 3个模型名 通过os.getenv外部化 / 5.141.2 session_lifecycle _DEFAULT_DB_DIR改用REPO_ROOT SSoT + fix_safety 3处timeout改用类常量+os.getenv), DRIFTED=7(5.141.1 ollama_chat DEFAULT_OLLAMA_URL/deepseek_chat DEFAULT_BASE_URL/secret_rotation_aware ROTATION_URLS/dep_cve_correlator nvd_api_url/runtime_types ollama_base_url 注册时已os.getenv + ops/config.py文件不存在 + flags.py为docstring示例非业务代码), NOT_NEEDED=6(5.141.1 model_registry token_limit为合理数据默认值 + runtime_types embed/chat_model为pydantic Field默认值 + pipeline_roadmap m3/m7_model为审计证明数据 + cost_router LLMProvider为Enum常量 + 5.141.2 dead_letter_queue max_retries为函数参数默认值 + 5.141.3 ollama_chat INFERENCE_TEMPERATURE/integration_hub max_tokens为合理默认值), DEFERRED=2(5.141.1 model_router MODEL_VERSION_MAP需统一配置中心 + 5.141.2 drift_engine db_path需统一到DB_PATH SSoT涉及路径解析重构). 维度5.141全部清零.
 
 #### 5.141.1 [HIGH] 硬编码URL/端点/模型名（14处代表性问题）
 

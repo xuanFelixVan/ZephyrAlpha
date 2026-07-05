@@ -357,7 +357,7 @@ class AutoRuntimeCore:
         try:
             from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
 
-            deepseek_chat = DeepSeekChat(model="deepseek-v4-flash")
+            deepseek_chat = DeepSeekChat()  # 5.141.1 修复: 使用DEFAULT_MODEL默认值, 避免硬编码
             if deepseek_chat.available:
                 self._ollama_chat = deepseek_chat  # 接口兼容，复用变量名
                 self._audit_logger.log_registration("deepseek-chat", "VERIFY_OK")

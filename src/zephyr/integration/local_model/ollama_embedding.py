@@ -49,7 +49,7 @@ class OllamaEmbedder:
 
     def __init__(
         self,
-        model: str = "BGE-M3:latest",
+        model: str = os.getenv("OLLAMA_EMBEDDING_MODEL", "BGE-M3:latest"),
         ollama_url: str = DEFAULT_OLLAMA_URL,
         normalize: bool = True,
         timeout_s: float = 60.0,

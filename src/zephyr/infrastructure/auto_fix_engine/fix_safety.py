@@ -125,6 +125,11 @@ class WriteSafety:
 
 
 class FixValidator:
+    # 5.141.2 修复: timeout 通过环境变量外部化, 避免散落硬编码
+    PYTEST_TIMEOUT_S: int = int(os.getenv("FIX_PYTEST_TIMEOUT_S", "120"))
+    MYPY_TIMEOUT_S: int = int(os.getenv("FIX_MYPY_TIMEOUT_S", "120"))
+    RUFF_TIMEOUT_S: int = int(os.getenv("FIX_RUFF_TIMEOUT_S", "60"))
+
     def __init__(self, project_root: str | None = None) -> None:
         self._project_root = project_root or str(Path.cwd())
 
@@ -158,7 +163,7 @@ class FixValidator:
             cmd = ["python", "-m", "pytest", "-x", "-q", "--tb=short"]
             if target:
                 cmd.append(target)
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, cwd=self._project_root)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=self.PYTEST_TIMEOUT_S, cwd=self._project_root)
             return ValidationResult(
                 valid=result.returncode == 0,
                 check_name="pytest",
@@ -174,7 +179,7 @@ class FixValidator:
                 ["python", "-m", "mypy", target, "--no-error-summary"],
                 capture_output=True,
                 text=True,
-                timeout=120,
+                timeout=self.MYPY_TIMEOUT_S,
                 cwd=self._project_root,
             )
             return ValidationResult(
@@ -192,7 +197,7 @@ class FixValidator:
                 ["python", "-m", "ruff", "check", target],
                 capture_output=True,
                 text=True,
-                timeout=60,
+                timeout=self.RUFF_TIMEOUT_S,
                 cwd=self._project_root,
             )
             return ValidationResult(
