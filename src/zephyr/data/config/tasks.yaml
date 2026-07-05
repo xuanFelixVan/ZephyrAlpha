@@ -1,0 +1,121 @@
+# [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+# [MODULE] zephyr.data.config.tasks
+# [DOMAIN] D_DATA
+# [TTL] permanent
+# 任务清单真源（蓝图 §6.2 调度计划 + §4.4 迁移映射表）
+# 首批 10 任务覆盖 3 个 Provider（iFind/QMT/AKShare）和 2 个调度时段
+# schedule 字段对应 schedule.yaml 的时段标识：daily_kline/daily_capital/daily_event/weekend_financial/monthly_static
+# dependencies 是同批次内的前置任务 task_id（DAG 依赖，蓝图 §6.3）
+
+tasks:
+  # ============== 盘后日K时段（16:30 周一-五）==============
+  - task_id: adj_factor_incremental
+    table: c1_market.adj_factor
+    source: ifind
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: adj_factor
+    symbols: null  # null=全市场
+    extra:
+      description: "复权因子增量"
+
+  - task_id: kline_daily_hfq_incremental
+    table: c1_market.kline_daily_hfq
+    source: ifind
+    schedule: daily_kline
+    incremental: true
+    dependencies: ["adj_factor_incremental"]  # DAG: adj_factor → kline_daily_hfq
+    capability: kline_daily
+    symbols: null
+    extra:
+      description: "后复权日K线增量"
+
+  - task_id: kline_daily_incremental
+    table: c1_market.kline_daily
+    source: ifind
+    schedule: daily_kline
+    incremental: true
+    dependencies: []  # kline_daily 独立，不依赖 hfq
+    capability: kline_daily
+    symbols: null
+    extra:
+      description: "不复权日K线增量"
+
+  - task_id: daily_valuation_incremental
+    table: c1_market.daily_valuation
+    source: ifind
+    schedule: daily_kline
+    incremental: true
+    dependencies: ["kline_daily_incremental"]  # DAG: kline_daily → daily_valuation
+    capability: daily_valuation
+    symbols: null
+    extra:
+      description: "每日估值（PE/PB）增量"
+
+  - task_id: index_kline_incremental
+    table: c1_market.index_kline
+    source: ifind
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: index_kline
+    symbols: null
+    extra:
+      description: "指数日K线增量"
+
+  # ============== 盘后资金时段（17:00 周一-五）==============
+  - task_id: margin_trading_incremental
+    table: c1_market.margin_trading
+    source: ifind
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: margin_trading
+    symbols: null
+    extra:
+      description: "融资融券增量"
+
+  - task_id: block_trade_incremental
+    table: c1_market.block_trade
+    source: ifind
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: block_trade
+    symbols: null
+    extra:
+      description: "大宗交易增量"
+
+  - task_id: dragon_tiger_incremental
+    table: c1_market.dragon_tiger
+    source: ifind
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: dragon_tiger
+    symbols: null
+    extra:
+      description: "龙虎榜增量"
+
+  - task_id: hk_daily_kline_incremental
+    table: c1_market.hk_daily_kline
+    source: miniqmt
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: hk_daily_kline
+    symbols: null
+    extra:
+      description: "港股日K线增量"
+
+  - task_id: macro_data_incremental
+    table: c1_market.macro_data
+    source: akshare
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: macro_data
+    symbols: null
+    extra:
+      description: "宏观数据增量"

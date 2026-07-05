@@ -1,0 +1,96 @@
+# [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+# [MODULE] zephyr.data.config.policies
+# [DOMAIN] D_DATA
+# [TTL] permanent
+# per-source 调用策略真源（蓝图 §5.2 跨源策略矩阵）
+# policy_registry.py 的 DEFAULT_POLICIES 是此 yaml 缺失时的 fallback
+# 修改此文件后调度器 60 秒内自动热更新（maybe_reload）
+# 字段对应 SourcePolicy dataclass（policy_registry.py）
+
+ifind:
+  rpm: 0  # 配额制，不限 RPM
+  concurrency: 1
+  max_retries: 3
+  backoff: exponential
+  initial_wait_sec: 2.0
+  retry_on: ["-201", "TimeoutError", "ConnectionError"]
+  session_ttl_sec: 86400
+  relogin_on_auth_error: true
+  extra:
+    monthly_quota_alert: true
+    quota_error_codes: ["-4318", "-4309"]
+
+miniqmt:
+  rpm: 0
+  concurrency: 1  # 单线程
+  max_retries: 3
+  backoff: fixed
+  initial_wait_sec: 1.0
+  retry_on: ["TimeoutError", "ConnectionError"]
+  session_ttl_sec: 0
+  relogin_on_auth_error: true
+  extra:
+    requires_process: "XtMiniQmt.exe"
+
+akshare:
+  rpm: 60
+  concurrency: 4
+  max_retries: 5
+  backoff: jittered
+  initial_wait_sec: 2.0
+  retry_on: ["HTTPError", "JSONDecodeError", "ConnectionError"]
+  disconnect_vpn: true
+  extra:
+    dongfang_caizhang_skip_after: 3  # 东财接口3次失败跳过
+
+baostock:
+  rpm: 60
+  concurrency: 8  # 每线程独立 login
+  max_retries: 3
+  backoff: fixed
+  initial_wait_sec: 2.0
+  retry_on: ["TimeoutError", "ConnectionError", "BaoStockError"]
+  session_ttl_sec: 3600
+  relogin_on_auth_error: true
+  extra:
+    thread_local_login: true
+    data_lag_days: 7
+
+tushare:
+  rpm: 200
+  concurrency: 2
+  max_retries: 3
+  backoff: exponential
+  initial_wait_sec: 1.0
+  retry_on: ["TPMaxQueryLimitError", "ConnectionError"]
+  session_ttl_sec: 0
+  relogin_on_auth_error: false
+  extra:
+    points_alert_threshold: 2000
+
+tickflow:
+  rpm: 60
+  concurrency: 2
+  max_retries: 3
+  backoff: jittered
+  initial_wait_sec: 1.0
+  retry_on: ["HTTPError", "ConnectionError"]
+
+tdx:
+  rpm: 0
+  concurrency: 1
+  max_retries: 3
+  backoff: fixed
+  initial_wait_sec: 0.5
+  retry_on: ["ConnectionError", "TimeoutError"]
+  extra:
+    bestip: true
+
+rss:
+  rpm: 0
+  concurrency: 1
+  max_retries: 3
+  backoff: exponential
+  initial_wait_sec: 5.0
+  retry_on: ["SSLError", "ConnectionError", "HTTPError"]
+  respect_robots_txt: true
