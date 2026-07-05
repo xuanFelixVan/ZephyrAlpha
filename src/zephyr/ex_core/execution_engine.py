@@ -184,7 +184,43 @@ class ExecutionEngine:
         current = self._broker_scores[broker_id]
         self._broker_scores[broker_id] = current * 0.9 + fill_quality * 0.1
 
+    def _record_run(
+        self,
+        order: Order,
+        algo_type: str,
+        broker_order_id: str,
+        broker_id: str,
+        start_time: datetime,
+    ) -> None:
+        """填充执行记录（消除死代码：原 _reports 从未写入）
+
+        Args:
+            order: 订单
+            algo_type: 算法类型（market/twap/vwap）
+            broker_order_id: 券商订单号
+            broker_id: 经纪商ID
+            start_time: 执行开始时间
+        """
+        target_price = order.limit_price if order.limit_price is not None else Decimal("0")
+        self._reports[order.order_id] = ExecutionEngineRunRecord(
+            report_id=f"rpt-{broker_order_id}",
+            order_id=order.order_id,
+            symbol=order.symbol,
+            algo_type=algo_type,
+            total_quantity=order.quantity,
+            filled_quantity=order.filled_quantity or Decimal("0"),
+            avg_fill_price=order.avg_fill_price or Decimal("0"),
+            target_price=target_price,
+            slippage_bps=Decimal("0"),
+            commission=Decimal("0"),
+            start_time=start_time,
+            end_time=datetime.now(UTC),
+            status=order.status.value if hasattr(order.status, 'value') else str(order.status),
+            venue=broker_id,
+        )
+
     def _execute_twap(self, order: Order, broker_id: str) -> str:
+        start_time = datetime.now(UTC)
         slices = self._config.twap_slices
         broker_order_id = self._order_manager.submit_order(order.order_id, broker_id)
 
@@ -192,20 +228,27 @@ class ExecutionEngine:
             "algo": "twap",
             "slices": slices,
             "broker_order_ids": [broker_order_id],
-            "started_at": datetime.now(UTC),
+            "started_at": start_time,
         }
+        self._record_run(order, "twap", broker_order_id, broker_id, start_time)
 
         return broker_order_id
 
     def _execute_vwap(self, order: Order, broker_id: str) -> str:
+        start_time = datetime.now(UTC)
         self._algo_orders[order.order_id] = {
             "algo": "vwap",
-            "started_at": datetime.now(UTC),
+            "started_at": start_time,
         }
-        return self._order_manager.submit_order(order.order_id, broker_id)
+        broker_order_id = self._order_manager.submit_order(order.order_id, broker_id)
+        self._record_run(order, "vwap", broker_order_id, broker_id, start_time)
+        return broker_order_id
 
     def _execute_market(self, order: Order, broker_id: str) -> str:
-        return self._order_manager.submit_order(order.order_id, broker_id)
+        start_time = datetime.now(UTC)
+        broker_order_id = self._order_manager.submit_order(order.order_id, broker_id)
+        self._record_run(order, "market", broker_order_id, broker_id, start_time)
+        return broker_order_id
 
 
 __all__ = ["AlgoType", "ExecutionConfig", "ExecutionEngine", "ExecutionEngineRunRecord"]

@@ -50,5 +50,4 @@ from __future__ import annotations
 
 __all__ = [
     "pipeline_base",
-    "pipeline_base_from_resear",
 ]
