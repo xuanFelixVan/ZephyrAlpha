@@ -180,7 +180,7 @@ result = await gateway.full_scan(user_text, llm_response)
 新 AI 进入项目后，发现已有功能/符号有两个互补手段，职责边界明确：
 
 - **能力发现（CapabilityLookup）**：查"某个能力是否存在 + canonical 真源在哪"。
-  - 真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（134 条已声明能力）
+  - 真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（179 条已声明能力）
   - 用法：`from zephyr.governance.capability_lookup import CapabilityLookup; CapabilityLookup().find("handoff")`
   - 覆盖范围：仅已声明 capability_id 的功能。子目录文件（如 `audit_trail/agent_signer.py`）默认未声明，查不到。
   - 何时用：新 AI 想做"X 功能"前，反查是否已有该能力的 canonical 实现。

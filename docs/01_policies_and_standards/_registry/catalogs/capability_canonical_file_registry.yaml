@@ -2752,6 +2752,116 @@ capabilities:
       post_commit_guard 匹配 capability_id）。4 种合法 GW 标记放行 + merge commit
       豁免。审计报告落盘 .runtime/reconcile_reports/post_commit_guard_<ts>.json。
 
+  # --------------------------------------------------------------------------
+  - capability_id: position_reconciler
+    aliases:
+      - PositionReconciler
+      - position_reconcile
+      - reconcile_position
+    description: >-
+      持仓对账器（D_POSITION）。事件驱动——ExecutionReport到达时触发reconcile，
+      禁止时间触发。canonical = src/zephyr/position/position_reconciler.py
+      （蓝图 MOD-INF-022 escalation_protocol）。reconcile结果包含rule_id（POS-RECON-001），
+      should_escalate判断P0-FATAL硬中断阈值。handle_execution_report为事件入口。
+
+  # --------------------------------------------------------------------------
+  - capability_id: performance_attribution_engine
+    aliases:
+      - DefaultAttributionEngine
+      - AttributionEngineBase
+      - attribution_engine
+      - brinson_attribution
+    description: >-
+      绩效归因引擎（D_REPORTING）。Brinson三因子分解（allocation/selection/interaction）。
+      canonical = src/zephyr/reporting/analytics_base.py（AttributionEngineBase OCP扩展点）+
+      src/zephyr/reporting/default_attribution_engine.py（DefaultAttributionEngine默认实现）。
+      契约对齐 CTR-P1-009（PerformanceAttributionReport → D_FRONTEND, D_GOV_ENFORCEMENT）。
+      governance/audit/default_attribution_engine.py + governance/observability_governance/analytics_base.py
+      为 re-export shim（2026-07-06 双定义收敛）。
+
+  # --------------------------------------------------------------------------
+  - capability_id: tca_engine
+    aliases:
+      - DefaultTCAEngine
+      - TCAEngineBase
+      - transaction_cost_analysis
+    description: >-
+      交易成本分析引擎（D_REPORTING）。Fill+Order→ExecutionReport，计算滑点/佣金/冲击成本。
+      canonical = src/zephyr/reporting/analytics_base.py（TCAEngineBase OCP扩展点）+
+      src/zephyr/reporting/default_tca_engine.py（DefaultTCAEngine默认实现）。
+      契约对齐 CTR-005（Fill）+ CTR-004（Order）→ CTR-P1-007（ExecutionReport）。
+      governance/audit/default_tca_engine.py 为 re-export shim（2026-07-06 双定义收敛）。
+
+  # --------------------------------------------------------------------------
+  - capability_id: default_equity_strategy
+    aliases:
+      - DefaultEquityStrategy
+      - RebalanceMode
+      - equity_long_only_strategy
+    description: >-
+      默认A股股票多头策略（D_PORTFOLIO_CORE）。等权/信号加权/最小方差配置。
+      canonical = src/zephyr/pf_core/default_equity_strategy.py。
+      通过 @StrategyRegistry.register 注册（OCP-002）。
+      generate_target_weights 返回 dict[str,float]（LSP对齐 StrategyBase抽象方法），
+      generate_orders 便捷方法返回 list[Order]（CTR-004）。
+
+  # --------------------------------------------------------------------------
+  - capability_id: strategy_registry
+    aliases:
+      - StrategyRegistry
+      - StrategyBase
+      - StrategyMeta
+      - autodiscover_strategies
+    description: >-
+      策略注册表+OCP扩展点（D_PORTFOLIO_CORE）。canonical =
+      src/zephyr/governance/strategies/strategy_base.py（StrategyBase+StrategyMeta+
+      StrategyRegistry+autodiscover_strategies）。pf_core/strategy_base.py +
+      pf_core/strategy_registry.py 为 re-export shim。
+      契约对齐 OCP-002（StrategyBase + StrategyRegistry 策略扩展点）。
+
+  # --- 因子信号域 capability（2026-07-06 AI-08 审计补登，P3-19 治本）---
+  - capability_id: factor_base_abstraction
+    aliases:
+      - FactorBase
+      - FactorRegistry
+      - factor_base
+    description: >-
+      因子抽象基类 + 因子注册表（OCP 扩展点）。canonical =
+      src/zephyr/factor/factor_base.py（auto 派生：basename factor_base 匹配 alias）。
+      FactorBase 定义 compute(data)→Series 协议；FactorRegistry 提供 register/list_all/get。
+      域：D_FACTOR。新 AI 实现因子须继承 FactorBase 并用 @FactorRegistry.register 注册。
+
+  - capability_id: alpha_signal_pipeline
+    aliases:
+      - AlphaSignalPipeline
+      - signal_pipeline
+      - pipeline
+    description: >-
+      Alpha 信号管道（因子发现→计算→合成→验证→资本分配 5 阶段）。canonical =
+      src/zephyr/signal_fundamental/pipeline.py（auto 派生：basename pipeline  匹配 alias）。
+      域：D_FUNDAMENTAL_SIGNAL。因子协议 compute(self)→list（非 FactorBase 的 compute(data)），
+      因子须通过 register_factor() 显式注册。re-export shim 在 src/zephyr/factor/alpha_signal_pipeline.py。
+
+  - capability_id: signal_synthesizer_base
+    aliases:
+      - SignalSynthesizerBase
+      - signal_synthesizer
+    description: >-
+      信号合成器抽象基类（OCP 扩展点 D_SIGNAL-SYN）。canonical =
+      src/zephyr/signal_fundamental/synth/signal_synthesizer.py（auto 派生：basename
+      signal_synthesizer 匹配 alias）。域：D_FUNDAMENTAL_SIGNAL。合成 FactorSignal→SynthesizedSignal。
+
+  - capability_id: degradation_monitor_base
+    aliases:
+      - DegradationMonitorBase
+      - degradation_monitor
+    description: >-
+      信号质量降级监视器抽象基类（OCP 扩展点 D_SIGQC-DEG）。canonical =
+      src/zephyr/signal_quality/degradation_monitor_base.py（auto 派生：basename
+      degradation_monitor_base 匹配 capability_id）。域：D_SIGQC（2026-07-06 域边界修正：
+      原 D_FUNDAMENTAL_SIGNAL 迁移至 D_SIGQC）。契约对齐 CTR-ERR-003。
+      signal_fundamental/gen/__init__.py + signal_fundamental/__init__.py 跨域 re-export 向后兼容。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -2779,6 +2889,12 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+
+  # --- 因子信号域（2026-07-06 AI-08 审计修复，DegradationMonitorBase 域边界迁移）---
+  - file: "src/zephyr/signal_quality/degradation_monitor_base.py"
+    token: "auto-degradation-monitor-base-20260706"
+    created_by: "session-sess-19552-20260706013714"
+    capability: "degradation_monitor_base"
 
   # --- commit_gates/ 门禁文件（CREATE-GUARD 自身 + 已有 4 gate） ---
   - file: "src/zephyr/governance/commit_gates/create_guard.py"

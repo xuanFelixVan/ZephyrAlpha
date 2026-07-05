@@ -79,7 +79,7 @@ class AttributionEngineBase(abc.ABC):
     """
     绩效归因引擎（OCP 扩展点 D_REPORTING-ATTR）
 
-    契约对齐：CTR-P1-009（PerformanceAttributionReport 出站）→ D_FRONTEND, D_COMPLIANCE
+    契约对齐：CTR-P1-009（PerformanceAttributionReport 出站）→ D_FRONTEND, D_GOV_ENFORCEMENT
 
     实现者要求：
       - attribute(): 给定持仓和因子暴露，按 Brinson 模型拆解收益

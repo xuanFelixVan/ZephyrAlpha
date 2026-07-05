@@ -28,7 +28,7 @@
 
 CTR 契约：
   消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
-  生产者 — CTR-P1-009 (PerformanceAttributionReport) → D_FRONTEND, D_COMPLIANCE
+  生产者 — CTR-P1-009 (PerformanceAttributionReport) → D_FRONTEND, D_GOV_ENFORCEMENT
 
 SSoT: cross_layer_contracts.yaml → CTR-P1-009
 """
@@ -36,10 +36,8 @@ SSoT: cross_layer_contracts.yaml → CTR-P1-009
 from __future__ import annotations
 
 import logging
-import uuid
-from datetime import UTC, datetime
 
-from zephyr.governance.observability_governance.analytics_base import AttributionEngineBase
+from zephyr.reporting.analytics_base import AttributionEngineBase
 from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
 
 _logger = logging.getLogger(__name__)
@@ -69,19 +67,15 @@ class DefaultAttributionEngine(AttributionEngineBase):
         total_return = allocation_effect + selection_effect + interaction_effect
 
         return PerformanceAttributionReport(
-            report_id=f"attr-{uuid.uuid4().hex[:8]}",
             portfolio_id=portfolio_id,
             period_start=period_start,
             period_end=period_end,
             total_return=total_return,
-            benchmark_return=0.0,
-            excess_return=total_return,
             allocation_effect=allocation_effect,
             selection_effect=selection_effect,
             interaction_effect=interaction_effect,
-            sector_attributions={},
-            factor_attributions={},
-            generated_at=datetime.now(UTC),
+            factor_contributions={},
+            transaction_cost_drag=0.0,
             idempotency_key=idempotency_key,
         )
 
