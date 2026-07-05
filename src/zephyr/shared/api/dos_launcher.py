@@ -42,6 +42,7 @@ Output: DOSResult with directives_loaded, execution_log, compliance.
 """
 
 
+import functools
 import os
 import re
 from pathlib import Path
@@ -65,6 +66,7 @@ __all__ = [
 #   1. 环境变量 ZEPHYR_DOS_DIRECTIVE_DIR（显式配置，优先）
 #   2. resources/DOS/directives（项目内约定路径）
 # ---------------------------------------------------------------------------
+@functools.cache
 def _resolve_default_directive_dir() -> Path:
     env = os.environ.get("ZEPHYR_DOS_DIRECTIVE_DIR")
     if env:

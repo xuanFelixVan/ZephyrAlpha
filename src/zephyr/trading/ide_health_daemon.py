@@ -423,14 +423,29 @@ class IdeHealthDaemon:
             capture_output=True, text=True,
             cwd=str(self._project_root),
         )
-        metrics["stash_count"] = len([l for l in r.stdout.splitlines() if l.strip()])
+        # 5.75.3 修复：检查 returncode，非零时记录 warning 并标记 metrics 不可用
+        if r.returncode != 0:
+            logger.warning(
+                "drift health: git stash list failed (returncode=%d): %s",
+                r.returncode, r.stderr.strip(),
+            )
+            metrics["stash_count"] = None
+        else:
+            metrics["stash_count"] = len([l for l in r.stdout.splitlines() if l.strip()])
         # worktree 变更量
         r = subprocess.run(
             ["git", "status", "--porcelain"],
             capture_output=True, text=True,
             cwd=str(self._project_root),
         )
-        metrics["worktree_changes"] = len([l for l in r.stdout.splitlines() if l.strip()])
+        if r.returncode != 0:
+            logger.warning(
+                "drift health: git status --porcelain failed (returncode=%d): %s",
+                r.returncode, r.stderr.strip(),
+            )
+            metrics["worktree_changes"] = None
+        else:
+            metrics["worktree_changes"] = len([l for l in r.stdout.splitlines() if l.strip()])
         # 写入 .runtime/drift_health.json（P1-T3: 原子写 RULE-ONE — tmp + os.replace，防多 session 并发采集写损坏）
         runtime_dir = self._project_root / ".runtime"
         runtime_dir.mkdir(parents=True, exist_ok=True)
@@ -453,7 +468,7 @@ class IdeHealthDaemon:
                 )
             except Exception:
                 logger.exception("drift health: stash auto-cleanup failed", exc_info=True)
-        if metrics["worktree_changes"] > 50:
+        if metrics["worktree_changes"] is not None and metrics["worktree_changes"] > 50:
             logger.warning("drift health: worktree_changes=%d > 50", metrics["worktree_changes"])
 
     @property

@@ -22,6 +22,7 @@ C 轨 — 14 层业务脊柱 | B 轨 — 10 横切平台能力
   向量记忆服务:    from zephyr.integration.vector_memory import InProcessVectorMemory
 """
 
+import atexit
 import importlib
 import logging
 import sys
@@ -182,6 +183,19 @@ def _deferred_service_registration():
 _registration_timer = threading.Timer(0.1, _deferred_service_registration)
 _registration_timer.daemon = True
 _registration_timer.start()
+
+
+# 5.77.1 修复: import 副作用——daemon Timer 线程在 import 时启动。
+# 注册 atexit cleanup 取消未完成的 daemon Timer，避免进程退出时遗留线程资源。
+def _cleanup_bootstrap_timers() -> None:
+    for timer in (_bootstrap_timer, _registration_timer):
+        try:
+            timer.cancel()
+        except Exception:
+            pass
+
+
+atexit.register(_cleanup_bootstrap_timers)
 
 # ── 模块懒加载注册（M-04 · PEP 562 __getattr__）───────────────────────────
 # 5.22.2 修复：4个幻影路径修正为真实模块路径

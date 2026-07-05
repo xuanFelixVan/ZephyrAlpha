@@ -36,9 +36,11 @@ REPO_ROOT，导致：
   - Terraform: provider 配置集中定义，模块引用而非重定义
 """
 
+import functools
 from pathlib import Path
 
 
+@functools.cache
 def find_repo_root() -> Path:
     """从当前文件向上查找项目根目录（包含 src/zephyr/ 的目录）。
 

@@ -262,26 +262,41 @@ def generate_audit_log(
             pass
 
     try:
-        subprocess.run(
+        # 5.75.1 修复：检查 git add/commit 返回码，失败时不置 committed_to_git=True
+        add_result = subprocess.run(
             ["git", "add", str(audit_path.relative_to(project_root))],
             capture_output=True,
             timeout=10,
             cwd=project_root,
         )
 
-        subprocess.run(
-            [
-                "git",
-                "commit",
-                "-m",
-                f"audit_log: {scan_id} sha256={events_hash[:12]}",
-            ],
-            capture_output=True,
-            timeout=10,
-            cwd=project_root,
-        )
+        if add_result.returncode != 0:
+            logger.warning(
+                "tamper_proof_audit: git add failed (returncode=%d): %s",
+                add_result.returncode,
+                add_result.stderr.decode("utf-8", errors="replace").strip(),
+            )
+        else:
+            commit_result = subprocess.run(
+                [
+                    "git",
+                    "commit",
+                    "-m",
+                    f"audit_log: {scan_id} sha256={events_hash[:12]}",
+                ],
+                capture_output=True,
+                timeout=10,
+                cwd=project_root,
+            )
 
-        record.committed_to_git = True
+            if commit_result.returncode != 0:
+                logger.warning(
+                    "tamper_proof_audit: git commit failed (returncode=%d): %s",
+                    commit_result.returncode,
+                    commit_result.stderr.decode("utf-8", errors="replace").strip(),
+                )
+            else:
+                record.committed_to_git = True
 
     except Exception as e:
         logger.warning("suppressed error in tamper_proof_audit", exc_info=True)

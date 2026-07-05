@@ -191,6 +191,21 @@ class WorkOrchestrator:
                     if all_done:
                         other.status = "READY"
 
+            self._cleanup_completed()
+
+    def _cleanup_completed(self) -> None:
+        """5.65.3 修复：清理已完成且无PENDING依赖的item，防止_items无界增长。"""
+        pending_deps: set[str] = set()
+        for other in self._items.values():
+            if other.status == "PENDING":
+                pending_deps.update(other.depends_on)
+        stale = [
+            iid for iid, it in self._items.items()
+            if it.status in ("COMPLETED", "FAILED") and iid not in pending_deps
+        ]
+        for iid in stale:
+            del self._items[iid]
+
     def status(self, item_id: str) -> str | None:
         item = self._items.get(item_id)
         return item.status if item else None

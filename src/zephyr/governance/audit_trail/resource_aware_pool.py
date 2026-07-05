@@ -53,8 +53,10 @@ class ResourceAwarePool:
         pool = self._gpu_pool if self._route_task(task_type) == "gpu" else self._cpu_pool
         future = pool.submit(func, *args)
         if self._route_task(task_type) == "gpu":
+            self._gpu_futures = [f for f in self._gpu_futures if not f.done()]
             self._gpu_futures.append(future)
         else:
+            self._cpu_futures = [f for f in self._cpu_futures if not f.done()]
             self._cpu_futures.append(future)
         return future
 

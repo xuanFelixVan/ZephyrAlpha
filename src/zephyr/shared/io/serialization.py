@@ -266,9 +266,22 @@ def from_json(
 
     Returns:
         反序列化后的 dict 或 Pydantic 模型实例。
+
+    Raises:
+        SerializationError: 当 raw 中含 _format_version 且与当前契约版本不匹配时。
     """
     raw = json.loads(json_str)
+    if isinstance(raw, dict):
+        raw_version = raw.get("_format_version")
+        if raw_version is not None and raw_version != SerializationContract().format_version:
+            raise SerializationError(
+                f"format version mismatch: expected {SerializationContract().format_version}, got {raw_version}"
+            )
     return from_dict(raw, model=model)
+
+
+class SerializationError(Exception):
+    """序列化/反序列化错误——版本不匹配或格式校验失败。"""
 
 
 @dataclass(frozen=True)

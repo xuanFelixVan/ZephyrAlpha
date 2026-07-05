@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+import atexit
 import json
 import logging
 import os
@@ -57,6 +58,27 @@ class InterruptGuard:
             logger.info("Interrupt guard handlers installed")
         except (OSError, ValueError):
             logger.warning("Cannot install signal handlers (not in main thread)")
+            # 5.77.5 修复: 非主线程无法注册 signal handler，注册 atexit 作为兜底清理
+            atexit.register(self._atexit_cleanup)
+
+    def _atexit_cleanup(self) -> None:
+        """atexit 兜底清理：进程退出时回滚未完成的 active fixes。
+
+        仅在非主线程场景下注册（signal handler 不可用时），作为中断响应的兜底。
+        """
+        try:
+            with self._lock:
+                if not self._active_fixes:
+                    return
+                logger.warning(
+                    "atexit cleanup: rolling back %d active fixes", len(self._active_fixes)
+                )
+                for action_id, fix_data in list(self._active_fixes.items()):
+                    self._write_wal(action_id, "interrupted", fix_data)
+                    self._rollback_fix(action_id, fix_data)
+                self._active_fixes.clear()
+        except Exception as exc:
+            logger.error("atexit cleanup failed: %s", exc, exc_info=True)
 
     def remove_handlers(self) -> None:
         if not self._handlers_installed:
