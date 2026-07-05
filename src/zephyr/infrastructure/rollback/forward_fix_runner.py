@@ -81,7 +81,7 @@ class ForwardFixRunner:
                 commit_sha=commit_sha,
                 fix_type="forward_fix",
                 patch_file="",
-                details=[str(e)],
+                details=["internal error"],
             )
 
     def _run_git(self, args: list[str]) -> str:

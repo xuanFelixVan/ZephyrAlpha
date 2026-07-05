@@ -72,7 +72,7 @@ class IntegrationRegistry:
             except Exception as e:
                 point.status = "DEGRADED"
                 report.degraded += 1
-                report.details.append({"point_id": point.point_id, "error": str(e)})
+                report.details.append({"point_id": point.point_id, "error": "internal error"})
         return report
 
     def status_all(self) -> dict[str, str]:

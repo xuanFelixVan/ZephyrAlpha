@@ -183,7 +183,7 @@ class RollbackVerifier:
                 details=details,
             )
         except Exception as e:
-            return DBHealReport(healed=False, tasks_fixed=0, gates_fixed=0, events_fixed=0, details=[str(e)])
+            return DBHealReport(healed=False, tasks_fixed=0, gates_fixed=0, events_fixed=0, details=["internal error"])
 
     def differential_check(self, db_before: Path, db_after: Path) -> DifferentialReport:
         rows_compared = 0

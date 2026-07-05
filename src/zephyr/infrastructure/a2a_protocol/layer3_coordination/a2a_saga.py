@@ -119,7 +119,7 @@ class A2ASaga:
                 step.executed = True
             except Exception as e:
                 result.status = SagaStatus.COMPENSATING
-                result.error_message = str(e)
+                result.error_message = "internal error"
                 self._compensate(result, action_funcs)
                 return result
 

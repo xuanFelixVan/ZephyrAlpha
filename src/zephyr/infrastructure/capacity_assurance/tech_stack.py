@@ -151,7 +151,7 @@ class TechStackValidator:
                 dd_id="DD-2",
                 component="SQLite",
                 available=False,
-                details=str(e),
+                details="internal error",
                 suggestion="检查 Python sqlite3 模块是否编译进你的 Python",
             )
 

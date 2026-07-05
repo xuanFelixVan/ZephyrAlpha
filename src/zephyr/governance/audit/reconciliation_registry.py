@@ -220,7 +220,7 @@ def _write_reconcile_report(
         )
         return report_path, ""
     except OSError as e:
-        return None, str(e)
+        return None, "internal error"
 
 
 def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -886,7 +886,7 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
                     shutil.move(str(doc), str(dest))
                     archived.append(doc.name)
                 except OSError as e:
-                    details[doc.name]["archive_error"] = str(e)
+                    details[doc.name]["archive_error"] = "internal error"
             else:
                 archived.append(doc.name)  # dry_run 计入候选供审阅
         else:
@@ -1162,8 +1162,8 @@ def _audit_commit_history(
         if len(parts) < 2:
             continue
         commit_hash, subject = parts[0], parts[1]
-        # 跳过 merge commit（合并提交无作者意图）
-        if subject.startswith("Merge "):
+        # 跳过 merge commit（合并提交无作者意图；大小写不敏感以兼容 session_worktree 的小写 "merge session/..."）
+        if subject.lower().startswith("merge "):
             continue
         if gw_marker in subject:
             # subject 已含 [GW:（合法 commit），检测是否豁免通道使用

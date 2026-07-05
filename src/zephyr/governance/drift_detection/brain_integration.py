@@ -275,7 +275,8 @@ def _l0_startup_probe(project_root, result):
     except Exception as exc:
         result.errors.append("L0 exception: " + str(exc))
 
-        result.errors.append(traceback.format_exc()[-500:])
+        logger.exception("probe failed with exception")
+        result.errors.append("internal error")
 
     if result.errors:
         result.status = ProbeStatus.FAIL
@@ -349,7 +350,8 @@ def _l1_readiness_probe(project_root, result):
     except Exception as exc:
         result.errors.append("L1 exception: " + str(exc))
 
-        result.errors.append(traceback.format_exc()[-500:])
+        logger.exception("probe failed with exception")
+        result.errors.append("internal error")
 
     if result.errors:
         result.status = ProbeStatus.FAIL
@@ -415,7 +417,8 @@ def _l2_liveness_probe(result):
     except Exception as exc:
         result.errors.append("L2 exception: " + str(exc))
 
-        result.errors.append(traceback.format_exc()[-500:])
+        logger.exception("probe failed with exception")
+        result.errors.append("internal error")
 
     if result.errors:
         result.status = ProbeStatus.FAIL
@@ -479,7 +482,8 @@ def _l3_reconcile(result, scan_level="LIGHT"):
     except Exception as exc:
         result.errors.append("L3 exception: " + str(exc))
 
-        result.errors.append(traceback.format_exc()[-500:])
+        logger.exception("probe failed with exception")
+        result.errors.append("internal error")
 
     if result.verify_events_remaining == 0:
         result.status = ProbeStatus.PASS

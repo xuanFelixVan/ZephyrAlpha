@@ -234,7 +234,7 @@ class BootstrapSuperadminBridge:
             logger.error("BootstrapSuperadminBridge: bootstrap failed: %s", e)
             return {
                 "bootstrapped": False,
-                "error": f"bootstrap exception: {e}",
+                "error": "bootstrap failed",
             }
 
     def verify(self) -> dict[str, Any]:
@@ -257,7 +257,7 @@ class BootstrapSuperadminBridge:
                 "account": SUPERADMIN_ACCOUNT,
             }
         except Exception as e:
-            return {"valid": False, "error": str(e)}
+            return {"valid": False, "error": "internal error"}
 
     def shutdown(self) -> dict[str, Any]:
         """关闭superadmin桥接 — 清理状态."""

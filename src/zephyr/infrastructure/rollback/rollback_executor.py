@@ -820,13 +820,13 @@ class RollbackExecutor:
 
             return result
         except Exception as e:
-            errors.append(str(e))
-            self._write_in_flight(execution_id, "error", "FAILED", {"error": str(e)})
+            errors.append("internal error")
+            self._write_in_flight(execution_id, "error", "FAILED", {"error": "internal error"})
             self._write_op_audit(
                 operation=operation.value,
                 commit_sha=commit_sha,
                 success=False,
-                details={"error": str(e), "execution_id": execution_id},
+                details={"error": "internal error", "execution_id": execution_id},
                 audit_session=audit_session,
             )
             return RollbackExecutionResult(
@@ -846,7 +846,7 @@ class RollbackExecutor:
                     self._run_git(["stash", "pop"])
                     self._write_in_flight(execution_id, "stash_pop", "SUCCESS")
                 except Exception as e:
-                    self._write_in_flight(execution_id, "stash_pop", "FAILED", {"error": str(e)})
+                    self._write_in_flight(execution_id, "stash_pop", "FAILED", {"error": "internal error"})
             self._delete_in_flight(execution_id)
 
     def _resolve_conflict_files(

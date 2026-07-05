@@ -234,7 +234,7 @@ def _call_openai_compatible(
             provider=provider,
             latency_ms=latency_ms,
             simulated=True,
-            error=str(exc),
+            error="internal error",
         )
 
 
@@ -318,7 +318,7 @@ def _call_anthropic(
             provider="claude",
             latency_ms=latency_ms,
             simulated=True,
-            error=str(exc),
+            error="internal error",
         )
 
 

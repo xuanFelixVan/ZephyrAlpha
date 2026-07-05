@@ -119,7 +119,7 @@ class FactChecker:
                 confidence=1.0 if found else 0.0,
             )
         except Exception as e:
-            return FactResult(fact_type="file_contains", target=path, verified=False, confidence=0.0, error=str(e))
+            return FactResult(fact_type="file_contains", target=path, verified=False, confidence=0.0, error="internal error")
 
     def _verify_path_absolute(self, path: str = "", **kwargs) -> FactResult:
         is_abs = Path(path).is_absolute()
@@ -172,7 +172,7 @@ class FactChecker:
                 target=f"{module_name}.{attr}",
                 verified=False,
                 confidence=0.0,
-                error=str(e),
+                error="internal error",
             )
 
     def _verify_version_match(self, value: str = "", expected: str = "", **kwargs) -> FactResult:

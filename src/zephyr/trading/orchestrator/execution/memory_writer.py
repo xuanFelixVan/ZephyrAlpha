@@ -50,7 +50,7 @@ class MemoryWriter:
             return ArchiveResult(stored=1)
         except Exception as e:
             logger.warning("[ORC-VMS] degraded: %s", e)
-            return ArchiveResult(stored=0, status="degraded", error=str(e))
+            return ArchiveResult(stored=0, status="degraded", error="internal error")
 
 
 def archive_to_vms(task: Any, result: dict[str, Any] | None = None) -> ArchiveResult:

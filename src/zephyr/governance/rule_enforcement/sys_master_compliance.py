@@ -409,7 +409,7 @@ def check_crosscheck_script() -> list[dict]:
             }
         ]
     except Exception as e:
-        return [{"check_id": "SYS-C06", "label": "crosscheck_script_pass", "status": "FAIL", "detail": str(e)}]
+        return [{"check_id": "SYS-C06", "label": "crosscheck_script_pass", "status": "FAIL", "detail": "internal error"}]
 
 
 def main() -> int:

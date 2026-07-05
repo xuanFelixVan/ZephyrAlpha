@@ -93,7 +93,7 @@ class HealthcheckService:
                 component="dependencies",
                 healthy=False,
                 latency_ms=(time.time() - t0) * 1000,
-                message=f"Import failed: {e}",
+                message="import failed",
                 last_checked=datetime.now(UTC).isoformat(),
             )
 
@@ -119,7 +119,7 @@ class HealthcheckService:
                 component="git",
                 healthy=False,
                 latency_ms=(time.time() - t0) * 1000,
-                message=str(e),
+                message="internal error",
                 last_checked=datetime.now(UTC).isoformat(),
             )
 
@@ -164,7 +164,7 @@ class HealthcheckService:
                 component="disk",
                 healthy=False,
                 latency_ms=(time.time() - t0) * 1000,
-                message=str(e),
+                message="internal error",
                 last_checked=datetime.now(UTC).isoformat(),
             )
 

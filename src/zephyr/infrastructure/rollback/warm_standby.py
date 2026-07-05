@@ -131,7 +131,7 @@ class WarmStandby:
                 target_commit=target_commit,
                 rto_ms=0,
                 exit_code=self.EXIT_CODE_CUTOVER,
-                details=[str(e)],
+                details=["internal error"],
             )
 
         state.standby_commit = target_commit

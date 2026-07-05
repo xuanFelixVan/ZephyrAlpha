@@ -158,7 +158,7 @@ class HealthMonitor:
                     return ProbeResult(
                         capability_id="shared.longevity_monitor",
                         alive=False,
-                        error=str(e),
+                        error="internal error",
                     )
 
             self.register_probe("shared.longevity_monitor", _longevity_probe)
@@ -188,7 +188,7 @@ class HealthMonitor:
                     return ProbeResult(
                         capability_id="shared.healthcheck_service",
                         alive=False,
-                        error=str(e),
+                        error="internal error",
                     )
 
             self.register_probe("shared.healthcheck_service", _healthcheck_probe)
@@ -255,7 +255,7 @@ class HealthMonitor:
             result.latency_ms = (time.monotonic() - start) * 1000
             return result
         except Exception as e:
-            return ProbeResult(capability_id=capability_id, error=str(e))
+            return ProbeResult(capability_id=capability_id, error="internal error")
 
     def probe_all(self) -> dict[str, ProbeResult]:
         results: dict[str, ProbeResult] = {}

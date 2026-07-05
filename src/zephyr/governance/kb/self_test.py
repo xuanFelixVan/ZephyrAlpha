@@ -121,7 +121,7 @@ def _check_sqlite_integrity(root: Path) -> CheckResult:
         )
     except Exception as e:
         return CheckResult(
-            1, "SQLite Integrity", CheckStatus.FAIL, str(e), "检查 data/databases/governance.db 是否存在且可读写"
+            1, "SQLite Integrity", CheckStatus.FAIL, "internal error", "检查 data/databases/governance.db 是否存在且可读写"
         )
 
 
@@ -154,7 +154,7 @@ def _check_ke_count(root: Path) -> CheckResult:
                 "运行 bootstrap 扫描全项目文档自动填充KE库",
             )
     except Exception as e:
-        return CheckResult(3, "KE Count (MVKB)", CheckStatus.FAIL, str(e))
+        return CheckResult(3, "KE Count (MVKB)", CheckStatus.FAIL, "internal error")
 
 
 def _check_category_coverage(root: Path) -> CheckResult:
@@ -187,7 +187,7 @@ def _check_category_coverage(root: Path) -> CheckResult:
                 "运行 bootstrap 丰富KE来源",
             )
     except Exception as e:
-        return CheckResult(4, "Category Coverage", CheckStatus.FAIL, str(e))
+        return CheckResult(4, "Category Coverage", CheckStatus.FAIL, "internal error")
 
 
 def _check_load_bearing_kes(root: Path) -> CheckResult:
@@ -236,7 +236,7 @@ def _check_load_bearing_kes(root: Path) -> CheckResult:
             )
         return CheckResult(5, "Load-Bearing KEs", CheckStatus.PASS, f"{len(load_bearing)} load-bearing KEs healthy")
     except Exception as e:
-        return CheckResult(5, "Load-Bearing KEs", CheckStatus.FAIL, str(e))
+        return CheckResult(5, "Load-Bearing KEs", CheckStatus.FAIL, "internal error")
 
 
 def _check_ghost_scan(root: Path) -> CheckResult:
@@ -269,7 +269,7 @@ def _check_wal_health(root: Path) -> CheckResult:
             )
         return CheckResult(7, "WAL Health", CheckStatus.PASS, f"{len(wal_files)} WAL file(s) within normal size range")
     except Exception as e:
-        return CheckResult(7, "WAL Health", CheckStatus.FAIL, str(e))
+        return CheckResult(7, "WAL Health", CheckStatus.FAIL, "internal error")
 
 
 def _check_hnsw_fragmentation(root: Path) -> CheckResult:
@@ -296,7 +296,7 @@ def _check_freeze_state(root: Path) -> CheckResult:
             "若冻结已解决问题，运行 python -m zephyr.governance.kb.freeze --unfreeze 恢复",
         )
     except Exception as e:
-        return CheckResult(9, "Freeze State", CheckStatus.FAIL, str(e))
+        return CheckResult(9, "Freeze State", CheckStatus.FAIL, "internal error")
 
 
 def _check_tombstone_integrity(root: Path) -> CheckResult:
@@ -320,7 +320,7 @@ def _check_tombstone_integrity(root: Path) -> CheckResult:
             )
         return CheckResult(10, "Tombstone Integrity", CheckStatus.PASS, "Table exists")
     except Exception as e:
-        return CheckResult(10, "Tombstone Integrity", CheckStatus.FAIL, str(e))
+        return CheckResult(10, "Tombstone Integrity", CheckStatus.FAIL, "internal error")
 
 
 def _check_silent_period(root: Path) -> CheckResult:
@@ -343,7 +343,7 @@ def _check_silent_period(root: Path) -> CheckResult:
             )
         return CheckResult(11, "Silent Period", CheckStatus.PASS, f"{len(recent)} KEs modified in last 7 days")
     except Exception as e:
-        return CheckResult(11, "Silent Period", CheckStatus.FAIL, str(e))
+        return CheckResult(11, "Silent Period", CheckStatus.FAIL, "internal error")
 
 
 def _check_filesystem_permissions(root: Path) -> CheckResult:
@@ -377,7 +377,7 @@ def _check_filesystem_permissions(root: Path) -> CheckResult:
             )
         return CheckResult(12, "Filesystem Permissions", CheckStatus.PASS, "All critical paths writable")
     except Exception as e:
-        return CheckResult(12, "Filesystem Permissions", CheckStatus.FAIL, str(e))
+        return CheckResult(12, "Filesystem Permissions", CheckStatus.FAIL, "internal error")
 
 
 def _check_embedding_model(root: Path) -> CheckResult:
@@ -417,7 +417,7 @@ def _check_embedding_model(root: Path) -> CheckResult:
                     "向量检索将使用Mock模式（无向量索引），运行 pip install sentence-transformers",
                 )
     except Exception as e:
-        return CheckResult(13, "Embedding Model", CheckStatus.FAIL, str(e))
+        return CheckResult(13, "Embedding Model", CheckStatus.FAIL, "internal error")
 
 
 class SelfTest:
@@ -447,7 +447,7 @@ class SelfTest:
                 result = fn(self._root)
                 checks.append(result)
             except Exception as e:
-                checks.append(CheckResult(-1, fn.__name__, CheckStatus.FAIL, str(e)))
+                checks.append(CheckResult(-1, fn.__name__, CheckStatus.FAIL, "internal error"))
 
         passed = sum(1 for c in checks if c.status == CheckStatus.PASS)
         warned = sum(1 for c in checks if c.status == CheckStatus.WARN)

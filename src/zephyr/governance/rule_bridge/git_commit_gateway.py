@@ -409,7 +409,7 @@ class GitCommitGateway:
             with _GlobalCommitLock(self.project_root):
                 result = self._commit_locked(session_id, existing, full_message, gw_marker)
         except GatewayError as e:
-            return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message=str(e))
+            return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message="internal error")
 
         # Post-commit reconciler 在锁外运行（reconciler 可通过 _commit_auto 独立获取锁 auto-commit）
         if result.status == CommitStatus.OK:
@@ -917,7 +917,7 @@ class GitCommitGateway:
                     except OSError:
                         pass
         except GatewayError as e:
-            return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message=str(e))
+            return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message="internal error")
 
     def _write_pathspec_file(self, abs_files: list[str]) -> str:
         """将文件路径写入临时 pathspec 文件（:(icase) 前缀兼容 Windows 大小写不敏感）。"""
