@@ -72,7 +72,8 @@ class OllamaEmbedder:
         try:
             self._verify()
             return self._dim is not None and self._dim > 0
-        except Exception:
+        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+            _log.warning("available failed: %s", e, exc_info=True)
             return False
 
     def encode(
@@ -126,7 +127,8 @@ class OllamaEmbedder:
 
             resp = requests.get(f"{url.rstrip('/')}/api/tags", timeout=timeout_s)
             return resp.status_code == HTTPStatus.OK
-        except Exception:
+        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+            _log.warning("quick_alive failed: %s", e, exc_info=True)
             return False
 
     def _verify(self) -> None:

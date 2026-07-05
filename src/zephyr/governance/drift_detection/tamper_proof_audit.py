@@ -142,7 +142,8 @@ def setup_append_only(db_path: str) -> bool:
         conn.executescript(APPEND_ONLY_TRIGGERS)
         conn.commit()
         return True
-    except Exception:
+    except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+        logger.warning("setup_append_only failed: %s", e, exc_info=True)
         return False
     finally:
         if conn is not None:

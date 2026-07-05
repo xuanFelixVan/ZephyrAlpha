@@ -34,6 +34,10 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 
+class EngineUnavailableError(RuntimeError):
+    """5.27.6 修复：引擎不可用时抛出的专用异常，替代通用 RuntimeError，语义更清晰。"""
+
+
 class GenesisPhase(str, Enum):
     """RBAC启动阶段."""
 
@@ -244,7 +248,7 @@ class GenesisBootstrap:
 
             mgr = EngineDegradationManager()
             if mgr.current_level == DegradationLevel.SYSTEM_UNAVAILABLE:
-                raise RuntimeError("EngineDegradation: SYSTEM_UNAVAILABLE")
+                raise EngineUnavailableError("EngineDegradation: SYSTEM_UNAVAILABLE")
         except (AttributeError, NotImplementedError) as exc:
             logger.warning("Phase ENGINE_DEGRADATION: stub detected, skipping (%s)", exc)
         self._state.checks_passed += 1

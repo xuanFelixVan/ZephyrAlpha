@@ -33,8 +33,11 @@ Drift detector 自身完整性验证（纯 stdlib，零 zephyr 依赖）。
 from __future__ import annotations
 
 import hashlib
+import logging
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 def sha256_file(path: Path) -> str:

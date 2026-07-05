@@ -53,6 +53,9 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
+# 5.76.1 修复：删除同名 PipelineError 副本，统一使用 shared/foundation/errors.py 的 SSoT 定义
+from zephyr.shared.foundation.errors import PipelineError
+
 _MAX_WORKERS = 8
 
 __all__ = [
@@ -82,14 +85,6 @@ class PipelineStage(Enum):
     METRIC_COLLECTION = "metric_collection"
     STATISTICS_VALIDATE = "statistics_validate"
     PRODUCTION_PROMOTE = "production_promote"
-
-
-class PipelineError(Exception):
-    def __init__(self, stage: PipelineStage, message: str, detail: dict[str, Any] | None = None) -> None:
-        self.stage = stage
-        self.message = message
-        self.detail = detail or {}
-        super().__init__(f"[{stage.value}] {message}")
 
 
 @dataclass

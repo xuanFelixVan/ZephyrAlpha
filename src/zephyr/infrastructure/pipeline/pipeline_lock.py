@@ -256,7 +256,8 @@ class FileLockBackend(LockBackend):
         try:
             with open(owner_file, encoding="utf-8") as fh:
                 return json.load(fh)
-        except Exception:
+        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+            logger.warning("_read_owner failed: %s", e, exc_info=True)
             return None
 
     def _is_stale(self, lock_dir: str) -> bool:
@@ -277,7 +278,8 @@ class FileLockBackend(LockBackend):
         try:
             shutil.rmtree(lock_dir, ignore_errors=True)
             return True
-        except Exception:
+        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+            logger.warning("_cleanup_stale failed: %s", e, exc_info=True)
             return False
 
     def _ensure_root(self) -> None:
