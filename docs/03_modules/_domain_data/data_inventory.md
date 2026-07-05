@@ -1,8 +1,9 @@
 ---
 module_id: MOD-L00-001
 title: 业务数据清单
-doc_type: data_inventory
+doc_type: index
 status: Active
+ttl: permanent
 generated_at: "2026-07-06 03:50:17"
 generator: tmp/generate_data_inventory.py
 language: zh
