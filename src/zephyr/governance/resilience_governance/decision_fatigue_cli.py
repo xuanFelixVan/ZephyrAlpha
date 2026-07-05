@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.resilience_governance.decision_fatigue_cli
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.decision_fatigue
+# [DEPENDENCIES] zephyr.governance.resilience_governance.decision_fatigue
 # [CONSUMERS] MOD-INF-027;MOD-INF-020;MOD-INF-018
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -19,7 +19,11 @@ from __future__ import annotations
 
 import argparse
 
-from .decision_fatigue import EisenhowerPriority, TaskTriage, triage
+from zephyr.governance.resilience_governance.decision_fatigue import (
+    EisenhowerPriority,
+    TaskTriage,
+    triage,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:

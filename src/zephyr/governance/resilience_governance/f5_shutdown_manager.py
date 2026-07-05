@@ -99,8 +99,10 @@ class F5ShutdownManager:
         self._shutdown_done = False
         self._lock = threading.Lock()
         self._installed = False
-        self._idle_thread: threading.Thread | None = None
-        self._idle_stop = threading.Event()
+        # 事件驱动 idle 计时器（debounce 模式）：每次 update_activity() 重置 timer，
+        # timer 到期触发 _on_idle_timeout → shutdown。替代原 sleep-loop 轮询线程，
+        # 满足"永久系统主触发必须事件驱动"铁律。
+        self._idle_timer: threading.Timer | None = None
         self._previous_sigint = None
         self._previous_sigterm = None
         self._atexit_registered = False
@@ -109,7 +111,7 @@ class F5ShutdownManager:
     # 安装: signal + atexit + idle 监控
     # ------------------------------------------------------------------ #
     def install(self) -> ShutdownResult:
-        """注册 signal handler + atexit 钩子 + 启动 idle 监控线程 (幂等)。"""
+        """注册 signal handler + atexit 钩子 + 启动 idle 计时器 (幂等，事件驱动)。"""
         if self._installed:
             return ShutdownResult(
                 success=True,
@@ -130,7 +132,7 @@ class F5ShutdownManager:
         except (ValueError, OSError) as e:
             # 非主线程无法注册 signal handler — 仅记录, 不阻断
             errors.append(f"signal handler registration failed: {e}")
-            logger.warning("F5ShutdownManager: signal handler registration failed: %s", e)
+            logger.warning("F5ShutdownManager: signal handler registration failed: %s", e, exc_info=True)
 
         # 2. 注册 atexit 兜底
         try:
@@ -142,15 +144,9 @@ class F5ShutdownManager:
             errors.append(f"atexit registration failed: {e}")
             logger.warning("F5ShutdownManager: atexit registration failed: %s", e, exc_info=True)
 
-        # 3. 启动 idle 监控线程
+        # 3. 启动 idle 计时器（事件驱动 one-shot timer）
         try:
-            self._idle_stop.clear()
-            self._idle_thread = threading.Thread(
-                target=self._idle_monitor,
-                name="f5_idle_monitor",
-                daemon=True,
-            )
-            self._idle_thread.start()
+            self._reschedule_idle_timer()
             details["idle_monitor_started"] = True
             details["idle_timeout_seconds"] = self._idle_timeout
         except Exception as e:
@@ -166,11 +162,8 @@ class F5ShutdownManager:
         )
 
     def uninstall(self) -> None:
-        """卸载 signal handler + 停止 idle 监控线程 (供测试使用)。"""
-        if self._idle_thread is not None and self._idle_thread.is_alive():
-            self._idle_stop.set()
-            self._idle_thread.join(timeout=2.0)
-            self._idle_thread = None
+        """卸载 signal handler + 取消 idle 计时器 (供测试使用)。"""
+        self._cancel_idle_timer()
 
         # 恢复之前的 signal handler
         try:
@@ -205,13 +198,11 @@ class F5ShutdownManager:
         errors: list[str] = []
         details: dict = {}
 
-        # 1. 停止 idle 监控线程
+        # 1. 取消 idle 计时器
         try:
-            self._idle_stop.set()
-            if self._idle_thread is not None and self._idle_thread.is_alive():
-                self._idle_thread.join(timeout=2.0)
+            self._cancel_idle_timer()
         except Exception as e:
-            errors.append(f"idle monitor stop failed: {e}")
+            errors.append(f"idle timer cancel failed: {e}")
 
         # 2. 持久化状态 (在 on_shutdown 之前, 因为 on_shutdown 会清理状态)
         try:
@@ -497,37 +488,54 @@ class F5ShutdownManager:
         except Exception as e:
             logger.error("F5ShutdownManager: shutdown in atexit failed: %s", e, exc_info=True)
 
-    def _idle_monitor(self) -> None:
-        """idle 监控线程: 检测 10 分钟无活动则自动关闭。"""
-        while not self._idle_stop.is_set():
-            # 每 30 秒检查一次
-            if self._idle_stop.wait(timeout=30.0):
-                break
-            try:
-                if self._is_idle_timeout():
-                    logger.info(
-                        "F5ShutdownManager: idle timeout (%.0fs) reached, auto-shutdown",
-                        self._idle_timeout,
-                    )
-                    self.shutdown()
-                    break
-            except Exception as e:
-                logger.error("F5ShutdownManager: idle monitor error: %s", e, exc_info=True)
-                break
+    def _reschedule_idle_timer(self) -> None:
+        """重置 idle 计时器（debounce 模式）。
 
-    def _is_idle_timeout(self) -> bool:
-        """检查是否达到 idle 超时。"""
+        取消前一个 timer（若存在）并安排新的 one-shot timer。
+        timer 到期后调用 _on_idle_timeout 触发自动关闭。
+        """
+        self._cancel_idle_timer()
         if self._shutdown_done:
-            return False
-        elapsed = time.monotonic() - self._last_activity
-        return elapsed >= self._idle_timeout
+            return
+        self._last_activity = time.monotonic()
+        self._idle_timer = threading.Timer(
+            self._idle_timeout,
+            self._on_idle_timeout,
+        )
+        self._idle_timer.daemon = True
+        self._idle_timer.name = "f5_idle_timer"
+        self._idle_timer.start()
+
+    def _cancel_idle_timer(self) -> None:
+        """取消当前 idle 计时器（若存在）。"""
+        timer = self._idle_timer
+        if timer is not None:
+            try:
+                timer.cancel()
+            except Exception:
+                pass
+            self._idle_timer = None
+
+    def _on_idle_timeout(self) -> None:
+        """idle 计时器到期回调：触发自动关闭（事件驱动，无轮询）。"""
+        if self._shutdown_done:
+            return
+        try:
+            logger.info(
+                "F5ShutdownManager: idle timeout (%.0fs) reached, auto-shutdown",
+                self._idle_timeout,
+            )
+            self.shutdown()
+        except Exception as e:
+            logger.error("F5ShutdownManager: idle timeout callback error: %s", e, exc_info=True)
 
     def update_activity(self) -> None:
-        """更新最后活动时间 (重置 idle 计时)。
+        """更新最后活动时间 (重置 idle 计时器)。
 
         任何 F5 操作 (escalation / delegation / arbitration) 后应调用。
+        触发 timer 重排（事件驱动），替代原 sleep-loop 轮询。
         """
-        self._last_activity = time.monotonic()
+        self._reschedule_idle_timer()
 
     # ------------------------------------------------------------------ #
     # 属性

@@ -123,8 +123,8 @@ class TestInstall:
         assert manager._atexit_registered is True
 
     def test_install_starts_idle_monitor(self, manager: F5ShutdownManager):
-        assert manager._idle_thread is not None
-        assert manager._idle_thread.is_alive()
+        # 事件驱动模型：install 后存在活跃的 idle timer
+        assert manager._idle_timer is not None
 
     def test_install_is_idempotent(self, manager: F5ShutdownManager):
         first = manager.install()
@@ -202,11 +202,11 @@ class TestShutdown:
             assert any("integration on_shutdown failed" in e for e in result.errors)
 
     def test_shutdown_stops_idle_monitor(self, manager: F5ShutdownManager):
-        thread = manager._idle_thread
-        assert thread is not None and thread.is_alive()
+        timer = manager._idle_timer
+        assert timer is not None
         manager.shutdown()
-        # 线程应该已停止 (join with timeout)
-        assert not thread.is_alive()
+        # shutdown 后 timer 应已取消
+        assert manager._idle_timer is None
 
 
 class TestPersistState:
@@ -429,27 +429,30 @@ class TestIdleMonitor:
         assert manager.last_activity > old_activity
 
     def test_is_idle_timeout_false_when_recent_activity(self, manager: F5ShutdownManager):
+        # 事件驱动模型：update_activity 重排 timer，timer 仍活跃
         manager.update_activity()
-        assert manager._is_idle_timeout() is False
+        assert manager._idle_timer is not None
 
     def test_is_idle_timeout_true_when_timeout_reached(self, temp_db: Path):
-        # 使用极短的 timeout
+        # 事件驱动模型：极短 timeout 让 timer 触发 shutdown
         mgr = F5ShutdownManager(
             integration=None,
             db_path=temp_db,
             idle_timeout_seconds=0.01,
         )
-        # 等待 timeout
-        time.sleep(0.05)
-        assert mgr._is_idle_timeout() is True
+        mgr.install()
+        # 等待 timer 到期触发 shutdown
+        time.sleep(0.1)
+        assert mgr.is_shutdown is True
+        mgr.uninstall()
 
     def test_is_idle_timeout_false_after_shutdown(self, manager: F5ShutdownManager):
         manager.shutdown()
-        # shutdown 后不应该再触发 idle timeout
-        assert manager._is_idle_timeout() is False
+        # shutdown 后 timer 应已取消
+        assert manager._idle_timer is None
 
     def test_idle_monitor_triggers_shutdown(self, temp_db: Path):
-        """测试 idle monitor 线程在 timeout 后触发 shutdown。"""
+        """测试 idle timer 在 timeout 后触发 shutdown（事件驱动）。"""
         integration = F5BootIntegration()
         integration.on_startup()
         mgr = F5ShutdownManager(
@@ -459,21 +462,20 @@ class TestIdleMonitor:
         )
         try:
             mgr.install()
-            # 等待 idle monitor 检测到 timeout (30秒检查间隔太长, 直接调用 _is_idle_timeout)
-            time.sleep(0.2)
-            # 手动触发 shutdown (因为 idle monitor 检查间隔是 30s)
-            # 这里我们验证 _is_idle_timeout 返回 True
-            assert mgr._is_idle_timeout() is True
+            # 等待 timer 到期触发 shutdown
+            time.sleep(0.3)
+            assert mgr.is_shutdown is True
         finally:
             mgr.uninstall()
 
 
 class TestUninstall:
     def test_uninstall_stops_idle_thread(self, manager: F5ShutdownManager):
-        thread = manager._idle_thread
-        assert thread is not None and thread.is_alive()
+        timer = manager._idle_timer
+        assert timer is not None
         manager.uninstall()
-        assert not thread.is_alive()
+        # uninstall 后 timer 应已取消
+        assert manager._idle_timer is None
 
     def test_uninstall_restores_signal_handlers(self, integration: F5BootIntegration, temp_db: Path):
         # 保存原始 signal handler

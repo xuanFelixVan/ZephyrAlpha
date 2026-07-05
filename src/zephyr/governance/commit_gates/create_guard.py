@@ -339,8 +339,12 @@ def make_create_guard() -> GateSpec:
                         f"{_gov_root_renamed}. 新模块 MUST 放入对应功能子目录。"
                         f"修复：将文件移动到 src/zephyr/governance/<subdir>/ 下。"
                     )
-        except Exception:
-            pass  # fail-open: git diff 失败不阻断
+        except Exception as e:
+            logger.warning(
+                "CREATE-GUARD: ARCH-031 rename 检测 git diff 失败: %s",
+                e, exc_info=True,
+            )
+            # fail-open: git diff 失败不阻断 rename 检测（下游 gate 仍检测新增文件）
 
         if not new_py_files and not new_yaml_files:
             return True, ""
@@ -515,7 +519,11 @@ def make_create_guard() -> GateSpec:
                 _head = "\n".join(
                     _abs_path.read_text(encoding="utf-8", errors="replace").split("\n")[:30]
                 )
-            except Exception:
+            except Exception as e:
+                logger.debug(
+                    "CREATE-GUARD: 读取文件头失败 file=%s: %s",
+                    _py_file, e, exc_info=True,
+                )
                 continue  # 读取失败由其他 gate 检测，此处 fail-open
 
             # codegen 文件豁免（自动生成，字段由模板注入，手写会被覆盖）

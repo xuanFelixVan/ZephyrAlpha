@@ -33,8 +33,19 @@ class SandboxTrial:
 
 
 class PolicySandbox:
-    def __init__(self, policy_path: str = "config/budget_policy.yaml"):
-        self._policy_path = Path(policy_path)
+    def __init__(self, policy_path: str | None = None):
+        """初始化 PolicySandbox。
+
+        Args:
+            policy_path: 预算策略 YAML 路径。None 时使用项目根的
+                config/budget_policy.yaml 绝对路径（铁律：禁相对路径）。
+        """
+        if policy_path is None:
+            # 项目根 = src/zephyr/governance/resilience_governance → 上溯 4 级
+            _project_root = Path(__file__).resolve().parents[4]
+            self._policy_path = _project_root / "config" / "budget_policy.yaml"
+        else:
+            self._policy_path = Path(policy_path)
         self._sandbox_policy: dict | None = None
         self._changes: dict = {}
         self._trials: list[SandboxTrial] = []
