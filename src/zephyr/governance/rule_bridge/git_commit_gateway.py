@@ -64,6 +64,7 @@ from zephyr.governance.audit.reconciliation_registry import (
 )
 from zephyr.governance.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate
+from zephyr.governance.commit_gates.session_required_gate import make_session_required_gate
 from zephyr.governance.commit_gates.claim_required_gate import make_claim_required_gate
 from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate
 from zephyr.governance.commit_gates.create_guard import make_create_guard
@@ -252,6 +253,7 @@ class GitCommitGateway:
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         self._gate_registry = CommitGateRegistry()
         self._gate_registry.register(make_held_overlap_gate())
+        self._gate_registry.register(make_session_required_gate())  # priority=30 治本 session 注册强制（防 AI 绕过 session_worktree_start 传空 session_id）
         self._gate_registry.register(make_claim_required_gate())
         self._gate_registry.register(make_capability_overlap_gate())
         self._gate_registry.register(make_directory_contract_gate())
