@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INT_migrate_chroma_to_faiss | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ChromDB → FAISS + SQLite WAL 数据迁移脚本
@@ -42,7 +42,7 @@ sys.path.insert(0, str(_repo_root / "src"))
 
 from zephyr.shared.io.paths import VMS_PERSIST_DIR
 
-logging.basicConfig(level=logging.INFO, format="%(name)s [%(levelname)s] %(message)s")
+# 5.129.3 修复: logging.basicConfig 移入 main() 避免模块级全局 root logger 副作用
 _logger = logging.getLogger("chroma2faiss")
 
 VMS_CHROMA_PATH = VMS_PERSIST_DIR
@@ -311,6 +311,8 @@ def migrate_kb_collection(
 
 
 def main():
+    # 5.129.3 修复: basicConfig 移入 main(), 仅脚本直接执行时配置 root logger
+    logging.basicConfig(level=logging.INFO, format="%(name)s [%(levelname)s] %(message)s")
     dry_run = "--dry-run" in sys.argv
 
     _logger.info("=" * 60)

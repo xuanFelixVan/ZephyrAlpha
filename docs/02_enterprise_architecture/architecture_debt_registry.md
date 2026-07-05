@@ -7290,6 +7290,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.129 模块级副作用（7个，第23轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(__init__.py import即启动线程需重构为lazy init)
+> **第40轮修复状态（2026-07-05）**：FIXED=2(5.129.3 migrate_chroma_to_faiss.py logging.basicConfig 移入 main() + 5.129.4 dashboard/app.py 移除冗余 sys.path.insert), NOT_NEEDED=5(5.129.1-2 根 __init__.py 有 [MODIFY-GUARD] no structural changes without owner approval, 且 auto_bootstrap on import 是"永久系统必须全自动"铁律的有意设计, 非缺陷), STILL_VALID=0
 
 #### 5.129.1 [HIGH] 根__init__.py import即启动2个后台线程
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SEC_app | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """LLM Security Gateway - Streamlit Dashboard.
 
@@ -29,9 +29,9 @@ import streamlit as st
 import yaml
 from zephyr.shared.io.paths import REPO_ROOT
 
-# 添加项目根目录到路径
+# 5.129.4 修复: 移除冗余 sys.path.insert — line 30 已 from zephyr.shared.io.paths import REPO_ROOT,
+# 说明 zephyr 包已在 sys.path 上, 此处重复插入无意义且污染全局 sys.path
 project_root = REPO_ROOT
-sys.path.insert(0, str(project_root))
 
 try:
     from zephyr.security.llm_defense.llm_security.behavior_audit_logger import AuditLogger
