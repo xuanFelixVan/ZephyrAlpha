@@ -33,7 +33,10 @@ import sys
 import threading
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -306,12 +309,14 @@ def _list_completed_tasks(repo: Any, statuses: list[str]) -> list[Any]:
     return tasks
 
 
-def cleanup_completed_tasks() -> list[dict[str, Any]]:
+def cleanup_completed_tasks(task_repo: TaskRepositoryProtocol | None = None) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     try:
-        from zephyr.governance.persistence.task_repo import TaskRepository
+        repo = task_repo
+        if repo is None:
+            from zephyr.governance.persistence.task_repo import TaskRepository
 
-        repo = TaskRepository()
+            repo = TaskRepository()
         tasks = _list_completed_tasks(repo, _COMPLETED_STATUSES)
     except Exception:
         logger.warning("ide_health_daemon: TaskRepository unavailable for cleanup", exc_info=True)

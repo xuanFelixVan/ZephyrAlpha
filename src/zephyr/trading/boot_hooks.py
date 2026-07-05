@@ -19,9 +19,14 @@ from __future__ import annotations
 
 import logging
 import threading
+from typing import TYPE_CHECKING
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 from zephyr.shared.events.event_bus import EventBus, EventType
+
+if TYPE_CHECKING:
+    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -30,12 +35,14 @@ _MAX_AUTO_RETRY_LIMIT = 3
 
 
 # 5.97.16 修复：抽取 _on_task_verified_triple_align 内嵌 try-except 的 helper
-def _get_source_blueprint(task_id: str) -> str:
+def _get_source_blueprint(task_id: str, task_repo: TaskRepositoryProtocol | None = None) -> str:
     """从 TaskRepository 查询 task 的 source_blueprint，失败返回空串。"""
     try:
-        from zephyr.governance.persistence.task_repo import TaskRepository
+        tr = task_repo
+        if tr is None:
+            from zephyr.governance.persistence.task_repo import TaskRepository
 
-        tr = TaskRepository()
+            tr = TaskRepository()
         task = tr.get(task_id)
         return getattr(task, "source_blueprint", "") if task else ""
     except Exception:
@@ -315,15 +322,20 @@ def _subscribe_skill_freshness_events() -> None:
         logger.warning("Failed to subscribe skill.freshness_critical: %s", e, exc_info=True)
 
 
-def register_boot_hooks() -> None:
+def register_boot_hooks(task_repo: TaskRepositoryProtocol | None = None) -> None:
     try:
         from zephyr.governance.ops_governance.event_hook import hook_registry
 
+        def _get_task_repo():
+            if task_repo is not None:
+                return task_repo
+            from zephyr.governance.persistence.task_repo import TaskRepository
+
+            return TaskRepository()
+
         def _on_task_completed(event: object) -> None:
             try:
-                from zephyr.governance.persistence.task_repo import TaskRepository
-
-                tr = TaskRepository()
+                tr = _get_task_repo()
                 completed_id = getattr(event, "task_id", "")
                 if not completed_id:
                     return
@@ -342,9 +354,7 @@ def register_boot_hooks() -> None:
 
         def _on_task_failed(event: object) -> None:
             try:
-                from zephyr.governance.persistence.task_repo import TaskRepository
-
-                tr = TaskRepository()
+                tr = _get_task_repo()
                 task_id = getattr(event, "task_id", "")
                 task = tr.get(task_id)
                 if not task:
@@ -364,7 +374,7 @@ def register_boot_hooks() -> None:
                 from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
 
                 task_id = getattr(event, "task_id", "")
-                source_bp = _get_source_blueprint(task_id)
+                source_bp = _get_source_blueprint(task_id, task_repo=task_repo)
                 if not source_bp:
                     return
                 result = check_triple_alignment(specific_module=source_bp, warn_only=False)
@@ -399,10 +409,9 @@ def register_boot_hooks() -> None:
                 to_status = getattr(event, "to_status", "")
                 if to_status.upper() != "COMPLETED":
                     return
-                from zephyr.governance.persistence.task_repo import TaskRepository
                 from zephyr.trading.orchestrator.execution.memory_writer import archive_to_vms
 
-                tr = TaskRepository()
+                tr = _get_task_repo()
                 task = tr.get(task_id)
                 if task:
                     archive_to_vms(task)
@@ -451,9 +460,7 @@ def register_boot_hooks() -> None:
             if to_status.upper() != "BLOCKED":
                 return
             try:
-                from zephyr.governance.persistence.task_repo import TaskRepository
-
-                TaskRepository().check_escalation(getattr(event, "task_id", ""))
+                _get_task_repo().check_escalation(getattr(event, "task_id", ""))
             except Exception as exc:
                 logger.debug("hook escalation_check: %s", exc, exc_info=True)
 
@@ -462,9 +469,7 @@ def register_boot_hooks() -> None:
             if to_status.upper() != "IN_PROGRESS":
                 return
             try:
-                from zephyr.governance.persistence.task_repo import TaskRepository
-
-                TaskRepository().check_task_timeout(getattr(event, "task_id", ""))
+                _get_task_repo().check_task_timeout(getattr(event, "task_id", ""))
             except Exception as exc:
                 logger.debug("hook timeout_check: %s", exc, exc_info=True)
 

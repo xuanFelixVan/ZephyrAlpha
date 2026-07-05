@@ -34,12 +34,16 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.trading.orchestrator.core.task_queue import TaskCard
+    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 
 logger = logging.getLogger("zephyr.auto_dispatcher")
 
 
 class AutoDispatcher:
     """轻量 PipelineDispatcher — 执行 TaskCard 并触发整条基础设施管道。"""
+
+    def __init__(self, task_repo: TaskRepositoryProtocol | None = None) -> None:
+        self._task_repo = task_repo
 
     def dispatch(self, task_card: TaskCard) -> dict:
         task_id = getattr(task_card, "task_id", str(task_card))
@@ -97,10 +101,11 @@ class AutoDispatcher:
             logger.info("[AUTO-DISPATCH] no files_in_scope for %s, skipping audit", task_id)
 
         try:
-            from zephyr.governance.persistence.task_repo import TaskRepository
+            if self._task_repo is None:
+                from zephyr.governance.persistence.task_repo import TaskRepository
 
-            repo = TaskRepository()
-            repo.transition(task_id, "COMPLETED", note="auto-dispatched by daemon")
+                self._task_repo = TaskRepository()
+            self._task_repo.transition(task_id, "COMPLETED", note="auto-dispatched by daemon")
             result["step_transition"] = "ok (→COMPLETED)"
         except Exception as exc:
             logger.warning("[AUTO-DISPATCH] transition failed for %s: %s", task_id, exc, exc_info=True)

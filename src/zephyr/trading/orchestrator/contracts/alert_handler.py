@@ -24,7 +24,10 @@ from __future__ import annotations
 import json
 import logging
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +38,9 @@ __all__ = [
 
 
 class AlertHandler:
+    def __init__(self, task_repo: TaskRepositoryProtocol | None = None) -> None:
+        self._task_repo = task_repo
+
     def handle_alert(self, event: Any) -> Any | None:
         try:
             severity_val = _get_severity(event)
@@ -52,6 +58,7 @@ class AlertHandler:
                 category=category_val,
                 title=_get_title(event),
                 detail=_get_detail(event),
+                task_repo=self._task_repo,
             )
             logger.info("[ORC-FLE] %s alert → task %s created", severity_val, task.task_id)
             return task
@@ -115,8 +122,8 @@ def _create_repair_task(
     category: str,
     title: str,
     detail: str,
+    task_repo: TaskRepositoryProtocol | None = None,
 ) -> Any:
-    from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
     from zephyr.integration.shared.schema.execution_model import ExecutionModel
     from zephyr.integration.shared.schema.severity_types import Priority
@@ -164,7 +171,11 @@ def _create_repair_task(
         dependency_type="none" if severity != "CRITICAL" else "hard",
     )
 
-    repo = TaskRepository()
+    repo = task_repo
+    if repo is None:
+        from zephyr.governance.persistence.task_repo import TaskRepository
+
+        repo = TaskRepository()
     return repo.create(task, allow_direct_create=True)
 
 
