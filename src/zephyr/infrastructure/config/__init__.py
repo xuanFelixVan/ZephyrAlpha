@@ -141,7 +141,14 @@ def load_config(config_path: str | None = None, env_override: bool = True) -> Ap
         if os.environ.get("ZEPHYR_ENV"):
             env = os.environ["ZEPHYR_ENV"].strip()
         if os.environ.get("ZEPHYR_LOG_LEVEL"):
-            log_level = os.environ["ZEPHYR_LOG_LEVEL"].strip()
+            log_level = os.environ["ZEPHYR_LOG_LEVEL"].strip().upper()
+            _VALID_LEVELS = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
+            if log_level not in _VALID_LEVELS:
+                _LOGGER.warning(
+                    "config.load_config: ZEPHYR_LOG_LEVEL=%s 无效，回退到 %s",
+                    log_level, loaded.get("log_level", "INFO"),
+                )
+                log_level = str(loaded.get("log_level", "INFO")).upper()
 
     if not isinstance(dsp, tuple):
         dsp = ("akshare", "tushare")
