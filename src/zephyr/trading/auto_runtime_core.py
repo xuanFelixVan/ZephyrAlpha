@@ -34,10 +34,13 @@ if TYPE_CHECKING:
     from zephyr.integration.local_model.ollama_chat import OllamaChat
     from zephyr.integration.local_model.embedding_router import EmbeddingRouter, EmbeddingRouterProtocol
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
+    from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
+    from zephyr.intelligence.model_profiling import ModelProfiler
     from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
     from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
     from zephyr.shared.protocols.a2a.a2a_registry import A2ARegistryProtocol as A2ARegistry
     from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway import A2AProtocolGateway
+    from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 
 
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
@@ -76,6 +79,12 @@ class AutoRuntimeCore:
         config: RuntimeConfig | None = None,
         system_config: SystemConfiguration | None = None,
         embedding_router: EmbeddingRouterProtocol | None = None,
+        ollama_chat: OllamaChat | None = None,
+        local_scheduler: LocalModelScheduler | None = None,
+        vms: InProcessVectorMemory | None = None,
+        model_router: ModelRouter | None = None,
+        model_profiler: ModelProfiler | None = None,
+        task_repo: TaskRepositoryProtocol | None = None,
     ) -> None:
         self._config = config or RuntimeConfig()
         self._system_config = system_config
@@ -118,14 +127,16 @@ class AutoRuntimeCore:
         self._init_a2a()
 
         self._booted = False
-        self._local_scheduler: LocalModelScheduler | None = None
+        self._local_scheduler: LocalModelScheduler | None = local_scheduler
         self._fle_scheduler: FeedbackLoopScheduler | None = None
         self._embedding_router: EmbeddingRouter | None = embedding_router
-        self._ollama_chat: OllamaChat | None = None
+        self._ollama_chat: OllamaChat | None = ollama_chat
         self._ollama_proc: object | None = None  # 5.49.1 修复：保存 Popen 引用避免孤儿进程
         self._task_learner: ModelTaskMatrix | None = None
-        self._model_router: ModelRouter | None = None
-        self._vms: InProcessVectorMemory | None = None
+        self._model_router: ModelRouter | None = model_router
+        self._vms: InProcessVectorMemory | None = vms
+        self._model_profiler: ModelProfiler | None = model_profiler
+        self._task_repo: TaskRepositoryProtocol | None = task_repo
 
     def boot(self) -> BootReport:
         report = self._lifecycle.boot_sequence(
@@ -278,10 +289,12 @@ class AutoRuntimeCore:
 
             def _dispatch_handler(item: object) -> bool:
                 try:
-                    from zephyr.governance.persistence.task_repo import TaskRepository
                     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
-                    tr = TaskRepository()
+                    tr = self._task_repo
+                    if tr is None:
+                        from zephyr.governance.persistence.task_repo import TaskRepository
+                        tr = TaskRepository()
                     po = PipelineOrchestrator()
                     task_id = getattr(item, "task_id", "")
                     task = tr.get(task_id)
@@ -357,36 +370,37 @@ class AutoRuntimeCore:
                 return
 
         # 优先使用 DeepSeek API（更强、更快），降级到 OllamaChat
-        try:
-            from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
-
-            deepseek_chat = DeepSeekChat()  # 5.141.1 修复: 使用DEFAULT_MODEL默认值, 避免硬编码
-            if deepseek_chat.available:
-                self._ollama_chat = deepseek_chat  # 接口兼容，复用变量名
-                self._audit_logger.log_registration("deepseek-chat", "VERIFY_OK")
-                report.components_started.append("08_deepseek_chat_verify")
-                report.steps_completed += 1
-                logger.info("DeepSeekChat 已启用作为推理后端 (deepseek-v4-flash)")
-            else:
-                logger.warning("DeepSeekChat 不可用，降级到 OllamaChat")
-                raise RuntimeError("DeepSeekChat not available")
-        except Exception as e:
-            logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e, exc_info=True)
+        if self._ollama_chat is None:
             try:
-                from zephyr.integration.local_model.ollama_chat import OllamaChat
+                from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
 
-                self._ollama_chat = OllamaChat()
-                if self._ollama_chat.available:
-                    self._audit_logger.log_registration("ollama-chat", "VERIFY_OK")
-                    report.components_started.append("08_ollama_chat_verify")
+                deepseek_chat = DeepSeekChat()  # 5.141.1 修复: 使用DEFAULT_MODEL默认值, 避免硬编码
+                if deepseek_chat.available:
+                    self._ollama_chat = deepseek_chat  # 接口兼容，复用变量名
+                    self._audit_logger.log_registration("deepseek-chat", "VERIFY_OK")
+                    report.components_started.append("08_deepseek_chat_verify")
                     report.steps_completed += 1
-                    import time
-
-                    time.sleep(2.0)
+                    logger.info("DeepSeekChat 已启用作为推理后端 (deepseek-v4-flash)")
                 else:
-                    report.errors.append("ollama_chat: not available (Ollama may not be running)")
-            except Exception as e2:
-                report.errors.append(f"ollama_chat_verify: {e2}")
+                    logger.warning("DeepSeekChat 不可用，降级到 OllamaChat")
+                    raise RuntimeError("DeepSeekChat not available")
+            except Exception as e:
+                logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e, exc_info=True)
+                try:
+                    from zephyr.integration.local_model.ollama_chat import OllamaChat
+
+                    self._ollama_chat = OllamaChat()
+                    if self._ollama_chat.available:
+                        self._audit_logger.log_registration("ollama-chat", "VERIFY_OK")
+                        report.components_started.append("08_ollama_chat_verify")
+                        report.steps_completed += 1
+                        import time
+
+                        time.sleep(2.0)
+                    else:
+                        report.errors.append("ollama_chat: not available (Ollama may not be running)")
+                except Exception as e2:
+                    report.errors.append(f"ollama_chat_verify: {e2}")
 
         try:
             if self._embedding_router is None:
@@ -400,28 +414,40 @@ class AutoRuntimeCore:
         except Exception as e:
             report.errors.append(f"embedding_router_warmup: {e}")
 
-        try:
-            from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
+        if self._local_scheduler is None:
+            try:
+                from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
 
-            self._local_scheduler = LocalModelScheduler(
-                embedding_router=self._embedding_router,
-                ollama_chat=self._ollama_chat,
-            )
-            self._local_scheduler.start()
-            self._audit_logger.log_registration("local-model-scheduler", "STARTED")
-            report.components_started.append("12_local_scheduler_start")
-            report.steps_completed += 1
-        except Exception as e:
-            report.errors.append(f"local_scheduler_start: {e}")
+                self._local_scheduler = LocalModelScheduler(
+                    embedding_router=self._embedding_router,
+                    ollama_chat=self._ollama_chat,
+                )
+                self._local_scheduler.start()
+                self._audit_logger.log_registration("local-model-scheduler", "STARTED")
+                report.components_started.append("12_local_scheduler_start")
+                report.steps_completed += 1
+            except Exception as e:
+                report.errors.append(f"local_scheduler_start: {e}")
+        else:
+            try:
+                self._local_scheduler.start()
+            except Exception as e:
+                report.errors.append(f"local_scheduler_start: {e}")
 
-        try:
-            from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        if self._vms is None:
+            try:
+                from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
-            self._vms = InProcessVectorMemory()
-            self._vms.start()
-            logger.info("VMS started via AutoRuntimeCore.boot()")
-        except Exception as e:
-            logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
+                self._vms = InProcessVectorMemory()
+                self._vms.start()
+                logger.info("VMS started via AutoRuntimeCore.boot()")
+            except Exception as e:
+                logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
+        else:
+            try:
+                self._vms.start()
+            except Exception as e:
+                logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
 
     def _init_task_learner(self, report: BootReport) -> None:
         try:
@@ -434,6 +460,8 @@ class AutoRuntimeCore:
             report.errors.append(f"task_learner_init: {e}")
 
     def _init_model_router(self) -> None:
+        if self._model_router is not None:
+            return
         try:
             from zephyr.governance.intelligence_governance.model_router import ModelRouter
 
@@ -443,10 +471,13 @@ class AutoRuntimeCore:
 
     def _benchmark_and_learn(self, report: BootReport) -> None:
         try:
-            from zephyr.intelligence.model_profiling import ModelProfiler
             from zephyr.intelligence.model_profiling.results_writer import to_model_benchmark_result
 
-            profiler = ModelProfiler(max_ollama_models=5)
+            profiler = self._model_profiler
+            if profiler is None:
+                from zephyr.intelligence.model_profiling import ModelProfiler
+
+                profiler = ModelProfiler(max_ollama_models=5)
             profiles = profiler.profile_ollama_only()
             if not profiles:
                 return
