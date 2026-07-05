@@ -61,6 +61,28 @@ __all__ = [
 ]
 
 
+# 5.146.6 修复: 正则复杂度校验, 阻止 ReDoS 攻击模式
+# 检测嵌套量词 (如 (a+)+, (a*)*) 和过大重复次数 (如 a{999,})
+_NESTED_QUANTIFIER_RE = re.compile(r"\([^)]*[+*?][^)]*\)[+*?]")
+_MAX_REPEAT = 100
+
+
+def _validate_regex_safety(pattern: str) -> None:
+    """5.146.6 修复: 校验正则复杂度, 阻止已知 ReDoS 攻击模式。
+
+    检测:
+    - 嵌套量词: (a+)+, (a*)* 等可导致指数级回溯
+    - 过大重复: a{999,} 可导致线性时间攻击
+    """
+    if _NESTED_QUANTIFIER_RE.search(pattern):
+        raise ValueError(f"Blocked ReDoS pattern (nested quantifier): {pattern!r}")
+    for m in re.finditer(r"\{(\d+)(?:,(\d*))?\}", pattern):
+        low = int(m.group(1))
+        high = int(m.group(2)) if m.group(2) else low
+        if low > _MAX_REPEAT or high > _MAX_REPEAT:
+            raise ValueError(f"Blocked ReDoS pattern (excessive repeat): {pattern!r}")
+
+
 class PatternType(str, Enum):
     SUCCESS_PATTERN = "success_pattern"
     FAILURE_PATTERN = "failure_pattern"
@@ -467,8 +489,10 @@ class DangerousPatternLibrary:
         self._compiled: dict[str, re.Pattern[str]] = {}
         for p in self._patterns:
             try:
+                # 5.146.6 修复: 编译前校验正则复杂度, 阻止 ReDoS 攻击模式
+                _validate_regex_safety(p.detection)
                 self._compiled[p.pattern_id] = re.compile(p.detection)
-            except re.error:
+            except (re.error, ValueError):
                 pass
 
     @property

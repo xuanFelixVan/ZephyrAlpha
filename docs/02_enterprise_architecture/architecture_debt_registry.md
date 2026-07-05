@@ -8035,6 +8035,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=6(字符串处理安全需逐处审查编码/转义)
 > **第35轮修复状态（2026-07-05）**：FIXED=4(5.146.1 shell=True→shlex.split+shell=False已修复 + 5.146.2 yaml.load(FullLoader)→safe_load已修复 + 5.146.3 eval增加AST预校验拒绝dunder访问 + 5.146.4 INSERT列名已有_TASK_COLUMNS白名单校验), STILL_VALID=2(5.146.5 format_map改SafeFormatter + 5.146.6 re.compile改RE2,均为LOW防御纵深)
+> **第38轮修复状态（2026-07-05）**：5.146.5/5.146.6 FIXED——5.146.5 新增_SafeFormatter(string.Formatter子类)阻止{obj.attr}/{obj[key]}属性/索引访问, format_map替换为_safe_formatter.vformat / 5.146.6 新增_validate_regex_safety校验嵌套量词+过大重复次数, re.compile前调用校验。本维度全部清零。
 
 审查SQL注入、路径遍历、命令注入、格式化字符串注入、ReDoS等字符串安全漏洞。
 

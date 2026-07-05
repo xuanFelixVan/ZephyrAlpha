@@ -54,6 +54,7 @@ templates:
 from __future__ import annotations
 
 import re
+import string
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -81,6 +82,23 @@ __all__ = [
 ]
 
 _log = structlog.get_logger().bind(layer="infra", module="prompt_registry")
+
+
+class _SafeFormatter(string.Formatter):
+    """5.146.5 修复: 仅允许 {name} 简单替换, 阻止 {obj.attr} / {obj[key]} 属性/索引访问。
+
+    str.format_map 支持格式说明符中的属性访问({var.__class__})和索引访问,
+    当 template_text 是 AI 可编辑的 prompt 模板时, 构成纵深防御缺口。
+    本 Formatter 仅允许简单 {name} 占位符, 阻断属性链/索引链 RCE 路径。
+    """
+
+    def get_field(self, field_name: str, args: tuple, kwargs: dict) -> tuple[Any, str]:
+        if "." in field_name or "[" in field_name:
+            raise ValueError(f"Unsafe format spec blocked: {{{field_name}}}")
+        return super().get_field(field_name, args, kwargs)
+
+
+_safe_formatter = _SafeFormatter()
 
 _SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 _STABILITY_VALUES: frozenset[str] = frozenset({"experimental", "beta", "stable", "frozen"})
@@ -242,9 +260,12 @@ class PromptTemplate(BaseModel):
                 effective[k] = str(v)
 
         try:
-            rendered_body = self.template_text.format_map(effective)
+            # 5.146.5 修复: 用 _SafeFormatter 替代 str.format_map, 阻止 {obj.attr}/{obj[key]} 属性/索引访问
+            rendered_body = _safe_formatter.vformat(self.template_text, (), effective)
         except KeyError as exc:
             raise VariableError(f"模板 '{self.template_id}' 含未知占位符 {exc}") from exc
+        except ValueError as exc:
+            raise VariableError(f"模板 '{self.template_id}' 含不安全格式说明符: {exc}") from exc
 
         full_text = f"{self.system_prefix}\n{rendered_body}".strip() if self.system_prefix else rendered_body
         token_count = estimate_tokens(full_text)
