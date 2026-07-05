@@ -349,7 +349,17 @@ class MetricsWriteBuffer:
         return self
 
     def __exit__(self, *args):
-        self.flush()
+        try:
+            self.flush()
+        except Exception:
+            if args[0] is None:
+                raise
+            import logging
+
+            logging.getLogger(__name__).warning(
+                "CapacityMetricsBuffer.flush() failed in __exit__, suppressing to preserve original exception",
+                exc_info=True,
+            )
 
 
 def get_db_path() -> str:

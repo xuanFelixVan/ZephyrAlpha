@@ -46,7 +46,7 @@ class DeploymentSuppression:
 
     state: DeployGateState = DeployGateState.OPEN
     blocked_since: float = 0.0
-    stable_since: float = 0.0
+    stable_since: float | None = None
     blocked_count: int = 0
 
     def update_from_fle_state(self, fle_state: str) -> DeployGateState:
@@ -57,12 +57,12 @@ class DeploymentSuppression:
                 self.blocked_count += 1
                 self.blocked_since = now
             self.state = DeployGateState.BLOCKED_STABILITY
-            self.stable_since = 0.0
+            self.stable_since = None
         elif fle_state == "INCIDENT_ACTIVE":
             self.state = DeployGateState.BLOCKED_INCIDENT
-            self.stable_since = 0.0
+            self.stable_since = None
         else:
-            if self.stable_since == 0.0:
+            if self.stable_since is None:
                 self.stable_since = now
             if now - self.stable_since >= self.sustain_window:
                 self.state = DeployGateState.OPEN

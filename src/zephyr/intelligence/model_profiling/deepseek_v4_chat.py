@@ -67,10 +67,7 @@ def _patch_win32_ver() -> None:
             return
 
         def _safe_win32_ver():
-            try:
-                return ("10", "10.0.19045", "SP0", "Multiprocessor Free")
-            except Exception:
-                return ("10", "", "", "")
+            return ("10", "10.0.19045", "SP0", "Multiprocessor Free")
 
         _safe_win32_ver._patched = True  # type: ignore[attr-defined]
         _plat.win32_ver = _safe_win32_ver

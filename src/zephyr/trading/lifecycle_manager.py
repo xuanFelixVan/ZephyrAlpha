@@ -111,6 +111,8 @@ class LifecycleManager:
             except Exception as e:
                 report.errors.append(f"{name}: {e}")
                 report.success = False
+                logger.warning("boot_sequence step %s failed, skipping remaining steps", name)
+                break
 
         finalizer.register("night_shift_queue", night_shift_queue.flush_all)
         finalizer.register("capability_registry", lambda: registry.dump_snapshot())

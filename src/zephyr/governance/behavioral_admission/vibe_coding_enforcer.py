@@ -46,7 +46,8 @@ VIBE_CODING_RULES: dict[str, tuple[VibeRuleLevel, str]] = {
 def enforce(rule_name: str, *, level: VibeRuleLevel | None = None) -> bool:
     entry = VIBE_CODING_RULES.get(rule_name)
     if entry is None:
-        return True
+        # 修复 fail-open：未知规则默认拒绝（原为 return True）
+        return False
     actual_level, _ = entry
     if level is None:
         return actual_level is not VibeRuleLevel.MUST
@@ -60,9 +61,6 @@ def enforce_all(checks: dict[str, VibeRuleLevel | None]) -> dict[str, bool]:
 
 def must(rule_name: str) -> Callable[[F], F]:
     def decorator(func: F) -> F:
-        func._vibe_rule = rule_name
-        func._vibe_level = VibeRuleLevel.MUST
-
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             if not enforce(rule_name, level=VibeRuleLevel.MUST):
@@ -71,6 +69,8 @@ def must(rule_name: str) -> Callable[[F], F]:
                 logging.getLogger(__name__).warning("Vibe Coding MUST violation: %s in %s", rule_name, func.__name__)
             return func(*args, **kwargs)
 
+        wrapper._vibe_rule = rule_name  # type: ignore[attr-defined]
+        wrapper._vibe_level = VibeRuleLevel.MUST  # type: ignore[attr-defined]
         return wrapper  # type: ignore[return-value]
 
     return decorator
@@ -78,14 +78,13 @@ def must(rule_name: str) -> Callable[[F], F]:
 
 def should(rule_name: str) -> Callable[[F], F]:
     def decorator(func: F) -> F:
-        func._vibe_rule = rule_name
-        func._vibe_level = VibeRuleLevel.SHOULD
-
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             enforce(rule_name, level=VibeRuleLevel.SHOULD)
             return func(*args, **kwargs)
 
+        wrapper._vibe_rule = rule_name  # type: ignore[attr-defined]
+        wrapper._vibe_level = VibeRuleLevel.SHOULD  # type: ignore[attr-defined]
         return wrapper  # type: ignore[return-value]
 
     return decorator
