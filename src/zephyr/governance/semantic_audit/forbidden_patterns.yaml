@@ -1,3 +1,5 @@
+# [A_module] module_id=MOD-GOV_safety_boundary_config | layer=config | stability=frozen | safety=H | ai_autonomy=human_gated
+# [TTL] permanent
 # forbidden_patterns.yaml — 语义审计安全边界禁碰规则
 # SSoT for SafetyBoundary (semantic_audit/safety_boundary.py)
 # 修改此文件后无需重启，SafetyBoundary 会在下次 filter() 调用时重新加载

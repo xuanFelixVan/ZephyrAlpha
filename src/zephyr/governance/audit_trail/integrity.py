@@ -149,7 +149,7 @@ class IntegrityVerifier:
                         if not hmac.compare_digest(expected_hmac, stored_hmac):
                             issues.append(f"event #{event_count}: HMAC signature mismatch")
 
-                stored_agent_sig = event.get("agent_signature", "")
+                stored_agent_sig = event.get("signature", "")
                 if stored_agent_sig:
                     entry_hash = event.get("entry_hash", "")
                     if entry_hash:
