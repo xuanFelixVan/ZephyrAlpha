@@ -3137,7 +3137,10 @@ capabilities:
       canonical = src/zephyr/data/provider_base.py（DataSourceBase ABC）。
       配套文件：policy_registry.py（SourcePolicy + PolicyRegistry）、
       implementations/{ifind,miniqmt,akshare}_provider.py（3 个 Provider 实现）、
-      scheduler.py（阶段2 调度编排层占位）。
+      scheduler.py（阶段2 调度编排层完整实现，IntegratorScheduler + APScheduler）、
+      progress_store.py（SQLite 断点续传存储）、ch_writer.py（ClickHouse TSV 写入器）、
+      task_queue.py（DAG 依赖图 + 优先级队列）、alerter.py（告警管理）、
+      config/{policies,tasks,schedule}.yaml（per-source 策略 + 任务清单 + 5档时段）。
       与 governance/intelligence_governance/provider_base.py 的 LLM Provider
       同名不同义（class-name-alias 标记豁免），过渡期共存，阶段4 退役旧版。
 
@@ -3708,6 +3711,36 @@ creation_tokens:
     created_by: "session-sess-11416-20260706044753"
     capability: "data_source_provider_abstraction"
 
+  # --- MOD-L00-004 数据源集成器阶段2（2026-07-06，调度编排层完整实现）---
+  - file: "src/zephyr/data/progress_store.py"
+    token: "auto-data-progress-store-20260706"
+    created_by: "session-sess-37904-20260706052842"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/ch_writer.py"
+    token: "auto-data-ch-writer-20260706"
+    created_by: "session-sess-37904-20260706052842"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/task_queue.py"
+    token: "auto-data-task-queue-20260706"
+    created_by: "session-sess-37904-20260706052842"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/alerter.py"
+    token: "auto-data-alerter-20260706"
+    created_by: "session-sess-37904-20260706052842"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/config/policies.yaml"
+    token: "auto-data-config-policies-20260706"
+    created_by: "session-sess-37904-20260706052842"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/config/tasks.yaml"
+    token: "auto-data-config-tasks-20260706"
+    created_by: "session-sess-37904-20260706052842"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/config/schedule.yaml"
+    token: "auto-data-config-schedule-20260706"
+    created_by: "session-sess-37904-20260706052842"
+    capability: "data_source_provider_abstraction"
+
   # --- AI-12审计修复：语义审计安全边界配置（forbidden_patterns.yaml）---
   - file: "src/zephyr/governance/semantic_audit/forbidden_patterns.yaml"
     token: "auto-forbidden-patterns-20260706"
@@ -3774,3 +3807,11 @@ creation_tokens:
 #   - 字段结构：[{file, token, created_by, capability}]
 #   - 种子 8 条：commit_gates/ 5 个 gate 文件 + governance/ 3 个核心文件（gateway/worktree/registry）
 #   - tests/ 豁免：测试非能力真源，对标 capability_overlap_gate 设计
+# 2026-07-06 MOD-L00-004 阶段2 数据源集成器调度编排层完整实现：
+#   - 新增 7 个 creation_tokens：progress_store.py / ch_writer.py / task_queue.py /
+#     alerter.py + config/{policies,tasks,schedule}.yaml
+#   - 更新 data_source_provider_abstraction 描述：scheduler.py 从"阶段2占位"升级为
+#     "完整实现（IntegratorScheduler + APScheduler）"，补充 4 个新模块 + 3 个 config yaml
+#   - 单测全绿：progress_store 15/15、ch_writer 26/26、task_queue 23/23、
+#     alerter 21/21、scheduler 26/26（共 111/111）
+#   - session: sess-37904-20260706052842
