@@ -6,11 +6,11 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-07-05T21:26:27Z'
+  generated_at: '2026-07-05T23:02:32Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
   total_path_claims: 738
   total_ssot_claims: 16
-  total_conflicts: 13
+  total_conflicts: 2
   conflict_resolution: 'ssot_claims_priority'
 ownership:
   - path: 'src/zephyr/governance/__init__.py'
@@ -4150,84 +4150,84 @@ ownership:
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/drift_detection/drift_engine.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/drift_engine.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/roi_engine.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/roi_engine.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/drift_models.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/drift_models.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/gate_persistence.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/gate_persistence.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/headless_scanner.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/headless_scanner.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/cross_module_score.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/cross_module_score.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/self_test_verifier.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/self_test_verifier.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/drift_cron_scheduler.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/drift_cron_scheduler.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/drift_infrastructure.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/drift_infrastructure.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/drift_result_types.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/drift_result_types.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/brain_integration.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/brain_integration.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/drift_detection/events.py'
+  - path: 'src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/events.py'
     owner_blueprint: 'MOD-INF-023'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
@@ -5607,125 +5607,4 @@ conflicts:
       blueprint: 'MOD-INF-022'
       claim_type: 'section_0_1'
       declared_in: 'docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/drift_engine.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/drift_models.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/drift_infrastructure.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/drift_result_types.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/cross_module_score.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/events.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/self_test_verifier.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/gate_persistence.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/brain_integration.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/roi_engine.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/governance/drift_detection/headless_scanner.py'
-    claimant:
-      blueprint: 'MOD-INF-033'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-023'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
     resolution: 'ssot_claims_priority'
