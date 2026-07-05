@@ -357,7 +357,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=60,
+            timeout=120,  # 止血：60→120（项目规模 10k+ 目录逼近 60s 预算；治本见 generate_path_tree.py 性能优化任务）
         )
         if sync_result.returncode != 0:
             return ReconcileResult(
@@ -373,7 +373,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=60,
+            timeout=120,  # 止血：60→120（项目规模 10k+ 目录逼近 60s 预算；治本见 generate_path_tree.py 性能优化任务）
         )
         if doc_result.returncode != 0:
             return ReconcileResult(
