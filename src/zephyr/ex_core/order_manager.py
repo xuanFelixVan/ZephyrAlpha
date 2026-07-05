@@ -118,6 +118,26 @@ class OrderManager:
         _logger.info("Order created: order_id=%s symbol=%s side=%s qty=%s", order_id, symbol, side, quantity)
         return order
 
+    def _transition_status(self, order: Order, new_status: OrderStatus) -> None:
+        """状态机校验并转换订单状态
+
+        基于 VALID_TRANSITIONS 校验状态转换合法性，违规抛 ValueError。
+
+        Args:
+            order: 订单对象
+            new_status: 目标状态
+
+        Raises:
+            ValueError: 非法状态转换
+        """
+        allowed = self.VALID_TRANSITIONS.get(order.status, set())
+        if new_status not in allowed:
+            raise ValueError(
+                f"非法状态转换: {order.status} → {new_status} (order_id={order.order_id})"
+            )
+        order.status = new_status
+        order.updated_at = datetime.now(UTC)
+
     def submit_order(self, order_id: str, broker_id: str = "simulation") -> str:
         order = self._orders.get(order_id)
         if not order:
@@ -127,8 +147,7 @@ class OrderManager:
         if not broker:
             raise ValueError(f"Broker not found: {broker_id}")
 
-        if order.status not in {OrderStatus.PENDING, OrderStatus.SUBMITTED}:
-            raise ValueError(f"Cannot submit order in status: {order.status}")
+        self._transition_status(order, OrderStatus.SUBMITTED)
 
         broker_order_id = broker.submit_order(order)
         order.broker_order_id = broker_order_id
@@ -137,13 +156,47 @@ class OrderManager:
         return broker_order_id
 
     def cancel_order(self, order_id: str) -> bool:
+        """撤单——同时通知券商端撤销
+
+        P0-1 修复: 必须调用 broker.cancel_order 通知券商端，
+        否则本地显示已撤但券商端订单仍挂单，导致资金损失风险。
+
+        Args:
+            order_id: 订单ID
+
+        Returns:
+            True = 撤单成功（本地+券商端均成功）
+        """
         order = self._orders.get(order_id)
         if not order:
             return False
+
+        # 状态机校验
         if order.status not in {OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL}:
             return False
-        order.status = OrderStatus.CANCELLED
-        order.updated_at = datetime.now(UTC)
+
+        # 通知券商端撤单（若有 broker_order_id）
+        if order.broker_order_id:
+            broker = self._brokers.get("simulation")  # 默认 simulation broker
+            # 查找该 order 所属的 broker（通过 broker_order_id 反查）
+            for bid, b in self._brokers.items():
+                try:
+                    if b.query_order(order.broker_order_id) is not None:
+                        broker = b
+                        break
+                except Exception:
+                    continue
+            if broker is not None:
+                try:
+                    broker.cancel_order(order.broker_order_id)
+                except Exception as e:
+                    _logger.error(
+                        "券商端撤单失败: order_id=%s broker_order_id=%s error=%s",
+                        order_id, order.broker_order_id, e,
+                    )
+                    return False
+
+        self._transition_status(order, OrderStatus.CANCELLED)
         _logger.info("Order cancelled: order_id=%s", order_id)
         return True
 
@@ -184,9 +237,15 @@ class OrderManager:
             order.updated_at = datetime.now(UTC)
 
             if order.filled_quantity >= order.quantity:
-                order.status = OrderStatus.FILLED
+                try:
+                    self._transition_status(order, OrderStatus.FILLED)
+                except ValueError as e:
+                    _logger.warning("成交回调状态转换跳过: %s", e)
             elif order.filled_quantity > 0:
-                order.status = OrderStatus.PARTIAL
+                try:
+                    self._transition_status(order, OrderStatus.PARTIAL)
+                except ValueError as e:
+                    _logger.warning("成交回调状态转换跳过: %s", e)
 
         for callback in self._fill_callbacks:
             try:

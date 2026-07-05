@@ -1,6 +1,27 @@
-# [A_module] module_id=MOD-EXE_adapters | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
+# [MODULE] zephyr.ex_core.adapters
+# [DOMAIN] D_EX_CORE
+# [DEPENDENCIES] zephyr.governance.trading_contracts.broker_interface; zephyr.governance.adapters.risk_validation_bridge; zephyr.governance.adapters.simulation_broker; zephyr.ex_core.adapters.miniqmt_broker
+# [CONSUMERS] zephyr.ex_core.execution_engine; zephyr.ex_core.order_manager
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-L06-001-adapters | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""Re-export wrapper: adapters has migrated to zephyr.execution_core.core.adapters"""
+"""D_EX_CORE adapters — 券商/风控适配器 re-export wrapper
+
+聚合 governance.trading_contracts.broker_interface、governance.adapters.* 与
+ex_core.adapters.miniqmt_broker，提供统一 import 入口。
+
+真源: governance.trading_contracts.broker_interface（BrokerInterface 契约真源）
+      ex_core.adapters.miniqmt_broker（MiniQmtBroker 实现真源）
+"""
 
 from zephyr.governance.trading_contracts.broker_interface import BrokerInterface, FillCallback
 from zephyr.governance.adapters.risk_validation_bridge import (

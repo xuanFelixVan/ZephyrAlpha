@@ -110,7 +110,7 @@ references:
 | 4 | `adapters/simulation_broker.py` | §3.1 | 模拟券商适配器 | 已实现 |
 | 5 | `adapters/__init__.py` | §3.1 | 适配器注册 | 已实现 |
 | 6 | `__init__.py` | §4.2 | CTR 声明 + 模块导出 | 已实现 |
-| 7 | `adapters/miniqmt_broker.py` | §16.7.1 | **v2.2.0新增** MiniQMT实盘Broker(对接xttrader, A股实盘交易) | 待施工 |
+| 7 | `adapters/miniqmt_broker.py` | §16.7.1 | **v2.2.0新增** MiniQMT实盘Broker(对接xttrader, A股实盘交易) | 已施工(部分: P0已修, P1余项见审计清单) |
 
 > YAML SSoT 列出 `simulation_broker.py` 在根目录，实际磁盘位于 `adapters/` 子目录。
 
@@ -732,7 +732,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 | 1 | 订单状态机转换规则 | 算法 | PENDING→{SUBMITTED,CANCELLED}; SUBMITTED→{PARTIAL,FILLED,CANCELLED,REJECTED}; PARTIAL→{FILLED,CANCELLED,REJECTED}; FILLED/CANCELLED/REJECTED→∅ | `order_manager.py` |
 | 2 | SOR 评分衰减公式 | 算法 | `score = current * 0.9 + fill_quality * 0.1` | `execution_engine.py` |
 | 3 | 滑点计算 | 算法 | BUY: `fill_price = price * (1 + slippage_bps/10000)`; SELL: `fill_price = price * (1 - slippage_bps/10000)` | `simulation_broker.py` |
-| 4 | **MiniQmtBroker撮合逻辑(v2.2.0)** | 协议 | 实盘撮合MUST调用D_BACKTEST matching_engine抽取的共享MatchingLogic模块(回测=实盘一致性), 禁止在本适配器内重新实现撮合规则 | `adapters/miniqmt_broker.py`(待施工) |
+| 4 | **MiniQmtBroker撮合逻辑(v2.2.0)** | 协议 | 实盘撮合MUST调用D_BACKTEST matching_engine抽取的共享MatchingLogic模块(回测=实盘一致性), 禁止在本适配器内重新实现撮合规则 | `adapters/miniqmt_broker.py`(已施工: submit_order内置pre_trade_simulate预校验) |
 
 ### §16.7.1 MiniQmtBroker 详细规格（v2.2.0新增）
 
@@ -930,8 +930,8 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | GAP-L06-001 | 单线程订单处理 | 多线程 + 锁 + ThreadPoolExecutor | P1 | 并发订单 > 10 | v2.1.0 | 待施工 |
 | GAP-L06-002 | 仅 SimulationBroker | 新增MiniQMT/富途/IB 适配器 | P1 | 需要实盘交易 | v2.2.0 | **MiniQMT规格已就绪(§16.7.1), 待施工** |
 | GAP-L06-003 | 无 ExecutionReport | 新增 CTR-P1-007 产出 | P0 | D_REPORTING 需要执行报告 | v2.0.1 | 待施工 |
-| **GAP-L06-004** (v2.2.0) | 回测≠实盘(撮合逻辑各实现一套) | 抽取MatchingLogic共享模块 | P0 | 回测-实盘偏差>30% | v2.2.0 | 待施工 |
-| **GAP-L06-005** (v2.2.0) | 无A股T+1/涨跌停校验 | MiniQmtBroker内置校验 | P0 | 实盘接入 | v2.2.0 | 待施工 |
+| **GAP-L06-004** (v2.2.0) | 回测≠实盘(撮合逻辑各实现一套) | 抽取MatchingLogic共享模块 | P0 | 回测-实盘偏差>30% | v2.2.0 | 已施工(submit_order内置pre_trade_simulate, MatchingLogic共享) |
+| **GAP-L06-005** (v2.2.0) | 无A股T+1/涨跌停校验 | MiniQmtBroker内置校验 | P0 | 实盘接入 | v2.2.0 | 已施工(T+1查持仓available_quantity, 涨跌停基于prev_close) |
 
 ### §17.3 升级版本矩阵
 

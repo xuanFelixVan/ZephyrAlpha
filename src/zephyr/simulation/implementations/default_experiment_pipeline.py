@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-UNK_default_experiment_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L13-001-default_experiment_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """实验 — Default Experiment Pipeline
@@ -107,12 +107,6 @@ class DefaultExperimentPipeline(ExperimentPipelineBase):
         if abs_d < 0.8:
             return 0.01
         return 0.001
-
-    @staticmethod
-    def compute_effect_size(control: float, treatment: float, pooled_std: float) -> float:
-        if pooled_std == 0:
-            return 0.0
-        return (treatment - control) / pooled_std
 
 
 __all__ = ["DefaultExperimentPipeline"]

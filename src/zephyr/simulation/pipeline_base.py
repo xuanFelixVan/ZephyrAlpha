@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-UNK_pipeline_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L13-001-pipeline_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """
@@ -38,10 +38,15 @@ from __future__ import annotations
 
 import abc
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Any, ClassVar
+from datetime import UTC, datetime
+from typing import Any
 
 from zephyr.shared.contracts.experiment_result import ExperimentResult
+
+
+def _utcnow() -> datetime:
+    """当前 UTC 时间（替代已废弃的 datetime.utcnow）"""
+    return datetime.now(UTC)
 
 
 @dataclass(frozen=True)
@@ -69,7 +74,7 @@ class ExperimentMetric:
     effect_size: float
     p_value: float
     is_significant: bool
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=_utcnow)
 
 
 class ExperimentPipelineBase(abc.ABC):
@@ -81,8 +86,6 @@ class ExperimentPipelineBase(abc.ABC):
       - 支持 A/B 分组与 p-value / effect_size 计算
       - 最终实验结论通过 ScoutAgent 汇总为 ExperimentResult
     """
-
-    _registry_removed_5_89_5: ClassVar[None] = None  # 5.89.5 修复: 移除死_registry字段
 
     @abc.abstractmethod
     def run(self, config: ExperimentConfig, idempotency_key: str) -> list[ExperimentMetric]:
@@ -110,8 +113,6 @@ class ScoutAgentBase(abc.ABC):
       - confidence < 0.7 的结论不应发布（D_RESEARCH/D_ML_TRAIN 消费端应忽略）
       - 已确认结论 archived_to_kms = True，写入 KMS 知识管道
     """
-
-    _registry_removed_5_89_5b: ClassVar[None] = None  # 5.89.5 修复: 移除死_registry字段
 
     @abc.abstractmethod
     def scout(self, context: dict[str, Any], idempotency_key: str) -> ExperimentResult:
