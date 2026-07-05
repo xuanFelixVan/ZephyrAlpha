@@ -6563,6 +6563,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.102 可变默认参数（7个，第20轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(可变默认参数=[/={}，task_manager_server 5处+模板2处，含重复副本需统一)
+> **第39轮修复状态（2026-07-05）**：FIXED=7(5.102.1-5.102.5 task_manager_server.py 5处已改为`list | None = None`+函数体内初始化/5.102.6-5.102.7 template.py+_gen_inherited.py模板字符串已改为`field(default_factory=...)`+同步更新`from dataclasses import dataclass, field`), 0 DRIFTED, STILL_VALID=0
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
@@ -6891,6 +6892,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.115 ABC注册模式（2个，第21轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(ABC注册模式需重构为显式注册)
+> **第39轮修复状态（2026-07-05）**：FIXED=2(5.115.1 default_risk_limits_calculator.py已改为`from zephyr.risk.risk_limits import RiskLimitsCalculator`/5.115.2 5文件(signal_synthesizer/risk_validator/risk_limits/quality_gate/intelligence_governance/provider_base)已改用`inspect.isabstract(cls)`), DRIFTED=1(5.115.2 governance/provider_base.py已删), STILL_VALID=0
 
 #### 5.115.1 [MEDIUM] DefaultRiskLimitsCalculator从错误源导入ABC致__init_subclass__注册静默失败
 
@@ -7523,6 +7525,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(返回值不一致需统一返回类型)
 
 > **第34轮修复状态（2026-07-05）**：FIXED=1(5.134.1 _hash_file注解从`-> str | None`改为`-> str`,函数实际始终返回str,文件打开失败抛OSError而非返回None)
+
+> **第39轮验证状态（2026-07-05）**：5.134.1已FIXED, 注册表"2个"为初始计数偏差, 实际仅1项有据可查, 本维度清零
 
 #### 5.134.1 [MEDIUM] _hash_file类型注解与实际返回不匹配
 
