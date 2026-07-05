@@ -424,7 +424,7 @@ class GPUConsensusScheduler:
             )
             return result
         except Exception as exc:
-            logger.debug("API call failed for model %s: %s", model_id, exc)
+            logger.debug("API call failed for model %s: %s", model_id, exc, exc_info=True)
             return None
 
     def _call_api_sync(self, model_id: str, request: ConsensusRequest) -> dict[str, Any] | None:

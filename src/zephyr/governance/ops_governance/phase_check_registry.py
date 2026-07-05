@@ -119,7 +119,7 @@ def check_session_continuity() -> GateResult:
         sc = SessionContinuity()
         return GateResult.GREEN
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -226,7 +226,7 @@ def check_shell_dangerous() -> GateResult:
                     logger.warning("Dangerous pattern %r (%s) in %s", pat, desc, py_file)
                     found_any = True
         except Exception as e:
-            logger.warning("pattern scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("pattern scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
     return GateResult.YELLOW if found_any else GateResult.GREEN
 
 
@@ -272,7 +272,7 @@ def check_sys_master_compliance() -> GateResult:
             return GateResult.GREEN
         return GateResult.RED
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -331,7 +331,7 @@ def check_vms_health() -> GateResult:
     except ImportError:
         return GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -358,7 +358,7 @@ def check_vms_migration() -> GateResult:
     except ImportError:
         return GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -366,7 +366,7 @@ def check_gate_engine_judge() -> GateResult:
     try:
         return GateResult.GREEN
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -413,7 +413,7 @@ def check_contract_compliance() -> GateResult:
     except ImportError:
         return GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -460,7 +460,7 @@ def check_agent_rbac() -> GateResult:
     except ImportError:
         return GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -482,7 +482,7 @@ def check_audit_trail() -> GateResult:
 
         return GateResult.GREEN
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -520,7 +520,7 @@ def check_audit_trail_context() -> GateResult:
     except ImportError:
         return GateResult.RED
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -547,7 +547,7 @@ def check_asset_inventory() -> GateResult:
             return GateResult.YELLOW
         return GateResult.GREEN
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -574,7 +574,7 @@ def check_escalation_protocol() -> GateResult:
     except ImportError:
         return GateResult.RED
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -599,7 +599,7 @@ def check_budget_enforcer() -> GateResult:
     except ImportError:
         return GateResult.RED
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -630,7 +630,7 @@ def check_full_audit_regression() -> GateResult:
     except ImportError:
         return GateResult.RED
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -652,7 +652,7 @@ def check_full_backtest() -> GateResult:
         # mod = REPO_ROOT / "src/zephyr/research_innovation/implementations/default_backtest_engine.py"  # 路径不存在
         return GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -666,7 +666,7 @@ def check_chaos_test() -> GateResult:
         mod = REPO_ROOT / "src/zephyr/feedback-loop/detectors/chaos_engineering.py"
         return GateResult.GREEN if mod.exists() else GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -684,7 +684,7 @@ def check_kill_switch() -> GateResult:
     except ImportError:
         return GateResult.RED
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -701,7 +701,7 @@ def check_shadow_mode() -> GateResult:
         ]
         return GateResult.GREEN if all(f.exists() for f in shadow_files) else GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -721,7 +721,7 @@ def check_rollback_drill() -> GateResult:
     except ImportError:
         return GateResult.RED
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -746,7 +746,7 @@ def check_e2e_integration_test() -> GateResult:
         )
         return GateResult.GREEN if result.returncode == 0 else GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -764,7 +764,7 @@ def check_mcp_e2e() -> GateResult:
         )
         return GateResult.GREEN if result.returncode == 0 else GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -797,7 +797,7 @@ def check_pipeline_e2e() -> GateResult:
                     return GateResult.YELLOW
         return GateResult.GREEN
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -816,7 +816,7 @@ def check_skill_canary() -> GateResult:
     except ImportError:
         return GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -834,7 +834,7 @@ def check_dependency_audit() -> GateResult:
         test_file = REPO_ROOT / "tests/governance/test_dependency_graph_acyclic.py"
         return GateResult.GREEN if test_file.exists() else GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -852,7 +852,7 @@ def check_a2a_hold() -> GateResult:
     except AttributeError:
         return GateResult.GREEN
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -884,7 +884,7 @@ def check_task_system() -> GateResult:
         bo = REPO_ROOT / "src/zephyr/orchestrator/batch_orchestrator.py"
         return GateResult.GREEN if tr.exists() and bo.exists() else GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -916,7 +916,7 @@ def check_lsg_security() -> GateResult:
             return GateResult.RED
         return GateResult.YELLOW
     except Exception as e:
-        logger.warning("phase check failed (%s: %s)", type(e).__name__, e)
+        logger.warning("phase check failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return GateResult.YELLOW
 
 
@@ -1018,5 +1018,5 @@ def run_check(check_name: str) -> GateResult:
     try:
         return func()
     except Exception:
-        logger.exception("Check '%s' failed with exception", check_name)
+        logger.exception("Check '%s' failed with exception", check_name, exc_info=True)
         return GateResult.RED

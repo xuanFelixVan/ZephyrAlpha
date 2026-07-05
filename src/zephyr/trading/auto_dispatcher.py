@@ -72,7 +72,7 @@ class AutoDispatcher:
             result["step_context"] = "ok"
             logger.info("[AUTO-DISPATCH] context built for %s", task_id)
         except Exception as exc:
-            logger.warning("[AUTO-DISPATCH] context failed for %s: %s", task_id, exc)
+            logger.warning("[AUTO-DISPATCH] context failed for %s: %s", task_id, exc, exc_info=True)
             result["step_context"] = f"failed: {exc}"
 
         if files_in_scope:
@@ -91,7 +91,7 @@ class AutoDispatcher:
                     audit_result.failed,
                 )
             except Exception as exc:
-                logger.warning("[AUTO-DISPATCH] audit failed for %s: %s", task_id, exc)
+                logger.warning("[AUTO-DISPATCH] audit failed for %s: %s", task_id, exc, exc_info=True)
                 result["step_scripts"] = f"failed: {exc}"
         else:
             logger.info("[AUTO-DISPATCH] no files_in_scope for %s, skipping audit", task_id)
@@ -103,7 +103,7 @@ class AutoDispatcher:
             repo.transition(task_id, "COMPLETED", note="auto-dispatched by daemon")
             result["step_transition"] = "ok (→COMPLETED)"
         except Exception as exc:
-            logger.warning("[AUTO-DISPATCH] transition failed for %s: %s", task_id, exc)
+            logger.warning("[AUTO-DISPATCH] transition failed for %s: %s", task_id, exc, exc_info=True)
             result["step_transition"] = f"failed: {exc}"
 
         return result

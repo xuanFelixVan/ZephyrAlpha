@@ -209,7 +209,7 @@ def subscribe_eventbus() -> None:
         _subscribed = True
         logger.info("AutoPilot: subscribed to task_completed event")
     except Exception as e:
-        logger.warning("AutoPilot: subscribe_eventbus failed: %s", e)
+        logger.warning("AutoPilot: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
 def _on_task_completed(payload: object) -> None:
@@ -229,4 +229,4 @@ def _on_task_completed(payload: object) -> None:
             detail,
         )
     except Exception as e:
-        logger.error("AutoPilot: _on_task_completed failed: %s", e)
+        logger.error("AutoPilot: _on_task_completed failed: %s", e, exc_info=True)

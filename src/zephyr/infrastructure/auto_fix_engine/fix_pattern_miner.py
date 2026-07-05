@@ -165,7 +165,7 @@ class FixPatternMiner:
                 )
             conn.commit()
         except Exception as exc:
-            logger.error("Failed to upsert pattern: %s", exc)
+            logger.error("Failed to upsert pattern: %s", exc, exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:
             if conn is not None:

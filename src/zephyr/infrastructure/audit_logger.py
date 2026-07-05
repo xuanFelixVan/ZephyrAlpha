@@ -95,7 +95,7 @@ class AuditLogger:
                 self._core_writer = _CoreAuditWriter()
             except Exception as e:
                 # Phase 2 P2 修复（异常处理 HIGH）：审计路径吞异常=审计完整性无法保证
-                logger.warning("AuditLogger: _CoreAuditWriter 初始化失败(%s: %s)，核心审计链不可用", type(e).__name__, e)
+                logger.warning("AuditLogger: _CoreAuditWriter 初始化失败(%s: %s)，核心审计链不可用", type(e).__name__, e, exc_info=True)
 
     def hash_args(self, arguments: dict[str, Any]) -> str:
         raw = json.dumps(arguments, sort_keys=True, ensure_ascii=False)

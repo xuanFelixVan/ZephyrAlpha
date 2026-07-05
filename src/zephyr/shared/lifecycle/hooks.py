@@ -138,7 +138,7 @@ class LifecycleManager:
                 await mod.on_init()
                 logger.info("module '%s': init OK", mod.module_name)
             except Exception as exc:
-                logger.error("module '%s': init FAILED: %s", mod.module_name, exc)
+                logger.error("module '%s': init FAILED: %s", mod.module_name, exc, exc_info=True)
                 raise
 
         for mod in self._modules:
@@ -146,7 +146,7 @@ class LifecycleManager:
                 await mod.on_startup()
                 logger.info("module '%s': startup OK", mod.module_name)
             except Exception as exc:
-                logger.error("module '%s': startup FAILED: %s", mod.module_name, exc)
+                logger.error("module '%s': startup FAILED: %s", mod.module_name, exc, exc_info=True)
                 raise
 
     async def shutdown_all(self) -> None:
@@ -155,7 +155,7 @@ class LifecycleManager:
                 await mod.on_shutdown()
                 logger.info("module '%s': shutdown OK", mod.module_name)
             except Exception as exc:
-                logger.error("module '%s': shutdown FAILED: %s", mod.module_name, exc)
+                logger.error("module '%s': shutdown FAILED: %s", mod.module_name, exc, exc_info=True)
 
     async def health_check_all(self) -> dict[str, ModuleHealth]:
         results: dict[str, ModuleHealth] = {}

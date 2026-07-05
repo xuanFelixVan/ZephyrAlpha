@@ -123,7 +123,7 @@ class FileCache:
                 if result is not None:
                     loaded += 1
             except Exception:
-                logger.debug("FileCache: warm failed for %s", fp)
+                logger.debug("FileCache: warm failed for %s", fp, exc_info=True)
         return loaded
 
     def clear(self) -> None:
@@ -167,7 +167,7 @@ class FileCache:
                 data = yaml.safe_load(raw) or json.loads(raw)
             size_bytes = len(raw.encode("utf-8"))
         except Exception:
-            logger.debug("FileCache: parse failed for %s", path)
+            logger.debug("FileCache: parse failed for %s", path, exc_info=True)
             return None
         if data is None:
             return None

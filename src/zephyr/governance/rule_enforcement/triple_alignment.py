@@ -139,7 +139,7 @@ def _extract_dep_map_modules() -> dict[str, dict[str, str]]:
         finally:
             conn.close()
     except Exception as e:
-        logger.warning("Failed to query depgraph nodes: %s", e)
+        logger.warning("Failed to query depgraph nodes: %s", e, exc_info=True)
     return modules
 
 

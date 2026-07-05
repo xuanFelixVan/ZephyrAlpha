@@ -53,7 +53,7 @@ class AuditIndexer(AuditIndexerABC):  # 5.104.14 修复: 继承ABC契约
                 cached = json.loads(self._index_path.read_text(encoding="utf-8"))
                 self._index = cached
             except Exception:
-                logger.warning("Corrupted index cache, rebuilding")
+                logger.warning("Corrupted index cache, rebuilding", exc_info=True)
 
         self._index["built_at"] = self._index.get("built_at", "")
         return {"status": "rebuilt", "entries": self._index.get("total_entries", 0)}
@@ -87,7 +87,7 @@ class AuditIndexer(AuditIndexerABC):  # 5.104.14 修复: 继承ABC契约
             )
             return True
         except Exception as exc:
-            logger.error("Failed to persist index: %s", exc)
+            logger.error("Failed to persist index: %s", exc, exc_info=True)
             return False
 
     def cold_start_cache(self) -> dict[str, Any]:

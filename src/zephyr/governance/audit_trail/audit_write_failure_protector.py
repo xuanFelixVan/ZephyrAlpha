@@ -43,7 +43,7 @@ class AuditWriteProtector:
             try:
                 self._writer = AuditWriter()
             except Exception as e:
-                logger.warning("AuditWriteProtector._ensure_writer: AuditWriter initialization failed (%s: %s)", type(e).__name__, e)
+                logger.warning("AuditWriteProtector._ensure_writer: AuditWriter initialization failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return self._writer
 
     def record_failure(self) -> None:

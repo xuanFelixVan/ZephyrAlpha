@@ -90,5 +90,5 @@ def register_tools() -> bool:
         logger.warning("MCP server not available, tools not registered")
         return False
     except Exception as exc:
-        logger.error("MCP tool registration failed: %s", exc)
+        logger.error("MCP tool registration failed: %s", exc, exc_info=True)
         return False

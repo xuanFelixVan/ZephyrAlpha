@@ -48,7 +48,7 @@ class ConfigLoader:
                     logger.info("Config loaded from %s", self._path)
                     return self._config
             except Exception as exc:
-                logger.warning("Failed to load config from %s: %s — using defaults", self._path, exc)
+                logger.warning("Failed to load config from %s: %s — using defaults", self._path, exc, exc_info=True)
 
         self._config = OrphanJudgeConfig()
         logger.info("Using default config")

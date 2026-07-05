@@ -139,7 +139,7 @@ class F5ShutdownManager:
             logger.info("F5ShutdownManager: atexit hook registered")
         except Exception as e:
             errors.append(f"atexit registration failed: {e}")
-            logger.warning("F5ShutdownManager: atexit registration failed: %s", e)
+            logger.warning("F5ShutdownManager: atexit registration failed: %s", e, exc_info=True)
 
         # 3. 启动 idle 监控线程
         try:
@@ -154,7 +154,7 @@ class F5ShutdownManager:
             details["idle_timeout_seconds"] = self._idle_timeout
         except Exception as e:
             errors.append(f"idle monitor start failed: {e}")
-            logger.warning("F5ShutdownManager: idle monitor start failed: %s", e)
+            logger.warning("F5ShutdownManager: idle monitor start failed: %s", e, exc_info=True)
 
         self._installed = True
         return ShutdownResult(
@@ -220,7 +220,7 @@ class F5ShutdownManager:
                 errors.extend(persist_result.errors)
         except Exception as e:
             errors.append(f"persist_state failed: {e}")
-            logger.error("F5ShutdownManager: persist_state failed: %s", e)
+            logger.error("F5ShutdownManager: persist_state failed: %s", e, exc_info=True)
 
         # 3. 调用 F5BootIntegration.on_shutdown() 清理资源
         if self._integration is not None:
@@ -231,7 +231,7 @@ class F5ShutdownManager:
                     errors.extend(boot_result.errors)
             except Exception as e:
                 errors.append(f"integration on_shutdown failed: {e}")
-                logger.error("F5ShutdownManager: integration on_shutdown failed: %s", e)
+                logger.error("F5ShutdownManager: integration on_shutdown failed: %s", e, exc_info=True)
 
         return ShutdownResult(
             success=len(errors) == 0,
@@ -322,7 +322,7 @@ class F5ShutdownManager:
             details["state_written"] = True
         except Exception as e:
             errors.append(f"db write failed: {e}")
-            logger.error("F5ShutdownManager: db write failed: %s", e)
+            logger.error("F5ShutdownManager: db write failed: %s", e, exc_info=True)
 
         return ShutdownResult(
             success=len(errors) == 0,
@@ -418,7 +418,7 @@ class F5ShutdownManager:
 
         except Exception as e:
             errors.append(f"db read failed: {e}")
-            logger.error("F5ShutdownManager: db read failed: %s", e)
+            logger.error("F5ShutdownManager: db read failed: %s", e, exc_info=True)
 
         return ShutdownResult(
             success=len(errors) == 0,
@@ -486,7 +486,7 @@ class F5ShutdownManager:
             self.shutdown()
         except Exception as e:
             # 信号处理永不抛异常
-            logger.error("F5ShutdownManager: shutdown in signal handler failed: %s", e)
+            logger.error("F5ShutdownManager: shutdown in signal handler failed: %s", e, exc_info=True)
 
     def _on_atexit(self) -> None:
         """atexit 兜底钩子 (永不抛异常)。"""
@@ -494,7 +494,7 @@ class F5ShutdownManager:
         try:
             self.shutdown()
         except Exception as e:
-            logger.error("F5ShutdownManager: shutdown in atexit failed: %s", e)
+            logger.error("F5ShutdownManager: shutdown in atexit failed: %s", e, exc_info=True)
 
     def _idle_monitor(self) -> None:
         """idle 监控线程: 检测 10 分钟无活动则自动关闭。"""
@@ -511,7 +511,7 @@ class F5ShutdownManager:
                     self.shutdown()
                     break
             except Exception as e:
-                logger.error("F5ShutdownManager: idle monitor error: %s", e)
+                logger.error("F5ShutdownManager: idle monitor error: %s", e, exc_info=True)
                 break
 
     def _is_idle_timeout(self) -> bool:

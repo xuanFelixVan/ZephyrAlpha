@@ -71,7 +71,7 @@ class EvidencePack:
                 "hash": evidence_hash,
             }
         except Exception as exc:
-            logger.error("EvidencePack.pack failed: %s", exc)
+            logger.error("EvidencePack.pack failed: %s", exc, exc_info=True)
             return None
 
     def verify(self, evidence_id: str) -> bool:

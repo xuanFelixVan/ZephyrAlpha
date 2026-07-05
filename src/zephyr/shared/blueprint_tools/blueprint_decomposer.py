@@ -437,7 +437,7 @@ class BlueprintDecomposer:
                 updated_at=now,
             )
         except Exception as e:
-            logger.warning(f"TaskCard 构造失败: {name} — {e}")
+            logger.warning(f"TaskCard 构造失败: {name} — {e}", exc_info=True)
             return None
 
     def _resolve_depends_on_ids(self, tasks: list[TaskCard]) -> None:
@@ -544,7 +544,7 @@ class BlueprintDecomposer:
                     result.warnings.append(f"TaskCard {task.task_id} 被门禁拒绝: {e}")
                     continue
                 except Exception as e:
-                    logger.error(f"task_repo.create 失败: {task.task_id} — {e}")
+                    logger.error(f"task_repo.create 失败: {task.task_id} — {e}", exc_info=True)
                     failed_ids.append(task.task_id)
                     result.warnings.append(f"TaskCard {task.task_id} 入库失败: {e}")
                     continue
@@ -553,7 +553,7 @@ class BlueprintDecomposer:
                         self.task_repo.transition(task.task_id, TaskStatus.READY)
                         task.status = TaskStatus.READY
                     except Exception as e:
-                        logger.warning(f"PENDING→READY 转换失败: {task.task_id} — {e}")
+                        logger.warning(f"PENDING→READY 转换失败: {task.task_id} — {e}", exc_info=True)
             if failed_ids:
                 logger.warning(f"共 {len(failed_ids)} 张卡入库失败: {failed_ids}")
 

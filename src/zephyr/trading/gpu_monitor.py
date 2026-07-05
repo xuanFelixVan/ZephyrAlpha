@@ -89,5 +89,5 @@ def collect_gpu_stats() -> dict[str, Any]:
         logger.warning("gpu_monitor: nvidia-smi timed out")
         return {"available": False, "error": "timeout"}
     except Exception as exc:
-        logger.warning("gpu_monitor: collect failed: %s", exc)
+        logger.warning("gpu_monitor: collect failed: %s", exc, exc_info=True)
         return {"available": False, "error": str(exc)}

@@ -118,7 +118,7 @@ class InventorySelfMetrics:
                 telemetry.metrics.counter(f"{name}_total", value)
             telemetry.health.register()
         except Exception as exc:
-            logger.warning("telemetry push_to_facade failed: %s", exc)
+            logger.warning("telemetry push_to_facade failed: %s", exc, exc_info=True)
 
 
 TELEMETRY = InventorySelfMetrics()

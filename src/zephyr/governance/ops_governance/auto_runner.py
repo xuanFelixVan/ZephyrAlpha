@@ -97,7 +97,7 @@ class GovernanceAutoRunner:
             self._run_gates()
         except Exception as e:
             self._result.errors.append(f"gate execution error: {e}")
-            logger.error("Gate execution error: %s", e)
+            logger.error("Gate execution error: %s", e, exc_info=True)
         finally:
             self._auto_close()
 
@@ -140,7 +140,7 @@ class GovernanceAutoRunner:
                 except Exception as e:
                     self._result.failed_gates += 1
                     self._result.errors.append(f"gate {check_name} error: {e}")
-                    logger.warning("Gate %s error: %s", check_name, e)
+                    logger.warning("Gate %s error: %s", check_name, e, exc_info=True)
 
         # 未执行的 gate 标记为 skipped
         executed = self._result.passed_gates + self._result.failed_gates
@@ -156,7 +156,7 @@ class GovernanceAutoRunner:
             return result == GateResult.GREEN
         except Exception as e:
             # fail-closed: gate 不存在或执行失败时，视为未通过（不静默放行）
-            logger.warning("Gate %s execution failed: %s", gate_name, e)
+            logger.warning("Gate %s execution failed: %s", gate_name, e, exc_info=True)
             return False
 
     def _auto_close(self) -> None:
@@ -169,7 +169,7 @@ class GovernanceAutoRunner:
                 if hasattr(resource, "close"):
                     resource.close()
             except Exception as e:
-                logger.warning("Resource close error: %s", e)
+                logger.warning("Resource close error: %s", e, exc_info=True)
         self._resources.clear()
 
         # 2. 清理临时文件
@@ -178,7 +178,7 @@ class GovernanceAutoRunner:
                 if temp_file.exists():
                     temp_file.unlink()
             except Exception as e:
-                logger.warning("Temp file cleanup error: %s", e)
+                logger.warning("Temp file cleanup error: %s", e, exc_info=True)
         self._temp_files.clear()
 
         # 3. 记录审计日志
@@ -186,7 +186,7 @@ class GovernanceAutoRunner:
             self._write_audit_log()
             self._result.audit_logged = True
         except Exception as e:
-            logger.error("Audit log error: %s", e)
+            logger.error("Audit log error: %s", e, exc_info=True)
             self._result.errors.append(f"audit log error: {e}")
 
         # 4. 标记清理完成

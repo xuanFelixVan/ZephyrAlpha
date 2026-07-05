@@ -120,7 +120,7 @@ class AlertDispatcher:
             )
             return result
         except Exception as exc:
-            logger.error("[FLE-ORC] dispatch 失败: %s", exc)
+            logger.error("[FLE-ORC] dispatch 失败: %s", exc, exc_info=True)
             return DispatchResult(
                 dispatched_to="orchestrator",
                 error=str(exc),

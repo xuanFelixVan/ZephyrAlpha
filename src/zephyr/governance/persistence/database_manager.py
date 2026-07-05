@@ -456,7 +456,7 @@ class DatabaseManager:
                         pass
 
         except Exception as exc:
-            logger.warning("db_backup_rotation_error: %s", exc)
+            logger.warning("db_backup_rotation_error: %s", exc, exc_info=True)
 
     # ------------------------------------------------------------------
     # WAL checkpoint
@@ -604,7 +604,7 @@ class DatabaseManager:
                 try:
                     self.backup(label="pre_close")
                 except Exception as exc:
-                    logger.warning("pre_close_backup_failed: %s", exc)
+                    logger.warning("pre_close_backup_failed: %s", exc, exc_info=True)
 
             self._closed = True
 

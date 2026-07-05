@@ -62,7 +62,7 @@ class AdversarialValidation:
         except RedBlueImportError:
             pass
         except Exception as exc:
-            logger.warning("challenge() enrich failed: %s", exc)
+            logger.warning("challenge() enrich failed: %s", exc, exc_info=True)
 
         return challenges
 
@@ -76,7 +76,7 @@ class AdversarialValidation:
                 error="RedBlueValidator not available — skipped adversarial check",
             )
         except Exception as exc:
-            logger.error("run_adversarial_check failed: %s", exc)
+            logger.error("run_adversarial_check failed: %s", exc, exc_info=True)
             return AdversarialResult(
                 claim=claim,
                 passed=False,

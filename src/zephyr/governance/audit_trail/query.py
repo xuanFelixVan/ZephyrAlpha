@@ -52,7 +52,7 @@ class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
                 data = json.loads(path.read_text(encoding="utf-8"))
                 results.append(data)
             except Exception as exc:
-                logger.warning("Failed to read report %s: %s", path, exc)
+                logger.warning("Failed to read report %s: %s", path, exc, exc_info=True)
         return results
 
     def get_issues(self, audit_id: str) -> list[AuditIssue]:
@@ -63,7 +63,7 @@ class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
             data = json.loads(report_path.read_text(encoding="utf-8"))
             return [AuditIssue(**i) for i in data.get("issues", [])]
         except Exception as exc:
-            logger.warning("Failed to read issues for %s: %s", audit_id, exc)
+            logger.warning("Failed to read issues for %s: %s", audit_id, exc, exc_info=True)
             return []
 
     def get_recent_findings(self, hours: int = 24) -> list[dict[str, Any]]:

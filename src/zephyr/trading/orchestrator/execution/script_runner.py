@@ -195,7 +195,7 @@ class ScriptRunner:
             if findings:
                 submit_to_gate(findings, task_id=task_id)
         except Exception:
-            logger.debug("[SCRIPT-GATE] submit skipped")
+            logger.debug("[SCRIPT-GATE] submit skipped", exc_info=True)
 
     def _publish_to_kb(self, result: RunResult, task_id: str) -> None:
         try:
@@ -214,7 +214,7 @@ class ScriptRunner:
             if findings:
                 publish_to_kb(findings, task_id=task_id)
         except Exception:
-            logger.debug("[SCRIPT-KB] publish skipped")
+            logger.debug("[SCRIPT-KB] publish skipped", exc_info=True)
 
 
 def run_audit(

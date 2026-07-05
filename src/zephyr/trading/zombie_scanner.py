@@ -109,7 +109,7 @@ def _load_patterns() -> dict[str, list[float]]:
             if isinstance(patterns, dict):
                 return patterns
     except Exception as e:
-        logger.warning("_load_patterns: failed to load patterns file (%s: %s)", type(e).__name__, e)
+        logger.warning("_load_patterns: failed to load patterns file (%s: %s)", type(e).__name__, e, exc_info=True)
     return {}
 
 
@@ -119,7 +119,7 @@ def _save_patterns(patterns: dict[str, list[float]]) -> None:
         with open(_PATTERNS_FILE, "w", encoding="utf-8") as f:
             json.dump(patterns, f, indent=2)
     except Exception:
-        logger.warning("zombie_scanner: failed to save patterns file")
+        logger.warning("zombie_scanner: failed to save patterns file", exc_info=True)
 
 
 def _log_kill(pid: int, reason: str) -> None:
@@ -282,7 +282,7 @@ def _kill_process(pid: int) -> bool:
                 if psutil.pid_exists(pid):
                     psutil.Process(pid).kill()
         except Exception as e:
-            logger.warning("_kill_process: failed to clean up process %s (%s: %s)", pid, type(e).__name__, e)
+            logger.warning("_kill_process: failed to clean up process %s (%s: %s)", pid, type(e).__name__, e, exc_info=True)
         return True
     except OSError as e:
         logger.warning("_kill_process: failed to kill process %s (%s: %s)", pid, type(e).__name__, e)

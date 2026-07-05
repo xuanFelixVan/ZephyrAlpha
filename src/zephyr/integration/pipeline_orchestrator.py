@@ -2447,7 +2447,7 @@ def subscribe_eventbus() -> None:
         _subscribed = True
         logger.info("PipelineOrchestrator: subscribed to pipeline_start event")
     except Exception as e:
-        logger.warning("PipelineOrchestrator: subscribe_eventbus failed: %s", e)
+        logger.warning("PipelineOrchestrator: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
 def _on_pipeline_start(payload: object) -> None:
@@ -2467,4 +2467,4 @@ def _on_pipeline_start(payload: object) -> None:
             detail,
         )
     except Exception as e:
-        logger.error("PipelineOrchestrator: _on_pipeline_start failed: %s", e)
+        logger.error("PipelineOrchestrator: _on_pipeline_start failed: %s", e, exc_info=True)

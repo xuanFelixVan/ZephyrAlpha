@@ -109,7 +109,7 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
     except Exception as e:
         # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
         # Phase 2 P2 修复（异常处理 HIGH）：安全扫描同步路径失败静默=安全绕过
-        logger.warning("lsg_agent_scan: 同步安全扫描失败(%s: %s)，返回None=放行（安全降级）", type(e).__name__, e)
+        logger.warning("lsg_agent_scan: 同步安全扫描失败(%s: %s)，返回None=放行（安全降级）", type(e).__name__, e, exc_info=True)
     return None
 
 

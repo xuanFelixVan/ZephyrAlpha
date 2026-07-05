@@ -59,7 +59,7 @@ class LogRotation:
                         f.unlink()
                         result["deleted"] += 1
                     except Exception as exc:
-                        logger.error("Failed to delete %s: %s", f, exc)
+                        logger.error("Failed to delete %s: %s", f, exc, exc_info=True)
 
         cutoff = datetime.now().timestamp() - (self._max_age_days * 86400)
         for f in files:
@@ -84,7 +84,7 @@ class LogRotation:
                         f.unlink()
                         result["compressed"] += 1
             except Exception as exc:
-                logger.error("Failed to process %s: %s", f, exc)
+                logger.error("Failed to process %s: %s", f, exc, exc_info=True)
 
         return result
 

@@ -224,7 +224,7 @@ class F5EventSubscriber:
                     handler_name=binding.handler_name,
                     error=str(e),
                 ))
-                logger.error("F5EventSubscriber: subscribe failed for '%s': %s", binding.topic, e)
+                logger.error("F5EventSubscriber: subscribe failed for '%s': %s", binding.topic, e, exc_info=True)
         return results
 
     def unsubscribe_all(self) -> int:
@@ -239,7 +239,7 @@ class F5EventSubscriber:
                 if removed:
                     count += 1
             except Exception as e:
-                logger.warning("F5EventSubscriber: unsubscribe failed for '%s': %s", topic, e)
+                logger.warning("F5EventSubscriber: unsubscribe failed for '%s': %s", topic, e, exc_info=True)
         self._subscribed_topics.clear()
         return count
 
@@ -285,7 +285,7 @@ class F5EventSubscriber:
         except Exception as e:
             result.error = str(e)
             result.handled = True
-            logger.error("F5EventSubscriber: handle_deadlock failed: %s", e)
+            logger.error("F5EventSubscriber: handle_deadlock failed: %s", e, exc_info=True)
         self._log_dispatch(result)
         self._notify_feedback_loop("deadlock", payload, result)
         return result
@@ -332,7 +332,7 @@ class F5EventSubscriber:
         except Exception as e:
             result.error = str(e)
             result.handled = True
-            logger.error("F5EventSubscriber: handle_escalation failed: %s", e)
+            logger.error("F5EventSubscriber: handle_escalation failed: %s", e, exc_info=True)
         self._log_dispatch(result)
         self._notify_feedback_loop("escalation", payload, result)
         return result
@@ -386,7 +386,7 @@ class F5EventSubscriber:
         except Exception as e:
             result.error = str(e)
             result.handled = True
-            logger.error("F5EventSubscriber: handle_conflict failed: %s", e)
+            logger.error("F5EventSubscriber: handle_conflict failed: %s", e, exc_info=True)
         self._log_dispatch(result)
         self._notify_feedback_loop("conflict", payload, result)
         return result
@@ -431,7 +431,7 @@ class F5EventSubscriber:
                     event_kind,
                 )
         except Exception as e:
-            logger.warning("F5EventSubscriber: FeedbackLoop notification failed: %s", e)
+            logger.warning("F5EventSubscriber: FeedbackLoop notification failed: %s", e, exc_info=True)
 
     # ── 工具方法 ─────────────────────────────────────────────────────────
 
@@ -598,7 +598,7 @@ def subscribe_eventbus() -> None:
             "(budget_exceeded/drift_detected/fix_completed/fix_failed)"
         )
     except Exception as e:
-        logger.warning("F5EventSubscriber: subscribe_eventbus failed: %s", e)
+        logger.warning("F5EventSubscriber: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
 def _on_budget_exceeded(payload: Any) -> None:

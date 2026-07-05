@@ -220,7 +220,7 @@ class KnowledgeBaseServer(BaseMCPServer):
             get_unified_memory_api = _mod.get_unified_memory_api
             self._kb_api = get_unified_memory_api(enforce_capability=False)
         except Exception as e:
-            logger.warning("KnowledgeBaseServer._init_backends: UnifiedMemoryAPI initialization failed (%s: %s)", type(e).__name__, e)
+            logger.warning("KnowledgeBaseServer._init_backends: UnifiedMemoryAPI initialization failed (%s: %s)", type(e).__name__, e, exc_info=True)
 
     # ------------------------------------------------------------------
     # Tool handlers
@@ -342,7 +342,7 @@ class KnowledgeBaseServer(BaseMCPServer):
                     provenance=prov,
                 )
             except Exception as e:
-                logger.warning("KnowledgeBaseServer._upsert_ke: kb_api write failed (%s: %s)", type(e).__name__, e)
+                logger.warning("KnowledgeBaseServer._upsert_ke: kb_api write failed (%s: %s)", type(e).__name__, e, exc_info=True)
 
         return {
             "ke_id": ke_id,
@@ -412,13 +412,13 @@ class KnowledgeBaseServer(BaseMCPServer):
             if ServiceRegistry.is_registered("vector-memory"):
                 vms_status = "available"
         except Exception as e:
-            logger.warning("KnowledgeBaseServer._health_check: VMS ServiceRegistry check failed (%s: %s)", type(e).__name__, e)
+            logger.warning("KnowledgeBaseServer._health_check: VMS ServiceRegistry check failed (%s: %s)", type(e).__name__, e, exc_info=True)
 
         if self._kb_api is not None:
             try:
                 kb_api_count = self._kb_api.count()
             except Exception as e:
-                logger.warning("KnowledgeBaseServer._health_check: kb_api count failed (%s: %s)", type(e).__name__, e)
+                logger.warning("KnowledgeBaseServer._health_check: kb_api count failed (%s: %s)", type(e).__name__, e, exc_info=True)
 
         overall = "healthy" if (sqlite_ok or chromadb_ok) else "degraded"
 

@@ -71,7 +71,7 @@ class TieredStorage:
                     report_path.rename(target_path)
                     result["migrated"] += 1
                 except Exception as exc:
-                    logger.error("Failed to migrate %s: %s", report_path, exc)
+                    logger.error("Failed to migrate %s: %s", report_path, exc, exc_info=True)
                     result["errors"] += 1
             else:
                 result["migrated"] += 1

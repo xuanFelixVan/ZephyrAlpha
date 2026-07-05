@@ -67,12 +67,12 @@ class SyncEngine:
                     bridge._vms.write("knowledge", text, metadata=meta, doc_id=f"ke::{ke_id}")
                     stored += 1
                 except Exception as exc:
-                    logger.debug("[KB-VMS] write failed for %s: %s", ke_id, exc)
+                    logger.debug("[KB-VMS] write failed for %s: %s", ke_id, exc, exc_info=True)
 
             logger.info("[KB-VMS] synced: %d/%d", stored, len(rows))
             return SyncResult(synced=stored, total=len(rows))
         except Exception as exc:
-            logger.warning("[KB-VMS] degraded: %s", exc)
+            logger.warning("[KB-VMS] degraded: %s", exc, exc_info=True)
             return SyncResult(status="degraded", error=str(exc))
 
 

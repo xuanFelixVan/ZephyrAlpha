@@ -127,7 +127,7 @@ class SteadyState:
             elif check.startswith("process_count:"):
                 return self._process_count(check[14:])
         except Exception:
-            logger.exception("metric_eval_failed metric=%s", metric_def["metric"])
+            logger.exception("metric_eval_failed metric=%s", metric_def["metric"], exc_info=True)
         return -1.0
 
     def _grep_count(self, spec: str) -> float:

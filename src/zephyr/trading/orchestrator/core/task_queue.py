@@ -136,7 +136,7 @@ class ActiveTaskQueue:
             try:
                 n = self._tick()
             except Exception:
-                logger.exception("ActiveTaskQueue tick failed")
+                logger.exception("ActiveTaskQueue tick failed", exc_info=True)
                 # 5.142.8 修复: _stats 写入加锁
                 with self._stats_lock:
                     self._stats["errors"] += 1
@@ -161,7 +161,7 @@ class ActiveTaskQueue:
                     self._stats["dispatched"] += 1
                 logger.info("Queue dispatched %s", task_card.task_id)
             except Exception:
-                logger.exception("Queue failed to dispatch %s", task_card.task_id)
+                logger.exception("Queue failed to dispatch %s", task_card.task_id, exc_info=True)
                 # 5.142.8 修复: _stats 写入加锁
                 with self._stats_lock:
                     self._stats["errors"] += 1

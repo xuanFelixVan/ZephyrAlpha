@@ -176,7 +176,7 @@ class ImmutableCore:
                 violations=[],
             )
         except Exception as exc:
-            logger.error("ImmutableCore integrity check FAILED: %s", exc)
+            logger.error("ImmutableCore integrity check FAILED: %s", exc, exc_info=True)
             return IntegrityResult(
                 intact=False,
                 detail=f"verification error: {exc}",
@@ -209,7 +209,7 @@ class ImmutableCore:
                 violations=[],
             )
         except Exception as exc:
-            logger.error("Static constants integrity check FAILED: %s", exc)
+            logger.error("Static constants integrity check FAILED: %s", exc, exc_info=True)
             return IntegrityResult(
                 intact=False,
                 detail=f"verification error: {exc}",

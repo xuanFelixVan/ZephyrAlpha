@@ -96,7 +96,7 @@ def _import_check(module_path: str) -> dict[str, Any]:
         logger.exception("import failed")
         return {"importable": False, "error": "import failed", "module": module_path}
     except Exception as e:
-        logger.exception("import failed")
+        logger.exception("import failed", exc_info=True)
         return {"importable": False, "error": "import failed", "module": module_path}
 
 
@@ -604,7 +604,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "behavioral-auditor import failed failed", "events": []}
         except Exception as e:
-            logger.exception("scan failed failed")
+            logger.exception("scan failed failed", exc_info=True)
 
             return {"error": "scan failed failed", "events": []}
 
@@ -632,7 +632,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "import failed failed"}
         except Exception as e:
-            logger.exception("report failed failed")
+            logger.exception("report failed failed", exc_info=True)
 
             return {"error": "report failed failed"}
 
@@ -651,7 +651,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "import failed failed", "module_id": module_id, "allowed": False}
         except Exception as e:
-            logger.exception("budget check failed failed")
+            logger.exception("budget check failed failed", exc_info=True)
 
             return {"error": "budget check failed failed", "module_id": module_id, "allowed": False}
 
@@ -689,7 +689,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "RBAC import failed failed", "decision": "ERROR"}
         except Exception as e:
-            logger.exception("RBAC check failed failed")
+            logger.exception("RBAC check failed failed", exc_info=True)
 
             return {"error": "RBAC check failed failed", "decision": "ERROR"}
 
@@ -719,7 +719,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "Agent Spec import failed failed", "total_skills": 0, "skills": []}
         except Exception as e:
-            logger.exception("list_skills failed failed")
+            logger.exception("list_skills failed failed", exc_info=True)
 
             return {"error": "list_skills failed failed", "total_skills": 0, "skills": []}
 
@@ -744,7 +744,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"skill_id": skill_id, "loaded": False, "error": "Agent Spec import failed"}
         except Exception as e:
-            logger.exception("load failed")
+            logger.exception("load failed", exc_info=True)
 
             return {"skill_id": skill_id, "loaded": False, "error": "load failed"}
 
@@ -768,7 +768,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"written": False, "error": "Audit Trail import failed"}
         except Exception as e:
-            logger.exception("write_audit failed")
+            logger.exception("write_audit failed", exc_info=True)
 
             return {"written": False, "error": "write_audit failed"}
 
@@ -863,7 +863,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "Rollback import failed failed", "success": False}
         except Exception as e:
-            logger.exception("rollback failed failed")
+            logger.exception("rollback failed failed", exc_info=True)
 
             return {"error": "rollback failed failed", "success": False}
 
@@ -888,7 +888,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "Escalation import failed failed", "level": "UNKNOWN"}
         except Exception as e:
-            logger.exception("escalate failed failed")
+            logger.exception("escalate failed failed", exc_info=True)
 
             return {"error": "escalate failed failed", "level": "UNKNOWN"}
 
@@ -924,7 +924,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "Budget Enforcer import failed failed"}
         except Exception as e:
-            logger.exception("check_budget failed failed")
+            logger.exception("check_budget failed failed", exc_info=True)
 
             return {"error": "check_budget failed failed"}
 
@@ -944,7 +944,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "Escalation import failed failed"}
         except Exception as e:
-            logger.exception("escalation_status failed failed")
+            logger.exception("escalation_status failed failed", exc_info=True)
 
             return {"error": "escalation_status failed failed"}
 
@@ -970,7 +970,7 @@ class GovernanceServer(BaseMCPServer):
 
             return {"error": "Escalation import failed failed", "resolved": False}
         except Exception as e:
-            logger.exception("escalation_resolve failed failed")
+            logger.exception("escalation_resolve failed failed", exc_info=True)
 
             return {"error": "escalation_resolve failed failed", "resolved": False}
 

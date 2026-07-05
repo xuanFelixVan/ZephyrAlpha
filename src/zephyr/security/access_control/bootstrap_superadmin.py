@@ -231,7 +231,7 @@ class BootstrapSuperadminBridge:
             }
 
         except Exception as e:
-            logger.error("BootstrapSuperadminBridge: bootstrap failed: %s", e)
+            logger.error("BootstrapSuperadminBridge: bootstrap failed: %s", e, exc_info=True)
             return {
                 "bootstrapped": False,
                 "error": "bootstrap failed",

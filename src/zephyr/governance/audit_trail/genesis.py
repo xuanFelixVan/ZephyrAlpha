@@ -69,7 +69,7 @@ class GenesisBlock:
             data["exists"] = True
             return data
         except Exception as exc:
-            logger.error("Failed to read genesis block: %s", exc)
+            logger.error("Failed to read genesis block: %s", exc, exc_info=True)
             return {"error": str(exc), "exists": False}
 
     def verify(self) -> dict[str, Any]:

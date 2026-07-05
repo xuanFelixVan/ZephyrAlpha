@@ -81,7 +81,7 @@ class FLEWriter:
             logger.debug("[FLE-DB] wrote %d metrics", written)
             return written
         except Exception as exc:
-            logger.error("[FLE-DB] write_metrics failed: %s", exc)
+            logger.error("[FLE-DB] write_metrics failed: %s", exc, exc_info=True)
             conn.rollback()
             return 0
         finally:
@@ -114,7 +114,7 @@ class FLEWriter:
             logger.debug("[FLE-DB] wrote alert %s %s", event.event_id, severity)
             return event.event_id
         except Exception as exc:
-            logger.error("[FLE-DB] write_alert failed: %s", exc)
+            logger.error("[FLE-DB] write_alert failed: %s", exc, exc_info=True)
             conn.rollback()
             return None
         finally:
@@ -142,7 +142,7 @@ class FLEWriter:
             logger.debug("[FLE-DB] wrote dispatch_log %d for %s", last_id, event_id)
             return last_id
         except Exception as exc:
-            logger.error("[FLE-DB] write_dispatch_log failed: %s", exc)
+            logger.error("[FLE-DB] write_dispatch_log failed: %s", exc, exc_info=True)
             conn.rollback()
             return None
         finally:
@@ -171,7 +171,7 @@ class FLEWriter:
             conn.commit()
             return True
         except Exception as exc:
-            logger.error("[FLE-DB] update_alert_status failed: %s", exc)
+            logger.error("[FLE-DB] update_alert_status failed: %s", exc, exc_info=True)
             conn.rollback()
             return False
         finally:

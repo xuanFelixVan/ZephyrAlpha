@@ -93,7 +93,7 @@ class ProcessLifecycleGateway:
                 idle_timeout_s,
             )
         except Exception:
-            logger.exception("ProcessLifecycleGateway: DaemonRegistry.register failed for '%s'", name)
+            logger.exception("ProcessLifecycleGateway: DaemonRegistry.register failed for '%s'", name, exc_info=True)
 
         return entry
 
@@ -122,7 +122,7 @@ class ProcessLifecycleGateway:
         try:
             DaemonRegistry.start(f"gateway:{name}")
         except Exception:
-            logger.exception("ProcessLifecycleGateway: DaemonRegistry.start failed for 'gateway:%s'", name)
+            logger.exception("ProcessLifecycleGateway: DaemonRegistry.start failed for 'gateway:%s'", name, exc_info=True)
         return True
 
     def terminate(self, name: str) -> bool:

@@ -424,7 +424,7 @@ class GitCommitGateway:
                     elif rr.action == "clean":
                         print(f"GitCommitGateway: post-commit reconcile clean (session={session_id}): {rr.detail}")
             except Exception as e:
-                logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e)
+                logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e, exc_info=True)
         return result
 
     def _is_git_tracked(self, rel_path: str) -> bool:
@@ -649,14 +649,14 @@ class GitCommitGateway:
                 try:
                     self._post_commit_red_blue_trigger(files, session_id, result.commit_hash)
                 except Exception as e:
-                    logger.warning("GitCommitGateway: red-blue trigger emit failed: %s", e)
+                    logger.warning("GitCommitGateway: red-blue trigger emit failed: %s", e, exc_info=True)
             # P4-T2: session shutdown handoff（crash recovery）
             if result.status == CommitStatus.OK:
                 try:
                     from zephyr.governance.ops_governance.phase_manager import session_shutdown
                     session_shutdown(session_id, summary=full_message)
                 except Exception as e:
-                    logger.warning("GitCommitGateway: session_shutdown handoff failed: %s", e)
+                    logger.warning("GitCommitGateway: session_shutdown handoff failed: %s", e, exc_info=True)
             if pathspec_file:
                 try:
                     os.remove(pathspec_file)

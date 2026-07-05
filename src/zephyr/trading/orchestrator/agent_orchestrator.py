@@ -895,7 +895,7 @@ class AgentOrchestrator:
 
                         AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
                     except Exception as e:
-                        logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s)", type(e).__name__, e)
+                        logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s)", type(e).__name__, e, exc_info=True)
                         return None
         gw = AgentOrchestrator._lsg_gateway_instance
         try:

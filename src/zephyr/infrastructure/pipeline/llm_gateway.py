@@ -57,7 +57,7 @@ def _get_lsg_gateway():
         logger.debug("LSG not available, skipping security scan")
         return None
     except Exception:
-        logger.warning("LSG init failed, security scans disabled")
+        logger.warning("LSG init failed, security scans disabled", exc_info=True)
         return None
 
 
@@ -227,7 +227,7 @@ def _call_openai_compatible(
         )
     except Exception as exc:
         latency_ms = int((time.monotonic() - start) * 1000)
-        logger.warning("LLMGateway _call_openai_compatible(%s) failed: %s", provider, exc)
+        logger.warning("LLMGateway _call_openai_compatible(%s) failed: %s", provider, exc, exc_info=True)
         return LLMResponse(
             content="",
             model=resolved_model,
@@ -311,7 +311,7 @@ def _call_anthropic(
         )
     except Exception as exc:
         latency_ms = int((time.monotonic() - start) * 1000)
-        logger.warning("LLMGateway _call_anthropic failed: %s", exc)
+        logger.warning("LLMGateway _call_anthropic failed: %s", exc, exc_info=True)
         return LLMResponse(
             content="",
             model=resolved_model,

@@ -64,7 +64,7 @@ def subscribe_eventbus() -> None:
             "DriftBridge: subscribed to 2 events (gate_blocked/task_completed)"
         )
     except Exception as e:
-        logger.warning("DriftBridge: subscribe_eventbus failed: %s", e)
+        logger.warning("DriftBridge: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
 def _on_gate_blocked(payload: object) -> None:
@@ -86,7 +86,7 @@ def _on_gate_blocked(payload: object) -> None:
             detail,
         )
     except Exception as e:
-        logger.error("DriftBridge: _on_gate_blocked failed: %s", e)
+        logger.error("DriftBridge: _on_gate_blocked failed: %s", e, exc_info=True)
 
 
 def _on_task_completed(payload: object) -> None:
@@ -106,4 +106,4 @@ def _on_task_completed(payload: object) -> None:
             detail,
         )
     except Exception as e:
-        logger.error("DriftBridge: _on_task_completed failed: %s", e)
+        logger.error("DriftBridge: _on_task_completed failed: %s", e, exc_info=True)

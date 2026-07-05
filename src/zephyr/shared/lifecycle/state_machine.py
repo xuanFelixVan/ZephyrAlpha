@@ -218,19 +218,19 @@ class StateMachine(Generic[S]):
                 try:
                     eff.on_exit(old, context)
                 except Exception as exc:
-                    logger.error("[%s] on_exit error: %s", self._config.fsm_id, exc)
+                    logger.error("[%s] on_exit error: %s", self._config.fsm_id, exc, exc_info=True)
             for eff in effects:
                 try:
                     eff.on_transition(old, target, context)
                 except Exception as exc:
-                    logger.error("[%s] on_transition error: %s", self._config.fsm_id, exc)
+                    logger.error("[%s] on_transition error: %s", self._config.fsm_id, exc, exc_info=True)
             self._current = target
             self._history.append((old, target, context))
             for eff in effects:
                 try:
                     eff.on_enter(target, context)
                 except Exception as exc:
-                    logger.error("[%s] on_enter error: %s", self._config.fsm_id, exc)
+                    logger.error("[%s] on_enter error: %s", self._config.fsm_id, exc, exc_info=True)
             logger.info("[%s] %s → %s", self._config.fsm_id, old, target)
             return self._current
 
@@ -268,7 +268,7 @@ class StateMachineRegistry:
                 if fsm_id:
                     self._configs[fsm_id] = entry
         except Exception as exc:
-            logger.warning("Failed to load state machine registry: %s", exc)
+            logger.warning("Failed to load state machine registry: %s", exc, exc_info=True)
 
     def register(self, config: StateMachineConfig[Any]) -> str:
         with self._lock:

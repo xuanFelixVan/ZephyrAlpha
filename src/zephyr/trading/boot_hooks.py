@@ -42,7 +42,7 @@ def _subscribe_task_lifecycle_events() -> None:
         bus.subscribe(EventType.TASK_COMPLETED, _on_task_completed_event)
         logger.info("EventBus task lifecycle subscriptions registered (TASK_CREATED, TASK_COMPLETED)")
     except Exception as e:
-        logger.debug("EventBus task lifecycle subscription skipped: %s", e)
+        logger.debug("EventBus task lifecycle subscription skipped: %s", e, exc_info=True)
 
 
 _monitoring_modules_initialized = False
@@ -75,7 +75,7 @@ def _init_shared_monitoring_modules() -> None:
         _monitor = LongevityMonitor()
         logger.info("Shared monitoring: LongevityMonitor instantiated")
     except Exception as e:
-        logger.warning("Shared monitoring: LongevityMonitor init failed: %s", e)
+        logger.warning("Shared monitoring: LongevityMonitor init failed: %s", e, exc_info=True)
 
     # 2. HealthcheckService
     try:
@@ -83,7 +83,7 @@ def _init_shared_monitoring_modules() -> None:
         _healthcheck = HealthcheckService(project_root=project_root)
         logger.info("Shared monitoring: HealthcheckService instantiated")
     except Exception as e:
-        logger.warning("Shared monitoring: HealthcheckService init failed: %s", e)
+        logger.warning("Shared monitoring: HealthcheckService init failed: %s", e, exc_info=True)
 
     # 3. AggregateHealth — DM-201247 条件已满足（HealthMonitor._monitor_loop 已实现分钟级调度），
     #    但 AggregateHealth 需 LifecycleManager 实例，本初始化阶段不可用。
@@ -98,7 +98,7 @@ def _init_shared_monitoring_modules() -> None:
         register_system_health("boot_hooks", _boot_hooks_health_check, source="boot_hooks")
         logger.info("Shared monitoring: HealthDiscovery registered boot_hooks health check")
     except Exception as e:
-        logger.warning("Shared monitoring: HealthDiscovery init failed: %s", e)
+        logger.warning("Shared monitoring: HealthDiscovery init failed: %s", e, exc_info=True)
 
     # 5. MetricsRegistry — 懒加载
     try:
@@ -107,7 +107,7 @@ def _init_shared_monitoring_modules() -> None:
         _metrics.observe("boot_hooks.init", 1.0, labels={"module": "shared_monitoring"})
         logger.info("Shared monitoring: MetricsRegistry instantiated (lazy)")
     except Exception as e:
-        logger.warning("Shared monitoring: MetricsRegistry init failed: %s", e)
+        logger.warning("Shared monitoring: MetricsRegistry init failed: %s", e, exc_info=True)
 
     # 6. AutonomyMonitor
     try:
@@ -115,7 +115,7 @@ def _init_shared_monitoring_modules() -> None:
         _autonomy = AutonomyMonitor(data_dir=project_root / "data" / "autonomy")
         logger.info("Shared monitoring: AutonomyMonitor instantiated")
     except Exception as e:
-        logger.warning("Shared monitoring: AutonomyMonitor init failed: %s", e)
+        logger.warning("Shared monitoring: AutonomyMonitor init failed: %s", e, exc_info=True)
 
     # DM-201248: 事件订阅机制
     try:
@@ -123,14 +123,14 @@ def _init_shared_monitoring_modules() -> None:
         subscribe_monitoring_events()
         logger.info("Shared monitoring: event subscription registered (health)")
     except Exception as e:
-        logger.warning("Shared monitoring: health event subscription failed: %s", e)
+        logger.warning("Shared monitoring: health event subscription failed: %s", e, exc_info=True)
 
     try:
         from zephyr.shared.observability.metrics import subscribe_metrics_events
         subscribe_metrics_events()
         logger.info("Shared monitoring: event subscription registered (metrics)")
     except Exception as e:
-        logger.warning("Shared monitoring: metrics event subscription failed: %s", e)
+        logger.warning("Shared monitoring: metrics event subscription failed: %s", e, exc_info=True)
 
     # DM-201249: Finalizer 自动关闭
     try:
@@ -138,7 +138,7 @@ def _init_shared_monitoring_modules() -> None:
         register_monitoring_finalizers_auto()
         logger.info("Shared monitoring: finalizer registered (monitor-flush + monitor-health-snapshot)")
     except Exception as e:
-        logger.warning("Shared monitoring: finalizer registration failed: %s", e)
+        logger.warning("Shared monitoring: finalizer registration failed: %s", e, exc_info=True)
 
 
 _eventbus_consumers_subscribed = False
@@ -196,7 +196,7 @@ def _subscribe_eventbus_consumers() -> None:
             logger.info("EventBus consumer %s: subscribed", label)
         except Exception as e:
             failed += 1
-            logger.warning("EventBus consumer %s: subscribe failed: %s", label, e)
+            logger.warning("EventBus consumer %s: subscribe failed: %s", label, e, exc_info=True)
 
     logger.info(
         "EventBus consumers subscription complete: %d succeeded, %d failed (total %d)",
@@ -229,7 +229,7 @@ def _register_rbac_hooks() -> None:
                         genesis.state.phase.value,
                     )
             except Exception as exc:
-                logger.debug("hook rbac_readiness_check: %s", exc)
+                logger.debug("hook rbac_readiness_check: %s", exc, exc_info=True)
 
         def _on_task_completed_rbac_audit(event: object) -> None:
             """任务完成时记录RBAC审计条目."""
@@ -244,7 +244,7 @@ def _register_rbac_hooks() -> None:
                 entry = nr.sign(f"task_completed:{task_id}", "auto_runtime_core")
                 logger.debug("RBAC audit entry signed for task %s: %s", task_id, entry.hmac_hash[:16])
             except Exception as exc:
-                logger.debug("hook rbac_audit_sign: %s", exc)
+                logger.debug("hook rbac_audit_sign: %s", exc, exc_info=True)
 
         def _on_task_failed_rbac_alert(event: object) -> None:
             """任务失败时检查是否需要触发RBAC熔断器."""
@@ -261,7 +261,7 @@ def _register_rbac_hooks() -> None:
                         getattr(event, "task_id", ""),
                     )
             except Exception as exc:
-                logger.debug("hook rbac_kill_switch_check: %s", exc)
+                logger.debug("hook rbac_kill_switch_check: %s", exc, exc_info=True)
 
         hook_registry.register(_on_task_in_progress_rbac_check, priority=40, name="rbac_readiness_check")
         hook_registry.register(_on_task_completed_rbac_audit, priority=46, name="rbac_audit_sign")
@@ -270,7 +270,7 @@ def _register_rbac_hooks() -> None:
             "RBAC hooks registered: rbac_readiness_check / rbac_audit_sign / rbac_kill_switch_check"
         )
     except Exception as e:
-        logger.warning("Failed to register RBAC hooks: %s", e)
+        logger.warning("Failed to register RBAC hooks: %s", e, exc_info=True)
 
 
 def _subscribe_skill_freshness_events() -> None:
@@ -295,7 +295,7 @@ def _subscribe_skill_freshness_events() -> None:
         bus.subscribe("skill.freshness_critical", _on_freshness_critical)
         logger.info("Skill freshness critical event subscribed")
     except Exception as e:
-        logger.warning("Failed to subscribe skill.freshness_critical: %s", e)
+        logger.warning("Failed to subscribe skill.freshness_critical: %s", e, exc_info=True)
 
 
 def register_boot_hooks() -> None:
@@ -321,7 +321,7 @@ def register_boot_hooks() -> None:
                     if all_done:
                         tr.transition(ds.task_id, "READY", note=f"unblocked by {completed_id}")
             except Exception as exc:
-                logger.error("hook auto_unblock_dependents FAILED: %s", exc)
+                logger.error("hook auto_unblock_dependents FAILED: %s", exc, exc_info=True)
 
         def _on_task_failed(event: object) -> None:
             try:
@@ -340,7 +340,7 @@ def register_boot_hooks() -> None:
                         note=f"auto-retry from hook (attempt {retry_count + 1})",
                     )
             except Exception as exc:
-                logger.error("hook auto_retry_on_failure FAILED: %s", exc)
+                logger.error("hook auto_retry_on_failure FAILED: %s", exc, exc_info=True)
 
         def _on_task_verified_triple_align(event: object) -> None:
             try:
@@ -368,7 +368,7 @@ def register_boot_hooks() -> None:
                         len([v for v in result.violations if v.severity.value == "ERROR"]),
                     )
             except Exception as exc:
-                logger.error("hook triple_alignment_on_verified FAILED: %s", exc)
+                logger.error("hook triple_alignment_on_verified FAILED: %s", exc, exc_info=True)
 
         def _cleanup_task_processes(event: object) -> None:
             try:
@@ -383,7 +383,7 @@ def register_boot_hooks() -> None:
                     if killed:
                         logger.info("hook cleanup_task_processes: killed %d PIDs for %s", len(killed), task_id)
             except Exception as exc:
-                logger.warning("hook cleanup_task_processes FAILED: %s", exc)
+                logger.warning("hook cleanup_task_processes FAILED: %s", exc, exc_info=True)
 
         def _on_task_completed_archive_vms(event: object) -> None:
             try:
@@ -399,7 +399,7 @@ def register_boot_hooks() -> None:
                 if task:
                     archive_to_vms(task)
             except Exception as exc:
-                logger.error("hook orc_vms_archive FAILED: %s", exc)
+                logger.error("hook orc_vms_archive FAILED: %s", exc, exc_info=True)
 
         def _on_task_completed_sync_kb_vms(event: object) -> None:
             try:
@@ -411,7 +411,7 @@ def register_boot_hooks() -> None:
 
                 sync_to_vms()
             except Exception as exc:
-                logger.error("hook kb_vms_sync FAILED: %s", exc)
+                logger.error("hook kb_vms_sync FAILED: %s", exc, exc_info=True)
 
         def _on_task_rollback_freeze_gates(event: object) -> None:
             try:
@@ -423,7 +423,7 @@ def register_boot_hooks() -> None:
                 result = freeze_all_gates()
                 logger.info("hook rbk_gate_freeze: frozen=%s gates=%d", result.frozen, result.gates_count)
             except Exception as exc:
-                logger.error("hook rbk_gate_freeze FAILED: %s", exc)
+                logger.error("hook rbk_gate_freeze FAILED: %s", exc, exc_info=True)
 
         hook_registry.register(_on_task_completed, priority=50, name="auto_unblock_dependents")
         hook_registry.register(_on_task_failed, priority=60, name="auto_retry_on_failure")
@@ -447,7 +447,7 @@ def register_boot_hooks() -> None:
 
                 TaskRepository().check_escalation(getattr(event, "task_id", ""))
             except Exception as exc:
-                logger.debug("hook escalation_check: %s", exc)
+                logger.debug("hook escalation_check: %s", exc, exc_info=True)
 
         def _on_task_in_progress_timeout(event: object) -> None:
             to_status = getattr(event, "to_status", "")
@@ -458,7 +458,7 @@ def register_boot_hooks() -> None:
 
                 TaskRepository().check_task_timeout(getattr(event, "task_id", ""))
             except Exception as exc:
-                logger.debug("hook timeout_check: %s", exc)
+                logger.debug("hook timeout_check: %s", exc, exc_info=True)
 
         def _on_task_completed_budget_delta(event: object) -> None:
             to_status = getattr(event, "to_status", "")
@@ -472,7 +472,7 @@ def register_boot_hooks() -> None:
                 if snapshot and getattr(snapshot, "health", "") not in ("HEALTHY", ""):
                     logger.warning("Budget status: %s", snapshot.health)
             except Exception as exc:
-                logger.debug("hook budget_delta: %s", exc)
+                logger.debug("hook budget_delta: %s", exc, exc_info=True)
 
         def _on_session_startup_init_budget(event: object) -> None:
             try:
@@ -486,7 +486,7 @@ def register_boot_hooks() -> None:
                     snapshot.get("degradation_level", "UNKNOWN"),
                 )
             except Exception as exc:
-                logger.error("hook session_startup_init_budget FAILED: %s", exc)
+                logger.error("hook session_startup_init_budget FAILED: %s", exc, exc_info=True)
 
         def _on_session_shutdown_budget_close(event: object) -> None:
             try:
@@ -500,7 +500,7 @@ def register_boot_hooks() -> None:
                         result.get("snapshot", {}).get("health", "UNKNOWN"),
                     )
             except Exception as exc:
-                logger.error("hook session_shutdown_budget_close FAILED: %s", exc)
+                logger.error("hook session_shutdown_budget_close FAILED: %s", exc, exc_info=True)
 
         def _on_blueprint_changed_triple_align(event: object) -> None:
             try:
@@ -517,7 +517,7 @@ def register_boot_hooks() -> None:
                             violations,
                         )
             except Exception as exc:
-                logger.debug("hook triple_align_event: %s", exc)
+                logger.debug("hook triple_align_event: %s", exc, exc_info=True)
 
         hook_registry.register(_on_task_blocked_escalation, priority=56, name="escalation_check_event")
         hook_registry.register(_on_task_in_progress_timeout, priority=56, name="timeout_check_event")
@@ -538,7 +538,7 @@ def register_boot_hooks() -> None:
 
         logger.info("Event-driven hooks registered: escalation_check / timeout_check / budget_delta / session_startup_init_budget / session_shutdown_budget_close / triple_align")
     except Exception as e:
-        logger.warning("Failed to register task system hooks: %s", e)
+        logger.warning("Failed to register task system hooks: %s", e, exc_info=True)
 
     try:
         from zephyr.trading.ide_health_daemon import register_daemon
@@ -546,7 +546,7 @@ def register_boot_hooks() -> None:
         register_daemon()
         logger.info("IdeHealthDaemon registered and auto-started via boot hooks")
     except Exception as e:
-        logger.warning("Failed to register IdeHealthDaemon: %s", e)
+        logger.warning("Failed to register IdeHealthDaemon: %s", e, exc_info=True)
 
     _subscribe_task_lifecycle_events()
     _register_rbac_hooks()
@@ -564,7 +564,7 @@ def register_boot_hooks() -> None:
         RedBlueTriggerConsumer().start()
         logger.info("RedBlueTriggerConsumer: started via boot hooks")
     except Exception as e:
-        logger.warning("RedBlueTriggerConsumer: start failed: %s", e)
+        logger.warning("RedBlueTriggerConsumer: start failed: %s", e, exc_info=True)
 
     # MCP 集群自动启动（daemon 线程，不阻塞主流程）
     def _start_mcp_cluster() -> None:
@@ -586,7 +586,7 @@ def register_boot_hooks() -> None:
             logger.info("MCP cluster auto-start: launching 10 servers via DAG...")
             mod.launch_all()
         except Exception as exc:
-            logger.error("MCP cluster auto-start FAILED: %s", exc)
+            logger.error("MCP cluster auto-start FAILED: %s", exc, exc_info=True)
 
     mcp_thread = threading.Thread(target=_start_mcp_cluster, name="mcp-cluster-launcher", daemon=True)
     mcp_thread.start()

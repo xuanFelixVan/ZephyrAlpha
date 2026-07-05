@@ -146,7 +146,7 @@ class LoadBearingWall:
                     )
                 )
             except Exception as e:
-                logger.warning("Failed to scan load-bearing KE %s: %s", ke_file.name, e)
+                logger.warning("Failed to scan load-bearing KE %s: %s", ke_file.name, e, exc_info=True)
 
         return entries
 

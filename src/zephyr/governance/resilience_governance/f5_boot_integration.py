@@ -91,7 +91,7 @@ class F5BootIntegration:
             hook_registry.register(_on_boot, priority=15, name=self.HOOK_NAME)
             logger.info("F5BootIntegration registered to boot_hooks as '%s'", self.HOOK_NAME)
         except Exception as e:
-            logger.warning("Failed to register F5 boot hook: %s", e)
+            logger.warning("Failed to register F5 boot hook: %s", e, exc_info=True)
 
     def on_startup(self) -> BootResult:
         """系统启动时初始化 F5 四组件 (按依赖顺序)。"""
@@ -106,7 +106,7 @@ class F5BootIntegration:
             logger.info("F5: DeadlockDetector initialized")
         except Exception as e:
             errors.append(f"DeadlockDetector init failed: {e}")
-            logger.error("F5: DeadlockDetector initialization failed: %s", e)
+            logger.error("F5: DeadlockDetector initialization failed: %s", e, exc_info=True)
 
         # 2. 初始化 EscalationEngine (无依赖, 但内部加载扩展探测器)
         try:
@@ -116,7 +116,7 @@ class F5BootIntegration:
             logger.info("F5: EscalationEngine initialized")
         except Exception as e:
             errors.append(f"EscalationEngine init failed: {e}")
-            logger.error("F5: EscalationEngine initialization failed: %s", e)
+            logger.error("F5: EscalationEngine initialization failed: %s", e, exc_info=True)
 
         # 3. 初始化 DelegationEngine (注入 DeadlockDetector)
         try:
@@ -127,7 +127,7 @@ class F5BootIntegration:
             logger.info("F5: DelegationEngine initialized (MAX_DEPTH=%d)", DelegationEngine.MAX_DELEGATION_DEPTH)
         except Exception as e:
             errors.append(f"DelegationEngine init failed: {e}")
-            logger.error("F5: DelegationEngine initialization failed: %s", e)
+            logger.error("F5: DelegationEngine initialization failed: %s", e, exc_info=True)
 
         # 4. 初始化 Arbitrator (注入 EscalationEngine + DeadlockDetector)
         try:
@@ -140,7 +140,7 @@ class F5BootIntegration:
             logger.info("F5: Arbitrator initialized (3-tier: priority→rule→escalation)")
         except Exception as e:
             errors.append(f"Arbitrator init failed: {e}")
-            logger.error("F5: Arbitrator initialization failed: %s", e)
+            logger.error("F5: Arbitrator initialization failed: %s", e, exc_info=True)
 
         self._initialized = len(errors) == 0
 
@@ -163,7 +163,7 @@ class F5BootIntegration:
                 details["delegations_cleaned"] = int(cleaned) if isinstance(cleaned, int) else 0
             except Exception as e:
                 errors.append(f"Delegation cleanup failed: {e}")
-                logger.error("F5: DelegationEngine cleanup failed: %s", e)
+                logger.error("F5: DelegationEngine cleanup failed: %s", e, exc_info=True)
 
         # 2. 重置 DeadlockDetector 等待图
         if self._deadlock_detector is not None:
@@ -174,7 +174,7 @@ class F5BootIntegration:
                 details["deadlock_graph_reset"] = True
             except Exception as e:
                 errors.append(f"Deadlock reset failed: {e}")
-                logger.error("F5: DeadlockDetector reset failed: %s", e)
+                logger.error("F5: DeadlockDetector reset failed: %s", e, exc_info=True)
 
         # 3. 释放组件引用
         self._escalation_engine = None

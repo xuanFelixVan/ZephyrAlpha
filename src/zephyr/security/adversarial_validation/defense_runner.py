@@ -196,7 +196,7 @@ class DefenseRunner:
             logger.debug("real_gate gate_id=%s passed=%s violations=%d", gate_id, result.passed, len(result.violations))
             return result.passed
         except Exception as exc:
-            logger.warning("real_gate_failed gate_id=%s error=%s — real gate unavailable, fail_closed will BLOCK", gate_id, exc)
+            logger.warning("real_gate_failed gate_id=%s error=%s — real gate unavailable, fail_closed will BLOCK", gate_id, exc, exc_info=True)
             return None
 
     def _simulate_gate(self, scenario: AttackScenario, gate_id: str) -> bool:

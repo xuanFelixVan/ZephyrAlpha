@@ -303,7 +303,7 @@ def session_worktree_start(
                     }
         except Exception as e:
             # fail-open：并发检测异常不阻断 start（对标 held_overlap_gate fail-open）
-            logger.warning("session_worktree_start: 并发检测异常（降级放行）: %s", e)
+            logger.warning("session_worktree_start: 并发检测异常（降级放行）: %s", e, exc_info=True)
 
     # 1. 注册 session（held_files 留空——worktree 模式下文件隔离由 worktree 物理保证，
     #    不依赖 held_files claim 机制）
@@ -333,7 +333,7 @@ def session_worktree_start(
                 sweep_r.get("swept"), sweep_r.get("skipped"), sweep_r.get("warnings"),
             )
     except Exception as e:
-        logger.warning("session_worktree sweep 异常（不阻断 start）: %s", e)
+        logger.warning("session_worktree sweep 异常（不阻断 start）: %s", e, exc_info=True)
     try:
         # 检测是否已存在（幂等）
         wt_path = manager._wt_path(sid)
@@ -689,7 +689,7 @@ def session_worktree_commit(
     except Exception as _e:
         # gate 基础设施异常降级为 warn（不阻断）——session_worktree 不应因 gate 框架
         # 自身 bug 卡死业务流程；gate 检出违规则由上方 return 阻断。
-        logger.warning("session_worktree_commit: gate 检查异常降级（不阻断）: %s", _e)
+        logger.warning("session_worktree_commit: gate 检查异常降级（不阻断）: %s", _e, exc_info=True)
 
     # git commit（用 -F 从临时文件读 message，避免 PowerShell 特殊字符问题，对标 RULE-TWENTY 裁定2）
     # --no-verify: 绕过 git pre-commit hooks（hook 已由上方 commit_gate_registry 检查替代）。
@@ -1025,7 +1025,7 @@ def _pre_merge_gate_check(
             )
     except Exception as _e:
         # gate 基础设施异常降级为 warn（不阻断）
-        logger.warning("pre-merge gate 检查异常降级（不阻断）: %s", _e)
+        logger.warning("pre-merge gate 检查异常降级（不阻断）: %s", _e, exc_info=True)
         return True, []
 
 

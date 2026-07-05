@@ -149,7 +149,7 @@ class AsyncRuntime:
                     try:
                         self._loop.close()
                     except Exception as e:
-                        logger.warning("AsyncRuntime.stop: loop.close() 失败: %s", e)
+                        logger.warning("AsyncRuntime.stop: loop.close() 失败: %s", e, exc_info=True)
                     logger.debug("AsyncRuntime: 事件循环已关闭")
 
             if self._executor is not None:

@@ -159,7 +159,7 @@ class BudgetEngine:
                 json.dump(snapshot, f, ensure_ascii=False, indent=2)
             os.replace(tmp_path, persist_path)
         except Exception as e:
-            logger.warning("BudgetEngine.shutdown: snapshot persist failed (%s: %s)", type(e).__name__, e)
+            logger.warning("BudgetEngine.shutdown: snapshot persist failed (%s: %s)", type(e).__name__, e, exc_info=True)
 
         with self._lock:
             self._ipi_defense = None
@@ -197,7 +197,7 @@ class BudgetEngine:
             for _ in range(step_idx):
                 engine.advance_degradation()
         except Exception as e:
-            logger.warning("BudgetEngine.recover_from_snapshot: snapshot load failed (%s: %s)", type(e).__name__, e)
+            logger.warning("BudgetEngine.recover_from_snapshot: snapshot load failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return engine
 
     def _init_consumption(self) -> None:

@@ -84,7 +84,7 @@ class ContextRecycling:
             decompressed = zlib.decompress(bytes.fromhex(ctx.data))
             return decompressed.decode("utf-8")
         except Exception as exc:
-            logger.error("ContextRecycling restore failed for %s: %s", session_id, exc)
+            logger.error("ContextRecycling restore failed for %s: %s", session_id, exc, exc_info=True)
             return None
 
     def store(self, session_id: str) -> CompressedContext | None:

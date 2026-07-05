@@ -104,7 +104,7 @@ class ComplianceAuditor:
                     tamper_proof_hash=row[11],
                 )
         except Exception as e:
-            logger.warning("ComplianceAuditor.get_evidence: evidence lookup failed (%s: %s)", type(e).__name__, e)
+            logger.warning("ComplianceAuditor.get_evidence: evidence lookup failed (%s: %s)", type(e).__name__, e, exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:
             if conn is not None:
@@ -152,7 +152,7 @@ class ComplianceAuditor:
             )
             conn.commit()
         except Exception as exc:
-            logger.error("Failed to persist compliance evidence: %s", exc)
+            logger.error("Failed to persist compliance evidence: %s", exc, exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:
             if conn is not None:

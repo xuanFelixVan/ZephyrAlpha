@@ -37,7 +37,7 @@ class DriftBridge:
         except ImportError:
             logger.warning("DriftDetector not available")
         except Exception as exc:
-            logger.warning("DriftDetector init failed: %s", exc)
+            logger.warning("DriftDetector init failed: %s", exc, exc_info=True)
 
     def establish_baseline(self, metrics: dict[str, float]) -> bool:
         if not self._available or self._detector is None:
@@ -46,7 +46,7 @@ class DriftBridge:
             self._detector.establish_baseline(metrics)
             return True
         except Exception as exc:
-            logger.error("DriftBridge.establish_baseline failed: %s", exc)
+            logger.error("DriftBridge.establish_baseline failed: %s", exc, exc_info=True)
             return False
 
     def check_drift(self, current: dict[str, float], threshold: float = 0.3) -> dict[str, Any]:
@@ -60,7 +60,7 @@ class DriftBridge:
                 "available": True,
             }
         except Exception as exc:
-            logger.error("DriftBridge.check_drift failed: %s", exc)
+            logger.error("DriftBridge.check_drift failed: %s", exc, exc_info=True)
             return {"is_drifting": False, "drift_score": 0.0, "available": False}
 
     def is_available(self) -> bool:

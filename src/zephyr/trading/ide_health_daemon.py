@@ -233,7 +233,7 @@ def kill_ghost_windows(ghosts: list[dict[str, Any]] | None = None) -> list[int]:
                     killed.append(pid)
                     logger.info("ide_health_daemon: psutil-terminated ghost PID %d", pid)
                 except Exception:
-                    logger.warning("ide_health_daemon: failed to kill PID %d", pid)
+                    logger.warning("ide_health_daemon: failed to kill PID %d", pid, exc_info=True)
 
     return killed
 
@@ -260,7 +260,7 @@ def _force_kill_pid(pid: int) -> bool:
             psutil.Process(pid).terminate()
             return True
         except Exception as e:
-            logger.warning("_force_kill_pid: failed to terminate process %s (%s: %s)", pid, type(e).__name__, e)
+            logger.warning("_force_kill_pid: failed to terminate process %s (%s: %s)", pid, type(e).__name__, e, exc_info=True)
             return False
 
 
@@ -295,7 +295,7 @@ def cleanup_completed_tasks() -> list[dict[str, Any]]:
             except Exception as e:
                 logger.debug("suppressed error in ide_health_daemon", exc_info=True)
     except Exception:
-        logger.warning("ide_health_daemon: TaskRepository unavailable for cleanup")
+        logger.warning("ide_health_daemon: TaskRepository unavailable for cleanup", exc_info=True)
         return results
 
     with _task_map_lock:
@@ -342,7 +342,7 @@ class IdeHealthDaemon:
                 bus.subscribe("ide.health.check.request", lambda _: self.scan_tick())
                 logger.info("IdeHealthDaemon: started (event-driven, no daemon thread)")
             except Exception as e:
-                logger.warning("IdeHealthDaemon: EventBus subscribe failed: %s", e)
+                logger.warning("IdeHealthDaemon: EventBus subscribe failed: %s", e, exc_info=True)
 
     def stop(self) -> None:
         with self._lifecycle_lock:
@@ -369,14 +369,14 @@ class IdeHealthDaemon:
                     logger.info("IdeHealthDaemon: auto-killed %d processes", len(killed))
             self._ghost_count = len(ghosts)
         except Exception:
-            logger.exception("IdeHealthDaemon: scan tick failed")
+            logger.exception("IdeHealthDaemon: scan tick failed", exc_info=True)
         # P1-DAE: 每 10 轮采集一次 drift 健康指标
         self._loop_count += 1
         if self._loop_count % 10 == 0:
             try:
                 self._collect_drift_metrics()
             except Exception:
-                logger.exception("IdeHealthDaemon: drift metrics collection failed")
+                logger.exception("IdeHealthDaemon: drift metrics collection failed", exc_info=True)
 
     def _collect_drift_metrics(self) -> None:
         """采集 drift 健康指标，写入 .runtime/drift_health.json（P1-DAE）。
@@ -431,7 +431,7 @@ class IdeHealthDaemon:
                     capture_output=True, text=True, timeout=60,
                 )
             except Exception:
-                logger.exception("drift health: stash auto-cleanup failed")
+                logger.exception("drift health: stash auto-cleanup failed", exc_info=True)
         if metrics["worktree_changes"] > 50:
             logger.warning("drift health: worktree_changes=%d > 50", metrics["worktree_changes"])
 
@@ -460,5 +460,5 @@ def register_daemon() -> None:
         registry.start("ide_health_daemon")
         logger.info("IdeHealthDaemon: registered and auto-started in DaemonRegistry")
     except Exception:
-        logger.warning("IdeHealthDaemon: DaemonRegistry unavailable, starting standalone")
+        logger.warning("IdeHealthDaemon: DaemonRegistry unavailable, starting standalone", exc_info=True)
         _daemon_instance.start()

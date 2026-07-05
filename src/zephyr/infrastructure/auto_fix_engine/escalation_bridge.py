@@ -79,7 +79,7 @@ class EscalationBridge:
             )
             return action
         except Exception as exc:
-            logger.error("Escalation failed: %s", exc)
+            logger.error("Escalation failed: %s", exc, exc_info=True)
             action.metadata["escalation_error"] = str(exc)
             return action
 

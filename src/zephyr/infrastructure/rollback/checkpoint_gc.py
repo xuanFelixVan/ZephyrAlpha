@@ -89,7 +89,7 @@ class CheckpointGC:
                 sp.unlink()
                 deleted.append(sp.name)
             except Exception as e:
-                logger.warning("CheckpointGC.collect: snapshot unlink failed for %s (%s: %s)", sp.name, type(e).__name__, e)
+                logger.warning("CheckpointGC.collect: snapshot unlink failed for %s (%s: %s)", sp.name, type(e).__name__, e, exc_info=True)
 
         total_after = total_before - len(deleted)
         return GCResult(

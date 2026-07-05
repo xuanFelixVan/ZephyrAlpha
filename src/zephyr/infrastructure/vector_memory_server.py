@@ -191,7 +191,7 @@ class VectorMemoryServer(BaseMCPServer):
             result_id = self._vms.write(collection_name, content, metadata=metadata, doc_id=doc_id)
             return {"doc_id": result_id, "collection": collection_name, "written": True}
         except Exception as e:
-            logger.exception("vms write failed")
+            logger.exception("vms write failed", exc_info=True)
             return {"error": "write failed", "written": False}
 
     def _recall(self, collection_name: str, k: int = 5) -> dict[str, Any]:

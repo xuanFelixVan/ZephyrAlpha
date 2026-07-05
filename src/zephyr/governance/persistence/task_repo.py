@@ -1728,7 +1728,7 @@ class TaskRepository:
                         session_id=session_id,
                     )
             except Exception as exc:
-                logger.warning("DM-202918: 自动git commit失败 (task=%s): %s", task_id, exc)
+                logger.warning("DM-202918: 自动git commit失败 (task=%s): %s", task_id, exc, exc_info=True)
                 with self._write_tx() as ev_conn:
                     self._record_event(
                         ev_conn,
@@ -1831,7 +1831,7 @@ class TaskRepository:
         except Exception as e:
             logger.warning(
                 "DM-202918: GitCommitGateway 异常，回退跳过 commit (task=%s): %s", task_id, e
-            )
+            , exc_info=True)
 
     def _run_circular_acceptance(
         self,
@@ -2986,7 +2986,7 @@ class TaskRepository:
                 card = self.create(sub_task, allow_direct_create=True)
                 created.append(card)
             except Exception:
-                logger.exception("auto_split: 创建子卡 %s 失败", sub_task.task_id)
+                logger.exception("auto_split: 创建子卡 %s 失败", sub_task.task_id, exc_info=True)
                 for c in created:
                     try:
                         self.hard_delete(c.task_id)
@@ -3352,7 +3352,7 @@ class TaskRepository:
                     proj_engine = ProjectionEngine(self._db_path)
                     proj_engine.rebuild_from_events(task_id, conn=conn)
                 except Exception:
-                    logger.exception("append_and_project: 投影重建失败 task_id=%s", task_id)
+                    logger.exception("append_and_project: 投影重建失败 task_id=%s", task_id, exc_info=True)
             updated_row = self._fetch_row(conn, task_id)
         if updated_row is None:
             return None

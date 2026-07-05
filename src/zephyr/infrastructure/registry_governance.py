@@ -95,7 +95,7 @@ class FunctionalDomainRegistry:
             self._loaded = True
             logger.info("Loaded %d functional domain entries", len(self._entries))
         except Exception as exc:
-            logger.error("Failed to load functional domain registry: %s", exc)
+            logger.error("Failed to load functional domain registry: %s", exc, exc_info=True)
             self._loaded = True
 
     def query_domain(self, domain: str, subdomain: str | None = None) -> list[DomainEntry]:

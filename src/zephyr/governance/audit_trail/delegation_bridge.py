@@ -37,7 +37,7 @@ class DelegationBridge:
         except ImportError:
             logger.warning("EscalationEngine not available")
         except Exception as exc:
-            logger.warning("EscalationEngine init failed: %s", exc)
+            logger.warning("EscalationEngine init failed: %s", exc, exc_info=True)
 
     def report_delegation_failure(self, target: str, reason: str) -> dict[str, Any] | None:
         if not self._available or self._engine is None:
@@ -55,7 +55,7 @@ class DelegationBridge:
                 "description": event.description,
             }
         except Exception as exc:
-            logger.error("DelegationBridge.report_delegation_failure failed: %s", exc)
+            logger.error("DelegationBridge.report_delegation_failure failed: %s", exc, exc_info=True)
             return None
 
     def report_delegation_timeout(self, target: str) -> dict[str, Any] | None:
@@ -74,7 +74,7 @@ class DelegationBridge:
                 "description": event.description,
             }
         except Exception as exc:
-            logger.error("DelegationBridge.report_delegation_timeout failed: %s", exc)
+            logger.error("DelegationBridge.report_delegation_timeout failed: %s", exc, exc_info=True)
             return None
 
     def is_available(self) -> bool:

@@ -209,7 +209,7 @@ class HealthMonitor:
                 self.reconcile()
                 self._last_health_check = now
         except Exception:
-            logger.exception("health monitor tick failed")
+            logger.exception("health monitor tick failed", exc_info=True)
 
     def _collect_metrics(self) -> None:
         """采集 probe 指标到 MetricsRegistry — DM-201247."""
@@ -298,7 +298,7 @@ class HealthMonitor:
         try:
             return fn()
         except Exception as e:
-            logger.warning("_auto_restart: restart failed for capability %s (%s: %s)", capability_id, type(e).__name__, e)
+            logger.warning("_auto_restart: restart failed for capability %s (%s: %s)", capability_id, type(e).__name__, e, exc_info=True)
             return False
 
     def pressure_level(self) -> PressureLevel:
@@ -381,7 +381,7 @@ class HealthMonitor:
                 bus.subscribe("health.check.request", lambda _: self.tick())
                 logger.info("HealthMonitor started (event-driven, no daemon thread)")
             except Exception as e:
-                logger.warning("HealthMonitor EventBus subscribe failed, tick() must be called manually: %s", e)
+                logger.warning("HealthMonitor EventBus subscribe failed, tick() must be called manually: %s", e, exc_info=True)
 
     def stop(self) -> None:
         """停止健康监控 — P1 修复：事件驱动模式无线程需 join。"""

@@ -37,7 +37,7 @@ class EscalationBridge:
         except ImportError:
             logger.warning("EscalationEngine not available")
         except Exception as exc:
-            logger.warning("EscalationEngine init failed: %s", exc)
+            logger.warning("EscalationEngine init failed: %s", exc, exc_info=True)
 
     def escalate_judgment(self, file_path: str, verdict: str, reason: str) -> dict[str, Any]:
         if not self._available or self._engine is None:
@@ -51,7 +51,7 @@ class EscalationBridge:
             )
             return {"status": "escalated", "event_id": getattr(event, "id", "unknown")}
         except Exception as exc:
-            logger.error("EscalationBridge.escalate_judgment failed: %s", exc)
+            logger.error("EscalationBridge.escalate_judgment failed: %s", exc, exc_info=True)
             return {"status": "bridge_error", "error": str(exc)}
 
     def evaluate_risk(self, file_path: str, reason: str) -> dict[str, Any]:
@@ -65,7 +65,7 @@ class EscalationBridge:
             )
             return {"status": "evaluated", "result": str(result) if result else "no_result"}
         except Exception as exc:
-            logger.error("EscalationBridge.evaluate_risk failed: %s", exc)
+            logger.error("EscalationBridge.evaluate_risk failed: %s", exc, exc_info=True)
             return {"status": "bridge_error", "error": str(exc)}
 
     def is_available(self) -> bool:

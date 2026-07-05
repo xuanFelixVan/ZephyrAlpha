@@ -255,7 +255,7 @@ class VerdictEngine:
             except Exception as e:
                 # 5.151.3 修复: protection_level 是安全判决关键输入, 失败后静默吞没并继续走决策树
                 # 存在安全风险。记录 warning 使查询失败可见 (不阻断决策, 但留审计痕迹)
-                logger.warning("verdict_engine: protection_index.query failed for %s: %s", operation.target_path, e)
+                logger.warning("verdict_engine: protection_index.query failed for %s: %s", operation.target_path, e, exc_info=True)
 
         verdict_level, reason = self._apply_decision_tree(actor, operation, gate_passed, violation_count)
 

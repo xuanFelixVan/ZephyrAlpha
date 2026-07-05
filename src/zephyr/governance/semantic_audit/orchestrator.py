@@ -81,63 +81,63 @@ class SemanticAuditor:
             from zephyr.governance.semantic_audit.reference_extractor import ReferenceExtractor
             self._extractor = ReferenceExtractor()
         except Exception as exc:
-            logger.warning("ReferenceExtractor init failed: %s", exc)
+            logger.warning("ReferenceExtractor init failed: %s", exc, exc_info=True)
             self._extractor = None
 
         try:
             from zephyr.governance.semantic_audit.trigger_engine import TriggerEngine
             self._trigger_engine = TriggerEngine()
         except Exception as exc:
-            logger.warning("TriggerEngine init failed: %s", exc)
+            logger.warning("TriggerEngine init failed: %s", exc, exc_info=True)
             self._trigger_engine = None
 
         try:
             from zephyr.governance.semantic_audit.safety_boundary import SafetyBoundary
             self._safety_boundary = SafetyBoundary()
         except Exception as exc:
-            logger.warning("SafetyBoundary init failed: %s", exc)
+            logger.warning("SafetyBoundary init failed: %s", exc, exc_info=True)
             self._safety_boundary = None
 
         try:
             from zephyr.governance.semantic_audit.alignment_engine import AlignmentEngine
             self._alignment_engine = AlignmentEngine(project_root=self._root)
         except Exception as exc:
-            logger.warning("AlignmentEngine init failed: %s", exc)
+            logger.warning("AlignmentEngine init failed: %s", exc, exc_info=True)
             self._alignment_engine = None
 
         try:
             from zephyr.governance.semantic_audit.issue_aggregator import IssueAggregator
             self._aggregator = IssueAggregator()
         except Exception as exc:
-            logger.warning("IssueAggregator init failed: %s", exc)
+            logger.warning("IssueAggregator init failed: %s", exc, exc_info=True)
             self._aggregator = None
 
         try:
             from zephyr.governance.semantic_audit.llm_bridge import LLMBridge
             self._llm_bridge = LLMBridge(api_available=self._llm_available)
         except Exception as exc:
-            logger.warning("LLMBridge init failed: %s", exc)
+            logger.warning("LLMBridge init failed: %s", exc, exc_info=True)
             self._llm_bridge = None
 
         try:
             from zephyr.governance.semantic_audit.self_healer import SelfHealer
             self._self_healer = SelfHealer()
         except Exception as exc:
-            logger.warning("SelfHealer init failed: %s", exc)
+            logger.warning("SelfHealer init failed: %s", exc, exc_info=True)
             self._self_healer = None
 
         try:
             from zephyr.governance.semantic_audit.fix_prioritizer import FixPrioritizer
             self._fix_prioritizer = FixPrioritizer()
         except Exception as exc:
-            logger.warning("FixPrioritizer init failed: %s", exc)
+            logger.warning("FixPrioritizer init failed: %s", exc, exc_info=True)
             self._fix_prioritizer = None
 
         try:
             from zephyr.governance.semantic_audit.self_health import SelfHealth
             self._self_health = SelfHealth(project_root=self._root)
         except Exception as exc:
-            logger.warning("SelfHealth init failed: %s", exc)
+            logger.warning("SelfHealth init failed: %s", exc, exc_info=True)
             self._self_health = None
 
     def audit(self, doc_path: Path | str, mode: str = "full") -> BaseModel:
@@ -174,7 +174,7 @@ class SemanticAuditor:
             try:
                 references = self._extractor.extract(doc_path)
             except Exception as exc:
-                logger.warning("Stage 1 extract failed for %s: %s", doc_path, exc)
+                logger.warning("Stage 1 extract failed for %s: %s", doc_path, exc, exc_info=True)
 
         # Stage 2: TriggerEngine
         triggers: list[TriggerResult] = []
@@ -183,7 +183,7 @@ class SemanticAuditor:
                 decision = self._trigger_engine.evaluate([str(doc_path)])
                 triggers = list(decision.results) if decision.should_trigger else []
             except Exception as exc:
-                logger.warning("Stage 2 trigger failed for %s: %s", doc_path, exc)
+                logger.warning("Stage 2 trigger failed for %s: %s", doc_path, exc, exc_info=True)
 
         # Stage 3: SafetyBoundary
         filtered_triggers = triggers
@@ -192,7 +192,7 @@ class SemanticAuditor:
                 filtered = self._safety_boundary.filter(triggers)
                 filtered_triggers = [t.trigger for t in filtered if hasattr(t, "trigger")]
             except Exception as exc:
-                logger.warning("Stage 3 safety filter failed for %s: %s", doc_path, exc)
+                logger.warning("Stage 3 safety filter failed for %s: %s", doc_path, exc, exc_info=True)
 
         # Stage 4: AlignmentEngine
         alignments: list[AlignmentReport] = []
@@ -203,7 +203,7 @@ class SemanticAuditor:
                     report = self._alignment_engine.align(module_id)
                     alignments = [report]
             except Exception as exc:
-                logger.warning("Stage 4 alignment failed for %s: %s", doc_path, exc)
+                logger.warning("Stage 4 alignment failed for %s: %s", doc_path, exc, exc_info=True)
 
         # Stage 6: LLMBridge (skip in detect-only mode)
         fixes: list[LLMFixResult] = []
@@ -212,7 +212,7 @@ class SemanticAuditor:
                 fixes = self._llm_bridge.generate_fix_batch(filtered_triggers)
                 total_token += sum(f.token_used for f in fixes)
             except Exception as exc:
-                logger.warning("Stage 6 LLM bridge failed for %s: %s", doc_path, exc)
+                logger.warning("Stage 6 LLM bridge failed for %s: %s", doc_path, exc, exc_info=True)
 
         # Stage 7: SelfHealer (skip in detect-only mode)
         heals: list[HealResult] = []
@@ -227,7 +227,7 @@ class SemanticAuditor:
                         )
                         heals.append(heal)
             except Exception as exc:
-                logger.warning("Stage 7 self heal failed for %s: %s", doc_path, exc)
+                logger.warning("Stage 7 self heal failed for %s: %s", doc_path, exc, exc_info=True)
 
         # Stage 5: IssueAggregator
         report = SemanticAuditReport(audit_id=audit_id, rule_document=str(doc_path))
@@ -245,7 +245,7 @@ class SemanticAuditor:
                     token_used=total_token,
                 )
             except Exception as exc:
-                logger.warning("Stage 5 aggregate failed for %s: %s", doc_path, exc)
+                logger.warning("Stage 5 aggregate failed for %s: %s", doc_path, exc, exc_info=True)
 
         return report
 
@@ -270,7 +270,7 @@ class SemanticAuditor:
                     report = future.result()
                     results.append(report)
                 except Exception as exc:
-                    logger.warning("Batch audit failed for %s: %s", path, exc)
+                    logger.warning("Batch audit failed for %s: %s", path, exc, exc_info=True)
         return results
 
     def health_check(self) -> BaseModel:
@@ -284,7 +284,7 @@ class SemanticAuditor:
             try:
                 return self._self_health.check(force=True)
             except Exception as exc:
-                logger.warning("Health check failed: %s", exc)
+                logger.warning("Health check failed: %s", exc, exc_info=True)
 
         # 降级: 返回最小健康状态
         from zephyr.governance.semantic_audit.self_health import HealthStatus, HealthLevel

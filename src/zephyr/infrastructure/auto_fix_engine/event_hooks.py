@@ -93,7 +93,7 @@ class EventHooks:
             try:
                 callback(event=event, action=action, **kwargs)
             except Exception as exc:
-                logger.error("Event hook error for %s: %s", event.value, exc)
+                logger.error("Event hook error for %s: %s", event.value, exc, exc_info=True)
 
     def emit_for_status(self, action: FixAction) -> None:
         status_to_event = {
@@ -153,7 +153,7 @@ def subscribe_eventbus() -> None:
             "(drift_detected/validation_result)"
         )
     except Exception as e:
-        logger.warning("AutoFixEngine: subscribe_eventbus failed: %s", e)
+        logger.warning("AutoFixEngine: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
 def _get_engine() -> Any:
@@ -165,7 +165,7 @@ def _get_engine() -> Any:
 
             _engine_instance = AutoFixEngine()
         except Exception as e:
-            logger.warning("AutoFixEngine: failed to instantiate engine: %s", e)
+            logger.warning("AutoFixEngine: failed to instantiate engine: %s", e, exc_info=True)
             return None
     return _engine_instance
 
@@ -199,7 +199,7 @@ def _on_drift_detected(payload: object) -> None:
             target,
         )
     except Exception as e:
-        logger.error("AutoFixEngine: _on_drift_detected failed: %s", e)
+        logger.error("AutoFixEngine: _on_drift_detected failed: %s", e, exc_info=True)
 
 
 def _on_validation_result(payload: object) -> None:
@@ -220,4 +220,4 @@ def _on_validation_result(payload: object) -> None:
             detail,
         )
     except Exception as e:
-        logger.error("AutoFixEngine: _on_validation_result failed: %s", e)
+        logger.error("AutoFixEngine: _on_validation_result failed: %s", e, exc_info=True)

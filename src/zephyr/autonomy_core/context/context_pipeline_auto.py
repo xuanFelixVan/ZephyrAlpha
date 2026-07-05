@@ -99,7 +99,7 @@ class ContextPipelineAuto:
             self._event_subscribed = True
             logger.info("ContextPipelineAuto event subscriptions registered")
         except Exception as exc:
-            logger.warning("ContextPipelineAuto event subscription failed: %s", exc)
+            logger.warning("ContextPipelineAuto event subscription failed: %s", exc, exc_info=True)
 
     def _on_task_started(self, event: DomainEvent) -> None:
         """事件启动：TASK_STARTED 时自动准备上下文。"""
@@ -177,7 +177,7 @@ class ContextPipelineAuto:
                 try:
                     cb()
                 except Exception as exc:
-                    logger.error("ContextPipelineAuto cleanup callback failed: %s", exc)
+                    logger.error("ContextPipelineAuto cleanup callback failed: %s", exc, exc_info=True)
 
             self._cleanup_callbacks.clear()
             self._started = False

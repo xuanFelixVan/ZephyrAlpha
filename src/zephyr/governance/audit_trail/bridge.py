@@ -42,42 +42,42 @@ class OrchestratorBridge:
 
             self._drift_bridge = DriftBridge()
         except Exception as exc:
-            logger.warning("DriftBridge init failed: %s", exc)
+            logger.warning("DriftBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.governance.audit_trail.feedback_bridge import FeedbackBridge
 
             self._feedback_bridge = FeedbackBridge()
         except Exception as exc:
-            logger.warning("FeedbackBridge init failed: %s", exc)
+            logger.warning("FeedbackBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.governance.audit_trail.delegation_bridge import DelegationBridge
 
             self._delegation_bridge = DelegationBridge()
         except Exception as exc:
-            logger.warning("DelegationBridge init failed: %s", exc)
+            logger.warning("DelegationBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.governance.merkle_hourly import MerkleHourlyBridge
 
             self._merkle_bridge = MerkleHourlyBridge()
         except Exception as exc:
-            logger.warning("MerkleHourlyBridge init failed: %s", exc)
+            logger.warning("MerkleHourlyBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.governance.audit_trail.trust_bridge import TrustBridge
 
             self._trust_bridge = TrustBridge()
         except Exception as exc:
-            logger.warning("TrustBridge init failed: %s", exc)
+            logger.warning("TrustBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.governance.audit_trail.tiered_storage_bridge import TieredStorageBridge
 
             self._storage_bridge = TieredStorageBridge()
         except Exception as exc:
-            logger.warning("TieredStorageBridge init failed: %s", exc)
+            logger.warning("TieredStorageBridge init failed: %s", exc, exc_info=True)
 
     def check_drift(self, metrics: dict[str, float]) -> dict[str, Any]:
         if self._drift_bridge and self._drift_bridge.is_available():

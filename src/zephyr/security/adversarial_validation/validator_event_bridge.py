@@ -62,7 +62,7 @@ def subscribe_eventbus() -> None:
         _subscribed = True
         logger.info("ValidatorEventBridge: subscribed to fix_completed event")
     except Exception as e:
-        logger.warning("ValidatorEventBridge: subscribe_eventbus failed: %s", e)
+        logger.warning("ValidatorEventBridge: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
 def _get_validator() -> Any:
@@ -74,7 +74,7 @@ def _get_validator() -> Any:
 
             _validator_instance = RedBlueValidator()
         except Exception as e:
-            logger.warning("ValidatorEventBridge: failed to instantiate validator: %s", e)
+            logger.warning("ValidatorEventBridge: failed to instantiate validator: %s", e, exc_info=True)
             return None
     return _validator_instance
 
@@ -116,4 +116,4 @@ def _on_fix_completed(payload: object) -> None:
             getattr(report, "bypassed", None),
         )
     except Exception as e:
-        logger.error("ValidatorEventBridge: _on_fix_completed failed: %s", e)
+        logger.error("ValidatorEventBridge: _on_fix_completed failed: %s", e, exc_info=True)

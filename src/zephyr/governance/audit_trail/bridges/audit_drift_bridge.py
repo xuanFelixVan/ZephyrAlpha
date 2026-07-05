@@ -135,7 +135,7 @@ class DriftBridge:
             logger.info("[drift-bridge] AnomalyDetector not available—跳过审计异常扫描")
             return []
         except Exception:
-            logger.exception("[drift-bridge] 审计异常扫描失败")
+            logger.exception("[drift-bridge] 审计异常扫描失败", exc_info=True)
             return []
 
     def _scan_drift_events(self) -> list[dict[str, Any]]:
@@ -158,7 +158,7 @@ class DriftBridge:
             logger.info("[drift-bridge] DriftEngine not available—跳过漂移扫描")
             return []
         except Exception:
-            logger.exception("[drift-bridge] 漂移事件扫描失败")
+            logger.exception("[drift-bridge] 漂移事件扫描失败", exc_info=True)
             return []
 
     def _load_events(self) -> list[dict[str, Any]]:

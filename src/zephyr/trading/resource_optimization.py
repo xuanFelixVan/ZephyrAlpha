@@ -476,7 +476,7 @@ class ResourceOptimizationEngine:
             success = False
             error_msg = str(e)
             cb.record_failure()
-            logger.exception("ResourceOptimizationEngine: optimize(%s) failed", strategy.value)
+            logger.exception("ResourceOptimizationEngine: optimize(%s) failed", strategy.value, exc_info=True)
 
         snap_after = self.snapshot()
         duration_ms = int((time.monotonic() - start) * 1000)
@@ -645,13 +645,13 @@ class ResourceOptimizationEngine:
             cache_stats = self._file_cache.get_stats()
             cache_healthy = cache_stats.total_entries >= 0
         except Exception as e:
-            logger.warning("health_check: cache stats failed: %s", e)
+            logger.warning("health_check: cache stats failed: %s", e, exc_info=True)
             cache_healthy = False
         try:
             pool_stats = self._process_pool.get_stats()
             process_pool_healthy = pool_stats.zombie_count == 0
         except Exception as e:
-            logger.warning("health_check: process_pool stats failed: %s", e)
+            logger.warning("health_check: process_pool stats failed: %s", e, exc_info=True)
             process_pool_healthy = False
         return HealthCheckResult(
             engine_running=running,
@@ -701,7 +701,7 @@ class ResourceOptimizationEngine:
             bus.subscribe("resource.check.request", lambda _: self.monitor_tick())
             logger.info("ResourceOptimizationEngine: monitor started (event-driven, no daemon thread)")
         except Exception as e:
-            logger.warning("ResourceOptimizationEngine: EventBus subscribe failed: %s", e)
+            logger.warning("ResourceOptimizationEngine: EventBus subscribe failed: %s", e, exc_info=True)
 
     def stop_monitor(self) -> None:
         self._monitor_running = False
@@ -739,7 +739,7 @@ class ResourceOptimizationEngine:
                 self._self_heal_cycle(snap)
 
         except Exception:
-            logger.exception("ResourceOptimizationEngine: monitor tick failed")
+            logger.exception("ResourceOptimizationEngine: monitor tick failed", exc_info=True)
 
     @classmethod
     def reset(cls) -> None:
@@ -769,7 +769,7 @@ class ResourceOptimizationEngine:
             if not isinstance(cfg, dict):
                 return
         except Exception:
-            logger.exception("ResourceOptimizationEngine: config load failed from %s", path)
+            logger.exception("ResourceOptimizationEngine: config load failed from %s", path, exc_info=True)
             return
 
         self._config_mtime = os.path.getmtime(path)

@@ -67,7 +67,7 @@ class RetentionPolicy:
                             f.unlink()
                             result["purged"] += 1
                 except Exception as exc:
-                    logger.error("Failed to purge %s: %s", f, exc)
+                    logger.error("Failed to purge %s: %s", f, exc, exc_info=True)
                     result["errors"] += 1
 
         return result

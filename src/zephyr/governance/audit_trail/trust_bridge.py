@@ -34,7 +34,7 @@ class TrustBridge:
         except ImportError:
             logger.warning("TrustEngine not available")
         except Exception as exc:
-            logger.warning("TrustEngine init failed: %s", exc)
+            logger.warning("TrustEngine init failed: %s", exc, exc_info=True)
 
     def evaluate(self, audit_results: list[dict[str, Any]]) -> dict[str, Any]:
         if not self._available or self._engine is None:
@@ -42,7 +42,7 @@ class TrustBridge:
         try:
             return self._engine.calculate(audit_results)
         except Exception as exc:
-            logger.error("TrustBridge.evaluate failed: %s", exc)
+            logger.error("TrustBridge.evaluate failed: %s", exc, exc_info=True)
             return {"trust_level": "UNKNOWN", "score": 0.0, "confidence": 0.0}
 
     def record(self, result: dict[str, Any]) -> bool:
@@ -52,7 +52,7 @@ class TrustBridge:
             self._engine.update_history(result)
             return True
         except Exception as exc:
-            logger.error("TrustBridge.record failed: %s", exc)
+            logger.error("TrustBridge.record failed: %s", exc, exc_info=True)
             return False
 
     def get_trend(self) -> dict[str, Any]:
@@ -61,7 +61,7 @@ class TrustBridge:
         try:
             return self._engine.trend()
         except Exception as exc:
-            logger.error("TrustBridge.get_trend failed: %s", exc)
+            logger.error("TrustBridge.get_trend failed: %s", exc, exc_info=True)
             return {"direction": "stable", "change": 0.0}
 
     def is_available(self) -> bool:

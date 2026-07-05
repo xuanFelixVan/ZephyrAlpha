@@ -86,7 +86,7 @@ class MCPEndpoints:
             else:
                 raise McpEndpointError(f"Unknown tool: {tool_name}")
         except Exception as e:
-            logger.exception("mcp_tool_error tool=%s", tool_name)
+            logger.exception("mcp_tool_error tool=%s", tool_name, exc_info=True)
             raise McpEndpointError(f"Tool '{tool_name}' failed: {e}") from e
 
     def _run_adversarial(self, args: dict) -> dict:

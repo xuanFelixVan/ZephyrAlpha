@@ -39,7 +39,7 @@ class FeedbackBridge:
         except ImportError:
             logger.warning("FeedbackLoop not available")
         except Exception as exc:
-            logger.warning("FeedbackLoop init failed: %s", exc)
+            logger.warning("FeedbackLoop init failed: %s", exc, exc_info=True)
 
     def report_misjudgment(self, file_path: str, actual: str, predicted: str) -> list[dict[str, Any]]:
         if not self._available or self._loop is None:
@@ -63,7 +63,7 @@ class FeedbackBridge:
                 for p in proposals
             ]
         except Exception as exc:
-            logger.error("FeedbackBridge.report_misjudgment failed: %s", exc)
+            logger.error("FeedbackBridge.report_misjudgment failed: %s", exc, exc_info=True)
             return []
 
     def is_available(self) -> bool:

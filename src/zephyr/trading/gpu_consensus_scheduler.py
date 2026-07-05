@@ -430,7 +430,7 @@ class GPUConsensusScheduler:
             )
             return result
         except Exception as exc:
-            logger.debug("API call failed for model %s: %s", model_id, exc)
+            logger.debug("API call failed for model %s: %s", model_id, exc, exc_info=True)
             return None
 
     def _call_api_sync(self, model_id: str, request: ConsensusRequest) -> dict[str, Any] | None:
@@ -460,7 +460,7 @@ class GPUConsensusScheduler:
                 return self._parse_model_response(text, model_id)
             return None
         except Exception as e:
-            logger.warning("_call_api_sync: model API call failed (%s: %s)", type(e).__name__, e)
+            logger.warning("_call_api_sync: model API call failed (%s: %s)", type(e).__name__, e, exc_info=True)
             return None
 
     async def _call_ollama(self, request: ConsensusRequest) -> dict[str, Any] | None:
@@ -475,7 +475,7 @@ class GPUConsensusScheduler:
             )
             return result
         except Exception as e:
-            logger.warning("_call_ollama: ollama async call failed (%s: %s)", type(e).__name__, e)
+            logger.warning("_call_ollama: ollama async call failed (%s: %s)", type(e).__name__, e, exc_info=True)
             return None
 
     def _call_ollama_sync(self, request: ConsensusRequest) -> dict[str, Any] | None:
@@ -504,7 +504,7 @@ class GPUConsensusScheduler:
                 return self._parse_model_response(text, self._local_model)
             return None
         except Exception as e:
-            logger.warning("_call_ollama_sync: ollama sync call failed (%s: %s)", type(e).__name__, e)
+            logger.warning("_call_ollama_sync: ollama sync call failed (%s: %s)", type(e).__name__, e, exc_info=True)
             return None
 
     def _parse_model_response(self, text: str, model_id: str) -> dict[str, Any]:

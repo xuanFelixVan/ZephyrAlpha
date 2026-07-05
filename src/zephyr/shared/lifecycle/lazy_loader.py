@@ -85,7 +85,7 @@ class LazyModuleRegistry:
         try:
             module = importlib.import_module(entry.import_path)
         except Exception:
-            logger.exception("LazyModuleRegistry: failed to load '%s' from '%s'", name, entry.import_path)
+            logger.exception("LazyModuleRegistry: failed to load '%s' from '%s'", name, entry.import_path, exc_info=True)
             raise
         elapsed = time.monotonic() - start
 
@@ -128,7 +128,7 @@ class LazyModuleRegistry:
                     self.load(name)
                     loaded += 1
                 except Exception:
-                    logger.warning("LazyModuleRegistry: core module '%s' failed to load", name)
+                    logger.warning("LazyModuleRegistry: core module '%s' failed to load", name, exc_info=True)
         return loaded
 
     def unload(self, name: str) -> bool:

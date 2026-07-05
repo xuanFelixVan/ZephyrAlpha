@@ -61,7 +61,7 @@ class FeedbackPolicy:
         except ImportError:
             logger.warning("FeedbackBridge not available")
         except Exception as exc:
-            logger.warning("FeedbackBridge init failed: %s", exc)
+            logger.warning("FeedbackBridge init failed: %s", exc, exc_info=True)
 
     def evaluate(self, findings: list[dict[str, Any]]) -> PolicyDecision:
         if not findings:

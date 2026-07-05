@@ -416,7 +416,7 @@ class ResourceOptimizationEngine:
             success = False
             error_msg = str(e)
             cb.record_failure()
-            logger.exception("ResourceOptimizationEngine: optimize(%s) failed", strategy.value)
+            logger.exception("ResourceOptimizationEngine: optimize(%s) failed", strategy.value, exc_info=True)
 
         snap_after = self.snapshot()
         duration_ms = int((time.monotonic() - start) * 1000)
@@ -654,7 +654,7 @@ class ResourceOptimizationEngine:
                     self._self_heal_cycle(snap)
 
             except Exception:
-                logger.exception("ResourceOptimizationEngine: monitor tick failed")
+                logger.exception("ResourceOptimizationEngine: monitor tick failed", exc_info=True)
 
             interval = self._monitor_interval
             if interval <= 0:
@@ -689,7 +689,7 @@ class ResourceOptimizationEngine:
             if not isinstance(cfg, dict):
                 return
         except Exception:
-            logger.exception("ResourceOptimizationEngine: config load failed from %s", path)
+            logger.exception("ResourceOptimizationEngine: config load failed from %s", path, exc_info=True)
             return
 
         self._config_mtime = os.path.getmtime(path)

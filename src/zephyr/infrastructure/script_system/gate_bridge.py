@@ -83,7 +83,7 @@ class GateBridge:
                 else:
                     result.blocked += count
             except Exception as exc:
-                logger.warning("[SCRIPT-GATE] gate %s check degraded: %s", gate_id, exc)
+                logger.warning("[SCRIPT-GATE] gate %s check degraded: %s", gate_id, exc, exc_info=True)
                 result.passed += count
 
         logger.info(

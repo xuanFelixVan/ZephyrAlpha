@@ -35,7 +35,7 @@ class KbBridge:
         except ImportError:
             logger.warning("UnifiedMemoryAPI not available")
         except Exception as exc:
-            logger.warning("UnifiedMemoryAPI init failed: %s", exc)
+            logger.warning("UnifiedMemoryAPI init failed: %s", exc, exc_info=True)
 
     def write_judgment(self, file_path: str, verdict: str, reason: str) -> bool:
         if not self._available or self._api is None:
@@ -46,7 +46,7 @@ class KbBridge:
             self._api.write(topic="orphan-judge", content=content, provenance=prov)
             return True
         except Exception as exc:
-            logger.error("KbBridge.write_judgment failed: %s", exc)
+            logger.error("KbBridge.write_judgment failed: %s", exc, exc_info=True)
             return False
 
     def search_history(self, query: str, k: int = 10) -> list[dict[str, Any]]:
@@ -63,7 +63,7 @@ class KbBridge:
                 for r in records
             ]
         except Exception as exc:
-            logger.error("KbBridge.search_history failed: %s", exc)
+            logger.error("KbBridge.search_history failed: %s", exc, exc_info=True)
             return []
 
     def is_available(self) -> bool:

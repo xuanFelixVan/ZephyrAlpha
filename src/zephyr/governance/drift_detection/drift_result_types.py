@@ -449,7 +449,7 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
                 orm_tables[class_name.lower()] = fields
 
         except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
     for db_file in db_files:
@@ -503,14 +503,14 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
                         pass
 
         except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
         finally:
             if conn is not None:
                 try:
                     conn.close()
                 except Exception as e:
-                    logger.warning("conn close failed (%s: %s)", type(e).__name__, e)
+                    logger.warning("conn close failed (%s: %s)", type(e).__name__, e, exc_info=True)
 
     for mdir in migration_dirs:
         try:
@@ -542,7 +542,7 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
                         )
 
         except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
     return events
@@ -877,7 +877,7 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
             content = py_file.read_text(encoding="utf-8")
 
         except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
         if not endpoint_rx.search(content):
@@ -924,7 +924,7 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
             content = py_file.read_text(encoding="utf-8")
 
         except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
         for pattern_rx, desc in _SECRET_PATTERNS:
@@ -1052,7 +1052,7 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
             bp_mtime_dt = datetime.fromtimestamp(bp_mtime, tz=UTC)
 
         except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
         bp_dir_parts = list(bp.parent.parts)
@@ -1099,7 +1099,7 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
                     )
 
             except Exception as e:
-                logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+                logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
                 continue
 
     _BLUEPRINT_IFACE_ALL_RX: re.Pattern[str] = re.compile(
@@ -1112,7 +1112,7 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
             bp_content = bp.read_text(encoding="utf-8")
 
         except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
         sections = _BLUEPRINT_IFACE_ALL_RX.findall(bp_content)
@@ -1138,7 +1138,7 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
                                 break
 
                         except Exception as e:
-                            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+                            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
                             continue
 
                 if not found_in_code:
@@ -1243,7 +1243,7 @@ def detect_test_coverage_drift(project_root: str) -> list[DriftEvent]:
             loc = len(py_file.read_text(encoding="utf-8").splitlines())
 
         except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
         parts = py_file.relative_to(src_root).parts
@@ -1262,7 +1262,7 @@ def detect_test_coverage_drift(project_root: str) -> list[DriftEvent]:
             loc = len(py_file.read_text(encoding="utf-8").splitlines())
 
         except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e)
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
         parts = py_file.relative_to(test_root).parts

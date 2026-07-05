@@ -112,7 +112,7 @@ class Scanner:
                 self._walk(abs_dir, rel_dir, file_paths, incremental, last_scan_time)
             except Exception as exc:
                 msg = f"目录遍历异常 {rel_dir}: {exc}"
-                logger.error(msg)
+                logger.error(msg, exc_info=True)
                 errors.append(msg)
 
         total_files = len(file_paths)
@@ -193,7 +193,7 @@ class Scanner:
                 except Exception as exc:
                     fp = futures[future]
                     msg = f"处理失败 {fp}: {exc}"
-                    logger.error(msg)
+                    logger.error(msg, exc_info=True)
                     errors.append(msg)
 
         return entries, errors

@@ -141,7 +141,7 @@ class LLMFixAdapter(BaseFixer):
                 return result if isinstance(result, str) else str(result)
             return ""
         except Exception as exc:
-            logger.error("LLM call failed: %s", exc)
+            logger.error("LLM call failed: %s", exc, exc_info=True)
             return ""
 
     def validate(self, target: str) -> ValidationResult:

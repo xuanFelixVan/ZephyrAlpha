@@ -34,7 +34,7 @@ class TieredStorageBridge:
         except ImportError:
             logger.warning("TieredStorage not available")
         except Exception as exc:
-            logger.warning("TieredStorage init failed: %s", exc)
+            logger.warning("TieredStorage init failed: %s", exc, exc_info=True)
 
     def find_report(self, audit_id: str) -> dict[str, Any] | None:
         if not self._available or self._storage is None:
@@ -49,7 +49,7 @@ class TieredStorageBridge:
             data["_storage_tier"] = self._storage.classify(report_path)
             return data
         except Exception as exc:
-            logger.error("TieredStorageBridge.find_report failed: %s", exc)
+            logger.error("TieredStorageBridge.find_report failed: %s", exc, exc_info=True)
             return None
 
     def migrate(self, dry_run: bool = False) -> dict[str, Any]:
@@ -60,7 +60,7 @@ class TieredStorageBridge:
             result["available"] = True
             return result
         except Exception as exc:
-            logger.error("TieredStorageBridge.migrate failed: %s", exc)
+            logger.error("TieredStorageBridge.migrate failed: %s", exc, exc_info=True)
             return {"migrated": 0, "errors": 1, "available": False}
 
     def stats(self) -> dict[str, Any]:
@@ -71,7 +71,7 @@ class TieredStorageBridge:
             stats["available"] = True
             return stats
         except Exception as exc:
-            logger.error("TieredStorageBridge.stats failed: %s", exc)
+            logger.error("TieredStorageBridge.stats failed: %s", exc, exc_info=True)
             return {"available": False}
 
     def is_available(self) -> bool:

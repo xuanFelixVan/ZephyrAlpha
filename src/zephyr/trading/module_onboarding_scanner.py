@@ -114,7 +114,7 @@ class ModuleOnboardingScanner:
             source = path.read_text(encoding="utf-8")
             tree = ast.parse(source)
         except Exception as e:
-            logger.warning("_parse_module: failed to parse module %s (%s: %s)", path, type(e).__name__, e)
+            logger.warning("_parse_module: failed to parse module %s (%s: %s)", path, type(e).__name__, e, exc_info=True)
             return None
 
         rel = path.relative_to(self._src_root)

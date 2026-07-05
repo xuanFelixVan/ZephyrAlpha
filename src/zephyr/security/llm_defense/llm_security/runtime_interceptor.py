@@ -150,11 +150,11 @@ def grant_allowance(request_id: str | None = None, ttl: float = _DEFAULT_TTL) ->
     try:
         _ctx_allowance.set(token)
     except Exception as e:
-        logger.warning("grant_allowance: contextvar set 失败(%s: %s)，异步路径放行令牌未生效", type(e).__name__, e)
+        logger.warning("grant_allowance: contextvar set 失败(%s: %s)，异步路径放行令牌未生效", type(e).__name__, e, exc_info=True)
     try:
         _tls_set(token)
     except Exception as e:
-        logger.warning("grant_allowance: thread-local set 失败(%s: %s)，同步路径放行令牌未生效", type(e).__name__, e)
+        logger.warning("grant_allowance: thread-local set 失败(%s: %s)，同步路径放行令牌未生效", type(e).__name__, e, exc_info=True)
 
 
 def revoke_allowance() -> None:
@@ -162,11 +162,11 @@ def revoke_allowance() -> None:
     try:
         _ctx_allowance.set(None)
     except Exception as e:
-        logger.critical("revoke_allowance: contextvar 清除失败(%s: %s)，异步路径放行令牌可能残留=授权绕过风险", type(e).__name__, e)
+        logger.critical("revoke_allowance: contextvar 清除失败(%s: %s)，异步路径放行令牌可能残留=授权绕过风险", type(e).__name__, e, exc_info=True)
     try:
         _tls_set(None)
     except Exception as e:
-        logger.critical("revoke_allowance: thread-local 清除失败(%s: %s)，同步路径放行令牌可能残留=授权绕过风险", type(e).__name__, e)
+        logger.critical("revoke_allowance: thread-local 清除失败(%s: %s)，同步路径放行令牌可能残留=授权绕过风险", type(e).__name__, e, exc_info=True)
 
 
 def reset_allowance_for_request() -> None:
@@ -290,13 +290,13 @@ def _patch_litellm(module) -> None:
         if completion is not None and not _is_guarded(completion):
             module.completion = _make_guard(completion, "litellm.completion")
     except Exception as e:
-        logger.critical("_patch_litellm: completion patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过", type(e).__name__, e)
+        logger.critical("_patch_litellm: completion patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过", type(e).__name__, e, exc_info=True)
     try:
         acompletion = getattr(module, "acompletion", None)
         if acompletion is not None and not _is_guarded(acompletion):
             module.acompletion = _make_async_guard(acompletion, "litellm.acompletion")
     except Exception as e:
-        logger.critical("_patch_litellm: acompletion patch 失败(%s: %s)，异步 LLM 裸调守卫未挂载=安全绕过", type(e).__name__, e)
+        logger.critical("_patch_litellm: acompletion patch 失败(%s: %s)，异步 LLM 裸调守卫未挂载=安全绕过", type(e).__name__, e, exc_info=True)
 
 
 def _patch_langchain(module) -> None:
@@ -321,7 +321,7 @@ def _patch_langchain(module) -> None:
                 label = f"langchain.{cls.__name__}.invoke"
                 setattr(cls, "invoke", _make_guard(invoke, label))
         except Exception as e:
-            logger.critical("_patch_langchain: %s.invoke patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过", cls.__name__, type(e).__name__, e)
+            logger.critical("_patch_langchain: %s.invoke patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过", cls.__name__, type(e).__name__, e, exc_info=True)
             continue
 
 
@@ -390,7 +390,7 @@ def _eager_patch_loaded() -> None:
             try:
                 patcher(mod)
             except Exception as e:
-                logger.critical("_eager_patch_loaded: %s patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过", name, type(e).__name__, e)
+                logger.critical("_eager_patch_loaded: %s patch 失败(%s: %s)，LLM 裸调守卫未挂载=安全绕过", name, type(e).__name__, e, exc_info=True)
 
 
 def install() -> bool:

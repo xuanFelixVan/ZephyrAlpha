@@ -49,7 +49,7 @@ class MemoryWriter:
             logger.info("[ORC-VMS] archived: %s", tid)
             return ArchiveResult(stored=1)
         except Exception as e:
-            logger.warning("[ORC-VMS] degraded: %s", e)
+            logger.warning("[ORC-VMS] degraded: %s", e, exc_info=True)
             return ArchiveResult(stored=0, status="degraded", error="internal error")
 
 

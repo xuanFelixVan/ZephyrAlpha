@@ -56,7 +56,7 @@ class AlertHandler:
             logger.info("[ORC-FLE] %s alert → task %s created", severity_val, task.task_id)
             return task
         except Exception as exc:
-            logger.error("[ORC-FLE] handle_alert 失败: %s", exc)
+            logger.error("[ORC-FLE] handle_alert 失败: %s", exc, exc_info=True)
             return None
 
 

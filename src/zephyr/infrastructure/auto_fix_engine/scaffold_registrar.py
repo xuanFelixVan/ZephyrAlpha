@@ -144,7 +144,7 @@ class ScaffoldRegistrar(BaseFixer):
                     yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
                 os.replace(tmp_path, str(manifest_path))
         except Exception as exc:
-            logger.error("Failed to register script %s: %s", target, exc)
+            logger.error("Failed to register script %s: %s", target, exc, exc_info=True)
             raise
 
     def _register_module(self, target: str) -> None:
@@ -176,7 +176,7 @@ class ScaffoldRegistrar(BaseFixer):
                 f.write(content)
             os.replace(tmp_path, str(init_file))
         except Exception as exc:
-            logger.error("Failed to register module %s: %s", target, exc)
+            logger.error("Failed to register module %s: %s", target, exc, exc_info=True)
             raise
 
     def validate(self, target: str) -> ValidationResult:

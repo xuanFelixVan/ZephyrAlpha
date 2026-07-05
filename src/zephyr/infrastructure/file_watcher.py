@@ -166,9 +166,9 @@ class FileWatcher:
                         try:
                             self._on_change(event)
                         except Exception:
-                            logger.exception("on_change callback failed for %s", event.path)
+                            logger.exception("on_change callback failed for %s", event.path, exc_info=True)
             except Exception:
-                logger.exception("FileWatcher poll loop error")
+                logger.exception("FileWatcher poll loop error", exc_info=True)
 
 
 class BlueprintWatcher:
@@ -236,7 +236,7 @@ class BlueprintWatcher:
                 len(result.tasks) if hasattr(result, "tasks") else 0,
             )
         except Exception:
-            logger.exception("Auto-decompose failed for %s", blueprint_path)
+            logger.exception("Auto-decompose failed for %s", blueprint_path, exc_info=True)
 
     @staticmethod
     def _trigger_triple_alignment(blueprint_path: Path) -> None:
@@ -257,4 +257,4 @@ class BlueprintWatcher:
             else:
                 logger.info("G-TRIPLE-ALIGN PASSED for %s", module_id)
         except Exception:
-            logger.exception("G-TRIPLE-ALIGN check failed for %s", blueprint_path)
+            logger.exception("G-TRIPLE-ALIGN check failed for %s", blueprint_path, exc_info=True)

@@ -112,7 +112,7 @@ class LLMBridge:
                 error="",
             )
         except Exception as exc:
-            logger.warning("LLM 调用失败, 降级到模板: %s", exc)
+            logger.warning("LLM 调用失败, 降级到模板: %s", exc, exc_info=True)
             return self._template_fix(issue)
 
     def _build_prompt(self, issue: dict[str, Any]) -> str:

@@ -72,7 +72,7 @@ class RollbackBootIntegration:
             hook_registry.register(_on_boot, priority=10, name=self.HOOK_NAME)
             logger.info("RollbackBootIntegration registered to boot_hooks as '%s'", self.HOOK_NAME)
         except Exception as e:
-            logger.warning("Failed to register rollback boot hook: %s", e)
+            logger.warning("Failed to register rollback boot hook: %s", e, exc_info=True)
 
     def on_startup(self) -> BootResult:
         """系统启动时初始化回滚系统。"""
@@ -91,7 +91,7 @@ class RollbackBootIntegration:
             details["wal_incomplete_found"] = bool(incomplete)
         except Exception as e:
             errors.append(f"WAL init failed: {e}")
-            logger.error("RollbackWAL initialization failed: %s", e)
+            logger.error("RollbackWAL initialization failed: %s", e, exc_info=True)
 
         # 2. 初始化 RollbackVerifier
         try:
@@ -100,7 +100,7 @@ class RollbackBootIntegration:
             details["verifier_initialized"] = True
         except Exception as e:
             errors.append(f"Verifier init failed: {e}")
-            logger.error("RollbackVerifier initialization failed: %s", e)
+            logger.error("RollbackVerifier initialization failed: %s", e, exc_info=True)
 
         self._initialized = len(errors) == 0
 
@@ -124,7 +124,7 @@ class RollbackBootIntegration:
                 details["wal_flushed"] = True
             except Exception as e:
                 errors.append(f"WAL flush failed: {e}")
-                logger.error("RollbackWAL flush failed: %s", e)
+                logger.error("RollbackWAL flush failed: %s", e, exc_info=True)
 
         # 2. 清理临时文件
         in_flight_dir = self._project_root / ".zephyr" / "rollback_in_flight"
@@ -186,7 +186,7 @@ def subscribe_eventbus() -> None:
             "(pipeline_failed/mcp_call_failed/kill_switch_triggered)"
         )
     except Exception as e:
-        logger.warning("RollbackBootIntegration: subscribe_eventbus failed: %s", e)
+        logger.warning("RollbackBootIntegration: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
 def _on_pipeline_failed(payload: object) -> None:
@@ -253,4 +253,4 @@ def _trigger_rollback(payload: object, source: str) -> None:
                     source,
                 )
     except Exception as e:
-        logger.error("Rollback trigger failed for '%s': %s", source, e)
+        logger.error("Rollback trigger failed for '%s': %s", source, e, exc_info=True)

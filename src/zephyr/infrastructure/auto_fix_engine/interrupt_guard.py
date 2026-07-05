@@ -114,7 +114,7 @@ class InterruptGuard:
                     self._rollback_fix(action_id, data)
                 wal_file.unlink(missing_ok=True)
             except Exception as exc:
-                logger.error("WAL recovery failed for %s: %s", wal_file, exc)
+                logger.error("WAL recovery failed for %s: %s", wal_file, exc, exc_info=True)
         return recovered
 
     def _handle_interrupt(self, signum: int, frame: Any) -> None:
@@ -139,7 +139,7 @@ class InterruptGuard:
                 json.dump(wal_data, f, ensure_ascii=False, indent=2)
             os.replace(tmp_path, str(wal_file))
         except Exception as exc:
-            logger.error("WAL write failed for %s: %s", action_id, exc)
+            logger.error("WAL write failed for %s: %s", action_id, exc, exc_info=True)
 
     def _remove_wal(self, action_id: str) -> None:
         try:
@@ -163,4 +163,4 @@ class InterruptGuard:
                 os.replace(tmp_path, target)
                 logger.info("Rolled back %s to pre-fix state", target)
         except Exception as exc:
-            logger.error("Rollback failed for %s: %s", target, exc)
+            logger.error("Rollback failed for %s: %s", target, exc, exc_info=True)

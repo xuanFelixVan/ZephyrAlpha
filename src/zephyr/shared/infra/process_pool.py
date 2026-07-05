@@ -152,7 +152,7 @@ class MCPProcessPool:
                     creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
                 )
             except Exception:
-                logger.exception("MCPProcessPool: failed to create process '%s'", name)
+                logger.exception("MCPProcessPool: failed to create process '%s'", name, exc_info=True)
                 return None
 
             entry = PooledProcess(name=name, process=proc)
@@ -213,7 +213,7 @@ class MCPProcessPool:
             try:
                 self._reap_zombies()
             except Exception:
-                logger.exception("MCPProcessPool: zombie scan failed")
+                logger.exception("MCPProcessPool: zombie scan failed", exc_info=True)
             time.sleep(self._zombie_check_interval)
 
     def _reap_zombies(self) -> int:

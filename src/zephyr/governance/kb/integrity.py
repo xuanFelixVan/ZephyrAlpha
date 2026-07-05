@@ -150,7 +150,7 @@ class IntegrityGuard:
                 layer3_aggregate=data.get("layer3_aggregate", ""),
             )
         except Exception as e:
-            logger.warning("Failed to load integrity manifest: %s", e)
+            logger.warning("Failed to load integrity manifest: %s", e, exc_info=True)
             return None
 
     def verify(self, layer: int) -> DriftReport:
@@ -250,7 +250,7 @@ class IntegrityGuard:
                     )
                 )
             except Exception as e:
-                logger.warning("Failed to hash %s: %s", f, e)
+                logger.warning("Failed to hash %s: %s", f, e, exc_info=True)
         return entries
 
 

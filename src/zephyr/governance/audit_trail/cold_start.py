@@ -56,7 +56,7 @@ class BootstrapCache:
                 logger.info("BootstrapCache loaded: %d keys", len(self._cache))
                 return dict(self._cache)
             except Exception as exc:
-                logger.warning("BootstrapCache load failed: %s", exc)
+                logger.warning("BootstrapCache load failed: %s", exc, exc_info=True)
 
         self._cache = {
             "version": "1.0",
@@ -90,7 +90,7 @@ class BootstrapCache:
             )
             return True
         except Exception as exc:
-            logger.error("BootstrapCache persist failed: %s", exc)
+            logger.error("BootstrapCache persist failed: %s", exc, exc_info=True)
             return False
 
     def invalidate(self) -> None:

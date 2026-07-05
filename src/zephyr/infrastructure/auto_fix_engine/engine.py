@@ -150,7 +150,7 @@ class AutoFixEngine:
                 cls = getattr(mod, class_name)
                 self._fixers[name] = cls()
             except Exception as exc:
-                logger.debug("Fixer %s not loaded: %s", name, exc)
+                logger.debug("Fixer %s not loaded: %s", name, exc, exc_info=True)
 
     def fix(self, action_type: str, target: str, dry_run: bool = False) -> FixAction:
         if action_type in _NO_AUTO_FIX_TYPES:

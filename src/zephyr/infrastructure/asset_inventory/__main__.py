@@ -329,7 +329,7 @@ def _auto_fix_orphans(orphans: list) -> int:
                     )
                     fixed += 1
                 except Exception as e:
-                    logger.warning("_auto_fix_orphans: scaffold module register failed for %s (%s: %s)", rel, type(e).__name__, e)
+                    logger.warning("_auto_fix_orphans: scaffold module register failed for %s (%s: %s)", rel, type(e).__name__, e, exc_info=True)
         elif rel.startswith("scripts/"):
             script_rel = rel.replace("scripts/", "").replace(".py", "")
             try:
@@ -341,7 +341,7 @@ def _auto_fix_orphans(orphans: list) -> int:
                 )
                 fixed += 1
             except Exception as e:
-                logger.warning("_auto_fix_orphans: scaffold script register failed for %s (%s: %s)", rel, type(e).__name__, e)
+                logger.warning("_auto_fix_orphans: scaffold script register failed for %s (%s: %s)", rel, type(e).__name__, e, exc_info=True)
 
     return fixed
 
@@ -580,7 +580,7 @@ def main() -> None:
     except KeyboardInterrupt:
         code = 5
     except Exception as exc:
-        logger.exception("命令 %s 异常", args.command)
+        logger.exception("命令 %s 异常", args.command, exc_info=True)
         print(f"ERROR: {exc}", file=sys.stderr)
         code = 2
 

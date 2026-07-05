@@ -183,7 +183,7 @@ class AutoRuntimeCore:
                     state.error,
                 )
         except Exception as exc:
-            logger.error("RBAC bootstrap exception: %s", exc)
+            logger.error("RBAC bootstrap exception: %s", exc, exc_info=True)
 
     def _shutdown_rbac(self) -> None:
         """关闭RBAC系统 — 清理资源."""
@@ -196,7 +196,7 @@ class AutoRuntimeCore:
             genesis.shutdown()
             logger.info("RBAC shutdown completed")
         except Exception as exc:
-            logger.error("RBAC shutdown exception: %s", exc)
+            logger.error("RBAC shutdown exception: %s", exc, exc_info=True)
 
     def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
         import requests
@@ -209,7 +209,7 @@ class AutoRuntimeCore:
             # 5.56.1 修复：原仅接受 200，改为 2xx 范围判定（与 gpu_consensus_scheduler.py 一致）。
             return 200 <= resp.status_code < 300
         except Exception as e:
-            logger.warning("_ollama_alive: ollama health check failed (%s: %s)", type(e).__name__, e)
+            logger.warning("_ollama_alive: ollama health check failed (%s: %s)", type(e).__name__, e, exc_info=True)
             return False
 
     def _ensure_ollama_running(self) -> bool:
@@ -252,7 +252,7 @@ class AutoRuntimeCore:
 
             auto_subscribe_eventbus()
         except Exception:
-            logger.debug("Escalation EventBus auto-subscribe skipped")
+            logger.debug("Escalation EventBus auto-subscribe skipped", exc_info=True)
 
     def _register_task_system_hooks(self) -> None:
         from zephyr.trading.boot_hooks import register_boot_hooks
@@ -279,14 +279,14 @@ class AutoRuntimeCore:
                         return True
                 except Exception:
                     # 5.12.1 修复：原 except: pass 静默吞任务派发失败（任务黑洞）
-                    logger.exception("TaskQueue dispatch_handler failed for task_id=%s", task_id)
+                    logger.exception("TaskQueue dispatch_handler failed for task_id=%s", task_id, exc_info=True)
                 return False
 
             self._task_queue.set_dispatch_handler(_dispatch_handler)
             self._task_queue.start_polling()
             logger.info("TaskQueue polling started (interval=300s)")
         except Exception as e:
-            logger.warning("Failed to start TaskQueue: %s", e)
+            logger.warning("Failed to start TaskQueue: %s", e, exc_info=True)
 
     def _start_blueprint_watcher(self) -> None:
         try:
@@ -298,7 +298,7 @@ class AutoRuntimeCore:
             self._blueprint_watcher.start()
             logger.info("BlueprintWatcher started (interval=60s, auto_decompose=True)")
         except Exception as e:
-            logger.warning("Failed to start BlueprintWatcher: %s", e)
+            logger.warning("Failed to start BlueprintWatcher: %s", e, exc_info=True)
 
     def _start_fle_scheduler(self) -> None:
         try:
@@ -309,7 +309,7 @@ class AutoRuntimeCore:
             # 定时轮询已废除，FLE 反馈循环由事件驱动（commit 事件/状态变更事件）。
             logger.info("FLE Scheduler instantiated (daemon mode abolished per trae_053 v2.0.0)")
         except Exception as e:
-            logger.warning("Failed to instantiate FLE Scheduler: %s", e)
+            logger.warning("Failed to instantiate FLE Scheduler: %s", e, exc_info=True)
 
     def _run_boot_triple_alignment(self) -> None:
         try:
@@ -331,7 +331,7 @@ class AutoRuntimeCore:
                     len(result.violations),
                 )
         except Exception as e:
-            logger.warning("G-TRIPLE-ALIGN boot check failed: %s", e)
+            logger.warning("G-TRIPLE-ALIGN boot check failed: %s", e, exc_info=True)
 
     def _start_local_models(self, report: BootReport) -> None:
         if not self._ollama_alive():
@@ -360,7 +360,7 @@ class AutoRuntimeCore:
                 logger.warning("DeepSeekChat 不可用，降级到 OllamaChat")
                 raise RuntimeError("DeepSeekChat not available")
         except Exception as e:
-            logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e)
+            logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e, exc_info=True)
             try:
                 from zephyr.integration.local_model.ollama_chat import OllamaChat
 
@@ -409,7 +409,7 @@ class AutoRuntimeCore:
             self._vms.start()
             logger.info("VMS started via AutoRuntimeCore.boot()")
         except Exception as e:
-            logger.warning("VMS auto-start skipped: %s", e)
+            logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
 
     def _init_task_learner(self, report: BootReport) -> None:
         try:
@@ -498,7 +498,7 @@ class AutoRuntimeCore:
                 self._ollama_proc.terminate()
                 self._ollama_proc.wait(timeout=5)
             except Exception:
-                logger.exception("ollama_proc.terminate() failed during shutdown")
+                logger.exception("ollama_proc.terminate() failed during shutdown", exc_info=True)
             finally:
                 self._ollama_proc = None
         if self._local_scheduler is not None:
@@ -506,26 +506,26 @@ class AutoRuntimeCore:
                 self._local_scheduler.stop()
             except Exception:
                 # 5.12.1 修复：原 except: pass 静默吞本地模型调度器关闭失败
-                logger.exception("local_scheduler.stop() failed during shutdown")
+                logger.exception("local_scheduler.stop() failed during shutdown", exc_info=True)
         if hasattr(self, "_fle_scheduler") and self._fle_scheduler is not None:
             try:
                 self._fle_scheduler.stop()
             except Exception:
                 # 5.12.1 修复：原 except: pass 静默吞 FLE 调度器关闭失败
-                logger.exception("fle_scheduler.stop() failed during shutdown")
+                logger.exception("fle_scheduler.stop() failed during shutdown", exc_info=True)
         if self._vms is not None:
             try:
                 self._vms.shutdown()
             except Exception:
                 # 5.12.1 修复：原 except: pass 静默吞向量内存关闭失败
-                logger.exception("vms.shutdown() failed during shutdown")
+                logger.exception("vms.shutdown() failed during shutdown", exc_info=True)
         try:
             from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
 
             ResourceOptimizationEngine().stop_monitor()
         except Exception:
             # 5.12.1 修复：原 except: pass 静默吞资源监控停止失败
-            logger.exception("ResourceOptimizationEngine.stop_monitor() failed during shutdown")
+            logger.exception("ResourceOptimizationEngine.stop_monitor() failed during shutdown", exc_info=True)
         # 5.144.4 修复: shutdown_sequence() 无 try/except, 若抛异常则 self._booted = False 不执行,
         # 运行时状态卡在"已关闭但 booted=True"。用 try/finally 保证 _booted=False 必定执行
         try:
@@ -582,7 +582,7 @@ class AutoRuntimeCore:
                     break
         except Exception:
             # 5.12.1 修复：原 except: pass 静默吞任务学习失败（学习回路断链不可见）
-            logger.exception("_learn_from_completed_tasks failed")
+            logger.exception("_learn_from_completed_tasks failed", exc_info=True)
 
         if count > 0:
             self._task_learner._save()

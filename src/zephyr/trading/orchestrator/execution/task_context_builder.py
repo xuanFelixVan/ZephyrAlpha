@@ -90,7 +90,7 @@ class TaskContextBuilder:
             total_tokens = result["total_tokens"]
             status = result["status"]
         except Exception as exc:
-            logger.error("[CE-TCB] build failed: %s", exc)
+            logger.error("[CE-TCB] build failed: %s", exc, exc_info=True)
             status = "degraded"
         finally:
             stages["build_ms"] = round((time.perf_counter() - t0) * 1000, 1)
@@ -102,7 +102,7 @@ class TaskContextBuilder:
                 blocks = compressed["blocks"]
                 total_tokens = compressed["total_tokens"]
             except Exception as exc:
-                logger.warning("[CE-TCB] compress failed: %s", exc)
+                logger.warning("[CE-TCB] compress failed: %s", exc, exc_info=True)
         stages["compress_ms"] = round((time.perf_counter() - t0) * 1000, 1)
 
         t0 = time.perf_counter()
@@ -110,7 +110,7 @@ class TaskContextBuilder:
             validated = _validate_blocks(blocks)
             blocks = validated
         except Exception as exc:
-            logger.warning("[CE-TCB] validate failed: %s", exc)
+            logger.warning("[CE-TCB] validate failed: %s", exc, exc_info=True)
         stages["validate_ms"] = round((time.perf_counter() - t0) * 1000, 1)
 
         t0 = time.perf_counter()

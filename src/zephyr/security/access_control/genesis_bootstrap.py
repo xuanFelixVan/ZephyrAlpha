@@ -165,7 +165,7 @@ class GenesisBootstrap:
             self._state.success = False
             self._state.error = str(exc)
             self._state.completed_at = time.time()
-            logger.error("GenesisBootstrap FAILED at %s: %s", self._state.phase.value, exc)
+            logger.error("GenesisBootstrap FAILED at %s: %s", self._state.phase.value, exc, exc_info=True)
 
         return self._state
 
@@ -275,7 +275,7 @@ class GenesisBootstrap:
             bridge = BootstrapSuperadminBridge()
             bridge.shutdown()
         except Exception as exc:
-            logger.warning("GenesisBootstrap shutdown: %s", exc)
+            logger.warning("GenesisBootstrap shutdown: %s", exc, exc_info=True)
 
         self._state = GenesisState()
         logger.info("GenesisBootstrap shutdown completed")

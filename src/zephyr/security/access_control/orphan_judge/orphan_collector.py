@@ -92,7 +92,7 @@ class OrphanCollector:
                 else:
                     result.errors += 1
             except Exception as exc:
-                logger.error("Error processing judgment for %s: %s", judgment.path, exc)
+                logger.error("Error processing judgment for %s: %s", judgment.path, exc, exc_info=True)
                 result.errors += 1
 
         return result
@@ -174,5 +174,5 @@ class OrphanCollector:
             logger.info("DEPRECATED: %s — %s", path, reason)
             return True
         except Exception as exc:
-            logger.error("Failed to deprecate %s: %s", path, exc)
+            logger.error("Failed to deprecate %s: %s", path, exc, exc_info=True)
             return False

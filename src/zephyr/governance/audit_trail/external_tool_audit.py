@@ -63,7 +63,7 @@ class ExternalToolAuditor:
             self._results[name] = result
             return result
         except Exception as exc:
-            logger.error("Tool %s audit failed: %s", name, exc)
+            logger.error("Tool %s audit failed: %s", name, exc, exc_info=True)
             result = {
                 "tool": name,
                 "exit_code": -1,

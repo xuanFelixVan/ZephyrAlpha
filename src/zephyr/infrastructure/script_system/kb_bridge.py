@@ -82,7 +82,7 @@ class KBBridge:
                     )
                     published += 1
                 except Exception as exc:
-                    logger.debug("[SCRIPT-KB] write finding failed: %s", exc)
+                    logger.debug("[SCRIPT-KB] write finding failed: %s", exc, exc_info=True)
 
             conn.commit()
             conn.close()
@@ -90,7 +90,7 @@ class KBBridge:
             logger.info("[SCRIPT-KB] published: task=%s published=%d/%d", task_id, published, len(findings))
             return KBPublishResult(published=published, total=len(findings))
         except Exception as exc:
-            logger.warning("[SCRIPT-KB] KB unavailable, degraded: %s", exc)
+            logger.warning("[SCRIPT-KB] KB unavailable, degraded: %s", exc, exc_info=True)
             return KBPublishResult(published=0, total=len(findings), status="degraded", error=str(exc))
 
 

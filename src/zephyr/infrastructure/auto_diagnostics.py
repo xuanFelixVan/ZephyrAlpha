@@ -174,7 +174,7 @@ class AutoDiagnostics:
             for r in data.get("rules", []):
                 self._rules.append(DiagnosisRule(**r))
         except Exception as e:
-            logger.warning("Failed to load rules from %s: %s", config_path, e)
+            logger.warning("Failed to load rules from %s: %s", config_path, e, exc_info=True)
             self._load_default_rules()
 
     def diagnose(

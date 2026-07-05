@@ -70,7 +70,7 @@ class ContextIngest:
                     bridge._vms.write(mapped_collection, content, metadata=meta, doc_id=f"{mapped_collection}::{block_id}")
                     stored += 1
                 except Exception as exc:
-                    logger.debug("[VMS-INGEST] write failed for %s: %s", block_id, exc)
+                    logger.debug("[VMS-INGEST] write failed for %s: %s", block_id, exc, exc_info=True)
 
             logger.info(
                 "[CE-VMS] ingested: task=%s collection=%s stored=%d/%d",
@@ -81,7 +81,7 @@ class ContextIngest:
             )
             return stored
         except Exception as exc:
-            logger.warning("[VMS-INGEST] VMS unavailable, in-memory fallback: %s", exc)
+            logger.warning("[VMS-INGEST] VMS unavailable, in-memory fallback: %s", exc, exc_info=True)
             return self._ingest_memory(records, collection, task_id)
 
     def _ingest_memory(self, records: list[dict[str, Any]], collection: str, task_id: str) -> int:

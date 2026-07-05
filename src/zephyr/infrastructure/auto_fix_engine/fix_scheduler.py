@@ -112,7 +112,7 @@ class FixScheduler:
                         self._batch_count += 1
                 time.sleep(self._batch_interval)
             except Exception as exc:
-                logger.error("Scheduler loop error: %s", exc)
+                logger.error("Scheduler loop error: %s", exc, exc_info=True)
                 time.sleep(self._batch_interval)
 
     def _process_events(self) -> None:

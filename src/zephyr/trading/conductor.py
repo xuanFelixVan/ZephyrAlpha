@@ -98,7 +98,7 @@ class Conductor:
                 if bid != "__no_batch__":
                     self.repo.recover_stale_claims(bid)
         except Exception as exc:
-            logger.warning("Conductor: recover_stale_claims failed: %s", exc)
+            logger.warning("Conductor: recover_stale_claims failed: %s", exc, exc_info=True)
 
         claimed = self.autopilot.run_cycle(max_tasks=max_tasks)
         if not claimed:

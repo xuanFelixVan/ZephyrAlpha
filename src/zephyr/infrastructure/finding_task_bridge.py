@@ -201,7 +201,7 @@ class FindingTaskBridge:
                 result.tasks_failed += 1
                 err_msg = f"[{finding.finding_id}] {type(e).__name__}: {e}"
                 result.errors.append(err_msg)
-                logger.warning(err_msg)
+                logger.warning(err_msg, exc_info=True)
 
         return result
 

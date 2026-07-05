@@ -50,7 +50,7 @@ class DriftBridge:
                 }
             )
         except Exception as exc:
-            logger.error("DriftBridge.notify_change failed: %s", exc)
+            logger.error("DriftBridge.notify_change failed: %s", exc, exc_info=True)
             return {"status": "bridge_error", "error": str(exc)}
 
     def is_available(self) -> bool:

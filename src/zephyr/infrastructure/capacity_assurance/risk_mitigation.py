@@ -90,7 +90,7 @@ class DeadlockDetector:
                 # 添加 ±10% 随机抖动，避免重试同步化。
                 delay = self.base_delay * (2**attempt)
                 delay = delay + random.uniform(0, delay * 0.1)
-                logger.warning(f"Retry {attempt + 1}/{self.max_retries} after {delay}s: {e}")
+                logger.warning(f"Retry {attempt + 1}/{self.max_retries} after {delay}s: {e}", exc_info=True)
                 time.sleep(delay)
         raise last_exc or RuntimeError("Max retries exceeded")
 

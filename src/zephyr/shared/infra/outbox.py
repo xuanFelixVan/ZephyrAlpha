@@ -237,8 +237,8 @@ class OutboxPublisher:
                         logger.debug("outbox: %s published → %s", entry.id, entry.event_type)
                     except Exception as exc:
                         await self._store.mark_failed(entry.id)
-                        logger.error("outbox: %s publish failed: %s", entry.id, exc)
+                        logger.error("outbox: %s publish failed: %s", entry.id, exc, exc_info=True)
             except Exception as exc:
-                logger.error("outbox poll failed: %s", exc)
+                logger.error("outbox poll failed: %s", exc, exc_info=True)
 
             await asyncio.sleep(self._poll_interval)

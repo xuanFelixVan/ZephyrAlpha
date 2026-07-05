@@ -173,7 +173,7 @@ class FeedbackLoopScheduler:
             except Exception:
                 logger.warning(
                     "FLE-Scheduler: VectorBridge initialization failed, failure patterns will not persist to VMS"
-                )
+                , exc_info=True)
                 self.vector_bridge = None
 
     _instance: ClassVar[FeedbackLoopScheduler | None] = None
@@ -377,7 +377,7 @@ class FeedbackLoopScheduler:
                         self.vector_bridge.write_failure_pattern(diag_text)
                         logger.debug("FLE-Scheduler: failure pattern persisted to VMS lessons")
             except Exception:
-                logger.debug("FLE-Scheduler: failed to persist failure pattern to VMS")
+                logger.debug("FLE-Scheduler: failed to persist failure pattern to VMS", exc_info=True)
 
         logger.info(
             "FLE run=%s anomaly=%s action=%s verdict=%s",
@@ -481,7 +481,7 @@ class FeedbackLoopScheduler:
                 if written:
                     logger.debug("[FLE-DB] persisted %d metrics", written)
         except Exception:
-            logger.debug("[FLE-DB] metrics persist skipped")
+            logger.debug("[FLE-DB] metrics persist skipped", exc_info=True)
 
     def _dispatch_alert_if_anomaly(self, event: FLEPipelineEvent, act_result: Any) -> None:
         if event.anomaly is None:
@@ -530,7 +530,7 @@ class FeedbackLoopScheduler:
 
             self._persist_alert_and_log(alert, result)
         except Exception:
-            logger.debug("[FLE-ORC] alert dispatch skipped")
+            logger.debug("[FLE-ORC] alert dispatch skipped", exc_info=True)
 
     def _persist_alert_and_log(self, alert: Any, dispatch_result: Any) -> None:
         try:
@@ -547,7 +547,7 @@ class FeedbackLoopScheduler:
                 error_message=dispatch_result.error,
             )
         except Exception:
-            logger.debug("[FLE-DB] alert persist skipped")
+            logger.debug("[FLE-DB] alert persist skipped", exc_info=True)
 
     def _append_event(self, event: FLEPipelineEvent) -> None:
         self._events.append(event)

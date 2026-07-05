@@ -92,7 +92,7 @@ class ContextBridge:
 
             return response
         except Exception as exc:
-            logger.warning("[ORC-CE] CE unavailable, degraded: %s", exc)
+            logger.warning("[ORC-CE] CE unavailable, degraded: %s", exc, exc_info=True)
             return ContextResponse(
                 task_id=task_id,
                 status="degraded",
@@ -105,7 +105,7 @@ class ContextBridge:
 
             vectorize_context(response.task_id, response.blocks)
         except Exception:
-            logger.debug("[CE-VMS] context vectorize skipped")
+            logger.debug("[CE-VMS] context vectorize skipped", exc_info=True)
 
 
 def _infer_type(task: Any) -> str:

@@ -168,7 +168,7 @@ def _try_import_checker(module_path: str, class_name: str) -> Any:
         if cls is not None:
             return cls()
     except Exception:
-        logger.debug("Checker %s.%s not available, skipping", module_path, class_name)
+        logger.debug("Checker %s.%s not available, skipping", module_path, class_name, exc_info=True)
     return None
 
 
@@ -178,7 +178,7 @@ def _create_l2_checker() -> Any:
 
         return _DuplicateDetectorAdapter(DuplicateDetector())
     except Exception:
-        logger.debug("DuplicateDetector not available for L2, skipping")
+        logger.debug("DuplicateDetector not available for L2, skipping", exc_info=True)
         return None
 
 
@@ -355,7 +355,7 @@ class OrphanJudge:
                 try:
                     judgments.append(future.result())
                 except Exception as exc:
-                    logger.warning("Judge failed for %s: %s", path, exc)
+                    logger.warning("Judge failed for %s: %s", path, exc, exc_info=True)
                     judgments.append(
                         Judgment(
                             path=path,
@@ -438,7 +438,7 @@ class OrphanJudge:
                 detail=f"{layer_name} checker returned non-LayerResult",
             )
         except Exception as exc:
-            logger.warning("%s checker failed for %s: %s", layer_name, path, exc)
+            logger.warning("%s checker failed for %s: %s", layer_name, path, exc, exc_info=True)
             default = _DEGRADATION_DEFAULTS.get(layer_name, {"passed": False, "data": {}})
             return LayerResult(
                 layer=layer_name,

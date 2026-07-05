@@ -159,7 +159,7 @@ class FixBudget:
                 )
                 conn.commit()
             except Exception as exc:
-                logger.warning("Failed to persist budget consumption: %s", exc)
+                logger.warning("Failed to persist budget consumption: %s", exc, exc_info=True)
             # 5.49.2 修复：异常路径确保连接归还
             finally:
                 if conn is not None:

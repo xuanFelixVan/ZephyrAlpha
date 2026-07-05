@@ -56,7 +56,7 @@ class DLQRetryPolicy:
             finally:
                 conn.close()
         except Exception as e:
-            logger.warning("[DLQ] degraded: %s", e)
+            logger.warning("[DLQ] degraded: %s", e, exc_info=True)
             return RetryResult(status="degraded")
 
 

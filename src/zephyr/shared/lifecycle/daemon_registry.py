@@ -183,7 +183,7 @@ class DaemonRegistry:
                 entry.state = DaemonState.FAILED
                 entry.error_count += 1
                 entry.last_error = str(e)
-            logger.exception("DaemonRegistry: failed to start '%s'", name)
+            logger.exception("DaemonRegistry: failed to start '%s'", name, exc_info=True)
             return False
 
     @classmethod
@@ -207,7 +207,7 @@ class DaemonRegistry:
                 entry.state = DaemonState.FAILED
                 entry.error_count += 1
                 entry.last_error = str(e)
-            logger.exception("DaemonRegistry: failed to stop '%s'", name)
+            logger.exception("DaemonRegistry: failed to stop '%s'", name, exc_info=True)
             return False
 
     @classmethod
@@ -357,7 +357,7 @@ class DaemonRegistry:
                     cls.stop_low_priority(min_priority=2)
 
             except Exception:
-                logger.exception("DaemonRegistry: monitor tick failed")
+                logger.exception("DaemonRegistry: monitor tick failed", exc_info=True)
             time.sleep(interval)
 
     @classmethod

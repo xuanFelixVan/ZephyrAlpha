@@ -132,7 +132,7 @@ class TombstoneManager:
             logger.info("Tombstone table ke_tombstones initialized")
             return True
         except Exception as e:
-            logger.error("Failed to init tombstone table: %s", e)
+            logger.error("Failed to init tombstone table: %s", e, exc_info=True)
             return False
 
     def bury(
@@ -163,7 +163,7 @@ class TombstoneManager:
                 vector_hash=vector_hash,
             )
         except Exception as e:
-            logger.error("Failed to bury KE %s: %s", ke_id, e)
+            logger.error("Failed to bury KE %s: %s", ke_id, e, exc_info=True)
             raise
         finally:
             conn.close()
@@ -224,7 +224,7 @@ class TombstoneManager:
                 for r in rows
             ]
         except Exception as e:
-            logger.error("Failed to list tombstones: %s", e)
+            logger.error("Failed to list tombstones: %s", e, exc_info=True)
             return []
         finally:
             conn.close()
@@ -257,7 +257,7 @@ class TombstoneManager:
                 logger.info("Purged %d tombstones older than %s", count, cutoff_str)
             return count
         except Exception as e:
-            logger.error("Failed to purge tombstones: %s", e)
+            logger.error("Failed to purge tombstones: %s", e, exc_info=True)
             return 0
         finally:
             conn.close()

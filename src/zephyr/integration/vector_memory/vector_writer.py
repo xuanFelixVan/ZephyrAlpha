@@ -92,7 +92,7 @@ class VectorWriter:
             )
         except Exception as exc:
             elapsed = round((time.perf_counter() - t0) * 1000)
-            logger.warning("[CE-VMS] VMS unavailable, degraded: %s", exc)
+            logger.warning("[CE-VMS] VMS unavailable, degraded: %s", exc, exc_info=True)
             return VMSWriteResult(
                 stored_count=0,
                 total_blocks=len(blocks),

@@ -96,7 +96,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
             logger.info("Drift recovery bypassed: hotfix commit detected for %s", module_id)
             return result
     except Exception as exc:
-        logger.debug("Hotfix bypass check failed (non-fatal): %s", exc)
+        logger.debug("Hotfix bypass check failed (non-fatal): %s", exc, exc_info=True)
 
     try:
         from zephyr.governance.drift_detection.drift_engine import (
@@ -168,7 +168,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
             logger.warning("Auto-fix paused for %s due to cascade detection", module_id)
             return result
     except Exception as exc:
-        logger.debug("Cascade detection failed (non-fatal): %s", exc)
+        logger.debug("Cascade detection failed (non-fatal): %s", exc, exc_info=True)
 
     try:
         from zephyr.governance.drift_detection.reconciler import AutoFixer

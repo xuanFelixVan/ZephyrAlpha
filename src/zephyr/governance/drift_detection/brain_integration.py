@@ -275,7 +275,7 @@ def _l0_startup_probe(project_root, result):
     except Exception as exc:
         result.errors.append("L0 exception: " + str(exc))
 
-        logger.exception("probe failed with exception")
+        logger.exception("probe failed with exception", exc_info=True)
         result.errors.append("internal error")
 
     if result.errors:
@@ -350,7 +350,7 @@ def _l1_readiness_probe(project_root, result):
     except Exception as exc:
         result.errors.append("L1 exception: " + str(exc))
 
-        logger.exception("probe failed with exception")
+        logger.exception("probe failed with exception", exc_info=True)
         result.errors.append("internal error")
 
     if result.errors:
@@ -417,7 +417,7 @@ def _l2_liveness_probe(result):
     except Exception as exc:
         result.errors.append("L2 exception: " + str(exc))
 
-        logger.exception("probe failed with exception")
+        logger.exception("probe failed with exception", exc_info=True)
         result.errors.append("internal error")
 
     if result.errors:
@@ -482,7 +482,7 @@ def _l3_reconcile(result, scan_level="LIGHT"):
     except Exception as exc:
         result.errors.append("L3 exception: " + str(exc))
 
-        logger.exception("probe failed with exception")
+        logger.exception("probe failed with exception", exc_info=True)
         result.errors.append("internal error")
 
     if result.verify_events_remaining == 0:
@@ -539,7 +539,7 @@ def session_entry_full_probe(project_root=""):
         logger.info("STEP 4.9 full probe: %s", probe_result.summary())
 
     except Exception as exc:
-        logger.warning("STEP 4.9 full probe failed: %s", exc)
+        logger.warning("STEP 4.9 full probe failed: %s", exc, exc_info=True)
 
     return cold_result, probe_result
 

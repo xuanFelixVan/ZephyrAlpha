@@ -34,7 +34,7 @@ class MerkleHourlyBridge:
         except ImportError:
             logger.warning("HourlyMerkleAggregator not available")
         except Exception as exc:
-            logger.warning("HourlyMerkleAggregator init failed: %s", exc)
+            logger.warning("HourlyMerkleAggregator init failed: %s", exc, exc_info=True)
 
     def aggregate(self, hour_key: str | None = None) -> dict[str, Any] | None:
         if not self._available or self._aggregator is None:
@@ -45,7 +45,7 @@ class MerkleHourlyBridge:
                 return None
             return result.model_dump()
         except Exception as exc:
-            logger.error("MerkleHourlyBridge.aggregate failed: %s", exc)
+            logger.error("MerkleHourlyBridge.aggregate failed: %s", exc, exc_info=True)
             return None
 
     def verify(self, hour_key: str, expected_root: str) -> bool:
@@ -57,7 +57,7 @@ class MerkleHourlyBridge:
                 return False
             return result.merkle_root == expected_root
         except Exception as exc:
-            logger.error("MerkleHourlyBridge.verify failed: %s", exc)
+            logger.error("MerkleHourlyBridge.verify failed: %s", exc, exc_info=True)
             return False
 
     def is_available(self) -> bool:

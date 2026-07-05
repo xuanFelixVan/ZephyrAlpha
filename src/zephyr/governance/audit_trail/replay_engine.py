@@ -55,7 +55,7 @@ class ReplayEngine:
                 "replayed_at": datetime.now().isoformat(),
             }
         except Exception as exc:
-            logger.error("ReplayEngine.replay failed: %s", exc)
+            logger.error("ReplayEngine.replay failed: %s", exc, exc_info=True)
             return {"status": "error", "evidence_id": evidence_id, "match": False, "error": str(exc)}
 
     def replay_all(self) -> dict[str, Any]:
