@@ -3,7 +3,7 @@ module_id: VIEW-10-FRONTEND-ARCH
 title: Target Architecture — Frontend Architecture / 目标架构：前端架构
 doc_type: architecture_view
 status: Active
-version: 1.1.1
+version: 1.2.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -38,9 +38,9 @@ summary: ZephyrAlpha 2.0 TOGAF 第 10 个架构视图——前端架构。承载
   顶级目录，与 `src/zephyr/` 53 域 Python 后端完全异构），对标 Bloomberg Terminal / Refinitiv Workspace
   Platform / QuantConnect Lean+Cloud / Interactive Brokers TWS 四家机构共性。9 章节：与 03-AA
   边界 / 7 条前端架构原则 / Application-Container-Component-Tools 四层 / Module Federation 与
-  MFE 策略 / State 管理 / Design System 与组件库 / 构建部署运行时拓扑 / Activation Triggers（7 档升级条件）。当前前端 `frontend/` 目录**尚未物理建立**，本视图仅定义"未来前端平台架构终局"；激活时机由
+  MFE 策略 / State 管理 / Design System 与组件库 / 构建部署运行时拓扑 / Activation Triggers（8 档升级条件，含 G0.5 Python 过渡层）。当前前端 `frontend/` 目录**尚未物理建立**，本视图仅定义"未来前端平台架构终局"；激活时机由
   §9 Activation Triggers 定义。
-date: '2026-07-04'
+date: '2026-07-06'
 ttl: permanent
 ---
 
@@ -412,6 +412,7 @@ frontend/packages/*    ──┘
 | 档位 | 名称 | 触发条件（任一即可）| 激活动作 | 预计工作量 |
 |------|------|-------------------|---------|-----------|
 | **G0** | 当前态（未激活）| — | 无前端代码；CLI + Cursor + Feishu bot 满足所有交互 | 0 |
+| **G0.5** | Python 过渡层（Panel+HoloViz）| 回测可视化需求爆发（ARCH-047 裁定，2026-07-04 DONE）| `src/zephyr/frontend/dashboard/` 部署 Panel 应用 + ChartFactory 统一工厂 + 6 组件（backtest_results / tick_replay / order_book / position_monitor / trade_panel / fitness_functions）| 已实施（v3.0.0）|
 | **G1** | 最小 dashboard | 外部干系人（非本人 Owner）看报表/监控的需求 ≥ 2 周/次 | 搭 `frontend/` 骨架 + 1 个 App（risk-dashboard 或 monitoring-center）+ 最小 packages（ui-kit / data-client）+ tools | 5-8 天 |
 | **G2** | 2-3 App 平台 | (a) G1 已运行且稳定 ≥ 1 个月 & (b) 第 2 个 App 的业务需求成熟 | 启动 Module Federation（方案 B：Vite-native MF）+ platform/ 骨架 + 第 2/3 App | 8-12 天 |
 | **G3** | 团队级平台 | (a) App ≥ 3 & (b) 出现第 2 个前端开发者（人或 AI Operator）| 切换到 Webpack MF（方案 A）+ 私有 NPM + CI gate + Design System v2 | 10-15 天 |
@@ -442,5 +443,56 @@ frontend/packages/*    ──┘
 - **本视图正文**：架构级决策、业界对标、原则、分层、拓扑、激活触发 → 永远留在本视图
 - **详细实现细节**（具体 package 清单 / App 路由树 / OpenAPI Operation 列表 / 组件 API）→ 待触发下沉时在本视图 §7.5/§8 扩展
 - **触发条件**：本视图某章节 > 400 行 且 OQ-072 三条件满足（架构终局已锁 + 父章节超阈值 + 用户批准下沉计划）
+
+### 9.5 G0.5 Python 过渡层详解（v1.2.0 新增，ARCH-047 裁定）
+
+> **2026-07-04 ARCH-047 裁定**：在 G0（无前端）和 G1（React+Vite+TS）之间插入 G0.5 Python 原生可视化层。
+> 技术栈：Panel + HoloViz（HoloViews + Datashader + hvPlot）+ Plotly + plotly_resampler + TradingView Lightweight Charts v5.2。
+> 当前状态：**已实施**（MOD-L08-001 frontend 蓝图 v3.0.0，2026-07-04 DONE）。
+
+#### 9.5.1 设计 rationale
+
+G0.5 是面向 100% AI 开发模式的过渡层——Python 原生可视化栈让 AI 能用同一语言（Python）完成后端逻辑与前端渲染，避免 G1 React/TypeScript 栈带来的语言切换成本与供应链风险。Panel 组件可嵌入 React，G1 升级时渲染层可零重写复用。
+
+四方案对比结论（ARCH-047）：
+- 方案 A（Streamlit）：rerun 模型 / 无 WebSocket / 无 crossfiltering——三硬伤不可治本
+- 方案 B（Dash）：callback 模型复杂，Datashader 集成弱，社区活跃度下降
+- 方案 C（Gradio）：面向 ML demo，金融图表支持弱
+- **方案 D（Panel+HoloViz）**：Datashader 原生 / WebSocket 原生 / crossfiltering 原生——三硬伤全治本 ✓
+
+#### 9.5.2 技术栈分工
+
+| 组件 | 版本 | 用途 | governance_layer |
+|------|------|------|------------------|
+| panel | >=1.5.0,<2.0.0 | Python 原生可视化 Web 应用框架（G0.5 过渡层核心）| policy |
+| holoviews | >=1.19.0,<2.0.0 | 声明式可视化（净值曲线 / crossfiltering 联动）| policy |
+| plotly_resampler | >=0.9.0,<1.0.0 | Plotly 大数据降采样（MVP 默认渲染策略，10 万级）| policy |
+| lightweight-charts | v5.2（JS 原生，不引入 Python 封装包）| TradingView 专业 K 线 / 订单流（pn.pane.HTML + 原生 JS 集成）| policy |
+| datashader | >=0.16.0,<1.0.0 | 百万级 tick 渲染（仅阈值触发 > 50 万点，MVP 不默认启用）| factory |
+| hvplot | >=0.10.0,<1.0.0 | pandas-like API 图表（AI 友好度提升）| factory |
+
+#### 9.5.3 ChartFactory 统一工厂
+
+`src/zephyr/frontend/dashboard/components/chart_factory.py` 提供 5 类图表工厂方法：
+
+- `make_equity` — 净值曲线
+- `make_drawdown` — 回撤曲线
+- `make_heatmap` — 热力图
+- `make_tick` — Tick 数据
+- `make_kline` — K 线图（TradingView Lightweight Charts）
+
+Panel callback 仅编排（fetch → ChartFactory.make_xxx() → callback），业务逻辑独立为纯函数。G1 升级时 fetch 可直接包装为 FastAPI 路由，零重写。
+
+#### 9.5.4 退出条件（升级到 G1 的 3 信号）
+
+G0.5 → G1 升级触发条件（3 信号**同时**出现）：
+
+1. MatchingLogic 共享后回测-实盘偏差仍 > 5% 且定位不到根因
+2. 策略迭代速度成瓶颈（Panel rerun 模型限制暴露）
+3. 有模拟实盘环境需求（需 React 级交互复杂度）
+
+#### 9.5.5 共存策略
+
+G0.5 与 G1 可共存——Panel 组件可嵌入 React（`pn.pane.HTML` + React 组件），G1 升级不推翻 G0.5 架构。G2 React 迁移时 Panel 渲染层可直接对应 React 组件复用。
 
 > 修订记录由 git log 承载，不再手写。
