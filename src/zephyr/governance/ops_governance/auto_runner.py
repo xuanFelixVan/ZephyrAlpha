@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] AutoRunnerError on failure; RuntimeError on resource leak
 # [TESTS] tests/test_auto_runner.py
 # [A_module] module_id=MOD-GOV_auto_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器.
 
@@ -202,7 +202,8 @@ class GovernanceAutoRunner:
         try:
             conn = get_depgraph_pg_connection(autocommit=False)
         except (psycopg2.Error, FileNotFoundError, ValueError) as e:
-            logger.warning("_write_audit_log: PG 连接失败: %s", e)
+            # 5.170.1 修复: 审计日志 PG 连接失败属于系统级故障, 应为 error 而非 warning
+            logger.error("_write_audit_log: PG 连接失败: %s", e)
             return
 
         try:
@@ -224,7 +225,8 @@ class GovernanceAutoRunner:
                 )
             conn.commit()
         except psycopg2.Error as e:
-            logger.warning("_write_audit_log: 写入审计日志失败: %s", e)
+            # 5.170.2 修复: 审计日志 INSERT 失败属于系统级故障, 应为 error 而非 warning
+            logger.error("_write_audit_log: 写入审计日志失败: %s", e)
             conn.rollback()
         finally:
             conn.close()

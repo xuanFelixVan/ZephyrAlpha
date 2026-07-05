@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_index_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """UnifiedAssetIndex — MOD-INF-026 L3 统一资产索引生成器
 
@@ -109,7 +109,8 @@ class IndexGenerator:
         klass_dir = self.root / "data" / "classified"
         klass_path = klass_dir / "classified-assets.json"
         if not klass_path.exists():
-            print("警告: 分类文件不存在，先运行 classifier")
+            # 5.170.4 修复: 警告信息 print → logger.warning
+            logger.warning("分类文件不存在，先运行 classifier: %s", klass_path)
             return
 
         payload = json.loads(klass_path.read_text(encoding="utf-8"))
@@ -121,9 +122,8 @@ class IndexGenerator:
 
         index = self.generate(cr)
         out = self.save(index)
-        print(f"  INDEX   {index.total_assets} 资产")
-        print(f"  HEALTH  {index.health_score}")
-        print(f"  OUTPUT  {out}")
+        # 5.170.5 修复: 结果输出 print → logger.info (库代码 CLI 入口)
+        logger.info("INDEX %d 资产 | HEALTH %s | OUTPUT %s", index.total_assets, index.health_score, out)
 
 
 def _calc_grade(orphan: float, ghost: float, drift: float) -> str:

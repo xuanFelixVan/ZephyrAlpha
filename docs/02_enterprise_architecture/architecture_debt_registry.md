@@ -9286,6 +9286,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.170 日志级别误用（14个，第29轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=14(日志级别误用需统一)
+> **第40轮修复状态（2026-07-05）**：FIXED=8(MEDIUM.1-2 auto_runner.py 审计日志 warning→error + LOW.4-9 windows_service.py 4处 + index_generator.py 2处 print→logger), NOT_NEEDED=6(LOW.1-3 print_ranking/print_summary 是 stdout 显示方法, 架构性建议非缺陷 + LOW.10-12 scripts/ 目录注册表自身标注"scripts acceptable"), STILL_VALID=0
 
 #### MEDIUM（2个）
 

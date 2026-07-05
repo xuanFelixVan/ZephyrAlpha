@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_windows_service | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 WindowsService — Windows Service 包装器
@@ -30,7 +30,10 @@ WindowsService — Windows Service 包装器
 
 from __future__ import annotations
 
+import logging
 import sys
+
+logger = logging.getLogger(__name__)
 
 
 def install_service() -> None:
@@ -46,14 +49,16 @@ def install_service() -> None:
         ["sc", "config", "ZephyrAlpha", "start=auto"],
         check=True,
     )
-    print("ZephyrAlpha Windows Service installed and set to auto-start.")
+    # 5.170.6 修复: 库代码 CLI 入口 print → logger.info
+    logger.info("ZephyrAlpha Windows Service installed and set to auto-start.")
 
 
 def uninstall_service() -> None:
     import subprocess
 
     subprocess.run(["sc", "delete", "ZephyrAlpha"], check=True)
-    print("ZephyrAlpha Windows Service uninstalled.")
+    # 5.170.7 修复: 库代码 CLI 入口 print → logger.info
+    logger.info("ZephyrAlpha Windows Service uninstalled.")
 
 
 def run_as_service() -> None:
@@ -62,8 +67,10 @@ def run_as_service() -> None:
         import win32service
         import win32serviceutil
     except ImportError:
-        print("pywin32 not installed. Run: pip install pywin32")
-        print("Falling back to console mode...")
+        # 5.170.8 修复: 缺失依赖错误 print → logger.error
+        logger.error("pywin32 not installed. Run: pip install pywin32")
+        # 5.170.9 修复: 降级提示 print → logger.warning
+        logger.warning("Falling back to console mode...")
         from zephyr.trading.__main__ import main
 
         main()
