@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK_default_risk_manager_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 # ---
 # domain: risk
@@ -218,7 +218,13 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
         total_nav = Decimal("1000000")
         if isinstance(positions, dict):
             positions_dict = positions
-            market_values = {k: float(v) * float(total_nav) for k, v in positions.items()}
+            # 5.105.9 修复: 添加类型校验, 防止 v 为 None 或非数字字符串时 float(v) 抛异常
+            market_values = {}
+            for k, v in positions.items():
+                try:
+                    market_values[k] = float(v) * float(total_nav)
+                except (TypeError, ValueError):
+                    market_values[k] = 0.0
         return self._limits_calculator.calculate(
             positions=positions_dict,
             market_values=market_values,

@@ -6637,6 +6637,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=13(Decimal/float精度问题需逐处审查强制转换安全)
 
 > **第39轮修复状态（2026-07-05）**：FIXED=5(5.105.1 default_risk_validator dd_from_peak>drawdown_limit 统一转Decimal比较+5.105.2 stop_loss.evaluate_stop_loss 函数入口统一current_price转Decimal+5.105.3/4 default_tca_engine int(Decimal)向零截断改to_integral_value(ROUND_HALF_EVEN)银行家舍入(2个重复文件)+5.105.13 risk_manager_orchestrator `or 0.0`掩盖None改显式is not None判断), 0 DRIFTED, STILL_VALID=8(5.105.5-12 Decimal精度问题涉及字段类型变更/跨模块影响需更深审查)。
+> **第41轮修复状态（2026-07-05）**：FIXED=2(5.105.5 execution_engine Decimal域内计算后转float避免大数量精度丢失 + 5.105.9 risk_manager_orchestrator float(v)添加try/except类型校验), DRIFTED=1(5.105.12 default_backtest_engine.py文件不存在), DEFERRED=5(5.105.6/7/8 涉及RiskLimits/RiskDashboardSnapshot/RiskMetricsReport字段类型float→Decimal变更,跨模块影响需专项工程 + 5.105.10/11 LOW项类型契约不一致但当前float转换在容差范围内可接受). 维度5.105机械项已清零.
 
 #### 5.105.1 HIGH级（2个）
 

@@ -133,7 +133,8 @@ class ExecutionEngine:
 
         violations = self._risk_validator.validate_order(
             symbol=order.symbol,
-            target_weight=float(order.quantity) / 1000000.0,
+            # 5.105.5 修复: 在Decimal域内计算后再转float, 避免大数量Decimal→float精度丢失
+            target_weight=float(Decimal(str(order.quantity)) / Decimal("1000000")) if not isinstance(order.quantity, Decimal) else float(order.quantity / Decimal("1000000")),
             current_holdings={},
             limits={"max_single_position": 0.10},
         )
