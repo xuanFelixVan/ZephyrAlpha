@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SEC_capability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 CBAC 能力检查器 (Capability-Based Access Control)
@@ -38,7 +38,7 @@ from __future__ import annotations
 import fnmatch
 from pathlib import Path
 from threading import RLock
-from typing import Any, Self
+from typing import Any, Self, final
 
 try:
     from pydantic import BaseModel, Field
@@ -69,6 +69,7 @@ class CapabilityDenied(Exception):
         )
 
 
+@final
 class Capability(BaseModel, frozen=True):
     name: str = Field(min_length=1)
     description: str = ""

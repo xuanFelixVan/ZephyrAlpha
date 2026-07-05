@@ -6854,6 +6854,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(375处常量未标注Final需全量标注)
 > **第40轮修复状态（2026-07-05）**：FIXED=4(5.114.1-5.114.4 governance/code_dedup/config.py 4个可变dict常量PROJECT_SCALE_TIERS/POLICY_TREE/EXIT_CODES/PATH_THRESHOLDS标注Final+MappingProxyType包裹防止内容突变,load_policy_tree fallback返回dict副本保持调用方dict语义), 0 DRIFTED, STILL_VALID=3(5.114.5 375处全量标注Final=大规模/5.114.6 re-export Final语义=非平凡/5.114.7 @final安全类标注=需评估, 均需专项推进)
+> **第41轮修复状态（2026-07-05）**：5.114.7 FIXED——3个安全敏感类添加@final装饰器(AuditRecord/AnomalyAlert in tamper_proof_audit.py + SkillFileLock in skill_locking.py + Capability in shared/security/capability.py),防止子类化绕过安全契约。STILL_VALID=2(5.114.5/5.114.6 需专项推进)。
 
 #### 5.114.1-5.114.4 [HIGH] governance/config.py 4个可变dict常量未标注Final
 

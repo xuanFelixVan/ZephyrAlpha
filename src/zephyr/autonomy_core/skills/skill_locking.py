@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_skill_locking | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 MOD-INF-019: Agent Spec — Skill Locking (Production Hardening)
@@ -32,7 +32,7 @@ import threading
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
+from typing import Any, final
 
 
 class SkillLock:
@@ -92,6 +92,7 @@ class SkillLock:
         return {"active_locks": len(cls._LOCKS)}
 
 
+@final
 class SkillFileLock:
     """基于文件的跨进程锁."""
 
