@@ -1,0 +1,33 @@
+# [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+# [MODULE] zephyr.data.config.schedule
+# [DOMAIN] D_DATA
+# [TTL] permanent
+# 调度计划真源（蓝图 §6.2 调度计划 4 档时段）
+# cron 格式: 分 时 日 月 周（APScheduler 标准）
+# executor: default(8线程池,可并行源) / heavy(2线程池,串行源如iFind/QMT)
+
+schedules:
+  daily_kline:
+    cron: "30 16 * * 1-5"
+    executor: heavy
+    description: "盘后日K时段——日频核心，先跑"
+
+  daily_capital:
+    cron: "00 17 * * 1-5"
+    executor: default
+    description: "盘后资金时段——资金面+外盘"
+
+  daily_event:
+    cron: "00 18 * * 1-5"
+    executor: default
+    description: "盘后事件时段——事件驱动数据"
+
+  weekend_financial:
+    cron: "00 10 * * 6"
+    executor: heavy
+    description: "周末财务时段——低频财务数据"
+
+  monthly_static:
+    cron: "00 09 1 * *"
+    executor: default
+    description: "静态数据月初刷新"
