@@ -54,6 +54,8 @@ DEFAULT_RISK_FREE_RATE = 0.025
 TRADING_DAYS_PER_YEAR = 252
 # Sharpe计算最小样本量(低于此值统计不显著)
 MIN_SAMPLES_FOR_SHARPE = 60
+# Euler-Mascheroni constant(用于DSR多重测试偏差修正E[max SR]期望)
+_EULER_MASCHERONI_GAMMA = 0.5772156649015329
 
 
 class MetricsError(Exception):
@@ -190,16 +192,21 @@ def calculate_ic_ir(
 
     # Spearman秩相关(更稳健)
     ic = float(factor_values.corr(forward_returns, method="spearman"))
-    ic_std = float(forward_returns.std())
+    n = len(factor_values)
+    # ic_std: 相关系数标准误, 由t统计量关系反推
+    # t = ic*sqrt(n-2)/sqrt(1-ic^2) → se(ic) = sqrt((1-ic^2)/(n-2))
+    if n > 2 and abs(ic) < 1.0:
+        ic_std = float(np.sqrt((1.0 - ic * ic) / (n - 2)))
+    else:
+        ic_std = 0.0
     if ic_std > 0:
         ic_ir = float(ic / ic_std * np.sqrt(periods_per_year))
     else:
         ic_ir = 0.0
 
-    # t统计量
-    n = len(factor_values)
-    if n > 2 and ic_std > 0:
-        t_stat = float(ic * np.sqrt(n - 2) / np.sqrt(1 - ic**2 + 1e-10))
+    # t统计量(与ic_std一致: t = ic / ic_std)
+    if ic_std > 0:
+        t_stat = float(ic / ic_std)
     else:
         t_stat = 0.0
 
@@ -262,35 +269,42 @@ def calculate_dsr(
     skew = float(skewness)
     kurt = float(kurtosis)
 
-    # 1) 非正态修正Sharpe(adjusted Sharpe Ratio)
+    # 1) 非正态修正Sharpe(adjusted Sharpe Ratio, Bailey-LdP 2014)
     #    SR_adj = SR * (1 - skew*SR/6 + (kurt-3)*SR^2/24)
     adjustment = 1.0 - skew * sr / 6.0 + (kurt - 3.0) * sr * sr / 24.0
     adjusted_sharpe = sr * adjustment
 
-    # 2) 多重测试偏差(multiple testing bias):N次独立试错中最高Sharpe的期望
-    #    E[max SR] = sqrt(2 * ln(N))
-    if n_trials > 1:
-        expected_max_sharpe = float(np.sqrt(2.0 * np.log(n_trials)))
+    # 2) DSR方差项(考虑非正态与样本量, Mertens/Bailey-LdP)
+    #    var_term = 1 - skew*SR_adj + (kurt-1)/4 * SR_adj^2
+    #    sigma_sr = sqrt(var_term / (n_samples - 1))
+    var_term = (
+        1.0
+        - skew * adjusted_sharpe
+        + (kurt - 1.0) * adjusted_sharpe * adjusted_sharpe / 4.0
+    )
+    if n_samples > 1 and var_term > 0:
+        sigma_sr = float(np.sqrt(var_term / (n_samples - 1)))
+    else:
+        sigma_sr = 0.0
+
+    # 3) 多重测试偏差(multiple testing bias):N次独立试错中最高Sharpe的期望
+    #    E[max SR] = sigma_sr * [(1-γ)*sqrt(2*ln(N)) + γ/sqrt(2*ln(N))]
+    #    γ = Euler-Mascheroni constant ≈ 0.5772156649
+    if n_trials > 1 and sigma_sr > 0:
+        sqrt_2lnN = float(np.sqrt(2.0 * np.log(n_trials)))
+        if sqrt_2lnN > 0:
+            expected_max_sharpe = sigma_sr * (
+                (1.0 - _EULER_MASCHERONI_GAMMA) * sqrt_2lnN
+                + _EULER_MASCHERONI_GAMMA / sqrt_2lnN
+            )
+        else:
+            expected_max_sharpe = 0.0
     else:
         expected_max_sharpe = 0.0
 
-    # 3) DSR方差项(考虑非正态与样本量)
-    #    var_term = 1 - skew*SR_adj/6 + (kurt-3)*SR_adj^2/24 + 1
-    #    std_term = sqrt(var_term / (n_samples - 1))
-    var_term = (
-        1.0
-        - skew * adjusted_sharpe / 6.0
-        + (kurt - 3.0) * adjusted_sharpe * adjusted_sharpe / 24.0
-        + 1.0
-    )
-    if n_samples > 1 and var_term > 0:
-        std_term = float(np.sqrt(var_term / (n_samples - 1)))
-    else:
-        std_term = 0.0
-
-    # 4) DSR = Φ((SR_adj - E[max SR]) / std_term),Φ为标准正态CDF
-    if std_term > 0:
-        z = (adjusted_sharpe - expected_max_sharpe) / std_term
+    # 4) DSR = Φ((SR_adj - E[max SR]) / sigma_sr),Φ为标准正态CDF
+    if sigma_sr > 0:
+        z = (adjusted_sharpe - expected_max_sharpe) / sigma_sr
         dsr = _norm_cdf(z)
     else:
         dsr = 0.0

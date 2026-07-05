@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-RES_model_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-021-model_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -28,10 +28,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 @dataclass
@@ -50,7 +53,7 @@ class ModelDriftDetector:
     BASELINE_FILE: str = ".zephyr/model_baseline.json"
 
     def __init__(self, project_root: Path | None = None) -> None:
-        self._project_root = project_root or Path.cwd()
+        self._project_root = project_root or REPO_ROOT
         self._baseline_path = self._project_root / self.BASELINE_FILE
 
     def establish_baseline(self, sample_outputs: list[dict[str, Any]]) -> bool:
@@ -134,7 +137,9 @@ class ModelDriftDetector:
             pk = p.get(k, 1e-10)
             qk = q.get(k, 1e-10)
             mk = m.get(k, 1e-10)
-            kl_pm += pk * (pk / mk if mk > 0 and pk > 0 else 0)
-            kl_qm += qk * (qk / mk if mk > 0 and qk > 0 else 0)
+            if pk > 0 and mk > 0:
+                kl_pm += pk * math.log(pk / mk)
+            if qk > 0 and mk > 0:
+                kl_qm += qk * math.log(qk / mk)
 
-        return 0.5 * (kl_pm + kl_qm) ** 0.5
+        return 0.5 * (kl_pm + kl_qm)

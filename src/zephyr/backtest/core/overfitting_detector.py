@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] OverfittingError
 # [TESTS]
 # [TTL] permanent
-# [A_module] module_id=MOD-BT-001-overfitting-detector | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001-overfitting_detector | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """过拟合检测模块(三维度 + 三层)
 
 职责:
@@ -97,6 +97,17 @@ class OverfittingDetector:
     def __init__(self, config: OverfittingConfig | None = None):
         self.config = config if config is not None else OverfittingConfig()
 
+    @staticmethod
+    def _extract_sharpe(result: dict) -> float:
+        """从结果字典提取Sharpe值, 处理None值/缺失键/非数值"""
+        val = result.get("sharpe_ratio")
+        if val is None:
+            val = result.get("sharpe", 0.0)
+        try:
+            return float(val)
+        except (TypeError, ValueError):
+            return 0.0
+
     def check_walk_forward_stability(self, walk_forward_results: list[dict]) -> dict:
         """Walk-Forward参数稳定性检测(维度1)
 
@@ -122,7 +133,7 @@ class OverfittingDetector:
             }
 
         sharpes = np.array(
-            [float(r.get("sharpe_ratio") if "sharpe_ratio" in r else r.get("sharpe", 0.0))
+            [self._extract_sharpe(r)
              for r in walk_forward_results],
             dtype=float,
         )
@@ -180,11 +191,7 @@ class OverfittingDetector:
         Returns:
             dict: is_stable, base_sharpe, max_change, mean_change, n_perturbed, reasons
         """
-        base_sharpe = float(
-            base_result.get("sharpe_ratio")
-            if "sharpe_ratio" in base_result
-            else base_result.get("sharpe", 0.0)
-        )
+        base_sharpe = self._extract_sharpe(base_result)
         if not perturbed_results:
             return {
                 "is_stable": True,
@@ -196,7 +203,7 @@ class OverfittingDetector:
             }
 
         perturbed_sharpes = np.array(
-            [float(r.get("sharpe_ratio") if "sharpe_ratio" in r else r.get("sharpe", 0.0))
+            [self._extract_sharpe(r)
              for r in perturbed_results],
             dtype=float,
         )
@@ -252,7 +259,7 @@ class OverfittingDetector:
             }
 
         sharpes = np.array(
-            [float(r.get("sharpe_ratio") if "sharpe_ratio" in r else r.get("sharpe", 0.0))
+            [self._extract_sharpe(r)
              for r in period_results],
             dtype=float,
         )

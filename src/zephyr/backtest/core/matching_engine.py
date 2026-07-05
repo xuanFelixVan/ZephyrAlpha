@@ -409,7 +409,7 @@ class MatchingEngine:
             )
             # Tick 模式下部分成交（quantity>0 但 filled=False）也应当应用
             # 市价单/限价单完全成交才应用（filled=True）
-            if fill is not None and (fill.filled or fill.quantity > 0):
+            if fill is not None and (fill.filled or fill.filled_quantity > 0):
                 fills.append(self._to_backtest_fill(fill, date))
         return fills
 
@@ -458,12 +458,16 @@ class MatchingEngine:
             return None
 
     def _to_backtest_fill(self, fill: MatchingFill, date: Any) -> BacktestFill:
-        """将 MatchingFill 转换为 BacktestFill（加 date 字段）"""
+        """将 MatchingFill 转换为 BacktestFill（加 date 字段）
+
+        使用 filled_quantity（实际成交数量）而非 quantity（委托数量），
+        以正确处理 Tick 级部分成交场景。
+        """
         return BacktestFill(
             date=date,
             symbol=fill.symbol,
             side=fill.side,
-            quantity=fill.quantity,
+            quantity=fill.filled_quantity,
             price=fill.price,
             commission=fill.commission,
             slippage_cost=fill.slippage_cost,

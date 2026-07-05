@@ -181,6 +181,7 @@ class MatchingFill:
     commission: Decimal
     slippage_cost: Decimal
     filled: bool = True
+    filled_quantity: Decimal = Decimal("0")
 
     @property
     def total_cost(self) -> Decimal:
@@ -279,6 +280,7 @@ class MatchingLogic:
             commission=commission,
             slippage_cost=slippage_cost,
             filled=True,
+            filled_quantity=order.quantity,
         )
 
     def match_limit_order(
@@ -341,6 +343,7 @@ class MatchingLogic:
             commission=commission,
             slippage_cost=slippage_cost,
             filled=True,
+            filled_quantity=order.quantity,
         )
 
     def match_tick_order(
@@ -426,6 +429,7 @@ class MatchingLogic:
             commission=commission,
             slippage_cost=slippage_cost,
             filled=(remaining <= 0),
+            filled_quantity=filled_qty,
         )
 
     def _apply_slippage(self, price: Decimal, side: str) -> Decimal:
@@ -481,6 +485,7 @@ class MatchingLogic:
             commission=Decimal("0"),
             slippage_cost=Decimal("0"),
             filled=False,
+            filled_quantity=Decimal("0"),
         )
 
     def _validate_order(self, order: MatchOrderInput, expected_type: str) -> None:

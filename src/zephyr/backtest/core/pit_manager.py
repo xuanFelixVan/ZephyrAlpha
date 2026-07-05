@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] PITError
 # [TESTS]
 # [TTL] permanent
-# [A_module] module_id=MOD-BT-001-pit-manager | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001-pit_manager | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """PIT(Point-In-Time)铁律管理器模块
 
 职责:
@@ -326,12 +326,18 @@ class PITManager:
                 "has_delisted": bool,       # 回测中是否包含已退市标的
                 "delisted_count": int,      # 回测中包含的已退市标的数量
                 "missing_delisted": list,   # 已退市但未纳入回测的标的(偏差来源)
+                "coverage_ratio": float,   # 回测标的占历史全部标的比例(越低→偏差风险越高)
             }
         """
         bt_set = set(backtest_symbols or [])
         dl_set = set(delisted_symbols or [])
-        # all_symbols 预留: 可用于覆盖率/退市集交叉校验, 当前不强制使用
-        _ = set(all_symbols or [])
+        all_set = set(all_symbols or [])
+
+        # 覆盖率: 回测标的占历史全部标的的比例(越低→幸存者偏差风险越高)
+        if all_set:
+            coverage_ratio = len(bt_set & all_set) / len(all_set)
+        else:
+            coverage_ratio = 0.0
 
         in_backtest = bt_set & dl_set
         missing_delisted = dl_set - bt_set
@@ -339,4 +345,5 @@ class PITManager:
             "has_delisted": len(in_backtest) > 0,
             "delisted_count": len(in_backtest),
             "missing_delisted": sorted(missing_delisted),
+            "coverage_ratio": float(coverage_ratio),
         }

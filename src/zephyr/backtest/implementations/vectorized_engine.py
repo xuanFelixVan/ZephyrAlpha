@@ -430,5 +430,43 @@ class DefaultBacktestEngine(BacktestEngineBase):
             params_locked=params_locked,
         )
 
+    def wf_fold_to_gate_dict(self, wf_fold_results: list[dict]) -> list[dict]:
+        """将Walk-Forward各fold结果转换为DecisionGate.check_wfa_stage所需的dict格式(R12桥接)
+
+        Walk-Forward产出的fold结果字段名可能不统一(sharpe_ratio/sharpe, passed有无),
+        本方法统一提取为 {passed, sharpe, max_drawdown} 三字段, 供DecisionGate消费。
+
+        Args:
+            wf_fold_results: Walk-Forward各fold结果列表
+
+        Returns:
+            list[dict]: 每项含 passed(bool)/sharpe(float)/max_drawdown(float) 字段
+        """
+        gate_results: list[dict] = []
+        for fold in wf_fold_results:
+            if not isinstance(fold, dict):
+                continue
+            sharpe = fold.get("sharpe_ratio")
+            if sharpe is None:
+                sharpe = fold.get("sharpe", 0.0)
+            try:
+                sharpe = float(sharpe)
+            except (TypeError, ValueError):
+                sharpe = 0.0
+            md = fold.get("max_drawdown", 0.0)
+            try:
+                md = float(md)
+            except (TypeError, ValueError):
+                md = 0.0
+            passed = fold.get("passed")
+            if passed is None:
+                passed = sharpe > 0
+            gate_results.append({
+                "passed": bool(passed),
+                "sharpe": sharpe,
+                "max_drawdown": md,
+            })
+        return gate_results
+
 
 __all__ = ["BacktestConfig", "DefaultBacktestEngine"]

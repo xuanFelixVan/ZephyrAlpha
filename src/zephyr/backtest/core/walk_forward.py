@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] WalkForwardError
 # [TESTS]
 # [TTL] permanent
-# [A_module] module_id=MOD-BT-001-walk-forward | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001-walk_forward | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """Walk-Forward分析与多重比较偏差校正模块
 
 职责:
@@ -53,14 +53,14 @@ class WalkForwardConfig:
         train_window: 训练窗口长度(交易日)
         test_window: 测试窗口长度(交易日)
         step: 滚动步进(交易日), 用于rolling/anchored模式
-        n_combinations: CPCV组合数(组合净化交叉验证, 消除PIT泄漏)
+        block_size: stationary block bootstrap平均块长(0=自动T^(1/3))
     """
 
     mode: str = "rolling"
     train_window: int = 252
     test_window: int = 63
     step: int = 63
-    n_combinations: int = 10
+    block_size: int = 0
 
     def __post_init__(self):
         if self.train_window <= 0:
@@ -73,8 +73,8 @@ class WalkForwardConfig:
             raise WalkForwardError(
                 f"不支持的mode: {self.mode} (支持: rolling/anchored/expanding)"
             )
-        if self.n_combinations <= 0:
-            raise WalkForwardError(f"n_combinations必须>0, got {self.n_combinations}")
+        if self.block_size < 0:
+            raise WalkForwardError(f"block_size必须>=0, got {self.block_size}")
 
 
 class WalkForwardAnalyzer:
@@ -207,8 +207,9 @@ class WalkForwardAnalyzer:
         strategy_returns: pd.Series,
         benchmark_returns: pd.Series,
         n_bootstrap: int = 1000,
+        block_size: int = 0,
     ) -> dict:
-        """White's Reality Check(多重比较偏差校正, bootstrap)
+        """White's Reality Check(多重比较偏差校正, stationary block bootstrap)
 
         通过bootstrap重采样检验策略相对基准是否存在显著超额收益(superior predictive ability)。
         原假设H0: 策略无超额收益能力(期望差分<=0)。
@@ -218,13 +219,15 @@ class WalkForwardAnalyzer:
           - 观测统计量为差分均值的t统计量
           - 对差分序列重新中心化(d_t - mean(d))后在H0下bootstrap重采样
           - p_value = P(bootstrap_t >= observed_t) (单侧)
-          - 采用iid bootstrap(简化实现; 标准WRC使用stationary block bootstrap,
-            因未引入block size配置, 此处用iid bootstrap近似)
+          - 采用stationary block bootstrap(Politis & Romano 1994),
+            块长L~Geometric(mean=block_size), 块起始均匀随机, 保留时间序列自相关
+          - block_size=0时自动取T^(1/3)(Politis & Romano最优块长)
 
         Args:
             strategy_returns: 策略收益率序列
             benchmark_returns: 基准收益率序列(与strategy_returns时间对齐)
             n_bootstrap: bootstrap重采样次数, 默认1000
+            block_size: stationary block bootstrap平均块长(0=自动T^(1/3))
 
         Returns:
             dict: p_value(float), is_significant(bool, p<0.05), t_stat(float, 观测t统计量)
@@ -252,13 +255,16 @@ class WalkForwardAnalyzer:
         sqrt_n = float(np.sqrt(n))
         obs_t = obs_mean / (obs_std / sqrt_n)
 
-        # 重新中心化(under H0: 均值为0), bootstrap估计null分布
+        # 自动计算block_size: T^(1/3)(Politis & Romano 1994最优块长)
+        if block_size <= 0:
+            block_size = max(1, int(round(n ** (1.0 / 3.0))))
+
+        # 重新中心化(under H0: 均值为0), stationary block bootstrap估计null分布
         recentered = diff - obs_mean
         rng = np.random.default_rng()
         boot_stats = np.empty(n_bootstrap)
         for b in range(n_bootstrap):
-            idx = rng.integers(0, n, size=n)
-            sample = recentered[idx]
+            sample = self._stationary_block_bootstrap(recentered, block_size, rng)
             s_std = float(np.std(sample, ddof=1))
             if s_std <= 0:
                 boot_stats[b] = 0.0
@@ -273,6 +279,43 @@ class WalkForwardAnalyzer:
             "is_significant": is_significant,
             "t_stat": float(obs_t),
         }
+
+    @staticmethod
+    def _stationary_block_bootstrap(
+        data: np.ndarray, block_size: int, rng: np.random.Generator
+    ) -> np.ndarray:
+        """Stationary block bootstrap(Politis & Romano 1994)
+
+        块长L ~ Geometric(mean=block_size), 块起始位置均匀随机,
+        保留时间序列自相关结构。最优block_size = T^(1/3)。
+
+        Args:
+            data: 一维数据数组
+            block_size: 平均块长(Geometric分布的均值)
+            rng: numpy随机数生成器
+
+        Returns:
+            重采样后的数组(长度等于data)
+        """
+        n = len(data)
+        result = np.empty(n)
+        # 块长服从Geometric分布, p = 1/block_size
+        p_block = 1.0 / max(block_size, 1)
+        idx = 0
+        while idx < n:
+            # 采样块长L ~ Geometric(p_block)
+            block_len = int(rng.geometric(p_block))
+            if block_len <= 0:
+                block_len = 1
+            # 块起始位置均匀随机(stationary: 允许环绕)
+            start = int(rng.integers(0, n))
+            for j in range(block_len):
+                if idx >= n:
+                    break
+                # 环绕索引(块可跨越序列边界)
+                result[idx] = data[(start + j) % n]
+                idx += 1
+        return result
 
 
 __all__ = [
