@@ -281,4 +281,4 @@ All documents under `docs/` must comply with frontmatter schema v2.0.0:
 - **本视图**只定义 `docs/` 信息资产抽屉体系与元数据标准
 - **业务能力地图**（哪些能力需要哪些文档）见 [business_architecture.md §3](./business_architecture.md)
 - **应用模块边界**（代码模块如何划分）见 [application_architecture.md](./application_architecture.md)
-- **架构原则**（R1-R4 安全红线 + BvB + 准入铁律）见 [../04_architecture_principles_decisions/architecture_principles.md](../04_architecture_principles_decisions/architecture_principles.md)
+- **架构原则**（R1-R4 安全红线 + 准入铁律）见 [../04_architecture_principles_decisions/architecture_principles.md](../04_architecture_principles_decisions/architecture_principles.md)

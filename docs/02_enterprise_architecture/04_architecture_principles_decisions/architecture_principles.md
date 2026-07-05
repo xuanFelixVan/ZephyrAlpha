@@ -13,18 +13,16 @@ valid_from: 2026-05-02
 superseded_by: null
 supersedes: null
 related_rationale: R29, R30
-related_open_questions:
-- OQ-032
+related_open_questions: []
 tags:
 - architecture-principles
 - open-source-first
-- build-vs-buy
 - license-governance
 - replaceability
 - thin-adapter
 - safety-red-lines
 - security-principles
-summary: ZephyrAlpha 2.0 架构原则集中 SSoT。v1.2.0 在 §1bis 增补安全红线 R1–R4 的 CI/工件追溯表。v1.1.0：§0 + §1 安全红线 + §2 BvB。未来扩展：OCP、SSoT、模块准入铁律。
+summary: ZephyrAlpha 2.0 架构原则集中 SSoT。v1.2.0 在 §1bis 增补安全红线 R1–R4 的 CI/工件追溯表。v1.1.0：§0 + §1 安全红线 + §2 开源优先。未来扩展：OCP、SSoT、模块准入铁律。
 date: '2026-05-06'
 ttl: permanent
 ---
@@ -39,7 +37,7 @@ ttl: permanent
 
 任何其他文件（KB 决策记录、视图文档、设计稿）中对同一原则的描述均为**只读引用**，不得独立修改原则正文。如有冲突，以本文档为准。
 
-**v1.0.0 初始内容来源**：§2 "开源优先与 Build-vs-Buy" 提取自 `designs/build-vs-buy-decision-framework.md`（DW-BVB-DESIGN-001，状态 deprecated），经质量对比确认 BvB 框架内容的专业完整度高于当前项目中的零散表述，提取升格为架构原则。
+**v1.0.0 初始内容来源**：§2 "开源优先" 子原则提取自早期设计稿（已废弃）。
 
 **v1.1.0 同步迁移完成**：安全红线 4 条已从 `overview.md` 归集至本文档 §1。
 **后续版本归集**：
@@ -75,7 +73,7 @@ ttl: permanent
 
 ---
 
-## 2. 开源优先与 Build-vs-Buy / Open Source First & Build-vs-Buy Decision Framework
+## 2. 开源优先 / Open Source First
 
 ### 2.1 专业机构为什么"开源优先"？
 
@@ -120,7 +118,7 @@ ttl: permanent
 **执行标准**：
 - 每个新的 `design_draft`、`adr`、`c4_view` 类文档必须含"OSS Candidates"小节
 - 至少调研 3 个同类开源项目
-- 输出 BvB 五维评分表（见 §2），明确决策结论
+- 明确决策结论（Buy / Buy+Wrap / Hybrid / Build）
 
 ---
 
@@ -187,63 +185,12 @@ OCP 扩展点基类（业务层只依赖抽象接口，不依赖具体开源库�
 
 ---
 
-### 2.3 "必须自研"的五条硬约束
-
-即使 OSS 评分很高，下列场景**必须 Build（自研）**：
-
-1. **红线数据（PIT + 合规审计日志）**：需要 7 年追溯不可变，开源的存储方案不一定满足合规审计的完整链路要求
-2. **核心业务逻辑（Alpha 本身）**：Alpha 因子是你的护城河，不能依赖外部库的版本变动
-3. **Agent 编排逻辑**：当前没有成熟开源方案匹配量化场景的多 Agent 协作，只能自研
-4. **金融特定的 PIT 数据结构**：开源数据库（ClickHouse 等）只能作为存储底座，PIT（Point-in-Time）语义必须自研
-5. **治理代码（OPA Rego 规则、KB 决策记录编译器）**：配置型代码高度项目特定，只能自研
-
----
-
-## 3. Build-vs-Buy 五维评分法（方法论附录）
-
-### 3.1 决策框架
-
-对任何新模块做 BvB 决策时，**按以下 5 个维度各打 1-5 分**：
-
-| 维度 | 问题 | 满分 5 = | 0 分 = |
-|-----|------|--------|--------|
-| **D1 成熟度** | 开源项目是否生产就绪？ | 多家顶级机构使用 / Star >5k / 维护活跃 | Prototype / 多年未更新 |
-| **D2 契合度** | 是否匹配 ZephyrAlpha 架构？ | API / 数据模型 / 契约高度契合 | 需要大量 adapter |
-| **D3 可控性** | 是否可定制 / 不被绑死？ | 模块化、接口清晰、可 patch | 整体捆绑难拆解 |
-| **D4 许可证** | 是否商用友好？ | MIT / Apache 2.0 / BSD | GPL（传染）/ AGPL |
-| **D5 替换成本** | 如果哪天要换，成本多大？ | 通过抽象层调用，换实现即可 | 业务逻辑深度耦合 |
-
-### 3.2 决策规则
-
-| 总分 | 决策 | 含义 |
-|:---:|:---:|------|
-| **≥ 20** | **Buy** | 强制使用开源，禁止自研 |
-| **15-19** | **Buy + Wrap** | 用开源 + 薄层封装（OCP adapter），保留替换弹性 |
-| **10-14** | **Hybrid** | 用开源作为 reference / inspiration，核心逻辑自研 |
-| **< 10** | **Build** | 从零自研 |
-
-### 3.3 项目实际统计（参考）
-
-基于 `technology_landscape.yaml` 43 条 + 本轮新模块 ~50 个的评估：
-
-| 决策 | 占比 |
-|:---|:---:|
-| **Buy（纯开源）** | ~36% |
-| **Buy+Wrap（开源+薄适配）** | ~42% |
-| **Hybrid（参考开源+核心自研）** | ~12% |
-| **Build（必须自研）** | ~10% |
-
-**关键结论**：**78% 的新模块有成熟开源可用**。按"1 人 3-10 倍节省"估算，对外开放开源至少节省 80% 开发时间。
-
----
-
 ## 4. 与其他文档的关系
 
 | 关系 | 对象 | 说明 |
 |:---|:---|:---|
-| 本文档取代 | `designs/build-vs-buy-decision-framework.md`（已 deprecated） | BvB 框架的决策逻辑 + 原则完整提取升格 |
 | 本文档引用 | `KBG-0004`（OCP 扩展点） | §1.2 原则 2 依赖 OCP 扩展点基础设施 |
-| 本文档引用 | `KBG-0014`（模块准入铁律） | 模块准入 MOD-P1~P4 与 BvB 五维评分是正交的两个决策维度 |
+| 本文档引用 | `KBG-0014`（模块准入铁律） | 模块准入 MOD-P1~P4 是独立的决策维度 |
 | 本文档引用 | `technology_landscape.yaml` | 技术全景图承载具体 OSS 条目登记，本文档承载"为什么选/不选"的决策原则 |
 | 本文档被引用 | `overview.md` | 00-overview §0 的安全红线等原则未来应归集至本文档 |
 | 本文档被引用 | `application_architecture.md` | 03-AA §4.4 的 ACL 三段是原则 2"薄适配器"的基础设施实现 |
@@ -255,4 +202,5 @@ OCP 扩展点基类（业务层只依赖抽象接口，不依赖具体开源库�
 | 日期 | 版本 | 说明 |
 |------|------|------|
 | 2026-05-02 | 1.1.0 | **安全红线归集**：§0 新增安全红线 4 条（R1-R4），从 `overview.md` 归集完成，附带执行机制 + 大白话解释。`overview.md` 同步更新为引用链接。消除同一事实双源问题。 |
-| 2026-05-02 | 1.0.0 | 初始版。提取 `designs/build-vs-buy-decision-framework.md`（DW-BVB-DESIGN-001）精华内容：5 条 Open Source First 子原则 + BvB 五维评分法 + 必须自研的 5 条硬约束 + 专业机构对标证据。原 BvB 文件 §4 OSS Scan 映射表已由 `technology_landscape.yaml` 覆盖，不提取。 |
+| 2026-05-02 | 1.0.0 | 初始版。5 条 Open Source First 子原则 + 专业机构对标证据。 |
+| 2026-07-06 | 1.3.0 | 删除 §2.3（5 条硬约束，孤岛概念+第1/4条重叠+第5条引用失效概念）+ §3（BvB 五维评分法，未落地的方法论附录）。清理 OQ-032 悬空引用。 |

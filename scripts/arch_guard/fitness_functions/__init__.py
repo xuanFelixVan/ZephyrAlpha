@@ -12,7 +12,6 @@ exit 0 = 不变量未被违反，exit 1 = 违反。
 __all__ = [
     "check_aisg_gateway",
     "check_audit_log_immutability",
-    "check_bvb_compliance",
     "check_capacity_slo_ssot",
     "check_daily_loss_limit",
     "check_hot_warm_ipc",

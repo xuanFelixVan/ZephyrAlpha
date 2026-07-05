@@ -136,7 +136,7 @@ RESPONSIBILITY_MAP = {
         ],
     ),
     "02_enterprise_architecture/designs": (
-        "设计决策框架 — build-vs-buy 等架构决策辅助文档",
+        "设计决策框架 — 架构决策辅助文档",
         [
             ("ADR", "02_enterprise_architecture/adr/"),
         ],

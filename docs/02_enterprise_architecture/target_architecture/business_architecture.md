@@ -227,7 +227,7 @@ Handoff 是 VSM 中最易产生**信息损失 + 责任真空 + 数据污染**的
 
 ## 6. Business constraints / 业务约束与政策红线
 
-> 完整约束真源在 [architecture_principles.md](../04_architecture_principles_decisions/architecture_principles.md)（R1-R4安全红线 + BvB + 准入铁律）。
+> 完整约束真源在 [architecture_principles.md](../04_architecture_principles_decisions/architecture_principles.md)（R1-R4安全红线 + 准入铁律）。
 
 | 约束 | 说明 | 真源 |
 |------|------|------|

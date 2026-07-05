@@ -6,7 +6,6 @@ __all__ = [
     "check_blueprint_automation_sync",
     "check_blueprint_code_alignment",
     "check_blueprint_template_compliance",
-    "check_bvb_compliance",
     "check_code_duplication",
     "check_contract_code_drift",
     "check_dependency_direction",
