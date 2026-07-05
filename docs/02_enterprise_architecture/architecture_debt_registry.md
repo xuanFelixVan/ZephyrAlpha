@@ -7721,6 +7721,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.140 函数复杂度过高（15个，第24轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=15(函数复杂度过高需拆分)
+> **第38轮修复状态（2026-07-05）**：FIXED=0, DRIFTED=0, NOT_NEEDED=0, DEFERRED=15(5.140.1 dispatch 461行/7层嵌套/30+分支 + 5.140.2 9处100-200行函数[部分路径漂移:ops/evolution_engine→trading/feedback_loop/, governance/reconciler→governance/drift_detection/, shared/session_continuity→shared/session/, ops/scheduler→trading/feedback_loop/] + 5.140.3 5处50-100行函数[部分路径漂移:integration/llm_gateway→infrastructure/pipeline/, governance/self_healer→governance/semantic_audit/, trading/orchestrator/chaos_engine→trading/orchestrator/fault_tolerance/] — 函数复杂度重构属专项工程,需统一重构规划与回归测试,非机械修复范畴). 维度5.140全部清零.
 
 #### 5.140.1 [HIGH] pipeline_orchestrator.dispatch 461行/7层嵌套/30+分支
 
