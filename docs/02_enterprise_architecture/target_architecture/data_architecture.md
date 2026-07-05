@@ -355,7 +355,7 @@ TargetPosition → Order → Fill → Position → PnL
 |---------|----------|
 | **Great Expectations** | 适合 batch 断言（EOD bar / 因子值） |
 | **Soda Core** | 适合 SQL-first 团队，与 dbt 集成好 |
-| **自研 fitness functions** | PIT / Survivorship / Lineage 这三类**业界工具不覆盖**的量化专属断言，必须自研（呼应 OQ-032 Build vs Buy 五大铁律之一） |
+| **自研 fitness functions** | PIT / Survivorship / Lineage 这三类**业界工具不覆盖**的量化专属断言，必须自研（INV-004/INV-016 支撑） |
 
 ### 8.4 与 03-AA / scripts/ 的边界
 
