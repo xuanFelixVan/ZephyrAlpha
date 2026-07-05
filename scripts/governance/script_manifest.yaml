@@ -1,17 +1,17 @@
-# 自动生成于 2026-07-05T16:18:59Z
+# 自动生成于 2026-07-05T20:52:27Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-05T16:18:59Z'
+generated_at: '2026-07-05T20:52:27Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 323
-with_manifest: 309
-missing_manifest: 14
+total_scripts: 324
+with_manifest: 308
+missing_manifest: 16
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 10
+  governance: 11
   governance:d10_performance: 1
   governance:d11_compliance: 22
   governance:d12_ai_hallucination: 4
@@ -103,6 +103,16 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
+- name: apply_dataflowgraph.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: apply_depgraph.py
   owner: governance
   dimensions:
@@ -1331,22 +1341,6 @@ scripts:
   description: '[BLUEPRINT] GOV-DOC-011 | d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml'
   tags:
   - Critical
-- name: d5_architecture/checkers/check_bvb_compliance.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  - D11
-  priority: P1
-  timeout_seconds: 30
-  args:
-  - flag: --warn-only
-    type: bool
-    description: 仅警告模式
-  warn_only: false
-  description: BvB 五维评分法自动化校验——OSS 依赖准入合规
-  tags:
-  - Critical
-  - Security
 - name: d5_architecture/checkers/check_code_duplication.py
   owner: governance:d5_architecture
   dimensions:
@@ -1670,6 +1664,16 @@ scripts:
   - Critical
   - Disruptive
 - name: d5_architecture/generators/generate_cross_domain_matrix.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d5_architecture/generators/generate_dataflow_diagram.py
   owner: governance:d5_architecture
   dimensions: []
   priority: P2
