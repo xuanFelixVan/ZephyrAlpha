@@ -2674,6 +2674,23 @@ capabilities:
       infrastructure/rollback/backtest_engine.py）。
 
   # --------------------------------------------------------------------------
+  - capability_id: backtest_decisiongraph_adapter
+    aliases:
+      - backtest_decisiongraph_adapter
+      - backtest_result_to_decision_node
+      - register_backtest_result_in_decisiongraph
+    canonical_override: src/zephyr/backtest/io/decisiongraph_adapter.py
+    description: >-
+      BacktestResult → decisiongraph 适配器（TRAE-061 Phase 5，2026-07-06）。
+      canonical = src/zephyr/backtest/io/decisiongraph_adapter.py。
+      将 BacktestResult（CTR-P1-016，15字段冻结契约）映射为 decisiongraph
+      decision_nodes 表 INSERT 参数，建立回测→决策流图关联。
+      映射规则: layer_id=L5(学习层), node_type=signal,
+      path=backtest/{strategy_id}/{idempotency_key}, evidence_hash=SHA-256(idempotency_key)。
+      解决发现性: 新AI搜 "回测决策流图/BacktestResult decisiongraph" 可定位真源。
+      解决防重建: check_file_canonical() 反查阻止在别处新建回测→decisiongraph 适配器。
+
+  # --------------------------------------------------------------------------
   - capability_id: breaking_change_concurrency_blocker
     aliases:
       - breaking_change
@@ -3427,7 +3444,7 @@ creation_tokens:
     capability: "rule_engine_package_marker"
 
   # --- 数据源验证脚本（tmp/ 一次性验证，2026-07-03）已于 2026-07-03 退役删除 ---
-  # 能力真源已沉淀至 docs/03_modules/_domain_data/data_source_capability_map.md（§7.9 完整代码示例）
+  # 能力真源已沉淀至 docs/03_modules/_domain_data/data_source_operation_manual.md（§7.9 完整代码示例）
   # 原 13 个 tmp/ 脚本（8 个 tmp/ iFind + 5 个 tmp/test_free_sources/）TTL=task_bound 退役，
   # capability_canonical_file_registry 悬挂引用同步清理（消除真源漂移）。
 
@@ -3651,6 +3668,11 @@ creation_tokens:
     token: "auto-generate-decision-graph-20260706"
     created_by: "session-sess-31068-20260706045331"
     capability: "decisiongraph_generate_cli"
+  # --- TRAE-061 decisiongraph Phase 5 BacktestResult adapter（2026-07-06）---
+  - file: "src/zephyr/backtest/io/decisiongraph_adapter.py"
+    token: "auto-backtest-decisiongraph-adapter-20260706"
+    created_by: "session-sess-40636-20260706051703"
+    capability: "backtest_decisiongraph_adapter"
 
   # --- MOD-L00-004 数据源集成器阶段1（2026-07-06）---
   - file: "src/zephyr/data/provider_base.py"
