@@ -787,6 +787,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.27 文档与代码同步（7个，第10轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.27全部清零.
+> **第58轮修复状态（2026-07-06）**：5.27.6 FIXED — genesis_bootstrap.py 新增 EngineUnavailableError(RuntimeError) 替代通用 RuntimeError, commit eacc5fa23b. DEFERRED=0. 维度5.27全部清零.
 > **维度定义**：文档（README/AGENTS.md/注释）与实际代码的同步性。
 > **病根归属**：根因1（静态快照未动态更新）。
 
@@ -3127,6 +3128,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.70 优雅降级与回退模式（4个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.70全部清零.
+> **第58轮修复状态（2026-07-06）**：5.70.4 FIXED — 5个文件8处 except Exception: return False/None 添加 logger.warning 日志(pipeline_lock/ollama_chat/ollama_embedding/tamper_proof_audit/self_check), commit eacc5fa23b. DEFERRED=0. 维度5.70全部清零.
 #### 5.70.1 [MEDIUM] ResourceOptimizationEngine启动失败被静默吞掉（无降级标记）
 
 - **文件**：`src/zephyr/trading/auto_runtime_core.py:139-145`
@@ -3308,6 +3310,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.76全部清零.
 > **第57轮修复状态（2026-07-06）**：5.76.2+5.76.3 FIXED — verdict_engine.py (governance/behavioral_admission/ + trading/) except Exception → except (TimeoutError, asyncio.TimeoutError, ConnectionError) + vector_memory_server.py 3处 except Exception → except VMSError, commit dc2210ce46. DEFERRED=1(5.76.1).
+> **第58轮修复状态（2026-07-06）**：5.76.1 FIXED — signal_fundamental/pipeline.py + shared/_cross_layer/ml_experiment_pipeline.py 删除2个 PipelineError 副本, 改为 from zephyr.shared.foundation.errors import PipelineError (SSoT re-export), commit eacc5fa23b. DEFERRED=0. 维度5.76全部清零.
 #### 5.76.1 [HIGH] PipelineError存在3个同名但基类不同的重复定义，破坏异常捕获语义
 
 - **文件**：`src/zephyr/shared/foundation/errors.py:105`（`class PipelineError(ZephyrBaseError)`）；`src/zephyr/signal_fundamental/pipeline.py:79`（`class PipelineError(Exception)`）；`src/zephyr/shared/_cross_layer/ml_experiment_pipeline.py:83`（`class PipelineError(Exception)`）
@@ -4562,6 +4565,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第40轮修复状态（2026-07-05）**：FIXED=6(5.151.1 git_bisector finally try/except + 5.151.2 zombie_scanner Exception 遮蔽移除 + 5.151.3 verdict_engine 静默→warning + 5.151.4 dlq 静默→warning + 5.151.5 errors.py IOError→ZephyrIOError 从 __all__ 移除 + 5.151.7 context_assembler 4处 pass→warning), DRIFTED=2(5.151.10 engine.py 文件不存在 + 5.151.11 fix_orphan_deps.py 已在前期修复), STILL_VALID=3(5.151.6+5.151.9 zombie_scanner 4种策略统一复杂重构 + 5.151.8 index_health_monitor 3种策略混用)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(5.151.6+5.151.9 zombie_scanner 4种策略统一复杂重构 + 5.151.8 index_health_monitor 3种策略混用), STILL_VALID=0. 维度5.151全部清零.
 > **第57轮修复状态（2026-07-06）**：5.151.8+5.151.9 FIXED — index_health_monitor.py 4处异常处理统一为 except (KeyError, ValueError) + zombie_scanner.py _kill_process except Exception → except (ProcessLookupError, PermissionError), commit dc2210ce46. DEFERRED=1(5.151.6).
+> **第58轮修复状态（2026-07-06）**：5.151.6 DRIFTED校正→FIXED — 代码验证显示 zombie_scanner.py 4处IO/系统调用错误已统一为 logger.warning(_load_patterns/_save_patterns/_log_kill/_kill_process), 原登记表"3处pass"已不存在, 登记表漂移校正. DEFERRED=0. 维度5.151全部清零.
 
 #### HIGH（3个）
 
