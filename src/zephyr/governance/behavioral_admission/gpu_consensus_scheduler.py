@@ -176,6 +176,8 @@ class GPUConsensusScheduler:
         self._api_timeout_s = api_timeout_s
         self._queue = _PriorityQueue(max_size=max_queue_size)
         self._max_workers = max_workers
+        # 5.67.2 修复: 使用 max_workers 创建 Semaphore 限制批量并发, 替代 submit_batch 中硬编码的 8
+        self._semaphore = asyncio.Semaphore(max_workers)
         self._lock = threading.Lock()
         self._gpu_status = GPUStatus(
             available=False,
@@ -222,7 +224,8 @@ class GPUConsensusScheduler:
         return result
 
     async def submit_batch(self, requests: list[ConsensusRequest]) -> list[ConsensusResult]:
-        sem = asyncio.Semaphore(8)
+        # 5.67.2 修复: 使用 self._semaphore (基于 max_workers) 替代硬编码 asyncio.Semaphore(8)
+        sem = self._semaphore
 
         async def _limited_submit(coro):
             async with sem:

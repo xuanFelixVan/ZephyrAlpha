@@ -33,6 +33,7 @@ ERR_TOOL_NOT_FOUND = -32001
 ERR_TOOL_EXECUTION = -32002
 ERR_GATE_FAILED = -32003
 ERR_RBAC_DENIED = -32004
+ERR_SAFETY_APPROVAL_REQUIRED = -32005
 
 __all__ = [
     "ERR_GATE_FAILED",
@@ -42,6 +43,7 @@ __all__ = [
     "ERR_METHOD_NOT_FOUND",
     "ERR_PARSE_ERROR",
     "ERR_RBAC_DENIED",
+    "ERR_SAFETY_APPROVAL_REQUIRED",
     "ERR_TOOL_EXECUTION",
     "ERR_TOOL_NOT_FOUND",
 ]
@@ -56,6 +58,7 @@ _MESSAGE_MAP: dict[int, str] = {
     ERR_TOOL_EXECUTION: "Tool execution error",
     ERR_GATE_FAILED: "Gate check failed",
     ERR_RBAC_DENIED: "RBAC permission denied",
+    ERR_SAFETY_APPROVAL_REQUIRED: "Safety approval required",
 }
 
 

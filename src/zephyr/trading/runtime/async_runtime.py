@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] start() 复用已有循环或创建新循环；stop() 幂等（多次调用安全）；run_coroutine 在已运行循环中抛 RuntimeError；run_in_executor 无循环时直接同步调用
+# [ERROR_CONTRACT] start() 复用已有循环或创建新循环；stop() 幂等（多次调用安全）；run_coroutine 在已运行循环中抛 RuntimeError；run_in_executor 无循环时直接同步调用, 有运行循环时通过 ThreadPoolExecutor 提交并阻塞等待结果 (5.67.3)
 # [TESTS] tests/trading/runtime/test_async_runtime.py
 # [A_module] module_id=MOD-TRADING-RUNTIME-ASYNC | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -211,16 +211,24 @@ class AsyncRuntime:
         bound = functools.partial(func, *args, **kwargs)
 
         try:
-            loop = asyncio.get_running_loop()
+            asyncio.get_running_loop()
         except RuntimeError:
             return bound()
 
-        # 5.100.13 修复: 在运行中的事件循环里调 .result() 会阻塞 loop 线程导致死锁
-        # 调用方应改用 run_in_executor_async (返回 awaitable)
-        raise RuntimeError(
-            "run_in_executor 不能在已运行的事件循环中调用——"
-            "请用 await run_in_executor_async(...) 代替"
-        )
+        # 5.67.3 修复: 当前线程有运行中的事件循环。
+        # 不能用 loop.run_in_executor(...).result() —— 返回的 asyncio.Future 在运行中的
+        # 循环里无法同步等待 (会死锁或抛 InvalidStateError)。
+        # 改用 self._executor (concurrent.futures.ThreadPoolExecutor) 直接提交,
+        # concurrent.futures.Future.result() 可安全阻塞等待, 不会与事件循环死锁
+        # (函数在独立线程执行, 不依赖事件循环调度)。
+        # 注意: 这会阻塞事件循环线程, 调用方应优先使用 run_in_executor_async。
+        if self._executor is None:
+            self._executor = concurrent.futures.ThreadPoolExecutor(
+                max_workers=self._max_workers,
+                thread_name_prefix="AsyncRuntime",
+            )
+        future = self._executor.submit(self._wrap_ctx(bound))
+        return future.result()
 
     async def run_in_executor_async(
         self,

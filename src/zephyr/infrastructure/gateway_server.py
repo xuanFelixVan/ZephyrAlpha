@@ -54,6 +54,7 @@ from zephyr.infrastructure.error_codes import (
     ERR_INTERNAL_ERROR,
     ERR_INVALID_PARAMS,
     ERR_RBAC_DENIED,
+    ERR_SAFETY_APPROVAL_REQUIRED,
     ERR_TOOL_EXECUTION,
     ERR_TOOL_NOT_FOUND,
 )
@@ -473,7 +474,7 @@ class MCPGateway(BaseMCPServer):
             )
             return self._err(req_id, ERR_RBAC_DENIED, f"LSG security blocked: {lsg_blocked}")
 
-        safety_result = self._check_safety_level(tool_name, routed_sid, session_id)
+        safety_result = self._check_safety_level(tool_name, routed_sid, session_id, req_id=req_id)
         if safety_result is not None:
             return safety_result
 
@@ -616,12 +617,12 @@ class MCPGateway(BaseMCPServer):
                 return sid
         return None
 
-    def _check_safety_level(self, tool_name: str, routed_sid: str, session_id: str) -> dict[str, Any] | None:
+    def _check_safety_level(self, tool_name: str, routed_sid: str, session_id: str, req_id: str | int | None = None) -> dict[str, Any] | None:
         """检查工具 safety_level 并执行 RBAC 强制（R2 修复）。
 
         - L (Low): 直接放行，返回 None
         - M (Medium): 记录审计日志，返回确认提示
-        - H (High): 返回 ERR_RBAC_DENIED，要求 Owner 审批
+        - H (High): 返回 ERR_SAFETY_APPROVAL_REQUIRED，要求 Owner 审批
 
         Returns
         -------
@@ -633,15 +634,15 @@ class MCPGateway(BaseMCPServer):
 
         if safety_level == "H":
             return self._err(
-                None,
-                ERR_RBAC_DENIED,
+                req_id,
+                ERR_SAFETY_APPROVAL_REQUIRED,
                 f"tool {tool_name!r} requires Owner approval (safety_level=H)",
             )
 
         if safety_level == "M":
             return {
                 "jsonrpc": "2.0",
-                "id": None,
+                "id": req_id,
                 "result": {
                     "content": [
                         {
