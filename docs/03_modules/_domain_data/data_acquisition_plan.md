@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据获取需求清单与数据库现状对照"
 doc_type: blueprint
 status: Active
-version: "1.5.0"
+version: "1.6.0"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -20,7 +20,7 @@ actual_disk_path: "src/zephyr/data/"
 belongs_to: "MOD-L00-001"
 parent_module: "MOD-L00-001"
 codification_level: L1
-last_updated: "2026-07-03"
+last_updated: "2026-07-06"
 generation: 1
 rule_form: reference
 scope: module
@@ -50,7 +50,7 @@ tags:
   - acquisition-plan
   - l00
   - ssot
-summary: "数据获取需求清单与数据库现状对照——v1.5.0：VPN对比测试+TickFlow重大发现。Baostock 10/10通过(不受VPN影响)+TickFlow 12/12通过(美股主力免费源，免费无Key)+AKShare 11/16通过(须断开VPN)+yfinance 0/10失败(VPN无效，库级限流)+Stooq 0/2失败(VPN无效，JS验证)。EDB宏观/新闻/研报由AKShare覆盖，A股K线/财务由Baostock覆盖，美股日/周/月/季/年K线由TickFlow覆盖。需求满足度：A股+美股全品类100%可获取，不再需要淘宝购买美股。"
+summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据补齐实测。v1.5.0 VPN对比+TickFlow发现(Baostock 10/10+TickFlow 12/12+AKShare 11/16须断VPN+yfinance/Stooq废弃)。v1.6.0 数据补齐实测(2026-07-05)：kline_daily(iFind THS_RQ批量+5517行,max=2026-07-03)+index_kline(THS_RQ+953行,max=07-03)+equity_pledge_summary(THS_BD+4440行,max=07-03)+rights_issue(AKShare stock_history_dividend_detail多线程+283行,max=07-06)+margin_trading/block_trade(清理未来日期脏数据,max=06-30)全部补齐。分红明细数据源优先级：AKShare stock_history_dividend_detail>baostock(滞后1周+)>iFind THS_BD(-209全失败)>iFind问财(不适合个股明细)。其余表仍截止2025-11待增量。"
 ---
 
 # 数据获取需求清单与数据库现状对照
@@ -97,7 +97,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.5.0：VPN对�
 ## 二、数据库现状（对照表）
 
 > A股股票总数基准: adj_factor 5,778只（含已退市）
-> 数据截止日期: 2025-11-12（距今约7.5个月未更新）
+> 数据截止日期: 2026-07-06（v1.6.0 数据补齐：kline_daily/index_kline/equity_pledge_summary/rights_issue/margin_trading/block_trade 已补齐至 2026-07-03/07-06；其余表仍截止 2025-11，待增量）
 
 ### 2.1 c1_market 行情库（19张表）
 
@@ -105,11 +105,11 @@ summary: "数据获取需求清单与数据库现状对照——v1.5.0：VPN对�
 
 | # | 表名 | 数据类型 | 行数 | 股票数 | 起始日期 | 结束日期 | 完整性 | 需补充 | 可获取性 |
 |---|------|---------|------|--------|---------|---------|--------|--------|---------|
-| 1 | daily_kline | 日K线(前复权) | 16,992,354 | 5,758 | 1990-12-19 | 2025-11-12 | ✅股票全 ⚠️需更新 | 增量更新 | ✅ 已验证(iFind21行+QMT359行) |
+| 1 | daily_kline | 日K线(前复权) | 18,124,798 | 5,895 | 1990-12-19 | 2026-07-03 | ✅完整(已补齐) | ✅已补齐(iFind THS_RQ批量+5517行) | ✅ 已验证(THS_RQ批量,见能力地图§2.5.6) |
 | 2 | adj_factor | 复权因子 | 17,950,034 | 5,778 | 1990-12-19 | 2025-11-12 | ✅完整(最全) | 增量更新 | ✅ 已验证(QMT get_divid_factors 26条) |
 | 3 | kline_weekly | 周K线 | 3,351,526 | 5,449 | 1990-12-21 | 2025-11-07 | ✅股票全 ⚠️需更新 | 增量更新 | ✅ 已验证(iFind5行+QMT 1w) |
 | 4 | kline_monthly | 月K线 | 804,028 | 5,677 | 1990-12-31 | 2025-10-31 | ✅股票全 ⚠️需更新 | 增量更新 | ✅ 已验证(iFind+QMT 1mon) |
-| 5 | index_kline | 指数K线 | 2,279,246 | 566 | 1990-12-19 | 2025-11-12 | ✅完整 | 增量更新 | ✅ 已验证(QMT 20行) |
+| 5 | index_kline | 指数K线 | 3,066,374 | 1,031 | 1990-12-19 | 2026-07-03 | ✅完整(已补齐) | ✅已补齐(iFind THS_RQ批量+953行) | ✅ 已验证(THS_RQ批量,见能力地图§2.5.6) |
 | 6 | kline_1min | 1分钟K线 | 3,639,361,518 | ~5,500 | 2000-06-09 | 2025-11-12 | ✅完整(25年) | 增量更新 | ✅ 已验证(QMT 241行)；历史需淘宝 |
 | 7 | kline_15min | 15分钟K线 | 241,618,057 | ~5,500 | 2000-06-09 | 2025-11-12 | ✅完整 | 增量更新 | ✅ 已验证(QMT 15m)；历史需淘宝 |
 | 8 | kline_30min | 30分钟K线 | 120,809,041 | ~5,500 | 2000-06-09 | 2025-11-12 | ✅完整 | 增量更新 | ✅ 已验证(QMT 30m)；历史需淘宝 |
@@ -130,7 +130,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.5.0：VPN对�
 | 18 | futures_position | 期货持仓 | 0 | 4大交易所多空持仓 | QMT/iFind | ✅ 已验证(QMT期货K线含openInterest字段，jm01.DF=3866)；详细持仓需iFind正式账号 |
 | 19 | futures_term_structure | 期货期限结构 | 0 | 前月/次月合约价格/基差 | QMT/iFind | 🔶 需计算：期货K线可获取(上期所6982/大商所9559/郑商所7281)，基差需自己计算 |
 
-### 2.2 c3_fundamental 财务库（9张表，全部有数据）
+### 2.2 c3_fundamental 财务库（11张表，全部有数据）
 
 | # | 表名 | 数据类型 | 行数 | 股票数 | 起始日期 | 结束日期 | 完整性 | 需补充 | 可获取性 |
 |---|------|---------|------|--------|---------|---------|--------|--------|---------|
@@ -143,14 +143,16 @@ summary: "数据获取需求清单与数据库现状对照——v1.5.0：VPN对�
 | 7 | earnings_forecast | 盈利预测 | 112,832 | 5,483 | 1999-01-09 | 2025-11-07 | ✅完整 | 增量更新 | ✅ API可用(QMT ProfitForecast表) |
 | 8 | audit_opinion | 审计意见 | 86,440 | 5,438 | 1998-02-21 | 2025-10-25 | ✅完整 | 增量更新 | ✅ 已验证(i问财"600000.SH 2024年审计意见") |
 | 9 | express_report | 业绩快报 | 27,066 | 4,313 | 2005-01-08 | 2025-10-22 | ✅完整 | 增量更新 | ✅ API可用(QMT Performance表) |
+| 10 | rights_issue | 分红配股 | 81,028 | ~5,800 | 1970-01-01 | 2026-07-06 | ✅完整(已补齐) | ✅已补齐(AKShare +283行) | ✅ 已验证(AKShare stock_history_dividend_detail,见能力地图§7.3.5) |
+| 11 | equity_pledge_summary | 股权质押 | 1,723,182 | ~5,500 | N/A | 2026-07-03 | ✅完整(已补齐) | ✅已补齐(iFind THS_BD +4440行) | ✅ 已验证(THS_BD,见能力地图§2.5.6) |
 
 ### 2.3 未建表的数据（需新建表+下载）
 
 | # | 数据类型 | 计划表名 | 获取方式 | 说明 | 可获取性 |
 |---|---------|---------|---------|------|---------|
 | 1 | 龙虎榜 | dragon_tiger | iFind i问财 | 营业部/席位买卖明细 | ✅ 已验证(i问财 5536行) |
-| 2 | 融资融券 | margin_trading | iFind i问财 | 两融余额/买入/偿还 | ✅ 已验证(i问财 10行) |
-| 3 | 大宗交易 | block_trade | iFind i问财 | 成交价/量/买卖双方 | ✅ 已验证(i问财 1340行) |
+| 2 | 融资融券 | margin_trading | iFind i问财 | 两融余额/买入/偿还 | ✅ 已建表于c1_market(1,095,732行,max=2026-06-30,已清理脏数据) |
+| 3 | 大宗交易 | block_trade | iFind i问财 | 成交价/量/买卖双方 | ✅ 已建表于c1_market(161,708行,max=2026-06-30,已清理脏数据) |
 | 4 | 沪深港通资金 | hk_connect_flow | iFind/淘宝 | 北向/南向资金流入 | ❌ 试用不可用(i问财4种查询都-4001)；需正式账号或淘宝 |
 | 5 | 股东数据 | shareholder | QMT/iFind | 十大股东/股东人数/增减持 | ✅ API可用(QMT get_financial_data: HolderNum/Top10Holder) |
 | 6 | 限售解禁 | share_unlock | iFind i问财 | 解禁日期/数量/比例 | ✅ 已验证(i问财 254行，字段含解禁日期/股数/比例/金额) |
@@ -236,6 +238,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.5.0：VPN对�
 - 宏观数据（CPI/PMI/M2/GDP/社融/LPR）—— AKShare `macro_china_*`（实测9/10通过，须断开VPN）
 - 财经新闻 + 研报 —— AKShare `stock_news_em`/`stock_research_report_em`（实测3/5通过，须断开VPN；`stock_info_global_cls`⏳卡住超时）
 - 一致预期EPS —— AKShare `stock_profit_forecast_ths`（实测通过，须断开VPN）
+- **分红明细** —— AKShare `stock_history_dividend_detail`（v1.6.0实测最可靠，多线程8 workers/5823 symbol约7.5分钟；baostock分红滞后勿用；详见能力地图§7.3.5）
 - 放到 `D:\A股数据\免费源\`
 
 > ⚠️ **免费源实测结论（2026-07-03，含VPN对比）**：
