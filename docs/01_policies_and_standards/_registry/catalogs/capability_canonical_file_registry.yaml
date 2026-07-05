@@ -3028,6 +3028,80 @@ capabilities:
     integrity_anchors:
       - total_values  # 词表值数量(篡改即词表不完整)
 
+  # --------------------------------------------------------------------------
+  # decisiongraph Reader + 脚本能力（TRAE-061 Phase 2，2026-07-06 新增）
+  # --------------------------------------------------------------------------
+  - capability_id: decisiongraph_reader
+    canonical_override: src/zephyr/governance/persistence/decision_graph_reader.py
+    aliases:
+      - DecisionGraphReader
+      - decision_graph_reader
+      - decisiongraph_query
+      - decision_nodes_query
+      - decision_edges_query
+      - decision_layers_query
+    description: >-
+      decisiongraph（决策流图）只读查询 Reader 类（TRAE-061 Phase 2，2026-07-06）。
+      canonical = src/zephyr/governance/persistence/decision_graph_reader.py。
+      对标 DepgraphReader，提供 decision_layers/decision_nodes/decision_edges/
+      decision_tracks 四张表的只读查询接口（30+ 方法）。
+      自动解析 JSONB 字段（inputs/outputs/conditions/facets/evidence_bundle）。
+      五条承重墙不变量校验查询（DEC-INV-001/002/005）。
+      与 depgraph 共享 PG 实例（不同表前缀 decision_*），连接由
+      decisiongraph_schema.get_decisiongraph_pg_connection() 派生。
+      解决发现性：新 AI 搜 "决策流图查询/DecisionGraphReader/decision node 查询" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止在别处新建 decisiongraph Reader。
+    integrity_anchors:
+      - DecisionGraphReader    # Reader 类(删则决策流图查询失效)
+      - get_all_layers         # 层查询(删则无法读取 L0-L6)
+      - find_order_nodes_without_risk_approving  # DEC-INV-001 校验(删则风控一票否决失效)
+
+  - capability_id: decisiongraph_access_scripts
+    aliases:
+      - extract_decisiongraph
+      - apply_decisiongraph
+      - generate_decision_graph
+      - decisiongraph_cli
+      - decisiongraph_yaml_sync
+    description: >-
+      decisiongraph（决策流图）读写访问脚本三件套（TRAE-061 Phase 2，2026-07-06）。
+      三个脚本对标 depgraph 三件套：
+      (1) extract_decisiongraph.py — 只读提取 CLI（对标 extract_depgraph.py），
+          7 个命令（summary/layers/nodes/edges/tracks/invariants/stats）。
+      (2) apply_decisiongraph.py — 写入入口 CLI（对标 apply_depgraph.py），
+          7 个 op（add_design_node/transition_build_status/remove_design_node/
+          deprecate_node/update_node_field/add_edge/remove_edge）+ batch JSON 批量。
+          pg_advisory_lock(424244) 写锁，build_status 单调推进校验，
+          DEC-INV-001~005 不变量校验。
+      (3) generate_decision_graph.py — YAML→DB 同步生成器（对标
+          generate_project_depgraph.py），从 decision_graph_model.yaml 同步
+          tracks+layers 到 PG（nodes/edges 由 apply 脚本写入）。
+      解决发现性：新 AI 搜 "decisiongraph 脚本/决策流图 CLI/YAML 同步" 可定位真源。
+      解决防重建：禁止在别处新建 decisiongraph 读写脚本。
+    integrity_anchors:
+      - op_add_design_node             # 设计态节点登记(删则无法新增决策)
+      - _validate_status_transition    # 状态机校验(删则跳态风险)
+      - sync_decision_graph            # YAML→DB 同步主入口(删则真源失同步)
+
+  # --------------------------------------------------------------------------
+  - capability_id: data_source_provider_abstraction
+    aliases:
+      - DataSourceBase
+      - DataSourceMeta
+      - FetchPayload
+      - FetchResult
+      - data_source_provider
+      - data_source_integrator
+    description: >-
+      数据源 Provider 抽象层（MOD-L00-004 §4）。统一封装 iFind/miniQMT/AKShare 等
+      数据源 SDK 的连接/拉取/断开生命周期，提供限流+重试+退避策略应用。
+      canonical = src/zephyr/data/provider_base.py（DataSourceBase ABC）。
+      配套文件：policy_registry.py（SourcePolicy + PolicyRegistry）、
+      implementations/{ifind,miniqmt,akshare}_provider.py（3 个 Provider 实现）、
+      scheduler.py（阶段2 调度编排层占位）。
+      与 governance/intelligence_governance/provider_base.py 的 LLM Provider
+      同名不同义（class-name-alias 标记豁免），过渡期共存，阶段4 退役旧版。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -3537,6 +3611,58 @@ creation_tokens:
     token: "auto-decision-edge-type-vocabulary-20260706"
     created_by: "session-sess-44736-20260706042345"
     capability: "decisiongraph_vocabulary"
+
+  # --- TRAE-061 decisiongraph Phase 2 脚本三件套（2026-07-06，session-sess-31068）---
+  - file: "src/zephyr/governance/persistence/decision_graph_reader.py"
+    token: "auto-decision-graph-reader-20260706"
+    created_by: "session-sess-31068-20260706045331"
+    capability: "decisiongraph_reader"
+  - file: "scripts/governance/extract_decisiongraph.py"
+    token: "auto-extract-decisiongraph-20260706"
+    created_by: "session-sess-31068-20260706045331"
+    capability: "decisiongraph_access_scripts"
+  - file: "scripts/governance/apply_decisiongraph.py"
+    token: "auto-apply-decisiongraph-20260706"
+    created_by: "session-sess-31068-20260706045331"
+    capability: "decisiongraph_access_scripts"
+  - file: "scripts/governance/generate_decision_graph.py"
+    token: "auto-generate-decision-graph-20260706"
+    created_by: "session-sess-31068-20260706045331"
+    capability: "decisiongraph_access_scripts"
+
+  # --- MOD-L00-004 数据源集成器阶段1（2026-07-06）---
+  - file: "src/zephyr/data/provider_base.py"
+    token: "auto-data-source-provider-base-20260706"
+    created_by: "session-sess-11416-20260706044753"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/policy_registry.py"
+    token: "auto-data-policy-registry-20260706"
+    created_by: "session-sess-11416-20260706044753"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/__init__.py"
+    token: "auto-data-init-20260706"
+    created_by: "session-sess-11416-20260706044753"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/implementations/__init__.py"
+    token: "auto-data-impl-init-20260706"
+    created_by: "session-sess-11416-20260706044753"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/implementations/ifind_provider.py"
+    token: "auto-ifind-provider-20260706"
+    created_by: "session-sess-11416-20260706044753"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/implementations/miniqmt_provider.py"
+    token: "auto-miniqmt-provider-20260706"
+    created_by: "session-sess-11416-20260706044753"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/implementations/akshare_provider.py"
+    token: "auto-akshare-provider-20260706"
+    created_by: "session-sess-11416-20260706044753"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/scheduler.py"
+    token: "auto-data-scheduler-20260706"
+    created_by: "session-sess-11416-20260706044753"
+    capability: "data_source_provider_abstraction"
 
 # ============================================================================
 # 维护日志
