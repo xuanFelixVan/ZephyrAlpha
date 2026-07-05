@@ -1,17 +1,17 @@
-# 自动生成于 2026-07-05T20:52:27Z
+# 自动生成于 2026-07-05T21:00:35Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-05T20:52:27Z'
+generated_at: '2026-07-05T21:00:35Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 324
-with_manifest: 308
+total_scripts: 327
+with_manifest: 311
 missing_manifest: 16
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 11
+  governance: 14
   governance:d10_performance: 1
   governance:d11_compliance: 22
   governance:d12_ai_hallucination: 4
@@ -113,6 +113,17 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: apply_decisiongraph.py
+  owner: governance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: decisiongraph 写入入口（对标 apply_depgraph.py）
+  tags:
+  - Quick
 - name: apply_depgraph.py
   owner: governance
   dimensions:
@@ -3078,6 +3089,17 @@ scripts:
   tags:
   - AI-Generated
   - Periodic
+- name: extract_decisiongraph.py
+  owner: governance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: decisiongraph 按需提取工具（对标 extract_depgraph.py）
+  tags:
+  - Quick
 - name: extract_depgraph.py
   owner: governance
   dimensions:
@@ -3088,6 +3110,18 @@ scripts:
   warn_only: false
   description: depgraph 巨型文件按需提取工具（RULE-SIXTEEN 强制配套）
   tags:
+  - Quick
+- name: generate_decision_graph.py
+  owner: governance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 120
+  args: []
+  warn_only: false
+  description: decisiongraph YAML→DB 同步生成器（对标 generate_project_depgraph.py）
+  tags:
+  - Disruptive
   - Quick
 - name: generate_project_depgraph.py
   owner: governance
