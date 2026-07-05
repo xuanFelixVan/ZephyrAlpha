@@ -81,12 +81,12 @@ ZephyrAlpha 的假设完全相反：
 
 | 真源 | 文件/系统 | 用途 |
 |------|----------|------|
-| 规则数据 | YAML 文件（60 条 trae_XXX 规则） | DB 规则表只读缓存，`sync_yaml_to_depgraph.py` 单向同步 |
-| 跨层契约 | `cross_layer_contracts.yaml`（31 个 CTR-XXX） | codegen 生成 Python dataclass，禁止手改 |
-| 能力反查 | `capability_canonical_file_registry.yaml`（134 条能力） | 新 AI 通过 capability_id 反查 canonical 文件，避免重复造轮子 |
-| 蓝图 | `blueprint_registry.yaml`（55 蓝图） | 从 `blueprint.md` frontmatter 自动同步，已替代 `module_registry.yaml` |
+| 规则数据 | YAML 文件（trae_XXX 规则，条数见规则目录动态统计） | DB 规则表只读缓存，`sync_yaml_to_depgraph.py` 单向同步 |
+| 跨层契约 | `cross_layer_contracts.yaml`（CTR-XXX，条数见契约文件动态统计） | codegen 生成 Python dataclass，禁止手改 |
+| 能力反查 | `capability_canonical_file_registry.yaml`（能力条数见注册表动态统计） | 新 AI 通过 capability_id 反查 canonical 文件，避免重复造轮子 |
+| 蓝图 | `blueprint_registry.yaml`（蓝图数见注册表动态统计） | 从 `blueprint.md` frontmatter 自动同步，已替代 `module_registry.yaml` |
 | 任务系统 | TaskRepository（SQLite） | 10 状态机，L3 铁律禁止读 MD 做决策 |
-| 架构全景图 | depgraph（PostgreSQL 16，28 表） | 依赖 + 路径全景图唯一真源，禁止裸连 |
+| 架构全景图 | depgraph（PostgreSQL 16，表数见 schema 动态统计） | 依赖 + 路径全景图唯一真源，禁止裸连 |
 
 #### SSoT 门禁
 
@@ -96,11 +96,11 @@ ZephyrAlpha 的假设完全相反：
 
 ### 3.2 depgraph — 架构全景图真源
 
-PostgreSQL `localhost:5432/depgraph`，28 张表存储 nodes / edges / domains / contracts / rule_bindings / arch_constraints 等。
+PostgreSQL `localhost:5432/depgraph`，存储 nodes / edges / domains / contracts / rule_bindings / arch_constraints 等（表数见 schema 动态统计）。
 
-- **运营态**：6003 节点（代码现状真实依赖快照）
-- **设计态**：89 节点（planned，尚未施工）
-- **schema 版本**：v18
+- **运营态**：节点数见 depgraph 动态统计（代码现状真实依赖快照）
+- **设计态**：节点数见 depgraph 动态统计（planned，尚未施工）
+- **schema 版本**：见 depgraph schema 动态统计
 
 两条铁律（2026-07-02 治本规则）：
 
@@ -114,7 +114,7 @@ PostgreSQL `localhost:5432/depgraph`，28 张表存储 nodes / edges / domains /
 [git_commit_gateway.py](../../src/zephyr/governance/rule_bridge/git_commit_gateway.py)：
 
 - **全局跨进程串行锁**：`.ailocks/git_commit_global.lock`，TTL=1800s
-- **门禁注册制 CommitGateRegistry**：23 个 commit_gates（arch_reference / bare_getenv / capability_overlap / claim_required / create_guard / dangling_reference / directory_contract / doc_ref_broken / empty_handler / file_copy / function_dup / held_overlap / id_uniqueness / module_id_consistency / orphan_module / perm_trigger / r5_digit_suffix / rule_four_way_alignment / session_required / ssot_redefinition / ttl / vocab_hardcode 等）
+- **门禁注册制 CommitGateRegistry**：commit_gates 数量见注册表动态统计（arch_reference / bare_getenv / capability_overlap / claim_required / create_guard / dangling_reference / directory_contract / doc_ref_broken / empty_handler / file_copy / function_dup / held_overlap / id_uniqueness / module_id_consistency / orphan_module / perm_trigger / r5_digit_suffix / rule_four_way_alignment / session_required / ssot_redefinition / ttl / vocab_hardcode 等）
 - 禁止裸 `git commit`，所有提交必须通过 GitCommitGateway
 
 关键门禁举例：
@@ -180,11 +180,11 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 
 `layer` 字段定义的是**逻辑分层**（如 `infra_ops = L01`），不是物理路径前缀。物理路径统一为 `src/zephyr/{domain}/`。
 
-53 域分布：
-- L0_infrastructure：5 域
-- L1_foundation：15 域
-- L2_domain：32 域
-- unassigned：1 域
+53 域分布（按 layer_id 分组，各组域数见 depgraph domains 表动态统计）：
+- L0_infrastructure
+- L1_foundation
+- L2_domain
+- unassigned
 
 ### 4.2 容量治理二元规则
 
@@ -432,8 +432,8 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 - **阶段**：experimental
 - **域总数**：53
-- **节点**：6501（design 89 / prototype 5008 / production 1404）
-- **依赖边**：7191
+- **节点**：见 depgraph 动态统计（按 design / prototype / production 状态分组）
+- **依赖边**：见 depgraph 动态统计
 
 ### 8.2 ARCH 编号体系
 
@@ -525,7 +525,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 2. **回测副产物未持久化**：BacktestResult 不含净值曲线/trades 明细，仅内存累积，进程结束即丢失
 3. **可视化平台已迁移**：已从 Streamlit 迁移到 Panel + HoloViz（ARCH-047 v1.2.0，2026-07-04 DONE），G0.5 Python 过渡层已部署
 4. **前端 G0.5→G1 激活**：长期终局是 React + FastAPI，当前 G0.5（Panel 过渡层）已部署，待 3 信号触发 G1 升级
-5. **production 节点仅 1400+/6500+**：大量 prototype 待施工或退役（时点值）
+5. **production 节点占比偏低**：大量 prototype 待施工或退役（占比见 depgraph 动态统计，时点值）
 
 ---
 
