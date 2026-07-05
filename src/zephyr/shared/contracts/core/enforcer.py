@@ -59,6 +59,7 @@ import inspect
 import logging
 import sys
 import types
+import typing
 import uuid
 from collections.abc import Callable
 from dataclasses import is_dataclass
@@ -356,7 +357,7 @@ def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
     try:
         module = sys.modules.get(contract_type.__module__)
         globalns = getattr(module, "__dict__", {}) if module else {}
-        return get_type_hints(contract_type, globalns=globalns, include_extras=False)
+        return typing.get_type_hints(contract_type, globalns=globalns, include_extras=False)
     except Exception as e:
         _logger.warning("suppressed error in enforcer", exc_info=True)
 
@@ -371,7 +372,11 @@ def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
         ftype = fld.type
         if isinstance(ftype, str):
             try:
-                hints[fld.name] = eval(ftype, globalns)
+                # 5.45.2 修复：使用 typing._eval_type 替代 eval() 解析字符串类型注解
+                # typing._eval_type 仅处理类型表达式，不会执行任意代码
+                hints[fld.name] = typing._eval_type(
+                    typing.ForwardRef(ftype), globalns, None
+                )
             except Exception:
                 hints[fld.name] = ftype
         else:
