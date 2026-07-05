@@ -517,6 +517,24 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 1. `python scripts/git_guard.py add src/x.py`
 2. `python scripts/git_guard.py commit -F _tmp.txt --no-verify`
 
+### 10.1 POST-COMMIT-GUARD：--no-verify 的 post-commit 层闭环（#ARCH-050）
+
+**病根**：`--no-verify` 绕过 pre-commit hook，导致 GitCommitGateway 的 in-process gates + pre-commit 检查全部被绕过，产生 non-GW commit（commit message 无 `[GW:` 标记）。`commit_gw_audit` reconciler 事后审计为 warn-only，不阻断，无法有效约束并发 AI 对话。
+
+**治本**：`--no-verify` 绕过 pre-commit，**但不绕过 post-commit**。在 post-commit 中检测 commit message 是否含 `[GW:` 标记，不含且非 merge commit → 自动 `git reset --soft HEAD~1`（保留修改在 staging area），强制所有 commit 必须通过 GitCommitGateway。
+
+**生效条件**：`.git/hooks/post-commit` 调用 [`scripts/governance/git_hooks/post_commit_guard.sh`](file:///d:/ZephyrAlpha/scripts/governance/git_hooks/post_commit_guard.sh)。源文件被 git-tracked，hook 安装见脚本头部注释。
+
+**合法标识**（4 种 GW 标记均放行）：
+- `[GW:{session_id}]` — GitCommitGateway 常规 commit（[`git_commit_gateway.py` L97](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py)）
+- `[GW:{session_id}:auto]` — GitCommitGateway auto-commit
+- `[GW:{session_id}:worktree]` — `session_worktree_commit`
+- `[GW:{session_id}:merge]` — `session_worktree_merge`
+
+**豁免**：merge commit（subject 以 `merge ` 开头，大小写不敏感）。
+
+**违规处置**：non-GW commit 被自动 `git reset --soft HEAD~1`，修改保留在 staging area。审计报告落盘 `.runtime/reconcile_reports/post_commit_guard_<timestamp>.json`。AI 应通过 GitCommitGateway 重新提交。
+
 ## 11. depgraph 使用指引（唯一全景真源）
 
 ### 11.0 真源方向决策表（唯一入口，新 AI 必读）
