@@ -1,0 +1,272 @@
+# [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+# [MODULE] zephyr.data.implementations.miniqmt_provider
+# [DOMAIN] D_DATA
+# [DEPENDENCIES] xtquant SDK (xtdata.download_history_data/get_market_data_ex)
+# [CONSUMERS] zephyr.data.scheduler
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] connect() 仅验证 SDK 可导入；单线程使用（xtquant 非线程安全）
+# [MODIFY-GUARD] none
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] fetch 异常→yield FetchResult(error=str)；_ts_to_date 按 UTC 解释避免跨日
+# [TESTS] tests/zephyr/data/test_providers.py::TestMiniQMTHelpers
+# [A_module] module_id=MOD-L00-004-miniqmt_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+"""MOD-L00-004 数据源集成器 · MiniQMTProvider 实现。
+
+封装 xtquant SDK（miniQMT），继承 DataSourceBase。
+
+设计要点：
+- xtquant 连接的是本地 XtMiniQmt.exe 进程，无需显式登录，但要求进程在跑
+- xtquant 非线程安全，本 Provider 按 single_thread 模型使用
+- xtquant 在方法内部 import，避免模块加载时就要求 SDK 安装
+- stock_code 格式 "000001.SZ" / "600000.SH"，period 如 "1d"/"5m"/"1m"
+- start_time/end_time 格式 "YYYYMMDD"
+"""
+from __future__ import annotations
+
+import datetime
+import time
+import logging
+from typing import Iterator
+
+from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta
+from ..policy_registry import SourcePolicy
+
+
+class MiniQMTProvider(DataSourceBase):
+    """miniQMT（迅投 xtquant）数据源 Provider。
+
+    通过本地 XtMiniQmt.exe 进程获取行情/财务/指数成分数据。
+    单线程使用（xtquant 非线程安全）。
+    """
+
+    source_name: str = "miniqmt"
+
+    meta: DataSourceMeta = DataSourceMeta(
+        name="miniqmt",
+        display_name="miniQMT 迅投",
+        auth_type="account",
+        requires_process=True,
+        thread_safety="single_thread",
+        rate_limit_default=0,
+        capabilities=[
+            "kline_daily",
+            "kline_1min",
+            "kline_5min",
+            "financial_statement",
+            "index_constituent",
+        ],
+        known_issues=[
+            "需XtMiniQmt.exe进程",
+            "单线程",
+            "高频数据时间限制",
+        ],
+    )
+
+    # ============== 生命周期方法 ==============
+
+    def connect(self) -> None:
+        """建立连接。
+
+        xtquant 连接本地 XtMiniQmt.exe 进程，无需显式登录。
+        此处仅验证 SDK 可导入，并标记连接状态。
+        """
+        try:
+            from xtquant import xtdata  # noqa: F401  仅验证 SDK 可导入
+        except ImportError as e:
+            self._connected = False
+            self._log.error(f"xtquant SDK 导入失败，请确认已安装: {e}")
+            raise
+        self._connected = True
+        self._log.info("miniQMT 连接就绪（依赖本地 XtMiniQmt.exe 进程）")
+
+    def health_check(self) -> bool:
+        """探活：尝试调用 xtdata.get_stock_list_in_sector 读取沪深A股列表。"""
+        try:
+            from xtquant import xtdata
+            xtdata.get_stock_list_in_sector("沪深A股")
+            return True
+        except Exception as e:
+            self._log.warning(f"miniQMT health_check 失败: {e}")
+            return False
+
+    def disconnect(self) -> None:
+        """断开连接。xtquant 无显式登出，仅重置状态标记。"""
+        self._connected = False
+        self._log.info("miniQMT 已断开")
+
+    # ============== fetch 路由 ==============
+
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """按 payload.extra["capability"] 路由到具体抓取方法。
+
+        Args:
+            payload: 下载请求，extra["capability"] 指定能力
+            policy: 调用策略（限流/重试）
+
+        Yields:
+            FetchResult: 每批一个
+        """
+        extra = payload.extra or {}
+        capability = extra.get("capability")
+        if capability == "kline_daily":
+            yield from self._fetch_kline_daily(payload, policy)
+        else:
+            yield FetchResult(
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"未知 capability: {capability}",
+            )
+
+    # ============== kline_daily ==============
+
+    def _fetch_kline_daily(
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取日K线（c1_market.kline_daily）。
+
+        步骤：
+        1. 若 symbols 为 None，取沪深A股全部标的
+        2. 对每个 stock_code：download_history_data 下载 → get_market_data_ex 读取
+        3. DataFrame 转 tuple 列表，每个股票作为一批 yield
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个股票一批
+        """
+        from xtquant import xtdata
+
+        table = "c1_market.kline_daily"
+        columns = ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount"]
+
+        try:
+            start_str = self._date_to_str(payload.start)
+            end_str = self._date_to_str(payload.end)
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=[], rows=[], last_key="",
+                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+            )
+            return
+
+        extra = payload.extra or {}
+        period = extra.get("period", "1d")
+
+        # 1. 获取标的清单
+        try:
+            symbols = payload.symbols
+            if not symbols:
+                symbols = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
+                )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=[], rows=[], last_key="",
+                elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+            )
+            return
+
+        last_key = self._date_to_str(payload.end)
+
+        # 2. 逐标的下载+读取
+        for stock_code in symbols:
+            t0 = time.time()
+            try:
+                # 下载历史数据
+                self._call_with_policy(
+                    xtdata.download_history_data,
+                    policy,
+                    stock_code, period, start_str, end_str,
+                )
+                # 读取行情
+                data = self._call_with_policy(
+                    xtdata.get_market_data_ex,
+                    policy,
+                    [], [stock_code], period, start_str, end_str,
+                )
+
+                # 3. DataFrame → tuple 列表
+                rows = []
+                df = data.get(stock_code) if data else None
+                if df is not None and len(df) > 0:
+                    symbol = self._stock_to_symbol(stock_code)
+                    times = df["time"].tolist()
+                    opens = df["open"].tolist()
+                    highs = df["high"].tolist()
+                    lows = df["low"].tolist()
+                    closes = df["close"].tolist()
+                    volumes = df["volume"].tolist()
+                    amounts = df["amount"].tolist()
+                    for i in range(len(times)):
+                        rows.append((
+                            self._ts_to_date(times[i]),
+                            symbol,
+                            self.safe_float(opens[i]),
+                            self.safe_float(highs[i]),
+                            self.safe_float(lows[i]),
+                            self.safe_float(closes[i]),
+                            self.safe_float(volumes[i]),
+                            self.safe_float(amounts[i]),
+                        ))
+
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.time() - t0,
+                    error=f"{stock_code} 抓取失败: {e}",
+                )
+
+    # ============== 辅助方法 ==============
+
+    @staticmethod
+    def _date_to_str(d: datetime.date) -> str:
+        """datetime.date → "YYYYMMDD" 字符串。"""
+        return d.strftime("%Y%m%d")
+
+    @staticmethod
+    def _ts_to_date(ts_ms) -> str:
+        """毫秒时间戳 → "YYYY-MM-DD" 字符串（按 UTC 解释，避免本地时区跨日）。
+
+        xtquant 返回的 time 列为中国市场收盘后的毫秒时间戳，但 trade_date
+        只取日期部分，使用 UTC 解释可避免本地时区偏移导致跨日。
+        """
+        return datetime.datetime.utcfromtimestamp(ts_ms / 1000).strftime("%Y-%m-%d")
+
+    @staticmethod
+    def _stock_to_symbol(stock_code: str) -> str:
+        """stock_code 去后缀："000001.SZ" → "000001"。"""
+        return stock_code.split(".")[0]
+
+    @staticmethod
+    def safe_float(v) -> float | None:
+        """转 float，失败或 NaN 返回 None。"""
+        if v is None:
+            return None
+        try:
+            f = float(v)
+        except (TypeError, ValueError):
+            return None
+        if f != f:  # NaN
+            return None
+        return f

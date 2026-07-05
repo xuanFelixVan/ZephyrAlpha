@@ -65,6 +65,20 @@ summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，
 > module_id: MOD-L00-001 | version: 4.0.0 | status: active | domain: data
 > actual_disk_path: src/zephyr/data/ | generation: 4 | construction_progress: partially_implemented
 
+> ⚠️ **职责拆分通知（2026-07-06）**
+>
+> 本蓝图的 **Provider 抽象部分（DataSourceBase / DataSourceMeta / per-source 实现）** 已移交新蓝图：
+> 👉 [data_source_integrator_blueprint.md](data_source_integrator_blueprint.md)（MOD-L00-004 数据源集成器）
+>
+> **移交原因**：本蓝图 §0.1/§0.3/§16.6 声称 Provider "已实现/已重建"，但 `src/zephyr/data/` 实际为空目录（仅 `__init__.py`），声明与磁盘不符。借 MOD-L00-004 一并重建，同时补齐本蓝图未设计的**调度编排层 / per-source 策略注册表 / 进度统一存储 / 告警**四块短板。
+>
+> **本蓝图保留职责**：
+> - 数据质量门禁（DataQualityGate）——与下载调度解耦，由消费方读取时调用
+> - 标准化输出契约（CTR-001/CTR-002/CTR-003）——数据格式规范不变
+> - 品类全景对接（母蓝图 §5/§6）
+>
+> **后续施工以 MOD-L00-004 为准**。本蓝图 §3.1/§4/§16.6/§16.7.1 的 Provider 相关章节仅作历史设计参考，不再维护。
+
 ## 概述
 
 本蓝图描述 ZephyrAlpha 数据接入层——它是业务数据库母蓝图([ARCH-BIZDB-001](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/business_data_architecture.md))的**上游**，为 C1/C2/C3 仓库提供原料数据，解决外部数据源格式各异、API限流、数据质量参差不齐的标准化接入问题。
