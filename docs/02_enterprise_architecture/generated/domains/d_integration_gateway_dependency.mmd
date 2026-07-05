@@ -1,7 +1,7 @@
 %% D_INTEGRATION_GATEWAY 域全景依赖图
-%% 生成时间: 2026-07-05 19:49:40
+%% 生成时间: 2026-07-05 20:28:25
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 20, 依赖边数: 80
+%% 模块数: 20, 依赖边数: 78
 
 graph TD
 
@@ -30,9 +30,6 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_integration_mcp_blueprint_search_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
-    src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_audit_logger_py
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_error_codes_py
@@ -47,11 +44,11 @@ graph TD
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_telemetry_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_vector_memory_server_py
     src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
+    src_zephyr_integration_mcp_blueprint_search_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
+    src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_sandbox_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
-    src_zephyr_integration_mcp_sentinel_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
-    src_zephyr_integration_mcp__base_server_py -->|import_depends| src_zephyr_integration_mcp_error_codes_py
-    src_zephyr_integration_mcp_vector_memory_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp___init___py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp___init___py -->|import_depends| src_zephyr_integration_mcp_blueprint_search_server_py
     src_zephyr_integration_mcp___init___py -->|import_depends| src_zephyr_integration_mcp_doc_guard_server_py
@@ -66,29 +63,30 @@ graph TD
     src_zephyr_integration_mcp___init___py -->|import_depends| src_zephyr_integration_mcp_prompt_provider_py
     src_zephyr_integration_mcp___init___py -->|import_depends| src_zephyr_integration_mcp_resource_provider_py
     src_zephyr_integration_mcp___init___py -->|import_depends| src_zephyr_integration_mcp_sandbox_server_py
+    src_zephyr_integration_mcp__base_server_py -->|import_depends| src_zephyr_integration_mcp_error_codes_py
+    src_zephyr_integration_mcp_vector_memory_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
+    src_zephyr_integration_mcp_sentinel_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_tool_contracts_yaml -->|config_depends| src_zephyr_integration_mcp___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_GOVERNANCE -> D_INTEGRATION_GATEWAY (3 条)
+    %% D_GOVERNANCE -> D_INTEGRATION_GATEWAY (1 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_mcp___init___py
-    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_integration_mcp_blueprint_search_server_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_integration_mcp_blueprint_search_server_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_INTEGRATION_GATEWAY -> D_GOVERNANCE (13 条)
     src_zephyr_integration_mcp_audit_logger_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_integration_mcp_sentinel_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_integration_mcp__base_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_integration_mcp_sentinel_server_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_INTEGRATION_GATEWAY -> D_GOV_ENFORCEMENT (1 条)
     src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     %% D_INTEGRATION_GATEWAY -> D_INFRA_RECOVERY (1 条)
@@ -105,26 +103,26 @@ graph TD
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     %% D_INTEGRATION_GATEWAY -> D_SHARED (18 条)
-    src_zephyr_integration_mcp_blueprint_search_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_audit_logger_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_blueprint_search_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_resource_provider_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_telemetry_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp__base_server_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 37 条
-    %% 跨域入边: 3 条
+    %% 跨域入边: 1 条
     %% 跨域出边: 40 条
