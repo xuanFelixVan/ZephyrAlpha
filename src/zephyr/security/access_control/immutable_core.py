@@ -121,10 +121,14 @@ class ImmutableCore:
         return False
 
     def is_always_blocked(self, operation: str) -> bool:
-        """检查操作是否永远禁止（支持大小写/分隔符规范化）."""
+        """检查操作是否永远禁止（支持大小写/分隔符规范化）.
+
+        规范化规则：统一转为小写，空格/连字符/冒号统一转为下划线，
+        使 "modify:immutable_core" 与 "modify_immutable_core" 等价。
+        """
         if not operation:
             return False
-        normalized = operation.lower().replace(" ", "_").replace("-", "_")
+        normalized = operation.lower().replace(" ", "_").replace("-", "_").replace(":", "_")
         return normalized in ALWAYS_BLOCKED_OPERATIONS
 
     @property

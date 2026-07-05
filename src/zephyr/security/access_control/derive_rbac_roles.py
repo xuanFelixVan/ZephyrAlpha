@@ -28,10 +28,12 @@ import hashlib
 from pathlib import Path
 from typing import Any
 
+from zephyr.security.access_control.identity import ROLE_DEFAULT_PERMISSIONS
 
-DEFAULT_DERIVATIONS = {
-    "executor": ["read:docs", "read:src", "write:tests", "execute:scripts"],
-    "admin": ["read:docs", "read:src", "write:src", "manage:rbac"],
+
+# 派生自 identity.py ROLE_DEFAULT_PERMISSIONS 真源——禁止在此硬编码角色权限
+DEFAULT_DERIVATIONS: dict[str, list[str]] = {
+    role.value: list(perms) for role, perms in ROLE_DEFAULT_PERMISSIONS.items()
 }
 
 

@@ -1,44 +1,25 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.compliance_rule
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.contracts.compliance_rule
 # [CONSUMERS] l10-compliance
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] re-export shim only; truth source is zephyr.shared.contracts.compliance_rule
+# [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.contracts.compliance_rule
 # [STABILITY] stable
-# [SAFETY] M
+# [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-PRT_compliance_rule | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""Re-export shim — ComplianceRule 真源已合并至 zephyr.shared.contracts.compliance_rule。
 
-# ==== BEGIN CODGEN:CTR-P1-012 ====
+SSoT: cross_layer_contracts.yaml -> CTR-P1-012
+canonical: src/zephyr/shared/contracts/compliance_rule.py
+"""
 
-from dataclasses import dataclass
-from datetime import datetime
-
-
-@dataclass(frozen=True)
-class ComplianceRule:
-    created_at: datetime
-    description: str
-    enforcement_action: str
-    idempotency_key: str
-    is_active: bool
-    jurisdiction: str
-    rule_id: str
-    rule_logic: str
-    rule_name: str
-    rule_type: str
-    severity: str
-    updated_at: datetime
-    version: str
-    schema_version: str = "1.0"
-
-
-# ==== END CODGEN:CTR-P1-012 ====
+from zephyr.shared.contracts.compliance_rule import ComplianceRule  # noqa: F401
 
 __all__ = ["ComplianceRule"]

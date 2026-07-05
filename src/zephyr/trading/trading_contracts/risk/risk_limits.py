@@ -36,14 +36,3 @@ class RiskLimits:
 
 
 # ==== END CODGEN:CTR-003 ====
-
-
-class RiskLimitsCalculator:
-    def __init__(self, limits: RiskLimits | None = None) -> None:
-        self._limits = limits or RiskLimits(
-            as_of_date=datetime.now(),
-            idempotency_key="default",
-        )
-
-    def check(self, position_value: float, portfolio_value: float) -> dict:
-        return {"within_limits": True, "position_ratio": position_value / portfolio_value if portfolio_value else 0.0}

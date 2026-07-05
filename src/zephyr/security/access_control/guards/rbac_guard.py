@@ -24,7 +24,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
@@ -33,6 +33,10 @@ from zephyr.security.access_control.identity import (
     AgentRole,
     MaturityLevel,
 )
+from zephyr.security.access_control.immutable_core import (
+    ALWAYS_BLOCKED_OPERATIONS,
+    PROTECTED_PATHS,
+)
 
 
 ALWAYS_ALLOW_OPERATIONS = [
@@ -40,13 +44,7 @@ ALWAYS_ALLOW_OPERATIONS = [
     "read:src",
     "read:tests",
     "read:config",
-]
-
-ALWAYS_BLOCKED_OPERATIONS = [
-    "modify:rbac_roles",
-    "delete:audit_logs",
-    "modify:immutable_core",
-    "delete:governance_db",
+    "code_search",
 ]
 
 AUTO_GUARD_OPERATIONS = [
@@ -56,17 +54,10 @@ AUTO_GUARD_OPERATIONS = [
     "execute:tests",
 ]
 
-RBAC_BLOCKED_OPS = {
-    "modify:rbac_roles",
-    "delete:audit_logs",
-    "modify:immutable_core",
-    "delete:governance_db",
-}
 
-PROTECTED_PATHS = [
-    ".git",
-    ".ailocks",
-]
+def _normalize_op(operation: str) -> str:
+    """操作名规范化：冒号/连字符/空格统一转为下划线，便于匹配 immutable_core 真源。"""
+    return operation.lower().replace(":", "_").replace("-", "_").replace(" ", "_")
 
 
 class PermissionDecision(str, Enum):
@@ -86,12 +77,16 @@ class PermissionResult:
         reason: 决策原因
         layer: 检查层
         auto_guard_timeout: auto-guard 超时时间（秒）
+        requires_owner_review: 是否需要 Owner 审查
+        audit_context: 审计上下文
     """
 
     decision: PermissionDecision
     reason: str = ""
     layer: str = "L1_rbac"
-    auto_guard_timeout: int = 0
+    auto_guard_timeout: int = 300
+    requires_owner_review: bool = False
+    audit_context: dict = field(default_factory=dict)
 
 
 class RBACGuard:
@@ -127,23 +122,30 @@ class RBACGuard:
                 layer="L0",
             )
 
-        # 永远阻止的操作
-        if operation in ALWAYS_BLOCKED_OPERATIONS:
+        # 永远阻止的操作（规范化后匹配 immutable_core 真源）
+        if _normalize_op(operation) in ALWAYS_BLOCKED_OPERATIONS:
             return PermissionResult(
                 decision=PermissionDecision.BLOCKED,
                 reason=f"always blocked: {operation}",
                 layer="L1_rbac",
             )
 
-        # 受保护路径检查
+        # 受保护路径检查（immutable_core 真源，glob 模式匹配）
+        # ADMIN / AUDITOR 角色可读访问受保护路径（审计/管理需要）
         if target_path:
-            for protected in PROTECTED_PATHS:
-                if target_path.startswith(protected) or protected in target_path:
-                    return PermissionResult(
-                        decision=PermissionDecision.BLOCKED,
-                        reason=f"protected path: {target_path}",
-                        layer="L1_rbac",
-                    )
+            from fnmatch import fnmatch
+
+            role = getattr(agent, "role", None)
+            role_value = str(getattr(role, "value", role)).lower() if role else ""
+            if role_value not in ("admin", "auditor"):
+                for pattern in PROTECTED_PATHS:
+                    base = pattern.replace("/**", "").rstrip("*")
+                    if base and (target_path.startswith(base) or fnmatch(target_path, pattern)):
+                        return PermissionResult(
+                            decision=PermissionDecision.BLOCKED,
+                            reason=f"protected path: {target_path}",
+                            layer="L1_rbac",
+                        )
 
         # READER 不能写
         role = getattr(agent, "role", None)
@@ -213,7 +215,7 @@ class RBACGuard:
                     layer="L1_rbac",
                 )
 
-        # 显式权限检查
+        # 显式权限检查（精确匹配 + 通配符匹配）
         explicit_perms = getattr(agent, "permissions", None) or []
         if operation in explicit_perms:
             return PermissionResult(
@@ -221,6 +223,13 @@ class RBACGuard:
                 reason="allowed by explicit permission",
                 layer="L1_rbac",
             )
+        for perm in explicit_perms:
+            if perm.endswith(":*") and operation.startswith(perm[:-1]):
+                return PermissionResult(
+                    decision=PermissionDecision.ALLOW,
+                    reason=f"allowed by wildcard {perm}",
+                    layer="L1_rbac",
+                )
 
         # owner_approved 允许未知操作
         if getattr(agent, "owner_approved", False):
@@ -251,7 +260,6 @@ __all__ = [
     "ALWAYS_BLOCKED_OPERATIONS",
     "AUTO_GUARD_OPERATIONS",
     "PROTECTED_PATHS",
-    "RBAC_BLOCKED_OPS",
     "PermissionDecision",
     "PermissionResult",
     "RBACGuard",

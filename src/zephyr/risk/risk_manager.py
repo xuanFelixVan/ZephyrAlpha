@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
 # [MODULE] zephyr.risk.risk_manager
 # [DOMAIN] D_RISK
-# [DEPENDENCIES] zephyr.trading.trading_contracts.risk.risk_limit_violation_error; zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot; zephyr.trading.trading_contracts.risk.risk_limits; zephyr.trading.trading_contracts.risk.risk_metrics
+# [DEPENDENCIES] zephyr.trading.trading_contracts.risk.risk_limit_violation_error; zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot; zephyr.shared.contracts.risk_limits; zephyr.trading.trading_contracts.risk.risk_metrics
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -44,7 +44,7 @@ from typing import ClassVar
 
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
+from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
 
 
