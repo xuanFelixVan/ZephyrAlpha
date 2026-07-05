@@ -253,6 +253,11 @@ def generate_audit_log(
                 # 降低碰撞阻力。保留完整 sha256（64个十六进制字符=256位）。
                 f.write(f"  {fp}: {fh}\n")
 
+            # 5.74.4 修复：os.replace 前刷盘，确保 tmp 内容落盘，防止崩溃后
+            # 目标文件存在但内容为空/不完整，破坏审计完整性。
+            f.flush()
+            os.fsync(f.fileno())
+
         os.replace(tmp_path, str(audit_path))
 
     except PermissionError:

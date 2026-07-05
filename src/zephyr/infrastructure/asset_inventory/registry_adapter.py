@@ -30,6 +30,36 @@ from pathlib import Path
 
 from zephyr.infrastructure.asset_inventory.models import ClassifiedAsset, RegistryEntry
 
+# 5.66.3 修复：表名白名单，防止 f-string 拼接表名的 SQL 注入风险。
+# SqliteAdapter 读取 governance.db（zalpha_metadata.db）各表，白名单覆盖全部已知表名。
+_ALLOWED_TABLES = frozenset(
+    {
+        "tasks",
+        "events",
+        "knowledge",
+        "gate_runs",
+        "circuit_breaker_state",
+        "task_files",
+        "_schema_version",
+        "slow_queries",
+        "tx_idempotency",
+        "task_events",
+        "task_snapshots",
+        "fle_metrics",
+        "fle_alerts",
+        "fle_dispatch_log",
+        "task_reviews",
+        "f5_state",
+    }
+)
+
+
+def _validate_table_name(table: str) -> str:
+    """5.66.3 修复：白名单校验表名，仅允许已知表名用于 SQL 拼接。"""
+    if table not in _ALLOWED_TABLES:
+        raise ValueError(f"table name not in whitelist: {table!r}")
+    return table
+
 
 class RegistryParseError(Exception):
     pass
@@ -495,6 +525,8 @@ class SqliteAdapter(RegistryAdapter):
             raise ValueError(f"非法表名: {table!r}（仅允许字母/数字/下划线）")
         if not isinstance(path_column, str) or not self._IDENT_RE.match(path_column):
             raise ValueError(f"非法列名: {path_column!r}（仅允许字母/数字/下划线）")
+        # 5.66.3 修复：白名单校验表名，仅允许已知表名用于 SQL 拼接
+        _validate_table_name(table)
         self._registry_id = registry_id
         self._db_path = db_path
         self._table = table

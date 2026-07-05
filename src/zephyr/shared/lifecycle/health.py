@@ -224,7 +224,13 @@ class AggregateHealth:
                     ),
                 )
 
-        tasks = [_check_one(m) for m in modules]
+        sem = asyncio.Semaphore(8)
+
+        async def _limited_check(coro):
+            async with sem:
+                return await coro
+
+        tasks = [_limited_check(_check_one(m)) for m in modules]
         results = await asyncio.gather(*tasks)
         health_map = dict(results)
         return _derive_summary(health_map)

@@ -69,6 +69,36 @@ logger = logging.getLogger(__name__)
 
 BACKUP_DIR: Path = REPO_ROOT / "data" / "backups"
 
+# 5.66.6 修复：表名白名单，防止 f-string 拼接表名的 SQL 注入风险。
+# verify_backup() 遍历 governance.db 的 sqlite_master 表名，白名单覆盖全部已知表名。
+_ALLOWED_TABLES = frozenset(
+    {
+        "tasks",
+        "events",
+        "knowledge",
+        "gate_runs",
+        "circuit_breaker_state",
+        "task_files",
+        "_schema_version",
+        "slow_queries",
+        "tx_idempotency",
+        "task_events",
+        "task_snapshots",
+        "fle_metrics",
+        "fle_alerts",
+        "fle_dispatch_log",
+        "task_reviews",
+        "f5_state",
+    }
+)
+
+
+def _validate_table_name(table: str) -> str:
+    """5.66.6 修复：白名单校验表名，仅允许已知表名用于 SQL 拼接。"""
+    if table not in _ALLOWED_TABLES:
+        raise ValueError(f"table name not in whitelist: {table!r}")
+    return table
+
 
 class DatabaseManagerError(RuntimeError):
     """DatabaseManager 基础异常。"""
@@ -644,8 +674,15 @@ class DatabaseManager:
             tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").fetchall()
             row_counts = {}
             for t in tables:
-                cnt = conn.execute(f"SELECT COUNT(*) FROM [{t['name']}]").fetchone()
-                row_counts[t["name"]] = cnt[0] if cnt else 0
+                # 5.66.6 修复：白名单校验表名后再用于 f-string 拼接（原 [t['name']] 方括号为
+                # SQL Server 语法，SQLite 下无效防御；改用白名单校验）
+                try:
+                    safe_table = _validate_table_name(t["name"])
+                except ValueError:
+                    logger.debug("verify_backup: skip table not in whitelist: %s", t["name"])
+                    continue
+                cnt = conn.execute(f"SELECT COUNT(*) FROM {safe_table}").fetchone()
+                row_counts[safe_table] = cnt[0] if cnt else 0
             duration_ms = (time.perf_counter() - start) * 1000
             return {
                 "integrity_ok": integrity is not None and integrity[0] == "ok",

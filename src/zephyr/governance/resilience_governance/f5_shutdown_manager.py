@@ -45,6 +45,17 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+# 5.66.6 修复：表名白名单，防止 f-string 拼接表名的 SQL 注入风险。
+# F5ShutdownManager 仅操作 f5_state 表（STATE_TABLE 类常量）。
+_ALLOWED_TABLES = frozenset({"f5_state"})
+
+
+def _validate_table_name(table: str) -> str:
+    """5.66.6 修复：白名单校验表名，仅允许已知表名用于 SQL 拼接。"""
+    if table not in _ALLOWED_TABLES:
+        raise ValueError(f"table name not in whitelist: {table!r}")
+    return table
+
 
 @dataclass
 class ShutdownResult:
@@ -325,6 +336,8 @@ class F5ShutdownManager:
 
     def _write_state_to_db(self, payload: dict[str, Any]) -> None:
         """将状态写入 SQLite (原子写入)。"""
+        # 5.66.6 修复：白名单校验表名后再用于 f-string 拼接
+        safe_table = _validate_table_name(self.STATE_TABLE)
         # 确保目录存在
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -335,7 +348,7 @@ class F5ShutdownManager:
         try:
             conn.execute(
                 f"""
-                CREATE TABLE IF NOT EXISTS {self.STATE_TABLE} (
+                CREATE TABLE IF NOT EXISTS {safe_table} (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     key TEXT NOT NULL,
                     value TEXT NOT NULL,
@@ -344,11 +357,11 @@ class F5ShutdownManager:
                 """
             )
             # 清空旧状态 (单表, 只保留最新)
-            conn.execute(f"DELETE FROM {self.STATE_TABLE}")
+            conn.execute(f"DELETE FROM {safe_table}")
             # 写入新状态
             for key, value in payload.items():
                 conn.execute(
-                    f"INSERT INTO {self.STATE_TABLE} (key, value, updated_at) VALUES (?, ?, ?)",
+                    f"INSERT INTO {safe_table} (key, value, updated_at) VALUES (?, ?, ?)",
                     (key, json.dumps(value, default=str), payload.get("timestamp", time.time())),
                 )
             conn.commit()
@@ -421,10 +434,12 @@ class F5ShutdownManager:
 
     def _read_state_from_db(self) -> dict[str, Any]:
         """从 SQLite 读取状态。"""
+        # 5.66.6 修复：白名单校验表名后再用于 f-string 拼接
+        safe_table = _validate_table_name(self.STATE_TABLE)
         conn = get_db_connection(str(self._db_path), timeout=5.0)
         try:
             cursor = conn.execute(
-                f"SELECT key, value FROM {self.STATE_TABLE}"
+                f"SELECT key, value FROM {safe_table}"
             )
             result: dict[str, Any] = {}
             for key, value in cursor.fetchall():

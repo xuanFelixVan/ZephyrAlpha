@@ -53,7 +53,12 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
 
         tmp_path = Path(str(output_path) + f".{os.getpid()}.tmp")
         try:
-            tmp_path.write_text(content, encoding="utf-8")
+            # 5.74.4 修复：os.replace 前刷盘，确保审计内容落盘，防止崩溃后
+            # 目标文件存在但内容为空/不完整，破坏审计完整性。
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                f.write(content)
+                f.flush()
+                os.fsync(f.fileno())
             os.replace(str(tmp_path), str(output_path))
         except Exception:
             try:
@@ -73,7 +78,12 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
         content = issue.model_dump_json(indent=2, default=str)
         tmp_path = Path(str(output_path) + f".{os.getpid()}.tmp")
         try:
-            tmp_path.write_text(content, encoding="utf-8")
+            # 5.74.4 修复：os.replace 前刷盘，确保审计内容落盘，防止崩溃后
+            # 目标文件存在但内容为空/不完整，破坏审计完整性。
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                f.write(content)
+                f.flush()
+                os.fsync(f.fileno())
             os.replace(str(tmp_path), str(output_path))
         except Exception:
             try:
@@ -90,7 +100,12 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
 
         tmp_path = Path(str(output_path) + f".{os.getpid()}.tmp")
         try:
-            tmp_path.write_text(content, encoding="utf-8")
+            # 5.74.4 修复：os.replace 前刷盘，确保审计内容落盘，防止崩溃后
+            # 目标文件存在但内容为空/不完整，破坏审计完整性。
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                f.write(content)
+                f.flush()
+                os.fsync(f.fileno())
             os.replace(str(tmp_path), str(output_path))
         except Exception:
             try:

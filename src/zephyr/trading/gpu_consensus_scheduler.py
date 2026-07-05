@@ -233,7 +233,13 @@ class GPUConsensusScheduler:
         return result
 
     async def submit_batch(self, requests: list[ConsensusRequest]) -> list[ConsensusResult]:
-        tasks = [self.submit(req) for req in requests]
+        sem = asyncio.Semaphore(8)
+
+        async def _limited_submit(coro):
+            async with sem:
+                return await coro
+
+        tasks = [_limited_submit(self.submit(req)) for req in requests]
         return list(await asyncio.gather(*tasks, return_exceptions=False))
 
     def get_gpu_status(self) -> GPUStatus:

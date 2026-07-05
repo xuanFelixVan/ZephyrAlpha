@@ -26,6 +26,12 @@ services:
       - ./data:/data
       - ./logs:/app/logs
       - ./config:/app/config:ro
+    deploy:
+      # 5.43.1 修复：为核心应用设置 CPU/内存上限，防止内存泄漏耗尽宿主机
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2g
     restart: unless-stopped
     networks:
       - zephyr-net
@@ -51,6 +57,12 @@ services:
       - "--storage.tsdb.retention.time=30d"
       - "--web.console.libraries=/usr/share/prometheus/console_libraries"
       - "--web.console.templates=/usr/share/prometheus/consoles"
+    deploy:
+      # 5.43.1 修复：Prometheus TSDB 内存占用可控，限制 1 CPU / 1g
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1g
     restart: unless-stopped
     networks:
       - zephyr-net
@@ -70,6 +82,12 @@ services:
       - grafana_data:/var/lib/grafana
       - ./infra/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
       - ./infra/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    deploy:
+      # 5.43.1 修复：Grafana 仪表板轻量，限制 0.5 CPU / 512m
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512m
     restart: unless-stopped
     networks:
       - zephyr-net
@@ -90,6 +108,12 @@ services:
       - "--path.procfs=/host/proc"
       - "--path.sysfs=/host/sys"
       - "--path.rootfs=/rootfs"
+    deploy:
+      # 5.43.1 修复：node-exporter 仅采集指标，极轻量，限制 0.5 CPU / 256m
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256m
     restart: unless-stopped
     networks:
       - zephyr-net

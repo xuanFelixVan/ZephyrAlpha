@@ -360,7 +360,13 @@ class VerdictEngine:
                     reason=f"evaluate_error:{exc}",
                 )
 
-        tasks = [_eval_one(evt) for evt in events]
+        sem = asyncio.Semaphore(8)
+
+        async def _limited_eval(coro):
+            async with sem:
+                return await coro
+
+        tasks = [_limited_eval(_eval_one(evt)) for evt in events]
         results = await asyncio.gather(*tasks)
         return list(results)
 

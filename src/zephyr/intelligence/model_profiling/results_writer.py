@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -56,12 +57,18 @@ def write_benchmark_results(
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filepath = base / f"benchmark_{timestamp}.jsonl"
 
+    # 5.74.3 修复：原子写入——tmp 文件 + flush + fsync + os.replace，
+    # 防止写入中途崩溃产生截断的 JSONL 文件导致 load_benchmark_history 解析失败。
+    tmp_path = str(filepath) + ".tmp"
     lines_written = 0
-    with open(filepath, "w", encoding="utf-8") as f:
+    with open(tmp_path, "w", encoding="utf-8") as f:
         for p in profiles:
             record = _profile_to_dict(p)
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
             lines_written += 1
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp_path, str(filepath))
 
     _log.info("ResultsWriter: wrote %d profiles → %s", lines_written, filepath)
     return str(filepath)
