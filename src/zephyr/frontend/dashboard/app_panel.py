@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.app_panel
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] panel; holoviews; plotly; plotly_resampler; datashader; bokeh; zephyr.frontend.dashboard.components.chart_factory; zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.tick_replay; zephyr.frontend.dashboard.components.order_book; zephyr.frontend.dashboard.components.position_monitor; zephyr.frontend.dashboard.components.trade_panel; zephyr.frontend.dashboard.components.fitness_functions; zephyr.frontend.dashboard.components.gate_statistics; zephyr.frontend.dashboard.components.knowledge_overview; zephyr.frontend.dashboard.components.olap_trend; zephyr.frontend.dashboard.components.task_progress; zephyr.governance.persistence.sqlite_schema; zephyr.governance.persistence.task_repo
+# [DEPENDENCIES] panel; holoviews; plotly; plotly_resampler; datashader; bokeh; zephyr.frontend.dashboard.components.chart_factory; zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.backtest_performance; zephyr.frontend.dashboard.components.tick_replay; zephyr.frontend.dashboard.components.order_book; zephyr.frontend.dashboard.components.position_monitor; zephyr.frontend.dashboard.components.trade_panel; zephyr.frontend.dashboard.components.fitness_functions; zephyr.frontend.dashboard.components.gate_statistics; zephyr.frontend.dashboard.components.knowledge_overview; zephyr.frontend.dashboard.components.olap_trend; zephyr.frontend.dashboard.components.task_progress; zephyr.governance.persistence.sqlite_schema; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -98,6 +98,12 @@ from zephyr.frontend.dashboard.components.backtest_results import (
     BacktestResultData,
     render_backtest_results,
 )
+# 掘金风格 5-Tab 绩效分析 (v3.2.0, bt-visualizer + 掘金量化)
+from zephyr.frontend.dashboard.components.backtest_performance import (
+    BacktestPerformanceData,
+    generate_demo_performance_data,
+    render_backtest_performance,
+)
 from zephyr.frontend.dashboard.components.tick_replay import (
     ReplaySpeed,
     fetch_tick_replay,
@@ -120,6 +126,9 @@ __all__ = [
     "DashboardPanelApp",
     "create_dashboard",
     "main",
+    "BacktestPerformanceData",
+    "generate_demo_performance_data",
+    "render_backtest_performance",
 ]
 
 
@@ -194,15 +203,11 @@ class DashboardPanelApp:
     # ===== 交易/回测类 Tab =====
 
     def _tab_backtest_results(self) -> Any:
-        if self._backtest_result is not None:
-            from zephyr.frontend.dashboard.components.backtest_results import (
-                fetch_backtest_results,
-            )
-            data = fetch_backtest_results(self._backtest_result)
-        else:
-            data = self._demo_backtest_data()
-        payload = render_backtest_results(data)
-        return payload.get("_layout") or pn.pane.Markdown("回测结果渲染失败")
+        # v3.2.0: 掘金风格 5-Tab 绩效分析 (bt-visualizer + 掘金量化)
+        # 5 子 Tab: 绩效概览 / 持仓分析 / 交易统计 / 每日明细 / 信号分析
+        perf_data = generate_demo_performance_data()
+        payload = render_backtest_performance(perf_data)
+        return payload.get("_layout") or pn.pane.Markdown("回测绩效分析渲染失败")
 
     def _tab_tick_replay(self) -> Any:
         ticks = self._tick_data if self._tick_data is not None else []
