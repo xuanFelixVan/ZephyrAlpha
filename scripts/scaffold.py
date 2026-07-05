@@ -66,6 +66,17 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from scripts.governance.d3_metadata.check_naming_convention import check_dir, check_file
 
+# 5.154.11 修复: 声明 __all__, 明确公共API边界
+# 注册表所述 line 90 __all__=[] 实为 MODULE_TEMPLATE 字符串内的模板内容, 非 scaffold.py 本身
+# 此处为 scaffold.py 本体的 __all__
+__all__ = [
+    "MODULE_TEMPLATE",
+    "SCRIPT_TEMPLATE",
+    "ScaffoldEngine",
+    "ScaffoldError",
+    "main",
+]
+
 # ---------------------------------------------------------------------------
 # 路径常量
 # ---------------------------------------------------------------------------

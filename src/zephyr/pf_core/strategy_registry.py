@@ -12,7 +12,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Re-export wrapper: strategy_registry has migrated to zephyr.portfolio.core.strategy_registry"""
 
 from zephyr.governance.strategies.strategy_registry import *  # noqa: F403
+
+# 5.154.12 修复: 显式声明 __all__, 与源模块保持一致
+# (源模块 zephyr.governance.strategies.strategy_registry 已声明 __all__)
+__all__ = ["StrategyBase", "StrategyMeta", "StrategyRegistry"]

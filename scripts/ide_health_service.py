@@ -122,15 +122,18 @@ def _get_daemon_status() -> dict[str, str]:
     返回 {"running": "true|false", "ghost_count": "N", "detail": "..."}
     """
     try:
-        from zephyr.trading.ide_health_daemon import _daemon_instance
+        # 5.154.1 修复: 使用公共 getter 而非导入 _daemon_instance 私有单例
+        from zephyr.trading.ide_health_daemon import get_daemon_instance
+        daemon = get_daemon_instance()
     except ImportError as e:
         return {"running": "false", "ghost_count": "0", "detail": f"导入失败: {e}"}
 
-    if _daemon_instance is None:
+    if daemon is None:
         return {"running": "false", "ghost_count": "0", "detail": "守护进程未注册"}
 
-    running = _daemon_instance._running
-    ghost_count = _daemon_instance.ghost_count
+    # 5.154.1 修复: 使用 is_running 公共属性而非 _running 私有字段
+    running = daemon.is_running
+    ghost_count = daemon.ghost_count
     return {
         "running": "true" if running else "false",
         "ghost_count": str(ghost_count),

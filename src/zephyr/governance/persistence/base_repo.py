@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] TaskNotFoundError;InvalidTransitionError;DuplicateTaskError;DatabaseError;QueryError;DependencyError
 # [TESTS] tests/db/
 # [A_module] module_id=MOD-DAT_base_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """[BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 
@@ -53,16 +53,13 @@ logger = logging.getLogger(__name__)
 
 
 __all__ = [
-    "_ALLOWED_TRANSITIONS",
+    # 5.154.7 修复: 移除 _ALLOWED_TRANSITIONS/_is_valid_transition/_new_id/_row_to_taskcard 私有符号
     "InvalidTransitionError",
     "P0InflationFrozenError",
     "P0InflationWarning",
     "RejectedUpgradeCoolingOffError",
     "TaskNotFoundError",
     "TaskRepositoryError",
-    "_is_valid_transition",
-    "_new_id",
-    "_row_to_taskcard",
     "allowed_transitions",
     "is_terminal",
     "now_iso",

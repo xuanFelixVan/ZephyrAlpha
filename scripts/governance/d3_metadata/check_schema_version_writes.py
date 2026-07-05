@@ -141,10 +141,11 @@ def run_db_check() -> int:
     print("[G_TRAE_059] DB check: verifying schema version consistency...")
 
     sys.path.insert(0, str(_REPO_ROOT / "src"))
-    from zephyr.governance.depgraph_schema import _MIGRATIONS
+    # 5.154.6 修复: 使用 MIGRATIONS 公共别名而非 _MIGRATIONS 私有列表
+    from zephyr.governance.depgraph_schema import MIGRATIONS
 
-    migrations_max = max(v for v, _, _ in _MIGRATIONS)
-    print(f"  _MIGRATIONS max version: v{migrations_max}")
+    migrations_max = max(v for v, _, _ in MIGRATIONS)
+    print(f"  MIGRATIONS max version: v{migrations_max}")
 
     conn = get_depgraph_pg_connection(autocommit=True)
     try:

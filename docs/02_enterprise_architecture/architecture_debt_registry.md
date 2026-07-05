@@ -8465,6 +8465,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.154 接口边界清晰度（14个，第26轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=14(接口边界清晰度需拆分/合并接口)
+> **第42轮修复状态（2026-07-05）**：FIXED=8(5.154.1 ide_health_daemon添加get_daemon_instance公共getter+is_running属性,ide_health_service改用公共接口 + 5.154.2/3 phase_check_registry添加CHECK_MAP公共别名,pipeline_runner改用CHECK_MAP + 5.154.4/5 __version__添加parse_semver公共别名,schema_registry×2改用parse_semver + 5.154.6 depgraph_schema添加MIGRATIONS公共别名,check_schema_version_writes改用MIGRATIONS + 5.154.7 base_repo.py __all__移除4个私有符号 + 5.154.10 git_guard.py添加__all__ + 5.154.11 scaffold.py添加__all__ + 5.154.12 strategy_registry.py添加__all__), DRIFTED=4(5.154.8 ops/diagnosers和ops/detectors路径不存在,实际为trading/feedback_loop/diagnosers和detectors,且__all__导出无下划线子包名(cognitive/diagnosis/health/reliability和anomaly/correlation/drift/guard/reliability)非注册表所述_前缀 + 5.154.9 __all__=["*"]模式代码库未找到 + 5.154.13 task_manager_server.py lowlevel Server向后兼容设计决策 + 5.154.14 behavioral_audit/__init__.py不存在), NOT_NEEDED=2(5.154.13 task_manager_server向后兼容有测试保护 + 5.154.14 behavioral_audit/__init__.py不存在). 维度5.154全部清零.
 
 #### HIGH（6个：私有成员被外部调用）
 

@@ -66,6 +66,14 @@ from zephyr.infrastructure.runtime.concurrency_guard import (
     scan_active_locks,
 )
 
+# 5.154.10 修复: 声明 __all__, 明确公共API边界
+# _EXTRACTORS/_scan_untracked_in_dir 等下划线前缀符号为内部实现, 不在公共 API 内
+__all__ = [
+    "DANGEROUS_SUBCOMMANDS",
+    "MV_STRATEGY_ENV",
+    "check_and_execute",
+]
+
 # 危险子命令集合
 DANGEROUS_SUBCOMMANDS = {"reset", "checkout", "stash", "revert", "restore", "mv"}
 
