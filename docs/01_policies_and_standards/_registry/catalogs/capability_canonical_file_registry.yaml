@@ -1376,11 +1376,11 @@ capabilities:
       - MODULE-ID-CONSISTENCY
       - module-id-consistency
       - make_module_id_consistency_gate
-      - module_id_three_track_consistency_blocker
+      - module_id_triple_declaration_consistency_blocker
       - cross_file_module_id_uniqueness_blocker
       - module_id_collision_blocker
     description: >-
-      MODULE-ID-CONSISTENCY in-process module_id 三轨一致性 + count 派生 + 跨文件唯一性门禁
+      MODULE-ID-CONSISTENCY in-process module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁
       （Phase 3 reconciler→gate 收敛，2026-07-03；三维扩展 2026-07-03）。
       从 make_module_id_consistency_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
       三维校验：1. 三轨一致性（P8-FIX-S0）单文件 CFG-*/MOD-*/PS-* module_id 声明是否一致；
@@ -3076,6 +3076,10 @@ creation_tokens:
   - file: "src/zephyr/frontend/dashboard/components/backtest_results.py"
     token: "auto-frontend-backtest-results-20260704"
     created_by: "session-sess-17516-20260704044314"
+    capability: "dashboard_frontend"
+  - file: "src/zephyr/frontend/dashboard/components/backtest_performance.py"
+    token: "auto-frontend-backtest-performance-20260705"
+    created_by: "session-sess-23296-20260705200032"
     capability: "dashboard_frontend"
   - file: "src/zephyr/frontend/dashboard/components/tick_replay.py"
     token: "auto-frontend-tick-replay-20260704"
