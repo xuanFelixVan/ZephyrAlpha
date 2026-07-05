@@ -2170,6 +2170,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.47全部清零.
 > 维度说明：缓存失效逻辑、缓存击穿防护、版本迁移等缓存与真源一致性。（注：MemoryCache LRU O(n)性能问题已在5.24.5记录，此处不重复）
 > **第57轮修复状态（2026-07-06）**：5.47.2 FIXED — semantic_cache.py 新增 get_or_compute() 方法实现 per-key single-flight Lock, commit dc2210ce46. DEFERRED=2(5.47.1/5.47.3).
+> **第62轮修复状态（2026-07-06）**：5.47.1+5.47.3 FIXED — cache_invalidation.py 添加 register_invalidation_handler()+bump_version()+JSON持久化 / cache_manager.py 添加 schema_version+_migrate()+_MIGRATIONS 迁移机制, commit 34d396630a. DEFERRED=0. 维度5.47全部清零.
 
 #### 5.47.1 [HIGH] CacheInvalidationManager无自动失效——数据更新后缓存stale
 - **文件**：[cache_invalidation.py](file:///D:/ZephyrAlpha/src/zephyr/shared/io/cache_invalidation.py#L33)
@@ -2177,7 +2178,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：若数据源更新后调用方忘记set_version，所有客户端持续读stale cache
 - **影响**：缓存与真源不一致；基于过期数据做决策（风险限额/预算阈值）
 - **修复**：接入事件总线自动set_version；持久化到SQLite/Redis；提供bump_version_on_write装饰器
-- **状态**：STILL_VALID（保留）— cache_invalidation.py L33-46 仍为手动 set_version + 内存 dict 存储，需接入事件总线 + 持久化，中等规模重构
+- **状态**：FIXED — cache_invalidation.py 添加 register_invalidation_handler()+bump_version()+JSON持久化, set_version自动通知回调, commit 34d396630a
 
 #### 5.47.2 [MEDIUM] SemanticCache无锁重建——缓存击穿风险
 - **文件**：[semantic_cache.py](file:///D:/ZephyrAlpha/src/zephyr/governance/semantic_audit/semantic_cache.py#L46)
@@ -2193,7 +2194,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：schema升级后缓存全量丢失，无迁移逻辑
 - **影响**：冷启动延迟激增
 - **修复**：load()中检查version，不匹配则调用迁移函数
-- **状态**：STILL_VALID（保留）— cache_manager.py L86-106 load() 仍直接 FunctionCache(**data) 不检查 version，需设计迁移函数注册机制
+- **状态**：FIXED — cache_manager.py 添加 schema_version 字段 + _migrate() 方法 + _MIGRATIONS dict 迁移注册机制, commit 34d396630a
 
 #### 5.47.4 严重度汇总
 
@@ -2397,6 +2398,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.54全部清零.
 > 维度说明：运行时配置变更是否生效、缓存引用刷新、回调失败处理等。
 > **第57轮修复状态（2026-07-06）**：5.54.1 FIXED — llm_gateway.py _PROVIDERS 构建逻辑提取为 _build_providers() + 新增 reload_providers(), commit dc2210ce46. DEFERRED=2(5.54.2/5.54.3).
+> **第62轮修复状态（2026-07-06）**：5.54.2 FIXED — env_watcher.py check_for_changes() 检测变更后 os.environ.update(changed_keys), commit 34d396630a. DEFERRED=1(5.54.3 reload_config不通知消费者需ConfigHolder架构级重构).
 
 #### 5.54.1 [MEDIUM] LLM Provider配置在模块导入时冻结，运行时不刷新（3处副本）
 - **文件**：[llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py#L142)
@@ -2410,7 +2412,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **证据**：check_for_changes检测.env变更后仅写sentinel JSON并返回"需要重载"提示，不实际调用os.environ.update()
 - **问题**：.env修改后os.getenv()读取的配置在当前进程内仍是旧值
 - **修复**：检测到变更时同步执行os.environ.update()
-- **状态**：STILL_VALID（保留）— env_watcher.py 仍仅写 sentinel 文件，需决策是否自动 os.environ.update()
+- **状态**：FIXED — env_watcher.py check_for_changes() 检测变更后 os.environ.update(changed_keys) 更新运行中进程环境, commit 34d396630a
 
 #### 5.54.3 [MEDIUM] reload_config重载后不通知持有旧引用的消费者
 - **文件**：[config/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/config/__init__.py#L154)
@@ -4220,6 +4222,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=20(配置硬编码vs外部化需迁移到配置文件)
 > **第38轮修复状态（2026-07-05）**：FIXED=5(5.141.1 ollama_chat INFERENCE_MODEL+ollama_embedding model+deepseek_chat DEFAULT_MODEL+auto_runtime_core model+gpu_consensus_scheduler 3个模型名 通过os.getenv外部化 / 5.141.2 session_lifecycle _DEFAULT_DB_DIR改用REPO_ROOT SSoT + fix_safety 3处timeout改用类常量+os.getenv), DRIFTED=7(5.141.1 ollama_chat DEFAULT_OLLAMA_URL/deepseek_chat DEFAULT_BASE_URL/secret_rotation_aware ROTATION_URLS/dep_cve_correlator nvd_api_url/runtime_types ollama_base_url 注册时已os.getenv + ops/config.py文件不存在 + flags.py为docstring示例非业务代码), NOT_NEEDED=6(5.141.1 model_registry token_limit为合理数据默认值 + runtime_types embed/chat_model为pydantic Field默认值 + pipeline_roadmap m3/m7_model为审计证明数据 + cost_router LLMProvider为Enum常量 + 5.141.2 dead_letter_queue max_retries为函数参数默认值 + 5.141.3 ollama_chat INFERENCE_TEMPERATURE/integration_hub max_tokens为合理默认值), DEFERRED=2(5.141.1 model_router MODEL_VERSION_MAP需统一配置中心 + 5.141.2 drift_engine db_path需统一到DB_PATH SSoT涉及路径解析重构). 维度5.141全部清零.
+> **第62轮修复状态（2026-07-06）**：5.141.2 FIXED — drift_engine.py _write_drift_events 硬编码 db_path 替换为 DB_PATH SSoT (from shared/io/paths.py), commit 34d396630a. DEFERRED=1(5.141.1 model_router MODEL_VERSION_MAP需统一配置中心).
 
 #### 5.141.1 [HIGH] 硬编码URL/端点/模型名（14处代表性问题）
 
