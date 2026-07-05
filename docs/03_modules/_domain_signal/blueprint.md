@@ -39,9 +39,6 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_signal\\blueprint.md"
     section: "§1"
     why: "本蓝图即SSoT"
-  - path: "D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md"
-    section: "§1-§3"
-    why: "信号域设计态子模块清单+域间接口（草稿区参考）"
 summary: "信号工厂蓝图——4个OCP扩展点+2个默认实现+策略生命周期管理(7阶段)+策略池容量管理+灰度发布。Phase B骨架已就位，业务层已开放，可施工。"
 ssot_yaml: "docs/03_modules/_domain_signal/blueprint.md"
 tags: [signal-generation, l03, c-track, ocp-extension-point, signal-factory]
@@ -296,7 +293,7 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 
 ### 1.8 子模块清单（D-SIGNAL-XX 体系）
 
-> **命名体系说明**：子模块编号 D-SIGNAL-XX 是**蓝图内部编号**，用于门禁挂载和契约落点，**不进入 blueprint_registry**。蓝图 module_id 保持 MOD-L03-001（域级单一ID，SSoT）。详见 frontmatter `submodules` 字段。完整164子模块清单见 [D:\临时工作区\依赖图\04-D-SIGNAL-信号域.md](file:///D:/临时工作区/依赖图/04-D-SIGNAL-信号域.md)。
+> **命名体系说明**：子模块编号 D-SIGNAL-XX 是**蓝图内部编号**，用于门禁挂载和契约落点，**不进入 blueprint_registry**。蓝图 module_id 保持 MOD-L03-001（域级单一ID，SSoT）。详见 frontmatter `submodules` 字段。完整164子模块清单待后续补录到蓝图内部（当前仅列出P0/P1核心子模块）。
 
 #### 1.8.1 P0 核心骨架（信号生成4个OCP扩展点）
 
@@ -329,7 +326,7 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 | D-SIGNAL-41~50 | 涨停基因评估系列 | 涨停基因+游资接力情绪+量化短线强度 | P2 | not_started |
 | D-SIGNAL-58 | 双引擎融合决策 | 量化+主观双引擎融合决策 | P2 | not_started |
 
-> **注**：完整164子模块清单（D-SIGNAL-01~164）见临时工作区依赖图文档。本蓝图仅列出P0/P1核心子模块，P2子模块按需补充。
+> **注**：完整164子模块清单（D-SIGNAL-01~164）待后续补录到蓝图内部。本蓝图仅列出P0/P1核心子模块，P2子模块按需补充。
 
 ---
 
@@ -799,7 +796,7 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 |------|:---:|---------|---------|:---:|
 | v2.1.0 | 2 | 模板v3.5升级 | §0前移+§7/§15删除+§10拆分+铁律扩展 | ✅ |
 | v2.2.0 | 2 | 模板v4.1回填 | 补齐模板缺失章节+压缩+对齐 | ✅ |
-| v3.0.0 | 3 | 信号工厂体系升级 | 子模块清单(D-SIGNAL-01~164)+策略生命周期7阶段+策略池容量+灰度发布+§0.1对齐34文件+去除MOD-ALPHA_SIGNAL_DOMAIN依赖 | ⚠️ |
+| v3.0.0 | 3 | 信号工厂体系升级 | 子模块清单(D-SIGNAL-01~164)+策略生命周期7阶段+策略池容量+灰度发布+§0.1对齐15条目/25文件+去除MOD-ALPHA_SIGNAL_DOMAIN依赖 | ⚠️ |
 
 ### 升级组件清单
 

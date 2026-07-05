@@ -34,9 +34,6 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture_model\\layers\\l02_alpha_factor.yaml"
     section: ""
     why: "架构层YAML真源"
-  - path: "D:\\临时工作区\\依赖图\\03-D-FACTOR-因子域.md"
-    section: "§1-§3"
-    why: "因子域设计态子模块清单+域间接口（草稿区参考）"
 depends_on:
   - target: MOD-L00-001
     at: "§4"
@@ -281,7 +278,7 @@ dual_storage:
 |--------|---------|:---:|
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
-| 代码[BLUEPRINT]字段指向MOD-L02-001 | `grep BLUEPRINT *.py` | ☐(当前指向alpha_signal_domain-001，需修正) |
+| 代码[BLUEPRINT]字段指向MOD-L02-001 | `grep BLUEPRINT *.py` | ☐(v4.0.0蓝图已修正，代码层待同步) |
 
 ### §0.3 版本-代码映射
 

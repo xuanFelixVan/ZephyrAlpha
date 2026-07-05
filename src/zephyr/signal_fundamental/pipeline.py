@@ -17,7 +17,7 @@
 
 """AlphaSignalPipeline D_FACTOR→D_SIGNAL跨层集成管道
 ============================================
-Domain   : _alpha-signal-domain (ALPHA-SIGNAL-DOMAIN-001)
+Domain   : _domain_signal (SIGNAL-DOMAIN-001)
 Contracts: AS-CT-001~005
 Layers   : D_FACTOR (AlphaFactor) → D_SIGNAL (SignalGeneration)
 Status   : Phase B — 骨架管道已就绪，底层C轨模块 blocked_by_infrastructure

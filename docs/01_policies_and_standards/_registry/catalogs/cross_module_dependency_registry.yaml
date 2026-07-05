@@ -1219,6 +1219,17 @@ dependencies:
     v3.1.0 (#ARCH-047) Panel 主入口通过 pn.Tabs 组装 10 Tab，各 Tab 调用 fetch_xxx+render_xxx。'
   direction: peer
   valid_since: '2026-07-05'
+- dep_id: DEP-092
+  source: MOD-L03-001
+  source_name: signal-generation
+  target: MOD-L02-001
+  target_name: alpha-factor
+  type: contract
+  strength: hard
+  description: '信号域消费因子域输出——SignalAggregatorBase.aggregate() 接收 FactorSignal (CTR-002) 作为输入，合成 SynthesizedSignal (CTR-P1-015)。v3.0.0 蓝图 §10.1 声明 depends_on MOD-L02-001 v4.0.0+。'
+  contract_anchor: cross_layer_contracts.yaml §CTR-002
+  direction: upstream
+  valid_since: '2026-07-05'
 dependency_graph:
   forward:
     SYS-MASTER-001:
