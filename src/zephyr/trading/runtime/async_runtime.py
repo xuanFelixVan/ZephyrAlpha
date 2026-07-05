@@ -114,6 +114,8 @@ class AsyncRuntime:
             pass
 
         self._loop = asyncio.new_event_loop()
+        # 5.100.17 修复: 设置为当前线程的默认事件循环, 避免后续 asyncio.get_event_loop() 返回不同 loop
+        asyncio.set_event_loop(self._loop)
         self._owns_loop = True
         logger.debug("AsyncRuntime: 创建新事件循环")
         return self._loop
@@ -175,6 +177,10 @@ class AsyncRuntime:
         try:
             loop = asyncio.get_running_loop()
         except RuntimeError:
+            # 5.100.14 修复: 无运行中的事件循环时, 优先复用 self._loop (若存在且未运行),
+            # 避免 asyncio.run() 创建新 loop 导致 self._loop 成为孤儿
+            if self._loop is not None and not self._loop.is_closed() and not self._loop.is_running():
+                return self._loop.run_until_complete(coro)  # type: ignore[arg-type]
             return run_sync(coro)  # type: ignore[arg-type]
 
         if loop.is_running():
@@ -209,15 +215,12 @@ class AsyncRuntime:
         except RuntimeError:
             return bound()
 
-        # 5.16.8 修复：executor 已在 __init__ 创建，消除竞态
-        if self._executor is None:
-            self._executor = concurrent.futures.ThreadPoolExecutor(
-                max_workers=self._max_workers,
-                thread_name_prefix="AsyncRuntime",
-            )
-
-        future = loop.run_in_executor(self._executor, self._wrap_ctx(bound))
-        return asyncio.ensure_future(future).result()  # type: ignore[no-any-return]
+        # 5.100.13 修复: 在运行中的事件循环里调 .result() 会阻塞 loop 线程导致死锁
+        # 调用方应改用 run_in_executor_async (返回 awaitable)
+        raise RuntimeError(
+            "run_in_executor 不能在已运行的事件循环中调用——"
+            "请用 await run_in_executor_async(...) 代替"
+        )
 
     async def run_in_executor_async(
         self,

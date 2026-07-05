@@ -135,12 +135,11 @@ class TokenBucketLimiter:
                     },
                 )
 
-            self._lock.release()
-            try:
-                logger.info("rate limit: waiting %.2fs for token", wait_time)
-                await asyncio.sleep(wait_time)
-            finally:
-                await self._lock.acquire()
+            # 5.100.1 修复: 原代码在持锁期间 release→sleep→acquire, 释放锁期间其他协程
+            # 可修改 _tokens/_last_refill, 重新获取后覆盖其修改 (数据丢失).
+            # 改为持锁期间 sleep, 简单正确. 并发优化 (条件变量) 属专项工程.
+            logger.info("rate limit: waiting %.2fs for token", wait_time)
+            await asyncio.sleep(wait_time)
 
             self._last_refill = time.monotonic()
             self._tokens = 0.0

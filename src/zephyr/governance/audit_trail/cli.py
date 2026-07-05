@@ -177,10 +177,15 @@ def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any
             from zephyr.governance.drift_detection.drift_engine import ScanLevel, scan
 
             level_enum = ScanLevel[level.upper()]
+            # 5.100.18 修复: 保存原 loop 并在 finally 中恢复, 避免污染调用方 loop 上下文
+            _prev_loop = asyncio.get_event_loop_policy().get_event_loop()
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            scan_result = loop.run_until_complete(scan(level=level_enum))
-            loop.close()
+            try:
+                scan_result = loop.run_until_complete(scan(level=level_enum))
+            finally:
+                loop.close()
+                asyncio.set_event_loop(_prev_loop)
             result["status"] = "ok"
             result["detail"] = {
                 "scan_id": scan_result.scan_id,

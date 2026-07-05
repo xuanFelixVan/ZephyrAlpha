@@ -250,6 +250,8 @@ def _trigger_light_scan(project_root: str) -> bool:
 
     from .drift_engine import ScanLevel, scan
 
+    # 5.100.18 修复: 保存原 loop 并在 finally 中恢复, 避免污染调用方 loop 上下文
+    _prev_loop = asyncio.get_event_loop_policy().get_event_loop()
     loop = asyncio.new_event_loop()
 
     try:
@@ -264,6 +266,7 @@ def _trigger_light_scan(project_root: str) -> bool:
 
     finally:
         loop.close()
+        asyncio.set_event_loop(_prev_loop)
 
 
 def session_entry_activate(project_root: str) -> ColdStartResult:

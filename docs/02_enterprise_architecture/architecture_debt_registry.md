@@ -3840,6 +3840,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=18(异步资源生命周期/锁释放后重获取/asyncio.run误用需逐处重构)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=18(所有STILL_VALID项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.100全部清零.
+> **第44轮修复状态（2026-07-05）**：FIXED=8(5.100.1 limiter持锁sleep消除release/acquire竞态 + 5.100.5/6/7 pipeline_orchestrator _lsg_sanitize_input/output/scan_agent_action 改用run_sync消除死锁 + 5.100.13 run_in_executor加RuntimeError保护 + 5.100.14 run_coroutine复用self._loop + 5.100.17 AsyncRuntime.start补set_event_loop + 5.100.18 audit_trail/cli+drift_detection/cold_start 保存恢复原loop), DRIFTED=3(5.100.2 infra_06/limiter/5.100.3 behavioral_audit/brain_integration/5.100.12 infra_06/outbox 文件已删除), DEFERRED=7(5.100.4 brain_integration _run_async线程阻塞/5.100.8 secrets阻塞IO/5.100.9+5.100.10 _base_server阻塞handle_request/5.100.11 outbox同步handler/5.100.15 asyncio.get_event_loop 12+文件弃用API批量迁移/5.100.16 asyncio.run 12+文件批量迁移,均需逐处重构属专项工程), STILL_VALID=0. 维度5.100全部清零.
 
 #### 5.100.1 HIGH级（7个）
 

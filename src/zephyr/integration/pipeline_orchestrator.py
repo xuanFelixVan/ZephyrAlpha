@@ -1778,12 +1778,10 @@ class PipelineOrchestrator:
                     if PipelineOrchestrator._lsg_gateway is None:
                         PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
             gw = PipelineOrchestrator._lsg_gateway
-            try:
-                loop = asyncio.get_running_loop()
-                future = asyncio.run_coroutine_threadsafe(gw.scan_input(text, source="PipelineOrchestrator"), loop)
-                result = future.result()
-            except RuntimeError:
-                result = run_sync(gw.scan_input(text, source="PipelineOrchestrator"))
+            # 5.100.5 修复: 原 run_coroutine_threadsafe + future.result() 在 loop 线程内调用会死锁
+            # (get_running_loop 成功=当前在 loop 线程, future.result 阻塞 loop 线程但协程需在 loop 上执行)
+            # run_sync 统一处理: 无运行 loop→asyncio.run; 有运行 loop→新线程+新 loop
+            result = run_sync(gw.scan_input(text, source="PipelineOrchestrator"))
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return f"[LSG-BLOCKED] {text[:200]}"
             return text
@@ -1816,23 +1814,13 @@ class PipelineOrchestrator:
             gw = PipelineOrchestrator._lsg_gateway
             for key in ("summary", "verdict", "detail", "minority_report"):
                 if key in output and isinstance(output[key], str):
-                    try:
-                        loop = asyncio.get_running_loop()
-                        future = asyncio.run_coroutine_threadsafe(
-                            gw.scan_output(
-                                output[key],
-                                source=f"Pipeline.{module_id}",
-                            ),
-                            loop,
+                    # 5.100.6 修复: 同 _lsg_sanitize_input, run_coroutine_threadsafe+future.result 死锁
+                    result = run_sync(
+                        gw.scan_output(
+                            output[key],
+                            source=f"Pipeline.{module_id}",
                         )
-                        result = future.result()
-                    except RuntimeError:
-                        result = run_sync(
-                            gw.scan_output(
-                                output[key],
-                                source=f"Pipeline.{module_id}",
-                            )
-                        )
+                    )
                     if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                         output[key] = f"[LSG-BLOCKED] {output[key][:200]}"
             return output
@@ -1875,27 +1863,15 @@ class PipelineOrchestrator:
                         PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
             gw = PipelineOrchestrator._lsg_gateway
             text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
-            try:
-                loop = asyncio.get_running_loop()
-                future = asyncio.run_coroutine_threadsafe(
-                    gw.scan_agent_action(
-                        text=text,
-                        tool_name=tool_name,
-                        tool_params=tool_params,
-                        metadata={"source": "PipelineOrchestrator"},
-                    ),
-                    loop,
+            # 5.100.7 修复: 同 _lsg_sanitize_input, run_coroutine_threadsafe+future.result 死锁
+            result = run_sync(
+                gw.scan_agent_action(
+                    text=text,
+                    tool_name=tool_name,
+                    tool_params=tool_params,
+                    metadata={"source": "PipelineOrchestrator"},
                 )
-                result = future.result()
-            except RuntimeError:
-                result = run_sync(
-                    gw.scan_agent_action(
-                        text=text,
-                        tool_name=tool_name,
-                        tool_params=tool_params,
-                        metadata={"source": "PipelineOrchestrator"},
-                    )
-                )
+            )
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
             return None
