@@ -8,7 +8,7 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.1.0
+version: 1.2.0
 created: '2026-06-26'
 last_updated: '2026-07-05'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
@@ -1252,6 +1252,56 @@ entries:
     (e) directory_contract.yaml neutral zone 补充 session-logs/tmp/logs/_journals 路径
     (f) capability_canonical_file_registry.yaml 登记 file_placement_ttl_gate capability
     P1 TODO：测试用例补全（tests/governance/commit_gates/test_file_placement_ttl_gate.py）
+  status: decided
+  created: '2026-07-05'
+  last_updated: '2026-07-05'
+
+# --- #ARCH-050: 强化 --no-verify 使用约束（POST-COMMIT-GUARD hook） ---
+- issue_id: '#ARCH-050'
+  title: 强化 --no-verify 使用约束——POST-COMMIT-GUARD hook 检测 non-GW commit 并自动 revert
+  severity: P1高
+  adjudication: |
+    ARCH-050 裁定：强化 --no-verify 使用约束，治本"AI/用户直接用 git commit --no-verify 绕过 GitCommitGateway 产生 non-GW commit"的病根。
+
+    【病根（5-Why 根因分析）】
+    症状：commit_gw_audit reconciler 检测到 non-GW commits（arch-debt 相关的 fix/docs commit，无 [GW: 标记）。
+
+    Why-1：为什么有 non-GW commit？因为 AI/用户直接用 git commit --no-verify 提交，绕过了 GitCommitGateway。
+    Why-2：为什么 --no-verify 能绕过 GitCommitGateway？因为 GitCommitGateway 是 in-process gate（Python 代码），
+           --no-verify 绕过的是 pre-commit hook（shell 脚本），两者是不同的检查层。
+    Why-3：为什么没有 post-commit 检测？因为现有 post-commit hook 只做 git-lfs 检查，没有 non-GW commit 检测。
+    Why-4：为什么 commit_gw_audit reconciler 不阻断？因为它是事后审计（warn-only），commit 已入历史不可逆。
+    Why-5（根因）：--no-verify 是 git 的合法参数，技术上无法禁止；但 post-commit hook 不被 --no-verify 绕过，
+           可以在 post-commit 中检测 non-GW commit 并自动 revert，实现技术强制。
+
+    【第一性原理：--no-verify 的边界】
+    --no-verify 绕过的 hooks：pre-commit, commit-msg
+    --no-verify 不绕过的 hooks：post-commit, post-merge, pre-push
+    → post-commit 是检测 non-GW commit 的正确位置
+
+    【治本方案】
+    新建 POST-COMMIT-GUARD hook（post-commit）：
+    1. 检测当前 commit message 是否含 [GW: 标记（GitCommitGateway / session_worktree_commit / session_worktree_merge 的合法标识）
+    2. 检测是否是 merge commit（merge commit 豁免，subject 以 "merge " 开头，大小写不敏感）
+    3. 不含 [GW: 且非 merge commit → 自动 git reset --soft HEAD~1（保留修改在 staging area）+ 记录违规到审计日志
+    4. 输出告警信息，提示通过 GitCommitGateway 重新提交
+
+    【合法标识（含 [GW: 标记的 commit）】
+    - GitCommitGateway 常规 commit: [GW:{session_id}]
+    - GitCommitGateway auto-commit: [GW:{session_id}:auto]
+    - session_worktree_commit: [GW:{session_id}:worktree]
+    - session_worktree_merge: [GW:{session_id}:merge]（ARCH-050 同期修复）
+
+    【关联】
+    - 裁定#208 R6——议题登记机制建立（本 ARCH 遵循铁律#6 登记）
+    - commit_gw_audit reconciler——事后审计（本 ARCH 补强为事前阻断）
+    - GitCommitGateway _run_git commit 守卫——禁止裸调 git commit（本 ARCH 补强 --no-verify 绕过场景）
+  fix_phase: |
+    P0 DONE 2026-07-05：
+    (a) ARCH-050 条目登记（本条目）
+    (b) scripts/governance/git_hooks/post_commit_guard.sh 新建（源文件，被 git 跟踪）
+    (c) .git/hooks/post-commit 修改（追加 POST-COMMIT-GUARD 调用，本地有效）
+    P1 TODO：验证 hook 在并发 AI 对话场景下的行为（自动 revert 是否影响其他 AI 的工作流）
   status: decided
   created: '2026-07-05'
   last_updated: '2026-07-05'
