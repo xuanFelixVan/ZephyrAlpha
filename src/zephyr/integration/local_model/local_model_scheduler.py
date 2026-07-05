@@ -56,6 +56,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
+    from zephyr.integration.local_model.ollama_chat import OllamaChatProtocol
 
 _log = logging.getLogger(__name__)
 
@@ -116,7 +117,7 @@ class LocalModelScheduler:
     def __init__(
         self,
         embedding_router: EmbeddingRouterProtocol | None = None,
-        ollama_chat: Any = None,
+        ollama_chat: OllamaChatProtocol | None = None,
         *,
         poll_interval_s: float = POLL_INTERVAL_S,
     ) -> None:

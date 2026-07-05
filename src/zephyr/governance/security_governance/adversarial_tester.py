@@ -199,7 +199,7 @@ class AdversarialTester:
         return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
 
     def _run_stream_abort_bypass(self, test: AdversarialTestCase) -> AdversarialResult:
-        from .stream_abort_guard import StreamAbortGuard
+        from zephyr.governance.ops_governance.stream_abort_guard import StreamAbortGuard
 
         guard = StreamAbortGuard(
             micro_transaction_threshold=0.05,
@@ -217,8 +217,8 @@ class AdversarialTester:
         return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
 
     def _run_race_condition(self, test: AdversarialTestCase) -> AdversarialResult:
-        from .budget_engine import BudgetEngine
-        from .budget_models import BudgetDimension
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+        from zephyr.governance.ops_governance.budget_models import BudgetDimension
 
         engine = BudgetEngine()
         v1 = engine.get_consumption_version(BudgetDimension.COST)
@@ -239,8 +239,8 @@ class AdversarialTester:
         3. 不可跳跃（每次只推进1级）
         4. 到达最高级后再 advance 返回 False
         """
-        from .budget_engine import BudgetEngine
-        from .budget_models import BudgetLevel
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+        from zephyr.governance.ops_governance.budget_models import BudgetLevel
 
         engine = BudgetEngine()
         initial_level = engine.current_degradation_level
@@ -295,8 +295,8 @@ class AdversarialTester:
         """
         from concurrent.futures import ThreadPoolExecutor
 
-        from .budget_engine import BudgetEngine
-        from .budget_models import BudgetDimension
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+        from zephyr.governance.ops_governance.budget_models import BudgetDimension
 
         engine = BudgetEngine()
         v1 = engine.get_consumption_version(BudgetDimension.COST)
@@ -331,7 +331,7 @@ class AdversarialTester:
         模拟200次 record_chunk_cost 每次 cost=0.01，
         验证累积 cost=2.0 > 0.50 限制时触发熔断。
         """
-        from .stream_abort_guard import StreamAbortGuard
+        from zephyr.governance.ops_governance.stream_abort_guard import StreamAbortGuard
 
         guard = StreamAbortGuard(
             micro_transaction_threshold=0.05,

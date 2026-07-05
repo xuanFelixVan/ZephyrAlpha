@@ -43,6 +43,9 @@ from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry  # 5.12.10 修复：移除 if TYPE_CHECKING: 死分支（条件import残留）
 
+if TYPE_CHECKING:
+    from zephyr.shared.protocols.ports import RerankerProtocol
+
 __all__ = [
     "AssembledContext",
     "AssemblyError",
@@ -582,18 +585,20 @@ def _get_embedded_defaults(task_type: str, layer: str) -> list[str]:
     return defaults
 
 
-def _build_context_from_kb(task_type: str, layer: str) -> RawContext:
+def _build_context_from_kb(task_type: str, layer: str, reranker: RerankerProtocol | None = None) -> RawContext:
     ctx = RawContext(embedded_defaults=_get_embedded_defaults(task_type, layer))
 
     try:
-        from zephyr.intelligence.model_evaluation.reranker import Reranker
-
         kb = _get_or_init_kb()
         if kb is None:
             ctx.degraded = True
             return ctx
 
-        rk = Reranker(top_k=5)
+        rk = reranker
+        if rk is None:
+            from zephyr.intelligence.model_evaluation.reranker import Reranker
+
+            rk = Reranker(top_k=5)
 
         if task_type:
             hits = kb.search(query=task_type, k=5)

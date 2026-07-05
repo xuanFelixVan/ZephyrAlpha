@@ -168,6 +168,7 @@ except ImportError:
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
     from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
+    from zephyr.shared.protocols.ports import RerankerProtocol
 
 __all__ = ["PipelineOrchestrator"]
 
@@ -195,6 +196,7 @@ class PipelineOrchestrator:
         agent_orchestrator: object | None = None,
         telemetry: object | None = None,
         embedding_router: EmbeddingRouterProtocol | None = None,
+        reranker: RerankerProtocol | None = None,
     ) -> None:
         self._cfg = config or PipelineOrchestratorConfig()
         self._task_repo = task_repo
@@ -203,6 +205,7 @@ class PipelineOrchestrator:
         self._agent_orchestrator = agent_orchestrator
         self._telemetry = telemetry
         self._embedding_router: EmbeddingRouterProtocol | None = embedding_router
+        self._reranker_instance: RerankerProtocol | None = reranker
         self._failure_log: dict[str, int] = {}
         # PENDING: ref to make _dispatched_ids / _active_dispatches exist before _preempt_mgr
 
@@ -1293,7 +1296,7 @@ class PipelineOrchestrator:
     # ------------------------------------------------------------------
 
     _embedding_router: EmbeddingRouterProtocol | None = None
-    _reranker_instance: object | None = None
+    _reranker_instance: RerankerProtocol | None = None
 
     def _ensure_local_models(self) -> None:
         if self._cfg.local_model_always_on and self._embedding_router is None:
