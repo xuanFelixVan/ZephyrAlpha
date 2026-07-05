@@ -13,7 +13,7 @@ classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-05-05"
-last_updated: "2026-07-04"
+last_updated: "2026-07-05"
 last_verified: "2026-05-15"
 valid_from: "2026-05-05"
 ttl: permanent
@@ -940,7 +940,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | v1.0.0 | 1 | 基线 | BrokerInterface + ExecutionEngine + OrderManager + SimulationBroker | ⚠️ |
 | v2.0.0 | 2 | 模板v3.3重构 | 章节重排+新增概述+标准锚点+§0版本映射更新 | ⚠️ |
 | v2.1.0 | 2 | 模板v4.1合规 | 回填缺失章节+压缩+依赖图对齐 | ⚠️ |
-| v2.2.0 | 2 | MiniQMT Broker规划 | 新增MiniQmtBroker适配器规格(§16.7.1)+回测=实盘一致性约束+MatchingLogic共享模块抽取方案 | ⚠️(规格已就绪, 代码待施工) |
+| v2.2.0 | 2 | MiniQMT Broker规划 | 新增MiniQmtBroker适配器规格(§16.7.1)+回测=实盘一致性约束+MatchingLogic共享模块抽取方案 | ✅(P0已修, P1余项见审计清单) |
 
 ### 升级组件清单
 
@@ -948,8 +948,8 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 |--------|---------|---------|----------|:---:|
 | RiskValidator ABC | GAP-L06-001 | execution_engine.py | Phase 2 | 待施工 |
 | ExecutionReport | GAP-L06-003 | execution_report.py | Phase 2 | 待施工 |
-| **MiniQmtBroker** | GAP-L06-002/005 | adapters/miniqmt_broker.py | Phase 1.5 | 待施工(规格已就绪) |
-| **MatchingLogic共享模块** | GAP-L06-004 | backtest/core/matching_logic.py | Phase 1.5 | 待施工 |
+| **MiniQmtBroker** | GAP-L06-002/005 | adapters/miniqmt_broker.py | Phase 1.5 | 已施工(P0已修, P1余项见审计清单) |
+| **MatchingLogic共享模块** | GAP-L06-004 | backtest/core/matching_logic.py | Phase 1.5 | 已施工(submit_order内置pre_trade_simulate) |
 | 富途/IB 适配器 | GAP-L06-002 | adapters/futu_broker.py | Phase 3 | 待施工 |
 
 ---
