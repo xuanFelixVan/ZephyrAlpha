@@ -6,7 +6,7 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-07-04T20:35:14Z'
+  generated_at: '2026-07-05T08:37:38Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
   total_path_claims: 738
   total_ssot_claims: 16
