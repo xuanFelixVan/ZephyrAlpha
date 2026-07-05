@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from zephyr.governance.intelligence_governance.model_router import ModelRouter
     from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
     from zephyr.integration.local_model.ollama_chat import OllamaChat
-    from zephyr.integration.local_model.embedding_router import EmbeddingRouter
+    from zephyr.integration.local_model.embedding_router import EmbeddingRouter, EmbeddingRouterProtocol
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
     from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
     from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
@@ -71,7 +71,12 @@ _TASK_LEARNER_SAMPLE_LIMIT = 50
 class AutoRuntimeCore:
     """三层运行时运营中心——ZephyrAlpha 系统大脑。"""
 
-    def __init__(self, config: RuntimeConfig | None = None, system_config: SystemConfiguration | None = None) -> None:
+    def __init__(
+        self,
+        config: RuntimeConfig | None = None,
+        system_config: SystemConfiguration | None = None,
+        embedding_router: EmbeddingRouterProtocol | None = None,
+    ) -> None:
         self._config = config or RuntimeConfig()
         self._system_config = system_config
         ensure_runtime_dirs(self._config)
@@ -115,7 +120,7 @@ class AutoRuntimeCore:
         self._booted = False
         self._local_scheduler: LocalModelScheduler | None = None
         self._fle_scheduler: FeedbackLoopScheduler | None = None
-        self._embedding_router: EmbeddingRouter | None = None
+        self._embedding_router: EmbeddingRouter | None = embedding_router
         self._ollama_chat: OllamaChat | None = None
         self._ollama_proc: object | None = None  # 5.49.1 修复：保存 Popen 引用避免孤儿进程
         self._task_learner: ModelTaskMatrix | None = None
@@ -384,9 +389,10 @@ class AutoRuntimeCore:
                 report.errors.append(f"ollama_chat_verify: {e2}")
 
         try:
-            from zephyr.integration.local_model.embedding_router import EmbeddingRouter
+            if self._embedding_router is None:
+                from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
-            self._embedding_router = EmbeddingRouter(backend="ollama")
+                self._embedding_router = EmbeddingRouter(backend="ollama")
             self._embedding_router.warmup()
             self._audit_logger.log_registration("embedding-router", "WARMUP_OK")
             report.components_started.append("06_embedding_router_warmup")

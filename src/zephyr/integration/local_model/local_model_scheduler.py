@@ -52,7 +52,10 @@ import queue
 import threading
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
 
 _log = logging.getLogger(__name__)
 
@@ -112,7 +115,7 @@ class LocalModelScheduler:
 
     def __init__(
         self,
-        embedding_router: Any = None,
+        embedding_router: EmbeddingRouterProtocol | None = None,
         ollama_chat: Any = None,
         *,
         poll_interval_s: float = POLL_INTERVAL_S,

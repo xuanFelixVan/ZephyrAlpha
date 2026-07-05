@@ -42,11 +42,57 @@ import hashlib
 import logging
 import time
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, Protocol, runtime_checkable
 
 import numpy as np
 
 _logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# EmbeddingRouterProtocol — DI 注入契约（5.133.8 专项工程，2026-07-06）
+# ---------------------------------------------------------------------------
+# 目的：消除 EmbeddingRouter 在 5 处散点硬编码实例化，改为构造函数注入。
+# 使用方可注入任意实现此 Protocol 的对象（如测试 mock），无需依赖具体类。
+# 现有懒初始化兜底逻辑保留，确保向后兼容。
+# ---------------------------------------------------------------------------
+
+
+@runtime_checkable
+class EmbeddingRouterProtocol(Protocol):
+    """嵌入路由器协议——DI 注入契约。
+
+    任何实现此协议的对象均可注入到 skill_router / vector_memory /
+    pipeline_orchestrator / local_model_scheduler / auto_runtime_core。
+    """
+
+    @property
+    def bge_m3_available(self) -> bool: ...
+
+    @property
+    def bge_small_available(self) -> bool: ...
+
+    @property
+    def bge_m3_dim(self) -> int: ...
+
+    @property
+    def bge_small_dim(self) -> int: ...
+
+    @property
+    def fallback_mode(self) -> str: ...
+
+    @property
+    def backend(self) -> str: ...
+
+    def warmup(self) -> None: ...
+
+    def embed(self, text: str, collection_name: str) -> np.ndarray: ...
+
+    def embed_batch(self, texts: list[str], collection_name: str) -> np.ndarray: ...
+
+    def health_check(self) -> dict[str, Any]: ...
+
+    def shutdown(self) -> None: ...
 
 MODEL_DIR_BGE_M3: Path = Path("data/models/local_model/bge-m3")
 MODEL_DIR_BGE_SMALL: Path = Path("data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2")

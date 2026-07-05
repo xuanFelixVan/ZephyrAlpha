@@ -26,7 +26,7 @@ import numpy as np
 import yaml
 
 if TYPE_CHECKING:
-    from zephyr.integration.local_model.embedding_router import EmbeddingRouter
+    from zephyr.integration.local_model.embedding_router import EmbeddingRouter, EmbeddingRouterProtocol
 
 
 _logger = logging.getLogger(__name__)
@@ -105,19 +105,24 @@ class SkillRouter:
 
     DEFAULT = {"role": "implementer", "domain_default": None}
 
-    def __init__(self, registry_path: Path | None = None):
+    def __init__(
+        self,
+        registry_path: Path | None = None,
+        embedding_router: EmbeddingRouterProtocol | None = None,
+    ):
         self._registry_path = registry_path or _REGISTRY_PATH
         self._yaml_routing: list[tuple[str, str, str]] | None = None
         self._semantic_index: dict[str, Any] | None = None
-        self._embedding_router: EmbeddingRouter | None = None
+        self._embedding_router: EmbeddingRouter | None = embedding_router
 
     def _init_semantic_index(self) -> None:
         if self._semantic_index is not None:
             return
         try:
-            from zephyr.integration.local_model.embedding_router import EmbeddingRouter
+            if self._embedding_router is None:
+                from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
-            self._embedding_router = EmbeddingRouter()
+                self._embedding_router = EmbeddingRouter()
             self._embedding_router.warmup()
             if not self._embedding_router.bge_m3_available and not self._embedding_router.bge_small_available:
                 _logger.warning("Semantic index: no embedding model available, semantic routing disabled")

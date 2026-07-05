@@ -44,9 +44,13 @@ import logging
 import threading
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from zephyr.integration.local_model.embedding_router import EmbeddingRouter
+
+if TYPE_CHECKING:
+    from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
+
 from zephyr.integration.vector_memory.collection_manager import (
     COLLECTION_NAMES,
     VMS_PERSIST_DIR,
@@ -61,9 +65,13 @@ class InProcessVectorMemory:
     COLLECTION_NAMES: ClassVar[tuple[str, ...]] = COLLECTION_NAMES
     VMS_PERSIST_DIR: ClassVar[Path] = VMS_PERSIST_DIR
 
-    def __init__(self, persist_dir: Path | str | None = None) -> None:
+    def __init__(
+        self,
+        persist_dir: Path | str | None = None,
+        embedding_router: EmbeddingRouterProtocol | None = None,
+    ) -> None:
         self._started: bool = False
-        self._embedding_router = EmbeddingRouter()
+        self._embedding_router = embedding_router if embedding_router is not None else EmbeddingRouter()
         self._collection_manager = CollectionManager(persist_dir=persist_dir, embedding_router=self._embedding_router)
         self._chunk_strategy_router: Any = self._init_chunk_router()
         self._hybrid_retriever: Any = None
