@@ -204,3 +204,7 @@ class QueueItemStatus:
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
     CANCELLED = "CANCELLED"
+
+
+# 向后兼容别名（P9 重命名：TaskQueue → ActiveTaskQueue，保留别名供旧 import 兼容）
+TaskQueue = ActiveTaskQueue

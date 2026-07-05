@@ -18,10 +18,10 @@
 """
 AutoDispatcher — 守护进程内的轻量 PipelineDispatcher
 =====================================================
-实现 PipelineDispatcher Protocol，供 TaskQueue 在守护进程中自动调度 READY 任务。
+实现 PipelineDispatcher Protocol，供 ActiveTaskQueue 在守护进程中自动调度 READY 任务。
 
 流程:
-    TaskQueue._tick() → transition(READY→IN_PROGRESS) → dispatch(task_card)
+    ActiveTaskQueue._tick() → transition(READY→IN_PROGRESS) → dispatch(task_card)
         ├── ContextBridge.request_context()     → CE→LSG + CE→VMS 自动触发
         ├── ScriptRunner.run_audit()            → Script→Gate + Script→KB 自动触发
         └── transition(IN_PROGRESS→COMPLETED)   → Orc→VMS + KB→VMS hook 自动触发

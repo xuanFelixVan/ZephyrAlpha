@@ -196,14 +196,6 @@ class HealthMonitor:
             # 5.12.1 修复：原 except: pass 静默吞注册失败
             logger.debug("healthcheck probe registration failed", exc_info=True)
 
-    def _monitor_loop(self) -> None:
-        """已废弃（P1 修复 2026-07-05）：time.sleep daemon 违反永久系统铁律。
-
-        原分钟级轮询已改为事件驱动：EventBus 事件触发 tick()。
-        保留方法签名仅为向后兼容，直接调用 tick()。
-        """
-        self.tick()
-
     def tick(self) -> None:
         """事件驱动入口：采集指标 + 条件性健康检查 reconcile。
 

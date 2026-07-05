@@ -9,7 +9,6 @@ __all__ = [
     "auto_runtime_core",
     "auto_task_generator",
     "autopilot",
-    "boot_cron_jobs",
     "boot_hooks",
     "capability_card",
     "capability_registry",
