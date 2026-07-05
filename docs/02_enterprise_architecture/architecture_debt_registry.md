@@ -1967,6 +1967,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.43全部清零.
 > 维度说明：CPU/内存/连接/并发/磁盘等资源配额限制，防止资源耗尽。
 > **第57轮修复状态（2026-07-06）**：5.43.5 FIXED — health_monitor.py pressure_level() 添加 psutil.disk_usage("/") 磁盘压力检查, commit dc2210ce46. DEFERRED=2(5.43.1/5.43.2).
+> **第60轮修复状态（2026-07-06）**：5.43.1+5.43.2+5.43.4 FIXED — docker-compose.yml 4个service添加deploy.resources.limits / trading/__main__.py添加RLIMIT_AS(4GB) / 5处asyncio.gather添加Semaphore(8)(verdict_engine×2/health/gpu_consensus_scheduler×2), commit 02e94d9219. DEFERRED=0. 维度5.43全部清零.
 
 #### 5.43.1 [HIGH] Docker容器无CPU/内存限制
 - **文件**：[docker-compose.yml](file:///D:/ZephyrAlpha/docker-compose.yml)
@@ -1974,7 +1975,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：任一容器可耗尽宿主机资源
 - **影响**：单个失控容器拖垮全栈； noisy neighbor问题
 - **修复**：为每个service设置CPU/内存上限
-- **状态**：STILL_VALID（保留）— docker-compose.yml 无 deploy.resources.limits/mem_limit/cpus（Grep 无命中），需为每个 service 设置 CPU/内存上限，涉及运维配置
+- **状态**：FIXED — docker-compose.yml 4个service添加 deploy.resources.limits (zephyr-core 2cpu/2g, prometheus 1cpu/1g, grafana 0.5cpu/512m, node-exporter 0.5cpu/256m), commit 02e94d9219
 
 #### 5.43.2 [MEDIUM] Python进程无OS级内存限制（无RLIMIT）
 - **文件**：全项目（Grep `resource.setrlimit|RLIMIT_AS|RLIMIT_DATA`无匹配）
@@ -1982,7 +1983,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：内存泄漏进程可耗尽系统内存
 - **影响**：OOM Killer可能杀关键进程
 - **修复**：在启动脚本设置RLIMIT_AS或用cgroups
-- **状态**：STILL_VALID（保留）— Grep `resource.setrlimit|RLIMIT_AS|RLIMIT_DATA` 在 src/ 无命中，无进程级内存限制；需在启动脚本设置 RLIMIT_AS 或用 cgroups
+- **状态**：FIXED — trading/__main__.py 添加 _set_memory_limit() 设置 RLIMIT_AS(4GB), 平台兼容try/except, commit 02e94d9219
 
 #### 5.43.4 [MEDIUM] asyncio.gather无Semaphore限制并发 [部分修复: 2026-07-04 验证10处gather仅drift_detection 2处配套Semaphore,5处仍需补]
 - **文件**：全项目（Grep `asyncio.gather`多处）
@@ -1991,6 +1992,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **影响**：下游限流/连接耗尽/自身内存压力
 - **修复**：用`asyncio.Semaphore(N)`限制并发
 - **验证状态（2026-07-04）**：10处gather调用中仅 drift_engine.py:270 + detector_dispatcher.py:110 配套Semaphore；5处仍可批量并发未限流（verdict_engine×2/health/submit_batch×2）；3处语义可豁免（dual_api固定2任务×2/shutdown路径×1）
+- **状态**：FIXED — 5处gather全部添加 asyncio.Semaphore(8)+_limited_* 包装 (trading/verdict_engine×2/behavioral_admission/verdict_engine×1/shared/lifecycle/health×1/gpu_consensus_scheduler×2), commit 02e94d9219
 
 #### 5.43.5 [LOW] 磁盘使用已采集但未纳入压力分类
 - **文件**：[health_monitor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py)
@@ -3001,6 +3003,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.66全部清零.
 > **第57轮修复状态（2026-07-06）**：5.66.2 FIXED — capacity_assurance/schema.py 添加 _ALLOWED_TABLES 白名单 + _validate_table_name() 校验, commit dc2210ce46. DEFERRED=2(5.66.3/5.66.6).
+> **第60轮修复状态（2026-07-06）**：5.66.3+5.66.6 FIXED — registry_adapter.py+database_manager.py+f5_shutdown_manager.py 添加 _ALLOWED_TABLES白名单+_validate_table_name()校验, commit 02e94d9219. DEFERRED=0. 维度5.66全部清零.
 #### 5.66.2 [MEDIUM] capacity_assurance schema用f-string插入cutoff值（非参数化）
 
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/schema.py:264-265,276-281`
@@ -3013,14 +3016,14 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **文件**：`src/zephyr/infrastructure/asset_inventory/registry_adapter.py:510`；副本 `infrastructure/asset_inventory/registry_adapter.py:508`
 - **证据**：`self._table` 来自构造参数，直接拼入 `SELECT * FROM {self._table}`，无白名单校验。若 `_table` 来自配置文件或外部输入可被注入。
 - **修复**：表名白名单校验。
-- **状态**：STILL_VALID（保留）— 需表名白名单校验
+- **状态**：FIXED — registry_adapter.py 添加 _ALLOWED_TABLES(16表)+_validate_table_name() 在 __init__ 校验 self._table, commit 02e94d9219
 
 #### 5.66.6 [MEDIUM] database_manager/f5_shutdown_manager表名f-string拼接
 
 - **文件**：`src/zephyr/governance/persistence/database_manager.py:605`；`src/zephyr/governance/resilience_governance/f5_shutdown_manager.py:355,435`
 - **证据**：`database_manager` 用 `f"SELECT COUNT(*) FROM [{t['name']}]"`（方括号仅SQL Server语法，SQLite下无效防御）；`f5_shutdown_manager` 用 `f"DELETE FROM {self.STATE_TABLE}"` 与 `f"SELECT key, value FROM {self.STATE_TABLE}"`，表名为类属性但未做白名单。
 - **修复**：表名白名单校验。
-- **状态**：STILL_VALID（保留）— 需表名白名单校验
+- **状态**：FIXED — database_manager.py+f5_shutdown_manager.py 各添加 _ALLOWED_TABLES+_validate_table_name() 校验表名, commit 02e94d9219
 
 #### 5.66 严重度汇总
 
@@ -3070,6 +3073,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.68全部清零.
 > **第57轮修复状态（2026-07-06）**：5.68.2 FIXED — drift_engine.py finally 块 proc.kill() 后改用 proc.communicate() 排空管道, commit dc2210ce46. DEFERRED=2(5.68.3/5.68.4).
+> **第60轮修复状态（2026-07-06）**：5.68.3 FIXED — verdict_engine.py evaluate_batch 添加 asyncio.Semaphore(8)+_limited_eval 包装, commit 02e94d9219. DEFERRED=1(5.68.4 MemoryLock超时取消后锁状态不一致需重构).
 #### 5.68.2 [HIGH] drift_detection/drift_engine同款子进程孤儿（副本）
 
 - **文件**：`src/zephyr/governance/drift_detection/drift_engine.py:299-317`
@@ -3082,7 +3086,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **文件**：`src/zephyr/trading/verdict_engine.py:325-355`；副本 `governance/behavioral_admission/verdict_engine.py:325-355`
 - **证据**：对整个events列表创建 `_eval_one` 协程后 `asyncio.gather(*tasks)`（L353-354），无Semaphore限流。虽每个 `_eval_one` 有 `wait_for` 超时（L334），但大批量事件会瞬时创建海量协程，可能耗尽内存或后端连接。`evaluate` 内部可能调用LLM/外部服务，无背压。
 - **修复**：添加 `asyncio.Semaphore` 限制并发数。
-- **状态**：STILL_VALID（保留）— 需添加asyncio.Semaphore限制并发数
+- **状态**：FIXED — verdict_engine.py evaluate_batch 添加 asyncio.Semaphore(8)+_limited_eval 包装, commit 02e94d9219
 
 #### 5.68.4 [MEDIUM] MemoryLock超时取消后锁状态不一致风险
 
@@ -3251,6 +3255,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.74全部清零.
 > **第57轮修复状态（2026-07-06）**：5.74.1 FIXED — zombie_scanner.py _save_patterns() 改用 tmp文件+flush+fsync+os.replace 原子写入, commit dc2210ce46. DEFERRED=2(5.74.3/5.74.4).
+> **第60轮修复状态（2026-07-06）**：5.74.3+5.74.4 FIXED — results_writer.py×2 原子写入(tmp+flush+fsync+os.replace) / tamper_proof_audit.py+audit_trail/writer.py 补充flush+fsync, commit 02e94d9219. 5.74.4 governance/__main__.py路径DRIFTED(文件不存在). DEFERRED=0. 维度5.74全部清零.
 #### 5.74.1 [HIGH] zombie_scanner直接open(path,"w")非原子写入patterns文件
 
 - **文件**：`src/zephyr/trading/zombie_scanner.py:115-116`
@@ -3263,14 +3268,14 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **文件**：`src/zephyr/intelligence/model_profiling/results_writer.py:60-64`；副本 `pipeline_routing/results_writer.py:60`
 - **证据**：直接 `"w"` 写入。中断后产生截断的JSONL文件，`load_benchmark_history` 逐行 `json.loads` 时会在损坏行抛异常。
 - **修复**：使用 `atomic_write`。
-- **状态**：STILL_VALID（保留）— 需使用atomic_write
+- **状态**：FIXED — results_writer.py×2 write_benchmark_results 改为 tmp+flush+fsync+os.replace 原子写入, commit 02e94d9219
 
 #### 5.74.4 [MEDIUM] 多处tmp+os.replace实现遗漏fsync，持久化保证不完整
 
 - **文件**：`src/zephyr/governance/drift_detection/tamper_proof_audit.py:219-236`；`governance/__main__.py:169`；`governance/audit_trail/writer.py:46`
 - **证据**：审计日志写入用tmp+os.replace（原子性好），但写完tmp后未 `f.flush()` + `os.fsync()` 即 `os.replace`。系统崩溃时tmp内容可能仍在页缓存未落盘，replace后目标文件存在但内容为空/不完整。作为"防篡改审计"日志，丢失记录破坏审计完整性。对比规范实现 `shared/io/file_utils.py:113-114` 有flush+fsync。
 - **修复**：os.replace前添加 `f.flush(); os.fsync(f.fileno())`。
-- **状态**：STILL_VALID（保留）— 需os.replace前添加f.flush()+os.fsync()，影响多处审计日志
+- **状态**：FIXED — tamper_proof_audit.py+audit_trail/writer.py(3方法) 补充 f.flush()+os.fsync() 后再 os.replace, commit 02e94d9219. governance/__main__.py 路径DRIFTED(文件不存在)
 
 #### 5.74 严重度汇总
 
