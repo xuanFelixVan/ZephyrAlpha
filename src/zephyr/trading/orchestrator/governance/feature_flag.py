@@ -38,8 +38,10 @@ class FeatureFlagManager:
         return flag
 
     def is_enabled(self, contract_id: str) -> bool:
+        # 5.38.3 修复: 未注册 flag 默认 False (安全默认原则),
+        # 原代码 return True 违反灰度发布原则——新功能无需显式启用即生效
         flag = self._flags.get(contract_id)
-        return flag.enabled if flag else True
+        return flag.enabled if flag else False
 
     def get_all(self) -> dict[str, bool]:
         return {k: v.enabled for k, v in self._flags.items()}

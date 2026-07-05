@@ -51,6 +51,7 @@ Version: 0.1.0
 
 import logging
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from enum import Enum, unique
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
@@ -79,18 +80,29 @@ class FlagNotFoundError(ZephyrBaseError):
 
 @dataclass(frozen=True)
 class FeatureFlag:
+    # 5.38.9 修复: 增加生命周期管理字段 (created_at/expires_at/owner)
     key: str
     state: FlagState = FlagState.ALWAYS_OFF
     description: str = ""
     allowed_modules: list[str] = field(default_factory=list)
     allowed_agents: list[str] = field(default_factory=list)
     rollout_pct: int = 0
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    expires_at: datetime | None = None
+    owner: str = ""
 
     def __post_init__(self) -> None:
         # 5.155.12 修复: 添加范围校验 (0-100), 防止 >100 时恒为 True 全员启用
         # frozen dataclass 需用 object.__setattr__ 修改字段
         if self.rollout_pct < 0 or self.rollout_pct > 100:
             object.__setattr__(self, "rollout_pct", max(0, min(100, self.rollout_pct)))
+
+    def is_expired(self, *, now: datetime | None = None) -> bool:
+        """5.38.9: 判断 flag 是否已过期。expires_at 为 None 表示永不过期。"""
+        if self.expires_at is None:
+            return False
+        ref = now or datetime.now(UTC)
+        return ref >= self.expires_at
 
     def is_enabled(
         self,
@@ -111,10 +123,16 @@ class FeatureFlag:
             if agent_id not in self.allowed_agents:
                 return False
 
-        if self.rollout_pct > 0 and module_id:
+        # 5.38.5 修复: rollout_pct > 0 时必须有稳定标识符 (module_id/agent_id) 做分桶,
+        # 无标识符时默认 False (安全默认)——原代码直接返回 True (CONDITIONAL)
+        # 导致未传 module_id 时灰度分桶失效、全量放行
+        if self.rollout_pct > 0:
+            bucket_key = module_id or agent_id
+            if bucket_key is None:
+                return False  # 无标识符无法稳定分桶, 安全默认 OFF
             import hashlib
 
-            bucket = int(hashlib.md5(module_id.encode()).hexdigest(), 16) % 100
+            bucket = int(hashlib.md5(bucket_key.encode()).hexdigest(), 16) % 100
             return bucket < self.rollout_pct
 
         return self.state is FlagState.CONDITIONAL
