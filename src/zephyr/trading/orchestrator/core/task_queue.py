@@ -54,7 +54,7 @@ _MAX_PER_CYCLE = 3
 class PipelineDispatcher(Protocol):
     """AUDIT-08 H6: 打破 pipeline↔orchestrator 循环依赖的协议接口。
 
-    任何实现了 ``dispatch(task_card)`` 方法的对象均可注入 TaskQueue，
+    任何实现了 ``dispatch(task_card)`` 方法的对象均可注入 ActiveTaskQueue，
     无需直接依赖 PipelineOrchestrator 类型。
     """
 
@@ -98,7 +98,7 @@ class ActiveTaskQueue:
         self._running = True
         self._thread = threading.Thread(target=self._loop, daemon=daemon, name="zephyr-task-queue")
         self._thread.start()
-        logger.info("TaskQueue started (interval=%.1fs, max/cycle=%d)", self._poll_interval, self._max_per_cycle)
+        logger.info("ActiveTaskQueue started (interval=%.1fs, max/cycle=%d)", self._poll_interval, self._max_per_cycle)
 
     def stop(self, *, timeout: float = 5.0) -> None:
         """停止后台轮询线程并等待退出。"""
@@ -115,9 +115,9 @@ class ActiveTaskQueue:
             dispatched = self._stats["dispatched"]
         # 5.53.3 修复：原无条件 INFO，累计大量 errors 时信息被埋在 INFO 中。errors>0 时用 WARNING。
         if errors > 0:
-            logger.warning("TaskQueue stopped (dispatched=%d, errors=%d)", dispatched, errors)
+            logger.warning("ActiveTaskQueue stopped (dispatched=%d, errors=%d)", dispatched, errors)
         else:
-            logger.info("TaskQueue stopped (dispatched=%d, errors=%d)", dispatched, errors)
+            logger.info("ActiveTaskQueue stopped (dispatched=%d, errors=%d)", dispatched, errors)
 
     @property
     def is_running(self) -> bool:
@@ -136,7 +136,7 @@ class ActiveTaskQueue:
             try:
                 n = self._tick()
             except Exception:
-                logger.exception("TaskQueue tick failed")
+                logger.exception("ActiveTaskQueue tick failed")
                 # 5.142.8 修复: _stats 写入加锁
                 with self._stats_lock:
                     self._stats["errors"] += 1
