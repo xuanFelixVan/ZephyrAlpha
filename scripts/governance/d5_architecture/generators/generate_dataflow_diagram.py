@@ -105,10 +105,13 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
     return datasets, jobs, edges
 
 
-def _gen_mermaid(datasets: list[dict], jobs: list[dict], edges: list[dict], scope_filter: str | None = None) -> str:
+def _gen_mermaid(
+    datasets: list[dict], jobs: list[dict], edges: list[dict], scope_filter: str | None = None
+) -> tuple[str, int, int, int]:
     """生成 Mermaid flowchart LR 图表。
 
     :param scope_filter: None=全部, 'production'=仅生产, 'backtest_internal'=仅回测
+    :return: (mmd_text, ds_count, job_count, edge_count) —— 计数均为 scope_filter 过滤后实数
     """
     lines = ["flowchart LR"]
 
@@ -142,13 +145,16 @@ def _gen_mermaid(datasets: list[dict], jobs: list[dict], edges: list[dict], scop
         lines.append(f'    JOB{j["id"]}("{label}"):::{scope_class}')
 
     # Edges
+    edge_count = 0
     for e in edges:
         if e["from_type"] == "job" and e["to_type"] == "dataset":
             if e["from_id"] in job_ids and e["to_id"] in ds_ids:
                 lines.append(f'    JOB{e["from_id"]} -->|produces| DS{e["to_id"]}')
+                edge_count += 1
         elif e["from_type"] == "dataset" and e["to_type"] == "job":
             if e["from_id"] in ds_ids and e["to_id"] in job_ids:
                 lines.append(f'    DS{e["from_id"]} -->|consumed by| JOB{e["to_id"]}')
+                edge_count += 1
 
     # 样式定义
     lines.append("")
@@ -157,7 +163,7 @@ def _gen_mermaid(datasets: list[dict], jobs: list[dict], edges: list[dict], scop
     lines.append("    classDef jobProd fill:#f1f8e9,stroke:#33691e,stroke-width:2px")
     lines.append("    classDef jobBacktest fill:#fce4ec,stroke:#880e4f,stroke-width:2px")
 
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines) + "\n", len(ds_list), len(job_list), edge_count
 
 
 def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
@@ -261,10 +267,10 @@ def main() -> int:
     filenames = {None: "dataflow_overview", "production": "dataflow_production", "backtest_internal": "dataflow_backtest"}
 
     for scope in scopes:
-        mmd = _gen_mermaid(datasets, jobs, edges, scope_filter=scope)
+        mmd, ds_count, job_count, edge_count = _gen_mermaid(datasets, jobs, edges, scope_filter=scope)
         fname = filenames[scope] + ".mmd"
         (out_dir / fname).write_text(mmd, encoding="utf-8")
-        print(f"[OK] 生成 {fname} ({len(datasets)} datasets, {len(jobs)} jobs)")
+        print(f"[OK] 生成 {fname} ({ds_count} datasets, {job_count} jobs, {edge_count} edges)")
 
     # 生成索引文档
     if not args.scope:
