@@ -182,12 +182,12 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 
 | 维度 | 当前态 | 目标态 | 差距 | 优先级 |
 |------|--------|--------|------|:------:|
-| 券商适配器 | 1 (SimulationBroker) | 3+ (MiniQMT/富途/IB/模拟) | 缺真实券商适配器, **MiniQMT Broker规格已就绪(§16.7.1)，待施工** | P1 |
+| 券商适配器 | 1 (SimulationBroker) | 3+ (MiniQMT/富途/IB/模拟) | 缺真实券商适配器, **MiniQMT已施工(P0已修), 富途/IB待施工** | P1 |
 | 并发订单 | 1 (单线程) | 100+ | 缺多线程+锁 | P1 |
 | ExecutionReport | 无 | CTR-P1-007 产出 | 缺数据模型+产出逻辑 | P0 |
 | RiskValidator 解耦 | 硬编码 DefaultRiskValidator | ABC 注入 | 缺解耦 | P0 |
-| **v2.2.0新增**: 回测=实盘一致性 | matching_engine与实盘Broker各自实现 | 共用撮合逻辑 | 缺共享撮合模块抽取 | P0 |
-| **v2.2.0新增**: A股特有约束 | 无T+1/涨跌停校验 | MiniQmtBroker内置校验 | 缺校验逻辑 | P0 |
+| **v2.2.0新增**: 回测=实盘一致性 | 共用MatchingLogic(submit_order内置pre_trade_simulate) | 共用撮合逻辑 | 已施工 | ✅ |
+| **v2.2.0新增**: A股特有约束 | T+1查持仓+涨跌停校验 | MiniQmtBroker内置校验 | 已施工 | ✅ |
 
 ### 1.7 典型场景
 
@@ -348,7 +348,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 
 | 维度 | 当前规模 | 峰值需求 | 系统极限 | 是否够用 | 扩展方案 |
 |------|:------:|:------:|:------:|:------:|---------|
-| 券商适配器数 | 1 (SimulationBroker) | 4 (MiniQMT/富途/IB/模拟) | 无硬限制 | ✅ | register_broker() 动态注册; **MiniQMT规格已就绪(§16.7.1)，待施工** |
+| 券商适配器数 | 1 (SimulationBroker) | 4 (MiniQMT/富途/IB/模拟) | 无硬限制 | ✅ | register_broker() 动态注册; **MiniQMT已施工(P0已修), 富途/IB待施工** |
 | 并发订单数 | 1 (单线程) | 100+ | 取决于线程模型 | ❌ | 多线程需加锁 + ThreadPoolExecutor |
 | 算法策略数 | 3 (TWAP/VWAP/冰山) | 5+ | 无硬限制 | ✅ | 策略模式扩展 |
 | **v2.2.0**: MiniQMT下单延迟 | — | <200ms (P95) | xttrader TCP往返 | 待验证 | 实盘测试后埋点测量 |
@@ -504,9 +504,9 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 | D_ML_TRAIN ML 平台 | 产出接口 | CTR-006 PositionSnapshot | D_ML_TRAIN 消费 PositionSnapshot 数据 | 待集成 |
 | SimulationBroker | 适配器注册 | register_broker("simulation", SimulationBroker) | 模拟成交 + 滑点 + 佣金 + 持仓维护 | ✅ 完成 |
 | SOR 智能路由 | 内部逻辑 | ExecutionEngine SOR 评分机制 | 评分机制已实现，多券商路由待扩展 | 骨架就位 |
-| **MiniQmtBroker** (v2.2.0) | 适配器注册 | register_broker("miniqmt", MiniQmtBroker) | 实盘小资金(1万元)100股测试: T+1/涨跌停/幂等/断线重连 | 待施工(规格已就绪) |
-| **D_DATA MiniQmtProvider** (v2.2.0) | 共享xtquant连接 | MiniQmtBroker构造函数注入shared_xtquant_conn | 单点登录miniQMT终端, 避免重复connect | 待施工 |
-| **D_BACKTEST matching_engine** (v2.2.0) | 共享撮合逻辑 | MatchingLogic共享模块(从matching_engine抽取) | 回测=实盘撮合行为一致性测试 | 待施工 |
+| **MiniQmtBroker** (v2.2.0) | 适配器注册 | register_broker("miniqmt", MiniQmtBroker) | 实盘小资金(1万元)100股测试: T+1/涨跌停/幂等/断线重连 | 已施工(P0已修, P1余项见审计清单) |
+| **D_DATA MiniQmtProvider** (v2.2.0) | 共享xtquant连接 | MiniQmtBroker构造函数注入shared_xtquant_conn | 单点登录miniQMT终端, 避免重复connect | 已施工(P1-4 shared_xtquant_conn连接复用) |
+| **D_BACKTEST matching_engine** (v2.2.0) | 共享撮合逻辑 | MatchingLogic共享模块(从matching_engine抽取) | 回测=实盘撮合行为一致性测试 | 已施工(submit_order内置pre_trade_simulate) |
 
 ---
 
@@ -676,7 +676,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 | AI 自治范围 | human_gated——实盘交易接入需Owner审批 + 小资金(1万元)灰度验证 |
 | 检查点 | miniqmt_broker.py 存在且非空 + 单元测试通过 + Mock集成测试通过 |
 
-**状态**：待实现（v2.2.0规划，规格已就绪于§16.7.1）
+**状态**：已施工(P0已修, P1余项见审计清单)
 
 > **回测=实盘一致性约束**: MiniQmtBroker的撮合逻辑MUST从`backtest/core/matching_engine.py`抽取的共享MatchingLogic模块调用, 禁止在MiniQmtBroker内重新实现撮合规则。这保证回测与实盘的撮合行为完全一致(回测-实盘偏差监控>30%告警/>50%退役的基线)。
 
