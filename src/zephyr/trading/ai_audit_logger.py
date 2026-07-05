@@ -86,6 +86,9 @@ class AiAuditLogger:
                         continue
                     try:
                         entry = json.loads(line)
+                        # 5.48.2 修复：json.loads 后添加类型校验
+                        if not isinstance(entry, dict):
+                            continue
                         eh = entry.get("entry_hash")
                         if eh:
                             last_hash = eh
@@ -142,6 +145,9 @@ class AiAuditLogger:
                     try:
                         entry = json.loads(line)
                     except json.JSONDecodeError:
+                        return False
+                    # 5.48.2 修复：json.loads 后添加类型校验
+                    if not isinstance(entry, dict):
                         return False
                     stored_prev = entry.get("prev_hash", "")
                     stored_hash = entry.get("entry_hash", "")

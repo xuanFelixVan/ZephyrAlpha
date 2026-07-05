@@ -222,15 +222,31 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
 
     for field in _json_array_fields:
         raw = d.get(field, "[]")
-
-        d[field] = json.loads(raw) if isinstance(raw, str) else raw
+        # 5.48.2 修复：json.loads 后添加类型校验
+        if isinstance(raw, str):
+            parsed = json.loads(raw)
+            if not isinstance(parsed, list):
+                raise ValueError(
+                    f"字段 {field} 期望 JSON 数组，实际得到 {type(parsed).__name__}: {raw!r}"
+                )
+            d[field] = parsed
+        else:
+            d[field] = raw
 
     _json_dict_fields = ("blocked_gates",)
 
     for field in _json_dict_fields:
         raw = d.get(field, "{}")
-
-        d[field] = json.loads(raw) if isinstance(raw, str) else raw
+        # 5.48.2 修复：json.loads 后添加类型校验
+        if isinstance(raw, str):
+            parsed = json.loads(raw)
+            if not isinstance(parsed, dict):
+                raise ValueError(
+                    f"字段 {field} 期望 JSON 对象，实际得到 {type(parsed).__name__}: {raw!r}"
+                )
+            d[field] = parsed
+        else:
+            d[field] = raw
 
     d["idempotent"] = bool(d.get("idempotent", 0))
 

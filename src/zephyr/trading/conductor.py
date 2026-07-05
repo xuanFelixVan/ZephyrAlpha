@@ -159,6 +159,9 @@ class Conductor:
                 fis = json.loads(fis)
             except (json.JSONDecodeError, TypeError):
                 fis = [fis] if fis else []
+            # 5.48.2 修复：json.loads 后添加类型校验
+            if not isinstance(fis, list):
+                fis = []
         files.update(str(f) for f in fis)
 
         at = getattr(task, "allowed_touch", None) or []
@@ -167,6 +170,9 @@ class Conductor:
                 at = json.loads(at)
             except (json.JSONDecodeError, TypeError):
                 at = [at] if at else []
+            # 5.48.2 修复：json.loads 后添加类型校验
+            if not isinstance(at, list):
+                at = []
         files.update(str(f) for f in at)
 
         do = getattr(task, "downstream_outputs", None) or []
@@ -174,6 +180,9 @@ class Conductor:
             try:
                 do = json.loads(do)
             except (json.JSONDecodeError, TypeError):
+                do = []
+            # 5.48.2 修复：json.loads 后添加类型校验
+            if not isinstance(do, list):
                 do = []
         for item in do:
             if isinstance(item, dict) and "path" in item:
