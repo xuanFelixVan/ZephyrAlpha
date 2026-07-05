@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 budget_enforcement（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 05:00:22
+> 最后更新: 2026-07-06 05:08:26
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -65,16 +65,16 @@ graph TD
     D_SECURITY["D_SECURITY prototype"]
     src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py -.->|import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py -.->|import_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
