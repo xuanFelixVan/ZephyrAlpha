@@ -255,6 +255,24 @@ node_types:
     cannot_directly_connect_to: [order]
     dmn_equivalent: Decision
 
+# === build_status 状态机（5态单调推进，DB CHECK 约束真源）===
+build_status_values:
+  - value: planned
+    order: 0
+    description: 已规划——已登记但尚未开始
+  - value: generated
+    order: 1
+    description: 已生成——代码已生成
+  - value: testing
+    order: 2
+    description: 测试中——正在测试
+  - value: stable
+    order: 3
+    description: 稳定——已通过测试，生产就绪
+  - value: deprecated
+    order: 4
+    description: 已弃用——终态，不可再迁移
+
 # === 决策边类型定义（借鉴 MARIA OS Evidence Graph 4类 typed causal edges）===
 edge_types:
   - type: triggering
