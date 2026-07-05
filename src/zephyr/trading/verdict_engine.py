@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] evaluate: PermissionCheckTimeout→Verdict(RED); evaluate_batch: partial_failure→individual RED
 # [TESTS] tests/test_behavioral_audit/test_verdict_engine.py
 # [A_module] module_id=MOD-ORC_verdict_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 
@@ -252,8 +252,10 @@ class VerdictEngine:
                         protection_level=resolved_level,
                     )
                     prot_level = resolved_level
-            except Exception:
-                pass
+            except Exception as e:
+                # 5.151.3 修复: protection_level 是安全判决关键输入, 失败后静默吞没并继续走决策树
+                # 存在安全风险。记录 warning 使查询失败可见 (不阻断决策, 但留审计痕迹)
+                logger.warning("verdict_engine: protection_index.query failed for %s: %s", operation.target_path, e)
 
         verdict_level, reason = self._apply_decision_tree(actor, operation, gate_passed, violation_count)
 

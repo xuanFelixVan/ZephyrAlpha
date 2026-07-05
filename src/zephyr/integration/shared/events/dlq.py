@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_dlq | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 dlq.py —— ZephyrAlpha 死信队列（Dead Letter Queue）
@@ -44,6 +44,7 @@ Version: 0.1.0
 from __future__ import annotations
 
 import json
+import logging
 import sqlite3
 import time
 from dataclasses import dataclass, field
@@ -51,6 +52,8 @@ from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.shared.infra.observer import EventType, Observer
+
+_logger = logging.getLogger(__name__)
 
 __all__ = [
     "DeadLetter",
@@ -153,10 +156,14 @@ class DeadLetterQueue:
 
     def _failure_handler(self, event_type: EventType, payload: dict[str, Any]) -> None:
         """DLQ 内部的 handler 不应抛异常——避免无限递归。"""
-        try:
-            raise RuntimeError("DLQ handler should not be called directly")
-        except Exception:
-            pass
+        # 5.151.4 修复: 原 raise+except pass 完全静默, 该 handler 已注册到事件总线,
+        # 所有 DLQ 事件在此处被完全静默丢弃。改为记录 warning 日志使丢弃可见
+        _logger.warning(
+            "DLQ _failure_handler called directly (should use capture() instead): "
+            "event_type=%s payload_keys=%s",
+            event_type,
+            list(payload.keys()) if isinstance(payload, dict) else "N/A",
+        )
 
     def capture(
         self,

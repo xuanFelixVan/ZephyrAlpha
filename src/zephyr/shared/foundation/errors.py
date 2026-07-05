@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_errors | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 errors.py —— ZephyrAlpha 统一错误层次（Traditional Exception Hierarchy）
@@ -50,13 +50,16 @@ __all__ = [
     "DataError",
     "FeedbackError",
     "GateError",
-    "IOError",
+    # 5.151.5 修复: IOError 从 __all__ 移除, 避免覆盖 Python 内建 IOError (3.3+ 为 OSError 别名)。
+    # IOError 仍可作为 errors.IOError 直接访问 (向后兼容), 但 import * 不再覆盖内建。
+    # 新代码应使用 ZephyrIOError。
     "PipelineError",
     "SecurityError",
     "TaskError",
     "UnimplementedError",
     "ValidationError",
     "ZephyrBaseError",
+    "ZephyrIOError",
 ]
 
 
@@ -122,8 +125,13 @@ class DataError(ZephyrBaseError):
     """数据层错误——数据库连接失败、查询异常、迁移失败。"""
 
 
-class IOError(ZephyrBaseError):
+class ZephyrIOError(ZephyrBaseError):
     """I/O 错误——文件读写失败、路径不存在、编码异常。"""
+
+
+# 5.151.5 修复: IOError 作为 ZephyrIOError 的向后兼容别名保留,
+# 但新代码应使用 ZephyrIOError 避免与 Python 内建 IOError (OSError 别名) 混淆
+IOError = ZephyrIOError
 
 
 class UnimplementedError(ZephyrBaseError):

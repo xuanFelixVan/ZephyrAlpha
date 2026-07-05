@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_context_assembler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ContextAssembler — 上下文装配、校验、影子留档
@@ -475,22 +475,24 @@ def build_context(
 
     ctx = RawContext()
 
+    # 5.151.7 修复: 原 4 处 except Exception: pass 静默吞没 VMS 检索失败,
+    # AI 拿到空上下文不知是真无数据还是检索失败。改为记录 warning 使失败可见
     try:
         ctx.ke_entries = _safe_search(vms, "ke_entries", _task_type, top_k=5)
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("context_assembler: ke_entries search failed: %s", e)
     try:
         ctx.vibe_rules = _safe_search(vms, "vibe_rules", _task_type, top_k=3)
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("context_assembler: vibe_rules search failed: %s", e)
     try:
         ctx.blueprints = _safe_search(vms, "blueprints", _layer, top_k=2)
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("context_assembler: blueprints search failed: %s", e)
     try:
         ctx.failure_patterns = _safe_search(vms, "failure_patterns", _task_type, top_k=3)
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("context_assembler: failure_patterns search failed: %s", e)
 
     if ctx.is_empty:
         ctx.degraded = True

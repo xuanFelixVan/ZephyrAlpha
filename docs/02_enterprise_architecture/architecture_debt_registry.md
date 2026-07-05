@@ -8305,6 +8305,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.151 错误处理策略一致性（11个，第26轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=11(错误处理策略一致性需统一)
+> **第40轮修复状态（2026-07-05）**：FIXED=6(5.151.1 git_bisector finally try/except + 5.151.2 zombie_scanner Exception 遮蔽移除 + 5.151.3 verdict_engine 静默→warning + 5.151.4 dlq 静默→warning + 5.151.5 errors.py IOError→ZephyrIOError 从 __all__ 移除 + 5.151.7 context_assembler 4处 pass→warning), DRIFTED=2(5.151.10 engine.py 文件不存在 + 5.151.11 fix_orphan_deps.py 已在前期修复), STILL_VALID=3(5.151.6+5.151.9 zombie_scanner 4种策略统一复杂重构 + 5.151.8 index_health_monitor 3种策略混用)
 
 #### HIGH（3个）
 

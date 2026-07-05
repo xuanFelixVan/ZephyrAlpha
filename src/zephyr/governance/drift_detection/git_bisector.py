@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_git_bisector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Git Bisector — git_bisector.py
@@ -114,7 +114,13 @@ class GitBisector:
             return False
 
         finally:
-            subprocess.run(["git", "checkout", "-"], capture_output=True, text=True, cwd=self._project_root, timeout=10)
+            # 5.151.1 修复: 原 finally 块直接 subprocess.run 无 try/except,
+            # 若 subprocess 抛 TimeoutExpired/FileNotFoundError 会掩盖 try 块中正在传播的异常,
+            # 并使仓库停留在 bisect 的分离 HEAD 状态。包裹 try/except 确保清理始终执行
+            try:
+                subprocess.run(["git", "checkout", "-"], capture_output=True, text=True, cwd=self._project_root, timeout=10)
+            except Exception:
+                pass
 
     def bisect(
         self,

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] psutil 不可用时返回空结果；kill 对已退出 PID 不报错；模式文件损坏时重置为空 dict
 # [TESTS]
 # [A_module] module_id=MOD-ORC_zombie_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 zombie_scanner.py — 僵尸 Python 进程检测与自动处置
@@ -210,7 +210,10 @@ def scan_zombie_processes() -> ZombieScanResult:
             if not belongs_to_project:
                 continue
 
-        except (psutil.NoSuchProcess, psutil.AccessDenied, Exception):
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            # 5.151.2 修复: 原 (psutil.NoSuchProcess, psutil.AccessDenied, Exception) 中 Exception
+            # 遮蔽特定异常, 等价于 except Exception:, 会吞掉 AttributeError/TypeError 等 Bug。
+            # 移除 Exception, 仅捕获进程枚举期间的预期异常
             continue
 
         try:
@@ -221,7 +224,8 @@ def scan_zombie_processes() -> ZombieScanResult:
                 children = len(proc.children())
             except Exception:
                 children = 0
-        except (psutil.NoSuchProcess, psutil.AccessDenied, Exception):
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            # 5.151.2 修复: 同上, 移除遮蔽特定异常的 Exception
             continue
 
         result.scanned += 1
