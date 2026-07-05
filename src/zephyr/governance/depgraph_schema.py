@@ -1107,8 +1107,10 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "(716 个遗留无效 ID). nodes 是 blueprint_id 真源, 保护 nodes 即间接保护派生表.",
         [
             # 1. nodes BEFORE INSERT: 粗校验 blueprint_id 前缀
-            # GLOB 大小写敏感(三轨制要求大写), 纯 SQL 无需扩展
+            # GLOB 大小写敏感(双轨制+历史兼容要求大写), 纯 SQL 无需扩展
             # 放行: NULL / 空串 / blueprint_id_invalid=1 / MOD-* / D-* / SH-* / SYS-* / PLACEHOLDER*
+            # R2 治本修订(2026-07-05): D-* 保留接受——用于 submodule_id 引用 + 历史 blueprint_id 数据;
+            # module_id 合法性校验由应用层 is_valid_module_id() 负责(R2 后 D-XXX-NNN 作 module_id 触发 N-06 阻断)
             """CREATE TRIGGER IF NOT EXISTS chk_nodes_blueprint_id_insert
             BEFORE INSERT ON nodes
             WHEN NEW.blueprint_id IS NOT NULL

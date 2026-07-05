@@ -27,10 +27,10 @@ fields:
   enum_values: []
   applicable_docs: []
   description: 模块唯一标识（frontmatter 文档标识符，格式：DOMAIN-TYPE-NNN）。注意：此 pattern 仅用于 frontmatter
-    文档 module_id，不适用于 depgraph blueprint_id 三轨制格式。blueprint_id 格式校验真源见 scripts/governance/validate_module_id_naming.py（裁定#208）
+    文档 module_id，不适用于 depgraph blueprint_id 双轨制格式。blueprint_id 格式校验真源见 scripts/governance/d3_metadata/validate_module_id_naming.py（裁定#208 双轨制 + R2 治本修订）
   source: PS-STD-001 §5
   pattern: ^[A-Z]+(-[A-Z]+)?-[A-Z]+-\d{3,4}$
-  note: 全项目唯一，不可重复。此 pattern 仅用于 frontmatter 文档 module_id，非 blueprint_id 三轨制格式
+  note: 全项目唯一，不可重复。此 pattern 仅用于 frontmatter 文档 module_id，非 blueprint_id 双轨制格式
 - field_name: title
   type: string
   required: always
@@ -452,11 +452,11 @@ fields:
   applicable_docs: []
   description: 上级蓝图引用——Level 2 模块蓝图声明其归属于哪个 Level 1 域蓝图或 Level 0 总蓝图。格式：module_id（如
     MOD-MASTER_BLUEPRINT）。注意：此 pattern 仅用于 frontmatter 文档 module_id，非 blueprint_id
-    三轨制格式。blueprint_id 格式校验真源见 scripts/governance/validate_module_id_naming.py（裁定#208）
+    双轨制格式。blueprint_id 格式校验真源见 scripts/governance/d3_metadata/validate_module_id_naming.py（裁定#208 双轨制 + R2 治本修订）
   source: PS-STD-005 §6.1
   pattern: ^[A-Z]+(-[A-Z]+)?-[A-Z]+-\d{3,4}$
   note: Level 2 蓝图 MUST 声明此字段。Level 0 蓝图不声明（顶层）。此 pattern 仅用于 frontmatter 文档 module_id，非
-    blueprint_id 三轨制格式
+    blueprint_id 双轨制格式
 - field_name: blueprint_level
   type: enum
   required: optional
