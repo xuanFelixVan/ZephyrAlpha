@@ -2866,7 +2866,7 @@ capabilities:
   # dataflowgraph 数据流图能力（ARCH-051，2026-07-06 新增）
   # --------------------------------------------------------------------------
   - capability_id: dataflow_graph_schema_management
-    canonical_override: src/zephyr/governance/dataflowgraph_schema.py
+    canonical_override: src/zephyr/governance/persistence/dataflowgraph_schema.py
     aliases:
       - dataflowgraph_schema
       - get_dataflowgraph_pg_connection
@@ -2875,7 +2875,7 @@ capabilities:
       - dataflowgraph_ddl
     description: >-
       dataflowgraph（数据流图）PostgreSQL schema 管理与连接入口（ARCH-051，2026-07-06）。
-      canonical = src/zephyr/governance/dataflowgraph_schema.py。
+      canonical = src/zephyr/governance/persistence/dataflowgraph_schema.py。
       与 depgraph 同库不同表（表名前缀 dataflow_*），共享 config/.env.postgres 配置
       （复用 depgraph_schema._PG_ENV_PATH / _load_pg_config / _build_pg_dsn，配置真源唯一）。
       连接入口独立：get_dataflowgraph_pg_connection()（与 depgraph 共享配置，但入口独立）。
@@ -3503,7 +3503,7 @@ creation_tokens:
     capability: "backtest_result_repository"
 
   # --- ARCH-051 dataflowgraph 数据流图架构（2026-07-06，session-sess-39852）---
-  - file: "src/zephyr/governance/dataflowgraph_schema.py"
+  - file: "src/zephyr/governance/persistence/dataflowgraph_schema.py"
     token: "auto-dataflowgraph-schema-20260706"
     created_by: "session-sess-39852-20260706041426"
     capability: "dataflow_graph_schema_management"
