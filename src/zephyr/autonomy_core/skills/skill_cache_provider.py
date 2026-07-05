@@ -46,14 +46,14 @@ class _MemoryCache:
         self._store: OrderedDict = OrderedDict()
         self._lock = threading.Lock()
 
-    def get(self, key: str):  # noqa: ANN
+    def get(self, key: str) -> Any | None:
         with self._lock:
             if key in self._store:
                 self._store.move_to_end(key)
                 return self._store[key]
         return None
 
-    def set(self, key: str, value: Any):
+    def set(self, key: str, value: Any) -> None:
         with self._lock:
             if key in self._store:
                 self._store.move_to_end(key)
@@ -61,11 +61,11 @@ class _MemoryCache:
             if len(self._store) > self._max:
                 self._store.popitem(last=False)
 
-    def invalidate(self, key: str):
+    def invalidate(self, key: str) -> None:
         with self._lock:
             self._store.pop(key, None)
 
-    def clear(self):
+    def clear(self) -> None:
         with self._lock:
             self._store.clear()
 
@@ -79,7 +79,7 @@ class _DiskCache:
         safe = key.replace(":", "_").replace("/", "_").replace("\\", "_")[:200]
         return self._dir / f"{safe}.json"
 
-    def get(self, key: str):  # noqa: ANN
+    def get(self, key: str) -> Any | None:
         path = self._path(key)
         if path.exists():
             try:
@@ -90,14 +90,14 @@ class _DiskCache:
                 pass
         return None
 
-    def set(self, key: str, value: Any, ttl_seconds: int = 3600):
+    def set(self, key: str, value: Any, ttl_seconds: int = 3600) -> None:
         data = {"value": value, "expires_at": time.time() + ttl_seconds}
         try:
             self._path(key).write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
         except OSError:
             pass
 
-    def invalidate(self, key: str):
+    def invalidate(self, key: str) -> None:
         try:
             self._path(key).unlink(missing_ok=True)
         except Exception as e:
@@ -122,12 +122,12 @@ class SkillCacheProvider:
             self._backend_name = "memory"
         return {"backend": self._backend_name, "requested": backend, "available": avail}
 
-    def get(self, key: str):  # noqa: ANN
+    def get(self, key: str) -> Any | None:
         if self.__backend is None:
             self.__backend = _MemoryCache()
         return self.__backend.get(key)
 
-    def set(self, key: str, value: Any, ttl_seconds: int = 3600):
+    def set(self, key: str, value: Any, ttl_seconds: int = 3600) -> None:
         if self.__backend is None:
             self.__backend = _MemoryCache()
         if isinstance(self.__backend, _DiskCache):
@@ -135,10 +135,10 @@ class SkillCacheProvider:
         else:
             self.__backend.set(key, value)
 
-    def invalidate(self, key: str):
+    def invalidate(self, key: str) -> None:
         if self.__backend:
             self.__backend.invalidate(key)
 
-    def clear(self):
+    def clear(self) -> None:
         if self.__backend:
             self.__backend.clear()
