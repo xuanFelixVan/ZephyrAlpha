@@ -7828,11 +7828,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - `_running`/`_started`布尔标志在start()/stop()/_loop()间无锁访问。start()的check-then-act是TOCTOU——两线程同时调用可都读到`_running=False`，启动两个线程
 - 修复：用`with self._lock`包裹或改为`threading.Event`
 
-#### 5.142.7 [LOW] SQLite访问锁粒度过大（串行化抵消WAL并发收益）
+#### 5.142.7 [FIXED 2026-07-05] SQLite访问锁粒度过大（串行化抵消WAL并发收益）
 
 - [infrastructure/event_store.py:155-166](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/event_store.py#L155) + cost_tracker.py
 - 每次调用新建连接+SQLite已配置WAL+`connect(timeout=10)`自带忙等待锁，但`self._lock`将"建连接+执行+提交+关闭"整体串行化，使WAL并发收益归零
 - 修复：移除`self._lock`依赖SQLite timeout+WAL，或使用线程局部连接
+- **第41轮修复状态（2026-07-05）**：5.142.7 FIXED — event_store.py与cost_tracker.py移除全局`self._lock`, 改用`threading.local()`线程局部连接复用+`_all_conns`注册表跟踪所有线程连接+`close_all()`统一关闭. 依赖SQLite timeout=10忙等待锁+WAL模式处理并发(读不阻塞写, 写不阻塞读). pipeline/cost_tracker.py为纯内存实现无SQLite不受影响.
 
 #### 5.142.8 [LOW] TaskQueue._stats字典后台线程写、属性读无锁
 

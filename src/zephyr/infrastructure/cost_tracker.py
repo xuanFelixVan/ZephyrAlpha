@@ -127,26 +127,34 @@ class CostTracker:
     ):
         self._db_path = Path(db_path)
         self._daily_budget = daily_budget_usd
-        self._lock = threading.Lock()
+        # 5.142.7 修复: 移除全局 self._lock (串行化抵消WAL并发收益), 改用线程局部连接
+        # 依赖 SQLite timeout=10 忙等待锁 + WAL 模式处理并发 (读不阻塞写, 写不阻塞读)
+        self._local = threading.local()
+        self._all_conns: dict[int, sqlite3.Connection] = {}
+        self._all_conns_lock = threading.Lock()
 
         if auto_init:
             self._db_path.parent.mkdir(parents=True, exist_ok=True)
             self._init_db()
 
-    def _get_conn(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(str(self._db_path), timeout=10)
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.row_factory = sqlite3.Row
-        return conn
+    @property
+    def _conn(self) -> sqlite3.Connection:
+        """5.142.7 修复: 线程局部连接复用, 避免每次操作创建/关闭连接的开销."""
+        if not hasattr(self._local, "conn") or self._local.conn is None:
+            conn = sqlite3.connect(str(self._db_path), timeout=10)
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=NORMAL")
+            conn.row_factory = sqlite3.Row
+            self._local.conn = conn
+            tid = threading.get_ident()
+            with self._all_conns_lock:
+                self._all_conns[tid] = conn
+        return self._local.conn
 
     def _init_db(self) -> None:
-        with self._lock:
-            conn = self._get_conn()
-            try:
-                conn.executescript(COST_TRACKER_SCHEMA)
-                conn.commit()
-            finally:
-                conn.close()
+        conn = self._conn
+        conn.executescript(COST_TRACKER_SCHEMA)
+        conn.commit()
 
     def record_usage(
         self,
@@ -167,27 +175,23 @@ class CostTracker:
         now = datetime.now(UTC)
         today = now.strftime("%Y-%m-%d")
 
-        with self._lock:
-            conn = self._get_conn()
-            try:
-                conn.execute(
-                    "INSERT INTO usage_records (record_id,timestamp,date,model,component,tokens_in,tokens_out,tokens_total,estimated_cost,metadata) VALUES (?,?,?,?,?,?,?,?,?,?)",
-                    (
-                        record.record_id,
-                        record.timestamp,
-                        today,
-                        record.model,
-                        record.component,
-                        record.tokens_in,
-                        record.tokens_out,
-                        record.tokens_total,
-                        str(record.estimated_cost),
-                        json.dumps(record.metadata, ensure_ascii=False),
-                    ),
-                )
-                conn.commit()
-            finally:
-                conn.close()
+        conn = self._conn
+        conn.execute(
+            "INSERT INTO usage_records (record_id,timestamp,date,model,component,tokens_in,tokens_out,tokens_total,estimated_cost,metadata) VALUES (?,?,?,?,?,?,?,?,?,?)",
+            (
+                record.record_id,
+                record.timestamp,
+                today,
+                record.model,
+                record.component,
+                record.tokens_in,
+                record.tokens_out,
+                record.tokens_total,
+                str(record.estimated_cost),
+                json.dumps(record.metadata, ensure_ascii=False),
+            ),
+        )
+        conn.commit()
 
         return record
 
@@ -195,34 +199,30 @@ class CostTracker:
         date_str = report_date or datetime.now(UTC).strftime("%Y-%m-%d")
         report = CostReport(report_date=date_str)
 
-        with self._lock:
-            conn = self._get_conn()
-            try:
-                rows = conn.execute("SELECT * FROM usage_records WHERE date = ?", (date_str,)).fetchall()
+        conn = self._conn
+        rows = conn.execute("SELECT * FROM usage_records WHERE date = ?", (date_str,)).fetchall()
 
-                report.record_count = len(rows)
-                for row in rows:
-                    r = dict(row)
-                    report.total_tokens += int(r.get("tokens_total", 0))
-                    report.total_cost += float(r.get("estimated_cost", 0))
+        report.record_count = len(rows)
+        for row in rows:
+            r = dict(row)
+            report.total_tokens += int(r.get("tokens_total", 0))
+            report.total_cost += float(r.get("estimated_cost", 0))
 
-                    model = r.get("model", "unknown")
-                    if model not in report.by_model:
-                        report.by_model[model] = {"tokens": 0, "cost": 0.0, "calls": 0}
-                    report.by_model[model]["tokens"] += int(r.get("tokens_total", 0))
-                    report.by_model[model]["cost"] += float(r.get("estimated_cost", 0))
-                    report.by_model[model]["calls"] += 1
+            model = r.get("model", "unknown")
+            if model not in report.by_model:
+                report.by_model[model] = {"tokens": 0, "cost": 0.0, "calls": 0}
+            report.by_model[model]["tokens"] += int(r.get("tokens_total", 0))
+            report.by_model[model]["cost"] += float(r.get("estimated_cost", 0))
+            report.by_model[model]["calls"] += 1
 
-                    comp = r.get("component", "unknown")
-                    if comp not in report.by_component:
-                        report.by_component[comp] = {"tokens": 0, "cost": 0.0, "calls": 0}
-                    report.by_component[comp]["tokens"] += int(r.get("tokens_total", 0))
-                    report.by_component[comp]["cost"] += float(r.get("estimated_cost", 0))
-                    report.by_component[comp]["calls"] += 1
+            comp = r.get("component", "unknown")
+            if comp not in report.by_component:
+                report.by_component[comp] = {"tokens": 0, "cost": 0.0, "calls": 0}
+            report.by_component[comp]["tokens"] += int(r.get("tokens_total", 0))
+            report.by_component[comp]["cost"] += float(r.get("estimated_cost", 0))
+            report.by_component[comp]["calls"] += 1
 
-                report.total_cost = round(report.total_cost, 6)
-            finally:
-                conn.close()
+        report.total_cost = round(report.total_cost, 6)
 
         return report
 
@@ -246,5 +246,17 @@ class CostTracker:
             "date": report.report_date,
         }
 
+    def close_all(self) -> None:
+        """5.142.7 修复: 关闭所有线程的连接 (线程池场景下 close() 只关闭当前线程连接不够)."""
+        with self._all_conns_lock:
+            for tid, conn in list(self._all_conns.items()):
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+            self._all_conns.clear()
+        if hasattr(self._local, "conn"):
+            self._local.conn = None
+
     def close(self) -> None:
-        pass
+        self.close_all()

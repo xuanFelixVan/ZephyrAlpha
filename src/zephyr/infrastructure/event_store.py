@@ -126,59 +126,58 @@ class EventStore:
 
     def __init__(self, db_path: str | Path = REPO_ROOT / "data" / "events.db", auto_init: bool = True):
         self._db_path = Path(db_path)
-        self._lock = threading.Lock()
+        # 5.142.7 修复: 移除全局 self._lock (串行化抵消WAL并发收益), 改用线程局部连接
+        # 依赖 SQLite timeout=10 忙等待锁 + WAL 模式处理并发 (读不阻塞写, 写不阻塞读)
+        self._local = threading.local()
+        self._all_conns: dict[int, sqlite3.Connection] = {}
+        self._all_conns_lock = threading.Lock()
 
         if auto_init:
             self._db_path.parent.mkdir(parents=True, exist_ok=True)
             self._init_db()
             self._migrate()
 
-    def _get_conn(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(str(self._db_path), timeout=10)
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA synchronous=NORMAL")
-        conn.row_factory = sqlite3.Row
-        return conn
+    @property
+    def _conn(self) -> sqlite3.Connection:
+        """5.142.7 修复: 线程局部连接复用, 避免每次操作创建/关闭连接的开销."""
+        if not hasattr(self._local, "conn") or self._local.conn is None:
+            conn = sqlite3.connect(str(self._db_path), timeout=10)
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=NORMAL")
+            conn.row_factory = sqlite3.Row
+            self._local.conn = conn
+            tid = threading.get_ident()
+            with self._all_conns_lock:
+                self._all_conns[tid] = conn
+        return self._local.conn
 
     def _init_db(self) -> None:
-        with self._lock:
-            conn = self._get_conn()
-            try:
-                conn.executescript(EVENT_STORE_SCHEMA)
-                conn.commit()
-            finally:
-                conn.close()
+        conn = self._conn
+        conn.executescript(EVENT_STORE_SCHEMA)
+        conn.commit()
 
     def _migrate(self) -> None:
         pass
 
     def record(self, event: StoredEvent) -> str:
-        with self._lock:
-            conn = self._get_conn()
-            try:
-                conn.execute(
-                    "INSERT INTO events (event_id,timestamp,level,component,event_type,payload,metadata,checksum) VALUES (?,?,?,?,?,?,?,?)",
-                    event.to_row(),
-                )
-                conn.commit()
-                return event.event_id
-            finally:
-                conn.close()
+        conn = self._conn
+        conn.execute(
+            "INSERT INTO events (event_id,timestamp,level,component,event_type,payload,metadata,checksum) VALUES (?,?,?,?,?,?,?,?)",
+            event.to_row(),
+        )
+        conn.commit()
+        return event.event_id
 
     def record_batch(self, events: list[StoredEvent]) -> int:
         if not events:
             return 0
-        with self._lock:
-            conn = self._get_conn()
-            try:
-                conn.executemany(
-                    "INSERT INTO events (event_id,timestamp,level,component,event_type,payload,metadata,checksum) VALUES (?,?,?,?,?,?,?,?)",
-                    [e.to_row() for e in events],
-                )
-                conn.commit()
-                return len(events)
-            finally:
-                conn.close()
+        conn = self._conn
+        conn.executemany(
+            "INSERT INTO events (event_id,timestamp,level,component,event_type,payload,metadata,checksum) VALUES (?,?,?,?,?,?,?,?)",
+            [e.to_row() for e in events],
+        )
+        conn.commit()
+        return len(events)
 
     def query(
         self,
@@ -188,58 +187,58 @@ class EventStore:
         limit: int = 100,
         offset: int = 0,
     ) -> list[StoredEvent]:
-        with self._lock:
-            conn = self._get_conn()
-            try:
-                conditions: list[str] = []
-                params: list[Any] = []
+        conn = self._conn
+        conditions: list[str] = []
+        params: list[Any] = []
 
-                if component:
-                    conditions.append("component = ?")
-                    params.append(component)
-                if level:
-                    conditions.append("level = ?")
-                    params.append(level.value)
-                if event_type:
-                    conditions.append("event_type = ?")
-                    params.append(event_type)
+        if component:
+            conditions.append("component = ?")
+            params.append(component)
+        if level:
+            conditions.append("level = ?")
+            params.append(level.value)
+        if event_type:
+            conditions.append("event_type = ?")
+            params.append(event_type)
 
-                where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
-                sql = f"SELECT * FROM events {where} ORDER BY timestamp DESC LIMIT ? OFFSET ?"
-                params.extend([limit, offset])
+        where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+        sql = f"SELECT * FROM events {where} ORDER BY timestamp DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
 
-                rows = conn.execute(sql, params).fetchall()
-                return [StoredEvent.from_row(dict(r)) for r in rows]
-            finally:
-                conn.close()
+        rows = conn.execute(sql, params).fetchall()
+        return [StoredEvent.from_row(dict(r)) for r in rows]
 
     def count(self, component: str | None = None) -> int:
-        with self._lock:
-            conn = self._get_conn()
-            try:
-                if component:
-                    row = conn.execute("SELECT COUNT(*) FROM events WHERE component = ?", (component,)).fetchone()
-                else:
-                    row = conn.execute("SELECT COUNT(*) FROM events").fetchone()
-                return row[0] if row else 0
-            finally:
-                conn.close()
+        conn = self._conn
+        if component:
+            row = conn.execute("SELECT COUNT(*) FROM events WHERE component = ?", (component,)).fetchone()
+        else:
+            row = conn.execute("SELECT COUNT(*) FROM events").fetchone()
+        return row[0] if row else 0
 
     def verify_integrity(self, event_id: str) -> bool:
-        with self._lock:
-            conn = self._get_conn()
-            try:
-                row = conn.execute("SELECT * FROM events WHERE event_id = ?", (event_id,)).fetchone()
-                if not row:
-                    return False
-                stored = StoredEvent.from_row(dict(row))
-                import hashlib
+        conn = self._conn
+        row = conn.execute("SELECT * FROM events WHERE event_id = ?", (event_id,)).fetchone()
+        if not row:
+            return False
+        stored = StoredEvent.from_row(dict(row))
+        import hashlib
 
-                payload_str = json.dumps(stored.payload, ensure_ascii=False)
-                expected = hashlib.sha256(f"{stored.event_id}{stored.timestamp}{payload_str}".encode()).hexdigest()[:16]
-                return expected == row["checksum"]
-            finally:
-                conn.close()
+        payload_str = json.dumps(stored.payload, ensure_ascii=False)
+        expected = hashlib.sha256(f"{stored.event_id}{stored.timestamp}{payload_str}".encode()).hexdigest()[:16]
+        return expected == row["checksum"]
+
+    def close_all(self) -> None:
+        """5.142.7 修复: 关闭所有线程的连接 (线程池场景下 close() 只关闭当前线程连接不够)."""
+        with self._all_conns_lock:
+            for tid, conn in list(self._all_conns.items()):
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+            self._all_conns.clear()
+        if hasattr(self._local, "conn"):
+            self._local.conn = None
 
     def close(self) -> None:
-        pass
+        self.close_all()
