@@ -21,8 +21,10 @@ references:
   - architecture_model/contracts/cross_layer_contracts.yaml#CTR-P1-016
   - architecture_model/contracts/cross_layer_contracts.yaml#CTR-P1-017
   - architecture_model/events/domain_events.yaml#E-BT-01
+  - architecture_model/domain/decision_graph_model.yaml#L5
   - docs/03_modules/_domain_data/blueprint.md#§16.7.1
   - docs/00_meta/_system_master.md#ARCH-047
+  - docs/02_enterprise_architecture/06_decision_architecture/index.md
 rule_form: structural
 scope: domain
 ssot_claims:
@@ -102,6 +104,7 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | src/zephyr/backtest/io/__init__.py | planned | **v1.3.0新增** io子包入口(#ARCH-047) |
 | src/zephyr/backtest/io/backtest_result_sink.py | planned | **v1.3.0新增** 回测结果数据落地模块,从 BacktestResult 提取可视化数据(CTR-P1-016→BacktestSinkData)(#ARCH-047) |
 | src/zephyr/backtest/io/result_repository.py | planned | **v1.3.0新增** 回测产物持久化/检索模块,供 D_FRONTEND 消费(CTR-P1-017 BacktestRunArtifact)(#ARCH-047) |
+| src/zephyr/backtest/io/decisiongraph_adapter.py | planned | **TRAE-061 Phase 5新增** BacktestResult→decisiongraph 适配器,将回测结果映射为 L5 学习层决策节点(backtest_result_to_decision_node + register_backtest_result_in_decisiongraph) |
 
 **Phase 2 — 过拟合检测与Walk-Forward**
 
@@ -214,6 +217,7 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 **v1.3.0新增 — io/子目录(可视化产物落地)**:2个模块(配合 #ARCH-047 前端 Streamlit→Panel+HoloViz 重构)
 - io/backtest_result_sink.py — 从 BacktestResult(CTR-P1-016)提取可视化数据,转化为 BacktestSinkData(depgraph 节点 475126,planned)
 - io/result_repository.py — 持久化/检索 BacktestRunArtifact(CTR-P1-017),供 D_FRONTEND backtest_results/tick_replay 组件消费(depgraph 节点 475127,planned)
+- io/decisiongraph_adapter.py — **TRAE-061 Phase 5新增** BacktestResult→decisiongraph 适配器,将回测结果映射为 L5 学习层决策节点(evidence_hash=SHA-256(idempotency_key),path=backtest/{strategy_id}/{idempotency_key})
 
 ### §1.4 运行场景约束
 
