@@ -17,6 +17,13 @@
 
 
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from zephyr.shared.contracts.trace_context import TraceContext  # 5.150.8 修复: 补充类型注解导入
+
+
 class RiskLimitViolationError(Exception):
     # 5.113.1 修复：删除 __slots__。Exception 基类未声明 __slots__，所有 Exception 子类
     # 实例始终携带 __dict__，__slots__ 的内存优化完全失效，仅给人"已优化"的错觉。

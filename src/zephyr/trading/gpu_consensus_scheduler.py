@@ -169,7 +169,7 @@ class GPUConsensusScheduler:
         max_workers: int = 1,
     ) -> None:
         self._ollama_url = ollama_url.rstrip("/")
-        self._local_model = local - model
+        self._local_model = local_model  # 5.150.9 修复: local-model 笔误导致 TypeError
         self._api_primary = api_primary
         self._api_secondary = api_secondary
         self._gpu_timeout_s = gpu_timeout_s
