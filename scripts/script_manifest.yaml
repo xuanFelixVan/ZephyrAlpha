@@ -294,14 +294,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: arch_guard/fitness_functions/check_bvb_compliance.py
-  path: arch_guard/fitness_functions/check_bvb_compliance.py
-  description: 对标 architecture_principles.md §2 "开源优先与 Build-vs-Buy"。
-  domain: arch_guard
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: arch_guard/fitness_functions/check_capacity_slo_ssot.py
   path: arch_guard/fitness_functions/check_capacity_slo_ssot.py
   description: check_capacity_slo_ssot.py — capacity_slo.yaml 注册表 + 与 invariants 数字对齐（SSoT 闭环）
@@ -577,6 +569,14 @@ scripts:
 - name: governance/__init__.py
   path: governance/__init__.py
   description: No description
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/apply_dataflowgraph.py
+  path: governance/apply_dataflowgraph.py
+  description: apply_dataflowgraph.py — dataflowgraph 变更写入工具（CLI）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1534,14 +1534,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/d5_architecture/checkers/check_bvb_compliance.py
-  path: governance/d5_architecture/checkers/check_bvb_compliance.py
-  description: 新引入的 OSS 依赖必须通过五维评估（License/Security/Maintenance/Community/Ecosystem）。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/d5_architecture/checkers/check_code_duplication.py
   path: governance/d5_architecture/checkers/check_code_duplication.py
   description: '[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §'
@@ -1737,6 +1729,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_cross_domain_matrix.py
   path: governance/d5_architecture/generators/generate_cross_domain_matrix.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_dataflow_diagram.py
+  path: governance/d5_architecture/generators/generate_dataflow_diagram.py
+  description: 依据：ARCH-051 裁定（2026-07-06）
   domain: governance
   execution_plane: warm-path
   status: registered
