@@ -7,7 +7,7 @@
 
 ## 一、一句话定位
 
-ZephyrAlpha 是一套**100% AI 开发模式**下的**专业级 A 股量化交易系统**，Python 3.12+，版本 v2.0.0，资产规模约 4639 模块 / 483 脚本 / 43 门禁 / 55 蓝图 / 22 Agent Skill，53 域 / 6501 节点 / 7191 依赖边。
+ZephyrAlpha 是一套**100% AI 开发模式**下的**专业级 A 股量化交易系统**，Python 3.12+，版本 v2.0.0。资产规模见 depgraph（PostgreSQL）+ 各注册表动态统计（约 4600+ 模块 / 53 域 / 6500+ 节点，时点值）。
 
 它不是传统意义上的"量化策略库"，而是一个**自治理的 AI 量化操作系统**——用治理代码（门禁、注册表、reconciler、worktree 隔离）替代人类工程师的纪律，让 AI 能在缺乏人类监督的情况下持续演进一个金融级系统而不漂移。
 
@@ -63,15 +63,9 @@ ZephyrAlpha 的假设完全相反：
 - **R3 金融不盲信任 AI**：金融决策必须有可验证的护栏，AI 输出不直接执行交易
 - **R4 PRD 永远不改**：产品需求文档一旦定稿冻结，禁止回写
 
-### 2.4 开源优先 + BvB 五维评分法
+### 2.4 开源优先
 
-技术选型遵循"开源优先 + BvB（Build vs Buy）五维评分法"。明确**必须自研的 5 条硬约束**：
-
-1. 红线数据 PIT（Point-in-Time）数据结构
-2. 核心业务 Alpha 生成逻辑
-3. Agent 编排框架
-4. 金融特定 PIT 数据结构
-5. 治理代码
+技术选型遵循"开源优先"原则。架构原则详见 [architecture_principles.md](../../docs/02_enterprise_architecture/04_architecture_principles_decisions/architecture_principles.md)（v1.3.0，2026-07-06 已删除 BvB 五维评分法附录及 5 条硬约束——BvB 从未落地，5 条硬约束为孤岛概念）。
 
 ---
 
@@ -147,15 +141,15 @@ PostgreSQL `localhost:5432/depgraph`，28 张表存储 nodes / edges / domains /
 
 ### 3.5 CapabilityLookup — 能力反查引擎
 
-[capability_lookup.py](../../src/zephyr/governance/capability_lookup.py)，被 76+ 消费者使用。能力 → 真源文件反查，134 条能力。
+[capability_lookup.py](../../src/zephyr/governance/capability_lookup.py)，被 76+ 消费者使用。能力 → 真源文件反查（条数见注册表动态统计）。
 
 新 AI 通过 capability 反查可发现正确入口，避免重复造轮子。这是"能现成不创造"原则的运行时落地。
 
-### 3.6 17 项 reconciler + 52 个 gate + 34 个词表
+### 3.6 reconciler + gate + 词表（见各注册表动态统计）
 
-> "ZephyrAlpha 项目治理体系设计严谨（trae_060 三原则 + 17 个 reconciler + 52 个 gate + 34 个词表 + CapabilityLookup 反查机制），但执行覆盖存在系统性断层。"
+> "ZephyrAlpha 项目治理体系设计严谨（trae_060 三原则 + reconciler + gate + 词表 + CapabilityLookup 反查机制），但执行覆盖存在系统性断层。"精确数量见各注册表动态统计。
 
-治理军备竞赛反思（#ARCH-028 / AD-GOV-001）：治理收敛 49 门禁 → 29，17 reconciler → 11。这反映 100% AI 开发模式的内在张力——治理过严增加 AI 上下文负担，治理过松导致漂移。
+治理军备竞赛反思（#ARCH-028 / AD-GOV-001）：治理收敛 49 门禁 → 29，17 reconciler → 11（历史值，见 #ARCH-028 裁定记录）。这反映 100% AI 开发模式的内在张力——治理过严增加 AI 上下文负担，治理过松导致漂移。
 
 ### 3.7 三层 AI 工作分配
 
@@ -206,8 +200,8 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 
 ### 4.4 运行时三平面 + 治理三层
 
-- **运行时三平面**：RP-1（控制面）/ RP-2（数据面）/ RP-3（质量面）
-- **治理三层**：GOV-P1（强约束）/ GOV-P2（中约束）/ GOV-P3（弱约束）
+- **运行时三平面**：Hot（控制面，<10ms）/ Warm（数据面，10ms-1s）/ Cold（质量面，>1s）——按延迟预算切分
+- **治理三层**：Policy（强约束，编译期）/ Factory（中约束，构建期）/ Runtime（弱约束，运行期）——按生命周期切分
 
 ---
 
@@ -219,7 +213,7 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 - **Pydantic V2**（>=2.0.0,<3.0.0）—— 数据建模
 - **pandas + pyarrow** —— 数据处理
 - **structlog** —— 结构化日志
-- **plotly >=6.0 + streamlit >=1.50** —— 可视化（当前）
+- **panel + holoviews + plotly + plotly_resampler + lightweight-charts v5.2** —— 可视化（G0.5 Python 过渡层，ARCH-047 裁定，已从 Streamlit 切换）
 - **openai + sentence-transformers + mcp** —— LLM/AI
 - **pyyaml + python-dotenv** —— 配置
 
@@ -278,7 +272,7 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 | `DefaultBacktestEngine`（向量化） | [vectorized_engine.py](../../src/zephyr/backtest/implementations/vectorized_engine.py) | 日 bar | 快速筛选因子 IC/IR |
 | `EventDrivenEngine`（事件驱动） | [event_driven_engine.py](../../src/zephyr/backtest/implementations/event_driven_engine.py) | Tick | 精确验证策略 PnL，做 T 专用 |
 
-### 6.3 BacktestResult — CTR-P1-016 冻结契约
+### 6.3 BacktestResult — CTR-P1-016 frozen dataclass 契约
 
 [engine_base.py](../../src/zephyr/backtest/core/engine_base.py) 中的 `@dataclass(frozen=True) BacktestResult`，由 codegen 从 `cross_layer_contracts.yaml` 自动生成。
 
@@ -387,18 +381,19 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 
 ## 七、前端与可视化现状
 
-### 7.1 当前状态
+### 7.1 当前状态（G0.5 Python 过渡层，ARCH-047 裁定）
 
-[src/zephyr/frontend/](../../src/zephyr/frontend/) 已有 Streamlit dashboard 骨架：
+[src/zephyr/frontend/](../../src/zephyr/frontend/) 已部署 Panel dashboard（G0.5 Python 过渡层，ARCH-047 v1.2.0，2026-07-04 DONE）：
 
-- [app.py](../../src/zephyr/frontend/dashboard/app.py)：5 个页面（任务进度/知识库/门禁/Fitness/OLAP）
-- [components/](../../src/zephyr/frontend/dashboard/components/)：10 个组件（backtest_results / fitness_functions / gate_statistics / knowledge_overview / olap_trend / order_book / position_monitor / task_progress / tick_replay / trade_panel）
+- [app_panel.py](../../src/zephyr/frontend/dashboard/app_panel.py)：Panel 应用（10 个 Tab：任务进度/知识库/门禁/Fitness/OLAP + 5 个交易/回测组件）
+- [components/](../../src/zephyr/frontend/dashboard/components/)：10 个组件（backtest_results / tick_replay / order_book / position_monitor / trade_panel / fitness_functions / gate_statistics / knowledge_overview / olap_trend / task_progress）
+- [chart_factory.py](../../src/zephyr/frontend/dashboard/components/chart_factory.py)：ChartFactory 统一工厂（make_equity / make_drawdown / make_heatmap / make_tick / make_kline）
 
-[backtest_results.py](../../src/zephyr/frontend/dashboard/components/backtest_results.py)（v2.2.0）已实现回测可视化组件，含 `BacktestResultData` / `BacktestMetrics` / `BacktestGateStatus` dataclass + `fetch_backtest_results()` + `render_backtest_results()`，但**尚未接入 app.py**。
+技术栈：Panel + HoloViz（HoloViews + Datashader + hvPlot）+ Plotly + plotly_resampler + TradingView Lightweight Charts v5.2。已从 Streamlit 切换（旧 app.py 保留为迁移参考）。
 
 ### 7.2 长期前端终局
 
-[frontend_architecture.md](../../docs/02_enterprise_architecture/target_architecture/frontend_architecture.md)（v1.1.1）定义了 7 条前端铁律：
+[frontend_architecture.md](../../docs/02_enterprise_architecture/target_architecture/frontend_architecture.md)（v1.2.0，含 G0.5 过渡层章节）定义了 7 条前端铁律：
 
 - **FE-P1**：技术栈异构隔离（React/TS 与 Python 物理隔离）
 - **FE-P2**：API Gateway 唯一对接（FastAPI `api_gateway/`）
@@ -445,7 +440,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 [architecture_issue_registry.yaml](../../docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)（REG-ARCH-ISSUE-001）：
 
 - 连续分配、不回收、`superseded_by` 链、status 四值（active / superseded / resolved / deprecated）
-- 已登记 #ARCH-008 到 #ARCH-036+
+- 已登记 #ARCH-001 到 #ARCH-051+（连续分配，不回收）
 
 关键裁定：
 - **#ARCH-028**：治理军备竞赛陷阱（49 门禁 → 29，17 reconciler → 11）
@@ -510,7 +505,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 ### 9.5 共享与前端
 - **shared**：共享基础（contracts / events / io / infra / utils / foundation / resilience / protocols / schema 等 22 子目录）
-- **frontend**：前端（D_FRONTEND，Streamlit dashboard）
+- **frontend**：前端（D_FRONTEND，G0.5 Python 过渡层 Panel dashboard）
 
 ---
 
@@ -520,7 +515,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 1. **100% AI 开发模式的工程实践**：把"AI 会幻觉/漂移"作为第一性原理，用机器可执行的治理（门禁/注册表/reconciler/worktree）替代人类纪律，形成可复制的 AI 自治理工程范式
 2. **A 股场景的专业级回测**：PIT 铁律 + WFA 三模式 + 过拟合三维度 + IS→WFA→OOS 三级门控 + 回测=实盘一致性（MatchingLogic 共享），达到机构级回测严谨度
-3. **depgraph 架构全景图**：PostgreSQL 28 表存储 6501 节点 + 7191 依赖边，作为架构静态真源，让 AI 查询零幻觉
+3. **depgraph 架构全景图**：PostgreSQL 28 表存储节点 + 依赖边（见 depgraph 动态统计），作为架构静态真源，让 AI 查询零幻觉
 4. **SSoT 真源唯一体系**：六大真源各司其职，从机制上消除多真源漂移
 5. **53 域平级架构**：消除双分类幻觉，物理路径与功能域层级一致
 
@@ -528,9 +523,9 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 1. **治理军备竞赛**：3193 个违规点分布在 177 维度，治理过严增加 AI 上下文负担，过松导致漂移——平衡点是 #ARCH-028 持续探索的
 2. **回测副产物未持久化**：BacktestResult 不含净值曲线/trades 明细，仅内存累积，进程结束即丢失
-3. **可视化平台选型**：现有 Streamlit 骨架在 crossfiltering/百万级 tick/WebSocket 推送上有架构性短板，需迁移到 Panel + HoloViz
-4. **前端 G0→G1 激活**：长期终局是 React + FastAPI，但当前在 G0，需要 Streamlit/Panel 过渡
-5. **production 节点仅 1404/6501**：大量 prototype 待施工或退役
+3. **可视化平台已迁移**：已从 Streamlit 迁移到 Panel + HoloViz（ARCH-047 v1.2.0，2026-07-04 DONE），G0.5 Python 过渡层已部署
+4. **前端 G0.5→G1 激活**：长期终局是 React + FastAPI，当前 G0.5（Panel 过渡层）已部署，待 3 信号触发 G1 升级
+5. **production 节点仅 1400+/6500+**：大量 prototype 待施工或退役（时点值）
 
 ---
 
@@ -538,15 +533,15 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 请 Claude 基于以上背景，分析以下问题（任选其一或多）：
 
-1. **治理体系评估**：100% AI 开发模式下的治理体系（23 门禁 + 17 reconciler + 6 真源 + worktree 隔离）是否过度？哪些可以简化，哪些是刚需？
+1. **治理体系评估**：100% AI 开发模式下的治理体系（门禁 + reconciler + 6 真源 + worktree 隔离，数量见各注册表动态统计）是否过度？哪些可以简化，哪些是刚需？
 
 2. **可视化方案选型**：Panel + HoloViz + Plotly + Lightweight Charts 的组合是否是 ZephyrAlpha 的最优解？有没有更优组合？考虑到 100% AI 开发模式，Panel 的 AI 友好度劣势如何缓解？
 
-3. **回测副产物持久化**：BacktestResult 不含净值曲线/trades 明细，仅内存累积。如何在不违反 CTR-P1-016 冻结契约的前提下，设计 BacktestRunArtifact 装配层 + ResultRepository 持久化层？
+3. **回测副产物持久化**：BacktestResult 不含净值曲线/trades 明细，仅内存累积。如何在不违反 CTR-P1-016 frozen dataclass 契约的前提下，设计 BacktestRunArtifact 装配层 + ResultRepository 持久化层？
 
-4. **53 域架构演进**：当前 53 域 / 6501 节点 / 7191 依赖边，production 仅 1404。架构健康度如何？哪些域应该优先施工，哪些应该合并或退役？
+4. **域架构演进**：当前 53 域 / 6500+ 节点 / 7100+ 依赖边（时点值，见 depgraph 动态统计），production 仅 1400+。架构健康度如何？哪些域应该优先施工，哪些应该合并或退役？
 
-5. **G0→G1 前端激活路径**：从当前 G0（无前端）到 G1（最小 dashboard）到 G2（React + FastAPI），迁移路径如何设计才能让资产不浪费？
+5. **G0.5→G1 前端激活路径**：从当前 G0.5（Panel Python 过渡层）到 G1（React 最小 dashboard）到 G2（React + FastAPI），迁移路径如何设计才能让资产不浪费？Panel 组件嵌入 React 的可行性如何？
 
 6. **100% AI 开发模式的可持续性**：这种治理密集型模式长期是否可持续？治理代码本身的维护成本会不会成为新的漂移源？
 
