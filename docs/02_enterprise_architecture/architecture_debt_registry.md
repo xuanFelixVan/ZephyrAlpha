@@ -1965,6 +1965,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.43全部清零.
 > 维度说明：CPU/内存/连接/并发/磁盘等资源配额限制，防止资源耗尽。
+> **第57轮修复状态（2026-07-06）**：5.43.5 FIXED — health_monitor.py pressure_level() 添加 psutil.disk_usage("/") 磁盘压力检查, commit dc2210ce46. DEFERRED=2(5.43.1/5.43.2).
 
 #### 5.43.1 [HIGH] Docker容器无CPU/内存限制
 - **文件**：[docker-compose.yml](file:///D:/ZephyrAlpha/docker-compose.yml)
@@ -1996,7 +1997,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：磁盘满不会触发健康检查告警
 - **影响**：磁盘耗尽导致写入失败无预警
 - **修复**：将disk_usage纳入压力分类阈值
-- **状态**：STILL_VALID（保留）— health_monitor.py pressure_level() 仅检查 psutil.virtual_memory().percent（L322-333），未将 disk_usage 纳入压力分类；需补充磁盘压力阈值
+- **状态**：FIXED — health_monitor.py pressure_level() 已添加 psutil.disk_usage("/") 磁盘压力检查, commit dc2210ce46
 
 #### 5.43.6 严重度汇总
 
@@ -2068,6 +2069,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.45全部清零.
 > 维度说明：命令注入、eval/exec代码执行、路径穿越防护、API响应清洗等输入边界安全。
+> **第57轮修复状态（2026-07-06）**：5.45.4 FIXED — gate_engine_server.py (infrastructure/ + integration/mcp/) 路径校验改用 os.path.realpath()+os.path.commonpath() 边界检查, commit dc2210ce46. DEFERRED=2(5.45.2/5.45.3).
 
 #### 5.45.1 [HIGH] subprocess.run使用shell=True存在命令注入风险
 - **文件**：[task_repo.py](file:///D:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py#L1811)
@@ -2099,7 +2101,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：路径规范化绕过（`scripts/./archive`）、符号链接绕过
 - **影响**：可绕过路径黑名单写入禁止目录
 - **修复**：改用realpath + commonpath做边界检查
-- **状态**：STILL_VALID（保留）— gate_engine_server.py L235-237 仍用 `if fragment in target_path` 子串匹配，未用 realpath 规范化；需改用 os.path.realpath + commonpath 边界检查
+- **状态**：FIXED — gate_engine_server.py (infrastructure/ + integration/mcp/) 路径校验改用 os.path.realpath()+os.path.commonpath() 边界检查, commit dc2210ce46
 
 #### 5.45.5 [LOW] API响应清洗器覆盖面严重不足
 - **文件**：[api_response_sanitizer.py](file:///D:/ZephyrAlpha/src/zephyr/governance/security_governance/api_response_sanitizer.py#L27)
@@ -2164,6 +2166,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.47全部清零.
 > 维度说明：缓存失效逻辑、缓存击穿防护、版本迁移等缓存与真源一致性。（注：MemoryCache LRU O(n)性能问题已在5.24.5记录，此处不重复）
+> **第57轮修复状态（2026-07-06）**：5.47.2 FIXED — semantic_cache.py 新增 get_or_compute() 方法实现 per-key single-flight Lock, commit dc2210ce46. DEFERRED=2(5.47.1/5.47.3).
 
 #### 5.47.1 [HIGH] CacheInvalidationManager无自动失效——数据更新后缓存stale
 - **文件**：[cache_invalidation.py](file:///D:/ZephyrAlpha/src/zephyr/shared/io/cache_invalidation.py#L33)
@@ -2179,7 +2182,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：热门prompt缓存击穿（thundering herd）
 - **影响**：LLM API配额瞬时耗尽；高延迟
 - **修复**：get miss时加asyncio.Lock/threading.Lock，仅持锁者重建
-- **状态**：STILL_VALID（保留）— semantic_cache.py 仍无 single-flight 锁，需新增 asyncio.Lock/threading.Lock + 重建协调逻辑
+- **状态**：FIXED — semantic_cache.py 新增 get_or_compute() 方法实现 per-key single-flight Lock, commit dc2210ce46
 
 #### 5.47.3 [MEDIUM] CacheManager序列化版本无迁移逻辑
 - **文件**：[cache_manager.py](file:///D:/ZephyrAlpha/src/zephyr/governance/code_dedup/cache_manager.py#L60)
@@ -2388,13 +2391,14 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.54全部清零.
 > 维度说明：运行时配置变更是否生效、缓存引用刷新、回调失败处理等。
+> **第57轮修复状态（2026-07-06）**：5.54.1 FIXED — llm_gateway.py _PROVIDERS 构建逻辑提取为 _build_providers() + 新增 reload_providers(), commit dc2210ce46. DEFERRED=2(5.54.2/5.54.3).
 
 #### 5.54.1 [MEDIUM] LLM Provider配置在模块导入时冻结，运行时不刷新（3处副本）
 - **文件**：[llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py#L142)
 - **证据**：`_PROVIDERS`模块级全局，base_url/default_model在import时通过os.getenv读取一次后冻结；但api_key在每次调用时动态读取——缓存策略不一致
 - **问题**：运维修改DEEPSEEK_BASE_URL后运行中进程仍用旧URL（除非重启）
 - **修复**：改为延迟读取或提供reload_providers()接口
-- **状态**：STILL_VALID（保留）— _PROVIDERS 模块级全局仍在 import 时冻结，需提供 reload_providers() 接口或延迟读取
+- **状态**：FIXED — llm_gateway.py _PROVIDERS 构建逻辑提取为 _build_providers() + 新增 reload_providers(), commit dc2210ce46
 
 #### 5.54.2 [MEDIUM] EnvWatcher仅写sentinel文件，不更新运行中进程的os.environ
 - **文件**：[env_watcher.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/env_watcher.py#L51)
@@ -2991,12 +2995,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.66 模板注入与字符串格式化安全（6个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.66全部清零.
+> **第57轮修复状态（2026-07-06）**：5.66.2 FIXED — capacity_assurance/schema.py 添加 _ALLOWED_TABLES 白名单 + _validate_table_name() 校验, commit dc2210ce46. DEFERRED=2(5.66.3/5.66.6).
 #### 5.66.2 [MEDIUM] capacity_assurance schema用f-string插入cutoff值（非参数化）
 
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/schema.py:264-265,276-281`
 - **证据**：`cutoff = f"datetime('now', '-{self.TTL_DAYS} days')"` 直接拼入SELECT/DELETE。虽 `TTL_DAYS` 是int类属性（当前安全），但模式违背"值必参数化"原则。`PRAGMA table_info({table})`（L236）表名亦未校验。
 - **修复**：参数化或白名单校验表名。
-- **状态**：STILL_VALID（保留）— 需参数化或白名单校验表名
+- **状态**：FIXED — capacity_assurance/schema.py 添加 _ALLOWED_TABLES 白名单 + _validate_table_name() 校验, commit dc2210ce46
 
 #### 5.66.3 [MEDIUM] registry_adapter表名f-string拼接（两处副本）
 
@@ -3025,12 +3030,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.67 线程/进程池大小与背压（3个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.67全部清零.
+> **第57轮修复状态（2026-07-06）**：5.67.1 FIXED — resource_aware_pool.py 添加 max_pending 参数 + _pending_count() + submit 背压检查, commit dc2210ce46. DEFERRED=2(5.67.2/5.67.3).
 #### 5.67.1 [HIGH] ResourceAwarePool无背压+私有属性访问
 
 - **文件**：`src/zephyr/governance/audit_trail/resource_aware_pool.py:42-83`
 - **证据**：(1) `submit()` 无队列长度检查，ThreadPoolExecutor默认无界队列，任务无限堆积（OOM风险）；(2) `stats()` 访问私有 `_work_queue.qsize()`（L75/L77），CPython实现细节，其他实现/版本会 `AttributeError`；(3) Future列表泄漏（见5.65.1）。
 - **修复**：添加maxsize队列限制，提交前检查队列长度。
-- **状态**：STILL_VALID（保留）— 需添加maxsize队列限制+提交前检查队列长度
+- **状态**：FIXED — resource_aware_pool.py 添加 max_pending 参数 + _pending_count() + submit 背压检查, commit dc2210ce46
 
 #### 5.67.2 [HIGH] GPUConsensusScheduler max_workers未使用+队列死代码+批量无限制
 
@@ -3058,12 +3064,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.68 异步取消与超时语义（4个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.68全部清零.
+> **第57轮修复状态（2026-07-06）**：5.68.2 FIXED — drift_engine.py finally 块 proc.kill() 后改用 proc.communicate() 排空管道, commit dc2210ce46. DEFERRED=2(5.68.3/5.68.4).
 #### 5.68.2 [HIGH] drift_detection/drift_engine同款子进程孤儿（副本）
 
 - **文件**：`src/zephyr/governance/drift_detection/drift_engine.py:299-317`
 - **证据**：与5.68.1完全相同的模式。`proc.communicate()` 超时后（L302）捕获 `TimeoutError`（L313）返回事件，`proc` 未kill。两处为同一缺陷的双副本。
 - **修复**：同5.68.1。
-- **状态**：STILL_VALID（保留）— 需proc.communicate()超时后kill proc，与5.68.1同源
+- **状态**：FIXED — drift_engine.py finally 块 proc.kill() 后改用 proc.communicate() 排空管道, commit dc2210ce46
 
 #### 5.68.3 [MEDIUM] verdict_engine.evaluate_batch无并发限制
 
@@ -3237,12 +3244,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.74 文件系统原子性（4个，第16轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.74全部清零.
+> **第57轮修复状态（2026-07-06）**：5.74.1 FIXED — zombie_scanner.py _save_patterns() 改用 tmp文件+flush+fsync+os.replace 原子写入, commit dc2210ce46. DEFERRED=2(5.74.3/5.74.4).
 #### 5.74.1 [HIGH] zombie_scanner直接open(path,"w")非原子写入patterns文件
 
 - **文件**：`src/zephyr/trading/zombie_scanner.py:115-116`
 - **证据**：直接以 `"w"` 模式写目标文件，未使用tmp+os.replace原子模式。进程在 `json.dump` 中途崩溃时，patterns文件被截断为半写入状态，下次读取时解析失败返回空dict，丢失全部僵尸进程检测基线。项目已有规范 `shared/io/file_utils.py:atomic_write` 却未使用。
 - **修复**：使用 `atomic_write`（tmp+fsync+os.replace）。
-- **状态**：STILL_VALID（保留）— 需使用atomic_write（tmp+fsync+os.replace）
+- **状态**：FIXED — zombie_scanner.py _save_patterns() 改用 tmp文件+flush+fsync+os.replace 原子写入, commit dc2210ce46
 
 #### 5.74.3 [MEDIUM] results_writer非原子写入benchmark JSONL结果
 
@@ -3299,6 +3307,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.76 异常层级与捕获广度（4个，第16轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.76全部清零.
+> **第57轮修复状态（2026-07-06）**：5.76.2+5.76.3 FIXED — verdict_engine.py (governance/behavioral_admission/ + trading/) except Exception → except (TimeoutError, asyncio.TimeoutError, ConnectionError) + vector_memory_server.py 3处 except Exception → except VMSError, commit dc2210ce46. DEFERRED=1(5.76.1).
 #### 5.76.1 [HIGH] PipelineError存在3个同名但基类不同的重复定义，破坏异常捕获语义
 
 - **文件**：`src/zephyr/shared/foundation/errors.py:105`（`class PipelineError(ZephyrBaseError)`）；`src/zephyr/signal_fundamental/pipeline.py:79`（`class PipelineError(Exception)`）；`src/zephyr/shared/_cross_layer/ml_experiment_pipeline.py:83`（`class PipelineError(Exception)`）
@@ -3311,14 +3320,14 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **文件**：`src/zephyr/trading/verdict_engine.py:345-351`
 - **证据**：`except Exception as exc:` 把 `AttributeError`/`TypeError`/`KeyError` 等编程bug一律转为RED判决。虽然reason里保留了exc信息，但bug被降级为"红色判决"而非显式失败，在交易判决引擎中可能掩盖代码缺陷导致错误的交易阻断/放行决策。
 - **修复**：区分 `TimeoutError`（预期）与编程错误（应让其传播或单独告警）。
-- **状态**：STILL_VALID（保留）— 需区分TimeoutError（预期）与编程错误
+- **状态**：FIXED — verdict_engine.py (governance/behavioral_admission/ + trading/) except Exception → except (TimeoutError, asyncio.TimeoutError, ConnectionError), commit dc2210ce46
 
 #### 5.76.3 [MEDIUM] vector_memory_server用except Exception把所有异常转为error dict，掩盖编程bug
 
 - **文件**：`src/zephyr/infrastructure/vector_memory_server.py:192-193`
 - **证据**：`_vms.write` 的编程错误（`AttributeError`/`KeyError`/`TypeError`）被一律包装成 `{"error": str(e), "written": False}` 返回给调用方。调用方无法区分"预期业务错误"与"代码bug"，缺陷在生产中被静默吞没而非暴露崩溃。
 - **修复**：捕获VMS自定义异常，让编程错误传播。
-- **状态**：STILL_VALID（保留）— 需捕获VMS自定义异常，让编程错误传播
+- **状态**：FIXED — vector_memory_server.py 3处 except Exception → except VMSError, commit dc2210ce46
 
 #### 5.76 严重度汇总
 
@@ -3485,27 +3494,28 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.81全部清零.
 > 维度U：模块级可变全局状态无锁并发访问、Singleton模式无双重检查锁（DCL）
+> **第57轮修复状态（2026-07-06）**：5.81.1 FIXED — facade.py ring buffer 添加 threading.Lock 保护并发写入 + 5.81.3 FIXED — context_evictor.py Singleton instance() 添加 double-checked locking + 5.81.2 DRIFTED — metrics_bridge.py Singleton DCL 已在 5.16.2 修复中存在, commit dc2210ce46. DEFERRED=0. 维度5.81全部清零.
 
 #### 5.81.1 [HIGH] telemetry ring buffer模块级list无锁，后台线程并发修改
 
 - **文件**：`src/zephyr/infrastructure/system_telemetry/facade.py:77-104,180,433`
 - **证据**：模块级 `_in_memory_ring`（list）和 `_ring_write_cursor`（int）被后台采集线程写入、被API请求线程读取，无任何锁保护。`_ring_write_cursor` 的 `+= 1` 非原子操作，并发写入导致游标跳跃或回退；`_in_memory_ring[_cursor] = event` 与 `list(_in_memory_ring)` 并发执行时，迭代器可能看到部分写入的元素。CPython GIL不保证复合操作的原子性。
 - **修复**：用 `threading.Lock` 保护ring buffer的读写，或改用 `collections.deque(maxlen=...)` 自带线程安全。
-- **状态**：STILL_VALID（保留）— 需用threading.Lock保护ring buffer或改用deque(maxlen=...)
+- **状态**：FIXED — facade.py ring buffer 添加 threading.Lock 保护并发写入, commit dc2210ce46
 
 #### 5.81.2 [MEDIUM] metrics_bridge Singleton无双重检查锁
 
 - **文件**：`src/zephyr/infrastructure/system_telemetry/metrics_bridge.py:162,168-171`
 - **证据**：`instance()` 类方法在多线程同时首次调用时，`if cls._instance is None` 检查后无锁，两个线程可能同时通过检查并各自创建实例。创建后 `_instance` 被后创建的覆盖，先创建的实例泄漏（其内部资源如连接池/线程不会被清理）。非DCL（Double-Checked Locking）模式。
 - **修复**：加类级锁 + 双重检查：`if cls._instance is None: with cls._lock: if cls._instance is None: cls._instance = cls()`。
-- **状态**：STILL_VALID（保留）— 需加类级锁+双重检查（DCL）
+- **状态**：DRIFTED — metrics_bridge.py Singleton DCL 已在 5.16.2 修复中存在, commit dc2210ce46
 
 #### 5.81.3 [MEDIUM] context_evictor Singleton无DCL
 
 - **文件**：`src/zephyr/autonomy_core/context/context_evictor.py:89,96-99`
 - **证据**：与5.81.2相同的反模式。`ContextEvictor` 的 `instance()` 无锁保护，多线程并发首次调用时可能创建多个实例。Evictor持有内部状态（如淘汰策略配置、LRU队列），多实例导致淘汰行为不一致。
 - **修复**：同5.81.2，加DCL。
-- **状态**：STILL_VALID（保留）— 需加DCL，同5.81.2
+- **状态**：FIXED — context_evictor.py Singleton instance() 添加 double-checked locking, commit dc2210ce46
 
 #### 5.81 严重度汇总
 
@@ -3727,6 +3737,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第36轮验证状态（2026-07-05）**：FIXED=2(5.96.1 VerifyResult.passed→@property + 5.96.5 删除RulesFileIntegrityResult死字段), 0 DRIFTED, STILL_VALID=3(5.96.2 TriggerDecision布尔字段与action冗余需枚举重构+5.96.3 _calculate_trust 3布尔参数+5.96.4 determine_exit_code 2布尔参数——重构收益低保留)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(5.96.2 TriggerDecision布尔字段与action冗余需枚举重构 + 5.96.3 _calculate_trust 3布尔参数需重构 + 5.96.4 determine_exit_code 2布尔参数需重构——重构收益低保留,属设计模式重构专项工程), STILL_VALID=0. 维度5.96全部清零.
+> **第57轮修复状态（2026-07-06）**：5.96.4 FIXED — exit_codes.py 添加 RunMode 枚举 + determine_exit_code_mode() 函数, commit dc2210ce46. DEFERRED=2(5.96.2/5.96.3).
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
@@ -4550,6 +4561,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=11(错误处理策略一致性需统一)
 > **第40轮修复状态（2026-07-05）**：FIXED=6(5.151.1 git_bisector finally try/except + 5.151.2 zombie_scanner Exception 遮蔽移除 + 5.151.3 verdict_engine 静默→warning + 5.151.4 dlq 静默→warning + 5.151.5 errors.py IOError→ZephyrIOError 从 __all__ 移除 + 5.151.7 context_assembler 4处 pass→warning), DRIFTED=2(5.151.10 engine.py 文件不存在 + 5.151.11 fix_orphan_deps.py 已在前期修复), STILL_VALID=3(5.151.6+5.151.9 zombie_scanner 4种策略统一复杂重构 + 5.151.8 index_health_monitor 3种策略混用)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(5.151.6+5.151.9 zombie_scanner 4种策略统一复杂重构 + 5.151.8 index_health_monitor 3种策略混用), STILL_VALID=0. 维度5.151全部清零.
+> **第57轮修复状态（2026-07-06）**：5.151.8+5.151.9 FIXED — index_health_monitor.py 4处异常处理统一为 except (KeyError, ValueError) + zombie_scanner.py _kill_process except Exception → except (ProcessLookupError, PermissionError), commit dc2210ce46. DEFERRED=1(5.151.6).
 
 #### HIGH（3个）
 
