@@ -114,8 +114,11 @@ _LAYER_NAME_TO_DOMAIN = {
 }
 
 # contract_mapping_table.yaml domain_contracts 的 YAML key → domain_id
+# v1.1.0: alpha_signal_domain 拆分为 factor_domain + signal_domain（域平级无父子）
 _DOMAIN_KEY_TO_DOMAIN_ID = {
-    "alpha_signal_domain": "D_ASHARE_SIGNAL",
+    "alpha_signal_domain": "D_ASHARE_SIGNAL",  # 旧key保留向后兼容
+    "factor_domain": "D_FACTOR",
+    "signal_domain": "D_ASHARE_SIGNAL",
     "ml_experiment_domain": "D_ML_TRAIN",
 }
 
