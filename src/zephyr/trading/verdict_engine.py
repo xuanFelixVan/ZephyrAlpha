@@ -27,6 +27,10 @@ from pydantic import BaseModel, ConfigDict, Field
 
 logger = logging.getLogger(__name__)
 
+# 5.137.1 修复：决策升级阈值魔数提取为命名常量
+_YELLOW_L5_VIOLATION_THRESHOLD = 5
+_YELLOW_L4_VIOLATION_THRESHOLD = 3
+
 try:
     from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType
 
@@ -377,9 +381,9 @@ class VerdictEngine:
             return GraduatedLevel.L3
 
         if verdict_level is VerdictLevel.YELLOW:
-            if session_violation_count >= 5:
+            if session_violation_count >= _YELLOW_L5_VIOLATION_THRESHOLD:
                 return GraduatedLevel.L5
-            if session_violation_count >= 3:
+            if session_violation_count >= _YELLOW_L4_VIOLATION_THRESHOLD:
                 return GraduatedLevel.L4
             return GraduatedLevel.L3
 

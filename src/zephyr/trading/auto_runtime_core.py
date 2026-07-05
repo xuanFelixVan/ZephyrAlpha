@@ -61,6 +61,12 @@ from zephyr.trading.work_orchestrator import WorkOrchestrator
 
 logger = logging.getLogger(__name__)
 
+# 5.137.1 修复：魔数提取为命名常量
+_OLLAMA_POLL_MAX_ATTEMPTS = 10
+_OLLAMA_POLL_INTERVAL_S = 2.5
+# 5.137.2 修复：任务学习器采样上限魔数
+_TASK_LEARNER_SAMPLE_LIMIT = 50
+
 
 class AutoRuntimeCore:
     """三层运行时运营中心——ZephyrAlpha 系统大脑。"""
@@ -578,7 +584,7 @@ class AutoRuntimeCore:
                     self._task_learner.record(mod_id, model, dur, toks, conf)
                     count += 1
 
-                if count >= 50:
+                if count >= _TASK_LEARNER_SAMPLE_LIMIT:
                     break
         except Exception:
             # 5.12.1 修复：原 except: pass 静默吞任务学习失败（学习回路断链不可见）

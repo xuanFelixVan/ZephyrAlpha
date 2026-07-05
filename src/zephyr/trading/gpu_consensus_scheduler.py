@@ -34,6 +34,14 @@ from zephyr.trading.verdict_engine import ProtectionLevel, VerdictLevel
 
 logger = logging.getLogger(__name__)
 
+# 5.137.2 修复：共识置信度魔数提取为命名常量
+_CONF_DUAL_API_FULL = 0.95
+_CONF_DUAL_API_PARTIAL = 0.6
+_CONF_SINGLE_API = 0.7
+_CONF_LOCAL_GPU = 0.8
+_CONF_DEGRADED = 0.0
+_CONF_DEFAULT = 0.5
+
 _HAS_REQUESTS = True
 try:
     import requests as _requests
@@ -327,7 +335,7 @@ class GPUConsensusScheduler:
                 status=ConsensusStatus.CONSENSUS_REACHED,
                 route=ConsensusRoute.DUAL_API,
                 verdict=verdicts[0],
-                confidence=0.95,
+                confidence=_CONF_DUAL_API_FULL,
                 model_responses=responses,
                 latency_ms=round(latency, 2),
                 reason="2/2_consensus",
@@ -339,7 +347,7 @@ class GPUConsensusScheduler:
                 status=ConsensusStatus.PARTIAL_CONSENSUS,
                 route=ConsensusRoute.DUAL_API,
                 verdict=verdicts[0],
-                confidence=0.6,
+                confidence=_CONF_DUAL_API_PARTIAL,
                 model_responses=responses,
                 latency_ms=round(latency, 2),
                 reason="partial_consensus_1/2",
@@ -349,7 +357,7 @@ class GPUConsensusScheduler:
             request_id=request.request_id,
             status=ConsensusStatus.DEGRADED,
             route=ConsensusRoute.DUAL_API,
-            confidence=0.0,
+            confidence=_CONF_DEGRADED,
             model_responses=responses,
             latency_ms=round(latency, 2),
             reason="dual_api_failed_degraded",
@@ -364,7 +372,7 @@ class GPUConsensusScheduler:
                 request_id=request.request_id,
                 status=ConsensusStatus.DEGRADED,
                 route=ConsensusRoute.SINGLE_API,
-                confidence=0.0,
+                confidence=_CONF_DEGRADED,
                 latency_ms=round(latency, 2),
                 reason="single_api_failed",
             )
@@ -380,7 +388,7 @@ class GPUConsensusScheduler:
             status=ConsensusStatus.CONSENSUS_REACHED,
             route=ConsensusRoute.SINGLE_API,
             verdict=verdict,
-            confidence=0.7,
+            confidence=_CONF_SINGLE_API,
             model_responses=[response],
             latency_ms=round(latency, 2),
             reason="single_api_consensus",
@@ -395,7 +403,7 @@ class GPUConsensusScheduler:
                 request_id=request.request_id,
                 status=ConsensusStatus.DEGRADED,
                 route=ConsensusRoute.LOCAL_GPU,
-                confidence=0.0,
+                confidence=_CONF_DEGRADED,
                 latency_ms=round(latency, 2),
                 reason="local_gpu_failed",
             )
@@ -411,7 +419,7 @@ class GPUConsensusScheduler:
             status=ConsensusStatus.CONSENSUS_REACHED,
             route=ConsensusRoute.LOCAL_GPU,
             verdict=verdict,
-            confidence=0.8,
+            confidence=_CONF_LOCAL_GPU,
             model_responses=[response],
             latency_ms=round(latency, 2),
             reason="local_gpu_consensus",
@@ -511,7 +519,7 @@ class GPUConsensusScheduler:
         import json as _json
 
         verdict = VerdictLevel.PASS
-        confidence = 0.5
+        confidence = _CONF_DEFAULT
         reasoning = ""
 
         try:
@@ -524,7 +532,7 @@ class GPUConsensusScheduler:
                     verdict = VerdictLevel(v)
                 except ValueError:
                     verdict = VerdictLevel.PASS
-                confidence = float(parsed.get("confidence", 0.5))
+                confidence = float(parsed.get("confidence", _CONF_DEFAULT))
                 reasoning = parsed.get("reasoning", "")
         except (ValueError, _json.JSONDecodeError):
             lower = text.lower()

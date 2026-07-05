@@ -43,6 +43,11 @@ class SpeedCategory(Enum):
     CRITICAL_SLOW = "critical_slow"
 
 
+# 5.137.2 修复：会话间隔阈值魔数提取为命名常量
+_UNMATCHED_RUNTIME_CRITICAL_S = 600
+_UNMATCHED_DEFAULT_BASELINE_S = 60
+
+
 SPEED_THRESHOLDS = {
     SpeedCategory.SLOW: 0.8,
     SpeedCategory.VERY_SLOW: 1.0,
@@ -136,9 +141,9 @@ class SpeedBaselineChecker:
                     if matched_script:
                         break
                 if not matched_script:
-                    if runtime_s > 600:
+                    if runtime_s > _UNMATCHED_RUNTIME_CRITICAL_S:
                         matched_script = "_unknown_"
-                        matched_baseline = 60
+                        matched_baseline = _UNMATCHED_DEFAULT_BASELINE_S
                     else:
                         continue
                 category = self._classify(runtime_s, matched_baseline)

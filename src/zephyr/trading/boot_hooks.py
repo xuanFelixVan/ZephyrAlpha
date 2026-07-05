@@ -25,6 +25,9 @@ from zephyr.shared.events.event_bus import EventBus, EventType
 
 logger = logging.getLogger(__name__)
 
+# 5.137.1 修复：自动重试门限魔数提取为命名常量
+_MAX_AUTO_RETRY_LIMIT = 3
+
 
 def _subscribe_task_lifecycle_events() -> None:
     try:
@@ -333,7 +336,7 @@ def register_boot_hooks() -> None:
                 if not task:
                     return
                 retry_count = getattr(task, "retry_count", 0) or 0
-                if retry_count < 3:
+                if retry_count < _MAX_AUTO_RETRY_LIMIT:
                     tr.transition(
                         task_id,
                         "RETRY",

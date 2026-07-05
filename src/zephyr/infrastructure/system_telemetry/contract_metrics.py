@@ -46,6 +46,10 @@ from datetime import UTC, datetime
 
 _logger = logging.getLogger("zephyr.data.telemetry.contract_metrics")
 
+# 5.137.2 修复：SLO 通过率阈值魔数提取为命名常量
+_SLA_PASS_RATE_THRESHOLD = 95
+_SLA_BUFFER_SIZE = 100
+
 
 @dataclass
 class SlaRecord:
@@ -117,13 +121,15 @@ class ContractMetricsCollector:
                 trace_id[:8],
             )
 
-        if len(self._sla_buffer) >= 100:
-            pass_count = sum(1 for r in self._sla_buffer[-100:] if r.passed)
-            if pass_count < 95:
+        if len(self._sla_buffer) >= _SLA_BUFFER_SIZE:
+            pass_count = sum(1 for r in self._sla_buffer[-_SLA_BUFFER_SIZE:] if r.passed)
+            if pass_count < _SLA_PASS_RATE_THRESHOLD:
                 _logger.warning(
-                    "[SLA] %s 最近 100 次中通过率=%d%% (<95%%)",
+                    "[SLA] %s 最近 %d 次中通过率=%d%% (<%d%%)",
                     contract_id,
+                    _SLA_BUFFER_SIZE,
                     pass_count,
+                    _SLA_PASS_RATE_THRESHOLD,
                 )
 
         return record

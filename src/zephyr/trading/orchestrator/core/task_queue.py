@@ -181,8 +181,21 @@ def get_queue(
     return _queue
 
 
+# 5.137.1 修复：魔数提取为命名常量
+_DEFAULT_MAX_SIZE = 1000
+_DEFAULT_PRIORITY_LEVELS = 3
+_DEFAULT_TIMEOUT_SEC = 300
+_DEFAULT_RETRY_LIMIT = 3
+
+
 class QueueConfig:
-    def __init__(self, max_size=1000, priority_levels=3, timeout=300, retry_limit=3):
+    def __init__(
+        self,
+        max_size: int = _DEFAULT_MAX_SIZE,
+        priority_levels: int = _DEFAULT_PRIORITY_LEVELS,
+        timeout: int = _DEFAULT_TIMEOUT_SEC,
+        retry_limit: int = _DEFAULT_RETRY_LIMIT,
+    ):
         self.max_size = max_size
         self.priority_levels = priority_levels
         self.timeout = timeout

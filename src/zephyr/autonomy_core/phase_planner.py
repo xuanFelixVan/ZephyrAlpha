@@ -65,6 +65,11 @@ class Phase:
 
 
 class PhasePlanner:
+    # 5.137.2 修复：阶段阈值魔数提取为命名常量
+    PHASE1_MAX_DONE = 6
+    PHASE2_MAX_DONE = 13
+    PHASE3_MAX_DONE = 25
+
     PhaseDefinitions = [
         ("scaffold-0", 1, "core model + loader + registry", []),
         ("scaffold-1", 2, "trigger router + executor", ["scaffold-0"]),
@@ -148,10 +153,10 @@ class PhasePlanner:
 
     def current_projection(self) -> dict[str, int]:
         done = sum(1 for p in self.phases.values() if p.status in (PhaseStatus.DONE, PhaseStatus.VERIFIED))
-        if done <= 6:
+        if done <= self.PHASE1_MAX_DONE:
             return self.SkillProjection["Phase1"]
-        if done <= 13:
+        if done <= self.PHASE2_MAX_DONE:
             return self.SkillProjection["Phase2"]
-        if done <= 25:
+        if done <= self.PHASE3_MAX_DONE:
             return self.SkillProjection["Phase3"]
         return self.SkillProjection["Final"]

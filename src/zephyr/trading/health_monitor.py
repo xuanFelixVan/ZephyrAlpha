@@ -41,6 +41,11 @@ from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
 
 logger = logging.getLogger(__name__)
 
+# 5.137.1 修复：内存压力分级阈值魔数提取为命名常量
+_MEM_PRESSURE_CRITICAL = 90
+_MEM_PRESSURE_HIGH = 80
+_MEM_PRESSURE_ELEVATED = 70
+
 # 5.39.1 修复：模块级共享 MetricsRegistry，避免每次 _collect_metrics 创建新实例导致指标被 GC
 _shared_metrics_registry = None
 
@@ -323,11 +328,11 @@ class HealthMonitor:
             mem = psutil.virtual_memory().percent
         except ImportError:
             return PressureLevel.NORMAL
-        if mem > 90:
+        if mem > _MEM_PRESSURE_CRITICAL:
             return PressureLevel.CRITICAL
-        if mem > 80:
+        if mem > _MEM_PRESSURE_HIGH:
             return PressureLevel.HIGH
-        if mem > 70:
+        if mem > _MEM_PRESSURE_ELEVATED:
             return PressureLevel.ELEVATED
         return PressureLevel.NORMAL
 

@@ -126,15 +126,22 @@ class IndexGenerator:
         logger.info("INDEX %d 资产 | HEALTH %s | OUTPUT %s", index.total_assets, index.health_score, out)
 
 
+# 5.137.2 修复：评分→等级映射阈值魔数提取为命名常量
+_GRADE_THRESHOLD_A = 90
+_GRADE_THRESHOLD_B = 75
+_GRADE_THRESHOLD_C = 55
+_GRADE_THRESHOLD_D = 35
+
+
 def _calc_grade(orphan: float, ghost: float, drift: float) -> str:
     score = _calc_numeric(orphan, ghost, drift)
-    if score >= 90:
+    if score >= _GRADE_THRESHOLD_A:
         return "A"
-    if score >= 75:
+    if score >= _GRADE_THRESHOLD_B:
         return "B"
-    if score >= 55:
+    if score >= _GRADE_THRESHOLD_C:
         return "C"
-    if score >= 35:
+    if score >= _GRADE_THRESHOLD_D:
         return "D"
     return "F"
 

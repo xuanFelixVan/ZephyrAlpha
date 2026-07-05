@@ -72,6 +72,11 @@ IRREVERSIBLE_GIT_COMMANDS = [
 
 CHECKPOINT_MIN_INTERVAL_S = 600
 CHECKPOINT_DENSITY_MAX_PER_HOUR = 6
+# 5.137.1 修复：checkpoint 密度阈值魔数提取为命名常量
+CHECKPOINT_TOKEN_RATE_HIGH = 5000
+CHECKPOINT_TOKEN_RATE_CRITICAL = 10000
+# 5.137.1 修复：指数退避上限魔数提取为命名常量
+EXPONENTIAL_BACKOFF_MAX_SLEEP_S = 60
 
 NOTIFICATION_THROTTLE_WINDOW_S = 300
 NOTIFICATION_THROTTLE_MAX = 10
@@ -378,9 +383,9 @@ class RollbackIntegration:
         now = datetime.now(UTC)
 
         adjusted_interval = CHECKPOINT_MIN_INTERVAL_S
-        if token_rate > 5000:
+        if token_rate > CHECKPOINT_TOKEN_RATE_HIGH:
             adjusted_interval = CHECKPOINT_MIN_INTERVAL_S * 2
-        elif token_rate > 10000:
+        elif token_rate > CHECKPOINT_TOKEN_RATE_CRITICAL:
             adjusted_interval = CHECKPOINT_MIN_INTERVAL_S * 4
 
         if self._last_checkpoint_time is None:
@@ -447,7 +452,7 @@ class RollbackIntegration:
                 except (sqlite3.Error, Exception):
                     pass
 
-                time.sleep(2**attempt)
+                time.sleep(min(EXPONENTIAL_BACKOFF_MAX_SLEEP_S, 2**attempt))
 
             except Exception as e:
                 if attempt == max_retries - 1:
