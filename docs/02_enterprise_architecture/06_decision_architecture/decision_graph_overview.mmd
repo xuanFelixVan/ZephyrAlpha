@@ -1,0 +1,79 @@
+%% 决策流图全景 — L0-L6 决策流水线 + 四轨并行架构
+%% 真源: architecture_model/domain/decision_graph_model.yaml
+flowchart TB
+    %% ===== 四轨并行架构 =====
+    subgraph TRACK_MD["模型驱动轨 (model_driven) — 优先级 1"]
+        direction TB
+        L0["L0 数据接入与预处理层<br/>tick · production · stable"]
+        L1["L1 因子计算层<br/>daily · production · stable"]
+        subgraph L2["L2 信号层群（4 子层并行）"]
+            direction LR
+            L2A["L2A 信号层<br/>Insight"]
+            L2B["L2B 主力行为层<br/>main_force_signal"]
+            L2C["L2C 大盘预测层<br/>market_state_prediction"]
+            L2D["L2D 因果推演层<br/>causal_inference_result"]
+        end
+        L3["L3 策略组合层<br/>PortfolioTarget · daily"]
+        L4["L4 风控层<br/>RiskDecision · realtime · veto"]
+        L5["L5 学习层<br/>learning_feedback · weekly"]
+        L6["L6 自评估层<br/>self_evaluation · weekly"]
+
+        L0 -->|informing| L1
+        L1 -->|informing| L2A
+        L1 -->|informing| L2B
+        L1 -->|informing| L2C
+        L1 -->|informing| L2D
+        L2A -->|informing| L3
+        L2B -->|informing| L3
+        L2C -->|informing| L3
+        L2D -->|informing| L3
+        L3 -->|triggering| L4
+        L4 -->|approving| L3
+        L4 -.->|反馈| L5
+        L5 -.->|反馈| L6
+        L6 -.->|反馈| L2A
+    end
+
+    subgraph TRACK_DD["数据驱动轨 (data_driven) — 优先级 2"]
+        direction LR
+        DD1["原始数据"]
+        DD2["自动特征"]
+        DD3["买卖信号"]
+        DD4["密度预测 PDF"]
+        DD5["AI 信号融合"]
+        DD6["AI 级决策信号"]
+        DD1 --> DD2 --> DD3 --> DD4 --> DD5 --> DD6
+        DD6 -.->|补充信号| L3
+    end
+
+    subgraph TRACK_HO["人工指令轨 (human_override) — 优先级 3"]
+        direction LR
+        HO1["人工买入/卖出/调仓"]
+        HO2["人工风控干预"]
+        HO3["人工参数覆盖"]
+        HO4["指令审计链"]
+        HO1 -.->|override| L3
+        HO2 -.->|override| L4
+    end
+
+    subgraph TRACK_EM["应急保命轨 (emergency) — 优先级 4"]
+        direction LR
+        EM1["L2 失效<br/>硬编码均线"]
+        EM2["L3 失效<br/>固定比例仓位"]
+        EM3["L4 失效<br/>硬编码 10% 上限"]
+        EM4["数据断流<br/>仅执行卖出"]
+        EM1 -.->|fallback| L2A
+        EM2 -.->|fallback| L3
+        EM3 -.->|fallback| L4
+    end
+
+    %% 样式
+    classDef stableLayer fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px,color:#1b5e20
+    classDef plannedLayer fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#e65100
+    classDef riskLayer fill:#ffcdd2,stroke:#c62828,stroke-width:3px,color:#b71c1c
+    classDef trackBox fill:#e3f2fd,stroke:#1565c0,stroke-width:1px
+
+    class L0,L1 stableLayer
+    class L2A,L2B,L2C,L2D,L3,L5,L6 plannedLayer
+    class L4 riskLayer
+    class L2 trackBox
