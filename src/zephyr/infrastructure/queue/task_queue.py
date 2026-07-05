@@ -73,6 +73,7 @@ class TaskQueue:
         self._running = False
         self._thread: threading.Thread | None = None
         self._dispatch_handler: Callable[[QueueItem], bool] | None = None
+        self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start_polling/stop_polling 的 check-then-act, 避免 TOCTOU
 
     def enqueue(self, task_id: str, priority: str = "P2") -> QueueItem:
         item = QueueItem(
@@ -104,15 +105,19 @@ class TaskQueue:
         self._dispatch_handler = handler
 
     def start_polling(self) -> None:
-        if self._running:
-            return
+        # 5.142.6 修复: 加锁保护 check-then-act, 防止并发创建多个线程
+        with self._lifecycle_lock:
+            if self._running:
+                return
 
-        self._running = True
-        self._thread = threading.Thread(target=self._poll_loop, daemon=True)
-        self._thread.start()
+            self._running = True
+            self._thread = threading.Thread(target=self._poll_loop, daemon=True)
+            self._thread.start()
 
     def stop_polling(self) -> None:
-        self._running = False
+        # 5.142.6 修复: 加锁保护 _running 写入, 防止与 start_polling() 竞争
+        with self._lifecycle_lock:
+            self._running = False
 
     def _poll_loop(self) -> None:
         while self._running:

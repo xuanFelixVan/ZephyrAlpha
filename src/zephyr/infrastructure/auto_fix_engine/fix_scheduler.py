@@ -53,6 +53,7 @@ class FixScheduler:
         self._lock = threading.Lock()
         self._last_batch_time: float = 0.0
         self._batch_count: int = 0
+        self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start/stop 的 check-then-act, 避免 TOCTOU (与 _lock 分离, 避免与 event_queue 锁耦合)
 
     @property
     def mode(self) -> SchedulerMode:
@@ -67,18 +68,25 @@ class FixScheduler:
         return self._batch_count
 
     def start(self) -> None:
-        if self._running:
-            return
-        self._running = True
-        if self._mode is SchedulerMode.CONTINUOUS:
-            self._thread = threading.Thread(target=self._continuous_loop, daemon=True)
-            self._thread.start()
+        # 5.142.6 修复: 加锁保护 check-then-act, 防止并发 start() 创建多个线程
+        with self._lifecycle_lock:
+            if self._running:
+                return
+            self._running = True
+            if self._mode is SchedulerMode.CONTINUOUS:
+                self._thread = threading.Thread(target=self._continuous_loop, daemon=True)
+                self._thread.start()
         logger.info("Fix scheduler started in %s mode", self._mode.value)
 
     def stop(self) -> None:
-        self._running = False
-        if self._thread and self._thread.is_alive():
-            self._thread.join(timeout=5)
+        # 5.142.6 修复: 加锁保护 _running 写入, join 在锁外执行避免长时间持锁
+        with self._lifecycle_lock:
+            self._running = False
+            thread = self._thread
+        if thread is not None and thread.is_alive():
+            thread.join(timeout=5)
+        with self._lifecycle_lock:
+            self._thread = None
         logger.info("Fix scheduler stopped")
 
     def submit_event(self, action: FixAction) -> None:

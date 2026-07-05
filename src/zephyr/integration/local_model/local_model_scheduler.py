@@ -185,9 +185,14 @@ class LocalModelScheduler:
         _log.info("LocalModelScheduler: 后台线程已启动 (poll=%ss)", self._poll_interval)
 
     def stop(self) -> None:
-        self._running = False
-        if self._thread is not None:
-            self._thread.join(timeout=10.0)
+        # 5.142.6 修复: 复用 self._lock 保护 _running 写入, join 在锁外执行避免长时间持锁 (start() 已用 self._lock 保护)
+        with self._lock:
+            self._running = False
+            thread = self._thread
+        if thread is not None:
+            thread.join(timeout=10.0)
+        with self._lock:
+            self._thread = None
         _log.info(
             "LocalModelScheduler: 已停止 (completed=%d failed=%d)",
             self._stats.get("completed", 0),

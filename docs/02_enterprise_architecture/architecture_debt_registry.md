@@ -7788,6 +7788,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=8(并发原语正确性需逐处审查)
 > **第38轮修复状态（2026-07-05）**：FIXED=5(5.142.1 pipeline锁双重释放+误转FAILED移入finally+标志位 / 5.142.3 WorkOrchestrator._dags加锁保护 / 5.142.4 night_shift_queue._next_id移入锁内 / 5.142.5 gpu_consensus_scheduler async改用asyncio.Lock / 5.142.8 TaskQueue._stats加_stats_lock保护), STILL_VALID=3(5.142.2已第35轮修复此处补登 / 5.142.6生命周期布尔标志TOCTOU需4+文件改threading.Event / 5.142.7 SQLite锁粒度过大需重构为线程局部连接)
+> **第40轮修复状态（2026-07-05）**：5.142.6 FIXED — 6个文件(health_monitor/ide_health_daemon/feedback_loop/scheduler/fix_scheduler/local_model_scheduler/queue/task_queue)的start()/stop() check-then-act用_lifecycle_lock保护, 避免TOCTOU两线程同时start()启动两个线程. join在锁外执行避免长时间持锁. while _running读取不加锁(CPython bool原子+GIL). 5.142.7仍STILL_VALID(SQLite锁粒度需重构为线程局部连接).
 
 审查 Lock/RLock/Event/Semaphore/Condition 使用错误、潜在死锁、锁粒度过大、锁未释放、双重加锁等问题。
 

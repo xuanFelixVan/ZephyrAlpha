@@ -98,6 +98,8 @@ class HealthMonitor:
         self._running = False
         self._telemetry_emitter_type = TelemetryEmitter
         self._monitor_thread: threading.Thread | None = None
+        # 5.142.6 修复: 生命周期锁保护 start/stop 的 check-then-act, 避免两线程同时调用 start() 启动两个线程
+        self._lifecycle_lock = threading.Lock()
         self._health_check_interval = health_check_interval
         self._metrics_interval = metrics_interval
         self._last_health_check: float = 0.0
@@ -367,15 +369,23 @@ class HealthMonitor:
 
     def start(self) -> None:
         """启动健康监控 — DM-201247: 启动分钟级后台调度线程."""
-        self._running = True
-        if self._monitor_thread is None or not self._monitor_thread.is_alive():
+        # 5.142.6 修复: 用 lifecycle_lock 保护 check-then-act, 避免 TOCTOU
+        with self._lifecycle_lock:
+            if self._monitor_thread is not None and self._monitor_thread.is_alive():
+                return  # 已在运行
+            self._running = True
             self._last_health_check = time.monotonic()
             self._monitor_thread = threading.Thread(target=self._monitor_loop, daemon=True, name="health-monitor")
             self._monitor_thread.start()
 
     def stop(self) -> None:
         """停止健康监控 — DM-201247: 停止后台调度线程."""
-        self._running = False
-        if self._monitor_thread is not None and self._monitor_thread.is_alive():
-            self._monitor_thread.join(timeout=5.0)
-        self._monitor_thread = None
+        # 5.142.6 修复: 用 lifecycle_lock 保护, 避免 start/stop 竞争
+        with self._lifecycle_lock:
+            self._running = False
+            thread = self._monitor_thread
+        # join 在锁外执行, 避免长时间持锁
+        if thread is not None and thread.is_alive():
+            thread.join(timeout=5.0)
+        with self._lifecycle_lock:
+            self._monitor_thread = None

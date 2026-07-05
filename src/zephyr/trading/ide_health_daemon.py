@@ -323,17 +323,22 @@ class IdeHealthDaemon:
         self._ghost_count: int = 0
         self._loop_count: int = 0  # P1-DAE: drift 指标采集节拍计数
         self._project_root: Path = Path(project_root) if project_root else Path.cwd()
+        self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start/stop 的 check-then-act, 避免 TOCTOU
 
     def start(self) -> None:
-        if self._running:
-            return
-        self._running = True
-        self._thread = threading.Thread(target=self._loop, daemon=True, name="ide-health-daemon")
-        self._thread.start()
+        # 5.142.6 修复: 加锁保护 check-then-act, 防止并发 start() 创建多个线程
+        with self._lifecycle_lock:
+            if self._running:
+                return
+            self._running = True
+            self._thread = threading.Thread(target=self._loop, daemon=True, name="ide-health-daemon")
+            self._thread.start()
         logger.info("IdeHealthDaemon: started (interval=%ds)", self._interval)
 
     def stop(self) -> None:
-        self._running = False
+        # 5.142.6 修复: 加锁保护 _running 写入, 防止与 start() 竞争
+        with self._lifecycle_lock:
+            self._running = False
         logger.info("IdeHealthDaemon: stopped")
 
     def _loop(self) -> None:

@@ -179,6 +179,7 @@ class FeedbackLoopScheduler:
                     "FLE-Scheduler: VectorBridge initialization failed, failure patterns will not persist to VMS"
                 )
                 self.vector_bridge = None
+        self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start/stop 的 check-then-act, 避免 TOCTOU (dataclass 锁在 __post_init__ 初始化)
 
     _instance: ClassVar[FeedbackLoopScheduler | None] = None
     _instance_lock: ClassVar[threading.Lock] = threading.Lock()
@@ -199,21 +200,28 @@ class FeedbackLoopScheduler:
             cls._instance = None
 
     def start(self) -> None:
-        if self._running:
-            return
-        attestation = self.safety_gate_manager.boot_attestation.attest(["src/zephyr/feedback-loop"])
-        if attestation.get("degraded"):
-            logger.warning("FLE boot attestation: %s — operating in observe-only mode", attestation["integrity"])
-        self._running = True
-        self._consecutive_errors = 0
-        self._thread = threading.Thread(target=self._run_loop, daemon=True, name="FLE-Scheduler")
-        self._thread.start()
+        # 5.142.6 修复: 加锁保护 check-then-act, 防止并发 start() 创建多个线程
+        with self._lifecycle_lock:
+            if self._running:
+                return
+            attestation = self.safety_gate_manager.boot_attestation.attest(["src/zephyr/feedback-loop"])
+            if attestation.get("degraded"):
+                logger.warning("FLE boot attestation: %s — operating in observe-only mode", attestation["integrity"])
+            self._running = True
+            self._consecutive_errors = 0
+            self._thread = threading.Thread(target=self._run_loop, daemon=True, name="FLE-Scheduler")
+            self._thread.start()
         logger.info("FLE-Scheduler started (poll=%.1fs, attestation=%s)", self.poll_interval, attestation["integrity"])
 
     def stop(self) -> None:
-        self._running = False
-        if self._thread is not None:
-            self._thread.join(timeout=5.0)
+        # 5.142.6 修复: 加锁保护 _running 写入, join 在锁外执行避免长时间持锁
+        with self._lifecycle_lock:
+            self._running = False
+            thread = self._thread
+        if thread is not None:
+            thread.join(timeout=5.0)
+        with self._lifecycle_lock:
+            self._thread = None
         logger.info("FLE-Scheduler stopped (%d events, %d cycles)", len(self._events), self._cycle_count)
 
     def tick(self) -> FLEPipelineEvent | None:
