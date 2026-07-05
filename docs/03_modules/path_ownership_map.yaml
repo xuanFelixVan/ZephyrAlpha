@@ -6,7 +6,7 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-07-05T13:08:01Z'
+  generated_at: '2026-07-05T17:53:53Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
   total_path_claims: 738
   total_ssot_claims: 16
@@ -5158,14 +5158,14 @@ ownership:
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/reporting/implementations/default_tca_engine.py'
+  - path: 'src/zephyr/reporting/default_tca_engine.py'
     owner_blueprint: 'MOD-L07-001'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_reporting/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/reporting/implementations/default_attribution_engine.py'
+  - path: 'src/zephyr/reporting/default_attribution_engine.py'
     owner_blueprint: 'MOD-L07-001'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_reporting/blueprint.md'
