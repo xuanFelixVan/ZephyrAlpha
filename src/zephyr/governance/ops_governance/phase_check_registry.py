@@ -578,12 +578,14 @@ def check_escalation_protocol() -> GateResult:
         return GateResult.YELLOW
 
 
-def check_budget_enforcer() -> GateResult:
+def check_budget_enforcer(engine: object | None = None) -> GateResult:
     try:
-        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
         from zephyr.governance.ops_governance.budget_models import BudgetDimension
 
-        engine = BudgetEngine()
+        if engine is None:
+            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+
+            engine = BudgetEngine()
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
         cost_policy = engine.get_active_policy(BudgetDimension.COST)
         time_policy = engine.get_active_policy(BudgetDimension.TIME)

@@ -29,6 +29,7 @@ import logging
 import threading
 from collections.abc import Callable
 from datetime import UTC, datetime
+from typing import Any, Protocol, runtime_checkable
 
 from .budget_models import (
     BudgetAlert,
@@ -59,6 +60,33 @@ DEFAULT_DEGRADATION_STEPS: list[DegradationStep] = [
         4, "Emergency — Read-only, no code generation", ModelTier.MINIMAL, BudgetLevel.L4_EMERGENCY, 2_000, 900
     ),
 ]
+
+
+@runtime_checkable
+class BudgetEngineProtocol(Protocol):
+    """BudgetEngine 协议——5.133.2 DI 注入契约。
+
+    覆盖跨层调用方实际使用的方法/属性：
+    pre_flight_check / get_snapshot / get_active_policy /
+    get_consumption_summary / current_degradation_level。
+    """
+
+    @property
+    def current_degradation_level(self) -> BudgetLevel: ...
+
+    def pre_flight_check(
+        self,
+        request_id: str,
+        estimated_tokens: int = 0,
+        estimated_cost: float = 0.0,
+        prompt: str = "",
+    ) -> GateResult: ...
+
+    def get_snapshot(self) -> dict: ...
+
+    def get_active_policy(self, dimension: BudgetDimension) -> BudgetPolicy | None: ...
+
+    def get_consumption_summary(self) -> dict[str, dict[str, float]]: ...
 
 
 class BudgetEngine:

@@ -40,7 +40,10 @@ import os
 import random
 import re
 import time
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
 
 _log = logging.getLogger(__name__)
 
@@ -271,6 +274,7 @@ class OllamaChat:
         temperature: float = INFERENCE_TEMPERATURE,
         max_tokens: int = INFERENCE_MAX_TOKENS,
         timeout_s: float = INFERENCE_TIMEOUT_S,
+        budget_engine: BudgetEngineProtocol | None = None,
     ) -> None:
         self._model = model
         self._url = ollama_url.rstrip("/")
@@ -278,6 +282,8 @@ class OllamaChat:
         self._max_tokens = max_tokens
         self._timeout = timeout_s
         self._verified = False
+        # 5.133.2 DI: 注入 BudgetEngine，避免每次 LLM 调用都硬编码实例化
+        self._budget_engine: BudgetEngineProtocol | None = budget_engine
 
     @property
     def model(self) -> str:
@@ -432,9 +438,11 @@ class OllamaChat:
 
     def _budget_preflight(self, msg_count: int) -> None:
         try:
-            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+            engine = self._budget_engine
+            if engine is None:
+                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
-            engine = BudgetEngine()
+                engine = BudgetEngine()
             est_tokens = msg_count * 500
             result = engine.pre_flight_check(
                 request_id=f"ollama:{self._model}",

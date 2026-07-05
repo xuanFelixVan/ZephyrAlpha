@@ -27,6 +27,7 @@ from zephyr.shared.events.event_bus import EventBus, EventType
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
+    from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ def _get_source_blueprint(task_id: str, task_repo: TaskRepositoryProtocol | None
         return ""
 
 
-def _subscribe_task_lifecycle_events() -> None:
+def _subscribe_task_lifecycle_events(budget_engine: BudgetEngineProtocol | None = None) -> None:
     try:
         bus = EventBus.get_instance()
 
@@ -322,7 +323,10 @@ def _subscribe_skill_freshness_events() -> None:
         logger.warning("Failed to subscribe skill.freshness_critical: %s", e, exc_info=True)
 
 
-def register_boot_hooks(task_repo: TaskRepositoryProtocol | None = None) -> None:
+def register_boot_hooks(
+    task_repo: TaskRepositoryProtocol | None = None,
+    budget_engine: BudgetEngineProtocol | None = None,
+) -> None:
     try:
         from zephyr.governance.ops_governance.event_hook import hook_registry
 
@@ -478,9 +482,11 @@ def register_boot_hooks(task_repo: TaskRepositoryProtocol | None = None) -> None
             if to_status.upper() != "COMPLETED":
                 return
             try:
-                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+                engine = budget_engine
+                if engine is None:
+                    from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
-                engine = BudgetEngine()
+                    engine = BudgetEngine()
                 snapshot = engine.get_snapshot()
                 if snapshot and getattr(snapshot, "health", "") not in ("HEALTHY", ""):
                     logger.warning("Budget status: %s", snapshot.health)
@@ -561,7 +567,7 @@ def register_boot_hooks(task_repo: TaskRepositoryProtocol | None = None) -> None
     except Exception as e:
         logger.warning("Failed to register IdeHealthDaemon: %s", e, exc_info=True)
 
-    _subscribe_task_lifecycle_events()
+    _subscribe_task_lifecycle_events(budget_engine=budget_engine)
     _register_rbac_hooks()
     _init_shared_monitoring_modules()
     _subscribe_eventbus_consumers()

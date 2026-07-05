@@ -46,7 +46,10 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
 
 from zephyr.integration.mcp._base_server import BaseMCPServer
 from zephyr.shared.io.paths import REPO_ROOT
@@ -102,8 +105,10 @@ class GovernanceServer(BaseMCPServer):
     VERSION = "1.1.0"
     DESCRIPTION = "治理域八件套统一MCP入口 — PhaseGate/Audit/Lock/Contract/Health/Drift/RBAC/Skill/Rollback/Escalation/Budget 十七工具"
 
-    def __init__(self, *, enable_rbac: bool = True) -> None:
+    def __init__(self, *, enable_rbac: bool = True, budget_engine: BudgetEngineProtocol | None = None) -> None:
         super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION, enable_rbac=enable_rbac)
+        # 5.133.2 DI: 注入 BudgetEngine，避免 _check_budget 硬编码实例化
+        self._budget_engine: BudgetEngineProtocol | None = budget_engine
 
         self.register_tool(
             name="governance.check_phase_gates",
@@ -878,10 +883,13 @@ class GovernanceServer(BaseMCPServer):
 
     def _check_budget(self, dimension: str = "ALL") -> dict[str, Any]:
         try:
-            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
             from zephyr.governance.ops_governance.budget_models import BudgetDimension
 
-            engine = BudgetEngine()
+            engine = self._budget_engine
+            if engine is None:
+                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+
+                engine = BudgetEngine()
             dims = (
                 [BudgetDimension.TOKEN, BudgetDimension.COST, BudgetDimension.TIME]
                 if dimension == "ALL"

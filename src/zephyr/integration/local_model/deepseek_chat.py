@@ -43,9 +43,12 @@ import random
 import re
 import time
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.security.secrets import get_secret_or_default
+
+if TYPE_CHECKING:
+    from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
 
 _log = logging.getLogger(__name__)
 
@@ -123,6 +126,7 @@ class DeepSeekChat:
         temperature: float = INFERENCE_TEMPERATURE,
         max_tokens: int = INFERENCE_MAX_TOKENS,
         timeout_s: float = INFERENCE_TIMEOUT_S,
+        budget_engine: BudgetEngineProtocol | None = None,
     ) -> None:
         _load_env()
         self._model = model
@@ -132,6 +136,8 @@ class DeepSeekChat:
         self._max_tokens = max_tokens
         self._timeout = timeout_s
         self._verified = False
+        # 5.133.2 DI: 注入 BudgetEngine，避免每次 LLM 调用都硬编码实例化
+        self._budget_engine: BudgetEngineProtocol | None = budget_engine
 
     # 5.110.2 修复: 显式 __repr__ 排除 _api_key, 防止调试/日志泄露
     def __repr__(self) -> str:
@@ -308,9 +314,11 @@ class DeepSeekChat:
     def _budget_preflight(self, msg_count: int) -> None:
         """预算预检——与 OllamaChat 保持一致。"""
         try:
-            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+            engine = self._budget_engine
+            if engine is None:
+                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
-            engine = BudgetEngine()
+                engine = BudgetEngine()
             est_tokens = msg_count * 500
             result = engine.pre_flight_check(
                 request_id=f"deepseek:{self._model}",

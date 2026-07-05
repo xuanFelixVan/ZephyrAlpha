@@ -169,6 +169,7 @@ if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
     from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
     from zephyr.shared.protocols.ports import RerankerProtocol
+    from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
 
 __all__ = ["PipelineOrchestrator"]
 
@@ -197,6 +198,7 @@ class PipelineOrchestrator:
         telemetry: object | None = None,
         embedding_router: EmbeddingRouterProtocol | None = None,
         reranker: RerankerProtocol | None = None,
+        budget_engine: BudgetEngineProtocol | None = None,
     ) -> None:
         self._cfg = config or PipelineOrchestratorConfig()
         self._task_repo = task_repo
@@ -206,6 +208,8 @@ class PipelineOrchestrator:
         self._telemetry = telemetry
         self._embedding_router: EmbeddingRouterProtocol | None = embedding_router
         self._reranker_instance: RerankerProtocol | None = reranker
+        # 5.133.2 DI: 注入 BudgetEngine，避免 _check_token_budget 硬编码实例化
+        self._budget_engine: BudgetEngineProtocol | None = budget_engine
         self._failure_log: dict[str, int] = {}
         # PENDING: ref to make _dispatched_ids / _active_dispatches exist before _preempt_mgr
 
@@ -1986,9 +1990,11 @@ class PipelineOrchestrator:
         优先使用 BudgetEngine.pre_flight_check()；若不可用则回退到本地简单检查。
         """
         try:
-            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+            engine = self._budget_engine
+            if engine is None:
+                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
-            engine = BudgetEngine()
+                engine = BudgetEngine()
             result = engine.pre_flight_check(
                 operation_id=f"pipeline-{task_card.task_id}",
                 estimated_tokens=_DEFAULT_TOKEN_BUDGET // 10,
