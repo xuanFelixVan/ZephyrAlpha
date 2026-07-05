@@ -21,7 +21,10 @@ import asyncio
 from collections import defaultdict, deque
 from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
 
 
 class AlertSeverity(Enum):
@@ -331,7 +334,7 @@ class ObservabilityLayer:
     def check_monitoring(self, component_id: str) -> bool:
         return True
 
-    async def evaluate(self, ctx: Any) -> Any:
+    async def evaluate(self, ctx: Any) -> SecurityResult:
         """Pass-through evaluation for A2A protocol integration."""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision

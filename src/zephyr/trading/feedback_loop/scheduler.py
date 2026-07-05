@@ -34,10 +34,17 @@ from dataclasses import dataclass, field
 from datetime import UTC
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from zephyr.trading.feedback_loop.actors.action_selector import ActionSelector
 from zephyr.trading.feedback_loop.collectors.feedback_collector import FeedbackCollector
+
+if TYPE_CHECKING:
+    from zephyr.trading.feedback_loop.alert_dispatcher import AlertEvent
+    from zephyr.trading.feedback_loop.actors.action_selector import ActionRecord
+    from zephyr.trading.feedback_loop.detectors.anomaly.anomaly_detector import AnomalyEvent
+    from zephyr.trading.feedback_loop.diagnosers.diagnosis.diagnosis_engine import Diagnosis
+    from zephyr.trading.feedback_loop.verifiers.verification_engine import VerificationResult
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from zephyr.trading.feedback_loop.collectors.metrics_collector import (
     MetricsCollector,
@@ -73,10 +80,10 @@ class FLEPipelineEvent:
     timestamp: float
     phase: str
     snapshot: MetricSnapshot | None = None
-    anomaly: Any | None = None
-    diagnosis: Any | None = None
-    action: Any | None = None
-    verification: Any | None = None
+    anomaly: AnomalyEvent | None = None
+    diagnosis: Diagnosis | None = None
+    action: ActionRecord | None = None
+    verification: VerificationResult | None = None
     g6_gate_pass: bool = True
     safety_gate_results: dict[str, bool] = field(default_factory=dict)
 
@@ -388,13 +395,13 @@ class FeedbackLoopScheduler:
         )
         return event
 
-    def _run_safety_gates(self, anomaly: Any, diagnosis: Any) -> dict[str, bool]:
+    def _run_safety_gates(self, anomaly: AnomalyEvent, diagnosis: Diagnosis) -> dict[str, bool]:
         return self.safety_gate_manager.run_safety_gates(anomaly, diagnosis)
 
-    def _dispatch_fle_gates(self, anomaly: Any, diagnosis: Any) -> dict[str, bool]:
+    def _dispatch_fle_gates(self, anomaly: AnomalyEvent, diagnosis: Diagnosis) -> dict[str, bool]:
         return self.safety_gate_manager._dispatch_fle_gates(anomaly, diagnosis)
 
-    def _invoke_fle_gate(self, gate_id: str, gate_file: str, anomaly: Any, diagnosis: Any) -> bool:
+    def _invoke_fle_gate(self, gate_id: str, gate_file: str, anomaly: AnomalyEvent, diagnosis: Diagnosis) -> bool:
         return self.safety_gate_manager._invoke_fle_gate(gate_id, gate_file, anomaly, diagnosis)
 
     def _post_pipeline_checks(self, event: FLEPipelineEvent) -> None:
@@ -423,7 +430,7 @@ class FeedbackLoopScheduler:
             if not trust.get("trustworthy", True):
                 logger.warning("FLE self-diagnosis trust: %s", trust)
 
-    def _g6_check(self, anomaly: Any) -> bool:
+    def _g6_check(self, anomaly: AnomalyEvent) -> bool:
         try:
             getattr(anomaly, "anomaly_id", "unknown")
             metrics_path = REPO_ROOT / "data" / "telemetry" / "blueprint_reads.jsonl"
@@ -449,7 +456,7 @@ class FeedbackLoopScheduler:
             return 0.0
         return getattr(self.metrics_collector.baseline, f"{metric_name}_ema", 0.0)
 
-    def _persist_metrics(self, snapshot: Any) -> None:
+    def _persist_metrics(self, snapshot: MetricSnapshot) -> None:
         try:
             from datetime import datetime
 
@@ -483,7 +490,7 @@ class FeedbackLoopScheduler:
         except Exception:
             logger.debug("[FLE-DB] metrics persist skipped", exc_info=True)
 
-    def _dispatch_alert_if_anomaly(self, event: FLEPipelineEvent, act_result: Any) -> None:
+    def _dispatch_alert_if_anomaly(self, event: FLEPipelineEvent, act_result: ActionRecord) -> None:
         if event.anomaly is None:
             return
         try:
@@ -532,7 +539,7 @@ class FeedbackLoopScheduler:
         except Exception:
             logger.debug("[FLE-ORC] alert dispatch skipped", exc_info=True)
 
-    def _persist_alert_and_log(self, alert: Any, dispatch_result: Any) -> None:
+    def _persist_alert_and_log(self, alert: AlertEvent, dispatch_result: Any) -> None:
         try:
             from zephyr.trading.feedback_loop.db_writer import FLEWriter
 
