@@ -167,7 +167,8 @@ class ChaosEngine:
                 raise ChaosInjectError(f"Unknown injection type: {injection_type_or_point}")  # 5.99.13 修复: %格式化改f-string统一
 
             result.duration_ms = (time.perf_counter() - start) * 1000
-            self._last_result = result
+            with self._lock:  # 5.172.M13 修复: _last_result 赋值移入锁内, 与 cleanup/verify 读取一致
+                self._last_result = result
             self._injection_state[target or injection_type_or_point] = True
             logger.info(
                 "Chaos inject type=%s target=%s duration_ms=%.1f",
@@ -195,7 +196,8 @@ class ChaosEngine:
                 duration_ms=elapsed,
                 error_message=str(exc),
             )
-            self._last_result = result
+            with self._lock:  # 5.172.M13 修复: _last_result 赋值移入锁内, 与 cleanup/verify 读取一致
+                self._last_result = result
             logger.error(
                 "Chaos inject failed type=%s: %s",
                 injection_type_or_point,

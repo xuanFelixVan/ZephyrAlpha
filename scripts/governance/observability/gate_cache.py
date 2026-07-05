@@ -32,6 +32,7 @@ import hashlib
 import json
 import os
 import sys
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -58,6 +59,12 @@ class GateCache:
         self._cache_dir = Path(cache_dir)
         self._cache_dir.mkdir(parents=True, exist_ok=True)
         self._stats: dict[str, int] = {"hits": 0, "misses": 0}
+        self._stats_lock = threading.Lock()  # 5.172.M12 修复: 保护 _stats += 自增线程安全
+
+    def _incr_stat(self, key: str) -> None:
+        # 5.172.M12 修复: += 是"读-改-写"三步操作, GIL 不保证原子性, 需加锁
+        with self._stats_lock:
+            self._stats[key] += 1
 
     @staticmethod
     def _file_hash(path: str) -> str:
@@ -82,11 +89,11 @@ class GateCache:
     def get(self, gate_id: str, file_path: str) -> dict | None:
         file_hash = self._file_hash(file_path)
         if not file_hash:
-            self._stats["misses"] += 1
+            self._incr_stat("misses")  # 5.172.M12 修复: 加锁自增
             return None
         entry_path = self._cache_entry_path(gate_id, file_hash)
         if not entry_path.exists():
-            self._stats["misses"] += 1
+            self._incr_stat("misses")  # 5.172.M12 修复: 加锁自增
             return None
         try:
             with open(entry_path, encoding="utf-8") as f:
@@ -95,9 +102,9 @@ class GateCache:
             raise CacheCorruptionError(f"Cache entry corrupted: {entry_path} — {exc}") from exc
         stored_path = data.get("file_path", "")
         if stored_path != file_path:
-            self._stats["misses"] += 1
+            self._incr_stat("misses")  # 5.172.M12 修复: 加锁自增
             return None
-        self._stats["hits"] += 1
+        self._incr_stat("hits")  # 5.172.M12 修复: 加锁自增
         return data.get("result")
 
     def put(self, gate_id: str, file_path: str, result: dict) -> None:

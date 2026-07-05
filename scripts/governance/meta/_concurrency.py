@@ -1308,26 +1308,31 @@ class ScriptRegistry:
         self._by_priority: dict[str, list[str]] = {}
         self._entries: dict[str, dict] = {}
         self._loaded = False
+        self._load_lock = threading.Lock()  # 5.172.M11 修复: 保护 load() lazy init 线程安全
 
     def load(self) -> None:
+        # 5.172.M11 修复: 双重检查锁定, 防多线程并发首次调用重复加载脚本 (路径漂移 scripts/governance/→scripts/governance/meta/)
         if self._loaded:
             return
-        if not self._manifest_path.exists():
-            return
-        with open(self._manifest_path, encoding="utf-8") as f:
-            data = yaml.safe_load(f) or {}
-        for name, meta in data.items():
-            if not isinstance(meta, dict):
-                continue
-            self._entries[name] = meta
-            for dim in meta.get("dimensions", []):
-                d = dim.value if hasattr(dim, "value") else str(dim)
-                self._by_dimension.setdefault(d, []).append(name)
-            for tag in meta.get("tags", []):
-                self._by_tag.setdefault(str(tag), []).append(name)
-            pri = meta.get("priority", "normal")
-            self._by_priority.setdefault(str(pri), []).append(name)
-        self._loaded = True
+        with self._load_lock:
+            if self._loaded:
+                return
+            if not self._manifest_path.exists():
+                return
+            with open(self._manifest_path, encoding="utf-8") as f:
+                data = yaml.safe_load(f) or {}
+            for name, meta in data.items():
+                if not isinstance(meta, dict):
+                    continue
+                self._entries[name] = meta
+                for dim in meta.get("dimensions", []):
+                    d = dim.value if hasattr(dim, "value") else str(dim)
+                    self._by_dimension.setdefault(d, []).append(name)
+                for tag in meta.get("tags", []):
+                    self._by_tag.setdefault(str(tag), []).append(name)
+                pri = meta.get("priority", "normal")
+                self._by_priority.setdefault(str(pri), []).append(name)
+            self._loaded = True
 
     def query_by_dimension(self, dimension: str) -> list[str]:
         self.load()

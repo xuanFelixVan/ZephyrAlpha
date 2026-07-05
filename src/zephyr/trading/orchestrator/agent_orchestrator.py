@@ -70,6 +70,7 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
 import time
 import uuid
 from collections import deque
@@ -882,16 +883,20 @@ class AgentOrchestrator:
             )
 
     _lsg_gateway_instance = None
+    _lsg_lock = threading.Lock()  # 5.172.M8 修复: class-level lock 保护 _lsg_gateway_instance lazy init
 
     def _lsg_scan_agent_action(self, tool_name: str, tool_params: dict[str, Any]) -> str | None:
+        # 5.172.M8 修复: 双重检查锁定, 防多线程并发首次调用创建多个 LSG Gateway 实例
         if AgentOrchestrator._lsg_gateway_instance is None:
-            try:
-                from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+            with AgentOrchestrator._lsg_lock:
+                if AgentOrchestrator._lsg_gateway_instance is None:
+                    try:
+                        from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
-                AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
-            except Exception as e:
-                logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s)", type(e).__name__, e)
-                return None
+                        AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
+                    except Exception as e:
+                        logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s)", type(e).__name__, e)
+                        return None
         gw = AgentOrchestrator._lsg_gateway_instance
         try:
             import asyncio

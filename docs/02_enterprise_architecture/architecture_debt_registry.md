@@ -9440,6 +9440,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.172 并发安全（23个，第30轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=23(并发安全需逐处审查锁/原子性)
+> **第34轮修复状态（2026-07-05，Batch 43）**：FIXED=4(MEDIUM 8 agent_orchestrator._lsg_scan_agent_action 加class-level lock+双重检查 + MEDIUM 11 ScriptRegistry.load 加_load_lock+双重检查(路径漂移scripts/governance/→scripts/governance/meta/) + MEDIUM 12 gate_cache._stats += 改用_incr_stat()加锁方法 + MEDIUM 13 chaos_engine._last_result 赋值移入self._lock内), DRIFTED=10(HIGH 1 database_manager.py已在Phase 2 P2修复 + HIGH 2 event_bus.py EventBus类已从生产代码删除仅测试存根 + HIGH 3 database_service.py已在Phase 2 P2修复且get_market_conn不存在 + MEDIUM 3 cold_start.py已在Phase 2 P2修复 + MEDIUM 4 capability.py已在Phase 2 P2修复 + MEDIUM 5 genesis_bootstrap.py已在5.98.2修复 + MEDIUM 6 trace_decorator.py已在Phase 2 P2修复 + MEDIUM 7 finding_ingest.py已在Phase 2 P2修复 + MEDIUM 9 scheduler.py路径漂移ops/→trading/feedback_loop/且无start()方法 + MEDIUM 14 health_monitor.py已在P1修复2026-07-05), NOT_NEEDED=6(MEDIUM 1,2 asyncio单线程 + LOW 1,2,5,6 CPython原子/import单线程), DEFERRED=3(MEDIUM 10 BulkheadExecutor V1计数器需专项重构V2已有完整锁 + LOW 3,4 ScanCache影响有限), 机械项已清零
 
 #### HIGH（3个）
 
