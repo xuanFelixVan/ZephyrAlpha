@@ -1157,27 +1157,27 @@ entries:
     - name: panel
       version: ">=1.5.0,<2.0.0"
       purpose: "Python原生可视化Web应用框架（G0.5过渡层核心）"
-      governance_layer: GOV-P1
+      governance_layer: policy
     - name: holoviews
       version: ">=1.19.0,<2.0.0"
       purpose: "声明式可视化（净值曲线/crossfiltering联动）"
-      governance_layer: GOV-P1
+      governance_layer: policy
     - name: datashader
       version: ">=0.16.0,<1.0.0"
       purpose: "百万级tick渲染（仅阈值触发>50万点，MVP不默认启用）"
-      governance_layer: GOV-P2
+      governance_layer: factory
     - name: hvplot
       version: ">=0.10.0,<1.0.0"
       purpose: "pandas-like API图表（AI友好度提升）"
-      governance_layer: GOV-P2
+      governance_layer: factory
     - name: plotly_resampler
       version: ">=0.9.0,<1.0.0"
       purpose: "Plotly大数据降采样（MVP默认渲染策略，10万级）"
-      governance_layer: GOV-P1
+      governance_layer: policy
     - name: lightweight-charts
       version: "v5.2（JS原生，不引入Python封装包）"
       purpose: "TradingView专业K线/订单流（pn.pane.HTML+原生JS集成）"
-      governance_layer: GOV-P1
+      governance_layer: policy
   related_rules:
   - VIEW-10-FRONTEND-ARCH
   - GOV-028
