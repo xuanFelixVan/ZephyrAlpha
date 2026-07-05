@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 04:52:12
+> 最后更新: 2026-07-06 05:00:22
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -85,26 +85,26 @@ graph TD
     src_zephyr_frontend_dashboard_components_trade_panel_py_1 -.->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py_1
     src_zephyr_frontend_dashboard_components_chart_factory_py_1 -.->|runtime| src_zephyr_frontend_dashboard_components_chart_factory_py_1
     src_zephyr_frontend_init_py -.->|config_depends| src_zephyr_frontend_interface_base_py
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_components_backtest_results_py -.->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     src_zephyr_frontend_dashboard_app_panel_py -.->|import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_order_book_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
-    src_zephyr_frontend_dashboard_components_backtest_results_py -.->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_gate_statistics_py -.->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_olap_trend_py -.->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_order_book_py -.->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_olap_trend_py -.->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_position_monitor_py -.->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_tick_replay_py -.->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_init_py -.->|import_depends| src_zephyr_frontend_dashboard_init_py
@@ -119,22 +119,22 @@ graph TD
     D_EX_CORE["D_EX_CORE design"]
     src_zephyr_frontend_dashboard_components_position_monitor_py_1 -.->|import_depends| D_EX_CORE
     src_zephyr_frontend_dashboard_components_trade_panel_py_1 -.->|import_depends| D_EX_CORE
-    D_TRADING["D_TRADING production"]
-    src_zephyr_frontend_dashboard_components_fitness_functions_py -->|import_depends| D_TRADING
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE
+    D_TRADING["D_TRADING production"]
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| D_TRADING
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE
+    src_zephyr_frontend_dashboard_components_fitness_functions_py -->|import_depends| D_TRADING
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| D_GOVERNANCE
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_frontend_dashboard_components_order_book_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     D_AUDITTEST -.->|test_depends| src_zephyr_frontend_dashboard_app_panel_py
     D_AUDITTEST -.->|test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     D_AUDITTEST -.->|test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     D_AUDITTEST -.->|test_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
@@ -261,26 +261,26 @@ graph TD
 │    →                                                             │
 │    →                                                             │
 │    →                                                             │
-│   app.py → knowledge_overview.py                                 │
+│   backtest_results.py → chart_factory.py                         │
+│   app.py → fitness_functions.py                                  │
 │   app.py → gate_statistics.py                                    │
 │   app.py → olap_trend.py                                         │
-│   app.py → fitness_functions.py                                  │
+│   app.py → knowledge_overview.py                                 │
 │   app.py → task_progress.py                                      │
-│   app_panel.py → knowledge_overview.py                           │
 │   app_panel.py → backtest_results.py                             │
 │   app_panel.py → backtest_performance.py                         │
-│   app_panel.py → gate_statistics.py                              │
-│   app_panel.py → olap_trend.py                                   │
 │   app_panel.py → fitness_functions.py                            │
+│   app_panel.py → gate_statistics.py                              │
 │   app_panel.py → order_book.py                                   │
+│   app_panel.py → olap_trend.py                                   │
+│   app_panel.py → knowledge_overview.py                           │
 │   app_panel.py → position_monitor.py                             │
 │   app_panel.py → tick_replay.py                                  │
 │   app_panel.py → task_progress.py                                │
 │   app_panel.py → trade_panel.py                                  │
-│   backtest_results.py → chart_factory.py                         │
 │   gate_statistics.py → chart_factory.py                          │
-│   olap_trend.py → chart_factory.py                               │
 │   order_book.py → chart_factory.py                               │
+│   olap_trend.py → chart_factory.py                               │
 │   position_monitor.py → chart_factory.py                         │
 │   tick_replay.py → chart_factory.py                              │
 │   __init__.py → __init__.py                                      │
