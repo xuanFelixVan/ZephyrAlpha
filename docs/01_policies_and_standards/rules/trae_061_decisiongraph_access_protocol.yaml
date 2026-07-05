@@ -1,0 +1,137 @@
+rule_id: TRAE-061
+title: decisiongraph 程序化访问协议
+version: 1.0.0
+layer: L1_foundation
+module_id: TRAE-061
+depends_on:
+- TRAE-054
+tags:
+- TRAE
+- decisiongraph_access_protocol
+- L0
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: ai_modifiable
+aliases:
+- RULE-DECISIONGRAPH
+- decisiongraph访问
+- 决策流图访问
+- extract_decisiongraph
+- apply_decisiongraph
+severity: critical
+scope: decisiongraph_access_protocol
+domain: TRAE
+triggers:
+- operation: decisiongraph_read
+- operation: decisiongraph_write
+- operation: decisiongraph_modify
+sections:
+  decisiongraph_access_protocol:
+    section_type: procedure
+    title: decisiongraph 程序化访问协议(RULE-DECISIONGRAPH)
+    original_rules:
+    - RULE-DECISIONGRAPH
+    conditions:
+    - type: trigger
+      check: 任何需要读取或修改 decisiongraph 的操作（查看决策层/修改决策节点/更新build_status/查看决策边/查看四轨定义等）
+      pass: 通过 extract_decisiongraph.py/apply_decisiongraph.py 程序化访问
+      fail: 直接 Read/Write decision_* 表 → OOM 崩溃
+    - type: constraint
+      check: decisiongraph 存储在同一个 PostgreSQL 数据库（通过 config/.env.postgres 配置连接，与 depgraph 共享 PG 实例，4 张表 decision_layers/decision_nodes/decision_edges/decision_tracks）。禁止 AI 直接连数据库，必须通过 extract_decisiongraph.py/apply_decisiongraph.py 程序化访问
+      pass: 禁止 AI 直接 Read/Write，必须通过提取/应用脚本操作
+      fail: 大表加载 → OOM 崩溃
+    actions:
+    - type: mandatory
+      step: '读取 decisiongraph: STEP1 确定需要什么数据 → STEP2 运行 extract_decisiongraph.py 对应命令 → STEP3 AI 只读提取结果(JSON, 几KB到几百KB, 安全)'
+    - type: mandatory
+      step: '修改 decisiongraph 前置备份(STEP0): 使用 pg_dump 或 apply_decisiongraph.py 内置物理备份。回滚: 通过 pg_restore 或 apply_decisiongraph.py 回滚命令'
+    - type: mandatory
+      step: '修改 decisiongraph: STEP0 前置备份(见上) → STEP1 AI 生成变更 JSON 文件 → STEP2 apply_decisiongraph.py --batch changes.json --dry-run(验证) → STEP3 apply_decisiongraph.py --batch changes.json(执行) → STEP4 extract_decisiongraph.py --summary(验证变更)'
+    - type: mandatory
+      step: '备份触发条件: 每次 apply_decisiongraph.py 执行前(apply_decisiongraph.py 是唯一合法 decisiongraph 写入口)。通过 PG 事务回滚提供原子性保障。extract_decisiongraph.py 是只读操作不需要备份。generate_decision_graph.py 治本后允许运行'
+    - type: mandatory
+      step: '备份范围: 通过 pg_dump 备份整个 decisiongraph (PostgreSQL，与 depgraph 共享 PG 实例，仅备份 decision_* 4 张表)。脚本文件(extract_decisiongraph.py/apply_decisiongraph.py)通过 git 常规版本控制保护，不需要额外备份触发'
+    - type: mandatory
+      step: '物理备份规范: apply_decisiongraph.py 每次非 dry-run 写操作前通过 PG 事务保护。需要完整备份时使用 pg_dump。存放位置: data/databases/backups/。命名格式: decisiongraph.backup.{YYYYMMDD_HHMMSS}_{tag}.sql'
+    - type: mandatory
+      step: 'extract_decisiongraph.py 命令清单: --summary(决策层数+决策节点数) / --layers L_STRATEGY / --nodes layer_id=L_STRATEGY / --edges / --tracks(四轨)'
+    - type: mandatory
+      step: '变更 JSON 格式: [{"op":"update","node_id":1,"field":"build_status","value":"testing"}] / [{"op":"add_edge","from_node_id":1,"to_node_id":2,"edge_type":"triggering"}] / [{"op":"remove_edge",...}] / [{"op":"set_layer","layer_id":"L_STRATEGY","fields":{...}}]'
+    - type: mandatory
+      step: 'build_status 合法值约束（5态）: nodes.build_status 字段只允许 5 种合法值——planned(设计态未实现)/generated(代码已生成)/testing(测试中)/stable(生产稳定)/deprecated(废弃态)。状态机为单调推进: planned→generated→testing→stable→deprecated。DB 层 CHECK 约束已生效，INSERT 非法值（如 draft/inactive/unbuilt/production/active 等）会被 psycopg2.IntegrityError 拒绝。design_maturity 字段只允许 3 种合法值: design/production/prototype（与 depgraph 节点表对齐）'
+    invariants:
+    - id: DEC-INV-001
+      title: 决策节点必须有归属层
+      description: decision_nodes.layer_id 必须存在于 decision_layers.layer_id（FK 约束）。无孤儿决策节点，每个决策必须归属于某个决策层
+      enforcement: DB FK REFERENCES decision_layers(layer_id)
+    - id: DEC-INV-002
+      title: 决策边两端节点必须存在
+      description: decision_edges.from_node_id 与 to_node_id 必须存在于 decision_nodes.node_id（FK 约束）。无悬空边，每个决策边的发起节点和目标节点都必须存在
+      enforcement: DB FK REFERENCES decision_nodes(node_id)
+    - id: DEC-INV-003
+      title: 决策边类型受控
+      description: edge_type 只允许 4 种合法值——triggering(触发)/informing(告知)/constraining(约束)/approving(审批)。DB CHECK 约束已生效，INSERT 非法值会被拒绝
+      enforcement: DB CHECK (edge_type IN ('triggering','informing','constraining','approving'))
+    - id: DEC-INV-004
+      title: build_status 单调推进
+      description: build_status 状态机为单调推进 planned→generated→testing→stable→deprecated。禁止跳态（如 generated 直接跃迁到 stable 必须经过 testing）。状态变更必须通过 apply_decisiongraph.py 走 dry-run 验证
+      enforcement: DB CHECK + apply_decisiongraph.py 状态迁移校验
+    - id: DEC-INV-005
+      title: design_maturity 3态受控
+      description: design_maturity 只允许 3 种合法值——design(设计态)/production(生产态)/prototype(原型态)。与 depgraph 节点表 design_maturity 字段语义对齐
+      enforcement: DB CHECK (design_maturity IN ('design','production','prototype'))
+    prohibitions:
+    - 用 Read 工具直接读取 decision_* 表数据（大表加载 → OOM 崩溃 → IDE 重启）
+    - 用 Write 工具直接写 decision_* 表数据（绕过脚本 → 破坏数据完整性 + 可能损坏 DB 约束）
+    - 拆分 decisiongraph 为多个文件（跨层决策关系丢失 → 漂移和幻觉）
+    - 绕过 extract_decisiongraph.py 自己写 Python 代码直接读 decision_* 表（AI 上下文不能装下）
+    - 在 decisiongraph 写入路径调用 lock_files.py（PG MVCC 事务已提供原子性保障，文件锁对 PG 写无保护作用）
+    exceptions:
+      schema_inspection: '通过 information_schema 查看表结构 ✅'
+      generate_decision_graph: '运行 generate_decision_graph.py 生成/更新（治本后允许）✅'
+    rationale:
+      no_split: '拆分为多个文件 → 跨层决策关系丢失 → AI 看到碎片化数据 → 产生大量漂移和幻觉。decisiongraph 保持 4 张表(SSoT)，通过程序化提取访问'
+      no_direct_db: 'decisiongraph 决策节点+决策边数据量较大，直接读 DB → AI 上下文溢出。复用 depgraph 的 PG 连接（同一 DB 实例，不同表）保证连接配置 SSoT'
+  change_history:
+    section_type: examples
+    title: decisiongraph 程序化访问协议修订记录
+    items:
+    - version: '1.0.0'
+      date: '2026-07-06'
+      by: session-20260706-decisiongraph
+      changes: '初始创建——decisiongraph Phase 1 施工。架构：decisiongraph 与 depgraph 共享 PostgreSQL 实例（同一 DB，不同表），4 张表（decision_layers/decision_nodes/decision_edges/decision_tracks）。复用 depgraph 的 PG 连接（get_decisiongraph_pg_connection 委托 get_depgraph_pg_connection）。build_status 5态 + design_maturity 3态 与 depgraph 节点表对齐。五条承重墙不变量 DEC-INV-001~005 约束决策流图数据完整性。depends_on TRAE-054（复用 PG 访问基础设施）'
+references:
+  rule_ids:
+  - TRAE-054
+  scripts:
+  - scripts/governance/extract_decisiongraph.py
+  - scripts/governance/apply_decisiongraph.py
+  - scripts/governance/generate_decision_graph.py
+  modules:
+  - zephyr.governance.decisiongraph_schema
+  blueprints: []
+enforcement:
+  type: hook
+  executors:
+  - scripts/governance/extract_decisiongraph.py
+  - scripts/governance/apply_decisiongraph.py
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: ai_modifiable
+  superseded_by:
+  change_history:
+  - version: 1.0.0
+    date: '2026-07-06'
+    by: session-20260706-decisiongraph
+    changes:
+    - 初始创建——decisiongraph Phase 1 施工
+    - 与 depgraph 共享 PostgreSQL 实例（同一 DB，不同表）
+    - 4 张表（decision_layers/decision_nodes/decision_edges/decision_tracks）
+    - 五条承重墙不变量 DEC-INV-001~005
+    - depends_on TRAE-054（复用 PG 访问基础设施）
+provenance:
+  extracted_at: '2026-07-06T00:00:00'
+  extracted_by: session-20260706-decisiongraph

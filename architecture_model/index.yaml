@@ -56,6 +56,13 @@ partitions:
 - id: ddd-model
   path: domain/ddd_model.yaml
   description: DDD战术模式：8 Aggregate Root + 6 Entity + 12 Value Object + 边界铁律
+- id: decision-graph
+  path: domain/decision_graph_model.yaml
+  description: >
+    决策流图架构——决策层级(L0-L6)+节点(signal/portfolio_target/risk_check/order等)+
+    因果边(4类typed edges: triggering/informing/constraining/approving)+四轨(model_driven等)+
+    五条承重墙不变量。借鉴 MARIA OS Evidence Graph + DMN DRD + QuantConnect Lean。
+    与 depgraph 通过 module_id 关联，三张图正交。
 - id: technology
   path: technology/
   description: 技术选型与版本治理SSoT
