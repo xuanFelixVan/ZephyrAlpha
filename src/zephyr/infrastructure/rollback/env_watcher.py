@@ -27,6 +27,7 @@ EnvWatcher — 环境变量热重载监控器。
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -66,6 +67,11 @@ class EnvWatcher:
             return None
 
         self._write_sentinel(current_state)
+
+        # 更新运行中进程的 os.environ，使已运行的进程能即时感知新配置。
+        # 仅更新 .env 文件中已知的配置键，不盲目覆盖其它环境变量。
+        for key in changed_keys:
+            os.environ[key] = current_state[key]
 
         return EnvChangeAlert(
             env_file=",".join(self.ENV_FILES),

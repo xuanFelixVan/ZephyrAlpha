@@ -48,6 +48,7 @@ import os
 import signal
 import sqlite3
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
+from zephyr.shared.io.paths import DB_PATH  # DB_PATH SSoT — 治理数据库路径唯一真源
 import uuid
 from datetime import UTC, datetime
 
@@ -511,11 +512,7 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
     if db_path is None:
         _resolve_paths()
 
-        project_root = os.environ.get(
-            "ZEPHYR_PROJECT_ROOT", os.path.dirname(os.path.dirname(os.path.dirname(_ENGINE_ROOT)))
-        )
-
-        db_path = os.path.join(project_root, "data", "databases", "governance.db")
+        db_path = str(DB_PATH)
 
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
 

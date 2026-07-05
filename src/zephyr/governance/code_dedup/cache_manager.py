@@ -33,7 +33,7 @@ import os
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from pydantic import BaseModel, Field
 
@@ -62,6 +62,7 @@ class CacheMetadata(BaseModel):
     total_functions: int = 0
     last_full_scan: str = ""
     version: str = "1.0.0"
+    schema_version: int = 1
     _integrity: str = ""
 
 
@@ -72,6 +73,9 @@ class FunctionCache(BaseModel):
 
 class CacheManager:
     """函数缓存管理器."""
+
+    CURRENT_SCHEMA_VERSION = 1
+    _MIGRATIONS: dict[int, Callable[[dict[str, Any]], dict[str, Any]]] = {}
 
     def __init__(self, cache_path: str | Path | None = None) -> None:
         if cache_path is None:
@@ -84,7 +88,7 @@ class CacheManager:
     # ── 公共 API ──────────────────────────────────────────────
 
     def load(self) -> FunctionCache:
-        """加载缓存——含 _integrity 验证."""
+        """加载缓存——含 _integrity 验证与 schema 版本迁移."""
         if not self._cache_path.exists():
             return self._rebuild_from_scratch()
 
@@ -100,6 +104,8 @@ class CacheManager:
         computed = self._compute_integrity(data)
         if stored_hash and stored_hash != computed:
             return self._rebuild_from_scratch()
+
+        data = self._migrate(data)
 
         self._cache = FunctionCache(**data)
         self._rebuild_indices()
@@ -208,6 +214,24 @@ class CacheManager:
         self._index.clear()
         self._signature_index.clear()
         return self._cache
+
+    def _migrate(self, data: dict[str, Any]) -> dict[str, Any]:
+        """根据 schema_version 运行迁移函数，直到达到 CURRENT_SCHEMA_VERSION。
+
+        迁移函数注册机制：_MIGRATIONS 字典映射 from_version → migration_function。
+        旧数据缺少 schema_version 字段时视为版本 1。
+        若某版本无对应迁移函数，中止迁移（由调用方决定是否全量重建）。
+        """
+        meta = data.get("cache_metadata") or {}
+        schema_version = meta.get("schema_version", 1)
+        while schema_version < self.CURRENT_SCHEMA_VERSION:
+            migration = self._MIGRATIONS.get(schema_version)
+            if migration is None:
+                break
+            data = migration(data)
+            meta = data.get("cache_metadata") or {}
+            schema_version = meta.get("schema_version", schema_version + 1)
+        return data
 
     @staticmethod
     def _compute_integrity(data: dict[str, Any]) -> str:
