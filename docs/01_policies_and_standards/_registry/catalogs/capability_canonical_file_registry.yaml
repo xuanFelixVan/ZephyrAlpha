@@ -1383,14 +1383,14 @@ capabilities:
       MODULE-ID-CONSISTENCY in-process module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁
       （Phase 3 reconciler→gate 收敛，2026-07-03；三维扩展 2026-07-03）。
       从 make_module_id_consistency_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
-      三维校验：1. 三轨一致性（P8-FIX-S0）单文件 CFG-*/MOD-*/PS-* module_id 声明是否一致；
+      三维校验：1. 三声明轨道一致性（P8-FIX-S0）单文件 CFG-*/MOD-*/PS-* module_id 声明是否一致；
       2. count 派生（P8-FIX-S1）注册表 total_registered/total_templates/total_dependencies
       与实际列表条目数是否匹配；3. 跨文件唯一性（治本 2026-07-03）staged .py 含 [A_*] module_id
       头时 git grep 全仓检测重复，历史豁免（_is_tracked_in_head 跳过已跟踪文件）。
       priority=88。正则匹配 + git grep subprocess（跨文件维度）。
       canonical basename module_id_consistency_gate 匹配 capability_id，canonical 在 src/zephyr/
       下需 canonical_override 显式声明。
-      解决发现性：新 AI 搜 "MODULE-ID-CONSISTENCY/三轨不一致/count 派生/跨文件撞车" 可定位真源。
+      解决发现性：新 AI 搜 "MODULE-ID-CONSISTENCY/三声明轨道不一致/count 派生/跨文件撞车" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重建同类 in-process module_id 一致性门禁。
     integrity_anchors:
       - make_module_id_consistency_gate  # gate 工厂(删则 gate 不注册)
