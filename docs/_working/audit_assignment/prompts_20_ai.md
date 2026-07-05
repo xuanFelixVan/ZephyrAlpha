@@ -1,5 +1,12 @@
 # 20个AI审计一键复制提示词
 
+> **⚠️ 禁止删除本文件（PROTECTED FILE）** ⚠️
+> - 用途：20 个审计 AI 的一键复制提示词，用户手动复制粘贴启动审计
+> - 保护：已设置 Windows 只读属性（attrib +r），其他 AI 会话禁止删除/移动/重命名
+> - 如需修改：先 `attrib -r` 取消只读，修改后重新 `attrib +r`
+> - 如本文件意外丢失：`git checkout HEAD -- docs/_working/audit_assignment/prompts_20_ai.md` 恢复
+> - session_worktree_abort 清理主工作区时 MUST 跳过本文件（held_files 等价保护）
+
 > **使用说明**：每个 AI 一个独立 section（用 `===` 分隔），复制对应 AI 编号的整段内容粘贴到新对话即可启动审计。所有提示词自包含，无需额外附件。
 
 ---
