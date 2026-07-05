@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] RuntimeError when task_repo is None; GateViolationError on invalid transitions
 # [TESTS] tests/test_mcp_task_claim.py
 # [A_module] module_id=MOD-INF_task_manager_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ZephyrAlpha MCP Task Manager Server
@@ -935,8 +935,12 @@ def _parse_legacy_md_to_taskcard(content: str) -> TaskCard | None:
             bm = re.search(r"阻塞:\s*(.+)$", line)
             if bm:
                 try:
-                    blocked_gates = json.loads(bm.group(1).strip().replace("'", '"'))
-                except (json.JSONDecodeError, TypeError):
+                    # 5.147.7 修复: 原 json.loads(text.replace("'", '"')) 启发式解析 Python-repr 为 JSON,
+                    # 若门禁名称含撇号会破坏字符串边界。改用 ast.literal_eval 安全解析 Python 字面量
+                    import ast
+
+                    blocked_gates = ast.literal_eval(bm.group(1).strip())
+                except (ValueError, SyntaxError):
                     pass
             continue
 

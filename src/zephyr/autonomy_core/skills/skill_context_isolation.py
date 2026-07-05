@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_skill_context_isolation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 MOD-INF-019: Agent Spec — Context Isolation
@@ -74,7 +74,12 @@ class ContextIsolation:
     ) -> dict[str, Any]:
         ns_key = self.create_namespace(skill_id)
 
-        clean_context = copy.deepcopy(context)
+        # 5.147.6 修复: context: dict[str, Any] 值类型为 Any, 调用方可传入含循环引用或极深嵌套的结构,
+        # copy.deepcopy 可能抛 RecursionError。捕获后回退到浅拷贝避免崩溃 (隔离功能降级优于进程崩溃)
+        try:
+            clean_context = copy.deepcopy(context)
+        except RecursionError:
+            clean_context = dict(context)
 
         if previous_skill_id and self._mode == self.ISOLATION_STRICT:
             prev_ns = f"ns:{previous_skill_id}"

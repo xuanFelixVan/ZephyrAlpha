@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] submit: GPUTimeout→LOCAL_GPU降级; submit: APIUnavailable→SINGLE_API降级; submit: AllFailed→ConsensusResult(failed)
 # [TESTS] tests/test_behavioral_audit/test_gpu_consensus_scheduler.py
 # [A_module] module_id=MOD-GOV_gpu_consensus_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 
@@ -508,10 +508,13 @@ class GPUConsensusScheduler:
         reasoning = ""
 
         try:
+            # 5.147.10 修复: 原 text.find("{") + text.rfind("}") 启发式提取,
+            # 若文本含多段 JSON 或花括号, text[start:end] 可能横跨非 JSON 内容。
+            # 改用 json.JSONDecoder().raw_decode 增量解析, 从首个 { 开始尝试解析完整 JSON 对象
             start = text.find("{")
-            end = text.rfind("}") + 1
-            if start >= 0 and end > start:
-                parsed = _json.loads(text[start:end])
+            if start >= 0:
+                decoder = _json.JSONDecoder()
+                parsed, _ = decoder.raw_decode(text[start:])
                 v = parsed.get("verdict", "PASS")
                 try:
                     verdict = VerdictLevel(v)

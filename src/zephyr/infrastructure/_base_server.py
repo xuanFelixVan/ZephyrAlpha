@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF__base_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 # AI-generated: JSON-RPC 2.0 over stdio MCP base server (
 """
@@ -455,6 +455,12 @@ class BaseMCPServer:
                 content_length = int(stripped.split(":", 1)[1].strip())
             except (ValueError, IndexError):
                 return first_line.strip(), False
+
+            # 5.147.3 修复: Content-Length 无上限, 恶意客户端可发送超大值触发 OOM Kill。
+            # 设定 MAX_MESSAGE_BYTES=10MB 上限, 超限返回错误
+            MAX_MESSAGE_BYTES = 10 * 1024 * 1024  # 10MB
+            if content_length > MAX_MESSAGE_BYTES:
+                return f"ERROR: Content-Length {content_length} exceeds limit {MAX_MESSAGE_BYTES}", False
 
             inp.readline()
 

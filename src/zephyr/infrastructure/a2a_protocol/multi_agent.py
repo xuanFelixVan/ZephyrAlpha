@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_multi_agent | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 multi_agent.py —— Multi-Agent 编排基座（Phase 14 | 盲点 B33）
@@ -77,10 +77,11 @@ class AgentCard:
         return cls(
             agent_id=data["agent_id"],
             role=AgentRole(data["role"]),
-            capabilities=data.get("capabilities", []),
+            # 5.147.9 修复: JSON 中 capabilities/metadata 为 null 时 d.get 返回 None 而非默认值
+            capabilities=data.get("capabilities") or [],
             description=data.get("description", ""),
             endpoint=data.get("endpoint"),
-            metadata=data.get("metadata", {}),
+            metadata=data.get("metadata") or {},
         )
 
 

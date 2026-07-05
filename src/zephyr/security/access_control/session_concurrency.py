@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SessionRegistry 读写失败不抛异常（返回空/False）；detect_mtime_conflict 文件不存在返回 False
 # [TESTS] tests/test_session_concurrency.py
-# [TTL] task_bound
+# [TTL] permanent
 """Session 级并发协调模块（P2-SES 落地）。
 
 从 Stub 落地为真实的 session 级协调：
@@ -180,7 +180,8 @@ class SessionInfo:
             session_id=d.get("session_id", ""),
             pid=d.get("pid", 0),
             start_time=d.get("start_time", 0.0),
-            held_files=d.get("held_files", []),
+            # 5.147.9 修复: JSON 中 held_files 为 null 时 d.get 返回 None 而非默认 [], 后续 .append() 会 AttributeError
+            held_files=d.get("held_files") or [],
             last_heartbeat=d.get("last_heartbeat", 0.0),
             is_breaking_change=d.get("is_breaking_change", False),
         )

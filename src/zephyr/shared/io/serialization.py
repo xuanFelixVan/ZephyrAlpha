@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_serialization | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 serialization.py —— 统一序列化/反序列化基础设施（Phase 7 新增 | 盲点 B10 修复）
@@ -215,8 +215,12 @@ def from_dict(
 ) -> dict[str, Any] | Any:
     """从确定性 dict 恢复为 Pydantic 模型实例或原生 dict。
 
-    如果提供 model，则用 model(**deserialized_dict) 构造。
-    如果不提供 model，则返回 deserialized dict（Decimal/str/datetime 已还原）。
+    如果提供 model，则用 model(**deserialized_dict) 构造，Pydantic 会按字段类型自动还原。
+    如果不提供 model，则返回 deserialized dict——5.147.8 修复: 原 docstring 声称
+    "Decimal/str/datetime 已还原"与实现矛盾。实际 _deserialize_value 仅透传 str,
+    不会调用 deserialize_decimal/deserialize_datetime 还原（无 schema 时无法可靠区分
+    原始 str 与 datetime/Decimal 序列化后的 str, 强制转换会引入 false positive）。
+    若需类型还原, 必须提供 model 参数让 Pydantic 按字段类型注解还原。
 
     Args:
         data: 由 to_dict() 产出的 dict。

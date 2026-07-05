@@ -8095,6 +8095,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.147 序列化/反序列化安全（11个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=11(序列化/反序列化安全需审查pickle/json风险)
+> **第40轮修复状态（2026-07-05）**：FIXED=7(5.147.3 MCP Content-Length 上限 + 5.147.6 deepcopy RecursionError 防护 + 5.147.7 ast.literal_eval 替代 json.loads+replace + 5.147.8 docstring 纠正 + 5.147.9 from_dict None 处理 + 5.147.10 raw_decode 替代启发式提取 + 5.147.11 stdout size check), DRIFTED=2(5.147.1 已被 5.117.1 路径白名单部分缓解 + 5.147.2 已在 5.146.2 修复), STILL_VALID=2(5.147.4 79+处 default=str 大规模重构保留 + 5.147.5 版本迁移逻辑复杂重构保留)
 
 审查json/yaml/toml/pickle/joblib/marshal等序列化格式的安全问题、版本兼容性、循环引用序列化失败等。
 

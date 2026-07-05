@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_headless_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Headless Scanner — headless_scanner.py
@@ -76,6 +76,12 @@ def _scan_script(script_path: str) -> list[HeadlessDiffEntry]:
         result = subprocess.run(["python", script_path], capture_output=True, text=True, timeout=30)
 
         if result.returncode != 0:
+            return []
+
+        # 5.147.11 修复: subprocess stdout 无大小限制, 30s 内可产生数 GB 文本触发 OOM。
+        # 设定 MAX_OUTPUT_SIZE=10MB 上限, 超限返回空列表
+        MAX_OUTPUT_SIZE = 10 * 1024 * 1024  # 10MB
+        if len(result.stdout) > MAX_OUTPUT_SIZE:
             return []
 
         output = json.loads(result.stdout)
