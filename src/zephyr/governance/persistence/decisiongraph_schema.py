@@ -71,7 +71,65 @@ P2 迁移后 schema 真源（重要）
 
 from __future__ import annotations
 
+from pathlib import Path
+
+import yaml
+
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.shared.io.paths import REPO_ROOT
+
+# ---------------------------------------------------------------------------
+# 受控词表动态加载（VOCAB-HARDCODE gate 治本：禁止硬编码词表值）
+# ---------------------------------------------------------------------------
+
+_YAML_MODEL_PATH = REPO_ROOT / "architecture_model" / "domain" / "decision_graph_model.yaml"
+_VOCAB_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
+
+
+def load_build_status_order() -> list[str]:
+    """从 decision_graph_model.yaml 动态加载 build_status 状态机顺序。
+
+    真源：architecture_model/domain/decision_graph_model.yaml 的 build_status_values 段。
+    5态单调推进：planned → generated → testing → stable → deprecated。
+    """
+    with open(_YAML_MODEL_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    items = data.get("build_status_values", [])
+    return [v["value"] for v in sorted(items, key=lambda x: x.get("order", 0))]
+
+
+def load_edge_type_values() -> set[str]:
+    """从 decision_edge_type_vocabulary.yaml 动态加载合法 edge_type 集合。
+
+    真源：docs/01_policies_and_standards/_registry/vocabularies/decision_edge_type_vocabulary.yaml
+    4值：triggering / informing / constraining / approving（DEC-INV-003）。
+    """
+    vocab_path = _VOCAB_DIR / "decision_edge_type_vocabulary.yaml"
+    with open(vocab_path, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return {v["value"] for v in data.get("values", [])}
+
+
+def load_node_type_values() -> set[str]:
+    """从 decision_graph_model.yaml 动态加载合法 node_type 集合。
+
+    真源：architecture_model/domain/decision_graph_model.yaml 的 node_types 段。
+    6值：signal / portfolio_target / risk_check / order / compliance_check / sell_decision。
+    """
+    with open(_YAML_MODEL_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return {nt["type"] for nt in data.get("node_types", [])}
+
+
+def load_track_ids() -> set[str]:
+    """从 decision_graph_model.yaml 动态加载合法 track_id 集合。
+
+    真源：architecture_model/domain/decision_graph_model.yaml 的 tracks 段。
+    4值：model_driven / data_driven / human_override / emergency。
+    """
+    with open(_YAML_MODEL_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return {t["track_id"] for t in data.get("tracks", [])}
 
 
 # ---------------------------------------------------------------------------
