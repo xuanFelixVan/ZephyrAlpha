@@ -48,6 +48,10 @@ from zephyr.backtest.io.result_repository import (
     list_artifacts,
     save_artifact,
 )
+from zephyr.backtest.io.decisiongraph_adapter import (
+    backtest_result_to_decision_node,
+    register_backtest_result_in_decisiongraph,
+)
 
 __all__ = [
     # backtest_result_sink
@@ -66,4 +70,7 @@ __all__ = [
     "list_artifacts",
     "delete_artifact",
     "build_artifact_from_data",
+    # decisiongraph_adapter (TRAE-061 Phase 5)
+    "backtest_result_to_decision_node",
+    "register_backtest_result_in_decisiongraph",
 ]
