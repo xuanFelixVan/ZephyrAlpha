@@ -8537,6 +8537,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.156 测试覆盖率盲区（12个，第26轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=12(测试覆盖率盲区需补测试)
+> **第41轮修复状态（2026-07-05）**：FIXED=3(5.156.1 test_l06_trade_execution importorskip改zephyr.ex_core + import路径修正ex_core.src.zephyr→ex_core + 5.156.4 test_auditor mock路径修正infrastructure.rollback.auditor→governance.audit_trail.contracts + 5.156.10 test_security_secrets import路径改canonical真源shared.security.secrets), DRIFTED=1(5.156.5 test_infra_lock/idempotency/outbox 已用正确路径zephyr.shared.infra.*), DEFERRED=8(5.156.2/3/6/7/8/9/11/12 需编写新测试用例或修复代码缺陷,属专项工程). 维度5.156机械项已清零,剩余为测试编写工程.
 
 #### HIGH（4个：关键路径无测试）
 

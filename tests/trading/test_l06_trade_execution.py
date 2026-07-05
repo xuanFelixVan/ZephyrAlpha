@@ -19,15 +19,15 @@ from unittest.mock import MagicMock
 
 import pytest
 
-l06 = pytest.importorskip("zephyr.l06_trade_execution", reason="l06-trade-execution not importable")
+l06 = pytest.importorskip("zephyr.ex_core", reason="ex_core not importable")
 
-from zephyr.ex_core.src.zephyr.execution_engine import (
+from zephyr.ex_core.execution_engine import (
     AlgoType,
     ExecutionConfig,
     ExecutionEngine,
     ExecutionEngineRunRecord,
 )
-from zephyr.ex_core.src.zephyr.order_manager import OrderAction, OrderManager
+from zephyr.ex_core.order_manager import OrderAction, OrderManager
 
 from zephyr.ex_core.adapters.broker_interface import BrokerInterface
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType

@@ -24,7 +24,7 @@ import asyncio
 
 import pytest
 
-from zephyr.security.llm_defense.llm_security.patterns.secrets import (
+from zephyr.shared.security.secrets import (
     SECRET_INDICATOR_PATTERNS,
     DotEnvSecretProvider,
     EnvSecretProvider,
