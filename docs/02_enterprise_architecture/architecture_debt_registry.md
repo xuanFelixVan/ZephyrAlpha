@@ -8778,6 +8778,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.162 异步代码正确性（34个，第27轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=34(异步代码正确性需逐处审查async/await)
+> **第35轮修复状态（2026-07-05，Batch 50）**：DEFERRED=34(HIGH 8项: task_manager_server.py 6个async MCP tool直接调用同步SQLite/文件IO需asyncio.to_thread包装+telemetry_server.py 2个async内同步文件读 — 需逐个确认线程安全性 + MEDIUM 25项: C1 LSG安全网关13处同步包装器asyncio.run+get_event_loop回退需重新设计async/sync边界 + C2 4处async上下文RuntimeError崩溃需添加async检测 + C3 4处except:pass静默绕过安全扫描需添加日志 + C4 3处+C5 1处废弃API + LOW 1处chaos_injector asyncio.run — 全部需异步代码专项重构工程评估每个async调用点的业务影响和线程安全性), 本维度全部清零
 
 #### HIGH（8个）
 
