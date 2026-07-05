@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ExamError;InferenceError
 # [TESTS] tests/test_model_profiler/
 # [A_module] module_id=MOD-RSC_exam_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 ExamOrchestrator --- 五轴入职考试主控
@@ -152,7 +152,11 @@ class ExamOrchestrator:
         # P1-2: depth 每题采样次数（默认 1=单次保持向后兼容; 5=统计显著性校准）
         # 优先级: 显式参数 > 环境变量 ZEPHYR_DEPTH_SAMPLES > 默认 1
         if depth_samples_per_case is None:
-            depth_samples_per_case = int(os.environ.get("ZEPHYR_DEPTH_SAMPLES", "1"))
+            # 5.155.4 修复: 添加 try/except 防止非整数环境变量值导致 ValueError
+            try:
+                depth_samples_per_case = int(os.environ.get("ZEPHYR_DEPTH_SAMPLES", "1"))
+            except (TypeError, ValueError):
+                depth_samples_per_case = 1
         self._depth_samples_per_case = max(1, depth_samples_per_case)
 
     def run_full_exam(self, *, skip_drift: bool = False) -> CapabilityPassport:

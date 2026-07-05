@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_telemetry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """AssetInventoryTelemetry — MOD-INF-026 自监控指标
 
@@ -230,7 +230,7 @@ class SmtpEmailChannel(NotificationChannel):
     def __init__(
         self,
         smtp_host: str | None = None,
-        smtp_port: int = 587,
+        smtp_port: int | None = None,
         smtp_user: str | None = None,
         smtp_password: str | None = None,
         from_addr: str | None = None,
@@ -238,6 +238,14 @@ class SmtpEmailChannel(NotificationChannel):
         use_tls: bool = True,
     ) -> None:
         self._smtp_host = smtp_host or os.environ.get("ZEPHYR_SMTP_HOST", "")
+        # 5.155.18 修复: smtp_port 改为可通过环境变量配置, 带范围校验
+        if smtp_port is None:
+            try:
+                smtp_port = int(os.environ.get("ZEPHYR_SMTP_PORT", "587"))
+            except (TypeError, ValueError):
+                smtp_port = 587
+        if not (1 <= smtp_port <= 65535):
+            smtp_port = 587
         self._smtp_port = smtp_port
         self._smtp_user = smtp_user or get_secret_or_default("ZEPHYR_SMTP_USER", "")
         self._smtp_password = smtp_password or get_secret_or_default("ZEPHYR_SMTP_PASSWORD", "")

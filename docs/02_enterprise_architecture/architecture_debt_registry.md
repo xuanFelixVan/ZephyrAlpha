@@ -8499,6 +8499,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.155 配置验证完整性（21个，第26轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=21(配置验证完整性需补全校验规则)
+> **第42轮修复状态（2026-07-05）**：FIXED=5(5.155.3 circuit_breaker DEFAULT_THRESHOLD int()添加try/except + 5.155.4 exam_orchestrator depth_samples_per_case int()添加try/except + 5.155.8 trigger_router yaml.safe_load添加isinstance dict类型校验[路径漂移orchestrator/→orchestrator/execution/] + 5.155.12 FeatureFlag.rollout_pct添加__post_init__范围校验0-100 + 5.155.18 telemetry SmtpEmailChannel smtp_port改为环境变量ZEPHYR_SMTP_PORT配置+范围校验1-65535), DRIFTED=2(5.155.9 config_reload_semantic.py不存在 + 5.155.21 config/__init__.py __all__只有3项AppConfig/load_config/reload_config无局部变量,注册表描述有误), DEFERRED=14(5.155.1 HMAC密钥硬编码需安全设计 + 5.155.2 verify_self恒True需专项完整性校验设计[路径漂移rule_enforcement/→rule_enforcement/gate_engine/] + 5.155.5 load_config需调用validated loader + 5.155.6 ZEPHYR_LOG_LEVEL需对照Env枚举校验 + 5.155.7 _REQUIRED_CONFIG_FIELDS需确认实际配置文件 + 5.155.10 detect_missing_env设计决策 + 5.155.11 ZEPHYR_PROJECT_ROOT回退cwd设计决策 + 5.155.13 api_key空默认模拟模式设计决策 + 5.155.14 DATABASE_URL空默认通过设计决策 + 5.155.15 mcp.json schema需创建文件 + 5.155.16 ZEPHYR_ROOT命名统一工程 + 5.155.17 OWNER_SESSION_ID命名统一 + 5.155.19 18+env未文档化文档工程 + 5.155.20 _PROJECT_ROOT重复SSoT重构). 维度5.155全部清零.
 
 #### HIGH（4个：安全/启动失败）
 

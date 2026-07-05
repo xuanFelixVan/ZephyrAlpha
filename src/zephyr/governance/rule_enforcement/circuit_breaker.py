@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_circuit_breaker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 CircuitBreakerGateway (CBG) — 模块间调用单向熔断器
@@ -87,7 +87,11 @@ _UTC = UTC
 # ---------------------------------------------------------------------------
 
 # 默认触发 OPEN 的连续失败次数；可用环境变量 ZEPHYR_CBG_FAILURE_THRESHOLD 覆盖。
-DEFAULT_THRESHOLD: int = int(os.environ.get("ZEPHYR_CBG_FAILURE_THRESHOLD", "3"))
+# 5.155.3 修复: 添加 try/except 防止非整数环境变量值导致模块导入失败
+try:
+    DEFAULT_THRESHOLD: int = int(os.environ.get("ZEPHYR_CBG_FAILURE_THRESHOLD", "3"))
+except (TypeError, ValueError):
+    DEFAULT_THRESHOLD = 3
 
 _CALLER_UNKNOWN: str = "__unknown__"
 

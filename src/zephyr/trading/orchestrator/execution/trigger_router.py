@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_trigger_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）
@@ -709,7 +709,10 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
 
     try:
         with open(routing_yaml_path, encoding="utf-8") as fh:
+            # 5.155.8 修复: 添加类型校验, 防止空YAML返回None时.get()抛AttributeError
             routing_config = yaml.safe_load(fh)
+            if not isinstance(routing_config, dict):
+                routing_config = {}
     except Exception as exc:
         _logger.error("failed to load blueprint_routing.yaml: %s", exc)
         return {

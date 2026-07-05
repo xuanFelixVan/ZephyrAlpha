@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_flags | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 
@@ -85,6 +85,12 @@ class FeatureFlag:
     allowed_modules: list[str] = field(default_factory=list)
     allowed_agents: list[str] = field(default_factory=list)
     rollout_pct: int = 0
+
+    def __post_init__(self) -> None:
+        # 5.155.12 修复: 添加范围校验 (0-100), 防止 >100 时恒为 True 全员启用
+        # frozen dataclass 需用 object.__setattr__ 修改字段
+        if self.rollout_pct < 0 or self.rollout_pct > 100:
+            object.__setattr__(self, "rollout_pct", max(0, min(100, self.rollout_pct)))
 
     def is_enabled(
         self,
