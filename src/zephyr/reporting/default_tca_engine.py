@@ -29,7 +29,7 @@
 CTR 契约：
   消费者 — CTR-005 (Fill) ← D_EXECUTION_CORE
   消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE（关联委托）
-  生产者 — CTR-P1-007 (ExecutionReport) → D_FRONTEND, D_COMPLIANCE
+  生产者 — CTR-P1-007 (ExecutionReport) → D_FRONTEND, D_GOV_ENFORCEMENT
 
 SSoT: cross_layer_contracts.yaml → CTR-005 + CTR-P1-007
 """
@@ -39,7 +39,7 @@ from __future__ import annotations
 import logging
 from decimal import Decimal, ROUND_HALF_EVEN
 
-from zephyr.governance.observability_governance.analytics_base import TCAEngineBase
+from zephyr.reporting.analytics_base import TCAEngineBase
 from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
 from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.order import Order

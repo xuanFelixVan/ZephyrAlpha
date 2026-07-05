@@ -44,13 +44,13 @@ codification_at: "2026-05-15"
 ---
 
 > module_id: MOD-L07-001 | version: 2.1.0 | status: active | domain: reporting
-> actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: not_started
+> actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: partially_implemented
 
 # ✅ Post Trade Analytics Core 蓝图 — 盘后分析层
 
 > **✅ 业务层已开放，可施工**
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
-> 当前 construction_progress = not_started，可开始业务代码实现。
+> 当前 construction_progress = partially_implemented，骨架代码已实现，Brinson核心算法待填充。
 
 ## 概述
 
@@ -79,15 +79,15 @@ codification_at: "2026-05-15"
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因 |
 |---|--------|------------|------|:---:|---------|
 | 1 | analytics_base.py | §3.1 | TCAEngineBase + AttributionEngineBase OCP 扩展点 | 已实现 | — |
-| 2 | implementations/default_tca_engine.py | §3.1 | 默认 TCA 引擎实现 | 已实现 | — |
-| 3 | implementations/default_attribution_engine.py | §3.1 | 默认归因引擎实现 | 已实现 | — |
+| 2 | default_tca_engine.py | §3.1 | 默认 TCA 引擎实现 | 已实现 | — |
+| 3 | default_attribution_engine.py | §3.1 | 默认归因引擎实现 | 已实现 | — |
 | 4 | tests/reporting/ | §9 | 测试用例 | 已阻塞 | C轨未开放，测试目录未创建 |
 
 ### §0.2 对齐验证矩阵
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = not_started → 代码目录存在但业务逻辑为骨架 | `ls src/zephyr/reporting/` | ☐ |
+| construction_progress = partially_implemented → 骨架代码已实现，Brinson核心算法待填充 | `ls src/zephyr/reporting/` | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
 
 ### §0.3 版本-代码映射
@@ -148,7 +148,7 @@ codification_at: "2026-05-15"
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
 | 日终 TCA 分析 | D_EXECUTION_CORE Fill 到达 | DefaultTCAEngine.analyze(fill, order) → ExecutionReport | CTR-P1-007 |
-| 日终归因分析 | 收盘后触发 | DefaultAttributionEngine.attribute() → PerformanceAttributionReport | CTR-P1-009 |
+| 日终归因分析 | ExecutionReport/Fill 事件触发（禁止时间触发） | DefaultAttributionEngine.attribute() → PerformanceAttributionReport | CTR-P1-009 |
 
 ---
 
