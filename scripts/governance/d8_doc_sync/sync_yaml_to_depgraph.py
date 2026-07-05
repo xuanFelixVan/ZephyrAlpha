@@ -115,9 +115,12 @@ _LAYER_NAME_TO_DOMAIN = {
 
 # contract_mapping_table.yaml domain_contracts 的 YAML key → domain_id
 # v1.1.0: alpha_signal_domain 拆分为 factor_domain + signal_domain（域平级无父子）
+# 新增 domain_key 须在此字典登记映射，否则 sync_contract_mapping_table 会阻断并提示
 _DOMAIN_KEY_TO_DOMAIN_ID = {
     "alpha_signal_domain": "D_ASHARE_SIGNAL",  # 旧key保留向后兼容
     "factor_domain": "D_FACTOR",
+    # ARCH-045: signal_domain 含3子域(D_FUNDAMENTAL_SIGNAL/D_ASHARE_SIGNAL/D_SIGQC)，
+    # 聚合 key 映射到主代表 D_ASHARE_SIGNAL，待后续架构裁定是否拆分
     "signal_domain": "D_ASHARE_SIGNAL",
     "ml_experiment_domain": "D_ML_TRAIN",
 }
@@ -340,6 +343,15 @@ def sync_contract_mapping_table(cur):
     # 域契约（UPSERT 只更新基础字段）
     # YAML 结构：domain_contracts[domain_key] = {domain_id, blueprint, contracts: [...]}
     # FIX: domain_key/direction 不是 domain_id，必须归一化防止FK违规
+    # 校验：domain_key 必须在 _DOMAIN_KEY_TO_DOMAIN_ID 中有映射，提前阻断防止 FK 违规
+    domain_keys = [k for k, v in data.get("domain_contracts", {}).items() if isinstance(v, dict)]
+    unregistered = [k for k in domain_keys if k not in _DOMAIN_KEY_TO_DOMAIN_ID]
+    if unregistered:
+        raise ValueError(
+            f"contract_mapping_table.yaml 的 domain_contracts 含未登记 domain_key {unregistered}。"
+            f"新增 domain_key 须同步在 _DOMAIN_KEY_TO_DOMAIN_ID 字典添加映射"
+            f"（有效 domain_id 见 functional_domain_registry.yaml，D_ 前缀）。"
+        )
     for domain_key, domain_data in data.get("domain_contracts", {}).items():
         if not isinstance(domain_data, dict):
             continue

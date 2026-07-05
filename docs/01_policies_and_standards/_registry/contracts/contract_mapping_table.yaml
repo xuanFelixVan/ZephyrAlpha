@@ -22,7 +22,7 @@ domain_contracts:
   # 蓝图: MOD-L02-001 | 路径: docs/03_modules/_domain_factor/blueprint.md
   # 子模块编号: D-FACTOR-01~11+24（蓝图内部使用，不进blueprint_registry）
   factor_domain:
-    domain_id: FACTOR-DOMAIN-001
+    domain_id: FACTOR-DOMAIN-001  # 文档标识；depgraph domain_id 为 D_FACTOR（见 functional_domain_registry.yaml）
     blueprint: docs/03_modules/_domain_factor/blueprint.md
     module_id: MOD-L02-001
     contracts:
@@ -52,7 +52,7 @@ domain_contracts:
   # 蓝图: MOD-L03-001 | 路径: docs/03_modules/_domain_signal/blueprint.md
   # 子模块编号: D-SIGNAL-01~164（蓝图内部使用，不进blueprint_registry）
   signal_domain:
-    domain_id: SIGNAL-DOMAIN-001
+    domain_id: SIGNAL-DOMAIN-001  # 文档标识；depgraph domain_id 为 D_ASHARE_SIGNAL（见 functional_domain_registry.yaml）
     blueprint: docs/03_modules/_domain_signal/blueprint.md
     module_id: MOD-L03-001
     contracts:
@@ -72,7 +72,7 @@ domain_contracts:
         status: Draft
 
   ml_experiment_domain:
-    domain_id: ML-EXPERIMENT-DOMAIN-001
+    domain_id: ML-EXPERIMENT-DOMAIN-001  # 文档标识；depgraph domain_id 为 D_ML_TRAIN（见 functional_domain_registry.yaml）
     blueprint: docs/03_modules/_ml_experiment_domain/blueprint.md
     module_id: MOD-ML_EXPERIMENT_DOMAIN
     contracts:

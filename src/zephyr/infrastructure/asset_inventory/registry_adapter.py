@@ -546,6 +546,8 @@ class RegistryManager:
         )
 
         self._known["docs/03_modules/module-registry.yaml"] = YamlListAdapter(
+            # 历史遗留 ID：名字含 ALPHA_SIGNAL_DOMAIN 但实际管辖整个 module-registry.yaml
+            # 改名涉及 6 文件+depgraph 节点迁移，待后续重构统一为 REG-MOD-001
             "REG-MOD-ALPHA_SIGNAL_DOMAIN", "module-registry.yaml", asset_key="module_id"
         )
         self._known["docs/03_modules/blueprint_registry.yaml"] = YamlListAdapter(
