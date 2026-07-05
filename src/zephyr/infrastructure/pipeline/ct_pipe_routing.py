@@ -155,7 +155,7 @@ def modules_slice_from_node(node_id: str) -> tuple[Literal["A", "B"], list[str]]
     if node_id in _ORDER_B:
         i = _ORDER_B.index(node_id)
         return "B", list(_ORDER_B[i:])
-    raise ValueError(f"unknown pipeline node_id: {node_id!r}")
+    raise ValueError(f"未知 pipeline node_id: {node_id!r}")
 
 
 def _make_decision(node_id: str, rationale: str) -> PipelineRouteDecision:

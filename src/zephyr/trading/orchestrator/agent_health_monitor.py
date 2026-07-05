@@ -140,7 +140,7 @@ class AgentHealthMonitor:
         now: Callable[[], datetime] = default_now,
     ) -> None:
         if window_size < 1:
-            raise ValueError("window_size must be >= 1")
+            raise ValueError("window_size 必须 >= 1")
         self._window = window_size
         self._slo = slo_config or SLOConfig()
         self._throughput_window_sec = throughput_window_sec

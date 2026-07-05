@@ -554,7 +554,7 @@ class HallucinationDetector:
         handoff_approved: bool,
         started_at: float,
     ) -> HallucinationResult:
-        if self._primary is None or self._verifier is None: raise RuntimeError("primary/verifier LLM not injected")  # 5.88.4 修复: assert→if/raise
+        if self._primary is None or self._verifier is None: raise RuntimeError("primary/verifier LLM 未注入")  # 5.88.4 修复: assert→if/raise
 
         total_cost = 0.0
 
@@ -620,17 +620,17 @@ class HallucinationDetector:
 
     def _step1_baseline_plan(self, claim: str, context: dict[str, Any]) -> tuple[str, list[str], float]:
         """Step 1：Baseline 回答 + N 条 verify_questions（合并单次调用）。"""
-        if self._primary is None: raise RuntimeError("primary LLM not injected")  # 5.88.4 修复: assert→if/raise
+        if self._primary is None: raise RuntimeError("primary LLM 未注入")  # 5.88.4 修复: assert→if/raise
         prompt = self._build_step1_prompt(claim, context)
         result = self._primary(prompt, purpose="cove_step1_baseline_plan")
         if not result.success:
-            raise CoVeStepError(f"step1 failed: {result.error}")
+            raise CoVeStepError(f"step1 失败: {result.error}")
         if result.cost_usd > self._per_call_max_usd * 2:
-            raise CoVeStepError(f"step1 cost {result.cost_usd} exceeds hard cap")
+            raise CoVeStepError(f"step1 成本 {result.cost_usd} 超过硬上限")
         try:
             payload = json.loads(result.content)
         except json.JSONDecodeError as exc:
-            raise CoVeStepError(f"step1 bad json: {exc}") from exc
+            raise CoVeStepError(f"step1 JSON 解析失败: {exc}") from exc
         baseline = str(payload.get("baseline_answer", "")).strip()
         raw_questions = payload.get("verify_questions", [])
         if not isinstance(raw_questions, list):
@@ -640,11 +640,11 @@ class HallucinationDetector:
 
     def _step2_verify(self, verify_questions: list[str]) -> tuple[list[dict[str, Any]], float]:
         """Step 2：异构模型独立作答（不看 baseline，防止 prime）。"""
-        if self._verifier is None: raise RuntimeError("verifier LLM not injected")  # 5.88.4 修复: assert→if/raise
+        if self._verifier is None: raise RuntimeError("verifier LLM 未注入")  # 5.88.4 修复: assert→if/raise
         prompt = self._build_step2_prompt(verify_questions)
         result = self._verifier(prompt, purpose="cove_step2_verify")
         if not result.success:
-            raise CoVeStepError(f"step2 failed: {result.error}")
+            raise CoVeStepError(f"step2 失败: {result.error}")
         answers: list[dict[str, Any]] = []
         try:
             parsed = json.loads(result.content)
@@ -706,7 +706,7 @@ class HallucinationDetector:
 
     def _step4_final_check(self, baseline_answer: str, inconsistencies: list[str]) -> tuple[str, float, float]:
         """Step 4：仅 H 级触发；主模型修正 baseline。"""
-        if self._primary is None: raise RuntimeError("primary LLM not injected")  # 5.88.4 修复: assert→if/raise
+        if self._primary is None: raise RuntimeError("primary LLM 未注入")  # 5.88.4 修复: assert→if/raise
         prompt = (
             "请基于以下不一致点修正原回答，保持简洁：\n"
             f"原回答：{baseline_answer}\n"
@@ -715,7 +715,7 @@ class HallucinationDetector:
         )
         result = self._primary(prompt, purpose="cove_step4_final_check")
         if not result.success:
-            raise CoVeStepError(f"step4 failed: {result.error}")
+            raise CoVeStepError(f"step4 失败: {result.error}")
         try:
             payload = json.loads(result.content)
             corrected = str(payload.get("corrected", baseline_answer))

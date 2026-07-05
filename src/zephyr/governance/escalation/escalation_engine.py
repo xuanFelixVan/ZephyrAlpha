@@ -464,6 +464,6 @@ class EscalationEngine:
             gateway = LSGSecurityGateway()
             result = run_sync(gateway.scan_input(description))
             if result.decision.value not in ("allow", "ALLOW"):
-                raise ValueError(f"LSG blocked escalation input: {result.decision.value}")
+                raise PermissionError(f"LSG blocked escalation input: {result.decision.value}")
         except ImportError:
             pass

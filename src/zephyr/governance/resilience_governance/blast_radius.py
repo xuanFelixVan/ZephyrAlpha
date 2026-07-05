@@ -122,7 +122,7 @@ class BlastRadiusAnalyzer:
             DepgraphLoadError: depgraph 文件不存在或格式无效时抛出。
         """
         if max_depth < 1:
-            raise ValueError(f"max_depth must be >= 1, got {max_depth}")
+            raise ValueError(f"max_depth 必须 >= 1，实际为 {max_depth}")
         if depgraph_path is None:
             raise ValueError(
                 "depgraph_path 必须显式传入（治本2026-06-27：删除默认路径常量防止污染）。"
