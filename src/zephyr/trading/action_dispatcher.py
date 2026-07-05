@@ -755,4 +755,5 @@ class ActionReport:
         self.detail = detail
 
     def __repr__(self) -> str:
-        return f"ActionReport({self.target}, {self.capability}, {self.status}, {self.detail})"
+        # 5.110.3 修复: 字符串字段加 !r 使 __repr__ 可重建
+        return f"ActionReport(target={self.target!r}, capability={self.capability!r}, status={self.status!r}, detail={self.detail!r})"

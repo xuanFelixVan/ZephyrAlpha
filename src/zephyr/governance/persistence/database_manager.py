@@ -121,8 +121,11 @@ class DatabaseHealthStatus:
         }
 
     def __repr__(self) -> str:
-        status = "HEALTHY" if self.healthy else f"UNHEALTHY: {self.error}"
-        return f"DatabaseHealthStatus(v{self.schema_version}, {status})"
+        # 5.110.7 修复: 原返回人类可读状态摘要(语义应为__str__), 改为可重建的 field=value 格式
+        return (
+            f"DatabaseHealthStatus(healthy={self.healthy!r}, "
+            f"schema_version={self.schema_version!r}, error={self.error!r})"
+        )
 
 
 class DatabaseManager:

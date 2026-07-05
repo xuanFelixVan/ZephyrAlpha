@@ -6074,6 +6074,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.92 Enum正确性（2个，第18轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(Enum == vs is / __str__缺失需统一)
+> **第35轮修复状态（2026-07-05）**：5.92.2 FIXED — 14个plain Enum已添加__str__(order.py 3个+drift_models.py 4个+order_manager.py 1个+execution_engine.py 1个+zombie_scanner.py 1个+circuit_breaker.py 1个+evolution_engine.py 3个), 3处DRIFTED(ops/circuit_breaker.py+ops/evolution_engine.py+behavioral_audit/drift_models.py旧路径已迁移), 5.92.1仍STILL_VALID(30+处== vs is需统一但LOW优先级)
 
 > 维度AI：Enum成员比较方式、缺少__str__导致日志不一致
 
@@ -6749,7 +6750,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.110 __repr__/__str__泄露与一致性（9个，第21轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=9(__repr__/__str__泄露敏感信息/不一致需逐处脱敏)
-> **第35轮修复状态（2026-07-05）**：FIXED=3(5.110.1 Capability自定义__repr__排除auth_token + 5.110.2 DeepSeekChat/DeepSeekV4Chat自定义__repr__排除_api_key + 5.110.9 IdentityVerifier自定义__repr__排除_secret), DRIFTED=1(5.110.2第三处pipeline_routing/deepseek_v4_chat.py已删), STILL_VALID=5(5.110.3-5.110.7 __repr__不可重建5处+5.110.2副本1处)
+> **第35轮修复状态（2026-07-05）**：FIXED=7(5.110.1 Capability自定义__repr__排除auth_token + 5.110.2 DeepSeekChat/DeepSeekV4Chat自定义__repr__排除_api_key + 5.110.3 ActionReport加!r + 5.110.4 Finding统一field=value格式 + 5.110.6 ConstitutionArticle改field=value + 5.110.7 DatabaseHealthStatus改field=value + 5.110.9 IdentityVerifier自定义__repr__排除_secret), DRIFTED=2(5.110.2第三处pipeline_routing/deepseek_v4_chat.py已删 + 5.110.5 ops/protocols.py已删), STILL_VALID=0
 
 #### 5.110.1 [MEDIUM] Capability(BaseModel) auto-__repr__暴露auth_token字段
 

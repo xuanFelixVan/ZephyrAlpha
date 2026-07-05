@@ -26,6 +26,10 @@ from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 a
 
 
 class Severity(Enum):
+    # 5.92.2 修复: 统一日志格式, 返回 value 而非 ClassName.MEMBER
+    def __str__(self) -> str:
+        return self.value
+
     CRITICAL = "CRITICAL"
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
@@ -33,12 +37,20 @@ class Severity(Enum):
 
 
 class FeedbackLayer(Enum):
+    # 5.92.2 修复: 统一日志格式, 返回 value 而非 ClassName.MEMBER
+    def __str__(self) -> str:
+        return self.value
+
     L1_TASK = "L1_TASK"
     L2_PATTERN = "L2_PATTERN"
     L3_ARCHITECTURE = "L3_ARCHITECTURE"
 
 
 class EvolutionSignal(Enum):
+    # 5.92.2 修复: 统一日志格式, 返回 value 而非 ClassName.MEMBER
+    def __str__(self) -> str:
+        return self.value
+
     HIGH_RETRY_RATE = "HIGH_RETRY_RATE"
     ACCEPTANCE_DRIFT = "ACCEPTANCE_DRIFT"
     CONTEXT_OVERFLOW = "CONTEXT_OVERFLOW"

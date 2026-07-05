@@ -58,7 +58,8 @@ class ConstitutionArticle:
         self.status: str = status
 
     def __repr__(self) -> str:
-        return f"ConstitutionArticle({self.article_id}: {self.name})"
+        # 5.110.6 修复: 冒号分隔非Python表达式, 改为 field=value 格式使 __repr__ 可重建
+        return f"ConstitutionArticle(article_id={self.article_id!r}, name={self.name!r})"
 
 
 class ConstitutionGuard:
