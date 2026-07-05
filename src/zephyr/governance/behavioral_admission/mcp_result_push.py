@@ -23,7 +23,7 @@ import urllib.error
 import urllib.request
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -345,7 +345,7 @@ class ResultPushManager:
             _log.info("retry_failed %s → %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))
         return status
 
-    def subscribe_event(self, callback: Any) -> None:
+    def subscribe_event(self, callback: Callable[[Any], None]) -> None:
         self._event_subscribers.append(callback)
 
     def set_file_watcher_path(self, path: str | Path) -> None:

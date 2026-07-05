@@ -75,7 +75,7 @@ class RiskValidationBridge:
         engine = ExecutionEngine(order_manager=om, risk_validator=bridge)
     """
 
-    def __init__(self, risk_validator: Any) -> None:
+    def __init__(self, risk_validator: RiskValidationPort) -> None:
         self._validator = risk_validator
 
     def validate_order(

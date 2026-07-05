@@ -289,6 +289,7 @@ class IngestGate:
             )
             return self._gate_engine.evaluate(task, "G1")
         except Exception:
+            logger.warning("G1 gate evaluation failed for %s", source_path, exc_info=True)
             return None
 
     def _write_to_raw_intake(self, source_path: Path, text: str, fm: dict[str, Any]) -> Path:
