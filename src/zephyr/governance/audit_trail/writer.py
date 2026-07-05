@@ -25,6 +25,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from zephyr.governance.audit_trail.contracts import AuditWriter as AuditWriterABC  # 5.104.15 修复: 继承ABC契约
 from zephyr.governance.audit_trail.models import AuditIssue, GlobalAuditReport
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,7 @@ _GLOBAL_WRITER: "AuditWriter | None" = None
 _GLOBAL_WRITER_LOCK = threading.Lock()
 
 
-class AuditReportWriter:
+class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
     def __init__(self, report_dir: Path | None = None) -> None:
         self._report_dir = Path(report_dir or DEFAULT_REPORT_DIR)
         self._report_dir.mkdir(parents=True, exist_ok=True)

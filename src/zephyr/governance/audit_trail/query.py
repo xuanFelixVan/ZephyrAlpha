@@ -20,6 +20,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+from zephyr.governance.audit_trail.contracts import AuditQuery as AuditQueryABC  # 5.104.16 修复: 继承ABC契约
 from zephyr.governance.audit_trail.models import AuditIssue, OrchestratorStatus
 
 logger = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ __all__ = ["AuditQueryEngine"]
 DEFAULT_REPORT_DIR = Path("data/audit_history")
 
 
-class AuditQueryEngine:
+class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
     def __init__(self, report_dir: Path | None = None) -> None:
         self._report_dir = Path(report_dir or DEFAULT_REPORT_DIR)
 

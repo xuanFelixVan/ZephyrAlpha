@@ -19,6 +19,8 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from zephyr.governance.audit_trail.contracts import AuditIndexer as AuditIndexerABC  # 5.104.14 修复: 继承ABC契约
+
 logger = logging.getLogger(__name__)
 
 __all__ = ["AuditIndexer"]
@@ -27,7 +29,7 @@ DEFAULT_INDEX_DIR = Path("data/audit_cache")
 INDEX_FILE = "audit_index.json"
 
 
-class AuditIndexer:
+class AuditIndexer(AuditIndexerABC):  # 5.104.14 修复: 继承ABC契约
     def __init__(self, index_dir: Path | None = None) -> None:
         self._index_dir = Path(index_dir or DEFAULT_INDEX_DIR)
         self._index_dir.mkdir(parents=True, exist_ok=True)
