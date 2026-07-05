@@ -2439,6 +2439,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.56 协议合规性（5个，第14轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.56全部清零.
+> **第61轮修复状态（2026-07-06）**：5.56.2+5.56.3 FIXED — _check_safety_level 新增 req_id 参数修复 JSON-RPC id=null / error_codes.py 新增 ERR_SAFETY_APPROVAL_REQUIRED=-32005 替代 ERR_RBAC_DENIED, commit 3e89a7c32e. DEFERRED=0. 维度5.56全部清零.
 > 维度说明：HTTP状态码正确性、JSON-RPC规范、错误码语义、事件丢弃语义等。
 
 #### 5.56.1 [MEDIUM] HTTP状态码判定过窄——只接受200，拒绝其他2xx
@@ -2453,14 +2454,14 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **证据**：`return self._err(None, ERR_RBAC_DENIED, ...)`——req_id传None；safety_level=M时`"id": None`硬编码
 - **问题**：客户端无法将安全拦截响应与原始请求关联
 - **修复**：将None替换为实际req_id
-- **状态**：STILL_VALID（保留）— _check_safety_level 无 req_id 参数，需新增参数并贯穿调用链，中等规模重构
+- **状态**：FIXED — _check_safety_level 新增 req_id 参数, H级响应用 self._err(req_id,...), M级响应 "id":req_id, commit 3e89a7c32e
 
 #### 5.56.3 [MEDIUM] 错误码语义不匹配——用RBAC拒绝码表示安全审批要求
 - **文件**：[gateway_server.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/gateway_server.py#L684), [error_codes.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/error_codes.py#L33)
 - **证据**：safety_level=H（需Owner审批）使用ERR_RBAC_DENIED（-32004，RBAC权限拒绝）——两者语义完全不同
 - **问题**：客户端无法区分"用户无权限"与"操作需审批"
 - **修复**：新增ERR_SAFETY_APPROVAL_REQUIRED错误码
-- **状态**：STILL_VALID（保留）— 需在 error_codes.py 新增 ERR_SAFETY_APPROVAL_REQUIRED 错误码并更新 gateway_server.py 调用点，影响客户端契约
+- **状态**：FIXED — error_codes.py 新增 ERR_SAFETY_APPROVAL_REQUIRED=-32005, gateway_server.py H级 ERR_RBAC_DENIED→ERR_SAFETY_APPROVAL_REQUIRED, commit 3e89a7c32e
 
 #### 5.56.4 [MEDIUM] 事件队列满时静默丢弃，调用方无法区分成功与丢弃
 - **文件**：[event_bus.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/event_bus.py#L241)
@@ -3039,6 +3040,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.67全部清零.
 > **第57轮修复状态（2026-07-06）**：5.67.1 FIXED — resource_aware_pool.py 添加 max_pending 参数 + _pending_count() + submit 背压检查, commit dc2210ce46. DEFERRED=2(5.67.2/5.67.3).
+> **第61轮修复状态（2026-07-06）**：5.67.2+5.67.3 FIXED — GPUConsensusScheduler Semaphore(max_workers) / AsyncRuntime.run_in_executor deadlock fix (executor.submit+concurrent.futures.Future.result), commit 3e89a7c32e. DEFERRED=0. 维度5.67全部清零.
 #### 5.67.1 [HIGH] ResourceAwarePool无背压+私有属性访问
 
 - **文件**：`src/zephyr/governance/audit_trail/resource_aware_pool.py:42-83`
@@ -3051,14 +3053,14 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **文件**：`src/zephyr/trading/gpu_consensus_scheduler.py:166,174,194-219,221-223`
 - **证据**：(1) `max_workers: int = 1` 参数（L166）存入 `self._max_workers`（L175）但全文件从未使用——无ThreadPoolExecutor、无Semaphore限制并发；(2) `_PriorityQueue`（L117-153，含max_size=50背压）是死代码：`submit()`（L194）直接 `_execute_route`，从不入队；(3) `submit_batch`（L221）对整个requests列表 `asyncio.gather(*tasks)`，无并发上限。
 - **修复**：使用max_workers创建Semaphore限流，激活优先级队列。
-- **状态**：STILL_VALID（保留）— 需使用max_workers创建Semaphore限流+激活优先级队列
+- **状态**：FIXED — GPUConsensusScheduler __init__ 添加 self._semaphore=asyncio.Semaphore(max_workers), submit_batch 用 self._semaphore 替代硬编码8, commit 3e89a7c32e
 
 #### 5.67.3 [HIGH] AsyncRuntime.run_in_executor在运行循环中.result()死锁/崩溃
 
 - **文件**：`src/zephyr/trading/runtime/async_runtime.py:194-206`
 - **证据**：当存在运行中的事件循环时（L195成功获取），调用 `loop.run_in_executor` 返回asyncio.Future，随后 `asyncio.ensure_future(future).result()`（L206）。对未完成的asyncio.Future调用 `.result()` 会抛 `InvalidStateError`；即便不抛，同步 `.result()` 阻塞事件循环线程，executor回调无法执行→死锁。文档声称"让同步代码在async环境中调用"，实则不可用。
 - **修复**：使用 `asyncio.run_coroutine_threadsafe` 或重构为async调用。
-- **状态**：STILL_VALID（保留）— 需使用asyncio.run_coroutine_threadsafe或重构为async调用
+- **状态**：FIXED — run_in_executor 检测到运行中事件循环时改用 self._executor.submit()+concurrent.futures.Future.result() 避免死锁, commit 3e89a7c32e
 
 #### 5.67 严重度汇总
 
