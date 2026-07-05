@@ -6853,6 +6853,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.114 Final/@final强制（7个，第21轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(375处常量未标注Final需全量标注)
+> **第40轮修复状态（2026-07-05）**：FIXED=4(5.114.1-5.114.4 governance/code_dedup/config.py 4个可变dict常量PROJECT_SCALE_TIERS/POLICY_TREE/EXIT_CODES/PATH_THRESHOLDS标注Final+MappingProxyType包裹防止内容突变,load_policy_tree fallback返回dict副本保持调用方dict语义), 0 DRIFTED, STILL_VALID=3(5.114.5 375处全量标注Final=大规模/5.114.6 re-export Final语义=非平凡/5.114.7 @final安全类标注=需评估, 均需专项推进)
 
 #### 5.114.1-5.114.4 [HIGH] governance/config.py 4个可变dict常量未标注Final
 
@@ -8786,6 +8787,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(上下文管理器正确性需补全__enter__/__exit__)
 
 > **第39轮修复状态（2026-07-05）**：FIXED=4(5.163.2 task_repo._write_tx except Exception→BaseException确保Ctrl+C时ROLLBACK释放SQLite写锁+5.163.3 file_utils.backup_and_rollback except Exception→BaseException确保Ctrl+C时restore_backup+5.163.4 facade._RealSpanBridge __exit__后置_ctx=None+end()检查None避免重复退出+5.163.5 span_stub.noop_span except Exception→BaseException确保Ctrl+C时span finish("ERROR")), DRIFTED=3(5.163.1 scripts/governance/_concurrency.py不存在/5.163.6 ops/observability/tracing.py在废弃ops目录/5.163.7 shared/observability_02/tracing.py不存在), 0 STILL_VALID。本维度全部清零。
+
+> **第40轮修复状态（2026-07-05）**：5.163.1 FIXED——scripts/governance/meta/_concurrency.py ProcessLock.__enter__ 添加 acquire()返回值检查,未获取锁时raise RuntimeError防止with块在无锁保护下执行。本维度DRIFTED=2(5.163.6/5.163.7 文件不存在)。
 
 #### HIGH（1个）
 

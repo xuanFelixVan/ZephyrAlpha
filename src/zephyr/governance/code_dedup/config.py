@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """配置管理 — 策略树 YAML 加载 + 项目规模感知四 Tier 自适应阈值.
 
@@ -27,11 +27,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from types import MappingProxyType
+from typing import Any, Final, Mapping
 
 # ── 项目规模感知四 Tier 自适应阈值 ──────────────────────────
 
-PROJECT_SCALE_TIERS: dict[str, dict[str, Any]] = {
+# 5.114.1 修复: 标注 Final + MappingProxyType 防止运行时篡改全局策略
+PROJECT_SCALE_TIERS: Final[Mapping[str, dict[str, Any]]] = MappingProxyType({
     "Tier1_small": {
         "name": "小型项目",
         "max_lines": 5000,
@@ -82,11 +84,12 @@ PROJECT_SCALE_TIERS: dict[str, dict[str, Any]] = {
         "pre_commit_block_threshold": 0.55,
         "sbs_monitor_active": True,
     },
-}
+})
 
 # ── 策略树配置 ───────────────────────────────────────────────
 
-POLICY_TREE: dict[str, Any] = {
+# 5.114.2 修复: 标注 Final + MappingProxyType 防止运行时篡改全局策略
+POLICY_TREE: Final[Mapping[str, Any]] = MappingProxyType({
     "version": "0.10.0",
     "cloning_detection": {
         "type1_exact_match": True,
@@ -119,27 +122,29 @@ POLICY_TREE: dict[str, Any] = {
         "frequency": "monthly",
         "net_negative_threshold": 50,
     },
-}
+})
 
 # ── 退出码约定 ───────────────────────────────────────────────
 
-EXIT_CODES: dict[int, str] = {
+# 5.114.3 修复: 标注 Final + MappingProxyType 防止运行时篡改
+EXIT_CODES: Final[Mapping[int, str]] = MappingProxyType({
     0: "CLEAN — 无重复发现",
     1: "WARN — 发现低风险重复",
     2: "ERROR — 发现严重重复",
     3: "FAULT — 工具内部故障",
     4: "DEGRADED — 降级运行",
-}
+})
 
 # ── 路径感知阈值 ─────────────────────────────────────────────
 
-PATH_THRESHOLDS: dict[str, float] = {
+# 5.114.4 修复: 标注 Final + MappingProxyType 防止运行时篡改
+PATH_THRESHOLDS: Final[Mapping[str, float]] = MappingProxyType({
     "shared": 0.3,
     "core": 0.6,
     "default": 0.7,
     "tests": 0.9,
     "scripts": 0.7,
-}
+})
 
 
 def get_tier_for_project(total_lines: int) -> dict[str, Any]:
@@ -174,7 +179,8 @@ def load_policy_tree() -> dict[str, Any]:
                 return data
         except Exception:
             pass
-    return POLICY_TREE
+    # 5.114.2 修复: POLICY_TREE 现为 MappingProxyType (只读), 返回 dict 副本保持调用方 dict 语义
+    return dict(POLICY_TREE)
 
 
 def load_policy_rules() -> list[dict[str, Any]]:

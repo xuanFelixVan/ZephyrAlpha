@@ -312,7 +312,10 @@ class ProcessLock:
             pass
 
     def __enter__(self):
-        self.acquire()
+        # 5.163.1 修复: 检查 acquire() 返回值, 未获取锁时抛 RuntimeError 防止 with 块在无锁保护下执行
+        result = self.acquire()
+        if not result.acquired:
+            raise RuntimeError(f"ProcessLock acquire failed: {result.reason}")
         return self
 
     def __exit__(self, *args):
