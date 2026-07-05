@@ -7080,6 +7080,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.121 singledispatch（3个，第22轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(singledispatch使用不当需重构)
+> **第41轮评估状态（2026-07-05）**：NOT_NEEDED=3. 5.121.1 async+多分支共享变量(actor/operation/gate_passed/violation_count), singledispatchmethod重构会引入tuple解包复杂度, 风险高于收益; 5.121.2/5.121.3 仅3分支, singledispatch需3个register函数+主函数, 行数反增, 违反"避免过度工程化"原则. 当前if-elif链对3分支已足够清晰.
 
 #### 5.121.1 [LOW] verdict_engine.evaluate的if-elif链可重构为singledispatchmethod
 
