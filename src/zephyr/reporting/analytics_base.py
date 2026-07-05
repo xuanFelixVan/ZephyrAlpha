@@ -31,13 +31,13 @@ D_REPORTING — Post-Trade Analytics Layer
   - TCA（Transaction Cost Analysis）：成交回报 Fill → 执行分析报告 ExecutionReport
   - 绩效归因（Brinson）：持仓快照 + 因子暴露 → 归因报告 PerformanceAttributionReport
   - P&L 分解（方向性 vs 波动性收益）
-  - 日终报告生成 → D_FRONTEND Dashboard / D_COMPLIANCE Compliance
+  - 日终报告生成 → D_FRONTEND Dashboard / D_GOV_ENFORCEMENT Compliance
 
 扩展点：
   - TCAEngineBase        : OCP D_REPORTING-TCA — Fill + Order → ExecutionReport
   - AttributionEngineBase : OCP D_REPORTING-ATTR — PositionSnapshot → PerformanceAttributionReport
 
-依赖方向：D_EXECUTION_CORE → D_REPORTING → D_FRONTEND / D_RESEARCH / D_COMPLIANCE
+依赖方向：D_EXECUTION_CORE → D_REPORTING → D_FRONTEND / D_RESEARCH / D_GOV_ENFORCEMENT
 """
 
 from __future__ import annotations

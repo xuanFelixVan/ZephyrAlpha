@@ -54,7 +54,7 @@ codification_at: "2026-05-15"
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 盘后分析层——它解决了交易成本量化与绩效归因标准化的问题。核心职责包括：TCA 交易成本分析、绩效归因（Brinson 三因子分解）、执行报告/归因报告产出。当前规模 2 个 EngineBase + 2 个 Default 实现（骨架），目标容量 5 个 TCA 策略 + 3 个归因模型。上游依赖 MOD-L06-001（Fill/Order）和 MOD-L05-001（PositionSnapshot），下游被 D_FRONTEND Dashboard 和 D_COMPLIANCE Compliance 消费。
+本蓝图描述 ZephyrAlpha 盘后分析层——它解决了交易成本量化与绩效归因标准化的问题。核心职责包括：TCA 交易成本分析、绩效归因（Brinson 三因子分解）、执行报告/归因报告产出。当前规模 2 个 EngineBase + 2 个 Default 实现（骨架），目标容量 5 个 TCA 策略 + 3 个归因模型。上游依赖 MOD-L06-001（Fill/Order）和 MOD-L05-001（PositionSnapshot），下游被 D_FRONTEND Dashboard 和 D_GOV_ENFORCEMENT Compliance 消费。
 
 ---
 
@@ -116,7 +116,7 @@ codification_at: "2026-05-15"
 | 4 | ✅ 包含 | 归因报告产出 | CTR-P1-009 PerformanceAttributionReport 可产出 |
 | 5 | ❌ 排除 | 交易执行 | D_EXECUTION_CORE Trade Execution |
 | 6 | ❌ 排除 | 风险评估 | D_RISK Risk Management |
-| 7 | ❌ 排除 | 合规审查 | D_COMPLIANCE Compliance |
+| 7 | ❌ 排除 | 合规审查 | D_GOV_ENFORCEMENT Compliance |
 
 ### 1.4 运行场景约束
 
@@ -133,7 +133,7 @@ codification_at: "2026-05-15"
 |------|--------|---------|------|
 | Owner | 架构决策 | 设计+施工 | 审批权限 |
 | D_FRONTEND Dashboard | 归因报告展示 | 集成 | CTR-P1-009 消费 |
-| D_COMPLIANCE Compliance | 合规审查 | 集成 | CTR-P1-009 消费 |
+| D_GOV_ENFORCEMENT Compliance | 合规审查 | 集成 | CTR-P1-009 消费 |
 
 ### 1.6 当前态/目标态差距
 
@@ -183,8 +183,8 @@ codification_at: "2026-05-15"
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | D_EXECUTION_CORE Fill + Order | 滑点计算 → ExecutionReport | D_FRONTEND, D_COMPLIANCE | ExecutionReport |
-| 2 | D_EXECUTION_CORE PositionSnapshot | Brinson 分解 → PerformanceAttributionReport | D_FRONTEND, D_COMPLIANCE | PerformanceAttributionReport |
+| 1 | D_EXECUTION_CORE Fill + Order | 滑点计算 → ExecutionReport | D_FRONTEND, D_GOV_ENFORCEMENT | ExecutionReport |
+| 2 | D_EXECUTION_CORE PositionSnapshot | Brinson 分解 → PerformanceAttributionReport | D_FRONTEND, D_GOV_ENFORCEMENT | PerformanceAttributionReport |
 
 ### 3.3 状态生命周期
 
@@ -431,7 +431,7 @@ class PerformanceAttributionReport:
 |------------|---------|--------|---------|
 | D_EXECUTION_CORE Trade Execution | CTR-005/004 消费 | TCA 可接收 Fill+Order | TCA 分析可执行 |
 | D_FRONTEND Dashboard | CTR-P1-009 产出 | Dashboard 可展示归因报告 | Dashboard 可渲染 |
-| D_COMPLIANCE Compliance | CTR-P1-009 产出 | 合规可审查归因结果 | 合规可消费 |
+| D_GOV_ENFORCEMENT Compliance | CTR-P1-009 产出 | 合规可审查归因结果 | 合规可消费 |
 
 ---
 
@@ -498,7 +498,7 @@ class PerformanceAttributionReport:
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\reporting\implementations\default_tca_engine.py` |
 | 验收标准 | import 成功，slippage_bps 计算使用 Decimal |
 | 验证命令 | `python -c "from zephyr.reporting.implementations.default_tca_engine import DefaultTCAEngine"` |
-| G7 检查项 | 上游 analytics_base.py 存在，下游 D_FRONTEND/D_COMPLIANCE 可消费 |
+| G7 检查项 | 上游 analytics_base.py 存在，下游 D_FRONTEND/D_GOV_ENFORCEMENT 可消费 |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | DefaultTCAEngine 可实例化且 analyze() 可调用 |
 
@@ -522,7 +522,7 @@ class PerformanceAttributionReport:
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\reporting\implementations\default_attribution_engine.py` |
 | 验收标准 | import 成功，Brinson 三因子分解正确 |
 | 验证命令 | `python -c "from zephyr.reporting.implementations.default_attribution_engine import DefaultAttributionEngine"` |
-| G7 检查项 | 上游 analytics_base.py 存在，下游 D_FRONTEND/D_COMPLIANCE 可消费 |
+| G7 检查项 | 上游 analytics_base.py 存在，下游 D_FRONTEND/D_GOV_ENFORCEMENT 可消费 |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | DefaultAttributionEngine.attribute() 返回非零 allocation/selection/interaction |
 
@@ -544,9 +544,9 @@ class PerformanceAttributionReport:
 |------|------|
 | 对应蓝图契约 | §4.1 + §9 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\reporting\implementations\` + `D:\ZephyrAlpha\tests\reporting\` |
-| 验收标准 | PerformanceAttributionReport 可被 D_FRONTEND/D_COMPLIANCE 消费，测试通过 |
+| 验收标准 | PerformanceAttributionReport 可被 D_FRONTEND/D_GOV_ENFORCEMENT 消费，测试通过 |
 | 验证命令 | `python -m pytest tests/reporting/ -k attribution -v` |
-| G7 检查项 | 下游 D_FRONTEND/D_COMPLIANCE 可消费，测试覆盖率 > 80% |
+| G7 检查项 | 下游 D_FRONTEND/D_GOV_ENFORCEMENT 可消费，测试覆盖率 > 80% |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | pytest exit 0 |
 
@@ -814,7 +814,7 @@ class PerformanceAttributionReport:
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
 | Tier 1 | D_FRONTEND Dashboard | §4 接口契约、§10 依赖关系 |
-| Tier 1 | D_COMPLIANCE Compliance | §4 接口契约 |
+| Tier 1 | D_GOV_ENFORCEMENT Compliance | §4 接口契约 |
 | Tier 2 | D_RESEARCH Research | CTR-P1-007 ExecutionReport |
 
 ### 变更审批与同步规则
