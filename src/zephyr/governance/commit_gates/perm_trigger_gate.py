@@ -133,6 +133,34 @@ def _detect_time_trigger(tree: ast.AST) -> bool:
     return False
 
 
+def _detect_time_trigger_in_text(text: str) -> bool:
+    """文本模式检测时间触发（用于 diff 新增行，AST 无法解析片段）。
+
+    检测：
+      - ``time.sleep(`` / ``.sleep(`` 调用
+      - ``while True`` / ``while 1``
+      - ``schedule.`` 属性访问
+      - APScheduler / BackgroundScheduler / BlockingScheduler / AsyncIOScheduler 标识符
+      - ``.wait(timeout=`` 事件超时轮询模式
+    """
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            continue
+        if "time.sleep(" in line or ".sleep(" in line:
+            return True
+        if "while True" in line or "while 1:" in line:
+            return True
+        if "schedule." in line:
+            return True
+        for ident in _TIME_TRIGGER_IDENTIFIERS:
+            if ident in line:
+                return True
+        if ".wait(timeout=" in line:
+            return True
+    return False
+
+
 def _detect_event_registration(tree: ast.AST) -> bool:
     """AST 中是否存在事件订阅/注册模式。
 
@@ -182,10 +210,10 @@ def make_perm_trigger_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增 .py 文件
+        # 1. 获取 staged 新增(A) + 修改(M) .py 文件
         try:
             diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+                ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
             )
             if diff_result.returncode != 0:
                 logger.warning(
@@ -193,7 +221,7 @@ def make_perm_trigger_gate() -> GateSpec:
                     diff_result.returncode,
                 )
                 return True, ""
-            staged_new = diff_result.stdout.strip().splitlines()
+            staged_files = diff_result.stdout.strip().splitlines()
         except Exception as e:
             logger.warning(
                 "PERM-TRIGGER gate fail-open: git diff 异常(%s: %s)，检测器失效。",
@@ -202,11 +230,11 @@ def make_perm_trigger_gate() -> GateSpec:
             return True, ""
 
         # 2. 过滤 .py 文件 + tests/ 豁免
-        new_py_files = [
-            f.replace("\\", "/") for f in staged_new
+        py_files = [
+            f.replace("\\", "/") for f in staged_files
             if f.endswith(".py") and not is_test_exempt(f)
         ]
-        if not new_py_files:
+        if not py_files:
             return True, ""
 
         # 3. 获取 worktree root
@@ -221,20 +249,25 @@ def make_perm_trigger_gate() -> GateSpec:
         except Exception:
             wt_root = str(gateway.project_root)
 
-        # 4. 解析为绝对路径
-        abs_files = []
-        for rel in new_py_files:
-            if os.path.isabs(rel):
-                abs_files.append(rel)
-            else:
-                abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
-        abs_files = [f for f in abs_files if os.path.isfile(f)]
-        if not abs_files:
-            return True, ""
+        # 4. 区分新增(A)和修改(M)：新增查全文件 AST，修改只查 staged 新增行
+        try:
+            added_result = gateway._run_git(
+                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+            )
+            added_set = set(added_result.stdout.strip().splitlines()) if added_result.returncode == 0 else set()
+        except Exception:
+            added_set = set()
 
         # 5. AST 检测：permanent 文件含时间触发但无事件订阅
         violations: list[str] = []
-        for abs_path in abs_files:
+        for rel_path in py_files:
+            if os.path.isabs(rel_path):
+                abs_path = rel_path
+            else:
+                abs_path = os.path.join(wt_root, rel_path.replace("/", os.sep))
+            if not os.path.isfile(abs_path):
+                continue
+
             try:
                 content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
             except OSError as e:
@@ -247,20 +280,55 @@ def make_perm_trigger_gate() -> GateSpec:
             if not _has_permanent_ttl(content):
                 continue  # 非 permanent 文件，跳过
 
-            try:
-                tree = ast.parse(content, filename=abs_path)
-            except SyntaxError as e:
-                logger.warning(
-                    "PERM-TRIGGER gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-                    abs_path, type(e).__name__, e,
-                )
+            # 门禁文件自豁免：检测器本身含 pattern 字符串（非真实时间触发）
+            if "governance/commit_gates/" in rel_path or "governance\\commit_gates\\" in rel_path:
                 continue
 
-            has_trigger = _detect_time_trigger(tree)
-            has_event = _detect_event_registration(tree)
-            if has_trigger and not has_event:
-                rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
-                violations.append(rel_name)
+            is_new = rel_path in added_set
+            if is_new:
+                # 新增文件：全文件 AST 检测
+                try:
+                    tree = ast.parse(content, filename=abs_path)
+                except SyntaxError as e:
+                    logger.warning(
+                        "PERM-TRIGGER gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
+                        abs_path, type(e).__name__, e,
+                    )
+                    continue
+                has_trigger = _detect_time_trigger(tree)
+                has_event = _detect_event_registration(tree)
+                if has_trigger and not has_event:
+                    violations.append(rel_path)
+            else:
+                # 修改文件：只检测 staged diff 新增行中的时间触发模式
+                try:
+                    diff_content = gateway._run_git(
+                        ["git", "diff", "--cached", "--unified=0", "--", rel_path]
+                    )
+                    if diff_content.returncode != 0:
+                        continue
+                    added_lines = [
+                        line[1:] for line in diff_content.stdout.splitlines()
+                        if line.startswith("+") and not line.startswith("+++")
+                    ]
+                except Exception:
+                    continue
+
+                if not added_lines:
+                    continue
+
+                # 对新增行做简化检测（AST 无法解析片段，用模式匹配）
+                added_text = "\n".join(added_lines)
+                has_new_trigger = _detect_time_trigger_in_text(added_text)
+                if has_new_trigger:
+                    # 检查修改后全文件是否有事件订阅
+                    try:
+                        tree = ast.parse(content, filename=abs_path)
+                        has_event = _detect_event_registration(tree)
+                    except SyntaxError:
+                        has_event = False
+                    if not has_event:
+                        violations.append(rel_path + " (modified)")
 
         if violations:
             detail = "; ".join(violations[:5])

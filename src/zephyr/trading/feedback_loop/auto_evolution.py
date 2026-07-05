@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-UNK_auto_evolution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
-import threading
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -29,6 +29,8 @@ from zephyr.trading.feedback_loop.evolution_engine import (
     FeedbackLayer,
     Severity,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class AutoTriggerType(Enum):
@@ -81,41 +83,12 @@ class AutoEvolution:
     engine: EvolutionEngine
     interval_seconds: float = 86400.0
 
-    _stop_event: threading.Event = field(default_factory=threading.Event, init=False)
-    _thread: threading.Thread | None = field(default=None, init=False)
-
-    def _run(self) -> None:
-        while not self._stop_event.is_set():
-            if self._stop_event.wait(timeout=self.interval_seconds):
-                break
-            try:
-                self.engine.consolidate_knowledge()
-            except Exception:
-                pass
-
-    def start(self) -> None:
-        if self._thread is not None and self._thread.is_alive():
-            return
-        self._stop_event.clear()
-        self._thread = threading.Thread(target=self._run, daemon=True, name="AutoEvolution")
-        self._thread.start()
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
-
+    def consolidate(self) -> None:
+        """事件驱动入口：由外部事件触发知识合并（替代原 time.wait 轮询）。"""
         try:
-            ResourceOptimizationEngine().register_daemon(
-                "auto-evolution",
-                self.start,
-                self.stop,
-                priority=3,
-            )
+            self.engine.consolidate_knowledge()
         except Exception:
-            pass
-
-    def stop(self, timeout: float = 10.0) -> None:
-        self._stop_event.set()
-        if self._thread is not None:
-            self._thread.join(timeout=timeout)
-            self._thread = None
+            logger.debug("AutoEvolution.consolidate failed", exc_info=True)
 
 
 @dataclass

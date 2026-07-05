@@ -197,24 +197,27 @@ class HealthMonitor:
             logger.debug("healthcheck probe registration failed", exc_info=True)
 
     def _monitor_loop(self) -> None:
-        """分钟级监控循环 — DM-201247.
+        """已废弃（P1 修复 2026-07-05）：time.sleep daemon 违反永久系统铁律。
 
-        - 每 _metrics_interval 秒：采集指标到 MetricsRegistry
-        - 每 _health_check_interval 秒：运行健康检查 reconcile
+        原分钟级轮询已改为事件驱动：EventBus 事件触发 tick()。
+        保留方法签名仅为向后兼容，直接调用 tick()。
         """
-        while self._running:
-            try:
-                now = time.monotonic()
-                # Metrics collection every interval
-                self._collect_metrics()
-                # Health check every health_check_interval
-                if now - self._last_health_check >= self._health_check_interval:
-                    self.reconcile()
-                    self._last_health_check = now
-            except Exception:
-                # 5.12.1 修复：原 except: pass 使监控变僵尸进程（故障不可见）
-                logger.exception("monitor loop iteration failed")
-            time.sleep(self._metrics_interval)
+        self.tick()
+
+    def tick(self) -> None:
+        """事件驱动入口：采集指标 + 条件性健康检查 reconcile。
+
+        由 EventBus 事件（task.completed/task.failed 等）触发，
+        或由 CI 批量兜底调用。替代原 _monitor_loop 的 time.sleep 轮询。
+        """
+        try:
+            now = time.monotonic()
+            self._collect_metrics()
+            if now - self._last_health_check >= self._health_check_interval:
+                self.reconcile()
+                self._last_health_check = now
+        except Exception:
+            logger.exception("health monitor tick failed")
 
     def _collect_metrics(self) -> None:
         """采集 probe 指标到 MetricsRegistry — DM-201247."""
@@ -368,24 +371,28 @@ class HealthMonitor:
         )
 
     def start(self) -> None:
-        """启动健康监控 — DM-201247: 启动分钟级后台调度线程."""
-        # 5.142.6 修复: 用 lifecycle_lock 保护 check-then-act, 避免 TOCTOU
+        """启动健康监控 — P1 修复（2026-07-05）：事件驱动替代 time.sleep daemon。
+
+        订阅 EventBus 事件（task.completed/task.failed）触发 tick()，
+        不再启动后台轮询线程。CI 批量兜底由外部调用 tick()。
+        """
         with self._lifecycle_lock:
-            if self._monitor_thread is not None and self._monitor_thread.is_alive():
-                return  # 已在运行
+            if self._running:
+                return
             self._running = True
             self._last_health_check = time.monotonic()
-            self._monitor_thread = threading.Thread(target=self._monitor_loop, daemon=True, name="health-monitor")
-            self._monitor_thread.start()
+            try:
+                from zephyr.shared.events.event_bus import bus
+
+                bus.subscribe("task.completed", lambda _: self.tick())
+                bus.subscribe("task.failed", lambda _: self.tick())
+                bus.subscribe("health.check.request", lambda _: self.tick())
+                logger.info("HealthMonitor started (event-driven, no daemon thread)")
+            except Exception as e:
+                logger.warning("HealthMonitor EventBus subscribe failed, tick() must be called manually: %s", e)
 
     def stop(self) -> None:
-        """停止健康监控 — DM-201247: 停止后台调度线程."""
-        # 5.142.6 修复: 用 lifecycle_lock 保护, 避免 start/stop 竞争
+        """停止健康监控 — P1 修复：事件驱动模式无线程需 join。"""
         with self._lifecycle_lock:
             self._running = False
-            thread = self._monitor_thread
-        # join 在锁外执行, 避免长时间持锁
-        if thread is not None and thread.is_alive():
-            thread.join(timeout=5.0)
-        with self._lifecycle_lock:
-            self._monitor_thread = None
+        logger.info("HealthMonitor stopped (event-driven mode)")

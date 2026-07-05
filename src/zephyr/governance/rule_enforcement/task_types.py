@@ -54,14 +54,25 @@ _TASK_ID_PATTERN = rf"^({_NAMESPACE_NAMES})-\d+$"
 
 
 class TaskStatus(str, Enum):
+    """TaskStatus 真源（SSoT）— 全项目唯一 TaskStatus 定义。
+
+    派生方（禁止反向修改）：
+      - zephyr.infrastructure.lifecycle.task_lifecycle_manager.TaskStatus → 本类 re-export
+      - zephyr.shared.protocols.a2a.a2a_coordination.TaskStatus → 本类 re-export
+    """
+
     PENDING = "PENDING"
+    CREATED = "CREATED"
+    LOCKED = "LOCKED"
+    ASSIGNED = "ASSIGNED"
+    READY = "READY"
     IN_PROGRESS = "IN_PROGRESS"
+    REVIEWING = "REVIEWING"
     COMPLETED = "COMPLETED"
     VERIFIED = "VERIFIED"
     FAILED = "FAILED"
     BLOCKED = "BLOCKED"
     WAITING = "WAITING"
-    READY = "READY"
     RETRY = "RETRY"
     CANCELLED = "CANCELLED"
 

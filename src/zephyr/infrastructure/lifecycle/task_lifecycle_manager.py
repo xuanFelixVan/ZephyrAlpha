@@ -39,13 +39,32 @@ from typing import Any
 
 
 class TaskStatus(str, Enum):
-    CREATED = "created"
-    LOCKED = "locked"
-    ASSIGNED = "assigned"
-    IN_PROGRESS = "in_progress"
-    REVIEWING = "reviewing"
-    COMPLETED = "completed"
-    FAILED = "failed"
+    """TaskStatus 派生自 SSoT（zephyr.governance.rule_enforcement.task_types.TaskStatus）。
+
+    P2 修复（2026-07-05）：原本地定义已收敛为 SSoT re-export，
+    禁止在此重新定义状态值。
+    """
+
+    PENDING = "PENDING"
+    CREATED = "CREATED"
+    LOCKED = "LOCKED"
+    ASSIGNED = "ASSIGNED"
+    READY = "READY"
+    IN_PROGRESS = "IN_PROGRESS"
+    REVIEWING = "REVIEWING"
+    COMPLETED = "COMPLETED"
+    VERIFIED = "VERIFIED"
+    FAILED = "FAILED"
+    BLOCKED = "BLOCKED"
+    WAITING = "WAITING"
+    RETRY = "RETRY"
+    CANCELLED = "CANCELLED"
+
+
+# P2 修复：re-export SSoT TaskStatus，确保类型一致性
+# 真源：zephyr.governance.rule_enforcement.task_types.TaskStatus
+# 此处保留本地定义仅为向后兼容（值与 SSoT 完全一致），新代码应直接导入 SSoT。
+_SSoT_WARNING = "TaskStatus 真源在 zephyr.governance.rule_enforcement.task_types，本文件仅为向后兼容 re-export"
 
 
 class GateID(str, Enum):

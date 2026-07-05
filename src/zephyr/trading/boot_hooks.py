@@ -273,6 +273,31 @@ def _register_rbac_hooks() -> None:
         logger.warning("Failed to register RBAC hooks: %s", e)
 
 
+def _subscribe_skill_freshness_events() -> None:
+    """订阅 skill.freshness_critical 事件 — 原 boot_cron_jobs 内联（2026-07-05 裁定）。"""
+    try:
+        from zephyr.shared.events.event_bus import bus
+
+        def _on_freshness_critical(payload: dict) -> None:
+            try:
+                from zephyr.autonomy_core.skills.skill_freshness_ext import auto_deprecate_skill
+                from zephyr.autonomy_core.skills.skill_lifecycle import SkillLifecycle
+
+                sl = SkillLifecycle()
+                for item in payload.get("criticals", []):
+                    skill_id = item.get("skill_id", "")
+                    score = item.get("freshness_score", 0.0)
+                    if skill_id:
+                        auto_deprecate_skill(sl, skill_id, score, reason="freshness_critical_auto")
+            except Exception:
+                logger.debug("skill.freshness_critical handler failed", exc_info=True)
+
+        bus.subscribe("skill.freshness_critical", _on_freshness_critical)
+        logger.info("Skill freshness critical event subscribed")
+    except Exception as e:
+        logger.warning("Failed to subscribe skill.freshness_critical: %s", e)
+
+
 def register_boot_hooks() -> None:
     try:
         from zephyr.governance.ops_governance.event_hook import hook_registry
@@ -527,6 +552,7 @@ def register_boot_hooks() -> None:
     _register_rbac_hooks()
     _init_shared_monitoring_modules()
     _subscribe_eventbus_consumers()
+    _subscribe_skill_freshness_events()
 
     # 红蓝对抗提交触发消费线程 (MOD-INF-030 事件驱动)：daemon 线程轮询
     # data/red_blue/trigger_queue/，门禁达标时跑 TIER_1 对抗。
