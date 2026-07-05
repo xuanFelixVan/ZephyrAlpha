@@ -8944,6 +8944,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.167 比较运算正确性（22个，第28轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=22(比较运算正确性需逐处审查__eq__/__lt__)
+> **第34轮修复状态（2026-07-05，Batch 42）**：FIXED=7(5.167.1/2/3/5/6/7/8 浮点==0分母守卫改 < 1e-9 或 <= 0), DRIFTED=2(5.167 HIGH backtest_engine.py不存在; 5.167.4 audit_orchestrator/anomaly.py已在5.159.5删除), DEFERRED=13(LOW 1-13 哨兵检查功能正确), 机械项已清零
 
 #### HIGH（1个）
 

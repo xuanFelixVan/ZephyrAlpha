@@ -56,7 +56,7 @@ def detect_contract_drift(
         else:
             return None
 
-    if baseline_std == 0:
+    if abs(baseline_std) < 1e-9:  # 5.167.5 修复: 浮点==0比较改 < epsilon (路径漂移 governance/→governance/drift_detection/)
         baseline_std = 0.001
 
     deviation = abs(current_value - baseline_median) / baseline_std

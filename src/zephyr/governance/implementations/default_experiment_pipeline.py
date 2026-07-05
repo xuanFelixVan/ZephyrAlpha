@@ -110,7 +110,7 @@ class DefaultExperimentPipeline(ExperimentPipelineBase):
 
     @staticmethod
     def compute_effect_size(control: float, treatment: float, pooled_std: float) -> float:
-        if pooled_std == 0:
+        if abs(pooled_std) < 1e-9:  # 5.167.7 修复: 浮点==0比较改 < epsilon (路径漂移 simulation/implementations/→governance/implementations/)
             return 0.0
         return (treatment - control) / pooled_std
 

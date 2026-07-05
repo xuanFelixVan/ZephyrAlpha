@@ -127,7 +127,7 @@ def _print_report(
 
     返回 None 表示分母为 0 (由调用方决定退出码)。
     """
-    if b.overall_score == 0:
+    if abs(b.overall_score) < 1e-9:  # 5.167.8 修复: 浮点==0比较改 < epsilon
         print(
             f"[ERROR] 分母模型 {b.model_id} 的 overall_score = 0, 无法计算比率",
             file=sys.stderr,

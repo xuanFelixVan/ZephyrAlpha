@@ -280,7 +280,7 @@ class AntiAutomationBias:
         half = len(self._last_response_times) // 2
         recent_avg = sum(self._last_response_times[-half:]) / half
         older_avg = sum(self._last_response_times[:half]) / half
-        if older_avg == 0:
+        if abs(older_avg) < 1e-9:  # 5.167.2 修复: 浮点==0比较改 < epsilon
             return "stable"
         ratio = recent_avg / older_avg
         if ratio > 1.5:

@@ -43,7 +43,7 @@ class AnomalyDetector:
         variance = sum((x - mean) ** 2 for x in recent) / len(recent)
         std_dev = variance**0.5
 
-        if std_dev == 0:
+        if abs(std_dev) < 1e-9:  # 5.167.3 修复: 浮点==0比较改 < epsilon
             return {"is_anomaly": value != mean, "z_score": 0.0 if value == mean else float("inf")}
 
         z_score = abs(value - mean) / std_dev

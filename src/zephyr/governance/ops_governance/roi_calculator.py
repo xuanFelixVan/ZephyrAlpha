@@ -46,7 +46,7 @@ class ROICalculator:
         net_tokens = self._total_saved_tokens - self._total_spent_tokens
         net_cost = self._total_saved_cost - self._total_spent_cost
 
-        if self._total_spent_cost == 0:
+        if self._total_spent_cost <= 0:  # 5.167.1 修复: 累积花费浮点比较改 <= 0 (防御负数与浮点零)
             token_ratio = self._total_saved_tokens - self._total_spent_tokens
             return ROIResult(
                 tokens_spent=self._total_spent_tokens,
