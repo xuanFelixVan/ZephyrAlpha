@@ -115,30 +115,30 @@ class AuditContext(BaseModel):
 
 
 class AuditChain:
-    def __init__(self):
-        self.entries = []
-        self.chain_hash = ""
+    def __init__(self) -> None:
+        self.entries: list[Any] = []
+        self.chain_hash: str = ""
 
-    def add_entry(self, entry):
+    def add_entry(self, entry: Any) -> None:
         self.entries.append(entry)
 
-    def verify(self):
+    def verify(self) -> bool:
         return True
 
 
 class _AuditEventTypeMember:
-    def __init__(self, value):
+    def __init__(self, value: str) -> None:
         self.value = value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"AuditEventType.{self.value}"
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, _AuditEventTypeMember):
             return self.value == other.value
         return self.value == other
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.value)
 
 
@@ -190,7 +190,15 @@ class AuditEventType:
 
 
 class AuditEntryV1:
-    def __init__(self, entry_id="", event_type="", timestamp=None, actor="", target="", details=None):
+    def __init__(
+        self,
+        entry_id: str = "",
+        event_type: str = "",
+        timestamp: datetime | None = None,
+        actor: str = "",
+        target: str = "",
+        details: dict[str, Any] | None = None,
+    ) -> None:
         self.entry_id = entry_id
         self.event_type = event_type
         self.timestamp = timestamp
@@ -200,7 +208,13 @@ class AuditEntryV1:
 
 
 class AuditMetrics:
-    def __init__(self, total_entries=0, by_type=None, by_actor=None, period=""):
+    def __init__(
+        self,
+        total_entries: int = 0,
+        by_type: dict[str, int] | None = None,
+        by_actor: dict[str, int] | None = None,
+        period: str = "",
+    ) -> None:
         self.total_entries = total_entries
         self.by_type = by_type or {}
         self.by_actor = by_actor or {}
@@ -223,7 +237,15 @@ class ProvenanceDepth:
 
 
 class FileAuditDetail:
-    def __init__(self, path="", action=None, actor="", timestamp=None, hash_before="", hash_after=""):
+    def __init__(
+        self,
+        path: str = "",
+        action: str | None = None,
+        actor: str = "",
+        timestamp: datetime | None = None,
+        hash_before: str = "",
+        hash_after: str = "",
+    ) -> None:
         self.path = path
         self.action = action
         self.actor = actor
@@ -240,7 +262,14 @@ class ProvenanceLevel:
 
 
 class IntegrityReport:
-    def __init__(self, report_id="", valid=True, entry_count=0, violations=None, timestamp=None):
+    def __init__(
+        self,
+        report_id: str = "",
+        valid: bool = True,
+        entry_count: int = 0,
+        violations: list[Any] | None = None,
+        timestamp: datetime | None = None,
+    ) -> None:
         self.report_id = report_id
         self.valid = valid
         self.entry_count = entry_count
@@ -249,7 +278,15 @@ class IntegrityReport:
 
 
 class IntegrityRecord:
-    def __init__(self, record_id="", entry_id="", hash_value="", algorithm="sha256", timestamp=None, verified=True):
+    def __init__(
+        self,
+        record_id: str = "",
+        entry_id: str = "",
+        hash_value: str = "",
+        algorithm: str = "sha256",
+        timestamp: datetime | None = None,
+        verified: bool = True,
+    ) -> None:
         self.record_id = record_id
         self.entry_id = entry_id
         self.hash_value = hash_value
@@ -266,24 +303,29 @@ class ProvenanceLight:
 
 
 class LamportClock:
-    def __init__(self, initial=0):
+    def __init__(self, initial: int = 0) -> None:
         self._counter = initial
 
-    def tick(self):
+    def tick(self) -> int:
         self._counter += 1
         return self._counter
 
-    def merge(self, other_counter):
+    def merge(self, other_counter: int) -> int:
         self._counter = max(self._counter, other_counter) + 1
         return self._counter
 
     @property
-    def value(self):
+    def value(self) -> int:
         return self._counter
 
 
 class ProvenanceFull:
-    def __init__(self, entry_id="", chain=None, depth=0):
+    def __init__(
+        self,
+        entry_id: str = "",
+        chain: list[Any] | None = None,
+        depth: int = 0,
+    ) -> None:
         self.entry_id = entry_id
         self.chain = chain or []
         self.depth = depth
@@ -297,7 +339,14 @@ class ProvenanceStandard:
 
 
 class TaskAuditSummary:
-    def __init__(self, task_id="", total_events=0, by_type=None, by_actor=None, period=""):
+    def __init__(
+        self,
+        task_id: str = "",
+        total_events: int = 0,
+        by_type: dict[str, int] | None = None,
+        by_actor: dict[str, int] | None = None,
+        period: str = "",
+    ) -> None:
         self.task_id = task_id
         self.total_events = total_events
         self.by_type = by_type or {}
