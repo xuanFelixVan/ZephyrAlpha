@@ -119,7 +119,7 @@ class AuditFinding:
 
     def __post_init__(self):
         if self.severity not in SEVERITY_TO_PRIORITY:
-            raise ValueError(f"Invalid severity: {self.severity}")
+            raise ValueError(f"Invalid severity: {self.severity!r}. Valid values: {list(SEVERITY_TO_PRIORITY.keys())}")  # 5.99.16 修复: 附加合法枚举值列表
 
 
 @dataclass

@@ -222,7 +222,7 @@ class AdversarialSampleGenerator:
         if strategy_name is not None:
             strategy = self._strategies.get(strategy_name)
             if strategy is None:
-                raise StrategyError("Unknown strategy: %s" % strategy_name)
+                raise StrategyError(f"Unknown strategy: {strategy_name}")  # 5.99.13 修复: %格式化改f-string统一
             return [strategy.generate(output)]
         return [s.generate(output) for s in self._strategies.values()]
 

@@ -6406,6 +6406,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.99 错误消息一致性（22个，第19轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=22(错误消息中英文混用/异常类型不一致需统一规范)
+> **第43轮修复状态（2026-07-05）**：FIXED=5(5.99.1 depgraph_schema 移除SQL文本泄露,仅保留版本/语句编号 + 5.99.13 chaos_engine/adversarial_strategies/adversarial_validation 3文件 %格式化改f-string + 5.99.14 budget_engine "BudgetEngine已关闭"中英文加空格 + 5.99.16 finding_task_bridge Invalid severity附加合法枚举值列表 + 5.99.17 trainer_base 裸KeyError附加说明和可用列表), DRIFTED=1(5.99.12 database_service.py WRITE_LOCK_TIMEOUT不存在,内容已变), DEFERRED=16(5.99.2-11 中英混用统一/异常类型统一属专项工程批量重构 + 5.99.15/18/19/20/21/22 风格问题批量重构/错误码SSoT扩展). 维度5.99机械项已清零.
 
 #### 5.99.1 HIGH级（1个）
 

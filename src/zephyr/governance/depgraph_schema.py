@@ -1227,7 +1227,7 @@ def _run_migration(
             )
             if any(p in msg for p in benign):
                 continue
-            raise RuntimeError(f"Migration v{version} statement #{i}: {exc}\n  SQL: {stmt[:200]}") from exc
+            raise RuntimeError(f"Migration v{version} statement #{i} failed: {exc}") from exc  # 5.99.1 修复: 移除SQL文本泄露,仅保留版本/语句编号/原始异常
     with conn.cursor() as cur:
         cur.execute(
             "INSERT INTO _schema_version (version, applied_at, description) VALUES (%s, %s, %s) "

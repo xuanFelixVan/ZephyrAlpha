@@ -318,7 +318,7 @@ class BudgetEngine:
 
     def pre_flight_check(self, request_id: str, estimated_tokens: int = 0, estimated_cost: float = 0.0, prompt: str = "") -> GateResult:
         if self._closed:
-            raise RuntimeError("BudgetEngine已关闭")
+            raise RuntimeError("BudgetEngine 已关闭")  # 5.99.14 修复: 中英文之间加空格
 
         # IPI 检查——若 prompt 含注入攻击，直接 DENY 并触发隔离
         if prompt:
@@ -373,7 +373,7 @@ class BudgetEngine:
 
     def record_consumption(self, policy_id: str, tokens: int, cost: float, time_minutes: float) -> None:
         if self._closed:
-            raise RuntimeError("BudgetEngine已关闭")
+            raise RuntimeError("BudgetEngine 已关闭")  # 5.99.14 修复: 中英文之间加空格
 
         with self._lock:
             cons = self._consumption.get(policy_id)

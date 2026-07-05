@@ -96,7 +96,7 @@ class ModelRegistry:
     @classmethod
     def get(cls, model_id: str) -> type[ModelTrainerBase]:
         if model_id not in cls._registry:
-            raise KeyError(model_id)
+            raise KeyError(f"Model trainer not registered: {model_id!r}. Available: {list(cls._registry.keys())}")  # 5.99.17 修复: 附加说明文字和可用列表
         return cls._registry[model_id]
 
     @classmethod

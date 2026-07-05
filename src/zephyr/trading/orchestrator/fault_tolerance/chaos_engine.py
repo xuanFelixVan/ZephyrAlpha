@@ -164,7 +164,7 @@ class ChaosEngine:
             else:
                 if point is not None:
                     return True
-                raise ChaosInjectError("Unknown injection type: %s" % injection_type_or_point)
+                raise ChaosInjectError(f"Unknown injection type: {injection_type_or_point}")  # 5.99.13 修复: %格式化改f-string统一
 
             result.duration_ms = (time.perf_counter() - start) * 1000
             self._last_result = result
@@ -224,7 +224,7 @@ class ChaosEngine:
         if os.environ.get("CHAOS_CRASH_CONFIRMED") != "yes":
             raise ChaosInjectError(
                 "Crash injection requires CHAOS_CRASH_CONFIRMED=yes env var. "
-                "Refusing to crash without explicit confirmation. target=%s" % target
+                f"Refusing to crash without explicit confirmation. target={target}"  # 5.99.13 修复: %格式化改f-string统一
             )
 
         return InjectionResult(
@@ -258,7 +258,7 @@ class ChaosEngine:
             checks_passed += 1
         except Exception as exc:
             checks_failed += 1
-            failures.append("State cleanup failed: %s" % exc)
+            failures.append(f"State cleanup failed: {exc}")  # 5.99.13 修复: %格式化改f-string统一
 
         try:
             if self._last_result and self._last_result.injection_type == "error":
