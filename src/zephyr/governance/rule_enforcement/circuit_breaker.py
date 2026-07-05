@@ -340,7 +340,7 @@ class CBGManager:
                 raise
 
         updated = self.get_state(caller, target)
-        assert updated is not None  # — 刚刚写入，不应为 None
+        if updated is None: raise RuntimeError("post-write fetch returned None")  # 5.88.6 修复: assert→if/raise
         return updated
 
     def reset(

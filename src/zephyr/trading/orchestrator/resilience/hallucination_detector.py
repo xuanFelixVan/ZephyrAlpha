@@ -554,7 +554,7 @@ class HallucinationDetector:
         handoff_approved: bool,
         started_at: float,
     ) -> HallucinationResult:
-        assert self._primary is not None and self._verifier is not None
+        if self._primary is None or self._verifier is None: raise RuntimeError("primary/verifier LLM not injected")  # 5.88.4 修复: assert→if/raise
 
         total_cost = 0.0
 
@@ -620,7 +620,7 @@ class HallucinationDetector:
 
     def _step1_baseline_plan(self, claim: str, context: dict[str, Any]) -> tuple[str, list[str], float]:
         """Step 1：Baseline 回答 + N 条 verify_questions（合并单次调用）。"""
-        assert self._primary is not None
+        if self._primary is None: raise RuntimeError("primary LLM not injected")  # 5.88.4 修复: assert→if/raise
         prompt = self._build_step1_prompt(claim, context)
         result = self._primary(prompt, purpose="cove_step1_baseline_plan")
         if not result.success:
@@ -640,7 +640,7 @@ class HallucinationDetector:
 
     def _step2_verify(self, verify_questions: list[str]) -> tuple[list[dict[str, Any]], float]:
         """Step 2：异构模型独立作答（不看 baseline，防止 prime）。"""
-        assert self._verifier is not None
+        if self._verifier is None: raise RuntimeError("verifier LLM not injected")  # 5.88.4 修复: assert→if/raise
         prompt = self._build_step2_prompt(verify_questions)
         result = self._verifier(prompt, purpose="cove_step2_verify")
         if not result.success:
@@ -706,7 +706,7 @@ class HallucinationDetector:
 
     def _step4_final_check(self, baseline_answer: str, inconsistencies: list[str]) -> tuple[str, float, float]:
         """Step 4：仅 H 级触发；主模型修正 baseline。"""
-        assert self._primary is not None
+        if self._primary is None: raise RuntimeError("primary LLM not injected")  # 5.88.4 修复: assert→if/raise
         prompt = (
             "请基于以下不一致点修正原回答，保持简洁：\n"
             f"原回答：{baseline_answer}\n"

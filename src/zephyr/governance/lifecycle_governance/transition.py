@@ -243,7 +243,7 @@ class TransitionMixin:
 
             raise
 
-        assert updated_row is not None
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.3 修复: assert→if/raise
 
         from zephyr.governance.ops_governance.event_hook import TransitionEvent, hook_registry
 

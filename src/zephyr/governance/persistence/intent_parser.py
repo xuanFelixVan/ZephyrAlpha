@@ -266,7 +266,7 @@ class IntentParser:
 
     def _run_stage2(self, query: str, stage1: IntentResult) -> IntentResult:
         """调用注入的 EmbeddingSearcher，按域聚合得分产出 IntentResult。"""
-        assert self._emb is not None
+        if self._emb is None: raise RuntimeError("embedding service not injected")  # 5.88.5 修复: assert→if/raise
         try:
             hits = self._emb(query, top_k=5)
         except Exception as exc:  # — 检索失败降级到 Stage 3
@@ -319,7 +319,7 @@ class IntentParser:
         mid: IntentResult,
     ) -> IntentResult:
         """调用注入的 LLM，返回兜底 IntentResult。"""
-        assert self._llm is not None
+        if self._llm is None: raise RuntimeError("LLM service not injected")  # 5.88.5 修复: assert→if/raise
         try:
             verdict = self._llm(query, context=context)
         except Exception as exc:  # — LLM 失败时保守兜底

@@ -1113,7 +1113,7 @@ class TaskRepository:
                 session_id=task.session_id,
             )
             row = self._fetch_row(conn, task.task_id)
-        assert row is not None
+        if row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
         return _row_to_taskcard(row)
 
     # ------------------------------------------------------------------
@@ -1252,7 +1252,7 @@ class TaskRepository:
             )
             updated_row = self._fetch_row(conn, task_id)
 
-        assert updated_row is not None
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
@@ -1319,7 +1319,7 @@ class TaskRepository:
             )
             updated_row = self._fetch_row(conn, task_id)
 
-        assert updated_row is not None
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
@@ -1451,7 +1451,7 @@ class TaskRepository:
             )
 
             updated_row = self._fetch_row(conn, task_id)
-        assert updated_row is not None
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
         return _row_to_taskcard(updated_row)
 
     def approve_priority_upgrade(self, task_id: str) -> TaskCard:
@@ -1489,7 +1489,7 @@ class TaskRepository:
             )
 
             updated_row = self._fetch_row(conn, task_id)
-        assert updated_row is not None
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
         return _row_to_taskcard(updated_row)
 
     def reject_priority_upgrade(self, task_id: str) -> TaskCard:
@@ -1528,7 +1528,7 @@ class TaskRepository:
             )
 
             updated_row = self._fetch_row(conn, task_id)
-        assert updated_row is not None
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
@@ -1699,7 +1699,7 @@ class TaskRepository:
                 self._gate_engine._persist_result(exc.result, conn=None)
             raise
 
-        assert updated_row is not None
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
 
         from zephyr.governance.ops_governance.event_hook import TransitionEvent, hook_registry
 
@@ -2820,7 +2820,7 @@ class TaskRepository:
                         (task.task_id, f["file_path"], f.get("role", "in_scope")),
                     )
             row = self._fetch_row(conn, task.task_id)
-        assert row is not None
+        if row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
         return _row_to_taskcard(row)
 
     # ------------------------------------------------------------------

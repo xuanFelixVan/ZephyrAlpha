@@ -5906,6 +5906,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.88 生产代码assert误用（6个，第18轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=6(assert→if/raise跨36处11文件，5.88.4/5.88.5涉及4副本/2副本消除重复=大规模重构)
+> **第35轮修复状态（2026-07-05）**：FIXED=6(5.88.1 atomic_transaction_manager 7处+5.88.2 task_repo 8处+5.88.3 transition 1处+5.88.4 hallucination_detector 3副本12处+5.88.5 intent_parser 2处+5.88.6 circuit_breaker 1处,共31处assert→if/raise), DRIFTED=2(5.88.4第4副本governance/audit_orchestration/hallucination_detector.py已删+5.88.5第2副本已合并), 0 STILL_VALID
 
 > 维度AD：生产代码中用assert做校验，python -O时校验被完全移除。共36处assert语句跨11个文件。
 

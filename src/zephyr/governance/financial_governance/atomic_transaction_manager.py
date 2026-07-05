@@ -189,7 +189,7 @@ class TransactionScope:
         """在当前事务中执行单条 SQL（参数化查询）。"""
         self._check_active()
         self._check_timeout()
-        assert self._atm._conn is not None
+        if self._atm._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
         return self._atm._conn.execute(sql, params)
 
     def executemany(
@@ -200,7 +200,7 @@ class TransactionScope:
         """在当前事务中批量执行 SQL。"""
         self._check_active()
         self._check_timeout()
-        assert self._atm._conn is not None
+        if self._atm._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
         return self._atm._conn.executemany(sql, seq_of_params)
 
     def write_file(
@@ -330,7 +330,7 @@ class AtomicTransactionManager:
 
     def _ensure_tx_idempotency_table(self) -> None:
         """确保 tx_idempotency 表存在（幂等）。"""
-        assert self._conn is not None
+        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
         self._conn.execute(
             """
             CREATE TABLE IF NOT EXISTS tx_idempotency (
@@ -373,7 +373,7 @@ class AtomicTransactionManager:
             tx = TransactionScope(atm=self, tx_id=_new_tx_id(), timeout=self._tx_timeout)
             self._active_tx = tx
 
-            assert self._conn is not None
+            if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
             self._conn.execute("BEGIN IMMEDIATE")
 
             # 登记到幂等去重表
@@ -420,7 +420,7 @@ class AtomicTransactionManager:
 
     def _write_compensation_event(self, tx: TransactionScope) -> None:
         """SQLite COMMIT 已成功但文件 rename 失败时，写入补偿事件。"""
-        assert self._conn is not None
+        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
         try:
             self._conn.execute(
                 """
@@ -451,7 +451,7 @@ class AtomicTransactionManager:
             logger.error("[%s] failed to write compensation event: %s", tx.tx_id, exc)
 
     def _commit(self, tx: TransactionScope) -> None:
-        assert self._conn is not None
+        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
 
         self._pre_commit_verify(tx)
 
@@ -516,7 +516,7 @@ class AtomicTransactionManager:
         if tx._rolled_back:
             return
 
-        assert self._conn is not None
+        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
         try:
             self._conn.execute("ROLLBACK")
         except sqlite3.Error as exc:
