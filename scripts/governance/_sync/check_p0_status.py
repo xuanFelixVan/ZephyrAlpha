@@ -33,16 +33,18 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import DB_PATH  # noqa: E402
 
 conn = sqlite3.connect(str(DB_PATH))
-cur = conn.execute(
-    "SELECT status, count(1) FROM tasks WHERE tags LIKE '%auto-bridged%' AND priority='P0' AND is_deleted=0 GROUP BY status"
-)
-print("auto-bridged P0 by status:")
-for r in cur.fetchall():
-    print(f"  {r[0]}: {r[1]}")
-cur2 = conn.execute(
-    "SELECT priority, status, count(1) FROM tasks WHERE tags LIKE '%auto-bridged%' AND is_deleted=0 GROUP BY priority, status"
-)
-print("\nauto-bridged (all priorities) by status:")
-for r in cur2.fetchall():
-    print(f"  {r[0]}/{r[1]}: {r[2]}")
-conn.close()
+try:
+    cur = conn.execute(
+        "SELECT status, count(1) FROM tasks WHERE tags LIKE '%auto-bridged%' AND priority='P0' AND is_deleted=0 GROUP BY status"
+    )
+    print("auto-bridged P0 by status:")
+    for r in cur.fetchall():
+        print(f"  {r[0]}: {r[1]}")
+    cur2 = conn.execute(
+        "SELECT priority, status, count(1) FROM tasks WHERE tags LIKE '%auto-bridged%' AND is_deleted=0 GROUP BY priority, status"
+    )
+    print("\nauto-bridged (all priorities) by status:")
+    for r in cur2.fetchall():
+        print(f"  {r[0]}/{r[1]}: {r[2]}")
+finally:
+    conn.close()

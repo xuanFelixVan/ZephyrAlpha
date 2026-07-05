@@ -226,10 +226,12 @@ def _build_adr_registry() -> set[str]:
             import sqlite3
 
             conn = sqlite3.connect(str(db_path))
-            cur = conn.execute("SELECT ke_id FROM knowledge WHERE category = 'architecture_decision'")
-            for row in cur:
-                adr_ids.add(row[0])
-            conn.close()
+            try:
+                cur = conn.execute("SELECT ke_id FROM knowledge WHERE category = 'architecture_decision'")
+                for row in cur:
+                    adr_ids.add(row[0])
+            finally:
+                conn.close()
         except Exception:
             _warn(f"KB 数据库读取失败: {db_path}")
     else:

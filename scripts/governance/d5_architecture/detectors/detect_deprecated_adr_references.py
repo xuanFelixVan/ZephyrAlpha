@@ -67,10 +67,12 @@ def build_adr_status_map() -> dict[str, str]:
             import sqlite3
 
             conn = sqlite3.connect(str(db_path))
-            cur = conn.execute("SELECT ke_id, status FROM knowledge WHERE category = 'architecture_decision'")
-            for row in cur:
-                status_map[row[0]] = row[1]
-            conn.close()
+            try:
+                cur = conn.execute("SELECT ke_id, status FROM knowledge WHERE category = 'architecture_decision'")
+                for row in cur:
+                    status_map[row[0]] = row[1]
+            finally:
+                conn.close()
         except Exception:
             pass
     adr_dirs = [

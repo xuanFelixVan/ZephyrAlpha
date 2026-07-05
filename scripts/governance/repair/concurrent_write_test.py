@@ -79,15 +79,17 @@ def setup():
     # shutil.copy2(PROD_DB, TEST_DB)  # 已移除：源文件不存在
     # 清理测试残留数据（防止上次测试残留干扰）
     conn = sqlite3.connect(str(TEST_DB))
-    conn.execute(
-        "DELETE FROM edges WHERE from_node_id IN (SELECT node_id FROM nodes WHERE path LIKE 'src/test_%') OR to_node_id IN (SELECT node_id FROM nodes WHERE path LIKE 'src/test_%')"
-    )
-    conn.execute("DELETE FROM nodes WHERE path LIKE 'src/test_%'")
-    conn.execute(
-        "DELETE FROM domains WHERE domain_id LIKE 'D-T2-%' OR domain_id LIKE 'D-T3-%' OR domain_id LIKE 'D-T4-%' OR domain_id LIKE 'D-T5-%' OR domain_id LIKE 'D-T9-%' OR domain_id LIKE 'D-TEST-RB%'"
-    )
-    conn.commit()
-    conn.close()
+    try:
+        conn.execute(
+            "DELETE FROM edges WHERE from_node_id IN (SELECT node_id FROM nodes WHERE path LIKE 'src/test_%') OR to_node_id IN (SELECT node_id FROM nodes WHERE path LIKE 'src/test_%')"
+        )
+        conn.execute("DELETE FROM nodes WHERE path LIKE 'src/test_%'")
+        conn.execute(
+            "DELETE FROM domains WHERE domain_id LIKE 'D-T2-%' OR domain_id LIKE 'D-T3-%' OR domain_id LIKE 'D-T4-%' OR domain_id LIKE 'D-T5-%' OR domain_id LIKE 'D-T9-%' OR domain_id LIKE 'D-TEST-RB%'"
+        )
+        conn.commit()
+    finally:
+        conn.close()
     print(f"[SETUP] 测试数据库已创建并清理: {TEST_DB}")
 
 
@@ -187,10 +189,12 @@ def test_t1():
         )
     # 验证最终只有1个设计态节点
     conn = sqlite3.connect(str(TEST_DB))
-    count = conn.execute(
-        "SELECT COUNT(*) FROM nodes WHERE path='src/test_rb_t1_same/' AND design_maturity='design'"
-    ).fetchone()[0]
-    conn.close()
+    try:
+        count = conn.execute(
+            "SELECT COUNT(*) FROM nodes WHERE path='src/test_rb_t1_same/' AND design_maturity='design'"
+        ).fetchone()[0]
+    finally:
+        conn.close()
     print(f"  验证: 同 path 设计态节点数={count}（期望: 1）")
     passed = ok_count == 8 and count == 1
     print(f"  判定: {'PASS' if passed else 'FAIL'}")
@@ -236,8 +240,10 @@ def test_t2():
         print(f"    worker-{r['worker']}: {r['status']}")
     # 验证域是否都插入
     conn = sqlite3.connect(str(TEST_DB))
-    count = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id LIKE 'D-T2-W%'").fetchone()[0]
-    conn.close()
+    try:
+        count = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id LIKE 'D-T2-W%'").fetchone()[0]
+    finally:
+        conn.close()
     print(f"  验证: 插入了 {count}/4 个测试域")
     passed = ok_count == 4 and count == 4
     print(f"  判定: {'PASS' if passed else 'FAIL'}")
@@ -275,8 +281,10 @@ def test_t3():
     ok_count = sum(1 for r in task_results if r["status"] == "OK")
     print(f"  结果: {ok_count}/4 成功（期望: 全部成功）")
     conn = sqlite3.connect(str(TEST_DB))
-    count = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id LIKE 'D-T3-W%'").fetchone()[0]
-    conn.close()
+    try:
+        count = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id LIKE 'D-T3-W%'").fetchone()[0]
+    finally:
+        conn.close()
     print(f"  验证: 插入了 {count}/4 个测试域")
     passed = ok_count == 4 and count == 4
     print(f"  判定: {'PASS' if passed else 'FAIL'}")
@@ -317,8 +325,10 @@ def test_t4():
     for r in task_results:
         print(f"    worker-{r['worker']}: {r['status']}")
     conn = sqlite3.connect(str(TEST_DB))
-    count = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id='D-T4-SAME'").fetchone()[0]
-    conn.close()
+    try:
+        count = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id='D-T4-SAME'").fetchone()[0]
+    finally:
+        conn.close()
     print(f"  验证: D-T4-SAME 存在 {count} 条（期望: 1）")
     passed = count == 1
     print(f"  判定: {'PASS' if passed else 'FAIL'}")
@@ -587,9 +597,11 @@ def test_t9():
 
     # 验证：D-T9-OK 不应该存在（因为 batch 回滚了）
     conn = sqlite3.connect(str(TEST_DB))
-    ok_exists = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id='D-T9-OK'").fetchone()[0]
-    prereq_exists = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id='D-T9-PREREQ'").fetchone()[0]
-    conn.close()
+    try:
+        ok_exists = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id='D-T9-OK'").fetchone()[0]
+        prereq_exists = conn.execute("SELECT COUNT(*) FROM domains WHERE domain_id='D-T9-PREREQ'").fetchone()[0]
+    finally:
+        conn.close()
 
     print(f"  验证: D-T9-OK 存在={ok_exists}（期望: 0，因回滚）")
     print(f"  验证: D-T9-PREREQ 存在={prereq_exists}（期望: 1，前置条件不受影响）")

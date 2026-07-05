@@ -44,102 +44,104 @@ DB = "data/databases/governance.db"
 NOW = datetime.now(UTC).isoformat()
 
 conn = sqlite3.connect(DB)
-all_ids = {r[0] for r in conn.execute("SELECT task_id FROM tasks WHERE is_deleted=0").fetchall()}
+try:
+    all_ids = {r[0] for r in conn.execute("SELECT task_id FROM tasks WHERE is_deleted=0").fetchall()}
 
-rows = conn.execute(
-    "SELECT task_id, depends_on, status FROM tasks WHERE is_deleted=0 AND depends_on != '[]'"
-).fetchall()
+    rows = conn.execute(
+        "SELECT task_id, depends_on, status FROM tasks WHERE is_deleted=0 AND depends_on != '[]'"
+    ).fetchall()
 
-_RANGE_RE = re.compile(r"^([A-Z]+-[A-Z]+(?:-\d+)?-(\d+))~(\d+)$")
-_MODULE_RE = re.compile(r"^MOD-[A-Z]+-\d+$")
+    _RANGE_RE = re.compile(r"^([A-Z]+-[A-Z]+(?:-\d+)?-(\d+))~(\d+)$")
+    _MODULE_RE = re.compile(r"^MOD-[A-Z]+-\d+$")
 
-fixes = {
-    "range_expanded": 0,
-    "module_ref_removed": 0,
-    "dead_ref_removed": 0,
-    "total_tasks_updated": 0,
-}
+    fixes = {
+        "range_expanded": 0,
+        "module_ref_removed": 0,
+        "dead_ref_removed": 0,
+        "total_tasks_updated": 0,
+    }
 
-for r in rows:
-    tid = r[0]
-    status = r[2]
-    try:
-        deps = json.loads(r[1]) if isinstance(r[1], str) else r[1]
-    except (json.JSONDecodeError, TypeError, ValueError) as e:
-        # Phase 2 P2 修复（异常处理 HIGH）：bare except 吞噬 JSON 解析异常=孤儿检测全部失真
-        logger.warning("fix_orphan_deps: task %s depends_on 解析失败(%s: %s)，按空依赖处理", r[0], type(e).__name__, e)
-        deps = []
+    for r in rows:
+        tid = r[0]
+        status = r[2]
+        try:
+            deps = json.loads(r[1]) if isinstance(r[1], str) else r[1]
+        except (json.JSONDecodeError, TypeError, ValueError) as e:
+            # Phase 2 P2 修复（异常处理 HIGH）：bare except 吞噬 JSON 解析异常=孤儿检测全部失真
+            logger.warning("fix_orphan_deps: task %s depends_on 解析失败(%s: %s)，按空依赖处理", r[0], type(e).__name__, e)
+            deps = []
 
-    new_deps = []
-    changed = False
+        new_deps = []
+        changed = False
 
-    for dep in deps:
-        if dep in all_ids:
+        for dep in deps:
+            if dep in all_ids:
+                new_deps.append(dep)
+                continue
+
+            m = _RANGE_RE.match(dep)
+            if m:
+                prefix = m.group(1)
+                start = int(m.group(2))
+                end = int(m.group(3))
+                expanded = []
+                for i in range(start, end + 1):
+                    candidate = f"{prefix.rsplit('-', 1)[0]}-{i:04d}"
+                    if candidate in all_ids:
+                        expanded.append(candidate)
+                if expanded:
+                    new_deps.extend(expanded)
+                    fixes["range_expanded"] += 1
+                    changed = True
+                    print(f"  [RANGE] {tid}: {dep} → {expanded[:5]}{'...' if len(expanded) > 5 else ''}")
+                else:
+                    print(f"  [RANGE-EMPTY] {tid}: {dep} → no matches, dropping")
+                    changed = True
+                continue
+
+            if _MODULE_RE.match(dep):
+                fixes["module_ref_removed"] += 1
+                changed = True
+                print(f"  [MODULE] {tid}: dropping module ref {dep}")
+                continue
+
+            if status == "COMPLETED":
+                fixes["dead_ref_removed"] += 1
+                changed = True
+                continue
+
             new_deps.append(dep)
-            continue
 
-        m = _RANGE_RE.match(dep)
-        if m:
-            prefix = m.group(1)
-            start = int(m.group(2))
-            end = int(m.group(3))
-            expanded = []
-            for i in range(start, end + 1):
-                candidate = f"{prefix.rsplit('-', 1)[0]}-{i:04d}"
-                if candidate in all_ids:
-                    expanded.append(candidate)
-            if expanded:
-                new_deps.extend(expanded)
-                fixes["range_expanded"] += 1
-                changed = True
-                print(f"  [RANGE] {tid}: {dep} → {expanded[:5]}{'...' if len(expanded) > 5 else ''}")
-            else:
-                print(f"  [RANGE-EMPTY] {tid}: {dep} → no matches, dropping")
-                changed = True
-            continue
+        if changed:
+            new_json = json.dumps(new_deps, ensure_ascii=False)
+            conn.execute("UPDATE tasks SET depends_on=?, updated_at=? WHERE task_id=?", (new_json, NOW, tid))
+            fixes["total_tasks_updated"] += 1
 
-        if _MODULE_RE.match(dep):
-            fixes["module_ref_removed"] += 1
-            changed = True
-            print(f"  [MODULE] {tid}: dropping module ref {dep}")
-            continue
+    conn.commit()
 
-        if status == "COMPLETED":
-            fixes["dead_ref_removed"] += 1
-            changed = True
-            continue
+    print("\n=== Fix Summary ===")
+    print(f"  Range notations expanded: {fixes['range_expanded']}")
+    print(f"  Module refs removed: {fixes['module_ref_removed']}")
+    print(f"  Dead refs removed (COMPLETED tasks): {fixes['dead_ref_removed']}")
+    print(f"  Total tasks updated: {fixes['total_tasks_updated']}")
 
-        new_deps.append(dep)
+    # Verify remaining orphans
+    all_ids2 = {r[0] for r in conn.execute("SELECT task_id FROM tasks WHERE is_deleted=0").fetchall()}
+    rows2 = conn.execute(
+        "SELECT task_id, depends_on, status FROM tasks WHERE is_deleted=0 AND depends_on != '[]'"
+    ).fetchall()
+    remaining = 0
+    for r in rows2:
+        try:
+            deps = json.loads(r[1]) if isinstance(r[1], str) else r[1]
+        except (json.JSONDecodeError, TypeError, ValueError) as e:
+            # Phase 2 P2 修复（异常处理 HIGH）：bare except 吞噬 JSON 解析异常=孤儿统计失真
+            logger.warning("fix_orphan_deps: verify task %s depends_on 解析失败(%s: %s)，按空依赖处理", r[0], type(e).__name__, e)
+            deps = []
+        for dep in deps:
+            if dep not in all_ids2:
+                remaining += 1
 
-    if changed:
-        new_json = json.dumps(new_deps, ensure_ascii=False)
-        conn.execute("UPDATE tasks SET depends_on=?, updated_at=? WHERE task_id=?", (new_json, NOW, tid))
-        fixes["total_tasks_updated"] += 1
-
-conn.commit()
-
-print("\n=== Fix Summary ===")
-print(f"  Range notations expanded: {fixes['range_expanded']}")
-print(f"  Module refs removed: {fixes['module_ref_removed']}")
-print(f"  Dead refs removed (COMPLETED tasks): {fixes['dead_ref_removed']}")
-print(f"  Total tasks updated: {fixes['total_tasks_updated']}")
-
-# Verify remaining orphans
-all_ids2 = {r[0] for r in conn.execute("SELECT task_id FROM tasks WHERE is_deleted=0").fetchall()}
-rows2 = conn.execute(
-    "SELECT task_id, depends_on, status FROM tasks WHERE is_deleted=0 AND depends_on != '[]'"
-).fetchall()
-remaining = 0
-for r in rows2:
-    try:
-        deps = json.loads(r[1]) if isinstance(r[1], str) else r[1]
-    except (json.JSONDecodeError, TypeError, ValueError) as e:
-        # Phase 2 P2 修复（异常处理 HIGH）：bare except 吞噬 JSON 解析异常=孤儿统计失真
-        logger.warning("fix_orphan_deps: verify task %s depends_on 解析失败(%s: %s)，按空依赖处理", r[0], type(e).__name__, e)
-        deps = []
-    for dep in deps:
-        if dep not in all_ids2:
-            remaining += 1
-
-print(f"\n  Remaining orphan refs: {remaining}")
-conn.close()
+    print(f"\n  Remaining orphan refs: {remaining}")
+finally:
+    conn.close()

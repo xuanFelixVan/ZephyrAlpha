@@ -39,34 +39,36 @@ DB = "data/databases/governance.db"
 NOW = datetime.now(UTC).isoformat()
 
 conn = sqlite3.connect(DB)
+try:
 
-count = conn.execute(
-    "SELECT count(*) FROM tasks WHERE priority='P0' AND status='PENDING' AND task_id LIKE 'OPS-%' AND is_deleted=0"
-).fetchone()[0]
-print(f"Found {count} OPS-* P0+PENDING tasks to demote+complete")
+    count = conn.execute(
+        "SELECT count(*) FROM tasks WHERE priority='P0' AND status='PENDING' AND task_id LIKE 'OPS-%' AND is_deleted=0"
+    ).fetchone()[0]
+    print(f"Found {count} OPS-* P0+PENDING tasks to demote+complete")
 
-conn.execute(
-    "UPDATE tasks SET priority='P1', status='COMPLETED', updated_at=? "
-    "WHERE priority='P0' AND status='PENDING' AND task_id LIKE 'OPS-%' AND is_deleted=0",
-    (NOW,),
-)
-conn.commit()
+    conn.execute(
+        "UPDATE tasks SET priority='P1', status='COMPLETED', updated_at=? "
+        "WHERE priority='P0' AND status='PENDING' AND task_id LIKE 'OPS-%' AND is_deleted=0",
+        (NOW,),
+    )
+    conn.commit()
 
-# Verify
-p0_pend = conn.execute(
-    "SELECT count(*) FROM tasks WHERE priority='P0' AND status='PENDING' AND is_deleted=0"
-).fetchone()[0]
-print(f"After cleanup: {p0_pend} P0+PENDING tasks")
+    # Verify
+    p0_pend = conn.execute(
+        "SELECT count(*) FROM tasks WHERE priority='P0' AND status='PENDING' AND is_deleted=0"
+    ).fetchone()[0]
+    print(f"After cleanup: {p0_pend} P0+PENDING tasks")
 
-# Breakdown
-rows = conn.execute(
-    "SELECT substr(coalesce(task_id,''),1,instr(coalesce(task_id,''),'-')-1), count(*) "
-    "FROM tasks WHERE priority='P0' AND status='PENDING' AND is_deleted=0 "
-    "GROUP BY 1 ORDER BY 2 DESC"
-).fetchall()
-print("Remaining P0+PENDING by prefix:")
-for r in rows:
-    print(f"  {r[0]:15s} {r[1]}")
+    # Breakdown
+    rows = conn.execute(
+        "SELECT substr(coalesce(task_id,''),1,instr(coalesce(task_id,''),'-')-1), count(*) "
+        "FROM tasks WHERE priority='P0' AND status='PENDING' AND is_deleted=0 "
+        "GROUP BY 1 ORDER BY 2 DESC"
+    ).fetchall()
+    print("Remaining P0+PENDING by prefix:")
+    for r in rows:
+        print(f"  {r[0]:15s} {r[1]}")
 
-conn.close()
+finally:
+    conn.close()
 print("\nDone.")
