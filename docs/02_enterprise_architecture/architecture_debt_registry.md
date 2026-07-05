@@ -2636,6 +2636,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.59 编码与字符集（5个，第14轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.59全部清零.
+> **第59轮修复状态（2026-07-06）**：5.59.5 FIXED — reconciliation_registry.py 新增 _run_subprocess() 工具函数统一 errors=replace 解码, 24处 subprocess.run 替换, commit f9081205df. DEFERRED=0. 维度5.59全部清零.
 > 维度说明：BOM处理、编码回退链、errors策略一致性等。
 
 #### 5.59.1 [HIGH] CSV读取未处理UTF-8 BOM，首列名被污染导致静默数据丢失
