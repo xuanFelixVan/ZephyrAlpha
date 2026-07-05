@@ -125,7 +125,7 @@ class AlphaSignalPipeline:
         self._factors: list[type] = []
         self._synthesizers: list[type] = []
         self._degraded_reasons: list[str] = []
-        self._BUILTINS_GUARD_ENABLED: bool = True
+        self._builtins_guard_enabled: bool = True
 
     @staticmethod
     def _snapshot_builtins() -> frozenset[str]:
@@ -195,16 +195,13 @@ class AlphaSignalPipeline:
             result.degraded = True
 
         if not self._factors:
-            # FactorBase 因子 compute(data) 需数据参数，与本管道 compute()→list 协议不兼容；
-            # 不自动发现 FactorBase 因子（避免 TypeError），因子须通过 register_factor() 显式注册。
-            # 原代码 getattr(FB,"discover_factors") 调用不存在的方法名，已修正为 FactorRegistry 查询。
             try:
-                from zephyr.factor.factor_base import FactorRegistry
+                from zephyr.factor.factor_base import FactorBase as FB
 
-                _ = FactorRegistry.list_all()  # 确认 registry 可达，供未来协议适配扩展
+                discovered = getattr(FB, "discover_factors", lambda: [])()
+                self._factors = list(discovered) if discovered else []
             except Exception:
-                pass
-            self._factors = []
+                self._factors = []
 
         if not self._factors:
             result.status = "no_factors"
@@ -219,7 +216,7 @@ class AlphaSignalPipeline:
         factor_signals: list = []
         result.stage = PipelineStage.FACTOR_COMPUTE
 
-        builtins_snapshot = self._snapshot_builtins() if self._BUILTINS_GUARD_ENABLED else frozenset()
+        builtins_snapshot = self._snapshot_builtins() if self._builtins_guard_enabled else frozenset()
 
         with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, len(self._factors))) as executor:
             futures = {
@@ -228,7 +225,7 @@ class AlphaSignalPipeline:
             for future in as_completed(futures):
                 try:
                     signals = future.result()
-                    if self._BUILTINS_GUARD_ENABLED:
+                    if self._builtins_guard_enabled:
                         violations = self._check_builtins_integrity(builtins_snapshot)
                         if violations:
                             result.factors_failed += 1
