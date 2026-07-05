@@ -63,8 +63,11 @@ class AlertHandler:
             logger.info("[ORC-FLE] %s alert → task %s created", severity_val, task.task_id)
             return task
         except Exception as exc:
+            # 5.53.7 修复：原实现 return None 使调用方无法区分"无告警(MEDIUM/LOW)"
+            # 与"处理异常"。改为 re-raise —— 调用方 AlertDispatcher.dispatch 已有
+            # try/except 兜底（返回带 error 字段的 DispatchResult），无告警路径仍返回 None。
             logger.error("[ORC-FLE] handle_alert 失败: %s", exc, exc_info=True)
-            return None
+            raise
 
 
 def _get_severity(event: Any) -> str:
