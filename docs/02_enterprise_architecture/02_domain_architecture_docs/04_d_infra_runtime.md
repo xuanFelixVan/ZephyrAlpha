@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 runtime_core（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-05 21:08:37
+> 最后更新: 2026-07-05 22:59:51
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 145 | Module Count | 145 |
 | 域内依赖 | 140 | Internal Dependencies | 140 |
-| 跨域入边 | 184 | Cross-domain Incoming | 184 |
+| 跨域入边 | 191 | Cross-domain Incoming | 191 |
 | 跨域出边 | 86 | Cross-domain Outgoing | 86 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 51 | Prototype Modules | 51 |
@@ -81,24 +81,24 @@ graph TD
         src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["src/zephyr/infrastructure/auto_fix_engine/confi... prototype"]
     end
     src_zephyr_infrastructure_asset_inventory_classifier_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_index_generator_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_dashboard_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
+    src_zephyr_infrastructure_asset_inventory_index_generator_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_scanner_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
+    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_classifier_py
     src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_dependency_py
-    src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_index_generator_py
     src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_dashboard_py
+    src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_index_generator_py
     src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_telemetry_py
-    src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_reconciler_py
-    src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_registry_adapter_py
     src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
+    src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_registry_adapter_py
+    src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_reconciler_py
+    src_zephyr_infrastructure_asset_inventory_main_py -.->|import_depends| src_zephyr_infrastructure_asset_inventory_telemetry_py
     src_zephyr_infrastructure_auto_fix_engine_init_py -.->|import_depends| src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py
+    src_zephyr_infrastructure_auto_fix_engine_init_py -.->|import_depends| src_zephyr_infrastructure_auto_fix_engine_all_completer_py
     src_zephyr_infrastructure_auto_fix_engine_init_py -.->|import_depends| src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py
     src_zephyr_infrastructure_auto_fix_engine_init_py -.->|import_depends| src_zephyr_infrastructure_auto_fix_engine_config_fixer_py
-    src_zephyr_infrastructure_auto_fix_engine_init_py -.->|import_depends| src_zephyr_infrastructure_auto_fix_engine_all_completer_py
     src_zephyr_infrastructure_auto_fix_engine_init_py -.->|import_depends| src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py
     src_zephyr_infrastructure_auto_fix_engine_auto_fix_config_yaml -->|config_depends| src_zephyr_infrastructure_auto_fix_engine_init_py
     D_SHARED["D_SHARED production"]
@@ -184,33 +184,33 @@ graph TD
         src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py["src/zephyr/infrastructure/capacity_assurance/co... prototype"]
     end
     src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -.->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
-    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_report_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py
+    src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
+    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_diff_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_report_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py -.->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_safety_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py -.->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
     src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SHARED["D_SHARED production"]
@@ -230,7 +230,14 @@ graph TD
     src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py -->|import_depends| D_SHARED
+    D_FACTOR["D_FACTOR prototype"]
+    D_FACTOR -.->|runtime| src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py
     D_AUDITTEST["D_AUDITTEST prototype"]
+    D_AUDITTEST -.->|runtime| src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_event_hooks_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
@@ -240,12 +247,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_state_machine_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -253,7 +254,7 @@ graph TD
     class src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py,src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py,src_zephyr_infrastructure_auto_fix_engine_engine_py,src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py,src_zephyr_infrastructure_auto_fix_engine_event_hooks_py,src_zephyr_infrastructure_auto_fix_engine_fix_budget_py,src_zephyr_infrastructure_auto_fix_engine_fix_diff_py,src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py,src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py,src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py,src_zephyr_infrastructure_auto_fix_engine_fix_report_py,src_zephyr_infrastructure_auto_fix_engine_fix_safety_py,src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py,src_zephyr_infrastructure_auto_fix_engine_interrupt_guard_py,src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py,src_zephyr_infrastructure_auto_fix_engine_models_py,src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py,src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py,src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py,src_zephyr_infrastructure_auto_fix_engine_state_machine_py,src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py,src_zephyr_infrastructure_blueprint_search_server_py,src_zephyr_infrastructure_capacity_assurance_budget_forecaster_py production
     class src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py,src_zephyr_infrastructure_auto_fix_engine_import_fixer_py,src_zephyr_infrastructure_capacity_assurance_init_py,src_zephyr_infrastructure_capacity_assurance_contracts_init_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py design
     class D_SHARED external_prod
-    class D_GOVERNANCE,D_AUDITTEST external_design
+    class D_GOVERNANCE,D_FACTOR,D_AUDITTEST external_design
 ```
 
 ### 第 3 页 / 共 5 页 / Page 3 of 5
@@ -318,6 +319,7 @@ graph TD
     D_AUTONOMY_CORE -->|import_depends| src_zephyr_infrastructure_capacity_assurance_kill_switch_py
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_event_store_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_config_init_py
     D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_infrastructure_finding_task_bridge_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_cost_tracker_py
@@ -325,7 +327,6 @@ graph TD
     D_AUTONOMY_CORE -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_dry_run_simulator_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_finding_task_bridge_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_config_init_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_contract_tester_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_gateway_server_py
@@ -380,27 +381,27 @@ graph TD
         src_zephyr_infrastructure_resource_provider_py["src/zephyr/infrastructure/resource_provider.py prototype"]
     end
     src_zephyr_infrastructure_pipeline_backpressure_manager_py -->|import_depends| src_zephyr_infrastructure_pipeline_backpressure_types_py
-    src_zephyr_infrastructure_pipeline_cost_tracker_py -->|import_depends| src_zephyr_infrastructure_pipeline_model_router_py
-    src_zephyr_infrastructure_pipeline_cost_tracker_py -->|import_depends| src_zephyr_infrastructure_pipeline_models_py
-    src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -->|import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py -->|import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_cost_tracker_py -->|import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_cost_tracker_py -->|import_depends| src_zephyr_infrastructure_pipeline_model_router_py
     src_zephyr_infrastructure_pipeline_dead_letter_queue_py -->|import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -->|import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py -->|import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_routing_plugins_py -->|import_depends| src_zephyr_infrastructure_pipeline_ct_pipe_routing_py
     src_zephyr_infrastructure_pipeline_routing_plugins_py -->|import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_backpressure_manager_py
-    src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_cost_tracker_py
-    src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_ct_pipe_routing_py
     src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py
+    src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_cost_tracker_py
     src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_dead_letter_queue_py
+    src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_ct_pipe_routing_py
     src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_llm_gateway_py
-    src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_model_router_py
-    src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_pipeline_lock_py
     src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_model_router_py
     src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py
     src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_pipeline_roadmap_py
     src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_preemption_manager_py
+    src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_pipeline_lock_py
     src_zephyr_infrastructure_pipeline_init_py -.->|import_depends| src_zephyr_infrastructure_pipeline_routing_plugins_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -.->|import_depends| D_SHARED
@@ -472,7 +473,7 @@ graph TD
         src_zephyr_shared_lifecycle_task_heartbeat_py["src/zephyr/shared/lifecycle/task_heartbeat.py production"]
         src_zephyr_shared_lifecycle_ttl_cleanup_engine_py["src/zephyr/shared/lifecycle/ttl_cleanup_engine.py production"]
     end
-    src_zephyr_infrastructure_script_system_init_py -.->|config_depends| src_zephyr_infrastructure_script_system_gate_bridge_py
+    src_zephyr_infrastructure_script_system_init_py -.->|config_depends| src_zephyr_infrastructure_script_system_finding_py
     src_zephyr_shared_lifecycle_health_py -->|import_depends| src_zephyr_shared_lifecycle_hooks_py
     src_zephyr_shared_lifecycle_init_py -.->|config_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_INTEGRATION["D_INTEGRATION production"]
@@ -484,6 +485,8 @@ graph TD
     src_zephyr_infrastructure_system_snapshot_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_INTEGRATION
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    D_GOVERNANCE -.->|runtime| src_zephyr_shared_lifecycle_state_machine_py
     D_INTEGRATION -.->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_engine_py
     D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_infrastructure_script_system_finding_py
@@ -491,7 +494,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_shared_lifecycle_hooks_py
     D_AUDITTEST -.->|test_depends| src_zephyr_shared_lifecycle_health_py
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_system_snapshot_py
@@ -502,7 +504,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     D_TRADING["D_TRADING production"]
     D_TRADING -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_engine_py
-    D_TRADING -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -510,7 +511,7 @@ graph TD
     class src_zephyr_infrastructure_script_system_finding_py,src_zephyr_infrastructure_sentinel_server_py,src_zephyr_infrastructure_system_snapshot_py,src_zephyr_infrastructure_task_manager_server_py,src_zephyr_infrastructure_telemetry_server_py,src_zephyr_infrastructure_warm_hot_gate_py,src_zephyr_shared_lifecycle_daemon_registry_py,src_zephyr_shared_lifecycle_health_py,src_zephyr_shared_lifecycle_health_discovery_py,src_zephyr_shared_lifecycle_hooks_py,src_zephyr_shared_lifecycle_lazy_loader_py,src_zephyr_shared_lifecycle_longevity_monitor_py,src_zephyr_shared_lifecycle_resource_optimization_engine_py,src_zephyr_shared_lifecycle_resource_optimization_models_py,src_zephyr_shared_lifecycle_task_heartbeat_py,src_zephyr_shared_lifecycle_ttl_cleanup_engine_py production
     class src_zephyr_infrastructure_runtime_init_py,src_zephyr_infrastructure_sandbox_server_py,src_zephyr_infrastructure_script_system_init_py,src_zephyr_infrastructure_script_system_gate_bridge_py,src_zephyr_infrastructure_script_system_kb_bridge_py,src_zephyr_infrastructure_services_init_py,src_zephyr_infrastructure_vector_memory_server_py,src_zephyr_shared_lifecycle_init_py,src_zephyr_shared_lifecycle_state_machine_py design
     class D_INTEGRATION,D_SHARED,D_TRADING external_prod
-    class D_GOV_SCRIPTS,D_AUDITTEST,D_GOVERNANCE external_design
+    class D_GOVERNANCE,D_GOV_SCRIPTS,D_AUDITTEST external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -530,15 +531,16 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 126 | test_depends |
+| D_AUDITTEST | 127 | runtime,test_depends |
+| D_GOVERNANCE | 17 | config_depends,import_depends,runtime |
 | D_TRADING | 16 | import_depends |
-| D_GOVERNANCE | 12 | config_depends,import_depends |
 | D_INTEGRATION | 11 | import_depends |
 | D_AUTONOMY_CORE | 7 | import_depends |
 | D_GOV_SCRIPTS | 6 | import_depends |
 | D_SHARED | 3 | import_depends |
 | D_INTELLIGENCE | 1 | import_depends |
 | D_BACKTEST | 1 | import_depends |
+| D_FACTOR | 1 | runtime |
 | D_SECURITY | 1 | import_depends |
 
 ## 架构分层视图 / Architecture Overview
@@ -755,8 +757,8 @@ graph TD
 │   gateway_server.py → governance_server.py                       │
 │   gateway_server.py → knowledge_base_server.py                   │
 │   gateway_server.py → rate_limiter.py                            │
-│   gateway_server.py → task_manager_server.py                     │
 │   gateway_server.py → sentinel_server.py                         │
+│   gateway_server.py → task_manager_server.py                     │
 │   gateway_server.py → telemetry_server.py                        │
 │   gateway_server.py → vector_memory_server.py                    │
 │   gateway_server.py → _base_server.py                            │
@@ -764,35 +766,35 @@ graph TD
 │   knowledge_base_server.py → _base_server.py                     │
 │   sandbox_server.py → _base_server.py                            │
 │   sentinel_server.py → _base_server.py                           │
-│   warm_hot_gate.py → contract_tester.py                          │
 │   warm_hot_gate.py → config_validator.py                         │
+│   warm_hot_gate.py → contract_tester.py                          │
 │   vector_memory_server.py → _base_server.py                      │
 │   _base_server.py → error_codes.py                               │
 │   classifier.py → models.py                                      │
-│   index_generator.py → models.py                                 │
 │   dashboard.py → models.py                                       │
+│   index_generator.py → models.py                                 │
 │   lifecycle.py → models.py                                       │
-│   reconciler.py → models.py                                      │
 │   scanner.py → models.py                                         │
+│   reconciler.py → models.py                                      │
 │   __main__.py → classifier.py                                    │
 │   __main__.py → dependency.py                                    │
-│   __main__.py → index_generator.py                               │
 │   __main__.py → dashboard.py                                     │
+│   __main__.py → index_generator.py                               │
 │   __main__.py → models.py                                        │
-│   __main__.py → telemetry.py                                     │
-│   __main__.py → reconciler.py                                    │
-│   __main__.py → registry_adapter.py                              │
 │   __main__.py → scanner.py                                       │
+│   __main__.py → registry_adapter.py                              │
+│   __main__.py → reconciler.py                                    │
+│   __main__.py → telemetry.py                                     │
 │   alignment_syncer.py → models.py                                │
+│   all_completer.py → models.py                                   │
 │   batch_fixer.py → fix_budget.py                                 │
 │   batch_fixer.py → fix_reliability.py                            │
 │   batch_fixer.py → models.py                                     │
 │   config_fixer.py → models.py                                    │
-│   all_completer.py → models.py                                   │
 │   compliance_auditor.py → models.py                              │
 │   dedup_extractor.py → models.py                                 │
-│   dep_version_fixer.py → models.py                               │
-│   drift_fixer.py → models.py                                     │
+│   engine.py → batch_fixer.py                                     │
+│   engine.py → compliance_auditor.py                              │
 │   ...还有 81 条 / 81 more edges                                  │
 └──────────────────────────────────────────────────────────────────┘
 

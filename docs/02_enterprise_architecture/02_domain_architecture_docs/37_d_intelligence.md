@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 context_management（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-05 21:08:37
+> 最后更新: 2026-07-05 22:59:51
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -81,17 +81,17 @@ graph TD
         src_zephyr_intelligence_model_profiling_model_discovery_py["src/zephyr/intelligence/model_profiling/model_d... production"]
     end
     src_zephyr_intelligence_init_py -.->|config_depends| src_zephyr_intelligence_model_drift_detector_py
-    src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends| src_zephyr_intelligence_model_evaluation_inference_base_py
+    src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends| src_zephyr_intelligence_model_evaluation_activate_py
     src_zephyr_intelligence_model_evaluation_implementations_init_py -.->|import_depends| src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py
     src_zephyr_intelligence_model_profiling_cli_py -.->|import_depends| src_zephyr_intelligence_model_profiling_init_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_executor_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_judge_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
-    src_zephyr_intelligence_model_profiling_exam_test_cases_py -.->|import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
     src_zephyr_intelligence_model_profiling_job_matcher_py -->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    src_zephyr_intelligence_model_profiling_exam_test_cases_py -.->|import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
     src_zephyr_intelligence_model_profiling_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     D_INTEGRATION["D_INTEGRATION production"]
@@ -102,17 +102,17 @@ graph TD
     src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_AUTONOMY_CORE
     D_BACKTEST["D_BACKTEST production"]
     src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py -.->|import_depends| D_BACKTEST
-    src_zephyr_intelligence_model_evaluation_notebook_integration_init_py -.->|import_depends| D_BACKTEST
     src_zephyr_intelligence_model_evaluation_implementations_init_py -.->|import_depends| D_BACKTEST
+    src_zephyr_intelligence_model_evaluation_notebook_integration_init_py -.->|import_depends| D_BACKTEST
     D_SHARED["D_SHARED production"]
     src_zephyr_intelligence_model_profiling_case_assembler_py -.->|import_depends| D_SHARED
-    D_ML_TRAIN["D_ML_TRAIN prototype"]
-    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
-    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOVERNANCE
+    D_ML_TRAIN["D_ML_TRAIN prototype"]
+    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
+    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_GOVERNANCE
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_SHARED
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_GOVERNANCE
@@ -164,25 +164,25 @@ graph TD
         src_zephyr_research_init_py["src/zephyr/research/__init__.py production"]
     end
     src_zephyr_intelligence_model_profiling_results_writer_py -.->|import_depends| src_zephyr_intelligence_model_profiling_profiler_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py -->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py -->|import_depends| D_INFRA_RUNTIME
     D_TRADING["D_TRADING production"]
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
     D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_provider_data_py
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    D_GOVERNANCE -->|import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_GOVERNANCE["D_GOVERNANCE production"]
     D_GOVERNANCE -->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
     D_TRADING -->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_provider_data_py
+    D_GOVERNANCE -->|import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
@@ -337,13 +337,13 @@ graph TD
 │   exam_orchestrator.py → capability_passport.py                  │
 │   exam_orchestrator.py → exam_executor.py                        │
 │   exam_orchestrator.py → exam_judge.py                           │
+│   exam_orchestrator.py → job_matcher.py                          │
 │   exam_orchestrator.py → exam_rubric.py                          │
 │   exam_orchestrator.py → exam_test_cases.py                      │
-│   exam_orchestrator.py → job_matcher.py                          │
 │   exam_orchestrator.py → provider_data.py                        │
+│   job_matcher.py → capability_passport.py                        │
 │   exam_test_cases.py → case_assembler.py                         │
 │   model_discovery.py → provider_data.py                          │
-│   job_matcher.py → capability_passport.py                        │
 │   profiler.py → benchmark_suite.py                               │
 │   profiler.py → model_discovery.py                               │
 │   results_writer.py → profiler.py                                │
@@ -351,16 +351,16 @@ graph TD
 │   __init__.py → model_discovery.py                               │
 │   __init__.py → profiler.py                                      │
 │   __init__.py → task_model_learner.py                            │
-│   cli.py → model_discovery.py                                    │
-│   cli.py → profiler.py                                           │
-│   cli.py → results_writer.py                                     │
 │   profiler.py → model_discovery.py                               │
 │   profiler.py → benchmark_suite.py                               │
 │   results_writer.py → profiler.py                                │
+│   cli.py → model_discovery.py                                    │
+│   cli.py → profiler.py                                           │
+│   cli.py → results_writer.py                                     │
 │   __init__.py → model_discovery.py                               │
 │   __init__.py → benchmark_suite.py                               │
-│   __init__.py → cli.py                                           │
 │   __init__.py → profiler.py                                      │
+│   __init__.py → cli.py                                           │
 │   __init__.py → task_model_learner.py                            │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -368,7 +368,7 @@ graph TD
 │                 [config_depends] (2 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → model_drift_detector.py                          │
-│   __init__.py → inference_base.py                                │
+│   __init__.py → activate.py                                      │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
