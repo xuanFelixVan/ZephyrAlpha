@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-SEC_behavioral_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ from __future__ import annotations
 #   4. 新增文件：按命名规则命名，并更新对应聚合的 _SUBMODULES + 本地图 + 能力卡
 # ============================================================================
 
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.governance.drift_detection
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增子模块须同步更新_SUBMODULES和__all__

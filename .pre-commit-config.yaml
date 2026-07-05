@@ -703,6 +703,24 @@ repos:
           )$
         description: "ARCH-029 漂移种子防复发——检测活跃代码/文档中 tests/unit/ 旧路径重引入，归档/历史/自动生成数据豁免"
 
+      # ── GATE-DEDUP: 代码重复检测门禁（code_dedup 引擎 pre-commit 入口）──
+      # 权威依据：ARCH-027 §3b 管线未接通→三阶段强制接入（阶段1注册 / 阶段2 CI / 阶段3 commit阻断）
+      # 真源：scripts/pre_commit/verify_dedup.py → zephyr.governance.code_dedup.cli verify
+      # 检测内容：AST 级函数粒度重复检测（incremental/full scan mode）
+      # 退出码：0=PASS / 1=WARN / 2=ERROR（pre-commit 非零即阻断）
+      # 阶段1（当前）：stages:[manual]——手动 `pre-commit run gate-dedup` 可用，不阻断常规 commit
+      # 阶段2（待定）：CI 集成——`pre-commit run gate-dedup --all-files` 加入 CI pipeline
+      # 阶段3（待定）：移除 stages:[manual]——commit 时自动阻断高严重度重复
+      - id: gate-dedup
+        name: "GATE-DEDUP: 代码重复检测（code_dedup 引擎 verify）"
+        entry: python scripts/pre_commit/verify_dedup.py
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        stages: [manual]
+        description: "代码重复检测门禁——委托 verify_dedup.py -> cli.py verify，AST 级函数粒度重复检测。阶段1：manual 手动运行，不阻断 commit"
+
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage
   # 格式: type(scope): description — type ∈ {feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert}

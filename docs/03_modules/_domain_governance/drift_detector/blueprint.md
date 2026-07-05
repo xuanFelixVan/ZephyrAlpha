@@ -15,8 +15,8 @@ valid_from: 2026-05-05
 submodule_path: src/zephyr/governance/drift_detection/
 date: "2026-05-05"
 ttl: permanent
-construction_progress: completed
-actual_disk_path: "src/zephyr/governance/drift_detection/"
+construction_progress: partially_implemented
+actual_disk_path: "src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1

@@ -34,66 +34,21 @@ class DeduplicationHandler(CheckTypeHandler):
         check: Any,
         project_root: Any,
     ) -> list[dict[str, Any]]:
-        violations: list[dict[str, Any]] = []
-        try:
-            import importlib
-
-            _scanner_mod = importlib.import_module("zephyr.governance.scanner")
-            _exit_mod = importlib.import_module("zephyr.governance.code_dedup.exit_codes")
-            Scanner = _scanner_mod.Scanner
-            ExitCode = _exit_mod.ExitCode
-
-            scan_mode = params.get("scan_mode", "incremental")
-            fail_on_severity = params.get("fail_on_severity", "high")
-
-            scanner = Scanner()
-            if scan_mode == "incremental":
-                _diff_mod = importlib.import_module("zephyr.governance.code_dedup.diff_detector")
-                DiffDetector = _diff_mod.DiffDetector
-                detector = DiffDetector()
-                changed_files = detector.detect()
-                if changed_files:
-                    scanner.scan_files(changed_files)
-            else:
-                from pathlib import Path
-
-                root = Path(str(project_root)) if project_root else Path(".")
-                py_files = [str(f) for f in root.glob("src/zephyr/**/*.py")]
-                if py_files:
-                    scanner.scan_files(py_files[:500])
-
-            duplicates = scanner.find_duplicates()
-
-            severity_map = {"critical": "P0", "high": "P0", "medium": "P1", "low": "P2"}
-            fail_level = {"critical": 0, "high": 1, "medium": 2, "low": 3}
-
-            for group in duplicates:
-                sev = _classify_severity(group)
-                if fail_level.get(sev, 3) <= fail_level.get(fail_on_severity, 1):
-                    violations.append(
-                        dict(
-                            message=f"Dedup: {group.group_id} similarity={group.similarity:.2f} severity={sev} members={len(group.members)}",
-                            severity=severity_map.get(sev, "P2"),
-                            check_id=getattr(check, "id", "DD-CHK-INCREMENTAL"),
-                        )
-                    )
-
-        except Exception as exc:
-            violations.append(
-                dict(
-                    message=f"Deduplication scan failed: {exc}",
-                    severity="P2",
-                    check_id=getattr(check, "id", "DD-CHK-INCREMENTAL"),
-                )
+        # 管线未接通（ARCH-027 §3b 合法保留理由）：
+        #   zephyr.governance.scanner 模块不存在，code_dedup 引擎的 Scanner API
+        #   （scan_files/find_duplicates）尚未实现。本 handler 为 task_types
+        #   集成预留入口，待 Scanner API 落地后接通。
+        # 生产侧去重通过 pre-commit → verify_dedup.py → cli.py verify 路径执行，
+        # 不经过本 handler。此处显式返回"未接通"违规，不再静默吞错。
+        check_id = getattr(check, "id", "DD-CHK-INCREMENTAL")
+        return [
+            dict(
+                message=(
+                    "Deduplication pipeline not connected: "
+                    "zephyr.governance.scanner module not found. "
+                    "Production dedup runs via pre-commit verify_dedup.py -> cli.py verify."
+                ),
+                severity="P2",
+                check_id=check_id,
             )
-        return violations
-
-
-def _classify_severity(group: Any) -> str:
-    if group.similarity >= 0.95:
-        return "critical"
-    if group.similarity >= 0.85:
-        return "high"
-    if group.similarity >= 0.70:
-        return "medium"
-    return "low"
+        ]
