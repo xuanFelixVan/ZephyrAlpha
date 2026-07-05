@@ -170,7 +170,7 @@ class ConstitutionGuard:
             except Exception:
                 logger.warning(
                     "constitution_gate_fallback article=%s action=%s", article.article_id, action, exc_info=True
-                , exc_info=True)
+                )
 
         checks: dict[str, str] = {
             "prompt_injection_filter.scan": "src/zephyr/llm-security",
