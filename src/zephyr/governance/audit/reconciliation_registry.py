@@ -61,6 +61,7 @@ Usage::
 from __future__ import annotations
 
 import logging
+import subprocess
 from dataclasses import dataclass, field
 from typing import Callable
 
@@ -91,6 +92,18 @@ __all__ = [
     "make_session_log_index_reconciler",
     "scan_and_archive_working_docs",
 ]
+
+
+# 5.59.5 修复：统一 subprocess 解码策略
+# 病根：reconciler 中 subprocess.run 调用散落 24 处，解码策略不一致（部分 strict、
+# 部分 errors="replace"），含非 UTF-8 字符的子进程输出在 strict 模式下抛
+# UnicodeDecodeError 导致 reconciler 降级失败。封装统一入口确保 errors="replace"。
+def _run_subprocess(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
+    """5.59.5 修复：统一 subprocess 解码策略，使用 errors='replace' 避免非 UTF-8 字符抛 UnicodeDecodeError。"""
+    kwargs.setdefault("capture_output", True)
+    kwargs.setdefault("text", True)
+    kwargs.setdefault("errors", "replace")
+    return subprocess.run(cmd, **kwargs)
 
 
 @dataclass
@@ -263,7 +276,7 @@ def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. 重生成 manifest（SSoT disk-scan）
-        gen_result = subprocess.run(
+        gen_result = _run_subprocess(
             [sys.executable, "scripts/generate_manifest.py"],
             cwd=str(project_root),
             capture_output=True,
@@ -350,7 +363,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
         # P2 PG 迁移后 depgraph 已迁至 PostgreSQL，generate_project_path_tree.py --write
         # 直接写入 PG（不产生 .db 文件变更），原 git diff/add/commit depgraph.db 逻辑
         # 永远不会命中（diff 永远为空），属于路径污染残留死代码。
-        sync_result = subprocess.run(
+        sync_result = _run_subprocess(
             [sys.executable, "scripts/governance/generate_project_path_tree.py", "--write"],
             cwd=str(project_root),
             capture_output=True,
@@ -366,7 +379,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
             )
         # 串联调用 d5 generate_path_tree.py 生成架构文档 md（治本 trae_060 §5）
         # 读 depgraph arch_directory_tree → 生成 md 文档供人类查看
-        doc_result = subprocess.run(
+        doc_result = _run_subprocess(
             [sys.executable, "scripts/governance/d5_architecture/generators/generate_path_tree.py"],
             cwd=str(project_root),
             capture_output=True,
@@ -451,7 +464,7 @@ def make_path_ownership_reconciler(gateway: "object") -> ReconcilerSpec:
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         ownership_file = "docs/03_modules/path_ownership_map.yaml"
         # 1. 重新生成 path_ownership_map.yaml
-        sync_result = subprocess.run(
+        sync_result = _run_subprocess(
             [sys.executable, "scripts/governance/generators/generate_path_ownership_map.py", "--write"],
             cwd=str(project_root),
             capture_output=True, text=True, encoding="utf-8", errors="replace",
@@ -538,7 +551,7 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
         # 全量同步代码→DB（P1/P2 保护机制兜底，不覆盖手工字段，详见 §14.2.1）
         import time
         start = time.time()
-        sync_result = subprocess.run(
+        sync_result = _run_subprocess(
             [
                 sys.executable,
                 "scripts/governance/generate_project_depgraph.py",
@@ -646,7 +659,7 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        sync_result = subprocess.run(
+        sync_result = _run_subprocess(
             [sys.executable, "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py"],
             cwd=str(project_root),
             capture_output=True,
@@ -953,7 +966,7 @@ def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. post-commit 重校（脚本内部读 CONFIG_PATH = REPO_ROOT/.pre-commit-config.yaml，
         #    不接受文件参；--ci 硬阻断语义在 post-commit 退化为非阻断——exit 1 仅作信号）
-        scan_result = subprocess.run(
+        scan_result = _run_subprocess(
             [sys.executable, _CHECK_SCRIPT, "--ci"],
             cwd=str(project_root),
             capture_output=True,
@@ -1036,7 +1049,7 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. 重判所有 docs/*.md 的 ttl（--rejudge 模式重判已有 ttl 的文件）
-        rejudge_result = subprocess.run(
+        rejudge_result = _run_subprocess(
             [sys.executable,
              "scripts/governance/d3_metadata/backfill_ttl_metadata.py", "--rejudge"],
             cwd=str(project_root),
@@ -1142,7 +1155,7 @@ def _audit_commit_history(
     """
     import subprocess
 
-    log_result = subprocess.run(
+    log_result = _run_subprocess(
         ["git", "log", f"-{audit_window}", "--oneline"],
         cwd=str(project_root),
         capture_output=True,
@@ -1171,7 +1184,7 @@ def _audit_commit_history(
                 rv_uses.append({"hash": commit_hash, "subject": subject[:120]})
             continue
         # subject 无 [GW: → 查 body（手动 commit 的 [GW:tag] 在 body 末尾）
-        body_result = subprocess.run(
+        body_result = _run_subprocess(
             ["git", "show", "-s", "--format=%B", commit_hash],
             cwd=str(project_root),
             capture_output=True,
@@ -1684,7 +1697,7 @@ def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
                 detail="ghost diagnose skipped: diagnose_depgraph.py not found under scripts/governance/",
             )
         # 1. 跑 diagnose_depgraph.py（无 --output，捕获 stdout 解析 ghost_count）
-        diag_result = subprocess.run(
+        diag_result = _run_subprocess(
             [sys.executable, diag_path],
             cwd=str(project_root),
             capture_output=True,
@@ -1736,7 +1749,7 @@ def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
                     detail=f"ghost count={ghost_count} but backup failed: {backup_err}, skip auto-clean for safety",
                 )
             # 调 apply_depgraph.py --cleanup-orphan-nodes（清理已在 backup 之后）
-            clean_nodes = subprocess.run(
+            clean_nodes = _run_subprocess(
                 [sys.executable, "scripts/governance/apply_depgraph.py", "--cleanup-orphan-nodes"],
                 cwd=str(project_root),
                 capture_output=True,
@@ -1746,7 +1759,7 @@ def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
                 timeout=300,
             )
             # 再调 --cleanup-orphan-edges（清理孤儿边）
-            clean_edges = subprocess.run(
+            clean_edges = _run_subprocess(
                 [sys.executable, "scripts/governance/apply_depgraph.py", "--cleanup-orphan-edges"],
                 cwd=str(project_root),
                 capture_output=True,
@@ -1904,7 +1917,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
     def _reconcile_domain_doc(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. 重生所有域制品（生成器不含时间戳，相同 DB 输入→相同输出）
         for gen_name in ("generate_domain_doc.py", "generate_domain_dependency_diagram.py"):
-            gen_result = subprocess.run(
+            gen_result = _run_subprocess(
                 [sys.executable, f"{_GEN_DIR}/{gen_name}", "--all"],
                 cwd=str(project_root),
                 capture_output=True,
@@ -1966,7 +1979,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile_arch_model(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. 重生根树 index.yaml（dm200916 从 depgraph (PostgreSQL) domains 表派生）
-        gen_result = subprocess.run(
+        gen_result = _run_subprocess(
             [sys.executable, _GEN_SCRIPT],
             cwd=str(project_root),
             capture_output=True,
@@ -2027,7 +2040,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
         return False
 
     def _reconcile_manifest(committed_files: list[str], session_id: str) -> ReconcileResult:
-        gen_result = subprocess.run(
+        gen_result = _run_subprocess(
             [sys.executable, _MANIFEST_GEN],
             cwd=str(project_root),
             capture_output=True,
@@ -2127,7 +2140,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile_catalog(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. 重新生成 catalog（generate_rule_catalog.py 幂等）
-        gen_result = subprocess.run(
+        gen_result = _run_subprocess(
             [sys.executable, "scripts/governance/d3_metadata/generate_rule_catalog.py"],
             cwd=str(project_root),
             capture_output=True,
@@ -2204,7 +2217,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         dcr001_violations: list[str] = []
 
         if contract_changed:
-            scan_result = subprocess.run(
+            scan_result = _run_subprocess(
                 [sys.executable, "scripts/governance/d1_structure/check_directory_contract.py"],
                 cwd=str(project_root),
                 capture_output=True,
@@ -2376,7 +2389,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile_index(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. 重新生成 registry_master_index（generate_registry_master_index.py 幂等）
-        gen_result = subprocess.run(
+        gen_result = _run_subprocess(
             [sys.executable, "scripts/governance/generators/generate_registry_master_index.py"],
             cwd=str(project_root),
             capture_output=True,
@@ -2452,7 +2465,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
                 action="skip",
                 detail="baseline_aware: no src/zephyr|scripts .py in committed files",
             )
-        scan_result = subprocess.run(
+        scan_result = _run_subprocess(
             [sys.executable, "scripts/governance/d11_compliance/audit_registration.py",
              "--baseline-aware", "--files"] + rel_py_files,
             cwd=str(project_root),
@@ -2551,7 +2564,7 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         # 红蓝发现4 治本：设置 ZEPHYR_RECONCILER_MODE=1 门禁令牌，允许 --register。
         _env = dict(os.environ)
         _env["ZEPHYR_RECONCILER_MODE"] = "1"
-        reg_result = subprocess.run(
+        reg_result = _run_subprocess(
             [sys.executable, _VALIDATE_SCRIPT, "--register"],
             cwd=str(project_root),
             capture_output=True,
@@ -2946,7 +2959,7 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. 跑 scan→classify→index 全管线（bootstrap 幂等，含 index 生成）
-        bootstrap_result = subprocess.run(
+        bootstrap_result = _run_subprocess(
             [sys.executable, "-m", "zephyr.infrastructure.asset_inventory", "bootstrap"],
             cwd=str(project_root),
             capture_output=True,
@@ -3111,7 +3124,7 @@ def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
         if not dashboard.exists():
             return ReconcileResult(action="skip", detail="dashboard script not found")
         try:
-            result = subprocess.run(
+            result = _run_subprocess(
                 [sys.executable, str(dashboard), "--snapshot"],
                 capture_output=True,
                 text=True,
@@ -3211,7 +3224,7 @@ def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
             )
 
         # 1. 调用 validate_session_log_index_integrity.py --generate（校验 + 汇总生成）
-        gen_result = subprocess.run(
+        gen_result = _run_subprocess(
             [
                 sys.executable,
                 str(validator),
