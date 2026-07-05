@@ -51,13 +51,17 @@ class AgentRole(IntEnum):
 
 
 class TaskStatus(str, Enum):
-    """Multi-agent task status."""
+    """Multi-agent task status.
 
-    PENDING = "pending"
-    ASSIGNED = "assigned"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    FAILED = "failed"
+    P2 修复（2026-07-05）：值已与 SSoT 对齐（zephyr.governance.rule_enforcement.task_types.TaskStatus）。
+    禁止在此重新定义状态值，新代码应直接导入 SSoT。
+    """
+
+    PENDING = "PENDING"
+    ASSIGNED = "ASSIGNED"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
 
 
 class MergeStrategy(str, Enum):

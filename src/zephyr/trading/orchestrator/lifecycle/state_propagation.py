@@ -47,6 +47,12 @@ class PropagationTarget(str, Enum):
 
 
 PROPAGATION_RULES: dict[str, dict[str, list[PropagationTarget]]] = {
+    # P4 修复（2026-07-05）：迁移键派生自 TaskStatus SSoT
+    # 真源：zephyr.governance.rule_enforcement.task_types.TaskStatus
+    # 合法状态值（大写）：PENDING/CREATED/LOCKED/ASSIGNED/READY/IN_PROGRESS/
+    #   REVIEWING/COMPLETED/VERIFIED/FAILED/BLOCKED/WAITING/RETRY/CANCELLED
+    # 迁移键格式："FROM→TO"，FROM/TO 必须是 SSoT 中的合法状态值。
+    # 合法迁移边定义在 TaskRepository.transition() 中，本表仅定义通知传播目标。
     "PENDING→IN_PROGRESS": {
         "sources": [],  # 改为直接映射
         "notify": [PropagationTarget.GATES, PropagationTarget.FLE],

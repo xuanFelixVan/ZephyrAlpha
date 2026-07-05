@@ -34,6 +34,7 @@ LifecycleManager — 启动/停止序列
 """
 
 from dataclasses import dataclass, field
+import logging
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 from zephyr.trading.ai_audit_logger import AiAuditLogger
@@ -47,6 +48,8 @@ from zephyr.trading.night_shift_queue import NightShiftQueue
 from zephyr.trading.runtime_config import RuntimeConfig, ensure_runtime_dirs
 from zephyr.trading.stop_gate import StopGate
 from zephyr.trading.work_orchestrator import WorkOrchestrator
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -122,13 +125,19 @@ class LifecycleManager:
         self._audit_self_monitor = SelfMonitor()
 
     def _start_governance_watchdog(self) -> None:
-        import sys as _sys
+        import importlib.util
 
-        _governance_dir = str(REPO_ROOT / "scripts" / "governance")
-        if _governance_dir not in _sys.path:
-            _sys.path.insert(0, _governance_dir)
-        from meta.governance_watchdog import GovernanceWatchdog as _GovernanceWatchdog
-        self._governance_watchdog = _GovernanceWatchdog()
+        watchdog_path = REPO_ROOT / "scripts" / "governance" / "meta" / "governance_watchdog.py"
+        if not watchdog_path.exists():
+            logger.warning("GovernanceWatchdog not found: %s", watchdog_path)
+            return
+        spec = importlib.util.spec_from_file_location("governance_watchdog", watchdog_path)
+        if spec is None or spec.loader is None:
+            logger.warning("GovernanceWatchdog spec creation failed")
+            return
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        self._governance_watchdog = mod.GovernanceWatchdog()
         self._governance_watchdog.run(daemon=True)
 
     def shutdown_sequence(

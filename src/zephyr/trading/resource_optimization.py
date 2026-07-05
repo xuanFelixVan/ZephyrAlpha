@@ -683,56 +683,63 @@ class ResourceOptimizationEngine:
         return {name: cb.state for name, cb in self._circuit_breakers.items()}
 
     def start_monitor(self, interval: float = 30.0) -> None:
+        """P1 修复（2026-07-05）：事件驱动替代 time.sleep daemon。
+
+        订阅 EventBus 事件触发 monitor_tick()，不再启动后台轮询线程。
+        interval 参数保留用于 CI 批量兜底参考。
+        """
         if self._monitor_running:
             return
         self._monitor_interval = interval
         self._monitor_running = True
         self._started_at = time.monotonic()
-        self._monitor_thread = threading.Thread(
-            target=self._monitor_loop,
-            daemon=True,
-            name="resource-optimization-monitor",
-        )
-        self._monitor_thread.start()
-        logger.info("ResourceOptimizationEngine: monitor started (interval=%.0fs)", interval)
+        try:
+            from zephyr.shared.events.event_bus import bus
+
+            bus.subscribe("task.completed", lambda _: self.monitor_tick())
+            bus.subscribe("task.failed", lambda _: self.monitor_tick())
+            bus.subscribe("resource.check.request", lambda _: self.monitor_tick())
+            logger.info("ResourceOptimizationEngine: monitor started (event-driven, no daemon thread)")
+        except Exception as e:
+            logger.warning("ResourceOptimizationEngine: EventBus subscribe failed: %s", e)
 
     def stop_monitor(self) -> None:
         self._monitor_running = False
         logger.info("ResourceOptimizationEngine: monitor stopped")
 
-    def _monitor_loop(self) -> None:
-        while self._monitor_running:
-            try:
-                self._check_config_reload()
-                snap = self.snapshot()
+    def monitor_tick(self) -> None:
+        """事件驱动入口：采集资源快照 + 压力回调 + 自愈。
 
-                if snap.pressure is not PressureLevel.NORMAL:
-                    logger.warning(
-                        "ResourceOptimizationEngine: pressure %s (mem=%.1f%%, cpu=%.1f%%, procs=%d)",
-                        snap.pressure.value,
-                        snap.memory_percent,
-                        snap.cpu_percent,
-                        snap.process_count,
-                    )
-                    for cb in self._pressure_callbacks:
-                        try:
-                            cb(snap.pressure, snap)
-                        except Exception:
-                            pass
+        由 EventBus 事件触发或 CI 批量兜底调用。替代原 _monitor_loop 的 time.sleep 轮询。
+        """
+        if not self._monitor_running:
+            return
+        try:
+            self._check_config_reload()
+            snap = self.snapshot()
 
-                self._emit_pressure_event(snap)
+            if snap.pressure is not PressureLevel.NORMAL:
+                logger.warning(
+                    "ResourceOptimizationEngine: pressure %s (mem=%.1f%%, cpu=%.1f%%, procs=%d)",
+                    snap.pressure.value,
+                    snap.memory_percent,
+                    snap.cpu_percent,
+                    snap.process_count,
+                )
+                for cb in self._pressure_callbacks:
+                    try:
+                        cb(snap.pressure, snap)
+                    except Exception:
+                        pass
 
-                if snap.pressure in (PressureLevel.EMERGENCY, PressureLevel.CRITICAL):
-                    self._execute_defensive(snap.pressure)
-                    self._self_heal_cycle(snap)
+            self._emit_pressure_event(snap)
 
-            except Exception:
-                logger.exception("ResourceOptimizationEngine: monitor tick failed")
+            if snap.pressure in (PressureLevel.EMERGENCY, PressureLevel.CRITICAL):
+                self._execute_defensive(snap.pressure)
+                self._self_heal_cycle(snap)
 
-            interval = self._monitor_interval
-            if interval <= 0:
-                interval = 30.0
-            time.sleep(interval)
+        except Exception:
+            logger.exception("ResourceOptimizationEngine: monitor tick failed")
 
     @classmethod
     def reset(cls) -> None:

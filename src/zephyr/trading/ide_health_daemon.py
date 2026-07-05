@@ -326,47 +326,57 @@ class IdeHealthDaemon:
         self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start/stop 的 check-then-act, 避免 TOCTOU
 
     def start(self) -> None:
-        # 5.142.6 修复: 加锁保护 check-then-act, 防止并发 start() 创建多个线程
+        """P1 修复（2026-07-05）：事件驱动替代 time.sleep daemon。
+
+        订阅 EventBus 事件触发 scan_tick()，不再启动后台轮询线程。
+        """
         with self._lifecycle_lock:
             if self._running:
                 return
             self._running = True
-            self._thread = threading.Thread(target=self._loop, daemon=True, name="ide-health-daemon")
-            self._thread.start()
-        logger.info("IdeHealthDaemon: started (interval=%ds)", self._interval)
+            try:
+                from zephyr.shared.events.event_bus import bus
+
+                bus.subscribe("task.completed", lambda _: self.scan_tick())
+                bus.subscribe("task.failed", lambda _: self.scan_tick())
+                bus.subscribe("ide.health.check.request", lambda _: self.scan_tick())
+                logger.info("IdeHealthDaemon: started (event-driven, no daemon thread)")
+            except Exception as e:
+                logger.warning("IdeHealthDaemon: EventBus subscribe failed: %s", e)
 
     def stop(self) -> None:
-        # 5.142.6 修复: 加锁保护 _running 写入, 防止与 start() 竞争
         with self._lifecycle_lock:
             self._running = False
         logger.info("IdeHealthDaemon: stopped")
 
-    def _loop(self) -> None:
-        import time
+    def scan_tick(self) -> None:
+        """事件驱动入口：扫描 ghost 窗口 + drift 指标采集。
 
-        while self._running:
+        由 EventBus 事件触发或 CI 批量兜底调用。替代原 _loop 的 time.sleep 轮询。
+        """
+        if not self._running:
+            return
+        try:
+            ghosts = scan_ghost_windows()
+            if ghosts:
+                logger.warning(
+                    "IdeHealthDaemon: detected %d ghost window(s): %s",
+                    len(ghosts),
+                    [(g["config_id"], g["pid_count"]) for g in ghosts],
+                )
+                killed = kill_ghost_windows(ghosts)
+                if killed:
+                    logger.info("IdeHealthDaemon: auto-killed %d processes", len(killed))
+            self._ghost_count = len(ghosts)
+        except Exception:
+            logger.exception("IdeHealthDaemon: scan tick failed")
+        # P1-DAE: 每 10 轮采集一次 drift 健康指标
+        self._loop_count += 1
+        if self._loop_count % 10 == 0:
             try:
-                ghosts = scan_ghost_windows()
-                if ghosts:
-                    logger.warning(
-                        "IdeHealthDaemon: detected %d ghost window(s): %s",
-                        len(ghosts),
-                        [(g["config_id"], g["pid_count"]) for g in ghosts],
-                    )
-                    killed = kill_ghost_windows(ghosts)
-                    if killed:
-                        logger.info("IdeHealthDaemon: auto-killed %d processes", len(killed))
-                self._ghost_count = len(ghosts)
+                self._collect_drift_metrics()
             except Exception:
-                logger.exception("IdeHealthDaemon: scan tick failed")
-            # P1-DAE: 每 10 轮（~5min @30s interval）采集一次 drift 健康指标
-            self._loop_count += 1
-            if self._loop_count % 10 == 0:
-                try:
-                    self._collect_drift_metrics()
-                except Exception:
-                    logger.exception("IdeHealthDaemon: drift metrics collection failed")
-            time.sleep(self._interval)
+                logger.exception("IdeHealthDaemon: drift metrics collection failed")
 
     def _collect_drift_metrics(self) -> None:
         """采集 drift 健康指标，写入 .runtime/drift_health.json（P1-DAE）。

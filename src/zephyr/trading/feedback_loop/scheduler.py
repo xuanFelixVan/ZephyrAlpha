@@ -132,13 +132,9 @@ class FeedbackLoopScheduler:
     nonstationary_check: NonstationaryEffectiveness = field(default_factory=NonstationaryEffectiveness)
     timezone_reasoner: TimezoneSemanticReasoner = field(default_factory=TimezoneSemanticReasoner)
 
-    _thread: threading.Thread | None = field(default=None, init=False)
-    _running: bool = field(default=False, init=False)
     _events: list[FLEPipelineEvent] = field(default_factory=list, init=False)
     _cycle_count: int = field(default=0, init=False)
-    _consecutive_errors: int = field(default=0, init=False)
-    _max_consecutive_errors: int = field(default=10, init=False)
-    _error_backoff_base: float = field(default=5.0, init=False)
+    _periodic_check_interval: int = field(default=10, init=False)
 
     def __post_init__(self) -> None:
         self.safety_gate_manager = SafetyGateManager(
@@ -179,7 +175,6 @@ class FeedbackLoopScheduler:
                     "FLE-Scheduler: VectorBridge initialization failed, failure patterns will not persist to VMS"
                 )
                 self.vector_bridge = None
-        self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start/stop 的 check-then-act, 避免 TOCTOU (dataclass 锁在 __post_init__ 初始化)
 
     _instance: ClassVar[FeedbackLoopScheduler | None] = None
     _instance_lock: ClassVar[threading.Lock] = threading.Lock()
@@ -195,37 +190,18 @@ class FeedbackLoopScheduler:
     @classmethod
     def reset_instance(cls) -> None:
         with cls._instance_lock:
-            if cls._instance is not None and cls._instance._running:
-                cls._instance.stop()
             cls._instance = None
 
-    def start(self) -> None:
-        # 5.142.6 修复: 加锁保护 check-then-act, 防止并发 start() 创建多个线程
-        with self._lifecycle_lock:
-            if self._running:
-                return
-            attestation = self.safety_gate_manager.boot_attestation.attest(["src/zephyr/feedback-loop"])
-            if attestation.get("degraded"):
-                logger.warning("FLE boot attestation: %s — operating in observe-only mode", attestation["integrity"])
-            self._running = True
-            self._consecutive_errors = 0
-            self._thread = threading.Thread(target=self._run_loop, daemon=True, name="FLE-Scheduler")
-            self._thread.start()
-        logger.info("FLE-Scheduler started (poll=%.1fs, attestation=%s)", self.poll_interval, attestation["integrity"])
-
     def stop(self) -> None:
-        # 5.142.6 修复: 加锁保护 _running 写入, join 在锁外执行避免长时间持锁
-        with self._lifecycle_lock:
-            self._running = False
-            thread = self._thread
-        if thread is not None:
-            thread.join(timeout=5.0)
-        with self._lifecycle_lock:
-            self._thread = None
-        logger.info("FLE-Scheduler stopped (%d events, %d cycles)", len(self._events), self._cycle_count)
+        """no-op：daemon 线程已废除（trae_053 v2.0.0），保留接口兼容 shutdown 调用。"""
+        logger.info("FLE-Scheduler stop (no-op, daemon abolished): %d events, %d cycles", len(self._events), self._cycle_count)
 
     def tick(self) -> FLEPipelineEvent | None:
-        return self._run_once()
+        result = self._run_once()
+        self._cycle_count += 1
+        if self._cycle_count % self._periodic_check_interval == 0:
+            self._periodic_checks()
+        return result
 
     def events(self, limit: int = 50) -> list[dict[str, Any]]:
         return [e.to_dict() for e in self._events[-limit:]]
@@ -235,34 +211,6 @@ class FeedbackLoopScheduler:
 
     def health_report(self) -> dict[str, Any]:
         return self.health_reporter.report()
-
-    def _run_loop(self) -> None:
-        while self._running:
-            try:
-                self._run_once()
-                self._consecutive_errors = 0
-                self._cycle_count += 1
-                if self._cycle_count % 10 == 0:
-                    self._periodic_checks()
-            except Exception:
-                self._consecutive_errors += 1
-                logger.exception("FLE-Scheduler tick failed (%d consecutive)", self._consecutive_errors)
-                if self._consecutive_errors >= self._max_consecutive_errors:
-                    logger.critical(
-                        "FLE-Scheduler: %d consecutive errors, pausing for 5 minutes", self._consecutive_errors
-                    )
-                    self._consecutive_errors = 0
-                    time.sleep(300)
-                    continue
-            backoff = (
-                min(
-                    self.poll_interval,
-                    self._error_backoff_base * (2 ** min(self._consecutive_errors, 5)),
-                )
-                if self._consecutive_errors > 0
-                else self.poll_interval
-            )
-            time.sleep(backoff)
 
     def _periodic_checks(self) -> None:
         self.health_reporter.dogfood_monitor.self_check()

@@ -23,10 +23,11 @@ Vibe Coding 2.0 基础设施 · 遥测 跨层支撑层 · 5 大核心服务之�
 ----
 任务生命周期管理 + Agent 调度 + 沙箱执行 + 幻觉检测
 
-状态机
-------
-DRAFT → QUEUED → ASSIGNED → RUNNING → REVIEWING → COMPLETED
-分支 : BLOCKED / FAILED / CANCELLED / HALLUCINATING
+状态机（真源：zephyr.governance.rule_enforcement.task_types.TaskStatus）
+----------------------------------------------------------------------
+PENDING → READY → IN_PROGRESS → COMPLETED → VERIFIED
+分支 : BLOCKED / FAILED / RETRY / WAITING / CANCELLED
+合法迁移定义见 TaskRepository.transition() + state_propagation.PROPAGATION_RULES（派生自 TaskStatus）
 
 基础设施
 --------

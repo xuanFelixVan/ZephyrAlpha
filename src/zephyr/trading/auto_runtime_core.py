@@ -149,7 +149,6 @@ class AutoRuntimeCore:
                 self._resource_engine_degraded = True
 
             self._bootstrap_rbac()
-            self._register_task_system_cron_jobs()
             self._register_task_system_hooks()
             self._start_task_queue()
             self._start_blueprint_watcher()
@@ -254,13 +253,6 @@ class AutoRuntimeCore:
             auto_subscribe_eventbus()
         except Exception:
             logger.debug("Escalation EventBus auto-subscribe skipped")
-
-    def _register_task_system_cron_jobs(self) -> None:
-        """已废弃：定时调度已废除（2026-06-26裁定）。保留调用以注册事件订阅（bus.subscribe）。"""
-        from zephyr.trading.boot_cron_jobs import register_boot_cron_jobs
-
-        project_root = REPO_ROOT
-        register_boot_cron_jobs(self._work_orchestrator, project_root)
 
     def _register_task_system_hooks(self) -> None:
         from zephyr.trading.boot_hooks import register_boot_hooks

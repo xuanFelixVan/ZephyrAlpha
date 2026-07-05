@@ -30,7 +30,10 @@ NOTE: 此模块已迁移至 zephyr.trading.orchestrator.core.task_queue，
 from __future__ import annotations
 
 from zephyr.trading.orchestrator.core.task_queue import (  # noqa: F401
+    ActiveTaskQueue,
     PipelineDispatcher,
-    TaskQueue,
     get_queue,
 )
+
+# 向后兼容别名（P9 重命名：避免与 infrastructure.queue.TaskQueue 同名冲突）
+TaskQueue = ActiveTaskQueue
