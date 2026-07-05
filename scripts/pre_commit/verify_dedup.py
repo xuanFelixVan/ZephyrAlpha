@@ -43,7 +43,7 @@ SRC_DIR = REPO_ROOT / "src"
 
 def main() -> int:
     result = subprocess.run(
-        [sys.executable, "-m", "zephyr.testing.code_dedup.cli", "verify"],
+        [sys.executable, "-m", "zephyr.governance.code_dedup.cli", "verify"],
         cwd=str(SRC_DIR.parent),
         capture_output=True,
         text=True,

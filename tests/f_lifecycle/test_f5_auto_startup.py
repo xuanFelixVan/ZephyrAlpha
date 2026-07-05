@@ -1,7 +1,7 @@
 # [A_test] module_id: SRC-TST-F5-BOOT | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §2
 # [MODULE] tests.test_f5_auto_startup
-# [INVARIANTS] on_startup returns BootResult; run_periodic_checks returns dict and never raises; register_startup_hook is idempotent
+# [INVARIANTS] on_startup returns BootResult; run_health_checks returns dict and never raises; register_startup_hook is idempotent
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
 # [STABILITY] volatile
@@ -188,7 +188,7 @@ class TestRunPeriodicChecks:
     def test_returns_dict_with_expected_keys(self):
         integration = F5BootIntegration()
         integration.on_startup()
-        result = integration.run_periodic_checks()
+        result = integration.run_health_checks()
         assert isinstance(result, dict)
         expected_keys = {
             "timestamp",
@@ -203,7 +203,7 @@ class TestRunPeriodicChecks:
     def test_never_raises(self):
         integration = F5BootIntegration()
         integration.on_startup()
-        # Inject broken components — run_periodic_checks should swallow exceptions
+        # Inject broken components — run_health_checks should swallow exceptions
         integration._deadlock_detector = MagicMock()
         integration._deadlock_detector.detect_cycle.side_effect = RuntimeError("broken")
         integration._deadlock_detector.break_timeout.side_effect = RuntimeError("broken")
@@ -211,7 +211,7 @@ class TestRunPeriodicChecks:
         integration._escalation_engine.get_active_count.side_effect = RuntimeError("broken")
         integration._delegation_engine = MagicMock()
         integration._delegation_engine.cleanup_expired.side_effect = RuntimeError("broken")
-        result = integration.run_periodic_checks()
+        result = integration.run_health_checks()
         assert isinstance(result, dict)
         assert len(result["errors"]) == 4
 
@@ -221,7 +221,7 @@ class TestRunPeriodicChecks:
         # Create a cycle: a→b→a
         integration.deadlock_detector.add_edge("a", "b")
         integration.deadlock_detector.add_edge("b", "a")
-        result = integration.run_periodic_checks()
+        result = integration.run_health_checks()
         assert len(result["deadlock_cycles"]) >= 2
 
     def test_breaks_expired_locks(self):
@@ -232,7 +232,7 @@ class TestRunPeriodicChecks:
         # Backdate the timestamp
         import time as _time
         integration.deadlock_detector._lock_timestamps["resource-1"] = _time.monotonic() - 400
-        result = integration.run_periodic_checks()
+        result = integration.run_health_checks()
         assert "resource-1" in result["expired_locks"]
 
     def test_reports_active_escalations(self):
@@ -252,26 +252,26 @@ class TestRunPeriodicChecks:
         )
         event.state = EscalationState.EVALUATING
         integration.escalation_engine._recent_escalations.append(event)
-        result = integration.run_periodic_checks()
+        result = integration.run_health_checks()
         assert result["active_escalations"] >= 1
 
     def test_cleans_expired_delegations(self):
         integration = F5BootIntegration()
         integration.on_startup()
-        result = integration.run_periodic_checks()
+        result = integration.run_health_checks()
         assert isinstance(result["expired_delegations_cleaned"], int)
         assert result["expired_delegations_cleaned"] >= 0
 
     def test_updates_last_periodic_result(self):
         integration = F5BootIntegration()
         integration.on_startup()
-        result = integration.run_periodic_checks()
+        result = integration.run_health_checks()
         assert integration.last_periodic_result["timestamp"] == result["timestamp"]
 
     def test_works_without_initialization(self):
         integration = F5BootIntegration()
         # Without on_startup, components are None — should still return dict
-        result = integration.run_periodic_checks()
+        result = integration.run_health_checks()
         assert isinstance(result, dict)
         assert result["deadlock_cycles"] == []
         assert result["expired_locks"] == []
@@ -302,7 +302,7 @@ class TestEndToEndBootCycle:
         boot_result = integration.on_startup()
         assert boot_result.success is True
         # Periodic check
-        periodic = integration.run_periodic_checks()
+        periodic = integration.run_health_checks()
         assert isinstance(periodic, dict)
         # Shutdown
         shutdown_result = integration.on_shutdown()
@@ -312,8 +312,8 @@ class TestEndToEndBootCycle:
     def test_multiple_periodic_checks_are_independent(self):
         integration = F5BootIntegration()
         integration.on_startup()
-        first = integration.run_periodic_checks()
-        second = integration.run_periodic_checks()
+        first = integration.run_health_checks()
+        second = integration.run_health_checks()
         assert first["timestamp"] != second["timestamp"] or True  # timestamps may be equal on fast machines
         assert isinstance(first, dict)
         assert isinstance(second, dict)

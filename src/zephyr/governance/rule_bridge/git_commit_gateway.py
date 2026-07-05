@@ -274,8 +274,8 @@ class GitCommitGateway:
         # Phase 1 AST 门禁扩展（DM-202953，2026-07-03）：5 个新 in-process gate 治本 5 病根
         self._gate_registry.register(make_perm_trigger_gate())  # priority=82 治本永久系统时间触发模式无事件订阅（病根：永久系统触发32）
         self._gate_registry.register(make_empty_handler_gate())  # priority=84 治本空 handler 函数体仅 logger/pass/return（病根：事件订阅空壳）
-        self._gate_registry.register(make_orphan_module_gate())  # priority=86 治本孤儿模块死代码无 import 引用（病根：新AI可发现性55）
-        self._gate_registry.register(make_doc_ref_broken_gate())  # priority=88 治本文档引用断裂 .md 相对路径不存在（病根：文档引用断裂26）
+        self._gate_registry.register(make_orphan_module_gate())  # priority=89 治本孤儿模块死代码无 import 引用（病根：新AI可发现性55）——原86与id_uniqueness撞号，调整至89
+        self._gate_registry.register(make_doc_ref_broken_gate())  # priority=91 治本文档引用断裂 .md 相对路径不存在（病根：文档引用断裂26）——原88与module_id_consistency撞号，调整至91
         self._gate_registry.register(make_function_dup_gate())  # priority=90 治本重复函数同目录同名同 body hash（病根：SSoT真源唯一性211）
         self._gate_registry.register(make_bare_getenv_gate())  # priority=81 治本裸os.getenv读密钥绕过SecretProvider（§5.17.10防复发，AST检测SECRET_INDICATOR_PATTERNS）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）

@@ -11,14 +11,14 @@ v1.0.0+: 统一入口已迁移至 zephyr.governance.drift_detection（B 轨平�
 
 迁移路径:
   旧: from zephyr.governance.drift_detection import events, rollback_bridge
-  新: from zephyr.governance.drift_detection.drift_engine import scan
-      from zephyr.governance.drift_detection.reconciler import AutoFixer
+  新: from zephyr.governance.drift_detector_core.drift_engine import scan
+      from zephyr.governance.drift_detector_core.reconciler import AutoFixer
 """
 
 import warnings
 
 warnings.warn(
-    "zephyr.governance.drift_detection 已迁移至 zephyr.governance.drift_detection (v1.0.0)。"
+    "zephyr.governance.drift_detection 已迁移至 zephyr.governance.drift_detector_core (v1.0.0)。"
     "请更新 import 路径。本兼容层将在 2 个版本后移除。",
     DeprecationWarning,
     stacklevel=2,

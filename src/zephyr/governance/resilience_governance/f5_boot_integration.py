@@ -5,12 +5,12 @@
 # [CONSUMERS] zephyr.trading.boot_hooks; zephyr.trading.feedback_loop.scheduler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] register_startup_hook is idempotent; on_startup initializes F5四组件; on_shutdown clears F5 state; run_periodic_checks never raises
+# [INVARIANTS] register_startup_hook is idempotent; on_startup initializes F5四组件; on_shutdown clears F5 state; run_health_checks never raises
 # [MODIFY-GUARD] boot_hooks registration name must be "f5_boot_init"
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] returns BootResult; logs error on failure; never raises during boot; run_periodic_checks returns dict
+# [ERROR_CONTRACT] returns BootResult; logs error on failure; never raises during boot; run_health_checks returns dict
 # [TESTS] tests/test_f5_auto_startup.py
 # [A_module] module_id=MOD-RES_f5_boot_integration | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -191,7 +191,7 @@ class F5BootIntegration:
             details=details,
         )
 
-    def run_periodic_checks(self) -> dict:
+    def run_health_checks(self) -> dict:
         """FLE _periodic_checks() 集成入口 — 巡检死锁/超时锁/升级队列/过期委托。
 
         本方法永不抛异常 (遵循 FLE _periodic_checks 契约)。

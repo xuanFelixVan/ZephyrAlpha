@@ -18,8 +18,9 @@ from __future__ import annotations
 #   _core.py        — 核心引擎与状态机（drift扫描调度/事件/状态/检测器分发/架构契约）
 #     含: drift_engine, drift_models, events, state_machine, detector_dispatcher,
 #         architecture_contracts, architecture_principles, brain_integration,
-#         dependency_manager, integration_test_runner, ml_engineering,
-#         model_drift_monitor, performance_baseline, regime_detector
+#         dependency_manager, integration_test_runner,
+#         ml_engineering, model_drift_monitor, performance_baseline, regime_detector
+#         （已迁至 drift_detector_core/）
 #
 #   _drift.py       — 漂移检测器簇（契约/DB/版本/文档/语义/安全等漂移类型）
 #     含: contract_drift_detector, drift_hotfix_bypass, drift_infrastructure,
@@ -29,7 +30,7 @@ from __future__ import annotations
 #     含: incremental_scanner, headless_scanner, orphan_scanner, scan_mutex,
 #         symlink_checker, file_attr_checker, naming_magic_checker,
 #         test_fixture_checker, python_compat, gitignore_auditor,
-#         benchmark_integrity, code_review_ai, cross_env_consistency,
+#         benchmark_integrity（已迁至 drift_detector_core/）, code_review_ai, cross_env_consistency,
 #         data_classification, data_lifecycle, data_quality, data_source_reliability
 #
 #   _infrastructure.py — 基础设施簇（缺勤/告警/基线/金丝雀/冷启动/配置/仪表盘等）

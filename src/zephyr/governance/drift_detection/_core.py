@@ -60,16 +60,8 @@ from zephyr.governance.drift_detection.state_machine import (
 )
 
 _SUBMODULES = [
-    "architecture_contracts",
-    "architecture_principles",
     "brain_integration",
     "dashboard",
-    "dependency_manager",
-    "integration_test_runner",
-    "ml_engineering",
-    "model_drift_monitor",
-    "performance_baseline",
-    "regime_detector",
 ]
 
 __all__ = [
