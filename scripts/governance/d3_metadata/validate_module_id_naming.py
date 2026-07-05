@@ -40,7 +40,7 @@ module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 +
   ok, reason = is_valid_submodule_id("D-FACTOR-01")    # (True, "")
 
 注：CLI 手工模式已删除（GATE-11 pre-commit 已自动覆盖同等校验，消除冗余 + 真源分裂）。
-    旧式单轨正则 VALID_MODULE_ID_PATTERN / NESTED_ID_PATTERN 一并删除（与三轨正则语义冲突）。
+    旧式单轨正则 VALID_MODULE_ID_PATTERN / NESTED_ID_PATTERN 一并删除（与三声明轨道正则语义冲突）。
     R2 治本修订：MODULE_ID_D_PREFIX_RE 重命名为 SUBMODULE_ID_RE，作用域缩小至 submodule_id 校验。
 """
 

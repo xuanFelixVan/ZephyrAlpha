@@ -174,7 +174,7 @@ ssot_claims:
 | `commit_gates/file_copy_gate.py` | §0.1 | 文件复制检测门禁 | 已实现 | | 本模块 |
 | `commit_gates/id_uniqueness_gate.py` | §0.1 | pre-commit hook id唯一性门禁 | 已实现 | | 本模块 |
 | `commit_gates/exempt_zone_frontmatter_gate.py` | §0.1 | 豁免区frontmatter门禁 | 已实现 | | 本模块 |
-| `commit_gates/module_id_consistency_gate.py` | §0.1 | module_id三轨一致性门禁 | 已实现 | | 本模块 |
+| `commit_gates/module_id_consistency_gate.py` | §0.1 | module_id 三声明轨道一致性门禁 | 已实现 | | 本模块 |
 | `commit_gates/perm_trigger_gate.py` | §0.1 | 永久系统时间触发门禁 | 已实现 | | 本模块 |
 | `commit_gates/empty_handler_gate.py` | §0.1 | 空handler门禁 | 已实现 | | 本模块 |
 | `commit_gates/orphan_module_gate.py` | §0.1 | 孤儿模块门禁 | 已实现 | | 本模块 |

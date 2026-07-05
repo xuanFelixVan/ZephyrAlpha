@@ -762,7 +762,7 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 
 ### 14.2 它什么时候跑
 
-三轨触发（裁定#209，2026-07-02）：
+三声明轨道触发（裁定#209，2026-07-02）：
 
 | 触发方式 | 场景 | 机制 |
 |---------|------|------|
@@ -829,7 +829,7 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 | 200 | GATE-REGISTRY-SYNC | 注册主索引+审计 |
 | 250 | GATE-ID-UNIQ | pre-commit hook id 唯一性 |
 | 280 | GATE-VOCAB-CHANGE | ttl 重判 |
-| 300 | GATE-MODULE-ID-CONSISTENCY | module_id 三轨一致 |
+| 300 | GATE-MODULE-ID-CONSISTENCY | module_id 三声明轨道一致 |
 | 500 | GATE-DELETE-AUDIT | 幽灵节点检测+归档 |
 | 600 | GATE-DEPRECATED-DIR | 废弃目录迁移 |
 | 620 | GATE-REGENERATE | 域文档/index.yaml/manifest 重生 |

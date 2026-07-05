@@ -2700,9 +2700,9 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     return _compose_reconcilers("GATE-INTEGRITY-AUDIT", spec_rules_integrity, spec_commit_gw_audit, spec_agents_md_refs)
 
 
-# trae_060-reviewed: 通过§4元问题审查。该 reconciler 该存在——3-轨 module_id（CFG-/MOD-/PS-*）语义此前未定义，
-# 导致 AI 误判为冲突并反复"修复"。不能删除（检测需求真实），不能合并（现有 reconciler 无 module_id 三轨校验逻辑）。
-# 治本：S0-3 已在 PS-STD-001 定义三轨语义，本 reconciler 自动校验一致性（非阻断，仅告警）。
+# trae_060-reviewed: 通过§4元问题审查。该 reconciler 该存在——三声明轨道 module_id（CFG-/MOD-/PS-*）语义此前未定义，
+# 导致 AI 误判为冲突并反复"修复"。不能删除（检测需求真实），不能合并（现有 reconciler 无 module_id 三声明轨道校验逻辑）。
+# 治本：S0-3 已在 PS-STD-001 定义三声明轨道语义，本 reconciler 自动校验一致性（非阻断，仅告警）。
 # 向内收：扩展已有 reconciliation_registry.py 框架（第12个 reconciler），不新建独立系统。
 # P8-FIX-S1 扩展：增加 count 派生校验（total_registered/total_templates/total_dependencies）。
 #   元问题审查：count 不一致是真实漂移源（template_registry 声明 14 但实际 13）。
@@ -2714,9 +2714,9 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
     body PS-*/GOV-*），语义未定义导致 AI 误判为冲突并反复"修复"。
 
     治本（P8-FIX-S0 v2.4.0，2026-06-30）：
-    - S0-3 已在 PS-STD-001 §5 定义三轨语义（header_config_id / anchor_module_ownership /
+    - S0-3 已在 PS-STD-001 §5 定义三声明轨道语义（header_config_id / anchor_module_ownership /
       body_rule_id），明确三者互补不冲突。
-    - 本 reconciler 在 post-commit 自动校验三轨一致性——检查三者是否在
+    - 本 reconciler 在 post-commit 自动校验三声明轨道一致性——检查三者是否在
       module_id_registry.yaml 中归属同一模块。不一致→warn（非阻断）。
 
     P8-FIX-S1 扩展（2026-06-30）：count 派生校验
@@ -2733,7 +2733,7 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
     cross_module_dependency_registry.yaml 或 _registry/contracts/ 下的 .yaml 文件即命中。
 
     向内收设计：
-    - 责任唯一：三轨语义定义在 PS-STD-001 §5，校验逻辑在本 reconciler 单点
+    - 责任唯一：三声明轨道语义定义在 PS-STD-001 §5，校验逻辑在本 reconciler 单点
     - 真源唯一：复用 ReconciliationRegistry 框架（第12个 reconciler）
     - 事件触发：post-commit 自动执行，无 cron/manual
 
@@ -2752,7 +2752,7 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
     _DEP_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml"
     _CONTRACTS_DIR = "docs/01_policies_and_standards/_registry/contracts/"
 
-    # 三轨正则
+    # 三声明轨道正则
     _RE_HEADER_CFG = re.compile(r"^#\s*\[A_config\]\s*module_id=(CFG-\S+)", re.MULTILINE)
     _RE_ANCHOR_MOD = re.compile(r"^#\s*module_id:\s*(MOD-\S+)", re.MULTILINE)
     _RE_BODY_RULE = re.compile(r"^module_id:\s*([A-Z]+(?:-[A-Z]+)*-\w+)\s*$", re.MULTILINE)
@@ -2796,7 +2796,7 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
 
             checked += 1
 
-            # === 三轨一致性校验（P8-FIX-S0） ===
+            # === 三声明轨道一致性校验（P8-FIX-S0） ===
             cfg_match = _RE_HEADER_CFG.search(content)
             mod_match = _RE_ANCHOR_MOD.search(content)
             rule_match = _RE_BODY_RULE.search(content)
@@ -2813,7 +2813,7 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
                     "cfg_id": cfg_id,
                     "mod_id": mod_id,
                     "rule_id": rule_id,
-                    "detail": f"文件有 header CFG-{cfg_id} 但仅 {tracks_found}/3 轨声明",
+                    "detail": f"文件有 header CFG-{cfg_id} 但仅 {tracks_found}/3 声明轨声明",
                 })
 
             # === count 派生校验（P8-FIX-S1） ===
