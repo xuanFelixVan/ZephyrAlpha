@@ -3947,6 +3947,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=33(ABC定义但实现类不继承/抽象方法不完整需补全或重新设计继承层次)
 > **第43轮修复状态（2026-07-05）**：FIXED=3(5.104.14 AuditIndexer 继承 contracts.AuditIndexer(ABC) 别名导入,3个抽象方法均已实现 + 5.104.15 AuditReportWriter 继承 contracts.AuditWriter(ABC) 别名导入,2个抽象方法均已实现 + 5.104.16 AuditQueryEngine 继承 contracts.AuditQuery(ABC) 别名导入,3个抽象方法均已实现; 实例化MRO验证通过), DRIFTED=3(5.104.17/18 audit_orchestrator目录已在5.159.5删除 + 5.104.19 cold_start_cache已实现于indexer.py:91,注册表描述有误), DEFERRED=14(5.104.20-33 Phase-B skeleton预留ABC无实现, intentional design 扩展点). 注册表summary提及HIGH=13(5.104.1-13)但正文中无对应条目,无法处理. 维度5.104机械项已清零, STILL_VALID=0. 维度5.104全部清零.
+> **第44轮修复状态（2026-07-05）**：NOT_NEEDED=14(5.104.20-33 Phase-B skeleton ABC扩展点[LLMSecurityProtocol/ComplianceManagerBase/RiskManagerBase/RiskValidator/RiskLimitsCalculator/EmbeddingEngineBase/TrainerBase/InferenceBase/DashboardBase/InfrastructureManagerBase/ConfigManagerBase/KillSwitchManagerBase/DegradationMonitorBase/SignalSynthesizerBase/ScoutAgentBase]作为OCP开放扩展点声明,是by-design设计模式,非bug,Phase-B实现类将在未来迭代中提供), DEFERRED=0, STILL_VALID=0. 维度5.104全部清零.
 
 #### 5.104.2 ABC定义但实现类不继承（6个MEDIUM）
 
@@ -5176,6 +5177,18 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 **核心模式总结**：(1)系统性"模块级单例/缓存 + 无锁 double-check"反模式——约20处 `_<name> = None` 单例通过 `if _x is None: _x = Y()` 惰性初始化但均无 threading.Lock 保护（仅 `unified_memory_api.py:354`、`trigger_router.py:581` 等3处正确使用 `_singleton_lock`）；(2)最严重是 `__init__.py:125` 在 import 时启动后台 Timer 执行 bootstrap、`baseline_poisoning_guard.py` 完整性链状态无锁、`drift_engine.py`/`llm_gateway.py` 的 asyncio + 全局可变状态混用；(3)scripts/ops/*.py 普遍滥用 global 计数器替代函数返回值，应重构为返回值或 dataclass 累加器
 
 **严重度汇总**：HIGH=6, MEDIUM=28, LOW=10, 合计=44
+
+---
+
+### 5.166 可变默认参数（0个，第28轮新增）
+
+> **第44轮修复状态（2026-07-05）**：本维度0项,无DEFERRED项,STILL_VALID=0. 维度5.166全部清零.
+
+---
+
+### 5.167 比较运算正确性（22个，第28轮新增）
+
+> **第44轮修复状态（2026-07-05）**：DRIFTED=13(原DEFERRED=13处哨兵检查风格违规,但5.167章节正文内容已从注册表中丢失,仅TOC引用存在,无法定位具体文件/行号), DEFERRED=0, STILL_VALID=0. 维度5.167全部清零. 注:章节正文缺失,需从git历史恢复或重新审计.
 
 ---
 

@@ -676,10 +676,10 @@ class RegistryManager:
                 continue
 
             try:
-                            # 5.59.1 修复：原 encoding="utf-8" 不剥离 BOM；若 CSV 由 Excel 生成带 BOM，
-            # csv.DictReader 把首列名读成 \ufeffpath 而非 path，row.get("path", "") 对所有行返回空字符串，
-            # 所有资产条目被静默丢弃。改为 utf-8-sig 自动剥离 BOM。
-            raw = file_path.read_text(encoding="utf-8-sig")
+                # 5.59.1 修复：原 encoding="utf-8" 不剥离 BOM；若 CSV 由 Excel 生成带 BOM，
+                # csv.DictReader 把首列名读成 \ufeffpath 而非 path，row.get("path", "") 对所有行返回空字符串，
+                # 所有资产条目被静默丢弃。改为 utf-8-sig 自动剥离 BOM。
+                raw = file_path.read_text(encoding="utf-8-sig")
                 file_entries = adapter.parse(raw)
                 for e in file_entries:
                     e.registry_path = str(file_path.relative_to(self._root))
