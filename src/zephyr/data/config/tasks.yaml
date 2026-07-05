@@ -119,3 +119,572 @@ tasks:
     symbols: null
     extra:
       description: "宏观数据增量"
+
+  - task_id: money_flow_incremental
+    table: c1_market.money_flow
+    source: ifind
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: money_flow
+    symbols: null
+    extra:
+      description: "资金流向增量"
+
+  - task_id: hk_connect_flow_incremental
+    table: c1_market.hk_connect_flow
+    source: ifind
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: hk_connect_flow
+    symbols: null
+    extra:
+      description: "沪深港通资金增量（试用账号不可用，需正式账号）"
+      disabled: true
+
+  - task_id: futures_kline_incremental
+    table: c1_market.futures_kline
+    source: miniqmt
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: futures_kline
+    symbols: null
+    extra:
+      description: "期货行情K线增量"
+
+  - task_id: futures_position_incremental
+    table: c1_market.futures_position
+    source: miniqmt
+    schedule: daily_capital
+    incremental: true
+    dependencies: ["futures_kline_incremental"]
+    capability: futures_position
+    symbols: null
+    extra:
+      description: "期货持仓增量"
+
+  - task_id: us_daily_kline_incremental
+    table: c1_market.us_daily_kline
+    source: tickflow
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: us_daily_kline
+    symbols: null  # 默认在 Provider 内置 10 美股标的
+    extra:
+      description: "美股日K线增量"
+
+  - task_id: us_index_incremental
+    table: c1_market.us_index
+    source: tickflow
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: us_index
+    symbols: null
+    extra:
+      description: "美股指数增量（ETF替代）"
+
+  # ============== 盘后日K时段追加（周月K线 + 分钟K线）==============
+  - task_id: kline_weekly_incremental
+    table: c1_market.kline_weekly
+    source: ifind
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: kline_weekly
+    symbols: null
+    extra:
+      description: "周K线增量"
+
+  - task_id: kline_monthly_incremental
+    table: c1_market.kline_monthly
+    source: ifind
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: kline_monthly
+    symbols: null
+    extra:
+      description: "月K线增量"
+
+  - task_id: kline_1min_incremental
+    table: c1_market.kline_1min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: kline_1min
+    symbols: null
+    extra:
+      description: "1分钟K线增量（历史需淘宝）"
+
+  - task_id: kline_5min_incremental
+    table: c1_market.kline_5min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: kline_5min
+    symbols: null
+    extra:
+      description: "5分钟K线增量（2019年前需淘宝补历史）"
+
+  - task_id: kline_15min_incremental
+    table: c1_market.kline_15min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: kline_15min
+    symbols: null
+    extra:
+      description: "15分钟K线增量"
+
+  - task_id: kline_30min_incremental
+    table: c1_market.kline_30min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: kline_30min
+    symbols: null
+    extra:
+      description: "30分钟K线增量"
+
+  - task_id: kline_60min_incremental
+    table: c1_market.kline_60min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: kline_60min
+    symbols: null
+    extra:
+      description: "60分钟K线增量"
+
+  # ============== 盘后事件时段（18:00 周一-五）==============
+  - task_id: news_data_incremental
+    table: c3_fundamental.news_data
+    source: rss
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_data
+    symbols: null  # 默认 4 个财经 RSS 源
+    extra:
+      description: "财经新闻增量（RSS 爬虫）"
+
+  - task_id: news_news_info_incremental
+    table: c3_fundamental.news_news_info
+    source: tushare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_news_info
+    symbols: null
+    extra:
+      description: "新闻快讯增量（tushare pro.news_info）"
+
+  - task_id: news_security_incremental
+    table: c3_fundamental.news_security
+    source: tushare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_security
+    symbols: null
+    extra:
+      description: "证券新闻增量（tushare pro.news）"
+
+  - task_id: share_unlock_incremental
+    table: c3_fundamental.share_unlock
+    source: ifind
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: share_unlock
+    symbols: null
+    extra:
+      description: "限售解禁增量"
+
+  - task_id: shareholder_incremental
+    table: c3_fundamental.shareholder
+    source: miniqmt
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: shareholder
+    symbols: null
+    extra:
+      description: "股东数据增量（十大股东/股东人数）"
+
+  - task_id: analyst_forecast_incremental
+    table: c3_fundamental.analyst_forecast
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: analyst_forecast
+    symbols: null
+    extra:
+      description: "分析师一致预期增量（同花顺一致预期EPS）"
+
+  - task_id: earnings_forecast_incremental
+    table: c3_fundamental.earnings_forecast
+    source: miniqmt
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: earnings_forecast
+    symbols: null
+    extra:
+      description: "盈利预测增量（QMT ProfitForecast表）"
+
+  - task_id: express_report_incremental
+    table: c3_fundamental.express_report
+    source: miniqmt
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: express_report
+    symbols: null
+    extra:
+      description: "业绩快报增量（QMT Performance表）"
+
+  - task_id: audit_opinion_incremental
+    table: c3_fundamental.audit_opinion
+    source: ifind
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: audit_opinion
+    symbols: null
+    extra:
+      description: "审计意见增量（iFind i问财）"
+
+  - task_id: dividend_incremental
+    table: c3_fundamental.dividend
+    source: miniqmt
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: dividend
+    symbols: null
+    extra:
+      description: "分红送股增量（QMT get_divid_factors）"
+
+  - task_id: rights_issue_incremental
+    table: c3_fundamental.rights_issue
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: rights_issue
+    symbols: null
+    extra:
+      description: "分红配股增量（AKShare stock_history_dividend_detail）"
+
+  - task_id: equity_pledge_incremental
+    table: c3_fundamental.equity_pledge
+    source: ifind
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: equity_pledge
+    symbols: null
+    extra:
+      description: "股权质押增量（iFind THS_BD）"
+
+  - task_id: equity_pledge_summary_incremental
+    table: c3_fundamental.equity_pledge_summary
+    source: ifind
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: equity_pledge_summary
+    symbols: null
+    extra:
+      description: "股权质押摘要增量"
+
+  # ============== 周末财务时段（周六 10:00）==============
+  - task_id: balance_sheet_incremental
+    table: c3_fundamental.balance_sheet
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: balance_sheet
+    symbols: null
+    extra:
+      description: "资产负债表增量"
+
+  - task_id: income_statement_incremental
+    table: c3_fundamental.income_statement
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: income_statement
+    symbols: null
+    extra:
+      description: "利润表增量"
+
+  - task_id: cashflow_statement_incremental
+    table: c3_fundamental.cashflow_statement
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: cashflow_statement
+    symbols: null
+    extra:
+      description: "现金流量表增量"
+
+  - task_id: financial_indicator_incremental
+    table: c3_fundamental.financial_indicator
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: financial_indicator
+    symbols: null
+    extra:
+      description: "财务指标增量（QMT Capital表）"
+
+  - task_id: main_business_incremental
+    table: c3_fundamental.main_business
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: main_business
+    symbols: null
+    extra:
+      description: "主营业务增量"
+
+  - task_id: industry_class_refresh
+    table: c3_fundamental.industry_class
+    source: tdx
+    schedule: weekend_financial
+    incremental: false  # 全量重建
+    dependencies: []
+    capability: industry_class
+    symbols: null
+    extra:
+      description: "板块分类全量刷新（mootdx get_stock_list_in_sector）"
+
+  - task_id: sector_kline_incremental
+    table: c1_market.sector_kline
+    source: tdx
+    schedule: weekend_financial
+    incremental: true
+    dependencies: ["industry_class_refresh"]
+    capability: sector_kline
+    symbols: null  # 由 industry_class_refresh 提供板块代码列表
+    extra:
+      description: "板块指数K线增量（mootdx index_bars）"
+      count: 100
+
+  - task_id: option_iv_surface_incremental
+    table: c1_market.option_iv_surface
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: option_iv_surface
+    symbols: null
+    extra:
+      description: "期权IV曲面增量（QMT 662期权+Greeks，IV需自己计算）"
+
+  - task_id: convertible_bond_iv_incremental
+    table: c1_market.convertible_bond_iv
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: convertible_bond_iv
+    symbols: null
+    extra:
+      description: "可转债IV增量（QMT 152可转债，IV需自己计算）"
+
+  - task_id: futures_term_structure_incremental
+    table: c1_market.futures_term_structure
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: ["futures_kline_incremental"]
+    capability: futures_term_structure
+    symbols: null
+    extra:
+      description: "期货期限结构增量（基差需自己计算）"
+
+  - task_id: tick_data_snapshot
+    table: c1_market.tick_data
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: tick_data
+    symbols: null
+    extra:
+      description: "3秒Tick快照（仅实时积累）"
+
+  - task_id: auction_snapshot
+    table: c1_market.auction_snapshot
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: auction_snapshot
+    symbols: null
+    extra:
+      description: "集合竞价快照（9:15-9:25 实时积累）"
+
+  - task_id: index_quote_snapshot
+    table: c1_market.index_quote
+    source: miniqmt
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: index_quote
+    symbols: null
+    extra:
+      description: "指数3秒实时行情快照"
+
+  # ============== 静态数据月初刷新（每月1日 09:00）==============
+  - task_id: trade_calendar_refresh
+    table: c1_market.trade_calendar
+    source: baostock
+    schedule: monthly_static
+    incremental: false  # 全量重建
+    dependencies: []
+    capability: trade_calendar
+    symbols: null
+    extra:
+      description: "交易日历全量刷新（baostock query_trade_date）"
+
+  - task_id: stock_list_refresh
+    table: c1_market.stock_list
+    source: miniqmt
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: stock_list
+    symbols: null
+    extra:
+      description: "股票列表全量刷新（QMT 5207只）"
+
+  - task_id: index_constituent_refresh
+    table: c1_market.index_constituent
+    source: baostock
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: index_constituent
+    symbols: null
+    extra:
+      description: "沪深300成分股全量刷新（baostock query_hs300_stocks）"
+
+  - task_id: industry_class_ifind_refresh
+    table: c3_fundamental.industry_class_ifind
+    source: ifind
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: industry_class_ifind
+    symbols: null
+    extra:
+      description: "申万/中证行业分类全量刷新（iFind THS_DataPool）"
+
+  - task_id: sector_constituent_refresh
+    table: c3_fundamental.sector_constituent
+    source: tdx
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: industry_class
+    symbols: null
+    extra:
+      description: "板块成分股全量刷新（mootdx 通达信板块）"
+
+  - task_id: kline_daily_full_refresh
+    table: c1_market.kline_daily
+    source: baostock
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: kline_daily
+    symbols: null
+    extra:
+      description: "日K线全量降级源刷新（baostock，数据滞后约1周）"
+
+  - task_id: macro_data_full_refresh
+    table: c1_market.macro_data
+    source: akshare
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: macro_data
+    symbols: null
+    extra:
+      description: "宏观数据全量刷新（GDP/CPI/PMI/货币供应量）"
+
+  - task_id: us_daily_kline_full_refresh
+    table: c1_market.us_daily_kline
+    source: tickflow
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: us_daily_kline
+    symbols: null
+    extra:
+      description: "美股日K线全量刷新"
+
+  - task_id: us_index_full_refresh
+    table: c1_market.us_index
+    source: tickflow
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: us_index
+    symbols: null
+    extra:
+      description: "美股指数全量刷新（ETF替代）"
+
+  - task_id: money_flow_full_refresh
+    table: c1_market.money_flow
+    source: ifind
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: money_flow
+    symbols: null
+    extra:
+      description: "资金流向全量刷新（iFind i问财）"
+
+  - task_id: daily_valuation_full_refresh
+    table: c1_market.daily_valuation
+    source: ifind
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: daily_valuation
+    symbols: null
+    extra:
+      description: "估值数据全量刷新（补缺约1800只）"
+
+  - task_id: kline_5min_history_backfill
+    table: c1_market.kline_5min
+    source: miniqmt
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: kline_5min
+    symbols: null
+    extra:
+      description: "5分钟K线历史回补（2000-2018 需淘宝购买）"
+      disabled: true
+      requires_manual: true
