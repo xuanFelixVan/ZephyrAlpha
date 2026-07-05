@@ -616,7 +616,7 @@ scripts:
   dimensions: []
 - name: governance/extract_decisiongraph.py
   path: governance/extract_decisiongraph.py
-  description: '[BLUEPRINT] | scripts/governance/extract_decisiongraph.py | §decisiongraph'
+  description: extract_decisiongraph - decisiongraph on-demand extraction tool
   domain: governance
   execution_plane: warm-path
   status: registered
