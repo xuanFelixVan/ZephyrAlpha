@@ -45,6 +45,7 @@ Version: 0.1.0
 from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, datetime
+import threading
 
 __all__ = [
     "MOCKED_TIME",
@@ -58,6 +59,7 @@ __all__ = [
 ]
 
 MOCKED_TIME: datetime | None = None
+_mocked_time_lock = threading.Lock()
 
 
 def now_utc() -> datetime:
@@ -143,12 +145,14 @@ def freeze_time(frozen_at: datetime | str) -> Generator[None, None, None]:
         if frozen_dt.tzinfo is None:
             frozen_dt = frozen_dt.replace(tzinfo=UTC)
 
-    previous = MOCKED_TIME
-    MOCKED_TIME = frozen_dt
+    with _mocked_time_lock:
+        previous = MOCKED_TIME
+        MOCKED_TIME = frozen_dt
     try:
         yield
     finally:
-        MOCKED_TIME = previous
+        with _mocked_time_lock:
+            MOCKED_TIME = previous
 
 
 def seconds_since(dt: datetime) -> float:

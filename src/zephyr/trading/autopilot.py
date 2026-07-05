@@ -26,6 +26,7 @@
 from __future__ import annotations
 
 import logging
+import threading
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -186,6 +187,7 @@ class AutoPilot:
 # ── EventBusBackpressure 订阅 (DM-2507-H) ──────────────────────────────
 
 _subscribed = False
+_subscribed_lock = threading.Lock()
 
 
 def subscribe_eventbus() -> None:
@@ -201,15 +203,18 @@ def subscribe_eventbus() -> None:
     global _subscribed
     if _subscribed:
         return
-    try:
-        from zephyr.shared.events.event_bus import EventBusBackpressure
+    with _subscribed_lock:
+        if _subscribed:
+            return
+        try:
+            from zephyr.shared.events.event_bus import EventBusBackpressure
 
-        bus = EventBusBackpressure()
-        bus.subscribe("task_completed", _on_task_completed)
-        _subscribed = True
-        logger.info("AutoPilot: subscribed to task_completed event")
-    except Exception as e:
-        logger.warning("AutoPilot: subscribe_eventbus failed: %s", e, exc_info=True)
+            bus = EventBusBackpressure()
+            bus.subscribe("task_completed", _on_task_completed)
+            _subscribed = True
+            logger.info("AutoPilot: subscribed to task_completed event")
+        except Exception as e:
+            logger.warning("AutoPilot: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
 def _on_task_completed(payload: object) -> None:

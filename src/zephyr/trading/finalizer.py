@@ -23,6 +23,7 @@ Finalizer — 优雅清理器
 """
 
 import logging
+import threading
 from collections.abc import Callable
 
 _logger = logging.getLogger(__name__)
@@ -94,13 +95,16 @@ def register_monitoring_finalizers(finalizer: Finalizer) -> None:
 
 
 _global_finalizer: Finalizer | None = None
+_global_finalizer_lock = threading.Lock()
 
 
 def get_finalizer() -> Finalizer:
     """获取全局 Finalizer 单例 — DM-201249."""
     global _global_finalizer
     if _global_finalizer is None:
-        _global_finalizer = Finalizer()
+        with _global_finalizer_lock:
+            if _global_finalizer is None:
+                _global_finalizer = Finalizer()
     return _global_finalizer
 
 

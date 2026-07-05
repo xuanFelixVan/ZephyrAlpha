@@ -38,6 +38,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+import threading
 from datetime import UTC, datetime
 from typing import Any
 
@@ -78,13 +79,16 @@ def _utc_now() -> datetime:
 
 
 _task_counter = 0
+_counter_lock = threading.Lock()
 
 
 def _next_task_seq(namespace: str = "STD") -> tuple[str, int]:
     global _task_counter
-    _task_counter += 1
-    task_id = f"{namespace}-{_task_counter:03d}"
-    return task_id, _task_counter
+    with _counter_lock:
+        _task_counter += 1
+        seq = _task_counter
+    task_id = f"{namespace}-{seq:03d}"
+    return task_id, seq
 
 
 def make_valid_task(
@@ -160,8 +164,10 @@ _audit_counter = 0
 
 def _next_audit_id() -> str:
     global _audit_counter
-    _audit_counter += 1
-    return f"AUDIT-{_audit_counter:03d}"
+    with _counter_lock:
+        _audit_counter += 1
+        seq = _audit_counter
+    return f"AUDIT-{seq:03d}"
 
 
 def make_valid_audit_report(
@@ -200,8 +206,10 @@ _ke_counter = 0
 
 def _next_ke_id() -> str:
     global _ke_counter
-    _ke_counter += 1
-    return f"KE-{_ke_counter:03d}"
+    with _counter_lock:
+        _ke_counter += 1
+        seq = _ke_counter
+    return f"KE-{seq:03d}"
 
 
 def make_valid_knowledge_entry(
@@ -230,8 +238,10 @@ _pattern_counter = 0
 
 def _next_pattern_id() -> str:
     global _pattern_counter
-    _pattern_counter += 1
-    return f"F-{_pattern_counter:03d}"
+    with _counter_lock:
+        _pattern_counter += 1
+        seq = _pattern_counter
+    return f"F-{seq:03d}"
 
 
 def make_valid_failure_pattern(

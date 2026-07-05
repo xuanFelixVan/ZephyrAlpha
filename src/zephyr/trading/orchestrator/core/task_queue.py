@@ -169,6 +169,7 @@ class ActiveTaskQueue:
 
 
 _queue: ActiveTaskQueue | None = None
+_queue_lock = threading.Lock()
 
 
 def get_queue(
@@ -177,7 +178,9 @@ def get_queue(
 ) -> ActiveTaskQueue:
     global _queue
     if _queue is None:
-        _queue = ActiveTaskQueue(repo, orchestrator)
+        with _queue_lock:
+            if _queue is None:
+                _queue = ActiveTaskQueue(repo, orchestrator)
     return _queue
 
 

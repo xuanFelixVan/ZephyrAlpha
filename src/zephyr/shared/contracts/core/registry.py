@@ -364,15 +364,19 @@ class ContractRegistry:
 
 
 from collections import defaultdict
+import threading
 
 _registry: ContractRegistry | None = None
+_registry_lock = threading.Lock()
 
 
 def get_registry(repo_root: Path | None = None) -> ContractRegistry:
     global _registry
     if _registry is None:
-        _registry = ContractRegistry(repo_root=repo_root)
-        _registry.initialize()
+        with _registry_lock:
+            if _registry is None:
+                _registry = ContractRegistry(repo_root=repo_root)
+                _registry.initialize()
     return _registry
 
 

@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+import threading
 from typing import Self
 
 """
@@ -191,10 +192,13 @@ class SchemaRegistry:
 
 
 _global_schema_registry: SchemaRegistry | None = None
+_global_schema_registry_lock = threading.Lock()
 
 
 def get_schema_registry() -> SchemaRegistry:
     global _global_schema_registry
     if _global_schema_registry is None:
-        _global_schema_registry = SchemaRegistry()
+        with _global_schema_registry_lock:
+            if _global_schema_registry is None:
+                _global_schema_registry = SchemaRegistry()
     return _global_schema_registry

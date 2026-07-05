@@ -457,13 +457,17 @@ class IdeHealthDaemon:
 
 
 _daemon_instance: IdeHealthDaemon | None = None
+_daemon_instance_lock = threading.Lock()
 
 
 def register_daemon() -> None:
     global _daemon_instance
     if _daemon_instance is not None:
         return
-    _daemon_instance = IdeHealthDaemon()
+    with _daemon_instance_lock:
+        if _daemon_instance is not None:
+            return
+        _daemon_instance = IdeHealthDaemon()
     try:
         from zephyr.shared.lifecycle.daemon_registry import registry
 

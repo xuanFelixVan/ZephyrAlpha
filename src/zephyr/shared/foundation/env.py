@@ -47,6 +47,7 @@ Version: 0.1.0
 
 import os
 import sys
+import threading
 from enum import Enum, unique
 
 __all__ = [
@@ -86,12 +87,15 @@ def _detect_env() -> Env:
 
 
 _CURRENT_ENV: Env | None = None
+_CURRENT_ENV_lock = threading.Lock()
 
 
 def current_env() -> Env:
     global _CURRENT_ENV
     if _CURRENT_ENV is None:
-        _CURRENT_ENV = _detect_env()
+        with _CURRENT_ENV_lock:
+            if _CURRENT_ENV is None:
+                _CURRENT_ENV = _detect_env()
     return _CURRENT_ENV
 
 
