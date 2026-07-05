@@ -233,6 +233,8 @@ class ProtectionIndex:
         self._rebuild()
 
     def query(self, file_path: str) -> ProtectionLevel:
+        # 修复路径分隔符：统一为正斜杠以兼容 Windows 反斜杠路径
+        file_path = file_path.replace("\\", "/")
         with self._lock:
             if file_path in self._entries:
                 return self._entries[file_path].level

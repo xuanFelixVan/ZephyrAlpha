@@ -3664,6 +3664,12 @@ creation_tokens:
     created_by: "session-sess-11416-20260706044753"
     capability: "data_source_provider_abstraction"
 
+  # --- AI-12审计修复：语义审计安全边界配置（forbidden_patterns.yaml）---
+  - file: "src/zephyr/governance/semantic_audit/forbidden_patterns.yaml"
+    token: "auto-forbidden-patterns-20260706"
+    created_by: "session-sess-28744-20260706044954"
+    capability: "safety_boundary_config"
+
 # ============================================================================
 # 维护日志
 # ============================================================================

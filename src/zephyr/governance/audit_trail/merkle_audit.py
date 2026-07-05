@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] record()->str;get_root()->str
 # [TESTS]
-# [A_module] module_id=MOD-RES_merkle_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-RES_merkle_audit | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.governance.audit_trail (MOD-INF-020).

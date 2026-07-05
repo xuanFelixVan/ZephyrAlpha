@@ -155,8 +155,8 @@ class TriggerEngine:
             return None
         candidates = [
             Path(target),
-            Path("src/zephyr") / target,
-            Path("docs") / target,
+            Path.cwd() / "src" / "zephyr" / target,
+            Path.cwd() / "docs" / target,
         ]
         for c in candidates:
             if c.exists():

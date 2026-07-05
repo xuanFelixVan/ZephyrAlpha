@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] TokenBucket全局桶50/s burst=100不可绕过；熔断器failure_threshold触发后所有请求CIRCUIT_OPEN
-# [MODIFY-GUARD] docs/docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

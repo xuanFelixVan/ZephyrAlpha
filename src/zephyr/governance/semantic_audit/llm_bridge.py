@@ -102,13 +102,16 @@ class LLMBridge:
             return self._template_fix(trigger)
 
     def _build_prompt(self, trigger: TriggerResult) -> str:
+        # 修复 prompt 注入：对用户可控字段进行基本净化（去换行+截断）
+        def _sanitize(text: str) -> str:
+            return text.replace("\n", " ").replace("\r", " ")[:500]
         return (
             f"你是一个代码审计助手。以下是一个语义断裂问题的检测结果:\n"
-            f"- 类型: {trigger.trigger_type}\n"
-            f"- 位置: {trigger.target_location}\n"
+            f"- 类型: {_sanitize(trigger.trigger_type)}\n"
+            f"- 位置: {_sanitize(trigger.target_location)}\n"
             f"- 严重性: {trigger.severity.value}\n"
             f"- 确定性: {trigger.certainty}\n"
-            f"- 证据: {trigger.evidence}\n\n"
+            f"- 证据: {_sanitize(trigger.evidence)}\n\n"
             f"请生成具体的修复文本。只需要输出修复内容,不要解释。"
         )
 

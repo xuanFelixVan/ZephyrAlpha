@@ -1,0 +1,34 @@
+# forbidden_patterns.yaml — 语义审计安全边界禁碰规则
+# SSoT for SafetyBoundary (semantic_audit/safety_boundary.py)
+# 修改此文件后无需重启，SafetyBoundary 会在下次 filter() 调用时重新加载
+forbidden_paths:
+  - ".trae/rules/"
+  - "project_rules.md"
+  - "_index.yaml"
+  - "AGENTS.md"
+  - "CLAUDE.md"
+  - "kill_switch.py"
+  - "rollback.py"
+  - "scripts/governance/"
+  - "scripts/lock_files.py"
+  - "src/zephyr/governance/"
+  - "src/zephyr/agent-rbac/"
+  - "src/zephyr/llm-security/"
+  - "src/zephyr/escalation-engine/"
+  - "src/zephyr/budget-enforcer/"
+
+forbidden_modules:
+  - "MOD-INF-020"
+  - "MOD-INF-021"
+  - "MOD-INF-022"
+  - "MOD-INF-027"
+  - "MOD-INF-028"
+
+forbidden_keywords:
+  - "HMAC_SECRET"
+  - "private_key"
+  - "API_KEY"
+  - "password"
+  - "credential"
+
+confidence_threshold: 0.95

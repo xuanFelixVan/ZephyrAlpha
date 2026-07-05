@@ -12,9 +12,10 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 创世块损坏返回恢复失败
 # [TESTS] tests/audit-orchestrator/test_genesis.py
-# [A_module] module_id=MOD-GOV_genesis | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_genesis | layer=module | stability=frozen | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 import hashlib
+import hmac
 import json
 import logging
 import os
@@ -26,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["GenesisBlock"]
 
-DEFAULT_GENESIS_DIR = Path("data/audit_genesis")
+DEFAULT_GENESIS_DIR = Path.cwd() / "data" / "audit_genesis"
 GENESIS_FILE = "genesis_block.json"
 
 
@@ -82,7 +83,7 @@ class GenesisBlock:
         computed_hash = self._hash_block(block)
 
         return {
-            "valid": stored_hash == computed_hash,
+            "valid": hmac.compare_digest(stored_hash, computed_hash),
             "stored_hash": stored_hash,
             "computed_hash": computed_hash,
         }
@@ -115,7 +116,16 @@ class GenesisManager:
         return {}
 
     def verify_genesis(self, entity):
-        return True
+        # 修复：原实现永远返回 True（虚假安全感）。改为实际验证创世块。
+        try:
+            genesis_path = Path.cwd() / "data" / "audit_genesis" / f"{entity}.json"
+            if not genesis_path.exists():
+                return False
+            manager = GenesisBlockManager(genesis_path)
+            result = manager.verify()
+            return result.get("valid", False)
+        except Exception:
+            return False
 
 
 class GenesisVerificationResult:

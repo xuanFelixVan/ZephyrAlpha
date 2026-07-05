@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] VerdictLevel三态判定不可扩展；GraduatedLevel升级矩阵由protection_level+gate+violations联合决定
-# [MODIFY-GUARD] docs/docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -213,7 +213,7 @@ class VerdictEngine:
             actor = ActorInfo(
                 agent_id=event.get("agent_id", ""),
                 is_human=event.get("is_human", False),
-                trust_score=event.get("trust-score", 50.0),
+                trust_score=event.get("trust_score", 50.0),
                 violation_count=event.get("violation_count", 0),
             )
             try:
@@ -300,6 +300,12 @@ class VerdictEngine:
         violation_count: int,
     ) -> tuple[VerdictLevel, str]:
         if actor.is_human:
+            # 修复 is_human 绕过：人Actor在anchor/protected路径仍需门控
+            if operation.protection_level is ProtectionLevel.anchor:
+                return VerdictLevel.RED, "human_on_anchor_blocked"
+            if operation.protection_level is ProtectionLevel.protected:
+                if not gate_passed:
+                    return VerdictLevel.HOLD, "human_on_protected_no_gate"
             return VerdictLevel.PASS, "human_actor_auto_pass"
 
         if operation.is_cross_module:

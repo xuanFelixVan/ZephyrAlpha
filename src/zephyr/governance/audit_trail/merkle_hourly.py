@@ -30,6 +30,7 @@ audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合
 
 from __future__ import annotations
 
+import hmac
 import json
 import logging
 from datetime import UTC, datetime
@@ -164,7 +165,7 @@ class HourlyMerkleAggregator:
             return False
 
         computed_root = MerkleAggregator.build(entry_hashes)
-        return computed_root == stored_root
+        return hmac.compare_digest(computed_root, stored_root)
 
     def _load_events_for_hour(self, hour_key: str) -> list[dict[str, Any]]:
         if not self._event_log_path.exists():

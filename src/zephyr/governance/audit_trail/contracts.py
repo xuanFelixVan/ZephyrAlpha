@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] 违反契约抛ContractViolationError
 # [TESTS] tests/audit-orchestrator/test_contracts.py
-# [A_module] module_id=MOD-GOV_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_contracts | layer=module | stability=frozen | safety=H | ai_autonomy=immutable_core
 # [TTL] permanent
 from abc import ABC, abstractmethod
 from pathlib import Path

@@ -218,8 +218,10 @@ class SelfHealer:
             return False
         if target_path.endswith(".py"):
             try:
+                # 修复命令注入：原 f-string 插值 target_path 到 python -c 命令字符串，
+                # 路径含特殊字符可执行任意命令。改用 -m py_compile + 参数列表传递。
                 result = subprocess.run(
-                    ["python", "-c", f"import py_compile; py_compile.compile(r'{target_path}', doraise=True)"],
+                    ["python", "-m", "py_compile", target_path],
                     capture_output=True,
                     text=True,
                     timeout=30,

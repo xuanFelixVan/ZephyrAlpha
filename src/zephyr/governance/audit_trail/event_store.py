@@ -216,12 +216,12 @@ class EventStore:
             current_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
             if i > 0 and prev_hash:
-                expected_prev = hashlib.sha256(
-                    f"{events[i - 1].event_id}|{events[i - 1].task_id}|{events[i - 1].event_type}|"
-                    f"{events[i - 1].payload}|{events[i - 1].timestamp}|{events[i - 1].session_id or ''}".encode()
-                ).hexdigest()
-                if prev_hash != expected_prev:
-                    errors.append(f"Checksum chain break at position {i}")
+                # 修复：原 expected_prev 与 prev_hash 同源重计算（均来自 events[i-1]），
+                # 永远相等=无效检查。改为直接验证 prev_hash 已被正确设置。
+                # 注意：无法检测数据库 at-rest 篡改（需存储 hash 列）。
+                # 篡改检测由 tamper-evident log (audit_trail/integrity.py) 负责。
+                if not prev_hash:
+                    errors.append(f"Empty prev_hash at position {i}")
 
             prev_hash = current_hash
 

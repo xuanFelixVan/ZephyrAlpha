@@ -229,7 +229,7 @@ class SemanticAuditor:
             except Exception as exc:
                 logger.warning("Stage 7 self heal failed for %s: %s", doc_path, exc, exc_info=True)
 
-        # Stage 5: IssueAggregator
+        # Stage 8: IssueAggregator (最终聚合，需等待 fixes/heals 完成)
         report = SemanticAuditReport(audit_id=audit_id, rule_document=str(doc_path))
         if self._aggregator is not None:
             try:

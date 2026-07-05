@@ -54,6 +54,7 @@ from zephyr.governance.behavioral_admission.vibe_coding_enforcer import (
     must,
     should,
 )
+from zephyr.governance.behavioral_admission.gate_event_adapter import GateEventAdapter
 
 __all__ = [
     "AdmissionController",
@@ -101,4 +102,5 @@ __all__ = [
     "typecheck_hook",
     "verdict_engine",
     "vibe_coding_enforcer",
-'gate_event_adapter']
+    "gate_event_adapter",
+]

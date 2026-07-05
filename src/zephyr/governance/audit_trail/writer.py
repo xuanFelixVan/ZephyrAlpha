@@ -32,8 +32,8 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["AuditReportWriter", "AuditWriter", "get_audit_writer"]
 
-DEFAULT_REPORT_DIR = Path("data/audit_history")
-DEFAULT_AUDIT_DIR = Path("data/audit_trail")
+DEFAULT_REPORT_DIR = Path.cwd() / "data" / "audit_history"
+DEFAULT_AUDIT_DIR = Path.cwd() / "data" / "audit_trail"
 _GENESIS_HASH = "0" * 64
 
 # 5.17.1 修复：模块级单例（供 contracts.py 委托桥接使用）
@@ -128,6 +128,7 @@ class AuditWriter:
         self.ide_source = ide_source or "unknown"
         self._hmac_key = _resolve_hmac_key(hmac_key if hmac_key is not None else "")
         self._last_hash = _GENESIS_HASH
+        self._batch_event_hashes: list[str] = []
         self.event_count = 0
         self.lamport_time = 0
         self._lamport_counter = 0
@@ -240,16 +241,20 @@ class AuditWriter:
         pass
 
     def finalize_current_batch(self) -> str | None:
-        """finalize 当前批次，返回 merkle root（简化为 last_hash）。"""
-        if self.event_count == 0:
+        """finalize 当前批次，返回 merkle root。"""
+        if not self._batch_event_hashes:
             return None
-        return self._last_hash
+        if self.enable_merkle:
+            from zephyr.governance.audit_trail.integrity import MerkleAggregator
+            root = MerkleAggregator.aggregate(self._batch_event_hashes)
+        else:
+            root = self._last_hash
+        self._batch_event_hashes.clear()
+        return root
 
     def get_merkle_batches(self) -> list[str]:
-        """返回已 finalized 的 merkle 批次列表。"""
-        if self.event_count == 0:
-            return []
-        return [self._last_hash]
+        """返回当前未 finalized 的事件哈希列表（供外部聚合）。"""
+        return list(self._batch_event_hashes)
 
 
 def get_audit_writer(
@@ -294,4 +299,7 @@ def _resolve_hmac_key(config=None) -> bytes:
     if key:
         return key.encode("utf-8")
     # 兜底默认（测试兼容 + 开发环境可用，生产应设置 env var）
+    logger.warning(
+        "ZEPHYR_AUDIT_HMAC_SECRET 未设置，使用公开默认密钥（不提供任何安全保证，仅限开发/测试）"
+    )
     return b"zephyr-audit-hmac-default-key"

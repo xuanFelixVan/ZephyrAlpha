@@ -91,7 +91,9 @@ class SafetyBoundary:
             raw = self._config_path.read_text(encoding="utf-8")
             config = yaml.safe_load(raw) or {}
         except (OSError, yaml.YAMLError) as exc:
+            # 修复 fail-open：配置加载失败时标记，_classify 将 HOLD 所有触发
             logger.warning("无法加载禁碰规则配置: %s, 默认 HOLD 所有触发", exc)
+            self._config_load_failed = True
             self._config_loaded = True
             return
         self._forbidden_paths = config.get("forbidden_paths", [])
