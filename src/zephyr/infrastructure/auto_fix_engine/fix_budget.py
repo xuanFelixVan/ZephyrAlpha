@@ -20,6 +20,7 @@ from __future__ import annotations
 import logging
 import os
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 import time
 from datetime import UTC, datetime
@@ -55,7 +56,7 @@ class FixBudget:
 
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS fix_budget_consumption "
@@ -72,7 +73,7 @@ class FixBudget:
         try:
             today = datetime.now(UTC).strftime("%Y-%m-%d")
             this_month = datetime.now(UTC).strftime("%Y-%m")
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             row = conn.execute(
                 "SELECT COALESCE(SUM(cost), 0) FROM fix_budget_consumption WHERE timestamp LIKE ?",
                 (today + "%",),
@@ -152,7 +153,7 @@ class FixBudget:
                 self._llm_tokens_consumed += tokens
             conn = None
             try:
-                conn = sqlite3.connect(self._db_path)
+                conn = get_db_connection(self._db_path)
                 conn.execute(
                     "INSERT INTO fix_budget_consumption (operation_id, level, cost, tokens, timestamp, session_id) VALUES (?, ?, ?, ?, ?, ?)",
                     (operation_id, level.value, cost, tokens, datetime.now(UTC).isoformat(), ""),

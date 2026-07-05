@@ -190,7 +190,7 @@ class QueryMetrics:
         try:
             from zephyr.shared.io.paths import DB_PATH as schema_db_path
 
-            explain_conn = sqlite3.connect(str(schema_db_path))
+            explain_conn = get_db_connection(str(schema_db_path))
             try:
                 # 5.176 修复：EXPLAIN QUERY PLAN 仅允许 SELECT/WITH 语句，防御纵深防注入
                 sql_stripped = sql.lstrip().upper()

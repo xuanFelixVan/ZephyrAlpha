@@ -27,6 +27,7 @@ Depends: observer.py (T-1-08), task_repo.py (T-1-04)
 from __future__ import annotations
 
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import time
 from enum import Enum, unique
 from threading import RLock
@@ -84,7 +85,7 @@ class DeferredQueue:
         # 5.16.7 修复：强制调用方持锁，防止新增方法忘记 with self._lock 导致竞态
         assert self._lock._is_owned(), "_get_conn must be called with self._lock held"
         if self._conn is None:
-            self._conn = sqlite3.connect(self._db_path, check_same_thread=False)
+            self._conn = get_db_connection(self._db_path, check_same_thread=False)
             self._conn.row_factory = sqlite3.Row
         return self._conn
 

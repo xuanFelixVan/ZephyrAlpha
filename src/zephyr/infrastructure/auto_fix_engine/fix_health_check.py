@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import logging
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from pathlib import Path
 from typing import Any
 
@@ -74,7 +75,7 @@ class FixHealthCheck:
     def _check_db(self) -> bool:
         try:
             Path(self._db_path).parent.mkdir(parents=True, exist_ok=True)
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             conn.execute("SELECT 1")
             conn.close()
             return True

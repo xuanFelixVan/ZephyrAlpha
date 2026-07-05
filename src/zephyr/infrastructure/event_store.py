@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 
 import json
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -145,7 +146,7 @@ class EventStore:
     def _conn(self) -> sqlite3.Connection:
         """5.142.7 修复: 线程局部连接复用, 避免每次操作创建/关闭连接的开销."""
         if not hasattr(self._local, "conn") or self._local.conn is None:
-            conn = sqlite3.connect(str(self._db_path), timeout=10)
+            conn = get_db_connection(str(self._db_path), timeout=10)
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA synchronous=NORMAL")
             conn.row_factory = sqlite3.Row

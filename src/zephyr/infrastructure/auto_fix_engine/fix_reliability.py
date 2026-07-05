@@ -20,6 +20,7 @@ from __future__ import annotations
 import logging
 import os
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 import time
 from collections import defaultdict
@@ -49,7 +50,7 @@ class IdempotencyGuard:
 
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS fix_idempotency "
@@ -70,7 +71,7 @@ class IdempotencyGuard:
                 return False, f"Duplicate fix: {fp} already processed as {status}"
         conn = None
         try:
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             row = conn.execute(
                 "SELECT result_status, expires_at FROM fix_idempotency WHERE fingerprint=?",
                 (fp,),
@@ -94,7 +95,7 @@ class IdempotencyGuard:
         conn = None
         try:
             expires = (datetime.now(UTC) + self._ttl).isoformat()
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             conn.execute(
                 "INSERT OR REPLACE INTO fix_idempotency (fingerprint, action_type, target, result_status, created_at, expires_at) "
                 "VALUES (?, ?, ?, ?, ?, ?)",

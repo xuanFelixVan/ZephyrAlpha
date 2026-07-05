@@ -23,6 +23,7 @@ import logging
 import os
 import random
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 import time
 from collections.abc import Callable
@@ -36,7 +37,7 @@ logger = logging.getLogger(__name__)
 def enable_wal_mode(db_path: str) -> bool:
     """R1: 启用 WAL 模式."""
     try:
-        conn = sqlite3.connect(db_path)
+        conn = get_db_connection(db_path)
         conn.execute("PRAGMA journal_mode=WAL")
         conn.close()
         return True
@@ -52,7 +53,7 @@ def perform_wal_checkpoint(db_path: str, mode: str = "PASSIVE") -> bool:
     if mode not in _VALID_MODES:
         raise ValueError(f"非法 wal_checkpoint mode: {mode!r}（仅允许 {sorted(_VALID_MODES)}）")
     try:
-        conn = sqlite3.connect(db_path)
+        conn = get_db_connection(db_path)
         conn.execute(f"PRAGMA wal_checkpoint({mode})")
         conn.close()
         return True
@@ -238,7 +239,7 @@ class ProvenanceIntegrityChecker:
     def verify_chain(self) -> tuple[bool, list[str]]:
         errors = []
         try:
-            conn = sqlite3.connect(self.db_path)
+            conn = get_db_connection(self.db_path)
             rows = conn.execute(
                 "SELECT id, prev_hash, curr_hash, module, field, old_value, new_value, author_agent "
                 "FROM ai_provenance ORDER BY id"

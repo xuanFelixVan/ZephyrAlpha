@@ -33,6 +33,7 @@ Rollback Integration — executor 集成增强层。
 """
 
 from __future__ import annotations
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 import hashlib
 import json
@@ -442,7 +443,7 @@ class RollbackIntegration:
                 try:
                     import sqlite3
 
-                    conn = sqlite3.connect(db_url.replace("sqlite:///", ""), timeout=5)
+                    conn = get_db_connection(db_url.replace("sqlite:///", ""), timeout=5)
                     # 5.169 修复：try/finally 确保 conn 关闭，execute 抛异常时不泄漏
                     try:
                         conn.execute("SELECT 1")

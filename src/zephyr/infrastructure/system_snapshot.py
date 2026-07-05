@@ -50,6 +50,7 @@ import hashlib
 import json
 import logging
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import warnings
 from datetime import UTC, datetime
 from pathlib import Path
@@ -265,7 +266,7 @@ class SystemSnapshotter:
         if not self._db_path.exists():
             return -1.0
         try:
-            conn = sqlite3.connect(str(self._db_path), timeout=5.0)
+            conn = get_db_connection(str(self._db_path), timeout=5.0)
             conn.row_factory = sqlite3.Row
             cursor = conn.execute(
                 "SELECT COUNT(*) AS total, "

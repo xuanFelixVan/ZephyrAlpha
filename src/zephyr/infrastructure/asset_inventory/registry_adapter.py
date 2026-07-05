@@ -22,6 +22,7 @@ RegistryAdapter 抽象基类 + 7 个适配器实现 + RegistryManager。
 """
 
 import csv
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import io
 import re
 from abc import ABC, abstractmethod
@@ -511,7 +512,7 @@ class SqliteAdapter(RegistryAdapter):
 
         entries: list[RegistryEntry] = []
         try:
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             conn.row_factory = sqlite3.Row
             cursor = conn.execute(f"SELECT * FROM {self._table}")
             for idx, row in enumerate(cursor.fetchall()):

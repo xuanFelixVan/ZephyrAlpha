@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import time
 import uuid
 from enum import Enum, unique
@@ -62,7 +63,7 @@ class MetricsCollector:
 
     def _get_conn(self) -> sqlite3.Connection:
         if self._conn is None:
-            self._conn = sqlite3.connect(self._db_path, check_same_thread=False)
+            self._conn = get_db_connection(self._db_path, check_same_thread=False)
             self._conn.row_factory = sqlite3.Row
         return self._conn
 

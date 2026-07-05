@@ -28,6 +28,7 @@ cooldown 状态绑定到 Agent Identity session token。
 from __future__ import annotations
 
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -60,7 +61,7 @@ class AgentCooldown:
     def _init_db(self) -> None:
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         # 5.144.6 修复: conn.close() 移入 finally, 防止 execute/commit 抛异常跳过 close
-        conn = sqlite3.connect(str(self._db_path))
+        conn = get_db_connection(str(self._db_path))
         try:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS cooldown (
@@ -89,7 +90,7 @@ class AgentCooldown:
 
         entries: list[CooldownEntry] = []
         # 5.144.6 修复: conn.close() 移入 finally
-        conn = sqlite3.connect(str(self._db_path))
+        conn = get_db_connection(str(self._db_path))
         try:
             self._cleanup_expired(conn)
 
@@ -113,7 +114,7 @@ class AgentCooldown:
 
     def check(self, agent_session: str, file_paths: list[str]) -> CooldownCheck:
         # 5.144.6 修复: conn.close() 移入 finally
-        conn = sqlite3.connect(str(self._db_path))
+        conn = get_db_connection(str(self._db_path))
         try:
             self._cleanup_expired(conn)
 
@@ -151,7 +152,7 @@ class AgentCooldown:
 
     def lift_quarantine(self, agent_session: str, file_paths: list[str] | None = None) -> int:
         # 5.144.6 修复: conn.close() 移入 finally
-        conn = sqlite3.connect(str(self._db_path))
+        conn = get_db_connection(str(self._db_path))
         try:
             if file_paths:
                 placeholders = ",".join(["?"] * len(file_paths))
@@ -173,7 +174,7 @@ class AgentCooldown:
 
     def get_active_quarantines(self, agent_session: str) -> list[CooldownEntry]:
         # 5.144.6 修复: conn.close() 移入 finally
-        conn = sqlite3.connect(str(self._db_path))
+        conn = get_db_connection(str(self._db_path))
         try:
             self._cleanup_expired(conn)
 

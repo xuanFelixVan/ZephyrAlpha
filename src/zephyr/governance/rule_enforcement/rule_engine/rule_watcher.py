@@ -40,6 +40,7 @@ from __future__ import annotations
 import argparse
 import os
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import subprocess
 import sys
 import threading
@@ -297,7 +298,7 @@ class RuleWatcher:
         if not _GOVERNANCE_DB.exists():
             return
         try:
-            conn = sqlite3.connect(str(_GOVERNANCE_DB), timeout=5.0)
+            conn = get_db_connection(str(_GOVERNANCE_DB), timeout=5.0)
             cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rule_enforcement_log'")
             if cursor.fetchone() is None:
                 conn.close()

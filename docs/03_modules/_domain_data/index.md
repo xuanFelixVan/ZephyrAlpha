@@ -28,10 +28,12 @@ ttl: permanent
 |------|------|----------|
 | [数据源能力地图](data_source_capability_map.md) | iFind + miniQMT 可获取数据完整清单与获取方法，所有 API 调用方法均已实测验证固化 | 数据源能力唯一真源——"能获取什么+怎么获取" |
 | [数据获取需求清单](data_acquisition_plan.md) | 数据库现状对照 + 需补充数据清单（P0/P1/P2/P3优先级）+ 执行计划 | 数据获取需求唯一真源——"需要什么+现状如何+缺什么" |
+| [业务数据清单](data_inventory.md) | ClickHouse 80 张业务表实时扫描结果（起止时间/标的数/行数/数据源/新鲜度），生成器 `tmp/generate_data_inventory.py` 可随时刷新 | 业务表数据现状唯一真源——"有什么+新鲜度如何" |
 
 **架构模型真源**：`docs/03_modules/_domain_data/blueprint.md`
 **数据源能力真源**：`docs/03_modules/_domain_data/data_source_capability_map.md`
 **数据获取需求真源**：`docs/03_modules/_domain_data/data_acquisition_plan.md`
+**业务数据现状真源**：`docs/03_modules/_domain_data/data_inventory.md`（派生自 ClickHouse 实时扫描）
 
 ## 导航
 

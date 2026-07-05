@@ -46,6 +46,7 @@ from __future__ import annotations
 import json
 import logging
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -188,7 +189,7 @@ class DeadLetterQueue:
         now = _utc_iso()
         next_retry = _utc_iso()  # 立即可重试
 
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             _ensure_table(conn)
             cur = conn.execute(
@@ -221,7 +222,7 @@ class DeadLetterQueue:
             DeadLetter 列表
         """
         now = _utc_iso()
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             _ensure_table(conn)
             rows = conn.execute(
@@ -290,7 +291,7 @@ class DeadLetterQueue:
         retry_ts = time.time() + self._retry_interval
         next_retry_at = datetime.fromtimestamp(retry_ts, tz=UTC).isoformat()
 
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             _ensure_table(conn)
             conn.execute(
@@ -306,7 +307,7 @@ class DeadLetterQueue:
 
     def mark_resolved(self, db_id: int) -> None:
         """标记死信已解决（重试成功）。"""
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             _ensure_table(conn)
             conn.execute(
@@ -321,7 +322,7 @@ class DeadLetterQueue:
 
     def mark_exhausted(self, db_id: int) -> None:
         """标记死信已耗尽重试次数（不再重试）。"""
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             _ensure_table(conn)
             conn.execute(
@@ -337,7 +338,7 @@ class DeadLetterQueue:
 
     def stats(self) -> dict[str, Any]:
         """查询死信队列统计信息。"""
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             _ensure_table(conn)
             total = conn.execute("SELECT COUNT(*) FROM dead_letters").fetchone()[0]
@@ -372,7 +373,7 @@ class DeadLetterQueue:
         age_seconds = (max_age_hours or (self._max_age_seconds / 3600.0)) * 3600.0
         cutoff = datetime.fromtimestamp(time.time() - age_seconds, tz=UTC).isoformat()
 
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             _ensure_table(conn)
             cur = conn.execute(

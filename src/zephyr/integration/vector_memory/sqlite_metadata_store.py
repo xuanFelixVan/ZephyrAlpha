@@ -45,6 +45,7 @@ import atexit
 import json
 import logging
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import threading
 from datetime import UTC, datetime
 from pathlib import Path
@@ -126,7 +127,7 @@ class SQLiteMetadataStore:
     @property
     def _conn(self) -> sqlite3.Connection:
         if not hasattr(self._local, "conn") or self._local.conn is None:
-            conn = sqlite3.connect(str(self._db_path), check_same_thread=False)
+            conn = get_db_connection(str(self._db_path), check_same_thread=False)
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA synchronous=NORMAL")
             conn.execute("PRAGMA foreign_keys=ON")

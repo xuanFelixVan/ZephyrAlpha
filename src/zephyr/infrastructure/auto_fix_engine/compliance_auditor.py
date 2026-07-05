@@ -21,6 +21,7 @@ import hashlib
 import logging
 import os
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from datetime import UTC, datetime
 
 from zephyr.infrastructure.auto_fix_engine.models import ComplianceEvidence, FixAction
@@ -37,7 +38,7 @@ class ComplianceAuditor:
 
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS fix_compliance "
@@ -81,7 +82,7 @@ class ComplianceAuditor:
     def get_evidence(self, fix_id: str) -> ComplianceEvidence | None:
         conn = None
         try:
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             row = conn.execute(
                 "SELECT fix_id, action_type, target, before_hash, after_hash, "
                 "timestamp, actor, confidence, rbac_decision, validation_result, "
@@ -115,7 +116,7 @@ class ComplianceAuditor:
         cutoff = (datetime.now(UTC) - __import__("datetime").timedelta(days=self._retention_days)).isoformat()
         conn = None
         try:
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             cursor = conn.execute("DELETE FROM fix_compliance WHERE timestamp < ?", (cutoff,))
             conn.commit()
             deleted = cursor.rowcount
@@ -130,7 +131,7 @@ class ComplianceAuditor:
     def _persist(self, evidence: ComplianceEvidence) -> None:
         conn = None
         try:
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             conn.execute(
                 "INSERT INTO fix_compliance (fix_id, action_type, target, before_hash, after_hash, "
                 "timestamp, actor, confidence, rbac_decision, validation_result, "

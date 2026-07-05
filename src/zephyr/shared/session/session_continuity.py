@@ -46,6 +46,7 @@ logger = logging.getLogger(__name__)
 import json
 import re
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -134,7 +135,7 @@ class SessionContinuity:
 
     def _get_conn(self) -> sqlite3.Connection:
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
-        conn = sqlite3.connect(str(self._db_path))
+        conn = get_db_connection(str(self._db_path))
         conn.row_factory = sqlite3.Row
         return conn
 

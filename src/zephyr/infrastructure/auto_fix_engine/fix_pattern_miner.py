@@ -21,6 +21,7 @@ import json
 import logging
 import os
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from collections import defaultdict
 from datetime import UTC, datetime
 from typing import Any
@@ -39,7 +40,7 @@ class FixPatternMiner:
 
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS fix_patterns "
@@ -84,7 +85,7 @@ class FixPatternMiner:
     def get_patterns(self, dimension: str = "", min_frequency: int = 1) -> list[dict[str, Any]]:
         conn = None
         try:
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             if dimension:
                 rows = conn.execute(
                     "SELECT pattern_id, action_type, dimension, frequency, success_rate, last_seen, pattern_data "
@@ -131,7 +132,7 @@ class FixPatternMiner:
     def _upsert_pattern(self, pattern: dict[str, Any]) -> None:
         conn = None
         try:
-            conn = sqlite3.connect(self._db_path)
+            conn = get_db_connection(self._db_path)
             existing = conn.execute(
                 "SELECT frequency, success_rate FROM fix_patterns WHERE pattern_id=?",
                 (pattern["pattern_id"],),

@@ -43,6 +43,7 @@ PRAGMA 基线：
 import hashlib
 import os
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 
 class SchemaManager:
@@ -59,7 +60,7 @@ class SchemaManager:
         target = db_path or self.db_path
         os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
 
-        conn = sqlite3.connect(target)
+        conn = get_db_connection(target)
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA synchronous=NORMAL")
         conn.execute("PRAGMA foreign_keys=ON")
@@ -154,7 +155,7 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
 
     def migrate(self, db_path: str | None = None):
         target = db_path or self.db_path
-        conn = sqlite3.connect(target)
+        conn = get_db_connection(target)
         existing = self._existing_tables(conn)
         required = {
             "ai_provenance",
@@ -177,7 +178,7 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
 
     def verify(self, db_path: str | None = None) -> dict:
         target = db_path or self.db_path
-        conn = sqlite3.connect(target)
+        conn = get_db_connection(target)
         result = {
             "all_tables_exist": True,
             "hash_chain_valid": True,
@@ -272,7 +273,7 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
 
     def ttl_cleanup(self, db_path: str | None = None) -> int:
         target = db_path or self.db_path
-        conn = sqlite3.connect(target)
+        conn = get_db_connection(target)
         cutoff = f"datetime('now', '-{self.TTL_DAYS} days')"
         total = 0
         try:
@@ -326,7 +327,7 @@ class MetricsWriteBuffer:
     def flush(self) -> int:
         if not self._buffer:
             return 0
-        conn = sqlite3.connect(self.db_path)
+        conn = get_db_connection(self.db_path)
         try:
             conn.execute("BEGIN IMMEDIATE")
             conn.executemany(

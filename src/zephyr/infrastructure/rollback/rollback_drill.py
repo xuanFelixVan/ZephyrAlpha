@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 import json
 import random
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 import subprocess
 import time
 from dataclasses import dataclass, field
@@ -185,7 +186,7 @@ class RollbackDrill:
             db_path = path / "data" / "databases" / "governance.db"
             if not db_path.exists():
                 return True
-            conn = sqlite3.connect(str(db_path))
+            conn = get_db_connection(str(db_path))
             result = conn.execute("PRAGMA integrity_check").fetchone()
             conn.close()
             return result[0] == "ok"

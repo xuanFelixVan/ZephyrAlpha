@@ -36,6 +36,7 @@ import ast
 import json
 import shutil
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -142,7 +143,7 @@ class RollbackVerifier:
         details: list[str] = []
 
         try:
-            conn = sqlite3.connect(str(db))
+            conn = get_db_connection(str(db))
             conn.row_factory = sqlite3.Row
 
             tasks = conn.execute("SELECT * FROM tasks").fetchall()
@@ -191,8 +192,8 @@ class RollbackVerifier:
         table_changes: dict[str, int] = {}
 
         try:
-            conn_before = sqlite3.connect(str(db_before))
-            conn_after = sqlite3.connect(str(db_after))
+            conn_before = get_db_connection(str(db_before))
+            conn_after = get_db_connection(str(db_after))
             conn_before.row_factory = sqlite3.Row
             conn_after.row_factory = sqlite3.Row
 

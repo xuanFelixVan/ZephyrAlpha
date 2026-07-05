@@ -577,6 +577,8 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 4. ~~准备操作 market.duckdb~~ → **market.duckdb（原 INFRA-DB-005）已于 2026-07-01 彻底删除**（墓碑清理，见 ARCH-046 铁律3"删除即彻底删除"）。原 market_schema.py 同步删除（死代码）。业务行情数据迁移至 ClickHouse c1_market（INFRA-DB-006，status=connected），统一入口 `DatabaseService.get_clickhouse_conn()`（readonly=1），详见 [c1_market_clickhouse.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md)。**注意**：DuckDB OLAP 引擎（INFRA-DB-004，:memory: 内存模式只读挂载 governance.db）保留不变，与 market.duckdb 是两个独立实体。
 5. **ARCH-046 数据库节点全景图登记三铁律**（2026-07-04 固化）：(1) 粒度铁律——数据库在全景图中有且仅有一个点（`infrastructure_components` 表），不展开内部表/schema；(2) 运营态/设计态语义铁律——数据库存在并使用=运营态（status=connected），不存在=设计态（status=planned），禁止 status 漂移；(3) 动态更新铁律——数据库节点随项目实况增删，不保留墓碑，生成器（generate_project_depgraph.py）MUST NOT 碰 `infrastructure_components` 表。详见 [ARCH-046](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)。
 
+> **业务数据表清单**（2026-07-06）：想知道 ClickHouse c1_market/c3_fundamental 各业务表有什么数据、起止时间、标的数、新鲜度 → 读 [`docs/03_modules/_domain_data/data_inventory.md`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/data_inventory.md)。生成器 [`tmp/generate_data_inventory.py`](file:///d:/ZephyrAlpha/tmp/generate_data_inventory.py) 可随时运行刷新（`python tmp\generate_data_inventory.py`）。禁止手工同步业务表清单到其它文档——一律用纯指针指向此文档。
+
 > depgraph 是唯一全景真源（PostgreSQL 16，localhost:5432），禁止创建派生 YAML 副本。连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()`。遇到 depgraph 相关问题，直接问工具：
 
 - **查 DB 数据** → `python scripts/governance/extract_depgraph.py --help`（场景速查表在 epilog）

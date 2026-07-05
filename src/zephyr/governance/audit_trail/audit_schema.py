@@ -47,6 +47,7 @@ Safety     : M（只读查询，不修改数据）
 from __future__ import annotations
 
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from pathlib import Path
 from typing import Any
 
@@ -87,7 +88,7 @@ class AuditQuery:
             init_db(self._db_path)
 
     def _get_conn(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(str(self._db_path))
+        conn = get_db_connection(str(self._db_path))
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
         return conn

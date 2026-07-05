@@ -53,6 +53,7 @@ import json
 import os
 import re
 import sqlite3
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -177,7 +178,7 @@ class SqliteDumper:
 
     def check_sqlite_health(self) -> bool:
         try:
-            conn = sqlite3.connect(f"file:{self._db_path}?mode=ro", uri=True)
+            conn = get_db_connection(f"file:{self._db_path}?mode=ro", uri=True)
             conn.execute("PRAGMA integrity_check")
             conn.close()
             return True
@@ -186,7 +187,7 @@ class SqliteDumper:
 
     def wal_checkpoint(self) -> bool:
         try:
-            conn = sqlite3.connect(str(self._db_path))
+            conn = get_db_connection(str(self._db_path))
             conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
             conn.close()
             return True
@@ -199,7 +200,7 @@ class SqliteDumper:
 
         self.wal_checkpoint()
 
-        conn = sqlite3.connect(str(self._db_path))
+        conn = get_db_connection(str(self._db_path))
         conn.row_factory = sqlite3.Row
 
         try:
@@ -313,7 +314,7 @@ class SqliteDumper:
         tables_restored = 0
         rows_restored = 0
 
-        conn = sqlite3.connect(str(target_db))
+        conn = get_db_connection(str(target_db))
         conn.row_factory = sqlite3.Row
 
         try:
