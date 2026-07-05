@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ChartFactoryError
 # [TESTS]
 # [A_module] module_id=MOD-L08-001-chart_factory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """chart_factory · 图表统一工厂（v3.0.0新增, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §3.1 组件13

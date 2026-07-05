@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-L08-001-position_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """position_monitor · 实盘持仓监控组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §16.7.4
