@@ -12,10 +12,10 @@ doc_type: register
 owner: ZephyrAlpha-Owner
 module_id: PS-REG-007
 title: 跨模块依赖登记表
-version: 1.0.8
+version: 1.0.9
 status: active
 created: '2026-05-02'
-last_updated: '2026-07-05'
+last_updated: '2026-07-06'
 ai_autonomy: human_gated
 ttl: permanent
 # P8-FIX-S1: total_dependencies 已移到 summary 节(派生),删除此处的双写声明
@@ -1230,10 +1230,47 @@ dependencies:
   contract_anchor: cross_layer_contracts.yaml §CTR-002
   direction: upstream
   valid_since: '2026-07-05'
+- dep_id: DEP-093
+  source: MOD-L00-004
+  source_name: data-source-integrator
+  target: MOD-L00-002
+  target_name: data-source-capability-map
+  type: data
+  strength: hard
+  description: '数据源集成器消费能力地图的 per-source 限流/防爬/登录方式描述，抽取为 SourcePolicy 策略参数（policies.yaml）。能力地图 §1-§8 是策略注册表的唯一真源。'
+  contract_anchor: data_source_integrator_blueprint.md §5.2
+  direction: upstream
+  valid_since: '2026-07-06'
+- dep_id: DEP-094
+  source: MOD-L00-004
+  source_name: data-source-integrator
+  target: MOD-L00-003
+  target_name: data-acquisition-plan
+  type: data
+  strength: hard
+  description: '数据源集成器消费需求清单的 78 项数据需求，转化为 schedule.yaml 中的调度任务（task_id ↔ 表名 ↔ Provider 映射）。需求清单 §二/§三是任务清单的唯一真源。'
+  contract_anchor: data_source_integrator_blueprint.md §6.2
+  direction: upstream
+  valid_since: '2026-07-06'
+- dep_id: DEP-095
+  source: MOD-L00-004
+  source_name: data-source-integrator
+  target: MOD-L00-001
+  target_name: datasource-core
+  type: contract
+  strength: hard
+  description: '数据源集成器接管 datasource-core 的 Provider 抽象部分（DataSourceBase/DataSourceMeta/per-source 实现）。MOD-L00-001 §0.1/§3.1/§4/§16.6 的 Provider 相关章节已移交 MOD-L00-004，仅保留 DataQualityGate 与 CTR-001/002/003 输出契约。'
+  contract_anchor: data_source_integrator_blueprint.md §0.1
+  direction: upstream
+  valid_since: '2026-07-06'
 dependency_graph:
   forward:
     SYS-MASTER-001:
     - MOD-MASTER_BLUEPRINT
+    MOD-L00-004:
+    - MOD-L00-001
+    - MOD-L00-002
+    - MOD-L00-003
     MOD-INF-001: []
     MOD-INF-002:
     - MOD-INF-001
@@ -1464,16 +1501,20 @@ dependency_graph:
     fle-protocols:
     - MOD-FEEDBACK_LOOP
 summary:
-  total_dependencies: 111
+  total_dependencies: 114
   by_type:
     runtime: 69
-    contract: 16
-    data: 5
+    contract: 17
+    data: 8
   by_strength:
-    hard: 62
+    hard: 65
     soft: 13
     medium: 16
 changelog:
+- version: 1.0.9
+  date: '2026-07-06'
+  changes:
+  - MOD-L00-004 数据源集成器依赖注册：新增 DEP-093~DEP-095 共 3 条——依赖 MOD-L00-002(能力地图,策略参数源)/MOD-L00-003(需求清单,任务清单源)/MOD-L00-001(接管其Provider抽象部分)
 - version: 1.0.7
   date: '2026-05-18'
   changes:
