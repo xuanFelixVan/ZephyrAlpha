@@ -1,7 +1,7 @@
 %% D_INFRA_RECOVERY 域全景依赖图
-%% 生成时间: 2026-07-06 00:18:46
+%% 生成时间: 2026-07-06 04:52:15
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 54, 依赖边数: 127
+%% 模块数: 54, 依赖边数: 132
 
 graph TD
 
@@ -176,14 +176,19 @@ graph TD
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_INFRA_RECOVERY -> D_SHARED (5 条)
+    %% D_INFRA_RECOVERY -> D_SHARED (10 条)
+    src_zephyr_infrastructure_rollback_agent_cooldown_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_forensic_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_rollback_rollback_drill_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_rollback_rollback_integration_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_rollback_rollback_verifier_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 52 条
     %% 跨域入边: 62 条
-    %% 跨域出边: 13 条
+    %% 跨域出边: 18 条

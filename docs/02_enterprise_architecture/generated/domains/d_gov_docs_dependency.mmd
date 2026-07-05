@@ -1,7 +1,7 @@
 %% D_GOV_DOCS 域全景依赖图
-%% 生成时间: 2026-07-06 00:18:46
+%% 生成时间: 2026-07-06 04:52:14
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 2, 依赖边数: 0
+%% 模块数: 3, 依赖边数: 0
 
 graph TD
 
@@ -9,6 +9,7 @@ graph TD
     subgraph D_GOV_DOCS[architecture_docs]
         docs_02_enterprise_architecture_migration_registry_yaml["..._architecture/migration-registry.yaml [production]"]
         docs_03_modules__cross_layer_d___siness_data_categories_yaml["...atabase/business_data_categories.yaml [production]"]
+        docs_03_modules__domain_data_data_catalog_yaml["...odules/_domain_data/data_catalog.yaml [production]"]
     end
 
     %% 域内依赖（最多显示 80 条）

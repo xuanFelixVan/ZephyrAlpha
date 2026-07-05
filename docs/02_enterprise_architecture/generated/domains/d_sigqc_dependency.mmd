@@ -1,7 +1,7 @@
 %% D_SIGQC 域全景依赖图
-%% 生成时间: 2026-07-06 00:18:47
+%% 生成时间: 2026-07-06 04:52:15
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 7, 依赖边数: 0
+%% 模块数: 8, 依赖边数: 3
 
 graph TD
 
@@ -11,18 +11,23 @@ graph TD
         src_zephyr_signal_quality__extensions___init___py["...ignal_quality/_extensions/__init__.py [prototype]"]
         src_zephyr_signal_quality_api___init___py["...zephyr/signal_quality/api/__init__.py [prototype]"]
         src_zephyr_signal_quality_core___init___py["...ephyr/signal_quality/core/__init__.py [prototype]"]
+        src_zephyr_signal_quality_degradation_monitor_base_py["...l_quality/degradation_monitor_base.py [prototype]"]
         src_zephyr_signal_quality_infrastructure___init___py["...al_quality/infrastructure/__init__.py [prototype]"]
         src_zephyr_signal_quality_models___init___py["...hyr/signal_quality/models/__init__.py [prototype]"]
         src_zephyr_signal_quality_services___init___py["...r/signal_quality/services/__init__.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
+    src_zephyr_signal_quality___init___py -->|import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
+    %% D_SIGQC -> D_TRADING (2 条)
+    src_zephyr_signal_quality_degradation_monitor_base_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_signal_quality_degradation_monitor_base_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 0 条
+    %% 域内依赖: 1 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 0 条
+    %% 跨域出边: 2 条
