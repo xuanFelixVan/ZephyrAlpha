@@ -299,21 +299,30 @@ def _patch_litellm(module) -> None:
         logger.critical("_patch_litellm: acompletion patch 失败(%s: %s)，异步 LLM 裸调守卫未挂载=安全绕过", type(e).__name__, e, exc_info=True)
 
 
+def _import_chat_classes() -> list:
+    """5.97.12 修复：抽取 _patch_langchain 内嵌 try-except 的 helper。
+
+    尝试两种 langchain 路径导入 ChatOpenAI/ChatAnthropic，失败返回空列表。
+    """
+    try:
+        from langchain.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401
+        return [ChatOpenAI, ChatAnthropic]
+    except Exception:
+        try:
+            from langchain_community.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401
+            return [ChatOpenAI, ChatAnthropic]
+        except Exception:
+            return []
+
+
 def _patch_langchain(module) -> None:
     """patch langchain 的 ChatOpenAI / ChatAnthropic（best-effort）。
 
     langchain 未安装时 no-op。版本结构差异较大，仅 best-effort patch .invoke。
     """
-    targets = []
-    try:
-        from langchain.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401
-        targets = [ChatOpenAI, ChatAnthropic]
-    except Exception:
-        try:
-            from langchain_community.chat_models import ChatAnthropic, ChatOpenAI  # noqa: F401
-            targets = [ChatOpenAI, ChatAnthropic]
-        except Exception:
-            return
+    targets = _import_chat_classes()
+    if not targets:
+        return
     for cls in targets:
         try:
             invoke = getattr(cls, "invoke", None)

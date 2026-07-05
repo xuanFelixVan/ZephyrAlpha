@@ -37,6 +37,16 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+
+# 5.97.13 修复：抽取 _collect_drift_metrics 内嵌 try-except 的 helper
+def _safe_unlink(path: Any) -> None:
+    """安全删除文件，忽略 OSError（文件不存在/权限不足等）。"""
+    try:
+        path.unlink()
+    except OSError:
+        pass
+
+
 __all__ = [
     "IdeHealthDaemon",
     "cleanup_completed_tasks",
@@ -281,19 +291,28 @@ def kill_task_processes(task_id: str) -> list[int]:
     return killed
 
 
+# 5.97.14 修复：抽取 cleanup_completed_tasks 内嵌 try-except 的 helper
+_COMPLETED_STATUSES = ["COMPLETED", "FAILED", "CANCELLED"]
+
+
+def _list_completed_tasks(repo: Any, statuses: list[str]) -> list[Any]:
+    """按状态列表聚合查询已完成任务，单个状态查询失败时记录并继续。"""
+    tasks: list[Any] = []
+    for s in statuses:
+        try:
+            tasks.extend(repo.list_by_status(s))
+        except Exception:
+            logger.debug("suppressed error in ide_health_daemon list_by_status(%s)", s, exc_info=True)
+    return tasks
+
+
 def cleanup_completed_tasks() -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     try:
         from zephyr.governance.persistence.task_repo import TaskRepository
 
         repo = TaskRepository()
-        completed_statuses = ["COMPLETED", "FAILED", "CANCELLED"]
-        tasks: list[dict[str, Any]] = []
-        for s in completed_statuses:
-            try:
-                tasks.extend(repo.list_by_status(s))
-            except Exception as e:
-                logger.debug("suppressed error in ide_health_daemon", exc_info=True)
+        tasks = _list_completed_tasks(repo, _COMPLETED_STATUSES)
     except Exception:
         logger.warning("ide_health_daemon: TaskRepository unavailable for cleanup", exc_info=True)
         return results
@@ -302,7 +321,7 @@ def cleanup_completed_tasks() -> list[dict[str, Any]]:
         tracked_ids = list(_task_process_map.keys())
 
     for task_id in tracked_ids:
-        if any(t.task_id == task_id and t.status.value.upper() in completed_statuses for t in tasks):
+        if any(t.task_id == task_id and t.status.value.upper() in _COMPLETED_STATUSES for t in tasks):
             killed = kill_task_processes(task_id)
             results.append(
                 {
@@ -416,10 +435,7 @@ class IdeHealthDaemon:
             tmp_path.write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
             os.replace(tmp_path, health_path)
         except PermissionError:
-            try:
-                tmp_path.unlink()
-            except OSError:
-                pass
+            _safe_unlink(tmp_path)
         # 阈值告警 + 自动清理（P1-STH: stash > 5 时调 cleanup_stash.py --cleanup）
         if metrics["stash_count"] > 5:
             logger.warning("drift health: stash_count=%d > 5, auto-cleanup", metrics["stash_count"])

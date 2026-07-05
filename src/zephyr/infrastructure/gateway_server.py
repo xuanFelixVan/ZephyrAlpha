@@ -285,61 +285,27 @@ class MCPGateway(BaseMCPServer):
         self._register_gateway_tools()
 
     def _init_server_handlers(self) -> None:
-        try:
-            from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
+        # 5.97.18 修复：9 段重复 try-except 改为配置表驱动循环
+        server_specs = [
+            ("knowledge_base", "zephyr.infrastructure.knowledge_base_server", "KnowledgeBaseServer", "kb server"),
+            ("gate_engine", "zephyr.infrastructure.gate_engine_server", "GateEngineServer", "gate engine"),
+            ("session_handoff", "zephyr.infrastructure.doc_guard_server", "DocGuardServer", "doc guard"),
+            ("intent_router", "zephyr.infrastructure.sentinel_server", "SentinelServer", "sentinel"),
+            ("blueprint_search", "zephyr.infrastructure.blueprint_search_server", "BlueprintSearchServer", "blueprint search"),
+            ("task_manager", "zephyr.infrastructure.task_manager_server", "TaskManagerMCP", "task manager"),
+            ("governance", "zephyr.infrastructure.governance_server", "GovernanceServer", "governance server"),
+            ("telemetry", "zephyr.infrastructure.telemetry_server", "TelemetryMCP", "telemetry server"),
+            ("vector-memory", "zephyr.infrastructure.vector_memory_server", "VectorMemoryServer", "vector-memory server"),
+        ]
+        for key, module_path, class_name, label in server_specs:
+            try:
+                import importlib
 
-            self._server_instances["knowledge_base"] = KnowledgeBaseServer()
-        except Exception as exc:
-            _log.warning("kb server init failed: %s", exc)
-        try:
-            from zephyr.infrastructure.gate_engine_server import GateEngineServer
-
-            self._server_instances["gate_engine"] = GateEngineServer()
-        except Exception as exc:
-            _log.warning("gate engine init failed: %s", exc)
-        try:
-            from zephyr.infrastructure.doc_guard_server import DocGuardServer
-
-            self._server_instances["session_handoff"] = DocGuardServer()
-        except Exception as exc:
-            _log.warning("doc guard init failed: %s", exc)
-        try:
-            from zephyr.infrastructure.sentinel_server import SentinelServer
-
-            self._server_instances["intent_router"] = SentinelServer()
-        except Exception as exc:
-            _log.warning("sentinel init failed: %s", exc)
-        try:
-            from zephyr.infrastructure.blueprint_search_server import BlueprintSearchServer
-
-            self._server_instances["blueprint_search"] = BlueprintSearchServer()
-        except Exception as exc:
-            _log.warning("blueprint search init failed: %s", exc)
-        # task_manager via FastMCP — import only for tools/list
-        try:
-            from zephyr.infrastructure.task_manager_server import TaskManagerMCP
-
-            self._server_instances["task_manager"] = TaskManagerMCP()
-        except Exception as exc:
-            _log.warning("task manager init failed: %s", exc)
-        try:
-            from zephyr.infrastructure.governance_server import GovernanceServer
-
-            self._server_instances["governance"] = GovernanceServer()
-        except Exception as exc:
-            _log.warning("governance server init failed: %s", exc)
-        try:
-            from zephyr.infrastructure.telemetry_server import TelemetryMCP
-
-            self._server_instances["telemetry"] = TelemetryMCP()
-        except Exception as exc:
-            _log.warning("telemetry server init failed: %s", exc)
-        try:
-            from zephyr.infrastructure.vector_memory_server import VectorMemoryServer
-
-            self._server_instances["vector-memory"] = VectorMemoryServer()
-        except Exception as exc:
-            _log.warning("vector-memory server init failed: %s", exc)
+                module = importlib.import_module(module_path)
+                server_cls = getattr(module, class_name)
+                self._server_instances[key] = server_cls()
+            except Exception as exc:
+                _log.warning("%s init failed: %s", label, exc, exc_info=True)
 
     def _register_gateway_tools(self) -> None:
         self.register_tool(

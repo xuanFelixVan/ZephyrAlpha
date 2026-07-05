@@ -29,6 +29,20 @@ logger = logging.getLogger(__name__)
 _MAX_AUTO_RETRY_LIMIT = 3
 
 
+# 5.97.16 修复：抽取 _on_task_verified_triple_align 内嵌 try-except 的 helper
+def _get_source_blueprint(task_id: str) -> str:
+    """从 TaskRepository 查询 task 的 source_blueprint，失败返回空串。"""
+    try:
+        from zephyr.governance.persistence.task_repo import TaskRepository
+
+        tr = TaskRepository()
+        task = tr.get(task_id)
+        return getattr(task, "source_blueprint", "") if task else ""
+    except Exception:
+        logger.debug("task_repo.get failed for triple_align check task_id=%s", task_id, exc_info=True)
+        return ""
+
+
 def _subscribe_task_lifecycle_events() -> None:
     try:
         bus = EventBus.get_instance()
@@ -350,16 +364,7 @@ def register_boot_hooks() -> None:
                 from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
 
                 task_id = getattr(event, "task_id", "")
-                source_bp = ""
-                try:
-                    from zephyr.governance.persistence.task_repo import TaskRepository
-
-                    tr = TaskRepository()
-                    task = tr.get(task_id)
-                    source_bp = getattr(task, "source_blueprint", "") if task else ""
-                except Exception:
-                    # 5.12.1 修复：原 except: pass 静默吞 task_repo 查询失败（三对齐检查被静默跳过）
-                    logger.debug("task_repo.get failed for triple_align check task_id=%s", task_id, exc_info=True)
+                source_bp = _get_source_blueprint(task_id)
                 if not source_bp:
                     return
                 result = check_triple_alignment(specific_module=source_bp, warn_only=False)
