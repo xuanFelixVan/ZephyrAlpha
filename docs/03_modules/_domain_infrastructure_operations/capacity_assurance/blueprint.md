@@ -836,57 +836,57 @@ slo_registry:
  target: 2000
  measurement: pytest 基准测试
  golden_signal: latency
- governance_layer: GOV-P1
- runtime_plane: RP-2
+ governance_layer: policy
+ runtime_plane: warm
  - id: CAP-002-event-throughput
  description: "事件总线吞吐量"
  target: 1000
  measurement: msg/s 压力测试
  golden_signal: traffic
- governance_layer: GOV-P1
- runtime_plane: RP-1
+ governance_layer: policy
+ runtime_plane: warm
  - id: CAP-003-error-rate
  description: "模块间调用错误率"
  target: 0.001
  measurement: circuit_breaker 统计
  golden_signal: errors
- governance_layer: GOV-P1
- runtime_plane: RP-1
+ governance_layer: policy
+ runtime_plane: warm
  - id: CAP-004-memory-saturation
  description: "内存饱和度"
  target: 0.8
  measurement: psutil 内存监控
  golden_signal: saturation
- governance_layer: GOV-P1
- runtime_plane: RP-2
+ governance_layer: policy
+ runtime_plane: warm
  - id: CAP-005-cpu-saturation
  description: "CPU 饱和度"
  target: 0.7
  measurement: psutil CPU 监控
  golden_signal: saturation
- governance_layer: GOV-P1
- runtime_plane: RP-2
+ governance_layer: policy
+ runtime_plane: warm
  - id: CAP-006-queue-depth-saturation
  description: "事件队列深度饱和度"
  target: 500
  measurement: asyncio.Queue.qsize()
  golden_signal: saturation
- governance_layer: GOV-P1
- runtime_plane: RP-1
+ governance_layer: policy
+ runtime_plane: warm
  - id: CAP-007-type-check-time
  description: "类型检查时间 P99"
  target: 30000
  measurement: dmypy 基准测试
  golden_signal: latency
- governance_layer: GOV-P2
- runtime_plane: RP-3
+ governance_layer: factory
+ runtime_plane: cold
  - id: CAP-008-config-check-time
  description: "配置一致性检查时间 P99"
  target: 10000
  measurement: validate_ssot.py 计时
  golden_signal: latency
- governance_layer: GOV-P2
- runtime_plane: RP-3
+ governance_layer: factory
+ runtime_plane: cold
 ```
 
 ---
@@ -1733,8 +1733,8 @@ slo_registry:
  target: 2000
  measurement: pytest 基准测试
  golden_signal: latency
- governance_layer: GOV-P1
- runtime_plane: RP-2
+ governance_layer: policy
+ runtime_plane: warm
  instrumentation: #
  hook_point: "zephyr.__init__.post_import" # 插桩位置：顶层 import 完成后
  collection_method: "time.perf_counter_ns" # 高精度时钟
@@ -1746,8 +1746,8 @@ slo_registry:
  target: 0.001
  measurement: circuit_breaker 统计
  golden_signal: errors
- governance_layer: GOV-P1
- runtime_plane: RP-1
+ governance_layer: policy
+ runtime_plane: warm
  instrumentation:
  hook_point: "circuit_breaker.CBGManager.on_state_change"
  state_filter: "OPEN" # 仅在 OPEN 事件计数
@@ -1758,8 +1758,8 @@ slo_registry:
  target: 0.8
  measurement: psutil 内存监控
  golden_signal: saturation
- governance_layer: GOV-P1
- runtime_plane: RP-2
+ governance_layer: policy
+ runtime_plane: warm
  instrumentation:
  hook_point: "capacity_governance_loop.poll_cycle"
  sample_interval_sec: 30 # 采样间隔
@@ -2334,33 +2334,33 @@ business_slis:
  target: "≥ 5 / day"
  measurement: task_card 表 status='done' + completed_at
  golden_signal: "traffic (business)"
- governance_layer: GOV-P1
+ governance_layer: policy
  - id: BIZ-002-gate-pass-rate
  description: "AI 施工产物通过 G0-G7 门禁的比例"
  target: 0.85 # 85% 一次通过
  measurement: gate_results 表
  golden_signal: "errors (business)"
- governance_layer: GOV-P1
+ governance_layer: policy
  degradation_alert: "< 0.70" # 低于 70% → AI 上下文可能退化
  - id: BIZ-003-code-rework-rate
  description: "AI 生成的代码被后续修改/回滚的比例"
  target: 0.15 # ≤ 15% 返工率
  measurement: git diff --stat + rollback_manager 统计
  golden_signal: "saturation (business)"
- governance_layer: GOV-P1
+ governance_layer: policy
  degradation_alert: "> 0.30"
  - id: BIZ-004-blueprint-drift-rate
  description: "蓝图与实际代码不一致的比例变化"
  target: "< 5% drift / week"
  measurement: drift-detector（MOD-INF-023）的 reconcile 事件
  golden_signal: "saturation (business)"
- governance_layer: GOV-P2
+ governance_layer: factory
  - id: BIZ-005-temp-file-growth-rate
  description: "docs/_working/ 的增长速度——反映AI产生的中间产物"
  target: "< 10MB / week"
  measurement: du -sh docs/_working/
  golden_signal: "saturation (business)"
- governance_layer: GOV-P2
+ governance_layer: factory
 ```
 
 #### 设计约束 #15：施工节奏控制（Change Burst Detection）

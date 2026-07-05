@@ -38,10 +38,10 @@ ARCH-047: Streamlit→Panel+HoloViz技术栈切换, ChartFactory 作为图表生
   - make_trend_line: 趋势折线图(Plotly Line, 大数据量自动 plotly_resampler), olap_trend 调用 (v3.1.0新增)
 
 技术栈版本(ARCH-047 tech_stack):
-  - holoviews >=1.19.0,<2.0.0 (GOV-P1)
-  - plotly_resampler >=0.9.0,<1.0.0 (GOV-P1, MVP默认渲染策略10万级)
-  - lightweight-charts v5.2 (GOV-P1, JS原生不引入Python封装包)
-  - datashader >=0.16.0,<1.0.0 (GOV-P2, 仅阈值触发>50万点)
+  - holoviews >=1.19.0,<2.0.0 (policy)
+  - plotly_resampler >=0.9.0,<1.0.0 (policy, MVP默认渲染策略10万级)
+  - lightweight-charts v5.2 (policy, JS原生不引入Python封装包)
+  - datashader >=0.16.0,<1.0.0 (factory, 仅阈值触发>50万点)
 """
 from __future__ import annotations
 
