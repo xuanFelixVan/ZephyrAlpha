@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 05:13:30
+> 最后更新: 2026-07-06 05:15:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 14 | Module Count | 14 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
-| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 7 | Cross-domain Outgoing | 7 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 10 | Prototype Modules | 10 |
@@ -62,17 +62,17 @@ graph TD
         src_zephyr_pf_core_strategy_engine_init_py["src/zephyr/pf_core/strategy_engine/__init__.py prototype"]
         src_zephyr_pf_core_strategy_registry_py["src/zephyr/pf_core/strategy_registry.py prototype"]
     end
-    src_zephyr_pf_core_init_py -.->|config_depends| src_zephyr_pf_core_performance_attribution_report_py
+    src_zephyr_pf_core_init_py -.->|config_depends| src_zephyr_pf_core_compliance_rule_py
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    src_zephyr_pf_core_strategy_engine_init_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
     src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_TRADING
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    src_zephyr_pf_core_risk_limits_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_pf_core_strategy_registry_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     src_zephyr_pf_core_compliance_rule_py -.->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_pf_core_risk_limits_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_base_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategy_registry_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategy_engine_init_py -.->|import_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|import_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -98,7 +98,6 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 2 | test_depends |
 | D_GOVERNANCE | 1 | import_depends |
 
 ## 架构分层视图 / Architecture Overview
@@ -167,7 +166,7 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [config_depends] (1 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   __init__.py → performance_attribution_r...                     │
+│   __init__.py → compliance_rule.py                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 05:13:30
+> 最后更新: 2026-07-06 05:15:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
-| 跨域入边 | 4 | Cross-domain Incoming | 4 |
+| 跨域入边 | 3 | Cross-domain Incoming | 3 |
 | 跨域出边 | 6 | Cross-domain Outgoing | 6 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 9 | Prototype Modules | 9 |
@@ -58,8 +58,8 @@ graph TD
         src_zephyr_reporting_models_init_py["src/zephyr/reporting/models/__init__.py prototype"]
         src_zephyr_reporting_services_init_py["src/zephyr/reporting/services/__init__.py prototype"]
     end
-    src_zephyr_reporting_default_attribution_engine_py -.->|import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_init_py -.->|import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_attribution_engine_py -.->|import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_tca_engine_py -.->|import_depends| src_zephyr_reporting_analytics_base_py
     D_TRADING["D_TRADING production"]
     src_zephyr_reporting_analytics_base_py -->|import_depends| D_TRADING
@@ -94,7 +94,6 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_GOVERNANCE | 3 | import_depends |
-| D_AUDITTEST | 1 | test_depends |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -154,8 +153,8 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [import_depends] (3 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   default_attribution_engin... → analytics_base.py               │
 │   __init__.py → analytics_base.py                                │
+│   default_attribution_engin... → analytics_base.py               │
 │   default_tca_engine.py → analytics_base.py                      │
 └──────────────────────────────────────────────────────────────────┘
 

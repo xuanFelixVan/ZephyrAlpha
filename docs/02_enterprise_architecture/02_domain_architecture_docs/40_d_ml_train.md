@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 model_evaluation（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 05:13:30
+> 最后更新: 2026-07-06 05:15:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -67,10 +67,10 @@ graph TD
     src_zephyr_ml_train_implementations_init_py -.->|import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_SHARED
     D_TRADING["D_TRADING production"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_TRADING
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_SHARED
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE design"]
     D_GOVERNANCE -.->|data| docs_03_modules_cross_layer_model_profiler_blueprint_md
