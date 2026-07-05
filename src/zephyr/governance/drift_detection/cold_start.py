@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Cold Start Bootstrapper — 冷启动引导 §6.31。
@@ -184,14 +184,16 @@ def init_database(project_root: str) -> bool:
 
         conn = sqlite3.connect(db_path)
 
-        cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-        for statement in DRIFT_EVENTS_SCHEMA.strip().split("\n\n"):
-            cursor.execute(statement)
+            for statement in DRIFT_EVENTS_SCHEMA.strip().split("\n\n"):
+                cursor.execute(statement)
 
-        conn.commit()
-
-        conn.close()
+            conn.commit()
+        finally:
+            # 5.144.9 修复: conn.close() 移入 finally, 防止 execute/commit 抛异常跳过 close
+            conn.close()
 
         return True
 

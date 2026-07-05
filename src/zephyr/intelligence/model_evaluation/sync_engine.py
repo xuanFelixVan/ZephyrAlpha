@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] VMS不可用返回degraded; 空增量返回0
 # [TESTS] scripts/connect/kb_vms.py --trigger
 # [A_module] module_id=MOD-RSC_sync_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """KB→VMS 同步引擎 — sync_to_vms() 生产者"""
 
 from __future__ import annotations
@@ -43,12 +43,15 @@ class SyncEngine:
             from zephyr.integration.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
 
             conn = get_db_connection()
-            since_str = since.isoformat() if since else "1970-01-01"
-            rows = conn.execute(
-                "SELECT ke_id,title,summary,category,tags FROM knowledge WHERE status='INDEXED' AND created_at > ? LIMIT 50",
-                (since_str,),
-            ).fetchall()
-            conn.close()
+            try:
+                since_str = since.isoformat() if since else "1970-01-01"
+                rows = conn.execute(
+                    "SELECT ke_id,title,summary,category,tags FROM knowledge WHERE status='INDEXED' AND created_at > ? LIMIT 50",
+                    (since_str,),
+                ).fetchall()
+            finally:
+                # 5.144.5 修复: conn.close() 移入 finally, 防止 execute 抛异常跳过 close
+                conn.close()
 
             if not rows:
                 return SyncResult(synced=0, total=0)

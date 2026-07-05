@@ -7916,6 +7916,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.144 资源清理顺序（12个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=12(资源清理顺序需重构为确定性析构)
+> **第41轮修复状态（2026-07-05）**：FIXED=10(5.144.1 lifecycle_manager 4步独立try/except + 5.144.2 async_runtime executor纳入finally + 5.144.3 process_pool 管道关闭顺序调整为terminate→wait→关闭 + 5.144.4 auto_runtime_core try/finally保证_booted=False + 5.144.5 sync_engine conn.close移入finally + 5.144.6 agent_cooldown 5方法conn.close移入finally + 5.144.7 correlation_engine 2方法conn.close移入finally + 5.144.8 dashboard 2方法conn.close移入finally + 5.144.9 cold_start conn.close移入finally + 5.144.12 facade 移除重复health.shutdown), DRIFTED=2(5.144.10 night_shift_queue 已在5.169修复 + 5.144.11 resource_guard atexit已在5.77.4修复), STILL_VALID=0. 本维度全部清零。
 
 审查资源释放顺序错误、try/finally清理顺序、上下文管理器嵌套错误、连接关闭顺序等问题。
 

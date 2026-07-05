@@ -14,7 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-ORC_lifecycle_manager | layer=module | stability=evolving | safety=L | ai_autonomy=immutable_core
 # [CHANGE-NOTE] 2026-06-26: Owner 授权手术式修改——移除 CircadianScheduler 依赖（项目硬约束"废除CircadianScheduler定时触发机制"）。
-# [TTL] task_bound
+# [TTL] permanent
 #   删除 circadian_scheduler 参数（boot_sequence/shutdown_sequence）、_register_audit_tasks（no-op）、
 #   _register_audit_event_hooks（注册的回调因 trigger_event 从未被调用而永不触发=死代码）、
 #   circadian_scheduler.start()/.stop() no-op 调用、finalizer.register("circadian_scheduler", ...)。
@@ -142,16 +142,30 @@ class LifecycleManager:
 
         # circadian_scheduler.stop() 已移除：no-op（CircadianScheduler 废除，2026-06-26裁定）
 
-        report.finalizer_results = finalizer.run()
-        report.steps_completed += 1
+        # 5.144.1 修复: 4步清理无异常隔离, 若 finalizer.run() 抛异常后续 3 步全被跳过。
+        # 每步独立 try/except, 异常收集到 report.errors 保证清理顺序确定性
+        try:
+            report.finalizer_results = finalizer.run()
+            report.steps_completed += 1
+        except Exception as exc:
+            report.errors.append(f"finalizer.run failed: {exc}")
 
-        health_monitor.stop()
-        report.steps_completed += 1
+        try:
+            health_monitor.stop()
+            report.steps_completed += 1
+        except Exception as exc:
+            report.errors.append(f"health_monitor.stop failed: {exc}")
 
-        audit_logger.flush()
-        report.steps_completed += 1
+        try:
+            audit_logger.flush()
+            report.steps_completed += 1
+        except Exception as exc:
+            report.errors.append(f"audit_logger.flush failed: {exc}")
 
-        stop_gate.acknowledge_shutdown()
-        report.steps_completed += 1
+        try:
+            stop_gate.acknowledge_shutdown()
+            report.steps_completed += 1
+        except Exception as exc:
+            report.errors.append(f"stop_gate.acknowledge_shutdown failed: {exc}")
 
         return report

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_process_pool | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 process_pool.py - Shared process pool for MCP servers and subprocess tasks
@@ -240,12 +240,8 @@ class MCPProcessPool:
     def _remove_entry(self, name: str) -> None:
         entry = self._pool.pop(name, None)
         if entry is not None:
-            for stream in (entry.process.stdin, entry.process.stdout, entry.process.stderr):
-                if stream is not None:
-                    try:
-                        stream.close()
-                    except Exception:
-                        pass
+            # 5.144.3 修复: 先 terminate()→wait()→关闭管道（申请逆序释放）
+            # 原顺序：先关管道再 terminate, 子进程写日志触发 BrokenPipeError, 关 stdin 发 EOF 让子进程提前退出跳过自身清理
             try:
                 entry.process.terminate()
                 entry.process.wait(timeout=5.0)
@@ -255,3 +251,9 @@ class MCPProcessPool:
                     entry.process.wait(timeout=2.0)
                 except Exception:
                     pass
+            for stream in (entry.process.stdin, entry.process.stdout, entry.process.stderr):
+                if stream is not None:
+                    try:
+                        stream.close()
+                    except Exception:
+                        pass

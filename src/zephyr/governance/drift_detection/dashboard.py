@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Coverage Dashboard — dashboard.py
@@ -76,13 +76,14 @@ class Dashboard:
         if not os.path.exists(self._db_path):
             return {}
 
+        # 5.144.8 修复: conn.close() 移入 finally
         conn = sqlite3.connect(self._db_path)
-
-        rows = conn.execute(
-            "SELECT module_id, COUNT(*) as total, SUM(CASE WHEN state='VERIFIED' THEN 1 ELSE 0 END) as resolved FROM drift_events GROUP BY module_id"
-        ).fetchall()
-
-        conn.close()
+        try:
+            rows = conn.execute(
+                "SELECT module_id, COUNT(*) as total, SUM(CASE WHEN state='VERIFIED' THEN 1 ELSE 0 END) as resolved FROM drift_events GROUP BY module_id"
+            ).fetchall()
+        finally:
+            conn.close()
 
         health: dict[str, float] = {}
 
@@ -99,13 +100,14 @@ class Dashboard:
         if not os.path.exists(self._db_path):
             return []
 
+        # 5.144.8 修复: conn.close() 移入 finally
         conn = sqlite3.connect(self._db_path)
-
-        rows = conn.execute(
-            "SELECT date(created_at) as day, module_id, COUNT(*) as cnt FROM drift_events GROUP BY day, module_id ORDER BY day"
-        ).fetchall()
-
-        conn.close()
+        try:
+            rows = conn.execute(
+                "SELECT date(created_at) as day, module_id, COUNT(*) as cnt FROM drift_events GROUP BY day, module_id ORDER BY day"
+            ).fetchall()
+        finally:
+            conn.close()
 
         return [{"date": day, "module_id": mod, "count": cnt} for day, mod, cnt in rows]
 

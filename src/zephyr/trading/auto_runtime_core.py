@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_auto_runtime_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 ==================================================
@@ -534,13 +534,17 @@ class AutoRuntimeCore:
         except Exception:
             # 5.12.1 修复：原 except: pass 静默吞资源监控停止失败
             logger.exception("ResourceOptimizationEngine.stop_monitor() failed during shutdown")
-        report = self._lifecycle.shutdown_sequence(
-            stop_gate=self._stop_gate,
-            finalizer=self._finalizer,
-            health_monitor=self._health_monitor,
-            audit_logger=self._audit_logger,
-        )
-        self._booted = False
+        # 5.144.4 修复: shutdown_sequence() 无 try/except, 若抛异常则 self._booted = False 不执行,
+        # 运行时状态卡在"已关闭但 booted=True"。用 try/finally 保证 _booted=False 必定执行
+        try:
+            report = self._lifecycle.shutdown_sequence(
+                stop_gate=self._stop_gate,
+                finalizer=self._finalizer,
+                health_monitor=self._health_monitor,
+                audit_logger=self._audit_logger,
+            )
+        finally:
+            self._booted = False
         return report
 
     def reconcile(self) -> ReconciliationReport:

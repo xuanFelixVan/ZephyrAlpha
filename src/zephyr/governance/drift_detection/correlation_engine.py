@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_correlation_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 Correlation Engine — correlation_engine.py
@@ -64,11 +64,12 @@ class CorrelationEngine:
         if not os.path.exists(self._db_path):
             return {}
 
+        # 5.144.7 修复: conn.close() 移入 finally, 防止 execute 抛异常跳过 close
         conn = sqlite3.connect(self._db_path)
-
-        rows = conn.execute("SELECT scan_id, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'").fetchall()
-
-        conn.close()
+        try:
+            rows = conn.execute("SELECT scan_id, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'").fetchall()
+        finally:
+            conn.close()
 
         scan_sets: dict[str, set[str]] = {}
 
@@ -107,13 +108,14 @@ class CorrelationEngine:
         if not os.path.exists(self._db_path):
             return {}
 
+        # 5.144.7 修复: conn.close() 移入 finally
         conn = sqlite3.connect(self._db_path)
-
-        rows = conn.execute(
-            "SELECT drift_dimension, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'"
-        ).fetchall()
-
-        conn.close()
+        try:
+            rows = conn.execute(
+                "SELECT drift_dimension, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'"
+            ).fetchall()
+        finally:
+            conn.close()
 
         clusters: dict[str, set[str]] = {}
 

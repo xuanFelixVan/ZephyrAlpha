@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] ValueError; OSError; RuntimeError
 # [TESTS] tests/system-telemetry/test_facade.py
 # [A_module] module_id=MOD-INF_facade | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 """Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）
 
@@ -490,6 +490,11 @@ class Telemetry:
 
         _flush_ring_to_jsonl()
 
+        # 5.144.12 修复: health 已在 _SHUTDOWN_ORDER 中, 循环会调用 shutdown()。
+        # set_unhealthy 需在 shutdown 前调用, 移除循环后的重复 health.shutdown()
+        if hasattr(self.health, "set_unhealthy"):
+            self.health.set_unhealthy("shutdown")
+
         for attr_name in reversed(_SHUTDOWN_ORDER):
             sub = getattr(self, attr_name, None)
             if sub is not None and hasattr(sub, "shutdown"):
@@ -497,10 +502,6 @@ class Telemetry:
                     sub.shutdown()
                 except Exception:
                     _logger.debug("shutdown %s failed", attr_name, exc_info=True)
-
-        if hasattr(self.health, "set_unhealthy"):
-            self.health.set_unhealthy("shutdown")
-        self.health.shutdown()
 
         if not self.test_mode:
             _logger.info("Telemetry shutdown complete module=%s", self.module_id)

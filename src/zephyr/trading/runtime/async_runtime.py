@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] start() 复用已有循环或创建新循环；stop() 幂等（多次调用安全）；run_coroutine 在已运行循环中抛 RuntimeError；run_in_executor 无循环时直接同步调用
 # [TESTS] tests/trading/runtime/test_async_runtime.py
 # [A_module] module_id=MOD-TRADING-RUNTIME-ASYNC | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
@@ -126,34 +126,39 @@ class AsyncRuntime:
         - 关闭 executor
         - 关闭事件循环（仅当 AsyncRuntime 拥有它时）
         """
-        if self._loop is None:
-            return
+        # 5.144.2 修复: executor 关闭独立 try/finally, 防止 loop.close() 抛异常跳过 executor.shutdown()
+        try:
+            if self._loop is None:
+                return
 
-        if self._owns_loop and not self._loop.is_closed():
-            try:
-                pending = asyncio.all_tasks(self._loop)
-                for task in pending:
-                    task.cancel()
-                if pending:
-                    self._loop.run_until_complete(
-                        asyncio.wait_for(
-                            asyncio.gather(*pending, return_exceptions=True),
-                            timeout=self._loop_timeout,
+            if self._owns_loop and not self._loop.is_closed():
+                try:
+                    pending = asyncio.all_tasks(self._loop)
+                    for task in pending:
+                        task.cancel()
+                    if pending:
+                        self._loop.run_until_complete(
+                            asyncio.wait_for(
+                                asyncio.gather(*pending, return_exceptions=True),
+                                timeout=self._loop_timeout,
+                            )
                         )
-                    )
-            except (TimeoutError, RuntimeError) as e:
-                logger.warning("AsyncRuntime.stop: 等待任务超时或失败: %s", e)
-            finally:
-                self._loop.close()
-                logger.debug("AsyncRuntime: 事件循环已关闭")
+                except (TimeoutError, RuntimeError) as e:
+                    logger.warning("AsyncRuntime.stop: 等待任务超时或失败: %s", e)
+                finally:
+                    try:
+                        self._loop.close()
+                    except Exception as e:
+                        logger.warning("AsyncRuntime.stop: loop.close() 失败: %s", e)
+                    logger.debug("AsyncRuntime: 事件循环已关闭")
 
-        if self._executor is not None:
-            self._executor.shutdown(wait=False, cancel_futures=True)
-            self._executor = None
-            logger.debug("AsyncRuntime: executor 已关闭")
-
-        self._loop = None
-        self._owns_loop = False
+            if self._executor is not None:
+                self._executor.shutdown(wait=False, cancel_futures=True)
+                self._executor = None
+                logger.debug("AsyncRuntime: executor 已关闭")
+        finally:
+            self._loop = None
+            self._owns_loop = False
 
     def run_coroutine(self, coro: Awaitable[T]) -> T:
         """在同步入口中运行 async 函数（asyncio.run 封装）。
