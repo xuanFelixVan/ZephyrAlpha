@@ -70,12 +70,15 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-# 三轨正则真源归位：从 validate_module_id_naming.py 复用（消除正则重复定义）
+# 双轨正则真源归位：从 validate_module_id_naming.py 复用（消除正则重复定义）
+# R2 治本修订（2026-07-05）：MODULE_ID_D_PREFIX_RE 已废弃为 module_id 派生轨，
+# 重定义为 SUBMODULE_ID_RE（submodule_id 专用，见 trae_028 gov_doc_009）
 from d3_metadata.validate_module_id_naming import (
     MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
     MODULE_ID_DOMAIN_DERIVED_RE as _MODULE_ID_DOMAIN_DERIVED_RE,
-    MODULE_ID_D_PREFIX_RE as _MODULE_ID_D_PREFIX_RE,
     MODULE_ID_SHARED_RE as _MODULE_ID_SHARED_RE,
+    SUBMODULE_ID_RE as _SUBMODULE_ID_RE,
+    is_valid_module_id as _is_valid_module_id,
 )
 
 # ---------------------------------------------------------------------------
@@ -275,17 +278,20 @@ def _check_n05_adr_missing_suffix(filepath: str) -> list[NamingViolation]:
 
 
 # ---------------------------------------------------------------------------
-# N-06: module_id scope 前缀检测 + 双轨制格式校验（裁定#208 R1/R4: layer-master 轨
-#        MOD-{LAYER_CODE}-{SEQ} 序号必填 + domain-functional 派生轨
-#        MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选 + D-XXX-{SEQ} 派生轨）
+# N-06: module_id scope 前缀检测 + 双轨制格式校验（裁定#208 R1/R4 + R2 治本修订:
+#        layer-master 轨 MOD-{LAYER_CODE}-{SEQ} 序号必填 +
+#        domain-functional 派生轨 MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选）
+# R2 治本修订（2026-07-05）：D-XXX-{SEQ} 已废弃为 module_id 派生轨，
+#        重定义为 submodule_id 专用（见 trae_028 gov_doc_009）。
+#        D- 前缀字符串触发 ERROR（不允许作为 module_id 使用）。
 # ---------------------------------------------------------------------------
 
 _MODULE_ID_SCOPE_RE = re.compile(
     r"^\s*module_id:[ \t]*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM|SH)(?:[-_][A-Za-z0-9_]+)+[\"']?",
     re.MULTILINE,
 )
-# 裁定#208 R1/R4: 双轨制 module_id 格式正则（真源已迁移至 validate_module_id_naming.py，
-# 本文件通过顶部 import 复用 _MODULE_ID_LAYER_MASTER_RE 等四个常量，消除正则重复定义）
+# 裁定#208 R1/R4 + R2 治本修订: 双轨制 module_id 格式正则（真源已迁移至 validate_module_id_naming.py，
+# 本文件通过顶部 import 复用 _MODULE_ID_LAYER_MASTER_RE 等常量，消除正则重复定义）
 # 提取 module_id 值（兼容 YAML module_id: VALUE 和 .py 头部 module_id=VALUE 两种格式）
 _MODULE_ID_VALUE_RE = re.compile(r'module_id[:=]\s*["\']?([A-Za-z][A-Za-z0-9_-]+)', re.MULTILINE)
 # Relaxed regex for inline module_id: inside .py comment headers (e.g. "# [A_test] module_id: SRC-TST-0212 | ...")
@@ -295,12 +301,19 @@ _INLINE_MODULE_ID_SCOPE_RE = re.compile(
 
 
 def _check_n06_dual_track_format(filepath: str, content: str) -> list[NamingViolation]:
-    """裁定#208 R4: scope 前缀通过后，校验 MOD-*/D-*/SH-* module_id 值符合双轨制格式。
+    """裁定#208 R4 + R2 治本修订: scope 前缀通过后，校验 MOD-*/SH-* module_id 值符合双轨制格式。
 
     layer-master 轨: MOD-{LAYER_CODE}-{SEQ}（序号必填）
-    domain-functional 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN]（序号可选）/ D-XXX-{SEQ}
+    domain-functional 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN]（序号可选）
     跨域共享模块: SH-{ABBR}-{NNN}（序号必填，trae_028 L86/L466/L475）
-    非 MOD-*/D-*/SH-* 前缀（如 ADR/KBG/CFG/TRAE）跳过格式校验（由 scope 前缀检测覆盖）。
+
+    R2 治本修订（2026-07-05）：
+    - D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用
+      （见 trae_028 gov_doc_009 和 validate_module_id_naming.py::is_valid_submodule_id）
+    - 任何 D- 前缀的 module_id 值触发 ERROR（不允许作为 module_id 使用，
+      应改用 MOD-{DOMAIN_FRAGMENT}[-NNN] 派生轨）
+
+    非 MOD-*/SH-* 前缀（如 ADR/KBG/CFG/TRAE）跳过格式校验（由 scope 前缀检测覆盖）。
     """
     violations: list[NamingViolation] = []
     # 跳过 markdown 代码块（避免文档示例误判）
@@ -329,12 +342,18 @@ def _check_n06_dual_track_format(filepath: str, content: str) -> list[NamingViol
                 filepath=filepath,
             ))
         elif value.startswith("D-"):
-            if not _MODULE_ID_D_PREFIX_RE.match(value):
-                violations.append(NamingViolation(
-                    rule="N-06",
-                    message=f"module_id D-前缀格式不符合双轨制(裁定#208): {value}（应为 D-{{DOMAIN}}-NNN）",
-                    filepath=filepath,
-                ))
+            # R2 治本修订（2026-07-05）：D-XXX-NNN 已废弃为 module_id 派生轨，
+            # 重定义为 submodule_id 专用（见 trae_028 gov_doc_009）。
+            # 任何 D- 前缀的 module_id 值触发 ERROR——应改用 MOD-{DOMAIN_FRAGMENT}[-NNN] 派生轨。
+            violations.append(NamingViolation(
+                rule="N-06",
+                message=(
+                    f"module_id D-前缀已废弃(R2治本修订,2026-07-05): {value}"
+                    f"（D-XXX-NNN 重定义为 submodule_id 专用,见 trae_028 gov_doc_009;"
+                    f"module_id 应改用 MOD-{{DOMAIN_FRAGMENT}}[-NNN] 派生轨）"
+                ),
+                filepath=filepath,
+            ))
         elif value.startswith("D_"):
             violations.append(NamingViolation(
                 rule="N-06",
@@ -1547,10 +1566,13 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
     ver = (int(vm.group(1)), int(vm.group(2)), int(vm.group(3)))
 
     # 2. 脚本双轨正则已定义（编译期已校验，此处 sanity check 防常量被误删）
+    # R2 治本修订（2026-07-05）：_MODULE_ID_D_PREFIX_RE 已废弃，
+    # 替换为 _SUBMODULE_ID_RE（submodule_id 校验专用，见 trae_028 gov_doc_009）
     regexes = {
         "_MODULE_ID_LAYER_MASTER_RE": _MODULE_ID_LAYER_MASTER_RE,
         "_MODULE_ID_DOMAIN_DERIVED_RE": _MODULE_ID_DOMAIN_DERIVED_RE,
-        "_MODULE_ID_D_PREFIX_RE": _MODULE_ID_D_PREFIX_RE,
+        "_MODULE_ID_SHARED_RE": _MODULE_ID_SHARED_RE,
+        "_SUBMODULE_ID_RE": _SUBMODULE_ID_RE,
     }
     undefined = [name for name, rx in regexes.items() if rx is None]
     if undefined:

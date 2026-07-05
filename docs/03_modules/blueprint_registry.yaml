@@ -87,6 +87,22 @@ _schema:
     第 3 代+ = 后续大版本重写
 
     '
+  module_id_format: '裁定#208 双轨制（R2 治本修订后，2026-07-05）——layer-master 轨 MOD-{LAYER_CODE}-{SEQ}
+    / domain-functional 派生轨 MOD-{DOMAIN_FRAGMENT}[-NNN] / 跨域共享轨 SH-{ABBR}-{NNN}。
+    真源：trae_028 §gov_doc_003_naming_ssot L1044-1048 + validate_module_id_naming.py。
+
+    R2 治本修订（2026-07-05）：D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id
+    专用。本 registry 的 module_id 字段禁止使用 D-XXX-NNN 格式（GATE-11 N-06 阻断）。
+
+    '
+  submodule_id_format: 'R2 治本修订新增（2026-07-05）——submodule_id 格式 D-{DOMAIN}-NNN（如 D-FACTOR-01），
+    仅用于蓝图正文 §sections/§modules/§lifecycle 章节引用，不进入本 registry 的 module_id 字段，
+    不进入 depgraph.nodes.blueprint_id。真源：trae_028 §gov_doc_009_submodule_id_convention。
+
+    可选字段 submodules（list[str]）：声明本蓝图内部使用的 submodule_id 集合，供 AI 检索与
+    断链检测使用。无子模块的蓝图可不声明此字段。
+
+    '
 blueprints:
 - module_id: MOD-BT-001
   name: _domain_backtest

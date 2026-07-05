@@ -1102,7 +1102,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: module_id / domain_id 格式校验真源（裁定#208 三轨制）
+  description: module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 + R2 治本修订）
   tags:
   - Quick
 - name: d3_metadata/validate_registry_master_index.py

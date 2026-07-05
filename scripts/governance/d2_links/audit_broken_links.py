@@ -262,7 +262,11 @@ def _frontmatter_field(content: str, field: str) -> str:
     return ""
 
 
-# --- 三轨制 module_id 格式正则（真源 validate_module_id_naming.py:51-54）---
+# --- module_id 格式正则（真源 validate_module_id_naming.py，裁定#208 + R2 治本修订）---
+# R2 治本修订（2026-07-05）：D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用
+# 本文件保留 _MODULE_ID_DERIVED_D_RE 是为了断链检测——历史 blueprint_id 和 submodule_id
+# 引用可能使用 D-XXX-NNN 格式，需要查 DB 存在性。R2 修订不影响此处的格式合法性判定，
+# 真正的 module_id 格式校验由 GATE-11 N-06 负责（R2 后 N-06 阻断 D-XXX-NNN 作 module_id）。
 _MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-[0-9]+\Z")
 _MODULE_ID_DERIVED_MOD_RE = re.compile(r"^MOD-[A-Z]{1,20}(?:_[A-Z]{1,20})*(?:-[0-9]+)?\Z")
 _MODULE_ID_DERIVED_D_RE = re.compile(r"^D-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")
@@ -280,10 +284,21 @@ _BODY_MODULE_ID_RE = re.compile(
 
 
 def _is_valid_module_id_format(mid: str) -> bool:
-    """检查 module_id 是否符合三轨制格式之一。
+    """检查 ID 字符串是否符合已知合法格式之一（用于断链检测的存在性查询门控）。
 
-    真源：validate_module_id_naming.py:51-54（向内收，不复制实现，复用正则）。
-    格式非法的 ID 交给 GATE-11 N-06 校验，本函数仅判格式合法性以决定是否查存在性。
+    真源：validate_module_id_naming.py（裁定#208 双轨制 + R2 治本修订）。
+
+    注意：本函数判定"格式是否良好到值得查 DB 存在性"，不等同于"是否为合法 module_id"。
+    R2 治本修订（2026-07-05）后：
+    - D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用（见 trae_028 gov_doc_009）
+    - 但本函数仍接受 D-XXX-NNN 格式，因为：
+      (a) 历史数据中可能存在 D-XXX-NNN 作为 blueprint_id（R2 修订前的遗留）
+      (b) 蓝图正文中的 submodule_id 引用使用 D-XXX-NNN 格式
+      (c) 断链检测需要查这些 ID 是否在 registry 中存在
+    - 真正的 module_id 格式校验由 GATE-11 N-06 (_check_n06_dual_track_format) 负责，
+      R2 修订后 N-06 会阻断 D-XXX-NNN 作为 module_id 的使用
+
+    格式非法的 ID（如拼写错误）交给 GATE-11 N-06 校验，本函数仅判格式合法性以决定是否查存在性。
     """
     return any(
         p.match(mid)

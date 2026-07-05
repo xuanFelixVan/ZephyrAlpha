@@ -103,8 +103,9 @@ if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
-# 引入 module_id 三轨正则真源（真源唯一：从 validate_module_id_naming.py 复用）
-# 裁定#208 三轨制：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨
+# 引入 module_id 双轨正则真源（真源唯一：从 validate_module_id_naming.py 复用）
+# 裁定#208 双轨制（R2 治本修订后）：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨
+# R2 治本修订（2026-07-05）：D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用
 from d3_metadata.validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
 from d3_metadata.validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
 from d3_metadata.validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402  真源统一：NR-002 复用
@@ -2775,13 +2776,14 @@ def cmd_rename_blueprint_id(
 
     返回受影响总行数，-1=失败。
     """
-    # V2 漏洞修复：new_bp_id 必须符合裁定#208 三轨制格式
+    # V2 漏洞修复：new_bp_id 必须符合裁定#208 双轨制格式（R2 治本修订后）
     # old_bp_id 不校验（DB 中可能存在历史遗留的不合规 ID，需要允许改名到合规格式）
+    # R2 治本修订（2026-07-05）：D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用
     ok, reason = _validate_bp_id_format(new_bp_id)
     if not ok:
         print(
             f"ERROR: new_bp_id '{new_bp_id}' 格式不合规：{reason}\n"
-            f"裁定#208 三轨制：layer-master 轨(MOD-{{LAYER}}-NNN) / 派生轨(MOD-{{DOMAIN}}[-NNN]) / 跨域共享轨(SH-{{ABBR}}-NNN)",
+            f"裁定#208 双轨制（R2 治本修订后）：layer-master 轨(MOD-{{LAYER}}-NNN) / 派生轨(MOD-{{DOMAIN}}[-NNN]) / 跨域共享轨(SH-{{ABBR}}-NNN)；D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用(见 trae_028 gov_doc_009)",
             file=sys.stderr,
         )
         return -1

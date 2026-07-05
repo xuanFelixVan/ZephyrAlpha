@@ -345,19 +345,22 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: validate_module_id_naming
-    canonical_override: scripts/governance/validate_module_id_naming.py
+    canonical_override: scripts/governance/d3_metadata/validate_module_id_naming.py
     aliases:
       - module_id_naming
       - is_valid_module_id
       - is_valid_domain_id
+      - is_valid_submodule_id
     description: >-
-      module_id/blueprint_id/domain_id 格式校验真源（裁定#208 三轨制正则唯一责任点）。
-      提供 is_valid_module_id(bp_id) 和 is_valid_domain_id(domain_id) 两个公共校验函数，
-      被 check_naming_convention.py（N-06 GATE-11）和 apply_depgraph.py（V1/V2 漏洞修复 +
-      P1-2 --rename-domain 校验）复用，消除正则重复定义。三轨制：layer-master 轨
-      MOD-{LAYER}-NNN / 派生轨 MOD-{DOMAIN}[-NNN] 或 D-{DOMAIN}-NNN / 跨域共享轨
-      SH-{ABBR}-NNN。canonical 在 scripts/governance/ 下（非 src/zephyr/），无法 auto
-      派生，故用 canonical_override 显式声明。
+      module_id/blueprint_id/domain_id/submodule_id 格式校验真源（裁定#208 双轨制 +
+      R2 治本修订，2026-07-05）。提供 is_valid_module_id(bp_id)、is_valid_domain_id(domain_id)
+      和 is_valid_submodule_id(submodule_id) 三个公共校验函数，被 check_naming_convention.py
+      （N-06 GATE-11）和 apply_depgraph.py（V1/V2 漏洞修复 + P1-2 --rename-domain 校验）复用，
+      消除正则重复定义。双轨制（R2 治本修订后）：layer-master 轨 MOD-{LAYER}-NNN / 派生轨
+      MOD-{DOMAIN_FRAGMENT}[-NNN] / 跨域共享轨 SH-{ABBR}-NNN。R2 治本修订：D-XXX-NNN 已废弃
+      为 module_id 派生轨，重定义为 submodule_id 专用（蓝图内部子模块编号，见 trae_028
+      gov_doc_009）。canonical 在 scripts/governance/d3_metadata/ 下（非 src/zephyr/），
+      无法 auto 派生，故用 canonical_override 显式声明。
 
   # --------------------------------------------------------------------------
   - capability_id: n16_exemption_loader
