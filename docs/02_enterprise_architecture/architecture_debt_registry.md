@@ -2241,6 +2241,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.50 数值精度与类型安全（2个，第13轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.50全部清零.
+> **第55轮修复状态（2026-07-06）**：5.50.1 FIXED — deployment_suppression.py stable_since哨兵值从float 0.0改为float|None None, ==0.0改is None(pricing_sync.py已修复+circuit_breaker.py已DRIFTED), commit 73485e8b6d. DEFERRED=0. 维度5.50全部清零.
 > 维度说明：浮点数比较、金额计算精度、除零防护等数值正确性。（注：金额计算已全面使用Decimal，值得肯定）
 
 #### 5.50.1 [LOW] 浮点数用==比较而非容差比较
@@ -3089,6 +3090,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.69 部分失败处理（5个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.69全部清零.
+> **第55轮修复状态（2026-07-06）**：5.69.4 FIXED — boot_sequence步骤失败后添加break+logger.warning跳过后续依赖步骤(fail-fast), commit 73485e8b6d. DEFERRED=0. 维度5.69全部清零.
 #### 5.69.4 [MEDIUM] boot_sequence步骤失败后继续执行后续依赖步骤（无fail-fast）
 
 - **文件**：`src/zephyr/trading/lifecycle_manager.py:103-110`
@@ -3192,6 +3194,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.73 上下文管理器正确性（4个，第16轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.73全部清零.
+> **第55轮修复状态（2026-07-06）**：5.73.2 FIXED — CapacityMetricsBuffer.__exit__ flush()加try/except, args[0] is None时re-raise flush异常, 否则log+suppress保留with块原始异常, commit 73485e8b6d. DEFERRED=0. 维度5.73全部清零.
 #### 5.73.1 [MEDIUM] _RealSpanBridge.__exit__丢弃底层上下文返回值，破坏异常抑制契约
 
 - **文件**：`src/zephyr/infrastructure/system_telemetry/facade.py:279-281`
@@ -3363,6 +3366,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.78 装饰器正确性（3个，第16轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.78全部清零.
+> **第55轮修复状态（2026-07-06）**：5.78.3 FIXED — must/should装饰器_vibe_rule/_vibe_level属性从原函数func移到wrapper, 不再mutate原函数, commit 73485e8b6d. DEFERRED=0. 维度5.78全部清零.
 #### 5.78.1 [MEDIUM] async_limited装饰器未使用@functools.wraps，缺失__wrapped__
 
 - **文件**：`src/zephyr/shared/infra/limiter.py:186-195`；副本 `shared/infra_06/limiter.py:182-191`
@@ -4228,6 +4232,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第38轮修复状态（2026-07-05）**：FIXED=5(5.142.1 pipeline锁双重释放+误转FAILED移入finally+标志位 / 5.142.3 WorkOrchestrator._dags加锁保护 / 5.142.4 night_shift_queue._next_id移入锁内 / 5.142.5 gpu_consensus_scheduler async改用asyncio.Lock / 5.142.8 TaskQueue._stats加_stats_lock保护), STILL_VALID=3(5.142.2已第35轮修复此处补登 / 5.142.6生命周期布尔标志TOCTOU需4+文件改threading.Event / 5.142.7 SQLite锁粒度过大需重构为线程局部连接)
 > **第40轮修复状态（2026-07-05）**：5.142.6 FIXED — 6个文件(health_monitor/ide_health_daemon/feedback_loop/scheduler/fix_scheduler/local_model_scheduler/queue/task_queue)的start()/stop() check-then-act用_lifecycle_lock保护, 避免TOCTOU两线程同时start()启动两个线程. join在锁外执行避免长时间持锁. while _running读取不加锁(CPython bool原子+GIL). 5.142.7仍STILL_VALID(SQLite锁粒度需重构为线程局部连接).
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(5.142.7 SQLite锁粒度过大需重构为线程局部连接,涉及连接池架构重构属专项工程), STILL_VALID=0. 维度5.142全部清零.
+> **第55轮修复状态（2026-07-06）**：文档漂移校正——5.142.7 实际已在第41轮FIXED(event_store.py与cost_tracker.py移除全局self._lock改用threading.local()线程局部连接), 但第42轮维度汇总误记为DEFERRED=1. 校正为DEFERRED=0. 维度5.142全部清零.
 
 审查 Lock/RLock/Event/Semaphore/Condition 使用错误、潜在死锁、锁粒度过大、锁未释放、双重加锁等问题。
 
@@ -5198,6 +5203,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=100(bare except/except Exception吞噬异常需全量重构为细粒度处理)
 > **第34轮修复状态（2026-07-04）**：FIXED=0, DRIFTED=96, STILL_VALID=9, 合计=105（条目编号1-105，与合计100存在5个代表性取样统计口径偏差）。HIGH 25个全部DRIFTED（前期已将except Exception: pass替换为logger.warning/exception，含路径漂移19处）；MEDIUM类别4 return哨兵值46个全部DRIFTED（apply_depgraph.py 25个print ERROR已转logger.error且return -1作为CLI脚本约定保留+fix_orphan_deps.py 2个bare except已改具体异常+logger.warning+src/zephyr/trading/ 19个已加logger.warning）；MEDIUM类别5 print替代logging 29个中20个DRIFTED（apply_depgraph.py print ERROR已转logger.error+governance/__main__.py路径漂移）+9个STILL_VALID（fix_orphan_deps.py汇总输出2+audit_rename_completeness.py [FAIL]输出2+autonomy_core/__main__.py 1+asset_inventory/__main__.py 1+drift_detection/__main__.py 1+capability_lookup.py 1+governance/__main__.py 1）；LOW 5个中4个DRIFTED+1个STILL_VALID（deepseek_v4_chat.py:73-74 _safe_win32_ver except Exception无日志）。
 > **第42轮修复状态（2026-07-05）**：NOT_NEEDED=9(MEDIUM 类别5 print替代logging——9处均为CLI脚本/工具的print汇总输出[fix_orphan_deps.py汇总输出2+audit_rename_completeness.py FAIL输出2+autonomy_core/__main__.py 1+asset_inventory/__main__.py 1+drift_detection/__main__.py 1+capability_lookup.py 1+governance/__main__.py 1],CLI脚本print输出属合理设计)+DEFERRED=1(LOW deepseek_v4_chat.py:69-73 _safe_win32_ver except Exception无日志——环境兼容性monkey-patch,try块仅返回字面量元组几乎不会抛异常,except为过度防御), STILL_VALID=0. 维度5.175全部清零.
+> **第55轮修复状态（2026-07-06）**：5.175 DEFERRED项FIXED — deepseek_v4_chat.py _safe_win32_ver移除死代码try/except(try块仅return字面量元组不可抛异常, except块不可达), commit 73485e8b6d. DEFERRED=0. 维度5.175全部清零.
 
 > **5.175 修复明细（2026-07-04）**：
 > - 本轮无代码修改（FIXED=0），全部为前期修复后的DRIFTED标记更新
