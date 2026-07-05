@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-05 20:35:47
+> 最后更新: 2026-07-05 21:08:37
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -65,11 +65,9 @@ graph TD
     end
     src_zephyr_ex_core_execution_engine_py -->|import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_adapters_init_py -.->|import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
-    src_zephyr_ex_core_adapters_broker_interface_py -.->|import_depends| D_GOVERNANCE
-    D_BACKTEST["D_BACKTEST prototype"]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_BACKTEST
+    D_BACKTEST["D_BACKTEST design"]
     src_zephyr_ex_core_adapters_miniqmt_broker_py_1 -.->|import_depends| D_BACKTEST
+    D_GOVERNANCE["D_GOVERNANCE design"]
     src_zephyr_ex_core_adapters_miniqmt_broker_py_1 -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_broker_interface_py -.->|import_depends| D_GOVERNANCE
@@ -83,6 +81,8 @@ graph TD
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_TRADING
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_TRADING
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_TRADING
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_TRADING
+    src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
     D_FRONTEND["D_FRONTEND design"]
     D_FRONTEND -.->|import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py_1
     D_FRONTEND -.->|import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py_1
@@ -96,7 +96,7 @@ graph TD
     class src_zephyr_ex_core_init_py,src_zephyr_ex_core_adapters_broker_interface_py,src_zephyr_ex_core_adapters_simulation_broker_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_order_manager_py production
     class src_zephyr_ex_core_extensions_init_py,src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_miniqmt_broker_py,src_zephyr_ex_core_adapters_miniqmt_broker_py_1,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_api_init_py,src_zephyr_ex_core_broker_interface_py,src_zephyr_ex_core_core_init_py,src_zephyr_ex_core_infrastructure_init_py,src_zephyr_ex_core_services_init_py design
     class D_TRADING external_prod
-    class D_GOVERNANCE,D_BACKTEST,D_FRONTEND,D_AUDITTEST external_design
+    class D_BACKTEST,D_GOVERNANCE,D_FRONTEND,D_AUDITTEST external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

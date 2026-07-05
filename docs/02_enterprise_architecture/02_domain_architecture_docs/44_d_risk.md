@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 风控（D_RISK）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-05 20:35:48
+> 最后更新: 2026-07-05 21:08:37
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -72,20 +72,20 @@ graph TD
     end
     src_zephyr_risk_cross_asset_init_py -.->|import_depends| src_zephyr_risk_cross_asset_risk_manager_base_py
     src_zephyr_risk_cross_asset_init_py -.->|import_depends| src_zephyr_risk_cross_asset_risk_manager_py
-    src_zephyr_risk_cross_asset_cross_market_data_adapter_init_py -.->|config_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -.->|import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -.->|import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_limits_calculator_py -.->|import_depends| src_zephyr_risk_risk_limits_py
-    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -.->|import_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementations_default_risk_limits_calculator_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementations_default_risk_validator_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -.->|import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
-    src_zephyr_risk_implementations_init_py -.->|config_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -.->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -.->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_cross_asset_cross_market_data_adapter_init_py -.->|config_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
+    src_zephyr_risk_implementations_default_risk_limits_calculator_py -.->|import_depends| src_zephyr_risk_risk_limits_py
+    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
+    src_zephyr_risk_implementations_init_py -.->|config_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
     src_zephyr_risk_implementations_default_stop_loss_engine_py -.->|import_depends| src_zephyr_risk_risk_manager_base_py
     D_TRADING["D_TRADING production"]
     src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING
@@ -213,18 +213,18 @@ graph TD
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → risk_manager_base.py                             │
 │   __init__.py → risk_manager.py                                  │
-│   default_position_limit_ch... → risk_manager_base.py            │
-│   default_position_limit_ch... → risk_manager.py                 │
-│   default_risk_limits_calcu... → risk_limits.py                  │
-│   default_risk_limits_calcu... → risk_manager.py                 │
-│   default_risk_validator.py → risk_manager.py                    │
-│   default_risk_validator.py → risk_validator.py                  │
 │   default_risk_manager_orch... → risk_manager_base.py            │
 │   default_risk_manager_orch... → risk_manager.py                 │
 │   default_risk_manager_orch... → default_position_limit_ch...    │
 │   default_risk_manager_orch... → default_risk_limits_calcu...    │
 │   default_risk_manager_orch... → default_risk_validator.py       │
 │   default_risk_manager_orch... → default_stop_loss_engine.py     │
+│   default_position_limit_ch... → risk_manager_base.py            │
+│   default_position_limit_ch... → risk_manager.py                 │
+│   default_risk_limits_calcu... → risk_limits.py                  │
+│   default_risk_limits_calcu... → risk_manager.py                 │
+│   default_risk_validator.py → risk_manager.py                    │
+│   default_risk_validator.py → risk_validator.py                  │
 │   default_stop_loss_engine.py → risk_manager_base.py             │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -232,7 +232,7 @@ graph TD
 │                 [config_depends] (2 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → ml_experiment_pipeline.py                        │
-│   __init__.py → default_position_limit_ch...                     │
+│   __init__.py → default_risk_manager_orch...                     │
 └──────────────────────────────────────────────────────────────────┘
 
 ```

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 model_evaluation（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-05 20:35:48
+> 最后更新: 2026-07-05 21:08:37
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -75,10 +75,10 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE design"]
     D_GOVERNANCE -.->|data| docs_03_modules_cross_layer_model_profiler_blueprint_md
     D_INTELLIGENCE["D_INTELLIGENCE production"]
-    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED -.->|import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000

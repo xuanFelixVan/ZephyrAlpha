@@ -1,5 +1,5 @@
 %% D_INFRA_TELEMETRY 域全景依赖图
-%% 生成时间: 2026-07-05 20:35:50
+%% 生成时间: 2026-07-05 21:08:39
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 25, 依赖边数: 51
 
@@ -39,7 +39,6 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_metrics___init___py
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_contract_metrics_py
-    src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___elemetry_alerts___init___py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___elemetry_health___init___py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___emetry_profiles___init___py
@@ -50,6 +49,7 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___y_ai_behavior_event_sink_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___emetry_archive_cold_stub_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_archive___init___py
+    src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_syst___try_ai_behavior___init___py
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_syst___elemetry_alerts___init___py
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_archive___init___py
@@ -64,8 +64,8 @@ graph TD
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_syst___elemetry_schema___init___py
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_syst___elemetry_traces___init___py
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_system_telemetry_watchdog_py
-    src_zephyr_infrastructure_syst___try_ai_behavior___init___py -->|import_depends| src_zephyr_infrastructure_syst___y_ai_behavior_event_sink_py
     src_zephyr_infrastructure_syst___y_ai_behavior_event_sink_py -->|import_depends| src_zephyr_infrastructure_syst___try_logs_structured_sink_py
+    src_zephyr_infrastructure_syst___try_ai_behavior___init___py -->|import_depends| src_zephyr_infrastructure_syst___y_ai_behavior_event_sink_py
     src_zephyr_infrastructure_syst___lemetry_archive___init___py -->|import_depends| src_zephyr_infrastructure_syst___emetry_archive_cold_stub_py
     src_zephyr_infrastructure_system_telemetry_logs___init___py -->|import_depends| src_zephyr_infrastructure_syst___try_logs_structured_sink_py
     src_zephyr_infrastructure_syst___try_logs_structured_sink_py -->|import_depends| src_zephyr_infrastructure_system_telemetry__trace_bridge_py
