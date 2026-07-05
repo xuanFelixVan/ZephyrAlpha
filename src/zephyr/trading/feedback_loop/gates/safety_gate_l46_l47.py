@@ -36,7 +36,7 @@ class SafetyGateL46L47:
     def evaluate(self, ctx: ActionContext) -> list[GateResult]:
         results: list[GateResult] = []
         results.append(self._l46_systemic_emergence(ctx))
-        if results[-1].verdict != GateVerdict.REJECT:
+        if results[-1].verdict is not GateVerdict.REJECT:
             results.append(self._l47_ontological_consistency(ctx))
         return results
 

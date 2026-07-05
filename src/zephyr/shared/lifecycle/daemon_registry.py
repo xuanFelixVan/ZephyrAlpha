@@ -166,7 +166,7 @@ class DaemonRegistry:
             if entry is None:
                 logger.warning("DaemonRegistry: '%s' not registered", name)
                 return False
-            if entry.state == DaemonState.RUNNING:
+            if entry.state is DaemonState.RUNNING:
                 logger.debug("DaemonRegistry: '%s' already running", name)
                 return True
             entry.state = DaemonState.STARTING
@@ -192,7 +192,7 @@ class DaemonRegistry:
             entry = cls._entries.get(name)
             if entry is None:
                 return False
-            if entry.state != DaemonState.RUNNING:
+            if entry.state is not DaemonState.RUNNING:
                 return True
             entry.state = DaemonState.STOPPING
 
@@ -234,7 +234,7 @@ class DaemonRegistry:
             candidates = [
                 (name, entry)
                 for name, entry in cls._entries.items()
-                if entry.state == DaemonState.RUNNING and entry.priority <= min_priority
+                if entry.state is DaemonState.RUNNING and entry.priority <= min_priority
             ]
         candidates.sort(key=lambda x: x[1].priority)
         stopped: list[str] = []
@@ -253,7 +253,7 @@ class DaemonRegistry:
                     "state": entry.state.value,
                     "priority": entry.priority,
                     "started_at": entry.started_at,
-                    "uptime_s": time.monotonic() - entry.started_at if entry.state == DaemonState.RUNNING else 0,
+                    "uptime_s": time.monotonic() - entry.started_at if entry.state is DaemonState.RUNNING else 0,
                     "error_count": entry.error_count,
                     "last_error": entry.last_error,
                 }
@@ -264,7 +264,7 @@ class DaemonRegistry:
     def is_running(cls, name: str) -> bool:
         with cls._lock:
             entry = cls._entries.get(name)
-            return entry is not None and entry.state == DaemonState.RUNNING
+            return entry is not None and entry.state is DaemonState.RUNNING
 
     @classmethod
     def reset(cls) -> None:
@@ -337,7 +337,7 @@ class DaemonRegistry:
                 if len(cls._pressure_history) > cls._max_history:
                     cls._pressure_history = cls._pressure_history[-cls._max_history :]
 
-                if snap.pressure != PressureLevel.NORMAL:
+                if snap.pressure is not PressureLevel.NORMAL:
                     logger.warning(
                         "DaemonRegistry: resource pressure %s (mem=%.1f%%, procs=%d, cpu=%.1f%%)",
                         snap.pressure.value,
@@ -351,9 +351,9 @@ class DaemonRegistry:
                         except Exception:
                             pass
 
-                if snap.pressure == PressureLevel.EMERGENCY:
+                if snap.pressure is PressureLevel.EMERGENCY:
                     cls.stop_low_priority(min_priority=5)
-                elif snap.pressure == PressureLevel.CRITICAL:
+                elif snap.pressure is PressureLevel.CRITICAL:
                     cls.stop_low_priority(min_priority=2)
 
             except Exception:

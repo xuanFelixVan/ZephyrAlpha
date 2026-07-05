@@ -161,7 +161,7 @@ class DryRunSimulator:
                     result.status = SimulationStatus.BLOCKED
                     result.risk = SimulationRisk.HIGH
 
-        if result.risk == SimulationRisk.NONE and result.warnings:
+        if result.risk is SimulationRisk.NONE and result.warnings:
             result.risk = SimulationRisk.LOW
 
         if result.warnings and result.status == SimulationStatus.PASSED:

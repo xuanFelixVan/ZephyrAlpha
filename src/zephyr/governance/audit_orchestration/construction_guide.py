@@ -125,4 +125,4 @@ class ConstructionGuide:
         return self._config.phase0_check_required
 
     def is_dev_mode(self) -> bool:
-        return self._config.mode == ConstructionMode.DEV
+        return self._config.mode is ConstructionMode.DEV

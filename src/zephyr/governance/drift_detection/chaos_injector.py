@@ -330,11 +330,11 @@ def run_chaos_experiment(
 
     metrics.total_injections = len(results)
 
-    metrics.detected = sum(1 for r in results if r.result == ChaosResult.DETECTED)
+    metrics.detected = sum(1 for r in results if r.result is ChaosResult.DETECTED)
 
-    metrics.missed = sum(1 for r in results if r.result == ChaosResult.MISSED)
+    metrics.missed = sum(1 for r in results if r.result is ChaosResult.MISSED)
 
-    metrics.degraded = sum(1 for r in results if r.result == ChaosResult.DEGRADED)
+    metrics.degraded = sum(1 for r in results if r.result is ChaosResult.DEGRADED)
 
     if metrics.total_injections > 0:
         metrics.false_negative_rate = metrics.missed / metrics.total_injections
@@ -390,7 +390,7 @@ def _detect_phase(
     from .drift_engine import ScanLevel, scan
 
     for ci in results:
-        if ci.phase != ChaosPhase.DETECT:
+        if ci.phase is not ChaosPhase.DETECT:
             continue
 
         inject_time = ci.created_at
@@ -426,7 +426,7 @@ def _rollback_phase(
     """回滚阶段：恢复原始文件内容。"""
 
     for ci in results:
-        if ci.result == ChaosResult.ERROR:
+        if ci.result is ChaosResult.ERROR:
             continue
 
         try:

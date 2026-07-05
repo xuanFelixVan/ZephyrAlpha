@@ -92,9 +92,9 @@ class FeatureFlag:
         module_id: str | None = None,
         agent_id: str | None = None,
     ) -> bool:
-        if self.state == FlagState.ALWAYS_ON:
+        if self.state is FlagState.ALWAYS_ON:
             return True
-        if self.state == FlagState.ALWAYS_OFF:
+        if self.state is FlagState.ALWAYS_OFF:
             return False
 
         if self.allowed_modules and module_id:
@@ -111,7 +111,7 @@ class FeatureFlag:
             bucket = int(hashlib.md5(module_id.encode()).hexdigest(), 16) % 100
             return bucket < self.rollout_pct
 
-        return self.state == FlagState.CONDITIONAL
+        return self.state is FlagState.CONDITIONAL
 
 
 class FlagRegistry:

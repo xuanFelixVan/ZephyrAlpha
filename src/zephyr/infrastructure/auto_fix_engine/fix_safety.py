@@ -60,7 +60,7 @@ class SafetyGate:
     def check(self, action: FixAction) -> SafetyDecision:
         if not self._enabled:
             return SafetyDecision(approved=True, confidence=FixConfidence.HIGH, reason="Safety gate disabled")
-        if action.level == FixLevel.L3_AGENT:
+        if action.level is FixLevel.L3_AGENT:
             return SafetyDecision(
                 approved=False, confidence=FixConfidence.LOW, reason="L3 agent fixes require human approval"
             )
@@ -75,7 +75,7 @@ class SafetyGate:
                 return SafetyDecision(
                     approved=False, confidence=FixConfidence.HIGH, reason=f"Target matches protected pattern: {pattern}"
                 )
-        if action.level == FixLevel.L2_LLM and action.confidence == FixConfidence.LOW:
+        if action.level is FixLevel.L2_LLM and action.confidence is FixConfidence.LOW:
             return SafetyDecision(
                 approved=False, confidence=FixConfidence.LOW, reason="L2 fix with LOW confidence requires approval"
             )

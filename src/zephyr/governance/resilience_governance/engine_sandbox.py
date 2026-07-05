@@ -280,7 +280,7 @@ class EngineSandbox:
             self._access_log.append(event)
 
     def grant_temporary_access(self, path: str, duration_s: float, mode: str = "read") -> bool:
-        if self._state == SandboxState.LOCKED:
+        if self._state is SandboxState.LOCKED:
             return False
         if mode == "read" and path not in self._profile.read_paths:
             self._profile.read_paths.append(path)

@@ -156,7 +156,7 @@ class PostProcessPipeline:
                 passed += 1
             else:
                 failed += 1
-                if hook.strategy == HookStrategy.ABORT:
+                if hook.strategy is HookStrategy.ABORT:
                     return PipelineResult(
                         hook_results=hook_results,
                         total_hooks=len(self._hooks),
@@ -164,7 +164,7 @@ class PostProcessPipeline:
                         failed=failed,
                         aborted=True,
                     )
-                if hook.strategy == HookStrategy.SKIP:
+                if hook.strategy is HookStrategy.SKIP:
                     continue
 
         return PipelineResult(
@@ -194,7 +194,7 @@ class PostProcessPipeline:
                 passed += 1
             else:
                 failed += 1
-                if hook.strategy == HookStrategy.ABORT:
+                if hook.strategy is HookStrategy.ABORT:
                     return PipelineResult(
                         hook_results=hook_results,
                         total_hooks=len(self._hooks),

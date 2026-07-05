@@ -172,7 +172,7 @@ def make_drawdown(
 
     # 优先使用 FigureResampler（大数据降采样），降级为普通 go.Figure
     if FigureResampler is not None:
-        fig = FigureResampler(default_n_ticks=10_000)
+        fig = FigureResampler(default_n_shown_samples=10_000)
     else:
         fig = go.Figure()
 
@@ -304,9 +304,9 @@ def make_tick(
 
     # 大数据量优先用 FigureResampler（内置降采样，Datashader 风格渲染）
     if use_datashader and FigureResampler is not None:
-        fig = FigureResampler(default_n_ticks=10_000)
+        fig = FigureResampler(default_n_shown_samples=10_000)
     elif FigureResampler is not None:
-        fig = FigureResampler(default_n_ticks=10_000)
+        fig = FigureResampler(default_n_shown_samples=10_000)
     else:
         fig = go.Figure()
 
@@ -736,7 +736,7 @@ def make_trend_line(
     x = _ensure_x(x_labels, len(y_values))
 
     if FigureResampler is not None and len(y_values) > 10_000:
-        fig = FigureResampler(default_n_ticks=10_000)
+        fig = FigureResampler(default_n_shown_samples=10_000)
     else:
         fig = go.Figure()
 

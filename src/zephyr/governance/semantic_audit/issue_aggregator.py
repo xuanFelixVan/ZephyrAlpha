@@ -63,9 +63,9 @@ class IssueAggregator:
 
         for t in deduped:
             entry = t.model_dump()
-            if t.severity == Severity.RED:
+            if t.severity is Severity.RED:
                 reds.append(entry)
-            elif t.severity == Severity.YELLOW:
+            elif t.severity is Severity.YELLOW:
                 yellows.append(entry)
             else:
                 safety_filtered += 1
@@ -92,7 +92,7 @@ class IssueAggregator:
         seen: dict[str, TriggerResult] = {}
         for t in triggers:
             key = f"{t.trigger_type}:{t.target_location}"
-            if key not in seen or (t.severity == Severity.RED and seen[key].severity != Severity.RED):
+            if key not in seen or (t.severity is Severity.RED and seen[key].severity is not Severity.RED):
                 seen[key] = t
         return list(seen.values())
 

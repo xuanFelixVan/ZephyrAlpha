@@ -145,9 +145,9 @@ class TripleTrustAnchorGate:
 
     @staticmethod
     def _recommend(trust_level: TrustLevel) -> str:
-        if trust_level == TrustLevel.FULL:
+        if trust_level is TrustLevel.FULL:
             return "盘点器完全可信——正常运行：索引更新、对账、自愈全部开启"
-        if trust_level == TrustLevel.PARTIAL:
+        if trust_level is TrustLevel.PARTIAL:
             return "盘点器部分可信——正常运行，Dashboard 标记 trust_level=partial"
         return "盘点器不可信——停止自愈，仅作只读扫描+报告"
 

@@ -154,13 +154,13 @@ class ChaosEngine:
         start = time.perf_counter()
 
         try:
-            if inject_type == InjectType.LATENCY:
+            if inject_type is InjectType.LATENCY:
                 result = self._inject_latency(delay_ms, target)
-            elif inject_type == InjectType.ERROR:
+            elif inject_type is InjectType.ERROR:
                 result = self._inject_error(target)
-            elif inject_type == InjectType.CRASH:
+            elif inject_type is InjectType.CRASH:
                 result = self._inject_crash(target)
-            elif inject_type == InjectType.EXIT_CODE:
+            elif inject_type is InjectType.EXIT_CODE:
                 result = self._inject_exit_code(target)
             else:
                 if point is not None:

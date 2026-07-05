@@ -282,7 +282,7 @@ class ExamOrchestrator:
             exact_matches.append(1 if (statistics.mean(sample_ems) >= 0.5) else 0)
 
             # OLYMPIAD: 用均值 overall 判定 pass, 仅 append 一次 (不按采样次数膨胀)
-            if case.difficulty == Difficulty.OLYMPIAD:
+            if case.difficulty is Difficulty.OLYMPIAD:
                 mean_oly = statistics.mean(oly_overalls) if oly_overalls else 0.0
                 self._olympiad_case_results.append(mean_oly >= _OLYMPIAD_CASE_PASS_THRESHOLD)
 
@@ -326,7 +326,7 @@ class ExamOrchestrator:
             if isinstance(result, dict):
                 elapsed_ms = result.pop("_elapsed_ms", 0.0)
 
-            if case.difficulty == Difficulty.OLYMPIAD:
+            if case.difficulty is Difficulty.OLYMPIAD:
                 # P1.5: OLYMPIAD 题走三轨评分
                 oly_overall = self._score_olympiad_case(case, result)
                 p = r = oly_overall
@@ -337,7 +337,7 @@ class ExamOrchestrator:
                 p, r, ed, em = self._compute_metrics(case, result)
         except Exception:
             p, r, ed, em = 0.0, 0.0, 1.0, 0
-            if case.difficulty == Difficulty.OLYMPIAD:
+            if case.difficulty is Difficulty.OLYMPIAD:
                 oly_overall = 0.0
 
         tw = _time_weight(elapsed_ms)
@@ -1377,10 +1377,10 @@ class ExamOrchestrator:
         if not cases:
             return None
         for c in cases:
-            if c.difficulty == Difficulty.MEDIUM:
+            if c.difficulty is Difficulty.MEDIUM:
                 return c
         for c in cases:
-            if c.difficulty == Difficulty.EASY:
+            if c.difficulty is Difficulty.EASY:
                 return c
         return cases[0]
 

@@ -230,10 +230,10 @@ def enforce_affinity(
                     warnings.append(msg)
                 elif node_a_model and node_b_model and node_a_model != node_b_model:
                     pass
-                elif constraint.weight == AffinityWeight.SOFT:
+                elif constraint.weight is AffinityWeight.SOFT:
                     warnings.append(f"WARN: {constraint.description} (insufficient model info)")
             else:
-                if constraint.weight == AffinityWeight.SOFT:
+                if constraint.weight is AffinityWeight.SOFT:
                     warnings.append(f"WARN: {constraint.description}")
         elif constraint.constraint_type == "sandbox":
             if constraint.node_a.startswith("M") and decision.node_id in ("M1", "M2", "M3", "M4"):

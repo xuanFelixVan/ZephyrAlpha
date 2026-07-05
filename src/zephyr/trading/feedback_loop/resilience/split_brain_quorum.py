@@ -85,4 +85,4 @@ class SplitBrainQuorum:
 
     @property
     def is_owner(self) -> bool:
-        return self.state == QuorumState.OWNER and time.time() < self.lease_expires_at
+        return self.state is QuorumState.OWNER and time.time() < self.lease_expires_at

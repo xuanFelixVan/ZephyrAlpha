@@ -537,7 +537,7 @@ class SelfTest:
             self._root = args.project_root
         report = self.run()
         self.print_report(report, json_output=args.json)
-        if report.overall == CheckStatus.FAIL:
+        if report.overall is CheckStatus.FAIL:
             return 1
         return 0
 

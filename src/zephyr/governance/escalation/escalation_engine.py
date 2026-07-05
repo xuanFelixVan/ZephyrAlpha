@@ -118,7 +118,7 @@ class EscalationEngine:
             if ab and hasattr(ab, "evaluate"):
                 result = ab.evaluate(
                     event.event_id,
-                    is_autonomous=(event.level == EscalationLevel.L0_SELF_HEAL),
+                    is_autonomous=(event.level is EscalationLevel.L0_SELF_HEAL),
                     actor_identity=getattr(event, "actor", ""),
                     operation_content=event.description,
                 )
@@ -164,7 +164,7 @@ class EscalationEngine:
         return event
 
     def escalate(self, event: EscalationEvent) -> EscalationResult:
-        if event.state == EscalationState.REJECTED:
+        if event.state is EscalationState.REJECTED:
             return EscalationResult(event=event, escalated=False, new_level=event.level, message="Rejected by gate")
         rule = self._find_best_rule(event.category)
         if rule is None:
@@ -181,7 +181,7 @@ class EscalationEngine:
         self._economic_guard.consume(cost)
         self._circuit_breaker.record_success()
         delegated_to: str | None = None
-        if rule.delegate_strategy != DelegationStrategy.NONE:
+        if rule.delegate_strategy is not DelegationStrategy.NONE:
             result_msg = f"Escalated to {new_level.name} — delegation needed"
             delegated_to = rule.delegate_strategy.name
             event.delegate_id = delegated_to
@@ -248,7 +248,7 @@ class EscalationEngine:
     def _find_best_rule(self, category: RuleCategory) -> EscalationRule | None:
         candidates = [r for r in self._rules.values() if r.category == category and r.enabled]
         if not candidates:
-            candidates = [r for r in self._rules.values() if r.category == RuleCategory.CUSTOM and r.enabled]
+            candidates = [r for r in self._rules.values() if r.category is RuleCategory.CUSTOM and r.enabled]
         if not candidates:
             return None
         candidates.sort(key=lambda r: r.priority, reverse=True)
@@ -330,7 +330,7 @@ class EscalationEngine:
 
         try:
             dd = self._extension_detectors.get("DeadlockDetector")
-            if dd and event.category == RuleCategory.DEADLOCK:
+            if dd and event.category is RuleCategory.DEADLOCK:
                 cycle = dd.detect_cycle()
                 if cycle:
                     event.description += f" | deadlock_cycle={','.join(cycle)}"
@@ -341,7 +341,7 @@ class EscalationEngine:
 
         try:
             cg = self._extension_detectors.get("CredentialGuard")
-            if cg and event.category == RuleCategory.SECURITY_VIOLATION:
+            if cg and event.category is RuleCategory.SECURITY_VIOLATION:
                 if hasattr(cg, "scan") and cg.scan(event.description):
                     event.description += " | credential_leak_detected=True"
         except Exception:
@@ -374,7 +374,7 @@ class EscalationEngine:
 
         try:
             dd = self._extension_detectors.get("DriftDetector")
-            if dd and event.category == RuleCategory.DRIFT_DETECTED:
+            if dd and event.category is RuleCategory.DRIFT_DETECTED:
                 if hasattr(dd, "is_drifting"):
                     metrics = {
                         "event_rate": float(len(self._recent_escalations)),
@@ -402,7 +402,7 @@ class EscalationEngine:
             if ab and hasattr(ab, "evaluate"):
                 result = ab.evaluate(
                     event.event_id,
-                    is_autonomous=(event.level == EscalationLevel.L0_SELF_HEAL),
+                    is_autonomous=(event.level is EscalationLevel.L0_SELF_HEAL),
                     actor_identity=getattr(event, "actor", ""),
                     operation_content=event.description,
                 )
@@ -428,11 +428,11 @@ class EscalationEngine:
             rd = self._extension_detectors.get("ReboundDetector")
             if rd and event.category in (RuleCategory.SECURITY_VIOLATION, RuleCategory.REWARD_HACKING_REBOUND):
                 owner = event.owner_id or "unknown"
-                if event.category == RuleCategory.SECURITY_VIOLATION:
+                if event.category is RuleCategory.SECURITY_VIOLATION:
                     rd.record(
                         owner, "violation", severity="high", description=event.description, event_id=event.event_id
                     )
-                elif event.category == RuleCategory.REWARD_HACKING_REBOUND:
+                elif event.category is RuleCategory.REWARD_HACKING_REBOUND:
                     rd.record(
                         owner, "rebound", severity="critical", description=event.description, event_id=event.event_id
                     )

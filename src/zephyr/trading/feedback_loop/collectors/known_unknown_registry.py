@@ -54,7 +54,7 @@ class KnownUnknownRegistry:
         return item
 
     def open_count(self) -> int:
-        return sum(1 for i in self.items if i.state == KnownUnknownState.OPEN)
+        return sum(1 for i in self.items if i.state is KnownUnknownState.OPEN)
 
     def by_domain(self, domain: str) -> list[KnownUnknown]:
         return [i for i in self.items if i.domain == domain]

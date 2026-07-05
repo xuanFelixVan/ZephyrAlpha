@@ -103,6 +103,6 @@ class BlastRadius:
         return False
 
     def _should_abort(self) -> bool:
-        if self._current_level == BlastRadiusLevel.SYSTEM:
+        if self._current_level is BlastRadiusLevel.SYSTEM:
             return self._bypass_counts.get(BlastRadiusLevel.SYSTEM, 0) >= LEVEL_THRESHOLD[BlastRadiusLevel.SYSTEM]
         return False

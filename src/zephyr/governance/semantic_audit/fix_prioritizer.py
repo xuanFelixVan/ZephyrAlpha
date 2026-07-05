@@ -82,9 +82,9 @@ class FixPrioritizer:
         return batches
 
     def summary(self, fixes: list[PrioritizedFix]) -> dict[str, Any]:
-        reds = [f for f in fixes if f.trigger.severity == Severity.RED]
-        yellows = [f for f in fixes if f.trigger.severity == Severity.YELLOW]
-        infos = [f for f in fixes if f.trigger.severity == Severity.INFO]
+        reds = [f for f in fixes if f.trigger.severity is Severity.RED]
+        yellows = [f for f in fixes if f.trigger.severity is Severity.YELLOW]
+        infos = [f for f in fixes if f.trigger.severity is Severity.INFO]
         return {
             "total": len(fixes),
             "red_count": len(reds),

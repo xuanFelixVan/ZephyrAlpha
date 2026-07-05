@@ -52,7 +52,7 @@ class ContextBlock:
 
     @property
     def is_pinned(self) -> bool:
-        return self.priority == PriorityLevel.PINNED
+        return self.priority is PriorityLevel.PINNED
 
     @property
     def is_mandatory(self) -> bool:

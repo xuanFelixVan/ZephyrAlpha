@@ -94,7 +94,7 @@ class CircuitBreakerManager:
             True 如果允许请求（CLOSED 或 HALF_OPEN），False 如果断路器 OPEN
         """
         state = self._check_state(cb_key, model)
-        return state != CircuitBreakerState.OPEN
+        return state is not CircuitBreakerState.OPEN
 
     def record_result(self, cb_key: str, success: bool) -> None:
         """记录一次调用的结果。
@@ -110,7 +110,7 @@ class CircuitBreakerManager:
             self._failures.pop(cb_key, None)
             if cb_key in self._states:
                 old = self._states[cb_key]
-                if old == CircuitBreakerState.HALF_OPEN:
+                if old is CircuitBreakerState.HALF_OPEN:
                     self._states[cb_key] = CircuitBreakerState.CLOSED
                     self._log("INFO", f"CircuitBreaker[{cb_key}] HALF_OPEN→CLOSED (试探成功)")
         else:
@@ -145,7 +145,7 @@ class CircuitBreakerManager:
     @property
     def open_count(self) -> int:
         """当前处于 OPEN 状态的断路器数量。"""
-        return sum(1 for s in self._states.values() if s == CircuitBreakerState.OPEN)
+        return sum(1 for s in self._states.values() if s is CircuitBreakerState.OPEN)
 
     # ------------------------------------------------------------------
     # 内部状态机
@@ -161,7 +161,7 @@ class CircuitBreakerManager:
         now = time.time()
         state = self._states.get(cb_key, CircuitBreakerState.CLOSED)
 
-        if state == CircuitBreakerState.OPEN:
+        if state is CircuitBreakerState.OPEN:
             failures = self._failures.get(cb_key, [])
             if failures:
                 last_fail = max(failures)
@@ -174,7 +174,7 @@ class CircuitBreakerManager:
                     return CircuitBreakerState.HALF_OPEN
             return CircuitBreakerState.OPEN
 
-        if state == CircuitBreakerState.CLOSED:
+        if state is CircuitBreakerState.CLOSED:
             failures = self._failures.get(cb_key, [])
             recent = [t for t in failures if now - t <= self._failure_window_s]
             if len(recent) >= self._failure_threshold:

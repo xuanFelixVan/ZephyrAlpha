@@ -114,9 +114,9 @@ class DefenseRunner:
                 remediation=FindingRemediation(
                     action=RemediationAction.FIX if not result.passed else RemediationAction.INVESTIGATE,
                     priority=RemediationPriority.P0
-                    if severity == FindingSeverity.CRITICAL
+                    if severity is FindingSeverity.CRITICAL
                     else RemediationPriority.P1
-                    if severity == FindingSeverity.HIGH
+                    if severity is FindingSeverity.HIGH
                     else RemediationPriority.P2,
                 ),
             )

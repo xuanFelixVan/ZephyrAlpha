@@ -91,7 +91,7 @@ class FLEDogfoodMonitor:
         else:
             self.self_health = FLESelfHealth.HEALTHY
 
-        if self.self_health != FLESelfHealth.HEALTHY:
+        if self.self_health is not FLESelfHealth.HEALTHY:
             self.dogfood_events.append(
                 {
                     "ts": now,
@@ -106,11 +106,11 @@ class FLEDogfoodMonitor:
             "missed_cycles": self.missed_cycles,
             "recommendation": (
                 "trigger_external_watchdog"
-                if self.self_health == FLESelfHealth.CRITICAL
+                if self.self_health is FLESelfHealth.CRITICAL
                 else "reduce_self_check_interval"
-                if self.self_health == FLESelfHealth.SICK
+                if self.self_health is FLESelfHealth.SICK
                 else "log_and_continue"
-                if self.self_health == FLESelfHealth.DEGRADED
+                if self.self_health is FLESelfHealth.DEGRADED
                 else "continue"
             ),
         }
@@ -128,7 +128,7 @@ class FLEDogfoodMonitor:
             ),
             "degradation_events": len([e for e in self.dogfood_events if e["health"] != FLESelfHealth.HEALTHY.value]),
             "last_health": self.self_health.value,
-            "healthy": self.self_health == FLESelfHealth.HEALTHY,
+            "healthy": self.self_health is FLESelfHealth.HEALTHY,
         }
 
     def get_self_metric_summary(self) -> dict:

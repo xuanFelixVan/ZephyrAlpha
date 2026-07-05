@@ -106,7 +106,7 @@ class CircuitBreaker:
     @property
     def state(self) -> CircuitBreakerState:
         with self._lock:
-            if self._state == CircuitBreakerState.OPEN:
+            if self._state is CircuitBreakerState.OPEN:
                 if time.monotonic() - self._last_failure_time >= self._recovery_timeout_s:
                     self._state = CircuitBreakerState.HALF_OPEN
                     self._half_open_calls = 0
@@ -114,13 +114,13 @@ class CircuitBreaker:
 
     def allow(self) -> bool:
         with self._lock:
-            if self._state == CircuitBreakerState.OPEN:
+            if self._state is CircuitBreakerState.OPEN:
                 if time.monotonic() - self._last_failure_time >= self._recovery_timeout_s:
                     self._state = CircuitBreakerState.HALF_OPEN
                     self._half_open_calls = 0
-            if self._state == CircuitBreakerState.CLOSED:
+            if self._state is CircuitBreakerState.CLOSED:
                 return True
-            if self._state == CircuitBreakerState.HALF_OPEN:
+            if self._state is CircuitBreakerState.HALF_OPEN:
                 if self._half_open_calls < self._half_open_max_calls:
                     self._half_open_calls += 1
                     return True
@@ -129,7 +129,7 @@ class CircuitBreaker:
 
     def record_success(self) -> None:
         with self._lock:
-            if self._state == CircuitBreakerState.HALF_OPEN:
+            if self._state is CircuitBreakerState.HALF_OPEN:
                 self._state = CircuitBreakerState.CLOSED
             self._failure_count = 0
             self._half_open_calls = 0
@@ -138,7 +138,7 @@ class CircuitBreaker:
         with self._lock:
             self._failure_count += 1
             self._last_failure_time = time.monotonic()
-            if self._state == CircuitBreakerState.HALF_OPEN or self._failure_count >= self._failure_threshold:
+            if self._state is CircuitBreakerState.HALF_OPEN or self._failure_count >= self._failure_threshold:
                 self._state = CircuitBreakerState.OPEN
 
     def reset(self) -> None:
@@ -394,19 +394,19 @@ class ResourceOptimizationEngine:
         error_msg: str | None = None
 
         try:
-            if strategy == OptimizationStrategy.SCHEDULE_ADAPT:
+            if strategy is OptimizationStrategy.SCHEDULE_ADAPT:
                 actions = self._execute_schedule_adapt(snap_before.pressure)
-            elif strategy == OptimizationStrategy.MEMORY_COMPACT:
+            elif strategy is OptimizationStrategy.MEMORY_COMPACT:
                 actions = self._execute_memory_compact()
-            elif strategy == OptimizationStrategy.CACHE_WARM:
+            elif strategy is OptimizationStrategy.CACHE_WARM:
                 actions = self._execute_cache_warm(context)
-            elif strategy == OptimizationStrategy.IO_BATCH:
+            elif strategy is OptimizationStrategy.IO_BATCH:
                 actions = self._execute_io_batch(context)
-            elif strategy == OptimizationStrategy.PROCESS_POOL:
+            elif strategy is OptimizationStrategy.PROCESS_POOL:
                 actions = self._execute_process_pool(context)
-            elif strategy == OptimizationStrategy.LAZY_INIT:
+            elif strategy is OptimizationStrategy.LAZY_INIT:
                 actions = self._execute_lazy_init(context)
-            elif strategy == OptimizationStrategy.STREAMING_READ:
+            elif strategy is OptimizationStrategy.STREAMING_READ:
                 actions = self._execute_streaming_read(context)
             else:
                 raise ValueError(f"unknown strategy: {strategy}")
@@ -522,7 +522,7 @@ class ResourceOptimizationEngine:
 
     def _execute_defensive(self, pressure: PressureLevel) -> list[str]:
         actions: list[str] = []
-        if pressure == PressureLevel.EMERGENCY:
+        if pressure is PressureLevel.EMERGENCY:
             stopped = DaemonRegistry.stop_low_priority(min_priority=5)
             if stopped:
                 actions.append(f"stop_low_priority(5): stopped {stopped}")
@@ -530,7 +530,7 @@ class ResourceOptimizationEngine:
 
             gc.collect()
             actions.append("emergency_gc: forced garbage collection")
-        elif pressure == PressureLevel.CRITICAL:
+        elif pressure is PressureLevel.CRITICAL:
             stopped = DaemonRegistry.stop_low_priority(min_priority=2)
             if stopped:
                 actions.append(f"stop_low_priority(2): stopped {stopped}")
@@ -633,7 +633,7 @@ class ResourceOptimizationEngine:
                 self._check_config_reload()
                 snap = self.snapshot()
 
-                if snap.pressure != PressureLevel.NORMAL:
+                if snap.pressure is not PressureLevel.NORMAL:
                     logger.warning(
                         "ResourceOptimizationEngine: pressure %s (mem=%.1f%%, cpu=%.1f%%, procs=%d)",
                         snap.pressure.value,
@@ -749,7 +749,7 @@ class ResourceOptimizationEngine:
     def _self_heal_cycle(self, snap: ResourceSnapshot) -> OptimizationResult | None:
         if not self._self_healing_enabled:
             return None
-        if snap.pressure == PressureLevel.NORMAL:
+        if snap.pressure is PressureLevel.NORMAL:
             return None
 
         start = time.monotonic()
@@ -788,7 +788,7 @@ class ResourceOptimizationEngine:
         return None
 
     def _select_healing_strategy(self, pressure: PressureLevel) -> OptimizationStrategy:
-        if pressure == PressureLevel.EMERGENCY or pressure == PressureLevel.CRITICAL:
+        if pressure is PressureLevel.EMERGENCY or pressure is PressureLevel.CRITICAL:
             return OptimizationStrategy.MEMORY_COMPACT
         else:
             return OptimizationStrategy.SCHEDULE_ADAPT

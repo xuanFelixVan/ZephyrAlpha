@@ -145,9 +145,9 @@ class ReboundDetector:
         now = time.time()
         records = [r for r in records if now - r.timestamp <= self._sliding_window_seconds]
 
-        violations = [r for r in records if r.phase == ReboundPhase.VIOLATION]
-        improvements = [r for r in records if r.phase == ReboundPhase.IMPROVEMENT]
-        rebounds = [r for r in records if r.phase == ReboundPhase.REBOUND]
+        violations = [r for r in records if r.phase is ReboundPhase.VIOLATION]
+        improvements = [r for r in records if r.phase is ReboundPhase.IMPROVEMENT]
+        rebounds = [r for r in records if r.phase is ReboundPhase.REBOUND]
 
         if not violations or not improvements or not rebounds:
             return ReboundDetection(agent_id=agent_id)

@@ -210,9 +210,9 @@ class BlastRadiusEstimator:
                 lines_estimate = len(target.read_text(encoding="utf-8").splitlines())
             except Exception:
                 pass
-        if action.level == FixLevel.L2_LLM:
+        if action.level is FixLevel.L2_LLM:
             risk = "medium"
-        elif action.level == FixLevel.L3_AGENT:
+        elif action.level is FixLevel.L3_AGENT:
             risk = "high"
         if files > 5 or lines_estimate > 200:
             risk = "high" if risk != "low" else "medium"

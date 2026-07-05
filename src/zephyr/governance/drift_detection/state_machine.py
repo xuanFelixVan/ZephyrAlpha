@@ -103,7 +103,7 @@ class DriftStateMachine:
         if resolution_detail:
             record.resolution_detail = resolution_detail
 
-        if to_state == DriftState.RESOLVED:
+        if to_state is DriftState.RESOLVED:
             record.resolved_at = now
 
         self._events[event_id] = record
@@ -118,18 +118,18 @@ class DriftStateMachine:
 
         state = record.state
 
-        if state == DriftState.TRIAGED:
+        if state is DriftState.TRIAGED:
             if record.auto_fixable:
                 return self.transition(event_id, state, DriftState.RESOLVING)
 
-        if state == DriftState.FIX_FAILED:
+        if state is DriftState.FIX_FAILED:
             self.trigger_rollback(event_id, record)
 
             record.needs_human = True
 
             return self.transition(event_id, state, DriftState.ACKNOWLEDGED)
 
-        if state == DriftState.RESOLVED:
+        if state is DriftState.RESOLVED:
             return self.transition(event_id, state, DriftState.VERIFIED)
 
         return None
@@ -178,7 +178,7 @@ class DriftStateMachine:
         expired: list[uuid.UUID] = []
 
         for event_id, record in self._events.items():
-            if record.state == DriftState.DETECTED:
+            if record.state is DriftState.DETECTED:
                 if now - record.created_at > timedelta(hours=self.TTL_DETECTED_HOURS):
                     try:
                         self.transition(event_id, DriftState.DETECTED, DriftState.DEAD_LETTER)
@@ -188,7 +188,7 @@ class DriftStateMachine:
                     except InvalidTransitionError:
                         pass
 
-            elif record.state == DriftState.SUPPRESSED and record.suppressed_until:
+            elif record.state is DriftState.SUPPRESSED and record.suppressed_until:
                 if now >= record.suppressed_until:
                     try:
                         self.transition(event_id, DriftState.SUPPRESSED, DriftState.DETECTED)

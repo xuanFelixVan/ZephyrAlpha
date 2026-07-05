@@ -111,7 +111,7 @@ class GraduatedActivationProtocol:
         decision = PromotionDecision.HOLD
         stage = rule["stage"]
 
-        if stage == ActivationStage.CANARY:
+        if stage is ActivationStage.CANARY:
             if success_rate >= self.canary_success_threshold and elapsed >= self.canary_duration:
                 decision = PromotionDecision.PROMOTE
                 rule["stage"] = ActivationStage.BETA
@@ -129,7 +129,7 @@ class GraduatedActivationProtocol:
                 decision = PromotionDecision.ROLLBACK
                 rule["stage"] = ActivationStage.ROLLED_BACK
 
-        elif stage == ActivationStage.BETA:
+        elif stage is ActivationStage.BETA:
             if success_rate >= self.beta_success_threshold and elapsed >= self.beta_duration:
                 decision = PromotionDecision.PROMOTE
                 rule["stage"] = ActivationStage.STABLE
@@ -147,7 +147,7 @@ class GraduatedActivationProtocol:
                 decision = PromotionDecision.ROLLBACK
                 rule["stage"] = ActivationStage.ROLLED_BACK
 
-        elif stage == ActivationStage.STABLE:
+        elif stage is ActivationStage.STABLE:
             if success_rate < self.beta_success_threshold:
                 decision = PromotionDecision.ROLLBACK
                 rule["stage"] = ActivationStage.ROLLED_BACK

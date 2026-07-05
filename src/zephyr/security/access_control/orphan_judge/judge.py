@@ -322,7 +322,7 @@ class OrphanJudge:
                 layers=layers,
                 reason=reason,
                 safety_blocked=safety_blocked,
-                requires_review=verdict == Verdict.ESCALATE or confidence != Confidence.HIGH,
+                requires_review=verdict == Verdict.ESCALATE or confidence is not Confidence.HIGH,
             )
         )
 

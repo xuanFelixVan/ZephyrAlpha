@@ -332,7 +332,7 @@ class ContractRegistry:
 
     def list_p0_contracts(self) -> list[ContractMeta]:
         """列出所有 P0 契约。"""
-        return [m for m in self._contracts.values() if m.priority == Priority.P0]
+        return [m for m in self._contracts.values() if m.priority is Priority.P0]
 
     def list_by_layer(self, layer: str) -> list[ContractMeta]:
         """列出指定层涉及的所有契约（作为 source 或 target）。"""
@@ -347,8 +347,8 @@ class ContractRegistry:
         initialized = self._initialized
         return {
             "total_contracts": len(self._contracts),
-            "p0_count": len([m for m in self._contracts.values() if m.priority == Priority.P0]),
-            "p1_count": len([m for m in self._contracts.values() if m.priority == Priority.P1]),
+            "p0_count": len([m for m in self._contracts.values() if m.priority is Priority.P0]),
+            "p1_count": len([m for m in self._contracts.values() if m.priority is Priority.P1]),
             "registered_consumers": sum(len(c) for c in self._consumers.values()),
             "active_transitions": len(self.get_active_transitions()),
             "registered_adapters": sum(len(a) for a in self._adapters.values()),

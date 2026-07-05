@@ -2014,7 +2014,7 @@ class PipelineOrchestrator:
             )
             from zephyr.governance.ops_governance.budget_models import GateDecision
 
-            if result.decision == GateDecision.DENY:
+            if result.decision is GateDecision.DENY:
                 self._log(
                     "WARN",
                     f"BudgetEngine DENY: {result.reason} (remaining_daily={result.remaining_daily})",

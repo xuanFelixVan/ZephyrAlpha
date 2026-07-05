@@ -116,7 +116,7 @@ class AutonomyMonitor:
             downgrade_history=downgrades[-10:],
             recommendation=(
                 "Full autonomy recommended"
-                if self._state.current_level == AutonomyLevel.FULL
+                if self._state.current_level is AutonomyLevel.FULL
                 else "Human supervision recommended"
             ),
         )

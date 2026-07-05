@@ -288,9 +288,9 @@ class BudgetEngine:
             committed = min(actual_amount, claimed) if claimed > 0 else actual_amount
 
             if (
-                cons.dimension == BudgetDimension.TOKEN
-                or cons.dimension == BudgetDimension.COST
-                or cons.dimension == BudgetDimension.TIME
+                cons.dimension is BudgetDimension.TOKEN
+                or cons.dimension is BudgetDimension.COST
+                or cons.dimension is BudgetDimension.TIME
             ):
                 cons.consumed_daily += committed
                 cons.consumed_hourly += committed
@@ -338,8 +338,8 @@ class BudgetEngine:
             cost_result = self._check_dimension(BudgetDimension.COST, request_id, estimated_tokens, estimated_cost)
 
             worst = token_result
-            if cost_result.decision == GateDecision.DENY or (
-                cost_result.decision == GateDecision.DEGRADE and worst.decision != GateDecision.DENY
+            if cost_result.decision is GateDecision.DENY or (
+                cost_result.decision is GateDecision.DEGRADE and worst.decision is not GateDecision.DENY
             ):
                 worst = cost_result
 
@@ -349,7 +349,7 @@ class BudgetEngine:
             drift_result = check_budget_for_gate("MOD-INF-024", tier="P1")
             if not drift_result.get("allowed", True):
                 with self._lock:
-                    if worst.decision != GateDecision.DENY:
+                    if worst.decision is not GateDecision.DENY:
                         worst = GateResult(
                             request_id=request_id,
                             decision=GateDecision.NARROW,
@@ -388,15 +388,15 @@ class BudgetEngine:
                 cons.consumed_hourly = 0.0
                 cons.last_reset_hourly = now
 
-            if cons.dimension == BudgetDimension.TOKEN:
+            if cons.dimension is BudgetDimension.TOKEN:
                 cons.consumed_daily += tokens
                 cons.consumed_hourly += tokens
                 cons.consumed_per_request = tokens
-            elif cons.dimension == BudgetDimension.COST:
+            elif cons.dimension is BudgetDimension.COST:
                 cons.consumed_daily += cost
                 cons.consumed_hourly += cost
                 cons.consumed_per_request = cost
-            elif cons.dimension == BudgetDimension.TIME:
+            elif cons.dimension is BudgetDimension.TIME:
                 cons.consumed_daily += time_minutes
                 cons.consumed_hourly += time_minutes
                 cons.consumed_per_request = time_minutes
@@ -500,8 +500,8 @@ class BudgetEngine:
 
         consumption: float = (
             float(estimated_tokens)
-            if dimension == BudgetDimension.TOKEN
-            else (estimated_cost if dimension == BudgetDimension.COST else 0.0)
+            if dimension is BudgetDimension.TOKEN
+            else (estimated_cost if dimension is BudgetDimension.COST else 0.0)
         )
 
         if consumption > policy.per_request_limit:
@@ -570,13 +570,13 @@ class BudgetEngine:
         )
 
     def _compute_budget_level(self, result: GateResult) -> BudgetLevel:
-        if result.decision == GateDecision.DENY:
+        if result.decision is GateDecision.DENY:
             return BudgetLevel.L5_HARD_STOP
-        if result.decision == GateDecision.DEGRADE:
+        if result.decision is GateDecision.DEGRADE:
             return BudgetLevel.L3_DEGRADED
-        if result.decision == GateDecision.BORROW:
+        if result.decision is GateDecision.BORROW:
             return BudgetLevel.L2_THROTTLED
-        if result.decision == GateDecision.NARROW:
+        if result.decision is GateDecision.NARROW:
             return BudgetLevel.L1_WARNING
         return BudgetLevel.L0_NORMAL
 

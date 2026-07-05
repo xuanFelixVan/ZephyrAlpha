@@ -279,7 +279,7 @@ async def scan(
 
             events.append(parsed)
 
-            if parsed.state != DriftState.FALSE_POSITIVE:
+            if parsed.state is not DriftState.FALSE_POSITIVE:
                 consume_budget(parsed.module_id, "P0")
 
     _write_drift_events(events)
@@ -366,10 +366,10 @@ def _filter_detectors_by_level(detectors: list[Detector], level: ScanLevel, scop
     if scope:
         return [d for d in detectors if d.id in scope]
 
-    if level == ScanLevel.LIGHT:
-        return [d for d in detectors if d.severity == Severity.HIGH]
+    if level is ScanLevel.LIGHT:
+        return [d for d in detectors if d.severity is Severity.HIGH]
 
-    elif level == ScanLevel.STANDARD:
+    elif level is ScanLevel.STANDARD:
         return [d for d in detectors if d.severity in (Severity.HIGH, Severity.MEDIUM)]
 
     return detectors

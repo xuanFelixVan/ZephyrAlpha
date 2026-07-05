@@ -104,9 +104,9 @@ class GraphValidator:
         issues.extend(self._check_duplicate_fingerprints())
         issues.extend(self._check_vector_status_violations())
 
-        error_count = sum(1 for i in issues if i.severity == ValidationSeverity.ERROR)
-        warning_count = sum(1 for i in issues if i.severity == ValidationSeverity.WARNING)
-        info_count = sum(1 for i in issues if i.severity == ValidationSeverity.INFO)
+        error_count = sum(1 for i in issues if i.severity is ValidationSeverity.ERROR)
+        warning_count = sum(1 for i in issues if i.severity is ValidationSeverity.WARNING)
+        info_count = sum(1 for i in issues if i.severity is ValidationSeverity.INFO)
 
         cursor = self._conn.execute("SELECT COUNT(*) FROM knowledge")
         total = cursor.fetchone()[0]

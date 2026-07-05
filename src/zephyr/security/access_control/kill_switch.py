@@ -262,7 +262,7 @@ class KillSwitch:
     def trigger(self, trigger_name: str = "manual", reason: str = "") -> TriggerResult:
         """触发熔断器（兼容旧接口）."""
         old_state = self._status.state
-        if old_state == KillSwitchState.TRIPPED:
+        if old_state is KillSwitchState.TRIPPED:
             return TriggerResult(action=TriggerResult.NO_ACTION)
 
         self._status.state = KillSwitchState.TRIPPED
@@ -275,7 +275,7 @@ class KillSwitch:
     def reset(self) -> TriggerResult:
         """重置熔断器（需要owner批准）."""
         old_state = self._status.state
-        if old_state == KillSwitchState.NORMAL:
+        if old_state is KillSwitchState.NORMAL:
             return TriggerResult(action=TriggerResult.NO_ACTION)
 
         self._status.state = KillSwitchState.NORMAL

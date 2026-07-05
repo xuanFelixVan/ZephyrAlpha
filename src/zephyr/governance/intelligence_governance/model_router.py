@@ -151,7 +151,7 @@ class ModelRouter:
                     )
 
         key, prov = candidates[0]
-        req_owner = effective_tier == ModelTier.PREMIUM
+        req_owner = effective_tier is ModelTier.PREMIUM
         perf = self._get_perf_score(key)
         has_bench = bool(self._benchmark_profiles)
         reason = f"perf-aware:{effective_tier.value}" if has_bench else f"least-cost-tier:{effective_tier.value}"
@@ -166,9 +166,9 @@ class ModelRouter:
         )
 
     def _infer_tier(self, complexity: TaskComplexity) -> ModelTier:
-        if complexity == TaskComplexity.SIMPLE:
+        if complexity is TaskComplexity.SIMPLE:
             return ModelTier.MINIMAL
-        if complexity == TaskComplexity.MODERATE:
+        if complexity is TaskComplexity.MODERATE:
             return ModelTier.ECONOMY
         return ModelTier.STANDARD
 

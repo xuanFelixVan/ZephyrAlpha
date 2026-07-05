@@ -148,7 +148,7 @@ class SafetyGateManager:
                     if hasattr(result, "verdict"):
                         from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import GateVerdict
 
-                        return result.verdict != GateVerdict.REJECT
+                        return result.verdict is not GateVerdict.REJECT
                     return bool(result)
                 elif len(params) == 0:
                     result = method()

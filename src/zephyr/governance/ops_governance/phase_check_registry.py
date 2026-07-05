@@ -566,9 +566,9 @@ def check_escalation_protocol() -> GateResult:
         from zephyr.governance.intelligence_governance.self_test import HealthLevel, run_self_test
 
         report = run_self_test()
-        if report.overall == HealthLevel.CRITICAL:
+        if report.overall is HealthLevel.CRITICAL:
             return GateResult.RED
-        if report.overall == HealthLevel.DEGRADED:
+        if report.overall is HealthLevel.DEGRADED:
             return GateResult.YELLOW
         return GateResult.GREEN
     except ImportError:

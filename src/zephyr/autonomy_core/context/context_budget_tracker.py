@@ -199,7 +199,7 @@ class ContextBudgetTracker:
                             "ratio": round(ratio, 3),
                         }
                         # T-V2-006: L2_THROTTLE 时追加压缩建议标志
-                        if level == ContextBudgetLevel.L2_THROTTLE:
+                        if level is ContextBudgetLevel.L2_THROTTLE:
                             payload["compression_suggested"] = True
                             payload["doc_compressor_available"] = self._doc_compressor is not None
                         self._observer.emit(EventType.METRIC_EVENT, payload)

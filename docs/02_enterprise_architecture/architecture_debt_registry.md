@@ -6077,6 +6077,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(Enum == vs is / __str__缺失需统一)
 > **第35轮修复状态（2026-07-05）**：5.92.2 FIXED — 14个plain Enum已添加__str__(order.py 3个+drift_models.py 4个+order_manager.py 1个+execution_engine.py 1个+zombie_scanner.py 1个+circuit_breaker.py 1个+evolution_engine.py 3个), 3处DRIFTED(ops/circuit_breaker.py+ops/evolution_engine.py+behavioral_audit/drift_models.py旧路径已迁移), 5.92.1仍STILL_VALID(30+处== vs is需统一但LOW优先级)
+> **第36轮修复状态（2026-07-05）**：5.92.1 FIXED — 批量将Enum成员比较`==`改为`is`(186文件565处), 经AST语法检查+非Enum类回滚(11个非Enum类42处回滚, 含UpgradePhase/CanaryResult/DegradationLevel等命名空间常量类及Verdict同名类的保守处理), 净保留581处Enum `is`优化(146个Enum类). 修复脚本TTL=task_bound已退役.
 
 > 维度AI：Enum成员比较方式、缺少__str__导致日志不一致
 

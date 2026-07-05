@@ -36,7 +36,7 @@ class SafetyGateL44L45:
     def evaluate(self, ctx: ActionContext) -> list[GateResult]:
         results: list[GateResult] = []
         results.append(self._l44_operational_excellence(ctx))
-        if results[-1].verdict != GateVerdict.REJECT:
+        if results[-1].verdict is not GateVerdict.REJECT:
             results.append(self._l45_causal_interrogability(ctx))
         return results
 

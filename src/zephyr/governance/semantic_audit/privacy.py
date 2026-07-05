@@ -158,17 +158,17 @@ class PrivacyGuard:
         for detection in sorted_detections:
             original = detection.value
 
-            if effective_policy == RedactionPolicy.MASK:
+            if effective_policy is RedactionPolicy.MASK:
                 replacement_text = (
                     original[:2] + _MASK_CHAR * (len(original) - 4) + original[-2:]
                     if len(original) > 4
                     else _MASK_CHAR * len(original)
                 )
 
-            elif effective_policy == RedactionPolicy.HASH:
+            elif effective_policy is RedactionPolicy.HASH:
                 replacement_text = f"[HASH:{hash_path(original)}]"
 
-            elif effective_policy == RedactionPolicy.REMOVE:
+            elif effective_policy is RedactionPolicy.REMOVE:
                 replacement_text = ""
 
             else:

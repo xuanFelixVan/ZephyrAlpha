@@ -141,7 +141,7 @@ class A2AAnomalyDetector:
         z = baseline.z_score(value)
         level = self._zscore_to_level(z)
 
-        if level == AnomalyLevel.NORMAL:
+        if level is AnomalyLevel.NORMAL:
             return None
 
         return AnomalyRecord(

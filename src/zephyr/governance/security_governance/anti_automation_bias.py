@@ -140,12 +140,12 @@ class AntiAutomationBias:
             return OversightResult(OversightAction.PASS, "Not autonomous — no sampling needed")
         self._autonomous_count += 1
 
-        if self._fatigue_level == FatigueLevel.FATIGUED:
+        if self._fatigue_level is FatigueLevel.FATIGUED:
             return OversightResult(
                 OversightAction.BLOCK_AND_NOTIFY,
                 "Owner fatigue critical — blocking autonomous path",
             )
-        if self._fatigue_level == FatigueLevel.ELEVATED:
+        if self._fatigue_level is FatigueLevel.ELEVATED:
             return OversightResult(
                 OversightAction.FORCE_REVIEW,
                 "Owner fatigue elevated — forcing additional review",
@@ -181,13 +181,13 @@ class AntiAutomationBias:
             response_time_s=response_time_s,
         )
         self._review_records.append(record)
-        if decision == ReviewDecision.TIMED_OUT:
+        if decision is ReviewDecision.TIMED_OUT:
             return
         self._last_response_times.append(response_time_s)
         if len(self._last_response_times) > 20:
             self._last_response_times = self._last_response_times[-20:]
 
-        if decision == ReviewDecision.CONFIRMED_SAFE:
+        if decision is ReviewDecision.CONFIRMED_SAFE:
             self._consecutive_confirms += 1
         else:
             self._consecutive_confirms = 0
@@ -204,7 +204,7 @@ class AntiAutomationBias:
         reviewed = [
             r
             for r in self._review_records
-            if r.decision == ReviewDecision.CONFIRMED_SAFE and r.was_safe_in_audit is not None
+            if r.decision is ReviewDecision.CONFIRMED_SAFE and r.was_safe_in_audit is not None
         ]
         if not reviewed:
             return {"miss_rate": None, "total_reviewed": 0, "target": "≤ 1%"}
@@ -244,8 +244,8 @@ class AntiAutomationBias:
         return inconsistent / len(self._sycophancy_probes)
 
     def get_review_monitoring(self) -> dict[str, Any]:
-        confirmed = [r for r in self._review_records if r.decision != ReviewDecision.TIMED_OUT]
-        blocked = [r for r in self._review_records if r.decision == ReviewDecision.OVERRIDDEN]
+        confirmed = [r for r in self._review_records if r.decision is not ReviewDecision.TIMED_OUT]
+        blocked = [r for r in self._review_records if r.decision is ReviewDecision.OVERRIDDEN]
         confirmation_rate = len(blocked) / max(1, len(confirmed))
 
         avg_response = (
@@ -302,9 +302,9 @@ class AntiAutomationBias:
         elif older_avg > 0 and recent_avg / older_avg > 1.25:
             self._fatigue_level = FatigueLevel.ELEVATED
         else:
-            confirmed = [r for r in self._review_records[-20:] if r.decision != ReviewDecision.TIMED_OUT]
+            confirmed = [r for r in self._review_records[-20:] if r.decision is not ReviewDecision.TIMED_OUT]
             if confirmed:
-                block_rate = sum(1 for r in confirmed if r.decision == ReviewDecision.OVERRIDDEN) / len(confirmed)
+                block_rate = sum(1 for r in confirmed if r.decision is ReviewDecision.OVERRIDDEN) / len(confirmed)
                 if block_rate < 0.3:
                     self._fatigue_level = FatigueLevel.ELEVATED
                 else:

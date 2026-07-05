@@ -35,7 +35,7 @@ class SafetyGateL42L43:
     def evaluate(self, ctx: ActionContext) -> list[GateResult]:
         results: list[GateResult] = []
         results.append(self._l42_causal_integrity(ctx))
-        if results[-1].verdict != GateVerdict.REJECT:
+        if results[-1].verdict is not GateVerdict.REJECT:
             results.append(self._l43_survivability(ctx))
         return results
 

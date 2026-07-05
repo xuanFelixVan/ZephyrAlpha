@@ -81,8 +81,8 @@ class MarketEventIntegrator:
         self.current_mode = MarketMode.HOLIDAY
 
     def should_suppress_anomaly(self, anomaly_type: str) -> bool:
-        if self.current_mode == MarketMode.HOLIDAY:
+        if self.current_mode is MarketMode.HOLIDAY:
             return anomaly_type in ("missing_data", "low_volume")
-        if self.current_mode == MarketMode.EMERGENCY:
+        if self.current_mode is MarketMode.EMERGENCY:
             return anomaly_type in ("high_volatility", "latency_spike")
         return False

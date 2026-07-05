@@ -122,12 +122,12 @@ class CircuitBreaker:
 
     def _transition(self) -> CircuitState:
         """执行状态检查与自动迁移（调用方需持有锁）。"""
-        if self._state == CircuitState.OPEN:
+        if self._state is CircuitState.OPEN:
             if (time.monotonic() - self._opened_at) * 1000 >= self._recovery_timeout_ms:
                 self._state = CircuitState.HALF_OPEN
                 self._half_open_calls = 0
 
-        if self._state == CircuitState.HALF_OPEN and self._half_open_calls >= self._half_open_max_calls:
+        if self._state is CircuitState.HALF_OPEN and self._half_open_calls >= self._half_open_max_calls:
             pass
 
         return self._state
@@ -135,7 +135,7 @@ class CircuitBreaker:
     def record_success(self) -> None:
         # 5.16.1 修复：failure_count 重置移入锁内，避免锁外竞态导致断路器永远到不了 threshold
         with self._lock:
-            if self._state == CircuitState.HALF_OPEN:
+            if self._state is CircuitState.HALF_OPEN:
                 self._state = CircuitState.CLOSED
                 self._half_open_calls = 0
             self._failure_count = 0
@@ -145,12 +145,12 @@ class CircuitBreaker:
             self._failure_count += 1
             self._last_failure_time = time.monotonic()
 
-            if self._state == CircuitState.HALF_OPEN:
+            if self._state is CircuitState.HALF_OPEN:
                 self._state = CircuitState.OPEN
                 self._opened_at = time.monotonic()
                 return
 
-            if self._state == CircuitState.CLOSED and self._failure_count >= self._failure_threshold:
+            if self._state is CircuitState.CLOSED and self._failure_count >= self._failure_threshold:
                 self._state = CircuitState.OPEN
                 self._opened_at = time.monotonic()
 
@@ -165,7 +165,7 @@ class CircuitBreaker:
     def call(self, func: Any, *args: Any, **kwargs: Any) -> Any:
         with self._lock:
             state = self._transition()
-            if state == CircuitState.OPEN:
+            if state is CircuitState.OPEN:
                 raise CircuitOpenError(
                     self.name,
                     details={
@@ -174,7 +174,7 @@ class CircuitBreaker:
                         "opened_at": self._opened_at,
                     },
                 )
-            if state == CircuitState.HALF_OPEN:
+            if state is CircuitState.HALF_OPEN:
                 self._half_open_calls += 1
 
         try:

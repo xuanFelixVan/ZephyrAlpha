@@ -77,7 +77,7 @@ class KillSwitchManager:
         reason: str,
         token: str = "",
     ) -> KillSwitchEntry:
-        if level == KillLevel.L3_GLOBAL and not token:
+        if level is KillLevel.L3_GLOBAL and not token:
             raise ValueError("L3_GLOBAL requires BREAK_GLASS token")
 
         now = datetime.now(UTC)

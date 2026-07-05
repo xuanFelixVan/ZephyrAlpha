@@ -56,7 +56,7 @@ class HeisenbugDetector:
         if len(self.observation_timeline) > 1000:
             self.observation_timeline = self.observation_timeline[-1000:]
 
-        if mode == ObservationMode.PASSIVE:
+        if mode is ObservationMode.PASSIVE:
             self.passive_samples += 1
             if anomaly_detected:
                 self.passive_anomaly_rate = (

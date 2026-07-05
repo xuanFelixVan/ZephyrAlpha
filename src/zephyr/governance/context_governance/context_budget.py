@@ -189,13 +189,13 @@ class ContextBudget:
 
             excess = self.consumed - self.total_budget
 
-            if strategy == TruncationStrategy.NEWEST_FIRST:
+            if strategy is TruncationStrategy.NEWEST_FIRST:
                 sorted_entries = sorted(self.entries, key=lambda e: -e.priority)
-            elif strategy == TruncationStrategy.OLDEST_FIRST:
+            elif strategy is TruncationStrategy.OLDEST_FIRST:
                 sorted_entries = list(self.entries)
-            elif strategy == TruncationStrategy.SUMMARY_FIRST:
+            elif strategy is TruncationStrategy.SUMMARY_FIRST:
                 sorted_entries = sorted(self.entries, key=lambda e: (e.priority, len(e.content)))
-            elif strategy == TruncationStrategy.RELEVANCE_FIRST:
+            elif strategy is TruncationStrategy.RELEVANCE_FIRST:
                 sorted_entries = sorted(self.entries, key=lambda e: -e.priority)
             else:
                 sorted_entries = list(self.entries)

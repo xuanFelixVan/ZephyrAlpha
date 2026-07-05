@@ -91,7 +91,7 @@ class PermissionGuard:
 
     def is_blocked(self, result: GuardResult) -> bool:
         """判断结果是否为 BLOCKED."""
-        return result.decision == GuardDecision.BLOCKED
+        return result.decision is GuardDecision.BLOCKED
 
     def explain(self, result: GuardResult) -> dict:
         """解释 GuardResult，返回包含 blocked_layer 的字典."""
@@ -142,7 +142,7 @@ class PermissionGuard:
         # L6: 自防 — RBAC 系统修改
         if operation.startswith("modify:rbac") or operation == "modify:rbac_roles":
             role = getattr(agent, "role", None)
-            if role != AgentRole.ADMIN:
+            if role is not AgentRole.ADMIN:
                 return GuardResult(
                     decision=GuardDecision.BLOCKED,
                     reason="non-admin cannot modify RBAC system",

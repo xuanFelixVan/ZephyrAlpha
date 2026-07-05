@@ -212,9 +212,9 @@ class GPUConsensusScheduler:
                 self._failed += 1
             elif result.status == ConsensusStatus.DEGRADED:
                 self._degraded += 1
-            if route == ConsensusRoute.DUAL_API:
+            if route is ConsensusRoute.DUAL_API:
                 self._dual_api_count += 1
-            elif route == ConsensusRoute.SINGLE_API:
+            elif route is ConsensusRoute.SINGLE_API:
                 self._single_api_count += 1
             else:
                 self._local_gpu_count += 1
@@ -279,9 +279,9 @@ class GPUConsensusScheduler:
         route: ConsensusRoute,
         start: float,
     ) -> ConsensusResult:
-        if route == ConsensusRoute.DUAL_API:
+        if route is ConsensusRoute.DUAL_API:
             result = await self._route_dual_api(request, start)
-        elif route == ConsensusRoute.SINGLE_API:
+        elif route is ConsensusRoute.SINGLE_API:
             result = await self._route_single_api(request, start)
         else:
             result = await self._route_local_gpu(request, start)

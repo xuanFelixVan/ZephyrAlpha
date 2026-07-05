@@ -255,11 +255,11 @@ def scan_zombie_processes() -> ZombieScanResult:
             children_count=children,
         )
 
-        if cat == ZombieCategory.DANGEROUS:
+        if cat is ZombieCategory.DANGEROUS:
             result.dangerous.append(entry)
-        elif cat == ZombieCategory.ABNORMAL:
+        elif cat is ZombieCategory.ABNORMAL:
             result.abnormal.append(entry)
-        elif cat == ZombieCategory.SUSPICIOUS:
+        elif cat is ZombieCategory.SUSPICIOUS:
             result.suspicious.append(entry)
 
     return result

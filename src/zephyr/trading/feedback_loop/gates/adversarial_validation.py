@@ -150,10 +150,10 @@ class AdversarialValidation:
                 entry = None
 
             if result is not None:
-                if result.result_class == ResultClass.ATTACKER_WIN:
+                if result.result_class is ResultClass.ATTACKER_WIN:
                     bypass_count += 1
                     passed = False
-                elif result.result_class == ResultClass.DEFENDER_WIN:
+                elif result.result_class is ResultClass.DEFENDER_WIN:
                     pass
                 else:
                     bypass_count += 1

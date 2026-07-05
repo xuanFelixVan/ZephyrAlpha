@@ -111,7 +111,7 @@ def run_self_test() -> SelfTestReport:
     # Check 4: Circuit breaker state
     try:
         cb_state = engine.get_circuit_state()
-        if cb_state == CircuitState.OPEN:
+        if cb_state is CircuitState.OPEN:
             check_results.append(CheckResult("circuit_breaker", False, HealthLevel.DEGRADED, "Circuit is OPEN"))
         else:
             check_results.append(CheckResult("circuit_breaker", True, detail=f"state={cb_state.name}"))
@@ -171,8 +171,8 @@ def run_self_test() -> SelfTestReport:
     report.checks = check_results
     report.total_passed = sum(1 for c in check_results if c.passed)
     report.total_failed = sum(1 for c in check_results if not c.passed)
-    critical_failures = [c for c in check_results if not c.passed and c.level == HealthLevel.CRITICAL]
-    degraded_failures = [c for c in check_results if not c.passed and c.level == HealthLevel.DEGRADED]
+    critical_failures = [c for c in check_results if not c.passed and c.level is HealthLevel.CRITICAL]
+    degraded_failures = [c for c in check_results if not c.passed and c.level is HealthLevel.DEGRADED]
 
     if critical_failures:
         report.overall = HealthLevel.CRITICAL
@@ -211,9 +211,9 @@ def main():
             icon = "✓" if c.passed else "✗"
             print(f"  {icon} {c.name}: {c.detail}")
 
-    if report.overall == HealthLevel.CRITICAL:
+    if report.overall is HealthLevel.CRITICAL:
         return 2
-    if report.overall == HealthLevel.DEGRADED:
+    if report.overall is HealthLevel.DEGRADED:
         return 0 if warn_only else 1
     return 0
 

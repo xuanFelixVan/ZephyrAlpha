@@ -60,7 +60,7 @@ class AdaptiveParamTuning:
         self.ewma_fp = self.alpha * fp + (1 - self.alpha) * self.ewma_fp
         self.ewma_fn = self.alpha * fn + (1 - self.alpha) * self.ewma_fn
 
-        if self.mode == TuningMode.LOCKED:
+        if self.mode is TuningMode.LOCKED:
             return self.current_threshold
 
         if self.ewma_fp > self.false_positive_tolerance:

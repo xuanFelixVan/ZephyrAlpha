@@ -649,7 +649,7 @@ class RollbackExecutor:
         self._write_in_flight(execution_id, "preflight", "PENDING")
 
         preflight = self.preflight_check()
-        if not preflight.passed and operation != RollbackOp.HARD_RESET:
+        if not preflight.passed and operation is not RollbackOp.HARD_RESET:
             if preflight.errors and "Working tree is dirty" in str(preflight.errors):
                 # === stash 安全化（方案C）：只 stash 本 session 的文件，其他 session 文件阻断 ===
                 uncommitted = self.get_uncommitted_files() + self.get_staged_uncommitted_files()
@@ -735,7 +735,7 @@ class RollbackExecutor:
                     db_rows_restored=0,
                     execution_id=execution_id,
                 )
-            elif operation == RollbackOp.FULL_REVERT:
+            elif operation is RollbackOp.FULL_REVERT:
                 self._write_in_flight(execution_id, "git_revert", "PENDING")
                 git_result = self._git_revert(commit_sha)
                 files_reverted = git_result.get("files_changed", 0)
@@ -743,7 +743,7 @@ class RollbackExecutor:
                 self._write_in_flight(execution_id, "g0_verify", "PENDING")
                 g0_passed = self._g0_verify()
                 self._write_in_flight(execution_id, "g0_verify", "SUCCESS" if g0_passed else "FAILED")
-            elif operation == RollbackOp.PARTIAL_REVERT:
+            elif operation is RollbackOp.PARTIAL_REVERT:
                 if not file_globs:
                     raise ValueError("partial_revert requires file_globs")
                 self._write_in_flight(execution_id, "partial_revert", "PENDING")
@@ -752,7 +752,7 @@ class RollbackExecutor:
                 self._write_in_flight(execution_id, "partial_revert", "SUCCESS", {"files_changed": files_reverted})
                 g0_passed = self._g0_verify(files=file_globs)
                 self._write_in_flight(execution_id, "g0_verify", "SUCCESS" if g0_passed else "FAILED")
-            elif operation == RollbackOp.DISCARD:
+            elif operation is RollbackOp.DISCARD:
                 if not file_list:
                     raise ValueError("discard requires file_list")
                 self._write_in_flight(execution_id, "discard", "PENDING")
@@ -767,7 +767,7 @@ class RollbackExecutor:
                         self._run_git(["reset", "HEAD", "--", f])
                 files_reverted = len(discardable)
                 self._write_in_flight(execution_id, "discard", "SUCCESS", {"files_discarded": discardable})
-            elif operation == RollbackOp.HARD_RESET:
+            elif operation is RollbackOp.HARD_RESET:
                 self._write_in_flight(execution_id, "hard_reset", "PENDING")
                 self._run_git(["reset", "--hard", commit_sha])
                 files_reverted = 0
@@ -857,17 +857,17 @@ class RollbackExecutor:
         file_list: list[str] | None = None,
     ) -> list[str]:
         """根据 operation 类型确定冲突检查的文件范围。"""
-        if operation == RollbackOp.DISCARD:
+        if operation is RollbackOp.DISCARD:
             return list(file_list or [])
-        if operation == RollbackOp.PARTIAL_REVERT:
+        if operation is RollbackOp.PARTIAL_REVERT:
             return list(file_globs or [])
-        if operation == RollbackOp.FULL_REVERT:
+        if operation is RollbackOp.FULL_REVERT:
             try:
                 preview = self.preview(commit_sha)
                 return list(preview.changed_files)
             except Exception:
                 return []
-        if operation == RollbackOp.HARD_RESET:
+        if operation is RollbackOp.HARD_RESET:
             try:
                 output = self._run_git(["ls-files"])
                 return [f for f in output.strip().split("\n") if f]

@@ -256,7 +256,7 @@ class DefaultSecurityGateway(SecurityGateway):
                 "findings": [
                     {"rule_id": f.rule_id, "severity": f.severity, "message": f.message} for f in self._findings
                 ],
-                "content_safe": action != AuditAction.BLOCK,
+                "content_safe": action is not AuditAction.BLOCK,
                 "sanction_enabled": len(errors) > 0 or bool(lsg_blocked_by),
                 **lsg_info,
             },

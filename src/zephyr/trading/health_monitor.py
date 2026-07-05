@@ -336,9 +336,9 @@ class HealthMonitor:
 
     def pressure_response(self) -> str:
         level = self.pressure_level()
-        if level == PressureLevel.CRITICAL:
+        if level is PressureLevel.CRITICAL:
             return "SHUTDOWN_L3_PRESERVE_L2"
-        if level == PressureLevel.HIGH:
+        if level is PressureLevel.HIGH:
             return "THROTTLE_L3"
         return "NORMAL"
 

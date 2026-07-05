@@ -75,7 +75,7 @@ class LSGSecurityGateway:
     用法:
         gw = LSGSecurityGateway()
         result = await gw.scan_input("user prompt text", metadata={...})
-        if result.decision == SecurityDecision.DENY:
+        if result.decision is SecurityDecision.DENY:
             # 拒绝该请求
     """
 
@@ -277,19 +277,19 @@ class LSGSecurityGateway:
                 )
                 layer_results[name] = result
 
-                if result.decision == SecurityDecision.DENY:
+                if result.decision is SecurityDecision.DENY:
                     denied += 1
                     if name not in self.FAIL_OPEN_LAYERS:
                         final_decision = SecurityDecision.DENY
                         blocked_by = name
                         break
-                elif result.decision == SecurityDecision.BLOCK:
+                elif result.decision is SecurityDecision.BLOCK:
                     denied += 1
                     if name not in self.FAIL_OPEN_LAYERS:
                         final_decision = SecurityDecision.BLOCK
                         blocked_by = name
                         break
-                elif result.decision == SecurityDecision.FLAG:
+                elif result.decision is SecurityDecision.FLAG:
                     flagged += 1
                 else:
                     passed += 1
@@ -356,7 +356,7 @@ class LSGSecurityGateway:
         # 运行时 Gate 放行令牌：仅对“预调用”扫描（输入/全量/Agent 动作）且 ALLOW 时颁发。
         # scan_output（OUTPUT_ONLY）不颁发——输出扫描发生在 LLM 调用之后，不应放行后续裸调。
         # 令牌 TTL 30s，使合法的“LSG 扫描通过 → 发起 LLM 调用”链路畅通（见 runtime_interceptor）。
-        if final_decision == SecurityDecision.ALLOW and mode in (
+        if final_decision is SecurityDecision.ALLOW and mode in (
             ScanMode.INPUT_ONLY,
             ScanMode.FULL,
             ScanMode.AGENT_ONLY,

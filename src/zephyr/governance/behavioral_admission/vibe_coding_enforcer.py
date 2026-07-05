@@ -49,7 +49,7 @@ def enforce(rule_name: str, *, level: VibeRuleLevel | None = None) -> bool:
         return True
     actual_level, _ = entry
     if level is None:
-        return actual_level != VibeRuleLevel.MUST
+        return actual_level is not VibeRuleLevel.MUST
     level_order = {VibeRuleLevel.MAY: 0, VibeRuleLevel.SHOULD: 1, VibeRuleLevel.MUST: 2}
     return level_order.get(level, 0) <= level_order.get(actual_level, 0)
 

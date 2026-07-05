@@ -66,8 +66,8 @@ class TriggerEngine:
             decision.results = results
             decision.trigger_count = len(results)
 
-            reds = sum(1 for r in results if r.severity == Severity.RED)
-            yellows = sum(1 for r in results if r.severity == Severity.YELLOW)
+            reds = sum(1 for r in results if r.severity is Severity.RED)
+            yellows = sum(1 for r in results if r.severity is Severity.YELLOW)
             types = set(r.trigger_type for r in results)
             decision.trigger_type = ";".join(sorted(types))
             decision.reason = f"{reds} RED, {yellows} YELLOW triggers from {len(changed_files)} changed files"

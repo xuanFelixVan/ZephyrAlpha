@@ -147,10 +147,10 @@ class BootIntegrityAttestation:
             "mismatches": mismatches[:10],
             "new_files_count": len(new_files),
             "deleted_files_count": len(deleted_files),
-            "degraded": self.boot_integrity != BootIntegrityResult.ATTESTED and self.auto_degrade_on_failure,
+            "degraded": self.boot_integrity is not BootIntegrityResult.ATTESTED and self.auto_degrade_on_failure,
             "recommendation": (
                 "owner_override_required"
-                if self.boot_integrity == BootIntegrityResult.TAMPERED
+                if self.boot_integrity is BootIntegrityResult.TAMPERED
                 else "review_changes"
                 if violation_count > 0
                 else "proceed_full_auto"
@@ -158,7 +158,7 @@ class BootIntegrityAttestation:
         }
 
     def owner_attest_override(self, owner_signature: str) -> dict:
-        if self.boot_integrity == BootIntegrityResult.TAMPERED:
+        if self.boot_integrity is BootIntegrityResult.TAMPERED:
             self.boot_integrity = BootIntegrityResult.ATTESTED
             return {"override_accepted": True, "new_integrity": self.boot_integrity.value}
         return {"override_accepted": False, "reason": "no tampering detected — override unnecessary"}
@@ -168,5 +168,5 @@ class BootIntegrityAttestation:
             "boot_integrity": self.boot_integrity.value,
             "last_attestation_age_s": round(time.time() - self.last_attestation, 1) if self.last_attestation else 0,
             "mismatch_count": len(self.mismatch_details),
-            "safe_to_operate": self.boot_integrity == BootIntegrityResult.ATTESTED,
+            "safe_to_operate": self.boot_integrity is BootIntegrityResult.ATTESTED,
         }

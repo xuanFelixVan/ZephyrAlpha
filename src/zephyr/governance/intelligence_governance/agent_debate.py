@@ -122,5 +122,5 @@ class AgentDebate:
     def agreement_rate(self) -> float:
         if not self._history:
             return 0.0
-        agreed = sum(1 for rd in self._history if rd.verdict == DebateVerdict.AGREE)
+        agreed = sum(1 for rd in self._history if rd.verdict is DebateVerdict.AGREE)
         return agreed / len(self._history)

@@ -165,9 +165,9 @@ def route(
     policy: RoutingPolicy = RoutingPolicy.COST_MIN,
 ) -> LLMProvider:
     """A/B 双路由策略。"""
-    if policy == RoutingPolicy.COST_MIN:
+    if policy is RoutingPolicy.COST_MIN:
         return route_min_cost(estimated_tokens)
-    if policy == RoutingPolicy.THROUGHPUT:
+    if policy is RoutingPolicy.THROUGHPUT:
         candidates = sorted(PRICING_TABLE.values(), key=lambda m: m.throughput_rank)
         return candidates[0].provider
     return LLMProvider.DEEPSEEK

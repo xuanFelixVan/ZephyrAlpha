@@ -257,9 +257,9 @@ class VerdictEngine:
 
         latency = (time.monotonic() - start) * 1000.0
 
-        if verdict_level == VerdictLevel.RED:
+        if verdict_level is VerdictLevel.RED:
             self._red_count += 1
-        elif verdict_level == VerdictLevel.YELLOW:
+        elif verdict_level is VerdictLevel.YELLOW:
             self._yellow_count += 1
         else:
             self._pass_count += 1
@@ -305,15 +305,15 @@ class VerdictEngine:
         if operation.is_cross_module:
             return VerdictLevel.RED, "cross_module_blocked"
 
-        if operation.protection_level == ProtectionLevel.anchor:
+        if operation.protection_level is ProtectionLevel.anchor:
             return VerdictLevel.RED, "ai_on_anchor_blocked"
 
-        if operation.protection_level == ProtectionLevel.protected:
+        if operation.protection_level is ProtectionLevel.protected:
             if not gate_passed:
                 return VerdictLevel.RED, "ai_on_protected_no_gate"
             return VerdictLevel.PASS, "ai_on_protected_gate_passed"
 
-        if operation.protection_level == ProtectionLevel.normal:
+        if operation.protection_level is ProtectionLevel.normal:
             if actor.trust_score < _YELLOW_TRUST_THRESHOLD:
                 return VerdictLevel.YELLOW, "low_trust_score"
             if violation_count >= _YELLOW_VIOLATION_THRESHOLD:
@@ -361,26 +361,26 @@ class VerdictEngine:
         gate_passed: bool,
         session_violation_count: int,
     ) -> GraduatedLevel:
-        if verdict_level == VerdictLevel.PASS:
-            if protection_level == ProtectionLevel.public:
+        if verdict_level is VerdictLevel.PASS:
+            if protection_level is ProtectionLevel.public:
                 return GraduatedLevel.L0
-            if protection_level == ProtectionLevel.normal:
+            if protection_level is ProtectionLevel.normal:
                 return GraduatedLevel.L1
-            if protection_level == ProtectionLevel.protected and gate_passed:
+            if protection_level is ProtectionLevel.protected and gate_passed:
                 return GraduatedLevel.L2
             return GraduatedLevel.L3
 
-        if verdict_level == VerdictLevel.YELLOW:
+        if verdict_level is VerdictLevel.YELLOW:
             if session_violation_count >= 5:
                 return GraduatedLevel.L5
             if session_violation_count >= 3:
                 return GraduatedLevel.L4
             return GraduatedLevel.L3
 
-        if verdict_level == VerdictLevel.RED:
-            if protection_level == ProtectionLevel.anchor:
+        if verdict_level is VerdictLevel.RED:
+            if protection_level is ProtectionLevel.anchor:
                 return GraduatedLevel.L6
-            if protection_level == ProtectionLevel.protected:
+            if protection_level is ProtectionLevel.protected:
                 return GraduatedLevel.L5
             return GraduatedLevel.L4
 
@@ -391,12 +391,12 @@ class VerdictEngine:
         verdict_level: VerdictLevel,
         protection_level: ProtectionLevel,
     ) -> bool:
-        if verdict_level == VerdictLevel.RED and protection_level in (
+        if verdict_level is VerdictLevel.RED and protection_level in (
             ProtectionLevel.anchor,
             ProtectionLevel.protected,
         ):
             return True
-        if verdict_level == VerdictLevel.YELLOW and protection_level == ProtectionLevel.anchor:
+        if verdict_level is VerdictLevel.YELLOW and protection_level is ProtectionLevel.anchor:
             return True
         return False
 

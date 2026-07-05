@@ -104,20 +104,20 @@ class SafetyBrake:
                 "Split into smaller batches."
             )
 
-        if operation == OperationType.DELETE and affected_ke_count > 5:
+        if operation is OperationType.DELETE and affected_ke_count > 5:
             warnings.append(f"Deleting {affected_ke_count} KEs. Verify tombstone before proceeding.")
 
-        if operation == OperationType.MARK_AUTHORITATIVE:
+        if operation is OperationType.MARK_AUTHORITATIVE:
             warnings.append("Devil's advocate check required: verify there is no contradictory evidence.")
 
-        if operation == OperationType.PURGE:
+        if operation is OperationType.PURGE:
             warnings.append("Irreversible operation. Confirm backup exists.")
 
         cooling = 0
         if risk in (RiskLevel.HIGH, RiskLevel.CRITICAL) and not skip_cooling:
             cooling = self._QUIET_PERIOD_SECONDS
 
-        dv_required = operation == OperationType.MARK_AUTHORITATIVE or risk == RiskLevel.CRITICAL
+        dv_required = operation is OperationType.MARK_AUTHORITATIVE or risk is RiskLevel.CRITICAL
 
         return PreFlightResult(
             operation=operation.value,
@@ -131,13 +131,13 @@ class SafetyBrake:
         )
 
     def _assess_risk(self, operation: OperationType, count: int) -> RiskLevel:
-        if operation == OperationType.PURGE:
+        if operation is OperationType.PURGE:
             return RiskLevel.CRITICAL
-        if operation == OperationType.DELETE:
+        if operation is OperationType.DELETE:
             if count > 10:
                 return RiskLevel.HIGH
             return RiskLevel.MEDIUM
-        if operation == OperationType.BATCH_UPDATE:
+        if operation is OperationType.BATCH_UPDATE:
             if count > self._MAX_EPIDEMIC_CHANGES:
                 return RiskLevel.CRITICAL
             if count > 20:
@@ -145,9 +145,9 @@ class SafetyBrake:
             if count > 5:
                 return RiskLevel.MEDIUM
             return RiskLevel.LOW
-        if operation == OperationType.MARK_AUTHORITATIVE:
+        if operation is OperationType.MARK_AUTHORITATIVE:
             return RiskLevel.HIGH
-        if operation == OperationType.RECLASSIFY:
+        if operation is OperationType.RECLASSIFY:
             if count > 10:
                 return RiskLevel.MEDIUM
             return RiskLevel.LOW

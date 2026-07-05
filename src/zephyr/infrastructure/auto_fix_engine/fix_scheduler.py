@@ -70,7 +70,7 @@ class FixScheduler:
         if self._running:
             return
         self._running = True
-        if self._mode == SchedulerMode.CONTINUOUS:
+        if self._mode is SchedulerMode.CONTINUOUS:
             self._thread = threading.Thread(target=self._continuous_loop, daemon=True)
             self._thread.start()
         logger.info("Fix scheduler started in %s mode", self._mode.value)
@@ -84,7 +84,7 @@ class FixScheduler:
     def submit_event(self, action: FixAction) -> None:
         with self._lock:
             self._event_queue.append(action)
-        if self._mode == SchedulerMode.EVENT_DRIVEN and self._fix_fn:
+        if self._mode is SchedulerMode.EVENT_DRIVEN and self._fix_fn:
             self._process_events()
 
     def _continuous_loop(self) -> None:

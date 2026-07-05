@@ -66,7 +66,7 @@ def fetch_fitness_data(
                 "metric_name": m.metric_name,
                 "value": m.value,
                 "threshold": m.threshold,
-                "status": m.status,
+                "status": m.status.value if hasattr(m.status, "value") else str(m.status),
                 "message": m.message,
             }
             for m in report.metrics

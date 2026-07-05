@@ -345,11 +345,11 @@ class ProtectionIndex:
         normal_count = 0
         public_count = 0
         for entry in self._entries.values():
-            if entry.level == ProtectionLevel.anchor:
+            if entry.level is ProtectionLevel.anchor:
                 anchor_count += 1
-            elif entry.level == ProtectionLevel.protected:
+            elif entry.level is ProtectionLevel.protected:
                 protected_count += 1
-            elif entry.level == ProtectionLevel.normal:
+            elif entry.level is ProtectionLevel.normal:
                 normal_count += 1
             else:
                 public_count += 1

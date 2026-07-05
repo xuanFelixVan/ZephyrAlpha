@@ -349,7 +349,7 @@ class SessionLifecycle:
             record = self._sessions.get(session_id)
             if record is None:
                 return False
-            if record.state == SessionState.CLOSED:
+            if record.state is SessionState.CLOSED:
                 return True
 
             try:
@@ -387,11 +387,11 @@ class SessionLifecycle:
         with self._lock:
             to_expire: list[str] = []
             for sid, record in self._sessions.items():
-                if record.state == SessionState.IDLE:
+                if record.state is SessionState.IDLE:
                     idle_duration = now - record.last_activity_at
                     if idle_duration >= self._idle_timeout_s:
                         to_expire.append(sid)
-                elif record.state == SessionState.CLOSED:
+                elif record.state is SessionState.CLOSED:
                     closed_duration = now - record.last_transition_at
                     if closed_duration >= self._closed_expiry_s:
                         to_expire.append(sid)
@@ -419,9 +419,9 @@ class SessionLifecycle:
                 self._sessions[sid] = updated
                 self._persist_record(updated)
                 expired_count += 1
-                if old_state == SessionState.IDLE:
+                if old_state is SessionState.IDLE:
                     self._idle_to_expired += 1
-                elif old_state == SessionState.CLOSED:
+                elif old_state is SessionState.CLOSED:
                     self._closed_to_expired += 1
 
             self._expired_sessions += expired_count
@@ -468,7 +468,7 @@ class SessionLifecycle:
             active = sum(
                 1 for s in self._sessions.values() if s.state in (SessionState.ACTIVE, SessionState.RESPONDING)
             )
-            idle = sum(1 for s in self._sessions.values() if s.state == SessionState.IDLE)
+            idle = sum(1 for s in self._sessions.values() if s.state is SessionState.IDLE)
             total = len(self._sessions)
             return {
                 "status": "healthy" if active < self._max_active_sessions else "at_capacity",

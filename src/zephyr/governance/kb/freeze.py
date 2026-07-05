@@ -124,13 +124,13 @@ class FreezeCircuitBreaker:
         state = self.current_state()
         if state is None:
             return True
-        return state.mode == FreezeMode.NORMAL
+        return state.mode is FreezeMode.NORMAL
 
     def can_read(self) -> bool:
         state = self.current_state()
         if state is None:
             return True
-        return state.mode != FreezeMode.FROZEN
+        return state.mode is not FreezeMode.FROZEN
 
     def freeze(
         self,

@@ -99,7 +99,7 @@ class EmergentBehaviorDetector:
         else:
             self.state = EmergenceState.STABLE
 
-        if self.state != prev_state and self.state != EmergenceState.STABLE:
+        if self.state != prev_state and self.state is not EmergenceState.STABLE:
             self.emergence_events.append(
                 {
                     "ts": time.time(),
@@ -115,9 +115,9 @@ class EmergentBehaviorDetector:
             "correlation_details": {k: round(v, 3) for k, v in high_corr.items()},
             "recommendation": (
                 "investigate_coupling"
-                if self.state == EmergenceState.CRITICAL
+                if self.state is EmergenceState.CRITICAL
                 else "increase_observation_frequency"
-                if self.state == EmergenceState.CORRELATING
+                if self.state is EmergenceState.CORRELATING
                 else "continue_monitoring"
             ),
         }

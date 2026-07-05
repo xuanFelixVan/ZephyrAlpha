@@ -54,7 +54,7 @@ class FaultIsolator:
 
     def is_isolated(self, name: str) -> bool:
         domain = self._domains.get(name)
-        return domain.state == IsolationState.ISOLATED if domain else False
+        return domain.state is IsolationState.ISOLATED if domain else False
 
     def get_isolated(self) -> list[str]:
-        return [n for n, d in self._domains.items() if d.state == IsolationState.ISOLATED]
+        return [n for n, d in self._domains.items() if d.state is IsolationState.ISOLATED]

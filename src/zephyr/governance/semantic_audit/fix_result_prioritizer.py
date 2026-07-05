@@ -276,9 +276,9 @@ class FixPrioritizer:
         """
         if not prioritized:
             return PrioritySummary()
-        reds = [r for r in prioritized if r.fix.severity == Severity.RED]
-        yellows = [r for r in prioritized if r.fix.severity == Severity.YELLOW]
-        infos = [r for r in prioritized if r.fix.severity == Severity.INFO]
+        reds = [r for r in prioritized if r.fix.severity is Severity.RED]
+        yellows = [r for r in prioritized if r.fix.severity is Severity.YELLOW]
+        infos = [r for r in prioritized if r.fix.severity is Severity.INFO]
         avg_score = sum(r.priority_score for r in prioritized) / len(prioritized)
         top_5: list[dict[str, Any]] = [
             {

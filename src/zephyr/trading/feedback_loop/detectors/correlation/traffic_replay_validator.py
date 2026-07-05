@@ -61,9 +61,9 @@ class TrafficReplayValidator:
         for s in self.sessions:
             if s.session_id == session_id:
                 s.replay_count += 1
-                if verdict == ReplayVerdict.MATCH:
+                if verdict is ReplayVerdict.MATCH:
                     s.matches += 1
-                elif verdict == ReplayVerdict.DEVIATION:
+                elif verdict is ReplayVerdict.DEVIATION:
                     s.deviations += 1
                 else:
                     s.errors += 1

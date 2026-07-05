@@ -82,7 +82,7 @@ class EventHooks:
                     payload={
                         "timestamp": record["timestamp"],
                         "source_function": "EventHooks.emit",
-                        "severity": "info" if event == FixEvent.FIX_COMPLETED else "error",
+                        "severity": "info" if event is FixEvent.FIX_COMPLETED else "error",
                         "detail": f"action_id={action.action_id if action else None} target={action.target if action else None}",
                     },
                 )

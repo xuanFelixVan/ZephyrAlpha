@@ -40,7 +40,7 @@ class PreFlightReport:
 
     @property
     def all_green(self) -> bool:
-        return self.decision == PreFlightDecision.ALLOW
+        return self.decision is PreFlightDecision.ALLOW
 
 
 class PreFlightGate:
@@ -62,13 +62,13 @@ class PreFlightGate:
         severity = 0
 
         for check, name in [(tok, "Token"), (cst, "Cost"), (tim, "Time")]:
-            if check.decision == GateDecision.DENY:
+            if check.decision is GateDecision.DENY:
                 severity = max(severity, 3)
                 recs.append(f"{name}: 预算已耗尽，建议降级或拆分任务")
-            elif check.decision == GateDecision.DEGRADE:
+            elif check.decision is GateDecision.DEGRADE:
                 severity = max(severity, 2)
                 recs.append(f"{name}: 接近上限，建议使用免费模型")
-            elif check.decision == GateDecision.NARROW:
+            elif check.decision is GateDecision.NARROW:
                 severity = max(severity, 1)
                 recs.append(f"{name}: 预算消耗过半，注意控制")
 

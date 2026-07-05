@@ -176,7 +176,7 @@ class ConflictDetector:
         return len(self.detect(changes_a, changes_b)) > 0
 
     def is_blocking(self, changes_a: ChangeSet, changes_b: ChangeSet) -> bool:
-        return any(c.severity == ConflictSeverity.BLOCKING for c in self.detect(changes_a, changes_b))
+        return any(c.severity is ConflictSeverity.BLOCKING for c in self.detect(changes_a, changes_b))
 
     def _severity_from_overlap(
         self, start: int, end: int, range_a: ChangeRange, range_b: ChangeRange
@@ -203,6 +203,6 @@ class ConflictDetector:
             "total_conflicts": len(conflicts),
             "blocking": counts.get("blocking", 0),
             "severe": counts.get("severe", 0),
-            "has_blocking": any(c.severity == ConflictSeverity.BLOCKING for c in conflicts),
+            "has_blocking": any(c.severity is ConflictSeverity.BLOCKING for c in conflicts),
             "conflicts": [c.description for c in conflicts],
         }

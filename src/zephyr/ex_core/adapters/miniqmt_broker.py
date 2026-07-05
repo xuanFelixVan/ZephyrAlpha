@@ -337,7 +337,7 @@ class MiniQmtBroker(BrokerInterface):
             self._order_cache[broker_order_id] = order
 
             # T+1 记录买入日期
-            if order.side == OrderSide.BUY:
+            if order.side is OrderSide.BUY:
                 self._buy_dates[order.symbol] = date.today()
 
             _logger.info(
@@ -499,7 +499,7 @@ class MiniQmtBroker(BrokerInterface):
         Returns:
             MatchingFill 预估成交结果
         """
-        order_type = "MARKET" if order.order_type == OrderType.MARKET else "LIMIT"
+        order_type = "MARKET" if order.order_type is OrderType.MARKET else "LIMIT"
         match_input = MatchOrderInput(
             symbol=order.symbol,
             side=order.side.value,
@@ -508,7 +508,7 @@ class MiniQmtBroker(BrokerInterface):
             limit_price=order.limit_price,
         )
 
-        if order.order_type == OrderType.MARKET:
+        if order.order_type is OrderType.MARKET:
             return self._matching_logic.match_market_order(match_input, order_book)
         return self._matching_logic.match_limit_order(match_input, order_book)
 
@@ -618,7 +618,7 @@ class MiniQmtBroker(BrokerInterface):
             )
 
         # T+1锁定检查（卖出时）
-        if order.side == OrderSide.SELL:
+        if order.side is OrderSide.SELL:
             self._check_t_plus_1(order.symbol)
 
         # 涨跌停检查（如果有 limit_price）

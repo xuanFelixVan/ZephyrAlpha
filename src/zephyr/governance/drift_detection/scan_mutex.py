@@ -144,7 +144,7 @@ class ScanMutex:
 
         self._handle_collision(scan_id, level, lock)
 
-        max_wait = self.MAX_WAIT_LIGHT_S if level == ScanLevel.LIGHT else self.MAX_WAIT_DEEP_S
+        max_wait = self.MAX_WAIT_LIGHT_S if level is ScanLevel.LIGHT else self.MAX_WAIT_DEEP_S
 
         deadline = time.monotonic() + max_wait
 
@@ -213,7 +213,7 @@ class ScanMutex:
             if not found:
                 self._queue.append(queued)
 
-        elif level == ScanLevel.LIGHT and lock.scan_level == ScanLevel.DEEP:
+        elif level is ScanLevel.LIGHT and lock.scan_level is ScanLevel.DEEP:
             self.force_release()
 
     def _is_stale(self, lock: ScanLockRecord) -> bool:

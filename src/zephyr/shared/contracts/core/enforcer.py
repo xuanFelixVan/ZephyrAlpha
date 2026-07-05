@@ -153,7 +153,7 @@ def enforce_output(
 
             if violations:
                 report = _format_violations(contract_name, func.__qualname__, violations)
-                if mode == EnforcementMode.STRICT:
+                if mode is EnforcementMode.STRICT:
                     raise ContractViolationError(
                         contract_id=contract_name,
                         violation_type="output_contract_violation",
@@ -233,7 +233,7 @@ def enforce_input(
 
             if violations:
                 report = _format_violations(contract_name, func.__qualname__, violations)
-                if mode == EnforcementMode.STRICT:
+                if mode is EnforcementMode.STRICT:
                     raise ContractViolationError(
                         contract_id=contract_name,
                         violation_type="input_contract_violation",

@@ -51,6 +51,6 @@ class CombinatorialGate:
         return CombinedResult(CombineOp.OR, checks, passed)
 
     def evaluate(self, checks: list[GateCheck], operation: CombineOp = CombineOp.AND) -> CombinedResult:
-        if operation == CombineOp.OR:
+        if operation is CombineOp.OR:
             return self.evaluate_or(checks)
         return self.evaluate_and(checks)

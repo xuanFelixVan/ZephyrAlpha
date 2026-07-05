@@ -190,7 +190,7 @@ class AgentSecurityLayer:
             risk=risk,
             justification=justification,
         )
-        if risk == RiskLevel.LOW or self._auto_approve:
+        if risk is RiskLevel.LOW or self._auto_approve:
             req.outcome = ApprovalOutcome.APPROVED
         self._approvals[req.request_id] = req
         return req

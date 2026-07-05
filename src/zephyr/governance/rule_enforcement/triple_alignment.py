@@ -76,12 +76,12 @@ class TripleAlignmentResult:
 
     def add_violation(self, v: AlignmentViolation) -> None:
         self.violations.append(v)
-        if v.severity == Severity.ERROR:
+        if v.severity is Severity.ERROR:
             self.passed = False
 
     def summary(self) -> str:
-        errors = [v for v in self.violations if v.severity == Severity.ERROR]
-        warns = [v for v in self.violations if v.severity == Severity.WARN]
+        errors = [v for v in self.violations if v.severity is Severity.ERROR]
+        warns = [v for v in self.violations if v.severity is Severity.WARN]
         return (
             f"Triple Alignment: {self.checked_modules} modules checked, "
             f"{len(errors)} ERROR, {len(warns)} WARN, "
@@ -378,7 +378,7 @@ def main() -> None:
     result = check_triple_alignment(specific_module=specific, warn_only=warn_only)
     print(result.summary())
     for v in result.violations:
-        icon = "🔴" if v.severity == Severity.ERROR else "🟡"
+        icon = "🔴" if v.severity is Severity.ERROR else "🟡"
         print(
             f"  {icon} [{v.check}] {v.module_id}: {v.detail or f'{v.source}: expected={v.expected}, actual={v.actual}'}"
         )

@@ -143,9 +143,9 @@ class ExecutionEngine:
             _logger.warning("Order rejected by risk: order_id=%s violations=%s", order.order_id, len(halt_violations))
             raise ValueError(f"Order rejected by risk validator: {halt_violations[0].description}")
 
-        if algo == AlgoType.TWAP:
+        if algo is AlgoType.TWAP:
             return self._execute_twap(order, broker_id)
-        elif algo == AlgoType.VWAP:
+        elif algo is AlgoType.VWAP:
             return self._execute_vwap(order, broker_id)
         else:
             return self._execute_market(order, broker_id)

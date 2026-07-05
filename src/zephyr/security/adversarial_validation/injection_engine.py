@@ -77,13 +77,13 @@ class InjectionEngine:
             timestamp=datetime.now(UTC),
         )
 
-        if itype == InjectionType.LATENCY:
+        if itype is InjectionType.LATENCY:
             result = self._inject_latency(target, delay_ms)
-        elif itype == InjectionType.ERROR:
+        elif itype is InjectionType.ERROR:
             result = self._inject_error(target, error_message)
-        elif itype == InjectionType.CRASH:
+        elif itype is InjectionType.CRASH:
             result = self._inject_crash(target)
-        elif itype == InjectionType.EXIT_CODE:
+        elif itype is InjectionType.EXIT_CODE:
             result = self._inject_exit_code(target, exit_code)
 
         self._injected.append(result)

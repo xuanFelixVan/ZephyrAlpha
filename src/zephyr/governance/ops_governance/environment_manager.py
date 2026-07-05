@@ -89,6 +89,6 @@ def get_env(name: Environment) -> EnvConfig | None:
 
 
 def switch_env(current: Environment, target: Environment) -> EnvConfig | None:
-    if target == Environment.LIVE:
+    if target is Environment.LIVE:
         return ENVIRONMENTS.get(Environment.LIVE)
     return ENVIRONMENTS.get(target)

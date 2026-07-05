@@ -56,7 +56,7 @@ class MultiInstanceCoord:
 
     @property
     def is_leader(self) -> bool:
-        return self.role == InstanceRole.LEADER
+        return self.role is InstanceRole.LEADER
 
     def start_election(self) -> None:
         self.current_term += 1

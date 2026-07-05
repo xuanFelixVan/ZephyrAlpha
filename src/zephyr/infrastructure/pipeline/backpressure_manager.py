@@ -172,7 +172,7 @@ class BackpressureManager:
                 )
             )
 
-            if old_state != BpState.NORMAL:
+            if old_state is not BpState.NORMAL:
                 _logger.info(
                     "[BP] RESUME symbol=%s reason=%s (was %s)",
                     signal.symbol,
@@ -194,16 +194,16 @@ class BackpressureManager:
 
     def get_all_paused(self) -> list[BpSymbolState]:
         with self._lock:
-            return [s for s in self._states.values() if s.state == BpState.PAUSED]
+            return [s for s in self._states.values() if s.state is BpState.PAUSED]
 
     def get_all_throttled(self) -> list[BpSymbolState]:
         with self._lock:
-            return [s for s in self._states.values() if s.state == BpState.THROTTLED]
+            return [s for s in self._states.values() if s.state is BpState.THROTTLED]
 
     def is_blocked(self, symbol: str) -> bool:
         with self._lock:
             state = self._get_or_create(symbol)
-            if state.state == BpState.PAUSED:
+            if state.state is BpState.PAUSED:
                 if state.paused_until > 0 and time.time() >= state.paused_until:
                     state.state = BpState.NORMAL
                     _logger.info("[BP] auto-resume symbol=%s (timeout)", symbol)
@@ -230,9 +230,9 @@ class BackpressureManager:
 
     def get_stats(self) -> dict[str, Any]:
         with self._lock:
-            paused = sum(1 for s in self._states.values() if s.state == BpState.PAUSED)
-            throttled = sum(1 for s in self._states.values() if s.state == BpState.THROTTLED)
-            normal = sum(1 for s in self._states.values() if s.state == BpState.NORMAL)
+            paused = sum(1 for s in self._states.values() if s.state is BpState.PAUSED)
+            throttled = sum(1 for s in self._states.values() if s.state is BpState.THROTTLED)
+            normal = sum(1 for s in self._states.values() if s.state is BpState.NORMAL)
             return {
                 "total_tracked_symbols": len(self._states),
                 "paused_count": paused,

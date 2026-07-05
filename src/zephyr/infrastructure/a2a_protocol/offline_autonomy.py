@@ -39,7 +39,7 @@ class AutonomyState:
         if connected:
             self._mode = OfflineMode.ONLINE
             self._cache.clear()
-        elif self._mode == OfflineMode.ONLINE:
+        elif self._mode is OfflineMode.ONLINE:
             self._mode = OfflineMode.AUTO
         return self._mode
 

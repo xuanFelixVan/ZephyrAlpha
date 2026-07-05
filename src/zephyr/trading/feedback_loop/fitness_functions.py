@@ -127,7 +127,7 @@ class FitnessFunctionFramework:
         t = self.thresholds.module_coupling_max
         st = self._status_hi(coupling, t)
         msg = ""
-        if st != MetricStatus.PASS:
+        if st is not MetricStatus.PASS:
             msg = f"Coupling {coupling:.3f} exceeds max {t}"
         return MetricResult(
             metric_name=METRIC_MODULE_COUPLING,
@@ -145,7 +145,7 @@ class FitnessFunctionFramework:
         t = self.thresholds.test_coverage_min
         st = self._status(coverage_pct, t)
         msg = ""
-        if st != MetricStatus.PASS:
+        if st is not MetricStatus.PASS:
             msg = f"Coverage {coverage_pct:.2f}% below minimum {t}"
         return MetricResult(
             metric_name=METRIC_TEST_COVERAGE,
@@ -174,7 +174,7 @@ class FitnessFunctionFramework:
             )
         st = self._status(rate, t)
         msg = ""
-        if st != MetricStatus.PASS:
+        if st is not MetricStatus.PASS:
             msg = f"Compliance {rate:.2%} below minimum {t:.0%}"
         return MetricResult(
             metric_name=METRIC_COMPLIANCE_RATE,
@@ -195,7 +195,7 @@ class FitnessFunctionFramework:
         t = self.thresholds.knowledge_activation_min
         st = self._status(rate, t)
         msg = ""
-        if st != MetricStatus.PASS:
+        if st is not MetricStatus.PASS:
             msg = f"KE activation {rate:.2%} below minimum {t:.0%}"
         return MetricResult(
             metric_name=METRIC_KNOWLEDGE_ACTIVATION,
@@ -224,7 +224,7 @@ class FitnessFunctionFramework:
             )
         st = self._status(rate, t)
         msg = ""
-        if st != MetricStatus.PASS:
+        if st is not MetricStatus.PASS:
             msg = f"Hallucination interception {rate:.2%} below minimum {t:.0%}"
         return MetricResult(
             metric_name=METRIC_HALLUCINATION_INTERCEPTION,

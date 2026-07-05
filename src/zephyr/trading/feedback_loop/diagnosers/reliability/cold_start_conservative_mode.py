@@ -72,7 +72,7 @@ class ColdStartConservativeMode:
         return self.phase
 
     def current_threshold_multiplier(self) -> float:
-        if self.phase == ColdStartPhase.FULL_ENABLED:
+        if self.phase is ColdStartPhase.FULL_ENABLED:
             return 1.0
         phases = [
             ColdStartPhase.COLLECT_ONLY,
@@ -85,7 +85,7 @@ class ColdStartConservativeMode:
         return max(1.0, self.threshold_multiplier * decay)
 
     def is_action_allowed(self, action_type: str) -> bool:
-        if self.phase == ColdStartPhase.FULL_ENABLED:
+        if self.phase is ColdStartPhase.FULL_ENABLED:
             return True
         if action_type.startswith("COLLECT_"):
             return True
@@ -98,7 +98,7 @@ class ColdStartConservativeMode:
         pass
 
     def is_warm(self) -> bool:
-        return self.phase == ColdStartPhase.FULL_ENABLED
+        return self.phase is ColdStartPhase.FULL_ENABLED
 
     def elapsed_cycles(self) -> int:
         return self.current_cycle

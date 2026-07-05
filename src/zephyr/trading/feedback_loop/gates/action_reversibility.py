@@ -48,7 +48,7 @@ class ActionReversibility:
         return Reversibility.IRREVERSIBLE
 
     def gate(self, action: str, reversibility: Reversibility, autonomy_level: int) -> bool:
-        if reversibility == Reversibility.IRREVERSIBLE and autonomy_level < 3:
+        if reversibility is Reversibility.IRREVERSIBLE and autonomy_level < 3:
             self.blocked_actions.append(action)
             return False
         return True

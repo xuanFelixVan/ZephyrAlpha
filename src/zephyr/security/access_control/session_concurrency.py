@@ -121,7 +121,7 @@ class ConcurrencyManager:
         conflict_type: ConflictType,
         paths: tuple[str, str],
     ) -> str:
-        return "auto_merge" if conflict_type == ConflictType.SAME_FILE else "owner_decision"
+        return "auto_merge" if conflict_type is ConflictType.SAME_FILE else "owner_decision"
 
 
 def detect_mtime_conflict(path: str, last_read_mtime: float) -> bool:

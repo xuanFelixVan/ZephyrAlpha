@@ -72,16 +72,16 @@ class CircuitBreaker:
 
     def record_failure(self) -> None:
         self._failure_count += 1
-        if self._failure_count >= self._threshold and self._state == CircuitBreakerState.CLOSED:
+        if self._failure_count >= self._threshold and self._state is CircuitBreakerState.CLOSED:
             self._state = CircuitBreakerState.OPEN
 
     def record_success(self) -> None:
-        if self._state == CircuitBreakerState.HALF_OPEN:
+        if self._state is CircuitBreakerState.HALF_OPEN:
             self._state = CircuitBreakerState.CLOSED
             self._failure_count = 0
 
     def attempt_reset(self) -> None:
-        if self._state == CircuitBreakerState.OPEN:
+        if self._state is CircuitBreakerState.OPEN:
             self._state = CircuitBreakerState.HALF_OPEN
 
 

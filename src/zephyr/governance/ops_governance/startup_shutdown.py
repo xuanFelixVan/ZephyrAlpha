@@ -54,7 +54,7 @@ class StartupPhaseDef(BaseModel):
     @property
     def is_ready(self) -> bool:
         return all(
-            STARTUP_DAG.get(dep) is not None and STARTUP_DAG[dep].state == PhaseState.HEALTHY for dep in self.depends_on
+            STARTUP_DAG.get(dep) is not None and STARTUP_DAG[dep].state is PhaseState.HEALTHY for dep in self.depends_on
         )
 
 

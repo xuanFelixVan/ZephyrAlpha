@@ -83,7 +83,7 @@ class FailModeManager:
         elif len(unhealthy) >= 1:
             self._state = FailModeState(mode=FailMode.DEGRADED, reason=f"{len(unhealthy)} 组件降级")
         else:
-            if self._state.mode != FailMode.OPEN:
+            if self._state.mode is not FailMode.OPEN:
                 self._state = FailModeState(mode=FailMode.OPEN, reason="所有组件恢复正常")
 
         return self._state
@@ -94,7 +94,7 @@ class FailModeManager:
 
     def should_recover(self) -> bool:
         self.evaluate()
-        if self._state.mode == FailMode.OPEN:
+        if self._state.mode is FailMode.OPEN:
             return True
         if self._state.auto_recovery_at and time.time() > self._state.auto_recovery_at:
             return True

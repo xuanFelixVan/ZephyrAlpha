@@ -209,7 +209,7 @@ class AuditLogger:
         return self._log_dir
 
     def _current_log_file(self) -> Path:
-        if self._rotation == RotationPolicy.DATE:
+        if self._rotation is RotationPolicy.DATE:
             today = datetime.now(UTC).strftime("%Y-%m-%d")
             if self._current_date != today:
                 self._current_date = today

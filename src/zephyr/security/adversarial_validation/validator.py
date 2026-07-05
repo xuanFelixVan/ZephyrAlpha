@@ -80,9 +80,9 @@ class RedBlueValidator:
         for scenario in scenarios:
             result = self._process_scenario(scenario)
             scene_results.append(result)
-            if result.result == ResultClass.BLOCKED:
+            if result.result is ResultClass.BLOCKED:
                 blocked += 1
-            elif result.result == ResultClass.BYPASSED:
+            elif result.result is ResultClass.BYPASSED:
                 bypassed += 1
                 try:
                     self._blast.record_bypass(scenario)

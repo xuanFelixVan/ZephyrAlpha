@@ -59,7 +59,7 @@ class DepCVECorrelator:
         self.dependencies.append((name, version))
 
     def check_critical(self) -> list[CVEAlert]:
-        return [a for a in self.alerts if a.severity == CVESeverity.CRITICAL]
+        return [a for a in self.alerts if a.severity is CVESeverity.CRITICAL]
 
     def auto_fix_available(self) -> dict[str, str]:
         return {a.cve_id: a.fixed_version for a in self.alerts if a.fixed_version}

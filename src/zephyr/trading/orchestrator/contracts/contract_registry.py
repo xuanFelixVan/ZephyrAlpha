@@ -1018,21 +1018,21 @@ class ContractRegistry:
             )
 
         hint = contract.ai_read_only_hint
-        if hint == AIReadOnlyHint.DO_NOT_CALL:
+        if hint is AIReadOnlyHint.DO_NOT_CALL:
             return ContractCallResult(
                 allowed=False,
                 contract_id=contract_id,
                 hint=hint,
                 message=f"契约 '{contract_id}' 不可调用（DO_NOT_CALL）",
             )
-        elif hint == AIReadOnlyHint.IMPL_REQUIRED:
+        elif hint is AIReadOnlyHint.IMPL_REQUIRED:
             return ContractCallResult(
                 allowed=False,
                 contract_id=contract_id,
                 hint=hint,
                 message=f"契约 '{contract_id}' 需先完成实现（IMPL_REQUIRED）",
             )
-        elif hint == AIReadOnlyHint.CAUTION_STUB:
+        elif hint is AIReadOnlyHint.CAUTION_STUB:
             return ContractCallResult(
                 allowed=True,
                 contract_id=contract_id,

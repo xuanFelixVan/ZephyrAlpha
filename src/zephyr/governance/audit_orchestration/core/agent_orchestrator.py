@@ -388,15 +388,15 @@ class AgentRouter:
         -------
         RouteDecision
         """
-        if strategy == RoutingStrategy.SPECIALIST_FIRST:
+        if strategy is RoutingStrategy.SPECIALIST_FIRST:
             if required_role is None:
                 raise ValueError("specialist_first 策略必须指定 required_role")
             return self._specialist_first(domain, required_role)
 
-        if strategy == RoutingStrategy.LOAD_BALANCE:
+        if strategy is RoutingStrategy.LOAD_BALANCE:
             return self._load_balance(domain)
 
-        if strategy == RoutingStrategy.FALLBACK_CHAIN:
+        if strategy is RoutingStrategy.FALLBACK_CHAIN:
             return self._fallback_chain(domain)
 
         return self._capability_match(domain)

@@ -134,9 +134,9 @@ class IntermittentFailurePattern:
             "triggers": [f"{c['condition']}={c['value']} ({c['ratio']:.0%})" for c in strong_conditions],
             "recommendation": (
                 "reproduce_with_exact_conditions"
-                if confidence == PatternConfidence.HIGH
+                if confidence is PatternConfidence.HIGH
                 else "increase_context_capture_depth"
-                if confidence == PatternConfidence.LOW
+                if confidence is PatternConfidence.LOW
                 else "investigate_conditional_root_cause"
             ),
         }

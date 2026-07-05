@@ -147,7 +147,7 @@ class RBACGuard:
 
         # READER 不能写
         role = getattr(agent, "role", None)
-        if role == AgentRole.READER and operation.startswith("write:"):
+        if role is AgentRole.READER and operation.startswith("write:"):
             return PermissionResult(
                 decision=PermissionDecision.BLOCKED,
                 reason="READER cannot write",
@@ -156,7 +156,7 @@ class RBACGuard:
 
         # L0_INTERN 不能修改蓝图
         maturity = getattr(agent, "maturity", None)
-        if maturity == MaturityLevel.L0_INTERN and operation.startswith("modify:"):
+        if maturity is MaturityLevel.L0_INTERN and operation.startswith("modify:"):
             return PermissionResult(
                 decision=PermissionDecision.BLOCKED,
                 reason=f"INTERN cannot modify: {operation}",
@@ -239,11 +239,11 @@ class RBACGuard:
 
     def is_blocked(self, result: PermissionResult) -> bool:
         """判断结果是否为 BLOCKED."""
-        return result.decision == PermissionDecision.BLOCKED
+        return result.decision is PermissionDecision.BLOCKED
 
     def is_auto_guard(self, result: PermissionResult) -> bool:
         """判断结果是否为 AUTO_GUARD."""
-        return result.decision == PermissionDecision.AUTO_GUARD
+        return result.decision is PermissionDecision.AUTO_GUARD
 
 
 __all__ = [

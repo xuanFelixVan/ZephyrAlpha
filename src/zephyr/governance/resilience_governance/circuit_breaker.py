@@ -71,13 +71,13 @@ class CircuitBreaker:
     def call(self) -> bool:
         with self._lock:
             self._maybe_transition()
-            if self._state == CircuitState.OPEN:
+            if self._state is CircuitState.OPEN:
                 return False
             return True
 
     def record_success(self) -> None:
         with self._lock:
-            if self._state == CircuitState.HALF_OPEN:
+            if self._state is CircuitState.HALF_OPEN:
                 self._success_count += 1
                 if self._success_count >= self.config.success_threshold:
                     self._state = CircuitState.CLOSED
@@ -89,7 +89,7 @@ class CircuitBreaker:
             self._failure_count += 1
             self._last_failure_time = time.time()
             self._consume_error_budget()
-            if self._failure_count >= self.config.failure_threshold or self._state == CircuitState.HALF_OPEN:
+            if self._failure_count >= self.config.failure_threshold or self._state is CircuitState.HALF_OPEN:
                 self._state = CircuitState.OPEN
 
     def force_open(self) -> None:
@@ -103,7 +103,7 @@ class CircuitBreaker:
             self._success_count = 0
 
     def _maybe_transition(self) -> None:
-        if self._state != CircuitState.OPEN:
+        if self._state is not CircuitState.OPEN:
             return
         if self._last_failure_time == 0.0:
             return

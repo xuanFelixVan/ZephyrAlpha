@@ -150,9 +150,9 @@ class SelfAPIThrottleDefense:
             "active_targets": len(self.target_tokens),
             "recommendation": (
                 "emergency_throttle_all_non_critical"
-                if self.throttle_state == ThrottleState.SATURATED
+                if self.throttle_state is ThrottleState.SATURATED
                 else "reduce_non_critical_actions"
-                if self.throttle_state == ThrottleState.THROTTLING
+                if self.throttle_state is ThrottleState.THROTTLING
                 else "continue"
             ),
         }

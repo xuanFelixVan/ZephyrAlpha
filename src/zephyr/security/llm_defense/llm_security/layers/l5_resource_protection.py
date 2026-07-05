@@ -172,7 +172,7 @@ class LLMCostCircuitBreaker:
             self._opened_at = time.time()
 
     def allow_request(self) -> bool:
-        return self.state != CircuitState.OPEN
+        return self.state is not CircuitState.OPEN
 
     def reset(self) -> None:
         self._failures = 0

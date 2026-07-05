@@ -267,9 +267,9 @@ class SLOContractEngine:
         tier = worst.tier
         policy = TIER_POLICY[tier]
 
-        if tier == BudgetTier.HEALTHY or tier == BudgetTier.WARNING:
+        if tier is BudgetTier.HEALTHY or tier is BudgetTier.WARNING:
             level_offset = 0
-        elif tier == BudgetTier.CRITICAL:
+        elif tier is BudgetTier.CRITICAL:
             level_offset = 1
         else:
             level_offset = 4
@@ -287,9 +287,9 @@ class SLOContractEngine:
     def should_escalate(self, sli_name: SLIName, value: float) -> tuple[bool, str]:
         reading = self.record(sli_name, value)
         budget = self.get_budget(sli_name)
-        if budget.tier == BudgetTier.EXHAUSTED:
+        if budget.tier is BudgetTier.EXHAUSTED:
             return True, f"Error budget exhausted for {sli_name.value}"
-        if budget.tier == BudgetTier.CRITICAL and not reading.within_slo:
+        if budget.tier is BudgetTier.CRITICAL and not reading.within_slo:
             return True, f"Critical budget + SLO violation for {sli_name.value}"
         if not reading.within_slo and budget.burn_rate_per_hour > 5.0:
             return True, f"High burn rate ({budget.burn_rate_per_hour:.1f}/h) for {sli_name.value}"

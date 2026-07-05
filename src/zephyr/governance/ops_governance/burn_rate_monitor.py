@@ -127,7 +127,7 @@ class BurnRateMonitor:
 
     def generate_alert(self, policy: BudgetPolicy) -> BudgetAlert | None:
         sev = self.get_severity()
-        if sev == BurnSeverity.NORMAL:
+        if sev is BurnSeverity.NORMAL:
             return None
 
         level_map: dict[BurnSeverity, BudgetLevel] = {

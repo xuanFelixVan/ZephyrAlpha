@@ -54,7 +54,7 @@ class ToilQuantification:
     def record_action(self, action_class: ActionClass) -> float:
         now = time.time()
         self.total_actions += 1
-        if action_class == ActionClass.MANUAL_REQUIRED:
+        if action_class is ActionClass.MANUAL_REQUIRED:
             self.manual_actions += 1
 
         self.action_history.append(

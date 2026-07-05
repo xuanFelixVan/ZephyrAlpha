@@ -365,7 +365,7 @@ def main() -> None:
                     print(f"    - {issue}")
             else:
                 print("  No issues.")
-        if report.overall == LBStatus.CORRUPT:
+        if report.overall is LBStatus.CORRUPT:
             sys.exit(1)
         return
 

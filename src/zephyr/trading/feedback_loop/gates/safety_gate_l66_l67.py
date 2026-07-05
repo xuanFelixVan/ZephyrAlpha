@@ -56,7 +56,7 @@ class SafetyGateL66L67:
         return GateResult("L66", GateVerdict.PASS, GateType.HARD, "Financial prudence checks passed")
 
     def _l67(self, ctx: ActionContext, prior: list[GateResult]) -> GateResult:
-        if any(r.verdict == GateVerdict.REJECT for r in prior):
+        if any(r.verdict is GateVerdict.REJECT for r in prior):
             return GateResult("L67", GateVerdict.REJECT, GateType.HARD, "Full pipeline: REJECT upstream")
         return GateResult("L67", GateVerdict.PASS, GateType.HARD, "Full 67-layer pipeline: ALL PASS")
 

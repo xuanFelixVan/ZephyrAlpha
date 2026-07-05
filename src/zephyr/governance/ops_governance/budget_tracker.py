@@ -165,9 +165,9 @@ class BudgetTracker:
             summary.total_cost_usd += snap.cost_usd
             summary.total_wall_time += snap.wall_time_seconds
             summary.by_scope[f"{scope.value}:{sid}"] = snap
-            if scope == TrackerScope.REQUEST:
+            if scope is TrackerScope.REQUEST:
                 summary.request_count += 1
-            elif scope == TrackerScope.SESSION:
+            elif scope is TrackerScope.SESSION:
                 summary.active_sessions += 1
         summary.turn_count = len(self._turns)
         summary.dimension_usage = {

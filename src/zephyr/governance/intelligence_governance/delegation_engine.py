@@ -207,11 +207,11 @@ class DelegationEngine:
         if not available:
             return None
 
-        if strategy == DelegationStrategy.EXPERTISE_MATCH:
+        if strategy is DelegationStrategy.EXPERTISE_MATCH:
             return self._select_expertise(event, available)
-        elif strategy == DelegationStrategy.ROUND_ROBIN:
+        elif strategy is DelegationStrategy.ROUND_ROBIN:
             return self._select_round_robin(available)
-        elif strategy == DelegationStrategy.PRIORITY_QUEUE:
+        elif strategy is DelegationStrategy.PRIORITY_QUEUE:
             return self._select_least_loaded(available)
         else:
             return self._select_least_loaded(available)

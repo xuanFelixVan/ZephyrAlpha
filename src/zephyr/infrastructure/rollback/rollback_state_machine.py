@@ -127,7 +127,7 @@ class RollbackStateMachine:
 
     def is_current_reversible(self) -> bool:
         step = self.current_step
-        return step.step_type == StepType.REVERSIBLE if step else True
+        return step.step_type is StepType.REVERSIBLE if step else True
 
     def is_complete(self) -> bool:
         return self._current_step_idx >= len(self._steps)

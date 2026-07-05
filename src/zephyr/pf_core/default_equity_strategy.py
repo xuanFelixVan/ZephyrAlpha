@@ -95,9 +95,9 @@ class DefaultEquityStrategy(StrategyBase):
             _logger.warning("Universe is empty, no orders generated")
             return []
 
-        if self._mode == RebalanceMode.EQUAL_WEIGHT:
+        if self._mode is RebalanceMode.EQUAL_WEIGHT:
             weights = self._equal_weight_alloc()
-        elif self._mode == RebalanceMode.SIGNAL_WEIGHT:
+        elif self._mode is RebalanceMode.SIGNAL_WEIGHT:
             weights = self._signal_weight_alloc()
         else:
             weights = self._equal_weight_alloc()

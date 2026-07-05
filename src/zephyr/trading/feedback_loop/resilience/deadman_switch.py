@@ -47,7 +47,7 @@ class DeadmanSwitch:
     def heartbeat(self) -> DeadmanState:
         self.last_beat = time.time()
         self.missed_count = 0
-        if self.state == DeadmanState.WARNING:
+        if self.state is DeadmanState.WARNING:
             self.state = DeadmanState.ALIVE
         return self.state
 
@@ -64,4 +64,4 @@ class DeadmanSwitch:
 
     @property
     def is_locked(self) -> bool:
-        return self.state == DeadmanState.LOCKED
+        return self.state is DeadmanState.LOCKED

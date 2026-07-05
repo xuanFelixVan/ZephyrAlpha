@@ -106,15 +106,15 @@ class HumanAnomalyFloodDetector:
             "flood_level": level.value,
             "anomalies_per_hour": hourly_rate,
             "dismissed_count": dismissed_count,
-            "critical_buried": critical_among_flood > 0 and level != FloodLevel.NORMAL,
+            "critical_buried": critical_among_flood > 0 and level is not FloodLevel.NORMAL,
             "auto_triage_active": self.auto_triage_active,
             "recommendation": (
                 "auto_triage_p3_p4_immediately"
-                if level == FloodLevel.DROWNING
+                if level is FloodLevel.DROWNING
                 else "aggregate_p2_into_digest"
-                if level == FloodLevel.FLOOD
+                if level is FloodLevel.FLOOD
                 else "reduce_surface_frequency"
-                if level == FloodLevel.ELEVATED
+                if level is FloodLevel.ELEVATED
                 else "continue"
             ),
         }

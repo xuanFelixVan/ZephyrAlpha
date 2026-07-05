@@ -203,7 +203,7 @@ class BlueprintWatcher:
     def _on_blueprint_change(self, event: FileChangeEvent) -> None:
         if event.suffix != ".md":
             return
-        if event.event_type == FileChangeType.DELETED:
+        if event.event_type is FileChangeType.DELETED:
             return
         if not self._is_blueprint(event.path):
             return

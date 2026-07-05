@@ -1031,7 +1031,7 @@ class TaskRepository:
         self._validate_post_sync_extensions(task)
         with self._write_tx() as conn:
             self._check_files_in_scope_conflict(conn, task)
-            if task.priority == Priority.P0:
+            if task.priority is Priority.P0:
                 p0_count = self._count_p0_tasks(conn)
                 if p0_count >= 5:
                     raise P0InflationFrozenError(
@@ -2339,7 +2339,7 @@ class TaskRepository:
             return None
 
         triggers = []
-        is_p0 = task.priority == Priority.P0
+        is_p0 = task.priority is Priority.P0
 
         if is_p0 and task.block_sessions_count >= 2:
             triggers.append(f"P0 任务已 BLOCKED {task.block_sessions_count} 次（≥2）")

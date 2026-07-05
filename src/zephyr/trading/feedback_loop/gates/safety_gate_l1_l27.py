@@ -114,7 +114,7 @@ class SafetyGatePipeline:
         for gate_name, gate_type in self.gates:
             result = self._evaluate_gate(gate_name, gate_type, ctx)
             results.append(result)
-            if gate_type == GateType.HARD and result.verdict == GateVerdict.REJECT:
+            if gate_type is GateType.HARD and result.verdict is GateVerdict.REJECT:
                 break
         return results
 
@@ -279,10 +279,10 @@ class SafetyGatePipeline:
 
     @property
     def is_blocked(self) -> bool:
-        return any(r.verdict == GateVerdict.REJECT for r in self.results)
+        return any(r.verdict is GateVerdict.REJECT for r in self.results)
 
     @property
     def reject_trace(self) -> list[str]:
-        return [f"{r.layer}({r.gate_type.value}): {r.reason}" for r in self.results if r.verdict == GateVerdict.REJECT]
+        return [f"{r.layer}({r.gate_type.value}): {r.reason}" for r in self.results if r.verdict is GateVerdict.REJECT]
 
     results: list[GateResult] = field(default_factory=list)

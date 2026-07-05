@@ -94,9 +94,9 @@ class A2AVoting:
         for agent_id, (action, weight) in box.items():
             total += weight
             votes.append({"agent_id": agent_id, "action": action.value, "weight": weight})
-            if action == VoteAction.APPROVE:
+            if action is VoteAction.APPROVE:
                 approve += weight
-            elif action == VoteAction.REJECT:
+            elif action is VoteAction.REJECT:
                 reject += weight
             else:
                 abstain += weight

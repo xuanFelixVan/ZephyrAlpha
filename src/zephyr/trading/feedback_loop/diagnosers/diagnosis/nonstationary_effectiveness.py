@@ -62,7 +62,7 @@ class NonstationaryEffectiveness:
         if len(self.rolling_window) >= self.window_size:
             drop = (self.baseline_score - self.current_score) / max(self.baseline_score, 0.01)
             if drop > self.degradation_threshold:
-                if self.state != EffectivenessState.INEFFECTIVE:
+                if self.state is not EffectivenessState.INEFFECTIVE:
                     import time
 
                     self.degradation_started_at = time.time()
@@ -75,4 +75,4 @@ class NonstationaryEffectiveness:
         return self.state
 
     def needs_recalibration(self) -> bool:
-        return self.state == EffectivenessState.INEFFECTIVE
+        return self.state is EffectivenessState.INEFFECTIVE

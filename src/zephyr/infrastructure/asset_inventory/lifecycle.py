@@ -133,7 +133,7 @@ class Lifecycle:
         return None
 
     def _check_zero_ref(self, asset: ClassifiedAsset, index: UnifiedAssetIndex) -> AssetLifecycleEvent | None:
-        if asset.priority == Priority.P0:
+        if asset.priority is Priority.P0:
             return None
         if asset.status in (AssetStatus.DEPRECATED, AssetStatus.ARCHIVED):
             return None

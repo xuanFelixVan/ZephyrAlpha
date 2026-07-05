@@ -113,7 +113,7 @@ class FlappingDetector:
 
         return {
             "alert_id": alert_id,
-            "flapping": severity != FlappingSeverity.NONE,
+            "flapping": severity is not FlappingSeverity.NONE,
             "severity": severity.value,
             "changes_per_hour": state_changes,
         }

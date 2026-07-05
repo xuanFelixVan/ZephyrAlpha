@@ -129,9 +129,9 @@ class AuditReport(BaseModel):
     @model_validator(mode="after")
     def sync_counts(self) -> Self:
         if self.findings:
-            p0 = sum(1 for f in self.findings if f.severity == AuditSeverity.P0)
-            p1 = sum(1 for f in self.findings if f.severity == AuditSeverity.P1)
-            p2 = sum(1 for f in self.findings if f.severity == AuditSeverity.P2)
+            p0 = sum(1 for f in self.findings if f.severity is AuditSeverity.P0)
+            p1 = sum(1 for f in self.findings if f.severity is AuditSeverity.P1)
+            p2 = sum(1 for f in self.findings if f.severity is AuditSeverity.P2)
             object.__setattr__(self, "p0_count", p0)
             object.__setattr__(self, "p1_count", p1)
             object.__setattr__(self, "p2_count", p2)

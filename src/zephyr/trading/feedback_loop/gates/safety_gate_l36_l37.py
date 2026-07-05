@@ -35,7 +35,7 @@ class SafetyGateL36L37:
     def evaluate(self, ctx: ActionContext) -> list[GateResult]:
         results: list[GateResult] = []
         results.append(self._l36_ai_code_integrity(ctx))
-        if results[-1].verdict != GateVerdict.REJECT:
+        if results[-1].verdict is not GateVerdict.REJECT:
             results.append(self._l37_vibe_maintainability(ctx))
         return results
 

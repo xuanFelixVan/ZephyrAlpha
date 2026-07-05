@@ -65,12 +65,12 @@ class GenesisState:
     @property
     def bootstrapped(self) -> bool:
         """RBAC系统是否已完成启动引导."""
-        return self.phase == GenesisPhase.COMPLETED and self.success
+        return self.phase is GenesisPhase.COMPLETED and self.success
 
     @property
     def is_ready(self) -> bool:
         """RBAC系统是否就绪."""
-        return self.phase == GenesisPhase.COMPLETED and self.success
+        return self.phase is GenesisPhase.COMPLETED and self.success
 
     @property
     def progress(self) -> float:

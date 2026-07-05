@@ -293,15 +293,15 @@ class ObservabilityLayer:
 
     def collect_metrics(self) -> DashboardMetrics:
         total = len(self.events)
-        critical = sum(1 for e in self.events if e.severity == AlertSeverity.CRITICAL)
-        high = sum(1 for e in self.events if e.severity == AlertSeverity.HIGH)
-        medium = sum(1 for e in self.events if e.severity == AlertSeverity.WARNING)
+        critical = sum(1 for e in self.events if e.severity is AlertSeverity.CRITICAL)
+        high = sum(1 for e in self.events if e.severity is AlertSeverity.HIGH)
+        medium = sum(1 for e in self.events if e.severity is AlertSeverity.WARNING)
         low = sum(1 for e in self.events if e.severity in (AlertSeverity.LOW, AlertSeverity.INFO, AlertSeverity.DEBUG))
         blocked = sum(
             1
             for e in self.events
             if (
-                e.event_type == SecurityEventType.PROMPT_BLOCKED
+                e.event_type is SecurityEventType.PROMPT_BLOCKED
                 if isinstance(e.event_type, SecurityEventType)
                 else False
             )

@@ -106,9 +106,9 @@ class SilentCorruptionDetector:
             "corruption_rate": round(corruption_rate, 6),
             "recommendation": (
                 "quarantine_sink_and_investigate_hardware"
-                if severity == CorruptionSeverity.SYSTEMIC
+                if severity is CorruptionSeverity.SYSTEMIC
                 else "trigger_integrity_scan"
-                if severity == CorruptionSeverity.PATTERN
+                if severity is CorruptionSeverity.PATTERN
                 else "log_and_monitor"
                 if not valid
                 else "continue"

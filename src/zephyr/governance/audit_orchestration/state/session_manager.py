@@ -145,9 +145,9 @@ class SessionManager:
 
         elapsed = (datetime.now(_UTC) - changed).total_seconds() / 3600
         if elapsed > max_hours:
-            if session.state == SessionState.ACTIVE:
+            if session.state is SessionState.ACTIVE:
                 self.transition(session_id, SessionState.PAUSED, reason="timeout_4h_active")
-            elif session.state == SessionState.PAUSED:
+            elif session.state is SessionState.PAUSED:
                 self.transition(session_id, SessionState.COMPLETED, reason="timeout_72h_paused")
 
     def transition(
@@ -176,11 +176,11 @@ class SessionManager:
             }
         )
 
-        if target == SessionState.PAUSED:
+        if target is SessionState.PAUSED:
             session.paused_at = now
-        elif target == SessionState.COMPLETED:
+        elif target is SessionState.COMPLETED:
             session.completed_at = now
-        elif target == SessionState.ARCHIVED:
+        elif target is SessionState.ARCHIVED:
             session.archived_at = now
 
         _logger.info("Session %s: %s → %s (reason=%s)", session_id, current.value, target.value, reason)
@@ -198,7 +198,7 @@ class SessionManager:
                 self.transition(session_id, SessionState.COMPLETED, reason="unrecoverable_error")
             session.error_info["resolution"] = "manual_intervention_required"
         elif exception_type in {"encoding_error", "dependency_not_found", "token_budget_exceeded"}:
-            if session.state == SessionState.ACTIVE:
+            if session.state is SessionState.ACTIVE:
                 self.transition(session_id, SessionState.PAUSED, reason=exception_type)
             session.error_info["recovery"] = "user_intervention_required"
         else:
@@ -221,7 +221,7 @@ class SessionManager:
                 f"Invalid transition: {current.value} → {target.value}. Allowed from {current.value}: {sorted(allowed)}"
             )
 
-        if target == SessionState.ACTIVE and current == SessionState.COMPLETED:
+        if target is SessionState.ACTIVE and current is SessionState.COMPLETED:
             raise SessionError("Transition from completed to active is forbidden. Start a new session instead.")
 
     def validate_invariants(self, session_id: str) -> list[str]:
@@ -232,7 +232,7 @@ class SessionManager:
         if duplicate_ids > 1:
             violations.append("Each session must have a unique session_id")
 
-        if session.state == SessionState.ARCHIVED:
+        if session.state is SessionState.ARCHIVED:
             violations.append("Transition from archived to any other state is forbidden")
 
         if session.state_log:

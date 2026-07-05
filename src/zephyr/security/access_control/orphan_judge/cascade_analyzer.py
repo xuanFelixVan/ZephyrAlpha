@@ -80,7 +80,7 @@ class CascadeAnalyzer:
         indirect = self._find_indirect_dependents(direct, module_path)
 
         risk = self._assess_risk(direct, indirect)
-        safe = risk == CascadeRisk.LOW and len(indirect) == 0
+        safe = risk is CascadeRisk.LOW and len(indirect) == 0
 
         return CascadeResult(
             path=str(resolved),

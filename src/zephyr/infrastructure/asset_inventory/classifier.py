@@ -97,7 +97,7 @@ class Classifier:
             asset = self._classify_one(entry)
             assets.append(asset)
 
-        unknown = [a for a in assets if a.asset_type == AssetType.UNKNOWN]
+        unknown = [a for a in assets if a.asset_type is AssetType.UNKNOWN]
         unknown_pct = (len(unknown) / len(assets) * 100) if assets else 0.0
 
         by_type: dict[str, int] = dict(Counter(a.asset_type.value for a in assets))
@@ -181,7 +181,7 @@ class Classifier:
             size_bytes=entry.size_bytes,
             mtime_utc=entry.mtime_utc,
             sha256=entry.sha256,
-            classification_confidence=0.85 if asset_type != AssetType.UNKNOWN else 0.3,
+            classification_confidence=0.85 if asset_type is not AssetType.UNKNOWN else 0.3,
         )
 
     def main(self) -> None:

@@ -34,7 +34,7 @@ class SafetyGateL40L41:
     def evaluate(self, ctx: ActionContext) -> list[GateResult]:
         results: list[GateResult] = []
         results.append(self._l40_self_integrity(ctx))
-        if results[-1].verdict != GateVerdict.REJECT:
+        if results[-1].verdict is not GateVerdict.REJECT:
             results.append(self._l41_container_immutability(ctx))
         return results
 

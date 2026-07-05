@@ -75,7 +75,7 @@ class SerializationFormatTracker:
             "size_bytes": len(content_bytes),
             "hash": fmt_hash[:16],
             "recorded_at": time.time(),
-            "pickle_protocol": pickle.HIGHEST_PROTOCOL if fmt == SerdeFormat.PICKLE else None,
+            "pickle_protocol": pickle.HIGHEST_PROTOCOL if fmt is SerdeFormat.PICKLE else None,
         }
         self.format_versions[artifact_id] = entry
 
@@ -104,7 +104,7 @@ class SerializationFormatTracker:
             )
             return {"compatibility": Compatibility.BREAKING.value, "reason": msg}
 
-        if current_fmt == SerdeFormat.PICKLE:
+        if current_fmt is SerdeFormat.PICKLE:
             if entry.get("pickle_protocol") != pickle.HIGHEST_PROTOCOL:
                 self.version_changes.append(
                     {

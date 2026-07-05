@@ -159,7 +159,7 @@ class AutoRollbackTrigger:
         return FailureCategory.SOFT
 
     def _build_decision(self, category: FailureCategory, result: AutoGuardResult) -> TriggerDecision:
-        if category == FailureCategory.HARD:
+        if category is FailureCategory.HARD:
             return TriggerDecision(
                 category=category,
                 action="ROLLBACK_IMMEDIATE",
@@ -168,7 +168,7 @@ class AutoRollbackTrigger:
                 retry_allowed=False,
                 forward_fix_allowed=False,
             )
-        elif category == FailureCategory.SOFT:
+        elif category is FailureCategory.SOFT:
             return TriggerDecision(
                 category=category,
                 action="FORWARD_FIX_PREFERRED",

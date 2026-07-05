@@ -104,7 +104,7 @@ class SelfHealth:
                 level_name = r.name
                 if "CRITICAL" in level_name:
                     worst = HealthLevel.CRITICAL
-                elif worst != HealthLevel.CRITICAL:
+                elif worst is not HealthLevel.CRITICAL:
                     worst = HealthLevel.DEGRADED
         status = HealthStatus(
             level=worst,

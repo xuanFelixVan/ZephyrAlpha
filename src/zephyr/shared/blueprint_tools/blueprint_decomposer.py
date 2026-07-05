@@ -595,13 +595,13 @@ class BlueprintDecomposer:
         path.write_text(f"---\n{header}---\n\n{warning_banner}{body}", encoding="utf-8")
 
     def check_gate(self, gate_id: GateLevel, task: TaskCard) -> bool:
-        if gate_id == GateLevel.G0:
+        if gate_id is GateLevel.G0:
             return bool(
                 task.source_blueprint
                 and task.description
                 and len(task.description.strip()) >= 10
                 and task.priority is not None
             )
-        if gate_id == GateLevel.G7:
+        if gate_id is GateLevel.G7:
             return task.verification_status == "verified" and all(f.resolved for f in task.audit_findings)
         return True

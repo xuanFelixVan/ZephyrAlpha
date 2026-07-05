@@ -102,7 +102,7 @@ class EscalationRBACBridge:
                 operation=operation,
                 target_path=target_path or None,
             )
-            if guard_result.decision == GuardDecision.BLOCKED:
+            if guard_result.decision is GuardDecision.BLOCKED:
                 return RBACCheckResult(
                     passed=False,
                     decision="BLOCK",

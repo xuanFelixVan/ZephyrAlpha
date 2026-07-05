@@ -179,7 +179,7 @@ class CircuitBreakerCheck:
         """返回 True 表示熔断器当前处于 OPEN 状态。"""
         manager = CBGManager(self.db_path)
         record = manager.get_state(self.caller_module, self.target_module)
-        return record is not None and record.state == CircuitBreakerState.OPEN
+        return record is not None and record.state is CircuitBreakerState.OPEN
 
     def violation_message(self) -> str:
         """返回熔断触发的可读违规信息（含 caller / target 标识）。"""
@@ -249,7 +249,7 @@ class CBGManager:
         记录不存在时视为 CLOSED → 返回 False。
         """
         record = self.get_state(caller, target)
-        return record is not None and record.state == CircuitBreakerState.OPEN
+        return record is not None and record.state is CircuitBreakerState.OPEN
 
     def record_failure(
         self,
@@ -297,7 +297,7 @@ class CBGManager:
                         new_state.value,
                         new_count,
                         now,
-                        now if new_state == CircuitBreakerState.OPEN else None,
+                        now if new_state is CircuitBreakerState.OPEN else None,
                         reason,
                         now,
                         now,
@@ -311,7 +311,7 @@ class CBGManager:
             new_count = record.failure_count + 1
             new_state = CircuitBreakerState.OPEN if new_count >= threshold else CircuitBreakerState.CLOSED
             opened_at = record.opened_at
-            if new_state == CircuitBreakerState.OPEN and record.state == CircuitBreakerState.CLOSED:
+            if new_state is CircuitBreakerState.OPEN and record.state is CircuitBreakerState.CLOSED:
                 opened_at = now
 
             self._conn.execute("BEGIN IMMEDIATE")

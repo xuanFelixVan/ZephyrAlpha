@@ -115,11 +115,11 @@ class ResultMerge:
         if not results:
             return {"merged": True, "results": []}
 
-        if self.strategy == MergeStrategy.VOTE:
+        if self.strategy is MergeStrategy.VOTE:
             return self._merge_vote(results)
-        elif self.strategy == MergeStrategy.CHAIN:
+        elif self.strategy is MergeStrategy.CHAIN:
             return self._merge_chain(results)
-        elif self.strategy == MergeStrategy.CONSENSUS:
+        elif self.strategy is MergeStrategy.CONSENSUS:
             return self._merge_consensus(results)
         return {"merged": True, "results": results}
 

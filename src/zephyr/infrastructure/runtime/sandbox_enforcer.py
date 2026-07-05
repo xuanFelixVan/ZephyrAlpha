@@ -69,7 +69,7 @@ class SandboxEnforcer:
         return self._marker_path.exists()
 
     def enforce(self) -> SandboxBreachResult:
-        if self._mode == SandboxMode.NONE:
+        if self._mode is SandboxMode.NONE:
             return SandboxBreachResult(
                 breached=False,
                 reason="Sandbox mode disabled",
@@ -106,7 +106,7 @@ class SandboxEnforcer:
 
     def status(self) -> SandboxStatus:
         return SandboxStatus(
-            enforced=self._mode != SandboxMode.NONE,
+            enforced=self._mode is not SandboxMode.NONE,
             mode=self._mode,
             in_sandbox=self.is_in_sandbox(),
             details=[f"Sandbox marker: {self._marker_path}"],
@@ -114,7 +114,7 @@ class SandboxEnforcer:
 
     def validate_file_access(self, file_path: Path) -> bool:
         if not self.is_in_sandbox():
-            return self._mode == SandboxMode.NONE
+            return self._mode is SandboxMode.NONE
         try:
             resolved = file_path.resolve()
             allowed_roots = [

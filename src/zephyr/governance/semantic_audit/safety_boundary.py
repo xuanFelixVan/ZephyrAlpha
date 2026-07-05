@@ -61,7 +61,7 @@ class SafetyBoundary:
         for t in triggers:
             decision = self._classify(t)
             results.append(FilteredTrigger(t, decision))
-            if decision != SafetyDecision.PROCEED:
+            if decision is not SafetyDecision.PROCEED:
                 logger.debug(
                     "Trigger %s:%s → %s (certainty=%.2f)",
                     t.trigger_type,

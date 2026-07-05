@@ -253,7 +253,7 @@ class BudgetState(BaseModel):
 
     def can_afford(self, risk_level: RiskLevel) -> bool:
         """L/M 级在日度超预算时返回 False；H 级始终强制执行（在外层记告警）。"""
-        if risk_level == RiskLevel.H:
+        if risk_level is RiskLevel.H:
             return True
         return self.daily_spent_usd < self.daily_budget_usd
 
@@ -471,15 +471,15 @@ class HallucinationDetector:
 
         if (
             (source_stage in ("semantic", "llm") and (intent_confidence is None or intent_confidence < 0.90))
-            or mcp_safety_level == RiskLevel.H
+            or mcp_safety_level is RiskLevel.H
             or requires_human
             or frozen_asset_touch
             or historical_recurrence
-            or risk_level == RiskLevel.H
+            or risk_level is RiskLevel.H
         ):
             return TriggerLevel.L1_WHITELIST
 
-        if target_is_doc or mcp_safety_level == RiskLevel.M or risk_level == RiskLevel.M:
+        if target_is_doc or mcp_safety_level is RiskLevel.M or risk_level is RiskLevel.M:
             return TriggerLevel.L2_GREY
 
         return TriggerLevel.L2_GREY
@@ -520,7 +520,7 @@ class HallucinationDetector:
         started_at = time.perf_counter()
         self._budget.reset_if_window_changed(self._now())
 
-        if trigger_level == TriggerLevel.L3_BLACKLIST:
+        if trigger_level is TriggerLevel.L3_BLACKLIST:
             return self._skip_result(claim, rl, reason="L3_BLACKLIST", started_at=started_at)
 
         if not self._budget.can_afford(rl):
@@ -577,9 +577,9 @@ class HallucinationDetector:
         is_hallu_pre = inconsistency_score > bad_lower
         is_midband = ok_upper < inconsistency_score <= bad_lower
 
-        if is_midband and risk_level == RiskLevel.H:
+        if is_midband and risk_level is RiskLevel.H:
             requires_human = True
-        elif (is_midband and risk_level == RiskLevel.M) or (is_hallu_pre and risk_level == RiskLevel.H):
+        elif (is_midband and risk_level is RiskLevel.M) or (is_hallu_pre and risk_level is RiskLevel.H):
             corrected, final_check_confidence, step4_cost = self._step4_final_check(baseline_answer, evidence)
             total_cost += step4_cost
 
@@ -594,7 +594,7 @@ class HallucinationDetector:
         if final_check_confidence is not None:
             confidence = max(confidence, final_check_confidence * 0.85)
 
-        if risk_level == RiskLevel.H and is_hallucination:
+        if risk_level is RiskLevel.H and is_hallucination:
             requires_human = True
 
         latency_ms = int((time.perf_counter() - started_at) * 1000)
@@ -736,8 +736,8 @@ class HallucinationDetector:
         """单模型降级（仅一方可达）：keyword 规则 + 固定 confidence=0.5。"""
         kw_evidence = self._collect_keyword_evidence(claim, handoff_approved)
         inconsistency = 0.55 if kw_evidence else 0.30
-        is_hallu = bool(kw_evidence) and risk_level != RiskLevel.L
-        requires_human = risk_level == RiskLevel.H
+        is_hallu = bool(kw_evidence) and risk_level is not RiskLevel.L
+        requires_human = risk_level is RiskLevel.H
         latency_ms = int((time.perf_counter() - started_at) * 1000)
         return HallucinationResult(
             claim=claim,
@@ -770,7 +770,7 @@ class HallucinationDetector:
         is_hallu = bool(kw_evidence)
         inconsistency = 0.60 if is_hallu else 0.0
         confidence = 0.4 if is_hallu else 0.7
-        requires_human = is_hallu and risk_level == RiskLevel.H
+        requires_human = is_hallu and risk_level is RiskLevel.H
         latency_ms = int((time.perf_counter() - started_at) * 1000)
         return HallucinationResult(
             claim=claim,

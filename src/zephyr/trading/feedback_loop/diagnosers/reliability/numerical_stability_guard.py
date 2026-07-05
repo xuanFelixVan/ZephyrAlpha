@@ -80,7 +80,7 @@ class NumericalStabilityGuard:
             classification = NumAnomaly.SUBNORMAL
             sanitized = 0.0
 
-        if classification != NumAnomaly.CLEAN:
+        if classification is not NumAnomaly.CLEAN:
             if metric_name not in self.quarantine:
                 self.quarantine[metric_name] = []
             self.quarantine[metric_name].append(

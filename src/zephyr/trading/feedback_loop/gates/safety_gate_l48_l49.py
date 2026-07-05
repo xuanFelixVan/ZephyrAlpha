@@ -34,7 +34,7 @@ class SafetyGateL48L49:
     def evaluate(self, ctx: ActionContext) -> list[GateResult]:
         results: list[GateResult] = []
         results.append(self._l48_supply_chain_governance(ctx))
-        if results[-1].verdict != GateVerdict.REJECT:
+        if results[-1].verdict is not GateVerdict.REJECT:
             results.append(self._l49_cognitive_safety(ctx))
         return results
 

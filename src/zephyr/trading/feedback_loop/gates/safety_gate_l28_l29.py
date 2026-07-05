@@ -37,7 +37,7 @@ class SafetyGateL28L29:
     def evaluate(self, ctx: ActionContext) -> list[GateResult]:
         results: list[GateResult] = []
         results.append(self._l28_dr_readiness(ctx))
-        if results[-1].verdict != GateVerdict.REJECT:
+        if results[-1].verdict is not GateVerdict.REJECT:
             results.append(self._l29_supply_chain(ctx))
         return results
 

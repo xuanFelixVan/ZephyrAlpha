@@ -112,7 +112,7 @@ class RedTeamScanner:
         payloads_data = self._load_payloads()
         payloads = payloads_data.get("payloads", [])
 
-        if self._mode == ScanMode.QUICK:
+        if self._mode is ScanMode.QUICK:
             payloads = self._sample_payloads(payloads, max_per_category=3)
 
         total_payloads = len(payloads)
@@ -124,7 +124,7 @@ class RedTeamScanner:
             variant_list = entry.get("variants", [])
             if not variant_list:
                 continue
-            subset = variant_list[:2] if self._mode == ScanMode.QUICK else variant_list
+            subset = variant_list[:2] if self._mode is ScanMode.QUICK else variant_list
             for variant in subset:
                 variants_to_scan.append((entry, variant))
 
@@ -161,7 +161,7 @@ class RedTeamScanner:
             self._results.extend(input_results)
             self._results.extend(output_results)
 
-        if self._target == ScanTarget.BOTH:
+        if self._target is ScanTarget.BOTH:
             total_scanned = total_variants * 2
 
         self._completed_at = time.time()

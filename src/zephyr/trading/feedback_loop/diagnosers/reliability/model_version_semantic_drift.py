@@ -112,7 +112,7 @@ class ModelVersionSemanticDrift:
         else:
             severity = DriftSeverity.NONE
 
-        if severity != DriftSeverity.NONE:
+        if severity is not DriftSeverity.NONE:
             self.drift_events.append(
                 {
                     "ts": time.time(),
@@ -134,9 +134,9 @@ class ModelVersionSemanticDrift:
             "current_mean": round(new_mean, 4),
             "recommendation": (
                 "rollback_model_version"
-                if severity == DriftSeverity.BREAKING
+                if severity is DriftSeverity.BREAKING
                 else "increase_benchmark_frequency"
-                if severity == DriftSeverity.SIGNIFICANT
+                if severity is DriftSeverity.SIGNIFICANT
                 else "continue_monitoring"
             ),
         }

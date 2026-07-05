@@ -56,7 +56,7 @@ class AutoFixer:
             return False
         if blast_radius > self.params.blast_radius:
             return False
-        if self.params.level == FixLevel.COMPLEX and similarity < 0.98:
+        if self.params.level is FixLevel.COMPLEX and similarity < 0.98:
             return False
         return True
 

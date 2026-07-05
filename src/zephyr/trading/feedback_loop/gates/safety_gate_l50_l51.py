@@ -67,6 +67,6 @@ class SafetyGateL50L55:
         return GateResult("L54", GateVerdict.PASS, GateType.HARD)
 
     def _l55_final(self, ctx: ActionContext, prior: list[GateResult]) -> GateResult:
-        if any(r.verdict == GateVerdict.REJECT and r.layer in ("L52", "L53", "L54") for r in prior):
+        if any(r.verdict is GateVerdict.REJECT and r.layer in ("L52", "L53", "L54") for r in prior):
             return GateResult("L55", GateVerdict.REJECT, GateType.HARD, "Integrity chain broken upstream")
         return GateResult("L55", GateVerdict.PASS, GateType.HARD)

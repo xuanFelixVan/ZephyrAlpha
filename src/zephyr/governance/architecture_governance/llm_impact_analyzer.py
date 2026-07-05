@@ -145,7 +145,7 @@ class LLMImpactAnalyzer:
         recommendation = "safe_to_proceed"
         if risk_level in (RiskLevel.P0_CRITICAL, RiskLevel.P1_HIGH):
             recommendation = "requires_manual_review"
-        elif risk_level == RiskLevel.P2_MEDIUM:
+        elif risk_level is RiskLevel.P2_MEDIUM:
             recommendation = "auto_rollback_if_flaky"
 
         return ImpactAnalysis(

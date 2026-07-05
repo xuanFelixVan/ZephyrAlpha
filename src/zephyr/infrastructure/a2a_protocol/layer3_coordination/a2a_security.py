@@ -68,11 +68,11 @@ class A2ASecurityReport:
 
     @property
     def blocked(self) -> bool:
-        return any(f.verdict == SecurityVerdict.MALICIOUS for f in self.findings)
+        return any(f.verdict is SecurityVerdict.MALICIOUS for f in self.findings)
 
     @property
     def suspicious_count(self) -> int:
-        return sum(1 for f in self.findings if f.verdict == SecurityVerdict.SUSPICIOUS)
+        return sum(1 for f in self.findings if f.verdict is SecurityVerdict.SUSPICIOUS)
 
 
 _PROMPT_INJECTION_PATTERNS = [
@@ -173,7 +173,7 @@ class A2ASecurityScanner:
         if self._scan_categories[ThreatCategory.DENYLIST_CONTENT]:
             findings.extend(self._scan_patterns(content, _DENYLIST_PATTERNS, ThreatCategory.DENYLIST_CONTENT))
 
-        clean = not any(f.verdict == SecurityVerdict.MALICIOUS for f in findings)
+        clean = not any(f.verdict is SecurityVerdict.MALICIOUS for f in findings)
 
         return A2ASecurityReport(
             agent_id=agent_id,

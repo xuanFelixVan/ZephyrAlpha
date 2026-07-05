@@ -245,7 +245,7 @@ class ABACGuard:
                 return (False, f"TLB limit exceeded for {agent_id} (limit={record.limit})")
 
         # 成熟度检查 — L0_INTERN 只能读
-        if maturity == MaturityLevel.L0_INTERN:
+        if maturity is MaturityLevel.L0_INTERN:
             if not operation.startswith("read:"):
                 return (False, f"Maturity L0_INTERN cannot perform: {operation}")
 
@@ -263,8 +263,8 @@ class ABACGuard:
         # 时间检查
         temporal = getattr(ctx, "temporal", TemporalCategory.NORMAL)
         if temporal in (TemporalCategory.OFF_HOURS, TemporalCategory.WEEKEND):
-            if maturity == MaturityLevel.L0_INTERN:
-                if temporal == TemporalCategory.WEEKEND:
+            if maturity is MaturityLevel.L0_INTERN:
+                if temporal is TemporalCategory.WEEKEND:
                     return (False, f"Weekend blocked for {maturity.value}")
                 return (False, f"Off-hours blocked for {maturity.value}")
             if maturity in (MaturityLevel.L1_JUNIOR, MaturityLevel.L2_REGULAR):
@@ -273,13 +273,13 @@ class ABACGuard:
                         False,
                         f"Destructive operation blocked in off-hours for {maturity.value}",
                     )
-                if maturity == MaturityLevel.L1_JUNIOR and self._is_destructive(operation):
+                if maturity is MaturityLevel.L1_JUNIOR and self._is_destructive(operation):
                     return (
                         False,
                         f"Destructive operation blocked in off-hours for {maturity.value}",
                     )
-        elif temporal == TemporalCategory.LUNCH_PEAK:
-            if maturity == MaturityLevel.L1_JUNIOR:
+        elif temporal is TemporalCategory.LUNCH_PEAK:
+            if maturity is MaturityLevel.L1_JUNIOR:
                 if operation.startswith("batch:") or operation.startswith("execute:"):
                     return (
                         False,

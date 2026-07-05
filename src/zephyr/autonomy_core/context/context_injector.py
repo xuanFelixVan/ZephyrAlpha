@@ -120,9 +120,9 @@ class ContextInjector:
         )
 
     def inject(self, query: str, mode: RetrievalMode = RetrievalMode.KEYWORD) -> InjectedContext:
-        if mode == RetrievalMode.TASK_ID:
+        if mode is RetrievalMode.TASK_ID:
             return self.inject_by_task_id(query)
-        elif mode == RetrievalMode.MODULE_ID:
+        elif mode is RetrievalMode.MODULE_ID:
             return self.inject_by_module_id(query)
         else:
             return self.inject_by_keyword(query)

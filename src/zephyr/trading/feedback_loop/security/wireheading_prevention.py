@@ -55,7 +55,7 @@ class WireheadingPrevention:
         return sig
 
     def verify_metric(self, name: str, definition: str) -> bool:
-        if self.state == WireheadState.SAFE_MODE:
+        if self.state is WireheadState.SAFE_MODE:
             return False
         expected = self.immutable_metrics.get(name)
         if not expected:

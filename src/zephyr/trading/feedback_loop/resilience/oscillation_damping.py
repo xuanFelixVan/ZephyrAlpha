@@ -72,11 +72,11 @@ class OscillationDamping:
         return self.state
 
     def is_allowed(self) -> bool:
-        if self.state == DampingState.COOLDOWN and time.time() < self.cooldown_until:
+        if self.state is DampingState.COOLDOWN and time.time() < self.cooldown_until:
             return False
         return True
 
     def remaining_cooldown(self) -> float:
-        if self.state != DampingState.COOLDOWN:
+        if self.state is not DampingState.COOLDOWN:
             return 0.0
         return max(0.0, self.cooldown_until - time.time())

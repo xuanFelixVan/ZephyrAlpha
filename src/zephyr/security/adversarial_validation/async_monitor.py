@@ -68,7 +68,7 @@ class AsyncMonitor:
         return self._state
 
     def start(self) -> None:
-        if self._state == MonitorState.RUNNING:
+        if self._state is MonitorState.RUNNING:
             return
         self._stop_event.clear()
         self._state = MonitorState.RUNNING

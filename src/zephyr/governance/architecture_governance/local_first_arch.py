@@ -34,7 +34,7 @@ class LocalFirstPolicy(BaseModel):
     zero_cloud_dep: bool = True
 
     def is_local_first(self) -> bool:
-        return self.all_compute == ComputeLocation.LOCAL and self.zero_cloud_dep
+        return self.all_compute is ComputeLocation.LOCAL and self.zero_cloud_dep
 
 
 LOCAL_FIRST = LocalFirstPolicy()

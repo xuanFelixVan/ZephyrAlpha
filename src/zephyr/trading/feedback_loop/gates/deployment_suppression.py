@@ -53,7 +53,7 @@ class DeploymentSuppression:
         now = time.time()
 
         if fle_state in ("DEGRADED", "INEFFECTIVE", "CRISIS", "SAFE_MODE"):
-            if self.state == DeployGateState.OPEN:
+            if self.state is DeployGateState.OPEN:
                 self.blocked_count += 1
                 self.blocked_since = now
             self.state = DeployGateState.BLOCKED_STABILITY
@@ -70,9 +70,9 @@ class DeploymentSuppression:
         return self.state
 
     def is_deploy_allowed(self) -> bool:
-        return self.state == DeployGateState.OPEN
+        return self.state is DeployGateState.OPEN
 
     def remaining_block(self) -> float:
-        if self.state == DeployGateState.OPEN:
+        if self.state is DeployGateState.OPEN:
             return 0.0
         return max(0.0, self.sustain_window - (time.time() - self.stable_since)) if self.stable_since else 999.0

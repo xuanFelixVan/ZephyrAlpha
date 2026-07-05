@@ -81,13 +81,13 @@ class DefaultCapitalAllocator(CapitalAllocatorBase):
         valid = [s for s in signals if abs(s.signal_value) > self._min_signal_threshold]
         n = len(valid)
 
-        if self._method == AllocationMethod.EQUAL:
+        if self._method is AllocationMethod.EQUAL:
             weights = self._equal_alloc(valid, n)
-        elif self._method == AllocationMethod.SIGNAL:
+        elif self._method is AllocationMethod.SIGNAL:
             weights = self._signal_alloc(valid)
-        elif self._method == AllocationMethod.SHARPE:
+        elif self._method is AllocationMethod.SHARPE:
             weights = self._sharpe_alloc(valid, n)
-        elif self._method == AllocationMethod.RISK_PARITY:
+        elif self._method is AllocationMethod.RISK_PARITY:
             weights = self._risk_parity_alloc(valid, n)
         else:
             weights = self._equal_alloc(valid, n)

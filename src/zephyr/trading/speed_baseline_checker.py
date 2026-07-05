@@ -142,7 +142,7 @@ class SpeedBaselineChecker:
                     else:
                         continue
                 category = self._classify(runtime_s, matched_baseline)
-                if category == SpeedCategory.NORMAL:
+                if category is SpeedCategory.NORMAL:
                     continue
                 ratio = runtime_s / max(matched_baseline, 1)
                 anomaly = SpeedAnomaly(
@@ -159,9 +159,9 @@ class SpeedBaselineChecker:
                 continue
 
         result.classifications = {
-            "slow": len([a for a in result.anomalies if a.category == SpeedCategory.SLOW]),
-            "very_slow": len([a for a in result.anomalies if a.category == SpeedCategory.VERY_SLOW]),
-            "critical_slow": len([a for a in result.anomalies if a.category == SpeedCategory.CRITICAL_SLOW]),
+            "slow": len([a for a in result.anomalies if a.category is SpeedCategory.SLOW]),
+            "very_slow": len([a for a in result.anomalies if a.category is SpeedCategory.VERY_SLOW]),
+            "critical_slow": len([a for a in result.anomalies if a.category is SpeedCategory.CRITICAL_SLOW]),
         }
         return result
 

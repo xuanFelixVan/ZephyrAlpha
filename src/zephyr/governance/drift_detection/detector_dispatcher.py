@@ -265,7 +265,7 @@ class DetectorDispatcher:
 
 
 def get_max_parallel_for_level(level: ScanLevel) -> int:
-    if level == ScanLevel.LIGHT or level == ScanLevel.STANDARD:
+    if level is ScanLevel.LIGHT or level is ScanLevel.STANDARD:
         return 4
 
     else:
