@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 vector_storage（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-05 20:28:23
+> 最后更新: 2026-07-05 20:35:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 9 | Module Count | 9 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 1 | Cross-domain Incoming | 1 |
+| 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 7 | Prototype Modules | 7 |
@@ -59,7 +59,6 @@ graph TD
     end
     D_GOVERNANCE["D_GOVERNANCE design"]
     docs_03_modules_domain_knowledge_vector_memory_blueprint_md -.->|runtime| D_GOVERNANCE
-    D_GOVERNANCE -.->|contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -78,9 +77,7 @@ graph TD
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
-|------|:---:|---------|
-| D_GOVERNANCE | 1 | contract |
+无跨域入边依赖 / No cross-domain incoming dependencies
 
 ## 架构分层视图 / Architecture Overview
 

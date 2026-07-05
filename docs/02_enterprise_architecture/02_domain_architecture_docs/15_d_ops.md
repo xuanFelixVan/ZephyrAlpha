@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 telemetry（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-05 20:28:23
+> 最后更新: 2026-07-05 20:35:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -54,7 +54,6 @@ graph TD
     D_SHARED["D_SHARED production"]
     src_zephyr_shared_observability_tracing_py -->|import_depends| D_SHARED
     D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_tracing_py
     D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_metrics_py
     D_TRADING["D_TRADING production"]
     D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
@@ -64,6 +63,7 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_metrics_py
     D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
     D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_tracing_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
