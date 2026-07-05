@@ -1,0 +1,42 @@
+flowchart LR
+    DS80["backtest.result<br/>CTR: CTR-P1-016<br/>[D_BACKTEST]"]:::dsProd
+    DS74["factor.momentum_20d<br/>CTR: CTR-002<br/>[D_FACTOR]"]:::dsProd
+    DS73["factor.value_factor<br/>CTR: CTR-002<br/>[D_FACTOR]"]:::dsProd
+    DS78["fill.executed<br/>CTR: CTR-005<br/>[D_EX_CORE]"]:::dsProd
+    DS72["market_data.ohlc_bar<br/>CTR: CTR-001<br/>[D_MKT_DATA]"]:::dsProd
+    DS71["market_data.tick<br/>CTR: CTR-001<br/>[D_MKT_DATA]"]:::dsProd
+    DS77["order.target<br/>CTR: CTR-004<br/>[D_PF_CORE]"]:::dsProd
+    DS79["position.snapshot<br/>CTR: CTR-006<br/>[D_EX_CORE]"]:::dsProd
+    DS76["risk.limits<br/>CTR: CTR-003<br/>[D_RISK]"]:::dsProd
+    DS75["signal.composite<br/>CTR: CTR-P1-015<br/>[D_SIGLEGACY]"]:::dsProd
+    JOB69("aggregate.ohlc_bar<br/>trigger: event_driven"):::jobProd
+    JOB73("check.risk_limits<br/>trigger: event_driven"):::jobProd
+    JOB71("compute.momentum_20d<br/>trigger: event_driven"):::jobProd
+    JOB70("compute.value_factor<br/>trigger: event_driven"):::jobProd
+    JOB75("execute.order<br/>trigger: event_driven"):::jobProd
+    JOB74("generate.order<br/>trigger: event_driven"):::jobProd
+    JOB68("ingest.ifind_kline<br/>trigger: scheduled"):::jobProd
+    JOB72("synthesize.signal<br/>trigger: event_driven"):::jobProd
+    JOB68 -->|produces| DS71
+    JOB69 -->|produces| DS72
+    JOB70 -->|produces| DS73
+    JOB71 -->|produces| DS74
+    JOB72 -->|produces| DS75
+    JOB73 -->|produces| DS76
+    JOB74 -->|produces| DS77
+    JOB75 -->|produces| DS78
+    JOB75 -->|produces| DS79
+    DS71 -->|consumed by| JOB69
+    DS72 -->|consumed by| JOB70
+    DS72 -->|consumed by| JOB71
+    DS73 -->|consumed by| JOB72
+    DS74 -->|consumed by| JOB72
+    DS75 -->|consumed by| JOB73
+    DS75 -->|consumed by| JOB74
+    DS76 -->|consumed by| JOB74
+    DS77 -->|consumed by| JOB75
+
+    classDef dsProd fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef dsBacktest fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef jobProd fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    classDef jobBacktest fill:#fce4ec,stroke:#880e4f,stroke-width:2px
