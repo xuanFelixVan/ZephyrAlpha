@@ -3,13 +3,13 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-05T20:09:43Z'
+generated_at: '2026-07-05T20:23:13Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 143
-total_rules: 60
+total_files: 147
+total_rules: 61
 tier_distribution:
-  L0: 20
+  L0: 21
   L1: 29
   L2: 11
 files:
@@ -1254,6 +1254,26 @@ files:
   - 向内收
   - SSC-EVT-001
   section_count: 6
+- path: docs/01_policies_and_standards/rules/trae_061_decisiongraph_access_protocol.yaml
+  module_id: TRAE-061
+  title: decisiongraph 程序化访问协议
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: decisiongraph_access_protocol
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: L0
+  aliases:
+  - RULE-DECISIONGRAPH
+  - decisiongraph访问
+  - 决策流图访问
+  - extract_decisiongraph
+  - apply_decisiongraph
+  section_count: 2
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028
   title: Blueprint Construction Template
@@ -1530,6 +1550,21 @@ files:
   doc_type: register
   status: active
   version: 1.0.8
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml
+  module_id: MOD-GOVERNANCE
+  title: ''
+  doc_type: ''
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2022,6 +2057,36 @@ files:
 - path: docs/01_policies_and_standards/_registry/vocabularies/created_by_vocabulary.yaml
   module_id: PS-VOC-008
   title: created_by 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/decision_edge_type_vocabulary.yaml
+  module_id: PS-VOC-DEC-EDGE
+  title: decision_edge_type 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/decision_layer_vocabulary.yaml
+  module_id: PS-VOC-DEC-LAYER
+  title: decision_layer 受控词表
   doc_type: vocabulary
   status: active
   version: 1.0.0
