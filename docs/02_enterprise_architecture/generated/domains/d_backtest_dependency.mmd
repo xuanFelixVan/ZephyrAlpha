@@ -1,5 +1,5 @@
 %% D_BACKTEST 域全景依赖图
-%% 生成时间: 2026-07-06 05:46:46
+%% 生成时间: 2026-07-06 06:14:13
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 33, 依赖边数: 67
 
@@ -63,15 +63,6 @@ graph TD
     src_zephyr_backtest_core___init___py -->|import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_core___init___py -->|import_depends| src_zephyr_backtest_core_walk_forward_py
     src_zephyr_backtest_core_tick_replay_py -->|import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_tick_replay_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_overfitting_detector_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_walk_forward_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_decision_gate_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_metrics_py
@@ -81,12 +72,21 @@ graph TD
     src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_decision_gate_py
     src_zephyr_backtest_implementations___init___py -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations___init___py -->|import_depends| src_zephyr_backtest_implementations_event_driven_engine_py
-    src_zephyr_backtest_io_decisiongraph_adapter_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_metrics_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_tick_replay_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_io_backtest_result_sink_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_io_result_repository_py -->|import_depends| src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_io___init___py -->|import_depends| src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_io___init___py -->|import_depends| src_zephyr_backtest_io_result_repository_py
     src_zephyr_backtest_io___init___py -->|import_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
-    src_zephyr_backtest_io_result_repository_py -->|import_depends| src_zephyr_backtest_io_backtest_result_sink_py
+    src_zephyr_backtest_io_decisiongraph_adapter_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_EX_CORE -> D_BACKTEST (2 条)
@@ -109,8 +109,8 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_backtest_core_matching_logic_py
     %% D_INTELLIGENCE -> D_BACKTEST (3 条)
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_backtest_core_engine_base_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_backtest_core_engine_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_BACKTEST -> D_GOVERNANCE (3 条)
