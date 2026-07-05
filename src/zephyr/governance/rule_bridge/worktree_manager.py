@@ -375,8 +375,9 @@ class WorktreeManager:
                     f"session worktree 不存在 (session={session_id}): {wt_path}"
                 )
             # 在主工作目录执行 merge（--no-ff 保留 session 提交拓扑）
+            # merge message 末尾追加 [GW:{sid}:merge] 标记，与 session_worktree_commit 的 [GW:{sid}:worktree] 设计对齐
             r = self._run_git(
-                ["git", "merge", "--no-ff", "-m", f"merge session/{session_id}", branch]
+                ["git", "merge", "--no-ff", "-m", f"merge session/{session_id}\n\n[GW:{session_id}:merge]", branch]
             )
             if r.returncode != 0:
                 stderr = r.stderr.strip()
