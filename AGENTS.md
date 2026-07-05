@@ -551,6 +551,12 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 ## 11. depgraph 使用指引（唯一全景真源）
 
+> **三图正交声明（TRAE-061，2026-07-06）**：项目有三张架构图，正交分离，通过 `module_id` 关联：
+> - **depgraph**（模块依赖图，静态）：模块间依赖关系。真源=代码 AST 扫描。表 `nodes`/`edges`/...。入口 `apply_depgraph.py`/`extract_depgraph.py`。写锁 `pg_advisory_lock(424242)`。
+> - **dataflowgraph**（数据流图，动态）：Job/Dataset 数据流转。真源=`dataflow_graph_registry.yaml`。表 `dataflow_*`。入口 `apply_dataflowgraph.py`。写锁 `pg_advisory_lock(424243)`。
+> - **decisiongraph**（决策流图，动态）：L0-L6 交易决策链。真源=`decision_graph_model.yaml`。表 `decision_*`。入口 `apply_decisiongraph.py`/`extract_decisiongraph.py`。写锁 `pg_advisory_lock(424244)`。
+> 三图共库（localhost:5432），不同表前缀，不同写锁。禁止混用入口。详见 [governance blueprint §19](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/blueprint.md)。
+
 ### 11.0 真源方向决策表（唯一入口，新 AI 必读）
 
 > 项目存在两个真源方向，按数据类型机械判定。**禁止凭记忆推断真源方向**——拿到数据先查此表。
