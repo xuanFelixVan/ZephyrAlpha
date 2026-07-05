@@ -4810,6 +4810,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=27(魔法数字/字符串需提取常量)
 > **第34轮修复状态（2026-07-04）**：FIXED=8(LOW 24 HTTP 200→HTTPStatus.OK 7处4文件 + HIGH 5 secret_rotation_aware已用os.getenv外部化), DRIFTED=7(HIGH 1 task_repo.py不存在 + HIGH 4 behavioral_audit/目录已删 + MEDIUM 7/8 llm_gateway.py 2份副本已删 + MEDIUM 22 header_field正则无匹配 + MEDIUM 23 hallucination_pattern正则无匹配), DEFERRED=12(需大规模重构:SQL散落/正则重复/timeout/PRAGMA/max_workers等散落N+文件 — 常量提取属专项工程,需统一命名规范与全仓回归测试). 维度5.160全部清零.
+> **第47轮修复状态（2026-07-06）**：DRIFTED=1(HIGH 3 file_task_mapper.py原4份副本现已删3份仅剩1份orchestrator/file_task_mapper.py,去重部分已完成), DEFERRED=11(HIGH 2 apply_depgraph.py 40+条裸SQL→SQL常量集中化专项 + HIGH 3 file_task_mapper.py剩余1份13条SQL字面量→同上 + HIGH 6 3类安全扫描器正则阈值不一致{20,}vs{32,}→安全检测一致性评估专项 + MEDIUM 9-21 Ollama URL 11文件/OTLP 1文件/TaskStatus 30+处/timeout 80+处/PRAGMA 15+文件/max_workers=8 18处13文件/time.sleep 28+处/max_retries=3 4处/benchmark max_tokens 22文件/audit路径10文件/session_lifecycle路径/SEMVER正则20文件/frontmatter正则1处→配置值集中化专项[需统一到config/或constants模块] + LOW 25-27 错误消息模板/退避参数/单次硬编码→命名规范专项), STILL_VALID=0. 维度5.160剩余11项DEFERRED属常量集中化专项工程.
 
 #### HIGH（6个）
 
