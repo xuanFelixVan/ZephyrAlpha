@@ -45,28 +45,28 @@ class HotspotTracker:
 
     # ── 公共 API ──────────────────────────────────────────────
 
-    def record_change(self, file: str, function: str = "") -> None:
+    def record_change(self, file_path: str, function: str = "") -> None:
         """记录一次变更."""
         now = datetime.now(UTC).isoformat()
-        self._changes[file].append(now)
+        self._changes[file_path].append(now)
 
-    def record_duplicate(self, file: str, dup_id: str, confidence: int = 0) -> None:
+    def record_duplicate(self, file_path: str, dup_id: str, confidence: int = 0) -> None:
         """记录一次重复发现."""
-        self._duplicates[file].append((dup_id, confidence))
+        self._duplicates[file_path].append((dup_id, confidence))
 
     def get_hotspots(self) -> list[HotspotEntry]:
         """获取当前热点文件列表."""
         cutoff = (datetime.now(UTC) - timedelta(days=self._WINDOW_DAYS)).isoformat()
         hotspots: list[HotspotEntry] = []
 
-        for file, timestamps in self._changes.items():
+        for file_path, timestamps in self._changes.items():
             recent = [t for t in timestamps if t >= cutoff]
-            dup_count = len(self._duplicates.get(file, []))
+            dup_count = len(self._duplicates.get(file_path, []))
 
             if len(recent) >= self._HOT_THRESHOLD or dup_count >= self._HOT_THRESHOLD:
                 hotspots.append(
                     HotspotEntry(
-                        file=file,
+                        file=file_path,
                         change_count_90d=len(recent),
                         duplicate_count_90d=dup_count,
                         last_changed=recent[-1] if recent else "",

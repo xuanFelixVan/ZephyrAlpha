@@ -53,8 +53,8 @@ class EvolutionGraph(BaseModel):
         return sorted(self.nodes.values(), key=lambda n: n.date)
 
 
-def blame(file: str, line: int) -> BlameRecord:
-    return BlameRecord(file=file, line=line)
+def blame(file_path: str, line: int) -> BlameRecord:
+    return BlameRecord(file=file_path, line=line)
 
 
 def auto_doc(module_id: str, functions: list[str]) -> str:

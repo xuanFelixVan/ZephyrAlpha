@@ -48,8 +48,8 @@ class KnownUnknown:
 class KnownUnknownRegistry:
     items: list[KnownUnknown] = field(default_factory=list)
 
-    def register(self, id: str, domain: str, description: str) -> KnownUnknown:
-        item = KnownUnknown(id=id, domain=domain, description=description)
+    def register(self, item_id: str, domain: str, description: str) -> KnownUnknown:
+        item = KnownUnknown(id=item_id, domain=domain, description=description)
         self.items.append(item)
         return item
 

@@ -187,11 +187,11 @@ class SteadyState:
             logger.warning("import_time_failed module=%s", module, exc_info=True)
             return -1.0
 
-    def _lock_time(self, file: str) -> float:
+    def _lock_time(self, file_path: str) -> float:
         try:
             start = time.perf_counter()
             result = subprocess.run(
-                ["python", "scripts/lock_files.py", "check", file],
+                ["python", "scripts/lock_files.py", "check", file_path],
                 capture_output=True,
                 text=True,
                 timeout=10,
@@ -199,10 +199,10 @@ class SteadyState:
             elapsed_ms = (time.perf_counter() - start) * 1000.0
             if result.returncode == 0:
                 return round(elapsed_ms, 1)
-            logger.warning("lock_time_check_failed file=%s rc=%d", file, result.returncode)
+            logger.warning("lock_time_check_failed file=%s rc=%d", file_path, result.returncode)
             return round(elapsed_ms, 1)
         except Exception:
-            logger.warning("lock_time_failed file=%s", file, exc_info=True)
+            logger.warning("lock_time_failed file=%s", file_path, exc_info=True)
             return -1.0
 
     def _glob_count(self, pattern: str) -> float:

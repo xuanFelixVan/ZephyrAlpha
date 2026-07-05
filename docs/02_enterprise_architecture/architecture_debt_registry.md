@@ -6508,6 +6508,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.101 变量遮蔽与命名冲突（56个，第19轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=56(变量遮蔽内置名需全量重命名，涉及调用方)
+> **第40轮修复状态（2026-07-05）**：FIXED=4(5.101.1 known_unknown_registry id→item_id + 5.101.2 hotspot_tracker 3处file→file_path + 5.101.3 audit_trail/code_archaeology.py blame file→file_path + 5.101.4 steady_state _lock_time file→file_path), DRIFTED=1(5.101.3 governance/code_archaeology.py 不存在,仅audit_trail副本), DEFERRED=13(5.101.5-5.101.13 数据类/Pydantic字段遮蔽42处,涉及跨模块字段重命名需专项工程 + 5.101.14-5.101.17 模块名与标准库冲突6处,涉及全仓import路径变更需专项工程), STILL_VALID=0
 
 **关键结论**：无HIGH级问题。所有遮蔽均未在作用域内调用被遮蔽的内置函数。MEDIUM级仅1处，LOW级55处集中在数据类/Pydantic字段使用内置名（Python生态中极常见的模式）。
 
