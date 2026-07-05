@@ -10,6 +10,9 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""orchestrator.state — auto-generated package init."""
+"""orchestrator.state — auto-generated package init.
 
-__all__ = ["agent_health_monitor", "file_task_mapper"]
+5.159.4 修复: 死副本文件已删除 (agent_health_monitor/file_task_mapper 与顶层重复).
+"""
+
+__all__ = []

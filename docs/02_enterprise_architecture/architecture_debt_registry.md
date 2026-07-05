@@ -8631,6 +8631,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.159 死代码（9个，第27轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=9(死代码需删除)
+> **第42轮修复状态（2026-07-05）**：FIXED=2(5.159.4 state/resilience 5个死副本文件删除+__init__.py更新保留failure_matcher + 5.159.5 audit_orchestration整个目录111文件删除全自引用无外部import), DRIFTED=7(5.159.1 governance/governance/子目录不存在 + 5.159.2 infrastructure/rollback/governance/子目录不存在 + 5.159.3 governance/_*.py 8个错位split文件均不存在 + 5.159.6 governance/_manifest.py不存在(仅infrastructure/rollback/_manifest.py存在且code_directory正确) + 5.159.7 context_assembler.py if True死分支已前期5.12.10修复 + 5.159.8 depgraph_schema.get_db_connection废弃别名有测试保护向后兼容非死代码 + 5.159.9 api_index.py非注释代码是文档索引文件), 0 STILL_VALID。本维度全部清零。
 
 #### HIGH（5个）
 

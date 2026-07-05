@@ -10,8 +10,12 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""orchestrator.resilience — auto-generated package init."""
+"""orchestrator.resilience — auto-generated package init.
 
-from . import deferred_queue, failure_matcher
+5.159.4 修复: 死副本文件已删除 (deferred_queue/rollback_manager/hallucination_detector 与顶层重复).
+保留 failure_matcher (tests/trading/test_failure_matcher.py 导入).
+"""
 
-__all__ = ["deferred_queue", "failure_matcher", "hallucination_detector", "rollback_manager"]
+from . import failure_matcher
+
+__all__ = ["failure_matcher"]
