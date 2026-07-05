@@ -286,8 +286,8 @@ class SandboxExecutor:
                 import shutil
 
                 shutil.rmtree(sandbox_dir, ignore_errors=True)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in fix_safety", exc_info=True)
 
 
 class SecretLeakGuard:

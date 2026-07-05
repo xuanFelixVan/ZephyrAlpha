@@ -27,6 +27,10 @@ RI-13 EventStore — 事件存储
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import sqlite3
 import threading
@@ -234,8 +238,8 @@ class EventStore:
             for tid, conn in list(self._all_conns.items()):
                 try:
                     conn.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("suppressed error in event_store", exc_info=True)
             self._all_conns.clear()
         if hasattr(self._local, "conn"):
             self._local.conn = None

@@ -23,6 +23,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import math
 from typing import Any
 
@@ -58,8 +62,8 @@ class DriftDetector:
                         "detail": f"Drift detected: score={self.detect(current):.4f} > threshold={threshold}",
                     },
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in drift_detector", exc_info=True)
         return drifting
 
 

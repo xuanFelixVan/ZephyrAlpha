@@ -210,8 +210,8 @@ def _build_context_blocks(
                 }
             )
             total_tokens += 100
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in task_context_builder", exc_info=True)
 
     return {"blocks": blocks, "total_tokens": total_tokens, "status": status}
 

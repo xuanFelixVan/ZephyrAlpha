@@ -41,6 +41,10 @@ integrity_manifest: 每DEEP scan签名存Git
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 import json
 import subprocess
@@ -154,8 +158,8 @@ def cross_validate_baseline(
 
                 result["diff_lines"] = diff_lines[:20]
 
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in baseline_poisoning_guard", exc_info=True)
 
     return result
 

@@ -25,6 +25,10 @@ EncodingHandler — EncodingHandler
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from typing import Any
 
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
@@ -128,8 +132,8 @@ def _detect_mojibake_bytes(raw: bytes) -> bool:
                         partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
                         if partial_cjk >= 3:
                             return True
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("suppressed error in ct_encoding", exc_info=True)
             except UnicodeEncodeError:
                 pass
     # 2b: test segments WITH U+FFFD — split at U+FFFD and test sub-segments

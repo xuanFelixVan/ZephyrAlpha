@@ -302,15 +302,15 @@ class ResourceOptimizationEngine:
                 if disk_io:
                     snap.disk_io_read_mb_s = disk_io.read_bytes / (1024**2)
                     snap.disk_io_write_mb_s = disk_io.write_bytes / (1024**2)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in resource_optimization_engine", exc_info=True)
             import shutil
 
             try:
                 usage = shutil.disk_usage(".")
                 snap.disk_free_gb = usage.free / (1024**3)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in resource_optimization_engine", exc_info=True)
         except ImportError:
             try:
                 import ctypes
@@ -337,8 +337,8 @@ class ResourceOptimizationEngine:
                     snap.memory_percent = float(mem_status.dwMemoryLoad)
                     snap.memory_total_gb = mem_status.ullTotalPhys / (1024**3)
                     snap.memory_used_gb = (mem_status.ullTotalPhys - mem_status.ullAvailPhys) / (1024**3)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in resource_optimization_engine", exc_info=True)
 
         classified = self._classify_pressure(snap)
         snap.pressure = self._pressure_sm.transition(classified)
@@ -644,8 +644,8 @@ class ResourceOptimizationEngine:
                     for cb in self._pressure_callbacks:
                         try:
                             cb(snap.pressure, snap)
-                        except Exception:
-                            pass
+                        except Exception as e:
+                            logger.debug("suppressed error in resource_optimization_engine", exc_info=True)
 
                 self._emit_pressure_event(snap)
 
@@ -811,8 +811,8 @@ class ResourceOptimizationEngine:
                     "timestamp": snap.timestamp,
                 },
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in resource_optimization_engine", exc_info=True)
 
     def _audit_optimization(self, record: OptimizationRecord) -> None:
         if not self._audit_enabled:
@@ -833,5 +833,5 @@ class ResourceOptimizationEngine:
                     "duration_ms": record.duration_ms,
                 },
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in resource_optimization_engine", exc_info=True)

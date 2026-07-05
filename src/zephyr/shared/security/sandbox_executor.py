@@ -15,6 +15,10 @@
 # [TTL] permanent
 """SandboxExecutor — re-homed to eliminate shared->infrastructure circular import."""
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import os
 import tempfile
 from typing import Any
@@ -41,5 +45,5 @@ class SandboxExecutor:
                 import shutil
 
                 shutil.rmtree(sandbox_dir, ignore_errors=True)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in sandbox_executor", exc_info=True)

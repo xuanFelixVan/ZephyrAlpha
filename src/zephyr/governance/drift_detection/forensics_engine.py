@@ -35,6 +35,10 @@ forensics_report: timeline + state_diffs + actor_trace + dependency_impact
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import os
 import subprocess
@@ -212,8 +216,8 @@ def git_checkout_snapshot(
         if result.returncode == 0:
             return result.stdout
 
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in forensics_engine", exc_info=True)
 
     return None
 
@@ -252,8 +256,8 @@ def generate_forensics_report(
                     if len(parts) >= 2:
                         report.dependency_impact.setdefault("commits", []).append(parts[0])
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in forensics_engine", exc_info=True)
 
     return report
 

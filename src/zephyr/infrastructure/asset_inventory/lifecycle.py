@@ -196,8 +196,8 @@ class Lifecycle:
                         "metadata": {"event_id": evt.event_id},
                     }
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in lifecycle", exc_info=True)
 
     def main(self) -> None:
         index_path = self.root / "data" / "asset_index" / "unified-asset-index.yaml"

@@ -34,6 +34,8 @@ DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理（requests 实现）
 
 from __future__ import annotations
 
+logger = logging.getLogger(__name__)
+
 import json
 import logging
 import os
@@ -320,8 +322,8 @@ class DeepSeekChat:
             pass
         except RuntimeError:
             raise
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in deepseek_chat", exc_info=True)
 
     @staticmethod
     def _strip_think_block(text: str) -> str:

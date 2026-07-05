@@ -931,10 +931,10 @@ class AgentOrchestrator:
 
                 if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                     return result.blocked_by or "lsg_agent_scan"
-            except Exception:
-                pass
-        except Exception:
-            pass
+            except Exception as e:
+                logger.warning("suppressed error in agent_orchestrator", exc_info=True)
+        except Exception as e:
+            logger.warning("suppressed error in agent_orchestrator", exc_info=True)
         return None
 
 

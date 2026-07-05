@@ -35,6 +35,10 @@ P0 Hotfix 快速旁路处理：[HOTFIX]/[EMERGENCY] commit 自动标记为 ACKNO
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import os
 import uuid
@@ -99,8 +103,8 @@ class HotfixBypass:
                 _CoreAuditWriter = _importlib.import_module("zephyr.governance.audit_trail.writer").AuditWriter
                 self._core_writer = _CoreAuditWriter()
 
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in drift_hotfix_bypass", exc_info=True)
 
     def is_hotfix_commit(self, commit_message: str) -> bool:
         upper = commit_message.strip().upper()
@@ -190,8 +194,8 @@ class HotfixBypass:
 
                 return
 
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in drift_hotfix_bypass", exc_info=True)
 
         with open(self._audit_log_path, "a", encoding="utf-8") as fh:
             fh.write(json.dumps(record, ensure_ascii=False) + "\n")

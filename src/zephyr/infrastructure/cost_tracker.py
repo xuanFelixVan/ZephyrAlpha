@@ -28,6 +28,10 @@ RI-15 CostTracker — 成本追踪器
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import sqlite3
 import threading
@@ -252,8 +256,8 @@ class CostTracker:
             for tid, conn in list(self._all_conns.items()):
                 try:
                     conn.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("suppressed error in cost_tracker", exc_info=True)
             self._all_conns.clear()
         if hasattr(self._local, "conn"):
             self._local.conn = None

@@ -67,6 +67,10 @@ Safety : M（治理层代码，门禁失败阻断任务启动）
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import re
 import sqlite3
@@ -237,8 +241,8 @@ def _detect_mojibake(file_path: Path) -> bool:
                         partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
                         if partial_cjk >= 3:
                             return True
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("suppressed error in gate_engine", exc_info=True)
             except UnicodeEncodeError:
                 pass
     # 2b: test segments WITH U+FFFD — split at U+FFFD and test sub-segments

@@ -26,6 +26,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -133,8 +137,8 @@ class A2ASaga:
                 func = action_funcs.get(comp["action"], lambda p: {"compensated": True})
                 func(comp["params"])
                 step.compensate_called = True
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in a2a_saga", exc_info=True)
 
         result.steps = list(self._steps)
         result.status = SagaStatus.COMPENSATED

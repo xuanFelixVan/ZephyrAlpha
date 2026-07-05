@@ -27,6 +27,10 @@ RTO 从 ~2s 降低到 <100ms（worktree 切换 + 指针替换）。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import subprocess
 import time
@@ -155,8 +159,8 @@ class WarmStandby:
                 text=True,
                 timeout=10,
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in warm_standby", exc_info=True)
 
         return self.initialize(new_commit)
 

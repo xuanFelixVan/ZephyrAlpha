@@ -124,8 +124,8 @@ class EscalationEngine:
                 )
                 if result.forced_review:
                     event.description += " | forced_review=True"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             slo = self._extension_detectors.get("SLOContractEngine")
@@ -137,8 +137,8 @@ class EscalationEngine:
                         EscalationLevel.L4_EMERGENCY.value, event.level.value + scaling["escalation_level_offset"]
                     )
                     event.level = EscalationLevel(new_level)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         if not self._economic_guard.can_proceed():
             event.economic_guard_passed = False
@@ -316,8 +316,8 @@ class EscalationEngine:
                     event.description += " | loop_detected=True"
                     if event.level.value < EscalationLevel.L2_HUMAN_REVIEW.value:
                         event.level = EscalationLevel.L2_HUMAN_REVIEW
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             pd = self._extension_detectors.get("PersuasionDetector")
@@ -325,8 +325,8 @@ class EscalationEngine:
                 flagged, _ = pd.detect(event.description)
                 if flagged:
                     event.description += " | persuasion_flagged=True"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             dd = self._extension_detectors.get("DeadlockDetector")
@@ -336,24 +336,24 @@ class EscalationEngine:
                     event.description += f" | deadlock_cycle={','.join(cycle)}"
                     if event.level.value < EscalationLevel.L3_CRITICAL.value:
                         event.level = EscalationLevel.L3_CRITICAL
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             cg = self._extension_detectors.get("CredentialGuard")
             if cg and event.category is RuleCategory.SECURITY_VIOLATION:
                 if hasattr(cg, "scan") and cg.scan(event.description):
                     event.description += " | credential_leak_detected=True"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in escalation_engine", exc_info=True)
 
         try:
             cg2 = self._extension_detectors.get("ClockGuard")
             if cg2 and hasattr(cg2, "verify"):
                 if not cg2.verify():
                     event.description += " | clock_integrity_failed=True"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in escalation_engine", exc_info=True)
 
         try:
             cc = self._extension_detectors.get("CommandChainGate")
@@ -361,16 +361,16 @@ class EscalationEngine:
                 ok, limit = cc.check(event.description)
                 if not ok:
                     event.description += f" | command_chain_exceeded={limit}"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             ce = self._extension_detectors.get("ConfidenceEstimator")
             if ce and hasattr(ce, "estimate"):
                 conf = ce.estimate(event.description)
                 event.description += f" | meta_confidence={conf:.2f}"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             dd = self._extension_detectors.get("DriftDetector")
@@ -384,8 +384,8 @@ class EscalationEngine:
                         event.description += " | behavioral_drift=True"
                         if event.level.value < EscalationLevel.L2_HUMAN_REVIEW.value:
                             event.level = EscalationLevel.L2_HUMAN_REVIEW
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             ma = self._extension_detectors.get("MerkleAudit")
@@ -394,8 +394,8 @@ class EscalationEngine:
                     {"event_id": event.event_id, "category": event.category.name, "level": event.level.name}
                 )
                 event.description += f" | merkle_root={root_hash[:12]}"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             ab = self._extension_detectors.get("AntiAutomationBias")
@@ -408,8 +408,8 @@ class EscalationEngine:
                 )
                 if result.forced_review:
                     event.description += " | forced_review=True"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             slo = self._extension_detectors.get("SLOContractEngine")
@@ -421,8 +421,8 @@ class EscalationEngine:
                         EscalationLevel.L4_EMERGENCY.value, event.level.value + scaling["escalation_level_offset"]
                     )
                     event.level = EscalationLevel(new_level)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
             rd = self._extension_detectors.get("ReboundDetector")
@@ -440,8 +440,8 @@ class EscalationEngine:
                     event.description += " | reward_hacking_rebound=True"
                     event.level = EscalationLevel.L4_EMERGENCY
                     rd.mark_rebound_agent(owner)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         return event
 

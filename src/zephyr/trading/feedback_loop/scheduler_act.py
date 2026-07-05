@@ -17,6 +17,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import time
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
@@ -153,8 +157,8 @@ class ActPhaseHandler:
                 isinstance(level, str) and level.startswith("L2")
             ):
                 self._auto_rollback_on_escalation(anomaly, level_value)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in scheduler_act", exc_info=True)
 
     def _auto_rollback_on_escalation(self, anomaly: Any, escalation_level: str) -> None:
         try:
@@ -182,8 +186,8 @@ class ActPhaseHandler:
                             topic="rollback.failed",
                             payload={"escalation_level": escalation_level, "errors": getattr(result, "errors", [])},
                         )
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("suppressed error in scheduler_act", exc_info=True)
             else:
                 logger.warning(
                     "FLE auto-rollback: preflight failed, skipping rollback (escalation=%s)", escalation_level

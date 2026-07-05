@@ -14,6 +14,10 @@
 # [TESTS]
 # [A_module] module_id=MOD-RES_tamper_evident_log | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 import hmac
 import json
@@ -141,8 +145,8 @@ class TamperEvidentLog:
                     "operation": action,
                 }
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in tamper_evident_log", exc_info=True)
 
         return entry
 

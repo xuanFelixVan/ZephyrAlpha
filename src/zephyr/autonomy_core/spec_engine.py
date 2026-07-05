@@ -28,6 +28,10 @@ SpecEngine 是 agent-spec 的统一入口，负责将静态蓝图转化为可执
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -202,8 +206,8 @@ class SpecEngine:
                     if p not in ("docs", "03_modules", "infra_ops"):
                         module_name = p
                         break
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in spec_engine", exc_info=True)
 
         result.phase_results["discover"] = {"module_name": module_name, "blueprint": blueprint_path}
         return module_name
@@ -290,8 +294,8 @@ class SpecEngine:
                         "timestamp": datetime.now(UTC).isoformat(),
                     }
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in spec_engine", exc_info=True)
 
 
 __all__ = ["SpecEngine", "UpgradePhase", "UpgradeResult"]

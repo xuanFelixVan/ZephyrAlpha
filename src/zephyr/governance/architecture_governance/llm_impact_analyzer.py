@@ -32,6 +32,10 @@ module_id 已重新分配为 MOD-GOV_llm_impact_analyzer 避免撞车。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import importlib
 import subprocess
 from dataclasses import dataclass, field
@@ -177,8 +181,8 @@ class LLMImpactAnalyzer:
                 analysis.details.append("LSG output scan flagged content")
         except ImportError:
             pass
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in llm_impact_analyzer", exc_info=True)
 
     def _get_diff(self, commit_sha: str) -> str:
         try:

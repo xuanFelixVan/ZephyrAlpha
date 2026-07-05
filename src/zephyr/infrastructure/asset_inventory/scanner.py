@@ -357,8 +357,8 @@ class ConcurrentScanner:
                     entry = future.result()
                     if entry is not None:
                         results.append(entry)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in scanner", exc_info=True)
         return results
 
 

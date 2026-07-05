@@ -31,6 +31,10 @@ RollbackLock — 全局回滚锁管理。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import os
 import time
@@ -299,8 +303,8 @@ class RollbackLock:
                     wait_time_ms=0,
                     reason="Forced release",
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in rollback_lock", exc_info=True)
         return LockAcquireResult(
             acquired=True,
             lock_id="",
@@ -345,8 +349,8 @@ class RollbackLock:
                     )
                     + "\n"
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in rollback_lock", exc_info=True)
 
     def _dequeue_request(self, lock_id: str) -> None:
         # 5.58.8 修复：原仅调用 _cleanup_stale_queue_entries()，不使用 lock_id 参数，
@@ -373,8 +377,8 @@ class RollbackLock:
             tmp_path = self._queue_path.with_suffix(".tmp")
             tmp_path.write_text("\n".join(valid_lines) + ("\n" if valid_lines else ""), encoding="utf-8")
             os.replace(str(tmp_path), str(self._queue_path))
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in rollback_lock", exc_info=True)
 
     def _count_queue(self) -> int:
         self._cleanup_stale_queue_entries()
@@ -404,5 +408,5 @@ class RollbackLock:
                 except (json.JSONDecodeError, ValueError):
                     pass
             self._queue_path.write_text("\n".join(valid_lines) + ("\n" if valid_lines else ""), encoding="utf-8")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in rollback_lock", exc_info=True)

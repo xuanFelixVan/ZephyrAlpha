@@ -28,6 +28,10 @@ TopologyChangeLog — 分支拓扑变更日志。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import subprocess
 from dataclasses import dataclass, field
@@ -97,8 +101,8 @@ class TopologyChangeLog:
                     timeout=5,
                 )
                 return True
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in topology_change_log", exc_info=True)
         return False
 
     def get_history(self, limit: int = 20) -> list[TopologyChange]:

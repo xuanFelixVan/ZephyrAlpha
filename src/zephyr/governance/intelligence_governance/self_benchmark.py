@@ -26,6 +26,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import os
 import tempfile
@@ -280,8 +284,8 @@ class SelfBenchmark:
                 try:
                     if func_a(inp) == func_b(inp):
                         match_count += 1
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in self_benchmark", exc_info=True)
             sim = match_count / len(test_inputs)
             stage = "behavioral_sampler" if sim >= pair.expected_sim_min else "none"
             return round(sim, 3), stage
@@ -331,8 +335,8 @@ class SelfBenchmark:
                 try:
                     if func_a(*inp) == func_b(*inp):
                         match_count += 1
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in self_benchmark", exc_info=True)
             sim = match_count / len(test_inputs)
             stage = "—" if sim < pair.expected_sim_max else "behavioral_sampler"
             return round(sim, 3), stage

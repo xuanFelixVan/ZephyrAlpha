@@ -38,6 +38,10 @@ prevention: dry-run影响面分析(临时目录模拟修复diff跑关联检测�
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import os
 import tempfile
@@ -247,8 +251,8 @@ def _trigger_cascade_rollback(
     except ImportError:
         pass
 
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in cascade_detector", exc_info=True)
 
 
 def dry_run_impact_analysis(
@@ -306,7 +310,7 @@ def is_auto_fix_paused(module: str) -> bool:
                     if now < pause_until:
                         return True
 
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in cascade_detector", exc_info=True)
 
     return False

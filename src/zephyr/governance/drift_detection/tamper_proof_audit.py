@@ -41,6 +41,10 @@ anomaly_detection: 总行数减少/批量清洗/回溯修改 → P0 CRITICAL从G
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 import json
 import os
@@ -143,8 +147,8 @@ def setup_append_only(db_path: str) -> bool:
         if conn is not None:
             try:
                 conn.close()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in tamper_proof_audit", exc_info=True)
 
 
 def snapshot_event_hash(db_path: str) -> str:
@@ -163,8 +167,8 @@ def snapshot_event_hash(db_path: str) -> str:
         if conn is not None:
             try:
                 conn.close()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in tamper_proof_audit", exc_info=True)
 
 
 def count_states(db_path: str) -> dict[str, int]:
@@ -177,14 +181,14 @@ def count_states(db_path: str) -> dict[str, int]:
         cursor.execute("SELECT state, COUNT(*) FROM drift_events GROUP BY state")
         for row in cursor.fetchall():
             counts[str(row[0])] = int(row[1])
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("suppressed error in tamper_proof_audit", exc_info=True)
     finally:
         if conn is not None:
             try:
                 conn.close()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in tamper_proof_audit", exc_info=True)
     return counts
 
 
@@ -209,8 +213,8 @@ def generate_audit_log(
 
             src_files[pf.relative_to(project_root).as_posix()] = _sha256(content)
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in tamper_proof_audit", exc_info=True)
 
     record = AuditRecord(
         scan_id=scan_id,
@@ -278,8 +282,8 @@ def generate_audit_log(
 
         record.committed_to_git = True
 
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in tamper_proof_audit", exc_info=True)
 
     import importlib as _importlib
 

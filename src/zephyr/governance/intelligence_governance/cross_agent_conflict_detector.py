@@ -26,6 +26,10 @@ CrossAgentConflictDetector — 多 Agent 并发冲突检测。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import subprocess
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -90,8 +94,8 @@ class CrossAgentConflictDetector:
             if report.has_conflict:
                 try:
                     self._run_git(["add", report.file_path])
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in cross_agent_conflict_detector", exc_info=True)
         return reports
 
     def _get_all_uncommitted_files(self) -> list[str]:

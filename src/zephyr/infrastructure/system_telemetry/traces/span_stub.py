@@ -22,6 +22,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import contextvars
 import threading
 import time
@@ -234,8 +238,8 @@ def _flush_span(span: Span) -> None:
         from zephyr.infrastructure.system_telemetry._trace_bridge import write_record
 
         write_record(span.snapshot(), labels={"__type": "trace_span"})
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("suppressed error in span_stub", exc_info=True)
 
 
 def _gen_hex_id(hex_len: int) -> str:

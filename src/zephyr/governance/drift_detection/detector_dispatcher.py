@@ -32,6 +32,10 @@ module_id: MOD-INF-023
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import asyncio
 import hashlib
 import json
@@ -260,8 +264,8 @@ class DetectorDispatcher:
                     if proc is not None and proc.returncode is None:
                         proc.kill()
                         await proc.wait()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("suppressed error in detector_dispatcher", exc_info=True)
 
 
 def get_max_parallel_for_level(level: ScanLevel) -> int:

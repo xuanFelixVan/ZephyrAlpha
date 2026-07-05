@@ -26,6 +26,10 @@ SSoT: MOD-INF-016 §2.10 | DEP-GRAPH-process-lifecycle-001
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import ast
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -100,8 +104,8 @@ class ProcessCreationScanner(ast.NodeVisitor):
             with open(self.file_path, encoding="utf-8") as f:
                 source = f.read()
             snippet = ast.get_source_segment(source, node) or snippet
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in en_process_lifecycle_gateway", exc_info=True)
         return snippet.strip()[:120] if snippet else ""
 
     @staticmethod

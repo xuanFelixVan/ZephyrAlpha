@@ -30,6 +30,10 @@ Tag 作为语义化回滚目标: zephyr rollback --to rollback/refactor/auth:bef
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import subprocess
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -130,8 +134,8 @@ class SemanticRollbackTag:
             )
             if result.returncode == 0:
                 return result.stdout.strip()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in semantic_rollback_tag", exc_info=True)
         return None
 
     def delete_tag_safe(self, tag_name: str) -> bool:

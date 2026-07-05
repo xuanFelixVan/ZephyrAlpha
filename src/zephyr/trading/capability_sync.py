@@ -75,8 +75,8 @@ class CapabilitySync:
                     )
                     self._registry.register(cap_card)
                     synced += 1
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in capability_sync", exc_info=True)
         return synced
 
     def sync_skills(self, skill_registry_path: Path) -> int:
@@ -111,6 +111,6 @@ class CapabilitySync:
                     )
                     self._registry.register(cap_card)
                     synced += 1
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in capability_sync", exc_info=True)
         return synced

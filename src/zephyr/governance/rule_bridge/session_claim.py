@@ -57,6 +57,10 @@ Usage（AI 通过 RunCommand 调用）::
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 __all__ = [
     "session_claim_start",
     "session_claim_add",
@@ -266,8 +270,8 @@ def session_claim_end(
             try:
                 registry.release_file(session_id, f)
                 released.append(f)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in session_claim", exc_info=True)
 
     # 注销 session
     try:

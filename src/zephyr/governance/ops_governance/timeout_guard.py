@@ -15,6 +15,10 @@
 # [A_module] module_id=MOD-RES_timeout_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+import logging
+
+logger = logging.getLogger(__name__)
+
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -133,8 +137,8 @@ class TimeoutGuard:
         if handler:
             try:
                 handler(event)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in timeout_guard", exc_info=True)
 
     def active_count(self) -> int:
         return len(self._active_scopes)

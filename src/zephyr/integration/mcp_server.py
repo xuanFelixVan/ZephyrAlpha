@@ -236,8 +236,8 @@ def dispatch_tool(name: str, **kwargs: str) -> str:
                     "error_detail": "internal error",
                 },
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in mcp_server", exc_info=True)
         return json.dumps({"error": "internal error"})
 
 

@@ -399,8 +399,8 @@ def _get_memory_usage_mb() -> float:
 
         if hasattr(os, "sysconf") and hasattr(os, "confstr"):
             return 0.0
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("suppressed error in system_snapshot", exc_info=True)
     return 0.0
 
 
@@ -411,8 +411,8 @@ def _count_active_sessions() -> int:
         runtime_dir = Path(".runtime/sessions")
         if runtime_dir.exists():
             return len(list(runtime_dir.glob("*.json")))
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("suppressed error in system_snapshot", exc_info=True)
     return 0
 
 
@@ -422,8 +422,8 @@ def _check_vms_connection() -> bool:
 
         vms_dir = Path(".runtime/vms")
         return vms_dir.exists()
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("suppressed error in system_snapshot", exc_info=True)
     return False
 
 
@@ -438,6 +438,6 @@ def _get_pipeline_stats() -> dict[str, float]:
             data = json.loads(stats_file.read_text(encoding="utf-8"))
             if isinstance(data, dict):
                 return {k: float(v) for k, v in data.items()}
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("suppressed error in system_snapshot", exc_info=True)
     return {"build_ms": 0.0, "compress_ms": 0.0, "validate_ms": 0.0, "inject_ms": 0.0}

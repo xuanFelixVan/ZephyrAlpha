@@ -105,8 +105,8 @@ def _record_event(event_id: str, severity: str, category: str, event: Any) -> No
         )
         conn.commit()
         conn.close()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("suppressed error in alert_handler", exc_info=True)
 
 
 def _create_repair_task(

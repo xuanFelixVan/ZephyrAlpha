@@ -142,8 +142,8 @@ class AuditLogger:
                 core_event["target_path"] = tool_name
                 core_event["status"] = result_status
                 self._core_writer.write(core_event)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in audit_logger", exc_info=True)
 
         self._index.setdefault(client_session_id, []).append(entry)
         return entry

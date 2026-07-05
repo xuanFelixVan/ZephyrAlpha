@@ -347,8 +347,8 @@ class SessionAuditTrail:
                         "operation": "append_record",
                     }
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in session_audit", exc_info=True)
         return filepath
 
     def query(self, session_id: str) -> list[dict[str, Any]]:

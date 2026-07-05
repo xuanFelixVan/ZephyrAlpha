@@ -24,6 +24,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import os
 import time
 from collections.abc import Callable
@@ -120,8 +124,8 @@ class HealthProbeManager:
                 probe.write_text("ok", encoding="utf-8")
                 probe.unlink(missing_ok=True)
                 return True
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in health_probes", exc_info=True)
         # 5.55.7 修复：无注入检查器且 .runtime/ 不可达时 fail-closed（返回 False）
         # 原第三层 temp dir fallback 总返回 True，导致 readiness() 永远 "ready"，
         # 违反 fail-closed 原则。temp dir 可写不代表数据目录可达。

@@ -33,6 +33,10 @@ T-V2-006 扩展（experimental）
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import time
 from enum import Enum, unique
 from pathlib import Path
@@ -85,8 +89,8 @@ def _load_context_rules_yaml() -> dict:
                 data = _yaml.safe_load(fh) or {}
             _context_rules_cache = data
             return data
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in context_budget_tracker", exc_info=True)
     _context_rules_cache = {}
     return _context_rules_cache
 

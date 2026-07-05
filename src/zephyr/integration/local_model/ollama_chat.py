@@ -30,6 +30,8 @@ OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理
 
 from __future__ import annotations
 
+logger = logging.getLogger(__name__)
+
 from http import HTTPStatus
 
 import json
@@ -445,8 +447,8 @@ class OllamaChat:
             pass
         except RuntimeError:
             raise
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in ollama_chat", exc_info=True)
 
     @staticmethod
     def _strip_think_block(text: str) -> str:

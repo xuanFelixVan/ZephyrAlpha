@@ -175,8 +175,8 @@ class FindingIngest:
             bus.subscribe("audit.finding_created", cls._on_finding_created)
             bus.subscribe("audit.finding_resolved", cls._on_finding_resolved)
             cls._subscribers_registered = True
-        except Exception:
-            pass
+        except Exception as e:
+            _logger.warning("suppressed error in finding_ingest", exc_info=True)
 
     @staticmethod
     def _on_finding_created(payload: dict) -> None:
@@ -237,5 +237,5 @@ class FindingIngest:
 
             payload = finding.to_finding_dict()
             bus.emit(topic="audit.finding_created", payload=payload)
-        except Exception:
-            pass
+        except Exception as e:
+            _logger.warning("suppressed error in finding_ingest", exc_info=True)

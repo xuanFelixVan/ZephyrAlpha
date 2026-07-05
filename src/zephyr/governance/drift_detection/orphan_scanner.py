@@ -41,6 +41,10 @@ orphan_config: yaml/config 无代码读取
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -96,8 +100,8 @@ def find_orphan_scripts(project_root: str) -> list[OrphanResource]:
 
                         manifest_scripts.add(str(p))
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in orphan_scanner", exc_info=True)
 
     for py_file in scripts_dir.rglob("*.py"):
         rel = py_file.relative_to(project_root).as_posix()
@@ -136,8 +140,8 @@ def find_orphan_data(project_root: str) -> list[OrphanResource]:
         try:
             src_text += pf.read_text(encoding="utf-8") + "\n"
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in orphan_scanner", exc_info=True)
 
     for df in data_files:
         stem_lower = df.stem.lower().replace("_", "").replace("-", "")
@@ -173,8 +177,8 @@ def find_orphan_docs(project_root: str) -> list[OrphanResource]:
 
             blueprint_set.update(refs)
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in orphan_scanner", exc_info=True)
 
     for md_file in docs_dir.rglob("*.md"):
         rel = md_file.relative_to(project_root).as_posix()

@@ -79,8 +79,8 @@ class IdempotencyGuard:
                 expires = datetime.fromisoformat(row[1])
                 if datetime.now(UTC) < expires:
                     return False, f"Duplicate fix: {fp} already processed as {row[0]}"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in fix_reliability", exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:
             if conn is not None:
@@ -208,8 +208,8 @@ class BlastRadiusEstimator:
         elif target.is_file() and target.suffix == ".py":
             try:
                 lines_estimate = len(target.read_text(encoding="utf-8").splitlines())
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in fix_reliability", exc_info=True)
         if action.level is FixLevel.L2_LLM:
             risk = "medium"
         elif action.level is FixLevel.L3_AGENT:

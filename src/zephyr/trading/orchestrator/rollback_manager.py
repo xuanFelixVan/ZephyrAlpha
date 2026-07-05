@@ -43,6 +43,10 @@ RollbackManager — 仅调试用途的 DB-state 快照，不用于自动回滚�
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -127,8 +131,8 @@ class RollbackManager:
         except Exception:
             try:
                 conn.execute("ROLLBACK")
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in rollback_manager", exc_info=True)
             raise
         finally:
             conn.close()
@@ -198,8 +202,8 @@ class RollbackManager:
         except Exception:
             try:
                 conn.execute("ROLLBACK")
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in rollback_manager", exc_info=True)
             raise
         finally:
             conn.close()

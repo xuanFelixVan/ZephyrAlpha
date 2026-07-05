@@ -44,6 +44,10 @@ auto_config: 需要config但.env/config.yaml不存在建议
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import os
 import sqlite3
 from dataclasses import dataclass, field
@@ -170,8 +174,8 @@ def init_directories(project_root: str) -> list[str]:
 
                 created.append(d)
 
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in cold_start", exc_info=True)
 
     return created
 
@@ -292,7 +296,7 @@ def session_entry_activate(project_root: str) -> ColdStartResult:
     try:
         result.first_scan_triggered = _trigger_light_scan(project_root)
 
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in cold_start", exc_info=True)
 
     return result

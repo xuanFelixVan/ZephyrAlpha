@@ -230,8 +230,8 @@ class DatabaseManager:
         if self._closed:
             try:
                 conn.close()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in database_manager", exc_info=True)
             return
         # Phase 2 P2 修复（并发安全 HIGH）：_conn_pool.append() 加锁，与 get_connection() 配对
         with self._lock:
@@ -245,8 +245,8 @@ class DatabaseManager:
         # 池满或连接不健康时关闭（在锁外关闭）
         try:
             conn.close()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in database_manager", exc_info=True)
 
     # ------------------------------------------------------------------
     # 健康检查
@@ -351,8 +351,8 @@ class DatabaseManager:
             if conn is not None:
                 try:
                     conn.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("suppressed error in database_manager", exc_info=True)
 
     @property
     def last_health(self) -> DatabaseHealthStatus | None:
@@ -490,8 +490,8 @@ class DatabaseManager:
             if conn is not None:
                 try:
                     conn.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("suppressed error in database_manager", exc_info=True)
 
     def wal_checkpoint_truncate(self) -> None:
         """强制 checkpoint 并截断 WAL 文件（shutdown 时调用）。"""
@@ -532,8 +532,8 @@ class DatabaseManager:
                 if conn is not None:
                     try:
                         conn.close()
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.debug("suppressed error in database_manager", exc_info=True)
 
             self._wal_checkpoint("TRUNCATE")
             result["wal_truncated"] = True
@@ -612,14 +612,14 @@ class DatabaseManager:
             # WAL checkpoint 抛异常会掩盖with块原始异常并中断连接池清理流程。
             try:
                 self.wal_checkpoint_truncate()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in database_manager", exc_info=True)
 
             for conn in self._conn_pool:
                 try:
                     conn.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("suppressed error in database_manager", exc_info=True)
             self._conn_pool.clear()
 
             logger.info("database_manager_closed")
@@ -705,8 +705,8 @@ class DatabaseManager:
                 except Exception:
                     try:
                         conn.execute("ROLLBACK")
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("suppressed error in database_manager", exc_info=True)
                     payload = _json.loads(str(dl["payload"])) if isinstance(dl["payload"], str) else dict(dl["payload"])
                     payload["retry_count"] = payload.get("retry_count", 0) + 1
                     conn.execute(

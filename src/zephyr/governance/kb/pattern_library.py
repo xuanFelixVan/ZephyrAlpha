@@ -36,6 +36,10 @@ safety_level: M
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 import json
 import re
@@ -276,8 +280,8 @@ class PatternLibrary:
             col = self._chroma_client.get_collection(name=self.PATTERNS_COLLECTION)
             chunk_id = f"{pattern_id}-chunk-0"
             col.delete(ids=[chunk_id])
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in pattern_library", exc_info=True)
 
     def search(
         self,

@@ -38,6 +38,10 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import asyncio
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -298,8 +302,8 @@ def subscribe_monitoring_events() -> None:
                 _event_health_log.append(entry)
                 if len(_event_health_log) > 1000:
                     _event_health_log.pop(0)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in health", exc_info=True)
 
         def _on_fle_anomaly(payload: Any) -> None:
             try:
@@ -312,8 +316,8 @@ def subscribe_monitoring_events() -> None:
                 _event_health_log.append(entry)
                 if len(_event_health_log) > 1000:
                     _event_health_log.pop(0)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in health", exc_info=True)
 
         def _on_audit_finding(payload: Any) -> None:
             try:
@@ -326,14 +330,14 @@ def subscribe_monitoring_events() -> None:
                 _event_health_log.append(entry)
                 if len(_event_health_log) > 1000:
                     _event_health_log.pop(0)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in health", exc_info=True)
 
         bus.subscribe("f5.deadlock_detected", _on_f5_deadlock)
         bus.subscribe("fle.anomaly", _on_fle_anomaly)
         bus.subscribe("audit.finding_created", _on_audit_finding)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in health", exc_info=True)
 
 
 def get_event_health_log() -> list[dict[str, Any]]:

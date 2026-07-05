@@ -209,8 +209,8 @@ def _sweep_stale_worktrees(
                         manager._run_git(["git", "branch", "-D", branch])
                     try:
                         registry.unregister(sid)
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("suppressed error in session_worktree", exc_info=True)
                     swept += 1
                     logger.info(
                         "session_worktree sweep: 清理 stale %s (registered=%s)",
@@ -492,8 +492,8 @@ def session_worktree_commit(
             for cf in claimed_files:
                 try:
                     registry.release_file(session_id, cf)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in session_worktree", exc_info=True)
             return {
                 "session_id": session_id,
                 "status": "FAILED",
@@ -883,8 +883,8 @@ def _get_merge_files(root: Path) -> list[str]:
         )
         if result.returncode == 0 and result.stdout.strip():
             return [f.strip() for f in result.stdout.strip().split("\n") if f.strip()]
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in session_worktree", exc_info=True)
     return []
 
 
@@ -1119,8 +1119,8 @@ def session_worktree_merge(
     if merged and cleaned:
         try:
             unregistered = registry.unregister(session_id)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in session_worktree", exc_info=True)
 
     # 裁定#209 后续：merge 后可选触发 reconciler（补齐 worktree 路径的验证）
     reconcile_results: list[dict] = []
@@ -1250,8 +1250,8 @@ def session_worktree_abort(
     unregistered = False
     try:
         unregistered = registry.unregister(session_id)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("suppressed error in session_worktree", exc_info=True)
 
     return {
         "session_id": session_id,
@@ -1297,8 +1297,8 @@ def session_worktree_status(
     try:
         info = registry.get_session(session_id)
         registered = info is not None
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in session_worktree", exc_info=True)
 
     return {
         "session_id": session_id,

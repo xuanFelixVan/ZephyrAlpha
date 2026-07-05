@@ -27,6 +27,10 @@ RollbackDrill — 定期回滚演练调度器 (DiRT-style)。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import random
 import sqlite3
@@ -141,8 +145,8 @@ class RollbackDrill:
         finally:
             try:
                 self._run_git(["worktree", "remove", "--force", str(worktree_path)])
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in rollback_drill", exc_info=True)
             self._cleanup_chaos(scenario)
 
         duration_ms = int((time.time() - start_time) * 1000)

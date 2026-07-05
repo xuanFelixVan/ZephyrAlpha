@@ -47,6 +47,9 @@ class DecisionGateConfig:
 
     Attributes:
         is_sharpe_threshold: IS阶段Sharpe准入门槛(默认0.5)
+        wfa_sharpe_threshold: WFA阶段单窗口Sharpe通过门槛(默认0.0,
+            区别于IS门槛; WFA关注Walk-Forward各fold的相对稳定性而非绝对准入);
+            0.0=要求fold为正Sharpe即可
         oos_sharpe_ratio_threshold: OOS Sharpe/IS Sharpe 比率门槛(默认0.7)
         wfa_majority_pct: WFA多数通过比例(默认0.5,即>50%)
         disaster_max_drawdown: 灾难否决最大回撤(默认0.5,即50%)
@@ -57,6 +60,7 @@ class DecisionGateConfig:
     """
 
     is_sharpe_threshold: float = 0.5
+    wfa_sharpe_threshold: float = 0.0
     oos_sharpe_ratio_threshold: float = 0.7
     wfa_majority_pct: float = 0.5
     disaster_max_drawdown: float = 0.5
@@ -304,11 +308,13 @@ class DecisionGate:
                     f"Walk-Forward窗口{idx}必须是字典: {type(window).__name__}"
                 )
             # 窗口通过判定:优先使用passed字段,否则按sharpe判定
+            # P2-2 修正: WFA使用独立的wfa_sharpe_threshold(非IS门槛),
+            # 因为WFA关注的是Walk-Forward各fold的相对稳定性, 而非IS绝对准入
             if "passed" in window:
                 w_passed = bool(window["passed"])
             elif "sharpe" in window:
                 try:
-                    w_passed = float(window["sharpe"]) > self.config.is_sharpe_threshold
+                    w_passed = float(window["sharpe"]) > self.config.wfa_sharpe_threshold
                 except (TypeError, ValueError) as exc:
                     raise DecisionGateError(
                         f"窗口{idx}的sharpe非数值: {window['sharpe']!r}"

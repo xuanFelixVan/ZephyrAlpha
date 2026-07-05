@@ -41,6 +41,10 @@ StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（T-2-04�
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json as _json
 from dataclasses import dataclass
 from pathlib import Path
@@ -245,8 +249,8 @@ class StateSynchronizer:
             fm = yaml.safe_load(fm_text)
             if isinstance(fm, dict):
                 return str(fm.get("status", "")).strip() or None
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in state_synchronizer", exc_info=True)
         return None
 
     def _check_and_fix(

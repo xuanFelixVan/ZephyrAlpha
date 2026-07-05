@@ -43,6 +43,10 @@ Merkle 树验证：
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 import hmac
 import json
@@ -468,8 +472,8 @@ class SqliteDumper:
             )
             if result.returncode == 0:
                 return result.stdout.strip()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in sqlite_dumper", exc_info=True)
         return "unknown"
 
     def _resolve_schema_version(self, conn: sqlite3.Connection) -> str:
@@ -477,8 +481,8 @@ class SqliteDumper:
             row = conn.execute("SELECT schema_version FROM zalpha_metadata LIMIT 1").fetchone()
             if row:
                 return row["schema_version"]
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in sqlite_dumper", exc_info=True)
         try:
             row = conn.execute("SELECT sqlite_version()").fetchone()
             return f"sqlite-{row[0]}"

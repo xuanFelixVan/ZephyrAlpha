@@ -28,6 +28,10 @@ Differential Check: 回滚前后逐行比较 tasks/gates/events 表
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import ast
 import json
 import shutil
@@ -123,8 +127,8 @@ class RollbackVerifier:
             try:
                 shutil.rmtree(cache_dir)
                 removed += 1
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in rollback_verifier", exc_info=True)
         return removed
 
     def heal_db_consistency(self, db_path: Path | None = None) -> DBHealReport:
@@ -151,8 +155,8 @@ class RollbackVerifier:
                         conn.execute("UPDATE tasks SET status='FAILED' WHERE task_id=?", (tid,))
                         tasks_fixed += 1
                         details.append(f"task {tid}: status {status} → FAILED")
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in rollback_verifier", exc_info=True)
 
             gates = conn.execute("SELECT * FROM gates").fetchall()
             for gate in gates:
@@ -164,8 +168,8 @@ class RollbackVerifier:
                         conn.execute("UPDATE gates SET result='FAIL' WHERE gate_id=?", (gid,))
                         gates_fixed += 1
                         details.append(f"gate {gid}: result {result} → FAIL")
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in rollback_verifier", exc_info=True)
 
             conn.commit()
             conn.close()

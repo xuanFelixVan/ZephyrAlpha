@@ -88,8 +88,8 @@ class FixBudget:
                 (this_month + "%",),
             ).fetchone()
             self._llm_tokens_consumed = row[0] if row else 0
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in fix_budget", exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:
             if conn is not None:

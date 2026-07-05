@@ -62,6 +62,10 @@ MCP 扩展码：-32001(ERR_TOOL_NOT_FOUND) / -32002(ERR_TOOL_EXECUTION) /
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import sys
 from collections.abc import Callable
@@ -216,8 +220,8 @@ class BaseMCPServer:
 
             self._rbac_guard = EscalationRBACBridge()
             self._agent_session_id = self.server_id
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in _base_server", exc_info=True)
 
     def enable_rbac(self, session_id: str = "") -> None:
         self._agent_session_id = session_id

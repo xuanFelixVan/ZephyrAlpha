@@ -37,6 +37,10 @@ Safety : M（治理层代码，门禁失败阻断入库）
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 import importlib
 import re
@@ -238,8 +242,8 @@ class IngestGate:
                 return f"LSG 安全扫描拦截：{reasons or result.decision.value}"
         except ImportError:
             pass
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in ingest", exc_info=True)
         return None
 
     def _check_frontmatter(self, text: str, ext: str) -> str | None:

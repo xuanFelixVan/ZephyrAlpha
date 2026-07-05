@@ -38,6 +38,10 @@ gitignore_pattern_coverage: 新文件类型未被覆盖建议添加
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import fnmatch
 import os
 from dataclasses import dataclass, field
@@ -129,8 +133,8 @@ def parse_gitignore(project_root: str) -> list[str]:
                 if line and not line.startswith("#"):
                     rules.append(line.rstrip("/"))
 
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in gitignore_auditor", exc_info=True)
 
     return rules
 

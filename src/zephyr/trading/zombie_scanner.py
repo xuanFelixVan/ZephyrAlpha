@@ -127,8 +127,8 @@ def _log_kill(pid: int, reason: str) -> None:
         os.makedirs(os.path.dirname(_ZOMBIE_LOG), exist_ok=True)
         with open(_ZOMBIE_LOG, "a", encoding="utf-8") as f:
             f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] KILLED PID={pid} reason={reason}\n")
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in zombie_scanner", exc_info=True)
 
 
 def _make_signature(cmdline: str) -> str:

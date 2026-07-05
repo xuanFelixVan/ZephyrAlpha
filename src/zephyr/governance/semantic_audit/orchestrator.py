@@ -303,8 +303,8 @@ class SemanticAuditor:
                     parts = line.split(":", 2)
                     if len(parts) > 2:
                         return parts[2].strip().split()[0]
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in orchestrator", exc_info=True)
         return doc_path.stem
 
 

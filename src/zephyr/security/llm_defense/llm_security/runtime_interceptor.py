@@ -428,8 +428,8 @@ def uninstall() -> None:
     global _FINDER_INSTALLED
     try:
         sys.meta_path = [f for f in sys.meta_path if not isinstance(f, _LLMGuardFinder)]
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in runtime_interceptor", exc_info=True)
     _FINDER_INSTALLED = False
     revoke_allowance()
 

@@ -1761,8 +1761,8 @@ class TaskRepository:
                             task_id,
                             all_in_progress,
                         )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in task_repo", exc_info=True)
 
         return _row_to_taskcard(updated_row)
 
@@ -2990,8 +2990,8 @@ class TaskRepository:
                 for c in created:
                     try:
                         self.hard_delete(c.task_id)
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("suppressed error in task_repo", exc_info=True)
                 return []
 
         for i in range(1, len(created)):

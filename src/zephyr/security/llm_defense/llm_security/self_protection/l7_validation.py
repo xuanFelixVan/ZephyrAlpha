@@ -190,8 +190,8 @@ class ProviderFailClosedAdapter:
         try:
             if self._provider is not None:
                 return self._provider(request)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in l7_validation", exc_info=True)
         return self._default_safe_response
 
     def is_fail_closed(self) -> bool:

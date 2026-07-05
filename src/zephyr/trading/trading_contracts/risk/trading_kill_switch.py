@@ -22,6 +22,10 @@
 #
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from collections.abc import Callable
 from enum import Enum
 
@@ -125,6 +129,6 @@ def evaluate(
                 if evaluator(ks.trigger_condition):
                     ks.active = True
                     triggered.append(ks)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in trading_kill_switch", exc_info=True)
     return triggered

@@ -249,11 +249,11 @@ class MCPProcessPool:
                 try:
                     entry.process.kill()
                     entry.process.wait(timeout=2.0)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("suppressed error in process_pool", exc_info=True)
             for stream in (entry.process.stdin, entry.process.stdout, entry.process.stderr):
                 if stream is not None:
                     try:
                         stream.close()
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.debug("suppressed error in process_pool", exc_info=True)

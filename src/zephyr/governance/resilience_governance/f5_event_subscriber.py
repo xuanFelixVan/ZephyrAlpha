@@ -634,8 +634,8 @@ def _dispatch_to_escalation(payload: Any, category: str) -> None:
             description=description,
             owner_id=owner_id,
         )
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in f5_event_subscriber", exc_info=True)
 
 
 __all__ = [

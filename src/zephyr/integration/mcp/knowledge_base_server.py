@@ -35,6 +35,10 @@ Backend  : UnifiedMemoryAPI (zephyr.governance.kb.storage.unified_memory_api) + 
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 import re
 import threading
@@ -212,8 +216,8 @@ class KnowledgeBaseServer(BaseMCPServer):
             from zephyr.governance.kb.unified_memory_api import get_unified_memory_api
 
             self._kb_api = get_unified_memory_api(enforce_capability=False)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
     # ------------------------------------------------------------------
     # Tool handlers
@@ -334,8 +338,8 @@ class KnowledgeBaseServer(BaseMCPServer):
                     content=content[:4000],
                     provenance=prov,
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
         return {
             "ke_id": ke_id,
@@ -401,14 +405,14 @@ class KnowledgeBaseServer(BaseMCPServer):
 
         try:
             vms_status = "available"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
         if self._kb_api is not None:
             try:
                 kb_api_count = self._kb_api.count()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
         overall = "healthy" if (sqlite_ok or chromadb_ok) else "degraded"
 

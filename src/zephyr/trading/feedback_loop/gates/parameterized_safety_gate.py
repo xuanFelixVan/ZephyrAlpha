@@ -25,6 +25,10 @@ GateVerdict — GateVerdict
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -296,8 +300,8 @@ class ParameterizedSafetyGate:
 
                     return handler(ctx, gtype, rule)
 
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in parameterized_safety_gate", exc_info=True)
 
             return GateResult(layer, GateVerdict.PASS, gtype, "Custom handler not found, defaulting to PASS")
 

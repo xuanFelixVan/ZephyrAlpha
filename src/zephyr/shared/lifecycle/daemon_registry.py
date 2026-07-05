@@ -301,8 +301,8 @@ class DaemonRegistry:
                     snap.memory_total_gb = mem_status[0] / (1024**3)
                     snap.memory_used_gb = mem_status[2] / (1024**3)
                     snap.memory_percent = mem_status[4]
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in daemon_registry", exc_info=True)
         snap.pressure = cls._classify_pressure(snap)
         cls._last_snapshot = snap
         return snap
@@ -348,8 +348,8 @@ class DaemonRegistry:
                     for cb in cls._on_pressure_callbacks:
                         try:
                             cb(snap.pressure, snap)
-                        except Exception:
-                            pass
+                        except Exception as e:
+                            logger.warning("suppressed error in daemon_registry", exc_info=True)
 
                 if snap.pressure is PressureLevel.EMERGENCY:
                     cls.stop_low_priority(min_priority=5)

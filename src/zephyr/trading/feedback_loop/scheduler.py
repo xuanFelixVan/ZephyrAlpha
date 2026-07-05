@@ -236,8 +236,8 @@ class FeedbackLoopScheduler:
                     from zephyr.shared.events.event_bus import bus
 
                     bus.emit(topic="audit_chain.compromised", payload={"issues": issues})
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in scheduler", exc_info=True)
             elif status == "no_data":
                 logger.debug("FLE audit trail: no data to verify")
             else:
@@ -586,5 +586,5 @@ class FeedbackLoopScheduler:
                     },
                     priority=EventPriority.NORMAL,
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in scheduler", exc_info=True)

@@ -26,6 +26,10 @@ This module is the canonical location. Import from here.
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from typing import Any
 
 from zephyr.autonomy_core.skills.skill_freshness import FreshnessDecayModel
@@ -56,8 +60,8 @@ def scan_all_freshness(model: FreshnessDecayModel | None = None) -> dict[str, An
             bus.emit("skill.freshness_critical", {"criticals": criticals}, priority=EventPriority.HIGH)
         if warnings:
             bus.emit("skill.freshness_warning", {"warnings": warnings}, priority=EventPriority.NORMAL)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in skill_freshness_ext", exc_info=True)
     return {"total_scanned": len(data), "healthy": len(healthy), "warnings": len(warnings), "criticals": len(criticals)}
 
 
@@ -81,8 +85,8 @@ def auto_deprecate_skill(
                 {"skill_id": skill_id, "freshness_score": freshness_score},
                 priority=EventPriority.HIGH,
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in skill_freshness_ext", exc_info=True)
         return result
     if freshness_score <= 30.0:
         try:
@@ -93,8 +97,8 @@ def auto_deprecate_skill(
                 {"skill_id": skill_id, "freshness_score": freshness_score},
                 priority=EventPriority.NORMAL,
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in skill_freshness_ext", exc_info=True)
         return {"action": "warning_issued", "skill_id": skill_id, "freshness_score": freshness_score}
     return {"action": "no_action", "skill_id": skill_id, "freshness_score": freshness_score}
 

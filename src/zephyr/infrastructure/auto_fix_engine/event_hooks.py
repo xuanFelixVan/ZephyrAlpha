@@ -86,8 +86,8 @@ class EventHooks:
                         "detail": f"action_id={action.action_id if action else None} target={action.target if action else None}",
                     },
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in event_hooks", exc_info=True)
         callbacks = self._hooks.get(event, [])
         for callback in callbacks:
             try:

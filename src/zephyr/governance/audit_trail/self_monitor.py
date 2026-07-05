@@ -34,8 +34,8 @@ class SelfMonitor:
             from zephyr.governance.audit_trail.drift_bridge import DriftBridge
 
             self._drift_bridge = DriftBridge()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in self_monitor", exc_info=True)
 
     def increment(self, name: str, value: int = 1) -> None:
         self._counters[name] = self._counters.get(name, 0) + value

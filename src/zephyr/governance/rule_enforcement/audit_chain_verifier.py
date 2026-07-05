@@ -71,8 +71,8 @@ class AuditChainVerifier:
         if _CORE_AUDIT_AVAILABLE:
             try:
                 self._core_writer = _CoreAuditWriter()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
 
     def append(self, gate_id: str, result: GateResult) -> AuditEntry:
         payload = {
@@ -107,8 +107,8 @@ class AuditChainVerifier:
                     "entry_hash": entry_hash,
                 }
                 self._core_writer.write(core_event)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
 
         return entry
 
@@ -173,8 +173,8 @@ class AuditChainVerifier:
                     "chain_length": len(self._chain),
                     "last_hash": self._last_hash,
                 })
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
         self._chain.clear()
         self._last_hash = "0" * 64
 

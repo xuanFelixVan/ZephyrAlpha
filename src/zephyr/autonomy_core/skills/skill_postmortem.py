@@ -32,6 +32,10 @@ Version: 0.2.0
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from datetime import UTC, datetime
 from typing import Any
 
@@ -109,8 +113,8 @@ class SkillPostmortem:
 
             loader = SkillLoader()
             layer_registry_cache = loader._load_registry()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in skill_postmortem", exc_info=True)
 
         skill_data = None
         if layer_registry_cache:

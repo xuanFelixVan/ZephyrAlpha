@@ -81,8 +81,8 @@ class ShadowWorkspace:
         finally:
             try:
                 shutil.rmtree(shadow_dir, ignore_errors=True)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in shadow_workspace", exc_info=True)
 
     def _run_test(self, shadow_dir: str, project_root: str | None = None) -> dict[str, Any]:
         try:

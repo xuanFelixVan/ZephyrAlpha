@@ -62,8 +62,8 @@ class ScaffoldRegistrar(BaseFixer):
                     for entry in data["scripts"]:
                         if isinstance(entry, dict) and "path" in entry:
                             registered_scripts.add(entry["path"])
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in scaffold_registrar", exc_info=True)
         for script in (repo_root / "scripts").rglob("*.py"):
             if script.name.startswith("_"):
                 continue
@@ -85,8 +85,8 @@ class ScaffoldRegistrar(BaseFixer):
                         findings.append(
                             {"file": str(py_file), "init_file": str(init_file), "type": "unregistered_module"}
                         )
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in scaffold_registrar", exc_info=True)
         return findings
 
     def fix(self, target: str, dry_run: bool = False) -> FixAction:

@@ -247,8 +247,8 @@ class VerdictEngine:
                         protection_level=resolved_level,
                     )
                     prot_level = resolved_level
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in verdict_engine", exc_info=True)
 
         verdict_level, reason = self._apply_decision_tree(actor, operation, gate_passed, violation_count)
 

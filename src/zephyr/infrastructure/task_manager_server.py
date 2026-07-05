@@ -672,8 +672,8 @@ def _extract_yaml_frontmatter(content: str) -> dict | None:
         fm = _yaml.safe_load(raw_yaml)
         if isinstance(fm, dict):
             return fm
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in task_manager_server", exc_info=True)
     return None
 
 

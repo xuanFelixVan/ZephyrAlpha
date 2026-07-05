@@ -90,8 +90,8 @@ class AuditLogger:
         if _CORE_AUDIT_AVAILABLE:
             try:
                 self._core_writer = _CoreAuditWriter()
-            except Exception:
-                pass
+            except Exception as e:
+                _logger.warning("suppressed error in audit_logger", exc_info=True)
 
     def hash_args(self, arguments: dict[str, Any]) -> str:
         raw = json.dumps(arguments, sort_keys=True, ensure_ascii=False)
@@ -138,8 +138,8 @@ class AuditLogger:
                 core_event["target_path"] = tool_name
                 core_event["status"] = result_status
                 self._core_writer.write(core_event)
-            except Exception:
-                pass
+            except Exception as e:
+                _logger.warning("suppressed error in audit_logger", exc_info=True)
 
         self._index.setdefault(client_session_id, []).append(entry)
         return entry

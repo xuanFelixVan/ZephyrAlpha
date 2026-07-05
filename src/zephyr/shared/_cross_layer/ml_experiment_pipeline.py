@@ -42,6 +42,10 @@ ME-CT-006: 跨层审计追踪
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
@@ -319,8 +323,8 @@ class MLExperimentPipeline:
             for name, cls in registry.items():
                 if model_id.lower() in name.lower():
                     return cls
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in ml_experiment_pipeline", exc_info=True)
         return self._engines[0] if self._engines else None
 
     @staticmethod

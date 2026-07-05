@@ -34,6 +34,10 @@
 """
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import ast
 import subprocess
 import sys
@@ -114,8 +118,8 @@ class ExamExecutor:
         except subprocess.TimeoutExpired:
             # 全量超时 → 退化为逐测试
             pass
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in exam_executor", exc_info=True)
 
         # 3. 部分通过：逐测试断言执行，收集错误
         passed = 0

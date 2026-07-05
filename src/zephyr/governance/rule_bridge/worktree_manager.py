@@ -161,8 +161,8 @@ def _force_rmtree(path: Path) -> bool:
             os.chmod(p, stat.S_IWRITE)
             func(p)
             return
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in worktree_manager", exc_info=True)
         # 第二次：sleep 等句柄释放后重试
         time.sleep(0.5)
         try:

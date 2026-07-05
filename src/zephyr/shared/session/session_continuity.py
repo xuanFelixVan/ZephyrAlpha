@@ -39,6 +39,10 @@ Vibe Coding 最大痛点：AI 每次新 session 是零记忆的。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import re
 import sqlite3
@@ -503,8 +507,8 @@ class SessionContinuity:
                     timeout=30,
                     capture_output=True,
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in session_continuity", exc_info=True)
 
     def _auto_generate_questions(
         self,
@@ -723,8 +727,8 @@ class SessionContinuity:
                 orphan_rate = f"{orphan_rate * 100:.1f}"
             gen = str(data.get("generated_at", "?"))[:19]
             print(f"  [Asset Inventory] 资产: {total} | 健康: {health} | 孤儿率: {orphan_rate}% | 生成: {gen}")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in session_continuity", exc_info=True)
 
     def restore_session(self) -> dict | None:
         """恢复上次 session 状态（程序化接口）

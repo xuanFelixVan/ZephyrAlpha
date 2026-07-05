@@ -20,6 +20,10 @@
 SRC-0040: 从 git_metadata.py + multi_ide.py 合并。
 """
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import os
 import re
 import subprocess
@@ -317,18 +321,18 @@ class MultiIDERuleGenerator:
         results: dict[str, Path] = {}
         try:
             results["cursor"] = self.generate_cursor_rules()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in metadata", exc_info=True)
         try:
             results["trae"] = self.generate_trae_rules()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in metadata", exc_info=True)
         try:
             results["vscode"] = self.generate_vscode_rules()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in metadata", exc_info=True)
         try:
             results["jetbrains"] = self.generate_jetbrains_rules()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in metadata", exc_info=True)
         return results

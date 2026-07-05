@@ -211,8 +211,8 @@ class AutoEvolutionEngine:
                 try:
                     if self.apply_fn(p):
                         outcome.applied_count += 1
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in auto_evolution", exc_info=True)
             outcome.windows_processed = 1
 
         blocked = 0
@@ -238,8 +238,8 @@ class AutoEvolutionEngine:
             try:
                 if self.apply_fn(ae_p):
                     outcome.applied_count += 1
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in auto_evolution", exc_info=True)
         outcome.blocked_by_safety_gate = blocked
 
         return outcome

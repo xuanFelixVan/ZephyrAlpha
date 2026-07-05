@@ -25,6 +25,10 @@ Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.m
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import threading
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
@@ -99,8 +103,8 @@ class DelegationEngine:
                     )
                     record.deadlock_detected = True
                     return record
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in delegation_engine", exc_info=True)
 
         delegate_id = self._select_delegate(event, strategy)
         if delegate_id is None or delegate_id == event.owner_id:

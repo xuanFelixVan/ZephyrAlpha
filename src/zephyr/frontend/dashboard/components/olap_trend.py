@@ -28,6 +28,10 @@ v3.1.0 变更 (#ARCH-047):
 """
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -58,16 +62,16 @@ def fetch_olap_trends(olap_engine: Any = None, period: str = "day", limit: int =
         return data
     try:
         data.task_progress = olap_engine.task_progress_trend(period=period, limit=limit)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in olap_trend", exc_info=True)
     try:
         data.compliance_rate = olap_engine.compliance_rate_trend(period=period, limit=limit)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in olap_trend", exc_info=True)
     try:
         data.knowledge_activation = olap_engine.knowledge_activation_trend(period="month", limit=12)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in olap_trend", exc_info=True)
     return data
 
 

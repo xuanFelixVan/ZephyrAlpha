@@ -260,8 +260,8 @@ class LoadBearingWall:
                 fm = _parse_frontmatter(content)
                 if isinstance(fm, dict):
                     cats.add(str(fm.get("category", "unknown")))
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in load_bearing", exc_info=True)
         return len(cats)
 
 

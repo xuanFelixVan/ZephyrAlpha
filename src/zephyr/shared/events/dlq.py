@@ -43,6 +43,10 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import sqlite3
 import time
@@ -196,8 +200,8 @@ class DeadLetterQueue:
         """DLQ 内部的 handler 不应抛异常——避免无限递归。"""
         try:
             raise RuntimeError("DLQ handler should not be called directly")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in dlq", exc_info=True)
 
     def capture(
         self,

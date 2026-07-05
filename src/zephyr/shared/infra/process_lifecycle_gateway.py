@@ -130,8 +130,8 @@ class ProcessLifecycleGateway:
         daemon_name = f"gateway:{name}"
         try:
             DaemonRegistry.stop(daemon_name)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in process_lifecycle_gateway", exc_info=True)
         return self._pool.terminate(name)
 
     def terminate_all(self) -> int:

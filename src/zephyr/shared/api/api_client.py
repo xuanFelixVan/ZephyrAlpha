@@ -196,8 +196,8 @@ class ApiClient:
             return
         try:
             self._observer.emit("api_call_completed", metrics=to_dict(metrics))
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in api_client", exc_info=True)
 
     def _build_retry(self) -> RetryConfig:
         if self._config.retry:

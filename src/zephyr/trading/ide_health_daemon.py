@@ -134,8 +134,8 @@ def _get_visible_window_configs() -> set[str]:
         )
         for match in re.finditer(r"vscode-window-config=vscode:([a-f0-9-]+)", result.stdout):
             visible.add(match.group(1))
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in ide_health_daemon", exc_info=True)
     return visible
 
 
@@ -170,8 +170,8 @@ def _get_mainwindow_handle_map() -> dict[int, int]:
                     handle_map[pid] = handle
                 except ValueError:
                     continue
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in ide_health_daemon", exc_info=True)
     return handle_map
 
 
@@ -292,8 +292,8 @@ def cleanup_completed_tasks() -> list[dict[str, Any]]:
         for s in completed_statuses:
             try:
                 tasks.extend(repo.list_by_status(s))
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in ide_health_daemon", exc_info=True)
     except Exception:
         logger.warning("ide_health_daemon: TaskRepository unavailable for cleanup")
         return results

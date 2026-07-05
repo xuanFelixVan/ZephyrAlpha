@@ -38,6 +38,10 @@ FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写）
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -343,8 +347,8 @@ class FileTaskMapper:
             fm = yaml.safe_load(fm_text)
             if isinstance(fm, dict):
                 return str(fm.get("status", "")).strip() or None
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in file_task_mapper", exc_info=True)
         return None
 
     def _check_consistency(

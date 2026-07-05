@@ -26,6 +26,10 @@ RollbackTargetStaleness — 回滚目标陈旧度检测。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import subprocess
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -93,6 +97,6 @@ class RollbackTargetStaleness:
             )
             if result.returncode == 0 and result.stdout.strip():
                 return datetime.fromisoformat(result.stdout.strip())
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in rollback_target_staleness", exc_info=True)
         return None

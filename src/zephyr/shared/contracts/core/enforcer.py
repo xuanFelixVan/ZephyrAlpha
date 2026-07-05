@@ -357,8 +357,8 @@ def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
         module = sys.modules.get(contract_type.__module__)
         globalns = getattr(module, "__dict__", {}) if module else {}
         return get_type_hints(contract_type, globalns=globalns, include_extras=False)
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("suppressed error in enforcer", exc_info=True)
 
     hints: dict[str, Any] = {}
     try:

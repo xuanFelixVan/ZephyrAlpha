@@ -28,6 +28,10 @@ RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog.
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -69,8 +73,8 @@ class RollbackAuditNexus:
         if _CORE_AUDIT_AVAILABLE:
             try:
                 self._core_writer = _CoreAuditWriter()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in rollback_audit_nexus", exc_info=True)
 
     def publish(self, event: AuditEvent) -> None:
         record = {
@@ -97,8 +101,8 @@ class RollbackAuditNexus:
                 core_event["target_path"] = event.target_commit
                 core_event["status"] = "success" if event.success else "failed"
                 self._core_writer.write(core_event)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in rollback_audit_nexus", exc_info=True)
 
     def create_event(
         self,

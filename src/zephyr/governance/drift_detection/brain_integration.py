@@ -378,8 +378,8 @@ def _l2_liveness_probe(result):
 
             result.orphan_resources = len(orphans)
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in brain_integration", exc_info=True)
 
         try:
             from zephyr.governance.drift_detection.credibility_engine import CredibilityEngine
@@ -397,8 +397,8 @@ def _l2_liveness_probe(result):
 
             result.credibility_scores = len(engine._scores)
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in brain_integration", exc_info=True)
 
         try:
             from zephyr.governance.drift_detection.correlation_engine import CorrelationEngine
@@ -409,8 +409,8 @@ def _l2_liveness_probe(result):
 
             result.correlation_findings = len(co_occurrence)
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in brain_integration", exc_info=True)
 
     except Exception as exc:
         result.errors.append("L2 exception: " + str(exc))
@@ -438,8 +438,8 @@ def _l3_reconcile(result, scan_level="LIGHT"):
 
             result.forensics_reports = len(forensics.timeline_entries)
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in brain_integration", exc_info=True)
 
         import importlib as _il
 

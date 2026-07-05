@@ -27,6 +27,10 @@ RollbackAbuseDetector — 回滚滥用检测。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 from collections import defaultdict
 from dataclasses import dataclass
@@ -65,8 +69,8 @@ class RollbackAbuseDetector:
                 query = AuditQuery()
                 core_events = query.by_event_type("rollback_operation")
                 entries = [e for e in core_events if isinstance(e, dict)]
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in rollback_abuse_detector", exc_info=True)
 
         if not entries:
             return AbuseReport(

@@ -32,6 +32,10 @@ Git bisect 自动溯源：bisect start→每step跑detector→定位root_cause c
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import os
 import subprocess
 import uuid
@@ -119,8 +123,8 @@ class GitBisector:
             # 并使仓库停留在 bisect 的分离 HEAD 状态。包裹 try/except 确保清理始终执行
             try:
                 subprocess.run(["git", "checkout", "-"], capture_output=True, text=True, cwd=self._project_root, timeout=10)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in git_bisector", exc_info=True)
 
     def bisect(
         self,

@@ -27,6 +27,10 @@ CI 集成: 每次 PR 运行真实回滚 → 确认回滚可行 + 无副作用。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import subprocess
 import time
 from dataclasses import dataclass, field
@@ -90,8 +94,8 @@ class RollbackSimulator:
         finally:
             try:
                 self._run_git(["worktree", "remove", "--force", str(worktree_path)])
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in rollback_simulator", exc_info=True)
 
         duration_ms = int((time.time() - start_time) * 1000)
 

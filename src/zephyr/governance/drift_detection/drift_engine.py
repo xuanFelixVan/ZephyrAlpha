@@ -38,6 +38,10 @@ module_id: MOD-INF-023
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import asyncio
 import json
 import os
@@ -446,8 +450,8 @@ async def _dispatch_detector(detector: Detector, sem: asyncio.Semaphore) -> dict
                 if proc is not None and proc.returncode is None:
                     proc.kill()
                     await proc.wait()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in drift_engine", exc_info=True)
 
 
 def _create_drift_event(detector: Detector, detail: str) -> DriftEvent:
@@ -614,8 +618,8 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
 
                 written += 1
 
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in drift_engine", exc_info=True)
 
         conn.commit()
     # 5.49.2 修复：异常路径确保连接归还
@@ -703,6 +707,6 @@ def _output_findings_as_jsonl(result: ScanResult) -> list[str]:
 
             ingest = FindingIngest()
             ingest.ingest_findings(findings)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in drift_engine", exc_info=True)
     return jsonl_lines

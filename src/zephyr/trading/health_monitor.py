@@ -315,8 +315,8 @@ class HealthMonitor:
                 ROELevel.EMERGENCY: PressureLevel.CRITICAL,
             }
             return mapping.get(roe_level, PressureLevel.NORMAL)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in health_monitor", exc_info=True)
         try:
             import psutil
 

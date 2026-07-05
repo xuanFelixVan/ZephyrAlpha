@@ -30,6 +30,8 @@ ExamOrchestrator --- 五轴入职考试主控
 
 from __future__ import annotations
 
+logger = logging.getLogger(__name__)
+
 import json
 import logging
 import math
@@ -880,8 +882,8 @@ class ExamOrchestrator:
                         result2 = self._infer(case)
                         if not self._outputs_similar(result, result2):
                             inc_count += 1
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("suppressed error in exam_orchestrator", exc_info=True)
 
                     if self._check_refusal(result):
                         ref_count += 1
@@ -1355,8 +1357,8 @@ class ExamOrchestrator:
                         cd += 1  # 键集漂移
                     elif not self._outputs_similar(result, result2):
                         inc += 1  # 键集相同但值差异大
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in exam_orchestrator", exc_info=True)
             except Exception:
                 ref += 1
 

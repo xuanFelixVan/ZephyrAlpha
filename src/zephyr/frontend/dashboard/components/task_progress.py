@@ -28,6 +28,10 @@ v3.1.0 变更 (#ARCH-047):
 """
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -78,8 +82,8 @@ def fetch_task_progress(task_repo: Any = None) -> TaskProgressData:
                 pp.in_progress_tasks = sum(1 for t in tasks if t.status.value == "IN_PROGRESS")
                 pp.failed_tasks = sum(1 for t in tasks if t.status.value == "FAILED")
                 pp.pending_tasks = sum(1 for t in tasks if t.status.value == "PENDING")
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in task_progress", exc_info=True)
         data.phases.append(pp)
         data.total_tasks += pp.total_tasks
         data.total_completed += pp.completed_tasks

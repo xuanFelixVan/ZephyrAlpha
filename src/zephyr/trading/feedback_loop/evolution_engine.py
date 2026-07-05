@@ -14,6 +14,10 @@
 # [TESTS]
 # [A_module] module_id=MOD-UNK_evolution_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+import logging
+
+logger = logging.getLogger(__name__)
+
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -346,8 +350,8 @@ class EvolutionEngine:
                 try:
                     if self._apply_fn(p):
                         report.applied_count += 1
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("suppressed error in evolution_engine", exc_info=True)
 
         return report
 
@@ -368,8 +372,8 @@ class EvolutionEngine:
                 report.proposals = [p for p in report.proposals if p.proposal_id not in flagged]
         except ImportError:
             pass
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in evolution_engine", exc_info=True)
 
 
 def evolve(

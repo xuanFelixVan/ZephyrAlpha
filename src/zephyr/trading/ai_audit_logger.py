@@ -24,6 +24,10 @@ AiAuditLogger — AI 行为审计日志
 5.17.3 修复：添加 SHA-256 哈希链 + 篡改检测，实现真正的不可变性。
 """
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 import json
 import threading
@@ -88,8 +92,8 @@ class AiAuditLogger:
                     except json.JSONDecodeError:
                         continue
             self._last_hash = last_hash
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in ai_audit_logger", exc_info=True)
 
     def _date_file(self) -> Path:
         date_str = datetime.now().strftime("%Y-%m-%d")

@@ -145,8 +145,8 @@ class InterruptGuard:
         try:
             wal_file = self._wal_dir / f"{action_id}.wal"
             wal_file.unlink(missing_ok=True)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in interrupt_guard", exc_info=True)
 
     def _rollback_fix(self, action_id: str, data: dict[str, Any]) -> None:
         target = data.get("target", "")

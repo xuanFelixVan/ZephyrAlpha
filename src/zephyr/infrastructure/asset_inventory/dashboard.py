@@ -190,8 +190,8 @@ class KnowledgeTransferGate:
             conn.close()
             if top:
                 lines.append(f"  最高依赖:  {', '.join(str(t) for t in top)}")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in dashboard", exc_info=True)
 
         lines.append("=" * 40)
         lines.append("")

@@ -37,6 +37,10 @@ v0.8.0 新增 FileLockBackend——跨进程锁，覆盖 Trae+Cursor+RooCode 多
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import os
 import threading
 import time
@@ -356,8 +360,8 @@ class FileLockBackend(LockBackend):
                     try:
                         shutil.rmtree(lock_dir, ignore_errors=True)
                         released.append(entry[:-5])  # strip ".lock"
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("suppressed error in pipeline_lock", exc_info=True)
 
             return sorted(released)
 
@@ -399,8 +403,8 @@ class FileLockBackend(LockBackend):
                     elif os.path.isfile(path):
                         try:
                             os.unlink(path)
-                        except Exception:
-                            pass
+                        except Exception as e:
+                            logger.debug("suppressed error in pipeline_lock", exc_info=True)
 
 
 class PipelineLock:

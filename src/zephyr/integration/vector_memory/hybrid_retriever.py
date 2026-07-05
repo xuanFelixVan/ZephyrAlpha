@@ -223,8 +223,8 @@ class HybridRetriever:
             if all_data.get("ids"):
                 for i, doc_id in enumerate(all_data["ids"]):
                     meta_map[doc_id] = all_data.get("metadatas", [{}])[i] if all_data.get("metadatas") else {}
-        except Exception:
-            pass
+        except Exception as e:
+            _logger.warning("suppressed error in hybrid_retriever", exc_info=True)
         return [(doc_id, score, meta_map.get(doc_id, {})) for doc_id, score in scores]
 
     def _rrf_fusion(

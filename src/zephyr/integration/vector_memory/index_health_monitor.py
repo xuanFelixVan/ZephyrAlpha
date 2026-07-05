@@ -154,8 +154,8 @@ class IndexHealthMonitor:
                                 age = (now - wt).days
                                 if age > ttl_days:
                                     expired += 1
-                            except Exception:
-                                pass
+                            except Exception as e:
+                                _logger.warning("suppressed error in index_health_monitor", exc_info=True)
                 reports.append(
                     TTLExpiryReport(
                         collection=col_name,
@@ -164,8 +164,8 @@ class IndexHealthMonitor:
                         ttl_days=ttl_days,
                     )
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                _logger.warning("suppressed error in index_health_monitor", exc_info=True)
         return reports
 
     def auto_repair(self, collection_name: str) -> bool:

@@ -15,6 +15,10 @@
 # [A_module] module_id=MOD-ORC_skill_executor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 from datetime import UTC, datetime
 from typing import Any
@@ -246,8 +250,8 @@ class SkillExecutor:
         if _CORE_AUDIT_AVAILABLE:
             try:
                 self._core_writer = _CoreAuditWriter()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in skill_executor", exc_info=True)
 
     def _write_audit(self, event_type: str, skill_id: str, extra: dict[str, Any] | None = None):
         evt = AuditEvent(event_type, skill_id)
@@ -261,8 +265,8 @@ class SkillExecutor:
                 core_event["session_id"] = skill_id
                 core_event["target_path"] = skill_id
                 self._core_writer.write(core_event)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in skill_executor", exc_info=True)
         return entry
 
     def execute(self, skill_id: str, task_description: str = "") -> dict[str, Any]:

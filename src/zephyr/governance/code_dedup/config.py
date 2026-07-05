@@ -26,6 +26,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Final, Mapping
@@ -177,8 +181,8 @@ def load_policy_tree() -> dict[str, Any]:
                 data = yaml.safe_load(f)
             if isinstance(data, dict) and "version" in data:
                 return data
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in config", exc_info=True)
     # 5.114.2 修复: POLICY_TREE 现为 MappingProxyType (只读), 返回 dict 副本保持调用方 dict 语义
     return dict(POLICY_TREE)
 

@@ -45,6 +45,8 @@ LocalModelScheduler — L2 本地模型 24/7 调度循环
 
 from __future__ import annotations
 
+logger = logging.getLogger(__name__)
+
 import logging
 import queue
 import threading
@@ -180,8 +182,8 @@ class LocalModelScheduler:
                 self.stop,
                 priority=3,
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in local_model_scheduler", exc_info=True)
         _log.info("LocalModelScheduler: 后台线程已启动 (poll=%ss)", self._poll_interval)
 
     def stop(self) -> None:

@@ -891,8 +891,8 @@ class PipelineRunner:
                         blast_radius=BlastRadius.layer,
                     )
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in pipeline_runner", exc_info=True)
         return findings
 
     def scan_gate_registry(self) -> list[AuditFinding]:
@@ -1080,8 +1080,8 @@ class PipelineRunner:
                             remediation_priority=RemediationPriority.P1,
                         )
                     )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in pipeline_runner", exc_info=True)
         return findings
 
     def run_full_scan(self, dimensions: list[str] | None = None, dry_run: bool = False) -> PipelineResult:
@@ -1100,8 +1100,8 @@ class PipelineRunner:
         for method in scan_methods:
             try:
                 all_findings.extend(method())
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in pipeline_runner", exc_info=True)
         elapsed = time.monotonic() - start
         return PipelineResult(
             total_scripts=pipeline_result.total_scripts,

@@ -26,6 +26,10 @@ McCCabe 复杂度 > 15 / 文件 → 反向回溯 + Lint 阻断。
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import ast
 from dataclasses import dataclass
 from pathlib import Path
@@ -79,8 +83,8 @@ class ComplexityBudget:
         for py_file in module_dir.glob("**/*.py"):
             try:
                 reports.append(self.check_file(py_file))
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in complexity_budget", exc_info=True)
         return reports
 
     @staticmethod

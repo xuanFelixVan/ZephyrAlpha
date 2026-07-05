@@ -17,6 +17,10 @@
 
 """引擎自扫描器 — Dogfooding 检测引擎自身源码重复."""
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -51,8 +55,8 @@ class SelfScanner:
                     if isinstance(n, (__import__("ast").FunctionDef, __import__("ast").AsyncFunctionDef))
                 ]
                 total += len(funcs)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in self_scanner", exc_info=True)
 
         return SelfScanResult(
             files_scanned=len(py_files),

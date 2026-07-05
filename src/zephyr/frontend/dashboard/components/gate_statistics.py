@@ -28,6 +28,10 @@ v3.1.0 变更 (#ARCH-047):
 """
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -81,8 +85,8 @@ def fetch_gate_statistics(olap_engine: Any = None) -> GateStatisticsData:
         data.total_failed = data.total_runs - data.total_passed
         data.overall_pass_rate = data.total_passed / data.total_runs if data.total_runs > 0 else 1.0
         data.overall_block_rate = 1.0 - data.overall_pass_rate
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("suppressed error in gate_statistics", exc_info=True)
     return data
 
 

@@ -219,8 +219,8 @@ def check_triple_alignment(
                     if end > 0:
                         fm_text = text[3:end]
                         bp_frontmatter = yaml.safe_load(fm_text) or {}
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in triple_alignment", exc_info=True)
 
         source_path_str = bp_frontmatter.get("actual_disk_path", "")
         first_source = source_path_str.split("+")[0].strip() if source_path_str else ""

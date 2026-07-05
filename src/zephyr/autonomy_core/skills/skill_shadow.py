@@ -32,6 +32,10 @@ Skill 影子部署引擎
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import difflib
 from datetime import UTC, datetime
 from typing import Any
@@ -128,8 +132,8 @@ class SkillShadowDeploy:
 
             freshness = FreshnessDecayModel()
             freshness.boost(skill_id, 50.0)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in skill_shadow", exc_info=True)
 
         return {
             "skill_id": skill_id,

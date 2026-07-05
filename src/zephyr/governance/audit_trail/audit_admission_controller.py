@@ -17,6 +17,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -162,6 +166,6 @@ class AuditAdmissionController:
 
                 ingest = FindingIngest()
                 ingest.ingest_findings(findings)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in audit_admission_controller", exc_info=True)
         return jsonl_lines

@@ -38,6 +38,10 @@ scalability: 10→100→500→1500模块渐进路线
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import gc
 import os
 import threading
@@ -204,8 +208,8 @@ def apply_degradation(snap: ResourceSnapshot, current_pool: int) -> tuple[int, D
             try:
                 _on_critical()
 
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("suppressed error in resource_guard", exc_info=True)
 
     return new_pool, level
 
@@ -302,8 +306,8 @@ def _apply_guard(
         try:
             on_degraded(level)
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in resource_guard", exc_info=True)
 
 
 def _restore_pool() -> None:

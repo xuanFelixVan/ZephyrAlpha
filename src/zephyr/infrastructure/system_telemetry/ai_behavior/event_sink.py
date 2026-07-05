@@ -22,6 +22,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import hashlib
 import os
 import threading
@@ -236,7 +240,7 @@ def emit_ai_behavior_event(
             from zephyr.infrastructure.system_telemetry.logs.structured_sink import append_jsonl_record
 
             append_jsonl_record(snapshot, labels={"__type": "ai_behavior_event"})
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("suppressed error in event_sink", exc_info=True)
 
     return event

@@ -28,6 +28,10 @@ Memory + Disk 双后端，自动 fallback
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import threading
 import time
@@ -96,8 +100,8 @@ class _DiskCache:
     def invalidate(self, key: str):
         try:
             self._path(key).unlink(missing_ok=True)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("suppressed error in skill_cache_provider", exc_info=True)
 
 
 class SkillCacheProvider:

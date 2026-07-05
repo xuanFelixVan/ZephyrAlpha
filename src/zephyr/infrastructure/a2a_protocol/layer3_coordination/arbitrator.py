@@ -28,6 +28,10 @@
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import IntEnum
@@ -184,8 +188,8 @@ class Arbitrator:
                 cycle = self._deadlock_detector.detect_cycle(agent_a.agent_id, agent_b.agent_id)
                 if cycle:
                     return ArbitrationVerdict.BLOCKED
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in arbitrator", exc_info=True)
         if self._escalation_engine is not None:
             try:
                 from zephyr.governance.escalation.escalation_models import RuleCategory
@@ -195,8 +199,8 @@ class Arbitrator:
                     owner_id=agent_a.agent_id,
                 )
                 return ArbitrationVerdict.AUTO_GUARD
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("suppressed error in arbitrator", exc_info=True)
         return ArbitrationVerdict.AUTO_GUARD
 
     def _tier1_priority(self, a: AgentMeta, b: AgentMeta) -> ArbitrationResult | None:
