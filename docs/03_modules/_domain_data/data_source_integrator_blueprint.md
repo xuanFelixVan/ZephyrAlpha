@@ -754,7 +754,7 @@ akshare:
 - ✅ `blueprint.md` 加注记（Provider 部分移交本蓝图，已存在）
 - ✅ `tmp/generate_acquisition_matrix.py` 重建并重新生成 matrix（61 任务全部接入 tasks.yaml 调度配置）
 
-**验证**：重新运行 `generate_acquisition_matrix.py`，61 项任务全部接入调度（44 有数据 + 8 表待建 + 7 空表 + 2 已禁用）。
+**验证**：重新运行 `generate_acquisition_matrix.py`，61 项任务全部接入调度（44 有数据 + 15 空表 + 2 已禁用；其中 8 张表已由 `tmp/sql/_create_integrator_missing_tables.sql` 补建，从"表不存在"转为"空表"）。
 
 ---
 
