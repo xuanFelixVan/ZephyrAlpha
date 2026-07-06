@@ -313,7 +313,7 @@ class DataSourceMeta:
 
 | Provider | source_name | SDK | 登录方式 | 线程安全 | 核心能力 |
 |----------|-------------|-----|---------|---------|---------|
-| IFindProvider | ifind | iFinDPy | THS_iFinDLogin(license) | thread_local | THS_RQ/THS_BD/iwencai/EDB |
+| IFindProvider | ifind | iFinDPy | THS_iFinDLogin(user,pwd) | thread_local | THS_RQ/THS_BD/iwencai/EDB |
 | MiniQMTProvider | miniqmt | xtquant | 三要素 + 进程在跑 | single_thread | 行情/财务/板块/期权Greeks |
 | AKShareProvider | akshare | akshare | 无需登录 | shared（但内部有限流） | 分红/质押/解禁/宏观/股东 |
 | BaostockProvider | baostock | baostock | bs.login() 匿名 | **thread_local**（每线程独立登录） | K线/财务（滞后1周） |

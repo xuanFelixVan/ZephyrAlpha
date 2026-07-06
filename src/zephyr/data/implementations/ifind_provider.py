@@ -28,7 +28,7 @@
 - THS_iFinDLogin / THS_BasicData 等在方法内部 import，避免模块加载时就要求 iFinDPy 安装
 - 月度配额错误码 -4318/-4309 直接透传给上层（配额耗尽重试无意义，不在 retry_on 中）
 - THS_BasicData 调用经基类 _call_with_policy 包裹，自动限流 + 重试
-- license_key 从环境变量 IFIND_LICENSE 读取
+- 凭证从环境变量 IFIND_USERNAME/IFIND_PASSWORD 读取
 """
 from __future__ import annotations
 
@@ -54,7 +54,7 @@ class IFindProvider(DataSourceBase):
     meta: DataSourceMeta = DataSourceMeta(
         name="ifind",
         display_name="同花顺 iFind",
-        auth_type="license_key",
+        auth_type="username_password",
         requires_process=False,
         thread_safety="thread_local",
         rate_limit_default=0,
@@ -121,25 +121,28 @@ class IFindProvider(DataSourceBase):
     # ============== 连接 / 登出 ==============
 
     def connect(self) -> None:
-        """登录 iFind：从环境变量读取 license_key，调用 THS_iFinDLogin。
+        """登录 iFind：从环境变量读取 username/password，调用 THS_iFinDLogin。
 
-        成功（返回 0 或正数）则置 _connected=True；失败（负数）抛 RuntimeError。
+        成功（返回 0）则置 _connected=True；失败（负数）抛 RuntimeError。
         login 返回值存入 self._login_result 供后续诊断。
 
         Raises:
-            RuntimeError: license_key 缺失或登录返回负数错误码。
+            RuntimeError: 凭证缺失或登录返回负数错误码。
         """
         from iFinDPy import THS_iFinDLogin
 
-        license_key = os.environ.get("IFIND_LICENSE")
-        if not license_key:
-            raise RuntimeError("环境变量 IFIND_LICENSE 未设置，无法登录 iFind")
+        username = os.environ.get("IFIND_USERNAME")
+        password = os.environ.get("IFIND_PASSWORD")
+        if not username or not password:
+            raise RuntimeError(
+                "环境变量 IFIND_USERNAME/IFIND_PASSWORD 未设置，无法登录 iFind"
+            )
 
         self._log.info("正在登录 iFind ...")
-        result = THS_iFinDLogin(license_key)
+        result = THS_iFinDLogin(username, password)
         self._login_result = result
 
-        # 0 或正数表示成功，负数表示失败
+        # 0 表示成功，负数表示失败
         if isinstance(result, (int, float)) and result < 0:
             self._connected = False
             raise RuntimeError(f"iFind 登录失败，错误码: {result}")
