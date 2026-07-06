@@ -40,6 +40,7 @@ match_score 公式 (0-1, 四维加权):
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from pathlib import Path
 from typing import Any
@@ -58,7 +59,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源 (SSoT)
 
 _log = logging.getLogger(__name__)
 
-JOB_MATRIX_PATH = REPO_ROOT / "data" / "brain" / "job_matrix.yaml"
+JOB_MATRIX_PATH: Final[Path] = REPO_ROOT / "data" / "brain" / "job_matrix.yaml"
 
 
 class JobMatcherError(Exception):

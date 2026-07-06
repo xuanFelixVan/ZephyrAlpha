@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 
@@ -28,7 +29,7 @@ class TokenTier(str, Enum):
     T4 = "T4_40K"
 
 
-TIER_TOKENS: dict[TokenTier, int] = {
+TIER_TOKENS: Final[dict[TokenTier, int]] = {
     TokenTier.T0: 500,
     TokenTier.T1: 2000,
     TokenTier.T2: 5000,
@@ -43,5 +44,5 @@ class HallucinationLevel(str, Enum):
     L3_SELF_REF = "L3_self_refuting"
 
 
-TRIM_DUPLICATE_THRESHOLD: float = 0.30
-MAX_HISTORY_DAYS: int = 30
+TRIM_DUPLICATE_THRESHOLD: Final[float] = 0.30
+MAX_HISTORY_DAYS: Final[int] = 30

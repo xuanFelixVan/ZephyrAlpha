@@ -29,6 +29,7 @@ CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import logging
 import threading
@@ -38,10 +39,10 @@ import numpy as np
 
 _logger = logging.getLogger(__name__)
 
-DEFAULT_CACHE_SIZE: int = 1024
+DEFAULT_CACHE_SIZE: Final[int] = 1024
 
-PERMANENT_CACHE_COLLECTIONS: frozenset[str] = frozenset({"rules"})
-NO_CACHE_COLLECTIONS: frozenset[str] = frozenset({"execution_traces"})
+PERMANENT_CACHE_COLLECTIONS: Final[frozenset[str]] = frozenset({"rules"})
+NO_CACHE_COLLECTIONS: Final[frozenset[str]] = frozenset({"execution_traces"})
 
 
 class CacheLayer:

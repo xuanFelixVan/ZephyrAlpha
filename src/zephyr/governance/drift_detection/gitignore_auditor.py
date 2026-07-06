@@ -38,6 +38,7 @@ gitignore_pattern_coverage: 新文件类型未被覆盖建议添加
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -46,7 +47,7 @@ import fnmatch
 import os
 from dataclasses import dataclass, field
 
-GENERATED_FILE_EXTENSIONS: set[str] = {
+GENERATED_FILE_EXTENSIONS: Final[set[str]] = {
     ".pkl",
     ".joblib",
     ".cache",
@@ -77,7 +78,7 @@ GENERATED_FILE_EXTENSIONS: set[str] = {
 }
 
 
-CRITICAL_FILE_EXTENSIONS: set[str] = {
+CRITICAL_FILE_EXTENSIONS: Final[set[str]] = {
     ".py",
     ".yaml",
     ".yml",
@@ -90,7 +91,7 @@ CRITICAL_FILE_EXTENSIONS: set[str] = {
 }
 
 
-CRITICAL_FILE_PATTERNS: list[str] = [
+CRITICAL_FILE_PATTERNS: Final[list[str]] = [
     "project.godot",
     "AGENTS.md",
     "*.py",

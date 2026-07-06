@@ -46,6 +46,7 @@ SSoT: docs/03_modules/_domain_execution_core/blueprint.md §16.7.1 MiniQmtBroker
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import threading
 from datetime import datetime
@@ -76,7 +77,7 @@ from zephyr.shared.utils.time_utils import now_utc
 _logger = logging.getLogger(__name__)
 
 # xttrader 错误码映射
-XTTRADER_ERROR_CODES: dict[int, str] = {
+XTTRADER_ERROR_CODES: Final[dict[int, str]] = {
     0: "成功",
     -1: "连接失败",
     -2: "未就绪",

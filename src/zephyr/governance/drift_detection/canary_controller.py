@@ -34,6 +34,8 @@ auto_rollback: v2 FP率>2×v1自动回退
 对标 blueprint.md §6.11。"""
 
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 import json
@@ -107,7 +109,7 @@ class CanaryConfig:
 _CANARY_STATE_FILE: str = "_canary_state.json"
 
 
-CONFIG = CanaryConfig()
+CONFIG: Final[CanaryConfig] = CanaryConfig()
 
 
 def _load_state() -> dict[str, object]:

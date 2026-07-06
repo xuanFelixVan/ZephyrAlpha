@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import random
 from enum import Enum
 
@@ -28,18 +29,18 @@ class BulkheadPool(str, Enum):
     SYSTEM = "System"
 
 
-BULKHEAD_ALLOCATION: dict[BulkheadPool, float] = {
+BULKHEAD_ALLOCATION: Final[dict[BulkheadPool, float]] = {
     BulkheadPool.SIGNAL: 0.30,
     BulkheadPool.EXECUTION: 0.25,
     BulkheadPool.RESEARCH: 0.25,
     BulkheadPool.SYSTEM: 0.20,
 }
 
-RETRY_BACKOFF_SEQUENCE: list[float] = [0.01, 0.1, 1.0, 10.0, 30.0]
-MAX_RETRIES: int = 5
-JITTER_RATIO: float = 0.25
+RETRY_BACKOFF_SEQUENCE: Final[list[float]] = [0.01, 0.1, 1.0, 10.0, 30.0]
+MAX_RETRIES: Final[int] = 5
+JITTER_RATIO: Final[float] = 0.25
 
-E2E_TIMEOUT_MS: int = 460
+E2E_TIMEOUT_MS: Final[int] = 460
 
 
 class DegradationLevel(int, Enum):
@@ -50,7 +51,7 @@ class DegradationLevel(int, Enum):
     T4 = 4
 
 
-DEGRADATION_LAYERS: dict[DegradationLevel, str] = {
+DEGRADATION_LAYERS: Final[dict[DegradationLevel, str]] = {
     DegradationLevel.T0: "全功能——正常运作",
     DegradationLevel.T1: "信号更新 1min→5min (CPU>80%)",
     DegradationLevel.T2: "仅用核心因子 (数据源异常)",

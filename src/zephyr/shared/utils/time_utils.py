@@ -42,6 +42,8 @@ SSoT: MOD-INF-016 §2.18 shared-time-utils
 Version: 0.1.0
 """
 
+from typing import Final
+
 from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, datetime
@@ -58,7 +60,7 @@ __all__ = [
     "seconds_until",
 ]
 
-MOCKED_TIME: datetime | None = None
+MOCKED_TIME: Final[datetime | None] = None
 _mocked_time_lock = threading.Lock()
 
 

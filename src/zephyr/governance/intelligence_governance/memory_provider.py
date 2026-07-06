@@ -41,6 +41,7 @@ SSoT: cross_layer_contracts.yaml → CTR-001
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from datetime import UTC, datetime, timedelta
 
@@ -106,7 +107,7 @@ def _generate_candles(
     return open_prices, high, low, volume, amount
 
 
-DEFAULT_SYMBOLS = [
+DEFAULT_SYMBOLS: Final[list] = [
     "600519",
     "000858",
     "601318",

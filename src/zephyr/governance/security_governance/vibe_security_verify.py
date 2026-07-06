@@ -22,7 +22,8 @@ Vibe Security Verifier — v0.9.0 Vibe Coding安全验证器: AI生成代码安�
 
 from __future__ import annotations
 
-SECURITY_CHECKS = ["no_eval", "no_exec", "no_os_system", "no_subprocess_shell", "no_pickle", "no_yaml_unsafe_load"]
+from typing import Final
+SECURITY_CHECKS: Final[list] = ["no_eval", "no_exec", "no_os_system", "no_subprocess_shell", "no_pickle", "no_yaml_unsafe_load"]
 
 
 class VibeSecurityVerify:

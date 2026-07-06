@@ -23,6 +23,7 @@ a unified healthz endpoint consumable by external monitoring.
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from typing import Any
 
@@ -34,7 +35,7 @@ __all__ = [
 
 _logger = logging.getLogger(__name__)
 
-ALL_SYSTEM_NAMES: tuple[str, ...] = (
+ALL_SYSTEM_NAMES: Final[tuple[str, ...]] = (
     "orchestrator",
     "script_system",
     "knowledge_base",

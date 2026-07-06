@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from enum import Enum
 
@@ -40,7 +41,7 @@ class OrderState(str, Enum):
     CANCELLED = "CANCELLED"
 
 
-TERMINAL_STATES: set[OrderState] = {OrderState.FILLED, OrderState.REJECTED, OrderState.CANCELLED}
+TERMINAL_STATES: Final[set[OrderState]] = {OrderState.FILLED, OrderState.REJECTED, OrderState.CANCELLED}
 
 
 class RiskCheckResult(BaseModel):

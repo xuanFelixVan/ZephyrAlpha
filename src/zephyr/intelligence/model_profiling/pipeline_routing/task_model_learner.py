@@ -53,6 +53,7 @@ composite_score = speed_norm * 0.40 + quality_norm * 0.35 + consistency_norm * 0
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import logging
 import statistics
@@ -63,9 +64,9 @@ from typing import Any
 
 _log = logging.getLogger(__name__)
 
-THROUGHPUT_MAX = 200.0
-MIN_SAMPLES_FOR_LEARNED = 3
-DEFAULT_STORAGE_DIR = "data/model_learning"
+THROUGHPUT_MAX: Final[float] = 200.0
+MIN_SAMPLES_FOR_LEARNED: Final[int] = 3
+DEFAULT_STORAGE_DIR: Final[str] = "data/model_learning"
 
 
 @dataclass

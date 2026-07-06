@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 
@@ -27,8 +28,8 @@ class IntegrityDim(str, Enum):
     HFT_FIDELITY = "HFT_FIDELITY"
 
 
-PIT_MAX_DELAY_MINUTES: int = 15
-HEALTH_CHECK_INTERVAL: dict[str, str] = {
+PIT_MAX_DELAY_MINUTES: Final[int] = 15
+HEALTH_CHECK_INTERVAL: Final[dict[str, str]] = {
     "monthly": "所有dim+grid自动run",
     "quarterly": "full2016-2024 re-run vs Sept→bias report",
 }

@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import os
 from pathlib import Path
@@ -31,7 +32,7 @@ __all__: list[str] = ["ConstitutionEngine", "DuplicateArticleError", "RegistryWr
 
 _REGISTRY_PATH: Path = Path(__file__).parent / "_constitution-registry.yaml"
 
-ARTICLE_CATEGORIES: dict[str, str] = {
+ARTICLE_CATEGORIES: Final[dict[str, str]] = {
     "security_boundary": "Security Boundary",
     "data_sovereignty": "Data Sovereignty",
     "transaction_integrity": "Transaction Integrity",
@@ -40,7 +41,7 @@ ARTICLE_CATEGORIES: dict[str, str] = {
     "knowledge_safety": "Knowledge Safety",
 }
 
-TEMPLATES: dict[str, dict] = {
+TEMPLATES: Final[dict[str, dict]] = {
     "security_boundary": {
         "name": "No {vector} Bypass",
         "derived_from": "OWASP LLM01:2025",

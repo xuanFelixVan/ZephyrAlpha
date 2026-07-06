@@ -35,6 +35,7 @@ ModelProfiler — 核心性能分析引擎
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import logging
 import re
@@ -58,10 +59,10 @@ from zephyr.shared.utils.time_utils import now_utc
 _log = logging.getLogger(__name__)
 
 # Ollama 模型的上限（太多细小模型没必要全测）
-MAX_OLLAMA_MODELS = 10
+MAX_OLLAMA_MODELS: Final[int] = 10
 
 # 跳过非对话模型（embedding 模型等不适合 benchmark）
-SKIP_MODEL_PATTERNS = [
+SKIP_MODEL_PATTERNS: Final[list] = [
     "bge",
     "embed",
     "nomic",

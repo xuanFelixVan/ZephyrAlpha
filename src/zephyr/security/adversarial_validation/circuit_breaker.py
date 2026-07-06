@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import time
 from enum import Enum
@@ -27,9 +28,9 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["CircuitBreaker", "CircuitBreakerOpenError", "CircuitState"]
 
-DEFAULT_COOL_DOWN_MS: int = 30000
-BYPASS_RATE_OPEN_THRESHOLD: float = 0.3
-STRESS_LEVEL_THRESHOLD: int = 10
+DEFAULT_COOL_DOWN_MS: Final[int] = 30000
+BYPASS_RATE_OPEN_THRESHOLD: Final[float] = 0.3
+STRESS_LEVEL_THRESHOLD: Final[int] = 10
 
 
 class CircuitState(str, Enum):

@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel
@@ -37,4 +38,4 @@ class LocalFirstPolicy(BaseModel):
         return self.all_compute is ComputeLocation.LOCAL and self.zero_cloud_dep
 
 
-LOCAL_FIRST = LocalFirstPolicy()
+LOCAL_FIRST: Final[LocalFirstPolicy] = LocalFirstPolicy()

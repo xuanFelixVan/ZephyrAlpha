@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import logging
 import sys
@@ -52,7 +53,7 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["DefenseRunner", "GateEvaluationError"]
 
-GATE_MAP: dict[str, str] = {
+GATE_MAP: Final[dict[str, str]] = {
     "prompt_injection_filter": "G1",
     "immutable_core.verify": "G1",
     "circuit_breaker.hard_check": "G1",

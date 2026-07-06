@@ -62,6 +62,7 @@ MCP 扩展码：-32001(ERR_TOOL_NOT_FOUND) / -32002(ERR_TOOL_EXECUTION) /
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -90,8 +91,8 @@ __all__ = [
     "ToolDefinition",
 ]
 
-JSONRPC_VERSION = "2.0"
-MCP_PROTOCOL_VERSION = "2024-11-05"
+JSONRPC_VERSION: Final[str] = "2.0"
+MCP_PROTOCOL_VERSION: Final[str] = "2024-11-05"
 
 import asyncio
 

@@ -37,6 +37,8 @@ metrics: detection_rate / time_to_detect / false_negative_trend
 对标 blueprint.md §6.13。"""
 
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 import os
@@ -236,7 +238,7 @@ def import_hallucination(target_file: Path) -> tuple[str, str]:
     return original, mutated
 
 
-INJECTORS: dict[ChaosInjectionType, object] = {
+INJECTORS: Final[dict[ChaosInjectionType, object]] = {
     ChaosInjectionType.PATH_RENAME: inject_path_rename,
     ChaosInjectionType.YAML_FIELD_FLIP: inject_yaml_field_flip,
     ChaosInjectionType.FAKE_TODO_BOMB: inject_fake_todo_bomb,

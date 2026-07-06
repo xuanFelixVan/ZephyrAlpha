@@ -27,6 +27,7 @@ SSoT: cross_layer_contracts.yaml v3.0
 
 from __future__ import annotations
 
+from typing import Final
 import dataclasses
 import importlib
 import sys
@@ -51,9 +52,9 @@ def _load_contract_spec_path() -> Path:
             return REPO_ROOT / rel
     return REPO_ROOT / "architecture_model" / "contracts" / "cross_layer_contracts.yaml"
 
-CONTRACTS_PATH = _load_contract_spec_path()
+CONTRACTS_PATH: Final[Any] = _load_contract_spec_path()
 
-TYPE_ALIAS_MAP: dict[str, str] = {
+TYPE_ALIAS_MAP: Final[dict[str, str]] = {
     "str": "str",
     "int": "int",
     "float": "float",

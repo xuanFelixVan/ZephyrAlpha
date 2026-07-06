@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 from pydantic import BaseModel
@@ -40,7 +41,7 @@ class BudgetColumn(BaseModel):
         return current_spend > self.annual_cost + self.tolerance
 
 
-TCO_MODEL: dict[str, BudgetColumn] = {
+TCO_MODEL: Final[dict[str, BudgetColumn]] = {
     "infra": BudgetColumn(
         name="infra",
         annual_cost=2400.00,

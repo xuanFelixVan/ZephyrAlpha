@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -37,7 +38,7 @@ class SPOFReport(BaseModel):
     mitigated: bool = False
 
 
-SPOF_CHECKS: dict[SPOFType, SPOFReport] = {
+SPOF_CHECKS: Final[dict[SPOFType, SPOFReport]] = {
     SPOFType.BROKER: SPOFReport(
         spof_type=SPOFType.BROKER,
         current="单一经纪商API",

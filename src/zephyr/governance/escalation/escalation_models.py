@@ -24,6 +24,7 @@ Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.m
 
 from __future__ import annotations
 
+from typing import Final
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -162,7 +163,7 @@ class DelegationRecord:
     deadlock_detected: bool = False
 
 
-DEFAULT_ESCALATION_RULES: list[EscalationRule] = [
+DEFAULT_ESCALATION_RULES: Final[list[EscalationRule]] = [
     EscalationRule(
         "R001",
         RuleCategory.AUTO_GUARD_FAILURE,

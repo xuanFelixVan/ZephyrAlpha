@@ -17,9 +17,10 @@
 
 from __future__ import annotations
 
+from typing import Final
 from zephyr.governance.ops_governance.budget_models import ModelTier
 
-DEFAULT_PROVIDERS: dict[str, dict[str, str | float | list[str]]] = {
+DEFAULT_PROVIDERS: Final[dict[str, dict[str, str | float | list[str]]]] = {
     "zhipu": {
         "char_glm": "glm-4.5-free",
         "glm_plus": "glm-4-plus",
@@ -52,7 +53,7 @@ DEFAULT_PROVIDERS: dict[str, dict[str, str | float | list[str]]] = {
     },
 }
 
-TIER_MODEL_MAP: dict[ModelTier, list[str]] = {
+TIER_MODEL_MAP: Final[dict[ModelTier, list[str]]] = {
     ModelTier.ECONOMY: ["zhipu:char_glm", "zhipu:glm_flash", "deepseek:free"],
     ModelTier.STANDARD: ["zhipu:glm_plus", "deepseek:pro", "openai_azure:gpt4o_mini"],
     ModelTier.PREMIUM: ["openai_azure:gpt4o", "anthropic:sonnet", "deepseek:reasoner"],

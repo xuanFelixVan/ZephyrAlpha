@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from typing import Self
 
 #!/usr/bin/env python3
@@ -85,9 +86,9 @@ def _fix_windows_console() -> None:
 # 常量
 # ---------------------------------------------------------------------------
 
-REGISTRY_REL_PATH = "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
+REGISTRY_REL_PATH: Final[str] = "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
 
-WATCHED_PREFIXES: tuple[str, ...] = (
+WATCHED_PREFIXES: Final[tuple[str, ...]] = (
     "scripts/hooks/",
     "scripts/governance/",
     "scripts/ci_audit/",
@@ -98,10 +99,10 @@ WATCHED_PREFIXES: tuple[str, ...] = (
     "docs/00_meta/",
 )
 
-WATCHED_EXTENSIONS: frozenset[str] = frozenset({".py", ".yml", ".yaml", ".md"})
+WATCHED_EXTENSIONS: Final[frozenset[str]] = frozenset({".py", ".yml", ".yaml", ".md"})
 
 # 注册表 YAML 中表示文件路径的字段名（用于路径提取）
-PATH_FIELD_PATTERNS: tuple[str, ...] = (
+PATH_FIELD_PATTERNS: Final[tuple[str, ...]] = (
     r"^\s+path:\s+['\"]?([^\s'\"#]+)",
     r"^\s*-\s+path:\s+['\"]?([^\s'\"#]+)",
     r"^\s+core_file:\s+['\"]?([^\s'\"#]+)",

@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel
@@ -40,7 +41,7 @@ class PhaseDef(BaseModel):
     confidence_threshold: float = 0.95
 
 
-MIGRATION_PIPELINE: dict[MigrationPhase, PhaseDef] = {
+MIGRATION_PIPELINE: Final[dict[MigrationPhase, PhaseDef]] = {
     MigrationPhase.ISSUE_TRACKING: PhaseDef(
         phase=MigrationPhase.ISSUE_TRACKING,
         label="问题追踪",

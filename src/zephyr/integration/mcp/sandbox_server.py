@@ -27,6 +27,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import subprocess
 import tempfile
@@ -40,15 +41,15 @@ __all__ = ["SandboxServer", "main"]
 
 _log = logging.getLogger(__name__)
 
-SERVER_ID = "sandbox"
-SERVER_VERSION = "0.1.0"
-SERVER_DESCRIPTION = "安全代码执行沙箱（Phase 7 skeleton）"
+SERVER_ID: Final[str] = "sandbox"
+SERVER_VERSION: Final[str] = "0.1.0"
+SERVER_DESCRIPTION: Final[str] = "安全代码执行沙箱（Phase 7 skeleton）"
 
-MAX_CODE_BYTES = 500 * 1024
-MAX_OUTPUT_BYTES = 1 * 1024 * 1024
-DEFAULT_TIMEOUT = 30.0
+MAX_CODE_BYTES: Final[int] = 500 * 1024
+MAX_OUTPUT_BYTES: Final[int] = 1 * 1024 * 1024
+DEFAULT_TIMEOUT: Final[float] = 30.0
 
-SUPPORTED_LANGUAGES = {"python", "javascript", "bash"}
+SUPPORTED_LANGUAGES: Final[set] = {"python", "javascript", "bash"}
 
 
 class SandboxServer(BaseMCPServer):

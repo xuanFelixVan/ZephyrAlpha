@@ -21,14 +21,16 @@ verify_paths.py — 代码路径索引验证 (TASK-012)
 验证 §12 和 §14 中的所有文件路径与实际磁盘一致。
 """
 
+from typing import Final
+
 import json
 from pathlib import Path
 from typing import Any
 
-CE_DIR = Path(__file__).resolve().parent
-TESTS_DIR = CE_DIR.parent.parent.parent / "tests"
+CE_DIR: Final[Path] = Path(__file__).resolve().parent
+TESTS_DIR: Final[Any] = CE_DIR.parent.parent.parent / "tests"
 
-SOURCE_FILES = {
+SOURCE_FILES: Final[set] = {
     "context_assembler.py": "source",
     "context_budget_tracker.py": "source",
     "context_injector.py": "source",
@@ -46,7 +48,7 @@ SOURCE_FILES = {
     "vector_bridge.py": "source",
 }
 
-TEST_FILES = {
+TEST_FILES: Final[set] = {
     "unit/context-engine/test_context_assembler.py": "test",
     "unit/context-engine/test_context_budget_tracker.py": "test",
     "unit/context-engine/test_context_injector.py": "test",

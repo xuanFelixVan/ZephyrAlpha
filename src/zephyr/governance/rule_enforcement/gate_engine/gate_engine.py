@@ -67,6 +67,7 @@ Safety : M（治理层代码，门禁失败阻断任务启动）
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -107,7 +108,7 @@ __all__ = [
 # 常量
 # ---------------------------------------------------------------------------
 
-GATES_DIR = Path(__file__).parent.parent  # rule_enforcement/（门禁yaml真源根：task/ invariants/ admission/ 子目录）
+GATES_DIR: Final[Path] = Path(__file__).parent.parent  # rule_enforcement/（门禁yaml真源根：task/ invariants/ admission/ 子目录）
 
 _DEPRECATED_PATHS_YAML = (
     REPO_ROOT / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"

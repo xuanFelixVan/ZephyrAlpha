@@ -36,6 +36,8 @@ REPO_ROOT，导致：
   - Terraform: provider 配置集中定义，模块引用而非重定义
 """
 
+from typing import Final
+
 import functools
 from pathlib import Path
 
@@ -60,20 +62,20 @@ def find_repo_root() -> Path:
     raise FileNotFoundError(f"Cannot find project root (no src/zephyr/__init__.py found) from {current}")
 
 
-REPO_ROOT: Path = find_repo_root()
+REPO_ROOT: Final[Path] = find_repo_root()
 
-DB_DIR: Path = REPO_ROOT / "data"
+DB_DIR: Final[Path] = REPO_ROOT / "data"
 
 # DB_PATH — computed locally to avoid circular import from zephyr.governance.persistence
 # Previously: from zephyr.governance.persistence.sqlite_schema import DB_PATH
-DB_PATH: Path = REPO_ROOT / "data" / "databases" / "governance.db"
+DB_PATH: Final[Path] = REPO_ROOT / "data" / "databases" / "governance.db"
 
-GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
-SNAPSHOTS_DIR: Path = REPO_ROOT / ".runtime" / "snapshots"
-RATIONALE_LOG_PATH: Path = REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
+GATES_DIR: Final[Path] = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+SNAPSHOTS_DIR: Final[Path] = REPO_ROOT / ".runtime" / "snapshots"
+RATIONALE_LOG_PATH: Final[Path] = REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
 
-VECTOR_INDEX_DIR: Path = REPO_ROOT / ".audit_cache" / "vector_index"
-MODELS_CACHE_DIR: Path = REPO_ROOT / ".audit_cache" / "models"
+VECTOR_INDEX_DIR: Final[Path] = REPO_ROOT / ".audit_cache" / "vector_index"
+MODELS_CACHE_DIR: Final[Path] = REPO_ROOT / ".audit_cache" / "models"
 
 
 def get_tmp_dir() -> Path:

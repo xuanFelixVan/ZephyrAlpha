@@ -40,6 +40,8 @@ anomaly_detection: 总行数减少/批量清洗/回溯修改 → P0 CRITICAL从G
 同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。"""
 
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 import logging
@@ -91,7 +93,7 @@ class AnomalyAlert:
     recovery_suggestion: str = ""
 
 
-APPEND_ONLY_TRIGGERS: str = """
+APPEND_ONLY_TRIGGERS: Final[str] = """
 
 
 CREATE TRIGGER IF NOT EXISTS drift_events_no_update

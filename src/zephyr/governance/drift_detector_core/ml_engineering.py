@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 
@@ -29,7 +30,7 @@ class DataLeakCheck(str, Enum):
     C6_EARNINGS_SPLIT_EX_POST = "C6_EARNINGS_SPLIT_EX_POST"
 
 
-LEAK_CHECKS: dict[DataLeakCheck, str] = {
+LEAK_CHECKS: Final[dict[DataLeakCheck, str]] = {
     DataLeakCheck.C1_FACTOR_DATE_GT_MARKET: "factor_date > market_date → NEVER",
     DataLeakCheck.C2_TRAIN_TEST_OVERLAP: "train < test — time ordering",
     DataLeakCheck.C3_FUTURE_ACCESS_FACTOR_STORE: "不可达 — future barrier",
@@ -45,7 +46,7 @@ class MarketRegime(str, Enum):
     BEAR = "BEAR"
 
 
-FEATURE_STORE_SCHEMA: dict[str, str] = {
+FEATURE_STORE_SCHEMA: Final[dict[str, str]] = {
     "symbol": "TEXT NOT NULL",
     "date": "DATE NOT NULL",
     "factor_name": "TEXT NOT NULL",

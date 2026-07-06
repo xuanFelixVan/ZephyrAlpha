@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from enum import Enum
 
@@ -34,8 +35,8 @@ class FSMState(str, Enum):
     CANCELLED = "CANCELLED"
 
 
-FSM_INITIAL: FSMState = FSMState.PENDING
-FSM_TERMINAL: set[FSMState] = {FSMState.FILLED, FSMState.REJECTED, FSMState.CANCELLED}
+FSM_INITIAL: Final[FSMState] = FSMState.PENDING
+FSM_TERMINAL: Final[set[FSMState]] = {FSMState.FILLED, FSMState.REJECTED, FSMState.CANCELLED}
 
 
 class FSMTransition(BaseModel):
@@ -44,7 +45,7 @@ class FSMTransition(BaseModel):
     to_state: FSMState
 
 
-FSM_TRANSITIONS: list[FSMTransition] = [
+FSM_TRANSITIONS: Final[list[FSMTransition]] = [
     FSMTransition(from_state=FSMState.PENDING, event="ack_received", to_state=FSMState.ACK),
     FSMTransition(from_state=FSMState.ACK, event="partial_fill", to_state=FSMState.PARTIAL_FILL),
     FSMTransition(from_state=FSMState.PARTIAL_FILL, event="fill", to_state=FSMState.FILLED),
@@ -54,7 +55,7 @@ FSM_TRANSITIONS: list[FSMTransition] = [
     FSMTransition(from_state=FSMState.PARTIAL_FILL, event="cancel", to_state=FSMState.CANCELLED),
 ]
 
-FSM_INVARIANTS: list[str] = [
+FSM_INVARIANTS: Final[list[str]] = [
     "max one transition per event",
     "no transition from terminal states",
     "order_id unique across all live states",

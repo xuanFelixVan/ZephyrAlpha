@@ -32,6 +32,7 @@ BenchmarkSuite — 多维度模型性能测试用例集
 
 from __future__ import annotations
 
+from typing import Final
 from dataclasses import dataclass, field
 
 # ============================================================================
@@ -61,7 +62,7 @@ class BenchmarkCase:
 # 维度 1: 代码生成能力 (Code Generation)
 # ============================================================================
 
-CODE_GEN_CASES: list[BenchmarkCase] = [
+CODE_GEN_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="CG-001",
         category="code_generation",
@@ -134,7 +135,7 @@ CODE_GEN_CASES: list[BenchmarkCase] = [
 # 维度 2: 代码修复与编辑 (Code Editing / Fix)
 # ============================================================================
 
-CODE_FIX_CASES: list[BenchmarkCase] = [
+CODE_FIX_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="CF-001",
         category="code_fix",
@@ -201,7 +202,7 @@ CODE_FIX_CASES: list[BenchmarkCase] = [
 # 维度 3: 语义理解 (Semantic Understanding)
 # ============================================================================
 
-SEMANTIC_CASES: list[BenchmarkCase] = [
+SEMANTIC_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="SE-001",
         category="semantic",
@@ -263,7 +264,7 @@ SEMANTIC_CASES: list[BenchmarkCase] = [
 # 维度 4: 幻觉检测 (Hallucination Detection)
 # ============================================================================
 
-HALLUCINATION_CASES: list[BenchmarkCase] = [
+HALLUCINATION_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="HA-001",
         category="hallucination",
@@ -333,7 +334,7 @@ HALLUCINATION_CASES: list[BenchmarkCase] = [
 # 维度 5: 反应速度 (Latency / Speed) —— 用短 prompt 测试
 # ============================================================================
 
-LATENCY_CASES: list[BenchmarkCase] = [
+LATENCY_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="LT-001",
         category="latency",
@@ -373,7 +374,7 @@ LATENCY_CASES: list[BenchmarkCase] = [
 # 维度 6: 输出质量 (Output Quality)
 # ============================================================================
 
-QUALITY_CASES: list[BenchmarkCase] = [
+QUALITY_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="QL-001",
         category="quality",
@@ -414,7 +415,7 @@ QUALITY_CASES: list[BenchmarkCase] = [
 # 维度 7: 逻辑推理 (Logical Reasoning)
 # ============================================================================
 
-REASONING_CASES: list[BenchmarkCase] = [
+REASONING_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="LR-001",
         category="reasoning",
@@ -460,7 +461,7 @@ REASONING_CASES: list[BenchmarkCase] = [
 # 汇总
 # ============================================================================
 
-ALL_BENCHMARK_CASES: list[BenchmarkCase] = (
+ALL_BENCHMARK_CASES: Final[list[BenchmarkCase]] = (
     CODE_GEN_CASES
     + CODE_FIX_CASES
     + SEMANTIC_CASES
@@ -470,7 +471,7 @@ ALL_BENCHMARK_CASES: list[BenchmarkCase] = (
     + REASONING_CASES
 )
 
-CATEGORY_MAP: dict[str, list[BenchmarkCase]] = {
+CATEGORY_MAP: Final[dict[str, list[BenchmarkCase]]] = {
     "code_generation": CODE_GEN_CASES,
     "code_fix": CODE_FIX_CASES,
     "semantic": SEMANTIC_CASES,

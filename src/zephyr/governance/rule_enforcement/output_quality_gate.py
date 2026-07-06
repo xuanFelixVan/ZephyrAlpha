@@ -14,6 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-RES_output_quality_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from typing import Final
+
 from dataclasses import dataclass
 
 
@@ -33,7 +35,7 @@ class QualityVerdict:
     should_block: bool
 
 
-DEFAULT_RULES: list[QualityRule] = [
+DEFAULT_RULES: Final[list[QualityRule]] = [
     QualityRule("min_length", "len>20", 0.5, "soft"),
     QualityRule("no_repetition", "unique_ratio>0.3", 0.5, "soft"),
     QualityRule("no_placeholder", "placeholder_count==0", 1.0, "hard"),

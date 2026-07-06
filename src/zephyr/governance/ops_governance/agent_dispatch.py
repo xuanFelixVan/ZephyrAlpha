@@ -14,6 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV_agent_dispatch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from typing import Final
+
 import logging
 from dataclasses import dataclass
 
@@ -29,7 +31,7 @@ class DomainDispatch:
     blueprint_section: str = ""
 
 
-DISPATCH_TABLE: dict[str, DomainDispatch] = {
+DISPATCH_TABLE: Final[dict[str, DomainDispatch]] = {
     "gate-breaker": DomainDispatch(
         domain="门禁/断路器",
         pre_read="SYS-MASTER-001 §2",

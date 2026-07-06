@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import time
 from collections.abc import Callable
@@ -58,7 +59,7 @@ class StartupPhaseDef(BaseModel):
         )
 
 
-STARTUP_DAG: dict[StartupPhase, StartupPhaseDef] = {
+STARTUP_DAG: Final[dict[StartupPhase, StartupPhaseDef]] = {
     StartupPhase.P1_SECRETS_DB: StartupPhaseDef(
         phase=StartupPhase.P1_SECRETS_DB,
         label="Secrets + Database",
@@ -103,7 +104,7 @@ STARTUP_DAG: dict[StartupPhase, StartupPhaseDef] = {
     ),
 }
 
-SHUTDOWN_SEQUENCE: list[StartupPhase] = list(reversed(list(StartupPhase)))
+SHUTDOWN_SEQUENCE: Final[list[StartupPhase]] = list(reversed(list(StartupPhase)))
 
 
 class StartupOrchestrator:

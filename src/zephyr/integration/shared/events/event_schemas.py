@@ -46,6 +46,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+from typing import Final
 import importlib as _importlib
 from datetime import datetime
 from typing import Any, Literal
@@ -232,7 +233,7 @@ class MetricEventPayload(BaseModel):
     )
 
 
-EVENT_PAYLOAD_MAP: dict[EventType, type[BaseModel]] = {
+EVENT_PAYLOAD_MAP: Final[dict[EventType, type[BaseModel]]] = {
     EventType.FILE_EVENT: FileEventPayload,
     EventType.TIME_EVENT: TimeEventPayload,
     EventType.TASK_EVENT: TaskEventPayload,

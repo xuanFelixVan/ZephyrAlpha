@@ -28,6 +28,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import json
 import logging
@@ -47,10 +48,10 @@ except ImportError:
 
 __all__ = ["AUDIT_JSONL_PATH", "AUDIT_LOG_DIR", "AuditLogger", "create_audit_logger"]
 
-AUDIT_LOG_DIR = REPO_ROOT / "logs" / "mcp_audit"
-AUDIT_JSONL_PATH = AUDIT_LOG_DIR / "tools_call.jsonl"
+AUDIT_LOG_DIR: Final[Path] = REPO_ROOT / "logs" / "mcp_audit"
+AUDIT_JSONL_PATH: Final[Path] = AUDIT_LOG_DIR / "tools_call.jsonl"
 
-AUDIT_FIELDS = [
+AUDIT_FIELDS: Final[list] = [
     "timestamp",
     "client_session_id",
     "tool_name",

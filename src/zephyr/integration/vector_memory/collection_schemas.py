@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -37,21 +38,21 @@ __all__: list[str] = [
     "CollectionInfo",
 ]
 
-ALLOWED_DIMENSIONS: frozenset[int] = frozenset({512, 1024})
+ALLOWED_DIMENSIONS: Final[frozenset[int]] = frozenset({512, 1024})
 
-HOT_COLLECTIONS: frozenset[str] = frozenset({"decisions", "rules", "lessons", "knowledge"})
-COLD_COLLECTIONS: frozenset[str] = frozenset({"blueprints", "session_snapshots", "execution_traces"})
+HOT_COLLECTIONS: Final[frozenset[str]] = frozenset({"decisions", "rules", "lessons", "knowledge"})
+COLD_COLLECTIONS: Final[frozenset[str]] = frozenset({"blueprints", "session_snapshots", "execution_traces"})
 
-CHUNK_STRATEGIES_HOT: frozenset[str] = frozenset({"semantic", "paragraph", "heading_aware", "rule_level", "ast_aware"})
-CHUNK_STRATEGIES_COLD: frozenset[str] = frozenset({"section_aware", "session_level", "time_window"})
+CHUNK_STRATEGIES_HOT: Final[frozenset[str]] = frozenset({"semantic", "paragraph", "heading_aware", "rule_level", "ast_aware"})
+CHUNK_STRATEGIES_COLD: Final[frozenset[str]] = frozenset({"section_aware", "session_level", "time_window"})
 
-TTL_MAP: dict[str, int] = {
+TTL_MAP: Final[dict[str, int]] = {
     "code_context": 90,
     "session_snapshots": 90,
     "execution_traces": 30,
 }
 
-COLLECTION_SCHEMAS: dict[str, dict[str, Any]] = {
+COLLECTION_SCHEMAS: Final[dict[str, dict[str, Any]]] = {
     "decisions": {
         "dimension": 1024,
         "chunk_strategy": "semantic",
@@ -142,7 +143,7 @@ COLLECTION_SCHEMAS: dict[str, dict[str, Any]] = {
     },
 }
 
-COLLECTION_NAMES: tuple[str, ...] = tuple(COLLECTION_SCHEMAS.keys())
+COLLECTION_NAMES: Final[tuple[str, ...]] = tuple(COLLECTION_SCHEMAS.keys())
 
 
 class CollectionInfo(BaseModel):

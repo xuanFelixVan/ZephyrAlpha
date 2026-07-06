@@ -58,6 +58,7 @@ compress() 在写文件时调用 capability_check("write", target_path)，
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import re
 from pathlib import Path
@@ -85,7 +86,7 @@ __all__ = [
 # 路径常量
 # ---------------------------------------------------------------------------
 
-DEFAULT_POLICY_PATH: Path = REPO_ROOT / "config" / "compression_policy.yaml"
+DEFAULT_POLICY_PATH: Final[Path] = REPO_ROOT / "config" / "compression_policy.yaml"
 
 # ---------------------------------------------------------------------------
 # 不变量模型（Immutable Core）
@@ -137,7 +138,7 @@ class CompressionPolicy(BaseModel):
         return self
 
 
-DEFAULT_POLICY: CompressionPolicy = CompressionPolicy()
+DEFAULT_POLICY: Final[CompressionPolicy] = CompressionPolicy()
 """默认策略（所有不变量启用，含 3 个 immutable_blocks 标记——与 policy.yaml 保持一致）。"""
 
 # ---------------------------------------------------------------------------

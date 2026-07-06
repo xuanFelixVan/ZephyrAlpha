@@ -68,6 +68,7 @@ L2a 是 ZephyrAlpha RI（Runtime Integration）层的双层沙箱中的第一层
 
 from __future__ import annotations
 
+from typing import Final
 import os
 import subprocess
 from dataclasses import dataclass
@@ -88,7 +89,7 @@ __all__ = [
 # ---------------------------------------------------------------------------
 
 #: CWD 白名单（仓库相对路径前缀，使用 POSIX 格式）
-CWD_WHITELIST_SUFFIXES: tuple[str, ...] = (
+CWD_WHITELIST_SUFFIXES: Final[tuple[str, ...]] = (
     "src/zephyr/",
     "src/zephyr",
     "scripts/",
@@ -98,7 +99,7 @@ CWD_WHITELIST_SUFFIXES: tuple[str, ...] = (
 )
 
 #: ENV 白名单：允许传入子进程的环境变量键集合
-ENV_WHITELIST: frozenset[str] = frozenset(
+ENV_WHITELIST: Final[frozenset[str]] = frozenset(
     {
         "PATH",
         "PYTHONPATH",
@@ -121,7 +122,7 @@ ENV_WHITELIST: frozenset[str] = frozenset(
 )
 
 #: 默认 subprocess 超时（秒）
-DEFAULT_TIMEOUT: float = 60.0
+DEFAULT_TIMEOUT: Final[float] = 60.0
 
 # ---------------------------------------------------------------------------
 # 数据类

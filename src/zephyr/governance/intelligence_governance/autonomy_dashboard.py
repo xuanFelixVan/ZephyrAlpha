@@ -31,13 +31,14 @@ Autonomy Dashboard — AI 自主感知健康仪表。
 
 from __future__ import annotations
 
+from typing import Final
 import json
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-EXIT_AUTONOMY_DOWNGRADED = 35
+EXIT_AUTONOMY_DOWNGRADED: Final[int] = 35
 
 
 @dataclass

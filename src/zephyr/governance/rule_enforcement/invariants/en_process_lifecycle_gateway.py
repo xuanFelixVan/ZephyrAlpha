@@ -26,6 +26,7 @@ SSoT: MOD-INF-016 §2.10 | DEP-GRAPH-process-lifecycle-001
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -38,7 +39,7 @@ from typing import ClassVar
 
 from zephyr.shared.io.paths import REPO_ROOT
 
-ALLOWED_FILES: set[str] = {
+ALLOWED_FILES: Final[set[str]] = {
     "src/zephyr/shared/infra/process_pool.py",
     "src/zephyr/shared/infra/process_lifecycle_gateway.py",
 }

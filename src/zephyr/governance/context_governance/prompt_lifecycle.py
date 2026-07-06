@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from dataclasses import dataclass
 
 
@@ -27,5 +28,5 @@ class PromptVersion:
     prompt_text: str
 
 
-PROMPT_REGRESSION_THRESHOLD: float = 0.05
-PROMPT_STORE: dict[str, PromptVersion] = {}
+PROMPT_REGRESSION_THRESHOLD: Final[float] = 0.05
+PROMPT_STORE: Final[dict[str, PromptVersion]] = {}

@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel
@@ -37,7 +38,7 @@ class PLVSpec(BaseModel):
     description: str
 
 
-PLV_CHECKS: dict[PLVCheck, PLVSpec] = {
+PLV_CHECKS: Final[dict[PLVCheck, PLVSpec]] = {
     PLVCheck.ORDER_COUNT_DEVIATION: PLVSpec(
         check=PLVCheck.ORDER_COUNT_DEVIATION,
         label="Paper vs Live 订单偏差",
@@ -75,4 +76,4 @@ def get_plv_spec(check: PLVCheck) -> PLVSpec | None:
     return PLV_CHECKS.get(check)
 
 
-PLV_CHECK_COUNT: int = 5
+PLV_CHECK_COUNT: Final[int] = 5

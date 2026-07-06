@@ -38,6 +38,7 @@ YAML为SSoT，auto_fix生成config_sync.yaml
 
 from __future__ import annotations
 
+from typing import Final
 import os
 import re
 from dataclasses import dataclass, field
@@ -80,21 +81,21 @@ class ConfigAuditReport:
     report_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
-YAML_CONFIG_PATTERN: re.Pattern[str] = re.compile(r"(\w+)\s*:\s*(.+?)(?:\n|$)")
+YAML_CONFIG_PATTERN: Final[re.Pattern[str]] = re.compile(r"(\w+)\s*:\s*(.+?)(?:\n|$)")
 
 
-ENV_CONFIG_PATTERN: re.Pattern[str] = re.compile(r"^(\w+)\s*=\s*(.+?)$", re.MULTILINE)
+ENV_CONFIG_PATTERN: Final[re.Pattern[str]] = re.compile(r"^(\w+)\s*=\s*(.+?)$", re.MULTILINE)
 
 
-HARDCODED_DEFAULT_PATTERN: re.Pattern[str] = re.compile(
+HARDCODED_DEFAULT_PATTERN: Final[re.Pattern[str]] = re.compile(
     r"os\.(?:environ|getenv)\.get\(['\"](\w+)['\"]\s*,\s*['\"]([^'\"]+)['\"]"
 )
 
 
-HARDCODED_VAR_PATTERN: re.Pattern[str] = re.compile(r"(\w+)\s*=\s*(?:os\.environ\.get|os\.getenv)")
+HARDCODED_VAR_PATTERN: Final[re.Pattern[str]] = re.compile(r"(\w+)\s*=\s*(?:os\.environ\.get|os\.getenv)")
 
 
-SECRET_KEY_INDICATORS: set[str] = {
+SECRET_KEY_INDICATORS: Final[set[str]] = {
     "secret",
     "password",
     "token",

@@ -15,6 +15,8 @@
 # [A_module] module_id=MOD-SEC_secrets | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+from typing import Final
+
 import re
 from re import Pattern
 from typing import Any
@@ -218,7 +220,7 @@ _SECRET_PATTERNS: list[dict[str, Any]] = [
     },
 ]
 
-PRECOMPILED_SECRET_PATTERNS: list[tuple[str, Pattern, str, str]] = []
+PRECOMPILED_SECRET_PATTERNS: Final[list[tuple[str, Pattern, str, str]]] = []
 for entry in _SECRET_PATTERNS:
     try:
         PRECOMPILED_SECRET_PATTERNS.append(

@@ -16,6 +16,7 @@
 # [TTL] permanent
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import ConfigDict
@@ -39,7 +40,7 @@ class EvolutionPolicy(str, Enum):
     REWRITABLE = "rewritable"
 
 
-BASE_CONFIG = ConfigDict(
+BASE_CONFIG: Final[ConfigDict] = ConfigDict(
     extra="forbid",
     str_strip_whitespace=True,
     populate_by_name=True,

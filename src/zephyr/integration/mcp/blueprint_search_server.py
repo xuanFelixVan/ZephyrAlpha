@@ -55,6 +55,7 @@ Registered Tools
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import time
 from typing import Any
@@ -68,9 +69,9 @@ __all__ = ["BlueprintSearchServer", "main"]
 
 _logger = logging.getLogger(__name__)
 
-SERVER_ID = "blueprint_search"
-SERVER_VERSION = "1.0.0"
-SERVER_DESCRIPTION = (
+SERVER_ID: Final[str] = "blueprint_search"
+SERVER_VERSION: Final[str] = "1.0.0"
+SERVER_DESCRIPTION: Final[tuple] = (
     "Blueprint discovery MCP server — finds relevant blueprint documents "
     "for a given task via keyword matching over config/blueprint_routing.yaml. "
     "experimental (T-V2-010)."
@@ -80,8 +81,8 @@ SERVER_DESCRIPTION = (
 # Path resolution（与全仓 SSoT paths 对齐）
 # ---------------------------------------------------------------------------
 
-ROUTING_YAML_PATH = REPO_ROOT / "config" / "blueprint_routing.yaml"
-BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
+ROUTING_YAML_PATH: Final[Path] = REPO_ROOT / "config" / "blueprint_routing.yaml"
+BLUEPRINT_REGISTRY_PATH: Final[Path] = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 
 # ---------------------------------------------------------------------------
 # Server

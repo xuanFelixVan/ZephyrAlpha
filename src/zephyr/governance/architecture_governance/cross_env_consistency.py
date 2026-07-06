@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 
@@ -27,12 +28,12 @@ class ConsistencyDim(str, Enum):
     MODEL_OUTPUT = "float ε<1e-9"
 
 
-PYTHON_VERSION: str = "3.11.9"
-MODEL_FLOAT_TOLERANCE: float = 1e-9
-WIN_MIN_RAM_GB: int = 16
-WIN_MAX_CPU_LOAD: float = 0.75
+PYTHON_VERSION: Final[str] = "3.11.9"
+MODEL_FLOAT_TOLERANCE: Final[float] = 1e-9
+WIN_MIN_RAM_GB: Final[int] = 16
+WIN_MAX_CPU_LOAD: Final[float] = 0.75
 
-WIN11_RISKS: dict[str, str] = {
+WIN11_RISKS: Final[dict[str, str]] = {
     "permissions": "UAC escalation blocked + firewall auto",
     "paths": "反斜杠→all refs consistent WSL+",
     "crlf": "gitattributes *.bat/proj eol=crlf",

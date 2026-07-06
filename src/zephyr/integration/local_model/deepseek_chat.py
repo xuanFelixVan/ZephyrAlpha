@@ -34,6 +34,7 @@ DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理（requests 实现）
 
 from __future__ import annotations
 
+from typing import Final
 logger = logging.getLogger(__name__)
 
 import json
@@ -52,14 +53,14 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
-DEFAULT_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+DEFAULT_BASE_URL: Final[str] = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
 # 5.141.1 修复: 模型名通过环境变量外部化, 避免硬编码
-DEFAULT_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash")
-INFERENCE_TEMPERATURE = 0.1
-INFERENCE_MAX_TOKENS = 1024
-INFERENCE_TIMEOUT_S = 60.0
+DEFAULT_MODEL: Final[str] = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash")
+INFERENCE_TEMPERATURE: Final[float] = 0.1
+INFERENCE_MAX_TOKENS: Final[int] = 1024
+INFERENCE_TIMEOUT_S: Final[float] = 60.0
 
-SYSTEM_PROMPTS: dict[str, str] = {
+SYSTEM_PROMPTS: Final[dict[str, str]] = {
     "task_classification": (
         "You are a task classifier. Classify the input task into one of: "
         "audit, compliance, cleanup, repair, codegen, review, analysis, other."

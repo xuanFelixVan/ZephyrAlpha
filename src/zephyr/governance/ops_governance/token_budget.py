@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from datetime import UTC, datetime
 from enum import Enum
@@ -32,13 +33,13 @@ class PoolLevel(str, Enum):
     COLD = "cold"
 
 
-POOL_CAPS: dict[PoolLevel, int] = {
+POOL_CAPS: Final[dict[PoolLevel, int]] = {
     PoolLevel.HOT: 800,
     PoolLevel.DOMAIN: 2000,
     PoolLevel.COLD: 8000,
 }
 
-POOL_LABELS: dict[PoolLevel, str] = {
+POOL_LABELS: Final[dict[PoolLevel, str]] = {
     PoolLevel.HOT: "Hot Memory — 实时门禁状态 + 核心规则 (~800 tokens)",
     PoolLevel.DOMAIN: "Domain Triggers — 当前任务域依赖文档 (~2000 tokens)",
     PoolLevel.COLD: "Cold Memory — 全量背景被动检索 (~8000 tokens)",

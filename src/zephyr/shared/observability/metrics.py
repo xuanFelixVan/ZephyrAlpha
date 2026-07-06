@@ -45,6 +45,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import threading
 import time
@@ -64,9 +65,9 @@ __all__ = [
     "get_registry",
 ]
 
-COUNT_LLM_CALLS = "zephyr_llm_calls_total"
-COUNT_API_ERRORS = "zephyr_api_errors_total"
-HIST_LATENCY = "zephyr_request_latency_seconds"
+COUNT_LLM_CALLS: Final[str] = "zephyr_llm_calls_total"
+COUNT_API_ERRORS: Final[str] = "zephyr_api_errors_total"
+HIST_LATENCY: Final[str] = "zephyr_request_latency_seconds"
 
 
 @unique

@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 
@@ -35,7 +36,7 @@ class QuickCommand(str, Enum):
     PUBLISH = "/publish"
 
 
-QUICK_COMMANDS: dict[QuickCommand, str] = {
+QUICK_COMMANDS: Final[dict[QuickCommand, str]] = {
     QuickCommand.CRISIS: "立即Pause所有策略仅Emergency defense·内存Only",
     QuickCommand.STATUS: "实时关键指标clean dashboard",
     QuickCommand.NOTES: "所有今天关键事件→markdown→daily_notes.md",

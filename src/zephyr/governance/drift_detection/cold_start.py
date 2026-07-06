@@ -44,6 +44,7 @@ auto_config: 需要config但.env/config.yaml不存在建议
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -57,7 +58,7 @@ from pathlib import Path
 
 from zephyr.shared.io.paths import DB_PATH
 
-REQUIRED_DIRS: list[str] = [
+REQUIRED_DIRS: Final[list[str]] = [
     "data/drift",
     "data/checkpoints",
     "temp",
@@ -66,14 +67,14 @@ REQUIRED_DIRS: list[str] = [
 ]
 
 
-REQUIRED_ENV_VARS: list[str] = [
+REQUIRED_ENV_VARS: Final[list[str]] = [
     "ZEPHYR_PROJECT_ROOT",
 ]
 
 
-DEFAULT_DB_PATH: str = str(DB_PATH)
+DEFAULT_DB_PATH: Final[str] = str(DB_PATH)
 
-DRIFT_EVENTS_SCHEMA: str = """
+DRIFT_EVENTS_SCHEMA: Final[str] = """
 
 
 CREATE TABLE IF NOT EXISTS drift_events (

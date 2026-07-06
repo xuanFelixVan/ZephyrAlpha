@@ -72,6 +72,7 @@ CLI:
 
 from __future__ import annotations
 
+from typing import Final
 import argparse
 import json
 import re
@@ -86,16 +87,16 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 # ---------------------------------------------------------------------------
 # 路径常量
 # ---------------------------------------------------------------------------
-REGISTRY_YAML: Path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
+REGISTRY_YAML: Final[Path] = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
 # 治本（P8 Phase 3 S4 可发现性）：多根化让 scripts/governance/ 下文件进入自动扫描，
 # 消除 canonical_override 手填需求（原 scripts/ 不在扫描范围，需手动声明 canonical）
-SCAN_ROOTS: list[Path] = [
+SCAN_ROOTS: Final[list[Path]] = [
     REPO_ROOT / "src" / "zephyr",
     REPO_ROOT / "scripts" / "governance",
 ]
 # 向后兼容别名（单 root 时代的外部引用）：指向 SCAN_ROOTS[0]
-SCAN_ROOT: Path = SCAN_ROOTS[0]
-HEADER_SCAN_LIMIT = 30  # 头部字段都在前 30 行，只读这么多省时间
+SCAN_ROOT: Final[Path] = SCAN_ROOTS[0]
+HEADER_SCAN_LIMIT: Final[int] = 30  # 头部字段都在前 30 行，只读这么多省时间
 
 # 成熟度排序权重（production > prototype > design）；未知成熟度=0
 _MATURITY_RANK: dict[str, int] = {"production": 3, "prototype": 2, "design": 1}
@@ -106,7 +107,7 @@ _MATURITY_RANK: dict[str, int] = {"production": 3, "prototype": 2, "design": 1}
 _CJK_MIN_SUBSTRING: int = 3
 
 # 能力重复修复指令（L2 gateway / L3 hook 共用，真源唯一，避免两处硬编码漂移）
-CAPABILITY_DUPLICATE_FIX_HINT = (
+CAPABILITY_DUPLICATE_FIX_HINT: Final[tuple] = (
     "修复指令：删除上述新增文件，扩展现有 canonical 文件后重新 commit"
     "\n  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>"
 )

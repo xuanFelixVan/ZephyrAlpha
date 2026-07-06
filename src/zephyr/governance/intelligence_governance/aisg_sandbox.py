@@ -28,6 +28,7 @@ Phase B：将 FF-015 从此文件替换为实际调用入口。
 
 from __future__ import annotations
 
+from typing import Final
 import sys
 import uuid
 from dataclasses import dataclass, field
@@ -52,7 +53,7 @@ class SandboxResult:
     risk_flags: list[str] = field(default_factory=list)
 
 
-DANGEROUS_PATTERNS = {
+DANGEROUS_PATTERNS: Final[set] = {
     "eval(": "动态代码执行",
     "exec(": "动态代码执行",
     "compile(": "代码编译",
@@ -67,7 +68,7 @@ DANGEROUS_PATTERNS = {
     "requests.post(": "外部 HTTP 请求",
 }
 
-SAFE_SAMPLES = [
+SAFE_SAMPLES: Final[list] = [
     ("数据查询", "df = pd.read_csv('data.csv')"),
     ("因子计算", "result = np.log(price / price.shift(1))"),
     ("模型推理", "predictions = model.predict(features)"),

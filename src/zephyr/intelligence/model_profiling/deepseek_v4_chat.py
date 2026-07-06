@@ -35,6 +35,7 @@ DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import logging
 import os
@@ -76,9 +77,9 @@ def _patch_win32_ver() -> None:
     _win32_ver_patched = True
 
 
-DEFAULT_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+DEFAULT_BASE_URL: Final[str] = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
 
-SYSTEM_PROMPTS: dict[str, str] = {
+SYSTEM_PROMPTS: Final[dict[str, str]] = {
     "task_classification": (
         "You are a task classifier. Classify the input module/code into one of: "
         "web, config, data, logic, utility, test, other."
@@ -270,7 +271,7 @@ SYSTEM_PROMPTS: dict[str, str] = {
     ),
 }
 
-PRICING_RMB: dict[str, dict[str, float]] = {
+PRICING_RMB: Final[dict[str, dict[str, float]]] = {
     "deepseek-v4-flash": {
         "input_per_1M": 1.0,
         "input_cache_hit_per_1M": 0.02,

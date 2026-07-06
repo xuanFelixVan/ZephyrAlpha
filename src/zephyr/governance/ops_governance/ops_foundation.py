@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 
@@ -34,12 +35,12 @@ class LogCategory(str, Enum):
     AI_DECISION = "AI_Decision"
 
 
-OPS_BACKUPS: dict[BackupLayer, str] = {b: b.value for b in BackupLayer}
-OPS_LOG_CATEGORIES: dict[LogCategory, str] = {l: l.value for l in LogCategory}
+OPS_BACKUPS: Final[dict[BackupLayer, str]] = {b: b.value for b in BackupLayer}
+OPS_LOG_CATEGORIES: Final[dict[LogCategory, str]] = {l: l.value for l in LogCategory}
 
-CONFIG_DRIFT_CHECK_PERIOD_HOURS: int = 24
-LOG_SIZE_LIMIT_MB_PER_MODULE: int = 100
-FREEZE_FILE = "freeze.txt"
+CONFIG_DRIFT_CHECK_PERIOD_HOURS: Final[int] = 24
+LOG_SIZE_LIMIT_MB_PER_MODULE: Final[int] = 100
+FREEZE_FILE: Final[str] = "freeze.txt"
 
 
 def verify_config(last_good: str, current: str) -> tuple[bool, str]:

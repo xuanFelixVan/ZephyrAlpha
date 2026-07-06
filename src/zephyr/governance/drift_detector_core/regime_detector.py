@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel
@@ -43,7 +44,7 @@ class FactorSignal(BaseModel):
     current_value: str = ""
 
 
-MACRO_INDICATORS: dict[MacroFactor, FactorSignal] = {
+MACRO_INDICATORS: Final[dict[MacroFactor, FactorSignal]] = {
     MacroFactor.ECONOMIC_GROWTH: FactorSignal(
         factor=MacroFactor.ECONOMIC_GROWTH,
         indicator="PMI / GDP nowcast / 工业用电",
@@ -66,14 +67,14 @@ MACRO_INDICATORS: dict[MacroFactor, FactorSignal] = {
     ),
 }
 
-REGIME_ALLOCATIONS: dict[MacroRegime, str] = {
+REGIME_ALLOCATIONS: Final[dict[MacroRegime, str]] = {
     MacroRegime.EXPANSION: "Momentum + Growth + SmallCap",
     MacroRegime.STAGFLATION: "Commodities + Quality + LowVol",
     MacroRegime.TIGHTENING: "Cash + ShortDuration + Defense",
     MacroRegime.CRISIS: "Cash + Gold + Volatility long",
 }
 
-REGIME_SWITCH_SIGNALS: list[str] = [
+REGIME_SWITCH_SIGNALS: Final[list[str]] = [
     "PMI crossing 50",
     "Credit spread widening > 200bp",
     "VIX > 30 sustained > 5d",

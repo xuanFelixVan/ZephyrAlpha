@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import os
 from enum import Enum
 
@@ -40,7 +41,7 @@ class EnvConfig(BaseModel):
     broker_conn: str = ""
 
 
-ENVIRONMENTS: dict[Environment, EnvConfig] = {
+ENVIRONMENTS: Final[dict[Environment, EnvConfig]] = {
     Environment.DEV: EnvConfig(
         name=Environment.DEV,
         host="127.0.0.1",

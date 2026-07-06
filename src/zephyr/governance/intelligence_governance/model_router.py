@@ -14,6 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-RES_model_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from typing import Final
+
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -30,7 +32,7 @@ class TaskComplexity(Enum):
     COMPLEX = "complex"
 
 
-TIER_COMPLEXITY_MAP: dict[ModelTier, set[TaskComplexity]] = {
+TIER_COMPLEXITY_MAP: Final[dict[ModelTier, set[TaskComplexity]]] = {
     ModelTier.ECONOMY: {TaskComplexity.SIMPLE, TaskComplexity.MODERATE},
     ModelTier.STANDARD: {TaskComplexity.SIMPLE, TaskComplexity.MODERATE, TaskComplexity.COMPLEX},
     ModelTier.PREMIUM: {TaskComplexity.SIMPLE, TaskComplexity.MODERATE, TaskComplexity.COMPLEX},
@@ -38,14 +40,14 @@ TIER_COMPLEXITY_MAP: dict[ModelTier, set[TaskComplexity]] = {
 
 # performance-aware routing 权重
 # cost=0.5, speed=0.35, quality=0.15 → 优先便宜+快，质量作为 tie-breaker
-PERF_WEIGHT_COST: float = 0.50
-PERF_WEIGHT_SPEED: float = 0.35
-PERF_WEIGHT_QUALITY: float = 0.15
+PERF_WEIGHT_COST: Final[float] = 0.50
+PERF_WEIGHT_SPEED: Final[float] = 0.35
+PERF_WEIGHT_QUALITY: Final[float] = 0.15
 # 归一化基准（避免绝对值的尺度差异）
-NORM_COST_MAX: float = 0.03
-NORM_LATENCY_MAX_MS: float = 10_000.0
-NORM_THROUGHPUT_MIN: float = 1.0
-NORM_THROUGHPUT_MAX: float = 200.0
+NORM_COST_MAX: Final[float] = 0.03
+NORM_LATENCY_MAX_MS: Final[float] = 10_000.0
+NORM_THROUGHPUT_MIN: Final[float] = 1.0
+NORM_THROUGHPUT_MAX: Final[float] = 200.0
 
 
 @dataclass

@@ -30,6 +30,7 @@ KMS Interface — KE 推送契约 + 生命周期关联。
 
 from __future__ import annotations
 
+from typing import Final
 import json
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -55,7 +56,7 @@ class TaskStateAssociation:
     action: str
 
 
-TASK_KE_LIFECYCLE: dict[str, str] = {
+TASK_KE_LIFECYCLE: Final[dict[str, str]] = {
     "created": "draft",
     "locked": "draft",
     "assigned": "pending_review",

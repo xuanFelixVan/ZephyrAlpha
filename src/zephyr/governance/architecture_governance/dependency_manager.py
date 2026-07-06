@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel
@@ -35,7 +36,7 @@ class ManagedDependency(BaseModel):
     fallback: str | None = None
 
 
-DEPENDENCIES: list[ManagedDependency] = [
+DEPENDENCIES: Final[list[ManagedDependency]] = [
     ManagedDependency(
         name="Market Data API", tier=DependencyTier.TIER1_CORE, redundancy="双源冗余", fallback="Vendor B"
     ),

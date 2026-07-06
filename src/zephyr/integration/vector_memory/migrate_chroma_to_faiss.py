@@ -29,6 +29,7 @@ VMS Blueprint §12 Step 5
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import sys
 from datetime import UTC, datetime
@@ -45,14 +46,14 @@ from zephyr.shared.io.paths import VMS_PERSIST_DIR
 # 5.129.3 修复: logging.basicConfig 移入 main() 避免模块级全局 root logger 副作用
 _logger = logging.getLogger("chroma2faiss")
 
-VMS_CHROMA_PATH = VMS_PERSIST_DIR
-FAISS_PATH = VMS_PERSIST_DIR
+VMS_CHROMA_PATH: Final[Path] = VMS_PERSIST_DIR
+FAISS_PATH: Final[Path] = VMS_PERSIST_DIR
 
-KB_COLLECTION_TO_VMS: dict[str, str] = {
+KB_COLLECTION_TO_VMS: Final[dict[str, str]] = {
     "ke_entries": "knowledge",
 }
 
-COLLECTION_NAMES: tuple[str, ...] = (
+COLLECTION_NAMES: Final[tuple[str, ...]] = (
     "decisions",
     "code_context",
     "lessons",

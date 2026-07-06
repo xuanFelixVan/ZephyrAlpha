@@ -33,6 +33,7 @@ Safety : M
 
 from __future__ import annotations
 
+from typing import Final
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -54,9 +55,9 @@ __all__ = [
     "ActivateResult",
 ]
 
-AUTO_ACTIVATE_THRESHOLD = 9.0
-ACTIVE_DIR_NAME = "05_active_research"
-FUTURE_DIR_NAME = "04_future_capabilities"
+AUTO_ACTIVATE_THRESHOLD: Final[float] = 9.0
+ACTIVE_DIR_NAME: Final[str] = "05_active_research"
+FUTURE_DIR_NAME: Final[str] = "04_future_capabilities"
 
 _UTC = UTC
 

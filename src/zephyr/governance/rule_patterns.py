@@ -50,6 +50,7 @@ Usage::
 
 from __future__ import annotations
 
+from typing import Final
 import re
 from enum import Enum
 
@@ -69,18 +70,18 @@ __all__ = [
 # R5 数字后缀禁止——_\d+ 结尾
 # 真源: trae_028_doc_structure_naming.yaml L1224-1228 gov_doc_003_directory_semantics R5
 # 消费者: r5_digit_suffix_gate.py (commit-time 硬阻断) + validate_directory_structure.py (全量 warning-only)
-DIGIT_SUFFIX_RE = re.compile(r"_\d+$")
+DIGIT_SUFFIX_RE: Final[re.Pattern[str]] = re.compile(r"_\d+$")
 
 # DIM-5 规则文件名主题前缀——trae_NNN_<主题>_<描述>.yaml
 # 真源: trae_028_doc_structure_naming.yaml DIM-5 + ARCH-037
 # 消费者: create_guard.py (commit-time 新规则文件名校验) + validate_rule_frontmatter.py (全量 frontmatter 校验)
-RULE_NAME_RE = re.compile(r"^trae_\d+_(.+)\.yaml$")
+RULE_NAME_RE: Final[re.Pattern[str]] = re.compile(r"^trae_\d+_(.+)\.yaml$")
 
 # blueprint.md module_id 字段提取——^module_id:\s*(.+)$
 # 真源: trae_028_doc_structure_naming.yaml (module_id 字段格式)
 # 消费者: generate_pathway_registry.py + generate_path_ownership_map.py + validate_ssot_construction_progress.py
 # (ARCH-033 Phase 7 SSoT 收敛 2026-07-02: 3处真重复集中到此处)
-MODULE_ID_RE = re.compile(r"^module_id:\s*(.+)$", re.MULTILINE)
+MODULE_ID_RE: Final[re.Pattern[str]] = re.compile(r"^module_id:\s*(.+)$", re.MULTILINE)
 
 
 # ============================================================================
@@ -102,7 +103,7 @@ class PIICategory(str, Enum):
 
 # KB 投毒检测指标——用于 kb_gate.py 的内容安全扫描
 # 消费者: semantic_auditor/kb_gate.py + semantic_audit/kb_gate.py + audit_trail/kb_gate.py
-POISONING_INDICATORS: list[re.Pattern[str]] = [
+POISONING_INDICATORS: Final[list[re.Pattern[str]]] = [
     re.compile(
         r"(ignore|disregard|override|bypass)\s+(all|previous|above|prior)\s*(instructions|rules|guidelines)",
         re.IGNORECASE,
@@ -116,7 +117,7 @@ POISONING_INDICATORS: list[re.Pattern[str]] = [
 
 # PII 检测模式——用于 privacy.py 的 PII 扫描与脱敏
 # 消费者: semantic_auditor/privacy.py + semantic_audit/privacy.py + audit_trail/privacy.py
-PII_PATTERNS: dict[PIICategory, list[re.Pattern[str]]] = {
+PII_PATTERNS: Final[dict[PIICategory, list[re.Pattern[str]]]] = {
     PIICategory.EMAIL: [
         re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", re.IGNORECASE),
     ],

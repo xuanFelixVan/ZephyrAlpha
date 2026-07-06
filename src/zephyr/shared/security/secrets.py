@@ -45,6 +45,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import os
 from pathlib import Path
@@ -123,7 +124,7 @@ class SecretsError(ZephyrBaseError):
     """Secrets 读取失败——key 不存在、backend 不可达、权限拒绝。"""
 
 
-SECRET_INDICATOR_PATTERNS: tuple[str, ...] = (
+SECRET_INDICATOR_PATTERNS: Final[tuple[str, ...]] = (
     "KEY",
     "TOKEN",
     "SECRET",

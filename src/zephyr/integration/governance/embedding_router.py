@@ -38,6 +38,7 @@ EmbeddingRouter — MOD-INF-011 双嵌入维度路由
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import logging
 import time
@@ -48,10 +49,10 @@ import numpy as np
 
 _logger = logging.getLogger(__name__)
 
-MODEL_DIR_BGE_M3: Path = Path("models/bge-m3")
-MODEL_DIR_BGE_SMALL: Path = Path("models/bge-small-zh-v1.5")
+MODEL_DIR_BGE_M3: Final[Path] = Path("models/bge-m3")
+MODEL_DIR_BGE_SMALL: Final[Path] = Path("models/bge-small-zh-v1.5")
 
-BGE_M3_COLLECTIONS: frozenset[str] = frozenset(
+BGE_M3_COLLECTIONS: Final[frozenset[str]] = frozenset(
     {
         "decisions",
         "code_context",
@@ -60,7 +61,7 @@ BGE_M3_COLLECTIONS: frozenset[str] = frozenset(
         "rules",
     }
 )
-BGE_SMALL_COLLECTIONS: frozenset[str] = frozenset(
+BGE_SMALL_COLLECTIONS: Final[frozenset[str]] = frozenset(
     {
         "blueprints",
         "session_snapshots",
@@ -68,11 +69,11 @@ BGE_SMALL_COLLECTIONS: frozenset[str] = frozenset(
     }
 )
 
-BGE_M3_BATCH_SIZE: int = 16
-BGE_SMALL_BATCH_SIZE: int = 32
+BGE_M3_BATCH_SIZE: Final[int] = 16
+BGE_SMALL_BATCH_SIZE: Final[int] = 32
 
-OLLAMA_BGE_M3_MODEL: str = "BGE-M3:latest"
-OLLAMA_BGE_SMALL_MODEL: str = "qllama/bge-small-en-v1.5:latest"
+OLLAMA_BGE_M3_MODEL: Final[str] = "BGE-M3:latest"
+OLLAMA_BGE_SMALL_MODEL: Final[str] = "qllama/bge-small-en-v1.5:latest"
 
 
 def l2_normalize(vec: np.ndarray) -> np.ndarray:

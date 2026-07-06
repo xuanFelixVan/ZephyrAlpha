@@ -32,6 +32,7 @@ BenchmarkSuite — 多维度模型性能测试用例集
 
 from __future__ import annotations
 
+from typing import Final
 from dataclasses import dataclass, field
 
 
@@ -53,7 +54,7 @@ class BenchmarkCase:
         return f"{self.category}/{self.subcategory}/{self.case_id}"
 
 
-CODE_GEN_CASES: list[BenchmarkCase] = [
+CODE_GEN_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="CG-001",
         category="code_generation",
@@ -122,7 +123,7 @@ CODE_GEN_CASES: list[BenchmarkCase] = [
     ),
 ]
 
-CODE_FIX_CASES: list[BenchmarkCase] = [
+CODE_FIX_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="CF-001",
         category="code_fix",
@@ -185,7 +186,7 @@ CODE_FIX_CASES: list[BenchmarkCase] = [
     ),
 ]
 
-SEMANTIC_CASES: list[BenchmarkCase] = [
+SEMANTIC_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="SE-001",
         category="semantic",
@@ -243,7 +244,7 @@ SEMANTIC_CASES: list[BenchmarkCase] = [
     ),
 ]
 
-HALLUCINATION_CASES: list[BenchmarkCase] = [
+HALLUCINATION_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="HA-001",
         category="hallucination",
@@ -309,7 +310,7 @@ HALLUCINATION_CASES: list[BenchmarkCase] = [
     ),
 ]
 
-LATENCY_CASES: list[BenchmarkCase] = [
+LATENCY_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="LT-001",
         category="latency",
@@ -345,7 +346,7 @@ LATENCY_CASES: list[BenchmarkCase] = [
     ),
 ]
 
-QUALITY_CASES: list[BenchmarkCase] = [
+QUALITY_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="QL-001",
         category="quality",
@@ -382,7 +383,7 @@ QUALITY_CASES: list[BenchmarkCase] = [
     ),
 ]
 
-REASONING_CASES: list[BenchmarkCase] = [
+REASONING_CASES: Final[list[BenchmarkCase]] = [
     BenchmarkCase(
         case_id="LR-001",
         category="reasoning",
@@ -424,7 +425,7 @@ REASONING_CASES: list[BenchmarkCase] = [
     ),
 ]
 
-ALL_BENCHMARK_CASES: list[BenchmarkCase] = (
+ALL_BENCHMARK_CASES: Final[list[BenchmarkCase]] = (
     CODE_GEN_CASES
     + CODE_FIX_CASES
     + SEMANTIC_CASES
@@ -434,7 +435,7 @@ ALL_BENCHMARK_CASES: list[BenchmarkCase] = (
     + REASONING_CASES
 )
 
-CATEGORY_MAP: dict[str, list[BenchmarkCase]] = {
+CATEGORY_MAP: Final[dict[str, list[BenchmarkCase]]] = {
     "code_generation": CODE_GEN_CASES,
     "code_fix": CODE_FIX_CASES,
     "semantic": SEMANTIC_CASES,

@@ -31,6 +31,7 @@ ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模型
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import os
 from dataclasses import dataclass, field
@@ -38,7 +39,7 @@ from typing import Any
 
 _log = logging.getLogger(__name__)
 
-DEFAULT_OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 
 @dataclass

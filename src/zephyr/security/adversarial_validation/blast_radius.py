@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 from zephyr.security.adversarial_validation.models import AttackScenario, BlastRadiusLevel
@@ -25,14 +26,14 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["AbortThresholdError", "BlastRadius"]
 
-LEVEL_THRESHOLD: dict[BlastRadiusLevel, int] = {
+LEVEL_THRESHOLD: Final[dict[BlastRadiusLevel, int]] = {
     BlastRadiusLevel.FILE: 3,
     BlastRadiusLevel.MODULE: 5,
     BlastRadiusLevel.CROSS_MODULE: 8,
     BlastRadiusLevel.SYSTEM: 15,
 }
 
-LEVEL_ORDER: list[BlastRadiusLevel] = [
+LEVEL_ORDER: Final[list[BlastRadiusLevel]] = [
     BlastRadiusLevel.FILE,
     BlastRadiusLevel.MODULE,
     BlastRadiusLevel.CROSS_MODULE,

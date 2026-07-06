@@ -61,6 +61,7 @@ safety_level: M
 
 from __future__ import annotations
 
+from typing import Final
 import time
 from enum import Enum
 from typing import Any, Protocol, runtime_checkable
@@ -93,7 +94,7 @@ __all__ = [
 # 阈值常量（ §4）
 # ---------------------------------------------------------------------------
 
-DEFAULT_STAGE_THRESHOLDS: dict[str, float] = {
+DEFAULT_STAGE_THRESHOLDS: Final[dict[str, float]] = {
     "stage1_accept": 0.90,  # Stage 1 confidence ≥ 0.9 直接执行
     "stage2_accept": 0.70,  # Stage 2 confidence ≥ 0.7 直接执行
     # Stage 3 为兜底，无阈值

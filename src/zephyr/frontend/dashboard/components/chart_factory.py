@@ -44,6 +44,8 @@ ARCH-047: Streamlit→Panel+HoloViz技术栈切换, ChartFactory 作为图表生
   - datashader >=0.16.0,<1.0.0 (factory, 仅阈值触发>50万点)
 """
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 from typing import Any, Optional
@@ -74,7 +76,7 @@ class ChartFactoryError(Exception):
 
 
 # Datashader 阈值: 超过50万点自动切换 Datashader 渲染（蓝图 §16.7.2）
-DATASHADER_THRESHOLD = 500_000
+DATASHADER_THRESHOLD: Final[int] = 500_000
 
 
 def _ensure_x(x: Optional[list], length: int) -> list:
