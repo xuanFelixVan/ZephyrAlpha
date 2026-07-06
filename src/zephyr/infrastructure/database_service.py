@@ -83,9 +83,9 @@ class DatabaseService(DatabaseCRUDMixin):
         self.governance_db = str(DB_PATH)
 
         self._governance_conn: sqlite3.Connection | None = None  # 读写连接
-        self._governance_conn_readonly: sqlite3.Connection | None = None  # P-REVIEW-3 双连接：只读连接
+        self._governance_conn_readonly: sqlite3.Connection | None = None  # P-PLAN-1 双连接：只读连接
         self._depgraph_conn: psycopg2.extensions.connection | None = None  # psycopg2 读写连接 (P2迁移后)
-        self._depgraph_conn_readonly: psycopg2.extensions.connection | None = None  # P-REVIEW-3 双连接：只读连接
+        self._depgraph_conn_readonly: psycopg2.extensions.connection | None = None  # P-PLAN-1 双连接：只读连接
         self._clickhouse_conn: Any | None = None  # clickhouse_driver.Client (C1行情仓库)
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 HIGH）：lazy init 线程安全
 
@@ -95,7 +95,7 @@ class DatabaseService(DatabaseCRUDMixin):
         复用 sqlite_schema.get_db_connection() 确保 PRAGMA 基线（WAL/busy_timeout 等）一致，
         避免 DatabaseService 自行 sqlite3.connect() 导致连接行为漂移。
 
-        P-REVIEW-3 双连接机制：read_only=True 返回独立的只读连接，read_only=False 返回读写连接。
+        P-PLAN-1 双连接机制：read_only=True 返回独立的只读连接，read_only=False 返回读写连接。
         两个连接相互独立，只读查询不会阻断写操作。
 
         :param read_only: True=只读连接（PRAGMA query_only=1，独立连接）。
@@ -120,7 +120,7 @@ class DatabaseService(DatabaseCRUDMixin):
 
         返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
 
-        P-REVIEW-3 双连接机制：read_only=True 返回独立的只读连接，read_only=False 返回读写连接。
+        P-PLAN-1 双连接机制：read_only=True 返回独立的只读连接，read_only=False 返回读写连接。
         两个连接相互独立，只读查询不会阻断写操作。
 
         :param read_only: True=只读连接（SET default_transaction_read_only=on，独立连接）。
@@ -199,7 +199,7 @@ class DatabaseService(DatabaseCRUDMixin):
         return result
 
     def close_all(self):
-        """关闭所有连接（P-REVIEW-3 双连接：关闭 4 个连接）"""
+        """关闭所有连接（P-PLAN-1 双连接：关闭 4 个连接）"""
         for attr in ("_governance_conn", "_governance_conn_readonly",
                      "_depgraph_conn", "_depgraph_conn_readonly"):
             conn = getattr(self, attr)
