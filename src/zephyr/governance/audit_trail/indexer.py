@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.governance.audit_trail.contracts import AuditIndexer as AuditIndexerABC  # 5.104.14 修复: 继承ABC契约
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +81,7 @@ class AuditIndexer(AuditIndexerABC):  # 5.104.14 修复: 继承ABC契约
         try:
             from datetime import datetime
 
-            self._index["built_at"] = datetime.now().isoformat()
+            self._index["built_at"] = now_utc().isoformat()
             self._index_path.write_text(
                 json.dumps(self._index, indent=2, ensure_ascii=False, default=str),
                 encoding="utf-8",

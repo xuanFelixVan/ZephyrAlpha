@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.io.streaming_reader import stream_jsonl, tail_jsonl
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ class ReplayEngine:
                 "match": match,
                 "original_hash": data.get("evidence_hash", ""),
                 "recomputed_hash": recomputed["hash"],
-                "replayed_at": datetime.now().isoformat(),
+                "replayed_at": now_utc().isoformat(),
             }
         except Exception as exc:
             logger.error("ReplayEngine.replay failed: %s", exc, exc_info=True)

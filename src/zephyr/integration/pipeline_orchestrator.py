@@ -118,6 +118,7 @@ from zephyr.infrastructure.pipeline.pipeline_lock import LockResult, PipelineLoc
 from zephyr.infrastructure.pipeline.preemption_manager import PreemptionManager
 from zephyr.infrastructure.pipeline.routing_plugins import PipelineRouter
 from zephyr.shared.schema.task_types import TaskStatus
+from zephyr.shared.utils.time_utils import now_utc
 
 _RBAC_AVAILABLE = False
 try:
@@ -406,7 +407,7 @@ class PipelineOrchestrator:
         ct_decision = None
         hints = ct_pipe_hints_from_task_card(task_card)
 
-        _dispatch_start = datetime.now()
+        _dispatch_start = now_utc()
 
         self._active_dispatches.add(task_card.task_id)
         self._log(
@@ -423,7 +424,7 @@ class PipelineOrchestrator:
                 pipeline=task_card.assigned_pipeline,
                 overall_status=PipelineStatus.FAILURE,
                 modules_executed=[],
-                finished_at=datetime.now().isoformat(),
+                finished_at=now_utc().isoformat(),
                 is_dry_run=dry_run,
                 ct_pipe_warnings=["IDEMPOTENCY: duplicate dispatch rejected——同一TaskCard已执行过"],
             )
@@ -449,7 +450,7 @@ class PipelineOrchestrator:
                         pipeline=task_card.assigned_pipeline,
                         overall_status=PipelineStatus.FAILURE,
                         modules_executed=[],
-                        finished_at=datetime.now().isoformat(),
+                        finished_at=now_utc().isoformat(),
                         is_dry_run=dry_run,
                         ct_pipe_warnings=[_exit_detail],
                     )
@@ -482,7 +483,7 @@ class PipelineOrchestrator:
                 pipeline=task_card.assigned_pipeline,
                 overall_status=PipelineStatus.FAILURE,
                 modules_executed=[],
-                finished_at=datetime.now().isoformat(),
+                finished_at=now_utc().isoformat(),
                 is_dry_run=dry_run,
                 ct_pipe_warnings=[f"RBAC BLOCKED [{rbac_result.layer}/{rbac_result.rule_id}]: {rbac_result.reason}"],
                 needs_claude_rescue=_needs_rescue,
@@ -513,7 +514,7 @@ class PipelineOrchestrator:
                     pipeline=pipeline,
                     overall_status=PipelineStatus.FAILURE,
                     modules_executed=[],
-                    finished_at=datetime.now().isoformat(),
+                    finished_at=now_utc().isoformat(),
                     is_dry_run=dry_run,
                 )
             modules = [m for m in M_MODULES if M_MODULE_SPECS[m]["pipeline"] == pipeline]
@@ -528,7 +529,7 @@ class PipelineOrchestrator:
                     pipeline=task_card.assigned_pipeline,
                     overall_status=PipelineStatus.FAILURE,
                     modules_executed=[],
-                    finished_at=datetime.now().isoformat(),
+                    finished_at=now_utc().isoformat(),
                     is_dry_run=dry_run,
                     ct_pipe_route=None,
                     ct_pipe_warnings=[str(exc)],
@@ -588,7 +589,7 @@ class PipelineOrchestrator:
                     pipeline=task_card.assigned_pipeline,
                     overall_status=PipelineStatus.LOCKED,
                     modules_executed=[],
-                    finished_at=datetime.now().isoformat(),
+                    finished_at=now_utc().isoformat(),
                     is_dry_run=dry_run,
                     ct_pipe_route=ct_decision,
                     ct_pipe_warnings=ct_warnings
@@ -612,7 +613,7 @@ class PipelineOrchestrator:
                     pipeline=task_card.assigned_pipeline,
                     overall_status=PipelineStatus.G6_BLOCKED,
                     modules_executed=[],
-                    finished_at=datetime.now().isoformat(),
+                    finished_at=now_utc().isoformat(),
                     is_dry_run=dry_run,
                     ct_pipe_route=ct_decision,
                     ct_pipe_warnings=ct_warnings + [g6_violation],
@@ -758,7 +759,7 @@ class PipelineOrchestrator:
             _pipeline_final_status = status
             # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
 
-            _latency_ms = (datetime.now() - _dispatch_start).total_seconds() * 1000
+            _latency_ms = (now_utc() - _dispatch_start).total_seconds() * 1000
             self._record_telemetry_latency(task_type, _latency_ms)
 
             cost_records = self._cost_tracker.records
@@ -799,7 +800,7 @@ class PipelineOrchestrator:
                 overall_status=status,
                 needs_claude_rescue=rescue.triggered,
                 rescue_reason=rescue.reason,
-                finished_at=datetime.now().isoformat(),
+                finished_at=now_utc().isoformat(),
                 is_dry_run=dry_run,
                 ct_pipe_route=ct_decision,
                 ct_pipe_warnings=ct_warnings,
@@ -919,7 +920,7 @@ class PipelineOrchestrator:
         if method == "manual_switch":
             return getattr(self._cfg, "_manual_override_human_present", True)
         if method == "time_window":
-            now_hour = datetime.now().hour
+            now_hour = now_utc().hour
             return self._cfg.working_hours_start <= now_hour < self._cfg.working_hours_end
         return True
 
@@ -1108,8 +1109,8 @@ class PipelineOrchestrator:
                         output=output,
                         tokens_used=output.get("tokens_used", 0),
                         duration_ms=0,
-                        started_at=datetime.now().isoformat(),
-                        finished_at=datetime.now().isoformat(),
+                        started_at=now_utc().isoformat(),
+                        finished_at=now_utc().isoformat(),
                         fallback_from=primary_model if model != primary_model else None,
                     ),
                     model,
@@ -1129,8 +1130,8 @@ class PipelineOrchestrator:
                 model=primary_model,
                 status=ModuleStatus.FAILURE,
                 errors=[last_error] if last_error else ["all fallback models failed"],
-                started_at=datetime.now().isoformat(),
-                finished_at=datetime.now().isoformat(),
+                started_at=now_utc().isoformat(),
+                finished_at=now_utc().isoformat(),
                 fallback_from=None,
             ),
             primary_model,
@@ -1155,8 +1156,8 @@ class PipelineOrchestrator:
                 model="deepseek",
                 status=ModuleStatus.SUCCESS,
                 output={"summary": f"[DRY-RUN BLIND] M3: {task.title[:60]}"},
-                started_at=datetime.now().isoformat(),
-                finished_at=datetime.now().isoformat(),
+                started_at=now_utc().isoformat(),
+                finished_at=now_utc().isoformat(),
                 blind_review_role="generator",
             )
             m7_mr = ModuleResult(
@@ -1165,8 +1166,8 @@ class PipelineOrchestrator:
                 model="glm",
                 status=ModuleStatus.SUCCESS,
                 output={"summary": f"[DRY-RUN BLIND] M7: {task.title[:60]}"},
-                started_at=datetime.now().isoformat(),
-                finished_at=datetime.now().isoformat(),
+                started_at=now_utc().isoformat(),
+                finished_at=now_utc().isoformat(),
                 blind_review_role="reviewer",
             )
             return m3_mr, m7_mr, True
@@ -1211,7 +1212,7 @@ class PipelineOrchestrator:
         dry_run: bool = False,
         skill_injection: Any | None = None,
     ) -> ModuleResult:
-        started = datetime.now().isoformat()
+        started = now_utc().isoformat()
         last_error: str | None = None
         divisor = token_divisor if token_divisor and token_divisor > 0 else len(M_MODULES)
 
@@ -1225,7 +1226,7 @@ class PipelineOrchestrator:
                     status=ModuleStatus.FAILURE,
                     errors=[f"CIRCUIT-OPEN: {model} 断路器已断开——短路跳过重试"],
                     started_at=started,
-                    finished_at=datetime.now().isoformat(),
+                    finished_at=now_utc().isoformat(),
                 )
 
         if not dry_run and self._cfg.rate_limit_per_model:
@@ -1268,7 +1269,7 @@ class PipelineOrchestrator:
                     tokens_used=output.get("tokens_used", 0),
                     duration_ms=0,
                     started_at=started,
-                    finished_at=datetime.now().isoformat(),
+                    finished_at=now_utc().isoformat(),
                     confidence=confidence,
                 )
             except Exception as exc:
@@ -1292,7 +1293,7 @@ class PipelineOrchestrator:
             status=ModuleStatus.FAILURE,
             errors=[last_error] if last_error else ["unknown failure"],
             started_at=started,
-            finished_at=datetime.now().isoformat(),
+            finished_at=now_utc().isoformat(),
         )
 
     # ------------------------------------------------------------------
@@ -2075,7 +2076,7 @@ class PipelineOrchestrator:
 
     def _log(self, level: str, message: str) -> None:
         """结构化日志——B148 有界缓冲区（max=_cfg.log_buffer_max=2000）。"""
-        ts = datetime.now().isoformat()
+        ts = now_utc().isoformat()
         self._log_buffer.append((ts, level, message))
         limit = self._cfg.log_buffer_max
         if len(self._log_buffer) > limit:

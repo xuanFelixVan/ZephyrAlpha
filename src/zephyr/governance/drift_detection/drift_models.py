@@ -36,6 +36,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum, auto
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class DriftState(Enum):
@@ -242,7 +243,7 @@ class BulkDriftEvent:
 
     child_event_ids: list[uuid.UUID] = field(default_factory=list)
 
-    created_at: datetime = field(default_factory=lambda: datetime.utcnow())
+    created_at: datetime = field(default_factory=lambda: now_utc())
 
 
 @dataclass

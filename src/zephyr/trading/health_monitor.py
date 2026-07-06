@@ -38,6 +38,7 @@ from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,7 @@ class ProbeResult(BaseModel):
     ready: bool = False
     latency_ms: float = 0.0
     error: str = ""
-    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+    timestamp: str = Field(default_factory=lambda: now_utc().isoformat())
 
 
 class ReconciliationReport(BaseModel):
@@ -78,7 +79,7 @@ class ReconciliationReport(BaseModel):
     inactive: int = 0
     actions_taken: list[str] = Field(default_factory=list)
     orphan_rate: float = 0.0
-    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+    timestamp: str = Field(default_factory=lambda: now_utc().isoformat())
 
 
 class HealthMonitor:
@@ -357,7 +358,7 @@ class HealthMonitor:
         snapshot = {cid: r.model_dump() for cid, r in results.items()}
         if self._snapshot_dir:
             self._snapshot_dir.mkdir(parents=True, exist_ok=True)
-            ts = datetime.now().strftime("%Y%m%d%H%M%S")
+            ts = now_utc().strftime("%Y%m%d%H%M%S")
             path = self._snapshot_dir / f"health_{ts}.json"
             path.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8")
         return snapshot
@@ -367,12 +368,12 @@ class HealthMonitor:
             correlation_id=f"hm-{capability_id}",
             emitter_id="health-monitor",
             emitter_type="probe",
-            idempotency_key=f"hm-{capability_id}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+            idempotency_key=f"hm-{capability_id}-{now_utc().strftime('%Y%m%d%H%M%S')}",
             metric_name=metric_name,
             metric_type="gauge",
             metric_value=metric_value,
             source_module="zephyr.trading.health_monitor",
-            timestamp=datetime.now(),
+            timestamp=now_utc(),
         )
 
     def start(self) -> None:

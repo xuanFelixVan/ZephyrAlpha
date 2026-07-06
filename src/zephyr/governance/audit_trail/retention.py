@@ -18,6 +18,7 @@ import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ class RetentionPolicy:
             if not tier_dir.exists():
                 continue
 
-            cutoff = datetime.now() - timedelta(days=max_days)
+            cutoff = now_utc() - timedelta(days=max_days)
             for f in tier_dir.glob("*"):
                 try:
                     mtime = datetime.fromtimestamp(f.stat().st_mtime)
@@ -59,7 +60,7 @@ class RetentionPolicy:
                             {
                                 "file": f.name,
                                 "tier": tier_dir.name,
-                                "age_days": (datetime.now() - mtime).days,
+                                "age_days": (now_utc() - mtime).days,
                                 "retention_days": max_days,
                             }
                         )
@@ -83,7 +84,7 @@ class RetentionPolicy:
             if not tier_dir.exists():
                 continue
 
-            cutoff = datetime.now() - timedelta(days=max_days)
+            cutoff = now_utc() - timedelta(days=max_days)
             for f in tier_dir.glob("*"):
                 mtime = datetime.fromtimestamp(f.stat().st_mtime)
                 if mtime < cutoff:
@@ -91,7 +92,7 @@ class RetentionPolicy:
                         {
                             "file": f.name,
                             "tier": tier_name,
-                            "age_days": (datetime.now() - mtime).days,
+                            "age_days": (now_utc() - mtime).days,
                             "retention_days": max_days,
                         }
                     )

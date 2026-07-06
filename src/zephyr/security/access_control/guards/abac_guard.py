@@ -31,6 +31,7 @@ from enum import Enum
 from typing import Any
 
 from zephyr.security.access_control.identity import MATURITY_TLB_LIMITS, MaturityLevel
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class TemporalCategory(str, Enum):
@@ -141,7 +142,7 @@ class ABACGuard:
             TemporalCategory: 时间分类
         """
         if timestamp is None:
-            now = datetime.now()
+            now = now_utc()
         else:
             now = datetime.fromtimestamp(timestamp)
         hour = now.hour

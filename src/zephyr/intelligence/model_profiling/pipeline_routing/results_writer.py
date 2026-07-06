@@ -41,6 +41,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.intelligence.model_profiling.pipeline_routing.profiler import ModelProfile
+from zephyr.shared.utils.time_utils import now_utc
 
 _log = logging.getLogger(__name__)
 
@@ -54,7 +55,7 @@ def write_benchmark_results(
     """将 benchmark 结果写入 JSONL 文件（每行一个模型的结果）。"""
     base = Path(output_dir)
     base.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = now_utc().strftime("%Y%m%d_%H%M%S")
     filepath = base / f"benchmark_{timestamp}.jsonl"
 
     # 5.74.3 修复：原子写入——tmp 文件 + flush + fsync + os.replace，

@@ -40,6 +40,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field, field_validator
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import now_utc
 
 __all__ = [
     "FeedbackCollector",
@@ -111,7 +112,7 @@ class FeedbackCollector:
             score=score,
             comment=comment,
             tags=tags or [],
-            created_at=created_at or datetime.now(),
+            created_at=created_at or now_utc(),
         )
         self._entries.append(entry)
         self._next_id += 1

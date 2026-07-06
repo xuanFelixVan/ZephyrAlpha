@@ -22,6 +22,7 @@ from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, Field
+from zephyr.shared.utils.time_utils import now_utc
 
 __all__ = ["AlertEscalation", "EscalationLevel"]
 
@@ -44,7 +45,7 @@ class AlertEscalation(BaseModel):
     title: str = Field(default="")
     level: EscalationLevel = Field(default=EscalationLevel.WARNING)
     source: str = Field(default="")
-    triggered_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    triggered_at: str = Field(default_factory=lambda: now_utc().isoformat())
     acknowledged_at: str | None = None
     resolved_at: str | None = None
     escalation_chain: list[str] = Field(default_factory=list)

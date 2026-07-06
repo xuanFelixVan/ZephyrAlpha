@@ -64,6 +64,7 @@ import logging
 import subprocess
 from dataclasses import dataclass, field
 from typing import Callable
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -1509,7 +1510,7 @@ def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec
 
         reports_dir = os.path.join(_project_root_str, ".runtime", "reconcile_reports")
         os.makedirs(reports_dir, exist_ok=True)
-        ts_iso = datetime.now().isoformat(timespec="seconds")
+        ts_iso = now_utc().isoformat(timespec="seconds")
         ts_file = ts_iso.replace(":", "")
         report = {
             "timestamp": ts_iso,
@@ -1932,6 +1933,22 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
                     detail=f"{gen_name} --all failed: {gen_result.stderr.strip()[:200]}",
                 )
 
+        # 1b. 重生域索引（无 --all 参数，单独运行）
+        idx_result = _run_subprocess(
+            [sys.executable, f"{_GEN_DIR}/generate_domain_index.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        if idx_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"generate_domain_index.py failed: {idx_result.stderr.strip()[:200]}",
+            )
+
         # 2. 检测制品变更
         diff_result = gateway._run_git(
             ["git", "diff", "--name-only", "--", *_DOC_DIRS]
@@ -2205,7 +2222,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
         reports_dir = os.path.join(_project_root_str, ".runtime", "reconcile_reports")
         os.makedirs(reports_dir, exist_ok=True)
-        ts_iso = datetime.now().isoformat(timespec="seconds")
+        ts_iso = now_utc().isoformat(timespec="seconds")
         ts_file = ts_iso.replace(":", "")
 
         # P5 改造（2026-06-30）：契约文件变更时触发 DCR-001 全量扫描

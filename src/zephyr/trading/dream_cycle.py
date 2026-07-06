@@ -33,6 +33,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,7 @@ class DreamReport(BaseModel):
     forgotten_items: int = 0
     indexed_entries: int = 0
     committed: bool = False
-    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+    timestamp: str = Field(default_factory=lambda: now_utc().isoformat())
 
 
 class DreamCycle:
@@ -80,7 +81,7 @@ class DreamCycle:
 
     def needs_archival(self) -> bool:
         if self._audit_log_dir and self._audit_log_dir.exists():
-            today = datetime.now().strftime("%Y-%m-%d")
+            today = now_utc().strftime("%Y-%m-%d")
             today_file = self._audit_log_dir / f"ai_audit_{today}.jsonl"
             if today_file.exists():
                 episodic_today = self._episodic_dir / today
@@ -121,7 +122,7 @@ class DreamCycle:
         if not self._audit_log_dir or not self._audit_log_dir.exists():
             return 0
         count = 0
-        today = datetime.now().strftime("%Y-%m-%d")
+        today = now_utc().strftime("%Y-%m-%d")
         target = self._episodic_dir / today
         target.mkdir(parents=True, exist_ok=True)
         for f in self._audit_log_dir.glob("ai_audit_*.jsonl"):
@@ -139,7 +140,7 @@ class DreamCycle:
         self._forgotten_log.parent.mkdir(parents=True, exist_ok=True)
         if not self._forgotten_log.exists():
             self._forgotten_log.write_text(
-                f"# Forgotten Log — {datetime.now().isoformat()}\n# Retain lessons, forget noise.\n",
+                f"# Forgotten Log — {now_utc().isoformat()}\n# Retain lessons, forget noise.\n",
                 encoding="utf-8",
             )
         return 0

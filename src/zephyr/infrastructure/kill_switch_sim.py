@@ -47,6 +47,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from threading import Event
+from zephyr.shared.utils.time_utils import now_utc
 
 DEFAULT_TARGET_MS = 1.0
 METRICS_DIR = Path(os.environ.get("ZEPHYR_METRICS_DIR", "data/metrics"))
@@ -71,7 +72,7 @@ class KillSwitchProbe:
     def to_dict(self) -> dict:
         return {
             "probe_id": self.probe_id,
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": now_utc().isoformat() + "Z",
             "latency_us": round(self.latency_us, 2),
             "latency_ms": round(self.latency_ms, 4),
             "target_ms": DEFAULT_TARGET_MS,

@@ -51,6 +51,7 @@ ZephyrAlpha — shared/contracts/timestamp.py
 from datetime import datetime
 
 import pandas as pd
+from zephyr.shared.utils.time_utils import now_utc
 
 # ═══════════════════════════════════════════════════════════════════
 # 统一类型别名
@@ -95,7 +96,7 @@ def utcnow() -> Timestamp:
     获取当前 UTC 时间（纳秒精度，tz-aware）。
 
     **全公司唯一获取"当前时间"的方式**。
-    禁止使用 `datetime.now()`（naive，无时区）或 `datetime.utcnow()`（naive，已被 Python 官方 deprecated）。
+    禁止使用 `now_utc()`（naive，无时区）或 `now_utc()`（naive，已被 Python 官方 deprecated）。
 
     Fitness Function 会扫描所有代码文件，违规调用会被拦截。
 
@@ -127,7 +128,7 @@ def ensure_utc(ts: Timestamp | datetime | str | int | float) -> Timestamp:
         >>> ensure_utc("2026-04-18T10:30:00+08:00")  # 东八区 → UTC
         Timestamp('2026-04-18 02:30:00+0000', tz='UTC')
 
-        >>> ensure_utc(datetime.now())  # 抛 NaiveDatetimeError
+        >>> ensure_utc(now_utc())  # 抛 NaiveDatetimeError
         NaiveDatetimeError: datetime 对象必须 tz-aware...
 
         >>> ensure_utc(1713427200)  # Unix 秒时间戳

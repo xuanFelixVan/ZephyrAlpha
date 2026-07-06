@@ -46,6 +46,7 @@ from zephyr.backtest.io.backtest_result_sink import (
     DrawdownPoint,
     BenchmarkPoint,
 )
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class ArtifactNotFoundError(Exception):
@@ -132,7 +133,7 @@ def save_artifact(
 
     # 填充 created_at（如果未设置）
     if not artifact.created_at:
-        artifact = replace(artifact, created_at=datetime.utcnow().isoformat())
+        artifact = replace(artifact, created_at=now_utc().isoformat())
 
     file_path = storage / f"{artifact.run_id}.json"
     with open(file_path, "w", encoding="utf-8") as f:

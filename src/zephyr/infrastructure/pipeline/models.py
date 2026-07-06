@@ -31,6 +31,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import now_utc
 
 __all__ = [
     "AFFINITY_CONSTRAINTS",
@@ -163,7 +164,7 @@ class PipelineResult(BaseModel):
     overall_status: PipelineStatus = PipelineStatus.PENDING
     needs_claude_rescue: bool = False
     rescue_reason: str = ""
-    started_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+    started_at: str = Field(default_factory=lambda: now_utc().isoformat())
     finished_at: str | None = None
     ct_pipe_route: PipelineRouteDecision | None = None
     ct_pipe_warnings: list[str] = Field(default_factory=list)
@@ -256,7 +257,7 @@ class NightShiftAmbiguityLogEntry(BaseModel):
     model_config = BASE_CONFIG
 
     id: str = Field(..., description="NSL-{sequence} 编号")
-    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat(), description="检测时间")
+    timestamp: str = Field(default_factory=lambda: now_utc().isoformat(), description="检测时间")
     task_id: str = Field(..., description="关联任务ID")
     module: str = Field(..., description="触发模块节点 Mx")
     context: str = Field(..., description="不确定的上下文描述")
@@ -329,7 +330,7 @@ class DeadLetterEntry(BaseModel):
 
     model_config = BASE_CONFIG
     task_id: str
-    failed_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+    failed_at: str = Field(default_factory=lambda: now_utc().isoformat())
     failure_reason: str = ""
     retry_count: int = 0
     last_error: str = ""
@@ -378,7 +379,7 @@ class PreemptionRecord(BaseModel):
     preempted_task_id: str
     preempted_by_task_id: str
     preempted_priority: str
-    preempted_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+    preempted_at: str = Field(default_factory=lambda: now_utc().isoformat())
     resumed_at: str | None = None
     state_snapshot: dict[str, object] = Field(default_factory=dict)
 
@@ -794,7 +795,7 @@ class PipelineArtifact(BaseModel):
     path: str | None = Field(default=None, description="产出物文件路径")
     size: int = Field(default=0, ge=0, description="产出物大小(字节)")
     hash_value: str = Field(default="", description="SHA256 完整性哈希——B138")
-    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat(), description="产出时间戳")
+    timestamp: str = Field(default_factory=lambda: now_utc().isoformat(), description="产出时间戳")
     classification: ArtifactClassification = Field(
         default=ArtifactClassification.INTERNAL,
         description="数据分级标签——SOC2 CC7.2 数据生命周期管理",
@@ -851,7 +852,7 @@ class PipelineArtifactManifest(BaseModel):
     task_id: str = Field(default="", description="关联的任务ID")
     artifacts: list[PipelineArtifact] = Field(default_factory=list)
     meta: dict[str, object] = Field(default_factory=dict, description="扩展元数据")
-    created: str = Field(default_factory=lambda: datetime.now().isoformat(), description="创建时间")
+    created: str = Field(default_factory=lambda: now_utc().isoformat(), description="创建时间")
 
     def get(self, artifact_key: str) -> PipelineArtifact | None:
         for a in self.artifacts:

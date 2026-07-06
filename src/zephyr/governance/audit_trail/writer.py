@@ -27,6 +27,7 @@ from typing import Any
 
 from zephyr.governance.audit_trail.contracts import AuditWriter as AuditWriterABC  # 5.104.15 修复: 继承ABC契约
 from zephyr.governance.audit_trail.models import AuditIssue, GlobalAuditReport
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
 
     def write_report(self, report: GlobalAuditReport, path: Path | None = None) -> Path:
         output_path = path or self._report_dir / f"{report.audit_id}.json"
-        report.finished_at = report.finished_at or datetime.now()
+        report.finished_at = report.finished_at or now_utc()
         content = report.model_dump_json(indent=2, default=str)
 
         tmp_path = Path(str(output_path) + f".{os.getpid()}.tmp")
@@ -261,6 +262,7 @@ class AuditWriter:
             return None
         if self.enable_merkle:
             from zephyr.governance.audit_trail.integrity import MerkleAggregator
+
             root = MerkleAggregator.aggregate(self._batch_event_hashes)
         else:
             root = self._last_hash

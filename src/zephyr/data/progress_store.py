@@ -40,6 +40,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.time_utils import now_utc
 
 log = logging.getLogger(__name__)
 
@@ -170,7 +171,7 @@ class ProgressStore:
         Returns:
             是否成功。
         """
-        now = datetime.datetime.now().isoformat(timespec="seconds")
+        now = now_utc().isoformat(timespec="seconds")
         with self._lock:
             try:
                 self._conn.execute(
@@ -197,7 +198,7 @@ class ProgressStore:
 
     def start_run(self, task_id: str) -> int | None:
         """记录一次运行开始，返回 run_id。"""
-        now = datetime.datetime.now().isoformat(timespec="seconds")
+        now = now_utc().isoformat(timespec="seconds")
         with self._lock:
             try:
                 cur = self._conn.execute(
@@ -220,7 +221,7 @@ class ProgressStore:
         error_msg: str | None = None,
     ) -> bool:
         """记录一次运行结束。"""
-        now = datetime.datetime.now().isoformat(timespec="seconds")
+        now = now_utc().isoformat(timespec="seconds")
         with self._lock:
             try:
                 self._conn.execute(

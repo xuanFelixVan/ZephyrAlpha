@@ -20,6 +20,7 @@
 from datetime import datetime, timedelta
 
 from ..layer2_communication.a2a_state import A2ATask, A2ATaskStatus
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class Supervisor:
@@ -33,9 +34,9 @@ class Supervisor:
 
     def submit_task(self, task: A2ATask) -> A2ATask:
         if task.deadline is None:
-            task.deadline = datetime.utcnow() + timedelta(hours=1)
-        min_dl = datetime.utcnow() + timedelta(minutes=self.MIN_TIMEOUT_MINUTES)
-        max_dl = datetime.utcnow() + timedelta(hours=self.MAX_TIMEOUT_HOURS)
+            task.deadline = now_utc() + timedelta(hours=1)
+        min_dl = now_utc() + timedelta(minutes=self.MIN_TIMEOUT_MINUTES)
+        max_dl = now_utc() + timedelta(hours=self.MAX_TIMEOUT_HOURS)
         if task.deadline < min_dl:
             task.deadline = min_dl
         if task.deadline > max_dl:
@@ -50,7 +51,7 @@ class Supervisor:
         if task and task.status == A2ATaskStatus.QUEUED:
             task.to_agent = agent_id
             task.status = A2ATaskStatus.ASSIGNED
-            task.updated_at = datetime.utcnow()
+            task.updated_at = now_utc()
             self._agent_load[agent_id] = self._agent_load.get(agent_id, 0) + 1
             return True
         return False
@@ -58,7 +59,7 @@ class Supervisor:
     def detect_deadlocks(self) -> list[dict]:
         deadlocks = []
         waiting_tasks = [t for t in self._tasks.values() if t.status == A2ATaskStatus.IN_PROGRESS]
-        now = datetime.utcnow()
+        now = now_utc()
         for task in waiting_tasks:
             if task.deadline and now > task.deadline:
                 deadlocks.append(
@@ -78,7 +79,7 @@ class Supervisor:
         return [t for t in self._tasks.values() if t.status in (A2ATaskStatus.CREATED, A2ATaskStatus.QUEUED)]
 
     def escalate_timeouts(self) -> list[dict]:
-        now = datetime.utcnow()
+        now = now_utc()
         timeouts = []
         for task in self._tasks.values():
             if task.deadline and now > task.deadline:

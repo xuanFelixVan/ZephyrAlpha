@@ -21,6 +21,7 @@ import logging
 import threading
 from pathlib import Path
 from typing import Any
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +83,7 @@ class BootstrapCache:
         try:
             from datetime import datetime
 
-            self._cache["loaded_at"] = datetime.now().isoformat()
+            self._cache["loaded_at"] = now_utc().isoformat()
             CACHE_DIR.mkdir(parents=True, exist_ok=True)
             self._cache_path.write_text(
                 json.dumps(self._cache, indent=2, ensure_ascii=False, default=str),

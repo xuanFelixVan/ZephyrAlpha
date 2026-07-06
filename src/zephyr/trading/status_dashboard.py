@@ -30,6 +30,7 @@ from zephyr.trading.health_monitor import HealthMonitor
 from zephyr.trading.night_shift_queue import NightShiftQueue
 from zephyr.trading.orphan_detector import OrphanDetector
 from zephyr.trading.work_orchestrator import WorkOrchestrator
+from zephyr.shared.utils.time_utils import now_utc
 
 
 def _current_phase() -> str:
@@ -39,7 +40,7 @@ def _current_phase() -> str:
     定时调度机制已废除（2026-06-26 裁定），phase 仅用于状态面板展示，
     故下沉为模块级纯函数，不再依赖调度器实例。
     """
-    hour = datetime.now().hour
+    hour = now_utc().hour
     if 6 <= hour < 9:
         return "MORNING"
     if 9 <= hour < 18:
@@ -66,7 +67,7 @@ class StatusDashboard:
         self._nq = night_shift_queue
         self._wo = work_orchestrator
         self._orphan = orphan_detector
-        self._uptime_start = uptime_start or datetime.now().isoformat()
+        self._uptime_start = uptime_start or now_utc().isoformat()
 
     def render_tui(self) -> str:
         phase = _current_phase()

@@ -54,6 +54,7 @@ _LAZY_GOVERNANCE_ATTRS: dict[str, str] = {
 
 
 import importlib
+from zephyr.shared.utils.time_utils import now_utc
 
 
 def _lazy_import_governance(name: str):
@@ -82,7 +83,7 @@ class GateCheckResult(BaseModel):
     task_id: str
     passed: bool
     violations: list[str] = Field(default_factory=list)
-    checked_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+    checked_at: str = Field(default_factory=lambda: now_utc().isoformat())
 
 
 # 治本: 显式触发 lazy 加载并注入 globals, 使 pydantic forward reference 能被 model_rebuild() 解析。

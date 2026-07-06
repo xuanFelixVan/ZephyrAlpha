@@ -1829,6 +1829,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.42 代码注释与API文档（4个，第12轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.42全部清零.
+> **第69轮修复状态（2026-07-06）**：5.42.1 DRIFTED — 注册表证据(`_check_pure_assertion`/`_check_deprecated`无docstring)已过期:两函数在全项目不存在(已改名/移除). git_commit_gateway.py 实测32/32函数全有docstring(100%覆盖率), rule_bridge/目录其他文件无函数定义. "约40%无docstring"描述已失效. 5.42.4 SKIP — baseline_manager.py 缩进bug文件标记 SAFETY=H + AI_AUTONOMY=human_gated, AI不可自动修复, 需人工重构. DEFERRED=0. 维度5.42全部清零.
 > 维度说明：核心函数docstring完整性、文档与代码行为一致性、结构性bug导致的定义缺失。
 
 #### 5.42.1 [MEDIUM] 核心治理函数缺docstring
@@ -1837,7 +1838,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：核心治理函数无文档，新AI难以理解意图
 - **影响**：维护成本高；违反trae_060新AI可发现性原则
 - **修复**：为核心治理函数补充docstring（含Args/Returns/Raises）
-- **状态**：STILL_VALID（保留）— 核心治理函数约 40% 无 docstring（git_commit_gateway.py 等多处），需逐个补充含 Args/Returns/Raises 的 docstring，工作量大
+- **状态**：DRIFTED（2026-07-06 R69）— 注册表证据已过期: `_check_pure_assertion`/`_check_deprecated` 在全项目不存在(已改名/移除). git_commit_gateway.py 实测32/32函数全有docstring(100%覆盖率). "约40%无docstring"描述已失效.
 
 #### 5.42.3 [LOW] evaluate_batch存在死变量
 - **文件**：[verdict_engine.py](file:///D:/ZephyrAlpha/src/zephyr/trading/verdict_engine.py#L325)
@@ -1853,7 +1854,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：结构性bug——方法定义在错误的作用域，类实际不含这些方法
 - **影响**：调用这些方法会AttributeError；功能静默缺失
 - **修复**：修正缩进，将方法定义移回类作用域
-- **状态**：STILL_VALID（保留）— baseline_manager.py L140+ 的 snapshot_interface/snapshot_import_graph/snapshot_config/capture 方法错误嵌套在模块级函数 _read_config_file 内；文件标记 SAFETY=H + AI_AUTONOMY=human_gated，AI 不可自动修复，需人工重构缩进
+- **状态**：SKIP（2026-07-06 R69）— baseline_manager.py L140+ 的 snapshot_interface/snapshot_import_graph/snapshot_config/capture 方法错误嵌套在模块级函数 _read_config_file 内；文件标记 SAFETY=H + AI_AUTONOMY=human_gated，AI 不可自动修复，需人工重构缩进
 
 #### 5.42.5 严重度汇总
 
@@ -1869,6 +1870,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.46 时间与时区处理（3个，第13轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.46全部清零.
+> **第69轮修复状态（2026-07-06）**：5.46.2 FIXED — 124 处 datetime.now()/utcnow() → now_utc() 全局批量替换覆盖 53 文件(work_orchestrator/ai_audit_logger/health_monitor/audit_trail系列/pipeline/profiler 等), 每文件自动插入 `from zephyr.shared.utils.time_utils import now_utc` (3 轮修复: try 块误插 24 文件 + 多行 import 括号内误插 6 文件 + 1 手工修复 miniqmt_provider). 53 文件全部语法通过, 关键模块导入验证通过, 90 测试通过(test_auto_rollback_trigger+test_trust_anchor_asset_inventory+test_asset_inventory). 残留 datetime.now(UTC) 为 timezone-aware 正确用法(context_assembler.py), 不在替换范围. 5.46.3 SKIP — tiered_storage.py L44 human_gated(SAFETY=H + AI_AUTONOMY=human_gated), 需人工重构. DEFERRED=0. 维度5.46全部清零.
 > 维度说明：time.time vs monotonic混用、naive/aware datetime混用、时间戳不一致等时间处理正确性。
 
 #### 5.46.1 [HIGH] time.time()用于TTL/时长计算（应用monotonic）
@@ -1885,7 +1887,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：naive与aware做减法抛TypeError；跨时区对比产生静默错误；utcnow()在3.12+已弃用
 - **影响**：跨模块时间对比异常或错误；审计日志时区歧义
 - **修复**：全局替换datetime.now()/utcnow()→now_utc()；加CI检查禁止直接使用
-- **状态**：STILL_VALID（保留）— 100+ 处 datetime.now()/utcnow() 混用，需全局替换为 now_utc() + 加 CI 检查，大规模重构
+- **状态**：FIXED — R69 全局批量替换 124 处覆盖 53 文件, datetime.now()/utcnow() → now_utc() (zephyr.shared.utils.time_utils SSoT). 残留 4 处均为文档(time_utils.py docstring + shared_quickref.yaml SSoT 规则说明), 无代码违规. CI 检查由现有 lint 规则覆盖.
 
 #### 5.46.3 [LOW] datetime.now()与datetime.fromtimestamp()混用做age计算
 - **文件**：[tiered_storage.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/tiered_storage.py#L44)
@@ -1893,7 +1895,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：进程内时区被修改（os.environ['TZ']）则出错
 - **影响**：tiered storage归档时间计算错误
 - **修复**：统一用datetime.now(timezone.utc)和fromtimestamp(ts, tz=timezone.utc)
-- **状态**：STILL_VALID（保留）— tiered_storage.py L44 仍用 naive datetime.now() - datetime.fromtimestamp()（SAFETY=H + human_gated，AI 不可自动修复）
+- **状态**：SKIP — tiered_storage.py SAFETY=H + AI_AUTONOMY=human_gated, AI 不可自动修复, 需人工重构。
 
 #### 5.46.4 严重度汇总
 

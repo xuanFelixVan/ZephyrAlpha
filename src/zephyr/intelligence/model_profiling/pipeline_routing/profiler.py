@@ -53,6 +53,7 @@ from zephyr.intelligence.model_profiling.model_discovery import (
     DiscoveredModel,
     ModelDiscovery,
 )
+from zephyr.shared.utils.time_utils import now_utc
 
 _log = logging.getLogger(__name__)
 
@@ -195,7 +196,7 @@ class ModelProfiler:
         profile = ModelProfile(
             model_name=model_name,
             source="ollama",
-            benchmark_date=datetime.now().isoformat(),
+            benchmark_date=now_utc().isoformat(),
             available=True,
         )
 
@@ -279,7 +280,7 @@ class ModelProfiler:
         profile = ModelProfile(
             model_name=model.name,
             source=model.source,
-            benchmark_date=datetime.now().isoformat(),
+            benchmark_date=now_utc().isoformat(),
             available=True,
         )
         if model.size_gb > 0:
