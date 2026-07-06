@@ -2072,9 +2072,9 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.45 输入验证与净化深度（5个，第13轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.45全部清零.
+> **第57轮修复状态（2026-07-06）**：5.45.4 FIXED — gate_engine_server.py (infrastructure/ + integration/mcp/) 路径校验改用 os.path.realpath()+os.path.commonpath() 边界检查, commit dc2210ce46. DEFERRED=2(5.45.2/5.45.3).
 > **第63轮修复状态（2026-07-06）**：5.45.2+5.45.3 FIXED — enforcer.py eval()→typing._eval_type(ForwardRef) (同时修复预存 NameError: get_type_hints 被调用但未导入) / self_benchmark.py exec() 前置 _validate_ast_safety() AST 白名单+_SAFE_BUILTINS+SecurityError, commit bf2a18c201. DEFERRED=0. 维度5.45全部清零.
 > 维度说明：命令注入、eval/exec代码执行、路径穿越防护、API响应清洗等输入边界安全。
-> **第57轮修复状态（2026-07-06）**：5.45.4 FIXED — gate_engine_server.py (infrastructure/ + integration/mcp/) 路径校验改用 os.path.realpath()+os.path.commonpath() 边界检查, commit dc2210ce46. DEFERRED=2(5.45.2/5.45.3).
 
 #### 5.45.1 [HIGH] subprocess.run使用shell=True存在命令注入风险
 - **文件**：[task_repo.py](file:///D:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py#L1811)
