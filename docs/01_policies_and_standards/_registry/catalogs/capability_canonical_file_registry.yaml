@@ -3866,6 +3866,14 @@ creation_tokens:
     created_by: "session-sess-28744-20260706044954"
     capability: "safety_boundary_config"
 
+  # --- 三图对齐断链修复：架构违规检测器（2026-07-06，session-sess-36064）---
+  # 5类检测（跨域违规/容量超限/硬上限/孤儿节点/层级违规），写 PG arch_constraints 表
+  # GATE-CONSTRAINT-DETECT reconciler（priority=625）调用，补齐"检测器→PG→生成器"链路
+  - file: "scripts/governance/d5_architecture/detect_constraint_violations.py"
+    token: "auto-detect-constraint-violations-20260706"
+    created_by: "session-sess-36064-20260706152518"
+    capability: "constraint_violation_detector"
+
 # ============================================================================
 # 维护日志
 # ============================================================================
