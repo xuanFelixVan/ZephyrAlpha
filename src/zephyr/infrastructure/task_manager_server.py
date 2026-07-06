@@ -131,7 +131,7 @@ class TaskManagerMCP:
             raise
         except Exception as exc:
             raise PermissionError(
-                f"RBAC 检查异常: action={action}, task_id={task_id} — {type(exc).__name__}: {exc}"
+                f"RBAC 检查异常: action={action}, task_id={task_id}"
             ) from exc
 
     def _register_tools(self) -> None:
@@ -316,7 +316,7 @@ class TaskManagerMCP:
             """更新任务状态——蓝图 MOD-TASK_SYSTEM §3.5 Tool 3（使用状态机 transition）"""
             mgr._rbac_guard("update_task_status", task_id)
             if mgr.task_repo is None:
-                raise RuntimeError("update_task_status 需要注入 task_repo，当前为 None")
+                raise RuntimeError("update_task_status 需要任务存储后端，当前未配置")
 
             new_st = getattr(TaskStatus, new_status.upper(), None)
             if new_st is None:
@@ -428,7 +428,7 @@ class TaskManagerMCP:
             """原子认领下一个依赖已满足的 READY 任务——多AI并发安全（MOD-TASK_SYSTEM §16.7）"""
             mgr._rbac_guard("claim_task")
             if mgr.task_repo is None:
-                raise RuntimeError("claim_task 需要注入 task_repo，当前为 None")
+                raise RuntimeError("claim_task 需要任务存储后端，当前未配置")
             card = mgr.task_repo.claim_next(batch_id, worker_id)
             if card is None:
                 return {"claimed": False, "task": None, "reason": "no_ready_tasks"}
@@ -439,7 +439,7 @@ class TaskManagerMCP:
             """标记任务完成——调用状态机 transition(task_id, COMPLETED)"""
             mgr._rbac_guard("mark_task_done", task_id)
             if mgr.task_repo is None:
-                raise RuntimeError("mark_task_done 需要注入 task_repo，当前为 None")
+                raise RuntimeError("mark_task_done 需要任务存储后端，当前未配置")
             updated = mgr.task_repo.transition(task_id, TaskStatus.COMPLETED, session_id=worker_id or None)
             if mgr.docs_dir:
                 mgr._sync_md(updated)
@@ -450,7 +450,7 @@ class TaskManagerMCP:
             """标记任务失败——调用状态机 transition(task_id, FAILED)，reason 须包含"根因"关键词"""
             mgr._rbac_guard("mark_task_failed", task_id)
             if mgr.task_repo is None:
-                raise RuntimeError("mark_task_failed 需要注入 task_repo，当前为 None")
+                raise RuntimeError("mark_task_failed 需要任务存储后端，当前未配置")
             updated = mgr.task_repo.transition(task_id, TaskStatus.FAILED, note=reason, session_id=worker_id or None)
             if mgr.docs_dir:
                 mgr._sync_md(updated)
@@ -461,7 +461,7 @@ class TaskManagerMCP:
             """查询批量进度——READY/IN_PROGRESS/COMPLETED/FAILED 各多少"""
             mgr._rbac_guard("batch_progress")
             if mgr.task_repo is None:
-                raise RuntimeError("batch_progress 需要注入 task_repo，当前为 None")
+                raise RuntimeError("batch_progress 需要任务存储后端，当前未配置")
             return mgr.task_repo.batch_progress(batch_id)
 
         @mcp.tool(name="task_manager.list_dependents")
@@ -469,7 +469,7 @@ class TaskManagerMCP:
             """查询所有依赖指定 task_id 的下游任务（MOD-TASK_SYSTEM §16.7 依赖感知）"""
             mgr._rbac_guard("list_dependents", task_id)
             if mgr.task_repo is None:
-                raise RuntimeError("list_dependents 需要注入 task_repo，当前为 None")
+                raise RuntimeError("list_dependents 需要任务存储后端，当前未配置")
             downstream = mgr.task_repo.list_by_dependency(task_id)
             items = [mgr._to_response(t) for t in downstream]
             return {"task_id": task_id, "dependents": items, "count": len(items)}
@@ -487,7 +487,7 @@ class TaskManagerMCP:
             """
             mgr._rbac_guard("auto_split", task_id)
             if mgr.task_repo is None:
-                raise RuntimeError("auto_split 需要注入 task_repo，当前为 None")
+                raise RuntimeError("auto_split 需要任务存储后端，当前未配置")
             sub_cards = mgr.task_repo.auto_split_task(
                 task_id,
                 session_id=session_id or None,
@@ -573,8 +573,8 @@ class TaskManagerMCP:
     def _persist(self, tc: TaskCard) -> None:
         if self.task_repo is None:
             raise RuntimeError(
-                f"MCP _persist 失败: task_id={tc.task_id} — task_repo 未注入，"
-                f"数据将丢失。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
+                f"MCP _persist 失败: task_id={tc.task_id} — 任务存储后端未注入，"
+                f"数据将丢失。请确保正确初始化。"
             )
         try:
             existing = self.task_repo.get(tc.task_id)
@@ -585,7 +585,7 @@ class TaskManagerMCP:
             else:
                 self.task_repo.create(tc)
         except Exception as exc:
-            raise RuntimeError(f"MCP _persist 失败: task_id={tc.task_id} — {type(exc).__name__}: {exc}") from exc
+            raise RuntimeError(f"MCP _persist 失败: task_id={tc.task_id}") from exc
 
         if self.docs_dir:
             self._sync_md(tc)
@@ -600,13 +600,13 @@ class TaskManagerMCP:
     def _load(self, task_id: str) -> TaskCard | None:
         if self.task_repo is None:
             raise RuntimeError(
-                f"MCP _load 失败: task_id={task_id} — task_repo 未注入，"
-                f"无法查询任务。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
+                f"MCP _load 失败: task_id={task_id} — 任务存储后端未注入，"
+                f"无法查询任务。请确保正确初始化。"
             )
         try:
             return self.task_repo.get(task_id)
         except Exception as exc:
-            raise RuntimeError(f"MCP _load 失败: task_id={task_id} — {type(exc).__name__}: {exc}") from exc
+            raise RuntimeError(f"MCP _load 失败: task_id={task_id}") from exc
 
     @staticmethod
     def _to_response(tc: TaskCard) -> dict:
