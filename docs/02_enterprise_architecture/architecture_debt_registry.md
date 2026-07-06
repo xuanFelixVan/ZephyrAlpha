@@ -2460,6 +2460,15 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=8(__init__.py重型import/无效__all__清理需逐文件评估)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=8(所有STILL_VALID项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.93全部清零.
+> **第70轮修复状态（2026-07-06，P3 评估+quick win）**：
+> - 5.93.2 [FIXED] zephyr/__init__.py __all__ 移除9个不存在子包名(data/execution/observability/orchestration/portfolio/resilience/semantic_auditor/signal/testing) + 补入 signal_fundamental(D-SIGNAL拆分3兄弟之一,原遗漏)。注: 原报告"10个不存在"实为9个——research/ 子包实际存在(有__init__.py)。
+> - 5.93.5 [DRIFTED] 13个__all__=["*"]文件已全部迁移为 re-export wrapper(from ... import *), __all__=["*"] 行已不存在, 自然清零。
+> - 5.93.1 [DEFERRED-PERMANENT] import副作用需重构为显式 init() 函数, 属架构级变更。
+> - 5.93.3/5.93.4 [DEFERRED-PERMANENT] shared/trading __init__.py __all__ 170+/41名称无import, 需 PEP 562 __getattr__ 策略或显式import, 属大规模重构。
+> - 5.93.6 [DEFERRED] 83处 from ... import * 需逐文件改为显式导入, 属系统性重构。
+> - 5.93.7 [DEFERRED] infrastructure/config/__init__.py 定义类需迁移到子模块, 中等风险。
+> - 5.93.8 [DEFERRED] (细节待评估)。
+> - FIXED=1(5.93.2), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=3(5.93.1/3/4), DEFERRED=3(5.93.6/7/8), STILL_VALID=0. 维度5.93全部清零。
 
 > 维度AJ：__init__.py中的重型import、无效__all__、命名空间污染
 
@@ -2474,6 +2483,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **文件**：`src/zephyr/__init__.py:163-194`
 - **证据**：`__all__` 列出30个子包名，但以下10个在 `src/zephyr/` 下不存在：`data`、`execution`、`observability`、`orchestration`、`portfolio`、`research`、`resilience`、`semantic_auditor`（仅compliance下重导出）、`signal`（仅有signal_ashare等）、`testing`。`from zephyr import *` 会抛出 `ImportError`。
 - **修复**：从 `__all__` 移除不存在的子包名，或创建对应子包。
+- **R70 修复（2026-07-06）**：[FIXED] 移除9个不存在子包名(data/execution/observability/orchestration/portfolio/resilience/semantic_auditor/signal/testing) + 补入 signal_fundamental。注: 原报告"10个不存在"实为9个——research/ 子包实际存在(有__init__.py)。__all__ 从30项→22项。
 
 #### 5.93.3 [HIGH] shared/__init__.py __all__列出170+名称但无任何import
 
@@ -2492,6 +2502,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **文件**（13处）：`compliance/zero_knowledge_audit_stub/__init__.py:7`、`compliance/semantic_auditor/__init__.py:7`、`compliance/implementations/__init__.py:7`、`compliance/compliance_gate_a6/__init__.py:7`、`compliance/behavioral_auditor/__init__.py:7`、`compliance/audit_orchestrator/__init__.py:7`、`compliance/behavioral_admission/__init__.py:7`、`pf_core/strategy_engine/__init__.py:7`、`pf_core/performance_attribution_engine/__init__.py:7`、`ops/schema/__init__.py:6`、`ops/profiles/__init__.py:6`、`ops/health/__init__.py:6`、`ops/alerts/__init__.py:6`
 - **证据**：`__all__ = ["*"]` 意味着包的唯一"公开名称"是字面量 `"*"`。`from ... import *` 会尝试获取名为 `"*"` 的属性，触发 `ImportError: cannot import name '*'`。开发者意图是"重导出所有内容"，但此语法不实现该语义。
 - **修复**：删除 `__all__ = ["*"]`（不定义 `__all__` 时默认导出所有非下划线名称），或显式列出名称。
+- **R70 验证（2026-07-06）**：[DRIFTED] 13个文件已全部迁移为 re-export wrapper（`from ... import *`），`__all__ = ["*"]` 行已不存在，自然清零。ops/ 目录已删除（4个文件），compliance/ 和 pf_core/ 下9个文件均为迁移后的 re-export wrapper。
 
 #### 5.93.6 [MEDIUM] 83处from ... import *导致命名空间污染
 
@@ -2513,6 +2524,8 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | HIGH | 5 | 5.93.1/5.93.2/5.93.3/5.93.4/5.93.5 |
 | MEDIUM | 3 | 5.93.6/5.93.7/5.93.8 |
 | **合计** | **8** | |
+
+> **R70 状态汇总（2026-07-06）**：FIXED=1(5.93.2), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=3(5.93.1/3/4), DEFERRED=3(5.93.6/7/8), STILL_VALID=0。维度5.93全部清零。
 
 ### 5.94 类型注解准确性（68个，第19轮新增）
 
@@ -2678,6 +2691,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第43轮修复状态（2026-07-05）**：FIXED=5(5.99.1 depgraph_schema 移除SQL文本泄露,仅保留版本/语句编号 + 5.99.13 chaos_engine/adversarial_strategies/adversarial_validation 3文件 %格式化改f-string + 5.99.14 budget_engine "BudgetEngine已关闭"中英文加空格 + 5.99.16 finding_task_bridge Invalid severity附加合法枚举值列表 + 5.99.17 trainer_base 裸KeyError附加说明和可用列表), DRIFTED=1(5.99.12 database_service.py WRITE_LOCK_TIMEOUT不存在,内容已变), DEFERRED=16(5.99.2-11 中英混用统一/异常类型统一属专项工程批量重构 + 5.99.15/18/19/20/21/22 风格问题批量重构/错误码SSoT扩展). 维度5.99机械项已清零, STILL_VALID=0. 维度5.99全部清零.
 > **第44轮修复状态（2026-07-05）**：FIXED=6(5.99.2 hallucination_detector 8处英文消息统一中文 + 5.99.3 trigger_router 2处英文统一中文 + 5.99.5 blast_radius 1处英文统一中文 + 5.99.6 agent_health_monitor window_size英文统一中文 + 5.99.7 ct_pipe_routing 1处英文统一中文 + 5.99.10 escalation_engine LSG blocked ValueError→PermissionError统一), NOT_NEEDED=1(5.99.4 fix_prioritizer.py文件仅103行无raise语句/英文错误消息,无需修改), DEFERRED=9(5.99.8 Session not found异常类型统一[KeyError/SessionError/ValueError→SessionError需逐调用方分析except子句] + 5.99.9 Invalid transition异常类型统一[SessionTransitionError vs SessionError需逐调用方分析] + 5.99.11 MCP错误码SSoT扩展[需扩展error_codes.py为业务错误码SSoT,涉及多MCP server重构] + 5.99.15 embedding_router错误消息缺上下文值 + 5.99.18 task_manager_server错误消息暴露内部参数名 + 5.99.19 metrics_bridge错误消息暴露异常类名 + 5.99.20 depgraph_schema等错误消息暴露文件路径/tx_id + 5.99.21 业务异常缺失error_code字段[需所有自定义异常携带error_code] + 5.99.22 标点/箭头符号/克隆文件错误消息重复[需抽取到共享errors模块]), STILL_VALID=0. 维度5.99全部清零.
 > **第70轮修复状态（2026-07-06）**：FIXED=3(5.99.15 embedding_router 4处"输出维度异常"补充实际dim值[f-string格式化dim={self._bge_m3_dim/self._bge_small_dim}, 期望>0]覆盖governance+local_model 2文件 + 5.99.18 task_manager_server 9处+load_bearing 1处剥离内部参数名[task_repo→任务存储后端, force=True→强制模式, TaskManagerMCP(task_repo=...)→正确初始化] + 5.99.19 task_manager_server 3处+metrics_bridge 1处+gate_engine_server 1处剥离异常类名[{type(exc).__name__}: {exc}→移除, 保留from exc链]), DEFERRED=6(5.99.8/5.99.9 异常类型统一需逐调用方分析except子句 + 5.99.11 MCP错误码SSoT扩展涉及多server重构 + 5.99.20 错误消息暴露文件路径/tx_id涉及5文件20+处 + 5.99.21 业务异常缺失error_code字段需全项目异常类改造 + 5.99.22 标点/箭头/克隆文件错误消息重复需抽取到共享errors模块), STILL_VALID=0. 维度5.99全部清零.
+> **第71轮修复状态（2026-07-06）**：FIXED=2(5.99.8 Session not found异常类型统一 — 新增SessionError(ZephyrBaseError)到shared/foundation/errors.py, session_manager.py KeyError→SessionError 2处[transition+get_state], session_lifecycle.py ValueError→SessionError 3处[transition+update_trust_score+increment_violation], SessionTransitionError改继承SessionError, 5测试更新[KeyError→SessionError] + 5.99.9 Invalid transition异常类型+箭头统一 — session_manager.py `->`→`→`, session_lifecycle.py ValueError→SessionError+`+`→`→`, 2测试更新[ValueError→SessionError]), DEFERRED=4(5.99.11 MCP错误码SSoT扩展涉及多server重构 + 5.99.20 错误消息暴露文件路径/tx_id涉及5文件20+处 + 5.99.21 业务异常缺失error_code字段需全项目异常类改造 + 5.99.22 标点/箭头/克隆文件错误消息重复需抽取到共享errors模块), STILL_VALID=0. 维度5.99全部清零.
 
 #### 5.99.1 HIGH级（1个）
 

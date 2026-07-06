@@ -216,13 +216,14 @@ register_lazy("autopilot", "zephyr.trading.autopilot")  # MOD-INF-012B AutoPilot
 # 删除 register_lazy("signal", "zephyr.signal") — D-SIGNAL 域已拆分为3个平级兄弟域
 # （signal_ashare / signal_fundamental / signal_quality），无单一 zephyr.signal 包
 register_lazy("ml_train", "zephyr.ml_train")  # MOD-L11-001 ML Training domain
+# 5.93.2 修复（R70）：移除 9 个不存在的子包名（data/execution/observability/
+# orchestration/portfolio/resilience/semantic_auditor/signal/testing），
+# 补入 signal_fundamental（D-SIGNAL 拆分3兄弟之一，原遗漏）
 __all__ = [  # noqa: gate-vocab  __all__ 子包导出列表，非 domain 分类
     "autonomy_perm",
     "compliance",
     "cross_asset",
-    "data",
     "ex_core",
-    "execution",
     "factor",
     "frontend",
     "governance",
@@ -230,21 +231,15 @@ __all__ = [  # noqa: gate-vocab  __all__ 子包导出列表，非 domain 分类
     "integration",
     "intelligence",
     "ml_train",
-    "observability",
-    "orchestration",
     "pf_alloc",
     "pf_core",
-    "portfolio",
     "reporting",
     "research",
-    "resilience",
     "risk",
     "security",
-    "semantic_auditor",
     "shared",
-    "signal",
     "signal_ashare",
+    "signal_fundamental",
     "signal_quality",
     "simulation",
-    "testing",
 ]
