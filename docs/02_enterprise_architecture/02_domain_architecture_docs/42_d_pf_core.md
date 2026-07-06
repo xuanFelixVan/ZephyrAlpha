@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 16:10:35
+> 最后更新: 2026-07-06 16:16:04
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -62,7 +62,7 @@ graph TD
         src_zephyr_pf_core_strategy_engine_init_py["src/zephyr/pf_core/strategy_engine/__init__.py prototype"]
         src_zephyr_pf_core_strategy_registry_py["src/zephyr/pf_core/strategy_registry.py prototype"]
     end
-    src_zephyr_pf_core_init_py -.->|config_depends| src_zephyr_pf_core_compliance_rule_py
+    src_zephyr_pf_core_init_py -.->|config_depends| src_zephyr_pf_core_performance_attribution_report_py
     D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_pf_core_strategy_base_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
@@ -167,7 +167,7 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [config_depends] (1 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   __init__.py → compliance_rule.py                               │
+│   __init__.py → performance_attribution_r...                     │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
