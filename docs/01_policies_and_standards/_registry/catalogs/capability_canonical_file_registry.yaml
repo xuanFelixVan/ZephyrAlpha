@@ -2825,6 +2825,8 @@ capabilities:
       - sync_infrastructure_registry
       - yaml_to_db_sync
       - sync_aggregate_nodes
+      - sync_interface_contracts
+      - sync_database_nodes
     description: >-
       YAML 真源 → depgraph PostgreSQL readonly 表单向同步脚本。同步 9 张 readonly 表
       （gates/field_vocabularies/registries/cross_registry_rules/hard_boundaries/
@@ -2843,6 +2845,13 @@ capabilities:
       保护 apply_dataflowgraph --add-design-* 写入的设计态数据。解决发现性：新 AI 搜
       "聚合节点同步/aggregate_nodes 恢复/dataflow 设计态保护" 可定位真源。
       关联规则：ARCH-052（聚合节点模式治理配置对象过细）。
+      ARCH-053 扩展（2026-07-06）：新增 sync_interface_contracts() 函数（P8 优先级），
+      从 interface_contract_registry.yaml UPSERT 接口契约到 interface_contracts 表
+      （对标 Backstage API kind，接口集级粒度）。新增 sync_database_nodes() 函数
+      （P8 优先级），从 infrastructure_registry.yaml 的 relational_db/vector_db 条目
+      UPSERT database 节点到 nodes 表（补齐 depgraph 缺失的数据库节点）。
+      解决发现性：新 AI 搜"接口契约同步/database 节点同步" 可定位真源。
+      关联规则：ARCH-053（API 契约层补齐 + database 节点 + AI 可发现性）。
 
   - capability_id: post_commit_guard
     aliases:

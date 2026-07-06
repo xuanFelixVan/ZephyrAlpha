@@ -274,6 +274,15 @@ tiers:
         status: active
         description: 9 个基础设施组件登记
 
+      - registry_id: REG-INTF-001
+        name: 接口契约注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 5
+        status: active
+        description: 5 个核心模块的 API 接口契约（接口集级粒度，对标 Backstage API kind）。与 cross_module_dependency_registry 互补：本表回答"怎么依赖"，后者回答"是否依赖"
+
       - registry_id: REG-KB-001
         name: 知识文章注册表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml

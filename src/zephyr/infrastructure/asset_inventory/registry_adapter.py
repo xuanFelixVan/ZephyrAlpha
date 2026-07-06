@@ -754,10 +754,11 @@ def discover_all_registries() -> list[dict]:
         >>> print(f"基础设施相关: {infra}")
     """
     import yaml
-    from pathlib import Path
+    from zephyr.shared.io.paths import REPO_ROOT
 
     # registry_master_index.yaml 是自动生成的总索引（reconciler 维护）
-    master_path = Path("docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml")
+    # P1 修复：使用 REPO_ROOT 绝对路径，禁止相对路径（硬约束）
+    master_path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_master_index.yaml"
     if not master_path.exists():
         return []
 
