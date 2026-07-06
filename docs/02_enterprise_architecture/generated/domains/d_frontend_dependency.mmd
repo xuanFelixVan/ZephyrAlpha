@@ -1,5 +1,5 @@
 %% D_FRONTEND 域全景依赖图
-%% 生成时间: 2026-07-06 12:26:49
+%% 生成时间: 2026-07-06 12:38:52
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 30, 依赖边数: 56
 
@@ -63,13 +63,13 @@ graph TD
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     src_zephyr_frontend_dashboard_components_backtest_results_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_olap_trend_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_gate_statistics_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_olap_trend_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_order_book_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_position_monitor_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_tick_replay_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard___init___py
+    src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend___init___py -->|config_depends| src_zephyr_frontend_interface_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条

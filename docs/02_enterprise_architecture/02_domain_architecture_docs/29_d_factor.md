@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 12:26:47
+> 最后更新: 2026-07-06 12:38:51
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -64,8 +64,8 @@ graph TD
     end
     src_zephyr_factor_base_py -->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_momentum_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_value_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_init_py -->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_value_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL production"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|import_depends| D_FUNDAMENTAL_SIGNAL
     D_GOVERNANCE["D_GOVERNANCE prototype"]
@@ -164,8 +164,8 @@ graph TD
 ├──────────────────────────────────────────────────────────────────┤
 │   base.py → factor_base.py                                       │
 │   momentum_factor.py → factor_base.py                            │
-│   value_factor.py → factor_base.py                               │
 │   __init__.py → factor_base.py                                   │
+│   value_factor.py → factor_base.py                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
