@@ -53,6 +53,7 @@ class StopGate:
 
     def check(
         self,
+        *,
         audit_has_new_entries: bool = True,
         night_shift_all_resolved: bool = True,
         dream_cycle_archived: bool = True,

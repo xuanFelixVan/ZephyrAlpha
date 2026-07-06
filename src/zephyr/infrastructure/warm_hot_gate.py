@@ -85,6 +85,7 @@ class WarmHotGate:
     def check(
         self,
         context: dict[str, Any],
+        *,
         verify_contracts: bool = True,
         verify_configs: bool = True,
         verify_dependencies: bool = True,

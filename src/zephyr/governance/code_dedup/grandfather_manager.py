@@ -110,6 +110,7 @@ class GrandfatherManager:
 
     def archaeology_check(
         self,
+        *,
         git_log_ok: bool = False,
         all_tests_ok: bool = False,
         rollback_ok: bool = False,

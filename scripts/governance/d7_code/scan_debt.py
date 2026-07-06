@@ -173,8 +173,11 @@ class DebtScanner(ast.NodeVisitor):
     # --- 函数检测 DEBT-2 ---
     def _check_function_args(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
         args = node.args
-        # 收集所有参数（positional + kw-only + pos-only）
-        all_args = list(args.posonlyargs) + list(args.args) + list(args.kwonlyargs)
+        # R68 修订：只检测位置参数（posonly + positional），不检测 kwonlyargs
+        # 原因：keyword-only 参数已用 `*` 隔离，调用方必须写 `name=value`，不会传错顺序
+        # 5.96.3 病根是 _calculate_trust(git_ok, test_ok, audit_ok) 三位置参数，
+        # 调用方写 _calculate_trust(True, True, False) 时无法区分哪个是 git 哪个是 test
+        all_args = list(args.posonlyargs) + list(args.args)
         # 排除 self/cls
         if all_args and all_args[0].arg in ("self", "cls"):
             all_args = all_args[1:]
@@ -190,8 +193,8 @@ class DebtScanner(ast.NodeVisitor):
                 file=self.file,
                 line=node.lineno,
                 symbol=node.name,
-                detail=f"含 {len(bool_params)} 个 bool 参数 [{','.join(bool_params)}] "
-                      f"→ 应改为 dict[str, bool] 或 keyword-only（5.96.3 病根）",
+                detail=f"含 {len(bool_params)} 个 bool 位置参数 [{','.join(bool_params)}] "
+                      f"→ 应改为 dict[str, bool] 或 keyword-only（5.96.3 病根；注：keyword-only bool 不算蔓延）",
             ))
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:

@@ -728,9 +728,10 @@ repos:
       #   DEBT-1 dataclass 含 action/role 字段 + ≥2 个派生布尔字段（5.96.2 病根）
       #   DEBT-2 函数含 ≥3 个 bool 参数（5.96.3 病根）
       #   DEBT-3 任意 class 含 action + should_*/is_*/_allowed 字段（DEBT-1 非 dataclass 兜底）
-      # 阶段1（当前）：stages:[manual]——手动 `pre-commit run gate-debt-bridge` 触发，不阻断常规 commit
-      #   原因：现存 13 处 DEBT-2 违规（hallucination_detector.py 等），强制阻断会卡死工作流
-      # 阶段2（待定）：存量违规清零后移除 stages:[manual]——commit 时自动阻断新增违规
+      # 阶段1（R67 完成 2026-07-06）：stages:[manual] 不阻断常规 commit，手动触发
+      #   原因：R67 基线 DEBT-2=13（hallucination_detector.py 等），强制阻断会卡死工作流
+      # 阶段2（R68 完成 2026-07-06）：存量违规清零（DEBT-2: 13→0），移除 stages:[manual]
+      #   → commit 时自动阻断新增违规（hard block）；R68 修订只检测位置参数（kwonlyargs 豁免）
       # 阶段3（待定）：CI 集成——`pre-commit run gate-debt-bridge --all-files` 加入 CI pipeline
       # 设计原则：误报优先（宁可放过，不可误伤 commit）；纯 stdlib（不依赖 ruff 是否安装）
       - id: gate-debt-bridge
@@ -740,8 +741,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^src/zephyr/.*\\.py$"
-        stages: [manual]
-        description: "5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。阶段1 manual 不阻断，存量违规清零后转 commit 阶段自动阻断"
+        description: "5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。阶段2 已转硬阻断（R68 存量清零）"
 
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage

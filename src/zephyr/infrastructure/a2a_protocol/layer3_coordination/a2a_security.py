@@ -125,6 +125,7 @@ class A2ASecurityScanner:
     def __init__(
         self,
         max_payload_bytes: int = 100_000,
+        *,
         scan_prompt_injection: bool = True,
         scan_code_execution: bool = True,
         scan_credentials: bool = True,

@@ -46,6 +46,7 @@ class CanIDeploy:
 
     def check(
         self,
+        *,
         consumer_expectations_ok: bool = True,
         schema_version_ok: bool = True,
         contract_consistency_ok: bool = True,
