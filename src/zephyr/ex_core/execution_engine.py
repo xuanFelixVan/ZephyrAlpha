@@ -52,6 +52,7 @@ from zephyr.ex_core.order_manager import OrderManager
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationPort,
 )
+from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.execution.order import Order
 
 _logger = logging.getLogger(__name__)
@@ -136,7 +137,11 @@ class ExecutionEngine:
             # 5.105.5 修复: 在Decimal域内计算后再转float, 避免大数量Decimal→float精度丢失
             target_weight=float(Decimal(str(order.quantity)) / Decimal("1000000")) if not isinstance(order.quantity, Decimal) else float(order.quantity / Decimal("1000000")),
             current_holdings={},
-            limits={"max_single_position": 0.10},
+            limits=RiskLimits(
+                as_of_date=datetime.now(UTC),
+                idempotency_key=f"exec-{order.order_id}",
+                max_single_position=0.10,
+            ),
         )
 
         halt_violations = [v for v in violations if v.severity == "HALT"]

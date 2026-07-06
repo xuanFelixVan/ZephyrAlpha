@@ -12,7 +12,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=clean/warn-only / 1=--ci violations / 2=src dir missing
-# [TESTS] 手动验证: R70 基线 ANY-1=462 / ANY-2=172 / 总计 634（5.145 维度存量债务）
+# [TESTS] 手动验证: R70 基线 ANY-1=462 / ANY-2=172 / 总计 634（审查修复后 632: ANY-1=460 / ANY-2=172）
 # [TTL] permanent
 """
 类型注解 Any 滥用扫描器 — 5.145 维度防御门闸（R70 引入）。
@@ -241,6 +241,42 @@ def _scan_function(
     return violations
 
 
+class _FunctionScanner(ast.NodeVisitor):
+    """AST 遍历器——O(n) 收集函数签名 Any 滥用违规。
+
+    维护父节点栈用于 TYPE_CHECKING 块检测。
+    替代原 O(n²) 嵌套 ast.walk 方案（审查修复 2026-07-06）。
+    """
+
+    def __init__(self, filepath: str) -> None:
+        self.filepath = filepath
+        self.violations: list[AnyViolation] = []
+        self._stack: list[ast.AST] = []
+
+    def _scan_and_descend(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
+        """扫描函数签名，然后继续遍历子节点。"""
+        self.violations.extend(_scan_function(node, self.filepath, self._stack))
+        self._stack.append(node)
+        self.generic_visit(node)
+        self._stack.pop()
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        self._scan_and_descend(node)
+
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        self._scan_and_descend(node)
+
+    def visit_If(self, node: ast.If) -> None:
+        self._stack.append(node)
+        self.generic_visit(node)
+        self._stack.pop()
+
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        self._stack.append(node)
+        self.generic_visit(node)
+        self._stack.pop()
+
+
 def scan_file(filepath: Path) -> list[AnyViolation]:
     """扫描单个 .py 文件的 Any 滥用。"""
     try:
@@ -269,23 +305,10 @@ def scan_file(filepath: Path) -> list[AnyViolation]:
             detail=f"语法错误: {e.msg}",
         )]
 
-    violations: list[AnyViolation] = []
     rel_path = str(filepath).replace("\\", "/")
-
-    # 遍历所有函数定义（含类方法）
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            # 收集父节点链（用于 TYPE_CHECKING 检测）
-            parents: list[ast.AST] = []
-            for parent in ast.walk(tree):
-                if isinstance(parent, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.If, ast.Module)):
-                    for child in ast.iter_child_nodes(parent):
-                        if child is node:
-                            parents.append(parent)
-                            break
-            violations.extend(_scan_function(node, rel_path, parents))
-
-    return violations
+    scanner = _FunctionScanner(rel_path)
+    scanner.visit(tree)
+    return scanner.violations
 
 
 def scan_directory(src_dir: Path, files: list[Path] | None = None) -> list[AnyViolation]:
