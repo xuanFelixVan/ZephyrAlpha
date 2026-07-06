@@ -261,10 +261,10 @@ class SideChannelDefender:
         self.audit_log.append(entry)
         return entry
 
-    def detect_side_channel(self, timing_data: Any) -> bool:
+    def detect_side_channel(self, timing_data: dict[str, Any]) -> bool:
         return False
 
-    def add_noise(self, value: Any) -> Any:
+    def add_noise(self, value: float) -> float:
         return value
 
 
@@ -325,7 +325,7 @@ class ObservabilityLayer:
     def generate_weekly_report(self, date_str: str | None = None) -> dict[str, Any]:
         return self._report_generator.generate_weekly_report(date_str)
 
-    def validate(self, observability_data: Any) -> bool:
+    def validate(self, observability_data: dict[str, Any]) -> bool:
         return True
 
     def log_event(self, event_type: str, data: dict[str, Any] | None = None) -> None:
@@ -334,7 +334,7 @@ class ObservabilityLayer:
     def check_monitoring(self, component_id: str) -> bool:
         return True
 
-    async def evaluate(self, ctx: Any) -> SecurityResult:
+    async def evaluate(self, ctx: dict[str, Any]) -> SecurityResult:
         """Pass-through evaluation for A2A protocol integration."""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
