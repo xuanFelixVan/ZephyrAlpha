@@ -20,7 +20,7 @@
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/sync_yaml_to_depgraph.py | §22.10
 [MODULE] 无（独立脚本）
-[INVARIANTS] YAML→DB单向同步; 17项同步; try/finally恢复触发器
+[INVARIANTS] YAML→DB单向同步; 23项同步; try/finally恢复触发器
 [MODIFY-GUARD] 本脚本由autopilot执行
 [CONSUMERS] autopilot session-20260618-001
 [STABILITY] stable
@@ -31,10 +31,11 @@
 
 P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph
 - 同步方向：YAML → DB 单向（禁止反向）
-- 17项同步：cross_module_dependencies/architecture_contract/contract_mapping/gate_registry/
+- 23项同步：cross_module_dependencies/architecture_contract/contract_mapping/gate_registry/
   functional_domain/vocabularies/architecture_rules/declarative_contract/frontmatter_field/
   registry_of_registries/directory_registry/rule_catalog/infrastructure/model_capability/
   hard_boundaries/business_streams/blueprint_links
+  + ARCH-051 dataflow_registry + ARCH-052 aggregate_nodes + ARCH-053 interface_contracts/database_nodes
 - 通行证机制：临时DROP只读触发器→同步→finally恢复触发器
 """
 
@@ -1579,6 +1580,8 @@ def sync_interface_contracts(cur):
             last_updated   TEXT
         )
     """)
+    # P6 修复：加 COMMENT（HB-001 四要素：表名+用途+真源+同步方向）
+    cur.execute("COMMENT ON TABLE interface_contracts IS 'ARCH-053 接口契约表 | 用途: 模块API契约(接口集级) | 真源: interface_contract_registry.yaml | 同步: YAML→DB单向'")
 
     interfaces = data.get("interfaces", [])
     synced = 0

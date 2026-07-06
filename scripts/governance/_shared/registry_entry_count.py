@@ -53,6 +53,7 @@ def count_primary_registry_entries(data: dict[str, Any], file_stem: str) -> int:
         "documents",
         "entries",
         "registries",
+        "interfaces",  # P5 修复：interface_contract_registry.yaml 的主键是 interfaces
     )
     for key in order:
         v = data.get(key)
@@ -84,6 +85,7 @@ def primary_count_entry_key(data: dict[str, Any], file_stem: str) -> str:
         "documents",
         "entries",
         "registries",
+        "interfaces",  # P5 修复：interface_contract_registry.yaml 的主键是 interfaces
     )
     for key in order:
         v = data.get(key)
