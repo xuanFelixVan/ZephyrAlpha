@@ -7,7 +7,7 @@
 
 ## 一、一句话定位
 
-ZephyrAlpha 是一套**100% AI 开发模式**下的**专业级 A 股量化交易系统**，Python 3.12+，版本 v2.0.0。资产规模见 depgraph（PostgreSQL）+ 各注册表动态统计（约 4600+ 模块 / 53 域 / 6500+ 节点，时点值）。
+ZephyrAlpha 是一套**100% AI 开发模式**下的**专业级 A 股量化交易系统**，Python 3.12+，版本 v2.0.0。资产规模见 depgraph（PostgreSQL）+ 各注册表动态统计（模块数 / 域数 / 节点数均为时点值，见各真源动态统计）。
 
 它不是传统意义上的"量化策略库"，而是一个**自治理的 AI 量化操作系统**——用治理代码（门禁、注册表、reconciler、worktree 隔离）替代人类工程师的纪律，让 AI 能在缺乏人类监督的情况下持续演进一个金融级系统而不漂移。
 
@@ -169,18 +169,18 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 
 ---
 
-## 四、架构原则：53 域平级
+## 四、架构原则：域平级
 
-### 4.1 53 域唯一物理分类
+### 4.1 域唯一物理分类
 
-核心架构决策：**53 域是唯一物理分类**。原 14 层（L00-L13）降级为域的 `layer_id` 属性，消除"域分层 + 物理路径分层"的双分类幻觉。
+核心架构决策：**所有域是唯一物理分类**（域数见 depgraph 动态统计）。原 14 层（L00-L13）降级为域的 `layer_id` 属性，消除"域分层 + 物理路径分层"的双分类幻觉。
 
 > "所有域平级，无父子关系；新增域只需 INSERT 到 domains 表，不修改生成器"
 > "架构与功能域层级保持一致：功能域平级 → 物理路径平级；能平铺绝不嵌套，每多一层嵌套增加 AI 理解成本"
 
 `layer` 字段定义的是**逻辑分层**（如 `infra_ops = L01`），不是物理路径前缀。物理路径统一为 `src/zephyr/{domain}/`。
 
-53 域分布（按 layer_id 分组，各组域数见 depgraph domains 表动态统计）：
+域分布（按 layer_id 分组，各组域数见 depgraph domains 表动态统计）：
 - L0_infrastructure
 - L1_foundation
 - L2_domain
@@ -223,7 +223,7 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 |---|---|---|---|
 | INFRA-DB-001 | SQLite governance.db | 治理运行时——TaskCard/事件/门禁/断路器/FLE 指标 | 15+ |
 | INFRA-DB-002 | ChromaDB | 向量检索与 KMS 语义检索（8 Collection，BGE-M3 + bge-small-zh） | — |
-| INFRA-DB-003 | PostgreSQL 16 depgraph | 架构静态真源——nodes/edges/domains 等 28 表 | 28 |
+| INFRA-DB-003 | PostgreSQL 16 depgraph | 架构静态真源——nodes/edges/domains 等（表数见 schema 动态统计） | 见 schema |
 | INFRA-DB-004 | DuckDB（内存 `:memory:`） | OLAP 分析——只读挂载 governance.db 执行聚合，输出 Parquet | — |
 | INFRA-DB-006 | ClickHouse 26.6.1 c1_market | 业务行情仓库——日线/分钟线/Tick/5 档盘口/可转债隐含波动率 | — |
 
@@ -431,7 +431,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 ### 8.1 当前阶段
 
 - **阶段**：experimental
-- **域总数**：53
+- **域总数**：见 depgraph domains 表动态统计
 - **节点**：见 depgraph 动态统计（按 design / prototype / production 状态分组）
 - **依赖边**：见 depgraph 动态统计
 
@@ -515,9 +515,9 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 1. **100% AI 开发模式的工程实践**：把"AI 会幻觉/漂移"作为第一性原理，用机器可执行的治理（门禁/注册表/reconciler/worktree）替代人类纪律，形成可复制的 AI 自治理工程范式
 2. **A 股场景的专业级回测**：PIT 铁律 + WFA 三模式 + 过拟合三维度 + IS→WFA→OOS 三级门控 + 回测=实盘一致性（MatchingLogic 共享），达到机构级回测严谨度
-3. **depgraph 架构全景图**：PostgreSQL 28 表存储节点 + 依赖边（见 depgraph 动态统计），作为架构静态真源，让 AI 查询零幻觉
+3. **depgraph 架构全景图**：PostgreSQL 存储节点 + 依赖边（表数见 schema 动态统计），作为架构静态真源，让 AI 查询零幻觉
 4. **SSoT 真源唯一体系**：六大真源各司其职，从机制上消除多真源漂移
-5. **53 域平级架构**：消除双分类幻觉，物理路径与功能域层级一致
+5. **域平级架构**：消除双分类幻觉，物理路径与功能域层级一致
 
 ### 10.2 当前挑战
 
@@ -539,7 +539,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 3. **回测副产物持久化**：BacktestResult 不含净值曲线/trades 明细，仅内存累积。如何在不违反 CTR-P1-016 frozen dataclass 契约的前提下，设计 BacktestRunArtifact 装配层 + ResultRepository 持久化层？
 
-4. **域架构演进**：当前 53 域 / 6500+ 节点 / 7100+ 依赖边（时点值，见 depgraph 动态统计），production 仅 1400+。架构健康度如何？哪些域应该优先施工，哪些应该合并或退役？
+4. **域架构演进**：当前域数 / 节点数 / 依赖边数（时点值，见 depgraph 动态统计），production 节点占比见 depgraph 动态统计。架构健康度如何？哪些域应该优先施工，哪些应该合并或退役？
 
 5. **G0.5→G1 前端激活路径**：从当前 G0.5（Panel Python 过渡层）到 G1（React 最小 dashboard）到 G2（React + FastAPI），迁移路径如何设计才能让资产不浪费？Panel 组件嵌入 React 的可行性如何？
 
