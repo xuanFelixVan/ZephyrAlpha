@@ -93,9 +93,13 @@ class StagingError(RuntimeError):
     5.99.20 修复：文件路径移至 details 字段，不暴露在消息中。
     """
 
-    def __init__(self, message: str, *, details: dict[str, Any] | None = None) -> None:
+    error_code = "ZA-TR-0004"
+
+    def __init__(self, message: str, *, details: dict[str, Any] | None = None, error_code: str | None = None) -> None:
         super().__init__(message)
         self.details: dict[str, Any] = details or {}
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class _CrossProcessLock:

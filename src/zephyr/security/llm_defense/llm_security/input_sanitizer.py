@@ -71,31 +71,56 @@ DANGEROUS_PATTERNS: Final[tuple[re.Pattern, ...]] = (
 class SanitizationError(Exception):
     """输入清洗器基础设施异常基类（InputSanitizer 所有异常由此派生）。"""
 
-    pass
+    error_code = "ZA-SC-0017"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class PathTraversalError(SanitizationError):
     """检测到路径穿越攻击（目标路径不在白名单目录范围内）。"""
 
-    pass
+    error_code = "ZA-SC-0018"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class CommandInjectionError(SanitizationError):
     """检测到命令注入攻击（输入含 OS 命令拼接特征如 `$(...)`、`;` 等）。"""
 
-    pass
+    error_code = "ZA-SC-0019"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class TokenBudgetExceededError(SanitizationError):
     """输入 Token 预算超标（超过 safety limits 配置的 max 阈值）。"""
 
-    pass
+    error_code = "ZA-SC-0020"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class ContextInjectionError(SanitizationError):
     """CT-CE-LSG-001 L1：即将注入 LLM 的上下文中含高危模式（代码执行/越权指令/疑似凭据）。"""
 
-    pass
+    error_code = "ZA-SC-0021"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 # L1 上下文注入防护：对标 MOD-MASTER CT-CE-LSG-001 input_sanitizer 检查项

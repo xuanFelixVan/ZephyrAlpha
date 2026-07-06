@@ -59,10 +59,22 @@ _COMMIT_HASH_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 
 class GitUnavailableError(Exception):
     """git 不可用时抛出——门禁必须 RED，不允许降级到自报告。"""
+    error_code = "ZA-GV-0039"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class TamperingError(Exception):
     """检测到 modified_files.json 篡改时抛出。"""
+    error_code = "ZA-GV-0040"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 # trae_030 §1 可删清单——文化类比对标段

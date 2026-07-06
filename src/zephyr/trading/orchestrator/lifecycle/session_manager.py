@@ -62,6 +62,8 @@ class SessionState(str, Enum):
 class SessionTransitionError(SessionError):
     """非法状态转换。"""
 
+    error_code = "ZA-TR-0011"
+
 
 def load_state_machine_config(path: Path | None = None) -> dict[str, Any]:
     """从 session_state_machine.yaml 加载状态机定义。"""

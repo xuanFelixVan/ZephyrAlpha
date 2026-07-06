@@ -78,6 +78,12 @@ __all__ = [
 
 class AtomicWriteError(OSError):
     """原子写入失败——临时文件写入或 rename 异常。"""
+    error_code = "ZA-SH-0037"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 def atomic_write(

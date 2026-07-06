@@ -95,6 +95,13 @@ _DEGRADATION_DEFAULTS: dict[str, dict[str, Any]] = {
 class OrphanJudgeError(Exception):
     """OrphanJudge 模块基础异常"""
 
+    error_code = "ZA-SC-0032"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 class Verdict(str, Enum):
     KEEP = "KEEP"

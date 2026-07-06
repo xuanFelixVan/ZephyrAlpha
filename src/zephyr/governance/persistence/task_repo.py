@@ -122,22 +122,52 @@ _STARTUP_GATE_ID = "G1"
 
 class TaskRepositoryError(RuntimeError):
     """TaskRepository 基础异常。"""
+    error_code = "ZA-GV-0006"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class TaskNotFoundError(TaskRepositoryError):
     """task_id 不存在。"""
+    error_code = "ZA-GV-0007"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class InvalidTransitionError(TaskRepositoryError):
     """非法状态转换。"""
+    error_code = "ZA-GV-0008"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class RejectedUpgradeCoolingOffError(TaskRepositoryError):
     """优先级升级被拒绝且仍在 48h 冷却期内。"""
+    error_code = "ZA-GV-0009"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class P0InflationFrozenError(TaskRepositoryError):
     """GOV-TASK-004 §2.5: P0 任务已达上限（5个），冻结新增 P0。"""
+    error_code = "ZA-GV-0012"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class P0InflationWarning(TaskRepositoryError):
@@ -146,12 +176,15 @@ class P0InflationWarning(TaskRepositoryError):
 
 class SyncVerificationError(TaskRepositoryError):
     """post_sync_standard 验证命令执行失败（exit ≠ 0）。"""
+    error_code = "ZA-GV-0013"
 
-    def __init__(self, task_id: str, command: str, exit_code: int, stderr: str = "") -> None:
+    def __init__(self, task_id: str, command: str, exit_code: int, stderr: str = "", *, error_code: str | None = None) -> None:
         self.command = command
         self.exit_code = exit_code
         self.stderr = stderr
         super().__init__(f"任务 {task_id!r} 的 post_sync_standard 验证失败: 命令 {command!r} 返回 exit={exit_code}")
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class PostSyncValidationError(TaskRepositoryError):
@@ -162,13 +195,16 @@ class PostSyncValidationError(TaskRepositoryError):
     （如 D-SIGNAL 改名 20 卡死锁事故：建卡 AI 臆造 apply_depgraph.py --diagnose，
     argparse 从未注册该 flag，导致所有卡无法 transition）。
     """
+    error_code = "ZA-GV-0014"
 
-    def __init__(self, task_id: str, command: str, reason: str) -> None:
+    def __init__(self, task_id: str, command: str, reason: str, *, error_code: str | None = None) -> None:
         self.command = command
         self.reason = reason
         super().__init__(
             f"任务 {task_id!r} 的 post_sync_standard 校验失败: 命令 {command!r} — {reason}"
         )
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class PostSyncConstructionError(TaskRepositoryError):
@@ -179,8 +215,9 @@ class PostSyncConstructionError(TaskRepositoryError):
     （DM-210625: 原 _run_circular_acceptance 将所有非零退出码一视同仁，
     导致建卡缺陷被笼统报为 CircularAcceptanceError，掩盖根因。）
     """
+    error_code = "ZA-GV-0015"
 
-    def __init__(self, task_id: str, command: str, stderr: str = "") -> None:
+    def __init__(self, task_id: str, command: str, stderr: str = "", *, error_code: str | None = None) -> None:
         self.command = command
         super().__init__(
             f"任务 {task_id!r} 的 post_sync_standard 命令 {command!r} 存在建卡缺陷"
@@ -188,39 +225,60 @@ class PostSyncConstructionError(TaskRepositoryError):
             f"这是建卡时的幻觉缺陷，请修复 post_sync_standard 字段而非重试循环验收。"
             f"{(' stderr: ' + stderr) if stderr else ''}"
         )
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class CircularAcceptanceError(TaskRepositoryError):
     """循环验收未通过——验收命令未连续 2 次返回零错误。"""
+    error_code = "ZA-GV-0016"
 
-    def __init__(self, task_id: str, round_num: int, failures: list[str]) -> None:
+    def __init__(self, task_id: str, round_num: int, failures: list[str], *, error_code: str | None = None) -> None:
         self.round_num = round_num
         self.failures = failures
         super().__init__(f"任务 {task_id!r} 循环验收第 {round_num} 轮未通过: " + "; ".join(failures))
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class UnclaimedOperationError(TaskRepositoryError):
     """对未认领的任务执行了需要认领才能做的操作。"""
+    error_code = "ZA-GV-0017"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class RootCauseRequiredError(TaskRepositoryError):
     """FAILED 状态转换缺少根因分析（MTH-006）。"""
+    error_code = "ZA-GV-0018"
 
-    def __init__(self, task_id: str) -> None:
+    def __init__(self, task_id: str, *, error_code: str | None = None) -> None:
         super().__init__(
             f"任务 {task_id!r} 转换为 FAILED 必须提供根因分析（note 参数不得为空，"
             f"且须包含根因→治根→修复的完整追溯，见 MTH-006）"
         )
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class GranularityViolationError(TaskRepositoryError):
     """RULE-THIRTEEN 粒度门禁 R1-R6 违规（DM-200921 修复：原仅文档规则，现代码强制）。"""
+    error_code = "ZA-GV-0019"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class BatchReviewRequiredError(TaskRepositoryError):
     """task_001_batch_review_protocol 违规：未完成7维度循环审查即尝试 COMPLETED。"""
+    error_code = "ZA-GV-0020"
 
-    def __init__(self, task_id: str, detail: str = "") -> None:
+    def __init__(self, task_id: str, detail: str = "", *, error_code: str | None = None) -> None:
         msg = (
             f"任务 {task_id!r} 未完成 task_001_batch_review_protocol 审查，禁止转为 COMPLETED。"
             f"必须执行 batch_review() 直到连续2次0问题，并持久化审查记录。"
@@ -228,6 +286,8 @@ class BatchReviewRequiredError(TaskRepositoryError):
         if detail:
             msg += f" 详情: {detail}"
         super().__init__(msg)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 # ---------------------------------------------------------------------------
