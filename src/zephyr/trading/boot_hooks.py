@@ -323,6 +323,223 @@ def _subscribe_skill_freshness_events() -> None:
         logger.warning("Failed to subscribe skill.freshness_critical: %s", e, exc_info=True)
 
 
+# ---------------------------------------------------------------------------
+# 5.97.3 修复: 将 register_boot_hooks 内的 13 个闭包提取为模块级私有函数
+# 每个 handler 接受 (event, task_repo=None, budget_engine=None) 参数
+# register_boot_hooks 通过 lambda 绑定注入的依赖
+# ---------------------------------------------------------------------------
+
+
+def _resolve_task_repo(task_repo: TaskRepositoryProtocol | None = None):
+    """解析 task_repo — 注入则用注入的，否则惰性创建 TaskRepository。"""
+    if task_repo is not None:
+        return task_repo
+    from zephyr.governance.persistence.task_repo import TaskRepository
+
+    return TaskRepository()
+
+
+def _hook_auto_unblock_dependents(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
+    try:
+        tr = _resolve_task_repo(task_repo)
+        completed_id = getattr(event, "task_id", "")
+        if not completed_id:
+            return
+        downstream = tr.list_by_dependency(completed_id)
+        for ds in downstream:
+            if ds.status not in ("BLOCKED", "PENDING", "WAITING"):
+                continue
+            deps = ds.depends_on or []
+            if not deps:
+                continue
+            all_done = all(tr.get(d).status == "COMPLETED" for d in deps if d)
+            if all_done:
+                tr.transition(ds.task_id, "READY", note=f"unblocked by {completed_id}")
+    except Exception as exc:
+        logger.error("hook auto_unblock_dependents FAILED: %s", exc, exc_info=True)
+
+
+def _hook_auto_retry_on_failure(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
+    try:
+        tr = _resolve_task_repo(task_repo)
+        task_id = getattr(event, "task_id", "")
+        task = tr.get(task_id)
+        if not task:
+            return
+        retry_count = getattr(task, "retry_count", 0) or 0
+        if retry_count < _MAX_AUTO_RETRY_LIMIT:
+            tr.transition(
+                task_id,
+                "RETRY",
+                note=f"auto-retry from hook (attempt {retry_count + 1})",
+            )
+    except Exception as exc:
+        logger.error("hook auto_retry_on_failure FAILED: %s", exc, exc_info=True)
+
+
+def _hook_triple_alignment_on_verified(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
+    try:
+        from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
+
+        task_id = getattr(event, "task_id", "")
+        source_bp = _get_source_blueprint(task_id, task_repo=task_repo)
+        if not source_bp:
+            return
+        result = check_triple_alignment(specific_module=source_bp, warn_only=False)
+        if not result.passed:
+            logger.error(
+                "G-TRIPLE-ALIGN FAILED after task %s verified: module %s has %d violations",
+                task_id,
+                source_bp,
+                len([v for v in result.violations if v.severity.value == "ERROR"]),
+            )
+    except Exception as exc:
+        logger.error("hook triple_alignment_on_verified FAILED: %s", exc, exc_info=True)
+
+
+def _hook_cleanup_task_processes(event: object) -> None:
+    try:
+        task_id = getattr(event, "task_id", "")
+        to_status = getattr(event, "to_status", "")
+        if not task_id:
+            return
+        if to_status.upper() in ("COMPLETED", "FAILED", "CANCELLED"):
+            from zephyr.trading.ide_health_daemon import kill_task_processes
+
+            killed = kill_task_processes(task_id)
+            if killed:
+                logger.info("hook cleanup_task_processes: killed %d PIDs for %s", len(killed), task_id)
+    except Exception as exc:
+        logger.warning("hook cleanup_task_processes FAILED: %s", exc, exc_info=True)
+
+
+def _hook_orc_vms_archive(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
+    try:
+        task_id = getattr(event, "task_id", "")
+        to_status = getattr(event, "to_status", "")
+        if to_status.upper() != "COMPLETED":
+            return
+        from zephyr.trading.orchestrator.execution.memory_writer import archive_to_vms
+
+        tr = _resolve_task_repo(task_repo)
+        task = tr.get(task_id)
+        if task:
+            archive_to_vms(task)
+    except Exception as exc:
+        logger.error("hook orc_vms_archive FAILED: %s", exc, exc_info=True)
+
+
+def _hook_kb_vms_sync(event: object) -> None:
+    try:
+        task_id = getattr(event, "task_id", "")
+        to_status = getattr(event, "to_status", "")
+        if to_status.upper() != "COMPLETED":
+            return
+        from zephyr.intelligence.model_evaluation.sync_engine import sync_to_vms
+
+        sync_to_vms()
+    except Exception as exc:
+        logger.error("hook kb_vms_sync FAILED: %s", exc, exc_info=True)
+
+
+def _hook_rbk_gate_freeze(event: object) -> None:
+    try:
+        to_status = getattr(event, "to_status", "")
+        if to_status.upper() != "ROLLBACK":
+            return
+        from zephyr.infrastructure.runtime.gate_coordinator import freeze_all_gates
+
+        result = freeze_all_gates()
+        logger.info("hook rbk_gate_freeze: frozen=%s gates=%d", result.frozen, result.gates_count)
+    except Exception as exc:
+        logger.error("hook rbk_gate_freeze FAILED: %s", exc, exc_info=True)
+
+
+def _hook_escalation_check(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
+    to_status = getattr(event, "to_status", "")
+    if to_status.upper() != "BLOCKED":
+        return
+    try:
+        _resolve_task_repo(task_repo).check_escalation(getattr(event, "task_id", ""))
+    except Exception as exc:
+        logger.debug("hook escalation_check: %s", exc, exc_info=True)
+
+
+def _hook_timeout_check(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
+    to_status = getattr(event, "to_status", "")
+    if to_status.upper() != "IN_PROGRESS":
+        return
+    try:
+        _resolve_task_repo(task_repo).check_task_timeout(getattr(event, "task_id", ""))
+    except Exception as exc:
+        logger.debug("hook timeout_check: %s", exc, exc_info=True)
+
+
+def _hook_budget_delta(event: object, budget_engine: BudgetEngineProtocol | None = None) -> None:
+    to_status = getattr(event, "to_status", "")
+    if to_status.upper() != "COMPLETED":
+        return
+    try:
+        engine = budget_engine
+        if engine is None:
+            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+
+            engine = BudgetEngine()
+        snapshot = engine.get_snapshot()
+        if snapshot and getattr(snapshot, "health", "") not in ("HEALTHY", ""):
+            logger.warning("Budget status: %s", snapshot.health)
+    except Exception as exc:
+        logger.debug("hook budget_delta: %s", exc, exc_info=True)
+
+
+def _hook_session_startup_init_budget(event: object) -> None:
+    try:
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+
+        engine = BudgetEngine.ensure_initialized()
+        snapshot = engine.get_snapshot()
+        logger.info(
+            "session_startup: BudgetEngine initialized, health=%s, degradation=%s",
+            snapshot.get("health", "UNKNOWN"),
+            snapshot.get("degradation_level", "UNKNOWN"),
+        )
+    except Exception as exc:
+        logger.error("hook session_startup_init_budget FAILED: %s", exc, exc_info=True)
+
+
+def _hook_session_shutdown_budget_close(event: object) -> None:
+    try:
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+
+        if BudgetEngine._instance is not None:
+            result = BudgetEngine._instance.shutdown()
+            logger.info(
+                "session_shutdown: BudgetEngine closed, persisted=%s, health=%s",
+                result.get("cleaned_up", False),
+                result.get("snapshot", {}).get("health", "UNKNOWN"),
+            )
+    except Exception as exc:
+        logger.error("hook session_shutdown_budget_close FAILED: %s", exc, exc_info=True)
+
+
+def _hook_triple_align_event(event: object) -> None:
+    try:
+        from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
+
+        source_bp = getattr(event, "blueprint_path", "") or getattr(event, "path", "")
+        result = check_triple_alignment(specific_module=source_bp or None, warn_only=True)
+        if not result.passed:
+            violations = len([v for v in result.violations if v.severity.value == "ERROR"])
+            if violations:
+                logger.warning(
+                    "Event triple-align: %s has %d violations after blueprint change",
+                    source_bp or "all",
+                    violations,
+                )
+    except Exception as exc:
+        logger.debug("hook triple_align_event: %s", exc, exc_info=True)
+
+
 def register_boot_hooks(
     task_repo: TaskRepositoryProtocol | None = None,
     budget_engine: BudgetEngineProtocol | None = None,
@@ -330,227 +547,32 @@ def register_boot_hooks(
     try:
         from zephyr.governance.ops_governance.event_hook import hook_registry
 
-        def _get_task_repo():
-            if task_repo is not None:
-                return task_repo
-            from zephyr.governance.persistence.task_repo import TaskRepository
-
-            return TaskRepository()
-
-        def _on_task_completed(event: object) -> None:
-            try:
-                tr = _get_task_repo()
-                completed_id = getattr(event, "task_id", "")
-                if not completed_id:
-                    return
-                downstream = tr.list_by_dependency(completed_id)
-                for ds in downstream:
-                    if ds.status not in ("BLOCKED", "PENDING", "WAITING"):
-                        continue
-                    deps = ds.depends_on or []
-                    if not deps:
-                        continue
-                    all_done = all(tr.get(d).status == "COMPLETED" for d in deps if d)
-                    if all_done:
-                        tr.transition(ds.task_id, "READY", note=f"unblocked by {completed_id}")
-            except Exception as exc:
-                logger.error("hook auto_unblock_dependents FAILED: %s", exc, exc_info=True)
-
-        def _on_task_failed(event: object) -> None:
-            try:
-                tr = _get_task_repo()
-                task_id = getattr(event, "task_id", "")
-                task = tr.get(task_id)
-                if not task:
-                    return
-                retry_count = getattr(task, "retry_count", 0) or 0
-                if retry_count < _MAX_AUTO_RETRY_LIMIT:
-                    tr.transition(
-                        task_id,
-                        "RETRY",
-                        note=f"auto-retry from hook (attempt {retry_count + 1})",
-                    )
-            except Exception as exc:
-                logger.error("hook auto_retry_on_failure FAILED: %s", exc, exc_info=True)
-
-        def _on_task_verified_triple_align(event: object) -> None:
-            try:
-                from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
-
-                task_id = getattr(event, "task_id", "")
-                source_bp = _get_source_blueprint(task_id, task_repo=task_repo)
-                if not source_bp:
-                    return
-                result = check_triple_alignment(specific_module=source_bp, warn_only=False)
-                if not result.passed:
-                    logger.error(
-                        "G-TRIPLE-ALIGN FAILED after task %s verified: module %s has %d violations",
-                        task_id,
-                        source_bp,
-                        len([v for v in result.violations if v.severity.value == "ERROR"]),
-                    )
-            except Exception as exc:
-                logger.error("hook triple_alignment_on_verified FAILED: %s", exc, exc_info=True)
-
-        def _cleanup_task_processes(event: object) -> None:
-            try:
-                task_id = getattr(event, "task_id", "")
-                to_status = getattr(event, "to_status", "")
-                if not task_id:
-                    return
-                if to_status.upper() in ("COMPLETED", "FAILED", "CANCELLED"):
-                    from zephyr.trading.ide_health_daemon import kill_task_processes
-
-                    killed = kill_task_processes(task_id)
-                    if killed:
-                        logger.info("hook cleanup_task_processes: killed %d PIDs for %s", len(killed), task_id)
-            except Exception as exc:
-                logger.warning("hook cleanup_task_processes FAILED: %s", exc, exc_info=True)
-
-        def _on_task_completed_archive_vms(event: object) -> None:
-            try:
-                task_id = getattr(event, "task_id", "")
-                to_status = getattr(event, "to_status", "")
-                if to_status.upper() != "COMPLETED":
-                    return
-                from zephyr.trading.orchestrator.execution.memory_writer import archive_to_vms
-
-                tr = _get_task_repo()
-                task = tr.get(task_id)
-                if task:
-                    archive_to_vms(task)
-            except Exception as exc:
-                logger.error("hook orc_vms_archive FAILED: %s", exc, exc_info=True)
-
-        def _on_task_completed_sync_kb_vms(event: object) -> None:
-            try:
-                task_id = getattr(event, "task_id", "")
-                to_status = getattr(event, "to_status", "")
-                if to_status.upper() != "COMPLETED":
-                    return
-                from zephyr.intelligence.model_evaluation.sync_engine import sync_to_vms
-
-                sync_to_vms()
-            except Exception as exc:
-                logger.error("hook kb_vms_sync FAILED: %s", exc, exc_info=True)
-
-        def _on_task_rollback_freeze_gates(event: object) -> None:
-            try:
-                to_status = getattr(event, "to_status", "")
-                if to_status.upper() != "ROLLBACK":
-                    return
-                from zephyr.infrastructure.runtime.gate_coordinator import freeze_all_gates
-
-                result = freeze_all_gates()
-                logger.info("hook rbk_gate_freeze: frozen=%s gates=%d", result.frozen, result.gates_count)
-            except Exception as exc:
-                logger.error("hook rbk_gate_freeze FAILED: %s", exc, exc_info=True)
-
-        hook_registry.register(_on_task_completed, priority=50, name="auto_unblock_dependents")
-        hook_registry.register(_on_task_failed, priority=60, name="auto_retry_on_failure")
-        hook_registry.register(_on_task_verified_triple_align, priority=70, name="triple_alignment_on_verified")
-        hook_registry.register(_cleanup_task_processes, priority=45, name="cleanup_task_processes")
-        hook_registry.register(_on_task_completed_archive_vms, priority=48, name="orc_vms_archive")
-        hook_registry.register(_on_task_completed_sync_kb_vms, priority=47, name="kb_vms_sync")
-        hook_registry.register(_on_task_rollback_freeze_gates, priority=55, name="rbk_gate_freeze")
+        # Task system hooks — 需要 task_repo 的用 lambda 绑定
+        hook_registry.register(lambda e: _hook_auto_unblock_dependents(e, task_repo), priority=50, name="auto_unblock_dependents")
+        hook_registry.register(lambda e: _hook_auto_retry_on_failure(e, task_repo), priority=60, name="auto_retry_on_failure")
+        hook_registry.register(lambda e: _hook_triple_alignment_on_verified(e, task_repo), priority=70, name="triple_alignment_on_verified")
+        hook_registry.register(_hook_cleanup_task_processes, priority=45, name="cleanup_task_processes")
+        hook_registry.register(lambda e: _hook_orc_vms_archive(e, task_repo), priority=48, name="orc_vms_archive")
+        hook_registry.register(_hook_kb_vms_sync, priority=47, name="kb_vms_sync")
+        hook_registry.register(_hook_rbk_gate_freeze, priority=55, name="rbk_gate_freeze")
         logger.info(
             "Task system hooks registered: auto_unblock_dependents / auto_retry_on_failure / triple_alignment_on_verified / cleanup_task_processes / orc_vms_archive / kb_vms_sync / rbk_gate_freeze"
         )
 
-        # ── ⚡ Event-driven hooks (替代定时扫描的部分校验) ───────────
-
-        def _on_task_blocked_escalation(event: object) -> None:
-            to_status = getattr(event, "to_status", "")
-            if to_status.upper() != "BLOCKED":
-                return
-            try:
-                _get_task_repo().check_escalation(getattr(event, "task_id", ""))
-            except Exception as exc:
-                logger.debug("hook escalation_check: %s", exc, exc_info=True)
-
-        def _on_task_in_progress_timeout(event: object) -> None:
-            to_status = getattr(event, "to_status", "")
-            if to_status.upper() != "IN_PROGRESS":
-                return
-            try:
-                _get_task_repo().check_task_timeout(getattr(event, "task_id", ""))
-            except Exception as exc:
-                logger.debug("hook timeout_check: %s", exc, exc_info=True)
-
-        def _on_task_completed_budget_delta(event: object) -> None:
-            to_status = getattr(event, "to_status", "")
-            if to_status.upper() != "COMPLETED":
-                return
-            try:
-                engine = budget_engine
-                if engine is None:
-                    from zephyr.governance.ops_governance.budget_engine import BudgetEngine
-
-                    engine = BudgetEngine()
-                snapshot = engine.get_snapshot()
-                if snapshot and getattr(snapshot, "health", "") not in ("HEALTHY", ""):
-                    logger.warning("Budget status: %s", snapshot.health)
-            except Exception as exc:
-                logger.debug("hook budget_delta: %s", exc, exc_info=True)
-
-        def _on_session_startup_init_budget(event: object) -> None:
-            try:
-                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
-
-                engine = BudgetEngine.ensure_initialized()
-                snapshot = engine.get_snapshot()
-                logger.info(
-                    "session_startup: BudgetEngine initialized, health=%s, degradation=%s",
-                    snapshot.get("health", "UNKNOWN"),
-                    snapshot.get("degradation_level", "UNKNOWN"),
-                )
-            except Exception as exc:
-                logger.error("hook session_startup_init_budget FAILED: %s", exc, exc_info=True)
-
-        def _on_session_shutdown_budget_close(event: object) -> None:
-            try:
-                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
-
-                if BudgetEngine._instance is not None:
-                    result = BudgetEngine._instance.shutdown()
-                    logger.info(
-                        "session_shutdown: BudgetEngine closed, persisted=%s, health=%s",
-                        result.get("cleaned_up", False),
-                        result.get("snapshot", {}).get("health", "UNKNOWN"),
-                    )
-            except Exception as exc:
-                logger.error("hook session_shutdown_budget_close FAILED: %s", exc, exc_info=True)
-
-        def _on_blueprint_changed_triple_align(event: object) -> None:
-            try:
-                from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
-
-                source_bp = getattr(event, "blueprint_path", "") or getattr(event, "path", "")
-                result = check_triple_alignment(specific_module=source_bp or None, warn_only=True)
-                if not result.passed:
-                    violations = len([v for v in result.violations if v.severity.value == "ERROR"])
-                    if violations:
-                        logger.warning(
-                            "Event triple-align: %s has %d violations after blueprint change",
-                            source_bp or "all",
-                            violations,
-                        )
-            except Exception as exc:
-                logger.debug("hook triple_align_event: %s", exc, exc_info=True)
-
-        hook_registry.register(_on_task_blocked_escalation, priority=56, name="escalation_check_event")
-        hook_registry.register(_on_task_in_progress_timeout, priority=56, name="timeout_check_event")
-        hook_registry.register(_on_task_completed_budget_delta, priority=94, name="budget_delta_event")
-        hook_registry.register(_on_session_startup_init_budget, priority=10, name="session_startup_init_budget")
-        hook_registry.register(_on_session_shutdown_budget_close, priority=90, name="session_shutdown_budget_close")
-        hook_registry.register(_on_blueprint_changed_triple_align, priority=72, name="triple_align_event")
+        # Event-driven hooks
+        hook_registry.register(lambda e: _hook_escalation_check(e, task_repo), priority=56, name="escalation_check_event")
+        hook_registry.register(lambda e: _hook_timeout_check(e, task_repo), priority=56, name="timeout_check_event")
+        hook_registry.register(lambda e: _hook_budget_delta(e, budget_engine), priority=94, name="budget_delta_event")
+        hook_registry.register(_hook_session_startup_init_budget, priority=10, name="session_startup_init_budget")
+        hook_registry.register(_hook_session_shutdown_budget_close, priority=90, name="session_shutdown_budget_close")
+        hook_registry.register(_hook_triple_align_event, priority=72, name="triple_align_event")
 
         try:
             from zephyr.shared.events.event_bus import EventBusBackpressure
 
             _bus = EventBusBackpressure()
-            _bus.subscribe("blueprint.changed", _on_blueprint_changed_triple_align)
-            _bus.subscribe("blueprint.decomposed", _on_blueprint_changed_triple_align)
+            _bus.subscribe("blueprint.changed", _hook_triple_align_event)
+            _bus.subscribe("blueprint.decomposed", _hook_triple_align_event)
         except Exception:
             # 5.12.1 修复：原 except: pass 静默吞 EventBus 订阅失败（blueprint 变更事件丢失→三对齐检查不触发）
             logger.warning("EventBus subscribe failed for triple_align blueprint hooks", exc_info=True)
