@@ -322,6 +322,37 @@ class TestGenOverviewMmd:
         assert l_count == 0
         assert mmd.startswith("flowchart TD")
 
+    def test_design_only_filters_production(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """design_only=True 过滤掉 design_maturity=production 的 layer/node。"""
+        mmd, _, l_count, _ = _gen_overview_mmd(
+            sample_tracks, sample_layers, sample_nodes, sample_edges, design_only=True
+        )
+        # sample_layers: L0/L1/L4=production(3), L2A=design(1) → 过滤后 1 层
+        assert l_count == 1
+        # L0/L1/L4（production）不应出现
+        assert "LL0" not in mmd
+        assert "LL1" not in mmd
+        assert "LL4" not in mmd
+        # L2A（design）应出现
+        assert "LL2A" in mmd
+        # node 1/3（production）不应出现
+        assert "N1" not in mmd
+        assert "N3" not in mmd
+        # node 2（design, layer=L2A）应出现
+        assert "N2" in mmd
+
+    def test_design_only_empty_when_no_design(self, sample_tracks):
+        """design_only=True 时若无 design layer 则返回空图。"""
+        prod_only_layers = [
+            {"id": "L0", "name": "测试", "name_en": "Test", "track": "model_driven",
+             "desc": "", "freq": "daily", "maturity": "production", "build": "stable"},
+        ]
+        mmd, _, l_count, _ = _gen_overview_mmd(
+            sample_tracks, prod_only_layers, [], [], design_only=True
+        )
+        assert l_count == 0
+        assert mmd.startswith("flowchart TD")
+
 
 # ---------- _maturity_tag 测试 ----------
 
@@ -499,16 +530,16 @@ class TestGenIndexMd:
         assert "## Edge 清单" not in md
 
     def test_contains_embedded_mermaid_blocks(self, sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants):
-        """md 包含 4 个内嵌 ```mermaid 代码块（全景图 + 运营态全景图 + 层级图 + 不变量图）。"""
+        """md 包含 5 个内嵌 ```mermaid 代码块（全景图 + 运营态 + 设计态 + 层级图 + 不变量图）。"""
         md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants)
-        # 4 个 ```mermaid 开场标记（全景图 + 运营态全景图 + 层级图 + 不变量图）
-        assert md.count("```mermaid") == 4
+        # 5 个 ```mermaid 开场标记
+        assert md.count("```mermaid") == 5
         # 不再生成 .mmd 文件链接
         assert "decision_overview.mmd" not in md
         assert "decision_layers.mmd" not in md
         assert "decision_invariants.mmd" not in md
         # 内嵌的 Mermaid 图表内容应存在
-        assert "flowchart TD" in md  # overview + production overview + invariants
+        assert "flowchart TD" in md  # overview + production overview + design overview + invariants
         assert "flowchart LR" in md  # layers
 
     def test_stats_table_contains_design_production_counts(self, sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants):
@@ -528,3 +559,9 @@ class TestGenIndexMd:
         md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants)
         assert "运营态全景图" in md
         assert "design_maturity=production" in md
+
+    def test_contains_design_overview_section(self, sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants):
+        """md 包含设计态全景图 section。"""
+        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants)
+        assert "设计态全景图" in md
+        assert "design_maturity=design" in md

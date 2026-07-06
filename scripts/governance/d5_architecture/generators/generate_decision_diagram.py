@@ -151,7 +151,7 @@ def _maturity_tag(maturity: str | None) -> str:
 
 def _gen_overview_mmd(
     tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
-    production_only: bool = False,
+    production_only: bool = False, design_only: bool = False,
 ) -> tuple[str, int, int, int]:
     """生成全景图：L0-L6 层级 + 四轨并行 subgraph + 节点/边。
 
@@ -159,15 +159,19 @@ def _gen_overview_mmd(
         production_only: True 时仅生成运营态（design_maturity='production'）的
             layer/node，对标 depgraph 的运营态全景图。False（默认）生成全部，
             并在节点标签上标注 [design]/[production] 区分设计态/运营态。
+        design_only: True 时仅生成设计态（design_maturity='design'）的
+            layer/node。production_only 和 design_only 互斥，同时为 True 时
+            按 production_only 处理。
     """
-    # 过滤运营态子集
-    if production_only:
-        layers = [l for l in layers if l.get("maturity") == "production"]
-        prod_layer_ids = {l["id"] for l in layers}
-        nodes = [n for n in nodes if n["layer_id"] in prod_layer_ids and n.get("maturity") == "production"]
+    # 过滤运营态/设计态子集
+    if production_only or design_only:
+        target_maturity = "production" if production_only else "design"
+        layers = [l for l in layers if l.get("maturity") == target_maturity]
+        filt_layer_ids = {l["id"] for l in layers}
+        nodes = [n for n in nodes if n["layer_id"] in filt_layer_ids and n.get("maturity") == target_maturity]
         # 边的两端必须都在过滤后的节点集中
-        prod_node_ids = {n["id"] for n in nodes}
-        edges = [e for e in edges if e["from"] in prod_node_ids and e["to"] in prod_node_ids]
+        filt_node_ids = {n["id"] for n in nodes}
+        edges = [e for e in edges if e["from"] in filt_node_ids and e["to"] in filt_node_ids]
 
     lines = ["flowchart TD"]
 
@@ -334,6 +338,10 @@ def _gen_index_md(
     prod_overview_mmd, _, prod_l_count, prod_e_count = _gen_overview_mmd(
         tracks, layers, nodes, edges, production_only=True
     )
+    # 设计态全景图（只含 design_maturity='design' 的 layer/node）
+    design_overview_mmd, _, design_l_count, design_e_count = _gen_overview_mmd(
+        tracks, layers, nodes, edges, design_only=True
+    )
 
     # 设计态/运营态计数
     prod_layers = [l for l in layers if l.get("maturity") == "production"]
@@ -389,6 +397,14 @@ def _gen_index_md(
         "",
         "```mermaid",
         prod_overview_mmd.rstrip("\n"),
+        "```",
+        "",
+        "### 设计态全景图（仅 design_maturity=design 的 layer/node）",
+        "",
+        f"> 仅展示蓝图规划中尚未实现的决策层/节点（共 {design_l_count} 层，{design_e_count} 边）。",
+        "",
+        "```mermaid",
+        design_overview_mmd.rstrip("\n"),
         "```",
         "",
         "### 层级详情图（10 层卡片 + 频率/状态，标签标注 [design]/[production]）",

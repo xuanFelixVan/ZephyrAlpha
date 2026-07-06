@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-06T13:00:38
+> 生成时间: 2026-07-06T13:16:47
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -90,6 +90,41 @@ flowchart TD
     end
     LL0 -.->|triggering| LL1
     LL1 -.->|triggering| LL4
+
+    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
+    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+```
+
+### 设计态全景图（仅 design_maturity=design 的 layer/node）
+
+> 仅展示蓝图规划中尚未实现的决策层/节点（共 7 层，0 边）。
+
+```mermaid
+flowchart TD
+    subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
+        LL2A["[design]L2A: 信号层<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL2B["[design]L2B: 主力行为层<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL2C["[design]L2C: 市场状态与大盘预测层<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL2D["[design]L2D: 知识图谱与因果推演层<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL3["[design]L3: 策略组合层<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL5["[design]L5: 学习层<br/>freq: weekly<br/>build: planned"]:::bsPlanned
+        LL6["[design]L6: 自评估层<br/>freq: weekly<br/>build: planned"]:::bsPlanned
+    end
+    subgraph track_data_driven["数据驱动轨（Data-Driven Track）"]
+    end
+    subgraph track_human_override["人工指令轨（Human Override Track）"]
+    end
+    subgraph track_emergency["应急保命轨（Emergency Track）"]
+    end
+    LL2A -.->|triggering| LL2B
+    LL2B -.->|triggering| LL2C
+    LL2C -.->|triggering| LL2D
+    LL2D -.->|triggering| LL3
+    LL3 -.->|triggering| LL5
+    LL5 -.->|triggering| LL6
 
     classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
     classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px
