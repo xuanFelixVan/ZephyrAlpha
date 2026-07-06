@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 audit_test_suite（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 12:01:36
+> 最后更新: 2026-07-06 12:08:49
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_AUDITTEST | Domain ID | D_AUDITTEST |
 | 域名称 | audit_test_suite | Domain Name | audit_test_suite |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 1672 | Module Count | 1672 |
+| 模块数 | 1671 | Module Count | 1671 |
 | 域内依赖 | 10 | Internal Dependencies | 10 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 2209 | Cross-domain Outgoing | 2209 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 1624 | Prototype Modules | 1624 |
+| 原型态模块 | 1623 | Prototype Modules | 1623 |
 | 生产态模块 | 48 | Production Modules | 48 |
 | 容量 | 48/150 (正常) | Capacity | 48/150 (正常) |
 | 描述 | 审计单元测试(unit) | Description | 审计单元测试(unit) |
@@ -1078,8 +1078,8 @@ graph TD
         tests_e_test_e_confidence_estimator_py["tests/e/test_e_confidence_estimator.py prototype"]
     end
     D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_drift_test_drift_infrastructure_py -.->|test_depends| D_GOVERNANCE
     tests_drift_test_drift_fix_py -.->|test_depends| D_GOVERNANCE
+    tests_drift_test_drift_infrastructure_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     tests_drift_test_drift_fix_py -.->|test_depends| D_INFRA_RECOVERY
     tests_drift_test_drift_training_py -.->|test_depends| D_GOVERNANCE
@@ -1401,9 +1401,9 @@ graph TD
     tests_federated_learning_test_fl_meta_performance_gate_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_multi_agent_orchestrator_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_notification_personalizer_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_scope_creep_monitor_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_owner_absence_escalation_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_parameterized_safety_gate_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_scheduler_act_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_scheduler_act_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -1737,12 +1737,12 @@ graph TD
         tests_fle_test_fle_protocols_py["tests/fle/test_fle_protocols.py prototype"]
     end
     D_TRADING["D_TRADING production"]
+    tests_fle_test_fle_performance_regression_detector_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_dogfood_monitor_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_metrics_collector_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_protocols_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_performance_regression_detector_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_chaos_engineering_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
@@ -2414,13 +2414,14 @@ graph TD
         tests_infrastructure_test_mcp_health_check_recovery_py["tests/infrastructure/test_mcp_health_check_reco... prototype"]
         tests_infrastructure_test_mcp_idle_timeout_py["tests/infrastructure/test_mcp_idle_timeout.py prototype"]
     end
+    D_SHARED["D_SHARED production"]
+    tests_infrastructure_test_mcp_idle_timeout_py -.->|test_depends| D_SHARED
     D_TRADING["D_TRADING production"]
     tests_infrastructure_test_mcp_boot_hooks_integration_py -.->|test_depends| D_TRADING
-    D_SHARED["D_SHARED production"]
     tests_infrastructure_test_mcp_boot_hooks_integration_py -.->|test_depends| D_SHARED
-    tests_infrastructure_test_mcp_idle_timeout_py -.->|test_depends| D_SHARED
     tests_infrastructure_test_infra_outbox_py -.->|test_depends| D_SHARED
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    tests_infrastructure_test_dashboard_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_infrastructure_test_classifier_root_py -.->|test_depends| D_INFRA_RUNTIME
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     tests_infrastructure_test_commit_quality_gate_py -.->|test_depends| D_INFRA_RECOVERY
@@ -2433,13 +2434,12 @@ graph TD
     tests_infrastructure_test_mcp_health_check_recovery_py -.->|test_depends| D_SHARED
     D_INFRA_A2A["D_INFRA_A2A production"]
     tests_infrastructure_test_arbitrator_py -.->|test_depends| D_INFRA_A2A
-    tests_infrastructure_test_deadlock_guard_py -.->|test_depends| D_INFRA_A2A
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_infrastructure_test_arbitrator_py,tests_infrastructure_test_audit_rename_completeness_py,tests_infrastructure_test_cascade_guard_py,tests_infrastructure_test_classifier_root_py,tests_infrastructure_test_commit_quality_gate_py,tests_infrastructure_test_conflict_detector_py,tests_infrastructure_test_cost_tracker_py,tests_infrastructure_test_dashboard_root_py,tests_infrastructure_test_deadlock_guard_py,tests_infrastructure_test_dry_run_simulator_py,tests_infrastructure_test_f18_governance_adversarial_py,tests_infrastructure_test_finding_task_bridge_py,tests_infrastructure_test_forward_fix_runner_py,tests_infrastructure_test_graceful_degradation_planner_py,tests_infrastructure_test_index_generator_root_py,tests_infrastructure_test_infra_cache_py,tests_infrastructure_test_infra_idempotency_py,tests_infrastructure_test_infra_limiter_py,tests_infrastructure_test_infra_lock_py,tests_infrastructure_test_infra_observer_py,tests_infrastructure_test_infra_outbox_py,tests_infrastructure_test_infrastructure_base_py,tests_infrastructure_test_kill_switch_sim_py,tests_infrastructure_test_lifecycle_root_py,tests_infrastructure_test_livelock_detector_py,tests_infrastructure_test_mcp_adapter_py,tests_infrastructure_test_mcp_boot_hooks_integration_py,tests_infrastructure_test_mcp_full_lifecycle_e2e_py,tests_infrastructure_test_mcp_health_check_recovery_py,tests_infrastructure_test_mcp_idle_timeout_py design
-    class D_TRADING,D_SHARED,D_INFRA_RUNTIME,D_INFRA_RECOVERY,D_INFRA_A2A external_prod
+    class D_SHARED,D_TRADING,D_INFRA_RUNTIME,D_INFRA_RECOVERY,D_INFRA_A2A external_prod
 ```
 
 ### 第 40 页 / 共 56 页 / Page 40 of 56
@@ -2493,11 +2493,11 @@ graph TD
     tests_intent_test_intent_keyword_mapper_root_py -.->|test_depends| D_GOVERNANCE
     tests_intent_test_intent_parser_root_py -.->|test_depends| D_GOVERNANCE
     tests_intent_test_intent_parser_root_py -.->|test_depends| D_GOVERNANCE
+    tests_io_test_io_content_fingerprint_py -.->|test_depends| D_SHARED
     tests_io_test_io_paths_py -.->|test_depends| D_SHARED
     tests_infrastructure_test_metadata_py -.->|test_depends| D_INFRA_RUNTIME
     D_INFRA_A2A["D_INFRA_A2A production"]
     tests_infrastructure_test_supervisor_py -.->|test_depends| D_INFRA_A2A
-    tests_infrastructure_test_mcp_signal_shutdown_py -.->|test_depends| D_SHARED
     tests_infrastructure_test_mcp_signal_shutdown_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -2546,6 +2546,8 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_kb_test_kb_embedding_migrate_py -.->|test_depends| D_GOVERNANCE
     tests_kb_test_kb_verify_py -.->|test_depends| D_GOVERNANCE
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    tests_io_test_mcp_task_claim_py -.->|test_depends| D_INFRA_RUNTIME
     tests_kb_test_kb_gate_task_py -.->|test_depends| D_GOVERNANCE
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_kb_test_kb_activate_py -.->|test_depends| D_INTELLIGENCE
@@ -2554,8 +2556,6 @@ graph TD
     D_SHARED["D_SHARED production"]
     tests_io_test_mcp_launcher_py -.->|test_depends| D_SHARED
     tests_io_test_mcp_task_claim_py -.->|test_depends| D_GOVERNANCE
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    tests_io_test_mcp_task_claim_py -.->|test_depends| D_INFRA_RUNTIME
     tests_io_test_verify_schema_health_py -.->|test_depends| D_SHARED
     tests_kb_test_kb_analyze_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_kb_test_kb_gate_py -.->|test_depends| D_GOVERNANCE
@@ -2568,7 +2568,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_io_test_io_serialization_py,tests_io_test_mcp_launcher_py,tests_io_test_mcp_task_claim_py,tests_io_test_verify_schema_health_py,tests_kb_test_kb_activate_py,tests_kb_test_kb_analyze_py,tests_kb_test_kb_batch_ingest_py,tests_kb_test_kb_bootstrap_py,tests_kb_test_kb_embedding_migrate_py,tests_kb_test_kb_extract_py,tests_kb_test_kb_freeze_py,tests_kb_test_kb_gate_py,tests_kb_test_kb_gate_task_py,tests_kb_test_kb_graph_validator_py,tests_kb_test_kb_ingest_py,tests_kb_test_kb_integrity_py,tests_kb_test_kb_migration_embedding_py,tests_kb_test_kb_migration_gate_py,tests_kb_test_kb_pipeline_activate_py,tests_kb_test_kb_reranker_py,tests_kb_test_kb_self_test_py,tests_kb_test_kb_storage_backend_py,tests_kb_test_kb_triage_py,tests_kb_test_kb_unified_memory_api_py,tests_kb_test_kb_verify_py,tests_kb_test_kb_vms_memory_backend_py,tests_kb_test_vector_memory_root_py,tests_knowledge_engine_test_ke_quality_py,tests_knowledge_engine_test_ke_tombstone_py,tests_knowledge_engine_test_knowledge_bus_factor_monitor_py design
-    class D_GOVERNANCE,D_INTELLIGENCE,D_GOV_ENFORCEMENT,D_SHARED,D_INFRA_RUNTIME external_prod
+    class D_GOVERNANCE,D_INFRA_RUNTIME,D_INTELLIGENCE,D_GOV_ENFORCEMENT,D_SHARED external_prod
 ```
 
 ### 第 42 页 / 共 56 页 / Page 42 of 56
@@ -2868,10 +2868,11 @@ graph TD
     tests_risk_test_ml_experiment_pipeline_py -.->|test_depends| D_RISK
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_risk_test_risk_matrix_py -.->|test_depends| D_GOVERNANCE
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
+    tests_prompt_test_prompt_registry_root_py -.->|test_depends| D_AUTONOMY_CORE
     D_INTEGRATION["D_INTEGRATION production"]
     tests_pipeline_test_pipeline_orchestrator_auto_py -.->|test_depends| D_INTEGRATION
     tests_prompt_test_prompt_fingerprint_py -.->|test_depends| D_TRADING
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_phase_test_phase_planner_py -.->|test_depends| D_AUTONOMY_CORE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_pipeline_test_pipeline_agent_bridge_py -.->|test_depends| D_INFRA_RUNTIME
@@ -2882,13 +2883,12 @@ graph TD
     tests_pipeline_test_pipeline_models_py -.->|test_depends| D_INFRA_RUNTIME
     tests_pipeline_test_pipeline_cost_tracker_py -.->|test_depends| D_INFRA_RUNTIME
     tests_pipeline_test_pipeline_cost_tracker_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_pipeline_test_pipeline_orchestrator_auto_py -.->|test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_phase_test_phase_check_registry_py,tests_phase_test_phase_executor_root_py,tests_phase_test_phase_hold_py,tests_phase_test_phase_manager_py,tests_phase_test_phase_planner_py,tests_pipeline_conftest_py,tests_pipeline_test_alpha_signal_pipeline_py,tests_pipeline_test_integration_test_pipeline_py,tests_pipeline_test_pipeline_agent_bridge_py,tests_pipeline_test_pipeline_bridge_py,tests_pipeline_test_pipeline_cost_tracker_py,tests_pipeline_test_pipeline_lock_py,tests_pipeline_test_pipeline_models_py,tests_pipeline_test_pipeline_orchestrator_auto_py,tests_pipeline_test_pipeline_orchestrator_root_py,tests_pipeline_test_pipeline_roadmap_py,tests_prompt_test_prompt_factory_governance_py,tests_prompt_test_prompt_fingerprint_py,tests_prompt_test_prompt_optimization_regression_detector_py,tests_prompt_test_prompt_registry_root_py,tests_prompt_test_prompt_sanitizer_py,tests_prompt_test_prompt_self_optimization_loop_py,tests_prompt_test_prompt_version_py,tests_resource_test_resource_guard_py,tests_resource_test_resource_optimization_py,tests_resource_test_resource_starvation_aware_py,tests_risk_test_blast_radius_detector_py,tests_risk_test_ml_experiment_pipeline_py,tests_risk_test_risk_matrix_py,tests_risk_test_risk_mitigation_root_py design
-    class D_TRADING,D_RISK,D_GOVERNANCE,D_INTEGRATION,D_AUTONOMY_CORE,D_INFRA_RUNTIME external_prod
+    class D_TRADING,D_RISK,D_GOVERNANCE,D_AUTONOMY_CORE,D_INTEGRATION,D_INFRA_RUNTIME external_prod
 ```
 
 ### 第 47 页 / 共 56 页 / Page 47 of 56
@@ -3180,11 +3180,11 @@ graph TD
     end
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_skill_test_skill_model_evolution_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_temperature_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_silent_failure_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_team_optimizer_py -.->|test_depends| D_AUTONOMY_CORE
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_task_test_task_repo_auto_commit_py -.->|test_depends| D_GOVERNANCE
-    tests_skill_test_skill_temperature_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_loader_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_observability_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_ontology_py -.->|test_depends| D_AUTONOMY_CORE
@@ -3219,7 +3219,6 @@ graph TD
         tests_test_backtest_decisiongraph_adapter_py["tests/test_backtest_decisiongraph_adapter.py prototype"]
         tests_test_decision_graph_reader_py["tests/test_decision_graph_reader.py prototype"]
         tests_test_extract_decisiongraph_py["tests/test_extract_decisiongraph.py prototype"]
-        tests_test_generate_decision_diagram_py["tests/test_generate_decision_diagram.py prototype"]
         tests_test_generate_decision_graph_py["tests/test_generate_decision_graph.py prototype"]
         tests_trading_test_admission_controller_py["tests/trading/test_admission_controller.py prototype"]
         tests_trading_test_backpressure_manager_py["tests/trading/test_backpressure_manager.py prototype"]
@@ -3238,6 +3237,7 @@ graph TD
         tests_trading_test_degrade_cascade_py["tests/trading/test_degrade_cascade.py prototype"]
         tests_trading_test_design_decisions_root_py["tests/trading/test_design_decisions_root.py prototype"]
         tests_trading_test_disk_guard_py["tests/trading/test_disk_guard.py prototype"]
+        tests_trading_test_dlq_manager_root_py["tests/trading/test_dlq_manager_root.py prototype"]
     end
     D_BACKTEST["D_BACKTEST production"]
     tests_test_backtest_decisiongraph_adapter_py -.->|test_depends| D_BACKTEST
@@ -3264,7 +3264,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_task_test_task_types_py,tests_temporal_test_temporal_coherence_of_self_model_py,tests_temporal_test_temporal_context_adapter_py,tests_temporal_test_temporal_drift_tracker_py,tests_temporal_test_temporal_event_store_py,tests_temporal_test_temporal_integrity_guard_py,tests_temporal_test_temporal_pattern_py,tests_test_apply_decisiongraph_py,tests_test_backtest_decisiongraph_adapter_py,tests_test_decision_graph_reader_py,tests_test_extract_decisiongraph_py,tests_test_generate_decision_diagram_py,tests_test_generate_decision_graph_py,tests_trading_test_admission_controller_py,tests_trading_test_backpressure_manager_py,tests_trading_test_backpressure_types_py,tests_trading_test_batch_orchestrator_py,tests_trading_test_behavioral_admission_py,tests_trading_test_benchmark_runner_py,tests_trading_test_blind_spot_closure_py,tests_trading_test_boot_cron_jobs_py,tests_trading_test_boot_hooks_py,tests_trading_test_bulkhead_manager_py,tests_trading_test_circuit_breaker_manager_py,tests_trading_test_conductor_py,tests_trading_test_construction_guide_py,tests_trading_test_dead_letter_queue_py,tests_trading_test_degrade_cascade_py,tests_trading_test_design_decisions_root_py,tests_trading_test_disk_guard_py design
+    class tests_task_test_task_types_py,tests_temporal_test_temporal_coherence_of_self_model_py,tests_temporal_test_temporal_context_adapter_py,tests_temporal_test_temporal_drift_tracker_py,tests_temporal_test_temporal_event_store_py,tests_temporal_test_temporal_integrity_guard_py,tests_temporal_test_temporal_pattern_py,tests_test_apply_decisiongraph_py,tests_test_backtest_decisiongraph_adapter_py,tests_test_decision_graph_reader_py,tests_test_extract_decisiongraph_py,tests_test_generate_decision_graph_py,tests_trading_test_admission_controller_py,tests_trading_test_backpressure_manager_py,tests_trading_test_backpressure_types_py,tests_trading_test_batch_orchestrator_py,tests_trading_test_behavioral_admission_py,tests_trading_test_benchmark_runner_py,tests_trading_test_blind_spot_closure_py,tests_trading_test_boot_cron_jobs_py,tests_trading_test_boot_hooks_py,tests_trading_test_bulkhead_manager_py,tests_trading_test_circuit_breaker_manager_py,tests_trading_test_conductor_py,tests_trading_test_construction_guide_py,tests_trading_test_dead_letter_queue_py,tests_trading_test_degrade_cascade_py,tests_trading_test_design_decisions_root_py,tests_trading_test_disk_guard_py,tests_trading_test_dlq_manager_root_py design
     class D_BACKTEST,D_GOVERNANCE,D_TRADING,D_INTEGRATION,D_INFRA_RECOVERY,D_INFRA_RUNTIME external_prod
 ```
 
@@ -3273,7 +3273,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUDITTEST["D_AUDITTEST audit_test_suite"]
-        tests_trading_test_dlq_manager_root_py["tests/trading/test_dlq_manager_root.py prototype"]
         tests_trading_test_dream_cycle_py["tests/trading/test_dream_cycle.py prototype"]
         tests_trading_test_f14_pipeline_extreme_py["tests/trading/test_f14_pipeline_extreme.py prototype"]
         tests_trading_test_f1_extreme_py["tests/trading/test_f1_extreme.py prototype"]
@@ -3303,29 +3302,30 @@ graph TD
         tests_trading_test_state_propagation_root_py["tests/trading/test_state_propagation_root.py prototype"]
         tests_trading_test_state_synchronizer_root_py["tests/trading/test_state_synchronizer_root.py prototype"]
         tests_trading_test_status_dashboard_py["tests/trading/test_status_dashboard.py prototype"]
+        tests_trading_test_stop_gate_py["tests/trading/test_stop_gate.py prototype"]
     end
     D_TRADING["D_TRADING production"]
     tests_trading_test_incident_postmortem_py -.->|test_depends| D_TRADING
+    tests_trading_test_protection_index_py -.->|test_depends| D_TRADING
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_trading_test_routing_plugins_py -.->|test_depends| D_INFRA_RUNTIME
     tests_trading_test_routing_plugins_py -.->|test_depends| D_INFRA_RUNTIME
     tests_trading_test_schema_migration_py -.->|test_depends| D_TRADING
     tests_trading_test_stability_guard_py -.->|test_depends| D_TRADING
     tests_trading_test_network_partition_py -.->|test_depends| D_TRADING
+    tests_trading_test_lifecycle_manager_py -.->|test_depends| D_TRADING
     tests_trading_test_protection_index_py -.->|test_depends| D_TRADING
     tests_trading_test_staging_area_py -.->|test_depends| D_TRADING
+    tests_trading_test_status_dashboard_py -.->|test_depends| D_TRADING
     tests_trading_test_f1_extreme_py -.->|test_depends| D_TRADING
     tests_trading_test_f14_pipeline_extreme_py -.->|test_depends| D_INFRA_RUNTIME
     tests_trading_test_f14_pipeline_extreme_py -.->|test_depends| D_INFRA_RUNTIME
     tests_trading_test_f14_pipeline_extreme_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_trading_test_f14_pipeline_extreme_py -.->|test_depends| D_TRADING
-    tests_trading_test_module_onboarding_scanner_py -.->|test_depends| D_TRADING
-    tests_trading_test_fault_types_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_trading_test_dlq_manager_root_py,tests_trading_test_dream_cycle_py,tests_trading_test_f14_pipeline_extreme_py,tests_trading_test_f1_extreme_py,tests_trading_test_fault_types_py,tests_trading_test_feature_flag_py,tests_trading_test_finalizer_py,tests_trading_test_finding_bridge_py,tests_trading_test_gpu_consensus_scheduler_py,tests_trading_test_housekeeping_py,tests_trading_test_ide_health_daemon_py,tests_trading_test_incident_postmortem_py,tests_trading_test_integration_registry_py,tests_trading_test_lean_scanner_py,tests_trading_test_lifecycle_manager_py,tests_trading_test_module_onboarding_scanner_py,tests_trading_test_network_partition_py,tests_trading_test_night_shift_queue_py,tests_trading_test_protection_index_py,tests_trading_test_reconciliation_loop_py,tests_trading_test_rolling_upgrade_py,tests_trading_test_routing_plugins_py,tests_trading_test_runtime_config_py,tests_trading_test_schema_migration_py,tests_trading_test_stability_guard_py,tests_trading_test_staging_area_py,tests_trading_test_startup_sequencer_py,tests_trading_test_state_propagation_root_py,tests_trading_test_state_synchronizer_root_py,tests_trading_test_status_dashboard_py design
+    class tests_trading_test_dream_cycle_py,tests_trading_test_f14_pipeline_extreme_py,tests_trading_test_f1_extreme_py,tests_trading_test_fault_types_py,tests_trading_test_feature_flag_py,tests_trading_test_finalizer_py,tests_trading_test_finding_bridge_py,tests_trading_test_gpu_consensus_scheduler_py,tests_trading_test_housekeeping_py,tests_trading_test_ide_health_daemon_py,tests_trading_test_incident_postmortem_py,tests_trading_test_integration_registry_py,tests_trading_test_lean_scanner_py,tests_trading_test_lifecycle_manager_py,tests_trading_test_module_onboarding_scanner_py,tests_trading_test_network_partition_py,tests_trading_test_night_shift_queue_py,tests_trading_test_protection_index_py,tests_trading_test_reconciliation_loop_py,tests_trading_test_rolling_upgrade_py,tests_trading_test_routing_plugins_py,tests_trading_test_runtime_config_py,tests_trading_test_schema_migration_py,tests_trading_test_stability_guard_py,tests_trading_test_staging_area_py,tests_trading_test_startup_sequencer_py,tests_trading_test_state_propagation_root_py,tests_trading_test_state_synchronizer_root_py,tests_trading_test_status_dashboard_py,tests_trading_test_stop_gate_py design
     class D_TRADING,D_INFRA_RUNTIME external_prod
 ```
 
@@ -3334,7 +3334,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUDITTEST["D_AUDITTEST audit_test_suite"]
-        tests_trading_test_stop_gate_py["tests/trading/test_stop_gate.py prototype"]
         tests_trading_test_system_transfer_py["tests/trading/test_system_transfer.py prototype"]
         tests_trading_test_teardown_manager_py["tests/trading/test_teardown_manager.py prototype"]
         tests_trading_test_trading_contracts_py["tests/trading/test_trading_contracts.py prototype"]
@@ -3364,6 +3363,7 @@ graph TD
         tests_trae_rules_test_g_trae_026_py["tests/trae_rules/test_g_trae_026.py prototype"]
         tests_trae_rules_test_g_trae_027_py["tests/trae_rules/test_g_trae_027.py prototype"]
         tests_trae_rules_test_g_trae_028_py["tests/trae_rules/test_g_trae_028.py prototype"]
+        tests_trae_rules_test_g_trae_029_py["tests/trae_rules/test_g_trae_029.py prototype"]
     end
     D_SHARED["D_SHARED production"]
     tests_trae_rules_test_g_trae_018_py -.->|test_depends| D_SHARED
@@ -3379,14 +3379,14 @@ graph TD
     tests_trae_rules_test_g_trae_021_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_006_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_011_py -.->|test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_029_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_026_py -.->|test_depends| D_SHARED
     tests_trae_rules_test_g_trae_004_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_007_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_006_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_trading_test_stop_gate_py,tests_trading_test_system_transfer_py,tests_trading_test_teardown_manager_py,tests_trading_test_trading_contracts_py,tests_trading_test_trading_kill_switch_py,tests_trading_test_trading_session_lifecycle_py,tests_trading_test_version_manifest_py,tests_trading_test_work_dag_py,tests_trading_test_work_orchestrator_py,tests_trae_rules_test_g_trae_003_py,tests_trae_rules_test_g_trae_004_py,tests_trae_rules_test_g_trae_006_py,tests_trae_rules_test_g_trae_007_py,tests_trae_rules_test_g_trae_008_py,tests_trae_rules_test_g_trae_009_py,tests_trae_rules_test_g_trae_010_py,tests_trae_rules_test_g_trae_011_py,tests_trae_rules_test_g_trae_012_py,tests_trae_rules_test_g_trae_016_py,tests_trae_rules_test_g_trae_017_py,tests_trae_rules_test_g_trae_018_py,tests_trae_rules_test_g_trae_020_py,tests_trae_rules_test_g_trae_021_py,tests_trae_rules_test_g_trae_022_py,tests_trae_rules_test_g_trae_023_py,tests_trae_rules_test_g_trae_024_py,tests_trae_rules_test_g_trae_025_py,tests_trae_rules_test_g_trae_026_py,tests_trae_rules_test_g_trae_027_py,tests_trae_rules_test_g_trae_028_py design
+    class tests_trading_test_system_transfer_py,tests_trading_test_teardown_manager_py,tests_trading_test_trading_contracts_py,tests_trading_test_trading_kill_switch_py,tests_trading_test_trading_session_lifecycle_py,tests_trading_test_version_manifest_py,tests_trading_test_work_dag_py,tests_trading_test_work_orchestrator_py,tests_trae_rules_test_g_trae_003_py,tests_trae_rules_test_g_trae_004_py,tests_trae_rules_test_g_trae_006_py,tests_trae_rules_test_g_trae_007_py,tests_trae_rules_test_g_trae_008_py,tests_trae_rules_test_g_trae_009_py,tests_trae_rules_test_g_trae_010_py,tests_trae_rules_test_g_trae_011_py,tests_trae_rules_test_g_trae_012_py,tests_trae_rules_test_g_trae_016_py,tests_trae_rules_test_g_trae_017_py,tests_trae_rules_test_g_trae_018_py,tests_trae_rules_test_g_trae_020_py,tests_trae_rules_test_g_trae_021_py,tests_trae_rules_test_g_trae_022_py,tests_trae_rules_test_g_trae_023_py,tests_trae_rules_test_g_trae_024_py,tests_trae_rules_test_g_trae_025_py,tests_trae_rules_test_g_trae_026_py,tests_trae_rules_test_g_trae_027_py,tests_trae_rules_test_g_trae_028_py,tests_trae_rules_test_g_trae_029_py design
     class D_SHARED,D_GOV_ENFORCEMENT external_prod
 ```
 
@@ -3395,7 +3395,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUDITTEST["D_AUDITTEST audit_test_suite"]
-        tests_trae_rules_test_g_trae_029_py["tests/trae_rules/test_g_trae_029.py prototype"]
         tests_trae_rules_test_g_trae_030_py["tests/trae_rules/test_g_trae_030.py prototype"]
         tests_trae_rules_test_g_trae_031_py["tests/trae_rules/test_g_trae_031.py prototype"]
         tests_trae_rules_test_g_trae_032_py["tests/trae_rules/test_g_trae_032.py prototype"]
@@ -3425,6 +3424,7 @@ graph TD
         tests_utils_test_foundation_deprecation_py["tests/utils/test_foundation_deprecation.py prototype"]
         tests_utils_test_foundation_env_py["tests/utils/test_foundation_env.py prototype"]
         tests_utils_test_foundation_errors_py["tests/utils/test_foundation_errors.py prototype"]
+        tests_utils_test_foundation_flags_py["tests/utils/test_foundation_flags.py prototype"]
     end
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_trae_rules_test_g_trae_043_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -3439,15 +3439,15 @@ graph TD
     tests_trae_rules_test_g_trae_054_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_054_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_utils_test_foundation_deprecation_py -.->|test_depends| D_SHARED
+    tests_utils_test_foundation_flags_py -.->|test_depends| D_SHARED
+    tests_utils_test_foundation_flags_py -.->|test_depends| D_SHARED
     tests_utils_test_foundation_env_py -.->|test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_029_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_032_py -.->|test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_032_py -.->|test_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_trae_rules_test_g_trae_029_py,tests_trae_rules_test_g_trae_030_py,tests_trae_rules_test_g_trae_031_py,tests_trae_rules_test_g_trae_032_py,tests_trae_rules_test_g_trae_033_py,tests_trae_rules_test_g_trae_034_py,tests_trae_rules_test_g_trae_035_py,tests_trae_rules_test_g_trae_036_py,tests_trae_rules_test_g_trae_037_py,tests_trae_rules_test_g_trae_038_py,tests_trae_rules_test_g_trae_039_py,tests_trae_rules_test_g_trae_040_py,tests_trae_rules_test_g_trae_041_py,tests_trae_rules_test_g_trae_042_py,tests_trae_rules_test_g_trae_043_py,tests_trae_rules_test_g_trae_044_py,tests_trae_rules_test_g_trae_045_py,tests_trae_rules_test_g_trae_046_py,tests_trae_rules_test_g_trae_047_py,tests_trae_rules_test_g_trae_048_py,tests_trae_rules_test_g_trae_049_py,tests_trae_rules_test_g_trae_050_py,tests_trae_rules_test_g_trae_051_py,tests_trae_rules_test_g_trae_052_py,tests_trae_rules_test_g_trae_053_py,tests_trae_rules_test_g_trae_054_py,tests_trae_rules_test_g_trae_055_py,tests_utils_test_foundation_deprecation_py,tests_utils_test_foundation_env_py,tests_utils_test_foundation_errors_py design
+    class tests_trae_rules_test_g_trae_030_py,tests_trae_rules_test_g_trae_031_py,tests_trae_rules_test_g_trae_032_py,tests_trae_rules_test_g_trae_033_py,tests_trae_rules_test_g_trae_034_py,tests_trae_rules_test_g_trae_035_py,tests_trae_rules_test_g_trae_036_py,tests_trae_rules_test_g_trae_037_py,tests_trae_rules_test_g_trae_038_py,tests_trae_rules_test_g_trae_039_py,tests_trae_rules_test_g_trae_040_py,tests_trae_rules_test_g_trae_041_py,tests_trae_rules_test_g_trae_042_py,tests_trae_rules_test_g_trae_043_py,tests_trae_rules_test_g_trae_044_py,tests_trae_rules_test_g_trae_045_py,tests_trae_rules_test_g_trae_046_py,tests_trae_rules_test_g_trae_047_py,tests_trae_rules_test_g_trae_048_py,tests_trae_rules_test_g_trae_049_py,tests_trae_rules_test_g_trae_050_py,tests_trae_rules_test_g_trae_051_py,tests_trae_rules_test_g_trae_052_py,tests_trae_rules_test_g_trae_053_py,tests_trae_rules_test_g_trae_054_py,tests_trae_rules_test_g_trae_055_py,tests_utils_test_foundation_deprecation_py,tests_utils_test_foundation_env_py,tests_utils_test_foundation_errors_py,tests_utils_test_foundation_flags_py design
     class D_GOV_ENFORCEMENT,D_SHARED external_prod
 ```
 
@@ -3456,7 +3456,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUDITTEST["D_AUDITTEST audit_test_suite"]
-        tests_utils_test_foundation_flags_py["tests/utils/test_foundation_flags.py prototype"]
         tests_utils_test_resilience_fallback_py["tests/utils/test_resilience_fallback.py prototype"]
         tests_utils_test_resilience_retry_py["tests/utils/test_resilience_retry.py prototype"]
         tests_utils_test_utils_context_py["tests/utils/test_utils_context.py prototype"]
@@ -3481,8 +3480,8 @@ graph TD
     end
     tests_zephyr_data_test_alerter_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_ch_writer_py -.->|config_depends| tests_zephyr_data_init_py
-    tests_zephyr_data_test_metrics_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_policy_registry_py -.->|config_depends| tests_zephyr_data_init_py
+    tests_zephyr_data_test_metrics_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_providers_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_provider_base_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_providers_stage3_py -.->|config_depends| tests_zephyr_data_init_py
@@ -3493,8 +3492,6 @@ graph TD
     tests_zephyr_data_test_cli_py -.->|test_depends| D_GOVERNANCE
     tests_zephyr_data_test_scheduler_py -.->|test_depends| D_GOVERNANCE
     D_SHARED["D_SHARED production"]
-    tests_utils_test_foundation_flags_py -.->|test_depends| D_SHARED
-    tests_utils_test_foundation_flags_py -.->|test_depends| D_SHARED
     tests_utils_test_resilience_retry_py -.->|test_depends| D_SHARED
     tests_utils_test_utils_diff_utils_py -.->|test_depends| D_SHARED
     tests_utils_test_utils_migration_py -.->|test_depends| D_SHARED
@@ -3507,11 +3504,13 @@ graph TD
     tests_utils_test_version_py -.->|test_depends| D_SHARED
     tests_utils_test_utils_time_utils_py -.->|test_depends| D_SHARED
     tests_utils_test_resilience_fallback_py -.->|test_depends| D_SHARED
+    tests_utils_test_resilience_retry_py -.->|test_depends| D_SHARED
+    tests_utils_test_resilience_fallback_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_utils_test_foundation_flags_py,tests_utils_test_resilience_fallback_py,tests_utils_test_resilience_retry_py,tests_utils_test_utils_context_py,tests_utils_test_utils_diff_utils_py,tests_utils_test_utils_migration_py,tests_utils_test_utils_pagination_py,tests_utils_test_utils_testing_py,tests_utils_test_utils_time_utils_py,tests_utils_test_version_py,tests_zephyr_data_init_py,tests_zephyr_data_test_alerter_py,tests_zephyr_data_test_ch_writer_py,tests_zephyr_data_test_cli_py,tests_zephyr_data_test_metrics_py,tests_zephyr_data_test_policy_registry_py,tests_zephyr_data_test_progress_store_py,tests_zephyr_data_test_provider_base_py,tests_zephyr_data_test_providers_py,tests_zephyr_data_test_providers_stage3_py,tests_zephyr_data_test_scheduler_py,tests_zephyr_data_test_task_queue_py design
+    class tests_utils_test_resilience_fallback_py,tests_utils_test_resilience_retry_py,tests_utils_test_utils_context_py,tests_utils_test_utils_diff_utils_py,tests_utils_test_utils_migration_py,tests_utils_test_utils_pagination_py,tests_utils_test_utils_testing_py,tests_utils_test_utils_time_utils_py,tests_utils_test_version_py,tests_zephyr_data_init_py,tests_zephyr_data_test_alerter_py,tests_zephyr_data_test_ch_writer_py,tests_zephyr_data_test_cli_py,tests_zephyr_data_test_metrics_py,tests_zephyr_data_test_policy_registry_py,tests_zephyr_data_test_progress_store_py,tests_zephyr_data_test_provider_base_py,tests_zephyr_data_test_providers_py,tests_zephyr_data_test_providers_stage3_py,tests_zephyr_data_test_scheduler_py,tests_zephyr_data_test_task_queue_py design
     class D_GOVERNANCE,D_SHARED,D_GOV_ENFORCEMENT,D_INTEGRATION external_prod
 ```
 
@@ -3552,12 +3551,12 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 audit_test_suite（D_AUDITTEST）的模块分布。共 1672 个模块 / 1672 modules。
+> 按 architecture_layer 分层显示 audit_test_suite（D_AUDITTEST）的模块分布。共 1671 个模块 / 1671 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│             L2 领域层 / Domain Layer (1672 modules)              │
+│             L2 领域层 / Domain Layer (1671 modules)              │
 ├──────────────────────────────────────────────────────────────────┤
 │   tests/a2a/test_a2a_anomaly_detector.py  [prototype]            │
 │   tests/a2a/test_a2a_behavior_fingerprint.py  [prototype]        │
@@ -3577,16 +3576,16 @@ graph TD
 │   tests/a2a/test_a2a_delegation_chain.py  [prototype]            │
 │   tests/a2a/test_a2a_economics.py  [prototype]                   │
 │   tests/a2a/test_a2a_failure.py  [prototype]                     │
-│   ...还有 1654 个模块 / 1654 more modules                        │
+│   ...还有 1653 个模块 / 1653 more modules                        │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 1672 个模块 / 1672 modules）。
+> 按 architecture_layer 分组的模块清单（共 1671 个模块 / 1671 modules）。
 
-### L2 领域层 / Domain Layer (1672 modules)
+### L2 领域层 / Domain Layer (1671 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -3791,7 +3790,7 @@ graph TD
 | 199 | tests/audit/test_state_machine.py | tests/audit/test_state_machine.py | prototype | generated |
 | 200 | tests/audit/test_statistical_hygiene_auditor.py | tests/audit/test_statistical_hygiene_... | prototype | generated |
 
-> (仅显示前 200 个模块，共 1672 个)
+> (仅显示前 200 个模块，共 1671 个)
 
 ## 依赖关系图 / Dependency Graph
 
@@ -3812,8 +3811,8 @@ graph TD
 │   test_semantic_diff.py → __init__.py                            │
 │   test_alerter.py → __init__.py                                  │
 │   test_ch_writer.py → __init__.py                                │
-│   test_metrics.py → __init__.py                                  │
 │   test_policy_registry.py → __init__.py                          │
+│   test_metrics.py → __init__.py                                  │
 │   test_providers.py → __init__.py                                │
 │   test_provider_base.py → __init__.py                            │
 │   test_providers_stage3.py → __init__.py                         │

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回测（D_BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 12:01:36
+> 最后更新: 2026-07-06 12:08:49
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -87,34 +87,34 @@ graph TD
     src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_io_init_py
     src_zephyr_backtest_core_data_handler_py -.->|import_depends| src_zephyr_backtest_core_pit_manager_py
-    src_zephyr_backtest_core_matching_engine_py -.->|import_depends| src_zephyr_backtest_core_matching_logic_py
     src_zephyr_backtest_core_matching_engine_py -.->|import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_core_matching_engine_py -.->|import_depends| src_zephyr_backtest_core_matching_logic_py
     src_zephyr_backtest_core_tick_replay_py -.->|import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_data_handler_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_metrics_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_pit_manager_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_decision_gate_py
     src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_metrics_py
     src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_walk_forward_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_decision_gate_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_data_handler_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_overfitting_detector_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_pit_manager_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_walk_forward_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_decision_gate_py
     src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_tick_replay_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_tick_replay_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations_init_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations_init_py -.->|import_depends| src_zephyr_backtest_implementations_event_driven_engine_py
     src_zephyr_backtest_io_backtest_result_sink_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
@@ -297,34 +297,34 @@ graph TD
 │   __init__.py → vectorized_engine.py                             │
 │   __init__.py → __init__.py                                      │
 │   data_handler.py → pit_manager.py                               │
-│   matching_engine.py → matching_logic.py                         │
 │   matching_engine.py → portfolio.py                              │
+│   matching_engine.py → matching_logic.py                         │
 │   tick_replay.py → matching_logic.py                             │
-│   vectorized_engine.py → decision_gate.py                        │
+│   __init__.py → engine_base.py                                   │
+│   __init__.py → decision_gate.py                                 │
+│   __init__.py → data_handler.py                                  │
+│   __init__.py → matching_engine.py                               │
+│   __init__.py → metrics.py                                       │
+│   __init__.py → portfolio.py                                     │
+│   __init__.py → pit_manager.py                                   │
+│   __init__.py → walk_forward.py                                  │
+│   __init__.py → overfitting_detector.py                          │
 │   vectorized_engine.py → engine_base.py                          │
+│   vectorized_engine.py → decision_gate.py                        │
 │   vectorized_engine.py → matching_engine.py                      │
-│   vectorized_engine.py → overfitting_detector.py                 │
 │   vectorized_engine.py → metrics.py                              │
 │   vectorized_engine.py → portfolio.py                            │
 │   vectorized_engine.py → walk_forward.py                         │
-│   __init__.py → decision_gate.py                                 │
-│   __init__.py → data_handler.py                                  │
-│   __init__.py → engine_base.py                                   │
-│   __init__.py → matching_engine.py                               │
-│   __init__.py → overfitting_detector.py                          │
-│   __init__.py → metrics.py                                       │
-│   __init__.py → pit_manager.py                                   │
-│   __init__.py → portfolio.py                                     │
-│   __init__.py → walk_forward.py                                  │
-│   event_driven_engine.py → decision_gate.py                      │
+│   vectorized_engine.py → overfitting_detector.py                 │
 │   event_driven_engine.py → engine_base.py                        │
+│   event_driven_engine.py → decision_gate.py                      │
 │   event_driven_engine.py → matching_engine.py                    │
-│   event_driven_engine.py → overfitting_detector.py               │
 │   event_driven_engine.py → metrics.py                            │
-│   event_driven_engine.py → tick_replay.py                        │
-│   event_driven_engine.py → vectorized_engine.py                  │
 │   event_driven_engine.py → portfolio.py                          │
 │   event_driven_engine.py → walk_forward.py                       │
+│   event_driven_engine.py → overfitting_detector.py               │
+│   event_driven_engine.py → tick_replay.py                        │
+│   event_driven_engine.py → vectorized_engine.py                  │
 │   __init__.py → vectorized_engine.py                             │
 │   __init__.py → event_driven_engine.py                           │
 │   backtest_result_sink.py → engine_base.py                       │

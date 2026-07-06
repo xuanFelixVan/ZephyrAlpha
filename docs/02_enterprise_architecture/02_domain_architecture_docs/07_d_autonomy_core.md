@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 agent_lifecycle（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 12:01:36
+> 最后更新: 2026-07-06 12:08:49
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -81,10 +81,10 @@ graph TD
         src_zephyr_autonomy_core_context_context_value_attribution_py["src/zephyr/autonomy_core/context/context_value_... production"]
     end
     src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|import_depends| src_zephyr_autonomy_core_context_context_assembler_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
+    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     D_SHARED["D_SHARED production"]
     src_zephyr_autonomy_core_context_context_pipeline_py -->|import_depends| D_SHARED
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -167,7 +167,7 @@ graph TD
         src_zephyr_autonomy_core_skills_skill_compliance_py["src/zephyr/autonomy_core/skills/skill_complianc... production"]
     end
     src_zephyr_autonomy_core_integration_init_py -.->|config_depends| src_zephyr_autonomy_core_integration_pipeline_bridge_py
-    src_zephyr_autonomy_core_skills_init_py -.->|config_depends| src_zephyr_autonomy_core_skills_skill_breakage_checker_py
+    src_zephyr_autonomy_core_skills_init_py -.->|config_depends| src_zephyr_autonomy_core_skills_skill_attention_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_autonomy_core_prompt_registry_py -->|import_depends| D_INFRA_RUNTIME
     D_INTEGRATION["D_INTEGRATION production"]
@@ -182,6 +182,7 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_ide_watcher_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_integrity_check_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_position_optimizer_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_prompt_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_progressive_disclosure_injector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skill_rbac_registry_py
     D_TRADING["D_TRADING production"]
@@ -189,7 +190,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_calibration_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_phase_planner_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_integration_pipeline_bridge_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_prompt_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_curation_loop_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -327,9 +327,9 @@ graph TD
     src_zephyr_autonomy_core_spec_engine_py -->|import_depends| D_GOVERNANCE
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_temperature_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_silent_failure_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_team_optimizer_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_temperature_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_trigger_router_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_observability_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_ontology_py
@@ -552,13 +552,13 @@ graph TD
 │   spec_engine.py → skill_factory.py                              │
 │   spec_engine.py → skill_freshness.py                            │
 │   spec_engine.py → skill_loader.py                               │
-│   __main__.py → skill_model.py                                   │
 │   __main__.py → skill_loader.py                                  │
+│   __main__.py → skill_model.py                                   │
 │   context_assembler.py → context_rule_registry.py                │
-│   context_pipeline_auto.py → context_pipeline.py                 │
 │   context_pipeline.py → context_assembler.py                     │
 │   context_pipeline.py → context_injector.py                      │
 │   context_pipeline.py → context_rule_registry.py                 │
+│   context_pipeline_auto.py → context_pipeline.py                 │
 │   pipeline_bridge.py → trigger_router.py                         │
 │   pipeline_bridge.py → skill_loader.py                           │
 │   skill_consensus.py → skill_freshness.py                        │
@@ -591,7 +591,7 @@ graph TD
 │                 [config_depends] (2 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → pipeline_bridge.py                               │
-│   __init__.py → skill_breakage_checker.py                        │
+│   __init__.py → skill_attention.py                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```

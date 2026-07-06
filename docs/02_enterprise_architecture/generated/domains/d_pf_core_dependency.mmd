@@ -1,5 +1,5 @@
 %% D_PF_CORE 域全景依赖图
-%% 生成时间: 2026-07-06 12:01:39
+%% 生成时间: 2026-07-06 12:08:52
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 14, 依赖边数: 9
 
@@ -33,9 +33,9 @@ graph TD
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_PF_CORE -> D_GOVERNANCE (5 条)
     src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_pf_core_strategy_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_pf_core_strategy_registry_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_pf_core_risk_limits_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_pf_core_strategy_registry_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_pf_core_strategy_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_pf_core_strategy_engine___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_PF_CORE -> D_GOV_ENFORCEMENT (1 条)
     src_zephyr_pf_core_compliance_rule_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
