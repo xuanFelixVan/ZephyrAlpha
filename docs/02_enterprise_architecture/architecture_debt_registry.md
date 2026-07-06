@@ -2071,6 +2071,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.45 输入验证与净化深度（5个，第13轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.45全部清零.
+> **第63轮修复状态（2026-07-06）**：5.45.2+5.45.3 FIXED — enforcer.py eval()→typing._eval_type(ForwardRef) (同时修复预存 NameError: get_type_hints 被调用但未导入) / self_benchmark.py exec() 前置 _validate_ast_safety() AST 白名单+_SAFE_BUILTINS+SecurityError, commit bf2a18c201. DEFERRED=0. 维度5.45全部清零.
 > 维度说明：命令注入、eval/exec代码执行、路径穿越防护、API响应清洗等输入边界安全。
 > **第57轮修复状态（2026-07-06）**：5.45.4 FIXED — gate_engine_server.py (infrastructure/ + integration/mcp/) 路径校验改用 os.path.realpath()+os.path.commonpath() 边界检查, commit dc2210ce46. DEFERRED=2(5.45.2/5.45.3).
 
@@ -2088,7 +2089,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：若模块命名空间被污染，eval可执行任意代码
 - **影响**：恶意dataclass定义可借eval执行任意代码
 - **修复**：使用typing.get_type_hints()替代eval fallback
-- **状态**：STILL_VALID（保留）— enforcer.py L374 仍用 `eval(ftype, globalns)` 解析字符串类型注解；需改用 typing.get_type_hints()，但涉及 contracts/core 共享模块需谨慎重构
+- **状态**：FIXED — enforcer.py 新增 `import typing`, _resolve_type_hints 主路径用 typing.get_type_hints() (修复预存 NameError: get_type_hints 被调用但未导入), fallback 路径 eval(ftype, globalns)→typing._eval_type(ForwardRef(ftype), globalns, None) 仅处理类型表达式不会执行任意代码. commit bf2a18c201.
 
 #### 5.45.3 [HIGH] exec()执行LLM生成的动态代码
 - **文件**：[self_benchmark.py](file:///D:/ZephyrAlpha/src/zephyr/governance/intelligence_governance/self_benchmark.py#L350)
@@ -2096,7 +2097,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：LLM被提示注入时可生成恶意代码（如`__import__('os').system(...)`）
 - **影响**：任意代码执行；prompt injection直接导致RCE
 - **修复**：沙箱环境执行；或ast.parse白名单校验；至少限制`__builtins__`
-- **状态**：STILL_VALID（保留）— self_benchmark.py L353 仍用 `exec(source, ns)` 执行 LLM 生成代码，无沙箱隔离；需引入 ast 白名单校验或沙箱环境
+- **状态**：FIXED — self_benchmark.py 新增 _ALLOWED_AST_NODES 白名单(23+ 良性节点)+_DANGEROUS_NAMES 黑名单(__import__/eval/exec/compile/open 等)+_SAFE_BUILTINS 受限命名空间+_validate_ast_safety(source) AST 校验函数(阻断非白名单节点/危险名称/私有属性访问), _exec_function exec 前调用 _validate_ast_safety, ns={"__builtins__": _SAFE_BUILTINS}, 新增 SecurityError 异常分支. commit bf2a18c201.
 
 #### 5.45.4 [MEDIUM] 路径穿越防护用子串匹配而非realpath边界检查
 - **文件**：[gate_engine_server.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/gate_engine_server.py#L235)
