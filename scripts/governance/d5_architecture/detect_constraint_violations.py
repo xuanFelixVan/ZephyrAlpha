@@ -12,7 +12,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 检测失败→exit 1; 无违规→exit 0
-# [TESTS] tests/test_detect_constraint_violations.py
+# [TESTS] 无
 # [TTL] permanent
 # [ARCH-REF] #ARCH-CAP-001 #ARCH-CAP-002
 """G9-Detect: 架构约束违规检测器（对照 depgraph 实际数据检测 5 类违规）
