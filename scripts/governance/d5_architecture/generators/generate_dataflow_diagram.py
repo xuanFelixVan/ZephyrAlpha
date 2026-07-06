@@ -167,63 +167,117 @@ def _gen_mermaid(
 
 
 def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
-    """生成索引文档（含统计+图嵌入）。"""
+    """生成索引文档（frontmatter + 内嵌 Mermaid 图 + 统计 + 清单）。
+
+    单 MD 文件可看全部（图 + 清单），符合 02_domain_architecture_docs/ 风格。
+    .mmd 文件仍单独输出，供 Mermaid CLI/VSCode 单独预览。
+    """
     prod_ds = sum(1 for d in datasets if d["scope"] == "production")
     bt_ds = sum(1 for d in datasets if d["scope"] == "backtest_internal")
     prod_job = sum(1 for j in jobs if j["scope"] == "production")
     bt_job = sum(1 for j in jobs if j["scope"] == "backtest_internal")
+    now = datetime.now().isoformat(timespec="seconds")
 
-    lines = [
-        "# 数据流图（dataflowgraph）索引",
-        "",
-        f"> 生成时间: {datetime.now().isoformat(timespec='seconds')}",
-        f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）",
-        f"> 数据库: {DB_DISPLAY_NAME}",
-        "",
-        "## 概述",
-        "",
-        "数据流图（dataflowgraph）是与依赖图（depgraph）正交的第三维度全景图。",
-        '- depgraph 表达"谁依赖谁"（模块依赖）',
-        '- dataflowgraph 表达"数据从哪流到哪"（数据流向）',
-        "- 通过 `Job.source_code_ref` 引用 depgraph 模块 path，建立跨图关联",
-        "",
-        "## 统计",
-        "",
-        f"| 类型 | 生产 (production) | 回测内部 (backtest_internal) | 合计 |",
-        f"|------|-------------------|------------------------------|------|",
-        f"| Dataset | {prod_ds} | {bt_ds} | {len(datasets)} |",
-        f"| Job | {prod_job} | {bt_job} | {len(jobs)} |",
-        f"| Edge | - | - | {len(edges)} |",
-        "",
-        "## Mermaid 图表",
-        "",
-        "### 全景图",
-        "- [dataflow_overview.mmd](dataflow_overview.mmd)",
-        "",
-        "### 生产数据流图（scope=production）",
-        "- [dataflow_production.mmd](dataflow_production.mmd)",
-        "",
-        "### 回测内部数据流图（scope=backtest_internal）",
-        "- [dataflow_backtest.mmd](dataflow_backtest.mmd)",
-        "",
-        "## Dataset 清单",
-        "",
-        "| ID | entity_name | scope | contract_ref | domain | pit_policy | build_status |",
-        "|----|-------------|-------|--------------|--------|------------|--------------|",
-    ]
+    lines = []
+    # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
+    lines.append("---")
+    lines.append("doc_type: architecture_view")
+    lines.append("title: 数据流图（dataflowgraph）索引")
+    lines.append('version: "1.0"')
+    lines.append("status: active")
+    lines.append(f"date: {now.split('T')[0]}")
+    lines.append("owner: auto-generator")
+    lines.append("ttl: permanent")
+    lines.append("---")
+    lines.append("")
+
+    lines.append("# 数据流图（dataflowgraph）索引")
+    lines.append("")
+    lines.append(f"> 生成时间: {now}")
+    lines.append(f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）")
+    lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
+    lines.append(f"> 生成器: `generate_dataflow_diagram.py`（Mermaid 图内嵌在本文档中，IDE 可直接渲染）")
+    lines.append("")
+
+    # 概述
+    lines.append("## 概述")
+    lines.append("")
+    lines.append("数据流图（dataflowgraph）是与依赖图（depgraph）正交的第三维度全景图。")
+    lines.append('- depgraph 表达"谁依赖谁"（模块依赖）')
+    lines.append('- dataflowgraph 表达"数据从哪流到哪"（数据流向）')
+    lines.append("- 通过 `Job.source_code_ref` 引用 depgraph 模块 path，建立跨图关联")
+    lines.append("")
+
+    # 统计
+    lines.append("## 统计")
+    lines.append("")
+    lines.append("| 类型 | 生产 (production) | 回测内部 (backtest_internal) | 合计 |")
+    lines.append("|------|-------------------|------------------------------|------|")
+    lines.append(f"| Dataset | {prod_ds} | {bt_ds} | {len(datasets)} |")
+    lines.append(f"| Job | {prod_job} | {bt_job} | {len(jobs)} |")
+    lines.append(f"| Edge | - | - | {len(edges)} |")
+    lines.append("")
+
+    # 内嵌 Mermaid 图
+    lines.append("## Mermaid 图表")
+    lines.append("")
+    lines.append("> 图表内嵌在本文档中，IDE 可直接渲染显示。")
+    lines.append(">")
+    lines.append("> **图例说明**：")
+    lines.append("> - **dsProd**（蓝色底）/ **jobProd**（绿色底）= 生产 scope")
+    lines.append("> - **dsBacktest**（橙色底）/ **jobBacktest**（粉色底）= 回测内部 scope")
+    lines.append("")
+
+    # 全景图
+    lines.append("### 全景图")
+    lines.append("")
+    mmd_overview, _, _, _ = _gen_mermaid(datasets, jobs, edges, scope_filter=None)
+    lines.append("```mermaid")
+    lines.append(mmd_overview.rstrip())
+    lines.append("```")
+    lines.append("")
+
+    # 生产数据流图
+    lines.append("### 生产数据流图（scope=production）")
+    lines.append("")
+    mmd_prod, _, _, _ = _gen_mermaid(datasets, jobs, edges, scope_filter="production")
+    lines.append("```mermaid")
+    lines.append(mmd_prod.rstrip())
+    lines.append("```")
+    lines.append("")
+
+    # 回测内部数据流图
+    lines.append("### 回测内部数据流图（scope=backtest_internal）")
+    lines.append("")
+    mmd_bt, _, _, _ = _gen_mermaid(datasets, jobs, edges, scope_filter="backtest_internal")
+    lines.append("```mermaid")
+    lines.append(mmd_bt.rstrip())
+    lines.append("```")
+    lines.append("")
+
+    # .mmd 文件链接（保留，供 Mermaid CLI/VSCode 单独预览）
+    lines.append("> 纯 Mermaid 文件（.mmd）也可直接打开渲染：")
+    lines.append("> - [dataflow_overview.mmd](dataflow_overview.mmd)")
+    lines.append("> - [dataflow_production.mmd](dataflow_production.mmd)")
+    lines.append("> - [dataflow_backtest.mmd](dataflow_backtest.mmd)")
+    lines.append("")
+
+    # Dataset 清单
+    lines.append("## Dataset 清单")
+    lines.append("")
+    lines.append("| ID | entity_name | scope | contract_ref | domain | pit_policy | build_status |")
+    lines.append("|----|-------------|-------|--------------|--------|------------|--------------|")
     for d in datasets:
         lines.append(
             f"| DS-{d['id']:03d} | {d['name']} | {d['scope']} | "
             f"{d['contract'] or '-'} | {d['domain'] or '-'} | {d['pit']} | {d['build']} |"
         )
 
-    lines.extend([
-        "",
-        "## Job 清单",
-        "",
-        "| ID | job_name | scope | source_code_ref | trigger_type | run_context | build_status |",
-        "|----|----------|-------|-----------------|--------------|-------------|--------------|",
-    ])
+    lines.append("")
+    lines.append("## Job 清单")
+    lines.append("")
+    lines.append("| ID | job_name | scope | source_code_ref | trigger_type | run_context | build_status |")
+    lines.append("|----|----------|-------|-----------------|--------------|-------------|--------------|")
     for j in jobs:
         lines.append(
             f"| JOB-{j['id']:03d} | {j['name']} | {j['scope']} | "
