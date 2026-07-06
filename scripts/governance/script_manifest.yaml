@@ -1,13 +1,13 @@
-# 自动生成于 2026-07-06T04:01:47Z
+# 自动生成于 2026-07-06T04:09:00Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-06T04:01:47Z'
+generated_at: '2026-07-06T04:09:00Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 328
+total_scripts: 327
 with_manifest: 311
-missing_manifest: 17
+missing_manifest: 16
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 22
   governance:d4_paths: 4
-  governance:d5_architecture: 97
+  governance:d5_architecture: 96
   governance:d6_security: 14
   governance:d7_code: 31
   governance:d8_doc_sync: 9
@@ -1685,16 +1685,6 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: d5_architecture/generators/generate_dataflow_diagram.py
-  owner: governance:d5_architecture
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: d5_architecture/generators/generate_decision_diagram.py
   owner: governance:d5_architecture
   dimensions: []
   priority: P2
