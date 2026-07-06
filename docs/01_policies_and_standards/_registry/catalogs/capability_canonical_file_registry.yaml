@@ -2305,11 +2305,16 @@ capabilities:
       - dedup_engine
       - duplicate_code_detector
       - code_dedup_cli
+      - verify_dedup
+      - pre_commit_dedup
+      - gate_dedup
     description: >-
       code-dedup-engine 子包（MOD-INF-017 蓝图）的唯一真源。重复代码检测与治理引擎，
       包含检测器/审计器/验证器/守卫/修复器等 57 个模块。从 governance 根目录迁入
       code_dedup/ 子目录以符合 GOV-DOC-018 阈值（commit 92756af5）。
       新 AI 查找重复代码检测能力时 MUST 使用本子包模块，禁止重新创建。
+      pre-commit 入口委托脚本：scripts/pre_commit/verify_dedup.py（委托 cli.py verify，
+      ARCH-027 §3b 管线未接通三阶段接入，AGENTS.md GATE-DEDUP 条目）。
 
   - capability_id: code_dedup_trackers
     canonical_override: src/zephyr/governance/code_dedup/trackers/__init__.py

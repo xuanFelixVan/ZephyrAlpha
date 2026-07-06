@@ -171,7 +171,7 @@ summary: >
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单 100% 存在 | `ls D:\ZephyrAlpha\src\zephyr\governance\drift_detection\` 逐文件核对 | ✅ |
+| construction_progress = partially_implemented → 代码文件清单存在（部分已实现） | `ls D:\ZephyrAlpha\src\zephyr\governance\drift_detection\` 逐文件核对 | ✅ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" D:\ZephyrAlpha\src\zephyr\governance\drift_detection\*.py` | ✅ |
 | actual_disk_path = §11 业务代码路径 | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\` 存在 | ✅ |
 | 红白对抗验证通过 | `python tests/infrastructure/drift_red_blue_adversarial.py`（独立脚本，非pytest） | ✅ |
