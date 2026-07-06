@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-06T18:27:25
+> 生成时间: 2026-07-07T04:15:47
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -19,7 +19,7 @@
 | Track（轨） | 4 |
 | Layer（层） | 10 |
 | Node（节点） | 214 |
-| Edge（边） | 0 |
+| Edge（边） | 213 |
 | 运营态 Layer（design_maturity=production） | 3 |
 | 设计态 Layer（design_maturity=design） | 7 |
 | 原型态 Layer（design_maturity=prototype） | 0 |
@@ -491,6 +491,219 @@ flowchart TD
     LL3 -.->|triggering| LL4
     LL4 -.->|triggering| LL5
     LL5 -.->|triggering| LL6
+    N192 -->|informing| N193
+    N193 -->|informing| N194
+    N194 -->|informing| N190
+    N190 -->|informing| N191
+    N191 -->|informing| N202
+    N202 -->|informing| N200
+    N200 -->|informing| N201
+    N201 -->|informing| N209
+    N209 -->|informing| N210
+    N210 -->|informing| N203
+    N203 -->|informing| N204
+    N204 -->|informing| N205
+    N205 -->|informing| N206
+    N206 -->|informing| N211
+    N211 -->|informing| N212
+    N212 -->|informing| N213
+    N213 -->|informing| N214
+    N214 -->|informing| N1
+    N1 -->|informing| N2
+    N2 -->|informing| N3
+    N3 -->|informing| N4
+    N4 -->|informing| N5
+    N5 -->|informing| N6
+    N6 -->|informing| N7
+    N7 -->|informing| N8
+    N8 -->|informing| N9
+    N9 -->|informing| N10
+    N10 -->|informing| N11
+    N11 -->|informing| N12
+    N12 -->|informing| N13
+    N13 -->|informing| N14
+    N14 -->|informing| N15
+    N15 -->|informing| N16
+    N16 -->|informing| N17
+    N17 -->|informing| N18
+    N18 -->|informing| N19
+    N19 -->|informing| N177
+    N177 -->|informing| N178
+    N178 -->|informing| N179
+    N179 -->|informing| N180
+    N180 -->|informing| N181
+    N181 -->|informing| N182
+    N182 -->|informing| N183
+    N183 -->|informing| N184
+    N184 -->|informing| N185
+    N185 -->|informing| N186
+    N186 -->|informing| N187
+    N187 -->|informing| N188
+    N188 -->|informing| N189
+    N189 -->|informing| N141
+    N141 -->|informing| N142
+    N142 -->|informing| N143
+    N143 -->|informing| N144
+    N144 -->|informing| N145
+    N145 -->|informing| N146
+    N146 -->|informing| N147
+    N147 -->|informing| N148
+    N148 -->|informing| N149
+    N149 -->|informing| N150
+    N150 -->|informing| N151
+    N151 -->|informing| N152
+    N152 -->|informing| N153
+    N153 -->|informing| N154
+    N154 -->|informing| N155
+    N113 -->|informing| N115
+    N115 -->|informing| N116
+    N116 -->|informing| N117
+    N117 -->|informing| N118
+    N118 -->|informing| N119
+    N119 -->|informing| N120
+    N120 -->|informing| N121
+    N121 -->|informing| N133
+    N133 -->|informing| N135
+    N135 -->|informing| N136
+    N136 -->|informing| N59
+    N59 -->|informing| N60
+    N60 -->|informing| N61
+    N61 -->|informing| N62
+    N62 -->|informing| N63
+    N63 -->|informing| N64
+    N64 -->|informing| N65
+    N65 -->|informing| N66
+    N66 -->|informing| N71
+    N71 -->|informing| N72
+    N72 -->|informing| N73
+    N73 -->|informing| N75
+    N75 -->|informing| N77
+    N77 -->|informing| N78
+    N78 -->|informing| N32
+    N32 -->|informing| N33
+    N33 -->|informing| N34
+    N34 -->|informing| N35
+    N35 -->|informing| N36
+    N36 -->|informing| N37
+    N37 -->|informing| N20
+    N20 -->|informing| N21
+    N21 -->|informing| N22
+    N22 -->|informing| N23
+    N23 -->|informing| N24
+    N24 -->|informing| N25
+    N25 -->|informing| N26
+    N26 -->|informing| N27
+    N27 -->|informing| N28
+    N28 -->|informing| N29
+    N29 -->|informing| N30
+    N30 -->|informing| N31
+    N31 -->|informing| N38
+    N38 -->|informing| N39
+    N39 -->|informing| N40
+    N40 -->|informing| N41
+    N41 -->|informing| N42
+    N42 -->|informing| N43
+    N43 -->|informing| N44
+    N44 -->|informing| N45
+    N45 -->|informing| N46
+    N46 -->|informing| N47
+    N47 -->|informing| N48
+    N48 -->|informing| N49
+    N49 -->|informing| N50
+    N50 -->|informing| N51
+    N51 -->|informing| N52
+    N52 -->|informing| N53
+    N53 -->|informing| N54
+    N54 -->|informing| N55
+    N55 -->|informing| N56
+    N56 -->|informing| N102
+    N102 -->|informing| N103
+    N103 -->|informing| N104
+    N104 -->|informing| N105
+    N105 -->|informing| N106
+    N106 -->|informing| N107
+    N107 -->|informing| N108
+    N108 -->|informing| N109
+    N109 -->|informing| N110
+    N110 -->|informing| N111
+    N111 -->|informing| N112
+    N114 -->|informing| N122
+    N122 -->|informing| N134
+    N134 -->|informing| N123
+    N123 -->|informing| N124
+    N124 -->|informing| N125
+    N125 -->|informing| N126
+    N126 -->|informing| N127
+    N127 -->|informing| N128
+    N128 -->|informing| N129
+    N129 -->|informing| N130
+    N130 -->|informing| N131
+    N131 -->|informing| N132
+    N132 -->|informing| N137
+    N137 -->|informing| N138
+    N138 -->|informing| N139
+    N139 -->|informing| N140
+    N140 -->|informing| N166
+    N166 -->|informing| N167
+    N167 -->|informing| N168
+    N168 -->|informing| N169
+    N169 -->|informing| N170
+    N170 -->|informing| N171
+    N171 -->|informing| N172
+    N172 -->|informing| N173
+    N173 -->|informing| N174
+    N174 -->|informing| N175
+    N175 -->|informing| N176
+    N176 -->|informing| N57
+    N57 -->|informing| N58
+    N58 -->|informing| N67
+    N67 -->|informing| N68
+    N68 -->|informing| N69
+    N69 -->|informing| N70
+    N70 -->|informing| N74
+    N74 -->|informing| N76
+    N76 -->|informing| N79
+    N79 -->|informing| N156
+    N156 -->|informing| N157
+    N157 -->|informing| N158
+    N158 -->|informing| N159
+    N159 -->|informing| N160
+    N160 -->|informing| N161
+    N161 -->|informing| N162
+    N162 -->|informing| N163
+    N163 -->|informing| N164
+    N164 -->|informing| N165
+    N165 -->|informing| N80
+    N80 -->|informing| N81
+    N81 -->|informing| N82
+    N82 -->|informing| N83
+    N83 -->|informing| N84
+    N84 -->|informing| N85
+    N85 -->|informing| N86
+    N86 -->|informing| N87
+    N87 -->|informing| N88
+    N88 -->|informing| N89
+    N89 -->|informing| N90
+    N90 -->|informing| N91
+    N91 -->|informing| N92
+    N92 -->|informing| N93
+    N93 -->|informing| N94
+    N94 -->|informing| N95
+    N95 -->|informing| N96
+    N96 -->|informing| N97
+    N97 -->|informing| N98
+    N98 -->|informing| N99
+    N99 -->|informing| N100
+    N100 -->|informing| N101
+    N101 -->|informing| N195
+    N195 -->|informing| N198
+    N198 -->|informing| N199
+    N199 -->|informing| N196
+    N196 -->|informing| N197
+    N197 -->|informing| N207
+    N207 -->|informing| N208
+    N155 -->|informing| N113
+    N112 -->|informing| N114
 
     classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
     classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000
@@ -528,7 +741,7 @@ flowchart TD
 
 ### 设计态全景图（仅 design_maturity=design 的 layer/node）
 
-> 仅展示蓝图规划中尚未实现的决策层/节点（共 7 层，0 边）。
+> 仅展示蓝图规划中尚未实现的决策层/节点（共 7 层，137 边）。
 
 ```mermaid
 flowchart TD
@@ -829,6 +1042,143 @@ flowchart TD
     LL2D -.->|triggering| LL3
     LL3 -.->|triggering| LL5
     LL5 -.->|triggering| LL6
+    N192 -->|informing| N193
+    N193 -->|informing| N194
+    N194 -->|informing| N190
+    N190 -->|informing| N191
+    N191 -->|informing| N202
+    N202 -->|informing| N200
+    N200 -->|informing| N201
+    N201 -->|informing| N209
+    N209 -->|informing| N210
+    N210 -->|informing| N203
+    N203 -->|informing| N204
+    N204 -->|informing| N205
+    N205 -->|informing| N206
+    N206 -->|informing| N211
+    N211 -->|informing| N212
+    N212 -->|informing| N213
+    N213 -->|informing| N214
+    N214 -->|informing| N1
+    N1 -->|informing| N2
+    N2 -->|informing| N3
+    N3 -->|informing| N4
+    N4 -->|informing| N5
+    N5 -->|informing| N6
+    N6 -->|informing| N7
+    N7 -->|informing| N8
+    N8 -->|informing| N9
+    N9 -->|informing| N10
+    N10 -->|informing| N11
+    N11 -->|informing| N12
+    N12 -->|informing| N13
+    N13 -->|informing| N14
+    N14 -->|informing| N15
+    N15 -->|informing| N16
+    N16 -->|informing| N17
+    N17 -->|informing| N18
+    N18 -->|informing| N19
+    N19 -->|informing| N177
+    N177 -->|informing| N178
+    N178 -->|informing| N179
+    N179 -->|informing| N180
+    N180 -->|informing| N181
+    N181 -->|informing| N182
+    N182 -->|informing| N183
+    N183 -->|informing| N184
+    N184 -->|informing| N185
+    N185 -->|informing| N186
+    N186 -->|informing| N187
+    N187 -->|informing| N188
+    N188 -->|informing| N189
+    N189 -->|informing| N141
+    N141 -->|informing| N142
+    N142 -->|informing| N143
+    N143 -->|informing| N144
+    N144 -->|informing| N145
+    N145 -->|informing| N146
+    N146 -->|informing| N147
+    N147 -->|informing| N148
+    N148 -->|informing| N149
+    N149 -->|informing| N150
+    N150 -->|informing| N151
+    N151 -->|informing| N152
+    N152 -->|informing| N153
+    N153 -->|informing| N154
+    N154 -->|informing| N155
+    N113 -->|informing| N115
+    N115 -->|informing| N116
+    N116 -->|informing| N117
+    N117 -->|informing| N118
+    N118 -->|informing| N119
+    N119 -->|informing| N120
+    N120 -->|informing| N121
+    N121 -->|informing| N133
+    N133 -->|informing| N135
+    N135 -->|informing| N136
+    N136 -->|informing| N59
+    N59 -->|informing| N60
+    N60 -->|informing| N61
+    N61 -->|informing| N62
+    N62 -->|informing| N63
+    N63 -->|informing| N64
+    N64 -->|informing| N65
+    N65 -->|informing| N66
+    N66 -->|informing| N71
+    N71 -->|informing| N72
+    N72 -->|informing| N73
+    N73 -->|informing| N75
+    N75 -->|informing| N77
+    N77 -->|informing| N78
+    N78 -->|informing| N32
+    N32 -->|informing| N33
+    N33 -->|informing| N34
+    N34 -->|informing| N35
+    N35 -->|informing| N36
+    N36 -->|informing| N37
+    N37 -->|informing| N20
+    N20 -->|informing| N21
+    N21 -->|informing| N22
+    N22 -->|informing| N23
+    N23 -->|informing| N24
+    N24 -->|informing| N25
+    N25 -->|informing| N26
+    N26 -->|informing| N27
+    N27 -->|informing| N28
+    N28 -->|informing| N29
+    N29 -->|informing| N30
+    N30 -->|informing| N31
+    N31 -->|informing| N38
+    N38 -->|informing| N39
+    N39 -->|informing| N40
+    N40 -->|informing| N41
+    N41 -->|informing| N42
+    N42 -->|informing| N43
+    N43 -->|informing| N44
+    N44 -->|informing| N45
+    N45 -->|informing| N46
+    N46 -->|informing| N47
+    N47 -->|informing| N48
+    N48 -->|informing| N49
+    N49 -->|informing| N50
+    N50 -->|informing| N51
+    N51 -->|informing| N52
+    N52 -->|informing| N53
+    N53 -->|informing| N54
+    N54 -->|informing| N55
+    N55 -->|informing| N56
+    N56 -->|informing| N102
+    N102 -->|informing| N103
+    N103 -->|informing| N104
+    N104 -->|informing| N105
+    N105 -->|informing| N106
+    N106 -->|informing| N107
+    N107 -->|informing| N108
+    N108 -->|informing| N109
+    N109 -->|informing| N110
+    N110 -->|informing| N111
+    N111 -->|informing| N112
+    N155 -->|informing| N113
 
     classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
     classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000
@@ -1144,3 +1494,221 @@ flowchart TD
 | 199 | L4 | compliance_check | Self-Protect 自保护 | decision/security/sec_008 | - | - | design | planned |
 | 207 | L4 | compliance_check | LLM Gateway 推理网关 LLM Gateway | decision/security/sec_010 | - | - | design | planned |
 | 208 | L4 | compliance_check | 推理熔断器 Inference Circuit Breaker | decision/security/sec_011 | - | - | design | planned |
+
+## Edge 清单（决策因果边）
+
+| edge_id | from | to | type | condition | track |
+|---------|-------|-----|------|-----------|-------|
+| 1 | 192 | 193 | informing | L2A层内顺序流 | - |
+| 2 | 193 | 194 | informing | L2A层内顺序流 | - |
+| 3 | 194 | 190 | informing | L2A层内顺序流 | - |
+| 4 | 190 | 191 | informing | L2A层内顺序流 | - |
+| 5 | 191 | 202 | informing | L2A层内顺序流 | - |
+| 6 | 202 | 200 | informing | L2A层内顺序流 | - |
+| 7 | 200 | 201 | informing | L2A层内顺序流 | - |
+| 8 | 201 | 209 | informing | L2A层内顺序流 | - |
+| 9 | 209 | 210 | informing | L2A层内顺序流 | - |
+| 10 | 210 | 203 | informing | L2A层内顺序流 | - |
+| 11 | 203 | 204 | informing | L2A层内顺序流 | - |
+| 12 | 204 | 205 | informing | L2A层内顺序流 | - |
+| 13 | 205 | 206 | informing | L2A层内顺序流 | - |
+| 14 | 206 | 211 | informing | L2A层内顺序流 | - |
+| 15 | 211 | 212 | informing | L2A层内顺序流 | - |
+| 16 | 212 | 213 | informing | L2A层内顺序流 | - |
+| 17 | 213 | 214 | informing | L2A层内顺序流 | - |
+| 18 | 214 | 1 | informing | L2A层内顺序流 | - |
+| 19 | 1 | 2 | informing | L2A层内顺序流 | - |
+| 20 | 2 | 3 | informing | L2A层内顺序流 | - |
+| 21 | 3 | 4 | informing | L2A层内顺序流 | - |
+| 22 | 4 | 5 | informing | L2A层内顺序流 | - |
+| 23 | 5 | 6 | informing | L2A层内顺序流 | - |
+| 24 | 6 | 7 | informing | L2A层内顺序流 | - |
+| 25 | 7 | 8 | informing | L2A层内顺序流 | - |
+| 26 | 8 | 9 | informing | L2A层内顺序流 | - |
+| 27 | 9 | 10 | informing | L2A层内顺序流 | - |
+| 28 | 10 | 11 | informing | L2A层内顺序流 | - |
+| 29 | 11 | 12 | informing | L2A层内顺序流 | - |
+| 30 | 12 | 13 | informing | L2A层内顺序流 | - |
+| 31 | 13 | 14 | informing | L2A层内顺序流 | - |
+| 32 | 14 | 15 | informing | L2A层内顺序流 | - |
+| 33 | 15 | 16 | informing | L2A层内顺序流 | - |
+| 34 | 16 | 17 | informing | L2A层内顺序流 | - |
+| 35 | 17 | 18 | informing | L2A层内顺序流 | - |
+| 36 | 18 | 19 | informing | L2A层内顺序流 | - |
+| 37 | 19 | 177 | informing | L2A层内顺序流 | - |
+| 38 | 177 | 178 | informing | L2A层内顺序流 | - |
+| 39 | 178 | 179 | informing | L2A层内顺序流 | - |
+| 40 | 179 | 180 | informing | L2A层内顺序流 | - |
+| 41 | 180 | 181 | informing | L2A层内顺序流 | - |
+| 42 | 181 | 182 | informing | L2A层内顺序流 | - |
+| 43 | 182 | 183 | informing | L2A层内顺序流 | - |
+| 44 | 183 | 184 | informing | L2A层内顺序流 | - |
+| 45 | 184 | 185 | informing | L2A层内顺序流 | - |
+| 46 | 185 | 186 | informing | L2A层内顺序流 | - |
+| 47 | 186 | 187 | informing | L2A层内顺序流 | - |
+| 48 | 187 | 188 | informing | L2A层内顺序流 | - |
+| 49 | 188 | 189 | informing | L2A层内顺序流 | - |
+| 50 | 189 | 141 | informing | L2A层内顺序流 | - |
+| 51 | 141 | 142 | informing | L2A层内顺序流 | - |
+| 52 | 142 | 143 | informing | L2A层内顺序流 | - |
+| 53 | 143 | 144 | informing | L2A层内顺序流 | - |
+| 54 | 144 | 145 | informing | L2A层内顺序流 | - |
+| 55 | 145 | 146 | informing | L2A层内顺序流 | - |
+| 56 | 146 | 147 | informing | L2A层内顺序流 | - |
+| 57 | 147 | 148 | informing | L2A层内顺序流 | - |
+| 58 | 148 | 149 | informing | L2A层内顺序流 | - |
+| 59 | 149 | 150 | informing | L2A层内顺序流 | - |
+| 60 | 150 | 151 | informing | L2A层内顺序流 | - |
+| 61 | 151 | 152 | informing | L2A层内顺序流 | - |
+| 62 | 152 | 153 | informing | L2A层内顺序流 | - |
+| 63 | 153 | 154 | informing | L2A层内顺序流 | - |
+| 64 | 154 | 155 | informing | L2A层内顺序流 | - |
+| 65 | 113 | 115 | informing | L3层内顺序流 | - |
+| 66 | 115 | 116 | informing | L3层内顺序流 | - |
+| 67 | 116 | 117 | informing | L3层内顺序流 | - |
+| 68 | 117 | 118 | informing | L3层内顺序流 | - |
+| 69 | 118 | 119 | informing | L3层内顺序流 | - |
+| 70 | 119 | 120 | informing | L3层内顺序流 | - |
+| 71 | 120 | 121 | informing | L3层内顺序流 | - |
+| 72 | 121 | 133 | informing | L3层内顺序流 | - |
+| 73 | 133 | 135 | informing | L3层内顺序流 | - |
+| 74 | 135 | 136 | informing | L3层内顺序流 | - |
+| 75 | 136 | 59 | informing | L3层内顺序流 | - |
+| 76 | 59 | 60 | informing | L3层内顺序流 | - |
+| 77 | 60 | 61 | informing | L3层内顺序流 | - |
+| 78 | 61 | 62 | informing | L3层内顺序流 | - |
+| 79 | 62 | 63 | informing | L3层内顺序流 | - |
+| 80 | 63 | 64 | informing | L3层内顺序流 | - |
+| 81 | 64 | 65 | informing | L3层内顺序流 | - |
+| 82 | 65 | 66 | informing | L3层内顺序流 | - |
+| 83 | 66 | 71 | informing | L3层内顺序流 | - |
+| 84 | 71 | 72 | informing | L3层内顺序流 | - |
+| 85 | 72 | 73 | informing | L3层内顺序流 | - |
+| 86 | 73 | 75 | informing | L3层内顺序流 | - |
+| 87 | 75 | 77 | informing | L3层内顺序流 | - |
+| 88 | 77 | 78 | informing | L3层内顺序流 | - |
+| 89 | 78 | 32 | informing | L3层内顺序流 | - |
+| 90 | 32 | 33 | informing | L3层内顺序流 | - |
+| 91 | 33 | 34 | informing | L3层内顺序流 | - |
+| 92 | 34 | 35 | informing | L3层内顺序流 | - |
+| 93 | 35 | 36 | informing | L3层内顺序流 | - |
+| 94 | 36 | 37 | informing | L3层内顺序流 | - |
+| 95 | 37 | 20 | informing | L3层内顺序流 | - |
+| 96 | 20 | 21 | informing | L3层内顺序流 | - |
+| 97 | 21 | 22 | informing | L3层内顺序流 | - |
+| 98 | 22 | 23 | informing | L3层内顺序流 | - |
+| 99 | 23 | 24 | informing | L3层内顺序流 | - |
+| 100 | 24 | 25 | informing | L3层内顺序流 | - |
+| 101 | 25 | 26 | informing | L3层内顺序流 | - |
+| 102 | 26 | 27 | informing | L3层内顺序流 | - |
+| 103 | 27 | 28 | informing | L3层内顺序流 | - |
+| 104 | 28 | 29 | informing | L3层内顺序流 | - |
+| 105 | 29 | 30 | informing | L3层内顺序流 | - |
+| 106 | 30 | 31 | informing | L3层内顺序流 | - |
+| 107 | 31 | 38 | informing | L3层内顺序流 | - |
+| 108 | 38 | 39 | informing | L3层内顺序流 | - |
+| 109 | 39 | 40 | informing | L3层内顺序流 | - |
+| 110 | 40 | 41 | informing | L3层内顺序流 | - |
+| 111 | 41 | 42 | informing | L3层内顺序流 | - |
+| 112 | 42 | 43 | informing | L3层内顺序流 | - |
+| 113 | 43 | 44 | informing | L3层内顺序流 | - |
+| 114 | 44 | 45 | informing | L3层内顺序流 | - |
+| 115 | 45 | 46 | informing | L3层内顺序流 | - |
+| 116 | 46 | 47 | informing | L3层内顺序流 | - |
+| 117 | 47 | 48 | informing | L3层内顺序流 | - |
+| 118 | 48 | 49 | informing | L3层内顺序流 | - |
+| 119 | 49 | 50 | informing | L3层内顺序流 | - |
+| 120 | 50 | 51 | informing | L3层内顺序流 | - |
+| 121 | 51 | 52 | informing | L3层内顺序流 | - |
+| 122 | 52 | 53 | informing | L3层内顺序流 | - |
+| 123 | 53 | 54 | informing | L3层内顺序流 | - |
+| 124 | 54 | 55 | informing | L3层内顺序流 | - |
+| 125 | 55 | 56 | informing | L3层内顺序流 | - |
+| 126 | 56 | 102 | informing | L3层内顺序流 | - |
+| 127 | 102 | 103 | informing | L3层内顺序流 | - |
+| 128 | 103 | 104 | informing | L3层内顺序流 | - |
+| 129 | 104 | 105 | informing | L3层内顺序流 | - |
+| 130 | 105 | 106 | informing | L3层内顺序流 | - |
+| 131 | 106 | 107 | informing | L3层内顺序流 | - |
+| 132 | 107 | 108 | informing | L3层内顺序流 | - |
+| 133 | 108 | 109 | informing | L3层内顺序流 | - |
+| 134 | 109 | 110 | informing | L3层内顺序流 | - |
+| 135 | 110 | 111 | informing | L3层内顺序流 | - |
+| 136 | 111 | 112 | informing | L3层内顺序流 | - |
+| 137 | 114 | 122 | informing | L4层内顺序流 | - |
+| 138 | 122 | 134 | informing | L4层内顺序流 | - |
+| 139 | 134 | 123 | informing | L4层内顺序流 | - |
+| 140 | 123 | 124 | informing | L4层内顺序流 | - |
+| 141 | 124 | 125 | informing | L4层内顺序流 | - |
+| 142 | 125 | 126 | informing | L4层内顺序流 | - |
+| 143 | 126 | 127 | informing | L4层内顺序流 | - |
+| 144 | 127 | 128 | informing | L4层内顺序流 | - |
+| 145 | 128 | 129 | informing | L4层内顺序流 | - |
+| 146 | 129 | 130 | informing | L4层内顺序流 | - |
+| 147 | 130 | 131 | informing | L4层内顺序流 | - |
+| 148 | 131 | 132 | informing | L4层内顺序流 | - |
+| 149 | 132 | 137 | informing | L4层内顺序流 | - |
+| 150 | 137 | 138 | informing | L4层内顺序流 | - |
+| 151 | 138 | 139 | informing | L4层内顺序流 | - |
+| 152 | 139 | 140 | informing | L4层内顺序流 | - |
+| 153 | 140 | 166 | informing | L4层内顺序流 | - |
+| 154 | 166 | 167 | informing | L4层内顺序流 | - |
+| 155 | 167 | 168 | informing | L4层内顺序流 | - |
+| 156 | 168 | 169 | informing | L4层内顺序流 | - |
+| 157 | 169 | 170 | informing | L4层内顺序流 | - |
+| 158 | 170 | 171 | informing | L4层内顺序流 | - |
+| 159 | 171 | 172 | informing | L4层内顺序流 | - |
+| 160 | 172 | 173 | informing | L4层内顺序流 | - |
+| 161 | 173 | 174 | informing | L4层内顺序流 | - |
+| 162 | 174 | 175 | informing | L4层内顺序流 | - |
+| 163 | 175 | 176 | informing | L4层内顺序流 | - |
+| 164 | 176 | 57 | informing | L4层内顺序流 | - |
+| 165 | 57 | 58 | informing | L4层内顺序流 | - |
+| 166 | 58 | 67 | informing | L4层内顺序流 | - |
+| 167 | 67 | 68 | informing | L4层内顺序流 | - |
+| 168 | 68 | 69 | informing | L4层内顺序流 | - |
+| 169 | 69 | 70 | informing | L4层内顺序流 | - |
+| 170 | 70 | 74 | informing | L4层内顺序流 | - |
+| 171 | 74 | 76 | informing | L4层内顺序流 | - |
+| 172 | 76 | 79 | informing | L4层内顺序流 | - |
+| 173 | 79 | 156 | informing | L4层内顺序流 | - |
+| 174 | 156 | 157 | informing | L4层内顺序流 | - |
+| 175 | 157 | 158 | informing | L4层内顺序流 | - |
+| 176 | 158 | 159 | informing | L4层内顺序流 | - |
+| 177 | 159 | 160 | informing | L4层内顺序流 | - |
+| 178 | 160 | 161 | informing | L4层内顺序流 | - |
+| 179 | 161 | 162 | informing | L4层内顺序流 | - |
+| 180 | 162 | 163 | informing | L4层内顺序流 | - |
+| 181 | 163 | 164 | informing | L4层内顺序流 | - |
+| 182 | 164 | 165 | informing | L4层内顺序流 | - |
+| 183 | 165 | 80 | informing | L4层内顺序流 | - |
+| 184 | 80 | 81 | informing | L4层内顺序流 | - |
+| 185 | 81 | 82 | informing | L4层内顺序流 | - |
+| 186 | 82 | 83 | informing | L4层内顺序流 | - |
+| 187 | 83 | 84 | informing | L4层内顺序流 | - |
+| 188 | 84 | 85 | informing | L4层内顺序流 | - |
+| 189 | 85 | 86 | informing | L4层内顺序流 | - |
+| 190 | 86 | 87 | informing | L4层内顺序流 | - |
+| 191 | 87 | 88 | informing | L4层内顺序流 | - |
+| 192 | 88 | 89 | informing | L4层内顺序流 | - |
+| 193 | 89 | 90 | informing | L4层内顺序流 | - |
+| 194 | 90 | 91 | informing | L4层内顺序流 | - |
+| 195 | 91 | 92 | informing | L4层内顺序流 | - |
+| 196 | 92 | 93 | informing | L4层内顺序流 | - |
+| 197 | 93 | 94 | informing | L4层内顺序流 | - |
+| 198 | 94 | 95 | informing | L4层内顺序流 | - |
+| 199 | 95 | 96 | informing | L4层内顺序流 | - |
+| 200 | 96 | 97 | informing | L4层内顺序流 | - |
+| 201 | 97 | 98 | informing | L4层内顺序流 | - |
+| 202 | 98 | 99 | informing | L4层内顺序流 | - |
+| 203 | 99 | 100 | informing | L4层内顺序流 | - |
+| 204 | 100 | 101 | informing | L4层内顺序流 | - |
+| 205 | 101 | 195 | informing | L4层内顺序流 | - |
+| 206 | 195 | 198 | informing | L4层内顺序流 | - |
+| 207 | 198 | 199 | informing | L4层内顺序流 | - |
+| 208 | 199 | 196 | informing | L4层内顺序流 | - |
+| 209 | 196 | 197 | informing | L4层内顺序流 | - |
+| 210 | 197 | 207 | informing | L4层内顺序流 | - |
+| 211 | 207 | 208 | informing | L4层内顺序流 | - |
+| 212 | 155 | 113 | informing | L2A→L3 层间流 | - |
+| 213 | 112 | 114 | informing | L3→L4 层间流 | - |

@@ -2,25 +2,25 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-07-06 18:27:27
+> 自动生成时间: 2026-07-07 04:15:53
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
-> 跨域依赖对数: 178
+> 跨域依赖对数: 167
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-07-06 18:27:27
+%% 生成时间: 2026-07-07 04:15:53
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
-%% 跨域依赖对数: 178
+%% 跨域依赖对数: 167
 
 graph LR
 
     %% 功能域节点（按架构层分组）
     subgraph L0_infrastructure[L0_infrastructure]
-        D_INFRA_A2A["D_INFRA_A2A<br/>a2a_communication<br/>(92模块)"]
+        D_INFRA_A2A["D_INFRA_A2A<br/>a2a_communication<br/>(89模块)"]
         D_INFRA_OPS["D_INFRA_OPS<br/>asset-inventory<br/>(1模块)"]
         D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>rollback_recovery<br/>(54模块)"]
-        D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>runtime_core<br/>(149模块)"]
+        D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>runtime_core<br/>(148模块)"]
         D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>observability_profiling<br/>(25模块)"]
     end
     subgraph L1_foundation[L1_foundation]
@@ -37,11 +37,11 @@ graph LR
         D_REPORTING["D_REPORTING<br/>报告<br/>(10模块)"]
         D_SECURITY["D_SECURITY<br/>orphan_judge<br/>(147模块)"]
         D_SECURITY_LLM["D_SECURITY_LLM<br/>llm_defense<br/>(44模块)"]
-        D_SHARED["D_SHARED<br/>shared_services<br/>(228模块)"]
+        D_SHARED["D_SHARED<br/>shared_services<br/>(232模块)"]
     end
     subgraph L2_domain[L2_domain]
         D_ASHARE_SIGNAL["D_ASHARE_SIGNAL<br/>ashare_signal<br/>(7模块)"]
-        D_AUDITTEST["D_AUDITTEST<br/>audit_test_suite<br/>(1720模块)"]
+        D_AUDITTEST["D_AUDITTEST<br/>audit_test_suite<br/>(1722模块)"]
         D_AUTONOMY_PERM["D_AUTONOMY_PERM<br/>budget_enforcement<br/>(14模块)"]
         D_BACKTEST["D_BACKTEST<br/>回测<br/>(33模块)"]
         D_CROSS_ASSET["D_CROSS_ASSET<br/>跨资产<br/>(8模块)"]
@@ -51,12 +51,14 @@ graph LR
         D_EX_SOR["D_EX_SOR<br/>执行路由<br/>(7模块)"]
         D_FACTOR["D_FACTOR<br/>因子<br/>(14模块)"]
         D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>fundamental_signal<br/>(25模块)"]
-        D_GOVERNANCE["D_GOVERNANCE<br/>registry_management<br/>(851模块)"]
+        D_GOVERNANCE["D_GOVERNANCE<br/>registry_management<br/>(848模块)"]
         D_GOV_AUDIT["D_GOV_AUDIT<br/>audit_orchestration<br/>(2模块)"]
         D_GOV_DOCS["D_GOV_DOCS<br/>architecture_docs<br/>(2模块)"]
         D_GOV_DRIFT["D_GOV_DRIFT<br/>drift_detection<br/>(1模块)"]
         D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>rule_enforcement<br/>(201模块)"]
-        D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>script_governance<br/>(434模块)"]
+        D_GOV_REPAIR["D_GOV_REPAIR<br/>rollback<br/>(0模块)"]
+        D_GOV_RULE["D_GOV_RULE<br/>rule_governance<br/>(0模块)"]
+        D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>script_governance<br/>(436模块)"]
         D_INTELLIGENCE["D_INTELLIGENCE<br/>context_management<br/>(43模块)"]
         D_KNOWLEDGE["D_KNOWLEDGE<br/>vector_storage<br/>(9模块)"]
         D_ML_SERVE["D_ML_SERVE<br/>推理<br/>(7模块)"]
@@ -70,129 +72,125 @@ graph LR
         D_SIMULATION["D_SIMULATION<br/>仿真<br/>(11模块)"]
         D_TRADING["D_TRADING<br/>交易运营<br/>(481模块)"]
     end
-    subgraph unknown[unknown]
-        D_GOV_REPAIR["D_GOV_REPAIR<br/>rollback<br/>(0模块)"]
-        D_GOV_RULE["D_GOV_RULE<br/>rule_governance<br/>(0模块)"]
-    end
 
     %% 跨域依赖（按依赖数排序，最多显示 100 条）
-    D_AUDITTEST -->|638条 test_depends| D_TRADING
-    D_AUDITTEST -->|519条 contract| D_GOVERNANCE
-    D_AUDITTEST -->|222条 runtime| D_GOV_ENFORCEMENT
+    D_AUDITTEST -->|639条 test_depends| D_TRADING
+    D_AUDITTEST -->|514条 test_depends| D_GOVERNANCE
+    D_AUDITTEST -->|221条 test_depends| D_GOV_ENFORCEMENT
     D_AUDITTEST -->|168条 test_depends| D_SECURITY
-    D_AUDITTEST -->|161条 test_depends| D_SHARED
-    D_GOVERNANCE -->|138条 import_depends| D_SHARED
-    D_AUDITTEST -->|127条 runtime| D_INFRA_RUNTIME
+    D_AUDITTEST -->|163条 test_depends| D_SHARED
+    D_GOVERNANCE -->|141条 data| D_SHARED
     D_AUDITTEST -->|127条 test_depends| D_AUTONOMY_CORE
-    D_TRADING -->|87条 import_depends| D_SHARED
-    D_INFRA_RUNTIME -->|76条 import_depends| D_SHARED
+    D_AUDITTEST -->|126条 test_depends| D_INFRA_RUNTIME
+    D_TRADING -->|88条 import_depends| D_SHARED
+    D_INFRA_RUNTIME -->|80条 import_depends| D_SHARED
     D_AUDITTEST -->|63条 test_depends| D_INTEGRATION
-    D_GOVERNANCE -->|57条 import_depends| D_TRADING
     D_AUDITTEST -->|52条 test_depends| D_INFRA_RECOVERY
-    D_AUDITTEST -->|41条 runtime| D_SECURITY_LLM
-    D_GOV_SCRIPTS -->|40条 import_depends| D_SHARED
-    D_GOV_ENFORCEMENT -->|38条 contract| D_GOVERNANCE
+    D_GOVERNANCE -->|51条 import_depends| D_TRADING
+    D_GOV_SCRIPTS -->|42条 import_depends| D_SHARED
+    D_AUDITTEST -->|40条 test_depends| D_SECURITY_LLM
     D_INTEGRATION -->|37条 import_depends| D_SHARED
-    D_AUDITTEST -->|36条 test_depends| D_INFRA_A2A
+    D_AUDITTEST -->|35条 test_depends| D_INFRA_A2A
+    D_GOV_ENFORCEMENT -->|35条 import_depends| D_GOVERNANCE
     D_AUDITTEST -->|31条 test_depends| D_INTELLIGENCE
     D_GOV_SCRIPTS -->|31条 import_depends| D_GOVERNANCE
-    D_TRADING -->|26条 import_depends| D_GOVERNANCE
     D_TRADING -->|26条 import_depends| D_INTEGRATION
-    D_GOVERNANCE -->|22条 contract| D_GOV_ENFORCEMENT
+    D_TRADING -->|26条 import_depends| D_GOVERNANCE
     D_GOVERNANCE -->|20条 import_depends| D_INTEGRATION
-    D_INFRA_A2A -->|19条 import_depends| D_SHARED
-    D_INTEGRATION_GATEWAY -->|19条 import_depends| D_SHARED
     D_GOV_ENFORCEMENT -->|19条 import_depends| D_SHARED
+    D_INTEGRATION_GATEWAY -->|19条 import_depends| D_SHARED
     D_INFRA_RUNTIME -->|18条 import_depends| D_GOVERNANCE
-    D_GOVERNANCE -->|17条 config_depends| D_INFRA_RUNTIME
+    D_INFRA_RECOVERY -->|17条 import_depends| D_SHARED
+    D_GOVERNANCE -->|17条 import_depends| D_GOV_ENFORCEMENT
     D_SECURITY_LLM -->|17条 import_depends| D_SHARED
     D_GOVERNANCE -->|17条 import_depends| D_INTELLIGENCE
+    D_INFRA_A2A -->|16条 import_depends| D_SHARED
     D_TRADING -->|16条 import_depends| D_INFRA_RUNTIME
-    D_FUNDAMENTAL_SIGNAL -->|14条 import_depends| D_TRADING
-    D_AUTONOMY_CORE -->|14条 contract| D_GOVERNANCE
     D_INTELLIGENCE -->|14条 import_depends| D_SHARED
+    D_FUNDAMENTAL_SIGNAL -->|14条 import_depends| D_TRADING
     D_INTEGRATION_GATEWAY -->|13条 import_depends| D_GOVERNANCE
+    D_AUDITTEST -->|13条 test_depends| D_BACKTEST
     D_AUTONOMY_PERM -->|12条 import_depends| D_SECURITY
-    D_INTEGRATION -->|11条 import_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE -->|12条 config_depends| D_INFRA_RUNTIME
     D_EX_CORE -->|11条 import_depends| D_GOVERNANCE
-    D_INFRA_RECOVERY -->|11条 import_depends| D_SHARED
-    D_GOVERNANCE -->|11条 import_depends| D_BACKTEST
+    D_INTEGRATION -->|11条 import_depends| D_INFRA_RUNTIME
     D_AUTONOMY_CORE -->|10条 import_depends| D_SHARED
-    D_GOVERNANCE -->|10条 import_depends| D_SECURITY
+    D_INFRA_TELEMETRY -->|9条 import_depends| D_SHARED
     D_INTEGRATION -->|9条 import_depends| D_GOVERNANCE
+    D_GOVERNANCE -->|8条 import_depends| D_SECURITY
     D_INFRA_RECOVERY -->|8条 import_depends| D_GOVERNANCE
-    D_INFRA_TELEMETRY -->|8条 import_depends| D_SHARED
-    D_GOVERNANCE -->|8条 contract| D_AUDITTEST
-    D_AUDITTEST -->|8条 test_depends| D_FRONTEND
     D_GOV_SCRIPTS -->|8条 import_depends| D_GOV_ENFORCEMENT
+    D_AUDITTEST -->|8条 test_depends| D_FRONTEND
     D_AUTONOMY_CORE -->|7条 import_depends| D_INFRA_RUNTIME
-    D_FRONTEND -->|7条 import_depends| D_GOVERNANCE
-    D_SECURITY -->|7条 import_depends| D_SHARED
     D_INFRA_RUNTIME -->|7条 import_depends| D_INTEGRATION
-    D_GOVERNANCE -->|7条 contract| D_SECURITY_LLM
-    D_GOV_ENFORCEMENT -->|6条 import_depends| D_INTEGRATION
-    D_SECURITY -->|6条 import_depends| D_GOVERNANCE
+    D_SECURITY -->|7条 import_depends| D_SHARED
+    D_FRONTEND -->|7条 import_depends| D_GOVERNANCE
+    D_GOV_SCRIPTS -->|6条 import_depends| D_INFRA_RUNTIME
+    D_AUDITTEST -->|6条 test_depends| D_RISK
+    D_AUTONOMY_CORE -->|6条 import_depends| D_INTEGRATION
     D_EX_CORE -->|6条 import_depends| D_TRADING
+    D_GOV_ENFORCEMENT -->|6条 import_depends| D_INTEGRATION
+    D_REPORTING -->|6条 import_depends| D_TRADING
+    D_SECURITY -->|6条 import_depends| D_GOVERNANCE
     D_SECURITY -->|6条 import_depends| D_GOV_ENFORCEMENT
     D_TRADING -->|6条 import_depends| D_SECURITY
-    D_AUDITTEST -->|6条 test_depends| D_RISK
-    D_GOV_SCRIPTS -->|6条 import_depends| D_INFRA_RUNTIME
-    D_REPORTING -->|6条 import_depends| D_TRADING
-    D_AUTONOMY_CORE -->|6条 import_depends| D_INTEGRATION
-    D_PF_CORE -->|5条 import_depends| D_GOVERNANCE
     D_TRADING -->|5条 import_depends| D_GOV_ENFORCEMENT
-    D_TRADING -->|5条 import_depends| D_INTELLIGENCE
-    D_GOV_DRIFT -->|5条 runtime| D_GOVERNANCE
     D_GOVERNANCE -->|5条 import_depends| D_FRONTEND
-    D_AUDITTEST -->|4条 test_depends| D_OPS
+    D_TRADING -->|5条 import_depends| D_INTELLIGENCE
+    D_PF_CORE -->|5条 import_depends| D_GOVERNANCE
+    D_GOVERNANCE -->|5条 import_depends| D_SECURITY_LLM
+    D_AUDITTEST -->|4条 test_depends| D_EX_CORE
     D_INTELLIGENCE -->|4条 import_depends| D_GOVERNANCE
-    D_TRADING -->|4条 import_depends| D_AUTONOMY_CORE
     D_INTELLIGENCE -->|4条 import_depends| D_ML_TRAIN
+    D_AUTONOMY_CORE -->|4条 import_depends| D_GOVERNANCE
+    D_AUDITTEST -->|4条 test_depends| D_OPS
     D_INTEGRATION_GATEWAY -->|4条 import_depends| D_INTEGRATION
     D_TRADING -->|4条 import_depends| D_SECURITY_LLM
-    D_AUDITTEST -->|4条 test_depends| D_EX_CORE
+    D_TRADING -->|4条 import_depends| D_AUTONOMY_CORE
     D_GOV_ENFORCEMENT -->|3条 import_depends| D_SECURITY
-    D_BACKTEST -->|3条 import_depends| D_GOVERNANCE
-    D_GOVERNANCE -->|3条 contract| D_AUTONOMY_CORE
-    D_GOVERNANCE -->|3条 contract| D_GOV_DRIFT
-    D_GOVERNANCE -->|3条 import_depends| D_INFRA_RECOVERY
-    D_GOVERNANCE -->|3条 contract| D_INTEGRATION_GATEWAY
     D_GOVERNANCE -->|3条 import_depends| D_REPORTING
-    D_GOVERNANCE -->|3条 import_depends| D_RISK
-    D_GOV_ENFORCEMENT -->|3条 import_depends| D_INFRA_RECOVERY
-    D_GOV_SCRIPTS -->|3条 import_depends| D_INTEGRATION
-    D_INTEGRATION -->|3条 import_depends| D_INTELLIGENCE
+    D_SHARED -->|3条 import_depends| D_INFRA_RUNTIME
     D_INTELLIGENCE -->|3条 import_depends| D_BACKTEST
-    D_ML_TRAIN -->|3条 import_depends| D_SHARED
+    D_GOV_ENFORCEMENT -->|3条 import_depends| D_INFRA_RECOVERY
+    D_GOV_DRIFT -->|3条 runtime| D_GOVERNANCE
+    D_TRADING -->|3条 import_depends| D_OPS
     D_RISK -->|3条 import_depends| D_SHARED
     D_RISK -->|3条 import_depends| D_TRADING
+    D_BACKTEST -->|3条 import_depends| D_GOVERNANCE
+    D_TRADING -->|3条 import_depends| D_INFRA_TELEMETRY
+    D_ML_TRAIN -->|3条 import_depends| D_SHARED
+    D_GOVERNANCE -->|3条 import_depends| D_INFRA_RECOVERY
+    D_GOVERNANCE -->|3条 contract| D_GOV_DRIFT
+    D_INTEGRATION -->|3条 import_depends| D_INTELLIGENCE
     D_SECURITY -->|3条 import_depends| D_TRADING
-    D_SHARED -->|3条 import_depends| D_INFRA_RUNTIME
-    D_TRADING -->|3条 import_depends| D_OPS
-    D_GOVERNANCE -->|2条 import_depends| D_INFRA_A2A
-    D_GOV_SCRIPTS -->|2条 import_depends| D_TRADING
-    D_INFRA_A2A -->|2条 import_depends| D_GOVERNANCE
-    D_GOVERNANCE -->|2条 import_depends| D_FACTOR
+    D_GOVERNANCE -->|3条 import_depends| D_RISK
+    D_GOV_SCRIPTS -->|3条 import_depends| D_INTEGRATION
+    D_GOV_SCRIPTS -->|2条 import_depends| D_AUTONOMY_CORE
+    D_AUDITTEST -->|2条 test_depends| D_POSITION
+    D_EX_CORE -->|2条 import_depends| D_SHARED
+    D_EX_CORE -->|2条 import_depends| D_BACKTEST
+    D_BACKTEST -->|2条 import_depends| D_SHARED
+    D_ML_TRAIN -->|2条 import_depends| D_TRADING
     D_FUNDAMENTAL_SIGNAL -->|2条 import_depends| D_SHARED
-    D_FUNDAMENTAL_SIGNAL -->|2条 contract| D_FACTOR
     D_INFRA_RUNTIME -->|2条 import_depends| D_INFRA_TELEMETRY
-    %% ... 还有 78 条跨域依赖未显示
+    D_SECURITY -->|2条 import_depends| D_INTEGRATION
+    %% ... 还有 67 条跨域依赖未显示
 
     %% 统计
     %% 域总数: 50
-    %% 跨域依赖对数: 178
-    %% 跨域依赖边总数: 3419
+    %% 跨域依赖对数: 167
+    %% 跨域依赖边总数: 3370
 
     %% Top 10 依赖对
-    %% 1. D_AUDITTEST -> D_TRADING: 638 条
-    %% 2. D_AUDITTEST -> D_GOVERNANCE: 519 条
-    %% 3. D_AUDITTEST -> D_GOV_ENFORCEMENT: 222 条
+    %% 1. D_AUDITTEST -> D_TRADING: 639 条
+    %% 2. D_AUDITTEST -> D_GOVERNANCE: 514 条
+    %% 3. D_AUDITTEST -> D_GOV_ENFORCEMENT: 221 条
     %% 4. D_AUDITTEST -> D_SECURITY: 168 条
-    %% 5. D_AUDITTEST -> D_SHARED: 161 条
-    %% 6. D_GOVERNANCE -> D_SHARED: 138 条
-    %% 7. D_AUDITTEST -> D_INFRA_RUNTIME: 127 条
-    %% 8. D_AUDITTEST -> D_AUTONOMY_CORE: 127 条
-    %% 9. D_TRADING -> D_SHARED: 87 条
-    %% 10. D_INFRA_RUNTIME -> D_SHARED: 76 条
+    %% 5. D_AUDITTEST -> D_SHARED: 163 条
+    %% 6. D_GOVERNANCE -> D_SHARED: 141 条
+    %% 7. D_AUDITTEST -> D_AUTONOMY_CORE: 127 条
+    %% 8. D_AUDITTEST -> D_INFRA_RUNTIME: 126 条
+    %% 9. D_TRADING -> D_SHARED: 88 条
+    %% 10. D_INFRA_RUNTIME -> D_SHARED: 80 条
 
 ```

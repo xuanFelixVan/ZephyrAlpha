@@ -20,17 +20,17 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 1587 | 31.7% |
-| design（设计态） | 53 | 1.1% |
-| prototype（原型态） | 3361 | 67.2% |
+| production（生产态） | 1593 | 31.8% |
+| design（设计态） | 54 | 1.1% |
+| prototype（原型态） | 3355 | 67.1% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **5001** | **100%** |
+| **总计** | **5002** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4947 | 98.9% |
+| generated | 4948 | 98.9% |
 | planned | 36 | 0.7% |
 | stable | 18 | 0.4% |
 
@@ -40,10 +40,10 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D_ASHARE_SIGNAL | ashare_signal | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_AUDITTEST | audit_test_suite | 1720 | 49 | 0 | 1671 | 0 | 2.8% |
+| D_AUDITTEST | audit_test_suite | 1722 | 49 | 0 | 1673 | 0 | 2.8% |
 | D_AUTONOMY_CORE | agent_lifecycle | 114 | 111 | 0 | 3 | 0 | 97.4% |
 | D_AUTONOMY_PERM | budget_enforcement | 14 | 0 | 0 | 14 | 0 | 0.0% |
-| D_BACKTEST | 回测 | 33 | 3 | 8 | 22 | 0 | 9.1% |
+| D_BACKTEST | 回测 | 33 | 9 | 8 | 16 | 0 | 27.3% |
 | D_CROSS_ASSET | 跨资产 | 8 | 1 | 1 | 6 | 0 | 12.5% |
 | D_DATA_ENG | 数据工程 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D_DATA_GOV | 数据治理 | 7 | 0 | 0 | 7 | 0 | 0.0% |
@@ -55,18 +55,18 @@ ttl: permanent
 | D_FACTOR | 因子 | 14 | 4 | 0 | 10 | 0 | 28.6% |
 | D_FRONTEND | 前端 | 30 | 13 | 6 | 11 | 0 | 43.3% |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | 25 | 4 | 0 | 21 | 0 | 16.0% |
-| D_GOVERNANCE | registry_management | 851 | 479 | 27 | 345 | 0 | 56.3% |
+| D_GOVERNANCE | registry_management | 848 | 480 | 27 | 341 | 0 | 56.6% |
 | D_GOV_AUDIT | audit_orchestration | 2 | 0 | 2 | 0 | 0 | 0.0% |
 | D_GOV_DOCS | architecture_docs | 2 | 2 | 0 | 0 | 0 | 100.0% |
 | D_GOV_DRIFT | drift_detection | 1 | 0 | 1 | 0 | 0 | 0.0% |
 | D_GOV_ENFORCEMENT | rule_enforcement | 201 | 133 | 0 | 68 | 0 | 66.2% |
 | D_GOV_REPAIR | rollback | 0 | 0 | 0 | 0 | 0 | N/A |
 | D_GOV_RULE | rule_governance | 0 | 0 | 0 | 0 | 0 | N/A |
-| D_GOV_SCRIPTS | script_governance | 434 | 32 | 0 | 402 | 0 | 7.4% |
-| D_INFRA_A2A | a2a_communication | 92 | 33 | 0 | 59 | 0 | 35.9% |
+| D_GOV_SCRIPTS | script_governance | 436 | 32 | 0 | 404 | 0 | 7.3% |
+| D_INFRA_A2A | a2a_communication | 89 | 32 | 0 | 57 | 0 | 36.0% |
 | D_INFRA_OPS | asset-inventory | 1 | 0 | 1 | 0 | 0 | 0.0% |
 | D_INFRA_RECOVERY | rollback_recovery | 54 | 48 | 0 | 6 | 0 | 88.9% |
-| D_INFRA_RUNTIME | runtime_core | 149 | 98 | 0 | 51 | 0 | 65.8% |
+| D_INFRA_RUNTIME | runtime_core | 148 | 98 | 0 | 50 | 0 | 66.2% |
 | D_INFRA_TELEMETRY | observability_profiling | 25 | 13 | 0 | 12 | 0 | 52.0% |
 | D_INTEGRATION | pipeline_routing | 72 | 30 | 0 | 42 | 0 | 41.7% |
 | D_INTEGRATION_GATEWAY | mcp_servers | 20 | 1 | 0 | 19 | 0 | 5.0% |
@@ -84,7 +84,7 @@ ttl: permanent
 | D_SECURITY | orphan_judge | 147 | 80 | 0 | 67 | 0 | 54.4% |
 | D_SECURITY_LLM | llm_defense | 44 | 33 | 0 | 11 | 0 | 75.0% |
 | D_SELL_DECISION | 卖出决策 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_SHARED | shared_services | 228 | 94 | 0 | 134 | 0 | 41.2% |
+| D_SHARED | shared_services | 232 | 94 | 1 | 137 | 0 | 40.5% |
 | D_SIGQC | signal_quality | 8 | 0 | 0 | 8 | 0 | 0.0% |
 | D_SIMULATION | 仿真 | 11 | 2 | 1 | 8 | 0 | 18.2% |
 | D_TRADING | 交易运营 | 481 | 280 | 0 | 201 | 0 | 58.2% |

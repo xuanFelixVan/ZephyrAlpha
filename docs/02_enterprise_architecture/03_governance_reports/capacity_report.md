@@ -29,7 +29,7 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | registry_management | 479 | 150 | +329 |
+| D_GOVERNANCE | registry_management | 480 | 150 | +330 |
 | D_TRADING | 交易运营 | 280 | 150 | +130 |
 
 ## 接近超容域清单（>80%，需关注）
@@ -53,8 +53,8 @@ ttl: permanent
 | D_EX_SOR | 执行路由 | L2_domain | 150 |
 | D_GOV_AUDIT | audit_orchestration | L2_domain | 150 |
 | D_GOV_DRIFT | drift_detection | L2_domain | 150 |
-| D_GOV_REPAIR | rollback |  | 150 |
-| D_GOV_RULE | rule_governance |  | 150 |
+| D_GOV_REPAIR | rollback | L2_domain | 150 |
+| D_GOV_RULE | rule_governance | L2_domain | 150 |
 | D_INFRA_OPS | asset-inventory | L0_infrastructure | 150 |
 | D_KNOWLEDGE | vector_storage | L2_domain | 150 |
 | D_MKT_DATA | 行情数据 | L1_foundation | 150 |
@@ -73,7 +73,7 @@ ttl: permanent
 | D_AUDITTEST | audit_test_suite | L2_domain | 49 | 150 | 32.7% | 正常 |
 | D_AUTONOMY_CORE | agent_lifecycle | L1_foundation | 111 | 150 | 74.0% | 正常 |
 | D_AUTONOMY_PERM | budget_enforcement | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_BACKTEST | 回测 | L2_domain | 3 | 150 | 2.0% | 正常 |
+| D_BACKTEST | 回测 | L2_domain | 9 | 150 | 6.0% | 正常 |
 | D_CROSS_ASSET | 跨资产 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_DATA_ENG | 数据工程 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_DATA_GOV | 数据治理 | L1_foundation | 0 | 150 | 0.0% | 空 |
@@ -85,15 +85,15 @@ ttl: permanent
 | D_FACTOR | 因子 | L2_domain | 4 | 150 | 2.7% | 正常 |
 | D_FRONTEND | 前端 | L1_foundation | 13 | 150 | 8.7% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | L2_domain | 4 | 150 | 2.7% | 正常 |
-| D_GOVERNANCE | registry_management | L2_domain | 479 | 150 | 319.3% | 超容 |
+| D_GOVERNANCE | registry_management | L2_domain | 480 | 150 | 320.0% | 超容 |
 | D_GOV_AUDIT | audit_orchestration | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_GOV_DOCS | architecture_docs | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | drift_detection | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_GOV_ENFORCEMENT | rule_enforcement | L2_domain | 133 | 150 | 88.7% | 接近超容 |
-| D_GOV_REPAIR | rollback |  | 0 | 150 | 0.0% | 空 |
-| D_GOV_RULE | rule_governance |  | 0 | 150 | 0.0% | 空 |
+| D_GOV_REPAIR | rollback | L2_domain | 0 | 150 | 0.0% | 空 |
+| D_GOV_RULE | rule_governance | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_GOV_SCRIPTS | script_governance | L2_domain | 32 | 150 | 21.3% | 正常 |
-| D_INFRA_A2A | a2a_communication | L0_infrastructure | 33 | 150 | 22.0% | 正常 |
+| D_INFRA_A2A | a2a_communication | L0_infrastructure | 32 | 150 | 21.3% | 正常 |
 | D_INFRA_OPS | asset-inventory | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 48 | 150 | 32.0% | 正常 |
 | D_INFRA_RUNTIME | runtime_core | L0_infrastructure | 98 | 150 | 65.3% | 正常 |

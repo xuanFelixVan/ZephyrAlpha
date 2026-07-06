@@ -4,7 +4,7 @@
 >
 > **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph (PostgreSQL)），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。
 >
-> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：2026-07-06 18:27:34
+> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：2026-07-07 04:16:03
 
 ---
 
@@ -13,7 +13,7 @@
 | 文件夹 | 是什么 | 谁维护 | 什么时候变 |
 |--------|--------|--------|-----------|
 | `00_overview_entry/` | 你现在看的这个文件，整个文档库的导航地图 | 自动生成 | 全景图更新时 |
-| `01_global_architecture_diagram/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 5 个文件 | 自动生成 | 全景图更新时 |
+| `01_global_architecture_diagram/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 7 个文件 | 自动生成 | 全景图更新时 |
 | `02_domain_architecture_docs/` | 每个功能域的详细文档和依赖图，共 51 个文件 | 自动生成 | 全景图更新时 |
 | `03_governance_reports/` | 容量报告、约束违规报告、设计态vs运营态报告，共 3 个文件 | 自动生成 | 全景图更新时 |
 
@@ -62,8 +62,7 @@
 |------|:---:|--------|
 | 基础设施层 | 5 | D_INFRA_A2A（a2a_communication）、D_INFRA_OPS（asset-inventory）、D_INFRA_RECOVERY（rollback_recovery） 等 |
 | 基础层 | 14 | D_ALT_DATA（另类数据）、D_AUTONOMY_CORE（agent_lifecycle）、D_DATA_ENG（数据工程） 等 |
-| 业务域层 | 29 | D_ASHARE_SIGNAL（ashare_signal）、D_AUDITTEST（audit_test_suite）、D_AUTONOMY_PERM（budget_enforcement） 等 |
-| 未分层 | 2 | D_GOV_REPAIR（rollback）、D_GOV_RULE（rule_governance） |
+| 业务域层 | 31 | D_ASHARE_SIGNAL（ashare_signal）、D_AUDITTEST（audit_test_suite）、D_AUTONOMY_PERM（budget_enforcement） 等 |
 
 ---
 
@@ -71,4 +70,4 @@
 
 | 日期 | 说明 |
 |------|------|
-| 2026-07-06 18:27:34 | 自动生成 |
+| 2026-07-07 04:16:03 | 自动生成 |

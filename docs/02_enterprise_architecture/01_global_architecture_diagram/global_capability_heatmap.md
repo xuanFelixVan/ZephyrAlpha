@@ -122,10 +122,10 @@ ttl: permanent
 | C4 | 策略决策 | 4 | 37 | 5 | 2 | 30 | 1.50 | 🟡 部分覆盖 / Partial |
 | C5 | 执行交易 | 4 | 511 | 286 | 1 | 224 | 1.75 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 19 | 0 | 1 | 18 | 1.00 | 🟡 部分覆盖 / Partial |
-| C7 | 回测仿真 | 4 | 59 | 5 | 10 | 44 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 6 | 1055 | 612 | 30 | 413 | 1.33 | 🟡 部分覆盖 / Partial |
+| C7 | 回测仿真 | 4 | 59 | 11 | 10 | 38 | 1.50 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 6 | 1052 | 613 | 30 | 409 | 1.33 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 4 | 212 | 113 | 0 | 99 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 11 | 679 | 372 | 9 | 298 | 1.91 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 11 | 682 | 372 | 10 | 300 | 1.91 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
@@ -149,11 +149,11 @@ ttl: permanent
 | D_TRADING | 交易运营 | C5 | L2_domain | 481 | 280 | 0 | 201 | 0 | L2 🟡 | 🟡 |
 | D_ML_SERVE | 推理 | C6 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_ML_TRAIN | model_evaluation | C6 | L2_domain | 12 | 0 | 1 | 11 | 0 | L1 🔵 | 🟡 |
-| D_BACKTEST | 回测 | C7 | L2_domain | 33 | 3 | 8 | 22 | 0 | L2 🟡 | 🟡 |
+| D_BACKTEST | 回测 | C7 | L2_domain | 33 | 9 | 8 | 16 | 0 | L2 🟡 | 🟡 |
 | D_DIGITAL_TWIN | 数字孪生 | C7 | L2_domain | 8 | 0 | 1 | 7 | 0 | L1 🔵 | 🟡 |
 | D_EXEC_SIM | 执行仿真 | C7 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_SIMULATION | 仿真 | C7 | L2_domain | 11 | 2 | 1 | 8 | 0 | L2 🟡 | 🟡 |
-| D_GOVERNANCE | registry_management | CC1 | L2_domain | 851 | 479 | 27 | 345 | 1 | L3 🟢 | ✅ |
+| D_GOVERNANCE | registry_management | CC1 | L2_domain | 848 | 480 | 27 | 341 | 1 | L3 🟢 | ✅ |
 | D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 2 | 0 | 2 | 0 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 1 | 0 | 1 | 0 | 0 | L1 🔵 | 🟡 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 201 | 133 | 0 | 68 | 1 | L3 🟢 | ✅ |
@@ -166,17 +166,17 @@ ttl: permanent
 | D_AUTONOMY_CORE | agent_lifecycle | CC3 | L1_foundation | 114 | 111 | 0 | 3 | 0 | L2 🟡 | 🟡 |
 | D_FRONTEND | 前端 | CC3 | L1_foundation | 30 | 13 | 6 | 11 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_OPS | asset-inventory | CC3 | L0_infrastructure | 1 | 0 | 1 | 0 | 0 | L1 🔵 | 🟡 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 149 | 98 | 0 | 51 | 4 | L3 🟢 | ✅ |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 148 | 98 | 0 | 50 | 4 | L3 🟢 | ✅ |
 | D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 72 | 30 | 0 | 42 | 0 | L2 🟡 | 🟡 |
 | D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 20 | 1 | 0 | 19 | 0 | L2 🟡 | 🟡 |
 | D_INTELLIGENCE | context_management | CC3 | L2_domain | 43 | 21 | 0 | 22 | 0 | L2 🟡 | 🟡 |
 | D_KNOWLEDGE | vector_storage | CC3 | L2_domain | 9 | 0 | 2 | 7 | 0 | L1 🔵 | 🟡 |
 | D_OPS | telemetry | CC3 | L1_foundation | 3 | 3 | 0 | 0 | 0 | L2 🟡 | 🟡 |
 | D_REPORTING | 报告 | CC3 | L1_foundation | 10 | 1 | 0 | 9 | 0 | L2 🟡 | 🟡 |
-| D_SHARED | shared_services | CC3 | L1_foundation | 228 | 94 | 0 | 134 | 0 | L2 🟡 | 🟡 |
+| D_SHARED | shared_services | CC3 | L1_foundation | 232 | 94 | 1 | 137 | 0 | L2 🟡 | 🟡 |
 | D_DATA_GOV | 数据治理 | — | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DOCS | architecture_docs | — | L2_domain | 2 | 2 | 0 | 0 | 0 | L2 🟡 | 🟡 |
-| D_INFRA_A2A | a2a_communication | — | L0_infrastructure | 92 | 33 | 0 | 59 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_A2A | a2a_communication | — | L0_infrastructure | 89 | 32 | 0 | 57 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_RECOVERY | rollback_recovery | — | L0_infrastructure | 54 | 48 | 0 | 6 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_TELEMETRY | observability_profiling | — | L0_infrastructure | 25 | 13 | 0 | 12 | 0 | L2 🟡 | 🟡 |
 
@@ -231,9 +231,9 @@ ttl: permanent
 | D_INTELLIGENCE | context_management | CC3 | L2 | 43 |
 | D_OPS | telemetry | CC3 | L2 | 3 |
 | D_REPORTING | 报告 | CC3 | L2 | 10 |
-| D_SHARED | shared_services | CC3 | L2 | 228 |
+| D_SHARED | shared_services | CC3 | L2 | 232 |
 | D_GOV_DOCS | architecture_docs | — | L2 | 2 |
-| D_INFRA_A2A | a2a_communication | — | L2 | 92 |
+| D_INFRA_A2A | a2a_communication | — | L2 | 89 |
 | D_INFRA_RECOVERY | rollback_recovery | — | L2 | 54 |
 | D_INFRA_TELEMETRY | observability_profiling | — | L2 | 25 |
 
@@ -241,9 +241,9 @@ ttl: permanent
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | registry_management | CC1 | L3 | 851 |
+| D_GOVERNANCE | registry_management | CC1 | L3 | 848 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L3 | 201 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 149 |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 148 |
 
 ## 未映射域 / Unmapped Domains
 
@@ -254,6 +254,6 @@ ttl: permanent
 |--------|--------|--------|:---:|:---:|
 | D_DATA_GOV | 数据治理 | L1_foundation | 7 | L1 |
 | D_GOV_DOCS | architecture_docs | L2_domain | 2 | L2 |
-| D_INFRA_A2A | a2a_communication | L0_infrastructure | 92 | L2 |
+| D_INFRA_A2A | a2a_communication | L0_infrastructure | 89 | L2 |
 | D_INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 54 | L2 |
 | D_INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 25 | L2 |
