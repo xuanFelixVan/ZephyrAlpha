@@ -1,13 +1,13 @@
-# 自动生成于 2026-07-06T10:06:46Z
+# 自动生成于 2026-07-06T10:27:19Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-06T10:06:46Z'
+generated_at: '2026-07-06T10:27:19Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 331
+total_scripts: 332
 with_manifest: 311
-missing_manifest: 20
+missing_manifest: 21
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -21,7 +21,7 @@ categories:
   governance:d4_paths: 4
   governance:d5_architecture: 99
   governance:d6_security: 14
-  governance:d7_code: 32
+  governance:d7_code: 33
   governance:d8_doc_sync: 9
   governance:d9_knowledge: 2
   governance:generators: 8
@@ -2612,6 +2612,16 @@ scripts:
     '
   tags:
   - Critical
+- name: d7_code/check_any_abuse.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d7_code/check_encoding.py
   owner: governance:d7_code
   dimensions:
