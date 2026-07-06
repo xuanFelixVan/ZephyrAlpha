@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-06T13:22:03
+> 生成时间: 2026-07-06T14:02:22
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -37,16 +37,16 @@
 ```mermaid
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL0["[production]L0: 数据接入与预处理层<br/>freq: tick<br/>build: stable"]:::bsStable
-        LL1["[production]L1: 因子计算层<br/>freq: daily<br/>build: stable"]:::bsStable
-        LL2A["[design]L2A: 信号层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2B["[design]L2B: 主力行为层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL3["[design]L3: 策略组合层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL4["[production]L4: 风控层<br/>freq: realtime<br/>build: stable"]:::bsStable
-        LL5["[design]L5: 学习层<br/>freq: weekly<br/>build: planned"]:::bsPlanned
-        LL6["[design]L6: 自评估层<br/>freq: weekly<br/>build: planned"]:::bsPlanned
+        LL0["[production]L0: 数据接入与预处理层<br/>功能: miniQMT + iFind + t…<br/>freq: tick<br/>build: stable"]:::bsStable
+        LL1["[production]L1: 因子计算层<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>freq: daily<br/>build: stable"]:::bsStable
+        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL4["[production]L4: 风控层<br/>功能: Pre/Post-Trade 风控校验…<br/>freq: realtime<br/>build: stable"]:::bsStable
+        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]:::bsPlanned
+        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]:::bsPlanned
     end
     subgraph track_data_driven["数据驱动轨（Data-Driven Track）"]
     end
@@ -78,9 +78,9 @@ flowchart TD
 ```mermaid
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL0["[production]L0: 数据接入与预处理层<br/>freq: tick<br/>build: stable"]:::bsStable
-        LL1["[production]L1: 因子计算层<br/>freq: daily<br/>build: stable"]:::bsStable
-        LL4["[production]L4: 风控层<br/>freq: realtime<br/>build: stable"]:::bsStable
+        LL0["[production]L0: 数据接入与预处理层<br/>功能: miniQMT + iFind + t…<br/>freq: tick<br/>build: stable"]:::bsStable
+        LL1["[production]L1: 因子计算层<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>freq: daily<br/>build: stable"]:::bsStable
+        LL4["[production]L4: 风控层<br/>功能: Pre/Post-Trade 风控校验…<br/>freq: realtime<br/>build: stable"]:::bsStable
     end
     subgraph track_data_driven["数据驱动轨（Data-Driven Track）"]
     end
@@ -105,13 +105,13 @@ flowchart TD
 ```mermaid
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2B["[design]L2B: 主力行为层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL3["[design]L3: 策略组合层<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL5["[design]L5: 学习层<br/>freq: weekly<br/>build: planned"]:::bsPlanned
-        LL6["[design]L6: 自评估层<br/>freq: weekly<br/>build: planned"]:::bsPlanned
+        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]:::bsPlanned
+        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]:::bsPlanned
+        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]:::bsPlanned
     end
     subgraph track_data_driven["数据驱动轨（Data-Driven Track）"]
     end
@@ -137,16 +137,16 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    LL0["[production] L0 数据接入与预处理层<br/>Data Ingestion & Preprocessing<br/>频率: tick<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LL1["[production] L1 因子计算层<br/>Factor Calculation<br/>频率: daily<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LL2A["[design] L2A 信号层<br/>Signal Generation<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LL2B["[design] L2B 主力行为层<br/>Main Force Behavior Analysis<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LL2C["[design] L2C 市场状态与大盘预测层<br/>Market State & Index Prediction<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LL2D["[design] L2D 知识图谱与因果推演层<br/>Knowledge Graph & Causal Inference<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LL3["[design] L3 策略组合层<br/>Strategy & Portfolio Combination<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LL4["[production] L4 风控层<br/>Risk Control<br/>频率: realtime<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LL5["[design] L5 学习层<br/>Learning & Optimization<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LL6["[design] L6 自评估层<br/>Self Evaluation<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL0["[production] L0 数据接入与预处理层<br/>Data Ingestion & Preprocessing<br/>功能: miniQMT + iFind + t…<br/>频率: tick<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LL1["[production] L1 因子计算层<br/>Factor Calculation<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>频率: daily<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LL2A["[design] L2A 信号层<br/>Signal Generation<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL2B["[design] L2B 主力行为层<br/>Main Force Behavior Analysis<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL2C["[design] L2C 市场状态与大盘预测层<br/>Market State & Index Prediction<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL2D["[design] L2D 知识图谱与因果推演层<br/>Knowledge Graph & Causal Inference<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL3["[design] L3 策略组合层<br/>Strategy & Portfolio Combination<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL4["[production] L4 风控层<br/>Risk Control<br/>功能: Pre/Post-Trade 风控校验…<br/>频率: realtime<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LL5["[design] L5 学习层<br/>Learning & Optimization<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL6["[design] L6 自评估层<br/>Self Evaluation<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LL0 -->|triggering| LL1
     LL1 -->|triggering| LL2A
     LL2A -->|triggering| LL2B
@@ -209,15 +209,15 @@ flowchart TD
 
 ## Layer 清单（L0-L6）
 
-| layer_id | 名称 | 英文名 | 所属轨 | 决策频率 | 成熟度 | build_status |
-|----------|------|--------|--------|----------|--------|--------------|
-| L0 | 数据接入与预处理层 | Data Ingestion & Preprocessing | model_driven | tick | production | stable |
-| L1 | 因子计算层 | Factor Calculation | model_driven | daily | production | stable |
-| L2A | 信号层 | Signal Generation | model_driven | daily | design | planned |
-| L2B | 主力行为层 | Main Force Behavior Analysis | model_driven | daily | design | planned |
-| L2C | 市场状态与大盘预测层 | Market State & Index Prediction | model_driven | daily | design | planned |
-| L2D | 知识图谱与因果推演层 | Knowledge Graph & Causal Inference | model_driven | daily | design | planned |
-| L3 | 策略组合层 | Strategy & Portfolio Combination | model_driven | daily | design | planned |
-| L4 | 风控层 | Risk Control | model_driven | realtime | production | stable |
-| L5 | 学习层 | Learning & Optimization | model_driven | weekly | design | planned |
-| L6 | 自评估层 | Self Evaluation | model_driven | weekly | design | planned |
+| layer_id | 名称 | 英文名 | 所属轨 | 蓝图(module_id) | 蓝图名(派生) | 代码引用 | 功能简述 | 决策频率 | 成熟度 | build_status |
+|----------|------|--------|--------|-----------------|--------------|----------|----------|----------|--------|--------------|
+| L0 | 数据接入与预处理层 | Data Ingestion & Preprocessing | model_driven | - | - | - | miniQMT + iFind + tushare + 另类数据源 → 事件总线 → 分层时序存储 产出：tick_data / ohlc_bar / factor_input_data | tick | production | stable |
+| L1 | 因子计算层 | Factor Calculation | model_driven | - | - | - | 因子工厂全生命周期管理 → 盘前全量/盘中增量双模计算 → 因子池 产出：factor_value（带 PIT 合规标记） | daily | production | stable |
+| L2A | 信号层 | Signal Generation | model_driven | - | - | - | 信号工厂 → 多策略投票 → 收益率条件密度预测 → Transformer/Mamba时序增强 → 共形预测 产出：signal（Insight: direction/confidence/horizon） | daily | design | planned |
+| L2B | 主力行为层 | Main Force Behavior Analysis | model_driven | - | - | - | 六阶段识别 + 自迭代推演 + 庄家专项 + 群体博弈模拟 产出：main_force_signal（主力行为画像） | daily | design | planned |
+| L2C | 市场状态与大盘预测层 | Market State & Index Prediction | model_driven | - | - | - | 3×3矩阵 + 2叠加态 + 三层大盘预测 + T+1次日8态走势预测 + 体制转换检测(HMM/变点) 产出：market_state_prediction（大盘方向/波动率/体制判断） | daily | design | planned |
+| L2D | 知识图谱与因果推演层 | Knowledge Graph & Causal Inference | model_driven | - | - | - | 六类知识图谱 → 事件影响链分析 → 因果传导推演 → GNN股票关系建模 → Causal ML 产出：causal_inference_result（因果推断结果） | daily | design | planned |
+| L3 | 策略组合层 | Strategy & Portfolio Combination | model_driven | - | - | - | 多策略信号合成 → 资本分配 → 元策略路由 → 组合构建 产出：portfolio_target（PortfolioTarget: 目标仓位） | daily | design | planned |
+| L4 | 风控层 | Risk Control | model_driven | - | - | - | Pre/Post-Trade 风控校验 + Kill Switch 熔断 + 止损评估 产出：risk_check（RiskDecision: approve/veto/adjust） | realtime | production | stable |
+| L5 | 学习层 | Learning & Optimization | model_driven | - | - | - | 7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环 产出：learning_feedback（策略优化建议） | weekly | design | planned |
+| L6 | 自评估层 | Self Evaluation | model_driven | - | - | - | LLM 自评估(Judge+交叉验证) + 多模态金融推理 + VeNRA零幻觉锚定 产出：self_evaluation（决策质量评估） | weekly | design | planned |

@@ -77,27 +77,29 @@ def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list
 
         cur.execute("""
             SELECT layer_id, layer_name, layer_name_en, track, description,
-                   decision_frequency, design_maturity, build_status
+                   decision_frequency, design_maturity, build_status,
+                   module_id, source_code_ref
             FROM decision_layers ORDER BY layer_id
         """)
         layers = [
             {
                 "id": r[0], "name": r[1], "name_en": r[2], "track": r[3],
                 "desc": r[4], "freq": r[5], "maturity": r[6], "build": r[7],
+                "module_id": r[8], "source_code_ref": r[9],
             }
             for r in cur.fetchall()
         ]
 
         cur.execute("""
             SELECT node_id, layer_id, node_type, path, module_id, decision_name,
-                   build_status, design_maturity, evidence_hash
+                   build_status, design_maturity, evidence_hash, source_code_ref
             FROM decision_nodes ORDER BY layer_id, node_id
         """)
         nodes = [
             {
                 "id": r[0], "layer_id": r[1], "type": r[2], "path": r[3],
                 "module_id": r[4], "name": r[5], "build": r[6],
-                "maturity": r[7], "hash": r[8],
+                "maturity": r[7], "hash": r[8], "source_code_ref": r[9],
             }
             for r in cur.fetchall()
         ]
@@ -122,6 +124,52 @@ def _load_invariants() -> list[dict]:
     with open(_YAML_PATH, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return data.get("invariants", [])
+
+
+def _resolve_blueprint_names(conn, layers: list[dict]) -> dict[str, str]:
+    """从 depgraph 查 module_id→blueprint_name 映射。
+
+    decisiongraph 与 depgraph 共享 PG 实例，可通过同一连接查询
+    depgraph.nodes 表。module_id 对应 depgraph.nodes.blueprint_id，
+    node_name 为蓝图可读名称。
+
+    :return: {module_id: blueprint_name}，查不到的 module_id 不包含在映射中
+    """
+    module_ids = {l.get("module_id") for l in layers if l.get("module_id")}
+    if not module_ids:
+        return {}
+    result: dict[str, str] = {}
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT DISTINCT blueprint_id, node_name
+                FROM nodes
+                WHERE blueprint_id = ANY(%s)
+                  AND node_name IS NOT NULL
+                  AND node_name != ''
+                """,
+                (list(module_ids),),
+            )
+            for row in cur.fetchall():
+                bp_id = row[0] if isinstance(row, (list, tuple)) else row.get("blueprint_id")
+                bp_name = row[1] if isinstance(row, (list, tuple)) else row.get("node_name")
+                if bp_id and bp_name:
+                    result[bp_id] = bp_name
+    except Exception:
+        # depgraph 表不存在或查询失败时静默降级——仅展示 module_id
+        pass
+    return result
+
+
+def _truncate(text: str, max_len: int = 20) -> str:
+    """截断文本到指定长度，超出加省略号。"""
+    if not text:
+        return ""
+    text = text.strip().replace("\n", " ").replace(">", "》")
+    if len(text) <= max_len:
+        return text
+    return text[:max_len - 1] + "…"
 
 
 def _build_status_color(build: str) -> str:
@@ -186,6 +234,19 @@ def _gen_overview_mmd(
             safe_lid = lid.replace("-", "_")
             mtag = _maturity_tag(layer.get("maturity"))
             label = f'{mtag}{layer["id"]}: {layer["name"]}' if mtag else f'{layer["id"]}: {layer["name"]}'
+            # 蓝图（module_id + 派生蓝图名）
+            mid = layer.get("module_id")
+            if mid:
+                bp_name = layer.get("blueprint_name") or mid
+                label += f'<br/>蓝图: {bp_name}'
+            # 代码引用
+            scr = layer.get("source_code_ref")
+            if scr:
+                label += f'<br/>代码: {_truncate(scr, 30)}'
+            # 功能简述（截断到~20字）
+            desc = layer.get("desc")
+            if desc:
+                label += f'<br/>功能: {_truncate(desc)}'
             if layer["freq"]:
                 label += f'<br/>freq: {layer["freq"]}'
             label += f'<br/>build: {layer["build"]}'
@@ -234,6 +295,19 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         label = f'{layer["id"]} {layer["name"]}<br/>{layer["name_en"]}'
         if mtag:
             label = f'{mtag} {label}'
+        # 蓝图（module_id + 派生蓝图名）
+        mid = layer.get("module_id")
+        if mid:
+            bp_name = layer.get("blueprint_name") or mid
+            label += f'<br/>蓝图: {bp_name}'
+        # 代码引用
+        scr = layer.get("source_code_ref")
+        if scr:
+            label += f'<br/>代码: {_truncate(scr, 30)}'
+        # 功能简述（截断到~20字）
+        desc = layer.get("desc")
+        if desc:
+            label += f'<br/>功能: {_truncate(desc)}'
         if layer["freq"]:
             label += f'<br/>频率: {layer["freq"]}'
         label += f'<br/>成熟度: {layer["maturity"]}'
@@ -434,12 +508,17 @@ def _gen_index_md(
         "",
         "## Layer 清单（L0-L6）",
         "",
-        "| layer_id | 名称 | 英文名 | 所属轨 | 决策频率 | 成熟度 | build_status |",
-        "|----------|------|--------|--------|----------|--------|--------------|",
+        "| layer_id | 名称 | 英文名 | 所属轨 | 蓝图(module_id) | 蓝图名(派生) | 代码引用 | 功能简述 | 决策频率 | 成熟度 | build_status |",
+        "|----------|------|--------|--------|-----------------|--------------|----------|----------|----------|--------|--------------|",
     ])
     for l in layers:
+        mid = l.get("module_id") or "-"
+        bp_name = l.get("blueprint_name") or "-"
+        scr = l.get("source_code_ref") or "-"
+        desc = (l.get("desc") or "").strip().replace("\n", " ").replace("|", "\\|") or "-"
         lines.append(
             f"| {l['id']} | {l['name']} | {l['name_en']} | {l['track']} | "
+            f"{mid} | {bp_name} | {scr} | {desc} | "
             f"{l['freq'] or '-'} | {l['maturity']} | {l['build']} |"
         )
 
@@ -448,13 +527,14 @@ def _gen_index_md(
             "",
             "## Node 清单（运行时决策节点）",
             "",
-            "| node_id | layer | type | name | path | module_id | 成熟度 | build_status |",
-            "|---------|-------|------|------|------|-----------|--------|--------------|",
+            "| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |",
+            "|---------|-------|------|------|------|-----------|----------|--------|--------------|",
         ])
         for n in nodes:
+            nscr = n.get("source_code_ref") or "-"
             lines.append(
                 f"| {n['id']} | {n['layer_id']} | {n['type']} | {n['name']} | "
-                f"{n['path']} | {n['module_id'] or '-'} | {n.get('maturity') or '-'} | {n['build']} |"
+                f"{n['path']} | {n['module_id'] or '-'} | {nscr} | {n.get('maturity') or '-'} | {n['build']} |"
             )
 
     if edges:
@@ -490,6 +570,12 @@ def main() -> int:
 
     try:
         tracks, layers, nodes, edges = _fetch_decision_data(conn)
+        # 派生蓝图名：从 depgraph 查 module_id→blueprint_name
+        bp_map = _resolve_blueprint_names(conn, layers)
+        for l in layers:
+            mid = l.get("module_id")
+            if mid and mid in bp_map:
+                l["blueprint_name"] = bp_map[mid]
     finally:
         conn.close()
 

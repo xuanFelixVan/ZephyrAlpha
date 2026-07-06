@@ -32,12 +32,13 @@
 #
 # 变更历史：
 #   v1.0.0 (2026-07-05): 初版——4张表 + 10层 + 4轨 + 6节点类型 + 4边类型
+#   v1.1.0 (2026-07-06): Layer 加 module_id（关联 depgraph 蓝图）+ source_code_ref（关联代码脚本）
 #
 
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 doc_type: decision_graph_model
 module_id: CFG-decision_graph_model
-version: "1.0.0"
+version: "1.1.0"
 title: "决策流图架构"
 status: active
 depends_on:
@@ -96,6 +97,8 @@ layers:
     decision_frequency: tick
     design_maturity: production
     build_status: stable
+    module_id: ""
+    source_code_ref: ""
 
   - layer_id: L1
     layer_name: 因子计算层
@@ -107,6 +110,8 @@ layers:
     decision_frequency: daily
     design_maturity: production
     build_status: stable
+    module_id: ""
+    source_code_ref: ""
 
   - layer_id: L2A
     layer_name: 信号层
@@ -118,6 +123,8 @@ layers:
     decision_frequency: daily
     design_maturity: design
     build_status: planned
+    module_id: ""
+    source_code_ref: ""
 
   - layer_id: L2B
     layer_name: 主力行为层
@@ -129,6 +136,8 @@ layers:
     decision_frequency: daily
     design_maturity: design
     build_status: planned
+    module_id: ""
+    source_code_ref: ""
 
   - layer_id: L2C
     layer_name: 市场状态与大盘预测层
@@ -140,6 +149,8 @@ layers:
     decision_frequency: daily
     design_maturity: design
     build_status: planned
+    module_id: ""
+    source_code_ref: ""
 
   - layer_id: L2D
     layer_name: 知识图谱与因果推演层
@@ -151,6 +162,8 @@ layers:
     decision_frequency: daily
     design_maturity: design
     build_status: planned
+    module_id: ""
+    source_code_ref: ""
 
   - layer_id: L3
     layer_name: 策略组合层
@@ -162,6 +175,8 @@ layers:
     decision_frequency: daily
     design_maturity: design
     build_status: planned
+    module_id: ""
+    source_code_ref: ""
 
   - layer_id: L4
     layer_name: 风控层
@@ -173,6 +188,8 @@ layers:
     decision_frequency: realtime
     design_maturity: production
     build_status: stable
+    module_id: ""
+    source_code_ref: ""
 
   - layer_id: L5
     layer_name: 学习层
@@ -184,6 +201,8 @@ layers:
     decision_frequency: weekly
     design_maturity: design
     build_status: planned
+    module_id: ""
+    source_code_ref: ""
 
   - layer_id: L6
     layer_name: 自评估层
@@ -195,6 +214,8 @@ layers:
     decision_frequency: weekly
     design_maturity: design
     build_status: planned
+    module_id: ""
+    source_code_ref: ""
 
 # === 决策节点类型定义（借鉴 QuantConnect Lean + DMN DRD）===
 node_types:

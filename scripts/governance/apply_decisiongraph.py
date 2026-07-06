@@ -283,6 +283,7 @@ def op_add_design_node(
     decision_name_en: str,
     evidence_hash: str,
     module_id: str | None = None,
+    source_code_ref: str | None = None,
     inputs: dict | None = None,
     outputs: dict | None = None,
     conditions: dict | None = None,
@@ -306,6 +307,7 @@ def op_add_design_node(
         "node_type": node_type,
         "path": path,
         "module_id": module_id,
+        "source_code_ref": source_code_ref,
         "decision_name": decision_name,
         "decision_name_en": decision_name_en,
         "inputs": json.dumps(inputs, ensure_ascii=False) if inputs else None,
@@ -337,10 +339,11 @@ def op_add_design_node(
             cur.execute(
                 """
                 INSERT INTO decision_nodes
-                    (layer_id, node_type, path, module_id, decision_name, decision_name_en,
+                    (layer_id, node_type, path, module_id, source_code_ref,
+                     decision_name, decision_name_en,
                      inputs, outputs, conditions, facets, evidence_hash,
                      design_maturity, build_status)
-                VALUES (%(layer_id)s, %(node_type)s, %(path)s, %(module_id)s,
+                VALUES (%(layer_id)s, %(node_type)s, %(path)s, %(module_id)s, %(source_code_ref)s,
                         %(decision_name)s, %(decision_name_en)s,
                         %(inputs)s, %(outputs)s, %(conditions)s, %(facets)s,
                         %(evidence_hash)s, %(design_maturity)s, %(build_status)s)
@@ -439,7 +442,7 @@ def op_update_node_field(
     _ALLOWED_FIELDS = {
         "decision_name", "decision_name_en", "module_id",
         "inputs", "outputs", "conditions", "facets", "evidence_hash",
-        "design_maturity",
+        "design_maturity", "source_code_ref",
     }
     if field not in _ALLOWED_FIELDS:
         raise ValueError(
@@ -691,6 +694,7 @@ build_status 状态机（单调推进，禁止跳态）：
     parser.add_argument("--node-type", type=str, help="节点类型（signal/order/...）")
     parser.add_argument("--path", type=str, help="节点路径（UNIQUE）")
     parser.add_argument("--module-id", type=str, help="关联模块 ID（与 depgraph 关联）")
+    parser.add_argument("--source-code-ref", type=str, help="代码/脚本引用路径")
     parser.add_argument("--decision-name", type=str, help="决策名称（中文）")
     parser.add_argument("--decision-name-en", type=str, help="决策名称（英文）")
     parser.add_argument("--evidence-hash", type=str, help="证据哈希（DEC-INV-005 必填）")
@@ -766,6 +770,7 @@ build_status 状态机（单调推进，禁止跳态）：
                     decision_name_en=args.decision_name_en,
                     evidence_hash=args.evidence_hash,
                     module_id=args.module_id,
+                    source_code_ref=args.source_code_ref,
                     inputs=inputs,
                     outputs=outputs,
                     conditions=conditions,
