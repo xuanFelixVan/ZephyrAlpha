@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-06T13:36:22Z
+# 自动生成于 2026-07-06T13:39:19Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-06T13:36:22Z'
+generated_at: '2026-07-06T13:39:19Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 26
