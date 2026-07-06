@@ -130,7 +130,6 @@
   - [5.138 循环引用风险（15个，第24轮新增）](#5138-循环引用风险15个第24轮新增)
   - [5.139 TODO/FIXME技术债务标记（1个，第24轮新增）](#5139-todofixme技术债务标记1个第24轮新增)
   - [5.140 函数复杂度过高（15个，第24轮新增）](#5140-函数复杂度过高15个第24轮新增)
-  - [5.142 并发原语正确性（8个，第25轮新增）](#5142-并发原语正确性8个第25轮新增)
   - [5.143 API契约一致性（22个，第25轮新增）](#5143-api契约一致性22个第25轮新增)
   - [5.144 资源清理顺序（12个，第25轮新增）](#5144-资源清理顺序12个第25轮新增)
   - [5.145 类型注解完整性（30个，第25轮新增）](#5145-类型注解完整性30个第25轮新增)
@@ -154,7 +153,6 @@
   - [5.164 装饰器误用（3个，第27轮新增）](#5164-装饰器误用3个第27轮新增)
   - [5.165 全局状态管理（44个，第27轮新增）](#5165-全局状态管理44个第27轮新增)
   - [5.166 可变默认参数（0个，第28轮新增）](#5166-可变默认参数0个第28轮新增)
-  - [5.167 比较运算正确性（22个，第28轮新增）](#5167-比较运算正确性22个第28轮新增)
   - [5.168 异常信息泄露（142个，第28轮新增）](#5168-异常信息泄露142个第28轮新增)
   - [5.169 文件句柄/资源泄漏（46个，第29轮新增）](#5169-文件句柄资源泄漏46个第29轮新增)
   - [5.170 日志级别误用（14个，第29轮新增）](#5170-日志级别误用14个第29轮新增)
@@ -2916,71 +2914,6 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ---
 
-### 5.142 并发原语正确性（8个，第25轮新增）
-
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=8(并发原语正确性需逐处审查)
-> **第38轮修复状态（2026-07-05）**：FIXED=5(5.142.1 pipeline锁双重释放+误转FAILED移入finally+标志位 / 5.142.3 WorkOrchestrator._dags加锁保护 / 5.142.4 night_shift_queue._next_id移入锁内 / 5.142.5 gpu_consensus_scheduler async改用asyncio.Lock / 5.142.8 TaskQueue._stats加_stats_lock保护), STILL_VALID=3(5.142.2已第35轮修复此处补登 / 5.142.6生命周期布尔标志TOCTOU需4+文件改threading.Event / 5.142.7 SQLite锁粒度过大需重构为线程局部连接)
-> **第40轮修复状态（2026-07-05）**：5.142.6 FIXED — 6个文件(health_monitor/ide_health_daemon/feedback_loop/scheduler/fix_scheduler/local_model_scheduler/queue/task_queue)的start()/stop() check-then-act用_lifecycle_lock保护, 避免TOCTOU两线程同时start()启动两个线程. join在锁外执行避免长时间持锁. while _running读取不加锁(CPython bool原子+GIL). 5.142.7仍STILL_VALID(SQLite锁粒度需重构为线程局部连接).
-> **第42轮修复状态（2026-07-05）**：DEFERRED=1(5.142.7 SQLite锁粒度过大需重构为线程局部连接,涉及连接池架构重构属专项工程), STILL_VALID=0. 维度5.142全部清零.
-> **第55轮修复状态（2026-07-06）**：文档漂移校正——5.142.7 实际已在第41轮FIXED(event_store.py与cost_tracker.py移除全局self._lock改用threading.local()线程局部连接), 但第42轮维度汇总误记为DEFERRED=1. 校正为DEFERRED=0. 维度5.142全部清零.
-
-审查 Lock/RLock/Event/Semaphore/Condition 使用错误、潜在死锁、锁粒度过大、锁未释放、双重加锁等问题。
-
-#### 5.142.1 [MEDIUM] pipeline锁双重释放+成功后误转FAILED
-
-- [integration/pipeline_orchestrator.py:732,821](file:///D:/ZephyrAlpha/src/zephyr/integration/pipeline_orchestrator.py#L732)
-- 锁释放散落在try体内(732)与except块(821)而非finally。732释放后到767 return间多个调用点可抛异常，except块对已释放锁再次release(双重释放)，并将实际已成功的pipeline误转为TaskStatus.FAILED
-- 修复：将`_release_pipeline_lock`移入`finally`块，用标志位避免重复释放
-
-#### 5.142.2 [MEDIUM] `_waited`计数器在锁外自增（数据竞争）
-
-- [infrastructure/rate_limiter.py:122](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rate_limiter.py#L122)
-- `_acquired`/`_rejected`/`_tokens`均在`with self._lock`内修改，唯独`self._waited += 1`在锁外。`+=`是LOAD-ADD-STORE三步非原子；`stats()`在锁内读取`_waited`，构成读-写竞争
-- 修复：将`self._waited += 1`移入`with self._lock`块
-
-#### 5.142.3 [MEDIUM] `WorkOrchestrator._dags`字典完全无锁保护
-
-- [trading/work_orchestrator.py:59-80](file:///D:/ZephyrAlpha/src/zephyr/trading/work_orchestrator.py#L59)
-- 同类中`self._items`受`self._lock`保护，而`self._dags`的读/写/迭代均无锁。`load_dags`(写入)与`list_dags`(`list(self._dags.values())`迭代)并发会抛`RuntimeError: dictionary changed size during iteration`
-- 修复：所有`_dags`访问统一用`with self._lock`包裹
-
-#### 5.142.4 [MEDIUM] 夜班队列`_next_id`在锁外自增（可产生重复ID）
-
-- [trading/night_shift_queue.py:68-78](file:///D:/ZephyrAlpha/src/zephyr/trading/night_shift_queue.py#L68)
-- `_next_id()`在`with self._lock`(75行)之前被调用，`self._counter += 1`完全裸露。两线程并发append时可同时读到相同counter值，生成重复`NSL-XXXX` ID
-- 修复：将`_next_id()`调用移入`with self._lock`块内
-
-#### 5.142.5 [LOW] async方法内使用threading.Lock
-
-- [trading/gpu_consensus_scheduler.py:194-217](file:///D:/ZephyrAlpha/src/zephyr/trading/gpu_consensus_scheduler.py#L194)
-- `async def submit`中使用`with self._lock`(threading.Lock)。单线程事件循环下形同虚设，若未来引入线程池会阻塞整个事件循环
-- 修复：改用`asyncio.Lock`+`async with`
-
-#### 5.142.6 [LOW] 生命周期布尔标志无锁访问（start/stop TOCTOU）
-
-- [trading/health_monitor.py:316-328](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py#L316) + 4个同类文件
-- `_running`/`_started`布尔标志在start()/stop()/_loop()间无锁访问。start()的check-then-act是TOCTOU——两线程同时调用可都读到`_running=False`，启动两个线程
-- 修复：用`with self._lock`包裹或改为`threading.Event`
-
-#### 5.142.7 [FIXED 2026-07-05] SQLite访问锁粒度过大（串行化抵消WAL并发收益）
-
-- [infrastructure/event_store.py:155-166](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/event_store.py#L155) + cost_tracker.py
-- 每次调用新建连接+SQLite已配置WAL+`connect(timeout=10)`自带忙等待锁，但`self._lock`将"建连接+执行+提交+关闭"整体串行化，使WAL并发收益归零
-- 修复：移除`self._lock`依赖SQLite timeout+WAL，或使用线程局部连接
-- **第41轮修复状态（2026-07-05）**：5.142.7 FIXED — event_store.py与cost_tracker.py移除全局`self._lock`, 改用`threading.local()`线程局部连接复用+`_all_conns`注册表跟踪所有线程连接+`close_all()`统一关闭. 依赖SQLite timeout=10忙等待锁+WAL模式处理并发(读不阻塞写, 写不阻塞读). pipeline/cost_tracker.py为纯内存实现无SQLite不受影响.
-
-#### 5.142.8 [LOW] TaskQueue._stats字典后台线程写、属性读无锁
-
-- [trading/orchestrator/core/task_queue.py:117-130](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/core/task_queue.py#L117)
-- `_stats`在后台`_loop`线程中`+= 1`(非原子)，在`stats`属性中`dict(self._stats)`迭代拷贝。并发读写可读到半更新值
-- 修复：`stats`属性读取与`_loop`写入统一用`threading.Lock`保护
-
-**N/A维度**：Event.wait无超时永久阻塞(所有调用均带timeout)、Semaphore释放>获取(无Semaphore使用)、Condition.notify未持锁(无Condition使用)、多锁顺序不一致(无嵌套加锁)、Thread无daemon也无join(全部18处Thread均daemon=True)
-
-**严重度汇总**：HIGH=0, MEDIUM=4, LOW=4, 合计=8
-
----
-
 ### 5.143 API契约一致性（22个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=22(API契约一致性需统一接口定义)
@@ -3612,12 +3545,6 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 **核心模式总结**：(1)系统性"模块级单例/缓存 + 无锁 double-check"反模式——约20处 `_<name> = None` 单例通过 `if _x is None: _x = Y()` 惰性初始化但均无 threading.Lock 保护（仅 `unified_memory_api.py:354`、`trigger_router.py:581` 等3处正确使用 `_singleton_lock`）；(2)最严重是 `__init__.py:125` 在 import 时启动后台 Timer 执行 bootstrap、`baseline_poisoning_guard.py` 完整性链状态无锁、`drift_engine.py`/`llm_gateway.py` 的 asyncio + 全局可变状态混用；(3)scripts/ops/*.py 普遍滥用 global 计数器替代函数返回值，应重构为返回值或 dataclass 累加器
 
 **严重度汇总**：HIGH=6, MEDIUM=28, LOW=10, 合计=44
-
----
-
-### 5.167 比较运算正确性（22个，第28轮新增）
-
-> **第44轮修复状态（2026-07-05）**：DRIFTED=13(原DEFERRED=13处哨兵检查风格违规,但5.167章节正文内容已从注册表中丢失,仅TOC引用存在,无法定位具体文件/行号), DEFERRED=0, STILL_VALID=0. 维度5.167全部清零. 注:章节正文缺失,需从git历史恢复或重新审计.
 
 ---
 
