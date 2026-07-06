@@ -228,7 +228,10 @@ class MiniQMTProvider(DataSourceBase):
                 df = data.get(stock_code) if data else None
                 if df is not None and len(df) > 0:
                     symbol = self._stock_to_symbol(stock_code)
-                    times = df["time"].tolist()
+                    # xtquant DataFrame 索引为 numpy.int64：
+                    #   日K索引为 YYYYMMDD 格式整数（如 20260703）
+                    #   分钟K索引为 YYYYMMDDHHMMSS 格式整数（如 20260703093000）
+                    times = [int(ts) for ts in df.index]
                     opens = df["open"].tolist()
                     highs = df["high"].tolist()
                     lows = df["low"].tolist()
@@ -236,9 +239,12 @@ class MiniQMTProvider(DataSourceBase):
                     volumes = df["volume"].tolist()
                     amounts = df["amount"].tolist()
                     for i in range(len(times)):
+                        s = str(times[i])
                         if is_daily:
+                            # 日K：YYYYMMDD（8 位）→ YYYY-MM-DD
+                            trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
                             rows.append((
-                                self._ts_to_date(times[i]),
+                                trade_date,
                                 symbol,
                                 self.safe_float(opens[i]),
                                 self.safe_float(highs[i]),
@@ -248,10 +254,15 @@ class MiniQMTProvider(DataSourceBase):
                                 self.safe_float(amounts[i]),
                             ))
                         else:
-                            dt_str = self._ts_to_datetime(times[i])
+                            # 分钟K：YYYYMMDDHHMMSS（14 位）→ 拆分 date 和 datetime
+                            trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
+                            trade_time = (
+                                f"{s[:4]}-{s[4:6]}-{s[6:8]} "
+                                f"{s[8:10]}:{s[10:12]}:{s[12:14]}"
+                            )
                             rows.append((
-                                dt_str[:10],       # trade_date
-                                dt_str,            # trade_time (YYYY-MM-DD HH:MM:SS)
+                                trade_date,       # trade_date
+                                trade_time,       # trade_time (YYYY-MM-DD HH:MM:SS)
                                 symbol,
                                 self.safe_float(opens[i]),
                                 self.safe_float(highs[i]),
@@ -340,6 +351,7 @@ class MiniQMTProvider(DataSourceBase):
 
                 # 3. 转换为 rows
                 rows = []
+                columns = ["symbol"]  # 默认列（无数据时）
                 stock_data = fd.get(stock_code) if fd else None
                 if stock_data and table_list in stock_data:
                     df = stock_data[table_list]
@@ -358,8 +370,6 @@ class MiniQMTProvider(DataSourceBase):
                             rows.append(tuple([symbol] + row_values))
 
                         columns = ["symbol"] + col_names
-                else:
-                    columns = ["symbol"]
 
                 yield FetchResult(
                     table=table,
