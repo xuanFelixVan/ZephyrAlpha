@@ -1422,3 +1422,43 @@ entries:
   related_adjudication: '#208'
   created: '2026-07-06'
   last_updated: '2026-07-06'
+
+- issue_id: '#ARCH-052'
+  title: 聚合节点模式治理配置对象过细（门禁/脚本/测试/规则文件）
+  category: architecture_governance
+  severity: P2中
+  status: decided
+  description: |
+    5 个超容域（D_GOV_ENFORCEMENT 200/150, D_GOV_SCRIPTS 432/150, D_GOVERNANCE 847/150,
+    D_TRADING 481/150, D_AUDITTEST 1718/150）的根因是配置对象（门禁 yaml/脚本/测试/规则文件）
+    被当作独立 node 注册到 depgraph，导致节点数膨胀。业界实践中配置对象不进代码依赖图，
+    但 100% AI 开发项目的 L1 铁律要求 depgraph 是依赖唯一真源。
+    裁定：采用聚合节点模式（类比 database 节点先例），用 1 个聚合节点代表一组配置对象，
+    path 是 SSoT 指针指向 registry.yaml 索引文件。图视图只显示聚合节点不展开；
+    清单视图展开 registry.yaml 列出内部 items 的 description。
+  adjudication: |
+    5 项架构裁定：
+    (a) 新增 node_type 值：gate_rule_set / script_collection / test_suite /
+        strategy_collection / rule_registry_collection（node_type 是 TEXT 无 CHECK 约束，
+        新增类型不需要改 DDL）
+    (b) 5 个 registry.yaml 索引文件（SSoT 指针目标）：
+        rule_enforcement_registry.yaml / scripts_registry.yaml / test_suite_registry.yaml /
+        strategy_registry.yaml / rule_registry_collection.yaml
+        结构：collection_id / collection_name / collection_path / owner_module / items[]
+    (c) 双层视图生成器改造：generate_domain_doc.py 的
+        generate_module_layered_list 识别聚合节点类型，图视图（Mermaid + ASCII）只显示
+        聚合节点本身；清单视图（表格）展开 registry.yaml 列出内部 items 的 description
+        （_load_registry_items + _extract_yaml_description）
+    (d) 新增 edge type：gate_engine_owns_gate_rule_set（gate_engine→gate_rule_set），
+        dep_type 是 TEXT 无 CHECK 约束
+    (e) 5 个超容域按聚合节点模式治理：D_GOV_ENFORCEMENT（84 个 config 节点→1 个
+        gate_rule_set 聚合节点）/ D_GOV_SCRIPTS / D_GOVERNANCE / D_TRADING / D_AUDITTEST
+    Phase 划分：
+    - Phase 1：ARCH-052 登记 + schema 文档化（本条目）
+    - Phase 2：D_GOV_ENFORCEMENT 试点（rule_enforcement_registry.yaml + depgraph DB 改动）
+    - Phase 3：生成器改造（generate_domain_doc.py）
+    - Phase 4：其他 4 个超容域治理
+    - Phase 5：验证与重生（50 个域文档）
+  fix_phase: Phase 1-5 逐步实施
+  created: '2026-07-06'
+  last_updated: '2026-07-06'
