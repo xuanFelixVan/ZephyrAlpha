@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-07-06T12:21:59
+> 生成时间: 2026-07-06T12:35:21
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 数据库: depgraph (PostgreSQL)
 
@@ -187,11 +187,6 @@ flowchart LR
     classDef jobProd fill:#f1f8e9,stroke:#33691e,stroke-width:2px
     classDef jobBacktest fill:#fce4ec,stroke:#880e4f,stroke-width:2px
 ```
-
-> 纯 Mermaid 文件（.mmd）也可直接打开渲染：
-> - [dataflow_overview.mmd](dataflow_overview.mmd)
-> - [dataflow_production.mmd](dataflow_production.mmd)
-> - [dataflow_backtest.mmd](dataflow_backtest.mmd)
 
 ## Dataset 清单
 
