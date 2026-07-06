@@ -13,6 +13,10 @@
 # [ERROR_CONTRACT] YAML 缺失→exit 1; 解析失败→exit 2; DB 写入失败→exit 4
 # [TESTS] tests/test_generate_decision_graph.py
 # [TTL] task_bound
+# 真源说明：本脚本同步 decision_graph_model.yaml 的【schema 定义】（tracks/layers/node_types/edge_types/invariants）到 DB。
+# 【架构数据】（decision_nodes/decision_edges）的真源在 DB，不通过本脚本同步，用 apply_decisiongraph.py 写入。
+# 禁止在本脚本新增 nodes/edges 同步逻辑。
+# 详见 AGENTS.md §真源分类（11.0.2）。
 """
 [BLUEPRINT] | scripts/governance/generate_decision_graph.py | §decisiongraph
 [MODULE] scripts.governance.generate_decision_graph
@@ -375,16 +379,32 @@ def _sync_layers(conn, layers: list[dict], dry_run: bool = False) -> dict:
 def _force_rebuild_tracks_layers(conn, dry_run: bool = False) -> None:
     """破坏性重建：清空 tracks+layers 后全量重写（--force 模式）。
 
-    安全约束：不删除 decision_nodes/decision_edges（业务数据）。
+    安全约束：
+      - 不删除 decision_nodes/decision_edges（业务数据）
+      - ARCH-052: 保护 decision_layers 中 design_maturity='design' 的设计态 layer
+        （apply_decisiongraph.py --add-design-node 写入的设计态节点引用的 layer）
+        及其引用的 decision_tracks（tracks 表无 design_maturity 字段，
+        但被设计态 layer 通过 FK 引用，需保留）。
     """
     if dry_run:
-        print("[DRY-RUN] DELETE FROM decision_layers")
-        print("[DRY-RUN] DELETE FROM decision_tracks")
+        print("[DRY-RUN] DELETE FROM decision_layers WHERE design_maturity IS NULL OR design_maturity != 'design'")
+        print("[DRY-RUN] DELETE FROM decision_tracks WHERE track_id NOT IN (SELECT track FROM decision_layers WHERE design_maturity = 'design')")
         return
     with conn.cursor() as cur:
         # 先清空 layers（tracks 被 layers FK 引用，需先删 layers）
-        cur.execute("DELETE FROM decision_layers")
-        cur.execute("DELETE FROM decision_tracks")
+        # ARCH-052: 仅删除运营态 layer，保留设计态 layer
+        cur.execute(
+            "DELETE FROM decision_layers "
+            "WHERE design_maturity IS NULL OR design_maturity != 'design'"
+        )
+        # ARCH-052: 删除未被设计态 layer 引用的 track（保留设计态 layer 引用的 track）
+        cur.execute(
+            "DELETE FROM decision_tracks "
+            "WHERE track_id NOT IN ("
+            "  SELECT track FROM decision_layers "
+            "  WHERE design_maturity = 'design' AND track IS NOT NULL"
+            ")"
+        )
 
 
 def sync_decision_graph(
