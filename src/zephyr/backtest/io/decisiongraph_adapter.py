@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.backtest.core.engine_base (BacktestResult); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection)
 # [CONSUMERS] 回测管线（vectorized_engine / event_driven_engine 完成后调用）
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] BacktestResult → decision_node 映射单向（回测产出→决策流图节点）; evidence_hash 由 idempotency_key 派生
 # [MODIFY-GUARD] CTR-P1-016 契约冻结（BacktestResult 15 字段）
 # [STABILITY] evolving
