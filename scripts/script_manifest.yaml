@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-06'
-total_scripts: 563
+total_scripts: 564
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1713,6 +1713,14 @@ scripts:
 - name: governance/d5_architecture/generators/_common.py
   path: governance/d5_architecture/generators/_common.py
   description: 当前提供 cleanup_stale_files()——治本修复"生成器只增不删"问题。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/align_panoramas.py
+  path: governance/d5_architecture/generators/align_panoramas.py
+  description: 依据：ARCH-053 裁定（2026-07-06）
   domain: governance
   execution_plane: warm-path
   status: registered
