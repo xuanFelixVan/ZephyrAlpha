@@ -93,9 +93,6 @@ __all__ = [
     "layer1_discovery",
     "layer2_communication",
     "layer3_coordination",
-    "legacy_auditor",
-    "legacy_governance_adapter",
-    "legacy_protocol",
     "local_first_arch",
     "migration_strategy",
     "multi_agent",
@@ -111,9 +108,6 @@ __version__ = "0.10.0"
 
 _SUBMODULES = [
     "a2a_card_registry",
-    "legacy_auditor",
-    "legacy_governance_adapter",
-    "legacy_protocol",
     "local_first_arch",
     "migration_strategy",
     "multi_agent",

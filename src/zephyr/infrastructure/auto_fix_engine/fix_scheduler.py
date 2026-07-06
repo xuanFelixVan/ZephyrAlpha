@@ -38,7 +38,7 @@ class SchedulerMode(str, Enum):
 class FixScheduler:
     def __init__(
         self,
-        mode: SchedulerMode = SchedulerMode.CONTINUOUS,
+        mode: SchedulerMode = SchedulerMode.EVENT_DRIVEN,
         batch_interval_sec: int = 300,
         fix_fn: Callable[[list[FixAction]], FixReport] | None = None,
         scan_fn: Callable[[], list[FixAction]] | None = None,
