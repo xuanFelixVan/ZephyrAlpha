@@ -21,10 +21,10 @@ ttl: permanent
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
 | production（生产态） | 1587 | 31.7% |
-| design（设计态） | 52 | 1.0% |
+| design（设计态） | 53 | 1.1% |
 | prototype（原型态） | 3361 | 67.2% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **5000** | **100%** |
+| **总计** | **5001** | **100%** |
 
 ## 构建状态统计（build_status）
 
@@ -32,7 +32,7 @@ ttl: permanent
 |---------|:---:|:---:|
 | generated | 4947 | 98.9% |
 | planned | 36 | 0.7% |
-| stable | 17 | 0.3% |
+| stable | 18 | 0.4% |
 
 ## 各域设计成熟度统计
 
@@ -55,7 +55,7 @@ ttl: permanent
 | D_FACTOR | 因子 | 14 | 4 | 0 | 10 | 0 | 28.6% |
 | D_FRONTEND | 前端 | 30 | 13 | 6 | 11 | 0 | 43.3% |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | 25 | 4 | 0 | 21 | 0 | 16.0% |
-| D_GOVERNANCE | registry_management | 850 | 479 | 26 | 345 | 0 | 56.4% |
+| D_GOVERNANCE | registry_management | 851 | 479 | 27 | 345 | 0 | 56.3% |
 | D_GOV_AUDIT | audit_orchestration | 2 | 0 | 2 | 0 | 0 | 0.0% |
 | D_GOV_DOCS | architecture_docs | 2 | 2 | 0 | 0 | 0 | 100.0% |
 | D_GOV_DRIFT | drift_detection | 1 | 0 | 1 | 0 | 0 | 0.0% |

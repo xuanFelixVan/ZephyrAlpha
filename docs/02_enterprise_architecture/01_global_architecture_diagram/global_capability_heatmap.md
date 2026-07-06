@@ -125,7 +125,7 @@ ttl: permanent
 | C5 | 执行交易 | 4 | 511 | 286 | 1 | 224 | 1.75 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 19 | 0 | 1 | 18 | 1.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 59 | 5 | 10 | 44 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 7 | 1488 | 644 | 29 | 815 | 1.14 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 7 | 1489 | 644 | 30 | 815 | 1.14 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 4 | 212 | 113 | 0 | 99 | 1.50 | 🟡 部分覆盖 / Partial |
 | CC3 | 基础设施 | 11 | 679 | 372 | 9 | 298 | 1.82 | 🟡 部分覆盖 / Partial |
 
@@ -155,7 +155,7 @@ ttl: permanent
 | D_DIGITAL_TWIN | 数字孪生 | C7 | L2_domain | 8 | 0 | 1 | 7 | 0 | L1 🔵 | 🟡 |
 | D_EXEC_SIM | 执行仿真 | C7 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_SIMULATION | 仿真 | C7 | L2_domain | 11 | 2 | 1 | 8 | 0 | L2 🟡 | 🟡 |
-| D_GOVERNANCE | registry_management | CC1 | L2_domain | 850 | 479 | 26 | 345 | 0 | L2 🟡 | 🟡 |
+| D_GOVERNANCE | registry_management | CC1 | L2_domain | 851 | 479 | 27 | 345 | 0 | L2 🟡 | 🟡 |
 | D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 2 | 0 | 2 | 0 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 1 | 0 | 1 | 0 | 0 | L1 🔵 | 🟡 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 201 | 133 | 0 | 68 | 0 | L2 🟡 | 🟡 |
@@ -226,7 +226,7 @@ ttl: permanent
 | D_TRADING | 交易运营 | C5 | L2 | 481 |
 | D_BACKTEST | 回测 | C7 | L2 | 33 |
 | D_SIMULATION | 仿真 | C7 | L2 | 11 |
-| D_GOVERNANCE | registry_management | CC1 | L2 | 850 |
+| D_GOVERNANCE | registry_management | CC1 | L2 | 851 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2 | 201 |
 | D_GOV_SCRIPTS | script_governance | CC1 | L2 | 434 |
 | D_SECURITY | orphan_judge | CC2 | L2 | 147 |
