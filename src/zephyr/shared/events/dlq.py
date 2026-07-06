@@ -79,8 +79,21 @@ def _ensure_table(conn: sqlite3.Connection) -> None:
             created_at TEXT NOT NULL,
             next_retry_at TEXT,
             resolved INTEGER NOT NULL DEFAULT 0,
-            resolved_at TEXT
+            resolved_at TEXT,
+            idempotency_key TEXT
         )
+        """
+    )
+    # 5.57.5 修复：为旧表添加 idempotency_key 列（若不存在），保证向前兼容
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(dead_letters)").fetchall()}
+    if "idempotency_key" not in cols:
+        conn.execute("ALTER TABLE dead_letters ADD COLUMN idempotency_key TEXT")
+    # 5.57.5 修复：未解决的同一 idempotency_key 死信唯一（部分唯一索引）
+    # SQLite 中 NULL 不参与 UNIQUE 约束，故历史无 key 的死信不受影响
+    conn.execute(
+        """
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_dl_idem_unresolved
+        ON dead_letters (idempotency_key) WHERE resolved = 0 AND idempotency_key IS NOT NULL
         """
     )
     conn.execute(
@@ -108,6 +121,7 @@ class DeadLetter:
     resolved: bool = False
     resolved_at: str | None = None
     db_id: int | None = None
+    idempotency_key: str | None = None  # 5.57.5 新增：幂等键，避免非幂等 handler 重复副作用
 
 
 def _utc_iso() -> str:
@@ -210,6 +224,7 @@ class DeadLetterQueue:
         payload: dict[str, Any],
         error: Exception,
         traceback_str: str = "",
+        idempotency_key: str | None = None,
     ) -> int:
         """捕获一次失败事件到死信表。
 
@@ -220,9 +235,13 @@ class DeadLetterQueue:
             payload: 事件负载（dict）
             error: 捕获的异常
             traceback_str: traceback 字符串（可选）
+            idempotency_key: 幂等键（可选）。5.57.5 新增：
+                传入后若已存在同一 idempotency_key 的未解决死信，
+                跳过插入并返回已有 db_id，避免非幂等 handler 在
+                重试时产生重复副作用（如重复创建订单）。
 
         Returns:
-            新记录的 db id
+            新记录或已存在记录的 db id
         """
         now = _utc_iso()
         next_retry = _utc_iso()  # 立即可重试
@@ -230,12 +249,23 @@ class DeadLetterQueue:
         conn = get_db_connection(self._db_path)
         try:
             _ensure_table(conn)
+            # 5.57.5 修复：幂等性去重——同 idempotency_key 的未解决死信已存在则跳过插入
+            if idempotency_key is not None:
+                existing = conn.execute(
+                    """SELECT id FROM dead_letters
+                       WHERE idempotency_key = ? AND resolved = 0
+                       LIMIT 1""",
+                    (idempotency_key,),
+                ).fetchone()
+                if existing is not None:
+                    return existing[0]
+
             cur = conn.execute(
                 """INSERT INTO dead_letters
                    (event_type, payload_json, error_type, error_message,
                     error_traceback, attempt_count, max_attempts,
-                    created_at, next_retry_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    created_at, next_retry_at, idempotency_key)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     event_type.value,
                     json.dumps(payload, ensure_ascii=False, default=str),
@@ -246,6 +276,7 @@ class DeadLetterQueue:
                     self._max_attempts,
                     now,
                     next_retry,
+                    idempotency_key,
                 ),
             )
             conn.commit()
@@ -266,7 +297,7 @@ class DeadLetterQueue:
             rows = conn.execute(
                 """SELECT id, event_type, payload_json, error_type,
                           error_message, error_traceback, attempt_count,
-                          max_attempts, created_at, next_retry_at
+                          max_attempts, created_at, next_retry_at, idempotency_key
                    FROM dead_letters
                    WHERE resolved = 0
                      AND attempt_count < max_attempts
@@ -289,6 +320,7 @@ class DeadLetterQueue:
                     max_attempts,
                     created_at,
                     next_retry_at,
+                    idempotency_key,
                 ) = row
                 try:
                     event_type = EventType(event_type_str)
@@ -310,6 +342,7 @@ class DeadLetterQueue:
                         created_at=created_at or "",
                         next_retry_at=next_retry_at,
                         db_id=db_id,
+                        idempotency_key=idempotency_key,
                     )
                 )
             return result
