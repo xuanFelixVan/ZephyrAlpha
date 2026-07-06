@@ -29,7 +29,7 @@ audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
+from zephyr.shared.io.serialization import dumps, filter_dataclass_fields
 
 import hmac
 import json
@@ -138,7 +138,7 @@ class HourlyMerkleAggregator:
         for f in sorted(self._merkle_dir.glob("*.merkle")):
             try:
                 data = json.loads(f.read_text(encoding="utf-8"))
-                root = MerkleHourlyRoot(**data)
+                root = MerkleHourlyRoot(**filter_dataclass_fields(MerkleHourlyRoot, data))
                 if since and root.hour_key < since:
                     continue
                 if until and root.hour_key > until:

@@ -35,6 +35,7 @@ import yaml
 
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.work_dag import WorkDAG, WorkItem
+from zephyr.shared.io.serialization import filter_dataclass_fields
 from zephyr.shared.utils.time_utils import now_utc
 
 
@@ -83,7 +84,7 @@ class WorkOrchestrator:
         for path in self._dag_dir.glob("*.yaml"):
             try:
                 data = yaml.safe_load(path.read_text(encoding="utf-8"))
-                dag = WorkDAG(**data)
+                dag = WorkDAG(**filter_dataclass_fields(WorkDAG, data))
                 # 5.142.3 修复: 写入 _dags 必须持锁
                 with self._lock:
                     self._dags[dag.dag_id] = dag

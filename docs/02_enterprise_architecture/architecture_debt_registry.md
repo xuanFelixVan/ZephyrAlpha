@@ -3057,7 +3057,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=11(序列化/反序列化安全需审查pickle/json风险)
 > **第40轮修复状态（2026-07-05）**：FIXED=7(5.147.3 MCP Content-Length 上限 + 5.147.6 deepcopy RecursionError 防护 + 5.147.7 ast.literal_eval 替代 json.loads+replace + 5.147.8 docstring 纠正 + 5.147.9 from_dict None 处理 + 5.147.10 raw_decode 替代启发式提取 + 5.147.11 stdout size check), DRIFTED=2(5.147.1 已被 5.117.1 路径白名单部分缓解 + 5.147.2 已在 5.146.2 修复), STILL_VALID=2(5.147.4 79+处 default=str 大规模重构保留 + 5.147.5 版本迁移逻辑复杂重构保留)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(5.147.4 79+处default=str大规模重构 + 5.147.5 版本迁移逻辑复杂重构), STILL_VALID=0. 维度5.147全部清零.
-> **第69轮修复状态（2026-07-06）**：5.147.4 FIXED — serialization.py 新增 dumps() 函数, 批量替换 56 处 json.dumps(default=str) → dumps() 覆盖 46 文件, 清理 3 处 dead import json, 修复 33 文件 from __future__ 导入顺序. 5.147.5 FIXED — capability_passport.py 新增 _filter_dataclass_fields helper 用 dataclasses.fields() 过滤旧 JSON 已删除/重命名字段避免 TypeError, _migrate_passport_data 提供 version 迁移钩子占位, CapabilityPassport._from_dict/QuickProfile._from_dict 中 9 个 dataclass 的 **data.get(...) 调用全部包装过滤. 5.147 全部清零.
+> **第69轮修复状态（2026-07-06）**：5.147.4 FIXED — serialization.py 新增 dumps() 函数, 批量替换 56 处 json.dumps(default=str) → dumps() 覆盖 46 文件, 清理 3 处 dead import json, 修复 33 文件 from __future__ 导入顺序. 5.147.5 FIXED — capability_passport.py 新增 _filter_dataclass_fields helper 用 dataclasses.fields() 过滤旧 JSON 已删除/重命名字段避免 TypeError, _migrate_passport_data 提供 version 迁移钩子占位, CapabilityPassport._from_dict/QuickProfile._from_dict 中 9 个 dataclass 的 **data.get(...) 调用全部包装过滤. 5.147.12 FIXED (R69 新增) — 同族扩展: serialization.py 新增 SSoT `filter_dataclass_fields(cls, data)` 函数(支持 dataclass + Pydantic BaseModel), 12 处 `**data` 直接展开模式批量修复覆盖 12 文件(work_orchestrator/night_shift_queue/capability_registry/feedback_loop core/orphan_judge config_loader/skill_feedback/checkpoint_manager/merkle_hourly/cache_manager/warm_standby/preemption_manager/asset_inventory __main__). 5.147 全部清零.
 
 审查json/yaml/toml/pickle/joblib/marshal等序列化格式的安全问题、版本兼容性、循环引用序列化失败等。
 
@@ -3127,6 +3127,27 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - [behavioral_audit/headless_scanner.py:81](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/headless_scanner.py#L81)
 - `subprocess.run`捕获stdout后直接`json.loads(result.stdout)`。timeout=30限制执行时间但不限制输出量——30秒内可产生数GB文本
 - 修复：json.loads前校验`len(result.stdout) <= MAX_OUTPUT_SIZE`
+
+#### 5.147.12 [MEDIUM] **data 直接展开模式的版本兼容性缺陷（5.147.5 同族扩展）
+
+- **文件**：13 处持久化加载点（详见下）
+- **问题**：与 5.147.5 同族的 `SomeClass(**data)` 直接展开模式——data 来自 JSON/YAML/DB 反序列化，schema 演化时旧数据含已删除/重命名字段会触发 `TypeError: unexpected keyword argument`。其中 2 处用 Pydantic `BASE_CONFIG`（`extra="forbid"`）同样会拒绝多余字段
+- **涉及文件**：
+  - [trading/work_orchestrator.py:87](file:///D:/ZephyrAlpha/src/zephyr/trading/work_orchestrator.py#L87) `WorkDAG(**data)` ← YAML
+  - [trading/night_shift_queue.py:98](file:///D:/ZephyrAlpha/src/zephyr/trading/night_shift_queue.py#L98) `NightShiftEntry(**data)` ← JSONL (Pydantic)
+  - [trading/capability_registry.py:114](file:///D:/ZephyrAlpha/src/zephyr/trading/capability_registry.py#L114) `CapabilityCard(**data)` ← YAML
+  - [trading/feedback_loop/core.py:96](file:///D:/ZephyrAlpha/src/zephyr/trading/feedback_loop/core.py#L96) `EvolutionProposal(**data)` ← YAML (Pydantic)
+  - [security/access_control/orphan_judge/config_loader.py:48](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/orphan_judge/config_loader.py#L48) `OrphanJudgeConfig(**data)` ← YAML
+  - [autonomy_core/skills/skill_feedback.py:202](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/skills/skill_feedback.py#L202) `FeedbackSignal(**data)` ← JSONL
+  - [autonomy_core/context/checkpoint_manager.py:52](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/context/checkpoint_manager.py#L52) `Checkpoint(**data)` ← JSON
+  - [governance/audit_trail/merkle_hourly.py:141](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/merkle_hourly.py#L141) `MerkleHourlyRoot(**data)` ← JSON
+  - [governance/code_dedup/cache_manager.py:112](file:///D:/ZephyrAlpha/src/zephyr/governance/code_dedup/cache_manager.py#L112) `FunctionCache(**data)` ← JSON
+  - [infrastructure/rollback/warm_standby.py:192](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/warm_standby.py#L192) `StandbyState(**data)` ← JSON
+  - [infrastructure/pipeline/preemption_manager.py:216](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/preemption_manager.py#L216) `PreemptionRecord(**data)` ← dict
+  - [infrastructure/asset_inventory/__main__.py:154-155](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/asset_inventory/__main__.py#L154) `RawFileEntry/ScanResult(**data)` ← JSON
+  - [infrastructure/capacity_assurance/contracts/contract_bus.py:70](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/contracts/contract_bus.py#L70) `model(**data)` ← Pydantic 验证（已自带字段过滤，未改）
+- **修复**：在 `zephyr.shared.io.serialization` 新增 SSoT 的 `filter_dataclass_fields(cls, data)` 函数（同时支持 dataclass 和 Pydantic BaseModel），12 处 `**data` 改用 `**filter_dataclass_fields(Cls, data)` 包装；contract_bus.py 是 Pydantic 动态验证入口，本身用 `model_validate` 语义，不改
+- **状态**：FIXED — R69 在 serialization.py 新增 `filter_dataclass_fields(cls, data)` SSoT 函数(同时支持 dataclass 用 `dataclasses.fields()` + Pydantic 用 `model_fields`, 非 dataclass/Pydantic 返回原数据副本), capability_passport.py 改用 import SSoT 版本(删除本地 _filter_dataclass_fields 实现). 批量修复 12 处 `**data` 直接展开模式 → `**filter_dataclass_fields(Cls, data)` 覆盖 12 文件. 14 文件语法校验通过, 13 模块 import 验证通过, dataclass/Pydantic/None/空 输入功能测试通过.
 
 **N/A维度**：marshal.loads(全项目无使用)、自定义__getstate__/__setstate__(全项目无实现)、shelve模块(全项目无使用)
 

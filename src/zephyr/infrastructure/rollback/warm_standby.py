@@ -38,6 +38,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
+from zephyr.shared.io.serialization import filter_dataclass_fields
+
 
 @dataclass
 class StandbyState:
@@ -187,7 +189,7 @@ class WarmStandby:
             return None
         try:
             data = json.loads(self._state_path.read_text(encoding="utf-8"))
-            return StandbyState(**data)
+            return StandbyState(**filter_dataclass_fields(StandbyState, data))
         except (json.JSONDecodeError, TypeError):
             return None
 

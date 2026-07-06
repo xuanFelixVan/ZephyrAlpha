@@ -34,6 +34,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.serialization import filter_dataclass_fields
+
 
 @dataclass
 class FeedbackSignal:
@@ -197,7 +199,7 @@ class SkillFeedback:
                         if line:
                             try:
                                 data = json.loads(line)
-                                self._history.append(FeedbackSignal(**data))
+                                self._history.append(FeedbackSignal(**filter_dataclass_fields(FeedbackSignal, data)))
                             except (json.JSONDecodeError, TypeError):
                                 pass
                 if len(self._history) > self._MAX_HISTORY:

@@ -21,6 +21,8 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from zephyr.shared.io.serialization import filter_dataclass_fields
+
 
 @dataclass
 class Checkpoint:
@@ -47,4 +49,4 @@ class CheckpointManager:
         if not path.exists():
             return None
         data = json.loads(path.read_text(encoding="utf-8"))
-        return Checkpoint(**data)
+        return Checkpoint(**filter_dataclass_fields(Checkpoint, data))

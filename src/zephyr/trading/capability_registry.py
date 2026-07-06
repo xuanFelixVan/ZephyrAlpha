@@ -25,10 +25,10 @@ CapabilityRegistry — 能力注册中心
 import threading
 from pathlib import Path
 from typing import Any
-
 import yaml
 
 from zephyr.trading.capability_card import CapabilityCard
+from zephyr.shared.io.serialization import filter_dataclass_fields
 
 
 class CapabilityRegistry:
@@ -111,7 +111,7 @@ class CapabilityRegistry:
         for path in self._card_dir.glob("*.yaml"):
             try:
                 data = yaml.safe_load(path.read_text(encoding="utf-8"))
-                card = CapabilityCard(**data)
+                card = CapabilityCard(**filter_dataclass_fields(CapabilityCard, data))
                 with self._lock:
                     if card.capability_id not in self._cards:
                         self._cards[card.capability_id] = card
