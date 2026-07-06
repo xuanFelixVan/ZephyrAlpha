@@ -5,14 +5,14 @@ doc_type: blueprint
 status: Draft
 layer: L2_domain
 date: "2026-07-06"
-version: "0.1.0"
+version: "0.4.0"
 ttl: permanent
 supersedes:
   - "MOD-L00-001 §3.1 Provider 抽象部分（接管）"
 depends_on:
   - "MOD-L00-002 数据源操作手册（策略参数来源）"
   - "MOD-L00-003 数据获取需求清单（任务清单来源）"
-construction_progress: not_started
+construction_progress: stage3_done
 language: zh
 description: 统一管理多个数据源的自动下载——Provider 抽象 + per-source 策略注册表 + APScheduler 调度编排 + 进度/告警统一管理
 ---
