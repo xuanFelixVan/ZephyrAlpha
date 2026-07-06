@@ -723,7 +723,7 @@ def cmd_batch(
         print("ERROR: batch file must be a JSON array of op objects", file=sys.stderr)
         sys.exit(1)
 
-    conn = get_decisiongraph_pg_connection(autocommit=False)
+    conn = get_decisiongraph_pg_connection(autocommit=False, allow_design_delete=True)  # ARCH-053: 允许设计态写入
     results: list[dict] = []
     try:
         with _db_write_lock(conn):
@@ -858,7 +858,7 @@ build_status 状态机（单调推进，禁止跳态）：
         return
 
     # 单 op 模式
-    conn = get_decisiongraph_pg_connection(autocommit=False)
+    conn = get_decisiongraph_pg_connection(autocommit=False, allow_design_delete=True)  # ARCH-053: 允许设计态写入
     try:
         with _db_write_lock(conn):
             result: dict | None = None

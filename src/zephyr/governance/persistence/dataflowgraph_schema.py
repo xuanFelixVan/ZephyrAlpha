@@ -250,6 +250,7 @@ def get_dataflowgraph_pg_connection(
     superuser: bool = False,
     autocommit: bool = True,
     replica: bool = False,
+    allow_design_delete: bool = False,
 ) -> Any:
     """返回 dataflowgraph (PostgreSQL) 连接。
 
@@ -260,6 +261,9 @@ def get_dataflowgraph_pg_connection(
     :param autocommit: True 启用自动提交（默认）；False 需显式 conn.commit()
     :param replica: True 设置 session_replication_role='replica' 禁用所有触发器和 FK
         （仅超级用户可用；用于批量数据导入/迁移场景；自动设置 superuser=True）
+    :param allow_design_delete: True 启用 SET app.allow_design_maturity_delete = on
+        （逃生通道，绕过 protect_dataflow_design_maturity 触发器；仅 apply_dataflowgraph.py
+        设计态写入命令启用；ARCH-053）
 
     注意：本函数复用 depgraph_schema._build_pg_dsn()（配置真源唯一），
     但返回独立的连接对象（dataflowgraph 操作不影响 depgraph 事务）。
@@ -273,6 +277,12 @@ def get_dataflowgraph_pg_connection(
     if replica:
         with conn.cursor() as cur:
             cur.execute("SET session_replication_role = 'replica';")
+        if not autocommit:
+            conn.commit()
+
+    if allow_design_delete:
+        with conn.cursor() as cur:
+            cur.execute("SET app.allow_design_maturity_delete = on")
         if not autocommit:
             conn.commit()
 

@@ -155,3 +155,41 @@ CREATE INDEX IF NOT EXISTS idx_dataflow_edges_edge_type   ON dataflow_edges(edge
 
 -- ========== 4. Schema 健康检查视图（可选，Phase 2 补充） ==========
 -- 当前由 verify_schema_health.py 扩展校验（Phase 2 TODO）
+
+-- ========== 5. 设计态保护触发器（ARCH-053，2026-07-06） ==========
+-- 防止 sync_dataflow_registry 等批量同步工具覆盖/删除设计态节点
+-- 逃生通道：SET app.allow_design_maturity_delete = on（仅 apply_dataflowgraph.py 设计态写入命令启用）
+-- 对齐 depgraph.protect_depgraph_design_edges 模式（裁定#203 + #ARCH-053）
+CREATE OR REPLACE FUNCTION protect_dataflow_design_maturity()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_allow TEXT;
+BEGIN
+    SHOW app.allow_design_maturity_delete INTO v_allow;
+    IF v_allow = 'on' THEN
+        RETURN COALESCE(NEW, OLD);
+    END IF;
+    -- DELETE: OLD.design_maturity / UPDATE: OLD.design_maturity（before 状态）
+    IF TG_OP = 'DELETE' AND OLD.design_maturity = 'design' THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design 态 dataflow 行（表=%, entity=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name);
+    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity = 'design' AND NEW.design_maturity IS DISTINCT FROM 'design' THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design 态 dataflow 行降级（表=%, entity=%, design→%）', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name), NEW.design_maturity;
+    END IF;
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_protect_dataflow_design_datasets ON dataflow_datasets;
+CREATE TRIGGER trg_protect_dataflow_design_datasets
+    BEFORE DELETE OR UPDATE ON dataflow_datasets
+    FOR EACH ROW EXECUTE FUNCTION protect_dataflow_design_maturity();
+
+DROP TRIGGER IF EXISTS trg_protect_dataflow_design_jobs ON dataflow_jobs;
+CREATE TRIGGER trg_protect_dataflow_design_jobs
+    BEFORE DELETE OR UPDATE ON dataflow_jobs
+    FOR EACH ROW EXECUTE FUNCTION protect_dataflow_design_maturity();
+
+DROP TRIGGER IF EXISTS trg_protect_dataflow_design_edges ON dataflow_edges;
+CREATE TRIGGER trg_protect_dataflow_design_edges
+    BEFORE DELETE OR UPDATE ON dataflow_edges
+    FOR EACH ROW EXECUTE FUNCTION protect_dataflow_design_maturity();

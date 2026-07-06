@@ -137,18 +137,27 @@ def load_track_ids() -> set[str]:
 # ---------------------------------------------------------------------------
 
 
-def get_decisiongraph_pg_connection(*args, **kwargs):
+def get_decisiongraph_pg_connection(*args, allow_design_delete: bool = False, **kwargs):
     """返回 decisiongraph (PostgreSQL) 连接。
 
     decisiongraph 与 depgraph 共享同一个 PostgreSQL 实例（同一 DB，不同表），
     本函数直接委托 get_depgraph_pg_connection()，保证 PG 配置 SSoT
     （config/.env.postgres）。
 
-    所有参数透传给 get_depgraph_pg_connection()，详见其文档。
+    所有位置参数透传给 get_depgraph_pg_connection()，详见其文档。
 
+    :param allow_design_delete: True 启用 SET app.allow_design_maturity_delete = on
+        （逃生通道，绕过 protect_decision_design_maturity 触发器；仅 apply_decisiongraph.py
+        设计态写入命令启用；ARCH-053）
     :return: psycopg2 连接对象（autocommit=True 默认）
     """
-    return get_depgraph_pg_connection(*args, **kwargs)
+    conn = get_depgraph_pg_connection(*args, **kwargs)
+    if allow_design_delete:
+        with conn.cursor() as cur:
+            cur.execute("SET app.allow_design_maturity_delete = on")
+        if not conn.autocommit:
+            conn.commit()
+    return conn
 
 
 # ---------------------------------------------------------------------------
