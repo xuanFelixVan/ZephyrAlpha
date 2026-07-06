@@ -76,8 +76,10 @@ class DatabaseService:
         # 治本(2026-06-30): 消除硬编码绝对路径, 改用 SSoT 源
         self.governance_db = str(DB_PATH)
 
-        self._governance_conn: sqlite3.Connection | None = None
-        self._depgraph_conn: psycopg2.extensions.connection | None = None  # psycopg2 connection (P2迁移后)
+        self._governance_conn: sqlite3.Connection | None = None  # 读写连接
+        self._governance_conn_readonly: sqlite3.Connection | None = None  # P-REVIEW-3 双连接：只读连接
+        self._depgraph_conn: psycopg2.extensions.connection | None = None  # psycopg2 读写连接 (P2迁移后)
+        self._depgraph_conn_readonly: psycopg2.extensions.connection | None = None  # P-REVIEW-3 双连接：只读连接
         self._clickhouse_conn: Any | None = None  # clickhouse_driver.Client (C1行情仓库)
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 HIGH）：lazy init 线程安全
 
@@ -87,36 +89,50 @@ class DatabaseService:
         复用 sqlite_schema.get_db_connection() 确保 PRAGMA 基线（WAL/busy_timeout 等）一致，
         避免 DatabaseService 自行 sqlite3.connect() 导致连接行为漂移。
 
-        :param read_only: True=只读连接（PRAGMA query_only=1）。
+        P-REVIEW-3 双连接机制：read_only=True 返回独立的只读连接，read_only=False 返回读写连接。
+        两个连接相互独立，只读查询不会阻断写操作。
+
+        :param read_only: True=只读连接（PRAGMA query_only=1，独立连接）。
                           安全约束：业务数据库查询MUST显式 read_only=True（project_memory 硬约束）。
-                          read_only 仅在连接首次创建时生效（lazy init 缓存机制）。
+                          False=读写连接（用于 INSERT/UPDATE/DELETE）。
         """
-        if self._governance_conn is None:
+        target_attr = "_governance_conn_readonly" if read_only else "_governance_conn"
+        conn = getattr(self, target_attr)
+        if conn is None:
             with self._lock:
-                if self._governance_conn is None:
-                    self._governance_conn = get_db_connection(self.governance_db)
+                conn = getattr(self, target_attr)
+                if conn is None:
+                    conn = get_db_connection(self.governance_db)
                     if read_only:
-                        self._governance_conn.execute("PRAGMA query_only = 1")
-        return self._governance_conn
+                        conn.execute("PRAGMA query_only = 1")
+                    setattr(self, target_attr, conn)
+        return conn
 
     def get_depgraph_conn(self, read_only: bool = False) -> psycopg2.extensions.connection:
         """获取 depgraph (PostgreSQL) 连接（P2迁移后从 SQLite 切换到 PostgreSQL）
 
         返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
 
-        :param read_only: True=只读连接（SET default_transaction_read_only=on）。
+        P-REVIEW-3 双连接机制：read_only=True 返回独立的只读连接，read_only=False 返回读写连接。
+        两个连接相互独立，只读查询不会阻断写操作。
+
+        :param read_only: True=只读连接（SET default_transaction_read_only=on，独立连接）。
                           安全约束：业务数据库查询MUST显式 read_only=True（project_memory 硬约束）。
-                          read_only 仅在连接首次创建时生效（lazy init 缓存机制）。
+                          False=读写连接（用于 INSERT/UPDATE/DELETE）。
         """
-        if self._depgraph_conn is None:
+        target_attr = "_depgraph_conn_readonly" if read_only else "_depgraph_conn"
+        conn = getattr(self, target_attr)
+        if conn is None:
             with self._lock:
-                if self._depgraph_conn is None:
-                    self._depgraph_conn = get_depgraph_pg_connection(autocommit=True)
-                    self._depgraph_conn.cursor_factory = RealDictCursor
+                conn = getattr(self, target_attr)
+                if conn is None:
+                    conn = get_depgraph_pg_connection(autocommit=True)
+                    conn.cursor_factory = RealDictCursor
                     if read_only:
-                        with self._depgraph_conn.cursor() as cur:
+                        with conn.cursor() as cur:
                             cur.execute("SET default_transaction_read_only = on")
-        return self._depgraph_conn
+                    setattr(self, target_attr, conn)
+        return conn
 
     def get_clickhouse_conn(self):
         """获取 ClickHouse 连接（C1 行情仓库 c1_market）
@@ -151,14 +167,14 @@ class DatabaseService:
         result = {}
 
         try:
-            conn = self.get_governance_conn()
+            conn = self.get_governance_conn(read_only=True)
             conn.execute("SELECT 1").fetchone()
             result["governance"] = True
         except Exception:
             result["governance"] = False
 
         try:
-            conn = self.get_depgraph_conn()
+            conn = self.get_depgraph_conn(read_only=True)
             with conn.cursor() as cur:
                 cur.execute("SELECT 1")
                 cur.fetchone()
@@ -176,14 +192,13 @@ class DatabaseService:
         return result
 
     def close_all(self):
-        """关闭所有连接"""
-        if self._governance_conn:
-            self._governance_conn.close()
-            self._governance_conn = None
-
-        if self._depgraph_conn:
-            self._depgraph_conn.close()
-            self._depgraph_conn = None
+        """关闭所有连接（P-REVIEW-3 双连接：关闭 4 个连接）"""
+        for attr in ("_governance_conn", "_governance_conn_readonly",
+                     "_depgraph_conn", "_depgraph_conn_readonly"):
+            conn = getattr(self, attr)
+            if conn:
+                conn.close()
+                setattr(self, attr, None)
 
         # clickhouse_driver.Client 无 close()，断开由 GC 处理
         self._clickhouse_conn = None
@@ -192,7 +207,7 @@ class DatabaseService:
 
     def get_task(self, task_id: str) -> dict[str, Any] | None:
         """获取任务"""
-        conn = self.get_governance_conn()
+        conn = self.get_governance_conn(read_only=True)
         row = conn.execute("SELECT * FROM tasks WHERE task_id=?", (task_id,)).fetchone()
         return dict(row) if row else None
 
@@ -245,7 +260,7 @@ class DatabaseService:
 
     def get_node(self, node_id: str) -> dict[str, Any] | None:
         """获取节点"""
-        conn = self.get_depgraph_conn()
+        conn = self.get_depgraph_conn(read_only=True)
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM nodes WHERE node_id=%s", (node_id,))
             row = cur.fetchone()
@@ -253,7 +268,7 @@ class DatabaseService:
 
     def get_nodes_by_domain(self, domain_id: str) -> list:
         """按域获取节点"""
-        conn = self.get_depgraph_conn()
+        conn = self.get_depgraph_conn(read_only=True)
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM nodes WHERE domain_id=%s", (domain_id,))
             rows = cur.fetchall()
@@ -261,7 +276,7 @@ class DatabaseService:
 
     def get_nodes_by_type(self, node_type: str) -> list:
         """按类型获取节点"""
-        conn = self.get_depgraph_conn()
+        conn = self.get_depgraph_conn(read_only=True)
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM nodes WHERE node_type=%s", (node_type,))
             rows = cur.fetchall()
@@ -269,7 +284,7 @@ class DatabaseService:
 
     def get_rule_bindings_by_function(self, function_name: str) -> list:
         """按函数名获取规则绑定"""
-        conn = self.get_depgraph_conn()
+        conn = self.get_depgraph_conn(read_only=True)
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM rule_bindings WHERE function_name=%s", (function_name,))
             rows = cur.fetchall()
@@ -277,7 +292,7 @@ class DatabaseService:
 
     def get_edges_from_node(self, from_node: str) -> list:
         """获取节点的出边"""
-        conn = self.get_depgraph_conn()
+        conn = self.get_depgraph_conn(read_only=True)
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM edges WHERE from_node=%s", (from_node,))
             rows = cur.fetchall()
