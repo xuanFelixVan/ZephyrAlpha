@@ -429,28 +429,42 @@ def make_create_guard() -> GateSpec:
         # 对标 directory_contract_gate.py L105-107 fail-closed。配套治本1② registry 入 RULES_MANIFEST
         # 防"删 registry 绕过"在裸 commit 路径被 C 层检测。
         # import 放 try 外（代码级故障不捕获，由 check_all 的 try-except 兜底为 fail-closed）。
+        # P-2 修复（2026-07-06）：registry 路径随 gateway.project_root 解析（支持 worktree 路径）。
+        # 病根：_pre_merge_gate_check 用 project_root=wt_path 创建 gateway，但本处读全局
+        # REGISTRY_YAML（主工作区路径）→ worktree 内更新的 capability 文件（如新增 creation_token）
+        # 读不到，误判"未登记"阻断 merge。修复：路径随 project_root 解析，worktree 场景读
+        # worktree 版本（session 分支内容）。与 L371 gateway.project_root / _py_file 模式一致。
+        # 回退到全局 REGISTRY_YAML：worktree 是 tracked 文件必存在；tmp_path 测试场景无此文件
+        # 时回退到全局真源（保持现有测试行为不变，fail-closed 语义不变）。
         from zephyr.governance.capability_lookup import REGISTRY_YAML
+        _registry_yaml = (
+            gateway.project_root
+            / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+            / "capability_canonical_file_registry.yaml"
+        )
+        if not _registry_yaml.exists():
+            _registry_yaml = REGISTRY_YAML  # 回退到全局真源
 
-        if not REGISTRY_YAML.exists():
+        if not _registry_yaml.exists():
             return False, (
-                f"CREATE-GUARD fail-closed: capability registry 不可达（文件缺失: {REGISTRY_YAML}）。"
+                f"CREATE-GUARD fail-closed: capability registry 不可达（文件缺失: {_registry_yaml}）。"
                 f"禁止放行——防删 registry 绕过 creation_token 检查。"
-                f"修复：git checkout HEAD -- {REGISTRY_YAML} 恢复 registry 后重试。"
+                f"修复：git checkout HEAD -- {_registry_yaml} 恢复 registry 后重试。"
             )
         try:
             import yaml
-            data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
+            data = yaml.safe_load(_registry_yaml.read_text(encoding="utf-8"))
         except Exception as e:
             return False, (
                 f"CREATE-GUARD fail-closed: capability registry 解析失败"
                 f"({type(e).__name__}: {e})。禁止放行——registry 是 creation_token 真源，"
-                f"语法错误=检测器失效。修复：修正 {REGISTRY_YAML} 的 YAML 语法后重试。"
+                f"语法错误=检测器失效。修复：修正 {_registry_yaml} 的 YAML 语法后重试。"
             )
 
         if not isinstance(data, dict):
             return False, (
                 f"CREATE-GUARD fail-closed: registry YAML 顶层非 dict（结构异常）。"
-                f"禁止放行——结构异常=检测器失效。修复：检查 {REGISTRY_YAML} 顶层结构后重试。"
+                f"禁止放行——结构异常=检测器失效。修复：检查 {_registry_yaml} 顶层结构后重试。"
             )
 
         # 3. 构建 creation_tokens 文件索引（相对路径 → token 条目）
