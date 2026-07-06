@@ -29,6 +29,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel
@@ -40,7 +41,7 @@ class MockStrategy(str, Enum):
     FULL = "full"
 
 
-MOCK_STRATEGIES: dict[str, MockStrategy] = {
+MOCK_STRATEGIES: Final[dict[str, MockStrategy]] = {
     "CT-ORC-SCRIPT-001": MockStrategy.PARTIAL,
     "CT-ORC-CE-001": MockStrategy.STUB,
     "CT-ORC-VMS-001": MockStrategy.FULL,

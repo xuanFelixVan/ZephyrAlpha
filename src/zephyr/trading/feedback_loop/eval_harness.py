@@ -15,18 +15,20 @@
 # [A_module] module_id=MOD-UNK_eval_harness | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+
+from typing import Final
 import json
 import time
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-CATEGORY_INTENT = "INTENT"
-CATEGORY_ORCHESTRATOR = "ORCHESTRATOR"
-CATEGORY_HALLUCINATION = "HALLUCINATION"
-CATEGORY_EVOLUTION = "EVOLUTION"
+CATEGORY_INTENT: Final[str] = "INTENT"
+CATEGORY_ORCHESTRATOR: Final[str] = "ORCHESTRATOR"
+CATEGORY_HALLUCINATION: Final[str] = "HALLUCINATION"
+CATEGORY_EVOLUTION: Final[str] = "EVOLUTION"
 
-CATEGORIES = frozenset({CATEGORY_INTENT, CATEGORY_ORCHESTRATOR, CATEGORY_HALLUCINATION, CATEGORY_EVOLUTION})
+CATEGORIES: Final[frozenset] = frozenset({CATEGORY_INTENT, CATEGORY_ORCHESTRATOR, CATEGORY_HALLUCINATION, CATEGORY_EVOLUTION})
 
 
 @dataclass

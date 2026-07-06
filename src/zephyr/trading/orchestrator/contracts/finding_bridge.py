@@ -26,6 +26,7 @@ Script System -> Orchestrator: Finding -> TaskCard 转换管道
 
 from __future__ import annotations
 
+from typing import Final
 import importlib as _importlib
 import logging
 from collections.abc import Sequence
@@ -35,7 +36,7 @@ _bridge_mod = _importlib.import_module("zephyr.infrastructure.finding_task_bridg
 AuditFinding = _bridge_mod.AuditFinding
 BridgeResult = _bridge_mod.BridgeResult
 FindingTaskBridge = _bridge_mod.FindingTaskBridge
-SEVERITY_TO_PRIORITY = _bridge_mod.SEVERITY_TO_PRIORITY
+SEVERITY_TO_PRIORITY: Final[Any] = _bridge_mod.SEVERITY_TO_PRIORITY
 from zephyr.shared.io.paths import DB_PATH
 from zephyr.shared.foundation.models import TaskNamespace
 

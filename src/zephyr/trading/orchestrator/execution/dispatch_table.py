@@ -30,6 +30,7 @@ AI Agent 冷启动分派表（Dispatch Table）
 
 from __future__ import annotations
 
+from typing import Final
 from dataclasses import dataclass
 
 
@@ -42,7 +43,7 @@ class SystemDispatch:
     blueprint_section: str = ""
 
 
-DISPATCH_TABLE: dict[str, SystemDispatch] = {
+DISPATCH_TABLE: Final[dict[str, SystemDispatch]] = {
     "orchestrator": SystemDispatch(
         system_name="Orchestrator（任务系统）",
         ct_contracts=(

@@ -30,6 +30,7 @@ ai_read_only_hint 四级：
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -62,7 +63,7 @@ class Contract(BaseModel):
     route_target: str = ""
 
 
-CONTRACTS: dict[str, Contract] = {
+CONTRACTS: Final[dict[str, Contract]] = {
     "CT-ORC-SCRIPT-001": Contract(
         contract_id="CT-ORC-SCRIPT-001",
         producer="Orchestrator",

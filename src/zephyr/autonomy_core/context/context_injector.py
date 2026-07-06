@@ -37,6 +37,7 @@ Respects token budget limits from ContextBudgetTracker.
 
 from __future__ import annotations
 
+from typing import Final
 import time
 from enum import Enum
 from pydantic import BaseModel, Field
@@ -184,7 +185,7 @@ class InjectionResult(BaseModel):
     authority_reviewed: bool = Field(default=False, description="是否通过 authority chain review")
 
 
-LAYER_HEADERS: dict[str, str] = {
+LAYER_HEADERS: Final[dict[str, str]] = {
     "system": "## System Core Rules (Layer1 — always-on)\n",
     "rules": "## Task-Specific Contracts & Blueprints (Layer2)\n",
     "knowledge": "## Knowledge Entries & Failure Patterns (Layer3)\n",
@@ -430,7 +431,7 @@ def _trim_knowledge_layer(
 _CE_TIMEOUT_METRIC: int = 0
 
 
-AUTHORITY_CHAIN: dict[str, float] = {
+AUTHORITY_CHAIN: Final[dict[str, float]] = {
     "CE_build": 0.7,
     "Orc_check": 0.85,
     "User_review": 1.0,

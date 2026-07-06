@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.execution.reconciliation_loop
 # [DOMAIN] D_TRADING
@@ -34,7 +36,7 @@ class Invariant(BaseModel):
     ok: bool = True
 
 
-RECONCILE_INVARIANTS: list[str] = [
+RECONCILE_INVARIANTS: Final[list[str]] = [
     "contract_checksums_consistent",
     "circuit_breaker_states_valid",
     "cbac_matrix_checksum_valid",

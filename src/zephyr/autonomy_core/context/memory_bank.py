@@ -23,12 +23,13 @@ memory_bank.py — AI 读写结构化持久上下文 (DD: memory_bank, TASK-014 
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from typing import Final
+from datetime import UTC, timezone, datetime
 from pathlib import Path
 
-UTC = UTC
+UTC: Final[timezone] = UTC
 
-BANK_FILES = [
+BANK_FILES: Final[list] = [
     "project_brief.md",
     "product_context.md",
     "system_patterns.md",

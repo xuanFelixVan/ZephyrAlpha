@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop._gen_inherited
 # [DOMAIN] D_OPS
@@ -20,9 +22,9 @@
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-BASE = os.path.join(os.path.dirname(__file__), "")
+BASE: Final[str] = os.path.join(os.path.dirname(__file__), "")
 
-SKELETONS = {
+SKELETONS: Final[set] = {
     # === DIAGNOSERS remaining ===
     "diagnosers/model_rotation.py": '''"""Model Rotation — v0.9.0 R125
 

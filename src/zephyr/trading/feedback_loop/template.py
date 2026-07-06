@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9
 # [MODULE] zephyr.trading.feedback_loop.template
 # [DOMAIN] D_OPS
@@ -26,7 +28,7 @@ ModelRotation — ModelRotation
 
 # SRC-0068a: 从 _gen_inherited.py 拆分 — 骨骼模板数据
 
-SKELETONS: dict[str, str] = {
+SKELETONS: Final[dict[str, str]] = {
     # === DIAGNOSERS remaining ===
     "diagnosers/model_rotation.py": '''"""Model Rotation — v0.9.0 R125
 

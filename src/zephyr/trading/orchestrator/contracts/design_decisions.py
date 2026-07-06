@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.contracts.design_decisions
 # [DOMAIN] D_TRADING
@@ -47,7 +49,7 @@ class DesignDecision(BaseModel):
     status: DecisionStatus = DecisionStatus.ACTIVE
 
 
-DECISIONS: dict[str, DesignDecision] = {
+DECISIONS: Final[dict[str, DesignDecision]] = {
     "DD-1": DesignDecision(
         dd_id="DD-1",
         title="总蓝图只定义'之间'不管'内部'",

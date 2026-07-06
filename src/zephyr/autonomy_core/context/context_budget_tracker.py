@@ -33,6 +33,7 @@ T-V2-006 扩展（experimental）
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -61,7 +62,7 @@ class ContextBudgetLevel(str, Enum):
 BudgetLevel = ContextBudgetLevel
 
 
-DEFAULT_THRESHOLDS = {
+DEFAULT_THRESHOLDS: Final[set] = {
     ContextBudgetLevel.L1_WARNING: 0.80,
     ContextBudgetLevel.L2_THROTTLE: 0.90,
     ContextBudgetLevel.L3_HARD_STOP: 0.95,

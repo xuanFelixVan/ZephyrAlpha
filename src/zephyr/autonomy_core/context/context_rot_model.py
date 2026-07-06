@@ -24,13 +24,14 @@ context_rot_model.py — n² Attention 衰减数学模型 (DD7, TASK-014 beta a)
 
 from __future__ import annotations
 
+from typing import Final
 from dataclasses import dataclass
-from datetime import UTC
+from datetime import UTC, timezone
 
-UTC = UTC
+UTC: Final[timezone] = UTC
 
-K_DEFAULT: float = 0.35
-BASE_TOKENS: float = 250.0
+K_DEFAULT: Final[float] = 0.35
+BASE_TOKENS: Final[float] = 250.0
 
 
 @dataclass(frozen=True)

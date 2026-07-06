@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import struct
 import threading
@@ -29,7 +30,7 @@ from zephyr.trading.verdict_engine import ProtectionLevel
 
 logger = logging.getLogger(__name__)
 
-ANCHOR_PATTERNS: list[str] = [
+ANCHOR_PATTERNS: Final[list[str]] = [
     ".trae/rules/",
     "project_rules.md",
     "_index.yaml",
@@ -46,7 +47,7 @@ ANCHOR_PATTERNS: list[str] = [
     "src/zephyr/budget-enforcer/",
 ]
 
-PROTECTED_PATTERNS: list[str] = [
+PROTECTED_PATTERNS: Final[list[str]] = [
     "src/zephyr/audit-trail/",
     "src/zephyr/rollback/",
     "src/zephyr/shared/",
@@ -59,7 +60,7 @@ PROTECTED_PATTERNS: list[str] = [
     "src/zephyr/vector-memory/",
 ]
 
-NORMAL_PATTERNS: list[str] = [
+NORMAL_PATTERNS: Final[list[str]] = [
     "src/zephyr/pipeline/",
     "src/zephyr/orchestrator/",
     "src/zephyr/runtime/",
@@ -69,7 +70,7 @@ NORMAL_PATTERNS: list[str] = [
     "scripts/",
 ]
 
-PUBLIC_PATTERNS: list[str] = [
+PUBLIC_PATTERNS: Final[list[str]] = [
     "docs/",
     "README.md",
     "LICENSE",

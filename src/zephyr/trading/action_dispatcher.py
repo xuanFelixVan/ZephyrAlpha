@@ -42,6 +42,8 @@ Phase 2 新增:
 """
 
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 import json
@@ -60,10 +62,10 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
-CAPABILITY_CARDS_DIR = REPO_ROOT / "data" / "capability_cards"
-AUDIT_LOGS_DIR = REPO_ROOT / "data" / "audit_logs"
-BRAIN_BACKUPS_DIR = REPO_ROOT / ".brain_backups"
-BRAIN_TRASH_DIR = REPO_ROOT / ".brain_trash"
+CAPABILITY_CARDS_DIR: Final[Path] = REPO_ROOT / "data" / "capability_cards"
+AUDIT_LOGS_DIR: Final[Path] = REPO_ROOT / "data" / "audit_logs"
+BRAIN_BACKUPS_DIR: Final[Path] = REPO_ROOT / ".brain_backups"
+BRAIN_TRASH_DIR: Final[Path] = REPO_ROOT / ".brain_trash"
 
 _BRAIN_MARKER = "# BRAIN"
 _MAX_BACKUPS_PER_FILE = 10

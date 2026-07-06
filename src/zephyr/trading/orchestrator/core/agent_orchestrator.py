@@ -17,6 +17,8 @@
 
 # AI-generated: T-3-10 Agent Orchestrator (
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 """
 AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康监控
@@ -132,7 +134,7 @@ class RoutingStrategy(str, Enum):
 
 #  §3.2 — 6 角色 × 10 域静态映射
 # 每个 (role, domain) 有一个 0.0-1.0 的 capability score；0.0 表示不覆盖
-DEFAULT_ROLE_DOMAIN_MATRIX: dict[AgentRole, dict[str, float]] = {
+DEFAULT_ROLE_DOMAIN_MATRIX: Final[dict[AgentRole, dict[str, float]]] = {
     AgentRole.ARCHITECT: {
         "D0": 0.8,
         "D1": 0.4,

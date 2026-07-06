@@ -22,12 +22,14 @@ Task ID : MOD-CONTEXT_ENGINE-TASK-011
 Priority: P2 (beta)
 """
 
+from typing import Final
+
 import json
 from pathlib import Path
 
-CE_ROOT = Path(__file__).resolve().parent
+CE_ROOT: Final[Path] = Path(__file__).resolve().parent
 
-CATEGORIES = {
+CATEGORIES: Final[set] = {
     "source": "*.py",
     "config": "config/**/*.yaml",
     "data": "*.json",

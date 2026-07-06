@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.gates._governance_gates
 # [DOMAIN] D_GOVERNANCE
@@ -15,7 +17,7 @@
 # [A_module] module_id=MOD-UNK__governance_gates | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-SUBMODULES = [
+SUBMODULES: Final[list] = [
     "autonomy_credit",
     "autonomy_maturity",
     "blueprint_code_reconciler",

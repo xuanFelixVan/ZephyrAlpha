@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.governance.model_registry
 # [DOMAIN] D_TRADING
@@ -18,7 +20,7 @@
 """LLM 模型注册表（CT-MODEL-REGISTRY）——deepseek/opus/gpt等模型版本+性能基线。"""
 
 
-MODELS: dict[str, dict] = {
+MODELS: Final[dict[str, dict]] = {
     "deepseek-chat": {"provider": "deepseek", "tier": "standard", "token_limit": 65536},
     "deepseek-reasoner": {"provider": "deepseek", "tier": "premium", "token_limit": 65536},
     "claude-opus-4": {"provider": "anthropic", "tier": "premium", "token_limit": 200000},

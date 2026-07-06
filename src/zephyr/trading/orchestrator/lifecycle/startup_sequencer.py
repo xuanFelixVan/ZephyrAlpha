@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.lifecycle.startup_sequencer
 # [DOMAIN] D_TRADING
@@ -36,7 +38,7 @@ class StartupLayer(str, Enum):
     L5_TELEMETRY = "L5_telemetry"
 
 
-STARTUP_ORDER: tuple[StartupLayer, ...] = (
+STARTUP_ORDER: Final[tuple[StartupLayer, ...]] = (
     StartupLayer.L1_DATABASE,
     StartupLayer.L2_VMS,
     StartupLayer.L3_FLE,
@@ -44,7 +46,7 @@ STARTUP_ORDER: tuple[StartupLayer, ...] = (
     StartupLayer.L5_TELEMETRY,
 )
 
-STARTUP_COMPONENTS: dict[StartupLayer, list[str]] = {
+STARTUP_COMPONENTS: Final[dict[StartupLayer, list[str]]] = {
     StartupLayer.L1_DATABASE: ["database"],
     StartupLayer.L2_VMS: ["vector-memory"],
     StartupLayer.L3_FLE: ["feedback-loop"],
@@ -61,7 +63,7 @@ STARTUP_COMPONENTS: dict[StartupLayer, list[str]] = {
     StartupLayer.L5_TELEMETRY: ["system-telemetry"],
 }
 
-GLOBAL_TIMEOUT_S: float = 120.0
+GLOBAL_TIMEOUT_S: Final[float] = 120.0
 
 
 class StartupState(BaseModel):

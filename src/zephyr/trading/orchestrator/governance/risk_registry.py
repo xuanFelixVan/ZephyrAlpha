@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.governance.risk_registry
 # [DOMAIN] D_TRADING
@@ -62,7 +64,7 @@ class ConflictResolution(BaseModel):
     resolved_by: str = ""
 
 
-RISKS: dict[str, Risk] = {
+RISKS: Final[dict[str, Risk]] = {
     f"R-MOD-{i}": Risk(
         risk_id=f"R-MOD-{i}",
         severity=RiskSeverity.MEDIUM,

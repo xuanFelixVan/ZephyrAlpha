@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.execution.data_lifecycle
 # [DOMAIN] D_TRADING
@@ -17,7 +19,7 @@
 
 """数据生命周期管理器（CT-DATA-LIFECYCLE-001）——8类数据保留策略+每日GC。"""
 
-DATA_LIFECYCLE: dict[str, dict] = {
+DATA_LIFECYCLE: Final[dict[str, dict]] = {
     "task_cards": {"hot_days": 7, "cold_days": 90, "archive_policy": "compress"},
     "findings": {"hot_days": 30, "cold_days": 180, "archive_policy": "compress"},
     "knowledge_entries": {"hot_days": 7, "cold_days": 365, "archive_policy": "keep"},

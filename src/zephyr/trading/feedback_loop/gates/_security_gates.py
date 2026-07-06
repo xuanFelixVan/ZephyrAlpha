@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.gates._security_gates
 # [DOMAIN] D_OPS
@@ -15,7 +17,7 @@
 # [A_module] module_id=MOD-UNK__security_gates | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-SUBMODULES = [
+SUBMODULES: Final[list] = [
     "adversarial_validation",
     "ci_cd_pre_scanner",
     "concurrent_change_deconfliction",

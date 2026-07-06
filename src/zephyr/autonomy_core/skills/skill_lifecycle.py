@@ -27,6 +27,7 @@ v0.3.0: complete lifecycle with guard functions, transition log, rollback, batch
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import time
 from collections.abc import Callable
@@ -52,7 +53,7 @@ class Transition:
         }
 
 
-VALID_TRANSITIONS = {
+VALID_TRANSITIONS: Final[set] = {
     SkillStatus.DRAFT.value: {SkillStatus.ACTIVE.value, SkillStatus.DEPRECATED.value},
     SkillStatus.ACTIVE.value: {SkillStatus.DEPRECATED.value, SkillStatus.DRAFT.value},
     SkillStatus.DEPRECATED.value: {SkillStatus.DRAFT.value},

@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.evolution_engine
 # [DOMAIN] D_OPS
@@ -65,7 +67,7 @@ class EvolutionSignal(Enum):
 LowScoreHook = Callable[[Any], None]
 ApplyFn = Callable[["EvolutionProposal"], bool]
 
-DEFAULT_THRESHOLDS: dict[str, float | int] = {
+DEFAULT_THRESHOLDS: Final[dict[str, float | int]] = {
     "low_score_threshold": 3,
     "pattern_min_count": 3,
     "context_overflow_threshold": 3,

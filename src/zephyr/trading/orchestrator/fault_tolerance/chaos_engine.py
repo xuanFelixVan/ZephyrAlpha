@@ -19,6 +19,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import os
 import threading
@@ -99,7 +100,7 @@ class FaultRecord:
     injected_at: float = 0.0
 
 
-INJECTION_POINTS: list[dict[str, Any]] = [
+INJECTION_POINTS: Final[list[dict[str, Any]]] = [
     {"name": "vms_latency", "system": "vector-memory", "type": "latency", "duration_s": 30},
     {"name": "vms_error", "system": "vector-memory", "type": "error", "duration_s": 10},
     {"name": "lsg_crash", "system": "llm-security", "type": "crash", "duration_s": 0},
