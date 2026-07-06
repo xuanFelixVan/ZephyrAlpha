@@ -28,7 +28,7 @@ Safety  : M（DDL 定义，init_decision_db 幂等验证）
 ------
 1. decision_layers   — 决策层表（10列，层定义+生命周期）
 2. decision_nodes     — 决策节点表（16列，决策定义+JSONB inputs/outputs/conditions/facets）
-3. decision_edges     — 决策边表（9列，4种边类型 triggering/informing/constraining/approving）
+3. decision_edges     — 决策边表（11列，4种边类型 triggering/informing/constraining/approving + design_maturity/build_status 三态机制 v1.2.0）
 4. decision_tracks    — 四轨表（6列，战略/战役/战术/操作四轨定义）
 
 与 depgraph 的关系
@@ -222,6 +222,10 @@ CREATE TABLE IF NOT EXISTS decision_edges (
     priority         INTEGER,
     track            TEXT,
     evidence_bundle  JSONB,
+    design_maturity  TEXT    DEFAULT 'production'
+        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+    build_status     TEXT    DEFAULT 'generated'
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     valid_since      TIMESTAMPTZ DEFAULT NOW()
 )
 """

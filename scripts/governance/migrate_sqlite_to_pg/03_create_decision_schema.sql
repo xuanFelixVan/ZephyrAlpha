@@ -90,6 +90,10 @@ CREATE TABLE IF NOT EXISTS decision_edges (
     priority               INTEGER,
     track                  TEXT,
     evidence_bundle        JSONB,
+    design_maturity        TEXT DEFAULT 'production'
+        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+    build_status           TEXT DEFAULT 'generated'
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     valid_since            TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -107,6 +111,11 @@ ALTER TABLE decision_layers ADD COLUMN IF NOT EXISTS module_id TEXT;
 ALTER TABLE decision_layers ADD COLUMN IF NOT EXISTS source_code_ref TEXT;
 -- decision_nodes 加 source_code_ref
 ALTER TABLE decision_nodes ADD COLUMN IF NOT EXISTS source_code_ref TEXT;
+-- decision_edges 加 design_maturity + build_status（v1.2.0：对齐 nodes 表三态机制）
+ALTER TABLE decision_edges ADD COLUMN IF NOT EXISTS design_maturity TEXT DEFAULT 'production'
+    CHECK (design_maturity IN ('design', 'production', 'prototype'));
+ALTER TABLE decision_edges ADD COLUMN IF NOT EXISTS build_status TEXT DEFAULT 'generated'
+    CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated'));
 
 -- ========== 6. 触发器：承重墙不变量 ==========
 -- DEC-INV-002 信号仓位分离：signal 节点不能直接连 order 节点
