@@ -7,7 +7,7 @@ import datetime
 import math
 import pytest
 
-from src.zephyr.data.provider_base import FetchPayload
+from src.zephyr.data.provider_base import FetchPayload, FetchResult
 from src.zephyr.data.policy_registry import SourcePolicy
 from src.zephyr.data.implementations.ifind_provider import IFindProvider
 from src.zephyr.data.implementations.akshare_provider import (

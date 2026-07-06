@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import dataclasses
 import logging
+import os
 import signal
 import sys
 import threading
@@ -44,6 +45,24 @@ from zephyr.data.policy_registry import PolicyRegistry, get_registry
 from zephyr.data.progress_store import ProgressStore, get_store
 
 log = logging.getLogger(__name__)
+
+
+def _load_dotenv() -> None:
+    """从项目根 .env 加载环境变量（IFIND_USERNAME 等）。
+
+    使用 os.environ.setdefault 避免覆盖已有环境变量。
+    """
+    from pathlib import Path
+
+    env_file = Path(__file__).resolve().parents[3] / ".env"
+    if not env_file.exists():
+        return
+    for line in env_file.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
 # ============== 输出格式化 ==============
@@ -328,6 +347,7 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
+    _load_dotenv()
 
     parser = _build_parser()
     args = parser.parse_args(argv)
