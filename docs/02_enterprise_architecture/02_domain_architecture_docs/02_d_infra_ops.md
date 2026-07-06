@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 02_d_infra_ops / asset-inventory
+# 02_d_infra_ops / asset-inventory / Asset Inventory
 
 > **文档作用 / Purpose**: 展示 asset-inventory（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 02 | Number | 02 |
 | 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
-| 域名称 | asset-inventory | Domain Name | asset-inventory |
-| 层级 | L0_infrastructure | Layer | L0_infrastructure |
+| 域名称 | asset-inventory | Domain Name | Asset Inventory |
+| 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |

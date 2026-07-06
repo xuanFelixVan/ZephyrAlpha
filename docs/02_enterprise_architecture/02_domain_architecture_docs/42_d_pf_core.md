@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 42_d_pf_core / 组合核心
+# 42_d_pf_core / 组合核心 / Portfolio Core
 
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 42 | Number | 42 |
 | 域ID | D_PF_CORE | Domain ID | D_PF_CORE |
-| 域名称 | 组合核心 | Domain Name | 组合核心 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | 组合核心 | Domain Name | Portfolio Core |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 14 | Module Count | 14 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 3 | Cross-domain Incoming | 3 |
@@ -134,22 +134,22 @@ graph TD
 
 ### L2 领域层 / Domain Layer (14 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_core/__init__.py | src/zephyr/pf_core/__init__.py | prototype | generated |
-| 2 | src/zephyr/pf_core/_extensions/__init__.py | src/zephyr/pf_core/_extensions/__init... | prototype | generated |
-| 3 | src/zephyr/pf_core/api/__init__.py | src/zephyr/pf_core/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/pf_core/compliance_rule.py | src/zephyr/pf_core/compliance_rule.py | production | generated |
-| 5 | src/zephyr/pf_core/core/__init__.py | src/zephyr/pf_core/core/__init__.py | prototype | generated |
-| 6 | src/zephyr/pf_core/default_equity_strategy.py | src/zephyr/pf_core/default_equity_str... | production | generated |
-| 7 | src/zephyr/pf_core/infrastructure/__init__.py | src/zephyr/pf_core/infrastructure/__i... | prototype | generated |
-| 8 | src/zephyr/pf_core/performance_attribution_report.py | src/zephyr/pf_core/performance_attrib... | production | generated |
-| 9 | src/zephyr/pf_core/risk_limits.py | src/zephyr/pf_core/risk_limits.py | prototype | generated |
-| 10 | src/zephyr/pf_core/services/__init__.py | src/zephyr/pf_core/services/__init__.py | prototype | generated |
-| 11 | src/zephyr/pf_core/strategies/__init__.py | src/zephyr/pf_core/strategies/__init_... | prototype | generated |
-| 12 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | production | generated |
-| 13 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | prototype | generated |
-| 14 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/pf_core/__init__.py | src/zephyr/pf_core/__init__.py | D_PORTFOLIO_CORE Portfolio Construction — Package root | prototype | generated |
+| 2 | src/zephyr/pf_core/_extensions/__init__.py | src/zephyr/pf_core/_extensions/__init... |  | prototype | generated |
+| 3 | src/zephyr/pf_core/api/__init__.py | src/zephyr/pf_core/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/pf_core/compliance_rule.py | src/zephyr/pf_core/compliance_rule.py | Re-export wrapper: compliance_rule has migrated to zephyr.portfolio.core.comp... | production | generated |
+| 5 | src/zephyr/pf_core/core/__init__.py | src/zephyr/pf_core/core/__init__.py |  | prototype | generated |
+| 6 | src/zephyr/pf_core/default_equity_strategy.py | src/zephyr/pf_core/default_equity_str... | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy | production | generated |
+| 7 | src/zephyr/pf_core/infrastructure/__init__.py | src/zephyr/pf_core/infrastructure/__i... |  | prototype | generated |
+| 8 | src/zephyr/pf_core/performance_attribution_report.py | src/zephyr/pf_core/performance_attrib... | Re-export wrapper: performance_attribution_report has migrated to zephyr.port... | production | generated |
+| 9 | src/zephyr/pf_core/risk_limits.py | src/zephyr/pf_core/risk_limits.py | Re-export wrapper: risk_limits canonical at zephyr.governance.trading_contrac... | prototype | generated |
+| 10 | src/zephyr/pf_core/services/__init__.py | src/zephyr/pf_core/services/__init__.py |  | prototype | generated |
+| 11 | src/zephyr/pf_core/strategies/__init__.py | src/zephyr/pf_core/strategies/__init_... | Re-export wrapper: true source is zephyr.pf_core.default_equity_strategy. | prototype | generated |
+| 12 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | Re-export wrapper: strategy_base has migrated to zephyr.portfolio.core.strate... | production | generated |
+| 13 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | Re-export wrapper: strategy_engine has migrated to zephyr.portfolio_core.core... | prototype | generated |
+| 14 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | Re-export wrapper: strategy_registry has migrated to zephyr.portfolio.core.st... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

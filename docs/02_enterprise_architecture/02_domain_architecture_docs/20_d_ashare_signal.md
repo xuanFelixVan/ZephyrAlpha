@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 20_d_ashare_signal / ashare_signal
+# 20_d_ashare_signal / ashare_signal / A-Share Signal
 
 > **文档作用 / Purpose**: 展示 ashare_signal（D_ASHARE_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:58
+> 最后更新: 2026-07-06 14:36:08
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 20 | Number | 20 |
 | 域ID | D_ASHARE_SIGNAL | Domain ID | D_ASHARE_SIGNAL |
-| 域名称 | ashare_signal | Domain Name | ashare_signal |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | ashare_signal | Domain Name | A-Share Signal |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
@@ -98,15 +98,15 @@ graph TD
 
 ### L2 领域层 / Domain Layer (7 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/signal_ashare/__init__.py | src/zephyr/signal_ashare/__init__.py | prototype | generated |
-| 2 | src/zephyr/signal_ashare/_extensions/__init__.py | src/zephyr/signal_ashare/_extensions/... | prototype | generated |
-| 3 | src/zephyr/signal_ashare/api/__init__.py | src/zephyr/signal_ashare/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/signal_ashare/core/__init__.py | src/zephyr/signal_ashare/core/__init_... | prototype | generated |
-| 5 | src/zephyr/signal_ashare/infrastructure/__init__.py | src/zephyr/signal_ashare/infrastructu... | prototype | generated |
-| 6 | src/zephyr/signal_ashare/models/__init__.py | src/zephyr/signal_ashare/models/__ini... | prototype | generated |
-| 7 | src/zephyr/signal_ashare/services/__init__.py | src/zephyr/signal_ashare/services/__i... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/signal_ashare/__init__.py | src/zephyr/signal_ashare/__init__.py |  | prototype | generated |
+| 2 | src/zephyr/signal_ashare/_extensions/__init__.py | src/zephyr/signal_ashare/_extensions/... |  | prototype | generated |
+| 3 | src/zephyr/signal_ashare/api/__init__.py | src/zephyr/signal_ashare/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/signal_ashare/core/__init__.py | src/zephyr/signal_ashare/core/__init_... |  | prototype | generated |
+| 5 | src/zephyr/signal_ashare/infrastructure/__init__.py | src/zephyr/signal_ashare/infrastructu... |  | prototype | generated |
+| 6 | src/zephyr/signal_ashare/models/__init__.py | src/zephyr/signal_ashare/models/__ini... |  | prototype | generated |
+| 7 | src/zephyr/signal_ashare/services/__init__.py | src/zephyr/signal_ashare/services/__i... |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

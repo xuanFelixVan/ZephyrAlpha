@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 47_d_simulation / 仿真
+# 47_d_simulation / 仿真 / Simulation
 
 > **文档作用 / Purpose**: 展示 仿真（D_SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:11
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 47 | Number | 47 |
 | 域ID | D_SIMULATION | Domain ID | D_SIMULATION |
-| 域名称 | 仿真 | Domain Name | 仿真 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | 仿真 | Domain Name | Simulation |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 11 | Module Count | 11 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
 | 跨域入边 | 3 | Cross-domain Incoming | 3 |
@@ -124,19 +124,19 @@ graph TD
 
 ### L2 领域层 / Domain Layer (11 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/simulation/ | 仿真核心域 | design | planned |
-| 2 | src/zephyr/simulation/__init__.py | src/zephyr/simulation/__init__.py | prototype | generated |
-| 3 | src/zephyr/simulation/_extensions/__init__.py | src/zephyr/simulation/_extensions/__i... | prototype | generated |
-| 4 | src/zephyr/simulation/api/__init__.py | src/zephyr/simulation/api/__init__.py | prototype | generated |
-| 5 | src/zephyr/simulation/core/__init__.py | src/zephyr/simulation/core/__init__.py | prototype | generated |
-| 6 | src/zephyr/simulation/implementations/__init__.py | src/zephyr/simulation/implementations... | prototype | generated |
-| 7 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | production | generated |
-| 8 | src/zephyr/simulation/infrastructure/__init__.py | src/zephyr/simulation/infrastructure/... | prototype | generated |
-| 9 | src/zephyr/simulation/models/__init__.py | src/zephyr/simulation/models/__init__.py | prototype | generated |
-| 10 | src/zephyr/simulation/pipeline_base.py | src/zephyr/simulation/pipeline_base.py | production | generated |
-| 11 | src/zephyr/simulation/services/__init__.py | src/zephyr/simulation/services/__init... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/simulation/ | 仿真核心域 |  | design | planned |
+| 2 | src/zephyr/simulation/__init__.py | src/zephyr/simulation/__init__.py | 实验 Experimentation | prototype | generated |
+| 3 | src/zephyr/simulation/_extensions/__init__.py | src/zephyr/simulation/_extensions/__i... |  | prototype | generated |
+| 4 | src/zephyr/simulation/api/__init__.py | src/zephyr/simulation/api/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/simulation/core/__init__.py | src/zephyr/simulation/core/__init__.py |  | prototype | generated |
+| 6 | src/zephyr/simulation/implementations/__init__.py | src/zephyr/simulation/implementations... | 实验 — Experimentation Concrete Implementations | prototype | generated |
+| 7 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | 实验 — Default Experiment Pipeline | production | generated |
+| 8 | src/zephyr/simulation/infrastructure/__init__.py | src/zephyr/simulation/infrastructure/... |  | prototype | generated |
+| 9 | src/zephyr/simulation/models/__init__.py | src/zephyr/simulation/models/__init__.py |  | prototype | generated |
+| 10 | src/zephyr/simulation/pipeline_base.py | src/zephyr/simulation/pipeline_base.py | 实验 — Experimentation Pipeline Layer | production | generated |
+| 11 | src/zephyr/simulation/services/__init__.py | src/zephyr/simulation/services/__init... |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

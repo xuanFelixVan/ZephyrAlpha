@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 43_d_position / 仓位管理
+# 43_d_position / 仓位管理 / Position Management
 
 > **文档作用 / Purpose**: 展示 仓位管理（D_POSITION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 43 | Number | 43 |
 | 域ID | D_POSITION | Domain ID | D_POSITION |
-| 域名称 | 仓位管理 | Domain Name | 仓位管理 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | 仓位管理 | Domain Name | Position Management |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 8 | Module Count | 8 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 2 | Cross-domain Incoming | 2 |
@@ -108,16 +108,16 @@ graph TD
 
 ### L2 领域层 / Domain Layer (8 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/position/__init__.py | src/zephyr/position/__init__.py | prototype | generated |
-| 2 | src/zephyr/position/_extensions/__init__.py | src/zephyr/position/_extensions/__ini... | prototype | generated |
-| 3 | src/zephyr/position/api/__init__.py | src/zephyr/position/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/position/core/__init__.py | src/zephyr/position/core/__init__.py | prototype | generated |
-| 5 | src/zephyr/position/infrastructure/__init__.py | src/zephyr/position/infrastructure/__... | prototype | generated |
-| 6 | src/zephyr/position/models/__init__.py | src/zephyr/position/models/__init__.py | prototype | generated |
-| 7 | src/zephyr/position/position_reconciler.py | src/zephyr/position/position_reconcil... | production | generated |
-| 8 | src/zephyr/position/services/__init__.py | src/zephyr/position/services/__init__.py | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/position/__init__.py | src/zephyr/position/__init__.py |  | prototype | generated |
+| 2 | src/zephyr/position/_extensions/__init__.py | src/zephyr/position/_extensions/__ini... |  | prototype | generated |
+| 3 | src/zephyr/position/api/__init__.py | src/zephyr/position/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/position/core/__init__.py | src/zephyr/position/core/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/position/infrastructure/__init__.py | src/zephyr/position/infrastructure/__... |  | prototype | generated |
+| 6 | src/zephyr/position/models/__init__.py | src/zephyr/position/models/__init__.py |  | prototype | generated |
+| 7 | src/zephyr/position/position_reconciler.py | src/zephyr/position/position_reconcil... | Position Reconciler — v0.10.1 持仓对账: execution report+book record+counter... | production | generated |
+| 8 | src/zephyr/position/services/__init__.py | src/zephyr/position/services/__init__.py |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

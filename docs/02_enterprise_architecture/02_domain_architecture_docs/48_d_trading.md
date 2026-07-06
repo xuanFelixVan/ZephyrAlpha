@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 48_d_trading / 交易运营
+# 48_d_trading / 交易运营 / Trading Operations
 
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:11
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 48 | Number | 48 |
 | 域ID | D_TRADING | Domain ID | D_TRADING |
-| 域名称 | 交易运营 | Domain Name | 交易运营 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | 交易运营 | Domain Name | Trading Operations |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 464 | Module Count | 464 |
 | 域内依赖 | 437 | Internal Dependencies | 437 |
 | 跨域入边 | 735 | Cross-domain Incoming | 735 |
@@ -1464,208 +1464,208 @@ graph TD
 
 ### L2 领域层 / Domain Layer (464 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/trading/__init__.py | src/zephyr/trading/__init__.py | production | generated |
-| 2 | src/zephyr/trading/__main__.py | src/zephyr/trading/__main__.py | prototype | generated |
-| 3 | src/zephyr/trading/_extensions/__init__.py | src/zephyr/trading/_extensions/__init... | prototype | generated |
-| 4 | src/zephyr/trading/action_dispatcher.py | src/zephyr/trading/action_dispatcher.py | production | generated |
-| 5 | src/zephyr/trading/admission_controller.py | src/zephyr/trading/admission_controll... | production | generated |
-| 6 | src/zephyr/trading/ai_audit_logger.py | src/zephyr/trading/ai_audit_logger.py | production | generated |
-| 7 | src/zephyr/trading/api/__init__.py | src/zephyr/trading/api/__init__.py | prototype | generated |
-| 8 | src/zephyr/trading/auto_dispatcher.py | src/zephyr/trading/auto_dispatcher.py | prototype | generated |
-| 9 | src/zephyr/trading/auto_integrator.py | src/zephyr/trading/auto_integrator.py | production | generated |
-| 10 | src/zephyr/trading/auto_runtime_core.py | src/zephyr/trading/auto_runtime_core.py | production | generated |
-| 11 | src/zephyr/trading/auto_task_generator.py | src/zephyr/trading/auto_task_generato... | production | generated |
-| 12 | src/zephyr/trading/boot_hooks.py | src/zephyr/trading/boot_hooks.py | production | generated |
-| 13 | src/zephyr/trading/capability_card.py | src/zephyr/trading/capability_card.py | production | generated |
-| 14 | src/zephyr/trading/capability_registry.py | src/zephyr/trading/capability_registr... | production | generated |
-| 15 | src/zephyr/trading/capability_sync.py | src/zephyr/trading/capability_sync.py | production | generated |
-| 16 | src/zephyr/trading/core/__init__.py | src/zephyr/trading/core/__init__.py | prototype | generated |
-| 17 | src/zephyr/trading/dream_cycle.py | src/zephyr/trading/dream_cycle.py | production | generated |
-| 18 | src/zephyr/trading/feedback_loop/__init__.py | src/zephyr/trading/feedback_loop/__in... | production | generated |
-| 19 | src/zephyr/trading/feedback_loop/_gen_inherited.py | src/zephyr/trading/feedback_loop/_gen... | production | generated |
-| 20 | src/zephyr/trading/feedback_loop/actors/__init__.py | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 21 | src/zephyr/trading/feedback_loop/actors/action_selector.py | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 22 | src/zephyr/trading/feedback_loop/actors/agent_lifecycle.py | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 23 | src/zephyr/trading/feedback_loop/actors/api_version_contr... | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 24 | src/zephyr/trading/feedback_loop/actors/global_action_sch... | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 25 | src/zephyr/trading/feedback_loop/actors/incident_priority... | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 26 | src/zephyr/trading/feedback_loop/actors/intent_driven_ops.py | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 27 | src/zephyr/trading/feedback_loop/actors/multi_agent_orche... | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 28 | src/zephyr/trading/feedback_loop/actors/notification_pers... | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 29 | src/zephyr/trading/feedback_loop/actors/owner_absence_esc... | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 30 | src/zephyr/trading/feedback_loop/actors/saga_compensator.py | src/zephyr/trading/feedback_loop/acto... | prototype | generated |
-| 31 | src/zephyr/trading/feedback_loop/actors/secondary_alert_c... | src/zephyr/trading/feedback_loop/acto... | production | generated |
-| 32 | src/zephyr/trading/feedback_loop/alert_dispatcher.py | src/zephyr/trading/feedback_loop/aler... | prototype | generated |
-| 33 | src/zephyr/trading/feedback_loop/auto_evolution.py | src/zephyr/trading/feedback_loop/auto... | production | generated |
-| 34 | src/zephyr/trading/feedback_loop/backpressure_bridge.py | src/zephyr/trading/feedback_loop/back... | production | generated |
-| 35 | src/zephyr/trading/feedback_loop/collectors/__init__.py | src/zephyr/trading/feedback_loop/coll... | prototype | generated |
-| 36 | src/zephyr/trading/feedback_loop/collectors/calendar_adap... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 37 | src/zephyr/trading/feedback_loop/collectors/config_timeli... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 38 | src/zephyr/trading/feedback_loop/collectors/data_quality_... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 39 | src/zephyr/trading/feedback_loop/collectors/feedback_coll... | src/zephyr/trading/feedback_loop/coll... | prototype | generated |
-| 40 | src/zephyr/trading/feedback_loop/collectors/financial_str... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 41 | src/zephyr/trading/feedback_loop/collectors/kb_provenance.py | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 42 | src/zephyr/trading/feedback_loop/collectors/knowledge_cap... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 43 | src/zephyr/trading/feedback_loop/collectors/knowledge_fre... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 44 | src/zephyr/trading/feedback_loop/collectors/knowledge_inj... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 45 | src/zephyr/trading/feedback_loop/collectors/knowledge_pac... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 46 | src/zephyr/trading/feedback_loop/collectors/known_unknown... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 47 | src/zephyr/trading/feedback_loop/collectors/llm_cost_acco... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 48 | src/zephyr/trading/feedback_loop/collectors/market_calend... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 49 | src/zephyr/trading/feedback_loop/collectors/market_event_... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 50 | src/zephyr/trading/feedback_loop/collectors/metrics_colle... | src/zephyr/trading/feedback_loop/coll... | prototype | generated |
-| 51 | src/zephyr/trading/feedback_loop/collectors/notification_... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 52 | src/zephyr/trading/feedback_loop/collectors/schema_evolut... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 53 | src/zephyr/trading/feedback_loop/collectors/schema_migrat... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 54 | src/zephyr/trading/feedback_loop/collectors/temporal_even... | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 55 | src/zephyr/trading/feedback_loop/collectors/token_finops.py | src/zephyr/trading/feedback_loop/coll... | production | generated |
-| 56 | src/zephyr/trading/feedback_loop/config.py | src/zephyr/trading/feedback_loop/conf... | production | generated |
-| 57 | src/zephyr/trading/feedback_loop/core.py | src/zephyr/trading/feedback_loop/core.py | prototype | generated |
-| 58 | src/zephyr/trading/feedback_loop/db_bridge.py | src/zephyr/trading/feedback_loop/db_b... | production | generated |
-| 59 | src/zephyr/trading/feedback_loop/db_writer.py | src/zephyr/trading/feedback_loop/db_w... | prototype | generated |
-| 60 | src/zephyr/trading/feedback_loop/decision_engine.py | src/zephyr/trading/feedback_loop/deci... | production | generated |
-| 61 | src/zephyr/trading/feedback_loop/detectors/__init__.py | src/zephyr/trading/feedback_loop/dete... | production | generated |
-| 62 | src/zephyr/trading/feedback_loop/detectors/anomaly/__init... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 63 | src/zephyr/trading/feedback_loop/detectors/anomaly/anomal... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 64 | src/zephyr/trading/feedback_loop/detectors/anomaly/anomal... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 65 | src/zephyr/trading/feedback_loop/detectors/anomaly/emerge... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 66 | src/zephyr/trading/feedback_loop/detectors/anomaly/flappi... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 67 | src/zephyr/trading/feedback_loop/detectors/anomaly/heisen... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 68 | src/zephyr/trading/feedback_loop/detectors/anomaly/infini... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 69 | src/zephyr/trading/feedback_loop/detectors/anomaly/interm... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 70 | src/zephyr/trading/feedback_loop/detectors/anomaly/log_an... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 71 | src/zephyr/trading/feedback_loop/detectors/anomaly/silent... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 72 | src/zephyr/trading/feedback_loop/detectors/anomaly/synthe... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 73 | src/zephyr/trading/feedback_loop/detectors/anomaly/tempor... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 74 | src/zephyr/trading/feedback_loop/detectors/correlation/__... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 75 | src/zephyr/trading/feedback_loop/detectors/correlation/ac... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 76 | src/zephyr/trading/feedback_loop/detectors/correlation/ac... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 77 | src/zephyr/trading/feedback_loop/detectors/correlation/ac... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 78 | src/zephyr/trading/feedback_loop/detectors/correlation/ag... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 79 | src/zephyr/trading/feedback_loop/detectors/correlation/cr... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 80 | src/zephyr/trading/feedback_loop/detectors/correlation/cr... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 81 | src/zephyr/trading/feedback_loop/detectors/correlation/de... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 82 | src/zephyr/trading/feedback_loop/detectors/correlation/de... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 83 | src/zephyr/trading/feedback_loop/detectors/correlation/en... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 84 | src/zephyr/trading/feedback_loop/detectors/correlation/ex... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 85 | src/zephyr/trading/feedback_loop/detectors/correlation/ex... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 86 | src/zephyr/trading/feedback_loop/detectors/correlation/fl... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 87 | src/zephyr/trading/feedback_loop/detectors/correlation/mu... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 88 | src/zephyr/trading/feedback_loop/detectors/correlation/ru... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 89 | src/zephyr/trading/feedback_loop/detectors/correlation/tr... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 90 | src/zephyr/trading/feedback_loop/detectors/correlation/tr... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 91 | src/zephyr/trading/feedback_loop/detectors/drift/__init__.py | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 92 | src/zephyr/trading/feedback_loop/detectors/drift/concept_... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 93 | src/zephyr/trading/feedback_loop/detectors/drift/config_d... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 94 | src/zephyr/trading/feedback_loop/detectors/drift/context_... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 95 | src/zephyr/trading/feedback_loop/detectors/drift/diminish... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 96 | src/zephyr/trading/feedback_loop/detectors/drift/ensemble... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 97 | src/zephyr/trading/feedback_loop/detectors/drift/gradual_... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 98 | src/zephyr/trading/feedback_loop/detectors/drift/trend_cy... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 99 | src/zephyr/trading/feedback_loop/detectors/guard/__init__.py | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 100 | src/zephyr/trading/feedback_loop/detectors/guard/alert_de... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 101 | src/zephyr/trading/feedback_loop/detectors/guard/guard_ca... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 102 | src/zephyr/trading/feedback_loop/detectors/guard/guard_os... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 103 | src/zephyr/trading/feedback_loop/detectors/guard/placebo_... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 104 | src/zephyr/trading/feedback_loop/detectors/guard/positive... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 105 | src/zephyr/trading/feedback_loop/detectors/guard/recursiv... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 106 | src/zephyr/trading/feedback_loop/detectors/guard/self_aud... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 107 | src/zephyr/trading/feedback_loop/detectors/guard/self_dia... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 108 | src/zephyr/trading/feedback_loop/detectors/guard/self_ha.py | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 109 | src/zephyr/trading/feedback_loop/detectors/guard/temporal... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 110 | src/zephyr/trading/feedback_loop/detectors/reliability/__... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 111 | src/zephyr/trading/feedback_loop/detectors/reliability/au... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 112 | src/zephyr/trading/feedback_loop/detectors/reliability/bl... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 113 | src/zephyr/trading/feedback_loop/detectors/reliability/bl... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 114 | src/zephyr/trading/feedback_loop/detectors/reliability/ca... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 115 | src/zephyr/trading/feedback_loop/detectors/reliability/ch... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 116 | src/zephyr/trading/feedback_loop/detectors/reliability/eb... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 117 | src/zephyr/trading/feedback_loop/detectors/reliability/fl... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 118 | src/zephyr/trading/feedback_loop/detectors/reliability/ma... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 119 | src/zephyr/trading/feedback_loop/detectors/reliability/me... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 120 | src/zephyr/trading/feedback_loop/detectors/reliability/op... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 121 | src/zephyr/trading/feedback_loop/detectors/reliability/ot... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 122 | src/zephyr/trading/feedback_loop/detectors/reliability/re... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 123 | src/zephyr/trading/feedback_loop/detectors/reliability/re... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 124 | src/zephyr/trading/feedback_loop/detectors/reliability/ru... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 125 | src/zephyr/trading/feedback_loop/detectors/reliability/ve... | src/zephyr/trading/feedback_loop/dete... | prototype | generated |
-| 126 | src/zephyr/trading/feedback_loop/diagnosers/__init__.py | src/zephyr/trading/feedback_loop/diag... | production | generated |
-| 127 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/__i... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 128 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/ada... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 129 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/cog... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 130 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/cog... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 131 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/col... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 132 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/con... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 133 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/gam... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 134 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/met... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 135 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/soc... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 136 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/ton... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 137 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/ton... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 138 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/__i... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 139 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/aut... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 140 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/cau... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 141 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/cou... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 142 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/dia... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 143 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/dia... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 144 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/imp... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 145 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/inc... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 146 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/int... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 147 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/kno... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 148 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/kno... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 149 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/mtt... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 150 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/non... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 151 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/sta... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 152 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/ver... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 153 | src/zephyr/trading/feedback_loop/diagnosers/health/__init... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 154 | src/zephyr/trading/feedback_loop/diagnosers/health/action... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 155 | src/zephyr/trading/feedback_loop/diagnosers/health/dr_res... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 156 | src/zephyr/trading/feedback_loop/diagnosers/health/e2e_in... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 157 | src/zephyr/trading/feedback_loop/diagnosers/health/fle_do... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 158 | src/zephyr/trading/feedback_loop/diagnosers/health/fle_se... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 159 | src/zephyr/trading/feedback_loop/diagnosers/health/global... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 160 | src/zephyr/trading/feedback_loop/diagnosers/health/memory... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 161 | src/zephyr/trading/feedback_loop/diagnosers/health/model_... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 162 | src/zephyr/trading/feedback_loop/diagnosers/health/self_b... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 163 | src/zephyr/trading/feedback_loop/diagnosers/health/self_b... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 164 | src/zephyr/trading/feedback_loop/diagnosers/health/self_h... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 165 | src/zephyr/trading/feedback_loop/diagnosers/health/self_l... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 166 | src/zephyr/trading/feedback_loop/diagnosers/reliability/_... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 167 | src/zephyr/trading/feedback_loop/diagnosers/reliability/a... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 168 | src/zephyr/trading/feedback_loop/diagnosers/reliability/a... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 169 | src/zephyr/trading/feedback_loop/diagnosers/reliability/b... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 170 | src/zephyr/trading/feedback_loop/diagnosers/reliability/b... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 171 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 172 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 173 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 174 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 175 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 176 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 177 | src/zephyr/trading/feedback_loop/diagnosers/reliability/d... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 178 | src/zephyr/trading/feedback_loop/diagnosers/reliability/f... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 179 | src/zephyr/trading/feedback_loop/diagnosers/reliability/g... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 180 | src/zephyr/trading/feedback_loop/diagnosers/reliability/g... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 181 | src/zephyr/trading/feedback_loop/diagnosers/reliability/h... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 182 | src/zephyr/trading/feedback_loop/diagnosers/reliability/l... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 183 | src/zephyr/trading/feedback_loop/diagnosers/reliability/l... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 184 | src/zephyr/trading/feedback_loop/diagnosers/reliability/l... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 185 | src/zephyr/trading/feedback_loop/diagnosers/reliability/m... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 186 | src/zephyr/trading/feedback_loop/diagnosers/reliability/m... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 187 | src/zephyr/trading/feedback_loop/diagnosers/reliability/m... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 188 | src/zephyr/trading/feedback_loop/diagnosers/reliability/n... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 189 | src/zephyr/trading/feedback_loop/diagnosers/reliability/o... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 190 | src/zephyr/trading/feedback_loop/diagnosers/reliability/p... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 191 | src/zephyr/trading/feedback_loop/diagnosers/reliability/p... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 192 | src/zephyr/trading/feedback_loop/diagnosers/reliability/r... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 193 | src/zephyr/trading/feedback_loop/diagnosers/reliability/r... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 194 | src/zephyr/trading/feedback_loop/diagnosers/reliability/r... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 195 | src/zephyr/trading/feedback_loop/diagnosers/reliability/s... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 196 | src/zephyr/trading/feedback_loop/diagnosers/reliability/s... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 197 | src/zephyr/trading/feedback_loop/diagnosers/reliability/t... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 198 | src/zephyr/trading/feedback_loop/diagnosers/reliability/t... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 199 | src/zephyr/trading/feedback_loop/diagnosers/reliability/t... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
-| 200 | src/zephyr/trading/feedback_loop/diagnosers/reliability/v... | src/zephyr/trading/feedback_loop/diag... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/trading/__init__.py | src/zephyr/trading/__init__.py |  | production | generated |
+| 2 | src/zephyr/trading/__main__.py | src/zephyr/trading/__main__.py | python -m zephyr.trading — AutoRuntime Core 入口 | prototype | generated |
+| 3 | src/zephyr/trading/_extensions/__init__.py | src/zephyr/trading/_extensions/__init... |  | prototype | generated |
+| 4 | src/zephyr/trading/action_dispatcher.py | src/zephyr/trading/action_dispatcher.py | ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) | production | generated |
+| 5 | src/zephyr/trading/admission_controller.py | src/zephyr/trading/admission_controll... |  | production | generated |
+| 6 | src/zephyr/trading/ai_audit_logger.py | src/zephyr/trading/ai_audit_logger.py | AiAuditLogger — AI 行为审计日志 | production | generated |
+| 7 | src/zephyr/trading/api/__init__.py | src/zephyr/trading/api/__init__.py |  | prototype | generated |
+| 8 | src/zephyr/trading/auto_dispatcher.py | src/zephyr/trading/auto_dispatcher.py | AutoDispatcher — 守护进程内的轻量 PipelineDispatcher | prototype | generated |
+| 9 | src/zephyr/trading/auto_integrator.py | src/zephyr/trading/auto_integrator.py | AutoIntegrator — 自动接入器 | production | generated |
+| 10 | src/zephyr/trading/auto_runtime_core.py | src/zephyr/trading/auto_runtime_core.py | AutoRuntimeCore — 三层运行时运营中心（系统大脑） | production | generated |
+| 11 | src/zephyr/trading/auto_task_generator.py | src/zephyr/trading/auto_task_generato... | AutoTaskGenerator — 自动任务生成器 | production | generated |
+| 12 | src/zephyr/trading/boot_hooks.py | src/zephyr/trading/boot_hooks.py |  | production | generated |
+| 13 | src/zephyr/trading/capability_card.py | src/zephyr/trading/capability_card.py | CapabilityCard — 能力卡片数据模型 | production | generated |
+| 14 | src/zephyr/trading/capability_registry.py | src/zephyr/trading/capability_registr... | CapabilityRegistry — 能力注册中心 | production | generated |
+| 15 | src/zephyr/trading/capability_sync.py | src/zephyr/trading/capability_sync.py |  | production | generated |
+| 16 | src/zephyr/trading/core/__init__.py | src/zephyr/trading/core/__init__.py |  | prototype | generated |
+| 17 | src/zephyr/trading/dream_cycle.py | src/zephyr/trading/dream_cycle.py | DreamCycle — 知识固化引擎 | production | generated |
+| 18 | src/zephyr/trading/feedback_loop/__init__.py | src/zephyr/trading/feedback_loop/__in... | Feedback Loop Engine — MOD-FEEDBACK_LOOP. | production | generated |
+| 19 | src/zephyr/trading/feedback_loop/_gen_inherited.py | src/zephyr/trading/feedback_loop/_gen... | One-shot skeleton generator for TASK-MOD-FEEDBACK_LOOP-0003 inherited subsyst... | production | generated |
+| 20 | src/zephyr/trading/feedback_loop/actors/__init__.py | src/zephyr/trading/feedback_loop/acto... | feedback-loop.actors — auto-generated package init. | production | generated |
+| 21 | src/zephyr/trading/feedback_loop/actors/action_selector.py | src/zephyr/trading/feedback_loop/acto... |  | production | generated |
+| 22 | src/zephyr/trading/feedback_loop/actors/agent_lifecycle.py | src/zephyr/trading/feedback_loop/acto... | Agent Lifecycle Manager — v0.12.0 R159c | production | generated |
+| 23 | src/zephyr/trading/feedback_loop/actors/api_version_contr... | src/zephyr/trading/feedback_loop/acto... | API Version Contract — v0.14.0 R188 | production | generated |
+| 24 | src/zephyr/trading/feedback_loop/actors/global_action_sch... | src/zephyr/trading/feedback_loop/acto... | Global Action Scheduler — v0.16.0 R226 | production | generated |
+| 25 | src/zephyr/trading/feedback_loop/actors/incident_priority... | src/zephyr/trading/feedback_loop/acto... | Incident Priority Triage Automator — v0.37.0 R463 | production | generated |
+| 26 | src/zephyr/trading/feedback_loop/actors/intent_driven_ops.py | src/zephyr/trading/feedback_loop/acto... | Intent-Driven Ops — v0.12.0 R159 | production | generated |
+| 27 | src/zephyr/trading/feedback_loop/actors/multi_agent_orche... | src/zephyr/trading/feedback_loop/acto... | Multi-Agent Orchestrator — v0.12.0 R159b | production | generated |
+| 28 | src/zephyr/trading/feedback_loop/actors/notification_pers... | src/zephyr/trading/feedback_loop/acto... | Notification Personalizer — v0.6.0 R67 | production | generated |
+| 29 | src/zephyr/trading/feedback_loop/actors/owner_absence_esc... | src/zephyr/trading/feedback_loop/acto... | Owner Absence Escalation — v0.37.0 R462 | production | generated |
+| 30 | src/zephyr/trading/feedback_loop/actors/saga_compensator.py | src/zephyr/trading/feedback_loop/acto... | Saga Compensator — v0.3.0 R19b | prototype | generated |
+| 31 | src/zephyr/trading/feedback_loop/actors/secondary_alert_c... | src/zephyr/trading/feedback_loop/acto... | Secondary Alert Channel — v0.37.0 R461 | production | generated |
+| 32 | src/zephyr/trading/feedback_loop/alert_dispatcher.py | src/zephyr/trading/feedback_loop/aler... | FLE→Orc 告警分派器 — dispatch() 生产者 | prototype | generated |
+| 33 | src/zephyr/trading/feedback_loop/auto_evolution.py | src/zephyr/trading/feedback_loop/auto... |  | production | generated |
+| 34 | src/zephyr/trading/feedback_loop/backpressure_bridge.py | src/zephyr/trading/feedback_loop/back... | FLE → Pipeline 背压桥接（CTR-BP-001~003） | production | generated |
+| 35 | src/zephyr/trading/feedback_loop/collectors/__init__.py | src/zephyr/trading/feedback_loop/coll... | feedback-loop.collectors — auto-generated package init. | prototype | generated |
+| 36 | src/zephyr/trading/feedback_loop/collectors/calendar_adap... | src/zephyr/trading/feedback_loop/coll... | Calendar Adapter — v0.8.0 R102b | production | generated |
+| 37 | src/zephyr/trading/feedback_loop/collectors/config_timeli... | src/zephyr/trading/feedback_loop/coll... | Config Timeline — v0.8.0 R99 | production | generated |
+| 38 | src/zephyr/trading/feedback_loop/collectors/data_quality_... | src/zephyr/trading/feedback_loop/coll... | Data Quality Validator — v0.9.0 R110 | production | generated |
+| 39 | src/zephyr/trading/feedback_loop/collectors/feedback_coll... | src/zephyr/trading/feedback_loop/coll... |  | prototype | generated |
+| 40 | src/zephyr/trading/feedback_loop/collectors/financial_str... | src/zephyr/trading/feedback_loop/coll... | Financial Stratification — v0.5.0 R50 | production | generated |
+| 41 | src/zephyr/trading/feedback_loop/collectors/kb_provenance.py | src/zephyr/trading/feedback_loop/coll... | KB Provenance — v0.10.0 R136 | production | generated |
+| 42 | src/zephyr/trading/feedback_loop/collectors/knowledge_cap... | src/zephyr/trading/feedback_loop/coll... | Knowledge Capture — v0.4.0 R30 | production | generated |
+| 43 | src/zephyr/trading/feedback_loop/collectors/knowledge_fre... | src/zephyr/trading/feedback_loop/coll... | Knowledge Freshness — v0.5.0 R47 | production | generated |
+| 44 | src/zephyr/trading/feedback_loop/collectors/knowledge_inj... | src/zephyr/trading/feedback_loop/coll... | Knowledge Injection — v0.8.0 R102 | production | generated |
+| 45 | src/zephyr/trading/feedback_loop/collectors/knowledge_pac... | src/zephyr/trading/feedback_loop/coll... | Knowledge Packaging — v0.9.0 R123 | production | generated |
+| 46 | src/zephyr/trading/feedback_loop/collectors/known_unknown... | src/zephyr/trading/feedback_loop/coll... | Known-Unknown Registry — v0.16.0 R229 | production | generated |
+| 47 | src/zephyr/trading/feedback_loop/collectors/llm_cost_acco... | src/zephyr/trading/feedback_loop/coll... | LLM Cost Accounting — v0.4.0 R35 | production | generated |
+| 48 | src/zephyr/trading/feedback_loop/collectors/market_calend... | src/zephyr/trading/feedback_loop/coll... | Market Calendar — v0.5.0 R48 | production | generated |
+| 49 | src/zephyr/trading/feedback_loop/collectors/market_event_... | src/zephyr/trading/feedback_loop/coll... | Market Event Integrator — v0.14.0 R197 | production | generated |
+| 50 | src/zephyr/trading/feedback_loop/collectors/metrics_colle... | src/zephyr/trading/feedback_loop/coll... |  | prototype | generated |
+| 51 | src/zephyr/trading/feedback_loop/collectors/notification_... | src/zephyr/trading/feedback_loop/coll... | Notification Feedback — v0.9.0 R118 | production | generated |
+| 52 | src/zephyr/trading/feedback_loop/collectors/schema_evolut... | src/zephyr/trading/feedback_loop/coll... | Schema Evolution — v0.9.0 R111 | production | generated |
+| 53 | src/zephyr/trading/feedback_loop/collectors/schema_migrat... | src/zephyr/trading/feedback_loop/coll... | Schema Migration — v0.14.0 R190 | production | generated |
+| 54 | src/zephyr/trading/feedback_loop/collectors/temporal_even... | src/zephyr/trading/feedback_loop/coll... | Temporal Event Store — v0.3.0 R9 | production | generated |
+| 55 | src/zephyr/trading/feedback_loop/collectors/token_finops.py | src/zephyr/trading/feedback_loop/coll... | Token FinOps — v0.12.0 R162 | production | generated |
+| 56 | src/zephyr/trading/feedback_loop/config.py | src/zephyr/trading/feedback_loop/conf... |  | production | generated |
+| 57 | src/zephyr/trading/feedback_loop/core.py | src/zephyr/trading/feedback_loop/core.py | FeedbackLoop core — 反馈闭环核心类。 | prototype | generated |
+| 58 | src/zephyr/trading/feedback_loop/db_bridge.py | src/zephyr/trading/feedback_loop/db_b... | FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写入fle_metrics | production | generated |
+| 59 | src/zephyr/trading/feedback_loop/db_writer.py | src/zephyr/trading/feedback_loop/db_w... | FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQLite | prototype | generated |
+| 60 | src/zephyr/trading/feedback_loop/decision_engine.py | src/zephyr/trading/feedback_loop/deci... | Feedback Loop Decision Engine | production | generated |
+| 61 | src/zephyr/trading/feedback_loop/detectors/__init__.py | src/zephyr/trading/feedback_loop/dete... | feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分为5个逻辑子包(anomaly... | production | generated |
+| 62 | src/zephyr/trading/feedback_loop/detectors/anomaly/__init... | src/zephyr/trading/feedback_loop/dete... |  | prototype | generated |
+| 63 | src/zephyr/trading/feedback_loop/detectors/anomaly/anomal... | src/zephyr/trading/feedback_loop/dete... | Anomaly Clustering — v0.9.0 R119 | prototype | generated |
+| 64 | src/zephyr/trading/feedback_loop/detectors/anomaly/anomal... | src/zephyr/trading/feedback_loop/dete... |  | prototype | generated |
+| 65 | src/zephyr/trading/feedback_loop/detectors/anomaly/emerge... | src/zephyr/trading/feedback_loop/dete... | Emergent Behavior Detector — v0.38.0 R473 | prototype | generated |
+| 66 | src/zephyr/trading/feedback_loop/detectors/anomaly/flappi... | src/zephyr/trading/feedback_loop/dete... | Flapping Detector — v0.40.0 R494 | prototype | generated |
+| 67 | src/zephyr/trading/feedback_loop/detectors/anomaly/heisen... | src/zephyr/trading/feedback_loop/dete... | Heisenbug Detector — v0.38.0 R470 | prototype | generated |
+| 68 | src/zephyr/trading/feedback_loop/detectors/anomaly/infini... | src/zephyr/trading/feedback_loop/dete... | Infinite Loop Detector — v0.15.0 R219 | prototype | generated |
+| 69 | src/zephyr/trading/feedback_loop/detectors/anomaly/interm... | src/zephyr/trading/feedback_loop/dete... | Intermittent Failure Pattern Detector — v0.40.0 R501 | prototype | generated |
+| 70 | src/zephyr/trading/feedback_loop/detectors/anomaly/log_an... | src/zephyr/trading/feedback_loop/dete... | Log Anomaly Detector — v0.6.0 R61 | prototype | generated |
+| 71 | src/zephyr/trading/feedback_loop/detectors/anomaly/silent... | src/zephyr/trading/feedback_loop/dete... | Silent Corruption Detector — v0.40.0 R499 | prototype | generated |
+| 72 | src/zephyr/trading/feedback_loop/detectors/anomaly/synthe... | src/zephyr/trading/feedback_loop/dete... | Synthetic Anomaly Generator — v0.9.0 R112 | prototype | generated |
+| 73 | src/zephyr/trading/feedback_loop/detectors/anomaly/tempor... | src/zephyr/trading/feedback_loop/dete... | Temporal Pattern Detector — v0.12.0 R164 | prototype | generated |
+| 74 | src/zephyr/trading/feedback_loop/detectors/correlation/__... | src/zephyr/trading/feedback_loop/dete... |  | prototype | generated |
+| 75 | src/zephyr/trading/feedback_loop/detectors/correlation/ac... | src/zephyr/trading/feedback_loop/dete... | R507: ActionEfficacyDecayDetector | prototype | generated |
+| 76 | src/zephyr/trading/feedback_loop/detectors/correlation/ac... | src/zephyr/trading/feedback_loop/dete... | Action Interaction Detector — v0.38.0 R472 | prototype | generated |
+| 77 | src/zephyr/trading/feedback_loop/detectors/correlation/ac... | src/zephyr/trading/feedback_loop/dete... | R526: ActionSideEffectCumulativeDetector | prototype | generated |
+| 78 | src/zephyr/trading/feedback_loop/detectors/correlation/ag... | src/zephyr/trading/feedback_loop/dete... | R503: AgentTrajectoryAnomalyDetector | prototype | generated |
+| 79 | src/zephyr/trading/feedback_loop/detectors/correlation/cr... | src/zephyr/trading/feedback_loop/dete... | Cross-Signal Validator — v0.6.0 R63 | prototype | generated |
+| 80 | src/zephyr/trading/feedback_loop/detectors/correlation/cr... | src/zephyr/trading/feedback_loop/dete... | Cross-System Correlator — v0.13.0 R185 | prototype | generated |
+| 81 | src/zephyr/trading/feedback_loop/detectors/correlation/de... | src/zephyr/trading/feedback_loop/dete... | Decision Provenance — v0.12.0 R166 | prototype | generated |
+| 82 | src/zephyr/trading/feedback_loop/detectors/correlation/de... | src/zephyr/trading/feedback_loop/dete... | Dependency Freshness Monitor — v0.38.0 R474 | prototype | generated |
+| 83 | src/zephyr/trading/feedback_loop/detectors/correlation/en... | src/zephyr/trading/feedback_loop/dete... | Ensemble Detector — v0.4.0 R21 | prototype | generated |
+| 84 | src/zephyr/trading/feedback_loop/detectors/correlation/ex... | src/zephyr/trading/feedback_loop/dete... | External Health Monitor — v0.14.0 R193 | prototype | generated |
+| 85 | src/zephyr/trading/feedback_loop/detectors/correlation/ex... | src/zephyr/trading/feedback_loop/dete... | R524: ExternalValidationCheckpoint | prototype | generated |
+| 86 | src/zephyr/trading/feedback_loop/detectors/correlation/fl... | src/zephyr/trading/feedback_loop/dete... | R532: FLEPerformanceRegressionDetector | prototype | generated |
+| 87 | src/zephyr/trading/feedback_loop/detectors/correlation/mu... | src/zephyr/trading/feedback_loop/dete... | Multi-Signal Correlator — v0.4.0 R22 | prototype | generated |
+| 88 | src/zephyr/trading/feedback_loop/detectors/correlation/ru... | src/zephyr/trading/feedback_loop/dete... | Rumor Noise Filter — v0.37.0 R460 | prototype | generated |
+| 89 | src/zephyr/trading/feedback_loop/detectors/correlation/tr... | src/zephyr/trading/feedback_loop/dete... | Trace Causal Bridge — v0.6.0 R62 | prototype | generated |
+| 90 | src/zephyr/trading/feedback_loop/detectors/correlation/tr... | src/zephyr/trading/feedback_loop/dete... | Traffic Replay Validator — v0.14.0 R202 | prototype | generated |
+| 91 | src/zephyr/trading/feedback_loop/detectors/drift/__init__.py | src/zephyr/trading/feedback_loop/dete... |  | prototype | generated |
+| 92 | src/zephyr/trading/feedback_loop/detectors/drift/concept_... | src/zephyr/trading/feedback_loop/dete... | Concept Drift Detector — v0.5.0 R42 | prototype | generated |
+| 93 | src/zephyr/trading/feedback_loop/detectors/drift/config_d... | src/zephyr/trading/feedback_loop/dete... | Config Drift Detector — v0.13.0 R182 | prototype | generated |
+| 94 | src/zephyr/trading/feedback_loop/detectors/drift/context_... | src/zephyr/trading/feedback_loop/dete... | Context Window Contamination Detector — v0.38.0 R471 | prototype | generated |
+| 95 | src/zephyr/trading/feedback_loop/detectors/drift/diminish... | src/zephyr/trading/feedback_loop/dete... | R528: DiminishingReturnsDetector | prototype | generated |
+| 96 | src/zephyr/trading/feedback_loop/detectors/drift/ensemble... | src/zephyr/trading/feedback_loop/dete... | Ensemble Drift — v0.5.0 R43 | prototype | generated |
+| 97 | src/zephyr/trading/feedback_loop/detectors/drift/gradual_... | src/zephyr/trading/feedback_loop/dete... | Gradual Poisoning Detector — v0.15.0 R210 | prototype | generated |
+| 98 | src/zephyr/trading/feedback_loop/detectors/drift/trend_cy... | src/zephyr/trading/feedback_loop/dete... | Trend-Cycle Separator — v0.9.0 R113 | prototype | generated |
+| 99 | src/zephyr/trading/feedback_loop/detectors/guard/__init__.py | src/zephyr/trading/feedback_loop/dete... |  | prototype | generated |
+| 100 | src/zephyr/trading/feedback_loop/detectors/guard/alert_de... | src/zephyr/trading/feedback_loop/dete... | Alert Desensitization Curve — v0.37.0 R492 | prototype | generated |
+| 101 | src/zephyr/trading/feedback_loop/detectors/guard/guard_ca... | src/zephyr/trading/feedback_loop/dete... | R520: GuardCascadeDetector | prototype | generated |
+| 102 | src/zephyr/trading/feedback_loop/detectors/guard/guard_os... | src/zephyr/trading/feedback_loop/dete... | R519: GuardOscillationDetector | prototype | generated |
+| 103 | src/zephyr/trading/feedback_loop/detectors/guard/placebo_... | src/zephyr/trading/feedback_loop/dete... | R508: PlaceboActionDetector | prototype | generated |
+| 104 | src/zephyr/trading/feedback_loop/detectors/guard/positive... | src/zephyr/trading/feedback_loop/dete... | Positive Feedback Defense — v0.4.0 R28 | prototype | generated |
+| 105 | src/zephyr/trading/feedback_loop/detectors/guard/recursiv... | src/zephyr/trading/feedback_loop/dete... | R517: RecursiveDiagnosisTrustEvaluator | prototype | generated |
+| 106 | src/zephyr/trading/feedback_loop/detectors/guard/self_aud... | src/zephyr/trading/feedback_loop/dete... | Self Audit — v0.13.0 R183 | prototype | generated |
+| 107 | src/zephyr/trading/feedback_loop/detectors/guard/self_dia... | src/zephyr/trading/feedback_loop/dete... | R530: SelfDiagnosisDataLeakDetector | prototype | generated |
+| 108 | src/zephyr/trading/feedback_loop/detectors/guard/self_ha.py | src/zephyr/trading/feedback_loop/dete... | Self HA — v0.13.0 R173 | prototype | generated |
+| 109 | src/zephyr/trading/feedback_loop/detectors/guard/temporal... | src/zephyr/trading/feedback_loop/dete... | R525: TemporalCoherenceOfSelfModel | prototype | generated |
+| 110 | src/zephyr/trading/feedback_loop/detectors/reliability/__... | src/zephyr/trading/feedback_loop/dete... |  | prototype | generated |
+| 111 | src/zephyr/trading/feedback_loop/detectors/reliability/au... | src/zephyr/trading/feedback_loop/dete... | Autoscale Remediation — v0.13.0 R174 | prototype | generated |
+| 112 | src/zephyr/trading/feedback_loop/detectors/reliability/bl... | src/zephyr/trading/feedback_loop/dete... | Blast Radius Detector — v0.12.0 R167 | prototype | generated |
+| 113 | src/zephyr/trading/feedback_loop/detectors/reliability/bl... | src/zephyr/trading/feedback_loop/dete... | Blast Radius Budget — v0.13.0 R178 | prototype | generated |
+| 114 | src/zephyr/trading/feedback_loop/detectors/reliability/ca... | src/zephyr/trading/feedback_loop/dete... | Capacity Forecast — v0.13.0 R186b | prototype | generated |
+| 115 | src/zephyr/trading/feedback_loop/detectors/reliability/ch... | src/zephyr/trading/feedback_loop/dete... | Chaos Engineering — v0.13.0 R172 | prototype | generated |
+| 116 | src/zephyr/trading/feedback_loop/detectors/reliability/eb... | src/zephyr/trading/feedback_loop/dete... | eBPF Monitor — v0.6.0 R64 | prototype | generated |
+| 117 | src/zephyr/trading/feedback_loop/detectors/reliability/fl... | src/zephyr/trading/feedback_loop/dete... | Flag Lifecycle Detector — v0.13.0 R180 | prototype | generated |
+| 118 | src/zephyr/trading/feedback_loop/detectors/reliability/ma... | src/zephyr/trading/feedback_loop/dete... | Maintenance Coordinator — v0.12.0 R168 | prototype | generated |
+| 119 | src/zephyr/trading/feedback_loop/detectors/reliability/me... | src/zephyr/trading/feedback_loop/dete... | Metric Cardinality Guard — v0.40.0 R495 | prototype | generated |
+| 120 | src/zephyr/trading/feedback_loop/detectors/reliability/op... | src/zephyr/trading/feedback_loop/dete... | OpenFeature Integration — v0.13.0 R181 | prototype | generated |
+| 121 | src/zephyr/trading/feedback_loop/detectors/reliability/ot... | src/zephyr/trading/feedback_loop/dete... | OTel Adapter — v0.12.0 R170 | prototype | generated |
+| 122 | src/zephyr/trading/feedback_loop/detectors/reliability/re... | src/zephyr/trading/feedback_loop/dete... | Regulatory Audit Detector — v0.13.0 R184 | prototype | generated |
+| 123 | src/zephyr/trading/feedback_loop/detectors/reliability/re... | src/zephyr/trading/feedback_loop/dete... | Resolution Tracker — v0.12.0 R165 | prototype | generated |
+| 124 | src/zephyr/trading/feedback_loop/detectors/reliability/ru... | src/zephyr/trading/feedback_loop/dete... | Runbook Executor — v0.13.0 R186a | prototype | generated |
+| 125 | src/zephyr/trading/feedback_loop/detectors/reliability/ve... | src/zephyr/trading/feedback_loop/dete... | Version Migrator — v0.12.0 R169 | prototype | generated |
+| 126 | src/zephyr/trading/feedback_loop/diagnosers/__init__.py | src/zephyr/trading/feedback_loop/diag... | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit... | production | generated |
+| 127 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/__i... | src/zephyr/trading/feedback_loop/diag... |  | prototype | generated |
+| 128 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/ada... | src/zephyr/trading/feedback_loop/diag... | Adaptive Parameter Tuning — v0.37.0 R452 | prototype | generated |
+| 129 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/cog... | src/zephyr/trading/feedback_loop/diag... | Cognitive Load Estimator — v0.6.0 R68 | prototype | generated |
+| 130 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/cog... | src/zephyr/trading/feedback_loop/diag... | Cognitive Load Budget — v0.16.0 R223 | prototype | generated |
+| 131 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/col... | src/zephyr/trading/feedback_loop/diag... | Collaborative Learning — v0.7.0 R82 | prototype | generated |
+| 132 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/con... | src/zephyr/trading/feedback_loop/diag... | Confidence Decomposer — v0.7.0 R83 | prototype | generated |
+| 133 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/gam... | src/zephyr/trading/feedback_loop/diag... | Gamification — v0.8.0 R101 | prototype | generated |
+| 134 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/met... | src/zephyr/trading/feedback_loop/diag... | R516: MetaGuardLatencyBudget | prototype | generated |
+| 135 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/soc... | src/zephyr/trading/feedback_loop/diag... | Socratic Questions — v0.7.0 R81 | prototype | generated |
+| 136 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/ton... | src/zephyr/trading/feedback_loop/diag... | Tone Adapter — v0.9.0 R127 | prototype | generated |
+| 137 | src/zephyr/trading/feedback_loop/diagnosers/cognitive/ton... | src/zephyr/trading/feedback_loop/diag... | Tone Adapter v2 — v0.10.0 R141 | prototype | generated |
+| 138 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/__i... | src/zephyr/trading/feedback_loop/diag... |  | prototype | generated |
+| 139 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/aut... | src/zephyr/trading/feedback_loop/diag... | Auto Diagnosis — v0.3.0 R16 | prototype | generated |
+| 140 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/cau... | src/zephyr/trading/feedback_loop/diag... | Causal Inference Engine — v0.3.0 R5-R7 | prototype | generated |
+| 141 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/cou... | src/zephyr/trading/feedback_loop/diag... | Counterfactual Engine — v0.6.0 R60 | prototype | generated |
+| 142 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/dia... | src/zephyr/trading/feedback_loop/diag... |  | prototype | generated |
+| 143 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/dia... | src/zephyr/trading/feedback_loop/diag... | Diagnosis KPI — v0.9.0 R116 | prototype | generated |
+| 144 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/imp... | src/zephyr/trading/feedback_loop/diag... | Impact Predictor — v0.9.0 R121 | prototype | generated |
+| 145 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/inc... | src/zephyr/trading/feedback_loop/diag... | R504: IncidentKnowledgeInjector | prototype | generated |
+| 146 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/int... | src/zephyr/trading/feedback_loop/diag... | Interactive Diagnosis — v0.7.0 R80 | prototype | generated |
+| 147 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/kno... | src/zephyr/trading/feedback_loop/diag... | Knowledge Bus Factor Monitor — v0.38.0 R481 | prototype | generated |
+| 148 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/kno... | src/zephyr/trading/feedback_loop/diag... | Knowledge Market — v0.9.0 R126 | prototype | generated |
+| 149 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/mtt... | src/zephyr/trading/feedback_loop/diag... | MTTI Tracker — v0.16.0 R221 | prototype | generated |
+| 150 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/non... | src/zephyr/trading/feedback_loop/diag... | Nonstationary Effectiveness — v0.37.0 R455 | prototype | generated |
+| 151 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/sta... | src/zephyr/trading/feedback_loop/diag... | Statistical Hygiene Auditor — v0.38.0 R476 | prototype | generated |
+| 152 | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/ver... | src/zephyr/trading/feedback_loop/diag... | Vertical Self Assessment — v0.10.0 R137 | prototype | generated |
+| 153 | src/zephyr/trading/feedback_loop/diagnosers/health/__init... | src/zephyr/trading/feedback_loop/diag... |  | prototype | generated |
+| 154 | src/zephyr/trading/feedback_loop/diagnosers/health/action... | src/zephyr/trading/feedback_loop/diag... | R511: ActionCompositionHealthMonitor | prototype | generated |
+| 155 | src/zephyr/trading/feedback_loop/diagnosers/health/dr_res... | src/zephyr/trading/feedback_loop/diag... | DR Resilience Metrics — v0.17.0+ R231-R236 | prototype | generated |
+| 156 | src/zephyr/trading/feedback_loop/diagnosers/health/e2e_in... | src/zephyr/trading/feedback_loop/diag... | E2E Integration Health Monitor — v0.39.0 R489 | prototype | generated |
+| 157 | src/zephyr/trading/feedback_loop/diagnosers/health/fle_do... | src/zephyr/trading/feedback_loop/diag... | FLE Dogfood Monitor — v0.38.0 R480 | prototype | generated |
+| 158 | src/zephyr/trading/feedback_loop/diagnosers/health/fle_se... | src/zephyr/trading/feedback_loop/diag... | FLE Self SLO Metrics — v0.17.0+ R249-R254 | prototype | generated |
+| 159 | src/zephyr/trading/feedback_loop/diagnosers/health/global... | src/zephyr/trading/feedback_loop/diag... | Global Health Map — v0.8.0 R103 | prototype | generated |
+| 160 | src/zephyr/trading/feedback_loop/diagnosers/health/memory... | src/zephyr/trading/feedback_loop/diag... | Memory Self Check — v0.8.0 R105 | prototype | generated |
+| 161 | src/zephyr/trading/feedback_loop/diagnosers/health/model_... | src/zephyr/trading/feedback_loop/diag... | Model Health Monitor — v0.5.0 R40 | prototype | generated |
+| 162 | src/zephyr/trading/feedback_loop/diagnosers/health/self_b... | src/zephyr/trading/feedback_loop/diag... | Self Benchmark — v0.9.0 R115 | prototype | generated |
+| 163 | src/zephyr/trading/feedback_loop/diagnosers/health/self_b... | src/zephyr/trading/feedback_loop/diag... | Self-Bottleneck Detector — v0.38.0 R479 | prototype | generated |
+| 164 | src/zephyr/trading/feedback_loop/diagnosers/health/self_h... | src/zephyr/trading/feedback_loop/diag... | Self Health Monitor — v0.4.0 R29 | prototype | generated |
+| 165 | src/zephyr/trading/feedback_loop/diagnosers/health/self_l... | src/zephyr/trading/feedback_loop/diag... | Self LLM Observability — v0.12.0 R160 | prototype | generated |
+| 166 | src/zephyr/trading/feedback_loop/diagnosers/reliability/_... | src/zephyr/trading/feedback_loop/diag... |  | prototype | generated |
+| 167 | src/zephyr/trading/feedback_loop/diagnosers/reliability/a... | src/zephyr/trading/feedback_loop/diag... | Amplification Guard — v0.10.0 R134 | prototype | generated |
+| 168 | src/zephyr/trading/feedback_loop/diagnosers/reliability/a... | src/zephyr/trading/feedback_loop/diag... | API Dependency Metrics — v0.17.0+ R237-R242 | prototype | generated |
+| 169 | src/zephyr/trading/feedback_loop/diagnosers/reliability/b... | src/zephyr/trading/feedback_loop/diag... | Burn Rate Alerter — v0.14.0 R200 | prototype | generated |
+| 170 | src/zephyr/trading/feedback_loop/diagnosers/reliability/b... | src/zephyr/trading/feedback_loop/diag... | Burnout Alarm — v0.8.0 R100 | prototype | generated |
+| 171 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | Capacity Aware Repair — v0.9.0 R120 | prototype | generated |
+| 172 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | R509: ColdStartConservativeMode | prototype | generated |
+| 173 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | Context Truncation Detector — v0.9.0 R122 | prototype | generated |
+| 174 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | R506: ContextWindowPressureManager | prototype | generated |
+| 175 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | R513: CrossGuardConflictDetector | prototype | generated |
+| 176 | src/zephyr/trading/feedback_loop/diagnosers/reliability/c... | src/zephyr/trading/feedback_loop/diag... | R510: CrossSessionConsistencyValidator | prototype | generated |
+| 177 | src/zephyr/trading/feedback_loop/diagnosers/reliability/d... | src/zephyr/trading/feedback_loop/diag... | Data Volume Growth Monitor — v0.39.0 R492 | prototype | generated |
+| 178 | src/zephyr/trading/feedback_loop/diagnosers/reliability/f... | src/zephyr/trading/feedback_loop/diag... | Feedback Delay Compensator — v0.38.0 R477 | prototype | generated |
+| 179 | src/zephyr/trading/feedback_loop/diagnosers/reliability/g... | src/zephyr/trading/feedback_loop/diag... | R518: GuardInteractionTopologyMapper | prototype | generated |
+| 180 | src/zephyr/trading/feedback_loop/diagnosers/reliability/g... | src/zephyr/trading/feedback_loop/diag... | R512: GuardSelfConsistencyAuditor | prototype | generated |
+| 181 | src/zephyr/trading/feedback_loop/diagnosers/reliability/h... | src/zephyr/trading/feedback_loop/diag... | Human Anomaly Flood Detector — v0.40.0 R500 | prototype | generated |
+| 182 | src/zephyr/trading/feedback_loop/diagnosers/reliability/l... | src/zephyr/trading/feedback_loop/diag... | Latency SLO Monitor — v0.14.0 R192 | prototype | generated |
+| 183 | src/zephyr/trading/feedback_loop/diagnosers/reliability/l... | src/zephyr/trading/feedback_loop/diag... | LLM Provider Integrity — v0.15.0 R217 | prototype | generated |
+| 184 | src/zephyr/trading/feedback_loop/diagnosers/reliability/l... | src/zephyr/trading/feedback_loop/diag... | LLM Quality Regression — v0.12.0 R161 | prototype | generated |
+| 185 | src/zephyr/trading/feedback_loop/diagnosers/reliability/m... | src/zephyr/trading/feedback_loop/diag... | Model Rotation — v0.9.0 R125 | prototype | generated |
+| 186 | src/zephyr/trading/feedback_loop/diagnosers/reliability/m... | src/zephyr/trading/feedback_loop/diag... | Model Rotation v2 — v0.10.0 R140 | prototype | generated |
+| 187 | src/zephyr/trading/feedback_loop/diagnosers/reliability/m... | src/zephyr/trading/feedback_loop/diag... | Model Version Semantic Drift Monitor — v0.39.0 R493 | prototype | generated |
+| 188 | src/zephyr/trading/feedback_loop/diagnosers/reliability/n... | src/zephyr/trading/feedback_loop/diag... | Numerical Stability Guard — v0.38.0 R475 | prototype | generated |
+| 189 | src/zephyr/trading/feedback_loop/diagnosers/reliability/o... | src/zephyr/trading/feedback_loop/diag... | Operational Seasonality — v0.16.0 R228 | prototype | generated |
+| 190 | src/zephyr/trading/feedback_loop/diagnosers/reliability/p... | src/zephyr/trading/feedback_loop/diag... | Prompt Fingerprint — v0.3.0 R14 | prototype | generated |
+| 191 | src/zephyr/trading/feedback_loop/diagnosers/reliability/p... | src/zephyr/trading/feedback_loop/diag... | Prompt Sanitizer — v0.10.0 R133 | prototype | generated |
+| 192 | src/zephyr/trading/feedback_loop/diagnosers/reliability/r... | src/zephyr/trading/feedback_loop/diag... | Recovery Time Statistics — v0.37.0 R454 | prototype | generated |
+| 193 | src/zephyr/trading/feedback_loop/diagnosers/reliability/r... | src/zephyr/trading/feedback_loop/diag... | Regime Gain Scheduling — v0.37.0 R453 | prototype | generated |
+| 194 | src/zephyr/trading/feedback_loop/diagnosers/reliability/r... | src/zephyr/trading/feedback_loop/diag... | Retirement Planner — v0.10.0 R139 | prototype | generated |
+| 195 | src/zephyr/trading/feedback_loop/diagnosers/reliability/s... | src/zephyr/trading/feedback_loop/diag... | SLO Capacity Metrics — v0.17.0+ R243-R248 | prototype | generated |
+| 196 | src/zephyr/trading/feedback_loop/diagnosers/reliability/s... | src/zephyr/trading/feedback_loop/diag... | R527: SystemEntropyMonitor | prototype | generated |
+| 197 | src/zephyr/trading/feedback_loop/diagnosers/reliability/t... | src/zephyr/trading/feedback_loop/diag... | Temporal Integrity Guard — v0.38.0 R478 | prototype | generated |
+| 198 | src/zephyr/trading/feedback_loop/diagnosers/reliability/t... | src/zephyr/trading/feedback_loop/diag... | Timezone Semantic Reasoner — v0.37.0 R456 | prototype | generated |
+| 199 | src/zephyr/trading/feedback_loop/diagnosers/reliability/t... | src/zephyr/trading/feedback_loop/diag... | Toil Quantification — v0.37.0 R457 | prototype | generated |
+| 200 | src/zephyr/trading/feedback_loop/diagnosers/reliability/v... | src/zephyr/trading/feedback_loop/diag... | Value Added Baseline — v0.10.0 R138 | prototype | generated |
 
 > (仅显示前 200 个模块，共 464 个)
 

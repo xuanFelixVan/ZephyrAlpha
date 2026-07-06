@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 15_d_ops / telemetry
+# 15_d_ops / telemetry / Feedback Loop
 
 > **文档作用 / Purpose**: 展示 telemetry（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 15 | Number | 15 |
 | 域ID | D_OPS | Domain ID | D_OPS |
-| 域名称 | telemetry | Domain Name | telemetry |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | telemetry | Domain Name | Feedback Loop |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 3 | Module Count | 3 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 8 | Cross-domain Incoming | 8 |
@@ -111,11 +111,11 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (3 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/shared/observability/metrics.py | src/zephyr/shared/observability/metri... | production | generated |
-| 2 | src/zephyr/shared/observability/reasoning_spans.py | src/zephyr/shared/observability/reaso... | production | generated |
-| 3 | src/zephyr/shared/observability/tracing.py | src/zephyr/shared/observability/traci... | production | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/shared/observability/metrics.py | src/zephyr/shared/observability/metri... | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增 | 盲点 B17 修复） | production | generated |
+| 2 | src/zephyr/shared/observability/reasoning_spans.py | src/zephyr/shared/observability/reaso... |  | production | generated |
+| 3 | src/zephyr/shared/observability/tracing.py | src/zephyr/shared/observability/traci... | tracing.py —— OpenTelemetry 分布式追踪（Phase B 补充 | 盲点 B1 修复） | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

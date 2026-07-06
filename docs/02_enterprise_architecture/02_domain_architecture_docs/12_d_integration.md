@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 12_d_integration / pipeline_routing
+# 12_d_integration / pipeline_routing / Pipeline Routing
 
 > **文档作用 / Purpose**: 展示 pipeline_routing（D_INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 12 | Number | 12 |
 | 域ID | D_INTEGRATION | Domain ID | D_INTEGRATION |
-| 域名称 | pipeline_routing | Domain Name | pipeline_routing |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | pipeline_routing | Domain Name | Pipeline Routing |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 72 | Module Count | 72 |
 | 域内依赖 | 70 | Internal Dependencies | 70 |
 | 跨域入边 | 138 | Cross-domain Incoming | 138 |
@@ -360,80 +360,80 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (72 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/integration/__init__.py | src/zephyr/integration/__init__.py | prototype | generated |
-| 2 | src/zephyr/integration/_extensions/__init__.py | src/zephyr/integration/_extensions/__... | prototype | generated |
-| 3 | src/zephyr/integration/api/__init__.py | src/zephyr/integration/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/integration/behavioral_admission/__init__.py | src/zephyr/integration/behavioral_adm... | prototype | generated |
-| 5 | src/zephyr/integration/budget_enforcer/__init__.py | src/zephyr/integration/budget_enforce... | prototype | generated |
-| 6 | src/zephyr/integration/budget_enforcer/degradation_spiral... | src/zephyr/integration/budget_enforce... | prototype | generated |
-| 7 | src/zephyr/integration/core/__init__.py | src/zephyr/integration/core/__init__.py | prototype | generated |
-| 8 | src/zephyr/integration/governance/__init__.py | src/zephyr/integration/governance/__i... | prototype | generated |
-| 9 | src/zephyr/integration/governance/data_source_router/__in... | src/zephyr/integration/governance/dat... | prototype | generated |
-| 10 | src/zephyr/integration/governance/data_source_router/embe... | src/zephyr/integration/governance/dat... | prototype | generated |
-| 11 | src/zephyr/integration/governance/embedding_router.py | src/zephyr/integration/governance/emb... | prototype | generated |
-| 12 | src/zephyr/integration/infrastructure/__init__.py | src/zephyr/integration/infrastructure... | prototype | generated |
-| 13 | src/zephyr/integration/layer1_discovery/__init__.py | src/zephyr/integration/layer1_discove... | prototype | generated |
-| 14 | src/zephyr/integration/layer2_communication/__init__.py | src/zephyr/integration/layer2_communi... | prototype | generated |
-| 15 | src/zephyr/integration/layer3_coordination/__init__.py | src/zephyr/integration/layer3_coordin... | prototype | generated |
-| 16 | src/zephyr/integration/llm_bridge.py | src/zephyr/integration/llm_bridge.py | prototype | generated |
-| 17 | src/zephyr/integration/local_model/__init__.py | src/zephyr/integration/local_model/__... | prototype | generated |
-| 18 | src/zephyr/integration/local_model/cache_layer.py | src/zephyr/integration/local_model/ca... | production | generated |
-| 19 | src/zephyr/integration/local_model/deepseek_chat.py | src/zephyr/integration/local_model/de... | prototype | generated |
-| 20 | src/zephyr/integration/local_model/embedding_router.py | src/zephyr/integration/local_model/em... | production | generated |
-| 21 | src/zephyr/integration/local_model/local_model_scheduler.py | src/zephyr/integration/local_model/lo... | prototype | generated |
-| 22 | src/zephyr/integration/local_model/ollama_chat.py | src/zephyr/integration/local_model/ol... | prototype | generated |
-| 23 | src/zephyr/integration/local_model/ollama_embedding.py | src/zephyr/integration/local_model/ol... | prototype | generated |
-| 24 | src/zephyr/integration/mcp_server.py | src/zephyr/integration/mcp_server.py | prototype | generated |
-| 25 | src/zephyr/integration/pipeline_orchestrator.py | src/zephyr/integration/pipeline_orche... | production | generated |
-| 26 | src/zephyr/integration/ports.py | src/zephyr/integration/ports.py | prototype | generated |
-| 27 | src/zephyr/integration/services/__init__.py | src/zephyr/integration/services/__ini... | prototype | generated |
-| 28 | src/zephyr/integration/shared/contracts/errors/__init__.py | src/zephyr/integration/shared/contrac... | prototype | generated |
-| 29 | src/zephyr/integration/shared/contracts/errors/execution_... | src/zephyr/integration/shared/contrac... | prototype | generated |
-| 30 | src/zephyr/integration/shared/contracts/errors/risk_limit... | src/zephyr/integration/shared/contrac... | prototype | generated |
-| 31 | src/zephyr/integration/shared/contracts/errors/signal_deg... | src/zephyr/integration/shared/contrac... | prototype | generated |
-| 32 | src/zephyr/integration/shared/events/__init__.py | src/zephyr/integration/shared/events/... | prototype | generated |
-| 33 | src/zephyr/integration/shared/events/dlq.py | src/zephyr/integration/shared/events/... | prototype | generated |
-| 34 | src/zephyr/integration/shared/events/dlq_bridge.py | src/zephyr/integration/shared/events/... | prototype | generated |
-| 35 | src/zephyr/integration/shared/events/event_bus_upgrade.py | src/zephyr/integration/shared/events/... | prototype | generated |
-| 36 | src/zephyr/integration/shared/events/event_schemas.py | src/zephyr/integration/shared/events/... | prototype | generated |
-| 37 | src/zephyr/integration/shared/events/upgrade_strategy.py | src/zephyr/integration/shared/events/... | production | generated |
-| 38 | src/zephyr/integration/shared/schema/__init__.py | src/zephyr/integration/shared/schema/... | prototype | generated |
-| 39 | src/zephyr/integration/shared/schema/base_config.py | src/zephyr/integration/shared/schema/... | production | generated |
-| 40 | src/zephyr/integration/shared/schema/execution_model.py | src/zephyr/integration/shared/schema/... | production | generated |
-| 41 | src/zephyr/integration/shared/schema/schema_registry.py | src/zephyr/integration/shared/schema/... | production | generated |
-| 42 | src/zephyr/integration/shared/schema/schemas.py | src/zephyr/integration/shared/schema/... | production | generated |
-| 43 | src/zephyr/integration/shared/schema/severity_types.py | src/zephyr/integration/shared/schema/... | production | generated |
-| 44 | src/zephyr/integration/vector_memory/__init__.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 45 | src/zephyr/integration/vector_memory/bm25_index.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 46 | src/zephyr/integration/vector_memory/bridge_layer.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 47 | src/zephyr/integration/vector_memory/cache_layer.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 48 | src/zephyr/integration/vector_memory/chunk_strategy_route... | src/zephyr/integration/vector_memory/... | production | generated |
-| 49 | src/zephyr/integration/vector_memory/collection_manager.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 50 | src/zephyr/integration/vector_memory/collection_schemas.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 51 | src/zephyr/integration/vector_memory/context_ingest.py | src/zephyr/integration/vector_memory/... | prototype | generated |
-| 52 | src/zephyr/integration/vector_memory/cross_collection_ret... | src/zephyr/integration/vector_memory/... | prototype | generated |
-| 53 | src/zephyr/integration/vector_memory/delegated_vector_mem... | src/zephyr/integration/vector_memory/... | prototype | generated |
-| 54 | src/zephyr/integration/vector_memory/design_principles.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 55 | src/zephyr/integration/vector_memory/embedding_router.py | src/zephyr/integration/vector_memory/... | prototype | generated |
-| 56 | src/zephyr/integration/vector_memory/faiss_collection_man... | src/zephyr/integration/vector_memory/... | production | generated |
-| 57 | src/zephyr/integration/vector_memory/hybrid_retriever.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 58 | src/zephyr/integration/vector_memory/in_memory_fake_vms.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 59 | src/zephyr/integration/vector_memory/in_memory_memory_bac... | src/zephyr/integration/vector_memory/... | production | generated |
-| 60 | src/zephyr/integration/vector_memory/in_process_vector_me... | src/zephyr/integration/vector_memory/... | production | generated |
-| 61 | src/zephyr/integration/vector_memory/index_health_monitor.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 62 | src/zephyr/integration/vector_memory/interface.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 63 | src/zephyr/integration/vector_memory/migrate_chroma_to_fa... | src/zephyr/integration/vector_memory/... | prototype | generated |
-| 64 | src/zephyr/integration/vector_memory/ollama_embedding.py | src/zephyr/integration/vector_memory/... | prototype | generated |
-| 65 | src/zephyr/integration/vector_memory/provenance_enforcer.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 66 | src/zephyr/integration/vector_memory/retrieval_feedback.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 67 | src/zephyr/integration/vector_memory/sqlite_metadata_stor... | src/zephyr/integration/vector_memory/... | production | generated |
-| 68 | src/zephyr/integration/vector_memory/vector_bridge.py | src/zephyr/integration/vector_memory/... | prototype | generated |
-| 69 | src/zephyr/integration/vector_memory/vector_writer.py | src/zephyr/integration/vector_memory/... | prototype | generated |
-| 70 | src/zephyr/integration/vector_memory/vms_config.yaml | src/zephyr/integration/vector_memory/... | production | generated |
-| 71 | src/zephyr/integration/vector_memory/vms_errors.py | src/zephyr/integration/vector_memory/... | production | generated |
-| 72 | src/zephyr/integration/vector_memory/vms_schemas.py | src/zephyr/integration/vector_memory/... | production | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/integration/__init__.py | src/zephyr/integration/__init__.py |  | prototype | generated |
+| 2 | src/zephyr/integration/_extensions/__init__.py | src/zephyr/integration/_extensions/__... |  | prototype | generated |
+| 3 | src/zephyr/integration/api/__init__.py | src/zephyr/integration/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/integration/behavioral_admission/__init__.py | src/zephyr/integration/behavioral_adm... |  | prototype | generated |
+| 5 | src/zephyr/integration/budget_enforcer/__init__.py | src/zephyr/integration/budget_enforce... |  | prototype | generated |
+| 6 | src/zephyr/integration/budget_enforcer/degradation_spiral... | src/zephyr/integration/budget_enforce... | Degradation Spiral Detector — 模型幻觉-容量正反馈螺旋检测 (盲点 #19, M-29) | prototype | generated |
+| 7 | src/zephyr/integration/core/__init__.py | src/zephyr/integration/core/__init__.py |  | prototype | generated |
+| 8 | src/zephyr/integration/governance/__init__.py | src/zephyr/integration/governance/__i... |  | prototype | generated |
+| 9 | src/zephyr/integration/governance/data_source_router/__in... | src/zephyr/integration/governance/dat... |  | prototype | generated |
+| 10 | src/zephyr/integration/governance/data_source_router/embe... | src/zephyr/integration/governance/dat... |  | prototype | generated |
+| 11 | src/zephyr/integration/governance/embedding_router.py | src/zephyr/integration/governance/emb... | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 | prototype | generated |
+| 12 | src/zephyr/integration/infrastructure/__init__.py | src/zephyr/integration/infrastructure... |  | prototype | generated |
+| 13 | src/zephyr/integration/layer1_discovery/__init__.py | src/zephyr/integration/layer1_discove... |  | prototype | generated |
+| 14 | src/zephyr/integration/layer2_communication/__init__.py | src/zephyr/integration/layer2_communi... |  | prototype | generated |
+| 15 | src/zephyr/integration/layer3_coordination/__init__.py | src/zephyr/integration/layer3_coordin... |  | prototype | generated |
+| 16 | src/zephyr/integration/llm_bridge.py | src/zephyr/integration/llm_bridge.py | 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成。 | prototype | generated |
+| 17 | src/zephyr/integration/local_model/__init__.py | src/zephyr/integration/local_model/__... |  | prototype | generated |
+| 18 | src/zephyr/integration/local_model/cache_layer.py | src/zephyr/integration/local_model/ca... | CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU | production | generated |
+| 19 | src/zephyr/integration/local_model/deepseek_chat.py | src/zephyr/integration/local_model/de... | DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理（requests 实现） | prototype | generated |
+| 20 | src/zephyr/integration/local_model/embedding_router.py | src/zephyr/integration/local_model/em... | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 | production | generated |
+| 21 | src/zephyr/integration/local_model/local_model_scheduler.py | src/zephyr/integration/local_model/lo... | LocalModelScheduler — L2 本地模型 24/7 调度循环 | prototype | generated |
+| 22 | src/zephyr/integration/local_model/ollama_chat.py | src/zephyr/integration/local_model/ol... | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理 | prototype | generated |
+| 23 | src/zephyr/integration/local_model/ollama_embedding.py | src/zephyr/integration/local_model/ol... | OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入 | prototype | generated |
+| 24 | src/zephyr/integration/mcp_server.py | src/zephyr/integration/mcp_server.py | AssetInventory MCP Server — MOD-INF-026 蓝图 §21 | prototype | generated |
+| 25 | src/zephyr/integration/pipeline_orchestrator.py | src/zephyr/integration/pipeline_orche... | PipelineOrchestrator — M1-M11 管线协调器 | production | generated |
+| 26 | src/zephyr/integration/ports.py | src/zephyr/integration/ports.py | Protocol-based interface layer for pipeline→mcp dependency abstraction. | prototype | generated |
+| 27 | src/zephyr/integration/services/__init__.py | src/zephyr/integration/services/__ini... |  | prototype | generated |
+| 28 | src/zephyr/integration/shared/contracts/errors/__init__.py | src/zephyr/integration/shared/contrac... | Auto-generated contracts package — errors | prototype | generated |
+| 29 | src/zephyr/integration/shared/contracts/errors/execution_... | src/zephyr/integration/shared/contrac... |  | prototype | generated |
+| 30 | src/zephyr/integration/shared/contracts/errors/risk_limit... | src/zephyr/integration/shared/contrac... |  | prototype | generated |
+| 31 | src/zephyr/integration/shared/contracts/errors/signal_deg... | src/zephyr/integration/shared/contrac... |  | prototype | generated |
+| 32 | src/zephyr/integration/shared/events/__init__.py | src/zephyr/integration/shared/events/... |  | prototype | generated |
+| 33 | src/zephyr/integration/shared/events/dlq.py | src/zephyr/integration/shared/events/... | dlq.py —— ZephyrAlpha 死信队列（Dead Letter Queue） | prototype | generated |
+| 34 | src/zephyr/integration/shared/events/dlq_bridge.py | src/zephyr/integration/shared/events/... | CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge. | prototype | generated |
+| 35 | src/zephyr/integration/shared/events/event_bus_upgrade.py | src/zephyr/integration/shared/events/... | EventBus Upgrade — 事件总线升级 (M-16) | prototype | generated |
+| 36 | src/zephyr/integration/shared/events/event_schemas.py | src/zephyr/integration/shared/events/... | event_schemas.py —— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复） | prototype | generated |
+| 37 | src/zephyr/integration/shared/events/upgrade_strategy.py | src/zephyr/integration/shared/events/... | EventBus 升级策略引擎 | production | generated |
+| 38 | src/zephyr/integration/shared/schema/__init__.py | src/zephyr/integration/shared/schema/... | shared.schema — auto-generated package init. | prototype | generated |
+| 39 | src/zephyr/integration/shared/schema/base_config.py | src/zephyr/integration/shared/schema/... |  | production | generated |
+| 40 | src/zephyr/integration/shared/schema/execution_model.py | src/zephyr/integration/shared/schema/... |  | production | generated |
+| 41 | src/zephyr/integration/shared/schema/schema_registry.py | src/zephyr/integration/shared/schema/... |  | production | generated |
+| 42 | src/zephyr/integration/shared/schema/schemas.py | src/zephyr/integration/shared/schema/... |  | production | generated |
+| 43 | src/zephyr/integration/shared/schema/severity_types.py | src/zephyr/integration/shared/schema/... |  | production | generated |
+| 44 | src/zephyr/integration/vector_memory/__init__.py | src/zephyr/integration/vector_memory/... | Vector Memory Service (VMS) — MOD-INF-011 · v0.7.0 | production | generated |
+| 45 | src/zephyr/integration/vector_memory/bm25_index.py | src/zephyr/integration/vector_memory/... | BM25Index — MOD-INF-011 稀疏检索组件 | production | generated |
+| 46 | src/zephyr/integration/vector_memory/bridge_layer.py | src/zephyr/integration/vector_memory/... | BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 | production | generated |
+| 47 | src/zephyr/integration/vector_memory/cache_layer.py | src/zephyr/integration/vector_memory/... |  | production | generated |
+| 48 | src/zephyr/integration/vector_memory/chunk_strategy_route... | src/zephyr/integration/vector_memory/... | ChunkStrategyRouter — MOD-INF-011 分块策略调度 | production | generated |
+| 49 | src/zephyr/integration/vector_memory/collection_manager.py | src/zephyr/integration/vector_memory/... | CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理 | production | generated |
+| 50 | src/zephyr/integration/vector_memory/collection_schemas.py | src/zephyr/integration/vector_memory/... |  | production | generated |
+| 51 | src/zephyr/integration/vector_memory/context_ingest.py | src/zephyr/integration/vector_memory/... | VMS 上下文注入器 — ingest_context() 消费者 | prototype | generated |
+| 52 | src/zephyr/integration/vector_memory/cross_collection_ret... | src/zephyr/integration/vector_memory/... | CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索 | prototype | generated |
+| 53 | src/zephyr/integration/vector_memory/delegated_vector_mem... | src/zephyr/integration/vector_memory/... | DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器 | prototype | generated |
+| 54 | src/zephyr/integration/vector_memory/design_principles.py | src/zephyr/integration/vector_memory/... |  | production | generated |
+| 55 | src/zephyr/integration/vector_memory/embedding_router.py | src/zephyr/integration/vector_memory/... |  | prototype | generated |
+| 56 | src/zephyr/integration/vector_memory/faiss_collection_man... | src/zephyr/integration/vector_memory/... | FAISSCollectionManager — FAISS HNSW/IVF+PQ 8 Collection 全生命周期管理 | production | generated |
+| 57 | src/zephyr/integration/vector_memory/hybrid_retriever.py | src/zephyr/integration/vector_memory/... | HybridRetriever — MOD-INF-011 混合检索架构 | production | generated |
+| 58 | src/zephyr/integration/vector_memory/in_memory_fake_vms.py | src/zephyr/integration/vector_memory/... | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎 | production | generated |
+| 59 | src/zephyr/integration/vector_memory/in_memory_memory_bac... | src/zephyr/integration/vector_memory/... | InMemoryMemoryBackend — MOD-INF-011 降级兜底 | production | generated |
+| 60 | src/zephyr/integration/vector_memory/in_process_vector_me... | src/zephyr/integration/vector_memory/... | InProcessVectorMemory — MOD-INF-011 VMS 统一入口 | production | generated |
+| 61 | src/zephyr/integration/vector_memory/index_health_monitor.py | src/zephyr/integration/vector_memory/... | IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复 | production | generated |
+| 62 | src/zephyr/integration/vector_memory/interface.py | src/zephyr/integration/vector_memory/... | VMS — Vector Memory Service 接口基类 | production | generated |
+| 63 | src/zephyr/integration/vector_memory/migrate_chroma_to_fa... | src/zephyr/integration/vector_memory/... | ChromDB → FAISS + SQLite WAL 数据迁移脚本 | prototype | generated |
+| 64 | src/zephyr/integration/vector_memory/ollama_embedding.py | src/zephyr/integration/vector_memory/... |  | prototype | generated |
+| 65 | src/zephyr/integration/vector_memory/provenance_enforcer.py | src/zephyr/integration/vector_memory/... | ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行 | production | generated |
+| 66 | src/zephyr/integration/vector_memory/retrieval_feedback.py | src/zephyr/integration/vector_memory/... | RetrievalFeedback — MOD-INF-011 FLE 检索质量消费 | production | generated |
+| 67 | src/zephyr/integration/vector_memory/sqlite_metadata_stor... | src/zephyr/integration/vector_memory/... | SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 BM25) | production | generated |
+| 68 | src/zephyr/integration/vector_memory/vector_bridge.py | src/zephyr/integration/vector_memory/... | VectorBridge — MOD-INF-011 CE/KB 外部集成适配器 | prototype | generated |
+| 69 | src/zephyr/integration/vector_memory/vector_writer.py | src/zephyr/integration/vector_memory/... | CE 向量写入器 — vectorize_and_store() 生产者 | prototype | generated |
+| 70 | src/zephyr/integration/vector_memory/vms_config.yaml | src/zephyr/integration/vector_memory/... |  | production | generated |
+| 71 | src/zephyr/integration/vector_memory/vms_errors.py | src/zephyr/integration/vector_memory/... |  | production | generated |
+| 72 | src/zephyr/integration/vector_memory/vms_schemas.py | src/zephyr/integration/vector_memory/... | VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

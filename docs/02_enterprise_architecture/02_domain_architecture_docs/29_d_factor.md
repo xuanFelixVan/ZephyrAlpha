@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 29_d_factor / 因子
+# 29_d_factor / 因子 / Factor
 
 > **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 29 | Number | 29 |
 | 域ID | D_FACTOR | Domain ID | D_FACTOR |
-| 域名称 | 因子 | Domain Name | 因子 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | 因子 | Domain Name | Factor |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 14 | Module Count | 14 |
 | 域内依赖 | 4 | Internal Dependencies | 4 |
 | 跨域入边 | 2 | Cross-domain Incoming | 2 |
@@ -129,22 +129,22 @@ graph TD
 
 ### L2 领域层 / Domain Layer (14 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/factor/__init__.py | src/zephyr/factor/__init__.py | production | generated |
-| 2 | src/zephyr/factor/_extensions/__init__.py | src/zephyr/factor/_extensions/__init_... | prototype | generated |
-| 3 | src/zephyr/factor/alpha_signal_pipeline.py | src/zephyr/factor/alpha_signal_pipeli... | prototype | generated |
-| 4 | src/zephyr/factor/api/__init__.py | src/zephyr/factor/api/__init__.py | prototype | generated |
-| 5 | src/zephyr/factor/base.py | src/zephyr/factor/base.py | production | generated |
-| 6 | src/zephyr/factor/bus_factor_defense.py | src/zephyr/factor/bus_factor_defense.py | production | generated |
-| 7 | src/zephyr/factor/core/__init__.py | src/zephyr/factor/core/__init__.py | prototype | generated |
-| 8 | src/zephyr/factor/ctr_001_consumer/__init__.py | src/zephyr/factor/ctr_001_consumer/__... | prototype | generated |
-| 9 | src/zephyr/factor/engine/__init__.py | src/zephyr/factor/engine/__init__.py | prototype | generated |
-| 10 | src/zephyr/factor/factor_base.py | src/zephyr/factor/factor_base.py | production | generated |
-| 11 | src/zephyr/factor/infrastructure/__init__.py | src/zephyr/factor/infrastructure/__in... | prototype | generated |
-| 12 | src/zephyr/factor/momentum_factor.py | src/zephyr/factor/momentum_factor.py | prototype | generated |
-| 13 | src/zephyr/factor/services/__init__.py | src/zephyr/factor/services/__init__.py | prototype | generated |
-| 14 | src/zephyr/factor/value_factor.py | src/zephyr/factor/value_factor.py | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/factor/__init__.py | src/zephyr/factor/__init__.py | ZephyrAlpha — D_FACTOR Alpha Factor Layer | production | generated |
+| 2 | src/zephyr/factor/_extensions/__init__.py | src/zephyr/factor/_extensions/__init_... |  | prototype | generated |
+| 3 | src/zephyr/factor/alpha_signal_pipeline.py | src/zephyr/factor/alpha_signal_pipeli... |  | prototype | generated |
+| 4 | src/zephyr/factor/api/__init__.py | src/zephyr/factor/api/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/factor/base.py | src/zephyr/factor/base.py | ZephyrAlpha — factor.base re-export shim. | production | generated |
+| 6 | src/zephyr/factor/bus_factor_defense.py | src/zephyr/factor/bus_factor_defense.py |  | production | generated |
+| 7 | src/zephyr/factor/core/__init__.py | src/zephyr/factor/core/__init__.py |  | prototype | generated |
+| 8 | src/zephyr/factor/ctr_001_consumer/__init__.py | src/zephyr/factor/ctr_001_consumer/__... | ZephyrAlpha — D_FACTOR Alpha Factor Layer | prototype | generated |
+| 9 | src/zephyr/factor/engine/__init__.py | src/zephyr/factor/engine/__init__.py | D_FACTOR — Factors Package | prototype | generated |
+| 10 | src/zephyr/factor/factor_base.py | src/zephyr/factor/factor_base.py | ZephyrAlpha — D_FACTOR Alpha Factor Layer | production | generated |
+| 11 | src/zephyr/factor/infrastructure/__init__.py | src/zephyr/factor/infrastructure/__in... |  | prototype | generated |
+| 12 | src/zephyr/factor/momentum_factor.py | src/zephyr/factor/momentum_factor.py | D_FACTOR — Momentum Factor | prototype | generated |
+| 13 | src/zephyr/factor/services/__init__.py | src/zephyr/factor/services/__init__.py |  | prototype | generated |
+| 14 | src/zephyr/factor/value_factor.py | src/zephyr/factor/value_factor.py | D_FACTOR — Value Factor | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

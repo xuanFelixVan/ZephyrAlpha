@@ -134,6 +134,90 @@ DOMAIN_NAME_ZH = {
     "D-T9-PREREQ": "T9前置域",
 }
 
+# 域ID → 英文名称映射（双语显示用，硬编码真源，与 DOMAIN_NAME_ZH 一一对应）
+DOMAIN_NAME_EN: dict[str, str] = {
+    # L0 基础设施层
+    "D_INFRA_A2A": "A2A Communication",
+    "D_INFRA_OPS": "Asset Inventory",
+    "D_INFRA_RECOVERY": "Rollback Recovery",
+    "D_INFRA_RUNTIME": "Runtime Integration",
+    "D_INFRA_TELEMETRY": "Observability",
+
+    # L1 基础平台层
+    "D_ALT_DATA": "Alternative Data",
+    "D_BEHAVIORAL_AUDIT": "Behavioral Audit",
+    "D_DATA_ENG": "Data Engineering",
+    "D_DATA_GOV": "Data Governance",
+    "D_DATA_SEC": "Data Security & Contracts",
+    "D_FRONTEND": "Frontend",
+    "D_GOVERNANCE": "Lifecycle Management",
+    "D_INTEGRATION": "Pipeline Routing",
+    "D_INTEGRATION_GATEWAY": "Integration Gateway",
+    "D_MKT_DATA": "Market Data",
+    "D_OPS": "Feedback Loop",
+    "D_REPORTING": "Reporting",
+    "D_SECURITY": "Adversarial Validation",
+    "D_SECURITY_LLM": "LLM Defense",
+    "D_SHARED": "Shared Services",
+
+    # L1 智能层
+    "D_INTELLIGENCE": "Context Management",
+    "D_KNOWLEDGE": "Knowledge Management",
+    "D_AUTONOMY_CORE": "Autonomy Core",
+
+    # L2 业务域层 - 因子信号
+    "D_FACTOR": "Factor",
+    "D_SIGLEGACY": "Signal Legacy (Design)",
+    "D_ASHARE_SIGNAL": "A-Share Signal",
+    "D_FUNDAMENTAL_SIGNAL": "Fundamental Signal",
+    "D_SIGQC": "Signal Quality Control",
+
+    # L2 业务域层 - 风险合规
+    "D_RISK": "Risk Control",
+    "D_COMPLIANCE": "Compliance",
+    "D_AUTONOMY_PERM": "Autonomy Protection",
+
+    # L2 业务域层 - 组合决策
+    "D_PF_CORE": "Portfolio Core",
+    "D_PF_ALLOC": "Portfolio Allocation",
+    "D_SELL_DECISION": "Sell Decision",
+    "D_CROSS_ASSET": "Cross Asset",
+    "D_DIGITAL_TWIN": "Digital Twin",
+
+    # L2 业务域层 - 执行交易
+    "D_EX_CORE": "Execution Core",
+    "D_EX_SOR": "Execution Routing",
+    "D_TRADING": "Trading Operations",
+    "D_POSITION": "Position Management",
+
+    # L2 业务域层 - ML平台
+    "D_ML_TRAIN": "Training",
+    "D_ML_SERVE": "Inference",
+
+    # L2 业务域层 - 回测仿真
+    "D_BACKTEST": "Backtest",
+    "D_SIMULATION": "Simulation",
+    "D_EXEC_SIM": "Execution Simulation",
+
+    # L2 治理域层
+    "D_AUDITTEST": "Audit Test Suite",
+    "D_GOV_REPAIR": "Governance Repair",
+    "D_GOV_AUDIT": "Audit Trail",
+    "D_GOV_DOCS": "Architecture Docs Governance",
+    "D_GOV_DRIFT": "Drift Detection",
+    "D_GOV_ENFORCEMENT": "Rule Enforcement",
+    "D_GOV_RULE": "Rule Governance",
+    "D_GOV_SCRIPTS": "Script Governance",
+}
+
+# 架构层ID → (中文名, 英文名) 映射
+LAYER_NAME_BILINGUAL: dict[str, tuple[str, str]] = {
+    "L0_infrastructure": ("L0 基础设施层", "L0 Infrastructure"),
+    "L1_foundation": ("L1 基础平台层", "L1 Foundation"),
+    "L1_platform": ("L1 平台层", "L1 Platform"),
+    "L2_domain": ("L2 业务域层", "L2 Domain"),
+}
+
 # 模块级缓存：避免重复查询 db（None=未加载，dict=已加载，{}=加载失败回退硬编码）
 _DOMAIN_NAME_CACHE: dict[str, str] | None = None
 
@@ -199,3 +283,44 @@ def get_domain_name_zh(domain_id: str, fallback: str = "") -> str:
         return db_names[domain_id]
     # 回退到硬编码映射表（db 不可用或测试域）
     return DOMAIN_NAME_ZH.get(domain_id, fallback or domain_id)
+
+
+def get_domain_name_en(domain_id: str, fallback: str = "") -> str:
+    """获取域的英文名称（硬编码真源，db 无对应字段）。
+
+    Args:
+        domain_id: 域ID，如 "D_TRADING"
+        fallback: 硬编码没有时的回退值
+
+    Returns:
+        英文名称字符串
+    """
+    return DOMAIN_NAME_EN.get(domain_id, fallback or domain_id)
+
+
+def get_layer_name_bilingual(layer_id: str) -> tuple[str, str]:
+    """获取架构层的中英文名称（硬编码真源）。
+
+    Args:
+        layer_id: 层ID，如 "L0_infrastructure"
+
+    Returns:
+        (中文名, 英文名) 元组；未知层返回 (layer_id, layer_id)
+    """
+    return LAYER_NAME_BILINGUAL.get(layer_id, (layer_id, layer_id))
+
+
+def get_domain_name_bilingual(domain_id: str, fallback_zh: str = "", fallback_en: str = "") -> tuple[str, str]:
+    """获取域的中英文名称双显（get_domain_name_zh + get_domain_name_en 组合）。
+
+    Args:
+        domain_id: 域ID，如 "D_TRADING"
+        fallback_zh: 中文名回退值
+        fallback_en: 英文名回退值
+
+    Returns:
+        (中文名, 英文名) 元组
+    """
+    zh = get_domain_name_zh(domain_id, fallback_zh)
+    en = get_domain_name_en(domain_id, fallback_en)
+    return (zh, en)

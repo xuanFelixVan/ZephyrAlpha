@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 23_d_backtest / 回测
+# 23_d_backtest / 回测 / Backtest
 
 > **文档作用 / Purpose**: 展示 回测（D_BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 23 | Number | 23 |
 | 域ID | D_BACKTEST | Domain ID | D_BACKTEST |
-| 域名称 | 回测 | Domain Name | 回测 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | 回测 | Domain Name | Backtest |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 33 | Module Count | 33 |
 | 域内依赖 | 44 | Internal Dependencies | 44 |
 | 跨域入边 | 20 | Cross-domain Incoming | 20 |
@@ -236,41 +236,41 @@ graph TD
 
 ### L2 领域层 / Domain Layer (33 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/backtest/__init__.py | src/zephyr/backtest/__init__.py | prototype | generated |
-| 2 | src/zephyr/backtest/_extensions/__init__.py | src/zephyr/backtest/_extensions/__ini... | prototype | generated |
-| 3 | src/zephyr/backtest/api/__init__.py | src/zephyr/backtest/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/backtest/core/__init__.py | src/zephyr/backtest/core/__init__.py | prototype | generated |
-| 5 | src/zephyr/backtest/core/data_handler.py | src/zephyr/backtest/core/data_handler.py | prototype | generated |
-| 6 | src/zephyr/backtest/core/data_handler.py/ | src/zephyr/backtest/core/data_handler... | design | generated |
-| 7 | src/zephyr/backtest/core/decision_gate.py | src/zephyr/backtest/core/decision_gat... | prototype | generated |
-| 8 | src/zephyr/backtest/core/engine_base.py | src/zephyr/backtest/core/engine_base.py | production | generated |
-| 9 | src/zephyr/backtest/core/matching_engine.py | src/zephyr/backtest/core/matching_eng... | prototype | generated |
-| 10 | src/zephyr/backtest/core/matching_engine.py/ | src/zephyr/backtest/core/matching_eng... | design | generated |
-| 11 | src/zephyr/backtest/core/matching_logic.py | src/zephyr/backtest/core/matching_log... | prototype | generated |
-| 12 | src/zephyr/backtest/core/matching_logic.py/ | src/zephyr/backtest/core/matching_log... | design | stable |
-| 13 | src/zephyr/backtest/core/metrics.py | src/zephyr/backtest/core/metrics.py | prototype | generated |
-| 14 | src/zephyr/backtest/core/metrics.py/ | src/zephyr/backtest/core/metrics.py/ | design | generated |
-| 15 | src/zephyr/backtest/core/overfitting_detector.py | src/zephyr/backtest/core/overfitting_... | prototype | generated |
-| 16 | src/zephyr/backtest/core/pit_manager.py | src/zephyr/backtest/core/pit_manager.py | prototype | generated |
-| 17 | src/zephyr/backtest/core/portfolio.py | src/zephyr/backtest/core/portfolio.py | prototype | generated |
-| 18 | src/zephyr/backtest/core/portfolio.py/ | src/zephyr/backtest/core/portfolio.py/ | design | generated |
-| 19 | src/zephyr/backtest/core/tick_replay.py | src/zephyr/backtest/core/tick_replay.py | prototype | generated |
-| 20 | src/zephyr/backtest/core/tick_replay.py/ | src/zephyr/backtest/core/tick_replay.py/ | design | stable |
-| 21 | src/zephyr/backtest/core/walk_forward.py | src/zephyr/backtest/core/walk_forward.py | prototype | generated |
-| 22 | src/zephyr/backtest/implementations/__init__.py | src/zephyr/backtest/implementations/_... | prototype | generated |
-| 23 | src/zephyr/backtest/implementations/event_driven_engine.py | src/zephyr/backtest/implementations/e... | prototype | generated |
-| 24 | src/zephyr/backtest/implementations/vectorized_engine.py | src/zephyr/backtest/implementations/v... | production | generated |
-| 25 | src/zephyr/backtest/infrastructure/__init__.py | src/zephyr/backtest/infrastructure/__... | prototype | generated |
-| 26 | src/zephyr/backtest/io/__init__.py | src/zephyr/backtest/io/__init__.py | prototype | generated |
-| 27 | src/zephyr/backtest/io/backtest_result_sink.py | src/zephyr/backtest/io/backtest_resul... | prototype | generated |
-| 28 | src/zephyr/backtest/io/backtest_result_sink.py/ | src/zephyr/backtest/io/backtest_resul... | design | generated |
-| 29 | src/zephyr/backtest/io/decisiongraph_adapter.py | src/zephyr/backtest/io/decisiongraph_... | production | generated |
-| 30 | src/zephyr/backtest/io/result_repository.py | src/zephyr/backtest/io/result_reposit... | prototype | generated |
-| 31 | src/zephyr/backtest/io/result_repository.py/ | src/zephyr/backtest/io/result_reposit... | design | generated |
-| 32 | src/zephyr/backtest/models/__init__.py | src/zephyr/backtest/models/__init__.py | prototype | generated |
-| 33 | src/zephyr/backtest/services/__init__.py | src/zephyr/backtest/services/__init__.py | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/backtest/__init__.py | src/zephyr/backtest/__init__.py | ZephyrAlpha — D_BACKTEST 回测引擎域 | prototype | generated |
+| 2 | src/zephyr/backtest/_extensions/__init__.py | src/zephyr/backtest/_extensions/__ini... |  | prototype | generated |
+| 3 | src/zephyr/backtest/api/__init__.py | src/zephyr/backtest/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/backtest/core/__init__.py | src/zephyr/backtest/core/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/backtest/core/data_handler.py | src/zephyr/backtest/core/data_handler.py | 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源） | prototype | generated |
+| 6 | src/zephyr/backtest/core/data_handler.py/ | src/zephyr/backtest/core/data_handler... |  | design | generated |
+| 7 | src/zephyr/backtest/core/decision_gate.py | src/zephyr/backtest/core/decision_gat... | 3阶段决策门控模块(IS→WFA→OOS) | prototype | generated |
+| 8 | src/zephyr/backtest/core/engine_base.py | src/zephyr/backtest/core/engine_base.py | L_BACKTEST — Backtest Engine Layer | production | generated |
+| 9 | src/zephyr/backtest/core/matching_engine.py | src/zephyr/backtest/core/matching_eng... | 回测撮合引擎模块（v1.1.0 重构：委托 MatchingLogic 保证回测=实盘一致性） | prototype | generated |
+| 10 | src/zephyr/backtest/core/matching_engine.py/ | src/zephyr/backtest/core/matching_eng... |  | design | generated |
+| 11 | src/zephyr/backtest/core/matching_logic.py | src/zephyr/backtest/core/matching_log... | 共享撮合逻辑模块（回测=实盘一致性核心） | prototype | generated |
+| 12 | src/zephyr/backtest/core/matching_logic.py/ | src/zephyr/backtest/core/matching_log... |  | design | stable |
+| 13 | src/zephyr/backtest/core/metrics.py | src/zephyr/backtest/core/metrics.py | 回测绩效指标计算模块 | prototype | generated |
+| 14 | src/zephyr/backtest/core/metrics.py/ | src/zephyr/backtest/core/metrics.py/ |  | design | generated |
+| 15 | src/zephyr/backtest/core/overfitting_detector.py | src/zephyr/backtest/core/overfitting_... | 过拟合检测模块(三维度 + 三层) | prototype | generated |
+| 16 | src/zephyr/backtest/core/pit_manager.py | src/zephyr/backtest/core/pit_manager.py | PIT(Point-In-Time)铁律管理器模块 | prototype | generated |
+| 17 | src/zephyr/backtest/core/portfolio.py | src/zephyr/backtest/core/portfolio.py | 回测持仓管理模块 | prototype | generated |
+| 18 | src/zephyr/backtest/core/portfolio.py/ | src/zephyr/backtest/core/portfolio.py/ |  | design | generated |
+| 19 | src/zephyr/backtest/core/tick_replay.py | src/zephyr/backtest/core/tick_replay.py | Tick 回放引擎模块（v1.1.0 新增，秒级做T专用） | prototype | generated |
+| 20 | src/zephyr/backtest/core/tick_replay.py/ | src/zephyr/backtest/core/tick_replay.py/ |  | design | stable |
+| 21 | src/zephyr/backtest/core/walk_forward.py | src/zephyr/backtest/core/walk_forward.py | Walk-Forward分析与多重比较偏差校正模块 | prototype | generated |
+| 22 | src/zephyr/backtest/implementations/__init__.py | src/zephyr/backtest/implementations/_... |  | prototype | generated |
+| 23 | src/zephyr/backtest/implementations/event_driven_engine.py | src/zephyr/backtest/implementations/e... | 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心） | prototype | generated |
+| 24 | src/zephyr/backtest/implementations/vectorized_engine.py | src/zephyr/backtest/implementations/v... | L_BACKTEST — Vectorized Backtest Engine | production | generated |
+| 25 | src/zephyr/backtest/infrastructure/__init__.py | src/zephyr/backtest/infrastructure/__... |  | prototype | generated |
+| 26 | src/zephyr/backtest/io/__init__.py | src/zephyr/backtest/io/__init__.py | io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新增，#ARCH-047） | prototype | generated |
+| 27 | src/zephyr/backtest/io/backtest_result_sink.py | src/zephyr/backtest/io/backtest_resul... | backtest_result_sink · 回测结果数据落地模块（v1.3.0 新增，#ARCH-047） | prototype | generated |
+| 28 | src/zephyr/backtest/io/backtest_result_sink.py/ | src/zephyr/backtest/io/backtest_resul... |  | design | generated |
+| 29 | src/zephyr/backtest/io/decisiongraph_adapter.py | src/zephyr/backtest/io/decisiongraph_... | BacktestResult → decisiongraph 适配器（TRAE-061 Phase 5） | production | generated |
+| 30 | src/zephyr/backtest/io/result_repository.py | src/zephyr/backtest/io/result_reposit... | result_repository · 回测产物持久化/检索模块（v1.3.0 新增，#ARCH-047） | prototype | generated |
+| 31 | src/zephyr/backtest/io/result_repository.py/ | src/zephyr/backtest/io/result_reposit... |  | design | generated |
+| 32 | src/zephyr/backtest/models/__init__.py | src/zephyr/backtest/models/__init__.py |  | prototype | generated |
+| 33 | src/zephyr/backtest/services/__init__.py | src/zephyr/backtest/services/__init__.py |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

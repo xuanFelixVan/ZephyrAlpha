@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 18_d_security_llm / llm_defense
+# 18_d_security_llm / llm_defense / LLM Defense
 
 > **文档作用 / Purpose**: 展示 llm_defense（D_SECURITY_LLM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:11
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 18 | Number | 18 |
 | 域ID | D_SECURITY_LLM | Domain ID | D_SECURITY_LLM |
-| 域名称 | llm_defense | Domain Name | llm_defense |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | llm_defense | Domain Name | LLM Defense |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 44 | Module Count | 44 |
 | 域内依赖 | 47 | Internal Dependencies | 47 |
 | 跨域入边 | 53 | Cross-domain Incoming | 53 |
@@ -265,52 +265,52 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (44 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/security/llm_defense/__init__.py | src/zephyr/security/llm_defense/__ini... | prototype | generated |
-| 2 | src/zephyr/security/llm_defense/llm_security/__init__.py | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 3 | src/zephyr/security/llm_defense/llm_security/adversarial_... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 4 | src/zephyr/security/llm_defense/llm_security/alignment_sc... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 5 | src/zephyr/security/llm_defense/llm_security/behavior_aud... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 6 | src/zephyr/security/llm_defense/llm_security/dashboard/__... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 7 | src/zephyr/security/llm_defense/llm_security/dashboard/ap... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 8 | src/zephyr/security/llm_defense/llm_security/gateway.py | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 9 | src/zephyr/security/llm_defense/llm_security/input_saniti... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 10 | src/zephyr/security/llm_defense/llm_security/layers/__ini... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 11 | src/zephyr/security/llm_defense/llm_security/layers/l0_su... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 12 | src/zephyr/security/llm_defense/llm_security/layers/l1_in... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 13 | src/zephyr/security/llm_defense/llm_security/layers/l2_pr... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 14 | src/zephyr/security/llm_defense/llm_security/layers/l2a_p... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 15 | src/zephyr/security/llm_defense/llm_security/layers/l3_ou... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 16 | src/zephyr/security/llm_defense/llm_security/layers/l4_ag... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 17 | src/zephyr/security/llm_defense/llm_security/layers/l5_re... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 18 | src/zephyr/security/llm_defense/llm_security/layers/l6_da... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 19 | src/zephyr/security/llm_defense/llm_security/layers/l6_ob... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 20 | src/zephyr/security/llm_defense/llm_security/layers/l8_co... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 21 | src/zephyr/security/llm_defense/llm_security/layers/l8_mu... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 22 | src/zephyr/security/llm_defense/llm_security/lsg_pattern_... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 23 | src/zephyr/security/llm_defense/llm_security/patterns/__i... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 24 | src/zephyr/security/llm_defense/llm_security/patterns/inj... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 25 | src/zephyr/security/llm_defense/llm_security/patterns/sec... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 26 | src/zephyr/security/llm_defense/llm_security/payloads/__i... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 27 | src/zephyr/security/llm_defense/llm_security/payloads/inj... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 28 | src/zephyr/security/llm_defense/llm_security/payloads/lea... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 29 | src/zephyr/security/llm_defense/llm_security/payloads/red... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 30 | src/zephyr/security/llm_defense/llm_security/payloads/too... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 31 | src/zephyr/security/llm_defense/llm_security/poisoning_mo... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 32 | src/zephyr/security/llm_defense/llm_security/process_sand... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 33 | src/zephyr/security/llm_defense/llm_security/protocol.py | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 34 | src/zephyr/security/llm_defense/llm_security/red_team_cor... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 35 | src/zephyr/security/llm_defense/llm_security/runtime_inte... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 36 | src/zephyr/security/llm_defense/llm_security/sandbox/__in... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 37 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 38 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 39 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 40 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 41 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 42 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 43 | src/zephyr/security/llm_defense/llm_security/sensitivity_... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 44 | src/zephyr/security/llm_defense/llm_security/solo_dev_saf... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/security/llm_defense/__init__.py | src/zephyr/security/llm_defense/__ini... |  | prototype | generated |
+| 2 | src/zephyr/security/llm_defense/llm_security/__init__.py | src/zephyr/security/llm_defense/llm_s... |  | prototype | generated |
+| 3 | src/zephyr/security/llm_defense/llm_security/adversarial_... | src/zephyr/security/llm_defense/llm_s... | adversarial_robustness.py — 对抗鲁棒性 (B8, DD82, TASK-015 beta w) | production | generated |
+| 4 | src/zephyr/security/llm_defense/llm_security/alignment_sc... | src/zephyr/security/llm_defense/llm_s... | alignment_scorer.py — 对齐评分 (B11, DD85, TASK-015 beta w) | production | generated |
+| 5 | src/zephyr/security/llm_defense/llm_security/behavior_aud... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 6 | src/zephyr/security/llm_defense/llm_security/dashboard/__... | src/zephyr/security/llm_defense/llm_s... | LLM Security Gateway Dashboard Module. | prototype | generated |
+| 7 | src/zephyr/security/llm_defense/llm_security/dashboard/ap... | src/zephyr/security/llm_defense/llm_s... | LLM Security Gateway - Streamlit Dashboard. | prototype | generated |
+| 8 | src/zephyr/security/llm_defense/llm_security/gateway.py | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 9 | src/zephyr/security/llm_defense/llm_security/input_saniti... | src/zephyr/security/llm_defense/llm_s... | InputSanitizer: path whitelist + command whitelist + token budget guard. | production | generated |
+| 10 | src/zephyr/security/llm_defense/llm_security/layers/__ini... | src/zephyr/security/llm_defense/llm_s... |  | prototype | generated |
+| 11 | src/zephyr/security/llm_defense/llm_security/layers/l0_su... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 12 | src/zephyr/security/llm_defense/llm_security/layers/l1_in... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 13 | src/zephyr/security/llm_defense/llm_security/layers/l2_pr... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 14 | src/zephyr/security/llm_defense/llm_security/layers/l2a_p... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 15 | src/zephyr/security/llm_defense/llm_security/layers/l3_ou... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 16 | src/zephyr/security/llm_defense/llm_security/layers/l4_ag... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 17 | src/zephyr/security/llm_defense/llm_security/layers/l5_re... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 18 | src/zephyr/security/llm_defense/llm_security/layers/l6_da... | src/zephyr/security/llm_defense/llm_s... |  | prototype | generated |
+| 19 | src/zephyr/security/llm_defense/llm_security/layers/l6_ob... | src/zephyr/security/llm_defense/llm_s... | L6 Observability Layer — security event logging, alerting, and reporting. | production | generated |
+| 20 | src/zephyr/security/llm_defense/llm_security/layers/l8_co... | src/zephyr/security/llm_defense/llm_s... |  | prototype | generated |
+| 21 | src/zephyr/security/llm_defense/llm_security/layers/l8_mu... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 22 | src/zephyr/security/llm_defense/llm_security/lsg_pattern_... | src/zephyr/security/llm_defense/llm_s... | lsg_pattern_tracker.py — LSG 模式逃逸追踪 (B20, DD94, TASK-017) | production | generated |
+| 23 | src/zephyr/security/llm_defense/llm_security/patterns/__i... | src/zephyr/security/llm_defense/llm_s... |  | prototype | generated |
+| 24 | src/zephyr/security/llm_defense/llm_security/patterns/inj... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 25 | src/zephyr/security/llm_defense/llm_security/patterns/sec... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 26 | src/zephyr/security/llm_defense/llm_security/payloads/__i... | src/zephyr/security/llm_defense/llm_s... |  | prototype | generated |
+| 27 | src/zephyr/security/llm_defense/llm_security/payloads/inj... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 28 | src/zephyr/security/llm_defense/llm_security/payloads/lea... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 29 | src/zephyr/security/llm_defense/llm_security/payloads/red... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 30 | src/zephyr/security/llm_defense/llm_security/payloads/too... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 31 | src/zephyr/security/llm_defense/llm_security/poisoning_mo... | src/zephyr/security/llm_defense/llm_s... | poisoning_monitor.py — Embed 污染检测 (DD97, TASK-019) | production | generated |
+| 32 | src/zephyr/security/llm_defense/llm_security/process_sand... | src/zephyr/security/llm_defense/llm_s... | L2a ProcessSandbox — subprocess 路径白名单沙箱 | production | generated |
+| 33 | src/zephyr/security/llm_defense/llm_security/protocol.py | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 34 | src/zephyr/security/llm_defense/llm_security/red_team_cor... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 35 | src/zephyr/security/llm_defense/llm_security/runtime_inte... | src/zephyr/security/llm_defense/llm_s... | runtime_interceptor.py — 运行时 LLM 裸调拦截器（GATE-20 后备防线） | production | generated |
+| 36 | src/zephyr/security/llm_defense/llm_security/sandbox/__in... | src/zephyr/security/llm_defense/llm_s... | LSG 代码执行沙箱包。 | prototype | generated |
+| 37 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... |  | prototype | generated |
+| 38 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 39 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 40 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 41 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 42 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... |  | production | generated |
+| 43 | src/zephyr/security/llm_defense/llm_security/sensitivity_... | src/zephyr/security/llm_defense/llm_s... | sensitivity_classifier.py — 数据分级 (B9, DD83, TASK-015 beta w) | production | generated |
+| 44 | src/zephyr/security/llm_defense/llm_security/solo_dev_saf... | src/zephyr/security/llm_defense/llm_s... | solo_dev_safety_net.py — 单人无审查安全网 (B15, DD89, TASK-017) | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

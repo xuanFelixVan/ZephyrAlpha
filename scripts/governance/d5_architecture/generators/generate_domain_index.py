@@ -55,8 +55,14 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
-from domain_name_mapping import get_domain_name_zh
+from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+# 治本（2026-07-06）：复用 generate_domain_doc 的编号映射，确保索引链接与文件名一致
+_GENERATORS_DIR = _THIS_FILE.parent
+if str(_GENERATORS_DIR) not in sys.path:
+    sys.path.insert(0, str(_GENERATORS_DIR))
+from generate_domain_doc import build_numbering_map  # noqa: E402
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs" / "domain_index.md"
 
@@ -95,6 +101,7 @@ def generate_domain_index() -> str:
     conn = get_depgraph_pg_connection(autocommit=True)
     try:
         domains = get_all_domains(conn)
+        numbering_map = build_numbering_map(conn)
     finally:
         conn.close()
 
@@ -148,7 +155,8 @@ def generate_domain_index() -> str:
 
     for layer in sorted(layers.keys()):
         layer_domains = layers[layer]
-        lines.append(f"### {layer} ({len(layer_domains)} 个域)")
+        layer_zh, layer_en = get_layer_name_bilingual(layer)
+        lines.append(f"### {layer_zh} / {layer_en} ({len(layer_domains)} 个域 / {len(layer_domains)} domains)")
         lines.append("")
         lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |")
         lines.append("|------|--------|:---:|:---:|:---:|:---:|------|------|")
@@ -156,9 +164,13 @@ def generate_domain_index() -> str:
             capacity = f"{d['actual_nodes']}/{d['max_modules']}"
             capacity_status = "OK" if d["actual_nodes"] <= d["max_modules"] else "超容"
             safe_name = d["domain_id"].replace("-", "_").lower()
-            doc_link = f"[{safe_name}.md](domains/{safe_name}.md)"
+            number = numbering_map.get(d["domain_id"], 0)
+            if number:
+                doc_link = f"[{number:02d}_{safe_name}.md]({number:02d}_{safe_name}.md)"
+            else:
+                doc_link = f"[{safe_name}.md](未编号)"
             lines.append(
-                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['actual_nodes']} | "
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} / {get_domain_name_en(d['domain_id'])} | {d['actual_nodes']} | "
                 f"{d['production_count']} | {d['design_count']} | {d['prototype_count']} | "
                 f"{capacity} ({capacity_status}) | {doc_link} |"
             )

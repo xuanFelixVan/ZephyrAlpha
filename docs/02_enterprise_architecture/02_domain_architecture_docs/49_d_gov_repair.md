@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 49_d_gov_repair / rollback
+# 49_d_gov_repair / rollback / Governance Repair
 
 > **文档作用 / Purpose**: 展示 rollback（D_GOV_REPAIR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 49 | Number | 49 |
 | 域ID | D_GOV_REPAIR | Domain ID | D_GOV_REPAIR |
-| 域名称 | rollback | Domain Name | rollback |
+| 域名称 | rollback | Domain Name | Governance Repair |
 | 层级 |  | Layer |  |
 | 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |

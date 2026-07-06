@@ -64,13 +64,14 @@ warn_only: false
 
 
 import argparse
+import ast
 import os
 import re
 from datetime import datetime
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
-from domain_name_mapping import get_domain_name_zh
+from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
@@ -98,6 +99,38 @@ def _is_ghost(path: str) -> bool:
     防止架构文档引用已删除的文件。铁律保障：新 AI 不需要知道要跑 deprecate。
     """
     return bool(path) and not (REPO_ROOT / path).exists()
+
+
+def _extract_docstring_first_line(path: str) -> str:
+    """从 Python 文件提取 docstring 首行作为功能简介。
+
+    用 ast 模块安全解析，非 .py 文件或无 docstring 返回空字符串。
+    跳过治理标记首行（[A_module]、[BLUEPRINT]、[MODULE] 等），取第一个有意义行。
+    截断到 80 字符。
+    """
+    if not path or not path.endswith('.py'):
+        return ""
+    abs_path = REPO_ROOT / path
+    if not abs_path.exists():
+        return ""
+    try:
+        content = abs_path.read_text(encoding='utf-8', errors='replace')
+        tree = ast.parse(content)
+        docstring = ast.get_docstring(tree)
+        if docstring:
+            lines = docstring.strip().split('\n')
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+                # 跳过治理标记行（[A_module]、[BLUEPRINT]、[MODULE] 等）
+                if line.startswith('[A_') or line.startswith('[BLUEPRINT') or line.startswith('[MODULE'):
+                    continue
+                return _truncate(line, 80)
+            return ""
+    except Exception:
+        pass
+    return ""
 
 
 # ---------------------------------------------------------------------------
@@ -716,16 +749,17 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
         shown = layer_nodes_all[:MAX_PER_LAYER]
         lines.append(
             "| # | 模块路径 / Module Path | 模块名称 / Module Name | "
-            "成熟度 / Maturity | 构建状态 / Build Status |"
+            "功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |"
         )
-        lines.append("|:--:|---------|---------|:---:|:---:|")
+        lines.append("|:--:|---------|---------|---------|:---:|:---:|")
 
         for i, n in enumerate(shown, 1):
             path_display = _truncate(n["path"] or "", 60)
             name_display = _truncate(n["node_name"] or n["path"] or "", 40)
+            desc_display = _extract_docstring_first_line(n["path"] or "")
             lines.append(
                 f"| {i} | {path_display} | {name_display} | "
-                f"{n['design_maturity']} | {n['build_status']} |"
+                f"{desc_display} | {n['design_maturity']} | {n['build_status']} |"
             )
 
         if len(layer_nodes_all) > MAX_PER_LAYER:
@@ -859,6 +893,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     total_incoming = sum(d["count"] for d in incoming_agg)
 
     domain_name_zh = get_domain_name_zh(domain_id, info["domain_name"])
+    domain_name_en = get_domain_name_en(domain_id)
 
     lines = []
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
@@ -872,7 +907,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
-    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh}")
+    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh} / {domain_name_en}")
     lines.append("")
     lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。")
     lines.append("")
@@ -888,8 +923,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("|------|------|-------|-------|")
     lines.append(f"| 编号 | {number:02d} | Number | {number:02d} |")
     lines.append(f"| 域ID | {domain_id} | Domain ID | {domain_id} |")
-    lines.append(f"| 域名称 | {domain_name_zh} | Domain Name | {info['domain_name']} |")
-    lines.append(f"| 层级 | {info['layer_id']} | Layer | {info['layer_id']} |")
+    lines.append(f"| 域名称 | {domain_name_zh} | Domain Name | {domain_name_en} |")
+    layer_zh, layer_en = get_layer_name_bilingual(info['layer_id'])
+    lines.append(f"| 层级 | {layer_zh} | Layer | {layer_en} |")
     lines.append(f"| 模块数 | {len(nodes)} | Module Count | {len(nodes)} |")
     lines.append(f"| 域内依赖 | {len(edges)} | Internal Dependencies | {len(edges)} |")
     lines.append(f"| 跨域入边 | {total_incoming} | Cross-domain Incoming | {total_incoming} |")
