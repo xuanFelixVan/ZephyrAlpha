@@ -55,33 +55,73 @@ except Exception as e:  # noqa: BLE001
 
 @pytest.fixture
 def sample_datasets():
-    """3 个 Dataset：2 production + 1 backtest。"""
+    """3 个 Dataset：2 production + 1 backtest，全部 design_maturity=production（运营态）。"""
     return [
         {"id": 1, "name": "market_data.tick", "scope": "production", "contract": "CTR-001",
          "physical_type": "table", "produced_by": "JOB-001", "domain": "D_MKT_DATA",
-         "maturity": "generated", "build": "generated", "pit": "strict"},
+         "maturity": "production", "build": "generated", "pit": "strict"},
         {"id": 2, "name": "signal.composite", "scope": "production", "contract": "CTR-002",
          "physical_type": "table", "produced_by": "JOB-002", "domain": "D_SIGLEGACY",
-         "maturity": "generated", "build": "generated", "pit": "strict"},
+         "maturity": "production", "build": "generated", "pit": "strict"},
         {"id": 3, "name": "backtest.fills", "scope": "backtest_internal", "contract": None,
          "physical_type": "table", "produced_by": "JOB-003", "domain": "D_BACKTEST",
-         "maturity": "generated", "build": "generated", "pit": "strict"},
+         "maturity": "production", "build": "generated", "pit": "strict"},
     ]
 
 
 @pytest.fixture
 def sample_jobs():
-    """3 个 Job：2 production + 1 backtest。"""
+    """3 个 Job：2 production + 1 backtest，全部 design_maturity=production（运营态）。"""
     return [
         {"id": 10, "name": "ingest.ifind_kline", "scope": "production",
          "source": "src/zephyr/data/ingest.py", "trigger": "scheduled",
-         "context": "production", "maturity": "generated", "build": "generated"},
+         "context": "production", "maturity": "production", "build": "generated"},
         {"id": 11, "name": "synthesize.signal", "scope": "production",
          "source": "src/zephyr/signal_ashare/synthesizer.py", "trigger": "event_driven",
-         "context": "production", "maturity": "generated", "build": "generated"},
+         "context": "production", "maturity": "production", "build": "generated"},
         {"id": 12, "name": "backtest.replay_ticks", "scope": "backtest_internal",
          "source": "src/zephyr/backtest/tick_replay.py", "trigger": "manual",
-         "context": "backtest_tick", "maturity": "generated", "build": "generated"},
+         "context": "backtest_tick", "maturity": "production", "build": "generated"},
+    ]
+
+
+@pytest.fixture
+def sample_datasets_with_design():
+    """4 个 Dataset：3 运营态 + 1 设计态（design_maturity=design）。"""
+    return [
+        {"id": 1, "name": "market_data.tick", "scope": "production", "contract": "CTR-001",
+         "physical_type": "table", "produced_by": "JOB-001", "domain": "D_MKT_DATA",
+         "maturity": "production", "build": "generated", "pit": "strict"},
+        {"id": 2, "name": "signal.composite", "scope": "production", "contract": "CTR-002",
+         "physical_type": "table", "produced_by": "JOB-002", "domain": "D_SIGLEGACY",
+         "maturity": "production", "build": "generated", "pit": "strict"},
+        {"id": 3, "name": "backtest.fills", "scope": "backtest_internal", "contract": None,
+         "physical_type": "table", "produced_by": "JOB-003", "domain": "D_BACKTEST",
+         "maturity": "production", "build": "generated", "pit": "strict"},
+        # 设计态节点（蓝图规划，代码未写）
+        {"id": 4, "name": "factor.alpha_factor", "scope": "production", "contract": "CTR-009",
+         "physical_type": "table", "produced_by": "JOB-004", "domain": "D_FACTOR",
+         "maturity": "design", "build": "planned", "pit": "strict"},
+    ]
+
+
+@pytest.fixture
+def sample_jobs_with_design():
+    """4 个 Job：3 运营态 + 1 设计态（design_maturity=design）。"""
+    return [
+        {"id": 10, "name": "ingest.ifind_kline", "scope": "production",
+         "source": "src/zephyr/data/ingest.py", "trigger": "scheduled",
+         "context": "production", "maturity": "production", "build": "generated"},
+        {"id": 11, "name": "synthesize.signal", "scope": "production",
+         "source": "src/zephyr/signal_ashare/synthesizer.py", "trigger": "event_driven",
+         "context": "production", "maturity": "production", "build": "generated"},
+        {"id": 12, "name": "backtest.replay_ticks", "scope": "backtest_internal",
+         "source": "src/zephyr/backtest/tick_replay.py", "trigger": "manual",
+         "context": "backtest_tick", "maturity": "production", "build": "generated"},
+        # 设计态节点（蓝图规划，代码未写）
+        {"id": 13, "name": "compute.alpha_factor", "scope": "production",
+         "source": "src/zephyr/factor/alpha_factor.py", "trigger": "event_driven",
+         "context": "production", "maturity": "design", "build": "planned"},
     ]
 
 
@@ -178,18 +218,99 @@ class TestGenMermaid:
         assert mmd.startswith("flowchart LR")
 
     def test_mmd_contains_edge_labels(self, sample_datasets, sample_jobs, sample_edges):
-        """mmd 文本包含 produces / consumed by 边标签（英文+中文并列）。"""
+        """mmd 文本包含 produces / consumed by 边标签（中英并列）。"""
         mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
         assert "|produces / 产出|" in mmd
         assert "|consumed by / 被消费于|" in mmd
 
     def test_mmd_contains_class_defs(self, sample_datasets, sample_jobs, sample_edges):
-        """mmd 文本包含样式定义。"""
+        """mmd 文本包含样式定义（scope-based + design_maturity-based）。"""
         mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
+        # scope-based
         assert "classDef dsProd" in mmd
         assert "classDef dsBacktest" in mmd
         assert "classDef jobProd" in mmd
         assert "classDef jobBacktest" in mmd
+        # design_maturity-based（紫色设计态 + 黄色原型态）
+        assert "classDef dsDesign" in mmd
+        assert "classDef jobDesign" in mmd
+        assert "classDef dsProto" in mmd
+        assert "classDef jobProto" in mmd
+
+    def test_mmd_contains_maturity_prefix(self, sample_datasets, sample_jobs, sample_edges):
+        """mmd 节点标签包含 [production] design_maturity 前缀（运营态 fixture）。"""
+        mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
+        # 全部节点 design_maturity=production → 标签前缀 [production]
+        assert "[production]" in mmd
+
+
+# ---------- 设计态/运营态（design_maturity）测试 ----------
+
+class TestDesignMaturity:
+    """design_maturity 维度测试：设计态紫色 + [design] 前缀 + maturity_filter。"""
+
+    def test_design_node_gets_purple_class(
+        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
+    ):
+        """design_maturity=design 的节点使用紫色 class（dsDesign/jobDesign）。"""
+        mmd, _, _, _ = _gen_mermaid(
+            sample_datasets_with_design, sample_jobs_with_design, sample_edges
+        )
+        # DS4 是设计态 Dataset → dsDesign class
+        assert "DS4" in mmd
+        assert ":::dsDesign" in mmd
+        # JOB13 是设计态 Job → jobDesign class
+        assert "JOB13" in mmd
+        assert ":::jobDesign" in mmd
+
+    def test_design_node_has_design_prefix(
+        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
+    ):
+        """design_maturity=design 的节点标签前缀为 [design]。"""
+        mmd, _, _, _ = _gen_mermaid(
+            sample_datasets_with_design, sample_jobs_with_design, sample_edges
+        )
+        assert "[design]" in mmd
+
+    def test_production_node_keeps_scope_class(
+        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
+    ):
+        """design_maturity=production 的节点仍使用 scope-based 着色（非紫色）。"""
+        mmd, _, _, _ = _gen_mermaid(
+            sample_datasets_with_design, sample_jobs_with_design, sample_edges
+        )
+        # DS1 是 production scope + production maturity → dsProd class（非 dsDesign）
+        assert "DS1" in mmd
+        assert ":::dsProd" in mmd
+
+    def test_maturity_filter_production_excludes_design(
+        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
+    ):
+        """maturity_filter=production 排除设计态节点。"""
+        mmd, ds_count, job_count, _ = _gen_mermaid(
+            sample_datasets_with_design, sample_jobs_with_design, sample_edges,
+            maturity_filter="production",
+        )
+        # 3 运营态 dataset + 3 运营态 job（设计态 DS4/JOB13 被过滤）
+        assert ds_count == 3
+        assert job_count == 3
+        assert "DS4" not in mmd
+        assert "JOB13" not in mmd
+
+    def test_maturity_filter_design_only(
+        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
+    ):
+        """maturity_filter=design 只返回设计态节点。"""
+        mmd, ds_count, job_count, _ = _gen_mermaid(
+            sample_datasets_with_design, sample_jobs_with_design, sample_edges,
+            maturity_filter="design",
+        )
+        # 仅 1 设计态 dataset + 1 设计态 job
+        assert ds_count == 1
+        assert job_count == 1
+        assert "DS4" in mmd
+        assert "JOB13" in mmd
+        assert "DS1" not in mmd
 
 
 # ---------- _gen_index_md 测试 ----------
@@ -204,6 +325,28 @@ class TestGenIndexMd:
         assert "| Dataset | 2 | 1 | 3 |" in md
         assert "| Job | 2 | 1 | 3 |" in md
         assert "| Edge | - | - | 5 |" in md
+
+    def test_design_maturity_stats_table(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
+        """索引文档包含设计态/运营态统计子表（design_maturity 维度）。"""
+        md = _gen_index_md(
+            sample_datasets_with_design, sample_jobs_with_design, sample_edges
+        )
+        # 4 dataset: 3 production + 1 design
+        assert "| Dataset | 3 | 1 | 0 | 4 |" in md
+        # 4 job: 3 production + 1 design
+        assert "| Job | 3 | 1 | 0 | 4 |" in md
+        # 设计态 vs 运营态说明
+        assert "设计态 vs 运营态" in md
+
+    def test_contains_operation_state_diagram(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
+        """索引文档包含运营态全景图章节（仅 design_maturity=production）。"""
+        md = _gen_index_md(
+            sample_datasets_with_design, sample_jobs_with_design, sample_edges
+        )
+        assert "运营态全景图" in md
+        # 运营态全景图应排除设计态节点 DS4/JOB13
+        # （注意：运营态全景图 section 之后的内容会包含 DS4，所以只检查该 section 的 mermaid 块）
+        assert "### 运营态全景图（仅 design_maturity=production）" in md
 
     def test_contains_dataset_list(self, sample_datasets, sample_jobs, sample_edges):
         """索引文档包含 Dataset 清单。"""
