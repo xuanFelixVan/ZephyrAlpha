@@ -1,0 +1,182 @@
+# [A_config] module_id=CFG-interface-contract-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# ============================================================================
+# ZephyrAlpha 接口契约注册表（Interface Contract Registry）——唯一真源
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-07-06 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-020
+# doc_type: register
+# ARCH-053: 补齐 API 契约层，对标 Backstage API kind
+#
+# 对标: Backstage API kind（接口集级粒度，一个模块暴露一组接口）
+#       + OpenAPI Spec（接口签名 + 返回 schema）
+#       + Confluent Schema Registry（数据契约语义）
+#
+# 用途: 登记每个模块对外暴露的接口契约（函数签名 + 返回 schema + 消费方）。
+#       回答"A 暴露了什么接口给 B 调用"——补齐 cross_module_dependency 无法回答的
+#       "怎么依赖"层。
+#
+# 与 cross_module_dependency_registry 的关系:
+#   - cross_module_dependency: "A 依赖 B"（关系存在性，模块级，117 条）
+#   - 本表: "A 暴露 X 接口给 B 调用"（关系细节，接口集级）
+#   两者互补，不重复。
+#
+# 粒度: 接口集级（一个模块一组接口），不是函数级。
+#       函数级签名真源是代码本身，重复登记会漂移。
+# ============================================================================
+
+module_id: CFG-interface-contract-registry
+schema_version: "1.0.0"
+doc_type: register
+title: "接口契约注册表"
+version: "1.0.0"
+status: active
+created: "2026-07-06"
+last_updated: "2026-07-06"
+ai_autonomy: human_gated
+ttl: permanent
+total_registered: 5
+depends_on:
+  - target: PS-REG-007
+    at: "跨模块依赖关系"
+    why: "本表补充 cross_module_dependency 的接口细节层"
+
+# ============================================================================
+# 字段 Schema
+# ============================================================================
+# interface_id          唯一标识，格式 INTF-{MODULE}-{NNN}
+# module_id             暴露方模块 ID（MOD-XXX）
+# api_name              接口集名称（中英文）
+# api_type              接口类型: data_contract/service_contract/config_contract
+# description           一句话说明
+# exposed_interfaces[]  暴露的接口列表
+#   name                接口名（函数名）
+#   signature           函数签名
+#   returns             返回值描述（类型 + schema）
+# consumed_by_modules[] 消费方模块 ID 列表
+# contract_version      契约版本（语义化版本）
+# stability             stable/evolving/experimental
+# ============================================================================
+
+interfaces:
+  # --- MOD-DATA: 行情数据服务 ---
+  - interface_id: "INTF-MOD-DATA-001"
+    module_id: "MOD-DATA"
+    api_name: "行情数据服务 / Market Data Service"
+    api_type: "data_contract"
+    description: "提供日线/分钟线/Tick行情数据查询，数据源为 ClickHouse c1_market"
+    exposed_interfaces:
+      - name: "get_daily_kline"
+        signature: "(symbol: str, start: date, end: date) -> DataFrame"
+        returns: "DataFrame[symbol, date, open, high, low, close, volume]"
+      - name: "get_tick_data"
+        signature: "(symbol: str, date: date) -> DataFrame"
+        returns: "DataFrame[timestamp, price, volume]"
+    consumed_by_modules:
+      - "MOD-BACKTEST"
+      - "MOD-TRADING"
+    contract_version: "1.0.0"
+    stability: "stable"
+
+  # --- MOD-BACKTEST: 回测引擎 ---
+  - interface_id: "INTF-MOD-BACKTEST-001"
+    module_id: "MOD-BACKTEST"
+    api_name: "回测执行服务 / Backtest Execution Service"
+    api_type: "service_contract"
+    description: "接收策略 + 行情数据，执行回测，输出收益曲线和交易记录"
+    exposed_interfaces:
+      - name: "run_backtest"
+        signature: "(strategy: Strategy, start: date, end: date, capital: float) -> BacktestResult"
+        returns: "BacktestResult[equity_curve, trades, metrics]"
+    consumed_by_modules:
+      - "MOD-TRADING"
+    contract_version: "1.0.0"
+    stability: "stable"
+
+  # --- MOD-TRADING: 交易执行 ---
+  - interface_id: "INTF-MOD-TRADING-001"
+    module_id: "MOD-TRADING"
+    api_name: "交易执行服务 / Trade Execution Service"
+    api_type: "service_contract"
+    description: "接收订单，执行风控检查后下单"
+    exposed_interfaces:
+      - name: "submit_order"
+        signature: "(order: Order) -> OrderResult"
+        returns: "OrderResult[order_id, status, filled_qty, avg_price]"
+    consumed_by_modules: []
+    contract_version: "1.0.0"
+    stability: "evolving"
+
+  # --- MOD-GOVERNANCE: 治理模块 ---
+  - interface_id: "INTF-MOD-GOVERNANCE-001"
+    module_id: "MOD-GOVERNANCE"
+    api_name: "治理服务 / Governance Service"
+    api_type: "service_contract"
+    description: "提供 depgraph 查询、规则检查、审计日志接口"
+    exposed_interfaces:
+      - name: "get_depgraph_pg_connection"
+        signature: "() -> psycopg2.connection"
+        returns: "PostgreSQL 连接（depgraph 库，localhost:5432）"
+      - name: "sync_yaml_to_depgraph"
+        signature: "() -> bool"
+        returns: "True=同步成功，False=连接失败"
+    consumed_by_modules:
+      - "MOD-INF-012B"
+    contract_version: "1.0.0"
+    stability: "stable"
+
+  # --- MOD-INF-012B: depgraph 数据库 ---
+  - interface_id: "INTF-MOD-INF-012B-001"
+    module_id: "MOD-INF-012B"
+    api_name: "depgraph 数据库服务 / Depgraph Database Service"
+    api_type: "data_contract"
+    description: "PostgreSQL 16 depgraph 库，28 表，存 nodes/edges/domains/infrastructure 等"
+    exposed_interfaces:
+      - name: "query_nodes"
+        signature: "(domain_id: str = None, node_type: str = None) -> list[dict]"
+        returns: "list[dict[node_id, blueprint_id, node_name, ...]]"
+    consumed_by_modules:
+      - "MOD-GOVERNANCE"
+      - "MOD-FEEDBACK_LOOP"
+    contract_version: "1.0.0"
+    stability: "stable"
+
+# ============================================================================
+# 汇总统计
+# ============================================================================
+summary:
+  total: 5
+  by_type:
+    data_contract: 2
+    service_contract: 3
+    config_contract: 0
+  by_stability:
+    stable: 4
+    evolving: 1
+    experimental: 0
+  by_module:
+    MOD-DATA: 1
+    MOD-BACKTEST: 1
+    MOD-TRADING: 1
+    MOD-GOVERNANCE: 1
+    MOD-INF-012B: 1
+
+# ============================================================================
+# 变更记录
+# ============================================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-07-06"
+    author: "AI-GLM-5.2"
+    changes:
+      - "初始创建——登记 5 个核心模块的接口契约（MOD-DATA/MOD-BACKTEST/MOD-TRADING/MOD-GOVERNANCE/MOD-INF-012B）"
+      - "ARCH-053: 补齐 API 契约层，对标 Backstage API kind，接口集级粒度"
+      - "与 cross_module_dependency_registry 互补：本表回答'怎么依赖'，后者回答'是否依赖'"

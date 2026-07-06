@@ -1542,6 +1542,174 @@ def sync_aggregate_nodes(cur):
     print(f"  同步 {synced} 个聚合节点，跳过 {skipped} 个")
 
 
+# ========== 接口契约同步（ARCH-053） ==========
+
+
+def sync_interface_contracts(cur):
+    """#177 ARCH-053: 接口契约注册表 → interface_contracts 表
+
+    SSoT: docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml
+    ARCH-053 裁定：补齐 API 契约层，对标 Backstage API kind。
+    与 cross_module_dependency 互补：本表回答"怎么依赖"，后者回答"是否依赖"。
+
+    同步内容：
+    - interfaces → interface_contracts 表（接口集级粒度，一个模块一组接口）
+    """
+    print("同步 #177 ARCH-053: 接口契约注册表 → interface_contracts...")
+    data = load_yaml("_registry/catalogs/interface_contract_registry.yaml")
+    if not data:
+        print("  跳过: interface_contract_registry.yaml 不存在或为空")
+        return
+
+    from datetime import datetime, UTC
+    now_iso = datetime.now(UTC).isoformat(timespec="seconds")
+
+    # 建表（幂等，与 sync_dataflow_registry 模式一致）
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS interface_contracts (
+            interface_id   TEXT PRIMARY KEY,
+            module_id      TEXT NOT NULL,
+            api_name       TEXT,
+            api_type       TEXT,
+            description    TEXT,
+            exposed_interfaces TEXT,
+            consumed_by_modules TEXT,
+            contract_version TEXT,
+            stability      TEXT,
+            last_updated   TEXT
+        )
+    """)
+
+    interfaces = data.get("interfaces", [])
+    synced = 0
+    for iface in interfaces:
+        interface_id = iface.get("interface_id", "")
+        if not interface_id:
+            continue
+        cur.execute("""
+            INSERT INTO interface_contracts
+                (interface_id, module_id, api_name, api_type, description,
+                 exposed_interfaces, consumed_by_modules, contract_version,
+                 stability, last_updated)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT(interface_id) DO UPDATE SET
+                module_id=excluded.module_id,
+                api_name=excluded.api_name,
+                api_type=excluded.api_type,
+                description=excluded.description,
+                exposed_interfaces=excluded.exposed_interfaces,
+                consumed_by_modules=excluded.consumed_by_modules,
+                contract_version=excluded.contract_version,
+                stability=excluded.stability,
+                last_updated=excluded.last_updated
+        """, (
+            interface_id,
+            iface.get("module_id", ""),
+            iface.get("api_name", ""),
+            iface.get("api_type", ""),
+            iface.get("description", ""),
+            str(iface.get("exposed_interfaces", [])),
+            str(iface.get("consumed_by_modules", [])),
+            iface.get("contract_version", ""),
+            iface.get("stability", "evolving"),
+            now_iso,
+        ))
+        synced += 1
+
+    print(f"  同步 {synced} 个接口契约")
+
+
+# ========== Database 节点同步（ARCH-053） ==========
+
+
+# ARCH-053: infrastructure_registry 中 type 含数据库的条目 → nodes 表
+_DATABASE_INFRA_TYPES = {"relational_db", "vector_db"}
+
+
+def sync_database_nodes(cur):
+    """#178 ARCH-053: infrastructure_registry 的数据库条目 → nodes 表（node_type='database'）
+
+    SSoT: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
+    ARCH-053 裁定：补齐 database 节点到 depgraph，使模块→数据库依赖在依赖图中可视化。
+
+    根因：sync_infrastructure_registry 只写到 infrastructure_components 表，
+    未写到 nodes 表。generate_project_depgraph.py 的 DELETE 已排除 node_type='database'，
+    但无人创建——这是设计遗漏。本函数补齐。
+
+    真源：infrastructure_registry.yaml（不新建 database_registry.yaml，避免第二真源）
+    """
+    print("同步 #178 ARCH-053: infrastructure_registry 数据库条目 → nodes...")
+    data = load_yaml("_registry/catalogs/infrastructure_registry.yaml")
+    if not data:
+        print("  跳过: infrastructure_registry.yaml 不存在或为空")
+        return
+
+    infra_list = data.get("infrastructure", [])
+    synced = 0
+    for comp in infra_list:
+        if not isinstance(comp, dict):
+            continue
+        comp_type = comp.get("type", "")
+        if comp_type not in _DATABASE_INFRA_TYPES:
+            continue
+
+        infra_id = comp.get("infra_id", "")
+        name = comp.get("name", "")
+        if not infra_id or not name:
+            continue
+
+        # 构造 nodes 表字段
+        # blueprint_id 用 infra_id（如 INFRA-DB-003），符合裁定#208 的 SYS-* 前缀扩展
+        # path 指向 infrastructure_registry.yaml（SSoT 指针）
+        node_path = "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml"
+        node_name = f"{name} — database 节点 (ARCH-053)"
+
+        # domain_id 用 D_INFRA_RUNTIME（运行时基础设施域，与 registry_adapter.py 一致）
+        # 修复 ARCH-053 FK 违反：D_INFRA 不存在于 domains 表，nodes_domain_id_fkey 阻断
+        domain_id = "D_INFRA_RUNTIME"
+
+        # 查询是否已存在（按 blueprint_id + node_type='database' 匹配）
+        cur.execute(
+            "SELECT node_id FROM nodes WHERE blueprint_id = %s AND node_type = 'database' LIMIT 1",
+            (infra_id,),
+        )
+        existing = cur.fetchone()
+
+        if existing:
+            cur.execute(
+                """
+                UPDATE nodes SET
+                    path = %s,
+                    node_name = %s,
+                    domain_id = %s,
+                    design_maturity = 'production',
+                    build_status = 'stable',
+                    architecture_layer = 'L1_foundation',
+                    granularity = 'aggregated',
+                    tags = 'ARCH-053,database_node',
+                    blueprint_id_invalid = 1
+                WHERE node_id = %s
+                """,
+                (node_path, node_name, domain_id, existing["node_id"]),
+            )
+        else:
+            cur.execute(
+                """
+                INSERT INTO nodes (
+                    blueprint_id, node_type, path, node_name, domain_id,
+                    design_maturity, build_status, architecture_layer,
+                    granularity, tags, blueprint_id_invalid
+                ) VALUES (%s, 'database', %s, %s, %s, 'production', 'stable',
+                          'L1_foundation', 'aggregated', 'ARCH-053,database_node', 1)
+                """,
+                (infra_id, node_path, node_name, domain_id),
+            )
+        synced += 1
+        print(f"  UPSERT database 节点: {infra_id} ({comp_type}) — {name}")
+
+    print(f"  同步 {synced} 个 database 节点")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -1609,11 +1777,15 @@ def sync_all() -> bool:
         # P7 优先级同步（ARCH-052 聚合节点恢复通道）
         sync_aggregate_nodes(cur)  # #176 ARCH-052 聚合节点 YAML→nodes 表恢复
 
+        # P8 优先级同步（ARCH-053 API 契约 + database 节点补齐）
+        sync_interface_contracts(cur)  # #177 ARCH-053 接口契约→interface_contracts 表
+        sync_database_nodes(cur)  # #178 ARCH-053 database 节点→nodes 表
+
         # 历史遗留清理：删除 sync 无法触及的 FK 违规孤立记录
         cleanup_legacy_fk_violations(cur)
 
         conn.commit()
-        print("\n[PASS] 21 项 YAML→DB 同步完成")
+        print("\n[PASS] 23 项 YAML→DB 同步完成")
 
         # S1.2: 验证 readonly 表 COMMENT（HB-001 table_comment_required）
         verify_readonly_table_comments(cur)

@@ -606,23 +606,23 @@ class RegistryManager:
             "REG-CAP-001", "tech_stackmanifest.yaml", asset_key="tech_id"
         )
 
-        self._known["docs/01_policies_and_standards/_registry/catalogs/directory-registry.md"] = YamlListAdapter(
-            "REG-DIR-001", "directory-registry.md", asset_key="path"
+        self._known["docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml"] = YamlListAdapter(
+            "REG-DIR-001", "directory_registry.yaml", asset_key="path"
         )
         self._known["docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"] = (
             YamlListAdapter("REG-DOC-001", "document-metadata-index-registry.yaml", asset_key="path")
         )
-        self._known["docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml"] = (
-            YamlListAdapter("REG-CROSS-002", "cross-module-dependency-registry.yaml", asset_key="from_module")
+        self._known["docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml"] = (
+            YamlListAdapter("REG-CROSS-002", "cross_module_dependency_registry.yaml", asset_key="from_module")
         )
         self._known["docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"] = YamlListAdapter(
             "REG-GATE-CAT-001", "gate_registry.yaml", asset_key="gate_id"
         )
-        self._known["docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md"] = YamlListAdapter(
-            "REG-INFRA-001", "infrastructure-registry.md", asset_key="component_id"
+        self._known["docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml"] = YamlListAdapter(
+            "REG-INFRA-001", "infrastructure_registry.yaml", asset_key="component_id"
         )
-        self._known["docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md"] = YamlListAdapter(
-            "REG-TASK-META-001", "task-card-meta-registry.md", asset_key="subsystem_id"
+        self._known["docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml"] = YamlListAdapter(
+            "REG-TASK-META-001", "task_card_meta_registry.yaml", asset_key="subsystem_id"
         )
         self._known["docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml"] = (
             YamlListAdapter("REG-FRONTMATTER-001", "frontmatter_field_registry.yaml", asset_key="field_name")
@@ -630,8 +630,8 @@ class RegistryManager:
         self._known["docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml"] = YamlListAdapter(
             "REG-CROSS-001", "registry_consistency_contract.yaml", asset_key="field_name"
         )
-        self._known["docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.md"] = (
-            YamlListAdapter("REG-KB-001", "knowledge-article-registry.md", asset_key="article_id")
+        self._known["docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml"] = (
+            YamlListAdapter("REG-KB-001", "knowledge_article_registry.yaml", asset_key="article_id")
         )
 
         self._known["src/zephyr/drift-detector/_detector-registry.yaml"] = YamlListAdapter(
@@ -731,3 +731,38 @@ class RegistryManager:
             if entry.entry_path == asset_path:
                 return True
         return False
+
+
+# ============================================================================
+# ARCH-053: discover_all_registries() — AI 发现全部 registry 的统一入口
+# ============================================================================
+
+def discover_all_registries() -> list[dict]:
+    """读取 registry_master_index.yaml，返回全部 registry 的元数据列表。
+
+    ARCH-053 裁定：AI 代码启动时调用此函数即可发现项目全部 25+ 个 registry，
+    不再依赖硬编码路径或 AGENTS.md 提示。
+
+    Returns:
+        list[dict]: 每个元素含 registry_id/name/category/physical_path/format/
+                    maintenance/entry_count/status
+
+    Example:
+        >>> regs = discover_all_registries()
+        >>> print(f"项目共 {len(regs)} 个 registry")
+        >>> infra = [r for r in regs if 'infrastructure' in r['name']]
+        >>> print(f"基础设施相关: {infra}")
+    """
+    import yaml
+    from pathlib import Path
+
+    # registry_master_index.yaml 是自动生成的总索引（reconciler 维护）
+    master_path = Path("docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml")
+    if not master_path.exists():
+        return []
+
+    data = yaml.safe_load(master_path.read_text(encoding="utf-8"))
+    if not data or "registries" not in data:
+        return []
+
+    return data["registries"]

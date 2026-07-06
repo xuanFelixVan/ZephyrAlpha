@@ -51,6 +51,18 @@
 > 5. 验证依赖一致性
 > 6. `apply_depgraph.py --transition-build-status NODE_ID production` 转正
 
+## RULE-REGISTRY：第四件事（ARCH-053 AI 可发现性，2026-07-06）
+
+> **查项目所有 registry**：MUST 先读 [`registry_master_index.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml)（25+ 个 registry 的总索引，自动生成）或调用 `discover_all_registries()` 函数（`zephyr.infrastructure.asset_inventory.registry_adapter`）。
+>
+> **为什么**：项目有 25+ 个 registry（基础设施/门禁/规则/脚本/测试/接口契约/聚合节点等），硬编码路径只能覆盖 ~7 个。AI 启动时通过总索引发现全部 registry，避免"不知道某表存在"导致重复造轮子或绕过治理。
+>
+> **关键 registry 速查**：
+> - 基础设施（数据库/缓存/队列）：[`infrastructure_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)
+> - API 接口契约：[`interface_contract_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml)（ARCH-053 新增）
+> - 跨模块依赖：[`cross_module_dependency_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml)
+> - 能力→真源文件反查：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
