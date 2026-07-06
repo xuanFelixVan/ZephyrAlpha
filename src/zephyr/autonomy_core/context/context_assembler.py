@@ -1,4 +1,3 @@
-from typing import TYPE_CHECKING
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_assembler
 # [DOMAIN] D_AUTONOMY_CORE
@@ -34,7 +33,7 @@ import hashlib
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, Field
 

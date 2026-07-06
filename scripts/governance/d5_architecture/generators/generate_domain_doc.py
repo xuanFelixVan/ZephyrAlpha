@@ -69,12 +69,24 @@ import os
 import re
 from datetime import datetime
 
+import yaml
+
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
+
+# ARCH-052: 聚合节点类型——配置对象集（门禁/脚本/测试/规则文件）用 1 个聚合节点代表
+# 图视图只显示聚合节点本身；清单视图展开 registry.yaml 列出内部 items
+AGGREGATE_NODE_TYPES = {
+    "gate_rule_set",           # 门禁规则集（D_GOV_ENFORCEMENT）
+    "script_collection",       # 脚本集（D_GOV_SCRIPTS）
+    "test_suite",              # 测试集（D_AUDITTEST）
+    "strategy_collection",     # 策略集（D_TRADING）
+    "rule_registry_collection",  # 规则注册表集（D_GOVERNANCE）
+}
 
 # 层级排序：编号按此顺序分组分配
 LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]
@@ -131,6 +143,50 @@ def _extract_docstring_first_line(path: str) -> str:
     except Exception:
         pass
     return ""
+
+
+def _extract_yaml_description(path: str) -> str:
+    """从 YAML 文件提取 description 字段作为功能简介（ARCH-052）。
+
+    用于聚合节点展开的 items——门禁 yaml/脚本配置等。
+    """
+    if not path or not path.endswith(('.yaml', '.yml')):
+        return ""
+    abs_path = REPO_ROOT / path
+    if not abs_path.exists():
+        return ""
+    try:
+        data = yaml.safe_load(abs_path.read_text(encoding='utf-8', errors='replace'))
+        if isinstance(data, dict):
+            desc = (data.get('description', '') or '').strip()
+            if desc:
+                # 取第一行，截断到 80 字符
+                first_line = desc.split('\n')[0].strip()
+                return _truncate(first_line, 80)
+    except Exception:
+        pass
+    return ""
+
+
+def _load_registry_items(registry_path: str) -> list[dict]:
+    """加载 registry.yaml 的 items 列表（ARCH-052 聚合节点展开用）。
+
+    registry_path 是聚合节点的 path 字段（SSoT 指针），指向 registry.yaml 文件。
+    返回 items 列表，每个 item 含 file/description 等字段。
+    """
+    if not registry_path:
+        return []
+    abs_path = REPO_ROOT / registry_path
+    if not abs_path.exists() or not abs_path.suffix in ('.yaml', '.yml'):
+        return []
+    try:
+        data = yaml.safe_load(abs_path.read_text(encoding='utf-8', errors='replace'))
+        if isinstance(data, dict):
+            items = data.get('items', []) or []
+            return items if isinstance(items, list) else []
+    except Exception:
+        pass
+    return []
 
 
 # ---------------------------------------------------------------------------
@@ -756,11 +812,53 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
         for i, n in enumerate(shown, 1):
             path_display = _truncate(n["path"] or "", 60)
             name_display = _truncate(n["node_name"] or n["path"] or "", 40)
-            desc_display = _extract_docstring_first_line(n["path"] or "")
-            lines.append(
-                f"| {i} | {path_display} | {name_display} | "
-                f"{desc_display} | {n['design_maturity']} | {n['build_status']} |"
-            )
+            node_type = n.get("node_type", "")
+
+            # ARCH-052: 聚合节点——显示自身一行 + 展开 registry.yaml 列出内部 items
+            if node_type in AGGREGATE_NODE_TYPES:
+                registry_path = n["path"] or ""
+                registry_data = _load_registry_items(registry_path)
+                # 聚合节点本身一行
+                # 从 registry.yaml 取 collection_name 作为 description
+                collection_desc = ""
+                try:
+                    abs_reg = REPO_ROOT / registry_path
+                    if abs_reg.exists():
+                        reg_data = yaml.safe_load(abs_reg.read_text(encoding='utf-8', errors='replace'))
+                        if isinstance(reg_data, dict):
+                            collection_desc = reg_data.get("collection_name", "") or ""
+                            items_count = len(registry_data)
+                            collection_desc = f"[聚合节点 / Aggregated] {collection_desc} ({items_count} items)"
+                except Exception:
+                    pass
+                lines.append(
+                    f"| {i} | {path_display} | {name_display} | "
+                    f"{collection_desc} | {n['design_maturity']} | {n['build_status']} |"
+                )
+                # 展开内部 items（最多显示前 100 个，避免表格过长）
+                MAX_ITEMS = 100
+                for j, item in enumerate(registry_data[:MAX_ITEMS], 1):
+                    item_file = item.get("file", "") or ""
+                    item_desc = (item.get("description", "") or "").strip().split('\n')[0].strip()
+                    item_desc = _truncate(item_desc, 80)
+                    item_path_display = _truncate(f"  ↳ {item_file}", 60)
+                    item_name_display = _truncate(item.get("gate_id", "") or item.get("title", "") or "", 40)
+                    lines.append(
+                        f"| ↳{j} | {item_path_display} | {item_name_display} | "
+                        f"{item_desc} | - | - |"
+                    )
+                if len(registry_data) > MAX_ITEMS:
+                    lines.append(f"| | | | > (仅显示前 {MAX_ITEMS} 个 items，共 {len(registry_data)} 个) | | |")
+            else:
+                # 普通节点——保持原逻辑（docstring 提取）
+                # 对 .yaml 文件也尝试提取 description（ARCH-052 增强）
+                desc_display = _extract_docstring_first_line(n["path"] or "")
+                if not desc_display and n["path"] and n["path"].endswith(('.yaml', '.yml')):
+                    desc_display = _extract_yaml_description(n["path"])
+                lines.append(
+                    f"| {i} | {path_display} | {name_display} | "
+                    f"{desc_display} | {n['design_maturity']} | {n['build_status']} |"
+                )
 
         if len(layer_nodes_all) > MAX_PER_LAYER:
             lines.append(f"\n> (仅显示前 {MAX_PER_LAYER} 个模块，共 {len(layer_nodes_all)} 个)")
