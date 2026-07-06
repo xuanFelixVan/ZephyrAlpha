@@ -84,6 +84,7 @@ from zephyr.governance.commit_gates.id_uniqueness_gate import make_id_uniqueness
 from zephyr.governance.commit_gates.exempt_zone_frontmatter_gate import make_exempt_zone_frontmatter_gate
 from zephyr.governance.commit_gates.module_id_consistency_gate import make_module_id_consistency_gate
 from zephyr.governance.commit_gates.perm_trigger_gate import make_perm_trigger_gate
+from zephyr.governance.commit_gates.msg_exposure_gate import make_msg_exposure_gate
 from zephyr.governance.commit_gates.empty_handler_gate import make_empty_handler_gate
 from zephyr.governance.commit_gates.orphan_module_gate import make_orphan_module_gate
 from zephyr.governance.commit_gates.doc_ref_broken_gate import make_doc_ref_broken_gate
@@ -277,6 +278,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_module_id_consistency_gate())  # priority=88 治本 module_id 三声明轨道一致性 + count 派生（原 post-commit warn reconciler）
         # Phase 1 AST 门禁扩展（DM-202953，2026-07-03）：5 个新 in-process gate 治本 5 病根
         self._gate_registry.register(make_perm_trigger_gate())  # priority=82 治本永久系统时间触发模式无事件订阅（病根：永久系统触发32）
+        self._gate_registry.register(make_msg_exposure_gate())  # priority=83 治本错误消息暴露敏感信息（5.99.20 防复发：raise XxxError(f"...{path/tx_id/secret}...") 阻断）
         self._gate_registry.register(make_empty_handler_gate())  # priority=84 治本空 handler 函数体仅 logger/pass/return（病根：事件订阅空壳）
         self._gate_registry.register(make_orphan_module_gate())  # priority=89 治本孤儿模块死代码无 import 引用（病根：新AI可发现性55）——原86与id_uniqueness撞号，调整至89
         self._gate_registry.register(make_doc_ref_broken_gate())  # priority=91 治本文档引用断裂 .md 相对路径不存在（病根：文档引用断裂26）——原88与module_id_consistency撞号，调整至91
