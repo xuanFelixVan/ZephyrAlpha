@@ -1,7 +1,7 @@
 %% D_GOV_ENFORCEMENT 域全景依赖图
-%% 生成时间: 2026-07-06 18:29:06
+%% 生成时间: 2026-07-06 20:01:10
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 201, 依赖边数: 567
+%% 模块数: 201, 依赖边数: 555
 
 graph TD
 
@@ -125,76 +125,76 @@ graph TD
     src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enf___ine_gate_integrity_guard_py
     src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enf___ate_engine_gate_override_py
     src_zephyr_governance_rule_enforcement___init___py -->|import_depends| src_zephyr_governance_rule_enf___te_engine_gate_simulator_py
-    src_zephyr_governance_rule_enf___ypes_check_type_registry_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf___ypes_check_type_registry_py -->|import_depends| src_zephyr_governance_rule_enforcement___init___py
     src_zephyr_governance_rule_enf___s_adversarial_validation_py -->|import_depends| src_zephyr_governance_rule_enf___t_adversarial_strategies_py
     src_zephyr_governance_rule_enf___s_adversarial_validation_py -->|import_depends| src_zephyr_governance_rule_enf___e_adversarial_validation_py
     src_zephyr_governance_rule_enf___s_adversarial_validation_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf___s_adversarial_validation_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___ypes_check_type_registry_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___ypes_check_type_registry_py -->|import_depends| src_zephyr_governance_rule_enforcement___init___py
     src_zephyr_governance_rule_enf____audit_findings_resolved_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf____audit_findings_resolved_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf____ct_blueprint_read_check_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf____ct_blueprint_read_check_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf____types_ct_content_length_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf____types_ct_content_length_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf___circular_dependency_scan_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf___circular_dependency_scan_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf___circular_dependency_scan_py -->|import_depends| src_zephyr_governance_rule_enf____001_circular_dependency_py
-    src_zephyr_governance_rule_enf____types_ct_classification_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf____types_ct_classification_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___types_ct_circuit_breaker_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf___types_ct_circuit_breaker_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___types_ct_circuit_breaker_py -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
-    src_zephyr_governance_rule_enf___types_ct_content_quality_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf___types_ct_content_quality_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf____types_ct_classification_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf____types_ct_classification_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___circular_dependency_scan_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf___circular_dependency_scan_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___circular_dependency_scan_py -->|import_depends| src_zephyr_governance_rule_enf____001_circular_dependency_py
+    src_zephyr_governance_rule_enf____types_ct_content_length_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf____types_ct_content_length_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___ract_compatibility_check_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf___ract_compatibility_check_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___ract_compatibility_check_py -->|import_depends| src_zephyr_governance_rule_enf___3_contract_compatibility_py
-    src_zephyr_governance_rule_enf___ck_types_ct_drift_budget_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf___ck_types_ct_drift_budget_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___k_types_ct_deduplication_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf___k_types_ct_deduplication_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf____types_ct_file_extension_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf____types_ct_file_extension_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf____types_ct_field_presence_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf____types_ct_field_presence_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___types_ct_content_quality_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf___types_ct_content_quality_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___ck_types_ct_drift_budget_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf___ck_types_ct_drift_budget_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf____check_types_ct_fle_gate_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf____check_types_ct_fle_gate_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf____check_types_ct_encoding_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf____check_types_ct_encoding_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___t_enforcement_mode_check_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf___t_enforcement_mode_check_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___t_enforcement_mode_check_py -->|import_depends| src_zephyr_governance_rule_enf___02_enforcement_validator_py
-    src_zephyr_governance_rule_enf____check_types_ct_encoding_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf____check_types_ct_encoding_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf___eck_types_ct_frontmatter_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf___eck_types_ct_frontmatter_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf____types_ct_field_presence_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf____types_ct_field_presence_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf____types_ct_file_extension_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf____types_ct_file_extension_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___eck_types_ct_line_ending_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf___eck_types_ct_line_ending_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf___types_ct_manual_approval_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf___types_ct_manual_approval_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___eck_types_ct_frontmatter_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf___eck_types_ct_frontmatter_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf____types_ct_leverage_limit_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf____types_ct_leverage_limit_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf____types_ct_leverage_limit_py -->|import_depends| src_zephyr_governance_rule_enforcement_risk_ssot_py
+    src_zephyr_governance_rule_enf___types_ct_manual_approval_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf___types_ct_manual_approval_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___ck_types_ct_path_routing_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf___ck_types_ct_path_routing_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf___types_ct_reference_check_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf___types_ct_reference_check_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf____types_ct_path_blacklist_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf____types_ct_path_blacklist_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf____types_ct_position_limit_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf____types_ct_position_limit_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf____types_ct_position_limit_py -->|import_depends| src_zephyr_governance_rule_enforcement_risk_ssot_py
     src_zephyr_governance_rule_enf____types_ct_path_whitelist_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf____types_ct_path_whitelist_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___types_ct_reference_check_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf___types_ct_reference_check_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf____types_ct_path_blacklist_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf____types_ct_path_blacklist_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___k_types_ct_regex_pattern_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf___k_types_ct_regex_pattern_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf___es_ct_rollback_exit_code_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
-    src_zephyr_governance_rule_enf___es_ct_rollback_exit_code_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf____ct_restructuring_safety_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf____ct_restructuring_safety_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    src_zephyr_governance_rule_enf___es_ct_rollback_exit_code_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf___es_ct_rollback_exit_code_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     %% ... 还有 146 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_GOV_ENFORCEMENT (222 条)
+    %% D_AUDITTEST -> D_GOV_ENFORCEMENT (221 条)
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___ment_ai_capability_guard_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___ent_audit_chain_verifier_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___gate_engine_gate_context_py
@@ -225,10 +225,9 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_task_types_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    %% D_AUTONOMY_CORE -> D_GOV_ENFORCEMENT (2 条)
+    %% D_AUTONOMY_CORE -> D_GOV_ENFORCEMENT (1 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_governance_rule_enf____gate_engine_gate_engine_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
-    %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (22 条)
+    %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (17 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enf____gate_engine_gate_engine_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_types_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enf____gate_engine_gate_engine_py
@@ -246,13 +245,6 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_quality_gate_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_compliance_default_security_gateway_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_compliance_audit_trail_bridges___init___py
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_compliance_audit_trail_bridges___init___py
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_compliance_audit_trail_bridges___init___py
-    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
-    %% D_GOV_DRIFT -> D_GOV_ENFORCEMENT (1 条)
-    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
     %% D_GOV_SCRIPTS -> D_GOV_ENFORCEMENT (8 条)
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
@@ -286,16 +278,16 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_ENFORCEMENT -> D_GOVERNANCE (38 条)
+    %% D_GOV_ENFORCEMENT -> D_GOVERNANCE (35 条)
     src_zephyr_compliance_aisg_sandbox_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_artifact_scanner_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_evidence_pack_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_integrity_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_evidence_pack_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_default_security_gateway_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_security_gateway_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_merkle_hourly_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_orchestrator___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_security_gateway_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_audit_orchestrator___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -303,8 +295,8 @@ graph TD
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_behavioral_admission___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_zero_knowledge_audit_stub___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_rule_enf___ent_audit_chain_verifier_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_rule_enforcement_capability_checker_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -317,8 +309,6 @@ graph TD
     src_zephyr_governance_rule_enforcement_pre_flight_gate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_rule_enforcement_pre_flight_gate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_rule_enforcement_triple_alignment_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_GOV_ENFORCEMENT -> D_GOV_DRIFT (1 条)
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_GOV_ENFORCEMENT -> D_INFRA_RECOVERY (3 条)
     src_zephyr_governance_rule_enforcement_drift_detector_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     src_zephyr_governance_rule_enf___es_ct_rollback_exit_code_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
@@ -347,15 +337,15 @@ graph TD
     src_zephyr_governance_rule_enf____gate_engine_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf____gate_engine_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf____gate_engine_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_enf___3_contract_compatibility_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_enf___02_enforcement_validator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf____001_circular_dependency_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf___rocess_lifecycle_gateway_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_enf___ts_post_doc_review_check_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_rule_enf___3_contract_compatibility_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_rule_enf___02_enforcement_validator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf___iants_zero_residue_check_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_rule_enf___ts_post_doc_review_check_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf___rule_engine_rule_watcher_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 226 条
-    %% 跨域入边: 271 条
-    %% 跨域出边: 70 条
+    %% 跨域入边: 263 条
+    %% 跨域出边: 66 条
