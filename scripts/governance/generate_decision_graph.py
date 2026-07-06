@@ -207,6 +207,18 @@ def _validate_yaml(data: dict) -> list[str]:
                 errors.append(
                     f"layer {lid} design_maturity '{dm}' not in valid set"
                 )
+            # 议题1约束：design 态不能有 module_id/source_code_ref（代码未写、蓝图未建）
+            if dm == "design":
+                if L.get("module_id"):
+                    errors.append(
+                        f"layer {lid} design_maturity=design 时 module_id 必须为空"
+                        f"（代码未写、蓝图未建，转为 production 态时再填）"
+                    )
+                if L.get("source_code_ref"):
+                    errors.append(
+                        f"layer {lid} design_maturity=design 时 source_code_ref 必须为空"
+                        f"（代码未写，转为 production 态时再填）"
+                    )
 
     return errors
 

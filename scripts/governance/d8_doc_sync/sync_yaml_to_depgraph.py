@@ -1332,14 +1332,14 @@ def sync_dataflow_registry(cur):
             INSERT INTO dataflow_jobs
                 (job_name, entity_type, scope, source_code_ref, trigger_type,
                  run_context, pit_relevance, description, design_maturity,
-                 build_status, last_updated)
-            VALUES (%s, 'job', %s, %s, %s, %s, %s, %s, 'production', 'generated', %s)
+                 build_status, module_id, last_updated)
+            VALUES (%s, 'job', %s, %s, %s, %s, %s, %s, 'production', 'generated', %s, %s)
             RETURNING job_id
         """, (
             job_name, j.get("scope", "production"),
             j.get("source_code_ref"), j.get("trigger_type"),
             j.get("run_context"), j.get("pit_relevance", "strict"),
-            j.get("description"), now_iso,
+            j.get("description"), j.get("module_id") or None, now_iso,
         ))
         job_id = cur.fetchone()["job_id"]
         job_name_to_id[job_name] = job_id
@@ -1358,15 +1358,15 @@ def sync_dataflow_registry(cur):
             INSERT INTO dataflow_datasets
                 (entity_name, entity_type, scope, contract_ref, physical_type,
                  produced_by_job, domain_id, design_maturity, build_status,
-                 pit_policy, format_summary, valid_since, last_updated)
-            VALUES (%s, 'dataset', %s, %s, %s, %s, %s, 'production', 'generated', %s, %s, %s, %s)
+                 pit_policy, format_summary, valid_since, module_id, last_updated)
+            VALUES (%s, 'dataset', %s, %s, %s, %s, %s, 'production', 'generated', %s, %s, %s, %s, %s)
             RETURNING dataset_id
         """, (
             entity_name, d.get("scope", "production"),
             d.get("contract_ref"), d.get("physical_type"),
             d.get("produced_by_job"), d.get("domain_id"),
             d.get("pit_policy", "strict"), d.get("format_summary"),
-            d.get("valid_since"), now_iso,
+            d.get("valid_since"), d.get("module_id") or None, now_iso,
         ))
         dataset_id = cur.fetchone()["dataset_id"]
         dataset_name_to_id[entity_name] = dataset_id
