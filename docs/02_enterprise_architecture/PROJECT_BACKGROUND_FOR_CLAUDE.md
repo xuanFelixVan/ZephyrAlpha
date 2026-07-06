@@ -373,7 +373,9 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 
 回测域 Phase 1+2 模块状态（production / prototype 节点数及模块清单见 depgraph 动态统计）：
 
-7 类运行时测试全部通过：模块导入、向量化引擎、事件驱动引擎、WFA 三模式、OverfittingDetector 三维度、DecisionGate IS→WFA→OOS 三级门禁、PITManager。
+测试覆盖情况（ARCH-MM-001裁定：以 depgraph nodes.design_maturity 为真源，[MATURITY] 标记为声明）：
+- 有正式测试覆盖（tests/ 目录，depgraph 推导为 production）：matching_engine、matching_logic、portfolio、tick_replay、data_handler、event_driven_engine、engine_base、vectorized_engine、decisiongraph_adapter
+- 无正式测试覆盖（depgraph 推导为 prototype）：decision_gate、metrics、overfitting_detector、pit_manager、walk_forward、backtest_result_sink、result_repository
 
 ---
 

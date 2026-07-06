@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 过拟合三维度三层; 样本外Sharpe<70%样本内→否决
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -55,6 +55,13 @@ GEN_CV_THRESHOLD = 1.50
 
 class OverfittingError(Exception):
     """过拟合检测错误"""
+
+    error_code = "ZA-BT-0005"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass(frozen=True)

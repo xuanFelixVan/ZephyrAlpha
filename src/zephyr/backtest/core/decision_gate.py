@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] IS→WFA→OOS不可跳级;参数锁定;Sharpe>0.5准入
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -39,6 +39,13 @@ from typing import Any
 
 class DecisionGateError(Exception):
     """决策门控错误"""
+
+    error_code = "ZA-BT-0009"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass(frozen=True)

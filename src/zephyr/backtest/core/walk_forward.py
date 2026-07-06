@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] WF三模式;CPCV v2;White's Reality Check
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -42,6 +42,13 @@ WRC_SIGNIFICANCE_LEVEL = 0.05
 
 class WalkForwardError(Exception):
     """Walk-Forward分析错误"""
+
+    error_code = "ZA-BT-0001"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass(frozen=True)

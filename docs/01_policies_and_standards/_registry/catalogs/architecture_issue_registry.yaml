@@ -1508,3 +1508,41 @@ entries:
   related_adjudication: '#203'
   created: '2026-07-06'
   last_updated: '2026-07-06'
+- issue_id: '#ARCH-MM-001'
+  title: '[MATURITY]标记与depgraph design_maturity关系裁定——声明vs验证'
+  severity: P1中
+  adjudication: |
+    2026-07-06 调查发现 depgraph 数据过时：代码中11个backtest模块标记
+    [MATURITY] production，但depgraph中8个仍是prototype。根因分析：
+    (1) [MATURITY]文件头标记是AI/人工声明的"预期成熟度"（声明）
+    (2) depgraph nodes.design_maturity是生成器根据has_test推导的"实际成熟度"（验证）
+    (3) 生成器derive_design_maturity()函数只看has_test，不解析[MATURITY]标记
+    (4) tested_modules逻辑：tests/目录下test类型节点的import_depends边目标模块→production
+    (5) scripts/tests/路径不被生成器识别为test类型（L1198-1201: tests/→test, scripts/→script）
+    裁定结果：
+    - 裁定1: depgraph design_maturity是真源（生成器是运营态唯一真源）
+    - 裁定2: [MATURITY]标记是声明，不参与depgraph生成
+    - 裁定3: 生成器has_test推导逻辑符合maturity_vocabulary定义（production=有测试）
+    - 裁定4: 10个backtest模块中5个有测试→production（正确），5个无测试→prototype（正确）
+    - 裁定5: [MATURITY]标记设计意图修订——声明预期值，depgraph验证实际值，冲突时以depgraph为准
+    治本方案：
+    P1: 4个临时验证脚本从scripts/tests/迁移到tests/（使生成器识别为test类型）
+    P0: 5个无测试模块的[MATURITY]标记从production修正为prototype（使声明与验证一致）
+    P2: 文档修订（trae_047 v1.2.1/maturity_vocabulary v1.1.0/PROJECT_BACKGROUND）
+  fix_phase: |
+    P0 已完成（2026-07-06）：
+    (1) 5个模块[MATURITY] production→prototype（decision_gate/metrics/overfitting_detector/pit_manager/walk_forward）
+    P1 已完成（2026-07-06）：
+    (1) 4个测试文件从scripts/tests/迁移到tests/（matching_engine/tick_replay_data_handler/event_driven_engine/miniqmt_broker）
+    (2) reconciler自动同步depgraph，5个有测试模块升级为production
+    P2 已完成（2026-07-06）：
+    (1) trae_047 v1.2.1 changelog明确声明vs验证关系
+    (2) maturity_vocabulary v1.1.0添加ARCH-MM-001裁定说明
+    (3) PROJECT_BACKGROUND_FOR_CLAUDE.md修订"7类运行时测试全部通过"为depgraph动态统计
+  status: resolved
+  related_rules:
+  - maturity_vocabulary.yaml v1.1.0
+  - trae_047_engineering_file_header.yaml v1.2.1
+  - architecture_issue_registry.yaml#ARCH-035（生成器是运营态唯一真源）
+  created: '2026-07-06'
+  last_updated: '2026-07-06'

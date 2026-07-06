@@ -19,6 +19,14 @@
 #
 # 对标标准：
 #   - depgraph.db nodes.design_maturity 字段（与本词表值完全一致，零冲突）
+#
+# ARCH-MM-001裁定（2026-07-06）：
+#   - [MATURITY] 文件头标记是"声明"（AI/人工声明的预期成熟度）
+#   - depgraph nodes.design_maturity 是"验证"（生成器根据has_test推导的实际成熟度）
+#   - 生成器推导规则：tests/目录下test类型节点的import_depends边目标模块→production；
+#     无测试覆盖的模块→prototype
+#   - 冲突时以 depgraph 为真源（生成器是运营态唯一真源）
+#   - AI/人工应在编写测试后运行 generate_project_depgraph.py 刷新 depgraph，使声明与验证一致
 
 schema_version: "1.0.0"
 doc_type: vocabulary

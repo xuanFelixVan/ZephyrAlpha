@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.backtest.core.data_handler
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] PIT三公理;Embargo期;AS OF JOIN;pit_consistency_test
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -56,6 +56,13 @@ _EPSILON = 1e-12
 
 class PITError(Exception):
     """PIT铁律违反或数据一致性错误"""
+
+    error_code = "ZA-BT-0004"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass(frozen=True)

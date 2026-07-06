@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] PIT铁律; Sharpe修正(中国10年期国债); 样本量<60不计算Sharpe
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -60,6 +60,13 @@ _EULER_MASCHERONI_GAMMA = 0.5772156649015329
 
 class MetricsError(Exception):
     """绩效指标计算错误"""
+
+    error_code = "ZA-BT-0006"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 def calculate_metrics(
