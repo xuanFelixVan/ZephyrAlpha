@@ -139,6 +139,34 @@ def _get_insert_columns(table: str) -> str:
     return "(" + ", ".join(cols) + ")"
 
 
+# 表列缓存（避免每次 write_result 都查 DESCRIBE TABLE）
+_table_cols_cache: dict[str, set[str]] = {}
+
+
+def _get_table_columns_set(table: str) -> set[str]:
+    """查询表的全部列名集合（含 DEFAULT/MATERIALIZED/ALIAS 列）。
+
+    用于 write_result 列过滤：只插入表中存在的列。
+
+    Returns:
+        列名集合。查询失败返回空集合。
+    """
+    if table in _table_cols_cache:
+        return _table_cols_cache[table]
+    out = query(f"DESCRIBE TABLE {table}")
+    if not out.strip():
+        return set()
+    cols = set()
+    for line in out.split("\n"):
+        if not line.strip():
+            continue
+        parts = line.split("\t")
+        if len(parts) >= 1:
+            cols.add(parts[0])
+    _table_cols_cache[table] = cols
+    return cols
+
+
 def write_tsv(
     table: str,
     columns: str | None,
@@ -203,19 +231,44 @@ def write_result(
         log.info("write_result(%s): 无数据行，跳过", result.table)
         return True
 
-    # 构造 TSV 字节
-    tsv_lines = []
-    for row in result.rows:
-        tsv_lines.append("\t".join(tsv_escape(v) for v in row))
-    tsv_bytes = "\n".join(tsv_lines).encode("utf-8")
-
-    # 构造列子句
+    # 确定列子句和行数据
     if columns:
+        # 显式指定的列，直接用
         cols_clause = columns
+        rows = result.rows
     elif result.columns:
-        cols_clause = "(" + ", ".join(result.columns) + ")"
+        # 自动列过滤：只插入表中存在的列
+        table_cols = _get_table_columns_set(result.table)
+        if table_cols:
+            common_cols = [c for c in result.columns if c in table_cols]
+            if not common_cols:
+                log.error("write_result(%s): result.columns 与表列无交集", result.table)
+                return False
+            if len(common_cols) < len(result.columns):
+                # 有列被过滤，调整 rows
+                keep_indices = [i for i, c in enumerate(result.columns) if c in table_cols]
+                rows = [tuple(row[i] for i in keep_indices) for row in result.rows]
+                log.info(
+                    "write_result(%s): 列过滤 %d→%d（忽略 %d 个不匹配列）",
+                    result.table, len(result.columns), len(common_cols),
+                    len(result.columns) - len(common_cols),
+                )
+            else:
+                rows = result.rows
+            cols_clause = "(" + ", ".join(common_cols) + ")"
+        else:
+            # 查询失败，用 result.columns 原样
+            cols_clause = "(" + ", ".join(result.columns) + ")"
+            rows = result.rows
     else:
         cols_clause = None  # write_tsv 内部自动查询
+        rows = result.rows
+
+    # 构造 TSV 字节
+    tsv_lines = []
+    for row in rows:
+        tsv_lines.append("\t".join(tsv_escape(v) for v in row))
+    tsv_bytes = "\n".join(tsv_lines).encode("utf-8")
 
     return write_tsv(result.table, cols_clause, tsv_bytes, timeout=timeout)
 
