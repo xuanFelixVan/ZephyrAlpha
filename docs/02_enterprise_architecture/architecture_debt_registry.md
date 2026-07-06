@@ -2493,6 +2493,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.57 事件排序与因果一致性（7个，第14轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.57全部清零.
+> **第64轮修复状态（2026-07-06）**：5.57.5 FIXED — DeadLetter 增加 idempotency_key 字段 + capture() 幂等去重 + 部分唯一索引 idx_dl_idem_unresolved (resolved=0 AND idempotency_key IS NOT NULL), 同时修复 observer.py 预存 logging 未导入 NameError, commit 9ad89f8d50. DEFERRED=2 (5.57.2/5.57.6 仍需 task_events 表 schema migration 大规模重构).
 > 维度说明：事件序列号、因果链、事件重放、DLQ集成等。（注：HookDispatcher._call_webhook为pass已在5.40.5记录，此处不重复）
 
 #### 5.57.1 [MEDIUM] 事件ID使用秒级时间戳，同一秒内碰撞
@@ -2528,7 +2529,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **证据**：DeadLetter数据结构无idempotency_key字段；pop_retryable取出死信后重新emit，无去重机制
 - **问题**：非幂等handler处理同一死信两次会产生重复副作用（重复创建订单等）
 - **修复**：DeadLetter增加idempotency_key字段
-- **状态**：STILL_VALID（保留）— 需要DeadLetter dataclass增加idempotency_key字段，影响数据结构+持久化层
+- **状态**：FIXED — DeadLetter 增加 idempotency_key 字段; capture() 增加 idempotency_key 参数并在插入前去重(同 key 未解决死信已存在则跳过); dead_letters 表增加 idempotency_key 列(向前兼容 ALTER TABLE) + 部分唯一索引 idx_dl_idem_unresolved; pop_retryable SELECT 携带 idempotency_key. commit 9ad89f8d50.
 
 #### 5.57.6 [HIGH] 事件完整性校验链是空操作——永远通过
 - **文件**：[event_store.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/event_store.py#L215)
