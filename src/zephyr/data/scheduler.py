@@ -52,6 +52,23 @@ log = logging.getLogger(__name__)
 _DEFAULT_CONFIG_DIR = Path(__file__).parent / "config"
 _DEFAULT_JOBS_DB = "sqlite:///" + str(REPO_ROOT / "data" / "integrator_jobs.db")
 
+# 模块级调度器单例（供 APScheduler job 回调使用，避免 pickle 绑定方法+Lock 对象）
+_global_scheduler: "IntegratorScheduler | None" = None
+
+
+def _run_schedule_callback(schedule_name: str) -> None:
+    """APScheduler job 回调（模块级函数，可 pickle）。
+
+    APScheduler 的 SQLAlchemyJobStore 用 pickle 序列化 job 状态，
+    绑定方法 self.run_schedule 会 pickle 整个实例（含 _provider_lock），
+    导致 "cannot pickle '_thread.RLock' object"。
+    改用模块级函数 + 全局单例避免此问题。
+    """
+    if _global_scheduler is not None:
+        _global_scheduler.run_schedule(schedule_name)
+    else:
+        log.error("_run_schedule_callback: _global_scheduler 未设置")
+
 
 class IntegratorScheduler:
     """数据源集成器调度器。
@@ -457,7 +474,7 @@ class IntegratorScheduler:
                     "day_of_week": parts[4],
                 }
                 self._scheduler.add_job(
-                    self.run_schedule,
+                    _run_schedule_callback,
                     "cron",
                     args=[sched_name],
                     id=sched_name,
@@ -468,6 +485,9 @@ class IntegratorScheduler:
 
             self._scheduler.start()
             self._started = True
+            # 注册为全局单例（供 _run_schedule_callback 使用）
+            global _global_scheduler
+            _global_scheduler = self
             log.info("调度器已启动")
             return True
         except Exception as e:
@@ -550,7 +570,9 @@ def main() -> None:
     import signal
     import sys
 
+    global _global_scheduler
     sched = IntegratorScheduler()
+    _global_scheduler = sched
 
     # 信号处理：Ctrl+C 优雅关闭
     def _signal_handler(signum, frame):
