@@ -1,0 +1,177 @@
+# [A_config] module_id=CFG-data-sources-registry | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md | §4
+# module_id: MOD-L00-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v1.0.0: 外部数据源资产清单真源,从 data_source_operation_manual.md v2.1.0 提取
+# 同步到 DB data_source_assets 表,派生 asset_catalog.md
+
+module_id: MOD-L00-001
+version: "1.0.0"
+description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。"
+
+data_sources:
+  - id: DS-IFIND
+    name: "同花顺iFind"
+    name_en: "THS iFind"
+    type: commercial
+    category: market_data
+    vendor: "同花顺"
+    interface_types: ["THS_BD", "THS_DS", "THS_HF", "THS_RQ", "THS_WC", "THS_DateSerial"]
+    api_count: 70
+    auth_required: true
+    auth_method: "THS_iFinDLogin(同进程内调用)"
+    rate_limit: "需登录,无明确QPS限制"
+    status: active
+    coverage: "A股K线/Tick/板块/财务/宏观/研报"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §2"
+
+  - id: DS-MINIQMT
+    name: "miniQMT"
+    name_en: "miniQMT"
+    type: commercial
+    category: market_data
+    vendor: "迅投"
+    interface_types: ["XtQuantApi", "xtdata", "xttrader"]
+    api_count: 87
+    auth_required: true
+    auth_method: "QMT客户端登录"
+    rate_limit: "实时行情订阅,无明确QPS限制"
+    status: active
+    coverage: "A股实时行情/历史K线/交易接口"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §3"
+
+  - id: DS-AKSHARE
+    name: "AKShare"
+    name_en: "AKShare"
+    type: open_source
+    category: market_data
+    vendor: "开源社区"
+    interface_types: ["Python函数"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无"
+    rate_limit: "东财接口有反爬,需控制频率"
+    status: active
+    coverage: "A股/港股/美股/期货/宏观/新闻(部分接口被反爬)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §4"
+
+  - id: DS-BAOSTOCK
+    name: "Baostock"
+    name_en: "Baostock"
+    type: open_source
+    category: market_data
+    vendor: "开源社区"
+    interface_types: ["baostock.query"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无(免费注册可选)"
+    rate_limit: "无明确限制"
+    status: active
+    coverage: "A股K线/财务/宏观(数据有延迟)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §5"
+
+  - id: DS-TICKFLOW
+    name: "TickFlow"
+    name_en: "TickFlow"
+    type: open_source
+    category: market_data
+    vendor: "开源社区"
+    interface_types: ["Python函数"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无"
+    rate_limit: "无"
+    status: active
+    coverage: "A股Tick数据"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §6"
+
+  - id: DS-TDX
+    name: "通达信"
+    name_en: "TDX"
+    type: open_source
+    category: market_data
+    vendor: "通达信"
+    interface_types: ["mootdx", "pytdx"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无"
+    rate_limit: "无"
+    status: active
+    coverage: "A股K线/指数K线/实时报价/分时/个股分笔(仅最近交易日)/本地文件/财务数据/港股/期货"
+    limitations: "无板块分笔历史数据/无历史个股分笔/无复权/估值/EDB/新闻/研报/不支持美股"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §8"
+
+  - id: DS-BAIDUYUN
+    name: "百度云"
+    name_en: "BaiduYun"
+    type: commercial
+    category: market_data
+    vendor: "百度"
+    interface_types: ["BosClient"]
+    api_count: 0
+    auth_required: true
+    auth_method: "AK/SK认证"
+    rate_limit: "单账号单日50GB上限,高频触发风控(errno=20012)"
+    status: active
+    coverage: "通达信板块分笔历史Tick数据(一次性包,无API可持续更新)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7"
+
+  - id: DS-NEWSAPI
+    name: "NewsAPI"
+    name_en: "NewsAPI"
+    type: commercial
+    category: news
+    vendor: "NewsAPI.org"
+    interface_types: ["REST API"]
+    api_count: 0
+    auth_required: true
+    auth_method: "API Key"
+    rate_limit: "免费版100 req/day"
+    status: planned
+    coverage: "全球财经新闻"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7"
+
+  - id: DS-YFINANCE
+    name: "yfinance"
+    name_en: "yfinance"
+    type: open_source
+    category: market_data
+    vendor: "开源社区"
+    interface_types: ["Python函数"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无"
+    rate_limit: "无"
+    status: deprecated
+    coverage: "美股/港股(已废弃,分类体系不兼容)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7.4"
+
+  - id: DS-STOOQ
+    name: "Stooq"
+    name_en: "Stooq"
+    type: open_source
+    category: market_data
+    vendor: "Stooq.com"
+    interface_types: ["CSV下载"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无"
+    rate_limit: "无"
+    status: deprecated
+    coverage: "全球历史K线(已废弃)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7.4"

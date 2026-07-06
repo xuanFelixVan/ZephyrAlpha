@@ -1494,6 +1494,28 @@ capabilities:
       - make_perm_trigger_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: msg_exposure_gate
+    canonical_override: src/zephyr/governance/commit_gates/msg_exposure_gate.py
+    aliases:
+      - MSG-EXPOSURE
+      - msg-exposure
+      - make_msg_exposure_gate
+      - sensitive_info_in_error_message_blocker
+    description: >-
+      MSG-EXPOSURE in-process 错误消息暴露敏感信息阻断门禁（AST 门禁扩展，5.99.20 防复发，2026-07-06）。
+      治本"敏感信息应放入 details 字段而非消息文本"原则：检测 staged 新增/修改 .py 文件中
+      raise XxxError(f"...{sensitive_var}...") 模式——异常消息 f-string 中插值了路径/tx_id/
+      密钥/连接串等敏感变量（5 类敏感变量名清单：路径/标识/凭据/连接/数据）。
+      in-process AST 分析（无 subprocess），priority=83（在 PERM-TRIGGER(82) 之后、EMPTY-HANDLER(84) 之前）。
+      新增文件(A)查全文件 AST，修改文件(M)只查 diff 新增行。fail-open on AST/IO error，fail-closed on violations。
+      行级豁免：# noqa: MSG-EXPOSURE。tests/ 和 governance/commit_gates/ 自豁免。
+      canonical basename msg_exposure_gate 匹配 capability_id，canonical 在 src/zephyr/ 下需 canonical_override 显式声明。
+      解决发现性：新 AI 搜 "MSG-EXPOSURE/错误消息暴露/path in f-string/tx_id in exception" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 in-process 敏感信息暴露门禁。
+    integrity_anchors:
+      - make_msg_exposure_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: empty_handler_gate
     canonical_override: src/zephyr/governance/commit_gates/empty_handler_gate.py
     aliases:
@@ -3459,6 +3481,11 @@ creation_tokens:
     created_by: "session-sess-31148-20260703185158"
     capability: "perm_trigger_gate"
 
+  - file: "src/zephyr/governance/commit_gates/msg_exposure_gate.py"
+    token: "auto-msg-exposure-gate-20260706"
+    created_by: "session-sess-21036-20260706205027"
+    capability: "msg_exposure_gate"
+
   - file: "src/zephyr/governance/commit_gates/empty_handler_gate.py"
     token: "auto-empty-handler-gate-20260703"
     created_by: "session-sess-31148-20260703185158"
@@ -4030,6 +4057,24 @@ creation_tokens:
     token: "auto-rule-registry-collection-20260706"
     created_by: "session-sess-37316-20260706155138"
     capability: "rule_registry_collection_registry"
+
+  # --- 全景图修复批次:契约目录+资产清单生成器（2026-07-06）---
+  - file: "scripts/governance/d5_architecture/generators/generate_contract_catalog.py"
+    token: "auto-generate-contract-catalog-20260706"
+    created_by: "session-sess-44960-20260706204645"
+    capability: "domain_architecture_generators"
+  - file: "scripts/governance/d5_architecture/generators/generate_asset_catalog.py"
+    token: "auto-generate-asset-catalog-20260706"
+    created_by: "session-sess-44960-20260706204645"
+    capability: "domain_architecture_generators"
+  - file: "architecture_model/data/data_sources_registry.yaml"
+    token: "auto-data-sources-registry-20260706"
+    created_by: "session-sess-44960-20260706204645"
+    capability: "data_source_registry"
+  - file: "architecture_model/runtime/service_registry.yaml"
+    token: "auto-service-registry-20260706"
+    created_by: "session-sess-44960-20260706204645"
+    capability: "service_registry"
 
   # --- API 契约注册表（ARCH-053: 补齐 API 契约层，对标 Backstage API kind）---
   - file: "docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml"

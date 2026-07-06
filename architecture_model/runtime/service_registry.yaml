@@ -1,0 +1,137 @@
+# [A_config] module_id=CFG-service-registry | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md | §32
+# module_id: MOD-INF-026
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v1.0.0: 服务资产清单真源(静态声明部分)
+# 同步到 DB service_assets 表,派生 asset_catalog.md
+# 运行时状态(端口活/死/延迟)不在此表,归 system_telemetry 观测系统
+
+module_id: MOD-INF-026
+version: "1.0.0"
+description: "服务资产清单真源(静态声明)。AI 写新服务前需查此表确认已有哪些服务可复用。"
+
+services:
+  - id: SVC-DEPGRAPH
+    name: "depgraph PostgreSQL"
+    type: database
+    component_ref: "INFRA-DB-001"
+    domain: D_DATA_ENG
+    port: 5432
+    host: localhost
+    protocol: postgresql
+    status: active
+    description: "全景图数据库(架构SSoT),40张表存储依赖/路径/数据流/决策流"
+    owner: ZephyrAlpha-Owner
+
+  - id: SVC-CLICKHOUSE
+    name: "ClickHouse c1_market"
+    type: database
+    component_ref: "INFRA-DB-003"
+    domain: D_MKT_DATA
+    port: 9000
+    host: localhost
+    protocol: clickhouse
+    status: planned
+    description: "业务行情仓库(C1),K线/指数/板块/财务数据"
+    owner: ZephyrAlpha-Owner
+
+  - id: SVC-VECTORDB
+    name: "Vector DB"
+    type: database
+    component_ref: "INFRA-DB-002"
+    domain: D_KNOWLEDGE
+    port: null
+    host: "data/vector_db/"
+    protocol: file
+    status: provisioned
+    description: "向量数据库,知识库检索用"
+    owner: ZephyrAlpha-Owner
+
+  - id: SVC-GOVERNANCE-DB
+    name: "governance.db SQLite"
+    type: database
+    component_ref: null
+    domain: D_GOVERNANCE
+    port: null
+    host: "data/governance.db"
+    protocol: sqlite
+    status: active
+    description: "治理运行时(任务/审计/事件/门禁执行),34张表"
+    owner: ZephyrAlpha-Owner
+
+  - id: SVC-TELEMETRY
+    name: "system_telemetry"
+    type: service
+    component_ref: "MOD-INF-015"
+    domain: D_INFRA_RUNTIME
+    port: null
+    host: "in-process"
+    protocol: inproc
+    status: active
+    description: "系统遥测门面(9子系统:metrics/logs/traces/ai_behavior/health/alerts/profiles/schema/archive)"
+    owner: ZephyrAlpha-Owner
+
+  - id: SVC-OLLAMA
+    name: "Ollama LLM"
+    type: external_service
+    component_ref: null
+    domain: D_INTELLIGENCE
+    port: 11434
+    host: localhost
+    protocol: http
+    status: active
+    description: "本地LLM推理服务(ollama_chat)"
+    owner: ZephyrAlpha-Owner
+
+  - id: SVC-DEEPSEEK
+    name: "DeepSeek API"
+    type: external_service
+    component_ref: null
+    domain: D_INTELLIGENCE
+    port: null
+    host: "api.deepseek.com"
+    protocol: https
+    status: active
+    description: "云端LLM推理服务(deepseek_chat)"
+    owner: ZephyrAlpha-Owner
+
+  - id: SVC-IFIND
+    name: "iFind Client"
+    type: external_service
+    component_ref: null
+    domain: D_MKT_DATA
+    port: null
+    host: "in-process"
+    protocol: dll
+    status: active
+    description: "同花顺iFind客户端(同进程内调用THS_iFinDLogin)"
+    owner: ZephyrAlpha-Owner
+
+  - id: SVC-MINIQMT
+    name: "miniQMT Client"
+    type: external_service
+    component_ref: null
+    domain: D_TRADING
+    port: null
+    host: "in-process"
+    protocol: dll
+    status: planned
+    description: "迅投miniQMT客户端(行情+交易)"
+    owner: ZephyrAlpha-Owner
+
+  - id: SVC-BAIDUYUN
+    name: "百度云BOS"
+    type: external_service
+    component_ref: null
+    domain: D_MKT_DATA
+    port: null
+    host: "bj.bcebos.com"
+    protocol: https
+    status: active
+    description: "百度云对象存储(通达信历史Tick数据包)"
+    owner: ZephyrAlpha-Owner
