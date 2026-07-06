@@ -238,10 +238,10 @@ def auto_fix_compat(
 
     for issue in issues:
         if issue.issue_type == "union_syntax":
-            pattern_str = r"(\w+|\w+\[\w+\]|\w+)\s*\|\s*(\w+|None)"
-
-            replacement = f"Union[{r'\1'}, {r'\2'}]"
-
+            # 管线未接通（ARCH-027 §3b）：实际 re.sub 替换未实现，
+            # 当前仅返回修复描述。预留 pattern/replacement 供未来接通：
+            #   pattern: r"(\w+|\w+\[\w+\]|\w+)\s*\|\s*(\w+|None)"
+            #   replacement: r"Union[\1, \2]"
             fixes[issue.issue_id] = f"Replace {issue.current_syntax[:40]}... → Union[X, Y]"
 
         elif issue.issue_type == "stdlib_incompat":
