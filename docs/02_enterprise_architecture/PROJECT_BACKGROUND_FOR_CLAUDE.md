@@ -385,8 +385,8 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 
 [src/zephyr/frontend/](../../src/zephyr/frontend/) 已部署 Panel dashboard（G0.5 Python 过渡层，ARCH-047 v1.2.0，2026-07-04 DONE）：
 
-- [app_panel.py](../../src/zephyr/frontend/dashboard/app_panel.py)：Panel 应用（10 个 Tab：任务进度/知识库/门禁/Fitness/OLAP + 5 个交易/回测组件）
-- [components/](../../src/zephyr/frontend/dashboard/components/)：10 个组件（backtest_results / tick_replay / order_book / position_monitor / trade_panel / fitness_functions / gate_statistics / knowledge_overview / olap_trend / task_progress）
+- [app_panel.py](../../src/zephyr/frontend/dashboard/app_panel.py)：Panel 应用（Tab 清单见源码：任务进度/知识库/门禁/Fitness/OLAP + 交易/回测组件）
+- [components/](../../src/zephyr/frontend/dashboard/components/)：组件清单见目录（backtest_results / tick_replay / order_book / position_monitor / trade_panel / fitness_functions / gate_statistics / knowledge_overview / olap_trend / task_progress）
 - [chart_factory.py](../../src/zephyr/frontend/dashboard/components/chart_factory.py)：ChartFactory 统一工厂（make_equity / make_drawdown / make_heatmap / make_tick / make_kline）
 
 技术栈：Panel + HoloViz（HoloViews + Datashader + hvPlot）+ Plotly + plotly_resampler + TradingView Lightweight Charts v5.2。已从 Streamlit 切换（旧 app.py 保留为迁移参考）。
@@ -468,7 +468,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 ## 九、src/zephyr/ 域结构速览
 
-38 个一级域，按职能分类：
+一级域（数量见 src/zephyr/ 目录结构，按职能分类）：
 
 ### 9.1 核心业务域
 - **backtest**：回测引擎域（D_BACKTEST）
@@ -491,8 +491,8 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 ### 9.3 治理与基础设施域
 - **governance**：治理域（DOM-GOV-001，治理八件套 + kb + code_dedup + commit_gates + persistence 等 20+ 子目录）
-- **infrastructure**：基础设施（database_service / 14 个 MCP server）
-- **integration**：集成（10 个 MCP server / llm_bridge / mcp_server / ports）
+- **infrastructure**：基础设施（database_service / MCP server 见 infrastructure 目录）
+- **integration**：集成（MCP server 见 integration/mcp 目录 / llm_bridge / mcp_server / ports）
 - **security**：安全（access_control / llm_defense）
 - **compliance**：合规（aisg_sandbox / artifact_scanner / compliance_manager / evidence_pack / merkle_hourly）
 
