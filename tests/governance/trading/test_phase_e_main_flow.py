@@ -486,7 +486,7 @@ class TestPhaseERiskValidation:
     def test_risk_validator_blocks_over_limit_order(self):
         validator = DefaultRiskValidator()
         holdings = {"600519": 0.05, "000858": 0.03}
-        limits = {"max_single_position": 0.10}
+        limits = RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="phase-e", max_single_position=0.10)
 
         violations = validator.validate_order(
             symbol="600036",
@@ -514,7 +514,7 @@ class TestPhaseERiskValidation:
             holdings=holdings,
             market_values=market_values,
             total_nav=1000000.0,
-            limits={"max_single_position": 0.10, "max_gross_leverage": 1.0, "max_drawdown_limit": 0.20},
+            limits=RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="phase-e-port", max_single_position=0.10, max_gross_leverage=1.0, max_drawdown_limit=0.20),
         )
         assert len(violations) > 0
 
@@ -524,7 +524,7 @@ class TestPhaseERiskValidation:
             symbol="600519",
             target_weight=0.01,
             current_holdings={},
-            limits={"max_single_position": 0.10},
+            limits=RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="phase-e-kill", max_single_position=0.10),
         )
         assert len(violations) > 0
 
