@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-06T13:22:41Z'
+generated_at: '2026-07-06T13:36:52Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 153
@@ -994,7 +994,7 @@ files:
   title: 工程治理-文件头部与扩展
   doc_type: ''
   status: ''
-  version: 1.2.0
+  version: 1.2.1
   rule_form: ''
   scope: engineering_header_expansion
   stability: stable
