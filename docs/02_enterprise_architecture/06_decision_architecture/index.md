@@ -11,7 +11,7 @@ ttl: permanent
 
 # 决策流架构（decisiongraph）
 
-> **本目录是决策流图的入口索引**。自动生成的 Mermaid 图表 + Markdown 文档位于 `generated/decisions/`。
+> **自动生成的 Mermaid 图表 + Markdown 文档与本 index.md 同目录**。
 > 三图正交声明见 [AGENTS.md §11](../../../AGENTS.md)。
 
 ## 概述
@@ -22,28 +22,28 @@ ttl: permanent
 |--------|------|------|----------|
 | depgraph | 模块依赖 | "谁依赖谁"（静态） | `02_domain_architecture_docs/` + `generated/domains/` |
 | dataflowgraph | 数据流 | "数据从哪流到哪"（动态） | `05_dataflow_architecture/` + `generated/dataflows/` |
-| **decisiongraph** | **决策流** | **"决策如何产生"（动态）** | **`06_decision_architecture/` + `generated/decisions/`** |
+| **decisiongraph** | **决策流** | **"决策如何产生"（动态）** | **`06_decision_architecture/`（本目录）** |
 
 三图通过 `module_id` 关联：决策节点 → 实现模块（depgraph）→ 数据流作业（dataflowgraph）。
 
-## 自动生成文档（generated/decisions/）
+## 自动生成文档
 
 > **禁止手工编辑**——以下文档由 `generate_decision_diagram.py` 从 PostgreSQL `decision_*` 表 + `decision_graph_model.yaml` 自动生成。
 > 真源：`decision_graph_model.yaml`（YAML 真源）→ `decision_*` 表（DB 缓存）→ 本目录（派生文档）。
 
 | 文档 | 内容 |
 |------|------|
-| [decision_index.md](../generated/decisions/decision_index.md) | 索引（统计 + Track/Layer/Node/Edge 清单） |
-| [decision_overview.mmd](../generated/decisions/decision_overview.mmd) | 全景图（L0-L6 层级 + 四轨并行） |
-| [decision_layers.mmd](../generated/decisions/decision_layers.mmd) | 层级详情图（10 层卡片 + 频率/状态） |
-| [decision_invariants.mmd](../generated/decisions/decision_invariants.mmd) | 不变量图（6 节点类型 + 5 承重墙不变量） |
+| [decision_index.md](decision_index.md) | 索引（统计 + Track/Layer/Node/Edge 清单） |
+| [decision_overview.mmd](decision_overview.mmd) | 全景图（L0-L6 层级 + 四轨并行） |
+| [decision_layers.mmd](decision_layers.mmd) | 层级详情图（10 层卡片 + 频率/状态） |
+| [decision_invariants.mmd](decision_invariants.mmd) | 不变量图（6 节点类型 + 5 承重墙不变量） |
 
 ## 生成器
 
 - **脚本**：[`scripts/governance/d5_architecture/generators/generate_decision_diagram.py`](../../../scripts/governance/d5_architecture/generators/generate_decision_diagram.py)
 - **触发**：手动运行（`python scripts/governance/d5_architecture/generators/generate_decision_diagram.py`）
 - **数据源**：PostgreSQL `decision_tracks` / `decision_layers` / `decision_nodes` / `decision_edges` 表 + `decision_graph_model.yaml`（invariants 真源）
-- **输出**：`docs/02_enterprise_architecture/generated/decisions/`（4 份文档）
+- **输出**：`docs/02_enterprise_architecture/06_decision_architecture/`（4 份文档，本目录）
 
 ## 四轨架构（Four Tracks）
 
