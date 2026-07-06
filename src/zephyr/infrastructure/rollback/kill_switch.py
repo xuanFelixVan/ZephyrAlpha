@@ -55,6 +55,7 @@ class KillSwitchEntry:
     token_used: str
 
 
+# class-name-alias: rollback 3-level (L1/L2/L3) status snapshot dataclass; name shadows canonical zephyr.security.access_control.kill_switch.KillSwitchStatus (MOD-SEC_kill_switch) but exposes different fields (global_killed/skills_killed/sessions_killed vs state/tripped_at/reason). Distinct domain (D_INFRA_RECOVERY) — not a re-export.
 @dataclass
 class KillSwitchStatus:
     global_killed: bool

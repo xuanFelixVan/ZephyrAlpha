@@ -30,6 +30,7 @@ class FuseState:
     manual_reset_needed: bool
 
 
+# class-name-alias: capacity-assurance per-session error-count fuse (DD110); name shadows canonical zephyr.security.access_control.kill_switch.KillSwitch (MOD-SEC_kill_switch) but semantics differ (err threshold vs system-level breaker). Distinct domain (D_INFRA_RUNTIME) — not a re-export.
 class KillSwitch:
     """per-session err>threshold → fuse off. needs manual reset (DD110)."""
 

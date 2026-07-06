@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] deprecated
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -14,6 +14,10 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF_warm_standby | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# [DEPRECATED] legacy trio retirement (audit P2-13 / P2-20).
+#   Replacement: no direct replacement; the rollback core path
+#   (RollbackExecutor + RollbackVerifier) remains the supported API.
+#   Scheduled for removal in a future release.
 
 """
 WarmStandby — 温备热切（git worktree 副本维护）。
@@ -34,11 +38,20 @@ logger = logging.getLogger(__name__)
 import json
 import subprocess
 import time
+import warnings
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
 from zephyr.shared.io.serialization import filter_dataclass_fields
+
+warnings.warn(
+    "zephyr.infrastructure.rollback.warm_standby is deprecated (legacy trio "
+    "retirement, audit P2-13/P2-20). No direct replacement; use the rollback "
+    "core path (RollbackExecutor/RollbackVerifier).",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 
 @dataclass

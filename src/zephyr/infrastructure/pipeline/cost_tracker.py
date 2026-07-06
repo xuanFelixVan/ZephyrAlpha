@@ -40,6 +40,7 @@ from zephyr.infrastructure.pipeline.models import CostRecord
 __all__ = ["CostTracker"]
 
 
+# class-name-alias: Pipeline LLM 调用成本追踪器（SRC-0025），内存态，区别于 infrastructure/cost_tracker.py 的 SQLite 持久化成本追踪器
 class CostTracker:
     """LLM 调用成本追踪器。
 

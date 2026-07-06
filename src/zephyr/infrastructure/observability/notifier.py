@@ -133,3 +133,28 @@ class Notifier:
             f"Reason: {reason}",
             task_id=task_id,
         )
+
+    _subscribed: bool = False
+
+    def subscribe_eventbus(self) -> None:
+        """事件驱动订阅——pipeline_failed/kill_switch_triggered 自动通知 Owner（永久系统四要素：自动触发）。"""
+        if self._subscribed:
+            return
+        from zephyr.shared.events.event_bus import bus
+
+        notifier = self
+
+        def _on_pipeline_failed(payload: object) -> None:
+            data = payload if isinstance(payload, dict) else {}
+            task_id = str(data.get("task_id", ""))
+            error = str(data.get("error", "pipeline failed"))
+            notifier.notify_failure(task_id, error)
+
+        def _on_kill_switch_triggered(payload: object) -> None:
+            data = payload if isinstance(payload, dict) else {}
+            reason = str(data.get("reason", "kill switch triggered"))
+            notifier.notify_owner_attention("kill_switch", reason)
+
+        bus.subscribe("pipeline_failed", _on_pipeline_failed)
+        bus.subscribe("kill_switch_triggered", _on_kill_switch_triggered)
+        self._subscribed = True

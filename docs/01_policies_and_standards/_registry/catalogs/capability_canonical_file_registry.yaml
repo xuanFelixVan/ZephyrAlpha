@@ -3396,6 +3396,12 @@ creation_tokens:
     created_by: "session-sess-44448-20260706204224"
     capability: "event_bus"
 
+  # --- SLA target YAML化（2026-07-06 AI-14 审计修复 P3-24，SLA RTO/RPO 目标从硬编码改为 YAML SSoT）---
+  - file: "config/sla_targets.yaml"
+    token: "auto-sla-targets-yaml-20260706"
+    created_by: "session-sess-42456-20260706211542"
+    capability: "sla_targets_config"
+
   # --- 因子信号域（2026-07-06 AI-08 审计修复，DegradationMonitorBase 域边界迁移）---
   - file: "src/zephyr/signal_quality/degradation_monitor_base.py"
     token: "auto-degradation-monitor-base-20260706"

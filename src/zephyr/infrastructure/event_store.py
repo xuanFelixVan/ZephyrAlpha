@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF_event_store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF_audit_event_store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -119,6 +119,7 @@ class StoredEvent:
         )
 
 
+# class-name-alias: 审计日志事件存储（RI-13），区别于 events/event_store.py 的任务领域事件存储（JSONL）
 class EventStore:
     """事件存储——基于 SQLite 的不可篡改审计日志
 

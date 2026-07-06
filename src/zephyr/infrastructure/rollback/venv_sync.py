@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] deprecated
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -14,6 +14,10 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF_venv_sync | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# [DEPRECATED] legacy trio retirement (audit P2-13 / P2-20).
+#   Replacement: no direct replacement; the rollback core path
+#   (RollbackExecutor + RollbackVerifier) remains the supported API.
+#   Scheduled for removal in a future release.
 
 """
 VenvSync — venv/conda 版本同步保障。
@@ -28,8 +32,17 @@ pip freeze 保存回滚前后的依赖快照用于差异审计。
 from __future__ import annotations
 
 import subprocess
+import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
+
+warnings.warn(
+    "zephyr.infrastructure.rollback.venv_sync is deprecated (legacy trio "
+    "retirement, audit P2-13/P2-20). No direct replacement; use the rollback "
+    "core path (RollbackExecutor/RollbackVerifier).",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 
 @dataclass
