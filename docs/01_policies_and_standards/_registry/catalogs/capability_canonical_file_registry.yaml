@@ -3989,6 +3989,12 @@ creation_tokens:
     created_by: "session-sess-37316-20260706155138"
     capability: "rule_registry_collection_registry"
 
+  # --- API 契约注册表（ARCH-053: 补齐 API 契约层，对标 Backstage API kind）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml"
+    token: "auto-interface-contract-registry-20260706"
+    created_by: "session-sess-9032-20260706163221"
+    capability: "interface_contract_registry"
+
 # ============================================================================
 # 维护日志
 # ============================================================================
