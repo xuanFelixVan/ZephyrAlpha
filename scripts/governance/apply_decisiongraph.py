@@ -88,6 +88,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from psycopg2.extras import RealDictCursor
+
 from zephyr.shared.io.paths import REPO_ROOT
 
 _THIS_FILE = Path(__file__).resolve()
@@ -146,12 +148,12 @@ def _get_supported_ops() -> set[str]:
 @contextlib.contextmanager
 def _db_write_lock(conn):
     """获取 decisiongraph pg_advisory_lock（对标 apply_depgraph.py _db_write_lock）。"""
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("SELECT pg_advisory_lock(%s)", (_DECISIONGRAPH_LOCK_KEY,))
     try:
         yield
     finally:
-        with conn.cursor() as cur:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute("SELECT pg_advisory_unlock(%s)", (_DECISIONGRAPH_LOCK_KEY,))
 
 
@@ -213,7 +215,7 @@ def _check_invariants_on_add_edge(
     返回违规列表（空列表=通过）。
     """
     violations: list[str] = []
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         # DEC-INV-002: signal 节点不能直接连 order 节点
         cur.execute(
             """
@@ -242,7 +244,7 @@ def _check_invariants_post_add_edge(
     返回违规列表（空列表=通过）。
     """
     violations: list[str] = []
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(
             "SELECT node_type FROM decision_nodes WHERE node_id = %s",
             (to_node_id,),
@@ -319,7 +321,7 @@ def op_add_design_node(
         "design_maturity": "design",
     }
 
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(
             "SELECT layer_id FROM decision_layers WHERE layer_id = %s",
             (layer_id,),
@@ -364,7 +366,7 @@ def op_transition_build_status(
     if to not in _BUILD_STATUS_ORDER:
         raise ValueError(f"target build_status '{to}' 不合法")
 
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(
             "SELECT build_status FROM decision_nodes WHERE node_id = %s",
             (node_id,),
@@ -394,7 +396,7 @@ def op_transition_build_status(
 
 def op_remove_design_node(conn, *, node_id: int, dry_run: bool = False) -> dict:
     """删除设计态节点（仅当 status=planned 时允许，对标 apply_depgraph.py）。"""
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(
             "SELECT build_status, path FROM decision_nodes WHERE node_id = %s",
             (node_id,),
@@ -454,7 +456,7 @@ def op_update_node_field(
     _JSONB_FIELDS = {"inputs", "outputs", "conditions", "facets"}
     db_value = json.dumps(value, ensure_ascii=False) if field in _JSONB_FIELDS else value
 
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(
             "SELECT 1 FROM decision_nodes WHERE node_id = %s", (node_id,)
         )
@@ -514,7 +516,7 @@ def op_add_edge(
         "evidence_bundle": json.dumps(evidence_bundle, ensure_ascii=False) if evidence_bundle else None,
     }
 
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         if dry_run:
             print(f"[DRY-RUN] INSERT edge {from_node_id} → {to_node_id} ({edge_type})")
         else:
@@ -547,7 +549,7 @@ def op_add_edge(
 
 def op_remove_edge(conn, *, edge_id: int, dry_run: bool = False) -> dict:
     """删除决策边。"""
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("SELECT 1 FROM decision_edges WHERE edge_id = %s", (edge_id,))
         if cur.fetchone() is None:
             raise ValueError(f"edge_id {edge_id} 不存在")
