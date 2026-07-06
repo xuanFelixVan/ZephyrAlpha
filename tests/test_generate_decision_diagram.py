@@ -436,9 +436,15 @@ class TestGenIndexMd:
         assert "## Node 清单" not in md
         assert "## Edge 清单" not in md
 
-    def test_contains_mermaid_links(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """md 包含 3 个 Mermaid 图表链接。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "decision_overview.mmd" in md
-        assert "decision_layers.mmd" in md
-        assert "decision_invariants.mmd" in md
+    def test_contains_embedded_mermaid_blocks(self, sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants):
+        """md 包含 3 个内嵌 ```mermaid 代码块（替代 .mmd 文件链接）。"""
+        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants)
+        # 3 个 ```mermaid 开场标记（每个代码块一个）
+        assert md.count("```mermaid") == 3
+        # 不再生成 .mmd 文件链接
+        assert "decision_overview.mmd" not in md
+        assert "decision_layers.mmd" not in md
+        assert "decision_invariants.mmd" not in md
+        # 内嵌的 Mermaid 图表内容应存在
+        assert "flowchart TD" in md  # overview + invariants
+        assert "flowchart LR" in md  # layers

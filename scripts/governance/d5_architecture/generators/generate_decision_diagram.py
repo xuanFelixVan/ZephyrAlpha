@@ -13,21 +13,20 @@
 # [ERROR_CONTRACT] decisiongraph不存在→exit 1;无tracks/layers→exit 2
 # [TESTS] tests/test_generate_decision_diagram.py
 # [TTL] permanent
-"""G-decision: 从 decisiongraph (PostgreSQL) 生成决策流图(.mmd Mermaid格式 + .md 文档)
+"""G-decision: 从 decisiongraph (PostgreSQL) 生成决策流图(.md 文档，Mermaid 内嵌)
 
 依据：TRAE-061 任务（2026-07-06）
 
 功能：
   - 从 decision_tracks / decision_layers / decision_nodes / decision_edges 表读取决策流图
   - 从 decision_graph_model.yaml 读取 invariants 定义（5 条承重墙不变量）
-  - 生成 Mermaid 图表（flowchart TD/LR）
+  - 生成 Mermaid 图表并内嵌在 Markdown ```mermaid 代码块中（与
+    02_domain_architecture_docs/ 模式一致，避免单独 .mmd 文件在查看器
+    中无法渲染为图表的问题）
   - 输出到 docs/02_enterprise_architecture/06_decision_architecture/
 
 输出文件：
-  - decision_overview.mmd          全景图（L0-L6 层级 + 四轨并行 + 节点/边）
-  - decision_layers.mmd            层级详情图（10 层卡片 + 频率/成熟度/状态）
-  - decision_invariants.mmd        不变量图（6 节点类型 + 5 不变量 + 合法/非法连接）
-  - decision_index.md              索引文档（含统计+图嵌入+tracks/layers 清单）
+  - decision_index.md              索引文档（含统计 + 3 个内嵌 Mermaid 图表 + tracks/layers 清单）
 
 用法
 ----
@@ -279,9 +278,23 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
 
 
 def _gen_index_md(
-    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict]
+    tracks: list[dict],
+    layers: list[dict],
+    nodes: list[dict],
+    edges: list[dict],
+    invariants: list[dict] | None = None,
 ) -> str:
-    """生成索引文档（含统计+图嵌入+tracks/layers 清单）。"""
+    """生成索引文档（含统计 + 内嵌 Mermaid 图表 + tracks/layers 清单）。
+
+    Mermaid 图表通过 ```mermaid 代码块内嵌在 .md 中，与
+    02_domain_architecture_docs/ 模式一致——避免单独 .mmd 文件在 Markdown
+    查看器中无法渲染为图表的问题。
+    """
+    invariants = invariants or []
+    overview_mmd, t_count, l_count, e_count = _gen_overview_mmd(tracks, layers, nodes, edges)
+    layers_mmd = _gen_layers_mmd(tracks, layers)
+    invariants_mmd = _gen_invariants_mmd(invariants)
+
     lines = [
         "# 决策流图（decisiongraph）索引",
         "",
@@ -308,14 +321,25 @@ def _gen_index_md(
         "",
         "## Mermaid 图表",
         "",
+        "> 以下图表通过 Mermaid 代码块内嵌，可直接在 Markdown 查看器中渲染。",
+        "",
         "### 全景图（L0-L6 层级 + 四轨并行）",
-        "- [decision_overview.mmd](decision_overview.mmd)",
+        "",
+        "```mermaid",
+        overview_mmd.rstrip("\n"),
+        "```",
         "",
         "### 层级详情图（10 层卡片 + 频率/状态）",
-        "- [decision_layers.mmd](decision_layers.mmd)",
+        "",
+        "```mermaid",
+        layers_mmd.rstrip("\n"),
+        "```",
         "",
         "### 不变量图（6 节点类型 + 5 承重墙不变量）",
-        "- [decision_invariants.mmd](decision_invariants.mmd)",
+        "",
+        "```mermaid",
+        invariants_mmd.rstrip("\n"),
+        "```",
         "",
         "## Track 清单（四轨）",
         "",
@@ -401,25 +425,13 @@ def main() -> int:
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # 生成全景图
-    overview_mmd, t_count, l_count, e_count = _gen_overview_mmd(tracks, layers, nodes, edges)
-    (out_dir / "decision_overview.mmd").write_text(overview_mmd, encoding="utf-8")
-    print(f"[OK] 生成 decision_overview.mmd ({t_count} tracks, {l_count} layers, {len(nodes)} nodes, {e_count} edges)")
-
-    # 生成层级详情图
-    layers_mmd = _gen_layers_mmd(tracks, layers)
-    (out_dir / "decision_layers.mmd").write_text(layers_mmd, encoding="utf-8")
-    print(f"[OK] 生成 decision_layers.mmd ({l_count} layers)")
-
-    # 生成不变量图
-    invariants_mmd = _gen_invariants_mmd(invariants)
-    (out_dir / "decision_invariants.mmd").write_text(invariants_mmd, encoding="utf-8")
-    print(f"[OK] 生成 decision_invariants.mmd ({len(invariants)} invariants)")
-
-    # 生成索引文档
-    md = _gen_index_md(tracks, layers, nodes, edges)
+    # 生成索引文档（Mermaid 图表内嵌在 .md 中，不再生成独立 .mmd 文件）
+    md = _gen_index_md(tracks, layers, nodes, edges, invariants)
     (out_dir / "decision_index.md").write_text(md, encoding="utf-8")
-    print(f"[OK] 生成 decision_index.md")
+    print(
+        f"[OK] 生成 decision_index.md ({len(tracks)} tracks, {len(layers)} layers, "
+        f"{len(nodes)} nodes, {len(edges)} edges, {len(invariants)} invariants)"
+    )
 
     print(f"\n输出目录: {out_dir}")
     return 0
