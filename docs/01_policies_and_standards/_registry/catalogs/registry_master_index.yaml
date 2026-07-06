@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-06T10:14:08Z
+# 自动生成于 2026-07-06T10:21:41Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-06T10:14:08Z'
+generated_at: '2026-07-06T10:21:41Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 26
@@ -149,7 +149,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 0
+  entry_count: 5
   status: active
 - registry_id: CFG-knowledge-article-registry
   name: 知识条目登记表
