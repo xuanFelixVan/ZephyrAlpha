@@ -488,6 +488,7 @@ class IntegratorScheduler:
                     args=[sched_name],
                     id=sched_name,
                     executor=executor,
+                    replace_existing=True,  # 重启时覆盖残留 job（SQLAlchemyJobStore 持久化）
                     **cron_kwargs,
                 )
                 log.info("已注册调度: %s cron=%s executor=%s", sched_name, cron_expr, executor)
