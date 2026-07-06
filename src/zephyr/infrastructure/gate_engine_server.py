@@ -372,7 +372,7 @@ class GateEngineServer(BaseMCPServer):
         try:
             date.fromisoformat(valid_until)
         except ValueError as exc:
-            raise MCPError(-32602, f"valid_until 格式无效（期望 YYYY-MM-DD）: {exc}") from exc
+            raise MCPError(-32602, "valid_until 格式无效（期望 YYYY-MM-DD）") from exc
 
         exemption_id = f"EX-{check_id}-{uuid.uuid4().hex[:8].upper()}"
         self._exemptions[exemption_id] = {

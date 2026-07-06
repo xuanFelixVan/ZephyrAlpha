@@ -202,7 +202,7 @@ class MetricsBridge:
             return len(metrics)
         except Exception as exc:
             conn.rollback()
-            raise TelemetryWriteError(f"emit_metrics 失败: {exc}") from exc
+            raise TelemetryWriteError("emit_metrics 失败") from exc
         finally:
             conn.close()
 

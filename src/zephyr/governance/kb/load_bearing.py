@@ -157,7 +157,7 @@ class LoadBearingWall:
             fid = fm.get("module_id") or fm.get("ke_id") or ke_file.stem
             if fid == ke_id:
                 if not force and fm.get("is_load_bearing"):
-                    raise ValueError(f"KE {ke_id} is already load-bearing. Use force=True to re-register.")
+                    raise ValueError(f"KE {ke_id} 已标记为承重，如需重新注册请使用强制模式")
                 if isinstance(fm, dict):
                     fm["is_load_bearing"] = True
                     fm["load_bearing_since"] = datetime.now(UTC).isoformat()

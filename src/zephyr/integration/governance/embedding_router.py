@@ -163,7 +163,7 @@ class EmbeddingRouter:
                 if self._bge_m3_dim > 0 and not np.any(np.isnan(vec)):
                     _logger.info("EmbeddingRouter: BGE-M3 预热成功 (%dd, backend=%s)", self._bge_m3_dim, self._backend)
                 else:
-                    raise ValueError("输出维度异常")
+                    raise ValueError(f"输出维度异常: dim={self._bge_m3_dim}, 期望>0")
             except Exception:
                 _logger.warning("EmbeddingRouter: BGE-M3 预热失败，降级", exc_info=True)
                 self._bge_m3_available = False
@@ -177,7 +177,7 @@ class EmbeddingRouter:
                         "EmbeddingRouter: bge-small 预热成功 (%dd, backend=%s)", self._bge_small_dim, self._backend
                     )
                 else:
-                    raise ValueError("输出维度异常")
+                    raise ValueError(f"输出维度异常: dim={self._bge_small_dim}, 期望>0")
             except Exception:
                 _logger.warning("EmbeddingRouter: bge-small 预热失败", exc_info=True)
                 self._bge_small_available = False
