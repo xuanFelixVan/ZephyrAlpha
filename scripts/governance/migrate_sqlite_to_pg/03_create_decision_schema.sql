@@ -193,3 +193,40 @@ VALUES
 ON CONFLICT (layer_id) DO UPDATE SET
     module_id = EXCLUDED.module_id,
     source_code_ref = EXCLUDED.source_code_ref;
+
+-- ========== 9. 设计态保护触发器（ARCH-053，2026-07-06） ==========
+-- 防止 sync/generator 覆盖或降级设计态节点
+-- 逃生通道：SET app.allow_design_maturity_delete = on（仅 apply_decisiongraph.py 设计态写入命令启用）
+-- 对齐 depgraph.protect_depgraph_design_edges 模式（裁定#203 + #ARCH-053）
+CREATE OR REPLACE FUNCTION protect_decision_design_maturity()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_allow TEXT;
+BEGIN
+    SHOW app.allow_design_maturity_delete INTO v_allow;
+    IF v_allow = 'on' THEN
+        RETURN COALESCE(NEW, OLD);
+    END IF;
+    IF TG_OP = 'DELETE' AND OLD.design_maturity = 'design' THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design 态 decision 行（表=%, id=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, COALESCE(OLD.layer_id, OLD.node_id::TEXT, OLD.edge_id::TEXT);
+    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity = 'design' AND NEW.design_maturity IS DISTINCT FROM 'design' THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design 态 decision 行降级（表=%, id=%, design→%）', TG_TABLE_NAME, COALESCE(OLD.layer_id, OLD.node_id::TEXT, OLD.edge_id::TEXT), NEW.design_maturity;
+    END IF;
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_protect_decision_design_layers ON decision_layers;
+CREATE TRIGGER trg_protect_decision_design_layers
+    BEFORE DELETE OR UPDATE ON decision_layers
+    FOR EACH ROW EXECUTE FUNCTION protect_decision_design_maturity();
+
+DROP TRIGGER IF EXISTS trg_protect_decision_design_nodes ON decision_nodes;
+CREATE TRIGGER trg_protect_decision_design_nodes
+    BEFORE DELETE OR UPDATE ON decision_nodes
+    FOR EACH ROW EXECUTE FUNCTION protect_decision_design_maturity();
+
+DROP TRIGGER IF EXISTS trg_protect_decision_design_edges ON decision_edges;
+CREATE TRIGGER trg_protect_decision_design_edges
+    BEFORE DELETE OR UPDATE ON decision_edges
+    FOR EACH ROW EXECUTE FUNCTION protect_decision_design_maturity();

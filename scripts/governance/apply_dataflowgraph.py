@@ -101,7 +101,7 @@ def _parse_kv_pairs(pairs: list[str] | None) -> dict[str, str]:
 def cmd_add_design_dataset(args: argparse.Namespace) -> int:
     """新增设计态 Dataset 节点。"""
     init_dataflow_db()
-    conn = get_dataflowgraph_pg_connection(autocommit=False)
+    conn = get_dataflowgraph_pg_connection(autocommit=False, allow_design_delete=True)  # ARCH-053: 允许设计态写入
     try:
         acquire_dataflow_write_lock(conn)
         with conn.cursor() as cur:
@@ -144,7 +144,7 @@ def cmd_add_design_dataset(args: argparse.Namespace) -> int:
 def cmd_add_design_job(args: argparse.Namespace) -> int:
     """新增设计态 Job 节点。"""
     init_dataflow_db()
-    conn = get_dataflowgraph_pg_connection(autocommit=False)
+    conn = get_dataflowgraph_pg_connection(autocommit=False, allow_design_delete=True)  # ARCH-053: 允许设计态写入
     try:
         acquire_dataflow_write_lock(conn)
         with conn.cursor() as cur:
@@ -183,7 +183,7 @@ def cmd_add_design_job(args: argparse.Namespace) -> int:
 def cmd_add_design_edge(args: argparse.Namespace) -> int:
     """新增设计态数据流边。"""
     init_dataflow_db()
-    conn = get_dataflowgraph_pg_connection(autocommit=False)
+    conn = get_dataflowgraph_pg_connection(autocommit=False, allow_design_delete=True)  # ARCH-053: 允许设计态写入
     try:
         acquire_dataflow_write_lock(conn)
         with conn.cursor() as cur:
@@ -224,7 +224,7 @@ def cmd_transition_build_status(args: argparse.Namespace) -> int:
     门禁。非法值由 DB CHECK 约束拒绝，错误信息含合法值清单。
     """
     init_dataflow_db()
-    conn = get_dataflowgraph_pg_connection(autocommit=False)
+    conn = get_dataflowgraph_pg_connection(autocommit=False, allow_design_delete=True)  # ARCH-053: 允许设计态写入
     try:
         acquire_dataflow_write_lock(conn)
         with conn.cursor() as cur:

@@ -10,7 +10,7 @@ tier: tier_1_governance
 status: active
 version: 1.2.0
 created: '2026-06-26'
-last_updated: '2026-07-05'
+last_updated: '2026-07-06'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -1460,5 +1460,51 @@ entries:
     - Phase 4：其他 4 个超容域治理
     - Phase 5：验证与重生（50 个域文档）
   fix_phase: Phase 1-5 逐步实施
+  created: '2026-07-06'
+  last_updated: '2026-07-06'
+
+# --- #ARCH-053: 三图设计态保护机制 + 对齐检测器（depgraph/dataflow/decision） ---
+- issue_id: '#ARCH-053'
+  title: 三图设计态保护机制 + 对齐检测器（depgraph/dataflow/decision）
+  category: architecture_governance
+  severity: P1高
+  status: decided
+  description: |
+    三大全景图（depgraph/dataflow/decision）均引入 design_maturity 三态机制
+    （design/prototype/production），但只有 depgraph 有 DELETE/UPDATE 触发器保护
+    design 态节点。dataflowgraph 和 decisiongraph 的设计态节点可被 sync 工具覆盖
+    或删除（如 sync_dataflow_registry 批量同步会覆盖设计态节点）。
+    此外，三图设计态分布不一致（如某模块在 depgraph 是 design 但 dataflow 中
+    无对应记录），缺乏自动检测机制。
+    裁定：建立三图设计态保护机制 + 三图对齐检测器。
+  adjudication: |
+    5 项架构裁定：
+    (a) dataflowgraph 新增 3 个触发器（trg_protect_dataflow_design_datasets/
+        jobs/edges），阻断 design 态行的 DELETE/UPDATE 降级，对齐 depgraph 模式
+    (b) decisiongraph 新增 3 个触发器（trg_protect_decision_design_layers/
+        nodes/edges），阻断 design 态行的 DELETE/UPDATE 降级
+    (c) 新增 session 变量 app.allow_design_maturity_delete = on 作为逃生通道
+        （对齐 depgraph app.allow_delete_apply_depgraph_edges 模式）
+    (d) get_dataflowgraph_pg_connection / get_decisiongraph_pg_connection 新增
+        allow_design_delete 参数；apply_dataflowgraph.py / apply_decisiongraph.py
+        设计态写入命令显式传 allow_design_delete=True
+    (e) 新建 align_panoramas.py 三图对齐检测器，输出报告到
+        docs/02_enterprise_architecture/generated/panorama_alignment_report.md
+        检测四类问题：孤儿（仅一图）/状态漂移（design_maturity 不一致）/
+        域不一致（domain_id 不一致）/设计态孤立（design 仅一图）
+    设计原则：
+    - 逃生通道模式对齐 depgraph.app.allow_delete_apply_depgraph_edges
+    - 触发器函数 protect_dataflow_design_maturity / protect_decision_design_maturity
+      复用相同逻辑（仅 OLD.design_maturity='design' 触发）
+    - 检测器是只读工具（不自动修复），由人工或后续工具根据报告处理
+    - module_id 作为三图对齐 key（depgraph 用 blueprint_id，dataflow/decision
+      用 module_id 字段）
+  fix_phase: |
+    Phase 1: apply_dataflowgraph.py 加入 GATE-ARCH-DIAGRAM _PG_WRITE_SCRIPTS
+    Phase 2: 6 触发器 + 2 schema 函数 allow_design_delete + 2 apply 脚本改造
+    Phase 3: align_panoramas.py 检测器（466 行，输出 panorama_alignment_report.md）
+    Phase 4: ARCH-053 登记 + capability 登记（panorama_alignment_detection /
+             design_maturity_trigger_protection）
+  related_adjudication: '#203'
   created: '2026-07-06'
   last_updated: '2026-07-06'

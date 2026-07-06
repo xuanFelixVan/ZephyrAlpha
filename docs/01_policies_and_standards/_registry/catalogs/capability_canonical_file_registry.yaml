@@ -624,6 +624,42 @@ capabilities:
       与 generate_constraint_violations.py（只读展示层）职责分离：检测器写 PG，生成器读 PG。
 
   # --------------------------------------------------------------------------
+  - capability_id: panorama_alignment_detection
+    aliases:
+      - align_panoramas
+      - panorama_alignment
+      - three_panoramas_alignment
+      - ARCH-053
+      - design_maturity_alignment
+    description: >-
+      三图对齐检测器（ARCH-053）。从 PostgreSQL 读取 depgraph.nodes /
+      dataflow_datasets+jobs / decision_nodes+layers 三图节点，用 module_id
+      作为对齐 key（depgraph 用 blueprint_id 派生），检测 4 类问题：
+      孤儿（仅一图存在）/ 状态漂移（design_maturity 不一致）/
+      域不一致（domain_id 不一致）/ 设计态孤立（design 仅一图）。
+      输出报告到 docs/02_enterprise_architecture/generated/panorama_alignment_report.md。
+      定位：只读检测器（不自动修复），由人工或后续工具根据报告处理。
+      canonical = scripts/governance/d5_architecture/generators/align_panoramas.py。
+
+  # --------------------------------------------------------------------------
+  - capability_id: design_maturity_trigger_protection
+    aliases:
+      - protect_design_maturity
+      - design_maturity_delete_protection
+      - allow_design_maturity_delete
+      - ARCH-053-trigger
+    description: >-
+      设计态 PG 触发器保护机制（ARCH-053）。在 dataflowgraph（3 表：datasets/
+      jobs/edges）和 decisiongraph（3 表：layers/nodes/edges）共 6 张表上
+      新增 BEFORE DELETE OR UPDATE 触发器，阻断 design_maturity='design' 行的
+      删除或降级（design → 非 design）。
+      逃生通道：SET app.allow_design_maturity_delete = on（仅 apply_dataflowgraph.py
+      和 apply_decisiongraph.py 设计态写入命令启用）。
+      对齐 depgraph.protect_depgraph_design_edges 模式（裁定#203）。
+      canonical = scripts/governance/migrate_sqlite_to_pg/03_create_dataflow_schema.sql
+      + 03_create_decision_schema.sql（触发器 DDL）。
+
+  # --------------------------------------------------------------------------
   - capability_id: rule_catalog_generation
     aliases:
       - generate_rule_catalog
@@ -3926,6 +3962,14 @@ creation_tokens:
     token: "auto-detect-constraint-violations-20260706"
     created_by: "session-sess-36064-20260706152518"
     capability: "constraint_violation_detector"
+
+  # --- ARCH-053 三图设计态保护 + 对齐检测器（2026-07-06）---
+  # align_panoramas.py：三图对齐检测器（只读），输出 panorama_alignment_report.md
+  # 检测 4 类问题：孤儿/状态漂移/域不一致/设计态孤立
+  - file: "scripts/governance/d5_architecture/generators/align_panoramas.py"
+    token: "auto-align-panoramas-20260706"
+    created_by: "session-sess-41912-20260706173706"
+    capability: "panorama_alignment_detection"
 
   # --- ARCH-052: 聚合节点 SSoT 指针 registry（gate_rule_set/script_collection/test_suite/rule_registry_collection 聚合节点展开用）---
   - file: "docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml"

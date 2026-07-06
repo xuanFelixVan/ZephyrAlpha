@@ -3368,6 +3368,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
     _PG_WRITE_SCRIPTS = (
         "scripts/governance/apply_depgraph.py",
         "scripts/governance/apply_decisiongraph.py",  # decisiongraph DB 写入入口（节点/边增删改）
+        "scripts/governance/apply_dataflowgraph.py",  # dataflowgraph DB 写入入口 #ARCH-053
         "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py",
         "scripts/governance/generate_project_path_tree.py",
         "scripts/governance/generate_decision_graph.py",  # decisiongraph sync 入口
