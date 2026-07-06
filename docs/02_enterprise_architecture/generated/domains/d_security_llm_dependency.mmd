@@ -1,5 +1,5 @@
 %% D_SECURITY_LLM 域全景依赖图
-%% 生成时间: 2026-07-06 18:27:08
+%% 生成时间: 2026-07-06 18:29:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 44, 依赖边数: 123
 
@@ -73,17 +73,17 @@ graph TD
     src_zephyr_security_llm_defens___m_security_dashboard_app_py -->|import_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
     src_zephyr_security_llm_defens___m_security_dashboard_app_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defens___m_security_dashboard_app_py -->|import_depends| src_zephyr_security_llm_defens___self_protection___init___py
-    src_zephyr_security_llm_defens___security_layers_l1_input_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defens___ers_l2_prompt_protection_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defens___yers_l2a_process_sandbox_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security___init___py -->|import_depends| src_zephyr_security_llm_defens___ty_behavior_audit_logger_py
     src_zephyr_security_llm_defense_llm_security___init___py -->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     src_zephyr_security_llm_defense_llm_security___init___py -->|import_depends| src_zephyr_security_llm_defens___security_input_sanitizer_py
     src_zephyr_security_llm_defense_llm_security___init___py -->|import_depends| src_zephyr_security_llm_defens___security_process_sandbox_py
     src_zephyr_security_llm_defense_llm_security___init___py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defens___security_layers_l1_input_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defens___y_layers_l0_supply_chain_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defens___yers_l2a_process_sandbox_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defens___security_layers_l4_agent_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defens___ecurity_layers_l3_output_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defens___ers_l2_prompt_protection_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defens___security_layers_l4_agent_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defens___s_l5_resource_protection_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defens____layers_l6_observability_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defens___ty_layers_l8_multi_agent_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
@@ -96,11 +96,11 @@ graph TD
     src_zephyr_security_llm_defens___urity_dashboard___init___py -->|config_depends| src_zephyr_security_llm_defens___m_security_dashboard_app_py
     src_zephyr_security_llm_defens___rity_layers_l6_data_flow_py -->|config_depends| src_zephyr_security_llm_defens___security_layers___init___py
     src_zephyr_security_llm_defens___ity_layers_l8_compliance_py -->|config_depends| src_zephyr_security_llm_defens___security_layers___init___py
-    src_zephyr_security_llm_defens___curity_red_team_corpus_yaml -->|config_depends| src_zephyr_security_llm_defense_llm_security___init___py
-    src_zephyr_security_llm_defens___ads_injection_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
     src_zephyr_security_llm_defens___ads_leak_probe_phrases_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
-    src_zephyr_security_llm_defens___ads_tool_call_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
+    src_zephyr_security_llm_defens___ads_injection_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
+    src_zephyr_security_llm_defens___curity_red_team_corpus_yaml -->|config_depends| src_zephyr_security_llm_defense_llm_security___init___py
     src_zephyr_security_llm_defens___oads_red_team_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
+    src_zephyr_security_llm_defens___ads_tool_call_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_SECURITY_LLM (41 条)
@@ -114,37 +114,37 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___ty_behavior_audit_logger_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___rotection_code_integrity_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___security_input_sanitizer_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___terns_injection_patterns_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___security_input_sanitizer_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___terns_injection_patterns_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___elf_protection_isolation_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___y_layers_l0_supply_chain_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___security_layers_l1_input_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___yers_l2a_process_sandbox_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___ecurity_layers_l3_output_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___y_layers_l0_supply_chain_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___yers_l2a_process_sandbox_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___ers_l2_prompt_protection_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___security_layers_l4_agent_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___protection_l7_validation_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___s_l5_resource_protection_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens____layers_l6_observability_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___ecurity_layers_l3_output_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defens___ty_layers_l8_multi_agent_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     %% D_AUTONOMY_CORE -> D_SECURITY_LLM (2 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_security_llm_defens___y_adversarial_robustness_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_security_llm_defens___m_security_dashboard_app_py
     %% D_GOVERNANCE -> D_SECURITY_LLM (7 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_security_llm_defens___security_input_sanitizer_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_security_llm_defense_llm_security___init___py
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_security_llm_defens___y_adversarial_robustness_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_security_llm_defens___y_adversarial_robustness_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_security_llm_defens___m_security_dashboard_app_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_security_llm_defens___m_security_dashboard_app_py
     %% D_INTEGRATION -> D_SECURITY_LLM (1 条)
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     %% D_INTEGRATION_GATEWAY -> D_SECURITY_LLM (2 条)
@@ -162,15 +162,15 @@ graph TD
     src_zephyr_security_llm_defens___elf_protection_isolation_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_SECURITY_LLM -> D_SHARED (17 条)
     src_zephyr_security_llm_defens___ty_behavior_audit_logger_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defense_llm_security_protocol_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___security_process_sandbox_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defense_llm_security_protocol_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___m_security_dashboard_app_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___ers_l2_prompt_protection_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___yers_l2a_process_sandbox_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___security_layers_l1_input_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___y_layers_l0_supply_chain_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___yers_l2a_process_sandbox_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___security_layers_l4_agent_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___ecurity_layers_l3_output_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___ers_l2_prompt_protection_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___security_layers_l4_agent_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___s_l5_resource_protection_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens____layers_l6_observability_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___ty_layers_l8_multi_agent_py -->|import_depends| D_SHARED[D_SHARED]
