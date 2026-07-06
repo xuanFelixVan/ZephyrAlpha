@@ -90,13 +90,14 @@ def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list
 
         cur.execute("""
             SELECT node_id, layer_id, node_type, path, module_id, decision_name,
-                   build_status, evidence_hash
+                   build_status, design_maturity, evidence_hash
             FROM decision_nodes ORDER BY layer_id, node_id
         """)
         nodes = [
             {
                 "id": r[0], "layer_id": r[1], "type": r[2], "path": r[3],
-                "module_id": r[4], "name": r[5], "build": r[6], "hash": r[7],
+                "module_id": r[4], "name": r[5], "build": r[6],
+                "maturity": r[7], "hash": r[8],
             }
             for r in cur.fetchall()
         ]
@@ -134,10 +135,40 @@ def _build_status_color(build: str) -> str:
     }.get(build, "bsGenerated")
 
 
+def _maturity_tag(maturity: str | None) -> str:
+    """design_maturity → 标注标签，对标 depgraph generate_domain_dependency_diagram.py。
+
+    返回值用于 Mermaid 节点 label 前缀，区分设计态/运营态：
+    - production → [production]
+    - design     → [design]
+    - prototype  → [prototype]
+    - 空/未知    → 空字符串
+    """
+    if not maturity:
+        return ""
+    return f"[{maturity}]"
+
+
 def _gen_overview_mmd(
-    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict]
+    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
+    production_only: bool = False,
 ) -> tuple[str, int, int, int]:
-    """生成全景图：L0-L6 层级 + 四轨并行 subgraph + 节点/边。"""
+    """生成全景图：L0-L6 层级 + 四轨并行 subgraph + 节点/边。
+
+    Args:
+        production_only: True 时仅生成运营态（design_maturity='production'）的
+            layer/node，对标 depgraph 的运营态全景图。False（默认）生成全部，
+            并在节点标签上标注 [design]/[production] 区分设计态/运营态。
+    """
+    # 过滤运营态子集
+    if production_only:
+        layers = [l for l in layers if l.get("maturity") == "production"]
+        prod_layer_ids = {l["id"] for l in layers}
+        nodes = [n for n in nodes if n["layer_id"] in prod_layer_ids and n.get("maturity") == "production"]
+        # 边的两端必须都在过滤后的节点集中
+        prod_node_ids = {n["id"] for n in nodes}
+        edges = [e for e in edges if e["from"] in prod_node_ids and e["to"] in prod_node_ids]
+
     lines = ["flowchart TD"]
 
     # 按 track 分 subgraph
@@ -149,7 +180,8 @@ def _gen_overview_mmd(
         for layer in track_layers:
             lid = layer["id"]
             safe_lid = lid.replace("-", "_")
-            label = f'{layer["id"]}: {layer["name"]}'
+            mtag = _maturity_tag(layer.get("maturity"))
+            label = f'{mtag}{layer["id"]}: {layer["name"]}' if mtag else f'{layer["id"]}: {layer["name"]}'
             if layer["freq"]:
                 label += f'<br/>freq: {layer["freq"]}'
             label += f'<br/>build: {layer["build"]}'
@@ -158,7 +190,8 @@ def _gen_overview_mmd(
             # 该层下的节点
             layer_nodes = [n for n in nodes if n["layer_id"] == lid]
             for n in layer_nodes:
-                nlabel = f'{n["type"]}: {n["name"]}<br/>path: {n["path"]}'
+                nmtag = _maturity_tag(n.get("maturity"))
+                nlabel = f'{nmtag}{n["type"]}: {n["name"]}<br/>path: {n["path"]}' if nmtag else f'{n["type"]}: {n["name"]}<br/>path: {n["path"]}'
                 ncls = _build_status_color(n["build"])
                 lines.append(f'        N{n["id"]}("{nlabel}"):::{ncls}')
                 lines.append(f'        L{safe_lid} --- N{n["id"]}')
@@ -192,7 +225,10 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
 
     for layer in layers:
         lid = layer["id"].replace("-", "_")
+        mtag = _maturity_tag(layer.get("maturity"))
         label = f'{layer["id"]} {layer["name"]}<br/>{layer["name_en"]}'
+        if mtag:
+            label = f'{mtag} {label}'
         if layer["freq"]:
             label += f'<br/>频率: {layer["freq"]}'
         label += f'<br/>成熟度: {layer["maturity"]}'
@@ -294,6 +330,17 @@ def _gen_index_md(
     overview_mmd, t_count, l_count, e_count = _gen_overview_mmd(tracks, layers, nodes, edges)
     layers_mmd = _gen_layers_mmd(tracks, layers)
     invariants_mmd = _gen_invariants_mmd(invariants)
+    # 运营态全景图（只含 design_maturity='production' 的 layer/node）
+    prod_overview_mmd, _, prod_l_count, prod_e_count = _gen_overview_mmd(
+        tracks, layers, nodes, edges, production_only=True
+    )
+
+    # 设计态/运营态计数
+    prod_layers = [l for l in layers if l.get("maturity") == "production"]
+    design_layers = [l for l in layers if l.get("maturity") == "design"]
+    prototype_layers = [l for l in layers if l.get("maturity") == "prototype"]
+    prod_nodes = [n for n in nodes if n.get("maturity") == "production"]
+    design_nodes = [n for n in nodes if n.get("maturity") == "design"]
 
     lines = [
         "# 决策流图（decisiongraph）索引",
@@ -318,18 +365,33 @@ def _gen_index_md(
         f"| Layer（层） | {len(layers)} |",
         f"| Node（节点） | {len(nodes)} |",
         f"| Edge（边） | {len(edges)} |",
+        f"| 运营态 Layer（design_maturity=production） | {len(prod_layers)} |",
+        f"| 设计态 Layer（design_maturity=design） | {len(design_layers)} |",
+        f"| 原型态 Layer（design_maturity=prototype） | {len(prototype_layers)} |",
+        f"| 运营态 Node（design_maturity=production） | {len(prod_nodes)} |",
+        f"| 设计态 Node（design_maturity=design） | {len(design_nodes)} |",
+        "",
+        "> **设计态 vs 运营态**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行，`prototype`=原型验证中。对标 depgraph 的设计态/运营态机制。",
         "",
         "## Mermaid 图表",
         "",
         "> 以下图表通过 Mermaid 代码块内嵌，可直接在 Markdown 查看器中渲染。",
         "",
-        "### 全景图（L0-L6 层级 + 四轨并行）",
+        "### 全景图（设计态 + 运营态合并，标签标注 [design]/[production]）",
         "",
         "```mermaid",
         overview_mmd.rstrip("\n"),
         "```",
         "",
-        "### 层级详情图（10 层卡片 + 频率/状态）",
+        "### 运营态全景图（仅 design_maturity=production 的 layer/node）",
+        "",
+        f"> 仅展示已实现稳定运行的决策层/节点（共 {prod_l_count} 层，{prod_e_count} 边）。",
+        "",
+        "```mermaid",
+        prod_overview_mmd.rstrip("\n"),
+        "```",
+        "",
+        "### 层级详情图（10 层卡片 + 频率/状态，标签标注 [design]/[production]）",
         "",
         "```mermaid",
         layers_mmd.rstrip("\n"),
@@ -369,13 +431,13 @@ def _gen_index_md(
             "",
             "## Node 清单（运行时决策节点）",
             "",
-            "| node_id | layer | type | name | path | module_id | build_status |",
-            "|---------|-------|------|------|------|-----------|--------------|",
+            "| node_id | layer | type | name | path | module_id | 成熟度 | build_status |",
+            "|---------|-------|------|------|------|-----------|--------|--------------|",
         ])
         for n in nodes:
             lines.append(
                 f"| {n['id']} | {n['layer_id']} | {n['type']} | {n['name']} | "
-                f"{n['path']} | {n['module_id'] or '-'} | {n['build']} |"
+                f"{n['path']} | {n['module_id'] or '-'} | {n.get('maturity') or '-'} | {n['build']} |"
             )
 
     if edges:
