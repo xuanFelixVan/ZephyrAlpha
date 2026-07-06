@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 50 |
-| 模块总数 | 4990 |
-| 生产态模块 | 1578 |
+| 模块总数 | 4996 |
+| 生产态模块 | 1583 |
 | 设计态模块 | 52 |
-| 原型态模块 | 3360 |
+| 原型态模块 | 3361 |
 
 ## 域清单（按架构层分组）
 
@@ -62,7 +62,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_ASHARE_SIGNAL | ashare_signal / A-Share Signal | 7 | 0 | 0 | 7 | 7/150 (OK) | [20_d_ashare_signal.md](20_d_ashare_signal.md) |
-| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1718 | 48 | 0 | 1670 | 1718/150 (超容) | [21_d_audittest.md](21_d_audittest.md) |
+| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1720 | 49 | 0 | 1671 | 1720/150 (超容) | [21_d_audittest.md](21_d_audittest.md) |
 | D_AUTONOMY_PERM | budget_enforcement / Autonomy Protection | 14 | 0 | 0 | 14 | 14/150 (OK) | [22_d_autonomy_perm.md](22_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 33 | 3 | 8 | 22 | 33/150 (OK) | [23_d_backtest.md](23_d_backtest.md) |
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 8 | 1 | 1 | 6 | 8/150 (OK) | [24_d_cross_asset.md](24_d_cross_asset.md) |
@@ -72,12 +72,12 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [28_d_ex_sor.md](28_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 14 | 4 | 0 | 10 | 14/150 (OK) | [29_d_factor.md](29_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 25 | 4 | 0 | 21 | 25/150 (OK) | [30_d_fundamental_signal.md](30_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 848 | 477 | 26 | 345 | 848/150 (超容) | [31_d_governance.md](31_d_governance.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 850 | 479 | 26 | 345 | 850/150 (超容) | [31_d_governance.md](31_d_governance.md) |
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 2 | 0 | 2 | 0 | 2/150 (OK) | [32_d_gov_audit.md](32_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 2 | 2 | 0 | 0 | 2/150 (OK) | [33_d_gov_docs.md](33_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 1 | 0 | 1 | 0 | 1/150 (OK) | [34_d_gov_drift.md](34_d_gov_drift.md) |
-| D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 200 | 132 | 0 | 68 | 200/150 (超容) | [35_d_gov_enforcement.md](35_d_gov_enforcement.md) |
-| D_GOV_SCRIPTS | script_governance / Script Governance | 433 | 31 | 0 | 402 | 433/150 (超容) | [36_d_gov_scripts.md](36_d_gov_scripts.md) |
+| D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 201 | 133 | 0 | 68 | 201/150 (超容) | [35_d_gov_enforcement.md](35_d_gov_enforcement.md) |
+| D_GOV_SCRIPTS | script_governance / Script Governance | 434 | 32 | 0 | 402 | 434/150 (超容) | [36_d_gov_scripts.md](36_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 43 | 21 | 0 | 22 | 43/150 (OK) | [37_d_intelligence.md](37_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 9 | 0 | 2 | 7 | 9/150 (OK) | [38_d_knowledge.md](38_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [39_d_ml_serve.md](39_d_ml_serve.md) |

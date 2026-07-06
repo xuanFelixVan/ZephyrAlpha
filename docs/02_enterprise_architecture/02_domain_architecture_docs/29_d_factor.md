@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 16:16:01
+> 最后更新: 2026-07-06 16:37:11
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 14 | Module Count | 14 |
 | 域内依赖 | 4 | Internal Dependencies | 4 |
-| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域入边 | 2 | Cross-domain Incoming | 2 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 10 | Prototype Modules | 10 |
@@ -63,15 +63,14 @@ graph TD
         src_zephyr_factor_value_factor_py["src/zephyr/factor/value_factor.py prototype"]
     end
     src_zephyr_factor_base_py -->|import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_value_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_momentum_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_init_py -->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_momentum_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_value_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL production"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|import_depends| D_FUNDAMENTAL_SIGNAL
     D_FUNDAMENTAL_SIGNAL -->|import_depends| src_zephyr_factor_factor_base_py
     D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_factor_factor_base_py
-    D_FUNDAMENTAL_SIGNAL -.->|contract| src_zephyr_factor_value_factor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -94,7 +93,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_FUNDAMENTAL_SIGNAL | 2 | contract,import_depends |
+| D_FUNDAMENTAL_SIGNAL | 1 | import_depends |
 | D_GOVERNANCE | 1 | import_depends |
 
 ## 架构分层视图 / Architecture Overview
@@ -164,9 +163,9 @@ graph TD
 │                 [import_depends] (4 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   base.py → factor_base.py                                       │
-│   value_factor.py → factor_base.py                               │
-│   momentum_factor.py → factor_base.py                            │
 │   __init__.py → factor_base.py                                   │
+│   momentum_factor.py → factor_base.py                            │
+│   value_factor.py → factor_base.py                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
