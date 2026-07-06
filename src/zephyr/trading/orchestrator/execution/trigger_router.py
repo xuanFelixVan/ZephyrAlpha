@@ -62,10 +62,27 @@ from enum import Enum
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from threading import RLock
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
+
+
+@runtime_checkable
+class AuditLoggerProtocol(Protocol):
+    """触发路由审计日志 duck-typed 接口（5.145.11 修复：Any→Protocol）。
+
+    真源实现：``zephyr.security.llm_defense.llm_security.behavior_audit_logger.AuditLogger``。
+    本 Protocol 仅声明 trigger_router 实际消费的 ``log_rule_trigger`` 方法。
+    """
+
+    def log_rule_trigger(
+        self,
+        *,
+        target: str,
+        result: str,
+        extra: dict[str, Any] | None = None,
+    ) -> None: ...
 
 __all__ = [
     "DEFAULT_ROUTER_YAML_PATH",
@@ -230,10 +247,10 @@ class TriggerRouter:
     handlers : dict[str, Callable] | None
         直接注入 ``trigger_type -> callable`` 映射（优先级最高，跳过 YAML 解析）。
         测试 / 集成场景使用；生产建议保留 None 让 YAML 真源生效。
-    audit_logger : Any | None
+    audit_logger : AuditLoggerProtocol | None
         ``AuditLogger`` 实例（zephyr.security.llm_defense.llm_security.behavior_audit_logger）；
         None 时仅写 stdlib logging。Duck-typed 接口：
-        ``audit_logger.log_rule_trigger(target=str, result=str, extra=dict)``。
+        ``audit_logger.log_rule_trigger(target=str, result=str, extra=dict)``.
     session_id : str
         审计日志默认 session_id。
     model : str
@@ -247,7 +264,7 @@ class TriggerRouter:
         config_path: Path | None = None,
         *,
         handlers: dict[str, Callable[..., Any]] | None = None,
-        audit_logger: Any | None = None,
+        audit_logger: AuditLoggerProtocol | None = None,
         session_id: str = "",
         model: str = "M3:trigger_router",
         auto_load: bool = True,
