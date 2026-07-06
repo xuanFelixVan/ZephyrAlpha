@@ -2,10 +2,10 @@
 # [MODULE] scripts.governance.d5_architecture.generators.generate_decision_diagram
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); architecture_model/domain/decision_graph_model.yaml (invariants 真源)
-# [CONSUMERS] CI自动触发;人工查看generated/decisions/
+# [CONSUMERS] CI自动触发;人工查看06_decision_architecture/
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 输出幂等(相同输入→相同输出);只读decisiongraph;输出到generated/decisions/
+# [INVARIANTS] 输出幂等(相同输入→相同输出);只读decisiongraph;输出到06_decision_architecture/
 # [MODIFY-GUARD] 修改需通过TRAE-061任务或后续维护任务
 # [STABILITY] evolving
 # [SAFETY] L
@@ -21,7 +21,7 @@
   - 从 decision_tracks / decision_layers / decision_nodes / decision_edges 表读取决策流图
   - 从 decision_graph_model.yaml 读取 invariants 定义（5 条承重墙不变量）
   - 生成 Mermaid 图表（flowchart TD/LR）
-  - 输出到 docs/02_enterprise_architecture/generated/decisions/
+  - 输出到 docs/02_enterprise_architecture/06_decision_architecture/
 
 输出文件：
   - decision_overview.mmd          全景图（L0-L6 层级 + 四轨并行 + 节点/边）
@@ -57,7 +57,7 @@ from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
     get_decisiongraph_pg_connection,
 )
 
-OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "generated" / "decisions"
+OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "06_decision_architecture"
 _YAML_PATH = _REPO_ROOT / "architecture_model" / "domain" / "decision_graph_model.yaml"
 
 

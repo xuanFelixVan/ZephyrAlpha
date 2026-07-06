@@ -141,11 +141,10 @@ class TestImportAndStructure:
         assert _mod is not None
 
     def test_output_dir_constant(self):
-        """OUTPUT_DIR 指向 generated/decisions/。"""
+        """OUTPUT_DIR 指向 06_decision_architecture/。"""
         assert "docs" in str(OUTPUT_DIR)
         assert "02_enterprise_architecture" in str(OUTPUT_DIR)
-        assert "generated" in str(OUTPUT_DIR)
-        assert "decisions" in str(OUTPUT_DIR)
+        assert "06_decision_architecture" in str(OUTPUT_DIR)
 
     def test_yaml_path_constant(self):
         """_YAML_PATH 指向 decision_graph_model.yaml。"""
