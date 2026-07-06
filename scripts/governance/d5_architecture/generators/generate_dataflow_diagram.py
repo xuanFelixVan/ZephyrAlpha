@@ -14,26 +14,25 @@
 # [TESTS] tests/test_generate_dataflow_diagram.py
 # [TTL] permanent
 # [ARCH-REF] #ARCH-051
-"""G-dataflow: 从 dataflowgraph (PostgreSQL) 生成数据流图(.mmd Mermaid格式 + .md 文档)
+"""G-dataflow: 从 dataflowgraph (PostgreSQL) 生成数据流图 Markdown 文档（内嵌 Mermaid）
 
 依据：ARCH-051 裁定（2026-07-06）
 
 功能：
   - 从 dataflow_datasets / dataflow_jobs / dataflow_edges 表读取数据流图
-  - 生成 Mermaid 图表（flowchart LR）
+  - 生成 Mermaid 图表（flowchart LR）并内嵌到 Markdown 中
   - 区分 production / backtest_internal scope（不同颜色）
   - 输出到 docs/02_enterprise_architecture/05_dataflow_architecture/
 
 输出文件：
-  - dataflow_overview.mmd          全景图（所有 Dataset/Job）
-  - dataflow_production.mmd         生产数据流图（scope=production）
-  - dataflow_backtest.mmd           回测内部数据流图（scope=backtest_internal）
-  - dataflow_index.md               索引文档（含统计+图嵌入）
+  - dataflow_index.md   单 MD 文档（frontmatter + 内嵌 3 张 Mermaid 图 + 统计表 + Dataset/Job 清单）
+
+风格对齐 02_domain_architecture_docs/（generate_domain_doc.py）：Mermaid 直接内嵌在 MD 中，
+不输出独立 .mmd 文件，单文件可看全部（图 + 清单）。
 
 用法
 ----
     python scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py
-    python scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py --scope production
 """
 
 from __future__ import annotations
@@ -261,13 +260,6 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append("```")
     lines.append("")
 
-    # .mmd 文件链接（保留，供 Mermaid CLI/VSCode 单独预览）
-    lines.append("> 纯 Mermaid 文件（.mmd）也可直接打开渲染：")
-    lines.append("> - [dataflow_overview.mmd](dataflow_overview.mmd)")
-    lines.append("> - [dataflow_production.mmd](dataflow_production.mmd)")
-    lines.append("> - [dataflow_backtest.mmd](dataflow_backtest.mmd)")
-    lines.append("")
-
     # Dataset 清单
     lines.append("## Dataset 清单")
     lines.append("")
@@ -296,9 +288,8 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="从 dataflowgraph (PostgreSQL) 生成数据流图（Mermaid + Markdown）",
+        description="从 dataflowgraph (PostgreSQL) 生成数据流图 Markdown 文档（内嵌 Mermaid）",
     )
-    parser.add_argument("--scope", choices=["production", "backtest_internal"], help="仅生成指定 scope 的图表")
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
     args = parser.parse_args()
 
@@ -323,21 +314,10 @@ def main() -> int:
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # 生成图表
-    scopes = [args.scope] if args.scope else [None, "production", "backtest_internal"]
-    filenames = {None: "dataflow_overview", "production": "dataflow_production", "backtest_internal": "dataflow_backtest"}
-
-    for scope in scopes:
-        mmd, ds_count, job_count, edge_count = _gen_mermaid(datasets, jobs, edges, scope_filter=scope)
-        fname = filenames[scope] + ".mmd"
-        (out_dir / fname).write_text(mmd, encoding="utf-8")
-        print(f"[OK] 生成 {fname} ({ds_count} datasets, {job_count} jobs, {edge_count} edges)")
-
-    # 生成索引文档
-    if not args.scope:
-        md = _gen_index_md(datasets, jobs, edges)
-        (out_dir / "dataflow_index.md").write_text(md, encoding="utf-8")
-        print(f"[OK] 生成 dataflow_index.md")
+    # 生成单 MD 文档（内嵌 3 张 Mermaid 图 + 统计 + 清单），不再输出独立 .mmd 文件
+    md = _gen_index_md(datasets, jobs, edges)
+    (out_dir / "dataflow_index.md").write_text(md, encoding="utf-8")
+    print(f"[OK] 生成 dataflow_index.md（内嵌 3 张 Mermaid 图 + 统计 + Dataset/Job 清单）")
 
     print(f"\n输出目录: {out_dir}")
     return 0

@@ -33,10 +33,9 @@ ttl: permanent
 
 | 文档 | 内容 |
 |------|------|
-| [dataflow_index.md](dataflow_index.md) | 索引（frontmatter + 内嵌 Mermaid 图 + 统计 + Dataset/Job 清单） |
-| [dataflow_overview.mmd](dataflow_overview.mmd) | 全景图（所有 Dataset/Job） |
-| [dataflow_production.mmd](dataflow_production.mmd) | 生产数据流图（scope=production） |
-| [dataflow_backtest.mmd](dataflow_backtest.mmd) | 回测内部数据流图（scope=backtest_internal） |
+| [dataflow_index.md](dataflow_index.md) | 单 MD 文档（frontmatter + 内嵌 3 张 Mermaid 图 + 统计表 + Dataset/Job 清单） |
+
+> 风格对齐 `02_domain_architecture_docs/`：Mermaid 直接内嵌在 MD 中，不输出独立 .mmd 文件，单文件可看全部（图 + 清单）。
 
 ## 生成器
 
