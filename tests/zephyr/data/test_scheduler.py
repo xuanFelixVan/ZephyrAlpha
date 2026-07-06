@@ -249,6 +249,19 @@ class TestRunTask:
         assert len(events) == 1
         assert events[0]["success"] is True
 
+    def test_run_task_paused_source(self, scheduler):
+        """数据源已熔断（policy.enabled=False）时跳过任务返回 False。"""
+        scheduler._load_config()
+        # mock provider（可用）
+        mock_provider = _MockProvider()
+        mock_provider.connect()
+        scheduler._providers["mock"] = mock_provider
+        # mock policy.enabled=False（CLI pause 生效点）
+        from zephyr.data.policy_registry import SourcePolicy
+        with patch.object(scheduler._policy_registry, "get_policy", return_value=SourcePolicy(enabled=False)):
+            ok = scheduler.run_task("kline_daily_incremental")
+        assert ok is False
+
 
 class TestRunSchedule:
     """run_schedule 测试。"""

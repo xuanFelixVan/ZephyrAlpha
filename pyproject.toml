@@ -58,8 +58,10 @@ dependencies = [
 
 # 5.31.7 修复：原无 [project.scripts]，pip install 后无 CLI 命令
 # 新增 zephyr 入口点，避免 Dockerfile 硬编码 python -m ...
+# MOD-L00-004 数据源集成器 CLI 入口（蓝图 §8.4）
 [project.scripts]
 zephyr = "zephyr.trading.__main__:main"
+integrator = "zephyr.data.cli:main"
 
 [project.optional-dependencies]
 dev = [

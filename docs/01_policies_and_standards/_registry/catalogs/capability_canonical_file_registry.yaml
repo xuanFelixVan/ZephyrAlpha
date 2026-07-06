@@ -3138,6 +3138,8 @@ capabilities:
       配套文件：policy_registry.py（SourcePolicy + PolicyRegistry）、
       implementations/{ifind,miniqmt,akshare,baostock,tushare,tickflow,tdx,rss}_provider.py（8 个 Provider 实现）、
       scheduler.py（阶段3 调度编排层完整实现，IntegratorScheduler + APScheduler，8源路由 + 事件订阅）、
+      cli.py（命令行入口：run/status/rerun-failed/list/pause/resume/start，argparse + subparsers）、
+      __main__.py（python -m zephyr.data 入口，re-export cli.main）、
       progress_store.py（SQLite 断点续传存储）、ch_writer.py（ClickHouse TSV 写入器）、
       task_queue.py（DAG 依赖图 + 优先级队列）、alerter.py（告警管理）、
       metrics.py（阶段3 Prometheus 文本格式指标采集，6 指标 + 累积直方图桶）、
@@ -3758,6 +3760,14 @@ creation_tokens:
   - file: "src/zephyr/data/scheduler.py"
     token: "auto-data-scheduler-20260706"
     created_by: "session-sess-11416-20260706044753"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/cli.py"
+    token: "auto-data-cli-20260706"
+    created_by: "session-sess-33724-20260706101236"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/__main__.py"
+    token: "auto-data-main-20260706"
+    created_by: "session-sess-33724-20260706101236"
     capability: "data_source_provider_abstraction"
 
   # --- MOD-L00-004 数据源集成器阶段2（2026-07-06，调度编排层完整实现）---
