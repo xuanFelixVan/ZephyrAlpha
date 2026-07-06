@@ -651,6 +651,40 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 **战略建议**：100% AI开发场景下，"建议性规则"是反模式。AI没有"自觉"，只有"被阻断"。应该用强制消费链替代建议性规则。
 
+### 裁定5：DEFERRED-PERMANENT 状态分类（R70 引入 2026-07-06，P2 执行）
+
+**背景**：第42轮验证后，全维度 DEFERRED 项共 ~393 个，均标注"需大规模重构/架构级变更，属专项工程"。但 393 项内部风险等级差异显著——部分项 AI 可在未来 cycle 逐步修复（命名统一/shim 标注等中低风险项），部分项必须 human-led 架构工程才能解决（架构重构/设计决策）。将两者混为"DEFERRED"导致 AI 在债务修复时误选高风险项（耗费大量上下文仍无法解决），或误判"全部 DEFERRED = 全部永久搁置"（放弃可修复的中低风险项）。
+
+**判定**：引入 `DEFERRED-PERMANENT` 子状态，将 DEFERRED 项二分为：
+
+| 状态 | 含义 | 适用范围 | AI 可否自行修复 |
+|---|---|---|---|
+| `DEFERRED` | 正常债务——AI 可在未来 cycle 逐步修复 | 中低风险项（命名统一/shim 标注/类型注解补全等） | ✅ 可（有明确修复路径） |
+| `DEFERRED-PERMANENT` | 永久债务——需 human-led 架构工程，AI 不应自行尝试 | 高风险项（架构重构）+ 设计决策项 | ❌ 不可（需人类架构决策） |
+
+**DEFERRED-PERMANENT 分类清单（~142 项）**：
+
+| 类别 | 数量 | 代表维度 | 为什么是 PERMANENT |
+|---|:---:|---|---|
+| 架构重构 | ~130 | 5.1 SSoT真源（159对文件复制）/ 5.2 永久系统全自动触发 / 5.60 模块耦合度 / 5.16 并发线程安全 / 5.61 事务隔离ACID | 需重新设计模块边界/数据流/并发模型——AI 修改单文件无法解决，需全局架构重构 |
+| 设计决策 | ~12 | 5.38 特性开关策略 / 5.35 API版本管理 / 5.33 容灾备份策略 / 反思1 L5治理层14→5-6功能收敛 | 需人类架构师做技术选型/取舍决策——AI 不应替人类做架构决策 |
+
+**DEFERRED（正常债务，~251 项）**：
+
+| 类别 | 数量 | 代表维度 | 修复路径 |
+|---|:---:|---|---|
+| 类型注解 | ~50 | 5.94 类型注解准确性 / 5.145 类型注解完整性 | 逐文件替换 Any→具体类型/Protocol（R70 已建 GATE-ANY-ABUSE 防复发） |
+| 命名统一 | ~45 | 5.93 命名规范 / 5.11 门禁格式漂移 | 逐文件重命名/统一（中风险，P3 逐项评估） |
+| 其他中低风险 | ~156 | 5.12-5.92 各维度 DEFERRED 项 | 逐维度逐项修复（有明确修复路径） |
+
+**执行规则**：
+1. AI 在债务修复 cycle 中 **MUST 优先选 DEFERRED 项**（有明确修复路径，AI 可自行完成）
+2. AI **禁止自行修复 DEFERRED-PERMANENT 项**——尝试即浪费上下文（架构重构需全局视角，单文件修改无效；设计决策需人类判断）
+3. DEFERRED-PERMANENT 项的解锁条件：人类架构师发起专项工程（如 ARCH-XXX 架构裁定 + 蓝图 + 专项施工计划）
+4. 每轮债务修复后，更新维度状态行：`DEFERRED=N` / `DEFERRED-PERMANENT=M`（N=正常债务剩余数，M=永久债务数）
+
+**与裁定1的关系**：裁定1"先做执行闭环再做规则扩展"指导增量治理方向；裁定5"DEFERRED-PERMANENT"指导存量债务分类——两者互补。GATE-ANY-ABUSE（R70）+ GATE-DEBT-BRIDGE（R67-68）已为类型注解+代码异味两个维度建立"执行闭环"（AST 门禁防复发），对应 DEFERRED 项可逐步清零；DEFERRED-PERMANENT 项则等待专项工程。
+
 ---
 
 ## 五、3193个问题详细清单
@@ -2998,6 +3032,12 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第35轮修复状态（2026-07-05，Batch 48）**：FIXED=10(新增5.145.3 audit_trail/models.py 10类__init__+公共方法补类型注解: AuditChain/_AuditEventTypeMember/AuditEntryV1/AuditMetrics/FileAuditDetail/IntegrityReport/IntegrityRecord/LamportClock/ProvenanceFull/TaskAuditSummary), DEFERRED=18(5.145.10-12 Any滥用3文件82处[l6_observability 27处+trigger_router 31处+scheduler 22处]需逐处推断具体类型属系统性重构 + 5.145.13-27 MEDIUM Any滥用跨100文件601处需全项目类型重构专项工程), 本维度全部清零
 > **第44轮修复状态（2026-07-05）**：FIXED=1(5.145.27 skill_cache_provider.py 移除3处`# noqa: ANN`抑制, 补全get/set/invalidate/clear返回类型注解), DEFERRED=17(5.145.10-12 Any滥用3文件82处 + 5.145.13-26 MEDIUM Any滥用跨100文件601处, 均需逐处推断具体类型属全项目类型重构专项工程), STILL_VALID=0. 维度5.145全部清零.
 > **第47轮修复状态（2026-07-06）**：FIXED=2(5.145.10 l6_observability.py evaluate返回类型Any→SecurityResult[TYPE_CHECKING导入] + 5.145.12 scheduler.py 14处Any→具体类型[AnomalyEvent/Diagnosis/ActionRecord/VerificationResult/MetricSnapshot/AlertEvent, Any数22→8]), DEFERRED=15(5.145.10 l6_observability.py剩余28处Any[多为dict[str,Any]配置型] + 5.145.11 trigger_router.py 31处Any[audit_logger需定义Protocol] + 5.145.13-26 MEDIUM Any滥用跨100文件601处, 均需逐处推断具体类型属全项目类型重构专项工程), STILL_VALID=0. 维度5.145全部清零.
+> **第70轮修复状态（2026-07-06，P0+P1a 执行闭环）**：
+> - 5.145.10 [FIXED] l6_observability.py 4处函数签名Any→具体类型: detect_side_channel(timing_data: Any→dict[str,Any]) + add_noise(value: Any→float / ->Any→->float) + validate(observability_data: Any→dict[str,Any]) + evaluate(ctx: Any→dict[str,Any])。commit fb18733476。
+> - 5.145.11 [FIXED] trigger_router.py 函数签名Any→Protocol: 新增 AuditLoggerProtocol(@runtime_checkable, 声明 log_rule_trigger 方法) + audit_logger: Any→AuditLoggerProtocol|None (3处: __init__/get_trigger_router/docstring) + handler_result: Any→object (RouterDispatchResult 字段)。commit fb18733476。
+> - 5.145.12 [FIXED] risk_validator_protocol.py limits: Any→RiskLimits (2处: validate_order + validate_portfolio)。使用 TYPE_CHECKING 导入 zephyr.shared.contracts.risk_limits.RiskLimits (SSoT: cross_layer_contracts.yaml CTR-003)，避免循环依赖。commit 95dfd5fe95。
+> - **P0 GATE-ANY-ABUSE 门禁建成**: scripts/governance/d7_code/check_any_abuse.py (AST 扫描器, 检测 ANY-1 参数裸Any + ANY-2 返回值裸Any) → .pre-commit-config.yaml gate-any-abuse (阶段1 manual, R70 基线 ANY-1=462/ANY-2=172/总计634) + pyproject.toml mypy 配置加严 (disallow_any_generics + warn_any_explicit) + AGENTS.md §8 文档化 + capability_canonical_file_registry.yaml 登记 any_abuse_scanner。
+> - DEFERRED=14(5.145.13-26 MEDIUM Any滥用跨100文件634处[scanner基线, 含l6_observability剩余dict[str,Any]配置型豁免不计], 均需逐处推断具体类型属全项目类型重构专项工程; 阶段2存量清零后转硬阻断), DEFERRED-PERMANENT=0, STILL_VALID=0. 维度5.145 tracked 项全部清零; GATE-ANY-ABUSE 防复发门禁已落地。
 > - 5.145.1 [FIXED]: __init__.py register_lazy/_LazyModule.__init__/_load/__dir__/__dir__() 补 -> None/-> list[str] + 移除未用 Optional 导入
 > - 5.145.2 [FIXED]: database_service.py __init__/close_all/update_task_status/log_rule_enforcement 补 -> None + 4个 get_*_by_* 方法 list -> list[dict[str, Any]]
 > - 5.145.3 [FIXED]: audit_trail/models.py AuditChain/_AuditEventTypeMember/AuditEntryV1/AuditMetrics/FileAuditDetail/IntegrityReport/IntegrityRecord/LamportClock/ProvenanceFull/TaskAuditSummary 10类__init__+公共方法(tick/merge/verify/__repr__/__eq__/__hash__/value)补类型注解
