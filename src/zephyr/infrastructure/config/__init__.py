@@ -37,9 +37,10 @@ from __future__ import annotations
 
 import logging
 import os
+import threading
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -160,14 +161,98 @@ def reload_config(current: AppConfig | None = None, env_override: bool = True) -
     """热重载：按上次成功加载的路径（或默认搜索链）重新构建 ``AppConfig``。
 
     ``current`` 参数保留以兼容旧调用方，当前未使用（避免在 frozen dataclass 上挂载路径）。
+
+    注意：本函数返回新实例但不通知持有旧引用的消费者。需要通知请用
+    :meth:`ConfigHolder.reload`，它会调用本函数并广播给所有订阅者。
     """
 
     _ = current
     return load_config(config_path=_LAST_LOADED_CONFIG_PATH, env_override=env_override)
 
 
+class ConfigHolder:
+    """配置中心持有者 — 解决 reload_config 后消费者持有旧引用的问题。
+
+    5.54.3 修复：AppConfig 是 frozen dataclass，reload_config 返回全新实例，
+    持有旧引用的消费者（``self._config = load_config()``）无法感知变更，导致
+    系统内配置不一致。ConfigHolder 维护单一当前实例 + 订阅者列表，reload 时
+    广播通知所有订阅者刷新本地缓存。
+
+    用法：
+        # 消费者（启动时订阅，回调中刷新本地引用）
+        ConfigHolder.subscribe(self._on_config_reload)
+        cfg = ConfigHolder.get()
+
+        # 热重载（通知所有订阅者）
+        ConfigHolder.reload()
+    """
+
+    _instance: AppConfig | None = None
+    _listeners: list[Callable[[AppConfig | None, AppConfig], None]] = []
+    _lock = threading.Lock()
+
+    @classmethod
+    def get(cls) -> AppConfig:
+        """返回当前配置实例，首次调用时自动加载。"""
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = load_config()
+            return cls._instance
+
+    @classmethod
+    def set(cls, config: AppConfig) -> None:
+        """设置当前配置实例并通知订阅者（old, new）。"""
+        with cls._lock:
+            old = cls._instance
+            cls._instance = config
+            listeners = list(cls._listeners)
+        cls._notify(old, config, listeners)
+
+    @classmethod
+    def subscribe(
+        cls, callback: Callable[[AppConfig | None, AppConfig], None]
+    ) -> None:
+        """订阅配置重载事件。``callback(old, new)`` 在 set/reload 时被调用。
+
+        回调异常被捕获并记录日志，不阻断其他订阅者。
+        """
+        with cls._lock:
+            cls._listeners.append(callback)
+
+    @classmethod
+    def reload(cls, env_override: bool = True) -> AppConfig:
+        """热重载配置并通知订阅者。返回新实例。
+
+        内部调用 :func:`reload_config` 重建实例，再经 :meth:`set` 广播通知。
+        """
+        new = reload_config(current=cls._instance, env_override=env_override)
+        cls.set(new)
+        return new
+
+    @classmethod
+    def _notify(
+        cls,
+        old: AppConfig | None,
+        new: AppConfig,
+        listeners: list[Callable[[AppConfig | None, AppConfig], None]],
+    ) -> None:
+        for cb in listeners:
+            try:
+                cb(old, new)
+            except Exception:
+                _LOGGER.exception("ConfigHolder listener failed: %r", cb)
+
+    @classmethod
+    def _reset(cls) -> None:
+        """测试辅助：重置持有者状态（实例 + 订阅者）。"""
+        with cls._lock:
+            cls._instance = None
+            cls._listeners.clear()
+
+
 __all__ = [
     "AppConfig",
+    "ConfigHolder",
     "load_config",
     "reload_config",
 ]

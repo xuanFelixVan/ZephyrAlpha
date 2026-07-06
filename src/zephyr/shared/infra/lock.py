@@ -106,6 +106,8 @@ class MemoryLock:
     def __init__(self) -> None:
         self._locks: dict[str, asyncio.Lock] = {}
         self._owners: dict[str, str] = {}
+        # 5.68.4 修复：跟踪 in-flight acquire 数，用于超时取消后判定是否可安全清理 _locks
+        self._waiters: dict[str, int] = {}
 
     async def acquire(
         self,
@@ -116,22 +118,36 @@ class MemoryLock:
     ) -> LockHandle | None:
         if lock_name not in self._locks:
             self._locks[lock_name] = asyncio.Lock()
+        lock = self._locks[lock_name]
+        self._waiters[lock_name] = self._waiters.get(lock_name, 0) + 1
 
-        if wait_timeout_seconds <= 0:
-            locked = self._locks[lock_name].locked()
-            if locked:
-                logger.debug("lock '%s' already held by '%s'", lock_name, self._owners.get(lock_name, "unknown"))
-                return None
-            await self._locks[lock_name].acquire()
-        else:
-            try:
-                await asyncio.wait_for(
-                    self._locks[lock_name].acquire(),
-                    timeout=wait_timeout_seconds,
-                )
-            except TimeoutError:
-                logger.debug("lock '%s' acquisition timed out after %.1fs", lock_name, wait_timeout_seconds)
-                return None
+        acquired = False
+        try:
+            if wait_timeout_seconds <= 0:
+                if lock.locked():
+                    logger.debug("lock '%s' already held by '%s'", lock_name, self._owners.get(lock_name, "unknown"))
+                    return None
+                await lock.acquire()
+                acquired = True
+            else:
+                try:
+                    await asyncio.wait_for(
+                        lock.acquire(),
+                        timeout=wait_timeout_seconds,
+                    )
+                    acquired = True
+                except TimeoutError:
+                    logger.debug("lock '%s' acquisition timed out after %.1fs", lock_name, wait_timeout_seconds)
+                    return None
+        finally:
+            # 5.68.4 修复：超时/取消路径清理 _locks，防止每个唯一锁名永久驻留。
+            # 仅当本协程未获取锁（acquired=False）且无其他等待者（waiters 归零）
+            # 且锁未被持有时才删除——避免破坏其他在途 acquire 的互斥语义。
+            self._waiters[lock_name] -= 1
+            if self._waiters[lock_name] <= 0:
+                del self._waiters[lock_name]
+                if not acquired and not lock.locked() and lock_name in self._locks:
+                    del self._locks[lock_name]
 
         owner = str(uuid.uuid4())[:8]
         self._owners[lock_name] = owner
