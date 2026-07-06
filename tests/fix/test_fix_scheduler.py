@@ -28,7 +28,7 @@ def _make_report(actions=None):
 class TestFixSchedulerInstantiation:
     def test_default_mode(self):
         s = FixScheduler()
-        assert s.mode == SchedulerMode.CONTINUOUS
+        assert s.mode == SchedulerMode.EVENT_DRIVEN
 
     def test_custom_mode(self):
         s = FixScheduler(mode=SchedulerMode.EVENT_DRIVEN)
