@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 model_evaluation（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:42:01
+> 最后更新: 2026-07-06 15:43:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -60,10 +60,10 @@ graph TD
         src_zephyr_ml_train_services_init_py["src/zephyr/ml_train/services/__init__.py prototype"]
         src_zephyr_ml_train_trainer_base_py["src/zephyr/ml_train/trainer_base.py prototype"]
     end
+    src_zephyr_ml_train_init_py -.->|config_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_inference_base_py -.->|import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_init_py -.->|config_depends| src_zephyr_ml_train_inference_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_init_py -.->|import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_SHARED
@@ -72,12 +72,12 @@ graph TD
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_SHARED
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_TRADING
-    D_INTELLIGENCE["D_INTELLIGENCE production"]
-    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
-    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
-    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_SHARED -.->|import_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_GOVERNANCE["D_GOVERNANCE design"]
     D_GOVERNANCE -.->|data| docs_03_modules_cross_layer_model_profiler_blueprint_md
@@ -182,15 +182,15 @@ graph TD
 │                 [import_depends] (4 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   inference_base.py → trainer_base.py                            │
-│   default_inference_engine.py → inference_base.py                │
 │   default_inference_engine.py → trainer_base.py                  │
+│   default_inference_engine.py → inference_base.py                │
 │   __init__.py → default_inference_engine.py                      │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [config_depends] (1 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   __init__.py → inference_base.py                                │
+│   __init__.py → trainer_base.py                                  │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
