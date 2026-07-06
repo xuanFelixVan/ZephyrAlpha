@@ -1,11 +1,11 @@
-# 自动生成于 2026-07-06T07:11:26Z
+# 自动生成于 2026-07-06T07:26:40Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-06T07:11:26Z'
+generated_at: '2026-07-06T07:26:40Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 21
+total_registries: 22
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -165,7 +165,15 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 147
+  entry_count: 148
+  status: active
+- registry_id: CFG-rule-enforcement-registry
+  name: 门禁规则集登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
   status: active
 - registry_id: PS-REG-017
   name: 任务卡元层登记表
