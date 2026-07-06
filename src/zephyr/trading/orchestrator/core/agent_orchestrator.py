@@ -17,6 +17,7 @@
 
 # AI-generated: T-3-10 Agent Orchestrator (
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 """
 AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康监控
 ===========================================================
@@ -67,7 +68,6 @@ Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十�
 - **可测试**：时间源 ``now`` 与 UUID 生成器 ``id_factory`` 均可注入。
 """
 
-import json
 import time
 import uuid
 from collections import deque
@@ -758,7 +758,7 @@ class AgentOrchestrator:
                 if claim:
                     self._input_sanitizer.validate_llm_context(claim)
                 if ctx:
-                    self._input_sanitizer.validate_llm_context(json.dumps(ctx, ensure_ascii=False, default=str))
+                    self._input_sanitizer.validate_llm_context(dumps(ctx, ensure_ascii=False))
             except ContextInjectionError as exc:
                 budget = token_budget if token_budget is not None else self._default_budget
                 latency_ms = int((time.perf_counter() - started) * 1000)

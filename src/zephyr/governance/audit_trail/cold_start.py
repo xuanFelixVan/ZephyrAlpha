@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-GOV_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import json
 import logging
@@ -86,7 +87,7 @@ class BootstrapCache:
             self._cache["loaded_at"] = now_utc().isoformat()
             CACHE_DIR.mkdir(parents=True, exist_ok=True)
             self._cache_path.write_text(
-                json.dumps(self._cache, indent=2, ensure_ascii=False, default=str),
+                dumps(self._cache, indent=2, ensure_ascii=False),
                 encoding="utf-8",
             )
             return True

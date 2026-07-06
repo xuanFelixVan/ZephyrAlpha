@@ -29,6 +29,7 @@ SnapshotManager — Event Sourcing 快照管理（DW-0005）
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import json
 import logging
@@ -112,7 +113,7 @@ class SnapshotManager:
         int
             snapshot_id（自增主键）。
         """
-        snapshot_json = json.dumps(state, ensure_ascii=False, default=str)
+        snapshot_json = dumps(state, ensure_ascii=False)
         now = datetime.now(UTC).isoformat()
 
         last_event_timestamp = state.get("_last_event_timestamp")

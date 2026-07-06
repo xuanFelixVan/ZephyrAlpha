@@ -43,6 +43,7 @@ safe_operate: admin可设置severe级别限制
 对标 blueprint.md §6.32。"""
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import json
 import os
@@ -118,7 +119,7 @@ def _save_absence_state(state: dict[str, object]) -> None:
 
     try:
         with open(tmp, "w", encoding="utf-8") as f:
-            f.write(json.dumps(state, default=str, indent=2))
+            f.write(dumps(state,  indent=2))
 
         os.replace(tmp, path)
 

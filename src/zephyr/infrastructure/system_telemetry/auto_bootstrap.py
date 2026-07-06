@@ -30,7 +30,8 @@
 
 from __future__ import annotations
 
-import json
+from zephyr.shared.io.serialization import dumps
+
 import logging
 import threading
 import time
@@ -209,7 +210,7 @@ def bootstrap() -> dict:
 
     _logger.info(
         "auto_telemetry bootstrap complete: %s",
-        json.dumps(results, default=str),
+        dumps(results),
     )
     return results
 

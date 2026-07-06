@@ -34,12 +34,12 @@ forensics_report: timeline + state_diffs + actor_trace + dependency_impact
 对标 blueprint.md §6.17。"""
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-import json
 import os
 import subprocess
 from dataclasses import dataclass, field
@@ -296,7 +296,7 @@ def serialize_report(report: ForensicsReport, output_dir: str) -> str:
         "generated_at": report.generated_at.isoformat(),
     }
 
-    content = json.dumps(report_dict, indent=2, default=str, ensure_ascii=False)
+    content = dumps(report_dict, indent=2,  ensure_ascii=False)
 
     tmp_path = f"{path}.{os.getpid()}.tmp"
 

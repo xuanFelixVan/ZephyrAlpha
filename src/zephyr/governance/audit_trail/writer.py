@@ -14,6 +14,7 @@
 # [TESTS] tests/audit-orchestrator/test_writer.py
 # [A_module] module_id=MOD-GOV_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from zephyr.shared.io.serialization import dumps
 import hashlib
 import hmac
 import json
@@ -51,7 +52,7 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
     def write_report(self, report: GlobalAuditReport, path: Path | None = None) -> Path:
         output_path = path or self._report_dir / f"{report.audit_id}.json"
         report.finished_at = report.finished_at or now_utc()
-        content = report.model_dump_json(indent=2, default=str)
+        content = report.model_dump_json(indent=2)
 
         tmp_path = Path(str(output_path) + f".{os.getpid()}.tmp")
         try:
@@ -77,7 +78,7 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
         dir_path.mkdir(parents=True, exist_ok=True)
         output_path = dir_path / f"{issue.issue_id}.json"
 
-        content = issue.model_dump_json(indent=2, default=str)
+        content = issue.model_dump_json(indent=2)
         tmp_path = Path(str(output_path) + f".{os.getpid()}.tmp")
         try:
             # 5.74.4 修复：os.replace 前刷盘，确保审计内容落盘，防止崩溃后
@@ -98,7 +99,7 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
 
     def write_json(self, data: dict[str, Any], filename: str) -> Path:
         output_path = self._report_dir / filename
-        content = json.dumps(data, indent=2, ensure_ascii=False, default=str)
+        content = dumps(data, indent=2, ensure_ascii=False)
 
         tmp_path = Path(str(output_path) + f".{os.getpid()}.tmp")
         try:
@@ -207,7 +208,7 @@ class AuditWriter:
             entry["lamport_clock_ide"] = self.ide_source
 
             # entry_hash = SHA-256(canonical JSON of entry，不含 entry_hash/hmac_signature)
-            canonical = json.dumps(entry, sort_keys=True, ensure_ascii=False, default=str)
+            canonical = dumps(entry, sort_keys=True, ensure_ascii=False)
             entry_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
             entry["entry_hash"] = entry_hash
 
@@ -219,7 +220,7 @@ class AuditWriter:
 
             try:
                 with open(self._event_log_path, "a", encoding="utf-8") as f:
-                    f.write(json.dumps(entry, ensure_ascii=False, default=str) + "\n")
+                    f.write(dumps(entry, ensure_ascii=False) + "\n")
                     f.flush()
                     os.fsync(f.fileno())
             except Exception:

@@ -32,6 +32,7 @@ as JSON for downstream analysis or audit logging.
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import json
 from datetime import datetime
@@ -153,7 +154,7 @@ class FeedbackCollector:
         data = [e.model_dump(mode="json") for e in self._entries]
         self._store_path.parent.mkdir(parents=True, exist_ok=True)
         self._store_path.write_text(
-            json.dumps(data, indent=2, ensure_ascii=False, default=str),
+            dumps(data, indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
         return len(self._entries)

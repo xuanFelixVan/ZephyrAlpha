@@ -21,9 +21,9 @@ Forensic Package — v0.8.0 取证就绪: escalation event bundle+hash chain+tim
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import hashlib
-import json
 from datetime import UTC, datetime
 
 
@@ -33,7 +33,7 @@ class ForensicPackage:
         self._chain: list[str] = []
 
     def bundle(self, event: dict) -> str:
-        serialized = json.dumps(event, sort_keys=True, default=str)
+        serialized = dumps(event, sort_keys=True)
         h = hashlib.sha256(serialized.encode()).hexdigest()
         self._events.append({"hash": h, "timestamp": datetime.now(UTC).isoformat(), "event": event})
         if self._chain:
@@ -45,7 +45,7 @@ class ForensicPackage:
     def verify_chain(self) -> bool:
         for i in range(1, len(self._chain)):
             prev = self._chain[i - 1]
-            curr_event = json.dumps(self._events[i]["event"], sort_keys=True, default=str)
+            curr_event = dumps(self._events[i]["event"], sort_keys=True)
             expected = hashlib.sha256((prev + curr_event).encode()).hexdigest()
             if expected != self._chain[i]:
                 return False

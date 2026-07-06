@@ -31,6 +31,7 @@ VectorBridge — MOD-INF-011 CE/KB 外部集成适配器
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import hashlib
 import logging
@@ -106,11 +107,9 @@ class VectorBridge:
     def audit_operation(self, operation: str, details: dict[str, Any]) -> str:
         # 不传 doc_id——audited_at 每次不同必生成新 doc，审计日志语义本该每次独立记录；
         # execution_traces ttl=30 自净，天然堆叠可接受
-        import json
-
         return self._vms.write(
             "execution_traces",
-            json.dumps(details, ensure_ascii=False, default=str),
+            dumps(details, ensure_ascii=False),
             metadata={
                 "origin": f"audit-trail/{operation}",
                 "audit_chain": ["audit-trail"],

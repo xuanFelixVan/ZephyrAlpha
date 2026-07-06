@@ -44,8 +44,8 @@ ARCH-047: Streamlit→Panel+HoloViz技术栈切换, ChartFactory 作为图表生
   - datashader >=0.16.0,<1.0.0 (factory, 仅阈值触发>50万点)
 """
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
-import json
 from typing import Any, Optional
 
 try:
@@ -226,7 +226,7 @@ def make_kline(
         if missing:
             raise ChartFactoryError(f"kline_data[{i}] 缺少字段: {missing}")
 
-    data_json = json.dumps(kline_data, default=str)
+    data_json = dumps(kline_data)
     chart_id = f"kline-{id(kline_data) & 0xFFFFFF:x}"
 
     html = f"""

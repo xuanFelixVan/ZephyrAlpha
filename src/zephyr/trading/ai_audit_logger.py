@@ -24,6 +24,7 @@ AiAuditLogger — AI 行为审计日志
 5.17.3 修复：添加 SHA-256 哈希链 + 篡改检测，实现真正的不可变性。
 """
 
+from zephyr.shared.io.serialization import dumps
 import logging
 
 logger = logging.getLogger(__name__)
@@ -106,7 +107,7 @@ class AiAuditLogger:
     def _compute_hash(self, entry_dict: dict[str, Any]) -> str:
         """对 entry 计算 SHA-256（排除 entry_hash 字段本身）。"""
         payload = {k: v for k, v in entry_dict.items() if k != "entry_hash"}
-        canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False, default=str)
+        canonical = dumps(payload, sort_keys=True, ensure_ascii=False)
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
     def _write(self, entry: _LogEntry) -> None:

@@ -37,6 +37,7 @@ abort: 文件状态不一致→重新生成+通知Owner
 对标 blueprint.md §6.14。"""
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import hashlib
 import json
@@ -191,7 +192,7 @@ def serialize_package(pkg: HandoffPackage, output_dir: str) -> str:
         "last_verified_at": pkg.last_verified_at,
     }
 
-    content = json.dumps(package_dict, indent=2, default=str, ensure_ascii=False)
+    content = dumps(package_dict, indent=2,  ensure_ascii=False)
 
     tmp_path = f"{path}.{os.getpid()}.tmp"
 

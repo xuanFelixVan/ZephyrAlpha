@@ -37,8 +37,8 @@ metrics: detection_rate / time_to_detect / false_negative_trend
 对标 blueprint.md §6.13。"""
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
-import json
 import os
 import re
 import uuid
@@ -146,7 +146,7 @@ def _write_metrics(metrics: ChaosMetrics, state_dir: str) -> None:
 
     try:
         with open(tmp, "w", encoding="utf-8") as f:
-            f.write(json.dumps(metrics.summary(), indent=2, default=str))
+            f.write(dumps(metrics.summary(), indent=2))
 
         os.replace(tmp, path)
 

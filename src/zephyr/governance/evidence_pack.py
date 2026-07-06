@@ -14,6 +14,7 @@
 # [TESTS] tests/audit-orchestrator/test_evidence_pack.py
 # [A_module] module_id=MOD-GOV_evidence_pack | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from zephyr.shared.io.serialization import dumps
 import hashlib
 import json
 import logging
@@ -35,7 +36,7 @@ class EvidencePack:
         self, audit_id: str, findings: list[dict[str, Any]], metadata: dict[str, Any] | None = None
     ) -> dict[str, Any] | None:
         try:
-            serialized = json.dumps(findings, sort_keys=True, ensure_ascii=False, default=str)
+            serialized = dumps(findings, sort_keys=True, ensure_ascii=False)
             evidence_hash = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
             pack_data = {
@@ -53,7 +54,7 @@ class EvidencePack:
             tmp_path = Path(str(output_path) + f".{os.getpid()}.tmp")
             try:
                 tmp_path.write_text(
-                    json.dumps(pack_data, indent=2, ensure_ascii=False, default=str),
+                    dumps(pack_data, indent=2, ensure_ascii=False),
                     encoding="utf-8",
                 )
                 os.replace(str(tmp_path), str(output_path))
@@ -79,7 +80,7 @@ class EvidencePack:
             try:
                 data = json.loads(path.read_text(encoding="utf-8"))
                 findings = data.get("findings", [])
-                serialized = json.dumps(findings, sort_keys=True, ensure_ascii=False, default=str)
+                serialized = dumps(findings, sort_keys=True, ensure_ascii=False)
                 current_hash = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
                 if current_hash[:16] == evidence_id:
                     return current_hash == data.get("evidence_hash", "")

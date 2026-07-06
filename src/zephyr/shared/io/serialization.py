@@ -60,6 +60,7 @@ __all__ = [
     "SerializationFormat",
     "deserialize_datetime",
     "deserialize_decimal",
+    "dumps",
     "from_dict",
     "from_json",
     "serialize_datetime",
@@ -251,6 +252,46 @@ def to_json(obj: Any, *, indent: int | None = None) -> str:
     """
     d = to_dict(obj)
     return json.dumps(d, ensure_ascii=False, indent=indent, sort_keys=True, default=str)
+
+
+def dumps(
+    obj: Any,
+    *,
+    indent: int | None = None,
+    ensure_ascii: bool = True,
+    sort_keys: bool = False,
+) -> str:
+    """将任意对象序列化为确定性 JSON 字符串（5.147.4 SSoT）。
+
+    替代裸 ``json.dumps(obj, default=str)``——使用 ``_serialize_value`` 正确处理
+    datetime→ISO 8601 / Decimal→str / Enum→value，未知类型回退 ``str()`` 保持兼容。
+
+    与 ``to_json`` 的区别：``to_json`` 要求 Pydantic/dataclass 输入，
+    ``dumps`` 接受 dict/list/Any 原生对象。
+
+    Args:
+        obj: 任意可 JSON 序列化的对象（dict/list/datetime/Decimal/Enum/原生类型）。
+        indent: JSON 缩进空格数——None 为紧凑单行。
+        ensure_ascii: 是否转义非 ASCII 字符——False 保留中文等原样输出。
+        sort_keys: 是否按 key 排序——True 用于确定性哈希/签名场景。
+
+    Returns:
+        JSON 字符串。
+    """
+
+    def _default(o: Any) -> Any:
+        try:
+            return _serialize_value(o)
+        except SerializationError:
+            return str(o)
+
+    return json.dumps(
+        obj,
+        ensure_ascii=ensure_ascii,
+        indent=indent,
+        sort_keys=sort_keys,
+        default=_default,
+    )
 
 
 def from_json(

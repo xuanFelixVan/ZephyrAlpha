@@ -16,7 +16,7 @@
 # [TTL] permanent
 """Orc→VMS 记忆写入器"""
 
-import json
+from zephyr.shared.io.serialization import dumps
 import logging
 from dataclasses import dataclass
 from typing import Any
@@ -41,7 +41,7 @@ class MemoryWriter:
             vms = InMemoryFakeVMS()
             bridge = VectorBridge(vms)
             tid = getattr(task, "task_id", "unknown")
-            summary = f"Task: {getattr(task, 'title', '')}. Result: {json.dumps(result or {}, default=str)}"
+            summary = f"Task: {getattr(task, 'title', '')}. Result: {dumps(result or {})}"
             bridge._vms.write(
                 "session_snapshots", summary[:2000], metadata={"task_id": tid, "status": getattr(task, "status", "?")},
                 doc_id=f"session::{tid}",

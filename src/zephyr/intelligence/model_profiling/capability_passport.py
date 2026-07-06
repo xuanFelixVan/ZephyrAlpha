@@ -31,6 +31,7 @@ CapabilityPassport --- AI 模型能力护照
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import hashlib
 import hmac
@@ -477,7 +478,7 @@ class QuickProfile:
         safe_id = self.model_id.replace(":", "_").replace("/", "_")
         path = QUICK_PROFILES_DIR / f"{safe_id}.json"
         path.write_text(
-            json.dumps(asdict(self), ensure_ascii=False, indent=2, default=str),
+            dumps(asdict(self), ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
         _log.info("QuickProfile saved: %s", path)

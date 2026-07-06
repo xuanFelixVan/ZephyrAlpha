@@ -14,6 +14,7 @@
 # [TESTS] tests/audit-orchestrator/test_genesis.py
 # [A_module] module_id=MOD-GOV_genesis | layer=module | stability=frozen | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
+from zephyr.shared.io.serialization import dumps
 import hashlib
 import hmac
 import json
@@ -90,14 +91,14 @@ class GenesisBlock:
         }
 
     def _hash_block(self, block: dict[str, Any]) -> str:
-        data = json.dumps(block, sort_keys=True, ensure_ascii=False, default=str)
+        data = dumps(block, sort_keys=True, ensure_ascii=False)
         return hashlib.sha256(data.encode("utf-8")).hexdigest()
 
     def _persist(self, block: dict[str, Any]) -> None:
         tmp_path = Path(str(self._genesis_path) + f".{os.getpid()}.tmp")
         try:
             tmp_path.write_text(
-                json.dumps(block, indent=2, ensure_ascii=False, default=str),
+                dumps(block, indent=2, ensure_ascii=False),
                 encoding="utf-8",
             )
             os.replace(str(tmp_path), str(self._genesis_path))

@@ -28,6 +28,7 @@ F5 = EscalationProtocol 五件套: EscalationEngine + DelegationEngine + Deadloc
 6. 状态恢复: 从 SQLite 恢复 DeadlockDetector 状态 (供下次启动使用)
 """
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import atexit
 import json
@@ -362,7 +363,7 @@ class F5ShutdownManager:
             for key, value in payload.items():
                 conn.execute(
                     f"INSERT INTO {safe_table} (key, value, updated_at) VALUES (?, ?, ?)",
-                    (key, json.dumps(value, default=str), payload.get("timestamp", time.time())),
+                    (key, dumps(value), payload.get("timestamp", time.time())),
                 )
             conn.commit()
         finally:

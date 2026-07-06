@@ -31,6 +31,7 @@ module_id: MOD-INF-023
 对标 blueprint.md §2.17门禁持久化 / D-023-31。"""
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import hashlib
 import json
@@ -175,7 +176,7 @@ class GatePersistence:
     def persist_scan_result(self, scan_id: uuid.UUID, body: dict[str, object]) -> str:
         body["persisted_at"] = datetime.now(UTC).isoformat()
 
-        sha = hashlib.sha256(json.dumps(body, sort_keys=True, default=str).encode("utf-8")).hexdigest()
+        sha = hashlib.sha256(dumps(body, sort_keys=True).encode("utf-8")).hexdigest()
 
         body["sha256"] = sha
 
@@ -185,7 +186,7 @@ class GatePersistence:
 
         try:
             with open(tmp_path, "w", encoding="utf-8") as fh:
-                json.dump(body, fh, indent=2, ensure_ascii=False, default=str)
+                json.dump(body, fh, indent=2, ensure_ascii=False)
 
             os.replace(tmp_path, filepath)
 
@@ -247,7 +248,7 @@ class GatePersistence:
             if sha_key is None:
                 return False
 
-            computed = hashlib.sha256(json.dumps(data, sort_keys=True, default=str).encode("utf-8")).hexdigest()
+            computed = hashlib.sha256(dumps(data, sort_keys=True).encode("utf-8")).hexdigest()
 
             return computed == sha_key.get("sha256", "")
 
