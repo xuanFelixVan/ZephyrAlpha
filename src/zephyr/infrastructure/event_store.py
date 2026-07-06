@@ -176,13 +176,20 @@ class EventStore:
     def record_batch(self, events: list[StoredEvent]) -> int:
         if not events:
             return 0
+        # 5.44.5 修复：分片写入，每片 ≤1000 条，防止单事务过大导致回滚
+        BATCH_CHUNK_SIZE = 1000
         conn = self._conn
-        conn.executemany(
-            "INSERT INTO events (event_id,timestamp,level,component,event_type,payload,metadata,checksum) VALUES (?,?,?,?,?,?,?,?)",
-            [e.to_row() for e in events],
-        )
+        rows = [e.to_row() for e in events]
+        total = 0
+        for i in range(0, len(rows), BATCH_CHUNK_SIZE):
+            chunk = rows[i : i + BATCH_CHUNK_SIZE]
+            conn.executemany(
+                "INSERT INTO events (event_id,timestamp,level,component,event_type,payload,metadata,checksum) VALUES (?,?,?,?,?,?,?,?)",
+                chunk,
+            )
+            total += len(chunk)
         conn.commit()
-        return len(events)
+        return total
 
     def query(
         self,

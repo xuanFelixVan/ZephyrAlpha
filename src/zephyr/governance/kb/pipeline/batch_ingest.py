@@ -96,6 +96,9 @@ class BatchIngestReport:
 
 
 class BatchIngestor:
+    # 5.44.4 修复：批次大小上限，防止单批 OOM
+    MAX_BATCH_SIZE = 1000
+
     def __init__(
         self,
         ingest_gate: IngestGate,
@@ -186,6 +189,12 @@ class BatchIngestor:
         return self._process_entries(p0_p1)
 
     def _process_entries(self, entries: list[BatchIngestEntry]) -> BatchIngestReport:
+        # 5.44.4 修复：批次大小校验，超过 MAX_BATCH_SIZE 抛 ValueError
+        if len(entries) > self.MAX_BATCH_SIZE:
+            raise ValueError(
+                f"BatchIngestor 批次大小 {len(entries)} 超过上限 {self.MAX_BATCH_SIZE}，请分片处理"
+            )
+
         report = BatchIngestReport(
             total=len(entries),
             started_at=datetime.now(_UTC).isoformat(),
