@@ -66,7 +66,7 @@ tasks:
         if real_yaml.exists():
             queue.load_yaml(real_yaml)
             tasks = queue.list_all()
-            assert len(tasks) == 10
+            assert len(tasks) == 61
             # adj_factor 应无依赖
             assert queue.get_task("adj_factor_incremental")["dependencies"] == []
             # kline_daily_hfq 应依赖 adj_factor
