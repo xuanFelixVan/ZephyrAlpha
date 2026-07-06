@@ -7,7 +7,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] KeyError for unknown session; ValueError for duplicate session; SessionTransitionError for illegal transition
+# [ERROR_CONTRACT] SessionError for unknown session; ValueError for duplicate session; SessionTransitionError for illegal transition
 # [TESTS] test_session_manager.py
 # [TTL] task_bound
 
@@ -19,6 +19,7 @@ import pytest
 import yaml
 
 from zephyr.trading.orchestrator.lifecycle.session_manager import (
+    SessionError,
     SessionManager,
     SessionState,
     SessionTransitionError,
@@ -97,7 +98,7 @@ class TestSessionManager:
         assert manager.get_state(sid) == SessionState.IDLE
 
     def test_get_state_nonexistent_session(self, manager):
-        with pytest.raises(KeyError, match="not found"):
+        with pytest.raises(SessionError, match="not found"):
             manager.get_state("nonexistent")
 
     def test_valid_transition_idle_to_active(self, manager):
@@ -142,7 +143,7 @@ class TestSessionManager:
             manager.transition(sid, "idle")
 
     def test_transition_nonexistent_session(self, manager):
-        with pytest.raises(KeyError, match="not found"):
+        with pytest.raises(SessionError, match="not found"):
             manager.transition("nonexistent", "active")
 
     def test_archive_session(self, manager):

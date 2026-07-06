@@ -55,6 +55,7 @@ __all__ = [
     # 新代码应使用 ZephyrIOError。
     "PipelineError",
     "SecurityError",
+    "SessionError",
     "TaskError",
     "UnimplementedError",
     "ValidationError",
@@ -95,6 +96,10 @@ class ContractError(ZephyrBaseError):
 
 class SecurityError(ZephyrBaseError):
     """安全相关错误——权限拒绝、Token 无效、沙箱逃逸检测。"""
+
+
+class SessionError(ZephyrBaseError):
+    """会话生命周期错误——会话不存在、状态转换非法、会话超时。"""
 
 
 class ValidationError(ZephyrBaseError):

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] transition: InvalidTransition→ValueError; register_session: CapacityExceeded→RuntimeError
+# [ERROR_CONTRACT] transition: InvalidTransition→SessionError; session_not_found→SessionError; register_session: CapacityExceeded→RuntimeError
 # [TESTS] tests/test_behavioral_audit/test_session_lifecycle.py
 # [A_module] module_id=MOD-GOV_session_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -31,6 +31,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.shared.io.paths import REPO_ROOT  # 5.141.2 修复: 使用SSoT路径, 避免相对路径漂移
+from zephyr.shared.foundation.errors import SessionError  # 5.99.8/9 修复: 统一会话异常类型
 
 logger = logging.getLogger(__name__)
 
@@ -256,12 +257,12 @@ class SessionLifecycle:
         with self._lock:
             record = self._sessions.get(session_id)
             if record is None:
-                raise ValueError(f"session not found: {session_id}")
+                raise SessionError(f"session not found: {session_id}")
 
             current = record.state
             allowed = SESSION_TRANSITIONS.get(current, {})
             if trigger not in allowed:
-                raise ValueError(f"invalid transition: {current.value} + {trigger.value} not allowed")
+                raise SessionError(f"invalid transition: {current.value} → {trigger.value} not allowed")
 
             new_state = allowed[trigger]
             now = time.time()
@@ -302,7 +303,7 @@ class SessionLifecycle:
         with self._lock:
             record = self._sessions.get(session_id)
             if record is None:
-                raise ValueError(f"session not found: {session_id}")
+                raise SessionError(f"session not found: {session_id}")
 
             new_score = max(0.0, min(100.0, record.trust_score + delta))
             new_tier = _compute_trust_tier(new_score)
@@ -326,7 +327,7 @@ class SessionLifecycle:
         with self._lock:
             record = self._sessions.get(session_id)
             if record is None:
-                raise ValueError(f"session not found: {session_id}")
+                raise SessionError(f"session not found: {session_id}")
 
             new_count = record.violation_count + 1
             penalty = min(5.0, new_count * 1.0)

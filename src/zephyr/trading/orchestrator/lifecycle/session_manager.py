@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] session_not_found→SessionError; invalid_transition→SessionTransitionError(→SessionError); duplicate_session→ValueError
 # [TESTS]
 # [A_module] module_id=MOD-ORC_session_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -31,12 +31,14 @@ import time
 from enum import Enum, unique
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.foundation.errors import SessionError  # 5.99.8/9 修复: 统一会话异常类型
 from threading import RLock
 from typing import Any
 
 import yaml
 
 __all__ = [
+    "SessionError",
     "SessionManager",
     "SessionState",
     "SessionTransitionError",
@@ -57,7 +59,7 @@ class SessionState(str, Enum):
     ARCHIVED = "archived"
 
 
-class SessionTransitionError(RuntimeError):
+class SessionTransitionError(SessionError):
     """非法状态转换。"""
 
 
@@ -123,12 +125,12 @@ class SessionManager:
         with self._lock:
             session = self._sessions.get(session_id)
             if session is None:
-                raise KeyError(f"Session {session_id} not found")
+                raise SessionError(f"Session {session_id} not found")
             current = session["state"]
             target = SessionState(target_state)
             allowed = any(t.get("from") == current.value and t.get("to") == target.value for t in self._transitions)
             if not allowed:
-                raise SessionTransitionError(f"Transition {current.value} -> {target.value} not allowed")
+                raise SessionTransitionError(f"Transition {current.value} → {target.value} not allowed")
             session["state"] = target
             session["last_transition_at"] = time.time()
             session["history"].append(
@@ -145,7 +147,7 @@ class SessionManager:
         with self._lock:
             session = self._sessions.get(session_id)
             if session is None:
-                raise KeyError(f"Session {session_id} not found")
+                raise SessionError(f"Session {session_id} not found")
             return session["state"]
 
     def check_timeouts(self) -> list[str]:
