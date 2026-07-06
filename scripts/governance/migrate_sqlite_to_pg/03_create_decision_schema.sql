@@ -26,6 +26,7 @@
 --
 -- 变更历史：
 --   v1.0.0 (2026-07-05): 初版——4张表 + 5索引 + 2触发器
+--   v1.1.0 (2026-07-06): decision_layers 加 module_id + source_code_ref；decision_nodes 加 source_code_ref
 -- =====================================================================
 
 -- ========== 1. decision_tracks（四轨定义，无外键依赖，先创建） ==========
@@ -49,7 +50,9 @@ CREATE TABLE IF NOT EXISTS decision_layers (
     design_maturity        TEXT DEFAULT 'production'
         CHECK (design_maturity IN ('design', 'production', 'prototype')),
     build_status           TEXT DEFAULT 'generated'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated'))
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+    module_id              TEXT,
+    source_code_ref        TEXT
 );
 
 -- ========== 3. decision_nodes（决策节点，FK→decision_layers） ==========
@@ -70,6 +73,7 @@ CREATE TABLE IF NOT EXISTS decision_nodes (
         CHECK (design_maturity IN ('design', 'production', 'prototype')),
     build_status           TEXT DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+    source_code_ref        TEXT,
     created_at             TIMESTAMPTZ DEFAULT NOW(),
     finalized_at           TIMESTAMPTZ
 );
@@ -95,6 +99,14 @@ CREATE INDEX IF NOT EXISTS idx_decision_nodes_module ON decision_nodes(module_id
 CREATE INDEX IF NOT EXISTS idx_decision_edges_from ON decision_edges(from_node_id);
 CREATE INDEX IF NOT EXISTS idx_decision_edges_to ON decision_edges(to_node_id);
 CREATE INDEX IF NOT EXISTS idx_decision_edges_type ON decision_edges(edge_type);
+CREATE INDEX IF NOT EXISTS idx_decision_layers_module ON decision_layers(module_id);
+
+-- ========== 5.1 ALTER TABLE 迁移（v1.1.0：为已存在的表添加新列，幂等） ==========
+-- decision_layers 加 module_id + source_code_ref
+ALTER TABLE decision_layers ADD COLUMN IF NOT EXISTS module_id TEXT;
+ALTER TABLE decision_layers ADD COLUMN IF NOT EXISTS source_code_ref TEXT;
+-- decision_nodes 加 source_code_ref
+ALTER TABLE decision_nodes ADD COLUMN IF NOT EXISTS source_code_ref TEXT;
 
 -- ========== 6. 触发器：承重墙不变量 ==========
 -- DEC-INV-002 信号仓位分离：signal 节点不能直接连 order 节点
@@ -137,36 +149,38 @@ VALUES
 ON CONFLICT (track_id) DO NOTHING;
 
 -- ========== 8. 初始数据（决策层定义） ==========
-INSERT INTO decision_layers (layer_id, layer_name, layer_name_en, track, description, decision_frequency, design_maturity, build_status)
+INSERT INTO decision_layers (layer_id, layer_name, layer_name_en, track, description, decision_frequency, design_maturity, build_status, module_id, source_code_ref)
 VALUES
     ('L0', '数据接入与预处理层', 'Data Ingestion & Preprocessing', 'model_driven',
      'miniQMT + iFind + tushare + 另类数据源 → 事件总线 → 分层时序存储',
-     'tick', 'production', 'stable'),
+     'tick', 'production', 'stable', NULL, NULL),
     ('L1', '因子计算层', 'Factor Calculation', 'model_driven',
      '因子工厂全生命周期管理 → 盘前全量/盘中增量双模计算 → 因子池',
-     'daily', 'production', 'stable'),
+     'daily', 'production', 'stable', NULL, NULL),
     ('L2A', '信号层', 'Signal Generation', 'model_driven',
      '信号工厂 → 多策略投票 → 收益率条件密度预测 → Transformer/Mamba时序增强',
-     'daily', 'design', 'planned'),
+     'daily', 'design', 'planned', NULL, NULL),
     ('L2B', '主力行为层', 'Main Force Behavior Analysis', 'model_driven',
      '六阶段识别 + 自迭代推演 + 庄家专项 + 群体博弈模拟',
-     'daily', 'design', 'planned'),
+     'daily', 'design', 'planned', NULL, NULL),
     ('L2C', '市场状态与大盘预测层', 'Market State & Index Prediction', 'model_driven',
      '3×3矩阵 + 2叠加态 + 三层大盘预测 + T+1次日8态走势预测 + 体制转换检测',
-     'daily', 'design', 'planned'),
+     'daily', 'design', 'planned', NULL, NULL),
     ('L2D', '知识图谱与因果推演层', 'Knowledge Graph & Causal Inference', 'model_driven',
      '六类知识图谱 → 事件影响链分析 → 因果传导推演 → GNN股票关系建模 → Causal ML',
-     'daily', 'design', 'planned'),
+     'daily', 'design', 'planned', NULL, NULL),
     ('L3', '策略组合层', 'Strategy & Portfolio Combination', 'model_driven',
      '多策略信号合成 → 资本分配 → 元策略路由 → 组合构建',
-     'daily', 'design', 'planned'),
+     'daily', 'design', 'planned', NULL, NULL),
     ('L4', '风控层', 'Risk Control', 'model_driven',
      'Pre/Post-Trade 风控校验 + Kill Switch 熔断 + 止损评估',
-     'realtime', 'production', 'stable'),
+     'realtime', 'production', 'stable', NULL, NULL),
     ('L5', '学习层', 'Learning & Optimization', 'model_driven',
      '7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环',
-     'weekly', 'design', 'planned'),
+     'weekly', 'design', 'planned', NULL, NULL),
     ('L6', '自评估层', 'Self Evaluation', 'model_driven',
      'LLM 自评估(Judge+交叉验证) + 多模态金融推理 + VeNRA零幻觉锚定',
-     'weekly', 'design', 'planned')
-ON CONFLICT (layer_id) DO NOTHING;
+     'weekly', 'design', 'planned', NULL, NULL)
+ON CONFLICT (layer_id) DO UPDATE SET
+    module_id = EXCLUDED.module_id,
+    source_code_ref = EXCLUDED.source_code_ref;

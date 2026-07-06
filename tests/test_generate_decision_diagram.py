@@ -54,6 +54,8 @@ try:
     _gen_layers_mmd = _mod._gen_layers_mmd
     _gen_invariants_mmd = _mod._gen_invariants_mmd
     _gen_index_md = _mod._gen_index_md
+    _resolve_blueprint_names = _mod._resolve_blueprint_names
+    _truncate = _mod._truncate
     OUTPUT_DIR = _mod.OUTPUT_DIR
     _YAML_PATH_FROM_MOD = _mod._YAML_PATH
 except Exception as e:  # noqa: BLE001
@@ -78,36 +80,43 @@ def sample_tracks():
 
 @pytest.fixture
 def sample_layers():
-    """4 个 Layer（L0/L1/L2A/L4）。"""
+    """4 个 Layer（L0/L1/L2A/L4），含 module_id + source_code_ref + desc。"""
     return [
         {"id": "L0", "name": "数据接入与预处理层", "name_en": "Data Ingestion",
-         "track": "model_driven", "desc": "", "freq": "tick",
-         "maturity": "production", "build": "stable"},
+         "track": "model_driven", "desc": "miniQMT+iFind数据接入与预处理", "freq": "tick",
+         "maturity": "production", "build": "stable",
+         "module_id": "MOD-DATA-001", "source_code_ref": "src/zephyr/data/ingestion.py",
+         "blueprint_name": "数据接入蓝图"},
         {"id": "L1", "name": "因子计算层", "name_en": "Factor Computation",
-         "track": "model_driven", "desc": "", "freq": "daily",
-         "maturity": "production", "build": "stable"},
+         "track": "model_driven", "desc": "因子工厂全生命周期管理", "freq": "daily",
+         "maturity": "production", "build": "stable",
+         "module_id": "MOD-FACTOR-001", "source_code_ref": "src/zephyr/factor/calc.py",
+         "blueprint_name": "因子计算蓝图"},
         {"id": "L2A", "name": "信号层", "name_en": "Signal",
-         "track": "model_driven", "desc": "", "freq": "daily",
-         "maturity": "design", "build": "planned"},
+         "track": "model_driven", "desc": "信号工厂多策略投票", "freq": "daily",
+         "maturity": "design", "build": "planned",
+         "module_id": "", "source_code_ref": ""},
         {"id": "L4", "name": "风控层", "name_en": "Risk Control",
-         "track": "model_driven", "desc": "", "freq": "realtime",
-         "maturity": "production", "build": "stable"},
+         "track": "model_driven", "desc": "Pre/Post-Trade风控校验", "freq": "realtime",
+         "maturity": "production", "build": "stable",
+         "module_id": "MOD-RISK-001", "source_code_ref": "src/zephyr/risk/checker.py",
+         "blueprint_name": "风控蓝图"},
     ]
 
 
 @pytest.fixture
 def sample_nodes():
-    """3 个 Node（含 design_maturity 区分设计态/运营态）。"""
+    """3 个 Node（含 design_maturity 区分设计态/运营态 + source_code_ref）。"""
     return [
         {"id": 1, "layer_id": "L0", "type": "signal", "path": "ingest.tick",
          "module_id": "MOD-DATA-001", "name": "Tick接入", "build": "stable",
-         "maturity": "production", "hash": "abc123"},
+         "maturity": "production", "hash": "abc123", "source_code_ref": "src/zephyr/data/ingest.py"},
         {"id": 2, "layer_id": "L2A", "type": "signal", "path": "signal.momentum",
          "module_id": "MOD-SIG-001", "name": "动量信号", "build": "planned",
-         "maturity": "design", "hash": "def456"},
+         "maturity": "design", "hash": "def456", "source_code_ref": ""},
         {"id": 3, "layer_id": "L4", "type": "risk_check", "path": "risk.checker",
          "module_id": "MOD-RISK-001", "name": "风控检查", "build": "stable",
-         "maturity": "production", "hash": "ghi789"},
+         "maturity": "production", "hash": "ghi789", "source_code_ref": "src/zephyr/risk/check.py"},
     ]
 
 
@@ -565,3 +574,137 @@ class TestGenIndexMd:
         md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants)
         assert "设计态全景图" in md
         assert "design_maturity=design" in md
+
+
+# ---------- 新字段测试（module_id / source_code_ref / description） ----------
+
+class TestNewFields:
+    """新增字段（module_id / source_code_ref / description）展示测试。"""
+
+    def test_truncate_short_text(self):
+        """_truncate 对短文本不截断。"""
+        assert _truncate("短文本") == "短文本"
+
+    def test_truncate_long_text(self):
+        """_truncate 对长文本截断到 max_len 并加省略号。"""
+        long_text = "这是一个很长的功能描述文本需要被截断处理"
+        result = _truncate(long_text, max_len=10)
+        assert len(result) == 10
+        assert result.endswith("…")
+
+    def test_truncate_empty(self):
+        """_truncate 对空文本返回空字符串。"""
+        assert _truncate("") == ""
+        assert _truncate(None) == ""
+
+    def test_truncate_strips_newlines(self):
+        """_truncate 将换行替换为空格。"""
+        result = _truncate("第一行\n第二行", max_len=50)
+        assert "\n" not in result
+
+    def test_overview_contains_blueprint_name(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """全景图标签包含蓝图名（module_id 有值时）。"""
+        mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        # L0 有 module_id=MOD-DATA-001, blueprint_name=数据接入蓝图
+        assert "蓝图: 数据接入蓝图" in mmd
+        # L4 有 module_id=MOD-RISK-001, blueprint_name=风控蓝图
+        assert "蓝图: 风控蓝图" in mmd
+
+    def test_overview_contains_code_ref(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """全景图标签包含代码引用（source_code_ref 有值时）。"""
+        mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        assert "代码: src/zephyr/data/ingestion.py" in mmd
+        assert "代码: src/zephyr/risk/checker.py" in mmd
+
+    def test_overview_contains_description(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """全景图标签包含功能简述（desc 有值时，截断到~20字）。"""
+        mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        # 使用 _truncate 计算期望值，避免截断导致的断言失败
+        assert f"功能: {_truncate('miniQMT+iFind数据接入与预处理')}" in mmd
+        assert f"功能: {_truncate('Pre/Post-Trade风控校验')}" in mmd
+
+    def test_overview_no_blueprint_when_empty(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """module_id 为空时不显示蓝图行。"""
+        mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        # L2A 的 module_id 为空，不应出现"蓝图:"前缀在 L2A 附近
+        # 但由于整体 mmd 中其他 layer 有蓝图行，检查 L2A 不含蓝图
+        l2a_section = [l for l in mmd.split("\n") if "LL2A" in l]
+        assert l2a_section
+        for line in l2a_section:
+            assert "蓝图:" not in line
+
+    def test_layers_mmd_contains_blueprint_name(self, sample_tracks, sample_layers):
+        """层级详情图标签包含蓝图名。"""
+        mmd = _gen_layers_mmd(sample_tracks, sample_layers)
+        assert "蓝图: 数据接入蓝图" in mmd
+        assert "蓝图: 因子计算蓝图" in mmd
+
+    def test_layers_mmd_contains_code_ref(self, sample_tracks, sample_layers):
+        """层级详情图标签包含代码引用。"""
+        mmd = _gen_layers_mmd(sample_tracks, sample_layers)
+        assert "代码: src/zephyr/factor/calc.py" in mmd
+
+    def test_layers_mmd_contains_description(self, sample_tracks, sample_layers):
+        """层级详情图标签包含功能简述。"""
+        mmd = _gen_layers_mmd(sample_tracks, sample_layers)
+        assert "功能: 因子工厂全生命周期管理" in mmd
+
+    def test_index_md_layer_table_has_new_columns(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """Layer 清单表包含新列头。"""
+        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        assert "蓝图(module_id)" in md
+        assert "蓝图名(派生)" in md
+        assert "代码引用" in md
+        assert "功能简述" in md
+
+    def test_index_md_layer_table_has_module_id_values(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """Layer 清单表包含 module_id 值。"""
+        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        assert "MOD-DATA-001" in md
+        assert "MOD-FACTOR-001" in md
+        assert "MOD-RISK-001" in md
+
+    def test_index_md_layer_table_has_blueprint_names(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """Layer 清单表包含派生蓝图名。"""
+        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        assert "数据接入蓝图" in md
+        assert "因子计算蓝图" in md
+        assert "风控蓝图" in md
+
+    def test_index_md_layer_table_has_source_code_ref(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """Layer 清单表包含代码引用值。"""
+        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        assert "src/zephyr/data/ingestion.py" in md
+        assert "src/zephyr/factor/calc.py" in md
+
+    def test_index_md_layer_table_has_description(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """Layer 清单表包含功能简述值。"""
+        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        assert "miniQMT+iFind数据接入与预处理" in md
+        assert "Pre/Post-Trade风控校验" in md
+
+    def test_index_md_node_table_has_source_code_ref(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """Node 清单表包含代码引用列和值。"""
+        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        assert "代码引用" in md
+        assert "src/zephyr/data/ingest.py" in md
+        assert "src/zephyr/risk/check.py" in md
+
+    def test_index_md_empty_module_id_shows_dash(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """module_id 为空时清单表显示 '-'。"""
+        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
+        # L2A 的 module_id 为空
+        assert "| - | - | - |" in md or "| - |" in md
+
+    def test_resolve_blueprint_names_empty_input(self):
+        """_resolve_blueprint_names 无 module_id 时返回空 dict。"""
+        layers_no_mid = [{"id": "L0", "module_id": None}, {"id": "L1", "module_id": ""}]
+        # 使用 mock conn（不会实际查询，因为无 module_id）
+        class MockConn:
+            def cursor(self):
+                class MockCur:
+                    def __enter__(self): return self
+                    def __exit__(self, *a): pass
+                return MockCur()
+        result = _resolve_blueprint_names(MockConn(), layers_no_mid)
+        assert result == {}

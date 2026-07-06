@@ -152,7 +152,7 @@ def get_decisiongraph_pg_connection(*args, **kwargs):
 
 
 # ---------------------------------------------------------------------------
-# DDL — decision_layers 表（决策层，10列）
+# DDL — decision_layers 表（决策层，12列）
 # 列名对比真源：与 PG schema 真源对齐
 # ---------------------------------------------------------------------------
 
@@ -167,12 +167,14 @@ CREATE TABLE IF NOT EXISTS decision_layers (
     design_maturity     TEXT    DEFAULT 'production'
         CHECK (design_maturity IN ('design', 'production', 'prototype')),
     build_status        TEXT    DEFAULT 'generated'
-        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated'))
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+    module_id           TEXT,
+    source_code_ref     TEXT
 )
 """
 
 # ---------------------------------------------------------------------------
-# DDL — decision_nodes 表（决策节点，16列）
+# DDL — decision_nodes 表（决策节点，17列）
 # JSONB 字段：inputs/outputs/conditions/facets
 # FK: layer_id REFERENCES decision_layers(layer_id) — DEC-INV-001
 # UNIQUE: path — 节点路径唯一
@@ -196,6 +198,7 @@ CREATE TABLE IF NOT EXISTS decision_nodes (
         CHECK (design_maturity IN ('design', 'production', 'prototype')),
     build_status     TEXT    DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+    source_code_ref  TEXT,
     created_at       TIMESTAMPTZ DEFAULT NOW(),
     finalized_at     TIMESTAMPTZ
 )

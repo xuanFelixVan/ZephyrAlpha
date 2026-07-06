@@ -81,6 +81,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from psycopg2.extras import RealDictCursor
 
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -230,7 +231,7 @@ def _decision_sync_lock(conn):
 def _sync_tracks(conn, tracks: list[dict], dry_run: bool = False) -> dict:
     """同步 tracks 表（全量覆盖）。"""
     stats = {"inserted": 0, "updated": 0, "unchanged": 0}
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         for t in tracks:
             cur.execute(
                 "SELECT * FROM decision_tracks WHERE track_id = %s",
@@ -289,13 +290,16 @@ def _sync_tracks(conn, tracks: list[dict], dry_run: bool = False) -> dict:
 def _sync_layers(conn, layers: list[dict], dry_run: bool = False) -> dict:
     """同步 layers 表（全量覆盖）。"""
     stats = {"inserted": 0, "updated": 0, "unchanged": 0}
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         for L in layers:
             cur.execute(
                 "SELECT * FROM decision_layers WHERE layer_id = %s",
                 (L["layer_id"],),
             )
             existing = cur.fetchone()
+            # module_id / source_code_ref 可为空字符串或 null，统一处理为 None
+            mid = L.get("module_id") or None
+            scr = L.get("source_code_ref") or None
             row = {
                 "layer_id": L["layer_id"],
                 "layer_name": L["layer_name"],
@@ -305,6 +309,8 @@ def _sync_layers(conn, layers: list[dict], dry_run: bool = False) -> dict:
                 "decision_frequency": L.get("decision_frequency", ""),
                 "design_maturity": L.get("design_maturity", "production"),
                 "build_status": L.get("build_status", "generated"),
+                "module_id": mid,
+                "source_code_ref": scr,
             }
             if existing is None:
                 if dry_run:
@@ -314,10 +320,12 @@ def _sync_layers(conn, layers: list[dict], dry_run: bool = False) -> dict:
                         """
                         INSERT INTO decision_layers
                             (layer_id, layer_name, layer_name_en, track, description,
-                             decision_frequency, design_maturity, build_status)
+                             decision_frequency, design_maturity, build_status,
+                             module_id, source_code_ref)
                         VALUES (%(layer_id)s, %(layer_name)s, %(layer_name_en)s, %(track)s,
                                 %(description)s, %(decision_frequency)s,
-                                %(design_maturity)s, %(build_status)s)
+                                %(design_maturity)s, %(build_status)s,
+                                %(module_id)s, %(source_code_ref)s)
                         """,
                         row,
                     )
@@ -339,7 +347,9 @@ def _sync_layers(conn, layers: list[dict], dry_run: bool = False) -> dict:
                                 description = %(description)s,
                                 decision_frequency = %(decision_frequency)s,
                                 design_maturity = %(design_maturity)s,
-                                build_status = %(build_status)s
+                                build_status = %(build_status)s,
+                                module_id = %(module_id)s,
+                                source_code_ref = %(source_code_ref)s
                             WHERE layer_id = %(layer_id)s
                             """,
                             row,
