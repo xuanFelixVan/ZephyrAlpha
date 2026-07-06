@@ -732,7 +732,8 @@ repos:
       #   原因：R67 基线 DEBT-2=13（hallucination_detector.py 等），强制阻断会卡死工作流
       # 阶段2（R68 完成 2026-07-06）：存量违规清零（DEBT-2: 13→0），移除 stages:[manual]
       #   → commit 时自动阻断新增违规（hard block）；R68 修订只检测位置参数（kwonlyargs 豁免）
-      # 阶段3（待定）：CI 集成——`pre-commit run gate-debt-bridge --all-files` 加入 CI pipeline
+      # 阶段3（R68 完成 2026-07-06）：CI 集成——.github/workflows/governance.yml Tier 5
+      #   新增 Architecture Debt Scan step，scan_debt.py --ci 全量扫描，continue-on-error: false 硬阻断 push/PR
       # 设计原则：误报优先（宁可放过，不可误伤 commit）；纯 stdlib（不依赖 ruff 是否安装）
       - id: gate-debt-bridge
         name: "GATE-DEBT-BRIDGE: 架构债务防御（5.96 维度防复发）"

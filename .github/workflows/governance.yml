@@ -254,6 +254,10 @@ jobs:
         run: python scripts/governance/d7_code/detect_direct_llm_calls.py
         continue-on-error: false
 
+      - name: Architecture Debt Scan (GATE-DEBT-BRIDGE, 5.96维度防复发)
+        run: python scripts/governance/d7_code/scan_debt.py --src src/zephyr --ci
+        continue-on-error: false
+
       # ============================================================
       # Tier 6: 集成层 — Phase Manager + MCP + Architecture Context
       # ============================================================
