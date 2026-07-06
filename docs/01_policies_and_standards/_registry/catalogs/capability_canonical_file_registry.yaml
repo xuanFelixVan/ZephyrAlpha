@@ -2785,6 +2785,7 @@ capabilities:
       - infrastructure_components_sync
       - sync_infrastructure_registry
       - yaml_to_db_sync
+      - sync_aggregate_nodes
     description: >-
       YAML 真源 → depgraph PostgreSQL readonly 表单向同步脚本。同步 9 张 readonly 表
       （gates/field_vocabularies/registries/cross_registry_rules/hard_boundaries/
@@ -2796,6 +2797,13 @@ capabilities:
       "YAML 同步 DB/infrastructure_components 同步/墓碑清理" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止新 AI 重建同步脚本。
       关联规则：ARCH-046（数据库节点全景图登记三铁律）。
+      ARCH-052 扩展（2026-07-06）：新增 sync_aggregate_nodes() 函数（P7 优先级），
+      从 4 个 registry.yaml（rule_enforcement/scripts/test_suite/rule_registry_collection）
+      UPSERT 聚合节点到 nodes 表，作为 depgraph 重建后的 YAML→DB 恢复通道。
+      sync_dataflow_registry() DELETE 加 WHERE design_maturity != 'design' 条件，
+      保护 apply_dataflowgraph --add-design-* 写入的设计态数据。解决发现性：新 AI 搜
+      "聚合节点同步/aggregate_nodes 恢复/dataflow 设计态保护" 可定位真源。
+      关联规则：ARCH-052（聚合节点模式治理配置对象过细）。
 
   - capability_id: post_commit_guard
     aliases:
