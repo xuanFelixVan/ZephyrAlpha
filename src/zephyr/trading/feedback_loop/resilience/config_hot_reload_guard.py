@@ -33,9 +33,9 @@ proceeding. Flag inconsistent config states.
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import hashlib
-import json
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -60,7 +60,7 @@ class ConfigHotReloadGuard:
     cycle_active: bool = False
 
     def compute_config_hash(self, config_dict: dict) -> str:
-        canonical = json.dumps(config_dict, sort_keys=True, default=str)
+        canonical = dumps(config_dict, sort_keys=True)
         return hashlib.sha256(canonical.encode()).hexdigest()
 
     def register_config(self, config_dict: dict) -> dict:

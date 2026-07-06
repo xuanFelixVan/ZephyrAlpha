@@ -16,6 +16,7 @@
 # [TTL] permanent
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import argparse
 import json
@@ -236,7 +237,7 @@ def _cmd_run_audit(args: argparse.Namespace) -> int:
         "results": audit_results,
         "all_ok": all_ok,
     }
-    print(json.dumps(output, indent=2, default=str))
+    print(dumps(output, indent=2))
     return 0 if all_ok else 1
 
 

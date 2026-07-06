@@ -42,6 +42,7 @@ Phase 2 新增:
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import json
 import logging
@@ -693,7 +694,7 @@ class ActionDispatcher:
     @staticmethod
     def _build_py_brain_block(data: dict) -> str:
         ts = datetime.now(UTC).isoformat()
-        lines = [f"{_BRAIN_MARKER} {k}: {json.dumps(v, ensure_ascii=False, default=str)}" for k, v in data.items()]
+        lines = [f"{_BRAIN_MARKER} {k}: {dumps(v, ensure_ascii=False)}" for k, v in data.items()]
         lines.append(f"{_BRAIN_MARKER} at: {ts}")
         return "\n".join(lines)
 

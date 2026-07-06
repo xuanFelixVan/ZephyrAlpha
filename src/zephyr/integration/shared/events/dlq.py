@@ -42,6 +42,7 @@ Version: 0.1.0
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import json
 import logging
@@ -239,7 +240,7 @@ class DeadLetterQueue:
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     event_type.value,
-                    json.dumps(payload, ensure_ascii=False, default=str),
+                    dumps(payload, ensure_ascii=False),
                     type(error).__name__,
                     sanitized_error_message,
                     sanitized_traceback,

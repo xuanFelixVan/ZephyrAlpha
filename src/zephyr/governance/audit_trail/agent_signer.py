@@ -29,8 +29,9 @@ audit-trail.agent_signer — MOD-INF-020 · Agent Ed25519 签名器
 
 from __future__ import annotations
 
+from zephyr.shared.io.serialization import dumps
+
 import hashlib
-import json
 import logging
 from typing import Any
 
@@ -52,7 +53,7 @@ class AgentSigner:
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
         event_copy = {k: v for k, v in event.items() if k != "signature"}
-        event_json = json.dumps(event_copy, ensure_ascii=False, sort_keys=True, default=str)
+        event_json = dumps(event_copy, ensure_ascii=False, sort_keys=True)
         event_hash = hashlib.sha256(event_json.encode("utf-8")).digest()
 
         private_key = Ed25519PrivateKey.from_private_bytes(bytes.fromhex(private_key_hex))
@@ -65,7 +66,7 @@ class AgentSigner:
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
         event_copy = {k: v for k, v in event.items() if k != "signature"}
-        event_json = json.dumps(event_copy, ensure_ascii=False, sort_keys=True, default=str)
+        event_json = dumps(event_copy, ensure_ascii=False, sort_keys=True)
         event_hash = hashlib.sha256(event_json.encode("utf-8")).digest()
 
         public_key = Ed25519PublicKey.from_public_bytes(bytes.fromhex(public_key_hex))

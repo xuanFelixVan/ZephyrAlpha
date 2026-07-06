@@ -31,8 +31,8 @@ module_id: MOD-INF-023
 对标 blueprint.md §5.1 / TASK-INF-0025 / D-023-08。"""
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
-import json
 import os
 import sqlite3
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
@@ -248,7 +248,7 @@ class TrendAnalyzer:
                         "rollback_verified": row[11],
                     }
 
-                    fh.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
+                    fh.write(dumps(record, ensure_ascii=False) + "\n")
 
             conn.execute("DELETE FROM drift_events WHERE created_at < ?", (cutoff,))
 

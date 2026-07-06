@@ -43,6 +43,7 @@ Safety     : M（监控组件，不影响主流程）
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import functools
 import logging
@@ -207,7 +208,7 @@ class QueryMetrics:
             explain_rows = [{"error": "explain_unavailable"}]
         import json as _json
 
-        explain_json = _json.dumps(explain_rows, ensure_ascii=False, default=str)
+        explain_json = dumps(explain_rows, ensure_ascii=False)
         try:
             conn = get_db_connection(str(self._db_path))
             from datetime import UTC, datetime

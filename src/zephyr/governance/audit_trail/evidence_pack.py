@@ -28,8 +28,8 @@ audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
-import json
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
@@ -106,7 +106,7 @@ class EvidencePackExporter:
             "events": events,
         }
 
-        pack_json = json.dumps(pack, indent=2, ensure_ascii=False, default=str)
+        pack_json = dumps(pack, indent=2, ensure_ascii=False)
         checksum = hashlib.sha256(pack_json.encode("utf-8")).hexdigest()
         metadata.checksum = checksum
         pack["metadata"]["checksum"] = checksum
@@ -167,7 +167,7 @@ class EvidencePackExporter:
             }
             fca_record["records"].append(fca_entry)
 
-        fca_json = json.dumps(fca_record, indent=2, ensure_ascii=False, default=str)
+        fca_json = dumps(fca_record, indent=2, ensure_ascii=False)
         checksum = hashlib.sha256(fca_json.encode("utf-8")).hexdigest()
 
         output_path = self._output_dir / f"{pack_id}.fca.json"

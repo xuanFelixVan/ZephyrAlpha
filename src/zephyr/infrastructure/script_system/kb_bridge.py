@@ -20,8 +20,8 @@ CT-SCRIPT-KB-001: 审计脚本执行完成后将 findings 写入 Knowledge Base�
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
-import json
 import logging
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -74,7 +74,7 @@ class KBBridge:
                             "audit_finding",
                             f"script_system/task/{task_id}",
                             dim,
-                            json.dumps(finding, ensure_ascii=False, default=str)[:2000],
+                            dumps(finding, ensure_ascii=False)[:2000],
                             now,
                             now,
                             "INDEXED",

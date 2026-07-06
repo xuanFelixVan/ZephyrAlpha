@@ -37,6 +37,7 @@ prevention: dry-run影响面分析(临时目录模拟修复diff跑关联检测�
 对标 blueprint.md §6.15。"""
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import logging
 
@@ -127,7 +128,7 @@ def _save_cascade_state(state: dict[str, object]) -> None:
 
     try:
         with open(tmp, "w", encoding="utf-8") as f:
-            f.write(json.dumps(state, default=str, indent=2))
+            f.write(dumps(state,  indent=2))
 
         os.replace(tmp, path)
 

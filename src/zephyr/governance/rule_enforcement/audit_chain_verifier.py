@@ -19,8 +19,8 @@
 同时将门禁审计事件写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链
 """
 
+from zephyr.shared.io.serialization import dumps
 import hashlib
-import json
 import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -155,7 +155,7 @@ class AuditChainVerifier:
 
     @staticmethod
     def _compute_hash(payload: dict) -> str:
-        payload_str = json.dumps(payload, sort_keys=True, default=str)
+        payload_str = dumps(payload, sort_keys=True)
         return hashlib.sha256(payload_str.encode()).hexdigest()
 
     @property

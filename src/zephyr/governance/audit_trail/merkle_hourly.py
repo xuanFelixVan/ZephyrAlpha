@@ -29,6 +29,7 @@ audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import hmac
 import json
@@ -105,7 +106,7 @@ class HourlyMerkleAggregator:
 
         output_file = self._merkle_dir / f"{hour_key.replace(':', '-')}.merkle"
         output_file.write_text(
-            json.dumps(root_record.model_dump(), indent=2, ensure_ascii=False, default=str),
+            dumps(root_record.model_dump(), indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
 

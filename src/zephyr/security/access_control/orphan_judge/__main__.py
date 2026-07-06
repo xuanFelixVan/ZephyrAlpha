@@ -16,6 +16,7 @@
 # [TTL] permanent
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import argparse
 import json
@@ -42,7 +43,7 @@ def _cmd_judge(args: argparse.Namespace) -> int:
         "reason": result.reason,
         "layers": [{"layer": l.layer, "passed": l.passed, "detail": l.detail} for l in result.layers],
     }
-    print(json.dumps(output, indent=2, default=str))
+    print(dumps(output, indent=2))
     return 0
 
 
@@ -80,7 +81,7 @@ def _cmd_scan(args: argparse.Namespace) -> int:
         v = r.get("verdict", "ERROR")
         summary[v] = summary.get(v, 0) + 1
 
-    print(json.dumps({"total": len(results), "summary": summary, "results": results}, indent=2, default=str))
+    print(dumps({"total": len(results), "summary": summary, "results": results}, indent=2))
     return 0
 
 
@@ -111,7 +112,7 @@ def _cmd_report(args: argparse.Namespace) -> int:
             results.append({"path": rel_path, "error": str(exc)})
 
     if args.format == "json":
-        print(json.dumps(results, indent=2, default=str))
+        print(dumps(results, indent=2))
     elif args.format == "csv":
         print("path,verdict,confidence,reason")
         for r in results:

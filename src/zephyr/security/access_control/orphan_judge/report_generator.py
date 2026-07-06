@@ -14,7 +14,7 @@
 # [TESTS] tests/orphan-judge/test_report_generator.py
 # [A_module] module_id=MOD-SEC_report_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-import json
+from zephyr.shared.io.serialization import dumps
 import logging
 
 from zephyr.security.access_control.orphan_judge.db import JudgmentDB
@@ -60,7 +60,7 @@ class ReportGenerator:
                     "scanned_at": r.scanned_at.isoformat(),
                 }
             )
-        return json.dumps(data, indent=2, default=str)
+        return dumps(data, indent=2)
 
     def _as_csv(self, records: list[JudgmentRecord]) -> str:
         lines = ["path,verdict,confidence,reason,scanned_at"]

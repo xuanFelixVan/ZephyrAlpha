@@ -14,6 +14,7 @@
 # [TESTS] tests/audit-orchestrator/test_replay_engine.py
 # [A_module] module_id=MOD-GOV_replay_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from zephyr.shared.io.serialization import dumps
 import hashlib
 import json
 import logging
@@ -98,7 +99,7 @@ class ReplayEngine:
         return None
 
     def _recompute_findings(self, findings: list[dict[str, Any]]) -> dict[str, str]:
-        serialized = json.dumps(findings, sort_keys=True, ensure_ascii=False, default=str)
+        serialized = dumps(findings, sort_keys=True, ensure_ascii=False)
         return {"hash": hashlib.sha256(serialized.encode("utf-8")).hexdigest()}
 
     def replay_jsonl(self, jsonl_path: Path | str, last_n: int = 100) -> dict[str, Any]:

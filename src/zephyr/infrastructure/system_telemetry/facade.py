@@ -39,8 +39,8 @@
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
-import json
 import logging
 import os
 import threading
@@ -121,7 +121,7 @@ def _flush_ring_to_jsonl() -> None:
         for i in range(start, cursor_snapshot):
             idx = i % _RING_SIZE
             if idx < len(_in_memory_ring):
-                lines.append(json.dumps(_in_memory_ring[idx], default=str))
+                lines.append(dumps(_in_memory_ring[idx]))
     if not lines:
         return
     try:
@@ -189,7 +189,7 @@ class MetricsFacade:
             "tags": tags,
         }
         if not self._test_mode:
-            _logger.info("metrics %s %s=%s tags=%s", kind, name, value, json.dumps(tags, default=str))
+            _logger.info("metrics %s %s=%s tags=%s", kind, name, value, dumps(tags))
             _write_ring(point)
         return point
 
@@ -218,7 +218,7 @@ class LogsFacade:
         }
         if not self._test_mode:
             log_fn = {"INFO": _logger.info, "WARNING": _logger.warning, "ERROR": _logger.error}[level]
-            log_fn("%s labels=%s", message, json.dumps(labels, default=str))
+            log_fn("%s labels=%s", message, dumps(labels))
         return record
 
 
@@ -253,7 +253,7 @@ class _Span:
                 "trace span=%s elapsed=%.3fs attrs=%s",
                 self.operation_name,
                 elapsed,
-                json.dumps(self._attributes, default=str),
+                dumps(self._attributes),
             )
         return result
 
@@ -346,7 +346,7 @@ class AIBehaviorFacade:
                 decision,
                 model,
                 reason,
-                json.dumps(extra, default=str), exc_info=True
+                dumps(extra), exc_info=True
             )
             return {
                 "ts": datetime.now(UTC).isoformat(),

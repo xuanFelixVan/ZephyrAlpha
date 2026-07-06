@@ -31,6 +31,7 @@ audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import hashlib
 import hmac
@@ -133,14 +134,14 @@ class IntegrityVerifier:
                     )
 
                 verify_event = {k: v for k, v in event.items() if k not in ("entry_hash", "hmac_signature")}
-                event_str = json.dumps(verify_event, ensure_ascii=False, sort_keys=True, default=str)
+                event_str = dumps(verify_event, ensure_ascii=False, sort_keys=True)
                 prev_hash = hashlib.sha256(event_str.encode("utf-8")).hexdigest()
 
                 if self._hmac_key:
                     stored_hmac = event.get("hmac_signature", "")
                     if stored_hmac:
                         verify_event = {k: v for k, v in event.items() if k not in ("hmac_signature", "entry_hash")}
-                        verify_str = json.dumps(verify_event, ensure_ascii=False, sort_keys=True, default=str)
+                        verify_str = dumps(verify_event, ensure_ascii=False, sort_keys=True)
                         expected_hmac = hmac.new(
                             self._hmac_key,
                             verify_str.encode("utf-8"),
@@ -172,7 +173,7 @@ class IntegrityVerifier:
                     # 与 verify_chain() 保持一致，避免两种验证方法结果矛盾。
                     verify_event = {k: v for k, v in event.items() if k not in ("entry_hash", "hmac_signature")}
                     calc_hash = hashlib.sha256(
-                        json.dumps(verify_event, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
+                        dumps(verify_event, ensure_ascii=False, sort_keys=True).encode("utf-8")
                     ).hexdigest()
                     result: dict[str, Any] = {
                         "status": "found",

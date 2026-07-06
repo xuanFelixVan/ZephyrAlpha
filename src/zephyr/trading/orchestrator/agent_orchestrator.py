@@ -67,6 +67,7 @@ Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十�
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import json
 import logging
@@ -764,7 +765,7 @@ class AgentOrchestrator:
                 if claim:
                     self._input_sanitizer.validate_llm_context(claim)
                 if ctx:
-                    self._input_sanitizer.validate_llm_context(json.dumps(ctx, ensure_ascii=False, default=str))
+                    self._input_sanitizer.validate_llm_context(dumps(ctx, ensure_ascii=False))
             except ContextInjectionError as exc:
                 budget = token_budget if token_budget is not None else self._default_budget
                 latency_ms = int((time.perf_counter() - started) * 1000)

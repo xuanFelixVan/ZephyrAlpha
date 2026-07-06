@@ -31,6 +31,7 @@ Manages MCP (Model Context Protocol) tool contract templates:
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import json
 from datetime import datetime
@@ -152,7 +153,7 @@ class ContractTemplateManager:
         data = {k: v.model_dump(mode="json") for k, v in self._templates.items()}
         self._store_path.parent.mkdir(parents=True, exist_ok=True)
         self._store_path.write_text(
-            json.dumps(data, indent=2, ensure_ascii=False, default=str),
+            dumps(data, indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
         return len(self._templates)

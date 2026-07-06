@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-UNK_fitness_functions | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from zephyr.shared.io.serialization import dumps
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
@@ -282,8 +283,6 @@ class FitnessFunctionFramework:
 
     @staticmethod
     def to_json_report(report: FitnessReport) -> str:
-        import json as _json
-
         data = {
             "report_id": report.report_id,
             "overall_status": report.overall_status.value,
@@ -299,7 +298,7 @@ class FitnessFunctionFramework:
                 for m in report.metrics
             ],
         }
-        return _json.dumps(data, default=str)
+        return dumps(data)
 
     @staticmethod
     def to_trend_data(reports: list[FitnessReport] | None = None) -> list[dict[str, object]]:

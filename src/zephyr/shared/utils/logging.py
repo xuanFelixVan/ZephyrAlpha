@@ -42,10 +42,10 @@ Version: 0.1.0
 """
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import contextvars
 import datetime
-import json
 import logging
 import sys
 import uuid
@@ -103,7 +103,7 @@ class _StructuredFormatter(logging.Formatter):
         if extra:
             log_entry["extra"] = extra
 
-        return json.dumps(log_entry, ensure_ascii=False, default=str)
+        return dumps(log_entry, ensure_ascii=False)
 
 
 class _HumanFormatter(logging.Formatter):
@@ -133,7 +133,7 @@ class _HumanFormatter(logging.Formatter):
 
         extra = getattr(record, "z_extra", None)
         if extra:
-            base += f" | {json.dumps(extra, ensure_ascii=False, default=str)}"
+            base += f" | {dumps(extra, ensure_ascii=False)}"
 
         if record.exc_info and record.exc_info[1] is not None:
             base += f"\n  └─ {type(record.exc_info[1]).__name__}: {record.exc_info[1]}"

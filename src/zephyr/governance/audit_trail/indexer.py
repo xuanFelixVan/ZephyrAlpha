@@ -14,6 +14,7 @@
 # [TESTS] tests/audit-orchestrator/test_indexer.py
 # [A_module] module_id=MOD-GOV_indexer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from zephyr.shared.io.serialization import dumps
 import json
 import logging
 from pathlib import Path
@@ -84,7 +85,7 @@ class AuditIndexer(AuditIndexerABC):  # 5.104.14 修复: 继承ABC契约
 
             self._index["built_at"] = now_utc().isoformat()
             self._index_path.write_text(
-                json.dumps(self._index, indent=2, ensure_ascii=False, default=str),
+                dumps(self._index, indent=2, ensure_ascii=False),
                 encoding="utf-8",
             )
             return True

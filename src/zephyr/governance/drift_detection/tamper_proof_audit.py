@@ -40,13 +40,13 @@ anomaly_detection: 总行数减少/批量清洗/回溯修改 → P0 CRITICAL从G
 同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。"""
 
 from __future__ import annotations
+from zephyr.shared.io.serialization import dumps
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 import hashlib
-import json
 import os
 import sqlite3
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
@@ -161,7 +161,7 @@ def snapshot_event_hash(db_path: str) -> str:
         cursor = conn.cursor()
         cursor.execute("SELECT event_id, detector_id, severity, state FROM drift_events ORDER BY timestamp DESC")
         rows = cursor.fetchall()
-        data = json.dumps([list(r) for r in rows], default=str)
+        data = dumps([list(r) for r in rows])
         return _sha256(data)
     except Exception:
         return ""
