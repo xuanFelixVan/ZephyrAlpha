@@ -2567,6 +2567,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第36轮验证状态（2026-07-05）**：FIXED=2(5.96.1 VerifyResult.passed→@property + 5.96.5 删除RulesFileIntegrityResult死字段), 0 DRIFTED, STILL_VALID=3(5.96.2 TriggerDecision布尔字段与action冗余需枚举重构+5.96.3 _calculate_trust 3布尔参数+5.96.4 determine_exit_code 2布尔参数——重构收益低保留)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(5.96.2 TriggerDecision布尔字段与action冗余需枚举重构 + 5.96.3 _calculate_trust 3布尔参数需重构 + 5.96.4 determine_exit_code 2布尔参数需重构——重构收益低保留,属设计模式重构专项工程), STILL_VALID=0. 维度5.96全部清零.
 > **第57轮修复状态（2026-07-06）**：5.96.4 FIXED — exit_codes.py 添加 RunMode 枚举 + determine_exit_code_mode() 函数, commit dc2210ce46. DEFERRED=2(5.96.2/5.96.3).
+> **第67轮修复状态（2026-07-06）**：5.96.2 FIXED — auto_rollback_trigger.py 添加 ActionType(str, Enum) 枚举(ROLLBACK/FORWARD_FIX/UPGRADE_TO_SOFT/RETRY) + TriggerDecision 3 布尔字段(should_rollback/retry_allowed/forward_fix_allowed)改 @property 派生消除冗余, 4 处 _build_decision 构造点更新, 52 测试通过(test_auto_rollback_trigger+test_rollback_adversarial). 5.96.3 FIXED — trust_anchor.py _calculate_trust(git_ok,test_ok,audit_ok) 三布尔参数改 checks: dict[str, bool], 1 处调用点 + 3 测试文件 13 调用点同步, 88 测试通过. DEFERRED=0. 维度5.96全部清零.
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|

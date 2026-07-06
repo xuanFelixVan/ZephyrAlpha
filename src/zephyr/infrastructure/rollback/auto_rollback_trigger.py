@@ -44,6 +44,29 @@ class FailureCategory(str, Enum):
     TRANSIENT = "transient"
 
 
+class ActionType(str, Enum):
+    """5.96.2 修复：原 TriggerDecision 含 3 个布尔字段 (should_rollback/retry_allowed/
+    forward_fix_allowed) 与 action 完全冗余，重构为枚举 + @property 派生，消除互斥动作的
+    布尔组合不一致风险。"""
+
+    ROLLBACK = "ROLLBACK_IMMEDIATE"
+    FORWARD_FIX = "FORWARD_FIX_PREFERRED"
+    UPGRADE_TO_SOFT = "UPGRADE_TO_SOFT"
+    RETRY = "RETRY"
+
+    @property
+    def should_rollback(self) -> bool:
+        return self is ActionType.ROLLBACK
+
+    @property
+    def retry_allowed(self) -> bool:
+        return self in (ActionType.FORWARD_FIX, ActionType.RETRY)
+
+    @property
+    def forward_fix_allowed(self) -> bool:
+        return self in (ActionType.FORWARD_FIX, ActionType.UPGRADE_TO_SOFT)
+
+
 @dataclass
 class AutoGuardResult:
     source: str
@@ -58,11 +81,20 @@ class AutoGuardResult:
 @dataclass
 class TriggerDecision:
     category: FailureCategory
-    action: str
+    action: ActionType
     reason: str
-    should_rollback: bool
-    retry_allowed: bool
-    forward_fix_allowed: bool
+
+    @property
+    def should_rollback(self) -> bool:
+        return self.action.should_rollback
+
+    @property
+    def retry_allowed(self) -> bool:
+        return self.action.retry_allowed
+
+    @property
+    def forward_fix_allowed(self) -> bool:
+        return self.action.forward_fix_allowed
 
 
 HARD_SOURCES: set[str] = {
@@ -162,20 +194,14 @@ class AutoRollbackTrigger:
         if category is FailureCategory.HARD:
             return TriggerDecision(
                 category=category,
-                action="ROLLBACK_IMMEDIATE",
+                action=ActionType.ROLLBACK,
                 reason=f"HARD failure from {result.source}: {result.error_message[:80]}",
-                should_rollback=True,
-                retry_allowed=False,
-                forward_fix_allowed=False,
             )
         elif category is FailureCategory.SOFT:
             return TriggerDecision(
                 category=category,
-                action="FORWARD_FIX_PREFERRED",
+                action=ActionType.FORWARD_FIX,
                 reason=f"SOFT failure from {result.source}: {result.error_message[:80]}",
-                should_rollback=False,
-                retry_allowed=True,
-                forward_fix_allowed=True,
             )
         else:
             key = f"{result.task_id}:{result.gate_id}"
@@ -185,20 +211,14 @@ class AutoRollbackTrigger:
             if retries_left <= 0:
                 return TriggerDecision(
                     category=category,
-                    action="UPGRADE_TO_SOFT",
+                    action=ActionType.UPGRADE_TO_SOFT,
                     reason=f"TRANSIENT retries exhausted ({self._max_retries}) for {result.source}",
-                    should_rollback=False,
-                    retry_allowed=False,
-                    forward_fix_allowed=True,
                 )
 
             return TriggerDecision(
                 category=category,
-                action="RETRY",
+                action=ActionType.RETRY,
                 reason=f"TRANSIENT from {result.source}: {retries_left} retries left",
-                should_rollback=False,
-                retry_allowed=True,
-                forward_fix_allowed=False,
             )
 
     def process_guard_result(self, result: AutoGuardResult) -> TriggerDecision:
