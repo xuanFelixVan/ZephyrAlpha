@@ -1,0 +1,28 @@
+flowchart LR
+    LL0["L0 数据接入与预处理层<br/>Data Ingestion & Preprocessing<br/>频率: tick<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LL1["L1 因子计算层<br/>Factor Calculation<br/>频率: daily<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LL2A["L2A 信号层<br/>Signal Generation<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL2B["L2B 主力行为层<br/>Main Force Behavior Analysis<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL2C["L2C 市场状态与大盘预测层<br/>Market State & Index Prediction<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL2D["L2D 知识图谱与因果推演层<br/>Knowledge Graph & Causal Inference<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL3["L3 策略组合层<br/>Strategy & Portfolio Combination<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL4["L4 风控层<br/>Risk Control<br/>频率: realtime<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LL5["L5 学习层<br/>Learning & Optimization<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL6["L6 自评估层<br/>Self Evaluation<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LL0 -->|triggering| LL1
+    LL1 -->|triggering| LL2A
+    LL2A -->|triggering| LL2B
+    LL2B -->|triggering| LL2C
+    LL2C -->|triggering| LL2D
+    LL2D -->|triggering| LL3
+    LL3 -->|triggering| LL4
+    LL4 -->|triggering| LL5
+    LL5 -->|triggering| LL6
+    L6 -.->|feedback| L1
+    L6 -.->|feedback| L5
+
+    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
+    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px
