@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] scripts/connect/health_check.py --trigger
-# [A_module] module_id=MOD-INF_health_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF_health_monitor_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """全系统健康聚合 — check_all_systems()"""
 
@@ -59,6 +59,7 @@ SYSTEMS_CHECK = [
 ]
 
 
+# class-name-alias: health_monitor 健康聚合器（check_all 并行检查），区别于 system_telemetry/health_aggregator.py 的三态探针快照
 class HealthAggregator:
     def check_all(self, max_workers: int = 6) -> HealthReport:
         t0 = time.perf_counter()

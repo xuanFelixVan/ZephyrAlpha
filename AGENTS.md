@@ -89,6 +89,25 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | Dashboard (Panel) | `src/zephyr/frontend/dashboard/app_panel.py` | Panel+HoloViz 仪表盘主入口（v3.1.0, #ARCH-047），10 Tab 治理+交易/回测；`panel serve app_panel.py --show --port 5006` |
 | Data Source Integrator | `integrator` / `python -m zephyr.data` | 数据源集成器 CLI（MOD-L00-004 §8.4），7 子命令：`status`/`list`/`run`/`rerun-failed`/`pause <source>`/`resume <source>`/`start`；统一管理 8 源 61 任务的自动下载+断点续传+熔断 |
 
+### 基础设施层（D_INFRA_RUNTIME / D_INFRA_RECOVERY / D_GOVERNANCE）
+
+| 模块 | 入口 | 职责 |
+|------|------|------|
+| DatabaseService | `zephyr.infrastructure.database_service` | 业务数据库统一访问（ClickHouse/PostgreSQL），禁止裸 `duckdb.connect` |
+| EventBus (M-07) | `zephyr.shared.event_bus` → `bus` 单例 | 事件总线背压控制器，`from zephyr.shared.events.event_bus import bus` |
+| EventStore (RI-13) | `zephyr.infrastructure.event_store` | SQLite 不可篡改审计日志（WAL+SHA256 checksum） |
+| CostTracker (RI-15) | `zephyr.infrastructure.cost_tracker` | Token/API 调用成本实时监控+日预算告警 |
+| SLAMonitor | `zephyr.infrastructure.sla.sla_monitor` | RTO/RPO 自动记录（事件驱动：pipeline_failed→rollback_completed），目标见 `config/sla_targets.yaml` |
+| HealthAggregator | `zephyr.infrastructure.system_telemetry.health_aggregator` | 12 系统三态探针（alive/ready/degraded），15s 轮询 |
+| Notifier | `zephyr.infrastructure.observability.notifier` | 多渠道 Owner 通知（事件驱动：pipeline_failed/kill_switch_triggered） |
+| RollbackBootIntegration | `zephyr.infrastructure.rollback.rollback_boot_integration` | WAL/Verifier 自动初始化+回滚完成后 WAL GC |
+| FixScheduler | `zephyr.infrastructure.auto_fix_engine.fix_scheduler` | 自动修复调度（EVENT_DRIVEN 模式，CONTINUOUS 已废弃） |
+| KillSwitch (SSoT) | `zephyr.security.access_control.kill_switch` | 系统级熔断器（canonical），`get_kill_switch()` 单例 |
+| A2A Protocol | `zephyr.infrastructure.a2a_protocol` | Agent 间三层协调（通信/冲突/治理），AgentCard 注册 |
+| BaseMCPServer | `zephyr.integration.mcp._base_server` | JSON-RPC 2.0 over stdio MCP 基类（含工具版本化/废弃策略） |
+
+> **永久系统四要素**：所有基础设施永久系统必须满足自动触发/自动运行/自动维护/自动关闭。禁止时间触发（cron/Timer/sleep-loop），所有 reconciler 必须事件触发。启动接线见 [`boot_hooks.py`](file:///d:/ZephyrAlpha/src/zephyr/trading/boot_hooks.py)（`register_boot_hooks()`）。
+
 > MCP 服务器完整定义（工具清单/角色权限/熔断配置）见 [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json)。触发器路由表（6 触发器+处理器+安全等级）见 [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml)。
 
 ### 因子信号域（D_FACTOR / D_FUNDAMENTAL_SIGNAL / D_SIGQC，2026-07-06 AI-08 补登）

@@ -53,6 +53,13 @@ __all__ = [
 class EventStoreError(RuntimeError):
     """EventStore 基础异常。"""
 
+    error_code = "ZA-GV-0010"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 class IntegrityError(EventStoreError):
     """事件链完整性校验失败。"""

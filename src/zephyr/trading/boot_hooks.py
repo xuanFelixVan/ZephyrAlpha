@@ -609,6 +609,24 @@ def register_boot_hooks(
     except Exception as e:
         logger.warning("SLAMonitor: subscribe failed: %s", e, exc_info=True)
 
+    # P1-10 修复：Notifier 永久系统启动接入 — 事件驱动 Owner 通知
+    try:
+        from zephyr.infrastructure.observability.notifier import Notifier
+        _notifier = Notifier()
+        _notifier.subscribe_eventbus()
+        logger.info("Notifier: subscribed to EventBus (pipeline_failed/kill_switch auto-notify)")
+    except Exception as e:
+        logger.warning("Notifier: subscribe failed: %s", e, exc_info=True)
+
+    # P1-10 修复：HealthAggregator 永久系统启动接入 — 事件驱动健康快照
+    try:
+        from zephyr.infrastructure.system_telemetry.health_aggregator import HealthAggregator
+        _health_aggregator = HealthAggregator()
+        _health_aggregator.subscribe_eventbus()
+        logger.info("HealthAggregator: subscribed to EventBus (critical event auto-snapshot)")
+    except Exception as e:
+        logger.warning("HealthAggregator: subscribe failed: %s", e, exc_info=True)
+
     _subscribe_eventbus_consumers()
     _subscribe_skill_freshness_events()
 

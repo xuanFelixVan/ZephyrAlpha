@@ -41,6 +41,7 @@ class KillSwitchLevel(str, Enum):
     API_TIMEOUT = "API_TIMEOUT"
 
 
+# class-name-alias: trading-risk Pydantic kill-switch model (5-level POSITION_LIMIT/DAILY_LOSS/CIRCUIT_BREAKER/SECOND_LEVEL/API_TIMEOUT); name shadows canonical zephyr.security.access_control.kill_switch.KillSwitch (MOD-SEC_kill_switch) but is a trading-domain data model, not the system-level breaker. Distinct domain (D_TRADING).
 class KillSwitch(BaseModel):
     level: KillSwitchLevel
     label: str

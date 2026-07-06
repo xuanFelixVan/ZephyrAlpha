@@ -51,6 +51,7 @@ class AgentRole(str, Enum):
     RESEARCHER = "researcher"
 
 
+# class-name-alias: MOD-INF_multi_agent 多Agent编排 AgentCard（dataclass, role-based），与 shared.protocols.a2a.a2a_registry 的 Pydantic AgentCard（A2A discovery 协议契约）同名不同义，本地编排变体
 @dataclass
 class AgentCard:
     """Multi-agent orchestration AgentCard (dataclass; differs from shared Pydantic AgentCard)."""

@@ -86,3 +86,28 @@ class HealthAggregator:
             mttr_s=mttr,
             degradation_ratio=degradations,
         )
+
+    _subscribed: bool = False
+
+    def subscribe_eventbus(self) -> None:
+        """事件驱动订阅——kill_switch_triggered/pipeline_failed 时立即采集健康快照（永久系统四要素：自动触发）。"""
+        if self._subscribed:
+            return
+        from zephyr.shared.events.event_bus import bus
+
+        aggregator = self
+
+        def _on_critical_event(payload: object) -> None:
+            try:
+                snapshots = aggregator.poll_all()
+                degraded = [s for s in snapshots if s.degraded]
+                if degraded:
+                    from datetime import UTC, datetime
+                    ts = datetime.now(UTC).isoformat()
+                    print(f"[HEALTH] {ts}: {len(degraded)} degraded systems after critical event")
+            except Exception:
+                pass
+
+        bus.subscribe("kill_switch_triggered", _on_critical_event)
+        bus.subscribe("pipeline_failed", _on_critical_event)
+        self._subscribed = True

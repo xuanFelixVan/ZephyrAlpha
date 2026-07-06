@@ -1,0 +1,28 @@
+# --- 治理锚定 ---
+# blueprint: SRC-142 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# module_id: MOD-INF_sla_monitor
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# SLA Targets — 服务等级协议目标（SSoT）
+# 消费者: zephyr.infrastructure.sla.sla_monitor
+# 变更此文件后无需改代码，sla_monitor 启动时自动加载
+
+schema_version: "1.0"
+doc_type: config
+module_ref: MOD-INF_sla_monitor
+last_updated: "2026-07-06"
+
+targets:
+  rto_target_s: 300          # Recovery Time Objective — 恢复时间目标（秒）
+  rpo_target_tasks: 1         # Recovery Point Objective — 恢复点目标（丢失任务数上限）
+
+breach_escalation:
+  - level: warning
+    condition: "rto > 0.8 * target"
+    action: "log_warning"
+  - level: critical
+    condition: "rto > target"
+    action: "log_breach_and_notify_owner"
