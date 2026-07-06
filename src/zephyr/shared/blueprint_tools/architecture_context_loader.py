@@ -21,11 +21,13 @@ architecture_context_loader — 加载 ``generate_architecture_context.py`` 产�
 真源文件默认路径：与本包同目录下的 ``architecture-context.json``（由脚本生成）。
 """
 
+from typing import Final
+
 import json
 from pathlib import Path
 from typing import Any
 
-DEFAULT_ARCH_CONTEXT_PATH = Path(__file__).resolve().parent / "architecture-context.json"
+DEFAULT_ARCH_CONTEXT_PATH: Final[Path] = Path(__file__).resolve().parent / "architecture-context.json"
 
 __all__ = [
     "DEFAULT_ARCH_CONTEXT_PATH",

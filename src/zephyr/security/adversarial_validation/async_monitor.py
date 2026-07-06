@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import threading
 import time
@@ -30,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["AsyncMonitor", "MonitorAlert", "MonitorStallError", "MonitorState"]
 
-DEFAULT_POLL_INTERVAL_S: int = 30
+DEFAULT_POLL_INTERVAL_S: Final[int] = 30
 
 
 class MonitorState(str, Enum):

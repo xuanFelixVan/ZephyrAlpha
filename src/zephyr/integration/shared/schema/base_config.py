@@ -14,6 +14,8 @@
 # [TESTS] tests/test_schemas.py
 # [A_module] module_id=MOD-SHR_base_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from typing import Final
+
 from enum import Enum
 
 from pydantic import ConfigDict
@@ -37,7 +39,7 @@ class EvolutionPolicy(str, Enum):
     REWRITABLE = "rewritable"
 
 
-BASE_CONFIG = ConfigDict(
+BASE_CONFIG: Final[ConfigDict] = ConfigDict(
     extra="forbid",
     str_strip_whitespace=True,
     populate_by_name=True,

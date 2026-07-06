@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 from zephyr.security.adversarial_validation.models import ConvergenceResult, RedBlueReport
@@ -25,9 +26,9 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["ConvergenceChecker", "ConvergenceFailureError"]
 
-MAX_ROUNDS_WITHOUT_IMPROVEMENT: int = 3
-BLOCKED_RATE_TARGET: float = 0.95
-BYPASS_COUNT_TARGET: int = 0
+MAX_ROUNDS_WITHOUT_IMPROVEMENT: Final[int] = 3
+BLOCKED_RATE_TARGET: Final[float] = 0.95
+BYPASS_COUNT_TARGET: Final[int] = 0
 
 
 class ConvergenceFailureError(RuntimeError):

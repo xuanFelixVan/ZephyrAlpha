@@ -30,6 +30,7 @@ OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理
 
 from __future__ import annotations
 
+from typing import Final
 logger = logging.getLogger(__name__)
 
 from http import HTTPStatus
@@ -47,15 +48,15 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
-DEFAULT_OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 # 5.141.1 修复: 模型名通过环境变量外部化, 避免硬编码
-INFERENCE_MODEL = os.getenv("OLLAMA_INFERENCE_MODEL", "qwen3:8b")
-INFERENCE_TEMPERATURE = 0.1
-INFERENCE_MAX_TOKENS = 1024
-INFERENCE_TIMEOUT_S = 60.0
+INFERENCE_MODEL: Final[str] = os.getenv("OLLAMA_INFERENCE_MODEL", "qwen3:8b")
+INFERENCE_TEMPERATURE: Final[float] = 0.1
+INFERENCE_MAX_TOKENS: Final[int] = 1024
+INFERENCE_TIMEOUT_S: Final[float] = 60.0
 
-SYSTEM_PROMPTS: dict[str, str] = {
+SYSTEM_PROMPTS: Final[dict[str, str]] = {
     "task_classification": (
         "You are a task classifier. Classify the input task into one of: "
         "audit, compliance, cleanup, repair, codegen, review, analysis, other."

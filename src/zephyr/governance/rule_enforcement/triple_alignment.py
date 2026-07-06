@@ -31,6 +31,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import re
 from dataclasses import dataclass, field
@@ -45,11 +46,10 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 logger = logging.getLogger(__name__)
 
 # P2迁移审查修复：禁止 Path("D:/ZephyrAlpha") 硬编码，改用 REPO_ROOT 真源
-PROJECT_ROOT = REPO_ROOT
-BLUEPRINT_REGISTRY = PROJECT_ROOT / "docs/03_modules/blueprint_registry.yaml"
-MODULE_REGISTRY = PROJECT_ROOT / "docs/03_modules/module-registry.yaml"
-GATES_REGISTRY = PROJECT_ROOT / "src/zephyr/governance/rule_enforcement/_registry.yaml"
-BLUEPRINTS_DIR = PROJECT_ROOT / "docs/03_modules"
+BLUEPRINT_REGISTRY: Final[Path] = REPO_ROOT / "docs/03_modules/blueprint_registry.yaml"
+MODULE_REGISTRY: Final[Path] = REPO_ROOT / "docs/03_modules/module-registry.yaml"
+GATES_REGISTRY: Final[Path] = REPO_ROOT / "src/zephyr/governance/rule_enforcement/_registry.yaml"
+BLUEPRINTS_DIR: Final[Path] = REPO_ROOT / "docs/03_modules"
 
 
 class Severity(str, Enum):
@@ -189,7 +189,7 @@ def check_triple_alignment(
         # 修复: file_path 由 sync_registry_from_blueprints.py 的 make_registry_path 生成,
         # 相对 REPO_ROOT/"docs" (如 "03_modules/_cross_layer/.../blueprint.md"),
         # 不是相对 BLUEPRINTS_DIR。原 BLUEPRINTS_DIR / bp_path_str 会产生双重 03_modules 前缀。
-        bp_path = PROJECT_ROOT / "docs" / bp_path_str if bp_path_str else None
+        bp_path = REPO_ROOT / "docs" / bp_path_str if bp_path_str else None
         # 红蓝对抗修复：路径边界验证，防止路径穿越攻击
         if bp_path:
             try:
@@ -224,7 +224,7 @@ def check_triple_alignment(
 
         source_path_str = bp_frontmatter.get("actual_disk_path", "")
         first_source = source_path_str.split("+")[0].strip() if source_path_str else ""
-        code_path = PROJECT_ROOT / first_source if first_source else None
+        code_path = REPO_ROOT / first_source if first_source else None
         code_headers = _parse_code_headers(code_path) if code_path and code_path.exists() else {}
 
         # Check 1: module_id 三方一致
@@ -313,18 +313,18 @@ def check_triple_alignment(
         if source_path_str:
             paths_to_check = [p.strip() for p in source_path_str.split("+") if p.strip()]
             for p in paths_to_check:
-                resolved = PROJECT_ROOT / p
+                resolved = REPO_ROOT / p
                 # 红蓝对抗修复：actual_disk_path 路径穿越检查
                 try:
                     resolved_abs = resolved.resolve()
-                    if not resolved_abs.is_relative_to(PROJECT_ROOT.resolve()):
+                    if not resolved_abs.is_relative_to(REPO_ROOT.resolve()):
                         result.add_violation(
                             AlignmentViolation(
                                 check="code_path_traversal",
                                 severity=Severity.ERROR,
                                 module_id=mid,
                                 source="blueprint actual_disk_path",
-                                expected="path within PROJECT_ROOT",
+                                expected="path within REPO_ROOT",
                                 actual=f"PATH TRAVERSAL: {p}",
                             )
                         )

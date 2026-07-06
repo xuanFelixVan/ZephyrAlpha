@@ -36,6 +36,7 @@ Pipeline
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import math
 import threading
@@ -49,12 +50,12 @@ from zephyr.shared.schema.schemas import BASE_CONFIG
 
 _logger = logging.getLogger(__name__)
 
-RRF_K: int = 60
-DEFAULT_SCORE_THRESHOLD: float = 0.6
-DEFAULT_TIMEOUT_MS: int = 2000
-RECALL_MULTIPLIER: int = 3
+RRF_K: Final[int] = 60
+DEFAULT_SCORE_THRESHOLD: Final[float] = 0.6
+DEFAULT_TIMEOUT_MS: Final[int] = 2000
+RECALL_MULTIPLIER: Final[int] = 3
 
-COLLECTION_DECAY_RATES: dict[str, float] = {
+COLLECTION_DECAY_RATES: Final[dict[str, float]] = {
     "decisions": 0.003,
     "lessons": 0.005,
     "knowledge": 0.02,

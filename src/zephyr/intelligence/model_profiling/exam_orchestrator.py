@@ -30,6 +30,7 @@ ExamOrchestrator --- 五轴入职考试主控
 
 from __future__ import annotations
 
+from typing import Final
 logger = logging.getLogger(__name__)
 
 import json
@@ -69,7 +70,7 @@ from zephyr.intelligence.model_profiling.exam_judge import DeterministicJudge, E
 
 _log = logging.getLogger(__name__)
 
-CAPABILITIES = list(CASES_BY_CAPABILITY.keys())
+CAPABILITIES: Final[list] = list(CASES_BY_CAPABILITY.keys())
 
 _EXAM_CAPABILITY_NAMES = {
     "task_classification",

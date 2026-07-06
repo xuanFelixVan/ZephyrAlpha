@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
 
     ModelTier = _importlib.import_module("zephyr.infrastructure.budget_enforcement.budget_models").ModelTier
 
-DEFAULT_PROVIDERS: dict[str, dict[str, str | float | list[str]]] = {
+DEFAULT_PROVIDERS: Final[dict[str, dict[str, str | float | list[str]]]] = {
     "zhipu": {
         "char_glm": "glm-4.5-free",
         "glm_plus": "glm-4-plus",

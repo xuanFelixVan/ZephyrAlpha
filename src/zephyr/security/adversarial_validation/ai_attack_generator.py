@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import os
 import uuid
@@ -30,14 +31,14 @@ __all__: list[str] = ["AIAttackGenerator", "AttackGenerationError"]
 
 _REGISTRY_PATH: Path = Path(__file__).parent / "_scenario-registry.yaml"
 
-MUTATION_STRATEGIES: list[str] = [
+MUTATION_STRATEGIES: Final[list[str]] = [
     "payload_variation",
     "scenario_combination",
     "vector_permutation",
     "blast_radius_escalation",
 ]
 
-VECTOR_POOL: list[str] = [
+VECTOR_POOL: Final[list[str]] = [
     "prompt_injection_filter.scan",
     "immutable_core.verify_roles",
     "circuit_breaker.hard_check",

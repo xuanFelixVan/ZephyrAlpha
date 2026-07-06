@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import os
 import uuid
@@ -32,7 +33,7 @@ __all__: list[str] = ["BootstrapPhase", "BootstrapVerificationError", "ColdStart
 
 _REGISTRY_PATH: Path = Path(__file__).parent / "_scenario-registry.yaml"
 
-REGISTRATION_TEMPLATES: dict[str, dict] = {
+REGISTRATION_TEMPLATES: Final[dict[str, dict]] = {
     "python_module": {
         "name": "Onboard inspection of {module_name}",
         "description": "Auto-generated adversarial scenario for newly joined module {module_name}",

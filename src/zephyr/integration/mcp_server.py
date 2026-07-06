@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import logging
 from pathlib import Path
@@ -31,9 +32,9 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
-INDEX_PATH = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
-DASHBOARD_PATH = REPO_ROOT / "data" / "reports" / "dashboard.json"
-SCAN_PATH = REPO_ROOT / "data" / "scans" / "raw-asset-scan.json"
+INDEX_PATH: Final[Path] = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
+DASHBOARD_PATH: Final[Path] = REPO_ROOT / "data" / "reports" / "dashboard.json"
+SCAN_PATH: Final[Path] = REPO_ROOT / "data" / "scans" / "raw-asset-scan.json"
 
 try:
     import yaml
@@ -159,7 +160,7 @@ def list_registry_ids() -> str:
     )
 
 
-MCP_TOOLS = {
+MCP_TOOLS: Final[set] = {
     "get_asset_summary": {
         "description": "获取项目资产盘点总览：总数、健康评分、孤儿率/幽灵率/漂移率、按类型/层级/状态分布",
         "function": get_asset_summary,
@@ -198,7 +199,7 @@ MCP_TOOLS = {
     },
 }
 
-MCP_RESOURCES = {
+MCP_RESOURCES: Final[set] = {
     "asset_index://unified": {
         "description": "统一的资产索引 YAML 文件——项目 SSoT（单一事实来源）",
         "path": str(INDEX_PATH),

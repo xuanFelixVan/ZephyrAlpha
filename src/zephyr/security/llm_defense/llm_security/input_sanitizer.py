@@ -27,12 +27,13 @@ Depends: T-1-04 (task_repo.py)
 
 from __future__ import annotations
 
+from typing import Final
 import os
 import re
 import shlex
 from pathlib import Path
 
-ALLOWED_WRITE_DIRS: tuple[str, ...] = (
+ALLOWED_WRITE_DIRS: Final[tuple[str, ...]] = (
     "docs/",
     "scripts/governance/",
     "scripts/hooks/",
@@ -41,7 +42,7 @@ ALLOWED_WRITE_DIRS: tuple[str, ...] = (
     "src/zephyr/",
 )
 
-ALLOWED_COMMANDS: frozenset[str] = frozenset(
+ALLOWED_COMMANDS: Final[frozenset[str]] = frozenset(
     {
         "python",
         "pip",
@@ -57,7 +58,7 @@ ALLOWED_COMMANDS: frozenset[str] = frozenset(
     }
 )
 
-DANGEROUS_PATTERNS: tuple[re.Pattern, ...] = (
+DANGEROUS_PATTERNS: Final[tuple[re.Pattern, ...]] = (
     re.compile(r"\.\.[/\\]"),
     re.compile(r"[/\\]\.\.[/\\]"),
     re.compile(r"\0"),

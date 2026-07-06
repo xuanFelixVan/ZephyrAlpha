@@ -36,6 +36,7 @@ True Source : IRN-022（Reranker字段与三件套对齐）
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import threading
 from collections.abc import Sequence
@@ -52,9 +53,9 @@ __all__ = [
 ]
 
 
-DEFAULT_RERANK_MODEL = "BAAI/bge-reranker-v2-m3"
-DEFAULT_TOP_K = 5
-DEFAULT_SCORE_THRESHOLD = 0.0
+DEFAULT_RERANK_MODEL: Final[str] = "BAAI/bge-reranker-v2-m3"
+DEFAULT_TOP_K: Final[int] = 5
+DEFAULT_SCORE_THRESHOLD: Final[float] = 0.0
 
 
 @dataclass

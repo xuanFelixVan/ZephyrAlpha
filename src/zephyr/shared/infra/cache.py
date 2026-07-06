@@ -44,6 +44,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import time
 from collections import OrderedDict
@@ -65,7 +66,7 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
-TTL_EXPIRED_DEFAULT_SECONDS = 300
+TTL_EXPIRED_DEFAULT_SECONDS: Final[int] = 300
 
 
 class CacheError(ZephyrBaseError):

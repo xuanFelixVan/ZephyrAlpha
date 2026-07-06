@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-SHR-io-yaml | src/zephyr/shared/io/yaml_utils.py | §
+# [BLUEPRINT] MOD-SHR-io-yaml | src/zephyr/shared/io/yaml_utils.py | §
 # [MODULE] zephyr.shared.io.yaml_utils
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.io.paths
@@ -29,6 +29,7 @@ canonical: src/zephyr/shared/io/yaml_utils.py
 
 from __future__ import annotations
 
+from typing import Final
 from pathlib import Path
 
 import yaml
@@ -36,7 +37,7 @@ import yaml
 from zephyr.shared.io.paths import REPO_ROOT
 
 # vocabulary YAML 默认目录（SSoT 真源目录）
-DEFAULT_VOCAB_DIR: Path = (
+DEFAULT_VOCAB_DIR: Final[Path] = (
     REPO_ROOT
     / "docs"
     / "01_policies_and_standards"

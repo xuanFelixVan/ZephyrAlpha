@@ -64,6 +64,7 @@ Safety : H（基础设施核心，状态机错误会影响整个任务流水线�
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -234,7 +235,7 @@ class BatchReviewRequiredError(TaskRepositoryError):
 # ---------------------------------------------------------------------------
 
 # 循环验收轮数：COMPLETED 转换时 post_sync_standard 命令必须连续 2 次返回 0
-CIRCULAR_ACCEPTANCE_ROUNDS = 2
+CIRCULAR_ACCEPTANCE_ROUNDS: Final[int] = 2
 
 
 _ALLOWED_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {

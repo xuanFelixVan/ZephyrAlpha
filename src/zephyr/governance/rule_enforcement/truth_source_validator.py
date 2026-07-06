@@ -31,6 +31,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import logging
 from datetime import UTC, datetime
@@ -54,7 +55,7 @@ class TruthTier(IntEnum):
     TIER_4 = 4
 
 
-TIER_LABELS: dict[TruthTier, str] = {
+TIER_LABELS: Final[dict[TruthTier, str]] = {
     TruthTier.TIER_0: "本蓝图 MOD-MASTER_BLUEPRINT（跨系统集成契约）",
     TruthTier.TIER_1: "architecture_model/layers/{module}.yaml（单模块结构定义）",
     TruthTier.TIER_2: "docs/03_modules/{layer}/blueprint.md（模块级实现指引）",
@@ -62,7 +63,7 @@ TIER_LABELS: dict[TruthTier, str] = {
     TruthTier.TIER_4: "实际代码（运行时现实）",
 }
 
-TIER_ORDER: tuple[TruthTier, ...] = (
+TIER_ORDER: Final[tuple[TruthTier, ...]] = (
     TruthTier.TIER_0,
     TruthTier.TIER_1,
     TruthTier.TIER_2,

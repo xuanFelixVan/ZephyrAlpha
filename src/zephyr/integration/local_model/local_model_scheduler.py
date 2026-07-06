@@ -45,6 +45,7 @@ LocalModelScheduler — L2 本地模型 24/7 调度循环
 
 from __future__ import annotations
 
+from typing import Final
 logger = logging.getLogger(__name__)
 
 import logging
@@ -60,28 +61,28 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
-POLL_INTERVAL_S: float = 5.0
-RESULT_TTL_S: float = 300.0
+POLL_INTERVAL_S: Final[float] = 5.0
+RESULT_TTL_S: Final[float] = 300.0
 
-EMBEDDING_CAPABILITIES: frozenset[str] = frozenset(
+EMBEDDING_CAPABILITIES: Final[frozenset[str]] = frozenset(
     {
         "vector_embedding",
     }
 )
 
-SEARCH_CAPABILITIES: frozenset[str] = frozenset(
+SEARCH_CAPABILITIES: Final[frozenset[str]] = frozenset(
     {
         "semantic_search",
     }
 )
 
-RERANKING_CAPABILITIES: frozenset[str] = frozenset(
+RERANKING_CAPABILITIES: Final[frozenset[str]] = frozenset(
     {
         "reranking",
     }
 )
 
-INFERENCE_CAPABILITIES: frozenset[str] = frozenset(
+INFERENCE_CAPABILITIES: Final[frozenset[str]] = frozenset(
     {
         "task_classification",
         "tag_completion",
@@ -92,7 +93,7 @@ INFERENCE_CAPABILITIES: frozenset[str] = frozenset(
     }
 )
 
-ALL_LOCAL_CAPABILITIES: frozenset[str] = (
+ALL_LOCAL_CAPABILITIES: Final[frozenset[str]] = (
     EMBEDDING_CAPABILITIES | SEARCH_CAPABILITIES | RERANKING_CAPABILITIES | INFERENCE_CAPABILITIES
 )
 

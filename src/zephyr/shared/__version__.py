@@ -41,6 +41,7 @@ Version: 0.14.0
 
 from __future__ import annotations
 
+from typing import Final
 import re
 
 __all__ = [
@@ -62,7 +63,7 @@ __all__ = [
 
 __version__ = "0.14.0"
 __version_info__ = (0, 14, 0)
-MIN_COMPATIBLE_SHARED_VERSION = "0.14.0"
+MIN_COMPATIBLE_SHARED_VERSION: Final[str] = "0.14.0"
 """最低兼容的 Shared 版本。
 
 消费者应校验 shared.__version__ >= 此值。

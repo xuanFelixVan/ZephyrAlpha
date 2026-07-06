@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import subprocess
 import time
@@ -28,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["SteadyState", "SteadyStateDriftError"]
 
-DOMAIN_METRICS: dict[str, list[dict]] = {
+DOMAIN_METRICS: Final[dict[str, list[dict]]] = {
     "compliance": [
         {"metric": "rule_coverage", "check": "grep_count:project_rules.md:RULE-", "baseline": 9},
         {"metric": "registry_completeness", "check": "grep_count:_registry.yaml:module_id", "baseline": 30},

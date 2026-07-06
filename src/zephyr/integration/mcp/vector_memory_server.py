@@ -33,6 +33,7 @@ Backend  : InProcessVectorMemory (11子模块 + 8 Collection + HybridRetriever)
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 from typing import TYPE_CHECKING, Any
@@ -47,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["VectorMemoryServer", "create_server"]
 
-VMS_COLLECTION_NAMES = [
+VMS_COLLECTION_NAMES: Final[list] = [
     "decisions",
     "code_context",
     "lessons",

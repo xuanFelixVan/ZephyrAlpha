@@ -30,12 +30,13 @@ Retry Handler — 指数退避重试 + 可恢复/不可恢复错误分类。
 
 from __future__ import annotations
 
+from typing import Final
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-UNRECOVERABLE_EXCEPTIONS = (
+UNRECOVERABLE_EXCEPTIONS: Final[tuple] = (
     ValueError,
     TypeError,
     AssertionError,

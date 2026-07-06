@@ -39,6 +39,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+from typing import Final
 from collections.abc import Callable
 from typing import Any
 
@@ -58,7 +59,7 @@ class MigrationError(Exception):
 
 Migration = Callable[[dict[str, Any]], dict[str, Any]]
 
-MIGRATIONS: dict[str, dict[str, Migration]] = {}
+MIGRATIONS: Final[dict[str, dict[str, Migration]]] = {}
 """
 迁移注册表——按 `{from_version: {to_version: migration_fn}}` 组织。
 
@@ -96,7 +97,7 @@ def _register_bidirectional(
 # 应在 docs 中编写示例, 而非在源码中保留注释代码。
 
 
-LATEST_VERSION = "1.0.0"
+LATEST_VERSION: Final[str] = "1.0.0"
 
 
 def latest_schema_version() -> str:

@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 
@@ -33,13 +34,13 @@ class BrokerFailure(str, Enum):
     EXCHANGE_HALT = "EXCHANGE_HALT"
 
 
-BROKER_FAILOVER: dict[BrokerLevel, str] = {
+BROKER_FAILOVER: Final[dict[BrokerLevel, str]] = {
     BrokerLevel.P0_PRIMARY: "主API Primary",
     BrokerLevel.P1_FALLBACK: "自动故障转移 P1",
     BrokerLevel.P2_EMERGENCY: "应急平仓 only",
 }
 
-EMERGENCY_LIQUIDATION_STEPS: list[str] = [
+EMERGENCY_LIQUIDATION_STEPS: Final[list[str]] = [
     "检测P0故障>容忍(90sP0/120sP1)",
     "简报Owner(new pending L0+unique brief)",
     "P2 20% Exposure→每15min再降20%",

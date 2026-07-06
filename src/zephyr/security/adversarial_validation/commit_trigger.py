@@ -48,6 +48,7 @@ CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030).
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import logging
 import os
@@ -74,7 +75,7 @@ _QUEUE_DIR: Path = REPO_ROOT / "data" / "red_blue" / "trigger_queue"
 # ── 正式文件头部标记（对齐 project_memory 红蓝对抗触发条件）──────────────
 # 命中 `# [BLUEPRINT]` 或 `# [MODULE]`（方括号格式）。
 # 注意：`# blueprint:`（无方括号）不匹配——registry YAML 头部不会误触发。
-FORMAL_HEADER_RE: re.Pattern[str] = re.compile(r"^#\s*\[(BLUEPRINT|MODULE)\]")
+FORMAL_HEADER_RE: Final[re.Pattern[str]] = re.compile(r"^#\s*\[(BLUEPRINT|MODULE)\]")
 _HEADER_SCAN_LINES: int = 5  # 只扫前 5 行，毫秒级
 
 # ── 门禁 env var（fail-closed：默认关，操作者达标后手动设 1）─────────────

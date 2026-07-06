@@ -39,6 +39,7 @@ F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3).
 """
 from __future__ import annotations
 
+from typing import Final
 import logging
 import time
 from dataclasses import dataclass, field
@@ -51,11 +52,11 @@ logger = logging.getLogger(__name__)
 
 # ── F5 事件主题常量 ──────────────────────────────────────────────────────
 
-TOPIC_DEADLOCK_DETECTED = "f5.deadlock_detected"
-TOPIC_ESCALATION_NEEDED = "f5.escalation_needed"
-TOPIC_CONFLICT_DETECTED = "f5.conflict_detected"
+TOPIC_DEADLOCK_DETECTED: Final[str] = "f5.deadlock_detected"
+TOPIC_ESCALATION_NEEDED: Final[str] = "f5.escalation_needed"
+TOPIC_CONFLICT_DETECTED: Final[str] = "f5.conflict_detected"
 
-F5_EVENT_TOPICS: tuple[str, ...] = (
+F5_EVENT_TOPICS: Final[tuple[str, ...]] = (
     TOPIC_DEADLOCK_DETECTED,
     TOPIC_ESCALATION_NEEDED,
     TOPIC_CONFLICT_DETECTED,
@@ -95,7 +96,7 @@ class RuleBinding:
 
 
 # 默认规则绑定表 (RuleCategory → F5 事件主题 + 处理器)
-DEFAULT_RULE_BINDINGS: list[RuleBinding] = [
+DEFAULT_RULE_BINDINGS: Final[list[RuleBinding]] = [
     RuleBinding(
         category="deadlock",
         topic=TOPIC_DEADLOCK_DETECTED,

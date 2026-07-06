@@ -17,13 +17,15 @@
 
 """cache_invalidation.py — 缓存一致性 (DD113, TASK-020)"""
 
+from typing import Final
+
 import json
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Callable
 
-UTC = UTC
+UTC: Final[timezone] = UTC
 
 
 @dataclass

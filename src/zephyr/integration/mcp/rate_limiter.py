@@ -28,6 +28,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import threading
 import time
 from dataclasses import dataclass
@@ -41,10 +42,10 @@ __all__ = [
     "RateLimiterStats",
 ]
 
-RATE_LIMITED_KEY = "RATE_LIMITED"
-DEFAULT_QPS = 10.0
-DEFAULT_BURST = 30.0
-DEFAULT_MAX_WAIT = 30.0
+RATE_LIMITED_KEY: Final[str] = "RATE_LIMITED"
+DEFAULT_QPS: Final[float] = 10.0
+DEFAULT_BURST: Final[float] = 30.0
+DEFAULT_MAX_WAIT: Final[float] = 30.0
 
 
 @dataclass

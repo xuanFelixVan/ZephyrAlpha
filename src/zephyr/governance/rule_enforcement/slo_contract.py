@@ -25,6 +25,7 @@ Reference: Google SRE (SLI/SLO/Error Budget/Burn Rate), Nasdaq Pre-Trade Risk.
 
 from __future__ import annotations
 
+from typing import Final
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -88,7 +89,7 @@ class BudgetSnapshot:
     cooldown_until_s: float = 0.0
 
 
-DEFAULT_SLIS: dict[SLIName, SLIDefinition] = {
+DEFAULT_SLIS: Final[dict[SLIName, SLIDefinition]] = {
     SLIName.CODE_REJECTION: SLIDefinition(
         name=SLIName.CODE_REJECTION,
         description="AI代码被Gate/GLM拒绝率",
@@ -133,7 +134,7 @@ DEFAULT_SLIS: dict[SLIName, SLIDefinition] = {
     ),
 }
 
-DEFAULT_CONTRACTS: dict[ContractPriority, SLOContractTerms] = {
+DEFAULT_CONTRACTS: Final[dict[ContractPriority, SLOContractTerms]] = {
     ContractPriority.P0: SLOContractTerms(
         priority=ContractPriority.P0,
         ack_timeout_s=900,
@@ -154,14 +155,14 @@ DEFAULT_CONTRACTS: dict[ContractPriority, SLOContractTerms] = {
     ),
 }
 
-TRADING_OVERRIDE: SLOContractTerms = SLOContractTerms(
+TRADING_OVERRIDE: Final[SLOContractTerms] = SLOContractTerms(
     priority=ContractPriority.P0,
     ack_timeout_s=300,
     resolve_timeout_s=900,
     penalty="超时清仓",
 )
 
-TIER_POLICY: dict[BudgetTier, dict[str, Any]] = {
+TIER_POLICY: Final[dict[BudgetTier, dict[str, Any]]] = {
     BudgetTier.HEALTHY: {
         "threshold": 50.0,
         "auto_guard_modifier": 1.0,

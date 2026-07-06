@@ -15,6 +15,8 @@
 # [A_module] module_id=MOD-SHR_agent_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+from typing import Final
+
 import hashlib
 import hmac
 import time
@@ -48,7 +50,7 @@ class AgentRole(str, Enum):
     AUDITOR = "auditor"
 
 
-ROLE_DEFAULT_PERMISSIONS: dict[AgentRole, list[str]] = {
+ROLE_DEFAULT_PERMISSIONS: Final[dict[AgentRole, list[str]]] = {
     AgentRole.READER: [
         "read:docs",
         "read:src",
@@ -108,7 +110,7 @@ ROLE_DEFAULT_PERMISSIONS: dict[AgentRole, list[str]] = {
 }
 
 
-MATURITY_TLB_LIMITS: dict[MaturityLevel, int] = {
+MATURITY_TLB_LIMITS: Final[dict[MaturityLevel, int]] = {
     MaturityLevel.L0_INTERN: 100,
     MaturityLevel.L1_JUNIOR: 500,
     MaturityLevel.L2_REGULAR: 2000,
@@ -116,7 +118,7 @@ MATURITY_TLB_LIMITS: dict[MaturityLevel, int] = {
     MaturityLevel.L4_PRINCIPAL: 50000,
 }
 
-MATURITY_AUTO_GUARD_TIMEOUT: dict[MaturityLevel, int] = {
+MATURITY_AUTO_GUARD_TIMEOUT: Final[dict[MaturityLevel, int]] = {
     MaturityLevel.L0_INTERN: 300,
     MaturityLevel.L1_JUNIOR: 300,
     MaturityLevel.L2_REGULAR: 600,

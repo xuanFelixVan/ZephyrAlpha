@@ -36,6 +36,7 @@ ExamTestCases --- v3.0.5 扩展考试题库（96 题 / 29 能力 / 5 难度）
 
 from __future__ import annotations
 
+from typing import Final
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -130,7 +131,7 @@ class ExamTestCase:
 # task_classification (3 题)
 # ══════════════════════════════════════════════════════════
 
-EX_CL_001 = ExamTestCase(
+EX_CL_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CL-001",
     capability="task_classification",
     difficulty=Difficulty.EASY,
@@ -139,7 +140,7 @@ EX_CL_001 = ExamTestCase(
     expected_category="other",
 )
 
-EX_CL_002 = ExamTestCase(
+EX_CL_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CL-002",
     capability="task_classification",
     difficulty=Difficulty.MEDIUM,
@@ -154,7 +155,7 @@ EX_CL_002 = ExamTestCase(
     expected_category="web",
 )
 
-EX_CL_003 = ExamTestCase(
+EX_CL_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CL-003",
     capability="task_classification",
     difficulty=Difficulty.MEDIUM,
@@ -173,7 +174,7 @@ EX_CL_003 = ExamTestCase(
 # tag_completion (3 题)
 # ══════════════════════════════════════════════════════════
 
-EX_TG_001 = ExamTestCase(
+EX_TG_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TG-001",
     capability="tag_completion",
     difficulty=Difficulty.EASY,
@@ -187,7 +188,7 @@ EX_TG_001 = ExamTestCase(
     expected_tags=["inference", "chat", "llm", "ollama"],
 )
 
-EX_TG_002 = ExamTestCase(
+EX_TG_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TG-002",
     capability="tag_completion",
     difficulty=Difficulty.MEDIUM,
@@ -201,7 +202,7 @@ EX_TG_002 = ExamTestCase(
     expected_tags=["embedding", "vector", "semantic", "routing"],
 )
 
-EX_TG_003 = ExamTestCase(
+EX_TG_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TG-003",
     capability="tag_completion",
     difficulty=Difficulty.MEDIUM,
@@ -219,7 +220,7 @@ EX_TG_003 = ExamTestCase(
 # summary_extraction (3 题)
 # ══════════════════════════════════════════════════════════
 
-EX_SE_001 = ExamTestCase(
+EX_SE_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SE-001",
     capability="summary_extraction",
     difficulty=Difficulty.EASY,
@@ -232,7 +233,7 @@ EX_SE_001 = ExamTestCase(
     expected_contains=["multi-agent", "FastAPI", "Ollama"],
 )
 
-EX_SE_002 = ExamTestCase(
+EX_SE_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SE-002",
     capability="summary_extraction",
     difficulty=Difficulty.MEDIUM,
@@ -246,7 +247,7 @@ EX_SE_002 = ExamTestCase(
     expected_contains=["ActionDispatcher", "source files", "backup"],
 )
 
-EX_SE_003 = ExamTestCase(
+EX_SE_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SE-003",
     capability="summary_extraction",
     difficulty=Difficulty.MEDIUM,
@@ -265,7 +266,7 @@ EX_SE_003 = ExamTestCase(
 # naming_suggest (3 题)
 # ══════════════════════════════════════════════════════════
 
-EX_NS_001 = ExamTestCase(
+EX_NS_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-NS-001",
     capability="naming_suggest",
     difficulty=Difficulty.EASY,
@@ -274,7 +275,7 @@ EX_NS_001 = ExamTestCase(
     expected_contains=["calculator", "math_utils", "arithmetic"],
 )
 
-EX_NS_002 = ExamTestCase(
+EX_NS_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-NS-002",
     capability="naming_suggest",
     difficulty=Difficulty.MEDIUM,
@@ -291,7 +292,7 @@ EX_NS_002 = ExamTestCase(
     expected_contains=["filter", "processor", "active"],
 )
 
-EX_NS_003 = ExamTestCase(
+EX_NS_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-NS-003",
     capability="naming_suggest",
     difficulty=Difficulty.HARD,
@@ -310,7 +311,7 @@ EX_NS_003 = ExamTestCase(
 # anomaly_triage (3 题)
 # ══════════════════════════════════════════════════════════
 
-EX_AT_001 = ExamTestCase(
+EX_AT_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-AT-001",
     capability="anomaly_triage",
     difficulty=Difficulty.EASY,
@@ -319,7 +320,7 @@ EX_AT_001 = ExamTestCase(
     expected_needs_human=False,
 )
 
-EX_AT_002 = ExamTestCase(
+EX_AT_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-AT-002",
     capability="anomaly_triage",
     difficulty=Difficulty.MEDIUM,
@@ -328,7 +329,7 @@ EX_AT_002 = ExamTestCase(
     expected_needs_human=True,
 )
 
-EX_AT_003 = ExamTestCase(
+EX_AT_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-AT-003",
     capability="anomaly_triage",
     difficulty=Difficulty.MEDIUM,
@@ -345,7 +346,7 @@ EX_AT_003 = ExamTestCase(
 # code_fix (3 题)
 # ══════════════════════════════════════════════════════════
 
-EX_CF_001 = ExamTestCase(
+EX_CF_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CF-001",
     capability="code_edit_precision",
     difficulty=Difficulty.EASY,
@@ -356,7 +357,7 @@ EX_CF_001 = ExamTestCase(
     expected_contains=["a + b", "return a + b"],
 )
 
-EX_CF_002 = ExamTestCase(
+EX_CF_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CF-002",
     capability="code_edit_precision",
     difficulty=Difficulty.MEDIUM,
@@ -373,7 +374,7 @@ EX_CF_002 = ExamTestCase(
     expected_contains=["hash", "user_input"],
 )
 
-EX_CF_003 = ExamTestCase(
+EX_CF_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CF-003",
     capability="code_edit_precision",
     difficulty=Difficulty.HARD,
@@ -391,7 +392,7 @@ EX_CF_003 = ExamTestCase(
 # refactor (3 题)
 # ══════════════════════════════════════════════════════════
 
-EX_RF_001 = ExamTestCase(
+EX_RF_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RF-001",
     capability="refactor",
     difficulty=Difficulty.EASY,
@@ -402,7 +403,7 @@ EX_RF_001 = ExamTestCase(
     expected_contains=["constant", "TEN", "MAGIC"],
 )
 
-EX_RF_002 = ExamTestCase(
+EX_RF_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RF-002",
     capability="refactor",
     difficulty=Difficulty.MEDIUM,
@@ -419,7 +420,7 @@ EX_RF_002 = ExamTestCase(
     expected_contains=["comprehension", "x * 2 for x in"],
 )
 
-EX_RF_003 = ExamTestCase(
+EX_RF_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RF-003",
     capability="refactor",
     difficulty=Difficulty.HARD,
@@ -442,7 +443,7 @@ EX_RF_003 = ExamTestCase(
 # code_generate (3 题)
 # ══════════════════════════════════════════════════════════
 
-EX_CG_001 = ExamTestCase(
+EX_CG_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CG-001",
     capability="code_generate",
     difficulty=Difficulty.EASY,
@@ -461,7 +462,7 @@ EX_CG_001 = ExamTestCase(
     ],
 )
 
-EX_CG_002 = ExamTestCase(
+EX_CG_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CG-002",
     capability="code_generate",
     difficulty=Difficulty.MEDIUM,
@@ -482,7 +483,7 @@ EX_CG_002 = ExamTestCase(
     ],
 )
 
-EX_CG_003 = ExamTestCase(
+EX_CG_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CG-003",
     capability="code_generate",
     difficulty=Difficulty.HARD,
@@ -507,7 +508,7 @@ EX_CG_003 = ExamTestCase(
 # dead_code_removal (3 题)
 # ══════════════════════════════════════════════════════════
 
-EX_DC_001 = ExamTestCase(
+EX_DC_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-DC-001",
     capability="dead_code_removal",
     difficulty=Difficulty.EASY,
@@ -518,7 +519,7 @@ EX_DC_001 = ExamTestCase(
     expected_contains=["json", "import json"],
 )
 
-EX_DC_002 = ExamTestCase(
+EX_DC_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-DC-002",
     capability="dead_code_removal",
     difficulty=Difficulty.MEDIUM,
@@ -535,7 +536,7 @@ EX_DC_002 = ExamTestCase(
     expected_contains=["unreachable", "print('done')", "after return"],
 )
 
-EX_DC_003 = ExamTestCase(
+EX_DC_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-DC-003",
     capability="dead_code_removal",
     difficulty=Difficulty.HARD,
@@ -561,7 +562,7 @@ EX_DC_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # cross_file_analysis (3 题) — 跨文件依赖分析
-EX_CFA_001 = ExamTestCase(
+EX_CFA_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFA-001",
     capability="impact_analysis",
     difficulty=Difficulty.EASY,
@@ -576,7 +577,7 @@ EX_CFA_001 = ExamTestCase(
     expected_contains=["main.py", "test_calc.py"],
 )
 
-EX_CFA_002 = ExamTestCase(
+EX_CFA_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFA-002",
     capability="impact_analysis",
     difficulty=Difficulty.MEDIUM,
@@ -592,7 +593,7 @@ EX_CFA_002 = ExamTestCase(
     expected_contains=["api.py", "serializer.py", "tests.py"],
 )
 
-EX_CFA_003 = ExamTestCase(
+EX_CFA_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFA-003",
     capability="impact_analysis",
     difficulty=Difficulty.HARD,
@@ -610,7 +611,7 @@ EX_CFA_003 = ExamTestCase(
 )
 
 # architecture_design (3 题) — 架构方案设计
-EX_AD_001 = ExamTestCase(
+EX_AD_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-AD-001",
     capability="architecture_design",
     difficulty=Difficulty.EASY,
@@ -619,7 +620,7 @@ EX_AD_001 = ExamTestCase(
     expected_contains=["validate", "password", "database", "email", "logger"],
 )
 
-EX_AD_002 = ExamTestCase(
+EX_AD_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-AD-002",
     capability="architecture_design",
     difficulty=Difficulty.MEDIUM,
@@ -628,7 +629,7 @@ EX_AD_002 = ExamTestCase(
     expected_contains=["router", "auth", "rate_limit", "logger", "error", "cache"],
 )
 
-EX_AD_003 = ExamTestCase(
+EX_AD_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-AD-003",
     capability="architecture_design",
     difficulty=Difficulty.HARD,
@@ -638,7 +639,7 @@ EX_AD_003 = ExamTestCase(
 )
 
 # cross_file_refactor (3 题) — 跨文件重构
-EX_CFR_001 = ExamTestCase(
+EX_CFR_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFR-001",
     capability="cross_file_refactor",
     difficulty=Difficulty.EASY,
@@ -652,7 +653,7 @@ EX_CFR_001 = ExamTestCase(
     expected_contains=["sum_values", "calc.py", "main.py", "test.py"],
 )
 
-EX_CFR_002 = ExamTestCase(
+EX_CFR_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFR-002",
     capability="cross_file_refactor",
     difficulty=Difficulty.MEDIUM,
@@ -666,7 +667,7 @@ EX_CFR_002 = ExamTestCase(
     expected_contains=["Account", "models.py", "api.py", "serializer.py"],
 )
 
-EX_CFR_003 = ExamTestCase(
+EX_CFR_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFR-003",
     capability="cross_file_refactor",
     difficulty=Difficulty.HARD,
@@ -682,7 +683,7 @@ EX_CFR_003 = ExamTestCase(
 )
 
 # dependency_trace (3 题) — 依赖链追踪
-EX_DT_001 = ExamTestCase(
+EX_DT_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-DT-001",
     capability="dependency_trace",
     difficulty=Difficulty.EASY,
@@ -697,7 +698,7 @@ EX_DT_001 = ExamTestCase(
     expected_contains=["func_a", "func_b", "func_c", "a.py", "b.py", "c.py"],
 )
 
-EX_DT_002 = ExamTestCase(
+EX_DT_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-DT-002",
     capability="dependency_trace",
     difficulty=Difficulty.MEDIUM,
@@ -713,7 +714,7 @@ EX_DT_002 = ExamTestCase(
     expected_contains=["handler", "get_user", "find", "query", "api.py", "service.py", "repo.py", "db.py"],
 )
 
-EX_DT_003 = ExamTestCase(
+EX_DT_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-DT-003",
     capability="dependency_trace",
     difficulty=Difficulty.HARD,
@@ -737,7 +738,7 @@ EX_DT_003 = ExamTestCase(
 
 # context_consistency (3 题) — 上下文一致性检测
 # FIX L3.5: 从字面矛盾改为语义矛盾（旧题int vs string、SQLite vs PostgreSQL太明显）
-EX_CC_001 = ExamTestCase(
+EX_CC_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CC-001",
     capability="context_consistency",
     difficulty=Difficulty.EASY,
@@ -751,7 +752,7 @@ EX_CC_001 = ExamTestCase(
     expected_contains=["stateless", "无状态", "session", "会话", "in-memory", "内存", "memory"],
 )
 
-EX_CC_002 = ExamTestCase(
+EX_CC_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CC-002",
     capability="context_consistency",
     difficulty=Difficulty.MEDIUM,
@@ -765,7 +766,7 @@ EX_CC_002 = ExamTestCase(
     expected_contains=["event-driven", "polling", "轮询", "asynchronous"],
 )
 
-EX_CC_003 = ExamTestCase(
+EX_CC_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CC-003",
     capability="context_consistency",
     difficulty=Difficulty.HARD,
@@ -782,7 +783,7 @@ EX_CC_003 = ExamTestCase(
 )
 
 # hallucination_detect (3 题) — 幻觉检测
-EX_HD_001 = ExamTestCase(
+EX_HD_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-HD-001",
     capability="hallucination_detect",
     difficulty=Difficulty.EASY,
@@ -797,7 +798,7 @@ EX_HD_001 = ExamTestCase(
     expected_contains=["phantom_module"],
 )
 
-EX_HD_002 = ExamTestCase(
+EX_HD_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-HD-002",
     capability="hallucination_detect",
     difficulty=Difficulty.MEDIUM,
@@ -812,7 +813,7 @@ EX_HD_002 = ExamTestCase(
     expected_contains=["fetch_all_users"],
 )
 
-EX_HD_003 = ExamTestCase(
+EX_HD_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-HD-003",
     capability="hallucination_detect",
     difficulty=Difficulty.HARD,
@@ -828,7 +829,7 @@ EX_HD_003 = ExamTestCase(
 )
 
 # long_context_recall (3 题) — 长上下文召回
-EX_LCR_001 = ExamTestCase(
+EX_LCR_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-LCR-001",
     capability="long_context_recall",
     difficulty=Difficulty.EASY,
@@ -846,7 +847,7 @@ EX_LCR_001 = ExamTestCase(
     expected_contains=["3", "three", "三"],
 )
 
-EX_LCR_002 = ExamTestCase(
+EX_LCR_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-LCR-002",
     capability="long_context_recall",
     difficulty=Difficulty.MEDIUM,
@@ -862,7 +863,7 @@ EX_LCR_002 = ExamTestCase(
     expected_contains=["120", "4*30", "3*30", "four"],
 )
 
-EX_LCR_003 = ExamTestCase(
+EX_LCR_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-LCR-003",
     capability="long_context_recall",
     difficulty=Difficulty.HARD,
@@ -887,7 +888,7 @@ EX_LCR_003 = ExamTestCase(
 
 # rule_comprehension (3 题) — 规则理解
 # FIX L3.5: 精确化expected_contains（旧值包含修复建议而非违反点）
-EX_RC_001 = ExamTestCase(
+EX_RC_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RC-001",
     capability="rule_comprehension",
     difficulty=Difficulty.EASY,
@@ -897,7 +898,7 @@ EX_RC_001 = ExamTestCase(
     expected_contains=["eval", "type", "encoding"],
 )
 
-EX_RC_002 = ExamTestCase(
+EX_RC_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RC-002",
     capability="rule_comprehension",
     difficulty=Difficulty.MEDIUM,
@@ -907,7 +908,7 @@ EX_RC_002 = ExamTestCase(
     expected_contains=["subprocess", "timeout", "log"],
 )
 
-EX_RC_003 = ExamTestCase(
+EX_RC_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RC-003",
     capability="rule_comprehension",
     difficulty=Difficulty.HARD,
@@ -918,7 +919,7 @@ EX_RC_003 = ExamTestCase(
 )
 
 # 审查2.2修复: rule_comprehension 正例对照组 (防止"总是报不合规"退化策略拿满分)
-EX_RC_004 = ExamTestCase(
+EX_RC_004: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RC-004",
     capability="rule_comprehension",
     difficulty=Difficulty.MEDIUM,
@@ -929,7 +930,7 @@ EX_RC_004 = ExamTestCase(
 )
 
 # safety_judgment (3 题) — 安全判断
-EX_SJ_001 = ExamTestCase(
+EX_SJ_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SJ-001",
     capability="safety_judgment",
     difficulty=Difficulty.EASY,
@@ -940,7 +941,7 @@ EX_SJ_001 = ExamTestCase(
     expected_contains=["config.py", "utils.py", "core_rules.py"],
 )
 
-EX_SJ_002 = ExamTestCase(
+EX_SJ_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SJ-002",
     capability="safety_judgment",
     difficulty=Difficulty.MEDIUM,
@@ -951,7 +952,7 @@ EX_SJ_002 = ExamTestCase(
     expected_contains=["helper.py", "test_utils.py", "database_schema.py", "lock_files.py"],
 )
 
-EX_SJ_003 = ExamTestCase(
+EX_SJ_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SJ-003",
     capability="safety_judgment",
     difficulty=Difficulty.HARD,
@@ -968,7 +969,7 @@ EX_SJ_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # file_edit_precision (3 题) — 执行精度
-EX_FEP_001 = ExamTestCase(
+EX_FEP_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-FEP-001",
     capability="code_edit_precision",
     difficulty=Difficulty.EASY,
@@ -979,7 +980,7 @@ EX_FEP_001 = ExamTestCase(
     expected_contains=["x = 100"],
 )
 
-EX_FEP_002 = ExamTestCase(
+EX_FEP_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-FEP-002",
     capability="code_edit_precision",
     difficulty=Difficulty.MEDIUM,
@@ -990,7 +991,7 @@ EX_FEP_002 = ExamTestCase(
     expected_contains=["a + b"],
 )
 
-EX_FEP_003 = ExamTestCase(
+EX_FEP_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-FEP-003",
     capability="code_edit_precision",
     difficulty=Difficulty.HARD,
@@ -1008,7 +1009,7 @@ EX_FEP_003 = ExamTestCase(
 
 # self_review (3 题) — 自审自纠
 # FIX L3.5: 把明显bug改为隐蔽的逻辑错误（旧题add返回减法、divide除零太明显）
-EX_SR_001 = ExamTestCase(
+EX_SR_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SR-001",
     capability="self_review",
     difficulty=Difficulty.EASY,
@@ -1019,7 +1020,7 @@ EX_SR_001 = ExamTestCase(
     expected_contains=["1 + discount", "addition", "subtraction"],
 )
 
-EX_SR_002 = ExamTestCase(
+EX_SR_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SR-002",
     capability="self_review",
     difficulty=Difficulty.MEDIUM,
@@ -1030,7 +1031,7 @@ EX_SR_002 = ExamTestCase(
     expected_contains=["index", "out of range", "len(lst)", "off-by-one"],
 )
 
-EX_SR_003 = ExamTestCase(
+EX_SR_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SR-003",
     capability="self_review",
     difficulty=Difficulty.HARD,
@@ -1047,7 +1048,7 @@ EX_SR_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # incremental_execution (3 题) — 增量执行
-EX_IE_001 = ExamTestCase(
+EX_IE_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-IE-001",
     capability="incremental_execution",
     difficulty=Difficulty.EASY,
@@ -1057,7 +1058,7 @@ EX_IE_001 = ExamTestCase(
     expected_contains=["read", "读取", "parse", "解析", "extract", "提取", "return", "返回"],
 )
 
-EX_IE_002 = ExamTestCase(
+EX_IE_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-IE-002",
     capability="incremental_execution",
     difficulty=Difficulty.MEDIUM,
@@ -1067,7 +1068,7 @@ EX_IE_002 = ExamTestCase(
     expected_contains=["search", "搜索", "filter", "过滤", "count", "计数", "report", "报告", "glob"],
 )
 
-EX_IE_003 = ExamTestCase(
+EX_IE_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-IE-003",
     capability="incremental_execution",
     difficulty=Difficulty.HARD,
@@ -1083,7 +1084,7 @@ EX_IE_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # error_recovery (3 题) — 错误恢复
-EX_ER_001 = ExamTestCase(
+EX_ER_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-ER-001",
     capability="error_recovery",
     difficulty=Difficulty.EASY,
@@ -1093,7 +1094,7 @@ EX_ER_001 = ExamTestCase(
     expected_contains=["pip install", "requests", "install"],
 )
 
-EX_ER_002 = ExamTestCase(
+EX_ER_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-ER-002",
     capability="error_recovery",
     difficulty=Difficulty.MEDIUM,
@@ -1103,7 +1104,7 @@ EX_ER_002 = ExamTestCase(
     expected_contains=["JSON", "invalid", "parse", "JSONDecodeError"],
 )
 
-EX_ER_003 = ExamTestCase(
+EX_ER_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-ER-003",
     capability="error_recovery",
     difficulty=Difficulty.HARD,
@@ -1120,7 +1121,7 @@ EX_ER_003 = ExamTestCase(
 
 # ambiguity_detect (3 题) — 歧义识别
 # 注: 使用 EX_AMB 前缀避免与 architecture_design 的 EX_AD 冲突
-EX_AMB_001 = ExamTestCase(
+EX_AMB_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-AMB-001",
     capability="ambiguity_detect",
     difficulty=Difficulty.EASY,
@@ -1130,7 +1131,7 @@ EX_AMB_001 = ExamTestCase(
     expected_contains=["ambiguous", "optimize", "unclear"],
 )
 
-EX_AMB_002 = ExamTestCase(
+EX_AMB_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-AMB-002",
     capability="ambiguity_detect",
     difficulty=Difficulty.MEDIUM,
@@ -1140,7 +1141,7 @@ EX_AMB_002 = ExamTestCase(
     expected_contains=["ambiguous", "bug", "which bug", "where is"],
 )
 
-EX_AMB_003 = ExamTestCase(
+EX_AMB_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-AMB-003",
     capability="ambiguity_detect",
     difficulty=Difficulty.HARD,
@@ -1157,7 +1158,7 @@ EX_AMB_003 = ExamTestCase(
 
 # tool_selection (3 题) — 工具选择
 # FIX L3.5: 增加干扰选项，expected_contains改为理由关键词（旧题场景太简单）
-EX_TS_001 = ExamTestCase(
+EX_TS_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TS-001",
     capability="tool_selection",
     difficulty=Difficulty.EASY,
@@ -1167,7 +1168,7 @@ EX_TS_001 = ExamTestCase(
     expected_contains=["search", "pattern", "content", "regex"],
 )
 
-EX_TS_002 = ExamTestCase(
+EX_TS_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TS-002",
     capability="tool_selection",
     difficulty=Difficulty.MEDIUM,
@@ -1177,7 +1178,7 @@ EX_TS_002 = ExamTestCase(
     expected_contains=["full", "content", "complete", "view"],
 )
 
-EX_TS_003 = ExamTestCase(
+EX_TS_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TS-003",
     capability="tool_selection",
     difficulty=Difficulty.HARD,
@@ -1195,7 +1196,7 @@ EX_TS_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # function_calling (3 题) — 生成结构化工具调用
-EX_FC_001 = ExamTestCase(
+EX_FC_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-FC-001",
     capability="function_calling",
     difficulty=Difficulty.EASY,
@@ -1209,7 +1210,7 @@ EX_FC_001 = ExamTestCase(
     expected_contains=["file_path"],
 )
 
-EX_FC_002 = ExamTestCase(
+EX_FC_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-FC-002",
     capability="function_calling",
     difficulty=Difficulty.MEDIUM,
@@ -1224,7 +1225,7 @@ EX_FC_002 = ExamTestCase(
     expected_contains=["pattern", "path"],
 )
 
-EX_FC_003 = ExamTestCase(
+EX_FC_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-FC-003",
     capability="function_calling",
     difficulty=Difficulty.HARD,
@@ -1244,7 +1245,7 @@ EX_FC_003 = ExamTestCase(
 )
 
 # tool_chaining (3 题) — 规划多工具调用顺序
-EX_TC_001 = ExamTestCase(
+EX_TC_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TC-001",
     capability="tool_chaining",
     difficulty=Difficulty.EASY,
@@ -1257,7 +1258,7 @@ EX_TC_001 = ExamTestCase(
     expected_contains=["Grep", "Read"],
 )
 
-EX_TC_002 = ExamTestCase(
+EX_TC_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TC-002",
     capability="tool_chaining",
     difficulty=Difficulty.MEDIUM,
@@ -1271,7 +1272,7 @@ EX_TC_002 = ExamTestCase(
     expected_contains=["Glob", "Read", "Edit"],
 )
 
-EX_TC_003 = ExamTestCase(
+EX_TC_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TC-003",
     capability="tool_chaining",
     difficulty=Difficulty.HARD,
@@ -1291,7 +1292,7 @@ EX_TC_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # impact_analysis (5 题) — 影响分析
-EX_IA_001 = ExamTestCase(
+EX_IA_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-IA-001",
     capability="impact_analysis",
     difficulty=Difficulty.EASY,
@@ -1308,7 +1309,7 @@ EX_IA_001 = ExamTestCase(
     expected_contains=["main.py", "test_utils"],
 )
 
-EX_IA_002 = ExamTestCase(
+EX_IA_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-IA-002",
     capability="impact_analysis",
     difficulty=Difficulty.EASY,
@@ -1325,7 +1326,7 @@ EX_IA_002 = ExamTestCase(
     expected_contains=["retry", "handler"],
 )
 
-EX_IA_003 = ExamTestCase(
+EX_IA_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-IA-003",
     capability="impact_analysis",
     difficulty=Difficulty.MEDIUM,
@@ -1360,7 +1361,7 @@ EX_IA_003 = ExamTestCase(
     expected_contains=["impl1", "impl2", "factory", "client"],
 )
 
-EX_IA_005 = ExamTestCase(
+EX_IA_005: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-IA-005",
     capability="impact_analysis",
     difficulty=Difficulty.HARD,
@@ -1408,7 +1409,7 @@ EX_IA_005 = ExamTestCase(
 )
 
 # circular_dependency_detect (5 题) — 循环依赖检测
-EX_CDD_001 = ExamTestCase(
+EX_CDD_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CDD-001",
     capability="circular_dependency_detect",
     difficulty=Difficulty.EASY,
@@ -1427,7 +1428,7 @@ EX_CDD_001 = ExamTestCase(
     expected_contains=["cycle", "module_a", "module_b", "module_c"],
 )
 
-EX_CDD_002 = ExamTestCase(
+EX_CDD_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CDD-002",
     capability="circular_dependency_detect",
     difficulty=Difficulty.EASY,
@@ -1451,7 +1452,7 @@ EX_CDD_002 = ExamTestCase(
     expected_contains=["cycle", "a.py", "b.py", "c.py"],
 )
 
-EX_CDD_003 = ExamTestCase(
+EX_CDD_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CDD-003",
     capability="circular_dependency_detect",
     difficulty=Difficulty.MEDIUM,
@@ -1475,7 +1476,7 @@ EX_CDD_003 = ExamTestCase(
     expected_contains=["cycle", "m1", "m5"],
 )
 
-EX_CDD_005 = ExamTestCase(
+EX_CDD_005: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CDD-005",
     capability="circular_dependency_detect",
     difficulty=Difficulty.HARD,
@@ -1514,7 +1515,7 @@ EX_CDD_005 = ExamTestCase(
 )
 
 # rollback_boundary_design (5 题) — 回滚边界设计
-EX_RBD_001 = ExamTestCase(
+EX_RBD_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RBD-001",
     capability="rollback_boundary_design",
     difficulty=Difficulty.EASY,
@@ -1530,7 +1531,7 @@ EX_RBD_001 = ExamTestCase(
     expected_contains=["backup", "database.py", "model.py", "api.py"],
 )
 
-EX_RBD_002 = ExamTestCase(
+EX_RBD_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RBD-002",
     capability="rollback_boundary_design",
     difficulty=Difficulty.EASY,
@@ -1546,7 +1547,7 @@ EX_RBD_002 = ExamTestCase(
     expected_contains=["backup", "auth", "middleware"],
 )
 
-EX_RBD_003 = ExamTestCase(
+EX_RBD_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RBD-003",
     capability="rollback_boundary_design",
     difficulty=Difficulty.MEDIUM,
@@ -1561,7 +1562,7 @@ EX_RBD_003 = ExamTestCase(
     expected_contains=["backup", "schema", "resolvers", "migration"],
 )
 
-EX_RBD_004 = ExamTestCase(
+EX_RBD_004: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RBD-004",
     capability="rollback_boundary_design",
     difficulty=Difficulty.MEDIUM,
@@ -1576,7 +1577,7 @@ EX_RBD_004 = ExamTestCase(
     expected_contains=["backup", "monolith", "database", "split"],
 )
 
-EX_RBD_005 = ExamTestCase(
+EX_RBD_005: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-RBD-005",
     capability="rollback_boundary_design",
     difficulty=Difficulty.HARD,
@@ -1600,7 +1601,7 @@ EX_RBD_005 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # task_decomposition (5 题) — 任务分解
-EX_TD_001 = ExamTestCase(
+EX_TD_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TD-001",
     capability="task_decomposition",
     difficulty=Difficulty.EASY,
@@ -1615,7 +1616,7 @@ EX_TD_001 = ExamTestCase(
     expected_contains=["models.py", "views.py", "urls.py", "register"],
 )
 
-EX_TD_002 = ExamTestCase(
+EX_TD_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TD-002",
     capability="task_decomposition",
     difficulty=Difficulty.EASY,
@@ -1630,7 +1631,7 @@ EX_TD_002 = ExamTestCase(
     expected_contains=["auth", "email", "template", "reset"],
 )
 
-EX_TD_003 = ExamTestCase(
+EX_TD_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TD-003",
     capability="task_decomposition",
     difficulty=Difficulty.MEDIUM,
@@ -1645,7 +1646,7 @@ EX_TD_003 = ExamTestCase(
     expected_contains=["monolith", "database", "auth", "users", "orders", "microservice"],
 )
 
-EX_TD_004 = ExamTestCase(
+EX_TD_004: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TD-004",
     capability="task_decomposition",
     difficulty=Difficulty.MEDIUM,
@@ -1660,7 +1661,7 @@ EX_TD_004 = ExamTestCase(
     expected_contains=["websocket", "chat", "service", "notification", "presence"],
 )
 
-EX_TD_005 = ExamTestCase(
+EX_TD_005: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-TD-005",
     capability="task_decomposition",
     difficulty=Difficulty.HARD,
@@ -1676,7 +1677,7 @@ EX_TD_005 = ExamTestCase(
 )
 
 # parallel_planning (3 题) — 并行规划
-EX_PP_001 = ExamTestCase(
+EX_PP_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-PP-001",
     capability="parallel_planning",
     difficulty=Difficulty.EASY,
@@ -1693,7 +1694,7 @@ EX_PP_001 = ExamTestCase(
     expected_contains=["parallel", "sequential", "models.py", "views.py", "tests.py"],
 )
 
-EX_PP_002 = ExamTestCase(
+EX_PP_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-PP-002",
     capability="parallel_planning",
     difficulty=Difficulty.MEDIUM,
@@ -1717,7 +1718,7 @@ EX_PP_002 = ExamTestCase(
     expected_contains=["parallel", "T1", "T3", "T9", "T10"],
 )
 
-EX_PP_003 = ExamTestCase(
+EX_PP_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-PP-003",
     capability="parallel_planning",
     difficulty=Difficulty.HARD,
@@ -1737,7 +1738,7 @@ EX_PP_003 = ExamTestCase(
 )
 
 # dependency_ordering (3 题) — 依赖排序
-EX_DO_001 = ExamTestCase(
+EX_DO_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-DO-001",
     capability="dependency_ordering",
     difficulty=Difficulty.EASY,
@@ -1754,7 +1755,7 @@ EX_DO_001 = ExamTestCase(
     expected_contains=["B: Implement", "A: Write tests", "C: Deploy", "order"],
 )
 
-EX_DO_002 = ExamTestCase(
+EX_DO_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-DO-002",
     capability="dependency_ordering",
     difficulty=Difficulty.MEDIUM,
@@ -1778,7 +1779,7 @@ EX_DO_002 = ExamTestCase(
     expected_contains=["T1", "T2", "T3", "order"],
 )
 
-EX_DO_003 = ExamTestCase(
+EX_DO_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-DO-003",
     capability="dependency_ordering",
     difficulty=Difficulty.HARD,
@@ -1803,7 +1804,7 @@ EX_DO_003 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # cross_file_hallucination_detect (5 题) — 跨文件幻觉检测
-EX_CFHD_001 = ExamTestCase(
+EX_CFHD_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFHD-001",
     capability="hallucination_detect",
     difficulty=Difficulty.EASY,
@@ -1820,7 +1821,7 @@ EX_CFHD_001 = ExamTestCase(
     expected_contains=["hallucination", "fake_module", "nonexistent"],
 )
 
-EX_CFHD_002 = ExamTestCase(
+EX_CFHD_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFHD-002",
     capability="hallucination_detect",
     difficulty=Difficulty.EASY,
@@ -1837,7 +1838,7 @@ EX_CFHD_002 = ExamTestCase(
     expected_contains=["hallucination", "REDIS_URL", "cache"],
 )
 
-EX_CFHD_003 = ExamTestCase(
+EX_CFHD_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFHD-003",
     capability="hallucination_detect",
     difficulty=Difficulty.MEDIUM,
@@ -1868,7 +1869,7 @@ EX_CFHD_003 = ExamTestCase(
     expected_contains=["hallucination", "fake_service", "phantom", "ghost"],
 )
 
-EX_CFHD_004 = ExamTestCase(
+EX_CFHD_004: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFHD-004",
     capability="hallucination_detect",
     difficulty=Difficulty.MEDIUM,
@@ -1900,7 +1901,7 @@ EX_CFHD_004 = ExamTestCase(
     expected_contains=["hallucination", "UserView", "AuthService", "ConfigManager"],
 )
 
-EX_CFHD_005 = ExamTestCase(
+EX_CFHD_005: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFHD-005",
     capability="hallucination_detect",
     difficulty=Difficulty.HARD,
@@ -1928,7 +1929,7 @@ EX_CFHD_005 = ExamTestCase(
 
 # context_freshness_awareness (3 题) — 上下文新鲜度感知
 # 注: 使用 EX_CFAW 前缀避免与 cross_file_analysis 的 EX_CFA 冲突
-EX_CFAW_001 = ExamTestCase(
+EX_CFAW_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFAW-001",
     capability="context_management",
     difficulty=Difficulty.EASY,
@@ -1947,7 +1948,7 @@ EX_CFAW_001 = ExamTestCase(
     expected_contains=["fresh", "not degraded", "no degradation"],
 )
 
-EX_CFAW_002 = ExamTestCase(
+EX_CFAW_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFAW-002",
     capability="context_management",
     difficulty=Difficulty.MEDIUM,
@@ -1966,7 +1967,7 @@ EX_CFAW_002 = ExamTestCase(
     expected_contains=["degraded", "new session", "contradiction"],
 )
 
-EX_CFAW_003 = ExamTestCase(
+EX_CFAW_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CFAW-003",
     capability="context_management",
     difficulty=Difficulty.HARD,
@@ -1989,7 +1990,7 @@ EX_CFAW_003 = ExamTestCase(
 )
 
 # context_window_management (3 题) — 上下文窗口管理
-EX_CWM_001 = ExamTestCase(
+EX_CWM_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CWM-001",
     capability="context_management",
     difficulty=Difficulty.EASY,
@@ -2007,7 +2008,7 @@ EX_CWM_001 = ExamTestCase(
     expected_contains=["new session", "yes, start", "degraded"],
 )
 
-EX_CWM_002 = ExamTestCase(
+EX_CWM_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CWM-002",
     capability="context_management",
     difficulty=Difficulty.MEDIUM,
@@ -2025,7 +2026,7 @@ EX_CWM_002 = ExamTestCase(
     expected_contains=["no, continue", "fresh", "performing well"],
 )
 
-EX_CWM_003 = ExamTestCase(
+EX_CWM_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CWM-003",
     capability="context_management",
     difficulty=Difficulty.HARD,
@@ -2048,7 +2049,7 @@ EX_CWM_003 = ExamTestCase(
 # 高区分度hard题 (3题, 8B模型基本做不对, 顶级模型能做对)
 # ══════════════════════════════════════════════════════════
 
-EX_CDD_004 = ExamTestCase(
+EX_CDD_004: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-CDD-004",
     capability="circular_dependency_detect",
     difficulty=Difficulty.HARD,
@@ -2066,7 +2067,7 @@ EX_CDD_004 = ExamTestCase(
     expected_contains=["auth", "session", "user", "permission", "role"],
 )
 
-EX_IA_004 = ExamTestCase(
+EX_IA_004: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-IA-004",
     capability="impact_analysis",
     difficulty=Difficulty.HARD,
@@ -2088,7 +2089,7 @@ EX_IA_004 = ExamTestCase(
     expected_contains=["main", "api", "models", "views", "config", "helpers", "services"],
 )
 
-EX_SR_004 = ExamTestCase(
+EX_SR_004: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SR-004",
     capability="self_review",
     difficulty=Difficulty.HARD,
@@ -2110,7 +2111,7 @@ EX_SR_004 = ExamTestCase(
 )
 
 # 审查2.2修复: self_review 负例对照组 (防止"总是报bug"退化策略拿满分)
-EX_SR_005 = ExamTestCase(
+EX_SR_005: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-SR-005",
     capability="self_review",
     difficulty=Difficulty.MEDIUM,
@@ -2135,7 +2136,7 @@ EX_SR_005 = ExamTestCase(
 # ══════════════════════════════════════════════════════════
 
 # EX_OLY_001: architecture_design OLYMPIAD — 多租户微服务电商订单系统 (20+文件)
-EX_OLY_001 = ExamTestCase(
+EX_OLY_001: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-OLY-001",
     capability="architecture_design",
     difficulty=Difficulty.OLYMPIAD,
@@ -2168,7 +2169,7 @@ EX_OLY_001 = ExamTestCase(
 )
 
 # EX_OLY_002: hallucination_detect OLYMPIAD — 30 条声称中 12 条幻觉
-EX_OLY_002 = ExamTestCase(
+EX_OLY_002: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-OLY-002",
     capability="hallucination_detect",
     difficulty=Difficulty.OLYMPIAD,
@@ -2223,7 +2224,7 @@ EX_OLY_002 = ExamTestCase(
 )
 
 # EX_OLY_003: dependency_trace OLYMPIAD — 8 文件深度调用链
-EX_OLY_003 = ExamTestCase(
+EX_OLY_003: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-OLY-003",
     capability="dependency_trace",
     difficulty=Difficulty.OLYMPIAD,
@@ -2288,7 +2289,7 @@ EX_OLY_003 = ExamTestCase(
 )
 
 # EX_OLY_004: code_generate OLYMPIAD — TTL+LRU+并发安全缓存装饰器
-EX_OLY_004 = ExamTestCase(
+EX_OLY_004: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-OLY-004",
     capability="code_generate",
     difficulty=Difficulty.OLYMPIAD,
@@ -2313,7 +2314,7 @@ EX_OLY_004 = ExamTestCase(
 )
 
 # EX_OLY_005: parallel_planning OLYMPIAD — 15 任务 DAG
-EX_OLY_005 = ExamTestCase(
+EX_OLY_005: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-OLY-005",
     capability="parallel_planning",
     difficulty=Difficulty.OLYMPIAD,
@@ -2354,7 +2355,7 @@ EX_OLY_005 = ExamTestCase(
 )
 
 # EX_OLY_006: context_consistency OLYMPIAD — 6 份矛盾文档
-EX_OLY_006 = ExamTestCase(
+EX_OLY_006: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-OLY-006",
     capability="context_consistency",
     difficulty=Difficulty.OLYMPIAD,
@@ -2419,7 +2420,7 @@ _OLY_007_CONTEXT = assemble_real_context(
     extra_files={_OLY_007_GHOST_FILE[0]: _OLY_007_GHOST_FILE[1]},
 )
 
-EX_OLY_007 = ExamTestCase(
+EX_OLY_007: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-OLY-007",
     capability="architecture_design",
     difficulty=Difficulty.OLYMPIAD,
@@ -2467,7 +2468,7 @@ _OLY_008_CONTEXT = assemble_real_context(
     max_chars_per_file=6000,
 )
 
-EX_OLY_008 = ExamTestCase(
+EX_OLY_008: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-OLY-008",
     capability="hallucination_detect",
     difficulty=Difficulty.OLYMPIAD,
@@ -2507,7 +2508,7 @@ _OLY_009_CONTEXT = assemble_real_context(
     max_chars_per_file=8000,
 )
 
-EX_OLY_009 = ExamTestCase(
+EX_OLY_009: Final[ExamTestCase] = ExamTestCase(
     case_id="EX-OLY-009",
     capability="dependency_trace",
     difficulty=Difficulty.OLYMPIAD,
@@ -2531,7 +2532,7 @@ EX_OLY_009 = ExamTestCase(
 # P0核心12能力 + P1重要8能力 + P2辅助9能力(含context_management) + OLYMPIAD 9题 = 127题
 # ══════════════════════════════════════════════════════════
 
-ALL_EXAM_CASES: list[ExamTestCase] = [
+ALL_EXAM_CASES: Final[list[ExamTestCase]] = [
     # ── P0 核心12个能力 (各3题) ──────────────────────────
     # code_generate
     EX_CG_001,
@@ -2698,6 +2699,6 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_OLY_009,
 ]
 
-CASES_BY_CAPABILITY: dict[str, list[ExamTestCase]] = {}
+CASES_BY_CAPABILITY: Final[dict[str, list[ExamTestCase]]] = {}
 for _case in ALL_EXAM_CASES:
     CASES_BY_CAPABILITY.setdefault(_case.capability, []).append(_case)

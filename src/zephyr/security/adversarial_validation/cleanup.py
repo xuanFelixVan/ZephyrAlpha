@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import shutil
 from pathlib import Path
@@ -25,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["Cleanup", "CleanupVerificationError"]
 
-CLEANUP_PATTERNS: list[str] = [
+CLEANUP_PATTERNS: Final[list[str]] = [
     "_attack_*",
     "*.rb_backup",
     "_temp*.py",
@@ -34,7 +35,7 @@ CLEANUP_PATTERNS: list[str] = [
     "data/red_blue/checkpoint_*.yaml",
 ]
 
-CLEANUP_DIRS: list[Path] = [
+CLEANUP_DIRS: Final[list[Path]] = [
     Path("data/red_blue/backups"),
 ]
 

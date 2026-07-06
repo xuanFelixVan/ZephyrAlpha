@@ -23,6 +23,8 @@ Dogfooding — 自举测试：用 TaskCard 管理 TaskCard 建设。
     任务卡 TASK-INF-0110 (Part 2/4)
 """
 
+from typing import Final
+
 import json
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -48,7 +50,7 @@ class DogfoodReport:
     timestamp_utc: str
 
 
-DOGFOOD_TASKS: list[DogfoodTask] = [
+DOGFOOD_TASKS: Final[list[DogfoodTask]] = [
     DogfoodTask("DOGFOOD-001", "TaskCard schema self-validation", "MOD-TASK_SYSTEM", "P0"),
     DogfoodTask("DOGFOOD-002", "Blueprint decomposer self-test", "MOD-TASK_SYSTEM", "P1"),
     DogfoodTask("DOGFOOD-003", "Task manager server self-test", "MOD-TASK_SYSTEM-MCP", "P1"),

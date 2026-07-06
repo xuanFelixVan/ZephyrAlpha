@@ -13,6 +13,8 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
+from typing import Final
+
 import os
 import re
 from typing import Any
@@ -127,18 +129,18 @@ def _compile(patterns: list[tuple[str, str]]) -> list[tuple[Any, str]]:
 
 # --- Precompiled pattern exports (non-empty) ---
 
-PRECOMPILED_DIRECT: list = _compile(_DIRECT_PATTERNS + _NESTED_PATTERNS)
-PRECOMPILED_JAILBREAK: list = _compile(
+PRECOMPILED_DIRECT: Final[list] = _compile(_DIRECT_PATTERNS + _NESTED_PATTERNS)
+PRECOMPILED_JAILBREAK: Final[list] = _compile(
     _JAILBREAK_PATTERNS
     + _ENCODING_OBFUSCATION_PATTERNS
     + _TOKEN_SMUGGLING_PATTERNS
     + _EMOTIONAL_PATTERNS
 )
-PRECOMPILED_SHELL: list = _compile(_SHELL_PATTERNS)
-PRECOMPILED_SQL: list = _compile(_SQL_PATTERNS)
-PRECOMPILED_SEMANTIC: list = _compile(_SEMANTIC_PATTERNS)
-PRECOMPILED_PATH: list = _compile(_PATH_TRAVERSAL_PATTERNS)
-PRECOMPILED_ENCODING: list = [
+PRECOMPILED_SHELL: Final[list] = _compile(_SHELL_PATTERNS)
+PRECOMPILED_SQL: Final[list] = _compile(_SQL_PATTERNS)
+PRECOMPILED_SEMANTIC: Final[list] = _compile(_SEMANTIC_PATTERNS)
+PRECOMPILED_PATH: Final[list] = _compile(_PATH_TRAVERSAL_PATTERNS)
+PRECOMPILED_ENCODING: Final[list] = [
     ("zero_width", _ZERO_WIDTH_RE),
     ("hex_escape", re.compile(r"\\x[0-9a-fA-F]{2}")),
     ("unicode_escape", re.compile(r"\\u[0-9a-fA-F]{4}")),

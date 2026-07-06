@@ -29,6 +29,7 @@ BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
@@ -42,9 +43,9 @@ from zephyr.integration.vector_memory.collection_manager import (
 
 _logger = logging.getLogger(__name__)
 
-KB_PERSIST_DIR: Path = Path(".audit_cache/vector_index")
+KB_PERSIST_DIR: Final[Path] = Path(".audit_cache/vector_index")
 
-MIGRATION_MAP: dict[str, dict[str, Any]] = {
+MIGRATION_MAP: Final[dict[str, dict[str, Any]]] = {
     "ke_entries": {
         "target": "knowledge",
         "source_dim": 512,
@@ -72,7 +73,7 @@ MIGRATION_MAP: dict[str, dict[str, Any]] = {
     },
 }
 
-TOPIC_TO_COLLECTION: dict[str, str] = {
+TOPIC_TO_COLLECTION: Final[dict[str, str]] = {
     "knowledge": "knowledge",
     "rule": "rules",
     "governance": "rules",
@@ -86,7 +87,7 @@ TOPIC_TO_COLLECTION: dict[str, str] = {
     "trace": "execution_traces",
 }
 
-COLLECTION_ALIASES: dict[str, str] = {
+COLLECTION_ALIASES: Final[dict[str, str]] = {
     "decisions": "decisions",
     "learnings": "learnings",
     "runbooks": "runbooks",

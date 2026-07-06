@@ -31,11 +31,12 @@ Context Engine — AI 上下文组装与 Token 预算管理。
 
 from __future__ import annotations
 
+from typing import Final
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-DEFAULT_MAX_TOKENS = 20000
+DEFAULT_MAX_TOKENS: Final[int] = 20000
 
 
 @dataclass

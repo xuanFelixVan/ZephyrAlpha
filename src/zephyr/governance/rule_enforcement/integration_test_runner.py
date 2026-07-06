@@ -30,6 +30,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from datetime import UTC, datetime
 from enum import Enum
 
@@ -50,20 +51,20 @@ class CITrigger(str, Enum):
     DAILY_CRON = "daily-cron"
 
 
-TIER_TRIGGERS: dict[CITier, list[CITrigger]] = {
+TIER_TRIGGERS: Final[dict[CITier, list[CITrigger]]] = {
     CITier.SMOKE: [CITrigger.PRE_COMMIT],
     CITier.CORE: [CITrigger.PUSH_TO_MAIN],
     CITier.CONTRACT: [CITrigger.PRE_DEPLOY],
     CITier.HEALTH: [CITrigger.DAILY_CRON, CITrigger.PRE_DEPLOY],
 }
 
-SMOKE_CONTRACTS: tuple[str, ...] = (
+SMOKE_CONTRACTS: Final[tuple[str, ...]] = (
     "CT-ORC-SCRIPT-001",
     "CT-PIPE-ORC-001",
     "CT-ORC-GATE-001",
 )
 
-CORE_CONTRACTS: tuple[str, ...] = (
+CORE_CONTRACTS: Final[tuple[str, ...]] = (
     "CT-ORC-SCRIPT-001",
     "CT-ORC-CE-001",
     "CT-ORC-VMS-001",

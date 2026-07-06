@@ -28,6 +28,7 @@ Architecture Decision:  (LPC 双轨)
 
 from __future__ import annotations
 
+from typing import Final
 import ast
 import sys
 from collections import deque
@@ -37,7 +38,7 @@ from pathlib import Path
 import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT
-SRC_ROOT = REPO_ROOT / "src" / "zephyr"
+SRC_ROOT: Final[Path] = REPO_ROOT / "src" / "zephyr"
 
 _YAML_PATH = Path(__file__).parent / "en_001_circular_dependency.yaml"
 
@@ -53,11 +54,11 @@ def _load_module_names() -> list[str]:
 
 
 # MODULE_NAMES 从 YAML scan_targets 派生（含 zephyr.shared.contracts）
-MODULE_NAMES = _load_module_names()
+MODULE_NAMES: Final[Any] = _load_module_names()
 
-ALL_MODULES = MODULE_NAMES
+ALL_MODULES: Final[Any] = MODULE_NAMES
 
-MODULE_TO_DIR: dict[str, Path] = {}
+MODULE_TO_DIR: Final[dict[str, Path]] = {}
 for mod in MODULE_NAMES:
     suffix = mod.replace("zephyr.", "").replace(".", "/")
     MODULE_TO_DIR[mod] = SRC_ROOT / suffix

@@ -33,6 +33,7 @@ Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检�
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import logging
 import os
@@ -45,7 +46,7 @@ from zephyr.shared.utils.time_utils import now_utc
 
 _log = logging.getLogger(__name__)
 
-DEFAULT_OUTPUT_DIR = "data/model_profiles"
+DEFAULT_OUTPUT_DIR: Final[str] = "data/model_profiles"
 
 
 def write_benchmark_results(

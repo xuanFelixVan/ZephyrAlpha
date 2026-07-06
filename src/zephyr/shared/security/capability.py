@@ -35,6 +35,7 @@ CBAC 能力检查器 (Capability-Based Access Control)
 
 from __future__ import annotations
 
+from typing import Final
 import fnmatch
 from pathlib import Path
 from threading import RLock
@@ -55,7 +56,7 @@ except ImportError:
 
 from zephyr.shared.io.paths import REPO_ROOT
 
-CAPABILITIES_YAML_PATH = REPO_ROOT / "config" / "capabilities.yaml"
+CAPABILITIES_YAML_PATH: Final[Path] = REPO_ROOT / "config" / "capabilities.yaml"
 
 
 class CapabilityDenied(Exception):

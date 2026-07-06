@@ -22,7 +22,8 @@ Persuasion Detector — D-022-09 心理说服检测: 对抗语气+恳求+绕过�
 
 from __future__ import annotations
 
-SUSPICIOUS_PATTERNS = [
+from typing import Final
+SUSPICIOUS_PATTERNS: Final[list] = [
     "please",
     "urgent",
     "trust me",

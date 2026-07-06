@@ -25,6 +25,7 @@ v3.0.5 新增：阶段三极限深度测试的核心评分机制之一。
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import logging
 import re
@@ -45,7 +46,7 @@ class JudgeResult:
     reasoning: str = ""           # 裁判理由
 
 
-JUDGE_SYSTEM_PROMPT = """You are an expert judge evaluating AI model responses.
+JUDGE_SYSTEM_PROMPT: Final[str] = """You are an expert judge evaluating AI model responses.
 Evaluate the candidate answer against the reference answer and rubric.
 
 Be strict but fair. Reward depth, penalize hallucination.

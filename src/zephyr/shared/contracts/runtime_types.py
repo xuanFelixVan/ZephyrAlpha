@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import os
 from pathlib import Path
 
@@ -25,7 +26,7 @@ from pydantic import BaseModel, Field
 from zephyr.shared.schema.base_config import BASE_CONFIG
 from zephyr.shared.io.paths import REPO_ROOT
 
-DATA_DIR = REPO_ROOT / "data"
+DATA_DIR: Final[Path] = REPO_ROOT / "data"
 
 
 class RuntimeConfig(BaseModel):

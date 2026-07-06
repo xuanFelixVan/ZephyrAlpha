@@ -27,6 +27,7 @@ SSoT: cross_layer_contracts.yaml v3.0
 
 from __future__ import annotations
 
+from typing import Final
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -51,9 +52,9 @@ def _load_contract_spec_path() -> Path:
             return REPO_ROOT / rel
     return REPO_ROOT / "architecture_model" / "contracts" / "cross_layer_contracts.yaml"
 
-CONTRACTS_PATH = _load_contract_spec_path()
+CONTRACTS_PATH: Final[Any] = _load_contract_spec_path()
 
-VALID_ENFORCEMENT_MODES = {"block", "warn", "log", "shadow", "strict"}
+VALID_ENFORCEMENT_MODES: Final[set] = {"block", "warn", "log", "shadow", "strict"}
 
 
 @dataclass

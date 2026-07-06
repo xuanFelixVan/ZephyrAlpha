@@ -56,6 +56,7 @@ Usage::
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from dataclasses import dataclass
 from typing import Any, Callable
@@ -84,7 +85,7 @@ __all__ = [
 #
 # 安全约束：本常量是高价值篡改目标（加 "src/" 可豁免所有源码绕过 create_guard），
 # 已纳入 validate_rules_integrity.py RULES_MANIFEST C 层 golden hash 保护。
-TEST_EXEMPT_PREFIXES: tuple[str, ...] = ("tests/",)
+TEST_EXEMPT_PREFIXES: Final[tuple[str, ...]] = ("tests/",)
 
 
 def is_test_exempt(file_path: str) -> bool:
