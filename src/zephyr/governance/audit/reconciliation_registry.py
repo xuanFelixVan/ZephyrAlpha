@@ -3479,3 +3479,89 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         reconcile=_reconcile,
         priority=630,  # 在 regenerate(600-620) 之后，rule_audit(700-710) 之前
     )
+
+
+# 病根：generate_constraint_violations.py 只读不检测，arch_constraints 表 56 条全部默认
+# open，无检测器写入 violation_status/details/detected_at。链路断裂。
+# 该存在：检测器是独立职责（检测 vs 展示），不能合并进生成器。
+# 治本：事件触发（PG 写入脚本 commit）+ 跑检测器写 PG。
+# trae_060-reviewed: 该存在（检测器是独立职责，不能合并进生成器），治本（事件触发+写PG）
+def make_constraint_detect_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-CONSTRAINT-DETECT post-commit 架构违规检测 reconciler。
+
+    病根：``generate_constraint_violations.py`` 只读 ``arch_constraints`` 表生成 MD 报告，
+    但没有任何检测器实际检测违规并写入 ``violation_status``/``details``/``detected_at``。
+    导致报告中 56 条约束全部默认 ``open``，无法区分真违规和正常约束——链路断裂。
+
+    治本（补齐断链的检测层）：
+    - 接入 GitCommitGateway post-commit reconciler 轨（事件触发，非 cron/manual）
+    - trigger: PG 写入脚本 commit → 命中（与 GATE-ARCH-DIAGRAM 相同 trigger）
+    - reconcile: 跑 ``detect_constraint_violations.py``，5 类检测 → 写 PG
+
+    5 类检测（写入 constraint_type 区分规则定义和检测结果）：
+      1. cross_domain_violation — 跨域违规（import 跨域但未在 domain_dependencies 声明）
+      2. capacity_exceeded — 容量超限（production 节点 > max_modules，ARCH-CAP-001）
+      3. hard_limit_exceeded — 硬上限违规（production 节点 > 150，ARCH-CAP-002 v1.0.8）
+      4. orphan_node — 孤儿节点（路径未注册到 arch_directory_tree）
+      5. layer_violation — 层级违规（低层依赖高层）
+
+    链路（与 GATE-ARCH-DIAGRAM 协作）：
+      1. GATE-CONSTRAINT-DETECT (625): 跑检测器，写 PG arch_constraints 表
+      2. GATE-ARCH-DIAGRAM (630): 跑生成器，读 PG（含新检测结果），生成 MD，auto-commit
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-CONSTRAINT-DETECT", priority=625)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+
+    # PG 写入脚本真源（DB 变更即代表可能产生新违规）
+    _PG_WRITE_SCRIPTS = (
+        "scripts/governance/apply_depgraph.py",
+        "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py",
+        "scripts/governance/generate_project_path_tree.py",
+        "scripts/governance/generate_decision_graph.py",
+    )
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel in _PG_WRITE_SCRIPTS:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 跑检测器（写 PG，不产生文件变更）
+        gen_result = _run_subprocess(
+            [sys.executable, "scripts/governance/d5_architecture/detect_constraint_violations.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"constraint detection failed: {gen_result.stderr.strip()[:200]}",
+            )
+        # 检测器写 PG，不产生文件变更，返回 clean
+        # GATE-ARCH-DIAGRAM (630) 会在本 reconciler 之后触发，跑生成器展示新检测结果
+        return ReconcileResult(
+            action="clean",
+            detail=f"constraint detection completed: {gen_result.stdout.strip().splitlines()[-1] if gen_result.stdout.strip() else 'done'}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-CONSTRAINT-DETECT",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=625,  # 在 GATE-ARCH-DIAGRAM (630) 之前跑，生成器依赖检测结果
+    )
