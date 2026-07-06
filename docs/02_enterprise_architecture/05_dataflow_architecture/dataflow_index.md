@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-07-06T12:51:51
+> 生成时间: 2026-07-06T12:56:25
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 数据库: depgraph (PostgreSQL)
 
@@ -54,11 +54,11 @@ flowchart LR
     DS206["backtest.result<br/>回测.结果<br/>CTR: CTR-P1-016<br/>[D_BACKTEST / 回测]"]:::dsProd
     DS200["factor.momentum_20d<br/>因子.20日动量<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
     DS199["factor.value_factor<br/>因子.价值因子<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
-    DS204["fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE]"]:::dsProd
+    DS204["fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE / 执行核心]"]:::dsProd
     DS198["market_data.ohlc_bar<br/>市场数据.OHLC K线<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
     DS197["market_data.tick<br/>市场数据.Tick行情<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
-    DS203["order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE]"]:::dsProd
-    DS205["position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE]"]:::dsProd
+    DS203["order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE / 持仓核心]"]:::dsProd
+    DS205["position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE / 执行核心]"]:::dsProd
     DS202["risk.limits<br/>风险.限额<br/>CTR: CTR-003<br/>[D_RISK / 风险]"]:::dsProd
     DS201["signal.composite<br/>信号.合成信号<br/>CTR: CTR-P1-015<br/>[D_SIGLEGACY / 信号(legacy)]"]:::dsProd
     JOB197("backtest.calc_metrics<br/>回测.计算指标<br/>trigger: manual / 手动"):::jobBacktest
@@ -118,11 +118,11 @@ flowchart LR
     DS206["backtest.result<br/>回测.结果<br/>CTR: CTR-P1-016<br/>[D_BACKTEST / 回测]"]:::dsProd
     DS200["factor.momentum_20d<br/>因子.20日动量<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
     DS199["factor.value_factor<br/>因子.价值因子<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
-    DS204["fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE]"]:::dsProd
+    DS204["fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE / 执行核心]"]:::dsProd
     DS198["market_data.ohlc_bar<br/>市场数据.OHLC K线<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
     DS197["market_data.tick<br/>市场数据.Tick行情<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
-    DS203["order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE]"]:::dsProd
-    DS205["position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE]"]:::dsProd
+    DS203["order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE / 持仓核心]"]:::dsProd
+    DS205["position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE / 执行核心]"]:::dsProd
     DS202["risk.limits<br/>风险.限额<br/>CTR: CTR-003<br/>[D_RISK / 风险]"]:::dsProd
     DS201["signal.composite<br/>信号.合成信号<br/>CTR: CTR-P1-015<br/>[D_SIGLEGACY / 信号(legacy)]"]:::dsProd
     JOB186("aggregate.ohlc_bar<br/>聚合.OHLC K线<br/>trigger: event_driven / 事件驱动"):::jobProd
@@ -199,11 +199,11 @@ flowchart LR
 | DS-206 | backtest.result / 回测.结果 | production / 生产 | CTR-P1-016 | D_BACKTEST / 回测 | strict / 严格 | generated / 已生成 |
 | DS-200 | factor.momentum_20d / 因子.20日动量 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | generated / 已生成 |
 | DS-199 | factor.value_factor / 因子.价值因子 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | generated / 已生成 |
-| DS-204 | fill.executed / 成交.已成交 | production / 生产 | CTR-005 | D_EX_CORE | strict / 严格 | generated / 已生成 |
+| DS-204 | fill.executed / 成交.已成交 | production / 生产 | CTR-005 | D_EX_CORE / 执行核心 | strict / 严格 | generated / 已生成 |
 | DS-198 | market_data.ohlc_bar / 市场数据.OHLC K线 | production / 生产 | CTR-001 | D_MKT_DATA / 市场数据 | strict / 严格 | generated / 已生成 |
 | DS-197 | market_data.tick / 市场数据.Tick行情 | production / 生产 | CTR-001 | D_MKT_DATA / 市场数据 | strict / 严格 | generated / 已生成 |
-| DS-203 | order.target / 订单.目标订单 | production / 生产 | CTR-004 | D_PF_CORE | strict / 严格 | generated / 已生成 |
-| DS-205 | position.snapshot / 持仓.快照 | production / 生产 | CTR-006 | D_EX_CORE | strict / 严格 | generated / 已生成 |
+| DS-203 | order.target / 订单.目标订单 | production / 生产 | CTR-004 | D_PF_CORE / 持仓核心 | strict / 严格 | generated / 已生成 |
+| DS-205 | position.snapshot / 持仓.快照 | production / 生产 | CTR-006 | D_EX_CORE / 执行核心 | strict / 严格 | generated / 已生成 |
 | DS-202 | risk.limits / 风险.限额 | production / 生产 | CTR-003 | D_RISK / 风险 | strict / 严格 | generated / 已生成 |
 | DS-201 | signal.composite / 信号.合成信号 | production / 生产 | CTR-P1-015 | D_SIGLEGACY / 信号(legacy) | strict / 严格 | generated / 已生成 |
 

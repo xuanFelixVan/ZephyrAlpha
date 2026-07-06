@@ -104,7 +104,9 @@ _ZH_MAP: dict[str, str] = {
     "D_RISK": "风险",
     "D_ORDER": "订单",
     "D_EXECUTION": "执行",
+    "D_EX_CORE": "执行核心",
     "D_PORTFOLIO": "持仓",
+    "D_PF_CORE": "持仓核心",
     "D_BACKTEST": "回测",
     # --- scope ---
     "production": "生产",
