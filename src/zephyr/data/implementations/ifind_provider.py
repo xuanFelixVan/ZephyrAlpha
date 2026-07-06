@@ -607,7 +607,8 @@ class IFindProvider(DataSourceBase):
             try:
                 raw = self._call_with_policy(
                     THS_iwencai, policy,
-                    f"{date_cn} 主力资金流向", "stock",
+                    f"{date_cn} 主力资金流向 超大单 大单 中单 小单 收盘价 涨跌幅",
+                    "stock",
                 )
             except Exception as e:
                 self._log.warning(f"THS_iwencai 调用失败 {date_cn}: {e}")
@@ -679,18 +680,18 @@ class IFindProvider(DataSourceBase):
 
         # 字段映射（模糊匹配）
         col_map = {
-            "close": ["收盘价", "close"],
-            "pct_change": ["涨跌幅", "涨跌幅(%)", "changeRatio"],
-            "main_net_inflow": ["主力净流入-净额", "主力净流入", "主力净流入额"],
-            "main_net_inflow_pct": ["主力净流入-净占比", "主力净流入占比", "主力净流入-净占比(%)"],
-            "super_large_net_inflow": ["超大单净流入-净额", "超大单净流入", "超大单净流入额"],
-            "super_large_net_inflow_pct": ["超大单净流入-净占比", "超大单净流入占比", "超大单净流入-净占比(%)"],
-            "large_net_inflow": ["大单净流入-净额", "大单净流入", "大单净流入额"],
-            "large_net_inflow_pct": ["大单净流入-净占比", "大单净流入占比", "大单净流入-净占比(%)"],
-            "medium_net_inflow": ["中单净流入-净额", "中单净流入", "中单净流入额"],
-            "medium_net_inflow_pct": ["中单净流入-净占比", "中单净流入占比", "中单净流入-净占比(%)"],
-            "small_net_inflow": ["小单净流入-净额", "小单净流入", "小单净流入额"],
-            "small_net_inflow_pct": ["小单净流入-净占比", "小单净流入占比", "小单净流入-净占比(%)"],
+            "close": ["收盘价:不复权", "收盘价", "close"],
+            "pct_change": ["涨跌幅:前复权", "涨跌幅"],
+            "main_net_inflow": ["主力资金流向", "主力净流入-净额", "主力净流入"],
+            "main_net_inflow_pct": ["主力净流入-净占比", "主力净流入占比"],
+            "super_large_net_inflow": ["特大单净额", "超大单净流入-净额", "超大单净流入"],
+            "super_large_net_inflow_pct": ["超大单净流入-净占比", "超大单净流入占比"],
+            "large_net_inflow": ["dde大单净额", "大单净流入-净额", "大单净流入"],
+            "large_net_inflow_pct": ["大单净流入-净占比", "大单净流入占比"],
+            "medium_net_inflow": ["中单净额", "中单净流入-净额", "中单净流入"],
+            "medium_net_inflow_pct": ["中单净流入-净占比", "中单净流入占比"],
+            "small_net_inflow": ["小单净额", "小单净流入-净额", "小单净流入"],
+            "small_net_inflow_pct": ["小单净流入-净占比", "小单净流入占比"],
         }
 
         # 提取各列数据
@@ -900,8 +901,8 @@ class IFindProvider(DataSourceBase):
     def _find_column(table_data: dict, candidates: list[str]):
         """在 i问财返回的 table dict 中按候选键名列表查找列数据。
 
-        i问财返回的列名可能有变体（如 "主力净流入-净额" vs "主力净流入"），
-        按候选列表顺序匹配，返回第一个找到的列数据。
+        i问财返回的列名带日期后缀（如 "主力资金流向[20250704]"），
+        先精确匹配，再前缀匹配（startswith），返回第一个找到的列数据。
 
         Returns:
             列数据（list）或 None
@@ -911,6 +912,11 @@ class IFindProvider(DataSourceBase):
         for key in candidates:
             if key in table_data:
                 return table_data[key]
+        # 前缀匹配（i问财字段名带 [日期] 后缀）
+        for key in candidates:
+            for actual_key in table_data:
+                if isinstance(actual_key, str) and actual_key.startswith(key):
+                    return table_data[actual_key]
         return None
 
     @staticmethod
