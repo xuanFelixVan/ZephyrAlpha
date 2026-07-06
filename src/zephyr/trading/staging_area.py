@@ -59,6 +59,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +88,14 @@ class CommitStatus(str, Enum):
 
 
 class StagingError(RuntimeError):
-    pass
+    """StagingArea 操作错误。
+
+    5.99.20 修复：文件路径移至 details 字段，不暴露在消息中。
+    """
+
+    def __init__(self, message: str, *, details: dict[str, Any] | None = None) -> None:
+        super().__init__(message)
+        self.details: dict[str, Any] = details or {}
 
 
 class _CrossProcessLock:
@@ -150,8 +158,8 @@ class _CrossProcessLock:
                     pass
                 if time.monotonic() >= deadline:
                     raise StagingError(
-                        f"Cannot acquire cross-process lock for {self._file_path} "
-                        f"(timeout {self._timeout}s)— another session is committing this file"
+                        f"Cannot acquire cross-process lock (timeout {self._timeout}s)— another session is committing this file",
+                        details={"file_path": str(self._file_path)},
                     )
                 time.sleep(self._poll_interval)
 
@@ -288,14 +296,18 @@ class StagingArea:
             raise StagingError("file_path must not contain null byte")
         # 禁止绝对路径（Windows 与 POSIX）
         if Path(file_path).is_absolute():
-            raise StagingError(f"file_path must be relative, got: {file_path}")
+            raise StagingError(
+                "file_path must be relative",
+                details={"file_path": file_path},
+            )
         # 解析后必须位于项目根下
         resolved = (self._root / file_path).resolve()
         try:
             resolved.relative_to(self._root)
         except ValueError as exc:
             raise StagingError(
-                f"file_path escapes project root: {file_path} -> {resolved}"
+                "file_path escapes project root",
+                details={"file_path": file_path, "resolved": str(resolved)},
             ) from exc
         return file_path
 
@@ -342,7 +354,10 @@ class StagingArea:
                 os.remove(tmp)
             except OSError:
                 pass
-            raise StagingError(f"Cannot write draft to {draft}")
+            raise StagingError(
+                "Cannot write draft",
+                details={"draft_path": str(draft)},
+            )
 
         baseline = draft.with_suffix(draft.suffix + ".baseline")
         baseline_data = f"{mtime}\n{fhash}\n"
@@ -356,7 +371,10 @@ class StagingArea:
                 os.remove(baseline_tmp)
             except OSError:
                 pass
-            raise StagingError(f"Cannot write baseline to {baseline}")
+            raise StagingError(
+                "Cannot write baseline",
+                details={"baseline_path": str(baseline)},
+            )
 
         baseline_content_file = draft.with_suffix(draft.suffix + ".baseline_content")
         baseline_content_tmp = baseline_content_file.with_suffix(
@@ -371,7 +389,10 @@ class StagingArea:
                 os.remove(baseline_content_tmp)
             except OSError:
                 pass
-            raise StagingError(f"Cannot write baseline content to {baseline_content_file}")
+            raise StagingError(
+                "Cannot write baseline content",
+                details={"baseline_content_path": str(baseline_content_file)},
+            )
 
         return draft
 
@@ -440,7 +461,10 @@ class StagingArea:
                     os.remove(tmp)
                 except OSError:
                     pass
-                raise StagingError(f"Cannot commit draft to {target}")
+                raise StagingError(
+                    "Cannot commit draft",
+                    details={"target_path": str(target)},
+                )
 
         self._cleanup_draft(session_id, file_path)
         return CommitResult(status=CommitStatus.OK, file_path=file_path, message="committed successfully")
@@ -497,7 +521,10 @@ class StagingArea:
                         os.remove(tmp)
                     except OSError:
                         pass
-                    raise StagingError(f"Cannot auto-merge to {target}")
+                    raise StagingError(
+                        "Cannot auto-merge",
+                        details={"target_path": str(target)},
+                    )
                 self._cleanup_draft(session_id, file_path)
                 return CommitResult(status=CommitStatus.OK, file_path=file_path, message="committed successfully")
 
@@ -571,7 +598,10 @@ class StagingArea:
                     os.remove(tmp)
                 except OSError:
                     pass
-                raise StagingError(f"Cannot auto-merge to {target}")
+                raise StagingError(
+                    "Cannot auto-merge",
+                    details={"target_path": str(target)},
+                )
 
         self._cleanup_draft(session_id, file_path)
         return CommitResult(status=CommitStatus.MERGED, file_path=file_path, message="auto-merged successfully")
