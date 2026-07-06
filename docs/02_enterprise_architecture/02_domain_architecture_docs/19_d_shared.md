@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 19_d_shared / shared_services
+# 19_d_shared / shared_services / Shared Services
 
 > **文档作用 / Purpose**: 展示 shared_services（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:11
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 19 | Number | 19 |
 | 域ID | D_SHARED | Domain ID | D_SHARED |
-| 域名称 | shared_services | Domain Name | shared_services |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | shared_services | Domain Name | Shared Services |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 228 | Module Count | 228 |
 | 域内依赖 | 168 | Internal Dependencies | 168 |
 | 跨域入边 | 574 | Cross-domain Incoming | 574 |
@@ -712,208 +712,208 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (228 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/shared/__init__.py | src/zephyr/shared/__init__.py | prototype | generated |
-| 2 | src/zephyr/shared/__version__.py | src/zephyr/shared/__version__.py | production | generated |
-| 3 | src/zephyr/shared/_cross_layer/__init__.py | src/zephyr/shared/_cross_layer/__init... | prototype | generated |
-| 4 | src/zephyr/shared/_cross_layer/ml_experiment_pipeline.py | src/zephyr/shared/_cross_layer/ml_exp... | prototype | generated |
-| 5 | src/zephyr/shared/adaptation/__init__.py | src/zephyr/shared/adaptation/__init__.py | prototype | generated |
-| 6 | src/zephyr/shared/ai_guards/ai_audit_guard.py | src/zephyr/shared/ai_guards/ai_audit_... | production | generated |
-| 7 | src/zephyr/shared/ai_guards/combinatorial_gate.py | src/zephyr/shared/ai_guards/combinato... | production | generated |
-| 8 | src/zephyr/shared/ai_guards/config_safety_guard.py | src/zephyr/shared/ai_guards/config_sa... | production | generated |
-| 9 | src/zephyr/shared/ai_guards/core_integrity_guard.py | src/zephyr/shared/ai_guards/core_inte... | production | generated |
-| 10 | src/zephyr/shared/ai_guards/ssot_guard.py | src/zephyr/shared/ai_guards/ssot_guar... | production | generated |
-| 11 | src/zephyr/shared/alerts/alert_escalation.py | src/zephyr/shared/alerts/alert_escala... | production | generated |
-| 12 | src/zephyr/shared/alerts/alert_manager.py | src/zephyr/shared/alerts/alert_manage... | production | generated |
-| 13 | src/zephyr/shared/alerts/alert_precision_tracker.py | src/zephyr/shared/alerts/alert_precis... | production | generated |
-| 14 | src/zephyr/shared/alerts/dual_channel_alert.py | src/zephyr/shared/alerts/dual_channel... | production | generated |
-| 15 | src/zephyr/shared/alerts/heartbeat_server.py | src/zephyr/shared/alerts/heartbeat_se... | production | generated |
-| 16 | src/zephyr/shared/api/__init__.py | src/zephyr/shared/api/__init__.py | prototype | generated |
-| 17 | src/zephyr/shared/api/api_client.py | src/zephyr/shared/api/api_client.py | prototype | generated |
-| 18 | src/zephyr/shared/api/api_index.py | src/zephyr/shared/api/api_index.py | prototype | generated |
-| 19 | src/zephyr/shared/api/dos_launcher.py | src/zephyr/shared/api/dos_launcher.py | production | generated |
-| 20 | src/zephyr/shared/api/shared_quickref.yaml | src/zephyr/shared/api/shared_quickref... | production | generated |
-| 21 | src/zephyr/shared/blueprint_tools/__init__.py | src/zephyr/shared/blueprint_tools/__i... | prototype | generated |
-| 22 | src/zephyr/shared/blueprint_tools/ai_understandability_co... | src/zephyr/shared/blueprint_tools/ai_... | production | generated |
-| 23 | src/zephyr/shared/blueprint_tools/architecture_context_lo... | src/zephyr/shared/blueprint_tools/arc... | production | generated |
-| 24 | src/zephyr/shared/blueprint_tools/blueprint_code_auditor.py | src/zephyr/shared/blueprint_tools/blu... | production | generated |
-| 25 | src/zephyr/shared/blueprint_tools/blueprint_scorer.py | src/zephyr/shared/blueprint_tools/blu... | prototype | generated |
-| 26 | src/zephyr/shared/capacity_governance/__init__.py | src/zephyr/shared/capacity_governance... | prototype | generated |
-| 27 | src/zephyr/shared/capacity_governance/adaptive_sampler.py | src/zephyr/shared/capacity_governance... | production | generated |
-| 28 | src/zephyr/shared/capacity_governance/budget_aware_prompt.py | src/zephyr/shared/capacity_governance... | production | generated |
-| 29 | src/zephyr/shared/capacity_governance/capacity_calibrator.py | src/zephyr/shared/capacity_governance... | production | generated |
-| 30 | src/zephyr/shared/capacity_governance/capacity_digital_tw... | src/zephyr/shared/capacity_governance... | production | generated |
-| 31 | src/zephyr/shared/capacity_governance/capacity_fingerprin... | src/zephyr/shared/capacity_governance... | production | generated |
-| 32 | src/zephyr/shared/capacity_governance/capacity_governance... | src/zephyr/shared/capacity_governance... | production | generated |
-| 33 | src/zephyr/shared/capacity_governance/capacity_runbook_ge... | src/zephyr/shared/capacity_governance... | production | generated |
-| 34 | src/zephyr/shared/capacity_governance/cost_estimator.py | src/zephyr/shared/capacity_governance... | production | generated |
-| 35 | src/zephyr/shared/capacity_governance/dependency_capacity... | src/zephyr/shared/capacity_governance... | production | generated |
-| 36 | src/zephyr/shared/capacity_governance/model_capacity_prob... | src/zephyr/shared/capacity_governance... | production | generated |
-| 37 | src/zephyr/shared/compensation/__init__.py | src/zephyr/shared/compensation/__init... | prototype | generated |
-| 38 | src/zephyr/shared/contracts/__init__.py | src/zephyr/shared/contracts/__init__.py | prototype | generated |
-| 39 | src/zephyr/shared/contracts/backpressure/__init__.py | src/zephyr/shared/contracts/backpress... | prototype | generated |
-| 40 | src/zephyr/shared/contracts/backpressure/_types.py | src/zephyr/shared/contracts/backpress... | prototype | generated |
-| 41 | src/zephyr/shared/contracts/backpressure/pause.py | src/zephyr/shared/contracts/backpress... | prototype | generated |
-| 42 | src/zephyr/shared/contracts/backpressure/resume.py | src/zephyr/shared/contracts/backpress... | prototype | generated |
-| 43 | src/zephyr/shared/contracts/backpressure/throttle.py | src/zephyr/shared/contracts/backpress... | prototype | generated |
-| 44 | src/zephyr/shared/contracts/capital_allocation_result.py | src/zephyr/shared/contracts/capital_a... | prototype | generated |
-| 45 | src/zephyr/shared/contracts/compliance_rule.py | src/zephyr/shared/contracts/complianc... | prototype | generated |
-| 46 | src/zephyr/shared/contracts/contract_bus.py | src/zephyr/shared/contracts/contract_... | prototype | generated |
-| 47 | src/zephyr/shared/contracts/contract_tester.py | src/zephyr/shared/contracts/contract_... | prototype | generated |
-| 48 | src/zephyr/shared/contracts/core/__init__.py | src/zephyr/shared/contracts/core/__in... | prototype | generated |
-| 49 | src/zephyr/shared/contracts/core/base_event.py | src/zephyr/shared/contracts/core/base... | prototype | generated |
-| 50 | src/zephyr/shared/contracts/core/enforcer.py | src/zephyr/shared/contracts/core/enfo... | production | generated |
-| 51 | src/zephyr/shared/contracts/core/factories.py | src/zephyr/shared/contracts/core/fact... | prototype | generated |
-| 52 | src/zephyr/shared/contracts/core/gate_types.py | src/zephyr/shared/contracts/core/gate... | prototype | generated |
-| 53 | src/zephyr/shared/contracts/core/registry.py | src/zephyr/shared/contracts/core/regi... | prototype | generated |
-| 54 | src/zephyr/shared/contracts/core/runtime_plane_tag.py | src/zephyr/shared/contracts/core/runt... | prototype | generated |
-| 55 | src/zephyr/shared/contracts/core/system_configuration.py | src/zephyr/shared/contracts/core/syst... | production | generated |
-| 56 | src/zephyr/shared/contracts/core/telemetry_emitter.py | src/zephyr/shared/contracts/core/tele... | production | generated |
-| 57 | src/zephyr/shared/contracts/core/timestamp.py | src/zephyr/shared/contracts/core/time... | prototype | generated |
-| 58 | src/zephyr/shared/contracts/core/trace_context.py | src/zephyr/shared/contracts/core/trac... | production | generated |
-| 59 | src/zephyr/shared/contracts/errors/__init__.py | src/zephyr/shared/contracts/errors/__... | prototype | generated |
-| 60 | src/zephyr/shared/contracts/errors/contract_violation_err... | src/zephyr/shared/contracts/errors/co... | prototype | generated |
-| 61 | src/zephyr/shared/contracts/errors/data_quality_error.py | src/zephyr/shared/contracts/errors/da... | prototype | generated |
-| 62 | src/zephyr/shared/contracts/errors/execution_rejection_er... | src/zephyr/shared/contracts/errors/ex... | prototype | generated |
-| 63 | src/zephyr/shared/contracts/errors/factor_computation_err... | src/zephyr/shared/contracts/errors/fa... | prototype | generated |
-| 64 | src/zephyr/shared/contracts/errors/risk_limit_violation_e... | src/zephyr/shared/contracts/errors/ri... | prototype | generated |
-| 65 | src/zephyr/shared/contracts/errors/signal_degradation_war... | src/zephyr/shared/contracts/errors/si... | prototype | generated |
-| 66 | src/zephyr/shared/contracts/escalation/__init__.py | src/zephyr/shared/contracts/escalatio... | prototype | generated |
-| 67 | src/zephyr/shared/contracts/escalation/budget_alert.py | src/zephyr/shared/contracts/escalatio... | production | generated |
-| 68 | src/zephyr/shared/contracts/execution/__init__.py | src/zephyr/shared/contracts/execution... | prototype | generated |
-| 69 | src/zephyr/shared/contracts/execution/capital_allocation_... | src/zephyr/shared/contracts/execution... | prototype | generated |
-| 70 | src/zephyr/shared/contracts/execution/execution_report.py | src/zephyr/shared/contracts/execution... | prototype | generated |
-| 71 | src/zephyr/shared/contracts/execution/fill.py | src/zephyr/shared/contracts/execution... | prototype | generated |
-| 72 | src/zephyr/shared/contracts/execution/model_serving_reque... | src/zephyr/shared/contracts/execution... | prototype | generated |
-| 73 | src/zephyr/shared/contracts/execution/order.py | src/zephyr/shared/contracts/execution... | prototype | generated |
-| 74 | src/zephyr/shared/contracts/execution_report.py | src/zephyr/shared/contracts/execution... | prototype | generated |
-| 75 | src/zephyr/shared/contracts/experiment/__init__.py | src/zephyr/shared/contracts/experimen... | prototype | generated |
-| 76 | src/zephyr/shared/contracts/experiment/experiment_result.py | src/zephyr/shared/contracts/experimen... | prototype | generated |
-| 77 | src/zephyr/shared/contracts/experiment/model_serving_resp... | src/zephyr/shared/contracts/experimen... | prototype | generated |
-| 78 | src/zephyr/shared/contracts/experiment_result.py | src/zephyr/shared/contracts/experimen... | production | generated |
-| 79 | src/zephyr/shared/contracts/external/__init__.py | src/zephyr/shared/contracts/external/... | prototype | generated |
-| 80 | src/zephyr/shared/contracts/external/ext_001.py | src/zephyr/shared/contracts/external/... | prototype | generated |
-| 81 | src/zephyr/shared/contracts/external/ext_002.py | src/zephyr/shared/contracts/external/... | prototype | generated |
-| 82 | src/zephyr/shared/contracts/external/ext_003.py | src/zephyr/shared/contracts/external/... | prototype | generated |
-| 83 | src/zephyr/shared/contracts/external/ext_004.py | src/zephyr/shared/contracts/external/... | prototype | generated |
-| 84 | src/zephyr/shared/contracts/factor_monitor_report.py | src/zephyr/shared/contracts/factor_mo... | production | generated |
-| 85 | src/zephyr/shared/contracts/factor_signal.py | src/zephyr/shared/contracts/factor_si... | prototype | generated |
-| 86 | src/zephyr/shared/contracts/fill.py | src/zephyr/shared/contracts/fill.py | prototype | generated |
-| 87 | src/zephyr/shared/contracts/identity/__init__.py | src/zephyr/shared/contracts/identity/... | prototype | generated |
-| 88 | src/zephyr/shared/contracts/identity/agent_identity.py | src/zephyr/shared/contracts/identity/... | production | generated |
-| 89 | src/zephyr/shared/contracts/identity/permission.py | src/zephyr/shared/contracts/identity/... | production | generated |
-| 90 | src/zephyr/shared/contracts/llm_gateway_protocol.py | src/zephyr/shared/contracts/llm_gatew... | prototype | generated |
-| 91 | src/zephyr/shared/contracts/macro_factor_signal.py | src/zephyr/shared/contracts/macro_fac... | production | generated |
-| 92 | src/zephyr/shared/contracts/market/__init__.py | src/zephyr/shared/contracts/market/__... | prototype | generated |
-| 93 | src/zephyr/shared/contracts/market/factor_monitor_report.py | src/zephyr/shared/contracts/market/fa... | prototype | generated |
-| 94 | src/zephyr/shared/contracts/market/factor_signal.py | src/zephyr/shared/contracts/market/fa... | prototype | generated |
-| 95 | src/zephyr/shared/contracts/market/instrument.py | src/zephyr/shared/contracts/market/in... | prototype | generated |
-| 96 | src/zephyr/shared/contracts/market/macro_factor_signal.py | src/zephyr/shared/contracts/market/ma... | prototype | generated |
-| 97 | src/zephyr/shared/contracts/market/market_data.py | src/zephyr/shared/contracts/market/ma... | prototype | generated |
-| 98 | src/zephyr/shared/contracts/market/synthesized_signal.py | src/zephyr/shared/contracts/market/sy... | prototype | generated |
-| 99 | src/zephyr/shared/contracts/market_data.py | src/zephyr/shared/contracts/market_da... | prototype | generated |
-| 100 | src/zephyr/shared/contracts/model_serving_request.py | src/zephyr/shared/contracts/model_ser... | prototype | generated |
-| 101 | src/zephyr/shared/contracts/model_serving_response.py | src/zephyr/shared/contracts/model_ser... | production | generated |
-| 102 | src/zephyr/shared/contracts/orchestration_protocol.py | src/zephyr/shared/contracts/orchestra... | prototype | generated |
-| 103 | src/zephyr/shared/contracts/order.py | src/zephyr/shared/contracts/order.py | prototype | generated |
-| 104 | src/zephyr/shared/contracts/performance_attribution_repor... | src/zephyr/shared/contracts/performan... | production | generated |
-| 105 | src/zephyr/shared/contracts/portfolio/__init__.py | src/zephyr/shared/contracts/portfolio... | prototype | generated |
-| 106 | src/zephyr/shared/contracts/portfolio/money.py | src/zephyr/shared/contracts/portfolio... | production | generated |
-| 107 | src/zephyr/shared/contracts/portfolio/performance_attribu... | src/zephyr/shared/contracts/portfolio... | prototype | generated |
-| 108 | src/zephyr/shared/contracts/portfolio/position.py | src/zephyr/shared/contracts/portfolio... | prototype | generated |
-| 109 | src/zephyr/shared/contracts/portfolio/strategy_lifecycle_... | src/zephyr/shared/contracts/portfolio... | prototype | generated |
-| 110 | src/zephyr/shared/contracts/position.py | src/zephyr/shared/contracts/position.py | prototype | generated |
-| 111 | src/zephyr/shared/contracts/risk/__init__.py | src/zephyr/shared/contracts/risk/__in... | prototype | generated |
-| 112 | src/zephyr/shared/contracts/risk/compliance_rule.py | src/zephyr/shared/contracts/risk/comp... | prototype | generated |
-| 113 | src/zephyr/shared/contracts/risk/risk_dashboard_snapshot.py | src/zephyr/shared/contracts/risk/risk... | prototype | generated |
-| 114 | src/zephyr/shared/contracts/risk/risk_limits.py | src/zephyr/shared/contracts/risk/risk... | prototype | generated |
-| 115 | src/zephyr/shared/contracts/risk/risk_metrics.py | src/zephyr/shared/contracts/risk/risk... | prototype | generated |
-| 116 | src/zephyr/shared/contracts/risk/risk_validator_protocol.py | src/zephyr/shared/contracts/risk/risk... | prototype | generated |
-| 117 | src/zephyr/shared/contracts/risk_dashboard_snapshot.py | src/zephyr/shared/contracts/risk_dash... | prototype | generated |
-| 118 | src/zephyr/shared/contracts/risk_limits.py | src/zephyr/shared/contracts/risk_limi... | production | generated |
-| 119 | src/zephyr/shared/contracts/risk_metrics.py | src/zephyr/shared/contracts/risk_metr... | prototype | generated |
-| 120 | src/zephyr/shared/contracts/runtime_types.py | src/zephyr/shared/contracts/runtime_t... | production | generated |
-| 121 | src/zephyr/shared/contracts/security/__init__.py | src/zephyr/shared/contracts/security/... | prototype | generated |
-| 122 | src/zephyr/shared/contracts/security/security_decision.py | src/zephyr/shared/contracts/security/... | production | generated |
-| 123 | src/zephyr/shared/contracts/skill_protocol.py | src/zephyr/shared/contracts/skill_pro... | prototype | generated |
-| 124 | src/zephyr/shared/contracts/strategy_lifecycle_event.py | src/zephyr/shared/contracts/strategy_... | production | generated |
-| 125 | src/zephyr/shared/contracts/synthesized_signal.py | src/zephyr/shared/contracts/synthesiz... | prototype | generated |
-| 126 | src/zephyr/shared/contracts/system_configuration.py | src/zephyr/shared/contracts/system_co... | prototype | generated |
-| 127 | src/zephyr/shared/contracts/task_repository_protocol.py | src/zephyr/shared/contracts/task_repo... | prototype | generated |
-| 128 | src/zephyr/shared/contracts/telemetry_emitter.py | src/zephyr/shared/contracts/telemetry... | prototype | generated |
-| 129 | src/zephyr/shared/contracts/trace_context.py | src/zephyr/shared/contracts/trace_con... | prototype | generated |
-| 130 | src/zephyr/shared/dependency/__init__.py | src/zephyr/shared/dependency/__init__.py | prototype | generated |
-| 131 | src/zephyr/shared/dependency/dependency_tracker.py | src/zephyr/shared/dependency/dependen... | production | generated |
-| 132 | src/zephyr/shared/draft/__init__.py | src/zephyr/shared/draft/__init__.py | prototype | generated |
-| 133 | src/zephyr/shared/events/__init__.py | src/zephyr/shared/events/__init__.py | prototype | generated |
-| 134 | src/zephyr/shared/events/dlq.py | src/zephyr/shared/events/dlq.py | prototype | generated |
-| 135 | src/zephyr/shared/events/dlq_bridge.py | src/zephyr/shared/events/dlq_bridge.py | prototype | generated |
-| 136 | src/zephyr/shared/events/event_bus_upgrade.py | src/zephyr/shared/events/event_bus_up... | production | generated |
-| 137 | src/zephyr/shared/events/event_schemas.py | src/zephyr/shared/events/event_schema... | prototype | generated |
-| 138 | src/zephyr/shared/events/observer.py | src/zephyr/shared/events/observer.py | prototype | generated |
-| 139 | src/zephyr/shared/events/outbox.py | src/zephyr/shared/events/outbox.py | prototype | generated |
-| 140 | src/zephyr/shared/events/upgrade_strategy.py | src/zephyr/shared/events/upgrade_stra... | prototype | generated |
-| 141 | src/zephyr/shared/foundation/__init__.py | src/zephyr/shared/foundation/__init__.py | production | generated |
-| 142 | src/zephyr/shared/foundation/constants.py | src/zephyr/shared/foundation/constant... | prototype | generated |
-| 143 | src/zephyr/shared/foundation/deprecation.py | src/zephyr/shared/foundation/deprecat... | production | generated |
-| 144 | src/zephyr/shared/foundation/env.py | src/zephyr/shared/foundation/env.py | prototype | generated |
-| 145 | src/zephyr/shared/foundation/errors.py | src/zephyr/shared/foundation/errors.py | production | generated |
-| 146 | src/zephyr/shared/foundation/flags.py | src/zephyr/shared/foundation/flags.py | production | generated |
-| 147 | src/zephyr/shared/foundation/migration.py | src/zephyr/shared/foundation/migratio... | production | generated |
-| 148 | src/zephyr/shared/foundation/serialization.py | src/zephyr/shared/foundation/serializ... | production | generated |
-| 149 | src/zephyr/shared/foundation/types.py | src/zephyr/shared/foundation/types.py | prototype | generated |
-| 150 | src/zephyr/shared/infra/__init__.py | src/zephyr/shared/infra/__init__.py | prototype | generated |
-| 151 | src/zephyr/shared/infra/cache.py | src/zephyr/shared/infra/cache.py | production | generated |
-| 152 | src/zephyr/shared/infra/idempotency.py | src/zephyr/shared/infra/idempotency.py | production | generated |
-| 153 | src/zephyr/shared/infra/limiter.py | src/zephyr/shared/infra/limiter.py | prototype | generated |
-| 154 | src/zephyr/shared/infra/lock.py | src/zephyr/shared/infra/lock.py | production | generated |
-| 155 | src/zephyr/shared/infra/observer.py | src/zephyr/shared/infra/observer.py | production | generated |
-| 156 | src/zephyr/shared/infra/outbox.py | src/zephyr/shared/infra/outbox.py | production | generated |
-| 157 | src/zephyr/shared/infra/process_lifecycle_gateway.py | src/zephyr/shared/infra/process_lifec... | production | generated |
-| 158 | src/zephyr/shared/infra/process_pool.py | src/zephyr/shared/infra/process_pool.py | production | generated |
-| 159 | src/zephyr/shared/io/__init__.py | src/zephyr/shared/io/__init__.py | prototype | generated |
-| 160 | src/zephyr/shared/io/cache.py | src/zephyr/shared/io/cache.py | prototype | generated |
-| 161 | src/zephyr/shared/io/cache_invalidation.py | src/zephyr/shared/io/cache_invalidati... | production | generated |
-| 162 | src/zephyr/shared/io/content_fingerprint.py | src/zephyr/shared/io/content_fingerpr... | prototype | generated |
-| 163 | src/zephyr/shared/io/doc_compressor.py | src/zephyr/shared/io/doc_compressor.py | production | generated |
-| 164 | src/zephyr/shared/io/file_utils.py | src/zephyr/shared/io/file_utils.py | prototype | generated |
-| 165 | src/zephyr/shared/io/frontmatter_utils.py | src/zephyr/shared/io/frontmatter_util... | prototype | generated |
-| 166 | src/zephyr/shared/io/io_cache.py | src/zephyr/shared/io/io_cache.py | production | generated |
-| 167 | src/zephyr/shared/io/pagination.py | src/zephyr/shared/io/pagination.py | production | generated |
-| 168 | src/zephyr/shared/io/paths.py | src/zephyr/shared/io/paths.py | production | generated |
-| 169 | src/zephyr/shared/io/serialization.py | src/zephyr/shared/io/serialization.py | prototype | generated |
-| 170 | src/zephyr/shared/io/sqlite_factory.py | src/zephyr/shared/io/sqlite_factory.py | prototype | generated |
-| 171 | src/zephyr/shared/io/streaming_reader.py | src/zephyr/shared/io/streaming_reader.py | production | generated |
-| 172 | src/zephyr/shared/io/yaml_utils.py | src/zephyr/shared/io/yaml_utils.py | prototype | generated |
-| 173 | src/zephyr/shared/knowledge/__init__.py | src/zephyr/shared/knowledge/__init__.py | prototype | generated |
-| 174 | src/zephyr/shared/maintenance/__init__.py | src/zephyr/shared/maintenance/__init_... | prototype | generated |
-| 175 | src/zephyr/shared/maintenance/code_economy_analyzer.py | src/zephyr/shared/maintenance/code_ec... | production | generated |
-| 176 | src/zephyr/shared/maintenance/owner_trust_gauge.py | src/zephyr/shared/maintenance/owner_t... | production | generated |
-| 177 | src/zephyr/shared/maintenance/slo_review_assistant.py | src/zephyr/shared/maintenance/slo_rev... | production | generated |
-| 178 | src/zephyr/shared/protocols/__init__.py | src/zephyr/shared/protocols/__init__.py | prototype | generated |
-| 179 | src/zephyr/shared/protocols/a2a/__init__.py | src/zephyr/shared/protocols/a2a/__ini... | prototype | generated |
-| 180 | src/zephyr/shared/protocols/a2a/a2a_coordination.py | src/zephyr/shared/protocols/a2a/a2a_c... | prototype | generated |
-| 181 | src/zephyr/shared/protocols/a2a/a2a_governance.py | src/zephyr/shared/protocols/a2a/a2a_g... | prototype | generated |
-| 182 | src/zephyr/shared/protocols/a2a/a2a_protocol.py | src/zephyr/shared/protocols/a2a/a2a_p... | prototype | generated |
-| 183 | src/zephyr/shared/protocols/a2a/a2a_registry.py | src/zephyr/shared/protocols/a2a/a2a_r... | prototype | generated |
-| 184 | src/zephyr/shared/protocols/a2a/a2a_schemas.py | src/zephyr/shared/protocols/a2a/a2a_s... | prototype | generated |
-| 185 | src/zephyr/shared/protocols/a2a/layer3_coordination/__ini... | src/zephyr/shared/protocols/a2a/layer... | prototype | generated |
-| 186 | src/zephyr/shared/protocols/capability.py | src/zephyr/shared/protocols/capabilit... | prototype | generated |
-| 187 | src/zephyr/shared/protocols/module_birth_registry.py | src/zephyr/shared/protocols/module_bi... | production | generated |
-| 188 | src/zephyr/shared/queue/__init__.py | src/zephyr/shared/queue/__init__.py | prototype | generated |
-| 189 | src/zephyr/shared/reliability/__init__.py | src/zephyr/shared/reliability/__init_... | prototype | generated |
-| 190 | src/zephyr/shared/resilience/__init__.py | src/zephyr/shared/resilience/__init__.py | production | generated |
-| 191 | src/zephyr/shared/resilience/circuit_breaker.py | src/zephyr/shared/resilience/circuit_... | production | generated |
-| 192 | src/zephyr/shared/resilience/degradation_chain.py | src/zephyr/shared/resilience/degradat... | production | generated |
-| 193 | src/zephyr/shared/resilience/error_budget_tracker.py | src/zephyr/shared/resilience/error_bu... | production | generated |
-| 194 | src/zephyr/shared/resilience/fallback.py | src/zephyr/shared/resilience/fallback.py | production | generated |
-| 195 | src/zephyr/shared/resilience/fault_isolator.py | src/zephyr/shared/resilience/fault_is... | production | generated |
-| 196 | src/zephyr/shared/resilience/limiter.py | src/zephyr/shared/resilience/limiter.py | production | generated |
-| 197 | src/zephyr/shared/resilience/retry.py | src/zephyr/shared/resilience/retry.py | production | generated |
-| 198 | src/zephyr/shared/schema/__init__.py | src/zephyr/shared/schema/__init__.py | prototype | generated |
-| 199 | src/zephyr/shared/schema/base_config.py | src/zephyr/shared/schema/base_config.py | prototype | generated |
-| 200 | src/zephyr/shared/schema/schema_registry.py | src/zephyr/shared/schema/schema_regis... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/shared/__init__.py | src/zephyr/shared/__init__.py |  | prototype | generated |
+| 2 | src/zephyr/shared/__version__.py | src/zephyr/shared/__version__.py | __version__.py —— ZephyrAlpha Shared 模块版本常量 | production | generated |
+| 3 | src/zephyr/shared/_cross_layer/__init__.py | src/zephyr/shared/_cross_layer/__init... | _cross_layer: Cross-layer integration pipelines for domain blueprints. | prototype | generated |
+| 4 | src/zephyr/shared/_cross_layer/ml_experiment_pipeline.py | src/zephyr/shared/_cross_layer/ml_exp... | MLExperimentPipeline D_ML_TRAIN→实验跨层集成管道 | prototype | generated |
+| 5 | src/zephyr/shared/adaptation/__init__.py | src/zephyr/shared/adaptation/__init__.py | 包 shared.adaptation 的初始化文件。 | prototype | generated |
+| 6 | src/zephyr/shared/ai_guards/ai_audit_guard.py | src/zephyr/shared/ai_guards/ai_audit_... |  | production | generated |
+| 7 | src/zephyr/shared/ai_guards/combinatorial_gate.py | src/zephyr/shared/ai_guards/combinato... |  | production | generated |
+| 8 | src/zephyr/shared/ai_guards/config_safety_guard.py | src/zephyr/shared/ai_guards/config_sa... | config_safety_guard.py — 配置自毁防护 (B16, DD90, TASK-017) | production | generated |
+| 9 | src/zephyr/shared/ai_guards/core_integrity_guard.py | src/zephyr/shared/ai_guards/core_inte... |  | production | generated |
+| 10 | src/zephyr/shared/ai_guards/ssot_guard.py | src/zephyr/shared/ai_guards/ssot_guar... | ssot_guard.py —— Re-export wrapper → canonical: zephyr.shared.security.sso... | production | generated |
+| 11 | src/zephyr/shared/alerts/alert_escalation.py | src/zephyr/shared/alerts/alert_escala... | AlertEscalation — re-homed to eliminate shared->infrastructure circular import. | production | generated |
+| 12 | src/zephyr/shared/alerts/alert_manager.py | src/zephyr/shared/alerts/alert_manage... |  | production | generated |
+| 13 | src/zephyr/shared/alerts/alert_precision_tracker.py | src/zephyr/shared/alerts/alert_precis... |  | production | generated |
+| 14 | src/zephyr/shared/alerts/dual_channel_alert.py | src/zephyr/shared/alerts/dual_channel... |  | production | generated |
+| 15 | src/zephyr/shared/alerts/heartbeat_server.py | src/zephyr/shared/alerts/heartbeat_se... |  | production | generated |
+| 16 | src/zephyr/shared/api/__init__.py | src/zephyr/shared/api/__init__.py | shared.api — auto-generated package init. | prototype | generated |
+| 17 | src/zephyr/shared/api/api_client.py | src/zephyr/shared/api/api_client.py | api_client.py —— 统一 API Client 基类（Phase 7 新增 | 盲点 B11 修复） | prototype | generated |
+| 18 | src/zephyr/shared/api/api_index.py | src/zephyr/shared/api/api_index.py | shared/ API 索引 — AI session 冷启动时的"员工通讯录" | prototype | generated |
+| 19 | src/zephyr/shared/api/dos_launcher.py | src/zephyr/shared/api/dos_launcher.py |  | production | generated |
+| 20 | src/zephyr/shared/api/shared_quickref.yaml | src/zephyr/shared/api/shared_quickref... |  | production | generated |
+| 21 | src/zephyr/shared/blueprint_tools/__init__.py | src/zephyr/shared/blueprint_tools/__i... | 包 shared.blueprint_tools 的初始化文件。 | prototype | generated |
+| 22 | src/zephyr/shared/blueprint_tools/ai_understandability_co... | src/zephyr/shared/blueprint_tools/ai_... |  | production | generated |
+| 23 | src/zephyr/shared/blueprint_tools/architecture_context_lo... | src/zephyr/shared/blueprint_tools/arc... | architecture_context_loader — 加载 ``generate_architecture_context.py`` 产出... | production | generated |
+| 24 | src/zephyr/shared/blueprint_tools/blueprint_code_auditor.py | src/zephyr/shared/blueprint_tools/blu... |  | production | generated |
+| 25 | src/zephyr/shared/blueprint_tools/blueprint_scorer.py | src/zephyr/shared/blueprint_tools/blu... | blueprint_scorer.py — Re-export wrapper → canonical: zephyr.trading.orchest... | prototype | generated |
+| 26 | src/zephyr/shared/capacity_governance/__init__.py | src/zephyr/shared/capacity_governance... | 包 shared.capacity_governance 的初始化文件。 | prototype | generated |
+| 27 | src/zephyr/shared/capacity_governance/adaptive_sampler.py | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 28 | src/zephyr/shared/capacity_governance/budget_aware_prompt.py | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 29 | src/zephyr/shared/capacity_governance/capacity_calibrator.py | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 30 | src/zephyr/shared/capacity_governance/capacity_digital_tw... | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 31 | src/zephyr/shared/capacity_governance/capacity_fingerprin... | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 32 | src/zephyr/shared/capacity_governance/capacity_governance... | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 33 | src/zephyr/shared/capacity_governance/capacity_runbook_ge... | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 34 | src/zephyr/shared/capacity_governance/cost_estimator.py | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 35 | src/zephyr/shared/capacity_governance/dependency_capacity... | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 36 | src/zephyr/shared/capacity_governance/model_capacity_prob... | src/zephyr/shared/capacity_governance... |  | production | generated |
+| 37 | src/zephyr/shared/compensation/__init__.py | src/zephyr/shared/compensation/__init... | 包 shared.compensation 的初始化文件。 | prototype | generated |
+| 38 | src/zephyr/shared/contracts/__init__.py | src/zephyr/shared/contracts/__init__.py | ZephyrAlpha — shared/contracts/ | prototype | generated |
+| 39 | src/zephyr/shared/contracts/backpressure/__init__.py | src/zephyr/shared/contracts/backpress... | Auto-generated contracts package — backpressure | prototype | generated |
+| 40 | src/zephyr/shared/contracts/backpressure/_types.py | src/zephyr/shared/contracts/backpress... | Shared internal backpressure type definitions. | prototype | generated |
+| 41 | src/zephyr/shared/contracts/backpressure/pause.py | src/zephyr/shared/contracts/backpress... |  | prototype | generated |
+| 42 | src/zephyr/shared/contracts/backpressure/resume.py | src/zephyr/shared/contracts/backpress... |  | prototype | generated |
+| 43 | src/zephyr/shared/contracts/backpressure/throttle.py | src/zephyr/shared/contracts/backpress... |  | prototype | generated |
+| 44 | src/zephyr/shared/contracts/capital_allocation_result.py | src/zephyr/shared/contracts/capital_a... |  | prototype | generated |
+| 45 | src/zephyr/shared/contracts/compliance_rule.py | src/zephyr/shared/contracts/complianc... |  | prototype | generated |
+| 46 | src/zephyr/shared/contracts/contract_bus.py | src/zephyr/shared/contracts/contract_... | ContractBus — 跨层通信抽象 + Pydantic v2 Schema Enforcement (M-09) | prototype | generated |
+| 47 | src/zephyr/shared/contracts/contract_tester.py | src/zephyr/shared/contracts/contract_... | ContractTester — 契约测试框架 | prototype | generated |
+| 48 | src/zephyr/shared/contracts/core/__init__.py | src/zephyr/shared/contracts/core/__in... | shared.contracts.core — auto-generated package init. | prototype | generated |
+| 49 | src/zephyr/shared/contracts/core/base_event.py | src/zephyr/shared/contracts/core/base... | BaseEvent — 跨层事件基类 | prototype | generated |
+| 50 | src/zephyr/shared/contracts/core/enforcer.py | src/zephyr/shared/contracts/core/enfo... | ZephyrAlpha — shared/contracts/enforcer.py | production | generated |
+| 51 | src/zephyr/shared/contracts/core/factories.py | src/zephyr/shared/contracts/core/fact... | shared/contracts/factories.py — 跨层数据契约工厂方法 | prototype | generated |
+| 52 | src/zephyr/shared/contracts/core/gate_types.py | src/zephyr/shared/contracts/core/gate... |  | prototype | generated |
+| 53 | src/zephyr/shared/contracts/core/registry.py | src/zephyr/shared/contracts/core/regi... | ZephyrAlpha — shared/contracts/registry.py | prototype | generated |
+| 54 | src/zephyr/shared/contracts/core/runtime_plane_tag.py | src/zephyr/shared/contracts/core/runt... | ZephyrAlpha — shared/contracts/runtime_plane_tag.py | prototype | generated |
+| 55 | src/zephyr/shared/contracts/core/system_configuration.py | src/zephyr/shared/contracts/core/syst... |  | production | generated |
+| 56 | src/zephyr/shared/contracts/core/telemetry_emitter.py | src/zephyr/shared/contracts/core/tele... |  | production | generated |
+| 57 | src/zephyr/shared/contracts/core/timestamp.py | src/zephyr/shared/contracts/core/time... | ZephyrAlpha — shared/contracts/timestamp.py | prototype | generated |
+| 58 | src/zephyr/shared/contracts/core/trace_context.py | src/zephyr/shared/contracts/core/trac... |  | production | generated |
+| 59 | src/zephyr/shared/contracts/errors/__init__.py | src/zephyr/shared/contracts/errors/__... | Auto-generated contracts package — errors | prototype | generated |
+| 60 | src/zephyr/shared/contracts/errors/contract_violation_err... | src/zephyr/shared/contracts/errors/co... |  | prototype | generated |
+| 61 | src/zephyr/shared/contracts/errors/data_quality_error.py | src/zephyr/shared/contracts/errors/da... | CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误 | prototype | generated |
+| 62 | src/zephyr/shared/contracts/errors/execution_rejection_er... | src/zephyr/shared/contracts/errors/ex... |  | prototype | generated |
+| 63 | src/zephyr/shared/contracts/errors/factor_computation_err... | src/zephyr/shared/contracts/errors/fa... | CTR-ERR-002: FactorComputationError / 因子计算失败错误 | prototype | generated |
+| 64 | src/zephyr/shared/contracts/errors/risk_limit_violation_e... | src/zephyr/shared/contracts/errors/ri... |  | prototype | generated |
+| 65 | src/zephyr/shared/contracts/errors/signal_degradation_war... | src/zephyr/shared/contracts/errors/si... |  | prototype | generated |
+| 66 | src/zephyr/shared/contracts/escalation/__init__.py | src/zephyr/shared/contracts/escalatio... |  | prototype | generated |
+| 67 | src/zephyr/shared/contracts/escalation/budget_alert.py | src/zephyr/shared/contracts/escalatio... |  | production | generated |
+| 68 | src/zephyr/shared/contracts/execution/__init__.py | src/zephyr/shared/contracts/execution... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 69 | src/zephyr/shared/contracts/execution/capital_allocation_... | src/zephyr/shared/contracts/execution... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 70 | src/zephyr/shared/contracts/execution/execution_report.py | src/zephyr/shared/contracts/execution... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 71 | src/zephyr/shared/contracts/execution/fill.py | src/zephyr/shared/contracts/execution... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 72 | src/zephyr/shared/contracts/execution/model_serving_reque... | src/zephyr/shared/contracts/execution... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 73 | src/zephyr/shared/contracts/execution/order.py | src/zephyr/shared/contracts/execution... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 74 | src/zephyr/shared/contracts/execution_report.py | src/zephyr/shared/contracts/execution... |  | prototype | generated |
+| 75 | src/zephyr/shared/contracts/experiment/__init__.py | src/zephyr/shared/contracts/experimen... | shared.contracts.experiment — auto-generated package init. | prototype | generated |
+| 76 | src/zephyr/shared/contracts/experiment/experiment_result.py | src/zephyr/shared/contracts/experimen... |  | prototype | generated |
+| 77 | src/zephyr/shared/contracts/experiment/model_serving_resp... | src/zephyr/shared/contracts/experimen... |  | prototype | generated |
+| 78 | src/zephyr/shared/contracts/experiment_result.py | src/zephyr/shared/contracts/experimen... |  | production | generated |
+| 79 | src/zephyr/shared/contracts/external/__init__.py | src/zephyr/shared/contracts/external/... | Auto-generated contracts package — external | prototype | generated |
+| 80 | src/zephyr/shared/contracts/external/ext_001.py | src/zephyr/shared/contracts/external/... |  | prototype | generated |
+| 81 | src/zephyr/shared/contracts/external/ext_002.py | src/zephyr/shared/contracts/external/... |  | prototype | generated |
+| 82 | src/zephyr/shared/contracts/external/ext_003.py | src/zephyr/shared/contracts/external/... |  | prototype | generated |
+| 83 | src/zephyr/shared/contracts/external/ext_004.py | src/zephyr/shared/contracts/external/... |  | prototype | generated |
+| 84 | src/zephyr/shared/contracts/factor_monitor_report.py | src/zephyr/shared/contracts/factor_mo... |  | production | generated |
+| 85 | src/zephyr/shared/contracts/factor_signal.py | src/zephyr/shared/contracts/factor_si... |  | prototype | generated |
+| 86 | src/zephyr/shared/contracts/fill.py | src/zephyr/shared/contracts/fill.py |  | prototype | generated |
+| 87 | src/zephyr/shared/contracts/identity/__init__.py | src/zephyr/shared/contracts/identity/... |  | prototype | generated |
+| 88 | src/zephyr/shared/contracts/identity/agent_identity.py | src/zephyr/shared/contracts/identity/... |  | production | generated |
+| 89 | src/zephyr/shared/contracts/identity/permission.py | src/zephyr/shared/contracts/identity/... |  | production | generated |
+| 90 | src/zephyr/shared/contracts/llm_gateway_protocol.py | src/zephyr/shared/contracts/llm_gatew... | LLMGatewayProtocol — LLM 网关抽象接口 | prototype | generated |
+| 91 | src/zephyr/shared/contracts/macro_factor_signal.py | src/zephyr/shared/contracts/macro_fac... |  | production | generated |
+| 92 | src/zephyr/shared/contracts/market/__init__.py | src/zephyr/shared/contracts/market/__... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 93 | src/zephyr/shared/contracts/market/factor_monitor_report.py | src/zephyr/shared/contracts/market/fa... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 94 | src/zephyr/shared/contracts/market/factor_signal.py | src/zephyr/shared/contracts/market/fa... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 95 | src/zephyr/shared/contracts/market/instrument.py | src/zephyr/shared/contracts/market/in... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 96 | src/zephyr/shared/contracts/market/macro_factor_signal.py | src/zephyr/shared/contracts/market/ma... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 97 | src/zephyr/shared/contracts/market/market_data.py | src/zephyr/shared/contracts/market/ma... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 98 | src/zephyr/shared/contracts/market/synthesized_signal.py | src/zephyr/shared/contracts/market/sy... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 99 | src/zephyr/shared/contracts/market_data.py | src/zephyr/shared/contracts/market_da... |  | prototype | generated |
+| 100 | src/zephyr/shared/contracts/model_serving_request.py | src/zephyr/shared/contracts/model_ser... |  | prototype | generated |
+| 101 | src/zephyr/shared/contracts/model_serving_response.py | src/zephyr/shared/contracts/model_ser... |  | production | generated |
+| 102 | src/zephyr/shared/contracts/orchestration_protocol.py | src/zephyr/shared/contracts/orchestra... |  | prototype | generated |
+| 103 | src/zephyr/shared/contracts/order.py | src/zephyr/shared/contracts/order.py |  | prototype | generated |
+| 104 | src/zephyr/shared/contracts/performance_attribution_repor... | src/zephyr/shared/contracts/performan... |  | production | generated |
+| 105 | src/zephyr/shared/contracts/portfolio/__init__.py | src/zephyr/shared/contracts/portfolio... | shared.contracts.portfolio — auto-generated package init. | prototype | generated |
+| 106 | src/zephyr/shared/contracts/portfolio/money.py | src/zephyr/shared/contracts/portfolio... |  | production | generated |
+| 107 | src/zephyr/shared/contracts/portfolio/performance_attribu... | src/zephyr/shared/contracts/portfolio... | Re-export shim — 真源已收敛至 zephyr.shared.contracts.performance_attributio... | prototype | generated |
+| 108 | src/zephyr/shared/contracts/portfolio/position.py | src/zephyr/shared/contracts/portfolio... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 109 | src/zephyr/shared/contracts/portfolio/strategy_lifecycle_... | src/zephyr/shared/contracts/portfolio... |  | prototype | generated |
+| 110 | src/zephyr/shared/contracts/position.py | src/zephyr/shared/contracts/position.py |  | prototype | generated |
+| 111 | src/zephyr/shared/contracts/risk/__init__.py | src/zephyr/shared/contracts/risk/__in... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 112 | src/zephyr/shared/contracts/risk/compliance_rule.py | src/zephyr/shared/contracts/risk/comp... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 113 | src/zephyr/shared/contracts/risk/risk_dashboard_snapshot.py | src/zephyr/shared/contracts/risk/risk... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 114 | src/zephyr/shared/contracts/risk/risk_limits.py | src/zephyr/shared/contracts/risk/risk... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 115 | src/zephyr/shared/contracts/risk/risk_metrics.py | src/zephyr/shared/contracts/risk/risk... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 116 | src/zephyr/shared/contracts/risk/risk_validator_protocol.py | src/zephyr/shared/contracts/risk/risk... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | prototype | generated |
+| 117 | src/zephyr/shared/contracts/risk_dashboard_snapshot.py | src/zephyr/shared/contracts/risk_dash... |  | prototype | generated |
+| 118 | src/zephyr/shared/contracts/risk_limits.py | src/zephyr/shared/contracts/risk_limi... |  | production | generated |
+| 119 | src/zephyr/shared/contracts/risk_metrics.py | src/zephyr/shared/contracts/risk_metr... |  | prototype | generated |
+| 120 | src/zephyr/shared/contracts/runtime_types.py | src/zephyr/shared/contracts/runtime_t... |  | production | generated |
+| 121 | src/zephyr/shared/contracts/security/__init__.py | src/zephyr/shared/contracts/security/... |  | prototype | generated |
+| 122 | src/zephyr/shared/contracts/security/security_decision.py | src/zephyr/shared/contracts/security/... |  | production | generated |
+| 123 | src/zephyr/shared/contracts/skill_protocol.py | src/zephyr/shared/contracts/skill_pro... |  | prototype | generated |
+| 124 | src/zephyr/shared/contracts/strategy_lifecycle_event.py | src/zephyr/shared/contracts/strategy_... |  | production | generated |
+| 125 | src/zephyr/shared/contracts/synthesized_signal.py | src/zephyr/shared/contracts/synthesiz... |  | prototype | generated |
+| 126 | src/zephyr/shared/contracts/system_configuration.py | src/zephyr/shared/contracts/system_co... |  | prototype | generated |
+| 127 | src/zephyr/shared/contracts/task_repository_protocol.py | src/zephyr/shared/contracts/task_repo... | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口 | prototype | generated |
+| 128 | src/zephyr/shared/contracts/telemetry_emitter.py | src/zephyr/shared/contracts/telemetry... |  | prototype | generated |
+| 129 | src/zephyr/shared/contracts/trace_context.py | src/zephyr/shared/contracts/trace_con... |  | prototype | generated |
+| 130 | src/zephyr/shared/dependency/__init__.py | src/zephyr/shared/dependency/__init__.py | 包 shared.dependency 的初始化文件。 | prototype | generated |
+| 131 | src/zephyr/shared/dependency/dependency_tracker.py | src/zephyr/shared/dependency/dependen... | dependency_tracker.py — 依赖追踪 (DD116, TASK-020) | production | generated |
+| 132 | src/zephyr/shared/draft/__init__.py | src/zephyr/shared/draft/__init__.py | 包 shared.draft 的初始化文件。 | prototype | generated |
+| 133 | src/zephyr/shared/events/__init__.py | src/zephyr/shared/events/__init__.py |  | prototype | generated |
+| 134 | src/zephyr/shared/events/dlq.py | src/zephyr/shared/events/dlq.py | dlq.py —— ZephyrAlpha 死信队列（Dead Letter Queue） | prototype | generated |
+| 135 | src/zephyr/shared/events/dlq_bridge.py | src/zephyr/shared/events/dlq_bridge.py | CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge. | prototype | generated |
+| 136 | src/zephyr/shared/events/event_bus_upgrade.py | src/zephyr/shared/events/event_bus_up... | EventBus Upgrade — 事件总线升级 (M-16) | production | generated |
+| 137 | src/zephyr/shared/events/event_schemas.py | src/zephyr/shared/events/event_schema... | event_schemas.py —— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复） | prototype | generated |
+| 138 | src/zephyr/shared/events/observer.py | src/zephyr/shared/events/observer.py | observer.py —— Re-export wrapper → canonical: zephyr.shared.infra.observer | prototype | generated |
+| 139 | src/zephyr/shared/events/outbox.py | src/zephyr/shared/events/outbox.py | outbox.py —— Re-export wrapper → canonical: zephyr.shared.infra.outbox | prototype | generated |
+| 140 | src/zephyr/shared/events/upgrade_strategy.py | src/zephyr/shared/events/upgrade_stra... | EventBus 升级策略引擎 | prototype | generated |
+| 141 | src/zephyr/shared/foundation/__init__.py | src/zephyr/shared/foundation/__init__.py | shared.foundation — auto-generated package init. | production | generated |
+| 142 | src/zephyr/shared/foundation/constants.py | src/zephyr/shared/foundation/constant... | constants.py —— 共享枚举 & 常量集中 re-export（Single Source of Truth） | prototype | generated |
+| 143 | src/zephyr/shared/foundation/deprecation.py | src/zephyr/shared/foundation/deprecat... | deprecation.py —— ZephyrAlpha API 废弃策略 | production | generated |
+| 144 | src/zephyr/shared/foundation/env.py | src/zephyr/shared/foundation/env.py |  | prototype | generated |
+| 145 | src/zephyr/shared/foundation/errors.py | src/zephyr/shared/foundation/errors.py | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exception Hierarchy） | production | generated |
+| 146 | src/zephyr/shared/foundation/flags.py | src/zephyr/shared/foundation/flags.py |  | production | generated |
+| 147 | src/zephyr/shared/foundation/migration.py | src/zephyr/shared/foundation/migratio... | migration.py —— Re-export wrapper → canonical: zephyr.shared.utils.migration | production | generated |
+| 148 | src/zephyr/shared/foundation/serialization.py | src/zephyr/shared/foundation/serializ... | serialization.py —— Re-export wrapper → canonical: zephyr.shared.io.serial... | production | generated |
+| 149 | src/zephyr/shared/foundation/types.py | src/zephyr/shared/foundation/types.py | types.py —— 共享类型别名 & 语义化 NewType（Phase 3 新增 | 盲点 #5 修复） | prototype | generated |
+| 150 | src/zephyr/shared/infra/__init__.py | src/zephyr/shared/infra/__init__.py |  | prototype | generated |
+| 151 | src/zephyr/shared/infra/cache.py | src/zephyr/shared/infra/cache.py | cache.py —— 统一缓存抽象（Phase 8 新增 | 盲点 B13 修复） | production | generated |
+| 152 | src/zephyr/shared/infra/idempotency.py | src/zephyr/shared/infra/idempotency.py | idempotency.py —— 幂等性基础设施（Phase 8 新增 | 盲点 B15 修复） | production | generated |
+| 153 | src/zephyr/shared/infra/limiter.py | src/zephyr/shared/infra/limiter.py |  | prototype | generated |
+| 154 | src/zephyr/shared/infra/lock.py | src/zephyr/shared/infra/lock.py | lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点 B23 修复） | production | generated |
+| 155 | src/zephyr/shared/infra/observer.py | src/zephyr/shared/infra/observer.py | Zero-dependency Observer pattern (subscribe/emit/unsubscribe). | production | generated |
+| 156 | src/zephyr/shared/infra/outbox.py | src/zephyr/shared/infra/outbox.py | outbox.py —— 事务性 Outbox 模式（Phase 10 新增 | 盲点 B24 修复） | production | generated |
+| 157 | src/zephyr/shared/infra/process_lifecycle_gateway.py | src/zephyr/shared/infra/process_lifec... | ProcessLifecycleGateway — 进程生命周期统一入口 | production | generated |
+| 158 | src/zephyr/shared/infra/process_pool.py | src/zephyr/shared/infra/process_pool.py | process_pool.py - Shared process pool for MCP servers and subprocess tasks | production | generated |
+| 159 | src/zephyr/shared/io/__init__.py | src/zephyr/shared/io/__init__.py | shared.io — auto-generated package init. | prototype | generated |
+| 160 | src/zephyr/shared/io/cache.py | src/zephyr/shared/io/cache.py | cache.py —— Re-export wrapper → canonical: zephyr.shared.infra.cache | prototype | generated |
+| 161 | src/zephyr/shared/io/cache_invalidation.py | src/zephyr/shared/io/cache_invalidati... | cache_invalidation.py — 缓存一致性 (DD113, TASK-020) | production | generated |
+| 162 | src/zephyr/shared/io/content_fingerprint.py | src/zephyr/shared/io/content_fingerpr... | SHA-256 content fingerprint computation and verification. | prototype | generated |
+| 163 | src/zephyr/shared/io/doc_compressor.py | src/zephyr/shared/io/doc_compressor.py | DocCompressor — 文档压缩服务（CL-018 RI 扩展模式） | production | generated |
+| 164 | src/zephyr/shared/io/file_utils.py | src/zephyr/shared/io/file_utils.py | file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 #15 修复） | prototype | generated |
+| 165 | src/zephyr/shared/io/frontmatter_utils.py | src/zephyr/shared/io/frontmatter_util... | frontmatter_utils.py — Markdown/YAML frontmatter 解析 SSoT | prototype | generated |
+| 166 | src/zephyr/shared/io/io_cache.py | src/zephyr/shared/io/io_cache.py | io_cache.py - File-level I/O cache with LRU eviction | production | generated |
+| 167 | src/zephyr/shared/io/pagination.py | src/zephyr/shared/io/pagination.py | pagination.py —— Re-export wrapper → canonical: zephyr.shared.utils.pagination | production | generated |
+| 168 | src/zephyr/shared/io/paths.py | src/zephyr/shared/io/paths.py | paths.py — 项目路径常量 SSoT（Single Source of Truth） | production | generated |
+| 169 | src/zephyr/shared/io/serialization.py | src/zephyr/shared/io/serialization.py | serialization.py —— 统一序列化/反序列化基础设施（Phase 7 新增 | 盲点 B10 修复） | prototype | generated |
+| 170 | src/zephyr/shared/io/sqlite_factory.py | src/zephyr/shared/io/sqlite_factory.py | SQLite 连接工厂真源（SSoT） | prototype | generated |
+| 171 | src/zephyr/shared/io/streaming_reader.py | src/zephyr/shared/io/streaming_reader.py | streaming_reader.py - Memory-efficient streaming file readers | production | generated |
+| 172 | src/zephyr/shared/io/yaml_utils.py | src/zephyr/shared/io/yaml_utils.py |  | prototype | generated |
+| 173 | src/zephyr/shared/knowledge/__init__.py | src/zephyr/shared/knowledge/__init__.py | 包 shared.knowledge 的初始化文件。 | prototype | generated |
+| 174 | src/zephyr/shared/maintenance/__init__.py | src/zephyr/shared/maintenance/__init_... | 包 shared.maintenance 的初始化文件。 | prototype | generated |
+| 175 | src/zephyr/shared/maintenance/code_economy_analyzer.py | src/zephyr/shared/maintenance/code_ec... |  | production | generated |
+| 176 | src/zephyr/shared/maintenance/owner_trust_gauge.py | src/zephyr/shared/maintenance/owner_t... |  | production | generated |
+| 177 | src/zephyr/shared/maintenance/slo_review_assistant.py | src/zephyr/shared/maintenance/slo_rev... |  | production | generated |
+| 178 | src/zephyr/shared/protocols/__init__.py | src/zephyr/shared/protocols/__init__.py | Shared Protocols — cross-domain interface definitions. | prototype | generated |
+| 179 | src/zephyr/shared/protocols/a2a/__init__.py | src/zephyr/shared/protocols/a2a/__ini... | A2A Protocol — shared interface definitions. | prototype | generated |
+| 180 | src/zephyr/shared/protocols/a2a/a2a_coordination.py | src/zephyr/shared/protocols/a2a/a2a_c... | A2A Coordination — shared interface definitions for multi-agent coordination. | prototype | generated |
+| 181 | src/zephyr/shared/protocols/a2a/a2a_governance.py | src/zephyr/shared/protocols/a2a/a2a_g... | A2A Governance — shared interface definitions for governance layer. | prototype | generated |
+| 182 | src/zephyr/shared/protocols/a2a/a2a_protocol.py | src/zephyr/shared/protocols/a2a/a2a_p... | Core A2A Protocol interface and governance data contracts. | prototype | generated |
+| 183 | src/zephyr/shared/protocols/a2a/a2a_registry.py | src/zephyr/shared/protocols/a2a/a2a_r... | A2A Registry and Agent Card contracts — discovery and identity interfaces. | prototype | generated |
+| 184 | src/zephyr/shared/protocols/a2a/a2a_schemas.py | src/zephyr/shared/protocols/a2a/a2a_s... | A2A data structure contracts — Message, Task, and StateMachine schemas. | prototype | generated |
+| 185 | src/zephyr/shared/protocols/a2a/layer3_coordination/__ini... | src/zephyr/shared/protocols/a2a/layer... | A2A Layer3 Coordination — shared Protocol interfaces and data contracts. | prototype | generated |
+| 186 | src/zephyr/shared/protocols/capability.py | src/zephyr/shared/protocols/capabilit... | capability.py —— Re-export wrapper → canonical: zephyr.shared.security.cap... | prototype | generated |
+| 187 | src/zephyr/shared/protocols/module_birth_registry.py | src/zephyr/shared/protocols/module_bi... |  | production | generated |
+| 188 | src/zephyr/shared/queue/__init__.py | src/zephyr/shared/queue/__init__.py |  | prototype | generated |
+| 189 | src/zephyr/shared/reliability/__init__.py | src/zephyr/shared/reliability/__init_... | 包 shared.reliability 的初始化文件。 | prototype | generated |
+| 190 | src/zephyr/shared/resilience/__init__.py | src/zephyr/shared/resilience/__init__.py | resilience/__init__.py — 韧性工具包入口（Phase 2 新增） | production | generated |
+| 191 | src/zephyr/shared/resilience/circuit_breaker.py | src/zephyr/shared/resilience/circuit_... | circuit_breaker.py —— 轻量熔断器状态机（Phase 2 新增 | 零依赖） | production | generated |
+| 192 | src/zephyr/shared/resilience/degradation_chain.py | src/zephyr/shared/resilience/degradat... |  | production | generated |
+| 193 | src/zephyr/shared/resilience/error_budget_tracker.py | src/zephyr/shared/resilience/error_bu... |  | production | generated |
+| 194 | src/zephyr/shared/resilience/fallback.py | src/zephyr/shared/resilience/fallback.py | fallback.py —— 降级策略模式（Phase 2 新增 | 零依赖） | production | generated |
+| 195 | src/zephyr/shared/resilience/fault_isolator.py | src/zephyr/shared/resilience/fault_is... |  | production | generated |
+| 196 | src/zephyr/shared/resilience/limiter.py | src/zephyr/shared/resilience/limiter.py | limiter.py —— Re-export wrapper → canonical: zephyr.shared.infra.limiter | production | generated |
+| 197 | src/zephyr/shared/resilience/retry.py | src/zephyr/shared/resilience/retry.py | retry.py —— 统一重试策略（Phase 2 新增 | 零依赖） | production | generated |
+| 198 | src/zephyr/shared/schema/__init__.py | src/zephyr/shared/schema/__init__.py | shared.schema — auto-generated package init. | prototype | generated |
+| 199 | src/zephyr/shared/schema/base_config.py | src/zephyr/shared/schema/base_config.py |  | prototype | generated |
+| 200 | src/zephyr/shared/schema/schema_registry.py | src/zephyr/shared/schema/schema_regis... |  | prototype | generated |
 
 > (仅显示前 200 个模块，共 228 个)
 

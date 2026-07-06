@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 40_d_ml_train / model_evaluation
+# 40_d_ml_train / model_evaluation / Training
 
 > **文档作用 / Purpose**: 展示 model_evaluation（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 40 | Number | 40 |
 | 域ID | D_ML_TRAIN | Domain ID | D_ML_TRAIN |
-| 域名称 | model_evaluation | Domain Name | model_evaluation |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | model_evaluation | Domain Name | Training |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 12 | Module Count | 12 |
 | 域内依赖 | 5 | Internal Dependencies | 5 |
 | 跨域入边 | 7 | Cross-domain Incoming | 7 |
@@ -144,25 +144,25 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (1 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | docs__03_modules___cross_layer__model... | design | planned |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | docs__03_modules___cross_layer__model... |  | design | planned |
 
 ### L2 领域层 / Domain Layer (11 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/ml_train/__init__.py | src/zephyr/ml_train/__init__.py | prototype | generated |
-| 2 | src/zephyr/ml_train/_extensions/__init__.py | src/zephyr/ml_train/_extensions/__ini... | prototype | generated |
-| 3 | src/zephyr/ml_train/api/__init__.py | src/zephyr/ml_train/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/ml_train/core/__init__.py | src/zephyr/ml_train/core/__init__.py | prototype | generated |
-| 5 | src/zephyr/ml_train/implementations/__init__.py | src/zephyr/ml_train/implementations/_... | prototype | generated |
-| 6 | src/zephyr/ml_train/implementations/default_inference_eng... | src/zephyr/ml_train/implementations/d... | prototype | generated |
-| 7 | src/zephyr/ml_train/inference_base.py | src/zephyr/ml_train/inference_base.py | prototype | generated |
-| 8 | src/zephyr/ml_train/infrastructure/__init__.py | src/zephyr/ml_train/infrastructure/__... | prototype | generated |
-| 9 | src/zephyr/ml_train/models/__init__.py | src/zephyr/ml_train/models/__init__.py | prototype | generated |
-| 10 | src/zephyr/ml_train/services/__init__.py | src/zephyr/ml_train/services/__init__.py | prototype | generated |
-| 11 | src/zephyr/ml_train/trainer_base.py | src/zephyr/ml_train/trainer_base.py | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/ml_train/__init__.py | src/zephyr/ml_train/__init__.py | D_ML_TRAIN — ML Training Domain | prototype | generated |
+| 2 | src/zephyr/ml_train/_extensions/__init__.py | src/zephyr/ml_train/_extensions/__ini... |  | prototype | generated |
+| 3 | src/zephyr/ml_train/api/__init__.py | src/zephyr/ml_train/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/ml_train/core/__init__.py | src/zephyr/ml_train/core/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/ml_train/implementations/__init__.py | src/zephyr/ml_train/implementations/_... | D_ML_TRAIN — ML Training Concrete Implementations | prototype | generated |
+| 6 | src/zephyr/ml_train/implementations/default_inference_eng... | src/zephyr/ml_train/implementations/d... | D_ML_TRAIN — Default Inference Engine | prototype | generated |
+| 7 | src/zephyr/ml_train/inference_base.py | src/zephyr/ml_train/inference_base.py | D_ML_TRAIN — ML Inference Base | prototype | generated |
+| 8 | src/zephyr/ml_train/infrastructure/__init__.py | src/zephyr/ml_train/infrastructure/__... |  | prototype | generated |
+| 9 | src/zephyr/ml_train/models/__init__.py | src/zephyr/ml_train/models/__init__.py |  | prototype | generated |
+| 10 | src/zephyr/ml_train/services/__init__.py | src/zephyr/ml_train/services/__init__.py |  | prototype | generated |
+| 11 | src/zephyr/ml_train/trainer_base.py | src/zephyr/ml_train/trainer_base.py | D_ML_TRAIN — ML Training Base | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

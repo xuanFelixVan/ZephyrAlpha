@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 10_d_data_sec / 数据安全与契约
+# 10_d_data_sec / 数据安全与契约 / Data Security & Contracts
 
 > **文档作用 / Purpose**: 展示 数据安全与契约（D_DATA_SEC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 10 | Number | 10 |
 | 域ID | D_DATA_SEC | Domain ID | D_DATA_SEC |
-| 域名称 | 数据安全与契约 | Domain Name | 数据安全与契约 |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | 数据安全与契约 | Domain Name | Data Security & Contracts |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
@@ -98,15 +98,15 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (7 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/data_security/__init__.py | src/zephyr/data_security/__init__.py | prototype | generated |
-| 2 | src/zephyr/data_security/_extensions/__init__.py | src/zephyr/data_security/_extensions/... | prototype | generated |
-| 3 | src/zephyr/data_security/api/__init__.py | src/zephyr/data_security/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/data_security/core/__init__.py | src/zephyr/data_security/core/__init_... | prototype | generated |
-| 5 | src/zephyr/data_security/infrastructure/__init__.py | src/zephyr/data_security/infrastructu... | prototype | generated |
-| 6 | src/zephyr/data_security/models/__init__.py | src/zephyr/data_security/models/__ini... | prototype | generated |
-| 7 | src/zephyr/data_security/services/__init__.py | src/zephyr/data_security/services/__i... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/data_security/__init__.py | src/zephyr/data_security/__init__.py |  | prototype | generated |
+| 2 | src/zephyr/data_security/_extensions/__init__.py | src/zephyr/data_security/_extensions/... |  | prototype | generated |
+| 3 | src/zephyr/data_security/api/__init__.py | src/zephyr/data_security/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/data_security/core/__init__.py | src/zephyr/data_security/core/__init_... |  | prototype | generated |
+| 5 | src/zephyr/data_security/infrastructure/__init__.py | src/zephyr/data_security/infrastructu... |  | prototype | generated |
+| 6 | src/zephyr/data_security/models/__init__.py | src/zephyr/data_security/models/__ini... |  | prototype | generated |
+| 7 | src/zephyr/data_security/services/__init__.py | src/zephyr/data_security/services/__i... |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

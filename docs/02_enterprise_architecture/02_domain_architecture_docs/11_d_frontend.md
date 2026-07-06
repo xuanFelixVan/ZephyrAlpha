@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 11_d_frontend / 前端
+# 11_d_frontend / 前端 / Frontend
 
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 11 | Number | 11 |
 | 域ID | D_FRONTEND | Domain ID | D_FRONTEND |
-| 域名称 | 前端 | Domain Name | 前端 |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | 前端 | Domain Name | Frontend |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 30 | Module Count | 30 |
 | 域内依赖 | 31 | Internal Dependencies | 31 |
 | 跨域入边 | 13 | Cross-domain Incoming | 13 |
@@ -205,38 +205,38 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (30 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/frontend/__init__.py | src/zephyr/frontend/__init__.py | prototype | generated |
-| 2 | src/zephyr/frontend/_extensions/__init__.py | src/zephyr/frontend/_extensions/__ini... | prototype | generated |
-| 3 | src/zephyr/frontend/api/__init__.py | src/zephyr/frontend/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/frontend/core/__init__.py | src/zephyr/frontend/core/__init__.py | prototype | generated |
-| 5 | src/zephyr/frontend/dashboard/__init__.py | src/zephyr/frontend/dashboard/__init_... | prototype | generated |
-| 6 | src/zephyr/frontend/dashboard/app.py | src/zephyr/frontend/dashboard/app.py | production | generated |
-| 7 | src/zephyr/frontend/dashboard/app_panel.py | src/zephyr/frontend/dashboard/app_pan... | production | generated |
-| 8 | src/zephyr/frontend/dashboard/components/__init__.py | src/zephyr/frontend/dashboard/compone... | prototype | generated |
-| 9 | src/zephyr/frontend/dashboard/components/backtest_perform... | src/zephyr/frontend/dashboard/compone... | prototype | generated |
-| 10 | src/zephyr/frontend/dashboard/components/backtest_results.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 11 | src/zephyr/frontend/dashboard/components/backtest_results... | src/zephyr/frontend/dashboard/compone... | design | stable |
-| 12 | src/zephyr/frontend/dashboard/components/chart_factory.py | src/zephyr/frontend/dashboard/compone... | prototype | generated |
-| 13 | src/zephyr/frontend/dashboard/components/chart_factory.py/ | src/zephyr/frontend/dashboard/compone... | design | generated |
-| 14 | src/zephyr/frontend/dashboard/components/fitness_function... | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 15 | src/zephyr/frontend/dashboard/components/gate_statistics.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 16 | src/zephyr/frontend/dashboard/components/knowledge_overvi... | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 17 | src/zephyr/frontend/dashboard/components/olap_trend.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 18 | src/zephyr/frontend/dashboard/components/order_book.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 19 | src/zephyr/frontend/dashboard/components/order_book.py/ | src/zephyr/frontend/dashboard/compone... | design | stable |
-| 20 | src/zephyr/frontend/dashboard/components/position_monitor.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 21 | src/zephyr/frontend/dashboard/components/position_monitor... | src/zephyr/frontend/dashboard/compone... | design | stable |
-| 22 | src/zephyr/frontend/dashboard/components/task_progress.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 23 | src/zephyr/frontend/dashboard/components/tick_replay.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 24 | src/zephyr/frontend/dashboard/components/tick_replay.py/ | src/zephyr/frontend/dashboard/compone... | design | stable |
-| 25 | src/zephyr/frontend/dashboard/components/trade_panel.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 26 | src/zephyr/frontend/dashboard/components/trade_panel.py/ | src/zephyr/frontend/dashboard/compone... | design | stable |
-| 27 | src/zephyr/frontend/infrastructure/__init__.py | src/zephyr/frontend/infrastructure/__... | prototype | generated |
-| 28 | src/zephyr/frontend/interface_base.py | src/zephyr/frontend/interface_base.py | production | generated |
-| 29 | src/zephyr/frontend/models/__init__.py | src/zephyr/frontend/models/__init__.py | prototype | generated |
-| 30 | src/zephyr/frontend/services/__init__.py | src/zephyr/frontend/services/__init__.py | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/frontend/__init__.py | src/zephyr/frontend/__init__.py |  | prototype | generated |
+| 2 | src/zephyr/frontend/_extensions/__init__.py | src/zephyr/frontend/_extensions/__ini... |  | prototype | generated |
+| 3 | src/zephyr/frontend/api/__init__.py | src/zephyr/frontend/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/frontend/core/__init__.py | src/zephyr/frontend/core/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/frontend/dashboard/__init__.py | src/zephyr/frontend/dashboard/__init_... |  | prototype | generated |
+| 6 | src/zephyr/frontend/dashboard/app.py | src/zephyr/frontend/dashboard/app.py | ZephyrAlpha Dashboard · Streamlit 仪表盘 | production | generated |
+| 7 | src/zephyr/frontend/dashboard/app_panel.py | src/zephyr/frontend/dashboard/app_pan... | app_panel · Panel 仪表盘主应用入口（v3.1.0, #ARCH-047） | production | generated |
+| 8 | src/zephyr/frontend/dashboard/components/__init__.py | src/zephyr/frontend/dashboard/compone... |  | prototype | generated |
+| 9 | src/zephyr/frontend/dashboard/components/backtest_perform... | src/zephyr/frontend/dashboard/compone... | backtest_performance · 掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047） | prototype | generated |
+| 10 | src/zephyr/frontend/dashboard/components/backtest_results.py | src/zephyr/frontend/dashboard/compone... | backtest_results · 回测结果可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047） | production | generated |
+| 11 | src/zephyr/frontend/dashboard/components/backtest_results... | src/zephyr/frontend/dashboard/compone... |  | design | stable |
+| 12 | src/zephyr/frontend/dashboard/components/chart_factory.py | src/zephyr/frontend/dashboard/compone... | chart_factory · 图表统一工厂（v3.0.0新增, #ARCH-047） | prototype | generated |
+| 13 | src/zephyr/frontend/dashboard/components/chart_factory.py/ | src/zephyr/frontend/dashboard/compone... |  | design | generated |
+| 14 | src/zephyr/frontend/dashboard/components/fitness_function... | src/zephyr/frontend/dashboard/compone... | fitness_functions · Fitness Functions 仪表盘组件（v3.1.0 Panel 迁移, #ARCH-047） | production | generated |
+| 15 | src/zephyr/frontend/dashboard/components/gate_statistics.py | src/zephyr/frontend/dashboard/compone... | gate_statistics · 门禁统计组件（v3.1.0 Panel 迁移, #ARCH-047） | production | generated |
+| 16 | src/zephyr/frontend/dashboard/components/knowledge_overvi... | src/zephyr/frontend/dashboard/compone... | knowledge_overview · 知识库概览组件（v3.1.0 Panel 迁移, #ARCH-047） | production | generated |
+| 17 | src/zephyr/frontend/dashboard/components/olap_trend.py | src/zephyr/frontend/dashboard/compone... | olap_trend · OLAP 趋势组件（v3.1.0 Panel 迁移, #ARCH-047） | production | generated |
+| 18 | src/zephyr/frontend/dashboard/components/order_book.py | src/zephyr/frontend/dashboard/compone... | order_book · 5档盘口实时展示组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047） | production | generated |
+| 19 | src/zephyr/frontend/dashboard/components/order_book.py/ | src/zephyr/frontend/dashboard/compone... |  | design | stable |
+| 20 | src/zephyr/frontend/dashboard/components/position_monitor.py | src/zephyr/frontend/dashboard/compone... | position_monitor · 实盘持仓监控组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047） | production | generated |
+| 21 | src/zephyr/frontend/dashboard/components/position_monitor... | src/zephyr/frontend/dashboard/compone... |  | design | stable |
+| 22 | src/zephyr/frontend/dashboard/components/task_progress.py | src/zephyr/frontend/dashboard/compone... | task_progress · 任务进度看板组件（v3.1.0 Panel 迁移, #ARCH-047） | production | generated |
+| 23 | src/zephyr/frontend/dashboard/components/tick_replay.py | src/zephyr/frontend/dashboard/compone... | tick_replay · Tick 回放可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047） | production | generated |
+| 24 | src/zephyr/frontend/dashboard/components/tick_replay.py/ | src/zephyr/frontend/dashboard/compone... |  | design | stable |
+| 25 | src/zephyr/frontend/dashboard/components/trade_panel.py | src/zephyr/frontend/dashboard/compone... | trade_panel · 实盘交易面板组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047, human_... | production | generated |
+| 26 | src/zephyr/frontend/dashboard/components/trade_panel.py/ | src/zephyr/frontend/dashboard/compone... |  | design | stable |
+| 27 | src/zephyr/frontend/infrastructure/__init__.py | src/zephyr/frontend/infrastructure/__... |  | prototype | generated |
+| 28 | src/zephyr/frontend/interface_base.py | src/zephyr/frontend/interface_base.py | D_FRONTEND — Human-AI Interface Layer Skeleton | production | generated |
+| 29 | src/zephyr/frontend/models/__init__.py | src/zephyr/frontend/models/__init__.py |  | prototype | generated |
+| 30 | src/zephyr/frontend/services/__init__.py | src/zephyr/frontend/services/__init__.py |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 37_d_intelligence / context_management
+# 37_d_intelligence / context_management / Context Management
 
 > **文档作用 / Purpose**: 展示 context_management（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 37 | Number | 37 |
 | 域ID | D_INTELLIGENCE | Domain ID | D_INTELLIGENCE |
-| 域名称 | context_management | Domain Name | context_management |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | context_management | Domain Name | Context Management |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 43 | Module Count | 43 |
 | 域内依赖 | 33 | Internal Dependencies | 33 |
 | 跨域入边 | 60 | Cross-domain Incoming | 60 |
@@ -267,51 +267,51 @@ graph TD
 
 ### L2 领域层 / Domain Layer (43 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/intelligence/__init__.py | src/zephyr/intelligence/__init__.py | prototype | generated |
-| 2 | src/zephyr/intelligence/_extensions/__init__.py | src/zephyr/intelligence/_extensions/_... | prototype | generated |
-| 3 | src/zephyr/intelligence/api/__init__.py | src/zephyr/intelligence/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/intelligence/core/__init__.py | src/zephyr/intelligence/core/__init__.py | prototype | generated |
-| 5 | src/zephyr/intelligence/infrastructure/__init__.py | src/zephyr/intelligence/infrastructur... | prototype | generated |
-| 6 | src/zephyr/intelligence/model_drift_detector.py | src/zephyr/intelligence/model_drift_d... | production | generated |
-| 7 | src/zephyr/intelligence/model_evaluation/__init__.py | src/zephyr/intelligence/model_evaluat... | prototype | generated |
-| 8 | src/zephyr/intelligence/model_evaluation/activate.py | src/zephyr/intelligence/model_evaluat... | production | generated |
-| 9 | src/zephyr/intelligence/model_evaluation/experiment_track... | src/zephyr/intelligence/model_evaluat... | prototype | generated |
-| 10 | src/zephyr/intelligence/model_evaluation/implementations/... | src/zephyr/intelligence/model_evaluat... | prototype | generated |
-| 11 | src/zephyr/intelligence/model_evaluation/implementations/... | src/zephyr/intelligence/model_evaluat... | production | generated |
-| 12 | src/zephyr/intelligence/model_evaluation/inference_base.py | src/zephyr/intelligence/model_evaluat... | production | generated |
-| 13 | src/zephyr/intelligence/model_evaluation/notebook_integra... | src/zephyr/intelligence/model_evaluat... | prototype | generated |
-| 14 | src/zephyr/intelligence/model_evaluation/reranker.py | src/zephyr/intelligence/model_evaluat... | production | generated |
-| 15 | src/zephyr/intelligence/model_evaluation/sync_engine.py | src/zephyr/intelligence/model_evaluat... | prototype | generated |
-| 16 | src/zephyr/intelligence/model_evaluation/target_lib/__ini... | src/zephyr/intelligence/model_evaluat... | prototype | generated |
-| 17 | src/zephyr/intelligence/model_evaluation/unified_memory_a... | src/zephyr/intelligence/model_evaluat... | production | generated |
-| 18 | src/zephyr/intelligence/model_profiling/__init__.py | src/zephyr/intelligence/model_profili... | prototype | generated |
-| 19 | src/zephyr/intelligence/model_profiling/benchmark_suite.py | src/zephyr/intelligence/model_profili... | prototype | generated |
-| 20 | src/zephyr/intelligence/model_profiling/capability_passpo... | src/zephyr/intelligence/model_profili... | production | generated |
-| 21 | src/zephyr/intelligence/model_profiling/case_assembler.py | src/zephyr/intelligence/model_profili... | prototype | generated |
-| 22 | src/zephyr/intelligence/model_profiling/cli.py | src/zephyr/intelligence/model_profili... | production | generated |
-| 23 | src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py | src/zephyr/intelligence/model_profili... | production | generated |
-| 24 | src/zephyr/intelligence/model_profiling/exam_executor.py | src/zephyr/intelligence/model_profili... | prototype | generated |
-| 25 | src/zephyr/intelligence/model_profiling/exam_judge.py | src/zephyr/intelligence/model_profili... | production | generated |
-| 26 | src/zephyr/intelligence/model_profiling/exam_orchestrator.py | src/zephyr/intelligence/model_profili... | production | generated |
-| 27 | src/zephyr/intelligence/model_profiling/exam_rubric.py | src/zephyr/intelligence/model_profili... | prototype | generated |
-| 28 | src/zephyr/intelligence/model_profiling/exam_test_cases.py | src/zephyr/intelligence/model_profili... | production | generated |
-| 29 | src/zephyr/intelligence/model_profiling/job_matcher.py | src/zephyr/intelligence/model_profili... | production | generated |
-| 30 | src/zephyr/intelligence/model_profiling/model_discovery.py | src/zephyr/intelligence/model_profili... | production | generated |
-| 31 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | prototype | generated |
-| 32 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | production | generated |
-| 33 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | prototype | generated |
-| 34 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | production | generated |
-| 35 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | production | generated |
-| 36 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | production | generated |
-| 37 | src/zephyr/intelligence/model_profiling/profiler.py | src/zephyr/intelligence/model_profili... | prototype | generated |
-| 38 | src/zephyr/intelligence/model_profiling/provider_data.py | src/zephyr/intelligence/model_profili... | production | generated |
-| 39 | src/zephyr/intelligence/model_profiling/results_writer.py | src/zephyr/intelligence/model_profili... | production | generated |
-| 40 | src/zephyr/intelligence/model_profiling/task_model_learne... | src/zephyr/intelligence/model_profili... | prototype | generated |
-| 41 | src/zephyr/intelligence/models/__init__.py | src/zephyr/intelligence/models/__init... | prototype | generated |
-| 42 | src/zephyr/intelligence/services/__init__.py | src/zephyr/intelligence/services/__in... | prototype | generated |
-| 43 | src/zephyr/research/__init__.py | src/zephyr/research/__init__.py | production | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/intelligence/__init__.py | src/zephyr/intelligence/__init__.py | Intelligence Domain | prototype | generated |
+| 2 | src/zephyr/intelligence/_extensions/__init__.py | src/zephyr/intelligence/_extensions/_... |  | prototype | generated |
+| 3 | src/zephyr/intelligence/api/__init__.py | src/zephyr/intelligence/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/intelligence/core/__init__.py | src/zephyr/intelligence/core/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/intelligence/infrastructure/__init__.py | src/zephyr/intelligence/infrastructur... |  | prototype | generated |
+| 6 | src/zephyr/intelligence/model_drift_detector.py | src/zephyr/intelligence/model_drift_d... | ModelDriftDetector — LLM 模型行为漂移检测。 | production | generated |
+| 7 | src/zephyr/intelligence/model_evaluation/__init__.py | src/zephyr/intelligence/model_evaluat... | Intelligence — Model Evaluation Domain | prototype | generated |
+| 8 | src/zephyr/intelligence/model_evaluation/activate.py | src/zephyr/intelligence/model_evaluat... | G4 Activate 门禁 — 人工激活（T-2-13-D） | production | generated |
+| 9 | src/zephyr/intelligence/model_evaluation/experiment_track... | src/zephyr/intelligence/model_evaluat... | D_RESEARCH — Research & Innovation Concrete Implementations | prototype | generated |
+| 10 | src/zephyr/intelligence/model_evaluation/implementations/... | src/zephyr/intelligence/model_evaluat... | Intelligence — Model Evaluation Concrete Implementations | prototype | generated |
+| 11 | src/zephyr/intelligence/model_evaluation/implementations/... | src/zephyr/intelligence/model_evaluat... | D_ML_TRAIN — Default Inference Engine | production | generated |
+| 12 | src/zephyr/intelligence/model_evaluation/inference_base.py | src/zephyr/intelligence/model_evaluat... |  | production | generated |
+| 13 | src/zephyr/intelligence/model_evaluation/notebook_integra... | src/zephyr/intelligence/model_evaluat... | D_RESEARCH Research & Innovation | prototype | generated |
+| 14 | src/zephyr/intelligence/model_evaluation/reranker.py | src/zephyr/intelligence/model_evaluat... | Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T-MOD-KB-001-RERANKER） | production | generated |
+| 15 | src/zephyr/intelligence/model_evaluation/sync_engine.py | src/zephyr/intelligence/model_evaluat... | KB→VMS 同步引擎 — sync_to_vms() 生产者 | prototype | generated |
+| 16 | src/zephyr/intelligence/model_evaluation/target_lib/__ini... | src/zephyr/intelligence/model_evaluat... |  | prototype | generated |
+| 17 | src/zephyr/intelligence/model_evaluation/unified_memory_a... | src/zephyr/intelligence/model_evaluat... | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装） | production | generated |
+| 18 | src/zephyr/intelligence/model_profiling/__init__.py | src/zephyr/intelligence/model_profili... | Model Profiling — 本地 + 远程模型性能基准测试 | prototype | generated |
+| 19 | src/zephyr/intelligence/model_profiling/benchmark_suite.py | src/zephyr/intelligence/model_profili... | BenchmarkSuite — 多维度模型性能测试用例集 | prototype | generated |
+| 20 | src/zephyr/intelligence/model_profiling/capability_passpo... | src/zephyr/intelligence/model_profili... | CapabilityPassport --- AI 模型能力护照 | production | generated |
+| 21 | src/zephyr/intelligence/model_profiling/case_assembler.py | src/zephyr/intelligence/model_profili... | 真实多文件注入装配器（Phase 3 极限深度）。 | prototype | generated |
+| 22 | src/zephyr/intelligence/model_profiling/cli.py | src/zephyr/intelligence/model_profili... | model-profiler.cli — 模型性能检测命令行入口 | production | generated |
+| 23 | src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py | src/zephyr/intelligence/model_profili... | DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 | production | generated |
+| 24 | src/zephyr/intelligence/model_profiling/exam_executor.py | src/zephyr/intelligence/model_profili... | ExamExecutor --- 执行式代码评测（HumanEval pass@1 风格，v3.0.5）。 | prototype | generated |
+| 25 | src/zephyr/intelligence/model_profiling/exam_judge.py | src/zephyr/intelligence/model_profili... | ExamJudge --- LLM-as-judge 评分器 | production | generated |
+| 26 | src/zephyr/intelligence/model_profiling/exam_orchestrator.py | src/zephyr/intelligence/model_profili... | ExamOrchestrator --- 五轴入职考试主控 | production | generated |
+| 27 | src/zephyr/intelligence/model_profiling/exam_rubric.py | src/zephyr/intelligence/model_profili... | ExamRubric --- 奥赛题结构化多维清单评分（v3.0.5）。 | prototype | generated |
+| 28 | src/zephyr/intelligence/model_profiling/exam_test_cases.py | src/zephyr/intelligence/model_profili... | ExamTestCases --- v3.0.5 扩展考试题库（96 题 / 29 能力 / 5 难度） | production | generated |
+| 29 | src/zephyr/intelligence/model_profiling/job_matcher.py | src/zephyr/intelligence/model_profili... | JobMatcher --- 模型岗位匹配器 | production | generated |
+| 30 | src/zephyr/intelligence/model_profiling/model_discovery.py | src/zephyr/intelligence/model_profili... | ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模型 | production | generated |
+| 31 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | Model Profiler — Pipeline Routing variant | prototype | generated |
+| 32 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | BenchmarkSuite — 多维度模型性能测试用例集 | production | generated |
+| 33 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | model-profiler.cli — 模型性能检测命令行入口 | prototype | generated |
+| 34 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | ModelProfiler — 核心性能分析引擎 | production | generated |
+| 35 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测） | production | generated |
+| 36 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | src/zephyr/intelligence/model_profili... | ModelTaskMatrix — 任务×模型性能学习引擎 | production | generated |
+| 37 | src/zephyr/intelligence/model_profiling/profiler.py | src/zephyr/intelligence/model_profili... | ModelProfiler — 核心性能分析引擎 | prototype | generated |
+| 38 | src/zephyr/intelligence/model_profiling/provider_data.py | src/zephyr/intelligence/model_profili... |  | production | generated |
+| 39 | src/zephyr/intelligence/model_profiling/results_writer.py | src/zephyr/intelligence/model_profili... | Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测） | production | generated |
+| 40 | src/zephyr/intelligence/model_profiling/task_model_learne... | src/zephyr/intelligence/model_profili... | ModelTaskMatrix — 任务×模型性能学习引擎 | prototype | generated |
+| 41 | src/zephyr/intelligence/models/__init__.py | src/zephyr/intelligence/models/__init... |  | prototype | generated |
+| 42 | src/zephyr/intelligence/services/__init__.py | src/zephyr/intelligence/services/__in... |  | prototype | generated |
+| 43 | src/zephyr/research/__init__.py | src/zephyr/research/__init__.py | MOD-L09-001 Research Innovation Core. | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

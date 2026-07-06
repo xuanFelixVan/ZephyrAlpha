@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 36_d_gov_scripts / script_governance
+# 36_d_gov_scripts / script_governance / Script Governance
 
 > **文档作用 / Purpose**: 展示 script_governance（D_GOV_SCRIPTS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 36 | Number | 36 |
 | 域ID | D_GOV_SCRIPTS | Domain ID | D_GOV_SCRIPTS |
-| 域名称 | script_governance | Domain Name | script_governance |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | script_governance | Domain Name | Script Governance |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 432 | Module Count | 432 |
 | 域内依赖 | 306 | Internal Dependencies | 306 |
 | 跨域入边 | 3 | Cross-domain Incoming | 3 |
@@ -1101,208 +1101,208 @@ graph TD
 
 ### L2 领域层 / Domain Layer (432 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | scripts/governance/__init__.py | scripts/governance/__init__.py | production | generated |
-| 2 | scripts/governance/_archive/one_off/analyze_orphan_consum... | scripts/governance/_archive/one_off/a... | prototype | generated |
-| 3 | scripts/governance/_archive/one_off/audit_post_sync_comma... | scripts/governance/_archive/one_off/a... | prototype | generated |
-| 4 | scripts/governance/_archive/one_off/audit_session_07.py | scripts/governance/_archive/one_off/a... | prototype | generated |
-| 5 | scripts/governance/_archive/one_off/check_exam_case_consi... | scripts/governance/_archive/one_off/c... | prototype | generated |
-| 6 | scripts/governance/_archive/one_off/check_rule_coverage.py | scripts/governance/_archive/one_off/c... | prototype | generated |
-| 7 | scripts/governance/_archive/one_off/create_alignment_task... | scripts/governance/_archive/one_off/c... | prototype | generated |
-| 8 | scripts/governance/_archive/one_off/dm105_depgraph_triage.py | scripts/governance/_archive/one_off/d... | prototype | generated |
-| 9 | scripts/governance/_archive/one_off/fix_broken_post_sync.py | scripts/governance/_archive/one_off/f... | prototype | generated |
-| 10 | scripts/governance/_archive/one_off/group_orphan_modules.py | scripts/governance/_archive/one_off/g... | prototype | generated |
-| 11 | scripts/governance/_archive/one_off/list_phase0_tasks.py | scripts/governance/_archive/one_off/l... | prototype | generated |
-| 12 | scripts/governance/_archive/one_off/migrate_clean_build_s... | scripts/governance/_archive/one_off/m... | prototype | generated |
-| 13 | scripts/governance/_archive/one_off/migrate_domain_id_hyp... | scripts/governance/_archive/one_off/m... | prototype | generated |
-| 14 | scripts/governance/_archive/one_off/perf_depgraph_baselin... | scripts/governance/_archive/one_off/p... | prototype | generated |
-| 15 | scripts/governance/_archive/one_off/phase_a_backup.py | scripts/governance/_archive/one_off/p... | prototype | generated |
-| 16 | scripts/governance/_archive/one_off/rename_kebab_to_snake.py | scripts/governance/_archive/one_off/r... | prototype | generated |
-| 17 | scripts/governance/_archive/one_off/rename_whitelist_clea... | scripts/governance/_archive/one_off/r... | prototype | generated |
-| 18 | scripts/governance/_archive/one_off/test_lock_scenarios.py | scripts/governance/_archive/one_off/t... | prototype | generated |
-| 19 | scripts/governance/_archive/one_off/verify_final_delivery.py | scripts/governance/_archive/one_off/v... | prototype | generated |
-| 20 | scripts/governance/_archive/one_off/verify_rule_yaml_migr... | scripts/governance/_archive/one_off/v... | prototype | generated |
-| 21 | scripts/governance/_archive/prototype/adversarial_log.py | scripts/governance/_archive/prototype... | prototype | generated |
-| 22 | scripts/governance/_archive/prototype/adversarial_sys_mas... | scripts/governance/_archive/prototype... | prototype | generated |
-| 23 | scripts/governance/_archive/prototype/audit_domain_nodes.py | scripts/governance/_archive/prototype... | prototype | generated |
-| 24 | scripts/governance/_archive/prototype/changelog.py | scripts/governance/_archive/prototype... | prototype | generated |
-| 25 | scripts/governance/_archive/prototype/check_audit_rbac_is... | scripts/governance/_archive/prototype... | prototype | generated |
-| 26 | scripts/governance/_archive/prototype/construction_gate.py | scripts/governance/_archive/prototype... | prototype | generated |
-| 27 | scripts/governance/_archive/prototype/generate_asset_inde... | scripts/governance/_archive/prototype... | prototype | generated |
-| 28 | scripts/governance/_archive/prototype/generate_nav_table.py | scripts/governance/_archive/prototype... | prototype | generated |
-| 29 | scripts/governance/_archive/prototype/rebuild_audit_index.py | scripts/governance/_archive/prototype... | prototype | generated |
-| 30 | scripts/governance/_archive/prototype/scan_ground_truth_d... | scripts/governance/_archive/prototype... | prototype | generated |
-| 31 | scripts/governance/_archive/prototype/session_simulator.py | scripts/governance/_archive/prototype... | prototype | generated |
-| 32 | scripts/governance/_archive/prototype/sync_blueprint_stat... | scripts/governance/_archive/prototype... | prototype | generated |
-| 33 | scripts/governance/_archive/vms_ri/ri_boundary_check.py | scripts/governance/_archive/vms_ri/ri... | prototype | generated |
-| 34 | scripts/governance/_archive/vms_ri/ri_build_completion_ch... | scripts/governance/_archive/vms_ri/ri... | prototype | generated |
-| 35 | scripts/governance/_archive/vms_ri/vms_blindspot_check.py | scripts/governance/_archive/vms_ri/vm... | prototype | generated |
-| 36 | scripts/governance/_archive/vms_ri/vms_build_completion_c... | scripts/governance/_archive/vms_ri/vm... | prototype | generated |
-| 37 | scripts/governance/_archive/vms_ri/vms_cron_monitor.py | scripts/governance/_archive/vms_ri/vm... | prototype | generated |
-| 38 | scripts/governance/_archive/vms_ri/vms_cross_file_check.py | scripts/governance/_archive/vms_ri/vm... | prototype | generated |
-| 39 | scripts/governance/_archive/vms_ri/vms_health_check.py | scripts/governance/_archive/vms_ri/vm... | prototype | generated |
-| 40 | scripts/governance/_archive/vms_ri/vms_migrate.py | scripts/governance/_archive/vms_ri/vm... | prototype | generated |
-| 41 | scripts/governance/_archive/vms_ri/vms_migration_dry_run.py | scripts/governance/_archive/vms_ri/vm... | prototype | generated |
-| 42 | scripts/governance/_archive/vms_ri/vms_phase_rollback.py | scripts/governance/_archive/vms_ri/vm... | prototype | generated |
-| 43 | scripts/governance/_archive/vms_ri/vms_version_sync_check.py | scripts/governance/_archive/vms_ri/vm... | prototype | generated |
-| 44 | scripts/governance/_shared/__init__.py | scripts/governance/_shared/__init__.py | prototype | generated |
-| 45 | scripts/governance/_shared/base.py | scripts/governance/_shared/base.py | prototype | generated |
-| 46 | scripts/governance/_shared/constants.py | scripts/governance/_shared/constants.py | production | generated |
-| 47 | scripts/governance/_shared/deprecated_paths.yaml | scripts/governance/_shared/deprecated... | production | generated |
-| 48 | scripts/governance/_shared/encoding.py | scripts/governance/_shared/encoding.py | prototype | generated |
-| 49 | scripts/governance/_shared/file_utils.py | scripts/governance/_shared/file_utils.py | prototype | generated |
-| 50 | scripts/governance/_shared/frontmatter.py | scripts/governance/_shared/frontmatte... | production | generated |
-| 51 | scripts/governance/_shared/libcst_docstring_adder.py | scripts/governance/_shared/libcst_doc... | prototype | generated |
-| 52 | scripts/governance/_shared/plugin_contract_schema.yaml | scripts/governance/_shared/plugin_con... | production | generated |
-| 53 | scripts/governance/_shared/registry_entry_count.py | scripts/governance/_shared/registry_e... | prototype | generated |
-| 54 | scripts/governance/_shared/thresholds.py | scripts/governance/_shared/thresholds.py | prototype | generated |
-| 55 | scripts/governance/_shared/thresholds.yaml | scripts/governance/_shared/thresholds... | production | generated |
-| 56 | scripts/governance/_shared/walk.py | scripts/governance/_shared/walk.py | prototype | generated |
-| 57 | scripts/governance/_shared/yaml_utils.py | scripts/governance/_shared/yaml_utils.py | prototype | generated |
-| 58 | scripts/governance/_sync/check_p0_status.py | scripts/governance/_sync/check_p0_sta... | prototype | generated |
-| 59 | scripts/governance/_sync/cleanup_p0_auto_bridged.py | scripts/governance/_sync/cleanup_p0_a... | prototype | generated |
-| 60 | scripts/governance/_sync/cleanup_p0_ops_pending.py | scripts/governance/_sync/cleanup_p0_o... | prototype | generated |
-| 61 | scripts/governance/_sync/fix_orphan_deps.py | scripts/governance/_sync/fix_orphan_d... | prototype | generated |
-| 62 | scripts/governance/_tasks/__init__.py | scripts/governance/_tasks/__init__.py | prototype | generated |
-| 63 | scripts/governance/_tasks/list_phase0_tasks.py | scripts/governance/_tasks/list_phase0... | prototype | generated |
-| 64 | scripts/governance/_tasks/task_show.py | scripts/governance/_tasks/task_show.py | prototype | generated |
-| 65 | scripts/governance/_tasks/task_summary.py | scripts/governance/_tasks/task_summar... | prototype | generated |
-| 66 | scripts/governance/apply_dataflowgraph.py | scripts/governance/apply_dataflowgrap... | prototype | generated |
-| 67 | scripts/governance/apply_decisiongraph.py | scripts/governance/apply_decisiongrap... | prototype | generated |
-| 68 | scripts/governance/apply_depgraph.py | scripts/governance/apply_depgraph.py | prototype | generated |
-| 69 | scripts/governance/architecture_health_dashboard.py | scripts/governance/architecture_healt... | prototype | generated |
-| 70 | scripts/governance/ast_import_rewriter.py | scripts/governance/ast_import_rewrite... | prototype | generated |
-| 71 | scripts/governance/d10_performance/__init__.py | scripts/governance/d10_performance/__... | prototype | generated |
-| 72 | scripts/governance/d10_performance/collect_system_threads.py | scripts/governance/d10_performance/co... | prototype | generated |
-| 73 | scripts/governance/d11_compliance/__init__.py | scripts/governance/d11_compliance/__i... | prototype | generated |
-| 74 | scripts/governance/d11_compliance/audit_registration.py | scripts/governance/d11_compliance/aud... | prototype | generated |
-| 75 | scripts/governance/d11_compliance/check_ssot_gate.py | scripts/governance/d11_compliance/che... | prototype | generated |
-| 76 | scripts/governance/d11_compliance/check_test_structure.py | scripts/governance/d11_compliance/che... | prototype | generated |
-| 77 | scripts/governance/d11_compliance/ci_self_check.py | scripts/governance/d11_compliance/ci_... | prototype | generated |
-| 78 | scripts/governance/d11_compliance/fix_shared_bypass.py | scripts/governance/d11_compliance/fix... | prototype | generated |
-| 79 | scripts/governance/d11_compliance/g9_compliance_check.py | scripts/governance/d11_compliance/g9_... | prototype | generated |
-| 80 | scripts/governance/d11_compliance/task_self_check.py | scripts/governance/d11_compliance/tas... | prototype | generated |
-| 81 | scripts/governance/d11_compliance/validate_blueprint_over... | scripts/governance/d11_compliance/val... | production | generated |
-| 82 | scripts/governance/d11_compliance/validate_commit_gateway.py | scripts/governance/d11_compliance/val... | prototype | generated |
-| 83 | scripts/governance/d11_compliance/validate_commit_message.py | scripts/governance/d11_compliance/val... | prototype | generated |
-| 84 | scripts/governance/d11_compliance/validate_exit_codes.py | scripts/governance/d11_compliance/val... | prototype | generated |
-| 85 | scripts/governance/d11_compliance/validate_frozen_require... | scripts/governance/d11_compliance/val... | prototype | generated |
-| 86 | scripts/governance/d11_compliance/validate_manifest_admis... | scripts/governance/d11_compliance/val... | prototype | generated |
-| 87 | scripts/governance/d11_compliance/validate_no_utf8_bom.py | scripts/governance/d11_compliance/val... | prototype | generated |
-| 88 | scripts/governance/d11_compliance/validate_script_naming.py | scripts/governance/d11_compliance/val... | prototype | generated |
-| 89 | scripts/governance/d11_compliance/validate_script_quality.py | scripts/governance/d11_compliance/val... | prototype | generated |
-| 90 | scripts/governance/d11_compliance/validate_task_decomposi... | scripts/governance/d11_compliance/val... | prototype | generated |
-| 91 | scripts/governance/d11_compliance/validate_truth_source_c... | scripts/governance/d11_compliance/val... | production | generated |
-| 92 | scripts/governance/d11_compliance/validate_vocabulary_cov... | scripts/governance/d11_compliance/val... | prototype | generated |
-| 93 | scripts/governance/d11_compliance/verify_audit_integrity.py | scripts/governance/d11_compliance/ver... | prototype | generated |
-| 94 | scripts/governance/d11_compliance/verify_key_imports.py | scripts/governance/d11_compliance/ver... | prototype | generated |
-| 95 | scripts/governance/d11_compliance/verify_schema_health.py | scripts/governance/d11_compliance/ver... | prototype | generated |
-| 96 | scripts/governance/d12_ai_hallucination/__init__.py | scripts/governance/d12_ai_hallucinati... | prototype | generated |
-| 97 | scripts/governance/d12_ai_hallucination/check_logger_kwar... | scripts/governance/d12_ai_hallucinati... | prototype | generated |
-| 98 | scripts/governance/d12_ai_hallucination/validate_gate_pro... | scripts/governance/d12_ai_hallucinati... | prototype | generated |
-| 99 | scripts/governance/d12_ai_hallucination/validate_session_... | scripts/governance/d12_ai_hallucinati... | prototype | generated |
-| 100 | scripts/governance/d12_ai_hallucination/validate_session_... | scripts/governance/d12_ai_hallucinati... | prototype | generated |
-| 101 | scripts/governance/d1_structure/__init__.py | scripts/governance/d1_structure/__ini... | prototype | generated |
-| 102 | scripts/governance/d1_structure/archive_drafts_zone.py | scripts/governance/d1_structure/archi... | production | generated |
-| 103 | scripts/governance/d1_structure/audit_config_format.py | scripts/governance/d1_structure/audit... | prototype | generated |
-| 104 | scripts/governance/d1_structure/audit_directory_integrity.py | scripts/governance/d1_structure/audit... | prototype | generated |
-| 105 | scripts/governance/d1_structure/audit_directory_scalabili... | scripts/governance/d1_structure/audit... | prototype | generated |
-| 106 | scripts/governance/d1_structure/audit_findings_by_scope.py | scripts/governance/d1_structure/audit... | prototype | generated |
-| 107 | scripts/governance/d1_structure/batch_create_index_md.py | scripts/governance/d1_structure/batch... | prototype | generated |
-| 108 | scripts/governance/d1_structure/cbg_reset.py | scripts/governance/d1_structure/cbg_r... | prototype | generated |
-| 109 | scripts/governance/d1_structure/check_directory_contract.py | scripts/governance/d1_structure/check... | prototype | generated |
-| 110 | scripts/governance/d1_structure/check_handoff_manifests.py | scripts/governance/d1_structure/check... | prototype | generated |
-| 111 | scripts/governance/d1_structure/check_index_integrity.py | scripts/governance/d1_structure/check... | prototype | generated |
-| 112 | scripts/governance/d1_structure/cleanup_stash.py | scripts/governance/d1_structure/clean... | prototype | generated |
-| 113 | scripts/governance/d1_structure/detect_orphan_py.py | scripts/governance/d1_structure/detec... | prototype | generated |
-| 114 | scripts/governance/d1_structure/detect_residual_files.py | scripts/governance/d1_structure/detec... | prototype | generated |
-| 115 | scripts/governance/d1_structure/detect_temp_files.py | scripts/governance/d1_structure/detec... | prototype | generated |
-| 116 | scripts/governance/d1_structure/drafts_zone_archiver.py | scripts/governance/d1_structure/draft... | prototype | generated |
-| 117 | scripts/governance/d1_structure/generate_missing_index_md.py | scripts/governance/d1_structure/gener... | prototype | generated |
-| 118 | scripts/governance/d1_structure/reset_cbg.py | scripts/governance/d1_structure/reset... | prototype | generated |
-| 119 | scripts/governance/d1_structure/run_script_smoke_test.py | scripts/governance/d1_structure/run_s... | prototype | generated |
-| 120 | scripts/governance/d1_structure/sync_index_from_manifest.py | scripts/governance/d1_structure/sync_... | prototype | generated |
-| 121 | scripts/governance/d1_structure/sync_policies_index.py | scripts/governance/d1_structure/sync_... | prototype | generated |
-| 122 | scripts/governance/d1_structure/validate_config_integrity.py | scripts/governance/d1_structure/valid... | prototype | generated |
-| 123 | scripts/governance/d1_structure/validate_d1_output_sanity.py | scripts/governance/d1_structure/valid... | prototype | generated |
-| 124 | scripts/governance/d1_structure/validate_immutable_core.py | scripts/governance/d1_structure/valid... | prototype | generated |
-| 125 | scripts/governance/d1_structure/validate_index_reality.py | scripts/governance/d1_structure/valid... | prototype | generated |
-| 126 | scripts/governance/d1_structure/validate_read_before_writ... | scripts/governance/d1_structure/valid... | prototype | generated |
-| 127 | scripts/governance/d2_links/__init__.py | scripts/governance/d2_links/__init__.py | prototype | generated |
-| 128 | scripts/governance/d2_links/audit_broken_links.py | scripts/governance/d2_links/audit_bro... | prototype | generated |
-| 129 | scripts/governance/d2_links/detect_relative_references.py | scripts/governance/d2_links/detect_re... | prototype | generated |
-| 130 | scripts/governance/d3_metadata/__init__.py | scripts/governance/d3_metadata/__init... | prototype | generated |
-| 131 | scripts/governance/d3_metadata/auto_generate_index.py | scripts/governance/d3_metadata/auto_g... | prototype | generated |
-| 132 | scripts/governance/d3_metadata/backfill_doctype_metadata.py | scripts/governance/d3_metadata/backfi... | prototype | generated |
-| 133 | scripts/governance/d3_metadata/backfill_ttl_metadata.py | scripts/governance/d3_metadata/backfi... | prototype | generated |
-| 134 | scripts/governance/d3_metadata/check_blueprint_compliance.py | scripts/governance/d3_metadata/check_... | prototype | generated |
-| 135 | scripts/governance/d3_metadata/check_frontmatter_metadata.py | scripts/governance/d3_metadata/check_... | production | generated |
-| 136 | scripts/governance/d3_metadata/check_module_singlesource.py | scripts/governance/d3_metadata/check_... | prototype | generated |
-| 137 | scripts/governance/d3_metadata/check_naming_convention.py | scripts/governance/d3_metadata/check_... | prototype | generated |
-| 138 | scripts/governance/d3_metadata/check_registry_consistency.py | scripts/governance/d3_metadata/check_... | prototype | generated |
-| 139 | scripts/governance/d3_metadata/check_schema_version_write... | scripts/governance/d3_metadata/check_... | prototype | generated |
-| 140 | scripts/governance/d3_metadata/check_vocab_hardcode.py | scripts/governance/d3_metadata/check_... | prototype | generated |
-| 141 | scripts/governance/d3_metadata/classify_ttl_by_content.py | scripts/governance/d3_metadata/classi... | prototype | generated |
-| 142 | scripts/governance/d3_metadata/deep_content_scanner.py | scripts/governance/d3_metadata/deep_c... | prototype | generated |
-| 143 | scripts/governance/d3_metadata/generate_derived_files.py | scripts/governance/d3_metadata/genera... | prototype | generated |
-| 144 | scripts/governance/d3_metadata/generate_rule_catalog.py | scripts/governance/d3_metadata/genera... | prototype | generated |
-| 145 | scripts/governance/d3_metadata/migrate_illegal_doctype.py | scripts/governance/d3_metadata/migrat... | prototype | generated |
-| 146 | scripts/governance/d3_metadata/validate_architecture.py | scripts/governance/d3_metadata/valida... | prototype | generated |
-| 147 | scripts/governance/d3_metadata/validate_blueprint_provena... | scripts/governance/d3_metadata/valida... | prototype | generated |
-| 148 | scripts/governance/d3_metadata/validate_module_id.py | scripts/governance/d3_metadata/valida... | prototype | generated |
-| 149 | scripts/governance/d3_metadata/validate_module_id_naming.py | scripts/governance/d3_metadata/valida... | prototype | generated |
-| 150 | scripts/governance/d3_metadata/validate_registry_master_i... | scripts/governance/d3_metadata/valida... | prototype | generated |
-| 151 | scripts/governance/d3_metadata/validate_rule_frontmatter.py | scripts/governance/d3_metadata/valida... | prototype | generated |
-| 152 | scripts/governance/d3_metadata/validate_tool_contracts_co... | scripts/governance/d3_metadata/valida... | prototype | generated |
-| 153 | scripts/governance/d4_paths/__init__.py | scripts/governance/d4_paths/__init__.py | prototype | generated |
-| 154 | scripts/governance/d4_paths/detect_deprecated_path_writes.py | scripts/governance/d4_paths/detect_de... | prototype | generated |
-| 155 | scripts/governance/d4_paths/detect_excessive_file_moves.py | scripts/governance/d4_paths/detect_ex... | prototype | generated |
-| 156 | scripts/governance/d4_paths/detect_ruins_references.py | scripts/governance/d4_paths/detect_ru... | prototype | generated |
-| 157 | scripts/governance/d4_paths/detect_split_delete_ref_commi... | scripts/governance/d4_paths/detect_sp... | prototype | generated |
-| 158 | scripts/governance/d5_architecture/__init__.py | scripts/governance/d5_architecture/__... | prototype | generated |
-| 159 | scripts/governance/d5_architecture/analyzers/__init__.py | scripts/governance/d5_architecture/an... | prototype | generated |
-| 160 | scripts/governance/d5_architecture/analyzers/analyze_cont... | scripts/governance/d5_architecture/an... | prototype | generated |
-| 161 | scripts/governance/d5_architecture/analyzers/audit_depend... | scripts/governance/d5_architecture/an... | prototype | generated |
-| 162 | scripts/governance/d5_architecture/analyzers/measure_depr... | scripts/governance/d5_architecture/an... | prototype | generated |
-| 163 | scripts/governance/d5_architecture/audit_agent_spec.py | scripts/governance/d5_architecture/au... | prototype | generated |
-| 164 | scripts/governance/d5_architecture/check_budget_health.py | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 165 | scripts/governance/d5_architecture/check_drift_e2e.py | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 166 | scripts/governance/d5_architecture/checkers/__init__.py | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 167 | scripts/governance/d5_architecture/checkers/check_archite... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 168 | scripts/governance/d5_architecture/checkers/check_bluepri... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 169 | scripts/governance/d5_architecture/checkers/check_bluepri... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 170 | scripts/governance/d5_architecture/checkers/check_bluepri... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 171 | scripts/governance/d5_architecture/checkers/check_code_du... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 172 | scripts/governance/d5_architecture/checkers/check_contrac... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 173 | scripts/governance/d5_architecture/checkers/check_contrac... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 174 | scripts/governance/d5_architecture/checkers/check_depende... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 175 | scripts/governance/d5_architecture/checkers/check_g6_ctr_... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 176 | scripts/governance/d5_architecture/checkers/check_orphan_... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 177 | scripts/governance/d5_architecture/checkers/check_precomm... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 178 | scripts/governance/d5_architecture/checkers/check_rule_fo... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 179 | scripts/governance/d5_architecture/checkers/check_src_no_... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 180 | scripts/governance/d5_architecture/checkers/check_ssot_un... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 181 | scripts/governance/d5_architecture/checkers/check_trace_c... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 182 | scripts/governance/d5_architecture/checkers/check_vms_sso... | scripts/governance/d5_architecture/ch... | prototype | generated |
-| 183 | scripts/governance/d5_architecture/dependency_graph.py | scripts/governance/d5_architecture/de... | production | generated |
-| 184 | scripts/governance/d5_architecture/detectors/__init__.py | scripts/governance/d5_architecture/de... | prototype | generated |
-| 185 | scripts/governance/d5_architecture/detectors/analyze_same... | scripts/governance/d5_architecture/de... | prototype | generated |
-| 186 | scripts/governance/d5_architecture/detectors/detect_depen... | scripts/governance/d5_architecture/de... | prototype | generated |
-| 187 | scripts/governance/d5_architecture/detectors/detect_depre... | scripts/governance/d5_architecture/de... | prototype | generated |
-| 188 | scripts/governance/d5_architecture/detectors/detect_dupli... | scripts/governance/d5_architecture/de... | prototype | generated |
-| 189 | scripts/governance/d5_architecture/diagnose_depgraph.py | scripts/governance/d5_architecture/di... | prototype | generated |
-| 190 | scripts/governance/d5_architecture/dm200912_query_domains.py | scripts/governance/d5_architecture/dm... | prototype | generated |
-| 191 | scripts/governance/d5_architecture/dm200916_write_direct.py | scripts/governance/d5_architecture/dm... | prototype | generated |
-| 192 | scripts/governance/d5_architecture/generators/__init__.py | scripts/governance/d5_architecture/ge... | prototype | generated |
-| 193 | scripts/governance/d5_architecture/generators/domain_name... | scripts/governance/d5_architecture/ge... | prototype | generated |
-| 194 | scripts/governance/d5_architecture/generators/generate_ca... | scripts/governance/d5_architecture/ge... | prototype | generated |
-| 195 | scripts/governance/d5_architecture/generators/generate_ca... | scripts/governance/d5_architecture/ge... | prototype | generated |
-| 196 | scripts/governance/d5_architecture/generators/generate_co... | scripts/governance/d5_architecture/ge... | prototype | generated |
-| 197 | scripts/governance/d5_architecture/generators/generate_co... | scripts/governance/d5_architecture/ge... | prototype | generated |
-| 198 | scripts/governance/d5_architecture/generators/generate_cr... | scripts/governance/d5_architecture/ge... | prototype | generated |
-| 199 | scripts/governance/d5_architecture/generators/generate_de... | scripts/governance/d5_architecture/ge... | prototype | generated |
-| 200 | scripts/governance/d5_architecture/generators/generate_de... | scripts/governance/d5_architecture/ge... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | scripts/governance/__init__.py | scripts/governance/__init__.py |  | production | generated |
+| 2 | scripts/governance/_archive/one_off/analyze_orphan_consum... | scripts/governance/_archive/one_off/a... |  | prototype | generated |
+| 3 | scripts/governance/_archive/one_off/audit_post_sync_comma... | scripts/governance/_archive/one_off/a... | audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL... | prototype | generated |
+| 4 | scripts/governance/_archive/one_off/audit_session_07.py | scripts/governance/_archive/one_off/a... | 对话#07 全量产出审计脚本。 | prototype | generated |
+| 5 | scripts/governance/_archive/one_off/check_exam_case_consi... | scripts/governance/_archive/one_off/c... | 考试题库一致性检查——根因治本，防止"定义-注册脱钩"复发。 | prototype | generated |
+| 6 | scripts/governance/_archive/one_off/check_rule_coverage.py | scripts/governance/_archive/one_off/c... | governance/check_rule_coverage 脚本 — 规则文件漂移检测 | prototype | generated |
+| 7 | scripts/governance/_archive/one_off/create_alignment_task... | scripts/governance/_archive/one_off/c... | # [BLUEPRINT] MOD-INF-005 | scripts/governance/create_alignment_tasks.py | §7 | prototype | generated |
+| 8 | scripts/governance/_archive/one_off/dm105_depgraph_triage.py | scripts/governance/_archive/one_off/d... | DM-105: depgraph 未分配节点三策略处理脚本 | prototype | generated |
+| 9 | scripts/governance/_archive/one_off/fix_broken_post_sync.py | scripts/governance/_archive/one_off/f... | fix_broken_post_sync.py — 批量修复历史 broken post_sync_standard 命令 | prototype | generated |
+| 10 | scripts/governance/_archive/one_off/group_orphan_modules.py | scripts/governance/_archive/one_off/g... | 按域分组统计 ORPHAN MODULES — 用于建任务卡批量处理。 | prototype | generated |
+| 11 | scripts/governance/_archive/one_off/list_phase0_tasks.py | scripts/governance/_archive/one_off/l... | [INVARIANTS] 仅查询不修改; 连接失败→exit 1 | prototype | generated |
+| 12 | scripts/governance/_archive/one_off/migrate_clean_build_s... | scripts/governance/_archive/one_off/m... | OPS-2026062504: 数据清洗 depgraph (PostgreSQL) 历史脏值 | prototype | generated |
+| 13 | scripts/governance/_archive/one_off/migrate_domain_id_hyp... | scripts/governance/_archive/one_off/m... | 域ID连字符→下划线迁移脚本（分层分批执行） | prototype | generated |
+| 14 | scripts/governance/_archive/one_off/perf_depgraph_baselin... | scripts/governance/_archive/one_off/p... | [INVARIANTS] 只读访问 depgraph（mode=ro）；禁止任何写操作；测试结果可重复 | prototype | generated |
+| 15 | scripts/governance/_archive/one_off/phase_a_backup.py | scripts/governance/_archive/one_off/p... | phase_a_backup.py — 阶段A安全网 Tier0/Tier1 关键文件备份 | prototype | generated |
+| 16 | scripts/governance/_archive/one_off/rename_kebab_to_snake.py | scripts/governance/_archive/one_off/r... | rename_kebab_to_snake.py — 全项目文件名/目录名 kebab-case → snake_case 批量... | prototype | generated |
+| 17 | scripts/governance/_archive/one_off/rename_whitelist_clea... | scripts/governance/_archive/one_off/r... | 命名规范白名单清理 - 全文替换脚本。 | prototype | generated |
+| 18 | scripts/governance/_archive/one_off/test_lock_scenarios.py | scripts/governance/_archive/one_off/t... | test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证 | prototype | generated |
+| 19 | scripts/governance/_archive/one_off/verify_final_delivery.py | scripts/governance/_archive/one_off/v... | [INVARIANTS] 设计态节点数>=1128; 规则表各表>0 | prototype | generated |
+| 20 | scripts/governance/_archive/one_off/verify_rule_yaml_migr... | scripts/governance/_archive/one_off/v... | verify_rule_yaml_migration.py - 6-dimensional verification of rule YAML migra... | prototype | generated |
+| 21 | scripts/governance/_archive/prototype/adversarial_log.py | scripts/governance/_archive/prototype... | 红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪 | prototype | generated |
+| 22 | scripts/governance/_archive/prototype/adversarial_sys_mas... | scripts/governance/_archive/prototype... | Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte... | prototype | generated |
+| 23 | scripts/governance/_archive/prototype/audit_domain_nodes.py | scripts/governance/_archive/prototype... | SRC-100200: Audit 13 over-capacity domains granularity distribution. | prototype | generated |
+| 24 | scripts/governance/_archive/prototype/changelog.py | scripts/governance/_archive/prototype... | changelog.py — 治理域变更日志生成/追加工具. | prototype | generated |
+| 25 | scripts/governance/_archive/prototype/check_audit_rbac_is... | scripts/governance/_archive/prototype... | check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import agent-rbac. | prototype | generated |
+| 26 | scripts/governance/_archive/prototype/construction_gate.py | scripts/governance/_archive/prototype... | Construction Gate — 施工前路径校验门禁 | prototype | generated |
+| 27 | scripts/governance/_archive/prototype/generate_asset_inde... | scripts/governance/_archive/prototype... | 全项目资产索引生成器 | prototype | generated |
+| 28 | scripts/governance/_archive/prototype/generate_nav_table.py | scripts/governance/_archive/prototype... | generate_nav_table.py — 全流程导航表自动生成器 v1.0.0 | prototype | generated |
+| 29 | scripts/governance/_archive/prototype/rebuild_audit_index.py | scripts/governance/_archive/prototype... | scripts/governance/rebuild_audit_index.py — 重建 audit-trail SQLite 派生索引 | prototype | generated |
+| 30 | scripts/governance/_archive/prototype/scan_ground_truth_d... | scripts/governance/_archive/prototype... | # [BLUEPRINT] MOD-INF-005 | scripts/governance/scan_ground_truth_deps.py | §7 | prototype | generated |
+| 31 | scripts/governance/_archive/prototype/session_simulator.py | scripts/governance/_archive/prototype... | session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器 | prototype | generated |
+| 32 | scripts/governance/_archive/prototype/sync_blueprint_stat... | scripts/governance/_archive/prototype... | 机械强制：construction_plan=phase_2_complete → blueprint.status=Active. | prototype | generated |
+| 33 | scripts/governance/_archive/vms_ri/ri_boundary_check.py | scripts/governance/_archive/vms_ri/ri... | Runtime Integration 边界验证脚本 — MOD-INF-002 | prototype | generated |
+| 34 | scripts/governance/_archive/vms_ri/ri_build_completion_ch... | scripts/governance/_archive/vms_ri/ri... | Runtime Integration Phase 2 完工验证 — MOD-INF-002 | prototype | generated |
+| 35 | scripts/governance/_archive/vms_ri/vms_blindspot_check.py | scripts/governance/_archive/vms_ri/vm... | VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6) | prototype | generated |
+| 36 | scripts/governance/_archive/vms_ri/vms_build_completion_c... | scripts/governance/_archive/vms_ri/vm... | VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217 | prototype | generated |
+| 37 | scripts/governance/_archive/vms_ri/vms_cron_monitor.py | scripts/governance/_archive/vms_ri/vm... | VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224 | prototype | generated |
+| 38 | scripts/governance/_archive/vms_ri/vms_cross_file_check.py | scripts/governance/_archive/vms_ri/vm... | VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211 | prototype | generated |
+| 39 | scripts/governance/_archive/vms_ri/vms_health_check.py | scripts/governance/_archive/vms_ri/vm... | VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化 | prototype | generated |
+| 40 | scripts/governance/_archive/vms_ri/vms_migrate.py | scripts/governance/_archive/vms_ri/vm... | VMS Phase 2 数据迁移脚本 — MOD-INF-011 | prototype | generated |
+| 41 | scripts/governance/_archive/vms_ri/vms_migration_dry_run.py | scripts/governance/_archive/vms_ri/vm... | VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查 | prototype | generated |
+| 42 | scripts/governance/_archive/vms_ri/vms_phase_rollback.py | scripts/governance/_archive/vms_ri/vm... | VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0217 | prototype | generated |
+| 43 | scripts/governance/_archive/vms_ri/vms_version_sync_check.py | scripts/governance/_archive/vms_ri/vm... | VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0222 | prototype | generated |
+| 44 | scripts/governance/_shared/__init__.py | scripts/governance/_shared/__init__.py |  | prototype | generated |
+| 45 | scripts/governance/_shared/base.py | scripts/governance/_shared/base.py | base.py — 审计脚本基类 | prototype | generated |
+| 46 | scripts/governance/_shared/constants.py | scripts/governance/_shared/constants.py | constants.py — 审计脚本共享常量 | production | generated |
+| 47 | scripts/governance/_shared/deprecated_paths.yaml | scripts/governance/_shared/deprecated... |  | production | generated |
+| 48 | scripts/governance/_shared/encoding.py | scripts/governance/_shared/encoding.py | encoding.py — UTF-8 编码安全工具 | prototype | generated |
+| 49 | scripts/governance/_shared/file_utils.py | scripts/governance/_shared/file_utils.py | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1） | prototype | generated |
+| 50 | scripts/governance/_shared/frontmatter.py | scripts/governance/_shared/frontmatte... | 文件头部格式解析 SSoT（Single Source of Truth） | production | generated |
+| 51 | scripts/governance/_shared/libcst_docstring_adder.py | scripts/governance/_shared/libcst_doc... | libcst_docstring_adder.py — Lossless docstring addition using LibCST. | prototype | generated |
+| 52 | scripts/governance/_shared/plugin_contract_schema.yaml | scripts/governance/_shared/plugin_con... |  | production | generated |
+| 53 | scripts/governance/_shared/registry_entry_count.py | scripts/governance/_shared/registry_e... | 登记表主条目计数——与 generate_registry_master_index 单一真源对齐。 | prototype | generated |
+| 54 | scripts/governance/_shared/thresholds.py | scripts/governance/_shared/thresholds.py | thresholds.py — 阈值集中配置加载器 | prototype | generated |
+| 55 | scripts/governance/_shared/thresholds.yaml | scripts/governance/_shared/thresholds... |  | production | generated |
+| 56 | scripts/governance/_shared/walk.py | scripts/governance/_shared/walk.py | walk.py — 目录遍历共享工具 | prototype | generated |
+| 57 | scripts/governance/_shared/yaml_utils.py | scripts/governance/_shared/yaml_utils.py | _shared/yaml_utils.py — YAML 文件加载共享工具 | prototype | generated |
+| 58 | scripts/governance/_sync/check_p0_status.py | scripts/governance/_sync/check_p0_sta... |  | prototype | generated |
+| 59 | scripts/governance/_sync/cleanup_p0_auto_bridged.py | scripts/governance/_sync/cleanup_p0_a... | 清理历史 P0 自动桥接任务 | prototype | generated |
+| 60 | scripts/governance/_sync/cleanup_p0_ops_pending.py | scripts/governance/_sync/cleanup_p0_o... | cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成 | prototype | generated |
+| 61 | scripts/governance/_sync/fix_orphan_deps.py | scripts/governance/_sync/fix_orphan_d... | fix_orphan_deps.py — 一次性修复孤儿依赖引用 | prototype | generated |
+| 62 | scripts/governance/_tasks/__init__.py | scripts/governance/_tasks/__init__.py |  | prototype | generated |
+| 63 | scripts/governance/_tasks/list_phase0_tasks.py | scripts/governance/_tasks/list_phase0... | [INVARIANTS] 仅查询不修改; 连接失败→exit 1 | prototype | generated |
+| 64 | scripts/governance/_tasks/task_show.py | scripts/governance/_tasks/task_show.py | governance/task_show 脚本 — 任务卡详情查询 CLI。 | prototype | generated |
+| 65 | scripts/governance/_tasks/task_summary.py | scripts/governance/_tasks/task_summar... | task_summary.py — 任务系统全局摘要 CLI | prototype | generated |
+| 66 | scripts/governance/apply_dataflowgraph.py | scripts/governance/apply_dataflowgrap... | apply_dataflowgraph.py — dataflowgraph 变更写入工具（CLI） | prototype | generated |
+| 67 | scripts/governance/apply_decisiongraph.py | scripts/governance/apply_decisiongrap... | [INVARIANTS] pg_advisory_lock 写锁; build_status 单调推进; DEC-INV-001~005 校... | prototype | generated |
+| 68 | scripts/governance/apply_depgraph.py | scripts/governance/apply_depgraph.py | [INVARIANTS] 原子写入（RULE-ONE）；变更前验证；禁止直接覆盖 | prototype | generated |
+| 69 | scripts/governance/architecture_health_dashboard.py | scripts/governance/architecture_healt... | architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线） | prototype | generated |
+| 70 | scripts/governance/ast_import_rewriter.py | scripts/governance/ast_import_rewrite... | AST-based import rewriter for governance directory migration. | prototype | generated |
+| 71 | scripts/governance/d10_performance/__init__.py | scripts/governance/d10_performance/__... |  | prototype | generated |
+| 72 | scripts/governance/d10_performance/collect_system_threads.py | scripts/governance/d10_performance/co... | collect_system_threads.py — 全系统线程数快照采集器 | prototype | generated |
+| 73 | scripts/governance/d11_compliance/__init__.py | scripts/governance/d11_compliance/__i... |  | prototype | generated |
+| 74 | scripts/governance/d11_compliance/audit_registration.py | scripts/governance/d11_compliance/aud... | audit_registration.py — 孤儿注册检测（RULE-TWO 防线 2） | prototype | generated |
+| 75 | scripts/governance/d11_compliance/check_ssot_gate.py | scripts/governance/d11_compliance/che... | GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。 | prototype | generated |
+| 76 | scripts/governance/d11_compliance/check_test_structure.py | scripts/governance/d11_compliance/che... | 测试结构合规门禁——检查 test_*.py 文件结构，防止"脚本伪装测试"和模块级副作用。 | prototype | generated |
+| 77 | scripts/governance/d11_compliance/ci_self_check.py | scripts/governance/d11_compliance/ci_... | CI Entry: Self-Check — Drift Detector 自身完整性验证 | prototype | generated |
+| 78 | scripts/governance/d11_compliance/fix_shared_bypass.py | scripts/governance/d11_compliance/fix... | fix_shared_bypass.py - D-D-07 auto-fix tool (validate_script_quality.py --fix... | prototype | generated |
+| 79 | scripts/governance/d11_compliance/g9_compliance_check.py | scripts/governance/d11_compliance/g9_... | G9 四蓝图跨模块集成合规门禁执行器. | prototype | generated |
+| 80 | scripts/governance/d11_compliance/task_self_check.py | scripts/governance/d11_compliance/tas... | task_self_check.py — 任务系统自身健康检查 | prototype | generated |
+| 81 | scripts/governance/d11_compliance/validate_blueprint_over... | scripts/governance/d11_compliance/val... |  | production | generated |
+| 82 | scripts/governance/d11_compliance/validate_commit_gateway.py | scripts/governance/d11_compliance/val... | validate_commit_gateway.py — GATE-COMMIT-GW 门禁（OPS-2026062513） | prototype | generated |
+| 83 | scripts/governance/d11_compliance/validate_commit_message.py | scripts/governance/d11_compliance/val... | validate_commit_message.py — Conventional Commits 校验（commit-msg hook）+ A... | prototype | generated |
+| 84 | scripts/governance/d11_compliance/validate_exit_codes.py | scripts/governance/d11_compliance/val... | validate_exit_codes.py — 审计脚本退出码规范门禁 | prototype | generated |
+| 85 | scripts/governance/d11_compliance/validate_frozen_require... | scripts/governance/d11_compliance/val... | validate_frozen_requirements.py — 依赖版本锁定与验证（蓝图 §34.2） | prototype | generated |
+| 86 | scripts/governance/d11_compliance/validate_manifest_admis... | scripts/governance/d11_compliance/val... | Module docstring — see module-level docstring for details. | prototype | generated |
+| 87 | scripts/governance/d11_compliance/validate_no_utf8_bom.py | scripts/governance/d11_compliance/val... | validate_no_utf8_bom.py — UTF-8 BOM 检测门禁 | prototype | generated |
+| 88 | scripts/governance/d11_compliance/validate_script_naming.py | scripts/governance/d11_compliance/val... | validate_script_naming.py — 审计脚本命名规范门禁 | prototype | generated |
+| 89 | scripts/governance/d11_compliance/validate_script_quality.py | scripts/governance/d11_compliance/val... | validate_script_quality.py — 治理脚本质量合规检查 | prototype | generated |
+| 90 | scripts/governance/d11_compliance/validate_task_decomposi... | scripts/governance/d11_compliance/val... | validate_task_decomposition_bypass.py — Task Decomposition Bypass 检测 | prototype | generated |
+| 91 | scripts/governance/d11_compliance/validate_truth_source_c... | scripts/governance/d11_compliance/val... |  | production | generated |
+| 92 | scripts/governance/d11_compliance/validate_vocabulary_cov... | scripts/governance/d11_compliance/val... | Module docstring — see module-level docstring for details. | prototype | generated |
+| 93 | scripts/governance/d11_compliance/verify_audit_integrity.py | scripts/governance/d11_compliance/ver... | verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器 | prototype | generated |
+| 94 | scripts/governance/d11_compliance/verify_key_imports.py | scripts/governance/d11_compliance/ver... | governance/verify_key_imports 脚本 — 关键模块导入验证 | prototype | generated |
+| 95 | scripts/governance/d11_compliance/verify_schema_health.py | scripts/governance/d11_compliance/ver... | verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁（#ARCH... | prototype | generated |
+| 96 | scripts/governance/d12_ai_hallucination/__init__.py | scripts/governance/d12_ai_hallucinati... | D12 AI 幻觉审计维度 | prototype | generated |
+| 97 | scripts/governance/d12_ai_hallucination/check_logger_kwar... | scripts/governance/d12_ai_hallucinati... | ======================================================== | prototype | generated |
+| 98 | scripts/governance/d12_ai_hallucination/validate_gate_pro... | scripts/governance/d12_ai_hallucinati... | validate_gate_prompt_conflict.py — Gate-Prompt 冲突检测 | prototype | generated |
+| 99 | scripts/governance/d12_ai_hallucination/validate_session_... | scripts/governance/d12_ai_hallucinati... | validate_session_budget.py — Session 操作预算校验（已废弃） | prototype | generated |
+| 100 | scripts/governance/d12_ai_hallucination/validate_session_... | scripts/governance/d12_ai_hallucinati... | validate_session_gate_check.py — Session 门禁检查完整性校验 | prototype | generated |
+| 101 | scripts/governance/d1_structure/__init__.py | scripts/governance/d1_structure/__ini... |  | prototype | generated |
+| 102 | scripts/governance/d1_structure/archive_drafts_zone.py | scripts/governance/d1_structure/archi... |  | production | generated |
+| 103 | scripts/governance/d1_structure/audit_config_format.py | scripts/governance/d1_structure/audit... | audit_config_format.py — config/ 目录格式/注释/边界快速扫描 | prototype | generated |
+| 104 | scripts/governance/d1_structure/audit_directory_integrity.py | scripts/governance/d1_structure/audit... | audit_directory_integrity.py — 01_policies_and_standards/ 目录结构完整性审计 | prototype | generated |
+| 105 | scripts/governance/d1_structure/audit_directory_scalabili... | scripts/governance/d1_structure/audit... | audit_directory_scalability.py -- 物理结构可扩展性审计 [1500模块支撑能力检查] | prototype | generated |
+| 106 | scripts/governance/d1_structure/audit_findings_by_scope.py | scripts/governance/d1_structure/audit... | audit_findings_by_scope.py — 按目录范围筛选 Finding 报告 | prototype | generated |
+| 107 | scripts/governance/d1_structure/batch_create_index_md.py | scripts/governance/d1_structure/batch... | Batch create index.md for all directories under docs/ that lack one. | prototype | generated |
+| 108 | scripts/governance/d1_structure/cbg_reset.py | scripts/governance/d1_structure/cbg_r... | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) | prototype | generated |
+| 109 | scripts/governance/d1_structure/check_directory_contract.py | scripts/governance/d1_structure/check... | GATE-DIRECTORY-CONTRACT: Directory Contract validation gate. | prototype | generated |
+| 110 | scripts/governance/d1_structure/check_handoff_manifests.py | scripts/governance/d1_structure/check... | check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验. | prototype | generated |
+| 111 | scripts/governance/d1_structure/check_index_integrity.py | scripts/governance/d1_structure/check... | check_index_integrity.py — 索引完整性校验 | prototype | generated |
+| 112 | scripts/governance/d1_structure/cleanup_stash.py | scripts/governance/d1_structure/clean... | cleanup_stash.py — git stash 堆积治理（OPS-2026062501 治本） | prototype | generated |
+| 113 | scripts/governance/d1_structure/detect_orphan_py.py | scripts/governance/d1_structure/detec... | detect_orphan_py.py — 项目根目录孤儿 .py 文件检测 | prototype | generated |
+| 114 | scripts/governance/d1_structure/detect_residual_files.py | scripts/governance/d1_structure/detec... | detect_residual_files.py — 残留物检测 | prototype | generated |
+| 115 | scripts/governance/d1_structure/detect_temp_files.py | scripts/governance/d1_structure/detec... |  | prototype | generated |
+| 116 | scripts/governance/d1_structure/drafts_zone_archiver.py | scripts/governance/d1_structure/draft... | 草稿区生命周期归档器 (Drafts Zone Lifecycle Archiver · V-16) | prototype | generated |
+| 117 | scripts/governance/d1_structure/generate_missing_index_md.py | scripts/governance/d1_structure/gener... | generate_missing_index_md.py — 扫描目录树，为缺失 index.md 的目录自动生成索... | prototype | generated |
+| 118 | scripts/governance/d1_structure/reset_cbg.py | scripts/governance/d1_structure/reset... | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) | prototype | generated |
+| 119 | scripts/governance/d1_structure/run_script_smoke_test.py | scripts/governance/d1_structure/run_s... | run_script_smoke_test.py — 治理脚本冒烟测试运行器 | prototype | generated |
+| 120 | scripts/governance/d1_structure/sync_index_from_manifest.py | scripts/governance/d1_structure/sync_... | sync_index_from_manifest.py — 从 script_manifest.yaml (SSoT) 自动同步 index.... | prototype | generated |
+| 121 | scripts/governance/d1_structure/sync_policies_index.py | scripts/governance/d1_structure/sync_... | sync_policies_index.py — 从磁盘实际扫描，自动同步 PS-IDX-001 §二 文件数量表格。 | prototype | generated |
+| 122 | scripts/governance/d1_structure/validate_config_integrity.py | scripts/governance/d1_structure/valid... | validate_config_integrity.py — 运行时配置完整性十一层纵深审计 + 自动同步检测 | prototype | generated |
+| 123 | scripts/governance/d1_structure/validate_d1_output_sanity.py | scripts/governance/d1_structure/valid... | validate_d1_output_sanity.py — D1 产出物合理性校验（蓝图 §31 B93） | prototype | generated |
+| 124 | scripts/governance/d1_structure/validate_immutable_core.py | scripts/governance/d1_structure/valid... | validate_immutable_core.py — immutable_core 文件修改检测 | prototype | generated |
+| 125 | scripts/governance/d1_structure/validate_index_reality.py | scripts/governance/d1_structure/valid... | Module docstring — see module-level docstring for details. | prototype | generated |
+| 126 | scripts/governance/d1_structure/validate_read_before_writ... | scripts/governance/d1_structure/valid... | validate_read_before_write.py — 先读后写校验（IRN-008） | prototype | generated |
+| 127 | scripts/governance/d2_links/__init__.py | scripts/governance/d2_links/__init__.py | D2 链接完整性 — 文档内/文档间交叉引用有效性审计。 | prototype | generated |
+| 128 | scripts/governance/d2_links/audit_broken_links.py | scripts/governance/d2_links/audit_bro... | 检测文档/数据文件中的断链与幽灵引用。 | prototype | generated |
+| 129 | scripts/governance/d2_links/detect_relative_references.py | scripts/governance/d2_links/detect_re... | detect_relative_references.py — 相对路径引用检测 | prototype | generated |
+| 130 | scripts/governance/d3_metadata/__init__.py | scripts/governance/d3_metadata/__init... | D3 元数据合规 — Markdown/YAML 文档元数据（frontmatter）合规性审计。 | prototype | generated |
+| 131 | scripts/governance/d3_metadata/auto_generate_index.py | scripts/governance/d3_metadata/auto_g... | GATE-INDEX: Validate and auto-fix index.md factual accuracy. | prototype | generated |
+| 132 | scripts/governance/d3_metadata/backfill_doctype_metadata.py | scripts/governance/d3_metadata/backfi... | 批量回填 frontmatter doc_type 字段（doc_type 存量治理 Stage 2.1） | prototype | generated |
+| 133 | scripts/governance/d3_metadata/backfill_ttl_metadata.py | scripts/governance/d3_metadata/backfi... | 批量回填/重判 ttl 字段（6 格式统一入口，GATE-15 存量治理 + GATE-VOCAB-CHANGE ... | prototype | generated |
+| 134 | scripts/governance/d3_metadata/check_blueprint_compliance.py | scripts/governance/d3_metadata/check_... | [INVARIANTS] REQUIRED_SECTIONS 必须与蓝图+施工图模板 v4.0 COMPLIANCE_CHECKLIS... | prototype | generated |
+| 135 | scripts/governance/d3_metadata/check_frontmatter_metadata.py | scripts/governance/d3_metadata/check_... | GATE-15: Frontmatter metadata validation（ttl + doc_type 字段校验） | production | generated |
+| 136 | scripts/governance/d3_metadata/check_module_singlesource.py | scripts/governance/d3_metadata/check_... | GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（Phase 7 治本防复发）。 | prototype | generated |
+| 137 | scripts/governance/d3_metadata/check_naming_convention.py | scripts/governance/d3_metadata/check_... | GATE-11 命名规范门禁 — 全类型命名检测。 | prototype | generated |
+| 138 | scripts/governance/d3_metadata/check_registry_consistency.py | scripts/governance/d3_metadata/check_... | check_registry_consistency — 跨登记表一致性校验。 | prototype | generated |
+| 139 | scripts/governance/d3_metadata/check_schema_version_write... | scripts/governance/d3_metadata/check_... | G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查。 | prototype | generated |
+| 140 | scripts/governance/d3_metadata/check_vocab_hardcode.py | scripts/governance/d3_metadata/check_... | GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2） | prototype | generated |
+| 141 | scripts/governance/d3_metadata/classify_ttl_by_content.py | scripts/governance/d3_metadata/classi... | 基于内容关键词的 ttl 精细分类审查脚本。 | prototype | generated |
+| 142 | scripts/governance/d3_metadata/deep_content_scanner.py | scripts/governance/d3_metadata/deep_c... | deep_content_scanner.py — 深度内容扫描器 | prototype | generated |
+| 143 | scripts/governance/d3_metadata/generate_derived_files.py | scripts/governance/d3_metadata/genera... | generate_derived_files.py — 枚举自动派生生成器（Level 3 终极防御） | prototype | generated |
+| 144 | scripts/governance/d3_metadata/generate_rule_catalog.py | scripts/governance/d3_metadata/genera... | Scan docs/01_policies_and_standards and emit _registry/catalogs/rule_catalog_... | prototype | generated |
+| 145 | scripts/governance/d3_metadata/migrate_illegal_doctype.py | scripts/governance/d3_metadata/migrat... | 批量迁移非法 doc_type 值（doc_type 存量治理 Stage 2.2） | prototype | generated |
+| 146 | scripts/governance/d3_metadata/validate_architecture.py | scripts/governance/d3_metadata/valida... | validate_architecture.py - Validate rule files against architecture_contract.... | prototype | generated |
+| 147 | scripts/governance/d3_metadata/validate_blueprint_provena... | scripts/governance/d3_metadata/valida... | Blueprint Provenance Gate - V-12: validate provenance triples in blueprint fr... | prototype | generated |
+| 148 | scripts/governance/d3_metadata/validate_module_id.py | scripts/governance/d3_metadata/valida... | GATE-MODULEID: Validate module_id uniqueness and index/file consistency. | prototype | generated |
+| 149 | scripts/governance/d3_metadata/validate_module_id_naming.py | scripts/governance/d3_metadata/valida... | module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 + R2 治本... | prototype | generated |
+| 150 | scripts/governance/d3_metadata/validate_registry_master_i... | scripts/governance/d3_metadata/valida... | 登记表总索引自校验门禁 (Registry Master Index Self-Check Gate · V-18). | prototype | generated |
+| 151 | scripts/governance/d3_metadata/validate_rule_frontmatter.py | scripts/governance/d3_metadata/valida... | GATE-RULE-FM: 校验所有 trae_XXX.yaml 的 frontmatter 7标准字段+顺序+枚举值合法... | prototype | generated |
+| 152 | scripts/governance/d3_metadata/validate_tool_contracts_co... | scripts/governance/d3_metadata/valida... | Tool Contract 一致性校验脚本（MOD-INF-013 §9 R3）。 | prototype | generated |
+| 153 | scripts/governance/d4_paths/__init__.py | scripts/governance/d4_paths/__init__.py | D4 路径有效性 — 文件系统中路径引用/落位合规性审计。 | prototype | generated |
+| 154 | scripts/governance/d4_paths/detect_deprecated_path_writes.py | scripts/governance/d4_paths/detect_de... | detect_deprecated_path_writes.py — 废弃路径写入检测 | prototype | generated |
+| 155 | scripts/governance/d4_paths/detect_excessive_file_moves.py | scripts/governance/d4_paths/detect_ex... | detect_excessive_file_moves.py — 文件过度搬迁检测 | prototype | generated |
+| 156 | scripts/governance/d4_paths/detect_ruins_references.py | scripts/governance/d4_paths/detect_ru... | detect_ruins_references.py — 残骸/废弃路径引用检测 | prototype | generated |
+| 157 | scripts/governance/d4_paths/detect_split_delete_ref_commi... | scripts/governance/d4_paths/detect_sp... | detect_split_delete_ref_commit.py — 删除引用分离提交检测 | prototype | generated |
+| 158 | scripts/governance/d5_architecture/__init__.py | scripts/governance/d5_architecture/__... |  | prototype | generated |
+| 159 | scripts/governance/d5_architecture/analyzers/__init__.py | scripts/governance/d5_architecture/an... |  | prototype | generated |
+| 160 | scripts/governance/d5_architecture/analyzers/analyze_cont... | scripts/governance/d5_architecture/an... | analyze_contract_impact.py — 契约变更影响分析器 | prototype | generated |
+| 161 | scripts/governance/d5_architecture/analyzers/audit_depend... | scripts/governance/d5_architecture/an... | audit_depends_on_chain_depth.py — depends_on 依赖链路深度审计 | prototype | generated |
+| 162 | scripts/governance/d5_architecture/analyzers/measure_depr... | scripts/governance/d5_architecture/an... | measure_deprecation_cascade.py — 废弃级联影响度量 | prototype | generated |
+| 163 | scripts/governance/d5_architecture/audit_agent_spec.py | scripts/governance/d5_architecture/au... | [INVARIANTS] agent-spec 审计完整性 | prototype | generated |
+| 164 | scripts/governance/d5_architecture/check_budget_health.py | scripts/governance/d5_architecture/ch... | [INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析 | prototype | generated |
+| 165 | scripts/governance/d5_architecture/check_drift_e2e.py | scripts/governance/d5_architecture/ch... | CI Entry: Drift Detector E2E Pipeline Check | prototype | generated |
+| 166 | scripts/governance/d5_architecture/checkers/__init__.py | scripts/governance/d5_architecture/ch... |  | prototype | generated |
+| 167 | scripts/governance/d5_architecture/checkers/check_archite... | scripts/governance/d5_architecture/ch... | v2.4.0 — 2026-05-03 | prototype | generated |
+| 168 | scripts/governance/d5_architecture/checkers/check_bluepri... | scripts/governance/d5_architecture/ch... | [INVARIANTS] 蓝图§5.5自动化触发机制状态列必须与代码实际实现一致; ⚠️待实现... | prototype | generated |
+| 169 | scripts/governance/d5_architecture/checkers/check_bluepri... | scripts/governance/d5_architecture/ch... | [INVARIANTS] 代码[BLUEPRINT]头部module_id必须与蓝图注册表一致; 蓝图§4已实现... | prototype | generated |
+| 170 | scripts/governance/d5_architecture/checkers/check_bluepri... | scripts/governance/d5_architecture/ch... | [INVARIANTS] 蓝图模板合规检查不可绕过;52项检查全覆盖 | prototype | generated |
+| 171 | scripts/governance/d5_architecture/checkers/check_code_du... | scripts/governance/d5_architecture/ch... | [INVARIANTS] 扫描 src/zephyr/ 下所有包; 检测跨包同名文件代码重复 | prototype | generated |
+| 172 | scripts/governance/d5_architecture/checkers/check_contrac... | scripts/governance/d5_architecture/ch... | check_contract_code_drift.py —— 契约-代码双写漂移阻断（盲点 C2 修复） | prototype | generated |
+| 173 | scripts/governance/d5_architecture/checkers/check_contrac... | scripts/governance/d5_architecture/ch... | check_contract_physical_path.py — GATE-CONTRACT-PHYSICAL-PATH | prototype | generated |
+| 174 | scripts/governance/d5_architecture/checkers/check_depende... | scripts/governance/d5_architecture/ch... | check_dependency_direction.py — 依赖方向校验（INJ-002/008） | prototype | generated |
+| 175 | scripts/governance/d5_architecture/checkers/check_g6_ctr_... | scripts/governance/d5_architecture/ch... | check_g6_ctr_compliance.py - G6 CTR Contract Compliance Gate Engine | prototype | generated |
+| 176 | scripts/governance/d5_architecture/checkers/check_orphan_... | scripts/governance/d5_architecture/ch... | [INVARIANTS] 扫描蓝图 §11 产出物 consumer_min; 检测零消费者孤儿产出物 | prototype | generated |
+| 177 | scripts/governance/d5_architecture/checkers/check_precomm... | scripts/governance/d5_architecture/ch... | check_precommit_id_uniqueness.py — GATE-ID-UNIQ | prototype | generated |
+| 178 | scripts/governance/d5_architecture/checkers/check_rule_fo... | scripts/governance/d5_architecture/ch... | check_rule_four_way_alignment.py —— 规则四方对齐门禁（ARCH-020 补建） | prototype | generated |
+| 179 | scripts/governance/d5_architecture/checkers/check_src_no_... | scripts/governance/d5_architecture/ch... | # [A_full] module_id=CFG-check-src-no-data | layer=config | stability=stable ... | prototype | generated |
+| 180 | scripts/governance/d5_architecture/checkers/check_ssot_un... | scripts/governance/d5_architecture/ch... | [INVARIANTS] 扫描所有蓝图 ssot_claims 字段; 检测跨蓝图 SSoT 冲突 | prototype | generated |
+| 181 | scripts/governance/d5_architecture/checkers/check_trace_c... | scripts/governance/d5_architecture/ch... | check_trace_context_propagation.py — TraceContext 传播强制执行 CI 检查 | prototype | generated |
+| 182 | scripts/governance/d5_architecture/checkers/check_vms_sso... | scripts/governance/d5_architecture/ch... | GATE-VMS-SSOT: VMS 单一真源门禁——三重检测。 | prototype | generated |
+| 183 | scripts/governance/d5_architecture/dependency_graph.py | scripts/governance/d5_architecture/de... | 治理域有向依赖图 — 扫描 governance/ 下所有 import 生成依赖图. | production | generated |
+| 184 | scripts/governance/d5_architecture/detectors/__init__.py | scripts/governance/d5_architecture/de... |  | prototype | generated |
+| 185 | scripts/governance/d5_architecture/detectors/analyze_same... | scripts/governance/d5_architecture/de... | analyze_same_name_module_relations.py --- 同名模块语义关系分析 | prototype | generated |
+| 186 | scripts/governance/d5_architecture/detectors/detect_depen... | scripts/governance/d5_architecture/de... | detect_depends_on_cycles.py - depends_on 环检测. | prototype | generated |
+| 187 | scripts/governance/d5_architecture/detectors/detect_depre... | scripts/governance/d5_architecture/de... | detect_deprecated_adr_references.py — 废弃 ADR 引用检测 | prototype | generated |
+| 188 | scripts/governance/d5_architecture/detectors/detect_dupli... | scripts/governance/d5_architecture/de... | detect_duplicate_module_names.py --- 同名模块语义关系分析 | prototype | generated |
+| 189 | scripts/governance/d5_architecture/diagnose_depgraph.py | scripts/governance/d5_architecture/di... | # [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py | §7 | prototype | generated |
+| 190 | scripts/governance/d5_architecture/dm200912_query_domains.py | scripts/governance/d5_architecture/dm... | DM-200912 Phase4-A: 查询 depgraph (PostgreSQL) 域+模块统计，输出 JSON 供视图... | prototype | generated |
+| 191 | scripts/governance/d5_architecture/dm200916_write_direct.py | scripts/governance/d5_architecture/dm... | 从 depgraph (PostgreSQL) 派生 architecture_model/index.yaml。 | prototype | generated |
+| 192 | scripts/governance/d5_architecture/generators/__init__.py | scripts/governance/d5_architecture/ge... |  | prototype | generated |
+| 193 | scripts/governance/d5_architecture/generators/domain_name... | scripts/governance/d5_architecture/ge... | 功能域中文名称映射表 / Functional Domain Chinese Name Mapping | prototype | generated |
+| 194 | scripts/governance/d5_architecture/generators/generate_ca... | scripts/governance/d5_architecture/ge... | G11: 从 depgraph (PostgreSQL) 生成能力热力图 | prototype | generated |
+| 195 | scripts/governance/d5_architecture/generators/generate_ca... | scripts/governance/d5_architecture/ge... | G7: 从 depgraph (PostgreSQL) domains 表生成域容量报告MD文档 | prototype | generated |
+| 196 | scripts/governance/d5_architecture/generators/generate_co... | scripts/governance/d5_architecture/ge... | G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档 | prototype | generated |
+| 197 | scripts/governance/d5_architecture/generators/generate_co... | scripts/governance/d5_architecture/ge... | generate_contracts.py -- SSoT to Codegen pipeline | prototype | generated |
+| 198 | scripts/governance/d5_architecture/generators/generate_cr... | scripts/governance/d5_architecture/ge... | G6: 从 depgraph (PostgreSQL) edges 表生成域间依赖矩阵MD文档 | prototype | generated |
+| 199 | scripts/governance/d5_architecture/generators/generate_de... | scripts/governance/d5_architecture/ge... | G-decision: 从 decisiongraph (PostgreSQL) 生成决策流图(.md 文档，Mermaid 内嵌) | prototype | generated |
+| 200 | scripts/governance/d5_architecture/generators/generate_de... | scripts/governance/d5_architecture/ge... | G8: 从 depgraph (PostgreSQL) nodes 表生成设计态vs运营态统计报告MD文档 | prototype | generated |
 
 > (仅显示前 200 个模块，共 432 个)
 

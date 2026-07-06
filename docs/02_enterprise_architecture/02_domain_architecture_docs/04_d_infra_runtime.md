@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 04_d_infra_runtime / runtime_core
+# 04_d_infra_runtime / runtime_core / Runtime Integration
 
 > **文档作用 / Purpose**: 展示 runtime_core（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 04 | Number | 04 |
 | 域ID | D_INFRA_RUNTIME | Domain ID | D_INFRA_RUNTIME |
-| 域名称 | runtime_core | Domain Name | runtime_core |
-| 层级 | L0_infrastructure | Layer | L0_infrastructure |
+| 域名称 | runtime_core | Domain Name | Runtime Integration |
+| 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 145 | Module Count | 145 |
 | 域内依赖 | 130 | Internal Dependencies | 130 |
 | 跨域入边 | 184 | Cross-domain Incoming | 184 |
@@ -576,153 +576,153 @@ graph TD
 
 ### L0 基础设施层 / Infrastructure Layer (145 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/__init__.py | src/zephyr/__init__.py | prototype | generated |
-| 2 | src/zephyr/infrastructure/__init__.py | src/zephyr/infrastructure/__init__.py | prototype | generated |
-| 3 | src/zephyr/infrastructure/_base_server.py | src/zephyr/infrastructure/_base_serve... | production | generated |
-| 4 | src/zephyr/infrastructure/_extensions/__init__.py | src/zephyr/infrastructure/_extensions... | prototype | generated |
-| 5 | src/zephyr/infrastructure/api/__init__.py | src/zephyr/infrastructure/api/__init_... | prototype | generated |
-| 6 | src/zephyr/infrastructure/asset_inventory/__init__.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 7 | src/zephyr/infrastructure/asset_inventory/__main__.py | src/zephyr/infrastructure/asset_inven... | prototype | generated |
-| 8 | src/zephyr/infrastructure/asset_inventory/classifier.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 9 | src/zephyr/infrastructure/asset_inventory/dashboard.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 10 | src/zephyr/infrastructure/asset_inventory/dependency.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 11 | src/zephyr/infrastructure/asset_inventory/index_generator.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 12 | src/zephyr/infrastructure/asset_inventory/lifecycle.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 13 | src/zephyr/infrastructure/asset_inventory/mcp_server.py | src/zephyr/infrastructure/asset_inven... | prototype | generated |
-| 14 | src/zephyr/infrastructure/asset_inventory/metadata.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 15 | src/zephyr/infrastructure/asset_inventory/models.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 16 | src/zephyr/infrastructure/asset_inventory/reconciler.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 17 | src/zephyr/infrastructure/asset_inventory/registry_adapte... | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 18 | src/zephyr/infrastructure/asset_inventory/scanner.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 19 | src/zephyr/infrastructure/asset_inventory/telemetry.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 20 | src/zephyr/infrastructure/asset_inventory/trust_anchor.py | src/zephyr/infrastructure/asset_inven... | production | generated |
-| 21 | src/zephyr/infrastructure/audit_logger.py | src/zephyr/infrastructure/audit_logge... | production | generated |
-| 22 | src/zephyr/infrastructure/auto_diagnostics.py | src/zephyr/infrastructure/auto_diagno... | production | generated |
-| 23 | src/zephyr/infrastructure/auto_fix_engine/__init__.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 24 | src/zephyr/infrastructure/auto_fix_engine/__main__.py | src/zephyr/infrastructure/auto_fix_en... | prototype | generated |
-| 25 | src/zephyr/infrastructure/auto_fix_engine/alignment_synce... | src/zephyr/infrastructure/auto_fix_en... | prototype | generated |
-| 26 | src/zephyr/infrastructure/auto_fix_engine/all_completer.py | src/zephyr/infrastructure/auto_fix_en... | prototype | generated |
-| 27 | src/zephyr/infrastructure/auto_fix_engine/auto_fix_config... | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 28 | src/zephyr/infrastructure/auto_fix_engine/batch_fixer.py | src/zephyr/infrastructure/auto_fix_en... | prototype | generated |
-| 29 | src/zephyr/infrastructure/auto_fix_engine/compliance_audi... | src/zephyr/infrastructure/auto_fix_en... | prototype | generated |
-| 30 | src/zephyr/infrastructure/auto_fix_engine/config_fixer.py | src/zephyr/infrastructure/auto_fix_en... | prototype | generated |
-| 31 | src/zephyr/infrastructure/auto_fix_engine/dedup_extractor.py | src/zephyr/infrastructure/auto_fix_en... | prototype | generated |
-| 32 | src/zephyr/infrastructure/auto_fix_engine/dep_version_fix... | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 33 | src/zephyr/infrastructure/auto_fix_engine/drift_fixer.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 34 | src/zephyr/infrastructure/auto_fix_engine/engine.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 35 | src/zephyr/infrastructure/auto_fix_engine/escalation_brid... | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 36 | src/zephyr/infrastructure/auto_fix_engine/event_hooks.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 37 | src/zephyr/infrastructure/auto_fix_engine/fix_budget.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 38 | src/zephyr/infrastructure/auto_fix_engine/fix_diff.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 39 | src/zephyr/infrastructure/auto_fix_engine/fix_health_chec... | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 40 | src/zephyr/infrastructure/auto_fix_engine/fix_pattern_min... | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 41 | src/zephyr/infrastructure/auto_fix_engine/fix_reliability.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 42 | src/zephyr/infrastructure/auto_fix_engine/fix_report.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 43 | src/zephyr/infrastructure/auto_fix_engine/fix_safety.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 44 | src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 45 | src/zephyr/infrastructure/auto_fix_engine/import_fixer.py | src/zephyr/infrastructure/auto_fix_en... | prototype | generated |
-| 46 | src/zephyr/infrastructure/auto_fix_engine/interrupt_guard.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 47 | src/zephyr/infrastructure/auto_fix_engine/llm_fix_adapter.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 48 | src/zephyr/infrastructure/auto_fix_engine/models.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 49 | src/zephyr/infrastructure/auto_fix_engine/scaffold_regist... | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 50 | src/zephyr/infrastructure/auto_fix_engine/self_heal_agent.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 51 | src/zephyr/infrastructure/auto_fix_engine/shadow_workspac... | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 52 | src/zephyr/infrastructure/auto_fix_engine/state_machine.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 53 | src/zephyr/infrastructure/auto_fix_engine/zombie_cleaner.py | src/zephyr/infrastructure/auto_fix_en... | production | generated |
-| 54 | src/zephyr/infrastructure/blueprint_search_server.py | src/zephyr/infrastructure/blueprint_s... | production | generated |
-| 55 | src/zephyr/infrastructure/capacity_assurance/__init__.py | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 56 | src/zephyr/infrastructure/capacity_assurance/budget_forec... | src/zephyr/infrastructure/capacity_as... | production | generated |
-| 57 | src/zephyr/infrastructure/capacity_assurance/contracts/__... | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 58 | src/zephyr/infrastructure/capacity_assurance/contracts/ba... | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 59 | src/zephyr/infrastructure/capacity_assurance/contracts/ba... | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 60 | src/zephyr/infrastructure/capacity_assurance/contracts/ba... | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 61 | src/zephyr/infrastructure/capacity_assurance/contracts/co... | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 62 | src/zephyr/infrastructure/capacity_assurance/cross_module... | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 63 | src/zephyr/infrastructure/capacity_assurance/host_resourc... | src/zephyr/infrastructure/capacity_as... | production | generated |
-| 64 | src/zephyr/infrastructure/capacity_assurance/kill_switch.py | src/zephyr/infrastructure/capacity_as... | production | generated |
-| 65 | src/zephyr/infrastructure/capacity_assurance/risk_mitigat... | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 66 | src/zephyr/infrastructure/capacity_assurance/schema.py | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 67 | src/zephyr/infrastructure/capacity_assurance/sli_instrume... | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 68 | src/zephyr/infrastructure/capacity_assurance/tech_stack.py | src/zephyr/infrastructure/capacity_as... | prototype | generated |
-| 69 | src/zephyr/infrastructure/capacity_assurance/token_budget.py | src/zephyr/infrastructure/capacity_as... | production | generated |
-| 70 | src/zephyr/infrastructure/config/__init__.py | src/zephyr/infrastructure/config/__in... | production | generated |
-| 71 | src/zephyr/infrastructure/config_validator.py | src/zephyr/infrastructure/config_vali... | production | generated |
-| 72 | src/zephyr/infrastructure/contract_tester.py | src/zephyr/infrastructure/contract_te... | production | generated |
-| 73 | src/zephyr/infrastructure/core/__init__.py | src/zephyr/infrastructure/core/__init... | prototype | generated |
-| 74 | src/zephyr/infrastructure/cost_tracker.py | src/zephyr/infrastructure/cost_tracke... | production | generated |
-| 75 | src/zephyr/infrastructure/dashboard/__init__.py | src/zephyr/infrastructure/dashboard/_... | prototype | generated |
-| 76 | src/zephyr/infrastructure/dashboard/components/__init__.py | src/zephyr/infrastructure/dashboard/c... | prototype | generated |
-| 77 | src/zephyr/infrastructure/database_service.py | src/zephyr/infrastructure/database_se... | prototype | generated |
-| 78 | src/zephyr/infrastructure/doc_guard_server.py | src/zephyr/infrastructure/doc_guard_s... | production | generated |
-| 79 | src/zephyr/infrastructure/dry_run_simulator.py | src/zephyr/infrastructure/dry_run_sim... | production | generated |
-| 80 | src/zephyr/infrastructure/error_codes.py | src/zephyr/infrastructure/error_codes.py | production | generated |
-| 81 | src/zephyr/infrastructure/event_bus_upgrade.py | src/zephyr/infrastructure/event_bus_u... | production | generated |
-| 82 | src/zephyr/infrastructure/event_store.py | src/zephyr/infrastructure/event_store.py | production | generated |
-| 83 | src/zephyr/infrastructure/file_watcher.py | src/zephyr/infrastructure/file_watche... | production | generated |
-| 84 | src/zephyr/infrastructure/finding_task_bridge.py | src/zephyr/infrastructure/finding_tas... | production | generated |
-| 85 | src/zephyr/infrastructure/gate_engine_server.py | src/zephyr/infrastructure/gate_engine... | production | generated |
-| 86 | src/zephyr/infrastructure/gateway_server.py | src/zephyr/infrastructure/gateway_ser... | production | generated |
-| 87 | src/zephyr/infrastructure/governance_server.py | src/zephyr/infrastructure/governance_... | production | generated |
-| 88 | src/zephyr/infrastructure/handoff_auto_loader.py | src/zephyr/infrastructure/handoff_aut... | prototype | generated |
-| 89 | src/zephyr/infrastructure/health_monitor/health_aggregato... | src/zephyr/infrastructure/health_moni... | prototype | generated |
-| 90 | src/zephyr/infrastructure/hooks/__init__.py | src/zephyr/infrastructure/hooks/__ini... | prototype | generated |
-| 91 | src/zephyr/infrastructure/hooks/event_hook.py | src/zephyr/infrastructure/hooks/event... | prototype | generated |
-| 92 | src/zephyr/infrastructure/infrastructure/__init__.py | src/zephyr/infrastructure/infrastruct... | prototype | generated |
-| 93 | src/zephyr/infrastructure/infrastructure_base.py | src/zephyr/infrastructure/infrastruct... | production | generated |
-| 94 | src/zephyr/infrastructure/kill_switch_sim.py | src/zephyr/infrastructure/kill_switch... | production | generated |
-| 95 | src/zephyr/infrastructure/knowledge_base_server.py | src/zephyr/infrastructure/knowledge_b... | production | generated |
-| 96 | src/zephyr/infrastructure/lifecycle/__init__.py | src/zephyr/infrastructure/lifecycle/_... | prototype | generated |
-| 97 | src/zephyr/infrastructure/model_capability_exam/__init__.py | src/zephyr/infrastructure/model_capab... | prototype | generated |
-| 98 | src/zephyr/infrastructure/model_profiler/__init__.py | src/zephyr/infrastructure/model_profi... | prototype | generated |
-| 99 | src/zephyr/infrastructure/models/__init__.py | src/zephyr/infrastructure/models/__in... | prototype | generated |
-| 100 | src/zephyr/infrastructure/observability/__init__.py | src/zephyr/infrastructure/observabili... | prototype | generated |
-| 101 | src/zephyr/infrastructure/pipeline/__init__.py | src/zephyr/infrastructure/pipeline/__... | prototype | generated |
-| 102 | src/zephyr/infrastructure/pipeline/backpressure_manager.py | src/zephyr/infrastructure/pipeline/ba... | production | generated |
-| 103 | src/zephyr/infrastructure/pipeline/backpressure_types.py | src/zephyr/infrastructure/pipeline/ba... | production | generated |
-| 104 | src/zephyr/infrastructure/pipeline/circuit_breaker_manage... | src/zephyr/infrastructure/pipeline/ci... | production | generated |
-| 105 | src/zephyr/infrastructure/pipeline/cost_tracker.py | src/zephyr/infrastructure/pipeline/co... | production | generated |
-| 106 | src/zephyr/infrastructure/pipeline/ct_pipe_routing.py | src/zephyr/infrastructure/pipeline/ct... | production | generated |
-| 107 | src/zephyr/infrastructure/pipeline/dead_letter_queue.py | src/zephyr/infrastructure/pipeline/de... | production | generated |
-| 108 | src/zephyr/infrastructure/pipeline/llm_gateway.py | src/zephyr/infrastructure/pipeline/ll... | production | generated |
-| 109 | src/zephyr/infrastructure/pipeline/model_router.py | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 110 | src/zephyr/infrastructure/pipeline/models.py | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 111 | src/zephyr/infrastructure/pipeline/pipeline_agent_bridge.py | src/zephyr/infrastructure/pipeline/pi... | production | generated |
-| 112 | src/zephyr/infrastructure/pipeline/pipeline_lock.py | src/zephyr/infrastructure/pipeline/pi... | production | generated |
-| 113 | src/zephyr/infrastructure/pipeline/pipeline_roadmap.py | src/zephyr/infrastructure/pipeline/pi... | production | generated |
-| 114 | src/zephyr/infrastructure/pipeline/preemption_manager.py | src/zephyr/infrastructure/pipeline/pr... | production | generated |
-| 115 | src/zephyr/infrastructure/pipeline/routing_plugins.py | src/zephyr/infrastructure/pipeline/ro... | production | generated |
-| 116 | src/zephyr/infrastructure/prompt_provider.py | src/zephyr/infrastructure/prompt_prov... | prototype | generated |
-| 117 | src/zephyr/infrastructure/pydantic_v2_migrator.py | src/zephyr/infrastructure/pydantic_v2... | production | generated |
-| 118 | src/zephyr/infrastructure/rate_limiter.py | src/zephyr/infrastructure/rate_limite... | production | generated |
-| 119 | src/zephyr/infrastructure/registry_governance.py | src/zephyr/infrastructure/registry_go... | production | generated |
-| 120 | src/zephyr/infrastructure/resource_provider.py | src/zephyr/infrastructure/resource_pr... | prototype | generated |
-| 121 | src/zephyr/infrastructure/runtime/__init__.py | src/zephyr/infrastructure/runtime/__i... | prototype | generated |
-| 122 | src/zephyr/infrastructure/sandbox_server.py | src/zephyr/infrastructure/sandbox_ser... | prototype | generated |
-| 123 | src/zephyr/infrastructure/script_system/__init__.py | src/zephyr/infrastructure/script_syst... | prototype | generated |
-| 124 | src/zephyr/infrastructure/script_system/finding.py | src/zephyr/infrastructure/script_syst... | production | generated |
-| 125 | src/zephyr/infrastructure/script_system/gate_bridge.py | src/zephyr/infrastructure/script_syst... | prototype | generated |
-| 126 | src/zephyr/infrastructure/script_system/kb_bridge.py | src/zephyr/infrastructure/script_syst... | prototype | generated |
-| 127 | src/zephyr/infrastructure/sentinel_server.py | src/zephyr/infrastructure/sentinel_se... | production | generated |
-| 128 | src/zephyr/infrastructure/services/__init__.py | src/zephyr/infrastructure/services/__... | prototype | generated |
-| 129 | src/zephyr/infrastructure/system_snapshot.py | src/zephyr/infrastructure/system_snap... | production | generated |
-| 130 | src/zephyr/infrastructure/task_manager_server.py | src/zephyr/infrastructure/task_manage... | production | generated |
-| 131 | src/zephyr/infrastructure/telemetry_server.py | src/zephyr/infrastructure/telemetry_s... | production | generated |
-| 132 | src/zephyr/infrastructure/vector_memory_server.py | src/zephyr/infrastructure/vector_memo... | prototype | generated |
-| 133 | src/zephyr/infrastructure/warm_hot_gate.py | src/zephyr/infrastructure/warm_hot_ga... | production | generated |
-| 134 | src/zephyr/shared/lifecycle/__init__.py | src/zephyr/shared/lifecycle/__init__.py | prototype | generated |
-| 135 | src/zephyr/shared/lifecycle/daemon_registry.py | src/zephyr/shared/lifecycle/daemon_re... | production | generated |
-| 136 | src/zephyr/shared/lifecycle/health.py | src/zephyr/shared/lifecycle/health.py | production | generated |
-| 137 | src/zephyr/shared/lifecycle/health_discovery.py | src/zephyr/shared/lifecycle/health_di... | production | generated |
-| 138 | src/zephyr/shared/lifecycle/hooks.py | src/zephyr/shared/lifecycle/hooks.py | production | generated |
-| 139 | src/zephyr/shared/lifecycle/lazy_loader.py | src/zephyr/shared/lifecycle/lazy_load... | production | generated |
-| 140 | src/zephyr/shared/lifecycle/longevity_monitor.py | src/zephyr/shared/lifecycle/longevity... | production | generated |
-| 141 | src/zephyr/shared/lifecycle/resource_optimization_engine.py | src/zephyr/shared/lifecycle/resource_... | production | generated |
-| 142 | src/zephyr/shared/lifecycle/resource_optimization_models.py | src/zephyr/shared/lifecycle/resource_... | production | generated |
-| 143 | src/zephyr/shared/lifecycle/state_machine.py | src/zephyr/shared/lifecycle/state_mac... | prototype | generated |
-| 144 | src/zephyr/shared/lifecycle/task_heartbeat.py | src/zephyr/shared/lifecycle/task_hear... | production | generated |
-| 145 | src/zephyr/shared/lifecycle/ttl_cleanup_engine.py | src/zephyr/shared/lifecycle/ttl_clean... | production | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/__init__.py | src/zephyr/__init__.py | ZephyrAlpha 核心包索引 + 模块懒加载器 (M-04) | prototype | generated |
+| 2 | src/zephyr/infrastructure/__init__.py | src/zephyr/infrastructure/__init__.py |  | prototype | generated |
+| 3 | src/zephyr/infrastructure/_base_server.py | src/zephyr/infrastructure/_base_serve... | BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类 | production | generated |
+| 4 | src/zephyr/infrastructure/_extensions/__init__.py | src/zephyr/infrastructure/_extensions... |  | prototype | generated |
+| 5 | src/zephyr/infrastructure/api/__init__.py | src/zephyr/infrastructure/api/__init_... |  | prototype | generated |
+| 6 | src/zephyr/infrastructure/asset_inventory/__init__.py | src/zephyr/infrastructure/asset_inven... | asset-inventory — MOD-INF-026 · 资产盘点系统：发现→分类→登记→对账→生命周期 | production | generated |
+| 7 | src/zephyr/infrastructure/asset_inventory/__main__.py | src/zephyr/infrastructure/asset_inven... | Asset Inventory CLI — MOD-INF-026 蓝图 §31 | prototype | generated |
+| 8 | src/zephyr/infrastructure/asset_inventory/classifier.py | src/zephyr/infrastructure/asset_inven... | AssetClassifier — MOD-INF-026 L2 资产自动分类器 | production | generated |
+| 9 | src/zephyr/infrastructure/asset_inventory/dashboard.py | src/zephyr/infrastructure/asset_inven... | AssetDashboard — MOD-INF-026 资产健康仪表盘生成器 | production | generated |
+| 10 | src/zephyr/infrastructure/asset_inventory/dependency.py | src/zephyr/infrastructure/asset_inven... | MOD-INF-026 §18 — 资产依赖图。 | production | generated |
+| 11 | src/zephyr/infrastructure/asset_inventory/index_generator.py | src/zephyr/infrastructure/asset_inven... | UnifiedAssetIndex — MOD-INF-026 L3 统一资产索引生成器 | production | generated |
+| 12 | src/zephyr/infrastructure/asset_inventory/lifecycle.py | src/zephyr/infrastructure/asset_inven... | AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器 | production | generated |
+| 13 | src/zephyr/infrastructure/asset_inventory/mcp_server.py | src/zephyr/infrastructure/asset_inven... | AssetInventory MCP Server — MOD-INF-026 蓝图 §21 | prototype | generated |
+| 14 | src/zephyr/infrastructure/asset_inventory/metadata.py | src/zephyr/infrastructure/asset_inven... | MOD-INF-026 §24-25 — Git 历史元数据提取 + 多 IDE 规则生成器。 | production | generated |
+| 15 | src/zephyr/infrastructure/asset_inventory/models.py | src/zephyr/infrastructure/asset_inven... | AssetInventoryModels — MOD-INF-026 Pydantic V2 共享数据模型 | production | generated |
+| 16 | src/zephyr/infrastructure/asset_inventory/reconciler.py | src/zephyr/infrastructure/asset_inven... | ReconciliationEngine — MOD-INF-026 L4 注册表 vs 磁盘对账引擎 | production | generated |
+| 17 | src/zephyr/infrastructure/asset_inventory/registry_adapte... | src/zephyr/infrastructure/asset_inven... | MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。 | production | generated |
+| 18 | src/zephyr/infrastructure/asset_inventory/scanner.py | src/zephyr/infrastructure/asset_inven... | AssetDiscoveryScanner — MOD-INF-026 L1 全量文件系统扫描器 | production | generated |
+| 19 | src/zephyr/infrastructure/asset_inventory/telemetry.py | src/zephyr/infrastructure/asset_inven... | AssetInventoryTelemetry — MOD-INF-026 自监控指标 | production | generated |
+| 20 | src/zephyr/infrastructure/asset_inventory/trust_anchor.py | src/zephyr/infrastructure/asset_inven... | MOD-INF-026 §26 — 三重信任锚验证门 R20。 | production | generated |
+| 21 | src/zephyr/infrastructure/audit_logger.py | src/zephyr/infrastructure/audit_logge... | MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 | production | generated |
+| 22 | src/zephyr/infrastructure/auto_diagnostics.py | src/zephyr/infrastructure/auto_diagno... | RI-12 AutoDiagnostics — 自动诊断引擎 | production | generated |
+| 23 | src/zephyr/infrastructure/auto_fix_engine/__init__.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 24 | src/zephyr/infrastructure/auto_fix_engine/__main__.py | src/zephyr/infrastructure/auto_fix_en... |  | prototype | generated |
+| 25 | src/zephyr/infrastructure/auto_fix_engine/alignment_synce... | src/zephyr/infrastructure/auto_fix_en... |  | prototype | generated |
+| 26 | src/zephyr/infrastructure/auto_fix_engine/all_completer.py | src/zephyr/infrastructure/auto_fix_en... |  | prototype | generated |
+| 27 | src/zephyr/infrastructure/auto_fix_engine/auto_fix_config... | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 28 | src/zephyr/infrastructure/auto_fix_engine/batch_fixer.py | src/zephyr/infrastructure/auto_fix_en... |  | prototype | generated |
+| 29 | src/zephyr/infrastructure/auto_fix_engine/compliance_audi... | src/zephyr/infrastructure/auto_fix_en... |  | prototype | generated |
+| 30 | src/zephyr/infrastructure/auto_fix_engine/config_fixer.py | src/zephyr/infrastructure/auto_fix_en... |  | prototype | generated |
+| 31 | src/zephyr/infrastructure/auto_fix_engine/dedup_extractor.py | src/zephyr/infrastructure/auto_fix_en... |  | prototype | generated |
+| 32 | src/zephyr/infrastructure/auto_fix_engine/dep_version_fix... | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 33 | src/zephyr/infrastructure/auto_fix_engine/drift_fixer.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 34 | src/zephyr/infrastructure/auto_fix_engine/engine.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 35 | src/zephyr/infrastructure/auto_fix_engine/escalation_brid... | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 36 | src/zephyr/infrastructure/auto_fix_engine/event_hooks.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 37 | src/zephyr/infrastructure/auto_fix_engine/fix_budget.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 38 | src/zephyr/infrastructure/auto_fix_engine/fix_diff.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 39 | src/zephyr/infrastructure/auto_fix_engine/fix_health_chec... | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 40 | src/zephyr/infrastructure/auto_fix_engine/fix_pattern_min... | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 41 | src/zephyr/infrastructure/auto_fix_engine/fix_reliability.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 42 | src/zephyr/infrastructure/auto_fix_engine/fix_report.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 43 | src/zephyr/infrastructure/auto_fix_engine/fix_safety.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 44 | src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 45 | src/zephyr/infrastructure/auto_fix_engine/import_fixer.py | src/zephyr/infrastructure/auto_fix_en... |  | prototype | generated |
+| 46 | src/zephyr/infrastructure/auto_fix_engine/interrupt_guard.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 47 | src/zephyr/infrastructure/auto_fix_engine/llm_fix_adapter.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 48 | src/zephyr/infrastructure/auto_fix_engine/models.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 49 | src/zephyr/infrastructure/auto_fix_engine/scaffold_regist... | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 50 | src/zephyr/infrastructure/auto_fix_engine/self_heal_agent.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 51 | src/zephyr/infrastructure/auto_fix_engine/shadow_workspac... | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 52 | src/zephyr/infrastructure/auto_fix_engine/state_machine.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 53 | src/zephyr/infrastructure/auto_fix_engine/zombie_cleaner.py | src/zephyr/infrastructure/auto_fix_en... |  | production | generated |
+| 54 | src/zephyr/infrastructure/blueprint_search_server.py | src/zephyr/infrastructure/blueprint_s... | BlueprintSearchServer — MCP Server for blueprint discovery | production | generated |
+| 55 | src/zephyr/infrastructure/capacity_assurance/__init__.py | src/zephyr/infrastructure/capacity_as... | ZephyrAlpha 容量保障体系 (Capacity Assurance) — MOD-INF-001 · 基础设施 Infr... | prototype | generated |
+| 56 | src/zephyr/infrastructure/capacity_assurance/budget_forec... | src/zephyr/infrastructure/capacity_as... | budget_forecaster.py — Token 预算预测 (DD120-extra, TASK-020) | production | generated |
+| 57 | src/zephyr/infrastructure/capacity_assurance/contracts/__... | src/zephyr/infrastructure/capacity_as... | capacity-assurance contracts — ContractBus 44条契约 Pydantic v2 Schema Enfor... | prototype | generated |
+| 58 | src/zephyr/infrastructure/capacity_assurance/contracts/ba... | src/zephyr/infrastructure/capacity_as... | Batch1 基础设施层契约 — 15条 Pydantic v2 Schema（SLO/Error Budget/Token Budg... | prototype | generated |
+| 59 | src/zephyr/infrastructure/capacity_assurance/contracts/ba... | src/zephyr/infrastructure/capacity_as... | Batch2 治理层契约 — 15条 Pydantic v2 Schema（Provenance/AI审计守卫/TechStack... | prototype | generated |
+| 60 | src/zephyr/infrastructure/capacity_assurance/contracts/ba... | src/zephyr/infrastructure/capacity_as... | Batch3 集成层契约 — 14条 Pydantic v2 Schema（OTel/W3C/跨模块CT-1~4/DR/容量预... | prototype | generated |
+| 61 | src/zephyr/infrastructure/capacity_assurance/contracts/co... | src/zephyr/infrastructure/capacity_as... | ContractBus loader — 加载全部44条容量保障契约的Pydantic v2 Schema（DD-9三批... | prototype | generated |
+| 62 | src/zephyr/infrastructure/capacity_assurance/cross_module... | src/zephyr/infrastructure/capacity_as... | Cross-module integration — CT-1~CT-4 跨模块集成契约实现（对标蓝图 §17）. | prototype | generated |
+| 63 | src/zephyr/infrastructure/capacity_assurance/host_resourc... | src/zephyr/infrastructure/capacity_as... | host_resource_governor.py — 主机资源治理 (B17, DD91, TASK-017) | production | generated |
+| 64 | src/zephyr/infrastructure/capacity_assurance/kill_switch.py | src/zephyr/infrastructure/capacity_as... | kill_switch.py -- safety circuit breaker (DD110, TASK-019) | production | generated |
+| 65 | src/zephyr/infrastructure/capacity_assurance/risk_mitigat... | src/zephyr/infrastructure/capacity_as... | Risk mitigation — R1~R16 全量风险缓解实现（对标蓝图 §14 风险与缓解 + 多轮盲... | prototype | generated |
+| 66 | src/zephyr/infrastructure/capacity_assurance/schema.py | src/zephyr/infrastructure/capacity_as... | SchemaManager — 容量保障体系数据库 Schema 管理器 | prototype | generated |
+| 67 | src/zephyr/infrastructure/capacity_assurance/sli_instrume... | src/zephyr/infrastructure/capacity_as... | SLI instrumentation — SLI采集插桩点（对标蓝图 §13 SLI Registry CAP-001~CAP-... | prototype | generated |
+| 68 | src/zephyr/infrastructure/capacity_assurance/tech_stack.py | src/zephyr/infrastructure/capacity_as... | TechStackValidator — 技术栈可用性校验器 | prototype | generated |
+| 69 | src/zephyr/infrastructure/capacity_assurance/token_budget.py | src/zephyr/infrastructure/capacity_as... | token_budget.py — Token 估算工具 SSoT | production | generated |
+| 70 | src/zephyr/infrastructure/config/__init__.py | src/zephyr/infrastructure/config/__in... | ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management | production | generated |
+| 71 | src/zephyr/infrastructure/config_validator.py | src/zephyr/infrastructure/config_vali... | M-12 ConfigValidator — 配置参数校验器 | production | generated |
+| 72 | src/zephyr/infrastructure/contract_tester.py | src/zephyr/infrastructure/contract_te... | M-11 ContractTester — 契约测试框架 | production | generated |
+| 73 | src/zephyr/infrastructure/core/__init__.py | src/zephyr/infrastructure/core/__init... |  | prototype | generated |
+| 74 | src/zephyr/infrastructure/cost_tracker.py | src/zephyr/infrastructure/cost_tracke... | RI-15 CostTracker — 成本追踪器 | production | generated |
+| 75 | src/zephyr/infrastructure/dashboard/__init__.py | src/zephyr/infrastructure/dashboard/_... |  | prototype | generated |
+| 76 | src/zephyr/infrastructure/dashboard/components/__init__.py | src/zephyr/infrastructure/dashboard/c... |  | prototype | generated |
+| 77 | src/zephyr/infrastructure/database_service.py | src/zephyr/infrastructure/database_se... | DatabaseService: 统一管理数据库的连接池、生命周期、健康检查 | prototype | generated |
+| 78 | src/zephyr/infrastructure/doc_guard_server.py | src/zephyr/infrastructure/doc_guard_s... | DocGuardServer: 跨会话交接协议服务 MCP Server | production | generated |
+| 79 | src/zephyr/infrastructure/dry_run_simulator.py | src/zephyr/infrastructure/dry_run_sim... | RI-14 DryRunSimulator — 干运行模拟器 | production | generated |
+| 80 | src/zephyr/infrastructure/error_codes.py | src/zephyr/infrastructure/error_codes.py | MCP 错误码集中注册（MOD-INF-013 §3.4）。 | production | generated |
+| 81 | src/zephyr/infrastructure/event_bus_upgrade.py | src/zephyr/infrastructure/event_bus_u... | DEPRECATED: 此文件已废弃。 | production | generated |
+| 82 | src/zephyr/infrastructure/event_store.py | src/zephyr/infrastructure/event_store.py | RI-13 EventStore — 事件存储 | production | generated |
+| 83 | src/zephyr/infrastructure/file_watcher.py | src/zephyr/infrastructure/file_watche... |  | production | generated |
+| 84 | src/zephyr/infrastructure/finding_task_bridge.py | src/zephyr/infrastructure/finding_tas... | Finding→TaskCard 桥接器 | production | generated |
+| 85 | src/zephyr/infrastructure/gate_engine_server.py | src/zephyr/infrastructure/gate_engine... | GateEngineServer: 门禁裁决服务 MCP Server | production | generated |
+| 86 | src/zephyr/infrastructure/gateway_server.py | src/zephyr/infrastructure/gateway_ser... | MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 | production | generated |
+| 87 | src/zephyr/infrastructure/governance_server.py | src/zephyr/infrastructure/governance_... | GovernanceServer: 治理域统一MCP入口 | production | generated |
+| 88 | src/zephyr/infrastructure/handoff_auto_loader.py | src/zephyr/infrastructure/handoff_aut... | Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。 | prototype | generated |
+| 89 | src/zephyr/infrastructure/health_monitor/health_aggregato... | src/zephyr/infrastructure/health_moni... | 全系统健康聚合 — check_all_systems() | prototype | generated |
+| 90 | src/zephyr/infrastructure/hooks/__init__.py | src/zephyr/infrastructure/hooks/__ini... |  | prototype | generated |
+| 91 | src/zephyr/infrastructure/hooks/event_hook.py | src/zephyr/infrastructure/hooks/event... | EventHook — 声明式任务系统事件订阅 | prototype | generated |
+| 92 | src/zephyr/infrastructure/infrastructure/__init__.py | src/zephyr/infrastructure/infrastruct... |  | prototype | generated |
+| 93 | src/zephyr/infrastructure/infrastructure_base.py | src/zephyr/infrastructure/infrastruct... | 基础设施 — Infrastructure Layer Skeleton | production | generated |
+| 94 | src/zephyr/infrastructure/kill_switch_sim.py | src/zephyr/infrastructure/kill_switch... | Kill Switch T0 Hardware Simulator | production | generated |
+| 95 | src/zephyr/infrastructure/knowledge_base_server.py | src/zephyr/infrastructure/knowledge_b... | KnowledgeBaseServer: 知识库语义检索 MCP Server | production | generated |
+| 96 | src/zephyr/infrastructure/lifecycle/__init__.py | src/zephyr/infrastructure/lifecycle/_... | core.lifecycle — lifecycle management, resource optimization, and module lif... | prototype | generated |
+| 97 | src/zephyr/infrastructure/model_capability_exam/__init__.py | src/zephyr/infrastructure/model_capab... | # [MODULE] zephyr.infrastructure.model_capability_exam | prototype | generated |
+| 98 | src/zephyr/infrastructure/model_profiler/__init__.py | src/zephyr/infrastructure/model_profi... | Model Profiler — 本地 + 远程模型性能基准测试 | prototype | generated |
+| 99 | src/zephyr/infrastructure/models/__init__.py | src/zephyr/infrastructure/models/__in... |  | prototype | generated |
+| 100 | src/zephyr/infrastructure/observability/__init__.py | src/zephyr/infrastructure/observabili... | Auto-generated contracts package — system-telemetry | prototype | generated |
+| 101 | src/zephyr/infrastructure/pipeline/__init__.py | src/zephyr/infrastructure/pipeline/__... | ZephyrAlpha Pipeline 模块 — M1-M11 双管线 + K8s Scheduling Framework + 跨层... | prototype | generated |
+| 102 | src/zephyr/infrastructure/pipeline/backpressure_manager.py | src/zephyr/infrastructure/pipeline/ba... | Pipeline — Backpressure Manager | production | generated |
+| 103 | src/zephyr/infrastructure/pipeline/backpressure_types.py | src/zephyr/infrastructure/pipeline/ba... | backpressure_types.py - Pipeline backpressure signal data types | production | generated |
+| 104 | src/zephyr/infrastructure/pipeline/circuit_breaker_manage... | src/zephyr/infrastructure/pipeline/ci... | CircuitBreakerManager -- standalone circuit breaker manager (Netflix Hystrix ... | production | generated |
+| 105 | src/zephyr/infrastructure/pipeline/cost_tracker.py | src/zephyr/infrastructure/pipeline/co... | CostTracker —— LLM 调用成本追踪器（SRC-0025） | production | generated |
+| 106 | src/zephyr/infrastructure/pipeline/ct_pipe_routing.py | src/zephyr/infrastructure/pipeline/ct... | CT-PIPE-ORC-001 — TaskCard → 管线入口节点路由 | production | generated |
+| 107 | src/zephyr/infrastructure/pipeline/dead_letter_queue.py | src/zephyr/infrastructure/pipeline/de... | DeadLetterQueue — 死信队列 | production | generated |
+| 108 | src/zephyr/infrastructure/pipeline/llm_gateway.py | src/zephyr/infrastructure/pipeline/ll... | MOD-INF-019: Agent Spec — LLM Gateway | production | generated |
+| 109 | src/zephyr/infrastructure/pipeline/model_router.py | src/zephyr/infrastructure/pipeline/mo... | ModelRouter — 模型路由与降级链管理 | production | generated |
+| 110 | src/zephyr/infrastructure/pipeline/models.py | src/zephyr/infrastructure/pipeline/mo... | Pipeline 数据模型 | production | generated |
+| 111 | src/zephyr/infrastructure/pipeline/pipeline_agent_bridge.py | src/zephyr/infrastructure/pipeline/pi... | Pipeline → Agent Bridge — 双编排器桥接层 | production | generated |
+| 112 | src/zephyr/infrastructure/pipeline/pipeline_lock.py | src/zephyr/infrastructure/pipeline/pi... | Pipeline Lock — 双管线并发锁 | production | generated |
+| 113 | src/zephyr/infrastructure/pipeline/pipeline_roadmap.py | src/zephyr/infrastructure/pipeline/pi... | Pipeline 未来版本路线图——v0.10.0 → v0.12.0 规划骨架。 | production | generated |
+| 114 | src/zephyr/infrastructure/pipeline/preemption_manager.py | src/zephyr/infrastructure/pipeline/pr... | PreemptionManager -- 优先级抢占管理器 | production | generated |
+| 115 | src/zephyr/infrastructure/pipeline/routing_plugins.py | src/zephyr/infrastructure/pipeline/ro... | Pipeline Routing Plugin System — K8s Scheduling Framework 对标 | production | generated |
+| 116 | src/zephyr/infrastructure/prompt_provider.py | src/zephyr/infrastructure/prompt_prov... | MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。 | prototype | generated |
+| 117 | src/zephyr/infrastructure/pydantic_v2_migrator.py | src/zephyr/infrastructure/pydantic_v2... | M-15 PydanticV2Migrator — Pydantic V2 迁移工具 | production | generated |
+| 118 | src/zephyr/infrastructure/rate_limiter.py | src/zephyr/infrastructure/rate_limite... | MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。 | production | generated |
+| 119 | src/zephyr/infrastructure/registry_governance.py | src/zephyr/infrastructure/registry_go... | Registry Governance — MOD-INF-037 | production | generated |
+| 120 | src/zephyr/infrastructure/resource_provider.py | src/zephyr/infrastructure/resource_pr... | MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）。 | prototype | generated |
+| 121 | src/zephyr/infrastructure/runtime/__init__.py | src/zephyr/infrastructure/runtime/__i... |  | prototype | generated |
+| 122 | src/zephyr/infrastructure/sandbox_server.py | src/zephyr/infrastructure/sandbox_ser... | MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。 | prototype | generated |
+| 123 | src/zephyr/infrastructure/script_system/__init__.py | src/zephyr/infrastructure/script_syst... |  | prototype | generated |
+| 124 | src/zephyr/infrastructure/script_system/finding.py | src/zephyr/infrastructure/script_syst... | Finding Schema — 审计发现标准化数据模型 | production | generated |
+| 125 | src/zephyr/infrastructure/script_system/gate_bridge.py | src/zephyr/infrastructure/script_syst... | Script→Gate 门禁桥接器 — submit_findings() 生产者 | prototype | generated |
+| 126 | src/zephyr/infrastructure/script_system/kb_bridge.py | src/zephyr/infrastructure/script_syst... | Script→KB 审计入库桥接器 — publish_to_kb() 生产者 | prototype | generated |
+| 127 | src/zephyr/infrastructure/sentinel_server.py | src/zephyr/infrastructure/sentinel_se... | SentinelServer: 意图路由哨兵 MCP Server | production | generated |
+| 128 | src/zephyr/infrastructure/services/__init__.py | src/zephyr/infrastructure/services/__... |  | prototype | generated |
+| 129 | src/zephyr/infrastructure/system_snapshot.py | src/zephyr/infrastructure/system_snap... | SystemSnapshotter — M1 系统状态镜像（CL-017 RI 扩展模式） | production | generated |
+| 130 | src/zephyr/infrastructure/task_manager_server.py | src/zephyr/infrastructure/task_manage... | ZephyrAlpha MCP Task Manager Server | production | generated |
+| 131 | src/zephyr/infrastructure/telemetry_server.py | src/zephyr/infrastructure/telemetry_s... | ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口 | production | generated |
+| 132 | src/zephyr/infrastructure/vector_memory_server.py | src/zephyr/infrastructure/vector_memo... | VectorMemoryServer: VMS 向量记忆 MCP Server (MOD-INF-011 v0.7.0) | prototype | generated |
+| 133 | src/zephyr/infrastructure/warm_hot_gate.py | src/zephyr/infrastructure/warm_hot_ga... | M-14 WarmHotGate — Warm→Hot 阻断门 | production | generated |
+| 134 | src/zephyr/shared/lifecycle/__init__.py | src/zephyr/shared/lifecycle/__init__.py |  | prototype | generated |
+| 135 | src/zephyr/shared/lifecycle/daemon_registry.py | src/zephyr/shared/lifecycle/daemon_re... | daemon_registry.py - unified daemon thread registry + resource guardian | production | generated |
+| 136 | src/zephyr/shared/lifecycle/health.py | src/zephyr/shared/lifecycle/health.py | health.py —— ZephyrAlpha 聚合健康检查 | production | generated |
+| 137 | src/zephyr/shared/lifecycle/health_discovery.py | src/zephyr/shared/lifecycle/health_di... | CT-HEALTH-001: System-wide Health Discovery Registration. | production | generated |
+| 138 | src/zephyr/shared/lifecycle/hooks.py | src/zephyr/shared/lifecycle/hooks.py | hooks.py —— 模块生命周期钩子（Phase 2 新增 | 盲点 B8 修复） | production | generated |
+| 139 | src/zephyr/shared/lifecycle/lazy_loader.py | src/zephyr/shared/lifecycle/lazy_load... | lazy_loader.py - Lazy module loading registry | production | generated |
+| 140 | src/zephyr/shared/lifecycle/longevity_monitor.py | src/zephyr/shared/lifecycle/longevity... |  | production | generated |
+| 141 | src/zephyr/shared/lifecycle/resource_optimization_engine.py | src/zephyr/shared/lifecycle/resource_... |  | production | generated |
+| 142 | src/zephyr/shared/lifecycle/resource_optimization_models.py | src/zephyr/shared/lifecycle/resource_... | models.py - Pydantic data models for resource optimization engine | production | generated |
+| 143 | src/zephyr/shared/lifecycle/state_machine.py | src/zephyr/shared/lifecycle/state_mac... | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038) | prototype | generated |
+| 144 | src/zephyr/shared/lifecycle/task_heartbeat.py | src/zephyr/shared/lifecycle/task_hear... |  | production | generated |
+| 145 | src/zephyr/shared/lifecycle/ttl_cleanup_engine.py | src/zephyr/shared/lifecycle/ttl_clean... |  | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

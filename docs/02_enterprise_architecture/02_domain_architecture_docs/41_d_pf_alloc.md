@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 41_d_pf_alloc / 组合分配
+# 41_d_pf_alloc / 组合分配 / Portfolio Allocation
 
 > **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 41 | Number | 41 |
 | 域ID | D_PF_ALLOC | Domain ID | D_PF_ALLOC |
-| 域名称 | 组合分配 | Domain Name | 组合分配 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | 组合分配 | Domain Name | Portfolio Allocation |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 8 | Module Count | 8 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
@@ -100,16 +100,16 @@ graph TD
 
 ### L2 领域层 / Domain Layer (8 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_alloc/ | 组合分配域 | design | planned |
-| 2 | src/zephyr/pf_alloc/__init__.py | src/zephyr/pf_alloc/__init__.py | prototype | generated |
-| 3 | src/zephyr/pf_alloc/_extensions/__init__.py | src/zephyr/pf_alloc/_extensions/__ini... | prototype | generated |
-| 4 | src/zephyr/pf_alloc/api/__init__.py | src/zephyr/pf_alloc/api/__init__.py | prototype | generated |
-| 5 | src/zephyr/pf_alloc/core/__init__.py | src/zephyr/pf_alloc/core/__init__.py | prototype | generated |
-| 6 | src/zephyr/pf_alloc/infrastructure/__init__.py | src/zephyr/pf_alloc/infrastructure/__... | prototype | generated |
-| 7 | src/zephyr/pf_alloc/models/__init__.py | src/zephyr/pf_alloc/models/__init__.py | prototype | generated |
-| 8 | src/zephyr/pf_alloc/services/__init__.py | src/zephyr/pf_alloc/services/__init__.py | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/pf_alloc/ | 组合分配域 |  | design | planned |
+| 2 | src/zephyr/pf_alloc/__init__.py | src/zephyr/pf_alloc/__init__.py |  | prototype | generated |
+| 3 | src/zephyr/pf_alloc/_extensions/__init__.py | src/zephyr/pf_alloc/_extensions/__ini... |  | prototype | generated |
+| 4 | src/zephyr/pf_alloc/api/__init__.py | src/zephyr/pf_alloc/api/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/pf_alloc/core/__init__.py | src/zephyr/pf_alloc/core/__init__.py |  | prototype | generated |
+| 6 | src/zephyr/pf_alloc/infrastructure/__init__.py | src/zephyr/pf_alloc/infrastructure/__... |  | prototype | generated |
+| 7 | src/zephyr/pf_alloc/models/__init__.py | src/zephyr/pf_alloc/models/__init__.py |  | prototype | generated |
+| 8 | src/zephyr/pf_alloc/services/__init__.py | src/zephyr/pf_alloc/services/__init__.py |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

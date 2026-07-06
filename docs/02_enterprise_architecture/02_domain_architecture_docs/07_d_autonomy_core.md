@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 07_d_autonomy_core / agent_lifecycle
+# 07_d_autonomy_core / agent_lifecycle / Autonomy Core
 
 > **文档作用 / Purpose**: 展示 agent_lifecycle（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:58
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 07 | Number | 07 |
 | 域ID | D_AUTONOMY_CORE | Domain ID | D_AUTONOMY_CORE |
-| 域名称 | agent_lifecycle | Domain Name | agent_lifecycle |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | agent_lifecycle | Domain Name | Autonomy Core |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 114 | Module Count | 114 |
 | 域内依赖 | 40 | Internal Dependencies | 40 |
 | 跨域入边 | 138 | Cross-domain Incoming | 138 |
@@ -416,122 +416,122 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (114 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/autonomy_core/__init__.py | src/zephyr/autonomy_core/__init__.py | production | generated |
-| 2 | src/zephyr/autonomy_core/__main__.py | src/zephyr/autonomy_core/__main__.py | production | generated |
-| 3 | src/zephyr/autonomy_core/agent_observability.py | src/zephyr/autonomy_core/agent_observ... | production | generated |
-| 4 | src/zephyr/autonomy_core/all_skill_modules.py | src/zephyr/autonomy_core/all_skill_mo... | production | generated |
-| 5 | src/zephyr/autonomy_core/context/__init__.py | src/zephyr/autonomy_core/context/__in... | production | generated |
-| 6 | src/zephyr/autonomy_core/context/atomic_injector.py | src/zephyr/autonomy_core/context/atom... | production | generated |
-| 7 | src/zephyr/autonomy_core/context/ce_bootstrap.py | src/zephyr/autonomy_core/context/ce_b... | production | generated |
-| 8 | src/zephyr/autonomy_core/context/ce_explain_cli.py | src/zephyr/autonomy_core/context/ce_e... | production | generated |
-| 9 | src/zephyr/autonomy_core/context/ce_file_lister.py | src/zephyr/autonomy_core/context/ce_f... | production | generated |
-| 10 | src/zephyr/autonomy_core/context/ce_playground_v2.py | src/zephyr/autonomy_core/context/ce_p... | production | generated |
-| 11 | src/zephyr/autonomy_core/context/ce_vibe_shortcuts.py | src/zephyr/autonomy_core/context/ce_v... | production | generated |
-| 12 | src/zephyr/autonomy_core/context/checkpoint_manager.py | src/zephyr/autonomy_core/context/chec... | production | generated |
-| 13 | src/zephyr/autonomy_core/context/cold_start_booster.py | src/zephyr/autonomy_core/context/cold... | production | generated |
-| 14 | src/zephyr/autonomy_core/context/complexity_budget.py | src/zephyr/autonomy_core/context/comp... | production | generated |
-| 15 | src/zephyr/autonomy_core/context/context_assembler.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 16 | src/zephyr/autonomy_core/context/context_budget.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 17 | src/zephyr/autonomy_core/context/context_budget_tracker.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 18 | src/zephyr/autonomy_core/context/context_debt_score.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 19 | src/zephyr/autonomy_core/context/context_evaluator.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 20 | src/zephyr/autonomy_core/context/context_evictor.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 21 | src/zephyr/autonomy_core/context/context_health_score.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 22 | src/zephyr/autonomy_core/context/context_injector.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 23 | src/zephyr/autonomy_core/context/context_model_strategy.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 24 | src/zephyr/autonomy_core/context/context_outcome_tracker.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 25 | src/zephyr/autonomy_core/context/context_pipeline.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 26 | src/zephyr/autonomy_core/context/context_pipeline_auto.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 27 | src/zephyr/autonomy_core/context/context_playground.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 28 | src/zephyr/autonomy_core/context/context_rot_model.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 29 | src/zephyr/autonomy_core/context/context_rule_registry.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 30 | src/zephyr/autonomy_core/context/context_value_attributio... | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 31 | src/zephyr/autonomy_core/context/contextual_fetch_api.py | src/zephyr/autonomy_core/context/cont... | production | generated |
-| 32 | src/zephyr/autonomy_core/context/curation_loop.py | src/zephyr/autonomy_core/context/cura... | production | generated |
-| 33 | src/zephyr/autonomy_core/context/diff_injector.py | src/zephyr/autonomy_core/context/diff... | production | generated |
-| 34 | src/zephyr/autonomy_core/context/diversity_constraint.py | src/zephyr/autonomy_core/context/dive... | production | generated |
-| 35 | src/zephyr/autonomy_core/context/domain_decay_config.py | src/zephyr/autonomy_core/context/doma... | production | generated |
-| 36 | src/zephyr/autonomy_core/context/fallback_staleness_gate.py | src/zephyr/autonomy_core/context/fall... | production | generated |
-| 37 | src/zephyr/autonomy_core/context/integrity_check.py | src/zephyr/autonomy_core/context/inte... | production | generated |
-| 38 | src/zephyr/autonomy_core/context/memory_bank.py | src/zephyr/autonomy_core/context/memo... | production | generated |
-| 39 | src/zephyr/autonomy_core/context/mode_manager.py | src/zephyr/autonomy_core/context/mode... | production | generated |
-| 40 | src/zephyr/autonomy_core/context/position_optimizer.py | src/zephyr/autonomy_core/context/posi... | production | generated |
-| 41 | src/zephyr/autonomy_core/context/shadow_canary.py | src/zephyr/autonomy_core/context/shad... | production | generated |
-| 42 | src/zephyr/autonomy_core/context/staleness_manager.py | src/zephyr/autonomy_core/context/stal... | production | generated |
-| 43 | src/zephyr/autonomy_core/context/vector_bridge.py | src/zephyr/autonomy_core/context/vect... | production | generated |
-| 44 | src/zephyr/autonomy_core/file_autoregister.py | src/zephyr/autonomy_core/file_autoreg... | prototype | generated |
-| 45 | src/zephyr/autonomy_core/ide_watcher.py | src/zephyr/autonomy_core/ide_watcher.py | production | generated |
-| 46 | src/zephyr/autonomy_core/integration/__init__.py | src/zephyr/autonomy_core/integration/... | prototype | generated |
-| 47 | src/zephyr/autonomy_core/integration/pipeline_bridge.py | src/zephyr/autonomy_core/integration/... | production | generated |
-| 48 | src/zephyr/autonomy_core/phase_planner.py | src/zephyr/autonomy_core/phase_planne... | production | generated |
-| 49 | src/zephyr/autonomy_core/progressive_disclosure_injector.py | src/zephyr/autonomy_core/progressive_... | production | generated |
-| 50 | src/zephyr/autonomy_core/prompt_registry.py | src/zephyr/autonomy_core/prompt_regis... | production | generated |
-| 51 | src/zephyr/autonomy_core/self_evolution_fidelity_gate.py | src/zephyr/autonomy_core/self_evoluti... | production | generated |
-| 52 | src/zephyr/autonomy_core/skill_rbac_registry.py | src/zephyr/autonomy_core/skill_rbac_r... | production | generated |
-| 53 | src/zephyr/autonomy_core/skills/__init__.py | src/zephyr/autonomy_core/skills/__ini... | prototype | generated |
-| 54 | src/zephyr/autonomy_core/skills/skill_attention.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 55 | src/zephyr/autonomy_core/skills/skill_breakage_checker.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 56 | src/zephyr/autonomy_core/skills/skill_cache_provider.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 57 | src/zephyr/autonomy_core/skills/skill_calibration.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 58 | src/zephyr/autonomy_core/skills/skill_canary.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 59 | src/zephyr/autonomy_core/skills/skill_cognitive_preservat... | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 60 | src/zephyr/autonomy_core/skills/skill_compliance.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 61 | src/zephyr/autonomy_core/skills/skill_consensus.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 62 | src/zephyr/autonomy_core/skills/skill_constructor.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 63 | src/zephyr/autonomy_core/skills/skill_context_isolation.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 64 | src/zephyr/autonomy_core/skills/skill_contract.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 65 | src/zephyr/autonomy_core/skills/skill_cross_model.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 66 | src/zephyr/autonomy_core/skills/skill_di.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 67 | src/zephyr/autonomy_core/skills/skill_discovery.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 68 | src/zephyr/autonomy_core/skills/skill_durable.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 69 | src/zephyr/autonomy_core/skills/skill_economics.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 70 | src/zephyr/autonomy_core/skills/skill_efficacy_calibrator.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 71 | src/zephyr/autonomy_core/skills/skill_evaluator.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 72 | src/zephyr/autonomy_core/skills/skill_executor.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 73 | src/zephyr/autonomy_core/skills/skill_explain.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 74 | src/zephyr/autonomy_core/skills/skill_factory.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 75 | src/zephyr/autonomy_core/skills/skill_feature_flags.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 76 | src/zephyr/autonomy_core/skills/skill_feedback.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 77 | src/zephyr/autonomy_core/skills/skill_freshness.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 78 | src/zephyr/autonomy_core/skills/skill_freshness_ext.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 79 | src/zephyr/autonomy_core/skills/skill_gitops.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 80 | src/zephyr/autonomy_core/skills/skill_guardrails.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 81 | src/zephyr/autonomy_core/skills/skill_idempotency.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 82 | src/zephyr/autonomy_core/skills/skill_kill_switch.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 83 | src/zephyr/autonomy_core/skills/skill_knowledge_base.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 84 | src/zephyr/autonomy_core/skills/skill_kya.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 85 | src/zephyr/autonomy_core/skills/skill_learning.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 86 | src/zephyr/autonomy_core/skills/skill_lifecycle.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 87 | src/zephyr/autonomy_core/skills/skill_lineage.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 88 | src/zephyr/autonomy_core/skills/skill_loader.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 89 | src/zephyr/autonomy_core/skills/skill_locking.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 90 | src/zephyr/autonomy_core/skills/skill_model.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 91 | src/zephyr/autonomy_core/skills/skill_model_evolution.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 92 | src/zephyr/autonomy_core/skills/skill_observability.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 93 | src/zephyr/autonomy_core/skills/skill_ontology.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 94 | src/zephyr/autonomy_core/skills/skill_postmortem.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 95 | src/zephyr/autonomy_core/skills/skill_prompt_cache.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 96 | src/zephyr/autonomy_core/skills/skill_prompt_opt.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 97 | src/zephyr/autonomy_core/skills/skill_registry.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 98 | src/zephyr/autonomy_core/skills/skill_resilience.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 99 | src/zephyr/autonomy_core/skills/skill_risk_mitigator.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 100 | src/zephyr/autonomy_core/skills/skill_router.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 101 | src/zephyr/autonomy_core/skills/skill_sandbox.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 102 | src/zephyr/autonomy_core/skills/skill_schema_registry.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 103 | src/zephyr/autonomy_core/skills/skill_security.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 104 | src/zephyr/autonomy_core/skills/skill_shadow.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 105 | src/zephyr/autonomy_core/skills/skill_silent_failure.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 106 | src/zephyr/autonomy_core/skills/skill_team_optimizer.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 107 | src/zephyr/autonomy_core/skills/skill_telemetry.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 108 | src/zephyr/autonomy_core/skills/skill_temperature.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 109 | src/zephyr/autonomy_core/skills/skill_tokenomics.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 110 | src/zephyr/autonomy_core/skills/skill_translator.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 111 | src/zephyr/autonomy_core/skills/skill_workflow.py | src/zephyr/autonomy_core/skills/skill... | production | generated |
-| 112 | src/zephyr/autonomy_core/spec_engine.py | src/zephyr/autonomy_core/spec_engine.py | production | generated |
-| 113 | src/zephyr/autonomy_core/trigger_router.py | src/zephyr/autonomy_core/trigger_rout... | production | generated |
-| 114 | src/zephyr/autonomy_core/vibe_coding_quality_gate.py | src/zephyr/autonomy_core/vibe_coding_... | production | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/autonomy_core/__init__.py | src/zephyr/autonomy_core/__init__.py | autonomy_core 包结构指引（ARCH-033 治本）： | production | generated |
+| 2 | src/zephyr/autonomy_core/__main__.py | src/zephyr/autonomy_core/__main__.py | agent-spec MOD-INF-019 CLI — 蓝图→Skill 升级引擎入口. | production | generated |
+| 3 | src/zephyr/autonomy_core/agent_observability.py | src/zephyr/autonomy_core/agent_observ... | MOD-INF-019: Agent Spec — Agent Observability | production | generated |
+| 4 | src/zephyr/autonomy_core/all_skill_modules.py | src/zephyr/autonomy_core/all_skill_mo... | MOD-INF-019: Agent Spec — All Skill Modules | production | generated |
+| 5 | src/zephyr/autonomy_core/context/__init__.py | src/zephyr/autonomy_core/context/__in... | Context 子包（MOD-CONTEXT_ENGINE 蓝图）：上下文引擎核心组件 + 工具/playground... | production | generated |
+| 6 | src/zephyr/autonomy_core/context/atomic_injector.py | src/zephyr/autonomy_core/context/atom... | atomic_injector.py — 原子注入 (DD101, TASK-019) | production | generated |
+| 7 | src/zephyr/autonomy_core/context/ce_bootstrap.py | src/zephyr/autonomy_core/context/ce_b... | ce_bootstrap.py — CE 自举架构 (B1, DD75, TASK-015 beta v) | production | generated |
+| 8 | src/zephyr/autonomy_core/context/ce_explain_cli.py | src/zephyr/autonomy_core/context/ce_e... | ce_explain_cli.py — KE inclusion rationale 解释 CLI (TASK-016) | production | generated |
+| 9 | src/zephyr/autonomy_core/context/ce_file_lister.py | src/zephyr/autonomy_core/context/ce_f... | list_ce_files.py — CE 文件清单生成器 | production | generated |
+| 10 | src/zephyr/autonomy_core/context/ce_playground_v2.py | src/zephyr/autonomy_core/context/ce_p... | ce_playground_v2.py — V2 Playground with full decision chain (TASK-016) | production | generated |
+| 11 | src/zephyr/autonomy_core/context/ce_vibe_shortcuts.py | src/zephyr/autonomy_core/context/ce_v... | ce_vibe_shortcuts.py — Vibe/Strict 模式切换 (TASK-016) | production | generated |
+| 12 | src/zephyr/autonomy_core/context/checkpoint_manager.py | src/zephyr/autonomy_core/context/chec... | checkpoint_manager.py — Inject 前快照 (DD100, TASK-019) | production | generated |
+| 13 | src/zephyr/autonomy_core/context/cold_start_booster.py | src/zephyr/autonomy_core/context/cold... | cold_start_booster.py — 冷启动 (DD107, TASK-019) | production | generated |
+| 14 | src/zephyr/autonomy_core/context/complexity_budget.py | src/zephyr/autonomy_core/context/comp... | complexity_budget.py — Token 预算复杂度因子 (DD103, TASK-019) | production | generated |
+| 15 | src/zephyr/autonomy_core/context/context_assembler.py | src/zephyr/autonomy_core/context/cont... |  | production | generated |
+| 16 | src/zephyr/autonomy_core/context/context_budget.py | src/zephyr/autonomy_core/context/cont... | TruncationStrategy — TruncationStrategy | production | generated |
+| 17 | src/zephyr/autonomy_core/context/context_budget_tracker.py | src/zephyr/autonomy_core/context/cont... | ContextBudgetTracker: token budget management with 3-level thresholds. | production | generated |
+| 18 | src/zephyr/autonomy_core/context/context_debt_score.py | src/zephyr/autonomy_core/context/cont... | context_debt_score.py — 上下文债务评分 (B19, DD93, TASK-017) | production | generated |
+| 19 | src/zephyr/autonomy_core/context/context_evaluator.py | src/zephyr/autonomy_core/context/cont... | context_evaluator.py — AI 引用率评估 (TASK-014 beta b) | production | generated |
+| 20 | src/zephyr/autonomy_core/context/context_evictor.py | src/zephyr/autonomy_core/context/cont... | context_evictor.py — 三维逐出器 (DD9, TASK-014 beta a) | production | generated |
+| 21 | src/zephyr/autonomy_core/context/context_health_score.py | src/zephyr/autonomy_core/context/cont... | ContextHealthScore.py — 统一健康分 (B6, DD80, TASK-015 beta v) | production | generated |
+| 22 | src/zephyr/autonomy_core/context/context_injector.py | src/zephyr/autonomy_core/context/cont... | ContextInjector: retrieve and inject relevant knowledge into prompt context | production | generated |
+| 23 | src/zephyr/autonomy_core/context/context_model_strategy.py | src/zephyr/autonomy_core/context/cont... | context_model_strategy.py — 模型选择策略 (DD118, TASK-020) | production | generated |
+| 24 | src/zephyr/autonomy_core/context/context_outcome_tracker.py | src/zephyr/autonomy_core/context/cont... | context_outcome_tracker.py — 因果链追踪 (B14, DD88, TASK-017) | production | generated |
+| 25 | src/zephyr/autonomy_core/context/context_pipeline.py | src/zephyr/autonomy_core/context/cont... | context_pipeline — Context Engine **四段流水线组合根** | production | generated |
+| 26 | src/zephyr/autonomy_core/context/context_pipeline_auto.py | src/zephyr/autonomy_core/context/cont... | context_pipeline_auto.py — ContextPipeline 三层自动化机制 | production | generated |
+| 27 | src/zephyr/autonomy_core/context/context_playground.py | src/zephyr/autonomy_core/context/cont... | context_playground.py — 上下文沙箱 dry-run (B5, DD79, TASK-015 beta v) | production | generated |
+| 28 | src/zephyr/autonomy_core/context/context_rot_model.py | src/zephyr/autonomy_core/context/cont... | context_rot_model.py — n² Attention 衰减数学模型 (DD7, TASK-014 beta a) | production | generated |
+| 29 | src/zephyr/autonomy_core/context/context_rule_registry.py | src/zephyr/autonomy_core/context/cont... |  | production | generated |
+| 30 | src/zephyr/autonomy_core/context/context_value_attributio... | src/zephyr/autonomy_core/context/cont... | context_value_attribution.py — KE 级 ROI 归因 (B2, DD76, TASK-015 beta v) | production | generated |
+| 31 | src/zephyr/autonomy_core/context/contextual_fetch_api.py | src/zephyr/autonomy_core/context/cont... | contextual_fetch_api.py — HTTP FE 对外 API (DD115, TASK-020) | production | generated |
+| 32 | src/zephyr/autonomy_core/context/curation_loop.py | src/zephyr/autonomy_core/context/cura... | curation_loop.py — Per-Turn Curation 策展 (DD10, TASK-014 beta b) | production | generated |
+| 33 | src/zephyr/autonomy_core/context/diff_injector.py | src/zephyr/autonomy_core/context/diff... | diff_injector.py — 增量注入 (DD98, TASK-019) | production | generated |
+| 34 | src/zephyr/autonomy_core/context/diversity_constraint.py | src/zephyr/autonomy_core/context/dive... | diversity_constraint.py — 多样性约束 (DD119, TASK-020) | production | generated |
+| 35 | src/zephyr/autonomy_core/context/domain_decay_config.py | src/zephyr/autonomy_core/context/doma... | domain_decay_config.py — 每领域半衰期 (DD105, TASK-019) | production | generated |
+| 36 | src/zephyr/autonomy_core/context/fallback_staleness_gate.py | src/zephyr/autonomy_core/context/fall... | fallback_staleness_gate.py — 兜底层自腐检测 (B13, DD87, TASK-017) | production | generated |
+| 37 | src/zephyr/autonomy_core/context/integrity_check.py | src/zephyr/autonomy_core/context/inte... | integrity_check.py — 注入后完整性 (DD106, TASK-019) | production | generated |
+| 38 | src/zephyr/autonomy_core/context/memory_bank.py | src/zephyr/autonomy_core/context/memo... | memory_bank.py — AI 读写结构化持久上下文 (DD: memory_bank, TASK-014 beta c) | production | generated |
+| 39 | src/zephyr/autonomy_core/context/mode_manager.py | src/zephyr/autonomy_core/context/mode... | mode_manager.py — 模式管理器 (DD102, TASK-019) | production | generated |
+| 40 | src/zephyr/autonomy_core/context/position_optimizer.py | src/zephyr/autonomy_core/context/posi... | position_optimizer.py — 位置优化 (DD104, TASK-019) | production | generated |
+| 41 | src/zephyr/autonomy_core/context/shadow_canary.py | src/zephyr/autonomy_core/context/shad... | shadow_canary.py — 金丝雀部署 (B4, DD78, TASK-015 beta w) | production | generated |
+| 42 | src/zephyr/autonomy_core/context/staleness_manager.py | src/zephyr/autonomy_core/context/stal... | staleness_manager.py — 全局过期检测 (DD112, TASK-019) | production | generated |
+| 43 | src/zephyr/autonomy_core/context/vector_bridge.py | src/zephyr/autonomy_core/context/vect... | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE-VMS-001) | production | generated |
+| 44 | src/zephyr/autonomy_core/file_autoregister.py | src/zephyr/autonomy_core/file_autoreg... |  | prototype | generated |
+| 45 | src/zephyr/autonomy_core/ide_watcher.py | src/zephyr/autonomy_core/ide_watcher.py | MOD-INF-019: Agent Spec — IDE Watcher | production | generated |
+| 46 | src/zephyr/autonomy_core/integration/__init__.py | src/zephyr/autonomy_core/integration/... | Agent Spec → Pipeline 集成桥接层 | prototype | generated |
+| 47 | src/zephyr/autonomy_core/integration/pipeline_bridge.py | src/zephyr/autonomy_core/integration/... | PipelineSkillBridge — Agent Spec → Pipeline 双向桥接 | production | generated |
+| 48 | src/zephyr/autonomy_core/phase_planner.py | src/zephyr/autonomy_core/phase_planne... | MOD-INF-019: Agent Spec — Phase Planner | production | generated |
+| 49 | src/zephyr/autonomy_core/progressive_disclosure_injector.py | src/zephyr/autonomy_core/progressive_... | progressive_disclosure_injector.py — 渐进式披露 (B7, DD81, TASK-015 beta w) | production | generated |
+| 50 | src/zephyr/autonomy_core/prompt_registry.py | src/zephyr/autonomy_core/prompt_regis... | PromptRegistry: YAML-driven Prompt 模板注册表 | production | generated |
+| 51 | src/zephyr/autonomy_core/self_evolution_fidelity_gate.py | src/zephyr/autonomy_core/self_evoluti... | MOD-INF-019: Agent Spec — Self Evolution Fidelity Gate | production | generated |
+| 52 | src/zephyr/autonomy_core/skill_rbac_registry.py | src/zephyr/autonomy_core/skill_rbac_r... | G-CT-003: Agent Spec -> RBAC capability check. | production | generated |
+| 53 | src/zephyr/autonomy_core/skills/__init__.py | src/zephyr/autonomy_core/skills/__ini... | Skill 子包：原根目录平铺的 skill_*.py 按 ARCH-033 归位至此（N-16 文件名唯一性... | prototype | generated |
+| 54 | src/zephyr/autonomy_core/skills/skill_attention.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Attention Management | production | generated |
+| 55 | src/zephyr/autonomy_core/skills/skill_breakage_checker.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Breakage Checker | production | generated |
+| 56 | src/zephyr/autonomy_core/skills/skill_cache_provider.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Cache Provider | production | generated |
+| 57 | src/zephyr/autonomy_core/skills/skill_calibration.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Calibration | production | generated |
+| 58 | src/zephyr/autonomy_core/skills/skill_canary.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Canary | production | generated |
+| 59 | src/zephyr/autonomy_core/skills/skill_cognitive_preservat... | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Cognitive Preservation | production | generated |
+| 60 | src/zephyr/autonomy_core/skills/skill_compliance.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Compliance | production | generated |
+| 61 | src/zephyr/autonomy_core/skills/skill_consensus.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Consensus | production | generated |
+| 62 | src/zephyr/autonomy_core/skills/skill_constructor.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Constructor | production | generated |
+| 63 | src/zephyr/autonomy_core/skills/skill_context_isolation.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Context Isolation | production | generated |
+| 64 | src/zephyr/autonomy_core/skills/skill_contract.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Contract | production | generated |
+| 65 | src/zephyr/autonomy_core/skills/skill_cross_model.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Cross-Model | production | generated |
+| 66 | src/zephyr/autonomy_core/skills/skill_di.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Dependency Injection | production | generated |
+| 67 | src/zephyr/autonomy_core/skills/skill_discovery.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Discovery | production | generated |
+| 68 | src/zephyr/autonomy_core/skills/skill_durable.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Durable Execution | production | generated |
+| 69 | src/zephyr/autonomy_core/skills/skill_economics.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Economics | production | generated |
+| 70 | src/zephyr/autonomy_core/skills/skill_efficacy_calibrator.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Efficacy Calibrator | production | generated |
+| 71 | src/zephyr/autonomy_core/skills/skill_evaluator.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Evaluator | production | generated |
+| 72 | src/zephyr/autonomy_core/skills/skill_executor.py | src/zephyr/autonomy_core/skills/skill... |  | production | generated |
+| 73 | src/zephyr/autonomy_core/skills/skill_explain.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — XAI Explainable Skill Engine | production | generated |
+| 74 | src/zephyr/autonomy_core/skills/skill_factory.py | src/zephyr/autonomy_core/skills/skill... |  | production | generated |
+| 75 | src/zephyr/autonomy_core/skills/skill_feature_flags.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Feature Flags | production | generated |
+| 76 | src/zephyr/autonomy_core/skills/skill_feedback.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Feedback Loop | production | generated |
+| 77 | src/zephyr/autonomy_core/skills/skill_freshness.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Freshness Decay | production | generated |
+| 78 | src/zephyr/autonomy_core/skills/skill_freshness_ext.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Freshness Extensions | production | generated |
+| 79 | src/zephyr/autonomy_core/skills/skill_gitops.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill GitOps | production | generated |
+| 80 | src/zephyr/autonomy_core/skills/skill_guardrails.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Guardrails | production | generated |
+| 81 | src/zephyr/autonomy_core/skills/skill_idempotency.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Idempotency | production | generated |
+| 82 | src/zephyr/autonomy_core/skills/skill_kill_switch.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Kill Switch | production | generated |
+| 83 | src/zephyr/autonomy_core/skills/skill_knowledge_base.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Knowledge Base Integration | production | generated |
+| 84 | src/zephyr/autonomy_core/skills/skill_kya.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill KYA | production | generated |
+| 85 | src/zephyr/autonomy_core/skills/skill_learning.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Self-Learning Engine | production | generated |
+| 86 | src/zephyr/autonomy_core/skills/skill_lifecycle.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Lifecycle | production | generated |
+| 87 | src/zephyr/autonomy_core/skills/skill_lineage.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Lineage | production | generated |
+| 88 | src/zephyr/autonomy_core/skills/skill_loader.py | src/zephyr/autonomy_core/skills/skill... |  | production | generated |
+| 89 | src/zephyr/autonomy_core/skills/skill_locking.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Locking (Production Hardening) | production | generated |
+| 90 | src/zephyr/autonomy_core/skills/skill_model.py | src/zephyr/autonomy_core/skills/skill... |  | production | generated |
+| 91 | src/zephyr/autonomy_core/skills/skill_model_evolution.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Model Evolution | production | generated |
+| 92 | src/zephyr/autonomy_core/skills/skill_observability.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Observability | production | generated |
+| 93 | src/zephyr/autonomy_core/skills/skill_ontology.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Ontology | production | generated |
+| 94 | src/zephyr/autonomy_core/skills/skill_postmortem.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Postmortem (追问到底) | production | generated |
+| 95 | src/zephyr/autonomy_core/skills/skill_prompt_cache.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Prompt Cache | production | generated |
+| 96 | src/zephyr/autonomy_core/skills/skill_prompt_opt.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Prompt Optimizer | production | generated |
+| 97 | src/zephyr/autonomy_core/skills/skill_registry.py | src/zephyr/autonomy_core/skills/skill... | skill-registry.py —— Skill 注册基座（Phase 14 | 盲点 B34） | production | generated |
+| 98 | src/zephyr/autonomy_core/skills/skill_resilience.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Resilience | production | generated |
+| 99 | src/zephyr/autonomy_core/skills/skill_risk_mitigator.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Risk Mitigator | production | generated |
+| 100 | src/zephyr/autonomy_core/skills/skill_router.py | src/zephyr/autonomy_core/skills/skill... |  | production | generated |
+| 101 | src/zephyr/autonomy_core/skills/skill_sandbox.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Sandbox | production | generated |
+| 102 | src/zephyr/autonomy_core/skills/skill_schema_registry.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Schema Registry | production | generated |
+| 103 | src/zephyr/autonomy_core/skills/skill_security.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Security | production | generated |
+| 104 | src/zephyr/autonomy_core/skills/skill_shadow.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Shadow Deployment | production | generated |
+| 105 | src/zephyr/autonomy_core/skills/skill_silent_failure.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Silent Failure Detector | production | generated |
+| 106 | src/zephyr/autonomy_core/skills/skill_team_optimizer.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Team Optimizer | production | generated |
+| 107 | src/zephyr/autonomy_core/skills/skill_telemetry.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Telemetry | production | generated |
+| 108 | src/zephyr/autonomy_core/skills/skill_temperature.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Temperature | production | generated |
+| 109 | src/zephyr/autonomy_core/skills/skill_tokenomics.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Tokenomics | production | generated |
+| 110 | src/zephyr/autonomy_core/skills/skill_translator.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Translator | production | generated |
+| 111 | src/zephyr/autonomy_core/skills/skill_workflow.py | src/zephyr/autonomy_core/skills/skill... | MOD-INF-019: Agent Spec — Skill Workflow Orchestrator | production | generated |
+| 112 | src/zephyr/autonomy_core/spec_engine.py | src/zephyr/autonomy_core/spec_engine.py | MOD-INF-019: Agent Spec — SpecEngine 蓝图→Skill 升级引擎 | production | generated |
+| 113 | src/zephyr/autonomy_core/trigger_router.py | src/zephyr/autonomy_core/trigger_rout... |  | production | generated |
+| 114 | src/zephyr/autonomy_core/vibe_coding_quality_gate.py | src/zephyr/autonomy_core/vibe_coding_... |  | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

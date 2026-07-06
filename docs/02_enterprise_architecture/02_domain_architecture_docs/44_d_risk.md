@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 44_d_risk / 风控
+# 44_d_risk / 风控 / Risk Control
 
 > **文档作用 / Purpose**: 展示 风控（D_RISK）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 44 | Number | 44 |
 | 域ID | D_RISK | Domain ID | D_RISK |
-| 域名称 | 风控 | Domain Name | 风控 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | 风控 | Domain Name | Risk Control |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 20 | Module Count | 20 |
 | 域内依赖 | 17 | Internal Dependencies | 17 |
 | 跨域入边 | 9 | Cross-domain Incoming | 9 |
@@ -164,28 +164,28 @@ graph TD
 
 ### L2 领域层 / Domain Layer (20 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/risk/__init__.py | src/zephyr/risk/__init__.py | prototype | generated |
-| 2 | src/zephyr/risk/_extensions/__init__.py | src/zephyr/risk/_extensions/__init__.py | prototype | generated |
-| 3 | src/zephyr/risk/api/__init__.py | src/zephyr/risk/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/risk/core/__init__.py | src/zephyr/risk/core/__init__.py | prototype | generated |
-| 5 | src/zephyr/risk/cross_asset/__init__.py | src/zephyr/risk/cross_asset/__init__.py | prototype | generated |
-| 6 | src/zephyr/risk/cross_asset/cross_market_data_adapter/__i... | src/zephyr/risk/cross_asset/cross_mar... | prototype | generated |
-| 7 | src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_... | src/zephyr/risk/cross_asset/cross_mar... | production | generated |
-| 8 | src/zephyr/risk/implementations/__init__.py | src/zephyr/risk/implementations/__ini... | prototype | generated |
-| 9 | src/zephyr/risk/implementations/default_position_limit_ch... | src/zephyr/risk/implementations/defau... | prototype | generated |
-| 10 | src/zephyr/risk/implementations/default_risk_limits_calcu... | src/zephyr/risk/implementations/defau... | production | generated |
-| 11 | src/zephyr/risk/implementations/default_risk_manager_orch... | src/zephyr/risk/implementations/defau... | production | generated |
-| 12 | src/zephyr/risk/implementations/default_risk_validator.py | src/zephyr/risk/implementations/defau... | production | generated |
-| 13 | src/zephyr/risk/implementations/default_stop_loss_engine.py | src/zephyr/risk/implementations/defau... | prototype | generated |
-| 14 | src/zephyr/risk/infrastructure/__init__.py | src/zephyr/risk/infrastructure/__init... | prototype | generated |
-| 15 | src/zephyr/risk/risk_limits.py | src/zephyr/risk/risk_limits.py | production | generated |
-| 16 | src/zephyr/risk/risk_manager.py | src/zephyr/risk/risk_manager.py | production | generated |
-| 17 | src/zephyr/risk/risk_manager_base.py | src/zephyr/risk/risk_manager_base.py | production | generated |
-| 18 | src/zephyr/risk/risk_validator.py | src/zephyr/risk/risk_validator.py | production | generated |
-| 19 | src/zephyr/risk/services/__init__.py | src/zephyr/risk/services/__init__.py | prototype | generated |
-| 20 | src/zephyr/risk/stop_loss.py | src/zephyr/risk/stop_loss.py | production | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/risk/__init__.py | src/zephyr/risk/__init__.py | D_RISK Risk Management | prototype | generated |
+| 2 | src/zephyr/risk/_extensions/__init__.py | src/zephyr/risk/_extensions/__init__.py |  | prototype | generated |
+| 3 | src/zephyr/risk/api/__init__.py | src/zephyr/risk/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/risk/core/__init__.py | src/zephyr/risk/core/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/risk/cross_asset/__init__.py | src/zephyr/risk/cross_asset/__init__.py | Auto-created by DM-295 migration. | prototype | generated |
+| 6 | src/zephyr/risk/cross_asset/cross_market_data_adapter/__i... | src/zephyr/risk/cross_asset/cross_mar... | _cross_layer: Cross-layer integration pipelines for domain blueprints. | prototype | generated |
+| 7 | src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_... | src/zephyr/risk/cross_asset/cross_mar... |  | production | generated |
+| 8 | src/zephyr/risk/implementations/__init__.py | src/zephyr/risk/implementations/__ini... | D_RISK — Risk Management Concrete Implementations | prototype | generated |
+| 9 | src/zephyr/risk/implementations/default_position_limit_ch... | src/zephyr/risk/implementations/defau... | D_RISK — Default Position Limit Checker | prototype | generated |
+| 10 | src/zephyr/risk/implementations/default_risk_limits_calcu... | src/zephyr/risk/implementations/defau... | D_RISK — Default Risk Limits Calculator | production | generated |
+| 11 | src/zephyr/risk/implementations/default_risk_manager_orch... | src/zephyr/risk/implementations/defau... | D_RISK — Default Risk Manager Orchestrator | production | generated |
+| 12 | src/zephyr/risk/implementations/default_risk_validator.py | src/zephyr/risk/implementations/defau... | D_RISK — Default Risk Validator | production | generated |
+| 13 | src/zephyr/risk/implementations/default_stop_loss_engine.py | src/zephyr/risk/implementations/defau... | D_RISK — Default Stop-Loss Engine | prototype | generated |
+| 14 | src/zephyr/risk/infrastructure/__init__.py | src/zephyr/risk/infrastructure/__init... |  | prototype | generated |
+| 15 | src/zephyr/risk/risk_limits.py | src/zephyr/risk/risk_limits.py | D_RISK — Risk Limits Calculator | production | generated |
+| 16 | src/zephyr/risk/risk_manager.py | src/zephyr/risk/risk_manager.py | ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器接口 | production | generated |
+| 17 | src/zephyr/risk/risk_manager_base.py | src/zephyr/risk/risk_manager_base.py | D_RISK — Risk Management Layer Skeleton | production | generated |
+| 18 | src/zephyr/risk/risk_validator.py | src/zephyr/risk/risk_validator.py | D_RISK — Risk Validator | production | generated |
+| 19 | src/zephyr/risk/services/__init__.py | src/zephyr/risk/services/__init__.py |  | prototype | generated |
+| 20 | src/zephyr/risk/stop_loss.py | src/zephyr/risk/stop_loss.py | D_RISK — Stop-Loss & Kill Switch 兼容层 | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

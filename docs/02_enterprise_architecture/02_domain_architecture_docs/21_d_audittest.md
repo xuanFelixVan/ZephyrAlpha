@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 21_d_audittest / audit_test_suite
+# 21_d_audittest / audit_test_suite / Audit Test Suite
 
 > **文档作用 / Purpose**: 展示 audit_test_suite（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:58
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 21 | Number | 21 |
 | 域ID | D_AUDITTEST | Domain ID | D_AUDITTEST |
-| 域名称 | audit_test_suite | Domain Name | audit_test_suite |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | audit_test_suite | Domain Name | Audit Test Suite |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 1672 | Module Count | 1672 |
 | 域内依赖 | 10 | Internal Dependencies | 10 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
@@ -3585,208 +3585,208 @@ graph TD
 
 ### L2 领域层 / Domain Layer (1672 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | tests/a2a/test_a2a_anomaly_detector.py | tests/a2a/test_a2a_anomaly_detector.py | prototype | generated |
-| 2 | tests/a2a/test_a2a_behavior_fingerprint.py | tests/a2a/test_a2a_behavior_fingerpri... | prototype | generated |
-| 3 | tests/a2a/test_a2a_blame_attribution.py | tests/a2a/test_a2a_blame_attribution.py | prototype | generated |
-| 4 | tests/a2a/test_a2a_carbon.py | tests/a2a/test_a2a_carbon.py | prototype | generated |
-| 5 | tests/a2a/test_a2a_card_registry.py | tests/a2a/test_a2a_card_registry.py | prototype | generated |
-| 6 | tests/a2a/test_a2a_causal_trace.py | tests/a2a/test_a2a_causal_trace.py | prototype | generated |
-| 7 | tests/a2a/test_a2a_check.py | tests/a2a/test_a2a_check.py | prototype | generated |
-| 8 | tests/a2a/test_a2a_checkpoint.py | tests/a2a/test_a2a_checkpoint.py | prototype | generated |
-| 9 | tests/a2a/test_a2a_collusion_detector.py | tests/a2a/test_a2a_collusion_detector.py | prototype | generated |
-| 10 | tests/a2a/test_a2a_consent.py | tests/a2a/test_a2a_consent.py | prototype | generated |
-| 11 | tests/a2a/test_a2a_constitutional.py | tests/a2a/test_a2a_constitutional.py | prototype | generated |
-| 12 | tests/a2a/test_a2a_context_rot.py | tests/a2a/test_a2a_context_rot.py | prototype | generated |
-| 13 | tests/a2a/test_a2a_cross_agent_semantic_flow.py | tests/a2a/test_a2a_cross_agent_semant... | prototype | generated |
-| 14 | tests/a2a/test_a2a_dashboard.py | tests/a2a/test_a2a_dashboard.py | prototype | generated |
-| 15 | tests/a2a/test_a2a_debate.py | tests/a2a/test_a2a_debate.py | prototype | generated |
-| 16 | tests/a2a/test_a2a_delegation_chain.py | tests/a2a/test_a2a_delegation_chain.py | prototype | generated |
-| 17 | tests/a2a/test_a2a_economics.py | tests/a2a/test_a2a_economics.py | prototype | generated |
-| 18 | tests/a2a/test_a2a_failure.py | tests/a2a/test_a2a_failure.py | prototype | generated |
-| 19 | tests/a2a/test_a2a_forgetting.py | tests/a2a/test_a2a_forgetting.py | prototype | generated |
-| 20 | tests/a2a/test_a2a_formal_verification.py | tests/a2a/test_a2a_formal_verificatio... | prototype | generated |
-| 21 | tests/a2a/test_a2a_frame_negotiation.py | tests/a2a/test_a2a_frame_negotiation.py | prototype | generated |
-| 22 | tests/a2a/test_a2a_governance.py | tests/a2a/test_a2a_governance.py | prototype | generated |
-| 23 | tests/a2a/test_a2a_governance_adapter.py | tests/a2a/test_a2a_governance_adapter.py | prototype | generated |
-| 24 | tests/a2a/test_a2a_hardware_router.py | tests/a2a/test_a2a_hardware_router.py | prototype | generated |
-| 25 | tests/a2a/test_a2a_hibernate.py | tests/a2a/test_a2a_hibernate.py | prototype | generated |
-| 26 | tests/a2a/test_a2a_idempotency.py | tests/a2a/test_a2a_idempotency.py | prototype | generated |
-| 27 | tests/a2a/test_a2a_idle_guard.py | tests/a2a/test_a2a_idle_guard.py | prototype | generated |
-| 28 | tests/a2a/test_a2a_immune.py | tests/a2a/test_a2a_immune.py | prototype | generated |
-| 29 | tests/a2a/test_a2a_knowledge_distill.py | tests/a2a/test_a2a_knowledge_distill.py | prototype | generated |
-| 30 | tests/a2a/test_a2a_latent_comm.py | tests/a2a/test_a2a_latent_comm.py | prototype | generated |
-| 31 | tests/a2a/test_a2a_layer1_discovery.py | tests/a2a/test_a2a_layer1_discovery.py | prototype | generated |
-| 32 | tests/a2a/test_a2a_metrics.py | tests/a2a/test_a2a_metrics.py | prototype | generated |
-| 33 | tests/a2a/test_a2a_negotiation.py | tests/a2a/test_a2a_negotiation.py | prototype | generated |
-| 34 | tests/a2a/test_a2a_protocol_gateway.py | tests/a2a/test_a2a_protocol_gateway.py | prototype | generated |
-| 35 | tests/a2a/test_a2a_protocol_security.py | tests/a2a/test_a2a_protocol_security.py | prototype | generated |
-| 36 | tests/a2a/test_a2a_red_team.py | tests/a2a/test_a2a_red_team.py | prototype | generated |
-| 37 | tests/a2a/test_a2a_saga.py | tests/a2a/test_a2a_saga.py | prototype | generated |
-| 38 | tests/a2a/test_a2a_schemas.py | tests/a2a/test_a2a_schemas.py | prototype | generated |
-| 39 | tests/a2a/test_a2a_security.py | tests/a2a/test_a2a_security.py | prototype | generated |
-| 40 | tests/a2a/test_a2a_state.py | tests/a2a/test_a2a_state.py | prototype | generated |
-| 41 | tests/a2a/test_a2a_temporal_admission.py | tests/a2a/test_a2a_temporal_admission.py | prototype | generated |
-| 42 | tests/a2a/test_a2a_tracing.py | tests/a2a/test_a2a_tracing.py | prototype | generated |
-| 43 | tests/a2a/test_a2a_vector_reputation.py | tests/a2a/test_a2a_vector_reputation.py | prototype | generated |
-| 44 | tests/a2a/test_a2a_voting.py | tests/a2a/test_a2a_voting.py | prototype | generated |
-| 45 | tests/a2a/test_a2a_work_steal.py | tests/a2a/test_a2a_work_steal.py | prototype | generated |
-| 46 | tests/a2a/test_construction_verifier.py | tests/a2a/test_construction_verifier.py | prototype | generated |
-| 47 | tests/a2a/test_legacy_auditor.py | tests/a2a/test_legacy_auditor.py | prototype | generated |
-| 48 | tests/a2a/test_legacy_governance_adapter.py | tests/a2a/test_legacy_governance_adap... | prototype | generated |
-| 49 | tests/a2a/test_legacy_protocol.py | tests/a2a/test_legacy_protocol.py | prototype | generated |
-| 50 | tests/a2a/test_mcp.py | tests/a2a/test_mcp.py | prototype | generated |
-| 51 | tests/a2a/test_spec_sync.py | tests/a2a/test_spec_sync.py | prototype | generated |
-| 52 | tests/action/test_action_composition_health_monitor.py | tests/action/test_action_composition_... | prototype | generated |
-| 53 | tests/action/test_action_dispatcher.py | tests/action/test_action_dispatcher.py | prototype | generated |
-| 54 | tests/action/test_action_efficacy_decay_detector.py | tests/action/test_action_efficacy_dec... | prototype | generated |
-| 55 | tests/action/test_action_explainability.py | tests/action/test_action_explainabili... | prototype | generated |
-| 56 | tests/action/test_action_history.py | tests/action/test_action_history.py | prototype | generated |
-| 57 | tests/action/test_action_interaction_detector.py | tests/action/test_action_interaction_... | prototype | generated |
-| 58 | tests/action/test_action_reversibility.py | tests/action/test_action_reversibilit... | prototype | generated |
-| 59 | tests/action/test_action_selector.py | tests/action/test_action_selector.py | prototype | generated |
-| 60 | tests/action/test_action_side_effect_cumulative_detector.py | tests/action/test_action_side_effect_... | prototype | generated |
-| 61 | tests/agent/test_agent_cooldown.py | tests/agent/test_agent_cooldown.py | prototype | generated |
-| 62 | tests/agent/test_agent_creation_policy.py | tests/agent/test_agent_creation_polic... | prototype | generated |
-| 63 | tests/agent/test_agent_health_monitor_root.py | tests/agent/test_agent_health_monitor... | prototype | generated |
-| 64 | tests/agent/test_agent_lifecycle.py | tests/agent/test_agent_lifecycle.py | prototype | generated |
-| 65 | tests/agent/test_agent_observability.py | tests/agent/test_agent_observability.py | prototype | generated |
-| 66 | tests/agent/test_agent_orchestrator_root.py | tests/agent/test_agent_orchestrator_r... | prototype | generated |
-| 67 | tests/agent/test_agent_quality.py | tests/agent/test_agent_quality.py | prototype | generated |
-| 68 | tests/agent/test_agent_signer.py | tests/agent/test_agent_signer.py | prototype | generated |
-| 69 | tests/agent/test_agent_skill_guard.py | tests/agent/test_agent_skill_guard.py | prototype | generated |
-| 70 | tests/agent/test_agent_spec_main.py | tests/agent/test_agent_spec_main.py | prototype | generated |
-| 71 | tests/agent/test_agent_spec_registry.py | tests/agent/test_agent_spec_registry.py | prototype | generated |
-| 72 | tests/agent/test_agent_trajectory_anomaly_detector.py | tests/agent/test_agent_trajectory_ano... | prototype | generated |
-| 73 | tests/agent_rbac/conftest.py | tests/agent_rbac/conftest.py | prototype | generated |
-| 74 | tests/agent_rbac/test_abac_guard_agent_rbac.py | tests/agent_rbac/test_abac_guard_agen... | prototype | generated |
-| 75 | tests/agent_rbac/test_adversarial_agent_rbac.py | tests/agent_rbac/test_adversarial_age... | prototype | generated |
-| 76 | tests/agent_rbac/test_adversarial_resilience.py | tests/agent_rbac/test_adversarial_res... | prototype | generated |
-| 77 | tests/agent_rbac/test_cross_model_consistency.py | tests/agent_rbac/test_cross_model_con... | prototype | generated |
-| 78 | tests/agent_rbac/test_crosscut_d.py | tests/agent_rbac/test_crosscut_d.py | prototype | generated |
-| 79 | tests/agent_rbac/test_cybersec_2026.py | tests/agent_rbac/test_cybersec_2026.py | prototype | generated |
-| 80 | tests/agent_rbac/test_decision_explainer_agent_rbac.py | tests/agent_rbac/test_decision_explai... | prototype | generated |
-| 81 | tests/agent_rbac/test_decisions.py | tests/agent_rbac/test_decisions.py | prototype | generated |
-| 82 | tests/agent_rbac/test_derive_rbac.py | tests/agent_rbac/test_derive_rbac.py | prototype | generated |
-| 83 | tests/agent_rbac/test_dry_run_agent_rbac.py | tests/agent_rbac/test_dry_run_agent_r... | prototype | generated |
-| 84 | tests/agent_rbac/test_engine_degradation_agent_rbac.py | tests/agent_rbac/test_engine_degradat... | prototype | generated |
-| 85 | tests/agent_rbac/test_enhanced_security.py | tests/agent_rbac/test_enhanced_securi... | prototype | generated |
-| 86 | tests/agent_rbac/test_exceptions_agent_rbac.py | tests/agent_rbac/test_exceptions_agen... | prototype | generated |
-| 87 | tests/agent_rbac/test_forensic_a.py | tests/agent_rbac/test_forensic_a.py | prototype | generated |
-| 88 | tests/agent_rbac/test_forensic_b.py | tests/agent_rbac/test_forensic_b.py | prototype | generated |
-| 89 | tests/agent_rbac/test_forensic_c.py | tests/agent_rbac/test_forensic_c.py | prototype | generated |
-| 90 | tests/agent_rbac/test_guard_layers_agent_rbac.py | tests/agent_rbac/test_guard_layers_ag... | prototype | generated |
-| 91 | tests/agent_rbac/test_identity.py | tests/agent_rbac/test_identity.py | prototype | generated |
-| 92 | tests/agent_rbac/test_immutable_core_agent_rbac.py | tests/agent_rbac/test_immutable_core_... | prototype | generated |
-| 93 | tests/agent_rbac/test_input_guard_agent_rbac.py | tests/agent_rbac/test_input_guard_age... | prototype | generated |
-| 94 | tests/agent_rbac/test_integration_agent_rbac.py | tests/agent_rbac/test_integration_age... | prototype | generated |
-| 95 | tests/agent_rbac/test_integration_root.py | tests/agent_rbac/test_integration_roo... | prototype | generated |
-| 96 | tests/agent_rbac/test_integrity_agent_rbac.py | tests/agent_rbac/test_integrity_agent... | prototype | generated |
-| 97 | tests/agent_rbac/test_intent_binder_agent_rbac.py | tests/agent_rbac/test_intent_binder_a... | prototype | generated |
-| 98 | tests/agent_rbac/test_kill_switch_agent_rbac.py | tests/agent_rbac/test_kill_switch_age... | prototype | generated |
-| 99 | tests/agent_rbac/test_novel_attack.py | tests/agent_rbac/test_novel_attack.py | prototype | generated |
-| 100 | tests/agent_rbac/test_observability_agent_rbac.py | tests/agent_rbac/test_observability_a... | prototype | generated |
-| 101 | tests/agent_rbac/test_output_guard_agent_rbac.py | tests/agent_rbac/test_output_guard_ag... | prototype | generated |
-| 102 | tests/agent_rbac/test_permission_guard.py | tests/agent_rbac/test_permission_guar... | prototype | generated |
-| 103 | tests/agent_rbac/test_permissions.py | tests/agent_rbac/test_permissions.py | prototype | generated |
-| 104 | tests/agent_rbac/test_post_action.py | tests/agent_rbac/test_post_action.py | prototype | generated |
-| 105 | tests/agent_rbac/test_rbac_auto_lifecycle.py | tests/agent_rbac/test_rbac_auto_lifec... | prototype | generated |
-| 106 | tests/agent_rbac/test_rbac_guard_agent_rbac.py | tests/agent_rbac/test_rbac_guard_agen... | prototype | generated |
-| 107 | tests/agent_rbac/test_redteam_adversarial.py | tests/agent_rbac/test_redteam_adversa... | prototype | generated |
-| 108 | tests/agent_rbac/test_risk_mitigation_agent_rbac.py | tests/agent_rbac/test_risk_mitigation... | prototype | generated |
-| 109 | tests/agent_rbac/test_sequence_guard_agent_rbac.py | tests/agent_rbac/test_sequence_guard_... | prototype | generated |
-| 110 | tests/agent_rbac/test_session_aware_stash_red_blue.py | tests/agent_rbac/test_session_aware_s... | prototype | generated |
-| 111 | tests/agent_rbac/test_toctou_guard_agent_rbac.py | tests/agent_rbac/test_toctou_guard_ag... | prototype | generated |
-| 112 | tests/agent_rbac/test_vibe_coding.py | tests/agent_rbac/test_vibe_coding.py | prototype | generated |
-| 113 | tests/ai/test_ai_audit_logger.py | tests/ai/test_ai_audit_logger.py | prototype | generated |
-| 114 | tests/ai/test_ai_capability_guard.py | tests/ai/test_ai_capability_guard.py | prototype | generated |
-| 115 | tests/ai/test_ai_comment_veracity.py | tests/ai/test_ai_comment_veracity.py | prototype | generated |
-| 116 | tests/ai/test_ai_construction_detectors.py | tests/ai/test_ai_construction_detecto... | prototype | generated |
-| 117 | tests/ai/test_ai_context_injector.py | tests/ai/test_ai_context_injector.py | prototype | generated |
-| 118 | tests/asset_inventory/test_asset_inventory.py | tests/asset_inventory/test_asset_inve... | prototype | generated |
-| 119 | tests/audit/test_ab_test.py | tests/audit/test_ab_test.py | prototype | generated |
-| 120 | tests/audit/test_absence_manager.py | tests/audit/test_absence_manager.py | prototype | generated |
-| 121 | tests/audit/test_amplification_guard.py | tests/audit/test_amplification_guard.py | prototype | generated |
-| 122 | tests/audit/test_api_dependency_metrics.py | tests/audit/test_api_dependency_metri... | prototype | generated |
-| 123 | tests/audit/test_architecture_contracts.py | tests/audit/test_architecture_contrac... | prototype | generated |
-| 124 | tests/audit/test_architecture_principles.py | tests/audit/test_architecture_princip... | prototype | generated |
-| 125 | tests/audit/test_audit_anomaly.py | tests/audit/test_audit_anomaly.py | prototype | generated |
-| 126 | tests/audit/test_audit_api_lifecycle.py | tests/audit/test_audit_api_lifecycle.py | prototype | generated |
-| 127 | tests/audit/test_audit_bridge.py | tests/audit/test_audit_bridge.py | prototype | generated |
-| 128 | tests/audit/test_audit_chain_verifier.py | tests/audit/test_audit_chain_verifier.py | prototype | generated |
-| 129 | tests/audit/test_audit_cli.py | tests/audit/test_audit_cli.py | prototype | generated |
-| 130 | tests/audit/test_audit_contracts.py | tests/audit/test_audit_contracts.py | prototype | generated |
-| 131 | tests/audit/test_audit_dim_d1_d4_e2e.py | tests/audit/test_audit_dim_d1_d4_e2e.py | prototype | generated |
-| 132 | tests/audit/test_audit_dim_d5_d8_e2e.py | tests/audit/test_audit_dim_d5_d8_e2e.py | prototype | generated |
-| 133 | tests/audit/test_audit_dim_d9_d12_e2e.py | tests/audit/test_audit_dim_d9_d12_e2e.py | prototype | generated |
-| 134 | tests/audit/test_audit_financial_compliance.py | tests/audit/test_audit_financial_comp... | prototype | generated |
-| 135 | tests/audit/test_audit_full_closure_e2e.py | tests/audit/test_audit_full_closure_e... | prototype | generated |
-| 136 | tests/audit/test_audit_full_pipeline_e2e.py | tests/audit/test_audit_full_pipeline_... | prototype | generated |
-| 137 | tests/audit/test_audit_incremental_review.py | tests/audit/test_audit_incremental_re... | prototype | generated |
-| 138 | tests/audit/test_audit_indexer.py | tests/audit/test_audit_indexer.py | prototype | generated |
-| 139 | tests/audit/test_audit_integrity.py | tests/audit/test_audit_integrity.py | prototype | generated |
-| 140 | tests/audit/test_audit_log_guard.py | tests/audit/test_audit_log_guard.py | prototype | generated |
-| 141 | tests/audit/test_audit_models.py | tests/audit/test_audit_models.py | prototype | generated |
-| 142 | tests/audit/test_audit_observability_dashboard.py | tests/audit/test_audit_observability_... | prototype | generated |
-| 143 | tests/audit/test_audit_orchestrator_e2e.py | tests/audit/test_audit_orchestrator_e... | prototype | generated |
-| 144 | tests/audit/test_audit_orphan_judge_e2e.py | tests/audit/test_audit_orphan_judge_e... | prototype | generated |
-| 145 | tests/audit/test_audit_provenance_tracker.py | tests/audit/test_audit_provenance_tra... | prototype | generated |
-| 146 | tests/audit/test_audit_red_blue_e2e.py | tests/audit/test_audit_red_blue_e2e.py | prototype | generated |
-| 147 | tests/audit/test_audit_registry_gate_e2e.py | tests/audit/test_audit_registry_gate_... | prototype | generated |
-| 148 | tests/audit/test_audit_self_healer_e2e.py | tests/audit/test_audit_self_healer_e2... | prototype | generated |
-| 149 | tests/audit/test_audit_spec_auditor.py | tests/audit/test_audit_spec_auditor.py | prototype | generated |
-| 150 | tests/audit/test_audit_supply_chain_security.py | tests/audit/test_audit_supply_chain_s... | prototype | generated |
-| 151 | tests/audit/test_audit_write_failure_protector.py | tests/audit/test_audit_write_failure_... | prototype | generated |
-| 152 | tests/audit/test_backcompat_checker.py | tests/audit/test_backcompat_checker.py | prototype | generated |
-| 153 | tests/audit/test_baseline_manager.py | tests/audit/test_baseline_manager.py | prototype | generated |
-| 154 | tests/audit/test_baseline_poisoning_guard.py | tests/audit/test_baseline_poisoning_g... | prototype | generated |
-| 155 | tests/audit/test_benchmark_integrity.py | tests/audit/test_benchmark_integrity.py | prototype | generated |
-| 156 | tests/audit/test_brain_integration_root.py | tests/audit/test_brain_integration_ro... | prototype | generated |
-| 157 | tests/audit/test_build_reproducibility_verifier.py | tests/audit/test_build_reproducibilit... | prototype | generated |
-| 158 | tests/audit/test_build_reproducibility_verifier_v2.py | tests/audit/test_build_reproducibilit... | prototype | generated |
-| 159 | tests/audit/test_burn_rate_alerter.py | tests/audit/test_burn_rate_alerter.py | prototype | generated |
-| 160 | tests/audit/test_burnout_alarm.py | tests/audit/test_burnout_alarm.py | prototype | generated |
-| 161 | tests/audit/test_cascade_detector.py | tests/audit/test_cascade_detector.py | prototype | generated |
-| 162 | tests/audit/test_causal_inference_engine.py | tests/audit/test_causal_inference_eng... | prototype | generated |
-| 163 | tests/audit/test_code_review_ai.py | tests/audit/test_code_review_ai.py | prototype | generated |
-| 164 | tests/audit/test_cognitive_load_budget.py | tests/audit/test_cognitive_load_budge... | prototype | generated |
-| 165 | tests/audit/test_correlation_engine.py | tests/audit/test_correlation_engine.py | prototype | generated |
-| 166 | tests/audit/test_credibility_engine.py | tests/audit/test_credibility_engine.py | prototype | generated |
-| 167 | tests/audit/test_crypto_bootstrap.py | tests/audit/test_crypto_bootstrap.py | prototype | generated |
-| 168 | tests/audit/test_detector_dispatcher.py | tests/audit/test_detector_dispatcher.py | prototype | generated |
-| 169 | tests/audit/test_deterministic_replay.py | tests/audit/test_deterministic_replay.py | prototype | generated |
-| 170 | tests/audit/test_diagnosis_kpi.py | tests/audit/test_diagnosis_kpi.py | prototype | generated |
-| 171 | tests/audit/test_emergent_behavior_detector.py | tests/audit/test_emergent_behavior_de... | prototype | generated |
-| 172 | tests/audit/test_events_ba.py | tests/audit/test_events_ba.py | prototype | generated |
-| 173 | tests/audit/test_forensics_engine.py | tests/audit/test_forensics_engine.py | prototype | generated |
-| 174 | tests/audit/test_gitignore_auditor.py | tests/audit/test_gitignore_auditor.py | prototype | generated |
-| 175 | tests/audit/test_global_health_map.py | tests/audit/test_global_health_map.py | prototype | generated |
-| 176 | tests/audit/test_handoff_manager.py | tests/audit/test_handoff_manager.py | prototype | generated |
-| 177 | tests/audit/test_headless_scanner.py | tests/audit/test_headless_scanner.py | prototype | generated |
-| 178 | tests/audit/test_human_anomaly_flood_detector.py | tests/audit/test_human_anomaly_flood_... | prototype | generated |
-| 179 | tests/audit/test_incremental_scanner.py | tests/audit/test_incremental_scanner.py | prototype | generated |
-| 180 | tests/audit/test_interactive_diagnosis.py | tests/audit/test_interactive_diagnosi... | prototype | generated |
-| 181 | tests/audit/test_intermittent_failure_pattern.py | tests/audit/test_intermittent_failure... | prototype | generated |
-| 182 | tests/audit/test_latency_slo.py | tests/audit/test_latency_slo.py | prototype | generated |
-| 183 | tests/audit/test_ml_engineering.py | tests/audit/test_ml_engineering.py | prototype | generated |
-| 184 | tests/audit/test_mtti_tracker.py | tests/audit/test_mtti_tracker.py | prototype | generated |
-| 185 | tests/audit/test_naming_magic_checker.py | tests/audit/test_naming_magic_checker.py | prototype | generated |
-| 186 | tests/audit/test_orphan_scanner.py | tests/audit/test_orphan_scanner.py | prototype | generated |
-| 187 | tests/audit/test_performance_baseline.py | tests/audit/test_performance_baseline.py | prototype | generated |
-| 188 | tests/audit/test_point_in_time_reconstructor.py | tests/audit/test_point_in_time_recons... | prototype | generated |
-| 189 | tests/audit/test_pre_flight_simulator.py | tests/audit/test_pre_flight_simulator.py | prototype | generated |
-| 190 | tests/audit/test_preventive_repair.py | tests/audit/test_preventive_repair.py | prototype | generated |
-| 191 | tests/audit/test_python_compat.py | tests/audit/test_python_compat.py | prototype | generated |
-| 192 | tests/audit/test_regime_detector.py | tests/audit/test_regime_detector.py | prototype | generated |
-| 193 | tests/audit/test_regime_gain_scheduling.py | tests/audit/test_regime_gain_scheduli... | prototype | generated |
-| 194 | tests/audit/test_roi_engine.py | tests/audit/test_roi_engine.py | prototype | generated |
-| 195 | tests/audit/test_scan_mutex.py | tests/audit/test_scan_mutex.py | prototype | generated |
-| 196 | tests/audit/test_serialization_format_tracker.py | tests/audit/test_serialization_format... | prototype | generated |
-| 197 | tests/audit/test_sim2real_calibration.py | tests/audit/test_sim2real_calibration.py | prototype | generated |
-| 198 | tests/audit/test_socratic_questions.py | tests/audit/test_socratic_questions.py | prototype | generated |
-| 199 | tests/audit/test_state_machine.py | tests/audit/test_state_machine.py | prototype | generated |
-| 200 | tests/audit/test_statistical_hygiene_auditor.py | tests/audit/test_statistical_hygiene_... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | tests/a2a/test_a2a_anomaly_detector.py | tests/a2a/test_a2a_anomaly_detector.py |  | prototype | generated |
+| 2 | tests/a2a/test_a2a_behavior_fingerprint.py | tests/a2a/test_a2a_behavior_fingerpri... |  | prototype | generated |
+| 3 | tests/a2a/test_a2a_blame_attribution.py | tests/a2a/test_a2a_blame_attribution.py |  | prototype | generated |
+| 4 | tests/a2a/test_a2a_carbon.py | tests/a2a/test_a2a_carbon.py |  | prototype | generated |
+| 5 | tests/a2a/test_a2a_card_registry.py | tests/a2a/test_a2a_card_registry.py |  | prototype | generated |
+| 6 | tests/a2a/test_a2a_causal_trace.py | tests/a2a/test_a2a_causal_trace.py |  | prototype | generated |
+| 7 | tests/a2a/test_a2a_check.py | tests/a2a/test_a2a_check.py |  | prototype | generated |
+| 8 | tests/a2a/test_a2a_checkpoint.py | tests/a2a/test_a2a_checkpoint.py |  | prototype | generated |
+| 9 | tests/a2a/test_a2a_collusion_detector.py | tests/a2a/test_a2a_collusion_detector.py |  | prototype | generated |
+| 10 | tests/a2a/test_a2a_consent.py | tests/a2a/test_a2a_consent.py |  | prototype | generated |
+| 11 | tests/a2a/test_a2a_constitutional.py | tests/a2a/test_a2a_constitutional.py |  | prototype | generated |
+| 12 | tests/a2a/test_a2a_context_rot.py | tests/a2a/test_a2a_context_rot.py |  | prototype | generated |
+| 13 | tests/a2a/test_a2a_cross_agent_semantic_flow.py | tests/a2a/test_a2a_cross_agent_semant... |  | prototype | generated |
+| 14 | tests/a2a/test_a2a_dashboard.py | tests/a2a/test_a2a_dashboard.py |  | prototype | generated |
+| 15 | tests/a2a/test_a2a_debate.py | tests/a2a/test_a2a_debate.py |  | prototype | generated |
+| 16 | tests/a2a/test_a2a_delegation_chain.py | tests/a2a/test_a2a_delegation_chain.py |  | prototype | generated |
+| 17 | tests/a2a/test_a2a_economics.py | tests/a2a/test_a2a_economics.py |  | prototype | generated |
+| 18 | tests/a2a/test_a2a_failure.py | tests/a2a/test_a2a_failure.py |  | prototype | generated |
+| 19 | tests/a2a/test_a2a_forgetting.py | tests/a2a/test_a2a_forgetting.py |  | prototype | generated |
+| 20 | tests/a2a/test_a2a_formal_verification.py | tests/a2a/test_a2a_formal_verificatio... |  | prototype | generated |
+| 21 | tests/a2a/test_a2a_frame_negotiation.py | tests/a2a/test_a2a_frame_negotiation.py |  | prototype | generated |
+| 22 | tests/a2a/test_a2a_governance.py | tests/a2a/test_a2a_governance.py |  | prototype | generated |
+| 23 | tests/a2a/test_a2a_governance_adapter.py | tests/a2a/test_a2a_governance_adapter.py |  | prototype | generated |
+| 24 | tests/a2a/test_a2a_hardware_router.py | tests/a2a/test_a2a_hardware_router.py |  | prototype | generated |
+| 25 | tests/a2a/test_a2a_hibernate.py | tests/a2a/test_a2a_hibernate.py |  | prototype | generated |
+| 26 | tests/a2a/test_a2a_idempotency.py | tests/a2a/test_a2a_idempotency.py |  | prototype | generated |
+| 27 | tests/a2a/test_a2a_idle_guard.py | tests/a2a/test_a2a_idle_guard.py |  | prototype | generated |
+| 28 | tests/a2a/test_a2a_immune.py | tests/a2a/test_a2a_immune.py |  | prototype | generated |
+| 29 | tests/a2a/test_a2a_knowledge_distill.py | tests/a2a/test_a2a_knowledge_distill.py |  | prototype | generated |
+| 30 | tests/a2a/test_a2a_latent_comm.py | tests/a2a/test_a2a_latent_comm.py |  | prototype | generated |
+| 31 | tests/a2a/test_a2a_layer1_discovery.py | tests/a2a/test_a2a_layer1_discovery.py |  | prototype | generated |
+| 32 | tests/a2a/test_a2a_metrics.py | tests/a2a/test_a2a_metrics.py |  | prototype | generated |
+| 33 | tests/a2a/test_a2a_negotiation.py | tests/a2a/test_a2a_negotiation.py |  | prototype | generated |
+| 34 | tests/a2a/test_a2a_protocol_gateway.py | tests/a2a/test_a2a_protocol_gateway.py |  | prototype | generated |
+| 35 | tests/a2a/test_a2a_protocol_security.py | tests/a2a/test_a2a_protocol_security.py |  | prototype | generated |
+| 36 | tests/a2a/test_a2a_red_team.py | tests/a2a/test_a2a_red_team.py |  | prototype | generated |
+| 37 | tests/a2a/test_a2a_saga.py | tests/a2a/test_a2a_saga.py |  | prototype | generated |
+| 38 | tests/a2a/test_a2a_schemas.py | tests/a2a/test_a2a_schemas.py |  | prototype | generated |
+| 39 | tests/a2a/test_a2a_security.py | tests/a2a/test_a2a_security.py |  | prototype | generated |
+| 40 | tests/a2a/test_a2a_state.py | tests/a2a/test_a2a_state.py |  | prototype | generated |
+| 41 | tests/a2a/test_a2a_temporal_admission.py | tests/a2a/test_a2a_temporal_admission.py |  | prototype | generated |
+| 42 | tests/a2a/test_a2a_tracing.py | tests/a2a/test_a2a_tracing.py |  | prototype | generated |
+| 43 | tests/a2a/test_a2a_vector_reputation.py | tests/a2a/test_a2a_vector_reputation.py |  | prototype | generated |
+| 44 | tests/a2a/test_a2a_voting.py | tests/a2a/test_a2a_voting.py |  | prototype | generated |
+| 45 | tests/a2a/test_a2a_work_steal.py | tests/a2a/test_a2a_work_steal.py |  | prototype | generated |
+| 46 | tests/a2a/test_construction_verifier.py | tests/a2a/test_construction_verifier.py |  | prototype | generated |
+| 47 | tests/a2a/test_legacy_auditor.py | tests/a2a/test_legacy_auditor.py |  | prototype | generated |
+| 48 | tests/a2a/test_legacy_governance_adapter.py | tests/a2a/test_legacy_governance_adap... |  | prototype | generated |
+| 49 | tests/a2a/test_legacy_protocol.py | tests/a2a/test_legacy_protocol.py |  | prototype | generated |
+| 50 | tests/a2a/test_mcp.py | tests/a2a/test_mcp.py |  | prototype | generated |
+| 51 | tests/a2a/test_spec_sync.py | tests/a2a/test_spec_sync.py |  | prototype | generated |
+| 52 | tests/action/test_action_composition_health_monitor.py | tests/action/test_action_composition_... |  | prototype | generated |
+| 53 | tests/action/test_action_dispatcher.py | tests/action/test_action_dispatcher.py |  | prototype | generated |
+| 54 | tests/action/test_action_efficacy_decay_detector.py | tests/action/test_action_efficacy_dec... |  | prototype | generated |
+| 55 | tests/action/test_action_explainability.py | tests/action/test_action_explainabili... |  | prototype | generated |
+| 56 | tests/action/test_action_history.py | tests/action/test_action_history.py |  | prototype | generated |
+| 57 | tests/action/test_action_interaction_detector.py | tests/action/test_action_interaction_... |  | prototype | generated |
+| 58 | tests/action/test_action_reversibility.py | tests/action/test_action_reversibilit... |  | prototype | generated |
+| 59 | tests/action/test_action_selector.py | tests/action/test_action_selector.py |  | prototype | generated |
+| 60 | tests/action/test_action_side_effect_cumulative_detector.py | tests/action/test_action_side_effect_... |  | prototype | generated |
+| 61 | tests/agent/test_agent_cooldown.py | tests/agent/test_agent_cooldown.py |  | prototype | generated |
+| 62 | tests/agent/test_agent_creation_policy.py | tests/agent/test_agent_creation_polic... |  | prototype | generated |
+| 63 | tests/agent/test_agent_health_monitor_root.py | tests/agent/test_agent_health_monitor... |  | prototype | generated |
+| 64 | tests/agent/test_agent_lifecycle.py | tests/agent/test_agent_lifecycle.py |  | prototype | generated |
+| 65 | tests/agent/test_agent_observability.py | tests/agent/test_agent_observability.py |  | prototype | generated |
+| 66 | tests/agent/test_agent_orchestrator_root.py | tests/agent/test_agent_orchestrator_r... |  | prototype | generated |
+| 67 | tests/agent/test_agent_quality.py | tests/agent/test_agent_quality.py |  | prototype | generated |
+| 68 | tests/agent/test_agent_signer.py | tests/agent/test_agent_signer.py |  | prototype | generated |
+| 69 | tests/agent/test_agent_skill_guard.py | tests/agent/test_agent_skill_guard.py |  | prototype | generated |
+| 70 | tests/agent/test_agent_spec_main.py | tests/agent/test_agent_spec_main.py |  | prototype | generated |
+| 71 | tests/agent/test_agent_spec_registry.py | tests/agent/test_agent_spec_registry.py |  | prototype | generated |
+| 72 | tests/agent/test_agent_trajectory_anomaly_detector.py | tests/agent/test_agent_trajectory_ano... |  | prototype | generated |
+| 73 | tests/agent_rbac/conftest.py | tests/agent_rbac/conftest.py | pytest fixtures for agent-rbac tests. | prototype | generated |
+| 74 | tests/agent_rbac/test_abac_guard_agent_rbac.py | tests/agent_rbac/test_abac_guard_agen... | 测试 L2 ABACGuard — 五维属性权限判定 | prototype | generated |
+| 75 | tests/agent_rbac/test_adversarial_agent_rbac.py | tests/agent_rbac/test_adversarial_age... | MOD-INF-018 test_adversarial.py — 对抗性测试: 权限绕过/伪造/重放. | prototype | generated |
+| 76 | tests/agent_rbac/test_adversarial_resilience.py | tests/agent_rbac/test_adversarial_res... |  | prototype | generated |
+| 77 | tests/agent_rbac/test_cross_model_consistency.py | tests/agent_rbac/test_cross_model_con... | MOD-INF-018 跨模型一致性测试 — DeepSeek/GLM/Claude 对同权限规则判定一致性 | prototype | generated |
+| 78 | tests/agent_rbac/test_crosscut_d.py | tests/agent_rbac/test_crosscut_d.py | 跨切面 D 异常检测 + 蓝图保真 + 原生API守卫 + 内存守卫 测试. | prototype | generated |
+| 79 | tests/agent_rbac/test_cybersec_2026.py | tests/agent_rbac/test_cybersec_2026.py | cybersec 2026 独立测试. | prototype | generated |
+| 80 | tests/agent_rbac/test_decision_explainer_agent_rbac.py | tests/agent_rbac/test_decision_explai... | 测试 DecisionExplainer — 结构化拒绝原因 | prototype | generated |
+| 81 | tests/agent_rbac/test_decisions.py | tests/agent_rbac/test_decisions.py | 决策注册表测试. | prototype | generated |
+| 82 | tests/agent_rbac/test_derive_rbac.py | tests/agent_rbac/test_derive_rbac.py | MOD-INF-018 test_derive_rbac.py — RBAC 自动派生测试. | prototype | generated |
+| 83 | tests/agent_rbac/test_dry_run_agent_rbac.py | tests/agent_rbac/test_dry_run_agent_r... | 测试 L7 DryRun — 权限模拟与影响分析 | prototype | generated |
+| 84 | tests/agent_rbac/test_engine_degradation_agent_rbac.py | tests/agent_rbac/test_engine_degradat... | 测试 L0 EngineDegradation — 权限引擎降级策略 | prototype | generated |
+| 85 | tests/agent_rbac/test_enhanced_security.py | tests/agent_rbac/test_enhanced_securi... | 七项增强安全机制整合测试. | prototype | generated |
+| 86 | tests/agent_rbac/test_exceptions_agent_rbac.py | tests/agent_rbac/test_exceptions_agen... | 测试 AgentRbac 异常类型 | prototype | generated |
+| 87 | tests/agent_rbac/test_forensic_a.py | tests/agent_rbac/test_forensic_a.py | 跨切面 B 取证审计 A 层——genesis/asymmetric/non-repudiation 测试. | prototype | generated |
+| 88 | tests/agent_rbac/test_forensic_b.py | tests/agent_rbac/test_forensic_b.py | 跨切面 B 取证审计 B 层——path/shell/rule_injection 守卫测试. | prototype | generated |
+| 89 | tests/agent_rbac/test_forensic_c.py | tests/agent_rbac/test_forensic_c.py | 跨切面 B 取证审计 C 层——audit_log/replay/legal_chain/rollback_sandbox/monot... | prototype | generated |
+| 90 | tests/agent_rbac/test_guard_layers_agent_rbac.py | tests/agent_rbac/test_guard_layers_ag... | 测试防护层模块 — ColdStartLock, AutoGuard, EscalationHandler | prototype | generated |
+| 91 | tests/agent_rbac/test_identity.py | tests/agent_rbac/test_identity.py | 测试 AgentIdentity — 身份模型 | prototype | generated |
+| 92 | tests/agent_rbac/test_immutable_core_agent_rbac.py | tests/agent_rbac/test_immutable_core_... | 测试 L0 ImmutableCore — 硬编码不可变保护区 | prototype | generated |
+| 93 | tests/agent_rbac/test_input_guard_agent_rbac.py | tests/agent_rbac/test_input_guard_age... | 测试 L3 InputGuard — 参数级护栏 | prototype | generated |
+| 94 | tests/agent_rbac/test_integration_agent_rbac.py | tests/agent_rbac/test_integration_age... | 集成 + 契约验证测试. | prototype | generated |
+| 95 | tests/agent_rbac/test_integration_root.py | tests/agent_rbac/test_integration_roo... |  | prototype | generated |
+| 96 | tests/agent_rbac/test_integrity_agent_rbac.py | tests/agent_rbac/test_integrity_agent... | 完整性自检测试. | prototype | generated |
+| 97 | tests/agent_rbac/test_intent_binder_agent_rbac.py | tests/agent_rbac/test_intent_binder_a... | 测试 IntentBinder — 意图绑定与连续验证 | prototype | generated |
+| 98 | tests/agent_rbac/test_kill_switch_agent_rbac.py | tests/agent_rbac/test_kill_switch_age... | 测试 L0 KillSwitch — 全局熔断机制 | prototype | generated |
+| 99 | tests/agent_rbac/test_novel_attack.py | tests/agent_rbac/test_novel_attack.py | 新攻击 / cybersec 2026 专项测试. | prototype | generated |
+| 100 | tests/agent_rbac/test_observability_agent_rbac.py | tests/agent_rbac/test_observability_a... | 测试 L6 Observability — 指标上报与异常检测 | prototype | generated |
+| 101 | tests/agent_rbac/test_output_guard_agent_rbac.py | tests/agent_rbac/test_output_guard_ag... | 测试 L5 OutputGuard — 输出护栏 | prototype | generated |
+| 102 | tests/agent_rbac/test_permission_guard.py | tests/agent_rbac/test_permission_guar... | 测试 PermissionGuard — 七层统一编排 | prototype | generated |
+| 103 | tests/agent_rbac/test_permissions.py | tests/agent_rbac/test_permissions.py | 权限自动化测试——120+攻击向量/跨模型一致性/对抗性测试/边缘用例. | prototype | generated |
+| 104 | tests/agent_rbac/test_post_action.py | tests/agent_rbac/test_post_action.py | MOD-INF-018 test_post_action.py — L5 Post-Action Hook 测试. | prototype | generated |
+| 105 | tests/agent_rbac/test_rbac_auto_lifecycle.py | tests/agent_rbac/test_rbac_auto_lifec... | RBAC 自动启动/关闭生命周期集成测试. | prototype | generated |
+| 106 | tests/agent_rbac/test_rbac_guard_agent_rbac.py | tests/agent_rbac/test_rbac_guard_agen... | 测试 L1 RBACGuard — 三层权限模型 | prototype | generated |
+| 107 | tests/agent_rbac/test_redteam_adversarial.py | tests/agent_rbac/test_redteam_adversa... | MOD-INF-018 对抗性红队测试 — 专用 Agent 尝试绕过七层+六横切面 | prototype | generated |
+| 108 | tests/agent_rbac/test_risk_mitigation_agent_rbac.py | tests/agent_rbac/test_risk_mitigation... | 风险缓解测试. | prototype | generated |
+| 109 | tests/agent_rbac/test_sequence_guard_agent_rbac.py | tests/agent_rbac/test_sequence_guard_... | 测试 L4 SequenceGuard — 操作序列追踪与危险序列阻断 | prototype | generated |
+| 110 | tests/agent_rbac/test_session_aware_stash_red_blue.py | tests/agent_rbac/test_session_aware_s... | session 隔离 stash 红蓝对抗极限测试。 | prototype | generated |
+| 111 | tests/agent_rbac/test_toctou_guard_agent_rbac.py | tests/agent_rbac/test_toctou_guard_ag... | 测试 TOCTOU Guard — 竞态防护 | prototype | generated |
+| 112 | tests/agent_rbac/test_vibe_coding.py | tests/agent_rbac/test_vibe_coding.py | Vibe Coding / Novel Attack / Cybersec 2026 攻击面扩展测试. | prototype | generated |
+| 113 | tests/ai/test_ai_audit_logger.py | tests/ai/test_ai_audit_logger.py |  | prototype | generated |
+| 114 | tests/ai/test_ai_capability_guard.py | tests/ai/test_ai_capability_guard.py |  | prototype | generated |
+| 115 | tests/ai/test_ai_comment_veracity.py | tests/ai/test_ai_comment_veracity.py |  | prototype | generated |
+| 116 | tests/ai/test_ai_construction_detectors.py | tests/ai/test_ai_construction_detecto... |  | prototype | generated |
+| 117 | tests/ai/test_ai_context_injector.py | tests/ai/test_ai_context_injector.py |  | prototype | generated |
+| 118 | tests/asset_inventory/test_asset_inventory.py | tests/asset_inventory/test_asset_inve... |  | prototype | generated |
+| 119 | tests/audit/test_ab_test.py | tests/audit/test_ab_test.py |  | prototype | generated |
+| 120 | tests/audit/test_absence_manager.py | tests/audit/test_absence_manager.py |  | prototype | generated |
+| 121 | tests/audit/test_amplification_guard.py | tests/audit/test_amplification_guard.py |  | prototype | generated |
+| 122 | tests/audit/test_api_dependency_metrics.py | tests/audit/test_api_dependency_metri... |  | prototype | generated |
+| 123 | tests/audit/test_architecture_contracts.py | tests/audit/test_architecture_contrac... |  | prototype | generated |
+| 124 | tests/audit/test_architecture_principles.py | tests/audit/test_architecture_princip... |  | prototype | generated |
+| 125 | tests/audit/test_audit_anomaly.py | tests/audit/test_audit_anomaly.py |  | prototype | generated |
+| 126 | tests/audit/test_audit_api_lifecycle.py | tests/audit/test_audit_api_lifecycle.py |  | prototype | generated |
+| 127 | tests/audit/test_audit_bridge.py | tests/audit/test_audit_bridge.py |  | prototype | generated |
+| 128 | tests/audit/test_audit_chain_verifier.py | tests/audit/test_audit_chain_verifier.py |  | prototype | generated |
+| 129 | tests/audit/test_audit_cli.py | tests/audit/test_audit_cli.py |  | prototype | generated |
+| 130 | tests/audit/test_audit_contracts.py | tests/audit/test_audit_contracts.py |  | prototype | generated |
+| 131 | tests/audit/test_audit_dim_d1_d4_e2e.py | tests/audit/test_audit_dim_d1_d4_e2e.py |  | prototype | generated |
+| 132 | tests/audit/test_audit_dim_d5_d8_e2e.py | tests/audit/test_audit_dim_d5_d8_e2e.py |  | prototype | generated |
+| 133 | tests/audit/test_audit_dim_d9_d12_e2e.py | tests/audit/test_audit_dim_d9_d12_e2e.py |  | prototype | generated |
+| 134 | tests/audit/test_audit_financial_compliance.py | tests/audit/test_audit_financial_comp... |  | prototype | generated |
+| 135 | tests/audit/test_audit_full_closure_e2e.py | tests/audit/test_audit_full_closure_e... |  | prototype | generated |
+| 136 | tests/audit/test_audit_full_pipeline_e2e.py | tests/audit/test_audit_full_pipeline_... |  | prototype | generated |
+| 137 | tests/audit/test_audit_incremental_review.py | tests/audit/test_audit_incremental_re... |  | prototype | generated |
+| 138 | tests/audit/test_audit_indexer.py | tests/audit/test_audit_indexer.py |  | prototype | generated |
+| 139 | tests/audit/test_audit_integrity.py | tests/audit/test_audit_integrity.py |  | prototype | generated |
+| 140 | tests/audit/test_audit_log_guard.py | tests/audit/test_audit_log_guard.py |  | prototype | generated |
+| 141 | tests/audit/test_audit_models.py | tests/audit/test_audit_models.py |  | prototype | generated |
+| 142 | tests/audit/test_audit_observability_dashboard.py | tests/audit/test_audit_observability_... |  | prototype | generated |
+| 143 | tests/audit/test_audit_orchestrator_e2e.py | tests/audit/test_audit_orchestrator_e... |  | prototype | generated |
+| 144 | tests/audit/test_audit_orphan_judge_e2e.py | tests/audit/test_audit_orphan_judge_e... | [INVARIANTS] E2E tests cover DecisionTable 12-row routing; SafetyFence blocks... | prototype | generated |
+| 145 | tests/audit/test_audit_provenance_tracker.py | tests/audit/test_audit_provenance_tra... |  | prototype | generated |
+| 146 | tests/audit/test_audit_red_blue_e2e.py | tests/audit/test_audit_red_blue_e2e.py |  | prototype | generated |
+| 147 | tests/audit/test_audit_registry_gate_e2e.py | tests/audit/test_audit_registry_gate_... |  | prototype | generated |
+| 148 | tests/audit/test_audit_self_healer_e2e.py | tests/audit/test_audit_self_healer_e2... |  | prototype | generated |
+| 149 | tests/audit/test_audit_spec_auditor.py | tests/audit/test_audit_spec_auditor.py |  | prototype | generated |
+| 150 | tests/audit/test_audit_supply_chain_security.py | tests/audit/test_audit_supply_chain_s... |  | prototype | generated |
+| 151 | tests/audit/test_audit_write_failure_protector.py | tests/audit/test_audit_write_failure_... |  | prototype | generated |
+| 152 | tests/audit/test_backcompat_checker.py | tests/audit/test_backcompat_checker.py |  | prototype | generated |
+| 153 | tests/audit/test_baseline_manager.py | tests/audit/test_baseline_manager.py |  | prototype | generated |
+| 154 | tests/audit/test_baseline_poisoning_guard.py | tests/audit/test_baseline_poisoning_g... |  | prototype | generated |
+| 155 | tests/audit/test_benchmark_integrity.py | tests/audit/test_benchmark_integrity.py |  | prototype | generated |
+| 156 | tests/audit/test_brain_integration_root.py | tests/audit/test_brain_integration_ro... |  | prototype | generated |
+| 157 | tests/audit/test_build_reproducibility_verifier.py | tests/audit/test_build_reproducibilit... |  | prototype | generated |
+| 158 | tests/audit/test_build_reproducibility_verifier_v2.py | tests/audit/test_build_reproducibilit... |  | prototype | generated |
+| 159 | tests/audit/test_burn_rate_alerter.py | tests/audit/test_burn_rate_alerter.py |  | prototype | generated |
+| 160 | tests/audit/test_burnout_alarm.py | tests/audit/test_burnout_alarm.py |  | prototype | generated |
+| 161 | tests/audit/test_cascade_detector.py | tests/audit/test_cascade_detector.py |  | prototype | generated |
+| 162 | tests/audit/test_causal_inference_engine.py | tests/audit/test_causal_inference_eng... |  | prototype | generated |
+| 163 | tests/audit/test_code_review_ai.py | tests/audit/test_code_review_ai.py |  | prototype | generated |
+| 164 | tests/audit/test_cognitive_load_budget.py | tests/audit/test_cognitive_load_budge... |  | prototype | generated |
+| 165 | tests/audit/test_correlation_engine.py | tests/audit/test_correlation_engine.py |  | prototype | generated |
+| 166 | tests/audit/test_credibility_engine.py | tests/audit/test_credibility_engine.py |  | prototype | generated |
+| 167 | tests/audit/test_crypto_bootstrap.py | tests/audit/test_crypto_bootstrap.py |  | prototype | generated |
+| 168 | tests/audit/test_detector_dispatcher.py | tests/audit/test_detector_dispatcher.py |  | prototype | generated |
+| 169 | tests/audit/test_deterministic_replay.py | tests/audit/test_deterministic_replay.py |  | prototype | generated |
+| 170 | tests/audit/test_diagnosis_kpi.py | tests/audit/test_diagnosis_kpi.py |  | prototype | generated |
+| 171 | tests/audit/test_emergent_behavior_detector.py | tests/audit/test_emergent_behavior_de... |  | prototype | generated |
+| 172 | tests/audit/test_events_ba.py | tests/audit/test_events_ba.py |  | prototype | generated |
+| 173 | tests/audit/test_forensics_engine.py | tests/audit/test_forensics_engine.py |  | prototype | generated |
+| 174 | tests/audit/test_gitignore_auditor.py | tests/audit/test_gitignore_auditor.py |  | prototype | generated |
+| 175 | tests/audit/test_global_health_map.py | tests/audit/test_global_health_map.py |  | prototype | generated |
+| 176 | tests/audit/test_handoff_manager.py | tests/audit/test_handoff_manager.py |  | prototype | generated |
+| 177 | tests/audit/test_headless_scanner.py | tests/audit/test_headless_scanner.py |  | prototype | generated |
+| 178 | tests/audit/test_human_anomaly_flood_detector.py | tests/audit/test_human_anomaly_flood_... |  | prototype | generated |
+| 179 | tests/audit/test_incremental_scanner.py | tests/audit/test_incremental_scanner.py |  | prototype | generated |
+| 180 | tests/audit/test_interactive_diagnosis.py | tests/audit/test_interactive_diagnosi... |  | prototype | generated |
+| 181 | tests/audit/test_intermittent_failure_pattern.py | tests/audit/test_intermittent_failure... |  | prototype | generated |
+| 182 | tests/audit/test_latency_slo.py | tests/audit/test_latency_slo.py |  | prototype | generated |
+| 183 | tests/audit/test_ml_engineering.py | tests/audit/test_ml_engineering.py |  | prototype | generated |
+| 184 | tests/audit/test_mtti_tracker.py | tests/audit/test_mtti_tracker.py |  | prototype | generated |
+| 185 | tests/audit/test_naming_magic_checker.py | tests/audit/test_naming_magic_checker.py |  | prototype | generated |
+| 186 | tests/audit/test_orphan_scanner.py | tests/audit/test_orphan_scanner.py |  | prototype | generated |
+| 187 | tests/audit/test_performance_baseline.py | tests/audit/test_performance_baseline.py |  | prototype | generated |
+| 188 | tests/audit/test_point_in_time_reconstructor.py | tests/audit/test_point_in_time_recons... |  | prototype | generated |
+| 189 | tests/audit/test_pre_flight_simulator.py | tests/audit/test_pre_flight_simulator.py |  | prototype | generated |
+| 190 | tests/audit/test_preventive_repair.py | tests/audit/test_preventive_repair.py |  | prototype | generated |
+| 191 | tests/audit/test_python_compat.py | tests/audit/test_python_compat.py |  | prototype | generated |
+| 192 | tests/audit/test_regime_detector.py | tests/audit/test_regime_detector.py |  | prototype | generated |
+| 193 | tests/audit/test_regime_gain_scheduling.py | tests/audit/test_regime_gain_scheduli... |  | prototype | generated |
+| 194 | tests/audit/test_roi_engine.py | tests/audit/test_roi_engine.py |  | prototype | generated |
+| 195 | tests/audit/test_scan_mutex.py | tests/audit/test_scan_mutex.py |  | prototype | generated |
+| 196 | tests/audit/test_serialization_format_tracker.py | tests/audit/test_serialization_format... |  | prototype | generated |
+| 197 | tests/audit/test_sim2real_calibration.py | tests/audit/test_sim2real_calibration.py |  | prototype | generated |
+| 198 | tests/audit/test_socratic_questions.py | tests/audit/test_socratic_questions.py |  | prototype | generated |
+| 199 | tests/audit/test_state_machine.py | tests/audit/test_state_machine.py |  | prototype | generated |
+| 200 | tests/audit/test_statistical_hygiene_auditor.py | tests/audit/test_statistical_hygiene_... |  | prototype | generated |
 
 > (仅显示前 200 个模块，共 1672 个)
 

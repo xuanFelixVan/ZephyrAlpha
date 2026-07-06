@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 16_d_reporting / 报告
+# 16_d_reporting / 报告 / Reporting
 
 > **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 16 | Number | 16 |
 | 域ID | D_REPORTING | Domain ID | D_REPORTING |
-| 域名称 | 报告 | Domain Name | 报告 |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | 报告 | Domain Name | Reporting |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
 | 跨域入边 | 4 | Cross-domain Incoming | 4 |
@@ -125,18 +125,18 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (10 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/reporting/__init__.py | src/zephyr/reporting/__init__.py | prototype | generated |
-| 2 | src/zephyr/reporting/_extensions/__init__.py | src/zephyr/reporting/_extensions/__in... | prototype | generated |
-| 3 | src/zephyr/reporting/analytics_base.py | src/zephyr/reporting/analytics_base.py | production | generated |
-| 4 | src/zephyr/reporting/api/__init__.py | src/zephyr/reporting/api/__init__.py | prototype | generated |
-| 5 | src/zephyr/reporting/core/__init__.py | src/zephyr/reporting/core/__init__.py | prototype | generated |
-| 6 | src/zephyr/reporting/default_attribution_engine.py | src/zephyr/reporting/default_attribut... | prototype | generated |
-| 7 | src/zephyr/reporting/default_tca_engine.py | src/zephyr/reporting/default_tca_engi... | prototype | generated |
-| 8 | src/zephyr/reporting/infrastructure/__init__.py | src/zephyr/reporting/infrastructure/_... | prototype | generated |
-| 9 | src/zephyr/reporting/models/__init__.py | src/zephyr/reporting/models/__init__.py | prototype | generated |
-| 10 | src/zephyr/reporting/services/__init__.py | src/zephyr/reporting/services/__init_... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/reporting/__init__.py | src/zephyr/reporting/__init__.py | D_REPORTING Post-Trade Analytics | prototype | generated |
+| 2 | src/zephyr/reporting/_extensions/__init__.py | src/zephyr/reporting/_extensions/__in... |  | prototype | generated |
+| 3 | src/zephyr/reporting/analytics_base.py | src/zephyr/reporting/analytics_base.py | D_REPORTING — Post-Trade Analytics Layer | production | generated |
+| 4 | src/zephyr/reporting/api/__init__.py | src/zephyr/reporting/api/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/reporting/core/__init__.py | src/zephyr/reporting/core/__init__.py |  | prototype | generated |
+| 6 | src/zephyr/reporting/default_attribution_engine.py | src/zephyr/reporting/default_attribut... | D_REPORTING — Default Attribution Engine | prototype | generated |
+| 7 | src/zephyr/reporting/default_tca_engine.py | src/zephyr/reporting/default_tca_engi... | D_REPORTING — Default TCA Engine | prototype | generated |
+| 8 | src/zephyr/reporting/infrastructure/__init__.py | src/zephyr/reporting/infrastructure/_... |  | prototype | generated |
+| 9 | src/zephyr/reporting/models/__init__.py | src/zephyr/reporting/models/__init__.py |  | prototype | generated |
+| 10 | src/zephyr/reporting/services/__init__.py | src/zephyr/reporting/services/__init_... |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

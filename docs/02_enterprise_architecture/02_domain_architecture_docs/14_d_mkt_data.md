@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 14_d_mkt_data / 行情数据
+# 14_d_mkt_data / 行情数据 / Market Data
 
 > **文档作用 / Purpose**: 展示 行情数据（D_MKT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 14 | Number | 14 |
 | 域ID | D_MKT_DATA | Domain ID | D_MKT_DATA |
-| 域名称 | 行情数据 | Domain Name | 行情数据 |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | 行情数据 | Domain Name | Market Data |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
@@ -103,15 +103,15 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (7 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/market_data/__init__.py | src/zephyr/market_data/__init__.py | prototype | generated |
-| 2 | src/zephyr/market_data/_extensions/__init__.py | src/zephyr/market_data/_extensions/__... | prototype | generated |
-| 3 | src/zephyr/market_data/api/__init__.py | src/zephyr/market_data/api/__init__.py | prototype | generated |
-| 4 | src/zephyr/market_data/core/__init__.py | src/zephyr/market_data/core/__init__.py | prototype | generated |
-| 5 | src/zephyr/market_data/infrastructure/__init__.py | src/zephyr/market_data/infrastructure... | prototype | generated |
-| 6 | src/zephyr/market_data/models/__init__.py | src/zephyr/market_data/models/__init_... | prototype | generated |
-| 7 | src/zephyr/market_data/services/__init__.py | src/zephyr/market_data/services/__ini... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/market_data/__init__.py | src/zephyr/market_data/__init__.py |  | prototype | generated |
+| 2 | src/zephyr/market_data/_extensions/__init__.py | src/zephyr/market_data/_extensions/__... |  | prototype | generated |
+| 3 | src/zephyr/market_data/api/__init__.py | src/zephyr/market_data/api/__init__.py |  | prototype | generated |
+| 4 | src/zephyr/market_data/core/__init__.py | src/zephyr/market_data/core/__init__.py |  | prototype | generated |
+| 5 | src/zephyr/market_data/infrastructure/__init__.py | src/zephyr/market_data/infrastructure... |  | prototype | generated |
+| 6 | src/zephyr/market_data/models/__init__.py | src/zephyr/market_data/models/__init_... |  | prototype | generated |
+| 7 | src/zephyr/market_data/services/__init__.py | src/zephyr/market_data/services/__ini... |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

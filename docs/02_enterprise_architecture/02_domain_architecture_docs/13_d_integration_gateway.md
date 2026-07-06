@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 13_d_integration_gateway / mcp_servers
+# 13_d_integration_gateway / mcp_servers / Integration Gateway
 
 > **文档作用 / Purpose**: 展示 mcp_servers（D_INTEGRATION_GATEWAY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 13 | Number | 13 |
 | 域ID | D_INTEGRATION_GATEWAY | Domain ID | D_INTEGRATION_GATEWAY |
-| 域名称 | mcp_servers | Domain Name | mcp_servers |
-| 层级 | L1_foundation | Layer | L1_foundation |
+| 域名称 | mcp_servers | Domain Name | Integration Gateway |
+| 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 20 | Module Count | 20 |
 | 域内依赖 | 37 | Internal Dependencies | 37 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
@@ -195,28 +195,28 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (20 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/integration/mcp/__init__.py | src/zephyr/integration/mcp/__init__.py | prototype | generated |
-| 2 | src/zephyr/integration/mcp/_base_server.py | src/zephyr/integration/mcp/_base_serv... | prototype | generated |
-| 3 | src/zephyr/integration/mcp/audit_logger.py | src/zephyr/integration/mcp/audit_logg... | prototype | generated |
-| 4 | src/zephyr/integration/mcp/blueprint_search_server.py | src/zephyr/integration/mcp/blueprint_... | prototype | generated |
-| 5 | src/zephyr/integration/mcp/doc_guard_server.py | src/zephyr/integration/mcp/doc_guard_... | prototype | generated |
-| 6 | src/zephyr/integration/mcp/error_codes.py | src/zephyr/integration/mcp/error_code... | prototype | generated |
-| 7 | src/zephyr/integration/mcp/gate_engine_server.py | src/zephyr/integration/mcp/gate_engin... | prototype | generated |
-| 8 | src/zephyr/integration/mcp/gateway_server.py | src/zephyr/integration/mcp/gateway_se... | prototype | generated |
-| 9 | src/zephyr/integration/mcp/governance_server.py | src/zephyr/integration/mcp/governance... | prototype | generated |
-| 10 | src/zephyr/integration/mcp/handoff_auto_loader.py | src/zephyr/integration/mcp/handoff_au... | prototype | generated |
-| 11 | src/zephyr/integration/mcp/knowledge_base_server.py | src/zephyr/integration/mcp/knowledge_... | prototype | generated |
-| 12 | src/zephyr/integration/mcp/prompt_provider.py | src/zephyr/integration/mcp/prompt_pro... | prototype | generated |
-| 13 | src/zephyr/integration/mcp/rate_limiter.py | src/zephyr/integration/mcp/rate_limit... | prototype | generated |
-| 14 | src/zephyr/integration/mcp/resource_provider.py | src/zephyr/integration/mcp/resource_p... | prototype | generated |
-| 15 | src/zephyr/integration/mcp/sandbox_server.py | src/zephyr/integration/mcp/sandbox_se... | prototype | generated |
-| 16 | src/zephyr/integration/mcp/sentinel_server.py | src/zephyr/integration/mcp/sentinel_s... | prototype | generated |
-| 17 | src/zephyr/integration/mcp/task_manager_server.py | src/zephyr/integration/mcp/task_manag... | prototype | generated |
-| 18 | src/zephyr/integration/mcp/telemetry_server.py | src/zephyr/integration/mcp/telemetry_... | prototype | generated |
-| 19 | src/zephyr/integration/mcp/tool_contracts.yaml | src/zephyr/integration/mcp/tool_contr... | production | generated |
-| 20 | src/zephyr/integration/mcp/vector_memory_server.py | src/zephyr/integration/mcp/vector_mem... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/integration/mcp/__init__.py | src/zephyr/integration/mcp/__init__.py | ZephyrAlpha MCP (Model Context Protocol) 子包。 | prototype | generated |
+| 2 | src/zephyr/integration/mcp/_base_server.py | src/zephyr/integration/mcp/_base_serv... | BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类 | prototype | generated |
+| 3 | src/zephyr/integration/mcp/audit_logger.py | src/zephyr/integration/mcp/audit_logg... | MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 | prototype | generated |
+| 4 | src/zephyr/integration/mcp/blueprint_search_server.py | src/zephyr/integration/mcp/blueprint_... | BlueprintSearchServer — MCP Server for blueprint discovery | prototype | generated |
+| 5 | src/zephyr/integration/mcp/doc_guard_server.py | src/zephyr/integration/mcp/doc_guard_... | DocGuardServer: 跨会话交接协议服务 MCP Server | prototype | generated |
+| 6 | src/zephyr/integration/mcp/error_codes.py | src/zephyr/integration/mcp/error_code... | MCP 错误码集中注册（MOD-INF-013 §3.4）。 | prototype | generated |
+| 7 | src/zephyr/integration/mcp/gate_engine_server.py | src/zephyr/integration/mcp/gate_engin... | GateEngineServer: 门禁裁决服务 MCP Server | prototype | generated |
+| 8 | src/zephyr/integration/mcp/gateway_server.py | src/zephyr/integration/mcp/gateway_se... | MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 | prototype | generated |
+| 9 | src/zephyr/integration/mcp/governance_server.py | src/zephyr/integration/mcp/governance... | GovernanceServer: 治理域统一MCP入口 | prototype | generated |
+| 10 | src/zephyr/integration/mcp/handoff_auto_loader.py | src/zephyr/integration/mcp/handoff_au... | Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。 | prototype | generated |
+| 11 | src/zephyr/integration/mcp/knowledge_base_server.py | src/zephyr/integration/mcp/knowledge_... | KnowledgeBaseServer: 知识库语义检索 MCP Server | prototype | generated |
+| 12 | src/zephyr/integration/mcp/prompt_provider.py | src/zephyr/integration/mcp/prompt_pro... | MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。 | prototype | generated |
+| 13 | src/zephyr/integration/mcp/rate_limiter.py | src/zephyr/integration/mcp/rate_limit... | MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。 | prototype | generated |
+| 14 | src/zephyr/integration/mcp/resource_provider.py | src/zephyr/integration/mcp/resource_p... | MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）。 | prototype | generated |
+| 15 | src/zephyr/integration/mcp/sandbox_server.py | src/zephyr/integration/mcp/sandbox_se... | MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。 | prototype | generated |
+| 16 | src/zephyr/integration/mcp/sentinel_server.py | src/zephyr/integration/mcp/sentinel_s... | SentinelServer: 意图路由哨兵 MCP Server | prototype | generated |
+| 17 | src/zephyr/integration/mcp/task_manager_server.py | src/zephyr/integration/mcp/task_manag... | ZephyrAlpha MCP Task Manager Server | prototype | generated |
+| 18 | src/zephyr/integration/mcp/telemetry_server.py | src/zephyr/integration/mcp/telemetry_... | ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口 | prototype | generated |
+| 19 | src/zephyr/integration/mcp/tool_contracts.yaml | src/zephyr/integration/mcp/tool_contr... |  | production | generated |
+| 20 | src/zephyr/integration/mcp/vector_memory_server.py | src/zephyr/integration/mcp/vector_mem... | VectorMemoryServer: VMS 向量记忆 MCP Server (MOD-INF-011 v0.7.0) | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

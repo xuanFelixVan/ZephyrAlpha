@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 05_d_infra_telemetry / observability_profiling
+# 05_d_infra_telemetry / observability_profiling / Observability
 
 > **文档作用 / Purpose**: 展示 observability_profiling（D_INFRA_TELEMETRY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 05 | Number | 05 |
 | 域ID | D_INFRA_TELEMETRY | Domain ID | D_INFRA_TELEMETRY |
-| 域名称 | observability_profiling | Domain Name | observability_profiling |
-| 层级 | L0_infrastructure | Layer | L0_infrastructure |
+| 域名称 | observability_profiling | Domain Name | Observability |
+| 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 25 | Module Count | 25 |
 | 域内依赖 | 36 | Internal Dependencies | 36 |
 | 跨域入边 | 8 | Cross-domain Incoming | 8 |
@@ -198,33 +198,33 @@ graph TD
 
 ### L0 基础设施层 / Infrastructure Layer (25 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/infrastructure/system_telemetry/__init__.py | src/zephyr/infrastructure/system_tele... | production | generated |
-| 2 | src/zephyr/infrastructure/system_telemetry/_budget_teleme... | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 3 | src/zephyr/infrastructure/system_telemetry/_trace_bridge.py | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 4 | src/zephyr/infrastructure/system_telemetry/ai_behavior/__... | src/zephyr/infrastructure/system_tele... | production | generated |
-| 5 | src/zephyr/infrastructure/system_telemetry/ai_behavior/ev... | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 6 | src/zephyr/infrastructure/system_telemetry/alerts/__init_... | src/zephyr/infrastructure/system_tele... | production | generated |
-| 7 | src/zephyr/infrastructure/system_telemetry/archive/__init... | src/zephyr/infrastructure/system_tele... | production | generated |
-| 8 | src/zephyr/infrastructure/system_telemetry/archive/cold_s... | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 9 | src/zephyr/infrastructure/system_telemetry/auto_bootstrap.py | src/zephyr/infrastructure/system_tele... | production | generated |
-| 10 | src/zephyr/infrastructure/system_telemetry/contract_metri... | src/zephyr/infrastructure/system_tele... | production | generated |
-| 11 | src/zephyr/infrastructure/system_telemetry/facade.py | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 12 | src/zephyr/infrastructure/system_telemetry/health/__init_... | src/zephyr/infrastructure/system_tele... | production | generated |
-| 13 | src/zephyr/infrastructure/system_telemetry/health_aggrega... | src/zephyr/infrastructure/system_tele... | production | generated |
-| 14 | src/zephyr/infrastructure/system_telemetry/health_probes.py | src/zephyr/infrastructure/system_tele... | production | generated |
-| 15 | src/zephyr/infrastructure/system_telemetry/logs/__init__.py | src/zephyr/infrastructure/system_tele... | production | generated |
-| 16 | src/zephyr/infrastructure/system_telemetry/logs/structure... | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 17 | src/zephyr/infrastructure/system_telemetry/metrics/__init... | src/zephyr/infrastructure/system_tele... | production | generated |
-| 18 | src/zephyr/infrastructure/system_telemetry/metrics/bluepr... | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 19 | src/zephyr/infrastructure/system_telemetry/metrics_bridge.py | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 20 | src/zephyr/infrastructure/system_telemetry/otel_instrumen... | src/zephyr/infrastructure/system_tele... | production | generated |
-| 21 | src/zephyr/infrastructure/system_telemetry/profiles/__ini... | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 22 | src/zephyr/infrastructure/system_telemetry/schema/__init_... | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 23 | src/zephyr/infrastructure/system_telemetry/traces/__init_... | src/zephyr/infrastructure/system_tele... | production | generated |
-| 24 | src/zephyr/infrastructure/system_telemetry/traces/span_st... | src/zephyr/infrastructure/system_tele... | prototype | generated |
-| 25 | src/zephyr/infrastructure/system_telemetry/watchdog.py | src/zephyr/infrastructure/system_tele... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/infrastructure/system_telemetry/__init__.py | src/zephyr/infrastructure/system_tele... | system-telemetry — 系统遥测模块（MOD-INF-015 v2.1.0）. | production | generated |
+| 2 | src/zephyr/infrastructure/system_telemetry/_budget_teleme... | src/zephyr/infrastructure/system_tele... |  | prototype | generated |
+| 3 | src/zephyr/infrastructure/system_telemetry/_trace_bridge.py | src/zephyr/infrastructure/system_tele... |  | prototype | generated |
+| 4 | src/zephyr/infrastructure/system_telemetry/ai_behavior/__... | src/zephyr/infrastructure/system_tele... | 遥测 · ai_behavior — AI 行为遥测（7维度 + Error Taxonomy） | production | generated |
+| 5 | src/zephyr/infrastructure/system_telemetry/ai_behavior/ev... | src/zephyr/infrastructure/system_tele... | 遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。 | prototype | generated |
+| 6 | src/zephyr/infrastructure/system_telemetry/alerts/__init_... | src/zephyr/infrastructure/system_tele... | AlertSubsystem — 告警规则评估引擎（MOD-INF-015 §9 · alerts）. | production | generated |
+| 7 | src/zephyr/infrastructure/system_telemetry/archive/__init... | src/zephyr/infrastructure/system_tele... | 遥测 · archive — 冷存储归档管道（TTL + gzip + backup + 成本降级） | production | generated |
+| 8 | src/zephyr/infrastructure/system_telemetry/archive/cold_s... | src/zephyr/infrastructure/system_tele... | 遥测 · archive/cold_stub — 冷存储归档管道。 | prototype | generated |
+| 9 | src/zephyr/infrastructure/system_telemetry/auto_bootstrap.py | src/zephyr/infrastructure/system_tele... | auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0） | production | generated |
+| 10 | src/zephyr/infrastructure/system_telemetry/contract_metri... | src/zephyr/infrastructure/system_tele... | ZephyrAlpha — system-telemetry/contract_metrics.py | production | generated |
+| 11 | src/zephyr/infrastructure/system_telemetry/facade.py | src/zephyr/infrastructure/system_tele... | Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0） | prototype | generated |
+| 12 | src/zephyr/infrastructure/system_telemetry/health/__init_... | src/zephyr/infrastructure/system_tele... | health subsystem — 模块健康注册与 LifecycleManager 对接. | production | generated |
+| 13 | src/zephyr/infrastructure/system_telemetry/health_aggrega... | src/zephyr/infrastructure/system_tele... | 健康聚合器（Health Aggregator） | production | generated |
+| 14 | src/zephyr/infrastructure/system_telemetry/health_probes.py | src/zephyr/infrastructure/system_tele... | 三态健康探针协议（Health Probes — CT-HEALTH-001） | production | generated |
+| 15 | src/zephyr/infrastructure/system_telemetry/logs/__init__.py | src/zephyr/infrastructure/system_tele... | logs — 结构化日志流（structlog + JSONL + trace注入）（D_SYSTEM_TELEMETRY） | production | generated |
+| 16 | src/zephyr/infrastructure/system_telemetry/logs/structure... | src/zephyr/infrastructure/system_tele... | logs/structured_sink — 结构化日志管道（D_SYSTEM_TELEMETRY）。 | prototype | generated |
+| 17 | src/zephyr/infrastructure/system_telemetry/metrics/__init... | src/zephyr/infrastructure/system_tele... | 遥测 · metrics — SLI/SLO 与业务指标流 | production | generated |
+| 18 | src/zephyr/infrastructure/system_telemetry/metrics/bluepr... | src/zephyr/infrastructure/system_tele... | blueprint_metrics — 蓝图使用追踪 instrumentation | prototype | generated |
+| 19 | src/zephyr/infrastructure/system_telemetry/metrics_bridge.py | src/zephyr/infrastructure/system_tele... | TELE→FLE 指标桥接 — emit_metrics() 生产者 | prototype | generated |
+| 20 | src/zephyr/infrastructure/system_telemetry/otel_instrumen... | src/zephyr/infrastructure/system_tele... | otel_instrumentation.py — 全链路 OTel (B12, DD86, TASK-015 beta v) | production | generated |
+| 21 | src/zephyr/infrastructure/system_telemetry/profiles/__ini... | src/zephyr/infrastructure/system_tele... | ProfileSubsystem — 系统资源画像（MOD-INF-015 §6 · profiles）. | prototype | generated |
+| 22 | src/zephyr/infrastructure/system_telemetry/schema/__init_... | src/zephyr/infrastructure/system_tele... | SchemaSubsystem — Schema 版本管理与兼容性校验（MOD-INF-015 §5.1 · schema）. | prototype | generated |
+| 23 | src/zephyr/infrastructure/system_telemetry/traces/__init_... | src/zephyr/infrastructure/system_tele... | 遥测 · traces — 分布式链路追踪（W3C TraceContext） | production | generated |
+| 24 | src/zephyr/infrastructure/system_telemetry/traces/span_st... | src/zephyr/infrastructure/system_tele... | 遥测 · traces/span_stub — W3C TraceContext 分布式追踪管道。 | prototype | generated |
+| 25 | src/zephyr/infrastructure/system_telemetry/watchdog.py | src/zephyr/infrastructure/system_tele... | 三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。 | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 01_d_infra_a2a / a2a_communication
+# 01_d_infra_a2a / a2a_communication / A2A Communication
 
 > **文档作用 / Purpose**: 展示 a2a_communication（D_INFRA_A2A）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 01 | Number | 01 |
 | 域ID | D_INFRA_A2A | Domain ID | D_INFRA_A2A |
-| 域名称 | a2a_communication | Domain Name | a2a_communication |
-| 层级 | L0_infrastructure | Layer | L0_infrastructure |
+| 域名称 | a2a_communication | Domain Name | A2A Communication |
+| 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 92 | Module Count | 92 |
 | 域内依赖 | 88 | Internal Dependencies | 88 |
 | 跨域入边 | 39 | Cross-domain Incoming | 39 |
@@ -354,100 +354,100 @@ graph TD
 
 ### L0 基础设施层 / Infrastructure Layer (92 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/infrastructure/a2a_protocol/__init__.py | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 2 | src/zephyr/infrastructure/a2a_protocol/a2a_card_registry.py | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 3 | src/zephyr/infrastructure/a2a_protocol/governance/__init_... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 4 | src/zephyr/infrastructure/a2a_protocol/governance/_base_s... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 5 | src/zephyr/infrastructure/a2a_protocol/governance/audit_l... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 6 | src/zephyr/infrastructure/a2a_protocol/governance/auditor.py | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 7 | src/zephyr/infrastructure/a2a_protocol/governance/error_c... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 8 | src/zephyr/infrastructure/a2a_protocol/governance/governa... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 9 | src/zephyr/infrastructure/a2a_protocol/governance/phase_h... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 10 | src/zephyr/infrastructure/a2a_protocol/governance/policy_... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 11 | src/zephyr/infrastructure/a2a_protocol/governance/protoco... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 12 | src/zephyr/infrastructure/a2a_protocol/governance/rate_li... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 13 | src/zephyr/infrastructure/a2a_protocol/governance/session... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 14 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/_... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 15 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/a... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 16 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/a... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 17 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/i... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 18 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 19 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 20 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 21 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 22 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 23 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 24 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 25 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 26 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 27 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 28 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 29 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 30 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 31 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 32 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 33 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 34 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 35 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 36 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 37 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 38 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 39 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 40 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 41 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 42 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 43 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 44 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 45 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 46 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 47 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 48 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 49 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 50 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 51 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 52 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 53 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 54 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 55 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 56 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 57 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 58 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 59 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 60 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 61 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 62 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 63 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 64 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 65 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 66 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 67 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 68 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 69 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 70 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 71 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 72 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 73 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 74 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 75 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 76 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 77 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 78 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 79 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 80 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 81 | src/zephyr/infrastructure/a2a_protocol/legacy_auditor.py | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 82 | src/zephyr/infrastructure/a2a_protocol/legacy_governance_... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 83 | src/zephyr/infrastructure/a2a_protocol/legacy_protocol.py | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
-| 84 | src/zephyr/infrastructure/a2a_protocol/local_first_arch.py | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 85 | src/zephyr/infrastructure/a2a_protocol/migration_strategy.py | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 86 | src/zephyr/infrastructure/a2a_protocol/multi_agent.py | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 87 | src/zephyr/infrastructure/a2a_protocol/multi_model_consen... | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 88 | src/zephyr/infrastructure/a2a_protocol/offline_autonomy.py | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 89 | src/zephyr/infrastructure/a2a_protocol/offline_resilience.py | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 90 | src/zephyr/infrastructure/a2a_protocol/phase_hold.py | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 91 | src/zephyr/infrastructure/a2a_protocol/prompt_lifecycle.py | src/zephyr/infrastructure/a2a_protoco... | production | generated |
-| 92 | src/zephyr/infrastructure/a2a_protocol/realtime_streaming.py | src/zephyr/infrastructure/a2a_protoco... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/infrastructure/a2a_protocol/__init__.py | src/zephyr/infrastructure/a2a_protoco... | 基础设施 Infrastructure — A2A Protocol 模块 (MOD-INF-025) | production | generated |
+| 2 | src/zephyr/infrastructure/a2a_protocol/a2a_card_registry.py | src/zephyr/infrastructure/a2a_protoco... | A2A Card Registry — 全局 Agent Card 注册单例 | production | generated |
+| 3 | src/zephyr/infrastructure/a2a_protocol/governance/__init_... | src/zephyr/infrastructure/a2a_protoco... | A2A Protocol — MOD-INF-025 | prototype | generated |
+| 4 | src/zephyr/infrastructure/a2a_protocol/governance/_base_s... | src/zephyr/infrastructure/a2a_protoco... |  | prototype | generated |
+| 5 | src/zephyr/infrastructure/a2a_protocol/governance/audit_l... | src/zephyr/infrastructure/a2a_protoco... |  | prototype | generated |
+| 6 | src/zephyr/infrastructure/a2a_protocol/governance/auditor.py | src/zephyr/infrastructure/a2a_protoco... | G-CT-008 契约：A2A → Audit 审计 Agent 间通信. | prototype | generated |
+| 7 | src/zephyr/infrastructure/a2a_protocol/governance/error_c... | src/zephyr/infrastructure/a2a_protoco... |  | prototype | generated |
+| 8 | src/zephyr/infrastructure/a2a_protocol/governance/governa... | src/zephyr/infrastructure/a2a_protoco... | A2A GovernanceAdapter — Phase 4 治理集成桥接器 | production | generated |
+| 9 | src/zephyr/infrastructure/a2a_protocol/governance/phase_h... | src/zephyr/infrastructure/a2a_protoco... | Phase 4 Hold — A2A Phase 4 锁定标记模块 与其他 Phase 3 模块不可并发施工. | production | generated |
+| 10 | src/zephyr/infrastructure/a2a_protocol/governance/policy_... | src/zephyr/infrastructure/a2a_protoco... |  | prototype | generated |
+| 11 | src/zephyr/infrastructure/a2a_protocol/governance/protoco... | src/zephyr/infrastructure/a2a_protoco... | G-CT-008 — A2ACommunication Pydantic V2 BaseModel agent-to-agent 通信数据结构. | production | generated |
+| 12 | src/zephyr/infrastructure/a2a_protocol/governance/rate_li... | src/zephyr/infrastructure/a2a_protoco... |  | prototype | generated |
+| 13 | src/zephyr/infrastructure/a2a_protocol/governance/session... | src/zephyr/infrastructure/a2a_protoco... |  | prototype | generated |
+| 14 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/_... | src/zephyr/infrastructure/a2a_protoco... | Layer 1: 发现+身份 — Agent Card 模型, AGENTS.md 注册, JWT 身份验证 | prototype | generated |
+| 15 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/a... | src/zephyr/infrastructure/a2a_protoco... | A2A Registry — Agent Card 注册与发现 | production | generated |
+| 16 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/a... | src/zephyr/infrastructure/a2a_protoco... | Agent Card 模型 — A2A Layer 1 Discovery | production | generated |
+| 17 | src/zephyr/infrastructure/a2a_protocol/layer1_discovery/i... | src/zephyr/infrastructure/a2a_protoco... | Identity Verifier — JWT 身份验证器 | production | generated |
+| 18 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | Layer 2: 通信+任务 — Task 状态机, Message/Part Schema, 上下文包 | prototype | generated |
+| 19 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | A2A Message/Part 系统 — Layer 2 Communication | production | generated |
+| 20 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | A2A Task 状态机 — Layer 2 Communication | production | generated |
+| 21 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | Context Package — A2A 上下文包 | prototype | generated |
+| 22 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | Handoff Manager — Agent 间任务交接 | prototype | generated |
+| 23 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | Message Router — A2A 消息路由 | production | generated |
+| 24 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | Push Notifier — A2A 推送通知 | production | generated |
+| 25 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | Streaming — A2A 流式传输 | production | generated |
+| 26 | src/zephyr/infrastructure/a2a_protocol/layer2_communicati... | src/zephyr/infrastructure/a2a_protoco... | 触发监控器 | production | generated |
+| 27 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | Layer 3: 协调+仲裁 — Coordinator, Living Spec 同步, 死锁防护, 全量 25 模块落地 | prototype | generated |
+| 28 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | Re-export bridge for layer3_coordination consensus symbols. | prototype | generated |
+| 29 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | Re-export bridge for layer3_coordination core coordination symbols. | prototype | generated |
+| 30 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | Re-export bridge for layer3_coordination governance integration symbols. | prototype | generated |
+| 31 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | Re-export bridge for layer3_coordination intelligence symbols. | prototype | generated |
+| 32 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | Re-export bridge for layer3_coordination security and economics symbols. | prototype | generated |
+| 33 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 统计异常检测引擎 — 基线学习 + 实时异常判断 | prototype | generated |
+| 34 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 行为指纹 — Agent 行为模式学习与画像 | prototype | generated |
+| 35 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 责任归属引擎 — 因果链分析 + 责任分配 | prototype | generated |
+| 36 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 碳足迹追踪 | prototype | generated |
+| 37 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 因果追踪 — 跨 Agent 操作因果链图谱 | prototype | generated |
+| 38 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 检查点管理器 | prototype | generated |
+| 39 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 合谋检测器 — Agent 间串通模式识别 | prototype | generated |
+| 40 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | P2: Agent同意管理 | prototype | generated |
+| 41 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | P2: 宪法性Agent管理 | prototype | generated |
+| 42 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | 上下文腐烂检测 | prototype | generated |
+| 43 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 跨 Agent 语义流追踪 — 知识+意图在 Agent 间传递 | prototype | generated |
+| 44 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 监控仪表盘 — Agent 集群运行状态可视化面板 | prototype | generated |
+| 45 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 结构化辩论协议 — 多轮主张→反驳→合成 | prototype | generated |
+| 46 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | 委托链 | prototype | generated |
+| 47 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 经济学——Token/API成本追踪 | prototype | generated |
+| 48 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 遗忘机制 | prototype | generated |
+| 49 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 形式化验证 — 协议属性模型检查 | prototype | generated |
+| 50 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A ANP 帧协商协议 — Agent Negotiation Protocol 帧层协商 | prototype | generated |
+| 51 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 治理适配器 — 连接 A2A 协议与 Governance 层 | prototype | generated |
+| 52 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 硬件路由器——GPU/CPU 调度 | prototype | generated |
+| 53 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | P2: Agent休眠管理 | prototype | generated |
+| 54 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 幂等性保证 | prototype | generated |
+| 55 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 空闲守卫 | prototype | generated |
+| 56 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 免疫系统 | prototype | generated |
+| 57 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 知识蒸馏 — 跨 Agent 经验提炼与共享 | prototype | generated |
+| 58 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 隐性通信检测 — 检测 Agent 通过副作用隐式通信 | prototype | generated |
+| 59 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 指标收集 | prototype | generated |
+| 60 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 协商协议 — Agent 间资源/任务分配协商 | production | generated |
+| 61 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 协议网关 — Agent 间请求分发与协议转换 | prototype | generated |
+| 62 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A协议安全 | prototype | generated |
+| 63 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 红队测试 — 攻击向量定义与执行框架 | prototype | generated |
+| 64 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A Saga 事务协议 — 多 Agent 跨步分布式事务 | production | generated |
+| 65 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 安全内容扫描器 — 六大类威胁检测 | prototype | generated |
+| 66 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | 时序准入控制 | prototype | generated |
+| 67 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 分布式追踪 — 跨 Agent 请求链追踪 (Span-based) | prototype | generated |
+| 68 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | 向量化信誉系统 | prototype | generated |
+| 69 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 加权投票协议 — 多 Agent 共识达成机制 | production | generated |
+| 70 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 工作窃取调度器 — 跨 Agent 负载均衡 | production | generated |
+| 71 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 三级仲裁引擎 — priority → rule → escalation | production | generated |
+| 72 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | 级联守卫——防止失败在Agent间级联 | production | generated |
+| 73 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 冲突检测引擎 — 语义+文本+资源三维冲突检测 | production | generated |
+| 74 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | 施工后验证器 — 自指悖论防御：不橡胶图章，真正验证 A2A 协议模块的施工完整性 | prototype | generated |
+| 75 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | P2: 死锁守卫 | production | generated |
+| 76 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | P2: 活锁检测器 | production | generated |
+| 77 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A 语义差异引擎 — 结构感知的 Agent 间差异检测 | prototype | generated |
+| 78 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A Session 走私防御 — 防止跨 Agent session 上下文伪造 | prototype | generated |
+| 79 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | A2A Living Spec 同步 — 蓝图与实现的双向漂移管理 | prototype | generated |
+| 80 | src/zephyr/infrastructure/a2a_protocol/layer3_coordinatio... | src/zephyr/infrastructure/a2a_protoco... | Supervisor — A2A Layer 3 Coordination | production | generated |
+| 81 | src/zephyr/infrastructure/a2a_protocol/legacy_auditor.py | src/zephyr/infrastructure/a2a_protoco... | G-CT-008 契约：A2A → Audit 审计 Agent 间通信. | prototype | generated |
+| 82 | src/zephyr/infrastructure/a2a_protocol/legacy_governance_... | src/zephyr/infrastructure/a2a_protoco... | G-CT-008: A2A → RBAC + Escalation | production | generated |
+| 83 | src/zephyr/infrastructure/a2a_protocol/legacy_protocol.py | src/zephyr/infrastructure/a2a_protoco... | G-CT-008 — A2ACommunication Pydantic V2 BaseModel agent-to-agent 通信数据结构. | prototype | generated |
+| 84 | src/zephyr/infrastructure/a2a_protocol/local_first_arch.py | src/zephyr/infrastructure/a2a_protoco... |  | production | generated |
+| 85 | src/zephyr/infrastructure/a2a_protocol/migration_strategy.py | src/zephyr/infrastructure/a2a_protoco... |  | production | generated |
+| 86 | src/zephyr/infrastructure/a2a_protocol/multi_agent.py | src/zephyr/infrastructure/a2a_protoco... | multi_agent.py —— Multi-Agent 编排基座（Phase 14 | 盲点 B33） | production | generated |
+| 87 | src/zephyr/infrastructure/a2a_protocol/multi_model_consen... | src/zephyr/infrastructure/a2a_protoco... |  | production | generated |
+| 88 | src/zephyr/infrastructure/a2a_protocol/offline_autonomy.py | src/zephyr/infrastructure/a2a_protoco... |  | production | generated |
+| 89 | src/zephyr/infrastructure/a2a_protocol/offline_resilience.py | src/zephyr/infrastructure/a2a_protoco... |  | production | generated |
+| 90 | src/zephyr/infrastructure/a2a_protocol/phase_hold.py | src/zephyr/infrastructure/a2a_protoco... | Phase 4 Hold — A2A Phase 4 锁定标记模块 与其他 Phase 3 模块不可并发施工. | production | generated |
+| 91 | src/zephyr/infrastructure/a2a_protocol/prompt_lifecycle.py | src/zephyr/infrastructure/a2a_protoco... |  | production | generated |
+| 92 | src/zephyr/infrastructure/a2a_protocol/realtime_streaming.py | src/zephyr/infrastructure/a2a_protoco... |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

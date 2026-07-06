@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 27_d_ex_core / 执行核心
+# 27_d_ex_core / 执行核心 / Execution Core
 
 > **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 27 | Number | 27 |
 | 域ID | D_EX_CORE | Domain ID | D_EX_CORE |
-| 域名称 | 执行核心 | Domain Name | 执行核心 |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | 执行核心 | Domain Name | Execution Core |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 15 | Module Count | 15 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
 | 跨域入边 | 7 | Cross-domain Incoming | 7 |
@@ -151,23 +151,23 @@ graph TD
 
 ### L2 领域层 / Domain Layer (15 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/ex_core/__init__.py | src/zephyr/ex_core/__init__.py | production | generated |
-| 2 | src/zephyr/ex_core/_extensions/__init__.py | src/zephyr/ex_core/_extensions/__init... | prototype | generated |
-| 3 | src/zephyr/ex_core/adapters/__init__.py | src/zephyr/ex_core/adapters/__init__.py | prototype | generated |
-| 4 | src/zephyr/ex_core/adapters/broker_interface.py | src/zephyr/ex_core/adapters/broker_in... | production | generated |
-| 5 | src/zephyr/ex_core/adapters/miniqmt_broker.py | src/zephyr/ex_core/adapters/miniqmt_b... | prototype | generated |
-| 6 | src/zephyr/ex_core/adapters/miniqmt_broker.py/ | src/zephyr/ex_core/adapters/miniqmt_b... | design | stable |
-| 7 | src/zephyr/ex_core/adapters/risk_validation_bridge.py | src/zephyr/ex_core/adapters/risk_vali... | prototype | generated |
-| 8 | src/zephyr/ex_core/adapters/simulation_broker.py | src/zephyr/ex_core/adapters/simulatio... | production | generated |
-| 9 | src/zephyr/ex_core/api/__init__.py | src/zephyr/ex_core/api/__init__.py | prototype | generated |
-| 10 | src/zephyr/ex_core/broker_interface.py | src/zephyr/ex_core/broker_interface.py | prototype | generated |
-| 11 | src/zephyr/ex_core/core/__init__.py | src/zephyr/ex_core/core/__init__.py | prototype | generated |
-| 12 | src/zephyr/ex_core/execution_engine.py | src/zephyr/ex_core/execution_engine.py | production | generated |
-| 13 | src/zephyr/ex_core/infrastructure/__init__.py | src/zephyr/ex_core/infrastructure/__i... | prototype | generated |
-| 14 | src/zephyr/ex_core/order_manager.py | src/zephyr/ex_core/order_manager.py | production | generated |
-| 15 | src/zephyr/ex_core/services/__init__.py | src/zephyr/ex_core/services/__init__.py | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | src/zephyr/ex_core/__init__.py | src/zephyr/ex_core/__init__.py | D_EXECUTION_CORE Trade Execution — Re-export wrapper (DM-298) | production | generated |
+| 2 | src/zephyr/ex_core/_extensions/__init__.py | src/zephyr/ex_core/_extensions/__init... |  | prototype | generated |
+| 3 | src/zephyr/ex_core/adapters/__init__.py | src/zephyr/ex_core/adapters/__init__.py | D_EX_CORE adapters — 券商/风控适配器 re-export wrapper | prototype | generated |
+| 4 | src/zephyr/ex_core/adapters/broker_interface.py | src/zephyr/ex_core/adapters/broker_in... | Re-export wrapper: broker_interface has migrated to zephyr.execution.core.ada... | production | generated |
+| 5 | src/zephyr/ex_core/adapters/miniqmt_broker.py | src/zephyr/ex_core/adapters/miniqmt_b... | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） | prototype | generated |
+| 6 | src/zephyr/ex_core/adapters/miniqmt_broker.py/ | src/zephyr/ex_core/adapters/miniqmt_b... |  | design | stable |
+| 7 | src/zephyr/ex_core/adapters/risk_validation_bridge.py | src/zephyr/ex_core/adapters/risk_vali... | Re-export wrapper: risk_validation_bridge has migrated to zephyr.execution.co... | prototype | generated |
+| 8 | src/zephyr/ex_core/adapters/simulation_broker.py | src/zephyr/ex_core/adapters/simulatio... | Re-export wrapper: simulation_broker has migrated to zephyr.execution.core.ad... | production | generated |
+| 9 | src/zephyr/ex_core/api/__init__.py | src/zephyr/ex_core/api/__init__.py |  | prototype | generated |
+| 10 | src/zephyr/ex_core/broker_interface.py | src/zephyr/ex_core/broker_interface.py | Re-export wrapper: broker_interface has migrated to zephyr.execution.core.bro... | prototype | generated |
+| 11 | src/zephyr/ex_core/core/__init__.py | src/zephyr/ex_core/core/__init__.py |  | prototype | generated |
+| 12 | src/zephyr/ex_core/execution_engine.py | src/zephyr/ex_core/execution_engine.py | D_EXECUTION_CORE — Execution Engine | production | generated |
+| 13 | src/zephyr/ex_core/infrastructure/__init__.py | src/zephyr/ex_core/infrastructure/__i... |  | prototype | generated |
+| 14 | src/zephyr/ex_core/order_manager.py | src/zephyr/ex_core/order_manager.py | D_EXECUTION_CORE — Order Manager | production | generated |
+| 15 | src/zephyr/ex_core/services/__init__.py | src/zephyr/ex_core/services/__init__.py |  | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

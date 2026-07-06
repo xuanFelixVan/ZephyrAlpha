@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 31_d_governance / registry_management
+# 31_d_governance / registry_management / Lifecycle Management
 
 > **文档作用 / Purpose**: 展示 registry_management（D_GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:07:59
+> 最后更新: 2026-07-06 14:36:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,8 +22,8 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 31 | Number | 31 |
 | 域ID | D_GOVERNANCE | Domain ID | D_GOVERNANCE |
-| 域名称 | registry_management | Domain Name | registry_management |
-| 层级 | L2_domain | Layer | L2_domain |
+| 域名称 | registry_management | Domain Name | Lifecycle Management |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 847 | Module Count | 847 |
 | 域内依赖 | 647 | Internal Dependencies | 647 |
 | 跨域入边 | 702 | Cross-domain Incoming | 702 |
@@ -2340,238 +2340,238 @@ graph TD
 
 ### L1 基础层 / Foundation Layer (25 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | docs__03_modules___cross_layer__agent... | design | planned |
-| 2 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | docs__03_modules___cross_layer__auto_... | design | planned |
-| 3 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | docs__03_modules___cross_layer__auto_... | design | planned |
-| 4 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | docs__03_modules___cross_layer__behav... | design | planned |
-| 5 | docs/03_modules/_cross_layer/context_engine/blueprint.md | docs__03_modules___cross_layer__conte... | design | planned |
-| 6 | docs/03_modules/_cross_layer/database/blueprint.md | docs__03_modules___cross_layer__datab... | design | planned |
-| 7 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | docs__03_modules___cross_layer__feedb... | design | planned |
-| 8 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | docs__03_modules___cross_layer__gate_... | design | planned |
-| 9 | docs/03_modules/_cross_layer/model_capability_exam/bluepr... | docs__03_modules___cross_layer__model... | design | planned |
-| 10 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | docs__03_modules___cross_layer__orpha... | design | planned |
-| 11 | docs/03_modules/_cross_layer/pipeline/blueprint.md | docs__03_modules___cross_layer__pipel... | design | planned |
-| 12 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | docs__03_modules___cross_layer__red_b... | design | planned |
-| 13 | docs/03_modules/_cross_layer/resource_optimization_engine... | docs__03_modules___cross_layer__resou... | design | planned |
-| 14 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | docs__03_modules___cross_layer__seman... | design | planned |
-| 15 | docs/03_modules/_cross_layer/shared_core/blueprint.md | docs__03_modules___cross_layer__share... | design | planned |
-| 16 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprin... | docs__03_modules___domain_autonomy_co... | design | planned |
-| 17 | docs/03_modules/_domain_autonomy_core/rollback_system/blu... | docs__03_modules___domain_autonomy_co... | design | planned |
-| 18 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blu... | docs__03_modules___domain_autonomy_pe... | design | planned |
-| 19 | docs/03_modules/_domain_autonomy_perm/escalation_protocol... | docs__03_modules___domain_autonomy_pe... | design | planned |
-| 20 | docs/03_modules/_domain_governance/blueprint.md | docs__03_modules___domain_governance_... | design | planned |
-| 21 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | docs__03_modules___domain_governance_... | design | planned |
-| 22 | docs/03_modules/_domain_governance/governance_automation/... | docs__03_modules___domain_governance_... | design | planned |
-| 23 | docs/03_modules/_domain_governance/registry_governance/bl... | docs__03_modules___domain_governance_... | design | planned |
-| 24 | docs/03_modules/_master_blueprint/blueprint.md | docs__03_modules___master_blueprint__... | design | planned |
-| 25 | docs/03_modules/_master_blueprint/blueprint_agent_spec.md | agent_spec_md | design | planned |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | docs__03_modules___cross_layer__agent... |  | design | planned |
+| 2 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | docs__03_modules___cross_layer__auto_... |  | design | planned |
+| 3 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | docs__03_modules___cross_layer__auto_... |  | design | planned |
+| 4 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | docs__03_modules___cross_layer__behav... |  | design | planned |
+| 5 | docs/03_modules/_cross_layer/context_engine/blueprint.md | docs__03_modules___cross_layer__conte... |  | design | planned |
+| 6 | docs/03_modules/_cross_layer/database/blueprint.md | docs__03_modules___cross_layer__datab... |  | design | planned |
+| 7 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | docs__03_modules___cross_layer__feedb... |  | design | planned |
+| 8 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | docs__03_modules___cross_layer__gate_... |  | design | planned |
+| 9 | docs/03_modules/_cross_layer/model_capability_exam/bluepr... | docs__03_modules___cross_layer__model... |  | design | planned |
+| 10 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | docs__03_modules___cross_layer__orpha... |  | design | planned |
+| 11 | docs/03_modules/_cross_layer/pipeline/blueprint.md | docs__03_modules___cross_layer__pipel... |  | design | planned |
+| 12 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | docs__03_modules___cross_layer__red_b... |  | design | planned |
+| 13 | docs/03_modules/_cross_layer/resource_optimization_engine... | docs__03_modules___cross_layer__resou... |  | design | planned |
+| 14 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | docs__03_modules___cross_layer__seman... |  | design | planned |
+| 15 | docs/03_modules/_cross_layer/shared_core/blueprint.md | docs__03_modules___cross_layer__share... |  | design | planned |
+| 16 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprin... | docs__03_modules___domain_autonomy_co... |  | design | planned |
+| 17 | docs/03_modules/_domain_autonomy_core/rollback_system/blu... | docs__03_modules___domain_autonomy_co... |  | design | planned |
+| 18 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blu... | docs__03_modules___domain_autonomy_pe... |  | design | planned |
+| 19 | docs/03_modules/_domain_autonomy_perm/escalation_protocol... | docs__03_modules___domain_autonomy_pe... |  | design | planned |
+| 20 | docs/03_modules/_domain_governance/blueprint.md | docs__03_modules___domain_governance_... |  | design | planned |
+| 21 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | docs__03_modules___domain_governance_... |  | design | planned |
+| 22 | docs/03_modules/_domain_governance/governance_automation/... | docs__03_modules___domain_governance_... |  | design | planned |
+| 23 | docs/03_modules/_domain_governance/registry_governance/bl... | docs__03_modules___domain_governance_... |  | design | planned |
+| 24 | docs/03_modules/_master_blueprint/blueprint.md | docs__03_modules___master_blueprint__... |  | design | planned |
+| 25 | docs/03_modules/_master_blueprint/blueprint_agent_spec.md | agent_spec_md |  | design | planned |
 
 ### L2 领域层 / Domain Layer (822 modules)
 
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | config/ai_capability_matrix.yaml | config/ai_capability_matrix.yaml | production | generated |
-| 2 | config/auto_fix_cron.yaml | config/auto_fix_cron.yaml | production | generated |
-| 3 | config/blueprint_routing.yaml | config/blueprint_routing.yaml | production | generated |
-| 4 | config/budget_policy.yaml | config/budget_policy.yaml | production | generated |
-| 5 | config/capabilities.yaml | config/capabilities.yaml | production | generated |
-| 6 | config/capacity_params.yaml | config/capacity_params.yaml | production | generated |
-| 7 | config/context_rules.yaml | config/context_rules.yaml | production | generated |
-| 8 | config/flags.yaml | config/flags.yaml | production | generated |
-| 9 | config/infra/grafana/dashboards/provider.yml | config/infra/grafana/dashboards/provi... | production | generated |
-| 10 | config/infra/grafana/datasources/prometheus.yml | config/infra/grafana/datasources/prom... | production | generated |
-| 11 | config/infra/prometheus/prometheus.yml | config/infra/prometheus/prometheus.yml | production | generated |
-| 12 | config/kb_parameters.yaml | config/kb_parameters.yaml | production | generated |
-| 13 | config/model_pricing.yaml | config/model_pricing.yaml | production | generated |
-| 14 | config/nav_table_mapping.yaml | config/nav_table_mapping.yaml | production | generated |
-| 15 | config/rbac_roles.yaml | config/rbac_roles.yaml | production | generated |
-| 16 | config/resource_optimization.yaml | config/resource_optimization.yaml | production | generated |
-| 17 | config/risk_params.yaml | config/risk_params.yaml | production | generated |
-| 18 | config/runtime/burn_rate_acceleration.yaml | config/runtime/burn_rate_acceleration... | production | generated |
-| 19 | config/runtime/error_budget_state.yaml | config/runtime/error_budget_state.yaml | production | generated |
-| 20 | config/runtime/kill_switch_state.yaml | config/runtime/kill_switch_state.yaml | production | generated |
-| 21 | config/runtime/script_retirement_state.yaml | config/runtime/script_retirement_stat... | production | generated |
-| 22 | config/runtime/shadow_mode_state.yaml | config/runtime/shadow_mode_state.yaml | production | generated |
-| 23 | config/session_state_machine.yaml | config/session_state_machine.yaml | production | generated |
-| 24 | config/trigger_router.yaml | config/trigger_router.yaml | production | generated |
-| 25 | data/asset_index/archive/migration_scripts/_migration_sha... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 26 | data/asset_index/archive/migration_scripts/_verify_manife... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 27 | data/asset_index/archive/migration_scripts/_verify_step4.py | data/asset_index/archive/migration_sc... | prototype | generated |
-| 28 | data/asset_index/archive/migration_scripts/apply_rulings.py | data/asset_index/archive/migration_sc... | prototype | generated |
-| 29 | data/asset_index/archive/migration_scripts/check_coverage.py | data/asset_index/archive/migration_sc... | prototype | generated |
-| 30 | data/asset_index/archive/migration_scripts/comprehensive_... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 31 | data/asset_index/archive/migration_scripts/create_target_... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 32 | data/asset_index/archive/migration_scripts/cross_domain_i... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 33 | data/asset_index/archive/migration_scripts/domain_prefix_... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 34 | data/asset_index/archive/migration_scripts/execute_move.py | data/asset_index/archive/migration_sc... | prototype | generated |
-| 35 | data/asset_index/archive/migration_scripts/generate_migra... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 36 | data/asset_index/archive/migration_scripts/generate_path_... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 37 | data/asset_index/archive/migration_scripts/inject_domain_... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 38 | data/asset_index/archive/migration_scripts/lock_batch.py | data/asset_index/archive/migration_sc... | prototype | generated |
-| 39 | data/asset_index/archive/migration_scripts/preflight_chec... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 40 | data/asset_index/archive/migration_scripts/rollback_batch.py | data/asset_index/archive/migration_sc... | prototype | generated |
-| 41 | data/asset_index/archive/migration_scripts/scan_import_im... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 42 | data/asset_index/archive/migration_scripts/shared_import_... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 43 | data/asset_index/archive/migration_scripts/test_import_fi... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 44 | data/asset_index/archive/migration_scripts/unnest_from_mc... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 45 | data/asset_index/archive/migration_scripts/update_imports.py | data/asset_index/archive/migration_sc... | prototype | generated |
-| 46 | data/asset_index/archive/migration_scripts/update_non_imp... | data/asset_index/archive/migration_sc... | prototype | generated |
-| 47 | data/asset_index/archive/migration_scripts/verify_batch.py | data/asset_index/archive/migration_sc... | prototype | generated |
-| 48 | docs/01_policies_and_standards/_registry/schemas/session_... | docs/01_policies_and_standards/_regis... | production | generated |
-| 49 | docs/01_policies_and_standards/rules/trae_001_file_operat... | docs/01_policies_and_standards/rules/... | production | generated |
-| 50 | docs/01_policies_and_standards/rules/trae_002_anti_orphan... | docs/01_policies_and_standards/rules/... | production | generated |
-| 51 | docs/01_policies_and_standards/rules/trae_003_task_granul... | docs/01_policies_and_standards/rules/... | production | generated |
-| 52 | docs/01_policies_and_standards/rules/trae_004_parallel_at... | docs/01_policies_and_standards/rules/... | production | generated |
-| 53 | docs/01_policies_and_standards/rules/trae_005_modificatio... | docs/01_policies_and_standards/rules/... | production | generated |
-| 54 | docs/01_policies_and_standards/rules/trae_006_anti_halluc... | docs/01_policies_and_standards/rules/... | production | generated |
-| 55 | docs/01_policies_and_standards/rules/trae_007_anti_halluc... | docs/01_policies_and_standards/rules/... | production | generated |
-| 56 | docs/01_policies_and_standards/rules/trae_008_anti_halluc... | docs/01_policies_and_standards/rules/... | production | generated |
-| 57 | docs/01_policies_and_standards/rules/trae_009_anti_halluc... | docs/01_policies_and_standards/rules/... | production | generated |
-| 58 | docs/01_policies_and_standards/rules/trae_010_code_naming... | docs/01_policies_and_standards/rules/... | production | generated |
-| 59 | docs/01_policies_and_standards/rules/trae_011_code_type_i... | docs/01_policies_and_standards/rules/... | production | generated |
-| 60 | docs/01_policies_and_standards/rules/trae_012_code_test_s... | docs/01_policies_and_standards/rules/... | production | generated |
-| 61 | docs/01_policies_and_standards/rules/trae_013_arch_cross_... | docs/01_policies_and_standards/rules/... | production | generated |
-| 62 | docs/01_policies_and_standards/rules/trae_014_arch_bluepr... | docs/01_policies_and_standards/rules/... | production | generated |
-| 63 | docs/01_policies_and_standards/rules/trae_015_arch_path_r... | docs/01_policies_and_standards/rules/... | production | generated |
-| 64 | docs/01_policies_and_standards/rules/trae_016_arch_drift_... | docs/01_policies_and_standards/rules/... | production | generated |
-| 65 | docs/01_policies_and_standards/rules/trae_017_arch_govern... | docs/01_policies_and_standards/rules/... | production | generated |
-| 66 | docs/01_policies_and_standards/rules/trae_018_behavior_co... | docs/01_policies_and_standards/rules/... | production | generated |
-| 67 | docs/01_policies_and_standards/rules/trae_019_behavior_se... | docs/01_policies_and_standards/rules/... | production | generated |
-| 68 | docs/01_policies_and_standards/rules/trae_020_behavior_go... | docs/01_policies_and_standards/rules/... | production | generated |
-| 69 | docs/01_policies_and_standards/rules/trae_021_behavior_ot... | docs/01_policies_and_standards/rules/... | production | generated |
-| 70 | docs/01_policies_and_standards/rules/trae_022_behavior_co... | docs/01_policies_and_standards/rules/... | production | generated |
-| 71 | docs/01_policies_and_standards/rules/trae_023_behavior_co... | docs/01_policies_and_standards/rules/... | production | generated |
-| 72 | docs/01_policies_and_standards/rules/trae_024_methodology... | docs/01_policies_and_standards/rules/... | production | generated |
-| 73 | docs/01_policies_and_standards/rules/trae_025_methodology... | docs/01_policies_and_standards/rules/... | production | generated |
-| 74 | docs/01_policies_and_standards/rules/trae_026_methodology... | docs/01_policies_and_standards/rules/... | production | generated |
-| 75 | docs/01_policies_and_standards/rules/trae_027_methodology... | docs/01_policies_and_standards/rules/... | production | generated |
-| 76 | docs/01_policies_and_standards/rules/trae_028_doc_structu... | docs/01_policies_and_standards/rules/... | production | generated |
-| 77 | docs/01_policies_and_standards/rules/trae_029_doc_operati... | docs/01_policies_and_standards/rules/... | production | generated |
-| 78 | docs/01_policies_and_standards/rules/trae_030_doc_numberi... | docs/01_policies_and_standards/rules/... | production | generated |
-| 79 | docs/01_policies_and_standards/rules/trae_031_security_ke... | docs/01_policies_and_standards/rules/... | production | generated |
-| 80 | docs/01_policies_and_standards/rules/trae_032_module_life... | docs/01_policies_and_standards/rules/... | production | generated |
-| 81 | docs/01_policies_and_standards/rules/trae_033_module_regi... | docs/01_policies_and_standards/rules/... | production | generated |
-| 82 | docs/01_policies_and_standards/rules/trae_034_task_card_s... | docs/01_policies_and_standards/rules/... | production | generated |
-| 83 | docs/01_policies_and_standards/rules/trae_035_task_constr... | docs/01_policies_and_standards/rules/... | production | generated |
-| 84 | docs/01_policies_and_standards/rules/trae_036_arch_gate_t... | docs/01_policies_and_standards/rules/... | production | generated |
-| 85 | docs/01_policies_and_standards/rules/trae_037_arch_qualif... | docs/01_policies_and_standards/rules/... | production | generated |
-| 86 | docs/01_policies_and_standards/rules/trae_038_arch_ctr_in... | docs/01_policies_and_standards/rules/... | production | generated |
-| 87 | docs/01_policies_and_standards/rules/trae_039_ai_hallucin... | docs/01_policies_and_standards/rules/... | production | generated |
-| 88 | docs/01_policies_and_standards/rules/trae_040_ai_model_ro... | docs/01_policies_and_standards/rules/... | production | generated |
-| 89 | docs/01_policies_and_standards/rules/trae_041_meta_rule_c... | docs/01_policies_and_standards/rules/... | production | generated |
-| 90 | docs/01_policies_and_standards/rules/trae_042_meta_rule_s... | docs/01_policies_and_standards/rules/... | production | generated |
-| 91 | docs/01_policies_and_standards/rules/trae_043_meta_rule_m... | docs/01_policies_and_standards/rules/... | production | generated |
-| 92 | docs/01_policies_and_standards/rules/trae_044_compliance_... | docs/01_policies_and_standards/rules/... | production | generated |
-| 93 | docs/01_policies_and_standards/rules/trae_045_data_qualit... | docs/01_policies_and_standards/rules/... | production | generated |
-| 94 | docs/01_policies_and_standards/rules/trae_046_engineering... | docs/01_policies_and_standards/rules/... | production | generated |
-| 95 | docs/01_policies_and_standards/rules/trae_047_engineering... | docs/01_policies_and_standards/rules/... | production | generated |
-| 96 | docs/01_policies_and_standards/rules/trae_048_ops_vibe_co... | docs/01_policies_and_standards/rules/... | production | generated |
-| 97 | docs/01_policies_and_standards/rules/trae_049_ops_domain_... | docs/01_policies_and_standards/rules/... | production | generated |
-| 98 | docs/01_policies_and_standards/rules/trae_050_domain_poli... | docs/01_policies_and_standards/rules/... | production | generated |
-| 99 | docs/01_policies_and_standards/rules/trae_051_domain_poli... | docs/01_policies_and_standards/rules/... | production | generated |
-| 100 | docs/01_policies_and_standards/rules/trae_052_cross_bluep... | docs/01_policies_and_standards/rules/... | production | generated |
-| 101 | docs/01_policies_and_standards/rules/trae_053_automation_... | docs/01_policies_and_standards/rules/... | production | generated |
-| 102 | docs/01_policies_and_standards/rules/trae_054_depgraph_ac... | docs/01_policies_and_standards/rules/... | production | generated |
-| 103 | docs/01_policies_and_standards/rules/trae_055_arch_domain... | docs/01_policies_and_standards/rules/... | production | generated |
-| 104 | docs/01_policies_and_standards/rules/trae_056_module_crea... | docs/01_policies_and_standards/rules/... | production | generated |
-| 105 | docs/01_policies_and_standards/rules/trae_057_ai_consumer... | docs/01_policies_and_standards/rules/... | production | generated |
-| 106 | docs/01_policies_and_standards/rules/trae_058_depgraph_sc... | docs/01_policies_and_standards/rules/... | production | generated |
-| 107 | docs/01_policies_and_standards/rules/trae_059_schema_vers... | docs/01_policies_and_standards/rules/... | production | generated |
-| 108 | docs/01_policies_and_standards/rules/trae_060_inward_cons... | docs/01_policies_and_standards/rules/... | production | generated |
-| 109 | docs/01_policies_and_standards/rules/trae_061_decisiongra... | docs/01_policies_and_standards/rules/... | production | generated |
-| 110 | docs/03_modules/_domain_infrastructure_operations/agent_t... | docs/03_modules/_domain_infrastructur... | production | generated |
-| 111 | docs/03_modules/_domain_infrastructure_operations/agent_t... | docs/03_modules/_domain_infrastructur... | production | generated |
-| 112 | docs/03_modules/path_ownership_map.yaml | docs/03_modules/path_ownership_map.yaml | production | generated |
-| 113 | scripts/__init__.py | scripts/__init__.py | prototype | generated |
-| 114 | scripts/_archive/construction/create_db_alignment_tasks.py | scripts/_archive/construction/create_... | prototype | generated |
-| 115 | scripts/_archive/construction/create_dm_phase9_tasks.py | scripts/_archive/construction/create_... | prototype | generated |
-| 116 | scripts/_archive/construction/dm014_orphan_edge_repair.py | scripts/_archive/construction/dm014_o... | prototype | generated |
-| 117 | scripts/_archive/governance/compare_ba_copies.py | scripts/_archive/governance/compare_b... | prototype | generated |
-| 118 | scripts/_archive/governance/create_depgraph_task_cards.py | scripts/_archive/governance/create_de... | prototype | generated |
-| 119 | scripts/_archive/governance/d11_compliance/batch_remove_b... | scripts/_archive/governance/d11_compl... | prototype | generated |
-| 120 | scripts/_archive/governance/d3_metadata/assign_module_id.py | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 121 | scripts/_archive/governance/d3_metadata/check_frontmatter... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 122 | scripts/_archive/governance/d3_metadata/check_template_co... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 123 | scripts/_archive/governance/d3_metadata/detect_deprecated... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 124 | scripts/_archive/governance/d3_metadata/detect_skip_activ... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 125 | scripts/_archive/governance/d3_metadata/detect_stale_vers... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 126 | scripts/_archive/governance/d3_metadata/fix_dm411_bare_re... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 127 | scripts/_archive/governance/d3_metadata/fix_dm413_duplica... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 128 | scripts/_archive/governance/d3_metadata/fix_n06_module_id... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 129 | scripts/_archive/governance/d3_metadata/fix_n12_ke_naming.py | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 130 | scripts/_archive/governance/d3_metadata/fix_n15_blueprint... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 131 | scripts/_archive/governance/d3_metadata/generate_rule_cat... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 132 | scripts/_archive/governance/d3_metadata/scan_deep_content.py | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 133 | scripts/_archive/governance/d3_metadata/validate_blueprin... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 134 | scripts/_archive/governance/d3_metadata/validate_cross_mo... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 135 | scripts/_archive/governance/d3_metadata/validate_derived_... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 136 | scripts/_archive/governance/d3_metadata/validate_enum_con... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 137 | scripts/_archive/governance/d3_metadata/validate_frontmat... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 138 | scripts/_archive/governance/d3_metadata/validate_no_dupli... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 139 | scripts/_archive/governance/d3_metadata/validate_ssot_sta... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 140 | scripts/_archive/governance/d3_metadata/validate_supersed... | scripts/_archive/governance/d3_metada... | prototype | generated |
-| 141 | scripts/_archive/governance/dm101_blueprint_domain_mappin... | scripts/_archive/governance/dm101_blu... | prototype | generated |
-| 142 | scripts/_archive/governance/dm106_p2b_verification.py | scripts/_archive/governance/dm106_p2b... | prototype | generated |
-| 143 | scripts/_archive/governance/list_no_consumer_orphans.py | scripts/_archive/governance/list_no_c... | prototype | generated |
-| 144 | scripts/_archive/governance/merge_domain_nodes.py | scripts/_archive/governance/merge_dom... | prototype | generated |
-| 145 | scripts/_archive/governance/repair/ensure_dep_cycles_view.py | scripts/_archive/governance/repair/en... | prototype | generated |
-| 146 | scripts/_archive/governance/repair/list_source_md_files.py | scripts/_archive/governance/repair/li... | prototype | generated |
-| 147 | scripts/_archive/migration/_migration_shared.py | scripts/_archive/migration/_migration... | prototype | generated |
-| 148 | scripts/_archive/migration/_verify_manifest.py | scripts/_archive/migration/_verify_ma... | prototype | generated |
-| 149 | scripts/_archive/migration/_verify_step4.py | scripts/_archive/migration/_verify_st... | prototype | generated |
-| 150 | scripts/_archive/migration/apply_rulings.py | scripts/_archive/migration/apply_ruli... | prototype | generated |
-| 151 | scripts/_archive/migration/check_coverage.py | scripts/_archive/migration/check_cove... | prototype | generated |
-| 152 | scripts/_archive/migration/comprehensive_import_fix.py | scripts/_archive/migration/comprehens... | prototype | generated |
-| 153 | scripts/_archive/migration/create_target_dirs.py | scripts/_archive/migration/create_tar... | prototype | generated |
-| 154 | scripts/_archive/migration/cross_domain_import_fix.py | scripts/_archive/migration/cross_doma... | prototype | generated |
-| 155 | scripts/_archive/migration/domain_prefix_import_fix.py | scripts/_archive/migration/domain_pre... | prototype | generated |
-| 156 | scripts/_archive/migration/execute_move.py | scripts/_archive/migration/execute_mo... | prototype | generated |
-| 157 | scripts/_archive/migration/generate_migration_registry.py | scripts/_archive/migration/generate_m... | prototype | generated |
-| 158 | scripts/_archive/migration/generate_path_migration_mappin... | scripts/_archive/migration/generate_p... | prototype | generated |
-| 159 | scripts/_archive/migration/inject_domain_fields.py | scripts/_archive/migration/inject_dom... | prototype | generated |
-| 160 | scripts/_archive/migration/lock_batch.py | scripts/_archive/migration/lock_batch.py | prototype | generated |
-| 161 | scripts/_archive/migration/migrate_security_split.py | scripts/_archive/migration/migrate_se... | prototype | generated |
-| 162 | scripts/_archive/migration/preflight_check.py | scripts/_archive/migration/preflight_... | prototype | generated |
-| 163 | scripts/_archive/migration/rollback_batch.py | scripts/_archive/migration/rollback_b... | prototype | generated |
-| 164 | scripts/_archive/migration/safe_delete_operational.py | scripts/_archive/migration/safe_delet... | prototype | generated |
-| 165 | scripts/_archive/migration/scan_import_impact.py | scripts/_archive/migration/scan_impor... | prototype | generated |
-| 166 | scripts/_archive/migration/shared_import_fix.py | scripts/_archive/migration/shared_imp... | prototype | generated |
-| 167 | scripts/_archive/migration/test_import_fix.py | scripts/_archive/migration/test_impor... | prototype | generated |
-| 168 | scripts/_archive/migration/unnest_from_mcp_server.py | scripts/_archive/migration/unnest_fro... | prototype | generated |
-| 169 | scripts/_archive/migration/update_imports.py | scripts/_archive/migration/update_imp... | prototype | generated |
-| 170 | scripts/_archive/migration/update_non_import_refs.py | scripts/_archive/migration/update_non... | prototype | generated |
-| 171 | scripts/_archive/migration/verify_batch.py | scripts/_archive/migration/verify_bat... | prototype | generated |
-| 172 | scripts/_archive/migration/verify_migration_alignment.py | scripts/_archive/migration/verify_mig... | prototype | generated |
-| 173 | scripts/_archive/ops/fill_blueprint_ids.py | scripts/_archive/ops/fill_blueprint_i... | prototype | generated |
-| 174 | scripts/a2a_full_verification.py | scripts/a2a_full_verification.py | prototype | generated |
-| 175 | scripts/arch_guard/__init__.py | scripts/arch_guard/__init__.py | prototype | generated |
-| 176 | scripts/arch_guard/_arch_ssot.py | scripts/arch_guard/_arch_ssot.py | prototype | generated |
-| 177 | scripts/arch_guard/_tools/build_ocp_manifest.py | scripts/arch_guard/_tools/build_ocp_m... | prototype | generated |
-| 178 | scripts/arch_guard/_tools/inject_idempotency.py | scripts/arch_guard/_tools/inject_idem... | prototype | generated |
-| 179 | scripts/arch_guard/_tools/patch_p1_paths.py | scripts/arch_guard/_tools/patch_p1_pa... | prototype | generated |
-| 180 | scripts/arch_guard/check_acl_boundary.py | scripts/arch_guard/check_acl_boundary.py | prototype | generated |
-| 181 | scripts/arch_guard/check_cross_plane_communication.py | scripts/arch_guard/check_cross_plane_... | prototype | generated |
-| 182 | scripts/arch_guard/check_fe_acl_boundary.py | scripts/arch_guard/check_fe_acl_bound... | prototype | generated |
-| 183 | scripts/arch_guard/check_hot_path_purity.py | scripts/arch_guard/check_hot_path_pur... | prototype | generated |
-| 184 | scripts/arch_guard/check_scaffold_exit_gates.py | scripts/arch_guard/check_scaffold_exi... | prototype | generated |
-| 185 | scripts/arch_guard/check_schema_consistency.py | scripts/arch_guard/check_schema_consi... | prototype | generated |
-| 186 | scripts/arch_guard/fitness_functions/__init__.py | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 187 | scripts/arch_guard/fitness_functions/check_aisg_gateway.py | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 188 | scripts/arch_guard/fitness_functions/check_audit_log_immu... | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 189 | scripts/arch_guard/fitness_functions/check_capacity_slo_s... | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 190 | scripts/arch_guard/fitness_functions/check_daily_loss_lim... | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 191 | scripts/arch_guard/fitness_functions/check_hot_warm_ipc.py | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 192 | scripts/arch_guard/fitness_functions/check_idempotency_ke... | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 193 | scripts/arch_guard/fitness_functions/check_kill_switch_la... | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 194 | scripts/arch_guard/fitness_functions/check_log_secret_lea... | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 195 | scripts/arch_guard/fitness_functions/check_no_cross_plane... | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 196 | scripts/arch_guard/fitness_functions/check_ocp_signatures.py | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 197 | scripts/arch_guard/fitness_functions/check_pit_compliance.py | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 198 | scripts/arch_guard/fitness_functions/check_position_limit.py | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 199 | scripts/arch_guard/fitness_functions/check_risk_params_co... | scripts/arch_guard/fitness_functions/... | prototype | generated |
-| 200 | scripts/arch_guard/fitness_functions/check_survivorship_b... | scripts/arch_guard/fitness_functions/... | prototype | generated |
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|---------|:---:|:---:|
+| 1 | config/ai_capability_matrix.yaml | config/ai_capability_matrix.yaml |  | production | generated |
+| 2 | config/auto_fix_cron.yaml | config/auto_fix_cron.yaml |  | production | generated |
+| 3 | config/blueprint_routing.yaml | config/blueprint_routing.yaml |  | production | generated |
+| 4 | config/budget_policy.yaml | config/budget_policy.yaml |  | production | generated |
+| 5 | config/capabilities.yaml | config/capabilities.yaml |  | production | generated |
+| 6 | config/capacity_params.yaml | config/capacity_params.yaml |  | production | generated |
+| 7 | config/context_rules.yaml | config/context_rules.yaml |  | production | generated |
+| 8 | config/flags.yaml | config/flags.yaml |  | production | generated |
+| 9 | config/infra/grafana/dashboards/provider.yml | config/infra/grafana/dashboards/provi... |  | production | generated |
+| 10 | config/infra/grafana/datasources/prometheus.yml | config/infra/grafana/datasources/prom... |  | production | generated |
+| 11 | config/infra/prometheus/prometheus.yml | config/infra/prometheus/prometheus.yml |  | production | generated |
+| 12 | config/kb_parameters.yaml | config/kb_parameters.yaml |  | production | generated |
+| 13 | config/model_pricing.yaml | config/model_pricing.yaml |  | production | generated |
+| 14 | config/nav_table_mapping.yaml | config/nav_table_mapping.yaml |  | production | generated |
+| 15 | config/rbac_roles.yaml | config/rbac_roles.yaml |  | production | generated |
+| 16 | config/resource_optimization.yaml | config/resource_optimization.yaml |  | production | generated |
+| 17 | config/risk_params.yaml | config/risk_params.yaml |  | production | generated |
+| 18 | config/runtime/burn_rate_acceleration.yaml | config/runtime/burn_rate_acceleration... |  | production | generated |
+| 19 | config/runtime/error_budget_state.yaml | config/runtime/error_budget_state.yaml |  | production | generated |
+| 20 | config/runtime/kill_switch_state.yaml | config/runtime/kill_switch_state.yaml |  | production | generated |
+| 21 | config/runtime/script_retirement_state.yaml | config/runtime/script_retirement_stat... |  | production | generated |
+| 22 | config/runtime/shadow_mode_state.yaml | config/runtime/shadow_mode_state.yaml |  | production | generated |
+| 23 | config/session_state_machine.yaml | config/session_state_machine.yaml |  | production | generated |
+| 24 | config/trigger_router.yaml | config/trigger_router.yaml |  | production | generated |
+| 25 | data/asset_index/archive/migration_scripts/_migration_sha... | data/asset_index/archive/migration_sc... | 搬家脚本共享模块——数据加载、批次筛选、原子写入。 | prototype | generated |
+| 26 | data/asset_index/archive/migration_scripts/_verify_manife... | data/asset_index/archive/migration_sc... |  | prototype | generated |
+| 27 | data/asset_index/archive/migration_scripts/_verify_step4.py | data/asset_index/archive/migration_sc... |  | prototype | generated |
+| 28 | data/asset_index/archive/migration_scripts/apply_rulings.py | data/asset_index/archive/migration_sc... |  | prototype | generated |
+| 29 | data/asset_index/archive/migration_scripts/check_coverage.py | data/asset_index/archive/migration_sc... |  | prototype | generated |
+| 30 | data/asset_index/archive/migration_scripts/comprehensive_... | data/asset_index/archive/migration_sc... | 从 path-migration-mapping.yaml 构建全面的 old→new 模块路径映射，修复所有 .py... | prototype | generated |
+| 31 | data/asset_index/archive/migration_scripts/create_target_... | data/asset_index/archive/migration_sc... | 创建30域目标目录结构。 | prototype | generated |
+| 32 | data/asset_index/archive/migration_scripts/cross_domain_i... | data/asset_index/archive/migration_sc... | 修复跨域 import 引用。 | prototype | generated |
+| 33 | data/asset_index/archive/migration_scripts/domain_prefix_... | data/asset_index/archive/migration_sc... | 从域目录结构推导 old→new 模块路径映射，修复 import 的域前缀。 | prototype | generated |
+| 34 | data/asset_index/archive/migration_scripts/execute_move.py | data/asset_index/archive/migration_sc... | 批量文件复制——搬家核心引擎（文件级，复制模式）。 | prototype | generated |
+| 35 | data/asset_index/archive/migration_scripts/generate_migra... | data/asset_index/archive/migration_sc... |  | prototype | generated |
+| 36 | data/asset_index/archive/migration_scripts/generate_path_... | data/asset_index/archive/migration_sc... | 从 depgraph v3 domain draft 的 physical_files 生成文件级 path-migration-mappi... | prototype | generated |
+| 37 | data/asset_index/archive/migration_scripts/inject_domain_... | data/asset_index/archive/migration_sc... |  | prototype | generated |
+| 38 | data/asset_index/archive/migration_scripts/lock_batch.py | data/asset_index/archive/migration_sc... | 锁定搬家批次——验证通过后禁止回滚。 | prototype | generated |
+| 39 | data/asset_index/archive/migration_scripts/preflight_chec... | data/asset_index/archive/migration_sc... | 搬家预检查——验证搬家可行性。 | prototype | generated |
+| 40 | data/asset_index/archive/migration_scripts/rollback_batch.py | data/asset_index/archive/migration_sc... | 回滚搬家批次——从 migration-log 反向搬回。 | prototype | generated |
+| 41 | data/asset_index/archive/migration_scripts/scan_import_im... | data/asset_index/archive/migration_sc... |  | prototype | generated |
+| 42 | data/asset_index/archive/migration_scripts/shared_import_... | data/asset_index/archive/migration_sc... | 修复 zephyr.shared.* import 引用。 | prototype | generated |
+| 43 | data/asset_index/archive/migration_scripts/test_import_fi... | data/asset_index/archive/migration_sc... | 修复 tests/ 目录中的 import 引用。 | prototype | generated |
+| 44 | data/asset_index/archive/migration_scripts/unnest_from_mc... | data/asset_index/archive/migration_sc... | Phase 1: 将 src/zephyr/integration/mcp_server/ 下的文件解嵌套回 src/zephyr/。 | prototype | generated |
+| 45 | data/asset_index/archive/migration_scripts/update_imports.py | data/asset_index/archive/migration_sc... | 批量更新 import 引用。 | prototype | generated |
+| 46 | data/asset_index/archive/migration_scripts/update_non_imp... | data/asset_index/archive/migration_sc... | 更新非 import 引用——蓝图头部/注册表/YAML/__init__.py。 | prototype | generated |
+| 47 | data/asset_index/archive/migration_scripts/verify_batch.py | data/asset_index/archive/migration_sc... | 验证搬家批次——5项检查。 | prototype | generated |
+| 48 | docs/01_policies_and_standards/_registry/schemas/session_... | docs/01_policies_and_standards/_regis... |  | production | generated |
+| 49 | docs/01_policies_and_standards/rules/trae_001_file_operat... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 50 | docs/01_policies_and_standards/rules/trae_002_anti_orphan... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 51 | docs/01_policies_and_standards/rules/trae_003_task_granul... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 52 | docs/01_policies_and_standards/rules/trae_004_parallel_at... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 53 | docs/01_policies_and_standards/rules/trae_005_modificatio... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 54 | docs/01_policies_and_standards/rules/trae_006_anti_halluc... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 55 | docs/01_policies_and_standards/rules/trae_007_anti_halluc... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 56 | docs/01_policies_and_standards/rules/trae_008_anti_halluc... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 57 | docs/01_policies_and_standards/rules/trae_009_anti_halluc... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 58 | docs/01_policies_and_standards/rules/trae_010_code_naming... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 59 | docs/01_policies_and_standards/rules/trae_011_code_type_i... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 60 | docs/01_policies_and_standards/rules/trae_012_code_test_s... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 61 | docs/01_policies_and_standards/rules/trae_013_arch_cross_... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 62 | docs/01_policies_and_standards/rules/trae_014_arch_bluepr... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 63 | docs/01_policies_and_standards/rules/trae_015_arch_path_r... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 64 | docs/01_policies_and_standards/rules/trae_016_arch_drift_... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 65 | docs/01_policies_and_standards/rules/trae_017_arch_govern... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 66 | docs/01_policies_and_standards/rules/trae_018_behavior_co... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 67 | docs/01_policies_and_standards/rules/trae_019_behavior_se... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 68 | docs/01_policies_and_standards/rules/trae_020_behavior_go... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 69 | docs/01_policies_and_standards/rules/trae_021_behavior_ot... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 70 | docs/01_policies_and_standards/rules/trae_022_behavior_co... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 71 | docs/01_policies_and_standards/rules/trae_023_behavior_co... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 72 | docs/01_policies_and_standards/rules/trae_024_methodology... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 73 | docs/01_policies_and_standards/rules/trae_025_methodology... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 74 | docs/01_policies_and_standards/rules/trae_026_methodology... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 75 | docs/01_policies_and_standards/rules/trae_027_methodology... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 76 | docs/01_policies_and_standards/rules/trae_028_doc_structu... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 77 | docs/01_policies_and_standards/rules/trae_029_doc_operati... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 78 | docs/01_policies_and_standards/rules/trae_030_doc_numberi... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 79 | docs/01_policies_and_standards/rules/trae_031_security_ke... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 80 | docs/01_policies_and_standards/rules/trae_032_module_life... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 81 | docs/01_policies_and_standards/rules/trae_033_module_regi... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 82 | docs/01_policies_and_standards/rules/trae_034_task_card_s... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 83 | docs/01_policies_and_standards/rules/trae_035_task_constr... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 84 | docs/01_policies_and_standards/rules/trae_036_arch_gate_t... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 85 | docs/01_policies_and_standards/rules/trae_037_arch_qualif... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 86 | docs/01_policies_and_standards/rules/trae_038_arch_ctr_in... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 87 | docs/01_policies_and_standards/rules/trae_039_ai_hallucin... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 88 | docs/01_policies_and_standards/rules/trae_040_ai_model_ro... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 89 | docs/01_policies_and_standards/rules/trae_041_meta_rule_c... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 90 | docs/01_policies_and_standards/rules/trae_042_meta_rule_s... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 91 | docs/01_policies_and_standards/rules/trae_043_meta_rule_m... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 92 | docs/01_policies_and_standards/rules/trae_044_compliance_... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 93 | docs/01_policies_and_standards/rules/trae_045_data_qualit... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 94 | docs/01_policies_and_standards/rules/trae_046_engineering... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 95 | docs/01_policies_and_standards/rules/trae_047_engineering... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 96 | docs/01_policies_and_standards/rules/trae_048_ops_vibe_co... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 97 | docs/01_policies_and_standards/rules/trae_049_ops_domain_... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 98 | docs/01_policies_and_standards/rules/trae_050_domain_poli... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 99 | docs/01_policies_and_standards/rules/trae_051_domain_poli... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 100 | docs/01_policies_and_standards/rules/trae_052_cross_bluep... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 101 | docs/01_policies_and_standards/rules/trae_053_automation_... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 102 | docs/01_policies_and_standards/rules/trae_054_depgraph_ac... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 103 | docs/01_policies_and_standards/rules/trae_055_arch_domain... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 104 | docs/01_policies_and_standards/rules/trae_056_module_crea... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 105 | docs/01_policies_and_standards/rules/trae_057_ai_consumer... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 106 | docs/01_policies_and_standards/rules/trae_058_depgraph_sc... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 107 | docs/01_policies_and_standards/rules/trae_059_schema_vers... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 108 | docs/01_policies_and_standards/rules/trae_060_inward_cons... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 109 | docs/01_policies_and_standards/rules/trae_061_decisiongra... | docs/01_policies_and_standards/rules/... |  | production | generated |
+| 110 | docs/03_modules/_domain_infrastructure_operations/agent_t... | docs/03_modules/_domain_infrastructur... |  | production | generated |
+| 111 | docs/03_modules/_domain_infrastructure_operations/agent_t... | docs/03_modules/_domain_infrastructur... |  | production | generated |
+| 112 | docs/03_modules/path_ownership_map.yaml | docs/03_modules/path_ownership_map.yaml |  | production | generated |
+| 113 | scripts/__init__.py | scripts/__init__.py |  | prototype | generated |
+| 114 | scripts/_archive/construction/create_db_alignment_tasks.py | scripts/_archive/construction/create_... | 数据库大更新后全项目对齐任务卡创建脚本 | prototype | generated |
+| 115 | scripts/_archive/construction/create_dm_phase9_tasks.py | scripts/_archive/construction/create_... | 已归档脚本——一次性任务卡生成脚本，已执行完毕，不再适用。 | prototype | generated |
+| 116 | scripts/_archive/construction/dm014_orphan_edge_repair.py | scripts/_archive/construction/dm014_o... | DM-014: 孤儿节点补边 v3 —— 增加 test 文件文件名匹配策略 | prototype | generated |
+| 117 | scripts/_archive/governance/compare_ba_copies.py | scripts/_archive/governance/compare_b... | 全量比对 governance/behavioral_auditor/ 和 security/access_control/behavioral... | prototype | generated |
+| 118 | scripts/_archive/governance/create_depgraph_task_cards.py | scripts/_archive/governance/create_de... | depgraph_issue_registry 任务卡批量建卡脚本（直接DB插入版） | prototype | generated |
+| 119 | scripts/_archive/governance/d11_compliance/batch_remove_b... | scripts/_archive/governance/d11_compl... | DM-200817: 批量去除UTF-8 BOM | prototype | generated |
+| 120 | scripts/_archive/governance/d3_metadata/assign_module_id.py | scripts/_archive/governance/d3_metada... | assign_module_id.py — 模块 ID 唯一性校验（INJ-001） | prototype | generated |
+| 121 | scripts/_archive/governance/d3_metadata/check_frontmatter... | scripts/_archive/governance/d3_metada... | GATE-15: Frontmatter metadata validation | prototype | generated |
+| 122 | scripts/_archive/governance/d3_metadata/check_template_co... | scripts/_archive/governance/d3_metada... |  | prototype | generated |
+| 123 | scripts/_archive/governance/d3_metadata/detect_deprecated... | scripts/_archive/governance/d3_metada... | detect_deprecated_overdue.py — 废弃超期检测 | prototype | generated |
+| 124 | scripts/_archive/governance/d3_metadata/detect_skip_activ... | scripts/_archive/governance/d3_metada... | detect_skip_active_status.py — 跨级降格检测 | prototype | generated |
+| 125 | scripts/_archive/governance/d3_metadata/detect_stale_vers... | scripts/_archive/governance/d3_metada... | detect_stale_version.py — 版本号未更新检测 | prototype | generated |
+| 126 | scripts/_archive/governance/d3_metadata/fix_dm411_bare_re... | scripts/_archive/governance/d3_metada... | DM-411: Fix bare relative imports (from module_name import X -> from .module_... | prototype | generated |
+| 127 | scripts/_archive/governance/d3_metadata/fix_dm413_duplica... | scripts/_archive/governance/d3_metada... | DM-413: Fix duplicate test file names (N-16 violations) | prototype | generated |
+| 128 | scripts/_archive/governance/d3_metadata/fix_n06_module_id... | scripts/_archive/governance/d3_metada... | fix_n06_module_id_prefix.py — 修复 N-06 module_id scope 前缀违规。 | prototype | generated |
+| 129 | scripts/_archive/governance/d3_metadata/fix_n12_ke_naming.py | scripts/_archive/governance/d3_metada... | 修复 N-12 KE 条目命名违规 — 将旧格式重命名为 ke-NNN-kebab-title.md。 | prototype | generated |
+| 130 | scripts/_archive/governance/d3_metadata/fix_n15_blueprint... | scripts/_archive/governance/d3_metada... | 修复 N-15 命名违规：[BLUEPRINT] 头部路径不存在。 | prototype | generated |
+| 131 | scripts/_archive/governance/d3_metadata/generate_rule_cat... | scripts/_archive/governance/d3_metada... | Scan docs/01_policies_and_standards and emit _registry/catalogs/rule-catalog-... | prototype | generated |
+| 132 | scripts/_archive/governance/d3_metadata/scan_deep_content.py | scripts/_archive/governance/d3_metada... | scan_deep_content.py — 深度内容扫描器 | prototype | generated |
+| 133 | scripts/_archive/governance/d3_metadata/validate_blueprin... | scripts/_archive/governance/d3_metada... | validate_blueprint_registry.py — Blueprint registry self-check. | prototype | generated |
+| 134 | scripts/_archive/governance/d3_metadata/validate_cross_mo... | scripts/_archive/governance/d3_metada... | validate_cross_module_dependencies.py | prototype | generated |
+| 135 | scripts/_archive/governance/d3_metadata/validate_derived_... | scripts/_archive/governance/d3_metada... | validate_derived_from.py — derived_from 标注完整性闸门（GATE-DERIVED） | prototype | generated |
+| 136 | scripts/_archive/governance/d3_metadata/validate_enum_con... | scripts/_archive/governance/d3_metada... | validate_enum_consistency.py — 枚举自动派生一致性闸门（GATE-ENUM） | prototype | generated |
+| 137 | scripts/_archive/governance/d3_metadata/validate_frontmat... | scripts/_archive/governance/d3_metada... | GATE-FRONTMATTER: Validate frontmatter enum values against vocabulary YAMLs. | prototype | generated |
+| 138 | scripts/_archive/governance/d3_metadata/validate_no_dupli... | scripts/_archive/governance/d3_metada... | GATE-DUP: Detect duplicate files after migration. | prototype | generated |
+| 139 | scripts/_archive/governance/d3_metadata/validate_ssot_sta... | scripts/_archive/governance/d3_metada... | validate_ssot_status.py —— SSoT frontmatter status 字段枚举白名单（盲点 C1 ... | prototype | generated |
+| 140 | scripts/_archive/governance/d3_metadata/validate_supersed... | scripts/_archive/governance/d3_metada... | validate_superseded_by.py — 废弃文件 superseded_by 检测 | prototype | generated |
+| 141 | scripts/_archive/governance/dm101_blueprint_domain_mappin... | scripts/_archive/governance/dm101_blu... | DM-101: 构建 blueprint_id → domain 映射表 + CSV 模块匹配文件 | prototype | generated |
+| 142 | scripts/_archive/governance/dm106_p2b_verification.py | scripts/_archive/governance/dm106_p2b... | DM-106: P2-B 迁移全量验证脚本 | prototype | generated |
+| 143 | scripts/_archive/governance/list_no_consumer_orphans.py | scripts/_archive/governance/list_no_c... | 从 orphan_analysis.json 中提取 NO_CONSUMER_HAS_VALUE 模块清单。 | prototype | generated |
+| 144 | scripts/_archive/governance/merge_domain_nodes.py | scripts/_archive/governance/merge_dom... | Generic merge script for domain cleanup. Usage: python script.py <DOMAIN_ID> | prototype | generated |
+| 145 | scripts/_archive/governance/repair/ensure_dep_cycles_view.py | scripts/_archive/governance/repair/en... | 已归档脚本——P2迁移后 depgraph.db 已迁移至 PostgreSQL，此脚本不再适用。 | prototype | generated |
+| 146 | scripts/_archive/governance/repair/list_source_md_files.py | scripts/_archive/governance/repair/li... | 扫描临时工作区源MD文件清单 | prototype | generated |
+| 147 | scripts/_archive/migration/_migration_shared.py | scripts/_archive/migration/_migration... | 搬家脚本共享模块——数据加载、批次筛选、原子写入。 | prototype | generated |
+| 148 | scripts/_archive/migration/_verify_manifest.py | scripts/_archive/migration/_verify_ma... |  | prototype | generated |
+| 149 | scripts/_archive/migration/_verify_step4.py | scripts/_archive/migration/_verify_st... | 已归档脚本——P2迁移后 depgraph.db 已迁移至 PostgreSQL，此脚本不再适用。 | prototype | generated |
+| 150 | scripts/_archive/migration/apply_rulings.py | scripts/_archive/migration/apply_ruli... |  | prototype | generated |
+| 151 | scripts/_archive/migration/check_coverage.py | scripts/_archive/migration/check_cove... |  | prototype | generated |
+| 152 | scripts/_archive/migration/comprehensive_import_fix.py | scripts/_archive/migration/comprehens... | 从 path-migration-mapping.yaml 构建全面的 old→new 模块路径映射，修复所有 .py... | prototype | generated |
+| 153 | scripts/_archive/migration/create_target_dirs.py | scripts/_archive/migration/create_tar... | 创建30域目标目录结构。 | prototype | generated |
+| 154 | scripts/_archive/migration/cross_domain_import_fix.py | scripts/_archive/migration/cross_doma... | 修复跨域 import 引用。 | prototype | generated |
+| 155 | scripts/_archive/migration/domain_prefix_import_fix.py | scripts/_archive/migration/domain_pre... | 从域目录结构推导 old→new 模块路径映射，修复 import 的域前缀。 | prototype | generated |
+| 156 | scripts/_archive/migration/execute_move.py | scripts/_archive/migration/execute_mo... | 批量文件复制——搬家核心引擎（文件级，复制模式）。 | prototype | generated |
+| 157 | scripts/_archive/migration/generate_migration_registry.py | scripts/_archive/migration/generate_m... |  | prototype | generated |
+| 158 | scripts/_archive/migration/generate_path_migration_mappin... | scripts/_archive/migration/generate_p... | 从 depgraph v3 domain draft 的 physical_files 生成文件级 path-migration-mappi... | prototype | generated |
+| 159 | scripts/_archive/migration/inject_domain_fields.py | scripts/_archive/migration/inject_dom... |  | prototype | generated |
+| 160 | scripts/_archive/migration/lock_batch.py | scripts/_archive/migration/lock_batch.py | 锁定搬家批次——验证通过后禁止回滚。 | prototype | generated |
+| 161 | scripts/_archive/migration/migrate_security_split.py | scripts/_archive/migration/migrate_se... | DM-315: 拆分security/目录到多设计域路径 | prototype | generated |
+| 162 | scripts/_archive/migration/preflight_check.py | scripts/_archive/migration/preflight_... | 搬家预检查——验证搬家可行性。 | prototype | generated |
+| 163 | scripts/_archive/migration/rollback_batch.py | scripts/_archive/migration/rollback_b... | 回滚搬家批次——从 migration-log 反向搬回。 | prototype | generated |
+| 164 | scripts/_archive/migration/safe_delete_operational.py | scripts/_archive/migration/safe_delet... | 安全删除旧运营态脚本：验证通过后才删除旧文件，设计态顶替旧运营态成为新运营态。 | prototype | generated |
+| 165 | scripts/_archive/migration/scan_import_impact.py | scripts/_archive/migration/scan_impor... |  | prototype | generated |
+| 166 | scripts/_archive/migration/shared_import_fix.py | scripts/_archive/migration/shared_imp... | 修复 zephyr.shared.* import 引用。 | prototype | generated |
+| 167 | scripts/_archive/migration/test_import_fix.py | scripts/_archive/migration/test_impor... | 修复 tests/ 目录中的 import 引用。 | prototype | generated |
+| 168 | scripts/_archive/migration/unnest_from_mcp_server.py | scripts/_archive/migration/unnest_fro... | Phase 1: 将 src/zephyr/integration/mcp_server/ 下的文件解嵌套回 src/zephyr/。 | prototype | generated |
+| 169 | scripts/_archive/migration/update_imports.py | scripts/_archive/migration/update_imp... | 批量更新 import 引用。 | prototype | generated |
+| 170 | scripts/_archive/migration/update_non_import_refs.py | scripts/_archive/migration/update_non... | 更新非 import 引用——蓝图头部/注册表/YAML/__init__.py。 | prototype | generated |
+| 171 | scripts/_archive/migration/verify_batch.py | scripts/_archive/migration/verify_bat... | 验证搬家批次——5项检查。 | prototype | generated |
+| 172 | scripts/_archive/migration/verify_migration_alignment.py | scripts/_archive/migration/verify_mig... | 迁移对齐验证脚本：验证旧位置内容在新位置完整存在。 | prototype | generated |
+| 173 | scripts/_archive/ops/fill_blueprint_ids.py | scripts/_archive/ops/fill_blueprint_i... |  | prototype | generated |
+| 174 | scripts/a2a_full_verification.py | scripts/a2a_full_verification.py | A2A Protocol 全链路满分验证脚本 | prototype | generated |
+| 175 | scripts/arch_guard/__init__.py | scripts/arch_guard/__init__.py | Architecture Guard — 不变量自动强制执行基础设施 | prototype | generated |
+| 176 | scripts/arch_guard/_arch_ssot.py | scripts/arch_guard/_arch_ssot.py | arch_guard 共享：仓库根路径、capacity_slo / invariants / contracts 装载。 | prototype | generated |
+| 177 | scripts/arch_guard/_tools/build_ocp_manifest.py | scripts/arch_guard/_tools/build_ocp_m... | 从 cross_layer_contracts.yaml 生成 OCP 冻结契约指纹（INV-009）。 | prototype | generated |
+| 178 | scripts/arch_guard/_tools/inject_idempotency.py | scripts/arch_guard/_tools/inject_idem... | 为所有 P0/P1 契约添加 idempotency_key 字段——状态感知版本。 | prototype | generated |
+| 179 | scripts/arch_guard/_tools/patch_p1_paths.py | scripts/arch_guard/_tools/patch_p1_pa... | 一次性工具——为 9 个 P1 契约补齐 physical_path 并运行 codegen。 | prototype | generated |
+| 180 | scripts/arch_guard/check_acl_boundary.py | scripts/arch_guard/check_acl_boundary.py | check_acl_boundary.py — Broker ACL 边界强制执行 (INV-005) | prototype | generated |
+| 181 | scripts/arch_guard/check_cross_plane_communication.py | scripts/arch_guard/check_cross_plane_... | check_cross_plane_communication.py — INV-011 拓扑 + 静态越界 import 嗅探 | prototype | generated |
+| 182 | scripts/arch_guard/check_fe_acl_boundary.py | scripts/arch_guard/check_fe_acl_bound... | check_fe_acl_boundary.py — INV-006 前端 ACL（仓库内有前端树则启用） | prototype | generated |
+| 183 | scripts/arch_guard/check_hot_path_purity.py | scripts/arch_guard/check_hot_path_pur... | check_hot_path_purity.py — INV-012 Hot 路径 Python 禁 asyncio（配置驱动） | prototype | generated |
+| 184 | scripts/arch_guard/check_scaffold_exit_gates.py | scripts/arch_guard/check_scaffold_exi... | check_scaffold_exit_gates.py — scaffold→experimental 安全门禁检查 | prototype | generated |
+| 185 | scripts/arch_guard/check_schema_consistency.py | scripts/arch_guard/check_schema_consi... | check_schema_consistency.py — INV-010 契约物理路径存在性（Schema canonical ... | prototype | generated |
+| 186 | scripts/arch_guard/fitness_functions/__init__.py | scripts/arch_guard/fitness_functions/... | Architecture Guard — 不变量适应度函数集 | prototype | generated |
+| 187 | scripts/arch_guard/fitness_functions/check_aisg_gateway.py | scripts/arch_guard/fitness_functions/... | check_aisg_gateway.py — AISG 拦截门禁 (INV-015) Phase B 升级 | prototype | generated |
+| 188 | scripts/arch_guard/fitness_functions/check_audit_log_immu... | scripts/arch_guard/fitness_functions/... | check_audit_log_immutability.py — 审计日志不可篡改检查 (INV-016) | prototype | generated |
+| 189 | scripts/arch_guard/fitness_functions/check_capacity_slo_s... | scripts/arch_guard/fitness_functions/... | check_capacity_slo_ssot.py — capacity_slo.yaml 注册表 + 与 invariants 数字对... | prototype | generated |
+| 190 | scripts/arch_guard/fitness_functions/check_daily_loss_lim... | scripts/arch_guard/fitness_functions/... | check_daily_loss_limit.py — 日损失限额自动暂停 (INV-003) | prototype | generated |
+| 191 | scripts/arch_guard/fitness_functions/check_hot_warm_ipc.py | scripts/arch_guard/fitness_functions/... | check_hot_warm_ipc.py — INV-018 Hot↔Warm IPC 协议检查 | prototype | generated |
+| 192 | scripts/arch_guard/fitness_functions/check_idempotency_ke... | scripts/arch_guard/fitness_functions/... | check_idempotency_key.py — 幂等 Key 字段存在性检查 (INV-007) | prototype | generated |
+| 193 | scripts/arch_guard/fitness_functions/check_kill_switch_la... | scripts/arch_guard/fitness_functions/... | check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001) | prototype | generated |
+| 194 | scripts/arch_guard/fitness_functions/check_log_secret_lea... | scripts/arch_guard/fitness_functions/... | check_log_secret_leak.py — R2 日志不写 secret 适应度函数 | prototype | generated |
+| 195 | scripts/arch_guard/fitness_functions/check_no_cross_plane... | scripts/arch_guard/fitness_functions/... | check_no_cross_plane_mutable_state.py — INV-020 跨平面共享可变状态检查 | prototype | generated |
+| 196 | scripts/arch_guard/fitness_functions/check_ocp_signatures.py | scripts/arch_guard/fitness_functions/... | check_ocp_signatures.py — OCP 冻结契约指纹校验 (INV-009) | prototype | generated |
+| 197 | scripts/arch_guard/fitness_functions/check_pit_compliance.py | scripts/arch_guard/fitness_functions/... | check_pit_compliance.py — PIT（Point-in-Time）铁律强制执行 (INV-004) | prototype | generated |
+| 198 | scripts/arch_guard/fitness_functions/check_position_limit.py | scripts/arch_guard/fitness_functions/... | check_position_limit.py — 单一持仓限制 ≤ 5% NAV (INV-002) | prototype | generated |
+| 199 | scripts/arch_guard/fitness_functions/check_risk_params_co... | scripts/arch_guard/fitness_functions/... | check_risk_params_consistency.py — 风控参数真源 (INV-013) + 与 INV-002 声明对齐 | prototype | generated |
+| 200 | scripts/arch_guard/fitness_functions/check_survivorship_b... | scripts/arch_guard/fitness_functions/... | check_survivorship_bias.py — Survivorship 策略门禁 (INV-014) | prototype | generated |
 
 > (仅显示前 200 个模块，共 822 个)
 
