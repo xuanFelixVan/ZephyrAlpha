@@ -60,6 +60,91 @@ from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
 OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_architecture"
 
 
+# ============================================================
+# 中文术语映射（英文 → 中文）
+# ============================================================
+# 新增 Dataset/Job 时，在此添加对应中文翻译。
+# 维护策略：dataflow_graph_registry.yaml 新增节点后，同步在此添加映射。
+# 未映射的英文将原样显示（不附加中文）。
+_ZH_MAP: dict[str, str] = {
+    # --- Dataset entity_name → 中文 ---
+    "market_data.tick": "市场数据.Tick行情",
+    "market_data.ohlc_bar": "市场数据.OHLC K线",
+    "factor.value_factor": "因子.价值因子",
+    "factor.momentum_20d": "因子.20日动量",
+    "signal.composite": "信号.合成信号",
+    "risk.limits": "风险.限额",
+    "order.target": "订单.目标订单",
+    "fill.executed": "成交.已成交",
+    "position.snapshot": "持仓.快照",
+    "backtest.result": "回测.结果",
+    "backtest.tick_event": "回测.Tick事件",
+    "backtest.target_weights": "回测.目标权重",
+    "backtest.fills": "回测.模拟成交",
+    "backtest.nav_series": "回测.净值序列",
+    # --- Job job_name → 中文 ---
+    "ingest.ifind_kline": "采集.iFind行情",
+    "aggregate.ohlc_bar": "聚合.OHLC K线",
+    "compute.value_factor": "计算.价值因子",
+    "compute.momentum_20d": "计算.20日动量",
+    "synthesize.signal": "合成.信号",
+    "check.risk_limits": "检查.风险限额",
+    "generate.order": "生成.订单",
+    "execute.order": "执行.订单",
+    "backtest.replay_ticks": "回测.Tick重放",
+    "backtest.run_event_driven": "回测.事件驱动运行",
+    "backtest.match_fills": "回测.撮合成交",
+    "backtest.update_portfolio": "回测.更新组合",
+    "backtest.calc_metrics": "回测.计算指标",
+    # --- domain_id → 中文 ---
+    "D_MKT_DATA": "市场数据",
+    "D_FACTOR": "因子",
+    "D_SIGNAL": "信号",
+    "D_SIGLEGACY": "信号(legacy)",
+    "D_RISK": "风险",
+    "D_ORDER": "订单",
+    "D_EXECUTION": "执行",
+    "D_PORTFOLIO": "持仓",
+    "D_BACKTEST": "回测",
+    # --- scope ---
+    "production": "生产",
+    "backtest_internal": "回测内部",
+    # --- build_status / design_maturity ---
+    "design": "设计",
+    "prototype": "原型",
+    "generated": "已生成",
+    # --- pit_policy ---
+    "strict": "严格",
+    "loose": "宽松",
+    "none": "无",
+    # --- trigger_type ---
+    "event_driven": "事件驱动",
+    "scheduled": "定时",
+    "manual": "手动",
+    "stream": "流式",
+    # --- edge labels ---
+    "produces": "产出",
+    "consumed by": "被消费于",
+}
+
+
+def _zh(en: str | None) -> str:
+    """英文 → 中文。未映射或 None 返回空串。"""
+    if not en:
+        return ""
+    return _ZH_MAP.get(en, "")
+
+
+def _en_zh(en: str | None, sep: str = " / ") -> str:
+    """英文 + 中文并列（如 'production / 生产'）。无映射或 None 返回原值或 '-'。"""
+    if not en:
+        return "-"
+    zh = _ZH_MAP.get(en, "")
+    if zh:
+        return f"{en}{sep}{zh}"
+    return en
+
+
 def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
     """从 PG 读取 datasets/jobs/edges。"""
     with conn.cursor() as cur:
@@ -125,34 +210,34 @@ def _gen_mermaid(
     ds_ids = {d["id"] for d in ds_list}
     job_ids = {j["id"] for j in job_list}
 
-    # Dataset 节点（矩形）
+    # Dataset 节点（矩形）—— 标签英文+中文并列
     for d in ds_list:
-        label = d["name"]
+        label = _en_zh(d["name"], sep="<br/>")
         if d["contract"]:
             label += f"<br/>CTR: {d['contract']}"
         if d["domain"]:
-            label += f"<br/>[{d['domain']}]"
+            label += f"<br/>[{_en_zh(d['domain'])}]"
         scope_class = "dsProd" if d["scope"] == "production" else "dsBacktest"
         lines.append(f'    DS{d["id"]}["{label}"]:::{scope_class}')
 
-    # Job 节点（圆角矩形）
+    # Job 节点（圆角矩形）—— 标签英文+中文并列
     for j in job_list:
-        label = j["name"]
+        label = _en_zh(j["name"], sep="<br/>")
         if j["trigger"]:
-            label += f"<br/>trigger: {j['trigger']}"
+            label += f"<br/>trigger: {_en_zh(j['trigger'])}"
         scope_class = "jobProd" if j["scope"] == "production" else "jobBacktest"
         lines.append(f'    JOB{j["id"]}("{label}"):::{scope_class}')
 
-    # Edges
+    # Edges —— 边标签英文+中文并列
     edge_count = 0
     for e in edges:
         if e["from_type"] == "job" and e["to_type"] == "dataset":
             if e["from_id"] in job_ids and e["to_id"] in ds_ids:
-                lines.append(f'    JOB{e["from_id"]} -->|produces| DS{e["to_id"]}')
+                lines.append(f'    JOB{e["from_id"]} -->|{_en_zh("produces")}| DS{e["to_id"]}')
                 edge_count += 1
         elif e["from_type"] == "dataset" and e["to_type"] == "job":
             if e["from_id"] in ds_ids and e["to_id"] in job_ids:
-                lines.append(f'    DS{e["from_id"]} -->|consumed by| JOB{e["to_id"]}')
+                lines.append(f'    DS{e["from_id"]} -->|{_en_zh("consumed by")}| JOB{e["to_id"]}')
                 edge_count += 1
 
     # 样式定义
@@ -166,10 +251,10 @@ def _gen_mermaid(
 
 
 def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
-    """生成索引文档（frontmatter + 内嵌 Mermaid 图 + 统计 + 清单）。
+    """生成索引文档（frontmatter + 内嵌 Mermaid 图 + 统计 + 清单，英文+中文并列）。
 
     单 MD 文件可看全部（图 + 清单），符合 02_domain_architecture_docs/ 风格。
-    .mmd 文件仍单独输出，供 Mermaid CLI/VSCode 单独预览。
+    所有英文术语后附加中文翻译（通过 _ZH_MAP 映射，新增节点时需同步更新映射）。
     """
     prod_ds = sum(1 for d in datasets if d["scope"] == "production")
     bt_ds = sum(1 for d in datasets if d["scope"] == "backtest_internal")
@@ -223,15 +308,15 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append("> - **橙色矩形** = 回测 Dataset（dsBacktest）")
     lines.append("> - **绿色圆角矩形** = 生产 Job（jobProd）")
     lines.append("> - **粉色圆角矩形** = 回测 Job（jobBacktest）")
-    lines.append("> - `JOB -->|produces| DS` = Job 产出 Dataset")
-    lines.append("> - `DS -->|consumed by| JOB` = Job 消费 Dataset")
+    lines.append("> - `JOB -->|produces / 产出| DS` = Job 产出 Dataset")
+    lines.append("> - `DS -->|consumed by / 被消费于| JOB` = Job 消费 Dataset")
     lines.append("")
 
     # 全景图
     lines.append("### 全景图")
     lines.append("")
     mmd_overview, o_ds, o_job, o_edge = _gen_mermaid(datasets, jobs, edges, scope_filter=None)
-    lines.append(f"> 节点数: {o_ds} datasets, {o_job} jobs, {o_edge} edges")
+    lines.append(f"> 节点数: {o_ds} datasets / 数据集, {o_job} jobs / 作业, {o_edge} edges / 边")
     lines.append("")
     lines.append("```mermaid")
     lines.append(mmd_overview.rstrip())
@@ -242,7 +327,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append("### 生产数据流图（scope=production）")
     lines.append("")
     mmd_prod, p_ds, p_job, p_edge = _gen_mermaid(datasets, jobs, edges, scope_filter="production")
-    lines.append(f"> 节点数: {p_ds} datasets, {p_job} jobs, {p_edge} edges")
+    lines.append(f"> 节点数: {p_ds} datasets / 数据集, {p_job} jobs / 作业, {p_edge} edges / 边")
     lines.append("")
     lines.append("```mermaid")
     lines.append(mmd_prod.rstrip())
@@ -253,7 +338,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append("### 回测内部数据流图（scope=backtest_internal）")
     lines.append("")
     mmd_bt, b_ds, b_job, b_edge = _gen_mermaid(datasets, jobs, edges, scope_filter="backtest_internal")
-    lines.append(f"> 节点数: {b_ds} datasets, {b_job} jobs, {b_edge} edges")
+    lines.append(f"> 节点数: {b_ds} datasets / 数据集, {b_job} jobs / 作业, {b_edge} edges / 边")
     lines.append("")
     lines.append("```mermaid")
     lines.append(mmd_bt.rstrip())
@@ -263,24 +348,24 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     # Dataset 清单
     lines.append("## Dataset 清单")
     lines.append("")
-    lines.append("| ID | entity_name | scope | contract_ref | domain | pit_policy | build_status |")
-    lines.append("|----|-------------|-------|--------------|--------|------------|--------------|")
+    lines.append("| ID | entity_name / 实体名 | scope / 范围 | contract_ref / 契约引用 | domain / 域 | pit_policy / PIT策略 | build_status / 构建状态 |")
+    lines.append("|----|----------------------|--------------|---------------------------|------------|------------------|--------------------|")
     for d in datasets:
         lines.append(
-            f"| DS-{d['id']:03d} | {d['name']} | {d['scope']} | "
-            f"{d['contract'] or '-'} | {d['domain'] or '-'} | {d['pit']} | {d['build']} |"
+            f"| DS-{d['id']:03d} | {_en_zh(d['name'])} | {_en_zh(d['scope'])} | "
+            f"{d['contract'] or '-'} | {_en_zh(d['domain'] or '-')} | {_en_zh(d['pit'])} | {_en_zh(d['build'])} |"
         )
 
     # Job 清单
     lines.append("")
     lines.append("## Job 清单")
     lines.append("")
-    lines.append("| ID | job_name | scope | source_code_ref | trigger_type | run_context | build_status |")
-    lines.append("|----|----------|-------|-----------------|--------------|-------------|--------------|")
+    lines.append("| ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | build_status / 构建状态 |")
+    lines.append("|----|-------------------|--------------|------------------------------|----------------------------|------------------------------|--------------------|")
     for j in jobs:
         lines.append(
-            f"| JOB-{j['id']:03d} | {j['name']} | {j['scope']} | "
-            f"{j['source'] or '-'} | {j['trigger'] or '-'} | {j['context'] or '-'} | {j['build']} |"
+            f"| JOB-{j['id']:03d} | {_en_zh(j['name'])} | {_en_zh(j['scope'])} | "
+            f"{j['source'] or '-'} | {_en_zh(j['trigger'] or '-')} | {_en_zh(j['context'] or '-')} | {_en_zh(j['build'])} |"
         )
 
     return "\n".join(lines) + "\n"

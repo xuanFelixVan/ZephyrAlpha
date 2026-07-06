@@ -178,10 +178,10 @@ class TestGenMermaid:
         assert mmd.startswith("flowchart LR")
 
     def test_mmd_contains_edge_labels(self, sample_datasets, sample_jobs, sample_edges):
-        """mmd 文本包含 produces / consumed by 边标签。"""
+        """mmd 文本包含 produces / consumed by 边标签（英文+中文并列）。"""
         mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
-        assert "|produces|" in mmd
-        assert "|consumed by|" in mmd
+        assert "|produces / 产出|" in mmd
+        assert "|consumed by / 被消费于|" in mmd
 
     def test_mmd_contains_class_defs(self, sample_datasets, sample_jobs, sample_edges):
         """mmd 文本包含样式定义。"""
