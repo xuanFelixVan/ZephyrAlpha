@@ -103,6 +103,7 @@ class DatabaseService:
                 conn = getattr(self, target_attr)
                 if conn is None:
                     conn = get_db_connection(self.governance_db)
+                    conn.row_factory = sqlite3.Row  # P-PLAN-2 统一 row_factory（与 governance 版对齐）
                     if read_only:
                         conn.execute("PRAGMA query_only = 1")
                     setattr(self, target_attr, conn)
