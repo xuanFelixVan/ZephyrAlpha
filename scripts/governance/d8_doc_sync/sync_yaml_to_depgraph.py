@@ -14,6 +14,9 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
+# 真源说明：本脚本同步的是【规则数据】（trae_*.yaml/契约/门禁/词汇表）YAML→DB。
+# 【架构数据】（nodes/edges）不通过本脚本同步，其真源在 DB，用 apply_depgraph.py 写入。
+# 详见 AGENTS.md §真源分类（11.0.2）。
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/sync_yaml_to_depgraph.py | §22.10
 [MODULE] 无（独立脚本）
@@ -1313,11 +1316,23 @@ def sync_dataflow_registry(cur):
     from datetime import datetime, UTC
     now_iso = datetime.now(UTC).isoformat(timespec="seconds")
 
-    # --- 清空表（DELETE + INSERT 模式，与 sync_blueprint_links 一致）---
+    # --- 清空运营态数据（DELETE + INSERT 模式，保护设计态）---
+    # ARCH-052: 与 generate_project_depgraph.py 对齐——保护 design_maturity='design' 的设计态数据
+    # apply_dataflowgraph.py --add-design-* 写入的数据（design_maturity='design', build_status='planned'）
+    # 不得被常规 sync 清空。NULL != 'design' 为 NULL（非 TRUE），需显式处理。
     # 先 edges（FK 逻辑依赖），再 datasets/jobs
-    cur.execute("DELETE FROM dataflow_edges")
-    cur.execute("DELETE FROM dataflow_datasets")
-    cur.execute("DELETE FROM dataflow_jobs")
+    cur.execute(
+        "DELETE FROM dataflow_edges "
+        "WHERE design_maturity IS NULL OR design_maturity != 'design'"
+    )
+    cur.execute(
+        "DELETE FROM dataflow_datasets "
+        "WHERE design_maturity IS NULL OR design_maturity != 'design'"
+    )
+    cur.execute(
+        "DELETE FROM dataflow_jobs "
+        "WHERE design_maturity IS NULL OR design_maturity != 'design'"
+    )
 
     # --- 同步 jobs（先 jobs，因为 datasets 的 produced_by_job 引用 job_name）---
     jobs = data.get("jobs", [])
@@ -1405,6 +1420,128 @@ def sync_dataflow_registry(cur):
     print(f"  同步 {synced_jobs} 个 Job, {synced_datasets} 个 Dataset, {synced_edges} 条 edges")
 
 
+# ========== 聚合节点同步（ARCH-052） ==========
+
+
+# ARCH-052: owner_module → domain_id 映射
+# 聚合节点的 registry.yaml 用 owner_module 字段标识归属蓝图，
+# 但 nodes 表需要 domain_id（FK 到 domains 表），此处显式映射。
+_AGGREGATE_OWNER_TO_DOMAIN = {
+    "MOD-GATE_ENGINE": "D_GOV_ENFORCEMENT",
+    "MOD-GOV-SCRIPTS": "D_GOV_SCRIPTS",
+    "MOD-AUDIT-TEST": "D_AUDITTEST",
+    "MOD-GOVERNANCE": "D_GOVERNANCE",
+}
+
+# ARCH-052: 聚合节点 registry.yaml 列表（SSoT 真源）
+# 每个文件描述一类配置对象集（门禁/脚本/测试/规则），用 1 个聚合节点代表。
+# 路径相对于 RULES_DIR（docs/01_policies_and_standards/）。
+_AGGREGATE_REGISTRY_FILES = [
+    "_registry/catalogs/rule_enforcement_registry.yaml",
+    "_registry/catalogs/scripts_registry.yaml",
+    "_registry/catalogs/test_suite_registry.yaml",
+    "_registry/catalogs/rule_registry_collection.yaml",
+]
+
+
+def sync_aggregate_nodes(cur):
+    """#176 ARCH-052: 聚合节点 registry.yaml → nodes 表
+
+    SSoT: 4 个 registry.yaml 文件（_AGGREGATE_REGISTRY_FILES）
+    ARCH-052 裁定：门禁/脚本/测试/规则文件不再作为独立 depgraph 节点，
+    用 1 个聚合节点代表一组配置对象。本函数将这 4 个聚合节点 UPSERT 到 nodes 表。
+
+    为什么需要本函数：
+      - generate_project_depgraph.py 重建时已排除聚合节点类型（不被 DELETE）
+      - 但若 DB 被意外清空（如人工操作/并发会话误删），需要从 YAML 恢复
+      - 本函数提供"YAML→DB 单向恢复"通道，与 sync_gate_registry 等保持一致模式
+
+    幂等性：
+      - nodes 表无 blueprint_id 唯一约束，使用 SELECT-then-UPDATE/INSERT 模式
+      - 已存在的聚合节点（按 blueprint_id+node_type 匹配）UPDATE，否则 INSERT
+      - 不用 DELETE+INSERT 模式，避免破坏 edges 表中指向聚合节点的边
+    """
+    print("同步 #176 ARCH-052: 聚合节点 registry.yaml → nodes...")
+    synced = 0
+    skipped = 0
+    for rel_path in _AGGREGATE_REGISTRY_FILES:
+        data = load_yaml(rel_path)
+        if not data:
+            print(f"  跳过: {rel_path} 不存在或为空")
+            skipped += 1
+            continue
+
+        module_id = data.get("module_id", "")
+        node_type = data.get("node_type", "")
+        collection_name = data.get("collection_name", "")
+        owner_module = data.get("owner_module", "")
+        total_registered = data.get("total_registered", 0)
+
+        if not module_id or not node_type:
+            print(f"  跳过: {rel_path} 缺少 module_id 或 node_type")
+            skipped += 1
+            continue
+
+        domain_id = _AGGREGATE_OWNER_TO_DOMAIN.get(owner_module)
+        if not domain_id:
+            print(f"  跳过: {rel_path} 的 owner_module={owner_module} 未在 "
+                  f"_AGGREGATE_OWNER_TO_DOMAIN 登记映射")
+            skipped += 1
+            continue
+
+        # path 指向 registry.yaml（SSoT 指针），用 repo-relative 路径
+        # RULES_DIR = docs/01_policies_and_standards/，rel_path 相对它
+        node_path = f"docs/01_policies_and_standards/{rel_path}"
+        # node_name 对齐域文档渲染格式："<中文名> — ARCH-052 聚合节点 production"
+        node_name = f"{collection_name} — ARCH-052 聚合节点 production"
+
+        # 查询是否已存在（按 blueprint_id + node_type 匹配，避免误伤同名节点）
+        cur.execute(
+            "SELECT node_id FROM nodes WHERE blueprint_id = %s AND node_type = %s LIMIT 1",
+            (module_id, node_type),
+        )
+        existing = cur.fetchone()
+
+        if existing:
+            # UPDATE 已有聚合节点
+            cur.execute(
+                """
+                UPDATE nodes SET
+                    path = %s,
+                    node_name = %s,
+                    domain_id = %s,
+                    design_maturity = 'production',
+                    build_status = 'stable',
+                    architecture_layer = 'L1_foundation',
+                    granularity = 'aggregated',
+                    tags = 'ARCH-052,aggregate_node',
+                    blueprint_id_invalid = 1
+                WHERE node_id = %s
+                """,
+                (node_path, node_name, domain_id, existing["node_id"]),
+            )
+        else:
+            # INSERT 新聚合节点（node_id 自增）
+            # blueprint_id_invalid=1: CFG-* 前缀不符合裁定#208 三轨制（MOD-/D-/SH-），
+            # 但 CFG- 是聚合节点 registry 的语义前缀（Configuration），用此 escape hatch
+            cur.execute(
+                """
+                INSERT INTO nodes (
+                    blueprint_id, node_type, path, node_name, domain_id,
+                    design_maturity, build_status, architecture_layer,
+                    granularity, tags, blueprint_id_invalid
+                ) VALUES (%s, %s, %s, %s, %s, 'production', 'stable',
+                          'L1_foundation', 'aggregated', 'ARCH-052,aggregate_node', 1)
+                """,
+                (module_id, node_type, node_path, node_name, domain_id),
+            )
+        synced += 1
+        print(f"  UPSERT 聚合节点: {module_id} ({node_type}) → {domain_id}, "
+              f"items={total_registered}")
+
+    print(f"  同步 {synced} 个聚合节点，跳过 {skipped} 个")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -1469,11 +1606,14 @@ def sync_all() -> bool:
         # P6 优先级同步（ARCH-051 dataflowgraph 数据流图）
         sync_dataflow_registry(cur)  # #175 ARCH-051 dataflowgraph（同库不同表）
 
+        # P7 优先级同步（ARCH-052 聚合节点恢复通道）
+        sync_aggregate_nodes(cur)  # #176 ARCH-052 聚合节点 YAML→nodes 表恢复
+
         # 历史遗留清理：删除 sync 无法触及的 FK 违规孤立记录
         cleanup_legacy_fk_violations(cur)
 
         conn.commit()
-        print("\n[PASS] 20 项 YAML→DB 同步完成")
+        print("\n[PASS] 21 项 YAML→DB 同步完成")
 
         # S1.2: 验证 readonly 表 COMMENT（HB-001 table_comment_required）
         verify_readonly_table_comments(cur)
