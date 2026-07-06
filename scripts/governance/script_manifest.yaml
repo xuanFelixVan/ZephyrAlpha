@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-06T05:10:07Z
+# 自动生成于 2026-07-06T05:18:38Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-06T05:10:07Z'
+generated_at: '2026-07-06T05:18:38Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 328
