@@ -1,6 +1,6 @@
 rule_id: TRAE-047
 title: 工程治理-文件头部与扩展
-version: 1.2.0
+version: 1.2.1
 layer: L1_foundation
 module_id: TRAE-047
 depends_on: []
@@ -475,6 +475,9 @@ sections:
     - version: 1.2.0
       date: '2026-06-27'
       change: 新增gov_eng_002_directory_mapping section——格式-目录映射规则定死(永久区/临时区/根目录白名单/禁止规则);全格式加ttl字段(A_full 15/A_test 7/B_yaml 6/C_json 6/E_shell 5);合并docs/09_audit/+docs/decomposition/→docs/_working/统一临时区
+    - version: 1.2.1
+      date: '2026-07-06'
+      change: ARCH-MM-001裁定——明确[MATURITY]标记是声明(AI/人工声明的预期成熟度),depgraph nodes.design_maturity是验证(生成器根据has_test推导的实际成熟度);冲突时以depgraph为真源;生成器推导规则:tests/目录下test类型节点的import_depends边目标模块→production,无测试覆盖→prototype
     context:
       summary: GOV-ENG-002 v1.0.0从GOV-ENG-001§7独立；GOV-ENG-003 v1.0.0基于2026-05-19基线数据
       impact_on_rules: GOV-ENG-002独立后GOV-ENG-001§7仅保留速查表
@@ -546,6 +549,14 @@ metadata:
   modification_permission: human_gated
   superseded_by:
   change_history:
+  - version: 1.2.1
+    date: '2026-07-06'
+    by: session-20260706-arch-mm-001
+    changes:
+    - ARCH-MM-001裁定——明确[MATURITY]标记是"声明"（AI/人工声明的预期成熟度），depgraph nodes.design_maturity是"验证"（生成器根据has_test推导的实际成熟度）
+    - 生成器推导规则——tests/目录下test类型节点的import_depends边目标模块→production；无测试覆盖的模块→prototype
+    - 冲突时以depgraph为真源（生成器是运营态唯一真源，见architecture_issue_registry.yaml#ARCH-MM-001）
+    - AI/人工应在编写测试后运行generate_project_depgraph.py刷新depgraph，使声明与验证一致
   - version: 1.1.0
     date: '2026-06-24'
     by: session-20260624-header
