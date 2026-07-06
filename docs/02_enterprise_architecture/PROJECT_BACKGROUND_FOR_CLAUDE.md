@@ -371,9 +371,7 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 
 ### 6.11 当前施工状态
 
-回测域 Phase 1+2 共 12 模块：
-- **已 production（6 模块）**：engine_base / vectorized_engine / pit_manager / decision_gate / overfitting_detector / walk_forward
-- **planned（6 模块）**：matching_engine / portfolio / data_handler / metrics / tick_replay / event_driven_engine
+回测域 Phase 1+2 模块状态（production / prototype 节点数及模块清单见 depgraph 动态统计）：
 
 7 类运行时测试全部通过：模块导入、向量化引擎、事件驱动引擎、WFA 三模式、OverfittingDetector 三维度、DecisionGate IS→WFA→OOS 三级门禁、PITManager。
 
