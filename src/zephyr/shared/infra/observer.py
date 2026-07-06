@@ -27,6 +27,7 @@ ADR ref: ADR-0037 (pending Opus authoring)
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from enum import Enum, unique
 from threading import RLock
