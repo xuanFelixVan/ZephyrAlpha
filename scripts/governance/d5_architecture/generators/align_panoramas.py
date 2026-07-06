@@ -1,7 +1,7 @@
 # [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §panorama-alignment
 # [MODULE] scripts.governance.d5_architecture.generators.align_panoramas
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.depgraph_schema; zephyr.governance.persistence.dataflowgraph_schema; zephyr.governance.persistence.decisiongraph_schema; _common (DB_DISPLAY_NAME)
+# [DEPENDENCIES] zephyr.governance.depgraph_schema; zephyr.governance.persistence.dataflowgraph_schema; zephyr.governance.persistence.decisiongraph_schema; _common (DB_DISPLAY_NAME)
 # [CONSUMERS] CI自动触发;人工审查三图对齐报告
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -70,6 +70,10 @@ from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
 # ---------------------------------------------------------------------------
 # 数据模型
 # ---------------------------------------------------------------------------
+
+
+class PanoramaEmptyError(RuntimeError):
+    """三图任一为空时抛出（ERROR_CONTRACT exit 2）。"""
 
 
 @dataclass
@@ -516,6 +520,19 @@ def run_alignment(output_path: Path | None = None) -> PanoramaAlignmentReport:
 
     all_nodes = depgraph_nodes + dataflow_nodes + decision_nodes
 
+    # ERROR_CONTRACT: 三图任一为空 → exit 2（检测无意义）
+    empty_graphs = []
+    if not depgraph_nodes:
+        empty_graphs.append("depgraph")
+    if not dataflow_nodes:
+        empty_graphs.append("dataflow")
+    if not decision_nodes:
+        empty_graphs.append("decision")
+    if empty_graphs:
+        raise PanoramaEmptyError(
+            f"三图任一为空（exit 2）: {','.join(empty_graphs)} 无节点；检测无意义"
+        )
+
     # 检测四类问题
     orphans = _detect_orphans(all_nodes)
     state_drifts = _detect_state_drifts(all_nodes)
@@ -559,6 +576,10 @@ def main() -> int:
 
     try:
         run_alignment(output_path=args.output)
+    except PanoramaEmptyError as e:
+        # ERROR_CONTRACT: 三图任一为空 → exit 2
+        print(f"ERROR: {e}", file=sys.stderr)
+        return 2
     except Exception as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 1
