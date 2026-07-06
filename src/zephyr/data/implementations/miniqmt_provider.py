@@ -177,6 +177,12 @@ class MiniQMTProvider(DataSourceBase):
         is_daily = (period == "1d")
         if is_daily:
             columns = ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount"]
+        elif "kline_1min" in table:
+            # kline_1min 表有 pct_change/amplitude（无 DEFAULT），需补充；data_source 有 DEFAULT
+            columns = ["trade_date", "trade_time", "symbol", "open", "close", "high", "low", "volume", "amount", "pct_change", "amplitude"]
+        elif "kline_5min" in table:
+            # kline_5min 表无 trade_date，data_source 无 DEFAULT 需补充
+            columns = ["trade_time", "symbol", "open", "high", "low", "close", "volume", "amount", "data_source"]
         else:
             columns = ["trade_date", "trade_time", "symbol", "open", "high", "low", "close", "volume", "amount"]
 
@@ -265,17 +271,46 @@ class MiniQMTProvider(DataSourceBase):
                             )
                             vol = self.safe_float(volumes[i])
                             vol = int(vol) if vol is not None else None
-                            rows.append((
-                                trade_date,       # trade_date
-                                trade_time,       # trade_time (YYYY-MM-DD HH:MM:SS)
-                                symbol,
-                                self.safe_float(opens[i]),
-                                self.safe_float(highs[i]),
-                                self.safe_float(lows[i]),
-                                self.safe_float(closes[i]),
-                                vol,
-                                self.safe_float(amounts[i]),
-                            ))
+                            if "kline_1min" in table:
+                                # kline_1min: 补充 pct_change=0, amplitude=0
+                                rows.append((
+                                    trade_date,
+                                    trade_time,
+                                    symbol,
+                                    self.safe_float(opens[i]),
+                                    self.safe_float(closes[i]),
+                                    self.safe_float(highs[i]),
+                                    self.safe_float(lows[i]),
+                                    vol,
+                                    self.safe_float(amounts[i]),
+                                    0,  # pct_change（miniQMT 不提供）
+                                    0,  # amplitude（miniQMT 不提供）
+                                ))
+                            elif "kline_5min" in table:
+                                # kline_5min: 无 trade_date，补充 data_source
+                                rows.append((
+                                    trade_time,
+                                    symbol,
+                                    self.safe_float(opens[i]),
+                                    self.safe_float(highs[i]),
+                                    self.safe_float(lows[i]),
+                                    self.safe_float(closes[i]),
+                                    vol,
+                                    self.safe_float(amounts[i]),
+                                    "miniqmt",  # data_source
+                                ))
+                            else:
+                                rows.append((
+                                    trade_date,
+                                    trade_time,
+                                    symbol,
+                                    self.safe_float(opens[i]),
+                                    self.safe_float(highs[i]),
+                                    self.safe_float(lows[i]),
+                                    self.safe_float(closes[i]),
+                                    vol,
+                                    self.safe_float(amounts[i]),
+                                ))
 
                 yield FetchResult(
                     table=table,
