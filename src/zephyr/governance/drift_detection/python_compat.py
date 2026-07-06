@@ -41,6 +41,7 @@ auto_fixable: 自动降级语法到目标Python版本
 
 from __future__ import annotations
 
+from typing import Final
 import re
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -66,7 +67,7 @@ class PythonCompatIssue:
     severity: str = "MAJOR"
 
 
-PYTHON_VERSIONS: dict[str, int] = {
+PYTHON_VERSIONS: Final[dict[str, int]] = {
     "3.9": 9,
     "3.10": 10,
     "3.11": 11,
@@ -75,7 +76,7 @@ PYTHON_VERSIONS: dict[str, int] = {
 }
 
 
-NEW_IN_VERSION: dict[str, dict[int, str]] = {
+NEW_IN_VERSION: Final[dict[str, dict[int, str]]] = {
     "syntax": {
         10: "PEP 604: X | Y union syntax",
         11: "PEP 654: Exception Groups",

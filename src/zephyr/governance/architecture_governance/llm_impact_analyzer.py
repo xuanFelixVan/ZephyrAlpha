@@ -32,6 +32,7 @@ module_id 已重新分配为 MOD-GOV_llm_impact_analyzer 避免撞车。
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -63,7 +64,7 @@ class ImpactAnalysis:
     details: list[str] = field(default_factory=list)
 
 
-HIGH_RISK_KEYWORDS: set[str] = {
+HIGH_RISK_KEYWORDS: Final[set[str]] = {
     "drop table",
     "delete from",
     "truncate",
@@ -86,7 +87,7 @@ HIGH_RISK_KEYWORDS: set[str] = {
     "importlib",
 }
 
-MEDIUM_RISK_KEYWORDS: set[str] = {
+MEDIUM_RISK_KEYWORDS: Final[set[str]] = {
     "ALTER TABLE",
     "ALTER COLUMN",
     "modify",

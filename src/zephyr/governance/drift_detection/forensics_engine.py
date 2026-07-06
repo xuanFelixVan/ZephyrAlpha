@@ -34,6 +34,8 @@ forensics_report: timeline + state_diffs + actor_trace + dependency_impact
 对标 blueprint.md §6.17。"""
 
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 import logging
@@ -98,7 +100,7 @@ class ForensicsConfig:
     include_blame: bool = True
 
 
-FORENSICS_CONFIG = ForensicsConfig()
+FORENSICS_CONFIG: Final[ForensicsConfig] = ForensicsConfig()
 
 
 def replay_baseline_history(

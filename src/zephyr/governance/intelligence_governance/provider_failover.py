@@ -22,7 +22,8 @@ Provider Failover — v0.7.0 多LLM Provider容灾: deepseek→claude→gpt fall
 
 from __future__ import annotations
 
-FALLBACK_CHAIN = ["deepseek", "claude", "gpt"]
+from typing import Final
+FALLBACK_CHAIN: Final[list] = ["deepseek", "claude", "gpt"]
 
 
 class ProviderFailover:

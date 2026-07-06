@@ -27,6 +27,7 @@ module_id: MOD-INF-023
 
 from __future__ import annotations
 
+from typing import Final
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -51,7 +52,7 @@ _VALID_TRANSITIONS: dict[DriftState, set[DriftState]] = {
 }
 
 
-TERMINAL_STATES: set[DriftState] = {DriftState.VERIFIED, DriftState.FALSE_POSITIVE}
+TERMINAL_STATES: Final[set[DriftState]] = {DriftState.VERIFIED, DriftState.FALSE_POSITIVE}
 
 
 class InvalidTransitionError(Exception):

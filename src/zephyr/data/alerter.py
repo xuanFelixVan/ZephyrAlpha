@@ -34,6 +34,7 @@
 """
 from __future__ import annotations
 
+from typing import Final
 import datetime
 import json
 import logging
@@ -49,10 +50,10 @@ log = logging.getLogger(__name__)
 _DEFAULT_FAILURES_DIR = REPO_ROOT / "data" / "failures"
 
 # 告警级别
-LEVEL_INFO = "INFO"
-LEVEL_WARN = "WARN"
-LEVEL_ERROR = "ERROR"
-LEVEL_CRITICAL = "CRITICAL"
+LEVEL_INFO: Final[str] = "INFO"
+LEVEL_WARN: Final[str] = "WARN"
+LEVEL_ERROR: Final[str] = "ERROR"
+LEVEL_CRITICAL: Final[str] = "CRITICAL"
 
 
 class Alerter:

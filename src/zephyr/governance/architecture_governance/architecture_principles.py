@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from collections.abc import Callable
 from enum import Enum
 from functools import wraps
@@ -41,7 +42,7 @@ class BlueprintIronLaw(str, Enum):
     IL5_SOURCE_OF_TRUTH = "IL5_SOURCE_OF_TRUTH"
 
 
-PRINCIPLE_DEFS: dict[ArchPrinciple, dict[str, str]] = {
+PRINCIPLE_DEFS: Final[dict[ArchPrinciple, dict[str, str]]] = {
     ArchPrinciple.P1_SSOT: {
         "label": "P1-SSoT (ADR-0001)",
         "statement": "YAML=真源，MD=衍生视图",
@@ -69,7 +70,7 @@ PRINCIPLE_DEFS: dict[ArchPrinciple, dict[str, str]] = {
     },
 }
 
-IRON_LAW_DEFS: dict[BlueprintIronLaw, str] = {
+IRON_LAW_DEFS: Final[dict[BlueprintIronLaw, str]] = {
     BlueprintIronLaw.IL1_FLAT_TOP: "单层目录不允许嵌套子目录",
     BlueprintIronLaw.IL2_BOOTSTRAP_LINK: "自举链接——所有MD必须可通过YAML重建",
     BlueprintIronLaw.IL3_AUDITABLE_CHANGE: "变更记录必须可审计追踪",

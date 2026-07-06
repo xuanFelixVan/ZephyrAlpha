@@ -38,6 +38,7 @@ module_id: MOD-INF-023
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -182,7 +183,7 @@ def _install_signal_handlers() -> None:
 # ── Storm Detection ─────────────────────────────────────────
 
 
-STORM_THRESHOLD: int = 50
+STORM_THRESHOLD: Final[int] = 50
 
 
 _expected_storm_keywords: set[str] = {"REFACTOR", "MIGRATION", "REFORMAT", "RENAME"}

@@ -36,6 +36,7 @@ safety_level: M
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -374,7 +375,7 @@ class DangerousPatternMatch(BaseModel):
     position_end: int = Field(default=0, ge=0, description="匹配结束位置")
 
 
-KNOWN_DANGEROUS_PATTERNS: list[DangerousPattern] = [
+KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
     DangerousPattern(
         pattern_id="DNG-001",
         pattern_type=DangerousPatternType.PROMPT_INJECTION,

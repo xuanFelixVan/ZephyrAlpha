@@ -15,6 +15,8 @@
 # [A_module] module_id=MOD-GOV_data_quality | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # ARCH-031: migrated from governance/governance/data_quality.py to root (canonical per [MODULE] annotation)
+from typing import Final
+
 from enum import Enum
 
 from pydantic import BaseModel
@@ -37,7 +39,7 @@ class DQSpec(BaseModel):
     check_func: str = ""
 
 
-DQ_SPECS: dict[DQDimension, DQSpec] = {
+DQ_SPECS: Final[dict[DQDimension, DQSpec]] = {
     DQDimension.COMPLETENESS: DQSpec(
         dimension=DQDimension.COMPLETENESS,
         label="完整性",
@@ -94,4 +96,4 @@ def score_dq(dim: DQDimension, value: float) -> float:
     return min(1.0, value / spec.threshold)
 
 
-DQ_DIM_COUNT: int = 6
+DQ_DIM_COUNT: Final[int] = 6

@@ -15,6 +15,8 @@
 # [A_module] module_id=MOD-RES_timeout_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -32,7 +34,7 @@ class TimeoutLevel(Enum):
     SESSION = "session"
 
 
-DEFAULT_TIMEOUTS: dict[TimeoutLevel, float] = {
+DEFAULT_TIMEOUTS: Final[dict[TimeoutLevel, float]] = {
     TimeoutLevel.REQUEST: 120.0,
     TimeoutLevel.TURN: 300.0,
     TimeoutLevel.TASK: 3600.0,

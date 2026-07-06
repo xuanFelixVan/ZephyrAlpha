@@ -30,14 +30,15 @@ Owner Absent — 人力缺席分级处置。
 
 from __future__ import annotations
 
+from typing import Final
 import json
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-EXIT_OWNER_ABSENT_L3 = 31
-EXIT_OWNER_ABSENT_L1 = 32
+EXIT_OWNER_ABSENT_L3: Final[int] = 31
+EXIT_OWNER_ABSENT_L1: Final[int] = 32
 
 
 @dataclass

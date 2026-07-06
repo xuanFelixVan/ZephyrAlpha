@@ -35,6 +35,7 @@ Safety : M
 
 from __future__ import annotations
 
+from typing import Final
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -55,10 +56,10 @@ __all__ = [
     "ExtractResult",
 ]
 
-LESSONS_DIR_NAME = "06_lessons_learned"
-BEST_PRACTICES_DIR_NAME = "07_best_practices"
+LESSONS_DIR_NAME: Final[str] = "06_lessons_learned"
+BEST_PRACTICES_DIR_NAME: Final[str] = "07_best_practices"
 
-EXTRACTION_TEMPLATES = {
+EXTRACTION_TEMPLATES: Final[set] = {
     "blueprint": {
         "fields": ["design_decisions", "interfaces", "constraints", "dependencies"],
     },

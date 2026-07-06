@@ -24,6 +24,7 @@ Blueprint: docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md §
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import logging
 import threading
@@ -45,7 +46,7 @@ from .budget_models import (
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_DEGRADATION_STEPS: list[DegradationStep] = [
+DEFAULT_DEGRADATION_STEPS: Final[list[DegradationStep]] = [
     DegradationStep(
         0, "Normal operation — Premium models available", ModelTier.PREMIUM, BudgetLevel.L0_NORMAL, 32_000, 0
     ),

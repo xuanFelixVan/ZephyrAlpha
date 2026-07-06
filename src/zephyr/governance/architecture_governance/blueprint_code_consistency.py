@@ -26,6 +26,7 @@ Returns: 0 if consistent, 1 if drift detected.
 
 from __future__ import annotations
 
+from typing import Final
 import importlib
 import json
 import sys
@@ -51,7 +52,7 @@ class DecisionMapping:
     notes: str = ""
 
 
-DECISION_MAP: list[DecisionMapping] = [
+DECISION_MAP: Final[list[DecisionMapping]] = [
     DecisionMapping(
         "D-022-01",
         "三级升级策略 L0-L4",

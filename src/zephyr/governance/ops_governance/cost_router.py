@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from enum import Enum
 
@@ -52,7 +53,7 @@ class ModelPricing(BaseModel):
     context_window: int
 
 
-PRICING_TABLE: dict[LLMProvider, ModelPricing] = {
+PRICING_TABLE: Final[dict[LLMProvider, ModelPricing]] = {
     LLMProvider.DEEPSEEK: ModelPricing(
         provider=LLMProvider.DEEPSEEK,
         cost_per_1k_input=0.27,

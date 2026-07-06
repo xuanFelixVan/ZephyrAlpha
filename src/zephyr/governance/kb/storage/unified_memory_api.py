@@ -57,6 +57,7 @@ Collection: ``unified_memory``
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import threading
 import uuid
@@ -93,7 +94,7 @@ _UTC = UTC
 # 常量
 # ---------------------------------------------------------------------------
 
-UNIFIED_COLLECTION: str = "unified_memory"
+UNIFIED_COLLECTION: Final[str] = "unified_memory"
 """ChromaDB 中承载 RI-02 跨模块记忆的集合名（不可变 schema）。"""
 
 # ---------------------------------------------------------------------------

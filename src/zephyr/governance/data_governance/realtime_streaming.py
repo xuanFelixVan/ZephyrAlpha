@@ -14,6 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-DAT_realtime_streaming | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from typing import Final
+
 from enum import Enum
 
 
@@ -22,7 +24,7 @@ class PipelineMode(str, Enum):
     STREAM = "Stream"
 
 
-CONNECTION_POOL_MIN: int = 10
-FIFO_MAX_DEPTH: int = 1000
-DISCONNECT_ALERT_SECONDS: int = 120
-BACKPRESSURE_THRESHOLD: int = 1000
+CONNECTION_POOL_MIN: Final[int] = 10
+FIFO_MAX_DEPTH: Final[int] = 1000
+DISCONNECT_ALERT_SECONDS: Final[int] = 120
+BACKPRESSURE_THRESHOLD: Final[int] = 1000

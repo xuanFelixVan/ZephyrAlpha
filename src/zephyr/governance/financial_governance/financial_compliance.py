@@ -14,6 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV_financial_compliance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from typing import Final
+
 from enum import Enum
 
 from pydantic import BaseModel
@@ -49,7 +51,7 @@ class ProtocolDef(BaseModel):
     review_date: str | None = None
 
 
-SAFEGUARD_LABELS: dict[Safeguard, str] = {
+SAFEGUARD_LABELS: Final[dict[Safeguard, str]] = {
     Safeguard.S1_ACCESS_CONTROL: "访问控制 — GateController + Role-Based Access",
     Safeguard.S2_DATA_PROTECTION: "数据保护 — Encryption + L1-L4 Classification",
     Safeguard.S3_AUDIT_TRAIL: "审计轨迹 — Every mutation logged",
@@ -59,7 +61,7 @@ SAFEGUARD_LABELS: dict[Safeguard, str] = {
     Safeguard.S7_INSIDER_THREAT: "内部威胁 — Dual AI Review + Session Auditing",
 }
 
-PROTOCOL_DEFS: dict[Protocol, ProtocolDef] = {
+PROTOCOL_DEFS: Final[dict[Protocol, ProtocolDef]] = {
     Protocol.CLIENT_STATEMENT: ProtocolDef(
         name=Protocol.CLIENT_STATEMENT,
         description="每日客户对账单自动生成与加密分发",
@@ -95,7 +97,7 @@ def get_safeguard(safeguard: Safeguard) -> str:
     return SAFEGUARD_LABELS.get(safeguard, str(safeguard))
 
 
-FRAMEWORK_DIMENSIONS: dict[str, int] = {
+FRAMEWORK_DIMENSIONS: Final[dict[str, int]] = {
     "compliance_layers": 3,
     "safeguards": 7,
     "protocols": 4,

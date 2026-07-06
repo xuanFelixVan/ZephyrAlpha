@@ -60,6 +60,7 @@ Usage::
 
 from __future__ import annotations
 
+from typing import Final
 import importlib
 import json
 import logging
@@ -104,7 +105,7 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_TIMEOUT_SECONDS: float = 30.0
+DEFAULT_TIMEOUT_SECONDS: Final[float] = 30.0
 
 
 class TransactionError(RuntimeError):

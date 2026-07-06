@@ -34,6 +34,7 @@ Safety : M
 
 from __future__ import annotations
 
+from typing import Final
 import re
 from dataclasses import dataclass, field
 from datetime import UTC
@@ -58,7 +59,7 @@ __all__ = [
     "TriageResult",
 ]
 
-APPROVED_LABELS = [
+APPROVED_LABELS: Final[list] = [
     "BLUEPRINT",
     "MODULE_SPEC",
     "STRATEGY",
@@ -75,11 +76,11 @@ APPROVED_LABELS = [
 # 治本（P2-1，2026-06-30）：消除私有 _load_doc_type_values()/_load_layer_values()，
 # 收敛到共享 SSoT load_vocabulary_values()（D-D-05 禁止跨脚本复制粘贴逻辑）。
 # 词表改即生效，本模块不复制值名。返回 set[str]（消费者均用 in/set() 消费，类型安全）。
-VALID_DOC_TYPES: set[str] = load_vocabulary_values("doc_type_vocabulary.yaml")
-VALID_LAYERS: set[str] = load_vocabulary_values("layer_vocabulary.yaml")
+VALID_DOC_TYPES: Final[set[str]] = load_vocabulary_values("doc_type_vocabulary.yaml")
+VALID_LAYERS: Final[set[str]] = load_vocabulary_values("layer_vocabulary.yaml")
 
-HIGH_VALUE_THRESHOLD = 0.7
-REJECT_THRESHOLD = 0.3
+HIGH_VALUE_THRESHOLD: Final[float] = 0.7
+REJECT_THRESHOLD: Final[float] = 0.3
 
 _TRIAGED_DIR_NAME = "02_triaged"
 

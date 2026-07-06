@@ -14,6 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-DAT_data_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from typing import Final
+
 from enum import Enum
 
 
@@ -25,9 +27,9 @@ class DataStage(str, Enum):
     PURGE = "Purge"
 
 
-ARCHIVE_AFTER_YEARS: int = 7
-PURGE_AFTER_YEARS: int = 15
-GDPR_PII_FIELDS: list[str] = ["user", "payment", "email"]
+ARCHIVE_AFTER_YEARS: Final[int] = 7
+PURGE_AFTER_YEARS: Final[int] = 15
+GDPR_PII_FIELDS: Final[list[str]] = ["user", "payment", "email"]
 
 
 def forget_pii() -> dict[str, str]:

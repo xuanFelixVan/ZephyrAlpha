@@ -37,6 +37,7 @@ Safety : M（治理层代码，门禁失败阻断入库）
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -65,11 +66,11 @@ __all__ = [
     "IngestResult",
 ]
 
-REQUIRED_FRONTMATTER_FIELDS = ["module_id", "title", "category", "ttl"]
-ALLOWED_EXTENSIONS = {".md", ".yaml", ".yml"}
-MIN_CONTENT_CHARS = 100
+REQUIRED_FRONTMATTER_FIELDS: Final[list] = ["module_id", "title", "category", "ttl"]
+ALLOWED_EXTENSIONS: Final[set] = {".md", ".yaml", ".yml"}
+MIN_CONTENT_CHARS: Final[int] = 100
 
-BLACKLIST_PATTERNS = [
+BLACKLIST_PATTERNS: Final[list] = [
     r"\{\{",
     r"\{%",
     r"ignore\s+all\s+rules",
@@ -87,7 +88,7 @@ _RAW_INTAKE_DIR_NAME = "01_raw_intake"
 _UTC = UTC
 
 # 口语化模式 — 用于 triage 门禁检测非正式表述
-COLLOQUIAL_PATTERNS = [
+COLLOQUIAL_PATTERNS: Final[list] = [
     r"gonna",
     r"wanna",
     r"gotta",

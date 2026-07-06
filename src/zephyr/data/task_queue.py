@@ -30,6 +30,7 @@ DAG 依赖示例（蓝图 §6.3）：
 """
 from __future__ import annotations
 
+from typing import Final
 import logging
 import threading
 from collections import defaultdict
@@ -39,11 +40,11 @@ from typing import Optional
 log = logging.getLogger(__name__)
 
 # 任务状态常量
-PENDING = "PENDING"
-RUNNING = "RUNNING"
-SUCCESS = "SUCCESS"
-FAILED = "FAILED"
-BLOCKED = "BLOCKED"  # 前置失败，不可执行
+PENDING: Final[str] = "PENDING"
+RUNNING: Final[str] = "RUNNING"
+SUCCESS: Final[str] = "SUCCESS"
+FAILED: Final[str] = "FAILED"
+BLOCKED: Final[str] = "BLOCKED"  # 前置失败，不可执行
 
 
 # class-name-alias: MOD-L00-004 数据源集成器的 DAG 依赖图 + 优先级队列，与 infrastructure/queue/task_queue.py 的后台任务队列同名不同义，过渡期共存（阶段4退役旧版或重命名）

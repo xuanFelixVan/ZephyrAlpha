@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from datetime import UTC, datetime
 from enum import Enum
 
@@ -51,7 +52,7 @@ class ConsequenceDeclaration(BaseModel):
         self.resolved_at = datetime.now(UTC).isoformat()
 
 
-CONSEQUENCE_REGISTRY: dict[str, ConsequenceDeclaration] = {
+CONSEQUENCE_REGISTRY: Final[dict[str, ConsequenceDeclaration]] = {
     "alpha_unavailable": ConsequenceDeclaration(
         con_id="alpha_unavailable",
         scenario="Alpha 因子管线不可用",

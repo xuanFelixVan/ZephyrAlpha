@@ -41,6 +41,7 @@ integrity_manifest: 每DEEP scan签名存Git
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -99,10 +100,10 @@ class HashChainEntry:
     verified: bool = False
 
 
-HASH_CHAIN: list[HashChainEntry] = []
+HASH_CHAIN: Final[list[HashChainEntry]] = []
 
 
-INTEGRITY_MANIFEST: dict[str, object] = {}
+INTEGRITY_MANIFEST: Final[dict[str, object]] = {}
 
 
 def _sha256(data: str) -> str:

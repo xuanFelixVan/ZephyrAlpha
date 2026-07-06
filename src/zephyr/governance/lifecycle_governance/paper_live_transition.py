@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from datetime import UTC, datetime
 from enum import Enum
 
@@ -37,7 +38,7 @@ class PhaseSpec(BaseModel):
     key_gates: list[str] = Field(default_factory=list)
 
 
-PHASE_SPECS: dict[TransitionPhase, PhaseSpec] = {
+PHASE_SPECS: Final[dict[TransitionPhase, PhaseSpec]] = {
     TransitionPhase.PARALLEL: PhaseSpec(
         phase=TransitionPhase.PARALLEL,
         name="并行运行",
@@ -61,7 +62,7 @@ PHASE_SPECS: dict[TransitionPhase, PhaseSpec] = {
     ),
 }
 
-PHASE_ORDER: dict[TransitionPhase, int] = {
+PHASE_ORDER: Final[dict[TransitionPhase, int]] = {
     TransitionPhase.PARALLEL: 0,
     TransitionPhase.SHADOW: 1,
     TransitionPhase.GRAY_RAMP: 2,

@@ -35,6 +35,7 @@ Safety : M
 
 from __future__ import annotations
 
+from typing import Final
 import re
 from dataclasses import dataclass, field
 from datetime import UTC
@@ -54,9 +55,9 @@ __all__ = [
     "AnalyzeResult",
 ]
 
-VALUE_SCORE_THRESHOLD = 7.0
+VALUE_SCORE_THRESHOLD: Final[float] = 7.0
 
-SCORING_DIMENSIONS = {
+SCORING_DIMENSIONS: Final[set] = {
     "design_decision_density": 0.30,
     "technical_specificity": 0.25,
     "reuse_potential": 0.25,

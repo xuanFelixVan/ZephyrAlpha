@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel
@@ -35,7 +36,7 @@ class DriftConfig(BaseModel):
     action: str
 
 
-DRIFT_MONITORS: dict[ModelDriftType, DriftConfig] = {
+DRIFT_MONITORS: Final[dict[ModelDriftType, DriftConfig]] = {
     ModelDriftType.CONCEPT: DriftConfig(
         drift_type=ModelDriftType.CONCEPT,
         metric="Factor IC 30日滚动均值",

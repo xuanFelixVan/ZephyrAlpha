@@ -37,6 +37,8 @@ prevention: dry-run影响面分析(临时目录模拟修复diff跑关联检测�
 对标 blueprint.md §6.15。"""
 
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 import logging
@@ -99,7 +101,7 @@ class CascadeConfig:
 _CASCADE_STATE_FILE: str = "_cascade_state.json"
 
 
-CASCADE_CONFIG = CascadeConfig()
+CASCADE_CONFIG: Final[CascadeConfig] = CascadeConfig()
 
 
 def _load_cascade_state() -> dict[str, object]:

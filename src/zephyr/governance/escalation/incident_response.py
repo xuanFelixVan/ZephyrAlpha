@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -39,7 +40,7 @@ class IncidentProtocol(BaseModel):
     postmortem_required: bool = False
 
 
-INCIDENT_PROTOCOLS: dict[IncidentLevel, IncidentProtocol] = {
+INCIDENT_PROTOCOLS: Final[dict[IncidentLevel, IncidentProtocol]] = {
     IncidentLevel.L1_INSTANT: IncidentProtocol(
         level=IncidentLevel.L1_INSTANT,
         label="瞬时故障 (<5min)",

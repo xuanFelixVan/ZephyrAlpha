@@ -45,6 +45,7 @@ Depends    : sqlite_schema.py
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import sqlite3
 import threading
@@ -67,7 +68,7 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
-BACKUP_DIR: Path = REPO_ROOT / "data" / "backups"
+BACKUP_DIR: Final[Path] = REPO_ROOT / "data" / "backups"
 
 # 5.66.6 修复：表名白名单，防止 f-string 拼接表名的 SQL 注入风险。
 # verify_backup() 遍历 governance.db 的 sqlite_master 表名，白名单覆盖全部已知表名。

@@ -35,6 +35,7 @@ Data contract ( section 4.3):
 
 from __future__ import annotations
 
+from typing import Final
 import re
 import time
 from enum import Enum
@@ -479,7 +480,7 @@ class IntentKeywordMapper:
         return list(self._keywords.get(domain, []))
 
 
-MAP: dict[str, list[str]] = {
+MAP: Final[dict[str, list[str]]] = {
     "CODE_GEN": [
         "generate",
         "create",

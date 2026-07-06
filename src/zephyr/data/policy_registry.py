@@ -27,6 +27,7 @@
 """
 from __future__ import annotations
 
+from typing import Final
 import logging
 import os
 import threading
@@ -88,7 +89,7 @@ class SourcePolicy:
 # ============== 默认策略（跨源矩阵 §5.2） ==============
 
 # 这些默认值对应蓝图 §5.2 跨源策略矩阵，可作为 policies.yaml 缺失时的兜底
-DEFAULT_POLICIES: dict[str, dict] = {
+DEFAULT_POLICIES: Final[dict[str, dict]] = {
     "ifind": {
         "rpm": 0, "concurrency": 1, "max_retries": 3, "backoff": "exponential",
         "initial_wait_sec": 2.0, "retry_on": ["-201", "TimeoutError", "ConnectionError"],

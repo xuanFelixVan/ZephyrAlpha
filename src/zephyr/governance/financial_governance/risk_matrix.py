@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -64,7 +65,7 @@ def _compute_risk_level(likelihood: int, impact: int) -> RiskLevel:
     return RiskLevel.LOW
 
 
-RISK_MATRIX: dict[RiskCategory, RiskItem] = {
+RISK_MATRIX: Final[dict[RiskCategory, RiskItem]] = {
     RiskCategory.OPERATIONAL: RiskItem(
         name="操作风险",
         category=RiskCategory.OPERATIONAL,
@@ -115,7 +116,7 @@ RISK_MATRIX: dict[RiskCategory, RiskItem] = {
     ),
 }
 
-RISK_LEVEL_ORDER: dict[RiskLevel, int] = {
+RISK_LEVEL_ORDER: Final[dict[RiskLevel, int]] = {
     RiskLevel.LOW: 0,
     RiskLevel.MEDIUM: 1,
     RiskLevel.HIGH: 2,

@@ -38,6 +38,7 @@ scalability: 10→100→500→1500模块渐进路线
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -106,7 +107,7 @@ class ResourceSnapshot:
     snapshot_time: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
-LIMITS = ResourceLimits()
+LIMITS: Final[ResourceLimits] = ResourceLimits()
 
 
 _current_pool_size: int = 4

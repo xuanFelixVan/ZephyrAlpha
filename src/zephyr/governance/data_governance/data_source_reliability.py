@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -30,7 +31,7 @@ class ReliabilityDimension(str, Enum):
     CONSISTENCY = "Consistency"
 
 
-DIMENSION_WEIGHTS: dict[ReliabilityDimension, float] = {
+DIMENSION_WEIGHTS: Final[dict[ReliabilityDimension, float]] = {
     ReliabilityDimension.UPTIME: 0.25,
     ReliabilityDimension.ACCURACY: 0.30,
     ReliabilityDimension.TIMELINESS: 0.20,

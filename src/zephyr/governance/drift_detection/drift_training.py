@@ -32,6 +32,7 @@ module_id: MOD-INF-023 (SRC-0034)
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import re
 from dataclasses import dataclass, field
@@ -408,7 +409,7 @@ def detect_ai_training_loop(project_root: str) -> list[DriftEvent]:
 # ── §6.18 Cross-Language Drift Detection ─────────────────────
 
 
-LANGUAGE_AGNOSTIC_DIMENSIONS: list[str] = [
+LANGUAGE_AGNOSTIC_DIMENSIONS: Final[list[str]] = [
     "D5-YAML-DISK",
     "D5-DIRTY-GIT",
     "D5-EVOLUTION",
@@ -421,7 +422,7 @@ LANGUAGE_AGNOSTIC_DIMENSIONS: list[str] = [
 ]
 
 
-LANGUAGE_SPECIFIC_INTERFACES: dict[str, list[str]] = {
+LANGUAGE_SPECIFIC_INTERFACES: Final[dict[str, list[str]]] = {
     "Python": ["parse_python_imports", "parse_python_public_api", "detect_python_dead_code"],
     "TypeScript": [],
     "Go": [],
@@ -458,7 +459,7 @@ class CrossLanguageConfig:
     fallback_on_unsupported: bool = True
 
 
-CROSS_LANG_CONFIG = CrossLanguageConfig()
+CROSS_LANG_CONFIG: Final[CrossLanguageConfig] = CrossLanguageConfig()
 
 
 def parse_python_imports(file_path: str) -> list[str]:
@@ -618,7 +619,7 @@ def detect_python_dead_code(file_path: str) -> list[str]:
     return dead
 
 
-LANG_INTERFACE_IMPL: dict[str, object] = {
+LANG_INTERFACE_IMPL: Final[dict[str, object]] = {
     "parse_python_imports": parse_python_imports,
     "parse_python_public_api": parse_python_public_api,
     "detect_python_dead_code": detect_python_dead_code,

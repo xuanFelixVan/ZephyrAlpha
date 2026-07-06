@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import uuid
 from enum import Enum
 
@@ -35,7 +36,7 @@ class Contract(BaseModel):
     status: str = "active"
 
 
-ARCH_BASE_CONTRACTS: dict[str, Contract] = {
+ARCH_BASE_CONTRACTS: Final[dict[str, Contract]] = {
     "C1_COMMUNICATION": Contract(
         name="模块间通信",
         description="数据格式 JSON（跨模块）· 版本管理 v1/get_signal· 契约存档 CT-### in MOD-MASTER_BLUEPRINT",

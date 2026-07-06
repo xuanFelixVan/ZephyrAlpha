@@ -43,6 +43,8 @@ safe_operate: admin可设置severe级别限制
 对标 blueprint.md §6.32。"""
 
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 import json
@@ -75,10 +77,10 @@ class EscalationEntry:
     reason: str = ""
 
 
-ABSENCE_THRESHOLD_DAYS: int = 7
+ABSENCE_THRESHOLD_DAYS: Final[int] = 7
 
 
-ABSENCE_STATE_FILE: str = "_absence_state.json"
+ABSENCE_STATE_FILE: Final[str] = "_absence_state.json"
 
 
 @dataclass
@@ -90,7 +92,7 @@ class AbsenceManagerConfig:
     state_dir: str = ""
 
 
-CONFIG = AbsenceManagerConfig()
+CONFIG: Final[AbsenceManagerConfig] = AbsenceManagerConfig()
 
 
 def _load_absence_state() -> dict[str, object]:

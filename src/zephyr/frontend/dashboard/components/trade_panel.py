@@ -40,6 +40,7 @@ A股约束:
 """
 from __future__ import annotations
 
+from typing import Final
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
@@ -62,10 +63,10 @@ class TradePanelError(Exception):
 
 
 # 默认灰度约束（蓝图 §16.7.5 D: 小资金灰度）
-DEFAULT_GREY_CAPITAL = 10000.0   # 1万元
-DEFAULT_GREY_MAX_QTY = 100       # 100股
-DEFAULT_MIN_ORDER_QTY = 100      # A股最小1手
-DEFAULT_QTY_STEP = 100           # 100股整数倍
+DEFAULT_GREY_CAPITAL: Final[int] = 10000.0   # 1万元
+DEFAULT_GREY_MAX_QTY: Final[int] = 100       # 100股
+DEFAULT_MIN_ORDER_QTY: Final[int] = 100      # A股最小1手
+DEFAULT_QTY_STEP: Final[int] = 100           # 100股整数倍
 
 
 @dataclass

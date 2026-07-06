@@ -38,6 +38,7 @@ True Source :
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import importlib
 import logging
@@ -130,7 +131,7 @@ class BootstrapResult:
     elapsed_seconds: float = 0.0
 
 
-NOISE_HEADINGS = {
+NOISE_HEADINGS: Final[set] = {
     "table of contents",
     "toc",
     "目录",
@@ -146,9 +147,9 @@ NOISE_HEADINGS = {
     "license",
 }
 
-PATTERN_PII = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
-PATTERN_SHA = re.compile(r"\b[a-f0-9]{40}\b")
-PATTERN_TIMESTAMP = re.compile(r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}")
+PATTERN_PII: Final[re.Pattern[str]] = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
+PATTERN_SHA: Final[re.Pattern[str]] = re.compile(r"\b[a-f0-9]{40}\b")
+PATTERN_TIMESTAMP: Final[re.Pattern[str]] = re.compile(r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}")
 
 _SANITIZE_REPLACEMENTS = {
     PATTERN_PII: "[EMAIL_REDACTED]",

@@ -15,6 +15,8 @@
 # [A_module] module_id=MOD-GOV_vibe_coding_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+
+from typing import Final
 from enum import Enum
 from functools import wraps
 from typing import Any, Callable, TypeVar
@@ -28,7 +30,7 @@ class VibeRuleLevel(str, Enum):
     MAY = "MAY"
 
 
-VIBE_CODING_RULES: dict[str, tuple[VibeRuleLevel, str]] = {
+VIBE_CODING_RULES: Final[dict[str, tuple[VibeRuleLevel, str]]] = {
     "lock_before_write": (VibeRuleLevel.MUST, "写入前必须 lock_files.py check → acquire"),
     "release_after_write": (VibeRuleLevel.MUST, "写入后必须 release 锁"),
     "encoding_utf8": (VibeRuleLevel.MUST, "所有文件写入必须 encoding='utf-8'"),

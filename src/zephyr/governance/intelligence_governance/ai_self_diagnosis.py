@@ -14,6 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV_ai_self_diagnosis | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from typing import Final
+
 from enum import Enum
 
 
@@ -23,7 +25,7 @@ class AutoFixLayer(str, Enum):
     L3_REPORT = "L3_Report"
 
 
-AUTO_KB_STEPS: list[str] = [
+AUTO_KB_STEPS: Final[list[str]] = [
     "发现→记录→解决→诊断反转验证(初始诊断是否正确？错了为什么？)→防御→文档化",
 ]
 

@@ -46,6 +46,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import logging
 import os
@@ -73,7 +74,7 @@ class TombstoneEntry:
     purged_at: str = ""
 
 
-CREATE_TABLE_SQL = """
+CREATE_TABLE_SQL: Final[str] = """
 CREATE TABLE IF NOT EXISTS ke_tombstones (
     tombstone_id   TEXT PRIMARY KEY,
     ke_id          TEXT NOT NULL,
@@ -87,7 +88,7 @@ CREATE TABLE IF NOT EXISTS ke_tombstones (
 );
 """
 
-CREATE_INDEX_SQL = """
+CREATE_INDEX_SQL: Final[str] = """
 CREATE INDEX IF NOT EXISTS idx_tombstones_ke_id ON ke_tombstones(ke_id);
 CREATE INDEX IF NOT EXISTS idx_tombstones_deletion_time ON ke_tombstones(deletion_time);
 CREATE INDEX IF NOT EXISTS idx_tombstones_purged ON ke_tombstones(purged);

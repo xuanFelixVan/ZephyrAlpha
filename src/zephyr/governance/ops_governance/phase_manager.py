@@ -39,6 +39,7 @@ PhaseManager ↔ GateEngine 桥梁:
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 from collections.abc import Callable
 from enum import Enum
@@ -89,7 +90,7 @@ class PhaseGate(BaseModel):
         return worst
 
 
-PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
+PHASE_SEQUENCE: Final[dict[ConstructionPhase, PhaseGate]] = {
     # ================================================================
     # Phase 0 — 骨架搭建 (15 checks)
     # 对标: 项目初始化 + RULE-ZERO~FIVE 合规 + 安全/目录基线 + 代码去重

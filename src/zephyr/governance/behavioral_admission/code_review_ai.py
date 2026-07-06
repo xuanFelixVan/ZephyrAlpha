@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 
@@ -29,7 +30,7 @@ class ReviewLevel(str, Enum):
     L5_DUAL_AI = "L5_dual_ai"
 
 
-REVIEW_TIMEOUTS: dict[ReviewLevel, int] = {
+REVIEW_TIMEOUTS: Final[dict[ReviewLevel, int]] = {
     ReviewLevel.L0_RUFF: 1,
     ReviewLevel.L1_SECURITY: 5,
     ReviewLevel.L2_LOGIC: 5,
@@ -38,7 +39,7 @@ REVIEW_TIMEOUTS: dict[ReviewLevel, int] = {
     ReviewLevel.L5_DUAL_AI: 120,
 }
 
-REVIEW_RULES: list[str] = [
+REVIEW_RULES: Final[list[str]] = [
     "所有AI产出MUST通过L3",
     "模块部署前L3+L4完整审查",
     "黄金路径: AI自L2→AI同伴L3→Owner L4标志→终",

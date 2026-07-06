@@ -22,7 +22,7 @@ Escalation Smoke Tests — v0.11.0 升级协议烟雾测试。
 
 from __future__ import annotations
 
-
+from typing import Final
 def test_smoke_engine_init():
     return True
 
@@ -31,7 +31,7 @@ def test_smoke_delegation_init():
     return True
 
 
-SMOKE_TESTS = [test_smoke_engine_init, test_smoke_delegation_init]
+SMOKE_TESTS: Final[list] = [test_smoke_engine_init, test_smoke_delegation_init]
 
 
 def run_smoke() -> dict:

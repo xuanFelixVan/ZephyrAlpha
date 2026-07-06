@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel
@@ -36,7 +37,7 @@ class DefenseStrategy(BaseModel):
     countermeasure: str
 
 
-DEFENSE_STRATEGIES: dict[DefenseType, DefenseStrategy] = {
+DEFENSE_STRATEGIES: Final[dict[DefenseType, DefenseStrategy]] = {
     DefenseType.HFT_FRONT_RUN: DefenseStrategy(
         defense=DefenseType.HFT_FRONT_RUN,
         threat="HFT抢先交易 — 探测大订单并前置",
@@ -87,4 +88,4 @@ class FidelityFactor(BaseModel):
         return f"预期实盘/模拟 ≈ {self.composite_ff * 100:.0f}%-{self.composite_ff * 100 + 30:.0f}%"
 
 
-DEFAULT_FIDELITY = FidelityFactor()
+DEFAULT_FIDELITY: Final[FidelityFactor] = FidelityFactor()

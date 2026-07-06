@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -39,7 +40,7 @@ class LevelAttributes(BaseModel):
     examples: list[str] = Field(default_factory=list)
 
 
-DATA_CLASSIFICATION: dict[DataLevel, LevelAttributes] = {
+DATA_CLASSIFICATION: Final[dict[DataLevel, LevelAttributes]] = {
     DataLevel.L1_PUBLIC: LevelAttributes(
         level=DataLevel.L1_PUBLIC,
         label="Public — 公开数据",
@@ -78,7 +79,7 @@ DATA_CLASSIFICATION: dict[DataLevel, LevelAttributes] = {
     ),
 }
 
-LEVEL_ORDER: dict[DataLevel, int] = {
+LEVEL_ORDER: Final[dict[DataLevel, int]] = {
     DataLevel.L1_PUBLIC: 1,
     DataLevel.L2_INTERNAL: 2,
     DataLevel.L3_CONFIDENTIAL: 3,
