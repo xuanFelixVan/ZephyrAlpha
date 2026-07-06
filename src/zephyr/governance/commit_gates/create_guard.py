@@ -512,7 +512,18 @@ def make_create_guard() -> GateSpec:
         # 真源：trae_047_engineering_file_header.yaml field_specs（SSoT）。
         #   本 gate 从真源动态读取字段列表，禁止在代码中硬编码（消除多真源漂移）。
         #   fail-closed：真源读取失败时阻断（不回退硬编码，否则又造双真源）。
+        # F-5 修复（2026-07-06）：无 new_py_files 时跳过整个 trae_047 block——字段头部检测
+        # 仅对 .py 文件有意义，无 .py 文件时读 trae_047 YAML 是浪费且 tmp_path 测试场景
+        # 读不到会误阻断（与 L573 basename 碰撞检测的 `if new_py_files:` 守卫一致）。
+        if not new_py_files:
+            return True, ""
         _TRAE_047_YAML = gateway.project_root / "docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml"
+        # F-5 修复续：trae_047 路径回退到全局 REPO_ROOT（对标 P-2 capability registry 回退模式）。
+        # worktree 场景 trae_047 是 tracked 文件必存在于 wt_path；tmp_path 测试场景无此文件
+        # 时回退到全局真源，保持现有测试行为不变。
+        if not _TRAE_047_YAML.exists():
+            from zephyr.shared.io.paths import REPO_ROOT
+            _TRAE_047_YAML = REPO_ROOT / "docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml"
         try:
             import yaml as _yaml
             _rule_data = _yaml.safe_load(_TRAE_047_YAML.read_text(encoding="utf-8"))
