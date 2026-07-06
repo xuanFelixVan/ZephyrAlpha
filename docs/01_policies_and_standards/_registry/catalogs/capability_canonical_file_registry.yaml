@@ -1217,6 +1217,30 @@ capabilities:
       - make_ssot_redefinition_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: unsafe_dict_spread_gate
+    aliases:
+      - UNSAFE-DICT-SPREAD
+      - unsafe-dict-spread
+      - make_unsafe_dict_spread_gate
+      - dict_spread_warn_gate
+      - unsafe_dict_spread_blocker
+    description: >-
+      **data 直接展开 warn 级门禁（UNSAFE-DICT-SPREAD，5.147.5/5.147.12 同族防复发
+      2026-07-06）。检测 staged .py 新增行中 SomeClass(**varname) 直接展开模式，
+      varname 来自反序列化（json.loads/yaml.safe_load/DB row）时遇 schema 演进
+      会 TypeError；Pydantic BASE_CONFIG extra="forbid" 同样硬拒未知字段。
+      5.147.12 已用 SSoT filter_dataclass_fields(cls, data) 修复 13 处存量债务，
+      但新 AI 写新功能时若不自觉仍会制造同类债务 → gate 持续盯。warn 级（passed=True
+      不阻断，仅 stderr+logger 告警），豁免 **kwargs/**kwds（显式透传）、
+      **filter_dataclass_fields(...)（已用 SSoT 过滤）、**{...}（字典字面量）、
+      **func(...)（函数调用，正则不匹配）；tests/ 豁免；import/注释/docstring 豁免；
+      YAML/git diff 不可达 fail-open。priority=66（紧随 ssot_redefinition=65）。
+      选择 warn 而非 hard-block：避免误报阻断正常开发（如 dict(**other) 合法用法）；
+      真正治本是 SSoT filter_dataclass_fields（已落地），gate 是防复发预警。
+    integrity_anchors:
+      - make_unsafe_dict_spread_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: create_guard
     aliases:
       - CREATE-GUARD
@@ -3533,6 +3557,10 @@ creation_tokens:
     token: "auto-ssot-redef-gate-20260702"
     created_by: "session-arch033-ssot"
     capability: "rule_patterns_ssot"
+  - file: "src/zephyr/governance/commit_gates/unsafe_dict_spread_gate.py"
+    token: "auto-unsafe-dict-spread-gate-20260706"
+    created_by: "session-r69-5-147-12-gate"
+    capability: "unsafe_dict_spread_gate"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
   - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"
