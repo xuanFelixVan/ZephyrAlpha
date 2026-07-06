@@ -593,6 +593,32 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 > **业务数据表清单**（2026-07-06）：想知道 ClickHouse c1_market/c3_fundamental 各业务表有什么数据、起止时间、标的数、新鲜度 → 读 [`docs/03_modules/_domain_data/data_inventory.md`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/data_inventory.md)。生成器 [`tmp/generate_data_inventory.py`](file:///d:/ZephyrAlpha/tmp/generate_data_inventory.py) 可随时运行刷新（`python tmp\generate_data_inventory.py`）。禁止手工同步业务表清单到其它文档——一律用纯指针指向此文档。
 
+### 11.0.2 ⚠️ YAML 真源 vs DB 真源分类铁律（SSoT Classification，2026-07-06）
+
+> **铁律**：项目有两类数据真源，按数据类型机械判定，禁止凭记忆推断。AI 写入架构数据前 MUST 先查此表。规则真源文件：[`trae_062_ssot_classification.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml)。
+
+| 数据类型 | 真源 | 写入方式 | 例子 |
+|---------|------|---------|------|
+| **规则数据**（trae_*.yaml、契约、门禁、词汇表、注册表） | **YAML 文件** | `sync_yaml_to_depgraph.py` 单向同步到 DB（DB 是只读缓存） | `trae_001_*.yaml` / `gate_registry.yaml` / `rule_catalog_registry.yaml` / `infrastructure_registry.yaml` |
+| **架构数据**（depgraph.nodes/edges、decision_nodes/edges、dataflow 节点） | **PostgreSQL DB** | `apply_depgraph.py` / `apply_decisiongraph.py` / `apply_dataflowgraph.py` 直接写入 DB | 设计态决策节点、依赖关系、数据流节点 |
+
+> **铁律清单（AI 操作前必读）**：
+> - 架构数据（nodes/edges）的真源在 PostgreSQL DB，**不在 YAML**。
+> - 禁止把架构数据写入 YAML 真源文件（如 `decision_graph_model.yaml` 的 `design_nodes` 字段）。
+> - 禁止扩展 sync 脚本去同步架构数据 nodes/edges（`sync_yaml_to_depgraph.py` 只同步规则数据，不同步架构数据）。
+> - 架构数据通过 `apply_*.py --batch` 直接写入 DB。
+> - 生成器从 DB 读取，重新生成 MD 视图（设计态在 DB 里，所以重新生成不会丢失）。
+
+> **常见错误（AI 容易犯）**：
+> - ❌ 把决策节点写入 `decision_graph_model.yaml` 的 `design_nodes` 字段——架构数据真源在 DB。
+> - ❌ 扩展 `generate_decision_graph.py` 新增 nodes 同步逻辑——该脚本只同步 schema 定义。
+> - ❌ 误以为"YAML 是真源"适用于所有数据（实际只适用规则数据，架构数据真源在 DB）。
+
+> **判定流程**：拿到一个数据 → 先问"是规则数据还是架构数据？"
+> 1. 规则数据（声明态：规则/契约/词表应该有什么）→ 改 YAML 真源 → `sync_yaml_to_depgraph.py` 同步到 DB。
+> 2. 架构数据（实例态：nodes/edges 实际有什么节点/边）→ 用 `apply_*.py` 直接写 DB → 生成器从 DB 重生 MD 视图。
+> 3. 边界模糊时查上方表格，或查 [`trae_062_ssot_classification.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml)。
+
 > depgraph 是唯一全景真源（PostgreSQL 16，localhost:5432），禁止创建派生 YAML 副本。连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()`。遇到 depgraph 相关问题，直接问工具：
 
 - **查 DB 数据** → `python scripts/governance/extract_depgraph.py --help`（场景速查表在 epilog）
@@ -653,7 +679,8 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 | `generate_domain_index.py` | `02_domain_architecture_docs/` | 域索引 |
 | `generate_domain_dependency_diagram.py` | `02_domain_architecture_docs/` | 域依赖图 |
 | `generate_design_vs_production.py` | `03_governance_reports/` | 设计 vs 生产 |
-| `generate_constraint_violations.py` | `03_governance_reports/` | 约束违规 |
+| `generate_constraint_violations.py` | `03_governance_reports/` | 约束违规（读 PG 展示） |
+| `detect_constraint_violations.py` | `03_governance_reports/` | 约束违规检测（写 PG，GATE-CONSTRAINT-DETECT） |
 | `generate_capacity_report.py` | `03_governance_reports/` | 容量报告 |
 | `generate_contracts.py` | `05_contracts/` | 契约文档 |
 

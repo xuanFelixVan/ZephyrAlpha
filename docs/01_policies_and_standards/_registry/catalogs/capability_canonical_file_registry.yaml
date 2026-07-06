@@ -607,6 +607,23 @@ capabilities:
         generators: [generate_contracts.py]
 
   # --------------------------------------------------------------------------
+  - capability_id: constraint_violation_detector
+    aliases:
+      - detect_constraint_violations
+      - GATE-CONSTRAINT-DETECT
+      - constraint_detection
+      - architecture_violation_detector
+    description: >-
+      架构约束违规检测器。对照 depgraph（PostgreSQL）实际数据检测 5 类违规
+      （跨域违规 cross_domain_violation / 容量超限 capacity_exceeded / 硬上限
+      hard_limit_exceeded / 孤儿节点 orphan_node / 层级违规 layer_violation），
+      结果写入 arch_constraints 表（DELETE 旧→INSERT 新，幂等）。
+      GATE-CONSTRAINT-DETECT reconciler（priority=625）在 PG 写入脚本 commit 后
+      事件触发，在 GATE-ARCH-DIAGRAM (630) 之前跑，生成器依赖检测结果。
+      canonical = scripts/governance/d5_architecture/detect_constraint_violations.py。
+      与 generate_constraint_violations.py（只读展示层）职责分离：检测器写 PG，生成器读 PG。
+
+  # --------------------------------------------------------------------------
   - capability_id: rule_catalog_generation
     aliases:
       - generate_rule_catalog
