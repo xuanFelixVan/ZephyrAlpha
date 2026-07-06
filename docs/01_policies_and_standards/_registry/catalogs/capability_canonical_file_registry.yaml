@@ -640,6 +640,9 @@ capabilities:
       输出报告到 docs/02_enterprise_architecture/generated/panorama_alignment_report.md。
       定位：只读检测器（不自动修复），由人工或后续工具根据报告处理。
       canonical = scripts/governance/d5_architecture/generators/align_panoramas.py。
+      注意区别：本能力是"三图间 module_id 对齐检测"（depgraph/dataflow/decision
+      三大全景图横向对齐），与 rule_four_way_alignment_gate（规则 YAML↔DB↔code↔path
+      四方纵向对齐）职责不同，勿混淆。
 
   # --------------------------------------------------------------------------
   - capability_id: design_maturity_trigger_protection

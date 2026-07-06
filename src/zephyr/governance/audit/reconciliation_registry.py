@@ -3381,7 +3381,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
     _GEN_DIR = "scripts/governance/d5_architecture/generators"
-    # 9 个生成器 + 输出路径（漂移检测目标）
+    # 10 个生成器 + 输出路径（漂移检测目标）
     _GENERATORS = (
         "generate_decision_diagram.py",
         "generate_dataflow_diagram.py",
@@ -3392,6 +3392,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         "generate_capacity_report.py",
         "generate_capability_heatmap.py",
         "generate_navigation_index.py",
+        "align_panoramas.py",  # ARCH-053 三图对齐检测器（manual，但 PG 写入后自动重生）
     )
     _OUTPUTS = (
         "docs/02_enterprise_architecture/06_decision_architecture/decision_index.md",
@@ -3403,6 +3404,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         "docs/02_enterprise_architecture/03_governance_reports/capacity_report.md",
         "docs/02_enterprise_architecture/01_global_architecture_diagram/global_capability_heatmap.md",
         "docs/02_enterprise_architecture/00_overview_entry/navigation_index.md",
+        "docs/02_enterprise_architecture/generated/panorama_alignment_report.md",  # ARCH-053
     )
 
     def _trigger(committed_files: list[str]) -> bool:
