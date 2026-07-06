@@ -91,6 +91,7 @@ __all__ = [
     "make_runtime_cleanup_reconciler",
     "make_architecture_health_reconciler",
     "make_session_log_index_reconciler",
+    "make_arch_diagram_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -3293,4 +3294,188 @@ def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=175,  # 在 index_generator(170) 之后，runtime_cleanup 之前
+    )
+
+
+# 病根：02_enterprise_architecture 下 9 个架构图生成器无自动触发，depgraph/dataflow/decision
+# PG 或 YAML 真源变更后架构图 MD 过时。原 make_regenerate_reconciler 仅覆盖 domain_doc/
+# domain_dependency_diagram/domain_index + arch_model + script_manifest，不含
+# decision/dataflow/integration/cross_domain/constraint/capacity/capability/navigation。
+# 治本：扩展 ReconciliationRegistry 框架（第19个 reconciler），事件触发，非 cron/manual。
+# 三图对齐：depgraph(600-620)+dataflow(630)+decision(630) trigger 对齐，priority 相邻。
+# trae_060-reviewed: 该存在（9 个生成器无自动触发是真实问题），不能合并进已有 reconciler
+#   （已有 make_regenerate_reconciler 仅含 domain_doc/arch_model/manifest，trigger 虽重叠但
+#   输出目标不同——9 个架构图 MD 是独立输出，需独立 reconciler），治本（事件触发+auto-commit）。
+def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-ARCH-DIAGRAM post-commit 架构图自动重生 reconciler（议题3）。
+
+    病根：``docs/02_enterprise_architecture/`` 下 9 个架构图生成器无自动触发机制——
+    depgraph/dataflow/decision PG 表变更或 YAML 真源变更后，架构图 MD 文档过时，
+    依赖手动跑各生成器。这违反"永久系统必须全自动"硬约束。
+
+    治本（事件触发自动重生，三图对齐）：
+    - 接入 GitCommitGateway post-commit reconciler 轨（事件触发，非 cron/manual）
+    - trigger: PG 写入脚本 commit OR YAML 真源变更 → 命中
+    - reconcile: 串联跑 9 个生成器，检测漂移，auto-commit
+
+    涵盖生成器（输出均在 docs/02_enterprise_architecture/）：
+      1. generate_decision_diagram.py        → 06_decision_architecture/decision_index.md
+      2. generate_dataflow_diagram.py        → 05_dataflow_architecture/dataflow_index.md
+      3. generate_integration_topology.py     → 01_global_architecture_diagram/integration_topology.md
+      4. generate_design_vs_production.py    → 03_governance_reports/design_vs_production.md
+      5. generate_cross_domain_matrix.py     → 01_global_architecture_diagram/cross_domain_matrix.md
+      6. generate_constraint_violations.py    → 03_governance_reports/constraint_violations.md
+      7. generate_capacity_report.py         → 03_governance_reports/capacity_report.md
+      8. generate_capability_heatmap.py       → 01_global_architecture_diagram/global_capability_heatmap.md
+      9. generate_navigation_index.py         → 00_overview_entry/navigation_index.md
+
+    已覆盖（不在本 reconciler 范围，由 make_regenerate_reconciler 处理）：
+      - generate_domain_doc.py --all
+      - generate_domain_dependency_diagram.py --all
+      - generate_domain_index.py
+      - dm200916_write_direct.py（根树 index.yaml）
+    已覆盖（由 make_path_tree_reconciler 处理）：
+      - generate_path_tree.py
+
+    trigger 真源：
+      - PG 写入脚本（DB 变更即代表架构可能漂移）：
+        apply_depgraph.py / sync_yaml_to_depgraph.py / generate_project_path_tree.py /
+        generate_decision_graph.py（decisiongraph sync 入口）
+      - YAML 真源（架构图直接数据源）：
+        architecture_model/domain/decision_graph_model.yaml
+        docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml
+        architecture_model/cross_cutting/capability_heatmap.yaml
+
+    向内收设计：
+    - 责任唯一：生成逻辑只在各生成器一处（本 reconciler 仅调用，不复制逻辑）
+    - 真源唯一：复用 ReconciliationRegistry 框架（第19个 reconciler），不新建独立触发系统
+    - 事件触发：post-commit 自动执行，无 cron/manual
+    - 三图对齐：depgraph(600) / dataflow(630) / decision(630) 三图 trigger+priority 对齐
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _run_git + _commit_auto）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-ARCH-DIAGRAM", priority=630)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+
+    # PG 写入脚本真源（DB 变更即代表架构图可能漂移）
+    _PG_WRITE_SCRIPTS = (
+        "scripts/governance/apply_depgraph.py",
+        "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py",
+        "scripts/governance/generate_project_path_tree.py",
+        "scripts/governance/generate_decision_graph.py",  # decisiongraph sync 入口
+    )
+    # YAML 真源（架构图直接数据源）
+    _YAML_SOURCES = (
+        "architecture_model/domain/decision_graph_model.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml",
+        "architecture_model/cross_cutting/capability_heatmap.yaml",
+    )
+
+    _GEN_DIR = "scripts/governance/d5_architecture/generators"
+    # 9 个生成器 + 输出路径（漂移检测目标）
+    _GENERATORS = (
+        "generate_decision_diagram.py",
+        "generate_dataflow_diagram.py",
+        "generate_integration_topology.py",
+        "generate_design_vs_production.py",
+        "generate_cross_domain_matrix.py",
+        "generate_constraint_violations.py",
+        "generate_capacity_report.py",
+        "generate_capability_heatmap.py",
+        "generate_navigation_index.py",
+    )
+    _OUTPUTS = (
+        "docs/02_enterprise_architecture/06_decision_architecture/decision_index.md",
+        "docs/02_enterprise_architecture/05_dataflow_architecture/dataflow_index.md",
+        "docs/02_enterprise_architecture/01_global_architecture_diagram/integration_topology.md",
+        "docs/02_enterprise_architecture/03_governance_reports/design_vs_production.md",
+        "docs/02_enterprise_architecture/01_global_architecture_diagram/cross_domain_matrix.md",
+        "docs/02_enterprise_architecture/03_governance_reports/constraint_violations.md",
+        "docs/02_enterprise_architecture/03_governance_reports/capacity_report.md",
+        "docs/02_enterprise_architecture/01_global_architecture_diagram/global_capability_heatmap.md",
+        "docs/02_enterprise_architecture/00_overview_entry/navigation_index.md",
+    )
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel in _PG_WRITE_SCRIPTS:
+                return True
+            if rel in _YAML_SOURCES:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 串联跑 9 个生成器（无 --all 参数，直接运行；幂等：相同输入→相同输出）
+        failed_gens: list[str] = []
+        for gen_name in _GENERATORS:
+            gen_result = _run_subprocess(
+                [sys.executable, f"{_GEN_DIR}/{gen_name}"],
+                cwd=str(project_root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=180,  # 单个生成器最多 3 分钟（depgraph 查询 + MD 写入）
+            )
+            if gen_result.returncode != 0:
+                failed_gens.append(
+                    f"{gen_name}: {gen_result.stderr.strip()[:120]}"
+                )
+                # 不 return，继续跑剩余生成器（部分漂移修复优于全跳过）
+
+        if failed_gens and len(failed_gens) == len(_GENERATORS):
+            # 全部失败 → warn 直接返回（无漂移可检测）
+            return ReconcileResult(
+                action="warn",
+                detail=f"all {len(_GENERATORS)} generators failed: {'; '.join(failed_gens[:3])}",
+            )
+
+        # 2. 检测输出文件变更（即使部分生成器失败，已成功的可能产生漂移）
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", *_OUTPUTS]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            if failed_gens:
+                return ReconcileResult(
+                    action="warn",
+                    detail=f"no drift but {len(failed_gens)} generator(s) failed: {'; '.join(failed_gens[:3])}",
+                )
+            return ReconcileResult(action="clean", detail="arch diagrams up to date")
+
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        changed_files = [
+            f.strip() for f in diff_result.stdout.splitlines() if f.strip()
+        ]
+        abs_files = [str(project_root / f) for f in changed_files]
+        auto_msg = "chore(arch): auto-regenerate architecture diagrams by GitCommitGateway post-commit"
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            detail = f"arch diagrams drift detected and auto-regenerated ({len(changed_files)} files)"
+            if failed_gens:
+                detail += f"; {len(failed_gens)} generator(s) failed: {'; '.join(failed_gens[:3])}"
+            return ReconcileResult(action="auto_committed", detail=detail)
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="arch diagrams no drift (auto-commit found no staged changes)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"arch diagrams drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-ARCH-DIAGRAM",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=630,  # 在 regenerate(600-620) 之后，rule_audit(700-710) 之前
     )
