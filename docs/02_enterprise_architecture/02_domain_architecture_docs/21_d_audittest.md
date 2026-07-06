@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 audit_test_suite（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 15:43:21
+> 最后更新: 2026-07-06 15:54:59
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 1672 | Module Count | 1672 |
 | 域内依赖 | 10 | Internal Dependencies | 10 |
-| 跨域入边 | 6 | Cross-domain Incoming | 6 |
-| 跨域出边 | 2221 | Cross-domain Outgoing | 2221 |
+| 跨域入边 | 0 | Cross-domain Incoming | 0 |
+| 跨域出边 | 2209 | Cross-domain Outgoing | 2209 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 1624 | Prototype Modules | 1624 |
 | 生产态模块 | 48 | Production Modules | 48 |
@@ -528,16 +528,12 @@ graph TD
     tests_automation_test_auto_evolution_root_py -.->|test_depends| D_TRADING
     tests_automation_test_auto_fix_red_blue_py -.->|test_depends| D_INFRA_RUNTIME
     tests_automation_test_auto_fix_red_blue_py -.->|test_depends| D_INFRA_RUNTIME
-    D_GOVERNANCE["D_GOVERNANCE design"]
-    D_GOVERNANCE -.->|runtime| tests_automation_test_auto_bootstrap_py
-    D_GOVERNANCE -.->|runtime| tests_automation_test_auto_bootstrap_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_audit_test_trend_analyzer_py,tests_audit_test_value_added_baseline_py,tests_audit_test_verification_engine_py,tests_audit_test_zombie_fle_detector_py,tests_automation_test_auto_bootstrap_py,tests_automation_test_auto_diagnosis_py,tests_automation_test_auto_diagnostics_py,tests_automation_test_auto_evolution_root_py,tests_automation_test_auto_fix_autopilot_py,tests_automation_test_auto_fix_engine_py,tests_automation_test_auto_fix_phase_manager_py,tests_automation_test_auto_fix_red_blue_py,tests_automation_test_auto_fixer_py,tests_automation_test_auto_integrator_py,tests_automation_test_auto_maintenance_py,tests_automation_test_auto_reward_py,tests_automation_test_auto_rollback_py,tests_automation_test_auto_rollback_trigger_py,tests_automation_test_auto_runtime_core_py,tests_automation_test_auto_runtime_e2e_py,tests_automation_test_auto_runtime_fle_integration_py,tests_automation_test_auto_split_py,tests_automation_test_auto_task_generator_py,tests_automation_test_auto_test_generator_py,tests_autonomy_test_adversarial_robustness_py,tests_autonomy_test_alignment_scorer_py,tests_autonomy_test_all_skill_modules_py,tests_autonomy_test_architecture_context_loader_py,tests_autonomy_test_assembly_context_assembler_py,tests_autonomy_test_assembly_context_injector_py design
     class D_TRADING,D_INFRA_RECOVERY,D_SECURITY_LLM,D_INTEGRATION,D_SHARED,D_INFRA_RUNTIME external_prod
-    class D_GOVERNANCE external_design
 ```
 
 ### 第 9 页 / 共 56 页 / Page 9 of 56
@@ -1409,18 +1405,12 @@ graph TD
     tests_federated_learning_test_fl_scheduler_collect_detect_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_scheduler_collect_detect_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_scheduler_py -.->|test_depends| D_TRADING
-    D_GOVERNANCE["D_GOVERNANCE design"]
-    D_GOVERNANCE -.->|runtime| tests_federated_learning_test_fl_scheduler_act_py
-    D_GOVERNANCE -.->|runtime| tests_federated_learning_test_fl_scheduler_collect_detect_py
-    D_GOVERNANCE -.->|runtime| tests_federated_learning_test_fl_scheduler_health_py
-    D_GOVERNANCE -.->|runtime| tests_federated_learning_test_fl_scheduler_safety_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_federated_learning_test_fl_global_action_scheduler_py,tests_federated_learning_test_fl_incident_priority_triage_automator_py,tests_federated_learning_test_fl_intent_driven_ops_py,tests_federated_learning_test_fl_kb_provenance_py,tests_federated_learning_test_fl_license_compliance_py,tests_federated_learning_test_fl_llm_cost_router_py,tests_federated_learning_test_fl_merkle_audit_root_py,tests_federated_learning_test_fl_meta_performance_gate_py,tests_federated_learning_test_fl_multi_agent_orchestrator_py,tests_federated_learning_test_fl_notification_personalizer_py,tests_federated_learning_test_fl_owner_absence_escalation_py,tests_federated_learning_test_fl_parameterized_safety_gate_py,tests_federated_learning_test_fl_protocols_py,tests_federated_learning_test_fl_safety_gate_l1_l27_py,tests_federated_learning_test_fl_saga_compensator_py,tests_federated_learning_test_fl_scheduler_py,tests_federated_learning_test_fl_scheduler_act_py,tests_federated_learning_test_fl_scheduler_collect_detect_py,tests_federated_learning_test_fl_scheduler_health_py,tests_federated_learning_test_fl_scheduler_safety_py,tests_federated_learning_test_fl_scope_creep_monitor_py,tests_federated_learning_test_fl_slo_manager_py,tests_federated_learning_test_fl_template_py,tests_federated_learning_test_fl_validator_py,tests_feedback_test_actors_init_py,tests_feedback_test_adaptive_param_tuning_py,tests_feedback_test_alert_desensitization_curve_py,tests_feedback_test_anomaly_clustering_py,tests_feedback_test_architectural_sod_py,tests_feedback_test_automated_rca_postmortem_generator_py design
     class D_TRADING external_prod
-    class D_GOVERNANCE external_design
 ```
 
 ### 第 23 页 / 共 56 页 / Page 23 of 56
@@ -3483,11 +3473,11 @@ graph TD
     end
     tests_zephyr_data_test_alerter_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_ch_writer_py -.->|config_depends| tests_zephyr_data_init_py
-    tests_zephyr_data_test_metrics_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_policy_registry_py -.->|config_depends| tests_zephyr_data_init_py
+    tests_zephyr_data_test_metrics_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_providers_py -.->|config_depends| tests_zephyr_data_init_py
-    tests_zephyr_data_test_progress_store_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_providers_stage3_py -.->|config_depends| tests_zephyr_data_init_py
+    tests_zephyr_data_test_progress_store_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_provider_base_py -.->|config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_task_queue_py -.->|config_depends| tests_zephyr_data_init_py
     D_SHARED["D_SHARED production"]
@@ -3524,36 +3514,33 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_TRADING | 638 | test_depends |
-| D_GOVERNANCE | 516 | contract,data,runtime,test_depends |
-| D_GOV_ENFORCEMENT | 222 | runtime,test_depends |
-| D_SECURITY | 169 | contract,test_depends |
+| D_GOVERNANCE | 510 | test_depends |
+| D_GOV_ENFORCEMENT | 221 | test_depends |
+| D_SECURITY | 168 | test_depends |
 | D_SHARED | 161 | test_depends |
-| D_AUTONOMY_CORE | 128 | runtime,test_depends |
-| D_INFRA_RUNTIME | 127 | runtime,test_depends |
+| D_AUTONOMY_CORE | 127 | test_depends |
+| D_INFRA_RUNTIME | 126 | test_depends |
 | D_INTEGRATION | 63 | test_depends |
 | D_INFRA_RECOVERY | 52 | test_depends |
-| D_SECURITY_LLM | 41 | runtime,test_depends |
+| D_SECURITY_LLM | 40 | test_depends |
 | D_INFRA_A2A | 36 | test_depends |
 | D_INTELLIGENCE | 31 | test_depends |
 | D_FRONTEND | 8 | test_depends |
 | D_RISK | 6 | test_depends |
-| D_EX_CORE | 4 | test_depends |
 | D_OPS | 4 | test_depends |
+| D_EX_CORE | 4 | test_depends |
 | D_BACKTEST | 2 | test_depends |
-| D_FUNDAMENTAL_SIGNAL | 2 | test_depends |
 | D_GOV_SCRIPTS | 2 | test_depends |
 | D_INFRA_TELEMETRY | 2 | test_depends |
 | D_PF_CORE | 2 | test_depends |
 | D_POSITION | 2 | test_depends |
-| D_REPORTING | 1 | test_depends |
+| D_FUNDAMENTAL_SIGNAL | 2 | test_depends |
 | D_SIMULATION | 1 | test_depends |
-| D_GOV_DRIFT | 1 | runtime |
+| D_REPORTING | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
-|------|:---:|---------|
-| D_GOVERNANCE | 6 | runtime |
+无跨域入边依赖 / No cross-domain incoming dependencies
 
 ## 架构分层视图 / Architecture Overview
 
@@ -3817,11 +3804,11 @@ graph TD
 │   test_semantic_diff.py → __init__.py                            │
 │   test_alerter.py → __init__.py                                  │
 │   test_ch_writer.py → __init__.py                                │
-│   test_metrics.py → __init__.py                                  │
 │   test_policy_registry.py → __init__.py                          │
+│   test_metrics.py → __init__.py                                  │
 │   test_providers.py → __init__.py                                │
-│   test_progress_store.py → __init__.py                           │
 │   test_providers_stage3.py → __init__.py                         │
+│   test_progress_store.py → __init__.py                           │
 │   test_provider_base.py → __init__.py                            │
 │   test_task_queue.py → __init__.py                               │
 └──────────────────────────────────────────────────────────────────┘
