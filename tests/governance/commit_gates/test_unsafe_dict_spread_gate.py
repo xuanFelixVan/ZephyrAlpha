@@ -49,12 +49,19 @@ from zephyr.governance.commit_gates.unsafe_dict_spread_gate import (  # noqa: E4
 from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
-def _make_mock_gateway(staged_files: list[str], file_diffs: dict[str, list[str]]) -> MagicMock:
+def _make_mock_gateway(
+    staged_files: list[str],
+    file_diffs: dict[str, list[str]],
+    file_contents: dict[str, str] | None = None,
+) -> MagicMock:
     """构造 mock gateway，_run_git 根据 cmd 返回预设结果。
 
     Args:
         staged_files: git diff --name-only 返回的文件列表（相对路径）
-        file_diffs: {py_file: [added_line1, added_line2, ...]}
+        file_diffs: {py_file: [added_line1, added_line2, ...]}（added 行内容）
+        file_contents: {py_file: 完整文件内容}（用于 ``git show :path`` 读取 staged 版本，
+            预计算 docstring 行号集合）。若 None，则根据 file_diffs 自动生成
+            "纯 added 行拼接"的简化文件内容（行号从 1 开始）。
     """
     gw = MagicMock()
 
@@ -64,11 +71,46 @@ def _make_mock_gateway(staged_files: list[str], file_diffs: dict[str, list[str]]
             result.returncode = 0
             result.stdout = "\n".join(staged_files)
             return result
+        # git show :path —— 读 staged 完整文件
+        if len(cmd) >= 3 and cmd[1] == "show" and cmd[2].startswith(":"):
+            py_file = cmd[2][1:].replace("\\", "/")
+            content = (file_contents or {}).get(py_file)
+            if content is None:
+                # 默认：added 行拼成文件，行号从 1 开始
+                lines = file_diffs.get(py_file, [])
+                content = "\n".join(lines)
+            result.returncode = 0
+            result.stdout = content
+            return result
         # per-file diff: cmd[-1] 是 py_file
         py_file = cmd[-1].replace("\\", "/")
         lines = file_diffs.get(py_file, [])
-        diff_lines = [f"+++ b/{py_file}", f"@@ -0,0 +1,{len(lines)} @@"]
-        diff_lines.extend(f"+{l}" for l in lines)
+        # 如果提供 file_contents，查找 added 行在完整文件中的真实行号（用于 docstring 跟踪）
+        if file_contents and py_file in file_contents:
+            file_lines = file_contents[py_file].splitlines()
+            added_with_lineno: list[tuple[int, str]] = []
+            for added_content in lines:
+                lineno = None
+                for i, fl in enumerate(file_lines, 1):
+                    if fl == added_content:
+                        lineno = i
+                        break
+                if lineno is None:
+                    lineno = 1  # 默认第 1 行
+                added_with_lineno.append((lineno, added_content))
+            # 若 file_diffs 未指定 added 行，用 file_contents 所有行（模拟新增文件）
+            if not added_with_lineno:
+                added_with_lineno = list(enumerate(file_lines, 1))
+        else:
+            # 无 file_contents，added 行从第 1 行开始
+            added_with_lineno = list(enumerate(lines, 1))
+
+        if added_with_lineno:
+            start = added_with_lineno[0][0]
+            diff_lines = [f"+++ b/{py_file}", f"@@ -0,0 +{start},{len(added_with_lineno)} @@"]
+            diff_lines.extend(f"+{content}" for _, content in added_with_lineno)
+        else:
+            diff_lines = [f"+++ b/{py_file}"]
         result.returncode = 0
         result.stdout = "\n".join(diff_lines)
         return result
@@ -386,6 +428,87 @@ class TestDocstringExemption:
         passed, detail = gate.check(gw, [])
         assert passed
         assert detail == ""
+
+    def test_multiline_docstring_inner_line_exempt(self):
+        """多行 docstring 中间的 ``**data`` 示例不报（行号在 docstring 集合内）"""
+        blue_file = "src/zephyr/governance/commit_gates/unsafe_dict_spread_gate.py"
+        # 完整文件内容：第 2-4 行在 docstring 内
+        full_content = (
+            '"""模块 docstring\n'
+            '检测 SomeClass(**varname) 模式\n'
+            '以及 Other(**payload) 模式\n'
+            '"""'
+        )
+        # added 行是第 3 行（docstring 内）
+        gw = _make_mock_gateway(
+            [blue_file],
+            {blue_file: ["以及 Other(**payload) 模式"]},
+            file_contents={blue_file: full_content},
+        )
+        gate = make_unsafe_dict_spread_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed
+        assert detail == ""  # docstring 内，豁免
+
+    def test_multiline_docstring_triple_single_quote_exempt(self):
+        """多行 ''' docstring 中间的 ``**data`` 示例不报"""
+        blue_file = "src/zephyr/trading/some_module.py"
+        full_content = (
+            "'''模块 docstring\n"
+            "示例: WorkDAG(**data)\n"
+            "'''"
+        )
+        gw = _make_mock_gateway(
+            [blue_file],
+            {blue_file: ["示例: WorkDAG(**data)"]},
+            file_contents={blue_file: full_content},
+        )
+        gate = make_unsafe_dict_spread_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed
+        assert detail == ""
+
+    def test_code_after_docstring_still_detected(self):
+        """docstring 结束后的代码行仍检测——确保 docstring 跟踪正确闭合"""
+        red_file = "src/zephyr/trading/some_module.py"
+        full_content = (
+            '"""模块 docstring\n'
+            '示例: WorkDAG(**data)\n'
+            '"""\n'
+            "obj = RealCode(**payload)  # 这行应被检测"
+        )
+        # added 行是第 4 行（docstring 外）
+        gw = _make_mock_gateway(
+            [red_file],
+            {red_file: ["obj = RealCode(**payload)  # 这行应被检测"]},
+            file_contents={red_file: full_content},
+        )
+        gate = make_unsafe_dict_spread_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed
+        assert "RealCode" in detail
+        assert "**payload" in detail
+
+    def test_gate_self_docstring_no_warn(self):
+        """gate 自身 docstring 中的示例不触发 warn（修复目标场景）"""
+        gate_file = "src/zephyr/governance/commit_gates/unsafe_dict_spread_gate.py"
+        # 模拟 gate 文件的真实 docstring 片段
+        full_content = (
+            '"""unsafe_dict_spread_gate.py\n'
+            '\n'
+            '检测 SomeClass(**varname) 直接展开模式。\n'
+            '豁免 **kwargs / **kwds、**filter_dataclass_fields(...)。\n'
+            '"""'
+        )
+        gw = _make_mock_gateway(
+            [gate_file],
+            {gate_file: ["检测 SomeClass(**varname) 直接展开模式。"]},
+            file_contents={gate_file: full_content},
+        )
+        gate = make_unsafe_dict_spread_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed
+        assert detail == ""  # docstring 内，豁免
 
 
 # ============================================================================
