@@ -203,10 +203,10 @@ domains:
   layer_id: L2_domain
 - id: D_GOV_REPAIR
   name: rollback
-  layer_id:
+  layer_id: L2_domain
 - id: D_GOV_RULE
   name: rule_governance
-  layer_id:
+  layer_id: L2_domain
 - id: D_GOV_SCRIPTS
   name: script_governance
   layer_id: L2_domain
