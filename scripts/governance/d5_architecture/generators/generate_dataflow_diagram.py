@@ -274,17 +274,19 @@ def _gen_mermaid(
                 edge_count += 1
 
     # 样式定义（scope-based + design_maturity-based）
+    # 填色用 Material Design 100-level（对齐 decision_index.md，50-level 太浅字体看不清）
+    # 显式 color 设深色字体，确保各主题下可读
     lines.append("")
-    lines.append("    classDef dsProd fill:#e1f5fe,stroke:#01579b,stroke-width:2px")
-    lines.append("    classDef dsBacktest fill:#fff3e0,stroke:#e65100,stroke-width:2px")
-    lines.append("    classDef jobProd fill:#f1f8e9,stroke:#33691e,stroke-width:2px")
-    lines.append("    classDef jobBacktest fill:#fce4ec,stroke:#880e4f,stroke-width:2px")
+    lines.append("    classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1")
+    lines.append("    classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100")
+    lines.append("    classDef jobProd fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20")
+    lines.append("    classDef jobBacktest fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c")
     # 设计态=紫色（对标 decision_index.md 的 bsPlanned，但用紫色以区分 dataflow 维度）
-    lines.append("    classDef dsDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px")
-    lines.append("    classDef jobDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px")
+    lines.append("    classDef dsDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c")
+    lines.append("    classDef jobDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c")
     # 原型态=黄色（区别于回测橙色）
-    lines.append("    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px")
-    lines.append("    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px")
+    lines.append("    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17")
+    lines.append("    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17")
 
     return "\n".join(lines) + "\n", len(ds_list), len(job_list), edge_count
 
