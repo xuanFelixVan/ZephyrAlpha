@@ -58,6 +58,7 @@ class MiniQMTProvider(DataSourceBase):
             "kline_5min",
             "financial_statement",
             "index_constituent",
+            "index_kline",
         ],
         known_issues=[
             "需XtMiniQmt.exe进程",
@@ -135,6 +136,8 @@ class MiniQMTProvider(DataSourceBase):
             yield from self._fetch_financial_statement(payload, policy, _FINANCIAL_CAPABILITIES[capability])
         elif capability == "index_constituent":
             yield from self._fetch_index_constituent(payload, policy)
+        elif capability == "index_kline":
+            yield from self._fetch_index_kline(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -501,6 +504,141 @@ class MiniQMTProvider(DataSourceBase):
                     last_key="",
                     elapsed_sec=time.time() - t0,
                     error=f"获取指数成分失败[{sector_name}]: {e}",
+                )
+
+    # ============== 指数K线 ==============
+
+    def _fetch_index_kline(
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取指数日K线数据。
+
+        使用 xtdata.get_stock_list_in_sector("沪深指数") 获取指数列表，
+        逐个 download_history_data + get_market_data_ex 读取日K，
+        get_instrument_detail 获取指数名称。
+
+        表 schema: (trade_date, symbol, name, open, high, low, close,
+                    volume, amount, data_source)
+        advance_count/decline_count/quality_flag 由 CH DEFAULT 填充。
+
+        Args:
+            payload: 下载请求（payload.symbols 可指定指数代码列表，
+                     None 时取"沪深指数"板块全部）
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个指数一批
+        """
+        from xtquant import xtdata
+
+        table = payload.table or "c1_market.index_kline"
+        columns = [
+            "trade_date", "symbol", "name",
+            "open", "high", "low", "close",
+            "volume", "amount", "data_source",
+        ]
+
+        try:
+            start_str = self._date_to_str(payload.start)
+            end_str = self._date_to_str(payload.end)
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=[], rows=[], last_key="",
+                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+            )
+            return
+
+        # 1. 获取指数清单
+        try:
+            index_codes = payload.symbols
+            if not index_codes:
+                index_codes = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, "沪深指数"
+                )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=[], rows=[], last_key="",
+                elapsed_sec=0.0, error=f"获取指数清单失败: {e}",
+            )
+            return
+
+        last_key = end_str
+
+        # 2. 逐指数下载+读取
+        for index_code in index_codes:
+            t0 = time.time()
+            try:
+                # 下载历史数据
+                self._call_with_policy(
+                    xtdata.download_history_data,
+                    policy,
+                    index_code, "1d", start_str, end_str,
+                )
+                # 读取行情
+                data = self._call_with_policy(
+                    xtdata.get_market_data_ex,
+                    policy,
+                    [], [index_code], "1d", start_str, end_str,
+                )
+
+                # 3. 获取指数名称
+                symbol = self._stock_to_symbol(index_code)
+                try:
+                    detail = xtdata.get_instrument_detail(index_code)
+                    name = detail.get("InstrumentName", "") if detail else ""
+                except Exception:
+                    name = ""
+
+                # 4. DataFrame → tuple 列表
+                rows = []
+                df = data.get(index_code) if data else None
+                if df is not None and len(df) > 0:
+                    times = [int(ts) for ts in df.index]
+                    opens = df["open"].tolist()
+                    highs = df["high"].tolist()
+                    lows = df["low"].tolist()
+                    closes = df["close"].tolist()
+                    volumes = df["volume"].tolist()
+                    amounts = df["amount"].tolist()
+                    for i in range(len(times)):
+                        s = str(times[i])
+                        # 日K索引 YYYYMMDD（8位）→ YYYY-MM-DD
+                        trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
+                        vol = self.safe_float(volumes[i])
+                        # volume 是 UInt64，负值（某些计算指数）转为 0
+                        if vol is not None and vol < 0:
+                            vol = 0
+                        vol = int(vol) if vol is not None else 0
+                        rows.append((
+                            trade_date,
+                            symbol,
+                            name,
+                            self.safe_float(opens[i]),
+                            self.safe_float(highs[i]),
+                            self.safe_float(lows[i]),
+                            self.safe_float(closes[i]),
+                            vol,
+                            self.safe_float(amounts[i]),
+                            "miniqmt",  # data_source
+                        ))
+
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.time() - t0,
+                    error=f"{index_code} 指数K线抓取失败: {e}",
                 )
 
     # ============== 辅助方法 ==============
