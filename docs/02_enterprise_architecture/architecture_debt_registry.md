@@ -1959,6 +1959,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.57全部清零.
 > **第64轮修复状态（2026-07-06）**：5.57.5 FIXED — DeadLetter 增加 idempotency_key 字段 + capture() 幂等去重 + 部分唯一索引 idx_dl_idem_unresolved (resolved=0 AND idempotency_key IS NOT NULL), 同时修复 observer.py 预存 logging 未导入 NameError, commit 9ad89f8d50. DEFERRED=2 (5.57.2/5.57.6 仍需 task_events 表 schema migration 大规模重构).
+> **第69轮修复状态（2026-07-06）**：5.57.2 FIXED — sqlite_schema migration v32: ALTER TABLE task_events ADD COLUMN seq INTEGER + idx_te_seq. EventStore.append_event 在 BEGIN IMMEDIATE 事务内查 MAX(seq)+1 per task_id. replay_events ORDER BY seq ASC 替代 timestamp ASC. verify_integrity 增加 seq 单调递增校验. 5.57.6 FIXED — migration v32: ALTER TABLE task_events ADD COLUMN prev_hash TEXT NOT NULL DEFAULT ''. append_event 计算 prev_hash=SHA256(前一条事件规范化串) 并存入. verify_integrity 比较 stored prev_hash vs 重算 expected_prev_hash, 不一致=at-rest 篡改检测 (原代码同源重算=永远相等). 验证: seq 单调+prev_hash 链+完整性+篡改检测全通过. 现有 16 测试 pre-existing 失败(CHECK constraint 拒绝短 event_type 如"CREATED"非"TASK_CREATED", 与本改动无关), 10 测试通过. DEFERRED=0. 维度5.57全部清零.
 > 维度说明：事件序列号、因果链、事件重放、DLQ集成等。（注：HookDispatcher._call_webhook为pass已在5.40.5记录，此处不重复）
 
 #### 5.57.1 [MEDIUM] 事件ID使用秒级时间戳，同一秒内碰撞
@@ -1973,7 +1974,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **证据**：所有事件存储按timestamp排序，无单调递增整数sequence；多线程并发写入时时间戳可能相同或倒序
 - **问题**：事件回放时因果顺序可能错误
 - **修复**：增加seq INTEGER AUTOINCREMENT列，ORDER BY seq ASC
-- **状态**：STILL_VALID（保留）— 需要DB schema增加seq列，属SchemaManager大规模重构
+- **状态**：FIXED — R69 migration v32: ALTER TABLE task_events ADD COLUMN seq INTEGER + idx_te_seq. EventStore.append_event 在 BEGIN IMMEDIATE 事务内查 MAX(seq)+1 per task_id. replay_events ORDER BY seq ASC 替代 timestamp ASC. verify_integrity 增加 seq 单调递增校验.
 
 #### 5.57.3 [HIGH] 事件处理异常被静默吞没，因果链断裂
 - **文件**：[event_bus.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/event_bus.py#L119), [observer.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/observer.py#L92)
@@ -2001,7 +2002,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **证据**：verify_integrity比较prev_hash（前一条事件hash）与expected_prev（重新计算的前一条事件hash）——同一份数据的同一hash，结构上不可能失败
 - **问题**：篡改payload、删除事件、重排序都无法被检测到
 - **修复**：append_event时将前一条hash存入当前事件记录，校验时比较存储的prev_hash
-- **状态**：STILL_VALID（保留）— 需要task_events表增加prev_hash列，属schema migration大规模重构
+- **状态**：FIXED — R69 migration v32: ALTER TABLE task_events ADD COLUMN prev_hash TEXT NOT NULL DEFAULT ''. append_event 计算 prev_hash=SHA256(前一条事件规范化串) 并存入. verify_integrity 比较 stored prev_hash vs 重算 expected_prev_hash, 不一致=at-rest 篡改检测 (原代码同源重算=永远相等, 无效检查).
 
 #### 5.57.7 [MEDIUM] Outbox的fetch_pending无锁保护，与append竞态
 - **文件**：[outbox.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/outbox.py#L134)

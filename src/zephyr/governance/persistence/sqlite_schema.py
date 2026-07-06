@@ -941,6 +941,15 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "PRAGMA foreign_keys = ON",
         ],
     ),
+    (
+        32,
+        "5.57.2+5.57.6 治本: task_events 增加 seq 单调序列号 + prev_hash 完整性链列",
+        [
+            "ALTER TABLE task_events ADD COLUMN seq INTEGER",
+            "ALTER TABLE task_events ADD COLUMN prev_hash TEXT NOT NULL DEFAULT ''",
+            "CREATE INDEX IF NOT EXISTS idx_te_seq ON task_events(seq)",
+        ],
+    ),
 ]
 
 

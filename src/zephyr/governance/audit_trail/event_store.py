@@ -66,6 +66,9 @@ class EventRecord:
     payload: str
     timestamp: str
     session_id: str | None
+    # 5.57.2: seq 单调序列号（消费者可检测乱序）；5.57.6: prev_hash 完整性链
+    seq: int = 0
+    prev_hash: str = ""
 
 
 class EventStore:
@@ -137,12 +140,32 @@ class EventStore:
         else:
             payload_str = payload
 
+        # 5.57.2: 获取 per-task 单调递增 seq；5.57.6: 计算前一条事件 prev_hash
         self._conn.execute("BEGIN IMMEDIATE")
         try:
+            row = self._conn.execute(
+                """SELECT event_id, task_id, event_type, payload, timestamp, session_id,
+                          COALESCE(seq, 0) AS seq, COALESCE(prev_hash, '') AS prev_hash
+                   FROM task_events
+                   WHERE task_id = ?
+                   ORDER BY seq DESC, timestamp DESC, rowid DESC
+                   LIMIT 1""",
+                (task_id,),
+            ).fetchone()
+            if row is not None:
+                prev_seq = int(row["seq"])
+                # 5.57.6: prev_hash = SHA256(前一条事件规范化串)
+                canonical = f"{row['event_id']}|{row['task_id']}|{row['event_type']}|{row['payload']}|{row['timestamp']}|{row['session_id'] or ''}"
+                prev_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+            else:
+                prev_seq = 0
+                prev_hash = ""
+            next_seq = prev_seq + 1
+
             self._conn.execute(
-                """INSERT INTO task_events (event_id, task_id, event_type, payload, timestamp, session_id)
-                   VALUES (?, ?, ?, ?, ?, ?)""",
-                (event_id, task_id, event_type, payload_str, timestamp, session_id),
+                """INSERT INTO task_events (event_id, task_id, event_type, payload, timestamp, session_id, seq, prev_hash)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                (event_id, task_id, event_type, payload_str, timestamp, session_id, next_seq, prev_hash),
             )
             self._conn.execute("COMMIT")
         except Exception:
@@ -157,13 +180,14 @@ class EventStore:
         返回
         ----
         list[EventRecord]
-            按 timestamp ASC 排序的事件记录列表。
+            按 seq ASC 排序的事件记录列表（5.57.2: 单调序列号保证因果顺序）。
         """
         cursor = self._conn.execute(
-            """SELECT event_id, task_id, event_type, payload, timestamp, session_id
+            """SELECT event_id, task_id, event_type, payload, timestamp, session_id,
+                      COALESCE(seq, 0) AS seq, COALESCE(prev_hash, '') AS prev_hash
                FROM task_events
                WHERE task_id = ?
-               ORDER BY timestamp ASC""",
+               ORDER BY seq ASC, timestamp ASC, rowid ASC""",
             (task_id,),
         )
         return [
@@ -174,6 +198,8 @@ class EventStore:
                 payload=row["payload"],
                 timestamp=row["timestamp"],
                 session_id=row["session_id"],
+                seq=int(row["seq"]),
+                prev_hash=row["prev_hash"],
             )
             for row in cursor.fetchall()
         ]
@@ -183,9 +209,11 @@ class EventStore:
 
         检查项：
         1. event_id 唯一性（PRIMARY KEY 保证）
-        2. timestamp 单调递增
+        2. seq 单调递增（5.57.2）
         3. payload 为合法 JSON
         4. checksum 链连续性（每条事件的 prev_hash = SHA256(前一条事件序列化)）
+           5.57.6 治本：比较数据库存储的 prev_hash 与重计算的 expected_prev_hash，
+           不一致=数据库 at-rest 篡改/payload 被改/事件被删
 
         返回
         ----
@@ -202,28 +230,29 @@ class EventStore:
                 errors.append(f"Duplicate event_id: {ev.event_id} at position {i}")
             seen_ids.add(ev.event_id)
 
+            # 5.57.2: seq 单调递增校验
             if i > 0:
                 prev_ev = events[i - 1]
-                if ev.timestamp < prev_ev.timestamp:
-                    errors.append(f"Timestamp regression at position {i}: {ev.timestamp} < {prev_ev.timestamp}")
+                if ev.seq <= prev_ev.seq:
+                    errors.append(f"Seq regression at position {i}: seq={ev.seq} <= prev_seq={prev_ev.seq}")
 
             try:
                 json.loads(ev.payload)
             except (json.JSONDecodeError, TypeError) as exc:
                 errors.append(f"Invalid JSON payload at position {i}: {exc}")
 
+            # 5.57.6 治本：比较存储的 prev_hash 与重计算的 expected_prev_hash
+            if i > 0:
+                expected_prev_hash = prev_hash
+                # 容忍空值（migration 前历史数据 seq/prev_hash 为空/0）
+                if ev.prev_hash and expected_prev_hash and ev.prev_hash != expected_prev_hash:
+                    errors.append(
+                        f"Hash chain broken at position {i}: stored prev_hash={ev.prev_hash[:12]}... "
+                        f"!= expected={expected_prev_hash[:12]}... (at-rest tampering detected)"
+                    )
+
             canonical = f"{ev.event_id}|{ev.task_id}|{ev.event_type}|{ev.payload}|{ev.timestamp}|{ev.session_id or ''}"
-            current_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-
-            if i > 0 and prev_hash:
-                # 修复：原 expected_prev 与 prev_hash 同源重计算（均来自 events[i-1]），
-                # 永远相等=无效检查。改为直接验证 prev_hash 已被正确设置。
-                # 注意：无法检测数据库 at-rest 篡改（需存储 hash 列）。
-                # 篡改检测由 tamper-evident log (audit_trail/integrity.py) 负责。
-                if not prev_hash:
-                    errors.append(f"Empty prev_hash at position {i}")
-
-            prev_hash = current_hash
+            prev_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
         return {
             "valid": len(errors) == 0,
