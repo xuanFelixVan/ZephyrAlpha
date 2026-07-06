@@ -38,6 +38,7 @@ ModelRouter — 模型路由与降级链管理
 
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
@@ -64,12 +65,15 @@ class ModelRouter:
 
     # ------------------------------------------------------------------
     # 模型版本映射 —— B150 模型版本锁定
+    # 5.141.1 修复: 模型版本通过环境变量外部化, 避免硬编码 (与 deepseek_chat.py /
+    # llm_gateway.py 的 os.getenv 模式统一)。使用 *_MODEL_VERSION 后缀以区别于
+    # DEEPSEEK_MODEL(聊天默认模型) 等已有变量，版本映射是独立语义。
     # ------------------------------------------------------------------
 
     MODEL_VERSION_MAP: ClassVar[dict[str, str]] = {
-        "deepseek": "deepseek-v4-pro",
-        "glm": "glm-5.1",
-        "claude": "claude-opus-4.7",
+        "deepseek": os.getenv("DEEPSEEK_MODEL_VERSION", "deepseek-v4-pro"),
+        "glm": os.getenv("GLM_MODEL_VERSION", "glm-5.1"),
+        "claude": os.getenv("ANTHROPIC_MODEL_VERSION", "claude-opus-4.7"),
     }
 
     # ------------------------------------------------------------------

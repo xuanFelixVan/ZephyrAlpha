@@ -2017,6 +2017,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=4(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.44全部清零.
 > **第65轮修复状态（2026-07-06）**：5.44.1+5.44.4+5.44.5 FIXED — verdict_engine evaluate_batch 加 max_batch_size=100 + batch_timeout_s=300s + asyncio.wait_for 整体超时 (trading/ + governance/behavioral_admission/) / BatchIngestor MAX_BATCH_SIZE=1000 校验 / EventStore.record_batch 分片 executemany (1000/chunk), commit 6b14640a03. DEFERRED=1 (5.44.2 return_exceptions=True 需变更返回类型+更新所有调用方, 非纯单文件).
+> **第66轮修复状态（2026-07-06）**：5.44.2 FIXED — submit_batch (trading/gpu_consensus_scheduler.py + governance/behavioral_admission/gpu_consensus_scheduler.py) 改 return_exceptions=True + 过滤异常并 logger.error 记录, 返回类型保持 list[ConsensusResult] 无需调用方变更 (消费者仅3处测试, 无生产调用方). CancelledError 传播取消信号 (遵循 _route_dual_api 已有模式 5.112.2). 4场景异步测试全通过 (全成功/空批/混合失败过滤/取消传播). DEFERRED=0. 维度5.44全部清零.
 > 维度说明：批量操作的大小限制、超时、失败处理、正确使用executemany等。
 
 #### 5.44.1 [HIGH] evaluate_batch无批次大小限制/无整体超时
@@ -2401,6 +2402,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > 维度说明：运行时配置变更是否生效、缓存引用刷新、回调失败处理等。
 > **第57轮修复状态（2026-07-06）**：5.54.1 FIXED — llm_gateway.py _PROVIDERS 构建逻辑提取为 _build_providers() + 新增 reload_providers(), commit dc2210ce46. DEFERRED=2(5.54.2/5.54.3).
 > **第62轮修复状态（2026-07-06）**：5.54.2 FIXED — env_watcher.py check_for_changes() 检测变更后 os.environ.update(changed_keys), commit 34d396630a. DEFERRED=1(5.54.3 reload_config不通知消费者需ConfigHolder架构级重构).
+> **第66轮修复状态（2026-07-06）**：5.54.3 FIXED — config/__init__.py 新增 ConfigHolder 类 (get/set/subscribe/reload/_reset), 维护单一当前 AppConfig 实例 + 订阅者列表, reload 时广播通知 (old,new). threading.Lock 保护, 回调异常隔离不阻断其他订阅者. AppConfig 无生产消费者 (仅1处测试), 评估"架构级重构"过度——提供通知基础设施即可. 5新场景+既有4测试全通过. DEFERRED=0. 维度5.54全部清零.
 
 #### 5.54.1 [MEDIUM] LLM Provider配置在模块导入时冻结，运行时不刷新（3处副本）
 - **文件**：[llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py#L142)
@@ -3081,6 +3083,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=3(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.68全部清零.
 > **第57轮修复状态（2026-07-06）**：5.68.2 FIXED — drift_engine.py finally 块 proc.kill() 后改用 proc.communicate() 排空管道, commit dc2210ce46. DEFERRED=2(5.68.3/5.68.4).
 > **第60轮修复状态（2026-07-06）**：5.68.3 FIXED — verdict_engine.py evaluate_batch 添加 asyncio.Semaphore(8)+_limited_eval 包装, commit 02e94d9219. DEFERRED=1(5.68.4 MemoryLock超时取消后锁状态不一致需重构).
+> **第66轮修复状态（2026-07-06）**：5.68.4 FIXED — MemoryLock 新增 _waiters 计数器, acquire() 改 try/finally 在超时/取消路径清理 _locks (仅当 acquired=False 且 waiters 归零且 lock 未持有时删除), 防止每个唯一锁名永久驻留内存泄漏. owner_id 校验 (5.58.10) 和 release 清理 (5.65.4) 保持不变. 7场景异步测试全通过 (含并发等待者互斥保护关键测试: 一等待者超时不删除条目, 另一等待者仍能正确获取). DEFERRED=0. 维度5.68全部清零.
 #### 5.68.2 [HIGH] drift_detection/drift_engine同款子进程孤儿（副本）
 
 - **文件**：`src/zephyr/governance/drift_detection/drift_engine.py:299-317`
@@ -4226,6 +4229,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=20(配置硬编码vs外部化需迁移到配置文件)
 > **第38轮修复状态（2026-07-05）**：FIXED=5(5.141.1 ollama_chat INFERENCE_MODEL+ollama_embedding model+deepseek_chat DEFAULT_MODEL+auto_runtime_core model+gpu_consensus_scheduler 3个模型名 通过os.getenv外部化 / 5.141.2 session_lifecycle _DEFAULT_DB_DIR改用REPO_ROOT SSoT + fix_safety 3处timeout改用类常量+os.getenv), DRIFTED=7(5.141.1 ollama_chat DEFAULT_OLLAMA_URL/deepseek_chat DEFAULT_BASE_URL/secret_rotation_aware ROTATION_URLS/dep_cve_correlator nvd_api_url/runtime_types ollama_base_url 注册时已os.getenv + ops/config.py文件不存在 + flags.py为docstring示例非业务代码), NOT_NEEDED=6(5.141.1 model_registry token_limit为合理数据默认值 + runtime_types embed/chat_model为pydantic Field默认值 + pipeline_roadmap m3/m7_model为审计证明数据 + cost_router LLMProvider为Enum常量 + 5.141.2 dead_letter_queue max_retries为函数参数默认值 + 5.141.3 ollama_chat INFERENCE_TEMPERATURE/integration_hub max_tokens为合理默认值), DEFERRED=2(5.141.1 model_router MODEL_VERSION_MAP需统一配置中心 + 5.141.2 drift_engine db_path需统一到DB_PATH SSoT涉及路径解析重构). 维度5.141全部清零.
 > **第62轮修复状态（2026-07-06）**：5.141.2 FIXED — drift_engine.py _write_drift_events 硬编码 db_path 替换为 DB_PATH SSoT (from shared/io/paths.py), commit 34d396630a. DEFERRED=1(5.141.1 model_router MODEL_VERSION_MAP需统一配置中心).
+> **第66轮修复状态（2026-07-06）**：5.141.1 FIXED — model_router.py MODEL_VERSION_MAP 3个模型版本通过 os.getenv(DEEPSEEK/GLM/ANTHROPIC_MODEL_VERSION) 外部化, 与 deepseek_chat.py/llm_gateway.py 模式统一 (使用 *_MODEL_VERSION 后缀以区别于 DEEPSEEK_MODEL 聊天默认模型语义). DEFERRED=0. 维度5.141全部清零.
 
 #### 5.141.1 [HIGH] 硬编码URL/端点/模型名（14处代表性问题）
 
