@@ -11,7 +11,7 @@ ttl: permanent
 
 # 数据流架构（dataflowgraph）
 
-> **本目录是数据流图的入口索引**。自动生成的 Mermaid 图表 + Markdown 文档位于 `generated/dataflows/`。
+> **本目录是数据流图的入口索引**。自动生成的 Mermaid 图表 + Markdown 文档直接位于本目录（`05_dataflow_architecture/`）。
 > 三图正交声明见 [AGENTS.md §11](../../../AGENTS.md)。
 
 ## 概述
@@ -21,22 +21,22 @@ ttl: permanent
 | 全景图 | 维度 | 表达 | 文档位置 |
 |--------|------|------|----------|
 | depgraph | 模块依赖 | "谁依赖谁"（静态） | `02_domain_architecture_docs/` + `generated/domains/` |
-| **dataflowgraph** | **数据流** | **"数据从哪流到哪"（动态）** | **`generated/dataflows/`** |
+| **dataflowgraph** | **数据流** | **"数据从哪流到哪"（动态）** | **`05_dataflow_architecture/`** |
 | decisiongraph | 决策流 | "决策如何产生"（动态） | `06_decision_architecture/` + `generated/decisions/` |
 
 三图通过 `module_id` / `source_code_ref` 关联：决策节点 → 实现模块（depgraph）→ 数据流作业（dataflowgraph）。
 
-## 自动生成文档（generated/dataflows/）
+## 自动生成文档（本目录）
 
 > **禁止手工编辑**——以下文档由 `generate_dataflow_diagram.py` 从 PostgreSQL `dataflow_*` 表自动生成。
 > 真源：`dataflow_graph_registry.yaml`（YAML 真源）→ `dataflow_*` 表（DB 缓存）→ 本目录（派生文档）。
 
 | 文档 | 内容 |
 |------|------|
-| [dataflow_index.md](../generated/dataflows/dataflow_index.md) | 索引（统计 + Dataset/Job 清单） |
-| [dataflow_overview.mmd](../generated/dataflows/dataflow_overview.mmd) | 全景图（所有 Dataset/Job） |
-| [dataflow_production.mmd](../generated/dataflows/dataflow_production.mmd) | 生产数据流图（scope=production） |
-| [dataflow_backtest.mmd](../generated/dataflows/dataflow_backtest.mmd) | 回测内部数据流图（scope=backtest_internal） |
+| [dataflow_index.md](dataflow_index.md) | 索引（frontmatter + 内嵌 Mermaid 图 + 统计 + Dataset/Job 清单） |
+| [dataflow_overview.mmd](dataflow_overview.mmd) | 全景图（所有 Dataset/Job） |
+| [dataflow_production.mmd](dataflow_production.mmd) | 生产数据流图（scope=production） |
+| [dataflow_backtest.mmd](dataflow_backtest.mmd) | 回测内部数据流图（scope=backtest_internal） |
 
 ## 生成器
 
