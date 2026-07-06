@@ -999,6 +999,46 @@ def transition_build_status(node_id: int, to: str, db_path: str = None) -> bool:
             conn.close()
 
 
+def transition_design_maturity(node_id: int, to: str, db_path: str = None) -> bool:
+    """
+    转换 design_maturity 状态（3态单调推进：design → prototype → production）。
+    返回：True=成功，False=失败
+    转换规则（机械判定）：
+    - design → prototype：允许（设计→原型）
+    - design → production：允许（设计→生产，代码已实现验证通过时跳转）
+    - prototype → production：允许（原型→生产）
+    - 任何倒退（production→prototype/design, prototype→design）：禁止
+    """
+    # 合法状态转换（3态单调推进，允许 design→production 跳转）
+    valid_transitions = {
+        ("design", "prototype"),
+        ("design", "production"),
+        ("prototype", "production"),
+    }
+
+    with _db_write_lock(db_path=db_path, task="transition_design_maturity"):
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
+        try:
+            row = conn.execute("SELECT design_maturity FROM nodes WHERE node_id=%s", (node_id,)).fetchone()
+            if not row:
+                print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
+                return False
+            current = row["design_maturity"]
+            if (current, to) not in valid_transitions:
+                print(f"ERROR: 非法状态转换: {current} -> {to}（合法转换: {valid_transitions}）", file=sys.stderr)
+                return False
+            conn.execute("UPDATE nodes SET design_maturity=%s WHERE node_id=%s", (to, node_id))
+            conn.commit()
+            print(f"[OK] node_id={node_id}: design_maturity {current} -> {to}", file=sys.stderr)
+            return True
+        except Exception as e:
+            conn.rollback()
+            logger.error("transition_design_maturity失败: %s", e)
+            return False
+        finally:
+            conn.close()
+
+
 def remove_design_node(node_id: int, db_path: str = None) -> bool:
     """
     删除设计态节点（软删除）。
@@ -3487,6 +3527,13 @@ def main() -> None:
         metavar=("NODE_ID", "TO_STATUS"),
         help="转换build_status: NODE_ID TO_STATUS",
     )
+    parser.add_argument(
+        "--transition-design-maturity",
+        type=str,
+        nargs=2,
+        metavar=("NODE_ID", "TO_MATURITY"),
+        help="转换design_maturity(3态单调推进design→prototype→production): NODE_ID TO_MATURITY",
+    )
     parser.add_argument("--remove-design-node", type=int, metavar="NODE_ID", help="软删除设计态节点: NODE_ID")
     parser.add_argument(
         "--deprecate-node",
@@ -3763,6 +3810,14 @@ def main() -> None:
         node_id_str, to_status = args.transition_build_status
         node_id = int(node_id_str)
         ok = transition_build_status(node_id, to_status)
+        if not ok:
+            sys.exit(4)
+        return
+
+    if args.transition_design_maturity:
+        node_id_str, to_maturity = args.transition_design_maturity
+        node_id = int(node_id_str)
+        ok = transition_design_maturity(node_id, to_maturity)
         if not ok:
             sys.exit(4)
         return
@@ -4156,7 +4211,7 @@ if __name__ == "__main__":
         # 只在写入命令（非 --dry-run）时触发，--list-ops/--help 等只读命令不备份
         # 治本原则：永久系统必须全自动（事件触发，非时间触发/手动触发）
         _WRITE_COMMANDS = {
-            "--add-design-node", "--add-design-edge", "--transition-build-status",
+            "--add-design-node", "--add-design-edge", "--transition-build-status", "--transition-design-maturity",
             "--remove-design-node", "--deprecate-node", "--delete-design-edge",
             "--mark-invalid", "--update-edge-type", "--add-edge", "--delete-edge",
             "--delete-blueprint-link", "--delete-constraint", "--add-file-node",
