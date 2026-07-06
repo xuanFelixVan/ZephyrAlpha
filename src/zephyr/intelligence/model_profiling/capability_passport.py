@@ -31,14 +31,16 @@ CapabilityPassport --- AI 模型能力护照
 """
 
 from __future__ import annotations
-from zephyr.shared.io.serialization import dumps
+
+from typing import Final
+from zephyr.shared.io.serialization import dumps, filter_dataclass_fields as _filter_dataclass_fields
 
 import hashlib
 import hmac
 import json
 import logging
 import os
-from dataclasses import asdict, dataclass, field, fields as _dc_fields
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -46,8 +48,8 @@ from zephyr.shared.security.secrets import get_secret_or_default
 
 _log = logging.getLogger(__name__)
 
-PASSPORTS_DIR = REPO_ROOT / "data" / "brain" / "passports"
-QUICK_PROFILES_DIR = REPO_ROOT / "data" / "brain" / "quick_profiles"
+PASSPORTS_DIR: Final[Path] = REPO_ROOT / "data" / "brain" / "passports"
+QUICK_PROFILES_DIR: Final[Path] = REPO_ROOT / "data" / "brain" / "quick_profiles"
 
 # 默认开发环境签名密钥（生产环境应通过环境变量 ZEPHYR_PASSPORT_SIGNING_KEY 覆盖）
 _DEFAULT_SIGNING_KEY = b"zephyr-passport-dev-key-v1"
@@ -83,30 +85,10 @@ def _compute_signature(data: dict) -> str:
 # 修复 `asdict() + **data.get(...)` 模式在 schema 演化时的 TypeError 缺陷：
 #   - 旧 JSON 含已删除字段 → TypeError: unexpected keyword argument
 #   - 字段重命名 → 旧名透传引发 TypeError
-# 方案：在 `**data.get("xxx", {})` 处用 `_filter_dataclass_fields` 过滤无效键；
-#       仅保留目标 dataclass 实际声明的字段，多余键丢弃并记录 debug 日志。
+# 方案：用 SSoT 的 `zephyr.shared.io.serialization.filter_dataclass_fields`
+#       过滤无效键，仅保留目标 dataclass 实际声明的字段。
 
 _CURRENT_PASSPORT_VERSION: str = "1.0.0"
-
-
-def _filter_dataclass_fields(cls: type, data: dict | None) -> dict:
-    """过滤 dict，仅保留目标 dataclass 实际声明的字段。
-
-    用于 `_from_dict` 中 `**data.get("xxx", {})` 的版本兼容：
-    旧 JSON 中已删除/重命名的字段会被静默丢弃，避免 TypeError。
-    新字段缺失时由 dataclass 默认值兜底。
-    """
-    if not data:
-        return {}
-    valid_names = {f.name for f in _dc_fields(cls)}
-    filtered = {k: v for k, v in data.items() if k in valid_names}
-    dropped = set(data.keys()) - valid_names
-    if dropped:
-        _log.debug(
-            "passport version_compat: %s dropped unknown fields %s",
-            cls.__name__, dropped,
-        )
-    return filtered
 
 
 def _migrate_passport_data(data: dict) -> dict:
@@ -125,7 +107,7 @@ def _migrate_passport_data(data: dict) -> dict:
         )
     return data
 
-DEPTH_THRESHOLDS: dict[str, float] = {
+DEPTH_THRESHOLDS: Final[dict[str, float]] = {
     # 原 9 能力（保留阈值）
     "task_classification": 0.60,
     "tag_completion": 0.55,
@@ -430,7 +412,7 @@ def compute_grade_simple(score: float) -> str:
 
 
 # 能力分级 → 数值映射（用于 required 阈值比较，越高越好）
-GRADE_LEVEL: dict[str, int] = {"A": 4, "B": 3, "C": 2, "D": 1, "F": 0}
+GRADE_LEVEL: Final[dict[str, int]] = {"A": 4, "B": 3, "C": 2, "D": 1, "F": 0}
 
 
 @dataclass

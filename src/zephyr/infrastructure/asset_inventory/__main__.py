@@ -149,9 +149,10 @@ def _cmd_classify(args: argparse.Namespace) -> int:
 
     data = _json.loads(Path(scan_path).read_text(encoding="utf-8"))
     from zephyr.infrastructure.asset_inventory.models import RawFileEntry, ScanResult
+    from zephyr.shared.io.serialization import filter_dataclass_fields
 
-    entries = [RawFileEntry(**e) for e in data["entries"]]
-    scan = ScanResult(**{**data, "entries": entries})
+    entries = [RawFileEntry(**filter_dataclass_fields(RawFileEntry, e)) for e in data["entries"]]
+    scan = ScanResult(**filter_dataclass_fields(ScanResult, {**data, "entries": entries}))
 
     c = Classifier()
     if args.dry_run:

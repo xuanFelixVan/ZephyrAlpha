@@ -31,6 +31,7 @@ import yaml
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.io.serialization import filter_dataclass_fields
 from zephyr.shared.utils.time_utils import now_utc
 
 __all__ = [
@@ -92,7 +93,7 @@ class FeedbackLoop:
         for path in self._proposal_dir.glob("PROP-*.yaml"):
             try:
                 data = yaml.safe_load(path.read_text(encoding="utf-8"))
-                results.append(EvolutionProposal(**data))
+                results.append(EvolutionProposal(**filter_dataclass_fields(EvolutionProposal, data)))
             except Exception:
                 continue
         return results

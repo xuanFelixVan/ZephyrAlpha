@@ -23,6 +23,7 @@ from pathlib import Path
 import yaml
 
 from zephyr.security.access_control.orphan_judge.models import OrphanJudgeConfig
+from zephyr.shared.io.serialization import filter_dataclass_fields
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,7 @@ class ConfigLoader:
             try:
                 data = yaml.safe_load(self._path.read_text(encoding="utf-8"))
                 if isinstance(data, dict):
-                    self._config = OrphanJudgeConfig(**data)
+                    self._config = OrphanJudgeConfig(**filter_dataclass_fields(OrphanJudgeConfig, data))
                     logger.info("Config loaded from %s", self._path)
                     return self._config
             except Exception as exc:

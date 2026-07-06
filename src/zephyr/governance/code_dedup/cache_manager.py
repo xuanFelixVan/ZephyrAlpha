@@ -37,6 +37,8 @@ from typing import Any, Callable
 
 from pydantic import BaseModel, Field
 
+from zephyr.shared.io.serialization import filter_dataclass_fields
+
 
 class FunctionCacheEntry(BaseModel):
     id: str
@@ -107,7 +109,7 @@ class CacheManager:
 
         data = self._migrate(data)
 
-        self._cache = FunctionCache(**data)
+        self._cache = FunctionCache(**filter_dataclass_fields(FunctionCache, data))
         self._rebuild_indices()
         return self._cache
 

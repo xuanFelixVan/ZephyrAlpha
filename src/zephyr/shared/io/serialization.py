@@ -45,6 +45,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+from typing import Final
 import json
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -61,6 +62,7 @@ __all__ = [
     "deserialize_datetime",
     "deserialize_decimal",
     "dumps",
+    "filter_dataclass_fields",
     "from_dict",
     "from_json",
     "serialize_datetime",
@@ -69,7 +71,7 @@ __all__ = [
     "to_json",
 ]
 
-ISO_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+ISO_FORMAT: Final[str] = "%Y-%m-%dT%H:%M:%S.%fZ"
 
 
 class SerializationError(ZephyrBaseError):
@@ -82,7 +84,7 @@ class SerializationFormat(str, Enum):
     DICT = "dict"
 
 
-ENCODING_RULES: dict[str, str] = {
+ENCODING_RULES: Final[dict[str, str]] = {
     "Decimal": "str(ISO-decimal)——例 Decimal('100.50') → '100.50' 保留精度永不丢",
     "datetime": "ISO-8601 with Z suffix (UTC)——例 datetime(2026,5,5,12,0,0,tzinfo=UTC) → '2026-05-05T12:00:00.000000Z'",
     "date": "ISO-8601 date only——例 date(2026,5,5) → '2026-05-05'",
@@ -292,6 +294,58 @@ def dumps(
         sort_keys=sort_keys,
         default=_default,
     )
+
+
+def filter_dataclass_fields(cls: type, data: dict | None) -> dict:
+    """过滤 dict，仅保留目标类实际声明的字段（5.147.5 SSoT）。
+
+    用于 ``_from_dict`` / ``**data`` 直接展开的版本兼容：
+    旧持久化数据中已删除/重命名的字段会被静默丢弃，避免 ``TypeError``；
+    新增字段缺失时由 dataclass 默认值或 Pydantic 默认值兜底。
+
+    支持两种类类型：
+        - ``@dataclass`` 装饰的类（用 ``dataclasses.fields()``）
+        - Pydantic ``BaseModel`` 子类（用 ``model_fields`` 属性，兼容 ``extra="forbid"``）
+
+    Args:
+        cls: 目标类类型（dataclass 或 Pydantic BaseModel 子类）。
+        data: 原始 dict（来自 JSON/YAML/DB 反序列化）。``None`` 视为空 dict。
+
+    Returns:
+        过滤后的 dict——仅包含 ``cls`` 实际声明的字段名。
+        多余键丢弃并记 debug 日志（通过 ``logging`` 模块）。
+        若 ``cls`` 既非 dataclass 也非 Pydantic 模型，返回原数据副本（调用方自行处理）。
+    """
+    if not data:
+        return {}
+
+    valid_names: set[str] | None = None
+    # 1. 尝试 dataclass
+    try:
+        from dataclasses import fields as _dc_fields
+        valid_names = {f.name for f in _dc_fields(cls)}
+    except TypeError:
+        pass
+
+    # 2. 尝试 Pydantic BaseModel
+    if valid_names is None:
+        model_fields = getattr(cls, "model_fields", None)
+        if model_fields is not None:
+            valid_names = set(model_fields.keys())
+
+    # 3. 都不是，返回原数据
+    if valid_names is None:
+        return dict(data)
+
+    filtered = {k: v for k, v in data.items() if k in valid_names}
+    dropped = set(data.keys()) - valid_names
+    if dropped:
+        import logging
+        logging.getLogger(__name__).debug(
+            "filter_dataclass_fields: %s dropped unknown fields %s",
+            getattr(cls, "__name__", cls), dropped,
+        )
+    return filtered
 
 
 def from_json(

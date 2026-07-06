@@ -30,6 +30,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.io.serialization import filter_dataclass_fields
 from zephyr.shared.utils.time_utils import now_utc
 
 
@@ -94,7 +95,7 @@ class NightShiftQueue:
                         continue
                     try:
                         data = json.loads(line)
-                        entry = NightShiftEntry(**data)
+                        entry = NightShiftEntry(**filter_dataclass_fields(NightShiftEntry, data))
                         if entry.human_decision is None:
                             results.append(entry)
                     except Exception:
