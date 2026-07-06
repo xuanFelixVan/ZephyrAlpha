@@ -3362,6 +3362,93 @@ capabilities:
       解决防重建：check_file_canonical() 反查阻止新 AI 重建 registry 发现函数。
       关联规则：ARCH-053（API 契约层补齐 + database 节点 + AI 可发现性）。
 
+  # --------------------------------------------------------------------------
+  # 永久系统关键能力（2026-07-06 AI-14 审计修复 P2-15，补登 P1-5/P1-10/P2-19 已裁定的 canonical）
+  # --------------------------------------------------------------------------
+  - capability_id: notifier
+    canonical_override: src/zephyr/infrastructure/observability/notifier.py
+    aliases:
+      - Notifier
+      - notify_failure
+      - notify_owner_attention
+    description: >-
+      多渠道 Owner 通知器（永久系统四要素：自动通知）。canonical =
+      src/zephyr/infrastructure/observability/notifier.py（MOD-INF_notifier）。
+      P1-10 已接入 EventBus：pipeline_failed/kill_switch_triggered 自动通知 Owner。
+      解决发现性：新 AI 搜 "owner 通知/失败通知/notifier" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建通知器。
+
+  - capability_id: sla_monitor
+    canonical_override: src/zephyr/infrastructure/sla/sla_monitor.py
+    aliases:
+      - SLAMonitor
+      - record_rto
+      - record_rpo
+    description: >-
+      SLA RTO/RPO 监控器（永久系统四要素：自动测量）。canonical =
+      src/zephyr/infrastructure/sla/sla_monitor.py（MOD-INF_sla_monitor）。
+      P1-9 已接入 EventBus：pipeline_failed/kill_switch_triggered 启动 RTO 计时，
+      rollback_completed 记录 RTO/RPO。P3-24 SLA 目标从 config/sla_targets.yaml 加载（SSoT）。
+      解决发现性：新 AI 搜 "SLA/RTO/RPO/恢复时间" 可定位真源。
+
+  - capability_id: health_aggregator
+    canonical_override: src/zephyr/infrastructure/health_monitor/health_aggregator.py
+    aliases:
+      - HealthAggregator
+      - check_all
+      - poll_all
+    description: >-
+      健康聚合器——多探针并行检查并聚合为系统健康视图（永久系统四要素：自动监控）。
+      canonical = src/zephyr/infrastructure/health_monitor/health_aggregator.py
+      （MOD-INF_health_monitor_aggregator，P1-5 裁定：check_all 并行检查）。
+      P1-10 已接入 EventBus：critical event 触发即时健康快照采集。
+      duplicates_manual：system_telemetry/health_aggregator.py（MOD-INF_health_aggregator）
+      为三态探针快照（功能差异：pull-once 快照 vs check_all 并行），标 class-name-alias 豁免。
+      解决发现性：新 AI 搜 "health/健康聚合/探针" 可定位真源。
+
+  - capability_id: kill_switch
+    canonical_override: src/zephyr/security/access_control/kill_switch.py
+    aliases:
+      - KillSwitch
+      - trigger_kill_switch
+    description: >-
+      系统级熔断开关——风险事件触发全局停摆（永久系统四要素：自动熔断）。
+      canonical = src/zephyr/security/access_control/kill_switch.py（P2-19 裁定：
+      系统级 canonical，非 per-session 错误计数熔断）。
+      duplicates_manual（3 个 shadow，均标 class-name-alias 豁免）：
+      (1) infrastructure/capacity_assurance/kill_switch.py — per-session 错误计数熔断；
+      (2) trading/trading_contracts/risk/trading_kill_switch.py — 交易 5 级风险模型熔断；
+      (3) infrastructure/rollback/kill_switch.py — rollback L1/L2/L3 状态快照。
+      解决发现性：新 AI 搜 "kill_switch/熔断/停摆" 可定位真源。
+
+  - capability_id: event_store
+    canonical_override: src/zephyr/infrastructure/event_store.py
+    aliases:
+      - EventStore
+      - record_event
+    description: >-
+      审计日志事件存储（RI-13，永久系统四要素：自动记录）。
+      canonical = src/zephyr/infrastructure/event_store.py（MOD-INF_audit_event_store，
+      P1-5 裁定：审计日志 JSONL 存储）。
+      duplicates_manual（2 个 shadow，均标 class-name-alias 豁免）：
+      (1) infrastructure/events/event_store.py — 任务领域事件存储（JSONL，MOD-INF_event_store）；
+      (2) governance/audit_trail/event_store.py — Event Sourcing 事件存储（hash chain，MOD-DAT_event_store）。
+      解决发现性：新 AI 搜 "event_store/事件存储/审计日志" 可定位真源。
+
+  - capability_id: database_crud_mixin
+    canonical_override: src/zephyr/shared/database/database_crud_mixin.py
+    aliases:
+      - DatabaseCRUDMixin
+      - database_crud_mixin
+    description: >-
+      共享 CRUD 方法 Mixin——governance.db + depgraph 9 个 CRUD 方法单一真源。
+      canonical = src/zephyr/shared/database/database_crud_mixin.py（SH-DB-001）。
+      被两个 DatabaseService 类继承：governance/persistence 版（SH-DB-001）+
+      infrastructure 版（MOD-INF-002）。宿主类需提供 get_governance_conn(read_only)
+      和 get_depgraph_conn(read_only) 连接管理方法。消除约 100 行 CRUD 代码重复。
+      解决发现性：新 AI 搜 "CRUD mixin/get_task/get_node/database_crud" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重复创建 CRUD mixin。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -3390,11 +3477,27 @@ capabilities:
 # ============================================================================
 creation_tokens:
 
+  # --- DatabaseCRUDMixin 专项工程（2026-07-06 P-PLAN，抽取两个 DatabaseService 类共享的 9 个 CRUD 方法）---
+  - file: "src/zephyr/shared/database/database_crud_mixin.py"
+    token: "auto-database-crud-mixin-20260706"
+    created_by: "session-sess-41620-20260706213808"
+    capability: "database_crud_mixin"
+  - file: "src/zephyr/shared/database/__init__.py"
+    token: "auto-database-package-init-20260706"
+    created_by: "session-sess-41620-20260706213808"
+    capability: "database_crud_mixin"
+
   # --- EventBus 真源恢复（2026-07-06 AI-14 审计修复，从 git 历史恢复被误删的 event_bus.py）---
   - file: "src/zephyr/shared/event_bus.py"
     token: "auto-event-bus-restore-20260706"
     created_by: "session-sess-44448-20260706204224"
     capability: "event_bus"
+
+  # --- SLA target YAML化（2026-07-06 AI-14 审计修复 P3-24，SLA RTO/RPO 目标从硬编码改为 YAML SSoT）---
+  - file: "config/sla_targets.yaml"
+    token: "auto-sla-targets-yaml-20260706"
+    created_by: "session-sess-42456-20260706211542"
+    capability: "sla_targets_config"
 
   # --- 因子信号域（2026-07-06 AI-08 审计修复，DegradationMonitorBase 域边界迁移）---
   - file: "src/zephyr/signal_quality/degradation_monitor_base.py"

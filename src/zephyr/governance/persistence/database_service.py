@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.governance.persistence.database_service
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.governance.__init__, zephyr.shared.database.database_crud_mixin
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -33,17 +33,22 @@ DatabaseService: 统一管理两个数据库的连接池、生命周期、健康
 import sqlite3
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import threading
-from typing import Any
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.shared.database.database_crud_mixin import DatabaseCRUDMixin
 from zephyr.shared.io.paths import DB_PATH
 
 
-class DatabaseService:
-    """统一数据库服务层"""
+class DatabaseService(DatabaseCRUDMixin):
+    """统一数据库服务层
+
+    P-PLAN 专项工程：CRUD 方法（get_task/create_task/get_node 等 9 个）已抽取到
+    DatabaseCRUDMixin（zephyr.shared.database.database_crud_mixin），本类仅保留
+    连接管理（get_governance_conn/get_depgraph_conn/close_all）和健康检查（health_check）。
+    """
 
     def __init__(self) -> None:
         # 治本(2026-06-30): 消除硬编码绝对路径, 改用 SSoT 源
@@ -138,100 +143,12 @@ class DatabaseService:
                 conn.close()
                 setattr(self, attr, None)
 
-    # ========== governance.db 方法 ==========
-
-    def get_task(self, task_id: str) -> dict[str, Any] | None:
-        """获取任务"""
-        conn = self.get_governance_conn(read_only=True)
-        row = conn.execute("SELECT * FROM tasks WHERE task_id=?", (task_id,)).fetchone()
-        return dict(row) if row else None
-
-    # 5.66.1 修复：tasks 表列名白名单，防止 SQL 注入（f-string 拼接列名的治本）
-    _TASK_COLUMNS = frozenset({
-        "task_id", "title", "description", "status", "priority", "assignee",
-        "created_at", "updated_at", "due_date", "completed_at", "parent_id",
-        "module_id", "blueprint_id", "decomposition_id", "task_type",
-        "estimated_hours", "actual_hours", "tags", "metadata", "is_deleted",
-        "deleted_at", "depends_on", "blocks", "labels", "story_points",
-        "sprint_id", "epic_id", "assignee_ai", "source", "difficulty",
-        "verification_status", "verification_notes", "review_status",
-        "review_notes", "creation_tokens", "related_arch_issues",
-    })
-
-    def create_task(self, task_data: dict[str, Any]) -> str:
-        """创建任务"""
-        conn = self.get_governance_conn()
-        task_id = task_data["task_id"]
-        # 5.66.1 修复：列名白名单校验，阻断 f-string SQL 注入路径
-        invalid_cols = set(task_data.keys()) - self._TASK_COLUMNS
-        if invalid_cols:
-            raise ValueError(f"Invalid task columns: {invalid_cols}. Allowed: {sorted(self._TASK_COLUMNS)}")
-        columns = ", ".join(task_data.keys())
-        placeholders = ", ".join(["?" for _ in task_data])
-        conn.execute(f"INSERT INTO tasks ({columns}) VALUES ({placeholders})", list(task_data.values()))
-        conn.commit()
-        return task_id
-
-    def update_task_status(self, task_id: str, status: str) -> None:
-        """更新任务状态"""
-        conn = self.get_governance_conn()
-        conn.execute("UPDATE tasks SET status=?, updated_at=datetime('now') WHERE task_id=?", (status, task_id))
-        conn.commit()
-
-    def log_rule_enforcement(self, rule_id: str, operation: str, target: str, result: str, details: str = "") -> None:
-        """记录规则执行日志"""
-        conn = self.get_governance_conn()
-        conn.execute(
-            """INSERT INTO rule_enforcement_log
-            (rule_id, operation, target, result, details, enforced_at, enforced_by)
-            VALUES (?, ?, ?, ?, ?, datetime('now'), ?)""",
-            (rule_id, operation, target, result, details, "DatabaseService"),
-        )
-        conn.commit()
-
-    # ========== depgraph 方法 ==========
-    # P2迁移后：depgraph 已切换到 PostgreSQL，使用 psycopg2 cursor 模式
-    # cursor_factory=RealDictCursor 使每行返回 RealDictRow，dict(row) 兼容原 sqlite3.Row 用法
-
-    def get_node(self, node_id: str) -> dict[str, Any] | None:
-        """获取节点"""
-        conn = self.get_depgraph_conn(read_only=True)
-        with conn.cursor() as cur:
-            cur.execute("SELECT * FROM nodes WHERE node_id=%s", (node_id,))
-            row = cur.fetchone()
-        return dict(row) if row else None
-
-    def get_nodes_by_domain(self, domain_id: str) -> list[dict[str, Any]]:
-        """按域获取节点"""
-        conn = self.get_depgraph_conn(read_only=True)
-        with conn.cursor() as cur:
-            cur.execute("SELECT * FROM nodes WHERE domain_id=%s", (domain_id,))
-            rows = cur.fetchall()
-        return [dict(r) for r in rows]
-
-    def get_nodes_by_type(self, node_type: str) -> list[dict[str, Any]]:
-        """按类型获取节点"""
-        conn = self.get_depgraph_conn(read_only=True)
-        with conn.cursor() as cur:
-            cur.execute("SELECT * FROM nodes WHERE node_type=%s", (node_type,))
-            rows = cur.fetchall()
-        return [dict(r) for r in rows]
-
-    def get_rule_bindings_by_function(self, function_name: str) -> list[dict[str, Any]]:
-        """按函数名获取规则绑定"""
-        conn = self.get_depgraph_conn(read_only=True)
-        with conn.cursor() as cur:
-            cur.execute("SELECT * FROM rule_bindings WHERE function_name=%s", (function_name,))
-            rows = cur.fetchall()
-        return [dict(r) for r in rows]
-
-    def get_edges_from_node(self, from_node: str) -> list[dict[str, Any]]:
-        """获取节点的出边"""
-        conn = self.get_depgraph_conn(read_only=True)
-        with conn.cursor() as cur:
-            cur.execute("SELECT * FROM edges WHERE from_node=%s", (from_node,))
-            rows = cur.fetchall()
-        return [dict(r) for r in rows]
+    # ========== governance.db + depgraph CRUD 方法 ==========
+    # P-PLAN 专项工程：以下 9 个 CRUD 方法已抽取到 DatabaseCRUDMixin：
+    #   get_task / create_task / update_task_status / log_rule_enforcement
+    #   get_node / get_nodes_by_domain / get_nodes_by_type
+    #   get_rule_bindings_by_function / get_edges_from_node
+    # 通过 class DatabaseService(DatabaseCRUDMixin) 自动继承，无需在此重复定义。
 
 
 if __name__ == "__main__":
