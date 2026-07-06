@@ -404,6 +404,13 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
   - **强制方式**：文档约定（本条目）+ code review + **GATE-NO-TESTS-UNIT 硬阻断门禁**。
   - **自动化 guard**（ARCH-029 漂移种子防复发，2026-07-01 添加）：[`.pre-commit-config.yaml` L664-686](file:///d:/ZephyrAlpha/.pre-commit-config.yaml#L664-L686) `id: gate-no-tests-unit`，pygrep hook 检测活跃代码/文档中 `tests/unit/` 旧路径重引入，检测到即 exit 1 拒绝提交。豁免：`_archive/`、`scripts/_archive/`、`scripts/.*/_archive/`、`session_logs/`、`data/`、`reports/`、历史规则文件(`trae_028/034`)、`.pre-commit-config.yaml`、`AGENTS.md` 自身（文档真源需描述旧路径）。每次 `git commit` 自动触发，无需手工干预。治本依据：并发 session 不知情回退已修复文件（commit 021c2274 后被回退为 tests/unit/），证明无 guard 时漂移会重新发生。
 
+- **代码重复检测门禁**（GATE-DEDUP，2026-07-06 新增，阶段1 manual）→ 病根：`code_dedup` 引擎 64 文件（MOD-INF-017）有蓝图背书+测试覆盖+capability 登记，但生产侧去重管线未接通——`ct_deduplication.py` handler 引用不存在的 `zephyr.governance.scanner`，静默吞错返回空列表（P2-10 审计发现）。[ARCH-027 §3b](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 裁定"管线未接通"是合法保留理由，但必须三阶段强制接入，禁止永久 silent fail：
+  - **阶段1（当前，manual）**：[`.pre-commit-config.yaml` L706-722](file:///d:/ZephyrAlpha/.pre-commit-config.yaml#L706-L722) `id: gate-dedup`，`stages: [manual]`——手动 `pre-commit run gate-dedup` 可用，不阻断常规 commit。委托 [`verify_dedup.py`](file:///d:/ZephyrAlpha/scripts/pre_commit/verify_dedup.py) → [`zephyr.governance.code_dedup.cli verify`](file:///d:/ZephyrAlpha/src/zephyr/governance/code_dedup/cli.py)，AST 级函数粒度重复检测（incremental/full scan mode）。退出码：0=PASS / 1=WARN / 2=ERROR。
+  - **阶段2（待定，CI）**：`pre-commit run gate-dedup --all-files` 加入 CI pipeline，PR 时自动运行。
+  - **阶段3（待定，commit 阻断）**：移除 `stages: [manual]`，commit 时自动阻断高严重度重复。
+  - **handler 显式未接通标注**（P2-10-1 修复）：[`ct_deduplication.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/check_types/ct_deduplication.py) `DeduplicationHandler.run()` 不再 try/except 静默吞错，显式返回 `"Deduplication pipeline not connected"` P2 违规——待 Scanner API（`scan_files`/`find_duplicates`）落地后接通。
+  - **capability 反查**：`rule_registry_collection.yaml` L905 已登记 `verify_dedup.py`；`cross_module_dependency_registry.yaml` L492 已登记 GATE-DEDUP 引用。新 AI 想做"代码重复检测/dedup 检查"前，应反查本条目，扩展 `code_dedup` 引擎而非新建 checker。
+
 ## 8. 永远不要做的事
 
 > 完整禁止清单见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md) 四条铁律。此处仅列项目宪法级禁令：

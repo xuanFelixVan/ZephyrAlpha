@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.__main__
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_engine; zephyr.governance.drift_detection.self_test_verifier; zephyr.governance.drift_detection.drift_infrastructure; zephyr.governance.drift_detection.self_check
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-SEC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-033 | 03_modules/_cross_layer/behavioral-auditor/blueprint.md | §
+"""[BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 
 Drift Detector MOD-INF-023 CLI — 漂移扫描入口。
 

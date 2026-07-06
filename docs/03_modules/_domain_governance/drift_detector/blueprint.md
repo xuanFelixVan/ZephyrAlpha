@@ -77,7 +77,7 @@ summary: >
 ---
 
 > module_id: MOD-INF-023 | version: 3.1.0 | status: Active | layer: cross_layer
-> actual_disk_path: src/zephyr/governance/drift_detection/ (54 .py files) | generation: 4 | construction_progress: completed
+> actual_disk_path: src/zephyr/governance/drift_detection/ + src/zephyr/governance/drift_detector_core/ | generation: 4 | construction_progress: partially_implemented
 
 # Drift Detector 蓝图+施工图 — 39检测器漂移检测引擎与10状态漂移生命周期
 
@@ -193,16 +193,16 @@ summary: >
 | 漂移检测核心策略（2.1-2.21） | ✅ 是 | — | 无其他蓝图定义此策略集 |
 | 漂移分析高级策略（6.1-6.27） | ✅ 是 | — | 无其他蓝图定义此策略集 |
 | 10 状态漂移生命周期 | ✅ 是 | — | 无其他蓝图定义此状态机 |
-| `src/zephyr/governance/drift_detection/` 代码 | ✅ 是 | — | MOD-INF-033 已改 actual_disk_path 为 behavioral_audit/，冲突已消除 |
+| `src/zephyr/governance/drift_detection/` + `drift_detector_core/` 代码 | ✅ 是 | — | MOD-INF-033 已改 actual_disk_path 为 behavioral_audit/，双包路径冲突已消除（ARCH-042 裁定双包并存） |
 | `src/zephyr/drift-detector/` 代码 | ✅ 已清理 | — | 消费者已迁移至 drift_detection |
 
 ### §0.5 代码目录唯一性声明
 
 | 声明项 | 状态 | 详情 |
 |--------|:----:|------|
-| `actual_disk_path` 无冲突 | ✅ 无冲突 | MOD-INF-033 已改为 `behavioral_audit/`，本蓝图独占 `drift_detection/` |
+| `actual_disk_path` 无冲突 | ✅ 无冲突 | MOD-INF-033 已改为 `behavioral_audit/`，本蓝图覆盖 `drift_detection/` + `drift_detector_core/`（ARCH-042 双包并存） |
 | 代码副本存在 | ✅ 已清理 | 消费者已迁移至 drift_detection |
-| 代码头部一致性 | ✅ 已修复 | 53 个文件 `[BLUEPRINT]` 头部已统一为 MOD-INF-023 |
+| 代码头部一致性 | ✅ 已修复 | 全部 `[BLUEPRINT]` 头部已统一为 MOD-INF-023 |
 
 ---
 

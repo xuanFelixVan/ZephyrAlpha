@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.ai_construction_detectors
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_models
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-SEC_ai_construction_detectors | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-033 | 03_modules/_cross_layer/behavioral-auditor/blueprint.md | §
+"""[BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 
 Drift Detector AI 施工检测器 — ai_construction_detectors.py
 
