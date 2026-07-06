@@ -3123,6 +3123,30 @@ capabilities:
       - sync_decision_graph    # YAML→DB 同步主入口(删则真源失同步)
 
   # --------------------------------------------------------------------------
+  - capability_id: decisiongraph_documentation_generation
+    canonical_override: scripts/governance/d5_architecture/generators/generate_decision_diagram.py
+    aliases:
+      - generate_decision_diagram
+      - decision_mermaid_generator
+      - decision_doc_generator
+      - decisiongraph_doc_generator
+    description: >-
+      decisiongraph（决策流图）文档生成器（Mermaid + Markdown，TRAE-061，2026-07-06）。
+      canonical = scripts/governance/d5_architecture/generators/generate_decision_diagram.py。
+      从 decision_tracks / decision_layers / decision_nodes / decision_edges 表读取数据，
+      并从 architecture_model/domain/decision_graph_model.yaml 读取 5 条承重墙不变量，
+      生成 Mermaid 图表（flowchart TD/LR，全景/层级/不变量三视图）。
+      输出到 docs/02_enterprise_architecture/generated/decisions/：
+      decision_overview.mmd / decision_layers.mmd / decision_invariants.mmd / decision_index.md。
+      区分 build_status（stable=绿/generated=黄/testing=橙/planned=蓝/deprecated=红）。
+      解决发现性：新 AI 搜 "决策流图生成/decision diagram/mermaid decisiongraph" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类生成器。
+    integrity_anchors:
+      - _gen_overview_mmd       # 全景图生成函数(篡改即图表错乱)
+      - _gen_invariants_mmd     # 不变量图生成函数(5 承重墙不变量可视化)
+      - _load_invariants        # YAML 真源读取函数(删则不变量图失效)
+
+  # --------------------------------------------------------------------------
   - capability_id: data_source_provider_abstraction
     aliases:
       - DataSourceBase
@@ -3722,6 +3746,10 @@ creation_tokens:
     token: "auto-generate-decision-graph-20260706"
     created_by: "session-sess-31068-20260706045331"
     capability: "decisiongraph_generate_cli"
+  - file: "scripts/governance/d5_architecture/generators/generate_decision_diagram.py"
+    token: "auto-generate-decision-diagram-20260706"
+    created_by: "session-sess-7136-20260706115006"
+    capability: "decisiongraph_documentation_generation"
   # --- TRAE-061 decisiongraph Phase 5 BacktestResult adapter（2026-07-06）---
   - file: "src/zephyr/backtest/io/decisiongraph_adapter.py"
     token: "auto-backtest-decisiongraph-adapter-20260706"
