@@ -161,8 +161,8 @@ utilities:
     entry_point: from zephyr.infrastructure.capacity_assurance.token_budget import estimate_tokens
     note: Token 估算——上下文预算控制的基础
   frontmatter:
-    file: src/zephyr/shared/frontmatter_utils.py
-    entry_point: from zephyr.shared.utils.frontmatter_utils import parse_frontmatter
+    file: src/zephyr/shared/io/frontmatter_utils.py
+    entry_point: from zephyr.shared.io.frontmatter_utils import parse_frontmatter
   diff_utils:
     file: src/zephyr/shared/diff_utils.py
     entry_point: from zephyr.shared.utils.diff_utils import compute_diff, apply_patch
@@ -299,7 +299,7 @@ migration:
   anti_patterns:
   - 在迁移函数中修改共享状态——迁移应是无副作用纯函数
 deprecation:
-  file: src/zephyr/shared/deprecation.py
+  file: src/zephyr/shared/foundation/deprecation.py
   entry_point: from zephyr.shared.foundation.deprecation import deprecated, set_deprecation_mode
   key_exports:
   - symbol: '@deprecated(since=, remove_in=, replacement=)'
@@ -490,7 +490,7 @@ pagination:
   anti_patterns:
   - API 直接返回 list——应?Page/CursorPage 支持大数据分?has_more 指示
 time_utils_enhanced:
-  file: src/zephyr/shared/time_utils.py
+  file: src/zephyr/shared/utils/time_utils.py
   entry_point: from zephyr.shared.utils.time_utils import now_utc, freeze_time, now_iso,
     parse_iso, format_iso
   key_exports:
