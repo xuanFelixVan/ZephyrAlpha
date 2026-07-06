@@ -3874,6 +3874,24 @@ creation_tokens:
     created_by: "session-sess-36064-20260706152518"
     capability: "constraint_violation_detector"
 
+  # --- ARCH-052: 聚合节点 SSoT 指针 registry（gate_rule_set/script_collection/test_suite/rule_registry_collection 聚合节点展开用）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml"
+    token: "auto-rule-enforcement-registry-20260706"
+    created_by: "session-sess-37316-20260706155138"
+    capability: "gate_rule_set_registry"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml"
+    token: "auto-scripts-registry-20260706"
+    created_by: "session-sess-37316-20260706155138"
+    capability: "script_collection_registry"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/test_suite_registry.yaml"
+    token: "auto-test-suite-registry-20260706"
+    created_by: "session-sess-37316-20260706155138"
+    capability: "test_suite_registry"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/rule_registry_collection.yaml"
+    token: "auto-rule-registry-collection-20260706"
+    created_by: "session-sess-37316-20260706155138"
+    capability: "rule_registry_collection_registry"
+
 # ============================================================================
 # 维护日志
 # ============================================================================
