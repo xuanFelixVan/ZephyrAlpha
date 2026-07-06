@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.orphan_scanner
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
