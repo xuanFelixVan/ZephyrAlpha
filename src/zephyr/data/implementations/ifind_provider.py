@@ -20,6 +20,9 @@
 
 支持的能力（capability，通过 payload.extra["capability"] 路由）：
 - daily_valuation: 日频估值（PE/PB/PS/PCF），写入 c1_market.daily_valuation
+- kline_daily: 日K线（前复权，THS_HistoryQuotes），写入 c1_market.kline_daily
+- index_kline: 指数日K线（THS_HistoryQuotes），写入 c1_market.index_kline
+- money_flow: 资金流向（THS_iwencai i问财），写入 c1_market.money_flow
 
 设计要点：
 - THS_iFinDLogin / THS_BasicData 等在方法内部 import，避免模块加载时就要求 iFinDPy 安装
@@ -32,6 +35,7 @@ from __future__ import annotations
 import os
 import time
 import logging
+import datetime
 from typing import Iterator
 
 from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta
@@ -67,6 +71,44 @@ class IFindProvider(DataSourceBase):
     _VALUATION_COLUMNS = ["trade_date", "symbol", "pe_ttm", "pb_mrq", "ps_ttm", "pcf_ncf_ttm"]
     # 估值目标表
     _VALUATION_TABLE = "c1_market.daily_valuation"
+
+    # ---- kline_daily 能力 ----
+    _KLINE_INDICATORS = "preClose,open,high,low,close,change,changeRatio,volume,turnoverRatio,amount"
+    _KLINE_PARAMS = "Interval:D,CPS:1,baseDate:1900-01-01,Currency:YSHB,fill:Previous"
+    _KLINE_COLUMNS = ["trade_date", "symbol", "open", "close", "high", "low",
+                      "volume", "amount", "amplitude", "pct_change", "change",
+                      "turnover", "data_source"]
+    _KLINE_TABLE = "c1_market.kline_daily"
+
+    # ---- index_kline 能力 ----
+    _INDEX_KLINE_INDICATORS = "open,high,low,close,volume,amount"
+    _INDEX_KLINE_PARAMS = "Interval:D,CPS:0,baseDate:1900-01-01,Currency:YSHB,fill:Previous"
+    _INDEX_KLINE_COLUMNS = ["trade_date", "symbol", "name", "open", "high", "low",
+                            "close", "volume", "amount", "advance_count",
+                            "decline_count", "data_source", "quality_flag"]
+    _INDEX_KLINE_TABLE = "c1_market.index_kline"
+    # 主要指数代码 → 名称 映射（iFind 格式）
+    _INDEX_NAME_MAP = {
+        "000001.SH": "上证指数",
+        "399001.SZ": "深证成指",
+        "399006.SZ": "创业板指",
+        "399005.SZ": "中小板指",
+        "000300.SH": "沪深300",
+        "000905.SH": "中证500",
+        "000852.SH": "中证1000",
+        "000016.SH": "上证50",
+        "000688.SH": "科创50",
+    }
+
+    # ---- money_flow 能力 ----
+    _MONEY_FLOW_COLUMNS = ["trade_date", "symbol", "close", "pct_change",
+                           "main_net_inflow", "main_net_inflow_pct",
+                           "super_large_net_inflow", "super_large_net_inflow_pct",
+                           "large_net_inflow", "large_net_inflow_pct",
+                           "medium_net_inflow", "medium_net_inflow_pct",
+                           "small_net_inflow", "small_net_inflow_pct",
+                           "data_source"]
+    _MONEY_FLOW_TABLE = "c1_market.money_flow"
 
     # 每批 yield 的行数上限
     _BATCH_SIZE = 500
@@ -151,6 +193,12 @@ class IFindProvider(DataSourceBase):
 
         if capability == "daily_valuation":
             yield from self._fetch_daily_valuation(payload, policy)
+        elif capability == "kline_daily":
+            yield from self._fetch_kline_daily(payload, policy)
+        elif capability == "index_kline":
+            yield from self._fetch_index_kline(payload, policy)
+        elif capability == "money_flow":
+            yield from self._fetch_money_flow(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -281,6 +329,406 @@ class IFindProvider(DataSourceBase):
                 batch_rows.clear()
                 start_ts = time.time()
 
+    # ============== kline_daily 能力 ==============
+
+    def _fetch_kline_daily(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取日K线（前复权），写入 c1_market.kline_daily。
+
+        使用 THS_HistoryQuotes（Interval:D, CPS:1 前复权）。
+        指标: preClose/open/high/low/close/change/changeRatio/volume/turnoverRatio/amount
+        amplitude 由 (high-low)/preClose*100 计算。
+
+        Args:
+            payload: symbols 为 iFind ts_code 列表（如 ["600000.SH"]）；
+                     None 时通过 THS_DataPool 获取全部A股。
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每 500 行一批
+        """
+        from iFinDPy import THS_HistoryQuotes, THS_Trans2DataFrame
+
+        symbols = payload.symbols
+        if not symbols:
+            symbols = self._get_all_a_share_codes(policy)
+        if not symbols:
+            yield FetchResult(
+                table=self._KLINE_TABLE, columns=self._KLINE_COLUMNS,
+                rows=[], last_key="", elapsed_sec=0.0,
+                error="无法获取标的清单（symbols 为空且 THS_DataPool 失败）",
+            )
+            return
+
+        start_str = payload.start.strftime("%Y-%m-%d")
+        end_str = payload.end.strftime("%Y-%m-%d")
+        last_key = end_str
+        batch_rows: list[tuple] = []
+        start_ts = time.time()
+
+        for ts_code in symbols:
+            # 调用 THS_HistoryQuotes
+            try:
+                raw = self._call_with_policy(
+                    THS_HistoryQuotes, policy,
+                    ts_code, self._KLINE_INDICATORS, self._KLINE_PARAMS,
+                    start_str, end_str,
+                )
+            except Exception as e:
+                self._log.warning(f"THS_HistoryQuotes 调用失败 {ts_code}: {e}")
+                continue
+
+            # 检查错误码
+            is_error, code, msg = self._check_ifind_error(raw)
+            if is_error:
+                if code in (-4318, -4309):
+                    yield FetchResult(
+                        table=self._KLINE_TABLE, columns=self._KLINE_COLUMNS,
+                        rows=[], last_key=last_key,
+                        elapsed_sec=time.time() - start_ts,
+                        error=f"iFind配额耗尽: {code}",
+                    )
+                    return
+                self._log.warning(f"{ts_code} iFind错误: {code} {msg}")
+                continue
+
+            # 转 DataFrame
+            try:
+                df = THS_Trans2DataFrame(raw)
+            except Exception as e:
+                self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}: {e}")
+                continue
+
+            if df is None or len(df) == 0:
+                continue
+
+            symbol = self._ts_code_to_symbol(ts_code)  # "600000.SH" → "600000"
+
+            for idx, row in df.iterrows():
+                # 日期：DataFrame index 或 "time" 列
+                trade_date = self._extract_date(idx, row)
+                if not trade_date:
+                    continue
+
+                pre_close = self.safe_float(row.get("preClose"))
+                open_ = self.safe_float(row.get("open"))
+                close = self.safe_float(row.get("close"))
+                high = self.safe_float(row.get("high"))
+                low = self.safe_float(row.get("low"))
+                volume = self.safe_float(row.get("volume"))
+                amount = self.safe_float(row.get("amount"))
+                change = self.safe_float(row.get("change"))
+                pct_change = self.safe_float(row.get("changeRatio"))
+                turnover = self.safe_float(row.get("turnoverRatio"))
+
+                # amplitude = (high - low) / preClose * 100
+                if pre_close and pre_close != 0 and high is not None and low is not None:
+                    amplitude = round((high - low) / pre_close * 100, 4)
+                else:
+                    amplitude = 0.0
+
+                batch_rows.append((
+                    trade_date, symbol,
+                    open_ or 0.0, close or 0.0, high or 0.0, low or 0.0,
+                    int(volume) if volume else 0,
+                    amount or 0.0,
+                    amplitude,
+                    pct_change or 0.0,
+                    change or 0.0,
+                    turnover or 0.0,
+                    "ifind_qfq",
+                ))
+
+                if len(batch_rows) >= self._BATCH_SIZE:
+                    yield FetchResult(
+                        table=self._KLINE_TABLE, columns=self._KLINE_COLUMNS,
+                        rows=batch_rows[:], last_key=last_key,
+                        elapsed_sec=time.time() - start_ts,
+                    )
+                    batch_rows.clear()
+                    start_ts = time.time()
+
+        # yield 剩余
+        if batch_rows:
+            yield FetchResult(
+                table=self._KLINE_TABLE, columns=self._KLINE_COLUMNS,
+                rows=batch_rows[:], last_key=last_key,
+                elapsed_sec=time.time() - start_ts,
+            )
+
+    # ============== index_kline 能力 ==============
+
+    def _fetch_index_kline(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取指数日K线，写入 c1_market.index_kline。
+
+        使用 THS_HistoryQuotes（Interval:D, CPS:0 不复权）。
+        payload.symbols 为指数代码列表（如 ["000300.SH"]）；
+        None 时使用默认主要指数列表。
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个指数一批
+        """
+        from iFinDPy import THS_HistoryQuotes, THS_Trans2DataFrame
+
+        symbols = payload.symbols
+        if not symbols:
+            symbols = list(self._INDEX_NAME_MAP.keys())
+
+        start_str = payload.start.strftime("%Y-%m-%d")
+        end_str = payload.end.strftime("%Y-%m-%d")
+        last_key = end_str
+        batch_rows: list[tuple] = []
+        start_ts = time.time()
+
+        for ts_code in symbols:
+            try:
+                raw = self._call_with_policy(
+                    THS_HistoryQuotes, policy,
+                    ts_code, self._INDEX_KLINE_INDICATORS, self._INDEX_KLINE_PARAMS,
+                    start_str, end_str,
+                )
+            except Exception as e:
+                self._log.warning(f"THS_HistoryQuotes(index) 调用失败 {ts_code}: {e}")
+                continue
+
+            is_error, code, msg = self._check_ifind_error(raw)
+            if is_error:
+                if code in (-4318, -4309):
+                    yield FetchResult(
+                        table=self._INDEX_KLINE_TABLE,
+                        columns=self._INDEX_KLINE_COLUMNS,
+                        rows=[], last_key=last_key,
+                        elapsed_sec=time.time() - start_ts,
+                        error=f"iFind配额耗尽: {code}",
+                    )
+                    return
+                self._log.warning(f"{ts_code} iFind错误: {code} {msg}")
+                continue
+
+            try:
+                df = THS_Trans2DataFrame(raw)
+            except Exception as e:
+                self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}: {e}")
+                continue
+
+            if df is None or len(df) == 0:
+                continue
+
+            name = self._INDEX_NAME_MAP.get(ts_code, "")
+
+            for idx, row in df.iterrows():
+                trade_date = self._extract_date(idx, row)
+                if not trade_date:
+                    continue
+
+                open_ = self.safe_float(row.get("open"))
+                high = self.safe_float(row.get("high"))
+                low = self.safe_float(row.get("low"))
+                close = self.safe_float(row.get("close"))
+                volume = self.safe_float(row.get("volume"))
+                amount = self.safe_float(row.get("amount"))
+
+                batch_rows.append((
+                    trade_date, ts_code, name,
+                    open_ or 0.0, high or 0.0, low or 0.0, close or 0.0,
+                    int(volume) if volume else 0,
+                    amount or 0.0,
+                    0,  # advance_count（iFind 不提供）
+                    0,  # decline_count
+                    "ifind",
+                    1,  # quality_flag
+                ))
+
+                if len(batch_rows) >= self._BATCH_SIZE:
+                    yield FetchResult(
+                        table=self._INDEX_KLINE_TABLE,
+                        columns=self._INDEX_KLINE_COLUMNS,
+                        rows=batch_rows[:], last_key=last_key,
+                        elapsed_sec=time.time() - start_ts,
+                    )
+                    batch_rows.clear()
+                    start_ts = time.time()
+
+        if batch_rows:
+            yield FetchResult(
+                table=self._INDEX_KLINE_TABLE,
+                columns=self._INDEX_KLINE_COLUMNS,
+                rows=batch_rows[:], last_key=last_key,
+                elapsed_sec=time.time() - start_ts,
+            )
+
+    # ============== money_flow 能力 ==============
+
+    def _fetch_money_flow(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取资金流向数据，写入 c1_market.money_flow。
+
+        使用 THS_iwencai（i问财）自然语言查询。
+        逐日查询 "{date} 主力资金流向" 获取全市场资金流数据。
+
+        i问财返回中文字段，映射到 schema：
+            股票代码 → symbol（转 sh/sz 前缀格式）
+            收盘价 → close
+            涨跌幅 → pct_change
+            主力净流入-净额 → main_net_inflow
+            主力净流入-净占比 → main_net_inflow_pct
+            超大单净流入-净额 → super_large_net_inflow
+            ...（以此类推）
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每日一批
+        """
+        from iFinDPy import THS_iwencai
+
+        last_key = payload.end.strftime("%Y-%m-%d")
+        start_ts = time.time()
+
+        # 逐日查询
+        current = payload.start
+        while current <= payload.end:
+            date_cn = current.strftime("%Y年%m月%d日")
+            date_iso = current.strftime("%Y-%m-%d")
+
+            try:
+                raw = self._call_with_policy(
+                    THS_iwencai, policy,
+                    f"{date_cn} 主力资金流向", "stock",
+                )
+            except Exception as e:
+                self._log.warning(f"THS_iwencai 调用失败 {date_cn}: {e}")
+                current += datetime.timedelta(days=1)
+                continue
+
+            # 检查错误码
+            is_error, code, msg = self._check_ifind_error(raw)
+            if is_error:
+                if code in (-4318, -4309):
+                    yield FetchResult(
+                        table=self._MONEY_FLOW_TABLE,
+                        columns=self._MONEY_FLOW_COLUMNS,
+                        rows=[], last_key=date_iso,
+                        elapsed_sec=time.time() - start_ts,
+                        error=f"iFind配额耗尽: {code}",
+                    )
+                    return
+                self._log.warning(f"money_flow {date_cn} iFind错误: {code} {msg}")
+                current += datetime.timedelta(days=1)
+                continue
+
+            # 解析 i问财返回结果
+            rows = self._parse_iwencai_money_flow(raw, date_iso)
+            if rows:
+                yield FetchResult(
+                    table=self._MONEY_FLOW_TABLE,
+                    columns=self._MONEY_FLOW_COLUMNS,
+                    rows=rows, last_key=date_iso,
+                    elapsed_sec=time.time() - start_ts,
+                )
+                start_ts = time.time()
+
+            current += datetime.timedelta(days=1)
+
+    def _parse_iwencai_money_flow(
+        self, raw, date_iso: str
+    ) -> list[tuple]:
+        """解析 i问财资金流向返回结果。
+
+        i问财返回 dict 格式：
+            {
+                'tables': [{
+                    'table': {
+                        '股票代码': ['600000.SH', ...],
+                        '主力净流入-净额': [...],
+                        ...
+                    }
+                }]
+            }
+
+        字段名中文→英文映射（模糊匹配，支持多种变体）。
+        """
+        if not isinstance(raw, dict) or "tables" not in raw:
+            self._log.warning(f"money_flow i问财返回格式异常: {type(raw)}")
+            return []
+
+        try:
+            table_data = raw["tables"][0]["table"]
+        except (IndexError, KeyError, TypeError):
+            self._log.warning("money_flow i问财返回无 table 数据")
+            return []
+
+        # 获取股票代码列表
+        codes = self._find_column(table_data, ["股票代码", "thscode", "THSCODE"])
+        if not codes:
+            self._log.warning("money_flow i问财返回无股票代码列")
+            return []
+
+        # 字段映射（模糊匹配）
+        col_map = {
+            "close": ["收盘价", "close"],
+            "pct_change": ["涨跌幅", "涨跌幅(%)", "changeRatio"],
+            "main_net_inflow": ["主力净流入-净额", "主力净流入", "主力净流入额"],
+            "main_net_inflow_pct": ["主力净流入-净占比", "主力净流入占比", "主力净流入-净占比(%)"],
+            "super_large_net_inflow": ["超大单净流入-净额", "超大单净流入", "超大单净流入额"],
+            "super_large_net_inflow_pct": ["超大单净流入-净占比", "超大单净流入占比", "超大单净流入-净占比(%)"],
+            "large_net_inflow": ["大单净流入-净额", "大单净流入", "大单净流入额"],
+            "large_net_inflow_pct": ["大单净流入-净占比", "大单净流入占比", "大单净流入-净占比(%)"],
+            "medium_net_inflow": ["中单净流入-净额", "中单净流入", "中单净流入额"],
+            "medium_net_inflow_pct": ["中单净流入-净占比", "中单净流入占比", "中单净流入-净占比(%)"],
+            "small_net_inflow": ["小单净流入-净额", "小单净流入", "小单净流入额"],
+            "small_net_inflow_pct": ["小单净流入-净占比", "小单净流入占比", "小单净流入-净占比(%)"],
+        }
+
+        # 提取各列数据
+        col_data = {}
+        for schema_key, candidates in col_map.items():
+            col_data[schema_key] = self._find_column(table_data, candidates)
+
+        rows = []
+        n = len(codes)
+        for i in range(n):
+            ts_code = str(codes[i])
+            symbol = self._ts_code_to_money_flow_symbol(ts_code)
+            if not symbol:
+                continue
+
+            def get_val(key, idx):
+                vals = col_data.get(key)
+                if not vals or idx >= len(vals):
+                    return None
+                return self.safe_float(vals[idx])
+
+            rows.append((
+                date_iso,
+                symbol,
+                get_val("close", i) or 0.0,
+                get_val("pct_change", i) or 0.0,
+                get_val("main_net_inflow", i) or 0.0,
+                get_val("main_net_inflow_pct", i) or 0.0,
+                get_val("super_large_net_inflow", i) or 0.0,
+                get_val("super_large_net_inflow_pct", i) or 0.0,
+                get_val("large_net_inflow", i) or 0.0,
+                get_val("large_net_inflow_pct", i) or 0.0,
+                get_val("medium_net_inflow", i) or 0.0,
+                get_val("medium_net_inflow_pct", i) or 0.0,
+                get_val("small_net_inflow", i) or 0.0,
+                get_val("small_net_inflow_pct", i) or 0.0,
+                "ifind_iwencai",
+            ))
+
+        return rows
+
     # ============== 辅助方法 ==============
 
     @staticmethod
@@ -366,3 +814,117 @@ class IFindProvider(DataSourceBase):
                 pass
 
         return (False, code, msg)
+
+    # ---- 新能力辅助方法 ----
+
+    def _get_all_a_share_codes(self, policy: "SourcePolicy") -> list[str]:
+        """通过 THS_DataPool 获取全部A股 ts_code 列表。
+
+        使用中证全指（000985.SH）成分股作为全A股近似清单。
+        返回 iFind 格式代码（如 "600000.SH"）。
+
+        Args:
+            policy: 调用策略
+
+        Returns:
+            ts_code 列表；失败返回空列表
+        """
+        from iFinDPy import THS_DataPool
+
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        try:
+            raw = self._call_with_policy(
+                THS_DataPool, policy,
+                "index", f"{today_str};000985.SH",
+                "date:Y,thscode:Y",
+            )
+        except Exception as e:
+            self._log.warning(f"THS_DataPool 获取A股清单失败: {e}")
+            return []
+
+        # THS_DataPool 返回 dict: {'tables': [{'table': {'THSCODE': [...]}}]}
+        if not isinstance(raw, dict) or "tables" not in raw:
+            self._log.warning(f"THS_DataPool 返回格式异常: {type(raw)}")
+            return []
+
+        try:
+            table_data = raw["tables"][0]["table"]
+            # 尝试多种键名
+            for key in ("THSCODE", "thscode", "股票代码", "code"):
+                if key in table_data:
+                    return list(table_data[key])
+        except (IndexError, KeyError, TypeError) as e:
+            self._log.warning(f"THS_DataPool 解析失败: {e}")
+
+        return []
+
+    @staticmethod
+    def _extract_date(idx, row) -> str:
+        """从 DataFrame 行提取日期字符串 "YYYY-MM-DD"。
+
+        THS_Trans2DataFrame 返回的 DataFrame index 可能是：
+        - pandas Timestamp
+        - datetime 对象
+        - 字符串 "2025-06-01"
+
+        也可能在 row 的 "time" 列中。
+
+        Returns:
+            "YYYY-MM-DD" 字符串；无法提取返回空串
+        """
+        # 优先从 index 取
+        if idx is not None:
+            if hasattr(idx, "strftime"):
+                return idx.strftime("%Y-%m-%d")
+            s = str(idx)
+            # 取前10位 "YYYY-MM-DD"
+            if len(s) >= 10 and s[4] == "-":
+                return s[:10]
+
+        # 从 row 的 time/日期 列取
+        for key in ("time", "日期", "date", "trade_date"):
+            v = row.get(key) if hasattr(row, "get") else None
+            if v is not None:
+                if hasattr(v, "strftime"):
+                    return v.strftime("%Y-%m-%d")
+                s = str(v)
+                if len(s) >= 10 and s[4] == "-":
+                    return s[:10]
+
+        return ""
+
+    @staticmethod
+    def _find_column(table_data: dict, candidates: list[str]):
+        """在 i问财返回的 table dict 中按候选键名列表查找列数据。
+
+        i问财返回的列名可能有变体（如 "主力净流入-净额" vs "主力净流入"），
+        按候选列表顺序匹配，返回第一个找到的列数据。
+
+        Returns:
+            列数据（list）或 None
+        """
+        if not isinstance(table_data, dict):
+            return None
+        for key in candidates:
+            if key in table_data:
+                return table_data[key]
+        return None
+
+    @staticmethod
+    def _ts_code_to_money_flow_symbol(ts_code: str) -> str:
+        """ts_code 转 money_flow 表的 symbol 格式。
+
+        "600000.SH" → "sh600000"
+        "000001.SZ" → "sz000001"
+        "830001.BJ" → "bj830001"
+
+        Returns:
+            小写交易所前缀 + 6位代码；无法识别返回空串
+        """
+        if not ts_code or "." not in ts_code:
+            return ""
+        code, _, suffix = ts_code.partition(".")
+        suffix_lower = suffix.lower()
+        if suffix_lower in ("sh", "sz", "bj"):
+            return f"{suffix_lower}{code}"
+        return ""

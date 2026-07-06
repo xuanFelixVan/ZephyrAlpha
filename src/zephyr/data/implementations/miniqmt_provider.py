@@ -112,8 +112,29 @@ class MiniQMTProvider(DataSourceBase):
         """
         extra = payload.extra or {}
         capability = extra.get("capability")
-        if capability == "kline_daily":
-            yield from self._fetch_kline_daily(payload, policy)
+        # K线类能力统一路由到 _fetch_kline，按 period 区分
+        _KLINE_CAPABILITIES = {
+            "kline_daily": "1d",
+            "kline_1min": "1m",
+            "kline_5min": "5m",
+            "kline_15min": "15m",
+            "kline_30min": "30m",
+            "kline_60min": "60m",
+        }
+        # 财务报表类能力统一路由到 _fetch_financial_statement，按 table_list 区分
+        _FINANCIAL_CAPABILITIES = {
+            "balance_sheet": "Balance",
+            "income_statement": "Income",
+            "cashflow_statement": "CashFlow",
+            "financial_indicator": "Capital",
+            "main_business": "Income",
+        }
+        if capability in _KLINE_CAPABILITIES:
+            yield from self._fetch_kline(payload, policy, _KLINE_CAPABILITIES[capability])
+        elif capability in _FINANCIAL_CAPABILITIES:
+            yield from self._fetch_financial_statement(payload, policy, _FINANCIAL_CAPABILITIES[capability])
+        elif capability == "index_constituent":
+            yield from self._fetch_index_constituent(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -124,31 +145,40 @@ class MiniQMTProvider(DataSourceBase):
                 error=f"未知 capability: {capability}",
             )
 
-    # ============== kline_daily ==============
+    # ============== K线通用方法（日K/分钟K） ==============
 
-    def _fetch_kline_daily(
+    def _fetch_kline(
         self,
         payload: FetchPayload,
         policy: SourcePolicy,
+        period: str,
     ) -> Iterator[FetchResult]:
-        """抓取日K线（c1_market.kline_daily）。
+        """抓取K线数据（日K/分钟K通用）。
 
         步骤：
         1. 若 symbols 为 None，取沪深A股全部标的
         2. 对每个 stock_code：download_history_data 下载 → get_market_data_ex 读取
         3. DataFrame 转 tuple 列表，每个股票作为一批 yield
 
+        period="1d" 时列为 trade_date+symbol+OHLCV+amount（日K）
+        period!="1d" 时列为 trade_date+trade_time+symbol+OHLCV+amount（分钟K）
+
         Args:
             payload: 下载请求
             policy: 调用策略
+            period: K线周期（"1d"/"1m"/"5m"/"15m"/"30m"/"60m"）
 
         Yields:
             FetchResult: 每个股票一批
         """
         from xtquant import xtdata
 
-        table = "c1_market.kline_daily"
-        columns = ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount"]
+        table = payload.table or "c1_market.kline_daily"
+        is_daily = (period == "1d")
+        if is_daily:
+            columns = ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount"]
+        else:
+            columns = ["trade_date", "trade_time", "symbol", "open", "high", "low", "close", "volume", "amount"]
 
         try:
             start_str = self._date_to_str(payload.start)
@@ -159,9 +189,6 @@ class MiniQMTProvider(DataSourceBase):
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
             )
             return
-
-        extra = payload.extra or {}
-        period = extra.get("period", "1d")
 
         # 1. 获取标的清单
         try:
@@ -209,16 +236,30 @@ class MiniQMTProvider(DataSourceBase):
                     volumes = df["volume"].tolist()
                     amounts = df["amount"].tolist()
                     for i in range(len(times)):
-                        rows.append((
-                            self._ts_to_date(times[i]),
-                            symbol,
-                            self.safe_float(opens[i]),
-                            self.safe_float(highs[i]),
-                            self.safe_float(lows[i]),
-                            self.safe_float(closes[i]),
-                            self.safe_float(volumes[i]),
-                            self.safe_float(amounts[i]),
-                        ))
+                        if is_daily:
+                            rows.append((
+                                self._ts_to_date(times[i]),
+                                symbol,
+                                self.safe_float(opens[i]),
+                                self.safe_float(highs[i]),
+                                self.safe_float(lows[i]),
+                                self.safe_float(closes[i]),
+                                self.safe_float(volumes[i]),
+                                self.safe_float(amounts[i]),
+                            ))
+                        else:
+                            dt_str = self._ts_to_datetime(times[i])
+                            rows.append((
+                                dt_str[:10],       # trade_date
+                                dt_str,            # trade_time (YYYY-MM-DD HH:MM:SS)
+                                symbol,
+                                self.safe_float(opens[i]),
+                                self.safe_float(highs[i]),
+                                self.safe_float(lows[i]),
+                                self.safe_float(closes[i]),
+                                self.safe_float(volumes[i]),
+                                self.safe_float(amounts[i]),
+                            ))
 
                 yield FetchResult(
                     table=table,
@@ -237,6 +278,162 @@ class MiniQMTProvider(DataSourceBase):
                     error=f"{stock_code} 抓取失败: {e}",
                 )
 
+    # ============== 财务报表 ==============
+
+    def _fetch_financial_statement(
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
+        table_list: str,
+    ) -> Iterator[FetchResult]:
+        """抓取财务报表数据（Balance/Income/CashFlow/Capital）。
+
+        使用 xtdata.download_financial_data2 下载 + get_financial_data 读取。
+        table_list 参数对应 xtquant 的报表名（Balance/Income/CashFlow/Capital）。
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+            table_list: xtquant 报表名（"Balance"/"Income"/"CashFlow"/"Capital"）
+
+        Yields:
+            FetchResult: 每个股票一批
+        """
+        from xtquant import xtdata
+
+        table = payload.table or f"c3_fundamental.{table_list.lower()}"
+        start_str = self._date_to_str(payload.start)
+        end_str = self._date_to_str(payload.end)
+
+        # 1. 获取标的清单
+        try:
+            symbols = payload.symbols
+            if not symbols:
+                symbols = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
+                )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=[], rows=[], last_key="",
+                elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+            )
+            return
+
+        last_key = end_str
+
+        # 2. 逐标的下载+读取
+        for stock_code in symbols:
+            t0 = time.time()
+            try:
+                # 下载财务数据
+                self._call_with_policy(
+                    xtdata.download_financial_data2,
+                    policy,
+                    [stock_code], '', start_str, end_str,
+                )
+                # 读取财务数据
+                fd = self._call_with_policy(
+                    xtdata.get_financial_data,
+                    policy,
+                    [stock_code], [table_list], start_str, end_str, 'report_time',
+                )
+
+                # 3. 转换为 rows
+                rows = []
+                stock_data = fd.get(stock_code) if fd else None
+                if stock_data and table_list in stock_data:
+                    df = stock_data[table_list]
+                    if df is not None and len(df) > 0:
+                        symbol = self._stock_to_symbol(stock_code)
+                        # 列名从 DataFrame 动态提取
+                        col_names = list(df.columns)
+                        for _, row in df.iterrows():
+                            row_values = []
+                            for col in col_names:
+                                v = row.get(col)
+                                if col in ('date', 'announce_date', 'report_date', 'enddate'):
+                                    row_values.append(str(v) if v is not None else None)
+                                else:
+                                    row_values.append(self.safe_float(v))
+                            rows.append(tuple([symbol] + row_values))
+
+                        columns = ["symbol"] + col_names
+                else:
+                    columns = ["symbol"]
+
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table,
+                    columns=["symbol"],
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.time() - t0,
+                    error=f"{stock_code} 财务数据抓取失败: {e}",
+                )
+
+    # ============== 指数成分股 ==============
+
+    def _fetch_index_constituent(
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取指数成分股列表。
+
+        使用 xtdata.get_stock_list_in_sector 获取板块/指数成分股。
+        payload.extra["sector_name"] 指定板块名（默认"沪深A股"）。
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 单批结果
+        """
+        from xtquant import xtdata
+
+        table = payload.table or "c1_market.index_constituent"
+        columns = ["symbol", "stock_code", "sector_name"]
+
+        extra = payload.extra or {}
+        sector_name = extra.get("sector_name", "沪深A股")
+
+        t0 = time.time()
+        try:
+            stock_list = self._call_with_policy(
+                xtdata.get_stock_list_in_sector, policy, sector_name
+            )
+
+            rows = []
+            if stock_list:
+                for stock_code in stock_list:
+                    symbol = self._stock_to_symbol(stock_code)
+                    rows.append((symbol, stock_code, sector_name))
+
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=self._date_to_str(payload.end),
+                elapsed_sec=time.time() - t0,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.time() - t0,
+                error=f"获取指数成分失败: {e}",
+            )
+
     # ============== 辅助方法 ==============
 
     @staticmethod
@@ -252,6 +449,14 @@ class MiniQMTProvider(DataSourceBase):
         只取日期部分，使用 UTC 解释可避免本地时区偏移导致跨日。
         """
         return datetime.datetime.utcfromtimestamp(ts_ms / 1000).strftime("%Y-%m-%d")
+
+    @staticmethod
+    def _ts_to_datetime(ts_ms) -> str:
+        """毫秒时间戳 → "YYYY-MM-DD HH:MM:SS" 字符串（按 UTC 解释）。
+
+        分钟K线需要完整时间戳，用于 trade_time 列。
+        """
+        return datetime.datetime.utcfromtimestamp(ts_ms / 1000).strftime("%Y-%m-%d %H:%M:%S")
 
     @staticmethod
     def _stock_to_symbol(stock_code: str) -> str:
