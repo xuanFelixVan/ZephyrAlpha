@@ -1,10 +1,10 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.shared.database.database_crud_mixin
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema, zephyr.governance.depgraph_schema
+# [DEPENDENCIES] none（通过宿主类 self.get_governance_conn/get_depgraph_conn 间接调用）
 # [CONSUMERS] zephyr.governance.persistence.database_service, zephyr.infrastructure.database_service
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] stable
 # [INVARIANTS] 共享CRUD方法mixin; 宿主类MUST提供get_governance_conn(read_only)和get_depgraph_conn(read_only)
 # [MODIFY-GUARD] 修改需同步更新两个DatabaseService类(governance/persistence版+infrastructure版)
 # [STABILITY] stable

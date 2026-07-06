@@ -4,11 +4,11 @@
 # [DEPENDENCIES] zephyr.governance.__init__, zephyr.shared.database.database_crud_mixin
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] stable
 # [INVARIANTS]
 # [MODIFY-GUARD]
-# [STABILITY] evolving
-# [SAFETY] M
+# [STABILITY] stable
+# [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
@@ -16,7 +16,7 @@
 """
 DatabaseService: 统一管理两个数据库的连接池、生命周期、健康检查
 
-[BLUEPRINT] DM-100022 | src/zephyr/governance/persistence/database_service.py | §22
+[BLUEPRINT] SH-DB-001 | src/zephyr/governance/persistence/database_service.py | §22
 [MODULE] zephyr.governance.persistence.database_service
 [INVARIANTS] 两库连接池管理(governance.db + depgraph); WAL 模式启用; 健康检查机制
 [MODIFY-GUARD] 修改需同步更新 tests/test_db_auto_ops.py
