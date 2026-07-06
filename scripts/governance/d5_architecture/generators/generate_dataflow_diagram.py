@@ -152,7 +152,8 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
     with conn.cursor() as cur:
         cur.execute("""
             SELECT dataset_id, entity_name, scope, contract_ref, physical_type,
-                   produced_by_job, domain_id, design_maturity, build_status, pit_policy
+                   produced_by_job, domain_id, design_maturity, build_status, pit_policy,
+                   module_id
             FROM dataflow_datasets
             ORDER BY scope, entity_name
         """)
@@ -160,14 +161,14 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
             {
                 "id": r[0], "name": r[1], "scope": r[2], "contract": r[3],
                 "physical_type": r[4], "produced_by": r[5], "domain": r[6],
-                "maturity": r[7], "build": r[8], "pit": r[9],
+                "maturity": r[7], "build": r[8], "pit": r[9], "module_id": r[10],
             }
             for r in cur.fetchall()
         ]
 
         cur.execute("""
             SELECT job_id, job_name, scope, source_code_ref, trigger_type,
-                   run_context, design_maturity, build_status
+                   run_context, design_maturity, build_status, module_id
             FROM dataflow_jobs
             ORDER BY scope, job_name
         """)
@@ -175,6 +176,7 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
             {
                 "id": r[0], "name": r[1], "scope": r[2], "source": r[3],
                 "trigger": r[4], "context": r[5], "maturity": r[6], "build": r[7],
+                "module_id": r[8],
             }
             for r in cur.fetchall()
         ]
@@ -249,6 +251,10 @@ def _gen_mermaid(
             label += f"<br/>CTR: {d['contract']}"
         if d["domain"]:
             label += f"<br/>[{_en_zh(d['domain'])}]"
+        # 议题1约束：蓝图仅 production/prototype 态显示（design 态代码未写、蓝图未建）
+        mid = d.get("module_id")
+        if mid and d.get("maturity") != "design":
+            label += f"<br/>蓝图: {mid}"
         node_class = _node_class(d["scope"], d.get("maturity"), is_job=False)
         lines.append(f'    DS{d["id"]}["{label}"]:::{node_class}')
 
@@ -258,6 +264,10 @@ def _gen_mermaid(
         label = f"{tag}{_en_zh(j['name'], sep='<br/>')}"
         if j["trigger"]:
             label += f"<br/>trigger: {_en_zh(j['trigger'])}"
+        # 议题1约束：蓝图仅 production/prototype 态显示（design 态代码未写、蓝图未建）
+        mid = j.get("module_id")
+        if mid and j.get("maturity") != "design":
+            label += f"<br/>蓝图: {mid}"
         node_class = _node_class(j["scope"], j.get("maturity"), is_job=True)
         lines.append(f'    JOB{j["id"]}("{label}"):::{node_class}')
 
@@ -435,24 +445,24 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     # Dataset 清单
     lines.append("## Dataset 清单")
     lines.append("")
-    lines.append("| ID | entity_name / 实体名 | scope / 范围 | contract_ref / 契约引用 | domain / 域 | pit_policy / PIT策略 | design_maturity / 设计成熟度 | build_status / 构建状态 |")
-    lines.append("|----|----------------------|--------------|---------------------------|------------|------------------|---------------------------|--------------------|")
+    lines.append("| ID | entity_name / 实体名 | scope / 范围 | contract_ref / 契约引用 | domain / 域 | pit_policy / PIT策略 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 |")
+    lines.append("|----|----------------------|--------------|---------------------------|------------|------------------|------------------|---------------------------|--------------------|")
     for d in datasets:
         lines.append(
             f"| DS-{d['id']:03d} | {_en_zh(d['name'])} | {_en_zh(d['scope'])} | "
-            f"{d['contract'] or '-'} | {_en_zh(d['domain'] or '-')} | {_en_zh(d['pit'])} | {_en_zh(d.get('maturity') or '-')} | {_en_zh(d['build'])} |"
+            f"{d['contract'] or '-'} | {_en_zh(d['domain'] or '-')} | {_en_zh(d['pit'])} | {d.get('module_id') or '-'} | {_en_zh(d.get('maturity') or '-')} | {_en_zh(d['build'])} |"
         )
 
     # Job 清单
     lines.append("")
     lines.append("## Job 清单")
     lines.append("")
-    lines.append("| ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | design_maturity / 设计成熟度 | build_status / 构建状态 |")
-    lines.append("|----|-------------------|--------------|------------------------------|----------------------------|------------------------------|---------------------------|--------------------|")
+    lines.append("| ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 |")
+    lines.append("|----|-------------------|--------------|------------------------------|----------------------------|------------------------------|------------------|---------------------------|--------------------|")
     for j in jobs:
         lines.append(
             f"| JOB-{j['id']:03d} | {_en_zh(j['name'])} | {_en_zh(j['scope'])} | "
-            f"{j['source'] or '-'} | {_en_zh(j['trigger'] or '-')} | {_en_zh(j['context'] or '-')} | {_en_zh(j.get('maturity') or '-')} | {_en_zh(j['build'])} |"
+            f"{j['source'] or '-'} | {_en_zh(j['trigger'] or '-')} | {_en_zh(j['context'] or '-')} | {j.get('module_id') or '-'} | {_en_zh(j.get('maturity') or '-')} | {_en_zh(j['build'])} |"
         )
 
     return "\n".join(lines) + "\n"

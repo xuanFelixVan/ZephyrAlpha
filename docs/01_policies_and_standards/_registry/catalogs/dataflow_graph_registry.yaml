@@ -58,7 +58,8 @@ dataset_schema:
   domain_id: str           # 所属域（D_MKT_DATA/D_FACTOR/...）
   pit_policy: str          # strict | loose | none（PIT 铁律适用性）
   format_summary: str      # 数据格式摘要（人类可读）
-  valid_since: str          # 数据有效起始日期
+  valid_since: str         # 数据有效起始日期
+  module_id: str            # 关联蓝图 ID（depgraph.nodes.blueprint_id，design 态为空）
 
 # ============================================================
 # Job 节点 schema
@@ -75,6 +76,7 @@ job_schema:
   outputs: list            # 输出 Dataset ID 列表
   pit_relevance: str       # PIT 相关性（strict/loose/none）
   description: str         # 作业描述
+  module_id: str            # 关联蓝图 ID（depgraph.nodes.blueprint_id，design 态为空）
 
 # ============================================================
 # Datasets（14 个核心数据集）
@@ -94,6 +96,7 @@ datasets:
     pit_policy: strict
     format_summary: "标准化Tick行情（symbol/timestamp/OHLCV/quality_score），CTR-001 NormalizedMarketData"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-002
     entity_name: market_data.ohlc_bar
@@ -107,6 +110,7 @@ datasets:
     pit_policy: strict
     format_summary: "聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001 derived"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-003
     entity_name: factor.value_factor
@@ -120,6 +124,7 @@ datasets:
     pit_policy: strict
     format_summary: "价值因子信号（factor_id/symbol/as_of_date/raw_value/normalized_value），CTR-002 FactorSignal"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-004
     entity_name: factor.momentum_20d
@@ -133,6 +138,7 @@ datasets:
     pit_policy: strict
     format_summary: "20日动量因子信号（factor_id/symbol/as_of_date/raw_value/rank_pct），CTR-002 FactorSignal"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-005
     entity_name: signal.composite
@@ -146,6 +152,7 @@ datasets:
     pit_policy: strict
     format_summary: "合成交易信号（多因子加权/截面排名/置信度），CTR-P1-015 SynthesizedSignal"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-006
     entity_name: risk.limits
@@ -159,6 +166,7 @@ datasets:
     pit_policy: strict
     format_summary: "风险限额（max_position/max_drawdown/exposure_limits），CTR-003 RiskLimits"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-007
     entity_name: order.target
@@ -172,6 +180,7 @@ datasets:
     pit_policy: strict
     format_summary: "目标订单（symbol/side/quantity/price/order_type），CTR-004 Order"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-008
     entity_name: fill.executed
@@ -185,6 +194,7 @@ datasets:
     pit_policy: strict
     format_summary: "成交回报（symbol/quantity/price/commission/timestamp），CTR-005 Fill"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-009
     entity_name: position.snapshot
@@ -198,6 +208,7 @@ datasets:
     pit_policy: strict
     format_summary: "持仓快照（symbol/quantity/avg_cost/market_value/timestamp），CTR-006 PositionSnapshot"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-010
     entity_name: backtest.result
@@ -211,6 +222,7 @@ datasets:
     pit_policy: strict
     format_summary: "回测结果（nav_series/sharpe/max_drawdown/trades），CTR-P1-016 BacktestResult"
     valid_since: '2020-01-01'
+    module_id: ""
 
   # --- 回测内部数据流 Dataset（scope=backtest_internal，contract_ref=NULL） ---
 
@@ -226,6 +238,7 @@ datasets:
     pit_policy: strict
     format_summary: "回测Tick事件（历史tick重放，含timestamp/symbol/price/volume），回测内部类型"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-012
     entity_name: backtest.target_weights
@@ -239,6 +252,7 @@ datasets:
     pit_policy: strict
     format_summary: "回测目标权重（symbol/target_weight/timestamp），策略根据tick事件生成"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-013
     entity_name: backtest.fills
@@ -252,6 +266,7 @@ datasets:
     pit_policy: strict
     format_summary: "回测模拟成交（symbol/quantity/price/commission/slippage），撮合引擎产出"
     valid_since: '2020-01-01'
+    module_id: ""
 
   - dataset_id: DS-014
     entity_name: backtest.nav_series
@@ -265,6 +280,7 @@ datasets:
     pit_policy: strict
     format_summary: "回测净值序列（timestamp/nav/cash/positions），组合更新产出"
     valid_since: '2020-01-01'
+    module_id: ""
 
 # ============================================================
 # Jobs（13 个核心数据变换作业）
@@ -283,6 +299,7 @@ jobs:
     outputs: [DS-001]
     pit_relevance: strict
     description: "从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick"
+    module_id: ""
 
   - job_id: JOB-002
     job_name: aggregate.ohlc_bar
@@ -295,6 +312,7 @@ jobs:
     outputs: [DS-002]
     pit_relevance: strict
     description: "将Tick数据聚合为OHLC K线（1m/5m/日线），产出DS-002 market_data.ohlc_bar"
+    module_id: ""
 
   - job_id: JOB-003
     job_name: compute.value_factor
@@ -307,6 +325,7 @@ jobs:
     outputs: [DS-003]
     pit_relevance: strict
     description: "计算价值因子（PE/PB/股息率等），产出DS-003 factor.value_factor"
+    module_id: ""
 
   - job_id: JOB-004
     job_name: compute.momentum_20d
@@ -319,6 +338,7 @@ jobs:
     outputs: [DS-004]
     pit_relevance: strict
     description: "计算20日动量因子（收益率/相对强度），产出DS-004 factor.momentum_20d"
+    module_id: ""
 
   - job_id: JOB-005
     job_name: synthesize.signal
@@ -331,6 +351,7 @@ jobs:
     outputs: [DS-005]
     pit_relevance: strict
     description: "合成多因子信号（加权/截面排名/置信度），产出DS-005 signal.composite"
+    module_id: ""
 
   - job_id: JOB-006
     job_name: check.risk_limits
@@ -343,6 +364,7 @@ jobs:
     outputs: [DS-006]
     pit_relevance: strict
     description: "风险限额检查（持仓/回撤/暴露度），产出DS-006 risk.limits"
+    module_id: ""
 
   - job_id: JOB-007
     job_name: generate.order
@@ -355,6 +377,7 @@ jobs:
     outputs: [DS-007]
     pit_relevance: strict
     description: "根据信号+风险限额生成目标订单，产出DS-007 order.target"
+    module_id: ""
 
   - job_id: JOB-008
     job_name: execute.order
@@ -367,6 +390,7 @@ jobs:
     outputs: [DS-008, DS-009]
     pit_relevance: strict
     description: "执行订单（实盘/模拟），产出DS-008 fill.executed + DS-009 position.snapshot"
+    module_id: ""
 
   # --- 回测内部数据流 Job（scope=backtest_internal） ---
 
@@ -381,6 +405,7 @@ jobs:
     outputs: [DS-011]
     pit_relevance: strict
     description: "历史Tick重放（从DS-001读取历史tick，按时间顺序重放），产出DS-011 backtest.tick_event"
+    module_id: ""
 
   - job_id: JOB-010
     job_name: backtest.run_event_driven
@@ -393,6 +418,7 @@ jobs:
     outputs: [DS-012]
     pit_relevance: strict
     description: "事件驱动回测引擎（消费tick事件，运行策略生成目标权重），产出DS-012 backtest.target_weights"
+    module_id: ""
 
   - job_id: JOB-011
     job_name: backtest.match_fills
@@ -405,6 +431,7 @@ jobs:
     outputs: [DS-013]
     pit_relevance: strict
     description: "回测撮合引擎（根据目标权重模拟成交，含滑点/手续费），产出DS-013 backtest.fills"
+    module_id: ""
 
   - job_id: JOB-012
     job_name: backtest.update_portfolio
@@ -417,6 +444,7 @@ jobs:
     outputs: [DS-014]
     pit_relevance: strict
     description: "回测组合更新（根据成交更新持仓/现金/净值），产出DS-014 backtest.nav_series"
+    module_id: ""
 
   - job_id: JOB-013
     job_name: backtest.calc_metrics
@@ -429,6 +457,7 @@ jobs:
     outputs: [DS-010]
     pit_relevance: strict
     description: "回测指标计算（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验），产出DS-010 backtest.result"
+    module_id: ""
 
 # ============================================================
 # 数据流边（edges，由 datasets 的 produced_by_job/consumed_by_jobs 派生）

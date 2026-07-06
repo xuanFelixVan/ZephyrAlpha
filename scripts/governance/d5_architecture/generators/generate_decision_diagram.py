@@ -234,16 +234,18 @@ def _gen_overview_mmd(
             safe_lid = lid.replace("-", "_")
             mtag = _maturity_tag(layer.get("maturity"))
             label = f'{mtag}{layer["id"]}: {layer["name"]}' if mtag else f'{layer["id"]}: {layer["name"]}'
+            # 议题1约束：蓝图/代码仅 production/prototype 态显示（design 态代码未写、蓝图未建）
+            is_design = layer.get("maturity") == "design"
             # 蓝图（module_id + 派生蓝图名）
             mid = layer.get("module_id")
-            if mid:
+            if mid and not is_design:
                 bp_name = layer.get("blueprint_name") or mid
                 label += f'<br/>蓝图: {bp_name}'
             # 代码引用
             scr = layer.get("source_code_ref")
-            if scr:
+            if scr and not is_design:
                 label += f'<br/>代码: {_truncate(scr, 30)}'
-            # 功能简述（截断到~20字）
+            # 功能简述（截断到~20字，设计态也显示）
             desc = layer.get("desc")
             if desc:
                 label += f'<br/>功能: {_truncate(desc)}'
@@ -295,16 +297,18 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         label = f'{layer["id"]} {layer["name"]}<br/>{layer["name_en"]}'
         if mtag:
             label = f'{mtag} {label}'
+        # 议题1约束：蓝图/代码仅 production/prototype 态显示（design 态代码未写、蓝图未建）
+        is_design = layer.get("maturity") == "design"
         # 蓝图（module_id + 派生蓝图名）
         mid = layer.get("module_id")
-        if mid:
+        if mid and not is_design:
             bp_name = layer.get("blueprint_name") or mid
             label += f'<br/>蓝图: {bp_name}'
         # 代码引用
         scr = layer.get("source_code_ref")
-        if scr:
+        if scr and not is_design:
             label += f'<br/>代码: {_truncate(scr, 30)}'
-        # 功能简述（截断到~20字）
+        # 功能简述（截断到~20字，设计态也显示）
         desc = layer.get("desc")
         if desc:
             label += f'<br/>功能: {_truncate(desc)}'
