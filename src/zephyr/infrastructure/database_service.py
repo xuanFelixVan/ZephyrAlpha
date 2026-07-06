@@ -55,7 +55,7 @@ class DatabaseService:
         self.governance_db = str(DB_PATH)
 
         self._governance_conn: sqlite3.Connection | None = None
-        self._depgraph_conn: Any | None = None  # psycopg2 connection (P2迁移后)
+        self._depgraph_conn: psycopg2.extensions.connection | None = None  # psycopg2 connection (P2迁移后)
         self._clickhouse_conn: Any | None = None  # clickhouse_driver.Client (C1行情仓库)
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 HIGH）：lazy init 线程安全
 
@@ -71,7 +71,7 @@ class DatabaseService:
                     self._governance_conn = get_db_connection(self.governance_db)
         return self._governance_conn
 
-    def get_depgraph_conn(self) -> Any:
+    def get_depgraph_conn(self) -> psycopg2.extensions.connection:
         """获取 depgraph (PostgreSQL) 连接（P2迁移后从 SQLite 切换到 PostgreSQL）
 
         返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
