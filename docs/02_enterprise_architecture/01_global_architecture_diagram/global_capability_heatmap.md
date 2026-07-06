@@ -127,7 +127,7 @@ ttl: permanent
 | C7 | 回测仿真 | 4 | 59 | 5 | 10 | 44 | 1.50 | 🟡 部分覆盖 / Partial |
 | CC1 | 治理合规 | 7 | 1488 | 644 | 29 | 815 | 1.14 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 4 | 212 | 113 | 0 | 99 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 11 | 675 | 368 | 9 | 298 | 1.82 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 11 | 679 | 372 | 9 | 298 | 1.82 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
@@ -169,7 +169,7 @@ ttl: permanent
 | D_AUTONOMY_CORE | agent_lifecycle | CC3 | L1_foundation | 114 | 111 | 0 | 3 | 0 | L2 🟡 | 🟡 |
 | D_FRONTEND | 前端 | CC3 | L1_foundation | 30 | 13 | 6 | 11 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_OPS | asset-inventory | CC3 | L0_infrastructure | 1 | 0 | 1 | 0 | 0 | L1 🔵 | 🟡 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 145 | 94 | 0 | 51 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 149 | 98 | 0 | 51 | 0 | L2 🟡 | 🟡 |
 | D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 72 | 30 | 0 | 42 | 0 | L2 🟡 | 🟡 |
 | D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 20 | 1 | 0 | 19 | 0 | L2 🟡 | 🟡 |
 | D_INTELLIGENCE | context_management | CC3 | L2_domain | 43 | 21 | 0 | 22 | 0 | L2 🟡 | 🟡 |
@@ -233,7 +233,7 @@ ttl: permanent
 | D_SECURITY_LLM | llm_defense | CC2 | L2 | 44 |
 | D_AUTONOMY_CORE | agent_lifecycle | CC3 | L2 | 114 |
 | D_FRONTEND | 前端 | CC3 | L2 | 30 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L2 | 145 |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L2 | 149 |
 | D_INTEGRATION | pipeline_routing | CC3 | L2 | 72 |
 | D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L2 | 20 |
 | D_INTELLIGENCE | context_management | CC3 | L2 | 43 |

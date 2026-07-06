@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-07-06T17:49:23
+> 生成时间: 2026-07-06T18:02:31
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 数据库: depgraph (PostgreSQL)
 
@@ -64,61 +64,61 @@ ttl: permanent
 
 ```mermaid
 flowchart LR
-    DS409["[production]backtest.fills<br/>回测.模拟成交<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS410["[production]backtest.nav_series<br/>回测.净值序列<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS408["[production]backtest.target_weights<br/>回测.目标权重<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS407["[production]backtest.tick_event<br/>回测.Tick事件<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS406["[production]backtest.result<br/>回测.结果<br/>CTR: CTR-P1-016<br/>[D_BACKTEST / 回测]"]:::dsProd
-    DS400["[production]factor.momentum_20d<br/>因子.20日动量<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
-    DS399["[production]factor.value_factor<br/>因子.价值因子<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
-    DS404["[production]fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE / 执行核心]"]:::dsProd
-    DS398["[production]market_data.ohlc_bar<br/>市场数据.OHLC K线<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
-    DS397["[production]market_data.tick<br/>市场数据.Tick行情<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
-    DS403["[production]order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE / 持仓核心]"]:::dsProd
-    DS405["[production]position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE / 执行核心]"]:::dsProd
-    DS402["[production]risk.limits<br/>风险.限额<br/>CTR: CTR-003<br/>[D_RISK / 风险]"]:::dsProd
-    DS401["[production]signal.composite<br/>信号.合成信号<br/>CTR: CTR-P1-015<br/>[D_SIGLEGACY / 信号(legacy)]"]:::dsProd
-    JOB380("[production]backtest.calc_metrics<br/>回测.计算指标<br/>trigger: manual / 手动"):::jobBacktest
-    JOB378("[production]backtest.match_fills<br/>回测.撮合成交<br/>trigger: event_driven / 事件驱动"):::jobBacktest
-    JOB376("[production]backtest.replay_ticks<br/>回测.Tick重放<br/>trigger: manual / 手动"):::jobBacktest
-    JOB377("[production]backtest.run_event_driven<br/>回测.事件驱动运行<br/>trigger: event_driven / 事件驱动"):::jobBacktest
-    JOB379("[production]backtest.update_portfolio<br/>回测.更新组合<br/>trigger: event_driven / 事件驱动"):::jobBacktest
-    JOB369("[production]aggregate.ohlc_bar<br/>聚合.OHLC K线<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB373("[production]check.risk_limits<br/>检查.风险限额<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB371("[production]compute.momentum_20d<br/>计算.20日动量<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB370("[production]compute.value_factor<br/>计算.价值因子<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB375("[production]execute.order<br/>执行.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB374("[production]generate.order<br/>生成.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB368("[production]ingest.ifind_kline<br/>采集.iFind行情<br/>trigger: scheduled / 定时"):::jobProd
-    JOB372("[production]synthesize.signal<br/>合成.信号<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB368 -->|produces / 产出| DS397
-    JOB369 -->|produces / 产出| DS398
-    JOB370 -->|produces / 产出| DS399
-    JOB371 -->|produces / 产出| DS400
-    JOB372 -->|produces / 产出| DS401
-    JOB373 -->|produces / 产出| DS402
-    JOB374 -->|produces / 产出| DS403
-    JOB375 -->|produces / 产出| DS404
-    JOB375 -->|produces / 产出| DS405
-    JOB380 -->|produces / 产出| DS406
-    JOB376 -->|produces / 产出| DS407
-    JOB377 -->|produces / 产出| DS408
-    JOB378 -->|produces / 产出| DS409
-    JOB379 -->|produces / 产出| DS410
-    DS397 -->|consumed by / 被消费于| JOB369
-    DS397 -->|consumed by / 被消费于| JOB376
-    DS398 -->|consumed by / 被消费于| JOB370
-    DS398 -->|consumed by / 被消费于| JOB371
-    DS399 -->|consumed by / 被消费于| JOB372
-    DS400 -->|consumed by / 被消费于| JOB372
-    DS401 -->|consumed by / 被消费于| JOB373
-    DS401 -->|consumed by / 被消费于| JOB374
-    DS402 -->|consumed by / 被消费于| JOB374
-    DS403 -->|consumed by / 被消费于| JOB375
-    DS407 -->|consumed by / 被消费于| JOB377
-    DS408 -->|consumed by / 被消费于| JOB378
-    DS409 -->|consumed by / 被消费于| JOB379
-    DS410 -->|consumed by / 被消费于| JOB380
+    DS479["[production]backtest.fills<br/>回测.模拟成交<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS480["[production]backtest.nav_series<br/>回测.净值序列<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS478["[production]backtest.target_weights<br/>回测.目标权重<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS477["[production]backtest.tick_event<br/>回测.Tick事件<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS476["[production]backtest.result<br/>回测.结果<br/>CTR: CTR-P1-016<br/>[D_BACKTEST / 回测]"]:::dsProd
+    DS470["[production]factor.momentum_20d<br/>因子.20日动量<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
+    DS469["[production]factor.value_factor<br/>因子.价值因子<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
+    DS474["[production]fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE / 执行核心]"]:::dsProd
+    DS468["[production]market_data.ohlc_bar<br/>市场数据.OHLC K线<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
+    DS467["[production]market_data.tick<br/>市场数据.Tick行情<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
+    DS473["[production]order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE / 持仓核心]"]:::dsProd
+    DS475["[production]position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE / 执行核心]"]:::dsProd
+    DS472["[production]risk.limits<br/>风险.限额<br/>CTR: CTR-003<br/>[D_RISK / 风险]"]:::dsProd
+    DS471["[production]signal.composite<br/>信号.合成信号<br/>CTR: CTR-P1-015<br/>[D_SIGLEGACY / 信号(legacy)]"]:::dsProd
+    JOB445("[production]backtest.calc_metrics<br/>回测.计算指标<br/>trigger: manual / 手动"):::jobBacktest
+    JOB443("[production]backtest.match_fills<br/>回测.撮合成交<br/>trigger: event_driven / 事件驱动"):::jobBacktest
+    JOB441("[production]backtest.replay_ticks<br/>回测.Tick重放<br/>trigger: manual / 手动"):::jobBacktest
+    JOB442("[production]backtest.run_event_driven<br/>回测.事件驱动运行<br/>trigger: event_driven / 事件驱动"):::jobBacktest
+    JOB444("[production]backtest.update_portfolio<br/>回测.更新组合<br/>trigger: event_driven / 事件驱动"):::jobBacktest
+    JOB434("[production]aggregate.ohlc_bar<br/>聚合.OHLC K线<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB438("[production]check.risk_limits<br/>检查.风险限额<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB436("[production]compute.momentum_20d<br/>计算.20日动量<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB435("[production]compute.value_factor<br/>计算.价值因子<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB440("[production]execute.order<br/>执行.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB439("[production]generate.order<br/>生成.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB433("[production]ingest.ifind_kline<br/>采集.iFind行情<br/>trigger: scheduled / 定时"):::jobProd
+    JOB437("[production]synthesize.signal<br/>合成.信号<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB433 -->|produces / 产出| DS467
+    JOB434 -->|produces / 产出| DS468
+    JOB435 -->|produces / 产出| DS469
+    JOB436 -->|produces / 产出| DS470
+    JOB437 -->|produces / 产出| DS471
+    JOB438 -->|produces / 产出| DS472
+    JOB439 -->|produces / 产出| DS473
+    JOB440 -->|produces / 产出| DS474
+    JOB440 -->|produces / 产出| DS475
+    JOB445 -->|produces / 产出| DS476
+    JOB441 -->|produces / 产出| DS477
+    JOB442 -->|produces / 产出| DS478
+    JOB443 -->|produces / 产出| DS479
+    JOB444 -->|produces / 产出| DS480
+    DS467 -->|consumed by / 被消费于| JOB434
+    DS467 -->|consumed by / 被消费于| JOB441
+    DS468 -->|consumed by / 被消费于| JOB435
+    DS468 -->|consumed by / 被消费于| JOB436
+    DS469 -->|consumed by / 被消费于| JOB437
+    DS470 -->|consumed by / 被消费于| JOB437
+    DS471 -->|consumed by / 被消费于| JOB438
+    DS471 -->|consumed by / 被消费于| JOB439
+    DS472 -->|consumed by / 被消费于| JOB439
+    DS473 -->|consumed by / 被消费于| JOB440
+    DS477 -->|consumed by / 被消费于| JOB442
+    DS478 -->|consumed by / 被消费于| JOB443
+    DS479 -->|consumed by / 被消费于| JOB444
+    DS480 -->|consumed by / 被消费于| JOB445
 
     classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
     classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100
@@ -136,61 +136,61 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    DS409["[production]backtest.fills<br/>回测.模拟成交<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS410["[production]backtest.nav_series<br/>回测.净值序列<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS408["[production]backtest.target_weights<br/>回测.目标权重<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS407["[production]backtest.tick_event<br/>回测.Tick事件<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS406["[production]backtest.result<br/>回测.结果<br/>CTR: CTR-P1-016<br/>[D_BACKTEST / 回测]"]:::dsProd
-    DS400["[production]factor.momentum_20d<br/>因子.20日动量<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
-    DS399["[production]factor.value_factor<br/>因子.价值因子<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
-    DS404["[production]fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE / 执行核心]"]:::dsProd
-    DS398["[production]market_data.ohlc_bar<br/>市场数据.OHLC K线<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
-    DS397["[production]market_data.tick<br/>市场数据.Tick行情<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
-    DS403["[production]order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE / 持仓核心]"]:::dsProd
-    DS405["[production]position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE / 执行核心]"]:::dsProd
-    DS402["[production]risk.limits<br/>风险.限额<br/>CTR: CTR-003<br/>[D_RISK / 风险]"]:::dsProd
-    DS401["[production]signal.composite<br/>信号.合成信号<br/>CTR: CTR-P1-015<br/>[D_SIGLEGACY / 信号(legacy)]"]:::dsProd
-    JOB380("[production]backtest.calc_metrics<br/>回测.计算指标<br/>trigger: manual / 手动"):::jobBacktest
-    JOB378("[production]backtest.match_fills<br/>回测.撮合成交<br/>trigger: event_driven / 事件驱动"):::jobBacktest
-    JOB376("[production]backtest.replay_ticks<br/>回测.Tick重放<br/>trigger: manual / 手动"):::jobBacktest
-    JOB377("[production]backtest.run_event_driven<br/>回测.事件驱动运行<br/>trigger: event_driven / 事件驱动"):::jobBacktest
-    JOB379("[production]backtest.update_portfolio<br/>回测.更新组合<br/>trigger: event_driven / 事件驱动"):::jobBacktest
-    JOB369("[production]aggregate.ohlc_bar<br/>聚合.OHLC K线<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB373("[production]check.risk_limits<br/>检查.风险限额<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB371("[production]compute.momentum_20d<br/>计算.20日动量<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB370("[production]compute.value_factor<br/>计算.价值因子<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB375("[production]execute.order<br/>执行.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB374("[production]generate.order<br/>生成.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB368("[production]ingest.ifind_kline<br/>采集.iFind行情<br/>trigger: scheduled / 定时"):::jobProd
-    JOB372("[production]synthesize.signal<br/>合成.信号<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB368 -->|produces / 产出| DS397
-    JOB369 -->|produces / 产出| DS398
-    JOB370 -->|produces / 产出| DS399
-    JOB371 -->|produces / 产出| DS400
-    JOB372 -->|produces / 产出| DS401
-    JOB373 -->|produces / 产出| DS402
-    JOB374 -->|produces / 产出| DS403
-    JOB375 -->|produces / 产出| DS404
-    JOB375 -->|produces / 产出| DS405
-    JOB380 -->|produces / 产出| DS406
-    JOB376 -->|produces / 产出| DS407
-    JOB377 -->|produces / 产出| DS408
-    JOB378 -->|produces / 产出| DS409
-    JOB379 -->|produces / 产出| DS410
-    DS397 -->|consumed by / 被消费于| JOB369
-    DS397 -->|consumed by / 被消费于| JOB376
-    DS398 -->|consumed by / 被消费于| JOB370
-    DS398 -->|consumed by / 被消费于| JOB371
-    DS399 -->|consumed by / 被消费于| JOB372
-    DS400 -->|consumed by / 被消费于| JOB372
-    DS401 -->|consumed by / 被消费于| JOB373
-    DS401 -->|consumed by / 被消费于| JOB374
-    DS402 -->|consumed by / 被消费于| JOB374
-    DS403 -->|consumed by / 被消费于| JOB375
-    DS407 -->|consumed by / 被消费于| JOB377
-    DS408 -->|consumed by / 被消费于| JOB378
-    DS409 -->|consumed by / 被消费于| JOB379
-    DS410 -->|consumed by / 被消费于| JOB380
+    DS479["[production]backtest.fills<br/>回测.模拟成交<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS480["[production]backtest.nav_series<br/>回测.净值序列<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS478["[production]backtest.target_weights<br/>回测.目标权重<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS477["[production]backtest.tick_event<br/>回测.Tick事件<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS476["[production]backtest.result<br/>回测.结果<br/>CTR: CTR-P1-016<br/>[D_BACKTEST / 回测]"]:::dsProd
+    DS470["[production]factor.momentum_20d<br/>因子.20日动量<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
+    DS469["[production]factor.value_factor<br/>因子.价值因子<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
+    DS474["[production]fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE / 执行核心]"]:::dsProd
+    DS468["[production]market_data.ohlc_bar<br/>市场数据.OHLC K线<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
+    DS467["[production]market_data.tick<br/>市场数据.Tick行情<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
+    DS473["[production]order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE / 持仓核心]"]:::dsProd
+    DS475["[production]position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE / 执行核心]"]:::dsProd
+    DS472["[production]risk.limits<br/>风险.限额<br/>CTR: CTR-003<br/>[D_RISK / 风险]"]:::dsProd
+    DS471["[production]signal.composite<br/>信号.合成信号<br/>CTR: CTR-P1-015<br/>[D_SIGLEGACY / 信号(legacy)]"]:::dsProd
+    JOB445("[production]backtest.calc_metrics<br/>回测.计算指标<br/>trigger: manual / 手动"):::jobBacktest
+    JOB443("[production]backtest.match_fills<br/>回测.撮合成交<br/>trigger: event_driven / 事件驱动"):::jobBacktest
+    JOB441("[production]backtest.replay_ticks<br/>回测.Tick重放<br/>trigger: manual / 手动"):::jobBacktest
+    JOB442("[production]backtest.run_event_driven<br/>回测.事件驱动运行<br/>trigger: event_driven / 事件驱动"):::jobBacktest
+    JOB444("[production]backtest.update_portfolio<br/>回测.更新组合<br/>trigger: event_driven / 事件驱动"):::jobBacktest
+    JOB434("[production]aggregate.ohlc_bar<br/>聚合.OHLC K线<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB438("[production]check.risk_limits<br/>检查.风险限额<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB436("[production]compute.momentum_20d<br/>计算.20日动量<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB435("[production]compute.value_factor<br/>计算.价值因子<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB440("[production]execute.order<br/>执行.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB439("[production]generate.order<br/>生成.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB433("[production]ingest.ifind_kline<br/>采集.iFind行情<br/>trigger: scheduled / 定时"):::jobProd
+    JOB437("[production]synthesize.signal<br/>合成.信号<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB433 -->|produces / 产出| DS467
+    JOB434 -->|produces / 产出| DS468
+    JOB435 -->|produces / 产出| DS469
+    JOB436 -->|produces / 产出| DS470
+    JOB437 -->|produces / 产出| DS471
+    JOB438 -->|produces / 产出| DS472
+    JOB439 -->|produces / 产出| DS473
+    JOB440 -->|produces / 产出| DS474
+    JOB440 -->|produces / 产出| DS475
+    JOB445 -->|produces / 产出| DS476
+    JOB441 -->|produces / 产出| DS477
+    JOB442 -->|produces / 产出| DS478
+    JOB443 -->|produces / 产出| DS479
+    JOB444 -->|produces / 产出| DS480
+    DS467 -->|consumed by / 被消费于| JOB434
+    DS467 -->|consumed by / 被消费于| JOB441
+    DS468 -->|consumed by / 被消费于| JOB435
+    DS468 -->|consumed by / 被消费于| JOB436
+    DS469 -->|consumed by / 被消费于| JOB437
+    DS470 -->|consumed by / 被消费于| JOB437
+    DS471 -->|consumed by / 被消费于| JOB438
+    DS471 -->|consumed by / 被消费于| JOB439
+    DS472 -->|consumed by / 被消费于| JOB439
+    DS473 -->|consumed by / 被消费于| JOB440
+    DS477 -->|consumed by / 被消费于| JOB442
+    DS478 -->|consumed by / 被消费于| JOB443
+    DS479 -->|consumed by / 被消费于| JOB444
+    DS480 -->|consumed by / 被消费于| JOB445
 
     classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
     classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100
@@ -208,42 +208,42 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    DS406["[production]backtest.result<br/>回测.结果<br/>CTR: CTR-P1-016<br/>[D_BACKTEST / 回测]"]:::dsProd
-    DS400["[production]factor.momentum_20d<br/>因子.20日动量<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
-    DS399["[production]factor.value_factor<br/>因子.价值因子<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
-    DS404["[production]fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE / 执行核心]"]:::dsProd
-    DS398["[production]market_data.ohlc_bar<br/>市场数据.OHLC K线<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
-    DS397["[production]market_data.tick<br/>市场数据.Tick行情<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
-    DS403["[production]order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE / 持仓核心]"]:::dsProd
-    DS405["[production]position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE / 执行核心]"]:::dsProd
-    DS402["[production]risk.limits<br/>风险.限额<br/>CTR: CTR-003<br/>[D_RISK / 风险]"]:::dsProd
-    DS401["[production]signal.composite<br/>信号.合成信号<br/>CTR: CTR-P1-015<br/>[D_SIGLEGACY / 信号(legacy)]"]:::dsProd
-    JOB369("[production]aggregate.ohlc_bar<br/>聚合.OHLC K线<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB373("[production]check.risk_limits<br/>检查.风险限额<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB371("[production]compute.momentum_20d<br/>计算.20日动量<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB370("[production]compute.value_factor<br/>计算.价值因子<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB375("[production]execute.order<br/>执行.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB374("[production]generate.order<br/>生成.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB368("[production]ingest.ifind_kline<br/>采集.iFind行情<br/>trigger: scheduled / 定时"):::jobProd
-    JOB372("[production]synthesize.signal<br/>合成.信号<br/>trigger: event_driven / 事件驱动"):::jobProd
-    JOB368 -->|produces / 产出| DS397
-    JOB369 -->|produces / 产出| DS398
-    JOB370 -->|produces / 产出| DS399
-    JOB371 -->|produces / 产出| DS400
-    JOB372 -->|produces / 产出| DS401
-    JOB373 -->|produces / 产出| DS402
-    JOB374 -->|produces / 产出| DS403
-    JOB375 -->|produces / 产出| DS404
-    JOB375 -->|produces / 产出| DS405
-    DS397 -->|consumed by / 被消费于| JOB369
-    DS398 -->|consumed by / 被消费于| JOB370
-    DS398 -->|consumed by / 被消费于| JOB371
-    DS399 -->|consumed by / 被消费于| JOB372
-    DS400 -->|consumed by / 被消费于| JOB372
-    DS401 -->|consumed by / 被消费于| JOB373
-    DS401 -->|consumed by / 被消费于| JOB374
-    DS402 -->|consumed by / 被消费于| JOB374
-    DS403 -->|consumed by / 被消费于| JOB375
+    DS476["[production]backtest.result<br/>回测.结果<br/>CTR: CTR-P1-016<br/>[D_BACKTEST / 回测]"]:::dsProd
+    DS470["[production]factor.momentum_20d<br/>因子.20日动量<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
+    DS469["[production]factor.value_factor<br/>因子.价值因子<br/>CTR: CTR-002<br/>[D_FACTOR / 因子]"]:::dsProd
+    DS474["[production]fill.executed<br/>成交.已成交<br/>CTR: CTR-005<br/>[D_EX_CORE / 执行核心]"]:::dsProd
+    DS468["[production]market_data.ohlc_bar<br/>市场数据.OHLC K线<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
+    DS467["[production]market_data.tick<br/>市场数据.Tick行情<br/>CTR: CTR-001<br/>[D_MKT_DATA / 市场数据]"]:::dsProd
+    DS473["[production]order.target<br/>订单.目标订单<br/>CTR: CTR-004<br/>[D_PF_CORE / 持仓核心]"]:::dsProd
+    DS475["[production]position.snapshot<br/>持仓.快照<br/>CTR: CTR-006<br/>[D_EX_CORE / 执行核心]"]:::dsProd
+    DS472["[production]risk.limits<br/>风险.限额<br/>CTR: CTR-003<br/>[D_RISK / 风险]"]:::dsProd
+    DS471["[production]signal.composite<br/>信号.合成信号<br/>CTR: CTR-P1-015<br/>[D_SIGLEGACY / 信号(legacy)]"]:::dsProd
+    JOB434("[production]aggregate.ohlc_bar<br/>聚合.OHLC K线<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB438("[production]check.risk_limits<br/>检查.风险限额<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB436("[production]compute.momentum_20d<br/>计算.20日动量<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB435("[production]compute.value_factor<br/>计算.价值因子<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB440("[production]execute.order<br/>执行.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB439("[production]generate.order<br/>生成.订单<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB433("[production]ingest.ifind_kline<br/>采集.iFind行情<br/>trigger: scheduled / 定时"):::jobProd
+    JOB437("[production]synthesize.signal<br/>合成.信号<br/>trigger: event_driven / 事件驱动"):::jobProd
+    JOB433 -->|produces / 产出| DS467
+    JOB434 -->|produces / 产出| DS468
+    JOB435 -->|produces / 产出| DS469
+    JOB436 -->|produces / 产出| DS470
+    JOB437 -->|produces / 产出| DS471
+    JOB438 -->|produces / 产出| DS472
+    JOB439 -->|produces / 产出| DS473
+    JOB440 -->|produces / 产出| DS474
+    JOB440 -->|produces / 产出| DS475
+    DS467 -->|consumed by / 被消费于| JOB434
+    DS468 -->|consumed by / 被消费于| JOB435
+    DS468 -->|consumed by / 被消费于| JOB436
+    DS469 -->|consumed by / 被消费于| JOB437
+    DS470 -->|consumed by / 被消费于| JOB437
+    DS471 -->|consumed by / 被消费于| JOB438
+    DS471 -->|consumed by / 被消费于| JOB439
+    DS472 -->|consumed by / 被消费于| JOB439
+    DS473 -->|consumed by / 被消费于| JOB440
 
     classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
     classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100
@@ -261,23 +261,23 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    DS409["[production]backtest.fills<br/>回测.模拟成交<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS410["[production]backtest.nav_series<br/>回测.净值序列<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS408["[production]backtest.target_weights<br/>回测.目标权重<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    DS407["[production]backtest.tick_event<br/>回测.Tick事件<br/>[D_BACKTEST / 回测]"]:::dsBacktest
-    JOB380("[production]backtest.calc_metrics<br/>回测.计算指标<br/>trigger: manual / 手动"):::jobBacktest
-    JOB378("[production]backtest.match_fills<br/>回测.撮合成交<br/>trigger: event_driven / 事件驱动"):::jobBacktest
-    JOB376("[production]backtest.replay_ticks<br/>回测.Tick重放<br/>trigger: manual / 手动"):::jobBacktest
-    JOB377("[production]backtest.run_event_driven<br/>回测.事件驱动运行<br/>trigger: event_driven / 事件驱动"):::jobBacktest
-    JOB379("[production]backtest.update_portfolio<br/>回测.更新组合<br/>trigger: event_driven / 事件驱动"):::jobBacktest
-    JOB376 -->|produces / 产出| DS407
-    JOB377 -->|produces / 产出| DS408
-    JOB378 -->|produces / 产出| DS409
-    JOB379 -->|produces / 产出| DS410
-    DS407 -->|consumed by / 被消费于| JOB377
-    DS408 -->|consumed by / 被消费于| JOB378
-    DS409 -->|consumed by / 被消费于| JOB379
-    DS410 -->|consumed by / 被消费于| JOB380
+    DS479["[production]backtest.fills<br/>回测.模拟成交<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS480["[production]backtest.nav_series<br/>回测.净值序列<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS478["[production]backtest.target_weights<br/>回测.目标权重<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    DS477["[production]backtest.tick_event<br/>回测.Tick事件<br/>[D_BACKTEST / 回测]"]:::dsBacktest
+    JOB445("[production]backtest.calc_metrics<br/>回测.计算指标<br/>trigger: manual / 手动"):::jobBacktest
+    JOB443("[production]backtest.match_fills<br/>回测.撮合成交<br/>trigger: event_driven / 事件驱动"):::jobBacktest
+    JOB441("[production]backtest.replay_ticks<br/>回测.Tick重放<br/>trigger: manual / 手动"):::jobBacktest
+    JOB442("[production]backtest.run_event_driven<br/>回测.事件驱动运行<br/>trigger: event_driven / 事件驱动"):::jobBacktest
+    JOB444("[production]backtest.update_portfolio<br/>回测.更新组合<br/>trigger: event_driven / 事件驱动"):::jobBacktest
+    JOB441 -->|produces / 产出| DS477
+    JOB442 -->|produces / 产出| DS478
+    JOB443 -->|produces / 产出| DS479
+    JOB444 -->|produces / 产出| DS480
+    DS477 -->|consumed by / 被消费于| JOB442
+    DS478 -->|consumed by / 被消费于| JOB443
+    DS479 -->|consumed by / 被消费于| JOB444
+    DS480 -->|consumed by / 被消费于| JOB445
 
     classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
     classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100
@@ -293,35 +293,35 @@ flowchart LR
 
 | ID | entity_name / 实体名 | scope / 范围 | contract_ref / 契约引用 | domain / 域 | pit_policy / PIT策略 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 |
 |----|----------------------|--------------|---------------------------|------------|------------------|------------------|---------------------------|--------------------|
-| DS-409 | backtest.fills / 回测.模拟成交 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-410 | backtest.nav_series / 回测.净值序列 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-408 | backtest.target_weights / 回测.目标权重 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-407 | backtest.tick_event / 回测.Tick事件 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-406 | backtest.result / 回测.结果 | production / 生产 | CTR-P1-016 | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-400 | factor.momentum_20d / 因子.20日动量 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-399 | factor.value_factor / 因子.价值因子 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-404 | fill.executed / 成交.已成交 | production / 生产 | CTR-005 | D_EX_CORE / 执行核心 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-398 | market_data.ohlc_bar / 市场数据.OHLC K线 | production / 生产 | CTR-001 | D_MKT_DATA / 市场数据 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-397 | market_data.tick / 市场数据.Tick行情 | production / 生产 | CTR-001 | D_MKT_DATA / 市场数据 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-403 | order.target / 订单.目标订单 | production / 生产 | CTR-004 | D_PF_CORE / 持仓核心 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-405 | position.snapshot / 持仓.快照 | production / 生产 | CTR-006 | D_EX_CORE / 执行核心 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-402 | risk.limits / 风险.限额 | production / 生产 | CTR-003 | D_RISK / 风险 | strict / 严格 | - | production / 生产 | generated / 已生成 |
-| DS-401 | signal.composite / 信号.合成信号 | production / 生产 | CTR-P1-015 | D_SIGLEGACY / 信号(legacy) | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-479 | backtest.fills / 回测.模拟成交 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-480 | backtest.nav_series / 回测.净值序列 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-478 | backtest.target_weights / 回测.目标权重 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-477 | backtest.tick_event / 回测.Tick事件 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-476 | backtest.result / 回测.结果 | production / 生产 | CTR-P1-016 | D_BACKTEST / 回测 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-470 | factor.momentum_20d / 因子.20日动量 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-469 | factor.value_factor / 因子.价值因子 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-474 | fill.executed / 成交.已成交 | production / 生产 | CTR-005 | D_EX_CORE / 执行核心 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-468 | market_data.ohlc_bar / 市场数据.OHLC K线 | production / 生产 | CTR-001 | D_MKT_DATA / 市场数据 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-467 | market_data.tick / 市场数据.Tick行情 | production / 生产 | CTR-001 | D_MKT_DATA / 市场数据 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-473 | order.target / 订单.目标订单 | production / 生产 | CTR-004 | D_PF_CORE / 持仓核心 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-475 | position.snapshot / 持仓.快照 | production / 生产 | CTR-006 | D_EX_CORE / 执行核心 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-472 | risk.limits / 风险.限额 | production / 生产 | CTR-003 | D_RISK / 风险 | strict / 严格 | - | production / 生产 | generated / 已生成 |
+| DS-471 | signal.composite / 信号.合成信号 | production / 生产 | CTR-P1-015 | D_SIGLEGACY / 信号(legacy) | strict / 严格 | - | production / 生产 | generated / 已生成 |
 
 ## Job 清单
 
 | ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 |
 |----|-------------------|--------------|------------------------------|----------------------------|------------------------------|------------------|---------------------------|--------------------|
-| JOB-380 | backtest.calc_metrics / 回测.计算指标 | backtest_internal / 回测内部 | src/zephyr/backtest/metrics.py | manual / 手动 | backtest_tick | - | production / 生产 | generated / 已生成 |
-| JOB-378 | backtest.match_fills / 回测.撮合成交 | backtest_internal / 回测内部 | src/zephyr/backtest/matching_logic.py | event_driven / 事件驱动 | backtest_tick | - | production / 生产 | generated / 已生成 |
-| JOB-376 | backtest.replay_ticks / 回测.Tick重放 | backtest_internal / 回测内部 | src/zephyr/backtest/tick_replay.py | manual / 手动 | backtest_tick | - | production / 生产 | generated / 已生成 |
-| JOB-377 | backtest.run_event_driven / 回测.事件驱动运行 | backtest_internal / 回测内部 | src/zephyr/backtest/event_engine.py | event_driven / 事件驱动 | backtest_tick | - | production / 生产 | generated / 已生成 |
-| JOB-379 | backtest.update_portfolio / 回测.更新组合 | backtest_internal / 回测内部 | src/zephyr/backtest/portfolio.py | event_driven / 事件驱动 | backtest_tick | - | production / 生产 | generated / 已生成 |
-| JOB-369 | aggregate.ohlc_bar / 聚合.OHLC K线 | production / 生产 | src/zephyr/data/aggregator.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
-| JOB-373 | check.risk_limits / 检查.风险限额 | production / 生产 | src/zephyr/risk/risk_checker.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
-| JOB-371 | compute.momentum_20d / 计算.20日动量 | production / 生产 | src/zephyr/factor/momentum.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
-| JOB-370 | compute.value_factor / 计算.价值因子 | production / 生产 | src/zephyr/factor/value_factor.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
-| JOB-375 | execute.order / 执行.订单 | production / 生产 | src/zephyr/ex_core/executor.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
-| JOB-374 | generate.order / 生成.订单 | production / 生产 | src/zephyr/pf_core/order_generator.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
-| JOB-368 | ingest.ifind_kline / 采集.iFind行情 | production / 生产 | src/zephyr/data/ingest_ifind.py | scheduled / 定时 | production / 生产 | - | production / 生产 | generated / 已生成 |
-| JOB-372 | synthesize.signal / 合成.信号 | production / 生产 | src/zephyr/signal_ashare/synthesizer.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
+| JOB-445 | backtest.calc_metrics / 回测.计算指标 | backtest_internal / 回测内部 | src/zephyr/backtest/metrics.py | manual / 手动 | backtest_tick | - | production / 生产 | generated / 已生成 |
+| JOB-443 | backtest.match_fills / 回测.撮合成交 | backtest_internal / 回测内部 | src/zephyr/backtest/matching_logic.py | event_driven / 事件驱动 | backtest_tick | - | production / 生产 | generated / 已生成 |
+| JOB-441 | backtest.replay_ticks / 回测.Tick重放 | backtest_internal / 回测内部 | src/zephyr/backtest/tick_replay.py | manual / 手动 | backtest_tick | - | production / 生产 | generated / 已生成 |
+| JOB-442 | backtest.run_event_driven / 回测.事件驱动运行 | backtest_internal / 回测内部 | src/zephyr/backtest/event_engine.py | event_driven / 事件驱动 | backtest_tick | - | production / 生产 | generated / 已生成 |
+| JOB-444 | backtest.update_portfolio / 回测.更新组合 | backtest_internal / 回测内部 | src/zephyr/backtest/portfolio.py | event_driven / 事件驱动 | backtest_tick | - | production / 生产 | generated / 已生成 |
+| JOB-434 | aggregate.ohlc_bar / 聚合.OHLC K线 | production / 生产 | src/zephyr/data/aggregator.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
+| JOB-438 | check.risk_limits / 检查.风险限额 | production / 生产 | src/zephyr/risk/risk_checker.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
+| JOB-436 | compute.momentum_20d / 计算.20日动量 | production / 生产 | src/zephyr/factor/momentum.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
+| JOB-435 | compute.value_factor / 计算.价值因子 | production / 生产 | src/zephyr/factor/value_factor.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
+| JOB-440 | execute.order / 执行.订单 | production / 生产 | src/zephyr/ex_core/executor.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
+| JOB-439 | generate.order / 生成.订单 | production / 生产 | src/zephyr/pf_core/order_generator.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |
+| JOB-433 | ingest.ifind_kline / 采集.iFind行情 | production / 生产 | src/zephyr/data/ingest_ifind.py | scheduled / 定时 | production / 生产 | - | production / 生产 | generated / 已生成 |
+| JOB-437 | synthesize.signal / 合成.信号 | production / 生产 | src/zephyr/signal_ashare/synthesizer.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 |

@@ -20,19 +20,19 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 1583 | 31.7% |
+| production（生产态） | 1587 | 31.7% |
 | design（设计态） | 52 | 1.0% |
-| prototype（原型态） | 3361 | 67.3% |
+| prototype（原型态） | 3361 | 67.2% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **4996** | **100%** |
+| **总计** | **5000** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4947 | 99.0% |
+| generated | 4947 | 98.9% |
 | planned | 36 | 0.7% |
-| stable | 13 | 0.3% |
+| stable | 17 | 0.3% |
 
 ## 各域设计成熟度统计
 
@@ -66,7 +66,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication | 92 | 33 | 0 | 59 | 0 | 35.9% |
 | D_INFRA_OPS | asset-inventory | 1 | 0 | 1 | 0 | 0 | 0.0% |
 | D_INFRA_RECOVERY | rollback_recovery | 54 | 48 | 0 | 6 | 0 | 88.9% |
-| D_INFRA_RUNTIME | runtime_core | 145 | 94 | 0 | 51 | 0 | 64.8% |
+| D_INFRA_RUNTIME | runtime_core | 149 | 98 | 0 | 51 | 0 | 65.8% |
 | D_INFRA_TELEMETRY | observability_profiling | 25 | 13 | 0 | 12 | 0 | 52.0% |
 | D_INTEGRATION | pipeline_routing | 72 | 30 | 0 | 42 | 0 | 41.7% |
 | D_INTEGRATION_GATEWAY | mcp_servers | 20 | 1 | 0 | 19 | 0 | 5.0% |

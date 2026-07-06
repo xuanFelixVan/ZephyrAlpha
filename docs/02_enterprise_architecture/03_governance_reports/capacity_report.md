@@ -96,7 +96,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication | L0_infrastructure | 33 | 150 | 22.0% | 正常 |
 | D_INFRA_OPS | asset-inventory | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 48 | 150 | 32.0% | 正常 |
-| D_INFRA_RUNTIME | runtime_core | L0_infrastructure | 94 | 150 | 62.7% | 正常 |
+| D_INFRA_RUNTIME | runtime_core | L0_infrastructure | 98 | 150 | 65.3% | 正常 |
 | D_INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 13 | 150 | 8.7% | 正常 |
 | D_INTEGRATION | pipeline_routing | L1_foundation | 30 | 150 | 20.0% | 正常 |
 | D_INTEGRATION_GATEWAY | mcp_servers | L1_foundation | 1 | 150 | 0.7% | 正常 |
