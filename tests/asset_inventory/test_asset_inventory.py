@@ -329,15 +329,15 @@ class TestTrustAnchorResult:
 
 class TestTripleTrustAnchorGate:
     def test_calculate_trust_full(self):
-        assert trust_anchor.TripleTrustAnchorGate._calculate_trust(True, True, True) is trust_anchor.TrustLevel.FULL
+        assert trust_anchor.TripleTrustAnchorGate._calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": True}) is trust_anchor.TrustLevel.FULL
 
     def test_calculate_trust_partial(self):
-        assert trust_anchor.TripleTrustAnchorGate._calculate_trust(True, True, False) is trust_anchor.TrustLevel.PARTIAL
-        assert trust_anchor.TripleTrustAnchorGate._calculate_trust(True, False, True) is trust_anchor.TrustLevel.PARTIAL
+        assert trust_anchor.TripleTrustAnchorGate._calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": False}) is trust_anchor.TrustLevel.PARTIAL
+        assert trust_anchor.TripleTrustAnchorGate._calculate_trust({"git_ok": True, "test_ok": False, "audit_ok": True}) is trust_anchor.TrustLevel.PARTIAL
 
     def test_calculate_trust_broken(self):
         assert (
-            trust_anchor.TripleTrustAnchorGate._calculate_trust(False, False, False) is trust_anchor.TrustLevel.BROKEN
+            trust_anchor.TripleTrustAnchorGate._calculate_trust({"git_ok": False, "test_ok": False, "audit_ok": False}) is trust_anchor.TrustLevel.BROKEN
         )
 
     def test_recommend_full(self):

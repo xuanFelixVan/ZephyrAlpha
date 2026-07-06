@@ -61,7 +61,11 @@ class TripleTrustAnchorGate:
         test_ok = self._run_pytest()
         audit_ok = self._check_audit_continuity()
 
-        trust_level = self._calculate_trust(git_ok, test_ok, audit_ok)
+        trust_level = self._calculate_trust({
+            "git_ok": git_ok,
+            "test_ok": test_ok,
+            "audit_ok": audit_ok,
+        })
 
         self._cache = TrustAnchorResult(
             git_ok=git_ok,
@@ -135,8 +139,9 @@ class TripleTrustAnchorGate:
             return False
 
     @staticmethod
-    def _calculate_trust(git_ok: bool, test_ok: bool, audit_ok: bool) -> TrustLevel:
-        green_count = sum([git_ok, test_ok, audit_ok])
+    def _calculate_trust(checks: dict[str, bool]) -> TrustLevel:
+        # 5.96.3 修复：原 (git_ok, test_ok, audit_ok) 三布尔参数蔓延，改为 dict 提升调用点可读性
+        green_count = sum(checks.values())
         if green_count == 3:
             return TrustLevel.FULL
         if green_count == 2:

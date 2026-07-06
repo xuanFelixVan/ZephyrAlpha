@@ -16,6 +16,7 @@ from __future__ import annotations
 from zephyr.infrastructure.rollback.auto_rollback_trigger import (
     AutoGuardResult,
     AutoRollbackTrigger,
+    ActionType,
     FailureCategory,
     TriggerDecision,
 )
@@ -78,11 +79,8 @@ class TestTriggerDecision:
     def test_instantiation(self):
         td = TriggerDecision(
             category=FailureCategory.HARD,
-            action="ROLLBACK_IMMEDIATE",
+            action=ActionType.ROLLBACK,
             reason="critical failure",
-            should_rollback=True,
-            retry_allowed=False,
-            forward_fix_allowed=False,
         )
         assert td.category == FailureCategory.HARD
         assert td.should_rollback is True
