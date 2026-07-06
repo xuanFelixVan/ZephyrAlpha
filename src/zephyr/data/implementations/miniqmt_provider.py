@@ -243,6 +243,9 @@ class MiniQMTProvider(DataSourceBase):
                         if is_daily:
                             # 日K：YYYYMMDD（8 位）→ YYYY-MM-DD
                             trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
+                            # volume 在 ClickHouse 中是 UInt64，需转 int
+                            vol = self.safe_float(volumes[i])
+                            vol = int(vol) if vol is not None else None
                             rows.append((
                                 trade_date,
                                 symbol,
@@ -250,7 +253,7 @@ class MiniQMTProvider(DataSourceBase):
                                 self.safe_float(highs[i]),
                                 self.safe_float(lows[i]),
                                 self.safe_float(closes[i]),
-                                self.safe_float(volumes[i]),
+                                vol,
                                 self.safe_float(amounts[i]),
                             ))
                         else:
@@ -260,6 +263,8 @@ class MiniQMTProvider(DataSourceBase):
                                 f"{s[:4]}-{s[4:6]}-{s[6:8]} "
                                 f"{s[8:10]}:{s[10:12]}:{s[12:14]}"
                             )
+                            vol = self.safe_float(volumes[i])
+                            vol = int(vol) if vol is not None else None
                             rows.append((
                                 trade_date,       # trade_date
                                 trade_time,       # trade_time (YYYY-MM-DD HH:MM:SS)
@@ -268,7 +273,7 @@ class MiniQMTProvider(DataSourceBase):
                                 self.safe_float(highs[i]),
                                 self.safe_float(lows[i]),
                                 self.safe_float(closes[i]),
-                                self.safe_float(volumes[i]),
+                                vol,
                                 self.safe_float(amounts[i]),
                             ))
 
