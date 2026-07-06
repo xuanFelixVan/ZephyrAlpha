@@ -37,6 +37,7 @@ Redis H1 热缓存为预留接口（抛 NotImplementedError），待 P2 实盘�
 
 import sqlite3
 import threading
+from pathlib import Path
 from typing import Any
 
 import psycopg2
@@ -44,7 +45,28 @@ from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
-from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
+from zephyr.shared.security.secrets import get_secret_from_file_or_default
+
+
+# ClickHouse 连接配置文件路径（P1-7 修复：消除硬编码，与 .env.postgres 同模式）
+_CH_ENV_PATH: Path = REPO_ROOT / "config" / ".env.clickhouse"
+
+
+def _load_clickhouse_config() -> dict[str, str]:
+    """从 config/.env.clickhouse 加载 ClickHouse 连接参数。
+
+    P1-7 修复：消除 host/port/user/password/database 硬编码。
+    优先级：os.environ > config/.env.clickhouse > 默认值（localhost:9000/default/空/c1_market）。
+    文件不存在时全走默认值（开发环境友好），生产环境应创建该文件覆盖默认值。
+    """
+    return {
+        "host": get_secret_from_file_or_default("CLICKHOUSE_HOST", _CH_ENV_PATH, "localhost"),
+        "port": get_secret_from_file_or_default("CLICKHOUSE_PORT", _CH_ENV_PATH, "9000"),
+        "user": get_secret_from_file_or_default("CLICKHOUSE_USER", _CH_ENV_PATH, "default"),
+        "password": get_secret_from_file_or_default("CLICKHOUSE_PASSWORD", _CH_ENV_PATH, ""),
+        "database": get_secret_from_file_or_default("CLICKHOUSE_DATABASE", _CH_ENV_PATH, "c1_market"),
+    }
 
 
 class DatabaseService:
@@ -59,43 +81,60 @@ class DatabaseService:
         self._clickhouse_conn: Any | None = None  # clickhouse_driver.Client (C1行情仓库)
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 HIGH）：lazy init 线程安全
 
-    def get_governance_conn(self) -> sqlite3.Connection:
+    def get_governance_conn(self, read_only: bool = False) -> sqlite3.Connection:
         """获取 governance.db 连接（保持 SQLite）
 
         复用 sqlite_schema.get_db_connection() 确保 PRAGMA 基线（WAL/busy_timeout 等）一致，
         避免 DatabaseService 自行 sqlite3.connect() 导致连接行为漂移。
+
+        :param read_only: True=只读连接（PRAGMA query_only=1）。
+                          安全约束：业务数据库查询MUST显式 read_only=True（project_memory 硬约束）。
+                          read_only 仅在连接首次创建时生效（lazy init 缓存机制）。
         """
         if self._governance_conn is None:
             with self._lock:
                 if self._governance_conn is None:
                     self._governance_conn = get_db_connection(self.governance_db)
+                    if read_only:
+                        self._governance_conn.execute("PRAGMA query_only = 1")
         return self._governance_conn
 
-    def get_depgraph_conn(self) -> psycopg2.extensions.connection:
+    def get_depgraph_conn(self, read_only: bool = False) -> psycopg2.extensions.connection:
         """获取 depgraph (PostgreSQL) 连接（P2迁移后从 SQLite 切换到 PostgreSQL）
 
         返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
+
+        :param read_only: True=只读连接（SET default_transaction_read_only=on）。
+                          安全约束：业务数据库查询MUST显式 read_only=True（project_memory 硬约束）。
+                          read_only 仅在连接首次创建时生效（lazy init 缓存机制）。
         """
         if self._depgraph_conn is None:
             with self._lock:
                 if self._depgraph_conn is None:
                     self._depgraph_conn = get_depgraph_pg_connection(autocommit=True)
                     self._depgraph_conn.cursor_factory = RealDictCursor
+                    if read_only:
+                        with self._depgraph_conn.cursor() as cur:
+                            cur.execute("SET default_transaction_read_only = on")
         return self._depgraph_conn
 
     def get_clickhouse_conn(self):
         """获取 ClickHouse 连接（C1 行情仓库 c1_market）
 
-        配置来源：tmp/import_intraday.py（数据导入脚本，另一个AI对话创建）
-        host=localhost port=9000 user=default password='' database=c1_market
+        P1-7 修复：配置改为从 config/.env.clickhouse 加载（os.environ > 文件 > 默认值）。
+        安全约束：settings={'readonly': 1} 确保只读（业务数据库连接必须显式指定 read_only）。
         """
         if self._clickhouse_conn is None:
             with self._lock:
                 if self._clickhouse_conn is None:
                     from clickhouse_driver import Client
+                    cfg = _load_clickhouse_config()
                     self._clickhouse_conn = Client(
-                        host='localhost', port=9000, user='default', password='',
-                        database='c1_market',
+                        host=cfg["host"],
+                        port=int(cfg["port"]),
+                        user=cfg["user"],
+                        password=cfg["password"],
+                        database=cfg["database"],
                         settings={'readonly': 1},
                     )
         return self._clickhouse_conn

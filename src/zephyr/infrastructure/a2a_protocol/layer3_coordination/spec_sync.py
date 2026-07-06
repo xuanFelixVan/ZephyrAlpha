@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination.spec_sync
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]

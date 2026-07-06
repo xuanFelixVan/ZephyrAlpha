@@ -59,13 +59,17 @@ _TRANSITIONS[FixState.ACKNOWLEDGED] = {FixState.RESOLVING, FixState.DEAD_LETTER}
 
 
 class InvalidFixTransitionError(Exception):
-    def __init__(self, current: FixState, target: FixState, allowed: set[FixState] | None = None):
+    error_code = "ZA-IF-0005"
+
+    def __init__(self, current: FixState, target: FixState, allowed: set[FixState] | None = None, error_code: str | None = None):
         self.current = current
         self.target = target
         self.allowed = allowed or set()
         super().__init__(
             f"Invalid fix transition: {current.value} -> {target.value} (allowed: {[s.value for s in self.allowed]})"
         )
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class FixStateMachine:

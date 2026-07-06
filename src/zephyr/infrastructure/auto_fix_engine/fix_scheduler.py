@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import logging
 import threading
-import time
 from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
@@ -31,6 +30,8 @@ logger = logging.getLogger(__name__)
 
 
 class SchedulerMode(str, Enum):
+    # P0-4 修复：CONTINUOUS 模式已废弃（违反"禁止时间触发"硬约束）
+    # 保留枚举值仅为向后兼容（配置文件/测试），start() 不再启动 time.sleep 循环
     CONTINUOUS = "continuous"
     EVENT_DRIVEN = "event_driven"
 
@@ -38,7 +39,7 @@ class SchedulerMode(str, Enum):
 class FixScheduler:
     def __init__(
         self,
-        mode: SchedulerMode = SchedulerMode.CONTINUOUS,
+        mode: SchedulerMode = SchedulerMode.EVENT_DRIVEN,
         batch_interval_sec: int = 300,
         fix_fn: Callable[[list[FixAction]], FixReport] | None = None,
         scan_fn: Callable[[], list[FixAction]] | None = None,
@@ -69,13 +70,17 @@ class FixScheduler:
 
     def start(self) -> None:
         # 5.142.6 修复: 加锁保护 check-then-act, 防止并发 start() 创建多个线程
+        # P0-4 修复：CONTINUOUS 模式不再启动 time.sleep 循环（违反"禁止时间触发"硬约束）
         with self._lifecycle_lock:
             if self._running:
                 return
             self._running = True
             if self._mode is SchedulerMode.CONTINUOUS:
-                self._thread = threading.Thread(target=self._continuous_loop, daemon=True)
-                self._thread.start()
+                logger.warning(
+                    "FixScheduler.CONTINUOUS 模式已废弃（违反禁止时间触发硬约束），"
+                    "请改用 EVENT_DRIVEN 模式 + 事件订阅。本次 start() 仅标记 running=True，"
+                    "不启动 time.sleep 循环线程。"
+                )
         logger.info("Fix scheduler started in %s mode", self._mode.value)
 
     def stop(self) -> None:
@@ -94,26 +99,6 @@ class FixScheduler:
             self._event_queue.append(action)
         if self._mode is SchedulerMode.EVENT_DRIVEN and self._fix_fn:
             self._process_events()
-
-    def _continuous_loop(self) -> None:
-        while self._running:
-            try:
-                if self._scan_fn:
-                    actions = self._scan_fn()
-                    if actions and self._fix_fn:
-                        self._fix_fn(actions)
-                        self._batch_count += 1
-                        self._last_batch_time = time.time()
-                with self._lock:
-                    if self._event_queue and self._fix_fn:
-                        events = list(self._event_queue)
-                        self._event_queue.clear()
-                        self._fix_fn(events)
-                        self._batch_count += 1
-                time.sleep(self._batch_interval)
-            except Exception as exc:
-                logger.error("Scheduler loop error: %s", exc, exc_info=True)
-                time.sleep(self._batch_interval)
 
     def _process_events(self) -> None:
         with self._lock:

@@ -52,7 +52,12 @@ class FileChangeEvent:
 
 
 class FileWatcherError(Exception):
-    pass
+    error_code = "ZA-IF-0004"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class FileWatcher:

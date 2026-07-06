@@ -30,6 +30,8 @@ import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 @dataclass
 class FixResult:
@@ -52,7 +54,7 @@ class ForwardFixRunner:
         return False
 
     def generate_fix(self, commit_sha: str, error_message: str) -> FixResult:
-        patch_path = Path(".zephyr/fix_patches") / f"fix_{commit_sha}.patch"
+        patch_path = (REPO_ROOT / ".zephyr" / "fix_patches") / f"fix_{commit_sha}.patch"
         patch_path.parent.mkdir(parents=True, exist_ok=True)
 
         try:

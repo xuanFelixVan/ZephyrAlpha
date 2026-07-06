@@ -59,7 +59,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.utils.time_utils import now_iso
-from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [
     "DumpResult",
@@ -124,7 +124,7 @@ class SqliteDumper:
         hmac_key: bytes | None = None,
     ) -> None:
         self._db_path = db_path or DB_PATH
-        self._output_dir = output_dir or Path("data/rollback/db_snapshots")
+        self._output_dir = output_dir or (REPO_ROOT / "data" / "rollback" / "db_snapshots")
         self._hmac_key = hmac_key or HMAC_KEY_DEFAULT
 
     def _get_all_tables(self, conn: sqlite3.Connection) -> list[str]:

@@ -38,6 +38,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 @dataclass
 class MerkleNode:
@@ -230,7 +232,7 @@ class ExternalMerkleProof:
 
     def export_merkle_tree(self, tree: MerkleTree, output_path: Path | None = None) -> Path:
         if output_path is None:
-            output_path = Path("data/rollback/merkle") / f"{tree.commit_sha}_merkle.json"
+            output_path = (REPO_ROOT / "data" / "rollback" / "merkle") / f"{tree.commit_sha}_merkle.json"
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
 

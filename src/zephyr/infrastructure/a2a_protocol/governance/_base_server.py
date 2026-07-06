@@ -35,8 +35,12 @@ class BaseMCPServer:
 
 
 class MCPError(Exception):
-    def __init__(self, code=-1, message="", data=None):
+    error_code = "ZA-IF-0012"
+
+    def __init__(self, code=-1, message="", data=None, error_code: str | None = None):
         self.code = code
         self.message = message
         self.data = data or {}
         super().__init__(message)
+        if error_code is not None:
+            self.error_code = error_code

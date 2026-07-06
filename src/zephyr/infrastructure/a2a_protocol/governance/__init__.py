@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-GOV_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.governance
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval

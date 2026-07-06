@@ -39,6 +39,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 EXIT_GDPR_BLOCKED = 19
 
 SENSITIVE_PATTERNS = [
@@ -76,7 +78,7 @@ class SensitiveMatch:
 
 class RightToBeForgotten:
     def __init__(self, registry_dir: Path | None = None) -> None:
-        self._registry_dir = registry_dir or Path("data/rollback/gdpr")
+        self._registry_dir = registry_dir or (REPO_ROOT / "data" / "rollback" / "gdpr")
         self._registry_path = self._registry_dir / "right_to_be_forgotten_registry.json"
         self._forgotten_hashes: set[str] = set()
         self._load_registry()

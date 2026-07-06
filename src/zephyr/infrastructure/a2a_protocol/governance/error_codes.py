@@ -34,11 +34,15 @@ class ErrorSeverity:
 
 
 class GovernanceError(Exception):
-    def __init__(self, code, message, severity=None):
+    error_code = "ZA-IF-0011"
+
+    def __init__(self, code, message, severity=None, error_code: str | None = None):
         self.code = code
         self.message = message
         self.severity = severity or ErrorSeverity.MEDIUM
         super().__init__(message)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 ERR_GATE_FAILED = "GATE_FAILED"

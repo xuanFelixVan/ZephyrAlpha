@@ -34,12 +34,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 _logger = logging.getLogger(__name__)
 
-_DEFAULT_ARCHIVE_DIR: Path = Path("data/telemetry/prod/archive")
-_BACKUP_DIR: Path = Path("data/backups")
+_DEFAULT_ARCHIVE_DIR: Path = REPO_ROOT / "data" / "telemetry" / "prod" / "archive"
+_BACKUP_DIR: Path = REPO_ROOT / "data" / "backups"
 _DB_PATH: Path = DB_PATH
 _COST_LIMIT_GB: float = 10.0
 _COST_WARN_80PCT: float = 8.0

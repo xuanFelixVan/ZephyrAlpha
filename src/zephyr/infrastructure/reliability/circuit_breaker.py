@@ -103,4 +103,9 @@ class CircuitBreaker:
 
 
 class CircuitBreakerOpenError(Exception):
-    pass
+    error_code = "ZA-IF-0010"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code

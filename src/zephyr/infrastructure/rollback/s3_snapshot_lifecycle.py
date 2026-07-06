@@ -36,6 +36,8 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 @dataclass
 class LifecyclePolicy:
@@ -90,7 +92,7 @@ class SnapshotExistenceCheck:
 
 class S3SnapshotLifecycle:
     def __init__(self, snapshot_dir: Path | None = None) -> None:
-        self._snapshot_dir = snapshot_dir or Path("data/rollback/db_snapshots")
+        self._snapshot_dir = snapshot_dir or (REPO_ROOT / "data" / "rollback" / "db_snapshots")
         self._manifest_dir = self._snapshot_dir / ".manifests"
         self._policy = LifecyclePolicy()
 
@@ -244,7 +246,7 @@ class S3SnapshotLifecycle:
         )
 
     def _cleanup_known_good_state(self, purged_keys: list[str]) -> None:
-        kgs_path = Path("data/rollback/knowngoodstate.json")
+        kgs_path = REPO_ROOT / "data" / "rollback" / "knowngoodstate.json"
         if not kgs_path.exists():
             return
         try:

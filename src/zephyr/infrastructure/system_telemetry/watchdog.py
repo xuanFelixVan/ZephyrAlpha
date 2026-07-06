@@ -30,6 +30,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 class WatchdogHeartbeat(BaseModel):
     watchdog_id: str
@@ -41,7 +43,7 @@ class Watchdog:
     def __init__(self, watchdog_id: str):
         self._id = watchdog_id
         self._heartbeats: dict[str, WatchdogHeartbeat] = {}
-        self._external_file = str(Path("data/telemetry") / f".watchdog_heartbeat_{watchdog_id}")
+        self._external_file = str(REPO_ROOT / "data" / "telemetry" / f".watchdog_heartbeat_{watchdog_id}")
         self._panic_mode = False
 
     @property

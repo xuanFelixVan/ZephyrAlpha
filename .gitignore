@@ -268,6 +268,9 @@ data/e2e_test/
 # PostgreSQL secrets (P2 migration — MOD-DB_DEPGRAPH_PG)
 # Contains connection credentials; never commit to repository
 config/.env.postgres
+# ClickHouse secrets (P1-7 修复 — 消除硬编码)
+# Contains connection credentials; never commit to repository
+config/.env.clickhouse
 # PostgreSQL native data directory (Windows install)
 data/databases/postgres/
 
