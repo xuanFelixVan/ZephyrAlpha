@@ -421,6 +421,17 @@ tiers:
         owner: MOD-GOVERNANCE
         parent_registry: REG-CAP-001
 
+      - registry_id: REG-ERRCODE-001
+        name: error_code SSoT 注册表
+        physical_path: architecture_model/contracts/error_code_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 199
+        status: active
+        description: 199 个业务异常 error_code 的 canonical 登记——code/class/module/file 归属，ZA-XX-NNNN 格式，grep 唯一命中。维度 5.99.21 error_code SSoT 专项工程
+        owner: MOD-GOVERNANCE
+        ssot_for: error_code, error_code_class_mapping
+
   - tier: 2
     name: 数据与运行时级
     description: 数据缓存/快照/蓝图等运行时的临时或衍生登记表
@@ -569,11 +580,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 51
+  total_registries: 52
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
     tier_0_core: 10
-    tier_1_governance: 16
+    tier_1_governance: 17
     tier_2_runtime: 9
