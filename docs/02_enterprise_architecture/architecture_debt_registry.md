@@ -2016,6 +2016,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.44 批处理正确性（5个，第12轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=4(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.44全部清零.
+> **第65轮修复状态（2026-07-06）**：5.44.1+5.44.4+5.44.5 FIXED — verdict_engine evaluate_batch 加 max_batch_size=100 + batch_timeout_s=300s + asyncio.wait_for 整体超时 (trading/ + governance/behavioral_admission/) / BatchIngestor MAX_BATCH_SIZE=1000 校验 / EventStore.record_batch 分片 executemany (1000/chunk), commit 6b14640a03. DEFERRED=1 (5.44.2 return_exceptions=True 需变更返回类型+更新所有调用方, 非纯单文件).
 > 维度说明：批量操作的大小限制、超时、失败处理、正确使用executemany等。
 
 #### 5.44.1 [HIGH] evaluate_batch无批次大小限制/无整体超时
@@ -2024,7 +2025,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：传入10000条则同步处理全部，可能阻塞数分钟
 - **影响**：单次大批次导致超时/内存压力
 - **修复**：限制max_batch_size（如100）+ 整体timeout
-- **状态**：STILL_VALID（保留）— evaluate_batch 无 max_batch_size 校验+无整体超时（verdict_engine.py L330-360），需加批次大小限制+整体 timeout
+- **状态**：FIXED — verdict_engine __init__ 新增 max_batch_size=100 + batch_timeout_s=300s 参数; evaluate_batch 开头校验 len(events)>max_batch_size 抛 ValueError; asyncio.gather 用 asyncio.wait_for 包裹整体超时 (trading/ + governance/behavioral_admission/ 两套实现). commit 6b14640a03.
 
 #### 5.44.2 [HIGH] submit_batch return_exceptions=False致单失败丢弃全部成功
 - **文件**：[gpu_consensus_scheduler.py](file:///D:/ZephyrAlpha/src/zephyr/trading/gpu_consensus_scheduler.py#L221)
@@ -2048,7 +2049,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：无界批次可能导致内存溢出
 - **影响**：大写入导致OOM
 - **修复**：增加批次大小限制+超时
-- **状态**：STILL_VALID（保留）— BatchIngestor.ingest_from_yaml/ingest_from_list 无 max_batch_size/timeout 参数（kb/batch_ingest.py L106/L145），需加批次限制+超时
+- **状态**：FIXED — BatchIngestor 新增 MAX_BATCH_SIZE=1000 类常量; _process_entries 开头校验 len(entries)>MAX_BATCH_SIZE 抛 ValueError (真源 governance/kb/pipeline/batch_ingest.py, re-export shim governance/kb/batch_ingest.py 不变). commit 6b14640a03.
 
 #### 5.44.5 [MEDIUM] EventStore.record_batch无max_batch_size
 - **文件**：全项目（EventStore.record_batch实现）
@@ -2056,7 +2057,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **问题**：大批次写入可能超DB单事务限制
 - **影响**：事务失败回滚全部
 - **修复**：分片写入，每片≤1000条
-- **状态**：STILL_VALID（保留）— EventStore.record_batch 用 executemany 但无 max_batch_size 校验（event_store.py L168-181），大批次可能超 SQLite 单事务限制；需分片写入
+- **状态**：FIXED — EventStore.record_batch 改为分片 executemany (BATCH_CHUNK_SIZE=1000, for 循环切片 rows[i:i+1000]), 防止单事务过大导致回滚 (infrastructure/event_store.py). commit 6b14640a03.
 
 #### 5.44.6 严重度汇总
 
