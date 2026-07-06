@@ -3253,6 +3253,12 @@ creation_tokens:
     created_by: "session-sess-19552-20260706013714"
     capability: "degradation_monitor_base"
 
+  # --- 架构债务防御门禁（R67 引入，5.96 维度防复发）---
+  - file: "scripts/governance/d7_code/scan_debt.py"
+    token: "auto-scan-debt-20260706"
+    created_by: "session-sess-29992-20260706143221"
+    capability: "architecture_debt_scanner"
+
   # --- commit_gates/ 门禁文件（CREATE-GUARD 自身 + 已有 4 gate） ---
   - file: "src/zephyr/governance/commit_gates/create_guard.py"
     token: "auto-create-guard-20260630"
