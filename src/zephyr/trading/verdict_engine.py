@@ -180,7 +180,7 @@ class VerdictEngine:
         self._yellow_count: int = 0
         self._pass_count: int = 0
 
-    async def evaluate(self, event: Any) -> Verdict:
+    async def evaluate(self, event: AuditEntryV1 | AuditEvent | dict[str, Any]) -> Verdict:
         start = time.monotonic()
         self._eval_count += 1
 
@@ -338,7 +338,7 @@ class VerdictEngine:
 
         return VerdictLevel.PASS, "ai_on_public"
 
-    async def evaluate_batch(self, events: list[Any]) -> list[Verdict]:
+    async def evaluate_batch(self, events: list[AuditEntryV1 | AuditEvent | dict[str, Any]]) -> list[Verdict]:
         if not events:
             return []
 
@@ -350,7 +350,7 @@ class VerdictEngine:
 
         loop = asyncio.get_running_loop()
 
-        async def _eval_one(evt: Any) -> Verdict:
+        async def _eval_one(evt: AuditEntryV1 | AuditEvent | dict[str, Any]) -> Verdict:
             try:
                 return await asyncio.wait_for(
                     self.evaluate(evt),

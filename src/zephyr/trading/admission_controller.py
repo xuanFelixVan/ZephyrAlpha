@@ -21,7 +21,7 @@ import logging
 import threading
 import time
 from enum import Enum
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -43,6 +43,15 @@ class EventTypeBudget(str, Enum):
     API_CALL = "api_call"
     SESSION = "session"
     DEFAULT = "default"
+
+
+@runtime_checkable
+class VerdictEvent(Protocol):
+    """5.171 修复：admit(event: Any) Any 滥用——定义 VerdictEvent Protocol
+    替代 Any。运行时 runtime_checkable 支持 isinstance 校验。defensive fallback
+    仍保留（非 Protocol 匹配的输入走 default 分支，向后兼容）。"""
+
+    event_type: str
 
 
 class TokenBucketConfig(BaseModel):
@@ -228,7 +237,7 @@ class AdmissionController:
         self._rejected: int = 0
         self._last_admit_time: float = 0.0
 
-    def admit(self, event: Any) -> AdmissionResult:
+    def admit(self, event: VerdictEvent | dict[str, Any]) -> AdmissionResult:
         with self._metrics_lock:
             self._total_requests += 1
 
@@ -278,7 +287,7 @@ class AdmissionController:
             remaining_tokens=self._global_bucket.tokens,
         )
 
-    def admit_batch(self, events: list[Any]) -> list[AdmissionResult]:
+    def admit_batch(self, events: list[VerdictEvent | dict[str, Any]]) -> list[AdmissionResult]:
         return [self.admit(evt) for evt in events]
 
     def get_metrics(self) -> AdmissionMetrics:
@@ -318,7 +327,7 @@ class AdmissionController:
             "type_bucket_tokens": {k: round(v.tokens, 2) for k, v in self._type_buckets.items()},
         }
 
-    def _extract_event_type(self, event: Any) -> str:
+    def _extract_event_type(self, event: VerdictEvent | dict[str, Any]) -> str:
         if isinstance(event, dict):
             raw = event.get("event_type", "")
         elif hasattr(event, "event_type"):
