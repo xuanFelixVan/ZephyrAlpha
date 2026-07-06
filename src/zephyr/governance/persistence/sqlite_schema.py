@@ -1085,7 +1085,7 @@ def _run_migration(
             )
             if any(p in msg for p in benign):
                 continue
-            raise RuntimeError(f"Migration v{version} statement #{i}: {exc}\n  SQL: {stmt[:200]}") from exc
+            raise RuntimeError(f"Migration v{version} statement #{i}: {exc}\n  SQL: {stmt[:200]}") from exc  # noqa: MSG-EXPOSURE  # SQL 是版本控制迁移 DDL/DML 调试上下文非用户数据
 
     conn.execute(
         "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",

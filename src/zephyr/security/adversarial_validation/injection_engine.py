@@ -106,7 +106,7 @@ class InjectionEngine:
     def _inject_error(self, target: str, error_message: str) -> InjectionResult:
         logger.warning("error_injected target=%s message=%s", target, error_message)
         try:
-            raise RuntimeError(f"INJECTED: {error_message} [target={target}]")
+            raise RuntimeError(f"INJECTED: {error_message} [target={target}]")  # noqa: MSG-EXPOSURE  # target 是注入目标标签非文件路径，错误立即被 except 捕获
         except RuntimeError:
             pass
         return InjectionResult(

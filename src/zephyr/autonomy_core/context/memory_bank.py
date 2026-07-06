@@ -91,7 +91,7 @@ class MemoryBank:
     def _validate_filename(filename: str) -> None:
         basename = filename if filename.endswith(".md") else f"{filename}.md"
         if basename not in BANK_FILES:
-            raise ValueError(f"Invalid bank file: {filename}. Must be one of {BANK_FILES}")
+            raise ValueError(f"Invalid bank file. Must be one of {BANK_FILES}")
 
     @property
     def root_dir(self) -> Path:
