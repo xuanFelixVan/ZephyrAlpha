@@ -1,13 +1,13 @@
-# 自动生成于 2026-07-06T06:08:09Z
+# 自动生成于 2026-07-06T06:39:47Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-06T06:08:09Z'
+generated_at: '2026-07-06T06:39:47Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 328
+total_scripts: 329
 with_manifest: 311
-missing_manifest: 17
+missing_manifest: 18
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -21,7 +21,7 @@ categories:
   governance:d4_paths: 4
   governance:d5_architecture: 97
   governance:d6_security: 14
-  governance:d7_code: 31
+  governance:d7_code: 32
   governance:d8_doc_sync: 9
   governance:d9_knowledge: 2
   governance:generators: 8
@@ -2836,6 +2836,16 @@ scripts:
   tags:
   - Critical
   - Quick
+- name: d7_code/scan_debt.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d7_code/validate_contracts_purity.py
   owner: governance:d7_code
   dimensions:
