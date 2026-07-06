@@ -53,6 +53,7 @@ experimental 起始集（5 种 trigger_type）
 
 from __future__ import annotations
 
+from typing import Final
 import importlib
 import logging
 from collections.abc import Callable
@@ -93,9 +94,9 @@ _UTC = UTC
 
 # 路径解析：trigger_router.py 位于 src/zephyr/orchestrator/，
 # parents[3] = （项目根，与 capability.py 一致）
-DEFAULT_ROUTER_YAML_PATH: Path = REPO_ROOT / "config" / "trigger_router.yaml"
+DEFAULT_ROUTER_YAML_PATH: Final[Path] = REPO_ROOT / "config" / "trigger_router.yaml"
 
-PHASE1D_TRIGGER_TYPES: frozenset[str] = frozenset(
+PHASE1D_TRIGGER_TYPES: Final[frozenset[str]] = frozenset(
     {
         "onboarding",
         "drift_detected",

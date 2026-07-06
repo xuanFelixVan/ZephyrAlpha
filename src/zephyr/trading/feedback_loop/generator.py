@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9
 # [MODULE] zephyr.trading.feedback_loop.generator
 # [DOMAIN] D_OPS
@@ -34,7 +36,7 @@ from zephyr.trading.feedback_loop.template import SKELETONS
 __all__ = ["BASE", "generate", "main"]
 
 
-BASE = os.path.join(os.path.dirname(__file__), "")
+BASE: Final[str] = os.path.join(os.path.dirname(__file__), "")
 
 
 def generate(skeletons: dict[str, str] | None = None) -> tuple[int, int, int]:

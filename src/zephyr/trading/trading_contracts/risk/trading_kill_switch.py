@@ -22,6 +22,7 @@
 #
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 logger = logging.getLogger(__name__)
@@ -50,7 +51,7 @@ class KillSwitch(BaseModel):
     active: bool = False
 
 
-KILL_SWITCHES: dict[KillSwitchLevel, KillSwitch] = {
+KILL_SWITCHES: Final[dict[KillSwitchLevel, KillSwitch]] = {
     KillSwitchLevel.POSITION_LIMIT: KillSwitch(
         level=KillSwitchLevel.POSITION_LIMIT,
         label="位置超限 → reduce_only",

@@ -23,10 +23,12 @@ Version: 0.3.0
 Know Your Agent certification
 """
 
+from typing import Final
+
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
-RISKY = {"write_file", "search_replace", "delete_file", "run_command", "execute", "bash"}
+RISKY: Final[set] = {"write_file", "search_replace", "delete_file", "run_command", "execute", "bash"}
 
 
 class SkillKYA:

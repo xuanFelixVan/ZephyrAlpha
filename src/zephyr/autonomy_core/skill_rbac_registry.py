@@ -24,6 +24,7 @@ Bidirectional bridge:
 
 from __future__ import annotations
 
+from typing import Final
 from pathlib import Path
 from typing import Any
 
@@ -32,7 +33,7 @@ from pydantic import BaseModel
 
 _SKILL_REGISTRY_PATH = Path(__file__).resolve().parent / "skill-registry.yaml"
 
-GOVERNANCE_SKILL_TYPES = {
+GOVERNANCE_SKILL_TYPES: Final[set] = {
     "domain": [
         "governor-specialist",
         "gate-specialist",

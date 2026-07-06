@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] SRC-018 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.execution.incremental_review
 # [DOMAIN] D_GOV_AUDIT
@@ -24,7 +26,7 @@ class ReviewChunk:
     time_budget_minutes: int = 30
 
 
-REVIEW_DIMENSIONS: dict[str, str] = {
+REVIEW_DIMENSIONS: Final[dict[str, str]] = {
     "consistency": "语义割裂检测",
     "accuracy": "数字引用验证",
     "completeness": "context manifest字段全",

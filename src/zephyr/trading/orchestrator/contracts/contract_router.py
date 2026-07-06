@@ -39,6 +39,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -48,7 +49,7 @@ from zephyr.trading.orchestrator.contracts.contract_registry import (
     ContractRegistry,
 )
 
-ROUTE_MAP: dict[str, str] = {
+ROUTE_MAP: Final[dict[str, str]] = {
     "CT-ORC-SCRIPT-001": "script_system",
     "CT-ORC-CE-001": "context-engine",
     "CT-ORC-VMS-001": "vector-memory",
@@ -103,7 +104,7 @@ ROUTE_MAP: dict[str, str] = {
     "CT-KE-QUALITY-001": "knowledge_base",
 }
 
-SYSTEM_NAME_MAP: dict[str, str] = {
+SYSTEM_NAME_MAP: Final[dict[str, str]] = {
     "script_system": "Script System",
     "context-engine": "Context Engine",
     "vector-memory": "Vector Memory Service",

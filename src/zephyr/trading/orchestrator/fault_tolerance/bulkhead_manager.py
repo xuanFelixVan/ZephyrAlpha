@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.fault_tolerance.bulkhead_manager
 # [DOMAIN] D_TRADING
@@ -18,7 +20,7 @@
 """Bulkhead 资源池隔舱管理器（CT-BULKHEAD-001）——12系统独立资源池。"""
 
 
-BULKHEAD_QUOTAS: dict[str, dict] = {
+BULKHEAD_QUOTAS: Final[dict[str, dict]] = {
     "orchestrator": {"threads": 8, "sqlite_connections": 3, "memory_mb": 256},
     "script_system": {"threads": 4, "sqlite_connections": 2, "memory_mb": 128},
     "knowledge_base": {"threads": 4, "sqlite_connections": 2, "memory_mb": 128},
@@ -33,7 +35,7 @@ BULKHEAD_QUOTAS: dict[str, dict] = {
     "mcp_servers": {"threads": 2, "sqlite_connections": 1, "memory_mb": 64},
 }
 
-SHARED_POOLS: dict[str, dict] = {
+SHARED_POOLS: Final[dict[str, dict]] = {
     "sqlite_wal": {"max_connections": 5, "timeout_s": 5.0},
     "chromadb_http": {"max_connections": 3, "timeout_s": 3.0},
 }

@@ -29,6 +29,7 @@ ContextAssembler — 上下文装配、校验、影子留档
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import logging
 from datetime import UTC, datetime
@@ -562,7 +563,7 @@ _BUILD_CACHE: dict[str, tuple[datetime, RawContext]] = {}
 
 _logger = logging.getLogger(__name__)
 
-EMBEDDED_DEFAULTS_BASE: list[str] = [
+EMBEDDED_DEFAULTS_BASE: Final[list[str]] = [
     "R-ONLY-CREATE: Never delete files, only Write and SearchReplace",
     "R-NO-ASK: Never ask questions, work autonomously",
     "R-LOG-EVERY: Log every completed card",
@@ -647,7 +648,7 @@ def _get_or_init_kb() -> UnifiedMemoryAPI | None:
         return None
 
 
-AUTHORITY_MIN_SCORE: float = 0.7
+AUTHORITY_MIN_SCORE: Final[float] = 0.7
 
 
 def validate_authority_chain(

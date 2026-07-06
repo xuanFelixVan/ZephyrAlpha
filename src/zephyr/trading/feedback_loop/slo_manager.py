@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.slo_manager
 # [DOMAIN] D_OPS
@@ -18,7 +20,7 @@
 """SLO/SLI 管理器（CT-SLO-001）——14条CT-* p95/p99目标 + Error Budget。"""
 
 
-SLO_MATRIX: dict[str, dict] = {
+SLO_MATRIX: Final[dict[str, dict]] = {
     "CT-ORC-SCRIPT-001": {"slos": [("p95", 3600.0)], "metric": "duration_s"},
     "CT-ORC-CE-001": {"slos": [("p95", 3.0)], "metric": "duration_s"},
     "CT-ORC-VMS-001": {"slos": [("p99", 1.0)], "metric": "duration_s"},

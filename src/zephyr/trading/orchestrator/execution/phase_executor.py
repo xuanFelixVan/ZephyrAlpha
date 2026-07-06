@@ -31,6 +31,7 @@ Phase 定义：
 
 from __future__ import annotations
 
+from typing import Final
 from datetime import UTC, datetime
 from enum import Enum
 
@@ -45,7 +46,7 @@ class ConstructionPhase(str, Enum):
     PHASE_D = "phase_d"
 
 
-PHASE_ORDER: tuple[ConstructionPhase, ...] = (
+PHASE_ORDER: Final[tuple[ConstructionPhase, ...]] = (
     ConstructionPhase.PHASE_0,
     ConstructionPhase.PHASE_A,
     ConstructionPhase.PHASE_B,
@@ -53,7 +54,7 @@ PHASE_ORDER: tuple[ConstructionPhase, ...] = (
     ConstructionPhase.PHASE_D,
 )
 
-PHASE_DEPENDENCIES: dict[ConstructionPhase, ConstructionPhase | None] = {
+PHASE_DEPENDENCIES: Final[dict[ConstructionPhase, ConstructionPhase | None]] = {
     ConstructionPhase.PHASE_0: None,
     ConstructionPhase.PHASE_A: ConstructionPhase.PHASE_0,
     ConstructionPhase.PHASE_B: ConstructionPhase.PHASE_A,
@@ -61,7 +62,7 @@ PHASE_DEPENDENCIES: dict[ConstructionPhase, ConstructionPhase | None] = {
     ConstructionPhase.PHASE_D: ConstructionPhase.PHASE_C,
 }
 
-PHASE_LABELS: dict[ConstructionPhase, str] = {
+PHASE_LABELS: Final[dict[ConstructionPhase, str]] = {
     ConstructionPhase.PHASE_0: "管控契约优先——17条管控契约 + context check",
     ConstructionPhase.PHASE_A: "核心集成——13条核心CT-* + 3共享Schema",
     ConstructionPhase.PHASE_B: "治理补齐——Anti-Patterns + 集成测试 + 门禁",

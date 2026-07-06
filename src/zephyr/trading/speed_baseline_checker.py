@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.speed_baseline_checker
 # [DOMAIN] D_TRADING
@@ -48,7 +50,7 @@ _UNMATCHED_RUNTIME_CRITICAL_S = 600
 _UNMATCHED_DEFAULT_BASELINE_S = 60
 
 
-SPEED_THRESHOLDS = {
+SPEED_THRESHOLDS: Final[set] = {
     SpeedCategory.SLOW: 0.8,
     SpeedCategory.VERY_SLOW: 1.0,
     SpeedCategory.CRITICAL_SLOW: 2.0,

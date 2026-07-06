@@ -67,6 +67,8 @@ Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十�
 """
 
 from __future__ import annotations
+
+from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 import json
@@ -139,7 +141,7 @@ class RoutingStrategy(str, Enum):
 
 #  §3.2 — 6 角色 × 10 域静态映射
 # 每个 (role, domain) 有一个 0.0-1.0 的 capability score；0.0 表示不覆盖
-DEFAULT_ROLE_DOMAIN_MATRIX: dict[AgentRole, dict[str, float]] = {
+DEFAULT_ROLE_DOMAIN_MATRIX: Final[dict[AgentRole, dict[str, float]]] = {
     AgentRole.ARCHITECT: {
         "D0": 0.8,
         "D1": 0.4,

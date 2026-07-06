@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.quality.benchmark_runner
 # [DOMAIN] D_TRADING
@@ -17,7 +19,7 @@
 
 """跨系统性能基准与回归预防（CT-BENCH）——13条CT-*基准数据+回归告警。"""
 
-BASELINES: dict[str, dict] = {
+BASELINES: Final[dict[str, dict]] = {
     "CT-ORC-SCRIPT-001": {"p50_ms": 500, "p95_ms": 3000, "p99_ms": 5000},
     "CT-ORC-CE-001": {"p50_ms": 100, "p95_ms": 500, "p99_ms": 1000},
     "CT-PIPE-ORC-001": {"p50_ms": 10, "p95_ms": 50, "p99_ms": 100},

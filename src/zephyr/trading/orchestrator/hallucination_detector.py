@@ -71,6 +71,7 @@ Depends      :  三阶段）、 策略）、
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import json
 import re
@@ -338,7 +339,7 @@ def _frozen_asset_mutation(claim: str, handoff_approved: bool) -> list[str]:
     return evidence
 
 
-KEYWORD_HALLU_RULES: dict[str, Callable[..., list[str]]] = {
+KEYWORD_HALLU_RULES: Final[dict[str, Callable[..., list[str]]]] = {
     "numeric_out_of_range": _numeric_out_of_range,
     "missing_files": _missing_files,
     "suspect_citations": _suspect_citations,

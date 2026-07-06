@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.governance.version_manifest
 # [DOMAIN] D_TRADING
@@ -17,7 +19,7 @@
 
 """模块全版本管理（Version Manifest）——各系统版本号+文件路径索引。"""
 
-VERSION_MANIFEST: dict[str, dict] = {
+VERSION_MANIFEST: Final[dict[str, dict]] = {
     "orchestrator": {"version": "v0.1.0", "path": "src/zephyr/orchestrator/"},
     "script_system": {"version": "v0.1.0", "path": "src/zephyr/script_system/"},
     "knowledge_base": {"version": "v0.1.0", "path": "src/zephyr/knowledge_base/"},

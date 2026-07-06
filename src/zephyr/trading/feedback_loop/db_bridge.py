@@ -22,6 +22,7 @@ DDL与sqlite_schema.py的_DDL_FLE_METRICS保持一致（SSoT）。
 
 from __future__ import annotations
 
+from typing import Final
 import json
 import logging
 from datetime import UTC, datetime
@@ -35,7 +36,7 @@ __all__ = ["FLE_METRICS_TABLE_DDL", "bulk_record_via_db_contract", "record_via_d
 _logger = logging.getLogger(__name__)
 
 # 规范DDL — 与 sqlite_schema.py _DDL_FLE_METRICS 完全一致（SSoT）
-FLE_METRICS_TABLE_DDL = """
+FLE_METRICS_TABLE_DDL: Final[str] = """
 CREATE TABLE IF NOT EXISTS fle_metrics (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp       TEXT    NOT NULL,

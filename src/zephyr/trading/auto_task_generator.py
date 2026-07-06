@@ -35,6 +35,7 @@ AutoTaskGenerator — 自动任务生成器
 
 from __future__ import annotations
 
+from typing import Final
 import hashlib
 import logging
 import time
@@ -44,10 +45,10 @@ from typing import Any
 
 _log = logging.getLogger(__name__)
 
-MAX_BATCH_SIZE = 12
-MAX_QUEUE_DEPTH = 50
-COOLDOWN_S = 120.0
-FILE_READ_LIMIT_CHARS = 800
+MAX_BATCH_SIZE: Final[int] = 12
+MAX_QUEUE_DEPTH: Final[int] = 50
+COOLDOWN_S: Final[float] = 120.0
+FILE_READ_LIMIT_CHARS: Final[int] = 800
 
 
 class AutoTaskGenerator:

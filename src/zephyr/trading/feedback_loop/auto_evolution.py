@@ -15,6 +15,8 @@
 # [A_module] module_id=MOD-UNK_auto_evolution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+
+from typing import Final
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -57,7 +59,7 @@ class AutoEvolutionConfig:
     history_max_days: int = 90
 
 
-DEFAULT_AUTO_CONFIG = AutoEvolutionConfig()
+DEFAULT_AUTO_CONFIG: Final[AutoEvolutionConfig] = AutoEvolutionConfig()
 
 
 @dataclass

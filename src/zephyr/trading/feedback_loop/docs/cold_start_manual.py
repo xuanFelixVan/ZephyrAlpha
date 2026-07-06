@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.docs.cold_start_manual
 # [DOMAIN] D_OPS
@@ -21,7 +23,7 @@ Blindspot: FLE starts with empty KB; first 100 anomalies misdiagnosed.
 Risk: R96 — Cold start period produces maximum false positives.
 """
 
-COLD_START_GUIDE = """
+COLD_START_GUIDE: Final[str] = """
 FLE Cold Start Protocol:
 1. First 24h: OBSERVE_ONLY (autonomy_max_level=0)
 2. 24h-72h: NOTIFY_OWNER for all anomalies

@@ -30,6 +30,7 @@ TaskCard 状态变更 → 所有关联系统得到通知。
 
 from __future__ import annotations
 
+from typing import Final
 from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
@@ -46,7 +47,7 @@ class PropagationTarget(str, Enum):
     ORCHESTRATOR = "orchestrator"
 
 
-PROPAGATION_RULES: dict[str, dict[str, list[PropagationTarget]]] = {
+PROPAGATION_RULES: Final[dict[str, dict[str, list[PropagationTarget]]]] = {
     # P4 修复（2026-07-05）：迁移键派生自 TaskStatus SSoT
     # 真源：zephyr.governance.rule_enforcement.task_types.TaskStatus
     # 合法状态值（大写）：PENDING/CREATED/LOCKED/ASSIGNED/READY/IN_PROGRESS/

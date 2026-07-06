@@ -26,6 +26,7 @@ Depends: observer.py (T-1-08), task_repo.py (T-1-04)
 
 from __future__ import annotations
 
+from typing import Final
 import sqlite3
 from zephyr.shared.io.sqlite_factory import get_db_connection
 import time
@@ -47,7 +48,7 @@ class DeferredTaskStatus(str, Enum):
     FAILED = "FAILED"
 
 
-DEFAULT_DB_PATH = ":memory:"
+DEFAULT_DB_PATH: Final[str] = ":memory:"
 
 
 class DeferredQueue:

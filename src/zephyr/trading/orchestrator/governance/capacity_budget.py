@@ -29,6 +29,7 @@
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 
 from datetime import UTC, datetime
@@ -54,7 +55,7 @@ class SystemPool(str, Enum):
     MCP = "mcp_servers"
 
 
-DEFAULT_POOL_QUOTAS: dict[SystemPool, int] = {
+DEFAULT_POOL_QUOTAS: Final[dict[SystemPool, int]] = {
     SystemPool.ORCHESTRATOR: 16,
     SystemPool.SCRIPT_SYSTEM: 4,
     SystemPool.KB: 4,

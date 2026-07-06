@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.quality.blind_spot_closure
 # [DOMAIN] D_TRADING
@@ -27,7 +29,7 @@ class BlindSpot(BaseModel):
     resolution: str = ""
 
 
-BLIND_SPOTS: dict[str, BlindSpot] = {}
+BLIND_SPOTS: Final[dict[str, BlindSpot]] = {}
 for i in range(301, 336):
     BLIND_SPOTS[f"B-MOD-{i}"] = BlindSpot(b_id=f"B-MOD-{i}", description=f"盲点 B-MOD-{i}")
 

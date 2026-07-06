@@ -17,12 +17,14 @@
 
 """fallback_staleness_gate.py — 兜底层自腐检测 (B13, DD87, TASK-017)"""
 
+from typing import Final
+
 import hashlib
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, timezone, datetime
 from pathlib import Path
 
-UTC = UTC
+UTC: Final[timezone] = UTC
 
 
 @dataclass

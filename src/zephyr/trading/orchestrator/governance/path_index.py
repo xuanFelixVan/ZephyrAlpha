@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.governance.path_index
 # [DOMAIN] D_TRADING
@@ -17,7 +19,7 @@
 
 """文件路径索引（Path Index）——Module→__init__.py→蓝图→任务卡→配置的完整映射。"""
 
-PATH_INDEX: dict[str, list[str]] = {}
+PATH_INDEX: Final[dict[str, list[str]]] = {}
 
 
 class PathIndex:

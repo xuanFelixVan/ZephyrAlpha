@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.fault_tolerance.disk_guard
 # [DOMAIN] D_TRADING
@@ -17,7 +19,7 @@
 
 """磁盘空间耗尽防护（CT-DISK-GUARD）——剩余空间<5%→告警+只读模式。"""
 
-DISK_THRESHOLD_PCT: float = 5.0
+DISK_THRESHOLD_PCT: Final[float] = 5.0
 
 
 class DiskGuard:

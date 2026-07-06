@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9
 # [MODULE] zephyr.trading.feedback_loop.validator
 # [DOMAIN] D_OPS
@@ -33,7 +35,7 @@ from zephyr.trading.feedback_loop.template import SKELETONS
 __all__ = ["BASE", "missing_files", "validate_all", "validate_one"]
 
 
-BASE = os.path.join(os.path.dirname(__file__), "")
+BASE: Final[str] = os.path.join(os.path.dirname(__file__), "")
 
 
 def missing_files() -> list[str]:

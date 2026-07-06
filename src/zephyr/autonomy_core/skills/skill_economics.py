@@ -23,9 +23,11 @@ Version: 0.3.0
 Token/API cost tracking
 """
 
+from typing import Final
+
 from typing import Any
 
-PRICING = {
+PRICING: Final[set] = {
     "deepseek-chat": {"in": 0.001, "out": 0.002},
     "deepseek-reasoner": {"in": 0.002, "out": 0.004},
     "glm-4-flash": {"in": 0.001, "out": 0.001},

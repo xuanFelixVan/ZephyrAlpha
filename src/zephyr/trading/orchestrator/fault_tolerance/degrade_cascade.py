@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.fault_tolerance.degrade_cascade
 # [DOMAIN] D_TRADING
@@ -17,7 +19,7 @@
 
 """全局降级级联预防（CT-DEGRADE-CASCADE）——降级传播链检测+熔断。"""
 
-DEGRADE_PROPAGATION_CHAIN: list[str] = ["script_system", "feedback-loop", "orchestrator"]
+DEGRADE_PROPAGATION_CHAIN: Final[list[str]] = ["script_system", "feedback-loop", "orchestrator"]
 
 
 class DegradeCascadeGuard:

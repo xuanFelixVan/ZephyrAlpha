@@ -25,6 +25,7 @@ Task: CT-003 | experimental | session-20260506-012
 
 from __future__ import annotations
 
+from typing import Final
 import logging
 import time
 from enum import Enum, unique
@@ -44,7 +45,7 @@ __all__ = [
 
 _logger = logging.getLogger(__name__)
 
-DEFAULT_STATE_MACHINE_PATH = REPO_ROOT / "config" / "session_state_machine.yaml"
+DEFAULT_STATE_MACHINE_PATH: Final[Path] = REPO_ROOT / "config" / "session_state_machine.yaml"
 
 
 @unique

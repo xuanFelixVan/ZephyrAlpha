@@ -1,3 +1,5 @@
+from typing import Final
+
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.lifecycle.teardown_manager
 # [DOMAIN] D_TRADING
@@ -34,7 +36,7 @@ class CleanupTarget(BaseModel):
     status: str = "pending"
 
 
-CLEANUP_SYSTEMS: list[str] = [
+CLEANUP_SYSTEMS: Final[list[str]] = [
     "orchestrator",
     "context-engine",
     "gate_engine",
