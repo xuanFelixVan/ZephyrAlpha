@@ -37,7 +37,6 @@ SSoT: cross_layer_contracts.yaml → CTR-ERR-004 + CTR-003
 from __future__ import annotations
 
 from decimal import Decimal
-from typing import Any
 
 from zephyr.risk.risk_manager import (
     RiskLimits,
@@ -65,7 +64,7 @@ class DefaultRiskValidator(RiskValidator):
         symbol: str,
         target_weight: float,
         current_holdings: dict[str, float],
-        limits: Any,
+        limits: RiskLimits,
     ) -> list[ViolationDetail]:
         violations: list[ViolationDetail] = []
 
@@ -82,11 +81,9 @@ class DefaultRiskValidator(RiskValidator):
             self._violation_history.extend(violations)
             return violations
 
-        if isinstance(limits, RiskLimits):
-            override_limit = (limits.symbol_overrides or {}).get(symbol)
-            effective_single = override_limit if override_limit is not None else limits.max_single_position
-        else:
-            effective_single = float(limits.get("max_single_position", 0.10))
+        # 5.145 审查修复：limits: Any → RiskLimits，消除 dict 双模式（死代码）
+        override_limit = (limits.symbol_overrides or {}).get(symbol)
+        effective_single = override_limit if override_limit is not None else limits.max_single_position
 
         if abs(target_weight) > effective_single:
             violations.append(
@@ -119,20 +116,15 @@ class DefaultRiskValidator(RiskValidator):
         holdings: dict[str, float],
         market_values: dict[str, float],
         total_nav: Decimal,
-        limits: Any,
+        limits: RiskLimits,
     ) -> list[ViolationDetail]:
         violations: list[ViolationDetail] = []
 
-        if isinstance(limits, RiskLimits):
-            max_single = limits.max_single_position
-            max_leverage = limits.max_gross_leverage
-            max_sector = limits.max_sector_concentration
-            drawdown_limit = limits.max_drawdown_limit
-        else:
-            max_single = limits.get("max_single_position", 0.10)
-            max_leverage = limits.get("max_gross_leverage", 1.0)
-            max_sector = limits.get("max_sector_concentration", 0.30)
-            drawdown_limit = limits.get("max_drawdown_limit", 0.20)
+        # 5.145 审查修复：limits: Any → RiskLimits，消除 dict 双模式（死代码）
+        max_single = limits.max_single_position
+        max_leverage = limits.max_gross_leverage
+        max_sector = limits.max_sector_concentration
+        drawdown_limit = limits.max_drawdown_limit
 
         for symbol, weight in holdings.items():
             if abs(weight) > max_single:
