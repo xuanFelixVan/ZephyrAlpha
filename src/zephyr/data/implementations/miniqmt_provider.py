@@ -430,6 +430,16 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 指数成分股 ==============
 
+    # 板块名 → 指数代码映射（与 c1_market.index_constituent 现有数据一致）
+    _INDEX_SECTOR_MAP = {
+        "上证50": "000016.SH",
+        "沪深300": "000300.SH",
+        "中证500": "000905.SH",
+        "中证1000": "000852.SH",
+        "中小板指": "399005.SZ",
+        "创业板指": "399006.SZ",
+    }
+
     def _fetch_index_constituent(
         self,
         payload: FetchPayload,
@@ -437,52 +447,61 @@ class MiniQMTProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """抓取指数成分股列表。
 
-        使用 xtdata.get_stock_list_in_sector 获取板块/指数成分股。
-        payload.extra["sector_name"] 指定板块名（默认"沪深A股"）。
+        使用 xtdata.get_stock_list_in_sector 获取各指数成分股。
+        遍历 _INDEX_SECTOR_MAP 中的 6 个核心指数，每个指数作为一批 yield。
+
+        表 schema: (trade_date, index_code, symbol, weight, action, data_source)
+        miniQMT 不提供权重，weight=0, action='', data_source='miniqmt'。
+        若需权重数据，应优先使用 iFind Provider。
 
         Args:
-            payload: 下载请求
+            payload: 下载请求（payload.end 作为 trade_date）
             policy: 调用策略
 
         Yields:
-            FetchResult: 单批结果
+            FetchResult: 每个指数一批
         """
         from xtquant import xtdata
 
         table = payload.table or "c1_market.index_constituent"
-        columns = ["symbol", "stock_code", "sector_name"]
+        columns = ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
 
+        trade_date = payload.end.isoformat()
         extra = payload.extra or {}
-        sector_name = extra.get("sector_name", "沪深A股")
+        # 允许 payload.extra["sectors"] 覆盖默认列表
+        sectors = extra.get("sectors", list(self._INDEX_SECTOR_MAP.keys()))
 
-        t0 = time.time()
-        try:
-            stock_list = self._call_with_policy(
-                xtdata.get_stock_list_in_sector, policy, sector_name
-            )
+        for sector_name in sectors:
+            index_code = self._INDEX_SECTOR_MAP.get(sector_name, sector_name)
+            t0 = time.time()
+            try:
+                stock_list = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, sector_name
+                )
 
-            rows = []
-            if stock_list:
-                for stock_code in stock_list:
-                    symbol = self._stock_to_symbol(stock_code)
-                    rows.append((symbol, stock_code, sector_name))
+                rows = []
+                if stock_list:
+                    for stock_code in stock_list:
+                        symbol = self._stock_to_symbol(stock_code)
+                        # weight=0（miniQMT 不提供权重）, action='', data_source='miniqmt'
+                        rows.append((trade_date, index_code, symbol, 0, "", "miniqmt"))
 
-            yield FetchResult(
-                table=table,
-                columns=columns,
-                rows=rows,
-                last_key=self._date_to_str(payload.end),
-                elapsed_sec=time.time() - t0,
-            )
-        except Exception as e:
-            yield FetchResult(
-                table=table,
-                columns=columns,
-                rows=[],
-                last_key="",
-                elapsed_sec=time.time() - t0,
-                error=f"获取指数成分失败: {e}",
-            )
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=self._date_to_str(payload.end),
+                    elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=time.time() - t0,
+                    error=f"获取指数成分失败[{sector_name}]: {e}",
+                )
 
     # ============== 辅助方法 ==============
 
