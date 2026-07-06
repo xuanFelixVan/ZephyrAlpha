@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 registry_management（D_GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 16:37:11
+> 最后更新: 2026-07-06 17:49:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -25,9 +25,9 @@ ttl: permanent
 | 域名称 | registry_management | Domain Name | Lifecycle Management |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 850 | Module Count | 850 |
-| 域内依赖 | 637 | Internal Dependencies | 637 |
-| 跨域入边 | 703 | Cross-domain Incoming | 703 |
-| 跨域出边 | 308 | Cross-domain Outgoing | 308 |
+| 域内依赖 | 655 | Internal Dependencies | 655 |
+| 跨域入边 | 726 | Cross-domain Incoming | 726 |
+| 跨域出边 | 340 | Cross-domain Outgoing | 340 |
 | 设计态模块 | 26 | Design Modules | 26 |
 | 原型态模块 | 345 | Prototype Modules | 345 |
 | 生产态模块 | 479 | Production Modules | 479 |
@@ -80,11 +80,11 @@ graph TD
         data_asset_index_archive_migration_scripts_check_coverage_py["data/asset_index/archive/migration_scripts/chec... prototype"]
         data_asset_index_archive_migration_scripts_comprehensive_import_fix_py["data/asset_index/archive/migration_scripts/comp... prototype"]
     end
-    data_asset_index_archive_migration_scripts_check_coverage_py -.->|config_depends| data_asset_index_archive_migration_scripts_comprehensive_import_fix_py
     data_asset_index_archive_migration_scripts_apply_rulings_py -.->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_migration_shared_py -.->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_verify_step4_py -.->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_verify_manifest_py -.->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_comprehensive_import_fix_py -.->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
+    data_asset_index_archive_migration_scripts_migration_shared_py -.->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
+    data_asset_index_archive_migration_scripts_verify_manifest_py -.->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
+    data_asset_index_archive_migration_scripts_verify_step4_py -.->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -216,17 +216,50 @@ graph TD
         docs_03_modules_cross_layer_gate_engine_blueprint_md["docs__03_modules___cross_layer__gate_engine__bl... design"]
         docs_03_modules_cross_layer_model_capability_exam_blueprint_md["docs__03_modules___cross_layer__model_capabilit... design"]
     end
+    D_AUDITTEST["D_AUDITTEST prototype"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_AUDITTEST
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_AUDITTEST
+    D_TRADING["D_TRADING prototype"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    D_SECURITY["D_SECURITY prototype"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_SECURITY
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_SECURITY
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_GOV_ENFORCEMENT
+    D_SHARED["D_SHARED prototype"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_SHARED
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_AUDITTEST
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_AUDITTEST
     D_GOV_DRIFT["D_GOV_DRIFT design"]
+    D_GOV_DRIFT -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
     D_GOV_DRIFT -.->|runtime| docs_03_modules_cross_layer_database_blueprint_md
+    D_GOV_ENFORCEMENT -.->|runtime| docs_03_modules_cross_layer_database_blueprint_md
+    D_GOV_ENFORCEMENT -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY prototype"]
+    D_INFRA_TELEMETRY -.->|data| docs_03_modules_cross_layer_database_blueprint_md
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_context_engine_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
+    D_AUTONOMY_CORE -.->|data| docs_03_modules_cross_layer_database_blueprint_md
+    D_INFRA_TELEMETRY -.->|runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
+    D_INFRA_TELEMETRY -.->|runtime| docs_03_modules_cross_layer_context_engine_blueprint_md
     D_KNOWLEDGE["D_KNOWLEDGE design"]
     D_KNOWLEDGE -.->|runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
+    D_FACTOR["D_FACTOR prototype"]
+    D_FACTOR -.->|runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_rules_trae_042_meta_rule_standard_yaml,docs_01_policies_and_standards_rules_trae_043_meta_rule_metadata_yaml,docs_01_policies_and_standards_rules_trae_044_compliance_audit_yaml,docs_01_policies_and_standards_rules_trae_045_data_quality_lineage_yaml,docs_01_policies_and_standards_rules_trae_046_engineering_code_restructure_yaml,docs_01_policies_and_standards_rules_trae_047_engineering_file_header_yaml,docs_01_policies_and_standards_rules_trae_048_ops_vibe_coding_session_yaml,docs_01_policies_and_standards_rules_trae_049_ops_domain_manual_yaml,docs_01_policies_and_standards_rules_trae_050_domain_policy_data_factor_yaml,docs_01_policies_and_standards_rules_trae_051_domain_policy_risk_backtest_yaml,docs_01_policies_and_standards_rules_trae_052_cross_blueprint_change_cleanup_yaml,docs_01_policies_and_standards_rules_trae_053_automation_dual_track_yaml,docs_01_policies_and_standards_rules_trae_054_depgraph_access_protocol_yaml,docs_01_policies_and_standards_rules_trae_055_arch_domain_capacity_yaml,docs_01_policies_and_standards_rules_trae_056_module_creation_workflow_yaml,docs_01_policies_and_standards_rules_trae_057_ai_consumer_first_yaml,docs_01_policies_and_standards_rules_trae_058_depgraph_scan_exclusions_yaml,docs_01_policies_and_standards_rules_trae_059_schema_version_write_protection_yaml,docs_01_policies_and_standards_rules_trae_060_inward_consolidation_yaml,docs_01_policies_and_standards_rules_trae_061_decisiongraph_access_protocol_yaml,docs_01_policies_and_standards_rules_trae_062_ssot_classification_yaml production
     class docs_03_modules_cross_layer_agent_orchestrator_blueprint_md,docs_03_modules_cross_layer_auto_fix_engine_blueprint_md,docs_03_modules_cross_layer_auto_runtime_core_blueprint_md,docs_03_modules_cross_layer_behavioral_auditor_blueprint_md,docs_03_modules_cross_layer_context_engine_blueprint_md,docs_03_modules_cross_layer_database_blueprint_md,docs_03_modules_cross_layer_feedback_loop_blueprint_md,docs_03_modules_cross_layer_gate_engine_blueprint_md,docs_03_modules_cross_layer_model_capability_exam_blueprint_md design
-    class D_GOV_DRIFT,D_KNOWLEDGE external_design
+    class D_AUDITTEST,D_TRADING,D_SECURITY,D_GOV_ENFORCEMENT,D_SHARED,D_GOV_DRIFT,D_INFRA_TELEMETRY,D_AUTONOMY_CORE,D_KNOWLEDGE,D_FACTOR external_design
 ```
 
 ### 第 5 页 / 共 29 页 / Page 5 of 29
@@ -268,36 +301,60 @@ graph TD
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime| docs_03_modules_cross_layer_orphan_judge_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime| docs_03_modules_cross_layer_semantic_auditor_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|data| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime| docs_03_modules_domain_governance_code_dedup_engine_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|contract| docs_03_modules_master_blueprint_blueprint_agent_spec_md
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data| docs_03_modules_cross_layer_shared_core_blueprint_md
+    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract| docs_03_modules_cross_layer_shared_core_blueprint_md
+    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
     scripts_archive_construction_create_db_alignment_tasks_py -.->|config_depends| scripts_archive_construction_dm014_orphan_edge_repair_py
     scripts_archive_construction_create_dm_phase9_tasks_py -.->|config_depends| scripts_archive_construction_create_db_alignment_tasks_py
     scripts_archive_governance_create_depgraph_task_cards_py -.->|config_depends| scripts_archive_governance_compare_ba_copies_py
-    scripts_archive_governance_d3_metadata_check_frontmatter_metadata_py -.->|config_depends| scripts_archive_governance_d3_metadata_check_template_compliance_py
-    scripts_archive_governance_d3_metadata_assign_module_id_py -.->|config_depends| scripts_archive_governance_d3_metadata_check_frontmatter_metadata_py
-    scripts_archive_governance_d3_metadata_detect_deprecated_overdue_py -.->|config_depends| scripts_archive_governance_d3_metadata_check_frontmatter_metadata_py
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME prototype"]
+    docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime| D_INFRA_RUNTIME
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
+    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|contract| D_GOV_ENFORCEMENT
+    D_AUDITTEST["D_AUDITTEST prototype"]
+    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime| D_AUDITTEST
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract| D_GOV_ENFORCEMENT
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract| D_AUDITTEST
     D_GOV_DRIFT["D_GOV_DRIFT design"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime| D_GOV_DRIFT
+    D_SECURITY_LLM["D_SECURITY_LLM prototype"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract| D_SECURITY_LLM
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime| D_INFRA_RUNTIME
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY prototype"]
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| D_INFRA_TELEMETRY
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract| D_GOV_ENFORCEMENT
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| D_GOV_DRIFT
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract| D_GOV_DRIFT
-    D_ML_TRAIN["D_ML_TRAIN design"]
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data| D_ML_TRAIN
-    D_GOV_DRIFT -.->|runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
-    D_GOV_DRIFT -.->|runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
-    D_GOV_AUDIT["D_GOV_AUDIT design"]
-    D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_red_blue_validator_blueprint_md
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract| D_AUTONOMY_CORE
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract| D_INFRA_RUNTIME
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime| D_INFRA_RUNTIME
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime| D_GOV_ENFORCEMENT
     D_FRONTEND["D_FRONTEND design"]
     D_FRONTEND -.->|runtime| docs_03_modules_domain_governance_blueprint_md
+    D_GOV_DRIFT -.->|runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
+    D_GOV_DRIFT -.->|runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
+    D_GOV_ENFORCEMENT -.->|contract| docs_03_modules_cross_layer_shared_core_blueprint_md
+    D_INFRA_TELEMETRY -.->|runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
+    D_GOV_AUDIT["D_GOV_AUDIT design"]
+    D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_red_blue_validator_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
+    D_AUTONOMY_CORE -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
+    D_INFRA_TELEMETRY -.->|contract| docs_03_modules_cross_layer_shared_core_blueprint_md
+    D_INFRA_TELEMETRY -.->|runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_domain_infrastructure_operations_agent_to_agent_protocol_arbitration_rules_yaml,docs_03_modules_domain_infrastructure_operations_agent_to_agent_protocol_trigger_config_yaml,docs_03_modules_path_ownership_map_yaml production
     class docs_03_modules_cross_layer_orphan_judge_blueprint_md,docs_03_modules_cross_layer_pipeline_blueprint_md,docs_03_modules_cross_layer_red_blue_validator_blueprint_md,docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md,docs_03_modules_cross_layer_semantic_auditor_blueprint_md,docs_03_modules_cross_layer_shared_core_blueprint_md,docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md,docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md,docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md,docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md,docs_03_modules_domain_governance_blueprint_md,docs_03_modules_domain_governance_code_dedup_engine_blueprint_md,docs_03_modules_domain_governance_governance_automation_blueprint_md,docs_03_modules_domain_governance_registry_governance_blueprint_md,docs_03_modules_master_blueprint_blueprint_md,docs_03_modules_master_blueprint_blueprint_agent_spec_md,scripts_init_py,scripts_archive_construction_create_db_alignment_tasks_py,scripts_archive_construction_create_dm_phase9_tasks_py,scripts_archive_construction_dm014_orphan_edge_repair_py,scripts_archive_governance_compare_ba_copies_py,scripts_archive_governance_create_depgraph_task_cards_py,scripts_archive_governance_d11_compliance_batch_remove_bom_py,scripts_archive_governance_d3_metadata_assign_module_id_py,scripts_archive_governance_d3_metadata_check_frontmatter_metadata_py,scripts_archive_governance_d3_metadata_check_template_compliance_py,scripts_archive_governance_d3_metadata_detect_deprecated_overdue_py design
-    class D_GOV_DRIFT,D_ML_TRAIN,D_GOV_AUDIT,D_FRONTEND external_design
+    class D_INFRA_RUNTIME,D_GOV_ENFORCEMENT,D_AUDITTEST,D_GOV_DRIFT,D_SECURITY_LLM,D_INFRA_TELEMETRY,D_AUTONOMY_CORE,D_FRONTEND,D_GOV_AUDIT external_design
 ```
 
 ### 第 6 页 / 共 29 页 / Page 6 of 29
@@ -336,13 +393,29 @@ graph TD
         scripts_archive_migration_comprehensive_import_fix_py["scripts/_archive/migration/comprehensive_import... prototype"]
         scripts_archive_migration_create_target_dirs_py["scripts/_archive/migration/create_target_dirs.py prototype"]
     end
-    scripts_archive_governance_repair_list_source_md_files_py -.->|config_depends| scripts_archive_governance_repair_ensure_dep_cycles_view_py
-    scripts_archive_migration_check_coverage_py -.->|config_depends| scripts_archive_migration_apply_rulings_py
-    scripts_archive_migration_comprehensive_import_fix_py -.->|config_depends| scripts_archive_migration_check_coverage_py
-    scripts_archive_migration_create_target_dirs_py -.->|config_depends| scripts_archive_migration_check_coverage_py
-    scripts_archive_migration_migration_shared_py -.->|config_depends| scripts_archive_migration_check_coverage_py
-    scripts_archive_migration_verify_step4_py -.->|config_depends| scripts_archive_migration_check_coverage_py
-    scripts_archive_migration_verify_manifest_py -.->|config_depends| scripts_archive_migration_check_coverage_py
+    scripts_archive_governance_d3_metadata_detect_stale_version_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_fix_dm411_bare_relative_imports_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_fix_n06_module_id_prefix_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_fix_n12_ke_naming_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_fix_dm413_duplicate_test_names_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_fix_n15_blueprint_path_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_scan_deep_content_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_generate_rule_catalog_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_validate_blueprint_registry_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_validate_cross_module_dependencies_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_validate_frontmatter_values_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_validate_derived_from_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_validate_enum_consistency_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_validate_ssot_status_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_validate_no_duplicate_files_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_d3_metadata_validate_superseded_by_py -.->|config_depends| scripts_archive_governance_d3_metadata_detect_skip_active_status_py
+    scripts_archive_governance_repair_ensure_dep_cycles_view_py -.->|config_depends| scripts_archive_governance_repair_list_source_md_files_py
+    scripts_archive_migration_comprehensive_import_fix_py -.->|config_depends| scripts_archive_migration_apply_rulings_py
+    scripts_archive_migration_check_coverage_py -.->|config_depends| scripts_archive_migration_comprehensive_import_fix_py
+    scripts_archive_migration_create_target_dirs_py -.->|config_depends| scripts_archive_migration_comprehensive_import_fix_py
+    scripts_archive_migration_migration_shared_py -.->|config_depends| scripts_archive_migration_comprehensive_import_fix_py
+    scripts_archive_migration_verify_manifest_py -.->|config_depends| scripts_archive_migration_comprehensive_import_fix_py
+    scripts_archive_migration_verify_step4_py -.->|config_depends| scripts_archive_migration_comprehensive_import_fix_py
     D_SHARED["D_SHARED production"]
     scripts_archive_governance_dm106_p2b_verification_py -.->|import_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -389,13 +462,13 @@ graph TD
         scripts_arch_guard_check_fe_acl_boundary_py["scripts/arch_guard/check_fe_acl_boundary.py prototype"]
         scripts_arch_guard_check_hot_path_purity_py["scripts/arch_guard/check_hot_path_purity.py prototype"]
     end
-    scripts_arch_guard_check_cross_plane_communication_py -.->|config_depends| scripts_arch_guard_init_py
     scripts_arch_guard_check_acl_boundary_py -.->|config_depends| scripts_arch_guard_init_py
-    scripts_arch_guard_check_fe_acl_boundary_py -.->|config_depends| scripts_arch_guard_init_py
+    scripts_arch_guard_check_cross_plane_communication_py -.->|config_depends| scripts_arch_guard_init_py
     scripts_arch_guard_check_hot_path_purity_py -.->|config_depends| scripts_arch_guard_init_py
+    scripts_arch_guard_check_fe_acl_boundary_py -.->|config_depends| scripts_arch_guard_init_py
     scripts_arch_guard_arch_ssot_py -.->|config_depends| scripts_arch_guard_init_py
+    scripts_arch_guard_tools_patch_p1_paths_py -.->|config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
     scripts_arch_guard_tools_inject_idempotency_py -.->|config_depends| scripts_arch_guard_tools_patch_p1_paths_py
-    scripts_arch_guard_tools_build_ocp_manifest_py -.->|config_depends| scripts_arch_guard_tools_inject_idempotency_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME prototype"]
     scripts_a2a_full_verification_py -.->|import_depends| D_INFRA_RUNTIME
     D_INTEGRATION["D_INTEGRATION prototype"]
@@ -445,31 +518,31 @@ graph TD
         scripts_construction_demo_a2a_chat_py["scripts/construction/demo_a2a_chat.py prototype"]
         scripts_construction_demo_a2a_coordination_py["scripts/construction/demo_a2a_coordination.py prototype"]
     end
-    scripts_arch_guard_fitness_functions_check_aisg_gateway_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_arch_guard_fitness_functions_check_audit_log_immutability_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
-    scripts_arch_guard_fitness_functions_check_capacity_slo_ssot_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
-    scripts_arch_guard_fitness_functions_check_no_cross_plane_mutable_state_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
-    scripts_arch_guard_fitness_functions_check_log_secret_leak_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
+    scripts_arch_guard_fitness_functions_check_aisg_gateway_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_arch_guard_fitness_functions_check_daily_loss_limit_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_arch_guard_fitness_functions_check_idempotency_key_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
-    scripts_arch_guard_fitness_functions_check_hot_warm_ipc_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
+    scripts_arch_guard_fitness_functions_check_capacity_slo_ssot_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
+    scripts_arch_guard_fitness_functions_check_log_secret_leak_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
+    scripts_arch_guard_fitness_functions_check_hot_warm_ipc_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
+    scripts_arch_guard_fitness_functions_check_no_cross_plane_mutable_state_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_arch_guard_fitness_functions_check_pit_compliance_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_arch_guard_fitness_functions_check_ocp_signatures_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
-    scripts_arch_guard_fitness_functions_check_survivorship_bias_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
-    scripts_arch_guard_fitness_functions_check_risk_params_consistency_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_arch_guard_fitness_functions_check_position_limit_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
+    scripts_arch_guard_fitness_functions_check_risk_params_consistency_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_arch_guard_fitness_functions_check_warm_cold_async_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
-    scripts_arch_guard_import_linter_init_py -.->|config_depends| scripts_arch_guard_import_linter_layer_boundary_check_py
-    scripts_construction_demo_a2a_chat_py -.->|config_depends| scripts_construction_check_statuses_py
-    D_INTELLIGENCE["D_INTELLIGENCE production"]
-    scripts_calibrate_model_diff_py -->|import_depends| D_INTELLIGENCE
+    scripts_arch_guard_fitness_functions_check_survivorship_bias_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
+    scripts_arch_guard_import_linter_layer_boundary_check_py -.->|config_depends| scripts_arch_guard_import_linter_init_py
+    scripts_construction_demo_a2a_chat_py -.->|config_depends| scripts_construction_check_transition_code_py
     D_INTEGRATION["D_INTEGRATION prototype"]
     scripts_construction_demo_a2a_coordination_py -.->|import_depends| D_INTEGRATION
     scripts_construction_d_init_task_system_py -.->|import_depends| D_INTEGRATION
     D_SHARED["D_SHARED production"]
-    scripts_construction_e2e_check_py -.->|import_depends| D_SHARED
     scripts_construction_e2e_deep_py -.->|import_depends| D_SHARED
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
+    scripts_calibrate_model_diff_py -->|import_depends| D_INTELLIGENCE
+    scripts_construction_e2e_check_py -.->|import_depends| D_SHARED
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| scripts_calibrate_model_diff_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -478,7 +551,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_calibrate_model_diff_py production
     class scripts_arch_guard_check_scaffold_exit_gates_py,scripts_arch_guard_check_schema_consistency_py,scripts_arch_guard_fitness_functions_init_py,scripts_arch_guard_fitness_functions_check_aisg_gateway_py,scripts_arch_guard_fitness_functions_check_audit_log_immutability_py,scripts_arch_guard_fitness_functions_check_capacity_slo_ssot_py,scripts_arch_guard_fitness_functions_check_daily_loss_limit_py,scripts_arch_guard_fitness_functions_check_hot_warm_ipc_py,scripts_arch_guard_fitness_functions_check_idempotency_key_py,scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_arch_guard_fitness_functions_check_log_secret_leak_py,scripts_arch_guard_fitness_functions_check_no_cross_plane_mutable_state_py,scripts_arch_guard_fitness_functions_check_ocp_signatures_py,scripts_arch_guard_fitness_functions_check_pit_compliance_py,scripts_arch_guard_fitness_functions_check_position_limit_py,scripts_arch_guard_fitness_functions_check_risk_params_consistency_py,scripts_arch_guard_fitness_functions_check_survivorship_bias_py,scripts_arch_guard_fitness_functions_check_warm_cold_async_py,scripts_arch_guard_import_linter_init_py,scripts_arch_guard_import_linter_layer_boundary_check_py,scripts_arch_guard_run_all_py,scripts_check_naming_convention_py,scripts_construction_e2e_check_py,scripts_construction_e2e_deep_py,scripts_construction_check_statuses_py,scripts_construction_check_transition_code_py,scripts_construction_d_init_task_system_py,scripts_construction_demo_a2a_chat_py,scripts_construction_demo_a2a_coordination_py design
-    class D_INTELLIGENCE,D_SHARED external_prod
+    class D_SHARED,D_INTELLIGENCE external_prod
     class D_INTEGRATION,D_AUDITTEST external_design
 ```
 
@@ -518,35 +591,33 @@ graph TD
         scripts_migration_dm311_autonomy_core_split_py["scripts/migration/dm311_autonomy_core_split.py prototype"]
         scripts_migration_dm314_infra_ops_split_py["scripts/migration/dm314_infra_ops_split.py prototype"]
     end
-    scripts_mcp_generate_ide_config_py -.->|config_depends| scripts_mcp_launcher_py
-    scripts_hooks_auto_handoff_log_py -.->|config_depends| scripts_hooks_git_secrets_setup_sh
-    scripts_mcp_start_all_py -.->|config_depends| scripts_mcp_launcher_py
-    scripts_mcp_status_all_py -.->|config_depends| scripts_mcp_launcher_py
-    scripts_migration_dm311_autonomy_core_split_py -.->|config_depends| scripts_migration_dm314_infra_ops_split_py
-    scripts_mcp_stop_all_py -.->|config_depends| scripts_mcp_launcher_py
-    scripts_hooks_contract_fingerprint_hook_sh -.->|config_depends| scripts_hooks_auto_handoff_log_py
+    scripts_hooks_auto_handoff_log_py -.->|config_depends| scripts_hooks_contract_fingerprint_hook_sh
+    scripts_mcp_generate_ide_config_py -.->|config_depends| scripts_mcp_start_all_py
+    scripts_migration_dm314_infra_ops_split_py -.->|config_depends| scripts_migration_dm311_autonomy_core_split_py
+    scripts_mcp_status_all_py -.->|config_depends| scripts_mcp_generate_ide_config_py
+    scripts_mcp_stop_all_py -.->|config_depends| scripts_mcp_generate_ide_config_py
+    scripts_hooks_git_secrets_setup_sh -.->|config_depends| scripts_hooks_auto_handoff_log_py
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     scripts_diagnose_breadth_failed_py -.->|import_depends| D_INTELLIGENCE
-    scripts_diagnose_breadth_failed_py -.->|import_depends| D_INTELLIGENCE
-    scripts_diagnose_breadth_failed_py -.->|import_depends| D_INTELLIGENCE
-    D_SHARED["D_SHARED production"]
-    scripts_diagnose_breadth_failed_py -.->|import_depends| D_SHARED
-    D_SECURITY["D_SECURITY production"]
-    scripts_git_commit_py -.->|import_depends| D_SECURITY
-    D_TRADING["D_TRADING production"]
-    scripts_ide_health_service_py -.->|import_depends| D_TRADING
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    scripts_ide_health_service_py -.->|import_depends| D_INFRA_RUNTIME
-    scripts_ide_health_service_py -.->|import_depends| D_SHARED
-    scripts_ide_health_service_py -.->|import_depends| D_SHARED
-    scripts_lock_files_py -.->|import_depends| D_SHARED
-    scripts_lock_files_py -.->|import_depends| D_SHARED
     D_RISK["D_RISK production"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_RISK
-    scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTELLIGENCE
+    D_SHARED["D_SHARED production"]
+    scripts_lock_files_py -.->|import_depends| D_SHARED
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_RISK
     D_INTEGRATION["D_INTEGRATION prototype"]
-    scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTEGRATION
+    scripts_construction_finalize_tasks_py -.->|import_depends| D_INTEGRATION
+    scripts_demos_demo_e2e_pipeline_py -.->|import_depends| D_SHARED
+    scripts_construction_local_layer_daemon_py -.->|import_depends| D_INTEGRATION
+    D_TRADING["D_TRADING production"]
+    scripts_construction_start_brain_py -.->|import_depends| D_TRADING
+    scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTELLIGENCE
+    scripts_construction_start_brain_py -.->|import_depends| D_TRADING
+    scripts_diagnose_breadth_failed_py -.->|import_depends| D_INTELLIGENCE
+    scripts_diagnose_breadth_failed_py -.->|import_depends| D_INTELLIGENCE
+    scripts_demos_demo_e2e_pipeline_py -.->|import_depends| D_SHARED
+    scripts_construction_reset_test_task_py -.->|import_depends| D_SHARED
+    D_SECURITY["D_SECURITY production"]
+    scripts_git_commit_py -.->|import_depends| D_SECURITY
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| scripts_git_guard_py
     D_AUDITTEST -.->|test_depends| scripts_git_guard_py
@@ -556,7 +627,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_git_guard_py production
     class scripts_construction_demo_e2e_pipeline_py,scripts_construction_finalize_tasks_py,scripts_construction_local_layer_daemon_py,scripts_construction_reset_test_task_py,scripts_construction_start_brain_py,scripts_construction_test_deepseek_api_py,scripts_construction_test_event_hook_py,scripts_context_generate_architecture_context_py,scripts_demos_demo_e2e_pipeline_py,scripts_diagnose_breadth_failed_py,scripts_dm90971_add_test_headers_py,scripts_fix_freeze_manifest_py,scripts_fix_orphan_all_py,scripts_generate_manifest_py,scripts_generate_pathway_registry_py,scripts_git_commit_py,scripts_hooks_auto_handoff_log_py,scripts_hooks_contract_fingerprint_hook_sh,scripts_hooks_git_secrets_setup_sh,scripts_ide_health_service_py,scripts_kb_self_test_py,scripts_lock_files_py,scripts_mcp_generate_ide_config_py,scripts_mcp_launcher_py,scripts_mcp_start_all_py,scripts_mcp_status_all_py,scripts_mcp_stop_all_py,scripts_migration_dm311_autonomy_core_split_py,scripts_migration_dm314_infra_ops_split_py design
-    class D_INTELLIGENCE,D_SHARED,D_SECURITY,D_TRADING,D_INFRA_RUNTIME,D_RISK external_prod
+    class D_INTELLIGENCE,D_RISK,D_SHARED,D_TRADING,D_SECURITY external_prod
     class D_INTEGRATION,D_AUDITTEST external_design
 ```
 
@@ -599,25 +670,28 @@ graph TD
     src_zephyr_data_cli_py -->|import_depends| src_zephyr_data_init_py
     src_zephyr_data_main_py -.->|import_depends| src_zephyr_data_cli_py
     src_zephyr_data_implementations_init_py -.->|import_depends| src_zephyr_data_implementations_akshare_provider_py
+    D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY prototype"]
+    scripts_scaffold_py -.->|import_depends| D_INTEGRATION_GATEWAY
     D_SHARED["D_SHARED production"]
     src_zephyr_data_alerter_py -.->|import_depends| D_SHARED
-    src_zephyr_data_alerter_py -.->|import_depends| D_SHARED
-    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
-    scripts_rollback_py -.->|import_depends| D_INFRA_RECOVERY
-    scripts_rollback_py -.->|import_depends| D_INFRA_RECOVERY
+    scripts_run_deepseek_v4_exam_py -.->|import_depends| D_SHARED
+    D_BACKTEST["D_BACKTEST prototype"]
+    scripts_tests_test_matching_engine_v1_1_0_py -.->|import_depends| D_BACKTEST
+    scripts_tests_test_tick_replay_data_handler_py -.->|import_depends| D_BACKTEST
     D_INTELLIGENCE["D_INTELLIGENCE production"]
+    scripts_test_exam_scoring_unit_py -.->|import_depends| D_INTELLIGENCE
+    scripts_tests_test_event_driven_engine_py -.->|import_depends| D_BACKTEST
+    scripts_run_deepseek_v4_exam_py -.->|import_depends| D_INTELLIGENCE
     scripts_quick_profile_py -.->|import_depends| D_INTELLIGENCE
     scripts_quick_profile_py -.->|import_depends| D_INTELLIGENCE
     D_INTEGRATION["D_INTEGRATION prototype"]
     scripts_quick_profile_py -.->|import_depends| D_INTEGRATION
-    scripts_quick_profile_py -.->|import_depends| D_INTELLIGENCE
-    scripts_run_deepseek_v4_exam_py -.->|import_depends| D_SHARED
-    scripts_run_deepseek_v4_exam_py -.->|import_depends| D_INTELLIGENCE
-    scripts_run_deepseek_v4_exam_py -.->|import_depends| D_INTELLIGENCE
-    scripts_run_ollama_exam_py -.->|import_depends| D_INTEGRATION
-    scripts_run_ollama_exam_py -.->|import_depends| D_INTELLIGENCE
-    scripts_test_exam_scoring_unit_py -.->|import_depends| D_INTELLIGENCE
-    scripts_test_exam_scoring_unit_py -.->|import_depends| D_INTELLIGENCE
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
+    scripts_rollback_py -.->|import_depends| D_INFRA_RECOVERY
+    scripts_rollback_py -.->|import_depends| D_INFRA_RECOVERY
+    scripts_tests_test_matching_engine_v1_1_0_py -.->|import_depends| D_BACKTEST
+    D_FRONTEND["D_FRONTEND production"]
+    scripts_tests_test_frontend_components_py -.->|import_depends| D_FRONTEND
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| scripts_scaffold_py
     D_AUDITTEST -.->|test_depends| src_zephyr_data_cli_py
@@ -627,8 +701,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_registry_scope_yaml,scripts_scaffold_py,src_zephyr_data_init_py,src_zephyr_data_cli_py,src_zephyr_data_config_policies_yaml,src_zephyr_data_config_schedule_yaml,src_zephyr_data_config_tasks_yaml production
     class scripts_migration_governance_root_split_py,scripts_ops_verify_header_completeness_py,scripts_post_checkout_guard_py,scripts_pre_commit_verify_dedup_py,scripts_print_exam_summary_py,scripts_quick_profile_py,scripts_record_session_start_commit_py,scripts_rollback_py,scripts_run_deepseek_v4_exam_py,scripts_run_ollama_exam_py,scripts_setup_git_guard_aliases_py,scripts_test_exam_scoring_unit_py,scripts_tests_test_event_driven_engine_py,scripts_tests_test_frontend_components_py,scripts_tests_test_matching_engine_v1_1_0_py,scripts_tests_test_miniqmt_broker_py,scripts_tests_test_tick_replay_data_handler_py,src_zephyr_data_main_py,src_zephyr_data_alerter_py,src_zephyr_data_ch_writer_py,src_zephyr_data_implementations_init_py,src_zephyr_data_implementations_akshare_provider_py,src_zephyr_data_implementations_baostock_provider_py design
-    class D_SHARED,D_INFRA_RECOVERY,D_INTELLIGENCE external_prod
-    class D_INTEGRATION,D_AUDITTEST external_design
+    class D_SHARED,D_INTELLIGENCE,D_INFRA_RECOVERY,D_FRONTEND external_prod
+    class D_INTEGRATION_GATEWAY,D_BACKTEST,D_INTEGRATION,D_AUDITTEST external_design
 ```
 
 ### 第 11 页 / 共 29 页 / Page 11 of 29
@@ -675,58 +749,58 @@ graph TD
     src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_task_queue_py
     src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_implementations_ifind_provider_py
     src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_implementations_miniqmt_provider_py
-    src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_implementations_rss_provider_py
-    src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_implementations_tickflow_provider_py
-    src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_implementations_tushare_provider_py
     src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_implementations_tdx_provider_py
+    src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_implementations_rss_provider_py
+    src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_implementations_tushare_provider_py
+    src_zephyr_data_scheduler_py -.->|import_depends| src_zephyr_data_implementations_tickflow_provider_py
     src_zephyr_data_implementations_ifind_provider_py -.->|import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_ifind_provider_py -.->|import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_implementations_miniqmt_provider_py -.->|import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_miniqmt_provider_py -.->|import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_rss_provider_py -.->|import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_rss_provider_py -.->|import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_tickflow_provider_py -.->|import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_tickflow_provider_py -.->|import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_tushare_provider_py -.->|import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_tushare_provider_py -.->|import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_implementations_tdx_provider_py -.->|import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_tdx_provider_py -.->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_rss_provider_py -.->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_rss_provider_py -.->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tushare_provider_py -.->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_tushare_provider_py -.->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tickflow_provider_py -.->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_tickflow_provider_py -.->|import_depends| src_zephyr_data_provider_base_py
     src_zephyr_governance_adapters_init_py -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     src_zephyr_governance_adapters_init_py -.->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
     src_zephyr_governance_agent_spec_init_py -.->|import_depends| src_zephyr_governance_agent_spec_registry_py
     D_SHARED["D_SHARED production"]
-    src_zephyr_data_metrics_py -.->|import_depends| D_SHARED
     src_zephyr_data_progress_store_py -.->|import_depends| D_SHARED
     src_zephyr_data_progress_store_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED
+    D_REPORTING["D_REPORTING prototype"]
+    src_zephyr_governance_audit_default_tca_engine_py -.->|import_depends| D_REPORTING
+    src_zephyr_governance_audit_default_attribution_engine_py -.->|import_depends| D_REPORTING
     src_zephyr_data_scheduler_py -.->|import_depends| D_SHARED
-    src_zephyr_data_implementations_tushare_provider_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED
     src_zephyr_governance_adapters_risk_validation_bridge_py -.->|import_depends| D_SHARED
-    D_TRADING["D_TRADING production"]
-    src_zephyr_governance_adapters_simulation_broker_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_adapters_simulation_broker_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_adapters_simulation_broker_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED
-    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED
+    src_zephyr_data_implementations_tushare_provider_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_agent_spec_registry_py -.->|import_depends| D_SHARED
     D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SECURITY
-    src_zephyr_governance_agent_spec_registry_py -.->|import_depends| D_SHARED
-    D_REPORTING["D_REPORTING prototype"]
-    src_zephyr_governance_audit_default_attribution_engine_py -.->|import_depends| D_REPORTING
-    src_zephyr_governance_audit_default_tca_engine_py -.->|import_depends| D_REPORTING
+    D_TRADING["D_TRADING production"]
+    src_zephyr_governance_adapters_simulation_broker_py -.->|import_depends| D_TRADING
+    src_zephyr_data_metrics_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_adapters_simulation_broker_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_adapters_simulation_broker_py -.->|import_depends| D_TRADING
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
     D_EX_CORE["D_EX_CORE prototype"]
     D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_architecture_governance_post_sync_validator_py
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_architecture_governance_blueprint_reconciler_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_data_policy_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_architecture_governance_gap_analyzer_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_architecture_governance_post_sync_validator_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_data_policy_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_architecture_governance_blueprint_code_consistency_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_architecture_governance_formal_verifier_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
@@ -738,8 +812,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_data_policy_registry_py,src_zephyr_governance_agent_spec_a2a_failure_py,src_zephyr_governance_agent_spec_rbac_bridge_py,src_zephyr_governance_architecture_governance_blueprint_bloat_monitor_py,src_zephyr_governance_architecture_governance_blueprint_code_consistency_py,src_zephyr_governance_architecture_governance_blueprint_reconciler_py,src_zephyr_governance_architecture_governance_formal_verifier_py,src_zephyr_governance_architecture_governance_gap_analyzer_py,src_zephyr_governance_audit_default_tca_engine_py production
     class src_zephyr_data_implementations_ifind_provider_py,src_zephyr_data_implementations_miniqmt_provider_py,src_zephyr_data_implementations_rss_provider_py,src_zephyr_data_implementations_tdx_provider_py,src_zephyr_data_implementations_tickflow_provider_py,src_zephyr_data_implementations_tushare_provider_py,src_zephyr_data_metrics_py,src_zephyr_data_progress_store_py,src_zephyr_data_provider_base_py,src_zephyr_data_scheduler_py,src_zephyr_data_task_queue_py,src_zephyr_governance_adapters_init_py,src_zephyr_governance_adapters_risk_validation_bridge_py,src_zephyr_governance_adapters_simulation_broker_py,src_zephyr_governance_agent_spec_init_py,src_zephyr_governance_agent_spec_registry_py,src_zephyr_governance_architecture_governance_init_py,src_zephyr_governance_architecture_governance_construction_verifier_py,src_zephyr_governance_architecture_governance_post_sync_validator_py,src_zephyr_governance_audit_init_py,src_zephyr_governance_audit_default_attribution_engine_py design
-    class D_SHARED,D_TRADING,D_SECURITY,D_INFRA_RUNTIME external_prod
-    class D_REPORTING,D_EX_CORE,D_AUDITTEST,D_GOV_SCRIPTS external_design
+    class D_SHARED,D_SECURITY,D_TRADING,D_INFRA_RUNTIME external_prod
+    class D_REPORTING,D_EX_CORE,D_GOV_SCRIPTS,D_AUDITTEST external_design
 ```
 
 ### 第 12 页 / 共 29 页 / Page 12 of 29
@@ -787,35 +861,35 @@ graph TD
     src_zephyr_governance_audit_trail_bridges_audit_feedback_bridge_py -->|import_depends| src_zephyr_governance_audit_trail_anomaly_py
     src_zephyr_governance_audit_trail_bridges_audit_drift_bridge_py -.->|import_depends| src_zephyr_governance_audit_trail_anomaly_py
     src_zephyr_governance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_anomaly_py
+    src_zephyr_governance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_feedback_bridge_py
     src_zephyr_governance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_contracts_py
     src_zephyr_governance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_delegation_bridge_py
-    src_zephyr_governance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_feedback_bridge_py
-    src_zephyr_governance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_tiered_storage_bridge_py
     src_zephyr_governance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_drift_bridge_py
     src_zephyr_governance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_trust_bridge_py
+    src_zephyr_governance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_tiered_storage_bridge_py
     D_SHARED["D_SHARED production"]
     src_zephyr_governance_audit_reconciliation_registry_py -->|import_depends| D_SHARED
     src_zephyr_governance_audit_snapshot_manager_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_audit_snapshot_manager_py -->|import_depends| D_SHARED
     src_zephyr_governance_audit_trail_agent_signer_py -.->|import_depends| D_SHARED
     src_zephyr_governance_audit_trail_cli_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_cold_start_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_cold_start_py -->|import_depends| D_SHARED
     D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_SECURITY
     src_zephyr_governance_audit_trail_cli_py -.->|import_depends| D_SECURITY
-    src_zephyr_governance_audit_trail_audit_schema_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_audit_schema_py -->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_cold_start_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_cold_start_py -->|import_depends| D_SHARED
     src_zephyr_governance_audit_trail_bridges_audit_drift_bridge_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_audit_schema_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_audit_snapshot_manager_py -->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_audit_schema_py -->|import_depends| D_SHARED
+    D_AUDITTEST["D_AUDITTEST prototype"]
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_api_lifecycle_py
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_governance_audit_trail_bridges_audit_feedback_bridge_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_action_history_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_api_lifecycle_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_bridges_audit_feedback_bridge_py
+    D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_orchestrator_compat_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_bridges_audit_tiered_storage_bridge_py
-    D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_action_history_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_bridges_audit_feedback_bridge_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_init_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_contracts_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_cold_start_py
@@ -832,7 +906,7 @@ graph TD
     class src_zephyr_governance_audit_reconciliation_registry_py,src_zephyr_governance_audit_snapshot_manager_py,src_zephyr_governance_audit_trail_init_py,src_zephyr_governance_audit_trail_orchestrator_compat_py,src_zephyr_governance_audit_trail_action_history_py,src_zephyr_governance_audit_trail_agent_signer_py,src_zephyr_governance_audit_trail_anomaly_py,src_zephyr_governance_audit_trail_api_lifecycle_py,src_zephyr_governance_audit_trail_audit_schema_py,src_zephyr_governance_audit_trail_audit_write_failure_protector_py,src_zephyr_governance_audit_trail_bridge_py,src_zephyr_governance_audit_trail_bridges_audit_delegation_bridge_py,src_zephyr_governance_audit_trail_bridges_audit_feedback_bridge_py,src_zephyr_governance_audit_trail_bridges_audit_tiered_storage_bridge_py,src_zephyr_governance_audit_trail_bridges_audit_trust_bridge_py,src_zephyr_governance_audit_trail_changelog_manager_py,src_zephyr_governance_audit_trail_cli_py,src_zephyr_governance_audit_trail_code_archaeology_py,src_zephyr_governance_audit_trail_cold_start_py,src_zephyr_governance_audit_trail_compliance_map_py,src_zephyr_governance_audit_trail_contracts_py,src_zephyr_governance_audit_trail_corporate_actions_py,src_zephyr_governance_audit_trail_delegation_auditor_py,src_zephyr_governance_audit_trail_dora_metrics_py production
     class src_zephyr_governance_audit_trail_audit_admission_controller_py,src_zephyr_governance_audit_trail_bridges_init_py,src_zephyr_governance_audit_trail_bridges_audit_anomaly_py,src_zephyr_governance_audit_trail_bridges_audit_contracts_py,src_zephyr_governance_audit_trail_bridges_audit_drift_bridge_py,src_zephyr_governance_audit_trail_delegation_bridge_py design
     class D_SHARED,D_SECURITY external_prod
-    class D_GOV_ENFORCEMENT,D_AUDITTEST,D_INFRA_RECOVERY external_design
+    class D_AUDITTEST,D_GOV_ENFORCEMENT,D_INFRA_RECOVERY external_design
 ```
 
 ### 第 13 页 / 共 29 页 / Page 13 of 29
@@ -876,30 +950,28 @@ graph TD
     src_zephyr_governance_audit_trail_merkle_hourly_py -.->|import_depends| src_zephyr_governance_audit_trail_integrity_py
     src_zephyr_governance_audit_trail_pipeline_runner_py -.->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
     src_zephyr_governance_audit_trail_query_py -->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_SHARED["D_SHARED production"]
-    src_zephyr_governance_audit_trail_event_store_py -->|import_depends| D_SHARED
-    D_TRADING["D_TRADING production"]
-    src_zephyr_governance_audit_trail_feedback_bridge_py -->|import_depends| D_TRADING
-    src_zephyr_governance_audit_trail_feedback_bridge_py -->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_evidence_pack_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_forensic_package_py -.->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_audit_trail_finding_model_py -.->|import_depends| D_INTEGRATION
+    D_SHARED["D_SHARED production"]
+    src_zephyr_governance_audit_trail_log_rotation_py -->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_pipeline_runner_py -->|import_depends| D_INTEGRATION
+    src_zephyr_governance_audit_trail_merkle_hourly_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_replay_engine_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_evidence_pack_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_forensic_package_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_query_py -->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_replay_engine_py -->|import_depends| D_SHARED
     src_zephyr_governance_audit_trail_genesis_py -.->|import_depends| D_SHARED
     src_zephyr_governance_audit_trail_indexer_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_indexer_py -->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_retention_py -->|import_depends| D_SHARED
     src_zephyr_governance_audit_trail_integrity_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_log_rotation_py -->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_merkle_hourly_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_pipeline_runner_py -->|import_depends| D_INTEGRATION
-    src_zephyr_governance_audit_trail_query_py -->|import_depends| D_SHARED
-    src_zephyr_governance_audit_trail_replay_engine_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_indexer_py -->|import_depends| D_SHARED
+    src_zephyr_governance_audit_trail_event_store_py -->|import_depends| D_SHARED
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_observability_dashboard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_drift_bridge_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_event_store_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_feedback_policy_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_forensic_package_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_genesis_py
@@ -907,16 +979,17 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_integrity_verifier_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_log_rotation_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_merkle_audit_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_privacy_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_query_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_feedback_policy_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_privacy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_audit_trail_drift_bridge_py,src_zephyr_governance_audit_trail_event_store_py,src_zephyr_governance_audit_trail_evidence_pack_py,src_zephyr_governance_audit_trail_external_tool_audit_py,src_zephyr_governance_audit_trail_feedback_bridge_py,src_zephyr_governance_audit_trail_feedback_policy_py,src_zephyr_governance_audit_trail_feedback_self_audit_py,src_zephyr_governance_audit_trail_forensic_package_py,src_zephyr_governance_audit_trail_genesis_py,src_zephyr_governance_audit_trail_glossary_matrix_py,src_zephyr_governance_audit_trail_incremental_review_py,src_zephyr_governance_audit_trail_indexer_py,src_zephyr_governance_audit_trail_integrity_verifier_py,src_zephyr_governance_audit_trail_kb_gate_py,src_zephyr_governance_audit_trail_log_rotation_py,src_zephyr_governance_audit_trail_merkle_audit_py,src_zephyr_governance_audit_trail_models_py,src_zephyr_governance_audit_trail_observability_dashboard_py,src_zephyr_governance_audit_trail_pipeline_runner_py,src_zephyr_governance_audit_trail_privacy_py,src_zephyr_governance_audit_trail_provenance_tracker_py,src_zephyr_governance_audit_trail_query_py,src_zephyr_governance_audit_trail_replay_engine_py,src_zephyr_governance_audit_trail_retention_py,src_zephyr_governance_audit_trail_sbom_generator_py production
     class src_zephyr_governance_audit_trail_finding_ingest_py,src_zephyr_governance_audit_trail_finding_model_py,src_zephyr_governance_audit_trail_integrity_py,src_zephyr_governance_audit_trail_merkle_hourly_py,src_zephyr_governance_audit_trail_resource_aware_pool_py design
-    class D_SHARED,D_TRADING,D_INTEGRATION external_prod
+    class D_INTEGRATION,D_SHARED external_prod
     class D_AUDITTEST external_design
 ```
 
@@ -958,54 +1031,54 @@ graph TD
     end
     src_zephyr_governance_audit_trail_tiered_storage_bridge_py -.->|import_depends| src_zephyr_governance_audit_trail_tiered_storage_py
     src_zephyr_governance_audit_trail_trust_bridge_py -.->|import_depends| src_zephyr_governance_audit_trail_trust_engine_py
-    src_zephyr_governance_behavioral_admission_gpu_consensus_scheduler_py -.->|import_depends| src_zephyr_governance_behavioral_admission_verdict_engine_py
     src_zephyr_governance_behavioral_admission_protection_index_py -.->|import_depends| src_zephyr_governance_behavioral_admission_verdict_engine_py
+    src_zephyr_governance_behavioral_admission_gpu_consensus_scheduler_py -.->|import_depends| src_zephyr_governance_behavioral_admission_verdict_engine_py
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_admission_controller_py
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_gate_event_adapter_py
+    src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_protection_index_py
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_gpu_consensus_scheduler_py
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_session_lifecycle_py
-    src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_protection_index_py
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_verdict_engine_py
     src_zephyr_governance_bridges_init_py -.->|config_depends| src_zephyr_governance_bridges_alerts_py
     src_zephyr_governance_code_dedup_init_py -.->|config_depends| src_zephyr_governance_code_dedup_annotations_py
-    D_FACTOR["D_FACTOR production"]
-    src_zephyr_governance_base_py -.->|import_depends| D_FACTOR
     D_SHARED["D_SHARED production"]
-    src_zephyr_governance_capability_lookup_py -->|import_depends| D_SHARED
     src_zephyr_governance_audit_trail_self_monitor_py -->|import_depends| D_SHARED
-    D_INTEGRATION["D_INTEGRATION production"]
-    src_zephyr_governance_audit_trail_text_to_finding_adapter_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_audit_trail_writer_py -.->|import_depends| D_SHARED
     src_zephyr_governance_audit_trail_writer_py -->|import_depends| D_SHARED
+    D_FACTOR["D_FACTOR production"]
+    src_zephyr_governance_base_py -.->|import_depends| D_FACTOR
+    src_zephyr_governance_bridges_alerts_py -->|import_depends| D_SHARED
     src_zephyr_governance_behavioral_admission_gate_event_adapter_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_behavioral_admission_session_lifecycle_py -->|import_depends| D_SHARED
+    D_INTEGRATION["D_INTEGRATION production"]
+    src_zephyr_governance_audit_trail_text_to_finding_adapter_py -.->|import_depends| D_INTEGRATION
+    src_zephyr_governance_capability_lookup_py -->|import_depends| D_SHARED
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_governance_behavioral_auditor_init_py -.->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_governance_bridges_alerts_py -->|import_depends| D_SHARED
-    D_TRADING["D_TRADING production"]
-    D_TRADING -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
+    src_zephyr_governance_behavioral_admission_session_lifecycle_py -->|import_depends| D_SHARED
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_ast_comparator_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_trust_ring_manager_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_spec_auditor_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_auto_fixer_py
+    D_TRADING["D_TRADING production"]
+    D_TRADING -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_trust_ring_manager_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_supply_chain_security_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_writer_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_auto_fixer_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_spec_auditor_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_supply_chain_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_tiered_storage_py
+    D_SHARED -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_writer_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_capability_lookup_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_behavioral_admission_session_lifecycle_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_spec_auditor_py
-    D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_bridges_alerts_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_bridges_alerts_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_audit_trail_self_monitor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_audit_trail_self_monitor_py,src_zephyr_governance_audit_trail_spec_auditor_py,src_zephyr_governance_audit_trail_supply_chain_py,src_zephyr_governance_audit_trail_supply_chain_security_py,src_zephyr_governance_audit_trail_tiered_storage_py,src_zephyr_governance_audit_trail_trust_engine_py,src_zephyr_governance_audit_trail_trust_ring_manager_py,src_zephyr_governance_audit_trail_wqa_scorer_py,src_zephyr_governance_audit_trail_writer_py,src_zephyr_governance_behavioral_admission_session_lifecycle_py,src_zephyr_governance_bridges_alerts_py,src_zephyr_governance_capability_lookup_py,src_zephyr_governance_code_dedup_annotations_py,src_zephyr_governance_code_dedup_ast_comparator_py,src_zephyr_governance_code_dedup_atomic_fixer_py,src_zephyr_governance_code_dedup_auto_fixer_py production
     class src_zephyr_governance_audit_trail_text_to_finding_adapter_py,src_zephyr_governance_audit_trail_tiered_storage_bridge_py,src_zephyr_governance_audit_trail_trust_bridge_py,src_zephyr_governance_base_py,src_zephyr_governance_behavioral_admission_init_py,src_zephyr_governance_behavioral_admission_admission_controller_py,src_zephyr_governance_behavioral_admission_gate_event_adapter_py,src_zephyr_governance_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_governance_behavioral_admission_protection_index_py,src_zephyr_governance_behavioral_admission_verdict_engine_py,src_zephyr_governance_behavioral_auditor_init_py,src_zephyr_governance_bridges_init_py,src_zephyr_governance_bridges_spec_auditor_py,src_zephyr_governance_code_dedup_init_py design
-    class D_FACTOR,D_SHARED,D_INTEGRATION,D_INFRA_RUNTIME,D_TRADING external_prod
+    class D_SHARED,D_FACTOR,D_INTEGRATION,D_INFRA_RUNTIME,D_TRADING external_prod
     class D_AUDITTEST external_design
 ```
 
@@ -1048,33 +1121,33 @@ graph TD
     src_zephyr_governance_code_dedup_cli_py -.->|import_depends| src_zephyr_governance_code_dedup_exit_codes_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_code_dedup_cache_manager_py -.->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    src_zephyr_governance_code_dedup_cli_py -.->|import_depends| D_INFRA_RUNTIME
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_governance_code_dedup_integration_hub_py -->|import_depends| D_AUTONOMY_CORE
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    src_zephyr_governance_code_dedup_cli_py -.->|import_depends| D_INFRA_RUNTIME
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_cross_boundary_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_decision_auditor_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_degradation_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_cache_manager_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_doom_loop_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_behavioral_sampler_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_dead_module_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_diff_detector_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_cache_manager_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_health_monitor_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_doom_loop_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_grandfather_manager_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_file_creator_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_config_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_extraction_safety_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_monoculture_guard_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_integration_hub_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_code_simulator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_code_dedup_behavioral_sampler_py,src_zephyr_governance_code_dedup_behavioral_trust_checker_py,src_zephyr_governance_code_dedup_cache_manager_py,src_zephyr_governance_code_dedup_canary_register_py,src_zephyr_governance_code_dedup_code_analyzer_runner_py,src_zephyr_governance_code_dedup_code_simulator_py,src_zephyr_governance_code_dedup_config_py,src_zephyr_governance_code_dedup_contract_consistency_checker_py,src_zephyr_governance_code_dedup_cross_boundary_detector_py,src_zephyr_governance_code_dedup_dead_module_detector_py,src_zephyr_governance_code_dedup_debt_projector_py,src_zephyr_governance_code_dedup_decision_auditor_py,src_zephyr_governance_code_dedup_degradation_py,src_zephyr_governance_code_dedup_diff_detector_py,src_zephyr_governance_code_dedup_doom_loop_guard_py,src_zephyr_governance_code_dedup_exit_codes_py,src_zephyr_governance_code_dedup_extraction_safety_py,src_zephyr_governance_code_dedup_false_negative_auditor_py,src_zephyr_governance_code_dedup_fifteen_dimension_auditor_py,src_zephyr_governance_code_dedup_file_creator_py,src_zephyr_governance_code_dedup_function_discovery_py,src_zephyr_governance_code_dedup_grandfather_manager_py,src_zephyr_governance_code_dedup_health_monitor_py,src_zephyr_governance_code_dedup_integration_hub_py,src_zephyr_governance_code_dedup_integrations_py,src_zephyr_governance_code_dedup_micro_clone_detector_py,src_zephyr_governance_code_dedup_mock_duplicate_generator_py,src_zephyr_governance_code_dedup_monoculture_guard_py production
     class src_zephyr_governance_code_dedup_canary_manager_py,src_zephyr_governance_code_dedup_cli_py design
-    class D_INFRA_RUNTIME,D_AUTONOMY_CORE external_prod
+    class D_AUTONOMY_CORE,D_INFRA_RUNTIME external_prod
     class D_SHARED,D_AUDITTEST external_design
 ```
 
@@ -1117,9 +1190,12 @@ graph TD
     src_zephyr_governance_code_dedup_trackers_init_py -.->|config_depends| src_zephyr_governance_code_dedup_trackers_blind_spot_tracker_py
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_ssot_registrar_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_symbol_index_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_trackers_consequence_tracker_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_symbol_index_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_verifier_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_shared_evolver_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_shared_lifecycle_manager_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_signature_matcher_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_stale_shared_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_pre_apply_integrity_gate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_simplicity_auditor_py
@@ -1128,9 +1204,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_success_validator_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_prioritizer_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_observation_window_guard_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_recovery_manifest_writer_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_shadow_verifier_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_code_dedup_self_scanner_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1176,11 +1249,11 @@ graph TD
         src_zephyr_governance_context_governance_init_py["src/zephyr/governance/context_governance/__init... prototype"]
         src_zephyr_governance_context_governance_command_chain_length_gate_py["src/zephyr/governance/context_governance/comman... production"]
     end
-    src_zephyr_governance_commit_gates_init_py -.->|config_depends| src_zephyr_governance_commit_gates_arch_reference_gate_py
+    src_zephyr_governance_commit_gates_init_py -.->|config_depends| src_zephyr_governance_commit_gates_bare_getenv_gate_py
     D_SHARED["D_SHARED production"]
+    src_zephyr_governance_commit_gates_gate_repo_py -->|import_depends| D_SHARED
+    src_zephyr_governance_commit_gates_gate_repo_py -->|import_depends| D_SHARED
     src_zephyr_governance_commit_gates_bare_getenv_gate_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_commit_gates_gate_repo_py -->|import_depends| D_SHARED
-    src_zephyr_governance_commit_gates_gate_repo_py -->|import_depends| D_SHARED
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_unsafe_dict_spread_gate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_create_guard_py
@@ -1191,11 +1264,11 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_context_governance_command_chain_length_gate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_directory_contract_gate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_arch_reference_gate_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_dangling_reference_gate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_capability_overlap_gate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_held_overlap_gate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_file_placement_ttl_gate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_claim_required_gate_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_commit_gates_dangling_reference_gate_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1245,14 +1318,14 @@ graph TD
     src_zephyr_governance_drift_detection_infrastructure_py -.->|import_depends| src_zephyr_governance_drift_detection_absence_manager_py
     src_zephyr_governance_drift_detection_infrastructure_py -.->|import_depends| src_zephyr_governance_drift_detection_ai_context_injector_py
     D_SHARED["D_SHARED production"]
-    src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED
-    src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    src_zephyr_governance_context_governance_context_budget_py -->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_governance_data_governance_miniqmt_provider_py -.->|import_depends| D_SHARED
     src_zephyr_governance_data_governance_pricing_sync_py -->|import_depends| D_SHARED
     src_zephyr_governance_drift_detection_absence_manager_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_data_governance_miniqmt_provider_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME prototype"]
     src_zephyr_governance_data_governance_miniqmt_provider_py -.->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED
+    src_zephyr_governance_context_governance_context_budget_py -->|import_depends| D_INFRA_RUNTIME
     D_BACKTEST["D_BACKTEST design"]
     D_BACKTEST -.->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_1
     D_BACKTEST -.->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_1
@@ -1263,24 +1336,23 @@ graph TD
     D_FRONTEND -.->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_1
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_absence_manager_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_data_governance_data_pipeline_guard_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_depgraph_schema_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_data_governance_exchange_partition_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_context_governance_conversation_tax_detector_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_data_governance_data_pipeline_guard_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_depgraph_schema_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_context_governance_instruction_bloat_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_depgraph_schema_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_context_governance_context_package_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_data_governance_exchange_reg_monitor_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_context_governance_protocol_self_context_py
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_depgraph_schema_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_context_governance_context_budget_py,src_zephyr_governance_context_governance_context_manager_py,src_zephyr_governance_context_governance_context_package_py,src_zephyr_governance_context_governance_context_recycling_py,src_zephyr_governance_context_governance_context_switch_governor_py,src_zephyr_governance_context_governance_context_waste_detector_py,src_zephyr_governance_context_governance_conversation_tax_detector_py,src_zephyr_governance_context_governance_instruction_bloat_detector_py,src_zephyr_governance_context_governance_multi_turn_intent_analyzer_py,src_zephyr_governance_context_governance_protocol_self_context_py,src_zephyr_governance_context_governance_think_time_model_py,src_zephyr_governance_data_governance_data_pipeline_guard_py,src_zephyr_governance_data_governance_exchange_partition_detector_py,src_zephyr_governance_data_governance_exchange_reg_monitor_py,src_zephyr_governance_data_governance_pricing_sync_py,src_zephyr_governance_depgraph_schema_py,src_zephyr_governance_drift_detection_init_py,src_zephyr_governance_drift_detection_absence_manager_py,src_zephyr_governance_drift_detection_ai_construction_detectors_py,src_zephyr_governance_drift_detection_ai_context_injector_py production
     class src_zephyr_governance_data_governance_init_py,src_zephyr_governance_data_governance_akshare_provider_py,src_zephyr_governance_data_governance_miniqmt_provider_py,src_zephyr_governance_data_governance_miniqmt_provider_py_1,src_zephyr_governance_drift_detection_main_py,src_zephyr_governance_drift_detection_analysis_py,src_zephyr_governance_drift_detection_core_py,src_zephyr_governance_drift_detection_drift_py,src_zephyr_governance_drift_detection_infrastructure_py,src_zephyr_governance_drift_detection_scanners_py design
-    class D_SHARED,D_INFRA_RUNTIME external_prod
-    class D_BACKTEST,D_EX_CORE,D_FRONTEND,D_AUDITTEST,D_GOV_SCRIPTS external_design
+    class D_SHARED external_prod
+    class D_INFRA_RUNTIME,D_BACKTEST,D_EX_CORE,D_FRONTEND,D_AUDITTEST external_design
 ```
 
 ### 第 19 页 / 共 29 页 / Page 19 of 29
@@ -1320,50 +1392,50 @@ graph TD
         src_zephyr_governance_drift_detection_gate_persistence_py["src/zephyr/governance/drift_detection/gate_pers... production"]
     end
     src_zephyr_governance_drift_detection_brain_integration_py -->|import_depends| src_zephyr_governance_drift_detection_correlation_engine_py
-    src_zephyr_governance_drift_detection_brain_integration_py -->|import_depends| src_zephyr_governance_drift_detection_credibility_engine_py
     src_zephyr_governance_drift_detection_brain_integration_py -.->|import_depends| src_zephyr_governance_drift_detection_cold_start_py
+    src_zephyr_governance_drift_detection_brain_integration_py -->|import_depends| src_zephyr_governance_drift_detection_credibility_engine_py
     src_zephyr_governance_drift_detection_brain_integration_py -->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     src_zephyr_governance_drift_detection_brain_integration_py -->|import_depends| src_zephyr_governance_drift_detection_forensics_engine_py
     src_zephyr_governance_drift_detection_chaos_injector_py -->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     src_zephyr_governance_drift_detection_cold_start_py -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     src_zephyr_governance_drift_detection_detector_dispatcher_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
-    src_zephyr_governance_drift_detection_drift_infrastructure_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_drift_engine_py -->|import_depends| src_zephyr_governance_drift_detection_drift_infrastructure_py
     src_zephyr_governance_drift_detection_drift_engine_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
+    src_zephyr_governance_drift_detection_drift_infrastructure_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_drift_result_types_py -->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     src_zephyr_governance_drift_detection_drift_result_types_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_drift_training_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     D_SHARED["D_SHARED prototype"]
-    src_zephyr_governance_drift_detection_brain_integration_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_drift_detection_canary_controller_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_drift_detection_chaos_injector_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_drift_detection_chaos_injector_py -.->|import_depends| D_SHARED
     src_zephyr_governance_drift_detection_cascade_detector_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_drift_detection_cold_start_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_drift_detection_drift_engine_py -->|import_depends| D_SHARED
+    src_zephyr_governance_drift_detection_chaos_injector_py -.->|import_depends| D_SHARED
     src_zephyr_governance_drift_detection_drift_models_py -->|import_depends| D_SHARED
     src_zephyr_governance_drift_detection_gate_persistence_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_drift_detection_gate_persistence_py -->|import_depends| D_SHARED
     src_zephyr_governance_drift_detection_forensics_engine_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_drift_detection_drift_engine_py -->|import_depends| D_SHARED
+    src_zephyr_governance_drift_detection_canary_controller_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_drift_detection_cold_start_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_drift_detection_gate_persistence_py -->|import_depends| D_SHARED
+    src_zephyr_governance_drift_detection_brain_integration_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_drift_detection_chaos_injector_py -.->|import_depends| D_SHARED
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_governance_drift_detection_drift_infrastructure_py
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
-    D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
-    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
-    D_INFRA_TELEMETRY -->|import_depends| src_zephyr_governance_drift_detection_contract_drift_detector_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_baseline_poisoning_guard_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_brain_integration_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_correlation_engine_py
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
+    D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_credibility_engine_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_detector_dispatcher_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_drift_models_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_chaos_injector_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_events_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_config_consistency_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_events_py
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
+    D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_canary_controller_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_drift_detector_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_bootstrapping_calibrator_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_autonomy_regressor_py
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
+    D_INFRA_TELEMETRY -->|import_depends| src_zephyr_governance_drift_detection_contract_drift_detector_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detection_events_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1414,9 +1486,9 @@ graph TD
     src_zephyr_governance_drift_detector_core_bridges_init_py -.->|import_depends| src_zephyr_governance_drift_detection_state_machine_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_drift_detection_handoff_manager_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_drift_detection_tamper_proof_audit_py -.->|import_depends| D_SHARED
     src_zephyr_governance_drift_detection_trend_analyzer_py -.->|import_depends| D_SHARED
     src_zephyr_governance_drift_detection_trend_analyzer_py -->|import_depends| D_SHARED
-    src_zephyr_governance_drift_detection_tamper_proof_audit_py -.->|import_depends| D_SHARED
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_governance_drift_detection_reconciler_py
     D_AUDITTEST["D_AUDITTEST prototype"]
@@ -1488,43 +1560,43 @@ graph TD
     src_zephyr_governance_financial_governance_init_py -.->|config_depends| src_zephyr_governance_financial_governance_arbitrage_asymmetry_detector_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_evidence_pack_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_engine_pipeline_base_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_escalation_contracts_py -->|import_depends| D_SHARED
-    src_zephyr_governance_escalation_escalation_engine_py -.->|import_depends| D_SHARED
-    D_SECURITY_LLM["D_SECURITY_LLM production"]
-    src_zephyr_governance_escalation_escalation_engine_py -->|import_depends| D_SECURITY_LLM
+    src_zephyr_governance_financial_governance_atomic_transaction_manager_py -->|import_depends| D_SHARED
     src_zephyr_governance_escalation_triage_py -.->|import_depends| D_SHARED
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_governance_escalation_triage_py -->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_escalation_contracts_py -->|import_depends| D_SHARED
     src_zephyr_governance_escalation_triage_py -->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_governance_financial_governance_atomic_transaction_manager_py -->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
-    D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    src_zephyr_governance_engine_pipeline_base_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_escalation_escalation_engine_py -.->|import_depends| D_SHARED
+    D_SECURITY_LLM["D_SECURITY_LLM production"]
+    src_zephyr_governance_escalation_escalation_engine_py -->|import_depends| D_SECURITY_LLM
     D_SECURITY["D_SECURITY prototype"]
     D_SECURITY -.->|import_depends| src_zephyr_governance_engine_pipeline_base_py
-    D_TRADING["D_TRADING production"]
-    D_TRADING -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_escalation_fatigue_manager_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_escalation_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY prototype"]
+    D_INTEGRATION_GATEWAY -.->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_TRADING["D_TRADING production"]
+    D_TRADING -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_escalation_engine_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_escalation_loop_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_result_types_py
-    D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY prototype"]
-    D_INTEGRATION_GATEWAY -.->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detector_core_model_drift_monitor_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_escalation_escalation_api_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_drift_detector_core_ml_engineering_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_drift_detector_core_ml_engineering_py,src_zephyr_governance_drift_detector_core_model_drift_monitor_py,src_zephyr_governance_drift_detector_core_performance_baseline_py,src_zephyr_governance_drift_detector_core_regime_detector_py,src_zephyr_governance_escalation_init_py,src_zephyr_governance_escalation_alternative_path_blocker_py,src_zephyr_governance_escalation_consequence_manager_py,src_zephyr_governance_escalation_contracts_py,src_zephyr_governance_escalation_escalation_api_py,src_zephyr_governance_escalation_escalation_engine_py,src_zephyr_governance_escalation_escalation_fatigue_manager_py,src_zephyr_governance_escalation_escalation_loop_detector_py,src_zephyr_governance_escalation_escalation_metrics_py,src_zephyr_governance_escalation_escalation_models_py,src_zephyr_governance_escalation_escalation_smoke_tests_py,src_zephyr_governance_escalation_git_hook_pre_scanner_py,src_zephyr_governance_escalation_human_factors_py,src_zephyr_governance_escalation_identity_verifier_py,src_zephyr_governance_escalation_incident_response_py,src_zephyr_governance_escalation_order_state_escalator_py,src_zephyr_governance_escalation_result_types_py,src_zephyr_governance_escalation_spof_checker_py,src_zephyr_governance_escalation_triage_py,src_zephyr_governance_financial_governance_arbitrage_asymmetry_detector_py,src_zephyr_governance_financial_governance_atomic_transaction_manager_py production
     class src_zephyr_governance_drift_detector_core_bridges_drift_bridge_py,src_zephyr_governance_engine_init_py,src_zephyr_governance_engine_pipeline_base_py,src_zephyr_governance_evidence_pack_py,src_zephyr_governance_financial_governance_init_py design
-    class D_SECURITY_LLM,D_GOV_ENFORCEMENT,D_INFRA_RUNTIME,D_TRADING external_prod
+    class D_GOV_ENFORCEMENT,D_SECURITY_LLM,D_INFRA_RUNTIME,D_TRADING external_prod
     class D_SHARED,D_SECURITY,D_AUDITTEST,D_INTEGRATION_GATEWAY external_design
 ```
 
@@ -1571,43 +1643,43 @@ graph TD
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|import_depends| D_AUTONOMY_CORE
     D_SHARED["D_SHARED production"]
     src_zephyr_governance_intelligence_governance_aisg_sandbox_py -->|import_depends| D_SHARED
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    src_zephyr_governance_intelligence_governance_self_benchmark_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_governance_intelligence_governance_delegation_engine_py -.->|import_depends| D_SHARED
     D_SECURITY_LLM["D_SECURITY_LLM production"]
     src_zephyr_governance_intelligence_governance_delegation_engine_py -->|import_depends| D_SECURITY_LLM
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     src_zephyr_governance_intelligence_governance_model_router_py -->|import_depends| D_INTELLIGENCE
-    src_zephyr_governance_intelligence_governance_model_router_py -->|import_depends| D_INTELLIGENCE
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    src_zephyr_governance_intelligence_governance_self_benchmark_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_governance_intelligence_governance_self_benchmark_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_intelligence_governance_model_router_py -->|import_depends| D_INTELLIGENCE
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_kb_embedding_migrate_py -->|import_depends| D_INTEGRATION
+    D_AUDITTEST["D_AUDITTEST prototype"]
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_intelligence_governance_cross_assistant_adapter_py
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_governance_integrity_py
     D_TRADING["D_TRADING production"]
     D_TRADING -->|import_depends| src_zephyr_governance_intelligence_governance_model_router_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_intelligence_governance_cross_assistant_adapter_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_intelligence_governance_subagent_hook_propagator_py
     D_TRADING -->|import_depends| src_zephyr_governance_integrity_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_financial_governance_flash_crash_guard_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_intelligence_governance_model_version_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_financial_governance_flash_crash_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_intelligence_governance_meta_confidence_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_embedding_migrate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_embedding_migrate_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_backend_protocol_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_intelligence_governance_meta_confidence_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_intelligence_governance_model_version_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_financial_governance_risk_matrix_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_intelligence_governance_self_test_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_intelligence_governance_delegation_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_financial_governance_budget_enforcement_py,src_zephyr_governance_financial_governance_flash_crash_guard_py,src_zephyr_governance_financial_governance_instrument_py,src_zephyr_governance_financial_governance_risk_matrix_py,src_zephyr_governance_financial_governance_strategy_scoper_py,src_zephyr_governance_integrity_py,src_zephyr_governance_intelligence_governance_aisg_sandbox_py,src_zephyr_governance_intelligence_governance_confidence_estimator_py,src_zephyr_governance_intelligence_governance_cross_assistant_adapter_py,src_zephyr_governance_intelligence_governance_delegation_engine_py,src_zephyr_governance_intelligence_governance_delegation_manager_py,src_zephyr_governance_intelligence_governance_memory_provider_py,src_zephyr_governance_intelligence_governance_meta_confidence_py,src_zephyr_governance_intelligence_governance_model_router_py,src_zephyr_governance_intelligence_governance_model_version_detector_py,src_zephyr_governance_intelligence_governance_mvep_orchestrator_py,src_zephyr_governance_intelligence_governance_provider_base_py,src_zephyr_governance_intelligence_governance_provider_failover_py,src_zephyr_governance_intelligence_governance_self_test_py,src_zephyr_governance_intelligence_governance_self_validator_py,src_zephyr_governance_intelligence_governance_subagent_hook_propagator_py,src_zephyr_governance_kb_backend_protocol_py,src_zephyr_governance_kb_bootstrap_py,src_zephyr_governance_kb_citation_walker_py,src_zephyr_governance_kb_embedding_migrate_py production
     class src_zephyr_governance_intelligence_governance_init_py,src_zephyr_governance_intelligence_governance_model_provider_data_py,src_zephyr_governance_intelligence_governance_self_benchmark_py,src_zephyr_governance_kb_init_py,src_zephyr_governance_kb_batch_ingest_py design
-    class D_AUTONOMY_CORE,D_SHARED,D_SECURITY_LLM,D_INTELLIGENCE,D_INFRA_RUNTIME,D_INTEGRATION,D_TRADING external_prod
-    class D_GOV_ENFORCEMENT,D_AUDITTEST external_design
+    class D_AUTONOMY_CORE,D_SHARED,D_INFRA_RUNTIME,D_SECURITY_LLM,D_INTELLIGENCE,D_INTEGRATION,D_TRADING external_prod
+    class D_AUDITTEST,D_GOV_ENFORCEMENT external_design
 ```
 
 ### 第 23 页 / 共 29 页 / Page 23 of 29
@@ -1647,52 +1719,52 @@ graph TD
         src_zephyr_governance_kb_storage_unified_memory_api_py["src/zephyr/governance/kb/storage/unified_memory... prototype"]
     end
     src_zephyr_governance_kb_ingest_py -->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
-    src_zephyr_governance_kb_kb_engine_kb_gate_task_py -.->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
     src_zephyr_governance_kb_kb_engine_init_py -.->|config_depends| src_zephyr_governance_kb_kb_engine_kb_gate_task_py
+    src_zephyr_governance_kb_migration_kb_gate_task_py -.->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
+    src_zephyr_governance_kb_kb_engine_kb_gate_task_py -.->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
     src_zephyr_governance_kb_migration_init_py -.->|config_depends| src_zephyr_governance_kb_migration_kb_gate_task_py
     src_zephyr_governance_kb_pipeline_activate_py -.->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
-    src_zephyr_governance_kb_migration_kb_gate_task_py -.->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
-    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
     src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
-    src_zephyr_governance_kb_pipeline_init_py -.->|config_depends| src_zephyr_governance_kb_pipeline_activate_py
     src_zephyr_governance_kb_pipeline_batch_ingest_py -.->|import_depends| src_zephyr_governance_kb_ingest_py
     src_zephyr_governance_kb_storage_unified_memory_api_py -.->|import_depends| src_zephyr_governance_kb_storage_backend_protocol_py
+    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
+    src_zephyr_governance_kb_pipeline_init_py -.->|config_depends| src_zephyr_governance_kb_pipeline_activate_py
     src_zephyr_governance_kb_storage_init_py -.->|config_depends| src_zephyr_governance_kb_storage_unified_memory_api_py
     D_SHARED["D_SHARED production"]
-    src_zephyr_governance_kb_integrity_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_kb_freeze_py -->|import_depends| D_SHARED
-    src_zephyr_governance_kb_ingest_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_kb_quiet_period_monitor_py -->|import_depends| D_SHARED
+    src_zephyr_governance_kb_quiet_period_monitor_py -->|import_depends| D_SHARED
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
+    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_kb_pipeline_activate_py -.->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_kb_pattern_library_py -->|import_depends| D_SHARED
+    src_zephyr_governance_kb_self_test_py -->|import_depends| D_SHARED
+    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_kb_ingest_py -.->|import_depends| D_SHARED
     src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_governance_kb_graph_validator_py -->|import_depends| D_SHARED
-    src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_kb_graph_validator_py -->|import_depends| D_SHARED
+    src_zephyr_governance_kb_safety_brake_py -->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_kb_kb_gate_task_py -->|import_depends| D_INTEGRATION
-    src_zephyr_governance_kb_ke_tombstone_py -->|import_depends| D_SHARED
-    src_zephyr_governance_kb_quiet_period_monitor_py -->|import_depends| D_SHARED
-    src_zephyr_governance_kb_quiet_period_monitor_py -->|import_depends| D_SHARED
+    src_zephyr_governance_kb_freeze_py -->|import_depends| D_SHARED
+    src_zephyr_governance_kb_integrity_py -.->|import_depends| D_SHARED
     src_zephyr_governance_kb_load_bearing_py -->|import_depends| D_SHARED
-    src_zephyr_governance_kb_pattern_library_py -->|import_depends| D_SHARED
     src_zephyr_governance_kb_pattern_library_py -->|import_depends| D_INTEGRATION
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_ke_justification_py
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     D_INTELLIGENCE -->|import_depends| src_zephyr_governance_kb_kb_gate_task_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_ke_tombstone_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_graph_validator_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_knowledge_distiller_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_freeze_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_kb_gate_task_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_kb_gate_task_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_embedding_version_lock_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_ke_tombstone_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_pattern_library_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_safety_brake_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_graph_validator_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_fragmentation_index_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_self_test_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_pipeline_analyze_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_load_bearing_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_kb_quiet_period_monitor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1741,54 +1813,54 @@ graph TD
     end
     src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    src_zephyr_governance_ops_governance_budget_tracker_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_burn_rate_monitor_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    src_zephyr_governance_ops_governance_budget_tracker_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_cost_attributor_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_degradation_manager_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_SHARED["D_SHARED production"]
-    src_zephyr_governance_kb_verify_py -->|import_depends| D_SHARED
-    D_INTEGRATION["D_INTEGRATION production"]
-    src_zephyr_governance_kb_vms_memory_backend_py -->|import_depends| D_INTEGRATION
-    src_zephyr_governance_kb_vms_memory_backend_py -->|import_depends| D_INTEGRATION
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
-    src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| D_GOV_ENFORCEMENT
+    D_SHARED["D_SHARED prototype"]
+    src_zephyr_governance_observability_governance_query_metrics_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_ops_governance_cost_budget_py -->|import_depends| D_SHARED
     D_REPORTING["D_REPORTING production"]
     src_zephyr_governance_observability_governance_analytics_base_py -.->|import_depends| D_REPORTING
     src_zephyr_governance_observability_governance_projection_engine_py -->|import_depends| D_SHARED
-    src_zephyr_governance_observability_governance_query_metrics_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_observability_governance_query_metrics_py -->|import_depends| D_SHARED
-    src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_SHARED
-    D_INFRA_RECOVERY["D_INFRA_RECOVERY prototype"]
-    src_zephyr_governance_ops_governance_budget_tracker_py -.->|import_depends| D_INFRA_RECOVERY
-    src_zephyr_governance_ops_governance_cost_budget_py -->|import_depends| D_SHARED
+    D_INTEGRATION["D_INTEGRATION production"]
+    src_zephyr_governance_kb_vms_memory_backend_py -->|import_depends| D_INTEGRATION
+    src_zephyr_governance_kb_verify_py -->|import_depends| D_SHARED
     D_OPS["D_OPS production"]
     src_zephyr_governance_ops_governance_cost_budget_py -->|import_depends| D_OPS
-    D_INFRA_RECOVERY -.->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
-    D_INTEGRATION -.->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    D_TRADING["D_TRADING production"]
-    D_TRADING -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    src_zephyr_governance_kb_vms_memory_backend_py -->|import_depends| D_INTEGRATION
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY prototype"]
+    src_zephyr_governance_ops_governance_budget_tracker_py -.->|import_depends| D_INFRA_RECOVERY
+    src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_SHARED
+    src_zephyr_governance_observability_governance_query_metrics_py -->|import_depends| D_SHARED
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
+    src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| D_GOV_ENFORCEMENT
     D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_budget_profile_manager_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_lifecycle_governance_transition_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_observability_governance_init_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_merkle_hourly_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_INFRA_RECOVERY -.->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_cost_attributor_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_burn_rate_monitor_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_error_budget_burst_limiter_py
+    D_INTEGRATION -.->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY prototype"]
+    D_INTEGRATION_GATEWAY -.->|import_depends| src_zephyr_governance_kb_unified_memory_api_py
+    D_INTEGRATION -.->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_kb_verify_py,src_zephyr_governance_kb_vms_memory_backend_py,src_zephyr_governance_lifecycle_governance_transition_py,src_zephyr_governance_merkle_hourly_py,src_zephyr_governance_observability_governance_init_py,src_zephyr_governance_observability_governance_objective_tracker_py,src_zephyr_governance_observability_governance_projection_engine_py,src_zephyr_governance_observability_governance_query_metrics_py,src_zephyr_governance_ops_governance_auto_runner_py,src_zephyr_governance_ops_governance_bandwidth_optimizer_py,src_zephyr_governance_ops_governance_budget_engine_py,src_zephyr_governance_ops_governance_budget_handler_py,src_zephyr_governance_ops_governance_budget_models_py,src_zephyr_governance_ops_governance_budget_profile_manager_py,src_zephyr_governance_ops_governance_budget_tracker_py,src_zephyr_governance_ops_governance_burn_rate_monitor_py,src_zephyr_governance_ops_governance_clock_guard_py,src_zephyr_governance_ops_governance_coldstart_manager_py,src_zephyr_governance_ops_governance_cost_attributor_py,src_zephyr_governance_ops_governance_cost_budget_py,src_zephyr_governance_ops_governance_cost_router_py,src_zephyr_governance_ops_governance_daily_ops_py,src_zephyr_governance_ops_governance_degradation_manager_py,src_zephyr_governance_ops_governance_error_budget_burst_limiter_py,src_zephyr_governance_ops_governance_event_hook_py production
     class src_zephyr_governance_kb_supply_chain_graph_engine_init_py,src_zephyr_governance_kb_unified_memory_api_py,src_zephyr_governance_lifecycle_governance_init_py,src_zephyr_governance_observability_governance_analytics_base_py,src_zephyr_governance_ops_governance_init_py design
-    class D_SHARED,D_INTEGRATION,D_GOV_ENFORCEMENT,D_REPORTING,D_OPS,D_TRADING external_prod
-    class D_INFRA_RECOVERY,D_AUDITTEST external_design
+    class D_REPORTING,D_INTEGRATION,D_OPS,D_GOV_ENFORCEMENT external_prod
+    class D_SHARED,D_INFRA_RECOVERY,D_AUDITTEST,D_INTEGRATION_GATEWAY external_design
 ```
 
 ### 第 25 页 / 共 29 页 / Page 25 of 29
@@ -1830,57 +1902,57 @@ graph TD
     src_zephyr_governance_persistence_database_manager_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_persistence_database_service_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_persistence_decision_graph_reader_py -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    src_zephyr_governance_persistence_olap_engine_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_persistence_intent_parser_py -->|import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
+    src_zephyr_governance_persistence_olap_engine_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_persistence_init_py -.->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     src_zephyr_governance_resilience_governance_init_py -.->|config_depends| src_zephyr_governance_resilience_governance_account_isolator_py
     D_SHARED["D_SHARED production"]
-    src_zephyr_governance_persistence_database_manager_py -->|import_depends| D_SHARED
-    src_zephyr_governance_persistence_base_repo_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_persistence_database_service_py -->|import_depends| D_SHARED
-    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| D_SHARED
-    D_INTEGRATION["D_INTEGRATION production"]
-    src_zephyr_governance_persistence_intent_keyword_mapper_py -->|import_depends| D_INTEGRATION
-    src_zephyr_governance_persistence_olap_engine_py -->|import_depends| D_SHARED
-    src_zephyr_governance_persistence_intent_parser_py -->|import_depends| D_INTEGRATION
+    src_zephyr_governance_persistence_sqlite_schema_py -->|import_depends| D_SHARED
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_ENFORCEMENT
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_INTEGRATION
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED
-    src_zephyr_governance_persistence_sqlite_schema_py -->|import_depends| D_SHARED
+    src_zephyr_governance_persistence_database_service_py -->|import_depends| D_SHARED
+    src_zephyr_governance_persistence_base_repo_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| D_SHARED
     src_zephyr_governance_persistence_sqlite_schema_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED
+    src_zephyr_governance_persistence_intent_keyword_mapper_py -->|import_depends| D_INTEGRATION
+    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED
+    src_zephyr_governance_persistence_database_manager_py -->|import_depends| D_SHARED
+    src_zephyr_governance_persistence_intent_parser_py -->|import_depends| D_INTEGRATION
     src_zephyr_governance_resilience_governance_blast_radius_py -->|import_depends| D_SHARED
-    D_TRADING["D_TRADING production"]
-    D_TRADING -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_persistence_olap_engine_py -->|import_depends| D_SHARED
     D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_persistence_decision_graph_reader_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_persistence_intent_parser_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_persistence_database_service_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_persistence_task_repo_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_account_isolator_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_meta_observability_py
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     D_INFRA_RECOVERY -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_TRADING -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_TRADING["D_TRADING production"]
+    D_TRADING -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_persistence_decision_graph_reader_py
+    D_TRADING -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_account_isolator_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME prototype"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_interrupt_handler_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_persistence_database_service_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
+    D_TRADING -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_ops_governance_interrupt_handler_py,src_zephyr_governance_ops_governance_maintenance_window_adapter_py,src_zephyr_governance_ops_governance_meta_observability_py,src_zephyr_governance_ops_governance_ops_foundation_py,src_zephyr_governance_ops_governance_parent_child_attributor_py,src_zephyr_governance_ops_governance_roi_calculator_py,src_zephyr_governance_ops_governance_self_budget_tracker_py,src_zephyr_governance_ops_governance_stream_abort_guard_py,src_zephyr_governance_ops_governance_tco_model_py,src_zephyr_governance_ops_governance_time_sync_py,src_zephyr_governance_ops_governance_timeout_guard_py,src_zephyr_governance_persistence_init_py,src_zephyr_governance_persistence_database_manager_py,src_zephyr_governance_persistence_database_service_py,src_zephyr_governance_persistence_decision_graph_reader_py,src_zephyr_governance_persistence_decisiongraph_schema_py,src_zephyr_governance_persistence_intent_keyword_mapper_py,src_zephyr_governance_persistence_intent_parser_py,src_zephyr_governance_persistence_olap_engine_py,src_zephyr_governance_persistence_protocol_state_store_py,src_zephyr_governance_persistence_sqlite_schema_py,src_zephyr_governance_persistence_task_repo_py,src_zephyr_governance_resilience_governance_account_isolator_py,src_zephyr_governance_resilience_governance_blast_radius_py,src_zephyr_governance_resilience_governance_broker_resilience_py production
     class src_zephyr_governance_ops_governance_token_budget_py,src_zephyr_governance_persistence_base_repo_py,src_zephyr_governance_persistence_dataflowgraph_schema_py,src_zephyr_governance_persistence_depgraph_reader_py,src_zephyr_governance_resilience_governance_init_py design
-    class D_SHARED,D_INTEGRATION,D_GOV_ENFORCEMENT,D_TRADING,D_INFRA_RECOVERY external_prod
-    class D_GOV_SCRIPTS,D_AUDITTEST,D_INFRA_RUNTIME external_design
+    class D_SHARED,D_GOV_ENFORCEMENT,D_INTEGRATION,D_INFRA_RECOVERY,D_TRADING external_prod
+    class D_AUDITTEST,D_GOV_SCRIPTS,D_INFRA_RUNTIME external_design
 ```
 
 ### 第 26 页 / 共 29 页 / Page 26 of 29
@@ -1923,55 +1995,55 @@ graph TD
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| src_zephyr_governance_rule_bridge_worktree_manager_py
-    src_zephyr_governance_rule_bridge_init_py -.->|config_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
     src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
     src_zephyr_governance_rule_bridge_session_worktree_py -.->|import_depends| src_zephyr_governance_rule_bridge_session_claim_py
     src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_governance_rule_bridge_worktree_manager_py
+    src_zephyr_governance_rule_bridge_init_py -.->|config_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     src_zephyr_governance_security_governance_init_py -.->|config_depends| src_zephyr_governance_security_governance_adversarial_tester_py
-    D_INFRA_A2A["D_INFRA_A2A production"]
-    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|import_depends| D_INFRA_A2A
-    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|import_depends| D_INFRA_A2A
-    D_SHARED["D_SHARED prototype"]
-    src_zephyr_governance_resilience_governance_f5_shutdown_manager_py -.->|import_depends| D_SHARED
-    D_SECURITY["D_SECURITY production"]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SECURITY
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -.->|import_depends| D_SECURITY
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED
-    src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| D_SECURITY
-    src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| D_SHARED
-    src_zephyr_governance_rule_bridge_session_claim_py -.->|import_depends| D_SECURITY
-    src_zephyr_governance_rule_bridge_session_claim_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_rule_bridge_worktree_manager_py -->|import_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
-    src_zephyr_governance_satellite_geospatial_engine_init_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_SECURITY_LLM["D_SECURITY_LLM production"]
     src_zephyr_governance_security_governance_default_security_gateway_py -->|import_depends| D_SECURITY_LLM
+    D_SECURITY["D_SECURITY production"]
+    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SECURITY
+    D_SHARED["D_SHARED production"]
+    src_zephyr_governance_rule_bridge_worktree_manager_py -->|import_depends| D_SHARED
+    src_zephyr_governance_resilience_governance_f5_shutdown_manager_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_rule_bridge_git_commit_gateway_py -.->|import_depends| D_SECURITY
+    D_INFRA_A2A["D_INFRA_A2A production"]
+    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|import_depends| D_INFRA_A2A
+    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED
+    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
+    src_zephyr_governance_satellite_geospatial_engine_init_py -.->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_security_governance_default_security_gateway_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_security_governance_default_security_gateway_py -->|import_depends| D_SECURITY_LLM
+    src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| D_SECURITY
     src_zephyr_governance_security_governance_default_security_gateway_py -->|import_depends| D_SHARED
+    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|import_depends| D_INFRA_A2A
+    src_zephyr_governance_rule_bridge_session_claim_py -.->|import_depends| D_SECURITY
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_f5_boot_integration_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_api_response_sanitizer_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_f5_boot_integration_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_f5_shutdown_manager_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_f5_shutdown_manager_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_credential_guard_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_fail_mode_manager_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_adversarial_tester_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_api_response_sanitizer_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_fail_mode_manager_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_f5_boot_integration_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_resilience_governance_f5_shutdown_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_resilience_governance_circuit_breaker_py,src_zephyr_governance_resilience_governance_deadlock_detector_py,src_zephyr_governance_resilience_governance_decision_fatigue_py,src_zephyr_governance_resilience_governance_decision_fatigue_cli_py,src_zephyr_governance_resilience_governance_engine_sandbox_py,src_zephyr_governance_resilience_governance_f5_boot_integration_py,src_zephyr_governance_resilience_governance_f5_event_subscriber_py,src_zephyr_governance_resilience_governance_f5_shutdown_manager_py,src_zephyr_governance_resilience_governance_fail_mode_manager_py,src_zephyr_governance_resilience_governance_last_resort_watchdog_py,src_zephyr_governance_resilience_governance_policy_sandbox_py,src_zephyr_governance_resilience_governance_process_isolator_py,src_zephyr_governance_resilience_governance_witness_isolation_py,src_zephyr_governance_rule_bridge_commit_gate_registry_py,src_zephyr_governance_rule_bridge_git_commit_gateway_py,src_zephyr_governance_rule_bridge_session_worktree_py,src_zephyr_governance_rule_bridge_worktree_manager_py,src_zephyr_governance_rule_patterns_py,src_zephyr_governance_security_governance_adversarial_tester_py,src_zephyr_governance_security_governance_anti_automation_bias_py,src_zephyr_governance_security_governance_api_response_sanitizer_py,src_zephyr_governance_security_governance_bare_repo_scanner_py,src_zephyr_governance_security_governance_compositional_safety_tester_py,src_zephyr_governance_security_governance_config_scanner_py,src_zephyr_governance_security_governance_credential_guard_py,src_zephyr_governance_security_governance_default_security_gateway_py production
     class src_zephyr_governance_rule_bridge_init_py,src_zephyr_governance_rule_bridge_session_claim_py,src_zephyr_governance_satellite_geospatial_engine_init_py,src_zephyr_governance_security_governance_init_py design
-    class D_INFRA_A2A,D_SECURITY,D_SECURITY_LLM external_prod
-    class D_SHARED,D_GOV_ENFORCEMENT,D_AUDITTEST external_design
+    class D_SECURITY_LLM,D_SECURITY,D_SHARED,D_INFRA_A2A external_prod
+    class D_GOV_ENFORCEMENT,D_AUDITTEST external_design
 ```
 
 ### 第 27 页 / 共 29 页 / Page 27 of 29
@@ -2014,30 +2086,33 @@ graph TD
     src_zephyr_governance_semantic_audit_alignment_engine_py -.->|import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_feedback_self_audit_py -.->|config_depends| src_zephyr_governance_semantic_audit_init_py
     src_zephyr_governance_semantic_audit_fix_prioritizer_py -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_llm_bridge_py -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_fix_result_prioritizer_py -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_issue_aggregator_py -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_llm_bridge_py -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_safety_boundary_py -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_alignment_engine_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_fix_prioritizer_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_issue_aggregator_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_llm_bridge_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_issue_aggregator_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_self_healer_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_safety_boundary_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_self_healer_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|import_depends| src_zephyr_governance_semantic_audit_self_health_py
     src_zephyr_governance_semantic_audit_reference_extractor_py -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_safety_boundary_py -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_forbidden_patterns_yaml -.->|config_depends| src_zephyr_governance_semantic_audit_init_py
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
-    src_zephyr_governance_security_governance_security_gateway_base_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_SHARED["D_SHARED production"]
     src_zephyr_governance_semantic_audit_issue_aggregator_py -.->|import_depends| D_SHARED
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
+    src_zephyr_governance_security_governance_security_gateway_base_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_persuasion_detector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_ipi_defense_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_github_api_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_security_config_scanner_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_tamper_evident_log_py
+    D_INTEGRATION["D_INTEGRATION prototype"]
+    D_INTEGRATION -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_ipi_defense_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_memory_poison_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_vibe_security_verify_py
@@ -2046,9 +2121,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_hooks_integrity_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_sbom_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_ipi_defense_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_tamper_evident_log_py
-    D_INTEGRATION["D_INTEGRATION prototype"]
-    D_INTEGRATION -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_security_governance_vibe_verify_integration_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -2096,54 +2168,53 @@ graph TD
         src_zephyr_governance_trading_contracts_market_signal_degradation_warning_py["src/zephyr/governance/trading_contracts/market/... prototype"]
         src_zephyr_governance_trading_contracts_market_synthesized_signal_py["src/zephyr/governance/trading_contracts/market/... prototype"]
     end
-    src_zephyr_governance_strategies_strategy_registry_py -.->|import_depends| src_zephyr_governance_strategies_strategy_base_py
-    src_zephyr_governance_services_init_py -.->|config_depends| src_zephyr_governance_services_adapter_py
+    src_zephyr_governance_services_init_py -.->|config_depends| src_zephyr_governance_services_cross_session_correlator_py
     src_zephyr_governance_strategies_init_py -.->|config_depends| src_zephyr_governance_strategies_strategy_base_py
+    src_zephyr_governance_strategies_strategy_registry_py -.->|import_depends| src_zephyr_governance_strategies_strategy_base_py
     src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_capital_allocation_result_py
+    src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_execution_rejection_error_py
+    src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_execution_report_py
+    src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_fill_py
     src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_model_serving_request_py
     src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_order_py
-    src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_execution_rejection_error_py
-    src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_fill_py
     src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_position_py
-    src_zephyr_governance_trading_contracts_execution_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_execution_execution_report_py
-    src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_factor_monitor_report_py
-    src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_market_data_py
+    src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_instrument_py
     src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_factor_signal_py
     src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_macro_factor_signal_py
-    src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_instrument_py
     src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_signal_degradation_warning_py
+    src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_factor_monitor_report_py
+    src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_market_data_py
     src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_synthesized_signal_py
-    D_PF_CORE["D_PF_CORE production"]
-    src_zephyr_governance_strategy_engine_init_py -.->|import_depends| D_PF_CORE
-    D_TRADING["D_TRADING production"]
+    D_TRADING["D_TRADING prototype"]
+    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_execution_fill_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_market_synthesized_signal_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_broker_interface_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_broker_interface_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_broker_interface_py -.->|import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
-    src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_trading_contracts_execution_model_serving_request_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_market_instrument_py -.->|import_depends| D_TRADING
+    D_AUDITTEST["D_AUDITTEST prototype"]
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_services_cross_session_correlator_py
     D_EX_CORE["D_EX_CORE prototype"]
     D_EX_CORE -.->|import_depends| src_zephyr_governance_trading_contracts_broker_interface_py
     D_EX_CORE -.->|import_depends| src_zephyr_governance_trading_contracts_broker_interface_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_services_cross_session_correlator_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_services_memory_provenance_py
+    D_PF_CORE["D_PF_CORE production"]
     D_PF_CORE -.->|import_depends| src_zephyr_governance_strategies_strategy_base_py
     D_EX_CORE -.->|import_depends| src_zephyr_governance_trading_contracts_broker_interface_py
+    D_PF_CORE -.->|import_depends| src_zephyr_governance_strategies_strategy_registry_py
     D_PF_CORE -.->|import_depends| src_zephyr_governance_strategies_strategy_base_py
     D_EX_CORE -.->|import_depends| src_zephyr_governance_trading_contracts_broker_interface_py
     D_PF_CORE -.->|import_depends| src_zephyr_governance_strategy_engine_init_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_semantic_audit_semantic_cache_py
-    D_PF_CORE -.->|import_depends| src_zephyr_governance_strategies_strategy_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_governance_services_adapter_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_services_adapter_py
@@ -2155,8 +2226,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_semantic_audit_semantic_cache_py,src_zephyr_governance_services_adapter_py,src_zephyr_governance_services_cross_session_correlator_py,src_zephyr_governance_services_memory_provenance_py production
     class src_zephyr_governance_semantic_audit_spec_auditor_py,src_zephyr_governance_semantic_audit_trigger_engine_py,src_zephyr_governance_services_init_py,src_zephyr_governance_strategies_init_py,src_zephyr_governance_strategies_strategy_base_py,src_zephyr_governance_strategies_strategy_registry_py,src_zephyr_governance_strategy_engine_init_py,src_zephyr_governance_trading_contracts_init_py,src_zephyr_governance_trading_contracts_broker_interface_py,src_zephyr_governance_trading_contracts_execution_init_py,src_zephyr_governance_trading_contracts_execution_capital_allocation_result_py,src_zephyr_governance_trading_contracts_execution_execution_rejection_error_py,src_zephyr_governance_trading_contracts_execution_execution_report_py,src_zephyr_governance_trading_contracts_execution_fill_py,src_zephyr_governance_trading_contracts_execution_model_serving_request_py,src_zephyr_governance_trading_contracts_execution_order_py,src_zephyr_governance_trading_contracts_execution_position_py,src_zephyr_governance_trading_contracts_factories_py,src_zephyr_governance_trading_contracts_market_init_py,src_zephyr_governance_trading_contracts_market_factor_monitor_report_py,src_zephyr_governance_trading_contracts_market_factor_signal_py,src_zephyr_governance_trading_contracts_market_instrument_py,src_zephyr_governance_trading_contracts_market_macro_factor_signal_py,src_zephyr_governance_trading_contracts_market_market_data_py,src_zephyr_governance_trading_contracts_market_signal_degradation_warning_py,src_zephyr_governance_trading_contracts_market_synthesized_signal_py design
-    class D_PF_CORE,D_TRADING,D_INFRA_RUNTIME external_prod
-    class D_GOV_ENFORCEMENT,D_EX_CORE,D_AUDITTEST external_design
+    class D_PF_CORE,D_INFRA_RUNTIME external_prod
+    class D_TRADING,D_AUDITTEST,D_EX_CORE external_design
 ```
 
 ### 第 29 页 / 共 29 页 / Page 29 of 29
@@ -2175,21 +2246,21 @@ graph TD
         src_zephyr_governance_zero_knowledge_audit_stub_init_py["src/zephyr/governance/zero_knowledge_audit_stub... prototype"]
         src_zephyr_service_layer_owners_yaml["src/zephyr/service_layer_owners.yaml production"]
     end
-    src_zephyr_governance_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_governance_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_risk_compliance_rule_py
+    src_zephyr_governance_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_governance_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_risk_risk_limits_py
+    src_zephyr_governance_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_risk_risk_limit_violation_error_py
     src_zephyr_governance_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_risk_risk_validator_protocol_py
     src_zephyr_governance_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_risk_risk_metrics_py
-    src_zephyr_governance_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_risk_risk_limit_violation_error_py
-    D_TRADING["D_TRADING production"]
-    src_zephyr_governance_trading_contracts_risk_risk_dashboard_snapshot_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_risk_compliance_rule_py -.->|import_depends| D_TRADING
+    D_TRADING["D_TRADING prototype"]
     src_zephyr_governance_trading_contracts_risk_risk_limits_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_risk_risk_limit_violation_error_py -.->|import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_risk_risk_dashboard_snapshot_py -.->|import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_risk_risk_validator_protocol_py -.->|import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_risk_risk_metrics_py -.->|import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_risk_risk_limit_violation_error_py -.->|import_depends| D_TRADING
     D_INFRA_RUNTIME["D_INFRA_RUNTIME prototype"]
     src_zephyr_service_layer_owners_yaml -.->|config_depends| D_INFRA_RUNTIME
+    src_zephyr_governance_trading_contracts_risk_compliance_rule_py -.->|import_depends| D_TRADING
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_governance_zero_knowledge_audit_stub_init_py
     D_PF_CORE["D_PF_CORE prototype"]
@@ -2200,8 +2271,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_service_layer_owners_yaml production
     class src_zephyr_governance_trading_contracts_portfolio_contracts_init_py,src_zephyr_governance_trading_contracts_risk_init_py,src_zephyr_governance_trading_contracts_risk_compliance_rule_py,src_zephyr_governance_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_governance_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_governance_trading_contracts_risk_risk_limits_py,src_zephyr_governance_trading_contracts_risk_risk_metrics_py,src_zephyr_governance_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_governance_zero_knowledge_audit_stub_init_py design
-    class D_TRADING external_prod
-    class D_INFRA_RUNTIME,D_GOV_ENFORCEMENT,D_PF_CORE external_design
+    class D_TRADING,D_INFRA_RUNTIME,D_GOV_ENFORCEMENT,D_PF_CORE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -2210,56 +2280,59 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 136 | import_depends |
-| D_TRADING | 52 | import_depends |
+| D_SHARED | 137 | import_depends,runtime |
+| D_TRADING | 57 | import_depends,runtime |
+| D_GOV_ENFORCEMENT | 22 | contract,import_depends,runtime |
 | D_INTEGRATION | 20 | import_depends |
-| D_GOV_ENFORCEMENT | 17 | import_depends |
+| D_INFRA_RUNTIME | 19 | config_depends,contract,import_depends,runtime |
 | D_INTELLIGENCE | 17 | import_depends |
-| D_INFRA_RUNTIME | 12 | config_depends,import_depends |
 | D_BACKTEST | 11 | import_depends |
-| D_SECURITY | 8 | import_depends |
-| D_SECURITY_LLM | 5 | import_depends |
+| D_SECURITY | 10 | import_depends,runtime |
+| D_SECURITY_LLM | 7 | contract,import_depends |
+| D_AUDITTEST | 6 | contract,runtime |
 | D_FRONTEND | 5 | import_depends |
 | D_RISK | 3 | import_depends |
-| D_GOV_DRIFT | 3 | contract,runtime |
-| D_INFRA_RECOVERY | 3 | import_depends |
 | D_REPORTING | 3 | import_depends |
+| D_AUTONOMY_CORE | 3 | contract,import_depends |
+| D_INFRA_RECOVERY | 3 | import_depends |
+| D_GOV_DRIFT | 3 | contract,runtime |
 | D_INFRA_A2A | 2 | import_depends |
-| D_AUTONOMY_CORE | 2 | import_depends |
-| D_FACTOR | 1 | import_depends |
-| D_GOV_SCRIPTS | 1 | import_depends |
+| D_INFRA_TELEMETRY | 2 | runtime |
+| D_FACTOR | 2 | import_depends,runtime |
+| D_PF_CORE | 1 | import_depends |
+| D_ML_TRAIN | 1 | data |
 | D_FUNDAMENTAL_SIGNAL | 1 | import_depends |
 | D_INTEGRATION_GATEWAY | 1 | import_depends |
-| D_ML_TRAIN | 1 | data |
-| D_OPS | 1 | import_depends |
-| D_PF_CORE | 1 | import_depends |
+| D_GOV_SCRIPTS | 1 | import_depends |
 | D_EX_CORE | 1 | import_depends |
 | D_SIMULATION | 1 | import_depends |
+| D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_AUDITTEST | 512 | test_depends |
-| D_GOV_ENFORCEMENT | 35 | import_depends |
+| D_GOV_ENFORCEMENT | 38 | contract,import_depends,runtime |
 | D_GOV_SCRIPTS | 31 | import_depends |
 | D_TRADING | 26 | import_depends |
 | D_INFRA_RUNTIME | 18 | import_depends |
+| D_AUTONOMY_CORE | 14 | contract,data,import_depends,runtime |
 | D_INTEGRATION_GATEWAY | 13 | import_depends |
 | D_EX_CORE | 11 | import_depends |
 | D_INTEGRATION | 9 | import_depends |
+| D_INFRA_TELEMETRY | 8 | contract,data,import_depends,runtime |
 | D_INFRA_RECOVERY | 8 | import_depends |
 | D_FRONTEND | 7 | import_depends,runtime |
 | D_SECURITY | 6 | import_depends |
 | D_PF_CORE | 5 | import_depends |
-| D_AUTONOMY_CORE | 4 | import_depends |
+| D_GOV_DRIFT | 5 | runtime |
 | D_INTELLIGENCE | 4 | import_depends |
 | D_BACKTEST | 3 | import_depends |
-| D_GOV_DRIFT | 3 | runtime |
 | D_INFRA_A2A | 2 | import_depends |
 | D_SECURITY_LLM | 2 | import_depends |
 | D_GOV_AUDIT | 1 | runtime |
-| D_INFRA_TELEMETRY | 1 | import_depends |
+| D_FACTOR | 1 | runtime |
 | D_SHARED | 1 | import_depends |
 | D_KNOWLEDGE | 1 | runtime |
 
@@ -2665,85 +2738,85 @@ graph TD
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 637 条 / 637 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 655 条 / 655 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 637 条 / 637 edges)       │
+│      依赖关系图 / Dependency Graph (共 655 条 / 655 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 5                               │
-│   [import_depends]: 482 条 / edges                               │
-│   [config_depends]: 142 条 / edges                               │
-│   [runtime]: 9 条 / edges                                        │
-│   [data]: 3 条 / edges                                           │
-│   [contract]: 1 条 / edges                                       │
+│   [import_depends]: 483 条 / edges                               │
+│   [config_depends]: 140 条 / edges                               │
+│   [runtime]: 18 条 / edges                                       │
+│   [contract]: 9 条 / edges                                       │
+│   [data]: 5 条 / edges                                           │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                [import_depends] (482 条 / edges)                 │
+│                [import_depends] (483 条 / edges)                 │
 ├──────────────────────────────────────────────────────────────────┤
-│   ch_writer.py → provider_base.py                                │
 │   cli.py → policy_registry.py                                    │
 │   cli.py → progress_store.py                                     │
-│   cli.py → __init__.py                                           │
 │   cli.py → scheduler.py                                          │
+│   cli.py → __init__.py                                           │
+│   ch_writer.py → provider_base.py                                │
 │   provider_base.py → policy_registry.py                          │
-│   akshare_provider.py → policy_registry.py                       │
-│   akshare_provider.py → provider_base.py                         │
-│   __init__.py → policy_registry.py                               │
-│   __init__.py → provider_base.py                                 │
-│   __init__.py → scheduler.py                                     │
 │   scheduler.py → alerter.py                                      │
 │   scheduler.py → metrics.py                                      │
 │   scheduler.py → policy_registry.py                              │
 │   scheduler.py → progress_store.py                               │
 │   scheduler.py → provider_base.py                                │
-│   scheduler.py → task_queue.py                                   │
-│   scheduler.py → akshare_provider.py                             │
 │   scheduler.py → __init__.py                                     │
-│   scheduler.py → baostock_provider.py                            │
+│   scheduler.py → task_queue.py                                   │
 │   scheduler.py → ifind_provider.py                               │
+│   scheduler.py → baostock_provider.py                            │
+│   scheduler.py → akshare_provider.py                             │
 │   scheduler.py → miniqmt_provider.py                             │
-│   scheduler.py → rss_provider.py                                 │
-│   scheduler.py → tickflow_provider.py                            │
-│   scheduler.py → tushare_provider.py                             │
 │   scheduler.py → tdx_provider.py                                 │
-│   baostock_provider.py → policy_registry.py                      │
-│   baostock_provider.py → provider_base.py                        │
-│   __main__.py → cli.py                                           │
+│   scheduler.py → rss_provider.py                                 │
+│   scheduler.py → tushare_provider.py                             │
+│   scheduler.py → tickflow_provider.py                            │
+│   __init__.py → policy_registry.py                               │
+│   __init__.py → provider_base.py                                 │
+│   __init__.py → scheduler.py                                     │
 │   ifind_provider.py → policy_registry.py                         │
 │   ifind_provider.py → provider_base.py                           │
+│   __main__.py → cli.py                                           │
+│   baostock_provider.py → policy_registry.py                      │
+│   baostock_provider.py → provider_base.py                        │
+│   akshare_provider.py → policy_registry.py                       │
+│   akshare_provider.py → provider_base.py                         │
 │   miniqmt_provider.py → policy_registry.py                       │
 │   miniqmt_provider.py → provider_base.py                         │
-│   rss_provider.py → policy_registry.py                           │
-│   rss_provider.py → provider_base.py                             │
-│   tickflow_provider.py → policy_registry.py                      │
-│   tickflow_provider.py → provider_base.py                        │
-│   tushare_provider.py → policy_registry.py                       │
-│   tushare_provider.py → provider_base.py                         │
-│   __init__.py → akshare_provider.py                              │
 │   __init__.py → ifind_provider.py                                │
+│   __init__.py → akshare_provider.py                              │
 │   __init__.py → miniqmt_provider.py                              │
 │   tdx_provider.py → policy_registry.py                           │
 │   tdx_provider.py → provider_base.py                             │
+│   rss_provider.py → policy_registry.py                           │
+│   rss_provider.py → provider_base.py                             │
+│   tushare_provider.py → policy_registry.py                       │
+│   tushare_provider.py → provider_base.py                         │
+│   tickflow_provider.py → policy_registry.py                      │
+│   tickflow_provider.py → provider_base.py                        │
+│   merkle_hourly.py → merkle_hourly.py                            │
 │   integrity.py → merkle_hourly.py                                │
 │   integrity.py → models.py                                       │
 │   integrity.py → trust_bridge.py                                 │
-│   merkle_hourly.py → merkle_hourly.py                            │
 │   simulation_broker.py → broker_interface.py                     │
-│   ...还有 433 条 / 433 more edges                                │
+│   ...还有 434 条 / 434 more edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
-**[config_depends]** (142 条 / edges) — 已达显示上限，省略 / limit reached
+**[config_depends]** (140 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[runtime]** (9 条 / edges) — 已达显示上限，省略 / limit reached
+**[runtime]** (18 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[data]** (3 条 / edges) — 已达显示上限，省略 / limit reached
+**[contract]** (9 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[contract]** (1 条 / edges) — 已达显示上限，省略 / limit reached
+**[data]** (5 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 637 条)
+> (最多显示前 50 条依赖边，共 655 条)
 
 ```
 
