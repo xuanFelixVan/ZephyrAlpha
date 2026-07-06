@@ -10,7 +10,7 @@ ttl: permanent
 supersedes:
   - "MOD-L00-001 §3.1 Provider 抽象部分（接管）"
 depends_on:
-  - "MOD-L00-002 数据源能力地图（策略参数来源）"
+  - "MOD-L00-002 数据源操作手册（策略参数来源）"
   - "MOD-L00-003 数据获取需求清单（任务清单来源）"
 construction_progress: not_started
 language: zh
@@ -23,7 +23,7 @@ description: 统一管理多个数据源的自动下载——Provider 抽象 + p
 >
 > **与现有文档关系**：
 > - **接管** [blueprint.md](blueprint.md) §3.1 的 Provider 抽象部分（原蓝图声称"已实现"但 `src/zephyr/data/` 实际为空，本次一并重建）
-> - **消费** [data_source_capability_map.md](data_source_capability_map.md) 中每个数据源的限流/防爬/登录方式（抽取为 per-source 策略参数）
+> - **消费** [data_source_operation_manual.md](data_source_operation_manual.md) 中每个数据源的限流/防爬/登录方式（抽取为 per-source 策略参数）
 > - **消费** [data_acquisition_plan.md](data_acquisition_plan.md) 的需求清单（转化为调度任务）
 > - **解决** [data_acquisition_plan.md](data_acquisition_plan.md) 暴露的"61 项手动触发、0 项自动更新"短板（matrix 由 `tmp/generate_acquisition_matrix.py` 派生）
 
@@ -375,7 +375,7 @@ class SourcePolicy:
     extra: dict                   # 如 iFind 月度配额监控
 ```
 
-### §5.2 跨源策略矩阵（从能力地图抽取）
+### §5.2 跨源策略矩阵（从操作手册抽取）
 
 | 数据源 | RPM | 并发 | 重试 | 退避 | 反爬 | 登录刷新 |
 |--------|-----|------|------|------|------|---------|
@@ -701,7 +701,7 @@ akshare:
 ## §14 依赖关系
 
 - **依赖**：
-  - MOD-L00-002 能力地图（策略参数来源）
+  - MOD-L00-002 操作手册（策略参数来源）
   - MOD-L00-003 需求清单（任务清单来源）
   - `tmp/_ds_common.py`（ClickHouse 写入工具）
 - **被依赖**：
@@ -713,7 +713,7 @@ akshare:
 
 ## §15 施工指引
 
-### §15.1 阶段1：Provider 抽象 + 3 个核心源（1-2 周）
+### §15.1 阶段1：Provider 抽象 + 3 个核心源 ✅ 已完成（2026-07-06，commit e1050fc27b）
 
 **交付**：
 - `src/zephyr/data/provider_base.py`（DataSourceBase + FetchPayload + FetchResult + DataSourceMeta）
@@ -724,7 +724,7 @@ akshare:
 
 **验证**：3 个 Provider 能独立 fetch 一个任务，产出与旧脚本一致。
 
-### §15.2 阶段2：策略注册表 + 调度器 + 首批 10 任务（1 周）
+### §15.2 阶段2：策略注册表 + 调度器 + 首批 10 任务 ✅ 已完成（2026-07-06，111/111 单测全绿）
 
 **交付**：
 - `src/zephyr/data/policy_registry.py`（SourcePolicy + PolicyRegistry + yaml 加载）
@@ -736,7 +736,7 @@ akshare:
 
 **验证**：调度器常驻运行 3 天，10 个任务自动触发，成功率 ≥ 99%。
 
-### §15.3 阶段3：剩余 5 个 Provider + 全量任务（1-2 周）
+### §15.3 阶段3：剩余 5 个 Provider + 全量任务 ✅ 已完成（2026-07-06，commit 7f89ce95c0，68/68 单测全绿）
 
 **交付**：
 - `implementations/baostock_provider.py` / `tushare_provider.py` / `tickflow_provider.py` / `tdx_provider.py` / `rss_provider.py`
@@ -745,16 +745,16 @@ akshare:
 
 **验证**：61 项手动触发数据全部接入调度，连续 7 天成功率 ≥ 99%。
 
-### §15.4 阶段4：旧脚本退役 + 文档更新（3 天）
+### §15.4 阶段4：旧脚本退役 + 文档更新 ✅ 已完成（2026-07-06）
 
 **交付**：
-- 12 个 `_fetch_*.py` 脚本删除（TTL=task_bound 退役）
-- 13 个 `_ds_progress/fill_*.json` 归档后删除
-- `index.md` 更新（登记 MOD-L00-004）
-- `blueprint.md` 加注记（Provider 部分移交本蓝图）
-- `tmp/generate_acquisition_matrix.py` 重新生成 matrix（"已配置定时"项数应 ≥ 61）
+- ✅ 12 个 `_fetch_*.py` 脚本已删除（TTL=task_bound 退役，被 Provider 替代）
+- ✅ 15 个 `_ds_progress/fill_*.json` 已删除（新 ProgressStore 用 SQLite）
+- ✅ `index.md` 更新（状态 Draft→Active/in_progress）
+- ✅ `blueprint.md` 加注记（Provider 部分移交本蓝图，已存在）
+- ✅ `tmp/generate_acquisition_matrix.py` 重建并重新生成 matrix（61 任务全部接入 tasks.yaml 调度配置）
 
-**验证**：重新运行 `generate_acquisition_matrix.py`，✅稳定获取项数 ≥ 61。
+**验证**：重新运行 `generate_acquisition_matrix.py`，61 项任务全部接入调度（44 有数据 + 8 表待建 + 7 空表 + 2 已禁用）。
 
 ---
 
