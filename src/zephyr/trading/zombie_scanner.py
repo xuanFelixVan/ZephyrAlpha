@@ -38,6 +38,12 @@ from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any
 
+# 5.97.7 修复: psutil 提升至模块级导入，供 _extract_proc_info / scan_zombie_processes 共享
+try:
+    import psutil as _psutil
+except ImportError:
+    _psutil = None
+
 logger = logging.getLogger(__name__)
 
 _PATTERNS_FILE = str(REPO_ROOT / "data" / "runtime" / "zombie-patterns.json")
@@ -181,87 +187,110 @@ def get_repeated_offenders() -> list[dict[str, Any]]:
     return sorted(offenders, key=lambda x: x["count"], reverse=True)
 
 
-def scan_zombie_processes() -> ZombieScanResult:
-    result = ZombieScanResult()
+def _extract_proc_info(proc, project_root_str: str, current_pid: int) -> dict[str, Any] | None:
+    """提取并过滤进程信息。
+
+    返回 None 表示跳过该进程（自身 / 非 Python / 安全关键字 / 非项目进程 / 进程已退出）。
+    返回 dict 包含 pid / cmdline / runtime / mem_gb / cpu / children。
+    """
+    # 5.151.2: 仅捕获进程枚举期间的预期异常，不遮蔽 AttributeError/TypeError 等 Bug
+    try:
+        pid = proc.info["pid"]
+        if pid == current_pid or pid is None:
+            return None
+
+        name = (proc.info.get("name") or "").lower()
+        if "python" not in name:
+            return None
+
+        cmdline_raw = proc.info.get("cmdline")
+        if not cmdline_raw:
+            return None
+        cmdline = " ".join(cmdline_raw) if isinstance(cmdline_raw, list) else str(cmdline_raw)
+
+        if _is_safe(cmdline):
+            return None
+
+        cwd = proc.info.get("cwd") or ""
+        belongs_to_project = (project_root_str in cmdline) or (project_root_str in cwd)
+        if not belongs_to_project:
+            return None
+    except (_psutil.NoSuchProcess, _psutil.AccessDenied):
+        return None
 
     try:
-        import psutil
-    except ImportError:
+        runtime = time.time() - proc.create_time()
+        mem_gb = proc.memory_info().rss / (1024**3)
+        cpu = proc.cpu_percent()
+        try:
+            children = len(proc.children())
+        except Exception:
+            children = 0
+    except (_psutil.NoSuchProcess, _psutil.AccessDenied):
+        return None
+
+    return {
+        "pid": pid,
+        "cmdline": cmdline,
+        "runtime": runtime,
+        "mem_gb": mem_gb,
+        "cpu": cpu,
+        "children": children,
+    }
+
+
+def _classify_zombie(
+    runtime: float, mem_gb: float, cpu: float, children: int
+) -> tuple[ZombieCategory | None, list[str]]:
+    """根据进程指标分类僵尸进程。
+
+    返回 (category, reason)。category=None 表示 NORMAL（正常，调用方跳过）。
+    """
+    if mem_gb > _DANGEROUS_MEM_GB or children > _DANGEROUS_CHILDREN or runtime > _DANGEROUS_RUNTIME_S:
+        reason = []
+        if mem_gb > _DANGEROUS_MEM_GB:
+            reason.append(f"mem={mem_gb:.1f}GB")
+        if children > _DANGEROUS_CHILDREN:
+            reason.append(f"children={children}")
+        if runtime > _DANGEROUS_RUNTIME_S:
+            reason.append(f"runtime={runtime / 3600:.1f}h")
+        return ZombieCategory.DANGEROUS, reason
+    if runtime > _ABNORMAL_RUNTIME_S:
+        return ZombieCategory.ABNORMAL, [f"runtime={runtime / 3600:.1f}h"]
+    if runtime > _SUSPICIOUS_RUNTIME_S and cpu < _SUSPICIOUS_CPU_MAX:
+        return ZombieCategory.SUSPICIOUS, [f"runtime={runtime / 3600:.1f}h cpu={cpu:.1f}%"]
+    return None, []
+
+
+def scan_zombie_processes() -> ZombieScanResult:
+    result = ZombieScanResult()
+    if _psutil is None:
         return result
 
     project_root_str = str(REPO_ROOT)
     current_pid = os.getpid()
 
-    for proc in psutil.process_iter(["pid", "name", "cmdline", "create_time", "cwd"]):
-        try:
-            pid = proc.info["pid"]
-            if pid == current_pid or pid is None:
-                continue
-
-            name = (proc.info.get("name") or "").lower()
-            if "python" not in name:
-                continue
-
-            cmdline_raw = proc.info.get("cmdline")
-            if not cmdline_raw:
-                continue
-            cmdline = " ".join(cmdline_raw) if isinstance(cmdline_raw, list) else str(cmdline_raw)
-
-            if _is_safe(cmdline):
-                continue
-
-            cwd = proc.info.get("cwd") or ""
-            belongs_to_project = (project_root_str in cmdline) or (project_root_str in cwd)
-            if not belongs_to_project:
-                continue
-
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            # 5.151.2 修复: 原 (psutil.NoSuchProcess, psutil.AccessDenied, Exception) 中 Exception
-            # 遮蔽特定异常, 等价于 except Exception:, 会吞掉 AttributeError/TypeError 等 Bug。
-            # 移除 Exception, 仅捕获进程枚举期间的预期异常
-            continue
-
-        try:
-            runtime = time.time() - proc.create_time()
-            mem_gb = proc.memory_info().rss / (1024**3)
-            cpu = proc.cpu_percent()
-            try:
-                children = len(proc.children())
-            except Exception:
-                children = 0
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            # 5.151.2 修复: 同上, 移除遮蔽特定异常的 Exception
+    for proc in _psutil.process_iter(["pid", "name", "cmdline", "create_time", "cwd"]):
+        info = _extract_proc_info(proc, project_root_str, current_pid)
+        if info is None:
             continue
 
         result.scanned += 1
-
-        if mem_gb > _DANGEROUS_MEM_GB or children > _DANGEROUS_CHILDREN or runtime > _DANGEROUS_RUNTIME_S:
-            cat = ZombieCategory.DANGEROUS
-            reason = []
-            if mem_gb > _DANGEROUS_MEM_GB:
-                reason.append(f"mem={mem_gb:.1f}GB")
-            if children > _DANGEROUS_CHILDREN:
-                reason.append(f"children={children}")
-            if runtime > _DANGEROUS_RUNTIME_S:
-                reason.append(f"runtime={runtime / 3600:.1f}h")
-        elif runtime > _ABNORMAL_RUNTIME_S:
-            cat = ZombieCategory.ABNORMAL
-            reason = [f"runtime={runtime / 3600:.1f}h"]
-        elif runtime > _SUSPICIOUS_RUNTIME_S and cpu < _SUSPICIOUS_CPU_MAX:
-            cat = ZombieCategory.SUSPICIOUS
-            reason = [f"runtime={runtime / 3600:.1f}h cpu={cpu:.1f}%"]
-        else:
+        cat, reason = _classify_zombie(
+            info["runtime"], info["mem_gb"], info["cpu"], info["children"]
+        )
+        if cat is None:
             continue
 
         entry = ZombieEntry(
-            pid=pid,
+            pid=info["pid"],
             category=cat,
             reason=", ".join(reason),
-            cmdline=cmdline[:200],
-            runtime_s=runtime,
-            mem_gb=round(mem_gb, 2),
-            cpu_percent=round(cpu, 2),
-            children_count=children,
+            cmdline=info["cmdline"][:200],
+            runtime_s=info["runtime"],
+            mem_gb=round(info["mem_gb"], 2),
+            cpu_percent=round(info["cpu"], 2),
+            children_count=info["children"],
         )
 
         if cat is ZombieCategory.DANGEROUS:

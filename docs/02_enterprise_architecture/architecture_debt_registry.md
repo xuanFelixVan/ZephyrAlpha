@@ -2645,6 +2645,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=18(深层嵌套/圈复杂度需拆分长函数=大规模重构)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=18(所有STILL_VALID项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.97全部清零.
 > **第44轮修复状态（2026-07-05）**：FIXED=5(5.97.12 runtime_interceptor _import_chat_classes + 5.97.13 ide_health_daemon _safe_unlink + 5.97.14 _list_completed_tasks + 5.97.16 boot_hooks _get_source_blueprint + 5.97.18 gateway_server 配置表驱动循环), DRIFTED=9(5.97.1 evolution_engine/5.97.2 context_injector/5.97.4 trigger_router/5.97.5 scheduler/5.97.8 budget_engine/5.97.9 context_pipeline/5.97.11 scheduler_act/5.97.15 scheduler_audit_trail_check/5.97.17 context_assembler 文件已删除/迁移), DEFERRED=4(5.97.3 boot_hooks register_boot_hooks 130行7闭包/5.97.6 audit_trail_cli _run_single_audit 108行5elif/5.97.7 zombie_scanner scan_zombie_processes 86行嵌套4层/5.97.10 hallucination_detector should_trigger 超长条件表达式,均需长函数拆分属专项工程), STILL_VALID=0. 维度5.97全部清零.
+> **第72轮修复状态（2026-07-06）**：FIXED=2(5.97.10 hallucination_detector should_trigger 超长条件表达式 → 提取命名变量 is_low_confidence_semantic / is_high_risk_signal [54测试全通过] + 5.97.7 zombie_scanner scan_zombie_processes 86行嵌套4层 → 封装 _extract_proc_info(proc) 和 _classify_zombie(...) 模块级函数 + psutil 提升至模块级导入 [scan+classify 验证通过, 34关联测试通过]), DEFERRED=2(5.97.3 boot_hooks register_boot_hooks 130行7闭包/5.97.6 audit_trail_cli _run_single_audit 108行5elif, 均需长函数拆分属专项工程), STILL_VALID=0. 维度5.97全部清零.
 
 #### 5.97.1 MEDIUM级（11个）
 
