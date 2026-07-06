@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-07-06T13:24:41
+> 生成时间: 2026-07-06T13:31:46
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 数据库: depgraph (PostgreSQL)
 
@@ -120,14 +120,14 @@ flowchart LR
     DS209 -->|consumed by / 被消费于| JOB196
     DS210 -->|consumed by / 被消费于| JOB197
 
-    classDef dsProd fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef dsBacktest fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef jobProd fill:#f1f8e9,stroke:#33691e,stroke-width:2px
-    classDef jobBacktest fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    classDef dsDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef jobDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px
-    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100
+    classDef jobProd fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef jobBacktest fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c
+    classDef dsDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef jobDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17
+    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17
 ```
 
 ### 运营态全景图（仅 design_maturity=production）
@@ -192,14 +192,14 @@ flowchart LR
     DS209 -->|consumed by / 被消费于| JOB196
     DS210 -->|consumed by / 被消费于| JOB197
 
-    classDef dsProd fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef dsBacktest fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef jobProd fill:#f1f8e9,stroke:#33691e,stroke-width:2px
-    classDef jobBacktest fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    classDef dsDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef jobDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px
-    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100
+    classDef jobProd fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef jobBacktest fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c
+    classDef dsDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef jobDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17
+    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17
 ```
 
 ### 生产数据流图（scope=production）
@@ -245,14 +245,14 @@ flowchart LR
     DS202 -->|consumed by / 被消费于| JOB191
     DS203 -->|consumed by / 被消费于| JOB192
 
-    classDef dsProd fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef dsBacktest fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef jobProd fill:#f1f8e9,stroke:#33691e,stroke-width:2px
-    classDef jobBacktest fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    classDef dsDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef jobDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px
-    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100
+    classDef jobProd fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef jobBacktest fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c
+    classDef dsDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef jobDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17
+    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17
 ```
 
 ### 回测内部数据流图（scope=backtest_internal）
@@ -279,14 +279,14 @@ flowchart LR
     DS209 -->|consumed by / 被消费于| JOB196
     DS210 -->|consumed by / 被消费于| JOB197
 
-    classDef dsProd fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef dsBacktest fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef jobProd fill:#f1f8e9,stroke:#33691e,stroke-width:2px
-    classDef jobBacktest fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    classDef dsDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef jobDesign fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px
-    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100
+    classDef jobProd fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef jobBacktest fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c
+    classDef dsDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef jobDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17
+    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17
 ```
 
 ## Dataset 清单
