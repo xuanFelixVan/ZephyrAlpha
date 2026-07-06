@@ -22,7 +22,7 @@
   - 从 dataflow_datasets / dataflow_jobs / dataflow_edges 表读取数据流图
   - 生成 Mermaid 图表（flowchart LR）
   - 区分 production / backtest_internal scope（不同颜色）
-  - 输出到 docs/02_enterprise_architecture/generated/dataflows/
+  - 输出到 docs/02_enterprise_architecture/05_dataflow_architecture/
 
 输出文件：
   - dataflow_overview.mmd          全景图（所有 Dataset/Job）
@@ -58,7 +58,7 @@ from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     init_dataflow_db,
 )
 
-OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "generated" / "dataflows"
+OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_architecture"
 
 
 def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
