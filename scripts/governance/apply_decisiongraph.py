@@ -30,7 +30,7 @@ apply_decisiongraph.py — 决策流图写入入口（对标 apply_depgraph.py�
 提供 decision_nodes/decision_edges 的设计态→运营态写入操作。
 depgraph 的 apply 脚本有 52 个参数处理大量字段，decisiongraph 更聚焦：
   - 节点操作：add_design_node / transition_build_status / remove_design_node / deprecate_node / update_node_field
-  - 边操作：add_edge / remove_edge
+  - 边操作：add_edge / add_design_edge / remove_edge
   - 批量操作：--batch（JSON 数组）
 
 五条承重墙不变量（DEC-INV-001~005）在写入时校验：
@@ -563,6 +563,109 @@ def op_remove_edge(conn, *, edge_id: int, dry_run: bool = False) -> dict:
     return {"op": "remove_edge", "dry_run": True, "edge_id": edge_id}
 
 
+def op_add_design_edge(
+    conn,
+    *,
+    from_node_id: int,
+    to_node_id: int,
+    edge_type: str,
+    edge_type_cn: str | None = None,
+    condition: str | None = None,
+    priority: int | None = None,
+    track: str | None = None,
+    evidence_bundle: dict | None = None,
+    dry_run: bool = False,
+) -> dict:
+    """新增设计态决策边（design_maturity='design', build_status='planned'）。
+
+    依赖关系先行铁律（L1）：施工前登记设计态决策边到 decisiongraph。
+    与 op_add_edge 的差异：
+    - 写入 design_maturity='design'（规划中），op_add_edge 默认 'production'（已实现）
+    - 写入 build_status='planned'（设计态未实现），op_add_edge 默认 'generated'
+    - 校验两端节点 design_maturity='design'（仅允许设计态节点互连，对标 apply_depgraph.add_design_edge）
+    - 校验不变量 DEC-INV-001/002/003 与 op_add_edge 一致
+    """
+    if edge_type not in _VALID_EDGE_TYPES:
+        raise ValueError(
+            f"edge_type '{edge_type}' 不合法（DEC-INV-003），合法值: {_VALID_EDGE_TYPES}"
+        )
+    if from_node_id == to_node_id:
+        raise ValueError("自环边禁止（DEC-INV-003 DAG 无环）")
+
+    violations = _check_invariants_on_add_edge(conn, from_node_id, to_node_id, edge_type)
+    if violations:
+        raise ValueError("; ".join(violations))
+
+    # 校验两端节点存在且为设计态
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute(
+            "SELECT node_id, design_maturity FROM decision_nodes WHERE node_id = %s",
+            (from_node_id,),
+        )
+        from_node = cur.fetchone()
+        if from_node is None:
+            raise ValueError(f"from_node_id={from_node_id} 不存在")
+        if from_node["design_maturity"] != "design":
+            raise ValueError(
+                f"from_node_id={from_node_id} design_maturity={from_node['design_maturity']}（应为 design）"
+            )
+
+        cur.execute(
+            "SELECT node_id, design_maturity FROM decision_nodes WHERE node_id = %s",
+            (to_node_id,),
+        )
+        to_node = cur.fetchone()
+        if to_node is None:
+            raise ValueError(f"to_node_id={to_node_id} 不存在")
+        if to_node["design_maturity"] != "design":
+            raise ValueError(
+                f"to_node_id={to_node_id} design_maturity={to_node['design_maturity']}（应为 design）"
+            )
+
+    row = {
+        "from_node_id": from_node_id,
+        "to_node_id": to_node_id,
+        "edge_type": edge_type,
+        "edge_type_cn": edge_type_cn,
+        "condition": condition,
+        "priority": priority,
+        "track": track,
+        "evidence_bundle": json.dumps(evidence_bundle, ensure_ascii=False) if evidence_bundle else None,
+        "design_maturity": "design",
+        "build_status": "planned",
+    }
+
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        if dry_run:
+            print(f"[DRY-RUN] INSERT design edge {from_node_id} → {to_node_id} ({edge_type})")
+        else:
+            cur.execute(
+                """
+                INSERT INTO decision_edges
+                    (from_node_id, to_node_id, edge_type, edge_type_cn,
+                     condition, priority, track, evidence_bundle,
+                     design_maturity, build_status)
+                VALUES (%(from_node_id)s, %(to_node_id)s, %(edge_type)s, %(edge_type_cn)s,
+                        %(condition)s, %(priority)s, %(track)s, %(evidence_bundle)s,
+                        %(design_maturity)s, %(build_status)s)
+                RETURNING edge_id
+                """,
+                row,
+            )
+            new_id = cur.fetchone()["edge_id"]
+
+            post_violations = _check_invariants_post_add_edge(conn, to_node_id)
+            if post_violations:
+                raise ValueError(
+                    "; ".join(post_violations)
+                    + f"（已回滚 design edge {new_id} 的插入）"
+                )
+
+            return {"op": "add_design_edge", "edge_id": new_id}
+
+    return {"op": "add_design_edge", "dry_run": True}
+
+
 # ---------------------------------------------------------------------------
 # 批量操作
 # ---------------------------------------------------------------------------
@@ -575,6 +678,7 @@ _OP_DISPATCH = {
     "deprecate_node": op_deprecate_node,
     "update_node_field": op_update_node_field,
     "add_edge": op_add_edge,
+    "add_design_edge": op_add_design_edge,
     "remove_edge": op_remove_edge,
 }
 
