@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-142 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.sla.sla_monitor
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.events.event_bus
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

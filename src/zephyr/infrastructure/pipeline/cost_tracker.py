@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.infrastructure.pipeline.cost_tracker
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__
+# [DEPENDENCIES] zephyr.infrastructure.pipeline.model_router; zephyr.infrastructure.pipeline.models
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

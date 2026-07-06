@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.health_aggregator
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.health_discovery; zephyr.shared.contracts.core.timestamp
+# [DEPENDENCIES] zephyr.infrastructure.system_telemetry.health_probes; zephyr.shared.events.event_bus
 # [CONSUMERS] zephyr.security.access_control; zephyr.infrastructure.budget_enforcement
 # [STARTUP] imported
 # [MATURITY] production
