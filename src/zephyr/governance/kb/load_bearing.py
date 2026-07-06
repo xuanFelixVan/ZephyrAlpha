@@ -172,7 +172,7 @@ class LoadBearingWall:
                     depends_on=fm.get("depends_on", []) if isinstance(fm, dict) else [],
                     version=int(fm.get("version", 1)) if isinstance(fm, dict) else 1,
                 )
-        raise FileNotFoundError(f"KE {ke_id} not found in {self.know_dir}")
+        raise FileNotFoundError(f"KE {ke_id} not found in knowledge base")
 
     def deregister(self, ke_id: str) -> None:
         for ke_file in self.know_dir.glob("ke-*.md"):
@@ -186,7 +186,7 @@ class LoadBearingWall:
                 new_content = _update_frontmatter(content, fm)
                 ke_file.write_text(new_content, encoding="utf-8")
                 return
-        raise FileNotFoundError(f"KE {ke_id} not found in {self.know_dir}")
+        raise FileNotFoundError(f"KE {ke_id} not found in knowledge base")
 
     def check(self) -> WallReport:
         entries = self.scan()

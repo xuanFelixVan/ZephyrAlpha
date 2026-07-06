@@ -115,7 +115,7 @@ def _load_pg_config() -> dict[str, str]:
     """
     if not _PG_ENV_PATH.exists():
         raise FileNotFoundError(
-            f"PG 连接配置文件不存在: {_PG_ENV_PATH}\n"
+            "PG 连接配置文件不存在\n"
             "请参考 P2迁移方案 §四 创建该文件（含 5 个必需字段）"
         )
     config: dict[str, str] = {}

@@ -109,7 +109,14 @@ DEFAULT_TIMEOUT_SECONDS: Final[float] = 30.0
 
 
 class TransactionError(RuntimeError):
-    """ATM 内部状态错误（嵌套、double-commit、未初始化等）。"""
+    """ATM 内部状态错误（嵌套、double-commit、未初始化等）。
+
+    5.99.20 修复：tx_id 和文件路径移至 details 字段，不暴露在消息中。
+    """
+
+    def __init__(self, message: str, *, details: dict[str, Any] | None = None) -> None:
+        super().__init__(message)
+        self.details: dict[str, Any] = details or {}
 
 
 class TransactionTimeoutError(TransactionError):
@@ -180,7 +187,10 @@ class TransactionScope:
     def _check_timeout(self) -> None:
         elapsed = time.monotonic() - self._started_at
         if elapsed > self._timeout:
-            raise TransactionTimeoutError(f"[{self.tx_id}] transaction timeout ({elapsed:.1f}s > {self._timeout}s)")
+            raise TransactionTimeoutError(
+                f"transaction timeout ({elapsed:.1f}s > {self._timeout}s)",
+                details={"tx_id": self.tx_id},
+            )
 
     def execute(
         self,
@@ -237,7 +247,10 @@ class TransactionScope:
             try:
                 os.replace(target, bak_path)
             except OSError as exc:
-                raise TransactionError(f"[{self.tx_id}] failed to stage existing file to .bak: {target}") from exc
+                raise TransactionError(
+                    "failed to stage existing file to .bak",
+                    details={"tx_id": self.tx_id, "target": str(target)},
+                ) from exc
 
         _flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
         _binary_flag = getattr(os, "O_BINARY", 0)
@@ -258,11 +271,20 @@ class TransactionScope:
 
     def _check_active(self) -> None:
         if self._committed:
-            raise TransactionError(f"[{self.tx_id}] transaction already committed")
+            raise TransactionError(
+                "transaction already committed",
+                details={"tx_id": self.tx_id},
+            )
         if self._rolled_back:
-            raise TransactionError(f"[{self.tx_id}] transaction already rolled back")
+            raise TransactionError(
+                "transaction already rolled back",
+                details={"tx_id": self.tx_id},
+            )
         if self._atm._active_tx is not self:
-            raise TransactionError(f"[{self.tx_id}] not the currently active transaction in ATM")
+            raise TransactionError(
+                "not the currently active transaction in ATM",
+                details={"tx_id": self.tx_id},
+            )
 
 
 class AtomicTransactionManager:
@@ -367,7 +389,10 @@ class AtomicTransactionManager:
         """
         with self._lock:
             if self._active_tx is not None:
-                raise TransactionError(f"nested transactions not supported; active={self._active_tx.tx_id}")
+                raise TransactionError(
+                    "nested transactions not supported",
+                    details={"active_tx_id": self._active_tx.tx_id},
+                )
             if self._conn is None:
                 self._open_connection()
 
@@ -387,7 +412,10 @@ class AtomicTransactionManager:
             if row and row[0] != "PREPARED":
                 self._conn.execute("ROLLBACK")
                 self._active_tx = None
-                raise TransactionError(f"[{tx.tx_id}] duplicate transaction: already {row[0]}")
+                raise TransactionError(
+                    f"duplicate transaction: already {row[0]}",
+                    details={"tx_id": tx.tx_id, "status": row[0]},
+                )
 
             logger.debug("[%s] BEGIN IMMEDIATE + PREPARED", tx.tx_id)
 
@@ -402,7 +430,8 @@ class AtomicTransactionManager:
             if elapsed > self._tx_timeout:
                 self._rollback(tx)
                 raise TransactionTimeoutError(
-                    f"[{tx.tx_id}] transaction timeout ({elapsed:.1f}s > {self._tx_timeout}s)"
+                    f"transaction timeout ({elapsed:.1f}s > {self._tx_timeout}s)",
+                    details={"tx_id": tx.tx_id},
                 )
 
             try:
@@ -415,9 +444,15 @@ class AtomicTransactionManager:
         """预验证所有 staged 的 tmp 文件存在且可读。"""
         for target, tmp, _bak in tx._staged_files:
             if not tmp.exists():
-                raise TransactionError(f"[{tx.tx_id}] pre-commit verify failed: tmp file missing {tmp}")
+                raise TransactionError(
+                    "pre-commit verify failed: tmp file missing",
+                    details={"tx_id": tx.tx_id, "tmp_file": str(tmp)},
+                )
             if tmp.stat().st_size == 0:
-                raise TransactionError(f"[{tx.tx_id}] pre-commit verify failed: tmp file empty {tmp}")
+                raise TransactionError(
+                    "pre-commit verify failed: tmp file empty",
+                    details={"tx_id": tx.tx_id, "tmp_file": str(tmp)},
+                )
 
     def _write_compensation_event(self, tx: TransactionScope) -> None:
         """SQLite COMMIT 已成功但文件 rename 失败时，写入补偿事件。"""
@@ -459,7 +494,10 @@ class AtomicTransactionManager:
         try:
             self._conn.execute("COMMIT")
         except sqlite3.Error as exc:
-            raise TransactionError(f"[{tx.tx_id}] SQLite COMMIT failed: {exc}") from exc
+            raise TransactionError(
+                "SQLite COMMIT failed",
+                details={"tx_id": tx.tx_id, "error": str(exc)},
+            ) from exc
 
         try:
             self._conn.execute(
@@ -503,7 +541,10 @@ class AtomicTransactionManager:
                         os.replace(bak, target)
                     except OSError:
                         pass
-            raise TransactionError(f"[{tx.tx_id}] file rename phase failed after SQLite COMMIT: {exc}") from exc
+            raise TransactionError(
+                "file rename phase failed after SQLite COMMIT",
+                details={"tx_id": tx.tx_id, "error": str(exc)},
+            ) from exc
 
         tx._committed = True
         self._active_tx = None
