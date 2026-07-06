@@ -108,6 +108,13 @@ class RoutingContext:
 class NoEligibleNodeError(ValueError):
     """所有候选节点均被 Filter 阶段淘汰。"""
 
+    error_code = "ZA-IF-0008"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 class RoutingPlugin(ABC):
     """Pipeline 路由插件基类——对标 K8s Scheduling Framework Plugin。

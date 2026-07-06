@@ -36,6 +36,7 @@ Usage:
 from __future__ import annotations
 
 import logging
+import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
@@ -79,6 +80,8 @@ class HookRegistry:
     def __init__(self) -> None:
         self._hooks: list[_HookEntry] = []
         self._active: bool = True
+        # P1-8 修复：添加 _lock 实现线程安全（docstring 已声明但缺失实现）
+        self._lock = threading.Lock()
 
     # ── public API ────────────────────────────────────────────────
 
@@ -105,26 +108,29 @@ class HookRegistry:
             name=name or getattr(callback, "__name__", repr(callback)),
             callback=callback,
         )
-        inserted = False
-        for i, h in enumerate(self._hooks):
-            if entry < h:
-                self._hooks.insert(i, entry)
-                inserted = True
-                break
-        if not inserted:
-            self._hooks.append(entry)
+        with self._lock:
+            inserted = False
+            for i, h in enumerate(self._hooks):
+                if entry < h:
+                    self._hooks.insert(i, entry)
+                    inserted = True
+                    break
+            if not inserted:
+                self._hooks.append(entry)
 
     def unregister(self, callback: Callable[[TransitionEvent], None]) -> bool:
         """移除一个已注册的回调。返回 True 表示成功移除。"""
-        for i, h in enumerate(self._hooks):
-            if h.callback is callback:
-                self._hooks.pop(i)
-                return True
+        with self._lock:
+            for i, h in enumerate(self._hooks):
+                if h.callback is callback:
+                    self._hooks.pop(i)
+                    return True
         return False
 
     def clear(self) -> None:
         """清空所有钩子。"""
-        self._hooks.clear()
+        with self._lock:
+            self._hooks.clear()
 
     # ── internal ───────────────────────────────────────────────────
 
@@ -133,9 +139,12 @@ class HookRegistry:
 
         按 priority 顺序执行。单个回调的异常被隔离并记录。
         """
-        if not self._active:
-            return
-        for h in self._hooks:
+        with self._lock:
+            if not self._active:
+                return
+            # 快照 hooks 列表，避免回调中 register/unregister 导致迭代异常
+            hooks_snapshot = list(self._hooks)
+        for h in hooks_snapshot:
             try:
                 h.callback(event)
             except Exception:
@@ -149,14 +158,17 @@ class HookRegistry:
                 )
 
     def suspend(self) -> None:
-        self._active = False
+        with self._lock:
+            self._active = False
 
     def resume(self) -> None:
-        self._active = True
+        with self._lock:
+            self._active = True
 
     def get_all(self) -> list[str]:
         """返回所有已注册钩子的名称列表（调试用）。"""
-        return [f"{h.name}(prio={h.priority})" for h in self._hooks]
+        with self._lock:
+            return [f"{h.name}(prio={h.priority})" for h in self._hooks]
 
 
 # ── Singleton ────────────────────────────────────────────────────────

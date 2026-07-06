@@ -37,6 +37,7 @@ Redis H1 热缓存为预留接口（抛 NotImplementedError），待 P2 实盘�
 
 import sqlite3
 import threading
+from pathlib import Path
 from typing import Any
 
 import psycopg2
@@ -44,7 +45,28 @@ from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
-from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
+from zephyr.shared.security.secrets import get_secret_from_file_or_default
+
+
+# ClickHouse 连接配置文件路径（P1-7 修复：消除硬编码，与 .env.postgres 同模式）
+_CH_ENV_PATH: Path = REPO_ROOT / "config" / ".env.clickhouse"
+
+
+def _load_clickhouse_config() -> dict[str, str]:
+    """从 config/.env.clickhouse 加载 ClickHouse 连接参数。
+
+    P1-7 修复：消除 host/port/user/password/database 硬编码。
+    优先级：os.environ > config/.env.clickhouse > 默认值（localhost:9000/default/空/c1_market）。
+    文件不存在时全走默认值（开发环境友好），生产环境应创建该文件覆盖默认值。
+    """
+    return {
+        "host": get_secret_from_file_or_default("CLICKHOUSE_HOST", _CH_ENV_PATH, "localhost"),
+        "port": get_secret_from_file_or_default("CLICKHOUSE_PORT", _CH_ENV_PATH, "9000"),
+        "user": get_secret_from_file_or_default("CLICKHOUSE_USER", _CH_ENV_PATH, "default"),
+        "password": get_secret_from_file_or_default("CLICKHOUSE_PASSWORD", _CH_ENV_PATH, ""),
+        "database": get_secret_from_file_or_default("CLICKHOUSE_DATABASE", _CH_ENV_PATH, "c1_market"),
+    }
 
 
 class DatabaseService:
@@ -99,16 +121,20 @@ class DatabaseService:
     def get_clickhouse_conn(self):
         """获取 ClickHouse 连接（C1 行情仓库 c1_market）
 
-        配置来源：tmp/import_intraday.py（数据导入脚本，另一个AI对话创建）
-        host=localhost port=9000 user=default password='' database=c1_market
+        P1-7 修复：配置改为从 config/.env.clickhouse 加载（os.environ > 文件 > 默认值）。
+        安全约束：settings={'readonly': 1} 确保只读（业务数据库连接必须显式指定 read_only）。
         """
         if self._clickhouse_conn is None:
             with self._lock:
                 if self._clickhouse_conn is None:
                     from clickhouse_driver import Client
+                    cfg = _load_clickhouse_config()
                     self._clickhouse_conn = Client(
-                        host='localhost', port=9000, user='default', password='',
-                        database='c1_market',
+                        host=cfg["host"],
+                        port=int(cfg["port"]),
+                        user=cfg["user"],
+                        password=cfg["password"],
+                        database=cfg["database"],
                         settings={'readonly': 1},
                     )
         return self._clickhouse_conn

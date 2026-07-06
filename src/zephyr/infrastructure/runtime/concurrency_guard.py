@@ -82,7 +82,9 @@ class StashPlan:
 class ConcurrencyConflictError(Exception):
     """回滚操作因并发冲突被阻断。"""
 
-    def __init__(self, blocked_files: list[str], locked_by: dict[str, str], reason: str = ""):
+    error_code = "ZA-IF-0007"
+
+    def __init__(self, blocked_files: list[str], locked_by: dict[str, str], reason: str = "", error_code: str | None = None):
         self.blocked_files = blocked_files
         self.locked_by = locked_by
         details = []
@@ -93,6 +95,8 @@ class ConcurrencyConflictError(Exception):
         if reason:
             msg += f"\n原因: {reason}"
         super().__init__(msg)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 def _lock_root(project_root: Path) -> Path:

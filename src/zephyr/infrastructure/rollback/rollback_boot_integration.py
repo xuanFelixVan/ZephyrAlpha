@@ -174,16 +174,17 @@ def subscribe_eventbus() -> None:
     if _subscribed:
         return
     try:
-        from zephyr.shared.events.event_bus import EventBusBackpressure
+        from zephyr.shared.events.event_bus import bus
 
-        bus = EventBusBackpressure()
         bus.subscribe("pipeline_failed", _on_pipeline_failed)
         bus.subscribe("mcp_call_failed", _on_mcp_call_failed)
         bus.subscribe("kill_switch_triggered", _on_kill_switch_triggered)
+        # P0-3 修复：WAL GC 改为事件触发（rollback_completed 时触发，替代时间触发循环）
+        bus.subscribe("rollback_completed", _on_rollback_completed)
         _subscribed = True
         logger.info(
-            "RollbackBootIntegration: subscribed to 3 failure events "
-            "(pipeline_failed/mcp_call_failed/kill_switch_triggered)"
+            "RollbackBootIntegration: subscribed to 4 events "
+            "(pipeline_failed/mcp_call_failed/kill_switch_triggered/rollback_completed)"
         )
     except Exception as e:
         logger.warning("RollbackBootIntegration: subscribe_eventbus failed: %s", e, exc_info=True)
@@ -202,6 +203,18 @@ def _on_mcp_call_failed(payload: object) -> None:
 def _on_kill_switch_triggered(payload: object) -> None:
     """kill_switch_triggered 事件：KillSwitch触发回滚。轻量handler。"""
     _trigger_rollback(payload, "kill_switch")
+
+
+def _on_rollback_completed(payload: object) -> None:
+    """rollback_completed 事件：回滚完成后触发 WAL GC（事件驱动，替代时间触发循环）。轻量handler。"""
+    try:
+        from zephyr.infrastructure.rollback.rollback_scheduler import RollbackScheduler
+
+        scheduler = RollbackScheduler(project_root=Path.cwd())
+        scheduler.schedule_wal_gc()
+        logger.debug("WAL GC triggered by rollback_completed event")
+    except Exception as e:
+        logger.warning("WAL GC on rollback_completed failed: %s", e, exc_info=True)
 
 
 def _trigger_rollback(payload: object, source: str) -> None:

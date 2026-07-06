@@ -59,6 +59,8 @@ from zephyr.infrastructure.rollback.rollback_lock import LockPriority, RollbackL
 from zephyr.infrastructure.rollback.sqlite_dumper import SqliteDumper
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 _AUDIT_AVAILABLE = False
@@ -564,7 +566,7 @@ class RollbackExecutor:
                 # 5.12.1 修复：原 except: pass 静默吞审计写入失败（审计链断链不可见）
                 logger.warning("AuditWriter.write failed for discard audit; falling back to jsonl", exc_info=True)
         try:
-            audit_dir = Path(".zephyr/audit")
+            audit_dir = REPO_ROOT / ".zephyr" / "audit"
             audit_dir.mkdir(parents=True, exist_ok=True)
             audit_file = audit_dir / "rollback_discard_audit.jsonl"
             with open(audit_file, "a", encoding="utf-8") as f:
@@ -975,7 +977,7 @@ class RollbackExecutor:
                 # 5.12.1 修复：原 except: pass 静默吞操作审计写入失败（审计链断链不可见）
                 logger.warning("AuditWriter.write failed for op audit; falling back to jsonl", exc_info=True)
         try:
-            audit_dir = Path(".zephyr/audit")
+            audit_dir = REPO_ROOT / ".zephyr" / "audit"
             audit_dir.mkdir(parents=True, exist_ok=True)
             audit_file = audit_dir / "rollback_operations_audit.jsonl"
             with open(audit_file, "a", encoding="utf-8") as f:

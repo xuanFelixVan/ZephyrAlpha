@@ -568,13 +568,11 @@ def register_boot_hooks(
         hook_registry.register(_hook_triple_align_event, priority=72, name="triple_align_event")
 
         try:
-            from zephyr.shared.events.event_bus import EventBusBackpressure
+            from zephyr.shared.events.event_bus import bus as _bus
 
-            _bus = EventBusBackpressure()
             _bus.subscribe("blueprint.changed", _hook_triple_align_event)
             _bus.subscribe("blueprint.decomposed", _hook_triple_align_event)
         except Exception:
-            # 5.12.1 修复：原 except: pass 静默吞 EventBus 订阅失败（blueprint 变更事件丢失→三对齐检查不触发）
             logger.warning("EventBus subscribe failed for triple_align blueprint hooks", exc_info=True)
 
         logger.info("Event-driven hooks registered: escalation_check / timeout_check / budget_delta / session_startup_init_budget / session_shutdown_budget_close / triple_align")
@@ -592,6 +590,25 @@ def register_boot_hooks(
     _subscribe_task_lifecycle_events(budget_engine=budget_engine)
     _register_rbac_hooks()
     _init_shared_monitoring_modules()
+
+    # P0-2 修复：RollbackBootIntegration 启动钩子接线 — WAL/Verifier 自动初始化
+    try:
+        from zephyr.infrastructure.rollback.rollback_boot_integration import RollbackBootIntegration
+        _rollback_boot = RollbackBootIntegration(project_root=REPO_ROOT)
+        _rollback_boot.register_startup_hook()
+        logger.info("RollbackBootIntegration: registered startup hook (WAL+Verifier init)")
+    except Exception as e:
+        logger.warning("RollbackBootIntegration: register failed: %s", e, exc_info=True)
+
+    # P1-10 修复：SLAMonitor 永久系统启动接入 — 事件驱动 RTO/RPO 自动记录
+    try:
+        from zephyr.infrastructure.sla.sla_monitor import SLAMonitor
+        _sla_monitor = SLAMonitor()
+        _sla_monitor.subscribe_eventbus()
+        logger.info("SLAMonitor: subscribed to EventBus (RTO/RPO auto-record)")
+    except Exception as e:
+        logger.warning("SLAMonitor: subscribe failed: %s", e, exc_info=True)
+
     _subscribe_eventbus_consumers()
     _subscribe_skill_freshness_events()
 

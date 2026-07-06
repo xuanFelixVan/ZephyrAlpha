@@ -3390,6 +3390,12 @@ capabilities:
 # ============================================================================
 creation_tokens:
 
+  # --- EventBus 真源恢复（2026-07-06 AI-14 审计修复，从 git 历史恢复被误删的 event_bus.py）---
+  - file: "src/zephyr/shared/event_bus.py"
+    token: "auto-event-bus-restore-20260706"
+    created_by: "session-sess-44448-20260706204224"
+    capability: "event_bus"
+
   # --- 因子信号域（2026-07-06 AI-08 审计修复，DegradationMonitorBase 域边界迁移）---
   - file: "src/zephyr/signal_quality/degradation_monitor_base.py"
     token: "auto-degradation-monitor-base-20260706"

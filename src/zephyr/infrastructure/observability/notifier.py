@@ -29,6 +29,8 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 class NotificationLevel(str, Enum):
     INFO = "info"
@@ -61,7 +63,7 @@ class NotifyConfig:
 
 class Notifier:
     def __init__(self, output_dir: Path | None = None) -> None:
-        self._output_dir = output_dir or Path("data/notifications")
+        self._output_dir = output_dir or (REPO_ROOT / "data" / "notifications")
         self._config = NotifyConfig()
         self._notification_count = 0
         self._window_start = datetime.now(UTC)

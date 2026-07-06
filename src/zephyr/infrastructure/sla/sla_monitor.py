@@ -29,11 +29,16 @@ RPO: Recovery Point Objective ≤ 1 task
 from __future__ import annotations
 
 import json
+import logging
 import time
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.io.paths import REPO_ROOT
+
+logger = logging.getLogger(__name__)
 
 RTO_TARGET_S = 300
 RPO_TARGET_TASKS = 1
@@ -62,10 +67,13 @@ class SLAReport:
 
 class SLAMonitor:
     def __init__(self, data_dir: Path | None = None) -> None:
-        self._data_dir = data_dir or Path("data/sla")
+        # P1-9 修复：相对路径改为 REPO_ROOT 锚定（禁止相对路径硬约束）
+        self._data_dir = data_dir or (REPO_ROOT / "data" / "sla")
         self._breach_log_path = self._data_dir / "sla_breaches.jsonl"
         self._rto_samples: list[float] = []
         self._rpo_counts: list[int] = []
+        self._subscribed = False
+        self._recovery_start_time: float | None = None
 
     def record_rto(self, recovery_time_s: float) -> SLABreach | None:
         self._rto_samples.append(recovery_time_s)
@@ -182,3 +190,50 @@ class SLAMonitor:
             ),
             encoding="utf-8",
         )
+
+    # ── P1-9 修复：事件驱动订阅（替代被动手动调用）──────────────────
+
+    def subscribe_eventbus(self) -> None:
+        """订阅 EventBusBackpressure 事件，实现自动 SLA 记录。
+
+        幂等：重复调用安全。订阅事件：
+        - pipeline_failed / kill_switch_triggered: 记录恢复开始时间（RTO 计时起点）
+        - rollback_completed: 记录 RTO/RPO（恢复完成）
+        """
+        if self._subscribed:
+            return
+        try:
+            from zephyr.shared.events.event_bus import bus
+
+            bus.subscribe("pipeline_failed", self._on_recovery_start)
+            bus.subscribe("kill_switch_triggered", self._on_recovery_start)
+            bus.subscribe("rollback_completed", self._on_recovery_completed)
+            self._subscribed = True
+            logger.info(
+                "SLAMonitor: subscribed to 3 events "
+                "(pipeline_failed/kill_switch_triggered/rollback_completed)"
+            )
+        except Exception as e:
+            logger.warning("SLAMonitor: subscribe_eventbus failed: %s", e, exc_info=True)
+
+    def _on_recovery_start(self, payload: object) -> None:
+        """失败事件触发：记录恢复开始时间（RTO 计时起点）。轻量handler。"""
+        self._recovery_start_time = time.time()
+        logger.debug("SLAMonitor: recovery timer started")
+
+    def _on_recovery_completed(self, payload: object) -> None:
+        """rollback_completed 事件：记录 RTO/RPO（恢复完成）。轻量handler。"""
+        if self._recovery_start_time is None:
+            logger.debug("SLAMonitor: rollback_completed without prior failure event, skipping")
+            return
+        try:
+            data = payload if isinstance(payload, dict) else {}
+            lost_tasks = int(data.get("lost_tasks", 0))
+            self.record_recovery(self._recovery_start_time, lost_tasks=lost_tasks)
+            logger.info(
+                "SLAMonitor: recovery recorded via rollback_completed event (RTO/RPO measured)"
+            )
+        except Exception as e:
+            logger.warning("SLAMonitor: _on_recovery_completed failed: %s", e, exc_info=True)
+        finally:
+            self._recovery_start_time = None

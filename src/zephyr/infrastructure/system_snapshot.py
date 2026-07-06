@@ -129,6 +129,13 @@ class SystemSnapshot(BaseModel):
 class SnapshotBuildError(RuntimeError):
     """系统快照构建失败（不抛出到 M1 主流程，仅内部记录）。"""
 
+    error_code = "ZA-IF-0003"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 # ---------------------------------------------------------------------------
 # SystemSnapshotter

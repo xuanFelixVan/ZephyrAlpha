@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.events.event_bus import DomainEvent
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 @dataclass
@@ -41,7 +42,7 @@ class EventStoreQuery:
 
 class EventStore:
     def __init__(self, data_dir: Path | None = None) -> None:
-        self._data_dir = data_dir or Path("data/events")
+        self._data_dir = data_dir or (REPO_ROOT / "data" / "events")
         self._store_path = self._data_dir / "event_store.jsonl"
 
     def append(self, event: DomainEvent) -> None:

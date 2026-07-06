@@ -119,7 +119,12 @@ class MetricPoint:
 class TelemetryWriteError(Exception):
     """指标写入失败"""
 
-    pass
+    error_code = "ZA-IF-0002"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 _metrics_queue: queue.Queue[MetricPoint] = queue.Queue(maxsize=10000)

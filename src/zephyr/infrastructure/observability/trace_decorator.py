@@ -34,6 +34,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 @dataclass
 class TraceSpan:
@@ -52,7 +54,7 @@ class TraceCollector:
 
     def __init__(self) -> None:
         self._spans: list[TraceSpan] = []
-        self._output_dir = Path("data/traces")
+        self._output_dir = REPO_ROOT / "data" / "traces"
         self._spans_lock = threading.Lock()  # Phase 2 P2 修复：共享 _spans list 线程安全
 
     @classmethod

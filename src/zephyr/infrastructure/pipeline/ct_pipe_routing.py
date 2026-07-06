@@ -97,6 +97,13 @@ class CtPipeRoutingHints(BaseModel):
 class PipelineRoutingInputsError(ValueError):
     """CT-PIPE 路由输入不足以唯一决策时抛出（如 DOC_WRITE 缺 target_layer）。"""
 
+    error_code = "ZA-IF-0009"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 def _tags_to_kv(tags: list[str]) -> dict[str, str]:
     out: dict[str, str] = {}

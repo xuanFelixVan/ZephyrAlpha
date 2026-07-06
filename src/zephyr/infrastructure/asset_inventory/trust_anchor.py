@@ -28,6 +28,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 class TrustLevel(str, Enum):
     FULL = "FULL"
@@ -185,7 +187,7 @@ class BypassManager:
 
     OVERRIDE_FILENAME = "inventory_override.yaml"
     MAX_BYPASS_HOURS = 24
-    _DEFAULT_OVERRIDE_PATH = Path("config/capacity") / OVERRIDE_FILENAME
+    _DEFAULT_OVERRIDE_PATH = (REPO_ROOT / "config" / "capacity") / OVERRIDE_FILENAME
 
     def __init__(self, project_root: Path | None = None) -> None:
         if project_root:

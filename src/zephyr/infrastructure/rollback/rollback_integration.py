@@ -50,6 +50,8 @@ from typing import Any
 from zephyr.infrastructure.rollback.contract import ExitCode
 from zephyr.shared.security.secrets import get_secret_or_default
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 PROMPT_INJECTION_PATTERNS = [
     re.compile(r"ignore\s+(all\s+)?(previous|above)\s+(instructions?|prompts?)", re.IGNORECASE),
     re.compile(r"\bDAN\b.*\bdo\s+anything\s+now\b", re.IGNORECASE),
@@ -290,7 +292,7 @@ class RollbackIntegration:
         }
 
     def resolve_self_audit_conflict(self, audit_path: Path | None = None) -> tuple[bool, str]:
-        target = audit_path or Path("data/rollback/audit/audit_findings.json")
+        target = audit_path or (REPO_ROOT / "data" / "rollback" / "audit" / "audit_findings.json")
 
         tmp_path = Path(str(target) + ".conflict_tmp")
         bak_path = Path(str(target) + ".conflict_bak")

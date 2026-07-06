@@ -21,6 +21,8 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 _log = logging.getLogger(__name__)
 
 
@@ -31,7 +33,7 @@ class HandoffAutoLoader:
     """
 
     def __init__(self, handoff_dir: Path | None = None) -> None:
-        self._dir = handoff_dir or Path("data/handoff")
+        self._dir = handoff_dir or (REPO_ROOT / "data" / "handoff")
         self._latest: dict[str, Any] | None = None
 
     @property

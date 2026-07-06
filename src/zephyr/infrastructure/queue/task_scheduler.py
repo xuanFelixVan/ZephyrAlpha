@@ -29,6 +29,8 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 class ScheduleStatus(str, Enum):
     PENDING = "pending"
@@ -63,7 +65,7 @@ class ScheduleResult:
 
 class TaskScheduler:
     def __init__(self, data_dir: Path | None = None) -> None:
-        self._data_dir = data_dir or Path("data/queue")
+        self._data_dir = data_dir or (REPO_ROOT / "data" / "queue")
         self._schedule_path = self._data_dir / "schedules.jsonl"
         self._tasks: dict[str, ScheduledTask] = {}
 

@@ -38,6 +38,8 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 class QueueItemStatus(str, Enum):
     ENQUEUED = "enqueued"
@@ -67,7 +69,7 @@ class QueueConfig:
 
 class TaskQueue:
     def __init__(self, data_dir: Path | None = None) -> None:
-        self._data_dir = data_dir or Path("data/queue")
+        self._data_dir = data_dir or (REPO_ROOT / "data" / "queue")
         self._items: list[QueueItem] = []
         self._config = QueueConfig()
         self._running = False
