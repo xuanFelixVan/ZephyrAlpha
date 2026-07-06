@@ -1294,7 +1294,7 @@ def get_depgraph_pg_connection(
     check_same_thread: bool = False,  # SQLite-only，PG 忽略
     timeout: float = 30.0,  # SQLite-only，PG 忽略
     apply_foreign_keys: bool = True,  # SQLite-only，PG 忽略（FK 由 schema DDL 管理）
-) -> Any:
+) -> psycopg2.extensions.connection:
     """返回 depgraph (PostgreSQL) 连接。
 
     所有 depgraph 连接必须经此入口（统一 PG 配置，防止散点连接绕过连接池配置）。

@@ -35,7 +35,13 @@ import logging
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.governance.escalation.escalation_engine import EscalationEngine
+    from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+    from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
+    from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import Arbitrator
 
 logger = logging.getLogger(__name__)
 
@@ -69,10 +75,10 @@ class F5BootIntegration:
 
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
-        self._escalation_engine: Any = None
-        self._delegation_engine: Any = None
-        self._deadlock_detector: Any = None
-        self._arbitrator: Any = None
+        self._escalation_engine: EscalationEngine | None = None
+        self._delegation_engine: DelegationEngine | None = None
+        self._deadlock_detector: DeadlockDetector | None = None
+        self._arbitrator: Arbitrator | None = None
         self._initialized = False
         self._last_periodic_result: dict = {}
 
@@ -260,19 +266,19 @@ class F5BootIntegration:
         return self._initialized
 
     @property
-    def escalation_engine(self) -> Any:
+    def escalation_engine(self) -> EscalationEngine | None:
         return self._escalation_engine
 
     @property
-    def delegation_engine(self) -> Any:
+    def delegation_engine(self) -> DelegationEngine | None:
         return self._delegation_engine
 
     @property
-    def deadlock_detector(self) -> Any:
+    def deadlock_detector(self) -> DeadlockDetector | None:
         return self._deadlock_detector
 
     @property
-    def arbitrator(self) -> Any:
+    def arbitrator(self) -> Arbitrator | None:
         return self._arbitrator
 
     @property

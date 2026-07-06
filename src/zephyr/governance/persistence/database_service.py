@@ -50,7 +50,7 @@ class DatabaseService:
         self.governance_db = str(DB_PATH)
 
         self._governance_conn: sqlite3.Connection | None = None
-        self._depgraph_conn: Any | None = None  # psycopg2 connection (P2迁移后)
+        self._depgraph_conn: psycopg2.extensions.connection | None = None  # psycopg2 connection (P2迁移后)
         # Phase 2 P2 修复（并发安全 HIGH）：lazy 连接初始化加双重检查锁，防多线程首次调用创建多个连接
         self._lock = threading.Lock()
 
@@ -63,7 +63,7 @@ class DatabaseService:
                     self._governance_conn.row_factory = sqlite3.Row
         return self._governance_conn
 
-    def get_depgraph_conn(self) -> Any:
+    def get_depgraph_conn(self) -> psycopg2.extensions.connection:
         """获取 depgraph (PostgreSQL) 连接（P2迁移后从 SQLite 切换到 PostgreSQL）
 
         返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
