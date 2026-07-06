@@ -25,7 +25,13 @@ from dataclasses import dataclass, field
 
 
 class EventVersionError(Exception):
-    pass
+    """事件版本错误。"""
+    error_code = "ZA-SH-0033"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass

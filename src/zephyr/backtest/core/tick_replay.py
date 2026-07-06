@@ -54,6 +54,13 @@ _logger = logging.getLogger(__name__)
 class TickReplayError(Exception):
     """Tick 回放引擎错误"""
 
+    error_code = "ZA-BT-0002"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 @dataclass(frozen=True)
 class TickReplayConfig:

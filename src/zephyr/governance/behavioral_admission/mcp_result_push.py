@@ -37,15 +37,23 @@ _CALLBACK_TIMEOUT_SECONDS = 10
 
 
 class PushError(Exception):
-    def __init__(self, task_id: str, message: str) -> None:
+    error_code = "ZA-GV-0003"
+
+    def __init__(self, task_id: str, message: str, *, error_code: str | None = None) -> None:
         self.task_id = task_id
         super().__init__(f"PushError({task_id}): {message}")
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class CallbackConnectionError(PushError):
-    def __init__(self, task_id: str, url: str, detail: str) -> None:
+    error_code = "ZA-GV-0004"
+
+    def __init__(self, task_id: str, url: str, detail: str, *, error_code: str | None = None) -> None:
         self.url = url
         super().__init__(task_id, f"callback connection failed to {url}: {detail}")
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class PushStatus(str, Enum):

@@ -70,68 +70,108 @@ class ZephyrBaseError(Exception):
     Attributes:
         message: 人类可读错误描述。
         details: 可选附加结构化上下文（模块名、参数名、触发值等）。
+        error_code: 业务错误码（ZA-XX-NNNN 格式），子类以类属性声明默认值。
     """
 
-    def __init__(self, message: str, *, details: dict[str, Any] | None = None) -> None:
+    error_code: str | None = None
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        details: dict[str, Any] | None = None,
+        error_code: str | None = None,
+    ) -> None:
         super().__init__(message)
         self.message: str = message
         self.details: dict[str, Any] = details or {}
+        if error_code is not None:
+            self.error_code = error_code
 
     def __repr__(self) -> str:
+        parts = [f"message={self.message!r}"]
+        if self.error_code:
+            parts.insert(0, f"code={self.error_code}")
         if self.details:
-            return f"{type(self).__name__}(message={self.message!r}, details={self.details!r})"
-        return f"{type(self).__name__}(message={self.message!r})"
+            parts.append(f"details={self.details!r}")
+        return f"{type(self).__name__}({', '.join(parts)})"
 
     def __str__(self) -> str:
+        if self.error_code:
+            return f"[{self.error_code}] {self.message}"
         return self.message
 
 
 class ConfigError(ZephyrBaseError):
     """配置系统错误——YAML 解析失败、Schema 校验失败、路径无效等。"""
 
+    error_code = "ZA-SH-0001"
+
 
 class ContractError(ZephyrBaseError):
     """数据契约错误——跨层契约不匹配、版本冲突、类型不兼容。"""
+
+    error_code = "ZA-SH-0002"
 
 
 class SecurityError(ZephyrBaseError):
     """安全相关错误——权限拒绝、Token 无效、沙箱逃逸检测。"""
 
+    error_code = "ZA-SH-0003"
+
 
 class SessionError(ZephyrBaseError):
     """会话生命周期错误——会话不存在、状态转换非法、会话超时。"""
+
+    error_code = "ZA-SH-0004"
 
 
 class ValidationError(ZephyrBaseError):
     """输入校验错误——字段缺失、类型错误、值域越界。"""
 
+    error_code = "ZA-SH-0005"
+
 
 class TaskError(ZephyrBaseError):
     """任务系统错误——Task 状态机非法跳转、Task 构造非法、dependency 死锁。"""
+
+    error_code = "ZA-SH-0006"
 
 
 class PipelineError(ZephyrBaseError):
     """管线错误——管线装配失败、步骤执行异常、路由错误。"""
 
+    error_code = "ZA-SH-0007"
+
 
 class GateError(ZephyrBaseError):
     """门禁错误——门禁判决异常、熔断器触发、contract-template 找不到。"""
+
+    error_code = "ZA-SH-0008"
 
 
 class ContextError(ZephyrBaseError):
     """上下文引擎错误——上下文装配失败、Token 预算溢出、evict 异常。"""
 
+    error_code = "ZA-SH-0009"
+
 
 class FeedbackError(ZephyrBaseError):
     """反馈循环错误——自进化引擎异常、metrics 采集失败、pattern 分析异常。"""
+
+    error_code = "ZA-SH-0010"
 
 
 class DataError(ZephyrBaseError):
     """数据层错误——数据库连接失败、查询异常、迁移失败。"""
 
+    error_code = "ZA-SH-0011"
+
 
 class ZephyrIOError(ZephyrBaseError):
     """I/O 错误——文件读写失败、路径不存在、编码异常。"""
+
+    error_code = "ZA-SH-0012"
 
 
 # 5.151.5 修复: IOError 作为 ZephyrIOError 的向后兼容别名保留,
@@ -141,3 +181,5 @@ IOError = ZephyrIOError
 
 class UnimplementedError(ZephyrBaseError):
     """施工占位——标记尚未实现但已规划的功能入口。"""
+
+    error_code = "ZA-SH-0013"

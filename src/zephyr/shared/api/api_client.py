@@ -72,6 +72,7 @@ logger = logging.getLogger(__name__)
 
 class ApiCallError(ZephyrBaseError):
     """API 调用失败——HTTP 错误、超时、协议不匹配。"""
+    error_code = "ZA-SH-0021"
 
 
 @unique

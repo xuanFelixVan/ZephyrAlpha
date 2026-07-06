@@ -71,6 +71,7 @@ logger = logging.getLogger(__name__)
 
 class OutboxError(ZephyrBaseError):
     """Outbox 操作失败——存储后端不可达、消息格式无效。"""
+    error_code = "ZA-SH-0042"
 
 
 @unique

@@ -68,10 +68,19 @@ class GateResult:
 
 
 class GateEngineError(RuntimeError):
-    pass
+    error_code = "ZA-GV-0041"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class GateViolationError(GateEngineError):
-    def __init__(self, result: GateResult) -> None:
+    error_code = "ZA-GV-0042"
+
+    def __init__(self, result: GateResult, *, error_code: str | None = None) -> None:
         self.result = result
         super().__init__(result.summary())
+        if error_code is not None:
+            self.error_code = error_code

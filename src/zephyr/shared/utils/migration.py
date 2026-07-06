@@ -55,6 +55,12 @@ __all__ = [
 
 class MigrationError(Exception):
     """迁移失败异常。"""
+    error_code = "ZA-SH-0048"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 Migration = Callable[[dict[str, Any]], dict[str, Any]]

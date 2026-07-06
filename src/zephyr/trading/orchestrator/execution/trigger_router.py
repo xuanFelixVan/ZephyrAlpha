@@ -132,6 +132,13 @@ PHASE1D_TRIGGER_TYPES: Final[frozenset[str]] = frozenset(
 class TriggerRouterConfigError(RuntimeError):
     """``config/trigger_router.yaml`` 加载或校验失败。"""
 
+    error_code = "ZA-TR-0005"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 class TriggerSafety(str, Enum):
     """触发器安全等级（与 schemas.SafetyLevel 一致：L/M/H，向后兼容别名）。"""

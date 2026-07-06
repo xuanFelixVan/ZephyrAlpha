@@ -76,6 +76,7 @@ class FlagState(str, Enum):
 
 class FlagNotFoundError(ZephyrBaseError):
     """请求的 FeatureFlag 未在注册表中找到。"""
+    error_code = "ZA-SH-0047"
 
 
 @dataclass(frozen=True)

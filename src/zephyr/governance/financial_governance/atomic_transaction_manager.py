@@ -113,14 +113,23 @@ class TransactionError(RuntimeError):
 
     5.99.20 修复：tx_id 和文件路径移至 details 字段，不暴露在消息中。
     """
+    error_code = "ZA-GV-0021"
 
-    def __init__(self, message: str, *, details: dict[str, Any] | None = None) -> None:
+    def __init__(self, message: str, *, details: dict[str, Any] | None = None, error_code: str | None = None) -> None:
         super().__init__(message)
         self.details: dict[str, Any] = details or {}
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class TransactionTimeoutError(TransactionError):
     """事务超时。"""
+    error_code = "ZA-GV-0022"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 def _utf8_lf_bytes(content: str | bytes) -> bytes:

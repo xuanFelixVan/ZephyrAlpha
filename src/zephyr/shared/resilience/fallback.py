@@ -61,6 +61,7 @@ R = TypeVar("R")
 
 class FallbackExhaustedError(ZephyrBaseError):
     """降级链全部耗尽——所有步骤都失败了。"""
+    error_code = "ZA-SH-0019"
 
 
 @dataclass(frozen=True)

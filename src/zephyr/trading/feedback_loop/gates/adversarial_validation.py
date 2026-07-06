@@ -31,7 +31,12 @@ logger = logging.getLogger(__name__)
 
 
 class RedBlueImportError(ImportError):
-    pass
+    error_code = "ZA-TR-0017"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass

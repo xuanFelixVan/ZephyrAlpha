@@ -38,7 +38,12 @@ class SafetyCheckResult(BaseModel):
 
 
 class SafetyFenceError(Exception):
-    pass
+    error_code = "ZA-SC-0034"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class SafetyFence:

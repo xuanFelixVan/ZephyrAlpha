@@ -71,6 +71,12 @@ _BRANCH_PREFIX = "session/"
 
 class WorktreeError(RuntimeError):
     """worktree 管理错误（创建/删除/merge 失败等）。"""
+    error_code = "ZA-GV-0031"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class _WorktreeLock:

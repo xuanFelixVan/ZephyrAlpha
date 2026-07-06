@@ -42,7 +42,12 @@ LEVEL_ORDER: Final[list[BlastRadiusLevel]] = [
 
 
 class AbortThresholdError(RuntimeError):
-    pass
+    error_code = "ZA-SC-0009"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class BlastRadius:

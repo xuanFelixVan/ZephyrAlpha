@@ -31,7 +31,12 @@ from __future__ import annotations
 class AgentRbacError(Exception):
     """Agent RBAC 异常基类."""
 
-    pass
+    error_code = "ZA-SC-0023"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class PermissionDeniedError(AgentRbacError):
@@ -43,6 +48,8 @@ class PermissionDeniedError(AgentRbacError):
         rule_id: 触发的规则 ID
     """
 
+    error_code = "ZA-SC-0024"
+
     def __init__(
         self,
         message: str = "",
@@ -50,11 +57,14 @@ class PermissionDeniedError(AgentRbacError):
         operation: str = "",
         layer: str = "",
         rule_id: str = "",
+        error_code: str | None = None,
     ) -> None:
         super().__init__(message)
         self.operation = operation
         self.layer = layer
         self.rule_id = rule_id
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class ColdStartLockedError(AgentRbacError):
@@ -65,16 +75,21 @@ class ColdStartLockedError(AgentRbacError):
         rule_id: 触发的规则 ID
     """
 
+    error_code = "ZA-SC-0025"
+
     def __init__(
         self,
         message: str = "",
         *,
         layer: str = "L1",
         rule_id: str = "CSL-001",
+        error_code: str | None = None,
     ) -> None:
         super().__init__(message)
         self.layer = layer
         self.rule_id = rule_id
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class OverrideTokenExpiredError(AgentRbacError):
@@ -85,16 +100,21 @@ class OverrideTokenExpiredError(AgentRbacError):
         layer: 检查层
     """
 
+    error_code = "ZA-SC-0026"
+
     def __init__(
         self,
         message: str = "",
         *,
         issued_at: float = 0.0,
         layer: str = "L1",
+        error_code: str | None = None,
     ) -> None:
         super().__init__(message)
         self.issued_at = issued_at
         self.layer = layer
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class KillSwitchTrippedError(AgentRbacError):
@@ -105,16 +125,21 @@ class KillSwitchTrippedError(AgentRbacError):
         layer: 检查层
     """
 
+    error_code = "ZA-SC-0027"
+
     def __init__(
         self,
         message: str = "",
         *,
         trigger: str = "",
         layer: str = "L0",
+        error_code: str | None = None,
     ) -> None:
         super().__init__(message)
         self.trigger = trigger
         self.layer = layer
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class DegradationBlockedError(AgentRbacError):
@@ -125,16 +150,21 @@ class DegradationBlockedError(AgentRbacError):
         rule_id: 触发的规则 ID
     """
 
+    error_code = "ZA-SC-0028"
+
     def __init__(
         self,
         message: str = "",
         *,
         layer: str = "L0",
         rule_id: str = "DEG-001",
+        error_code: str | None = None,
     ) -> None:
         super().__init__(message)
         self.layer = layer
         self.rule_id = rule_id
+        if error_code is not None:
+            self.error_code = error_code
 
 
 __all__ = [

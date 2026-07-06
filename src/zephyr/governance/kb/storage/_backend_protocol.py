@@ -46,6 +46,12 @@ __all__ = [
 
 class MemoryBackendError(RuntimeError):
     """Raised when a memory backend is unavailable or an operation fails."""
+    error_code = "ZA-GV-0038"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class MemoryRecord(BaseModel):

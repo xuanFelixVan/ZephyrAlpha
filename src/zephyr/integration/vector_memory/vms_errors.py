@@ -29,28 +29,33 @@ __all__: list[str] = [
 
 
 class VMSError(Exception):
-    pass
+    error_code = "ZA-IG-0001"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class DesignPrincipleError(VMSError):
-    pass
+    error_code = "ZA-IG-0002"
 
 
 class ProvenanceMissingError(VMSError):
-    pass
+    error_code = "ZA-IG-0003"
 
 
 class DimensionError(DesignPrincipleError):
-    pass
+    error_code = "ZA-IG-0004"
 
 
 class ChunkStrategyError(DesignPrincipleError):
-    pass
+    error_code = "ZA-IG-0005"
 
 
 class TTLError(DesignPrincipleError):
-    pass
+    error_code = "ZA-IG-0006"
 
 
 class HotColdSeparationError(DesignPrincipleError):
-    pass
+    error_code = "ZA-IG-0007"

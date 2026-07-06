@@ -31,7 +31,12 @@ __all__: list[str] = ["MCPEndpoints", "McpEndpointError", "McpTool"]
 
 
 class McpEndpointError(RuntimeError):
-    pass
+    error_code = "ZA-SC-0003"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass

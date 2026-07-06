@@ -29,6 +29,8 @@ class RiskLimitViolationError(Exception):
     # 实例始终携带 __dict__，__slots__ 的内存优化完全失效，仅给人"已优化"的错觉。
     # 同时解决 5.125.1 WeakRef 兼容性问题（无 __slots__ 则默认支持 __weakref__）。
 
+    error_code = "ZA-TR-0001"
+
     def __init__(
         self,
         *,
@@ -42,6 +44,7 @@ class RiskLimitViolationError(Exception):
         idempotency_key: str,
         schema_version: str = "1.0",
         trace_context: TraceContext | None = None,
+        error_code: str | None = None,
     ) -> None:
         super().__init__(violation_detail)
         self.actual_value = actual_value
@@ -54,3 +57,5 @@ class RiskLimitViolationError(Exception):
         self.violation_detail = violation_detail
         self.schema_version = schema_version
         self.trace_context = trace_context
+        if error_code is not None:
+            self.error_code = error_code

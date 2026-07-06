@@ -64,6 +64,12 @@ JOB_MATRIX_PATH: Final[Path] = REPO_ROOT / "data" / "brain" / "job_matrix.yaml"
 
 class JobMatcherError(Exception):
     """岗位匹配器错误。"""
+    error_code = "ZA-IT-0001"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class JobMatcher:

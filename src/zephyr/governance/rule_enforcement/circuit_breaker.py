@@ -141,8 +141,9 @@ class CircuitBreakerRecord:
 
 class CircuitOpenError(RuntimeError):
     """OPEN 状态下调用被阻断时抛出。"""
+    error_code = "ZA-GV-0036"
 
-    def __init__(self, caller: str, target: str, reason: str | None = None) -> None:
+    def __init__(self, caller: str, target: str, reason: str | None = None, *, error_code: str | None = None) -> None:
         self.caller = caller
         self.target = target
         self.reason = reason
@@ -150,6 +151,8 @@ class CircuitOpenError(RuntimeError):
         if reason:
             msg += f" ({reason})"
         super().__init__(msg)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 # ---------------------------------------------------------------------------

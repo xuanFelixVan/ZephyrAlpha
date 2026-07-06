@@ -65,6 +65,7 @@ logger = logging.getLogger(__name__)
 
 class IdempotencyError(ZephyrBaseError):
     """幂等性冲突——相同 key 产生了不同结果或状态不一致。"""
+    error_code = "ZA-SH-0044"
 
 
 @unique

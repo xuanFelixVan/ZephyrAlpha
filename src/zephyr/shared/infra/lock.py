@@ -66,6 +66,7 @@ logger = logging.getLogger(__name__)
 
 class LockError(ZephyrBaseError):
     """分布式锁操作失败——锁已被占用、后端不可达、超时。"""
+    error_code = "ZA-SH-0041"
 
 
 @dataclass

@@ -60,6 +60,7 @@ R = TypeVar("R")
 
 class RetryExhaustedError(ZephyrBaseError):
     """所有重试均已耗尽——最后一次异常通过 __cause__ 链保留。"""
+    error_code = "ZA-SH-0018"
 
 
 @dataclass(frozen=True)

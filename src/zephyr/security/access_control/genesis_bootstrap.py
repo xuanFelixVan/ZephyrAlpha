@@ -37,6 +37,13 @@ logger = logging.getLogger(__name__)
 class EngineUnavailableError(RuntimeError):
     """5.27.6 修复：引擎不可用时抛出的专用异常，替代通用 RuntimeError，语义更清晰。"""
 
+    error_code = "ZA-SC-0029"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 class GenesisPhase(str, Enum):
     """RBAC启动阶段."""

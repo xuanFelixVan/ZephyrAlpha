@@ -37,7 +37,12 @@ _REGISTRY_PATH: Path = Path(__file__).parent / "_constitution-registry.yaml"
 
 
 class ConstitutionViolationError(RuntimeError):
-    pass
+    error_code = "ZA-SC-0004"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class ConstitutionArticle:

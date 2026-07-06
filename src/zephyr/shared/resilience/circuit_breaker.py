@@ -68,13 +68,16 @@ class CircuitState(str, Enum):
 
 class CircuitOpenError(ZephyrBaseError):
     """熔断器处于 OPEN 状态时拒绝调用。"""
+    error_code = "ZA-SH-0020"
 
-    def __init__(self, name: str, message: str | None = None, *, details: dict[str, Any] | None = None) -> None:
+    def __init__(self, name: str, message: str | None = None, *, details: dict[str, Any] | None = None, error_code: str | None = None) -> None:
         super().__init__(
             message or f"CircuitBreaker '{name}' is OPEN",
             details=details or {},
         )
         self.circuit_name: str = name
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class CircuitBreaker:

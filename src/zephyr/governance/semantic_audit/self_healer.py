@@ -51,6 +51,12 @@ __all__ = [
 
 class SelfHealError(Exception):
     """自愈闭环异常基类."""
+    error_code = "ZA-GV-0034"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class HealResult(BaseModel):

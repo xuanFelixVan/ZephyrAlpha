@@ -109,10 +109,12 @@ _XT_SELL_ORDER_TYPES = {24, 26, 28, 30}  # 卖限价/卖市价/卖开/卖平
 
 class MiniQmtBrokerError(Exception):
     """MiniQMT 券商错误"""
+    error_code = "ZA-XC-0001"
 
     def __init__(self, message: str, error_code: Optional[int] = None):
         super().__init__(message)
-        self.error_code = error_code
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class MiniQmtBroker(BrokerInterface):

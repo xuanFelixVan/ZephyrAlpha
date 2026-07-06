@@ -53,6 +53,13 @@ _logger = logging.getLogger(__name__)
 class DataHandlerError(Exception):
     """数据处理器错误"""
 
+    error_code = "ZA-BT-0010"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 class BacktestDataHandler:
     """回测数据处理器（日线/分钟线 bar 模式）

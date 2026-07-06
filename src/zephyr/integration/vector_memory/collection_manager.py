@@ -67,31 +67,36 @@ TTL_MAP: Final[dict[str, int]] = {
 
 
 class VMSError(Exception):
-    pass
+    error_code = "ZA-IG-0008"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class DesignPrincipleError(VMSError):
-    pass
+    error_code = "ZA-IG-0009"
 
 
 class ProvenanceMissingError(VMSError):
-    pass
+    error_code = "ZA-IG-0010"
 
 
 class DimensionError(DesignPrincipleError):
-    pass
+    error_code = "ZA-IG-0011"
 
 
 class ChunkStrategyError(DesignPrincipleError):
-    pass
+    error_code = "ZA-IG-0012"
 
 
 class TTLError(DesignPrincipleError):
-    pass
+    error_code = "ZA-IG-0013"
 
 
 class HotColdSeparationError(DesignPrincipleError):
-    pass
+    error_code = "ZA-IG-0014"
 
 
 class DesignPrinciplesEnforcer:

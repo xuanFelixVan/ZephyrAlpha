@@ -158,12 +158,15 @@ class CompressionInvariantError(Exception):
     compressed
         压缩后值说明（如 "header '## Installation' 在压缩结果中缺失"）。
     """
+    error_code = "ZA-SH-0036"
 
-    def __init__(self, field: str, original: str, compressed: str) -> None:
+    def __init__(self, field: str, original: str, compressed: str, *, error_code: str | None = None) -> None:
         self.field = field
         self.original = original
         self.compressed = compressed
         super().__init__(f"CompressionInvariantError: field='{field}'\n  原始：{original}\n  压缩：{compressed}")
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class CompressionOutcome(BaseModel):

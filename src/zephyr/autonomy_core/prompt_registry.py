@@ -133,18 +133,27 @@ def _compare_semver(a: str, b: str) -> int:
 
 class PromptRegistryError(Exception):
     """PromptRegistry 基础异常。"""
+    error_code = "ZA-AC-0001"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class TokenBudgetExceededError(PromptRegistryError):
     """渲染后的 Prompt 超出 token 预算时抛出。"""
+    error_code = "ZA-AC-0002"
 
 
 class TemplateNotFoundError(PromptRegistryError):
     """模板 ID 或版本未注册时抛出。"""
+    error_code = "ZA-AC-0003"
 
 
 class VariableError(PromptRegistryError):
     """必填变量缺失或未知占位符时抛出。"""
+    error_code = "ZA-AC-0004"
 
 
 # ---------------------------------------------------------------------------

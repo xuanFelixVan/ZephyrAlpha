@@ -76,6 +76,7 @@ ISO_FORMAT: Final[str] = "%Y-%m-%dT%H:%M:%S.%fZ"
 
 class SerializationError(ZephyrBaseError):
     """序列化/反序列化过程中类型不兼容或格式错误。"""
+    error_code = "ZA-SH-0034"
 
 
 @unique
@@ -377,6 +378,12 @@ def from_json(
 
 class SerializationError(Exception):
     """序列化/反序列化错误——版本不匹配或格式校验失败。"""
+    error_code = "ZA-SH-0035"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass(frozen=True)

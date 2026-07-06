@@ -60,6 +60,12 @@ from zephyr.shared.utils.time_utils import now_utc
 
 class TradePanelError(Exception):
     """交易面板错误"""
+    error_code = "ZA-FE-0002"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 # 默认灰度约束（蓝图 §16.7.5 D: 小资金灰度）

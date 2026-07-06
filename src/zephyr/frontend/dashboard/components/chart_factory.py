@@ -73,6 +73,12 @@ except ImportError:  # 测试环境无 panel
 
 class ChartFactoryError(Exception):
     """图表工厂错误"""
+    error_code = "ZA-FE-0001"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 # Datashader 阈值: 超过50万点自动切换 Datashader 渲染（蓝图 §16.7.2）

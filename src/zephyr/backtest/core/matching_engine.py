@@ -58,6 +58,13 @@ from zephyr.backtest.core.portfolio import BacktestFill, Portfolio
 class MatchingError(Exception):
     """撮合引擎错误（回测专用 orchestrator 错误，区分 MatchingLogicError 纯函数错误）"""
 
+    error_code = "ZA-BT-0008"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 # 兼容性 sentinel: 用于从单一价格构造的合成1档盘口的虚拟深度
 _SYNTHETIC_DEPTH = Decimal("99999999")

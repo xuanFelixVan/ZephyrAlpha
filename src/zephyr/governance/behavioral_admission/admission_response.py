@@ -43,13 +43,17 @@ _DECISION_TO_STATUS: dict[AdmissionDecision, AdmissionResponseStatus] = {
 
 
 class InvalidDecisionError(ValueError):
-    def __init__(self, decision: Any) -> None:
+    error_code = "ZA-GV-0005"
+
+    def __init__(self, decision: Any, *, error_code: str | None = None) -> None:
         self.decision = decision
         super().__init__(
             f"Cannot map decision '{decision}' to AdmissionResponseStatus. "
             f"Expected AdmissionDecision enum or valid string: "
             f"{[d.value for d in AdmissionDecision]}"
         )
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class AdmissionResponse(BaseModel):

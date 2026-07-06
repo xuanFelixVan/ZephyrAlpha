@@ -103,6 +103,12 @@ def _validate_table_name(table: str) -> str:
 
 class DatabaseManagerError(RuntimeError):
     """DatabaseManager 基础异常。"""
+    error_code = "ZA-GV-0029"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class DatabaseHealthStatus:

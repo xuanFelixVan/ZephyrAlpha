@@ -55,11 +55,21 @@ class InjectType(str, Enum):
 
 
 class ChaosInjectError(RuntimeError):
-    pass
+    error_code = "ZA-TR-0015"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class ChaosRecoverError(RuntimeError):
-    pass
+    error_code = "ZA-TR-0016"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass

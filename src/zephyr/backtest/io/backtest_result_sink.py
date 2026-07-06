@@ -42,6 +42,13 @@ from zephyr.backtest.core.engine_base import BacktestResult
 class BacktestResultSinkError(Exception):
     """回测结果数据落地错误"""
 
+    error_code = "ZA-BT-0012"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 # ===== 时序数据点 dataclass =====
 

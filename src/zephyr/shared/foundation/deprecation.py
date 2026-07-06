@@ -58,6 +58,12 @@ __all__ = [
 
 class DeprecatedAPIError(FutureWarning):
     """废弃 API 仍被调用的运行时异常（仅在 strict 模式下抛出）。"""
+    error_code = "ZA-SH-0046"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 _DEPRECATION_MODE = os.environ.get("ZEPHYR_DEPRECATION_MODE", "warn")

@@ -35,16 +35,26 @@ F = TypeVar("F", bound=Callable[..., Any])
 
 
 class ContractViolationError(Exception):
-    def __init__(self, contract_id: str, field: str, expected: str, got: str):
+    error_code = "ZA-SH-0024"
+
+    def __init__(self, contract_id: str, field: str, expected: str, got: str, *, error_code: str | None = None):
         self.contract_id = contract_id
         self.field = field
         self.expected = expected
         self.got = got
         super().__init__(f"ContractViolation [{contract_id}] {field}: expected {expected}, got {got}")
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class ContractBusError(Exception):
-    pass
+    """Contract Bus 错误。"""
+    error_code = "ZA-SH-0025"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass

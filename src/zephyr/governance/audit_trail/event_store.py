@@ -63,6 +63,12 @@ class EventStoreError(RuntimeError):
 
 class IntegrityError(EventStoreError):
     """事件链完整性校验失败。"""
+    error_code = "ZA-GV-0011"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass(frozen=True)

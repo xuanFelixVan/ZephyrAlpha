@@ -47,13 +47,16 @@ _logger = logging.getLogger(__name__)
 
 class CostBudgetExceededError(ZephyrBaseError):
     """成本预算超出硬性熔断阈值时抛出。"""
+    error_code = "ZA-GV-0033"
 
-    def __init__(self, current: float, limit: float, provider: str, model: str):
+    def __init__(self, current: float, limit: float, provider: str, model: str, *, error_code: str | None = None):
         self.current = current
         self.limit = limit
         self.provider = provider
         self.model = model
         super().__init__(f"Cost budget exceeded: ${current:.4f} / ${limit:.4f} (provider={provider}, model={model})")
+        if error_code is not None:
+            self.error_code = error_code
 
 
 @dataclass

@@ -94,6 +94,7 @@ class ContractViolationError(TypeError):
     detail : str
         详细描述
     """
+    error_code = "ZA-SH-0022"
 
     def __init__(
         self,
@@ -103,6 +104,8 @@ class ContractViolationError(TypeError):
         field_name: str | None = None,
         expected_type: str | None = None,
         actual_type: str | None = None,
+        *,
+        error_code: str | None = None,
     ) -> None:
         self.error_id = str(uuid.uuid4())
         self.contract_id = contract_id
@@ -120,6 +123,8 @@ class ContractViolationError(TypeError):
             msg_parts.append(f"  expected={expected_type}, actual={actual_type}")
         msg_parts.append(f"  {detail}")
         super().__init__("\n".join(msg_parts))
+        if error_code is not None:
+            self.error_code = error_code
 
 
 def enforce_output(

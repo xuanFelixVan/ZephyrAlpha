@@ -111,12 +111,21 @@ from zephyr.integration.mcp.error_codes import (
 
 class MCPError(Exception):
     """MCP 协议层错误，携带 JSON-RPC error code。"""
+    error_code = "ZA-IG-0018"
 
-    def __init__(self, code: int, message: str, data: Any | None = None) -> None:
+    def __init__(
+        self,
+        code: int,
+        message: str,
+        data: Any | None = None,
+        error_code: str | None = None,
+    ) -> None:
         self.code = code
         self.message = message
         self.data = data
         super().__init__(message)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 # ---------------------------------------------------------------------------

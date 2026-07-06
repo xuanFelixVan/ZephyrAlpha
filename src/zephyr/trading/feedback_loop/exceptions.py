@@ -25,26 +25,31 @@ class ForensicContext:
 
 
 class FLEBaseException(Exception):
+    error_code = "ZA-TR-0006"
+
     def __init__(
         self,
         message: str,
         forensic_context: ForensicContext | None = None,
+        error_code: str | None = None,
     ):
         super().__init__(message)
         self.forensic_context = forensic_context or ForensicContext()
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class DiagnosisError(FLEBaseException):
-    pass
+    error_code = "ZA-TR-0007"
 
 
 class RepairError(FLEBaseException):
-    pass
+    error_code = "ZA-TR-0008"
 
 
 class GateBlockedError(FLEBaseException):
-    pass
+    error_code = "ZA-TR-0009"
 
 
 class AutonomyViolationError(FLEBaseException):
-    pass
+    error_code = "ZA-TR-0010"

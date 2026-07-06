@@ -77,7 +77,12 @@ DOMAIN_METRICS: Final[dict[str, list[dict]]] = {
 
 
 class SteadyStateDriftError(RuntimeError):
-    pass
+    error_code = "ZA-SC-0002"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class SteadyState:

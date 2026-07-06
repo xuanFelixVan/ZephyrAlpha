@@ -71,6 +71,7 @@ TTL_EXPIRED_DEFAULT_SECONDS: Final[int] = 300
 
 class CacheError(ZephyrBaseError):
     """缓存操作失败——后端不可达、key 冲突、序列化失败。"""
+    error_code = "ZA-SH-0045"
 
 
 @dataclass

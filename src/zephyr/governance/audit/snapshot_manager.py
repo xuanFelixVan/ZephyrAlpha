@@ -51,6 +51,12 @@ __all__ = [
 
 class SnapshotError(RuntimeError):
     """快照操作失败。"""
+    error_code = "ZA-GV-0002"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class SnapshotManager:

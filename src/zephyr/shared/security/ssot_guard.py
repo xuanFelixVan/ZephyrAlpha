@@ -120,6 +120,7 @@ from zephyr.shared.foundation.errors import ZephyrBaseError
 
 class SsotError(ZephyrBaseError):
     """SSoT Guard 模块专属基类。"""
+    error_code = "ZA-SH-0014"
 
 
 class SsotViolation(SsotError):
@@ -133,6 +134,7 @@ class SsotViolation(SsotError):
 
 class RegistryParseError(SsotError):
     """注册表 YAML 解析失败。"""
+    error_code = "ZA-SH-0015"
 
 
 # ---------------------------------------------------------------------------

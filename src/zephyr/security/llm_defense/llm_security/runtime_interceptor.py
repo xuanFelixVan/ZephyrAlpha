@@ -88,6 +88,13 @@ class BareLLMCallError(RuntimeError):
     核心 LLM 方法时抛出。对标 RULE-LSG-001。
     """
 
+    error_code = "ZA-SC-0022"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 # ============================================================================
 # 放行令牌（allowance token）—— 混合 contextvar + threading.local

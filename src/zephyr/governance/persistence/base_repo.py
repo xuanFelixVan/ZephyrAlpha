@@ -76,22 +76,52 @@ __all__ = [
 
 class TaskRepositoryError(RuntimeError):
     """TaskRepository 基础异常。"""
+    error_code = "ZA-GV-0024"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class TaskNotFoundError(TaskRepositoryError):
     """task_id 不存在。"""
+    error_code = "ZA-GV-0025"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class InvalidTransitionError(TaskRepositoryError):
     """非法状态转换。"""
+    error_code = "ZA-GV-0026"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class RejectedUpgradeCoolingOffError(TaskRepositoryError):
     """优先级升级被拒绝且仍在 48h 冷却期内。"""
+    error_code = "ZA-GV-0027"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class P0InflationFrozenError(TaskRepositoryError):
     """GOV-TASK-004 §2.5: P0 任务已达上限（5个），冻结新增 P0。"""
+    error_code = "ZA-GV-0028"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, error_code=error_code, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class P0InflationWarning(TaskRepositoryError):

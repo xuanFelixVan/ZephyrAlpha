@@ -67,26 +67,35 @@ _REGISTRY_PATH = Path(__file__).parent / "_state-machine-registry.yaml"
 
 
 class InvalidTransitionError(ZephyrBaseError):
-    def __init__(self, fsm_id: str, current: Any, target: Any, allowed: set[Any] | None = None):
+    error_code = "ZA-SH-0027"
+
+    def __init__(self, fsm_id: str, current: Any, target: Any, allowed: set[Any] | None = None, *, error_code: str | None = None):
         self.fsm_id = fsm_id
         self.current_state = current
         self.target_state = target
         self.allowed_transitions = allowed
         allowed_str = f" allowed: {allowed}" if allowed else ""
         super().__init__(f"[{fsm_id}] invalid transition: {current!r} → {target!r}{allowed_str}")
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class TransitionGuardError(ZephyrBaseError):
-    def __init__(self, fsm_id: str, source: Any, target: Any, reason: str):
+    error_code = "ZA-SH-0028"
+
+    def __init__(self, fsm_id: str, source: Any, target: Any, reason: str, *, error_code: str | None = None):
         self.fsm_id = fsm_id
         self.source_state = source
         self.target_state = target
         self.reason = reason
         super().__init__(f"[{fsm_id}] guard rejected: {source!r} → {target!r}: {reason}")
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class StateMachineRegistryError(ZephyrBaseError):
-    pass
+    """状态机注册表错误。"""
+    error_code = "ZA-SH-0029"
 
 
 @dataclass(frozen=True)

@@ -139,6 +139,13 @@ class FallbackMode(str, Enum):
 class CoVeStepError(RuntimeError):
     """CoVe 步骤执行失败异常。"""
 
+    error_code = "ZA-TR-0012"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 # ---------------------------------------------------------------------------
 # Protocol：模型调用者（由生产代码注入真实 LLM SDK）

@@ -79,6 +79,13 @@ __backtest_id__ = "event-driven-engine"
 class EventDrivenEngineError(Exception):
     """事件驱动回测引擎错误"""
 
+    error_code = "ZA-BT-0013"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+
 
 class EventDrivenEngine(BacktestEngineBase):
     """事件驱动回测引擎（Tick 级，做T专用）

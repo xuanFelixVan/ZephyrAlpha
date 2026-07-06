@@ -57,7 +57,12 @@ _DEFAULT_SIGNING_KEY = b"zephyr-passport-dev-key-v1"
 
 class TamperError(Exception):
     """护照篡改异常 — 签名验证失败或无签名字段时抛出。"""
-    pass
+    error_code = "ZA-IT-0002"
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 def _get_signing_key() -> bytes:

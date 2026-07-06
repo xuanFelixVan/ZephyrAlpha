@@ -59,6 +59,7 @@ __all__ = [
 
 class SchemaRegistryError(ZephyrBaseError):
     """Schema Registry 操作失败——schema 不存在、版本冲突、兼容性违规。"""
+    error_code = "ZA-IG-0015"
 
 
 @unique
