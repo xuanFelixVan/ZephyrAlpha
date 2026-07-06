@@ -61,6 +61,7 @@ from zephyr.pf_core.default_equity_strategy import (
 )
 from zephyr.governance.audit.default_tca_engine import DefaultTCAEngine
 from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+from zephyr.risk.risk_manager import RiskLimits
 from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
 from zephyr.research.backtest_base import (
     BacktestResult,
@@ -383,7 +384,7 @@ class TestPhaseGLatencyByLayer:
     def test_l04_risk_validation_latency(self):
         collector = PerfCollector()
         validator = DefaultRiskValidator()
-        limits = {"max_single_position": 0.10}
+        limits = RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="perf-l04", max_single_position=0.10)
 
         for _ in range(3):
             validator.validate_order("600519", 0.05, {}, limits)
@@ -689,7 +690,7 @@ class TestPhaseGFullPipelineThroughput:
                         symbol=order.symbol,
                         target_weight=0.05,
                         current_holdings={},
-                        limits={"max_single_position": 0.10},
+                        limits=RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="perf-batch", max_single_position=0.10),
                     )
                     assert len(violations) == 0
                     broker.submit_order(order)
@@ -824,7 +825,7 @@ class TestPhaseGSLACompliance:
         validator = DefaultRiskValidator()
         for _ in range(30):
             with measure_ms("CTR-003", collector):
-                validator.validate_order("600519", 0.05, {}, {"max_single_position": 0.10})
+                validator.validate_order("600519", 0.05, {}, RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="perf-ctr003", max_single_position=0.10))
         r = collector.finalize()["CTR-003"]
         reports.append(
             SlaReport("CTR-003", 5.0, r.p99_ms, r.p99_ms <= 5.0, (5.0 - r.p99_ms) / 5.0 * 100, len(r.samples))

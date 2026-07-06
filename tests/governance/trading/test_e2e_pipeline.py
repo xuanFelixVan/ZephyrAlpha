@@ -65,6 +65,7 @@ from zephyr.risk.implementations.default_risk_manager_orchestrator import (
 from zephyr.risk.implementations.default_risk_validator import (
     DefaultRiskValidator,
 )
+from zephyr.risk.risk_manager import RiskLimits
 from zephyr.risk.stop_loss import evaluate_stop_loss
 from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import (
     DefaultSignalAggregator,
@@ -176,7 +177,7 @@ class TestE2EFullPipeline:
         validator = DefaultRiskValidator()
 
         holdings = {"600519": 0.08, "000858": 0.04}
-        limits = {"max_single_position": 0.10}
+        limits = RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="e2e-pretrade", max_single_position=0.10)
 
         violations_normal = validator.validate_order(
             symbol="600036",
@@ -206,7 +207,7 @@ class TestE2EFullPipeline:
             holdings=holdings,
             market_values=market_values,
             total_nav=1000000.0,
-            limits={"max_single_position": 0.10, "max_gross_leverage": 1.0, "max_drawdown_limit": 0.20},
+            limits=RiskLimits(as_of_date=datetime.now(UTC), idempotency_key="e2e-portfolio", max_single_position=0.10, max_gross_leverage=1.0, max_drawdown_limit=0.20),
         )
 
         assert len(violations) > 0
@@ -336,8 +337,6 @@ class TestCrossLayerContractAlignment:
 
     def test_l04_produces_risk_limits_type(self):
         """L04 → CTR-003: RiskLimitsCalculator 输出正确的 RiskLimits 类型"""
-        from zephyr.risk.risk_manager import RiskLimits
-
         calculator = DefaultRiskLimitsCalculator()
         limits = calculator.calculate(
             positions={"600519": 0.8},
