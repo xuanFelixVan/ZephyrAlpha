@@ -1,5 +1,5 @@
 %% D_FACTOR 域全景依赖图
-%% 生成时间: 2026-07-06 15:55:04
+%% 生成时间: 2026-07-06 16:01:12
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 14, 依赖边数: 7
 
@@ -25,9 +25,9 @@ graph TD
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_factor_base_py -->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_value_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_momentum_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor___init___py -->|import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_value_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_FUNDAMENTAL_SIGNAL -> D_FACTOR (1 条)
