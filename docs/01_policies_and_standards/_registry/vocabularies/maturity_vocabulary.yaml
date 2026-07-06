@@ -10,7 +10,7 @@
 # maturity 受控词表
 # 文件头 [MATURITY] 字段唯一真源
 # 维护者：ZephyrAlpha-Owner
-# 版本：1.0.0
+# 版本：1.1.0
 # 创建日期：2026-06-29
 #
 # 本词表定义 maturity 字段的所有合法值（4 种）。
@@ -31,7 +31,7 @@
 schema_version: "1.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-028
-version: "1.0.0"
+version: "1.1.0"
 title: "maturity 受控词表"
 status: active
 ttl: permanent

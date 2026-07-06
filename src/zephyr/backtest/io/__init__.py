@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.backtest.core.engine_base
 # [CONSUMERS] zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.tick_replay
 # [STARTUP] manual
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] PIT铁律(零前瞻偏差)
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
