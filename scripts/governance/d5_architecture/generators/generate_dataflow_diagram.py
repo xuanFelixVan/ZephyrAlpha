@@ -176,6 +176,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     bt_ds = sum(1 for d in datasets if d["scope"] == "backtest_internal")
     prod_job = sum(1 for j in jobs if j["scope"] == "production")
     bt_job = sum(1 for j in jobs if j["scope"] == "backtest_internal")
+
     now = datetime.now().isoformat(timespec="seconds")
 
     lines = []
@@ -196,10 +197,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append(f"> 生成时间: {now}")
     lines.append(f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）")
     lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
-    lines.append(f"> 生成器: `generate_dataflow_diagram.py`（Mermaid 图内嵌在本文档中，IDE 可直接渲染）")
     lines.append("")
-
-    # 概述
     lines.append("## 概述")
     lines.append("")
     lines.append("数据流图（dataflowgraph）是与依赖图（depgraph）正交的第三维度全景图。")
@@ -207,12 +205,10 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append('- dataflowgraph 表达"数据从哪流到哪"（数据流向）')
     lines.append("- 通过 `Job.source_code_ref` 引用 depgraph 模块 path，建立跨图关联")
     lines.append("")
-
-    # 统计
     lines.append("## 统计")
     lines.append("")
-    lines.append("| 类型 | 生产 (production) | 回测内部 (backtest_internal) | 合计 |")
-    lines.append("|------|-------------------|------------------------------|------|")
+    lines.append(f"| 类型 | 生产 (production) | 回测内部 (backtest_internal) | 合计 |")
+    lines.append(f"|------|-------------------|------------------------------|------|")
     lines.append(f"| Dataset | {prod_ds} | {bt_ds} | {len(datasets)} |")
     lines.append(f"| Job | {prod_job} | {bt_job} | {len(jobs)} |")
     lines.append(f"| Edge | - | - | {len(edges)} |")
@@ -223,15 +219,21 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append("")
     lines.append("> 图表内嵌在本文档中，IDE 可直接渲染显示。")
     lines.append(">")
-    lines.append("> **图例说明**：")
-    lines.append("> - **dsProd**（蓝色底）/ **jobProd**（绿色底）= 生产 scope")
-    lines.append("> - **dsBacktest**（橙色底）/ **jobBacktest**（粉色底）= 回测内部 scope")
+    lines.append("> **图例说明 / Legend**：")
+    lines.append("> - **蓝色矩形** = 生产 Dataset（dsProd）")
+    lines.append("> - **橙色矩形** = 回测 Dataset（dsBacktest）")
+    lines.append("> - **绿色圆角矩形** = 生产 Job（jobProd）")
+    lines.append("> - **粉色圆角矩形** = 回测 Job（jobBacktest）")
+    lines.append("> - `JOB -->|produces| DS` = Job 产出 Dataset")
+    lines.append("> - `DS -->|consumed by| JOB` = Job 消费 Dataset")
     lines.append("")
 
     # 全景图
     lines.append("### 全景图")
     lines.append("")
-    mmd_overview, _, _, _ = _gen_mermaid(datasets, jobs, edges, scope_filter=None)
+    mmd_overview, o_ds, o_job, o_edge = _gen_mermaid(datasets, jobs, edges, scope_filter=None)
+    lines.append(f"> 节点数: {o_ds} datasets, {o_job} jobs, {o_edge} edges")
+    lines.append("")
     lines.append("```mermaid")
     lines.append(mmd_overview.rstrip())
     lines.append("```")
@@ -240,7 +242,9 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     # 生产数据流图
     lines.append("### 生产数据流图（scope=production）")
     lines.append("")
-    mmd_prod, _, _, _ = _gen_mermaid(datasets, jobs, edges, scope_filter="production")
+    mmd_prod, p_ds, p_job, p_edge = _gen_mermaid(datasets, jobs, edges, scope_filter="production")
+    lines.append(f"> 节点数: {p_ds} datasets, {p_job} jobs, {p_edge} edges")
+    lines.append("")
     lines.append("```mermaid")
     lines.append(mmd_prod.rstrip())
     lines.append("```")
@@ -249,7 +253,9 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     # 回测内部数据流图
     lines.append("### 回测内部数据流图（scope=backtest_internal）")
     lines.append("")
-    mmd_bt, _, _, _ = _gen_mermaid(datasets, jobs, edges, scope_filter="backtest_internal")
+    mmd_bt, b_ds, b_job, b_edge = _gen_mermaid(datasets, jobs, edges, scope_filter="backtest_internal")
+    lines.append(f"> 节点数: {b_ds} datasets, {b_job} jobs, {b_edge} edges")
+    lines.append("")
     lines.append("```mermaid")
     lines.append(mmd_bt.rstrip())
     lines.append("```")
@@ -273,6 +279,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
             f"{d['contract'] or '-'} | {d['domain'] or '-'} | {d['pit']} | {d['build']} |"
         )
 
+    # Job 清单
     lines.append("")
     lines.append("## Job 清单")
     lines.append("")

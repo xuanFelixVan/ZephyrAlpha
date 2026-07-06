@@ -10,10 +10,9 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-07-06T11:58:14
+> 生成时间: 2026-07-06T12:05:30
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 数据库: depgraph (PostgreSQL)
-> 生成器: `generate_dataflow_diagram.py`（Mermaid 图内嵌在本文档中，IDE 可直接渲染）
 
 ## 概述
 
@@ -34,11 +33,17 @@ ttl: permanent
 
 > 图表内嵌在本文档中，IDE 可直接渲染显示。
 >
-> **图例说明**：
-> - **dsProd**（蓝色底）/ **jobProd**（绿色底）= 生产 scope
-> - **dsBacktest**（橙色底）/ **jobBacktest**（粉色底）= 回测内部 scope
+> **图例说明 / Legend**：
+> - **蓝色矩形** = 生产 Dataset（dsProd）
+> - **橙色矩形** = 回测 Dataset（dsBacktest）
+> - **绿色圆角矩形** = 生产 Job（jobProd）
+> - **粉色圆角矩形** = 回测 Job（jobBacktest）
+> - `JOB -->|produces| DS` = Job 产出 Dataset
+> - `DS -->|consumed by| JOB` = Job 消费 Dataset
 
 ### 全景图
+
+> 节点数: 14 datasets, 13 jobs, 28 edges
 
 ```mermaid
 flowchart LR
@@ -106,6 +111,8 @@ flowchart LR
 
 ### 生产数据流图（scope=production）
 
+> 节点数: 10 datasets, 8 jobs, 18 edges
+
 ```mermaid
 flowchart LR
     DS192["backtest.result<br/>CTR: CTR-P1-016<br/>[D_BACKTEST]"]:::dsProd
@@ -152,6 +159,8 @@ flowchart LR
 ```
 
 ### 回测内部数据流图（scope=backtest_internal）
+
+> 节点数: 4 datasets, 5 jobs, 8 edges
 
 ```mermaid
 flowchart LR
