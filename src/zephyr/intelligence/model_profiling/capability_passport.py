@@ -38,7 +38,7 @@ import hmac
 import json
 import logging
 import os
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields as _dc_fields
 from pathlib import Path
 from typing import Any
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -77,6 +77,53 @@ def _compute_signature(data: dict) -> str:
     payload = {k: v for k, v in data.items() if k != "signature"}
     canonical = json.dumps(payload, ensure_ascii=False, sort_keys=True)
     return hmac.new(_get_signing_key(), canonical.encode("utf-8"), hashlib.sha256).hexdigest()
+
+
+# ── 5.147.5: 版本兼容性修复 ──────────────────────────────────────────
+# 修复 `asdict() + **data.get(...)` 模式在 schema 演化时的 TypeError 缺陷：
+#   - 旧 JSON 含已删除字段 → TypeError: unexpected keyword argument
+#   - 字段重命名 → 旧名透传引发 TypeError
+# 方案：在 `**data.get("xxx", {})` 处用 `_filter_dataclass_fields` 过滤无效键；
+#       仅保留目标 dataclass 实际声明的字段，多余键丢弃并记录 debug 日志。
+
+_CURRENT_PASSPORT_VERSION: str = "1.0.0"
+
+
+def _filter_dataclass_fields(cls: type, data: dict | None) -> dict:
+    """过滤 dict，仅保留目标 dataclass 实际声明的字段。
+
+    用于 `_from_dict` 中 `**data.get("xxx", {})` 的版本兼容：
+    旧 JSON 中已删除/重命名的字段会被静默丢弃，避免 TypeError。
+    新字段缺失时由 dataclass 默认值兜底。
+    """
+    if not data:
+        return {}
+    valid_names = {f.name for f in _dc_fields(cls)}
+    filtered = {k: v for k, v in data.items() if k in valid_names}
+    dropped = set(data.keys()) - valid_names
+    if dropped:
+        _log.debug(
+            "passport version_compat: %s dropped unknown fields %s",
+            cls.__name__, dropped,
+        )
+    return filtered
+
+
+def _migrate_passport_data(data: dict) -> dict:
+    """根据 passport_version 执行版本迁移钩子。
+
+    当前为占位实现——version==_CURRENT_PASSPORT_VERSION 时直接返回。
+    未来若 schema 发生破坏性变更，在此追加 `if version < "x.y.z":` 分支
+    将旧字段映射到新字段，确保旧 JSON 可向前兼容加载。
+    """
+    version = data.get("passport_version", _CURRENT_PASSPORT_VERSION)
+    if version != _CURRENT_PASSPORT_VERSION:
+        _log.debug(
+            "passport version_migration: loaded version=%s, current=%s "
+            "(no migration registered)",
+            version, _CURRENT_PASSPORT_VERSION,
+        )
+    return data
 
 DEPTH_THRESHOLDS: dict[str, float] = {
     # 原 9 能力（保留阈值）
@@ -289,28 +336,36 @@ class CapabilityPassport:
 
     @staticmethod
     def _from_dict(data: dict) -> CapabilityPassport:
+        # 5.147.5: 版本兼容——过滤旧 JSON 中的已删除/重命名字段，避免 TypeError
+        data = _migrate_passport_data(data)
         depth_caps: dict[str, DepthCapabilityResult] = {}
-        for cap_name, cap_data in data.get("depth", {}).get("capabilities", {}).items():
-            depth_caps[cap_name] = DepthCapabilityResult(**cap_data)
+        for cap_name, cap_data in (data.get("depth", {}) or {}).get("capabilities", {}).items():
+            depth_caps[cap_name] = DepthCapabilityResult(
+                **_filter_dataclass_fields(DepthCapabilityResult, cap_data)
+            )
 
         return CapabilityPassport(
-            passport_version=data.get("passport_version", "1.0.0"),
+            passport_version=data.get("passport_version", _CURRENT_PASSPORT_VERSION),
             model_id=data.get("model_id", ""),
             exam_timestamp=data.get("exam_timestamp", ""),
             exam_duration_seconds=data.get("exam_duration_seconds", 0.0),
             git_commit=data.get("git_commit", ""),
             overall_grade=data.get("overall_grade", "F"),
             overall_score=data.get("overall_score", 0.0),
-            breadth=BreadthResult(**data.get("breadth", {})),
+            breadth=BreadthResult(**_filter_dataclass_fields(BreadthResult, data.get("breadth"))),
             depth=DepthResult(
                 overall_score=data.get("depth", {}).get("overall_score", 0.0),
                 capabilities=depth_caps,
             ),
-            speed=SpeedResult(**data.get("speed", {})),
-            hallucination=HallucinationResult(**data.get("hallucination", {})),
-            drift=DriftResult(**data.get("drift", {})),
-            cost=CostBreakdown(**data.get("cost", {})),
-            recommendations=Recommendations(**data.get("recommendations", {})),
+            speed=SpeedResult(**_filter_dataclass_fields(SpeedResult, data.get("speed"))),
+            hallucination=HallucinationResult(
+                **_filter_dataclass_fields(HallucinationResult, data.get("hallucination"))
+            ),
+            drift=DriftResult(**_filter_dataclass_fields(DriftResult, data.get("drift"))),
+            cost=CostBreakdown(**_filter_dataclass_fields(CostBreakdown, data.get("cost"))),
+            recommendations=Recommendations(
+                **_filter_dataclass_fields(Recommendations, data.get("recommendations"))
+            ),
         )
 
     @staticmethod
@@ -500,6 +555,7 @@ class QuickProfile:
 
     @staticmethod
     def _from_dict(data: dict) -> QuickProfile:
+        # 5.147.5: 版本兼容——过滤旧 JSON 中的已删除/重命名字段
         return QuickProfile(
             model_id=data.get("model_id", ""),
             exam_mode=data.get("exam_mode", "quick"),
@@ -507,12 +563,15 @@ class QuickProfile:
             exam_duration_seconds=data.get("exam_duration_seconds", 0.0),
             capability_grades=data.get("capability_grades", {}),
             capability_scores=data.get("capability_scores", {}),
-            hallucination=HallucinationBreakdown(**data.get("hallucination", {})),
-            cost=CostBreakdown(**data.get("cost", {})),
+            hallucination=HallucinationBreakdown(
+                **_filter_dataclass_fields(HallucinationBreakdown, data.get("hallucination"))
+            ),
+            cost=CostBreakdown(**_filter_dataclass_fields(CostBreakdown, data.get("cost"))),
             overall_grade=data.get("overall_grade", "F"),
             overall_score=data.get("overall_score", 0.0),
             recommendations=[
-                JobRecommendation(**r) if isinstance(r, dict) else r
+                JobRecommendation(**_filter_dataclass_fields(JobRecommendation, r))
+                if isinstance(r, dict) else r
                 for r in data.get("recommendations", [])
             ],
             notes=data.get("notes", []),

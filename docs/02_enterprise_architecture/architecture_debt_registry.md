@@ -3057,7 +3057,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=11(序列化/反序列化安全需审查pickle/json风险)
 > **第40轮修复状态（2026-07-05）**：FIXED=7(5.147.3 MCP Content-Length 上限 + 5.147.6 deepcopy RecursionError 防护 + 5.147.7 ast.literal_eval 替代 json.loads+replace + 5.147.8 docstring 纠正 + 5.147.9 from_dict None 处理 + 5.147.10 raw_decode 替代启发式提取 + 5.147.11 stdout size check), DRIFTED=2(5.147.1 已被 5.117.1 路径白名单部分缓解 + 5.147.2 已在 5.146.2 修复), STILL_VALID=2(5.147.4 79+处 default=str 大规模重构保留 + 5.147.5 版本迁移逻辑复杂重构保留)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(5.147.4 79+处default=str大规模重构 + 5.147.5 版本迁移逻辑复杂重构), STILL_VALID=0. 维度5.147全部清零.
-> **第69轮修复状态（2026-07-06）**：5.147.4 FIXED — serialization.py 新增 dumps() 函数, 批量替换 56 处 json.dumps(default=str) → dumps() 覆盖 46 文件, 清理 3 处 dead import json, 修复 33 文件 from __future__ 导入顺序. 5.147.5 进行中.
+> **第69轮修复状态（2026-07-06）**：5.147.4 FIXED — serialization.py 新增 dumps() 函数, 批量替换 56 处 json.dumps(default=str) → dumps() 覆盖 46 文件, 清理 3 处 dead import json, 修复 33 文件 from __future__ 导入顺序. 5.147.5 FIXED — capability_passport.py 新增 _filter_dataclass_fields helper 用 dataclasses.fields() 过滤旧 JSON 已删除/重命名字段避免 TypeError, _migrate_passport_data 提供 version 迁移钩子占位, CapabilityPassport._from_dict/QuickProfile._from_dict 中 9 个 dataclass 的 **data.get(...) 调用全部包装过滤. 5.147 全部清零.
 
 审查json/yaml/toml/pickle/joblib/marshal等序列化格式的安全问题、版本兼容性、循环引用序列化失败等。
 
@@ -3090,6 +3090,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - [intelligence/model_profiling/capability_passport.py:289-312,500-514](file:///D:/ZephyrAlpha/src/zephyr/intelligence/model_profiling/capability_passport.py#L289)
 - `**data.get("breadth", {})`将保存的dict直接展开为构造函数参数。类新增必填字段→旧JSON缺参TypeError；类删除字段→旧JSON含废弃字段TypeError。虽有passport_version字段但_from_dict完全忽略版本——无迁移逻辑
 - 修复：在_from_dict中读取passport_version按版本迁移；或改用Pydantic model_validate
+- **状态**：FIXED — R69 在 capability_passport.py 新增 `_filter_dataclass_fields(cls, data)` helper(用 `dataclasses.fields()` 过滤 dict 仅保留目标 dataclass 实际声明的字段, 多余键静默丢弃并记 debug 日志), 新增 `_migrate_passport_data(data)` 版本迁移钩子占位(读 passport_version, 版本不一致时记 debug 日志, 预留 `if version < "x.y.z":` 分支扩展点). CapabilityPassport._from_dict 和 QuickProfile._from_dict 中所有 `**data.get("xxx", {})` 调用(BreadthResult/SpeedResult/HallucinationResult/DriftResult/CostBreakdown/Recommendations/DepthCapabilityResult/HallucinationBreakdown/JobRecommendation 共 9 个 dataclass) 改用 `_filter_dataclass_fields` 包装. 5 个回归测试通过(旧 JSON 含 obsolete_field/deprecated_metric/removed_field 等 → 静默丢弃无 TypeError; 完全缺子对象 → 默认值兜底; None/空输入 → 返回 {}).
 
 #### 5.147.6 [MEDIUM] copy.deepcopy处理可能含循环引用的context字典
 
