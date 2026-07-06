@@ -3435,6 +3435,20 @@ capabilities:
       (2) governance/audit_trail/event_store.py — Event Sourcing 事件存储（hash chain，MOD-DAT_event_store）。
       解决发现性：新 AI 搜 "event_store/事件存储/审计日志" 可定位真源。
 
+  - capability_id: database_crud_mixin
+    canonical_override: src/zephyr/shared/database/database_crud_mixin.py
+    aliases:
+      - DatabaseCRUDMixin
+      - database_crud_mixin
+    description: >-
+      共享 CRUD 方法 Mixin——governance.db + depgraph 9 个 CRUD 方法单一真源。
+      canonical = src/zephyr/shared/database/database_crud_mixin.py（SH-DB-001）。
+      被两个 DatabaseService 类继承：governance/persistence 版（SH-DB-001）+
+      infrastructure 版（MOD-INF-002）。宿主类需提供 get_governance_conn(read_only)
+      和 get_depgraph_conn(read_only) 连接管理方法。消除约 100 行 CRUD 代码重复。
+      解决发现性：新 AI 搜 "CRUD mixin/get_task/get_node/database_crud" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重复创建 CRUD mixin。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -3462,6 +3476,16 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+
+  # --- DatabaseCRUDMixin 专项工程（2026-07-06 P-PLAN，抽取两个 DatabaseService 类共享的 9 个 CRUD 方法）---
+  - file: "src/zephyr/shared/database/database_crud_mixin.py"
+    token: "auto-database-crud-mixin-20260706"
+    created_by: "session-sess-41620-20260706213808"
+    capability: "database_crud_mixin"
+  - file: "src/zephyr/shared/database/__init__.py"
+    token: "auto-database-package-init-20260706"
+    created_by: "session-sess-41620-20260706213808"
+    capability: "database_crud_mixin"
 
   # --- EventBus 真源恢复（2026-07-06 AI-14 审计修复，从 git 历史恢复被误删的 event_bus.py）---
   - file: "src/zephyr/shared/event_bus.py"
