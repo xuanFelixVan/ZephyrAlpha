@@ -470,14 +470,17 @@ class HallucinationDetector:
         if pure_codegen or meta_info:
             return TriggerLevel.L3_BLACKLIST
 
-        if (
-            (source_stage in ("semantic", "llm") and (intent_confidence is None or intent_confidence < 0.90))
-            or mcp_safety_level is RiskLevel.H
+        is_low_confidence_semantic = source_stage in ("semantic", "llm") and (
+            intent_confidence is None or intent_confidence < 0.90
+        )
+        is_high_risk_signal = (
+            mcp_safety_level is RiskLevel.H
             or requires_human
             or frozen_asset_touch
             or historical_recurrence
             or risk_level is RiskLevel.H
-        ):
+        )
+        if is_low_confidence_semantic or is_high_risk_signal:
             return TriggerLevel.L1_WHITELIST
 
         if target_is_doc or mcp_safety_level is RiskLevel.M or risk_level is RiskLevel.M:
