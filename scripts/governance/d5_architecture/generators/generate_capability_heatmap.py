@@ -164,8 +164,12 @@ MATURITY_LEVELS: dict[str, dict] = {
     "L3": {"symbol": "🟢", "coverage": "✅", "name_en": "Verified", "name_zh": "生产已验证", "score": 3},
 }
 
-# Test domain prefixes to exclude (not real architecture domains)
+# Test/governance-script domains to exclude (not real business domains)
+# - D-T3-/D-T4-/D-T5-/D-T9-: 测试域前缀
+# - D_AUDITTEST: 审计测试套件(1720节点,非业务域)
+# - D_GOV_SCRIPTS: 治理脚本域(434节点,工具脚本非业务域)
 TEST_DOMAIN_PREFIXES = ("D-T3-", "D-T4-", "D-T5-", "D-T9-")
+TEST_DOMAIN_EXACT = ("D_AUDITTEST", "D_GOV_SCRIPTS")
 
 
 def normalize_domain_id(domain_id: str) -> str:
@@ -211,13 +215,15 @@ def get_domain_maturity_counts(conn: PgConnExecuteWrapper) -> dict[str, dict[str
         result.setdefault(domain_id, {}).setdefault(maturity, 0)
         result[domain_id][maturity] += count
 
-    # Also query build_status='active' counts for L3 detection
+    # Also query build_status='stable'/'active' counts for L3 detection
+    # 注: 当前 DB build_status 实际值为 planned/stable/generated,无 active
+    # L3 判定放宽为 stable(已稳定运行)或 active(未来扩展)
     cur = conn.execute(
         """SELECT domain_id, COUNT(*) AS cnt
            FROM nodes
            WHERE domain_id IS NOT NULL
              AND design_maturity = 'production'
-             AND build_status = 'active'
+             AND build_status IN ('active', 'stable')
            GROUP BY domain_id"""
     )
     for r in cur.fetchall():
@@ -283,8 +289,12 @@ def generate_heatmap() -> str:
 
     domain_cap_map = build_domain_capability_map()
 
-    # Filter out test domains
-    real_domains = [d for d in domains if not any(d["domain_id"].startswith(prefix) for prefix in TEST_DOMAIN_PREFIXES)]
+    # Filter out test domains (prefix match) and governance-script domains (exact match)
+    real_domains = [
+        d for d in domains
+        if not any(d["domain_id"].startswith(prefix) for prefix in TEST_DOMAIN_PREFIXES)
+        and d["domain_id"] not in TEST_DOMAIN_EXACT
+    ]
 
     # Compute maturity for each domain
     domain_data: list[dict] = []
@@ -324,7 +334,7 @@ def generate_heatmap() -> str:
     lines.append("")
     lines.append("# 能力热力图 / Capability Heatmap")
     lines.append("")
-    lines.append("> **文档作用 / Purpose**: 以矩阵形式展示43个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。")
+    lines.append(f"> **文档作用 / Purpose**: 以矩阵形式展示{len(real_domains)}个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。")
     lines.append("")
     lines.append(f"> 本文档由 generate_capability_heatmap.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
@@ -383,11 +393,11 @@ def generate_heatmap() -> str:
         )
     lines.append("")
 
-    # 43 domains × 10 capability domains matrix
+    # {N} domains × 10 capability domains matrix
     lines.append("## 能力热力图矩阵 / Capability Heatmap Matrix")
     lines.append("")
-    lines.append("> 行：架构域（43域） | 列：能力域（10能力域）")
-    lines.append("> Rows: Architecture Domains (43) | Columns: Capability Domains (10)")
+    lines.append(f"> 行：架构域（{len(real_domains)}域） | 列：能力域（10能力域）")
+    lines.append(f"> Rows: Architecture Domains ({len(real_domains)}) | Columns: Capability Domains (10)")
     lines.append("> 单元格：成熟度符号（属于该能力域时显示，否则显示 —）")
     lines.append("> Cell: Maturity symbol (shown when domain belongs to capability, otherwise —)")
     lines.append("")
