@@ -18,7 +18,7 @@
 
 每个数据源有自己的限流/重试/反爬/登录刷新策略，集中管理、yaml 热更新。
 
-策略参数来源：data_source_capability_map.md（MOD-L00-002）中每个数据源的限流/防爬/登录方式描述，
+策略参数来源：data_source_operation_manual.md（MOD-L00-002）中每个数据源的限流/防爬/登录方式描述，
 已固化为 config/policies.yaml（见蓝图 §5.2 跨源策略矩阵）。
 
 核心组件：
@@ -75,6 +75,7 @@ class SourcePolicy:
     respect_robots_txt: bool = True
     session_ttl_sec: int = 0
     relogin_on_auth_error: bool = False
+    enabled: bool = True  # 熔断开关：CLI pause <source> 置 False，resume 置 True
     extra: dict = field(default_factory=dict)
 
     @classmethod

@@ -291,6 +291,15 @@ class IntegratorScheduler:
         # 获取策略
         policy = self._policy_registry.get_policy(source)
 
+        # 熔断检查（CLI `integrator pause <source>` 生效点）
+        if not policy.enabled:
+            log.warning("任务 %s 跳过：数据源 %s 已熔断", task_id, source)
+            self._alerter.notify(
+                task_id, f"源 {source} 已熔断，任务跳过", level=LEVEL_ERROR, source=source
+            )
+            self._task_queue.mark_failed(task_id)
+            return False
+
         # 查断点续传
         last_key = self._progress_store.get_last_key(task_id)
         today = datetime.date.today()
