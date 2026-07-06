@@ -20,90 +20,86 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 1369 | 21.5% |
-| design（设计态） | 89 | 1.4% |
-| prototype（原型态） | 4912 | 77.1% |
+| production（生产态） | 1583 | 31.7% |
+| design（设计态） | 52 | 1.0% |
+| prototype（原型态） | 3361 | 67.3% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **6370** | **100%** |
+| **总计** | **4996** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 5358 | 84.1% |
-| deprecated | 791 | 12.4% |
-| stable | 158 | 2.5% |
-| planned | 63 | 1.0% |
+| generated | 4947 | 99.0% |
+| planned | 36 | 0.7% |
+| stable | 13 | 0.3% |
 
 ## 各域设计成熟度统计
 
 | 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 脚手架 / Scaffold | 生产化率 / Production Rate |
 |------|--------|:---:|:---:|:---:|:---:|:---:|:---:|
-| D_ALT_DATA | 另类数据 | 8 | 1 | 0 | 7 | 0 | 12.5% |
-| D_ASHARE_SIGNAL | A股特色信号 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_AUDITTEST | 审计测试套件 | 151 | 141 | 0 | 10 | 0 | 93.4% |
-| D_AUTONOMY_CORE | 自治核心 | 175 | 2 | 0 | 173 | 0 | 1.1% |
-| D_AUTONOMY_PERM | 自治保护 | 70 | 2 | 1 | 67 | 0 | 2.9% |
-| D_BACKTEST | 回测 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_BEHAVIORAL_AUDIT | 行为审计 | 78 | 78 | 0 | 0 | 0 | 100.0% |
-| D_COMPLIANCE | 合规 | 25 | 0 | 0 | 25 | 0 | 0.0% |
-| D_CROSS_ASSET | 跨资产 | 11 | 1 | 1 | 9 | 0 | 9.1% |
+| D_ALT_DATA | 另类数据 | 7 | 0 | 0 | 7 | 0 | 0.0% |
+| D_ASHARE_SIGNAL | ashare_signal | 7 | 0 | 0 | 7 | 0 | 0.0% |
+| D_AUDITTEST | audit_test_suite | 1720 | 49 | 0 | 1671 | 0 | 2.8% |
+| D_AUTONOMY_CORE | agent_lifecycle | 114 | 111 | 0 | 3 | 0 | 97.4% |
+| D_AUTONOMY_PERM | budget_enforcement | 14 | 0 | 0 | 14 | 0 | 0.0% |
+| D_BACKTEST | 回测 | 33 | 3 | 8 | 22 | 0 | 9.1% |
+| D_CROSS_ASSET | 跨资产 | 8 | 1 | 1 | 6 | 0 | 12.5% |
 | D_DATA_ENG | 数据工程 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_DATA_GOV | 数据治理 | 0 | 0 | 0 | 0 | 0 | N/A |
-| D_DATA_SEC | 数据安全与契约 | 10 | 0 | 0 | 10 | 0 | 0.0% |
+| D_DATA_GOV | 数据治理 | 7 | 0 | 0 | 7 | 0 | 0.0% |
+| D_DATA_SEC | 数据安全与契约 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D_DIGITAL_TWIN | 数字孪生 | 8 | 0 | 1 | 7 | 0 | 0.0% |
 | D_EXEC_SIM | 执行仿真 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_EX_CORE | 执行核心 | 14 | 3 | 0 | 11 | 0 | 21.4% |
+| D_EX_CORE | 执行核心 | 15 | 5 | 1 | 9 | 0 | 33.3% |
 | D_EX_SOR | 执行路由 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_FACTOR | 因子 | 14 | 2 | 0 | 12 | 0 | 14.3% |
-| D_FRONTEND | 前端 | 23 | 7 | 0 | 16 | 0 | 30.4% |
-| D_FUNDAMENTAL_SIGNAL | 基本面信号 | 25 | 4 | 0 | 21 | 0 | 16.0% |
-| D_GOVERNANCE | 生命周期管理 | 2813 | 117 | 50 | 2646 | 0 | 4.2% |
-| D_GOV_AUDIT | 审计追踪 | 183 | 54 | 2 | 127 | 0 | 29.5% |
-| D_GOV_DOCS | 架构文档治理 | 127 | 78 | 0 | 49 | 0 | 61.4% |
-| D_GOV_DRIFT | 漂移检测 | 24 | 9 | 1 | 14 | 0 | 37.5% |
-| D_GOV_ENFORCEMENT | 规则执行 | 107 | 69 | 0 | 38 | 0 | 64.5% |
-| D_GOV_REPAIR | 治理修复 | 0 | 0 | 0 | 0 | 0 | N/A |
-| D_GOV_RULE | 规则治理 | 11 | 11 | 0 | 0 | 0 | 100.0% |
-| D_GOV_SCRIPTS | 脚本治理 | 411 | 26 | 0 | 385 | 0 | 6.3% |
-| D_INFRA_A2A | A2A通信 | 101 | 101 | 0 | 0 | 0 | 100.0% |
-| D_INFRA_OPS | 基础设施运维 | 34 | 7 | 1 | 26 | 0 | 20.6% |
-| D_INFRA_RECOVERY | 回滚恢复 | 107 | 107 | 0 | 0 | 0 | 100.0% |
-| D_INFRA_RUNTIME | 运行时集成 | 144 | 138 | 0 | 6 | 0 | 95.8% |
-| D_INFRA_TELEMETRY | 可观测性 | 35 | 35 | 0 | 0 | 0 | 100.0% |
-| D_INTEGRATION | 管线路由 | 280 | 69 | 0 | 211 | 0 | 24.6% |
-| D_INTEGRATION_GATEWAY | 集成网关 | 0 | 0 | 0 | 0 | 0 | N/A |
-| D_INTELLIGENCE | 上下文管理 | 42 | 17 | 0 | 25 | 0 | 40.5% |
-| D_KNOWLEDGE | 知识管理 | 14 | 1 | 2 | 11 | 0 | 7.1% |
-| D_MKT_DATA | 行情数据 | 9 | 1 | 0 | 8 | 0 | 11.1% |
+| D_FACTOR | 因子 | 14 | 4 | 0 | 10 | 0 | 28.6% |
+| D_FRONTEND | 前端 | 30 | 13 | 6 | 11 | 0 | 43.3% |
+| D_FUNDAMENTAL_SIGNAL | fundamental_signal | 25 | 4 | 0 | 21 | 0 | 16.0% |
+| D_GOVERNANCE | registry_management | 850 | 479 | 26 | 345 | 0 | 56.4% |
+| D_GOV_AUDIT | audit_orchestration | 2 | 0 | 2 | 0 | 0 | 0.0% |
+| D_GOV_DOCS | architecture_docs | 2 | 2 | 0 | 0 | 0 | 100.0% |
+| D_GOV_DRIFT | drift_detection | 1 | 0 | 1 | 0 | 0 | 0.0% |
+| D_GOV_ENFORCEMENT | rule_enforcement | 201 | 133 | 0 | 68 | 0 | 66.2% |
+| D_GOV_REPAIR | rollback | 0 | 0 | 0 | 0 | 0 | N/A |
+| D_GOV_RULE | rule_governance | 0 | 0 | 0 | 0 | 0 | N/A |
+| D_GOV_SCRIPTS | script_governance | 434 | 32 | 0 | 402 | 0 | 7.4% |
+| D_INFRA_A2A | a2a_communication | 92 | 33 | 0 | 59 | 0 | 35.9% |
+| D_INFRA_OPS | asset-inventory | 1 | 0 | 1 | 0 | 0 | 0.0% |
+| D_INFRA_RECOVERY | rollback_recovery | 54 | 48 | 0 | 6 | 0 | 88.9% |
+| D_INFRA_RUNTIME | runtime_core | 145 | 94 | 0 | 51 | 0 | 64.8% |
+| D_INFRA_TELEMETRY | observability_profiling | 25 | 13 | 0 | 12 | 0 | 52.0% |
+| D_INTEGRATION | pipeline_routing | 72 | 30 | 0 | 42 | 0 | 41.7% |
+| D_INTEGRATION_GATEWAY | mcp_servers | 20 | 1 | 0 | 19 | 0 | 5.0% |
+| D_INTELLIGENCE | context_management | 43 | 21 | 0 | 22 | 0 | 48.8% |
+| D_KNOWLEDGE | vector_storage | 9 | 0 | 2 | 7 | 0 | 0.0% |
+| D_MKT_DATA | 行情数据 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D_ML_SERVE | 推理 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_ML_TRAIN | 训练 | 12 | 0 | 1 | 11 | 0 | 0.0% |
-| D_OPS | 反馈循环 | 433 | 24 | 1 | 408 | 0 | 5.5% |
-| D_PF_ALLOC | 组合分配 | 11 | 0 | 1 | 10 | 0 | 0.0% |
-| D_PF_CORE | 组合核心 | 44 | 6 | 26 | 12 | 0 | 13.6% |
-| D_POSITION | 仓位管理 | 8 | 0 | 0 | 8 | 0 | 0.0% |
-| D_REPORTING | 报告 | 12 | 1 | 0 | 11 | 0 | 8.3% |
-| D_RISK | 风控 | 25 | 9 | 0 | 16 | 0 | 36.0% |
-| D_SECURITY | 对抗验证 | 243 | 132 | 0 | 111 | 0 | 54.3% |
-| D_SECURITY_LLM | LLM防御 | 0 | 0 | 0 | 0 | 0 | N/A |
+| D_ML_TRAIN | model_evaluation | 12 | 0 | 1 | 11 | 0 | 0.0% |
+| D_OPS | telemetry | 3 | 3 | 0 | 0 | 0 | 100.0% |
+| D_PF_ALLOC | 组合分配 | 8 | 0 | 1 | 7 | 0 | 0.0% |
+| D_PF_CORE | 组合核心 | 14 | 4 | 0 | 10 | 0 | 28.6% |
+| D_POSITION | 仓位管理 | 8 | 1 | 0 | 7 | 0 | 12.5% |
+| D_REPORTING | 报告 | 10 | 1 | 0 | 9 | 0 | 10.0% |
+| D_RISK | 风控 | 20 | 9 | 0 | 11 | 0 | 45.0% |
+| D_SECURITY | orphan_judge | 147 | 80 | 0 | 67 | 0 | 54.4% |
+| D_SECURITY_LLM | llm_defense | 44 | 33 | 0 | 11 | 0 | 75.0% |
 | D_SELL_DECISION | 卖出决策 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_SHARED | 共享服务 | 294 | 92 | 0 | 202 | 0 | 31.3% |
-| D_SIGLEGACY | 信号遗留设计态 | 0 | 0 | 0 | 0 | 0 | N/A |
-| D_SIGQC | 信号质量控制 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_SIMULATION | 仿真 | 19 | 4 | 1 | 14 | 0 | 21.1% |
-| D_TRADING | 交易运营 | 159 | 20 | 0 | 139 | 0 | 12.6% |
+| D_SHARED | shared_services | 228 | 94 | 0 | 134 | 0 | 41.2% |
+| D_SIGQC | signal_quality | 8 | 0 | 0 | 8 | 0 | 0.0% |
+| D_SIMULATION | 仿真 | 11 | 2 | 1 | 8 | 0 | 18.2% |
+| D_TRADING | 交易运营 | 481 | 280 | 0 | 201 | 0 | 58.2% |
 
 ## 生产化率最低的域（Top 10，需优先推进）
 
 | 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 生产化率 / Production Rate |
 |------|--------|:---:|:---:|:---:|
-| D_ASHARE_SIGNAL | A股特色信号 | 7 | 0 | 0.0% |
-| D_BACKTEST | 回测 | 7 | 0 | 0.0% |
-| D_COMPLIANCE | 合规 | 25 | 0 | 0.0% |
+| D_ALT_DATA | 另类数据 | 7 | 0 | 0.0% |
+| D_ASHARE_SIGNAL | ashare_signal | 7 | 0 | 0.0% |
+| D_AUTONOMY_PERM | budget_enforcement | 14 | 0 | 0.0% |
 | D_DATA_ENG | 数据工程 | 7 | 0 | 0.0% |
-| D_DATA_SEC | 数据安全与契约 | 10 | 0 | 0.0% |
+| D_DATA_GOV | 数据治理 | 7 | 0 | 0.0% |
+| D_DATA_SEC | 数据安全与契约 | 7 | 0 | 0.0% |
 | D_DIGITAL_TWIN | 数字孪生 | 8 | 0 | 0.0% |
 | D_EXEC_SIM | 执行仿真 | 7 | 0 | 0.0% |
 | D_EX_SOR | 执行路由 | 7 | 0 | 0.0% |
-| D_ML_SERVE | 推理 | 7 | 0 | 0.0% |
-| D_ML_TRAIN | 训练 | 12 | 0 | 0.0% |
+| D_GOV_AUDIT | audit_orchestration | 2 | 0 | 0.0% |
