@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure._base_server
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.utils.async_utils; zephyr.infrastructure.error_codes
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

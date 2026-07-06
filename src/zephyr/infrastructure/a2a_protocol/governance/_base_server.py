@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.governance._base_server
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.governance.__init__
+# [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype

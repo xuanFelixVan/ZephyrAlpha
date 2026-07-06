@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.infrastructure.event_store
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__
+# [DEPENDENCIES] zephyr.shared.io.sqlite_factory; zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
