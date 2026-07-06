@@ -2807,7 +2807,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第40轮修复状态（2026-07-05）**：FIXED=4(5.114.1-5.114.4 governance/code_dedup/config.py 4个可变dict常量PROJECT_SCALE_TIERS/POLICY_TREE/EXIT_CODES/PATH_THRESHOLDS标注Final+MappingProxyType包裹防止内容突变,load_policy_tree fallback返回dict副本保持调用方dict语义), 0 DRIFTED, STILL_VALID=3(5.114.5 375处全量标注Final=大规模/5.114.6 re-export Final语义=非平凡/5.114.7 @final安全类标注=需评估, 均需专项推进)
 > **第41轮修复状态（2026-07-05）**：5.114.7 FIXED——3个安全敏感类添加@final装饰器(AuditRecord/AnomalyAlert in tamper_proof_audit.py + SkillFileLock in skill_locking.py + Capability in shared/security/capability.py),防止子类化绕过安全契约。STILL_VALID=2(5.114.5/5.114.6 需专项推进)。
 > **第42轮修复状态（2026-07-05）**：DEFERRED=2(5.114.5 375处全量标注Final=大规模重构 + 5.114.6 re-export Final语义=非平凡), STILL_VALID=0. 维度5.114全部清零.
-> **第69轮修复状态（2026-07-06）**：5.114.5 PARTIAL-FIXED — P0批批完成: 33处Final标注覆盖22文件(security/access_control 13文件19处 + governance/audit_trail 7文件12处 + governance/code_dedup 2文件2处), 统一改写为`NAME: Final[type] = value` + `from typing import Final`. 语法校验全通过. 剩余约342处(P1: behavioral_audit/autonomy_core/trading域 + P2: 其余域)留后续批次. 5.114.6 进行中(re-export Final语义).
+> **第69轮修复状态（2026-07-06）**：5.114.5 PARTIAL-FIXED — P0批批完成: 33处Final标注覆盖22文件(security/access_control 13文件19处 + governance/audit_trail 7文件12处 + governance/code_dedup 2文件2处), 统一改写为`NAME: Final[type] = value` + `from typing import Final`. 语法校验全通过. 剩余约342处(P1: behavioral_audit/autonomy_core/trading域 + P2: 其余域)留后续批次. 5.114.6 FIXED — alias-import + Final 重声明模式, 5个常量在 constants.py 显式声明 Final 语义.
 
 #### 5.114.1-5.114.4 [HIGH] governance/config.py 4个可变dict常量未标注Final
 
@@ -2834,6 +2834,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **文件**：`src/zephyr/shared/foundation/constants.py`、`src/zephyr/shared/constants.py`
 - **问题**：从`runtime_plane_tag` re-export 5个`Final`常量，但re-export本身未声明`Final`语义，下游类型检查器跨模块re-export不一定能传递`Final`约束。
 - **修复**：re-export文件显式标注`Final[type]`。
+- **状态**：FIXED — R69 采用 alias-import + Final 重声明模式: `from module import CONST as _CONST` + `CONST: Final[type] = _CONST`. 5个常量(COLD_PATH_LATENCY_BUDGET_MS: Final[float], COLD_PATH_PARTIAL_ACTIVATED: Final[bool], HOT_PATH_ACTIVATED: Final[bool], HOT_PATH_LATENCY_BUDGET_MS: Final[float], WARM_PATH_LATENCY_BUDGET_MS: Final[float]) 在 constants.py 显式声明 Final 语义. `src/zephyr/shared/constants.py` 不存在(仅 foundation/constants.py). import 验证通过, 值正确(inf/False/1000.0).
 
 #### 5.114.7 [MEDIUM] @final全项目零使用，安全敏感类未标注
 

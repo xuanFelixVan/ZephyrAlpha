@@ -41,13 +41,14 @@ Version: 0.1.0
 """
 
 import importlib
+from typing import Final
 
 from zephyr.shared.contracts.core.runtime_plane_tag import (
-    COLD_PATH_LATENCY_BUDGET_MS,
-    COLD_PATH_PARTIAL_ACTIVATED,
-    HOT_PATH_ACTIVATED,
-    HOT_PATH_LATENCY_BUDGET_MS,
-    WARM_PATH_LATENCY_BUDGET_MS,
+    COLD_PATH_LATENCY_BUDGET_MS as _COLD_PATH_LATENCY_BUDGET_MS,
+    COLD_PATH_PARTIAL_ACTIVATED as _COLD_PATH_PARTIAL_ACTIVATED,
+    HOT_PATH_ACTIVATED as _HOT_PATH_ACTIVATED,
+    HOT_PATH_LATENCY_BUDGET_MS as _HOT_PATH_LATENCY_BUDGET_MS,
+    WARM_PATH_LATENCY_BUDGET_MS as _WARM_PATH_LATENCY_BUDGET_MS,
     RuntimePlane,
 )
 from zephyr.shared.infra.observer import EventType
@@ -62,6 +63,13 @@ from zephyr.shared.schema.schemas import (
     TaskNamespace,
     TaskStatus,
 )
+
+# 5.114.6: re-export 常量显式声明 Final 语义，确保跨模块传递 Final 约束
+COLD_PATH_LATENCY_BUDGET_MS: Final[float] = _COLD_PATH_LATENCY_BUDGET_MS
+COLD_PATH_PARTIAL_ACTIVATED: Final[bool] = _COLD_PATH_PARTIAL_ACTIVATED
+HOT_PATH_ACTIVATED: Final[bool] = _HOT_PATH_ACTIVATED
+HOT_PATH_LATENCY_BUDGET_MS: Final[float] = _HOT_PATH_LATENCY_BUDGET_MS
+WARM_PATH_LATENCY_BUDGET_MS: Final[float] = _WARM_PATH_LATENCY_BUDGET_MS
 
 # Lazy imports for trading-domain symbols (upward dependency from L0 shared → L3 trading)
 _TRADING_SYMBOLS = {
