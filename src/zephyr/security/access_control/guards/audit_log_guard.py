@@ -15,7 +15,9 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.guards.audit_log_guard — implementation pending."""
 
-LOG_INJECTION_PATTERNS = None  # stub constant
+from typing import Final
+
+LOG_INJECTION_PATTERNS: Final[None] = None  # stub constant
 
 
 class AuditLogGuard:

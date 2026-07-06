@@ -21,13 +21,14 @@ from typing import Any
 
 from zephyr.governance.audit_trail.contracts import AuditIndexer as AuditIndexerABC  # 5.104.14 修复: 继承ABC契约
 from zephyr.shared.utils.time_utils import now_utc
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["AuditIndexer"]
 
-DEFAULT_INDEX_DIR = Path("data/audit_cache")
-INDEX_FILE = "audit_index.json"
+DEFAULT_INDEX_DIR: Final[Any] = Path("data/audit_cache")
+INDEX_FILE: Final[str] = "audit_index.json"
 
 
 class AuditIndexer(AuditIndexerABC):  # 5.104.14 修复: 继承ABC契约

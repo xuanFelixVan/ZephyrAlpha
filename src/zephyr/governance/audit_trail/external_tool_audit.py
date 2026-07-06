@@ -18,12 +18,13 @@ import logging
 import subprocess
 from pathlib import Path
 from typing import Any
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["ExternalToolAuditor"]
 
-DEFAULT_TIMEOUT = 30
+DEFAULT_TIMEOUT: Final[int] = 30
 
 
 class ExternalToolAuditor:

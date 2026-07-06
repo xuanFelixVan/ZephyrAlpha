@@ -15,8 +15,10 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.dependency_auditor — implementation pending."""
 
-RESTRICTED_LICENSES = None  # stub constant
-RESTRICTED_PACKAGES = None  # stub constant
+from typing import Final
+
+RESTRICTED_LICENSES: Final[None] = None  # stub constant
+RESTRICTED_PACKAGES: Final[None] = None  # stub constant
 
 
 class DependencyAuditResult:

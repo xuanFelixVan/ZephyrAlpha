@@ -15,7 +15,9 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.environment_manager — implementation pending."""
 
-ENVIRONMENTS = None  # stub constant
+from typing import Final
+
+ENVIRONMENTS: Final[None] = None  # stub constant
 
 
 class EnvConfig:

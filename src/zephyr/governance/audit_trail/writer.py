@@ -28,13 +28,14 @@ from typing import Any
 from zephyr.governance.audit_trail.contracts import AuditWriter as AuditWriterABC  # 5.104.15 修复: 继承ABC契约
 from zephyr.governance.audit_trail.models import AuditIssue, GlobalAuditReport
 from zephyr.shared.utils.time_utils import now_utc
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["AuditReportWriter", "AuditWriter", "get_audit_writer"]
 
-DEFAULT_REPORT_DIR = Path.cwd() / "data" / "audit_history"
-DEFAULT_AUDIT_DIR = Path.cwd() / "data" / "audit_trail"
+DEFAULT_REPORT_DIR: Final[Any] = Path.cwd() / "data" / "audit_history"
+DEFAULT_AUDIT_DIR: Final[Any] = Path.cwd() / "data" / "audit_trail"
 _GENESIS_HASH = "0" * 64
 
 # 5.17.1 修复：模块级单例（供 contracts.py 委托桥接使用）

@@ -15,7 +15,9 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.a2a_check — implementation pending."""
 
-ALLOWED_TALK_PAIRS = None  # stub constant
+from typing import Final
+
+ALLOWED_TALK_PAIRS: Final[None] = None  # stub constant
 
 
 def verify_a2a_pair(*args, **kwargs):

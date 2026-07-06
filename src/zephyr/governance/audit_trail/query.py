@@ -23,12 +23,13 @@ from typing import Any
 from zephyr.governance.audit_trail.contracts import AuditQuery as AuditQueryABC  # 5.104.16 修复: 继承ABC契约
 from zephyr.governance.audit_trail.models import AuditIssue, OrchestratorStatus
 from zephyr.shared.utils.time_utils import now_utc
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["AuditQueryEngine"]
 
-DEFAULT_REPORT_DIR = Path("data/audit_history")
+DEFAULT_REPORT_DIR: Final[Any] = Path("data/audit_history")
 
 
 class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约

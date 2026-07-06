@@ -15,7 +15,9 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.compliance_matrix — implementation pending."""
 
-COMPLIANCE_MATRIX = None  # stub constant
+from typing import Final
+
+COMPLIANCE_MATRIX: Final[None] = None  # stub constant
 
 
 class ComplianceItem:

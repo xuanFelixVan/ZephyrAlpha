@@ -19,6 +19,7 @@
 
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Final
 
 
 class Boundary(str, Enum):
@@ -28,7 +29,7 @@ class Boundary(str, Enum):
     VENDORED_REIMPLEMENTATION = "VENDORED_REIMPLEMENTATION"
 
 
-BOUNDARY_CONFIG = {
+BOUNDARY_CONFIG: Final[dict] = {
     Boundary.SRC_TEST_BRIDGE: {"threshold": 0.80, "action": "WARN", "auto_fix": False, "message": "测试可简化但非阻塞"},
     Boundary.SRC_SCRIPTS_DIVERGENCE: {
         "threshold": 0.75,

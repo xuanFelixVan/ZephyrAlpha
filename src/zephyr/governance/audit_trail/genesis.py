@@ -22,13 +22,14 @@ import os
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["GenesisBlock"]
 
-DEFAULT_GENESIS_DIR = Path.cwd() / "data" / "audit_genesis"
-GENESIS_FILE = "genesis_block.json"
+DEFAULT_GENESIS_DIR: Final[Any] = Path.cwd() / "data" / "audit_genesis"
+GENESIS_FILE: Final[str] = "genesis_block.json"
 
 
 class GenesisBlock:

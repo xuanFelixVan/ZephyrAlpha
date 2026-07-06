@@ -20,14 +20,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 from zephyr.shared.utils.time_utils import now_utc
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["LogRotation"]
 
-DEFAULT_MAX_SIZE_MB = 100
-DEFAULT_MAX_AGE_DAYS = 90
-DEFAULT_MAX_FILES = 1000
+DEFAULT_MAX_SIZE_MB: Final[int] = 100
+DEFAULT_MAX_AGE_DAYS: Final[int] = 90
+DEFAULT_MAX_FILES: Final[int] = 1000
 
 
 class LogRotation:

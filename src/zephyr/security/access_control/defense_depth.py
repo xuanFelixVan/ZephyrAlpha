@@ -15,7 +15,9 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.defense_depth — implementation pending."""
 
-DEFENSE_DEPTH = None  # stub constant
+from typing import Final
+
+DEFENSE_DEPTH: Final[None] = None  # stub constant
 
 
 class DefenseLayer:

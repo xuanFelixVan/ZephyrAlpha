@@ -15,7 +15,9 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.build_sanitizer — implementation pending."""
 
-RISKY_BUILD_PATTERNS = None  # stub constant
+from typing import Final
+
+RISKY_BUILD_PATTERNS: Final[None] = None  # stub constant
 
 
 class BuildSanitizeResult:

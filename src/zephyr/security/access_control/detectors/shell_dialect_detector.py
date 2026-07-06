@@ -15,7 +15,9 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.detectors.shell_dialect_detector — implementation pending."""
 
-DANGEROUS_SHELL_PATTERNS = None  # stub constant
+from typing import Final
+
+DANGEROUS_SHELL_PATTERNS: Final[None] = None  # stub constant
 
 
 class ShellDialectDetector:

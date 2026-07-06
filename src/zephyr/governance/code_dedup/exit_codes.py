@@ -18,6 +18,7 @@
 """退出码定义模块——五档exit code 0-4枚举+描述+判定逻辑."""
 
 from enum import Enum, IntEnum
+from typing import Final
 
 
 class ExitCode(IntEnum):
@@ -36,7 +37,7 @@ class RunMode(Enum):
     TOOL_ERROR = "tool_error"
 
 
-EXIT_CODE_DESCRIPTIONS = {
+EXIT_CODE_DESCRIPTIONS: Final[dict] = {
     ExitCode.PASS: "PASS — 扫描范围内零重复组 → GATE-DEDUP PASS",
     ExitCode.WARN: "WARN — 发现低/中严重度重复（severity≤medium）→ GATE-DEDUP WARN 不阻断",
     ExitCode.ERROR: "ERROR — 发现高/严重重复（severity=high/critical）→ GATE-DEDUP FAIL 阻断commit",

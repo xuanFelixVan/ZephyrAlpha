@@ -15,8 +15,10 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.microstructure_defense — implementation pending."""
 
-DEFAULT_FIDELITY = None  # stub constant
-DEFENSE_STRATEGIES = None  # stub constant
+from typing import Final
+
+DEFAULT_FIDELITY: Final[None] = None  # stub constant
+DEFENSE_STRATEGIES: Final[None] = None  # stub constant
 
 
 class DefenseStrategy:
