@@ -1,6 +1,6 @@
 # [A_config] module_id=CFG-interface-contract-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md
 # module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
@@ -12,7 +12,8 @@
 # ============================================================================
 # 版本: 1.0.0 | 创建: 2026-07-06 | owner: ZephyrAlpha-Owner
 #
-# module_id: PS-REG-020
+# registry_id: REG-INTF-001（见 registry_of_registries.yaml + registry_master_index.yaml）
+# module_id: CFG-interface-contract-registry（与 frontmatter + 代码头第1行一致）
 # doc_type: register
 # ARCH-053: 补齐 API 契约层，对标 Backstage API kind
 #

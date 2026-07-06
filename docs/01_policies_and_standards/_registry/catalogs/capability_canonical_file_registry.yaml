@@ -3316,6 +3316,25 @@ capabilities:
       解决发现性：新 AI 搜 "unified memory/memory backend/kb storage" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止新 AI 重建 KB 统一记忆 API。
 
+  # --------------------------------------------------------------------------
+  - capability_id: registry_discovery
+    canonical_override: src/zephyr/infrastructure/asset_inventory/registry_adapter.py
+    aliases:
+      - discover_all_registries
+      - registry_adapter
+      - find_all_registries
+      - list_registries
+      - REGISTRY-DISCOVERY
+    description: >-
+      Registry 发现入口函数——discover_all_registries() 读取 registry_master_index.yaml
+      返回项目全部 25+ registry 元数据列表。ARCH-053 AI 可发现性：AI 代码启动时
+      调用此函数即可发现项目全部 registry，不再依赖硬编码路径或 AGENTS.md 提示。
+      canonical = src/zephyr/infrastructure/asset_inventory/registry_adapter.py。
+      AGENTS.md RULE-REGISTRY 段落（第四件事）登记此入口。
+      解决发现性：新 AI 搜 "discover registries/registry 入口/registry_adapter" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建 registry 发现函数。
+      关联规则：ARCH-053（API 契约层补齐 + database 节点 + AI 可发现性）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
