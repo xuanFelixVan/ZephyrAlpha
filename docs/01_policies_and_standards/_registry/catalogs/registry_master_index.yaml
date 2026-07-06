@@ -1,11 +1,11 @@
-# 自动生成于 2026-07-06T07:42:55Z
+# 自动生成于 2026-07-06T07:54:32Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-06T07:42:55Z'
+generated_at: '2026-07-06T07:54:32Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 22
+total_registries: 25
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -165,7 +165,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 148
+  entry_count: 152
   status: active
 - registry_id: CFG-rule-enforcement-registry
   name: 门禁规则集登记表
@@ -175,6 +175,22 @@ registries:
   maintenance: manual
   entry_count: 0
   status: active
+- registry_id: CFG-rule-registry-collection
+  name: rule_registry_collection
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_registry_collection.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: unknown
+- registry_id: CFG-scripts-registry
+  name: scripts_registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: unknown
 - registry_id: PS-REG-017
   name: 任务卡元层登记表
   category: governance_rule
@@ -183,3 +199,11 @@ registries:
   maintenance: manual
   entry_count: 0
   status: active
+- registry_id: CFG-test-suite-registry
+  name: test_suite_registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/test_suite_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: unknown
