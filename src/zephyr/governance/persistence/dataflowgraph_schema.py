@@ -114,6 +114,7 @@ CREATE TABLE IF NOT EXISTS dataflow_datasets (
         CHECK (pit_policy IN ('strict', 'loose', 'none')),
     format_summary   TEXT,
     valid_since      TEXT,
+    module_id        TEXT,
     last_updated     TEXT
 )
 """
@@ -140,6 +141,7 @@ CREATE TABLE IF NOT EXISTS dataflow_jobs (
         CHECK (design_maturity IN ('design', 'production', 'prototype')),
     build_status     TEXT DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
+    module_id        TEXT,
     last_updated     TEXT
 )
 """

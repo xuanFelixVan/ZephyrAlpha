@@ -28,6 +28,7 @@ from __future__ import annotations
 import hashlib
 from dataclasses import dataclass, field
 from datetime import datetime
+from zephyr.shared.utils.time_utils import now_utc
 
 
 @dataclass
@@ -45,7 +46,7 @@ class SelfModificationAudit:
 
     def register(self, filepath: str, content: str) -> None:
         sha = hashlib.sha256(content.encode()).hexdigest()
-        self.files[filepath] = FileIntegrity(path=filepath, sha256=sha, last_verified=datetime.now().isoformat())
+        self.files[filepath] = FileIntegrity(path=filepath, sha256=sha, last_verified=now_utc().isoformat())
 
     def verify(self, filepath: str, current_content: str) -> bool:
         current_sha = hashlib.sha256(current_content.encode()).hexdigest()
@@ -55,7 +56,7 @@ class SelfModificationAudit:
         if record.sha256 != current_sha:
             self.unauthorized_changes.append(filepath)
             return False
-        record.last_verified = datetime.now().isoformat()
+        record.last_verified = now_utc().isoformat()
         return True
 
     def scan_all(self, file_contents: dict[str, str]) -> list[str]:

@@ -34,6 +34,7 @@ import threading
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+from zephyr.shared.utils.time_utils import now_utc
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
@@ -414,7 +415,7 @@ class IdeHealthDaemon:
         设计对标 GitOps 社区：drift detection 是一等 SRE 指标（SLI/SLO）。
         """
         metrics: dict[str, Any] = {
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": now_utc().isoformat(),
             "ghost_count": self._ghost_count,
         }
         # stash 数量

@@ -71,6 +71,7 @@ from zephyr.trading.trading_contracts.execution.order import (
     OrderType,
 )
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+from zephyr.shared.utils.time_utils import now_utc
 
 _logger = logging.getLogger(__name__)
 
@@ -352,7 +353,7 @@ class MiniQmtBroker(BrokerInterface):
             broker_order_id = order.order_id
             order.status = OrderStatus.SUBMITTED
             order.broker_order_id = broker_order_id
-            order.updated_at = datetime.now()
+            order.updated_at = now_utc()
             self._idempotency_map[order.idempotency_key] = broker_order_id
             self._order_cache[broker_order_id] = order
 
@@ -400,7 +401,7 @@ class MiniQmtBroker(BrokerInterface):
             # 更新缓存
             if broker_order_id in self._order_cache:
                 self._order_cache[broker_order_id].status = OrderStatus.CANCELLED
-                self._order_cache[broker_order_id].updated_at = datetime.now()
+                self._order_cache[broker_order_id].updated_at = now_utc()
 
             _logger.info("撤单成功: broker_order_id=%s", broker_order_id)
             return True
@@ -443,7 +444,7 @@ class MiniQmtBroker(BrokerInterface):
                             if xt_order.traded_price > 0
                             else None
                         )
-                        cached.updated_at = datetime.now()
+                        cached.updated_at = now_utc()
                     return cached or self._xt_order_to_order(xt_order)
 
             return self._order_cache.get(broker_order_id)
@@ -491,8 +492,8 @@ class MiniQmtBroker(BrokerInterface):
                 cash = Decimal(str(xt_asset.cash))
 
             return PositionSnapshot(
-                as_of_timestamp=datetime.now(),
-                idempotency_key=f"pos-{self._session_id}-{int(datetime.now().timestamp())}",
+                as_of_timestamp=now_utc(),
+                idempotency_key=f"pos-{self._session_id}-{int(now_utc().timestamp())}",
                 portfolio_id=self._session_id,
                 cash=cash,
                 holdings=holdings,
@@ -616,6 +617,7 @@ class MiniQmtBroker(BrokerInterface):
             )
             if attempt < self._reconnect_max_retries - 1:
                 import time
+
                 time.sleep(1.0)
 
         raise MiniQmtBrokerError(
@@ -839,7 +841,7 @@ class MiniQmtBroker(BrokerInterface):
             broker_order_id=xt_order.order_id,
             filled_quantity=Decimal(str(xt_order.traded_volume)),
             status=self._map_xt_status(xt_order.order_status),
-            updated_at=datetime.now(),
+            updated_at=now_utc(),
         )
 
 

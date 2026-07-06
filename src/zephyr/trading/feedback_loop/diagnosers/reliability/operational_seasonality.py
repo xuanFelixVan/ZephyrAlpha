@@ -28,6 +28,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class OpMode(str, Enum):
@@ -52,7 +53,7 @@ class OperationalSeasonality:
     )
 
     def auto_mode(self) -> OpMode:
-        now = datetime.now()
+        now = now_utc()
         if now.month == 12 and now.day > 25:
             self.mode = OpMode.YEAR_END
         elif now.day > 25 and now.month in (3, 6, 9, 12):

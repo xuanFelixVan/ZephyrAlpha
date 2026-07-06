@@ -18,6 +18,7 @@ import logging
 import time
 from datetime import datetime
 from typing import Any
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +57,7 @@ class SelfMonitor:
             )
 
         return {
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": now_utc().isoformat(),
             "uptime_seconds": round(uptime, 2),
             "counters": dict(self._counters),
             "gauges": dict(self._gauges),

@@ -42,6 +42,7 @@ from zephyr.shared.schema.task_types import TaskStatus
 
 if TYPE_CHECKING:
     from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class PreemptionManager:
@@ -192,7 +193,7 @@ class PreemptionManager:
             self._active_dispatches.discard(tid)
 
             result = self._re_dispatch(task)
-            record.resumed_at = datetime.now().isoformat()
+            record.resumed_at = now_utc().isoformat()
             results.append(result)
 
         return results

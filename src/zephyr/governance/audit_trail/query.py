@@ -22,6 +22,7 @@ from typing import Any
 
 from zephyr.governance.audit_trail.contracts import AuditQuery as AuditQueryABC  # 5.104.16 修复: 继承ABC契约
 from zephyr.governance.audit_trail.models import AuditIssue, OrchestratorStatus
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,7 @@ class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
             return []
 
     def get_recent_findings(self, hours: int = 24) -> list[dict[str, Any]]:
-        cutoff = datetime.now() - timedelta(hours=hours)
+        cutoff = now_utc() - timedelta(hours=hours)
         findings: list[dict[str, Any]] = []
         for path in self._list_reports():
             if datetime.fromtimestamp(path.stat().st_mtime) < cutoff:

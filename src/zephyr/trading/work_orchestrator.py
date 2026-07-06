@@ -35,6 +35,7 @@ import yaml
 
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.work_dag import WorkDAG, WorkItem
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class WorkOrchestrator:
@@ -95,7 +96,7 @@ class WorkOrchestrator:
         if not work.item_id:
             work.item_id = f"WI-{uuid.uuid4().hex[:8]}"
         if not work.created_at:
-            work.created_at = datetime.now().isoformat()
+            work.created_at = now_utc().isoformat()
         with self._lock:
             self._items[work.item_id] = work
             if not work.depends_on:
@@ -175,7 +176,7 @@ class WorkOrchestrator:
             if item is None:
                 return
             item.status = "COMPLETED" if error is None else "FAILED"
-            item.completed_at = datetime.now().isoformat()
+            item.completed_at = now_utc().isoformat()
             item.result = result
             item.error = error
             self._slots_used[item.layer] = max(0, self._slots_used.get(item.layer, 0) - 1)

@@ -43,6 +43,7 @@ from zephyr.shared.foundation.models import (
     TaskStatus,
 )
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -831,13 +832,13 @@ def _parse_legacy_md_to_taskcard(content: str) -> TaskCard | None:
 
 def _parse_time(s: str) -> datetime:
     if not s:
-        return datetime.now()
+        return now_utc()
     for fmt in ("%Y-%m-%d %H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"):
         try:
             return datetime.strptime(s.strip(), fmt)
         except ValueError:
             continue
-    return datetime.now()
+    return now_utc()
 
 
 def _taskcard_to_md(tc: TaskCard) -> str:

@@ -29,6 +29,7 @@ from enum import Enum
 from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class PartType(str, Enum):
@@ -105,7 +106,7 @@ class A2AStateMachine:
         allowed = cls.VALID_TRANSITIONS.get(task.status, [])
         if new_status in allowed:
             task.status = new_status
-            task.updated_at = datetime.utcnow()
+            task.updated_at = now_utc()
             return True
         return False
 
@@ -114,7 +115,7 @@ class ContextPackage:
     def __init__(self, task_id: str, source_agent: str):
         self.task_id = task_id
         self.source_agent = source_agent
-        self.created_at = datetime.utcnow()
+        self.created_at = now_utc()
         self.blueprints: dict[str, str] = {}
         self.decisions: list = []
         self.session_state: dict[str, Any] = {}
@@ -146,7 +147,7 @@ class HandoffRecord:
         self.to_agent = to_agent
         self.task_id = task_id
         self.reason = reason
-        self.timestamp = datetime.utcnow()
+        self.timestamp = now_utc()
         self.acknowledged = False
 
     def to_dict(self) -> dict[str, Any]:

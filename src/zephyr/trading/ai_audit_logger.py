@@ -38,6 +38,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import now_utc
 
 _GENESIS_HASH = "0" * 64
 
@@ -45,7 +46,7 @@ _GENESIS_HASH = "0" * 64
 class _LogEntry(BaseModel):
     model_config = BASE_CONFIG
     log_type: str
-    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+    timestamp: str = Field(default_factory=lambda: now_utc().isoformat())
     session_id: str = ""
     detail: dict[str, Any] = {}
     prev_hash: str = ""
@@ -99,7 +100,7 @@ class AiAuditLogger:
             logger.warning("suppressed error in ai_audit_logger", exc_info=True)
 
     def _date_file(self) -> Path:
-        date_str = datetime.now().strftime("%Y-%m-%d")
+        date_str = now_utc().strftime("%Y-%m-%d")
         return self._log_dir / f"ai_audit_{date_str}.jsonl"
 
     def _compute_hash(self, entry_dict: dict[str, Any]) -> str:

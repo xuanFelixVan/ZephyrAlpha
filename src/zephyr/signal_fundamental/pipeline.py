@@ -50,6 +50,7 @@ from typing import Any
 
 # 5.76.1 修复：删除同名 PipelineError 副本，统一使用 shared/foundation/errors.py 的 SSoT 定义
 from zephyr.shared.foundation.errors import PipelineError
+from zephyr.shared.utils.time_utils import now_utc
 
 _MAX_WORKERS = 8
 
@@ -90,7 +91,7 @@ class PipelineResult:
     confidence: float = 0.0
     degraded: bool = False
     errors: list[dict[str, Any]] = field(default_factory=list)
-    started_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    started_at: str = field(default_factory=lambda: now_utc().isoformat())
     completed_at: str | None = None
     idempotency_key: str = field(default_factory=lambda: str(uuid.uuid4()))
 
@@ -312,7 +313,7 @@ class AlphaSignalPipeline:
 
         result.stage = PipelineStage.CAPITAL_ALLOCATION
         result.status = "completed_with_errors" if result.errors else "completed"
-        result.completed_at = datetime.utcnow().isoformat()
+        result.completed_at = now_utc().isoformat()
         return result
 
     def _compute_single(self, factor_cls: type, idempotency_key: str) -> list | None:

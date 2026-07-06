@@ -19,6 +19,7 @@ import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +62,7 @@ class LogRotation:
                     except Exception as exc:
                         logger.error("Failed to delete %s: %s", f, exc, exc_info=True)
 
-        cutoff = datetime.now().timestamp() - (self._max_age_days * 86400)
+        cutoff = now_utc().timestamp() - (self._max_age_days * 86400)
         for f in files:
             try:
                 fstat = f.stat()

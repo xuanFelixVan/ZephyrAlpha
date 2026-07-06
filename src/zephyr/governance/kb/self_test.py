@@ -54,6 +54,7 @@ from pathlib import Path
 
 import yaml
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -333,7 +334,7 @@ def _check_silent_period(root: Path) -> CheckResult:
         ke_files = list(know_dir.glob("ke-*.md"))
         if not ke_files:
             return CheckResult(11, "Silent Period", CheckStatus.SKIP, "No KEs")
-        recent_cutoff = datetime.now().timestamp() - (7 * 24 * 3600)
+        recent_cutoff = now_utc().timestamp() - (7 * 24 * 3600)
         recent = [f for f in ke_files if f.stat().st_mtime > recent_cutoff]
         if not recent:
             return CheckResult(

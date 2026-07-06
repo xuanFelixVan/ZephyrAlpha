@@ -25,6 +25,7 @@ StopGate — 质量闸门
 
 from dataclasses import dataclass, field
 from datetime import datetime
+from zephyr.shared.utils.time_utils import now_utc
 
 
 @dataclass
@@ -47,7 +48,7 @@ class StopGate:
         self._shutdown_acknowledged = False
 
     def initialize(self) -> None:
-        self._session_start = datetime.now().isoformat()
+        self._session_start = now_utc().isoformat()
         self._shutdown_acknowledged = False
 
     def check(

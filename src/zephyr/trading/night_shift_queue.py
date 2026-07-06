@@ -30,12 +30,13 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class NightShiftEntry(BaseModel):
     model_config = BASE_CONFIG
     id: str = Field(default="", description="NSL-{sequence}")
-    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+    timestamp: str = Field(default_factory=lambda: now_utc().isoformat())
     task_id: str = ""
     module: str = ""
     context: str = ""
@@ -116,7 +117,7 @@ class NightShiftQueue:
                         data = json.loads(line_stripped)
                         if data.get("id") == entry_id:
                             data["human_decision"] = decision
-                            data["human_timestamp"] = datetime.now().isoformat()
+                            data["human_timestamp"] = now_utc().isoformat()
                             data["human_notes"] = notes
                             is_found = True
                         lines.append(json.dumps(data, ensure_ascii=False) + "\n")

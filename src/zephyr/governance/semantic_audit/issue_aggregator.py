@@ -33,6 +33,7 @@ from zephyr.governance.semantic_audit.models import (
     Severity,
     TriggerResult,
 )
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +86,7 @@ class IssueAggregator:
             heal_results=heals or [],
             duration_ms=duration_ms,
             token_used=token_used,
-            fresh_until=datetime.now(),
+            fresh_until=now_utc(),
         )
 
     def _deduplicate(self, triggers: list[TriggerResult]) -> list[TriggerResult]:

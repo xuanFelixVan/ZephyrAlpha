@@ -48,6 +48,8 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any, Optional
 
+from zephyr.shared.utils.time_utils import now_utc
+
 import pandas as pd
 
 from zephyr.governance.intelligence_governance.provider_base import (
@@ -458,7 +460,7 @@ class MiniQmtProvider(DataSourceBase):
         bid_vol = tick.get("bidVol", []) or []
 
         ts = tick.get("time", 0)
-        timestamp = datetime.fromtimestamp(ts / 1000) if ts else datetime.now()
+        timestamp = datetime.fromtimestamp(ts / 1000) if ts else now_utc()
 
         return {
             "symbol": symbol,

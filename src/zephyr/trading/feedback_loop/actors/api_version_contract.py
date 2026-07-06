@@ -28,6 +28,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class VersionStatus(str, Enum):
@@ -47,11 +48,11 @@ class APIVersionContract:
 
     def check_sunset(self, today: str | None = None) -> bool:
         if today is None:
-            today = datetime.now().strftime("%Y-%m-%d")
+            today = now_utc().strftime("%Y-%m-%d")
         sunset = datetime.strptime(self.sunset_date, "%Y-%m-%d")
         now = datetime.strptime(today, "%Y-%m-%d")
         return now >= sunset
 
     def days_until_sunset(self) -> int:
         sunset = datetime.strptime(self.sunset_date, "%Y-%m-%d")
-        return (sunset - datetime.now()).days
+        return (sunset - now_utc()).days

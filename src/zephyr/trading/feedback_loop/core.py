@@ -31,6 +31,7 @@ import yaml
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import now_utc
 
 __all__ = [
     "EvolutionProposal",
@@ -40,7 +41,7 @@ __all__ = [
 
 class EvolutionProposal(BaseModel):
     model_config = BASE_CONFIG
-    proposal_id: str = Field(default_factory=lambda: f"PROP-{datetime.now().strftime('%Y%m%d%H%M%S')}")
+    proposal_id: str = Field(default_factory=lambda: f"PROP-{now_utc().strftime('%Y%m%d%H%M%S')}")
     source: str = ""
     pattern: str = ""
     suggested_rule_change: str = ""

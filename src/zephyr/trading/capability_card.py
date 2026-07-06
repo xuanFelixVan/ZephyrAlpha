@@ -29,6 +29,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class CapabilityCategory(str, Enum):
@@ -67,5 +68,5 @@ class CapabilityCard(BaseModel):
     runtime_plane: str = Field(default="warm", description="hot/warm/cold")
     requires_human: bool = Field(default=False, description="是否需要人在环")
     status: str = Field(default="ACTIVE", description="ACTIVE/DEGRADED/INACTIVE")
-    registered_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+    registered_at: str = Field(default_factory=lambda: now_utc().isoformat())
     examples: list[dict[str, Any]] = Field(default_factory=list, description="使用示例")

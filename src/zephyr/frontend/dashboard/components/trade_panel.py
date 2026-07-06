@@ -54,6 +54,7 @@ from zephyr.frontend.dashboard.components.chart_factory import (
     ChartFactoryError,
     make_orderflow,
 )
+from zephyr.shared.utils.time_utils import now_utc
 
 
 class TradePanelError(Exception):
@@ -238,6 +239,7 @@ def submit_order(
     # 构造 Order 对象（惰性导入，避免循环依赖）
     try:
         from zephyr.trading.trading_contracts.execution.order import (
+
             Order, OrderSide, OrderType,
         )
     except Exception as e:
@@ -252,7 +254,7 @@ def submit_order(
     }
     order_type_enum = type_map.get(order_submission.order_type, OrderType.LIMIT)
 
-    idem = order_submission.idempotency_key or f"tp-{order_submission.symbol}-{int(datetime.now().timestamp()*1000)}"
+    idem = order_submission.idempotency_key or f"tp-{order_submission.symbol}-{int(now_utc().timestamp()*1000)}"
 
     order = Order(
         idempotency_key=idem,
@@ -263,7 +265,7 @@ def submit_order(
         strategy_id=order_submission.strategy_id,
         symbol=order_submission.symbol,
         limit_price=Decimal(str(order_submission.price)) if order_submission.price > 0 else None,
-        created_at=datetime.now(),
+        created_at=now_utc(),
     )
 
     try:

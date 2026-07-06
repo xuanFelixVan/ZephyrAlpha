@@ -44,6 +44,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +80,7 @@ class QuietPeriodMonitor:
         return self._root / "docs" / "08_knowledge" / "01_raw_intake"
 
     def check(self) -> QuietPeriodReport:
-        now = datetime.now()
+        now = now_utc()
         now_ts = now.timestamp()
 
         if not self.know_dir.exists():

@@ -42,6 +42,7 @@ from pathlib import Path
 from typing import Optional
 
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.time_utils import now_utc
 
 log = logging.getLogger(__name__)
 
@@ -122,7 +123,7 @@ class Alerter:
 
         文件名格式：{date}_{task_id}_{timestamp}.json
         """
-        now = datetime.datetime.now()
+        now = now_utc()
         date_str = now.strftime("%Y%m%d")
         ts_str = now.strftime("%H%M%S")
         filename = f"{date_str}_{task_id}_{ts_str}.json"

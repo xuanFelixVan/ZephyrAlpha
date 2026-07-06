@@ -29,6 +29,7 @@ from datetime import datetime
 from zephyr.trading.capability_card import CapabilityCard, CapabilityCategory
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.module_onboarding_scanner import UnregisteredModule
+from zephyr.shared.utils.time_utils import now_utc
 
 
 @dataclass
@@ -60,7 +61,7 @@ class AutoIntegrator:
         self._registry = registry
         self._max_daily_l3 = max_daily_l3_activations
         self._daily_l3_count = 0
-        self._last_reset_date = datetime.now().strftime("%Y-%m-%d")
+        self._last_reset_date = now_utc().strftime("%Y-%m-%d")
 
     def analyze_module(self, module: UnregisteredModule) -> IntegrationAnalysis:
         self._check_daily_reset()
@@ -123,7 +124,7 @@ class AutoIntegrator:
         return False
 
     def _check_daily_reset(self) -> None:
-        today = datetime.now().strftime("%Y-%m-%d")
+        today = now_utc().strftime("%Y-%m-%d")
         if today != self._last_reset_date:
             self._daily_l3_count = 0
             self._last_reset_date = today
