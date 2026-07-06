@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 drift_detection（D_GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 07:12:04
+> 最后更新: 2026-07-06 12:01:36
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 1 | Module Count | 1 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 3 | Cross-domain Incoming | 3 |
-| 跨域出边 | 3 | Cross-domain Outgoing | 3 |
+| 跨域出边 | 4 | Cross-domain Outgoing | 4 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
@@ -53,6 +53,7 @@ graph TD
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
     D_GOVERNANCE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     D_GOVERNANCE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     D_GOVERNANCE -.->|contract| docs_03_modules_domain_governance_drift_detector_blueprint_md
@@ -70,7 +71,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 3 | runtime |
+| D_GOVERNANCE | 4 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
