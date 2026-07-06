@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-06T07:39:28Z'
+generated_at: '2026-07-06T07:43:40Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 148
+total_files: 149
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1274,6 +1274,25 @@ files:
   - extract_decisiongraph
   - apply_decisiongraph
   section_count: 2
+- path: docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml
+  module_id: TRAE-062
+  title: SSoT 真源分类铁律（YAML vs DB）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: ssot_classification
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-SSOT-CLASSIFICATION
+  - 真源分类
+  - YAML vs DB
+  - ssot_classification
+  section_count: 1
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028
   title: Blueprint Construction Template
