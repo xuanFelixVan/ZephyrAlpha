@@ -16,12 +16,13 @@
 # [TTL] permanent
 import logging
 from typing import Any
+from typing import Final
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["DelegationAuditor"]
 
-MAX_DELEGATION_DEPTH = 5
+MAX_DELEGATION_DEPTH: Final[int] = 5
 
 
 class DelegationAuditor:

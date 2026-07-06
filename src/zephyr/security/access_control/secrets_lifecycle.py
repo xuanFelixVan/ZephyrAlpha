@@ -15,9 +15,11 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.secrets_lifecycle — implementation pending."""
 
-REVOKE_TIMEOUT_SECONDS = None  # stub constant
-ROTATION_DAYS = None  # stub constant
-SECRET_MIN_BITS = None  # stub constant
+from typing import Final
+
+REVOKE_TIMEOUT_SECONDS: Final[None] = None  # stub constant
+ROTATION_DAYS: Final[None] = None  # stub constant
+SECRET_MIN_BITS: Final[None] = None  # stub constant
 
 
 class SecretStage:

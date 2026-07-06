@@ -15,8 +15,10 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.capability_check — implementation pending."""
 
-MAX_CAPABILITIES = None  # stub constant
-RESTRICTED_CAPABILITIES = None  # stub constant
+from typing import Final
+
+MAX_CAPABILITIES: Final[None] = None  # stub constant
+RESTRICTED_CAPABILITIES: Final[None] = None  # stub constant
 
 
 def verify_capability_scope(*args, **kwargs):

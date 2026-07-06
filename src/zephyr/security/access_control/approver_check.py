@@ -15,8 +15,10 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.approver_check — implementation pending."""
 
-RESTRICTED_ACTIONS = None  # stub constant
-SUPERADMIN_AGENTS = None  # stub constant
+from typing import Final
+
+RESTRICTED_ACTIONS: Final[None] = None  # stub constant
+SUPERADMIN_AGENTS: Final[None] = None  # stub constant
 
 
 def verify_approver(*args, **kwargs):

@@ -15,7 +15,9 @@
 # [TTL] permanent
 """Stub module: zephyr.security.access_control.session_lifecycle — implementation pending."""
 
-STATE_DEFS = None  # stub constant
+from typing import Final
+
+STATE_DEFS: Final[None] = None  # stub constant
 
 
 class SessionManager:
