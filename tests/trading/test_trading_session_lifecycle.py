@@ -31,6 +31,7 @@ from zephyr.governance.behavioral_admission.session_lifecycle import (
     SessionTrustTier,
     _compute_trust_tier,
 )
+from zephyr.shared.foundation.errors import SessionError
 
 
 class TestSessionStateEnum:
@@ -199,12 +200,12 @@ class TestTransition:
         sl = SessionLifecycle(db_path=":memory:")
         sl.register_session("s1")
         sl.transition("s1", SessionTransition.CLOSE)
-        with pytest.raises(ValueError, match="invalid transition"):
+        with pytest.raises(SessionError, match="invalid transition"):
             sl.transition("s1", SessionTransition.IDLE)
 
     def test_transition_unknown_session(self):
         sl = SessionLifecycle(db_path=":memory:")
-        with pytest.raises(ValueError, match="session not found"):
+        with pytest.raises(SessionError, match="session not found"):
             sl.transition("unknown", SessionTransition.IDLE)
 
     def test_transition_records_history(self):
@@ -270,7 +271,7 @@ class TestUpdateTrustScore:
 
     def test_update_unknown_session(self):
         sl = SessionLifecycle(db_path=":memory:")
-        with pytest.raises(ValueError, match="session not found"):
+        with pytest.raises(SessionError, match="session not found"):
             sl.update_trust_score("unknown", 10.0)
 
 
@@ -297,7 +298,7 @@ class TestIncrementViolation:
 
     def test_violation_unknown_session(self):
         sl = SessionLifecycle(db_path=":memory:")
-        with pytest.raises(ValueError, match="session not found"):
+        with pytest.raises(SessionError, match="session not found"):
             sl.increment_violation("unknown")
 
 

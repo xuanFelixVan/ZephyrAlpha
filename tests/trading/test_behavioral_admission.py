@@ -17,6 +17,8 @@ import asyncio
 
 import pytest
 
+from zephyr.shared.foundation.errors import SessionError
+
 ve_mod = pytest.importorskip("zephyr.trading.verdict_engine")
 ac_mod = pytest.importorskip("zephyr.trading.admission_controller")
 pi_mod = pytest.importorskip("zephyr.trading.protection_index")
@@ -404,13 +406,13 @@ class TestSessionLifecycle:
         db_path = str(tmp_path / "test_session.db")
         sl = SessionLifecycle(db_path=db_path)
         sl.register_session("sess-011")
-        with pytest.raises(ValueError, match="invalid transition"):
+        with pytest.raises(SessionError, match="invalid transition"):
             sl.transition("sess-011", SessionTransition.EXPIRE)
 
     def test_transition_nonexistent(self, tmp_path):
         db_path = str(tmp_path / "test_session.db")
         sl = SessionLifecycle(db_path=db_path)
-        with pytest.raises(ValueError, match="session not found"):
+        with pytest.raises(SessionError, match="session not found"):
             sl.transition("nonexistent", SessionTransition.IDLE)
 
     def test_get_state(self, tmp_path):
@@ -455,7 +457,7 @@ class TestSessionLifecycle:
     def test_update_trust_score_nonexistent(self, tmp_path):
         db_path = str(tmp_path / "test_session.db")
         sl = SessionLifecycle(db_path=db_path)
-        with pytest.raises(ValueError, match="session not found"):
+        with pytest.raises(SessionError, match="session not found"):
             sl.update_trust_score("nonexistent", 10.0)
 
     def test_increment_violation(self, tmp_path):
