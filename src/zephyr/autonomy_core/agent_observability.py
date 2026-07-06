@@ -39,7 +39,7 @@ class AgentObservability:
 
     def add_span(self, trace_id: str, span_name: str, metadata: dict[str, Any] = None) -> dict[str, Any]:
         if trace_id not in self._traces:
-            raise KeyError(f"Trace {trace_id} not found")
+            raise KeyError("Trace not found")
         span = {"name": span_name, "metadata": metadata or {}, "timestamp": datetime.now(UTC).isoformat()}
         self._traces[trace_id]["spans"].append(span)
         return span

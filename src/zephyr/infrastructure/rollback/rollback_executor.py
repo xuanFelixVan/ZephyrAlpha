@@ -504,7 +504,7 @@ class RollbackExecutor:
             content = f"rollback:{operation} target:{target}"
             result = run_sync(gateway.scan_agent_action(content, tool_name=f"rollback_{operation}"))
             if result.decision.value not in ("allow", "ALLOW"):
-                raise PermissionError(f"LSG blocked rollback operation: {operation} on {target}")
+                raise PermissionError(f"LSG blocked rollback operation: {operation}")
         except ImportError:
             pass
 

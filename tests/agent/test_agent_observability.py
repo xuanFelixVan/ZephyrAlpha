@@ -88,7 +88,7 @@ class TestAddSpan:
 
     def test_add_span_raises_keyerror_for_unknown_trace(self):
         obs = AgentObservability()
-        with pytest.raises(KeyError, match="Trace .* not found"):
+        with pytest.raises(KeyError, match="Trace not found"):
             obs.add_span("nonexistent-trace-id", "span-x")
 
     def test_add_span_empty_name(self):

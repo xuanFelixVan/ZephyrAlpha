@@ -60,7 +60,7 @@ def _validate_whitelist(path: Path) -> None:
             return
         except ValueError:
             continue
-    raise PermissionError(f"路径不在白名单内: {path}")
+    raise PermissionError("路径不在白名单内")
 
 
 def read_real_file(rel_path: str, max_chars: int = _DEFAULT_MAX_CHARS) -> str:

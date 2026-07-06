@@ -80,7 +80,7 @@ class ContextRuleRegistry:
     def load_yaml(self, path: str) -> int:
         p = Path(path)
         if not p.exists():
-            raise FileNotFoundError(f"YAML rules file not found: {path}")
+            raise FileNotFoundError("YAML rules file not found")
 
         with open(p, encoding="utf-8") as f:
             data = yaml.safe_load(f)

@@ -191,21 +191,21 @@ class TaskQueue:
         """标记任务为 RUNNING。"""
         with self._lock:
             if task_id not in self._tasks:
-                raise KeyError(f"未知 task_id: {task_id}")
+                raise KeyError("未知 task_id")
             self._status[task_id] = RUNNING
 
     def mark_completed(self, task_id: str) -> None:
         """标记任务为 SUCCESS。"""
         with self._lock:
             if task_id not in self._tasks:
-                raise KeyError(f"未知 task_id: {task_id}")
+                raise KeyError("未知 task_id")
             self._status[task_id] = SUCCESS
 
     def mark_failed(self, task_id: str) -> None:
         """标记任务为 FAILED。后续依赖此任务的任务会变 BLOCKED。"""
         with self._lock:
             if task_id not in self._tasks:
-                raise KeyError(f"未知 task_id: {task_id}")
+                raise KeyError("未知 task_id")
             self._status[task_id] = FAILED
 
     def reset(self, task_id: str | None = None) -> None:

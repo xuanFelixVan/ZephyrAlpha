@@ -120,12 +120,12 @@ class TaskManagerMCP:
             return
         try:
             if not self._auth_check(action, task_id):
-                raise PermissionError(f"RBAC 拒绝: action={action}, task_id={task_id}")
+                raise PermissionError(f"RBAC 拒绝: action={action}")
         except PermissionError:
             raise
         except Exception as exc:
             raise PermissionError(
-                f"RBAC 检查异常: action={action}, task_id={task_id} — {type(exc).__name__}: {exc}"
+                f"RBAC 检查异常: action={action} — {type(exc).__name__}: {exc}"
             ) from exc
 
     def _register_tools(self) -> None:
@@ -260,7 +260,7 @@ class TaskManagerMCP:
             mgr._rbac_guard("get_task", task_id)
             tc = mgr._load(task_id)
             if tc is None:
-                raise ValueError(f"Task 不存在: {task_id}")
+                raise ValueError("Task 不存在")
             return mgr._to_response(tc)
 
         @mcp.tool(name="task_manager.list_tasks")
@@ -332,7 +332,7 @@ class TaskManagerMCP:
                 raise ValueError("必须提供 triage_path（或兼容别名 yaml_path）")
             path = Path(src)
             if not path.exists():
-                raise FileNotFoundError(f"审阅文件不存在: {src}")
+                raise FileNotFoundError("审阅文件不存在")
 
             content = path.read_text(encoding="utf-8")
             ns = getattr(TaskNamespace, namespace.upper(), TaskNamespace.ADR)
@@ -429,13 +429,13 @@ class TaskManagerMCP:
     def _load(self, task_id: str) -> TaskCard | None:
         if self.task_repo is None:
             raise RuntimeError(
-                f"MCP _load 失败: task_id={task_id} — task_repo 未注入，"
-                f"无法查询任务。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
+                "MCP _load 失败: task_repo 未注入，"
+                "无法查询任务。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
             )
         try:
             return self.task_repo.get(task_id)
         except Exception as exc:
-            raise RuntimeError(f"MCP _load 失败: task_id={task_id} — {type(exc).__name__}: {exc}") from exc
+            raise RuntimeError(f"MCP _load 失败: {type(exc).__name__}: {exc}") from exc
 
     @staticmethod
     def _to_response(tc: TaskCard) -> dict:

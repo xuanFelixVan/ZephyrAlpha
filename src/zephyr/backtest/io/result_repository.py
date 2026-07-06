@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.backtest.io.backtest_result_sink
 # [CONSUMERS] zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.tick_replay
 # [STARTUP] manual
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] PIT铁律(零前瞻偏差); run_id全局唯一; 检索接口对前端透明
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
@@ -167,7 +167,7 @@ def get_artifact(
     file_path = storage / f"{run_id}.json"
 
     if not file_path.exists():
-        raise ArtifactNotFoundError(f"run_id={run_id} 未找到 (path={file_path})")
+        raise ArtifactNotFoundError("run_id 未找到", details={"run_id": run_id, "file_path": str(file_path)})
 
     try:
         with open(file_path, "r", encoding="utf-8") as f:

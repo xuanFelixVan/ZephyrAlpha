@@ -134,7 +134,7 @@ class FAISSCollectionManager:
     def _load_index_readonly(self, name: str) -> faiss.Index:
         path = str(self._index_path(name))
         if not os.path.exists(path):
-            raise VMSError(f"FAISS 索引不存在: {path}，请先 create_collection")
+            raise VMSError("FAISS 索引不存在，请先 create_collection", details={"path": path})
         index_type = self._read_index_type(name)
         if index_type == self._INDEX_IVF_PQ:
             return faiss.read_index(path)

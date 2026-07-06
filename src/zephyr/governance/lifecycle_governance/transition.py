@@ -145,7 +145,7 @@ class TransitionMixin:
                 row = self._fetch_row(conn, task_id)
 
                 if row is None:
-                    raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+                    raise TaskNotFoundError("任务不存在")
 
                 # G1 门禁检查在写事务内执行，与状态转换原子落盘
 

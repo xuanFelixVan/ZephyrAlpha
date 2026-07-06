@@ -257,7 +257,7 @@ class SessionLifecycle:
         with self._lock:
             record = self._sessions.get(session_id)
             if record is None:
-                raise SessionError(f"session not found: {session_id}")
+                raise SessionError("session not found", details={"session_id": session_id})
 
             current = record.state
             allowed = SESSION_TRANSITIONS.get(current, {})
@@ -303,7 +303,7 @@ class SessionLifecycle:
         with self._lock:
             record = self._sessions.get(session_id)
             if record is None:
-                raise SessionError(f"session not found: {session_id}")
+                raise SessionError("session not found", details={"session_id": session_id})
 
             new_score = max(0.0, min(100.0, record.trust_score + delta))
             new_tier = _compute_trust_tier(new_score)
@@ -327,7 +327,7 @@ class SessionLifecycle:
         with self._lock:
             record = self._sessions.get(session_id)
             if record is None:
-                raise SessionError(f"session not found: {session_id}")
+                raise SessionError("session not found", details={"session_id": session_id})
 
             new_count = record.violation_count + 1
             penalty = min(5.0, new_count * 1.0)
