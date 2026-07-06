@@ -157,10 +157,15 @@ class VerdictEngine:
         protection_index: Any = None,
         gpu_scheduler: Any = None,
         verdict_timeout_s: float = 10.0,
+        max_batch_size: int = 100,
+        batch_timeout_s: float = 300.0,
     ) -> None:
         self._protection_index = protection_index
         self._gpu_scheduler = gpu_scheduler
         self._verdict_timeout_s = verdict_timeout_s
+        # 5.44.1 修复：批次大小限制 + 整体超时，防止单次大批次阻塞数分钟
+        self._max_batch_size = max_batch_size
+        self._batch_timeout_s = batch_timeout_s
         self._eval_count: int = 0
         self._red_count: int = 0
         self._yellow_count: int = 0
@@ -332,6 +337,12 @@ class VerdictEngine:
         if not events:
             return []
 
+        # 5.44.1 修复：批次大小校验，超过 max_batch_size 抛 ValueError
+        if len(events) > self._max_batch_size:
+            raise ValueError(
+                f"evaluate_batch 批次大小 {len(events)} 超过上限 {self._max_batch_size}，请分片处理"
+            )
+
         loop = asyncio.get_running_loop()
         results: list[Verdict] = []
 
@@ -363,7 +374,10 @@ class VerdictEngine:
                 return await coro
 
         tasks = [_limited_eval(_eval_one(evt)) for evt in events]
-        results = await asyncio.gather(*tasks)
+        # 5.44.1 修复：整体超时包裹，超时抛 TimeoutError 给调用方
+        results = await asyncio.wait_for(
+            asyncio.gather(*tasks), timeout=self._batch_timeout_s
+        )
         return list(results)
 
     def resolve_graduated_level(
