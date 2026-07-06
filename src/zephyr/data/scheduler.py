@@ -34,6 +34,7 @@ from __future__ import annotations
 import datetime
 import logging
 import threading
+import time
 from pathlib import Path
 from typing import Callable, Any
 
@@ -43,6 +44,7 @@ from zephyr.data.progress_store import ProgressStore, get_store
 from zephyr.data.task_queue import TaskQueue, SUCCESS, FAILED, PENDING, RUNNING
 from zephyr.data.alerter import Alerter, LEVEL_ERROR, LEVEL_CRITICAL
 from zephyr.data import ch_writer
+from zephyr.data.metrics import IntegratorMetrics, get_metrics
 from zephyr.shared.io.paths import REPO_ROOT
 
 log = logging.getLogger(__name__)
@@ -87,6 +89,7 @@ class IntegratorScheduler:
         self._progress_store: ProgressStore = get_store(progress_db)
         self._alerter = Alerter()
         self._task_queue = TaskQueue()
+        self._metrics: IntegratorMetrics = get_metrics()
         self._providers: dict[str, DataSourceBase] = {}
         self._provider_lock = threading.Lock()
         # APScheduler 实例（懒初始化）
@@ -206,9 +209,23 @@ class IntegratorScheduler:
             elif source == "akshare":
                 from zephyr.data.implementations.akshare_provider import AKShareProvider
                 return AKShareProvider()
+            elif source == "baostock":
+                from zephyr.data.implementations.baostock_provider import BaostockProvider
+                return BaostockProvider()
+            elif source == "tushare":
+                from zephyr.data.implementations.tushare_provider import TushareProvider
+                return TushareProvider()
+            elif source == "tickflow":
+                from zephyr.data.implementations.tickflow_provider import TickFlowProvider
+                return TickFlowProvider()
+            elif source == "tdx":
+                from zephyr.data.implementations.tdx_provider import TDXProvider
+                return TDXProvider()
+            elif source == "rss":
+                from zephyr.data.implementations.rss_provider import RSSProvider
+                return RSSProvider()
             else:
-                # 阶段3+ 扩展：baostock/tushare/tickflow/tdx/rss
-                log.warning("数据源 %s 尚未实现（阶段3+）", source)
+                log.warning("未知数据源: %s", source)
                 return None
         except Exception as e:
             log.error("创建 Provider %s 异常: %s", source, e)
@@ -281,6 +298,7 @@ class IntegratorScheduler:
         # 记录运行开始
         run_id = self._progress_store.start_run(task_id)
         self._task_queue.mark_running(task_id)
+        task_start_ts = time.time()
 
         log.info("任务 %s 开始: source=%s table=%s start=%s end=%s",
                  task_id, source, table, start, today)
@@ -315,6 +333,7 @@ class IntegratorScheduler:
                 )
 
             # 完成
+            task_elapsed = time.time() - task_start_ts
             if last_error:
                 self._progress_store.save_progress(
                     task_id, source, latest_key, "FAILED", total_rows, last_error
@@ -323,6 +342,8 @@ class IntegratorScheduler:
                     self._progress_store.finish_run(run_id, "FAILED", total_rows, total_rows, last_error)
                 self._task_queue.mark_failed(task_id)
                 self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
+                self._metrics.record_task(task_id, source, "FAILED", task_elapsed, total_rows)
+                self._metrics.flush()
                 self._emit_event("task_completed", task_id=task_id, success=False)
                 return False
             else:
@@ -333,12 +354,15 @@ class IntegratorScheduler:
                     self._progress_store.finish_run(run_id, "SUCCESS", total_rows, total_rows)
                 self._task_queue.mark_completed(task_id)
                 log.info("任务 %s 完成: rows=%d last_key=%s", task_id, total_rows, latest_key)
+                self._metrics.record_task(task_id, source, "SUCCESS", task_elapsed, total_rows)
+                self._metrics.flush()
                 self._emit_event("task_completed", task_id=task_id, success=True)
                 return True
 
         except Exception as e:
             last_error = str(e)
             log.error("任务 %s 异常: %s", task_id, e, exc_info=True)
+            task_elapsed = time.time() - task_start_ts
             self._progress_store.save_progress(
                 task_id, source, latest_key, "FAILED", total_rows, last_error
             )
@@ -346,6 +370,8 @@ class IntegratorScheduler:
                 self._progress_store.finish_run(run_id, "FAILED", total_rows, total_rows, last_error)
             self._task_queue.mark_failed(task_id)
             self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
+            self._metrics.record_task(task_id, source, "FAILED", task_elapsed, total_rows)
+            self._metrics.flush()
             self._emit_event("task_completed", task_id=task_id, success=False)
             return False
 
