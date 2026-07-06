@@ -4,14 +4,14 @@ submodule_path: src/zephyr/infrastructure/db
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.1"
+version: "4.3.2"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: AI-session-20260519-001
-date: "2026-07-01"
+date: "2026-07-07"
 valid_from: "2026-05-19"
 ttl: permanent
 rule_form: structural
@@ -47,7 +47,7 @@ references:
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
-> module_id: SH-DB-001 | version: 4.3.1 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
+> module_id: SH-DB-001 | version: 4.3.2 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
 > actual_disk_path: `src/zephyr/governance/persistence/` | generation: 3 | construction_progress: completed
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
@@ -363,6 +363,9 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | `src/zephyr/infrastructure/db/sqlite_schema.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/db/task_repo.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/db/transition.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/database_service.py` | ✅ 已实现 | governance版DatabaseService（连接管理+健康检查，继承DatabaseCRUDMixin，P-PLAN-1双连接） |
+| `src/zephyr/infrastructure/database_service.py` | ✅ 已实现 | infrastructure版DatabaseService（连接管理+ClickHouse+健康检查，继承DatabaseCRUDMixin，P-PLAN-2统一row_factory） |
+| `src/zephyr/shared/database/database_crud_mixin.py` | ✅ 已实现 | DatabaseCRUDMixin（共享9个CRUD方法+_TASK_COLUMNS单一真源，被两个DatabaseService类继承，P-PLAN专项工程抽取消除约100行重复） |
 
 ### 1.2 测试文件
 
