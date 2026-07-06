@@ -126,6 +126,10 @@ select = [
     "SIM",  # flake8-simplify
     "RUF",  # ruff-specific rules
 ]
+# 5.96 维度防御门闸（R67 引入）：
+# 布尔字段冗余/参数蔓延由 scripts/governance/d7_code/scan_debt.py 自定义 AST 扫描器检测
+# （不依赖 ruff 是否安装，纯 stdlib 实现，可执行自定义语义规则）。
+# 未来 ruff 全量启用后再考虑加 PLR0913（too-many-args）/PLR0916（too-many-boolean-expr）。
 ignore = [
     "E501",  # line too long (handled by formatter)
     "E402",  # module level import not at top of file (项目风格：import前有docstring/注释)

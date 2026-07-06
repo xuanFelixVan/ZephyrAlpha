@@ -721,6 +721,28 @@ repos:
         stages: [manual]
         description: "代码重复检测门禁——委托 verify_dedup.py -> cli.py verify，AST 级函数粒度重复检测。阶段1：manual 手动运行，不阻断 commit"
 
+      # ── GATE-DEBT-BRIDGE: 架构债务防御门禁（5.96 维度防复发，R67 引入）──
+      # 权威依据：docs/02_enterprise_architecture/architecture_debt_registry.md 5.96 维度
+      # 真源：scripts/governance/d7_code/scan_debt.py
+      # 检测内容：3 类 AI 易复发的代码异味
+      #   DEBT-1 dataclass 含 action/role 字段 + ≥2 个派生布尔字段（5.96.2 病根）
+      #   DEBT-2 函数含 ≥3 个 bool 参数（5.96.3 病根）
+      #   DEBT-3 任意 class 含 action + should_*/is_*/_allowed 字段（DEBT-1 非 dataclass 兜底）
+      # 阶段1（当前）：stages:[manual]——手动 `pre-commit run gate-debt-bridge` 触发，不阻断常规 commit
+      #   原因：现存 13 处 DEBT-2 违规（hallucination_detector.py 等），强制阻断会卡死工作流
+      # 阶段2（待定）：存量违规清零后移除 stages:[manual]——commit 时自动阻断新增违规
+      # 阶段3（待定）：CI 集成——`pre-commit run gate-debt-bridge --all-files` 加入 CI pipeline
+      # 设计原则：误报优先（宁可放过，不可误伤 commit）；纯 stdlib（不依赖 ruff 是否安装）
+      - id: gate-debt-bridge
+        name: "GATE-DEBT-BRIDGE: 架构债务防御（5.96 维度防复发）"
+        entry: python scripts/governance/d7_code/scan_debt.py --ci
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        stages: [manual]
+        description: "5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。阶段1 manual 不阻断，存量违规清零后转 commit 阶段自动阻断"
+
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage
   # 格式: type(scope): description — type ∈ {feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert}
