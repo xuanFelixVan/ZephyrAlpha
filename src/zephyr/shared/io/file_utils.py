@@ -137,7 +137,7 @@ def atomic_write(
     except Exception:
         if tmp_path.exists():
             tmp_path.unlink(missing_ok=True)
-        raise AtomicWriteError(f"atomic_write failed for {target}")
+        raise AtomicWriteError("atomic_write failed")
 
     return target
 
@@ -168,7 +168,7 @@ def safe_read(
     if verify_sha256:
         actual = hashlib.sha256(content.encode(encoding)).hexdigest()
         if actual != verify_sha256:
-            raise ValueError(f"SHA-256 mismatch for {filepath}: expected {verify_sha256[:16]}..., got {actual[:16]}...")
+            raise ValueError(f"SHA-256 mismatch: expected {verify_sha256[:16]}..., got {actual[:16]}...")
 
     return content
 
@@ -237,7 +237,7 @@ def restore_backup(
     bak_path = target.parent / f"{target.name}.bak.{backup_index}"
 
     if not bak_path.exists():
-        raise FileNotFoundError(f"Backup not found: {bak_path}")
+        raise FileNotFoundError("Backup not found")
 
     shutil.copy2(bak_path, target)
     return target

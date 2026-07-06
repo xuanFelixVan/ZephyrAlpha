@@ -206,7 +206,7 @@ def _read_file_robust(path: Path, mode: str = "r", max_retries: int = 5) -> str:
                 raise
             delay = base_delay * (2**attempt) + random.uniform(0, 0.01)
             time.sleep(delay)
-    raise PermissionError(f"Cannot read {path} after {max_retries} retries")
+    raise PermissionError(f"Cannot read file after {max_retries} retries (permission denied)")
 
 
 def _file_hash(path: Path) -> str:

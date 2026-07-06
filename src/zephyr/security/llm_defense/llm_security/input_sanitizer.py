@@ -191,14 +191,14 @@ class InputSanitizer:
 
         for pat in DANGEROUS_PATTERNS:
             if pat.search(path):
-                raise PathTraversalError(f"Dangerous pattern in path: {path}")
+                raise PathTraversalError("Dangerous pattern in path")
 
         resolved = (self._root / path).resolve()
 
         try:
             resolved.relative_to(self._root)
         except ValueError:
-            raise PathTraversalError(f"Path escapes root: {path}")
+            raise PathTraversalError("Path escapes root")
 
         if mode == "write":
             rel = str(resolved.relative_to(self._root)).replace("\\", "/")

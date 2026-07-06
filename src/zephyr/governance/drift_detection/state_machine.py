@@ -210,7 +210,7 @@ class DriftStateMachine:
         record = self._events.get(event_id)
 
         if record is None:
-            raise InvalidTransitionError(f"Event {event_id} not found")
+            raise InvalidTransitionError("Event not found")
 
         result = self.transition(event_id, record.state, DriftState.SUPPRESSED)
 

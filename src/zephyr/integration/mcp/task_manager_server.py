@@ -402,8 +402,8 @@ class TaskManagerMCP:
     def _persist(self, tc: TaskCard) -> None:
         if self.task_repo is None:
             raise RuntimeError(
-                f"MCP _persist 失败: task_id={tc.task_id} — task_repo 未注入，"
-                f"数据将丢失。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
+                "MCP _persist 失败: task_repo 未注入，"
+                "数据将丢失。请确保 TaskManagerMCP(task_repo=...) 正确初始化。"
             )
         try:
             existing = self.task_repo.get(tc.task_id)
@@ -414,7 +414,7 @@ class TaskManagerMCP:
             else:
                 self.task_repo.create(tc)
         except Exception as exc:
-            raise RuntimeError(f"MCP _persist 失败: task_id={tc.task_id} — {type(exc).__name__}: {exc}") from exc
+            raise RuntimeError(f"MCP _persist 失败: {type(exc).__name__}: {exc}") from exc
 
         if self.docs_dir:
             self._sync_md(tc)

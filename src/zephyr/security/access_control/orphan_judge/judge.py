@@ -259,7 +259,7 @@ class OrphanJudge:
         """单文件判定：L0→L1→L2→L3→L4→决策表→安全围栏→处置建议"""
         target = Path(path)
         if not target.exists():
-            raise OrphanJudgeError(f"File not found: {path}")
+            raise OrphanJudgeError("File not found")
 
         layers: list[LayerResult] = []
 

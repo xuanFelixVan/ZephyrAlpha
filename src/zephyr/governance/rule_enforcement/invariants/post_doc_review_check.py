@@ -229,7 +229,7 @@ class PostDocReviewScanner:
         self._root = project_root
         # R7 防御：session_id 校验——禁止路径遍历字符
         if session_id and not _SESSION_ID_PATTERN.match(session_id):
-            raise ValueError(f"session_id 含非法字符（只允许字母/数字/下划线/连字符）: {session_id!r}")
+            raise ValueError("session_id 含非法字符（只允许字母/数字/下划线/连字符）")
         self._session_id = session_id
         self._session_log_dir = project_root / "session_logs"
 

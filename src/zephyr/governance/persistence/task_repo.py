@@ -1194,7 +1194,7 @@ class TaskRepository:
         """按 task_id 查询，不存在抛 TaskNotFoundError。"""
         task = self.get(task_id)
         if task is None:
-            raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+            raise TaskNotFoundError("任务不存在")
         return task
 
     # ------------------------------------------------------------------
@@ -1266,7 +1266,7 @@ class TaskRepository:
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
             if row is None:
-                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+                raise TaskNotFoundError("任务不存在")
 
             updates: list[tuple[str, object]] = []
             if title is not None:
@@ -1371,7 +1371,7 @@ class TaskRepository:
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
             if row is None:
-                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+                raise TaskNotFoundError("任务不存在")
 
             conn.execute(
                 "UPDATE tasks SET verification_status='verified', "
@@ -1413,7 +1413,7 @@ class TaskRepository:
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
             if row is None:
-                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+                raise TaskNotFoundError("任务不存在")
 
             current_p = row["priority"]
             proposed_p = getattr(P, proposed_priority, proposed_priority)
@@ -1520,7 +1520,7 @@ class TaskRepository:
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
             if row is None:
-                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+                raise TaskNotFoundError("任务不存在")
 
             if not row["approval_required"]:
                 return _row_to_taskcard(row)
@@ -1563,7 +1563,7 @@ class TaskRepository:
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
             if row is None:
-                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+                raise TaskNotFoundError("任务不存在")
 
             conn.execute(
                 "UPDATE tasks SET approval_required = 0, priority_proposed = NULL, rejection_cooldown_until = ?, updated_at = ? WHERE task_id = ?",
@@ -1652,7 +1652,7 @@ class TaskRepository:
             with self._write_tx() as conn:
                 row = self._fetch_row(conn, task_id)
                 if row is None:
-                    raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+                    raise TaskNotFoundError("任务不存在")
 
                 # G1 门禁检查在写事务内执行，与状态转换原子落盘
                 # GateEngine 接受外部 conn，不再管理独立事务

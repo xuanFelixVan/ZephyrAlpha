@@ -141,7 +141,7 @@ class ProjectionEngine:
             try:
                 state = handler(state, payload)
             except Exception as exc:
-                raise ProjectionError(f"Handler {ev.event_type} failed for event {ev.event_id}: {exc}") from exc
+                raise ProjectionError(f"Handler {ev.event_type} failed: {exc}") from exc
 
         return state
 

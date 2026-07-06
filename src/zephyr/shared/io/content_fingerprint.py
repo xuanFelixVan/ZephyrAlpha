@@ -74,9 +74,9 @@ def compute_hash(path: str | Path) -> str:
                     break
                 h.update(chunk)
     except FileNotFoundError:
-        raise FingerprintNotFoundError(f"File not found: {path}")
+        raise FingerprintNotFoundError("File not found")
     except PermissionError:
-        raise FingerprintPermissionError(f"Permission denied: {path}")
+        raise FingerprintPermissionError("Permission denied")
     return h.hexdigest()
 
 

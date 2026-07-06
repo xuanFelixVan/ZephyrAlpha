@@ -131,7 +131,7 @@ class TaskManagerMCP:
             raise
         except Exception as exc:
             raise PermissionError(
-                f"RBAC 检查异常: action={action}, task_id={task_id}"
+                f"RBAC 检查异常: action={action}"
             ) from exc
 
     def _register_tools(self) -> None:
@@ -573,8 +573,8 @@ class TaskManagerMCP:
     def _persist(self, tc: TaskCard) -> None:
         if self.task_repo is None:
             raise RuntimeError(
-                f"MCP _persist 失败: task_id={tc.task_id} — 任务存储后端未注入，"
-                f"数据将丢失。请确保正确初始化。"
+                "MCP _persist 失败: 任务存储后端未注入，"
+                "数据将丢失。请确保正确初始化。"
             )
         try:
             existing = self.task_repo.get(tc.task_id)
@@ -585,7 +585,7 @@ class TaskManagerMCP:
             else:
                 self.task_repo.create(tc)
         except Exception as exc:
-            raise RuntimeError(f"MCP _persist 失败: task_id={tc.task_id}") from exc
+            raise RuntimeError("MCP _persist 失败") from exc
 
         if self.docs_dir:
             self._sync_md(tc)

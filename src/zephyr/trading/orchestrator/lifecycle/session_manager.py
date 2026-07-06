@@ -127,7 +127,7 @@ class SessionManager:
         with self._lock:
             session = self._sessions.get(session_id)
             if session is None:
-                raise SessionError(f"Session {session_id} not found")
+                raise SessionError("Session not found", details={"session_id": session_id})
             current = session["state"]
             target = SessionState(target_state)
             allowed = any(t.get("from") == current.value and t.get("to") == target.value for t in self._transitions)
@@ -149,7 +149,7 @@ class SessionManager:
         with self._lock:
             session = self._sessions.get(session_id)
             if session is None:
-                raise SessionError(f"Session {session_id} not found")
+                raise SessionError("Session not found", details={"session_id": session_id})
             return session["state"]
 
     def check_timeouts(self) -> list[str]:
