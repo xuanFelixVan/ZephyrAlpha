@@ -59,28 +59,41 @@ class DatabaseService:
         self._clickhouse_conn: Any | None = None  # clickhouse_driver.Client (C1行情仓库)
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 HIGH）：lazy init 线程安全
 
-    def get_governance_conn(self) -> sqlite3.Connection:
+    def get_governance_conn(self, read_only: bool = False) -> sqlite3.Connection:
         """获取 governance.db 连接（保持 SQLite）
 
         复用 sqlite_schema.get_db_connection() 确保 PRAGMA 基线（WAL/busy_timeout 等）一致，
         避免 DatabaseService 自行 sqlite3.connect() 导致连接行为漂移。
+
+        :param read_only: True=只读连接（PRAGMA query_only=1）。
+                          安全约束：业务数据库查询MUST显式 read_only=True（project_memory 硬约束）。
+                          read_only 仅在连接首次创建时生效（lazy init 缓存机制）。
         """
         if self._governance_conn is None:
             with self._lock:
                 if self._governance_conn is None:
                     self._governance_conn = get_db_connection(self.governance_db)
+                    if read_only:
+                        self._governance_conn.execute("PRAGMA query_only = 1")
         return self._governance_conn
 
-    def get_depgraph_conn(self) -> psycopg2.extensions.connection:
+    def get_depgraph_conn(self, read_only: bool = False) -> psycopg2.extensions.connection:
         """获取 depgraph (PostgreSQL) 连接（P2迁移后从 SQLite 切换到 PostgreSQL）
 
         返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
+
+        :param read_only: True=只读连接（SET default_transaction_read_only=on）。
+                          安全约束：业务数据库查询MUST显式 read_only=True（project_memory 硬约束）。
+                          read_only 仅在连接首次创建时生效（lazy init 缓存机制）。
         """
         if self._depgraph_conn is None:
             with self._lock:
                 if self._depgraph_conn is None:
                     self._depgraph_conn = get_depgraph_pg_connection(autocommit=True)
                     self._depgraph_conn.cursor_factory = RealDictCursor
+                    if read_only:
+                        with self._depgraph_conn.cursor() as cur:
+                            cur.execute("SET default_transaction_read_only = on")
         return self._depgraph_conn
 
     def get_clickhouse_conn(self):

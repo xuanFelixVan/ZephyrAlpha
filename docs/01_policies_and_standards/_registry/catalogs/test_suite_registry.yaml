@@ -190,18 +190,6 @@ items:
   name: test_construction_verifier.py
   node_type: test
   status: active
-- file: tests/a2a/test_legacy_auditor.py
-  name: test_legacy_auditor.py
-  node_type: test
-  status: active
-- file: tests/a2a/test_legacy_governance_adapter.py
-  name: test_legacy_governance_adapter.py
-  node_type: test
-  status: active
-- file: tests/a2a/test_legacy_protocol.py
-  name: test_legacy_protocol.py
-  node_type: test
-  status: active
 - file: tests/a2a/test_mcp.py
   name: test_mcp.py
   node_type: test

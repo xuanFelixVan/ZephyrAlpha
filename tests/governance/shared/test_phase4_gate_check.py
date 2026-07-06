@@ -49,7 +49,6 @@ def test_phase4_gate_all_contracts_exist():
 
     modules = [
         "zephyr.autonomy_core.skill_rbac_registry",
-        "zephyr.infrastructure.a2a_protocol.legacy_auditor",
         "zephyr.infrastructure.rollback.auditor",
         "zephyr.infrastructure.rollback.budget_tracker",
         "zephyr.governance.agent_spec.rbac_bridge",

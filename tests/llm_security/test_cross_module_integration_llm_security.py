@@ -151,11 +151,6 @@ class TestL10ComplianceLSGIntegration:
 
 
 class TestA2ALSGIntegration:
-    def test_a2a_lsg_scan_function_exists(self):
-        from zephyr.infrastructure.a2a_protocol.legacy_governance_adapter import _lsg_scan_a2a_sync
-
-        assert callable(_lsg_scan_a2a_sync)
-
     def test_a2a_verify_pair_without_content(self):
         from zephyr.infrastructure.a2a_protocol import GovernanceAdapter
 
