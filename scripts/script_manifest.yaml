@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-06'
-total_scripts: 565
+total_scripts: 567
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1734,6 +1734,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/generators/generate_asset_catalog.py
+  path: governance/d5_architecture/generators/generate_asset_catalog.py
+  description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.1'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/generators/generate_capability_heatmap.py
   path: governance/d5_architecture/generators/generate_capability_heatmap.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.1'
@@ -1753,6 +1761,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_constraint_violations.py
   path: governance/d5_architecture/generators/generate_constraint_violations.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_contract_catalog.py
+  path: governance/d5_architecture/generators/generate_contract_catalog.py
+  description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.1'
   domain: governance
   execution_plane: warm-path
   status: registered
