@@ -33,14 +33,14 @@ tasks:
 
   - task_id: kline_daily_incremental
     table: c1_market.kline_daily
-    source: ifind
+    source: miniqmt
     schedule: daily_kline
     incremental: true
     dependencies: []  # kline_daily 独立，不依赖 hfq
     capability: kline_daily
     symbols: null
     extra:
-      description: "不复权日K线增量"
+      description: "不复权日K线增量（miniQMT，保留 iFind 配额给专属数据）"
 
   - task_id: daily_valuation_incremental
     table: c1_market.daily_valuation
@@ -55,14 +55,14 @@ tasks:
 
   - task_id: index_kline_incremental
     table: c1_market.index_kline
-    source: ifind
+    source: miniqmt
     schedule: daily_kline
     incremental: true
     dependencies: []
     capability: index_kline
     symbols: null
     extra:
-      description: "指数日K线增量"
+      description: "指数日K线增量（miniQMT 沪深指数 609 只，iFind 补齐其余）"
 
   # ============== 盘后资金时段（17:00 周一-五）==============
   - task_id: margin_trading_incremental
@@ -612,14 +612,14 @@ tasks:
 
   - task_id: kline_daily_full_refresh
     table: c1_market.kline_daily
-    source: baostock
+    source: miniqmt
     schedule: monthly_static
     incremental: false
     dependencies: []
     capability: kline_daily
     symbols: null
     extra:
-      description: "日K线全量降级源刷新（baostock，数据滞后约1周）"
+      description: "日K线全量刷新（miniQMT，原降级源 baostock 已替换）"
 
   - task_id: macro_data_full_refresh
     table: c1_market.macro_data
