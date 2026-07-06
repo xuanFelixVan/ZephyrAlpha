@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 orphan_judge（D_SECURITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-06 14:41:08
+> 最后更新: 2026-07-06 14:42:01
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 147 | Module Count | 147 |
 | 域内依赖 | 125 | Internal Dependencies | 125 |
-| 跨域入边 | 199 | Cross-domain Incoming | 199 |
+| 跨域入边 | 201 | Cross-domain Incoming | 201 |
 | 跨域出边 | 23 | Cross-domain Outgoing | 23 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 67 | Prototype Modules | 67 |
@@ -153,7 +153,7 @@ graph TD
         src_zephyr_security_access_control_guards_rbac_guard_py["src/zephyr/security/access_control/guards/rbac_... production"]
     end
     src_zephyr_security_access_control_genesis_bootstrap_py -->|import_depends| src_zephyr_security_access_control_engine_degradation_py
-    src_zephyr_security_access_control_detectors_init_py -.->|config_depends| src_zephyr_security_access_control_detectors_context_drift_detector_py
+    src_zephyr_security_access_control_detectors_init_py -.->|config_depends| src_zephyr_security_access_control_detectors_anomaly_detector_py
     src_zephyr_security_access_control_guards_anti_pattern_guard_py -.->|config_depends| src_zephyr_security_access_control_guards_init_py
     src_zephyr_security_access_control_guards_permission_guard_py -->|import_depends| src_zephyr_security_access_control_guards_rbac_guard_py
     D_SHARED["D_SHARED production"]
@@ -165,6 +165,7 @@ graph TD
     D_INTEGRATION_GATEWAY -.->|import_depends| src_zephyr_security_access_control_guards_permission_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_security_access_control_guards_memory_provenance_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_security_access_control_guards_memory_guard_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_security_access_control_guards_audit_log_guard_py
     D_TRADING["D_TRADING production"]
     D_TRADING -->|import_depends| src_zephyr_security_access_control_genesis_bootstrap_py
     D_AUDITTEST -.->|test_depends| src_zephyr_security_access_control_guards_cybersec_2026_guard_py
@@ -175,7 +176,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_security_access_control_guards_native_api_guard_py
     D_AUDITTEST -.->|test_depends| src_zephyr_security_access_control_exceptions_py
     D_AUDITTEST -.->|test_depends| src_zephyr_security_access_control_guard_layers_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_security_access_control_guards_permission_guard_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -223,14 +223,14 @@ graph TD
         src_zephyr_security_access_control_orphan_judge_kb_bridge_py["src/zephyr/security/access_control/orphan_judge... prototype"]
     end
     src_zephyr_security_access_control_orphan_judge_judge_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_duplicate_detector_py
-    src_zephyr_security_access_control_orphan_judge_main_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py
+    src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_decision_table_py
+    src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_deprecation_tracker_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_config_loader_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_db_py
-    src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_deprecation_tracker_py
-    src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_decision_table_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_duplicate_detector_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_main_py
+    src_zephyr_security_access_control_orphan_judge_main_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     D_SHARED["D_SHARED production"]
     src_zephyr_security_access_control_immutable_core_py -->|import_depends| D_SHARED
     src_zephyr_security_access_control_orphan_judge_feedback_bridge_py -.->|import_depends| D_SHARED
@@ -309,9 +309,9 @@ graph TD
     end
     src_zephyr_security_access_control_orphan_judge_orphan_collector_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_safety_fence_py
     src_zephyr_security_access_control_orphan_judge_report_generator_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_models_py
+    src_zephyr_security_access_control_orphan_judge_swid_tag_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_control_verifiers_bootstrap_verifier_py -.->|config_depends| src_zephyr_security_access_control_verifiers_init_py
     src_zephyr_security_access_control_verifiers_continuous_verifier_py -.->|config_depends| src_zephyr_security_access_control_verifiers_init_py
-    src_zephyr_security_access_control_orphan_judge_swid_tag_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_control_verifiers_micro_verifier_py -.->|config_depends| src_zephyr_security_access_control_verifiers_init_py
     src_zephyr_security_access_control_verifiers_post_action_verifier_py -.->|config_depends| src_zephyr_security_access_control_verifiers_init_py
     src_zephyr_security_adversarial_validation_init_py -.->|import_depends| src_zephyr_security_adversarial_validation_ai_attack_generator_py
@@ -382,41 +382,41 @@ graph TD
         src_zephyr_security_services_init_py["src/zephyr/security/services/__init__.py prototype"]
     end
     src_zephyr_security_adversarial_validation_blast_radius_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_bypass_recorder_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_async_monitor_py -.->|import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
-    src_zephyr_security_adversarial_validation_async_monitor_py -.->|import_depends| src_zephyr_security_adversarial_validation_cleanup_py
     src_zephyr_security_adversarial_validation_async_monitor_py -->|import_depends| src_zephyr_security_adversarial_validation_circuit_breaker_py
+    src_zephyr_security_adversarial_validation_async_monitor_py -.->|import_depends| src_zephyr_security_adversarial_validation_cleanup_py
+    src_zephyr_security_adversarial_validation_bypass_recorder_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversarial_validation_circuit_breaker_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_cli_py -.->|import_depends| src_zephyr_security_adversarial_validation_cold_start_py
     src_zephyr_security_adversarial_validation_cli_py -.->|import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
     src_zephyr_security_adversarial_validation_cli_py -.->|import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
     src_zephyr_security_adversarial_validation_cli_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_cli_py -.->|import_depends| src_zephyr_security_adversarial_validation_validator_py
-    src_zephyr_security_adversarial_validation_constitution_guard_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_circuit_breaker_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversarial_validation_constitution_engine_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_commit_trigger_py -.->|import_depends| src_zephyr_security_adversarial_validation_circuit_breaker_py
     src_zephyr_security_adversarial_validation_commit_trigger_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_commit_trigger_py -.->|import_depends| src_zephyr_security_adversarial_validation_validator_py
+    src_zephyr_security_adversarial_validation_constitution_guard_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_convergence_checker_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_constitution_engine_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_game_day_runner_py -.->|import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
     src_zephyr_security_adversarial_validation_game_day_runner_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_game_day_runner_py -.->|import_depends| src_zephyr_security_adversarial_validation_validator_py
+    src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversarial_validation_injection_engine_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversarial_validation_game_day_scheduler_py -.->|import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
+    src_zephyr_security_adversarial_validation_steady_state_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|import_depends| src_zephyr_security_adversarial_validation_convergence_checker_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|import_depends| src_zephyr_security_adversarial_validation_validator_py
-    src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_scenario_loader_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_injection_engine_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_game_day_scheduler_py -.->|import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
-    src_zephyr_security_adversarial_validation_steady_state_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
     src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
     src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_cleanup_py
     src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
+    src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_steady_state_py
     src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
     src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_steady_state_py
     src_zephyr_security_adversarial_validation_validator_event_bridge_py -.->|import_depends| src_zephyr_security_adversarial_validation_validator_py
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_INTEGRATION
@@ -477,7 +477,7 @@ graph TD
 |------|:---:|---------|
 | D_AUDITTEST | 168 | test_depends |
 | D_AUTONOMY_PERM | 12 | import_depends |
-| D_GOVERNANCE | 8 | import_depends |
+| D_GOVERNANCE | 10 | import_depends,runtime |
 | D_TRADING | 6 | import_depends |
 | D_GOV_ENFORCEMENT | 3 | import_depends |
 | D_INTEGRATION_GATEWAY | 1 | import_depends |
@@ -698,44 +698,44 @@ graph TD
 │   genesis_bootstrap.py → immutable_core.py                       │
 │   genesis_bootstrap.py → kill_switch.py                          │
 │   abac_guard.py → identity.py                                    │
-│   rbac_guard.py → identity.py                                    │
-│   rbac_guard.py → immutable_core.py                              │
-│   permission_guard.py → identity.py                              │
 │   permission_guard.py → immutable_core.py                        │
+│   permission_guard.py → identity.py                              │
 │   permission_guard.py → rbac_guard.py                            │
+│   rbac_guard.py → immutable_core.py                              │
+│   rbac_guard.py → identity.py                                    │
 │   config_loader.py → models.py                                   │
 │   db.py → models.py                                              │
 │   judge.py → duplicate_detector.py                               │
 │   mcp_integration.py → judge.py                                  │
-│   models.py → judge.py                                           │
 │   orphan_collector.py → cascade_analyzer.py                      │
-│   orphan_collector.py → deprecation_tracker.py                   │
 │   orphan_collector.py → decision_table.py                        │
+│   orphan_collector.py → deprecation_tracker.py                   │
 │   orphan_collector.py → safety_fence.py                          │
+│   models.py → judge.py                                           │
 │   rbac_bridge.py → permission_guard.py                           │
-│   reference_graph_engine.py → judge.py                           │
 │   registration_checker.py → judge.py                             │
+│   reference_graph_engine.py → judge.py                           │
 │   report_generator.py → db.py                                    │
 │   report_generator.py → models.py                                │
-│   standalone_evaluator.py → judge.py                             │
-│   __main__.py → judge.py                                         │
+│   swid_tag.py → models.py                                        │
 │   __init__.py → cascade_analyzer.py                              │
+│   __init__.py → decision_table.py                                │
+│   __init__.py → deprecation_tracker.py                           │
 │   __init__.py → config_loader.py                                 │
 │   __init__.py → db.py                                            │
-│   __init__.py → deprecation_tracker.py                           │
-│   __init__.py → decision_table.py                                │
 │   __init__.py → duplicate_detector.py                            │
+│   __init__.py → orphan_collector.py                              │
 │   __init__.py → models.py                                        │
 │   __init__.py → orphan_detector.py                               │
-│   __init__.py → orphan_collector.py                              │
-│   __init__.py → reference_graph_engine.py                        │
 │   __init__.py → registration_checker.py                          │
+│   __init__.py → reference_graph_engine.py                        │
 │   __init__.py → report_generator.py                              │
 │   __init__.py → safety_fence.py                                  │
-│   __init__.py → standalone_evaluator.py                          │
-│   __init__.py → __main__.py                                      │
-│   __init__.py → unique_analyzer.py                               │
 │   __init__.py → swid_tag.py                                      │
+│   __init__.py → standalone_evaluator.py                          │
+│   __init__.py → unique_analyzer.py                               │
+│   __init__.py → __main__.py                                      │
+│   standalone_evaluator.py → judge.py                             │
 │   unique_analyzer.py → judge.py                                  │
 │   ...还有 60 条 / 60 more edges                                  │
 └──────────────────────────────────────────────────────────────────┘
