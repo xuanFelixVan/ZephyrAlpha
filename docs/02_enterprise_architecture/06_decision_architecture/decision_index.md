@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-06T13:16:47
+> 生成时间: 2026-07-06T13:22:03
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -64,11 +64,11 @@ flowchart TD
     LL4 -.->|triggering| LL5
     LL5 -.->|triggering| LL6
 
-    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
-    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px
-    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
-    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
-    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000
+    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#000
+    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 ```
 
 ### 运营态全景图（仅 design_maturity=production 的 layer/node）
@@ -91,11 +91,11 @@ flowchart TD
     LL0 -.->|triggering| LL1
     LL1 -.->|triggering| LL4
 
-    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
-    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px
-    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
-    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
-    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000
+    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#000
+    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 ```
 
 ### 设计态全景图（仅 design_maturity=design 的 layer/node）
@@ -126,11 +126,11 @@ flowchart TD
     LL3 -.->|triggering| LL5
     LL5 -.->|triggering| LL6
 
-    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
-    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px
-    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
-    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
-    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000
+    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#000
+    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 ```
 
 ### 层级详情图（10 层卡片 + 频率/状态，标签标注 [design]/[production]）
@@ -159,11 +159,11 @@ flowchart LR
     L6 -.->|feedback| L1
     L6 -.->|feedback| L5
 
-    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
-    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px
-    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
-    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
-    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000
+    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#000
+    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 ```
 
 ### 不变量图（6 节点类型 + 5 承重墙不变量）
@@ -194,8 +194,8 @@ flowchart TD
     INV_DEC_INV_003 -.- NT_feedback
     INV_DEC_INV_005 -.- NT_signal
 
-    classDef nodeType fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    classDef invariant fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    classDef nodeType fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#000
+    classDef invariant fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#000
 ```
 
 ## Track 清单（四轨）

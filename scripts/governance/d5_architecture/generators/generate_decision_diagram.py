@@ -212,13 +212,14 @@ def _gen_overview_mmd(
     for e in edges:
         lines.append(f'    N{e["from"]} -->|{e["type"]}| N{e["to"]}')
 
-    # 样式
+    # 样式（color:#000 显式黑色文字，对标 02_domain_architecture_docs 模式；
+    # bsPlanned/bsDeprecated 加 stroke-dasharray 虚线边框区分设计态）
     lines.append("")
-    lines.append("    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px")
-    lines.append("    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px")
-    lines.append("    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px")
-    lines.append("    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px")
-    lines.append("    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px")
+    lines.append("    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000")
+    lines.append("    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000")
+    lines.append("    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#000")
+    lines.append("    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
+    lines.append("    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
 
     return "\n".join(lines) + "\n", len(tracks), len(layers), len(edges)
 
@@ -256,13 +257,13 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
             lines.append(f'    {l6} -.->|feedback| {l1}')
         lines.append(f'    {l6} -.->|feedback| {l5}')
 
-    # 图例
+    # 图例（color:#000 显式黑色文字，对标 02_domain_architecture_docs 模式）
     lines.append("")
-    lines.append("    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px")
-    lines.append("    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px")
-    lines.append("    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px")
-    lines.append("    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px")
-    lines.append("    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px")
+    lines.append("    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000")
+    lines.append("    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000")
+    lines.append("    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#000")
+    lines.append("    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
+    lines.append("    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
 
     return "\n".join(lines) + "\n"
 
@@ -309,10 +310,10 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
     lines.append("    INV_DEC_INV_003 -.- NT_feedback")
     lines.append("    INV_DEC_INV_005 -.- NT_signal")
 
-    # 样式
+    # 样式（color:#000 显式黑色文字，对标 02_domain_architecture_docs 模式）
     lines.append("")
-    lines.append("    classDef nodeType fill:#e3f2fd,stroke:#1565c0,stroke-width:2px")
-    lines.append("    classDef invariant fill:#fff8e1,stroke:#ff8f00,stroke-width:2px")
+    lines.append("    classDef nodeType fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#000")
+    lines.append("    classDef invariant fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#000")
 
     return "\n".join(lines) + "\n"
 
