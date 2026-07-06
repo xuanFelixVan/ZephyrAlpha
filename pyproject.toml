@@ -203,6 +203,11 @@ extend-aliases = { "zephyr.shared.paths" = "paths", "zephyr.shared.time_utils" =
 python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
+# 5.145 维度 P0：mypy 加严——裸 Any 滥用检测（R70 引入）
+# disallow_any_generics: dict/List 等泛型必须带参数（禁止裸 dict/List）
+# warn_any_explicit: 显式 Any 使用告警（配合 check_any_abuse.py AST 门禁）
+disallow_any_generics = true
+warn_any_explicit = true
 ignore_missing_imports = true
 namespace_packages = true
 explicit_package_bases = true
