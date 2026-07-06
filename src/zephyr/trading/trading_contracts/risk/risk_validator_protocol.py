@@ -19,7 +19,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
+
+if TYPE_CHECKING:
+    # 5.145.12 修复：limits: Any → RiskLimits（SSoT: cross_layer_contracts.yaml CTR-003）
+    # TYPE_CHECKING 导入避免运行期循环依赖；from __future__ import annotations 使注解惰性求值
+    from zephyr.shared.contracts.risk_limits import RiskLimits
 
 
 @dataclass(frozen=True)
@@ -38,7 +43,7 @@ class RiskValidatorProtocol(Protocol):
         symbol: str,
         target_weight: float,
         current_holdings: dict[str, float],
-        limits: Any,
+        limits: RiskLimits,
     ) -> list[ViolationDetail]: ...
 
     def validate_portfolio(
@@ -46,7 +51,7 @@ class RiskValidatorProtocol(Protocol):
         holdings: dict[str, float],
         market_values: dict[str, float],
         total_nav: Decimal,
-        limits: Any,
+        limits: RiskLimits,
     ) -> list[ViolationDetail]: ...
 
 

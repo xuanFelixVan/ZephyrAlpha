@@ -3356,6 +3356,12 @@ creation_tokens:
     created_by: "session-sess-29992-20260706143221"
     capability: "architecture_debt_scanner"
 
+  # --- 类型注解 Any 滥用门禁（R70 引入，5.145 维度防复发）---
+  - file: "scripts/governance/d7_code/check_any_abuse.py"
+    token: "auto-check-any-abuse-20260706"
+    created_by: "session-sess-15816-20260706181615"
+    capability: "any_abuse_scanner"
+
   # --- commit_gates/ 门禁文件（CREATE-GUARD 自身 + 已有 4 gate） ---
   - file: "src/zephyr/governance/commit_gates/create_guard.py"
     token: "auto-create-guard-20260630"

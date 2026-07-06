@@ -744,6 +744,28 @@ repos:
         files: "^src/zephyr/.*\\.py$"
         description: "5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。阶段2 已转硬阻断（R68 存量清零）"
 
+      # ── GATE-ANY-ABUSE: 类型注解 Any 滥用门禁（5.145 维度防复发，R70 引入）──
+      # 权威依据：docs/02_enterprise_architecture/architecture_debt_registry.md 5.145 维度
+      # 真源：scripts/governance/d7_code/check_any_abuse.py
+      # 检测内容：函数签名中的"裸 Any 滥用"——AI 偷懒写法的典型模式
+      #   ANY-1 函数参数类型为裸 Any（非 dict[str, Any] 等容器型，应替换为具体类型/Protocol）
+      #   ANY-2 函数返回值类型为裸 Any（同上）
+      # 豁免：dict[str,Any] / list[Any] / Callable[...,Any] / TYPE_CHECKING 块 / **kwargs:Any / dunder
+      # 阶段1（R70 完成 2026-07-06）：stages:[manual] 不阻断常规 commit，手动触发
+      #   原因：R70 基线 ANY-1=462 / ANY-2=172 / 总计 634（5.145 维度存量债务），强制阻断会卡死工作流
+      # 阶段2（待定）：存量违规清零（634→0）后移除 stages:[manual] → commit 时自动阻断新增违规
+      # 配套：pyproject.toml mypy 配置加严（disallow_any_generics + warn_any_explicit）
+      # 设计原则：误报优先（宁可放过，不可误伤 commit）；纯 stdlib（不依赖 ruff/mypy 是否安装）
+      - id: gate-any-abuse
+        name: "GATE-ANY-ABUSE: 类型注解 Any 滥用（5.145 维度防复发）"
+        entry: python scripts/governance/d7_code/check_any_abuse.py --ci
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        stages: [manual]
+        description: "5.145 维度防复发——检测函数签名裸 Any 滥用（ANY-1 参数 / ANY-2 返回值）。阶段1 manual（R70 基线 634），存量清零后转硬阻断"
+
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage
   # 格式: type(scope): description — type ∈ {feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert}
