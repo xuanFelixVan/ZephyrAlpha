@@ -1,5 +1,5 @@
 %% D_INFRA_RECOVERY 域全景依赖图
-%% 生成时间: 2026-07-06 16:01:12
+%% 生成时间: 2026-07-06 16:10:37
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 54, 依赖边数: 132
 
@@ -133,8 +133,8 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_forensic_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_auditor_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_right_to_be_forgotten_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_contract_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_submodule_sync_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_checkpoint_gc_py
@@ -179,10 +179,10 @@ graph TD
     %% D_INFRA_RECOVERY -> D_SHARED (10 条)
     src_zephyr_infrastructure_rollback_agent_cooldown_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_forensic_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_rollback_rollback_drill_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_rollback_rollback_drill_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_verifier_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_SHARED[D_SHARED]
