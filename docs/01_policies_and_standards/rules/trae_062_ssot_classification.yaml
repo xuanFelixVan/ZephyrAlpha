@@ -1,0 +1,147 @@
+rule_id: TRAE-062
+title: SSoT 真源分类铁律（YAML vs DB）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-062
+depends_on:
+- TRAE-054
+- TRAE-061
+tags:
+- TRAE
+- ssot_classification
+- L1_foundation
+- ssot
+- yaml_vs_db
+- 真源分类
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-SSOT-CLASSIFICATION
+- 真源分类
+- YAML vs DB
+- ssot_classification
+severity: critical
+scope: ssot_classification
+domain: TRAE
+triggers:
+- operation: yaml_ssot_write
+- operation: db_architecture_write
+- operation: sync_yaml_to_db
+- operation: generate_diagram
+- operation: decision_node_create
+- operation: depgraph_node_write
+- operation: dataflow_node_write
+sections:
+  ssot_classification:
+    section_type: procedure
+    title: SSoT 真源分类铁律（YAML vs DB）
+    original_rules:
+    - RULE-SSOT-CLASSIFICATION
+    conditions:
+    - type: trigger
+      check: 任何需要写入数据（规则/契约/门禁/词汇表/架构节点/依赖关系/数据流节点）的操作
+      pass: 按数据类型机械判定真源方向后写入正确位置
+      fail: 凭记忆推断真源方向 → 数据写入错误位置 → 真源漂移
+    - type: constraint
+      check: 项目有两类数据真源——规则数据（YAML 真源）和架构数据（PostgreSQL DB 真源），按数据类型机械判定，禁止凭记忆推断
+      pass: 拿到数据先查真源分类表，确认是规则数据还是架构数据后再写入
+      fail: 误以为"YAML 是真源"适用于所有数据 → 架构数据写入 YAML → 真源漂移
+    actions:
+    - type: mandatory
+      step: '真源分类表（机械判定，禁止凭记忆）: 【规则数据】（trae_*.yaml/契约/门禁/词汇表/注册表）→ 真源是 YAML 文件，通过 sync_yaml_to_depgraph.py 单向同步到 DB（DB 是只读缓存）。【架构数据】（depgraph.nodes/edges、decision_nodes/edges、dataflow 节点）→ 真源是 PostgreSQL DB，通过 apply_depgraph.py / apply_decisiongraph.py / apply_dataflowgraph.py 直接写入'
+    - type: mandatory
+      step: '铁律1: 架构数据（nodes/edges）的真源在 PostgreSQL DB，不在 YAML。禁止把架构数据写入 YAML 真源文件（如 decision_graph_model.yaml 的 design_nodes 字段）'
+    - type: mandatory
+      step: '铁律2: 禁止扩展 sync 脚本去同步架构数据 nodes/edges。sync_yaml_to_depgraph.py 只同步规则数据，不同步架构数据。架构数据通过 apply_*.py --batch 直接写入 DB'
+    - type: mandatory
+      step: '铁律3: 生成器从 DB 读取数据重新生成 MD 视图。设计态在 DB 里，所以重新生成不会丢失。禁止在 YAML 真源文件存放节点实际数据'
+    - type: mandatory
+      step: '铁律4: generate_decision_graph.py 只同步 decision_graph_model.yaml 的 schema 定义（tracks/layers/node_types/edge_types/invariants）到 DB。禁止在本脚本新增 nodes/edges 同步逻辑——架构数据真源在 DB，用 apply_decisiongraph.py 写入'
+    - type: mandatory
+      step: '判定流程: 拿到一个数据 → 先问"是规则数据还是架构数据？" → 规则数据（声明态：规则/契约/词表应该有什么）→ 改 YAML 真源 → sync_yaml_to_depgraph.py 同步到 DB → 架构数据（实例态：nodes/edges 实际有什么节点/边）→ 用 apply_*.py 直接写 DB → 生成器从 DB 重生 MD 视图'
+    - type: forbidden
+      step: '禁止: 把决策节点写入 decision_graph_model.yaml 的 design_nodes 字段——架构数据真源在 DB'
+    - type: forbidden
+      step: '禁止: 扩展 generate_decision_graph.py 新增 nodes 同步逻辑——该脚本只同步 schema 定义'
+    - type: forbidden
+      step: '禁止: 误以为"YAML 是真源"适用于所有数据——实际只适用规则数据，架构数据真源在 DB'
+    - type: forbidden
+      step: '禁止: 把 depgraph 节点/边数据写入 YAML 文件——depgraph 真源在 PostgreSQL DB（代码 AST 扫描派生）'
+    - type: forbidden
+      step: '禁止: 把 dataflow 节点实例数据写入 dataflow_graph_registry.yaml——节点实例真源在 PostgreSQL dataflow_* 表'
+    invariants:
+    - id: SSOT-INV-001
+      title: 规则数据 YAML 真源
+      description: 规则数据（trae_*.yaml、契约、门禁、词汇表、注册表）的真源是 YAML 文件，DB 是只读缓存。修改规则数据 MUST 改 YAML，通过 sync_yaml_to_depgraph.py 单向同步到 DB。禁止反向（DB→YAML）
+      enforcement: sync_yaml_to_depgraph.py 单向同步 + DB 只读触发器保护
+      violation_action: reject_write
+    - id: SSOT-INV-002
+      title: 架构数据 DB 真源
+      description: 架构数据（depgraph.nodes/edges、decision_nodes/edges、dataflow 节点）的真源是 PostgreSQL DB。禁止把架构数据写入 YAML 真源文件。架构数据通过 apply_*.py 直接写入 DB
+      enforcement: 人工审查 + AI 操作前必读 AGENTS.md §11.0.2
+      violation_action: reject_write
+    - id: SSOT-INV-003
+      title: sync 脚本职责单一
+      description: sync_yaml_to_depgraph.py 只同步规则数据，禁止扩展同步架构数据 nodes/edges。generate_decision_graph.py 只同步 schema 定义，禁止新增 nodes/edges 同步逻辑
+      enforcement: 人工审查 + 脚本头部真源说明注释
+      violation_action: reject_change
+    - id: SSOT-INV-004
+      title: 生成器从 DB 读取
+      description: 生成器（generate_decision_diagram.py / generate_domain_dependency_diagram.py / generate_dataflow_diagram.py）从 PostgreSQL DB 读取数据生成 MD 视图。重新生成不会丢失设计态——因为设计态在 DB 里
+      enforcement: 生成器代码只读 DB + 脚本头部真源说明注释
+      violation_action: reject_change
+    examples:
+    - data_type: 规则数据
+      真源: YAML 文件
+      写入方式: sync_yaml_to_depgraph.py 单向同步到 DB
+      例子: trae_001_*.yaml / gate_registry.yaml / rule_catalog_registry.yaml / infrastructure_registry.yaml
+    - data_type: 架构数据
+      真源: PostgreSQL DB
+      写入方式: apply_depgraph.py / apply_decisiongraph.py / apply_dataflowgraph.py 直接写入 DB
+      例子: 设计态决策节点、依赖关系、数据流节点
+    common_mistakes:
+    - '❌ 把决策节点写入 decision_graph_model.yaml 的 design_nodes 字段——架构数据真源在 DB'
+    - '❌ 扩展 generate_decision_graph.py 新增 nodes 同步逻辑——该脚本只同步 schema 定义'
+    - '❌ 误以为"YAML 是真源"适用于所有数据（实际只适用规则数据，架构数据真源在 DB）'
+references:
+  rule_ids:
+  - TRAE-054
+  - TRAE-061
+  scripts:
+  - scripts/governance/apply_depgraph.py
+  - scripts/governance/apply_decisiongraph.py
+  - scripts/governance/apply_dataflowgraph.py
+  - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  - scripts/governance/generate_decision_graph.py
+  - scripts/governance/d5_architecture/generators/generate_decision_diagram.py
+  - scripts/governance/d5_architecture/generators/generate_domain_dependency_diagram.py
+  - scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py
+  modules:
+  - MOD-GOVERNANCE
+  blueprints:
+  - docs/03_modules/_domain_governance/blueprint.md
+  yaml_sources:
+  - architecture_model/domain/decision_graph_model.yaml
+  - architecture_model/domain/ddd_model.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+enforcement:
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: null
+provenance:
+  extracted_at: '2026-07-06T00:00:00'
+  extracted_by: scaffold-generated
+  reason: 显化"YAML 真源 vs DB 真源"规则，写入所有 AI 操作时必看的位置。防止 AI 把架构数据写入 YAML 真源文件。
