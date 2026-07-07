@@ -276,3 +276,13 @@ data/databases/postgres/
 
 # Model quick exam profiles (runtime data, regenerable; same policy as data/brain/passports/)
 data/brain/quick_profiles/*
+
+# ClickHouse system artifacts (metadata dumps, access control, configs leaked to workdir)
+access/
+metadata/
+preprocessed_configs/
+status
+uuid
+
+# Architecture health dashboard snapshots (timestamped, regenerable; latest.json is tracked)
+data/architecture_health/dashboard_*.json
