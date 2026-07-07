@@ -285,7 +285,7 @@ class GateEngineServer(BaseMCPServer):
         passed = len([f for f in failed if f.startswith(Priority.P0.value)]) == 0
         report = _make_gate_run_report("G1", passed, 3, failed)
         if not passed:
-            raise MCPError(-32412, f"ZA-GT-0001: gate blocked (P0): {failed}", report)
+            raise MCPError(-32412, f"gate blocked (P0): {failed}", report, error_code="ZA-GT-0001")
         return report
 
     def _run_g2_commit(
@@ -310,7 +310,7 @@ class GateEngineServer(BaseMCPServer):
         passed = len([f for f in failed if f.startswith(Priority.P0.value)]) == 0
         report = _make_gate_run_report("G2", passed, len(files) + 1, failed)
         if not passed:
-            raise MCPError(-32412, f"ZA-GT-0001: gate blocked (P0): {failed}", report)
+            raise MCPError(-32412, f"gate blocked (P0): {failed}", report, error_code="ZA-GT-0001")
         return report
 
     def _run_g3_phase(
@@ -327,7 +327,7 @@ class GateEngineServer(BaseMCPServer):
         passed = not bool(failed)
         report = _make_gate_run_report("G3", passed, 1, failed)
         if not passed:
-            raise MCPError(-32412, f"ZA-GT-0001: gate blocked (P0): {failed}", report)
+            raise MCPError(-32412, f"gate blocked (P0): {failed}", report, error_code="ZA-GT-0001")
         return report
 
     def _run_g4_contract(
@@ -367,7 +367,7 @@ class GateEngineServer(BaseMCPServer):
         if len(reason) < 10:
             raise MCPError(-32602, "reason 至少 10 个字符")
         if not _EMAIL_RE.match(signer_email):
-            raise MCPError(-32403, f"ZA-GT-0003: signer_email 格式无效: {signer_email!r}")
+            raise MCPError(-32403, f"signer_email 格式无效: {signer_email!r}", error_code="ZA-GT-0003")
 
         try:
             date.fromisoformat(valid_until)

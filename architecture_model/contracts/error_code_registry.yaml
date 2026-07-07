@@ -1,21 +1,16 @@
 # [A_config] module_id=CFG-error_code_registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
-schema_version: "1.0.0"
+# [TTL] permanent
+schema_version: '1.0.0'
 doc_type: register
-title: "ZephyrAlpha 业务异常 error_code SSoT 注册表"
+title: ZephyrAlpha 业务异常 error_code SSoT 注册表
 status: active
-version: "2.0.0"
-date: "2026-07-06"
+version: 2.1.0
+date: '2026-07-06'
 owner: ZephyrAlpha-Owner
-description: >
-  本文件是所有自定义异常类 error_code 字段的唯一真源（SSoT）。
-  格式：ZA-XX-NNNN（项目前缀-域前缀-4位序号）。
-  grep 唯一命中：每个 code 在全项目仅出现一次。
+description: '本文件是所有自定义异常类 error_code 字段的唯一真源（SSoT）。 格式：ZA-XX-NNNN（项目前缀-域前缀-4位序号）。 grep 唯一命中：每个 code 在全项目仅出现一次。
 
-purpose:
-  1. 提供业务异常错误码的单一发现入口
-  2. 声明每个 error_code 的类名/模块/文件路径归属
-  3. 驱动 error_code 一致性校验
-
+  '
+purpose: 1. 提供业务异常错误码的单一发现入口 2. 声明每个 error_code 的类名/模块/文件路径归属 3. 驱动 error_code 一致性校验
 # ============================================================
 # 域前缀映射
 # ============================================================
@@ -35,828 +30,890 @@ domain_prefixes:
   SH: D_SHARED
   TR: D_TRADING
   XC: D_EX_CORE
-
 # ============================================================
 # 段位规划
 # ============================================================
 segment_plan:
-  "0001-8999": "业务异常（按域分配，单域 9999 容量）"
-  "9000-9999": "保留/实验段位"
-
+  0001-8999: 业务异常（按域分配，单域 9999 容量）
+  9000-9999: 保留/实验段位
 # ============================================================
-# error_code 登记表（共 199 条）
+# error_code 登记表（共 212 条）
 # ============================================================
 error_codes:
-  - code: ZA-AC-0001
-    class: PromptRegistryError
-    module: zephyr.autonomy_core.prompt_registry
-    file: src/zephyr/autonomy_core/prompt_registry.py
-  - code: ZA-AC-0002
-    class: TokenBudgetExceededError
-    module: zephyr.autonomy_core.prompt_registry
-    file: src/zephyr/autonomy_core/prompt_registry.py
-  - code: ZA-AC-0003
-    class: TemplateNotFoundError
-    module: zephyr.autonomy_core.prompt_registry
-    file: src/zephyr/autonomy_core/prompt_registry.py
-  - code: ZA-AC-0004
-    class: VariableError
-    module: zephyr.autonomy_core.prompt_registry
-    file: src/zephyr/autonomy_core/prompt_registry.py
-  - code: ZA-AC-0005
-    class: AssemblyError
-    module: zephyr.autonomy_core.context.context_assembler
-    file: src/zephyr/autonomy_core/context/context_assembler.py
-  - code: ZA-BT-0001
-    class: WalkForwardError
-    module: zephyr.backtest.core.walk_forward
-    file: src/zephyr/backtest/core/walk_forward.py
-  - code: ZA-BT-0002
-    class: TickReplayError
-    module: zephyr.backtest.core.tick_replay
-    file: src/zephyr/backtest/core/tick_replay.py
-  - code: ZA-BT-0003
-    class: PortfolioError
-    module: zephyr.backtest.core.portfolio
-    file: src/zephyr/backtest/core/portfolio.py
-  - code: ZA-BT-0004
-    class: PITError
-    module: zephyr.backtest.core.pit_manager
-    file: src/zephyr/backtest/core/pit_manager.py
-  - code: ZA-BT-0005
-    class: OverfittingError
-    module: zephyr.backtest.core.overfitting_detector
-    file: src/zephyr/backtest/core/overfitting_detector.py
-  - code: ZA-BT-0006
-    class: MetricsError
-    module: zephyr.backtest.core.metrics
-    file: src/zephyr/backtest/core/metrics.py
-  - code: ZA-BT-0007
-    class: MatchingLogicError
-    module: zephyr.backtest.core.matching_logic
-    file: src/zephyr/backtest/core/matching_logic.py
-  - code: ZA-BT-0008
-    class: MatchingError
-    module: zephyr.backtest.core.matching_engine
-    file: src/zephyr/backtest/core/matching_engine.py
-  - code: ZA-BT-0009
-    class: DecisionGateError
-    module: zephyr.backtest.core.decision_gate
-    file: src/zephyr/backtest/core/decision_gate.py
-  - code: ZA-BT-0010
-    class: DataHandlerError
-    module: zephyr.backtest.core.data_handler
-    file: src/zephyr/backtest/core/data_handler.py
-  - code: ZA-BT-0011
-    class: ArtifactNotFoundError
-    module: zephyr.backtest.io.result_repository
-    file: src/zephyr/backtest/io/result_repository.py
-  - code: ZA-BT-0012
-    class: BacktestResultSinkError
-    module: zephyr.backtest.io.backtest_result_sink
-    file: src/zephyr/backtest/io/backtest_result_sink.py
-  - code: ZA-BT-0013
-    class: EventDrivenEngineError
-    module: zephyr.backtest.implementations.event_driven_engine
-    file: src/zephyr/backtest/implementations/event_driven_engine.py
-  - code: ZA-FE-0001
-    class: ChartFactoryError
-    module: zephyr.frontend.dashboard.components.chart_factory
-    file: src/zephyr/frontend/dashboard/components/chart_factory.py
-  - code: ZA-FE-0002
-    class: TradePanelError
-    module: zephyr.frontend.dashboard.components.trade_panel
-    file: src/zephyr/frontend/dashboard/components/trade_panel.py
-  - code: ZA-GV-0001
-    class: MiniQmtProviderError
-    module: zephyr.governance.data_governance.miniqmt_provider
-    file: src/zephyr/governance/data_governance/miniqmt_provider.py
-  - code: ZA-GV-0002
-    class: SnapshotError
-    module: zephyr.governance.audit.snapshot_manager
-    file: src/zephyr/governance/audit/snapshot_manager.py
-  - code: ZA-GV-0003
-    class: PushError
-    module: zephyr.governance.behavioral_admission.mcp_result_push
-    file: src/zephyr/governance/behavioral_admission/mcp_result_push.py
-  - code: ZA-GV-0004
-    class: CallbackConnectionError
-    module: zephyr.governance.behavioral_admission.mcp_result_push
-    file: src/zephyr/governance/behavioral_admission/mcp_result_push.py
-  - code: ZA-GV-0005
-    class: InvalidDecisionError
-    module: zephyr.governance.behavioral_admission.admission_response
-    file: src/zephyr/governance/behavioral_admission/admission_response.py
-  - code: ZA-GV-0006
-    class: TaskRepositoryError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0007
-    class: TaskNotFoundError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0008
-    class: InvalidTransitionError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0009
-    class: RejectedUpgradeCoolingOffError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0010
-    class: EventStoreError
-    module: zephyr.governance.audit_trail.event_store
-    file: src/zephyr/governance/audit_trail/event_store.py
-  - code: ZA-GV-0011
-    class: IntegrityError
-    module: zephyr.governance.audit_trail.event_store
-    file: src/zephyr/governance/audit_trail/event_store.py
-  - code: ZA-GV-0012
-    class: P0InflationFrozenError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0013
-    class: SyncVerificationError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0014
-    class: PostSyncValidationError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0015
-    class: PostSyncConstructionError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0016
-    class: CircularAcceptanceError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0017
-    class: UnclaimedOperationError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0018
-    class: RootCauseRequiredError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0019
-    class: GranularityViolationError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0020
-    class: BatchReviewRequiredError
-    module: zephyr.governance.persistence.task_repo
-    file: src/zephyr/governance/persistence/task_repo.py
-  - code: ZA-GV-0021
-    class: TransactionError
-    module: zephyr.governance.financial_governance.atomic_transaction_manager
-    file: src/zephyr/governance/financial_governance/atomic_transaction_manager.py
-  - code: ZA-GV-0022
-    class: TransactionTimeoutError
-    module: zephyr.governance.financial_governance.atomic_transaction_manager
-    file: src/zephyr/governance/financial_governance/atomic_transaction_manager.py
-  - code: ZA-GV-0023
-    class: OLAPEngineError
-    module: zephyr.governance.persistence.olap_engine
-    file: src/zephyr/governance/persistence/olap_engine.py
-  - code: ZA-GV-0024
-    class: TaskRepositoryError
-    module: zephyr.governance.persistence.base_repo
-    file: src/zephyr/governance/persistence/base_repo.py
-  - code: ZA-GV-0025
-    class: TaskNotFoundError
-    module: zephyr.governance.persistence.base_repo
-    file: src/zephyr/governance/persistence/base_repo.py
-  - code: ZA-GV-0026
-    class: InvalidTransitionError
-    module: zephyr.governance.persistence.base_repo
-    file: src/zephyr/governance/persistence/base_repo.py
-  - code: ZA-GV-0027
-    class: RejectedUpgradeCoolingOffError
-    module: zephyr.governance.persistence.base_repo
-    file: src/zephyr/governance/persistence/base_repo.py
-  - code: ZA-GV-0028
-    class: P0InflationFrozenError
-    module: zephyr.governance.persistence.base_repo
-    file: src/zephyr/governance/persistence/base_repo.py
-  - code: ZA-GV-0029
-    class: DatabaseManagerError
-    module: zephyr.governance.persistence.database_manager
-    file: src/zephyr/governance/persistence/database_manager.py
-  - code: ZA-GV-0030
-    class: ProjectionError
-    module: zephyr.governance.observability_governance.projection_engine
-    file: src/zephyr/governance/observability_governance/projection_engine.py
-  - code: ZA-GV-0031
-    class: WorktreeError
-    module: zephyr.governance.rule_bridge.worktree_manager
-    file: src/zephyr/governance/rule_bridge/worktree_manager.py
-  - code: ZA-GV-0032
-    class: GatewayError
-    module: zephyr.governance.rule_bridge.git_commit_gateway
-    file: src/zephyr/governance/rule_bridge/git_commit_gateway.py
-  - code: ZA-GV-0033
-    class: CostBudgetExceededError
-    module: zephyr.governance.ops_governance.cost_budget
-    file: src/zephyr/governance/ops_governance/cost_budget.py
-  - code: ZA-GV-0034
-    class: SelfHealError
-    module: zephyr.governance.semantic_audit.self_healer
-    file: src/zephyr/governance/semantic_audit/self_healer.py
-  - code: ZA-GV-0035
-    class: ContractViolationError
-    module: zephyr.governance.audit_trail.contracts
-    file: src/zephyr/governance/audit_trail/contracts.py
-  - code: ZA-GV-0036
-    class: CircuitOpenError
-    module: zephyr.governance.rule_enforcement.circuit_breaker
-    file: src/zephyr/governance/rule_enforcement/circuit_breaker.py
-  - code: ZA-GV-0037
-    class: DepgraphLoadError
-    module: zephyr.governance.resilience_governance.blast_radius
-    file: src/zephyr/governance/resilience_governance/blast_radius.py
-  - code: ZA-GV-0038
-    class: MemoryBackendError
-    module: zephyr.governance.kb.storage._backend_protocol
-    file: src/zephyr/governance/kb/storage/_backend_protocol.py
-  - code: ZA-GV-0039
-    class: GitUnavailableError
-    module: zephyr.governance.rule_enforcement.invariants.post_doc_review_check
-    file: src/zephyr/governance/rule_enforcement/invariants/post_doc_review_check.py
-  - code: ZA-GV-0040
-    class: TamperingError
-    module: zephyr.governance.rule_enforcement.invariants.post_doc_review_check
-    file: src/zephyr/governance/rule_enforcement/invariants/post_doc_review_check.py
-  - code: ZA-GV-0041
-    class: GateEngineError
-    module: zephyr.governance.rule_enforcement.gate_types
-    file: src/zephyr/governance/rule_enforcement/gate_types.py
-  - code: ZA-GV-0042
-    class: GateViolationError
-    module: zephyr.governance.rule_enforcement.gate_types
-    file: src/zephyr/governance/rule_enforcement/gate_types.py
-  - code: ZA-GV-0043
-    class: StrategyError
-    module: zephyr.governance.rule_enforcement.adversarial_strategies
-    file: src/zephyr/governance/rule_enforcement/adversarial_strategies.py
-  - code: ZA-GV-0044
-    class: AdversarialValidationError
-    module: zephyr.governance.rule_enforcement.gate_engine.adversarial_validation
-    file: src/zephyr/governance/rule_enforcement/gate_engine/adversarial_validation.py
-  - code: ZA-GV-0045
-    class: InvalidTransitionError
-    module: zephyr.governance.drift_detection.state_machine
-    file: src/zephyr/governance/drift_detection/state_machine.py
-  - code: ZA-IF-0001
-    class: MCPError
-    module: zephyr.infrastructure._base_server
-    file: src/zephyr/infrastructure/_base_server.py
-  - code: ZA-IF-0002
-    class: TelemetryWriteError
-    module: zephyr.infrastructure.system_telemetry.metrics_bridge
-    file: src/zephyr/infrastructure/system_telemetry/metrics_bridge.py
-  - code: ZA-IF-0003
-    class: SnapshotBuildError
-    module: zephyr.infrastructure.system_snapshot
-    file: src/zephyr/infrastructure/system_snapshot.py
-  - code: ZA-IF-0004
-    class: FileWatcherError
-    module: zephyr.infrastructure.file_watcher
-    file: src/zephyr/infrastructure/file_watcher.py
-  - code: ZA-IF-0005
-    class: InvalidFixTransitionError
-    module: zephyr.infrastructure.auto_fix_engine.state_machine
-    file: src/zephyr/infrastructure/auto_fix_engine/state_machine.py
-  - code: ZA-IF-0006
-    class: RegistryParseError
-    module: zephyr.infrastructure.asset_inventory.registry_adapter
-    file: src/zephyr/infrastructure/asset_inventory/registry_adapter.py
-  - code: ZA-IF-0007
-    class: ConcurrencyConflictError
-    module: zephyr.infrastructure.runtime.concurrency_guard
-    file: src/zephyr/infrastructure/runtime/concurrency_guard.py
-  - code: ZA-IF-0008
-    class: NoEligibleNodeError
-    module: zephyr.infrastructure.pipeline.routing_plugins
-    file: src/zephyr/infrastructure/pipeline/routing_plugins.py
-  - code: ZA-IF-0009
-    class: PipelineRoutingInputsError
-    module: zephyr.infrastructure.pipeline.ct_pipe_routing
-    file: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
-  - code: ZA-IF-0010
-    class: CircuitBreakerOpenError
-    module: zephyr.infrastructure.reliability.circuit_breaker
-    file: src/zephyr/infrastructure/reliability/circuit_breaker.py
-  - code: ZA-IF-0011
-    class: GovernanceError
-    module: zephyr.infrastructure.a2a_protocol.governance.error_codes
-    file: src/zephyr/infrastructure/a2a_protocol/governance/error_codes.py
-  - code: ZA-IF-0012
-    class: MCPError
-    module: zephyr.infrastructure.a2a_protocol.governance._base_server
-    file: src/zephyr/infrastructure/a2a_protocol/governance/_base_server.py
-  - code: ZA-IG-0001
-    class: VMSError
-    module: zephyr.integration.vector_memory.vms_errors
-    file: src/zephyr/integration/vector_memory/vms_errors.py
-  - code: ZA-IG-0002
-    class: DesignPrincipleError
-    module: zephyr.integration.vector_memory.vms_errors
-    file: src/zephyr/integration/vector_memory/vms_errors.py
-  - code: ZA-IG-0003
-    class: ProvenanceMissingError
-    module: zephyr.integration.vector_memory.vms_errors
-    file: src/zephyr/integration/vector_memory/vms_errors.py
-  - code: ZA-IG-0004
-    class: DimensionError
-    module: zephyr.integration.vector_memory.vms_errors
-    file: src/zephyr/integration/vector_memory/vms_errors.py
-  - code: ZA-IG-0005
-    class: ChunkStrategyError
-    module: zephyr.integration.vector_memory.vms_errors
-    file: src/zephyr/integration/vector_memory/vms_errors.py
-  - code: ZA-IG-0006
-    class: TTLError
-    module: zephyr.integration.vector_memory.vms_errors
-    file: src/zephyr/integration/vector_memory/vms_errors.py
-  - code: ZA-IG-0007
-    class: HotColdSeparationError
-    module: zephyr.integration.vector_memory.vms_errors
-    file: src/zephyr/integration/vector_memory/vms_errors.py
-  - code: ZA-IG-0008
-    class: VMSError
-    module: zephyr.integration.vector_memory.collection_manager
-    file: src/zephyr/integration/vector_memory/collection_manager.py
-  - code: ZA-IG-0009
-    class: DesignPrincipleError
-    module: zephyr.integration.vector_memory.collection_manager
-    file: src/zephyr/integration/vector_memory/collection_manager.py
-  - code: ZA-IG-0010
-    class: ProvenanceMissingError
-    module: zephyr.integration.vector_memory.collection_manager
-    file: src/zephyr/integration/vector_memory/collection_manager.py
-  - code: ZA-IG-0011
-    class: DimensionError
-    module: zephyr.integration.vector_memory.collection_manager
-    file: src/zephyr/integration/vector_memory/collection_manager.py
-  - code: ZA-IG-0012
-    class: ChunkStrategyError
-    module: zephyr.integration.vector_memory.collection_manager
-    file: src/zephyr/integration/vector_memory/collection_manager.py
-  - code: ZA-IG-0013
-    class: TTLError
-    module: zephyr.integration.vector_memory.collection_manager
-    file: src/zephyr/integration/vector_memory/collection_manager.py
-  - code: ZA-IG-0014
-    class: HotColdSeparationError
-    module: zephyr.integration.vector_memory.collection_manager
-    file: src/zephyr/integration/vector_memory/collection_manager.py
-  - code: ZA-IG-0015
-    class: SchemaRegistryError
-    module: zephyr.integration.shared.schema.schema_registry
-    file: src/zephyr/integration/shared/schema/schema_registry.py
-  - code: ZA-IG-0016
-    class: EventVersionError
-    module: zephyr.integration.shared.events.event_bus_upgrade
-    file: src/zephyr/integration/shared/events/event_bus_upgrade.py
-  - code: ZA-IG-0017
-    class: InvalidDecisionError
-    module: zephyr.integration.behavioral_admission.admission_response
-    file: src/zephyr/integration/behavioral_admission/admission_response.py
-  - code: ZA-IG-0018
-    class: MCPError
-    module: zephyr.integration.mcp._base_server
-    file: src/zephyr/integration/mcp/_base_server.py
-  - code: ZA-IT-0001
-    class: JobMatcherError
-    module: zephyr.intelligence.model_profiling.job_matcher
-    file: src/zephyr/intelligence/model_profiling/job_matcher.py
-  - code: ZA-IT-0002
-    class: TamperError
-    module: zephyr.intelligence.model_profiling.capability_passport
-    file: src/zephyr/intelligence/model_profiling/capability_passport.py
-  - code: ZA-SC-0001
-    class: SessionError
-    module: zephyr.security.adversarial_validation.validator
-    file: src/zephyr/security/adversarial_validation/validator.py
-  - code: ZA-SC-0002
-    class: SteadyStateDriftError
-    module: zephyr.security.adversarial_validation.steady_state
-    file: src/zephyr/security/adversarial_validation/steady_state.py
-  - code: ZA-SC-0003
-    class: McpEndpointError
-    module: zephyr.security.adversarial_validation.mcp_endpoints
-    file: src/zephyr/security/adversarial_validation/mcp_endpoints.py
-  - code: ZA-SC-0004
-    class: ConstitutionViolationError
-    module: zephyr.security.adversarial_validation.constitution_guard
-    file: src/zephyr/security/adversarial_validation/constitution_guard.py
-  - code: ZA-SC-0005
-    class: ScheduleConflictError
-    module: zephyr.security.adversarial_validation.game_day_scheduler
-    file: src/zephyr/security/adversarial_validation/game_day_scheduler.py
-  - code: ZA-SC-0006
-    class: GameDayError
-    module: zephyr.security.adversarial_validation.game_day_runner
-    file: src/zephyr/security/adversarial_validation/game_day_runner.py
-  - code: ZA-SC-0007
-    class: GateEvaluationError
-    module: zephyr.security.adversarial_validation.defense_runner
-    file: src/zephyr/security/adversarial_validation/defense_runner.py
-  - code: ZA-SC-0008
-    class: ConvergenceFailureError
-    module: zephyr.security.adversarial_validation.convergence_checker
-    file: src/zephyr/security/adversarial_validation/convergence_checker.py
-  - code: ZA-SC-0009
-    class: AbortThresholdError
-    module: zephyr.security.adversarial_validation.blast_radius
-    file: src/zephyr/security/adversarial_validation/blast_radius.py
-  - code: ZA-SC-0010
-    class: CleanupVerificationError
-    module: zephyr.security.adversarial_validation.cleanup
-    file: src/zephyr/security/adversarial_validation/cleanup.py
-  - code: ZA-SC-0011
-    class: MonitorStallError
-    module: zephyr.security.adversarial_validation.async_monitor
-    file: src/zephyr/security/adversarial_validation/async_monitor.py
-  - code: ZA-SC-0012
-    class: CircuitBreakerOpenError
-    module: zephyr.security.adversarial_validation.circuit_breaker
-    file: src/zephyr/security/adversarial_validation/circuit_breaker.py
-  - code: ZA-SC-0013
-    class: BootstrapVerificationError
-    module: zephyr.security.adversarial_validation.cold_start
-    file: src/zephyr/security/adversarial_validation/cold_start.py
-  - code: ZA-SC-0014
-    class: AttackGenerationError
-    module: zephyr.security.adversarial_validation.ai_attack_generator
-    file: src/zephyr/security/adversarial_validation/ai_attack_generator.py
-  - code: ZA-SC-0015
-    class: RegistryWriteError
-    module: zephyr.security.adversarial_validation.constitution_engine
-    file: src/zephyr/security/adversarial_validation/constitution_engine.py
-  - code: ZA-SC-0016
-    class: DuplicateArticleError
-    module: zephyr.security.adversarial_validation.constitution_engine
-    file: src/zephyr/security/adversarial_validation/constitution_engine.py
-  - code: ZA-SC-0017
-    class: SanitizationError
-    module: zephyr.security.llm_defense.llm_security.input_sanitizer
-    file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
-  - code: ZA-SC-0018
-    class: PathTraversalError
-    module: zephyr.security.llm_defense.llm_security.input_sanitizer
-    file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
-  - code: ZA-SC-0019
-    class: CommandInjectionError
-    module: zephyr.security.llm_defense.llm_security.input_sanitizer
-    file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
-  - code: ZA-SC-0020
-    class: TokenBudgetExceededError
-    module: zephyr.security.llm_defense.llm_security.input_sanitizer
-    file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
-  - code: ZA-SC-0021
-    class: ContextInjectionError
-    module: zephyr.security.llm_defense.llm_security.input_sanitizer
-    file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
-  - code: ZA-SC-0022
-    class: BareLLMCallError
-    module: zephyr.security.llm_defense.llm_security.runtime_interceptor
-    file: src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py
-  - code: ZA-SC-0023
-    class: AgentRbacError
-    module: zephyr.security.access_control.exceptions
-    file: src/zephyr/security/access_control/exceptions.py
-  - code: ZA-SC-0024
-    class: PermissionDeniedError
-    module: zephyr.security.access_control.exceptions
-    file: src/zephyr/security/access_control/exceptions.py
-  - code: ZA-SC-0025
-    class: ColdStartLockedError
-    module: zephyr.security.access_control.exceptions
-    file: src/zephyr/security/access_control/exceptions.py
-  - code: ZA-SC-0026
-    class: OverrideTokenExpiredError
-    module: zephyr.security.access_control.exceptions
-    file: src/zephyr/security/access_control/exceptions.py
-  - code: ZA-SC-0027
-    class: KillSwitchTrippedError
-    module: zephyr.security.access_control.exceptions
-    file: src/zephyr/security/access_control/exceptions.py
-  - code: ZA-SC-0028
-    class: DegradationBlockedError
-    module: zephyr.security.access_control.exceptions
-    file: src/zephyr/security/access_control/exceptions.py
-  - code: ZA-SC-0029
-    class: EngineUnavailableError
-    module: zephyr.security.access_control.genesis_bootstrap
-    file: src/zephyr/security/access_control/genesis_bootstrap.py
-  - code: ZA-SC-0030
-    class: DeprecationTrackerError
-    module: zephyr.security.access_control.orphan_judge.deprecation_tracker
-    file: src/zephyr/security/access_control/orphan_judge/deprecation_tracker.py
-  - code: ZA-SC-0031
-    class: CascadeAnalyzerError
-    module: zephyr.security.access_control.orphan_judge.cascade_analyzer
-    file: src/zephyr/security/access_control/orphan_judge/cascade_analyzer.py
-  - code: ZA-SC-0032
-    class: OrphanJudgeError
-    module: zephyr.security.access_control.orphan_judge.judge
-    file: src/zephyr/security/access_control/orphan_judge/judge.py
-  - code: ZA-SC-0033
-    class: OrphanCollectorError
-    module: zephyr.security.access_control.orphan_judge.orphan_collector
-    file: src/zephyr/security/access_control/orphan_judge/orphan_collector.py
-  - code: ZA-SC-0034
-    class: SafetyFenceError
-    module: zephyr.security.access_control.orphan_judge.safety_fence
-    file: src/zephyr/security/access_control/orphan_judge/safety_fence.py
-  - code: ZA-SH-0001
-    class: ConfigError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0002
-    class: ContractError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0003
-    class: SecurityError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0004
-    class: SessionError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0005
-    class: ValidationError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0006
-    class: TaskError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0007
-    class: PipelineError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0008
-    class: GateError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0009
-    class: ContextError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0010
-    class: FeedbackError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0011
-    class: DataError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0012
-    class: ZephyrIOError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0013
-    class: UnimplementedError
-    module: zephyr.shared.foundation.errors
-    file: src/zephyr/shared/foundation/errors.py
-  - code: ZA-SH-0014
-    class: SsotError
-    module: zephyr.shared.security.ssot_guard
-    file: src/zephyr/shared/security/ssot_guard.py
-  - code: ZA-SH-0015
-    class: RegistryParseError
-    module: zephyr.shared.security.ssot_guard
-    file: src/zephyr/shared/security/ssot_guard.py
-  - code: ZA-SH-0016
-    class: SecretsError
-    module: zephyr.shared.security.secrets
-    file: src/zephyr/shared/security/secrets.py
-  - code: ZA-SH-0017
-    class: SchemaRegistryError
-    module: zephyr.shared.schema.schema_registry
-    file: src/zephyr/shared/schema/schema_registry.py
-  - code: ZA-SH-0018
-    class: RetryExhaustedError
-    module: zephyr.shared.resilience.retry
-    file: src/zephyr/shared/resilience/retry.py
-  - code: ZA-SH-0019
-    class: FallbackExhaustedError
-    module: zephyr.shared.resilience.fallback
-    file: src/zephyr/shared/resilience/fallback.py
-  - code: ZA-SH-0020
-    class: CircuitOpenError
-    module: zephyr.shared.resilience.circuit_breaker
-    file: src/zephyr/shared/resilience/circuit_breaker.py
-  - code: ZA-SH-0021
-    class: ApiCallError
-    module: zephyr.shared.api.api_client
-    file: src/zephyr/shared/api/api_client.py
-  - code: ZA-SH-0022
-    class: ContractViolationError
-    module: zephyr.shared.contracts.core.enforcer
-    file: src/zephyr/shared/contracts/core/enforcer.py
-  - code: ZA-SH-0023
-    class: NaiveDatetimeError
-    module: zephyr.shared.contracts.core.timestamp
-    file: src/zephyr/shared/contracts/core/timestamp.py
-  - code: ZA-SH-0024
-    class: ContractViolationError
-    module: zephyr.shared.contracts.contract_bus
-    file: src/zephyr/shared/contracts/contract_bus.py
-  - code: ZA-SH-0025
-    class: ContractBusError
-    module: zephyr.shared.contracts.contract_bus
-    file: src/zephyr/shared/contracts/contract_bus.py
-  - code: ZA-SH-0026
-    class: VersionMismatchError
-    module: zephyr.shared.contracts.core.registry
-    file: src/zephyr/shared/contracts/core/registry.py
-  - code: ZA-SH-0027
-    class: InvalidTransitionError
-    module: zephyr.shared.lifecycle.state_machine
-    file: src/zephyr/shared/lifecycle/state_machine.py
-  - code: ZA-SH-0028
-    class: TransitionGuardError
-    module: zephyr.shared.lifecycle.state_machine
-    file: src/zephyr/shared/lifecycle/state_machine.py
-  - code: ZA-SH-0029
-    class: StateMachineRegistryError
-    module: zephyr.shared.lifecycle.state_machine
-    file: src/zephyr/shared/lifecycle/state_machine.py
-  - code: ZA-SH-0030
-    class: VersionMismatchError
-    module: zephyr.shared.__version__
-    file: src/zephyr/shared/__version__.py
-  - code: ZA-SH-0031
-    class: MoneyPrecisionError
-    module: zephyr.shared.contracts.portfolio.money
-    file: src/zephyr/shared/contracts/portfolio/money.py
-  - code: ZA-SH-0032
-    class: MoneyCurrencyMismatchError
-    module: zephyr.shared.contracts.portfolio.money
-    file: src/zephyr/shared/contracts/portfolio/money.py
-  - code: ZA-SH-0033
-    class: EventVersionError
-    module: zephyr.shared.events.event_bus_upgrade
-    file: src/zephyr/shared/events/event_bus_upgrade.py
-  - code: ZA-SH-0034
-    class: SerializationError
-    module: zephyr.shared.io.serialization
-    file: src/zephyr/shared/io/serialization.py
-  - code: ZA-SH-0035
-    class: SerializationError
-    module: zephyr.shared.io.serialization
-    file: src/zephyr/shared/io/serialization.py
-  - code: ZA-SH-0036
-    class: CompressionInvariantError
-    module: zephyr.shared.io.doc_compressor
-    file: src/zephyr/shared/io/doc_compressor.py
-  - code: ZA-SH-0037
-    class: AtomicWriteError
-    module: zephyr.shared.io.file_utils
-    file: src/zephyr/shared/io/file_utils.py
-  - code: ZA-SH-0038
-    class: FingerprintError
-    module: zephyr.shared.io.content_fingerprint
-    file: src/zephyr/shared/io/content_fingerprint.py
-  - code: ZA-SH-0039
-    class: FingerprintNotFoundError
-    module: zephyr.shared.io.content_fingerprint
-    file: src/zephyr/shared/io/content_fingerprint.py
-  - code: ZA-SH-0040
-    class: FingerprintPermissionError
-    module: zephyr.shared.io.content_fingerprint
-    file: src/zephyr/shared/io/content_fingerprint.py
-  - code: ZA-SH-0041
-    class: LockError
-    module: zephyr.shared.infra.lock
-    file: src/zephyr/shared/infra/lock.py
-  - code: ZA-SH-0042
-    class: OutboxError
-    module: zephyr.shared.infra.outbox
-    file: src/zephyr/shared/infra/outbox.py
-  - code: ZA-SH-0043
-    class: RateLimitError
-    module: zephyr.shared.infra.limiter
-    file: src/zephyr/shared/infra/limiter.py
-  - code: ZA-SH-0044
-    class: IdempotencyError
-    module: zephyr.shared.infra.idempotency
-    file: src/zephyr/shared/infra/idempotency.py
-  - code: ZA-SH-0045
-    class: CacheError
-    module: zephyr.shared.infra.cache
-    file: src/zephyr/shared/infra/cache.py
-  - code: ZA-SH-0046
-    class: DeprecatedAPIError
-    module: zephyr.shared.foundation.deprecation
-    file: src/zephyr/shared/foundation/deprecation.py
-  - code: ZA-SH-0047
-    class: FlagNotFoundError
-    module: zephyr.shared.foundation.flags
-    file: src/zephyr/shared/foundation/flags.py
-  - code: ZA-SH-0048
-    class: MigrationError
-    module: zephyr.shared.utils.migration
-    file: src/zephyr/shared/utils/migration.py
-  - code: ZA-SH-0049
-    class: PatchConflictError
-    module: zephyr.shared.utils.diff_utils
-    file: src/zephyr/shared/utils/diff_utils.py
-  - code: ZA-TR-0001
-    class: RiskLimitViolationError
-    module: zephyr.trading.trading_contracts.risk.risk_limit_violation_error
-    file: src/zephyr/trading/trading_contracts/risk/risk_limit_violation_error.py
-  - code: ZA-TR-0002
-    class: MoneyPrecisionError
-    module: zephyr.trading.trading_contracts.portfolio.contracts.money
-    file: src/zephyr/trading/trading_contracts/portfolio/contracts/money.py
-  - code: ZA-TR-0003
-    class: MoneyCurrencyMismatchError
-    module: zephyr.trading.trading_contracts.portfolio.contracts.money
-    file: src/zephyr/trading/trading_contracts/portfolio/contracts/money.py
-  - code: ZA-TR-0004
-    class: StagingError
-    module: zephyr.trading.staging_area
-    file: src/zephyr/trading/staging_area.py
-  - code: ZA-TR-0005
-    class: TriggerRouterConfigError
-    module: zephyr.trading.orchestrator.execution.trigger_router
-    file: src/zephyr/trading/orchestrator/execution/trigger_router.py
-  - code: ZA-TR-0006
-    class: FLEBaseException
-    module: zephyr.trading.feedback_loop.exceptions
-    file: src/zephyr/trading/feedback_loop/exceptions.py
-  - code: ZA-TR-0007
-    class: DiagnosisError
-    module: zephyr.trading.feedback_loop.exceptions
-    file: src/zephyr/trading/feedback_loop/exceptions.py
-  - code: ZA-TR-0008
-    class: RepairError
-    module: zephyr.trading.feedback_loop.exceptions
-    file: src/zephyr/trading/feedback_loop/exceptions.py
-  - code: ZA-TR-0009
-    class: GateBlockedError
-    module: zephyr.trading.feedback_loop.exceptions
-    file: src/zephyr/trading/feedback_loop/exceptions.py
-  - code: ZA-TR-0010
-    class: AutonomyViolationError
-    module: zephyr.trading.feedback_loop.exceptions
-    file: src/zephyr/trading/feedback_loop/exceptions.py
-  - code: ZA-TR-0011
-    class: SessionTransitionError
-    module: zephyr.trading.orchestrator.lifecycle.session_manager
-    file: src/zephyr/trading/orchestrator/lifecycle/session_manager.py
-  - code: ZA-TR-0012
-    class: CoVeStepError
-    module: zephyr.trading.orchestrator.hallucination_detector
-    file: src/zephyr/trading/orchestrator/hallucination_detector.py
-  - code: ZA-TR-0013
-    class: FaultTypeNotFoundError
-    module: zephyr.trading.orchestrator.fault_tolerance.fault_types
-    file: src/zephyr/trading/orchestrator/fault_tolerance/fault_types.py
-  - code: ZA-TR-0014
-    class: ChaosHookError
-    module: zephyr.trading.orchestrator.fault_tolerance.chaos_hooks
-    file: src/zephyr/trading/orchestrator/fault_tolerance/chaos_hooks.py
-  - code: ZA-TR-0015
-    class: ChaosInjectError
-    module: zephyr.trading.orchestrator.fault_tolerance.chaos_engine
-    file: src/zephyr/trading/orchestrator/fault_tolerance/chaos_engine.py
-  - code: ZA-TR-0016
-    class: ChaosRecoverError
-    module: zephyr.trading.orchestrator.fault_tolerance.chaos_engine
-    file: src/zephyr/trading/orchestrator/fault_tolerance/chaos_engine.py
-  - code: ZA-TR-0017
-    class: RedBlueImportError
-    module: zephyr.trading.feedback_loop.gates.adversarial_validation
-    file: src/zephyr/trading/feedback_loop/gates/adversarial_validation.py
-  - code: ZA-TR-0018
-    class: DispatchError
-    module: zephyr.trading.feedback_loop.alert_dispatcher
-    file: src/zephyr/trading/feedback_loop/alert_dispatcher.py
-  - code: ZA-XC-0001
-    class: MiniQmtBrokerError
-    module: zephyr.ex_core.adapters.miniqmt_broker
-    file: src/zephyr/ex_core/adapters/miniqmt_broker.py
-
+- code: ZA-AC-0001
+  class: PromptRegistryError
+  module: zephyr.autonomy_core.prompt_registry
+  file: src/zephyr/autonomy_core/prompt_registry.py
+- code: ZA-AC-0002
+  class: TokenBudgetExceededError
+  module: zephyr.autonomy_core.prompt_registry
+  file: src/zephyr/autonomy_core/prompt_registry.py
+- code: ZA-AC-0003
+  class: TemplateNotFoundError
+  module: zephyr.autonomy_core.prompt_registry
+  file: src/zephyr/autonomy_core/prompt_registry.py
+- code: ZA-AC-0004
+  class: VariableError
+  module: zephyr.autonomy_core.prompt_registry
+  file: src/zephyr/autonomy_core/prompt_registry.py
+- code: ZA-AC-0005
+  class: AssemblyError
+  module: zephyr.autonomy_core.context.context_assembler
+  file: src/zephyr/autonomy_core/context/context_assembler.py
+- code: ZA-BT-0001
+  class: WalkForwardError
+  module: zephyr.backtest.core.walk_forward
+  file: src/zephyr/backtest/core/walk_forward.py
+- code: ZA-BT-0002
+  class: TickReplayError
+  module: zephyr.backtest.core.tick_replay
+  file: src/zephyr/backtest/core/tick_replay.py
+- code: ZA-BT-0003
+  class: PortfolioError
+  module: zephyr.backtest.core.portfolio
+  file: src/zephyr/backtest/core/portfolio.py
+- code: ZA-BT-0004
+  class: PITError
+  module: zephyr.backtest.core.pit_manager
+  file: src/zephyr/backtest/core/pit_manager.py
+- code: ZA-BT-0005
+  class: OverfittingError
+  module: zephyr.backtest.core.overfitting_detector
+  file: src/zephyr/backtest/core/overfitting_detector.py
+- code: ZA-BT-0006
+  class: MetricsError
+  module: zephyr.backtest.core.metrics
+  file: src/zephyr/backtest/core/metrics.py
+- code: ZA-BT-0007
+  class: MatchingLogicError
+  module: zephyr.backtest.core.matching_logic
+  file: src/zephyr/backtest/core/matching_logic.py
+- code: ZA-BT-0008
+  class: MatchingError
+  module: zephyr.backtest.core.matching_engine
+  file: src/zephyr/backtest/core/matching_engine.py
+- code: ZA-BT-0009
+  class: DecisionGateError
+  module: zephyr.backtest.core.decision_gate
+  file: src/zephyr/backtest/core/decision_gate.py
+- code: ZA-BT-0010
+  class: DataHandlerError
+  module: zephyr.backtest.core.data_handler
+  file: src/zephyr/backtest/core/data_handler.py
+- code: ZA-BT-0011
+  class: ArtifactNotFoundError
+  module: zephyr.backtest.io.result_repository
+  file: src/zephyr/backtest/io/result_repository.py
+- code: ZA-BT-0012
+  class: BacktestResultSinkError
+  module: zephyr.backtest.io.backtest_result_sink
+  file: src/zephyr/backtest/io/backtest_result_sink.py
+- code: ZA-BT-0013
+  class: EventDrivenEngineError
+  module: zephyr.backtest.implementations.event_driven_engine
+  file: src/zephyr/backtest/implementations/event_driven_engine.py
+- code: ZA-FE-0001
+  class: ChartFactoryError
+  module: zephyr.frontend.dashboard.components.chart_factory
+  file: src/zephyr/frontend/dashboard/components/chart_factory.py
+- code: ZA-FE-0002
+  class: TradePanelError
+  module: zephyr.frontend.dashboard.components.trade_panel
+  file: src/zephyr/frontend/dashboard/components/trade_panel.py
+- code: ZA-GT-0001
+  class: MCPError
+  module: zephyr.infrastructure.gate_engine_server
+  file: src/zephyr/infrastructure/gate_engine_server.py
+  description: MCP 门禁拦截（P0 级）
+- code: ZA-GT-0003
+  class: MCPError
+  module: zephyr.infrastructure.gate_engine_server
+  file: src/zephyr/infrastructure/gate_engine_server.py
+  description: signer_email 格式无效
+- code: ZA-GV-0001
+  class: MiniQmtProviderError
+  module: zephyr.governance.data_governance.miniqmt_provider
+  file: src/zephyr/governance/data_governance/miniqmt_provider.py
+- code: ZA-GV-0002
+  class: SnapshotError
+  module: zephyr.governance.audit.snapshot_manager
+  file: src/zephyr/governance/audit/snapshot_manager.py
+- code: ZA-GV-0003
+  class: PushError
+  module: zephyr.governance.behavioral_admission.mcp_result_push
+  file: src/zephyr/governance/behavioral_admission/mcp_result_push.py
+- code: ZA-GV-0004
+  class: CallbackConnectionError
+  module: zephyr.governance.behavioral_admission.mcp_result_push
+  file: src/zephyr/governance/behavioral_admission/mcp_result_push.py
+- code: ZA-GV-0005
+  class: InvalidDecisionError
+  module: zephyr.governance.behavioral_admission.admission_response
+  file: src/zephyr/governance/behavioral_admission/admission_response.py
+- code: ZA-GV-0006
+  class: TaskRepositoryError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0007
+  class: TaskNotFoundError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0008
+  class: InvalidTransitionError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0009
+  class: RejectedUpgradeCoolingOffError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0010
+  class: EventStoreError
+  module: zephyr.governance.audit_trail.event_store
+  file: src/zephyr/governance/audit_trail/event_store.py
+- code: ZA-GV-0011
+  class: IntegrityError
+  module: zephyr.governance.audit_trail.event_store
+  file: src/zephyr/governance/audit_trail/event_store.py
+- code: ZA-GV-0012
+  class: P0InflationFrozenError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0013
+  class: SyncVerificationError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0014
+  class: PostSyncValidationError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0015
+  class: PostSyncConstructionError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0016
+  class: CircularAcceptanceError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0017
+  class: UnclaimedOperationError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0018
+  class: RootCauseRequiredError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0019
+  class: GranularityViolationError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0020
+  class: BatchReviewRequiredError
+  module: zephyr.governance.persistence.task_repo
+  file: src/zephyr/governance/persistence/task_repo.py
+- code: ZA-GV-0021
+  class: TransactionError
+  module: zephyr.governance.financial_governance.atomic_transaction_manager
+  file: src/zephyr/governance/financial_governance/atomic_transaction_manager.py
+- code: ZA-GV-0022
+  class: TransactionTimeoutError
+  module: zephyr.governance.financial_governance.atomic_transaction_manager
+  file: src/zephyr/governance/financial_governance/atomic_transaction_manager.py
+- code: ZA-GV-0023
+  class: OLAPEngineError
+  module: zephyr.governance.persistence.olap_engine
+  file: src/zephyr/governance/persistence/olap_engine.py
+- code: ZA-GV-0024
+  class: TaskRepositoryError
+  module: zephyr.governance.persistence.base_repo
+  file: src/zephyr/governance/persistence/base_repo.py
+- code: ZA-GV-0025
+  class: TaskNotFoundError
+  module: zephyr.governance.persistence.base_repo
+  file: src/zephyr/governance/persistence/base_repo.py
+- code: ZA-GV-0026
+  class: InvalidTransitionError
+  module: zephyr.governance.persistence.base_repo
+  file: src/zephyr/governance/persistence/base_repo.py
+- code: ZA-GV-0027
+  class: RejectedUpgradeCoolingOffError
+  module: zephyr.governance.persistence.base_repo
+  file: src/zephyr/governance/persistence/base_repo.py
+- code: ZA-GV-0028
+  class: P0InflationFrozenError
+  module: zephyr.governance.persistence.base_repo
+  file: src/zephyr/governance/persistence/base_repo.py
+- code: ZA-GV-0029
+  class: DatabaseManagerError
+  module: zephyr.governance.persistence.database_manager
+  file: src/zephyr/governance/persistence/database_manager.py
+- code: ZA-GV-0030
+  class: ProjectionError
+  module: zephyr.governance.observability_governance.projection_engine
+  file: src/zephyr/governance/observability_governance/projection_engine.py
+- code: ZA-GV-0031
+  class: WorktreeError
+  module: zephyr.governance.rule_bridge.worktree_manager
+  file: src/zephyr/governance/rule_bridge/worktree_manager.py
+- code: ZA-GV-0032
+  class: GatewayError
+  module: zephyr.governance.rule_bridge.git_commit_gateway
+  file: src/zephyr/governance/rule_bridge/git_commit_gateway.py
+- code: ZA-GV-0033
+  class: CostBudgetExceededError
+  module: zephyr.governance.ops_governance.cost_budget
+  file: src/zephyr/governance/ops_governance/cost_budget.py
+- code: ZA-GV-0034
+  class: SelfHealError
+  module: zephyr.governance.semantic_audit.self_healer
+  file: src/zephyr/governance/semantic_audit/self_healer.py
+- code: ZA-GV-0035
+  class: ContractViolationError
+  module: zephyr.governance.audit_trail.contracts
+  file: src/zephyr/governance/audit_trail/contracts.py
+- code: ZA-GV-0036
+  class: CircuitOpenError
+  module: zephyr.governance.rule_enforcement.circuit_breaker
+  file: src/zephyr/governance/rule_enforcement/circuit_breaker.py
+- code: ZA-GV-0037
+  class: DepgraphLoadError
+  module: zephyr.governance.resilience_governance.blast_radius
+  file: src/zephyr/governance/resilience_governance/blast_radius.py
+- code: ZA-GV-0038
+  class: MemoryBackendError
+  module: zephyr.governance.kb.storage._backend_protocol
+  file: src/zephyr/governance/kb/storage/_backend_protocol.py
+- code: ZA-GV-0039
+  class: GitUnavailableError
+  module: zephyr.governance.rule_enforcement.invariants.post_doc_review_check
+  file: src/zephyr/governance/rule_enforcement/invariants/post_doc_review_check.py
+- code: ZA-GV-0040
+  class: TamperingError
+  module: zephyr.governance.rule_enforcement.invariants.post_doc_review_check
+  file: src/zephyr/governance/rule_enforcement/invariants/post_doc_review_check.py
+- code: ZA-GV-0041
+  class: GateEngineError
+  module: zephyr.governance.rule_enforcement.gate_types
+  file: src/zephyr/governance/rule_enforcement/gate_types.py
+- code: ZA-GV-0042
+  class: GateViolationError
+  module: zephyr.governance.rule_enforcement.gate_types
+  file: src/zephyr/governance/rule_enforcement/gate_types.py
+- code: ZA-GV-0043
+  class: StrategyError
+  module: zephyr.governance.rule_enforcement.adversarial_strategies
+  file: src/zephyr/governance/rule_enforcement/adversarial_strategies.py
+- code: ZA-GV-0044
+  class: AdversarialValidationError
+  module: zephyr.governance.rule_enforcement.gate_engine.adversarial_validation
+  file: src/zephyr/governance/rule_enforcement/gate_engine/adversarial_validation.py
+- code: ZA-GV-0045
+  class: InvalidTransitionError
+  module: zephyr.governance.drift_detection.state_machine
+  file: src/zephyr/governance/drift_detection/state_machine.py
+- code: ZA-HF-0001
+  class: MCPError
+  module: zephyr.infrastructure.doc_guard_server
+  file: src/zephyr/infrastructure/doc_guard_server.py
+  description: 文档守卫参数校验失败（to_platform/context_priority 无效）
+- code: ZA-HF-0002
+  class: MCPError
+  module: zephyr.infrastructure.doc_guard_server
+  file: src/zephyr/infrastructure/doc_guard_server.py
+  description: 防腐检查失败
+- code: ZA-HF-0003
+  class: MCPError
+  module: zephyr.infrastructure.doc_guard_server
+  file: src/zephyr/infrastructure/doc_guard_server.py
+  description: carryover 未找到
+- code: ZA-HF-0004
+  class: MCPError
+  module: zephyr.infrastructure.doc_guard_server
+  file: src/zephyr/infrastructure/doc_guard_server.py
+  description: 上下文超限（>200 items）
+- code: ZA-IF-0001
+  class: MCPError
+  module: zephyr.infrastructure._base_server
+  file: src/zephyr/infrastructure/_base_server.py
+- code: ZA-IF-0002
+  class: TelemetryWriteError
+  module: zephyr.infrastructure.system_telemetry.metrics_bridge
+  file: src/zephyr/infrastructure/system_telemetry/metrics_bridge.py
+- code: ZA-IF-0003
+  class: SnapshotBuildError
+  module: zephyr.infrastructure.system_snapshot
+  file: src/zephyr/infrastructure/system_snapshot.py
+- code: ZA-IF-0004
+  class: FileWatcherError
+  module: zephyr.infrastructure.file_watcher
+  file: src/zephyr/infrastructure/file_watcher.py
+- code: ZA-IF-0005
+  class: InvalidFixTransitionError
+  module: zephyr.infrastructure.auto_fix_engine.state_machine
+  file: src/zephyr/infrastructure/auto_fix_engine/state_machine.py
+- code: ZA-IF-0006
+  class: RegistryParseError
+  module: zephyr.infrastructure.asset_inventory.registry_adapter
+  file: src/zephyr/infrastructure/asset_inventory/registry_adapter.py
+- code: ZA-IF-0007
+  class: ConcurrencyConflictError
+  module: zephyr.infrastructure.runtime.concurrency_guard
+  file: src/zephyr/infrastructure/runtime/concurrency_guard.py
+- code: ZA-IF-0008
+  class: NoEligibleNodeError
+  module: zephyr.infrastructure.pipeline.routing_plugins
+  file: src/zephyr/infrastructure/pipeline/routing_plugins.py
+- code: ZA-IF-0009
+  class: PipelineRoutingInputsError
+  module: zephyr.infrastructure.pipeline.ct_pipe_routing
+  file: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
+- code: ZA-IF-0010
+  class: CircuitBreakerOpenError
+  module: zephyr.infrastructure.reliability.circuit_breaker
+  file: src/zephyr/infrastructure/reliability/circuit_breaker.py
+- code: ZA-IF-0011
+  class: GovernanceError
+  module: zephyr.infrastructure.a2a_protocol.governance.error_codes
+  file: src/zephyr/infrastructure/a2a_protocol/governance/error_codes.py
+- code: ZA-IF-0012
+  class: MCPError
+  module: zephyr.infrastructure.a2a_protocol.governance._base_server
+  file: src/zephyr/infrastructure/a2a_protocol/governance/_base_server.py
+- code: ZA-IG-0001
+  class: VMSError
+  module: zephyr.integration.vector_memory.vms_errors
+  file: src/zephyr/integration/vector_memory/vms_errors.py
+- code: ZA-IG-0002
+  class: DesignPrincipleError
+  module: zephyr.integration.vector_memory.vms_errors
+  file: src/zephyr/integration/vector_memory/vms_errors.py
+- code: ZA-IG-0003
+  class: ProvenanceMissingError
+  module: zephyr.integration.vector_memory.vms_errors
+  file: src/zephyr/integration/vector_memory/vms_errors.py
+- code: ZA-IG-0004
+  class: DimensionError
+  module: zephyr.integration.vector_memory.vms_errors
+  file: src/zephyr/integration/vector_memory/vms_errors.py
+- code: ZA-IG-0005
+  class: ChunkStrategyError
+  module: zephyr.integration.vector_memory.vms_errors
+  file: src/zephyr/integration/vector_memory/vms_errors.py
+- code: ZA-IG-0006
+  class: TTLError
+  module: zephyr.integration.vector_memory.vms_errors
+  file: src/zephyr/integration/vector_memory/vms_errors.py
+- code: ZA-IG-0007
+  class: HotColdSeparationError
+  module: zephyr.integration.vector_memory.vms_errors
+  file: src/zephyr/integration/vector_memory/vms_errors.py
+- code: ZA-IG-0008
+  class: VMSError
+  module: zephyr.integration.vector_memory.collection_manager
+  file: src/zephyr/integration/vector_memory/collection_manager.py
+- code: ZA-IG-0009
+  class: DesignPrincipleError
+  module: zephyr.integration.vector_memory.collection_manager
+  file: src/zephyr/integration/vector_memory/collection_manager.py
+- code: ZA-IG-0010
+  class: ProvenanceMissingError
+  module: zephyr.integration.vector_memory.collection_manager
+  file: src/zephyr/integration/vector_memory/collection_manager.py
+- code: ZA-IG-0011
+  class: DimensionError
+  module: zephyr.integration.vector_memory.collection_manager
+  file: src/zephyr/integration/vector_memory/collection_manager.py
+- code: ZA-IG-0012
+  class: ChunkStrategyError
+  module: zephyr.integration.vector_memory.collection_manager
+  file: src/zephyr/integration/vector_memory/collection_manager.py
+- code: ZA-IG-0013
+  class: TTLError
+  module: zephyr.integration.vector_memory.collection_manager
+  file: src/zephyr/integration/vector_memory/collection_manager.py
+- code: ZA-IG-0014
+  class: HotColdSeparationError
+  module: zephyr.integration.vector_memory.collection_manager
+  file: src/zephyr/integration/vector_memory/collection_manager.py
+- code: ZA-IG-0015
+  class: SchemaRegistryError
+  module: zephyr.integration.shared.schema.schema_registry
+  file: src/zephyr/integration/shared/schema/schema_registry.py
+- code: ZA-IG-0016
+  class: EventVersionError
+  module: zephyr.integration.shared.events.event_bus_upgrade
+  file: src/zephyr/integration/shared/events/event_bus_upgrade.py
+- code: ZA-IG-0017
+  class: InvalidDecisionError
+  module: zephyr.integration.behavioral_admission.admission_response
+  file: src/zephyr/integration/behavioral_admission/admission_response.py
+- code: ZA-IG-0018
+  class: MCPError
+  module: zephyr.integration.mcp._base_server
+  file: src/zephyr/integration/mcp/_base_server.py
+- code: ZA-INT-0001
+  class: MCPError
+  module: zephyr.infrastructure.sentinel_server
+  file: src/zephyr/infrastructure/sentinel_server.py
+  description: 三阶段全部失败（UNKNOWN）
+- code: ZA-INT-0002
+  class: MCPError
+  module: zephyr.infrastructure.sentinel_server
+  file: src/zephyr/infrastructure/sentinel_server.py
+  description: 查询过长
+- code: ZA-IT-0001
+  class: JobMatcherError
+  module: zephyr.intelligence.model_profiling.job_matcher
+  file: src/zephyr/intelligence/model_profiling/job_matcher.py
+- code: ZA-IT-0002
+  class: TamperError
+  module: zephyr.intelligence.model_profiling.capability_passport
+  file: src/zephyr/intelligence/model_profiling/capability_passport.py
+- code: ZA-KB-0001
+  class: MCPError
+  module: zephyr.infrastructure.knowledge_base_server
+  file: src/zephyr/infrastructure/knowledge_base_server.py
+  description: collection 未找到
+- code: ZA-KB-0002
+  class: MCPError
+  module: zephyr.integration.mcp.tool_contracts
+  file: src/zephyr/integration/mcp/tool_contracts.yaml
+  description: embedding model 不可用（声明于 tool_contracts.yaml）
+- code: ZA-KB-0003
+  class: MCPError
+  module: zephyr.integration.mcp.tool_contracts
+  file: src/zephyr/integration/mcp/tool_contracts.yaml
+  description: 查询延迟超限 >500ms（声明于 tool_contracts.yaml）
+- code: ZA-KB-0004
+  class: MCPError
+  module: zephyr.integration.mcp.tool_contracts
+  file: src/zephyr/integration/mcp/tool_contracts.yaml
+  description: 索引重建要求（声明于 tool_contracts.yaml）
+- code: ZA-KB-0005
+  class: MCPError
+  module: zephyr.infrastructure.knowledge_base_server
+  file: src/zephyr/infrastructure/knowledge_base_server.py
+  description: ke_id 未找到
+- code: ZA-SC-0001
+  class: SessionError
+  module: zephyr.security.adversarial_validation.validator
+  file: src/zephyr/security/adversarial_validation/validator.py
+- code: ZA-SC-0002
+  class: SteadyStateDriftError
+  module: zephyr.security.adversarial_validation.steady_state
+  file: src/zephyr/security/adversarial_validation/steady_state.py
+- code: ZA-SC-0003
+  class: McpEndpointError
+  module: zephyr.security.adversarial_validation.mcp_endpoints
+  file: src/zephyr/security/adversarial_validation/mcp_endpoints.py
+- code: ZA-SC-0004
+  class: ConstitutionViolationError
+  module: zephyr.security.adversarial_validation.constitution_guard
+  file: src/zephyr/security/adversarial_validation/constitution_guard.py
+- code: ZA-SC-0005
+  class: ScheduleConflictError
+  module: zephyr.security.adversarial_validation.game_day_scheduler
+  file: src/zephyr/security/adversarial_validation/game_day_scheduler.py
+- code: ZA-SC-0006
+  class: GameDayError
+  module: zephyr.security.adversarial_validation.game_day_runner
+  file: src/zephyr/security/adversarial_validation/game_day_runner.py
+- code: ZA-SC-0007
+  class: GateEvaluationError
+  module: zephyr.security.adversarial_validation.defense_runner
+  file: src/zephyr/security/adversarial_validation/defense_runner.py
+- code: ZA-SC-0008
+  class: ConvergenceFailureError
+  module: zephyr.security.adversarial_validation.convergence_checker
+  file: src/zephyr/security/adversarial_validation/convergence_checker.py
+- code: ZA-SC-0009
+  class: AbortThresholdError
+  module: zephyr.security.adversarial_validation.blast_radius
+  file: src/zephyr/security/adversarial_validation/blast_radius.py
+- code: ZA-SC-0010
+  class: CleanupVerificationError
+  module: zephyr.security.adversarial_validation.cleanup
+  file: src/zephyr/security/adversarial_validation/cleanup.py
+- code: ZA-SC-0011
+  class: MonitorStallError
+  module: zephyr.security.adversarial_validation.async_monitor
+  file: src/zephyr/security/adversarial_validation/async_monitor.py
+- code: ZA-SC-0012
+  class: CircuitBreakerOpenError
+  module: zephyr.security.adversarial_validation.circuit_breaker
+  file: src/zephyr/security/adversarial_validation/circuit_breaker.py
+- code: ZA-SC-0013
+  class: BootstrapVerificationError
+  module: zephyr.security.adversarial_validation.cold_start
+  file: src/zephyr/security/adversarial_validation/cold_start.py
+- code: ZA-SC-0014
+  class: AttackGenerationError
+  module: zephyr.security.adversarial_validation.ai_attack_generator
+  file: src/zephyr/security/adversarial_validation/ai_attack_generator.py
+- code: ZA-SC-0015
+  class: RegistryWriteError
+  module: zephyr.security.adversarial_validation.constitution_engine
+  file: src/zephyr/security/adversarial_validation/constitution_engine.py
+- code: ZA-SC-0016
+  class: DuplicateArticleError
+  module: zephyr.security.adversarial_validation.constitution_engine
+  file: src/zephyr/security/adversarial_validation/constitution_engine.py
+- code: ZA-SC-0017
+  class: SanitizationError
+  module: zephyr.security.llm_defense.llm_security.input_sanitizer
+  file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
+- code: ZA-SC-0018
+  class: PathTraversalError
+  module: zephyr.security.llm_defense.llm_security.input_sanitizer
+  file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
+- code: ZA-SC-0019
+  class: CommandInjectionError
+  module: zephyr.security.llm_defense.llm_security.input_sanitizer
+  file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
+- code: ZA-SC-0020
+  class: TokenBudgetExceededError
+  module: zephyr.security.llm_defense.llm_security.input_sanitizer
+  file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
+- code: ZA-SC-0021
+  class: ContextInjectionError
+  module: zephyr.security.llm_defense.llm_security.input_sanitizer
+  file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
+- code: ZA-SC-0022
+  class: BareLLMCallError
+  module: zephyr.security.llm_defense.llm_security.runtime_interceptor
+  file: src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py
+- code: ZA-SC-0023
+  class: AgentRbacError
+  module: zephyr.security.access_control.exceptions
+  file: src/zephyr/security/access_control/exceptions.py
+- code: ZA-SC-0024
+  class: PermissionDeniedError
+  module: zephyr.security.access_control.exceptions
+  file: src/zephyr/security/access_control/exceptions.py
+- code: ZA-SC-0025
+  class: ColdStartLockedError
+  module: zephyr.security.access_control.exceptions
+  file: src/zephyr/security/access_control/exceptions.py
+- code: ZA-SC-0026
+  class: OverrideTokenExpiredError
+  module: zephyr.security.access_control.exceptions
+  file: src/zephyr/security/access_control/exceptions.py
+- code: ZA-SC-0027
+  class: KillSwitchTrippedError
+  module: zephyr.security.access_control.exceptions
+  file: src/zephyr/security/access_control/exceptions.py
+- code: ZA-SC-0028
+  class: DegradationBlockedError
+  module: zephyr.security.access_control.exceptions
+  file: src/zephyr/security/access_control/exceptions.py
+- code: ZA-SC-0029
+  class: EngineUnavailableError
+  module: zephyr.security.access_control.genesis_bootstrap
+  file: src/zephyr/security/access_control/genesis_bootstrap.py
+- code: ZA-SC-0030
+  class: DeprecationTrackerError
+  module: zephyr.security.access_control.orphan_judge.deprecation_tracker
+  file: src/zephyr/security/access_control/orphan_judge/deprecation_tracker.py
+- code: ZA-SC-0031
+  class: CascadeAnalyzerError
+  module: zephyr.security.access_control.orphan_judge.cascade_analyzer
+  file: src/zephyr/security/access_control/orphan_judge/cascade_analyzer.py
+- code: ZA-SC-0032
+  class: OrphanJudgeError
+  module: zephyr.security.access_control.orphan_judge.judge
+  file: src/zephyr/security/access_control/orphan_judge/judge.py
+- code: ZA-SC-0033
+  class: OrphanCollectorError
+  module: zephyr.security.access_control.orphan_judge.orphan_collector
+  file: src/zephyr/security/access_control/orphan_judge/orphan_collector.py
+- code: ZA-SC-0034
+  class: SafetyFenceError
+  module: zephyr.security.access_control.orphan_judge.safety_fence
+  file: src/zephyr/security/access_control/orphan_judge/safety_fence.py
+- code: ZA-SH-0001
+  class: ConfigError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0002
+  class: ContractError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0003
+  class: SecurityError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0004
+  class: SessionError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0005
+  class: ValidationError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0006
+  class: TaskError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0007
+  class: PipelineError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0008
+  class: GateError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0009
+  class: ContextError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0010
+  class: FeedbackError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0011
+  class: DataError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0012
+  class: ZephyrIOError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0013
+  class: UnimplementedError
+  module: zephyr.shared.foundation.errors
+  file: src/zephyr/shared/foundation/errors.py
+- code: ZA-SH-0014
+  class: SsotError
+  module: zephyr.shared.security.ssot_guard
+  file: src/zephyr/shared/security/ssot_guard.py
+- code: ZA-SH-0015
+  class: RegistryParseError
+  module: zephyr.shared.security.ssot_guard
+  file: src/zephyr/shared/security/ssot_guard.py
+- code: ZA-SH-0016
+  class: SecretsError
+  module: zephyr.shared.security.secrets
+  file: src/zephyr/shared/security/secrets.py
+- code: ZA-SH-0017
+  class: SchemaRegistryError
+  module: zephyr.shared.schema.schema_registry
+  file: src/zephyr/shared/schema/schema_registry.py
+- code: ZA-SH-0018
+  class: RetryExhaustedError
+  module: zephyr.shared.resilience.retry
+  file: src/zephyr/shared/resilience/retry.py
+- code: ZA-SH-0019
+  class: FallbackExhaustedError
+  module: zephyr.shared.resilience.fallback
+  file: src/zephyr/shared/resilience/fallback.py
+- code: ZA-SH-0020
+  class: CircuitOpenError
+  module: zephyr.shared.resilience.circuit_breaker
+  file: src/zephyr/shared/resilience/circuit_breaker.py
+- code: ZA-SH-0021
+  class: ApiCallError
+  module: zephyr.shared.api.api_client
+  file: src/zephyr/shared/api/api_client.py
+- code: ZA-SH-0022
+  class: ContractViolationError
+  module: zephyr.shared.contracts.core.enforcer
+  file: src/zephyr/shared/contracts/core/enforcer.py
+- code: ZA-SH-0023
+  class: NaiveDatetimeError
+  module: zephyr.shared.contracts.core.timestamp
+  file: src/zephyr/shared/contracts/core/timestamp.py
+- code: ZA-SH-0024
+  class: ContractViolationError
+  module: zephyr.shared.contracts.contract_bus
+  file: src/zephyr/shared/contracts/contract_bus.py
+- code: ZA-SH-0025
+  class: ContractBusError
+  module: zephyr.shared.contracts.contract_bus
+  file: src/zephyr/shared/contracts/contract_bus.py
+- code: ZA-SH-0026
+  class: VersionMismatchError
+  module: zephyr.shared.contracts.core.registry
+  file: src/zephyr/shared/contracts/core/registry.py
+- code: ZA-SH-0027
+  class: InvalidTransitionError
+  module: zephyr.shared.lifecycle.state_machine
+  file: src/zephyr/shared/lifecycle/state_machine.py
+- code: ZA-SH-0028
+  class: TransitionGuardError
+  module: zephyr.shared.lifecycle.state_machine
+  file: src/zephyr/shared/lifecycle/state_machine.py
+- code: ZA-SH-0029
+  class: StateMachineRegistryError
+  module: zephyr.shared.lifecycle.state_machine
+  file: src/zephyr/shared/lifecycle/state_machine.py
+- code: ZA-SH-0030
+  class: VersionMismatchError
+  module: zephyr.shared.__version__
+  file: src/zephyr/shared/__version__.py
+- code: ZA-SH-0031
+  class: MoneyPrecisionError
+  module: zephyr.shared.contracts.portfolio.money
+  file: src/zephyr/shared/contracts/portfolio/money.py
+- code: ZA-SH-0032
+  class: MoneyCurrencyMismatchError
+  module: zephyr.shared.contracts.portfolio.money
+  file: src/zephyr/shared/contracts/portfolio/money.py
+- code: ZA-SH-0033
+  class: EventVersionError
+  module: zephyr.shared.events.event_bus_upgrade
+  file: src/zephyr/shared/events/event_bus_upgrade.py
+- code: ZA-SH-0034
+  class: SerializationError
+  module: zephyr.shared.io.serialization
+  file: src/zephyr/shared/io/serialization.py
+- code: ZA-SH-0035
+  class: SerializationError
+  module: zephyr.shared.io.serialization
+  file: src/zephyr/shared/io/serialization.py
+- code: ZA-SH-0036
+  class: CompressionInvariantError
+  module: zephyr.shared.io.doc_compressor
+  file: src/zephyr/shared/io/doc_compressor.py
+- code: ZA-SH-0037
+  class: AtomicWriteError
+  module: zephyr.shared.io.file_utils
+  file: src/zephyr/shared/io/file_utils.py
+- code: ZA-SH-0038
+  class: FingerprintError
+  module: zephyr.shared.io.content_fingerprint
+  file: src/zephyr/shared/io/content_fingerprint.py
+- code: ZA-SH-0039
+  class: FingerprintNotFoundError
+  module: zephyr.shared.io.content_fingerprint
+  file: src/zephyr/shared/io/content_fingerprint.py
+- code: ZA-SH-0040
+  class: FingerprintPermissionError
+  module: zephyr.shared.io.content_fingerprint
+  file: src/zephyr/shared/io/content_fingerprint.py
+- code: ZA-SH-0041
+  class: LockError
+  module: zephyr.shared.infra.lock
+  file: src/zephyr/shared/infra/lock.py
+- code: ZA-SH-0042
+  class: OutboxError
+  module: zephyr.shared.infra.outbox
+  file: src/zephyr/shared/infra/outbox.py
+- code: ZA-SH-0043
+  class: RateLimitError
+  module: zephyr.shared.infra.limiter
+  file: src/zephyr/shared/infra/limiter.py
+- code: ZA-SH-0044
+  class: IdempotencyError
+  module: zephyr.shared.infra.idempotency
+  file: src/zephyr/shared/infra/idempotency.py
+- code: ZA-SH-0045
+  class: CacheError
+  module: zephyr.shared.infra.cache
+  file: src/zephyr/shared/infra/cache.py
+- code: ZA-SH-0046
+  class: DeprecatedAPIError
+  module: zephyr.shared.foundation.deprecation
+  file: src/zephyr/shared/foundation/deprecation.py
+- code: ZA-SH-0047
+  class: FlagNotFoundError
+  module: zephyr.shared.foundation.flags
+  file: src/zephyr/shared/foundation/flags.py
+- code: ZA-SH-0048
+  class: MigrationError
+  module: zephyr.shared.utils.migration
+  file: src/zephyr/shared/utils/migration.py
+- code: ZA-SH-0049
+  class: PatchConflictError
+  module: zephyr.shared.utils.diff_utils
+  file: src/zephyr/shared/utils/diff_utils.py
+- code: ZA-TR-0001
+  class: RiskLimitViolationError
+  module: zephyr.trading.trading_contracts.risk.risk_limit_violation_error
+  file: src/zephyr/trading/trading_contracts/risk/risk_limit_violation_error.py
+- code: ZA-TR-0002
+  class: MoneyPrecisionError
+  module: zephyr.trading.trading_contracts.portfolio.contracts.money
+  file: src/zephyr/trading/trading_contracts/portfolio/contracts/money.py
+- code: ZA-TR-0003
+  class: MoneyCurrencyMismatchError
+  module: zephyr.trading.trading_contracts.portfolio.contracts.money
+  file: src/zephyr/trading/trading_contracts/portfolio/contracts/money.py
+- code: ZA-TR-0004
+  class: StagingError
+  module: zephyr.trading.staging_area
+  file: src/zephyr/trading/staging_area.py
+- code: ZA-TR-0005
+  class: TriggerRouterConfigError
+  module: zephyr.trading.orchestrator.execution.trigger_router
+  file: src/zephyr/trading/orchestrator/execution/trigger_router.py
+- code: ZA-TR-0006
+  class: FLEBaseException
+  module: zephyr.trading.feedback_loop.exceptions
+  file: src/zephyr/trading/feedback_loop/exceptions.py
+- code: ZA-TR-0007
+  class: DiagnosisError
+  module: zephyr.trading.feedback_loop.exceptions
+  file: src/zephyr/trading/feedback_loop/exceptions.py
+- code: ZA-TR-0008
+  class: RepairError
+  module: zephyr.trading.feedback_loop.exceptions
+  file: src/zephyr/trading/feedback_loop/exceptions.py
+- code: ZA-TR-0009
+  class: GateBlockedError
+  module: zephyr.trading.feedback_loop.exceptions
+  file: src/zephyr/trading/feedback_loop/exceptions.py
+- code: ZA-TR-0010
+  class: AutonomyViolationError
+  module: zephyr.trading.feedback_loop.exceptions
+  file: src/zephyr/trading/feedback_loop/exceptions.py
+- code: ZA-TR-0011
+  class: SessionTransitionError
+  module: zephyr.trading.orchestrator.lifecycle.session_manager
+  file: src/zephyr/trading/orchestrator/lifecycle/session_manager.py
+- code: ZA-TR-0012
+  class: CoVeStepError
+  module: zephyr.trading.orchestrator.hallucination_detector
+  file: src/zephyr/trading/orchestrator/hallucination_detector.py
+- code: ZA-TR-0013
+  class: FaultTypeNotFoundError
+  module: zephyr.trading.orchestrator.fault_tolerance.fault_types
+  file: src/zephyr/trading/orchestrator/fault_tolerance/fault_types.py
+- code: ZA-TR-0014
+  class: ChaosHookError
+  module: zephyr.trading.orchestrator.fault_tolerance.chaos_hooks
+  file: src/zephyr/trading/orchestrator/fault_tolerance/chaos_hooks.py
+- code: ZA-TR-0015
+  class: ChaosInjectError
+  module: zephyr.trading.orchestrator.fault_tolerance.chaos_engine
+  file: src/zephyr/trading/orchestrator/fault_tolerance/chaos_engine.py
+- code: ZA-TR-0016
+  class: ChaosRecoverError
+  module: zephyr.trading.orchestrator.fault_tolerance.chaos_engine
+  file: src/zephyr/trading/orchestrator/fault_tolerance/chaos_engine.py
+- code: ZA-TR-0017
+  class: RedBlueImportError
+  module: zephyr.trading.feedback_loop.gates.adversarial_validation
+  file: src/zephyr/trading/feedback_loop/gates/adversarial_validation.py
+- code: ZA-TR-0018
+  class: DispatchError
+  module: zephyr.trading.feedback_loop.alert_dispatcher
+  file: src/zephyr/trading/feedback_loop/alert_dispatcher.py
+- code: ZA-XC-0001
+  class: MiniQmtBrokerError
+  module: zephyr.ex_core.adapters.miniqmt_broker
+  file: src/zephyr/ex_core/adapters/miniqmt_broker.py
 # ============================================================
-# 关联系统（非 ZA-XX-NNNN 格式的其他错误码体系）
+# 关联系统
 # ============================================================
 related_systems:
-  - system: MCP 协议错误码
-    format: int（JSON-RPC 标准码 -32700~-32005）
-    canonical_file: src/zephyr/infrastructure/error_codes.py
-    description: MCP 协议层错误码，与业务 error_code 职责分离
-  - system: A2A 治理错误码
-    format: SCREAMING_SNAKE 字符串
-    canonical_file: src/zephyr/infrastructure/a2a_protocol/governance/error_codes.py
-    description: A2A 协议治理错误码
-  - system: CTR-ERR 契约错误码
-    format: dataclass 值对象
-    canonical_file: architecture_model/contracts/cross_layer_contracts.yaml
-    description: 跨层契约错误码
+- system: MCP 协议错误码
+  format: int（JSON-RPC 标准码 -32700~-32005）
+  canonical_file: src/zephyr/infrastructure/error_codes.py
+  description: MCP 协议层错误码，与业务 error_code 职责分离
+- system: A2A 治理错误码
+  format: SCREAMING_SNAKE 字符串
+  canonical_file: src/zephyr/infrastructure/a2a_protocol/governance/error_codes.py
+  description: A2A 协议治理错误码
+- system: CTR-ERR 契约错误码
+  format: dataclass 值对象
+  canonical_file: architecture_model/contracts/cross_layer_contracts.yaml
+  description: 跨层契约错误码

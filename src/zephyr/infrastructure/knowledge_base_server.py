@@ -238,7 +238,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         ZA-KB-0001: collection not found
         """
         if collection not in _VALID_COLLECTIONS:
-            raise MCPError(-32001, f"ZA-KB-0001: collection not found: {collection!r}")
+            raise MCPError(-32001, f"collection not found: {collection!r}", error_code="ZA-KB-0001")
 
         start = datetime.now(tz=UTC)
 
@@ -365,14 +365,14 @@ class KnowledgeBaseServer(BaseMCPServer):
                 "backend": "memory",
             }
 
-        raise MCPError(-32001, f"ZA-KB-0005: ke_id not found: {ke_id!r}")
+        raise MCPError(-32001, f"ke_id not found: {ke_id!r}", error_code="ZA-KB-0005")
 
     def _rebuild_index(self, collection: str, force: bool = False) -> dict[str, Any]:
         """重建向量索引（骨架层；生产中由 InProcessVectorMemory 重建）。"""
         targets = list(_VALID_COLLECTIONS) if collection == "ALL" else [collection]
         for col in targets:
             if col not in _VALID_COLLECTIONS:
-                raise MCPError(-32001, f"ZA-KB-0001: collection not found: {col!r}")
+                raise MCPError(-32001, f"collection not found: {col!r}", error_code="ZA-KB-0001")
         chunks = sum(max(1, len(e.get("content", "")) // 512) for e in self._entries.values())
         return {"chunks_indexed": chunks, "duration_seconds": 0.0}
 

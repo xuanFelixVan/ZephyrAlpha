@@ -187,13 +187,13 @@ class DocGuardServer(BaseMCPServer):
         ZA-HF-0004: context size exceeds limit
         """
         if to_platform not in _VALID_PLATFORMS:
-            raise MCPError(-32602, f"ZA-HF-0001: to_platform 无效: {to_platform!r}")
+            raise MCPError(-32602, f"to_platform 无效: {to_platform!r}", error_code="ZA-HF-0001")
         if context_priority not in _VALID_CONTEXT_PRIORITIES:
-            raise MCPError(-32602, f"ZA-HF-0001: context_priority 无效: {context_priority!r}")
+            raise MCPError(-32602, f"context_priority 无效: {context_priority!r}", error_code="ZA-HF-0001")
 
         total_items = len(completed_tasks) + len(next_tasks) + len(open_files)
         if total_items > 200:
-            raise MCPError(-32413, "ZA-HF-0004: context size exceeds limit (>200 items)")
+            raise MCPError(-32413, "context size exceeds limit (>200 items)", error_code="ZA-HF-0004")
 
         package: dict[str, Any] = {
             "from_session": from_session,
@@ -246,7 +246,7 @@ class DocGuardServer(BaseMCPServer):
 
         passed = not bool(failed)
         if not passed:
-            raise MCPError(-32409, f"ZA-HF-0002: anti-corruption check failed: {failed}")
+            raise MCPError(-32409, f"anti-corruption check failed: {failed}", error_code="ZA-HF-0002")
 
         return {"passed": passed, "failed_checks": failed, "warnings": warnings}
 
@@ -259,7 +259,7 @@ class DocGuardServer(BaseMCPServer):
         ZA-HF-0003: carryover not found
         """
         if not self._carryovers:
-            raise MCPError(-32404, "ZA-HF-0003: carryover not found")
+            raise MCPError(-32404, "carryover not found", error_code="ZA-HF-0003")
 
         if session_id is None:
             return self._carryovers[-1]
@@ -268,7 +268,7 @@ class DocGuardServer(BaseMCPServer):
             if co.get("session_id") == session_id:
                 return co
 
-        raise MCPError(-32404, f"ZA-HF-0003: carryover not found for session {session_id!r}")
+        raise MCPError(-32404, f"carryover not found for session {session_id!r}", error_code="ZA-HF-0003")
 
     def _emit_manual_event(
         self,

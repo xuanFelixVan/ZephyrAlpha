@@ -186,7 +186,7 @@ class SentinelServer(BaseMCPServer):
         ZA-INT-0002: query too long
         """
         if len(query) > 1000:
-            raise MCPError(-32400, f"ZA-INT-0002: query too long ({len(query)} chars)")
+            raise MCPError(-32400, f"query too long ({len(query)} chars)", error_code="ZA-INT-0002")
 
         t0 = time.perf_counter()
 
@@ -207,7 +207,7 @@ class SentinelServer(BaseMCPServer):
         latency_ms = int((time.perf_counter() - t0) * 1000)
 
         if domain == "UNKNOWN":
-            raise MCPError(-32422, "ZA-INT-0001: all three stages failed (UNKNOWN)")
+            raise MCPError(-32422, "all three stages failed (UNKNOWN)", error_code="ZA-INT-0001")
 
         # 简化版 directive 推荐（骨架）
         _DOMAIN_DIRECTIVES: dict[str, list[str]] = {
