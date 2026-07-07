@@ -597,9 +597,12 @@ def session_worktree_commit(
             try:
                 dst.unlink()
             except OSError:
-                # 只读文件兜底：清除只读位后重试
-                os.chmod(str(dst), 0o644)
-                dst.unlink()
+                try:
+                    # 只读文件兜底：清除只读位后重试
+                    os.chmod(str(dst), 0o644)
+                    dst.unlink()
+                except OSError:
+                    pass  # gitlink/special file unlink 失败，跳过（git add -A 会 stage 删除）
 
     # git add -A 同时 stage 新增/修改/删除（替代原 git add，确保文件删除被 stage）
     add_cmd = ["git", "add", "-A", "--"] + rel_files

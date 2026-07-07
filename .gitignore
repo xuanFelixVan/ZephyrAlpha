@@ -103,7 +103,8 @@ Thumbs.db
 .trae_cache/
 
 # AI draft worktree directory (session_worktree runtime, must not be tracked)
-.aidrafts/
+# 用 sess-*/ 只忽略 worktree 目录，不忽略 gitlink 文件（便于清理误入库的 gitlink）
+.aidrafts/sess-*/
 
 # AI file lock registry (runtime state, not config)
 .ailocks/
