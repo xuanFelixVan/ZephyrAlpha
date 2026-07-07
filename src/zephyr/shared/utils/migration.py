@@ -176,7 +176,7 @@ def migrate_task(data: dict[str, Any], to_version: str | None = None) -> dict[st
         current = data.get("schema_version", current_version)
         migration_fn = MIGRATIONS.get(current, {}).get(next_ver)
         if migration_fn is None:
-            raise MigrationError(f"迁移 {current} → {next_ver} 未注册。")
+            raise MigrationError(f"迁移 {current} -> {next_ver} 未注册")
         data = migration_fn(data)
         data["schema_version"] = next_ver
 

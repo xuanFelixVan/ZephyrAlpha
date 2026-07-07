@@ -375,7 +375,7 @@ class CollectionManager:
 
     def migrate_collection(self, from_name: str, to_name: str) -> CollectionInfo:
         if from_name not in COLLECTION_SCHEMAS and to_name not in COLLECTION_SCHEMAS:
-            raise KeyError(f"迁移需要至少一个目标在 COLLECTION_SCHEMAS 中: {from_name} → {to_name}")
+            raise KeyError(f"迁移需要至少一个目标在 COLLECTION_SCHEMAS 中: {from_name} -> {to_name}")
 
         existing_names = {c.name for c in self.client.list_collections()}
         if from_name not in existing_names:

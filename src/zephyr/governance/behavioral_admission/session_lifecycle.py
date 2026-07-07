@@ -262,7 +262,7 @@ class SessionLifecycle:
             current = record.state
             allowed = SESSION_TRANSITIONS.get(current, {})
             if trigger not in allowed:
-                raise SessionError(f"invalid transition: {current.value} → {trigger.value} not allowed")
+                raise SessionError(f"invalid transition: {current.value} -> {trigger.value} not allowed")
 
             new_state = allowed[trigger]
             now = time.time()

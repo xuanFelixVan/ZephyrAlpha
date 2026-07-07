@@ -132,7 +132,7 @@ class SessionManager:
             target = SessionState(target_state)
             allowed = any(t.get("from") == current.value and t.get("to") == target.value for t in self._transitions)
             if not allowed:
-                raise SessionTransitionError(f"Transition {current.value} → {target.value} not allowed")
+                raise SessionTransitionError(f"Transition {current.value} -> {target.value} not allowed")
             session["state"] = target
             session["last_transition_at"] = time.time()
             session["history"].append(

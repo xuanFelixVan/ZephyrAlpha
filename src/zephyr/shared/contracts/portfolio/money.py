@@ -229,7 +229,7 @@ class Money:
     def _check_same_currency(self, other: Money) -> None:
         if self.currency != other.currency:
             raise MoneyCurrencyMismatchError(
-                f"币种不匹配：{self.currency} vs {other.currency}。 请先用 FXRateProvider 换算到相同货币后再运算。"
+                f"币种不匹配：{self.currency} vs {other.currency}。 请先用 FXRateProvider 换算到相同货币后再运算"
             )
 
     def __add__(self, other: Money) -> Money:
@@ -242,7 +242,7 @@ class Money:
 
     def __mul__(self, multiplier: int | Decimal) -> Money:
         if isinstance(multiplier, float):
-            raise MoneyPrecisionError(f"Money 乘法禁止使用 float（{multiplier}），请用 int 或 Decimal。")
+            raise MoneyPrecisionError(f"Money 乘法禁止使用 float（{multiplier}），请用 int 或 Decimal")
         if not isinstance(multiplier, Decimal):
             multiplier = Decimal(str(multiplier))
         return Money(self.amount * multiplier, self.currency)
@@ -251,7 +251,7 @@ class Money:
 
     def __truediv__(self, divisor: int | Decimal) -> Money:
         if isinstance(divisor, float):
-            raise MoneyPrecisionError(f"Money 除法禁止使用 float（{divisor}），请用 int 或 Decimal。")
+            raise MoneyPrecisionError(f"Money 除法禁止使用 float（{divisor}），请用 int 或 Decimal")
         if not isinstance(divisor, Decimal):
             divisor = Decimal(str(divisor))
         if divisor == 0:

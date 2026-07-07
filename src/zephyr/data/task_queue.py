@@ -94,7 +94,7 @@ class TaskQueue:
         # DAG 无环检测
         cycle = self._detect_cycle()
         if cycle:
-            raise ValueError(f"任务依赖图有环: {' → '.join(cycle)}")
+            raise ValueError(f"任务依赖图有环: {' -> '.join(cycle)}")
 
     def add_task(self, task_def: dict) -> None:
         """编程式添加任务（测试用）。"""

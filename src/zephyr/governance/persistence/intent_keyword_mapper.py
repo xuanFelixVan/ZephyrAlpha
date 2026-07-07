@@ -630,9 +630,9 @@ def map_intent_to_keywords(intent: str) -> list[str]:
     >>> map_intent_to_keywords("UNKNOWN")
     Traceback (most recent call last):
     ...
-    ValueError: BUILD-C01: 未知意图类型 'UNKNOWN'，请补充 intent→keyword 映射到 intent_keyword_mapper.py
+    ValueError: BUILD-C01: 未知意图类型 'UNKNOWN'，请补充 intent->keyword 映射到 intent_keyword_mapper.py
     """
     keywords = MAP.get(intent)
     if not keywords:
-        raise ValueError(f"BUILD-C01: 未知意图类型 '{intent}'，请补充 intent→keyword 映射到 intent_keyword_mapper.py")
+        raise ValueError(f"BUILD-C01: 未知意图类型 '{intent}'，请补充 intent->keyword 映射到 intent_keyword_mapper.py")
     return keywords

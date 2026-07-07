@@ -82,7 +82,7 @@ class DriftStateMachine:
         resolution_detail: str | None = None,
     ) -> DriftState:
         if not self.validate_transition(from_state, to_state):
-            raise InvalidTransitionError(f"Invalid: {from_state.value} → {to_state.value}")
+            raise InvalidTransitionError(f"Invalid: {from_state.value} -> {to_state.value}")
 
         now = datetime.now(UTC)
 
