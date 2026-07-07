@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-07T12:37:58Z'
+generated_at: '2026-07-07T12:50:59Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 153
+total_files: 155
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -28,9 +28,39 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/policies/branch_strategy_policy.md
+  module_id: POL-BRANCH-STRATEGY-001
+  title: Branch Strategy Policy / 分支策略
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: cross_layer
+  superseded_by: null
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/policies/parallel_session_coordination_policy.md
   module_id: POL-PARALLEL-SESSION-001
   title: Parallel Session Coordination Policy / 并行 Session 协作策略
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: cross_layer
+  superseded_by: null
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/policies/workspace_governance_policy.md
+  module_id: POL-WORKSPACE-GOV-001
+  title: Workspace Governance Policy / 工作区治理规则
   doc_type: policy
   status: active
   version: 1.0.0
