@@ -31,6 +31,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.shared.io.paths import REPO_ROOT  # 5.141.2 修复: 使用SSoT路径, 避免相对路径漂移
+from zephyr.shared.io.sqlite_factory import get_db_connection  # 5.133.7 工厂化: 使用SSoT连接工厂
 from zephyr.shared.foundation.errors import SessionError  # 5.99.8/9 修复: 统一会话异常类型
 
 logger = logging.getLogger(__name__)
