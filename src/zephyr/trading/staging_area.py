@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.staging_area
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS] zephyr.infrastructure.task_manager_server; scripts/lock_files.py
+# [CONSUMERS] zephyr.integration.mcp.task_manager_server; scripts/lock_files.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] draft files live under .aidrafts/; commit is atomic via os.replace; conflict detection via mtime+hash; cross-process lock via _CrossProcessLock (os.open O_CREAT|O_EXCL in .ailocks/); _COMMIT_LOCK (threading.Lock) 仅作进程内线程安全辅助锁，跨进程互斥由 _CrossProcessLock 负责

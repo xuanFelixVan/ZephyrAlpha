@@ -6,7 +6,7 @@
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [CONSUMERS] zephyr.integration.agent_communication; zephyr.infrastructure.a2a_protocol; zephyr.infrastructure.gateway_server
+# [CONSUMERS] zephyr.integration.agent_communication; zephyr.infrastructure.a2a_protocol; zephyr.integration.mcp.gateway_server
 # [ERROR_CONTRACT] import errors only
 # [TESTS] tests/test_shared_protocols.py
 # [TTL] permanent

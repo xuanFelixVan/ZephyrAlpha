@@ -748,15 +748,15 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | 1 | `governance/` ↔ `infrastructure/rollback/` | 71 | 65 | 1（result_types.py 53.8%） | 高 | ✅ FIXED（governance/侧副本已删除，rollback/保留54文件为真源） |
 | 2 | `behavioral_audit/` ↔ `governance/drift_detection/` | 51 | 49 | 1（__init__.py 54.7%） | 高 | ✅ FIXED（behavioral_audit/已删除，drift_detection/保留67文件） |
-| 3 | `infrastructure/` ↔ `integration/mcp/` | 19 | 19 | 0 | 高 | ⚠ STILL_VALID（双方均存在gate_engine_server.py/doc_guard_server.py等同名副本） |
+| 3 | `infrastructure/` ↔ `integration/mcp/` | 19 | 19 | 0 | 高 | ✅ FIXED（infrastructure/侧18副本删除+__init__更新，integration/mcp/保留为真源；5.85.3 bugfix同步；15测试文件import迁移 2026-07-08） |
 | 4 | `infrastructure/pipeline/` ↔ `integration/` | 17 | 17 | 0 | 高 | ✅ FIXED（integration/侧已清理，仅剩5个无关文件） |
 | 5 | `autonomy_core/` ↔ `parsing/` | 3 | 3 | 0 | 高 | ✅ FIXED（parsing/目录已删除） |
 | 6 | `shared/schema/` ↔ `integration/shared/schema/` | 1 | 1 | 0 | 高 | ⚠ STILL_VALID（双方均存在6个同名.py文件） |
 | 7 | `shared/config/` ↔ `infrastructure/config/shared/config/` | 1 | 1 | 0 | 高 | ✅ FIXED（ARCH-038已解决，loader.py退役） |
 
-> **验证日期**：2026-07-04
-> **已消除**：5簇（簇1/2/4/5/7），代表约114+17+3+1=135个复制对已消除
-> **仍存在**：2簇（簇3 infrastructure↔integration/mcp 19对 + 簇6 shared/schema↔integration/shared/schema 6对 = 25对）
+> **验证日期**：2026-07-08
+> **已消除**：6簇（簇1/2/3/4/5/7），代表约114+17+19+3+1=154个复制对已消除
+> **仍存在**：1簇（簇6 shared/schema↔integration/shared/schema 6对 = 6对）
 > **原最大债务**：簇1（governance↔rollback 71同名）和簇2（behavioral_audit↔drift_detection 51同名）贡献114对复制，现已消除。
 
 #### 5.1.4 重复簇（6簇，1簇FIXED，3簇部分FIXED，2簇STILL_VALID）

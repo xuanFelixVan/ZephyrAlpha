@@ -43,11 +43,11 @@ from zephyr.governance.persistence.intent_parser import (
     IntentParser,
     LLMIntentVerdict,
 )
-from zephyr.infrastructure._base_server import JSONRPC_VERSION, BaseMCPServer
-from zephyr.infrastructure.doc_guard_server import DocGuardServer
-from zephyr.infrastructure.gate_engine_server import GateEngineServer
-from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
-from zephyr.infrastructure.sentinel_server import SentinelServer
+from zephyr.integration.mcp._base_server import JSONRPC_VERSION, BaseMCPServer
+from zephyr.integration.mcp.doc_guard_server import DocGuardServer
+from zephyr.integration.mcp.gate_engine_server import GateEngineServer
+from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
+from zephyr.integration.mcp.sentinel_server import SentinelServer
 from zephyr.trading.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionSignal,
@@ -82,7 +82,7 @@ from zephyr.trading.orchestrator.hallucination_detector import (
 # 当前状态: task_manager_server.py 的 create_task/list_tasks/update_status 均为 GATE_BLOCKED 空壳
 # 解除条件: 步骤5-6 TaskLifecycleManager 补齐后，tool 函数有真实逻辑，E2E 可重写适配 FastMCP Client
 try:
-    from zephyr.infrastructure.task_manager_server import TaskManagerServer
+    from zephyr.integration.mcp.task_manager_server import TaskManagerServer
 except ImportError:
     TaskManagerServer = None  # type: ignore[assignment]
 

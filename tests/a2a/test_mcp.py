@@ -16,7 +16,7 @@ from io import StringIO
 
 import pytest
 
-base_mod = pytest.importorskip("zephyr.infrastructure._base_server", reason="mcp._base_server not available")
+base_mod = pytest.importorskip("zephyr.integration.mcp._base_server", reason="mcp._base_server not available")
 BaseMCPServer = base_mod.BaseMCPServer
 ToolDefinition = base_mod.ToolDefinition
 MCPError = base_mod.MCPError
@@ -30,7 +30,7 @@ ERR_TOOL_EXECUTION = base_mod.ERR_TOOL_EXECUTION
 ERR_GATE_FAILED = base_mod.ERR_GATE_FAILED
 ERR_RBAC_DENIED = base_mod.ERR_RBAC_DENIED
 
-ec_mod = pytest.importorskip("zephyr.infrastructure.error_codes", reason="mcp.error_codes not available")
+ec_mod = pytest.importorskip("zephyr.integration.mcp.error_codes", reason="mcp.error_codes not available")
 error_message = ec_mod.error_message
 lookup = ec_mod.lookup
 

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.ide_health_daemon
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.shared.lifecycle.daemon_registry; zephyr.governance.compliance_rule; docs.03_modules._cross_layer.mcp_servers.blueprint.md; zephyr.governance.kb.pipeline.activate; zephyr.trading.feedback_loop.auto_evolution; zephyr.governance.rule_enforcement.adaptive_threshold; docs.03_modules._domain_governance.audit_trail.blueprint.md; docs.03_modules._domain_governance.drift_detector.blueprint.md; docs.03_modules._domain_autonomy_perm.budget_enforcer.blueprint.md; docs.03_modules._domain_autonomy_core.agent_spec.blueprint.md; zephyr.infrastructure.audit_logger
+# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.shared.lifecycle.daemon_registry; zephyr.governance.compliance_rule; docs.03_modules._cross_layer.mcp_servers.blueprint.md; zephyr.governance.kb.pipeline.activate; zephyr.trading.feedback_loop.auto_evolution; zephyr.governance.rule_enforcement.adaptive_threshold; docs.03_modules._domain_governance.audit_trail.blueprint.md; docs.03_modules._domain_governance.drift_detector.blueprint.md; docs.03_modules._domain_autonomy_perm.budget_enforcer.blueprint.md; docs.03_modules._domain_autonomy_core.agent_spec.blueprint.md; zephyr.integration.mcp.audit_logger
 # [CONSUMERS] zephyr.shared.lifecycle.daemon_registry; zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] prototype

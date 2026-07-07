@@ -186,7 +186,7 @@ class TestMCPAuditLoggerIntegration:
     def test_mcp_audit_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
         from zephyr.governance.audit_trail.writer import AuditWriter
-        from zephyr.infrastructure.audit_logger import AuditLogger
+        from zephyr.integration.mcp.audit_logger import AuditLogger
 
         writer = AuditWriter(data_dir=data_dir)
         logger = AuditLogger(log_dir=tmp_path / "logs" / "mcp_audit")

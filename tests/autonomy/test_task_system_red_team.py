@@ -41,7 +41,7 @@ def test_00_imports():
         ("core.models", "zephyr.shared.models"),
         ("core.blueprint_decomposer", "zephyr.shared.blueprint_decomposer"),
         ("db.task_repo", "zephyr.governance.persistence.task_repo"),
-        ("mcp.task_manager_server", "zephyr.infrastructure.task_manager_server"),
+        ("mcp.task_manager_server", "zephyr.integration.mcp.task_manager_server"),
         ("pipeline.models", "zephyr.infrastructure.pipeline.models"),
         ("pipeline.pipeline_orchestrator", "zephyr.integration.pipeline_orchestrator"),
         ("context-engine.context_assembler", "zephyr.autonomy_core.context.context_assembler"),
@@ -655,7 +655,7 @@ def test_05_check_gates():
 
 def test_06_mcp_init():
     """测试 MCP Server 初始化"""
-    from zephyr.infrastructure.task_manager_server import TaskManagerMCP
+    from zephyr.integration.mcp.task_manager_server import TaskManagerMCP
 
     with tempfile.TemporaryDirectory() as tmpdir:
         mcp = TaskManagerMCP(task_repo=None, docs_dir=tmpdir)
@@ -664,7 +664,7 @@ def test_06_mcp_init():
 
 def test_06_md_roundtrip():
     """测试 _taskcard_to_md → _parse_md_to_taskcard 往返"""
-    from zephyr.infrastructure.task_manager_server import _parse_md_to_taskcard, _taskcard_to_md
+    from zephyr.integration.mcp.task_manager_server import _parse_md_to_taskcard, _taskcard_to_md
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
 
@@ -697,7 +697,7 @@ def test_06_md_roundtrip():
 
 def test_06_extract_triage_profile():
     """测试 _extract_triage_profile"""
-    from zephyr.infrastructure.task_manager_server import _extract_triage_profile
+    from zephyr.integration.mcp.task_manager_server import _extract_triage_profile
 
     content = "# 审阅任务标题\n\n这是审阅池中的任务描述内容。"
     profile = _extract_triage_profile(content, "ADR-1")
@@ -707,7 +707,7 @@ def test_06_extract_triage_profile():
 def test_06_mcp_persist_and_load():
     """测试 MCP _persist + _load"""
     from zephyr.governance.persistence.task_repo import TaskRepository
-    from zephyr.infrastructure.task_manager_server import TaskManagerMCP
+    from zephyr.integration.mcp.task_manager_server import TaskManagerMCP
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
 

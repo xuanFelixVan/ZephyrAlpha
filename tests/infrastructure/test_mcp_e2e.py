@@ -41,7 +41,7 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.infrastructure._base_server import (
+from zephyr.integration.mcp._base_server import (
     ERR_INVALID_REQUEST,
     ERR_METHOD_NOT_FOUND,
     ERR_PARSE_ERROR,
@@ -49,10 +49,10 @@ from zephyr.infrastructure._base_server import (
     JSONRPC_VERSION,
     BaseMCPServer,
 )
-from zephyr.infrastructure.doc_guard_server import DocGuardServer
-from zephyr.infrastructure.gate_engine_server import GateEngineServer
-from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
-from zephyr.infrastructure.sentinel_server import SentinelServer
+from zephyr.integration.mcp.doc_guard_server import DocGuardServer
+from zephyr.integration.mcp.gate_engine_server import GateEngineServer
+from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
+from zephyr.integration.mcp.sentinel_server import SentinelServer
 
 # ---------------------------------------------------------------------------
 # 辅助：JSON-RPC 请求构造 + 结果解析

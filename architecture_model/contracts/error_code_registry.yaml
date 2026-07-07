@@ -122,13 +122,13 @@ error_codes:
   file: src/zephyr/frontend/dashboard/components/trade_panel.py
 - code: ZA-GT-0001
   class: MCPError
-  module: zephyr.infrastructure.gate_engine_server
-  file: src/zephyr/infrastructure/gate_engine_server.py
+  module: zephyr.integration.mcp.gate_engine_server
+  file: src/zephyr/integration/mcp/gate_engine_server.py
   description: MCP 门禁拦截（P0 级）
 - code: ZA-GT-0003
   class: MCPError
-  module: zephyr.infrastructure.gate_engine_server
-  file: src/zephyr/infrastructure/gate_engine_server.py
+  module: zephyr.integration.mcp.gate_engine_server
+  file: src/zephyr/integration/mcp/gate_engine_server.py
   description: signer_email 格式无效
 - code: ZA-GV-0001
   class: MiniQmtProviderError
@@ -312,28 +312,28 @@ error_codes:
   file: src/zephyr/governance/drift_detection/state_machine.py
 - code: ZA-HF-0001
   class: MCPError
-  module: zephyr.infrastructure.doc_guard_server
-  file: src/zephyr/infrastructure/doc_guard_server.py
+  module: zephyr.integration.mcp.doc_guard_server
+  file: src/zephyr/integration/mcp/doc_guard_server.py
   description: 文档守卫参数校验失败（to_platform/context_priority 无效）
 - code: ZA-HF-0002
   class: MCPError
-  module: zephyr.infrastructure.doc_guard_server
-  file: src/zephyr/infrastructure/doc_guard_server.py
+  module: zephyr.integration.mcp.doc_guard_server
+  file: src/zephyr/integration/mcp/doc_guard_server.py
   description: 防腐检查失败
 - code: ZA-HF-0003
   class: MCPError
-  module: zephyr.infrastructure.doc_guard_server
-  file: src/zephyr/infrastructure/doc_guard_server.py
+  module: zephyr.integration.mcp.doc_guard_server
+  file: src/zephyr/integration/mcp/doc_guard_server.py
   description: carryover 未找到
 - code: ZA-HF-0004
   class: MCPError
-  module: zephyr.infrastructure.doc_guard_server
-  file: src/zephyr/infrastructure/doc_guard_server.py
+  module: zephyr.integration.mcp.doc_guard_server
+  file: src/zephyr/integration/mcp/doc_guard_server.py
   description: 上下文超限（>200 items）
 - code: ZA-IF-0001
   class: MCPError
-  module: zephyr.infrastructure._base_server
-  file: src/zephyr/infrastructure/_base_server.py
+  module: zephyr.integration.mcp._base_server
+  file: src/zephyr/integration/mcp/_base_server.py
 - code: ZA-IF-0002
   class: TelemetryWriteError
   module: zephyr.infrastructure.system_telemetry.metrics_bridge
@@ -452,13 +452,13 @@ error_codes:
   file: src/zephyr/integration/mcp/_base_server.py
 - code: ZA-INT-0001
   class: MCPError
-  module: zephyr.infrastructure.sentinel_server
-  file: src/zephyr/infrastructure/sentinel_server.py
+  module: zephyr.integration.mcp.sentinel_server
+  file: src/zephyr/integration/mcp/sentinel_server.py
   description: 三阶段全部失败（UNKNOWN）
 - code: ZA-INT-0002
   class: MCPError
-  module: zephyr.infrastructure.sentinel_server
-  file: src/zephyr/infrastructure/sentinel_server.py
+  module: zephyr.integration.mcp.sentinel_server
+  file: src/zephyr/integration/mcp/sentinel_server.py
   description: 查询过长
 - code: ZA-IT-0001
   class: JobMatcherError

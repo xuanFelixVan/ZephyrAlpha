@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 
-from zephyr.infrastructure.blueprint_search_server import BlueprintSearchServer
+from zephyr.integration.mcp.blueprint_search_server import BlueprintSearchServer
 
 
 def test_find_relevant_blueprint_returns_structure() -> None:

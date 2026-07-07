@@ -61,16 +61,16 @@ def test_00_import_vector_memory():
 def test_00_import_mcp_servers():
     modules = [
         ("mcp", "zephyr.infrastructure.a2a_protocol.governance"),
-        ("mcp._base_server", "zephyr.infrastructure._base_server"),
-        ("mcp.gateway_server", "zephyr.infrastructure.gateway_server"),
-        ("mcp.task_manager_server", "zephyr.infrastructure.task_manager_server"),
-        ("mcp.sentinel_server", "zephyr.infrastructure.sentinel_server"),
-        ("mcp.doc_guard_server", "zephyr.infrastructure.doc_guard_server"),
-        ("mcp.knowledge_base_server", "zephyr.infrastructure.knowledge_base_server"),
-        ("mcp.gate_engine_server", "zephyr.infrastructure.gate_engine_server"),
-        ("mcp.blueprint_search_server", "zephyr.infrastructure.blueprint_search_server"),
-        ("mcp.sandbox_server", "zephyr.infrastructure.sandbox_server"),
-        ("mcp.governance_server", "zephyr.infrastructure.governance_server"),
+        ("mcp._base_server", "zephyr.integration.mcp._base_server"),
+        ("mcp.gateway_server", "zephyr.integration.mcp.gateway_server"),
+        ("mcp.task_manager_server", "zephyr.integration.mcp.task_manager_server"),
+        ("mcp.sentinel_server", "zephyr.integration.mcp.sentinel_server"),
+        ("mcp.doc_guard_server", "zephyr.integration.mcp.doc_guard_server"),
+        ("mcp.knowledge_base_server", "zephyr.integration.mcp.knowledge_base_server"),
+        ("mcp.gate_engine_server", "zephyr.integration.mcp.gate_engine_server"),
+        ("mcp.blueprint_search_server", "zephyr.integration.mcp.blueprint_search_server"),
+        ("mcp.sandbox_server", "zephyr.integration.mcp.sandbox_server"),
+        ("mcp.governance_server", "zephyr.integration.mcp.governance_server"),
     ]
     errors = []
     for name, import_path in modules:
@@ -282,7 +282,7 @@ class TestVectorMemoryAdversarial:
 
 
 def _make_test_server():
-    from zephyr.infrastructure._base_server import BaseMCPServer
+    from zephyr.integration.mcp._base_server import BaseMCPServer
 
     return BaseMCPServer("test_server", "1.0.0", "Test server for adversarial testing")
 
@@ -341,17 +341,17 @@ class TestMCPServersAdversarial:
         assert result["error"]["code"] == -32601
 
     def test_gateway_import(self):
-        from zephyr.infrastructure.gateway_server import MCPGateway
+        from zephyr.integration.mcp.gateway_server import MCPGateway
 
         assert MCPGateway.__name__ == "MCPGateway"
 
     def test_all_servers_importable(self):
-        from zephyr.infrastructure.blueprint_search_server import BlueprintSearchServer
-        from zephyr.infrastructure.doc_guard_server import DocGuardServer
-        from zephyr.infrastructure.gate_engine_server import GateEngineServer
-        from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
-        from zephyr.infrastructure.sentinel_server import SentinelServer
-        from zephyr.infrastructure.task_manager_server import TaskManagerMCP
+        from zephyr.integration.mcp.blueprint_search_server import BlueprintSearchServer
+        from zephyr.integration.mcp.doc_guard_server import DocGuardServer
+        from zephyr.integration.mcp.gate_engine_server import GateEngineServer
+        from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
+        from zephyr.integration.mcp.sentinel_server import SentinelServer
+        from zephyr.integration.mcp.task_manager_server import TaskManagerMCP
 
         assert TaskManagerMCP is not None
         assert SentinelServer is not None

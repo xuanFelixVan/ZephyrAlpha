@@ -24,17 +24,17 @@ import io
 import json
 from typing import Any
 
-from zephyr.infrastructure._base_server import (
+from zephyr.integration.mcp._base_server import (
     ERR_METHOD_NOT_FOUND,
     ERR_TOOL_NOT_FOUND,
     BaseMCPServer,
 )
-from zephyr.infrastructure.doc_guard_server import create_server as make_doc_server
-from zephyr.infrastructure.gate_engine_server import create_server as make_gate_server
-from zephyr.infrastructure.knowledge_base_server import (
+from zephyr.integration.mcp.doc_guard_server import create_server as make_doc_server
+from zephyr.integration.mcp.gate_engine_server import create_server as make_gate_server
+from zephyr.integration.mcp.knowledge_base_server import (
     create_server as make_kb_server,
 )
-from zephyr.infrastructure.sentinel_server import create_server as make_sentinel_server
+from zephyr.integration.mcp.sentinel_server import create_server as make_sentinel_server
 
 # ---------------------------------------------------------------------------
 # 辅助函数

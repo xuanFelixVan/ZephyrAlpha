@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.infrastructure._base_server import ERR_TOOL_EXECUTION, ERR_TOOL_NOT_FOUND, BaseMCPServer
+from zephyr.integration.mcp._base_server import ERR_TOOL_EXECUTION, ERR_TOOL_NOT_FOUND, BaseMCPServer
 
 
 class TestMCPChaos:

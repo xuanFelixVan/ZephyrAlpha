@@ -70,18 +70,18 @@ class TestOrchestratorLSGIntegration:
 
 class TestMCPGatewayLSGIntegration:
     def test_lsg_scan_function_exists(self):
-        from zephyr.infrastructure.gateway_server import _lsg_scan_tool_call_sync
+        from zephyr.integration.mcp.gateway_server import _lsg_scan_tool_call_sync
 
         assert callable(_lsg_scan_tool_call_sync)
 
     def test_lsg_scan_benign_tool(self):
-        from zephyr.infrastructure.gateway_server import _lsg_scan_tool_call_sync
+        from zephyr.integration.mcp.gateway_server import _lsg_scan_tool_call_sync
 
         result = _lsg_scan_tool_call_sync("read_file", {"path": "docs/test.md"}, "read docs/test.md")
         assert result is None
 
     def test_lsg_scan_dangerous_tool(self):
-        from zephyr.infrastructure.gateway_server import _lsg_scan_tool_call_sync
+        from zephyr.integration.mcp.gateway_server import _lsg_scan_tool_call_sync
 
         result = _lsg_scan_tool_call_sync(
             "unknown_dangerous_tool",

@@ -16,11 +16,11 @@ import time
 
 import pytest
 
-from zephyr.infrastructure._base_server import (
+from zephyr.integration.mcp._base_server import (
     ERR_TOOL_NOT_FOUND,
 )
-from zephyr.infrastructure.gateway_server import MCPGateway, create_gateway
-from zephyr.infrastructure.rate_limiter import PerToolRateLimiter, RateLimiter
+from zephyr.integration.mcp.gateway_server import MCPGateway, create_gateway
+from zephyr.integration.mcp.rate_limiter import PerToolRateLimiter, RateLimiter
 
 
 @pytest.fixture

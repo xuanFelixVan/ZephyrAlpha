@@ -16,7 +16,7 @@ import json
 import pytest
 
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.infrastructure.task_manager_server import TaskManagerMCP
+from zephyr.integration.mcp.task_manager_server import TaskManagerMCP
 from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
 from zephyr.shared.foundation.models import DecompositionResult
 
