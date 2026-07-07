@@ -113,7 +113,7 @@ class GovernanceAutoRunner:
         )
 
         # 收集所有治理 gate
-        # arch034-merge: GOVERNANCE_GATE_DIMENSIONS 已删除，从 PHASE_SEQUENCE 派生
+        # ARCH-034: GOVERNANCE_GATE_DIMENSIONS 已删除，从 PHASE_SEQUENCE 派生
         all_gov_gates: list[str] = []
         for phase_gate in PHASE_SEQUENCE.values():
             all_gov_gates.extend(phase_gate.gate_checks)

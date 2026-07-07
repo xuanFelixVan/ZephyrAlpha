@@ -454,7 +454,7 @@ class TestConcurrentRun:
         assert len(errors) == 0, f"Concurrent errors: {errors}"
         assert all(results), "All concurrent runs should complete"
 
-    @pytest.mark.skip(reason="arch034-merge: PhaseManager 已删除/拆分为函数式 API")
+    @pytest.mark.skip(reason="ARCH-034: PhaseManager 已删除/拆分为函数式 API")
     def test_concurrent_phase_managers(self) -> None:
         """多个 PhaseManager 同时 status_report() 不崩溃。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
@@ -707,7 +707,7 @@ class TestIdempotency:
         # total_gates 一致
         assert all(r.total_gates == results[0].total_gates for r in results)
 
-    @pytest.mark.skip(reason="arch034-merge: PhaseManager 已删除/拆分为函数式 API")
+    @pytest.mark.skip(reason="ARCH-034: PhaseManager 已删除/拆分为函数式 API")
     def test_verify_auto_start_idempotent(self) -> None:
         """verify_auto_start() 多次调用结果一致。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
@@ -718,7 +718,7 @@ class TestIdempotency:
         r3 = pm.verify_auto_start()
         assert r1 == r2 == r3
 
-    @pytest.mark.skip(reason="arch034-merge: PhaseManager 已删除/拆分为函数式 API")
+    @pytest.mark.skip(reason="ARCH-034: PhaseManager 已删除/拆分为函数式 API")
     def test_status_report_idempotent(self) -> None:
         """status_report() 多次调用结果一致。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager

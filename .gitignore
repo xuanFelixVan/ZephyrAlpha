@@ -102,6 +102,9 @@ Thumbs.db
 .runtime/
 .trae_cache/
 
+# AI draft worktree directory (session_worktree runtime, must not be tracked)
+.aidrafts/
+
 # AI file lock registry (runtime state, not config)
 .ailocks/
 
