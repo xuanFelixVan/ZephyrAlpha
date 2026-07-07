@@ -142,7 +142,7 @@ class ToolDefinition:
 # 基类
 # ---------------------------------------------------------------------------
 
-
+# class-name-alias: infrastructure MCP 基类（T-3-04 B15），与 integration/mcp/_base_server.py 的更新版本（含工具版本化/废弃策略）功能等价
 class BaseMCPServer:
     """JSON-RPC 2.0 over stdio MCP Server 基类。
 

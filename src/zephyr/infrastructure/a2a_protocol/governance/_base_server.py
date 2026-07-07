@@ -13,11 +13,13 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
+# [A_module] module_id=MOD-INF_a2a_base_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 
 logger = logging.getLogger(__name__)
 
 
+# class-name-alias: a2a_protocol governance MCP 基类（极简 stub），区别于 infrastructure/_base_server.py 和 integration/mcp/_base_server.py 的完整实现
 class BaseMCPServer:
     def __init__(self, name=None):
         self.name = name or "base"
