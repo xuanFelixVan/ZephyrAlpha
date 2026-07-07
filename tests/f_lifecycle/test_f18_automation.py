@@ -44,7 +44,7 @@ _PROJECT_ROOT = REPO_ROOT
 class TestAutoStartup:
     """自动启动测试:验证 PhaseManager 能调度所有 governance gate（从 depgraph 查询）。"""
 
-    @pytest.mark.skip(reason="arch034-merge: PhaseManager 类已删除/拆分为函数式 API")
+    @pytest.mark.skip(reason="ARCH-034: PhaseManager 类已删除/拆分为函数式 API")
     def test_phase_manager_importable(self) -> None:
         """PhaseManager 可导入。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
@@ -58,7 +58,7 @@ class TestAutoStartup:
         assert ConstructionPhase.PHASE_1_FUNCTIONAL in PHASE_SEQUENCE
         assert ConstructionPhase.PHASE_2_E2E in PHASE_SEQUENCE
 
-    @pytest.mark.skip(reason="arch034-merge: PhaseManager 类已删除/拆分为函数式 API")
+    @pytest.mark.skip(reason="ARCH-034: PhaseManager 类已删除/拆分为函数式 API")
     def test_all_phases_auto_start(self) -> None:
         """所有 gate 的 auto_start=1（从 depgraph 查询）。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
@@ -68,7 +68,7 @@ class TestAutoStartup:
         for gate_id, enabled in auto_start_map.items():
             assert enabled is True, f"{gate_id} auto_start should be True"
 
-    @pytest.mark.skip(reason="arch034-merge: PhaseManager 类已删除/拆分为函数式 API")
+    @pytest.mark.skip(reason="ARCH-034: PhaseManager 类已删除/拆分为函数式 API")
     def test_verify_auto_start_returns_dict(self) -> None:
         """verify_auto_start() 返回非空 dict。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
@@ -77,7 +77,7 @@ class TestAutoStartup:
         assert isinstance(result, dict)
         assert len(result) > 0
 
-    @pytest.mark.skip(reason="arch034-merge: PhaseManager 类已删除/拆分为函数式 API")
+    @pytest.mark.skip(reason="ARCH-034: PhaseManager 类已删除/拆分为函数式 API")
     def test_status_report_contains_governance(self) -> None:
         """status_report() 包含 governance 维度信息。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
@@ -87,7 +87,7 @@ class TestAutoStartup:
         assert "dimensions" in report
         assert "d6_governance" in report["dimensions"]
 
-    @pytest.mark.skip(reason="arch034-merge: PhaseManager 类已删除/拆分为函数式 API")
+    @pytest.mark.skip(reason="ARCH-034: PhaseManager 类已删除/拆分为函数式 API")
     def test_get_governance_gates_returns_dict(self) -> None:
         """get_governance_gates() 返回非空 dict（8维度）。"""
         from zephyr.governance.ops_governance.phase_manager import PhaseManager
@@ -96,7 +96,7 @@ class TestAutoStartup:
         assert isinstance(gates, dict)
         assert len(gates) > 0
 
-    @pytest.mark.skip(reason="arch034-merge: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
+    @pytest.mark.skip(reason="ARCH-034: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
     def test_governance_gate_dimensions_has_8_dimensions(self) -> None:
         """GOVERNANCE_GATE_DIMENSIONS 包含 8 个维度（含 d8_functional）。"""
         from zephyr.governance.ops_governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
@@ -107,7 +107,7 @@ class TestAutoStartup:
         }
         assert set(GOVERNANCE_GATE_DIMENSIONS.keys()) == expected_dims
 
-    @pytest.mark.skip(reason="arch034-merge: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
+    @pytest.mark.skip(reason="ARCH-034: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
     def test_each_dimension_has_gates(self) -> None:
         """每个维度至少有 1 个 gate。"""
         from zephyr.governance.ops_governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
@@ -137,7 +137,7 @@ class TestEventDriven:
         # 触发器类型集合完整
         assert len(expected_triggers) == 6
 
-    @pytest.mark.skip(reason="arch034-merge: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
+    @pytest.mark.skip(reason="ARCH-034: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
     def test_governance_dimensions_support_events(self) -> None:
         """治理维度支持事件驱动触发。"""
         from zephyr.governance.ops_governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
@@ -207,7 +207,7 @@ class TestAutoRun:
         result = runner.run()
         assert result.finished_at is not None
 
-    @pytest.mark.skip(reason="arch034-merge: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
+    @pytest.mark.skip(reason="ARCH-034: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
     def test_run_covers_8_dimensions(self) -> None:
         """run() 覆盖 8 维度 gate。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
@@ -307,7 +307,7 @@ class TestAutoClose:
 class TestIntegration:
     """集成测试:自动启动→自动运行→自动关闭全流程."""
 
-    @pytest.mark.skip(reason="arch034-merge: PhaseManager 类已删除/拆分为函数式 API")
+    @pytest.mark.skip(reason="ARCH-034: PhaseManager 类已删除/拆分为函数式 API")
     def test_full_automation_pipeline(self) -> None:
         """全流程:PhaseManager 调度 → AutoRunner 执行 → auto_close 清理。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
@@ -328,7 +328,7 @@ class TestIntegration:
         assert result.cleanup_done is True
         assert result.audit_logged is True
 
-    @pytest.mark.skip(reason="arch034-merge: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
+    @pytest.mark.skip(reason="ARCH-034: GOVERNANCE_GATE_DIMENSIONS 已删除，维度分组被阶段分组替代")
     def test_8_dimensions_all_covered(self) -> None:
         """8 维度 gate 全部被 AutoRunner 覆盖。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
