@@ -34,6 +34,11 @@
 > **君子协定（正式）**：无门禁强制（Trae IDE 不可 hook），依赖 AI 自觉。6 连续 PASS 已转正式（Round2-4 + Extreme A/B/C，覆盖 4 种代码路径）。**HELD-OVERLAP 已加硬（2026-07-02）**：`session_worktree_commit` 内置 auto-claim + 硬阻断（对标 GitCommitGateway 的 HELD-OVERLAP gate）——commit 前对每个文件调 `registry.claim_file()`（原子 check-and-claim，防 TOCTOU 竞态），被其他活跃 session 持有则 `HELD_OVERLAP_VIOLATION` 阻断（回滚已 claim 文件）；claim 是 session 级，merge/abort 时 `unregister` 自动释放。逃生通道：`allow_overlap=True` 参数放行（对标 `--allow-overlap`）。**逃生通道（永久保留）**：HELD-OVERLAP 加硬消除了"两 session 编辑同一文件"的搭便车根因，但无法解决 git 固有 merge conflict（`allow_overlap=True` 强行覆盖时）+ AI commit 后又编辑同一文件导致内容漂移——此时 `session_worktree_abort` + 改用 GitCommitGateway（stash 隔离）作为兜底。详见 [FP-ISO.4C](#fp-iso4c)。
 >
 > **豁免条款（reconciler 实弹验证专用，2026-07-02 裁定）**：验证 GitCommitGateway post-commit reconciler 链路时，允许走 `scripts/git_commit.py --reconciler-verify`（不经过 session_worktree）。**豁免理由**：reconciler 操作主分支数据（depgraph DB / 主仓库 index auto-commit），无法在 worktree 独立 index 内运行；且验证为单 session 诊断场景，与君子协定“防多 session 并发冲突”的核心目的正交。**三重前置条件**（缺一不可）：(1) 主工作区 clean（`git status --short` 空）(2) 无其他活跃 session（或 `--allow-concurrent` 逃生）(3) `claim_files` 全部成功（`--allow-overlap` 自动禁用）。搭便车风险由 claim_files 文件级锁 + `_GlobalCommitLock` 串行锁 + 干净环境三重防护覆盖。**仅限验证场景**，常规开发提交仍 MUST 走 session_worktree。
+>
+> **相关策略文档**（2026-07-08 架构师审查追加）：
+> - [分支策略](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/policies/branch_strategy_policy.md)（单一主分支模型：dev 主分支 + master FF 镜像 + session/* 命名约定 + 3 个月废弃规则）
+> - [工作区治理规则](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/policies/workspace_governance_policy.md)（auto-sync 产物还原优先 + .gitignore 维护规则 + bdpan 数据评估）
+> - [并行 session 协调策略](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/policies/parallel_session_coordination_policy.md)（held_files 协议 + handoff 交接 + 冲突升级）
 
 ## RULE-DEPGRAPH：第三件事（防幻觉/防漂移治本规则，2026-07-02）
 
@@ -429,6 +434,8 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
   - **阶段3（待定，commit 阻断）**：移除 `stages: [manual]`，commit 时自动阻断高严重度重复。
   - **handler 显式未接通标注**（P2-10-1 修复）：[`ct_deduplication.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/check_types/ct_deduplication.py) `DeduplicationHandler.run()` 不再 try/except 静默吞错，显式返回 `"Deduplication pipeline not connected"` P2 违规——待 Scanner API（`scan_files`/`find_duplicates`）落地后接通。
   - **capability 反查**：`rule_registry_collection.yaml` L905 已登记 `verify_dedup.py`；`cross_module_dependency_registry.yaml` L492 已登记 GATE-DEDUP 引用。新 AI 想做"代码重复检测/dedup 检查"前，应反查本条目，扩展 `code_dedup` 引擎而非新建 checker。
+- **错误消息风格规范（5.99.22 防复发，2026-07-07）**——`raise` 语句的错误消息文本 MUST 遵循统一风格：①**箭头符号用 ASCII `->`**（禁止 Unicode `→`，避免编辑器/终端显示差异）；②**中文消息不以句号 `。` 结尾**（错误消息是短语不是句子，与项目既有主流风格一致）。**强制方式**：code review + CI 兜底（无 AST 门禁，靠 AGENTS.md 规则约束新代码）。历史违规已由 5.99.22 第78轮修复清理（13处：7处 `→`→`->` + 6处句号去除）。
+- **异步IO最佳实践（5.100 防复发，2026-07-07）**——`async def` 函数内禁止直接调用同步阻塞IO（文件读写/网络/DB），MUST 用以下标准API委托：①**同步函数调用**用 `await loop.run_in_executor(None, fn, *args)`（`loop = asyncio.get_running_loop()`）；②**同步IO操作**用 `await asyncio.to_thread(fn, *args)`（Python 3.9+，语义更清晰）。**典型场景**：`async def` 内调用 `_load_env_file()`/`handle_request()`/`sqlite3.connect()` 等同步函数。**强制方式**：code review + CI 兜底（无 AST 门禁，靠 AGENTS.md 规则约束新代码）。历史违规已由 5.100 第79轮修复清理（3处：secrets.py + 2个 _base_server.py）。
 
 ## 8. 永远不要做的事
 

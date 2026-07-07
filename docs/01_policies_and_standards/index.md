@@ -90,8 +90,10 @@ verifiability: manual
 │       └── ...（其余 20 个 vocabulary 文件）
 │
 │
-├── policies/                   ← 策略文件
-│   └── parallel_session_coordination_policy.md     ← 并行 session 协调策略
+├── policies/                   ← 策略文件（3 个）
+│   ├── parallel_session_coordination_policy.md     ← 并行 session 协调策略
+│   ├── branch_strategy_policy.md                   ← 分支策略（单一主分支模型）
+│   └── workspace_governance_policy.md              ← 工作区治理规则
 │
 └── templates/                   ← 文档模板（10 个标准模板，含 index.md）
     ├── blueprint_construction_template.md          ← 蓝图 + 施工指引统一模板

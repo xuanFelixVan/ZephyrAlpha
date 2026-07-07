@@ -103,7 +103,7 @@ GitCommitGateway post-commit 自动触发的 reconciler 重新生成的文件，
 
 | 路径 | 理由 |
 |------|------|
-| `.aidrafts/` | session_worktree 工作目录（临时，运行时） |
+| `.aidrafts/sess-*/` | session_worktree 工作目录（临时，运行时；只忽略 worktree 目录，不忽略 gitlink 文件，便于清理误入库的 gitlink） |
 | `access/` | ClickHouse 系统产物（metadata dumps） |
 | `metadata/` | ClickHouse 系统产物 |
 | `*.db` / `*.sqlite3` | SQLite 运行时数据库 |
@@ -188,3 +188,18 @@ git status --short
 | bdpan 8 文件 stash 事故丢失 | stash 操作 unlink 失败会留下残留，需检测恢复 |
 | .aidrafts/sess-26204 gitlink 误入库 | session_worktree 运行时产物必须 .gitignore |
 | access/ 目录 untracked 噪音 | ClickHouse 系统产物必须 .gitignore |
+
+---
+
+## 附录 B：自动化债务声明
+
+> **架构债务登记**（2026-07-08 架构师审查裁定）
+
+本策略文档中以下规则属于**君子协定**（依赖 AI 自觉执行，无 gate/reconciler 自动化保障），在 100% AI 开发模式下不会自发触发。与项目硬约束"永久系统必须全自动"存在张力，登记为架构债务，待后续 reconciler 落地后消除。
+
+| 债务编号 | 规则位置 | 规则内容 | 自动化状态 | 缓解措施 |
+|----------|----------|----------|------------|----------|
+| DEBT-WORKSPACE-001 | §5.1 | 每次会话开始时检查 `git status --short` | 君子协定，无自动触发 | AI 读 AGENTS.md 时被引导执行；GitCommitGateway post-commit reconciler 部分覆盖（auto-sync 产物自动提交） |
+| DEBT-WORKSPACE-002 | §5.2 | 每次提交前检查工作区只保留本次任务相关改动 | 君子协定，无自动触发 | session_worktree 物理隔离 + HELD-OVERLAP gate 部分覆盖（文件级冲突阻断） |
+
+**消除路径**：未来可新增 `workspace_hygiene_reconciler`（post-commit 检测工作区残留 auto-sync 产物并自动 `git checkout` 还原），当前优先级不够，不创造无价值代码（向内收原则①）。在 reconciler 落地前，AI 读到本声明即知这些规则需自觉执行。
