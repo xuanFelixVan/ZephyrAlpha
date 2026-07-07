@@ -2736,6 +2736,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 5.99.20 | `governance/depgraph_schema.py:100,113` + `governance/database_manager.py:597` + `governance/kb/load_bearing.py:175,189` + `trading/staging_area.py:150,194,316,330,345,414,471,545` + `governance/atomic_transaction_manager.py:182,239,260,262,264,369,389,403,417,419,461,505` | 错误消息暴露文件路径和内部tx_id | LOW | 路径和tx_id放入details字段 |
 | 5.99.21 | `infrastructure/error_codes.py` | 业务异常缺失错误码字段：`MoneyPrecisionError`/`StagingError`/`ContractViolationError`/`SessionError`/`TransactionError`等均无`error_code`字段（`MCPError`和`ContractViolationError`是良好范式但未推广） | LOW | 要求所有自定义异常携带`error_code`字段 |
 | 5.99.22 | 多文件 | 标点符号不一致：中文消息有的以`。`结尾有的无；箭头符号`→` vs `->`混用；克隆文件中错误消息完全重复（hallucination_detector ×4副本、money ×2副本、unified_memory_api ×3副本、embedding_router ×2副本） | LOW | 统一标点和格式；抽取到共享errors模块 |
+| 5.99.23 | `trading/trading_contracts/portfolio/contracts/money.py` + `shared/contracts/portfolio/money.py` + `intelligence/model_evaluation/unified_memory_api.py` + `governance/kb/storage/unified_memory_api.py` + `integration/local_model/embedding_router.py` + `integration/governance/embedding_router.py` | 克隆文件错误消息完全重复：money.py两真源5处raise相同、unified_memory_api.py两真源仅8处路径注释差异、embedding_router.py两真源14处raise相同（5.99.22克隆文件去重部分DEFERRED拆分） | LOW | 抽取到共享errors模块；下游消费者依赖分析后合并真源 |
 
 **严重度汇总**：
 
@@ -2743,8 +2744,8 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 |---|:---:|---|
 | HIGH | 1 | 5.99.1 |
 | MEDIUM | 11 | 5.99.2-5.99.12 |
-| LOW | 10 | 5.99.13-5.99.22 |
-| **合计** | **22** | |
+| LOW | 11 | 5.99.13-5.99.23 |
+| **合计** | **23** | |
 
 ---
 
@@ -2753,6 +2754,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=18(异步资源生命周期/锁释放后重获取/asyncio.run误用需逐处重构)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=18(所有STILL_VALID项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.100全部清零.
 > **第44轮修复状态（2026-07-05）**：FIXED=8(5.100.1 limiter持锁sleep消除release/acquire竞态 + 5.100.5/6/7 pipeline_orchestrator _lsg_sanitize_input/output/scan_agent_action 改用run_sync消除死锁 + 5.100.13 run_in_executor加RuntimeError保护 + 5.100.14 run_coroutine复用self._loop + 5.100.17 AsyncRuntime.start补set_event_loop + 5.100.18 audit_trail/cli+drift_detection/cold_start 保存恢复原loop), DRIFTED=3(5.100.2 infra_06/limiter/5.100.3 behavioral_audit/brain_integration/5.100.12 infra_06/outbox 文件已删除), DEFERRED=7(5.100.4 brain_integration _run_async线程阻塞/5.100.8 secrets阻塞IO/5.100.9+5.100.10 _base_server阻塞handle_request/5.100.11 outbox同步handler/5.100.15 asyncio.get_event_loop 12+文件弃用API批量迁移/5.100.16 asyncio.run 12+文件批量迁移,均需逐处重构属专项工程), STILL_VALID=0. 维度5.100全部清零.
+> **第79轮修复状态（2026-07-07）**：FIXED=3(5.100.8 secrets.py DotEnvSecretProvider.get_secret 用 await asyncio.to_thread(self._load_env_file) 包装同步文件IO + 5.100.9 infrastructure/_base_server.py run_async 中 handle_request 用 await loop.run_in_executor(None, self.handle_request, request) 委托线程池 + 5.100.10 integration/mcp/_base_server.py run_async 同样修复), DRIFTED=1(5.100.4 governance/drift_detection/brain_integration.py _run_async 已由 5.16.9 修复为直接调用 run_sync, 移除了原来的新建线程+新loop+t.join(120)阻塞反模式), DEFERRED=3(5.100.11 outbox 同步handler已部分修复[iscoroutine检查]但同步handler仍阻塞事件循环, 统一用asyncio.to_thread需评估ContextVar线程安全 + 5.100.15 asyncio.get_event_loop 12+文件弃用API批量迁移 + 5.100.16 asyncio.run 12+文件批量迁移, 均需逐处重构属专项工程), STILL_VALID=0. 维度5.100剩余3项DEFERRED属批量迁移专项工程.
 
 #### 5.100.1 HIGH级（7个）
 
