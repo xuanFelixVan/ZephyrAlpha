@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_INTELLIGENCE context_management架构文档
 version: "1.0"
 status: active
-date: 2026-07-07
+date: 2026-07-08
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 context_management（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-07 04:15:05
+> 最后更新: 2026-07-08 00:38:30
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 43 | Module Count | 43 |
 | 域内依赖 | 33 | Internal Dependencies | 33 |
-| 跨域入边 | 60 | Cross-domain Incoming | 60 |
+| 跨域入边 | 59 | Cross-domain Incoming | 59 |
 | 跨域出边 | 31 | Cross-domain Outgoing | 31 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 22 | Prototype Modules | 22 |
@@ -81,39 +81,39 @@ graph TD
         src_zephyr_intelligence_model_profiling_model_discovery_py["src/zephyr/intelligence/model_profiling/model_d... production"]
     end
     src_zephyr_intelligence_init_py -.->|config_depends| src_zephyr_intelligence_model_drift_detector_py
-    src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends| src_zephyr_intelligence_model_evaluation_inference_base_py
+    src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends| src_zephyr_intelligence_model_evaluation_activate_py
     src_zephyr_intelligence_model_evaluation_implementations_init_py -.->|import_depends| src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py
     src_zephyr_intelligence_model_profiling_cli_py -.->|import_depends| src_zephyr_intelligence_model_profiling_init_py
+    src_zephyr_intelligence_model_profiling_job_matcher_py -->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_executor_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_judge_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
     src_zephyr_intelligence_model_profiling_exam_test_cases_py -.->|import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
-    src_zephyr_intelligence_model_profiling_job_matcher_py -->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     src_zephyr_intelligence_model_profiling_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     D_SHARED["D_SHARED production"]
     src_zephyr_intelligence_model_drift_detector_py -->|import_depends| D_SHARED
-    D_ML_TRAIN["D_ML_TRAIN prototype"]
-    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
-    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT
+    D_ML_TRAIN["D_ML_TRAIN prototype"]
+    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
+    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_AUTONOMY_CORE
     src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_INTEGRATION
+    D_BACKTEST["D_BACKTEST production"]
+    src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py -.->|import_depends| D_BACKTEST
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_GOVERNANCE
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_SHARED
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_GOVERNANCE
-    D_BACKTEST["D_BACKTEST production"]
-    src_zephyr_intelligence_model_evaluation_implementations_init_py -.->|import_depends| D_BACKTEST
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|import_depends| D_ML_TRAIN
     D_AUTONOMY_CORE -->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
@@ -129,10 +129,10 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -226,7 +226,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 31 | test_depends |
+| D_AUDITTEST | 30 | test_depends |
 | D_GOVERNANCE | 17 | import_depends |
 | D_TRADING | 5 | import_depends |
 | D_INTEGRATION | 3 | import_depends |
@@ -338,19 +338,19 @@ graph TD
 │   __init__.py → default_inference_engine.py                      │
 │   cli.py → results_writer.py                                     │
 │   cli.py → __init__.py                                           │
+│   job_matcher.py → capability_passport.py                        │
 │   exam_orchestrator.py → capability_passport.py                  │
 │   exam_orchestrator.py → exam_executor.py                        │
 │   exam_orchestrator.py → exam_judge.py                           │
-│   exam_orchestrator.py → exam_test_cases.py                      │
-│   exam_orchestrator.py → exam_rubric.py                          │
-│   exam_orchestrator.py → provider_data.py                        │
 │   exam_orchestrator.py → job_matcher.py                          │
-│   exam_test_cases.py → case_assembler.py                         │
+│   exam_orchestrator.py → exam_rubric.py                          │
+│   exam_orchestrator.py → exam_test_cases.py                      │
+│   exam_orchestrator.py → provider_data.py                        │
 │   model_discovery.py → provider_data.py                          │
+│   exam_test_cases.py → case_assembler.py                         │
 │   profiler.py → benchmark_suite.py                               │
 │   profiler.py → model_discovery.py                               │
 │   results_writer.py → profiler.py                                │
-│   job_matcher.py → capability_passport.py                        │
 │   __init__.py → benchmark_suite.py                               │
 │   __init__.py → model_discovery.py                               │
 │   __init__.py → profiler.py                                      │
@@ -372,7 +372,7 @@ graph TD
 │                 [config_depends] (2 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → model_drift_detector.py                          │
-│   __init__.py → inference_base.py                                │
+│   __init__.py → activate.py                                      │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
