@@ -1516,6 +1516,27 @@ capabilities:
       - make_msg_exposure_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: msg_style_gate
+    canonical_override: src/zephyr/governance/commit_gates/msg_style_gate.py
+    aliases:
+      - MSG-STYLE
+      - msg-style
+      - make_msg_style_gate
+      - error_message_punctuation_style_blocker
+    description: >-
+      MSG-STYLE in-process 错误消息标点/箭头风格阻断门禁（AST 门禁扩展，5.99.22 防复发，2026-07-07）。
+      治本"错误消息统一 ASCII -> + 无句号结尾"原则：检测 staged 新增/修改 .py 文件中
+      raise XxxError(...) 模式——异常消息含 Unicode 箭头 →（U+2192）或以中文句号 。（U+3002）结尾。
+      in-process AST 分析（无 subprocess），priority=92（在 DOC-REF-BROKEN(91) 之后）。
+      新增文件(A)查全文件 AST，修改文件(M)只查 diff 新增行。fail-open on AST/IO error，fail-closed on violations。
+      行级豁免：# noqa: MSG-STYLE。tests/ 和 governance/commit_gates/ 自豁免。
+      canonical basename msg_style_gate 匹配 capability_id，canonical 在 src/zephyr/ 下需 canonical_override 显式声明。
+      解决发现性：新 AI 搜 "MSG-STYLE/错误消息标点/unicode arrow/cn period" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 in-process 标点风格门禁。
+    integrity_anchors:
+      - make_msg_style_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: empty_handler_gate
     canonical_override: src/zephyr/governance/commit_gates/empty_handler_gate.py
     aliases:
@@ -3594,6 +3615,11 @@ creation_tokens:
     token: "auto-msg-exposure-gate-20260706"
     created_by: "session-sess-21036-20260706205027"
     capability: "msg_exposure_gate"
+
+  - file: "src/zephyr/governance/commit_gates/msg_style_gate.py"
+    token: "auto-msg-style-gate-20260707"
+    created_by: "session-sess-29416-20260707203645"
+    capability: "msg_style_gate"
 
   - file: "src/zephyr/governance/commit_gates/empty_handler_gate.py"
     token: "auto-empty-handler-gate-20260703"

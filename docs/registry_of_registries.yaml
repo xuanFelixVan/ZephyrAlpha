@@ -426,9 +426,9 @@ tiers:
         physical_path: architecture_model/contracts/error_code_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 199
+        entry_count: 212
         status: active
-        description: 199 个业务异常 error_code 的 canonical 登记——code/class/module/file 归属，ZA-XX-NNNN 格式，grep 唯一命中。维度 5.99.21 error_code SSoT 专项工程
+        description: 212 个业务异常 error_code 的 canonical 登记——code/class/module/file 归属，ZA-XX-NNNN 格式，grep 唯一命中。维度 5.99.21 error_code SSoT 专项工程 + 5.99.11 MCP错误码SSoT扩展
         owner: MOD-GOVERNANCE
         ssot_for: error_code, error_code_class_mapping
 
