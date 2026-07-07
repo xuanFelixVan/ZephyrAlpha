@@ -40,8 +40,31 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
-RTO_TARGET_S = 300
-RPO_TARGET_TASKS = 1
+# P3-24: SLA 目标从 YAML 加载（SSoT），fallback 到硬编码默认值
+_SLA_CONFIG_PATH: Path = REPO_ROOT / "config" / "sla_targets.yaml"
+
+_RTO_TARGET_S_DEFAULT = 300
+_RPO_TARGET_TASKS_DEFAULT = 1
+
+
+def _load_sla_targets() -> tuple[int, int]:
+    """从 config/sla_targets.yaml 加载 RTO/RPO 目标，失败时 fallback 到默认值。"""
+    try:
+        import yaml
+
+        if not _SLA_CONFIG_PATH.exists():
+            return _RTO_TARGET_S_DEFAULT, _RPO_TARGET_TASKS_DEFAULT
+        data = yaml.safe_load(_SLA_CONFIG_PATH.read_text(encoding="utf-8"))
+        targets = data.get("targets", {}) if isinstance(data, dict) else {}
+        rto = int(targets.get("rto_target_s", _RTO_TARGET_S_DEFAULT))
+        rpo = int(targets.get("rpo_target_tasks", _RPO_TARGET_TASKS_DEFAULT))
+        return rto, rpo
+    except Exception:
+        logger.debug("SLA targets YAML load failed, using defaults", exc_info=True)
+        return _RTO_TARGET_S_DEFAULT, _RPO_TARGET_TASKS_DEFAULT
+
+
+RTO_TARGET_S, RPO_TARGET_TASKS = _load_sla_targets()
 
 
 @dataclass

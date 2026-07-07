@@ -84,6 +84,7 @@ class EventRecord:
     prev_hash: str = ""
 
 
+# class-name-alias: Event Sourcing 事件存储（DW-0002 governance），区别于 infrastructure 的事件存储
 class EventStore:
     """Event Sourcing 事件存储——append-only 写入 + 时间顺序回放 + 完整性校验。
 
