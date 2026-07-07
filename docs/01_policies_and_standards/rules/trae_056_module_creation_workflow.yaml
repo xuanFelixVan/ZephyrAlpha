@@ -506,7 +506,7 @@ sections:
       - DEPENDENCIES: "{上游依赖模块，分号分隔}"
       - CONSUMERS: "{依赖此文件的模块，分号分隔}"
       - STARTUP: "{auto_start|event_driven|manual|imported}"
-      - MATURITY: "{design|prototype|production|legacy}"
+      - MATURITY: "{design|prototype|production}"
       - INVARIANTS: "{不可违反的约束，分号分隔}"
       - MODIFY-GUARD: "{修改此文件必须同步更新的文件，分号分隔}"
       - STABILITY: "{frozen|stable|evolving|volatile}"

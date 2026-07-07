@@ -113,7 +113,7 @@ sections:
     - GOV-ENG-002
     items:
     - description: A_full十五字段注释头部格式
-      details: "[BLUEPRINT] {module_id} | {blueprint_path} | §{N} / [MODULE] {full.module.path} / [DOMAIN] {D-XXX（仅跨域模块需填）} / [DEPENDENCIES] {上游依赖模块，分号分隔} / [CONSUMERS] {依赖此文件的模块，分号分隔} / [STARTUP] {auto_start|event_driven|manual|imported} / [MATURITY] {design|prototype|production|legacy} / [INVARIANTS] {不可违反的约束，分号分隔} / [MODIFY-GUARD] {修改此文件必须同步更新的文件，分号分隔} / [STABILITY] {frozen|stable|evolving|volatile} / [SAFETY] {H|M|L} / [AI_AUTONOMY] {immutable_core|human_gated|ai_modifiable} / [ERROR_CONTRACT] {可抛异常列表，分号分隔} / [TESTS] {测试文件路径，分号分隔} / [TTL] {permanent|task_bound}"
+      details: "[BLUEPRINT] {module_id} | {blueprint_path} | §{N} / [MODULE] {full.module.path} / [DOMAIN] {D-XXX（仅跨域模块需填）} / [DEPENDENCIES] {上游依赖模块，分号分隔} / [CONSUMERS] {依赖此文件的模块，分号分隔} / [STARTUP] {auto_start|event_driven|manual|imported} / [MATURITY] {design|prototype|production} / [INVARIANTS] {不可违反的约束，分号分隔} / [MODIFY-GUARD] {修改此文件必须同步更新的文件，分号分隔} / [STABILITY] {frozen|stable|evolving|volatile} / [SAFETY] {H|M|L} / [AI_AUTONOMY] {immutable_core|human_gated|ai_modifiable} / [ERROR_CONTRACT] {可抛异常列表，分号分隔} / [TESTS] {测试文件路径，分号分隔} / [TTL] {permanent|task_bound}"
     - description: A_test七字段简化版格式
       details: "[BLUEPRINT] {module_id} | {blueprint_path} | §{N} / [MODULE] {full.module.path} / [STABILITY] evolving / [SAFETY] L / [AI_AUTONOMY] ai_modifiable / [TESTS] — / [TTL] task_bound"
   gov_eng_001_enum_ref:
