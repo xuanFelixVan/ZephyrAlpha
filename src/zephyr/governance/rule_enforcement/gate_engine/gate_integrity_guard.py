@@ -75,7 +75,25 @@ class GateIntegrityGuard:
         if not _TRUST_ROOT:
             logger.info("no TRUST_ROOT configured, skipping self-verification")
             return True
-        return True
+        # 5.155.2 修复：_TRUST_ROOT已配置时执行实际完整性校验（原实现两分支均return True）
+        manifest_path = os.path.join(_TRUST_ROOT, "gate_integrity.manifest")
+        if not os.path.exists(manifest_path):
+            logger.warning(
+                "TRUST_ROOT set but manifest not found: %s — "
+                "run with --init-trust to create (grace period, skipping)",
+                manifest_path,
+            )
+            return True  # grace period: manifest not yet created
+        self._load_manifest(manifest_path)
+        if not self._manifest:
+            logger.error("TRUST_ROOT manifest empty or invalid: %s", manifest_path)
+            return False
+        all_valid = True
+        for gate_file, expected_hash in self._manifest.items():
+            report = self.verify(gate_file, expected_hash)
+            if not report.valid:
+                all_valid = False
+        return all_valid
 
     @staticmethod
     def _compute_sha256(path: str) -> str:

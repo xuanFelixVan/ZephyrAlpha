@@ -160,9 +160,9 @@ class CheckpointWriter:
         root = project_root
 
         if not root:
-            # Try to locate the project root from environment or CWD
-
-            root = os.environ.get("ZEPHYR_PROJECT_ROOT", os.getcwd())
+            # 5.155.11 修复：原回退os.getcwd()可能指向任意目录，改用REPO_ROOT SSoT
+            from zephyr.shared.io.paths import REPO_ROOT
+            root = os.environ.get("ZEPHYR_PROJECT_ROOT") or str(REPO_ROOT)
 
         ckpt_dir = (
             os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(root))), "data", "drift_checkpoints")
