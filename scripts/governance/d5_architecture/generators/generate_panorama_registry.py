@@ -714,6 +714,19 @@ DB_TABLE_GROUPS: list[dict] = [
             ("decision_edges", "决策边——节点间的决策传递关系（L0→L1→...→L6 链路），{count} 条"),
         ],
     },
+    {
+        "group": "assets",
+        "label": "资产配置 assets（YAML→DB 同步，DB 为只读缓存）",
+        "tables": [
+            # 备注标注 YAML 真源文件名，让读者一眼看出真源位置（SSoT 铁律：规则数据真源在 YAML，非 DB）
+            ("contracts", "跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，{count} 条"),
+            ("data_source_apis", "数据源 API 清单——外部数据源的 API 函数/参数/测试状态，真源 data_source_apis_registry.yaml，{count} 个"),
+            ("data_source_assets", "外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，{count} 个"),
+            ("service_assets", "服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，{count} 个"),
+            ("config_assets", "配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），{count} 项"),
+            ("infrastructure_components", "基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，{count} 个"),
+        ],
+    },
 ]
 
 

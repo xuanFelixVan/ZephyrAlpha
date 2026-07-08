@@ -30,8 +30,8 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 50 | 功能域清单——50 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 4986 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4986 个 |
-| 依赖图 depgraph | `edges` | 5983 | 依赖边——节点间的依赖关系（import/契约/事件订阅），5983 条 |
+| 依赖图 depgraph | `nodes` | 4989 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4989 个 |
+| 依赖图 depgraph | `edges` | 5989 | 依赖边——节点间的依赖关系（import/契约/事件订阅），5989 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
 | 数据流图 dataflowgraph | `dataflow_jobs` | 13 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
@@ -39,6 +39,12 @@
 | 决策流图 decisiongraph | `decision_layers` | 10 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
 | 决策流图 decisiongraph | `decision_nodes` | 214 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
 | 决策流图 decisiongraph | `decision_edges` | 213 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），213 条 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 65 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，65 条 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_apis` | 124 | 数据源 API 清单——外部数据源的 API 函数/参数/测试状态，真源 data_source_apis_registry.yaml，124 个 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_assets` | 10 | 外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，10 个 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `service_assets` | 10 | 服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，10 个 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `config_assets` | 33 | 配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），33 项 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `infrastructure_components` | 14 | 基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，14 个 |
 
 ---
 
