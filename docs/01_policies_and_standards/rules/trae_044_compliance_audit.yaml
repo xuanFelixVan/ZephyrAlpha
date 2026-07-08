@@ -756,7 +756,7 @@ sections:
       - 本协议是全部治理脚本的全覆盖索引（以script-manifest.yaml为准）
       key_decisions:
       - 本文档是：(1)每次审计的执行入口 (2)审计规则/工具/范围/频率的唯一真源 (3)审计结果处置的决策树 (4)全部治理脚本的全覆盖索引（以script-manifest.yaml为准）
-      - 本文档不是：(1)具体审计脚本的实现文档→见scripts/governance/各脚本 (2)门禁策略的详细定义→见gate_registry.yaml+各策略文件 (3)12维度评分算法→见12-dimension_audit_matrix.md §5
+      - 本文档不是：(1)具体审计脚本的实现文档→见scripts/governance/各脚本 (2)门禁策略的详细定义→见gate_registry.yaml+各策略文件
   gov_cmp_003_gate_mapping:
     title: 门禁与维度映射
     section_type: context
@@ -862,7 +862,6 @@ sections:
       - 任务治理：GOV-TASK-001(full/任务卡); GOV-TASK-004(full/生命周期); GOV-TASK-005(§4.2/§4.3/关闭标准)
       - 合规治理：GOV-CMP-001(full/监管分类); GOV-CMP-002(§2-4/审计追踪)
       - 门禁与登记表：PS-REG-014(gates/门禁SSoT); OPS-VC-005(§2/会话门禁); PS-REG-005(registries/登记表总索引)
-      - 评分矩阵：VIEW-12-AUDIT-MATRIX(§1-5/12维评分)
       key_decisions:
       - 37条depends_on覆盖全部规则文件——v1.2.0四重交叉验证确认
       - 每条引用包含target/at/why三元组

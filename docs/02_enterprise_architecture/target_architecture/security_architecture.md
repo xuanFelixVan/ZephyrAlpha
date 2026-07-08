@@ -84,7 +84,7 @@ Security Architecture 视图回答：
 
 **驱动关系**：本视图受应用架构（`application_architecture.md` §4A 5 大核心服务）驱动，并**反向约束**应用架构（拒绝不满足安全门禁的服务上线）。
 
-**基线评分**：2 维架构审计（[`dimension_audit_matrix.md`](../04_architecture_principles_decisions/dimension_audit_matrix.md)）中 D6 Security 当前得分 **2.2/10（P0 红线）**。本文档升格（skeleton→active）是消除该红线的**前置条件**。experimental 末目标：D6 达 5.5/10。
+**历史基线**：12 维架构评分矩阵（dimension_audit_matrix.md）已废弃删除。本文档升格（skeleton→active）是消除 D6 Security 历史红线（曾评 2.2/10）的**前置条件**。
 
 ---
 

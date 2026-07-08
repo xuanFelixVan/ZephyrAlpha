@@ -75,7 +75,7 @@ This view is **driven by** the Business Architecture (what capabilities determin
 - `01_global_architecture_diagram/` — 全局架构图（`cross_domain_matrix.md` / `global_capability_heatmap.md` / `integration_topology.md` / `full_project_tree_*.md`）
 - `02_domain_architecture_docs/` — 53 域架构文档（`01_d_infra_a2a.md`~`49_d_trading.md` + `domain_index.md`）
 - `03_governance_reports/` — 治理报告（`capacity_report.md` / `constraint_violations.md` / `design_vs_production.md`）
-- `04_architecture_principles_decisions/` — 架构原则与决策（`architecture_principles.md` SSoT / `dimension_audit_matrix.md` / `dependency_path_panorama.md`）
+- `04_architecture_principles_decisions/` — 架构原则与决策（`architecture_principles.md` SSoT / `dependency_path_panorama.md`）
 - `generated/` — 自动派生视图（`domains/index.md` + 53 个 `*_dependency.mmd`，由 `scripts/governance/d5_architecture/generators/` 生成）
 - `sample/` — 样板文件
 - `target_architecture/` — TOGAF 四层视图（本文档组，见 [index.md](./index.md)）

@@ -226,18 +226,7 @@ BUILT_PANORAMAS: list[dict] = [
         "description": "设计态到运营态的迁移进度对比",
     },
     # --- 04_architecture_principles_decisions/ ---
-    {
-        "panorama_id": "PAN-BUILT-15",
-        "name": "12维架构评分矩阵",
-        "category": "治理健康度",
-        "category_id": "governance",
-        "data_source": "手工",
-        "source_architecture": "手工",
-        "generator": "(手工维护)",
-        "output_path": "04_architecture_principles_decisions/",
-        "artifact_path": "04_architecture_principles_decisions/dimension_audit_matrix.md",
-        "description": "12 维架构评分矩阵",
-    },
+    # PAN-BUILT-15 (dimension_audit_matrix.md) 已废弃删除，不再登记
     {
         "panorama_id": "PAN-BUILT-17",
         "name": "依赖与路径全景图能力定位书",
