@@ -1390,6 +1390,45 @@ capabilities:
       - _is_generator_file  # 生成器文件判定
 
   # --------------------------------------------------------------------------
+  - capability_id: hardcoded_url_gate
+    aliases:
+      - NO-HARDCODED-URL
+      - no-hardcoded-url
+      - make_hardcoded_url_gate
+      - hardcoded_localhost_blocker
+    description: >-
+      硬编码 localhost URL 阻断门禁（NO-HARDCODED-URL，§5.160.9 防复发）。检测 staged
+      .py 文件 added 行中的 http://localhost: / https://localhost: 字面量——违反
+      DEFAULT_OLLAMA_URL SSoT 原则（§5.160.9），应改用 from zephyr.shared.foundation.constants
+      import DEFAULT_OLLAMA_URL。shared/foundation/constants.py 豁免（SSoT 定义位置）；
+      tests/ 豁免；import/注释/docstring 豁免；检出违规则 fail-closed 阻断（passed=False）。
+      priority=94（在 NO-UPWARD-IMPORT=93 之后）。
+      canonical basename hardcoded_url_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "硬编码URL阻断/localhost门禁/NO-HARDCODED-URL" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 URL 检测脚本。
+    integrity_anchors:
+      - make_hardcoded_url_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: import_direction_gate
+    aliases:
+      - NO-UPWARD-IMPORT
+      - no-upward-import
+      - make_import_direction_gate
+      - shared_upward_dependency_blocker
+    description: >-
+      shared 层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152 防复发）。检测 staged
+      shared 层（src/zephyr/shared/）.py 文件中是否含向上依赖 import——违反架构
+      分层原则（L0 shared 禁止依赖 L2 governance / L3 trading 等上层域）。TYPE_CHECKING
+      块内 import 豁免（类型检查专用无运行时导入）；tests/ 豁免；AST/git 异常 fail-open
+      （logger.warning）；检出违规则 fail-closed 阻断（passed=False）。priority=93。
+      canonical basename import_direction_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "shared向上依赖/shared层import门禁/NO-UPWARD-IMPORT" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 import 方向检测脚本。
+    integrity_anchors:
+      - make_import_direction_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: create_guard
     aliases:
       - CREATE-GUARD
@@ -3949,6 +3988,14 @@ creation_tokens:
     token: "auto-datetime-now-forbidden-gate-20260709"
     created_by: "session-sess-18616-20260709045132"
     capability: "datetime_now_forbidden_gate"
+  - file: "src/zephyr/governance/commit_gates/hardcoded_url_gate.py"
+    token: "auto-hardcoded-url-gate-20260709"
+    created_by: "session-sess-28892-20260709052442"
+    capability: "hardcoded_url_gate"
+  - file: "src/zephyr/governance/commit_gates/import_direction_gate.py"
+    token: "auto-import-direction-gate-20260709"
+    created_by: "session-sess-28892-20260709052442"
+    capability: "import_direction_gate"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
   - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"

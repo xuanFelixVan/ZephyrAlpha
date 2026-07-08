@@ -37,9 +37,11 @@ import os
 from dataclasses import dataclass, field
 from typing import Any
 
+from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
+
 _log = logging.getLogger(__name__)
 
-DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+# DEFAULT_OLLAMA_URL 已下沉到 zephyr.shared.foundation.constants（§5.160 SSoT）
 
 
 @dataclass
