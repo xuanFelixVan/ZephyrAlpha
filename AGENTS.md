@@ -736,7 +736,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
    - 搜索 capability_id / aliases / description / canonical_file / module_id
    - 例：`--find generator`、`--find path_tree`、`--find index`
 2. **注册表匹配**：查 [`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)
-   - `domain_architecture_generators` 条目列出全部 12 个架构生成器及其别名
+   - `domain_architecture_generators` 条目列出全部 13 个架构生成器及其别名
    - `outputs` 字段列出生成器→输出目录映射
 3. **复用决策**：命中已有 → 扩展已有生成器（RULE-EIGHT 扩展优先于新建）；未命中 → 通过 `scaffold.py` 创建（P0-5 create_guard 强制）
 
@@ -745,6 +745,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 | 生成器 | 输出目录 | 用途 |
 |--------|----------|------|
 | `generate_navigation_index.py` | `02_enterprise_architecture/00_overview_entry/` | 导航索引 |
+| `generate_panorama_registry.py` | `02_enterprise_architecture/00_overview_entry/` | 全景图清单总表 |
 | `generate_path_tree.py` | `01_global_architecture_diagram/` | 项目路径树 |
 | `generate_cross_domain_matrix.py` | `01_global_architecture_diagram/` | 跨域矩阵 |
 | `generate_integration_topology.py` | `01_global_architecture_diagram/` | 集成拓扑 |
@@ -757,6 +758,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 | `detect_constraint_violations.py` | `03_governance_reports/` | 约束违规检测（写 PG，GATE-CONSTRAINT-DETECT） |
 | `generate_capacity_report.py` | `03_governance_reports/` | 容量报告 |
 | `generate_contracts.py` | `05_contracts/` | 契约文档 |
+| `generate_asset_catalog.py` | `01_global_architecture_diagram/` | 资产清单全景图（数据源/服务/基础设施/契约/配置/数据源API，261项） |
 
 **P0 防再生门禁**（2026-07-01 生成器治理治本）：
 - P0-1：N-16 src/ basename 唯一门禁——同 basename 跨域 commit 阻断
