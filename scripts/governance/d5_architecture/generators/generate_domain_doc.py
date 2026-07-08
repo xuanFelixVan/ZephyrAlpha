@@ -73,7 +73,7 @@ import yaml
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
-from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual
+from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh, DOMAIN_NAME_ZH  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
@@ -1012,7 +1012,7 @@ def generate_ascii_dependency_graph(edges: list[dict]) -> str:
     overview_content = [f"  依赖类型数 / Dependency Types: {len(sorted_types)}"]
     for dtype in sorted_types:
         overview_content.append(
-            f"  [{dtype}]: {len(type_groups[dtype])} 条 / edges"
+            f"  [{_dep_type_display(dtype)}]: {len(type_groups[dtype])} 条 / edges"
         )
     lines.extend(_make_box(overview_title, overview_content))
     lines.append("")
@@ -1024,7 +1024,7 @@ def generate_ascii_dependency_graph(edges: list[dict]) -> str:
         remaining = MAX_EDGES - shown_total
         # 剩余空间不足以显示至少1条边时，输出摘要行而非空box
         if remaining <= 1:
-            lines.append(f"**[{dtype}]** ({len(group_edges)} 条 / edges) — 已达显示上限，省略 / limit reached")
+            lines.append(f"**[{_dep_type_display(dtype)}]** ({len(group_edges)} 条 / edges) — 已达显示上限，省略 / limit reached")
             lines.append("")
             continue
 
@@ -1106,12 +1106,15 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
 
     domain_name_zh = get_domain_name_zh(domain_id, info["domain_name"])
     domain_name_en = get_domain_name_en(domain_id)
+    # 中文名优先用硬编码 DOMAIN_NAME_ZH（DB domain_name 多为英文），确保标题显示中文
+    domain_name_zh_hardcoded = DOMAIN_NAME_ZH.get(domain_id, domain_name_zh)
+    domain_desc_zh = get_domain_desc_zh(domain_id)
 
     lines = []
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
     lines.append("---")
     lines.append("doc_type: architecture_view")
-    lines.append(f"title: {domain_id} {domain_name_zh}架构文档")
+    lines.append(f"title: {domain_id} {domain_name_zh_hardcoded}架构文档")
     lines.append('version: "1.0"')
     lines.append("status: active")
     lines.append(f"date: {now.split()[0]}")
@@ -1119,9 +1122,12 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
-    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh} / {domain_name_en}")
+    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh} / {domain_name_zh_hardcoded} / {domain_name_en}")
     lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。")
+    if domain_desc_zh:
+        lines.append(f"> **功能简介 / Overview**: {domain_desc_zh}")
+        lines.append("")
+    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh_hardcoded}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。")
     lines.append("")
     lines.append(f"> 本文档由 generate_domain_doc.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -1135,7 +1141,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("|------|------|-------|-------|")
     lines.append(f"| 编号 | {number:02d} | Number | {number:02d} |")
     lines.append(f"| 域ID | {domain_id} | Domain ID | {domain_id} |")
-    lines.append(f"| 域名称 | {domain_name_zh} | Domain Name | {domain_name_en} |")
+    lines.append(f"| 域名称 | {domain_name_zh_hardcoded} | Domain Name | {domain_name_en} |")
     layer_zh, layer_en = get_layer_name_bilingual(info['layer_id'])
     lines.append(f"| 层级 | {layer_zh} | Layer | {layer_en} |")
     lines.append(f"| 模块数 | {len(nodes)} | Module Count | {len(nodes)} |")
@@ -1180,7 +1186,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
             lines.append("")
 
         mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh, page_nodes, edges, page_outgoing, page_incoming
+            domain_id, domain_name_zh_hardcoded, page_nodes, edges, page_outgoing, page_incoming
         )
         lines.append("```mermaid")
         lines.append(mermaid_code)
@@ -1219,11 +1225,11 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("## 架构分层视图 / Architecture Overview")
     lines.append("")
     lines.append(
-        f"> 按 architecture_layer 分层显示 {domain_name_zh}（{domain_id}）的模块分布。"
+        f"> 按 architecture_layer 分层显示 {domain_name_zh_hardcoded}（{domain_id}）的模块分布。"
         f"共 {len(nodes)} 个模块 / {len(nodes)} modules。"
     )
     lines.append("")
-    lines.append(generate_ascii_architecture_overview(domain_id, domain_name_zh, nodes))
+    lines.append(generate_ascii_architecture_overview(domain_id, domain_name_zh_hardcoded, nodes))
     lines.append("")
 
     # 模块分层清单（按 architecture_layer 分组，合并自 generate_domain_architecture_diagram.py）
