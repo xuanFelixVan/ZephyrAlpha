@@ -1151,74 +1151,63 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 
 #### §7.1.2 国内财经新闻+公告+政策直连API清单（免费无Key，实测6/8通过，2026-07-03）
 
-> 从 [china-finance-rss](https://github.com/yuxuan-made/china-finance-rss) 项目源码提取的正确API URL。**须断开VPN**（国内网站）。与 AKShare(§7.3) 互补——AKShare覆盖个股新闻+研报，直连API覆盖7x24实时快讯+公告+政策。
+> **API 清单已结构化**：6 个国内直连 API（东财快讯/同花顺快讯/华尔街见闻/金十数据/财联社电报/巨潮公告）记录在 `depgraph.data_source_apis` 表（DS-NEWSAPI-API-003~008），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留分类摘要、参数坑与签名算法。
+>
+> 从 [china-finance-rss](https://github.com/yuxuan-made/china-finance-rss) 项目源码提取的正确 API URL。**须断开 VPN**（国内网站）。与 AKShare(§7.3) 互补——AKShare 覆盖个股新闻+研报，直连 API 覆盖 7x24 实时快讯+公告+政策。
 
-**A. 财经新闻快讯（4/4通过）**
+**A. 财经新闻快讯（4/4 通过）** — 东财/同花顺/华尔街见闻/金十，均 `GET` 返回 JSON（东财为 jsonP 需正则提取），免费无 Key。
 
-| 数据源 | API URL | 实测结果 | 说明 |
-|--------|---------|:--------:|------|
-| **东方财富快讯** | `https://newsapi.eastmoney.com/kuaixun/v1/getlist_102_ajaxResult_50_1_.html` | ✅ 50条 | 7x24快讯，jsonP格式(需正则提取)，免费无Key |
-| **同花顺快讯** | `https://news.10jqka.com.cn/tapp/news/push/stock/?page=1&tag=&track=website&pagesize=50` | ✅ 20条 | 7x24快讯推送，JSON，含stock关联股票+tagInfo标签评分 |
-| **华尔街见闻** | `https://api-one-wscn.awtmt.com/apiv1/content/lives?channel=global-channel&client=pc&limit=50` | ✅ 20条 | 全球直播(中英文)，JSON，含content_more扩展内容 |
-| **金十数据** | `https://flash-api.jin10.com/get_flash_list?channel=-8200&limit=50` | ✅ 21条 | 快讯+经济数据(type=1含actual/affect/unit)，需提取x-app-id |
+**B. 财联社电报（签名修复，✅可用）** — `GET https://www.cls.cn/v1/roll/get_roll_list`，签名修复后 10 条/次，字段最丰富（50+ 字段）。
 
-**B. 财联社电报（签名修复，✅可用）**
-
-| 数据源 | API URL | 实测结果 | 说明 |
-|--------|---------|:--------:|------|
-| **财联社电报** | `https://www.cls.cn/v1/roll/get_roll_list` | ✅ 10条 | 签名修复(SHA1→MD5, sv=8.7.9)，字段最丰富(50+字段含stock_list/subjects/tags/level/reading_num) |
-
-> **财联社签名算法**（从china-finance-rss源码提取）：
-> 1. 参数序列化：`key=value` 格式，按key大写排序拼接，嵌套用`key[index]`/`key[subkey]`
+> **财联社签名算法**（从 china-finance-rss 源码提取）：
+> 1. 参数序列化：`key=value` 格式，按 key 大写排序拼接，嵌套用 `key[index]`/`key[subkey]`
 > 2. 签名：`SHA1(serialized) → MD5(sha1_digest) → sign`
 > 3. 参数：`{refresh_type:1, rn:50, last_time:0, os:web, sv:8.7.9, app:CailianpressWeb, sign:<签名>}`
 > 4. Header：`Referer: https://www.cls.cn/telegraph`
 >
-> **财联社字段价值**（50+字段，最有价值的国内新闻源）：
-> - `stock_list` — 关联股票代码（直接可用，不用NLP提取）
+> **财联社字段价值**（50+ 字段，最有价值的国内新闻源）：
+> - `stock_list` — 关联股票代码（直接可用，不用 NLP 提取）
 > - `subjects` — 主题分类
 > - `tags` — 标签
-> - `level` — 重要级别（C/B/A级）
+> - `level` — 重要级别（C/B/A 级）
 > - `reading_num` — 阅读数（热度指标）
 > - `shareurl` — 分享链接
 
-**C. 上市公司公告（巨潮资讯网，✅可用）**
-
-| 数据源 | API URL | 实测结果 | 说明 |
-|--------|---------|:--------:|------|
-| **巨潮资讯网** | `http://www.cninfo.com.cn/new/hisAnnouncement/query` | ✅ 深交所3条/全市场10条 | 证监会指定信息披露平台，POST请求，需正确column(sse/szse)+orgId |
+**C. 上市公司公告（巨潮资讯网，✅可用）** — `POST http://www.cninfo.com.cn/new/hisAnnouncement/query`，证监会指定信息披露平台。
 
 > **巨潮资讯网**是证监会指定信息披露平台，有完整的上市公司公告历史（年报/季报/临时公告/董事会决议等）。
-> - API: POST `http://www.cninfo.com.cn/new/hisAnnouncement/query`
 > - 参数: `stock=代码,orgId` / `column=sse(上交所)或szse(深交所)` / `pageSize` / `seDate=开始~结束`
 > - 返回字段: secCode/secName/announcementTitle/announcementTime/adjunctUrl(PDF)/announcementType
-> - **坑**：orgId必须正确（如`gssz0000001`深交所/`gsshz0000001`上交所），错则NoneType错误
-> - 实测：平安银行(深交所)✅3条 / 全市场最新公告✅10条 / 浦发银行(上交所)❌orgId待修正
+> - **坑**：orgId 必须正确（如 `gssz0000001` 深交所/`gsshz0000001` 上交所），错则 NoneType 错误
 
-**D. 中国政策/监管数据源（页面可访问，需开发爬虫，后续做）**
+**D. 中国政策/监管数据源（HTML 爬虫，未结构化入 DB）**
+
+> 以下 4 源为 HTML 页面爬虫源（非结构化 API），保留为待开发清单。`ak.news_cctv` 已结构化入 `depgraph.data_source_apis`（DS-AKSHARE-API-017）。
 
 | 数据源 | URL | 可访问 | 方式 | 可获取内容 |
 |--------|-----|:------:|------|-----------|
-| **证监会** | `http://www.csrc.gov.cn/csrc/c100028/index.shtml` | ✅ | HTML爬虫(BeautifulSoup) | 要闻/政策解读/行政处罚/监管措施/行政复议/市场禁入/新闻发布会 |
-| **中国政府网** | `https://www.gov.cn/zhengce/` | ✅ | HTML爬虫 | 国务院政策文件/法规/规章 |
-| **中国人民银行** | `http://www.pbc.gov.cn/zhengcehuobisi/125207/index.html` | ✅ | HTML爬虫 | 货币政策/公开市场操作/利率公告 |
-| **AKShare news_cctv** | `ak.news_cctv(date="20260702")` | ✅ 10条 | AKShare | 央视新闻联播文字稿(政策风向标)，列=date/title/content |
+| **证监会** | `http://www.csrc.gov.cn/csrc/c100028/index.shtml` | ✅ | HTML 爬虫(BeautifulSoup) | 要闻/政策解读/行政处罚/监管措施/行政复议/市场禁入/新闻发布会 |
+| **中国政府网** | `https://www.gov.cn/zhengce/` | ✅ | HTML 爬虫 | 国务院政策文件/法规/规章 |
+| **中国人民银行** | `http://www.pbc.gov.cn/zhengcehuobisi/125207/index.html` | ✅ | HTML 爬虫 | 货币政策/公开市场操作/利率公告 |
+| **AKShare news_cctv** | `ak.news_cctv(date="20260702")` | ✅ 10 条 | AKShare | 央视新闻联播文字稿(政策风向标)，列=date/title/content |
 
 > **政策数据获取方案**：
-> - **实时政策快讯**：财联社电报(含stock_list关联股票) + AKShare `news_cctv`(央视新闻联播)
-> - **政策原文归档**：证监会/中国政府网/央行 HTML爬虫（页面已验证可访问，需开发BeautifulSoup解析器，**后续建表时做**）
+> - **实时政策快讯**：财联社电报(含 stock_list 关联股票) + AKShare `news_cctv`(央视新闻联播)
+> - **政策原文归档**：证监会/中国政府网/央行 HTML 爬虫（页面已验证可访问，需开发 BeautifulSoup 解析器，**后续建表时做**）
 > - **证监会可获取内容**：要闻/行政处罚决定书/监管措施(警示函等)/行政复议/市场禁入/新闻发布会文字稿
 
-> **国内新闻+公告+政策主力方案**：东方财富快讯(50条) + 华尔街见闻(20条) + 同花顺快讯(20条) + 金十数据(21条) + **财联社电报(10条,字段最丰富)** + **巨潮资讯网(上市公司公告)** + AKShare个股新闻/研报/央视新闻联播(§7.3) = **8源覆盖国内财经快讯+上市公司公告+政策监管**。
-> **金十数据特殊处理**：需先GET `https://www.jin10.com/` 提取JS bundle URL → GET bundle 提取 `x-app-id` → 用 `x-app-id` Header调用flash API。详见 §7.7.8。
+> **国内新闻+公告+政策主力方案**：东方财富快讯(50条) + 华尔街见闻(20条) + 同花顺快讯(20条) + 金十数据(21条) + **财联社电报(10条,字段最丰富)** + **巨潮资讯网(上市公司公告)** + AKShare 个股新闻/研报/央视新闻联播(§7.3) = **8 源覆盖国内财经快讯+上市公司公告+政策监管**。
+> **金十数据特殊处理**：需先 `GET https://www.jin10.com/` 提取 JS bundle URL → `GET` bundle 提取 `x-app-id` → 用 `x-app-id` Header 调用 flash API。详见 §7.7.8。
 > **华尔街见闻**：channel=global-channel 覆盖全球新闻(中英文)，是国外新闻的中文版补充源。
-> **巨潮资讯网orgId坑**：必须用正确的orgId（深交所`gssz`前缀/上交所`gsshz`前缀），错则NoneType错误。
+> **巨潮资讯网 orgId 坑**：必须用正确的 orgId（深交所 `gssz` 前缀/上交所 `gsshz` 前缀），错则 NoneType 错误。
 
 #### §7.1.3 股权穿透 + 产业链地图数据源清单（实测，2026-07-03）
 
 > 用户提问：①公司股权穿透/股东信息（董事长/股东股份/控股架构）能否获取？②产业链地图（每只股票在产业链中的位置/上下游关系/产业链涵盖公司清单）能否获取？本节为搜索+实测结论。
 
 **A. 股权穿透/股东信息 — AKShare 免费接口实测（断VPN，2026-07-03）**
+
+> **API 清单已结构化**：9 个 AKShare 股权穿透 API 记录在 `depgraph.data_source_apis` 表（DS-AKSHARE-API-018~026，含 2 个 deprecated 反爬失败），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留实测明细（字段规模属价值增量，不入 DB）。
 
 | # | 接口 | 实测结果 | 数据规模 | 字段 |
 |---|------|:--------:|---------|------|
@@ -1254,6 +1243,8 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 > - **需付费**：天眼查 API 或 iFind 正式账号才能拿到完整股权穿透图谱（多层穿透+实控人链）
 
 **C. 产业链地图 — AKShare 实测（断VPN，2026-07-03）**
+
+> **API 清单已结构化**：7 个 AKShare 产业链 API 记录在 `depgraph.data_source_apis` 表（DS-AKSHARE-API-028~034，含 4 个 deprecated 反爬/内部 bug），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留实测明细（字段规模属价值增量，不入 DB）。
 
 | # | 接口 | 实测结果 | 数据规模 | 字段 |
 |---|------|:--------:|---------|------|
@@ -1312,18 +1303,15 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 
 #### §7.2.1 数据覆盖范围
 
-| 数据类型 | 接口 | 时间范围 | 实测结果 |
-|---------|------|---------|---------|
-| 日/周/月K线 | `query_history_k_data_plus(frequency="d/w/m")` | 1990-12-19至今 | ✅ 日144行/周51行/月12行 |
-| 5/15/30/60分钟K线 | `query_history_k_data_plus(frequency="5/15/30/60")` | 2020-01-03至今(近5年) | ✅ 5分钟192行 |
-| 季频盈利能力 | `query_profit_data()` | 2007年至今 | ✅ 1行(roeAvg/npMargin/gpMargin) |
-| 季频资产负债 | `query_balance_data()` | 2007年至今 | ✅ 1行(currentRatio/quickRatio) |
-| 季频现金流 | `query_cash_flow_data()` | 2007年至今 | ✅ 1行 |
-| 季频成长能力 | `query_growth_data()` | 2007年至今 | ✅ 1行(YOYEquity/YOYAsset/YOYNI) |
-| 沪深300成分股 | `query_hs300_stocks()` | 每周一更新 | ✅ 300行 |
-| 交易日历 | `query_trade_dates()` | — | ✅ 365行(2025年) |
+> **API 清单已结构化**：16 个 Baostock API（K线/季频财务/成分股/证券列表/行业分类/基本信息/分红等）记录在 `depgraph.data_source_apis` 表（DS-BAOSTOCK-API-001~016），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留分类摘要，调用示例见 §7.2.2。
 
-> **还有**：`query_operation_data()`营运能力 / `query_dupont_data()`杜邦分析 / `query_sz50_stocks()`上证50 / `query_zz500_stocks()`中证500 / `query_stock_industry()`行业分类 / `query_all_stock()`证券列表 / `query_stock_basic()`股票基本信息
+**核心分类**：
+- **K线** — `query_history_k_data_plus(frequency="d/w/m/5/15/30/60")`，日 K 从 1990-12-19 起，分钟 K 近 5 年（2020-01-03 起）
+- **季频财务** — `query_profit_data()` 盈利能力 / `query_balance_data()` 资产负债 / `query_cash_flow_data()` 现金流 / `query_growth_data()` 成长能力 / `query_operation_data()` 营运能力 / `query_dupont_data()` 杜邦分析，均从 2007 年起
+- **成分股** — `query_hs300_stocks()` 沪深300 / `query_sz50_stocks()` 上证50 / `query_zz500_stocks()` 中证500
+- **基础数据** — `query_trade_dates()` 交易日历 / `query_all_stock()` 证券列表 / `query_stock_basic()` 股票基本信息 / `query_stock_industry()` 行业分类 / `query_dividend_data()` 分红（**滞后约1周+，见 §7.2.5，分红明细改用 AKShare**）
+
+> ⚠️ **分红数据滞后**：`query_dividend_data(yearType="report")` 严重滞后，详见 §7.2.5；分红明细改用 AKShare `stock_history_dividend_detail`（§7.3.5）。
 
 #### §7.2.2 API 调用示例（直接复制可用）
 
@@ -1421,33 +1409,14 @@ bs.logout()
 
 **iFind EDB 盲区**：试用账号 -4318 "exceeded this month"（月度配额超限，下月重置），且 EDB 的 77,909 指标中策略常用的核心宏观指标在 AKShare 中都有对应。
 
-**AKShare 宏观 API（已验证函数名，2026-07-03）**：
+> **API 清单已结构化**：10 个 AKShare 宏观 API（7 中国宏观 + 3 美国宏观）记录在 `depgraph.data_source_apis` 表（DS-AKSHARE-API-001~010），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留 iFind EDB 覆盖对照矩阵（覆盖度分析属价值增量，不入 DB）。
 
-```python
-import akshare as ak
+**核心 API 分类**：
+- **中国宏观** — `macro_china_gdp`(GDP) / `macro_china_cpi`(CPI) / `macro_china_ppi_yearly`(PPI) / `macro_china_pmi`(PMI) / `macro_china_money_supply`(M0/M1/M2) / `macro_china_lpr`(LPR) / `macro_china_shrzgm`(社融增量)
+- **美国宏观** — `macro_usa_cpi_monthly`(CPI) / `macro_usa_unemployment_rate`(失业率) / `macro_usa_fed_interest_rate`(联邦基金利率)
+- **其他宏观模块** — `macro_euro_*` 欧洲宏观 / `macro_japan_*` 日本宏观（完整列表见 [AKShare 官方文档](https://akshare.akfamily.xyz/data/economy/economy.html)）
 
-# === 中国宏观（替代 iFind EDB 中国宏观 11,762 指标的核心部分）===
-gdp = ak.macro_china_gdp()              # GDP季度数据（国内生产总值-绝对值/同比增长）
-cpi = ak.macro_china_cpi()              # CPI居民消费价格指数（全国-当月/同比增长）
-ppi = ak.macro_china_ppi_yearly()       # PPI工业品出厂价格指数（今值）
-pmi = ak.macro_china_pmi()              # PMI制造业采购经理指数（制造业/非制造业-指数）
-m2  = ak.macro_china_money_supply()     # M0/M1/M2货币供应量（数量/同比增长）
-lpr = ak.macro_china_lpr()              # LPR贷款市场报价利率（1年/5年）
-shrzgm = ak.macro_china_shrzgm()        # 社融增量（社会融资规模增量）
-
-# === 美国宏观（替代 iFind EDB 全球宏观 12,385 指标的核心部分）===
-usa_cpi = ak.macro_usa_cpi_monthly()              # 美国CPI月度
-usa_unemp = ak.macro_usa_unemployment_rate()      # 美国失业率
-usa_fed = ak.macro_usa_fed_interest_rate()        # 美联储联邦基金利率
-
-# === 其他宏观模块 ===
-# ak.macro_euro_*  欧洲宏观
-# ak.macro_japan_* 日本宏观
-# 完整列表见 https://akshare.akfamily.xyz/data/economy/economy.html
-
-# 返回 pandas DataFrame，直接 to_csv 或写入 ClickHouse
-gdp.to_csv("gdp.csv")
-```
+> 所有宏观 API 调用约定：无参数 → 返回 pandas DataFrame → 直接 `to_csv` 或写入 ClickHouse。**必须断开 VPN**（见上方 VPN 警告）。调用示例见 §7.7.2。
 
 **覆盖范围对照**：
 
@@ -1467,28 +1436,16 @@ gdp.to_csv("gdp.csv")
 
 **iFind 盲区**：试用账号 -5100 "account type is not supported"（事件/研报不支持）。
 
-**AKShare 新闻/研报 API（已验证函数名，2026-07-03）**：
+> **API 清单已结构化**：6 个 AKShare 新闻/研报 API 记录在 `depgraph.data_source_apis` 表（DS-AKSHARE-API-011~016），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留 iFind 覆盖对照矩阵（替代关系分析属价值增量，不入 DB）。
 
-```python
-import akshare as ak
+**核心 API 分类**：
+- **个股新闻** — `stock_news_em(symbol="600000")`（东方财富个股新闻）
+- **财经快讯** — `stock_info_global_cls()`（财联社全球快讯，实时滚动）/ `stock_info_global_em()`（东方财富全球资讯）
+- **研报** — `stock_research_report_em(symbol="600000")`（东方财富个股研报）/ `stock_profit_forecast_ths(symbol="600000")`（同花顺一致预期 EPS，替代 iFind 分析师预期）
+- **事件日历** — `news_eco_calendar()`（财经事件日历：经济数据发布/央行决议等）
+- **三大报表（备用）** — `stock_financial_report_sina(stock="600000", symbol="资产负债表")`，iFind/QMT 已能获取，仅作备用
 
-# === 个股新闻（东方财富）===
-news = ak.stock_news_em(symbol="600000")              # 浦发银行个股新闻
-
-# === 财经快讯 ===
-cls_news = ak.stock_info_global_cls()                 # 财联社全球快讯（实时滚动）
-em_news  = ak.stock_info_global_em()                  # 东方财富全球资讯
-
-# === 研报 ===
-report = ak.stock_research_report_em(symbol="600000")     # 东方财富个股研报
-forecast = ak.stock_profit_forecast_ths(symbol="600000")  # 同花顺一致预期EPS（替代iFind分析师预期）
-
-# === 财经事件日历 ===
-calendar = ak.news_eco_calendar()                     # 财经事件日历（经济数据发布/央行决议等）
-
-# === 三大报表（备用，iFind/QMT已能获取）===
-# ak.stock_financial_report_sina(stock="600000", symbol="资产负债表")
-```
+> 所有 API 返回 pandas DataFrame。调用示例见 §7.7.2。
 
 **覆盖对照**：
 
@@ -1517,6 +1474,8 @@ df = ak.stock_us_hist(symbol="AAPL", period="daily", start_date="20200101", end_
 | **东财实时快照反爬** | `stock_zh_a_spot_em()` 被 RemoteDisconnected 阻断（东财反爬升级） | 实时行情改用 QMT（见 §3）或 iFind THS_RQ（见 §2.4.6） |
 
 #### §7.3.5 stock_history_dividend_detail — 最可靠的分红数据源（v1.9.0 新增实测）
+
+> **API 清单已结构化**：`stock_history_dividend_detail` 已记录在 `depgraph.data_source_apis` 表（DS-AKSHARE-API-027），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留参数坑（列名前导空格）、字段映射表和批量补齐脚本（实测过程属价值增量，不入 DB）。
 
 > **2026-07-05 实测**：AKShare `stock_history_dividend_detail` 是分红明细数据的**最优数据源**——比 baostock（滞后约1周+，见 §7.2.5）、iFind THS_BD 分红指标（-209 全部失败，见 §2.4.6）、iFind 问财（不适合个股明细查询，见 §2.4.6）都可靠。多线程 8 workers 约 7.5 分钟完成 5823 个 symbol 查询，获取 283 条新数据（max announce_date=2026-07-06）。
 
@@ -1644,6 +1603,8 @@ with ThreadPoolExecutor(max_workers=8) as executor:
 | 数据更新 | 日K线为历史数据，盘中不实时更新 |
 
 #### §7.5.1 数据覆盖范围（实测验证）
+
+> **API 清单已结构化**：TickFlow 核心 API（`tf.klines.get`）记录在 `depgraph.data_source_apis` 表（DS-TICKFLOW-API-001），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留实测覆盖矩阵（symbol/period 支持情况属价值增量，不入 DB）。
 
 | # | 数据类型 | 代码格式 | 实测样本 | 实测结果 |
 |---|---------|---------|---------|---------|
@@ -2120,49 +2081,39 @@ python -m mootdx bestip --verbose
 
 #### §8.3.1 在线行情（quotes 模块，需网络）
 
-| # | 数据类型 | API | 参数 | 输出字段 | 频率参数对照 |
-|---|---------|-----|------|---------|------------|
-| 1 | **A股日K线** | `client.bars(symbol, frequency=9, offset=N)` | symbol='600036' | datetime/open/high/low/close/volume/amount | frequency=9=日线 |
-| 2 | **A股周K线** | `client.bars(symbol, frequency=5, offset=N)` | 同上 | 同上 | frequency=5=周线 |
-| 3 | **A股月K线** | `client.bars(symbol, frequency=6, offset=N)` | 同上 | 同上 | frequency=6=月线 |
-| 4 | **A股5分钟K线** | `client.bars(symbol, frequency=0, offset=N)` | 同上 | 同上 | frequency=0=5分钟 |
-| 5 | **A股15分钟K线** | `client.bars(symbol, frequency=1, offset=N)` | 同上 | 同上 | frequency=1=15分钟 |
-| 6 | **A股30分钟K线** | `client.bars(symbol, frequency=2, offset=N)` | 同上 | 同上 | frequency=2=30分钟 |
-| 7 | **A股60分钟K线** | `client.bars(symbol, frequency=3, offset=N)` | 同上 | 同上 | frequency=3=1小时 |
-| 8 | **A股1分钟K线** | `client.bars(symbol, frequency=7/8, offset=N)` | 同上 | 同上 | frequency=7/8=1分钟 |
-| 9 | **指数K线** | `client.index(symbol, frequency=9)` | symbol='000001'(上证) | 同上 | 同frequency对照 |
-| 10 | **实时报价** | `client.quote(symbol='600036')` | symbol | code/name/price/rise/percent | — |
-| 11 | **分时数据** | `client.minute(symbol='000001')` | symbol | datetime/price/avg_price/volume | — |
-| 12 | **个股分笔(最近交易日)** | `client.transaction(symbol='600036')` | symbol | time/price/vol/num/buyorsell | 仅最近交易日 |
+> **API 清单已结构化**：TDX 在线行情 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-001~005），详见 [asset_catalog.md](../../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
+
+- `client.bars(symbol, frequency, offset)` — A股K线全周期（frequency=0~9 对应 5分/15分/30分/60分/日/周/月/1分）
+- `client.index(symbol, frequency)` — 指数K线（symbol='000001'上证）
+- `client.quote(symbol)` — 实时报价（code/name/price/rise/percent）
+- `client.minute(symbol)` — 分时数据（datetime/price/avg_price/volume）
+- `client.transaction(symbol)` — 个股分笔（仅最近交易日；buyorsell:0=买/1=卖/2=中性）
 
 #### §8.3.2 本地数据文件读取（reader 模块，需安装通达信客户端）
 
-| # | 数据类型 | API | 文件类型 | 说明 |
-|---|---------|-----|---------|------|
-| 13 | **日线数据** | `reader.daily(symbol='600036')` | `.day` | 解析 `vipdoc/sh/lday/sh600036.day` |
-| 14 | **分钟线** | `reader.minute(symbol='600036', suffix=1)` | `.lc1` | 解析 `vipdoc/sh/fzline/sh600036.lc1` |
-| 15 | **5分钟线** | `reader.fzline(symbol='600036')` | `.lc5` | 解析 `vipdoc/sh/fzline/sh600036.lc5` |
-| 16 | **概念板块** | `reader.block(symbol='block_gn.dat', group=True)` | `.dat` | 通达信概念板块分类（880xxx体系） |
-| 17 | **行业板块** | `reader.block(symbol='block_fg.dat')` | `.dat` | 通达信行业板块分类 |
+> **API 清单已结构化**：TDX 本地文件 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-006~009），详见 [asset_catalog.md](../../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
+
+- `reader.daily(symbol)` — 日线（.day，解析 `vipdoc/sh/lday/shXXXXXX.day`）
+- `reader.minute(symbol, suffix=1)` — 分钟线（.lc1）
+- `reader.fzline(symbol)` — 5分钟线（.lc5）
+- `reader.block(symbol, group=True)` — 板块分类（.dat：block_gn=概念 / block_fg=行业，880xxx.TDX体系）
 
 > **路径约定**：通达信默认数据目录 `C:/new_tdx/vipdoc/`，沪市在 `sh/`，深市在 `sz/`，港股在 `hk/`。
 
 #### §8.3.3 财务数据（affair 模块）
 
-| # | 数据类型 | API | 说明 |
-|---|---------|-----|------|
-| 18 | **可下载财务文件列表** | `Affair.files()` | 返回全量可下载的 gpcw YYYYMMDD.zip 列表 |
-| 19 | **下载单个财务文件** | `Affair.fetch(downdir='./financial_data', filename='gpcw20231231.zip')` | 下载指定日期的财务数据包 |
-| 20 | **批量下载全部财务数据** | `Affair.fetch(downdir='./financial_data')` | 下载全部 gpcw 历史财务数据包 |
+> **API 清单已结构化**：TDX 财务数据 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-010~011），详见 [asset_catalog.md](../../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
+
+- `Affair.files()` — 可下载财务文件列表（返回 `gpcwYYYYMMDD.zip` 列表）
+- `Affair.fetch(downdir, filename)` — 下载财务数据包（单个或全量）
 
 > **财务数据格式**：gpcw YYYYMMDD.zip 解压后为 `.dat` 二进制文件，需配套 `财务数据对照表.xls` 解读字段含义（通达信官方提供）。
 
 #### §8.3.4 扩展行情（ExtQuotes 模块）
 
-| # | 数据类型 | API | 说明 |
-|---|---------|-----|------|
-| 21 | **港股K线** | `ExtQuotes().bars(market=47, symbol='00700', frequency=9)` | market=47=港股，5分钟K线可用 |
-| 22 | **期货K线** | `ExtQuotes().bars(market=..., frequency=9)` | 不同品种 market 值不同，需查文档 |
+> **API 清单已结构化**：TDX 扩展行情 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-012），详见 [asset_catalog.md](../../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
+
+- `ExtQuotes().bars(market, symbol, frequency)` — 港股/期货K线（market=47=港股；不同品种 market 值不同）
 
 ### §8.4 API 调用完整示例（直接复制可用）
 
