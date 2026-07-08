@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 50 |
-| 模块总数 | 4988 |
+| 模块总数 | 4989 |
 | 生产态模块 | 1598 |
 | 设计态模块 | 53 |
-| 原型态模块 | 3337 |
+| 原型态模块 | 3338 |
 
 ## 域清单（按架构层分组）
 
@@ -79,7 +79,7 @@ ttl: permanent
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 201 | 133 | 0 | 68 | 201/150 (超容) | [35_d_gov_enforcement.md](35_d_gov_enforcement.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 0 | 0 | 0 | 0 | 0/200 (OK) | [36_d_gov_repair.md](36_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 0 | 0 | 0 | 0 | 0/200 (OK) | [37_d_gov_rule.md](37_d_gov_rule.md) |
-| D_GOV_SCRIPTS | script_governance / Script Governance | 434 | 32 | 0 | 402 | 434/150 (超容) | [38_d_gov_scripts.md](38_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | script_governance / Script Governance | 435 | 32 | 0 | 403 | 435/150 (超容) | [38_d_gov_scripts.md](38_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 43 | 21 | 0 | 22 | 43/150 (OK) | [39_d_intelligence.md](39_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 9 | 0 | 2 | 7 | 9/150 (OK) | [40_d_knowledge.md](40_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [41_d_ml_serve.md](41_d_ml_serve.md) |
