@@ -630,6 +630,7 @@ class BaseMCPServer:
                 continue
 
             try:
+                # 5.100.10 修复: handle_request 改为 run_in_executor 委托线程池避免阻塞事件循环
                 response = await loop.run_in_executor(None, self.handle_request, request)
             except Exception as exc:
                 response = self._err(request.get("id") if isinstance(request, dict) else None, ERR_INTERNAL_ERROR, f"Internal error: {exc}")

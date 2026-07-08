@@ -272,6 +272,7 @@ class DotEnvSecretProvider:
 
     async def get_secret(self, key: str) -> str:
         _check_rotation(key)
+        # 5.100.8 修复: 同步文件IO改为 asyncio.to_thread 避免阻塞事件循环
         await asyncio.to_thread(self._load_env_file)
 
         env_value = os.environ.get(key)
