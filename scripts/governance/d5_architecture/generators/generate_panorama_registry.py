@@ -816,6 +816,63 @@ TABLE_GAPS: list[dict] = [
         "truth_source_form": "代码分析派生 + DB 缓存",
         "panorama_ref": "PAN-ASSET-04",
     },
+    # ===== 以下 4 项为 2026-07-09 数据库实测发现的数据质量缺口 =====
+    {
+        "gap_id": "GAP-TBL-07",
+        "table": "nodes (build_status 字段)",
+        "group": "depgraph",
+        "status": "字段值缺失",
+        "current_rows": 0,
+        "expected": "应有 active 值（production 节点且实际运行中）",
+        "what": "build_status 字段只有 planned/stable/generated 三种值，0 个 active。能力热力图算法 require build_status='active' 才判 L3，导致 L3 永远无法触发",
+        "ai_risk": "AI 看能力热力图会误判所有域最多 L2（可用未验证），无法区分「已上线验证」和「有代码但没跑过」，决策施工优先级时误判",
+        "fix": "1. 修 generate_capability_heatmap.py 算法：build_status='stable' 也算 L3；2. 排除 D_AUDITTEST/D_GOV_SCRIPTS 等测试/脚本域；3. 补 build_status 字段值",
+        "priority": "P0 必做",
+        "truth_source_form": "DB 直写（数据修复）+ 生成器算法修复",
+        "panorama_ref": "PAN-BUILT-09",
+    },
+    {
+        "gap_id": "GAP-TBL-08",
+        "table": "decision_edges",
+        "group": "decisiongraph",
+        "status": "空表待填",
+        "current_rows": 0,
+        "expected": "200+ 行（214 个 decision_nodes 之间的决策传递边）",
+        "what": "decision_nodes 有 214 个节点，但 decision_edges=0。同步脚本只同步了节点，没有同步边。历史曾有 213 条边，现已被清空（数据丢失或重建时遗漏）",
+        "ai_risk": "AI 写新策略时看决策链路只有孤立节点，看不到 L0→L1→...→L6 的流向，无法判断策略在决策链中的位置和上下游依赖",
+        "fix": "从 decision_graph_model.yaml 的 §edges 段重新同步边到 decision_edges 表",
+        "priority": "P0 必做",
+        "truth_source_form": "YAML 真源 + DB 缓存",
+        "panorama_ref": "PAN-BUILT-19",
+    },
+    {
+        "gap_id": "GAP-TBL-09",
+        "table": "contracts",
+        "group": "assets",
+        "status": "数据污染",
+        "current_rows": 294,
+        "expected": "30-40 行（真正的 P0/P1 契约，真源 cross_layer_contracts.yaml）",
+        "what": "DB contracts 表 294 条是从代码注释正则提取的占位符（schema_definition 只有 description 壳子，promise/actual_consumer/gap/last_reviewed 全 None，fulfillment_status 全 unresolved，contract_type 全 'C'）。真正的契约在 cross_layer_contracts.yaml 里（CTR-001~006 + CTR-ERR + CTR-BP + P1×15 等），未同步到 DB",
+        "ai_risk": "AI 查 contracts 表会看到 294 条垃圾数据，误以为是真契约，基于占位符做决策（幻觉根源）。真正的契约在 YAML 里 AI 不知道去查",
+        "fix": "1. 清空 contracts 表的占位符数据；2. 从 cross_layer_contracts.yaml 重新同步真契约到 contracts 表",
+        "priority": "P0 必做",
+        "truth_source_form": "YAML 真源 + DB 缓存",
+        "panorama_ref": "PAN-ASSET-02",
+    },
+    {
+        "gap_id": "GAP-TBL-10",
+        "table": "domains (layer_id 字段)",
+        "group": "depgraph",
+        "status": "字段值缺失",
+        "current_rows": 2,
+        "expected": "0 个 NULL（50 个域都应有 layer_id：L0_infrastructure / L1_foundation / L2_domain）",
+        "what": "domains 表 50 行中有 2 行 layer_id 为 NULL，无法归入 L0/L1/L2 分层",
+        "ai_risk": "AI 按层级筛选域时会漏掉这 2 个域，导致它们在热力图/容量报告/域文档中缺失或归类错误",
+        "fix": "从 ddd_model.yaml 或 domain 映射表补全这 2 个域的 layer_id",
+        "priority": "P1 应做",
+        "truth_source_form": "YAML 真源 + DB 缓存",
+        "panorama_ref": "PAN-BUILT-20",
+    },
 ]
 
 
@@ -989,7 +1046,7 @@ def _generate_table_gaps_section(gaps: list[dict], db_stats: dict) -> list[str]:
     lines.append(">")
     lines.append("> **两类缺口的区别**：")
     lines.append("> - 待建全景图（16 项）= 最终要给 AI/人看的产物目录，真源类型待裁定")
-    lines.append("> - 表级缺口（6 项）= 底层 DB 表的真实状态（空表/部分缺失/完全缺失），真源类型已确定")
+    lines.append(f"> - 表级缺口（{len(gaps)} 项）= 底层 DB 表的真实状态（空表/部分缺失/完全缺失/数据污染/字段值缺失），真源类型已确定")
     lines.append("> - 一个表级缺口对应一个待建全景图（见 panorama_ref 列），但反过来不一定")
     lines.append("")
 

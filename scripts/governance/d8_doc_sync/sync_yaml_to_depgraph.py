@@ -38,6 +38,7 @@ P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步�
   + ARCH-051 dataflow_registry + ARCH-052 aggregate_nodes + ARCH-053 interface_contracts/database_nodes
   + data_source_apis（#179）
   + data_source_assets（#180）+ service_assets（#181）+ config_assets（#182）
+  + cross_layer_contracts（#154b）跨层(跨域)契约→contracts 表
 - 通行证机制：临时DROP只读触发器→同步→finally恢复触发器
 """
 
@@ -433,6 +434,107 @@ def sync_contract_mapping_table(cur):
         synced += 1
 
     print(f"  同步 {synced} 条契约")
+
+
+def sync_cross_layer_contracts(cur):
+    """#154b: 跨层(跨域)契约 → contracts 表
+
+    SSoT: architecture_model/contracts/cross_layer_contracts.yaml
+    将 39 条跨域契约(CTR-*/OCP-*/EXT-*/AI-GOV-*/CT-TEL-*)从 YAML 同步到 contracts 表。
+    与 sync_contract_mapping_table 互补：后者同步域契约(domain_contract)和层契约(layer_contract)，
+    本函数同步跨域契约(cross_layer)。
+    派生关系：YAML → DB → generate_contract_catalog.py → contract_catalog.md。
+
+    FK 防护：target_domains 中可能含已删除的 domain_id（如 D_SIGLEGACY，ARCH-045），
+    先查 domains 表获取有效集合，过滤无效值。
+    """
+    import json
+
+    print("同步 #154b: 跨层(跨域)契约 → contracts...")
+    yaml_path = REPO_ROOT / "architecture_model" / "contracts" / "cross_layer_contracts.yaml"
+    if not yaml_path.exists():
+        print(f"  跳过: {yaml_path} 不存在")
+        return
+    with open(yaml_path, encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    contracts = data.get("contracts", [])
+    if not contracts:
+        print("  跳过: YAML 中无 contracts 条目")
+        return
+
+    # 查询有效 domain_id 集合（FK 约束防护）
+    cur.execute("SELECT domain_id FROM domains")
+    valid_domains = {row["domain_id"] for row in cur.fetchall()}
+
+    # 删除旧的跨域契约（幂等：多次运行安全，不影响域契约/层契约）
+    cur.execute("DELETE FROM contracts WHERE contract_type = 'cross_layer'")
+
+    synced = 0
+    skipped = 0
+    for c in contracts:
+        contract_id = c.get("id", "")
+        if not contract_id:
+            continue
+        name = c.get("name", "")
+        source_domain = c.get("source_domain", "")
+        target_domains = c.get("target_domains", [])
+        if isinstance(target_domains, str):
+            target_domains = [target_domains]
+
+        # FK 防护：source_domain 无效则跳过
+        if source_domain and source_domain not in valid_domains:
+            print(f"  跳过 {contract_id}: source_domain={source_domain} 不在 domains 表")
+            skipped += 1
+            continue
+        if not source_domain:
+            source_domain = "D_SHARED"
+
+        # FK 防护：过滤 target_domains，只保留有效 domain_id
+        valid_targets = [d for d in target_domains if d in valid_domains]
+        if not valid_targets:
+            # 无有效消费者，用 D_SHARED 兜底
+            valid_targets = ["D_SHARED"]
+
+        # consumer_domain 取第一个（主要消费者），完整列表存 schema_definition
+        consumer_domain = valid_targets[0]
+
+        # schema_definition 存完整信息（target_domains + physical_path + fields）
+        schema_info = {
+            "target_domains": valid_targets,
+            "physical_path": c.get("physical_path", ""),
+            "flow": c.get("flow", ""),
+            "priority": c.get("priority", ""),
+            "frozen": c.get("frozen", False),
+            "stability": c.get("stability", ""),
+            "fields": c.get("fields", []),
+            "sla": c.get("sla", {}),
+            "description": c.get("description", ""),
+        }
+        schema_definition = json.dumps(schema_info, ensure_ascii=False)
+        version = c.get("schema_version", "")
+        promise = c.get("flow", "")
+
+        cur.execute(
+            """
+        INSERT INTO contracts
+        (contract_id, name, provider_domain, consumer_domain, contract_type,
+         schema_definition, version, promise)
+        VALUES (%s, %s, %s, %s, 'cross_layer', %s, %s, %s)
+        ON CONFLICT(contract_id) DO UPDATE SET
+            name=excluded.name,
+            provider_domain=excluded.provider_domain,
+            consumer_domain=excluded.consumer_domain,
+            contract_type=excluded.contract_type,
+            schema_definition=excluded.schema_definition,
+            version=excluded.version,
+            promise=excluded.promise
+        """,
+            (contract_id, name, source_domain, consumer_domain,
+             schema_definition, version, promise),
+        )
+        synced += 1
+
+    print(f"  同步 {synced} 条跨域契约（跳过 {skipped} 条 FK 违规）")
 
 
 # ========== P1 优先级同步 ==========
@@ -1901,6 +2003,7 @@ def sync_all() -> bool:
         sync_cross_module_dependencies(cur)  # #152
         sync_architecture_contract(cur)  # #153
         sync_contract_mapping_table(cur)  # #154
+        sync_cross_layer_contracts(cur)  # #154b 跨层(跨域)契约→contracts 表
 
         # P1 优先级同步
         sync_gate_registry(cur)  # #155
@@ -1951,7 +2054,7 @@ def sync_all() -> bool:
         cleanup_legacy_fk_violations(cur)
 
         conn.commit()
-        print("\n[PASS] 27 项 YAML→DB 同步完成")
+        print("\n[PASS] 28 项 YAML→DB 同步完成")
 
         # S1.2: 验证 readonly 表 COMMENT（HB-001 table_comment_required）
         verify_readonly_table_comments(cur)

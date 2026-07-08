@@ -31,7 +31,7 @@
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 50 | 功能域清单——50 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
 | 依赖图 depgraph | `nodes` | 4989 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4989 个 |
-| 依赖图 depgraph | `edges` | 6008 | 依赖边——节点间的依赖关系（import/契约/事件订阅），6008 条 |
+| 依赖图 depgraph | `edges` | 6078 | 依赖边——节点间的依赖关系（import/契约/事件订阅），6078 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
 | 数据流图 dataflowgraph | `dataflow_jobs` | 13 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
@@ -146,18 +146,22 @@
 
 ## 表级缺口清单
 
-> 共 6 项表级缺口。与上方 16 项待建全景图区分：全景图是最终产物，表级缺口是底层 DB 真源的实际状态。
+> 共 10 项表级缺口。与上方 16 项待建全景图区分：全景图是最终产物，表级缺口是底层 DB 真源的实际状态。
 >
 > **两类缺口的区别**：
 > - 待建全景图（16 项）= 最终要给 AI/人看的产物目录，真源类型待裁定
-> - 表级缺口（6 项）= 底层 DB 表的真实状态（空表/部分缺失/完全缺失），真源类型已确定
+> - 表级缺口（10 项）= 底层 DB 表的真实状态（空表/部分缺失/完全缺失/数据污染/字段值缺失），真源类型已确定
 > - 一个表级缺口对应一个待建全景图（见 panorama_ref 列），但反过来不一定
 
 | 缺口ID | 表名 | 状态 | 实际行数 | 应有行数 | 缺什么 | AI 风险 | 怎么修 | 优先级 | 真源形式 | 对应全景图 |
 |------|------|:---:|:---:|------|------|------|------|:---:|------|------|
 | GAP-TBL-01 | `dataflow_datasets_metadata` | 空表待填 | 0 | 14 行（每个 dataset 一行扩展属性） | Dataset 的 physical_type / pit_policy / contract_ref 未填 | AI 查 dataflow 只能看到空壳名字，会幻觉编造物理类型（误把 ClickHouse 表当 PostgreSQL） | 从 YAML 真源同步设计态扩展属性 | P0 必做 | YAML 真源 + DB 缓存 | PAN-ASSET-03 |
 | GAP-TBL-02 | `dataflow_jobs_metadata` | 空表待填 | 0 | 13 行（每个 job 一行扩展属性） | Job 的 source_code_ref / trigger_type / run_context 未填 | AI 查 job 找不到源码文件，不知道怎么触发（定时/事件/手动），改代码会找错文件 | 从代码扫描派生（解析每个 job 的源码文件和触发配置） | P0 必做 | 代码扫描派生 + DB 缓存 | PAN-ASSET-03 |
+| GAP-TBL-07 | `nodes (build_status 字段)` | 字段值缺失 | 0 | 应有 active 值（production 节点且实际运行中） | build_status 字段只有 planned/stable/generated 三种值，0 个 active。能力热力图算法 require build_status='active' 才判 L3，导致 L3 永远无法触发 | AI 看能力热力图会误判所有域最多 L2（可用未验证），无法区分「已上线验证」和「有代码但没跑过」，决策施工优先级时误判 | 1. 修 generate_capability_heatmap.py 算法：build_status='stable' 也算 L3；2. 排除 D_AUDITTEST/D_GOV_SCRIPTS 等测试/脚本域；3. 补 build_status 字段值 | P0 必做 | DB 直写（数据修复）+ 生成器算法修复 | PAN-BUILT-09 |
+| GAP-TBL-08 | `decision_edges` | 空表待填 | 213 | 200+ 行（214 个 decision_nodes 之间的决策传递边） | decision_nodes 有 214 个节点，但 decision_edges=0。同步脚本只同步了节点，没有同步边。历史曾有 213 条边，现已被清空（数据丢失或重建时遗漏） | AI 写新策略时看决策链路只有孤立节点，看不到 L0→L1→...→L6 的流向，无法判断策略在决策链中的位置和上下游依赖 | 从 decision_graph_model.yaml 的 §edges 段重新同步边到 decision_edges 表 | P0 必做 | YAML 真源 + DB 缓存 | PAN-BUILT-19 |
+| GAP-TBL-09 | `contracts` | 数据污染 | 65 | 30-40 行（真正的 P0/P1 契约，真源 cross_layer_contracts.yaml） | DB contracts 表 294 条是从代码注释正则提取的占位符（schema_definition 只有 description 壳子，promise/actual_consumer/gap/last_reviewed 全 None，fulfillment_status 全 unresolved，contract_type 全 'C'）。真正的契约在 cross_layer_contracts.yaml 里（CTR-001~006 + CTR-ERR + CTR-BP + P1×15 等），未同步到 DB | AI 查 contracts 表会看到 294 条垃圾数据，误以为是真契约，基于占位符做决策（幻觉根源）。真正的契约在 YAML 里 AI 不知道去查 | 1. 清空 contracts 表的占位符数据；2. 从 cross_layer_contracts.yaml 重新同步真契约到 contracts 表 | P0 必做 | YAML 真源 + DB 缓存 | PAN-ASSET-02 |
 | GAP-TBL-04 | `interface_contracts` | 部分缺失 | 5 | 50+ 行（每个暴露接口的模块一行） | 50 个域只登记了 5 个模块接口（MOD-DATA/BACKTEST/TRADING/GOVERNANCE/INF-012B） | AI 调用别的模块时不知道暴露什么函数/参数签名，会瞎编函数名和参数 | 从代码扫描补全 exposed_interfaces / consumed_by_modules | P1 应做 | YAML 真源 + DB 缓存 | PAN-ASSET-02 |
+| GAP-TBL-10 | `domains (layer_id 字段)` | 字段值缺失 | 2 | 0 个 NULL（50 个域都应有 layer_id：L0_infrastructure / L1_foundation / L2_domain） | domains 表 50 行中有 2 行 layer_id 为 NULL，无法归入 L0/L1/L2 分层 | AI 按层级筛选域时会漏掉这 2 个域，导致它们在热力图/容量报告/域文档中缺失或归类错误 | 从 ddd_model.yaml 或 domain 映射表补全这 2 个域的 layer_id | P1 应做 | YAML 真源 + DB 缓存 | PAN-BUILT-20 |
 | GAP-TBL-03 | `dataflow_runs` | 空表待填 | 0 | 运行时动态产生（每个 job 每次执行一行） | 无任何 job 执行记录（status/耗时/参数） | AI 排查问题时看不到运行历史，只看到设计态（应该每天跑），看不到实际态（三天没跑成功了） | 依赖观测系统先建好，再回填 DB | P2 延后 | DB 直写（运行时动态产生） | PAN-RUN-01 |
 | GAP-TBL-05 | `runtime_observations（待建）` | 完全缺失 | —（表不存在） | 新建表，记录运行时指标（延迟/错误率/吞吐） | 搜索 runtime/telemetry/metric/trace/observ = 0 张表 | AI 无法获得运行时性能数据，不知道哪个任务慢/哪个错误率高 | 新建 runtime_observations 表 + 观测系统采集 | P2 延后 | DB 直写（运行时动态产生） | PAN-RUN-01 / PAN-RUN-04 |
 | GAP-TBL-06 | `field_lineage（待建）` | 完全缺失 | —（表不存在） | 新建表，记录 source_field → transformation → target_field | field_vocabularies（321 行）只是字段枚举字典，不是血缘；dataflow_edges（28 行）是表级血缘，不够字段级 | AI 改一个字段时不知道下游哪些字段受影响（改 close 不知道 ma20/macd 都依赖它），会漏改下游 | 从代码静态分析派生（解析每个 job 的 SQL/Python 字段映射）或运行时追踪 | P2 延后 | 代码分析派生 + DB 缓存 | PAN-ASSET-04 |
