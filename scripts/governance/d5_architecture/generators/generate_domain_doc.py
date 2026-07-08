@@ -929,19 +929,20 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     # 域内依赖图（内嵌 Mermaid，三视图：合并+运营态+设计态）
     lines.append("## 域内依赖图 / Internal Dependency Diagram")
     lines.append("")
-    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图。")
+    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分四个视图：合并全景图、运营态子图、设计态子图、原型态子图（按 design_maturity 实际值拆分）。")
     lines.append(">")
     lines.append("> **图例说明 / Legend**：")
     lines.append("> - **实线边框 = 运营态模块**（production，已上线运行）")
-    lines.append("> - **虚线边框 = 设计态模块**（design/prototype，还在设计中）")
+    lines.append("> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）")
+    lines.append("> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）")
     lines.append("> - **实线箭头 = 运营态依赖**（已生效的依赖关系）")
-    lines.append("> - **虚线箭头 = 设计态依赖**（计划中的依赖关系）")
+    lines.append("> - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）")
     lines.append("")
 
-    # --- 视图1：合并全景图（标注 [production]/[prototype]，分页显示全部节点）---
-    lines.append("### 合并全景图（生产态 + 非生产态，标签标注状态）")
+    # --- 视图1：合并全景图（标注 [production]/[design]/[prototype]，分页显示全部节点）---
+    lines.append("### 合并全景图（全部模块，标签标注成熟度）")
     lines.append("")
-    lines.append(f"> 展示全部 {len(nodes)} 个模块（生产态 {production_count} + 非生产态 {design_count + prototype_count}），标签标注成熟度。")
+    lines.append(f"> 展示全部 {len(nodes)} 个模块（生产态 {production_count} + 设计态 {design_count} + 原型态 {prototype_count}），标签标注成熟度。")
     lines.append("")
 
     PAGE_SIZE = 30
@@ -987,26 +988,48 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append("> （无运营态模块 / No production modules）")
     lines.append("")
 
-    # --- 视图3：设计态子图（仅非 production 节点和边）---
-    design_nodes_list = [n for n in nodes if n["design_maturity"] != "production"]
-    design_node_ids = {n["node_id"] for n in design_nodes_list}
-    design_edges_list = [e for e in edges if e["from_node_id"] in design_node_ids and e["to_node_id"] in design_node_ids]
-    design_outgoing, design_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in design_nodes_list])
+    # --- 视图3：设计态子图（仅 design 节点和边）---
+    design_only_nodes_list = [n for n in nodes if n["design_maturity"] == "design"]
+    design_only_node_ids = {n["node_id"] for n in design_only_nodes_list}
+    design_only_edges_list = [e for e in edges if e["from_node_id"] in design_only_node_ids and e["to_node_id"] in design_only_node_ids]
+    design_only_outgoing, design_only_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in design_only_nodes_list])
 
-    lines.append("### 设计态子图（仅 design_maturity≠production 的模块和依赖）")
+    lines.append("### 设计态子图（仅 design_maturity=design 的模块和依赖）")
     lines.append("")
-    lines.append(f"> 仅展示设计态/原型态模块（共 {len(design_nodes_list)} 个，{len(design_edges_list)} 条域内依赖）。")
+    lines.append(f"> 仅展示蓝图阶段、代码未写的设计态模块（共 {len(design_only_nodes_list)} 个，{len(design_only_edges_list)} 条域内依赖）。")
     lines.append("")
 
-    if design_nodes_list:
+    if design_only_nodes_list:
         mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh_hardcoded, design_nodes_list, design_edges_list, design_outgoing, design_incoming
+            domain_id, domain_name_zh_hardcoded, design_only_nodes_list, design_only_edges_list, design_only_outgoing, design_only_incoming
         )
         lines.append("```mermaid")
         lines.append(mermaid_code)
         lines.append("```")
     else:
         lines.append("> （无设计态模块 / No design modules）")
+    lines.append("")
+
+    # --- 视图4：原型态子图（仅 prototype 节点和边）---
+    proto_nodes_list = [n for n in nodes if n["design_maturity"] == "prototype"]
+    proto_node_ids = {n["node_id"] for n in proto_nodes_list}
+    proto_edges_list = [e for e in edges if e["from_node_id"] in proto_node_ids and e["to_node_id"] in proto_node_ids]
+    proto_outgoing, proto_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in proto_nodes_list])
+
+    lines.append("### 原型态子图（仅 design_maturity=prototype 的模块和依赖）")
+    lines.append("")
+    lines.append(f"> 仅展示代码已写、验证中未稳定上线的原型态模块（共 {len(proto_nodes_list)} 个，{len(proto_edges_list)} 条域内依赖）。")
+    lines.append("")
+
+    if proto_nodes_list:
+        mermaid_code = generate_internal_mermaid(
+            domain_id, domain_name_zh_hardcoded, proto_nodes_list, proto_edges_list, proto_outgoing, proto_incoming
+        )
+        lines.append("```mermaid")
+        lines.append(mermaid_code)
+        lines.append("```")
+    else:
+        lines.append("> （无原型态模块 / No prototype modules）")
     lines.append("")
 
     # 跨域依赖（中英文对照）
