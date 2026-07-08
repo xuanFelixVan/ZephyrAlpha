@@ -46,6 +46,7 @@ Version: 0.1.0
 from __future__ import annotations
 
 from typing import Final
+import asyncio
 import logging
 import os
 from pathlib import Path
@@ -271,7 +272,7 @@ class DotEnvSecretProvider:
 
     async def get_secret(self, key: str) -> str:
         _check_rotation(key)
-        self._load_env_file()
+        await asyncio.to_thread(self._load_env_file)
 
         env_value = os.environ.get(key)
         if env_value is not None:

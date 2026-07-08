@@ -629,7 +629,10 @@ class BaseMCPServer:
                 out.flush()
                 continue
 
-            response = self.handle_request(request)
+            try:
+                response = await loop.run_in_executor(None, self.handle_request, request)
+            except Exception as exc:
+                response = self._err(request.get("id") if isinstance(request, dict) else None, ERR_INTERNAL_ERROR, f"Internal error: {exc}")
             out.write(json.dumps(response, ensure_ascii=False) + "\n")
             out.flush()
 
