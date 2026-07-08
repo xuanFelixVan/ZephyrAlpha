@@ -184,71 +184,16 @@ class VerdictEngine:
         start = time.monotonic()
         self._eval_count += 1
 
-        if _HAS_AUDIT_ENTRY and isinstance(event, AuditEntryV1):
-            actor = ActorInfo(
-                agent_id=event.agent_id,
-                is_human=False,
-                trust_score=event.trust_score if event.trust_score is not None else 50.0,
-                violation_count=0,
-            )
-            prot_level_str = getattr(event, "permission_level", "normal") or "normal"
-            try:
-                prot_level = ProtectionLevel(prot_level_str)
-            except ValueError:
-                prot_level = ProtectionLevel.normal
-            operation = OperationInfo(
-                operation=event.operation,
-                target_path=event.target_path,
-                is_cross_module=getattr(event, "indirect_operation", False),
-                protection_level=prot_level,
-            )
-            gate_passed = bool(getattr(event, "guard_checks_passed", []))
-            violation_count = 0
-        elif isinstance(event, AuditEvent):
-            actor = ActorInfo(
-                agent_id=event.agent_id,
-                is_human=event.is_human,
-                trust_score=event.trust_score,
-                violation_count=event.violation_count,
-            )
-            try:
-                prot_level = ProtectionLevel(event.protection_level)
-            except ValueError:
-                prot_level = ProtectionLevel.normal
-            operation = OperationInfo(
-                operation=event.operation,
-                target_path=event.target_path,
-                is_cross_module=event.is_cross_module,
-                protection_level=prot_level,
-            )
-            gate_passed = event.gate_passed
-            violation_count = event.violation_count
-        elif isinstance(event, dict):
-            actor = ActorInfo(
-                agent_id=event.get("agent_id", ""),
-                is_human=event.get("is_human", False),
-                trust_score=event.get("trust-score", 50.0),
-                violation_count=event.get("violation_count", 0),
-            )
-            try:
-                prot_level = ProtectionLevel(event.get("protection_level", "normal"))
-            except ValueError:
-                prot_level = ProtectionLevel.normal
-            operation = OperationInfo(
-                operation=event.get("operation", ""),
-                target_path=event.get("target_path", ""),
-                is_cross_module=event.get("is_cross_module", False),
-                protection_level=prot_level,
-            )
-            gate_passed = event.get("gate_passed", False)
-            violation_count = event.get("violation_count", 0)
-        else:
+        parsed = self._parse_event(event)
+        if parsed is None:
             self._red_count += 1
             return Verdict(
                 verdict_level=VerdictLevel.RED,
                 graduated_level=GraduatedLevel.L6,
                 reason="unknown_event_type",
             )
+        actor, operation, gate_passed, violation_count = parsed
+        prot_level = operation.protection_level
 
         if self._protection_index is not None and operation.target_path:
             try:
@@ -307,6 +252,78 @@ class VerdictEngine:
             evidence=evidence,
             reason=reason,
         )
+
+    def _parse_event(self, event: AuditEntryV1 | AuditEvent | dict[str, Any]) -> tuple[ActorInfo, OperationInfo, bool, int] | None:
+        """将 3 种事件类型统一解析为 (actor, operation, gate_passed, violation_count)。未知类型返回 None。"""
+        if _HAS_AUDIT_ENTRY and isinstance(event, AuditEntryV1):
+            return self._parse_audit_entry_v1(event)
+        if isinstance(event, AuditEvent):
+            return self._parse_audit_event(event)
+        if isinstance(event, dict):
+            return self._parse_dict_event(event)
+        return None
+
+    @staticmethod
+    def _parse_audit_entry_v1(event: AuditEntryV1) -> tuple[ActorInfo, OperationInfo, bool, int]:
+        actor = ActorInfo(
+            agent_id=event.agent_id,
+            is_human=False,
+            trust_score=event.trust_score if event.trust_score is not None else 50.0,
+            violation_count=0,
+        )
+        prot_level_str = getattr(event, "permission_level", "normal") or "normal"
+        try:
+            prot_level = ProtectionLevel(prot_level_str)
+        except ValueError:
+            prot_level = ProtectionLevel.normal
+        operation = OperationInfo(
+            operation=event.operation,
+            target_path=event.target_path,
+            is_cross_module=getattr(event, "indirect_operation", False),
+            protection_level=prot_level,
+        )
+        gate_passed = bool(getattr(event, "guard_checks_passed", []))
+        return actor, operation, gate_passed, 0
+
+    @staticmethod
+    def _parse_audit_event(event: AuditEvent) -> tuple[ActorInfo, OperationInfo, bool, int]:
+        actor = ActorInfo(
+            agent_id=event.agent_id,
+            is_human=event.is_human,
+            trust_score=event.trust_score,
+            violation_count=event.violation_count,
+        )
+        try:
+            prot_level = ProtectionLevel(event.protection_level)
+        except ValueError:
+            prot_level = ProtectionLevel.normal
+        operation = OperationInfo(
+            operation=event.operation,
+            target_path=event.target_path,
+            is_cross_module=event.is_cross_module,
+            protection_level=prot_level,
+        )
+        return actor, operation, event.gate_passed, event.violation_count
+
+    @staticmethod
+    def _parse_dict_event(event: dict[str, Any]) -> tuple[ActorInfo, OperationInfo, bool, int]:
+        actor = ActorInfo(
+            agent_id=event.get("agent_id", ""),
+            is_human=event.get("is_human", False),
+            trust_score=event.get("trust-score", 50.0),
+            violation_count=event.get("violation_count", 0),
+        )
+        try:
+            prot_level = ProtectionLevel(event.get("protection_level", "normal"))
+        except ValueError:
+            prot_level = ProtectionLevel.normal
+        operation = OperationInfo(
+            operation=event.get("operation", ""),
+            target_path=event.get("target_path", ""),
+            is_cross_module=event.get("is_cross_module", False),
+            protection_level=prot_level,
+        )
+        return actor, operation, event.get("gate_passed", False), event.get("violation_count", 0)
 
     def _apply_decision_tree(
         self,

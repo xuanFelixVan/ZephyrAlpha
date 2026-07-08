@@ -414,83 +414,19 @@ class PipelineOrchestrator:
             "INFO", f"dispatch[{task_card.task_id}] started pipeline={task_card.assigned_pipeline} dry_run={dry_run}"
         )
 
-        if task_card.task_id in self._dispatched_ids:
-            self._active_dispatches.discard(task_card.task_id)
-            self._log(
-                "WARN", f"dispatch[{task_card.task_id}] idempotency guard: already dispatched, rejecting duplicate"
-            )
-            return PipelineResult(
-                task_id=task_card.task_id,
-                pipeline=task_card.assigned_pipeline,
-                overall_status=PipelineStatus.FAILURE,
-                modules_executed=[],
-                finished_at=now_utc().isoformat(),
-                is_dry_run=dry_run,
-                ct_pipe_warnings=["IDEMPOTENCY: duplicate dispatch rejected——同一TaskCard已执行过"],
-            )
-        self._dispatched_ids.add(task_card.task_id)
+        # --- 前置检查（幂等/rollback/RBAC）---
+        idempotency_result = self._check_idempotency(task_card, dry_run)
+        if idempotency_result is not None:
+            return idempotency_result
 
-        tags = set(task_card.tags or ())
-        if "rollback_exit" in tags:
-            exit_code_tag = [t for t in tags if t.startswith("rollback_exit:")]
-            exit_code = int(exit_code_tag[0].split(":")[1]) if exit_code_tag else -1
-            try:
-                from zephyr.infrastructure.rollback.contract import get_gate_action, get_pipeline_action
+        rollback_result, rollback_warnings = self._handle_rollback_exit(task_card, dry_run)
+        if rollback_result is not None:
+            return rollback_result
+        ct_warnings.extend(rollback_warnings)
 
-                gate_action, desc = get_gate_action(exit_code)
-                pipeline_action = get_pipeline_action(gate_action)
-                if gate_action in ("BLOCK", "BLOCK_AUTO", "FAIL", "L3_KILL", "L2_KILL"):
-                    self._active_dispatches.discard(task_card.task_id)
-                    _exit_detail = (
-                        f"Rollback exit code {exit_code} blocked dispatch: {gate_action} -> {pipeline_action}"
-                    )
-                    self._log("WARN", f"dispatch[{task_card.task_id}] {_exit_detail}")
-                    return PipelineResult(
-                        task_id=task_card.task_id,
-                        pipeline=task_card.assigned_pipeline,
-                        overall_status=PipelineStatus.FAILURE,
-                        modules_executed=[],
-                        finished_at=now_utc().isoformat(),
-                        is_dry_run=dry_run,
-                        ct_pipe_warnings=[_exit_detail],
-                    )
-                elif gate_action in ("WARN", "ROLLBACK", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
-                    ct_warnings.append(
-                        f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} pipeline={pipeline_action}"
-                    )
-            except Exception:
-                # 5.12.1 修复：原 except: pass 静默吞 rollback_exit 门禁决策失败（安全门禁失效不可见）
-                logger.warning("rollback_exit gate parse failed for task=%s exit_code=%s",
-                               task_card.task_id, exit_code, exc_info=True)
-
-        rbac_result = self._rbac_check(task_card)
-        if rbac_result is not None and not rbac_result.passed:
-            self._active_dispatches.discard(task_card.task_id)
-            self._write_audit_event(
-                task_card.task_id,
-                f"pipeline.{task_card.assigned_pipeline}",
-                "RBAC_BLOCKED",
-                {"layer": rbac_result.layer, "rule": rbac_result.rule_id, "reason": rbac_result.reason},
-            )
-            self._log(
-                "WARN",
-                f"dispatch[{task_card.task_id}] RBAC blocked: {rbac_result.reason} layer={rbac_result.layer} rule={rbac_result.rule_id}",
-            )
-            _tags = task_card.tags or ()
-            _needs_rescue = "security" in _tags or "experimental" in _tags
-            return PipelineResult(
-                task_id=task_card.task_id,
-                pipeline=task_card.assigned_pipeline,
-                overall_status=PipelineStatus.FAILURE,
-                modules_executed=[],
-                finished_at=now_utc().isoformat(),
-                is_dry_run=dry_run,
-                ct_pipe_warnings=[f"RBAC BLOCKED [{rbac_result.layer}/{rbac_result.rule_id}]: {rbac_result.reason}"],
-                needs_claude_rescue=_needs_rescue,
-                rescue_reason="Security/Experimental tag detected — RBAC blocked but Claude review required"
-                if _needs_rescue
-                else "",
-            )
+        rbac_result = self._check_rbac(task_card, dry_run)
+        if rbac_result is not None:
+            return rbac_result
 
         impact = self._assess_impact(task_card)
         if impact.human_review_required:
@@ -601,7 +537,6 @@ class PipelineOrchestrator:
 
             results: list[ModuleResult] = []
             manifest = PipelineArtifactManifest(run_id=task_card.task_id)
-            prev_module: str | None = None
             executed_module_ids: list[str] = []
 
             g6_violation = self._check_g6_blueprint_compliance(task_card, modules)
@@ -644,89 +579,11 @@ class PipelineOrchestrator:
                     # 5.12.1 修复：原 except: pass 静默吞 skill injection 失败（技能增强静默失效）
                     logger.debug("skill injection failed for task=%s", task_card.task_id, exc_info=True)
 
-            for mod_id in modules:
-                if prev_module is not None:
-                    zone_warnings = self._validate_zone_crossing(task_card, prev_module, mod_id)
-                    for zw in zone_warnings:
-                        if "VIOLATION" in zw:
-                            raise ValueError(zw)
-                        ct_warnings.append(zw)
-
-                spec = M_MODULE_SPECS[mod_id]
-                assigned_model = spec["model"]
-
-                if pipeline == "B" and route == "claude":
-                    assigned_model = "claude"
-                elif spec.get("pipeline") == pipeline:
-                    pass
-                else:
-                    assigned_model = spec["model"]
-
-                prior_artifacts = [a for a in manifest.artifacts if a.produced_by != mod_id]
-
-                mr = self._execute_module(
-                    mod_id,
-                    pipeline,
-                    assigned_model,
-                    task_card,
-                    token_divisor=len(modules),
-                    prior_artifacts=prior_artifacts,
-                    dry_run=dry_run,
-                    skill_injection=skill_injection,
-                )
-                results.append(mr)
-
-                if _SKILL_BRIDGE_AVAILABLE and skill_injection is not None and skill_injection.loaded:
-                    try:
-                        from zephyr.autonomy_core.skills.skill_feedback import SkillFeedback
-
-                        fb = SkillFeedback()
-                        for skid in [skill_injection.domain_skill_id, skill_injection.role_skill_id]:
-                            if skid:
-                                fb.record_module_result(skid, mr, task_card.task_id)
-                    except Exception:
-                        # 5.12.1 修复：原 except: pass 静默吞 skill feedback 失败（学习回路断链）
-                        logger.debug("skill feedback record failed for task=%s", task_card.task_id, exc_info=True)
-
-                consumed_keys = [a.artifact_key for a in prior_artifacts if a.produced_by != mod_id]
-                produced_keys: list[str] = []
-                for art_dict in mr.output.get("artifacts", []):
-                    try:
-                        artifact = PipelineArtifact(**art_dict)
-                        manifest.artifacts.append(artifact)
-                        produced_keys.append(artifact.artifact_key)
-                    except Exception:
-                        # 5.12.1 修复：原 except: pass 静默吞 artifact 解析失败（产物丢失不可见）
-                        logger.debug("artifact dict parse failed for mod=%s", mod_id, exc_info=True)
-
-                if mr.output.get("artifact_key") and mr.output.get("artifact_type"):
-                    try:
-                        artifact = PipelineArtifact(
-                            artifact_key=mr.output["artifact_key"],
-                            produced_by=mod_id,
-                            artifact_type=mr.output["artifact_type"],
-                            file_paths=mr.output.get("file_paths", []),
-                            summary=str(mr.output.get("summary", ""))[:200],
-                        )
-                        manifest.artifacts.append(artifact)
-                        produced_keys.append(artifact.artifact_key)
-                    except Exception:
-                        # 5.12.1 修复：原 except: pass 静默吞 artifact 构造失败（产物丢失不可见）
-                        logger.debug("artifact build failed for mod=%s key=%s", mod_id, mr.output.get("artifact_key"), exc_info=True)
-
-                lineage_entry = PipelineLineageEntry(
-                    module_id=mod_id,
-                    pipeline=pipeline,
-                    upstream_module_ids=[m for m in executed_module_ids if m != mod_id],
-                    consumed_artifact_keys=consumed_keys,
-                    produced_artifact_keys=produced_keys,
-                    started_at=mr.started_at or "",
-                    finished_at=mr.finished_at or "",
-                )
-                lineage_chain.add_entry(lineage_entry)
-                executed_module_ids.append(mod_id)
-
-                prev_module = mod_id
+            results = self._execute_modules_loop(
+                task_card, modules, pipeline, route, manifest,
+                lineage_chain, executed_module_ids, skill_injection,
+                dry_run, ct_warnings,
+            )
 
             rescue = self._check_claude_rescue(task_card, results)
 
@@ -792,41 +649,14 @@ class PipelineOrchestrator:
                 status.value,
                 {"modules_executed": len(results), "cost_total_usd": sum(c.cost_usd for c in cost_records)},
             )
-            return PipelineResult(
-                task_id=task_card.task_id,
-                pipeline=pipeline,
-                execution_mode=execution_mode,
-                modules_executed=results,
-                overall_status=status,
-                needs_claude_rescue=rescue.triggered,
-                rescue_reason=rescue.reason,
-                finished_at=now_utc().isoformat(),
-                is_dry_run=dry_run,
-                ct_pipe_route=ct_decision,
-                ct_pipe_warnings=ct_warnings,
-                artifact_manifest=manifest,
-                lineage=lineage_chain if lineage_chain.entries else None,
-                model_collapse=collapse_alert if collapse_alert.detected else None,
-                pipeline_version="0.9.0",
-                cost_total_usd=sum(c.cost_usd for c in cost_records),
-                cost_records=cost_records,
-                impact_assessment=impact,
-                fallback_plan=emergency_fallback if emergency_fallback.activated else None,
-                dead_letter=dead_letter,
-                circuit_breaker_state=cb_state,
-                bridge_result=bridge_result,
-                skill_injection=(
-                    {
-                        "loaded": skill_injection.loaded,
-                        "domain_skill_id": skill_injection.domain_skill_id,
-                        "role_skill_id": skill_injection.role_skill_id,
-                        "total_tokens": skill_injection.token_budget.get("total_tokens"),
-                        "context": skill_injection.injection_context[:500],
-                    }
-                    if skill_injection is not None
-                    else None
-                ),
-                night_shift_log=night_shift_log,
+            return self._build_dispatch_result(
+                task_card=task_card, pipeline=pipeline, execution_mode=execution_mode,
+                results=results, status=status, rescue=rescue, collapse_alert=collapse_alert,
+                dry_run=dry_run, ct_decision=ct_decision, ct_warnings=ct_warnings,
+                manifest=manifest, lineage_chain=lineage_chain, impact=impact,
+                skill_injection=skill_injection, cost_records=cost_records,
+                emergency_fallback=emergency_fallback, dead_letter=dead_letter,
+                cb_state=cb_state, bridge_result=bridge_result, night_shift_log=night_shift_log,
             )
         except Exception as exc:
             self._log("ERROR", f"dispatch[{task_card.task_id}] failed with exception")
@@ -862,6 +692,263 @@ class PipelineOrchestrator:
             # 5.142.1 修复: 锁释放移入 finally, 用标志位避免双重释放
             if _pipeline_lock_acquired:
                 self._release_pipeline_lock(task_card.task_id)
+
+    # ------------------------------------------------------------------
+    # dispatch 子方法（5.140.1 修复：从 461 行 dispatch 中提取）
+    # ------------------------------------------------------------------
+
+    def _check_idempotency(self, task_card: TaskCard, dry_run: bool) -> PipelineResult | None:
+        """幂等性检查：同一 TaskCard 不重复执行。未重复时返回 None 并登记 task_id。"""
+        if task_card.task_id in self._dispatched_ids:
+            self._active_dispatches.discard(task_card.task_id)
+            self._log(
+                "WARN", f"dispatch[{task_card.task_id}] idempotency guard: already dispatched, rejecting duplicate"
+            )
+            return PipelineResult(
+                task_id=task_card.task_id,
+                pipeline=task_card.assigned_pipeline,
+                overall_status=PipelineStatus.FAILURE,
+                modules_executed=[],
+                finished_at=now_utc().isoformat(),
+                is_dry_run=dry_run,
+                ct_pipe_warnings=["IDEMPOTENCY: duplicate dispatch rejected——同一TaskCard已执行过"],
+            )
+        self._dispatched_ids.add(task_card.task_id)
+        return None
+
+    def _handle_rollback_exit(self, task_card: TaskCard, dry_run: bool) -> tuple[PipelineResult | None, list[str]]:
+        """处理 rollback_exit 标签。返回 (early_result, warnings)。early_result 非 None 时阻断 dispatch。"""
+        warnings: list[str] = []
+        tags = set(task_card.tags or ())
+        if "rollback_exit" not in tags:
+            return None, warnings
+        exit_code_tag = [t for t in tags if t.startswith("rollback_exit:")]
+        exit_code = int(exit_code_tag[0].split(":")[1]) if exit_code_tag else -1
+        try:
+            from zephyr.infrastructure.rollback.contract import get_gate_action, get_pipeline_action
+
+            gate_action, desc = get_gate_action(exit_code)
+            pipeline_action = get_pipeline_action(gate_action)
+            if gate_action in ("BLOCK", "BLOCK_AUTO", "FAIL", "L3_KILL", "L2_KILL"):
+                self._active_dispatches.discard(task_card.task_id)
+                _exit_detail = (
+                    f"Rollback exit code {exit_code} blocked dispatch: {gate_action} -> {pipeline_action}"
+                )
+                self._log("WARN", f"dispatch[{task_card.task_id}] {_exit_detail}")
+                return PipelineResult(
+                    task_id=task_card.task_id,
+                    pipeline=task_card.assigned_pipeline,
+                    overall_status=PipelineStatus.FAILURE,
+                    modules_executed=[],
+                    finished_at=now_utc().isoformat(),
+                    is_dry_run=dry_run,
+                    ct_pipe_warnings=[_exit_detail],
+                ), warnings
+            elif gate_action in ("WARN", "ROLLBACK", "PAUSE_AGENT", "PAUSE_AUTO", "REDUCE_TIER"):
+                warnings.append(
+                    f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} pipeline={pipeline_action}"
+                )
+        except Exception:
+            # 5.12.1 修复：原 except: pass 静默吞 rollback_exit 门禁决策失败（安全门禁失效不可见）
+            logger.warning("rollback_exit gate parse failed for task=%s exit_code=%s",
+                           task_card.task_id, exit_code, exc_info=True)
+        return None, warnings
+
+    def _check_rbac(self, task_card: TaskCard, dry_run: bool) -> PipelineResult | None:
+        """RBAC 权限校验。通过返回 None，失败返回 PipelineResult(FAILURE)。"""
+        rbac_result = self._rbac_check(task_card)
+        if rbac_result is not None and not rbac_result.passed:
+            self._active_dispatches.discard(task_card.task_id)
+            self._write_audit_event(
+                task_card.task_id,
+                f"pipeline.{task_card.assigned_pipeline}",
+                "RBAC_BLOCKED",
+                {"layer": rbac_result.layer, "rule": rbac_result.rule_id, "reason": rbac_result.reason},
+            )
+            self._log(
+                "WARN",
+                f"dispatch[{task_card.task_id}] RBAC blocked: {rbac_result.reason} layer={rbac_result.layer} rule={rbac_result.rule_id}",
+            )
+            _tags = task_card.tags or ()
+            _needs_rescue = "security" in _tags or "experimental" in _tags
+            return PipelineResult(
+                task_id=task_card.task_id,
+                pipeline=task_card.assigned_pipeline,
+                overall_status=PipelineStatus.FAILURE,
+                modules_executed=[],
+                finished_at=now_utc().isoformat(),
+                is_dry_run=dry_run,
+                ct_pipe_warnings=[f"RBAC BLOCKED [{rbac_result.layer}/{rbac_result.rule_id}]: {rbac_result.reason}"],
+                needs_claude_rescue=_needs_rescue,
+                rescue_reason="Security/Experimental tag detected — RBAC blocked but Claude review required"
+                if _needs_rescue
+                else "",
+            )
+        return None
+
+    def _execute_modules_loop(
+        self,
+        task_card: TaskCard,
+        modules: list[str],
+        pipeline: str,
+        route: str,
+        manifest: PipelineArtifactManifest,
+        lineage_chain: PipelineLineageChain,
+        executed_module_ids: list[str],
+        skill_injection: SkillInjectionResult | None,
+        dry_run: bool,
+        ct_warnings: list[str],
+    ) -> list[ModuleResult]:
+        """逐模块执行循环。返回模块结果列表，副作用修改 manifest/lineage_chain/executed_module_ids/ct_warnings。"""
+        results: list[ModuleResult] = []
+        prev_module: str | None = None
+        for mod_id in modules:
+            if prev_module is not None:
+                zone_warnings = self._validate_zone_crossing(task_card, prev_module, mod_id)
+                for zw in zone_warnings:
+                    if "VIOLATION" in zw:
+                        raise ValueError(zw)
+                    ct_warnings.append(zw)
+
+            spec = M_MODULE_SPECS[mod_id]
+            assigned_model = spec["model"]
+
+            if pipeline == "B" and route == "claude":
+                assigned_model = "claude"
+            elif spec.get("pipeline") == pipeline:
+                pass
+            else:
+                assigned_model = spec["model"]
+
+            prior_artifacts = [a for a in manifest.artifacts if a.produced_by != mod_id]
+
+            mr = self._execute_module(
+                mod_id,
+                pipeline,
+                assigned_model,
+                task_card,
+                token_divisor=len(modules),
+                prior_artifacts=prior_artifacts,
+                dry_run=dry_run,
+                skill_injection=skill_injection,
+            )
+            results.append(mr)
+
+            if _SKILL_BRIDGE_AVAILABLE and skill_injection is not None and skill_injection.loaded:
+                try:
+                    from zephyr.autonomy_core.skills.skill_feedback import SkillFeedback
+
+                    fb = SkillFeedback()
+                    for skid in [skill_injection.domain_skill_id, skill_injection.role_skill_id]:
+                        if skid:
+                            fb.record_module_result(skid, mr, task_card.task_id)
+                except Exception:
+                    # 5.12.1 修复：原 except: pass 静默吞 skill feedback 失败（学习回路断链）
+                    logger.debug("skill feedback record failed for task=%s", task_card.task_id, exc_info=True)
+
+            consumed_keys = [a.artifact_key for a in prior_artifacts if a.produced_by != mod_id]
+            produced_keys: list[str] = []
+            for art_dict in mr.output.get("artifacts", []):
+                try:
+                    artifact = PipelineArtifact(**art_dict)
+                    manifest.artifacts.append(artifact)
+                    produced_keys.append(artifact.artifact_key)
+                except Exception:
+                    # 5.12.1 修复：原 except: pass 静默吞 artifact 解析失败（产物丢失不可见）
+                    logger.debug("artifact dict parse failed for mod=%s", mod_id, exc_info=True)
+
+            if mr.output.get("artifact_key") and mr.output.get("artifact_type"):
+                try:
+                    artifact = PipelineArtifact(
+                        artifact_key=mr.output["artifact_key"],
+                        produced_by=mod_id,
+                        artifact_type=mr.output["artifact_type"],
+                        file_paths=mr.output.get("file_paths", []),
+                        summary=str(mr.output.get("summary", ""))[:200],
+                    )
+                    manifest.artifacts.append(artifact)
+                    produced_keys.append(artifact.artifact_key)
+                except Exception:
+                    # 5.12.1 修复：原 except: pass 静默吞 artifact 构造失败（产物丢失不可见）
+                    logger.debug("artifact build failed for mod=%s key=%s", mod_id, mr.output.get("artifact_key"), exc_info=True)
+
+            lineage_entry = PipelineLineageEntry(
+                module_id=mod_id,
+                pipeline=pipeline,
+                upstream_module_ids=[m for m in executed_module_ids if m != mod_id],
+                consumed_artifact_keys=consumed_keys,
+                produced_artifact_keys=produced_keys,
+                started_at=mr.started_at or "",
+                finished_at=mr.finished_at or "",
+            )
+            lineage_chain.add_entry(lineage_entry)
+            executed_module_ids.append(mod_id)
+
+            prev_module = mod_id
+
+        return results
+
+    def _build_dispatch_result(
+        self,
+        *,
+        task_card: TaskCard,
+        pipeline: str,
+        execution_mode: str,
+        results: list[ModuleResult],
+        status: PipelineStatus,
+        rescue: object,
+        collapse_alert: object,
+        dry_run: bool,
+        ct_decision: object,
+        ct_warnings: list[str],
+        manifest: PipelineArtifactManifest,
+        lineage_chain: PipelineLineageChain,
+        impact: object,
+        skill_injection: SkillInjectionResult | None,
+        cost_records: list,
+        emergency_fallback: object,
+        dead_letter: object,
+        cb_state: object,
+        bridge_result: object,
+        night_shift_log: list,
+    ) -> PipelineResult:
+        """构造 dispatch 的最终 PipelineResult。"""
+        return PipelineResult(
+            task_id=task_card.task_id,
+            pipeline=pipeline,
+            execution_mode=execution_mode,
+            modules_executed=results,
+            overall_status=status,
+            needs_claude_rescue=rescue.triggered,
+            rescue_reason=rescue.reason,
+            finished_at=now_utc().isoformat(),
+            is_dry_run=dry_run,
+            ct_pipe_route=ct_decision,
+            ct_pipe_warnings=ct_warnings,
+            artifact_manifest=manifest,
+            lineage=lineage_chain if lineage_chain.entries else None,
+            model_collapse=collapse_alert if collapse_alert.detected else None,
+            pipeline_version="0.9.0",
+            cost_total_usd=sum(c.cost_usd for c in cost_records),
+            cost_records=cost_records,
+            impact_assessment=impact,
+            fallback_plan=emergency_fallback if emergency_fallback.activated else None,
+            dead_letter=dead_letter,
+            circuit_breaker_state=cb_state,
+            bridge_result=bridge_result,
+            skill_injection=(
+                {
+                    "loaded": skill_injection.loaded,
+                    "domain_skill_id": skill_injection.domain_skill_id,
+                    "role_skill_id": skill_injection.role_skill_id,
+                    "total_tokens": skill_injection.token_budget.get("total_tokens"),
+                    "context": skill_injection.injection_context[:500],
+                }
+                if skill_injection is not None
+                else None
+            ),
+            night_shift_log=night_shift_log,
+        )
 
     # ------------------------------------------------------------------
     # 状态机集成
