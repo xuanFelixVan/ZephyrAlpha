@@ -40,9 +40,9 @@ import logging
 from decimal import Decimal, ROUND_HALF_EVEN
 
 from zephyr.reporting.analytics_base import TCAEngineBase
-from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.trading.trading_contracts.execution.fill import Fill
-from zephyr.trading.trading_contracts.execution.order import Order
+from zephyr.shared.contracts.execution_report import ExecutionReport
+from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.order import Order
 
 _logger = logging.getLogger(__name__)
 

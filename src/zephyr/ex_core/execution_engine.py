@@ -53,7 +53,7 @@ from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationPort,
 )
 from zephyr.shared.contracts.risk_limits import RiskLimits
-from zephyr.trading.trading_contracts.execution.order import Order
+from zephyr.shared.contracts.order import Order
 
 _logger = logging.getLogger(__name__)
 

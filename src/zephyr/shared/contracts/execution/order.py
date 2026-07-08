@@ -14,11 +14,11 @@
 # [TESTS]
 # [A_module] module_id=MOD-EXE_order | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.order."""
+"""Backward-compat shim — canonical location is zephyr.shared.contracts.order (5.152 #1 修复后)."""
 
 import importlib
 
-_TARGET_MODULE = "zephyr.trading.trading_contracts.execution.order"
+_TARGET_MODULE = "zephyr.shared.contracts.order"
 
 
 def __getattr__(name):

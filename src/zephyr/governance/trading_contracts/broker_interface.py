@@ -37,9 +37,9 @@ from __future__ import annotations
 import abc
 from collections.abc import Callable
 
-from zephyr.trading.trading_contracts.execution.fill import Fill
-from zephyr.trading.trading_contracts.execution.order import Order
-from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.order import Order
+from zephyr.shared.contracts.position import PositionSnapshot
 
 FillCallback = Callable[[Fill], None]
 

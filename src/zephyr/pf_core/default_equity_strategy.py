@@ -48,7 +48,8 @@ from zephyr.governance.strategies.strategy_base import (
     StrategyMeta,
     StrategyRegistry,
 )
-from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderType
+from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderType
+from zephyr.shared.contracts.order import Order
 
 _logger = logging.getLogger(__name__)
 

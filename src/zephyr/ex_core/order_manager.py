@@ -45,8 +45,9 @@ from decimal import Decimal
 from enum import Enum
 
 from zephyr.governance.trading_contracts.broker_interface import BrokerInterface
-from zephyr.trading.trading_contracts.execution.fill import Fill
-from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.order import Order
 
 _logger = logging.getLogger(__name__)
 

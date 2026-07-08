@@ -46,9 +46,9 @@ import abc
 from typing import ClassVar
 
 from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
-from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.trading.trading_contracts.execution.fill import Fill
-from zephyr.trading.trading_contracts.execution.order import Order
+from zephyr.shared.contracts.execution_report import ExecutionReport
+from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.order import Order
 
 
 class TCAEngineBase(abc.ABC):

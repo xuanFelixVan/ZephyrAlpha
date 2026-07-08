@@ -67,9 +67,9 @@ _TYPE_IMPORTS: dict[str, str] = {
     "Dict": "from typing import Dict",
     "Any": "from typing import Any",
     "TraceContext": "from zephyr.shared.contracts.core.trace_context import TraceContext",
-    "OrderSide": "from zephyr.trading.trading_contracts.execution.order import OrderSide",
-    "OrderType": "from zephyr.trading.trading_contracts.execution.order import OrderType",
-    "OrderStatus": "from zephyr.trading.trading_contracts.execution.order import OrderStatus",
+    "OrderSide": "from zephyr.shared.contracts.enums.order_enums import OrderSide",
+    "OrderType": "from zephyr.shared.contracts.enums.order_enums import OrderType",
+    "OrderStatus": "from zephyr.shared.contracts.enums.order_enums import OrderStatus",
 }
 
 _STANDARD_IMPORTS = [

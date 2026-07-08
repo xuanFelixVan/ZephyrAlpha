@@ -15,42 +15,11 @@
 # [A_module] module_id=MOD-EXE_order | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
-from enum import Enum
 
+# 5.152 #1 修复: 枚举真源下沉到 shared 层，消除 shared→trading 违规依赖
+from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
 
-class OrderSide(Enum):
-    def __str__(self) -> str:
-        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
-        return self.value
-
-    BUY = "BUY"
-    SELL = "SELL"
-
-
-class OrderType(Enum):
-    def __str__(self) -> str:
-        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
-        return self.value
-
-    LIMIT = "LIMIT"
-    MARKET = "MARKET"
-    STOP = "STOP"
-    STOP_LIMIT = "STOP_LIMIT"
-    TRAILING_STOP = "TRAILING_STOP"
-
-
-class OrderStatus(Enum):
-    def __str__(self) -> str:
-        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
-        return self.value
-
-    PENDING = "PENDING"
-    SUBMITTED = "SUBMITTED"
-    PARTIAL = "PARTIAL"
-    FILLED = "FILLED"
-    CANCELLED = "CANCELLED"
-    REJECTED = "REJECTED"
-    EXPIRED = "EXPIRED"
+__all__ = ["OrderSide", "OrderStatus", "OrderType", "Order"]
 
 
 # ==== BEGIN CODGEN:CTR-004 ====

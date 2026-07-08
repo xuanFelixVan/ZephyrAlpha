@@ -51,9 +51,9 @@ from datetime import UTC, datetime
 from decimal import Decimal
 
 from zephyr.governance.trading_contracts.broker_interface import BrokerInterface
-from zephyr.trading.trading_contracts.execution.fill import Fill
-from zephyr.trading.trading_contracts.execution.order import Order
-from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.order import Order
+from zephyr.shared.contracts.position import PositionSnapshot
 
 _logger = logging.getLogger(__name__)
 

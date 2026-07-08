@@ -20,13 +20,14 @@ Infrastructure contracts (core/, backpressure/) remain in shared/contracts/.
 from zephyr.governance.rule_enforcement.compliance_rule import ComplianceRule
 from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
 from zephyr.trading.trading_contracts import factories
-from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.trading.trading_contracts.execution.execution_rejection_error import ExecutionRejectionError
-from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.trading.trading_contracts.execution.fill import Fill
-from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
-from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+from zephyr.shared.contracts.capital_allocation_result import CapitalAllocationResult
+from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.errors.execution_rejection_error import ExecutionRejectionError
+from zephyr.shared.contracts.execution_report import ExecutionReport
+from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.model_serving_request import ModelServingRequest
+from zephyr.shared.contracts.order import Order
+from zephyr.shared.contracts.position import PositionSnapshot
 from zephyr.trading.trading_contracts.market.factor_monitor_report import FactorMonitorReport
 from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
 from zephyr.trading.trading_contracts.market.instrument import (

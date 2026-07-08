@@ -21,9 +21,9 @@ from decimal import Decimal
 from typing import Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
-from zephyr.trading.trading_contracts.execution.order import OrderSide
-from zephyr.trading.trading_contracts.execution.order import OrderStatus
-from zephyr.trading.trading_contracts.execution.order import OrderType
+from zephyr.shared.contracts.enums.order_enums import OrderSide
+from zephyr.shared.contracts.enums.order_enums import OrderStatus
+from zephyr.shared.contracts.enums.order_enums import OrderType
 # ---
 # layer: cross_cutting
 # category: data_contract
