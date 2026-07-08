@@ -1338,19 +1338,26 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: diff_helpers
+    canonical_override: src/zephyr/governance/commit_gates/_diff_helpers.py
     aliases:
       - DIFF-HELPERS
       - diff-helpers
       - _diff_helpers
       - gate_diff_helpers
       - commit_gate_diff_helpers
+      - _is_exempt_line
+      - _extract_docstring_lines
+      - _parse_diff_with_line_numbers
+      - _read_staged_file
     description: >-
       gate 共享 diff 解析工具模块（_diff_helpers，2026-07-09 FUNCTION-DUP 治本提取）。
       提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate 公共 diff 解析函数
       （_is_exempt_line/_extract_docstring_lines/_parse_diff_with_line_numbers/
       _read_staged_file），消除 FUNCTION-DUP gate 阻断（同目录同 name+body hash 重复
       函数）。纯函数无副作用，不可达路径 fail-open（返回空集/空列表/None）。
-      canonical basename _diff_helpers 匹配 capability_id，可 auto 派生。
+      canonical_override 显式声明——basename _diff_helpers.py 含前导下划线，与
+      capability_id diff_helpers 不完全匹配，ssot_redefinition_gate 不 auto-derive
+      canonical 路径，必须显式提供 canonical_override 否则 gate 跳过此 capability。
       解决发现性：新 AI 搜 "gate diff 解析/_diff_helpers/commit gate 共享工具" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重建同类 diff 解析工具模块。
     integrity_anchors:
