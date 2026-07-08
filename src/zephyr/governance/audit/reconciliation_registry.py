@@ -92,6 +92,7 @@ __all__ = [
     "make_architecture_health_reconciler",
     "make_session_log_index_reconciler",
     "make_arch_diagram_reconciler",
+    "make_gate_inventory_sync_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -3628,4 +3629,66 @@ def make_constraint_detect_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=625,  # 在 GATE-ARCH-DIAGRAM (630) 之前跑，生成器依赖检测结果
+    )
+
+
+# ARCH-055 治本（2026-07-09）：commit_gates 模块清单漂移检测
+# 病根：blueprint.md §0.1 模块清单靠手工维护，100% AI 开发模式下漂移率 20.7%（6/29）
+# 现有 GATE-AGENTS-MD-REFS 是反向检测（文档引用→代码存在性），本 reconciler 补正向（代码→文档）
+# trae_060-reviewed: 该 reconciler 独立存在治本（commit_gates 模块清单漂移正向检测），
+# 不合并进已有 reconciler（现有 reconciler 无此检测逻辑，GATE-AGENTS-MD-REFS 是反向检测不覆盖正向）
+def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 commit_gates 模块清单漂移检测 post-commit reconciler（ARCH-055 治本）。
+
+    commit src/zephyr/governance/commit_gates/*.py 后，blueprint.md §0.1 模块清单
+    可能过时（新增/删除 gate 文件但文档未同步）。本 reconciler 在 post-commit 跑
+    check_gate_inventory_drift.py 检测脚本，漂移时 warn（不阻断）。
+
+    warn-only 理由：漂移是文档同步滞后，非代码错误；阻断会导致 AI 无法 commit
+    正常的 gate 新增（因 blueprint.md 未同步而阻断 gate 代码本身的 commit，形成
+    死循环）。warn 提醒 AI 同步文档即可。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-MODULE-INVENTORY-SYNC", priority=820)。
+    """
+    import os
+    import sys
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith("src/zephyr/governance/commit_gates/") and rel.endswith(".py"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        check_script = "scripts/governance/generators/check_gate_inventory_drift.py"
+        result = _run_subprocess(
+            [sys.executable, check_script],
+            cwd=str(project_root),
+            timeout=30,
+        )
+        if result.returncode == 0:
+            return ReconcileResult(action="clean", detail=result.stdout.strip()[:200])
+        if result.returncode == 1:
+            return ReconcileResult(
+                action="warn",
+                detail=f"commit_gates inventory drift detected (ARCH-055): "
+                       f"{result.stdout.strip()[:300]}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"check_gate_inventory_drift.py error: {result.stderr.strip()[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-MODULE-INVENTORY-SYNC",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=820,  # 在 GATE-AGENTS-MD-REFS(810) 之后
     )
