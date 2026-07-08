@@ -1429,6 +1429,69 @@ capabilities:
       - make_import_direction_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: long_param_list_gate
+    aliases:
+      - NO-LONG-PARAM-LIST
+      - no-long-param-list
+      - make_long_param_list_gate
+      - long_param_list_blocker
+    description: >-
+      长参数列表阻断门禁(NO-LONG-PARAM-LIST, 5.150 防复发). 检测 staged .py
+      文件中新增函数参数数 > 7 (排除 self/cls). 违反 5.150 Long Parameter List
+      反模式. AST-based 检测, tests/ 豁免, AST 解析失败 fail-open,
+      检出违规则 fail-closed (passed=False). priority=88.
+      canonical basename long_param_list_gate 匹配 capability_id, 可 auto 派生.
+    integrity_anchors:
+      - make_long_param_list_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: bare_sql_gate
+    aliases:
+      - NO-BARE-SQL
+      - no-bare-sql
+      - make_bare_sql_gate
+      - bare_sql_literal_blocker
+    description: >-
+      裸 SQL 字面量阻断门禁(NO-BARE-SQL, 5.160.2 防复发). 检测 staged .py
+      added 行中的裸 SQL 字面量(SELECT...FROM/INSERT INTO/UPDATE...SET/DELETE FROM).
+      违反 5.160 SQL 集中化原则. diff-based 检测, tests/ 豁免,
+      docstring/注释/import 豁免, git diff 不可达 fail-open,
+      检出违规则 fail-closed (passed=False). priority=87.
+    integrity_anchors:
+      - make_bare_sql_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: god_class_gate
+    aliases:
+      - NO-GOD-CLASS
+      - no-god-class
+      - make_god_class_gate
+      - god_class_blocker
+    description: >-
+      God Class 阻断门禁(NO-GOD-CLASS, 5.150 防复发). 检测 staged .py
+      文件中新增类的方法数 > 20. 违反 5.150 God Class 反模式. AST-based 检测,
+      tests/ 豁免, AST 解析失败 fail-open, git diff 不可达 fail-open,
+      检出违规则 fail-closed (passed=False). priority=86.
+    integrity_anchors:
+      - make_god_class_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: high_complexity_gate
+    aliases:
+      - NO-HIGH-COMPLEXITY
+      - no-high-complexity
+      - make_high_complexity_gate
+      - cyclomatic_complexity_blocker
+    description: >-
+      高循环复杂度阻断门禁(NO-HIGH-COMPLEXITY, 5.158 防复发). 检测 staged .py
+      文件中新增函数的循环复杂度(McCabe) > 15. 违反 5.158 循环复杂度反模式.
+      AST-based McCabe 检测(统计 If/For/While/ExceptHandler/BoolOp/comprehension-if),
+      tests/ 豁免, AST 解析失败 fail-open, git diff 不可达 fail-open,
+      检出违规则 fail-closed (passed=False). priority=85.
+    integrity_anchors:
+      - make_high_complexity_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: create_guard
     aliases:
       - CREATE-GUARD
@@ -3996,6 +4059,22 @@ creation_tokens:
     token: "auto-import-direction-gate-20260709"
     created_by: "session-sess-28892-20260709052442"
     capability: "import_direction_gate"
+  - file: "src/zephyr/governance/commit_gates/long_param_list_gate.py"
+    token: "auto-long-param-list-gate-20260709"
+    created_by: "session-sess-15832-20260709055056"
+    capability: "long_param_list_gate"
+  - file: "src/zephyr/governance/commit_gates/bare_sql_gate.py"
+    token: "auto-bare-sql-gate-20260709"
+    created_by: "session-sess-15832-20260709055056"
+    capability: "bare_sql_gate"
+  - file: "src/zephyr/governance/commit_gates/god_class_gate.py"
+    token: "auto-god-class-gate-20260709"
+    created_by: "session-sess-15832-20260709055056"
+    capability: "god_class_gate"
+  - file: "src/zephyr/governance/commit_gates/high_complexity_gate.py"
+    token: "auto-high-complexity-gate-20260709"
+    created_by: "session-sess-15832-20260709055056"
+    capability: "high_complexity_gate"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
   - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"
@@ -4360,6 +4439,19 @@ creation_tokens:
   - file: "scripts/governance/d5_architecture/generators/align_panoramas.py"
     token: "auto-align-panoramas-20260706"
     created_by: "session-sess-41912-20260706173706"
+    capability: "panorama_alignment_detection"
+
+  # --- 四图模块对齐项目 Step 4+5（2026-07-09，ARCH-053 配套）---
+  # panorama_alignment_gate.py：align_panoramas 的 in-process gate 封装（warn-only）
+  # 触发条件：commit 含 depgraph/dataflow/decision 相关变更；检测孤儿/状态漂移
+  - file: "src/zephyr/governance/commit_gates/panorama_alignment_gate.py"
+    token: "auto-panorama-alignment-gate-20260709"
+    created_by: "session-sess-28836-20260709052022"
+    capability: "panorama_alignment_detection"
+  # query_module_panorama.py：模块全景查询入口（--all 全项目模块表 / 单模块三图记录）
+  - file: "scripts/governance/query_module_panorama.py"
+    token: "auto-query-module-panorama-20260709"
+    created_by: "session-sess-28836-20260709052022"
     capability: "panorama_alignment_detection"
 
   # --- ARCH-052: 聚合节点 SSoT 指针 registry（gate_rule_set/script_collection/test_suite/rule_registry_collection 聚合节点展开用）---

@@ -50,6 +50,8 @@ __all__ = [
     "_extract_docstring_lines",
     "_parse_diff_with_line_numbers",
     "_read_staged_file",
+    "_get_staged_py_files",
+    "_get_added_lines",
 ]
 
 # 行级豁免：注释 / import
@@ -134,3 +136,50 @@ def _read_staged_file(gateway, py_file: str) -> str | None:
     except Exception:
         pass
     return None
+
+
+def _get_staged_py_files(gateway, gate_name: str = "gate") -> list[str]:
+    """获取 staged added/modified .py 文件列表（fail-open）。
+
+    失败时返回空列表并记录 warning。调用方应在返回空时 return True, ""（fail-open）。
+    注意：不过滤 tests/，由调用方用 is_test_exempt() 过滤。
+    """
+    try:
+        result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
+        )
+        if result.returncode != 0:
+            logger.warning(
+                "%s fail-open: git diff 失败(rc=%d)。", gate_name, result.returncode,
+            )
+            return []
+        return [
+            f.replace("\\", "/")
+            for f in result.stdout.strip().splitlines()
+            if f and f.endswith(".py")
+        ]
+    except Exception as e:
+        logger.warning(
+            "%s fail-open: git diff 异常(%s: %s)。",
+            gate_name, type(e).__name__, e, exc_info=True,
+        )
+        return []
+
+
+def _get_added_lines(
+    gateway, py_file: str, gate_name: str = "gate"
+) -> list[tuple[int, str]]:
+    """获取文件的 added 行列表（fail-open）。
+
+    失败时返回空列表并记录 warning。
+    """
+    try:
+        result = gateway._run_git(
+            ["git", "diff", "--cached", "--unified=0", "--", py_file]
+        )
+        if result.returncode != 0:
+            return []
+        return _parse_diff_with_line_numbers(result.stdout)
+    except Exception as e:
+        logger.warning("%s: git diff 失败 file=%s, %s", gate_name, py_file, e)
+        return []

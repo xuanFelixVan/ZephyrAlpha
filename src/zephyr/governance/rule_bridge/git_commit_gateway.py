@@ -97,6 +97,10 @@ from zephyr.governance.commit_gates.msg_style_gate import make_msg_style_gate
 from zephyr.governance.commit_gates.hardcoded_url_gate import make_hardcoded_url_gate
 from zephyr.governance.commit_gates.import_direction_gate import make_import_direction_gate
 from zephyr.governance.commit_gates.panorama_alignment_gate import make_panorama_alignment_gate
+from zephyr.governance.commit_gates.long_param_list_gate import make_long_param_list_gate
+from zephyr.governance.commit_gates.bare_sql_gate import make_bare_sql_gate
+from zephyr.governance.commit_gates.god_class_gate import make_god_class_gate
+from zephyr.governance.commit_gates.high_complexity_gate import make_high_complexity_gate
 from zephyr.governance.commit_gates.rule_four_way_alignment_gate import (
     make_rule_four_way_alignment_gate,
 )
@@ -304,6 +308,10 @@ class GitCommitGateway:
         self._gate_registry.register(make_import_direction_gate())  # priority=93 治本shared层向上依赖（§5.152防复发）
         self._gate_registry.register(make_hardcoded_url_gate())  # priority=94 治本硬编码localhost URL（§5.160.9防复发）
         self._gate_registry.register(make_panorama_alignment_gate())  # priority=830 warn-only 三图模块对齐检测（四图模块对齐 Step 4）
+        self._gate_registry.register(make_long_param_list_gate())  # priority=88 治本长参数列表>7参数（§5.150防复发，AST检测新增函数参数数）
+        self._gate_registry.register(make_bare_sql_gate())  # priority=87 治本裸SQL字面量（§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE）
+        self._gate_registry.register(make_god_class_gate())  # priority=86 治本God Class方法数>20（§5.150防复发，AST检测新增类方法数）
+        self._gate_registry.register(make_high_complexity_gate())  # priority=85 治本高循环复杂度>15（§5.158防复发，AST检测McCabe复杂度）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         # ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
