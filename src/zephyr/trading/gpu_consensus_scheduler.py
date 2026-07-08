@@ -31,6 +31,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.trading.verdict_engine import ProtectionLevel, VerdictLevel
+from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
 
 logger = logging.getLogger(__name__)
 
@@ -167,7 +168,7 @@ class _PriorityQueue:
 class GPUConsensusScheduler:
     def __init__(
         self,
-        ollama_url: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+        ollama_url: str = DEFAULT_OLLAMA_URL,
         local_model: str = os.getenv("GPU_LOCAL_MODEL", "qwen3:8b"),
         api_primary: str = os.getenv("GPU_API_PRIMARY_MODEL", "deepseek-v4-pro"),
         api_secondary: str = os.getenv("GPU_API_SECONDARY_MODEL", "claude-sonnet-4"),
@@ -191,7 +192,7 @@ class GPUConsensusScheduler:
         self._async_lock = asyncio.Lock()
         self._gpu_status = GPUStatus(
             available=False,
-            model_name=local - model,
+            model_name=local_model,
             last_check_time=0.0,
         )
         self._total_submitted: int = 0

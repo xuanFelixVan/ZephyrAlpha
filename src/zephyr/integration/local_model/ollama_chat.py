@@ -42,12 +42,14 @@ import re
 import time
 from typing import TYPE_CHECKING, Any
 
+from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
+
 if TYPE_CHECKING:
     from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
 
 _log = logging.getLogger(__name__)
 
-DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+# DEFAULT_OLLAMA_URL 已下沉到 zephyr.shared.foundation.constants（§5.160 SSoT）
 
 # 5.141.1 修复: 模型名通过环境变量外部化, 避免硬编码
 INFERENCE_MODEL: Final[str] = os.getenv("OLLAMA_INFERENCE_MODEL", "qwen3:8b")

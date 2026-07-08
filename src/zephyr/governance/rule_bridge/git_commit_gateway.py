@@ -94,6 +94,8 @@ from zephyr.governance.commit_gates.doc_ref_broken_gate import make_doc_ref_brok
 from zephyr.governance.commit_gates.function_dup_gate import make_function_dup_gate
 from zephyr.governance.commit_gates.bare_getenv_gate import make_bare_getenv_gate
 from zephyr.governance.commit_gates.msg_style_gate import make_msg_style_gate
+from zephyr.governance.commit_gates.hardcoded_url_gate import make_hardcoded_url_gate
+from zephyr.governance.commit_gates.import_direction_gate import make_import_direction_gate
 from zephyr.governance.commit_gates.rule_four_way_alignment_gate import (
     make_rule_four_way_alignment_gate,
 )
@@ -298,6 +300,8 @@ class GitCommitGateway:
         self._gate_registry.register(make_function_dup_gate())  # priority=90 治本重复函数同目录同名同 body hash（病根：SSoT真源唯一性211）
         self._gate_registry.register(make_bare_getenv_gate())  # priority=81 治本裸os.getenv读密钥绕过SecretProvider（§5.17.10防复发，AST检测SECRET_INDICATOR_PATTERNS）
         self._gate_registry.register(make_msg_style_gate())  # priority=92 治本错误消息标点/箭头风格不一致（5.99.22防复发：raise消息含->或。结尾阻断）
+        self._gate_registry.register(make_import_direction_gate())  # priority=93 治本shared层向上依赖（§5.152防复发）
+        self._gate_registry.register(make_hardcoded_url_gate())  # priority=94 治本硬编码localhost URL（§5.160.9防复发）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         # ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
