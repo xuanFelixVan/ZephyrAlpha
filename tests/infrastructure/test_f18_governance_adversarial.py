@@ -224,11 +224,11 @@ class TestPrivilegeEscalation:
                             findings.append((py_file.name, pattern, stripped))
             except Exception:
                 pass
-        # 蓝队: 不应有任意代码执行 (audit_session_07.py 的 exec(stmt) 需人工审查)
+        # 蓝队: 不应有任意代码执行 (归档审计脚本的 exec(stmt) 需人工审查)
         # 标记为需人工审查, 不硬阻断
         real_risks = [f for f in findings if "description" not in f[2] and "Python:" not in f[2]]
         if real_risks:
-            pytest.skip(f"发现需人工审查的代码执行: {real_risks[:3]} (audit_session_07.py exec(stmt) 可能是合法审计用途)")
+            pytest.skip(f"发现需人工审查的代码执行: {real_risks[:3]} (归档审计脚本 exec(stmt) 可能是合法审计用途)")
 
     def test_scripts_no_shell_true(self):
         """测试治理脚本不使用 shell=True (排除检测脚本)."""

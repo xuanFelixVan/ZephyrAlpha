@@ -4,7 +4,7 @@ collection_name: 脚本集 / Script Collection
 collection_path: scripts/governance/
 owner_module: MOD-GOV-SCRIPTS
 node_type: script_collection
-total_registered: 433
+total_registered: 432
 items:
 - file: scripts/governance/__init__.py
   name: __init__.py
@@ -16,10 +16,6 @@ items:
   status: active
 - file: scripts/governance/_archive/one_off/audit_post_sync_commands.py
   name: audit_post_sync_commands.py
-  node_type: script
-  status: active
-- file: scripts/governance/_archive/one_off/audit_session_07.py
-  name: audit_session_07.py
   node_type: script
   status: active
 - file: scripts/governance/_archive/one_off/check_exam_case_consistency.py
