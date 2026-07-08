@@ -188,6 +188,12 @@ ssot_claims:
 | `commit_gates/dangling_reference_gate.py` | §0.1 | 悬空引用门禁 | 已实现 | | 本模块 |
 | `commit_gates/arch_reference_gate.py` | §0.1 | ARCH-NNN引用门禁 | 已实现 | | 本模块 |
 | `commit_gates/session_required_gate.py` | §0.1 | session要求门禁 | 已实现 | | 本模块 |
+| `commit_gates/file_placement_ttl_gate.py` | §0.1 | 文件放置与TTL一致性门禁（ARCH-049） | 已实现 | | 本模块 |
+| `commit_gates/foreign_change_gate.py` | §0.1 | 外来变更检测门禁（ARCH-054） | 已实现 | | 本模块 |
+| `commit_gates/msg_exposure_gate.py` | §0.1 | commit消息敏感信息暴露门禁 | 已实现 | | 本模块 |
+| `commit_gates/msg_style_gate.py` | §0.1 | commit消息风格门禁 | 已实现 | | 本模块 |
+| `commit_gates/rule_four_way_alignment_gate.py` | §0.1 | 规则四方对齐门禁（ARCH-020补建） | 已实现 | | 本模块 |
+| `commit_gates/unsafe_dict_spread_gate.py` | §0.1 | 不安全字典展开门禁 | 已实现 | | 本模块 |
 | `commit_gates/gate_repo.py` | §0.1 | gate仓库（已正确指向MOD-GATE_ENGINE） | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
