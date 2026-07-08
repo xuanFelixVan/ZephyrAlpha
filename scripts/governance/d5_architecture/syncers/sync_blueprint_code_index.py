@@ -16,7 +16,7 @@
 """
 
 
-对标：AGENTS.md §6.14 蓝图-代码同步强制约定
+对标：AGENTS.md §6.1 蓝图-代码同步强制约定
       validate_blueprint_code_sync.py（验证端）的修复端——验证查问题，同步修问题
 
 功能：
@@ -35,7 +35,7 @@ import os
 
 __manifest__ = """
 args: []
-description: SYNC-BLUEPRINT-CODE — 蓝图§19已实现代码路径索引自动同步（AGENTS.md §6.14 — 为缺少路径索引的蓝图自动补齐+version
+description: SYNC-BLUEPRINT-CODE — 蓝图§19已实现代码路径索引自动同步（AGENTS.md §6.1 — 为缺少路径索引的蓝图自动补齐+version
   patch+1，--check模式仅检测漂移）
 dimensions:
 - D5
@@ -467,7 +467,7 @@ def _generate_path_index_section(section_num: int, module_name: str) -> str:
     lines = []
     lines.append(f"## {section_num}. 已实现代码完整路径索引")
     lines.append("")
-    lines.append("> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。")
+    lines.append("> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。")
     lines.append("> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。")
     lines.append(f"> {note}")
     lines.append("")
@@ -628,7 +628,7 @@ def sync(check_only: bool = False) -> int:
 
 def main() -> None:
     """入口函数."""
-    parser = ArgumentParser(description="蓝图 §19 已实现代码路径索引自动同步（AGENTS.md §6.14）")
+    parser = ArgumentParser(description="蓝图 §19 已实现代码路径索引自动同步（AGENTS.md §6.1）")
     parser.add_argument(
         "--check",
         action="store_true",

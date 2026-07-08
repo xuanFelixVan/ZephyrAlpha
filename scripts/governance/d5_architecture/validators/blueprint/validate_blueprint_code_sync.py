@@ -16,7 +16,7 @@
 """
 
 
-AGENTS.md §6.14 蓝图-代码同步强制约定的 CI 门禁脚本。
+AGENTS.md §6.1 蓝图-代码同步强制约定的 CI 门禁脚本。
 扫描所有蓝图 §19（已实现代码路径索引）中声称的文件路径，
 与磁盘实际文件交叉比对，检测三类漂移：
   1. 幽灵路径：蓝图声称"已实现/部分实现"但磁盘文件不存在
@@ -37,7 +37,7 @@ __manifest__ = """
 args:
   - --warn-only
   - --jsonl
-description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.14 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
+description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.1 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
 dimensions:
 - D5
 - D8
@@ -112,7 +112,7 @@ def validate_blueprint(bp_path: Path, warn_only: bool) -> list[str]:
     section = extract_path_index_section(content)
     if not section:
         errors.append(
-            f"[GATE-BLUEPRINT-CODE] {rel_bp}: 缺少「已实现代码路径索引」章节（AGENTS.md §6.14 要求蓝图 §16~§19 为路径索引）"
+            f"[GATE-BLUEPRINT-CODE] {rel_bp}: 缺少「已实现代码路径索引」章节（AGENTS.md §6.1 要求蓝图 §16~§19 为路径索引）"
         )
         return errors
     claimed = extract_claimed_paths(section)
@@ -128,7 +128,7 @@ def main() -> int:
     import argparse
     import json
 
-    parser = argparse.ArgumentParser(description="蓝图 §16~§19 路径索引与实际文件系统对账（AGENTS.md §6.14）")
+    parser = argparse.ArgumentParser(description="蓝图 §16~§19 路径索引与实际文件系统对账（AGENTS.md §6.1）")
     parser.add_argument("--warn-only", action="store_true", help="告警模式，不阻断退出码")
     parser.add_argument("--jsonl", action="store_true", help="单行 JSON 摘要")
     args = parser.parse_args()
@@ -167,7 +167,7 @@ def main() -> int:
             code = 0
         else:
             print(
-                "\n[GATE-BLUEPRINT-CODE] 🔴 CI 失败 — 蓝图路径索引与磁盘实际不一致。请按 AGENTS.md §6.14 更新蓝图路径索引章节。"
+                "\n[GATE-BLUEPRINT-CODE] 🔴 CI 失败 — 蓝图路径索引与磁盘实际不一致。请按 AGENTS.md §6.1 更新蓝图路径索引章节。"
             )
             code = 1
     else:

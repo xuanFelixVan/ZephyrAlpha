@@ -10,12 +10,12 @@ ttl: permanent
 
 # 32_d_gov_audit / audit_orchestration / 审计追踪 / Audit Trail
 
-> **功能简介 / Overview**: 审计追踪与变更记录
+> **功能简介 / Overview**: 审计追踪，负责变更审计追踪和操作日志管理
 
 > **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-09 01:10:30
+> 最后更新: 2026-07-09 03:56:41
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -36,15 +36,31 @@ ttl: permanent
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 审计管线编排 | Description | 审计管线编排 |
 
+## 模块分层清单 / Module Layered List
+
+> 按 architecture_layer 分组的模块清单（共 2 个模块 / 2 modules）。
+
+### L1 基础层 / Foundation Layer (2 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
+|:--:|---------|---------|:---:|:---:|
+| 1 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | docs__03_modules___cross_layer__audit_orchestrator__blueprint_md | 设计态 / design | [MOD-INF-027](../../03_modules/_cross_layer/audit_orchestrator/blueprint.md) |
+| 2 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | docs__03_modules___domain_governance__audit_trail__blueprint_md | 设计态 / design | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
+
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分四个视图：合并全景图、运营态子图、设计态子图、原型态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
-> - **虚线边框 = 设计态模块**（design，还在设计中）
+> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
+> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
-> - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
+> - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
+
+### 合并全景图（全部模块，标签标注成熟度）
+
+> 展示全部 2 个模块（生产态 0 + 设计态 2 + 原型态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -52,7 +68,7 @@ graph TD
         docs_03_modules_cross_layer_audit_orchestrator_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__audit_orchestrator__blueprint_md"]
         docs_03_modules_domain_governance_audit_trail_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__audit_trail__blueprint_md"]
     end
-    D_GOVERNANCE["[设计态 / design] D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     docs_03_modules_cross_layer_audit_orchestrator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -62,50 +78,60 @@ graph TD
     class D_GOVERNANCE external_design
 ```
 
+### 运营态子图（仅 design_maturity=production 的模块和依赖）
+
+> 仅展示已上线运行的模块（共 0 个，0 条域内依赖）。
+
+> （无运营态模块 / No production modules）
+
+### 设计态子图（仅 design_maturity=design 的模块和依赖）
+
+> 仅展示蓝图阶段、代码未写的设计态模块（共 2 个，0 条域内依赖）。
+
+```mermaid
+graph TD
+    subgraph D_GOV_AUDIT["D_GOV_AUDIT 审计追踪"]
+        docs_03_modules_cross_layer_audit_orchestrator_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__audit_orchestrator__blueprint_md"]
+        docs_03_modules_domain_governance_audit_trail_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__audit_trail__blueprint_md"]
+    end
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
+    docs_03_modules_cross_layer_audit_orchestrator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class docs_03_modules_cross_layer_audit_orchestrator_blueprint_md,docs_03_modules_domain_governance_audit_trail_blueprint_md design
+    class D_GOVERNANCE external_design
+```
+
+### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 0 个，0 条域内依赖）。
+
+> （无原型态模块 / No prototype modules）
+
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
-|--------|:---:|---------|
-| D_GOVERNANCE | 1 | runtime / runtime |
+| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
+|:--:|---------|:--:|---------|---------|
+| 1 | blueprint.md | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 无跨域入边依赖 / No cross-domain incoming dependencies
 
-## 架构分层视图 / Architecture Overview
+### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 按 architecture_layer 分层显示 审计追踪（D_GOV_AUDIT）的模块分布。共 2 个模块 / 2 modules。
+> 本域与 1 个外部域直接连接（出边 1 条 + 入边 0 条 = 1 条）。只显示直接连接的域，不展开具体节点。
 
+```mermaid
+graph LR
+    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
+    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
+    D_GOV_AUDIT -->|1条 runtime / runtime| D_GOVERNANCE
 ```
-
-┌──────────────────────────────────────────────────────────────────┐
-│     L1 基础层 / Foundation Layer（共 2 个模块 / 2 modules）      │
-├──────────────────────────────────────────────────────────────────┤
-│   docs__03_modules___cross_layer__audit_orchestrator__bluepri... │
-│   docs__03_modules___domain_governance__audit_trail__blueprin... │
-└──────────────────────────────────────────────────────────────────┘
-
-```
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 2 个模块 / 2 modules）。
-
-### L1 基础层 / Foundation Layer (2 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | docs__03_modules___cross_layer__audit... |  | design | planned |
-| 2 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | docs__03_modules___domain_governance_... |  | design | planned |
-
-## 依赖关系图 / Dependency Graph
-
-> 域内模块依赖关系（共 0 条 / 0 edges）。按依赖类型分组，使用 → 表示方向。
-
-（无域内依赖 / No internal dependencies）
-
 
 ## 说明 / Notes
 
@@ -113,4 +139,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
