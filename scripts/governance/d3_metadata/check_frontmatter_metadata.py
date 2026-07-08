@@ -16,7 +16,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无 hard-block 违规）；EXIT_FINDINGS=1（ttl 缺失/非法 或 strict-doctype 下 doc_type 缺失/非法）；EXIT_ERROR=2（脚本异常）
 # [TESTS] tests/governance/code_quality/test_check_frontmatter_metadata.py
-# [TTL] task_bound
+# [TTL] permanent
 """GATE-15: Frontmatter metadata validation（ttl + doc_type 字段校验）
 
 校验 .md 文档 frontmatter 的词表字段：

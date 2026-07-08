@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -24,7 +24,7 @@
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
-[TESTS] tests/test_dm200911_generators.py
+[TESTS]
 [DOMAIN] D_GOVERNANCE
 """
 
