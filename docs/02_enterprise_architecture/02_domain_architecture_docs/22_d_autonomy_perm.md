@@ -1,19 +1,21 @@
 ---
 doc_type: architecture_view
-title: D_AUTONOMY_PERM budget_enforcement架构文档
+title: D_AUTONOMY_PERM 自治保护架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 22_d_autonomy_perm / budget_enforcement / Autonomy Protection
+# 22_d_autonomy_perm / budget_enforcement / 自治保护 / Autonomy Protection
 
-> **文档作用 / Purpose**: 展示 budget_enforcement（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 自治权限保护与越权检测
+
+> **文档作用 / Purpose**: 展示 自治保护（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:33
+> 最后更新: 2026-07-09 01:10:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +24,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 22 | Number | 22 |
 | 域ID | D_AUTONOMY_PERM | Domain ID | D_AUTONOMY_PERM |
-| 域名称 | budget_enforcement | Domain Name | Autonomy Protection |
+| 域名称 | 自治保护 | Domain Name | Autonomy Protection |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 14 | Module Count | 14 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
@@ -46,35 +48,35 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_AUTONOMY_PERM["D_AUTONOMY_PERM budget_enforcement"]
-        src_zephyr_autonomy_perm_init_py["src/zephyr/autonomy_perm/__init__.py prototype"]
-        src_zephyr_autonomy_perm_extensions_init_py["src/zephyr/autonomy_perm/_extensions/__init__.py prototype"]
-        src_zephyr_autonomy_perm_api_init_py["src/zephyr/autonomy_perm/api/__init__.py prototype"]
-        src_zephyr_autonomy_perm_core_init_py["src/zephyr/autonomy_perm/core/__init__.py prototype"]
-        src_zephyr_autonomy_perm_infrastructure_init_py["src/zephyr/autonomy_perm/infrastructure/__init_... prototype"]
-        src_zephyr_autonomy_perm_models_init_py["src/zephyr/autonomy_perm/models/__init__.py prototype"]
-        src_zephyr_autonomy_perm_red_blue_validator_init_py["src/zephyr/autonomy_perm/red_blue_validator/__i... prototype"]
-        src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py["src/zephyr/autonomy_perm/red_blue_validator/att... prototype"]
-        src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py["src/zephyr/autonomy_perm/red_blue_validator/byp... prototype"]
-        src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py["src/zephyr/autonomy_perm/red_blue_validator/con... prototype"]
-        src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py["src/zephyr/autonomy_perm/red_blue_validator/con... prototype"]
-        src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py["src/zephyr/autonomy_perm/red_blue_validator/def... prototype"]
-        src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py["src/zephyr/autonomy_perm/red_blue_validator/gam... prototype"]
-        src_zephyr_autonomy_perm_services_init_py["src/zephyr/autonomy_perm/services/__init__.py prototype"]
+    subgraph D_AUTONOMY_PERM["D_AUTONOMY_PERM 自治保护"]
+        src_zephyr_autonomy_perm_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_autonomy_perm_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_autonomy_perm_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_autonomy_perm_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_autonomy_perm_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_autonomy_perm_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_autonomy_perm_red_blue_validator_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py["(原型态 / prototype) attack_registry.py"]
+        src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py["(原型态 / prototype) bypass_recorder.py"]
+        src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py["(原型态 / prototype) constitution_guard.py"]
+        src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py["(原型态 / prototype) convergence_checker.py"]
+        src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py["(原型态 / prototype) defense_runner.py"]
+        src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py["(原型态 / prototype) game_day_runner.py"]
+        src_zephyr_autonomy_perm_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    D_SECURITY["D_SECURITY prototype"]
-    src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py -.->|import_depends| D_SECURITY
+    D_SECURITY["[原型态 / prototype] D_SECURITY"]
+    src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py -.->|导入依赖 / import_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -89,7 +91,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SECURITY | 12 | import_depends |
+| D_SECURITY | 12 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -97,27 +99,27 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 budget_enforcement（D_AUTONOMY_PERM）的模块分布。共 14 个模块 / 14 modules。
+> 按 architecture_layer 分层显示 自治保护（D_AUTONOMY_PERM）的模块分布。共 14 个模块 / 14 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (14 modules)               │
+│      L2 领域层 / Domain Layer（共 14 个模块 / 14 modules）       │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/autonomy_perm/__init__.py  [prototype]              │
-│   src/zephyr/autonomy_perm/_extensions/__init__.py  [prototype]  │
-│   src/zephyr/autonomy_perm/api/__init__.py  [prototype]          │
-│   src/zephyr/autonomy_perm/core/__init__.py  [prototype]         │
-│   src/zephyr/autonomy_perm/infrastructure/__init__.py  [proto... │
-│   src/zephyr/autonomy_perm/models/__init__.py  [prototype]       │
-│   src/zephyr/autonomy_perm/red_blue_validator/__init__.py  [p... │
-│   src/zephyr/autonomy_perm/red_blue_validator/attack_registry... │
-│   src/zephyr/autonomy_perm/red_blue_validator/bypass_recorder... │
-│   src/zephyr/autonomy_perm/red_blue_validator/constitution_gu... │
-│   src/zephyr/autonomy_perm/red_blue_validator/convergence_che... │
-│   src/zephyr/autonomy_perm/red_blue_validator/defense_runner.... │
-│   src/zephyr/autonomy_perm/red_blue_validator/game_day_runner... │
-│   src/zephyr/autonomy_perm/services/__init__.py  [prototype]     │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   attack_registry.py [原型态 / prototype]                        │
+│   bypass_recorder.py [原型态 / prototype]                        │
+│   constitution_guard.py [原型态 / prototype]                     │
+│   convergence_checker.py [原型态 / prototype]                    │
+│   defense_runner.py [原型态 / prototype]                         │
+│   game_day_runner.py [原型态 / prototype]                        │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -158,4 +160,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

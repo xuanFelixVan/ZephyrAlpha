@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 50 |
-| 模块总数 | 4921 |
-| 生产态模块 | 1577 |
+| 模块总数 | 4978 |
+| 生产态模块 | 1596 |
 | 设计态模块 | 53 |
-| 原型态模块 | 3291 |
+| 原型态模块 | 3329 |
 
 ## 域清单（按架构层分组）
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication / A2A Communication | 89 | 32 | 0 | 57 | 89/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 1 | 0 | 1 | 0 | 1/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 54 | 48 | 0 | 6 | 54/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 130 | 85 | 0 | 45 | 130/150 (OK) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 132 | 87 | 0 | 45 | 132/150 (OK) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 25 | 13 | 0 | 12 | 25/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (14 个域 / 14 domains)
@@ -55,14 +55,14 @@ ttl: permanent
 | D_REPORTING | 报告 / Reporting | 10 | 1 | 0 | 9 | 10/150 (OK) | [16_d_reporting.md](16_d_reporting.md) |
 | D_SECURITY | orphan_judge / Adversarial Validation | 147 | 80 | 0 | 67 | 147/150 (OK) | [17_d_security.md](17_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 44 | 33 | 0 | 11 | 44/150 (OK) | [18_d_security_llm.md](18_d_security_llm.md) |
-| D_SHARED | shared_services / Shared Services | 231 | 94 | 0 | 137 | 231/150 (超容) | [19_d_shared.md](19_d_shared.md) |
+| D_SHARED | shared_services / Shared Services | 223 | 94 | 0 | 129 | 223/150 (超容) | [19_d_shared.md](19_d_shared.md) |
 
 ### L2 业务域层 / L2 Domain (31 个域 / 31 domains)
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_ASHARE_SIGNAL | ashare_signal / A-Share Signal | 7 | 0 | 0 | 7 | 7/150 (OK) | [20_d_ashare_signal.md](20_d_ashare_signal.md) |
-| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1677 | 49 | 0 | 1628 | 1677/150 (超容) | [21_d_audittest.md](21_d_audittest.md) |
+| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1723 | 49 | 0 | 1674 | 1723/150 (超容) | [21_d_audittest.md](21_d_audittest.md) |
 | D_AUTONOMY_PERM | budget_enforcement / Autonomy Protection | 14 | 0 | 0 | 14 | 14/150 (OK) | [22_d_autonomy_perm.md](22_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 33 | 9 | 8 | 16 | 33/150 (OK) | [23_d_backtest.md](23_d_backtest.md) |
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 8 | 1 | 1 | 6 | 8/150 (OK) | [24_d_cross_asset.md](24_d_cross_asset.md) |
@@ -91,4 +91,4 @@ ttl: permanent
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 7 | 0 | 0 | 7 | 7/150 (OK) | [47_d_sell_decision.md](47_d_sell_decision.md) |
 | D_SIGQC | signal_quality / Signal Quality Control | 8 | 0 | 0 | 8 | 8/150 (OK) | [48_d_sigqc.md](48_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 11 | 2 | 1 | 8 | 11/150 (OK) | [49_d_simulation.md](49_d_simulation.md) |
-| D_TRADING | 交易运营 / Trading Operations | 464 | 263 | 0 | 201 | 464/150 (超容) | [50_d_trading.md](50_d_trading.md) |
+| D_TRADING | 交易运营 / Trading Operations | 481 | 280 | 0 | 201 | 481/150 (超容) | [50_d_trading.md](50_d_trading.md) |

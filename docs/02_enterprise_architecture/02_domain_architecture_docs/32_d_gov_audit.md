@@ -1,19 +1,21 @@
 ---
 doc_type: architecture_view
-title: D_GOV_AUDIT audit_orchestration架构文档
+title: D_GOV_AUDIT 审计追踪架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 32_d_gov_audit / audit_orchestration / Audit Trail
+# 32_d_gov_audit / audit_orchestration / 审计追踪 / Audit Trail
 
-> **文档作用 / Purpose**: 展示 audit_orchestration（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 审计追踪与变更记录
+
+> **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:35
+> 最后更新: 2026-07-09 01:10:30
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +24,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 32 | Number | 32 |
 | 域ID | D_GOV_AUDIT | Domain ID | D_GOV_AUDIT |
-| 域名称 | audit_orchestration | Domain Name | Audit Trail |
+| 域名称 | 审计追踪 | Domain Name | Audit Trail |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 2 | Module Count | 2 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
@@ -46,12 +48,12 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_AUDIT["D_GOV_AUDIT audit_orchestration"]
-        docs_03_modules_cross_layer_audit_orchestrator_blueprint_md["docs__03_modules___cross_layer__audit_orchestra... design"]
-        docs_03_modules_domain_governance_audit_trail_blueprint_md["docs__03_modules___domain_governance__audit_tra... design"]
+    subgraph D_GOV_AUDIT["D_GOV_AUDIT 审计追踪"]
+        docs_03_modules_cross_layer_audit_orchestrator_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__audit_orchestrator__blueprint_md"]
+        docs_03_modules_domain_governance_audit_trail_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__audit_trail__blueprint_md"]
     end
-    D_GOVERNANCE["D_GOVERNANCE design"]
-    docs_03_modules_cross_layer_audit_orchestrator_blueprint_md -.->|runtime| D_GOVERNANCE
+    D_GOVERNANCE["[设计态 / design] D_GOVERNANCE"]
+    docs_03_modules_cross_layer_audit_orchestrator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -66,7 +68,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 1 | runtime |
+| D_GOVERNANCE | 1 | runtime / runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -74,12 +76,12 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 audit_orchestration（D_GOV_AUDIT）的模块分布。共 2 个模块 / 2 modules。
+> 按 architecture_layer 分层显示 审计追踪（D_GOV_AUDIT）的模块分布。共 2 个模块 / 2 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (2 modules)             │
+│     L1 基础层 / Foundation Layer（共 2 个模块 / 2 modules）      │
 ├──────────────────────────────────────────────────────────────────┤
 │   docs__03_modules___cross_layer__audit_orchestrator__bluepri... │
 │   docs__03_modules___domain_governance__audit_trail__blueprin... │
@@ -111,4 +113,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

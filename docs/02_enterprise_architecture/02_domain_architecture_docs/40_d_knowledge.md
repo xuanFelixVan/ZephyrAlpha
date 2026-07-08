@@ -1,19 +1,21 @@
 ---
 doc_type: architecture_view
-title: D_KNOWLEDGE vector_storage架构文档
+title: D_KNOWLEDGE 知识管理架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 40_d_knowledge / vector_storage / Knowledge Management
+# 40_d_knowledge / vector_storage / 知识管理 / Knowledge Management
 
-> **文档作用 / Purpose**: 展示 vector_storage（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 知识管理与向量检索
+
+> **文档作用 / Purpose**: 展示 知识管理（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,11 +24,11 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 40 | Number | 40 |
 | 域ID | D_KNOWLEDGE | Domain ID | D_KNOWLEDGE |
-| 域名称 | vector_storage | Domain Name | Knowledge Management |
+| 域名称 | 知识管理 | Domain Name | Knowledge Management |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 9 | Module Count | 9 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 1 | Cross-domain Incoming | 1 |
+| 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 7 | Prototype Modules | 7 |
@@ -46,27 +48,25 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_KNOWLEDGE["D_KNOWLEDGE vector_storage"]
-        docs_03_modules_domain_knowledge_knowledge_base_blueprint_md["docs__03_modules___domain_knowledge__knowledge_... design"]
-        docs_03_modules_domain_knowledge_vector_memory_blueprint_md["docs__03_modules___domain_knowledge__vector_mem... design"]
-        src_zephyr_knowledge_init_py["src/zephyr/knowledge/__init__.py prototype"]
-        src_zephyr_knowledge_extensions_init_py["src/zephyr/knowledge/_extensions/__init__.py prototype"]
-        src_zephyr_knowledge_api_init_py["src/zephyr/knowledge/api/__init__.py prototype"]
-        src_zephyr_knowledge_core_init_py["src/zephyr/knowledge/core/__init__.py prototype"]
-        src_zephyr_knowledge_infrastructure_init_py["src/zephyr/knowledge/infrastructure/__init__.py prototype"]
-        src_zephyr_knowledge_models_init_py["src/zephyr/knowledge/models/__init__.py prototype"]
-        src_zephyr_knowledge_services_init_py["src/zephyr/knowledge/services/__init__.py prototype"]
+    subgraph D_KNOWLEDGE["D_KNOWLEDGE 知识管理"]
+        docs_03_modules_domain_knowledge_knowledge_base_blueprint_md["(设计态 / design) docs__03_modules___domain_knowledge__knowledge_base__blueprint_md"]
+        docs_03_modules_domain_knowledge_vector_memory_blueprint_md["(设计态 / design) docs__03_modules___domain_knowledge__vector_memory__blueprint_md"]
+        src_zephyr_knowledge_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_knowledge_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_knowledge_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_knowledge_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_knowledge_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_knowledge_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_knowledge_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    D_GOVERNANCE["D_GOVERNANCE design"]
-    docs_03_modules_domain_knowledge_vector_memory_blueprint_md -.->|runtime| D_GOVERNANCE
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
-    D_AUTONOMY_CORE -.->|contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
+    D_GOVERNANCE["[设计态 / design] D_GOVERNANCE"]
+    docs_03_modules_domain_knowledge_vector_memory_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_domain_knowledge_knowledge_base_blueprint_md,docs_03_modules_domain_knowledge_vector_memory_blueprint_md,src_zephyr_knowledge_init_py,src_zephyr_knowledge_extensions_init_py,src_zephyr_knowledge_api_init_py,src_zephyr_knowledge_core_init_py,src_zephyr_knowledge_infrastructure_init_py,src_zephyr_knowledge_models_init_py,src_zephyr_knowledge_services_init_py design
-    class D_GOVERNANCE,D_AUTONOMY_CORE external_design
+    class D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -75,22 +75,20 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 1 | runtime |
+| D_GOVERNANCE | 1 | runtime / runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
-|------|:---:|---------|
-| D_AUTONOMY_CORE | 1 | contract |
+无跨域入边依赖 / No cross-domain incoming dependencies
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 vector_storage（D_KNOWLEDGE）的模块分布。共 9 个模块 / 9 modules。
+> 按 architecture_layer 分层显示 知识管理（D_KNOWLEDGE）的模块分布。共 9 个模块 / 9 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (2 modules)             │
+│     L1 基础层 / Foundation Layer（共 2 个模块 / 2 modules）      │
 ├──────────────────────────────────────────────────────────────────┤
 │   docs__03_modules___domain_knowledge__knowledge_base__bluepr... │
 │   docs__03_modules___domain_knowledge__vector_memory__bluepri... │
@@ -98,15 +96,15 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (7 modules)               │
+│       L2 领域层 / Domain Layer（共 7 个模块 / 7 modules）        │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/knowledge/__init__.py  [prototype]                  │
-│   src/zephyr/knowledge/_extensions/__init__.py  [prototype]      │
-│   src/zephyr/knowledge/api/__init__.py  [prototype]              │
-│   src/zephyr/knowledge/core/__init__.py  [prototype]             │
-│   src/zephyr/knowledge/infrastructure/__init__.py  [prototype]   │
-│   src/zephyr/knowledge/models/__init__.py  [prototype]           │
-│   src/zephyr/knowledge/services/__init__.py  [prototype]         │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -147,4 +145,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

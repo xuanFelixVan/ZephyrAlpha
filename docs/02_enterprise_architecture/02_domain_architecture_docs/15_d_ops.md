@@ -1,19 +1,21 @@
 ---
 doc_type: architecture_view
-title: D_OPS telemetry架构文档
+title: D_OPS 反馈循环架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 15_d_ops / telemetry / Feedback Loop
+# 15_d_ops / telemetry / 反馈循环 / Feedback Loop
 
-> **文档作用 / Purpose**: 展示 telemetry（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 反馈循环与运营监控
+
+> **文档作用 / Purpose**: 展示 反馈循环（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,12 +24,12 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 15 | Number | 15 |
 | 域ID | D_OPS | Domain ID | D_OPS |
-| 域名称 | telemetry | Domain Name | Feedback Loop |
+| 域名称 | 反馈循环 | Domain Name | Feedback Loop |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 3 | Module Count | 3 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 8 | Cross-domain Incoming | 8 |
-| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
+| 跨域出边 | 2 | Cross-domain Outgoing | 2 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 3 | Production Modules | 3 |
@@ -46,24 +48,25 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D_OPS telemetry"]
-        src_zephyr_shared_observability_metrics_py["src/zephyr/shared/observability/metrics.py production"]
-        src_zephyr_shared_observability_reasoning_spans_py["src/zephyr/shared/observability/reasoning_spans.py production"]
-        src_zephyr_shared_observability_tracing_py["src/zephyr/shared/observability/tracing.py production"]
+    subgraph D_OPS["D_OPS 反馈循环"]
+        src_zephyr_shared_observability_metrics_py["(生产态 / production) metrics.py"]
+        src_zephyr_shared_observability_reasoning_spans_py["(生产态 / production) reasoning_spans.py"]
+        src_zephyr_shared_observability_tracing_py["(生产态 / production) tracing.py"]
     end
-    D_SHARED["D_SHARED production"]
-    src_zephyr_shared_observability_tracing_py -->|import_depends| D_SHARED
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    D_GOVERNANCE -->|import_depends| src_zephyr_shared_observability_metrics_py
-    D_TRADING["D_TRADING production"]
-    D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
-    D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
-    D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_metrics_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_metrics_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_metrics_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_tracing_py
+    D_SHARED["[生产态 / production] D_SHARED"]
+    src_zephyr_shared_observability_metrics_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_observability_tracing_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE["[生产态 / production] D_GOVERNANCE"]
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_shared_observability_metrics_py
+    D_TRADING["[生产态 / production] D_TRADING"]
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_observability_metrics_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_observability_metrics_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_observability_metrics_py
+    D_AUDITTEST["[原型态 / prototype] D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_shared_observability_tracing_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -79,28 +82,28 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 1 | import_depends |
+| D_SHARED | 2 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 4 | test_depends |
-| D_TRADING | 3 | import_depends |
-| D_GOVERNANCE | 1 | import_depends |
+| D_AUDITTEST | 4 | 测试依赖 / test_depends |
+| D_TRADING | 3 | 导入依赖 / import_depends |
+| D_GOVERNANCE | 1 | 导入依赖 / import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 telemetry（D_OPS）的模块分布。共 3 个模块 / 3 modules。
+> 按 architecture_layer 分层显示 反馈循环（D_OPS）的模块分布。共 3 个模块 / 3 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (3 modules)             │
+│     L1 基础层 / Foundation Layer（共 3 个模块 / 3 modules）      │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/shared/observability/metrics.py  [production]       │
-│   src/zephyr/shared/observability/reasoning_spans.py  [produc... │
-│   src/zephyr/shared/observability/tracing.py  [production]       │
+│   metrics.py [生产态 / production]                               │
+│   reasoning_spans.py [生产态 / production]                       │
+│   tracing.py [生产态 / production]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -130,4 +133,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

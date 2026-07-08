@@ -3,17 +3,19 @@ doc_type: architecture_view
 title: D_ML_SERVE 推理架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 41_d_ml_serve / 推理 / Inference
+# 41_d_ml_serve / 推理 / 推理 / Inference
+
+> **功能简介 / Overview**: 模型推理与在线服务
 
 > **文档作用 / Purpose**: 展示 推理（D_ML_SERVE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -47,13 +49,13 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_ML_SERVE["D_ML_SERVE 推理"]
-        src_zephyr_ml_serve_init_py["src/zephyr/ml_serve/__init__.py prototype"]
-        src_zephyr_ml_serve_extensions_init_py["src/zephyr/ml_serve/_extensions/__init__.py prototype"]
-        src_zephyr_ml_serve_api_init_py["src/zephyr/ml_serve/api/__init__.py prototype"]
-        src_zephyr_ml_serve_core_init_py["src/zephyr/ml_serve/core/__init__.py prototype"]
-        src_zephyr_ml_serve_infrastructure_init_py["src/zephyr/ml_serve/infrastructure/__init__.py prototype"]
-        src_zephyr_ml_serve_models_init_py["src/zephyr/ml_serve/models/__init__.py prototype"]
-        src_zephyr_ml_serve_services_init_py["src/zephyr/ml_serve/services/__init__.py prototype"]
+        src_zephyr_ml_serve_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ml_serve_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ml_serve_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ml_serve_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ml_serve_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ml_serve_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ml_serve_services_init_py["(原型态 / prototype) __init__.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -79,15 +81,15 @@ graph TD
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (7 modules)               │
+│       L2 领域层 / Domain Layer（共 7 个模块 / 7 modules）        │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/ml_serve/__init__.py  [prototype]                   │
-│   src/zephyr/ml_serve/_extensions/__init__.py  [prototype]       │
-│   src/zephyr/ml_serve/api/__init__.py  [prototype]               │
-│   src/zephyr/ml_serve/core/__init__.py  [prototype]              │
-│   src/zephyr/ml_serve/infrastructure/__init__.py  [prototype]    │
-│   src/zephyr/ml_serve/models/__init__.py  [prototype]            │
-│   src/zephyr/ml_serve/services/__init__.py  [prototype]          │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -121,4 +123,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

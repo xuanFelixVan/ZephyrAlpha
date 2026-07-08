@@ -1,19 +1,21 @@
 ---
 doc_type: architecture_view
-title: D_SIGQC signal_quality架构文档
+title: D_SIGQC 信号质量控制架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 48_d_sigqc / signal_quality / Signal Quality Control
+# 48_d_sigqc / signal_quality / 信号质量控制 / Signal Quality Control
 
-> **文档作用 / Purpose**: 展示 signal_quality（D_SIGQC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 信号质量控制与评估
+
+> **文档作用 / Purpose**: 展示 信号质量控制（D_SIGQC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:37
+> 最后更新: 2026-07-09 01:10:32
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +24,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 48 | Number | 48 |
 | 域ID | D_SIGQC | Domain ID | D_SIGQC |
-| 域名称 | signal_quality | Domain Name | Signal Quality Control |
+| 域名称 | 信号质量控制 | Domain Name | Signal Quality Control |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 8 | Module Count | 8 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
@@ -46,20 +48,20 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_SIGQC["D_SIGQC signal_quality"]
-        src_zephyr_signal_quality_init_py["src/zephyr/signal_quality/__init__.py prototype"]
-        src_zephyr_signal_quality_extensions_init_py["src/zephyr/signal_quality/_extensions/__init__.py prototype"]
-        src_zephyr_signal_quality_api_init_py["src/zephyr/signal_quality/api/__init__.py prototype"]
-        src_zephyr_signal_quality_core_init_py["src/zephyr/signal_quality/core/__init__.py prototype"]
-        src_zephyr_signal_quality_degradation_monitor_base_py["src/zephyr/signal_quality/degradation_monitor_b... prototype"]
-        src_zephyr_signal_quality_infrastructure_init_py["src/zephyr/signal_quality/infrastructure/__init... prototype"]
-        src_zephyr_signal_quality_models_init_py["src/zephyr/signal_quality/models/__init__.py prototype"]
-        src_zephyr_signal_quality_services_init_py["src/zephyr/signal_quality/services/__init__.py prototype"]
+    subgraph D_SIGQC["D_SIGQC 信号质量控制"]
+        src_zephyr_signal_quality_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_quality_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_quality_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_quality_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_quality_degradation_monitor_base_py["(原型态 / prototype) degradation_monitor_base.py"]
+        src_zephyr_signal_quality_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_quality_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_quality_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    src_zephyr_signal_quality_init_py -.->|import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
-    D_TRADING["D_TRADING prototype"]
-    src_zephyr_signal_quality_degradation_monitor_base_py -.->|import_depends| D_TRADING
-    src_zephyr_signal_quality_degradation_monitor_base_py -.->|import_depends| D_TRADING
+    src_zephyr_signal_quality_init_py -.->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
+    D_TRADING["[原型态 / prototype] D_TRADING"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -74,7 +76,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_TRADING | 2 | import_depends |
+| D_TRADING | 2 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -82,21 +84,21 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 signal_quality（D_SIGQC）的模块分布。共 8 个模块 / 8 modules。
+> 按 architecture_layer 分层显示 信号质量控制（D_SIGQC）的模块分布。共 8 个模块 / 8 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (8 modules)               │
+│       L2 领域层 / Domain Layer（共 8 个模块 / 8 modules）        │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/signal_quality/__init__.py  [prototype]             │
-│   src/zephyr/signal_quality/_extensions/__init__.py  [prototype] │
-│   src/zephyr/signal_quality/api/__init__.py  [prototype]         │
-│   src/zephyr/signal_quality/core/__init__.py  [prototype]        │
-│   src/zephyr/signal_quality/degradation_monitor_base.py  [pro... │
-│   src/zephyr/signal_quality/infrastructure/__init__.py  [prot... │
-│   src/zephyr/signal_quality/models/__init__.py  [prototype]      │
-│   src/zephyr/signal_quality/services/__init__.py  [prototype]    │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   degradation_monitor_base.py [原型态 / prototype]               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -132,7 +134,7 @@ graph TD
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (1 条 / edges)                  │
+│           [导入依赖 / import_depends]（1 条 / edges）            │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → degradation_monitor_base.py                      │
 └──────────────────────────────────────────────────────────────────┘
@@ -145,4 +147,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

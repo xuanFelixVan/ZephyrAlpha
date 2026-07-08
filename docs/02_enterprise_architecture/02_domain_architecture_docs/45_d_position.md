@@ -3,17 +3,19 @@ doc_type: architecture_view
 title: D_POSITION 仓位管理架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 45_d_position / 仓位管理 / Position Management
+# 45_d_position / 仓位管理 / 仓位管理 / Position Management
+
+> **功能简介 / Overview**: 仓位管理与持仓核算
 
 > **文档作用 / Purpose**: 展示 仓位管理（D_POSITION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -47,19 +49,19 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_POSITION["D_POSITION 仓位管理"]
-        src_zephyr_position_init_py["src/zephyr/position/__init__.py prototype"]
-        src_zephyr_position_extensions_init_py["src/zephyr/position/_extensions/__init__.py prototype"]
-        src_zephyr_position_api_init_py["src/zephyr/position/api/__init__.py prototype"]
-        src_zephyr_position_core_init_py["src/zephyr/position/core/__init__.py prototype"]
-        src_zephyr_position_infrastructure_init_py["src/zephyr/position/infrastructure/__init__.py prototype"]
-        src_zephyr_position_models_init_py["src/zephyr/position/models/__init__.py prototype"]
-        src_zephyr_position_position_reconciler_py["src/zephyr/position/position_reconciler.py production"]
-        src_zephyr_position_services_init_py["src/zephyr/position/services/__init__.py prototype"]
+        src_zephyr_position_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_position_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_position_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_position_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_position_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_position_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_position_position_reconciler_py["(生产态 / production) position_reconciler.py"]
+        src_zephyr_position_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    src_zephyr_position_init_py -.->|config_depends| src_zephyr_position_position_reconciler_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_position_position_reconciler_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_position_position_reconciler_py
+    src_zephyr_position_init_py -.->|config_depends / config_depends| src_zephyr_position_position_reconciler_py
+    D_AUDITTEST["[原型态 / prototype] D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -79,7 +81,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 2 | test_depends |
+| D_AUDITTEST | 2 | 测试依赖 / test_depends |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -88,16 +90,16 @@ graph TD
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (8 modules)               │
+│       L2 领域层 / Domain Layer（共 8 个模块 / 8 modules）        │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/position/__init__.py  [prototype]                   │
-│   src/zephyr/position/_extensions/__init__.py  [prototype]       │
-│   src/zephyr/position/api/__init__.py  [prototype]               │
-│   src/zephyr/position/core/__init__.py  [prototype]              │
-│   src/zephyr/position/infrastructure/__init__.py  [prototype]    │
-│   src/zephyr/position/models/__init__.py  [prototype]            │
-│   src/zephyr/position/position_reconciler.py  [production]       │
-│   src/zephyr/position/services/__init__.py  [prototype]          │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   position_reconciler.py [生产态 / production]                   │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -133,7 +135,7 @@ graph TD
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [config_depends] (1 条 / edges)                  │
+│        [config_depends / config_depends]（1 条 / edges）         │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → position_reconciler.py                           │
 └──────────────────────────────────────────────────────────────────┘
@@ -146,4 +148,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

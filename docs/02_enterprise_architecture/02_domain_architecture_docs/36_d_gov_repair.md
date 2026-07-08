@@ -1,19 +1,21 @@
 ---
 doc_type: architecture_view
-title: D_GOV_REPAIR rollback架构文档
+title: D_GOV_REPAIR 治理修复架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 36_d_gov_repair / rollback / Governance Repair
+# 36_d_gov_repair / rollback / 治理修复 / Governance Repair
 
-> **文档作用 / Purpose**: 展示 rollback（D_GOV_REPAIR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 治理修复与自动纠正
+
+> **文档作用 / Purpose**: 展示 治理修复（D_GOV_REPAIR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:35
+> 最后更新: 2026-07-09 01:10:30
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +24,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 36 | Number | 36 |
 | 域ID | D_GOV_REPAIR | Domain ID | D_GOV_REPAIR |
-| 域名称 | rollback | Domain Name | Governance Repair |
+| 域名称 | 治理修复 | Domain Name | Governance Repair |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
@@ -46,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_REPAIR["D_GOV_REPAIR rollback"]
+    subgraph D_GOV_REPAIR["D_GOV_REPAIR 治理修复"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -66,7 +68,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 rollback（D_GOV_REPAIR）的模块分布。共 0 个模块 / 0 modules。
+> 按 architecture_layer 分层显示 治理修复（D_GOV_REPAIR）的模块分布。共 0 个模块 / 0 modules。
 
 （无模块 / No modules）
 
@@ -90,4 +92,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

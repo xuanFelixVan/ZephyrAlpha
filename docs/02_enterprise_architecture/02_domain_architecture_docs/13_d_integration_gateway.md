@@ -1,19 +1,21 @@
 ---
 doc_type: architecture_view
-title: D_INTEGRATION_GATEWAY mcp_servers架构文档
+title: D_INTEGRATION_GATEWAY 集成网关架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 13_d_integration_gateway / mcp_servers / Integration Gateway
+# 13_d_integration_gateway / mcp_servers / 集成网关 / Integration Gateway
 
-> **文档作用 / Purpose**: 展示 mcp_servers（D_INTEGRATION_GATEWAY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 外部集成网关与协议适配
+
+> **文档作用 / Purpose**: 展示 集成网关（D_INTEGRATION_GATEWAY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,11 +24,11 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 13 | Number | 13 |
 | 域ID | D_INTEGRATION_GATEWAY | Domain ID | D_INTEGRATION_GATEWAY |
-| 域名称 | mcp_servers | Domain Name | Integration Gateway |
+| 域名称 | 集成网关 | Domain Name | Integration Gateway |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 20 | Module Count | 20 |
 | 域内依赖 | 37 | Internal Dependencies | 37 |
-| 跨域入边 | 5 | Cross-domain Incoming | 5 |
+| 跨域入边 | 3 | Cross-domain Incoming | 3 |
 | 跨域出边 | 42 | Cross-domain Outgoing | 42 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 6 | Prototype Modules | 6 |
@@ -46,97 +48,96 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY mcp_servers"]
-        src_zephyr_integration_mcp_init_py["src/zephyr/integration/mcp/__init__.py prototype"]
-        src_zephyr_integration_mcp_base_server_py["src/zephyr/integration/mcp/_base_server.py production"]
-        src_zephyr_integration_mcp_audit_logger_py["src/zephyr/integration/mcp/audit_logger.py production"]
-        src_zephyr_integration_mcp_blueprint_search_server_py["src/zephyr/integration/mcp/blueprint_search_ser... production"]
-        src_zephyr_integration_mcp_doc_guard_server_py["src/zephyr/integration/mcp/doc_guard_server.py production"]
-        src_zephyr_integration_mcp_error_codes_py["src/zephyr/integration/mcp/error_codes.py production"]
-        src_zephyr_integration_mcp_gate_engine_server_py["src/zephyr/integration/mcp/gate_engine_server.py production"]
-        src_zephyr_integration_mcp_gateway_server_py["src/zephyr/integration/mcp/gateway_server.py production"]
-        src_zephyr_integration_mcp_governance_server_py["src/zephyr/integration/mcp/governance_server.py production"]
-        src_zephyr_integration_mcp_handoff_auto_loader_py["src/zephyr/integration/mcp/handoff_auto_loader.py prototype"]
-        src_zephyr_integration_mcp_knowledge_base_server_py["src/zephyr/integration/mcp/knowledge_base_serve... production"]
-        src_zephyr_integration_mcp_prompt_provider_py["src/zephyr/integration/mcp/prompt_provider.py prototype"]
-        src_zephyr_integration_mcp_rate_limiter_py["src/zephyr/integration/mcp/rate_limiter.py production"]
-        src_zephyr_integration_mcp_resource_provider_py["src/zephyr/integration/mcp/resource_provider.py prototype"]
-        src_zephyr_integration_mcp_sandbox_server_py["src/zephyr/integration/mcp/sandbox_server.py prototype"]
-        src_zephyr_integration_mcp_sentinel_server_py["src/zephyr/integration/mcp/sentinel_server.py production"]
-        src_zephyr_integration_mcp_task_manager_server_py["src/zephyr/integration/mcp/task_manager_server.py production"]
-        src_zephyr_integration_mcp_telemetry_server_py["src/zephyr/integration/mcp/telemetry_server.py production"]
-        src_zephyr_integration_mcp_tool_contracts_yaml["src/zephyr/integration/mcp/tool_contracts.yaml production"]
-        src_zephyr_integration_mcp_vector_memory_server_py["src/zephyr/integration/mcp/vector_memory_server.py prototype"]
+    subgraph D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY 集成网关"]
+        src_zephyr_integration_mcp_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_integration_mcp_base_server_py["(生产态 / production) _base_server.py"]
+        src_zephyr_integration_mcp_audit_logger_py["(生产态 / production) audit_logger.py"]
+        src_zephyr_integration_mcp_blueprint_search_server_py["(生产态 / production) blueprint_search_server.py"]
+        src_zephyr_integration_mcp_doc_guard_server_py["(生产态 / production) doc_guard_server.py"]
+        src_zephyr_integration_mcp_error_codes_py["(生产态 / production) error_codes.py"]
+        src_zephyr_integration_mcp_gate_engine_server_py["(生产态 / production) gate_engine_server.py"]
+        src_zephyr_integration_mcp_gateway_server_py["(生产态 / production) gateway_server.py"]
+        src_zephyr_integration_mcp_governance_server_py["(生产态 / production) governance_server.py"]
+        src_zephyr_integration_mcp_handoff_auto_loader_py["(原型态 / prototype) handoff_auto_loader.py"]
+        src_zephyr_integration_mcp_knowledge_base_server_py["(生产态 / production) knowledge_base_server.py"]
+        src_zephyr_integration_mcp_prompt_provider_py["(原型态 / prototype) prompt_provider.py"]
+        src_zephyr_integration_mcp_rate_limiter_py["(生产态 / production) rate_limiter.py"]
+        src_zephyr_integration_mcp_resource_provider_py["(原型态 / prototype) resource_provider.py"]
+        src_zephyr_integration_mcp_sandbox_server_py["(原型态 / prototype) sandbox_server.py"]
+        src_zephyr_integration_mcp_sentinel_server_py["(生产态 / production) sentinel_server.py"]
+        src_zephyr_integration_mcp_task_manager_server_py["(生产态 / production) task_manager_server.py"]
+        src_zephyr_integration_mcp_telemetry_server_py["(生产态 / production) telemetry_server.py"]
+        src_zephyr_integration_mcp_tool_contracts_yaml["(生产态 / production) tool_contracts.yaml"]
+        src_zephyr_integration_mcp_vector_memory_server_py["(原型态 / prototype) vector_memory_server.py"]
     end
-    src_zephyr_integration_mcp_blueprint_search_server_py -->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_audit_logger_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_error_codes_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_blueprint_search_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_doc_guard_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_gate_engine_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_governance_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_knowledge_base_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_rate_limiter_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_sentinel_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_task_manager_server_py
-    src_zephyr_integration_mcp_gateway_server_py -.->|import_depends| src_zephyr_integration_mcp_vector_memory_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_telemetry_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_sandbox_server_py -.->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_sentinel_server_py -->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_vector_memory_server_py -.->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_blueprint_search_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_doc_guard_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_gate_engine_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_handoff_auto_loader_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_governance_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_knowledge_base_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_sandbox_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_prompt_provider_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_sentinel_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_resource_provider_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_task_manager_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_vector_memory_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_telemetry_server_py
-    src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_base_server_py -->|import_depends| src_zephyr_integration_mcp_error_codes_py
-    src_zephyr_integration_mcp_tool_contracts_yaml -.->|config_depends| src_zephyr_integration_mcp_init_py
-    D_SHARED["D_SHARED production"]
-    src_zephyr_integration_mcp_audit_logger_py -->|import_depends| D_SHARED
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_integration_mcp_audit_logger_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_integration_mcp_blueprint_search_server_py -->|import_depends| D_SHARED
-    src_zephyr_integration_mcp_gateway_server_py -.->|import_depends| D_SHARED
-    D_SECURITY_LLM["D_SECURITY_LLM production"]
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| D_SECURITY_LLM
-    src_zephyr_integration_mcp_gateway_server_py -->|import_depends| D_SECURITY_LLM
-    src_zephyr_integration_mcp_doc_guard_server_py -.->|import_depends| D_SHARED
-    src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| D_SHARED
-    src_zephyr_integration_mcp_gate_engine_server_py -.->|import_depends| D_SHARED
-    src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| D_SHARED
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED
-    src_zephyr_integration_mcp_governance_server_py -.->|import_depends| D_SHARED
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_integration_mcp_governance_server_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOVERNANCE
-    D_GOVERNANCE -.->|import_depends| src_zephyr_integration_mcp_init_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_integration_mcp_task_manager_server_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_integration_mcp_gateway_server_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_integration_mcp_doc_guard_server_py
-    D_GOVERNANCE -.->|contract| src_zephyr_integration_mcp_doc_guard_server_py
+    src_zephyr_integration_mcp_doc_guard_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_doc_guard_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_audit_logger_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_blueprint_search_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_knowledge_base_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_gate_engine_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_governance_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_rate_limiter_py
+    src_zephyr_integration_mcp_gateway_server_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_vector_memory_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_sentinel_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_task_manager_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_telemetry_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_blueprint_search_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_knowledge_base_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_gate_engine_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_sandbox_server_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_vector_memory_server_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_sentinel_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_doc_guard_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_blueprint_search_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_prompt_provider_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_knowledge_base_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_handoff_auto_loader_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_gate_engine_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_governance_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_resource_provider_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_sandbox_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_vector_memory_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_sentinel_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_task_manager_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_telemetry_server_py
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_base_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
+    src_zephyr_integration_mcp_tool_contracts_yaml -.->|config_depends / config_depends| src_zephyr_integration_mcp_init_py
+    D_SHARED["[原型态 / prototype] D_SHARED"]
+    src_zephyr_integration_mcp_doc_guard_server_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_mcp_doc_guard_server_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_mcp_audit_logger_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE["[生产态 / production] D_GOVERNANCE"]
+    src_zephyr_integration_mcp_audit_logger_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_integration_mcp_gateway_server_py -.->|导入依赖 / import_depends| D_SHARED
+    D_SECURITY_LLM["[生产态 / production] D_SECURITY_LLM"]
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| D_SECURITY_LLM
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| D_SECURITY_LLM
+    src_zephyr_integration_mcp_blueprint_search_server_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_mcp_knowledge_base_server_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_mcp_knowledge_base_server_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_INTEGRATION["[生产态 / production] D_INTEGRATION"]
+    src_zephyr_integration_mcp_knowledge_base_server_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_gate_engine_server_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_mcp_gate_engine_server_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_mcp_governance_server_py -.->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_init_py
+    D_AUDITTEST["[原型态 / prototype] D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_mcp_task_manager_server_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_mcp_gateway_server_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_integration_mcp_base_server_py,src_zephyr_integration_mcp_audit_logger_py,src_zephyr_integration_mcp_blueprint_search_server_py,src_zephyr_integration_mcp_doc_guard_server_py,src_zephyr_integration_mcp_error_codes_py,src_zephyr_integration_mcp_gate_engine_server_py,src_zephyr_integration_mcp_gateway_server_py,src_zephyr_integration_mcp_governance_server_py,src_zephyr_integration_mcp_knowledge_base_server_py,src_zephyr_integration_mcp_rate_limiter_py,src_zephyr_integration_mcp_sentinel_server_py,src_zephyr_integration_mcp_task_manager_server_py,src_zephyr_integration_mcp_telemetry_server_py,src_zephyr_integration_mcp_tool_contracts_yaml production
     class src_zephyr_integration_mcp_init_py,src_zephyr_integration_mcp_handoff_auto_loader_py,src_zephyr_integration_mcp_prompt_provider_py,src_zephyr_integration_mcp_resource_provider_py,src_zephyr_integration_mcp_sandbox_server_py,src_zephyr_integration_mcp_vector_memory_server_py design
-    class D_SHARED,D_GOVERNANCE,D_SECURITY_LLM external_prod
-    class D_AUDITTEST external_design
+    class D_GOVERNANCE,D_SECURITY_LLM,D_INTEGRATION external_prod
+    class D_SHARED,D_AUDITTEST external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -145,51 +146,51 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 19 | import_depends |
-| D_GOVERNANCE | 13 | import_depends |
-| D_INTEGRATION | 4 | import_depends |
-| D_SECURITY_LLM | 2 | import_depends |
-| D_INFRA_RECOVERY | 1 | import_depends |
-| D_INFRA_TELEMETRY | 1 | import_depends |
-| D_SECURITY | 1 | import_depends |
-| D_GOV_ENFORCEMENT | 1 | import_depends |
+| D_SHARED | 19 | 导入依赖 / import_depends |
+| D_GOVERNANCE | 13 | 导入依赖 / import_depends |
+| D_INTEGRATION | 4 | 导入依赖 / import_depends |
+| D_SECURITY_LLM | 2 | 导入依赖 / import_depends |
+| D_INFRA_RECOVERY | 1 | 导入依赖 / import_depends |
+| D_INFRA_TELEMETRY | 1 | 导入依赖 / import_depends |
+| D_SECURITY | 1 | 导入依赖 / import_depends |
+| D_GOV_ENFORCEMENT | 1 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 3 | contract,import_depends,runtime |
-| D_AUDITTEST | 2 | test_depends |
+| D_AUDITTEST | 2 | 测试依赖 / test_depends |
+| D_GOVERNANCE | 1 | 导入依赖 / import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 mcp_servers（D_INTEGRATION_GATEWAY）的模块分布。共 20 个模块 / 20 modules。
+> 按 architecture_layer 分层显示 集成网关（D_INTEGRATION_GATEWAY）的模块分布。共 20 个模块 / 20 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (20 modules)             │
+│    L1 基础层 / Foundation Layer（共 20 个模块 / 20 modules）     │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/integration/mcp/__init__.py  [prototype]            │
-│   src/zephyr/integration/mcp/_base_server.py  [production]       │
-│   src/zephyr/integration/mcp/audit_logger.py  [production]       │
-│   src/zephyr/integration/mcp/blueprint_search_server.py  [pro... │
-│   src/zephyr/integration/mcp/doc_guard_server.py  [production]   │
-│   src/zephyr/integration/mcp/error_codes.py  [production]        │
-│   src/zephyr/integration/mcp/gate_engine_server.py  [production] │
-│   src/zephyr/integration/mcp/gateway_server.py  [production]     │
-│   src/zephyr/integration/mcp/governance_server.py  [production]  │
-│   src/zephyr/integration/mcp/handoff_auto_loader.py  [prototype] │
-│   src/zephyr/integration/mcp/knowledge_base_server.py  [produ... │
-│   src/zephyr/integration/mcp/prompt_provider.py  [prototype]     │
-│   src/zephyr/integration/mcp/rate_limiter.py  [production]       │
-│   src/zephyr/integration/mcp/resource_provider.py  [prototype]   │
-│   src/zephyr/integration/mcp/sandbox_server.py  [prototype]      │
-│   src/zephyr/integration/mcp/sentinel_server.py  [production]    │
-│   src/zephyr/integration/mcp/task_manager_server.py  [product... │
-│   src/zephyr/integration/mcp/telemetry_server.py  [production]   │
-│   src/zephyr/integration/mcp/tool_contracts.yaml  [production]   │
-│   src/zephyr/integration/mcp/vector_memory_server.py  [protot... │
+│   __init__.py [原型态 / prototype]                               │
+│   _base_server.py [生产态 / production]                          │
+│   audit_logger.py [生产态 / production]                          │
+│   blueprint_search_server.py [生产态 / production]               │
+│   doc_guard_server.py [生产态 / production]                      │
+│   error_codes.py [生产态 / production]                           │
+│   gate_engine_server.py [生产态 / production]                    │
+│   gateway_server.py [生产态 / production]                        │
+│   governance_server.py [生产态 / production]                     │
+│   handoff_auto_loader.py [原型态 / prototype]                    │
+│   knowledge_base_server.py [生产态 / production]                 │
+│   prompt_provider.py [原型态 / prototype]                        │
+│   rate_limiter.py [生产态 / production]                          │
+│   resource_provider.py [原型态 / prototype]                      │
+│   sandbox_server.py [原型态 / prototype]                         │
+│   sentinel_server.py [生产态 / production]                       │
+│   task_manager_server.py [生产态 / production]                   │
+│   telemetry_server.py [生产态 / production]                      │
+│   tool_contracts.yaml [生产态 / production]                      │
+│   vector_memory_server.py [原型态 / prototype]                   │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -238,48 +239,48 @@ graph TD
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (36 条 / edges)                 │
+│           [导入依赖 / import_depends]（36 条 / edges）           │
 ├──────────────────────────────────────────────────────────────────┤
-│   blueprint_search_server.py → _base_server.py                   │
+│   doc_guard_server.py → _base_server.py                          │
+│   gateway_server.py → doc_guard_server.py                        │
 │   gateway_server.py → audit_logger.py                            │
 │   gateway_server.py → error_codes.py                             │
 │   gateway_server.py → blueprint_search_server.py                 │
-│   gateway_server.py → doc_guard_server.py                        │
+│   gateway_server.py → knowledge_base_server.py                   │
 │   gateway_server.py → gate_engine_server.py                      │
 │   gateway_server.py → governance_server.py                       │
-│   gateway_server.py → knowledge_base_server.py                   │
 │   gateway_server.py → rate_limiter.py                            │
+│   gateway_server.py → vector_memory_server.py                    │
 │   gateway_server.py → sentinel_server.py                         │
 │   gateway_server.py → task_manager_server.py                     │
-│   gateway_server.py → vector_memory_server.py                    │
 │   gateway_server.py → telemetry_server.py                        │
 │   gateway_server.py → _base_server.py                            │
-│   doc_guard_server.py → _base_server.py                          │
+│   blueprint_search_server.py → _base_server.py                   │
+│   knowledge_base_server.py → _base_server.py                     │
 │   gate_engine_server.py → _base_server.py                        │
 │   governance_server.py → _base_server.py                         │
-│   knowledge_base_server.py → _base_server.py                     │
 │   sandbox_server.py → _base_server.py                            │
-│   sentinel_server.py → _base_server.py                           │
 │   vector_memory_server.py → _base_server.py                      │
-│   __init__.py → blueprint_search_server.py                       │
+│   sentinel_server.py → _base_server.py                           │
 │   __init__.py → doc_guard_server.py                              │
-│   __init__.py → gate_engine_server.py                            │
-│   __init__.py → handoff_auto_loader.py                           │
-│   __init__.py → governance_server.py                             │
-│   __init__.py → knowledge_base_server.py                         │
-│   __init__.py → sandbox_server.py                                │
+│   __init__.py → blueprint_search_server.py                       │
 │   __init__.py → prompt_provider.py                               │
-│   __init__.py → sentinel_server.py                               │
+│   __init__.py → knowledge_base_server.py                         │
+│   __init__.py → handoff_auto_loader.py                           │
+│   __init__.py → gate_engine_server.py                            │
+│   __init__.py → governance_server.py                             │
 │   __init__.py → resource_provider.py                             │
-│   __init__.py → task_manager_server.py                           │
+│   __init__.py → sandbox_server.py                                │
 │   __init__.py → vector_memory_server.py                          │
+│   __init__.py → sentinel_server.py                               │
+│   __init__.py → task_manager_server.py                           │
 │   __init__.py → telemetry_server.py                              │
 │   __init__.py → _base_server.py                                  │
 │   _base_server.py → error_codes.py                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [config_depends] (1 条 / edges)                  │
+│        [config_depends / config_depends]（1 条 / edges）         │
 ├──────────────────────────────────────────────────────────────────┤
 │   tool_contracts.yaml → __init__.py                              │
 └──────────────────────────────────────────────────────────────────┘
@@ -292,4 +293,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

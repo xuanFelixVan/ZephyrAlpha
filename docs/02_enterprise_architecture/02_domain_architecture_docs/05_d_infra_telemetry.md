@@ -1,19 +1,21 @@
 ---
 doc_type: architecture_view
-title: D_INFRA_TELEMETRY observability_profiling架构文档
+title: D_INFRA_TELEMETRY 可观测性架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 05_d_infra_telemetry / observability_profiling / Observability
+# 05_d_infra_telemetry / observability_profiling / 可观测性 / Observability
 
-> **文档作用 / Purpose**: 展示 observability_profiling（D_INFRA_TELEMETRY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 可观测性：日志、指标、追踪的采集与展示
+
+> **文档作用 / Purpose**: 展示 可观测性（D_INFRA_TELEMETRY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,12 +24,12 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 05 | Number | 05 |
 | 域ID | D_INFRA_TELEMETRY | Domain ID | D_INFRA_TELEMETRY |
-| 域名称 | observability_profiling | Domain Name | Observability |
+| 域名称 | 可观测性 | Domain Name | Observability |
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 25 | Module Count | 25 |
 | 域内依赖 | 36 | Internal Dependencies | 36 |
 | 跨域入边 | 9 | Cross-domain Incoming | 9 |
-| 跨域出边 | 10 | Cross-domain Outgoing | 10 |
+| 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 12 | Prototype Modules | 12 |
 | 生产态模块 | 13 | Production Modules | 13 |
@@ -46,103 +48,104 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_TELEMETRY["D_INFRA_TELEMETRY observability_profiling"]
-        src_zephyr_infrastructure_system_telemetry_init_py["src/zephyr/infrastructure/system_telemetry/__in... production"]
-        src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["src/zephyr/infrastructure/system_telemetry/_bud... prototype"]
-        src_zephyr_infrastructure_system_telemetry_trace_bridge_py["src/zephyr/infrastructure/system_telemetry/_tra... prototype"]
-        src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py["src/zephyr/infrastructure/system_telemetry/ai_b... production"]
-        src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py["src/zephyr/infrastructure/system_telemetry/ai_b... prototype"]
-        src_zephyr_infrastructure_system_telemetry_alerts_init_py["src/zephyr/infrastructure/system_telemetry/aler... production"]
-        src_zephyr_infrastructure_system_telemetry_archive_init_py["src/zephyr/infrastructure/system_telemetry/arch... production"]
-        src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py["src/zephyr/infrastructure/system_telemetry/arch... prototype"]
-        src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py["src/zephyr/infrastructure/system_telemetry/auto... production"]
-        src_zephyr_infrastructure_system_telemetry_contract_metrics_py["src/zephyr/infrastructure/system_telemetry/cont... production"]
-        src_zephyr_infrastructure_system_telemetry_facade_py["src/zephyr/infrastructure/system_telemetry/faca... prototype"]
-        src_zephyr_infrastructure_system_telemetry_health_init_py["src/zephyr/infrastructure/system_telemetry/heal... production"]
-        src_zephyr_infrastructure_system_telemetry_health_aggregator_py["src/zephyr/infrastructure/system_telemetry/heal... production"]
-        src_zephyr_infrastructure_system_telemetry_health_probes_py["src/zephyr/infrastructure/system_telemetry/heal... production"]
-        src_zephyr_infrastructure_system_telemetry_logs_init_py["src/zephyr/infrastructure/system_telemetry/logs... production"]
-        src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py["src/zephyr/infrastructure/system_telemetry/logs... prototype"]
-        src_zephyr_infrastructure_system_telemetry_metrics_init_py["src/zephyr/infrastructure/system_telemetry/metr... production"]
-        src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py["src/zephyr/infrastructure/system_telemetry/metr... prototype"]
-        src_zephyr_infrastructure_system_telemetry_metrics_bridge_py["src/zephyr/infrastructure/system_telemetry/metr... prototype"]
-        src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py["src/zephyr/infrastructure/system_telemetry/otel... production"]
-        src_zephyr_infrastructure_system_telemetry_profiles_init_py["src/zephyr/infrastructure/system_telemetry/prof... prototype"]
-        src_zephyr_infrastructure_system_telemetry_schema_init_py["src/zephyr/infrastructure/system_telemetry/sche... prototype"]
-        src_zephyr_infrastructure_system_telemetry_traces_init_py["src/zephyr/infrastructure/system_telemetry/trac... production"]
-        src_zephyr_infrastructure_system_telemetry_traces_span_stub_py["src/zephyr/infrastructure/system_telemetry/trac... prototype"]
-        src_zephyr_infrastructure_system_telemetry_watchdog_py["src/zephyr/infrastructure/system_telemetry/watc... prototype"]
+    subgraph D_INFRA_TELEMETRY["D_INFRA_TELEMETRY 可观测性"]
+        src_zephyr_infrastructure_system_telemetry_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["(原型态 / prototype) _budget_telemetry_bridge.py"]
+        src_zephyr_infrastructure_system_telemetry_trace_bridge_py["(原型态 / prototype) _trace_bridge.py"]
+        src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py["(原型态 / prototype) event_sink.py"]
+        src_zephyr_infrastructure_system_telemetry_alerts_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_archive_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py["(原型态 / prototype) cold_stub.py"]
+        src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py["(生产态 / production) auto_bootstrap.py"]
+        src_zephyr_infrastructure_system_telemetry_contract_metrics_py["(生产态 / production) contract_metrics.py"]
+        src_zephyr_infrastructure_system_telemetry_facade_py["(原型态 / prototype) facade.py"]
+        src_zephyr_infrastructure_system_telemetry_health_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_health_aggregator_py["(生产态 / production) health_aggregator.py"]
+        src_zephyr_infrastructure_system_telemetry_health_probes_py["(生产态 / production) health_probes.py"]
+        src_zephyr_infrastructure_system_telemetry_logs_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py["(原型态 / prototype) structured_sink.py"]
+        src_zephyr_infrastructure_system_telemetry_metrics_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py["(原型态 / prototype) blueprint_metrics.py"]
+        src_zephyr_infrastructure_system_telemetry_metrics_bridge_py["(原型态 / prototype) metrics_bridge.py"]
+        src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py["(生产态 / production) otel_instrumentation.py"]
+        src_zephyr_infrastructure_system_telemetry_profiles_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_schema_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_traces_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_infrastructure_system_telemetry_traces_span_stub_py["(原型态 / prototype) span_stub.py"]
+        src_zephyr_infrastructure_system_telemetry_watchdog_py["(原型态 / prototype) watchdog.py"]
     end
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_contract_metrics_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_metrics_init_py
-    src_zephyr_infrastructure_system_telemetry_health_aggregator_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_health_aggregator_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_watchdog_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_archive_init_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_schema_init_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_profiles_init_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_traces_span_stub_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_contract_metrics_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_watchdog_py
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_archive_init_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_schema_init_py
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_profiles_init_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_traces_init_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_logs_init_py
-    src_zephyr_infrastructure_system_telemetry_archive_init_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py
-    src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py
-    src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py
-    src_zephyr_infrastructure_system_telemetry_traces_span_stub_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
-    src_zephyr_infrastructure_system_telemetry_traces_init_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_traces_span_stub_py
-    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py
-    src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py -.->|import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
-    D_SHARED["D_SHARED prototype"]
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_infrastructure_system_telemetry_contract_metrics_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_infrastructure_system_telemetry_health_probes_py -->|import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_facade_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_watchdog_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_alerts_init_py -->|import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_schema_init_py -.->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME prototype"]
-    D_INFRA_RUNTIME -.->|import_depends| src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py
-    D_INFRA_RUNTIME -.->|import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
-    D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY production"]
-    D_INTEGRATION_GATEWAY -.->|import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
-    D_TRADING["D_TRADING production"]
-    D_TRADING -->|import_depends| src_zephyr_infrastructure_system_telemetry_health_aggregator_py
-    D_TRADING -.->|import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
-    D_TRADING -.->|import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_aggregator_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_watchdog_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_archive_init_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_profiles_init_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_schema_init_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_traces_span_stub_py
+    src_zephyr_infrastructure_system_telemetry_health_aggregator_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_contract_metrics_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_contract_metrics_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_watchdog_py
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_archive_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_logs_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_profiles_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_schema_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_traces_init_py
+    src_zephyr_infrastructure_system_telemetry_archive_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py
+    src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py
+    src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
+    src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py
+    src_zephyr_infrastructure_system_telemetry_traces_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_traces_span_stub_py
+    src_zephyr_infrastructure_system_telemetry_traces_span_stub_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
+    D_SHARED["[生产态 / production] D_SHARED"]
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_system_telemetry_facade_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_system_telemetry_health_aggregator_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE["[生产态 / production] D_GOVERNANCE"]
+    src_zephyr_infrastructure_system_telemetry_contract_metrics_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_infrastructure_system_telemetry_health_probes_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_system_telemetry_watchdog_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_system_telemetry_alerts_init_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_system_telemetry_schema_init_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["[原型态 / prototype] D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
+    D_INTEGRATION_GATEWAY["[生产态 / production] D_INTEGRATION_GATEWAY"]
+    D_INTEGRATION_GATEWAY -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
+    D_TRADING["[生产态 / production] D_TRADING"]
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_aggregator_py
+    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
+    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
+    D_GOV_SCRIPTS["[原型态 / prototype] D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
+    D_AUDITTEST["[原型态 / prototype] D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_system_telemetry_init_py,src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py,src_zephyr_infrastructure_system_telemetry_alerts_init_py,src_zephyr_infrastructure_system_telemetry_archive_init_py,src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py,src_zephyr_infrastructure_system_telemetry_contract_metrics_py,src_zephyr_infrastructure_system_telemetry_health_init_py,src_zephyr_infrastructure_system_telemetry_health_aggregator_py,src_zephyr_infrastructure_system_telemetry_health_probes_py,src_zephyr_infrastructure_system_telemetry_logs_init_py,src_zephyr_infrastructure_system_telemetry_metrics_init_py,src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py,src_zephyr_infrastructure_system_telemetry_traces_init_py production
     class src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py,src_zephyr_infrastructure_system_telemetry_trace_bridge_py,src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py,src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py,src_zephyr_infrastructure_system_telemetry_facade_py,src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py,src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py,src_zephyr_infrastructure_system_telemetry_metrics_bridge_py,src_zephyr_infrastructure_system_telemetry_profiles_init_py,src_zephyr_infrastructure_system_telemetry_schema_init_py,src_zephyr_infrastructure_system_telemetry_traces_span_stub_py,src_zephyr_infrastructure_system_telemetry_watchdog_py design
-    class D_GOVERNANCE,D_INTEGRATION_GATEWAY,D_TRADING external_prod
-    class D_SHARED,D_INFRA_RUNTIME,D_GOV_SCRIPTS,D_AUDITTEST external_design
+    class D_SHARED,D_GOVERNANCE,D_INTEGRATION_GATEWAY,D_TRADING external_prod
+    class D_INFRA_RUNTIME,D_GOV_SCRIPTS,D_AUDITTEST external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -151,46 +154,46 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 9 | import_depends |
-| D_GOVERNANCE | 1 | import_depends |
+| D_SHARED | 10 | 导入依赖 / import_depends |
+| D_GOVERNANCE | 1 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_TRADING | 3 | import_depends |
-| D_AUDITTEST | 2 | test_depends |
-| D_INFRA_RUNTIME | 2 | import_depends |
-| D_GOV_SCRIPTS | 1 | import_depends |
-| D_INTEGRATION_GATEWAY | 1 | import_depends |
+| D_TRADING | 3 | 导入依赖 / import_depends |
+| D_AUDITTEST | 2 | 测试依赖 / test_depends |
+| D_INFRA_RUNTIME | 2 | 导入依赖 / import_depends |
+| D_GOV_SCRIPTS | 1 | 导入依赖 / import_depends |
+| D_INTEGRATION_GATEWAY | 1 | 导入依赖 / import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 observability_profiling（D_INFRA_TELEMETRY）的模块分布。共 25 个模块 / 25 modules。
+> 按 architecture_layer 分层显示 可观测性（D_INFRA_TELEMETRY）的模块分布。共 25 个模块 / 25 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│        L0 基础设施层 / Infrastructure Layer (25 modules)         │
+│ L0 基础设施层 / Infrastructure Layer（共 25 个模块 / 25 modul... │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/infrastructure/system_telemetry/__init__.py  [pr... │
-│   src/zephyr/infrastructure/system_telemetry/_budget_telemetr... │
-│   src/zephyr/infrastructure/system_telemetry/_trace_bridge.py... │
-│   src/zephyr/infrastructure/system_telemetry/ai_behavior/__in... │
-│   src/zephyr/infrastructure/system_telemetry/ai_behavior/even... │
-│   src/zephyr/infrastructure/system_telemetry/alerts/__init__.... │
-│   src/zephyr/infrastructure/system_telemetry/archive/__init__... │
-│   src/zephyr/infrastructure/system_telemetry/archive/cold_stu... │
-│   src/zephyr/infrastructure/system_telemetry/auto_bootstrap.p... │
-│   src/zephyr/infrastructure/system_telemetry/contract_metrics... │
-│   src/zephyr/infrastructure/system_telemetry/facade.py  [prot... │
-│   src/zephyr/infrastructure/system_telemetry/health/__init__.... │
-│   src/zephyr/infrastructure/system_telemetry/health_aggregato... │
-│   src/zephyr/infrastructure/system_telemetry/health_probes.py... │
-│   src/zephyr/infrastructure/system_telemetry/logs/__init__.py... │
-│   src/zephyr/infrastructure/system_telemetry/logs/structured_... │
-│   src/zephyr/infrastructure/system_telemetry/metrics/__init__... │
-│   src/zephyr/infrastructure/system_telemetry/metrics/blueprin... │
+│   __init__.py [生产态 / production]                              │
+│   _budget_telemetry_bridge.py [原型态 / prototype]               │
+│   _trace_bridge.py [原型态 / prototype]                          │
+│   __init__.py [生产态 / production]                              │
+│   event_sink.py [原型态 / prototype]                             │
+│   __init__.py [生产态 / production]                              │
+│   __init__.py [生产态 / production]                              │
+│   cold_stub.py [原型态 / prototype]                              │
+│   auto_bootstrap.py [生产态 / production]                        │
+│   contract_metrics.py [生产态 / production]                      │
+│   facade.py [原型态 / prototype]                                 │
+│   __init__.py [生产态 / production]                              │
+│   health_aggregator.py [生产态 / production]                     │
+│   health_probes.py [生产态 / production]                         │
+│   __init__.py [生产态 / production]                              │
+│   structured_sink.py [原型态 / prototype]                        │
+│   __init__.py [生产态 / production]                              │
+│   blueprint_metrics.py [原型态 / prototype]                      │
 │   ...还有 7 个模块 / 7 more modules                              │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -222,7 +225,7 @@ graph TD
 | 16 | src/zephyr/infrastructure/system_telemetry/logs/structure... | src/zephyr/infrastructure/system_tele... | logs/structured_sink — 结构化日志管道（D_SYSTEM_TELEMETRY）。 | prototype | generated |
 | 17 | src/zephyr/infrastructure/system_telemetry/metrics/__init... | src/zephyr/infrastructure/system_tele... | 遥测 · metrics — SLI/SLO 与业务指标流 | production | generated |
 | 18 | src/zephyr/infrastructure/system_telemetry/metrics/bluepr... | src/zephyr/infrastructure/system_tele... | blueprint_metrics — 蓝图使用追踪 instrumentation | prototype | generated |
-| 19 | src/zephyr/infrastructure/system_telemetry/metrics_bridge.py | src/zephyr/infrastructure/system_tele... | TELE→FLE 指标桥接 — emit_metrics() 生产者 | prototype | generated |
+| 19 | src/zephyr/infrastructure/system_telemetry/metrics_bridge.py | src/zephyr/infrastructure/system_tele... | TELE->FLE 指标桥接 — emit_metrics() 生产者 | prototype | generated |
 | 20 | src/zephyr/infrastructure/system_telemetry/otel_instrumen... | src/zephyr/infrastructure/system_tele... | otel_instrumentation.py — 全链路 OTel (B12, DD86, TASK-015 beta v) | production | generated |
 | 21 | src/zephyr/infrastructure/system_telemetry/profiles/__ini... | src/zephyr/infrastructure/system_tele... | ProfileSubsystem — 系统资源画像（MOD-INF-015 §6 · profiles）. | prototype | generated |
 | 22 | src/zephyr/infrastructure/system_telemetry/schema/__init_... | src/zephyr/infrastructure/system_tele... | SchemaSubsystem — Schema 版本管理与兼容性校验（MOD-INF-015 §5.1 · schema）. | prototype | generated |
@@ -244,27 +247,27 @@ graph TD
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (36 条 / edges)                 │
+│           [导入依赖 / import_depends]（36 条 / edges）           │
 ├──────────────────────────────────────────────────────────────────┤
-│   auto_bootstrap.py → contract_metrics.py                        │
-│   auto_bootstrap.py → facade.py                                  │
-│   auto_bootstrap.py → _budget_telemetry_bridge.py                │
-│   auto_bootstrap.py → __init__.py                                │
-│   health_aggregator.py → health_probes.py                        │
 │   facade.py → health_aggregator.py                               │
 │   facade.py → watchdog.py                                        │
+│   facade.py → cold_stub.py                                       │
 │   facade.py → __init__.py                                        │
 │   facade.py → __init__.py                                        │
 │   facade.py → event_sink.py                                      │
 │   facade.py → __init__.py                                        │
-│   facade.py → cold_stub.py                                       │
 │   facade.py → __init__.py                                        │
 │   facade.py → __init__.py                                        │
 │   facade.py → span_stub.py                                       │
-│   __init__.py → auto_bootstrap.py                                │
+│   health_aggregator.py → health_probes.py                        │
+│   auto_bootstrap.py → facade.py                                  │
+│   auto_bootstrap.py → contract_metrics.py                        │
+│   auto_bootstrap.py → _budget_telemetry_bridge.py                │
+│   auto_bootstrap.py → __init__.py                                │
+│   __init__.py → facade.py                                        │
 │   __init__.py → contract_metrics.py                              │
 │   __init__.py → health_probes.py                                 │
-│   __init__.py → facade.py                                        │
+│   __init__.py → auto_bootstrap.py                                │
 │   __init__.py → watchdog.py                                      │
 │   __init__.py → metrics_bridge.py                                │
 │   __init__.py → __init__.py                                      │
@@ -276,12 +279,12 @@ graph TD
 │   __init__.py → __init__.py                                      │
 │   __init__.py → __init__.py                                      │
 │   __init__.py → cold_stub.py                                     │
-│   __init__.py → event_sink.py                                    │
 │   event_sink.py → structured_sink.py                             │
-│   span_stub.py → _trace_bridge.py                                │
-│   __init__.py → span_stub.py                                     │
-│   __init__.py → structured_sink.py                               │
 │   structured_sink.py → _trace_bridge.py                          │
+│   __init__.py → event_sink.py                                    │
+│   __init__.py → structured_sink.py                               │
+│   __init__.py → span_stub.py                                     │
+│   span_stub.py → _trace_bridge.py                                │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -292,4 +295,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

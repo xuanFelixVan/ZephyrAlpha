@@ -3,17 +3,19 @@ doc_type: architecture_view
 title: D_CROSS_ASSET 跨资产架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 24_d_cross_asset / 跨资产 / Cross Asset
+# 24_d_cross_asset / 跨资产 / 跨资产 / Cross Asset
+
+> **功能简介 / Overview**: 跨资产协同与统一视图
 
 > **文档作用 / Purpose**: 展示 跨资产（D_CROSS_ASSET）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:33
+> 最后更新: 2026-07-09 01:10:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -47,14 +49,14 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_CROSS_ASSET["D_CROSS_ASSET 跨资产"]
-        src_zephyr_cross_asset["跨资产域 design"]
-        src_zephyr_cross_asset_init_py["src/zephyr/cross_asset/__init__.py production"]
-        src_zephyr_cross_asset_extensions_init_py["src/zephyr/cross_asset/_extensions/__init__.py prototype"]
-        src_zephyr_cross_asset_api_init_py["src/zephyr/cross_asset/api/__init__.py prototype"]
-        src_zephyr_cross_asset_core_init_py["src/zephyr/cross_asset/core/__init__.py prototype"]
-        src_zephyr_cross_asset_infrastructure_init_py["src/zephyr/cross_asset/infrastructure/__init__.py prototype"]
-        src_zephyr_cross_asset_models_init_py["src/zephyr/cross_asset/models/__init__.py prototype"]
-        src_zephyr_cross_asset_services_init_py["src/zephyr/cross_asset/services/__init__.py prototype"]
+        src_zephyr_cross_asset["(设计态 / design) 跨资产域"]
+        src_zephyr_cross_asset_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_cross_asset_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_cross_asset_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_cross_asset_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_cross_asset_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_cross_asset_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_cross_asset_services_init_py["(原型态 / prototype) __init__.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -81,16 +83,16 @@ graph TD
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (8 modules)               │
+│       L2 领域层 / Domain Layer（共 8 个模块 / 8 modules）        │
 ├──────────────────────────────────────────────────────────────────┤
-│   跨资产域  [design]                                             │
-│   src/zephyr/cross_asset/__init__.py  [production]               │
-│   src/zephyr/cross_asset/_extensions/__init__.py  [prototype]    │
-│   src/zephyr/cross_asset/api/__init__.py  [prototype]            │
-│   src/zephyr/cross_asset/core/__init__.py  [prototype]           │
-│   src/zephyr/cross_asset/infrastructure/__init__.py  [prototype] │
-│   src/zephyr/cross_asset/models/__init__.py  [prototype]         │
-│   src/zephyr/cross_asset/services/__init__.py  [prototype]       │
+│   跨资产域 [设计态 / design]                                     │
+│   __init__.py [生产态 / production]                              │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -125,4 +127,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

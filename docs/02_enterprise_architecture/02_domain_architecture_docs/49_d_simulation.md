@@ -3,17 +3,19 @@ doc_type: architecture_view
 title: D_SIMULATION 仿真架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 49_d_simulation / 仿真 / Simulation
+# 49_d_simulation / 仿真 / 仿真 / Simulation
+
+> **功能简介 / Overview**: 仿真环境与情景模拟
 
 > **文档作用 / Purpose**: 展示 仿真（D_SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:37
+> 最后更新: 2026-07-09 01:10:32
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -47,27 +49,27 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_SIMULATION["D_SIMULATION 仿真"]
-        src_zephyr_simulation["仿真核心域 design"]
-        src_zephyr_simulation_init_py["src/zephyr/simulation/__init__.py prototype"]
-        src_zephyr_simulation_extensions_init_py["src/zephyr/simulation/_extensions/__init__.py prototype"]
-        src_zephyr_simulation_api_init_py["src/zephyr/simulation/api/__init__.py prototype"]
-        src_zephyr_simulation_core_init_py["src/zephyr/simulation/core/__init__.py prototype"]
-        src_zephyr_simulation_implementations_init_py["src/zephyr/simulation/implementations/__init__.py prototype"]
-        src_zephyr_simulation_implementations_default_experiment_pipeline_py["src/zephyr/simulation/implementations/default_e... production"]
-        src_zephyr_simulation_infrastructure_init_py["src/zephyr/simulation/infrastructure/__init__.py prototype"]
-        src_zephyr_simulation_models_init_py["src/zephyr/simulation/models/__init__.py prototype"]
-        src_zephyr_simulation_pipeline_base_py["src/zephyr/simulation/pipeline_base.py production"]
-        src_zephyr_simulation_services_init_py["src/zephyr/simulation/services/__init__.py prototype"]
+        src_zephyr_simulation["(设计态 / design) 仿真核心域"]
+        src_zephyr_simulation_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_simulation_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_simulation_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_simulation_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_simulation_implementations_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) default_experiment_pipeline.py"]
+        src_zephyr_simulation_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_simulation_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_simulation_pipeline_base_py["(生产态 / production) pipeline_base.py"]
+        src_zephyr_simulation_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    src_zephyr_simulation_implementations_init_py -.->|config_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|import_depends| src_zephyr_simulation_pipeline_base_py
-    D_SHARED["D_SHARED production"]
-    src_zephyr_simulation_pipeline_base_py -->|import_depends| D_SHARED
-    D_SHARED -.->|import_depends| src_zephyr_simulation_pipeline_base_py
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
-    D_GOVERNANCE -.->|import_depends| src_zephyr_simulation_init_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_simulation_pipeline_base_py
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
+    src_zephyr_simulation_implementations_init_py -.->|config_depends / config_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
+    D_SHARED["[生产态 / production] D_SHARED"]
+    src_zephyr_simulation_pipeline_base_py -->|导入依赖 / import_depends| D_SHARED
+    D_SHARED -.->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE["[原型态 / prototype] D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_simulation_init_py
+    D_AUDITTEST["[原型态 / prototype] D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_simulation_pipeline_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -84,15 +86,15 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 1 | import_depends |
+| D_SHARED | 1 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 1 | test_depends |
-| D_GOVERNANCE | 1 | import_depends |
-| D_SHARED | 1 | import_depends |
+| D_AUDITTEST | 1 | 测试依赖 / test_depends |
+| D_GOVERNANCE | 1 | 导入依赖 / import_depends |
+| D_SHARED | 1 | 导入依赖 / import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -101,19 +103,19 @@ graph TD
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (11 modules)               │
+│      L2 领域层 / Domain Layer（共 11 个模块 / 11 modules）       │
 ├──────────────────────────────────────────────────────────────────┤
-│   仿真核心域  [design]                                           │
-│   src/zephyr/simulation/__init__.py  [prototype]                 │
-│   src/zephyr/simulation/_extensions/__init__.py  [prototype]     │
-│   src/zephyr/simulation/api/__init__.py  [prototype]             │
-│   src/zephyr/simulation/core/__init__.py  [prototype]            │
-│   src/zephyr/simulation/implementations/__init__.py  [prototype] │
-│   src/zephyr/simulation/implementations/default_experiment_pi... │
-│   src/zephyr/simulation/infrastructure/__init__.py  [prototype]  │
-│   src/zephyr/simulation/models/__init__.py  [prototype]          │
-│   src/zephyr/simulation/pipeline_base.py  [production]           │
-│   src/zephyr/simulation/services/__init__.py  [prototype]        │
+│   仿真核心域 [设计态 / design]                                   │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   default_experiment_pipeline.py [生产态 / production]           │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   pipeline_base.py [生产态 / production]                         │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -148,20 +150,20 @@ graph TD
 │        依赖关系图 / Dependency Graph (共 2 条 / 2 edges)         │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 2                               │
-│   [config_depends]: 1 条 / edges                                 │
 │   [import_depends]: 1 条 / edges                                 │
+│   [config_depends]: 1 条 / edges                                 │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [config_depends] (1 条 / edges)                  │
-├──────────────────────────────────────────────────────────────────┤
-│   __init__.py → default_experiment_pipeli...                     │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (1 条 / edges)                  │
+│           [导入依赖 / import_depends]（1 条 / edges）            │
 ├──────────────────────────────────────────────────────────────────┤
 │   default_experiment_pipeli... → pipeline_base.py                │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│        [config_depends / config_depends]（1 条 / edges）         │
+├──────────────────────────────────────────────────────────────────┤
+│   __init__.py → default_experiment_pipeli...                     │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -172,4 +174,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

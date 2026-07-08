@@ -3,17 +3,19 @@ doc_type: architecture_view
 title: D_REPORTING 报告架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 16_d_reporting / 报告 / Reporting
+# 16_d_reporting / 报告 / 报告 / Reporting
+
+> **功能简介 / Overview**: 报告生成与数据导出
 
 > **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +28,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
-| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 6 | Cross-domain Outgoing | 6 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 9 | Prototype Modules | 9 |
@@ -47,31 +49,31 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_REPORTING["D_REPORTING 报告"]
-        src_zephyr_reporting_init_py["src/zephyr/reporting/__init__.py prototype"]
-        src_zephyr_reporting_extensions_init_py["src/zephyr/reporting/_extensions/__init__.py prototype"]
-        src_zephyr_reporting_analytics_base_py["src/zephyr/reporting/analytics_base.py production"]
-        src_zephyr_reporting_api_init_py["src/zephyr/reporting/api/__init__.py prototype"]
-        src_zephyr_reporting_core_init_py["src/zephyr/reporting/core/__init__.py prototype"]
-        src_zephyr_reporting_default_attribution_engine_py["src/zephyr/reporting/default_attribution_engine.py prototype"]
-        src_zephyr_reporting_default_tca_engine_py["src/zephyr/reporting/default_tca_engine.py prototype"]
-        src_zephyr_reporting_infrastructure_init_py["src/zephyr/reporting/infrastructure/__init__.py prototype"]
-        src_zephyr_reporting_models_init_py["src/zephyr/reporting/models/__init__.py prototype"]
-        src_zephyr_reporting_services_init_py["src/zephyr/reporting/services/__init__.py prototype"]
+        src_zephyr_reporting_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_reporting_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_reporting_analytics_base_py["(生产态 / production) analytics_base.py"]
+        src_zephyr_reporting_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_reporting_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_reporting_default_attribution_engine_py["(原型态 / prototype) default_attribution_engine.py"]
+        src_zephyr_reporting_default_tca_engine_py["(原型态 / prototype) default_tca_engine.py"]
+        src_zephyr_reporting_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_reporting_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_reporting_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    src_zephyr_reporting_default_attribution_engine_py -.->|import_depends| src_zephyr_reporting_analytics_base_py
-    src_zephyr_reporting_default_tca_engine_py -.->|import_depends| src_zephyr_reporting_analytics_base_py
-    src_zephyr_reporting_init_py -.->|import_depends| src_zephyr_reporting_analytics_base_py
-    D_TRADING["D_TRADING production"]
-    src_zephyr_reporting_analytics_base_py -->|import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -->|import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -->|import_depends| D_TRADING
-    src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_TRADING
-    src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_TRADING
-    src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_TRADING
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    D_GOVERNANCE -.->|import_depends| src_zephyr_reporting_default_tca_engine_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_reporting_default_attribution_engine_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_init_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    D_TRADING["[生产态 / production] D_TRADING"]
+    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_TRADING
+    D_GOVERNANCE["[生产态 / production] D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -87,13 +89,14 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_TRADING | 6 | import_depends |
+| D_TRADING | 6 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 3 | import_depends |
+| D_GOVERNANCE | 3 | 导入依赖 / import_depends |
+| D_AUDITTEST | 1 | 测试依赖 / test_depends |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -102,18 +105,18 @@ graph TD
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (10 modules)             │
+│    L1 基础层 / Foundation Layer（共 10 个模块 / 10 modules）     │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/reporting/__init__.py  [prototype]                  │
-│   src/zephyr/reporting/_extensions/__init__.py  [prototype]      │
-│   src/zephyr/reporting/analytics_base.py  [production]           │
-│   src/zephyr/reporting/api/__init__.py  [prototype]              │
-│   src/zephyr/reporting/core/__init__.py  [prototype]             │
-│   src/zephyr/reporting/default_attribution_engine.py  [protot... │
-│   src/zephyr/reporting/default_tca_engine.py  [prototype]        │
-│   src/zephyr/reporting/infrastructure/__init__.py  [prototype]   │
-│   src/zephyr/reporting/models/__init__.py  [prototype]           │
-│   src/zephyr/reporting/services/__init__.py  [prototype]         │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   analytics_base.py [生产态 / production]                        │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   default_attribution_engine.py [原型态 / prototype]             │
+│   default_tca_engine.py [原型态 / prototype]                     │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -151,11 +154,11 @@ graph TD
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (3 条 / edges)                  │
+│           [导入依赖 / import_depends]（3 条 / edges）            │
 ├──────────────────────────────────────────────────────────────────┤
 │   default_attribution_engin... → analytics_base.py               │
-│   default_tca_engine.py → analytics_base.py                      │
 │   __init__.py → analytics_base.py                                │
+│   default_tca_engine.py → analytics_base.py                      │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -166,4 +169,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

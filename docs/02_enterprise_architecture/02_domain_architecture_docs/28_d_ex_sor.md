@@ -3,17 +3,19 @@ doc_type: architecture_view
 title: D_EX_SOR 执行路由架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 28_d_ex_sor / 执行路由 / Execution Routing
+# 28_d_ex_sor / 执行路由 / 执行路由 / Execution Routing
+
+> **功能简介 / Overview**: 执行路由与最优路径选择
 
 > **文档作用 / Purpose**: 展示 执行路由（D_EX_SOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:33
+> 最后更新: 2026-07-09 01:10:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -47,13 +49,13 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_EX_SOR["D_EX_SOR 执行路由"]
-        src_zephyr_ex_sor_init_py["src/zephyr/ex_sor/__init__.py prototype"]
-        src_zephyr_ex_sor_extensions_init_py["src/zephyr/ex_sor/_extensions/__init__.py prototype"]
-        src_zephyr_ex_sor_api_init_py["src/zephyr/ex_sor/api/__init__.py prototype"]
-        src_zephyr_ex_sor_core_init_py["src/zephyr/ex_sor/core/__init__.py prototype"]
-        src_zephyr_ex_sor_infrastructure_init_py["src/zephyr/ex_sor/infrastructure/__init__.py prototype"]
-        src_zephyr_ex_sor_models_init_py["src/zephyr/ex_sor/models/__init__.py prototype"]
-        src_zephyr_ex_sor_services_init_py["src/zephyr/ex_sor/services/__init__.py prototype"]
+        src_zephyr_ex_sor_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_sor_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_sor_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_sor_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_sor_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_sor_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_sor_services_init_py["(原型态 / prototype) __init__.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -79,15 +81,15 @@ graph TD
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (7 modules)               │
+│       L2 领域层 / Domain Layer（共 7 个模块 / 7 modules）        │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/ex_sor/__init__.py  [prototype]                     │
-│   src/zephyr/ex_sor/_extensions/__init__.py  [prototype]         │
-│   src/zephyr/ex_sor/api/__init__.py  [prototype]                 │
-│   src/zephyr/ex_sor/core/__init__.py  [prototype]                │
-│   src/zephyr/ex_sor/infrastructure/__init__.py  [prototype]      │
-│   src/zephyr/ex_sor/models/__init__.py  [prototype]              │
-│   src/zephyr/ex_sor/services/__init__.py  [prototype]            │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -121,4 +123,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

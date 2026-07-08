@@ -3,17 +3,19 @@ doc_type: architecture_view
 title: D_EX_CORE 执行核心架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 27_d_ex_core / 执行核心 / Execution Core
+# 27_d_ex_core / 执行核心 / 执行核心 / Execution Core
+
+> **功能简介 / Overview**: 执行核心与订单管理
 
 > **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:33
+> 最后更新: 2026-07-09 01:10:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +28,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 15 | Module Count | 15 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
-| 跨域入边 | 4 | Cross-domain Incoming | 4 |
+| 跨域入边 | 7 | Cross-domain Incoming | 7 |
 | 跨域出边 | 21 | Cross-domain Outgoing | 21 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 9 | Prototype Modules | 9 |
@@ -47,49 +49,49 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_EX_CORE["D_EX_CORE 执行核心"]
-        src_zephyr_ex_core_init_py["src/zephyr/ex_core/__init__.py production"]
-        src_zephyr_ex_core_extensions_init_py["src/zephyr/ex_core/_extensions/__init__.py prototype"]
-        src_zephyr_ex_core_adapters_init_py["src/zephyr/ex_core/adapters/__init__.py prototype"]
-        src_zephyr_ex_core_adapters_broker_interface_py["src/zephyr/ex_core/adapters/broker_interface.py production"]
-        src_zephyr_ex_core_adapters_miniqmt_broker_py["src/zephyr/ex_core/adapters/miniqmt_broker.py prototype"]
-        src_zephyr_ex_core_adapters_miniqmt_broker_py_1["src/zephyr/ex_core/adapters/miniqmt_broker.py/ design"]
-        src_zephyr_ex_core_adapters_risk_validation_bridge_py["src/zephyr/ex_core/adapters/risk_validation_bri... prototype"]
-        src_zephyr_ex_core_adapters_simulation_broker_py["src/zephyr/ex_core/adapters/simulation_broker.py production"]
-        src_zephyr_ex_core_api_init_py["src/zephyr/ex_core/api/__init__.py prototype"]
-        src_zephyr_ex_core_broker_interface_py["src/zephyr/ex_core/broker_interface.py prototype"]
-        src_zephyr_ex_core_core_init_py["src/zephyr/ex_core/core/__init__.py prototype"]
-        src_zephyr_ex_core_execution_engine_py["src/zephyr/ex_core/execution_engine.py production"]
-        src_zephyr_ex_core_infrastructure_init_py["src/zephyr/ex_core/infrastructure/__init__.py prototype"]
-        src_zephyr_ex_core_order_manager_py["src/zephyr/ex_core/order_manager.py production"]
-        src_zephyr_ex_core_services_init_py["src/zephyr/ex_core/services/__init__.py prototype"]
+        src_zephyr_ex_core_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_ex_core_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_core_adapters_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_core_adapters_broker_interface_py["(生产态 / production) broker_interface.py"]
+        src_zephyr_ex_core_adapters_miniqmt_broker_py["(原型态 / prototype) miniqmt_broker.py"]
+        src_zephyr_ex_core_adapters_miniqmt_broker_py_1["(设计态 / design) "]
+        src_zephyr_ex_core_adapters_risk_validation_bridge_py["(原型态 / prototype) risk_validation_bridge.py"]
+        src_zephyr_ex_core_adapters_simulation_broker_py["(生产态 / production) simulation_broker.py"]
+        src_zephyr_ex_core_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_core_broker_interface_py["(原型态 / prototype) broker_interface.py"]
+        src_zephyr_ex_core_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_core_execution_engine_py["(生产态 / production) execution_engine.py"]
+        src_zephyr_ex_core_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_ex_core_order_manager_py["(生产态 / production) order_manager.py"]
+        src_zephyr_ex_core_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    src_zephyr_ex_core_execution_engine_py -->|import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_adapters_init_py -.->|import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
-    D_BACKTEST["D_BACKTEST design"]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py_1 -.->|import_depends| D_BACKTEST
-    D_GOVERNANCE["D_GOVERNANCE design"]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py_1 -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_GOVERNANCE
-    D_TRADING["D_TRADING production"]
-    src_zephyr_ex_core_order_manager_py -->|import_depends| D_TRADING
-    src_zephyr_ex_core_order_manager_py -->|import_depends| D_TRADING
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_BACKTEST
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_TRADING
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_TRADING
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_TRADING
-    D_SHARED["D_SHARED production"]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_SHARED
-    src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_execution_engine_py -->|import_depends| D_SHARED
-    src_zephyr_ex_core_execution_engine_py -->|import_depends| D_TRADING
-    src_zephyr_ex_core_broker_interface_py -.->|import_depends| D_GOVERNANCE
-    D_FRONTEND["D_FRONTEND design"]
-    D_FRONTEND -.->|import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py_1
-    D_FRONTEND -.->|import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py_1
-    D_GOVERNANCE -.->|import_depends| src_zephyr_ex_core_init_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_ex_core_init_py
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_adapters_init_py -.->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
+    D_BACKTEST["[设计态 / design] D_BACKTEST"]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py_1 -.->|导入依赖 / import_depends| D_BACKTEST
+    D_GOVERNANCE["[设计态 / design] D_GOVERNANCE"]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py_1 -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_order_manager_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_TRADING["[生产态 / production] D_TRADING"]
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_adapters_broker_interface_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_TRADING
+    D_SHARED["[生产态 / production] D_SHARED"]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_execution_engine_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_TRADING
+    D_FRONTEND["[设计态 / design] D_FRONTEND"]
+    D_FRONTEND -.->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py_1
+    D_FRONTEND -.->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py_1
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_ex_core_init_py
+    D_AUDITTEST["[原型态 / prototype] D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_ex_core_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -106,18 +108,18 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 11 | import_depends |
-| D_TRADING | 6 | import_depends |
-| D_BACKTEST | 2 | import_depends |
-| D_SHARED | 2 | import_depends |
+| D_GOVERNANCE | 11 | 导入依赖 / import_depends |
+| D_TRADING | 6 | 导入依赖 / import_depends |
+| D_BACKTEST | 2 | 导入依赖 / import_depends |
+| D_SHARED | 2 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_FRONTEND | 2 | import_depends |
-| D_AUDITTEST | 1 | test_depends |
-| D_GOVERNANCE | 1 | import_depends |
+| D_AUDITTEST | 4 | 测试依赖 / test_depends |
+| D_FRONTEND | 2 | 导入依赖 / import_depends |
+| D_GOVERNANCE | 1 | 导入依赖 / import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -126,23 +128,23 @@ graph TD
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (15 modules)               │
+│      L2 领域层 / Domain Layer（共 15 个模块 / 15 modules）       │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/ex_core/__init__.py  [production]                   │
-│   src/zephyr/ex_core/_extensions/__init__.py  [prototype]        │
-│   src/zephyr/ex_core/adapters/__init__.py  [prototype]           │
-│   src/zephyr/ex_core/adapters/broker_interface.py  [production]  │
-│   src/zephyr/ex_core/adapters/miniqmt_broker.py  [prototype]     │
-│   src/zephyr/ex_core/adapters/miniqmt_broker.py/  [design]       │
-│   src/zephyr/ex_core/adapters/risk_validation_bridge.py  [pro... │
-│   src/zephyr/ex_core/adapters/simulation_broker.py  [production] │
-│   src/zephyr/ex_core/api/__init__.py  [prototype]                │
-│   src/zephyr/ex_core/broker_interface.py  [prototype]            │
-│   src/zephyr/ex_core/core/__init__.py  [prototype]               │
-│   src/zephyr/ex_core/execution_engine.py  [production]           │
-│   src/zephyr/ex_core/infrastructure/__init__.py  [prototype]     │
-│   src/zephyr/ex_core/order_manager.py  [production]              │
-│   src/zephyr/ex_core/services/__init__.py  [prototype]           │
+│   __init__.py [生产态 / production]                              │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   broker_interface.py [生产态 / production]                      │
+│   miniqmt_broker.py [原型态 / prototype]                         │
+│    [设计态 / design]                                             │
+│   risk_validation_bridge.py [原型态 / prototype]                 │
+│   simulation_broker.py [生产态 / production]                     │
+│   __init__.py [原型态 / prototype]                               │
+│   broker_interface.py [原型态 / prototype]                       │
+│   __init__.py [原型态 / prototype]                               │
+│   execution_engine.py [生产态 / production]                      │
+│   __init__.py [原型态 / prototype]                               │
+│   order_manager.py [生产态 / production]                         │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -185,7 +187,7 @@ graph TD
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (2 条 / edges)                  │
+│           [导入依赖 / import_depends]（2 条 / edges）            │
 ├──────────────────────────────────────────────────────────────────┤
 │   execution_engine.py → order_manager.py                         │
 │   __init__.py → miniqmt_broker.py                                │
@@ -199,4 +201,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

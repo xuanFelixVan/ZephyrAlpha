@@ -1,19 +1,21 @@
 ---
 doc_type: architecture_view
-title: D_INTELLIGENCE context_management架构文档
+title: D_INTELLIGENCE 上下文管理架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 39_d_intelligence / context_management / Context Management
+# 39_d_intelligence / context_management / 上下文管理 / Context Management
 
-> **文档作用 / Purpose**: 展示 context_management（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 上下文管理与智能调度
+
+> **文档作用 / Purpose**: 展示 上下文管理（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,11 +24,11 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 39 | Number | 39 |
 | 域ID | D_INTELLIGENCE | Domain ID | D_INTELLIGENCE |
-| 域名称 | context_management | Domain Name | Context Management |
+| 域名称 | 上下文管理 | Domain Name | Context Management |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 43 | Module Count | 43 |
 | 域内依赖 | 33 | Internal Dependencies | 33 |
-| 跨域入边 | 59 | Cross-domain Incoming | 59 |
+| 跨域入边 | 60 | Cross-domain Incoming | 60 |
 | 跨域出边 | 31 | Cross-domain Outgoing | 31 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 22 | Prototype Modules | 22 |
@@ -48,161 +50,162 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INTELLIGENCE["D_INTELLIGENCE context_management"]
-        src_zephyr_intelligence_init_py["src/zephyr/intelligence/__init__.py prototype"]
-        src_zephyr_intelligence_extensions_init_py["src/zephyr/intelligence/_extensions/__init__.py prototype"]
-        src_zephyr_intelligence_api_init_py["src/zephyr/intelligence/api/__init__.py prototype"]
-        src_zephyr_intelligence_core_init_py["src/zephyr/intelligence/core/__init__.py prototype"]
-        src_zephyr_intelligence_infrastructure_init_py["src/zephyr/intelligence/infrastructure/__init__.py prototype"]
-        src_zephyr_intelligence_model_drift_detector_py["src/zephyr/intelligence/model_drift_detector.py production"]
-        src_zephyr_intelligence_model_evaluation_init_py["src/zephyr/intelligence/model_evaluation/__init... prototype"]
-        src_zephyr_intelligence_model_evaluation_activate_py["src/zephyr/intelligence/model_evaluation/activa... production"]
-        src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py["src/zephyr/intelligence/model_evaluation/experi... prototype"]
-        src_zephyr_intelligence_model_evaluation_implementations_init_py["src/zephyr/intelligence/model_evaluation/implem... prototype"]
-        src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py["src/zephyr/intelligence/model_evaluation/implem... production"]
-        src_zephyr_intelligence_model_evaluation_inference_base_py["src/zephyr/intelligence/model_evaluation/infere... production"]
-        src_zephyr_intelligence_model_evaluation_notebook_integration_init_py["src/zephyr/intelligence/model_evaluation/notebo... prototype"]
-        src_zephyr_intelligence_model_evaluation_reranker_py["src/zephyr/intelligence/model_evaluation/rerank... production"]
-        src_zephyr_intelligence_model_evaluation_sync_engine_py["src/zephyr/intelligence/model_evaluation/sync_e... prototype"]
-        src_zephyr_intelligence_model_evaluation_target_lib_init_py["src/zephyr/intelligence/model_evaluation/target... prototype"]
-        src_zephyr_intelligence_model_evaluation_unified_memory_api_py["src/zephyr/intelligence/model_evaluation/unifie... production"]
-        src_zephyr_intelligence_model_profiling_init_py["src/zephyr/intelligence/model_profiling/__init_... prototype"]
-        src_zephyr_intelligence_model_profiling_benchmark_suite_py["src/zephyr/intelligence/model_profiling/benchma... prototype"]
-        src_zephyr_intelligence_model_profiling_capability_passport_py["src/zephyr/intelligence/model_profiling/capabil... production"]
-        src_zephyr_intelligence_model_profiling_case_assembler_py["src/zephyr/intelligence/model_profiling/case_as... prototype"]
-        src_zephyr_intelligence_model_profiling_cli_py["src/zephyr/intelligence/model_profiling/cli.py production"]
-        src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py["src/zephyr/intelligence/model_profiling/deepsee... production"]
-        src_zephyr_intelligence_model_profiling_exam_executor_py["src/zephyr/intelligence/model_profiling/exam_ex... prototype"]
-        src_zephyr_intelligence_model_profiling_exam_judge_py["src/zephyr/intelligence/model_profiling/exam_ju... production"]
-        src_zephyr_intelligence_model_profiling_exam_orchestrator_py["src/zephyr/intelligence/model_profiling/exam_or... production"]
-        src_zephyr_intelligence_model_profiling_exam_rubric_py["src/zephyr/intelligence/model_profiling/exam_ru... prototype"]
-        src_zephyr_intelligence_model_profiling_exam_test_cases_py["src/zephyr/intelligence/model_profiling/exam_te... production"]
-        src_zephyr_intelligence_model_profiling_job_matcher_py["src/zephyr/intelligence/model_profiling/job_mat... production"]
-        src_zephyr_intelligence_model_profiling_model_discovery_py["src/zephyr/intelligence/model_profiling/model_d... production"]
+    subgraph D_INTELLIGENCE["D_INTELLIGENCE 上下文管理"]
+        src_zephyr_intelligence_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_model_drift_detector_py["(生产态 / production) model_drift_detector.py"]
+        src_zephyr_intelligence_model_evaluation_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_model_evaluation_activate_py["(生产态 / production) activate.py"]
+        src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_model_evaluation_implementations_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py["(生产态 / production) default_inference_engine.py"]
+        src_zephyr_intelligence_model_evaluation_inference_base_py["(生产态 / production) inference_base.py"]
+        src_zephyr_intelligence_model_evaluation_notebook_integration_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_model_evaluation_reranker_py["(生产态 / production) reranker.py"]
+        src_zephyr_intelligence_model_evaluation_sync_engine_py["(原型态 / prototype) sync_engine.py"]
+        src_zephyr_intelligence_model_evaluation_target_lib_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_model_evaluation_unified_memory_api_py["(生产态 / production) unified_memory_api.py"]
+        src_zephyr_intelligence_model_profiling_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_model_profiling_benchmark_suite_py["(原型态 / prototype) benchmark_suite.py"]
+        src_zephyr_intelligence_model_profiling_capability_passport_py["(生产态 / production) capability_passport.py"]
+        src_zephyr_intelligence_model_profiling_case_assembler_py["(原型态 / prototype) case_assembler.py"]
+        src_zephyr_intelligence_model_profiling_cli_py["(生产态 / production) cli.py"]
+        src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py["(生产态 / production) deepseek_v4_chat.py"]
+        src_zephyr_intelligence_model_profiling_exam_executor_py["(原型态 / prototype) exam_executor.py"]
+        src_zephyr_intelligence_model_profiling_exam_judge_py["(生产态 / production) exam_judge.py"]
+        src_zephyr_intelligence_model_profiling_exam_orchestrator_py["(生产态 / production) exam_orchestrator.py"]
+        src_zephyr_intelligence_model_profiling_exam_rubric_py["(原型态 / prototype) exam_rubric.py"]
+        src_zephyr_intelligence_model_profiling_exam_test_cases_py["(生产态 / production) exam_test_cases.py"]
+        src_zephyr_intelligence_model_profiling_job_matcher_py["(生产态 / production) job_matcher.py"]
+        src_zephyr_intelligence_model_profiling_model_discovery_py["(生产态 / production) model_discovery.py"]
     end
-    src_zephyr_intelligence_init_py -.->|config_depends| src_zephyr_intelligence_model_drift_detector_py
-    src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends| src_zephyr_intelligence_model_evaluation_activate_py
-    src_zephyr_intelligence_model_evaluation_implementations_init_py -.->|import_depends| src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py
-    src_zephyr_intelligence_model_profiling_cli_py -.->|import_depends| src_zephyr_intelligence_model_profiling_init_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_judge_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_executor_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    src_zephyr_intelligence_model_profiling_job_matcher_py -->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    src_zephyr_intelligence_model_profiling_exam_test_cases_py -.->|import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
-    src_zephyr_intelligence_model_profiling_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
-    src_zephyr_intelligence_model_profiling_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
-    D_SHARED["D_SHARED production"]
-    src_zephyr_intelligence_model_drift_detector_py -->|import_depends| D_SHARED
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
-    src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT
-    D_ML_TRAIN["D_ML_TRAIN prototype"]
-    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
-    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_AUTONOMY_CORE
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_GOVERNANCE
-    D_INTEGRATION["D_INTEGRATION production"]
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_SHARED
-    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_GOVERNANCE
-    D_BACKTEST["D_BACKTEST production"]
-    src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py -.->|import_depends| D_BACKTEST
-    src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|import_depends| D_ML_TRAIN
-    src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|import_depends| D_ML_TRAIN
-    D_AUTONOMY_CORE -->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
-    D_AUTONOMY_CORE -->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
-    D_INTEGRATION -->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
-    D_SECURITY["D_SECURITY prototype"]
-    D_SECURITY -.->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
-    D_TRADING["D_TRADING production"]
-    D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_init_py
-    D_TRADING -.->|import_depends| src_zephyr_intelligence_model_evaluation_sync_engine_py
-    D_TRADING -->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    D_GOVERNANCE -->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
+    src_zephyr_intelligence_init_py -.->|config_depends / config_depends| src_zephyr_intelligence_model_drift_detector_py
+    src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends / config_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    src_zephyr_intelligence_model_evaluation_implementations_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py
+    src_zephyr_intelligence_model_profiling_cli_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_init_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_judge_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_executor_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
+    src_zephyr_intelligence_model_profiling_job_matcher_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    src_zephyr_intelligence_model_profiling_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
+    src_zephyr_intelligence_model_profiling_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
+    src_zephyr_intelligence_model_profiling_exam_test_cases_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
+    D_SHARED["[生产态 / production] D_SHARED"]
+    src_zephyr_intelligence_model_profiling_case_assembler_py -.->|导入依赖 / import_depends| D_SHARED
+    D_BACKTEST["[生产态 / production] D_BACKTEST"]
+    src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py -.->|导入依赖 / import_depends| D_BACKTEST
+    D_INTEGRATION["[生产态 / production] D_INTEGRATION"]
+    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    D_GOVERNANCE["[生产态 / production] D_GOVERNANCE"]
+    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_AUTONOMY_CORE["[生产态 / production] D_AUTONOMY_CORE"]
+    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_AUTONOMY_CORE
+    src_zephyr_intelligence_model_evaluation_implementations_init_py -.->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_intelligence_model_evaluation_notebook_integration_init_py -.->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_intelligence_model_drift_detector_py -->|导入依赖 / import_depends| D_SHARED
+    D_ML_TRAIN["[原型态 / prototype] D_ML_TRAIN"]
+    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
+    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
+    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["[生产态 / production] D_GOV_ENFORCEMENT"]
+    src_zephyr_intelligence_model_evaluation_activate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_intelligence_model_evaluation_activate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_TRADING["[生产态 / production] D_TRADING"]
+    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_sync_engine_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
+    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_init_py
+    D_AUDITTEST["[原型态 / prototype] D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_drift_detector_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_evaluation_inference_base_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
+    D_SECURITY["[原型态 / prototype] D_SECURITY"]
+    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
+    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_evaluation_activate_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_evaluation_activate_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_intelligence_model_drift_detector_py,src_zephyr_intelligence_model_evaluation_activate_py,src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py,src_zephyr_intelligence_model_evaluation_inference_base_py,src_zephyr_intelligence_model_evaluation_reranker_py,src_zephyr_intelligence_model_evaluation_unified_memory_api_py,src_zephyr_intelligence_model_profiling_capability_passport_py,src_zephyr_intelligence_model_profiling_cli_py,src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py,src_zephyr_intelligence_model_profiling_exam_judge_py,src_zephyr_intelligence_model_profiling_exam_orchestrator_py,src_zephyr_intelligence_model_profiling_exam_test_cases_py,src_zephyr_intelligence_model_profiling_job_matcher_py,src_zephyr_intelligence_model_profiling_model_discovery_py production
     class src_zephyr_intelligence_init_py,src_zephyr_intelligence_extensions_init_py,src_zephyr_intelligence_api_init_py,src_zephyr_intelligence_core_init_py,src_zephyr_intelligence_infrastructure_init_py,src_zephyr_intelligence_model_evaluation_init_py,src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py,src_zephyr_intelligence_model_evaluation_implementations_init_py,src_zephyr_intelligence_model_evaluation_notebook_integration_init_py,src_zephyr_intelligence_model_evaluation_sync_engine_py,src_zephyr_intelligence_model_evaluation_target_lib_init_py,src_zephyr_intelligence_model_profiling_init_py,src_zephyr_intelligence_model_profiling_benchmark_suite_py,src_zephyr_intelligence_model_profiling_case_assembler_py,src_zephyr_intelligence_model_profiling_exam_executor_py,src_zephyr_intelligence_model_profiling_exam_rubric_py design
-    class D_SHARED,D_GOVERNANCE,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE,D_INTEGRATION,D_BACKTEST,D_TRADING external_prod
-    class D_ML_TRAIN,D_SECURITY external_design
+    class D_SHARED,D_BACKTEST,D_INTEGRATION,D_GOVERNANCE,D_AUTONOMY_CORE,D_GOV_ENFORCEMENT,D_TRADING external_prod
+    class D_ML_TRAIN,D_AUDITTEST,D_SECURITY external_design
 ```
 
 ### 第 2 页 / 共 2 页 / Page 2 of 2
 
 ```mermaid
 graph TD
-    subgraph D_INTELLIGENCE["D_INTELLIGENCE context_management"]
-        src_zephyr_intelligence_model_profiling_pipeline_routing_init_py["src/zephyr/intelligence/model_profiling/pipelin... prototype"]
-        src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py["src/zephyr/intelligence/model_profiling/pipelin... production"]
-        src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["src/zephyr/intelligence/model_profiling/pipelin... prototype"]
-        src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py["src/zephyr/intelligence/model_profiling/pipelin... production"]
-        src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py["src/zephyr/intelligence/model_profiling/pipelin... production"]
-        src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py["src/zephyr/intelligence/model_profiling/pipelin... production"]
-        src_zephyr_intelligence_model_profiling_profiler_py["src/zephyr/intelligence/model_profiling/profile... prototype"]
-        src_zephyr_intelligence_model_profiling_provider_data_py["src/zephyr/intelligence/model_profiling/provide... production"]
-        src_zephyr_intelligence_model_profiling_results_writer_py["src/zephyr/intelligence/model_profiling/results... production"]
-        src_zephyr_intelligence_model_profiling_task_model_learner_py["src/zephyr/intelligence/model_profiling/task_mo... prototype"]
-        src_zephyr_intelligence_models_init_py["src/zephyr/intelligence/models/__init__.py prototype"]
-        src_zephyr_intelligence_services_init_py["src/zephyr/intelligence/services/__init__.py prototype"]
-        src_zephyr_research_init_py["src/zephyr/research/__init__.py production"]
+    subgraph D_INTELLIGENCE["D_INTELLIGENCE 上下文管理"]
+        src_zephyr_intelligence_model_profiling_pipeline_routing_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py["(生产态 / production) benchmark_suite.py"]
+        src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["(原型态 / prototype) cli.py"]
+        src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py["(生产态 / production) profiler.py"]
+        src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py["(生产态 / production) results_writer.py"]
+        src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py["(生产态 / production) task_model_learner.py"]
+        src_zephyr_intelligence_model_profiling_profiler_py["(原型态 / prototype) profiler.py"]
+        src_zephyr_intelligence_model_profiling_provider_data_py["(生产态 / production) provider_data.py"]
+        src_zephyr_intelligence_model_profiling_results_writer_py["(生产态 / production) results_writer.py"]
+        src_zephyr_intelligence_model_profiling_task_model_learner_py["(原型态 / prototype) task_model_learner.py"]
+        src_zephyr_intelligence_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_intelligence_services_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_research_init_py["(生产态 / production) __init__.py"]
     end
-    src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py -->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    src_zephyr_intelligence_model_profiling_results_writer_py -.->|import_depends| src_zephyr_intelligence_model_profiling_profiler_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
-    D_SHARED["D_SHARED production"]
-    src_zephyr_intelligence_model_profiling_profiler_py -.->|import_depends| D_SHARED
-    src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|import_depends| D_SHARED
-    src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py -->|import_depends| D_SHARED
-    src_zephyr_intelligence_model_profiling_results_writer_py -->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py -->|import_depends| D_INFRA_RUNTIME
-    D_TRADING["D_TRADING production"]
-    D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_provider_data_py
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    D_GOVERNANCE -->|import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    D_INTEGRATION["D_INTEGRATION production"]
-    D_INTEGRATION -->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
-    D_INTEGRATION -->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    D_TRADING -->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    D_GOVERNANCE -->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
+    src_zephyr_intelligence_model_profiling_results_writer_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_profiler_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
+    D_SHARED["[生产态 / production] D_SHARED"]
+    src_zephyr_intelligence_model_profiling_profiler_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_intelligence_model_profiling_results_writer_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["[生产态 / production] D_INFRA_RUNTIME"]
+    src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE["[生产态 / production] D_GOVERNANCE"]
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_INTEGRATION["[生产态 / production] D_INTEGRATION"]
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
+    D_TRADING["[生产态 / production] D_TRADING"]
+    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_AUDITTEST["[原型态 / prototype] D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_provider_data_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py,src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py,src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py,src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py,src_zephyr_intelligence_model_profiling_provider_data_py,src_zephyr_intelligence_model_profiling_results_writer_py,src_zephyr_research_init_py production
     class src_zephyr_intelligence_model_profiling_pipeline_routing_init_py,src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py,src_zephyr_intelligence_model_profiling_profiler_py,src_zephyr_intelligence_model_profiling_task_model_learner_py,src_zephyr_intelligence_models_init_py,src_zephyr_intelligence_services_init_py design
-    class D_SHARED,D_INFRA_RUNTIME,D_TRADING,D_GOVERNANCE,D_INTEGRATION external_prod
+    class D_SHARED,D_INFRA_RUNTIME,D_GOVERNANCE,D_INTEGRATION,D_TRADING external_prod
     class D_AUDITTEST external_design
 ```
 
@@ -212,55 +215,55 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 14 | import_depends |
-| D_GOVERNANCE | 4 | import_depends |
-| D_ML_TRAIN | 4 | import_depends |
-| D_BACKTEST | 3 | import_depends |
-| D_GOV_ENFORCEMENT | 2 | import_depends |
-| D_TRADING | 1 | import_depends |
-| D_INFRA_RUNTIME | 1 | import_depends |
-| D_INTEGRATION | 1 | import_depends |
-| D_AUTONOMY_CORE | 1 | import_depends |
+| D_SHARED | 14 | 导入依赖 / import_depends |
+| D_GOVERNANCE | 4 | 导入依赖 / import_depends |
+| D_ML_TRAIN | 4 | 导入依赖 / import_depends |
+| D_BACKTEST | 3 | 导入依赖 / import_depends |
+| D_GOV_ENFORCEMENT | 2 | 导入依赖 / import_depends |
+| D_TRADING | 1 | 导入依赖 / import_depends |
+| D_INFRA_RUNTIME | 1 | 导入依赖 / import_depends |
+| D_INTEGRATION | 1 | 导入依赖 / import_depends |
+| D_AUTONOMY_CORE | 1 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 30 | test_depends |
-| D_GOVERNANCE | 17 | import_depends |
-| D_TRADING | 5 | import_depends |
-| D_INTEGRATION | 3 | import_depends |
-| D_AUTONOMY_CORE | 2 | import_depends |
-| D_GOV_SCRIPTS | 1 | import_depends |
-| D_SECURITY | 1 | import_depends |
+| D_AUDITTEST | 31 | 测试依赖 / test_depends |
+| D_GOVERNANCE | 17 | 导入依赖 / import_depends |
+| D_TRADING | 5 | 导入依赖 / import_depends |
+| D_INTEGRATION | 3 | 导入依赖 / import_depends |
+| D_AUTONOMY_CORE | 2 | 导入依赖 / import_depends |
+| D_GOV_SCRIPTS | 1 | 导入依赖 / import_depends |
+| D_SECURITY | 1 | 导入依赖 / import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 context_management（D_INTELLIGENCE）的模块分布。共 43 个模块 / 43 modules。
+> 按 architecture_layer 分层显示 上下文管理（D_INTELLIGENCE）的模块分布。共 43 个模块 / 43 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (43 modules)               │
+│      L2 领域层 / Domain Layer（共 43 个模块 / 43 modules）       │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/intelligence/__init__.py  [prototype]               │
-│   src/zephyr/intelligence/_extensions/__init__.py  [prototype]   │
-│   src/zephyr/intelligence/api/__init__.py  [prototype]           │
-│   src/zephyr/intelligence/core/__init__.py  [prototype]          │
-│   src/zephyr/intelligence/infrastructure/__init__.py  [protot... │
-│   src/zephyr/intelligence/model_drift_detector.py  [production]  │
-│   src/zephyr/intelligence/model_evaluation/__init__.py  [prot... │
-│   src/zephyr/intelligence/model_evaluation/activate.py  [prod... │
-│   src/zephyr/intelligence/model_evaluation/experiment_tracker... │
-│   src/zephyr/intelligence/model_evaluation/implementations/__... │
-│   src/zephyr/intelligence/model_evaluation/implementations/de... │
-│   src/zephyr/intelligence/model_evaluation/inference_base.py ... │
-│   src/zephyr/intelligence/model_evaluation/notebook_integrati... │
-│   src/zephyr/intelligence/model_evaluation/reranker.py  [prod... │
-│   src/zephyr/intelligence/model_evaluation/sync_engine.py  [p... │
-│   src/zephyr/intelligence/model_evaluation/target_lib/__init_... │
-│   src/zephyr/intelligence/model_evaluation/unified_memory_api... │
-│   src/zephyr/intelligence/model_profiling/__init__.py  [proto... │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   model_drift_detector.py [生产态 / production]                  │
+│   __init__.py [原型态 / prototype]                               │
+│   activate.py [生产态 / production]                              │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   default_inference_engine.py [生产态 / production]              │
+│   inference_base.py [生产态 / production]                        │
+│   __init__.py [原型态 / prototype]                               │
+│   reranker.py [生产态 / production]                              │
+│   sync_engine.py [原型态 / prototype]                            │
+│   __init__.py [原型态 / prototype]                               │
+│   unified_memory_api.py [生产态 / production]                    │
+│   __init__.py [原型态 / prototype]                               │
 │   ...还有 25 个模块 / 25 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -288,7 +291,7 @@ graph TD
 | 12 | src/zephyr/intelligence/model_evaluation/inference_base.py | src/zephyr/intelligence/model_evaluat... |  | production | generated |
 | 13 | src/zephyr/intelligence/model_evaluation/notebook_integra... | src/zephyr/intelligence/model_evaluat... | D_RESEARCH Research & Innovation | prototype | generated |
 | 14 | src/zephyr/intelligence/model_evaluation/reranker.py | src/zephyr/intelligence/model_evaluat... | Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T-MOD-KB-001-RERANKER） | production | generated |
-| 15 | src/zephyr/intelligence/model_evaluation/sync_engine.py | src/zephyr/intelligence/model_evaluat... | KB→VMS 同步引擎 — sync_to_vms() 生产者 | prototype | generated |
+| 15 | src/zephyr/intelligence/model_evaluation/sync_engine.py | src/zephyr/intelligence/model_evaluat... | KB->VMS 同步引擎 — sync_to_vms() 生产者 | prototype | generated |
 | 16 | src/zephyr/intelligence/model_evaluation/target_lib/__ini... | src/zephyr/intelligence/model_evaluat... |  | prototype | generated |
 | 17 | src/zephyr/intelligence/model_evaluation/unified_memory_a... | src/zephyr/intelligence/model_evaluat... | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装） | production | generated |
 | 18 | src/zephyr/intelligence/model_profiling/__init__.py | src/zephyr/intelligence/model_profili... | Model Profiling — 本地 + 远程模型性能基准测试 | prototype | generated |
@@ -333,7 +336,7 @@ graph TD
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (31 条 / edges)                 │
+│           [导入依赖 / import_depends]（31 条 / edges）           │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → default_inference_engine.py                      │
 │   cli.py → __init__.py                                           │
@@ -346,17 +349,17 @@ graph TD
 │   exam_orchestrator.py → exam_test_cases.py                      │
 │   exam_orchestrator.py → provider_data.py                        │
 │   job_matcher.py → capability_passport.py                        │
-│   model_discovery.py → provider_data.py                          │
-│   exam_test_cases.py → case_assembler.py                         │
-│   profiler.py → benchmark_suite.py                               │
-│   profiler.py → model_discovery.py                               │
 │   __init__.py → benchmark_suite.py                               │
 │   __init__.py → model_discovery.py                               │
 │   __init__.py → profiler.py                                      │
 │   __init__.py → task_model_learner.py                            │
+│   model_discovery.py → provider_data.py                          │
+│   exam_test_cases.py → case_assembler.py                         │
+│   profiler.py → benchmark_suite.py                               │
+│   profiler.py → model_discovery.py                               │
+│   results_writer.py → profiler.py                                │
 │   profiler.py → model_discovery.py                               │
 │   profiler.py → benchmark_suite.py                               │
-│   results_writer.py → profiler.py                                │
 │   results_writer.py → profiler.py                                │
 │   cli.py → model_discovery.py                                    │
 │   cli.py → profiler.py                                           │
@@ -369,10 +372,10 @@ graph TD
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [config_depends] (2 条 / edges)                  │
+│        [config_depends / config_depends]（2 条 / edges）         │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → model_drift_detector.py                          │
-│   __init__.py → activate.py                                      │
+│   __init__.py → reranker.py                                      │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -383,4 +386,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

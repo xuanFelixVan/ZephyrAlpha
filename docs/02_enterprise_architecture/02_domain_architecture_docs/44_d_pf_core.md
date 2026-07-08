@@ -3,17 +3,19 @@ doc_type: architecture_view
 title: D_PF_CORE 组合核心架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 44_d_pf_core / 组合核心 / Portfolio Core
+# 44_d_pf_core / 组合核心 / 组合核心 / Portfolio Core
+
+> **功能简介 / Overview**: 组合核心管理与持仓维护
 
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +28,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 14 | Module Count | 14 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
-| 跨域入边 | 1 | Cross-domain Incoming | 1 |
+| 跨域入边 | 3 | Cross-domain Incoming | 3 |
 | 跨域出边 | 7 | Cross-domain Outgoing | 7 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 10 | Prototype Modules | 10 |
@@ -47,33 +49,33 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_PF_CORE["D_PF_CORE 组合核心"]
-        src_zephyr_pf_core_init_py["src/zephyr/pf_core/__init__.py prototype"]
-        src_zephyr_pf_core_extensions_init_py["src/zephyr/pf_core/_extensions/__init__.py prototype"]
-        src_zephyr_pf_core_api_init_py["src/zephyr/pf_core/api/__init__.py prototype"]
-        src_zephyr_pf_core_compliance_rule_py["src/zephyr/pf_core/compliance_rule.py production"]
-        src_zephyr_pf_core_core_init_py["src/zephyr/pf_core/core/__init__.py prototype"]
-        src_zephyr_pf_core_default_equity_strategy_py["src/zephyr/pf_core/default_equity_strategy.py production"]
-        src_zephyr_pf_core_infrastructure_init_py["src/zephyr/pf_core/infrastructure/__init__.py prototype"]
-        src_zephyr_pf_core_performance_attribution_report_py["src/zephyr/pf_core/performance_attribution_repo... production"]
-        src_zephyr_pf_core_risk_limits_py["src/zephyr/pf_core/risk_limits.py prototype"]
-        src_zephyr_pf_core_services_init_py["src/zephyr/pf_core/services/__init__.py prototype"]
-        src_zephyr_pf_core_strategies_init_py["src/zephyr/pf_core/strategies/__init__.py prototype"]
-        src_zephyr_pf_core_strategy_base_py["src/zephyr/pf_core/strategy_base.py production"]
-        src_zephyr_pf_core_strategy_engine_init_py["src/zephyr/pf_core/strategy_engine/__init__.py prototype"]
-        src_zephyr_pf_core_strategy_registry_py["src/zephyr/pf_core/strategy_registry.py prototype"]
+        src_zephyr_pf_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_core_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_core_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_core_compliance_rule_py["(生产态 / production) compliance_rule.py"]
+        src_zephyr_pf_core_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) default_equity_strategy.py"]
+        src_zephyr_pf_core_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_core_performance_attribution_report_py["(生产态 / production) performance_attribution_report.py"]
+        src_zephyr_pf_core_risk_limits_py["(原型态 / prototype) risk_limits.py"]
+        src_zephyr_pf_core_services_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_core_strategies_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_core_strategy_base_py["(生产态 / production) strategy_base.py"]
+        src_zephyr_pf_core_strategy_engine_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_core_strategy_registry_py["(原型态 / prototype) strategy_registry.py"]
     end
-    src_zephyr_pf_core_init_py -.->|config_depends| src_zephyr_pf_core_compliance_rule_py
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
-    src_zephyr_pf_core_compliance_rule_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
-    src_zephyr_pf_core_strategy_registry_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
-    D_TRADING["D_TRADING production"]
-    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_TRADING
-    src_zephyr_pf_core_risk_limits_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategy_base_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategy_engine_init_py -.->|import_depends| D_GOVERNANCE
-    D_GOVERNANCE -.->|import_depends| src_zephyr_pf_core_default_equity_strategy_py
+    src_zephyr_pf_core_init_py -.->|config_depends / config_depends| src_zephyr_pf_core_risk_limits_py
+    D_GOVERNANCE["[原型态 / prototype] D_GOVERNANCE"]
+    src_zephyr_pf_core_risk_limits_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["[原型态 / prototype] D_GOV_ENFORCEMENT"]
+    src_zephyr_pf_core_compliance_rule_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_pf_core_strategy_registry_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_TRADING["[生产态 / production] D_TRADING"]
+    src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_pf_core_strategy_base_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_pf_core_strategy_engine_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -81,7 +83,7 @@ graph TD
     class src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_default_equity_strategy_py,src_zephyr_pf_core_performance_attribution_report_py,src_zephyr_pf_core_strategy_base_py production
     class src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py,src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_risk_limits_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
     class D_TRADING external_prod
-    class D_GOV_ENFORCEMENT,D_GOVERNANCE external_design
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -90,15 +92,16 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 5 | import_depends |
-| D_GOV_ENFORCEMENT | 1 | import_depends |
-| D_TRADING | 1 | import_depends |
+| D_GOVERNANCE | 5 | 导入依赖 / import_depends |
+| D_GOV_ENFORCEMENT | 1 | 导入依赖 / import_depends |
+| D_TRADING | 1 | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 1 | import_depends |
+| D_AUDITTEST | 2 | 测试依赖 / test_depends |
+| D_GOVERNANCE | 1 | 导入依赖 / import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -107,22 +110,22 @@ graph TD
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (14 modules)               │
+│      L2 领域层 / Domain Layer（共 14 个模块 / 14 modules）       │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/pf_core/__init__.py  [prototype]                    │
-│   src/zephyr/pf_core/_extensions/__init__.py  [prototype]        │
-│   src/zephyr/pf_core/api/__init__.py  [prototype]                │
-│   src/zephyr/pf_core/compliance_rule.py  [production]            │
-│   src/zephyr/pf_core/core/__init__.py  [prototype]               │
-│   src/zephyr/pf_core/default_equity_strategy.py  [production]    │
-│   src/zephyr/pf_core/infrastructure/__init__.py  [prototype]     │
-│   src/zephyr/pf_core/performance_attribution_report.py  [prod... │
-│   src/zephyr/pf_core/risk_limits.py  [prototype]                 │
-│   src/zephyr/pf_core/services/__init__.py  [prototype]           │
-│   src/zephyr/pf_core/strategies/__init__.py  [prototype]         │
-│   src/zephyr/pf_core/strategy_base.py  [production]              │
-│   src/zephyr/pf_core/strategy_engine/__init__.py  [prototype]    │
-│   src/zephyr/pf_core/strategy_registry.py  [prototype]           │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   compliance_rule.py [生产态 / production]                       │
+│   __init__.py [原型态 / prototype]                               │
+│   default_equity_strategy.py [生产态 / production]               │
+│   __init__.py [原型态 / prototype]                               │
+│   performance_attribution_report.py [生产态 / production]        │
+│   risk_limits.py [原型态 / prototype]                            │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   strategy_base.py [生产态 / production]                         │
+│   __init__.py [原型态 / prototype]                               │
+│   strategy_registry.py [原型态 / prototype]                      │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -164,9 +167,9 @@ graph TD
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [config_depends] (1 条 / edges)                  │
+│        [config_depends / config_depends]（1 条 / edges）         │
 ├──────────────────────────────────────────────────────────────────┤
-│   __init__.py → compliance_rule.py                               │
+│   __init__.py → risk_limits.py                                   │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -177,4 +180,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知

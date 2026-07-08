@@ -3,17 +3,19 @@ doc_type: architecture_view
 title: D_PF_ALLOC 组合分配架构文档
 version: "1.0"
 status: active
-date: 2026-07-08
+date: 2026-07-09
 owner: auto-generator
 ttl: permanent
 ---
 
-# 43_d_pf_alloc / 组合分配 / Portfolio Allocation
+# 43_d_pf_alloc / 组合分配 / 组合分配 / Portfolio Allocation
+
+> **功能简介 / Overview**: 组合分配与资产配置
 
 > **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-08 13:50:36
+> 最后更新: 2026-07-09 01:10:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -47,14 +49,14 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_PF_ALLOC["D_PF_ALLOC 组合分配"]
-        src_zephyr_pf_alloc["组合分配域 design"]
-        src_zephyr_pf_alloc_init_py["src/zephyr/pf_alloc/__init__.py prototype"]
-        src_zephyr_pf_alloc_extensions_init_py["src/zephyr/pf_alloc/_extensions/__init__.py prototype"]
-        src_zephyr_pf_alloc_api_init_py["src/zephyr/pf_alloc/api/__init__.py prototype"]
-        src_zephyr_pf_alloc_core_init_py["src/zephyr/pf_alloc/core/__init__.py prototype"]
-        src_zephyr_pf_alloc_infrastructure_init_py["src/zephyr/pf_alloc/infrastructure/__init__.py prototype"]
-        src_zephyr_pf_alloc_models_init_py["src/zephyr/pf_alloc/models/__init__.py prototype"]
-        src_zephyr_pf_alloc_services_init_py["src/zephyr/pf_alloc/services/__init__.py prototype"]
+        src_zephyr_pf_alloc["(设计态 / design) 组合分配域"]
+        src_zephyr_pf_alloc_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_alloc_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_alloc_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_alloc_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_alloc_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_alloc_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_alloc_services_init_py["(原型态 / prototype) __init__.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -80,16 +82,16 @@ graph TD
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (8 modules)               │
+│       L2 领域层 / Domain Layer（共 8 个模块 / 8 modules）        │
 ├──────────────────────────────────────────────────────────────────┤
-│   组合分配域  [design]                                           │
-│   src/zephyr/pf_alloc/__init__.py  [prototype]                   │
-│   src/zephyr/pf_alloc/_extensions/__init__.py  [prototype]       │
-│   src/zephyr/pf_alloc/api/__init__.py  [prototype]               │
-│   src/zephyr/pf_alloc/core/__init__.py  [prototype]              │
-│   src/zephyr/pf_alloc/infrastructure/__init__.py  [prototype]    │
-│   src/zephyr/pf_alloc/models/__init__.py  [prototype]            │
-│   src/zephyr/pf_alloc/services/__init__.py  [prototype]          │
+│   组合分配域 [设计态 / design]                                   │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
+│   __init__.py [原型态 / prototype]                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -124,4 +126,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知
