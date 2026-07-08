@@ -114,7 +114,11 @@ _BLUEPRINT_PATH_CACHE: dict[str, str] | None = None
 
 
 def _get_blueprint_link(blueprint_id: str) -> str:
-    """根据 blueprint_id 返回跳转链接 markdown 文本，无则返回空字符串。"""
+    """根据 blueprint_id 返回跳转链接 markdown 文本，无则返回空字符串。
+
+    链接使用相对路径（相对于域文档输出目录 docs/02_enterprise_architecture/02_domain_architecture_docs/）。
+    从该目录到 docs/03_modules/ 需要上跳两级：../../03_modules/...
+    """
     global _BLUEPRINT_PATH_CACHE
     if not blueprint_id:
         return ""
@@ -123,8 +127,13 @@ def _get_blueprint_link(blueprint_id: str) -> str:
     fp = _BLUEPRINT_PATH_CACHE.get(blueprint_id, "")
     if not fp:
         return ""
-    # 构造相对路径链接（相对仓库根）
-    return f"[{blueprint_id}](docs/03_modules/{fp.split('03_modules/', 1)[-1]})" if "03_modules/" in fp else ""
+    # registry file_path 格式如 "03_modules/_domain_xxx/yyy/blueprint.md"
+    # 域文档在 docs/02_enterprise_architecture/02_domain_architecture_docs/，
+    # 到 docs/03_modules/ 需上跳两级 → ../../03_modules/
+    if "03_modules/" in fp:
+        relative_path = "../../" + fp
+        return f"[{blueprint_id}]({relative_path})"
+    return ""
 
 # ARCH-052: 聚合节点类型——配置对象集（门禁/脚本/测试/规则文件）用 1 个聚合节点代表
 # 图视图只显示聚合节点本身；清单视图展开 registry.yaml 列出内部 items
