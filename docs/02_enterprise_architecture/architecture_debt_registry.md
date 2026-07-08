@@ -3060,6 +3060,70 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ---
 
+### 5.144 资源清理顺序（12个，第25轮新增）
+
+> **第82轮验证状态（2026-07-08）**：FIXED=10(5.144.1 lifecycle_manager.py 4步清理加异常隔离 / 5.144.2 async_runtime.py executor关闭独立try/finally / 5.144.3 process_pool.py 子进程管道关闭顺序改为先terminate→wait→关管道 / 5.144.4 auto_runtime_core.py shutdown_sequence加try/finally保证_booted=False / 5.144.5 sync_engine.py conn.close()移入finally / 5.144.6 agent_cooldown.py 5处conn.close()移入finally / 5.144.7 correlation_engine.py 2处conn.close()移入finally / 5.144.8 dashboard.py 2处conn.close()移入finally / 5.144.9 cold_start.py conn.close()移入finally / 5.144.12 facade.py shutdown循环重复调用修复), NOT_NEEDED=2(5.144.10 + 5.144.11 编号空缺——全项目代码和文档无任何引用,属初始规划编号未使用), DEFERRED=0, STILL_VALID=0. 维度5.144全部清零.
+
+审查核心关闭路径异常隔离、sqlite/数据库连接清理缺finally、子进程管道关闭顺序等问题。
+
+#### 5.144.1 [HIGH] lifecycle_manager 4步清理无异常隔离
+
+- [trading/lifecycle_manager.py:156](file:///D:/ZephyrAlpha/src/zephyr/trading/lifecycle_manager.py#L156) — teardown 4步清理(finalizer.run/cleanup_targets/audit/health)无try-except隔离
+- 修复：4步清理各加独立try-except，确保1步失败不跳过后续3步
+
+#### 5.144.2 [MEDIUM] async_runtime executor关闭无独立try/finally
+
+- [trading/runtime/async_runtime.py:131](file:///D:/ZephyrAlpha/src/zephyr/trading/runtime/async_runtime.py#L131) — executor.shutdown()和loop.close()在同一try块
+- 修复：executor关闭独立try/finally，防止loop.close()抛异常跳过executor.shutdown()
+
+#### 5.144.3 [LOW] process_pool子进程管道关闭顺序错误
+
+- [shared/infra/process_pool.py:243](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/process_pool.py#L243) — 原顺序：先关管道再terminate，子进程写日志触发BrokenPipeError
+- 修复：改为先terminate()→wait()→关闭管道（申请逆序释放）
+
+#### 5.144.4 [MEDIUM] auto_runtime_core shutdown_sequence无try/except
+
+- [trading/auto_runtime_core.py:572](file:///D:/ZephyrAlpha/src/zephyr/trading/auto_runtime_core.py#L572) — shutdown_sequence()抛异常则self._booted=False不执行，运行时状态卡在"已关闭但booted=True"
+- 修复：try/finally保证_booted=False必定执行
+
+#### 5.144.5 [MEDIUM] sync_engine sqlite conn.close()缺finally
+
+- [intelligence/model_evaluation/sync_engine.py:53](file:///D:/ZephyrAlpha/src/zephyr/intelligence/model_evaluation/sync_engine.py#L53) — conn.close()在try块末尾，execute抛异常跳过close
+- 修复：conn.close()移入finally
+
+#### 5.144.6 [MEDIUM] agent_cooldown sqlite conn.close()缺finally（5处）
+
+- [infrastructure/rollback/agent_cooldown.py:63,92,116,154,176](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/agent_cooldown.py#L63) — 5个方法conn.close()在try块末尾
+- 修复：5处conn.close()移入finally
+
+#### 5.144.7 [MEDIUM] correlation_engine sqlite conn.close()缺finally（2处）
+
+- [governance/drift_detection/correlation_engine.py:68,112](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/correlation_engine.py#L68) — 2个方法conn.close()在try块末尾
+- 修复：2处conn.close()移入finally
+
+#### 5.144.8 [MEDIUM] dashboard sqlite conn.close()缺finally（2处）
+
+- [governance/drift_detection/dashboard.py:80,104](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/dashboard.py#L80) — 2个方法conn.close()在try块末尾
+- 修复：2处conn.close()移入finally
+
+#### 5.144.9 [MEDIUM] cold_start sqlite conn.close()缺finally
+
+- [governance/drift_detection/cold_start.py:201](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/cold_start.py#L201) — conn.close()在try块末尾
+- 修复：conn.close()移入finally
+
+#### 5.144.10-5.144.11 [N/A] 编号空缺
+
+- 5.144.10和5.144.11在整个项目（代码+文档）中无任何引用，属初始规划编号未使用
+
+#### 5.144.12 [LOW] facade shutdown循环重复调用
+
+- [infrastructure/system_telemetry/facade.py:506](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/facade.py#L506) — health已在_SHUTDOWN_ORDER中，循环会重复调用shutdown()
+- 修复：移除重复调用
+
+**严重度汇总**：HIGH=1, MEDIUM=9, LOW=2, 合计=12
+
+---
+
 ### 5.145 类型注解完整性（30个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=30(类型注解完整性需补全缺失注解)
