@@ -815,6 +815,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 - **真源实现**：所有生成器代码禁止 datetime.now()（检测命令见下），输出幂等由代码层保障而非注释层声明
 - **时间真源**：文件修改时间唯一真源是 git log，生成器不引入独立时间源
 - **检测**：`Select-String -Path "scripts/governance/d5_architecture/generators/*.py" -Pattern "datetime\.now\(\)"` 应返回零匹配
+- **commit-time 强制**：DATETIME-NOW-FORBIDDEN gate（priority=34，hard-block）在 commit 时硬阻断生成器代码中的 `datetime.now()` 调用——生成器判定：路径含 `/generators/` 或文件名以 `generate_` 开头；tests/ 豁免；import/注释/docstring 豁免；非生成器文件豁免；检出违规则 fail-closed 阻断（passed=False）。真源：[`datetime_now_forbidden_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/datetime_now_forbidden_gate.py)
 - **自动触发**：GATE-REGENERATE reconciler（含原 DOMAIN-DOC 功能）在修改 depgraph 后自动调用 generate_domain_doc.py 和 generate_domain_dependency_diagram.py 重生域文档，生成器幂等性确保无噪音 auto-commit
 - **按域编号生成器 --all 模式 MUST 调用 cleanup_stale_files**：生成"按域编号文件"（`NN_d_xxx.md`/`.mmd`，域重命名/删除后旧编号会残留）的生成器，在 `--all` 模式下 MUST 调用 `_common.cleanup_stale_files()` 清理孤儿文件，治本"只增不删"。当前适用：`generate_domain_doc.py`、`generate_domain_dependency_diagram.py`（均已调用）。单域模式不清理（避免误删）；生成单文件/非编号文件的生成器（导航索引、容量报告、集成拓扑等）不适用。真源：[`_common.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/_common.py)
 - **检测**：对生成 `NN_d_xxx` 格式文件的生成器，`Select-String -Pattern "cleanup_stale_files"` 应返回至少 1 匹配（当前 2 个生成器均通过）
