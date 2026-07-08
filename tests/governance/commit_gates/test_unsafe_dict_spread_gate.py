@@ -677,8 +677,8 @@ class TestMixedSafeUnsafe:
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed
-        # 违规列表（→ 之前的部分）只含危险项
-        violations_part = detail.split("→")[0]
+        # 违规列表（-> 之前的部分）只含危险项
+        violations_part = detail.split("->")[0]
         assert "Other" in violations_part
         assert "**payload" in violations_part
         # 安全项不在违规列表
