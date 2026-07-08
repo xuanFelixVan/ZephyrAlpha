@@ -56,7 +56,7 @@ src/zephyr/data/
 ├── cli.py                        # 命令行：手动触发/查看状态/重跑失败
 ├── config/
 │   ├── schedule.yaml             # 调度计划（4档时段）
-│   ├── policies.yaml             # per-source 策略参数
+│   ├── policies.yaml             # per-source 策略参数（#183 起为派生物，真源见 data_sources_registry.yaml）
 │   └── tasks.yaml                # 任务清单（表→Provider→策略）
 └── implementations/
     ├── ifind_provider.py         # iFind（THS_RQ/THS_BD/iwencai/EDB）
@@ -391,6 +391,8 @@ class SourcePolicy:
 ### §5.3 策略热更新机制
 
 - 策略参数存 `config/policies.yaml`，调度器每 60 秒重载
+- #183 起 policies.yaml 改为派生物：真源在 `architecture_model/data/data_sources_registry.yaml` 的 policy 字段，
+  由 `scripts/governance/d5_architecture/generators/generate_policies.py` 单向派生；改真源后 reconciler 自动重生
 - 修改 yaml 后无需重启调度器即可生效
 - 紧急熔断：CLI `integrator pause <source>` 立即停掉某源所有任务
 
@@ -604,7 +606,7 @@ jobs:
     depends_on: [kline_daily_incremental, adj_factor_incremental]
 ```
 
-**config/policies.yaml**：
+**config/policies.yaml**（#183 起为派生物，以下示例仅展示格式；真源在 `architecture_model/data/data_sources_registry.yaml` 的 policy 字段）：
 ```yaml
 ifind:
   rpm: 0
@@ -731,7 +733,7 @@ akshare:
 - `src/zephyr/data/scheduler.py`（APScheduler 封装）
 - `src/zephyr/data/task_queue.py`（DAG + 优先级）
 - `src/zephyr/data/progress_store.py`（SQLite）
-- `config/schedule.yaml` + `config/policies.yaml`
+- `config/schedule.yaml` + `config/policies.yaml`（#183 起 policies.yaml 为派生物，真源见 data_sources_registry.yaml）
 - 接入首批 10 个任务（kline_daily / index_kline / daily_valuation / margin_trading / block_trade / dragon_tiger / money_flow / macro_data / analyst_forecast / us_index）
 
 **验证**：调度器常驻运行 3 天，10 个任务自动触发，成功率 ≥ 99%。
