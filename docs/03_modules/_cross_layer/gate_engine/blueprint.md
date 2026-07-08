@@ -196,6 +196,8 @@ ssot_claims:
 | `commit_gates/unsafe_dict_spread_gate.py` | §0.1 | 不安全字典展开门禁 | 已实现 | | 本模块 |
 | `commit_gates/_diff_helpers.py` | §0.1 | gate共享diff解析工具模块（FUNCTION-DUP治本提取） | 已实现 | | 本模块 |
 | `commit_gates/datetime_now_forbidden_gate.py` | §0.1 | 生成器代码datetime.now()硬阻断门禁（AGENTS.md §11.1.1） | 已实现 | | 本模块 |
+| `commit_gates/import_direction_gate.py` | §0.1 | shared层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152防复发） | 已实现 | | 本模块 |
+| `commit_gates/hardcoded_url_gate.py` | §0.1 | 硬编码localhost URL阻断门禁（NO-HARDCODED-URL，§5.160.9防复发） | 已实现 | | 本模块 |
 | `commit_gates/gate_repo.py` | §0.1 | gate仓库（已正确指向MOD-GATE_ENGINE） | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
