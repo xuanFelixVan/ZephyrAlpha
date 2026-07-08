@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-07T04:15:47
+> 生成时间: 2026-07-09T05:45:56
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -37,8 +37,8 @@
 ```mermaid
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL0["[production]L0: 数据接入与预处理层<br/>功能: miniQMT + iFind + t…<br/>freq: tick<br/>build: stable"]:::bsStable
-        LL1["[production]L1: 因子计算层<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>freq: daily<br/>build: stable"]:::bsStable
+        LL0["[production]L0: 数据接入与预处理层<br/>蓝图: MOD-MKT_DATA<br/>功能: miniQMT + iFind + t…<br/>freq: tick<br/>build: stable"]:::bsStable
+        LL1["[production]L1: 因子计算层<br/>蓝图: MOD-L02-001<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>freq: daily<br/>build: stable"]:::bsStable
         LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]:::bsPlanned
         N1("[design]sell_decision: 卖出决策域入口 Sell Decision Entry<br/>path: decision/sell/sell_00"):::bsPlanned
         LL2A --- N1
@@ -320,7 +320,7 @@ flowchart TD
         LL3 --- N135
         N136("[design]portfolio_target: 路由Agent Router<br/>path: decision/aut_core/ac_24"):::bsPlanned
         LL3 --- N136
-        LL4["[production]L4: 风控层<br/>功能: Pre/Post-Trade 风控校验…<br/>freq: realtime<br/>build: stable"]:::bsStable
+        LL4["[production]L4: 风控层<br/>蓝图: MOD-L04-001<br/>功能: Pre/Post-Trade 风控校验…<br/>freq: realtime<br/>build: stable"]:::bsStable
         N57("[design]compliance_check: Pre-Trade主链6项检查 Pre-Trade Main Chain 6 Checks<br/>path: decision/ex_core/ex_01"):::bsPlanned
         LL4 --- N57
         N58("[design]risk_check: Kill Switch 5层防御 Kill Switch 5-Layer Defense<br/>path: decision/ex_core/ex_02"):::bsPlanned
@@ -719,9 +719,9 @@ flowchart TD
 ```mermaid
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL0["[production]L0: 数据接入与预处理层<br/>功能: miniQMT + iFind + t…<br/>freq: tick<br/>build: stable"]:::bsStable
-        LL1["[production]L1: 因子计算层<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>freq: daily<br/>build: stable"]:::bsStable
-        LL4["[production]L4: 风控层<br/>功能: Pre/Post-Trade 风控校验…<br/>freq: realtime<br/>build: stable"]:::bsStable
+        LL0["[production]L0: 数据接入与预处理层<br/>蓝图: MOD-MKT_DATA<br/>功能: miniQMT + iFind + t…<br/>freq: tick<br/>build: stable"]:::bsStable
+        LL1["[production]L1: 因子计算层<br/>蓝图: MOD-L02-001<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>freq: daily<br/>build: stable"]:::bsStable
+        LL4["[production]L4: 风控层<br/>蓝图: MOD-L04-001<br/>功能: Pre/Post-Trade 风控校验…<br/>freq: realtime<br/>build: stable"]:::bsStable
     end
     subgraph track_data_driven["数据驱动轨（Data-Driven Track）"]
     end
@@ -1191,14 +1191,14 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    LL0["[production] L0 数据接入与预处理层<br/>Data Ingestion & Preprocessing<br/>功能: miniQMT + iFind + t…<br/>频率: tick<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LL1["[production] L1 因子计算层<br/>Factor Calculation<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>频率: daily<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LL0["[production] L0 数据接入与预处理层<br/>Data Ingestion & Preprocessing<br/>蓝图: MOD-MKT_DATA<br/>功能: miniQMT + iFind + t…<br/>频率: tick<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LL1["[production] L1 因子计算层<br/>Factor Calculation<br/>蓝图: MOD-L02-001<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>频率: daily<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL2A["[design] L2A 信号层<br/>Signal Generation<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LL2B["[design] L2B 主力行为层<br/>Main Force Behavior Analysis<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LL2C["[design] L2C 市场状态与大盘预测层<br/>Market State & Index Prediction<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LL2D["[design] L2D 知识图谱与因果推演层<br/>Knowledge Graph & Causal Inference<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LL3["[design] L3 策略组合层<br/>Strategy & Portfolio Combination<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LL4["[production] L4 风控层<br/>Risk Control<br/>功能: Pre/Post-Trade 风控校验…<br/>频率: realtime<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LL4["[production] L4 风控层<br/>Risk Control<br/>蓝图: MOD-L04-001<br/>功能: Pre/Post-Trade 风控校验…<br/>频率: realtime<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL5["[design] L5 学习层<br/>Learning & Optimization<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LL6["[design] L6 自评估层<br/>Self Evaluation<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LL0 -->|triggering| LL1
@@ -1265,14 +1265,14 @@ flowchart TD
 
 | layer_id | 名称 | 英文名 | 所属轨 | 蓝图(module_id) | 蓝图名(派生) | 代码引用 | 功能简述 | 决策频率 | 成熟度 | build_status |
 |----------|------|--------|--------|-----------------|--------------|----------|----------|----------|--------|--------------|
-| L0 | 数据接入与预处理层 | Data Ingestion & Preprocessing | model_driven | - | - | - | miniQMT + iFind + tushare + 另类数据源 → 事件总线 → 分层时序存储 产出：tick_data / ohlc_bar / factor_input_data | tick | production | stable |
-| L1 | 因子计算层 | Factor Calculation | model_driven | - | - | - | 因子工厂全生命周期管理 → 盘前全量/盘中增量双模计算 → 因子池 产出：factor_value（带 PIT 合规标记） | daily | production | stable |
+| L0 | 数据接入与预处理层 | Data Ingestion & Preprocessing | model_driven | MOD-MKT_DATA | - | - | miniQMT + iFind + tushare + 另类数据源 → 事件总线 → 分层时序存储 产出：tick_data / ohlc_bar / factor_input_data | tick | production | stable |
+| L1 | 因子计算层 | Factor Calculation | model_driven | MOD-L02-001 | - | - | 因子工厂全生命周期管理 → 盘前全量/盘中增量双模计算 → 因子池 产出：factor_value（带 PIT 合规标记） | daily | production | stable |
 | L2A | 信号层 | Signal Generation | model_driven | - | - | - | 信号工厂 → 多策略投票 → 收益率条件密度预测 → Transformer/Mamba时序增强 → 共形预测 产出：signal（Insight: direction/confidence/horizon） | daily | design | planned |
 | L2B | 主力行为层 | Main Force Behavior Analysis | model_driven | - | - | - | 六阶段识别 + 自迭代推演 + 庄家专项 + 群体博弈模拟 产出：main_force_signal（主力行为画像） | daily | design | planned |
 | L2C | 市场状态与大盘预测层 | Market State & Index Prediction | model_driven | - | - | - | 3×3矩阵 + 2叠加态 + 三层大盘预测 + T+1次日8态走势预测 + 体制转换检测(HMM/变点) 产出：market_state_prediction（大盘方向/波动率/体制判断） | daily | design | planned |
-| L2D | 知识图谱与因果推演层 | Knowledge Graph & Causal Inference | model_driven | - | - | - | 六类知识图谱 → 事件影响链分析 → 因果传导推演 → GNN股票关系建模 → Causal ML 产出：causal_inference_result（因果推断结果） | daily | design | planned |
-| L3 | 策略组合层 | Strategy & Portfolio Combination | model_driven | - | - | - | 多策略信号合成 → 资本分配 → 元策略路由 → 组合构建 产出：portfolio_target（PortfolioTarget: 目标仓位） | daily | design | planned |
-| L4 | 风控层 | Risk Control | model_driven | - | - | - | Pre/Post-Trade 风控校验 + Kill Switch 熔断 + 止损评估 产出：risk_check（RiskDecision: approve/veto/adjust） | realtime | production | stable |
+| L2D | 知识图谱与因果推演层 | Knowledge Graph & Causal Inference | model_driven | MOD-KB-001 | docs__03_modules___domain_knowledge__knowledge_base__blueprint_md | - | 六类知识图谱 → 事件影响链分析 → 因果传导推演 → GNN股票关系建模 → Causal ML 产出：causal_inference_result（因果推断结果） | daily | design | planned |
+| L3 | 策略组合层 | Strategy & Portfolio Combination | model_driven | MOD-L05-001 | - | - | 多策略信号合成 → 资本分配 → 元策略路由 → 组合构建 产出：portfolio_target（PortfolioTarget: 目标仓位） | daily | design | planned |
+| L4 | 风控层 | Risk Control | model_driven | MOD-L04-001 | - | - | Pre/Post-Trade 风控校验 + Kill Switch 熔断 + 止损评估 产出：risk_check（RiskDecision: approve/veto/adjust） | realtime | production | stable |
 | L5 | 学习层 | Learning & Optimization | model_driven | - | - | - | 7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环 产出：learning_feedback（策略优化建议） | weekly | design | planned |
 | L6 | 自评估层 | Self Evaluation | model_driven | - | - | - | LLM 自评估(Judge+交叉验证) + 多模态金融推理 + VeNRA零幻觉锚定 产出：self_evaluation（决策质量评估） | weekly | design | planned |
 
@@ -1345,155 +1345,155 @@ flowchart TD
 | 212 | L2A | signal | A股绩效审计与优化触发器 A-Share Performance Audit | decision/research/rs_05 | - | - | design | planned |
 | 213 | L2A | signal | 异常决策自检 Anomaly Decision Self-Check | decision/research/rs_06 | - | - | design | planned |
 | 214 | L2A | signal | Knowledge Feedback Loop 知识反馈循环 | decision/research/rs_07 | - | - | design | planned |
-| 20 | L3 | portfolio_target | 组合核心引擎 Portfolio Core Engine | decision/pf_core/pc_01 | - | - | design | planned |
-| 21 | L3 | portfolio_target | 半Kelly硬上限 Half-Kelly Hard Cap | decision/pf_core/pc_02 | - | - | design | planned |
-| 22 | L3 | portfolio_target | 风险预算 Risk Budget | decision/pf_core/pc_03 | - | - | design | planned |
-| 23 | L3 | portfolio_target | 再平衡决策 Rebalance Decision | decision/pf_core/pc_04 | - | - | design | planned |
-| 24 | L3 | portfolio_target | 仲裁优先级体系 Arbitration Priority | decision/pf_core/pc_05 | - | - | design | planned |
-| 25 | L3 | portfolio_target | 多策略共振融合 Strategy Convergence Fusion | decision/pf_core/pc_06 | - | - | design | planned |
-| 26 | L3 | portfolio_target | 因子直通裁决 Factor Bypass Arbitration | decision/pf_core/pc_07 | - | - | design | planned |
-| 27 | L3 | portfolio_target | 元策略路由 Meta-Strategy Router | decision/pf_core/pc_08 | - | - | design | planned |
-| 28 | L3 | portfolio_target | 组合优化 Portfolio Optimization | decision/pf_core/pc_09 | - | - | design | planned |
-| 29 | L3 | portfolio_target | 资本分配 Capital Allocation | decision/pf_core/pc_10 | - | - | design | planned |
-| 30 | L3 | portfolio_target | 决策编排器 Decision Orchestrator | decision/pf_core/pc_11 | - | - | design | planned |
-| 31 | L3 | portfolio_target | 四轨融合器 Multi-Track Fusion | decision/pf_core/pc_12 | - | - | design | planned |
-| 32 | L3 | portfolio_target | 策略分配 Strategy Allocation | decision/pf_alloc/pa_01 | - | - | design | planned |
-| 33 | L3 | portfolio_target | 风险平价 Risk Parity | decision/pf_alloc/pa_02 | - | - | design | planned |
-| 34 | L3 | portfolio_target | 动态权重 Dynamic Weighting | decision/pf_alloc/pa_03 | - | - | design | planned |
-| 35 | L3 | portfolio_target | 策略权重再平衡 Strategy Weight Rebalance | decision/pf_alloc/pa_04 | - | - | design | planned |
-| 36 | L3 | portfolio_target | 多策略共识 Multi-Strategy Consensus | decision/pf_alloc/pa_05 | - | - | design | planned |
-| 37 | L3 | portfolio_target | 元策略选择 Meta-Strategy Selection | decision/pf_alloc/pa_06 | - | - | design | planned |
-| 38 | L3 | portfolio_target | 仓位唯一裁决中心 C-047 Position Sole Arbiter | decision/position/pos_01 | - | - | design | planned |
-| 39 | L3 | portfolio_target | 持仓状态机 Position State Machine | decision/position/pos_02 | - | - | design | planned |
-| 40 | L3 | portfolio_target | 仓位漂移监控 Position Drift Monitor | decision/position/pos_03 | - | - | design | planned |
-| 41 | L3 | portfolio_target | Kelly仓位决策 Kelly Position Decision | decision/position/pos_04 | - | - | design | planned |
-| 42 | L3 | portfolio_target | 风险配额 Risk Quota | decision/position/pos_05 | - | - | design | planned |
-| 43 | L3 | portfolio_target | 11种市场状态→仓位上限 Market State Position Cap | decision/position/pos_06 | - | - | design | planned |
-| 44 | L3 | portfolio_target | 组合层决策 Portfolio Layer Decision | decision/position/pos_07 | - | - | design | planned |
-| 45 | L3 | portfolio_target | 策略层决策 Strategy Layer Decision | decision/position/pos_08 | - | - | design | planned |
-| 46 | L3 | portfolio_target | 标层决策 Instrument Layer Decision | decision/position/pos_09 | - | - | design | planned |
-| 47 | L3 | portfolio_target | 动态层决策 Dynamic Layer Decision | decision/position/pos_10 | - | - | design | planned |
-| 48 | L3 | portfolio_target | 再平衡触发 Rebalance Trigger | decision/position/pos_11 | - | - | design | planned |
-| 49 | L3 | portfolio_target | 仓位上限硬约束 Position Cap Hard Constraint | decision/position/pos_12 | - | - | design | planned |
-| 50 | L3 | portfolio_target | REDUCING→EXITING状态转换 REDUCING to EXITING | decision/position/pos_13 | - | - | design | planned |
-| 51 | L3 | portfolio_target | 风险预算→Kelly决策 Risk Budget to Kelly | decision/position/pos_14 | - | - | design | planned |
-| 52 | L3 | portfolio_target | 半Kelly硬上限 Half-Kelly Hard Cap | decision/position/pos_15 | - | - | design | planned |
-| 53 | L3 | portfolio_target | 仓位降级 Position Degradation | decision/position/pos_16 | - | - | design | planned |
-| 54 | L3 | portfolio_target | 持仓状态→卖出阈值 Position State to Sell Threshold | decision/position/pos_17 | - | - | design | planned |
-| 55 | L3 | portfolio_target | 仓位四轨决策 Position Four-Track Decision | decision/position/pos_18 | - | - | design | planned |
-| 56 | L3 | portfolio_target | 仓位裁决→执行 Position Arbitration to Execution | decision/position/pos_19 | - | - | design | planned |
-| 59 | L3 | order | 50ms SLA Fail-Closed 50ms SLA Fail-Closed | decision/ex_core/ex_03 | - | - | design | planned |
-| 60 | L3 | order | Saga编排式事务 Saga Orchestrated Transaction | decision/ex_core/ex_04 | - | - | design | planned |
-| 61 | L3 | order | 风控检查 Risk Check | decision/ex_core/ex_05 | - | - | design | planned |
-| 62 | L3 | order | 信号确认 Signal Confirmation | decision/ex_core/ex_06 | - | - | design | planned |
-| 63 | L3 | order | 下单提交 Order Submit | decision/ex_core/ex_07 | - | - | design | planned |
-| 64 | L3 | order | 成交确认 Fill Confirmation | decision/ex_core/ex_08 | - | - | design | planned |
-| 65 | L3 | order | 持仓更新 Position Update | decision/ex_core/ex_09 | - | - | design | planned |
-| 66 | L3 | order | 报告生成 Report Generation | decision/ex_core/ex_10 | - | - | design | planned |
-| 71 | L3 | order | 流动性螺旋3阶段 Liquidity Spiral 3-Phase | decision/ex_core/ex_15 | - | - | design | planned |
-| 72 | L3 | order | 订单路由决策 Order Routing Decision | decision/ex_sor/ex_16 | - | - | design | planned |
-| 73 | L3 | order | SOR路由决策延迟 SOR Routing Latency | decision/ex_sor/ex_17 | - | - | design | planned |
-| 75 | L3 | order | 交易通道熔断人工恢复 Trading Channel Manual Recovery | decision/ex_sor/ex_19 | - | - | design | planned |
-| 77 | L3 | order | Kill-Switch四级阶梯 Kill-Switch 4-Level Cascade | decision/ex_sor/ex_21 | - | - | design | planned |
-| 78 | L3 | order | 熔断器矩阵 Circuit Breaker Matrix | decision/ex_sor/ex_22 | - | - | design | planned |
-| 102 | L3 | order | 外部订单观察者 External Order Watcher | decision/trading/trd_01 | - | - | design | planned |
-| 103 | L3 | order | 结算引擎 Settlement Engine | decision/trading/trd_02 | - | - | design | planned |
-| 104 | L3 | order | 公司行动 Corporate Action | decision/trading/trd_03 | - | - | design | planned |
-| 105 | L3 | order | 保证金管理 Margin Manager | decision/trading/trd_04 | - | - | design | planned |
-| 106 | L3 | order | 多账户 Multi-Account | decision/trading/trd_05 | - | - | design | planned |
-| 107 | L3 | order | 微信枢纽 WeChat Hub | decision/trading/trd_06 | - | - | design | planned |
-| 108 | L3 | order | C-013 4级优先级 C-013 4-Level Priority | decision/trading/trd_07 | - | - | design | planned |
-| 109 | L3 | order | A股交易纪律四项必做 A-Share Trading 4-Do | decision/trading/trd_08 | - | - | design | planned |
-| 110 | L3 | order | A股交易纪律四项严禁 A-Share Trading 4-Forbidden | decision/trading/trd_09 | - | - | design | planned |
-| 111 | L3 | order | 监管报送 Regulatory Reporting | decision/trading/trd_10 | - | - | design | planned |
-| 112 | L3 | order | 盘中即时反应决策引擎 Intraday Instant Reaction Decision Engine | decision/trading/trd_11 | - | - | design | planned |
-| 113 | L3 | portfolio_target | Permission Guard 七层纵深防御 | decision/aut_core/ac_01 | - | - | design | planned |
-| 115 | L3 | portfolio_target | Self-Healing Git-native自愈 | decision/aut_core/ac_03 | - | - | design | planned |
-| 116 | L3 | portfolio_target | Budget Enforcer 七级预算 | decision/aut_core/ac_04 | - | - | design | planned |
-| 117 | L3 | portfolio_target | Health Monitor 9子系统监控 | decision/aut_core/ac_05 | - | - | design | planned |
-| 118 | L3 | portfolio_target | Escalation Engine 升级引擎 | decision/aut_core/ac_06 | - | - | design | planned |
-| 119 | L3 | portfolio_target | Rollback Engine Git-native回滚 | decision/aut_core/ac_07 | - | - | design | planned |
-| 120 | L3 | portfolio_target | Drift Detector 39检测器 | decision/aut_core/ac_08 | - | - | design | planned |
-| 121 | L3 | portfolio_target | Auto-Fix Engine 16修复器 | decision/aut_core/ac_09 | - | - | design | planned |
-| 133 | L3 | portfolio_target | 编排Agent Orchestrator | decision/aut_core/ac_21 | - | - | design | planned |
-| 135 | L3 | portfolio_target | 做TAgent T0Trader | decision/aut_core/ac_23 | - | - | design | planned |
-| 136 | L3 | portfolio_target | 路由Agent Router | decision/aut_core/ac_24 | - | - | design | planned |
-| 57 | L4 | compliance_check | Pre-Trade主链6项检查 Pre-Trade Main Chain 6 Checks | decision/ex_core/ex_01 | - | - | design | planned |
-| 58 | L4 | risk_check | Kill Switch 5层防御 Kill Switch 5-Layer Defense | decision/ex_core/ex_02 | - | - | design | planned |
-| 67 | L4 | risk_check | Kill Switch AI自动激活 Kill Switch AI Auto Trigger | decision/ex_core/ex_11 | - | - | design | planned |
-| 68 | L4 | risk_check | Kill Switch人工激活 Kill Switch Manual Trigger | decision/ex_core/ex_12 | - | - | design | planned |
-| 69 | L4 | risk_check | Kill Switch定时激活 Kill Switch Timer Trigger | decision/ex_core/ex_13 | - | - | design | planned |
-| 70 | L4 | risk_check | Kill Switch外部信号激活 Kill Switch External Signal | decision/ex_core/ex_14 | - | - | design | planned |
-| 74 | L4 | risk_check | 券商连接熔断+故障转移 Broker Circuit Breaker | decision/ex_sor/ex_18 | - | - | design | planned |
-| 76 | L4 | compliance_check | Pre-Trade合规检查流水线 Pre-Trade Compliance Pipeline | decision/ex_sor/ex_20 | - | - | design | planned |
-| 79 | L4 | compliance_check | 行为准入门禁 Behavioral Admission Gateway | decision/ex_sor/ex_23 | - | - | design | planned |
-| 80 | L4 | risk_check | 风控熔断事件 Risk Circuit Breaker Event | decision/risk/rk_01 | - | - | design | planned |
-| 81 | L4 | risk_check | 三层防线 Three Defense Lines | decision/risk/rk_02 | - | - | design | planned |
-| 82 | L4 | risk_check | 双引擎风控 Dual Engine Risk | decision/risk/rk_03 | - | - | design | planned |
-| 83 | L4 | risk_check | 4级风控决策门控 4-Level Risk Decision Gate | decision/risk/rk_04 | - | - | design | planned |
-| 84 | L4 | risk_check | 压力测试引擎 Stress Test Engine | decision/risk/rk_05 | - | - | design | planned |
-| 85 | L4 | risk_check | 黑天鹅模式库 Black Swan Pattern Library | decision/risk/rk_06 | - | - | design | planned |
-| 86 | L4 | risk_check | 流动性危机模拟 Liquidity Crisis Simulation | decision/risk/rk_07 | - | - | design | planned |
-| 87 | L4 | risk_check | 反向压力测试4步法 Reverse Stress Test 4-Step | decision/risk/rk_08 | - | - | design | planned |
-| 88 | L4 | risk_check | 二阶效应与传染模型 Second-Order Effect Model | decision/risk/rk_09 | - | - | design | planned |
-| 89 | L4 | risk_check | 风控否决权 Risk Veto | decision/risk/rk_10 | - | - | design | planned |
-| 90 | L4 | risk_check | 风控状态 Risk State | decision/risk/rk_11 | - | - | design | planned |
-| 91 | L4 | risk_check | 风控参数变更审批 Risk Parameter Approval | decision/risk/rk_12 | - | - | design | planned |
-| 92 | L4 | risk_check | 熔断恢复确认 Circuit Breaker Recovery Confirm | decision/risk/rk_13 | - | - | design | planned |
-| 93 | L4 | risk_check | OBSERVING软止损观察期 OBSERVING Soft Stop | decision/risk/rk_14 | - | - | design | planned |
-| 94 | L4 | risk_check | 风险预算 Risk Budget | decision/risk/rk_15 | - | - | design | planned |
-| 95 | L4 | risk_check | VaR计算 VaR Calculation | decision/risk/rk_16 | - | - | design | planned |
-| 96 | L4 | risk_check | 回撤监控 Drawdown Monitor | decision/risk/rk_17 | - | - | design | planned |
-| 97 | L4 | risk_check | 风控信号交互时序 Risk-Signal Timing | decision/risk/rk_18 | - | - | design | planned |
-| 98 | L4 | risk_check | 风控事件 Risk Event | decision/risk/rk_19 | - | - | design | planned |
-| 99 | L4 | risk_check | FLATTEN硬编码触发 FLATTEN Hardcoded Trigger | decision/risk/rk_20 | - | - | design | planned |
-| 100 | L4 | risk_check | 5级风险否决引擎 5-Level Risk Veto Engine | decision/risk/rk_21 | - | - | design | planned |
-| 101 | L4 | risk_check | Pod级止损 Pod-Level Stop Loss | decision/risk/rk_22 | - | - | design | planned |
-| 114 | L4 | compliance_check | Audit Trail Merkle哈希链 | decision/aut_core/ac_02 | - | - | design | planned |
-| 122 | L4 | compliance_check | Decision Audit Trail 决策审计 | decision/aut_core/ac_10 | - | - | design | planned |
-| 123 | L4 | compliance_check | Kill Switch直通路径 Kill Switch Direct Path | decision/aut_perm/ap_11 | - | - | design | planned |
-| 124 | L4 | compliance_check | 4级自治模型 Level 0-3 Autonomy Model | decision/aut_perm/ap_12 | - | - | design | planned |
-| 125 | L4 | compliance_check | AI自治边界三级分类 | decision/aut_perm/ap_13 | - | - | design | planned |
-| 126 | L4 | compliance_check | Agentic Drift 5类攻击模式 | decision/aut_perm/ap_14 | - | - | design | planned |
-| 127 | L4 | compliance_check | 行为审计7信号 S-01~S-07 | decision/aut_perm/ap_15 | - | - | design | planned |
-| 128 | L4 | compliance_check | ARS双轨结算模型 ARS Dual-Track Settlement | decision/aut_perm/ap_16 | - | - | design | planned |
-| 129 | L4 | risk_check | AI自治熔断5条件 VR-009 5 Conditions | decision/aut_perm/ap_17 | - | - | design | planned |
-| 130 | L4 | risk_check | L0完全人工→L4降级模式 L0 to L4 Degradation | decision/aut_perm/ap_18 | - | - | design | planned |
-| 131 | L4 | risk_check | 4级风控决策 APPROVE/REDUCE/REJECT/FLATTEN | decision/aut_perm/ap_19 | - | - | design | planned |
-| 132 | L4 | compliance_check | 人类监督四层级 L0~L3 Human Oversight | decision/aut_perm/ap_20 | - | - | design | planned |
-| 134 | L4 | risk_check | 风控Agent RiskManager | decision/aut_core/ac_22 | - | - | design | planned |
-| 137 | L4 | compliance_check | A2A检查网关策略引擎 A2A Check Gateway | decision/aut_perm/ap_21 | - | - | design | planned |
-| 138 | L4 | compliance_check | LLM Agent路由 级联控制器 Cascade Controller | decision/aut_perm/ap_22 | - | - | design | planned |
-| 139 | L4 | risk_check | 应急保命轨 Emergency Track | decision/aut_perm/ap_23 | - | - | design | planned |
-| 140 | L4 | compliance_check | 置信度分层决策 C-031 Confidence-Layered Decision | decision/aut_perm/ap_24 | - | - | design | planned |
-| 156 | L4 | compliance_check | AuditLedger 审计账本 | decision/governance/gov_001 | - | - | design | planned |
-| 157 | L4 | compliance_check | DDDRuleEnforcer DDD铁律执行器 | decision/governance/gov_002 | - | - | design | planned |
-| 158 | L4 | compliance_check | DecisionProvenance 决策溯源链 | decision/governance/gov_003 | - | - | design | planned |
-| 159 | L4 | compliance_check | PhaseGateManager 阶段门禁管理 | decision/governance/gov_004 | - | - | design | planned |
-| 160 | L4 | compliance_check | ConstitutionalGuard 宪法守卫 | decision/governance/gov_005 | - | - | design | planned |
-| 161 | L4 | compliance_check | ComplianceAuditor 合规审计器 | decision/governance/gov_006 | - | - | design | planned |
-| 162 | L4 | compliance_check | IncidentResponse 事件响应与升级 | decision/governance/gov_007 | - | - | design | planned |
-| 163 | L4 | compliance_check | SystemTopologyAuditor 系统拓扑审计 | decision/governance/gov_008 | - | - | design | planned |
-| 164 | L4 | compliance_check | 决策疲劳检测 Decision Fatigue Detection | decision/governance/gov_009 | - | - | design | planned |
-| 165 | L4 | compliance_check | Agent辩论机制 Agent Debate | decision/governance/gov_010 | - | - | design | planned |
-| 166 | L4 | compliance_check | AI Compliance Validator AI合规验证 | decision/compliance/cmp_01 | - | - | design | planned |
-| 167 | L4 | compliance_check | 决策溯源链 Decision Provenance Chain | decision/compliance/cmp_02 | - | - | design | planned |
-| 168 | L4 | compliance_check | TraceCompleteness TC≥0.997 | decision/compliance/cmp_03 | - | - | design | planned |
-| 169 | L4 | compliance_check | AI合规边界 Tier 1/2/3风险分级 | decision/compliance/cmp_04 | - | - | design | planned |
-| 170 | L4 | compliance_check | Pre-Trade合规检查三模式 Pre-Trade 3-Mode Check | decision/compliance/cmp_05 | - | - | design | planned |
-| 171 | L4 | compliance_check | Kill Switch <1秒响应 Kill Switch <1s Response | decision/compliance/cmp_06 | - | - | design | planned |
-| 172 | L4 | compliance_check | 人类监督四层级 L0~L3 Human Oversight 4-Level | decision/compliance/cmp_07 | - | - | design | planned |
-| 173 | L4 | compliance_check | AI决策可追溯性 AI Decision Traceability | decision/compliance/cmp_08 | - | - | design | planned |
-| 174 | L4 | compliance_check | AI决策可解释性门控 AI Decision Explainability Gate | decision/compliance/cmp_09 | - | - | design | planned |
-| 175 | L4 | compliance_check | 监管报告 Regulatory Report | decision/compliance/cmp_10 | - | - | design | planned |
-| 176 | L4 | compliance_check | 法域冲突解决 CrossBorderReg Navigator | decision/compliance/cmp_11 | - | - | design | planned |
-| 195 | L4 | compliance_check | AISGGate 九层防御 L0-L8 | decision/security/sec_001 | - | - | design | planned |
-| 196 | L4 | compliance_check | ACLGuard Kill Switch执行 | decision/security/sec_009a | - | - | design | planned |
-| 197 | L4 | compliance_check | Kill Switch紧急熔断 Kill Switch Emergency | decision/security/sec_009b | - | - | design | planned |
-| 198 | L4 | compliance_check | Secret Manager 密钥管理 | decision/security/sec_007 | - | - | design | planned |
-| 199 | L4 | compliance_check | Self-Protect 自保护 | decision/security/sec_008 | - | - | design | planned |
-| 207 | L4 | compliance_check | LLM Gateway 推理网关 LLM Gateway | decision/security/sec_010 | - | - | design | planned |
-| 208 | L4 | compliance_check | 推理熔断器 Inference Circuit Breaker | decision/security/sec_011 | - | - | design | planned |
+| 20 | L3 | portfolio_target | 组合核心引擎 Portfolio Core Engine | decision/pf_core/pc_01 | MOD-L05-001 | - | design | planned |
+| 21 | L3 | portfolio_target | 半Kelly硬上限 Half-Kelly Hard Cap | decision/pf_core/pc_02 | MOD-L05-001 | - | design | planned |
+| 22 | L3 | portfolio_target | 风险预算 Risk Budget | decision/pf_core/pc_03 | MOD-L05-001 | - | design | planned |
+| 23 | L3 | portfolio_target | 再平衡决策 Rebalance Decision | decision/pf_core/pc_04 | MOD-L05-001 | - | design | planned |
+| 24 | L3 | portfolio_target | 仲裁优先级体系 Arbitration Priority | decision/pf_core/pc_05 | MOD-L05-001 | - | design | planned |
+| 25 | L3 | portfolio_target | 多策略共振融合 Strategy Convergence Fusion | decision/pf_core/pc_06 | MOD-L05-001 | - | design | planned |
+| 26 | L3 | portfolio_target | 因子直通裁决 Factor Bypass Arbitration | decision/pf_core/pc_07 | MOD-L05-001 | - | design | planned |
+| 27 | L3 | portfolio_target | 元策略路由 Meta-Strategy Router | decision/pf_core/pc_08 | MOD-L05-001 | - | design | planned |
+| 28 | L3 | portfolio_target | 组合优化 Portfolio Optimization | decision/pf_core/pc_09 | MOD-L05-001 | - | design | planned |
+| 29 | L3 | portfolio_target | 资本分配 Capital Allocation | decision/pf_core/pc_10 | MOD-L05-001 | - | design | planned |
+| 30 | L3 | portfolio_target | 决策编排器 Decision Orchestrator | decision/pf_core/pc_11 | MOD-L05-001 | - | design | planned |
+| 31 | L3 | portfolio_target | 四轨融合器 Multi-Track Fusion | decision/pf_core/pc_12 | MOD-L05-001 | - | design | planned |
+| 32 | L3 | portfolio_target | 策略分配 Strategy Allocation | decision/pf_alloc/pa_01 | MOD-L05-001 | - | design | planned |
+| 33 | L3 | portfolio_target | 风险平价 Risk Parity | decision/pf_alloc/pa_02 | MOD-L05-001 | - | design | planned |
+| 34 | L3 | portfolio_target | 动态权重 Dynamic Weighting | decision/pf_alloc/pa_03 | MOD-L05-001 | - | design | planned |
+| 35 | L3 | portfolio_target | 策略权重再平衡 Strategy Weight Rebalance | decision/pf_alloc/pa_04 | MOD-L05-001 | - | design | planned |
+| 36 | L3 | portfolio_target | 多策略共识 Multi-Strategy Consensus | decision/pf_alloc/pa_05 | MOD-L05-001 | - | design | planned |
+| 37 | L3 | portfolio_target | 元策略选择 Meta-Strategy Selection | decision/pf_alloc/pa_06 | MOD-L05-001 | - | design | planned |
+| 38 | L3 | portfolio_target | 仓位唯一裁决中心 C-047 Position Sole Arbiter | decision/position/pos_01 | MOD-L05-001 | - | design | planned |
+| 39 | L3 | portfolio_target | 持仓状态机 Position State Machine | decision/position/pos_02 | MOD-L05-001 | - | design | planned |
+| 40 | L3 | portfolio_target | 仓位漂移监控 Position Drift Monitor | decision/position/pos_03 | MOD-L05-001 | - | design | planned |
+| 41 | L3 | portfolio_target | Kelly仓位决策 Kelly Position Decision | decision/position/pos_04 | MOD-L05-001 | - | design | planned |
+| 42 | L3 | portfolio_target | 风险配额 Risk Quota | decision/position/pos_05 | MOD-L05-001 | - | design | planned |
+| 43 | L3 | portfolio_target | 11种市场状态→仓位上限 Market State Position Cap | decision/position/pos_06 | MOD-L05-001 | - | design | planned |
+| 44 | L3 | portfolio_target | 组合层决策 Portfolio Layer Decision | decision/position/pos_07 | MOD-L05-001 | - | design | planned |
+| 45 | L3 | portfolio_target | 策略层决策 Strategy Layer Decision | decision/position/pos_08 | MOD-L05-001 | - | design | planned |
+| 46 | L3 | portfolio_target | 标层决策 Instrument Layer Decision | decision/position/pos_09 | MOD-L05-001 | - | design | planned |
+| 47 | L3 | portfolio_target | 动态层决策 Dynamic Layer Decision | decision/position/pos_10 | MOD-L05-001 | - | design | planned |
+| 48 | L3 | portfolio_target | 再平衡触发 Rebalance Trigger | decision/position/pos_11 | MOD-L05-001 | - | design | planned |
+| 49 | L3 | portfolio_target | 仓位上限硬约束 Position Cap Hard Constraint | decision/position/pos_12 | MOD-L05-001 | - | design | planned |
+| 50 | L3 | portfolio_target | REDUCING→EXITING状态转换 REDUCING to EXITING | decision/position/pos_13 | MOD-L05-001 | - | design | planned |
+| 51 | L3 | portfolio_target | 风险预算→Kelly决策 Risk Budget to Kelly | decision/position/pos_14 | MOD-L05-001 | - | design | planned |
+| 52 | L3 | portfolio_target | 半Kelly硬上限 Half-Kelly Hard Cap | decision/position/pos_15 | MOD-L05-001 | - | design | planned |
+| 53 | L3 | portfolio_target | 仓位降级 Position Degradation | decision/position/pos_16 | MOD-L05-001 | - | design | planned |
+| 54 | L3 | portfolio_target | 持仓状态→卖出阈值 Position State to Sell Threshold | decision/position/pos_17 | MOD-L05-001 | - | design | planned |
+| 55 | L3 | portfolio_target | 仓位四轨决策 Position Four-Track Decision | decision/position/pos_18 | MOD-L05-001 | - | design | planned |
+| 56 | L3 | portfolio_target | 仓位裁决→执行 Position Arbitration to Execution | decision/position/pos_19 | MOD-L05-001 | - | design | planned |
+| 59 | L3 | order | 50ms SLA Fail-Closed 50ms SLA Fail-Closed | decision/ex_core/ex_03 | MOD-L05-001 | - | design | planned |
+| 60 | L3 | order | Saga编排式事务 Saga Orchestrated Transaction | decision/ex_core/ex_04 | MOD-L05-001 | - | design | planned |
+| 61 | L3 | order | 风控检查 Risk Check | decision/ex_core/ex_05 | MOD-L05-001 | - | design | planned |
+| 62 | L3 | order | 信号确认 Signal Confirmation | decision/ex_core/ex_06 | MOD-L05-001 | - | design | planned |
+| 63 | L3 | order | 下单提交 Order Submit | decision/ex_core/ex_07 | MOD-L05-001 | - | design | planned |
+| 64 | L3 | order | 成交确认 Fill Confirmation | decision/ex_core/ex_08 | MOD-L05-001 | - | design | planned |
+| 65 | L3 | order | 持仓更新 Position Update | decision/ex_core/ex_09 | MOD-L05-001 | - | design | planned |
+| 66 | L3 | order | 报告生成 Report Generation | decision/ex_core/ex_10 | MOD-L05-001 | - | design | planned |
+| 71 | L3 | order | 流动性螺旋3阶段 Liquidity Spiral 3-Phase | decision/ex_core/ex_15 | MOD-L05-001 | - | design | planned |
+| 72 | L3 | order | 订单路由决策 Order Routing Decision | decision/ex_sor/ex_16 | MOD-L05-001 | - | design | planned |
+| 73 | L3 | order | SOR路由决策延迟 SOR Routing Latency | decision/ex_sor/ex_17 | MOD-L05-001 | - | design | planned |
+| 75 | L3 | order | 交易通道熔断人工恢复 Trading Channel Manual Recovery | decision/ex_sor/ex_19 | MOD-L05-001 | - | design | planned |
+| 77 | L3 | order | Kill-Switch四级阶梯 Kill-Switch 4-Level Cascade | decision/ex_sor/ex_21 | MOD-L05-001 | - | design | planned |
+| 78 | L3 | order | 熔断器矩阵 Circuit Breaker Matrix | decision/ex_sor/ex_22 | MOD-L05-001 | - | design | planned |
+| 102 | L3 | order | 外部订单观察者 External Order Watcher | decision/trading/trd_01 | MOD-L05-001 | - | design | planned |
+| 103 | L3 | order | 结算引擎 Settlement Engine | decision/trading/trd_02 | MOD-L05-001 | - | design | planned |
+| 104 | L3 | order | 公司行动 Corporate Action | decision/trading/trd_03 | MOD-L05-001 | - | design | planned |
+| 105 | L3 | order | 保证金管理 Margin Manager | decision/trading/trd_04 | MOD-L05-001 | - | design | planned |
+| 106 | L3 | order | 多账户 Multi-Account | decision/trading/trd_05 | MOD-L05-001 | - | design | planned |
+| 107 | L3 | order | 微信枢纽 WeChat Hub | decision/trading/trd_06 | MOD-L05-001 | - | design | planned |
+| 108 | L3 | order | C-013 4级优先级 C-013 4-Level Priority | decision/trading/trd_07 | MOD-L05-001 | - | design | planned |
+| 109 | L3 | order | A股交易纪律四项必做 A-Share Trading 4-Do | decision/trading/trd_08 | MOD-L05-001 | - | design | planned |
+| 110 | L3 | order | A股交易纪律四项严禁 A-Share Trading 4-Forbidden | decision/trading/trd_09 | MOD-L05-001 | - | design | planned |
+| 111 | L3 | order | 监管报送 Regulatory Reporting | decision/trading/trd_10 | MOD-L05-001 | - | design | planned |
+| 112 | L3 | order | 盘中即时反应决策引擎 Intraday Instant Reaction Decision Engine | decision/trading/trd_11 | MOD-L05-001 | - | design | planned |
+| 113 | L3 | portfolio_target | Permission Guard 七层纵深防御 | decision/aut_core/ac_01 | MOD-L05-001 | - | design | planned |
+| 115 | L3 | portfolio_target | Self-Healing Git-native自愈 | decision/aut_core/ac_03 | MOD-L05-001 | - | design | planned |
+| 116 | L3 | portfolio_target | Budget Enforcer 七级预算 | decision/aut_core/ac_04 | MOD-L05-001 | - | design | planned |
+| 117 | L3 | portfolio_target | Health Monitor 9子系统监控 | decision/aut_core/ac_05 | MOD-L05-001 | - | design | planned |
+| 118 | L3 | portfolio_target | Escalation Engine 升级引擎 | decision/aut_core/ac_06 | MOD-L05-001 | - | design | planned |
+| 119 | L3 | portfolio_target | Rollback Engine Git-native回滚 | decision/aut_core/ac_07 | MOD-L05-001 | - | design | planned |
+| 120 | L3 | portfolio_target | Drift Detector 39检测器 | decision/aut_core/ac_08 | MOD-L05-001 | - | design | planned |
+| 121 | L3 | portfolio_target | Auto-Fix Engine 16修复器 | decision/aut_core/ac_09 | MOD-L05-001 | - | design | planned |
+| 133 | L3 | portfolio_target | 编排Agent Orchestrator | decision/aut_core/ac_21 | MOD-L05-001 | - | design | planned |
+| 135 | L3 | portfolio_target | 做TAgent T0Trader | decision/aut_core/ac_23 | MOD-L05-001 | - | design | planned |
+| 136 | L3 | portfolio_target | 路由Agent Router | decision/aut_core/ac_24 | MOD-L05-001 | - | design | planned |
+| 57 | L4 | compliance_check | Pre-Trade主链6项检查 Pre-Trade Main Chain 6 Checks | decision/ex_core/ex_01 | MOD-L04-001 | - | design | planned |
+| 58 | L4 | risk_check | Kill Switch 5层防御 Kill Switch 5-Layer Defense | decision/ex_core/ex_02 | MOD-L04-001 | - | design | planned |
+| 67 | L4 | risk_check | Kill Switch AI自动激活 Kill Switch AI Auto Trigger | decision/ex_core/ex_11 | MOD-L04-001 | - | design | planned |
+| 68 | L4 | risk_check | Kill Switch人工激活 Kill Switch Manual Trigger | decision/ex_core/ex_12 | MOD-L04-001 | - | design | planned |
+| 69 | L4 | risk_check | Kill Switch定时激活 Kill Switch Timer Trigger | decision/ex_core/ex_13 | MOD-L04-001 | - | design | planned |
+| 70 | L4 | risk_check | Kill Switch外部信号激活 Kill Switch External Signal | decision/ex_core/ex_14 | MOD-L04-001 | - | design | planned |
+| 74 | L4 | risk_check | 券商连接熔断+故障转移 Broker Circuit Breaker | decision/ex_sor/ex_18 | MOD-L04-001 | - | design | planned |
+| 76 | L4 | compliance_check | Pre-Trade合规检查流水线 Pre-Trade Compliance Pipeline | decision/ex_sor/ex_20 | MOD-L04-001 | - | design | planned |
+| 79 | L4 | compliance_check | 行为准入门禁 Behavioral Admission Gateway | decision/ex_sor/ex_23 | MOD-L04-001 | - | design | planned |
+| 80 | L4 | risk_check | 风控熔断事件 Risk Circuit Breaker Event | decision/risk/rk_01 | MOD-L04-001 | - | design | planned |
+| 81 | L4 | risk_check | 三层防线 Three Defense Lines | decision/risk/rk_02 | MOD-L04-001 | - | design | planned |
+| 82 | L4 | risk_check | 双引擎风控 Dual Engine Risk | decision/risk/rk_03 | MOD-L04-001 | - | design | planned |
+| 83 | L4 | risk_check | 4级风控决策门控 4-Level Risk Decision Gate | decision/risk/rk_04 | MOD-L04-001 | - | design | planned |
+| 84 | L4 | risk_check | 压力测试引擎 Stress Test Engine | decision/risk/rk_05 | MOD-L04-001 | - | design | planned |
+| 85 | L4 | risk_check | 黑天鹅模式库 Black Swan Pattern Library | decision/risk/rk_06 | MOD-L04-001 | - | design | planned |
+| 86 | L4 | risk_check | 流动性危机模拟 Liquidity Crisis Simulation | decision/risk/rk_07 | MOD-L04-001 | - | design | planned |
+| 87 | L4 | risk_check | 反向压力测试4步法 Reverse Stress Test 4-Step | decision/risk/rk_08 | MOD-L04-001 | - | design | planned |
+| 88 | L4 | risk_check | 二阶效应与传染模型 Second-Order Effect Model | decision/risk/rk_09 | MOD-L04-001 | - | design | planned |
+| 89 | L4 | risk_check | 风控否决权 Risk Veto | decision/risk/rk_10 | MOD-L04-001 | - | design | planned |
+| 90 | L4 | risk_check | 风控状态 Risk State | decision/risk/rk_11 | MOD-L04-001 | - | design | planned |
+| 91 | L4 | risk_check | 风控参数变更审批 Risk Parameter Approval | decision/risk/rk_12 | MOD-L04-001 | - | design | planned |
+| 92 | L4 | risk_check | 熔断恢复确认 Circuit Breaker Recovery Confirm | decision/risk/rk_13 | MOD-L04-001 | - | design | planned |
+| 93 | L4 | risk_check | OBSERVING软止损观察期 OBSERVING Soft Stop | decision/risk/rk_14 | MOD-L04-001 | - | design | planned |
+| 94 | L4 | risk_check | 风险预算 Risk Budget | decision/risk/rk_15 | MOD-L04-001 | - | design | planned |
+| 95 | L4 | risk_check | VaR计算 VaR Calculation | decision/risk/rk_16 | MOD-L04-001 | - | design | planned |
+| 96 | L4 | risk_check | 回撤监控 Drawdown Monitor | decision/risk/rk_17 | MOD-L04-001 | - | design | planned |
+| 97 | L4 | risk_check | 风控信号交互时序 Risk-Signal Timing | decision/risk/rk_18 | MOD-L04-001 | - | design | planned |
+| 98 | L4 | risk_check | 风控事件 Risk Event | decision/risk/rk_19 | MOD-L04-001 | - | design | planned |
+| 99 | L4 | risk_check | FLATTEN硬编码触发 FLATTEN Hardcoded Trigger | decision/risk/rk_20 | MOD-L04-001 | - | design | planned |
+| 100 | L4 | risk_check | 5级风险否决引擎 5-Level Risk Veto Engine | decision/risk/rk_21 | MOD-L04-001 | - | design | planned |
+| 101 | L4 | risk_check | Pod级止损 Pod-Level Stop Loss | decision/risk/rk_22 | MOD-L04-001 | - | design | planned |
+| 114 | L4 | compliance_check | Audit Trail Merkle哈希链 | decision/aut_core/ac_02 | MOD-L04-001 | - | design | planned |
+| 122 | L4 | compliance_check | Decision Audit Trail 决策审计 | decision/aut_core/ac_10 | MOD-L04-001 | - | design | planned |
+| 123 | L4 | compliance_check | Kill Switch直通路径 Kill Switch Direct Path | decision/aut_perm/ap_11 | MOD-L04-001 | - | design | planned |
+| 124 | L4 | compliance_check | 4级自治模型 Level 0-3 Autonomy Model | decision/aut_perm/ap_12 | MOD-L04-001 | - | design | planned |
+| 125 | L4 | compliance_check | AI自治边界三级分类 | decision/aut_perm/ap_13 | MOD-L04-001 | - | design | planned |
+| 126 | L4 | compliance_check | Agentic Drift 5类攻击模式 | decision/aut_perm/ap_14 | MOD-L04-001 | - | design | planned |
+| 127 | L4 | compliance_check | 行为审计7信号 S-01~S-07 | decision/aut_perm/ap_15 | MOD-L04-001 | - | design | planned |
+| 128 | L4 | compliance_check | ARS双轨结算模型 ARS Dual-Track Settlement | decision/aut_perm/ap_16 | MOD-L04-001 | - | design | planned |
+| 129 | L4 | risk_check | AI自治熔断5条件 VR-009 5 Conditions | decision/aut_perm/ap_17 | MOD-L04-001 | - | design | planned |
+| 130 | L4 | risk_check | L0完全人工→L4降级模式 L0 to L4 Degradation | decision/aut_perm/ap_18 | MOD-L04-001 | - | design | planned |
+| 131 | L4 | risk_check | 4级风控决策 APPROVE/REDUCE/REJECT/FLATTEN | decision/aut_perm/ap_19 | MOD-L04-001 | - | design | planned |
+| 132 | L4 | compliance_check | 人类监督四层级 L0~L3 Human Oversight | decision/aut_perm/ap_20 | MOD-L04-001 | - | design | planned |
+| 134 | L4 | risk_check | 风控Agent RiskManager | decision/aut_core/ac_22 | MOD-L04-001 | - | design | planned |
+| 137 | L4 | compliance_check | A2A检查网关策略引擎 A2A Check Gateway | decision/aut_perm/ap_21 | MOD-L04-001 | - | design | planned |
+| 138 | L4 | compliance_check | LLM Agent路由 级联控制器 Cascade Controller | decision/aut_perm/ap_22 | MOD-L04-001 | - | design | planned |
+| 139 | L4 | risk_check | 应急保命轨 Emergency Track | decision/aut_perm/ap_23 | MOD-L04-001 | - | design | planned |
+| 140 | L4 | compliance_check | 置信度分层决策 C-031 Confidence-Layered Decision | decision/aut_perm/ap_24 | MOD-L04-001 | - | design | planned |
+| 156 | L4 | compliance_check | AuditLedger 审计账本 | decision/governance/gov_001 | MOD-L04-001 | - | design | planned |
+| 157 | L4 | compliance_check | DDDRuleEnforcer DDD铁律执行器 | decision/governance/gov_002 | MOD-L04-001 | - | design | planned |
+| 158 | L4 | compliance_check | DecisionProvenance 决策溯源链 | decision/governance/gov_003 | MOD-L04-001 | - | design | planned |
+| 159 | L4 | compliance_check | PhaseGateManager 阶段门禁管理 | decision/governance/gov_004 | MOD-L04-001 | - | design | planned |
+| 160 | L4 | compliance_check | ConstitutionalGuard 宪法守卫 | decision/governance/gov_005 | MOD-L04-001 | - | design | planned |
+| 161 | L4 | compliance_check | ComplianceAuditor 合规审计器 | decision/governance/gov_006 | MOD-L04-001 | - | design | planned |
+| 162 | L4 | compliance_check | IncidentResponse 事件响应与升级 | decision/governance/gov_007 | MOD-L04-001 | - | design | planned |
+| 163 | L4 | compliance_check | SystemTopologyAuditor 系统拓扑审计 | decision/governance/gov_008 | MOD-L04-001 | - | design | planned |
+| 164 | L4 | compliance_check | 决策疲劳检测 Decision Fatigue Detection | decision/governance/gov_009 | MOD-L04-001 | - | design | planned |
+| 165 | L4 | compliance_check | Agent辩论机制 Agent Debate | decision/governance/gov_010 | MOD-L04-001 | - | design | planned |
+| 166 | L4 | compliance_check | AI Compliance Validator AI合规验证 | decision/compliance/cmp_01 | MOD-L04-001 | - | design | planned |
+| 167 | L4 | compliance_check | 决策溯源链 Decision Provenance Chain | decision/compliance/cmp_02 | MOD-L04-001 | - | design | planned |
+| 168 | L4 | compliance_check | TraceCompleteness TC≥0.997 | decision/compliance/cmp_03 | MOD-L04-001 | - | design | planned |
+| 169 | L4 | compliance_check | AI合规边界 Tier 1/2/3风险分级 | decision/compliance/cmp_04 | MOD-L04-001 | - | design | planned |
+| 170 | L4 | compliance_check | Pre-Trade合规检查三模式 Pre-Trade 3-Mode Check | decision/compliance/cmp_05 | MOD-L04-001 | - | design | planned |
+| 171 | L4 | compliance_check | Kill Switch <1秒响应 Kill Switch <1s Response | decision/compliance/cmp_06 | MOD-L04-001 | - | design | planned |
+| 172 | L4 | compliance_check | 人类监督四层级 L0~L3 Human Oversight 4-Level | decision/compliance/cmp_07 | MOD-L04-001 | - | design | planned |
+| 173 | L4 | compliance_check | AI决策可追溯性 AI Decision Traceability | decision/compliance/cmp_08 | MOD-L04-001 | - | design | planned |
+| 174 | L4 | compliance_check | AI决策可解释性门控 AI Decision Explainability Gate | decision/compliance/cmp_09 | MOD-L04-001 | - | design | planned |
+| 175 | L4 | compliance_check | 监管报告 Regulatory Report | decision/compliance/cmp_10 | MOD-L04-001 | - | design | planned |
+| 176 | L4 | compliance_check | 法域冲突解决 CrossBorderReg Navigator | decision/compliance/cmp_11 | MOD-L04-001 | - | design | planned |
+| 195 | L4 | compliance_check | AISGGate 九层防御 L0-L8 | decision/security/sec_001 | MOD-L04-001 | - | design | planned |
+| 196 | L4 | compliance_check | ACLGuard Kill Switch执行 | decision/security/sec_009a | MOD-L04-001 | - | design | planned |
+| 197 | L4 | compliance_check | Kill Switch紧急熔断 Kill Switch Emergency | decision/security/sec_009b | MOD-L04-001 | - | design | planned |
+| 198 | L4 | compliance_check | Secret Manager 密钥管理 | decision/security/sec_007 | MOD-L04-001 | - | design | planned |
+| 199 | L4 | compliance_check | Self-Protect 自保护 | decision/security/sec_008 | MOD-L04-001 | - | design | planned |
+| 207 | L4 | compliance_check | LLM Gateway 推理网关 LLM Gateway | decision/security/sec_010 | MOD-L04-001 | - | design | planned |
+| 208 | L4 | compliance_check | 推理熔断器 Inference Circuit Breaker | decision/security/sec_011 | MOD-L04-001 | - | design | planned |
 
 ## Edge 清单（决策因果边）
 

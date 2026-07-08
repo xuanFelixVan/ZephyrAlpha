@@ -29,7 +29,7 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | registry_management | 480 | 150 | +330 |
+| D_GOVERNANCE | registry_management | 483 | 150 | +333 |
 | D_TRADING | 交易运营 | 280 | 150 | +130 |
 
 ## 接近超容域清单（>80%，需关注）
@@ -85,7 +85,7 @@ ttl: permanent
 | D_FACTOR | 因子 | L2_domain | 4 | 150 | 2.7% | 正常 |
 | D_FRONTEND | 前端 | L1_foundation | 13 | 150 | 8.7% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | L2_domain | 4 | 150 | 2.7% | 正常 |
-| D_GOVERNANCE | registry_management | L2_domain | 480 | 150 | 320.0% | 超容 |
+| D_GOVERNANCE | registry_management | L2_domain | 483 | 150 | 322.0% | 超容 |
 | D_GOV_AUDIT | audit_orchestration | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_GOV_DOCS | architecture_docs | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | drift_detection | L2_domain | 0 | 150 | 0.0% | 空 |
@@ -96,10 +96,10 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication | L0_infrastructure | 32 | 150 | 21.3% | 正常 |
 | D_INFRA_OPS | asset-inventory | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 48 | 150 | 32.0% | 正常 |
-| D_INFRA_RUNTIME | runtime_core | L0_infrastructure | 98 | 150 | 65.3% | 正常 |
+| D_INFRA_RUNTIME | runtime_core | L0_infrastructure | 87 | 150 | 58.0% | 正常 |
 | D_INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 13 | 150 | 8.7% | 正常 |
 | D_INTEGRATION | pipeline_routing | L1_foundation | 30 | 150 | 20.0% | 正常 |
-| D_INTEGRATION_GATEWAY | mcp_servers | L1_foundation | 1 | 150 | 0.7% | 正常 |
+| D_INTEGRATION_GATEWAY | mcp_servers | L1_foundation | 14 | 150 | 9.3% | 正常 |
 | D_INTELLIGENCE | context_management | L2_domain | 21 | 150 | 14.0% | 正常 |
 | D_KNOWLEDGE | vector_storage | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_MKT_DATA | 行情数据 | L1_foundation | 0 | 150 | 0.0% | 空 |

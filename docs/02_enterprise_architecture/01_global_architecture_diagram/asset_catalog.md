@@ -86,32 +86,45 @@ ttl: permanent
 
 | ID | 名称 | 类型 | 提供方 | 状态 |
 |----|------|------|--------|------|
-| CTR-002 | FactorSignal / 因子信号 | P0 | D_FACTOR | planned |
-| CTR-003 | RiskLimits / 风险限额 | P0 | D_RISK | planned |
-| CTR-BP-001 | BackpressurePause / 背压暂停信号 | P0 | D_FACTOR | planned |
-| CTR-BP-002 | BackpressureThrottle / 背压降速信号 | P0 | D_FACTOR | planned |
-| CTR-BP-003 | BackpressureResume / 背压恢复信号 | P0 | D_FACTOR | planned |
-| CTR-ERR-001 | DataQualityError / 行情质量门禁不通过错误 | P0 | D_MKT_DATA | planned |
-| CTR-ERR-002 | FactorComputationError / 因子计算失败错误 | P0 | D_FACTOR | planned |
-| CTR-ERR-003 | SignalDegradationWarning / 信号质量下降警告 | P0 | D_SIGQC | planned |
-| CTR-ERR-004 | RiskLimitViolationError / 风险限额突破错误 | P0 | D_RISK | planned |
-| CTR-ERR-005 | ExecutionRejectionError / 执行拒绝错误 | P0 | D_EX_CORE | planned |
-| CTR-ERR-006 | ContractViolationError / 契约违反错误 | P0 | D_SHARED | planned |
-| CT-TEL-001 | TelemetryMetrics / 遥测指标采集 | P1 | D_OPS | design |
-| CT-TEL-002 | TelemetryLogs / 遥测日志持久化 | P1 | D_OPS | design |
-| CT-TEL-003 | TelemetryTraces / 遥测链路追踪 | P1 | D_OPS | design |
-| CT-TEL-004 | TelemetryHealth / 遥测健康检查 | P1 | D_OPS | design |
-| CTR-P1-001 | FactorMonitorReport / 因子有效性监控报告 | P1 | D_FACTOR | planned |
-| CTR-P1-002 | MacroFactorSignal / 宏观因子信号 | P1 | D_FACTOR | planned |
-| CTR-P1-003 | CapitalAllocationResult / 资本配置结果 | P1 | — | planned |
-| CTR-P1-007 | ExecutionReport / 执行分析报告 | P1 | D_EX_CORE | planned |
-| CTR-P1-008 | RiskDashboardSnapshot / 风险仪表板快照 | P1 | D_RISK | planned |
-| CTR-P1-010 | SystemConfiguration / 系统配置 | P1 | D_INFRA_OPS | planned |
-| CTR-P1-011 | RiskMetricsReport / 风险指标报告 | P1 | D_RISK | planned |
-| CTR-P1-013 | TelemetryEmitter / 遥测发射器 | P1 | D_OPS | planned |
-| CTR-P1-015 | SynthesizedSignal / 合成交易信号 | P1 | — | planned |
-| CTR-P1-016 | BacktestResult / 回测结果 | P1 | D_BACKTEST | planned |
-| CTR-P1-017 | BacktestRunArtifact / 回测运行产物 | P1 | D_BACKTEST | planned |
+| CT-TEL-001 | TelemetryMetrics / 遥测指标采集 | cross_layer | D_OPS | unresolved |
+| CT-TEL-002 | TelemetryLogs / 遥测日志持久化 | cross_layer | D_OPS | unresolved |
+| CT-TEL-003 | TelemetryTraces / 遥测链路追踪 | cross_layer | D_OPS | unresolved |
+| CT-TEL-004 | TelemetryHealth / 遥测健康检查 | cross_layer | D_OPS | unresolved |
+| CTR-001 | NormalizedMarketData / 标准化行情数据 | cross_layer | D_MKT_DATA | planned |
+| CTR-002 | FactorSignal / 因子信号 | cross_layer | D_FACTOR | unresolved |
+| CTR-003 | RiskLimits / 风险限额 | cross_layer | D_RISK | unresolved |
+| CTR-004 | Order / 委托指令 | cross_layer | D_PF_CORE | design |
+| CTR-005 | Fill / 成交回报 | cross_layer | D_EX_CORE | planned |
+| CTR-006 | PositionSnapshot / 持仓快照 | cross_layer | D_EX_CORE | planned |
+| CTR-BP-001 | BackpressurePause / 背压暂停信号 | cross_layer | D_FACTOR | unresolved |
+| CTR-BP-002 | BackpressureThrottle / 背压降速信号 | cross_layer | D_FACTOR | unresolved |
+| CTR-BP-003 | BackpressureResume / 背压恢复信号 | cross_layer | D_FACTOR | unresolved |
+| CTR-ERR-001 | DataQualityError / 行情质量门禁不通过错误 | cross_layer | D_MKT_DATA | unresolved |
+| CTR-ERR-002 | FactorComputationError / 因子计算失败错误 | cross_layer | D_FACTOR | unresolved |
+| CTR-ERR-003 | SignalDegradationWarning / 信号质量下降警告 | cross_layer | D_SIGQC | unresolved |
+| CTR-ERR-004 | RiskLimitViolationError / 风险限额突破错误 | cross_layer | D_RISK | unresolved |
+| CTR-ERR-005 | ExecutionRejectionError / 执行拒绝错误 | cross_layer | D_EX_CORE | unresolved |
+| CTR-ERR-006 | ContractViolationError / 契约违反错误 | cross_layer | D_SHARED | unresolved |
+| CTR-P1-001 | FactorMonitorReport / 因子有效性监控报告 | cross_layer | D_FACTOR | unresolved |
+| CTR-P1-002 | MacroFactorSignal / 宏观因子信号 | cross_layer | D_FACTOR | unresolved |
+| CTR-P1-003 | CapitalAllocationResult / 资本配置结果 | cross_layer | D_ASHARE_SIGNAL | unresolved |
+| CTR-P1-004 | ModelServingRequest / 模型推理请求 | cross_layer | D_ML_TRAIN | planned |
+| CTR-P1-005 | ModelServingResponse / 模型推理响应 | cross_layer | D_ML_TRAIN | planned |
+| CTR-P1-006 | StrategyLifecycleEvent / 策略生命周期事件 | cross_layer | D_PF_CORE | planned |
+| CTR-P1-007 | ExecutionReport / 执行分析报告 | cross_layer | D_EX_CORE | unresolved |
+| CTR-P1-008 | RiskDashboardSnapshot / 风险仪表板快照 | cross_layer | D_RISK | unresolved |
+| CTR-P1-009 | PerformanceAttributionReport / 绩效归因报告 | cross_layer | D_TRADING | planned |
+| CTR-P1-010 | SystemConfiguration / 系统配置 | cross_layer | D_INFRA_OPS | unresolved |
+| CTR-P1-011 | RiskMetricsReport / 风险指标报告 | cross_layer | D_RISK | unresolved |
+| CTR-P1-012 | ComplianceRule / 合规规则 | cross_layer | D_GOV_ENFORCEMENT | planned |
+| CTR-P1-013 | TelemetryEmitter / 遥测发射器 | cross_layer | D_OPS | unresolved |
+| CTR-P1-014 | ExperimentResult / 实验结论 | cross_layer | D_INTELLIGENCE | planned |
+| CTR-P1-015 | SynthesizedSignal / 合成交易信号 | cross_layer | D_ASHARE_SIGNAL | unresolved |
+| CTR-P1-016 | BacktestResult / 回测结果 | cross_layer | D_BACKTEST | unresolved |
+| CTR-P1-017 | BacktestRunArtifact / 回测运行产物 | cross_layer | D_BACKTEST | unresolved |
+| CTR-TRACE-001 | TraceContext / 全链路追踪上下文 | cross_layer | D_MKT_DATA | planned |
+| OCP-002 | StrategyBase + StrategyRegistry / 策略扩展点 | cross_layer | D_SHARED | unresolved |
+| OCP-003 | BrokerInterface / 券商扩展点 | cross_layer | D_SHARED | unresolved |
 | CT-001 | config/context-rules.yaml | declarative | D_DATA_SEC | resolved |
 | CT-002 | config/embedding_model_registry.yaml | declarative | D_DATA_SEC | resolved |
 | CT-003 | config/session_state_machine.yaml | declarative | D_DATA_SEC | resolved |
@@ -133,24 +146,11 @@ ttl: permanent
 | ME-CT-FEATURE-001 | 特征向量读取（ChromaDB collections: factor-signals, model-features） | domain_contract | D_ML_TRAIN | unresolved |
 | ME-CT-SHADOW-001 | Shadow Mode：旁路预测→threshold→divergence alert→正式切流 | domain_contract | D_ML_TRAIN | unresolved |
 | ME-CT-TRAIN-001 | 训练Pipeline Gate：数据→训练→验证→Sanity→发布 | domain_contract | D_ML_TRAIN | unresolved |
-| CTR-001 | NormalizedMarketData → D_FACTOR, D_SIGNAL, D_RESEARCH | layer_contract | D_MKT_DATA | planned |
-| CTR-004 | Order → D_EXECUTION_CORE | layer_contract | D_PF_CORE | design |
-| CTR-005 | Fill → D_REPORTING | layer_contract | D_EX_CORE | planned |
-| CTR-006 | PositionSnapshot → D_RISK, D_REPORTING, D_ML_TRAIN | layer_contract | D_EX_CORE | planned |
 | CTR-009 | ExperimentConfig → D_ML_TRAIN ML Platform | layer_contract | D_SIMULATION | unresolved |
 | CTR-010 | ExperimentMetric → D_RESEARCH Research | layer_contract | D_SIMULATION | unresolved |
 | CTR-011 | ModelCheckpoint ← D_ML_TRAIN ML Platform | layer_contract | D_SIMULATION | unresolved |
 | CTR-012 | ExperimentArtifact → INF-012 Database | layer_contract | D_SIMULATION | unresolved |
-| CTR-P1-004 | ModelServingRequest → D_SIGNAL, D_PORTFOLIO_CORE | layer_contract | D_ML_TRAIN | planned |
-| CTR-P1-005 | ModelServingResponse → 推理响应 | layer_contract | D_ML_TRAIN | planned |
-| CTR-P1-006 | StrategyLifecycleEvent → D_REPORTING, D_GOV_ENFORCEMENT | layer_contract | D_PF_CORE | planned |
-| CTR-P1-009 | PerformanceAttributionReport → D_FRONTEND, D_GOV_ENFORCEMENT | layer_contract | D_REPORTING | planned |
-| CTR-P1-012 | ComplianceRule → D_RISK, D_EXECUTION_CORE, D_GOV_ENFORCEMENT | layer_contract | D_GOV_ENFORCEMENT | planned |
-| CTR-P1-014 | ExperimentResult → D_RESEARCH, D_ML_TRAIN | layer_contract | D_SIMULATION | planned |
-| CTR-TRACE-001 | TraceContext 链头 | layer_contract | D_MKT_DATA | planned |
 | EXT-DASHBOARD-FLE-001 | 消费 FLE fitness Facade | layer_contract | D_FRONTEND | unresolved |
-| OCP-002 | StrategyBase + StrategyRegistry / 策略扩展点 | unknown | — | design |
-| OCP-003 | BrokerInterface / 券商扩展点 | unknown | — | design |
 
 ## 6. 配置项清单(元数据)
 
