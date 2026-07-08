@@ -122,8 +122,8 @@
 
 | ID | 名称 | 类别 | 规划目录 | 规划生成器 | 优先级 | 真源待裁定 |
 |------|------|------|----------|------------|:---:|------|
-| PAN-ASSET-01 | 资产清单 / CMDB | 资产全景 | `08_asset_panorama/` | `generate_asset_panorama.py (待建)` | 高 | 待裁定：PostgreSQL 表 asset_registry（运行时服务/数据流/契约总览）vs YAML 静态... |
-| PAN-ASSET-02 | API 契约目录 | 资产全景 | `08_asset_panorama/` | `generate_api_contract_catalog.py (待建)` | 高 | 待裁定：扩展现有 depgraph contracts 表 vs 独立 api_contracts 表。现有 PA... |
+| PAN-ASSET-01 | 资产清单 / CMDB | 资产全景 | `08_asset_panorama/` | `generate_asset_panorama.py (待建)` | 高 | ✅已覆盖（PAN-BUILT-10，generate_asset_catalog.py 从 6 张资产表派生 256 项）；运行时 CMDB 仍待建 |
+| PAN-ASSET-02 | API 契约目录 | 资产全景 | `08_asset_panorama/` | `generate_api_contract_catalog.py (待建)` | 高 | ✅已覆盖（data_source_apis 表 124 项 API 清单，generate_asset_catalog.py 派生）；服务间 API 契约仍待建 |
 | PAN-ASSET-03 | 数据目录 Data Catalog | 资产全景 | `08_asset_panorama/` | `generate_data_catalog.py (待建)` | 高 | 待裁定：扩展现有 dataflow_datasets 表加完整性/延迟/质量字段 vs 独立 data_catal... |
 | PAN-ASSET-04 | 数据血缘图 Data Lineage | 资产全景 | `08_asset_panorama/` | `generate_data_lineage.py (待建)` | 高 | 待裁定：扩展 dataflow_edges 表加字段级血缘 vs 独立 column_lineage 表。data... |
 | PAN-RISK-01 | 风险敞口全景图 | 风险全景 | `11_risk_panorama/` | `generate_risk_exposure.py (待建)` | 高 | 待裁定：从 D_RISK/D_PORTFOLIO 域派生 vs 独立 risk_exposure 表。量化特有：因... |
