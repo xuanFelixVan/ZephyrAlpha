@@ -36,8 +36,8 @@ ttl: permanent
 |:---:|:---:|:---:|--------|--------|------|
 | L0 | ⚪ | ❌ | 缺失 | Missing | 能力完全不存在，无设计无代码 / No nodes in domain |
 | L1 | 🔵 | 🟡 | 设计中 | Designing | 有设计文档或原型代码，未集成 / design_maturity=design or prototype |
-| L2 | 🟡 | 🟡 | 可用未验证 | Usable | 代码可用但未生产验证 / design_maturity=production, build_status!=active |
-| L3 | 🟢 | ✅ | 生产已验证 | Verified | 生产环境稳定运行 / design_maturity=production, build_status=active |
+| L2 | 🟡 | 🟡 | 可用未验证 | Usable | 代码可用但未生产验证 / design_maturity=production, build_status NOT IN (active, stable) |
+| L3 | 🟢 | ✅ | 生产已验证 | Verified | 生产环境稳定运行 / design_maturity=production, build_status IN (active, stable) |
 
 ## 能力域定义 / Capability Domain Definitions
 
@@ -123,9 +123,9 @@ ttl: permanent
 | C5 | 执行交易 | 4 | 511 | 286 | 1 | 224 | 1.75 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 19 | 0 | 1 | 18 | 1.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 59 | 11 | 10 | 38 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 6 | 1052 | 613 | 30 | 409 | 1.33 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 6 | 908 | 611 | 30 | 267 | 1.33 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 4 | 212 | 113 | 0 | 99 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 11 | 682 | 372 | 10 | 300 | 1.91 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 11 | 665 | 374 | 9 | 282 | 1.91 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
@@ -153,7 +153,7 @@ ttl: permanent
 | D_DIGITAL_TWIN | 数字孪生 | C7 | L2_domain | 8 | 0 | 1 | 7 | 0 | L1 🔵 | 🟡 |
 | D_EXEC_SIM | 执行仿真 | C7 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_SIMULATION | 仿真 | C7 | L2_domain | 11 | 2 | 1 | 8 | 0 | L2 🟡 | 🟡 |
-| D_GOVERNANCE | registry_management | CC1 | L2_domain | 848 | 480 | 27 | 341 | 1 | L3 🟢 | ✅ |
+| D_GOVERNANCE | registry_management | CC1 | L2_domain | 704 | 478 | 27 | 199 | 1 | L3 🟢 | ✅ |
 | D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 2 | 0 | 2 | 0 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 1 | 0 | 1 | 0 | 0 | L1 🔵 | 🟡 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 201 | 133 | 0 | 68 | 1 | L3 🟢 | ✅ |
@@ -166,14 +166,14 @@ ttl: permanent
 | D_AUTONOMY_CORE | agent_lifecycle | CC3 | L1_foundation | 114 | 111 | 0 | 3 | 0 | L2 🟡 | 🟡 |
 | D_FRONTEND | 前端 | CC3 | L1_foundation | 30 | 13 | 6 | 11 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_OPS | asset-inventory | CC3 | L0_infrastructure | 1 | 0 | 1 | 0 | 0 | L1 🔵 | 🟡 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 148 | 98 | 0 | 50 | 4 | L3 🟢 | ✅ |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 132 | 87 | 0 | 45 | 4 | L3 🟢 | ✅ |
 | D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 72 | 30 | 0 | 42 | 0 | L2 🟡 | 🟡 |
-| D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 20 | 1 | 0 | 19 | 0 | L2 🟡 | 🟡 |
+| D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 20 | 14 | 0 | 6 | 0 | L2 🟡 | 🟡 |
 | D_INTELLIGENCE | context_management | CC3 | L2_domain | 43 | 21 | 0 | 22 | 0 | L2 🟡 | 🟡 |
 | D_KNOWLEDGE | vector_storage | CC3 | L2_domain | 9 | 0 | 2 | 7 | 0 | L1 🔵 | 🟡 |
 | D_OPS | telemetry | CC3 | L1_foundation | 3 | 3 | 0 | 0 | 0 | L2 🟡 | 🟡 |
 | D_REPORTING | 报告 | CC3 | L1_foundation | 10 | 1 | 0 | 9 | 0 | L2 🟡 | 🟡 |
-| D_SHARED | shared_services | CC3 | L1_foundation | 232 | 94 | 1 | 137 | 0 | L2 🟡 | 🟡 |
+| D_SHARED | shared_services | CC3 | L1_foundation | 231 | 94 | 0 | 137 | 0 | L2 🟡 | 🟡 |
 | D_DATA_GOV | 数据治理 | — | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DOCS | architecture_docs | — | L2_domain | 2 | 2 | 0 | 0 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_A2A | a2a_communication | — | L0_infrastructure | 89 | 32 | 0 | 57 | 0 | L2 🟡 | 🟡 |
@@ -231,7 +231,7 @@ ttl: permanent
 | D_INTELLIGENCE | context_management | CC3 | L2 | 43 |
 | D_OPS | telemetry | CC3 | L2 | 3 |
 | D_REPORTING | 报告 | CC3 | L2 | 10 |
-| D_SHARED | shared_services | CC3 | L2 | 232 |
+| D_SHARED | shared_services | CC3 | L2 | 231 |
 | D_GOV_DOCS | architecture_docs | — | L2 | 2 |
 | D_INFRA_A2A | a2a_communication | — | L2 | 89 |
 | D_INFRA_RECOVERY | rollback_recovery | — | L2 | 54 |
@@ -241,9 +241,9 @@ ttl: permanent
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | registry_management | CC1 | L3 | 848 |
+| D_GOVERNANCE | registry_management | CC1 | L3 | 704 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L3 | 201 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 148 |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 132 |
 
 ## 未映射域 / Unmapped Domains
 
