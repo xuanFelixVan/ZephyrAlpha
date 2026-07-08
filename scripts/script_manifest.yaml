@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-09'
-total_scripts: 562
+total_scripts: 564
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1854,6 +1854,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/generators/generate_panorama_registry.py
+  path: governance/d5_architecture/generators/generate_panorama_registry.py
+  description: '- 从 depgraph (PostgreSQL) 查询已建全景图真源健康度（domains/nodes/edges、dataflow_*、decision_*）'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/generators/generate_path_tree.py
   path: governance/d5_architecture/generators/generate_path_tree.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
@@ -1888,7 +1896,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/syncers/sync_blueprint_code_index.py
   path: governance/d5_architecture/syncers/sync_blueprint_code_index.py
-  description: 对标：AGENTS.md §6.14 蓝图-代码同步强制约定
+  description: 对标：AGENTS.md §6.1 蓝图-代码同步强制约定
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2152,7 +2160,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/blueprint/validate_blueprint_code_sync.py
   path: governance/d5_architecture/validators/blueprint/validate_blueprint_code_sync.py
-  description: AGENTS.md §6.14 蓝图-代码同步强制约定的 CI 门禁脚本。
+  description: AGENTS.md §6.1 蓝图-代码同步强制约定的 CI 门禁脚本。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2779,6 +2787,14 @@ scripts:
   description: __all__ = [
   domain: governance
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/generators/check_gate_inventory_drift.py
+  path: governance/generators/check_gate_inventory_drift.py
+  description: 检测 src/zephyr/governance/commit_gates/*.py 实际文件与
+  domain: governance
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
