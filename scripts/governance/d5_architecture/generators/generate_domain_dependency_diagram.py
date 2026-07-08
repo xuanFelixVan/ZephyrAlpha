@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """G3: 从 depgraph (PostgreSQL) edges 表生成指定域的全景依赖图(.mmd Mermaid格式)
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -24,7 +24,7 @@
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1;域不存在→exit 2
-[TESTS] tests/test_dm200910_generators.py
+[TESTS]
 [DOMAIN] D_GOVERNANCE
 """
 

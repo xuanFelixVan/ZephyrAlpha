@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# [TTL] task_bound
+# [TTL] permanent
 """
 功能域中文名称映射表 / Functional Domain Chinese Name Mapping
 

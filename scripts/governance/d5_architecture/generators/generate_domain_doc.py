@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档
 
 包含：
@@ -35,7 +35,7 @@
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1;域不存在→exit 2
-[TESTS] tests/test_dm200910_generators.py
+[TESTS]
 [DOMAIN] D_GOVERNANCE
 """
 
@@ -187,6 +187,124 @@ def _load_registry_items(registry_path: str) -> list[dict]:
     except Exception:
         pass
     return []
+
+
+# ---------------------------------------------------------------------------
+# 中英文双显映射表 + 节点标签辅助函数（L180-194 修复：视图显示中文功能简介）
+# ---------------------------------------------------------------------------
+
+# 成熟度中英文映射（design_maturity 字段值 → 中文/英文双显）
+MATURITY_DISPLAY = {
+    "production": "生产态 / production",
+    "design": "设计态 / design",
+    "prototype": "原型态 / prototype",
+    "unknown": "未知 / unknown",
+    "": "未知 / unknown",
+}
+
+# 构建状态中英文映射（build_status 字段值 → 中文/英文双显）
+BUILD_STATUS_DISPLAY = {
+    "generated": "已生成 / generated",
+    "handwritten": "手写 / handwritten",
+    "deprecated": "已废弃 / deprecated",
+    "": "—",
+}
+
+# 依赖类型中英文映射（dep_type 字段值 → 中文/英文双显）
+DEP_TYPE_DISPLAY = {
+    "import_depends": "导入依赖 / import_depends",
+    "test_depends": "测试依赖 / test_depends",
+    "contract_depends": "契约依赖 / contract_depends",
+    "event_depends": "事件依赖 / event_depends",
+    "unknown": "未知 / unknown",
+    "": "未知 / unknown",
+}
+
+
+def _maturity_display(maturity: str) -> str:
+    """成熟度值转中英文双显。"""
+    return MATURITY_DISPLAY.get(maturity, f"{maturity} / {maturity}")
+
+
+def _build_status_display(status: str) -> str:
+    """构建状态值转中英文双显。"""
+    return BUILD_STATUS_DISPLAY.get(status, f"{status} / {status}")
+
+
+def _dep_type_display(dep_type: str) -> str:
+    """依赖类型值转中英文双显。"""
+    return DEP_TYPE_DISPLAY.get(dep_type, f"{dep_type} / {dep_type}")
+
+
+def _dep_types_display(dep_types_str: str) -> str:
+    """逗号分隔的 dep_types 字符串转中英文双显（STRING_AGG 产物解析）。"""
+    if not dep_types_str:
+        return "—"
+    parts = [p.strip() for p in dep_types_str.split(",") if p.strip()]
+    return ", ".join(_dep_type_display(p) for p in parts) if parts else "—"
+
+
+def _node_short_name(n: dict) -> str:
+    """从节点数据提取短名称（文件名，不含路径）。"""
+    node_name = n.get("node_name") or ""
+    if node_name:
+        return node_name.rsplit("/", 1)[-1]
+    path = n.get("path") or ""
+    if path:
+        return path.rsplit("/", 1)[-1]
+    return f"node_{n.get('node_id', '?')}"
+
+
+def _node_desc_zh(n: dict) -> str:
+    """从节点数据提取功能简介（优先 DB description，回退到文件 docstring/yaml description）。
+
+    get_domain_nodes 不 SELECT description 字段（多为空），因此主要依赖
+    _extract_docstring_first_line 从 Python 文件 docstring 提取首行——
+    与模块清单表格的 desc_display 保持同一真源，避免多真源不一致。
+    """
+    # 1. 优先使用 DB description 字段（如已 SELECT）
+    desc = (n.get("description") or "").strip()
+    if desc:
+        return _truncate(desc.split("\n")[0].strip(), 50)
+    # 2. 回退到 Python 文件 docstring 首行 / YAML description
+    path = n.get("path") or ""
+    if not path:
+        return ""
+    doc_desc = _extract_docstring_first_line(path)
+    if doc_desc:
+        return _truncate(doc_desc, 50)
+    if path.endswith(('.yaml', '.yml')):
+        yaml_desc = _extract_yaml_description(path)
+        if yaml_desc:
+            return _truncate(yaml_desc, 50)
+    return ""
+
+
+def _node_mermaid_label(n: dict) -> str:
+    """生成 Mermaid 节点标签（中文功能简介在前+成熟度中英文）。
+
+    格式参考 decision_index.md：(状态中英文) 中文名<br/>文件: 文件名
+    """
+    desc_zh = _node_desc_zh(n)
+    maturity = _maturity_display(n.get("design_maturity") or "unknown")
+    short_name = _node_short_name(n)
+
+    if desc_zh:
+        return f"({maturity}) {desc_zh}<br/>文件: {short_name}"
+    else:
+        return f"({maturity}) {short_name}"
+
+
+def _node_ascii_label(n: dict) -> str:
+    """生成 ASCII 视图节点标签（中文功能简介在前+成熟度中英文，单行）。"""
+    desc_zh = _node_desc_zh(n)
+    maturity = _maturity_display(n.get("design_maturity") or "unknown")
+    short_name = _node_short_name(n)
+
+    if desc_zh:
+        return f"{desc_zh} [{maturity}]"
+    else:
+        return f"{short_name} [{maturity}]"
 
 
 # ---------------------------------------------------------------------------
@@ -499,11 +617,8 @@ def generate_internal_mermaid(
         if n["path"]:
             path_to_mermaid[n["path"]] = mermaid_id
 
-        label_name = _sanitize_mermaid_label(n["node_name"] or n["path"] or "unknown")
-        if len(label_name) > 50:
-            label_name = label_name[:47] + "..."
-        maturity = n["design_maturity"] or "unknown"
-        lines.append(f'        {mermaid_id}["{label_name} {maturity}"]')
+        label = _sanitize_mermaid_label(_node_mermaid_label(n))
+        lines.append(f'        {mermaid_id}["{label}"]')
     lines.append("    end")
 
     # 域内依赖边
@@ -515,7 +630,7 @@ def generate_internal_mermaid(
                 arrow = "-->"
             else:
                 arrow = "-.->"
-            dep_label = _sanitize_mermaid_label(e["dep_type"]) or "dep"
+            dep_label = _sanitize_mermaid_label(_dep_type_display(e["dep_type"])) or "dep"
             lines.append(f"    {from_id} {arrow}|{dep_label}| {to_id}")
 
     # 跨域外部节点
@@ -533,7 +648,8 @@ def generate_internal_mermaid(
         used_ids.add(ext_id)
         external_nodes[ext_domain] = (ext_id, maturity)
         ext_label = _sanitize_mermaid_label(ext_domain)
-        lines.append(f'    {ext_id}["{ext_label} {maturity}"]')
+        ext_maturity = _maturity_display(maturity)
+        lines.append(f'    {ext_id}["({ext_maturity}) {ext_label}"]')
         return ext_id
 
     # 跨域出边
@@ -546,7 +662,7 @@ def generate_internal_mermaid(
             arrow = "-->"
         else:
             arrow = "-.->"
-        dep_label = _sanitize_mermaid_label(e["dep_type"]) or "dep"
+        dep_label = _sanitize_mermaid_label(_dep_type_display(e["dep_type"])) or "dep"
         lines.append(f"    {from_mermaid} {arrow}|{dep_label}| {ext_id}")
 
     # 跨域入边
@@ -559,7 +675,7 @@ def generate_internal_mermaid(
             arrow = "-->"
         else:
             arrow = "-.->"
-        dep_label = _sanitize_mermaid_label(e["dep_type"]) or "dep"
+        dep_label = _sanitize_mermaid_label(_dep_type_display(e["dep_type"])) or "dep"
         lines.append(f"    {ext_id} {arrow}|{dep_label}| {to_mermaid}")
 
     # classDef 样式（所有都加 color:#000 确保黑字）
@@ -755,12 +871,10 @@ def generate_ascii_architecture_overview(
             shown = layer_nodes[: MAX_PER_LAYER - 2]
             more_count = count - (MAX_PER_LAYER - 2)
 
-        # 构建内容行：每行一个模块名
+        # 构建内容行：每行一个模块标签（中文功能简介在前+成熟度中英文）
         content = []
         for n in shown:
-            name = n["node_name"] or n["path"] or f"node_{n['node_id']}"
-            maturity = n["design_maturity"] or "unknown"
-            content.append(f"  {name}  [{maturity}]")
+            content.append(f"  {_node_ascii_label(n)}")
 
         if more_count > 0:
             content.append(f"  ...还有 {more_count} 个模块 / {more_count} more modules")
@@ -833,7 +947,7 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
                     pass
                 lines.append(
                     f"| {i} | {path_display} | {name_display} | "
-                    f"{collection_desc} | {n['design_maturity']} | {n['build_status']} |"
+                    f"{collection_desc} | {_maturity_display(n['design_maturity'])} | {_build_status_display(n['build_status'])} |"
                 )
                 # 展开内部 items（最多显示前 100 个，避免表格过长）
                 MAX_ITEMS = 100
@@ -857,7 +971,7 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
                     desc_display = _extract_yaml_description(n["path"])
                 lines.append(
                     f"| {i} | {path_display} | {name_display} | "
-                    f"{desc_display} | {n['design_maturity']} | {n['build_status']} |"
+                    f"{desc_display} | {_maturity_display(n['design_maturity'])} | {_build_status_display(n['build_status'])} |"
                 )
 
         if len(layer_nodes_all) > MAX_PER_LAYER:
@@ -923,7 +1037,7 @@ def generate_ascii_dependency_graph(edges: list[dict]) -> str:
 
         shown_total += len(shown)
 
-        group_title = f"[{dtype}] ({len(group_edges)} 条 / edges)"
+        group_title = f"[{_dep_type_display(dtype)}] ({len(group_edges)} 条 / edges)"
         content = []
         for e in shown:
             from_name = _display_edge_name(e["from_name"], e["from_path"])
@@ -1084,7 +1198,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append("| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |")
         lines.append("|--------|:---:|---------|")
         for d in outgoing_agg:
-            lines.append(f"| {d['target_domain']} | {d['count']} | {d['dep_types']} |")
+            lines.append(f"| {d['target_domain']} | {d['count']} | {_dep_types_display(d['dep_types'])} |")
     else:
         lines.append("无跨域出边依赖 / No cross-domain outgoing dependencies")
     lines.append("")
@@ -1096,7 +1210,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append("| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |")
         lines.append("|------|:---:|---------|")
         for d in incoming_agg:
-            lines.append(f"| {d['source_domain']} | {d['count']} | {d['dep_types']} |")
+            lines.append(f"| {d['source_domain']} | {d['count']} | {_dep_types_display(d['dep_types'])} |")
     else:
         lines.append("无跨域入边依赖 / No cross-domain incoming dependencies")
     lines.append("")

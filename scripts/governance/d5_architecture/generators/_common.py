@@ -11,8 +11,8 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] cleanup_stale_files 永不抛异常（目录不存在→返回空列表）
-# [TESTS] tests/test_dm200910_generators.py
-# [TTL] task_bound
+# [TESTS]
+# [TTL] permanent
 """生成器公共工具（向内收：消除重复）。
 
 当前提供 cleanup_stale_files()——治本修复"生成器只增不删"问题。

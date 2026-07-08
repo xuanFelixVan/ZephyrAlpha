@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
-# [TESTS] tests/test_dm200910_generators.py
+# [TESTS]
 # [TTL] permanent
 """G12: 从 depgraph (PostgreSQL) 生成契约目录全景图
 
