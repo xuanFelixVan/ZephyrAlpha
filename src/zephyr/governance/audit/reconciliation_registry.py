@@ -3459,7 +3459,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
     _GEN_DIR = "scripts/governance/d5_architecture/generators"
-    # 12 个生成器 + 输出路径（漂移检测目标）
+    # 13 个生成器 + 输出路径（漂移检测目标）
     _GENERATORS = (
         "generate_decision_diagram.py",
         "generate_dataflow_diagram.py",
@@ -3473,6 +3473,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         "generate_panorama_registry.py",  # 全景图清单总表（00_overview_entry/panorama_registry.md）
         "align_panoramas.py",  # ARCH-053 三图对齐检测器（manual，但 PG 写入后自动重生）
         "generate_asset_catalog.py",  # #179/#180/#181/#182 资产清单全景图（256 项资产）
+        "generate_policies.py",  # #183 数据源策略派生（data_sources_registry.yaml → policies.yaml）
     )
     _OUTPUTS = (
         "docs/02_enterprise_architecture/06_decision_architecture/decision_index.md",
@@ -3487,6 +3488,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         "docs/02_enterprise_architecture/00_overview_entry/panorama_registry.md",
         "docs/02_enterprise_architecture/generated/panorama_alignment_report.md",  # ARCH-053
         "docs/02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md",  # #179/#180/#181/#182
+        "src/zephyr/data/config/policies.yaml",  # #183 数据源策略派生物
     )
 
     def _trigger(committed_files: list[str]) -> bool:
@@ -3499,7 +3501,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 串联跑 12 个生成器（无 --all 参数，直接运行；幂等：相同输入->相同输出）
+        # 1. 串联跑 13 个生成器（无 --all 参数，直接运行；幂等：相同输入->相同输出）
         failed_gens: list[str] = []
         for gen_name in _GENERATORS:
             gen_result = _run_subprocess(

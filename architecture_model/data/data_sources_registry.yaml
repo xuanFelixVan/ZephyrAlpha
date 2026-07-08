@@ -8,14 +8,17 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 # v1.0.0: 外部数据源资产清单真源,从 data_source_operation_manual.md v2.1.0 提取
-# 同步到 DB data_source_assets 表,派生 asset_catalog.md
+# v2.0.0: #183 数据源策略单一真源化——合并 policies.yaml 调用策略到 policy 字段;
+#         新增 runtime_id 映射(资产ID DS-* <-> 运行时ID);补齐 DS-TUSHARE/DS-RSS
+# 同步到 DB data_source_assets 表,派生 asset_catalog.md;派生 policies.yaml(generate_policies.py)
 
 module_id: MOD-L00-001
-version: "1.0.0"
-description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。"
+version: "2.0.0"
+description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。"
 
 data_sources:
   - id: DS-IFIND
+    runtime_id: ifind
     name: "同花顺iFind"
     name_en: "THS iFind"
     type: commercial
@@ -30,8 +33,21 @@ data_sources:
     coverage: "A股K线/Tick/板块/财务/宏观/研报"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §2"
+    policy:
+      rpm: 0
+      concurrency: 1
+      max_retries: 3
+      backoff: exponential
+      initial_wait_sec: 2.0
+      retry_on: ["-201", "TimeoutError", "ConnectionError"]
+      session_ttl_sec: 86400
+      relogin_on_auth_error: true
+      extra:
+        monthly_quota_alert: true
+        quota_error_codes: ["-4318", "-4309"]
 
   - id: DS-MINIQMT
+    runtime_id: miniqmt
     name: "miniQMT"
     name_en: "miniQMT"
     type: commercial
@@ -46,8 +62,20 @@ data_sources:
     coverage: "A股实时行情/历史K线/交易接口"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §3"
+    policy:
+      rpm: 0
+      concurrency: 1
+      max_retries: 3
+      backoff: fixed
+      initial_wait_sec: 1.0
+      retry_on: ["TimeoutError", "ConnectionError"]
+      session_ttl_sec: 0
+      relogin_on_auth_error: true
+      extra:
+        requires_process: "XtMiniQmt.exe"
 
   - id: DS-AKSHARE
+    runtime_id: akshare
     name: "AKShare"
     name_en: "AKShare"
     type: open_source
@@ -62,8 +90,19 @@ data_sources:
     coverage: "A股/港股/美股/期货/宏观/新闻(部分接口被反爬)"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §4"
+    policy:
+      rpm: 60
+      concurrency: 4
+      max_retries: 5
+      backoff: jittered
+      initial_wait_sec: 2.0
+      retry_on: ["HTTPError", "JSONDecodeError", "ConnectionError"]
+      disconnect_vpn: true
+      extra:
+        dongfang_caizhang_skip_after: 3
 
   - id: DS-BAOSTOCK
+    runtime_id: baostock
     name: "Baostock"
     name_en: "Baostock"
     type: open_source
@@ -78,8 +117,49 @@ data_sources:
     coverage: "A股K线/财务/宏观(数据有延迟)"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §5"
+    policy:
+      rpm: 60
+      concurrency: 8
+      max_retries: 3
+      backoff: fixed
+      initial_wait_sec: 2.0
+      retry_on: ["TimeoutError", "ConnectionError", "BaoStockError"]
+      session_ttl_sec: 3600
+      relogin_on_auth_error: true
+      extra:
+        thread_local_login: true
+        data_lag_days: 7
+
+  - id: DS-TUSHARE
+    runtime_id: tushare
+    name: "Tushare"
+    name_en: "Tushare"
+    type: commercial
+    category: market_data
+    vendor: "Tushare"
+    interface_types: ["Python函数"]
+    api_count: 0
+    auth_required: true
+    auth_method: "Token认证"
+    rate_limit: "积分制,5000积分/分钟"
+    status: active
+    coverage: "A股K线/财务/板块/基金/期货"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7.4"
+    policy:
+      rpm: 200
+      concurrency: 2
+      max_retries: 3
+      backoff: exponential
+      initial_wait_sec: 1.0
+      retry_on: ["TPMaxQueryLimitError", "ConnectionError"]
+      session_ttl_sec: 0
+      relogin_on_auth_error: false
+      extra:
+        points_alert_threshold: 2000
 
   - id: DS-TICKFLOW
+    runtime_id: tickflow
     name: "TickFlow"
     name_en: "TickFlow"
     type: open_source
@@ -94,8 +174,16 @@ data_sources:
     coverage: "A股Tick数据"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §6"
+    policy:
+      rpm: 60
+      concurrency: 2
+      max_retries: 3
+      backoff: jittered
+      initial_wait_sec: 1.0
+      retry_on: ["HTTPError", "ConnectionError"]
 
   - id: DS-TDX
+    runtime_id: tdx
     name: "通达信"
     name_en: "TDX"
     type: open_source
@@ -111,8 +199,43 @@ data_sources:
     limitations: "无板块分笔历史数据/无历史个股分笔/无复权/估值/EDB/新闻/研报/不支持美股"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §8"
+    policy:
+      rpm: 0
+      concurrency: 1
+      max_retries: 3
+      backoff: fixed
+      initial_wait_sec: 0.5
+      retry_on: ["ConnectionError", "TimeoutError"]
+      extra:
+        bestip: true
+
+  - id: DS-RSS
+    runtime_id: rss
+    name: "RSS"
+    name_en: "RSS"
+    type: open_source
+    category: news
+    vendor: "开源"
+    interface_types: ["RSS/Atom"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无"
+    rate_limit: "无"
+    status: active
+    coverage: "财经新闻RSS源"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7.4"
+    policy:
+      rpm: 0
+      concurrency: 1
+      max_retries: 3
+      backoff: exponential
+      initial_wait_sec: 5.0
+      retry_on: ["SSLError", "ConnectionError", "HTTPError"]
+      respect_robots_txt: true
 
   - id: DS-BAIDUYUN
+    runtime_id: baiduyun
     name: "百度云"
     name_en: "BaiduYun"
     type: commercial
@@ -127,8 +250,10 @@ data_sources:
     coverage: "通达信板块分笔历史Tick数据(一次性包,无API可持续更新)"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7"
+    policy: {}
 
   - id: DS-NEWSAPI
+    runtime_id: newsapi
     name: "NewsAPI"
     name_en: "NewsAPI"
     type: commercial
@@ -143,8 +268,10 @@ data_sources:
     coverage: "全球财经新闻"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7"
+    policy: {}
 
   - id: DS-YFINANCE
+    runtime_id: yfinance
     name: "yfinance"
     name_en: "yfinance"
     type: open_source
@@ -159,8 +286,10 @@ data_sources:
     coverage: "美股/港股(已废弃,分类体系不兼容)"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7.4"
+    policy: {}
 
   - id: DS-STOOQ
+    runtime_id: stooq
     name: "Stooq"
     name_en: "Stooq"
     type: open_source
@@ -175,3 +304,4 @@ data_sources:
     coverage: "全球历史K线(已废弃)"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7.4"
+    policy: {}

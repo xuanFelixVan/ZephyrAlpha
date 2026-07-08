@@ -1337,6 +1337,52 @@ capabilities:
       - make_unsafe_dict_spread_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: diff_helpers
+    aliases:
+      - DIFF-HELPERS
+      - diff-helpers
+      - _diff_helpers
+      - gate_diff_helpers
+      - commit_gate_diff_helpers
+    description: >-
+      gate 共享 diff 解析工具模块（_diff_helpers，2026-07-09 FUNCTION-DUP 治本提取）。
+      提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate 公共 diff 解析函数
+      （_is_exempt_line/_extract_docstring_lines/_parse_diff_with_line_numbers/
+      _read_staged_file），消除 FUNCTION-DUP gate 阻断（同目录同 name+body hash 重复
+      函数）。纯函数无副作用，不可达路径 fail-open（返回空集/空列表/None）。
+      canonical basename _diff_helpers 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "gate diff 解析/_diff_helpers/commit gate 共享工具" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 diff 解析工具模块。
+    integrity_anchors:
+      - _is_exempt_line  # 行级豁免判定
+      - _extract_docstring_lines  # docstring 行号集合
+      - _parse_diff_with_line_numbers  # git diff 解析
+      - _read_staged_file  # staged 文件读取
+
+  # --------------------------------------------------------------------------
+  - capability_id: datetime_now_forbidden_gate
+    aliases:
+      - DATETIME-NOW-FORBIDDEN
+      - datetime-now-forbidden
+      - make_datetime_now_forbidden_gate
+      - generator_datetime_now_blocker
+      - datetime_now_hard_blocker
+    description: >-
+      生成器代码 datetime.now() 硬阻断门禁（DATETIME-NOW-FORBIDDEN，2026-07-09 治本
+      AGENTS.md §11.1.1）。检测 staged 生成器代码(.py)新增行中的 datetime.now() 调用
+      ——违反时间戳约定（生成器输出必须幂等，禁止实时时间源）。生成器判定：路径含
+      /generators/ 或文件名以 generate_ 开头；tests/ 豁免；import/注释/docstring 豁免；
+      非生成器文件豁免；检出违规则 fail-closed 阻断（passed=False）。hard-block（非
+      warn）——datetime.now() 在生成器中是确定性违规（违反 §11.1.1），应硬阻断。
+      priority=34（在 FILE-PLACEMENT-TTL=33 之后、R5-DIGIT-SUFFIX=35 之前）。
+      canonical basename datetime_now_forbidden_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "datetime.now 阻断/生成器时间戳门禁/DATETIME-NOW" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 datetime.now() 检测脚本。
+    integrity_anchors:
+      - make_datetime_now_forbidden_gate  # gate 工厂(删则 gate 不注册)
+      - _is_generator_file  # 生成器文件判定
+
+  # --------------------------------------------------------------------------
   - capability_id: create_guard
     aliases:
       - CREATE-GUARD
@@ -3887,6 +3933,15 @@ creation_tokens:
     token: "auto-unsafe-dict-spread-gate-20260706"
     created_by: "session-r69-5-147-12-gate"
     capability: "unsafe_dict_spread_gate"
+  # --- DATETIME-NOW-FORBIDDEN gate + _diff_helpers 共享模块（2026-07-09，FUNCTION-DUP 治本提取 + §11.1.1 强制）---
+  - file: "src/zephyr/governance/commit_gates/_diff_helpers.py"
+    token: "auto-diff-helpers-20260709"
+    created_by: "session-sess-18616-20260709045132"
+    capability: "diff_helpers"
+  - file: "src/zephyr/governance/commit_gates/datetime_now_forbidden_gate.py"
+    token: "auto-datetime-now-forbidden-gate-20260709"
+    created_by: "session-sess-18616-20260709045132"
+    capability: "datetime_now_forbidden_gate"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
   - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"
@@ -4279,6 +4334,10 @@ creation_tokens:
   - file: "scripts/governance/d5_architecture/generators/generate_asset_catalog.py"
     token: "auto-generate-asset-catalog-20260706"
     created_by: "session-sess-44960-20260706204645"
+    capability: "domain_architecture_generators"
+  - file: "scripts/governance/d5_architecture/generators/generate_policies.py"
+    token: "auto-generate-policies-20260709"
+    created_by: "session-sess-17012-20260709045429"
     capability: "domain_architecture_generators"
   - file: "architecture_model/data/data_sources_registry.yaml"
     token: "auto-data-sources-registry-20260706"
