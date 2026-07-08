@@ -66,6 +66,7 @@ from zephyr.governance.audit.reconciliation_registry import (
 )
 from zephyr.governance.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate
+from zephyr.governance.commit_gates.foreign_change_gate import make_foreign_change_gate
 from zephyr.governance.commit_gates.session_required_gate import make_session_required_gate
 from zephyr.governance.commit_gates.claim_required_gate import make_claim_required_gate
 from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate
@@ -122,6 +123,7 @@ class CommitStatus(str, Enum):
     REPO_ROOT_VIOLATION = "REPO_ROOT_VIOLATION"
     PURE_ASSERTION_VIOLATION = "PURE_ASSERTION_VIOLATION"
     HELD_OVERLAP_VIOLATION = "HELD_OVERLAP_VIOLATION"
+    FOREIGN_CHANGE_VIOLATION = "FOREIGN_CHANGE_VIOLATION"  # ARCH-054 外来变更检测
     CLAIM_REQUIRED_VIOLATION = "CLAIM_REQUIRED_VIOLATION"
     PURE_SHIM_VIOLATION = "PURE_SHIM_VIOLATION"
     STASH_CONFLICT = "STASH_CONFLICT"  # 阶段3 已弃用，保留向后兼容
@@ -264,6 +266,7 @@ class GitCommitGateway:
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         self._gate_registry = CommitGateRegistry()
         self._gate_registry.register(make_held_overlap_gate())
+        self._gate_registry.register(make_foreign_change_gate())  # ARCH-054 priority=45 外来变更检测（claim 时基线快照，commit 时对比）
         self._gate_registry.register(make_session_required_gate())  # priority=30 治本 session 注册强制（防 AI 绕过 session_worktree_start 传空 session_id）
         self._gate_registry.register(make_claim_required_gate())
         self._gate_registry.register(make_capability_overlap_gate())
@@ -294,6 +297,9 @@ class GitCommitGateway:
         self._gate_registry.register(make_msg_style_gate())  # priority=92 治本错误消息标点/箭头风格不一致（5.99.22防复发：raise消息含->或。结尾阻断）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
+        # ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
+        # commit 时 FOREIGN-CHANGE-DETECTION gate 对比检测搭便车变更。
+        self._claim_snapshots: dict[str, dict[str, str]] = {}
 
     def _get_worktree_manager(self):
         """延迟获取 WorktreeManager 单例。"""
@@ -303,11 +309,25 @@ class GitCommitGateway:
         return self._worktree_mgr
 
     def claim_files(self, session_id: str, files: list[str]) -> list[str]:
-        """为 session 声明持有本次 commit 的文件。claim 失败的文件从返回列表排除。"""
+        """为 session 声明持有本次 commit 的文件。claim 失败的文件从返回列表排除。
+
+        ARCH-054: claim 成功后捕获文件基线快照（git diff HEAD -- <file>），
+        供 FOREIGN-CHANGE-DETECTION gate 在 commit 时检测搭便车变更。
+        """
         claimed: list[str] = []
         for f in files:
             if self._registry.claim_file(session_id, f):
                 claimed.append(f)
+                # ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
+                try:
+                    abs_f = os.path.abspath(f)
+                    baseline = self._capture_baseline_diff(abs_f)
+                    self._claim_snapshots.setdefault(session_id, {})[abs_f] = baseline
+                except Exception:
+                    logger.warning(
+                        "GitCommitGateway: claim_files 基线快照捕获失败 — file=%s (session=%s)",
+                        f, session_id, exc_info=True,
+                    )
             else:
                 logger.warning(
                     "GitCommitGateway: claim_files conflict — file=%s held by other session, "
@@ -316,13 +336,40 @@ class GitCommitGateway:
         return claimed
 
     def release_files(self, session_id: str, files: list[str]) -> None:
-        """释放 session 对文件的持有（commit 后调用，静默失败仅 warning）。"""
+        """释放 session 对文件的持有（commit 后调用，静默失败仅 warning）。
+
+        ARCH-054: 同时清理该 session 的基线快照。
+        """
         for f in files:
             if not self._registry.release_file(session_id, f):
                 logger.debug(
                     "GitCommitGateway: release_files no-op — file=%s not held by session=%s",
                     f, session_id,
                 )
+        # ARCH-054: 清理 session 的基线快照
+        try:
+            self._claim_snapshots.pop(session_id, None)
+        except Exception:
+            pass
+
+    def _capture_baseline_diff(self, abs_file: str) -> str:
+        """ARCH-054: 捕获文件相对 HEAD 的 diff 基线。
+
+        claim_files 时调用，记录文件在 claim 时刻的 git diff HEAD 状态。
+        commit 时 FOREIGN-CHANGE-DETECTION gate 对比：若基线非空，说明 claim 时
+        文件已有外来变更（其他 session 的未提交修改），commit 会搭便车提交这些变更。
+
+        Returns:
+            git diff HEAD -- <file> 的 stdout（空串=文件干净或 git 不可用）。
+        """
+        try:
+            rel = os.path.relpath(abs_file, str(self.project_root)).replace("\\", "/")
+        except ValueError:
+            rel = abs_file
+        result = self._run_git(["git", "diff", "HEAD", "--", rel])
+        if result.returncode != 0:
+            return ""
+        return result.stdout or ""
 
     def _register_default_reconcilers(self) -> None:
         """注册默认 post-commit reconciler（声明式框架，P2-T1~T9 + 红蓝发现1 + P3收尾）。"""
@@ -411,6 +458,8 @@ class GitCommitGateway:
                     return CommitResult(status=CommitStatus.HELD_OVERLAP_VIOLATION, message=gr.detail)
                 if gr.gate_id == "CLAIM-REQUIRED":
                     return CommitResult(status=CommitStatus.CLAIM_REQUIRED_VIOLATION, message=gr.detail)
+                if gr.gate_id == "FOREIGN-CHANGE-DETECTION":  # ARCH-054
+                    return CommitResult(status=CommitStatus.FOREIGN_CHANGE_VIOLATION, message=gr.detail)
                 if gr.gate_id == "FILE-PLACEMENT-TTL" and gr.detail.startswith("PROMOTION_BLOCKED"):
                     return CommitResult(status=CommitStatus.PROMOTION_BLOCKED, message=gr.detail)
                 return CommitResult(

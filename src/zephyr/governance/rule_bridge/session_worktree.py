@@ -92,8 +92,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 # worktree 路径下跳过的 gate（session_worktree 有自己的 held_files 机制替代
-# HELD-OVERLAP/CLAIM-REQUIRED）。session_worktree_commit 和 _pre_merge_gate_check 共用。
-_WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED"})
+# HELD-OVERLAP/CLAIM-REQUIRED；worktree 物理隔离消除搭便车风险，FOREIGN-CHANGE-DETECTION 无需）。
+# session_worktree_commit 和 _pre_merge_gate_check 共用。
+_WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHANGE-DETECTION"})
 
 
 def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
