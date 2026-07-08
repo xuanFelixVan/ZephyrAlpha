@@ -195,6 +195,10 @@ def _call_openai_compatible(
 ) -> LLMResponse:
     api_key = get_secret_or_default(config.api_key_env, "")
     if not api_key:
+        # 5.155.13 修复：生产环境api_key缺失阻断，dev/test环境降级为模拟模式
+        from zephyr.shared.foundation.env import is_prod
+        if is_prod():
+            raise RuntimeError(f"API key not set in production: {config.api_key_env} (5.155.13)")
         return LLMResponse(
             content="",
             model=model or config.default_model,
