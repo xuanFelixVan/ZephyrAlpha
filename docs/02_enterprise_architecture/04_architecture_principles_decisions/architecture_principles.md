@@ -3,7 +3,7 @@ module_id: ARCH-004
 title: Architecture Principles / 架构原则
 doc_type: architecture_view
 status: Active
-version: 1.2.0
+version: 1.4.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -22,8 +22,8 @@ tags:
 - thin-adapter
 - safety-red-lines
 - security-principles
-summary: ZephyrAlpha 2.0 架构原则集中 SSoT。v1.2.0 在 §1bis 增补安全红线 R1–R4 的 CI/工件追溯表。v1.1.0：§0 + §1 安全红线 + §2 开源优先。未来扩展：OCP、SSoT、模块准入铁律。
-date: '2026-05-06'
+summary: ZephyrAlpha 2.0 架构原则集中 SSoT。v1.4.0：修复编号错乱（§1.1.x→§2.1.x，§3缺失重编号）、删除§0过期归集承诺、R2执行机制gap显式标注、§2.1机构对标表瘦身。v1.3.0：删除§2.3+§3未落地方法论。v1.1.0：§0+§1安全红线+§2开源优先。
+date: '2026-07-09'
 ttl: permanent
 ---
 
@@ -40,10 +40,8 @@ ttl: permanent
 **v1.0.0 初始内容来源**：§2 "开源优先" 子原则提取自早期设计稿（已废弃）。
 
 **v1.1.0 同步迁移完成**：安全红线 4 条已从 `overview.md` 归集至本文档 §1。
-**后续版本归集**：
-- OCP 扩展点原则（当前在 KBG-0004 中定义）
-- SSoT 唯一真源原则（当前在 KBG-0001 中定义）
-- 模块准入四级铁律（当前在 KBG-0014 中定义）
+
+**关于 OCP / SSoT / 模块准入铁律**：这三项原则仍分别在 `KBG-0004`（OCP 扩展点）、`KBG-0001`（SSoT 唯一真源）、`KBG-0014`（模块准入四级铁律）中定义。v1.3.0 评估后决定**不归集到本文档**——各自 KBG 已是独立 SSoT，强行归集会产生双源同步负担。本文档仅承载安全红线（§1）和开源优先（§2）两类原则。
 
 ---
 
@@ -60,14 +58,14 @@ ttl: permanent
 
 ### §1bis 门禁追溯（CI / 本地工件）
 
-| # | gate_ref | 说明 |
-|---|----------|------|
-| **R1** | `.pre-commit-config.yaml` → `pre-commit-hooks` / `detect-private-key`；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | 防私钥误提交；密钥字面量与轮换另见 `secret-management-policy.md` |
-| **R2** | **目标态**：运行时日志不得写出 secret、token、私钥。**当前**以 Code Review + `security_architecture.md` 日志约束为主，**尚无**「扫描所有运行时 log 输出」的独立 CI job | 若落地自动化，应在 `scripts/arch_guard/` 或专项 workflow 登记并回链本表 |
-| **R3** | 设计侧：`cross_layer_contracts.yaml` + `invariants.yaml`（D_RISK ↔ D_EXECUTION_CORE）；CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用） | T1 实盘后须满足 hard-check 与适应度函数阈值 |
-| **R4** | 数据治理策略（`data-retention-policy.md` 等）+ 迁移与审计流程；非单一脚本名 | 以权限与流程为主 |
+| # | gate_ref | 落地状态 | 说明 |
+|---|----------|:---:|------|
+| **R1** | `.pre-commit-config.yaml` → `pre-commit-hooks` / `detect-private-key`；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | ✅ 已落地 | 防私钥误提交；密钥字面量与轮换另见 `secret-management-policy.md` |
+| **R2** | **目标态**：运行时日志不得写出 secret、token、私钥 | ⚠️ **T1 待落地** | **当前**以 Code Review + `security_architecture.md` 日志约束为主，**尚无**「扫描所有运行时 log 输出」的独立 CI job。T1 实盘前必须在 `scripts/arch_guard/` 或专项 workflow 登记自动化扫描并回链本表 |
+| **R3** | 设计侧：`cross_layer_contracts.yaml` + `invariants.yaml`（D_RISK ↔ D_EXECUTION_CORE）；CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用） | ⚠️ **T1 待落地** | T1 实盘后须满足 hard-check 与适应度函数阈值 |
+| **R4** | 数据治理策略（`data-retention-policy.md` 等）+ 迁移与审计流程；非单一脚本名 | ✅ 已落地 | 以权限与流程为主 |
 
-**红线优先级**：高于所有其他架构原则。在其他原则（如 §1 "开源优先"）与红线冲突时，**红线无条件优先**。
+**红线优先级**：高于所有其他架构原则。在其他原则（如 §2 "开源优先"）与红线冲突时，**红线无条件优先**。
 
 **与 06-SEC 安全架构的关系**：06-SEC 定义了防御深度、GRC 矩阵、威胁模型等技术实现；本节定义的是不可妥协的最高原则。前者是"怎么做"，后者是"什么绝不能做"。
 
@@ -77,18 +75,15 @@ ttl: permanent
 
 ### 2.1 专业机构为什么"开源优先"？
 
-#### 1.1.1 直接对标
+#### 2.1.1 直接对标（量化领域代表性机构）
 
 | 机构 | 开源使用情况 | 关键证据 |
 |------|------------|--------|
 | **Two Sigma** | 重度使用 + 大量反哺 | 开源 `BeakerX`, `Arbuti`, `Cook`（数据科学生态）|
 | **Man AHL** | 开源 `arctic` 时序库 | 全球 Python 时序管理标杆 |
-| **JPMorgan** | 开源 `Athena` 风险引擎前身、`pyRESTful` | 金融工程 |
-| **Bloomberg** | 开源 `bqplot`, `ipywidgets` | 可视化 |
 | **Microsoft (Qlib)** | 开源 `Qlib` 完整 AI 量化平台 | 因子 / 训练 / 回测全栈 |
-| **Netflix** | `Hystrix`, `Eureka`, `Mantis` | 云原生基础设施 |
 
-#### 1.1.2 核心原因（从专业机构招聘资料 + 技术博客提炼）
+#### 2.1.2 核心原因（从专业机构招聘资料 + 技术博客提炼）
 
 1. **边际成本更低**：维护一个活跃开源项目 vs 自研从零，后者人力成本 10-50 倍
 2. **社区质量反哺**：Bug 由全球开发者发现，而不是只有你一个人
@@ -96,7 +91,7 @@ ttl: permanent
 4. **监管透明**：开源代码比自研代码更容易通过审计（可读、有历史、有社区审查）
 5. **退出成本低**：用开源意味着随时可换（社区分叉），自研意味着绑死自己
 
-#### 1.1.3 独立开发者更应该开源优先（3-10 倍更重要）
+#### 2.1.3 独立开发者更应该开源优先（3-10 倍更重要）
 
 | 维度 | 机构（10 人团队） | ZephyrAlpha（1 人 + AI） |
 |-----|---------------|:---:|
@@ -185,22 +180,23 @@ OCP 扩展点基类（业务层只依赖抽象接口，不依赖具体开源库�
 
 ---
 
-## 4. 与其他文档的关系
+## 3. 与其他文档的关系
 
 | 关系 | 对象 | 说明 |
 |:---|:---|:---|
-| 本文档引用 | `KBG-0004`（OCP 扩展点） | §1.2 原则 2 依赖 OCP 扩展点基础设施 |
+| 本文档引用 | `KBG-0004`（OCP 扩展点） | §2.2 原则 2 依赖 OCP 扩展点基础设施 |
 | 本文档引用 | `KBG-0014`（模块准入铁律） | 模块准入 MOD-P1~P4 是独立的决策维度 |
 | 本文档引用 | `technology_landscape.yaml` | 技术全景图承载具体 OSS 条目登记，本文档承载"为什么选/不选"的决策原则 |
-| 本文档被引用 | `overview.md` | 00-overview §0 的安全红线等原则未来应归集至本文档 |
+| 本文档被引用 | `overview.md` | 00-overview §0 的安全红线已归集至本文档 §1（v1.1.0 完成） |
 | 本文档被引用 | `application_architecture.md` | 03-AA §4.4 的 ACL 三段是原则 2"薄适配器"的基础设施实现 |
 
 ---
 
-## 5. 修订记录
+## 4. 修订记录
 
 | 日期 | 版本 | 说明 |
 |------|------|------|
-| 2026-05-02 | 1.1.0 | **安全红线归集**：§0 新增安全红线 4 条（R1-R4），从 `overview.md` 归集完成，附带执行机制 + 大白话解释。`overview.md` 同步更新为引用链接。消除同一事实双源问题。 |
 | 2026-05-02 | 1.0.0 | 初始版。5 条 Open Source First 子原则 + 专业机构对标证据。 |
+| 2026-05-02 | 1.1.0 | **安全红线归集**：§0 新增安全红线 4 条（R1-R4），从 `overview.md` 归集完成，附带执行机制 + 大白话解释。`overview.md` 同步更新为引用链接。消除同一事实双源问题。 |
 | 2026-07-06 | 1.3.0 | 删除 §2.3（5 条硬约束，孤岛概念+第1/4条重叠+第5条引用失效概念）+ §3（BvB 五维评分法，未落地的方法论附录）。清理 OQ-032 悬空引用。 |
+| 2026-07-09 | 1.4.0 | **大修复**：(1) 修复编号错乱——§1.1.1/2/3 重编号为 §2.1.1/2/3，原§4/§5 重编号为 §3/§4；(2) 删除 §0 过期归集承诺（OCP/SSoT/模块准入铁律不再归集，各自 KBG 是独立 SSoT）；(3) §1bis 门禁追溯表新增"落地状态"列，R2/R3 显式标注"T1 待落地"；(4) §2.1 机构对标表瘦身——删除 JPMorgan/Bloomberg/Netflix 3 家非量化机构，保留 Two Sigma/Man AHL/Microsoft Qlib 3 家量化领域代表性机构；(5) §3 修正交叉引用错误（§1.2→§2.2）和过期描述（"未来应归集"→"已归集"）。 |
