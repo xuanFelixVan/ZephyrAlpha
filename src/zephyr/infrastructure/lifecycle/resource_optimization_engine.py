@@ -800,7 +800,7 @@ class ResourceOptimizationEngine:
             return
         self._last_pressure_level = snap.pressure
         try:
-            from zephyr.shared.events.event_bus import bus
+            from zephyr.shared.event_bus import bus
             bus.emit(
                 self._eventbus_topic,
                 {

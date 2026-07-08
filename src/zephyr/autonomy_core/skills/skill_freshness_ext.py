@@ -54,7 +54,7 @@ def scan_all_freshness(model: FreshnessDecayModel | None = None) -> dict[str, An
         else:
             healthy.append(info)
     try:
-        from zephyr.shared.events.event_bus import EventPriority, bus
+        from zephyr.shared.event_bus import EventPriority, bus
 
         if criticals:
             bus.emit("skill.freshness_critical", {"criticals": criticals}, priority=EventPriority.HIGH)
@@ -78,7 +78,7 @@ def auto_deprecate_skill(
             reason=reason or f"freshness_score={freshness_score:.1f} <= critical",
         )
         try:
-            from zephyr.shared.events.event_bus import EventPriority, bus
+            from zephyr.shared.event_bus import EventPriority, bus
 
             bus.emit(
                 "skill.deprecated",
@@ -90,7 +90,7 @@ def auto_deprecate_skill(
         return result
     if freshness_score <= 30.0:
         try:
-            from zephyr.shared.events.event_bus import EventPriority, bus
+            from zephyr.shared.event_bus import EventPriority, bus
 
             bus.emit(
                 "skill.freshness_warning",

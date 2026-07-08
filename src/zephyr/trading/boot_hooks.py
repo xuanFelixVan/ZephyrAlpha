@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-from zephyr.shared.events.event_bus import EventBus, EventType
+from zephyr.shared.event_bus import EventBus, EventType
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
@@ -301,7 +301,7 @@ def _register_rbac_hooks() -> None:
 def _subscribe_skill_freshness_events() -> None:
     """订阅 skill.freshness_critical 事件 — 原 boot_cron_jobs 内联（2026-07-05 裁定）。"""
     try:
-        from zephyr.shared.events.event_bus import bus
+        from zephyr.shared.event_bus import bus
 
         def _on_freshness_critical(payload: dict) -> None:
             try:
@@ -568,7 +568,7 @@ def register_boot_hooks(
         hook_registry.register(_hook_triple_align_event, priority=72, name="triple_align_event")
 
         try:
-            from zephyr.shared.events.event_bus import bus as _bus
+            from zephyr.shared.event_bus import bus as _bus
 
             _bus.subscribe("blueprint.changed", _hook_triple_align_event)
             _bus.subscribe("blueprint.decomposed", _hook_triple_align_event)

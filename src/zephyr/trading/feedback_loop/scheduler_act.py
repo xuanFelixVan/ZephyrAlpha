@@ -180,7 +180,7 @@ class ActPhaseHandler:
                 else:
                     logger.error("FLE auto-rollback: failed — %s", getattr(result, "errors", []))
                     try:
-                        from zephyr.shared.events.event_bus import bus
+                        from zephyr.shared.event_bus import bus
 
                         bus.emit(
                             topic="rollback.failed",

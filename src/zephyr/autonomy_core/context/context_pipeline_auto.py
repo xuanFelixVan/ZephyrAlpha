@@ -35,7 +35,7 @@ from zephyr.autonomy_core.context.context_pipeline import (
     run_context_four_stage,
 )
 from zephyr.infrastructure.capacity_assurance.kill_switch import KillSwitch
-from zephyr.shared.events.event_bus import DomainEvent, EventBus, EventType
+from zephyr.shared.event_bus import DomainEvent, EventBus, EventType
 
 logger = logging.getLogger(__name__)
 

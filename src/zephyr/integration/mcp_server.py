@@ -226,7 +226,7 @@ def dispatch_tool(name: str, **kwargs: str) -> str:
         try:
             from datetime import UTC, datetime
 
-            from zephyr.shared.events.event_bus import EventBusBackpressure
+            from zephyr.shared.event_bus import EventBusBackpressure
 
             EventBusBackpressure().emit(
                 "mcp_call_failed",

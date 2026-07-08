@@ -360,7 +360,7 @@ class IdeHealthDaemon:
                 return
             self._running = True
             try:
-                from zephyr.shared.events.event_bus import bus
+                from zephyr.shared.event_bus import bus
 
                 bus.subscribe("task.completed", lambda _: self.scan_tick())
                 bus.subscribe("task.failed", lambda _: self.scan_tick())

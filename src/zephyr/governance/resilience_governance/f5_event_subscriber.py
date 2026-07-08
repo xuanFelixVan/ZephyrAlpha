@@ -45,7 +45,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
-from zephyr.shared.events.event_bus import EventBusBackpressure, EventPriority, bus as default_bus
+from zephyr.shared.event_bus import EventBusBackpressure, EventPriority, bus as default_bus
 
 logger = logging.getLogger(__name__)
 

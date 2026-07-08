@@ -295,7 +295,7 @@ def subscribe_monitoring_events() -> None:
     _monitoring_events_subscribed = True
 
     try:
-        from zephyr.shared.events.event_bus import bus
+        from zephyr.shared.event_bus import bus
 
         def _on_f5_deadlock(payload: Any) -> None:
             try:

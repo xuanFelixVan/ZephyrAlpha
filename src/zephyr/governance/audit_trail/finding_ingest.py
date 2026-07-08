@@ -170,7 +170,7 @@ class FindingIngest:
         if cls._subscribers_registered:
             return
         try:
-            from zephyr.shared.events.event_bus import bus
+            from zephyr.shared.event_bus import bus
 
             bus.subscribe("audit.finding_created", cls._on_finding_created)
             bus.subscribe("audit.finding_resolved", cls._on_finding_resolved)
@@ -233,7 +233,7 @@ class FindingIngest:
 
     def _emit_event(self, finding: AuditFinding) -> None:
         try:
-            from zephyr.shared.events.event_bus import bus
+            from zephyr.shared.event_bus import bus
 
             payload = finding.to_finding_dict()
             bus.emit(topic="audit.finding_created", payload=payload)

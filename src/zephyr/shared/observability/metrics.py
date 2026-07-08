@@ -294,7 +294,7 @@ def subscribe_metrics_events() -> None:
     _metrics_events_subscribed = True
 
     try:
-        from zephyr.shared.events.event_bus import bus
+        from zephyr.shared.event_bus import bus
 
         registry = get_registry()
 

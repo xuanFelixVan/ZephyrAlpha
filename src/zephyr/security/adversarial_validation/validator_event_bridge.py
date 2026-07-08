@@ -55,7 +55,7 @@ def subscribe_eventbus() -> None:
     if _subscribed:
         return
     try:
-        from zephyr.shared.events.event_bus import EventBusBackpressure
+        from zephyr.shared.event_bus import EventBusBackpressure
 
         bus = EventBusBackpressure()
         bus.subscribe("fix_completed", _on_fix_completed)
