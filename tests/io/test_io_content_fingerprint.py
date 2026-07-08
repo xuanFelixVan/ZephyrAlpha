@@ -23,7 +23,7 @@
 
 import pytest
 
-from zephyr.shared.utils.content_fingerprint import (
+from zephyr.shared.io.content_fingerprint import (
     FingerprintError,
     FingerprintNotFoundError,
     compute_bulk,

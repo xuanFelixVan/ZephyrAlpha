@@ -47,7 +47,7 @@ from zephyr.shared.contracts.core.runtime_plane_tag import (
     RuntimePlane,
 )
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
-from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
+from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
 from zephyr.shared.contracts.core.timestamp import (
     NaiveDatetimeError,
     Timestamp,

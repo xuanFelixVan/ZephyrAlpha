@@ -24,7 +24,7 @@ import hashlib
 
 import pytest
 
-from zephyr.shared.utils.file_utils import (
+from zephyr.shared.io.file_utils import (
     AtomicWriteError,
     atomic_write,
     backup_and_rollback,

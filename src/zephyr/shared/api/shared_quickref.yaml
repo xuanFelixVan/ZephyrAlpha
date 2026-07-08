@@ -178,8 +178,8 @@ utilities:
     - symbol: PatchConflictError
       note: patch 冲突异常
   file_utils:
-    file: src/zephyr/shared/file_utils.py
-    entry_point: from zephyr.shared.utils.file_utils import atomic_write, safe_read, backup_and_rollback
+    file: src/zephyr/shared/io/file_utils.py
+    entry_point: from zephyr.shared.io.file_utils import atomic_write, safe_read, backup_and_rollback
     exports:
     - symbol: atomic_write
       note: POSIX 原子写——mkstemp->flush->fsync->os.replace
@@ -342,8 +342,8 @@ health:
   anti_patterns:
   - 直接遍历 LifecycleManager.health_check_all()——应?AggregateHealth 获得整体视图
 serialization:
-  file: src/zephyr/shared/serialization.py
-  entry_point: from zephyr.shared.foundation.serialization import to_dict, from_dict, to_json,
+  file: src/zephyr/shared/io/serialization.py
+  entry_point: from zephyr.shared.io.serialization import to_dict, from_dict, to_json,
     from_json, ENCODING_RULES
   key_exports:
   - symbol: to_dict(obj)
@@ -410,8 +410,8 @@ secret_rotation:
     note: 自动扫描 os.environ 密钥变量注册到 SecretRotation 并注入 SecretProvider——在 _deferred_bootstrap 自动调用
   note: auto_configure 在 zephyr.__init__._deferred_bootstrap 后台线程自动调用，无需手动触发
 cache:
-  file: src/zephyr/shared/cache.py
-  entry_point: from zephyr.shared.io.cache import MemoryCache, cache_key
+  file: src/zephyr/shared/infra/cache.py
+  entry_point: from zephyr.shared.infra.cache import MemoryCache, cache_key
   key_exports:
   - symbol: MemoryCache
     note: 内存缓存——TTL + LRU 淘汰 + max_size 限制
@@ -476,8 +476,8 @@ metrics:
   anti_patterns:
   - ?handler ?hardcode 指标名称——用 MetricsRegistry 统一管理+Prometheus 导出
 pagination:
-  file: src/zephyr/shared/pagination.py
-  entry_point: from zephyr.shared.io.pagination import Page, CursorPage, paginate, paginate_cursor
+  file: src/zephyr/shared/utils/pagination.py
+  entry_point: from zephyr.shared.utils.pagination import Page, CursorPage, paginate, paginate_cursor
   key_exports:
   - symbol: Page[T]
     note: 偏移分页——items + total + offset + limit + has_more

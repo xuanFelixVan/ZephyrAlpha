@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.health_monitor
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.contracts.core.telemetry_emitter; zephyr.trading.__init__
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.contracts.telemetry_emitter; zephyr.trading.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -37,7 +37,7 @@ import logging
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
-from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
+from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
 from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
