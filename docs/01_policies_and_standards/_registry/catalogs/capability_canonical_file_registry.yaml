@@ -1162,6 +1162,30 @@ capabilities:
       - make_arch_reference_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: gate_inventory_sync_reconciler
+    aliases:
+      - GATE-MODULE-INVENTORY-SYNC
+      - gate-module-inventory-sync
+      - make_gate_inventory_sync_reconciler
+      - check_gate_inventory_drift
+      - gate_inventory_drift_checker
+    description: >-
+      commit_gates 模块清单漂移正向检测 post-commit reconciler（ARCH-055，2026-07-09 治本）。
+      GitCommitGateway post-commit 阶段触发（priority=820，在 GATE-AGENTS-MD-REFS(810) 之后）。
+      commit 含 src/zephyr/governance/commit_gates/*.py 变更时，subprocess 调
+      check_gate_inventory_drift.py 对比 commit_gates/*.py 实际文件集合 vs
+      blueprint.md §0.1 正则提取的登记集合，输出 missing/extra 漂移列表。
+      warn-only（不阻断 commit）：漂移是文档同步滞后非代码错误，阻断会形成死循环
+      （blueprint.md 未同步→阻断 gate 代码 commit→无法 commit blueprint.md 补登记）。
+      病根：blueprint.md §0.1 模块清单靠手工维护，100% AI 开发模式下漂移率 20.7%（6/29）。
+      治本：补正向检测（代码→文档），现有 GATE-AGENTS-MD-REFS 是反向检测（文档→代码）不覆盖。
+      解决发现性：新 AI 搜 "gate inventory drift/模块清单漂移/commit_gates 同步" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 commit_gates 清单漂移检测脚本。
+    integrity_anchors:
+      - make_gate_inventory_sync_reconciler  # reconciler 工厂(删则 reconciler 不注册)
+      - check_gate_inventory_drift           # 检测脚本(删则 reconciler 无检测逻辑)
+
+  # --------------------------------------------------------------------------
   - capability_id: rule_four_way_alignment_gate
     aliases:
       - RULE-FOUR-WAY-ALIGN
