@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.events.upgrade_strategy
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.observer
+# [DEPENDENCIES] zephyr.shared.events.observer
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] design_only
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -193,52 +193,24 @@ class EventBusUpgrade:
             "details": [],
         }
 
-        for step in plan.steps:
-            if dry_run:
-                step.status = UpgradeStatus.COMPLETED
-                result["steps_completed"] += 1
-                result["details"].append(
-                    {
-                        "step": step.step_id,
-                        "name": step.name,
-                        "status": "dry_run_passed",
-                        "would_rollback": step.rollback_action,
-                    }
-                )
-            else:
-                try:
-                    step.status = UpgradeStatus.IN_PROGRESS
-                    step.started_at = datetime.now(UTC).isoformat()
-                    self._execute_step(step)
-                    step.status = UpgradeStatus.COMPLETED
-                    step.completed_at = datetime.now(UTC).isoformat()
-                    result["steps_completed"] += 1
-                except Exception as e:
-                    step.status = UpgradeStatus.FAILED
-                    result["steps_failed"] += 1
-                    result["details"].append(
-                        {
-                            "step": step.step_id,
-                            "name": step.name,
-                            "status": "failed",
-                            "error": str(e),
-                            "rollback": step.rollback_action,
-                        }
-                    )
+        if not dry_run:
+            raise NotImplementedError(
+                "EventBusUpgrade.execute_upgrade is design-only; "
+                "use dry_run=True for plan preview. "
+                "Actual execution requires _execute_step/_rollback_step implementations."
+            )
 
-                    for prev_step in reversed(plan.steps):
-                        if prev_step.status != UpgradeStatus.COMPLETED:
-                            continue
-                        try:
-                            self._rollback_step(prev_step)
-                            prev_step.status = UpgradeStatus.ROLLED_BACK
-                        except Exception as re:
-                            result["details"].append(
-                                {
-                                    "rollback_error": f"{prev_step.step_id}: {re}",
-                                }
-                            )
-                    break
+        for step in plan.steps:
+            step.status = UpgradeStatus.COMPLETED
+            result["steps_completed"] += 1
+            result["details"].append(
+                {
+                    "step": step.step_id,
+                    "name": step.name,
+                    "status": "dry_run_passed",
+                    "would_rollback": step.rollback_action,
+                }
+            )
 
         self._upgrade_history.append(plan)
         return result
