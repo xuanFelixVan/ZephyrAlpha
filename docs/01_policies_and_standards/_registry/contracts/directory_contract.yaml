@@ -446,6 +446,15 @@ directory_extensions:
     allowed_doc_types: []
     overrides_parent: true
     note: "数据库文件区——governance.db(SQLite)+元数据；.db-wal/.db-shm 为 SQLite 旁车。market.duckdb 已于2026-07-01删除/废弃"
+  # ARCH-DEBT-BACKUP-CLEANUP: 子路径覆盖，允许 .csv（仅用于删除提交）
+  # deprecated_directories §7 阻断新建，本条仅放行已存在的 .csv 删除提交。2026-07-08 治本。
+  - path: "data/databases/backups/"
+    allowed: [".csv"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".yaml", ".jsonl", ".md", ".json", ".db"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    note: "DEPRECATED: ghost_autoclean 备份旧路径，已迁移到 tmp/pg_backups/（.gitignored）。.csv 仅允许用于删除提交，§7 deprecated_directories 阻断新建"
   - path: "data/databases/governance_metadata/"
     allowed: [".json", ".yaml", ".md"]
     forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".jsonl"]
@@ -750,6 +759,15 @@ deprecated_directories:
     reason: "物理快照违反向内收原则——git history 已是真源，禁止在仓库内堆积物理快照。74 个运行时状态快照（2026-05-07~09）已删除"
     severity: error
     history_lesson: "scripts/governance/meta/_backups/ 曾存放 runtime_state_snapshot 快照，每个含 12 YAML + 1 manifest，74 个快照共约 962 个文件，违反真源唯一原则（P8-FIX-S2 清理）"
+    consumers:
+      - "check_directory_contract.py::check_deprecated_directory（commit 时阻断新建）"
+      - "make_deprecated_directory_reconciler（post-commit 自动迁移+清理）"
+  # ARCH-DEBT-BACKUP-CLEANUP: ghost_autoclean 备份旧路径已迁移到 tmp/pg_backups/（.gitignored）
+  # 2026-07-08 治本：路径统一+保留策略对标 backup_pg_depgraph，消除无限增长+git 误提交
+  - path: "data/databases/backups"
+    reason: "ghost_autoclean 备份旧路径，已迁移到 tmp/pg_backups/（.gitignored）。8 目录 16 文件曾误提交到 git（commit 615ad0ec31），已 git rm --cached 清理"
+    severity: error
+    history_lesson: "_backup_depgraph_for_autoclean 创建于 2026-07-04 P1 auto_clean，未对标 backup_pg_depgraph 的路径/保留/.gitignore，导致备份只增不减+git 误提交。治本：路径改为 tmp/pg_backups/，保留 10 个，对标 backup_pg_depgraph"
     consumers:
       - "check_directory_contract.py::check_deprecated_directory（commit 时阻断新建）"
       - "make_deprecated_directory_reconciler（post-commit 自动迁移+清理）"

@@ -1616,6 +1616,11 @@ def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "
     不破坏本模块顶层"纯 stdlib"约束（reconciliation_registry 用于 mutation testing，
     顶层须纯 stdlib；函数内 import 是允许的，与既有 _reconcile_ghost 内 import 一致）。
 
+    治本（2026-07-08，ARCH-DEBT-BACKUP-CLEANUP）：备份路径统一到 tmp/pg_backups/（.gitignored，
+    与 backup_runtime_state.py 的 backup_pg_depgraph 标杆机制对齐），并新增保留策略——保留最近
+    max_backups 个 ghost_autoclean_* 目录，超出部分自动清理（对标 backup_pg_depgraph 的保留 10 个）。
+    消除"备份目录只增不减"的技术债务。详见 architecture_debt_registry.md §5.1.3。
+
     Args:
         project_root: Path 对象（gateway.project_root）。
         session_id: 触发 auto-clean 的 session_id（用于备份目录命名追溯）。
@@ -1632,7 +1637,7 @@ def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "
         return None, f"import depgraph_schema failed: {e}"
 
     ts = int(time.time())
-    backup_dir = Path(project_root) / "data" / "databases" / "backups" / f"ghost_autoclean_{ts}"
+    backup_dir = Path(project_root) / "tmp" / "pg_backups" / f"ghost_autoclean_{ts}"
     backup_dir.mkdir(parents=True, exist_ok=True)
 
     conn = get_depgraph_pg_connection(autocommit=True)
@@ -1642,11 +1647,62 @@ def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "
                 csv_path = backup_dir / f"{table}.csv"
                 with open(csv_path, "w", encoding="utf-8") as f:
                     cur.copy_expert(f"COPY {table} TO STDOUT WITH CSV HEADER", f)
+        # 治本（2026-07-08）：保留策略——清理过期 ghost_autoclean 备份（对标 backup_pg_depgraph）
+        _cleanup_old_ghost_backups(project_root, max_backups=10)
         return backup_dir, ""
     except Exception as e:
         return None, str(e)
     finally:
         conn.close()
+
+
+def _cleanup_old_ghost_backups(project_root: "object", max_backups: int = 10) -> int:
+    """清理过期的 ghost_autoclean_* 备份目录，保留最近 max_backups 个。
+
+    治本（2026-07-08，ARCH-DEBT-BACKUP-CLEANUP）：对标 backup_runtime_state.py 的
+    backup_pg_depgraph 保留策略（保留最近 10 个），消除"备份目录只增不减"的技术债务。
+
+    备份目录命名：ghost_autoclean_{unix_timestamp}（按时间戳排序 = 按创建时间排序）。
+
+    Args:
+        project_root: Path 对象（gateway.project_root）。
+        max_backups: 保留的备份数量上限（默认 10）。
+
+    Returns:
+        清理的备份数量（异常时返回 0，不阻断主流程）。
+    """
+    import os
+    import shutil
+    from pathlib import Path
+
+    try:
+        base = Path(project_root) / "tmp" / "pg_backups"
+        if not base.exists():
+            return 0
+        # 列出所有 ghost_autoclean_* 目录，按名称（含时间戳）降序排序 = 最近创建的在前
+        backups = sorted(
+            [d for d in base.iterdir() if d.is_dir() and d.name.startswith("ghost_autoclean_")],
+            key=lambda d: d.name,
+            reverse=True,
+        )
+        # 超出 max_backups 的全部删除
+        to_remove = backups[max_backups:]
+        for d in to_remove:
+            try:
+                shutil.rmtree(str(d))
+            except OSError:
+                # Windows 文件锁兜底——只读位清除后重试
+                import stat
+                try:
+                    for f in d.rglob("*"):
+                        if f.is_file():
+                            os.chmod(f, stat.S_IWRITE)
+                    shutil.rmtree(str(d))
+                except OSError:
+                    pass  # fail-open，不阻断主流程
+        return len(to_remove)
+    except Exception:
+        return 0  # fail-open，保留策略失败不阻断主备份流程
 
 
 def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
