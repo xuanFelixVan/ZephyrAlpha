@@ -1,0 +1,1895 @@
+# data_source_apis_registry.yaml
+# 数据源 API 结构化清单真源
+#
+# 真源模式：本 YAML 是 SSoT，depgraph.data_source_apis 表是只读缓存
+# 派生关系：generate_asset_catalog.py 从 DB 派生 asset_catalog.md 的"数据源 API 清单"部分
+#           data_source_operation_manual.md 保留参数坑/调用示例，不再手写 API 总览表格
+#
+# 数据来源：docs/03_modules/_domain_data/data_source_operation_manual.md §2/§3/§7/§8
+# 更新协议：新增/修改 API 时先改本 YAML，再跑同步脚本入 DB，再重新生成 asset_catalog.md
+
+apis:
+  # ============================================================
+  # DS-IFIND（同花顺iFind，70个API，§2.2+§2.4）
+  # ============================================================
+  - api_id: DS-IFIND-API-001
+    source_id: DS-IFIND
+    category: 历史行情
+    api_name: THS_HistoryQuotes
+    short_name: THS_HQ
+    function_desc: 日/周/月K线（OHLCV+涨跌幅+换手率）
+    params: '(stock, indicators, params, start, end)  indicators=preClose,open,high,low,close,...  params=Interval:D,CPS:1,Currency:YSHB,fill:Previous'
+    returns_format: DataFrame(thscode/time/open/high/low/close/volume/amount/...)
+    frequency_codes: D/W/M
+    data_scope: A股
+    test_status: verified
+    test_result: 21行
+    section_ref: §2.4.2
+    notes: 'CPS:1=前复权 CPS:2=后复权 CPS:0=不复权; Currency:YSHB=人民币; fill:Previous=缺失前值填充'
+
+  - api_id: DS-IFIND-API-002
+    source_id: DS-IFIND
+    category: 高频序列
+    api_name: THS_HighFrequenceSequence
+    short_name: THS_HF
+    function_desc: 分钟K线/Tick（Interval参数控制频率）
+    params: '(stock, indicators, params, start, end)  Interval控制频率'
+    returns_format: DataFrame
+    frequency_codes: 1m/5m/15m/30m/60m/tick
+    data_scope: A股
+    test_status: verified
+    test_result: ''
+    section_ref: §2.2
+    notes: '试用账号-4309只能获取1年历史'
+
+  - api_id: DS-IFIND-API-003
+    source_id: DS-IFIND
+    category: 实时行情
+    api_name: THS_RealtimeQuotes
+    short_name: THS_RQ
+    function_desc: 实时行情快照（含盘口/资金流向）
+    params: '(stock, indicators)  indicators=open;high;low;latest;changeRatio;amount;volume;bid1;ask1;...'
+    returns_format: DataFrame(thscode/open/high/low/latest/changeRatio/...)
+    frequency_codes: realtime
+    data_scope: A股
+    test_status: verified
+    test_result: 实时快照
+    section_ref: §2.4.6
+    notes: '支持批量查询(逗号分隔多个代码); v1.9.0实测可批量补齐kline_daily(5517股)和index_kline(953指数)'
+
+  - api_id: DS-IFIND-API-004
+    source_id: DS-IFIND
+    category: 基础数据
+    api_name: THS_BasicData
+    short_name: THS_BD
+    function_desc: 估值PE/PB/PS + 股票基础信息
+    params: '(stock, indicators, params)  indicators分号分隔  params="日期,类型"分号分隔  类型100=静态101=动态'
+    returns_format: DataFrame(thscode/ths_pe_stock/ths_pb_stock/...)
+    frequency_codes: ''
+    data_scope: A股
+    test_status: verified
+    test_result: PE=11.45 PB=0.69
+    section_ref: §2.4.3
+    notes: '⚠参数格式坑：指标分号分隔，参数"日期,类型"分号分隔；不支持分号多指标(-209)；分红相关指标全失败(-209)；股权质押仅比例/总股本可用'
+
+  - api_id: DS-IFIND-API-005
+    source_id: DS-IFIND
+    category: 日期序列
+    api_name: THS_DateSerial
+    short_name: THS_DS
+    function_desc: 财务数据时间序列（ROE/净利润/资产等）
+    params: '(stock, indicators, params, start, end)  params=;100;100;100 每指标对应类型'
+    returns_format: DataFrame
+    frequency_codes: D
+    data_scope: A股
+    test_status: deprecated
+    test_result: '-209 params invalid'
+    section_ref: §2.4.4
+    notes: 'v1.9.0实测单代码-209失败，补齐日K线改用THS_RQ'
+
+  - api_id: DS-IFIND-API-006
+    source_id: DS-IFIND
+    category: 数据池
+    api_name: THS_DataPool
+    short_name: THS_DP
+    function_desc: 指数成分股/行业板块成分股
+    params: '(type, date;code, fields)  type=index/block  date;code=2025-06-30;000300.SH'
+    returns_format: DataFrame(date/thscode/security_name)
+    frequency_codes: ''
+    data_scope: A股指数/板块
+    test_status: verified
+    test_result: 沪深300=300行 行业=30行
+    section_ref: §2.4.5
+    notes: ''
+
+  - api_id: DS-IFIND-API-007
+    source_id: DS-IFIND
+    category: EDB经济库
+    api_name: THS_EDBQuery
+    short_name: THS_EDB
+    function_desc: 宏观经济指标（CPI/M2/利率等，77909指标）
+    params: '(indicator_codes, start, end)  indicator_codes分号分隔'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 中国宏观/全球宏观/利率/行业经济
+    test_status: partial
+    test_result: '试用-4318 exceeded this month'
+    section_ref: §2.4.8
+    notes: '试用账号月度配额限制(-4318)，下月重置；正式账号无限制；AKShare可替代核心指标'
+
+  - api_id: DS-IFIND-API-008
+    source_id: DS-IFIND
+    category: i问财
+    api_name: THS_iwencai
+    short_name: THS_WC
+    function_desc: 自然语言查询（最灵活接口，16类已验证）
+    params: '(query, type)  type=stock'
+    returns_format: DataFrame(查询决定)
+    frequency_codes: ''
+    data_scope: A股聚合数据
+    test_status: verified
+    test_result: 16类查询全✅
+    section_ref: §2.4.7
+    notes: '已验证16类：龙虎榜/融资融券/大宗交易/限售解禁/审计意见/涨停跌停/ST/新股/股东/机构持仓/业绩预告/回购/增减持/分红；不可查：研报评级/北向资金/美股港股期货'
+
+  - api_id: DS-IFIND-API-009
+    source_id: DS-IFIND
+    category: 事件
+    api_name: THS_iEvent
+    short_name: ''
+    function_desc: 事件查询
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股事件
+    test_status: deprecated
+    test_result: '-5100 account type not supported'
+    section_ref: §2.3
+    notes: '试用账号不支持，需正式账号；替代源AKShare stock_news_em'
+
+  - api_id: DS-IFIND-API-010
+    source_id: DS-IFIND
+    category: 研报
+    api_name: THS_iResearch
+    short_name: ''
+    function_desc: 研究报告查询
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股研报
+    test_status: deprecated
+    test_result: '-5100 account type not supported'
+    section_ref: §2.3
+    notes: '试用账号不支持，需正式账号；替代源AKShare stock_research_report_em'
+
+  - api_id: DS-IFIND-API-011
+    source_id: DS-IFIND
+    category: 快照
+    api_name: THS_Snapshot
+    short_name: ''
+    function_desc: 行情快照
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §2.2
+    notes: ''
+
+  - api_id: DS-IFIND-API-012
+    source_id: DS-IFIND
+    category: 实时估值
+    api_name: THS_realTimeValuation
+    short_name: ''
+    function_desc: 实时估值
+    params: ''
+    returns_format: ''
+    frequency_codes: realtime
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §2.2
+    notes: ''
+
+  - api_id: DS-IFIND-API-013
+    source_id: DS-IFIND
+    category: 交易日历
+    api_name: THS_DateQuery
+    short_name: ''
+    function_desc: 交易日历查询
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股交易日
+    test_status: untested
+    test_result: ''
+    section_ref: §2.2
+    notes: ''
+
+  - api_id: DS-IFIND-API-014
+    source_id: DS-IFIND
+    category: 报告查询
+    api_name: THS_ReportQuery
+    short_name: ''
+    function_desc: 报告查询
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §2.2
+    notes: ''
+
+  - api_id: DS-IFIND-API-015
+    source_id: DS-IFIND
+    category: 登录
+    api_name: THS_iFinDLogin
+    short_name: ''
+    function_desc: 登录iFind（0=成功 -201=已登录）
+    params: '(username, password)  从.env读取IFIND_USERNAME/IFIND_PASSWORD'
+    returns_format: 'int(0/-201/errorcode)'
+    frequency_codes: ''
+    data_scope: ''
+    test_status: verified
+    test_result: '0'
+    section_ref: §2.4.1
+    notes: '不登录直接调用API返回空DataFrame'
+
+  # ============================================================
+  # DS-MINIQMT（迅投miniQMT，87个API，§3.2+§3.4）
+  # ============================================================
+  - api_id: DS-MINIQMT-API-001
+    source_id: DS-MINIQMT
+    category: 行情下载
+    api_name: download_history_data
+    short_name: ''
+    function_desc: 下载历史K线/Tick到本地
+    params: '(stock_code, period, start_time, end_time)'
+    returns_format: 'None(正常,异步下载到本地)'
+    frequency_codes: tick/1m/5m/15m/30m/1h/1d/1w/1mon
+    data_scope: A股
+    test_status: verified
+    test_result: None=正常
+    section_ref: §3.4.3
+    notes: '返回None是正常的，源码无return语句；两步：先download再get_market_data_ex'
+
+  - api_id: DS-MINIQMT-API-002
+    source_id: DS-MINIQMT
+    category: 行情下载
+    api_name: download_history_data2
+    short_name: ''
+    function_desc: 批量下载历史数据
+    params: ''
+    returns_format: ''
+    frequency_codes: tick/1m/5m/15m/30m/1h/1d/1w/1mon
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-003
+    source_id: DS-MINIQMT
+    category: 行情获取
+    api_name: get_market_data_ex
+    short_name: ''
+    function_desc: 读取本地/服务器行情（主力K线接口）
+    params: '(field_list, stock_list, period, start_time, end_time)  ⚠period在第3位不是第5位'
+    returns_format: 'dict{stock: DataFrame}'
+    frequency_codes: 1m/5m/15m/30m/1h/1d/1w/1mon
+    data_scope: A股
+    test_status: verified
+    test_result: 359行
+    section_ref: §3.4.2
+    notes: '⚠参数顺序坑：period在第3位；传错报"周期错误"'
+
+  - api_id: DS-MINIQMT-API-004
+    source_id: DS-MINIQMT
+    category: 行情获取
+    api_name: get_market_data
+    short_name: ''
+    function_desc: 读取行情（旧版接口）
+    params: ''
+    returns_format: ''
+    frequency_codes: 1m/5m/15m/30m/1h/1d/1w/1mon
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-005
+    source_id: DS-MINIQMT
+    category: 行情获取
+    api_name: get_local_data
+    short_name: ''
+    function_desc: 读取本地行情数据
+    params: ''
+    returns_format: ''
+    frequency_codes: 1m/5m/15m/30m/1h/1d/1w/1mon
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: '默认参数data_dir在模块加载时绑定，修改xtdata.data_dir无效'
+
+  - api_id: DS-MINIQMT-API-006
+    source_id: DS-MINIQMT
+    category: 实时行情
+    api_name: get_full_tick
+    short_name: ''
+    function_desc: 实时Tick快照
+    params: ''
+    returns_format: ''
+    frequency_codes: tick
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-007
+    source_id: DS-MINIQMT
+    category: 实时行情
+    api_name: subscribe_quote
+    short_name: ''
+    function_desc: 订阅行情推送
+    params: ''
+    returns_format: ''
+    frequency_codes: realtime
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-008
+    source_id: DS-MINIQMT
+    category: 实时行情
+    api_name: subscribe_whole_quote
+    short_name: ''
+    function_desc: 订阅全市场行情推送
+    params: ''
+    returns_format: ''
+    frequency_codes: realtime
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-009
+    source_id: DS-MINIQMT
+    category: Level-2
+    api_name: get_l2_order
+    short_name: ''
+    function_desc: 逐笔委托（需L2权限）
+    params: ''
+    returns_format: ''
+    frequency_codes: tick
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: '需L2权限'
+
+  - api_id: DS-MINIQMT-API-010
+    source_id: DS-MINIQMT
+    category: Level-2
+    api_name: get_l2_quote
+    short_name: ''
+    function_desc: 逐笔成交（需L2权限）
+    params: ''
+    returns_format: ''
+    frequency_codes: tick
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: '需L2权限'
+
+  - api_id: DS-MINIQMT-API-011
+    source_id: DS-MINIQMT
+    category: Level-2
+    api_name: get_l2_transaction
+    short_name: ''
+    function_desc: 逐笔行情（需L2权限）
+    params: ''
+    returns_format: ''
+    frequency_codes: tick
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: '需L2权限'
+
+  - api_id: DS-MINIQMT-API-012
+    source_id: DS-MINIQMT
+    category: 财务数据
+    api_name: download_financial_data2
+    short_name: ''
+    function_desc: 下载11张财务报表
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-013
+    source_id: DS-MINIQMT
+    category: 财务数据
+    api_name: get_financial_data
+    short_name: ''
+    function_desc: 读取财务数据
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-014
+    source_id: DS-MINIQMT
+    category: 期权
+    api_name: get_option_list
+    short_name: ''
+    function_desc: 期权合约列表
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股期权
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-015
+    source_id: DS-MINIQMT
+    category: 期权
+    api_name: get_option_detail_data
+    short_name: ''
+    function_desc: 期权详情/Greeks
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股期权
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-016
+    source_id: DS-MINIQMT
+    category: 期权
+    api_name: get_option_undl_data
+    short_name: ''
+    function_desc: 期权标的
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股期权
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-017
+    source_id: DS-MINIQMT
+    category: 可转债
+    api_name: get_cb_info
+    short_name: ''
+    function_desc: 可转债详情
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股可转债
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-018
+    source_id: DS-MINIQMT
+    category: 可转债
+    api_name: download_cb_data
+    short_name: ''
+    function_desc: 下载可转债数据
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股可转债
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-019
+    source_id: DS-MINIQMT
+    category: ETF
+    api_name: get_etf_info
+    short_name: ''
+    function_desc: ETF详情
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股ETF
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-020
+    source_id: DS-MINIQMT
+    category: 指数
+    api_name: download_index_weight
+    short_name: ''
+    function_desc: 下载指数权重
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股指数
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-021
+    source_id: DS-MINIQMT
+    category: 指数
+    api_name: get_index_weight
+    short_name: ''
+    function_desc: 读取指数权重
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股指数
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-022
+    source_id: DS-MINIQMT
+    category: 复权
+    api_name: get_divid_factors
+    short_name: ''
+    function_desc: 除权除息因子
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-023
+    source_id: DS-MINIQMT
+    category: 复权
+    api_name: getDividFactors
+    short_name: ''
+    function_desc: 除权除息因子（旧版）
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-024
+    source_id: DS-MINIQMT
+    category: 行业
+    api_name: get_industry
+    short_name: ''
+    function_desc: 行业分类
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-025
+    source_id: DS-MINIQMT
+    category: 期货
+    api_name: get_main_contract
+    short_name: ''
+    function_desc: 主力合约
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: 期货
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-026
+    source_id: DS-MINIQMT
+    category: 期货
+    api_name: download_history_contracts
+    short_name: ''
+    function_desc: 下载历史合约
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: 期货
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-027
+    source_id: DS-MINIQMT
+    category: 交易日历
+    api_name: get_trading_calendar
+    short_name: ''
+    function_desc: 交易日历
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股交易日
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-028
+    source_id: DS-MINIQMT
+    category: 交易日历
+    api_name: get_trading_dates
+    short_name: ''
+    function_desc: 交易日列表
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股交易日
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-029
+    source_id: DS-MINIQMT
+    category: 交易日历
+    api_name: get_holidays
+    short_name: ''
+    function_desc: 假日列表
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股假日
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-030
+    source_id: DS-MINIQMT
+    category: 板块
+    api_name: get_sector_list
+    short_name: ''
+    function_desc: 板块列表
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股板块
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-031
+    source_id: DS-MINIQMT
+    category: 板块
+    api_name: get_stock_list_in_sector
+    short_name: ''
+    function_desc: 板块成分股
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股板块
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-032
+    source_id: DS-MINIQMT
+    category: 板块
+    api_name: download_sector_data
+    short_name: ''
+    function_desc: 下载板块数据
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股板块
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-033
+    source_id: DS-MINIQMT
+    category: 股票详情
+    api_name: get_instrument_detail
+    short_name: ''
+    function_desc: 股票基础信息
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-034
+    source_id: DS-MINIQMT
+    category: 股票详情
+    api_name: get_instrument_type
+    short_name: ''
+    function_desc: 股票类型
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-035
+    source_id: DS-MINIQMT
+    category: 股票详情
+    api_name: get_stock_type
+    short_name: ''
+    function_desc: 股票类型（旧版）
+    params: ''
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §3.2
+    notes: ''
+
+  - api_id: DS-MINIQMT-API-036
+    source_id: DS-MINIQMT
+    category: 初始化
+    api_name: xtdata.get_client
+    short_name: ''
+    function_desc: 获取QMT客户端连接
+    params: ''
+    returns_format: 'client(is_connected())'
+    frequency_codes: ''
+    data_scope: ''
+    test_status: verified
+    test_result: 'is_connected()=True'
+    section_ref: §3.4.1
+    notes: '三要素：sys.path.append(非insert) + os.chdir(QMT bin.x64) + 验证连接'
+
+  # ============================================================
+  # DS-BAOSTOCK（免费开源，§7.2）
+  # ============================================================
+  - api_id: DS-BAOSTOCK-API-001
+    source_id: DS-BAOSTOCK
+    category: K线
+    api_name: query_history_k_data_plus
+    short_name: ''
+    function_desc: 日/周/月/分钟K线
+    params: '(code, fields, start_date, end_date, frequency, adjustflag)  code=sh.600000  adjustflag=1后/2前/3不'
+    returns_format: DataFrame(date/code/open/high/low/close/volume/...)
+    frequency_codes: d/w/m/5/15/30/60
+    data_scope: A股(1990至今,分钟近5年)
+    test_status: verified
+    test_result: '日144行/周51行/月12行/5分钟192行'
+    section_ref: §7.2.1
+    notes: '代码格式坑：sh.XXXXXX/sz.XXXXXX(小写点号)；K线含peTTM/pbMRQ/psTTM/isST'
+
+  - api_id: DS-BAOSTOCK-API-002
+    source_id: DS-BAOSTOCK
+    category: 季频财务
+    api_name: query_profit_data
+    short_name: ''
+    function_desc: 季频盈利能力(roeAvg/npMargin/gpMargin)
+    params: '(code, year, quarter)'
+    returns_format: DataFrame(roeAvg/npMargin/gpMargin)
+    frequency_codes: ''
+    data_scope: A股(2007至今)
+    test_status: verified
+    test_result: 1行
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-003
+    source_id: DS-BAOSTOCK
+    category: 季频财务
+    api_name: query_balance_data
+    short_name: ''
+    function_desc: 季频资产负债(currentRatio/quickRatio)
+    params: '(code, year, quarter)'
+    returns_format: DataFrame(currentRatio/quickRatio)
+    frequency_codes: ''
+    data_scope: A股(2007至今)
+    test_status: verified
+    test_result: 1行
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-004
+    source_id: DS-BAOSTOCK
+    category: 季频财务
+    api_name: query_cash_flow_data
+    short_name: ''
+    function_desc: 季频现金流
+    params: '(code, year, quarter)'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股(2007至今)
+    test_status: verified
+    test_result: 1行
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-005
+    source_id: DS-BAOSTOCK
+    category: 季频财务
+    api_name: query_growth_data
+    short_name: ''
+    function_desc: 季频成长能力(YOYEquity/YOYAsset/YOYNI)
+    params: '(code, year, quarter)'
+    returns_format: DataFrame(YOYEquity/YOYAsset/YOYNI)
+    frequency_codes: ''
+    data_scope: A股(2007至今)
+    test_status: verified
+    test_result: 1行
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-006
+    source_id: DS-BAOSTOCK
+    category: 成分股
+    api_name: query_hs300_stocks
+    short_name: ''
+    function_desc: 沪深300成分股(每周一更新)
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股指数
+    test_status: verified
+    test_result: 300行
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-007
+    source_id: DS-BAOSTOCK
+    category: 交易日历
+    api_name: query_trade_dates
+    short_name: ''
+    function_desc: 交易日历
+    params: '(start_date, end_date)'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股交易日
+    test_status: verified
+    test_result: 365行(2025)
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-008
+    source_id: DS-BAOSTOCK
+    category: 营运能力
+    api_name: query_operation_data
+    short_name: ''
+    function_desc: 营运能力
+    params: '(code, year, quarter)'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-009
+    source_id: DS-BAOSTOCK
+    category: 杜邦分析
+    api_name: query_dupont_data
+    short_name: ''
+    function_desc: 杜邦分析
+    params: '(code, year, quarter)'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-010
+    source_id: DS-BAOSTOCK
+    category: 成分股
+    api_name: query_sz50_stocks
+    short_name: ''
+    function_desc: 上证50成分股
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股指数
+    test_status: untested
+    test_result: ''
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-011
+    source_id: DS-BAOSTOCK
+    category: 成分股
+    api_name: query_zz500_stocks
+    short_name: ''
+    function_desc: 中证500成分股
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股指数
+    test_status: untested
+    test_result: ''
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-012
+    source_id: DS-BAOSTOCK
+    category: 行业分类
+    api_name: query_stock_industry
+    short_name: ''
+    function_desc: 行业分类
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-013
+    source_id: DS-BAOSTOCK
+    category: 证券列表
+    api_name: query_all_stock
+    short_name: ''
+    function_desc: 全部证券列表
+    params: '(date)'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-014
+    source_id: DS-BAOSTOCK
+    category: 股票基本信息
+    api_name: query_stock_basic
+    short_name: ''
+    function_desc: 股票基本信息
+    params: '(code)'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §7.2.1
+    notes: ''
+
+  - api_id: DS-BAOSTOCK-API-015
+    source_id: DS-BAOSTOCK
+    category: 分红
+    api_name: query_dividend_data
+    short_name: ''
+    function_desc: 分红数据
+    params: '(code, year, yearType)'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股
+    test_status: deprecated
+    test_result: '严重滞后(≤2026-06-27)'
+    section_ref: §7.2.5
+    notes: 'v1.9.0实测数据严重滞后，前3000个symbol全0条；分红明细改用AKShare stock_history_dividend_detail'
+
+  - api_id: DS-BAOSTOCK-API-016
+    source_id: DS-BAOSTOCK
+    category: 登录
+    api_name: bs.login
+    short_name: ''
+    function_desc: 匿名登录(无需注册)
+    params: '()'
+    returns_format: 'lg(error_code/error_msg)'
+    frequency_codes: ''
+    data_scope: ''
+    test_status: verified
+    test_result: error_code=0
+    section_ref: §7.2.2
+    notes: '用完需bs.logout()'
+
+  # ============================================================
+  # DS-AKSHARE（免费开源，§7.3）
+  # ============================================================
+  - api_id: DS-AKSHARE-API-001
+    source_id: DS-AKSHARE
+    category: 中国宏观
+    api_name: macro_china_gdp
+    short_name: ''
+    function_desc: GDP季度数据
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 中国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: '替代iFind EDB中国宏观；必须断VPN'
+
+  - api_id: DS-AKSHARE-API-002
+    source_id: DS-AKSHARE
+    category: 中国宏观
+    api_name: macro_china_cpi
+    short_name: ''
+    function_desc: CPI居民消费价格指数
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 中国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: '必须断VPN'
+
+  - api_id: DS-AKSHARE-API-003
+    source_id: DS-AKSHARE
+    category: 中国宏观
+    api_name: macro_china_ppi_yearly
+    short_name: ''
+    function_desc: PPI工业品出厂价格指数
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 中国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: '必须断VPN'
+
+  - api_id: DS-AKSHARE-API-004
+    source_id: DS-AKSHARE
+    category: 中国宏观
+    api_name: macro_china_pmi
+    short_name: ''
+    function_desc: PMI制造业采购经理指数
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 中国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: '必须断VPN'
+
+  - api_id: DS-AKSHARE-API-005
+    source_id: DS-AKSHARE
+    category: 中国宏观
+    api_name: macro_china_money_supply
+    short_name: ''
+    function_desc: M0/M1/M2货币供应量
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 中国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: '必须断VPN'
+
+  - api_id: DS-AKSHARE-API-006
+    source_id: DS-AKSHARE
+    category: 中国宏观
+    api_name: macro_china_lpr
+    short_name: ''
+    function_desc: LPR贷款市场报价利率
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 中国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: '必须断VPN'
+
+  - api_id: DS-AKSHARE-API-007
+    source_id: DS-AKSHARE
+    category: 中国宏观
+    api_name: macro_china_shrzgm
+    short_name: ''
+    function_desc: 社融增量
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 中国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: '必须断VPN'
+
+  - api_id: DS-AKSHARE-API-008
+    source_id: DS-AKSHARE
+    category: 美国宏观
+    api_name: macro_usa_cpi_monthly
+    short_name: ''
+    function_desc: 美国CPI月度
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 美国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-009
+    source_id: DS-AKSHARE
+    category: 美国宏观
+    api_name: macro_usa_unemployment_rate
+    short_name: ''
+    function_desc: 美国失业率
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 美国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-010
+    source_id: DS-AKSHARE
+    category: 美国宏观
+    api_name: macro_usa_fed_interest_rate
+    short_name: ''
+    function_desc: 美联储联邦基金利率
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 美国宏观
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.1
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-011
+    source_id: DS-AKSHARE
+    category: 新闻
+    api_name: stock_news_em
+    short_name: ''
+    function_desc: 个股新闻(东方财富)
+    params: '(symbol="600000")'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股新闻
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.2
+    notes: '替代iFind THS_iEvent'
+
+  - api_id: DS-AKSHARE-API-012
+    source_id: DS-AKSHARE
+    category: 新闻
+    api_name: stock_info_global_cls
+    short_name: ''
+    function_desc: 财联社全球快讯(实时滚动)
+    params: '(symbol="600000")'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 财经快讯
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.2
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-013
+    source_id: DS-AKSHARE
+    category: 新闻
+    api_name: stock_info_global_em
+    short_name: ''
+    function_desc: 东方财富全球资讯
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 财经快讯
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.2
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-014
+    source_id: DS-AKSHARE
+    category: 研报
+    api_name: stock_research_report_em
+    short_name: ''
+    function_desc: 东方财富个股研报
+    params: '(symbol="600000")'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股研报
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.2
+    notes: '替代iFind THS_iResearch'
+
+  - api_id: DS-AKSHARE-API-015
+    source_id: DS-AKSHARE
+    category: 研报
+    api_name: stock_profit_forecast_ths
+    short_name: ''
+    function_desc: 同花顺一致预期EPS(替代iFind分析师预期)
+    params: '(symbol="600000")'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股研报
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.2
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-016
+    source_id: DS-AKSHARE
+    category: 事件日历
+    api_name: news_eco_calendar
+    short_name: ''
+    function_desc: 财经事件日历(经济数据发布/央行决议)
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: 财经事件
+    test_status: verified
+    test_result: ''
+    section_ref: §7.3.2
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-017
+    source_id: DS-AKSHARE
+    category: 央视新闻
+    api_name: news_cctv
+    short_name: ''
+    function_desc: 央视新闻联播文字稿(政策风向标)
+    params: '(date="20260702")'
+    returns_format: DataFrame(date/title/content)
+    frequency_codes: ''
+    data_scope: 政策新闻
+    test_status: verified
+    test_result: 10条
+    section_ref: §7.1.2D
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-018
+    source_id: DS-AKSHARE
+    category: 股权穿透
+    api_name: stock_gdfx_top_10_em
+    short_name: ''
+    function_desc: 十大股东
+    params: '(symbol="SH600000", date="20240930")'
+    returns_format: DataFrame(股东名称/持股数量/持股比例/...)
+    frequency_codes: ''
+    data_scope: A股股权
+    test_status: verified
+    test_result: 10行/股
+    section_ref: §7.1.3A
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-019
+    source_id: DS-AKSHARE
+    category: 股权穿透
+    api_name: stock_gdfx_free_top_10_em
+    short_name: ''
+    function_desc: 十大流通股东
+    params: '(symbol="SH600000", date="20240930")'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股股权
+    test_status: verified
+    test_result: 10行/股
+    section_ref: §7.1.3A
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-020
+    source_id: DS-AKSHARE
+    category: 股权穿透
+    api_name: stock_zh_a_gdhs_detail_em
+    short_name: ''
+    function_desc: 股东户数明细(历史)
+    params: '(symbol="600000")'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股股权
+    test_status: verified
+    test_result: 60行/股
+    section_ref: §7.1.3A
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-021
+    source_id: DS-AKSHARE
+    category: 股权穿透
+    api_name: stock_zh_a_gdhs
+    short_name: ''
+    function_desc: 全市场股东户数
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股股权
+    test_status: verified
+    test_result: 429358行
+    section_ref: §7.1.3A
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-022
+    source_id: DS-AKSHARE
+    category: 股权穿透
+    api_name: stock_gpzy_pledge_ratio_em
+    short_name: ''
+    function_desc: 股权质押(全市场)
+    params: '()'
+    returns_format: DataFrame(质押机构/质押比例/质押股数/...)
+    frequency_codes: ''
+    data_scope: A股股权
+    test_status: verified
+    test_result: 2294行
+    section_ref: §7.1.3A
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-023
+    source_id: DS-AKSHARE
+    category: 股权穿透
+    api_name: stock_ggcg_em
+    short_name: ''
+    function_desc: 高管增减持(全市场)
+    params: '(symbol="全部")'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股股权
+    test_status: verified
+    test_result: 145213行
+    section_ref: §7.1.3A
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-024
+    source_id: DS-AKSHARE
+    category: 股权穿透
+    api_name: stock_zygc_em
+    short_name: ''
+    function_desc: 主营业务构成
+    params: '(symbol="SH600000")'
+    returns_format: DataFrame(主营收入/收入比例/毛利率/...)
+    frequency_codes: ''
+    data_scope: A股股权
+    test_status: verified
+    test_result: 200行/股
+    section_ref: §7.1.3A
+    notes: '可作为产业链归类依据'
+
+  - api_id: DS-AKSHARE-API-025
+    source_id: DS-AKSHARE
+    category: 股权穿透
+    api_name: stock_individual_info_em
+    short_name: ''
+    function_desc: 股票基础信息(董事长/总经理/注册资本)
+    params: '(symbol="600000")'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股
+    test_status: deprecated
+    test_result: ConnectionError
+    section_ref: §7.1.3A
+    notes: '东方财富反爬严重，3次重试全失败'
+
+  - api_id: DS-AKSHARE-API-026
+    source_id: DS-AKSHARE
+    category: 股权穿透
+    api_name: stock_hold_control_cninfo
+    short_name: ''
+    function_desc: 控股关系
+    params: '(symbol="600000")'
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股股权
+    test_status: deprecated
+    test_result: KeyError
+    section_ref: §7.1.3A
+    notes: '接口存在但功能不稳定'
+
+  - api_id: DS-AKSHARE-API-027
+    source_id: DS-AKSHARE
+    category: 分红
+    api_name: stock_history_dividend_detail
+    short_name: ''
+    function_desc: 分红明细(最可靠)
+    params: '(symbol="600000", indicator="分红")'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股分红
+    test_status: verified
+    test_result: 实时(2026-07-04)
+    section_ref: §7.3.5
+    notes: '替代baostock query_dividend_data(滞后);v1.9.0新增'
+
+  - api_id: DS-AKSHARE-API-028
+    source_id: DS-AKSHARE
+    category: 产业链
+    api_name: sw_index_first_info
+    short_name: ''
+    function_desc: 申万一级行业(31个)
+    params: '()'
+    returns_format: DataFrame(行业代码/行业名称/成份个数/市盈率/...)
+    frequency_codes: ''
+    data_scope: A股行业
+    test_status: verified
+    test_result: 31个
+    section_ref: §7.1.3C
+    notes: '申万行业三级分类(只是行业归类,非产业链)'
+
+  - api_id: DS-AKSHARE-API-029
+    source_id: DS-AKSHARE
+    category: 产业链
+    api_name: sw_index_second_info
+    short_name: ''
+    function_desc: 申万二级行业(131个)
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股行业
+    test_status: verified
+    test_result: 131个
+    section_ref: §7.1.3C
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-030
+    source_id: DS-AKSHARE
+    category: 产业链
+    api_name: sw_index_third_info
+    short_name: ''
+    function_desc: 申万三级行业(336个)
+    params: '()'
+    returns_format: DataFrame
+    frequency_codes: ''
+    data_scope: A股行业
+    test_status: verified
+    test_result: 336个
+    section_ref: §7.1.3C
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-031
+    source_id: DS-AKSHARE
+    category: 产业链
+    api_name: sw_index_third_cons
+    short_name: ''
+    function_desc: 三级行业成分股
+    params: '()'
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股行业
+    test_status: deprecated
+    test_result: 'AKShare内部bug(Length mismatch)'
+    section_ref: §7.1.3C
+    notes: ''
+
+  - api_id: DS-AKSHARE-API-032
+    source_id: DS-AKSHARE
+    category: 产业链
+    api_name: stock_board_industry_name_em
+    short_name: ''
+    function_desc: 东财行业板块
+    params: '()'
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股行业
+    test_status: deprecated
+    test_result: ConnectionError
+    section_ref: §7.1.3C
+    notes: '东方财富反爬严重'
+
+  - api_id: DS-AKSHARE-API-033
+    source_id: DS-AKSHARE
+    category: 产业链
+    api_name: stock_board_industry_cons_em
+    short_name: ''
+    function_desc: 东财行业板块成分股
+    params: '(symbol="银行")'
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股行业
+    test_status: deprecated
+    test_result: ConnectionError
+    section_ref: §7.1.3C
+    notes: '东方财富反爬严重'
+
+  - api_id: DS-AKSHARE-API-034
+    source_id: DS-AKSHARE
+    category: 产业链
+    api_name: stock_board_concept_name_em
+    short_name: ''
+    function_desc: 东财概念板块
+    params: '()'
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股概念
+    test_status: deprecated
+    test_result: ConnectionError
+    section_ref: §7.1.3C
+    notes: '东方财富反爬严重'
+
+  # ============================================================
+  # DS-TICKFLOW（免费开源美股，§7.4-§7.7）
+  # ============================================================
+  - api_id: DS-TICKFLOW-API-001
+    source_id: DS-TICKFLOW
+    category: 美股行情
+    api_name: tickflow.get_us_kline
+    short_name: ''
+    function_desc: 美股K线
+    params: '(symbol, period, start, end)'
+    returns_format: DataFrame
+    frequency_codes: 1d
+    data_scope: 美股
+    test_status: untested
+    test_result: ''
+    section_ref: §7.4
+    notes: '替代iFind试用账号美股-4210盲区'
+
+  # ============================================================
+  # DS-TDX（通达信mootdx/pytdx，§8）
+  # ============================================================
+  - api_id: DS-TDX-API-001
+    source_id: DS-TDX
+    category: 在线行情
+    api_name: client.bars
+    short_name: ''
+    function_desc: A股K线(全周期)
+    params: '(symbol, frequency, offset)  frequency=0/1/2/3/5/6/7/8/9'
+    returns_format: DataFrame(datetime/open/high/low/close/volume/amount)
+    frequency_codes: '0=5分/1=15分/2=30分/3=60分/5=周/6=月/7/8=1分/9=日'
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.1
+    notes: '文档级验证，尚未本机实测'
+
+  - api_id: DS-TDX-API-002
+    source_id: DS-TDX
+    category: 在线行情
+    api_name: client.index
+    short_name: ''
+    function_desc: 指数K线
+    params: '(symbol, frequency)  symbol=000001(上证)'
+    returns_format: DataFrame
+    frequency_codes: '9=日'
+    data_scope: A股指数
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.1
+    notes: ''
+
+  - api_id: DS-TDX-API-003
+    source_id: DS-TDX
+    category: 在线行情
+    api_name: client.quote
+    short_name: ''
+    function_desc: 实时报价
+    params: '(symbol)'
+    returns_format: 'dict(code/name/price/rise/percent)'
+    frequency_codes: realtime
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.1
+    notes: ''
+
+  - api_id: DS-TDX-API-004
+    source_id: DS-TDX
+    category: 在线行情
+    api_name: client.minute
+    short_name: ''
+    function_desc: 分时数据
+    params: '(symbol)'
+    returns_format: DataFrame(datetime/price/avg_price/volume)
+    frequency_codes: ''
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.1
+    notes: ''
+
+  - api_id: DS-TDX-API-005
+    source_id: DS-TDX
+    category: 在线行情
+    api_name: client.transaction
+    short_name: ''
+    function_desc: 个股分笔(最近交易日)
+    params: '(symbol)'
+    returns_format: DataFrame(time/price/vol/num/buyorsell)
+    frequency_codes: tick
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.1
+    notes: '仅最近交易日；历史分笔需淘宝购买；buyorsell:0=买/1=卖/2=中性'
+
+  - api_id: DS-TDX-API-006
+    source_id: DS-TDX
+    category: 本地文件
+    api_name: reader.daily
+    short_name: ''
+    function_desc: 日线数据(本地.day文件)
+    params: "(symbol='600036')  解析vipdoc/sh/lday/shXXXXXX.day"
+    returns_format: DataFrame
+    frequency_codes: 1d
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.2
+    notes: '需安装通达信客户端；路径C:/new_tdx/vipdoc/'
+
+  - api_id: DS-TDX-API-007
+    source_id: DS-TDX
+    category: 本地文件
+    api_name: reader.minute
+    short_name: ''
+    function_desc: 分钟线(本地.lc1文件)
+    params: "(symbol='600036', suffix=1)"
+    returns_format: DataFrame
+    frequency_codes: 1m
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.2
+    notes: ''
+
+  - api_id: DS-TDX-API-008
+    source_id: DS-TDX
+    category: 本地文件
+    api_name: reader.fzline
+    short_name: ''
+    function_desc: 5分钟线(本地.lc5文件)
+    params: "(symbol='600036')"
+    returns_format: DataFrame
+    frequency_codes: 5m
+    data_scope: A股
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.2
+    notes: ''
+
+  - api_id: DS-TDX-API-009
+    source_id: DS-TDX
+    category: 本地文件
+    api_name: reader.block
+    short_name: ''
+    function_desc: 板块分类(本地.dat文件)
+    params: "(symbol='block_gn.dat', group=True)  block_gn=概念 block_fg=行业"
+    returns_format: DataFrame(blockname/code/stock_count)
+    frequency_codes: ''
+    data_scope: A股板块
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.2
+    notes: '通达信板块分类(880xxx.TDX)与同花顺/申万/东财不兼容'
+
+  - api_id: DS-TDX-API-010
+    source_id: DS-TDX
+    category: 财务数据
+    api_name: Affair.files
+    short_name: ''
+    function_desc: 可下载财务文件列表
+    params: '()'
+    returns_format: 'list[gpcwYYYYMMDD.zip]'
+    frequency_codes: ''
+    data_scope: A股财务
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.3
+    notes: ''
+
+  - api_id: DS-TDX-API-011
+    source_id: DS-TDX
+    category: 财务数据
+    api_name: Affair.fetch
+    short_name: ''
+    function_desc: 下载财务数据包
+    params: "(downdir='./financial_data', filename='gpcw20231231.zip')"
+    returns_format: ''
+    frequency_codes: ''
+    data_scope: A股财务
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.3
+    notes: '解压后为.dat二进制，需配套财务数据对照表.xls'
+
+  - api_id: DS-TDX-API-012
+    source_id: DS-TDX
+    category: 扩展行情
+    api_name: ExtQuotes.bars
+    short_name: ''
+    function_desc: 港股/期货K线
+    params: '(market, symbol, frequency)  market=47=港股'
+    returns_format: DataFrame
+    frequency_codes: 5m/9=日
+    data_scope: 港股/期货
+    test_status: untested
+    test_result: ''
+    section_ref: §8.3.4
+    notes: '不同品种market值不同，需查文档'
+
+  - api_id: DS-TDX-API-013
+    source_id: DS-TDX
+    category: 初始化
+    api_name: Quotes.factory
+    short_name: ''
+    function_desc: 初始化客户端(bestip自动选最优服务器)
+    params: "(market='std', multithread=True, heartbeat=True, bestip=True)"
+    returns_format: client
+    frequency_codes: ''
+    data_scope: ''
+    test_status: untested
+    test_result: ''
+    section_ref: §8.4.1
+    notes: '首次使用前需python -m mootdx bestip'
+
+  # ============================================================
+  # DS-NEWSAPI（需Key新闻源，§7.1.1）
+  # ============================================================
+  - api_id: DS-NEWSAPI-API-001
+    source_id: DS-NEWSAPI
+    category: 新闻
+    api_name: newsapi.get_everything
+    short_name: ''
+    function_desc: 新闻搜索(全量)
+    params: '(q, from, to, language, sort_by, api_key)'
+    returns_format: JSON(articles[])
+    frequency_codes: ''
+    data_scope: 全球新闻
+    test_status: verified
+    test_result: '2/2通过'
+    section_ref: §7.1.1
+    notes: '免费100请求/天；环境变量NEWSAPI_KEY'
+
+  - api_id: DS-NEWSAPI-API-002
+    source_id: DS-NEWSAPI
+    category: 新闻
+    api_name: newsapi.get_top_headlines
+    short_name: ''
+    function_desc: 头条新闻
+    params: '(country, category, api_key)'
+    returns_format: JSON(articles[])
+    frequency_codes: ''
+    data_scope: 全球新闻
+    test_status: verified
+    test_result: ''
+    section_ref: §7.1.1
+    notes: '免费100请求/天'
+
+  # 国内财经直连API（免费无Key，§7.1.2）归入DS-NEWSAPI
+  - api_id: DS-NEWSAPI-API-003
+    source_id: DS-NEWSAPI
+    category: 国内直连
+    api_name: eastmoney_kuaixun
+    short_name: ''
+    function_desc: 东方财富快讯
+    params: 'GET https://newsapi.eastmoney.com/kuaixun/v1/getlist_102_ajaxResult_50_1_.html'
+    returns_format: jsonP(需正则提取)
+    frequency_codes: realtime
+    data_scope: 国内财经快讯
+    test_status: verified
+    test_result: 50条
+    section_ref: §7.1.2A
+    notes: '免费无Key；须断VPN'
+
+  - api_id: DS-NEWSAPI-API-004
+    source_id: DS-NEWSAPI
+    category: 国内直连
+    api_name: ths_kuaixun
+    short_name: ''
+    function_desc: 同花顺快讯
+    params: 'GET https://news.10jqka.com.cn/tapp/news/push/stock/?page=1&pagesize=50'
+    returns_format: JSON(含stock关联股票+tagInfo)
+    frequency_codes: realtime
+    data_scope: 国内财经快讯
+    test_status: verified
+    test_result: 20条
+    section_ref: §7.1.2A
+    notes: '免费无Key'
+
+  - api_id: DS-NEWSAPI-API-005
+    source_id: DS-NEWSAPI
+    category: 国内直连
+    api_name: wallstreetcn_live
+    short_name: ''
+    function_desc: 华尔街见闻全球直播
+    params: 'GET https://api-one-wscn.awtmt.com/apiv1/content/lives?channel=global-channel&limit=50'
+    returns_format: JSON(中英文)
+    frequency_codes: realtime
+    data_scope: 全球财经(中文版)
+    test_status: verified
+    test_result: 20条
+    section_ref: §7.1.2A
+    notes: '免费无Key'
+
+  - api_id: DS-NEWSAPI-API-006
+    source_id: DS-NEWSAPI
+    category: 国内直连
+    api_name: jin10_flash
+    short_name: ''
+    function_desc: 金十数据快讯
+    params: 'GET https://flash-api.jin10.com/get_flash_list?channel=-8200&limit=50'
+    returns_format: JSON(type=1含actual/affect/unit)
+    frequency_codes: realtime
+    data_scope: 财经快讯+经济数据
+    test_status: verified
+    test_result: 21条
+    section_ref: §7.1.2A
+    notes: '需先提取x-app-id(详见§7.7.8)'
+
+  - api_id: DS-NEWSAPI-API-007
+    source_id: DS-NEWSAPI
+    category: 国内直连
+    api_name: cls_roll
+    short_name: ''
+    function_desc: 财联社电报(字段最丰富50+字段)
+    params: 'GET https://www.cls.cn/v1/roll/get_roll_list  签名SHA1→MD5'
+    returns_format: JSON(stock_list/subjects/tags/level/reading_num)
+    frequency_codes: realtime
+    data_scope: 国内财经电报
+    test_status: verified
+    test_result: 10条
+    section_ref: §7.1.2B
+    notes: '签名算法：参数序列化→SHA1→MD5→sign；sv=8.7.9；字段最有价值(stock_list直接可用)'
+
+  - api_id: DS-NEWSAPI-API-008
+    source_id: DS-NEWSAPI
+    category: 国内直连
+    api_name: cninfo_announcement
+    short_name: ''
+    function_desc: 巨潮资讯网上市公司公告
+    params: 'POST http://www.cninfo.com.cn/new/hisAnnouncement/query  stock=代码,orgId column=sse/szse'
+    returns_format: JSON(secCode/announcementTitle/adjunctUrl)
+    frequency_codes: ''
+    data_scope: A股公告
+    test_status: verified
+    test_result: 深交所3条/全市场10条
+    section_ref: §7.1.2C
+    notes: '证监会指定信息披露平台；orgId必须正确(gssz/gsshz前缀)'
+
+  # ============================================================
+  # DS-BAIDUYUN（百度云新闻NLP，§7.1.1）
+  # ============================================================
+  - api_id: DS-BAIDUYUN-API-001
+    source_id: DS-BAIDUYUN
+    category: 新闻NLP
+    api_name: baidu_news_nlp
+    short_name: ''
+    function_desc: 百度新闻情感分析
+    params: '(text, access_token)'
+    returns_format: JSON(sentiment/keywords)
+    frequency_codes: ''
+    data_scope: 新闻NLP
+    test_status: untested
+    test_result: ''
+    section_ref: §7.1.1
+    notes: '需百度云access_token'

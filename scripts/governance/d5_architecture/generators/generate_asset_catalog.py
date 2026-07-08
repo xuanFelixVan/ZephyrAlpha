@@ -85,10 +85,22 @@ def generate_asset_catalog() -> str:
         cur = conn.execute("SELECT COUNT(*) AS c FROM dataflow_datasets")
         dataflow_datasets = cur.fetchone()["c"]
 
+        # 7. 数据源 API 清单（join data_source_assets 取源名）
+        cur = conn.execute("""
+            SELECT a.api_id, a.source_id, s.name AS source_name,
+                   a.category, a.api_name, a.short_name, a.function_desc,
+                   a.params, a.returns_format, a.frequency_codes, a.data_scope,
+                   a.test_status, a.test_result, a.section_ref, a.notes
+            FROM data_source_apis a
+            LEFT JOIN data_source_assets s ON a.source_id = s.source_id
+            ORDER BY a.source_id, a.api_id
+        """)
+        apis = [dict(r) for r in cur.fetchall()]
+
     finally:
         conn.close()
 
-    total = len(data_sources) + len(services) + len(configs) + len(infra) + len(contracts)
+    total = len(data_sources) + len(services) + len(configs) + len(infra) + len(contracts) + len(apis)
 
     lines: list[str] = []
     lines.append("---")
@@ -103,10 +115,10 @@ def generate_asset_catalog() -> str:
     lines.append("")
     lines.append("# 资产清单全景图 / Asset Catalog")
     lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/配置的总览,共{total}项资产。AI接入新功能前必查此图确认可复用资产。")
+    lines.append(f"> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共{total}项资产。AI接入新功能前必查此图确认可复用资产。")
     lines.append("")
     lines.append(f"> 本文档由 generate_asset_catalog.py 从 {DB_DISPLAY_NAME} 自动生成")
-    lines.append("> 真源: data_sources_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml")
+    lines.append("> 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml")
     lines.append("")
 
     # 统计概览
@@ -115,6 +127,7 @@ def generate_asset_catalog() -> str:
     lines.append("| 资产类型 | 数量 | 真源 |")
     lines.append("|----------|------|------|")
     lines.append(f"| 外部数据源 | {len(data_sources)} | data_sources_registry.yaml |")
+    lines.append(f"| 数据源 API | {len(apis)} | data_source_apis_registry.yaml |")
     lines.append(f"| 服务资产 | {len(services)} | service_registry.yaml |")
     lines.append(f"| 基础设施组件 | {len(infra)} | infrastructure_components.yaml |")
     lines.append(f"| 契约资产 | {len(contracts)} | cross_layer_contracts.yaml |")
@@ -175,6 +188,51 @@ def generate_asset_catalog() -> str:
         lm = cfg['last_modified'].strftime('%Y-%m-%d') if cfg['last_modified'] else '—'
         lines.append(f"| `{cfg['file_path']}` | {size_kb} | {lm} |")
     lines.append("")
+
+    # 数据源 API 清单（按数据源分组，每个 API 一行）
+    lines.append("## 7. 数据源 API 清单")
+    lines.append("")
+    lines.append(f"> 共 {len(apis)} 个 API,按数据源分组。真源: `architecture_model/data/data_source_apis_registry.yaml`,参数坑/调用示例见 [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)。")
+    lines.append("")
+    lines.append("**测试状态图例**: ✅ verified | 🟡 partial | ⚠️ untested | ❌ deprecated")
+    lines.append("")
+
+    # 按数据源分组
+    apis_by_source: dict[str, list[dict]] = {}
+    for api in apis:
+        apis_by_source.setdefault(api["source_id"], []).append(api)
+
+    for idx, (source_id, source_apis) in enumerate(apis_by_source.items(), start=1):
+        source_name = source_apis[0]["source_name"] or source_id
+        verified_count = sum(1 for a in source_apis if a["test_status"] == "verified")
+        deprecated_count = sum(1 for a in source_apis if a["test_status"] == "deprecated")
+        untested_count = sum(1 for a in source_apis if a["test_status"] == "untested")
+        partial_count = sum(1 for a in source_apis if a["test_status"] == "partial")
+
+        lines.append(f"### 7.{idx} {source_name}（`{source_id}`，{len(source_apis)} API）")
+        lines.append("")
+        lines.append(f"测试状态: ✅ {verified_count} verified / 🟡 {partial_count} partial / ⚠️ {untested_count} untested / ❌ {deprecated_count} deprecated")
+        lines.append("")
+        lines.append("| API ID | 函数名 | 类别 | 功能 | 频率 | 范围 | 状态 | 章节引用 |")
+        lines.append("|--------|--------|------|------|------|------|:----:|----------|")
+
+        status_symbol = {
+            "verified": "✅",
+            "partial": "🟡",
+            "untested": "⚠️",
+            "deprecated": "❌",
+        }
+        for a in source_apis:
+            sym = status_symbol.get(a["test_status"], "—")
+            api_name = a["api_name"] or "—"
+            category = a["category"] or "—"
+            func = a["function_desc"] or "—"
+            freq = a["frequency_codes"] or "—"
+            scope = a["data_scope"] or "—"
+            section_ref = a["section_ref"] or "—"
+            lines.append(f"| `{a['api_id']}` | `{api_name}` | {category} | {func} | {freq} | {scope} | {sym} | {section_ref} |")
+
+        lines.append("")
 
     return "\n".join(lines)
 
