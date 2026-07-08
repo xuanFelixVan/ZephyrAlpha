@@ -1536,6 +1536,31 @@ entries:
   related_adjudication: '#203'
   created: '2026-07-09'
   last_updated: '2026-07-09'
+- issue_id: '#ARCH-055'
+  title: GATE-MODULE-INVENTORY-SYNC——commit_gates 模块清单漂移正向检测治本
+  severity: P2中
+  adjudication: |
+    2026-07-09 裁定：ARCH-054 审查发现 gate_engine blueprint.md §0.1 模块清单漂移
+    （29 个实际 .py 文件中 6 个未登记，漂移率 20.7%）。根因：派生数据（blueprint.md
+    §0.1 模块清单）靠手工维护，100% AI 开发模式下每次新增 gate 文件都需 AI 自觉同步
+    文档，必然漂移。现有 GATE-AGENTS-MD-REFS（priority=810）是反向检测（文档引用→
+    代码存在性），缺正向检测（代码新增→文档同步）。
+    裁定：
+    (a) 新建 check_gate_inventory_drift.py 检测脚本——扫描 src/zephyr/governance/
+        commit_gates/*.py 实际文件 vs blueprint.md §0.1 登记清单，输出 missing/extra
+        漂移列表。exit 0=一致 / exit 1=漂移 / exit 2=错误。
+    (b) 新增 post-commit reconciler GATE-MODULE-INVENTORY-SYNC（priority=820，在
+        GATE-AGENTS-MD-REFS(810) 之后）——commit_gates/*.py 变更时触发，调用检测
+        脚本，漂移时 warn-only（不阻断 commit，因漂移不致命，避免误报阻断正常开发）。
+    (c) warn-only 而非 hard-block 理由：漂移是文档同步滞后，非代码错误；阻断会
+        导致 AI 无法 commit 正常的 gate 新增（因 blueprint.md 未同步而阻断 gate 代码
+        本身的 commit，形成死循环）。warn 提醒 AI 同步文档即可。
+    (d) 阶段1已补齐现有 6 个漂移（blueprint.md §0.1 补登记 file_placement_ttl_gate/
+        foreign_change_gate/msg_exposure_gate/msg_style_gate/rule_four_way_alignment_gate/
+        unsafe_dict_spread_gate）+ AGENTS.md 并发防护章节同步 FOREIGN-CHANGE-DETECTION。
+  related_adjudication: '#203'
+  created: '2026-07-09'
+  last_updated: '2026-07-09'
 - issue_id: '#ARCH-MM-001'
   title: '[MATURITY]标记与depgraph design_maturity关系裁定——声明vs验证'
   severity: P1中

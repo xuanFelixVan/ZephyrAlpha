@@ -411,11 +411,12 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
   - **豁免区**（DCR-001/002 跳过）：`docs/_working/`（临时区）、`docs/_archive/`（归档区）、`.runtime/`（运行时归档区）、`.trae/`（IDE 工具区）、`docs/01_policies_and_standards/templates/`（模板区 TMP-EX-001——模板是 Class Definition，cookbook template 的 doc_type 取目标类型，不受目标类型的 allowed_directories 约束）。
   - **capability 反查**：已登记 `directory_contract_checker`（canonical = `scripts/governance/d1_structure/check_directory_contract.py`，aliases 含 `DCR_checker`/`directory_contract_validation`）。新 AI 想做"文件目录校验/目录归属检查"前，CapabilityLookup 会反查到本脚本，提示"扩展本脚本（加 DCR 规则），勿新建 checker"。
   - **新 AI 必读**：创建新文件前，先查 doc_type_vocabulary.yaml 的 allowed_directories 确认目标目录合法。违反将被 DCR-001 在 commit 时阻断——不是"建议"，是硬约束。
-- **并发 session 文件冲突防护门禁**（SESSION-REQUIRED + HELD-OVERLAP + CLAIM-REQUIRED，2026-06-30 治本 + 2026-07-06 AI-11 三层化）→ 多 session 并发开发时，session A 修改的文件可能被 session B 的 commit 覆盖（回退）。三层门禁防护：
+- **并发 session 文件冲突防护门禁**（SESSION-REQUIRED + CLAIM-REQUIRED + HELD-OVERLAP + FOREIGN-CHANGE-DETECTION，2026-06-30 治本 + 2026-07-06 AI-11 三层化 + 2026-07-09 ARCH-054 四层化）→ 多 session 并发开发时，session A 修改的文件可能被 session B 的 commit 覆盖（回退）或搭便车提交。四层门禁防护：
   - **SESSION-REQUIRED**（阻断）：[`session_required_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/session_required_gate.py) priority=30。AI 对话启动后第一件事 MUST 调用 `session_worktree_start(sid)` 注册合法 session_id；commit 时若 session_id 未在 SessionRegistry 中登记 → `SESSION_REQUIRED_VIOLATION` 阻断。病根：不 start session 可绕过 CLAIM-REQUIRED/HELD-OVERLAP（无 session_id 则无 claim/held 比对基准）。AI-11 审计 P0-9 修复：补齐 gate 到 GitCommitGateway._gate_registry 注册链路。
   - **CLAIM-REQUIRED**（阻断）：[`claim_required_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/claim_required_gate.py) priority=40。已注册 session commit 前必须先 `claim_files` 声明目标文件，未 claim → `CLAIM_REQUIRED_VIOLATION` 阻断。逃生通道：`--allow-overlap` 参数放行（特殊情况）。病根：不 claim 可绕过 HELD-OVERLAP（未声明 held_files 则无比对基准）。
   - **HELD-OVERLAP**（阻断）：[`held_overlap_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/held_overlap_gate.py) priority=50。commit 中包含其他 session held（claim）的文件 → 阻断。防搭便车覆盖。
-  - **capability 反查**：三者均已登记 `capability_canonical_file_registry.yaml`（`session_required_gate` + `claim_required_gate` + `held_overlap_gate`）。新 AI 想做"文件冲突防护/file claim/session 注册强制"前，CapabilityLookup 会反查阻止重复造轮子。
+  - **FOREIGN-CHANGE-DETECTION**（阻断）：[`foreign_change_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/foreign_change_gate.py) priority=45。claim_files 时捕获 `git diff HEAD -- <file>` 基线快照，commit 时若基线非空（claim 时文件已有外来变更）→ `FOREIGN_CHANGE_VIOLATION` 阻断。治本 ARCH-054：补 HELD-OVERLAP 盲区——HELD-OVERLAP 只检测"文件被其他 session claim"，不检测"文件已有外来未提交变更"（未 claim 的编辑）。逃生通道：`--allow-overlap`。
+  - **capability 反查**：上述并发防护 gate 均已登记 `capability_canonical_file_registry.yaml`（`session_required_gate` + `claim_required_gate` + `held_overlap_gate` + `foreign_change_gate`）。新 AI 想做"文件冲突防护/file claim/session 注册强制/搭便车内容检测"前，CapabilityLookup 会反查阻止重复造轮子。
 
 - **新建 .py/.yaml CapabilityLookup 提示门禁**（CAPABILITY-OVERLAP，warn-only，2026-06-30 治本）→ commit 时 [`capability_overlap_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/capability_overlap_gate.py) priority=200 自动检测：①新建 .py 文件名是否与 `capability_canonical_file_registry.yaml` 已注册能力 aliases token 重叠 ②`_registry/` 下新增 .yaml/.yml 文件名是否与同目录现有 yaml token 重叠（≥2 token = 高置信度第二真源）。命中则 `logger.warning` 告警（**不阻断**）——文件名匹配是启发式，AI 看到 warning 后自行判断是扩展还是新建。检测范围覆盖 `_registry/` 所有子目录（contracts/vocabularies/catalogs/schemas/ + 未来新增），不硬编码子目录列表。病根：AGENTS.md §7 把"查 CapabilityLookup"列为 step 0，但仅靠文档约定——新 AI 跳过 AGENTS.md 即可重复造轮子，本 gate 补上代码层兜底。**capability 反查**已登记 `capability_overlap_gate`。新 AI 想做"重复造轮子检测/second source yaml"前，CapabilityLookup 会反查阻止重复造轮子。
 
@@ -624,6 +625,20 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 **违规处置**：non-GW commit 被自动 `git reset --soft HEAD~1`，修改保留在 staging area。审计报告落盘 `.runtime/reconcile_reports/post_commit_guard_<timestamp>.json`。AI 应通过 GitCommitGateway 重新提交。
 
+### 10.2 GATE-MODULE-INVENTORY-SYNC：commit_gates 模块清单漂移正向检测（#ARCH-055）
+
+**病根**：gate_engine [blueprint.md §0.1](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/gate_engine/blueprint.md) 的模块清单是派生数据（从 `commit_gates/*.py` 实际文件派生），但靠手工维护。100% AI 开发模式下每次新增 gate 文件都需 AI 自觉同步文档，必然漂移（ARCH-054 审查发现 29 个实际文件中 6 个未登记，漂移率 20.7%）。现有 [GATE-AGENTS-MD-REFS](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/dangling_reference_gate.py)（priority=810）是**反向检测**（文档引用→代码存在性），缺**正向检测**（代码新增→文档同步）。
+
+**治本**（2026-07-09，ARCH-055）：新增 post-commit reconciler `GATE-MODULE-INVENTORY-SYNC`（priority=820，在 GATE-AGENTS-MD-REFS 之后）。
+- **触发条件**：本次 commit 含 `src/zephyr/governance/commit_gates/*.py` 变更（新增/删除/重命名 gate 文件）。
+- **检测逻辑**：调用 [`check_gate_inventory_drift.py`](file:///d:/ZephyrAlpha/scripts/governance/generators/check_gate_inventory_drift.py) 对比 `commit_gates/*.py` 实际文件集合 vs blueprint.md §0.1 正则 `commit_gates/(\w+\.py)` 提取的登记集合，输出 missing（代码有但文档没登记）/ extra（文档登记但代码不存在）漂移列表。
+- **exit code**：0=一致 / 1=漂移 / 2=错误。
+- **处置**：**warn-only**（不阻断 commit）。漂移是文档同步滞后，非代码错误；阻断会导致 AI 无法 commit 正常的 gate 新增（因 blueprint.md 未同步而阻断 gate 代码本身的 commit，形成死循环）。warn 提醒 AI 同步 blueprint.md §0.1 即可。
+
+**生效条件**：[`reconciliation_registry.py` `make_gate_inventory_sync_reconciler`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py) 注册到 [`GitCommitGateway._register_default_reconcilers`](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py)（post-commit 自动触发，无需人工安装 hook）。
+
+**AI 收到 warn 后的操作**：编辑 [blueprint.md §0.1](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/gate_engine/blueprint.md) 补登记缺失的 gate 文件行（格式：`- commit_gates/<filename>.py → "<gate 中文名>门禁（<GATE-ID>）"`），然后 commit blueprint.md。
+
 ## 11. depgraph 使用指引（唯一全景真源）
 
 > **三图正交声明（TRAE-061，2026-07-06）**：项目有三张架构图，正交分离，通过 `module_id` 关联：
@@ -774,7 +789,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 > **禁止在生成器中使用 `datetime.now()` 或任何实时时间源**，否则每次修改 depgraph (PostgreSQL)
 > 都会因时间戳变化产生非幂等噪音 auto-commit。
 
-- **真源实现**：所有生成器 docstring `[INVARIANTS]` 声明"输出幂等(相同输入→相同输出);零时间戳"
+- **真源实现**：所有生成器代码禁止 datetime.now()（检测命令见下），输出幂等由代码层保障而非注释层声明
 - **时间真源**：文件修改时间唯一真源是 git log，生成器不引入独立时间源
 - **检测**：`Select-String -Path "scripts/governance/d5_architecture/generators/*.py" -Pattern "datetime\.now\(\)"` 应返回零匹配
 - **自动触发**：GATE-REGENERATE reconciler（含原 DOMAIN-DOC 功能）在修改 depgraph 后自动调用 generate_domain_doc.py 和 generate_domain_dependency_diagram.py 重生域文档，生成器幂等性确保无噪音 auto-commit
