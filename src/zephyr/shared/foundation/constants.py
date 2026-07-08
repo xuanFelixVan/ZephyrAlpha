@@ -41,6 +41,7 @@ Version: 0.1.0
 """
 
 import importlib
+import os
 import re
 from typing import Final
 
@@ -79,6 +80,9 @@ SEMVER_PATTERN: Final[re.Pattern] = re.compile(
     r"(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
 )
 
+# 5.160.9 修复：Ollama URL 集中化为共享常量（原散落 6 文件，DEFAULT_OLLAMA_URL 重复定义 3 处）
+DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
 # Lazy imports for trading-domain symbols (upward dependency from L0 shared -> L3 trading)
 _TRADING_SYMBOLS = {
     "ETF": "zephyr.trading.trading_contracts.market.instrument",
@@ -93,9 +97,9 @@ _TRADING_SYMBOLS = {
     "OptionType": "zephyr.trading.trading_contracts.market.instrument",
     "Stock": "zephyr.trading.trading_contracts.market.instrument",
     "TradingCalendarName": "zephyr.trading.trading_contracts.market.instrument",
-    "OrderSide": "zephyr.trading.trading_contracts.execution.order",
-    "OrderStatus": "zephyr.trading.trading_contracts.execution.order",
-    "OrderType": "zephyr.trading.trading_contracts.execution.order",
+    "OrderSide": "zephyr.shared.contracts.enums.order_enums",
+    "OrderStatus": "zephyr.shared.contracts.enums.order_enums",
+    "OrderType": "zephyr.shared.contracts.enums.order_enums",
 }
 
 # Lazy imports for governance-domain symbols (upward dependency from L0 shared -> L2 governance)
@@ -116,6 +120,7 @@ def __getattr__(name):
 __all__ = [
     "COLD_PATH_LATENCY_BUDGET_MS",
     "COLD_PATH_PARTIAL_ACTIVATED",
+    "DEFAULT_OLLAMA_URL",
     "ETF",
     "FX",
     "HOT_PATH_ACTIVATED",
