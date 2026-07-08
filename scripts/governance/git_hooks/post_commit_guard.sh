@@ -33,7 +33,51 @@ commit_msg=$(git log -1 --format=%B)
 
 # 检查是否含 [GW: 标记（GitCommitGateway / session_worktree_commit / session_worktree_merge 的合法标识）
 if echo "$commit_msg" | grep -q '\[GW:'; then
-    exit 0
+    # === session_id 真实性验证（治本伪造标记，#ARCH-050 强化 2026-07-08）===
+    # 解析 session_id：要求 sess- 前缀，避免匹配描述文本中误含的 [GW: 片段
+    session_id=$(echo "$commit_msg" | sed -n 's/.*\[GW:\(sess-[^]:}]*\).*/\1/p' | head -1)
+
+    # 解析失败 → 保守放行（避免误判）
+    if [ -z "$session_id" ]; then
+        exit 0
+    fi
+
+    # 获取主仓库根目录（worktree 内 git-common-dir 指向主仓库 .git）
+    common_dir=$(git rev-parse --git-common-dir 2>/dev/null)
+    if [ -n "$common_dir" ] && [ -d "$common_dir" ]; then
+        repo_root=$(cd "$common_dir/.." && pwd)
+        registry_file="$repo_root/.runtime/session_registry.json"
+    else
+        registry_file=".runtime/session_registry.json"
+    fi
+
+    # fail-open：注册表不存在 → 放行（避免环境问题阻断所有 commit）
+    if [ ! -f "$registry_file" ]; then
+        exit 0
+    fi
+
+    # 验证 session_id 在注册表中（register 写入/unregister 删除；merge commit 已被 ^merge 豁免）
+    if grep -q "\"$session_id\"" "$registry_file" 2>/dev/null; then
+        exit 0  # session_id 已注册 → 合法放行
+    fi
+
+    # session_id 未注册 → 伪造检测
+    echo ""
+    echo "[POST-COMMIT-GUARD] 检测到伪造 GW 标记（session_id=$session_id 未在 SessionRegistry 注册）"
+    echo "[POST-COMMIT-GUARD] 自动执行 git reset --soft HEAD~1（保留修改在 staging area）"
+    echo "[POST-COMMIT-GUARD] 请通过 GitCommitGateway/session_worktree_commit 重新提交（见 AGENTS.md §8）"
+    echo ""
+
+    # 记录违规到审计日志
+    mkdir -p .runtime/reconcile_reports
+    timestamp=$(date +%s)
+    hash=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+    report_file=".runtime/reconcile_reports/post_commit_guard_${timestamp}.json"
+    escaped_sid=$(echo "$session_id" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr -d '\n' | head -c 200)
+    echo "{\"gate_id\":\"POST-COMMIT-GUARD\",\"timestamp\":$timestamp,\"hash\":\"$hash\",\"violation\":\"forged_gw_marker\",\"session_id\":\"$escaped_sid\",\"action\":\"reset_soft_HEAD~1\"}" > "$report_file"
+
+    git reset --soft HEAD~1
+    exit 1
 fi
 
 # 检查是否是 merge commit（merge commit 豁免）
