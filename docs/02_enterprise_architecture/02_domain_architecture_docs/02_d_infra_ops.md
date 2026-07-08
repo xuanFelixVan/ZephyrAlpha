@@ -10,12 +10,12 @@ ttl: permanent
 
 # 02_d_infra_ops / asset-inventory / 基础设施运维 / Asset Inventory
 
-> **功能简介 / Overview**: 基础设施资产清单与运维管理
+> **功能简介 / Overview**: 资产清单与运维扫描，负责运行时资产盘点、基础设施配置管理和运维自动化
 
 > **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-09 01:10:31
+> 最后更新: 2026-07-09 03:56:46
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -36,15 +36,26 @@ ttl: permanent
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 资产扫描器(scanner) | Description | 资产扫描器(scanner) |
 
+## 模块分层清单 / Module Layered List
+
+> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
+
+（无模块 / No modules）
+
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分四个视图：合并全景图、运营态子图、设计态子图、原型态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
-> - **虚线边框 = 设计态模块**（design，还在设计中）
+> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
+> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
-> - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
+> - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
+
+### 合并全景图（全部模块，标签标注成熟度）
+
+> 展示全部 0 个模块（生产态 0 + 设计态 0 + 原型态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -56,6 +67,24 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
 ```
 
+### 运营态子图（仅 design_maturity=production 的模块和依赖）
+
+> 仅展示已上线运行的模块（共 0 个，0 条域内依赖）。
+
+> （无运营态模块 / No production modules）
+
+### 设计态子图（仅 design_maturity=design 的模块和依赖）
+
+> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
+
+> （无设计态模块 / No design modules）
+
+### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 0 个，0 条域内依赖）。
+
+> （无原型态模块 / No prototype modules）
+
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -66,25 +95,11 @@ graph TD
 
 无跨域入边依赖 / No cross-domain incoming dependencies
 
-## 架构分层视图 / Architecture Overview
+### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 0 个模块 / 0 modules。
+> 本域与 0 个外部域直接连接（出边 0 条 + 入边 0 条 = 0 条）。只显示直接连接的域，不展开具体节点。
 
-（无模块 / No modules）
-
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
-
-（无模块 / No modules）
-
-## 依赖关系图 / Dependency Graph
-
-> 域内模块依赖关系（共 0 条 / 0 edges）。按依赖类型分组，使用 → 表示方向。
-
-（无域内依赖 / No internal dependencies）
-
+> （无跨域依赖 / No cross-domain dependencies）
 
 ## 说明 / Notes
 
@@ -92,4 +107,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[生产态 / production]`=已上线 / `[设计态 / design]`=设计中 / `[原型态 / prototype]`=原型 / `[未知 / unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
