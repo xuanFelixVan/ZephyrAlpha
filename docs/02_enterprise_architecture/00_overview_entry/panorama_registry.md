@@ -16,12 +16,12 @@
 
 | 维度 | 值 |
 |------|:---:|
-| 已建全景图总数 | 23 |
+| 已建全景图总数 | 22 |
 | 待建全景图总数 | 16 |
-| 全景图总数 | 39 |
-| 已建覆盖率 | 59.0% |
+| 全景图总数 | 38 |
+| 已建覆盖率 | 57.9% |
 
-| 已建产物存在 | 23/23 |
+| 已建产物存在 | 22/22 |
 
 ### 数据库真源健康度
 
@@ -30,8 +30,8 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 50 | 功能域清单——50 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 4989 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4989 个 |
-| 依赖图 depgraph | `edges` | 5989 | 依赖边——节点间的依赖关系（import/契约/事件订阅），5989 条 |
+| 依赖图 depgraph | `nodes` | 4925 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4925 个 |
+| 依赖图 depgraph | `edges` | 5881 | 依赖边——节点间的依赖关系（import/契约/事件订阅），5881 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
 | 数据流图 dataflowgraph | `dataflow_jobs` | 13 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
@@ -79,7 +79,7 @@
 
 ## 已建全景图清单
 
-> 共 23 项已建全景图。状态由生成器扫描实际产物文件自动验证。
+> 共 22 项已建全景图。状态由生成器扫描实际产物文件自动验证。
 >
 > 排序：按输出目录顺序（00→01→02→...→target_architecture）。
 
@@ -97,7 +97,6 @@
 | PAN-BUILT-12 | 容量报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capacity_report.py` | [`03_governance_reports`](../03_governance_reports/capacity_report.md) | ✅存在 |
 | PAN-BUILT-13 | 约束违规报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_constraint_violations.py` | [`03_governance_reports`](../03_governance_reports/constraint_violations.md) | ✅存在 |
 | PAN-BUILT-14 | 设计态 vs 运营态 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_design_vs_production.py` | [`03_governance_reports`](../03_governance_reports/design_vs_production.md) | ✅存在 |
-| PAN-BUILT-15 | 12维架构评分矩阵 | 治理健康度 | 手工 | 手工 | `(手工维护)` | [`04_architecture_principles_decisions`](../04_architecture_principles_decisions/dimension_audit_matrix.md) | ✅存在 |
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | 治理健康度 | 手工 | 手工 | `(手工维护)` | [`04_architecture_principles_decisions`](../04_architecture_principles_decisions/dependency_path_panorama.md) | ✅存在 |
 | PAN-BUILT-18 | 数据流图（dataflowgraph Dataset/Job/Edge） | 数据流 | dataflowgraph | depgraph (PostgreSQL) (dataflow_* 表) | `generate_dataflow_diagram.py` | [`05_dataflow_architecture`](../05_dataflow_architecture/dataflow_index.md) | ✅存在 |
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
@@ -122,8 +121,8 @@
 
 | ID | 名称 | 类别 | 规划目录 | 规划生成器 | 优先级 | 真源待裁定 |
 |------|------|------|----------|------------|:---:|------|
-| PAN-ASSET-01 | 资产清单 / CMDB | 资产全景 | `08_asset_panorama/` | `generate_asset_panorama.py (待建)` | 高 | ✅已覆盖（PAN-BUILT-10，generate_asset_catalog.py 从 6 张资产表派生 256 项）；运行时 CMDB 仍待建 |
-| PAN-ASSET-02 | API 契约目录 | 资产全景 | `08_asset_panorama/` | `generate_api_contract_catalog.py (待建)` | 高 | ✅已覆盖（data_source_apis 表 124 项 API 清单，generate_asset_catalog.py 派生）；服务间 API 契约仍待建 |
+| PAN-ASSET-01 | 资产清单 / CMDB | 资产全景 | `08_asset_panorama/` | `generate_asset_panorama.py (待建)` | 高 | 待裁定：PostgreSQL 表 asset_registry（运行时服务/数据流/契约总览）vs YAML 静态... |
+| PAN-ASSET-02 | API 契约目录 | 资产全景 | `08_asset_panorama/` | `generate_api_contract_catalog.py (待建)` | 高 | 待裁定：扩展现有 depgraph contracts 表 vs 独立 api_contracts 表。现有 PA... |
 | PAN-ASSET-03 | 数据目录 Data Catalog | 资产全景 | `08_asset_panorama/` | `generate_data_catalog.py (待建)` | 高 | 待裁定：扩展现有 dataflow_datasets 表加完整性/延迟/质量字段 vs 独立 data_catal... |
 | PAN-ASSET-04 | 数据血缘图 Data Lineage | 资产全景 | `08_asset_panorama/` | `generate_data_lineage.py (待建)` | 高 | 待裁定：扩展 dataflow_edges 表加字段级血缘 vs 独立 column_lineage 表。data... |
 | PAN-RISK-01 | 风险敞口全景图 | 风险全景 | `11_risk_panorama/` | `generate_risk_exposure.py (待建)` | 高 | 待裁定：从 D_RISK/D_PORTFOLIO 域派生 vs 独立 risk_exposure 表。量化特有：因... |
@@ -152,7 +151,7 @@
 | 架构图来源 | 全景图数量 | 说明 |
 |------|:---:|------|
 | depgraph | 11 | 依赖图——模块节点和依赖边，生成域文档/矩阵/拓扑/热力图/容量/违规等 |
-| 手工 | 7 | 人工维护的架构文档，无自动生成器 |
+| 手工 | 6 | 人工维护的架构文档，无自动生成器 |
 | 待裁定（depgraph 域派生 vs 独立表） | 4 | 待裁定真源类型 |
 | 文件系统扫描 | 2 | 扫描实际文件系统派生，无 DB 真源 |
 | dataflowgraph | 1 | 数据流图——Dataset/Job/Edge，生成数据流图 |
@@ -170,7 +169,7 @@
 | 待裁定（depgraph contracts 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（depgraph 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（代码扫描派生 vs 独立表） | 1 | 待裁定真源类型 |
-| **合计** | **39** | 已建 23 + 待建 16 |
+| **合计** | **38** | 已建 22 + 待建 16 |
 
 ---
 
@@ -210,7 +209,6 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-BUILT-15 | 12维架构评分矩阵 | ✅已建 | 手工 | 12 维架构评分矩阵 | 真源：手工<br>生成器：`(手工维护)`<br>产物：[`04_architecture_principles_decisions/dimension_audit_matrix.md`](../04_architecture_principles_decisions/dimension_audit_matrix.md) |
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | ✅已建 | 手工 | 依赖与路径全景图能力定位书（双态模型 + SSoT 分层 + 生命周期 + 生成器覆盖矩阵） | 真源：手工<br>生成器：`(手工维护)`<br>产物：[`04_architecture_principles_decisions/dependency_path_panorama.md`](../04_architecture_principles_decisions/dependency_path_panorama.md) |
 
 ### 05 数据流架构
