@@ -21,8 +21,9 @@
 - TestTestExempt: tests/ 下文件 → 通过
 - TestNonPyFile: 非 .py 文件 → 通过
 - TestNoStagedFile: 空 staged → 通过
-- TestFailOpenRegistryMissing: registry 缺失 → 通过（fail-open）
-- TestFailOpenRegistryUnparseable: registry 解析失败 → 通过（fail-open）
+- TestFailClosedRegistryMissing: registry 缺失 → 阻断（fail-closed）
+- TestFailClosedRegistryUnparseable: registry 解析失败 → 阻断（fail-closed）
+- TestRegistryStagedExemption: registry 在 staged 中（正在修复）→ 通过
 - TestFailOpenGitDiffFails: git diff 失败 → 通过（fail-open）
 - TestUnrelatedSymbolPasses: 无关符号 → 通过
 
@@ -366,13 +367,13 @@ class TestNoStagedFile:
 
 
 # ============================================================================
-# TestFailOpenRegistryMissing
+# TestFailClosedRegistryMissing
 # ============================================================================
 
 
-class TestFailOpenRegistryMissing:
-    def test_registry_missing_passes(self, tmp_path, monkeypatch):
-        # registry 文件不存在
+class TestFailClosedRegistryMissing:
+    def test_registry_missing_blocks(self, tmp_path, monkeypatch):
+        # registry 文件不存在 → fail-closed（阻断）
         missing_path = tmp_path / "nonexistent.yaml"
         from zephyr.governance import capability_lookup
         monkeypatch.setattr(capability_lookup, "REGISTRY_YAML", missing_path)
@@ -381,17 +382,20 @@ class TestFailOpenRegistryMissing:
             {"src/zephyr/governance/some_module.py": ["class PIICategory(str):"]},
         )
         gate = make_ssot_redefinition_gate()
-        passed, _ = gate.check(gw, [])
-        assert passed  # fail-open
+        passed, detail = gate.check(gw, [])
+        assert not passed  # fail-closed
+        assert "fail-closed" in detail
+        assert "缺失" in detail
 
 
 # ============================================================================
-# TestFailOpenRegistryUnparseable
+# TestFailClosedRegistryUnparseable
 # ============================================================================
 
 
-class TestFailOpenRegistryUnparseable:
-    def test_unparseable_registry_passes(self, tmp_path, monkeypatch):
+class TestFailClosedRegistryUnparseable:
+    def test_unparseable_registry_blocks(self, tmp_path, monkeypatch):
+        # registry 解析失败 → fail-closed（阻断）
         bad_path = tmp_path / "bad.yaml"
         bad_path.write_text("{{not valid yaml: [unclosed", encoding="utf-8")
         from zephyr.governance import capability_lookup
@@ -401,8 +405,53 @@ class TestFailOpenRegistryUnparseable:
             {"src/zephyr/governance/some_module.py": ["class PIICategory(str):"]},
         )
         gate = make_ssot_redefinition_gate()
+        passed, detail = gate.check(gw, [])
+        assert not passed  # fail-closed
+        assert "fail-closed" in detail
+        assert "解析失败" in detail
+
+
+# ============================================================================
+# TestRegistryStagedExemption (registry 在 staged 中正在修复 → 放行)
+# ============================================================================
+
+
+class TestRegistryStagedExemption:
+    def test_missing_registry_in_staged_passes(self, tmp_path, monkeypatch):
+        # registry 缺失但本身在 staged 中（正在修复）→ 放行
+        registry_path = tmp_path / "capability_canonical_file_registry.yaml"
+        # 不创建文件（缺失）
+        from zephyr.governance import capability_lookup
+        monkeypatch.setattr(capability_lookup, "REGISTRY_YAML", registry_path)
+        gw = _make_mock_gateway(
+            [
+                "capability_canonical_file_registry.yaml",
+                "src/zephyr/governance/some_module.py",
+            ],
+            {"src/zephyr/governance/some_module.py": ["class PIICategory(str):"]},
+        )
+        gw.project_root = tmp_path  # 使 relative_to 可解析
+        gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
-        assert passed  # fail-open
+        assert passed  # registry 正在修复
+
+    def test_unparseable_registry_in_staged_passes(self, tmp_path, monkeypatch):
+        # registry 解析失败但本身在 staged 中（正在修复）→ 放行
+        registry_path = tmp_path / "capability_canonical_file_registry.yaml"
+        registry_path.write_text("{{broken", encoding="utf-8")
+        from zephyr.governance import capability_lookup
+        monkeypatch.setattr(capability_lookup, "REGISTRY_YAML", registry_path)
+        gw = _make_mock_gateway(
+            [
+                "capability_canonical_file_registry.yaml",
+                "src/zephyr/governance/some_module.py",
+            ],
+            {"src/zephyr/governance/some_module.py": ["class PIICategory(str):"]},
+        )
+        gw.project_root = tmp_path  # 使 relative_to 可解析
+        gate = make_ssot_redefinition_gate()
+        passed, _ = gate.check(gw, [])
+        assert passed  # registry 正在修复
 
 
 # ============================================================================

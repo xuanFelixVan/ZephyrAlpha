@@ -5,12 +5,12 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件中重新定义已 SSoT 化的符号(class/赋值)则阻断;SSoT 符号清单从 capability_canonical_file_registry.yaml aliases 自动派生(非新真源);canonical 文件本身定义豁免;tests/ 豁免;import/注释行豁免;YAML/git diff 不可达 fail-open(logger.warning 告警检测器失效)
+# [INVARIANTS] 硬阻断——staged .py 文件中重新定义已 SSoT 化的符号(class/赋值)则阻断;SSoT 符号清单从 capability_canonical_file_registry.yaml aliases 自动派生(非新真源);canonical 文件本身定义豁免;tests/ 豁免;import/注释行豁免;registry 缺失/解析失败 fail-closed(阻断,除非 registry 本身在 staged 中正在修复);git diff 不可达 fail-open(logger.warning 告警检测器失效)
 # [MODIFY-GUARD] gate_id="SSOT-REDEFINITION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——YAML/git diff 异常降级为 fail-open(不阻断,logger.warning 告警);check_all 兜底 fail-closed
+# [ERROR_CONTRACT] check 永不抛异常——registry 缺失/解析失败降级为 fail-closed(阻断,除非 registry 在 staged 中);git diff 异常降级为 fail-open(不阻断,logger.warning 告警);check_all 兜底 fail-closed
 # [TESTS] tests/governance/commit_gates/test_ssot_redefinition_gate.py
 # [A_module] module_id=MOD-GOV-ssot_redefinition_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -98,21 +98,51 @@ def make_ssot_redefinition_gate() -> GateSpec:
         # 2. 从 capability registry 读取 SSoT 符号 -> canonical 文件映射
         from zephyr.governance.capability_lookup import REGISTRY_YAML
 
+        # registry 修复豁免：若 registry 文件本身在 staged 中（正在修复），
+        # 放行本次提交让修复落地（否则坏 registry 会 fail-closed 锁死所有 commit）。
+        try:
+            registry_rel = REGISTRY_YAML.relative_to(gateway.project_root).as_posix()
+        except Exception:
+            registry_rel = ""
+        registry_being_fixed = bool(registry_rel) and registry_rel in staged
+
         if not REGISTRY_YAML.exists():
-            logger.warning(
-                "SSOT-REDEFINITION gate fail-open: registry 缺失(%s)，检测器失效。",
+            if registry_being_fixed:
+                logger.info(
+                    "SSOT-REDEFINITION gate: registry 缺失(%s)但正在 staged 修复，放行。",
+                    REGISTRY_YAML,
+                )
+                return True, ""
+            logger.error(
+                "SSOT-REDEFINITION gate fail-closed: registry 缺失(%s)，阻断。",
                 REGISTRY_YAML,
             )
-            return True, ""
+            return (
+                False,
+                f"SSOT-REDEFINITION gate fail-closed: capability registry 缺失"
+                f"({REGISTRY_YAML})。修复 registry（在提交中包含该文件）"
+                f"或恢复 registry 后重试。",
+            )
         try:
             import yaml
             data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
         except Exception as e:
-            logger.warning(
-                "SSOT-REDEFINITION gate fail-open: registry 解析失败(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
+            if registry_being_fixed:
+                logger.info(
+                    "SSOT-REDEFINITION gate: registry 解析失败(%s: %s)但正在 staged 修复，放行。",
+                    type(e).__name__, e,
+                )
+                return True, ""
+            logger.error(
+                "SSOT-REDEFINITION gate fail-closed: registry 解析失败(%s: %s)，阻断。",
+                type(e).__name__, e, exc_info=True,
             )
-            return True, ""
+            return (
+                False,
+                f"SSOT-REDEFINITION gate fail-closed: capability registry 解析失败"
+                f"({type(e).__name__}: {e})。修复 registry YAML 语法"
+                f"（在提交中包含该文件）后重试。",
+            )
 
         if not isinstance(data, dict):
             return True, ""
