@@ -534,7 +534,7 @@ class TestSharedCoreAdversarial:
         assert evt.priority == EventPriority.LOW
 
     def test_ssot_guard_instantiate(self):
-        from zephyr.shared.ai_guards.ssot_guard import SsotGuard
+        from zephyr.shared.security.ssot_guard import SsotGuard
 
         guard = SsotGuard()
         assert guard is not None

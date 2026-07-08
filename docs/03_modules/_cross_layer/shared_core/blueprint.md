@@ -89,7 +89,7 @@ depends_on:
 | 9 | quality/quality_monitor.py | §2.7 | 质量监控代理(F20恢复) | 已实现 | |
 | 10 | sla/sla_monitor.py | §2.7 | SLA监控代理(F20恢复) | 已实现 | |
 | 11 | maintenance/autonomy_monitor.py | §2.7 | 自治监控(F20恢复) | 已实现 | |
-| 12 | contracts/core/telemetry_emitter.py | §2.1 | 遥测契约(F20恢复) | 已实现 | |
+| 12 | contracts/telemetry_emitter.py | §2.1 | 遥测契约(CTR-P1-013 codegen) | 已实现 | |
 | 13 | contracts/market/factor_monitor_report.py | §2.1 | 因子监控报告契约(F20恢复) | 已实现 | |
 | 14 | contracts/risk/ (risk_dashboard_snapshot/risk_metrics) | §2.1 | 风险监控契约(F20恢复) | 已实现 | |
 
@@ -345,7 +345,7 @@ depends_on:
 | `src/zephyr/shared/flags.py` | ✅ 已实现 | Phase 2 新增：FeatureFlag 功能开关系统 |
 | `src/zephyr/shared/types.py` | ✅ 已实现 | Phase 3 新增：13 个语义化 NewType |
 | `src/zephyr/shared/diff_utils.py` | ✅ 已实现 | Phase 3 新增：diff/patch 统一工具 |
-| `src/zephyr/shared/file_utils.py` | ✅ 已实现 | Phase 3 新增：原子写/备份/rollback |
+| `src/zephyr/shared/io/file_utils.py` | ✅ 已实现 | Phase 3 新增：原子写/备份/rollback |
 | `src/zephyr/shared/config/loader.py` | ❌ ARCH-038 已退役 | 虚假统一空壳（0消费者），配置加载回归 infrastructure/config/load_config() |
 | `src/zephyr/shared/logging.py` | ✅ 已实现 | Phase 4 新增：结构化日志 ZephyrLogger + trace_id 传播 |
 | `src/zephyr/shared/api/shared_quickref.yaml` | ✅ 已实现 | Phase 4 新增：AI 零歧义快速参考 canonical YAML |
@@ -355,15 +355,15 @@ depends_on:
 | `src/zephyr/shared/events/dlq.py` | ✅ 已实现 | Phase 6 新增：死信队列——SQLite 持久化 + 定时重试 |
 | `src/zephyr/shared/__version__.py` | ✅ 已实现 | Phase 6 新增：PEP 440 版本常量 + 运行时校验 |
 | `src/zephyr/shared/health.py` | ✅ 已实现 | Phase 6 新增：聚合健康检查 + JSON 可序列化 |
-| `src/zephyr/shared/serialization.py` | ✅ 已实现 | Phase 7 新增：统一序列化——Decimal/str, datetime→ISO 8601 |
+| `src/zephyr/shared/io/serialization.py` | ✅ 已实现 | Phase 7 新增：统一序列化——Decimal/str, datetime→ISO 8601 |
 | `src/zephyr/shared/api_client.py` | ✅ 已实现 | Phase 7 新增：统一 API Client 基类——超时/重试/熔断/metrics |
 | `src/zephyr/shared/secrets.py` | ✅ 已实现 | Phase 7 新增：Secrets 管理——Env/DotEnv Provider + sanitize |
-| `src/zephyr/shared/cache.py` | ✅ 已实现 | Phase 8 新增：缓存抽象——TTL + LRU 驱逐 + 最大容量 |
+| `src/zephyr/shared/infra/cache.py` | ✅ 已实现 | Phase 8 新增：缓存抽象——TTL + LRU 驱逐 + 最大容量 |
 | `src/zephyr/shared/limiter.py` | ✅ 已实现 | Phase 8 新增：Token Bucket 速率限制器 |
 | `src/zephyr/shared/idempotency.py` | ✅ 已实现 | Phase 8 新增：幂等性 infrastructure——Stripe 24h TTL 对齐 |
 | `src/zephyr/shared/context.py` | ✅ 已实现 | Phase 8 新增：结构化 RequestContext——trace_id/span_id/tenant/agent |
 | `src/zephyr/shared/metrics.py` | ✅ 已实现 | Phase 9 新增：Metrics Registry——Counter/Gauge/Histogram + Prometheus text |
-| `src/zephyr/shared/pagination.py` | ✅ 已实现 | Phase 9 新增：统一分页工具——Page[T]/CursorPage[T] |
+| `src/zephyr/shared/utils/pagination.py` | ✅ 已实现 | Phase 9 新增：统一分页工具——Page[T]/CursorPage[T] |
 | `src/zephyr/shared/time_utils.py` | ✅ 已实现 | Phase 9 新增：时间工具——now_utc/freeze_time/parse_iso |
 | `src/zephyr/shared/env.py` | ✅ 已实现 | Phase 9 新增：环境检测——is_dev/is_prod/is_test |
 | `src/zephyr/shared/lock.py` | ✅ 已实现 | Phase 10 新增：分布式锁抽象——MemoryLock + async context manager |
@@ -445,7 +445,7 @@ depends_on:
 | api/ | 4 | `__init__`, `api_client`★, `api_index`★, `dos_launcher`★ |
 | config/ | 2 | `__init__`, `loader`(§5.1) |
 | contracts/backpressure/ | 4 | `__init__`, `pause`★, `resume`★, `throttle`★ |
-| contracts/core/ | 11 | `__init__`, `base_event`★, `enforcer`★, `factories`★, `gate_types`★, `registry`★, `runtime_plane_tag`(§5.1), `system_configuration`★, `telemetry_emitter`★, `timestamp`(§5.1), `trace_context`★ |
+| contracts/core/ | 10 | `__init__`, `base_event`★, `enforcer`★, `factories`★, `gate_types`★, `registry`★, `runtime_plane_tag`(§5.1), `system_configuration`★, `timestamp`(§5.1), `trace_context`★ |
 | contracts/errors/ | 7 | `__init__`, `contract_violation_error`★, `data_quality_error`★, `execution_rejection_error`★, `factor_computation_error`★, `risk_limit_violation_error`★, `signal_degradation_warning`★ |
 | contracts/execution/ | 6 | `__init__`, `capital_allocation_result`★, `execution_report`★, `fill`★, `model_serving_request`★, `order`★ |
 | contracts/experiment/ | 3 | `__init__`, `experiment_result`★, `model_serving_response`★ |

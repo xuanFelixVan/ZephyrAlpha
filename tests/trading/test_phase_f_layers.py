@@ -60,7 +60,7 @@ from zephyr.infrastructure.pipeline.backpressure_manager import (
     emit_throttle,
 )
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
-from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
+from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
 from zephyr.shared.contracts.experiment_result import ExperimentResult
 from zephyr.shared.contracts.factor_monitor_report import FactorMonitorReport
 from zephyr.shared.contracts.macro_factor_signal import MacroFactorSignal

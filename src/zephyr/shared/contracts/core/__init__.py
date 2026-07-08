@@ -13,7 +13,6 @@ __all__ = [
     "registry",
     "runtime_plane_tag",
     "system_configuration",
-    "telemetry_emitter",
     "timestamp",
     "trace_context",
 ]

@@ -28,7 +28,7 @@ from enum import Enum
 
 import pytest
 
-from zephyr.shared.foundation.serialization import (
+from zephyr.shared.io.serialization import (
     ENCODING_RULES,
     SerializationError,
     SerializationFormat,
