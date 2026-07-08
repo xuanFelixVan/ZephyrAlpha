@@ -230,34 +230,41 @@ def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
 
 
 def _fetch_dataflow_nodes(conn) -> list[PanoramaNode]:
-    """从 dataflow_datasets + dataflow_jobs 读取。"""
+    """从 dataflow_datasets + dataflow_jobs 读取（module_id 作为对齐 key）。
+
+    ARCH-053 修复（2026-07-09）：对齐 key 从 entity_name/job_name 改为 module_id 字段，
+    与 depgraph（blueprint_id）和 decision（module_id）统一。
+    module_id 为空的实体跳过（无对应 depgraph 模块，不参与对齐）。
+    """
     nodes: list[PanoramaNode] = []
     with conn.cursor() as cur:
         # datasets
         cur.execute(
             """
-            SELECT entity_name, design_maturity, build_status, domain_id
+            SELECT entity_name, module_id, design_maturity, build_status, domain_id
             FROM dataflow_datasets
-            WHERE entity_name IS NOT NULL
+            WHERE module_id IS NOT NULL AND module_id <> ''
             """
         )
         for row in cur.fetchall():
             if isinstance(row, dict):
                 name = row.get("entity_name")
+                mid = row.get("module_id")
                 dm = row.get("design_maturity")
                 bs = row.get("build_status")
                 dom = row.get("domain_id")
             else:
                 name = row[0] if len(row) > 0 else None
-                dm = row[1] if len(row) > 1 else None
-                bs = row[2] if len(row) > 2 else None
-                dom = row[3] if len(row) > 3 else None
-            if not name:
+                mid = row[1] if len(row) > 1 else None
+                dm = row[2] if len(row) > 2 else None
+                bs = row[3] if len(row) > 3 else None
+                dom = row[4] if len(row) > 4 else None
+            if not mid:
                 continue
             nodes.append(PanoramaNode(
-                module_id=name,
+                module_id=mid,
                 graph="dataflow",
-                entity_name=name,
+                entity_name=name or mid,
                 design_maturity=dm,
                 build_status=bs,
                 domain_id=dom,
@@ -265,28 +272,30 @@ def _fetch_dataflow_nodes(conn) -> list[PanoramaNode]:
         # jobs
         cur.execute(
             """
-            SELECT job_name, design_maturity, build_status, NULL AS domain_id
+            SELECT job_name, module_id, design_maturity, build_status, NULL AS domain_id
             FROM dataflow_jobs
-            WHERE job_name IS NOT NULL
+            WHERE module_id IS NOT NULL AND module_id <> ''
             """
         )
         for row in cur.fetchall():
             if isinstance(row, dict):
                 name = row.get("job_name")
+                mid = row.get("module_id")
                 dm = row.get("design_maturity")
                 bs = row.get("build_status")
                 dom = row.get("domain_id")
             else:
                 name = row[0] if len(row) > 0 else None
-                dm = row[1] if len(row) > 1 else None
-                bs = row[2] if len(row) > 2 else None
-                dom = row[3] if len(row) > 3 else None
-            if not name:
+                mid = row[1] if len(row) > 1 else None
+                dm = row[2] if len(row) > 2 else None
+                bs = row[3] if len(row) > 3 else None
+                dom = row[4] if len(row) > 4 else None
+            if not mid:
                 continue
             nodes.append(PanoramaNode(
-                module_id=name,
+                module_id=mid,
                 graph="dataflow",
-                entity_name=name,
+                entity_name=name or mid,
                 design_maturity=dm,
                 build_status=bs,
                 domain_id=dom,
