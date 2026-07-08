@@ -523,7 +523,7 @@ class TestSharedCoreAdversarial:
         assert task.status != "__INVALID__", "Invalid status was silently accepted"
 
     def test_event_bus_event_dataclass(self):
-        from zephyr.shared.events.event_bus import Event, EventPriority
+        from zephyr.shared.event_bus import Event, EventPriority
 
         evt = Event(
             topic="test.adversarial",

@@ -31,7 +31,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.shared.events.event_bus import (
+from zephyr.shared.event_bus import (
     EventBus,
     EventBusBackpressure,
     EventPriority,

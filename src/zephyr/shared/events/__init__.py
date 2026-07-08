@@ -19,7 +19,6 @@ __all__ = [
     "UpgradeStep",
     "dlq",
     "dlq_bridge",
-    "event_bus",
     "event_bus_upgrade",
     "event_reactor",
     "event_schemas",

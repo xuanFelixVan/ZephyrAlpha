@@ -19,7 +19,7 @@ event_reactor, hook_dispatcher, event_bus: re-exported from zephyr.shared.events
 from . import event_store
 
 _LAZY_SUBMODULES = {
-    "event_bus": "zephyr.shared.events.event_bus",
+    "event_bus": "zephyr.shared.event_bus",
     "event_reactor": "zephyr.shared.events.event_reactor",
     "hook_dispatcher": "zephyr.shared.events.hook_dispatcher",
 }

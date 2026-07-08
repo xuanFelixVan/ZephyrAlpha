@@ -26,7 +26,7 @@ Event Reactor — 事件反应器（自动响应事件）。
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
-from zephyr.shared.events.event_bus import DomainEvent, EventBus, EventType
+from zephyr.shared.event_bus import DomainEvent, EventBus, EventType
 
 
 @dataclass

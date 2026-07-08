@@ -42,7 +42,7 @@ from zephyr.governance.resilience_governance.f5_event_subscriber import (
     TOPIC_ESCALATION_NEEDED,
 )
 from zephyr.governance.resilience_governance.f5_shutdown_manager import F5ShutdownManager, ShutdownResult
-from zephyr.shared.events.event_bus import EventBusBackpressure, bus as default_bus
+from zephyr.shared.event_bus import EventBusBackpressure, bus as default_bus
 
 
 # ── Fixtures ────────────────────────────────────────────────────────────

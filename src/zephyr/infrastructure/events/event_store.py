@@ -28,7 +28,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from zephyr.shared.events.event_bus import DomainEvent
+from zephyr.shared.event_bus import DomainEvent
 from zephyr.shared.io.paths import REPO_ROOT
 
 

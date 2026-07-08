@@ -54,7 +54,7 @@ class TestSubscribeEvents:
             engine.subscribe_events()
 
         assert mock_bus.subscribe.call_count >= 2
-        from zephyr.shared.events.event_bus import EventType
+        from zephyr.shared.event_bus import EventType
 
         assert EventType.TASK_COMPLETED in captured
         assert EventType.TASK_FAILED in captured

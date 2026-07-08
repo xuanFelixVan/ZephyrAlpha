@@ -150,7 +150,7 @@ class AutoPilot:
         """
         from datetime import UTC, datetime
 
-        from zephyr.shared.events.event_bus import EventBusBackpressure
+        from zephyr.shared.event_bus import EventBusBackpressure
 
         bus = EventBusBackpressure()
         bus.emit(
@@ -207,7 +207,7 @@ def subscribe_eventbus() -> None:
         if _subscribed:
             return
         try:
-            from zephyr.shared.events.event_bus import EventBusBackpressure
+            from zephyr.shared.event_bus import EventBusBackpressure
 
             bus = EventBusBackpressure()
             bus.subscribe("task_completed", _on_task_completed)

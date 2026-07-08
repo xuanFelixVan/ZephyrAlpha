@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 from zephyr.shared.events.event_reactor import EventReactor, Reaction
-from zephyr.shared.events.event_bus import EventBus, EventType
+from zephyr.shared.event_bus import EventBus, EventType
 
 
 class TestReaction:

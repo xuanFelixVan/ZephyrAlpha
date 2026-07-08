@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 from zephyr.shared.events.hook_dispatcher import HookConfig, HookDispatcher, HookExecution
-from zephyr.shared.events.event_bus import EventBus, EventType
+from zephyr.shared.event_bus import EventBus, EventType
 
 
 class TestHookConfig:

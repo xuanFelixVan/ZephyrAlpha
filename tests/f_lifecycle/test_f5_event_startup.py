@@ -30,7 +30,7 @@ from zephyr.governance.resilience_governance.f5_event_subscriber import (
     SubscriptionResult,
     create_f5_event_subscriber,
 )
-from zephyr.shared.events.event_bus import EventBusBackpressure, EventPriority
+from zephyr.shared.event_bus import EventBusBackpressure, EventPriority
 
 
 @pytest.fixture

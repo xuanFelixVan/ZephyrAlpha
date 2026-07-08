@@ -388,7 +388,7 @@ class HealthMonitor:
             self._running = True
             self._last_health_check = time.monotonic()
             try:
-                from zephyr.shared.events.event_bus import bus
+                from zephyr.shared.event_bus import bus
 
                 bus.subscribe("task.completed", lambda _: self.tick())
                 bus.subscribe("task.failed", lambda _: self.tick())

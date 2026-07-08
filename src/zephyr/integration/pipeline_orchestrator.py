@@ -663,7 +663,7 @@ class PipelineOrchestrator:
             try:
                 from datetime import UTC, datetime
 
-                from zephyr.shared.events.event_bus import EventBusBackpressure
+                from zephyr.shared.event_bus import EventBusBackpressure
 
                 EventBusBackpressure().emit(
                     "pipeline_failed",
@@ -1798,7 +1798,7 @@ class PipelineOrchestrator:
         try:
             from datetime import UTC, datetime
 
-            from zephyr.shared.events.event_bus import EventBusBackpressure
+            from zephyr.shared.event_bus import EventBusBackpressure
 
             payload: dict[str, Any] = {
                 "task_id": task_id,
@@ -2516,7 +2516,7 @@ def subscribe_eventbus() -> None:
     if _subscribed:
         return
     try:
-        from zephyr.shared.events.event_bus import EventBusBackpressure
+        from zephyr.shared.event_bus import EventBusBackpressure
 
         bus = EventBusBackpressure()
         bus.subscribe("pipeline_start", _on_pipeline_start)

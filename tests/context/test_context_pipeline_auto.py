@@ -28,7 +28,7 @@ import pytest
 
 from zephyr.autonomy_core.context.context_pipeline_auto import ContextPipelineAuto
 from zephyr.infrastructure.capacity_assurance.kill_switch import KillSwitch
-from zephyr.shared.events.event_bus import EventBus, EventType
+from zephyr.shared.event_bus import EventBus, EventType
 
 
 # ── 自动启动测试 ──────────────────────────────────────────────

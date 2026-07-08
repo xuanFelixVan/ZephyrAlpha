@@ -694,7 +694,7 @@ class ResourceOptimizationEngine:
         self._monitor_running = True
         self._started_at = time.monotonic()
         try:
-            from zephyr.shared.events.event_bus import bus
+            from zephyr.shared.event_bus import bus
 
             bus.subscribe("task.completed", lambda _: self.monitor_tick())
             bus.subscribe("task.failed", lambda _: self.monitor_tick())
@@ -889,7 +889,7 @@ class ResourceOptimizationEngine:
             return
         self._last_pressure_level = snap.pressure
         try:
-            from zephyr.shared.events.event_bus import bus
+            from zephyr.shared.event_bus import bus
             bus.emit(
                 self._eventbus_topic,
                 {
