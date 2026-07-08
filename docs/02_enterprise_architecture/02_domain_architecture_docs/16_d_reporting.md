@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-09 03:56:51
+> 最后更新: 2026-07-09 04:09:01
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -84,19 +84,19 @@ graph TD
         src_zephyr_reporting_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_reporting_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
-    src_zephyr_reporting_init_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
-    D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
+    src_zephyr_reporting_init_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -104,8 +104,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_reporting_analytics_base_py production
     class src_zephyr_reporting_init_py,src_zephyr_reporting_extensions_init_py,src_zephyr_reporting_api_init_py,src_zephyr_reporting_core_init_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_infrastructure_init_py,src_zephyr_reporting_models_init_py,src_zephyr_reporting_services_init_py design
-    class D_TRADING external_prod
-    class D_GOVERNANCE external_design
+    class D_GOVERNANCE external_prod
+    class D_SHARED external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -117,10 +117,10 @@ graph TD
     subgraph D_REPORTING["D_REPORTING 报告"]
         src_zephyr_reporting_analytics_base_py["(生产态 / production) D_REPORTING — Post-Trade Analytics Layer<br/>文件: analytics_base.py"]
     end
-    D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_TRADING
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -128,8 +128,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_reporting_analytics_base_py production
-    class D_TRADING external_prod
-    class D_GOVERNANCE external_design
+    class D_SHARED,D_GOVERNANCE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -155,20 +154,20 @@ graph TD
         src_zephyr_reporting_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_reporting_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_reporting_init_py,src_zephyr_reporting_extensions_init_py,src_zephyr_reporting_api_init_py,src_zephyr_reporting_core_init_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_infrastructure_init_py,src_zephyr_reporting_models_init_py,src_zephyr_reporting_services_init_py design
-    class D_TRADING external_prod
-    class D_GOVERNANCE external_design
+    class D_GOVERNANCE external_prod
+    class D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -177,12 +176,12 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_TRADING 交易运营: execution_report.py | 导入依赖 / import_depends |
-| 2 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_TRADING 交易运营: fill.py | 导入依赖 / import_depends |
-| 3 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_TRADING 交易运营: order.py | 导入依赖 / import_depends |
-| 4 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_TRADING 交易运营: execution_report.py | 导入依赖 / import_depends |
-| 5 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_TRADING 交易运营: fill.py | 导入依赖 / import_depends |
-| 6 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_TRADING 交易运营: order.py | 导入依赖 / import_depends |
+| 1 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_SHARED 共享服务: execution_report.py | 导入依赖 / import_depends |
+| 2 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_SHARED 共享服务: fill.py | 导入依赖 / import_depends |
+| 3 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_SHARED 共享服务: order.py | 导入依赖 / import_depends |
+| 4 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_SHARED 共享服务: execution_report.py | 导入依赖 / import_depends |
+| 5 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_SHARED 共享服务: fill.py | 导入依赖 / import_depends |
+| 6 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_SHARED 共享服务: order.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -199,10 +198,10 @@ graph TD
 ```mermaid
 graph LR
     D_REPORTING["D_REPORTING<br/>报告"]
-    D_TRADING["D_TRADING<br/>交易运营"]
+    D_SHARED["D_SHARED<br/>共享服务"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
-    D_REPORTING -->|6条 导入依赖 / import_depends| D_TRADING
+    D_REPORTING -->|6条 导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE -->|3条 导入依赖 / import_depends| D_REPORTING
     D_AUDITTEST -->|1条 测试依赖 / test_depends| D_REPORTING
 ```
