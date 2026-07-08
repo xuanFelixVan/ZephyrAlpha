@@ -30,21 +30,25 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 50 | 功能域清单——50 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 4925 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4925 个 |
-| 依赖图 depgraph | `edges` | 5881 | 依赖边——节点间的依赖关系（import/契约/事件订阅），5881 条 |
+| 依赖图 depgraph | `nodes` | 4989 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4989 个 |
+| 依赖图 depgraph | `edges` | 6008 | 依赖边——节点间的依赖关系（import/契约/事件订阅），6008 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
 | 数据流图 dataflowgraph | `dataflow_jobs` | 13 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
+| 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
+| 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
+| 数据流图 dataflowgraph | `dataflow_runs` | 0 | 运行记录——job 执行历史（status/耗时/参数），0 行（0=无运行时观测，依赖观测系统回填） |
 | 决策流图 decisiongraph | `decision_tracks` | 4 | 决策轨——4 条正交决策轨（价值/动量/风险/组合），优先级+激活条件 |
 | 决策流图 decisiongraph | `decision_layers` | 10 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
 | 决策流图 decisiongraph | `decision_nodes` | 214 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
 | 决策流图 decisiongraph | `decision_edges` | 213 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），213 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 65 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，65 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_apis` | 124 | 数据源 API 清单——外部数据源的 API 函数/参数/测试状态，真源 data_source_apis_registry.yaml，124 个 |
-| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_assets` | 10 | 外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，10 个 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_assets` | 12 | 外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，12 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `service_assets` | 10 | 服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，10 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `config_assets` | 33 | 配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），33 项 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `infrastructure_components` | 14 | 基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，14 个 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `interface_contracts` | 5 | 接口级契约——模块对外 API（函数名/参数签名/返回值/消费方），5 行（仅 5=大部分模块接口未登记，AI 会幻觉函数名） |
 
 ---
 
@@ -137,6 +141,26 @@
 | PAN-QUANT-02 | 策略谱系图 | 量化全景 | `12_quant_panorama/` | `generate_strategy_lineage.py (待建)` | 可选 | 待裁定：从 decisiongraph L0-L6 派生 vs 独立 strategy_registry 表。策略... |
 | PAN-QUANT-03 | 回测对比看板 | 量化全景 | `12_quant_panorama/` | `generate_backtest_comparison.py (待建)` | 可选 | 待裁定：从 D_BACKTEST 域派生 vs 独立 backtest_results 表。多策略回测结果对比（S... |
 | PAN-QUANT-04 | 订单生命周期图 | 量化全景 | `12_quant_panorama/` | `generate_order_lifecycle.py (待建)` | 可选 | 待裁定：从 D_TRADING/D_EX_CORE 派生 vs 独立 order_lifecycle 表。目前只有... |
+
+---
+
+## 表级缺口清单
+
+> 共 6 项表级缺口。与上方 16 项待建全景图区分：全景图是最终产物，表级缺口是底层 DB 真源的实际状态。
+>
+> **两类缺口的区别**：
+> - 待建全景图（16 项）= 最终要给 AI/人看的产物目录，真源类型待裁定
+> - 表级缺口（6 项）= 底层 DB 表的真实状态（空表/部分缺失/完全缺失），真源类型已确定
+> - 一个表级缺口对应一个待建全景图（见 panorama_ref 列），但反过来不一定
+
+| 缺口ID | 表名 | 状态 | 实际行数 | 应有行数 | 缺什么 | AI 风险 | 怎么修 | 优先级 | 真源形式 | 对应全景图 |
+|------|------|:---:|:---:|------|------|------|------|:---:|------|------|
+| GAP-TBL-01 | `dataflow_datasets_metadata` | 空表待填 | 0 | 14 行（每个 dataset 一行扩展属性） | Dataset 的 physical_type / pit_policy / contract_ref 未填 | AI 查 dataflow 只能看到空壳名字，会幻觉编造物理类型（误把 ClickHouse 表当 PostgreSQL） | 从 YAML 真源同步设计态扩展属性 | P0 必做 | YAML 真源 + DB 缓存 | PAN-ASSET-03 |
+| GAP-TBL-02 | `dataflow_jobs_metadata` | 空表待填 | 0 | 13 行（每个 job 一行扩展属性） | Job 的 source_code_ref / trigger_type / run_context 未填 | AI 查 job 找不到源码文件，不知道怎么触发（定时/事件/手动），改代码会找错文件 | 从代码扫描派生（解析每个 job 的源码文件和触发配置） | P0 必做 | 代码扫描派生 + DB 缓存 | PAN-ASSET-03 |
+| GAP-TBL-04 | `interface_contracts` | 部分缺失 | 5 | 50+ 行（每个暴露接口的模块一行） | 50 个域只登记了 5 个模块接口（MOD-DATA/BACKTEST/TRADING/GOVERNANCE/INF-012B） | AI 调用别的模块时不知道暴露什么函数/参数签名，会瞎编函数名和参数 | 从代码扫描补全 exposed_interfaces / consumed_by_modules | P1 应做 | YAML 真源 + DB 缓存 | PAN-ASSET-02 |
+| GAP-TBL-03 | `dataflow_runs` | 空表待填 | 0 | 运行时动态产生（每个 job 每次执行一行） | 无任何 job 执行记录（status/耗时/参数） | AI 排查问题时看不到运行历史，只看到设计态（应该每天跑），看不到实际态（三天没跑成功了） | 依赖观测系统先建好，再回填 DB | P2 延后 | DB 直写（运行时动态产生） | PAN-RUN-01 |
+| GAP-TBL-05 | `runtime_observations（待建）` | 完全缺失 | —（表不存在） | 新建表，记录运行时指标（延迟/错误率/吞吐） | 搜索 runtime/telemetry/metric/trace/observ = 0 张表 | AI 无法获得运行时性能数据，不知道哪个任务慢/哪个错误率高 | 新建 runtime_observations 表 + 观测系统采集 | P2 延后 | DB 直写（运行时动态产生） | PAN-RUN-01 / PAN-RUN-04 |
+| GAP-TBL-06 | `field_lineage（待建）` | 完全缺失 | —（表不存在） | 新建表，记录 source_field → transformation → target_field | field_vocabularies（321 行）只是字段枚举字典，不是血缘；dataflow_edges（28 行）是表级血缘，不够字段级 | AI 改一个字段时不知道下游哪些字段受影响（改 close 不知道 ma20/macd 都依赖它），会漏改下游 | 从代码静态分析派生（解析每个 job 的 SQL/Python 字段映射）或运行时追踪 | P2 延后 | 代码分析派生 + DB 缓存 | PAN-ASSET-04 |
 
 ---
 
