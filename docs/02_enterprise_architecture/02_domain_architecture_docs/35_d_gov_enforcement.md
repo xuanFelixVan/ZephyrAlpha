@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 规则执行（D_GOV_ENFORCEMENT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-09 05:45:24
+> 最后更新: 2026-07-09 06:13:32
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -387,28 +387,25 @@ graph TD
     end
     src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_aisg_sandbox_py
     src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
-    src_zephyr_governance_rule_enforcement_admission_mad_001_architecture_necessity_yaml -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_admission_init_py
     src_zephyr_governance_rule_enforcement_template_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_admission_mad_001_architecture_necessity_yaml -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_admission_init_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_compliance_aisg_sandbox_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_SECURITY["(生产态 / production) D_SECURITY"]
     src_zephyr_compliance_compliance_manager_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_artifact_scanner_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_evidence_pack_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_merkle_hourly_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_orchestrator_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_behavioral_admission_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_implementations_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_compliance_audit_trail_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_zero_knowledge_audit_stub_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_init_py
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
@@ -417,16 +414,20 @@ graph TD
     D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_AUDITTEST -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_INFRA_TELEMETRY["(生产态 / production) D_INFRA_TELEMETRY"]
+    D_INFRA_TELEMETRY -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml,src_zephyr_governance_rule_enforcement_init_py,src_zephyr_governance_rule_enforcement_template_yaml,src_zephyr_governance_rule_enforcement_adaptive_threshold_py,src_zephyr_governance_rule_enforcement_admission_mad_001_architecture_necessity_yaml production
     class src_zephyr_compliance_init_py,src_zephyr_compliance_extensions_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_api_init_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_core_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_infrastructure_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_merkle_hourly_py,src_zephyr_compliance_models_init_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_services_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py,src_zephyr_governance_rule_enforcement_admission_init_py design
-    class D_GOVERNANCE,D_SECURITY external_prod
+    class D_GOVERNANCE,D_SECURITY,D_INFRA_TELEMETRY external_prod
     class D_GOV_SCRIPTS,D_AUDITTEST,D_GOV_DRIFT,D_AUTONOMY_CORE external_design
 ```
 
@@ -469,34 +470,34 @@ graph TD
     src_zephyr_governance_rule_enforcement_capability_checker_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_cbac_matrix_py
     src_zephyr_governance_rule_enforcement_check_types_adversarial_validation_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_adversarial_strategies_py
     src_zephyr_governance_rule_enforcement_check_types_adversarial_validation_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
-    src_zephyr_governance_rule_enforcement_check_types_ct_audit_findings_resolved_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_ct_blueprint_read_check_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
-    src_zephyr_governance_rule_enforcement_check_types_ct_circular_dependency_scan_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
+    src_zephyr_governance_rule_enforcement_check_types_ct_audit_findings_resolved_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_ct_circuit_breaker_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
+    src_zephyr_governance_rule_enforcement_check_types_ct_circular_dependency_scan_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_ct_classification_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
+    src_zephyr_governance_rule_enforcement_check_types_ct_content_length_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_ct_content_quality_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_ct_contract_compatibility_check_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_ct_deduplication_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
-    src_zephyr_governance_rule_enforcement_check_types_ct_content_length_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
-    src_zephyr_governance_rule_enforcement_check_types_ct_drift_budget_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
-    src_zephyr_governance_rule_enforcement_check_types_ct_enforcement_mode_check_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_ct_encoding_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
+    src_zephyr_governance_rule_enforcement_check_types_ct_drift_budget_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_ct_field_presence_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
+    src_zephyr_governance_rule_enforcement_check_types_ct_enforcement_mode_check_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_adversarial_validation_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_audit_findings_resolved_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_blueprint_read_check_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_circular_dependency_scan_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_audit_findings_resolved_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_circuit_breaker_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_circular_dependency_scan_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_classification_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_content_length_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_content_quality_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_contract_compatibility_check_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_deduplication_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_content_length_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_drift_budget_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_enforcement_mode_check_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_encoding_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_drift_budget_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_field_presence_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_enforcement_mode_check_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_governance_rule_enforcement_audit_chain_verifier_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
@@ -569,12 +570,9 @@ graph TD
     src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_rule_enforcement_contract_template_manager_py -->|导入依赖 / import_depends| D_SHARED
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    src_zephyr_governance_rule_enforcement_contract_template_manager_py -->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_governance_rule_enforcement_compliance_rule_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_rule_enforcement_dlq_retry_policy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_rule_enforcement_compliance_rule_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_drift_detector_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_rule_enforcement_drift_detector_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_rule_enforcement_drift_detector_py -.->|导入依赖 / import_depends| D_GOVERNANCE
@@ -582,6 +580,9 @@ graph TD
     D_INFRA_RECOVERY["(生产态 / production) D_INFRA_RECOVERY"]
     src_zephyr_governance_rule_enforcement_drift_detector_py -.->|导入依赖 / import_depends| D_INFRA_RECOVERY
     src_zephyr_governance_rule_enforcement_drift_detector_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_rule_enforcement_contract_template_manager_py -->|导入依赖 / import_depends| D_SHARED
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    src_zephyr_governance_rule_enforcement_contract_template_manager_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_check_types_ct_rollback_exit_code_py -.->|导入依赖 / import_depends| D_INFRA_RECOVERY
     D_SECURITY["(生产态 / production) D_SECURITY"]
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
@@ -606,7 +607,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_rule_enforcement_circuit_breaker_py,src_zephyr_governance_rule_enforcement_contract_template_manager_py,src_zephyr_governance_rule_enforcement_default_quality_gate_py,src_zephyr_governance_rule_enforcement_end_to_end_walkthrough_py,src_zephyr_governance_rule_enforcement_g1_ingest_yaml,src_zephyr_governance_rule_enforcement_g2_triage_yaml,src_zephyr_governance_rule_enforcement_g3_evaluate_yaml,src_zephyr_governance_rule_enforcement_g4_activate_yaml production
     class src_zephyr_governance_rule_enforcement_check_types_ct_file_extension_py,src_zephyr_governance_rule_enforcement_check_types_ct_fle_gate_py,src_zephyr_governance_rule_enforcement_check_types_ct_frontmatter_py,src_zephyr_governance_rule_enforcement_check_types_ct_leverage_limit_py,src_zephyr_governance_rule_enforcement_check_types_ct_line_ending_py,src_zephyr_governance_rule_enforcement_check_types_ct_manual_approval_py,src_zephyr_governance_rule_enforcement_check_types_ct_path_blacklist_py,src_zephyr_governance_rule_enforcement_check_types_ct_path_routing_py,src_zephyr_governance_rule_enforcement_check_types_ct_path_whitelist_py,src_zephyr_governance_rule_enforcement_check_types_ct_position_limit_py,src_zephyr_governance_rule_enforcement_check_types_ct_reference_check_py,src_zephyr_governance_rule_enforcement_check_types_ct_regex_pattern_py,src_zephyr_governance_rule_enforcement_check_types_ct_restructuring_safety_py,src_zephyr_governance_rule_enforcement_check_types_ct_rollback_exit_code_py,src_zephyr_governance_rule_enforcement_check_types_ct_score_threshold_py,src_zephyr_governance_rule_enforcement_check_types_ct_security_artifact_scan_py,src_zephyr_governance_rule_enforcement_check_types_ct_strategy_correlation_py,src_zephyr_governance_rule_enforcement_check_types_ct_temporal_py,src_zephyr_governance_rule_enforcement_check_types_ct_zero_residue_check_py,src_zephyr_governance_rule_enforcement_compliance_rule_py,src_zephyr_governance_rule_enforcement_dlq_retry_policy_py,src_zephyr_governance_rule_enforcement_drift_detector_py design
-    class D_SHARED,D_INTEGRATION,D_GOVERNANCE,D_INFRA_RECOVERY,D_SECURITY,D_PF_CORE,D_TRADING external_prod
+    class D_SHARED,D_GOVERNANCE,D_INFRA_RECOVERY,D_INTEGRATION,D_SECURITY,D_PF_CORE,D_TRADING external_prod
     class D_GOV_SCRIPTS,D_AUDITTEST external_design
 ```
 
@@ -734,14 +735,14 @@ graph TD
     end
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_types_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_001_circular_dependency_py
-    src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_post_doc_review_check_py
-    src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_003_contract_compatibility_py
+    src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_zero_residue_check_py
-    src_zephyr_governance_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_context_py
-    src_zephyr_governance_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_pipeline_py
+    src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_003_contract_compatibility_py
     src_zephyr_governance_rule_enforcement_gate_engine_init_py -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_gate_engine_adversarial_validation_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_pipeline_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_context_py
+    src_zephyr_governance_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_context_py
+    src_zephyr_governance_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_pipeline_py
     src_zephyr_governance_rule_enforcement_invariants_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_post_doc_review_check_py
     src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_yaml -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_invariants_init_py
     src_zephyr_governance_rule_enforcement_invariants_en_001_circular_dependency_yaml -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_invariants_init_py
@@ -760,10 +761,10 @@ graph TD
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| D_INFRA_RECOVERY
     src_zephyr_governance_rule_enforcement_gate_engine_gate_override_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_rule_enforcement_invariants_en_001_circular_dependency_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_rule_enforcement_invariants_post_doc_review_check_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_rule_enforcement_invariants_post_doc_review_check_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_rule_enforcement_invariants_en_process_lifecycle_gateway_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_rule_enforcement_invariants_zero_residue_check_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_invariants_en_003_contract_compatibility_py -->|导入依赖 / import_depends| D_SHARED
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py
@@ -818,19 +819,19 @@ graph TD
         src_zephyr_governance_rule_enforcement_truth_source_validator_py["(生产态 / production) 真源优先级裁决器（Truth Source Validator）<br/>文件: truth_source_validator.py"]
         src_zephyr_governance_rule_enforcement_zero_residue_yaml["(生产态 / production) 零残留原则自动化执行层——每次 GateEngine.evalu...<br/>文件: zero_residue.yaml"]
     end
-    src_zephyr_governance_rule_enforcement_rule_engine_init_py -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_rule_engine_rule_debt_auditor_py
-    src_zephyr_governance_rule_enforcement_task_g0_orc_gate_engine_yaml -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_task_init_py
+    src_zephyr_governance_rule_enforcement_rule_engine_init_py -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_rule_engine_rule_canary_manager_py
     src_zephyr_governance_rule_enforcement_task_g0_entry_yaml -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_task_init_py
+    src_zephyr_governance_rule_enforcement_task_g0_orc_gate_engine_yaml -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_task_init_py
     src_zephyr_governance_rule_enforcement_task_g7_orc_gate_engine_yaml -.->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_task_init_py
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_governance_rule_enforcement_sys_master_compliance_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_governance_rule_enforcement_task_types_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_task_types_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_task_types_py -->|导入依赖 / import_depends| D_INTEGRATION
+    D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_governance_rule_enforcement_triple_alignment_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_rule_enforcement_triple_alignment_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_rule_enforcement_sys_master_compliance_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_truth_source_validator_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_rule_enforcement_truth_source_validator_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_rule_engine_rule_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
@@ -861,7 +862,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_rule_enforcement_risk_ssot_py,src_zephyr_governance_rule_enforcement_rule_engine_rule_canary_manager_py,src_zephyr_governance_rule_enforcement_rule_engine_rule_debt_auditor_py,src_zephyr_governance_rule_enforcement_rule_engine_rule_engine_py,src_zephyr_governance_rule_enforcement_rule_engine_rule_shadow_runner_py,src_zephyr_governance_rule_enforcement_secrets_guard_py,src_zephyr_governance_rule_enforcement_slo_contract_py,src_zephyr_governance_rule_enforcement_sys_master_compliance_py,src_zephyr_governance_rule_enforcement_sys_master_compliance_yaml,src_zephyr_governance_rule_enforcement_task_g0_entry_yaml,src_zephyr_governance_rule_enforcement_task_g0_orc_gate_engine_yaml,src_zephyr_governance_rule_enforcement_task_g7_orc_gate_engine_yaml,src_zephyr_governance_rule_enforcement_task_completion_gate_py,src_zephyr_governance_rule_enforcement_task_types_py,src_zephyr_governance_rule_enforcement_triple_alignment_py,src_zephyr_governance_rule_enforcement_truth_source_validator_py,src_zephyr_governance_rule_enforcement_zero_residue_yaml production
     class src_zephyr_governance_rule_enforcement_quality_gate_py,src_zephyr_governance_rule_enforcement_rule_engine_init_py,src_zephyr_governance_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_governance_rule_enforcement_task_init_py design
-    class D_SHARED,D_INTEGRATION,D_GOVERNANCE,D_INTEGRATION_GATEWAY,D_TRADING external_prod
+    class D_INTEGRATION,D_SHARED,D_GOVERNANCE,D_INTEGRATION_GATEWAY,D_TRADING external_prod
     class D_SECURITY,D_GOV_SCRIPTS,D_AUDITTEST external_design
 ```
 
@@ -1008,16 +1009,16 @@ graph TD
     end
     src_zephyr_governance_rule_enforcement_audit_chain_verifier_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_context_py
     src_zephyr_governance_rule_enforcement_capability_checker_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_cbac_matrix_py
-    src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
     src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_ai_capability_guard_py
+    src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
     src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_breaking_change_detector_py
     src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_end_to_end_walkthrough_py
     src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_integration_test_runner_py
     src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_kiss_enforcer_py
     src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_secrets_guard_py
-    src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_override_py
-    src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_health_py
     src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_integrity_guard_py
+    src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_health_py
+    src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_override_py
     src_zephyr_governance_rule_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_simulator_py
     src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_init_py
@@ -1026,104 +1027,104 @@ graph TD
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_risk_ssot_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_001_circular_dependency_py
-    src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_post_doc_review_check_py
-    src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_003_contract_compatibility_py
+    src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_zero_residue_check_py
+    src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_invariants_en_003_contract_compatibility_py
+    src_zephyr_governance_rule_enforcement_gate_engine_gate_pipeline_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_context_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_context_py
     src_zephyr_governance_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_pipeline_py
-    src_zephyr_governance_rule_enforcement_gate_engine_gate_pipeline_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_context_py
-    src_zephyr_governance_rule_enforcement_g1_ingest_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g3_evaluate_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g4_activate_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g6_blueprint_compliance_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g3_evaluate_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g2_triage_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g5_extract_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g6_ctr_compliance_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g4_activate_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g1_ingest_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g7c_cross_gate_consistency_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g6_path_tree_freshness_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g8_leverage_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g9_strategy_correlation_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g8_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g9_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g7d_depth_compliance_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g7_position_limits_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_gate_dedup_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_006_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g6_ctr_compliance_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g5_extract_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_asset_inventory_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g7d_depth_compliance_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_forward_reference_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_gct_024_budget_enforcer_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_004_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_asset_inventory_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_gate_dedup_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g6_path_tree_freshness_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g9_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g9_strategy_correlation_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_003_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_006_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_007_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_012_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_009_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_011_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_004_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_008_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_010_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_017_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_016_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_018_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_020_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_021_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_011_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_010_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_012_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_016_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_022_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_024_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_023_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_017_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_025_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_026_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_027_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_029_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_021_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_023_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_020_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_028_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_026_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_029_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_024_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_027_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_030_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_031_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_032_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_031_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_034_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_033_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_035_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_036_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_038_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_037_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_039_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_041_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_040_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_043_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_036_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_035_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_033_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_039_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_042_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_046_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_045_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_047_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_037_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_038_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_041_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_044_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_048_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_049_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_051_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_055_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_043_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_050_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_045_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_051_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_049_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_046_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_048_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_047_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_053_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_g_trae_052_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_059_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_g_trae_054_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_055_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_observability_baseline_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
-    src_zephyr_governance_rule_enforcement_sys_master_compliance_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_054_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_g_trae_059_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_post_doc_review_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_zero_residue_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     src_zephyr_governance_rule_enforcement_template_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
+    src_zephyr_governance_rule_enforcement_sys_master_compliance_yaml -->|config_depends / config_depends| src_zephyr_governance_rule_enforcement_init_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_governance_rule_enforcement_audit_chain_verifier_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_rule_enforcement_audit_chain_verifier_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_capability_checker_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_contract_template_manager_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_governance_rule_enforcement_contract_template_manager_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_gate_types_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_pre_flight_gate_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_rule_enforcement_pre_flight_gate_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_rule_enforcement_sys_master_compliance_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_task_types_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_task_types_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_task_types_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_governance_rule_enforcement_triple_alignment_py -->|导入依赖 / import_depends| D_SHARED
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_gate_engine_gate_engine_py
@@ -1232,59 +1233,56 @@ graph TD
     end
     src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_aisg_sandbox_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_adversarial_validation_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_audit_findings_resolved_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_blueprint_read_check_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_circular_dependency_scan_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_audit_findings_resolved_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_circuit_breaker_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_circular_dependency_scan_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_classification_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_content_length_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_content_quality_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_contract_compatibility_check_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_deduplication_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_content_length_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_drift_budget_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_enforcement_mode_check_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_encoding_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_drift_budget_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_file_extension_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_leverage_limit_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_field_presence_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_fle_gate_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_line_ending_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_enforcement_mode_check_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_frontmatter_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_path_blacklist_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_leverage_limit_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_manual_approval_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_line_ending_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_path_blacklist_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_position_limit_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_path_routing_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_reference_check_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_path_whitelist_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_rollback_exit_code_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_path_routing_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_regex_pattern_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_restructuring_safety_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_rollback_exit_code_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_score_threshold_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_temporal_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_security_artifact_scan_py
-    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_strategy_correlation_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_path_whitelist_py
     src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_zero_residue_check_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_strategy_correlation_py
+    src_zephyr_governance_rule_enforcement_check_types_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_check_types_ct_score_threshold_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_compliance_aisg_sandbox_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_SECURITY["(生产态 / production) D_SECURITY"]
     src_zephyr_compliance_compliance_manager_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_artifact_scanner_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_evidence_pack_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_merkle_hourly_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_orchestrator_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_behavioral_admission_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_implementations_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_compliance_audit_trail_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_compliance_zero_knowledge_audit_stub_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
-    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_quality_gate_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
@@ -1299,6 +1297,9 @@ graph TD
     D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOVERNANCE -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1393,257 +1394,257 @@ graph TD
 | 2 | D_AUDITTEST 审计测试套件: test_audit_chain_verifier.py | → | 审计链验证工具——独立重放门禁判定+Hash链完整性... | 测试依赖 / test_depends |
 | 3 | D_AUDITTEST 审计测试套件: test_audit_chain_verifier.py | → | 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
 | 4 | D_AUDITTEST 审计测试套件: test_audit_red_blue_e2e.py | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 5 | D_AUDITTEST 审计测试套件: test_auto_bootstrap.py | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 6 | D_AUDITTEST 审计测试套件: test_auto_split.py | → | task_types.py | 测试依赖 / test_depends |
-| 7 | D_AUDITTEST 审计测试套件: test_ba_integration_test_runner.py | → | 集成测试运行器（Integration Test Runner） (inte... | 测试依赖 / test_depends |
-| 8 | D_AUDITTEST 审计测试套件: test_ct_audit_findings_resolved.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 9 | D_AUDITTEST 审计测试套件: test_ct_audit_findings_resolved.py | → | task_types.py | 测试依赖 / test_depends |
-| 10 | D_AUDITTEST 审计测试套件: test_ct_blueprint_read_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 11 | D_AUDITTEST 审计测试套件: test_ct_blueprint_read_check.py | → | task_types.py | 测试依赖 / test_depends |
-| 12 | D_AUDITTEST 审计测试套件: test_ct_circuit_breaker.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 13 | D_AUDITTEST 审计测试套件: test_ct_circuit_breaker.py | → | task_types.py | 测试依赖 / test_depends |
-| 14 | D_AUDITTEST 审计测试套件: test_ct_circular_dependency_scan.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 15 | D_AUDITTEST 审计测试套件: test_ct_circular_dependency_scan.py | → | task_types.py | 测试依赖 / test_depends |
-| 16 | D_AUDITTEST 审计测试套件: test_ct_classification.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 17 | D_AUDITTEST 审计测试套件: test_ct_classification.py | → | task_types.py | 测试依赖 / test_depends |
-| 18 | D_AUDITTEST 审计测试套件: test_ct_content_length.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 19 | D_AUDITTEST 审计测试套件: test_ct_content_length.py | → | task_types.py | 测试依赖 / test_depends |
-| 20 | D_AUDITTEST 审计测试套件: test_ct_content_quality.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 21 | D_AUDITTEST 审计测试套件: test_ct_content_quality.py | → | task_types.py | 测试依赖 / test_depends |
-| 22 | D_AUDITTEST 审计测试套件: test_ct_contract_compatibility_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 23 | D_AUDITTEST 审计测试套件: test_ct_contract_compatibility_check.py | → | task_types.py | 测试依赖 / test_depends |
-| 24 | D_AUDITTEST 审计测试套件: test_ct_deduplication.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 25 | D_AUDITTEST 审计测试套件: test_ct_deduplication.py | → | task_types.py | 测试依赖 / test_depends |
-| 26 | D_AUDITTEST 审计测试套件: test_ct_drift_budget.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 27 | D_AUDITTEST 审计测试套件: test_ct_drift_budget.py | → | task_types.py | 测试依赖 / test_depends |
-| 28 | D_AUDITTEST 审计测试套件: test_ct_encoding.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 29 | D_AUDITTEST 审计测试套件: test_ct_encoding.py | → | task_types.py | 测试依赖 / test_depends |
-| 30 | D_AUDITTEST 审计测试套件: test_ct_enforcement_mode_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 31 | D_AUDITTEST 审计测试套件: test_ct_enforcement_mode_check.py | → | task_types.py | 测试依赖 / test_depends |
-| 32 | D_AUDITTEST 审计测试套件: test_ct_field_presence.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 33 | D_AUDITTEST 审计测试套件: test_ct_field_presence.py | → | task_types.py | 测试依赖 / test_depends |
-| 34 | D_AUDITTEST 审计测试套件: test_ct_file_extension.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 35 | D_AUDITTEST 审计测试套件: test_ct_file_extension.py | → | task_types.py | 测试依赖 / test_depends |
-| 36 | D_AUDITTEST 审计测试套件: test_ct_fle_gate.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 37 | D_AUDITTEST 审计测试套件: test_ct_fle_gate.py | → | task_types.py | 测试依赖 / test_depends |
-| 38 | D_AUDITTEST 审计测试套件: test_ct_frontmatter.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 39 | D_AUDITTEST 审计测试套件: test_ct_frontmatter.py | → | task_types.py | 测试依赖 / test_depends |
-| 40 | D_AUDITTEST 审计测试套件: test_ct_leverage_limit.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 41 | D_AUDITTEST 审计测试套件: test_ct_leverage_limit.py | → | task_types.py | 测试依赖 / test_depends |
-| 42 | D_AUDITTEST 审计测试套件: test_ct_line_ending.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 43 | D_AUDITTEST 审计测试套件: test_ct_line_ending.py | → | task_types.py | 测试依赖 / test_depends |
-| 44 | D_AUDITTEST 审计测试套件: test_ct_manual_approval.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 45 | D_AUDITTEST 审计测试套件: test_ct_manual_approval.py | → | task_types.py | 测试依赖 / test_depends |
-| 46 | D_AUDITTEST 审计测试套件: test_ct_path_blacklist.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 47 | D_AUDITTEST 审计测试套件: test_ct_path_blacklist.py | → | task_types.py | 测试依赖 / test_depends |
-| 48 | D_AUDITTEST 审计测试套件: test_ct_path_routing.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 49 | D_AUDITTEST 审计测试套件: test_ct_path_routing.py | → | task_types.py | 测试依赖 / test_depends |
-| 50 | D_AUDITTEST 审计测试套件: test_ct_path_whitelist.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 51 | D_AUDITTEST 审计测试套件: test_ct_path_whitelist.py | → | task_types.py | 测试依赖 / test_depends |
-| 52 | D_AUDITTEST 审计测试套件: test_ct_position_limit.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 53 | D_AUDITTEST 审计测试套件: test_ct_position_limit.py | → | task_types.py | 测试依赖 / test_depends |
-| 54 | D_AUDITTEST 审计测试套件: test_ct_reference_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 55 | D_AUDITTEST 审计测试套件: test_ct_reference_check.py | → | task_types.py | 测试依赖 / test_depends |
-| 56 | D_AUDITTEST 审计测试套件: test_ct_regex_pattern.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 57 | D_AUDITTEST 审计测试套件: test_ct_regex_pattern.py | → | task_types.py | 测试依赖 / test_depends |
-| 58 | D_AUDITTEST 审计测试套件: test_ct_restructuring_safety.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 59 | D_AUDITTEST 审计测试套件: test_ct_restructuring_safety.py | → | task_types.py | 测试依赖 / test_depends |
-| 60 | D_AUDITTEST 审计测试套件: test_ct_rollback_exit_code.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 61 | D_AUDITTEST 审计测试套件: test_ct_rollback_exit_code.py | → | task_types.py | 测试依赖 / test_depends |
-| 62 | D_AUDITTEST 审计测试套件: test_ct_score_threshold.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 63 | D_AUDITTEST 审计测试套件: test_ct_score_threshold.py | → | task_types.py | 测试依赖 / test_depends |
-| 64 | D_AUDITTEST 审计测试套件: test_ct_security_artifact_scan.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 65 | D_AUDITTEST 审计测试套件: test_ct_security_artifact_scan.py | → | task_types.py | 测试依赖 / test_depends |
-| 66 | D_AUDITTEST 审计测试套件: test_ct_strategy_correlation.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 67 | D_AUDITTEST 审计测试套件: test_ct_strategy_correlation.py | → | task_types.py | 测试依赖 / test_depends |
-| 68 | D_AUDITTEST 审计测试套件: test_ct_temporal.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 69 | D_AUDITTEST 审计测试套件: test_ct_temporal.py | → | task_types.py | 测试依赖 / test_depends |
-| 70 | D_AUDITTEST 审计测试套件: test_ct_zero_residue_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 71 | D_AUDITTEST 审计测试套件: test_ct_zero_residue_check.py | → | task_types.py | 测试依赖 / test_depends |
-| 72 | D_AUDITTEST 审计测试套件: test_db_transition.py | → | task_types.py | 测试依赖 / test_depends |
-| 73 | D_AUDITTEST 审计测试套件: test_e_gov_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
-| 74 | D_AUDITTEST 审计测试套件: test_e_slo_contract.py | → | SLO-Driven Escalation Contract — D-022-12. (sl... | 测试依赖 / test_depends |
-| 75 | D_AUDITTEST 审计测试套件: test_escalation_gov_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
-| 76 | D_AUDITTEST 审计测试套件: test_fl_adversarial_validation.py | → | AdversarialValidationGate — validates outputs ... | 测试依赖 / test_depends |
-| 77 | D_AUDITTEST 审计测试套件: test_file_task_mapper_root.py | → | task_types.py | 测试依赖 / test_depends |
-| 78 | D_AUDITTEST 审计测试套件: test_gate_context.py | → | 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
-| 79 | D_AUDITTEST 审计测试套件: test_gate_health.py | → | 门禁健康仪表板——per-gate SLI 报告、误报率、延... | 测试依赖 / test_depends |
-| 80 | D_AUDITTEST 审计测试套件: test_gate_integrity_guard.py | → | 门禁引擎完整性守卫——自检SHA-256校验+trust roo... | 测试依赖 / test_depends |
-| 81 | D_AUDITTEST 审计测试套件: test_gate_override.py | → | Owner 紧急旁路——时间限定的门禁临时绕过 + 审计... | 测试依赖 / test_depends |
-| 82 | D_AUDITTEST 审计测试套件: test_gate_pipeline.py | → | 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
-| 83 | D_AUDITTEST 审计测试套件: test_gate_pipeline.py | → | 门禁评估管线——排序解析、组合逻辑（AND/OR/NOT.... | 测试依赖 / test_depends |
-| 84 | D_AUDITTEST 审计测试套件: test_gate_simulator.py | → | 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
-| 85 | D_AUDITTEST 审计测试套件: test_gate_simulator.py | → | 门禁评估管线——排序解析、组合逻辑（AND/OR/NOT.... | 测试依赖 / test_depends |
-| 86 | D_AUDITTEST 审计测试套件: test_gate_simulator.py | → | 门禁模拟器——dry-run 全链路门禁演练，不修改任.... | 测试依赖 / test_depends |
-| 87 | D_AUDITTEST 审计测试套件: test_gate_types.py | → | gate_types.py | 测试依赖 / test_depends |
-| 88 | D_AUDITTEST 审计测试套件: test_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
-| 89 | D_AUDITTEST 审计测试套件: test_pre_flight_gate.py | → | pre_flight_gate.py | 测试依赖 / test_depends |
-| 90 | D_AUDITTEST 审计测试套件: test_slo_contract.py | → | SLO-Driven Escalation Contract — D-022-12. (sl... | 测试依赖 / test_depends |
-| 91 | D_AUDITTEST 审计测试套件: test_base_repo.py | → | task_types.py | 测试依赖 / test_depends |
-| 92 | D_AUDITTEST 审计测试套件: test_check_type_registry.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 93 | D_AUDITTEST 审计测试套件: test_adversarial_gate_integration.py | → | Adversarial sample generator and 5 attack strat... | 测试依赖 / test_depends |
-| 94 | D_AUDITTEST 审计测试套件: test_adversarial_gate_integration.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
-| 95 | D_AUDITTEST 审计测试套件: test_adversarial_gate_integration.py | → | AdversarialValidationGate — validates outputs ... | 测试依赖 / test_depends |
-| 96 | D_AUDITTEST 审计测试套件: test_adversarial_validation.py | → | AdversarialValidationGate — validates outputs ... | 测试依赖 / test_depends |
-| 97 | D_AUDITTEST 审计测试套件: test_adversarial_validation_gate.py | → | AdversarialValidationGate — validates outputs ... | 测试依赖 / test_depends |
-| 98 | D_AUDITTEST 审计测试套件: test_en_001_circular_dependency.py | → | EN-001 — Circular Dependency Scanner (en_001_c... | 测试依赖 / test_depends |
-| 99 | D_AUDITTEST 审计测试套件: test_en_002_enforcement_validator.py | → | EN-002 — Enforcement Mode Validator (en_002_en... | 测试依赖 / test_depends |
-| 100 | D_AUDITTEST 审计测试套件: test_en_003_contract_compatibility.py | → | EN-003 — Contract Compatibility Checker (en_00... | 测试依赖 / test_depends |
-| 101 | D_AUDITTEST 审计测试套件: test_en_process_lifecycle_gateway.py | → | EN-process-lifecycle-gateway — 进程创建入口校.... | 测试依赖 / test_depends |
-| 102 | D_AUDITTEST 审计测试套件: test_post_doc_review.py | → | PostDocReviewScanner — Session 关门时文档内容.... | 测试依赖 / test_depends |
-| 103 | D_AUDITTEST 审计测试套件: test_zero_residue_check.py | → | zero_residue_check.py | 测试依赖 / test_depends |
-| 104 | D_AUDITTEST 审计测试套件: test_adaptive_threshold.py | → | 自适应阈值——从历史 FAIL/PASS 数据学习门禁参数... | 测试依赖 / test_depends |
-| 105 | D_AUDITTEST 审计测试套件: test_adversarial_strategies.py | → | Adversarial sample generator and 5 attack strat... | 测试依赖 / test_depends |
-| 106 | D_AUDITTEST 审计测试套件: test_breaking_change_detector.py | → | Breaking Change 检测器（GATE-CDC-2）——字段删.... | 测试依赖 / test_depends |
-| 107 | D_AUDITTEST 审计测试套件: test_end_to_end_walkthrough.py | → | 端到端场景走查验证器（End-to-End Walkthrough Va... | 测试依赖 / test_depends |
-| 108 | D_AUDITTEST 审计测试套件: test_integration_test_runner.py | → | 集成测试运行器（Integration Test Runner） (inte... | 测试依赖 / test_depends |
-| 109 | D_AUDITTEST 审计测试套件: test_kiss_enforcer.py | → | KISS 约束执行器（CT-KISS-001）——AI产出复杂度.... | 测试依赖 / test_depends |
-| 110 | D_AUDITTEST 审计测试套件: test_output_quality_gate.py | → | output_quality_gate.py | 测试依赖 / test_depends |
-| 111 | D_AUDITTEST 审计测试套件: test_secrets_guard.py | → | Secrets 守护（CT-SECRETS-001）——.env校验+git ... | 测试依赖 / test_depends |
-| 112 | D_AUDITTEST 审计测试套件: test_triple_alignment.py | → | G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁 ... | 测试依赖 / test_depends |
-| 113 | D_AUDITTEST 审计测试套件: test_preemption_manager.py | → | task_types.py | 测试依赖 / test_depends |
-| 114 | D_AUDITTEST 审计测试套件: test_kb_activate.py | → | gate_types.py | 测试依赖 / test_depends |
-| 115 | D_AUDITTEST 审计测试套件: test_kb_analyze.py | → | gate_types.py | 测试依赖 / test_depends |
-| 116 | D_AUDITTEST 审计测试套件: test_kb_extract.py | → | gate_types.py | 测试依赖 / test_depends |
-| 117 | D_AUDITTEST 审计测试套件: test_kb_migration_gate.py | → | task_types.py | 测试依赖 / test_depends |
-| 118 | D_AUDITTEST 审计测试套件: test_db.py | → | task_types.py | 测试依赖 / test_depends |
-| 119 | D_AUDITTEST 审计测试套件: test_risk_ssot.py | → | risk_ssot — 从 ``config/risk_params.yaml`` 加.... | 测试依赖 / test_depends |
-| 120 | D_AUDITTEST 审计测试套件: test_rule_canary_manager.py | → | Rule Canary Manager — v0.10.0 规则金丝雀: 1%用... | 测试依赖 / test_depends |
-| 121 | D_AUDITTEST 审计测试套件: test_rule_debt_auditor.py | → | Rule Debt Auditor — v0.7.0 规则债务审计器: 分.... | 测试依赖 / test_depends |
-| 122 | D_AUDITTEST 审计测试套件: test_rule_e2e.py | → | RuleLoader — 规则加载核心 API (rule_engine.py) | 测试依赖 / test_depends |
-| 123 | D_AUDITTEST 审计测试套件: test_rule_integration.py | → | RuleLoader — 规则加载核心 API (rule_engine.py) | 测试依赖 / test_depends |
-| 124 | D_AUDITTEST 审计测试套件: test_rule_shadow_runner.py | → | Rule Shadow Runner — v0.10.0 规则影子模式: 新.... | 测试依赖 / test_depends |
-| 125 | D_AUDITTEST 审计测试套件: test_task_types.py | → | task_types.py | 测试依赖 / test_depends |
-| 126 | D_AUDITTEST 审计测试套件: Test gate g_trae_003 for rule TRAE-003 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 127 | D_AUDITTEST 审计测试套件: Test gate g_trae_003 for rule TRAE-003 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 128 | D_AUDITTEST 审计测试套件: Test gate g_trae_004 for rule TRAE-004 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 129 | D_AUDITTEST 审计测试套件: Test gate g_trae_004 for rule TRAE-004 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 130 | D_AUDITTEST 审计测试套件: Test gate g_trae_006 for rule TRAE-006 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 131 | D_AUDITTEST 审计测试套件: Test gate g_trae_006 for rule TRAE-006 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 132 | D_AUDITTEST 审计测试套件: Test gate g_trae_007 for rule TRAE-007 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 133 | D_AUDITTEST 审计测试套件: Test gate g_trae_007 for rule TRAE-007 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 134 | D_AUDITTEST 审计测试套件: Test gate g_trae_008 for rule TRAE-008 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 135 | D_AUDITTEST 审计测试套件: Test gate g_trae_008 for rule TRAE-008 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 136 | D_AUDITTEST 审计测试套件: Test gate g_trae_009 for rule TRAE-009 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 137 | D_AUDITTEST 审计测试套件: Test gate g_trae_009 for rule TRAE-009 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 138 | D_AUDITTEST 审计测试套件: Test gate g_trae_010 for rule TRAE-010 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 139 | D_AUDITTEST 审计测试套件: Test gate g_trae_010 for rule TRAE-010 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 140 | D_AUDITTEST 审计测试套件: Test gate g_trae_011 for rule TRAE-011 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 141 | D_AUDITTEST 审计测试套件: Test gate g_trae_011 for rule TRAE-011 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 142 | D_AUDITTEST 审计测试套件: Test gate g_trae_012 for rule TRAE-012 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 143 | D_AUDITTEST 审计测试套件: Test gate g_trae_012 for rule TRAE-012 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 144 | D_AUDITTEST 审计测试套件: Test gate g_trae_016 for rule TRAE-016 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 145 | D_AUDITTEST 审计测试套件: Test gate g_trae_016 for rule TRAE-016 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 146 | D_AUDITTEST 审计测试套件: Test gate g_trae_017 for rule TRAE-017 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 147 | D_AUDITTEST 审计测试套件: Test gate g_trae_017 for rule TRAE-017 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 148 | D_AUDITTEST 审计测试套件: Test gate g_trae_018 for rule TRAE-018 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 149 | D_AUDITTEST 审计测试套件: Test gate g_trae_018 for rule TRAE-018 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 150 | D_AUDITTEST 审计测试套件: Test gate g_trae_020 for rule TRAE-020 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 151 | D_AUDITTEST 审计测试套件: Test gate g_trae_020 for rule TRAE-020 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 152 | D_AUDITTEST 审计测试套件: Test gate g_trae_021 for rule TRAE-021 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 153 | D_AUDITTEST 审计测试套件: Test gate g_trae_021 for rule TRAE-021 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 154 | D_AUDITTEST 审计测试套件: Test gate g_trae_022 for rule TRAE-022 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 155 | D_AUDITTEST 审计测试套件: Test gate g_trae_022 for rule TRAE-022 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 156 | D_AUDITTEST 审计测试套件: Test gate g_trae_023 for rule TRAE-023 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 157 | D_AUDITTEST 审计测试套件: Test gate g_trae_023 for rule TRAE-023 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 158 | D_AUDITTEST 审计测试套件: Test gate g_trae_024 for rule TRAE-024 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 159 | D_AUDITTEST 审计测试套件: Test gate g_trae_024 for rule TRAE-024 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 160 | D_AUDITTEST 审计测试套件: Test gate g_trae_025 for rule TRAE-025 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 161 | D_AUDITTEST 审计测试套件: Test gate g_trae_025 for rule TRAE-025 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 162 | D_AUDITTEST 审计测试套件: Test gate g_trae_026 for rule TRAE-026 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 163 | D_AUDITTEST 审计测试套件: Test gate g_trae_026 for rule TRAE-026 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 164 | D_AUDITTEST 审计测试套件: Test gate g_trae_027 for rule TRAE-027 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 165 | D_AUDITTEST 审计测试套件: Test gate g_trae_027 for rule TRAE-027 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 166 | D_AUDITTEST 审计测试套件: Test gate g_trae_028 for rule TRAE-028 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 167 | D_AUDITTEST 审计测试套件: Test gate g_trae_028 for rule TRAE-028 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 168 | D_AUDITTEST 审计测试套件: Test gate g_trae_029 for rule TRAE-029 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 169 | D_AUDITTEST 审计测试套件: Test gate g_trae_029 for rule TRAE-029 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 170 | D_AUDITTEST 审计测试套件: Test gate g_trae_030 for rule TRAE-030 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 171 | D_AUDITTEST 审计测试套件: Test gate g_trae_030 for rule TRAE-030 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 172 | D_AUDITTEST 审计测试套件: Test gate g_trae_031 for rule TRAE-031 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 173 | D_AUDITTEST 审计测试套件: Test gate g_trae_031 for rule TRAE-031 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 174 | D_AUDITTEST 审计测试套件: Test gate g_trae_032 for rule TRAE-032 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 175 | D_AUDITTEST 审计测试套件: Test gate g_trae_032 for rule TRAE-032 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 176 | D_AUDITTEST 审计测试套件: Test gate g_trae_033 for rule TRAE-033 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 177 | D_AUDITTEST 审计测试套件: Test gate g_trae_033 for rule TRAE-033 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 178 | D_AUDITTEST 审计测试套件: Test gate g_trae_034 for rule TRAE-034 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 179 | D_AUDITTEST 审计测试套件: Test gate g_trae_034 for rule TRAE-034 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 180 | D_AUDITTEST 审计测试套件: Test gate g_trae_035 for rule TRAE-035 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 181 | D_AUDITTEST 审计测试套件: Test gate g_trae_035 for rule TRAE-035 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 182 | D_AUDITTEST 审计测试套件: Test gate g_trae_036 for rule TRAE-036 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 183 | D_AUDITTEST 审计测试套件: Test gate g_trae_036 for rule TRAE-036 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 184 | D_AUDITTEST 审计测试套件: Test gate g_trae_037 for rule TRAE-037 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 185 | D_AUDITTEST 审计测试套件: Test gate g_trae_037 for rule TRAE-037 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 186 | D_AUDITTEST 审计测试套件: Test gate g_trae_038 for rule TRAE-038 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 187 | D_AUDITTEST 审计测试套件: Test gate g_trae_038 for rule TRAE-038 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 188 | D_AUDITTEST 审计测试套件: Test gate g_trae_039 for rule TRAE-039 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 189 | D_AUDITTEST 审计测试套件: Test gate g_trae_039 for rule TRAE-039 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 190 | D_AUDITTEST 审计测试套件: Test gate g_trae_040 for rule TRAE-040 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 191 | D_AUDITTEST 审计测试套件: Test gate g_trae_040 for rule TRAE-040 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 192 | D_AUDITTEST 审计测试套件: Test gate g_trae_041 for rule TRAE-041 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 193 | D_AUDITTEST 审计测试套件: Test gate g_trae_041 for rule TRAE-041 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 194 | D_AUDITTEST 审计测试套件: Test gate g_trae_042 for rule TRAE-042 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 195 | D_AUDITTEST 审计测试套件: Test gate g_trae_042 for rule TRAE-042 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 196 | D_AUDITTEST 审计测试套件: Test gate g_trae_043 for rule TRAE-043 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 197 | D_AUDITTEST 审计测试套件: Test gate g_trae_043 for rule TRAE-043 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 198 | D_AUDITTEST 审计测试套件: Test gate g_trae_044 for rule TRAE-044 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 199 | D_AUDITTEST 审计测试套件: Test gate g_trae_044 for rule TRAE-044 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 200 | D_AUDITTEST 审计测试套件: Test gate g_trae_045 for rule TRAE-045 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 201 | D_AUDITTEST 审计测试套件: Test gate g_trae_045 for rule TRAE-045 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 202 | D_AUDITTEST 审计测试套件: Test gate g_trae_046 for rule TRAE-046 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 203 | D_AUDITTEST 审计测试套件: Test gate g_trae_046 for rule TRAE-046 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 204 | D_AUDITTEST 审计测试套件: Test gate g_trae_047 for rule TRAE-047 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 205 | D_AUDITTEST 审计测试套件: Test gate g_trae_047 for rule TRAE-047 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 206 | D_AUDITTEST 审计测试套件: Test gate g_trae_048 for rule TRAE-048 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 207 | D_AUDITTEST 审计测试套件: Test gate g_trae_048 for rule TRAE-048 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 208 | D_AUDITTEST 审计测试套件: Test gate g_trae_049 for rule TRAE-049 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 209 | D_AUDITTEST 审计测试套件: Test gate g_trae_049 for rule TRAE-049 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 210 | D_AUDITTEST 审计测试套件: Test gate g_trae_050 for rule TRAE-050 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 211 | D_AUDITTEST 审计测试套件: Test gate g_trae_050 for rule TRAE-050 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 212 | D_AUDITTEST 审计测试套件: Test gate g_trae_051 for rule TRAE-051 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 213 | D_AUDITTEST 审计测试套件: Test gate g_trae_051 for rule TRAE-051 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 214 | D_AUDITTEST 审计测试套件: Test gate g_trae_052 for rule TRAE-052 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 215 | D_AUDITTEST 审计测试套件: Test gate g_trae_052 for rule TRAE-052 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 216 | D_AUDITTEST 审计测试套件: Test gate g_trae_053 for rule TRAE-053 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 217 | D_AUDITTEST 审计测试套件: Test gate g_trae_053 for rule TRAE-053 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 218 | D_AUDITTEST 审计测试套件: Test gate g_trae_054 for rule TRAE-054 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 219 | D_AUDITTEST 审计测试套件: Test gate g_trae_054 for rule TRAE-054 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 220 | D_AUDITTEST 审计测试套件: Test gate g_trae_055 for rule TRAE-055 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
-| 221 | D_AUDITTEST 审计测试套件: Test gate g_trae_055 for rule TRAE-055 — calls... | → | task_types.py | 测试依赖 / test_depends |
-| 222 | D_AUDITTEST 审计测试套件: test_utils_testing.py | → | task_types.py | 测试依赖 / test_depends |
-| 223 | D_AUTONOMY_CORE 自治核心: file_autoregister.py | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 224 | D_AUTONOMY_CORE 自治核心: skill_executor.py | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 225 | D_GOVERNANCE 生命周期管理: blueprint.md | → | default_security_gateway.py | runtime / runtime |
+| 5 | D_AUDITTEST 审计测试套件: test_auto_split.py | → | task_types.py | 测试依赖 / test_depends |
+| 6 | D_AUDITTEST 审计测试套件: test_ba_integration_test_runner.py | → | 集成测试运行器（Integration Test Runner） (inte... | 测试依赖 / test_depends |
+| 7 | D_AUDITTEST 审计测试套件: test_ct_audit_findings_resolved.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 8 | D_AUDITTEST 审计测试套件: test_ct_audit_findings_resolved.py | → | task_types.py | 测试依赖 / test_depends |
+| 9 | D_AUDITTEST 审计测试套件: test_ct_blueprint_read_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 10 | D_AUDITTEST 审计测试套件: test_ct_blueprint_read_check.py | → | task_types.py | 测试依赖 / test_depends |
+| 11 | D_AUDITTEST 审计测试套件: test_ct_circuit_breaker.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 12 | D_AUDITTEST 审计测试套件: test_ct_circuit_breaker.py | → | task_types.py | 测试依赖 / test_depends |
+| 13 | D_AUDITTEST 审计测试套件: test_ct_circular_dependency_scan.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 14 | D_AUDITTEST 审计测试套件: test_ct_circular_dependency_scan.py | → | task_types.py | 测试依赖 / test_depends |
+| 15 | D_AUDITTEST 审计测试套件: test_ct_classification.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 16 | D_AUDITTEST 审计测试套件: test_ct_classification.py | → | task_types.py | 测试依赖 / test_depends |
+| 17 | D_AUDITTEST 审计测试套件: test_ct_content_length.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 18 | D_AUDITTEST 审计测试套件: test_ct_content_length.py | → | task_types.py | 测试依赖 / test_depends |
+| 19 | D_AUDITTEST 审计测试套件: test_ct_content_quality.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 20 | D_AUDITTEST 审计测试套件: test_ct_content_quality.py | → | task_types.py | 测试依赖 / test_depends |
+| 21 | D_AUDITTEST 审计测试套件: test_ct_contract_compatibility_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 22 | D_AUDITTEST 审计测试套件: test_ct_contract_compatibility_check.py | → | task_types.py | 测试依赖 / test_depends |
+| 23 | D_AUDITTEST 审计测试套件: test_ct_deduplication.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 24 | D_AUDITTEST 审计测试套件: test_ct_deduplication.py | → | task_types.py | 测试依赖 / test_depends |
+| 25 | D_AUDITTEST 审计测试套件: test_ct_drift_budget.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 26 | D_AUDITTEST 审计测试套件: test_ct_drift_budget.py | → | task_types.py | 测试依赖 / test_depends |
+| 27 | D_AUDITTEST 审计测试套件: test_ct_encoding.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 28 | D_AUDITTEST 审计测试套件: test_ct_encoding.py | → | task_types.py | 测试依赖 / test_depends |
+| 29 | D_AUDITTEST 审计测试套件: test_ct_enforcement_mode_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 30 | D_AUDITTEST 审计测试套件: test_ct_enforcement_mode_check.py | → | task_types.py | 测试依赖 / test_depends |
+| 31 | D_AUDITTEST 审计测试套件: test_ct_field_presence.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 32 | D_AUDITTEST 审计测试套件: test_ct_field_presence.py | → | task_types.py | 测试依赖 / test_depends |
+| 33 | D_AUDITTEST 审计测试套件: test_ct_file_extension.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 34 | D_AUDITTEST 审计测试套件: test_ct_file_extension.py | → | task_types.py | 测试依赖 / test_depends |
+| 35 | D_AUDITTEST 审计测试套件: test_ct_fle_gate.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 36 | D_AUDITTEST 审计测试套件: test_ct_fle_gate.py | → | task_types.py | 测试依赖 / test_depends |
+| 37 | D_AUDITTEST 审计测试套件: test_ct_frontmatter.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 38 | D_AUDITTEST 审计测试套件: test_ct_frontmatter.py | → | task_types.py | 测试依赖 / test_depends |
+| 39 | D_AUDITTEST 审计测试套件: test_ct_leverage_limit.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 40 | D_AUDITTEST 审计测试套件: test_ct_leverage_limit.py | → | task_types.py | 测试依赖 / test_depends |
+| 41 | D_AUDITTEST 审计测试套件: test_ct_line_ending.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 42 | D_AUDITTEST 审计测试套件: test_ct_line_ending.py | → | task_types.py | 测试依赖 / test_depends |
+| 43 | D_AUDITTEST 审计测试套件: test_ct_manual_approval.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 44 | D_AUDITTEST 审计测试套件: test_ct_manual_approval.py | → | task_types.py | 测试依赖 / test_depends |
+| 45 | D_AUDITTEST 审计测试套件: test_ct_path_blacklist.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 46 | D_AUDITTEST 审计测试套件: test_ct_path_blacklist.py | → | task_types.py | 测试依赖 / test_depends |
+| 47 | D_AUDITTEST 审计测试套件: test_ct_path_routing.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 48 | D_AUDITTEST 审计测试套件: test_ct_path_routing.py | → | task_types.py | 测试依赖 / test_depends |
+| 49 | D_AUDITTEST 审计测试套件: test_ct_path_whitelist.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 50 | D_AUDITTEST 审计测试套件: test_ct_path_whitelist.py | → | task_types.py | 测试依赖 / test_depends |
+| 51 | D_AUDITTEST 审计测试套件: test_ct_position_limit.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 52 | D_AUDITTEST 审计测试套件: test_ct_position_limit.py | → | task_types.py | 测试依赖 / test_depends |
+| 53 | D_AUDITTEST 审计测试套件: test_ct_reference_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 54 | D_AUDITTEST 审计测试套件: test_ct_reference_check.py | → | task_types.py | 测试依赖 / test_depends |
+| 55 | D_AUDITTEST 审计测试套件: test_ct_regex_pattern.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 56 | D_AUDITTEST 审计测试套件: test_ct_regex_pattern.py | → | task_types.py | 测试依赖 / test_depends |
+| 57 | D_AUDITTEST 审计测试套件: test_ct_restructuring_safety.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 58 | D_AUDITTEST 审计测试套件: test_ct_restructuring_safety.py | → | task_types.py | 测试依赖 / test_depends |
+| 59 | D_AUDITTEST 审计测试套件: test_ct_rollback_exit_code.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 60 | D_AUDITTEST 审计测试套件: test_ct_rollback_exit_code.py | → | task_types.py | 测试依赖 / test_depends |
+| 61 | D_AUDITTEST 审计测试套件: test_ct_score_threshold.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 62 | D_AUDITTEST 审计测试套件: test_ct_score_threshold.py | → | task_types.py | 测试依赖 / test_depends |
+| 63 | D_AUDITTEST 审计测试套件: test_ct_security_artifact_scan.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 64 | D_AUDITTEST 审计测试套件: test_ct_security_artifact_scan.py | → | task_types.py | 测试依赖 / test_depends |
+| 65 | D_AUDITTEST 审计测试套件: test_ct_strategy_correlation.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 66 | D_AUDITTEST 审计测试套件: test_ct_strategy_correlation.py | → | task_types.py | 测试依赖 / test_depends |
+| 67 | D_AUDITTEST 审计测试套件: test_ct_temporal.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 68 | D_AUDITTEST 审计测试套件: test_ct_temporal.py | → | task_types.py | 测试依赖 / test_depends |
+| 69 | D_AUDITTEST 审计测试套件: test_ct_zero_residue_check.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 70 | D_AUDITTEST 审计测试套件: test_ct_zero_residue_check.py | → | task_types.py | 测试依赖 / test_depends |
+| 71 | D_AUDITTEST 审计测试套件: test_db_transition.py | → | task_types.py | 测试依赖 / test_depends |
+| 72 | D_AUDITTEST 审计测试套件: test_e_gov_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
+| 73 | D_AUDITTEST 审计测试套件: test_e_slo_contract.py | → | SLO-Driven Escalation Contract — D-022-12. (sl... | 测试依赖 / test_depends |
+| 74 | D_AUDITTEST 审计测试套件: test_escalation_gov_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
+| 75 | D_AUDITTEST 审计测试套件: test_fl_adversarial_validation.py | → | AdversarialValidationGate — validates outputs ... | 测试依赖 / test_depends |
+| 76 | D_AUDITTEST 审计测试套件: test_file_task_mapper_root.py | → | task_types.py | 测试依赖 / test_depends |
+| 77 | D_AUDITTEST 审计测试套件: test_gate_context.py | → | 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
+| 78 | D_AUDITTEST 审计测试套件: test_gate_health.py | → | 门禁健康仪表板——per-gate SLI 报告、误报率、延... | 测试依赖 / test_depends |
+| 79 | D_AUDITTEST 审计测试套件: test_gate_integrity_guard.py | → | 门禁引擎完整性守卫——自检SHA-256校验+trust roo... | 测试依赖 / test_depends |
+| 80 | D_AUDITTEST 审计测试套件: test_gate_override.py | → | Owner 紧急旁路——时间限定的门禁临时绕过 + 审计... | 测试依赖 / test_depends |
+| 81 | D_AUDITTEST 审计测试套件: test_gate_pipeline.py | → | 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
+| 82 | D_AUDITTEST 审计测试套件: test_gate_pipeline.py | → | 门禁评估管线——排序解析、组合逻辑（AND/OR/NOT.... | 测试依赖 / test_depends |
+| 83 | D_AUDITTEST 审计测试套件: test_gate_simulator.py | → | 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
+| 84 | D_AUDITTEST 审计测试套件: test_gate_simulator.py | → | 门禁评估管线——排序解析、组合逻辑（AND/OR/NOT.... | 测试依赖 / test_depends |
+| 85 | D_AUDITTEST 审计测试套件: test_gate_simulator.py | → | 门禁模拟器——dry-run 全链路门禁演练，不修改任.... | 测试依赖 / test_depends |
+| 86 | D_AUDITTEST 审计测试套件: test_gate_types.py | → | gate_types.py | 测试依赖 / test_depends |
+| 87 | D_AUDITTEST 审计测试套件: test_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
+| 88 | D_AUDITTEST 审计测试套件: test_pre_flight_gate.py | → | pre_flight_gate.py | 测试依赖 / test_depends |
+| 89 | D_AUDITTEST 审计测试套件: test_slo_contract.py | → | SLO-Driven Escalation Contract — D-022-12. (sl... | 测试依赖 / test_depends |
+| 90 | D_AUDITTEST 审计测试套件: test_base_repo.py | → | task_types.py | 测试依赖 / test_depends |
+| 91 | D_AUDITTEST 审计测试套件: test_check_type_registry.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 92 | D_AUDITTEST 审计测试套件: test_adversarial_gate_integration.py | → | Adversarial sample generator and 5 attack strat... | 测试依赖 / test_depends |
+| 93 | D_AUDITTEST 审计测试套件: test_adversarial_gate_integration.py | → | CheckTypeHandler — CheckTypeHandler (check_typ... | 测试依赖 / test_depends |
+| 94 | D_AUDITTEST 审计测试套件: test_adversarial_gate_integration.py | → | AdversarialValidationGate — validates outputs ... | 测试依赖 / test_depends |
+| 95 | D_AUDITTEST 审计测试套件: test_adversarial_validation.py | → | AdversarialValidationGate — validates outputs ... | 测试依赖 / test_depends |
+| 96 | D_AUDITTEST 审计测试套件: test_adversarial_validation_gate.py | → | AdversarialValidationGate — validates outputs ... | 测试依赖 / test_depends |
+| 97 | D_AUDITTEST 审计测试套件: test_en_001_circular_dependency.py | → | EN-001 — Circular Dependency Scanner (en_001_c... | 测试依赖 / test_depends |
+| 98 | D_AUDITTEST 审计测试套件: test_en_002_enforcement_validator.py | → | EN-002 — Enforcement Mode Validator (en_002_en... | 测试依赖 / test_depends |
+| 99 | D_AUDITTEST 审计测试套件: test_en_003_contract_compatibility.py | → | EN-003 — Contract Compatibility Checker (en_00... | 测试依赖 / test_depends |
+| 100 | D_AUDITTEST 审计测试套件: test_en_process_lifecycle_gateway.py | → | EN-process-lifecycle-gateway — 进程创建入口校.... | 测试依赖 / test_depends |
+| 101 | D_AUDITTEST 审计测试套件: test_post_doc_review.py | → | PostDocReviewScanner — Session 关门时文档内容.... | 测试依赖 / test_depends |
+| 102 | D_AUDITTEST 审计测试套件: test_zero_residue_check.py | → | zero_residue_check.py | 测试依赖 / test_depends |
+| 103 | D_AUDITTEST 审计测试套件: test_adaptive_threshold.py | → | 自适应阈值——从历史 FAIL/PASS 数据学习门禁参数... | 测试依赖 / test_depends |
+| 104 | D_AUDITTEST 审计测试套件: test_adversarial_strategies.py | → | Adversarial sample generator and 5 attack strat... | 测试依赖 / test_depends |
+| 105 | D_AUDITTEST 审计测试套件: test_breaking_change_detector.py | → | Breaking Change 检测器（GATE-CDC-2）——字段删.... | 测试依赖 / test_depends |
+| 106 | D_AUDITTEST 审计测试套件: test_end_to_end_walkthrough.py | → | 端到端场景走查验证器（End-to-End Walkthrough Va... | 测试依赖 / test_depends |
+| 107 | D_AUDITTEST 审计测试套件: test_integration_test_runner.py | → | 集成测试运行器（Integration Test Runner） (inte... | 测试依赖 / test_depends |
+| 108 | D_AUDITTEST 审计测试套件: test_kiss_enforcer.py | → | KISS 约束执行器（CT-KISS-001）——AI产出复杂度.... | 测试依赖 / test_depends |
+| 109 | D_AUDITTEST 审计测试套件: test_output_quality_gate.py | → | output_quality_gate.py | 测试依赖 / test_depends |
+| 110 | D_AUDITTEST 审计测试套件: test_secrets_guard.py | → | Secrets 守护（CT-SECRETS-001）——.env校验+git ... | 测试依赖 / test_depends |
+| 111 | D_AUDITTEST 审计测试套件: test_triple_alignment.py | → | G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁 ... | 测试依赖 / test_depends |
+| 112 | D_AUDITTEST 审计测试套件: test_preemption_manager.py | → | task_types.py | 测试依赖 / test_depends |
+| 113 | D_AUDITTEST 审计测试套件: test_kb_activate.py | → | gate_types.py | 测试依赖 / test_depends |
+| 114 | D_AUDITTEST 审计测试套件: test_kb_analyze.py | → | gate_types.py | 测试依赖 / test_depends |
+| 115 | D_AUDITTEST 审计测试套件: test_kb_extract.py | → | gate_types.py | 测试依赖 / test_depends |
+| 116 | D_AUDITTEST 审计测试套件: test_kb_migration_gate.py | → | task_types.py | 测试依赖 / test_depends |
+| 117 | D_AUDITTEST 审计测试套件: test_db.py | → | task_types.py | 测试依赖 / test_depends |
+| 118 | D_AUDITTEST 审计测试套件: test_risk_ssot.py | → | risk_ssot — 从 ``config/risk_params.yaml`` 加.... | 测试依赖 / test_depends |
+| 119 | D_AUDITTEST 审计测试套件: test_rule_canary_manager.py | → | Rule Canary Manager — v0.10.0 规则金丝雀: 1%用... | 测试依赖 / test_depends |
+| 120 | D_AUDITTEST 审计测试套件: test_rule_debt_auditor.py | → | Rule Debt Auditor — v0.7.0 规则债务审计器: 分.... | 测试依赖 / test_depends |
+| 121 | D_AUDITTEST 审计测试套件: test_rule_e2e.py | → | RuleLoader — 规则加载核心 API (rule_engine.py) | 测试依赖 / test_depends |
+| 122 | D_AUDITTEST 审计测试套件: test_rule_integration.py | → | RuleLoader — 规则加载核心 API (rule_engine.py) | 测试依赖 / test_depends |
+| 123 | D_AUDITTEST 审计测试套件: test_rule_shadow_runner.py | → | Rule Shadow Runner — v0.10.0 规则影子模式: 新.... | 测试依赖 / test_depends |
+| 124 | D_AUDITTEST 审计测试套件: test_task_types.py | → | task_types.py | 测试依赖 / test_depends |
+| 125 | D_AUDITTEST 审计测试套件: Test gate g_trae_003 for rule TRAE-003 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 126 | D_AUDITTEST 审计测试套件: Test gate g_trae_003 for rule TRAE-003 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 127 | D_AUDITTEST 审计测试套件: Test gate g_trae_004 for rule TRAE-004 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 128 | D_AUDITTEST 审计测试套件: Test gate g_trae_004 for rule TRAE-004 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 129 | D_AUDITTEST 审计测试套件: Test gate g_trae_006 for rule TRAE-006 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 130 | D_AUDITTEST 审计测试套件: Test gate g_trae_006 for rule TRAE-006 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 131 | D_AUDITTEST 审计测试套件: Test gate g_trae_007 for rule TRAE-007 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 132 | D_AUDITTEST 审计测试套件: Test gate g_trae_007 for rule TRAE-007 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 133 | D_AUDITTEST 审计测试套件: Test gate g_trae_008 for rule TRAE-008 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 134 | D_AUDITTEST 审计测试套件: Test gate g_trae_008 for rule TRAE-008 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 135 | D_AUDITTEST 审计测试套件: Test gate g_trae_009 for rule TRAE-009 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 136 | D_AUDITTEST 审计测试套件: Test gate g_trae_009 for rule TRAE-009 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 137 | D_AUDITTEST 审计测试套件: Test gate g_trae_010 for rule TRAE-010 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 138 | D_AUDITTEST 审计测试套件: Test gate g_trae_010 for rule TRAE-010 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 139 | D_AUDITTEST 审计测试套件: Test gate g_trae_011 for rule TRAE-011 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 140 | D_AUDITTEST 审计测试套件: Test gate g_trae_011 for rule TRAE-011 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 141 | D_AUDITTEST 审计测试套件: Test gate g_trae_012 for rule TRAE-012 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 142 | D_AUDITTEST 审计测试套件: Test gate g_trae_012 for rule TRAE-012 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 143 | D_AUDITTEST 审计测试套件: Test gate g_trae_016 for rule TRAE-016 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 144 | D_AUDITTEST 审计测试套件: Test gate g_trae_016 for rule TRAE-016 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 145 | D_AUDITTEST 审计测试套件: Test gate g_trae_017 for rule TRAE-017 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 146 | D_AUDITTEST 审计测试套件: Test gate g_trae_017 for rule TRAE-017 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 147 | D_AUDITTEST 审计测试套件: Test gate g_trae_018 for rule TRAE-018 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 148 | D_AUDITTEST 审计测试套件: Test gate g_trae_018 for rule TRAE-018 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 149 | D_AUDITTEST 审计测试套件: Test gate g_trae_020 for rule TRAE-020 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 150 | D_AUDITTEST 审计测试套件: Test gate g_trae_020 for rule TRAE-020 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 151 | D_AUDITTEST 审计测试套件: Test gate g_trae_021 for rule TRAE-021 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 152 | D_AUDITTEST 审计测试套件: Test gate g_trae_021 for rule TRAE-021 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 153 | D_AUDITTEST 审计测试套件: Test gate g_trae_022 for rule TRAE-022 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 154 | D_AUDITTEST 审计测试套件: Test gate g_trae_022 for rule TRAE-022 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 155 | D_AUDITTEST 审计测试套件: Test gate g_trae_023 for rule TRAE-023 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 156 | D_AUDITTEST 审计测试套件: Test gate g_trae_023 for rule TRAE-023 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 157 | D_AUDITTEST 审计测试套件: Test gate g_trae_024 for rule TRAE-024 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 158 | D_AUDITTEST 审计测试套件: Test gate g_trae_024 for rule TRAE-024 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 159 | D_AUDITTEST 审计测试套件: Test gate g_trae_025 for rule TRAE-025 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 160 | D_AUDITTEST 审计测试套件: Test gate g_trae_025 for rule TRAE-025 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 161 | D_AUDITTEST 审计测试套件: Test gate g_trae_026 for rule TRAE-026 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 162 | D_AUDITTEST 审计测试套件: Test gate g_trae_026 for rule TRAE-026 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 163 | D_AUDITTEST 审计测试套件: Test gate g_trae_027 for rule TRAE-027 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 164 | D_AUDITTEST 审计测试套件: Test gate g_trae_027 for rule TRAE-027 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 165 | D_AUDITTEST 审计测试套件: Test gate g_trae_028 for rule TRAE-028 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 166 | D_AUDITTEST 审计测试套件: Test gate g_trae_028 for rule TRAE-028 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 167 | D_AUDITTEST 审计测试套件: Test gate g_trae_029 for rule TRAE-029 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 168 | D_AUDITTEST 审计测试套件: Test gate g_trae_029 for rule TRAE-029 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 169 | D_AUDITTEST 审计测试套件: Test gate g_trae_030 for rule TRAE-030 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 170 | D_AUDITTEST 审计测试套件: Test gate g_trae_030 for rule TRAE-030 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 171 | D_AUDITTEST 审计测试套件: Test gate g_trae_031 for rule TRAE-031 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 172 | D_AUDITTEST 审计测试套件: Test gate g_trae_031 for rule TRAE-031 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 173 | D_AUDITTEST 审计测试套件: Test gate g_trae_032 for rule TRAE-032 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 174 | D_AUDITTEST 审计测试套件: Test gate g_trae_032 for rule TRAE-032 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 175 | D_AUDITTEST 审计测试套件: Test gate g_trae_033 for rule TRAE-033 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 176 | D_AUDITTEST 审计测试套件: Test gate g_trae_033 for rule TRAE-033 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 177 | D_AUDITTEST 审计测试套件: Test gate g_trae_034 for rule TRAE-034 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 178 | D_AUDITTEST 审计测试套件: Test gate g_trae_034 for rule TRAE-034 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 179 | D_AUDITTEST 审计测试套件: Test gate g_trae_035 for rule TRAE-035 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 180 | D_AUDITTEST 审计测试套件: Test gate g_trae_035 for rule TRAE-035 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 181 | D_AUDITTEST 审计测试套件: Test gate g_trae_036 for rule TRAE-036 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 182 | D_AUDITTEST 审计测试套件: Test gate g_trae_036 for rule TRAE-036 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 183 | D_AUDITTEST 审计测试套件: Test gate g_trae_037 for rule TRAE-037 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 184 | D_AUDITTEST 审计测试套件: Test gate g_trae_037 for rule TRAE-037 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 185 | D_AUDITTEST 审计测试套件: Test gate g_trae_038 for rule TRAE-038 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 186 | D_AUDITTEST 审计测试套件: Test gate g_trae_038 for rule TRAE-038 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 187 | D_AUDITTEST 审计测试套件: Test gate g_trae_039 for rule TRAE-039 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 188 | D_AUDITTEST 审计测试套件: Test gate g_trae_039 for rule TRAE-039 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 189 | D_AUDITTEST 审计测试套件: Test gate g_trae_040 for rule TRAE-040 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 190 | D_AUDITTEST 审计测试套件: Test gate g_trae_040 for rule TRAE-040 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 191 | D_AUDITTEST 审计测试套件: Test gate g_trae_041 for rule TRAE-041 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 192 | D_AUDITTEST 审计测试套件: Test gate g_trae_041 for rule TRAE-041 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 193 | D_AUDITTEST 审计测试套件: Test gate g_trae_042 for rule TRAE-042 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 194 | D_AUDITTEST 审计测试套件: Test gate g_trae_042 for rule TRAE-042 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 195 | D_AUDITTEST 审计测试套件: Test gate g_trae_043 for rule TRAE-043 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 196 | D_AUDITTEST 审计测试套件: Test gate g_trae_043 for rule TRAE-043 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 197 | D_AUDITTEST 审计测试套件: Test gate g_trae_044 for rule TRAE-044 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 198 | D_AUDITTEST 审计测试套件: Test gate g_trae_044 for rule TRAE-044 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 199 | D_AUDITTEST 审计测试套件: Test gate g_trae_045 for rule TRAE-045 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 200 | D_AUDITTEST 审计测试套件: Test gate g_trae_045 for rule TRAE-045 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 201 | D_AUDITTEST 审计测试套件: Test gate g_trae_046 for rule TRAE-046 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 202 | D_AUDITTEST 审计测试套件: Test gate g_trae_046 for rule TRAE-046 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 203 | D_AUDITTEST 审计测试套件: Test gate g_trae_047 for rule TRAE-047 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 204 | D_AUDITTEST 审计测试套件: Test gate g_trae_047 for rule TRAE-047 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 205 | D_AUDITTEST 审计测试套件: Test gate g_trae_048 for rule TRAE-048 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 206 | D_AUDITTEST 审计测试套件: Test gate g_trae_048 for rule TRAE-048 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 207 | D_AUDITTEST 审计测试套件: Test gate g_trae_049 for rule TRAE-049 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 208 | D_AUDITTEST 审计测试套件: Test gate g_trae_049 for rule TRAE-049 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 209 | D_AUDITTEST 审计测试套件: Test gate g_trae_050 for rule TRAE-050 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 210 | D_AUDITTEST 审计测试套件: Test gate g_trae_050 for rule TRAE-050 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 211 | D_AUDITTEST 审计测试套件: Test gate g_trae_051 for rule TRAE-051 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 212 | D_AUDITTEST 审计测试套件: Test gate g_trae_051 for rule TRAE-051 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 213 | D_AUDITTEST 审计测试套件: Test gate g_trae_052 for rule TRAE-052 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 214 | D_AUDITTEST 审计测试套件: Test gate g_trae_052 for rule TRAE-052 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 215 | D_AUDITTEST 审计测试套件: Test gate g_trae_053 for rule TRAE-053 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 216 | D_AUDITTEST 审计测试套件: Test gate g_trae_053 for rule TRAE-053 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 217 | D_AUDITTEST 审计测试套件: Test gate g_trae_054 for rule TRAE-054 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 218 | D_AUDITTEST 审计测试套件: Test gate g_trae_054 for rule TRAE-054 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 219 | D_AUDITTEST 审计测试套件: Test gate g_trae_055 for rule TRAE-055 — calls... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 测试依赖 / test_depends |
+| 220 | D_AUDITTEST 审计测试套件: Test gate g_trae_055 for rule TRAE-055 — calls... | → | task_types.py | 测试依赖 / test_depends |
+| 221 | D_AUDITTEST 审计测试套件: test_utils_testing.py | → | task_types.py | 测试依赖 / test_depends |
+| 222 | D_AUTONOMY_CORE 自治核心: file_autoregister.py | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 223 | D_AUTONOMY_CORE 自治核心: skill_executor.py | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 224 | D_GOVERNANCE 生命周期管理: blueprint.md | → | default_security_gateway.py | runtime / runtime |
+| 225 | D_GOVERNANCE 生命周期管理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
 | 226 | D_GOVERNANCE 生命周期管理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
 | 227 | D_GOVERNANCE 生命周期管理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
-| 228 | D_GOVERNANCE 生命周期管理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
-| 229 | D_GOVERNANCE 生命周期管理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 230 | D_GOVERNANCE 生命周期管理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 231 | D_GOVERNANCE 生命周期管理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | gate_types.py | 导入依赖 / import_depends |
-| 232 | D_GOVERNANCE 生命周期管理: G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 233 | D_GOVERNANCE 生命周期管理: G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A... | → | gate_types.py | 导入依赖 / import_depends |
-| 234 | D_GOVERNANCE 生命周期管理: G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 235 | D_GOVERNANCE 生命周期管理: G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | gate_types.py | 导入依赖 / import_depends |
-| 236 | D_GOVERNANCE 生命周期管理: G3 Evaluate 门禁 — 深度评估（T-2-13-C） (analy... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 237 | D_GOVERNANCE 生命周期管理: G3 Evaluate 门禁 — 深度评估（T-2-13-C） (analy... | → | gate_types.py | 导入依赖 / import_depends |
-| 238 | D_GOVERNANCE 生命周期管理: G5 Extract 门禁 — 知识升格（T-2-13-E） (extrac... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 239 | D_GOVERNANCE 生命周期管理: G5 Extract 门禁 — 知识升格（T-2-13-E） (extrac... | → | gate_types.py | 导入依赖 / import_depends |
-| 240 | D_GOVERNANCE 生命周期管理: transition — 状态机转换 Mixin（从 task_repo.py... | → | gate_types.py | 导入依赖 / import_depends |
-| 241 | D_GOVERNANCE 生命周期管理: transition — 状态机转换 Mixin（从 task_repo.py... | → | task_types.py | 导入依赖 / import_depends |
-| 242 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 243 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | → | gate_types.py | 导入依赖 / import_depends |
-| 244 | D_GOVERNANCE 生命周期管理: D_DATA Data Source (__init__.py) | → | D_DATA — Data Quality Gate (quality_gate.py) | 导入依赖 / import_depends |
-| 245 | D_GOVERNANCE 生命周期管理: D_COMPLIANCE — Governance & Compliance Layer (... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
-| 246 | D_GOVERNANCE 生命周期管理: zephyr.trading.trading_contracts — trading-dom... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
-| 247 | D_GOV_DRIFT 漂移检测: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 248 | D_GOV_SCRIPTS 脚本治理: Red/Blue Team Adversarial Test v3: SYS-MASTER-0... | → | SYS-MASTER-001 Compliance Checker (sys_master_c... | 导入依赖 / import_depends |
+| 228 | D_GOVERNANCE 生命周期管理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 229 | D_GOVERNANCE 生命周期管理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 230 | D_GOVERNANCE 生命周期管理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | gate_types.py | 导入依赖 / import_depends |
+| 231 | D_GOVERNANCE 生命周期管理: G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 232 | D_GOVERNANCE 生命周期管理: G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A... | → | gate_types.py | 导入依赖 / import_depends |
+| 233 | D_GOVERNANCE 生命周期管理: G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 234 | D_GOVERNANCE 生命周期管理: G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | gate_types.py | 导入依赖 / import_depends |
+| 235 | D_GOVERNANCE 生命周期管理: G3 Evaluate 门禁 — 深度评估（T-2-13-C） (analy... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 236 | D_GOVERNANCE 生命周期管理: G3 Evaluate 门禁 — 深度评估（T-2-13-C） (analy... | → | gate_types.py | 导入依赖 / import_depends |
+| 237 | D_GOVERNANCE 生命周期管理: G5 Extract 门禁 — 知识升格（T-2-13-E） (extrac... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 238 | D_GOVERNANCE 生命周期管理: G5 Extract 门禁 — 知识升格（T-2-13-E） (extrac... | → | gate_types.py | 导入依赖 / import_depends |
+| 239 | D_GOVERNANCE 生命周期管理: transition — 状态机转换 Mixin（从 task_repo.py... | → | gate_types.py | 导入依赖 / import_depends |
+| 240 | D_GOVERNANCE 生命周期管理: transition — 状态机转换 Mixin（从 task_repo.py... | → | task_types.py | 导入依赖 / import_depends |
+| 241 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 242 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | → | gate_types.py | 导入依赖 / import_depends |
+| 243 | D_GOVERNANCE 生命周期管理: D_DATA Data Source (__init__.py) | → | D_DATA — Data Quality Gate (quality_gate.py) | 导入依赖 / import_depends |
+| 244 | D_GOVERNANCE 生命周期管理: D_COMPLIANCE — Governance & Compliance Layer (... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 245 | D_GOVERNANCE 生命周期管理: zephyr.trading.trading_contracts — trading-dom... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 246 | D_GOV_DRIFT 漂移检测: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 247 | D_GOV_SCRIPTS 脚本治理: Red/Blue Team Adversarial Test v3: SYS-MASTER-0... | → | SYS-MASTER-001 Compliance Checker (sys_master_c... | 导入依赖 / import_depends |
+| 248 | D_GOV_SCRIPTS 脚本治理: CBG 熔断器重置 CLI (CircuitBreakerGateway Reset... | → | CircuitBreakerGateway (CBG) — 模块间调用单向熔... | 导入依赖 / import_depends |
 | 249 | D_GOV_SCRIPTS 脚本治理: CBG 熔断器重置 CLI (CircuitBreakerGateway Reset... | → | CircuitBreakerGateway (CBG) — 模块间调用单向熔... | 导入依赖 / import_depends |
-| 250 | D_GOV_SCRIPTS 脚本治理: CBG 熔断器重置 CLI (CircuitBreakerGateway Reset... | → | CircuitBreakerGateway (CBG) — 模块间调用单向熔... | 导入依赖 / import_depends |
-| 251 | D_GOV_SCRIPTS 脚本治理: AI写入前强制门禁钩子: lock协议检查+GateEngine P... | → | ZephyrAlpha 门禁子包 (__init__.py) | 导入依赖 / import_depends |
-| 252 | D_GOV_SCRIPTS 脚本治理: create_task_from_finding.py — Finding → 任务.... | → | task_types.py | 导入依赖 / import_depends |
-| 253 | D_GOV_SCRIPTS 脚本治理: Gate Engine Bootstrap Self-Check — Quis custod... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 254 | D_GOV_SCRIPTS 脚本治理: validate_gate_engine_external.py — Gate Engine... | → | CircuitBreakerGateway (CBG) — 模块间调用单向熔... | 导入依赖 / import_depends |
-| 255 | D_GOV_SCRIPTS 脚本治理: validate_gate_engine_external.py — Gate Engine... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 250 | D_GOV_SCRIPTS 脚本治理: AI写入前强制门禁钩子: lock协议检查+GateEngine P... | → | ZephyrAlpha 门禁子包 (__init__.py) | 导入依赖 / import_depends |
+| 251 | D_GOV_SCRIPTS 脚本治理: create_task_from_finding.py — Finding → 任务.... | → | task_types.py | 导入依赖 / import_depends |
+| 252 | D_GOV_SCRIPTS 脚本治理: Gate Engine Bootstrap Self-Check — Quis custod... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 253 | D_GOV_SCRIPTS 脚本治理: validate_gate_engine_external.py — Gate Engine... | → | CircuitBreakerGateway (CBG) — 模块间调用单向熔... | 导入依赖 / import_depends |
+| 254 | D_GOV_SCRIPTS 脚本治理: validate_gate_engine_external.py — Gate Engine... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 255 | D_INFRA_TELEMETRY 可观测性: 遥测 · metrics — SLI/SLO 与业务指标流 (__init... | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
 | 256 | D_INTEGRATION_GATEWAY 集成网关: ZephyrAlpha MCP Task Manager Server (task_manag... | → | task_types.py | 导入依赖 / import_depends |
 | 257 | D_INTELLIGENCE 上下文管理: G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
 | 258 | D_INTELLIGENCE 上下文管理: G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | gate_types.py | 导入依赖 / import_depends |
@@ -1663,7 +1664,7 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 13 个外部域直接连接（出边 70 条 + 入边 271 条 = 341 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 14 个外部域直接连接（出边 70 条 + 入边 271 条 = 341 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -1679,25 +1680,27 @@ graph LR
     D_TRADING["D_TRADING<br/>交易运营"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
-    D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY<br/>集成网关"]
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>可观测性"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
+    D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY<br/>集成网关"]
     D_GOV_ENFORCEMENT -->|38条 contract / contract, 导入依赖 / import_depends, runtime / runtime| D_GOVERNANCE
     D_GOV_ENFORCEMENT -->|19条 导入依赖 / import_depends| D_SHARED
     D_GOV_ENFORCEMENT -->|6条 导入依赖 / import_depends| D_INTEGRATION
     D_GOV_ENFORCEMENT -->|3条 导入依赖 / import_depends| D_INFRA_RECOVERY
     D_GOV_ENFORCEMENT -->|3条 导入依赖 / import_depends| D_SECURITY
     D_GOV_ENFORCEMENT -->|1条 runtime / runtime| D_GOV_DRIFT
-    D_AUDITTEST -->|222条 runtime / runtime, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
+    D_AUDITTEST -->|221条 测试依赖 / test_depends| D_GOV_ENFORCEMENT
     D_GOVERNANCE -->|22条 contract / contract, 导入依赖 / import_depends, runtime / runtime| D_GOV_ENFORCEMENT
     D_GOV_SCRIPTS -->|8条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_SECURITY -->|6条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_TRADING -->|5条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_INTELLIGENCE -->|2条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_AUTONOMY_CORE -->|2条 导入依赖 / import_depends, runtime / runtime| D_GOV_ENFORCEMENT
-    D_INTEGRATION_GATEWAY -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    D_PF_CORE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_GOV_ENFORCEMENT
     D_GOV_DRIFT -->|1条 runtime / runtime| D_GOV_ENFORCEMENT
     D_SHARED -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_PF_CORE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_INTEGRATION_GATEWAY -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
 ```
 
 ## 说明 / Notes

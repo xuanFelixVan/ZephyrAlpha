@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 训练（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-09 05:45:34
+> 最后更新: 2026-07-09 06:14:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -95,9 +95,9 @@ graph TD
     end
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_init_py -.->|config_depends / config_depends| src_zephyr_ml_train_inference_base_py
-    src_zephyr_ml_train_implementations_init_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_init_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
@@ -169,9 +169,9 @@ graph TD
     end
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_init_py -.->|config_depends / config_depends| src_zephyr_ml_train_inference_base_py
-    src_zephyr_ml_train_implementations_init_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_init_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
