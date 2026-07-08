@@ -34,6 +34,9 @@ if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
     from zephyr.shared.foundation.models import TaskCard
 
+# 5.160.11 修复：TaskStatus字符串替换为Enum引用
+from zephyr.shared.foundation.constants import TaskStatus
+
 logger = logging.getLogger(__name__)
 
 __all__ = ["AutoPilot"]
@@ -68,7 +71,7 @@ class AutoPilot:
         ).fetchall()
         task_batch_map: dict[str, str] = {r["task_id"]: r["bid"] for r in rows}
 
-        tasks = self.repo.list_by_status("READY")
+        tasks = self.repo.list_by_status(TaskStatus.READY)
         grouped: dict[str, list[TaskCard]] = {}
         for t in tasks:
             bid = task_batch_map.get(t.task_id, "__no_batch__")
@@ -96,13 +99,13 @@ class AutoPilot:
             "",
             "  全局任务统计:",
         ]
-        for st in ["READY", "IN_PROGRESS", "BLOCKED", "WAITING", "PENDING", "COMPLETED", "FAILED", "CANCELLED"]:
+        for st in [TaskStatus.READY, TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED, TaskStatus.WAITING, TaskStatus.PENDING, TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED]:
             cnt = counts.get(st, 0)
-            marker = " <<<" if st == "READY" and cnt > 0 else ""
-            lines.append(f"    {st:14s}: {cnt:4d}{marker}")
+            marker = " <<<" if st == TaskStatus.READY and cnt > 0 else ""
+            lines.append(f"    {st.value:14s}: {cnt:4d}{marker}")
 
-        ready_tasks = self.repo.list_by_status("READY")
-        pending_tasks = self.repo.list_by_status("PENDING")
+        ready_tasks = self.repo.list_by_status(TaskStatus.READY)
+        pending_tasks = self.repo.list_by_status(TaskStatus.PENDING)
         actionable = ready_tasks + pending_tasks
         if actionable:
             rows = self.repo._conn.execute(

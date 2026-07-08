@@ -35,6 +35,9 @@ logger = logging.getLogger(__name__)
 from dataclasses import dataclass, field
 from typing import Any
 
+# 5.160.11 修复：TaskStatus字符串替换为Enum引用
+from zephyr.shared.foundation.constants import TaskStatus
+
 try:
     import panel as pn
 except ImportError:  # 测试环境无 panel
@@ -78,10 +81,10 @@ def fetch_task_progress(task_repo: Any = None) -> TaskProgressData:
             try:
                 tasks = task_repo.list_by_phase(phase)
                 pp.total_tasks = len(tasks)
-                pp.completed_tasks = sum(1 for t in tasks if t.status.value in ("COMPLETED", "VERIFIED"))
-                pp.in_progress_tasks = sum(1 for t in tasks if t.status.value == "IN_PROGRESS")
-                pp.failed_tasks = sum(1 for t in tasks if t.status.value == "FAILED")
-                pp.pending_tasks = sum(1 for t in tasks if t.status.value == "PENDING")
+                pp.completed_tasks = sum(1 for t in tasks if t.status.value in (TaskStatus.COMPLETED, TaskStatus.VERIFIED))
+                pp.in_progress_tasks = sum(1 for t in tasks if t.status.value == TaskStatus.IN_PROGRESS)
+                pp.failed_tasks = sum(1 for t in tasks if t.status.value == TaskStatus.FAILED)
+                pp.pending_tasks = sum(1 for t in tasks if t.status.value == TaskStatus.PENDING)
             except Exception as e:
                 logger.warning("suppressed error in task_progress", exc_info=True)
         data.phases.append(pp)

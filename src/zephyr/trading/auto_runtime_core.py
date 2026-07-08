@@ -26,6 +26,8 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+# 5.160.11 修复：TaskStatus字符串替换为Enum引用
+from zephyr.shared.foundation.constants import TaskStatus
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -298,7 +300,7 @@ class AutoRuntimeCore:
                     po = PipelineOrchestrator()
                     task_id = getattr(item, "task_id", "")
                     task = tr.get(task_id)
-                    if task and task.get("status") in ("READY", "PENDING"):
+                    if task and task.get("status") in (TaskStatus.READY, TaskStatus.PENDING):
                         po.dispatch(task)
                         return True
                 except Exception:

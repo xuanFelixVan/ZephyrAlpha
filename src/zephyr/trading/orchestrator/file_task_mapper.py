@@ -62,6 +62,38 @@ __all__ = [
 ]
 
 
+# 5.160.3 修复：SQL常量集中化
+SQL_SELECT_TASK_FILE_BY_FILE_PATH = (
+    "SELECT task_id FROM task_files WHERE file_path = ? ORDER BY task_id"
+)
+SQL_SELECT_TASK_FILE_BY_TASK_ID = (
+    "SELECT file_path, role FROM task_files WHERE task_id = ? ORDER BY role, file_path"
+)
+SQL_SELECT_TASK_NEXT_SEQ = (
+    "SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM tasks WHERE namespace = ?"
+)
+SQL_INSERT_TASK = """INSERT INTO tasks
+    (task_id, namespace, seq, phase, title, status, execution_model, safety_level,
+     directive, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, 'PENDING', ?, ?, '', ?, ?)"""
+SQL_INSERT_TASK_FILE = (
+    "INSERT OR IGNORE INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)"
+)
+SQL_SELECT_TASK_FILE_JOIN_BY_TASK_ID = (
+    "SELECT tf.task_id, tf.file_path, t.status "
+    "FROM task_files tf JOIN tasks t ON tf.task_id = t.task_id "
+    "WHERE tf.task_id = ? AND tf.role = 'primary'"
+)
+SQL_SELECT_TASK_FILE_JOIN_ALL = (
+    "SELECT tf.task_id, tf.file_path, t.status "
+    "FROM task_files tf JOIN tasks t ON tf.task_id = t.task_id "
+    "WHERE tf.role = 'primary'"
+)
+SQL_DELETE_TASK_FILE = "DELETE FROM task_files WHERE task_id = ?"
+SQL_DELETE_EVENT = "DELETE FROM events WHERE task_id = ?"
+SQL_DELETE_TASK = "DELETE FROM tasks WHERE task_id = ?"
+
+
 def classify_file_to_namespace(file_path: str) -> TaskNamespace:
     """
     从文件路径推导命名空间（#21 裁定：分类字段，不是 ID 的一部分）。
@@ -140,7 +172,7 @@ class FileTaskMapper:
         conn = get_db_connection(self._db_path)
         try:
             cursor = conn.execute(
-                "SELECT task_id FROM task_files WHERE file_path = ? ORDER BY task_id",
+                SQL_SELECT_TASK_FILE_BY_FILE_PATH,
                 (file_path.replace("\\", "/"),),
             )
             return [row["task_id"] for row in cursor.fetchall()]
@@ -152,7 +184,7 @@ class FileTaskMapper:
         conn = get_db_connection(self._db_path)
         try:
             cursor = conn.execute(
-                "SELECT file_path, role FROM task_files WHERE task_id = ? ORDER BY role, file_path",
+                SQL_SELECT_TASK_FILE_BY_TASK_ID,
                 (task_id,),
             )
             return [{"file_path": row["file_path"], "role": row["role"]} for row in cursor.fetchall()]
@@ -185,7 +217,7 @@ class FileTaskMapper:
         conn = get_db_connection(self._db_path)
         try:
             cursor = conn.execute(
-                "SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM tasks WHERE namespace = ?",
+                SQL_SELECT_TASK_NEXT_SEQ,
                 (namespace.value,),
             )
             next_seq = cursor.fetchone()["next_seq"]
@@ -195,14 +227,11 @@ class FileTaskMapper:
 
             conn.execute("BEGIN")
             conn.execute(
-                """INSERT INTO tasks
-                   (task_id, namespace, seq, phase, title, status, execution_model, safety_level,
-                    directive, created_at, updated_at)
-                   VALUES (?, ?, ?, ?, ?, 'PENDING', ?, ?, '', ?, ?)""",
+                SQL_INSERT_TASK,
                 (task_id, namespace.value, next_seq, phase, task_title, execution_model, safety_level, now, now),
             )
             conn.execute(
-                "INSERT OR IGNORE INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)",
+                SQL_INSERT_TASK_FILE,
                 (task_id, fp, role),
             )
             conn.execute("COMMIT")
@@ -244,7 +273,7 @@ class FileTaskMapper:
 
                 try:
                     cursor = conn.execute(
-                        "SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM tasks WHERE namespace = ?",
+                        SQL_SELECT_TASK_NEXT_SEQ,
                         (namespace.value,),
                     )
                     next_seq = cursor.fetchone()["next_seq"]
@@ -252,14 +281,11 @@ class FileTaskMapper:
 
                     conn.execute("BEGIN")
                     conn.execute(
-                        """INSERT INTO tasks
-                           (task_id, namespace, seq, phase, title, status, execution_model, safety_level,
-                            directive, created_at, updated_at)
-                           VALUES (?, ?, ?, ?, ?, 'PENDING', ?, ?, '', ?, ?)""",
+                        SQL_INSERT_TASK,
                         (task_id, namespace.value, next_seq, phase, title, execution_model, safety_level, now, now),
                     )
                     conn.execute(
-                        "INSERT OR IGNORE INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)",
+                        SQL_INSERT_TASK_FILE,
                         (task_id, fp, role),
                     )
                     conn.execute("COMMIT")
@@ -285,16 +311,12 @@ class FileTaskMapper:
         try:
             if task_id:
                 rows = conn.execute(
-                    "SELECT tf.task_id, tf.file_path, t.status "
-                    "FROM task_files tf JOIN tasks t ON tf.task_id = t.task_id "
-                    "WHERE tf.task_id = ? AND tf.role = 'primary'",
+                    SQL_SELECT_TASK_FILE_JOIN_BY_TASK_ID,
                     (task_id,),
                 ).fetchall()
             else:
                 rows = conn.execute(
-                    "SELECT tf.task_id, tf.file_path, t.status "
-                    "FROM task_files tf JOIN tasks t ON tf.task_id = t.task_id "
-                    "WHERE tf.role = 'primary'"
+                    SQL_SELECT_TASK_FILE_JOIN_ALL
                 ).fetchall()
 
             for row in rows:
@@ -325,9 +347,9 @@ class FileTaskMapper:
         conn = get_db_connection(self._db_path)
         try:
             conn.execute("BEGIN")
-            conn.execute("DELETE FROM task_files WHERE task_id = ?", (task_id,))
-            conn.execute("DELETE FROM events WHERE task_id = ?", (task_id,))
-            conn.execute("DELETE FROM tasks WHERE task_id = ?", (task_id,))
+            conn.execute(SQL_DELETE_TASK_FILE, (task_id,))
+            conn.execute(SQL_DELETE_EVENT, (task_id,))
+            conn.execute(SQL_DELETE_TASK, (task_id,))
             conn.execute("COMMIT")
         except Exception:
             conn.execute("ROLLBACK")

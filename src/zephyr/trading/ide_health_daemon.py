@@ -36,6 +36,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 from zephyr.shared.utils.time_utils import now_utc
 
+# 5.160.11 修复：TaskStatus字符串替换为Enum引用
+from zephyr.shared.foundation.constants import TaskStatus
+
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 
@@ -296,7 +299,7 @@ def kill_task_processes(task_id: str) -> list[int]:
 
 
 # 5.97.14 修复：抽取 cleanup_completed_tasks 内嵌 try-except 的 helper
-_COMPLETED_STATUSES = ["COMPLETED", "FAILED", "CANCELLED"]
+_COMPLETED_STATUSES = [TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED]
 
 
 def _list_completed_tasks(repo: Any, statuses: list[str]) -> list[Any]:
