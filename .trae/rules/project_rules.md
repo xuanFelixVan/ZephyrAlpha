@@ -46,6 +46,7 @@
 |------|---------|------|
 | **路径全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16，设计态+运行态合一。**⚠️ 禁止裸连！** MUST 用 `extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_depgraph_pg_connection()` 有限查询。详见 RULE-SIXTEEN |
 | **数据库清单（4库唯一真源）** | `docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml` | INFRA-DB-001~004（governance.db/ChromaDB/depgraph/DuckDB OLAP）。**禁止在其它文档同步数据库清单**。market.duckdb 已于2026-07-01废弃。详见 AGENTS.md §11.0 |
+| **真源分类铁律（TRAE-062）** | `docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml` | 两类真源：①规则数据→YAML 真源（DB 只读缓存）②架构数据→PostgreSQL DB 真源。**禁止凭记忆推断**，写入数据前 MUST 查此规则。详见 AGENTS.md §11.0.2 |
 
 **绝对禁止**：引用 `project-entity-depgraph-v3-domain-draft.yaml`/`target_path_tree.yaml`/`archive/` 下归档文件/`project-path-tree.yaml`/`functional_domain_registry.yaml` 作为真源（均已被合并或为派生物）。
 
