@@ -686,9 +686,11 @@ DB_TABLE_GROUPS: list[dict] = [
         "group": "depgraph",
         "label": "依赖图 depgraph",
         "tables": [
-            ("domains", "功能域清单——50 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层）"),
-            ("nodes", "模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4986 个"),
-            ("edges", "依赖边——节点间的依赖关系（import/契约/事件订阅），5946 条"),
+            # 备注中的 {count} 占位符在生成时由 _generate_stats_section 用本表实时行数替换，
+            # 避免硬编码数字与行数列漂移（原 nodes=4986/edges=5946 等写死值与行数列不一致）
+            ("domains", "功能域清单——{count} 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层）"),
+            ("nodes", "模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），{count} 个"),
+            ("edges", "依赖边——节点间的依赖关系（import/契约/事件订阅），{count} 条"),
         ],
     },
     {
@@ -697,17 +699,19 @@ DB_TABLE_GROUPS: list[dict] = [
         "tables": [
             ("dataflow_datasets", "数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy"),
             ("dataflow_jobs", "作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context"),
-            ("dataflow_edges", "数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条"),
+            ("dataflow_edges", "数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），{count} 条"),
         ],
     },
     {
         "group": "decision",
         "label": "决策流图 decisiongraph",
         "tables": [
-            ("decision_tracks", "决策轨——4 条正交决策轨（价值/动量/风险/组合），优先级+激活条件"),
-            ("decision_layers", "决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），214 个节点的分层归属"),
+            ("decision_tracks", "决策轨——{count} 条正交决策轨（价值/动量/风险/组合），优先级+激活条件"),
+            # decision_layers 行数=层数（10），原备注里的 214 是跨表引用 decision_nodes 行数，
+            # 跨表引用易漂移且与行数列重复，改为不带数字的描述（节点数见 decision_nodes 行数列）
+            ("decision_layers", "决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属"),
             ("decision_nodes", "决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash"),
-            ("decision_edges", "决策边——节点间的决策传递关系（L0→L1→...→L6 链路），213 条"),
+            ("decision_edges", "决策边——节点间的决策传递关系（L0→L1→...→L6 链路），{count} 条"),
         ],
     },
 ]
@@ -780,7 +784,9 @@ def _generate_stats_section(built: list[dict], pending: list[dict], db_stats: di
     for group in DB_TABLE_GROUPS:
         for table, desc in group["tables"]:
             count = db_stats.get(table, "?")
-            lines.append(f"| {group['label']} | `{table}` | {count} | {desc} |")
+            # 将备注中的 {count} 占位符替换为本表实时行数，根治硬编码数字与行数列漂移
+            desc_filled = desc.replace("{count}", str(count))
+            lines.append(f"| {group['label']} | `{table}` | {count} | {desc_filled} |")
     lines.append("")
     return lines
 
