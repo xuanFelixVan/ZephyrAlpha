@@ -194,6 +194,8 @@ ssot_claims:
 | `commit_gates/msg_style_gate.py` | §0.1 | commit消息风格门禁 | 已实现 | | 本模块 |
 | `commit_gates/rule_four_way_alignment_gate.py` | §0.1 | 规则四方对齐门禁（ARCH-020补建） | 已实现 | | 本模块 |
 | `commit_gates/unsafe_dict_spread_gate.py` | §0.1 | 不安全字典展开门禁 | 已实现 | | 本模块 |
+| `commit_gates/_diff_helpers.py` | §0.1 | gate共享diff解析工具模块（FUNCTION-DUP治本提取） | 已实现 | | 本模块 |
+| `commit_gates/datetime_now_forbidden_gate.py` | §0.1 | 生成器代码datetime.now()硬阻断门禁（AGENTS.md §11.1.1） | 已实现 | | 本模块 |
 | `commit_gates/gate_repo.py` | §0.1 | gate仓库（已正确指向MOD-GATE_ENGINE） | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵

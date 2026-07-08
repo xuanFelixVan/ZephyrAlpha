@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV-commit_gates | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
 # [MODULE] zephyr.governance.commit_gates.unsafe_dict_spread_gate
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [DEPENDENCIES] zephyr.governance.commit_gates._diff_helpers; zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
@@ -54,6 +54,12 @@ import logging
 import re
 import sys
 
+from zephyr.governance.commit_gates._diff_helpers import (
+    _extract_docstring_lines,
+    _is_exempt_line,
+    _parse_diff_with_line_numbers,
+    _read_staged_file,
+)
 from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -69,89 +75,7 @@ _SAFE_KWARGS_NAMES: frozenset[str] = frozenset({"kwargs", "kwds"})
 _UNSAFE_SPREAD_RE = re.compile(r"\b(\w+)\(\*\*([A-Za-z_]\w*)\s*\)")
 
 # 行级豁免：注释 / import
-_COMMENT_RE = re.compile(r"^\s*#")
-_IMPORT_RE = re.compile(r"^\s*(from\s+\S+\s+import|import\s)")
-
 # hunk header: @@ -old_start,old_count +new_start,new_count @@
-_HUNK_HEADER_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
-
-
-def _is_exempt_line(content: str) -> bool:
-    """行级豁免：注释 / import（docstring 由 _extract_docstring_lines 多行跟踪处理）。"""
-    return bool(_COMMENT_RE.match(content) or _IMPORT_RE.match(content))
-
-
-def _extract_docstring_lines(file_content: str) -> set[int]:
-    """返回文件中所有 docstring 内的行号集合（1-based）。
-
-    跟踪 ``\"\"\"...\"\"\"`` 和 ``'''...'''`` 多行 docstring 范围。
-    单行 docstring（同行开闭）只标记该行。
-    用于豁免 docstring 中的示例代码（如 ``SomeClass(**varname)``），
-    避免 gate 误报 docstring 示例（5.147.12 gate 自身 docstring 触发 warn 的修复）。
-    """
-    lines = file_content.splitlines()
-    docstring_lines: set[int] = set()
-    in_docstring = False
-    quote = ""
-    for i, line in enumerate(lines, 1):
-        stripped = line.lstrip()
-        if not in_docstring:
-            for q in ('"""', "'''"):
-                if stripped.startswith(q):
-                    in_docstring = True
-                    quote = q
-                    docstring_lines.add(i)
-                    # 检查同行是否结束（单行 docstring）
-                    rest = stripped[len(q):]
-                    if quote in rest:
-                        in_docstring = False
-                        quote = ""
-                    break
-        else:
-            docstring_lines.add(i)
-            if quote in stripped:
-                in_docstring = False
-                quote = ""
-    return docstring_lines
-
-
-def _parse_diff_with_line_numbers(diff_stdout: str) -> list[tuple[int, str]]:
-    """解析 git diff --unified=0 输出，返回 [(line_no, added_content), ...]。
-
-    line_no 是新文件中的 1-based 行号。
-    hunk header ``@@ -a,b +c,d @@`` 中 c 是新文件起始行号。
-    added 行（``+`` 前缀）占用新行号；删除行（``-`` 前缀）不占用；上下文行占用。
-    """
-    result: list[tuple[int, str]] = []
-    current_line = 0
-    for raw_line in diff_stdout.splitlines():
-        m = _HUNK_HEADER_RE.match(raw_line)
-        if m:
-            current_line = int(m.group(1))
-            continue
-        if raw_line.startswith("+++"):
-            continue
-        if raw_line.startswith("+"):
-            result.append((current_line, raw_line[1:]))
-            current_line += 1
-        elif raw_line.startswith("-"):
-            pass  # 删除行不递增新行号
-        else:
-            current_line += 1  # 上下文行（unified=0 通常无，保险处理）
-    return result
-
-
-def _read_staged_file(gateway, py_file: str) -> str | None:
-    """读取 staged 文件内容（index 版本，``git show :path``）。"""
-    try:
-        result = gateway._run_git(["git", "show", ":" + py_file])
-        if result.returncode == 0:
-            return result.stdout
-    except Exception:
-        pass
-    return None
-
-
 def make_unsafe_dict_spread_gate() -> GateSpec:
     """构造 ``**data`` 直接展开 warn 级 GateSpec。
 
