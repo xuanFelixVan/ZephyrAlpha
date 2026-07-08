@@ -13,25 +13,25 @@ tasks:
   # ============== 盘后日K时段（16:30 周一-五）==============
   - task_id: adj_factor_incremental
     table: c1_market.adj_factor
-    source: ifind
+    source: miniqmt
     schedule: daily_kline
     incremental: true
     dependencies: []
     capability: adj_factor
     symbols: null  # null=全市场
     extra:
-      description: "复权因子增量"
+      description: "复权因子增量（miniQMT get_divid_factors）"
 
   - task_id: kline_daily_hfq_incremental
     table: c1_market.kline_daily_hfq
-    source: ifind
+    source: miniqmt
     schedule: daily_kline
     incremental: true
     dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_daily_hfq
-    capability: kline_daily
+    capability: kline_daily_hfq
     symbols: null
     extra:
-      description: "后复权日K线增量"
+      description: "后复权日K线增量（miniQMT dividend_type=back）"
 
   - task_id: kline_daily_incremental
     table: c1_market.kline_daily
@@ -46,14 +46,14 @@ tasks:
 
   - task_id: daily_valuation_incremental
     table: c1_market.daily_valuation
-    source: ifind
+    source: akshare
     schedule: daily_kline
     incremental: true
     dependencies: ["kline_daily_incremental"]  # DAG: kline_daily -> daily_valuation
     capability: daily_valuation
     symbols: null
     extra:
-      description: "每日估值（PE/PB）增量"
+      description: "每日估值（PE/PB）增量（AKShare stock_a_indicator_lg）"
 
   - task_id: index_kline_incremental
     table: c1_market.index_kline
@@ -69,36 +69,36 @@ tasks:
   # ============== 盘后资金时段（17:00 周一-五）==============
   - task_id: margin_trading_incremental
     table: c1_market.margin_trading
-    source: ifind
+    source: akshare
     schedule: daily_capital
     incremental: true
     dependencies: []
     capability: margin_trading
     symbols: null
     extra:
-      description: "融资融券增量"
+      description: "融资融券增量（AKShare stock_margin_detail_sse/szse）"
 
   - task_id: block_trade_incremental
     table: c1_market.block_trade
-    source: ifind
+    source: akshare
     schedule: daily_capital
     incremental: true
     dependencies: []
     capability: block_trade
     symbols: null
     extra:
-      description: "大宗交易增量"
+      description: "大宗交易增量（AKShare stock_dzjy_mrmx）"
 
   - task_id: dragon_tiger_incremental
     table: c1_market.dragon_tiger
-    source: ifind
+    source: akshare
     schedule: daily_capital
     incremental: true
     dependencies: []
     capability: dragon_tiger
     symbols: null
     extra:
-      description: "龙虎榜增量"
+      description: "龙虎榜增量（AKShare stock_lhb_detail_em）"
 
   - task_id: hk_daily_kline_incremental
     table: c1_market.hk_daily_kline
@@ -124,14 +124,14 @@ tasks:
 
   - task_id: money_flow_incremental
     table: c1_market.money_flow
-    source: ifind
+    source: akshare
     schedule: daily_capital
     incremental: true
     dependencies: []
     capability: money_flow
     symbols: null
     extra:
-      description: "资金流向增量"
+      description: "资金流向增量（AKShare stock_individual_fund_flow）"
 
   - task_id: hk_connect_flow_incremental
     table: c1_market.hk_connect_flow
@@ -192,25 +192,25 @@ tasks:
   # ============== 盘后日K时段追加（周月K线 + 分钟K线）==============
   - task_id: kline_weekly_incremental
     table: c1_market.kline_weekly
-    source: ifind
+    source: miniqmt
     schedule: daily_kline
     incremental: true
     dependencies: []
     capability: kline_weekly
     symbols: null
     extra:
-      description: "周K线增量"
+      description: "周K线增量（miniQMT 日K聚合 resample W）"
 
   - task_id: kline_monthly_incremental
     table: c1_market.kline_monthly
-    source: ifind
+    source: miniqmt
     schedule: daily_kline
     incremental: true
     dependencies: []
     capability: kline_monthly
     symbols: null
     extra:
-      description: "月K线增量"
+      description: "月K线增量（miniQMT 日K聚合 resample M）"
 
   - task_id: kline_1min_incremental
     table: c1_market.kline_1min
@@ -303,14 +303,14 @@ tasks:
 
   - task_id: share_unlock_incremental
     table: c3_fundamental.share_unlock
-    source: ifind
+    source: akshare
     schedule: daily_event
     incremental: true
     dependencies: []
     capability: share_unlock
     symbols: null
     extra:
-      description: "限售解禁增量"
+      description: "限售解禁增量（AKShare stock_restricted_release_detail_em）"
 
   - task_id: shareholder_incremental
     table: c3_fundamental.shareholder
@@ -358,14 +358,14 @@ tasks:
 
   - task_id: audit_opinion_incremental
     table: c3_fundamental.audit_opinion
-    source: ifind
+    source: akshare
     schedule: daily_event
     incremental: true
     dependencies: []
     capability: audit_opinion
     symbols: null
     extra:
-      description: "审计意见增量（iFind i问财）"
+      description: "审计意见增量（AKShare 财报附属字段 OPINION_TYPE）"
 
   - task_id: dividend_incremental
     table: c3_fundamental.dividend
@@ -391,25 +391,25 @@ tasks:
 
   - task_id: equity_pledge_incremental
     table: c3_fundamental.equity_pledge
-    source: ifind
+    source: akshare
     schedule: daily_event
     incremental: true
     dependencies: []
     capability: equity_pledge
     symbols: null
     extra:
-      description: "股权质押增量（iFind THS_BD）"
+      description: "股权质押增量（AKShare stock_gpzy_pledge_ratio_em）"
 
   - task_id: equity_pledge_summary_incremental
     table: c3_fundamental.equity_pledge_summary
-    source: ifind
+    source: akshare
     schedule: daily_event
     incremental: true
     dependencies: []
     capability: equity_pledge_summary
     symbols: null
     extra:
-      description: "股权质押摘要增量"
+      description: "股权质押摘要增量（AKShare stock_gpzy_profile_em）"
 
   # ============== 周末财务时段（周六 10:00）==============
   - task_id: balance_sheet_incremental
@@ -658,25 +658,25 @@ tasks:
 
   - task_id: money_flow_full_refresh
     table: c1_market.money_flow
-    source: ifind
+    source: akshare
     schedule: monthly_static
     incremental: false
     dependencies: []
     capability: money_flow
     symbols: null
     extra:
-      description: "资金流向全量刷新（iFind i问财）"
+      description: "资金流向全量刷新（AKShare stock_individual_fund_flow）"
 
   - task_id: daily_valuation_full_refresh
     table: c1_market.daily_valuation
-    source: ifind
+    source: akshare
     schedule: monthly_static
     incremental: false
     dependencies: []
     capability: daily_valuation
     symbols: null
     extra:
-      description: "估值数据全量刷新（补缺约1800只）"
+      description: "估值数据全量刷新（AKShare stock_a_indicator_lg）"
 
   - task_id: kline_5min_history_backfill
     table: c1_market.kline_5min
