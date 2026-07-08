@@ -1103,6 +1103,15 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append(f"| 描述 | {info['description']} | Description | {info['description']} |")
     lines.append("")
 
+    # 模块分层清单（按 architecture_layer 分组，合并自 generate_domain_architecture_diagram.py）
+    lines.append("## 模块分层清单 / Module Layered List")
+    lines.append("")
+    lines.append(
+        f"> 按 architecture_layer 分组的模块清单（共 {len(nodes)} 个模块 / {len(nodes)} modules）。"
+    )
+    lines.append("")
+    lines.append(generate_module_layered_list(nodes))
+
     # 域内依赖图（内嵌 Mermaid，三视图：合并+运营态+设计态）
     lines.append("## 域内依赖图 / Internal Dependency Diagram")
     lines.append("")
@@ -1279,15 +1288,6 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     else:
         lines.append("> （无跨域依赖 / No cross-domain dependencies）")
     lines.append("")
-
-    # 模块分层清单（按 architecture_layer 分组，合并自 generate_domain_architecture_diagram.py）
-    lines.append("## 模块分层清单 / Module Layered List")
-    lines.append("")
-    lines.append(
-        f"> 按 architecture_layer 分组的模块清单（共 {len(nodes)} 个模块 / {len(nodes)} modules）。"
-    )
-    lines.append("")
-    lines.append(generate_module_layered_list(nodes))
 
     # 说明
     lines.append("## 说明 / Notes")
