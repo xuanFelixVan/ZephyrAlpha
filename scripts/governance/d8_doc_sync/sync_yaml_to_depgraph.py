@@ -20,7 +20,7 @@
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/sync_yaml_to_depgraph.py | §22.10
 [MODULE] 无（独立脚本）
-[INVARIANTS] YAML→DB单向同步; 23项同步; try/finally恢复触发器
+[INVARIANTS] YAML→DB单向同步; 24项同步; try/finally恢复触发器
 [MODIFY-GUARD] 本脚本由autopilot执行
 [CONSUMERS] autopilot session-20260618-001
 [STABILITY] stable
@@ -36,6 +36,7 @@ P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步�
   registry_of_registries/directory_registry/rule_catalog/infrastructure/model_capability/
   hard_boundaries/business_streams/blueprint_links
   + ARCH-051 dataflow_registry + ARCH-052 aggregate_nodes + ARCH-053 interface_contracts/database_nodes
+  + data_source_apis（#179）
 - 通行证机制：临时DROP只读触发器→同步→finally恢复触发器
 """
 
@@ -85,6 +86,7 @@ READONLY_TABLES = [
     "business_streams",
     "infrastructure_components",
     "model_capabilities",
+    "data_source_apis",
 ]
 
 
@@ -1713,6 +1715,45 @@ def sync_database_nodes(cur):
     print(f"  同步 {synced} 个 database 节点")
 
 
+def sync_data_source_apis(cur):
+    """#179: 数据源 API 结构化清单 → data_source_apis 表
+
+    SSoT: architecture_model/data/data_source_apis_registry.yaml
+    将 124 个数据源 API 从 YAML 同步到 depgraph.data_source_apis 表。
+    data_source_operation_manual.md 的 API 总览表格已替换为指针，派生关系：
+    YAML → DB → generate_asset_catalog.py → asset_catalog.md §7。
+    """
+    print("同步 #179: 数据源 API 清单 → data_source_apis...")
+    yaml_path = REPO_ROOT / "architecture_model" / "data" / "data_source_apis_registry.yaml"
+    if not yaml_path.exists():
+        print(f"  跳过: {yaml_path} 不存在")
+        return
+    with open(yaml_path, encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    apis = data.get("apis", [])
+    if not apis:
+        print("  跳过: YAML 中无 apis 条目")
+        return
+    cur.execute("DELETE FROM data_source_apis")
+    synced = 0
+    for a in apis:
+        cur.execute("""
+            INSERT INTO data_source_apis
+                (api_id, source_id, category, api_name, short_name,
+                 function_desc, params, returns_format, frequency_codes,
+                 data_scope, test_status, test_result, section_ref, notes)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            a.get("api_id", ""), a.get("source_id", ""), a.get("category", ""),
+            a.get("api_name", ""), a.get("short_name", ""), a.get("function_desc", ""),
+            a.get("params", ""), a.get("returns_format", ""), a.get("frequency_codes", ""),
+            a.get("data_scope", ""), a.get("test_status", "untested"),
+            a.get("test_result", ""), a.get("section_ref", ""), a.get("notes", ""),
+        ))
+        synced += 1
+    print(f"  同步 {synced} 个数据源 API")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -1784,11 +1825,14 @@ def sync_all() -> bool:
         sync_interface_contracts(cur)  # #177 ARCH-053 接口契约→interface_contracts 表
         sync_database_nodes(cur)  # #178 ARCH-053 database 节点→nodes 表
 
+        # P9 优先级同步（数据源 API 结构化清单）
+        sync_data_source_apis(cur)  # #179 数据源 API→data_source_apis 表
+
         # 历史遗留清理：删除 sync 无法触及的 FK 违规孤立记录
         cleanup_legacy_fk_violations(cur)
 
         conn.commit()
-        print("\n[PASS] 23 项 YAML→DB 同步完成")
+        print("\n[PASS] 24 项 YAML→DB 同步完成")
 
         # S1.2: 验证 readonly 表 COMMENT（HB-001 table_comment_required）
         verify_readonly_table_comments(cur)

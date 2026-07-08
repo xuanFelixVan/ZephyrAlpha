@@ -668,3 +668,63 @@ COMMENT ON TABLE business_streams IS 'YAML 真源只读缓存表。禁止直接 
 COMMENT ON TABLE infrastructure_components IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
 
 COMMENT ON TABLE model_capabilities IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+-- =====================================================================
+-- S1.3: 资产清单扩展表（2026-07-09 新增，#179）
+-- data_source_assets: 外部数据源资产（非 readonly，由 data_sources_registry.yaml 派生）
+-- data_source_apis: 数据源 API 结构化清单（readonly，#179 sync_data_source_apis 同步）
+-- =====================================================================
+
+CREATE TABLE IF NOT EXISTS data_source_assets (
+    source_id        TEXT PRIMARY KEY,
+    name             TEXT NOT NULL,
+    name_en          TEXT,
+    type             TEXT,
+    category         TEXT,
+    vendor           TEXT,
+    interface_types  TEXT,
+    api_count        INTEGER DEFAULT 0,
+    auth_required    BOOLEAN DEFAULT false,
+    auth_method      TEXT,
+    rate_limit       TEXT,
+    status           TEXT,
+    coverage         TEXT,
+    limitations      TEXT,
+    owner            TEXT,
+    operation_manual TEXT,
+    created_at       TIMESTAMPTZ DEFAULT now(),
+    updated_at       TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS data_source_apis (
+    api_id           TEXT PRIMARY KEY,
+    source_id        TEXT REFERENCES data_source_assets(source_id) ON DELETE CASCADE,
+    category         TEXT,
+    api_name         TEXT NOT NULL,
+    short_name       TEXT,
+    function_desc    TEXT,
+    params           TEXT,
+    returns_format   TEXT,
+    frequency_codes  TEXT,
+    data_scope       TEXT,
+    test_status      TEXT,
+    test_result      TEXT,
+    section_ref      TEXT,
+    notes            TEXT,
+    created_at       TIMESTAMPTZ DEFAULT now(),
+    updated_at       TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_data_source_apis_source   ON data_source_apis(source_id);
+CREATE INDEX IF NOT EXISTS idx_data_source_apis_category ON data_source_apis(category);
+CREATE INDEX IF NOT EXISTS idx_data_source_apis_name     ON data_source_apis(api_name);
+
+-- data_source_apis 只读触发器（readonly，真源=YAML，sync_data_source_apis 同步）
+CREATE TRIGGER readonly_data_source_apis_delete
+    BEFORE DELETE ON data_source_apis FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+CREATE TRIGGER readonly_data_source_apis_insert
+    BEFORE INSERT ON data_source_apis FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+CREATE TRIGGER readonly_data_source_apis_update
+    BEFORE UPDATE ON data_source_apis FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+
+COMMENT ON TABLE data_source_apis IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：architecture_model/data/data_source_apis_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
