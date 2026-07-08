@@ -205,6 +205,7 @@ def get_domain_maturity_counts(conn: PgConnExecuteWrapper) -> dict[str, dict[str
         """SELECT domain_id, design_maturity, COUNT(*) AS cnt
            FROM nodes
            WHERE domain_id IS NOT NULL
+             AND node_type NOT IN ('test', 'script')
            GROUP BY domain_id, design_maturity"""
     )
     result: dict[str, dict[str, int]] = {}
@@ -224,6 +225,7 @@ def get_domain_maturity_counts(conn: PgConnExecuteWrapper) -> dict[str, dict[str
            WHERE domain_id IS NOT NULL
              AND design_maturity = 'production'
              AND build_status IN ('active', 'stable')
+             AND node_type NOT IN ('test', 'script')
            GROUP BY domain_id"""
     )
     for r in cur.fetchall():
@@ -239,8 +241,10 @@ def compute_maturity_level(counts: dict[str, int]) -> str:
 
     L0: no nodes (Missing)
     L1: only design or prototype nodes (Designing)
-    L2: has production nodes but build_status != active (Usable, unverified)
-    L3: has production nodes with build_status=active (Verified)
+    L2: has production nodes but build_status NOT IN (active, stable) (Usable, unverified)
+    L3: has production nodes with build_status IN (active, stable) (Verified)
+
+    注: test/script 类型节点已在 get_domain_maturity_counts 查询中排除，不参与计算。
     """
     production = counts.get("production", 0)
     design = counts.get("design", 0)
@@ -552,8 +556,8 @@ def _maturity_definition(level: str) -> str:
     definitions = {
         "L0": "能力完全不存在，无设计无代码 / No nodes in domain",
         "L1": "有设计文档或原型代码，未集成 / design_maturity=design or prototype",
-        "L2": "代码可用但未生产验证 / design_maturity=production, build_status!=active",
-        "L3": "生产环境稳定运行 / design_maturity=production, build_status=active",
+        "L2": "代码可用但未生产验证 / design_maturity=production, build_status NOT IN (active, stable)",
+        "L3": "生产环境稳定运行 / design_maturity=production, build_status IN (active, stable)",
     }
     return definitions.get(level, "")
 
