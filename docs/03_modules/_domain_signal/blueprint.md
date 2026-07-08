@@ -607,7 +607,6 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 | D_FACTOR Alpha Factor | 因子消费 | SignalAggregatorBase.aggregate() 消费 FactorSignal | 信号聚合可消费因子结果 |
 | D_PORTFOLIO_CORE Portfolio Construction | 契约输出 | CTR-P1-015 SynthesizedSignal | 组合构建可消费合成信号 |
 | D_RISK Risk Management | 契约输出 | CTR-P1-003 + CTR-ERR-003 | 风险管理可消费分配结果和降级警告 |
-| MOD-ALPHA_SIGNAL_DOMAIN | 域集成 | 因子→信号域内数据流 | 域内数据流端到端通过 |
 
 ---
 
