@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-09'
-total_scripts: 562
+total_scripts: 561
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -657,6 +657,14 @@ scripts:
 - name: governance/migrate_to_metadata_tables.py
   path: governance/migrate_to_metadata_tables.py
   description: 将 PRODUCTION_PROTECTED_FIELDS(14) + EDGES_PROTECTED_FIELDS(9) 从 nodes/edges
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/query_module_panorama.py
+  path: governance/query_module_panorama.py
+  description: 输入 module_id（MOD-XXX），输出该模块在三图（depgraph/dataflow/decision）的所有记录，
   domain: governance
   execution_plane: warm-path
   status: registered
