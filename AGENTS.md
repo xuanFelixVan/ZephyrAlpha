@@ -42,19 +42,42 @@
 
 ## RULE-DEPGRAPH：第三件事（防幻觉/防漂移治本规则，2026-07-02）
 
-> **施工前 MUST 登记**：任何模块施工前（写第1行业务代码前），MUST先通过 `apply_depgraph.py` 将该模块的依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（`status=planned`）。禁止"先施工后补登记"或"施工中临时编造依赖"。施工完成并通过验证后，将 `status` 从 `planned → production`。
+> **三态状态机（design_maturity 字段）**：depgraph.nodes 表的 `design_maturity` 字段有 3 个值，标识模块的生命周期阶段：
 >
-> **写入设计态前 MUST 检查运营态**：`apply_depgraph.py --add-design-node` 写入 `build_status=planned` 时，内置门闸自动检查 depgraph 运营态（production节点）是否就绪。运营态为空→阻断，提示先手动运行 `generate_project_depgraph.py` 刷新；运营态就绪→允许写入设计态。设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。逃生通道：`--skip-refresh`（仅限故障时使用，正常流程禁止）。
+> | 值 | 含义 | 代码状态 | 写入方式 |
+> |------|------|---------|---------|
+> | `design` | 设计态 | 蓝图阶段，代码未写 | **只能手工**：`apply_depgraph.py --add-design-node` |
+> | `prototype` | 原型态 | 代码已写，验证中 | 生成器自动产出（无测试的代码）或手工升级 |
+> | `production` | 运营态 | 已上线稳定运行 | 生成器自动产出（有测试的代码）或手工升级 |
+>
+> **设计态保护机制（裁定#189，已实测验证）**：
+> - 生成器**不得创建** design 节点（`derive_design_maturity` 只返回 production/prototype）
+> - 生成器 DELETE **跳过** design 节点（`WHERE design_maturity != 'design'`）
+> - path 冲突时**设计态优先保留**（`resolve_conflicts` 删除非设计态冲突行）
+> - `cleanup_orphan_nodes` **跳过** design 节点（设计态 path 在磁盘不存在是正常的，不应被当 ghost 清理）
+> - design 边也受保护（`WHERE dep_maturity != 'design'`）
+>
+> **状态升级规则（单调推进，禁止倒退）**：
+> - `design → prototype` ✅ 合法（设计完成，开始施工）
+> - `prototype → production` ✅ 合法（代码已写且运行验证通过）
+> - `design → production` ✅ 合法（跳转，设计直接投产）
+> - `production → prototype` ❌ 禁止（倒退）
+> - `prototype → design` ❌ 禁止（倒退）
+> - 升级命令：`apply_depgraph.py --transition-design-maturity NODE_ID TO_MATURITY`
+>
+> **施工前 MUST 登记**：任何模块施工前（写第1行业务代码前），MUST先通过 `apply_depgraph.py --add-design-node` 将该模块登记到 depgraph 设计态（`design_maturity='design'`）。禁止"先施工后补登记"或"施工中临时编造依赖"。
+>
+> **写入设计态前 MUST 检查运营态**：`apply_depgraph.py --add-design-node` 写入时，内置门闸自动检查 depgraph 运营态（production 节点）是否就绪。运营态为空→阻断，提示先手动运行 `generate_project_depgraph.py` 刷新；运营态就绪→允许写入设计态。设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。逃生通道：`--skip-refresh`（仅限故障时使用，正常流程禁止）。
 >
 > **为什么**：depgraph 是依赖关系唯一真源。AI 从 depgraph 查询依赖=零幻觉空间；AI 绕过 depgraph 自行推断依赖=幻觉/漂移根源。未登记依赖在拓扑验证时自动阻断。
 >
 > **流程**：
 > 1. `generate_project_depgraph.py` 刷新运营态（门闸自动执行）
-> 2. `apply_depgraph.py --add-design-node PATH BLUEPRINT_ID DOMAIN_ID planned` 登记设计态
+> 2. `apply_depgraph.py --add-design-node PATH BLUEPRINT_ID DOMAIN_ID` 登记设计态（design_maturity='design'）
 > 3. 拓扑验证（无循环/无缺失/无孤儿）
 > 4. 施工（代码引用 depgraph 契约名）
 > 5. 验证依赖一致性
-> 6. `apply_depgraph.py --transition-build-status NODE_ID production` 转正
+> 6. `apply_depgraph.py --transition-design-maturity NODE_ID production` 转正（design → production）
 
 ## RULE-REGISTRY：第四件事（ARCH-053 AI 可发现性，2026-07-06）
 
