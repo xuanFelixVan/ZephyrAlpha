@@ -68,6 +68,18 @@
 > - 跨模块依赖：[`cross_module_dependency_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml)
 > - 能力→真源文件反查：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)
 
+## RULE-SSOT：第五件事（真源分类铁律，防泛化错误，2026-07-09 加强）
+
+> **写入任何数据前 MUST 先判定真源方向**——项目有两类数据真源，按数据类型机械判定，禁止凭记忆推断。规则真源：[`trae_062_ssot_classification.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml)。详见 §11.0.2。
+>
+> | 数据类型 | 真源 | 写入方式 |
+> |---------|------|---------|
+> | **规则数据**（trae_*.yaml/契约/门禁/词汇表/注册表） | **YAML 文件** | `sync_yaml_to_depgraph.py` 单向同步到 DB（DB 只读缓存） |
+> | **架构数据**（depgraph.nodes/edges、decision_nodes/edges、dataflow 节点） | **PostgreSQL DB** | `apply_*.py` 直接写入 DB |
+>
+> **常见错误**：❌ 误以为"YAML 是真源"适用于所有数据（实际只适用规则数据，架构数据真源在 DB）。
+> **判定流程**：拿到数据 → 先问"规则数据还是架构数据？" → 规则数据改 YAML→sync 到 DB；架构数据用 apply_*.py 直接写 DB。边界模糊查 §11.0.2。
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
