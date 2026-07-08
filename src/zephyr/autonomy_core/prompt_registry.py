@@ -65,6 +65,8 @@ from pydantic import BaseModel, Field, field_validator
 
 from zephyr.infrastructure.capacity_assurance.token_budget import estimate_tokens
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+# 5.160.20 修复：SEMVER正则统一为共享常量
+from zephyr.shared.foundation.constants import SEMVER_PATTERN
 
 if TYPE_CHECKING:
     from zephyr.autonomy_core.context.context_injector import ContextInjector, InjectedContext
@@ -100,7 +102,7 @@ class _SafeFormatter(string.Formatter):
 
 _safe_formatter = _SafeFormatter()
 
-_SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
+# 5.160.20 修复：SEMVER正则统一为共享常量（SEMVER_PATTERN 见 imports）
 _STABILITY_VALUES: frozenset[str] = frozenset({"experimental", "beta", "stable", "frozen"})
 _PLACEHOLDER_RE = re.compile(r"\{(\w+)\}")
 
@@ -192,7 +194,7 @@ class PromptVersion(BaseModel):
     @field_validator("version")
     @classmethod
     def _validate_semver(cls, v: str) -> str:
-        if not _SEMVER_RE.match(v):
+        if not SEMVER_PATTERN.match(v):
             raise ValueError(f"version 必须是 semver（X.Y.Z），得到：{v!r}")
         return v
 
@@ -223,7 +225,7 @@ class PromptTemplate(BaseModel):
     @field_validator("version")
     @classmethod
     def _validate_semver(cls, v: str) -> str:
-        if not _SEMVER_RE.match(v):
+        if not SEMVER_PATTERN.match(v):
             raise ValueError(f"version 必须是 semver（X.Y.Z），得到：{v!r}")
         return v
 

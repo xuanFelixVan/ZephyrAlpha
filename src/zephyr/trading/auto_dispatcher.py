@@ -36,6 +36,9 @@ if TYPE_CHECKING:
     from zephyr.trading.orchestrator.core.task_queue import TaskCard
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 
+# 5.160.11 修复：TaskStatus字符串替换为Enum引用
+from zephyr.shared.foundation.constants import TaskStatus
+
 logger = logging.getLogger("zephyr.auto_dispatcher")
 
 
@@ -105,7 +108,7 @@ class AutoDispatcher:
                 from zephyr.governance.persistence.task_repo import TaskRepository
 
                 self._task_repo = TaskRepository()
-            self._task_repo.transition(task_id, "COMPLETED", note="auto-dispatched by daemon")
+            self._task_repo.transition(task_id, TaskStatus.COMPLETED, note="auto-dispatched by daemon")
             result["step_transition"] = "ok (->COMPLETED)"
         except Exception as exc:
             logger.warning("[AUTO-DISPATCH] transition failed for %s: %s", task_id, exc, exc_info=True)

@@ -45,13 +45,14 @@ from typing import Any
 from pydantic import BaseModel, Field, field_validator
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+# 5.160.20 修复：SEMVER正则统一为共享常量
+from zephyr.shared.foundation.constants import SEMVER_PATTERN
 
-_SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 _STABILITY_VALUES: frozenset[str] = frozenset({"experimental", "beta", "stable", "frozen"})
 
 
 def _validate_semver(v: str) -> str:
-    if not _SEMVER_RE.match(v):
+    if not SEMVER_PATTERN.match(v):
         raise ValueError(f"version must be semver (X.Y.Z), got: {v!r}")
     return v
 

@@ -39,6 +39,9 @@ if TYPE_CHECKING:
     from zephyr.shared.foundation.models import TaskCard
     from zephyr.trading.autopilot import AutoPilot
 
+# 5.160.11 修复：TaskStatus字符串替换为Enum引用
+from zephyr.shared.foundation.constants import TaskStatus
+
 logger = logging.getLogger(__name__)
 
 __all__ = ["Conductor"]
@@ -118,28 +121,28 @@ class Conductor:
 
     def mark_completed(self, task_id: str, note: str | None = None) -> None:
         """标记任务 COMPLETED + 触发依赖级联解锁。"""
-        self.repo.transition(task_id, "COMPLETED", session_id=self.session_id, note=note)
+        self.repo.transition(task_id, TaskStatus.COMPLETED, session_id=self.session_id, note=note)
         logger.info("Conductor: %s -> COMPLETED", task_id)
 
     def mark_failed(self, task_id: str, note: str) -> None:
         """标记任务 FAILED。note 必须包含根因分析。"""
-        self.repo.transition(task_id, "FAILED", session_id=self.session_id, note=note)
+        self.repo.transition(task_id, TaskStatus.FAILED, session_id=self.session_id, note=note)
         # 5.53.1 修复：任务失败是负向事件，原用 INFO 在海量日志中被淹没。改为 WARNING。
         logger.warning("Conductor: %s -> FAILED (note=%s)", task_id, note)
 
     def is_done(self) -> bool:
         """检查是否还有可做的任务（READY 或 IN_PROGRESS）。"""
         counts = self.repo.count_by_status()
-        ready = counts.get("READY", 0)
-        in_progress = counts.get("IN_PROGRESS", 0)
+        ready = counts.get(TaskStatus.READY, 0)
+        in_progress = counts.get(TaskStatus.IN_PROGRESS, 0)
         return ready == 0 and in_progress == 0
 
     def status_report(self) -> str:
         """全局状态报告（委托 AutoPilot + 追加 Conductor 信息）。"""
         base = self.autopilot.status_report()
         counts = self.repo.count_by_status()
-        ready = counts.get("READY", 0)
-        in_progress = counts.get("IN_PROGRESS", 0)
+        ready = counts.get(TaskStatus.READY, 0)
+        in_progress = counts.get(TaskStatus.IN_PROGRESS, 0)
         conductor_info = [
             "",
             f"  Conductor: session={self.session_id}",

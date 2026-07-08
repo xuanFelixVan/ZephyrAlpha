@@ -41,6 +41,7 @@ Version: 0.1.0
 """
 
 import importlib
+import re
 from typing import Final
 
 from zephyr.shared.contracts.core.runtime_plane_tag import (
@@ -70,6 +71,13 @@ COLD_PATH_PARTIAL_ACTIVATED: Final[bool] = _COLD_PATH_PARTIAL_ACTIVATED
 HOT_PATH_ACTIVATED: Final[bool] = _HOT_PATH_ACTIVATED
 HOT_PATH_LATENCY_BUDGET_MS: Final[float] = _HOT_PATH_LATENCY_BUDGET_MS
 WARM_PATH_LATENCY_BUDGET_MS: Final[float] = _WARM_PATH_LATENCY_BUDGET_MS
+
+# 5.160.20 修复：SEMVER正则统一为共享常量
+SEMVER_PATTERN: Final[re.Pattern] = re.compile(
+    r"^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)"
+    r"(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"
+    r"(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
+)
 
 # Lazy imports for trading-domain symbols (upward dependency from L0 shared -> L3 trading)
 _TRADING_SYMBOLS = {
@@ -133,6 +141,7 @@ __all__ = [
     "OrderType",
     "Priority",
     "RuntimePlane",
+    "SEMVER_PATTERN",
     "SafetyLevel",
     "Stock",
     "TaskNamespace",

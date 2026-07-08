@@ -25,6 +25,9 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 
 from zephyr.shared.event_bus import EventBus, EventType
 
+# 5.160.11 修复：TaskStatus字符串替换为Enum引用
+from zephyr.shared.foundation.constants import TaskStatus
+
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
     from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
@@ -239,7 +242,7 @@ def _register_rbac_hooks() -> None:
         def _on_task_in_progress_rbac_check(event: object) -> None:
             """任务开始执行时验证RBAC系统就绪状态."""
             to_status = getattr(event, "to_status", "")
-            if to_status.upper() != "IN_PROGRESS":
+            if to_status.upper() != TaskStatus.IN_PROGRESS:
                 return
             try:
                 from zephyr.security.access_control.genesis_bootstrap import (
@@ -259,7 +262,7 @@ def _register_rbac_hooks() -> None:
         def _on_task_completed_rbac_audit(event: object) -> None:
             """任务完成时记录RBAC审计条目."""
             to_status = getattr(event, "to_status", "")
-            if to_status.upper() != "COMPLETED":
+            if to_status.upper() != TaskStatus.COMPLETED:
                 return
             try:
                 from zephyr.security.access_control.non_repudiation import NonRepudiation
@@ -274,7 +277,7 @@ def _register_rbac_hooks() -> None:
         def _on_task_failed_rbac_alert(event: object) -> None:
             """任务失败时检查是否需要触发RBAC熔断器."""
             to_status = getattr(event, "to_status", "")
-            if to_status.upper() != "FAILED":
+            if to_status.upper() != TaskStatus.FAILED:
                 return
             try:
                 from zephyr.security.access_control.kill_switch import KillSwitchState, get_kill_switch
@@ -347,14 +350,14 @@ def _hook_auto_unblock_dependents(event: object, task_repo: TaskRepositoryProtoc
             return
         downstream = tr.list_by_dependency(completed_id)
         for ds in downstream:
-            if ds.status not in ("BLOCKED", "PENDING", "WAITING"):
+            if ds.status not in (TaskStatus.BLOCKED, TaskStatus.PENDING, TaskStatus.WAITING):
                 continue
             deps = ds.depends_on or []
             if not deps:
                 continue
-            all_done = all(tr.get(d).status == "COMPLETED" for d in deps if d)
+            all_done = all(tr.get(d).status == TaskStatus.COMPLETED for d in deps if d)
             if all_done:
-                tr.transition(ds.task_id, "READY", note=f"unblocked by {completed_id}")
+                tr.transition(ds.task_id, TaskStatus.READY, note=f"unblocked by {completed_id}")
     except Exception as exc:
         logger.error("hook auto_unblock_dependents FAILED: %s", exc, exc_info=True)
 
@@ -370,7 +373,7 @@ def _hook_auto_retry_on_failure(event: object, task_repo: TaskRepositoryProtocol
         if retry_count < _MAX_AUTO_RETRY_LIMIT:
             tr.transition(
                 task_id,
-                "RETRY",
+                TaskStatus.RETRY,
                 note=f"auto-retry from hook (attempt {retry_count + 1})",
             )
     except Exception as exc:
@@ -403,7 +406,7 @@ def _hook_cleanup_task_processes(event: object) -> None:
         to_status = getattr(event, "to_status", "")
         if not task_id:
             return
-        if to_status.upper() in ("COMPLETED", "FAILED", "CANCELLED"):
+        if to_status.upper() in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
             from zephyr.trading.ide_health_daemon import kill_task_processes
 
             killed = kill_task_processes(task_id)
@@ -417,7 +420,7 @@ def _hook_orc_vms_archive(event: object, task_repo: TaskRepositoryProtocol | Non
     try:
         task_id = getattr(event, "task_id", "")
         to_status = getattr(event, "to_status", "")
-        if to_status.upper() != "COMPLETED":
+        if to_status.upper() != TaskStatus.COMPLETED:
             return
         from zephyr.trading.orchestrator.execution.memory_writer import archive_to_vms
 
@@ -433,7 +436,7 @@ def _hook_kb_vms_sync(event: object) -> None:
     try:
         task_id = getattr(event, "task_id", "")
         to_status = getattr(event, "to_status", "")
-        if to_status.upper() != "COMPLETED":
+        if to_status.upper() != TaskStatus.COMPLETED:
             return
         from zephyr.intelligence.model_evaluation.sync_engine import sync_to_vms
 
@@ -457,7 +460,7 @@ def _hook_rbk_gate_freeze(event: object) -> None:
 
 def _hook_escalation_check(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
     to_status = getattr(event, "to_status", "")
-    if to_status.upper() != "BLOCKED":
+    if to_status.upper() != TaskStatus.BLOCKED:
         return
     try:
         _resolve_task_repo(task_repo).check_escalation(getattr(event, "task_id", ""))
@@ -467,7 +470,7 @@ def _hook_escalation_check(event: object, task_repo: TaskRepositoryProtocol | No
 
 def _hook_timeout_check(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
     to_status = getattr(event, "to_status", "")
-    if to_status.upper() != "IN_PROGRESS":
+    if to_status.upper() != TaskStatus.IN_PROGRESS:
         return
     try:
         _resolve_task_repo(task_repo).check_task_timeout(getattr(event, "task_id", ""))
@@ -477,7 +480,7 @@ def _hook_timeout_check(event: object, task_repo: TaskRepositoryProtocol | None 
 
 def _hook_budget_delta(event: object, budget_engine: BudgetEngineProtocol | None = None) -> None:
     to_status = getattr(event, "to_status", "")
-    if to_status.upper() != "COMPLETED":
+    if to_status.upper() != TaskStatus.COMPLETED:
         return
     try:
         engine = budget_engine
