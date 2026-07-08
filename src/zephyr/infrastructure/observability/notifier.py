@@ -1,7 +1,7 @@
-# [BLUEPRINT] SRC-125 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-014 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.observability.notifier
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.events.event_bus
+# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.event_bus
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -140,7 +140,7 @@ class Notifier:
         """事件驱动订阅——pipeline_failed/kill_switch_triggered 自动通知 Owner（永久系统四要素：自动触发）。"""
         if self._subscribed:
             return
-        from zephyr.shared.events.event_bus import bus
+        from zephyr.shared.event_bus import bus
 
         notifier = self
 
