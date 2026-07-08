@@ -492,12 +492,18 @@ def _detect_design_only_in_one(all_nodes: list[PanoramaNode]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 
-def run_alignment(output_path: Path | None = None) -> PanoramaAlignmentReport:
+def run_alignment(
+    output_path: Path | None = None,
+    *,
+    write_report: bool = True,
+) -> PanoramaAlignmentReport:
     """运行三图对齐检测，生成报告。
 
     Args:
         output_path: 报告输出路径。None 时使用默认路径
             docs/02_enterprise_architecture/generated/panorama_alignment_report.md
+        write_report: True 写入文件（默认）；False 仅返回 report 不写文件
+            （门禁场景使用，避免污染 docs/）
     """
     if output_path is None:
         output_path = (
@@ -560,13 +566,14 @@ def run_alignment(output_path: Path | None = None) -> PanoramaAlignmentReport:
         issues_total=len(orphans) + len(state_drifts) + len(domain_mismatches) + len(design_only_in_one),
     )
 
-    # 写入文件
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(report.to_markdown(), encoding="utf-8")
-    print(f"OK: 三图对齐报告已写入 {output_path}")
-    print(f"    问题总数: {report.issues_total} "
-          f"(孤儿={len(orphans)}, 状态漂移={len(state_drifts)}, "
-          f"域不一致={len(domain_mismatches)}, 设计态孤立={len(design_only_in_one)})")
+    # 写入文件（门禁场景 write_report=False 跳过）
+    if write_report:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(report.to_markdown(), encoding="utf-8")
+        print(f"OK: 三图对齐报告已写入 {output_path}")
+        print(f"    问题总数: {report.issues_total} "
+              f"(孤儿={len(orphans)}, 状态漂移={len(state_drifts)}, "
+              f"域不一致={len(domain_mismatches)}, 设计态孤立={len(design_only_in_one)})")
 
     return report
 
