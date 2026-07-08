@@ -1090,6 +1090,29 @@ capabilities:
       - make_held_overlap_gate     # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: foreign_change_gate
+    aliases:
+      - FOREIGN-CHANGE-DETECTION
+      - foreign-change-detection
+      - make_foreign_change_gate
+      - foreign_change_detector
+      - ghost_commit_content_blocker
+      - dirty_baseline_blocker
+    description: >-
+      外来变更检测门禁（FOREIGN-CHANGE-DETECTION，ARCH-054 治本，2026-07-09）。
+      检测 commit 中是否包含 claim 时已存在的"外来变更"（其他 session 的未提交修改）——
+      防止搭便车提交（ARCH-031 根因治本）。病根：session A 修改文件 X 未 commit，
+      session B claim_files(X) 时 HELD-OVERLAP 因 X 未被 claim 而放行，B commit 将 A 的
+      修改一并提交。FOREIGN-CHANGE-DETECTION 在 claim_files 时捕获 git diff HEAD 基线快照，
+      commit 时对比：基线非空则阻断（FOREIGN_CHANGE_VIOLATION）。
+      priority=45（在 CLAIM-REQUIRED(40) 后、HELD-OVERLAP(50) 前）。allow_overlap=True
+      逃生通道放行。canonical basename foreign_change_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "外来变更/搭便车内容/ghost commit content/dirty baseline" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类防护脚本。
+    integrity_anchors:
+      - make_foreign_change_gate    # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: dangling_reference_gate
     aliases:
       - DANGLING-REFERENCE
@@ -3509,6 +3532,12 @@ capabilities:
 # ============================================================================
 creation_tokens:
 
+  # --- 全景图清单总表生成器（2026-07-09，GATE-ARCH-DIAGRAM reconciler 第11个生成器）---
+  - file: "scripts/governance/d5_architecture/generators/generate_panorama_registry.py"
+    token: "auto-generate-panorama-registry-20260709"
+    created_by: "session-sess-22040-20260709012115"
+    capability: "domain_architecture_generators"
+
   # --- DatabaseCRUDMixin 专项工程（2026-07-06 P-PLAN，抽取两个 DatabaseService 类共享的 9 个 CRUD 方法）---
   - file: "src/zephyr/shared/database/database_crud_mixin.py"
     token: "auto-database-crud-mixin-20260706"
@@ -3574,6 +3603,11 @@ creation_tokens:
     token: "auto-held-overlap-gate-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "held_overlap_gate"
+
+  - file: "src/zephyr/governance/commit_gates/foreign_change_gate.py"
+    token: "auto-foreign-change-gate-20260709"
+    created_by: "session-arch054-foreign-change"
+    capability: "foreign_change_gate"
 
   - file: "src/zephyr/governance/commit_gates/dangling_reference_gate.py"
     token: "auto-dangling-reference-gate-20260701"

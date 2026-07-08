@@ -1514,6 +1514,28 @@ entries:
   related_adjudication: '#203'
   created: '2026-07-06'
   last_updated: '2026-07-06'
+- issue_id: '#ARCH-054'
+  title: FOREIGN-CHANGE-DETECTION gate——claim 时基线快照检测搭便车提交治本
+  severity: P1中
+  adjudication: |
+    2026-07-09 裁定：ARCH-031 搭便车提交根因治本——GitCommitGateway 新增
+    FOREIGN-CHANGE-DETECTION gate（priority=45）。病根：session A 修改文件 X 后未 commit，
+    session B claim_files(X) 时 HELD-OVERLAP gate 因 X 未被 claim 而放行，B commit 时
+    将 A 的未提交修改一并提交（搭便车）。现有 HELD-OVERLAP 只检测"文件是否被其他 session
+    claim"，无法检测"文件是否已有外来未提交变更"。
+    裁定：
+    (a) GitCommitGateway.claim_files 新增基线快照捕获——claim 成功后立即调用
+        _capture_baseline_diff(file) 记录 git diff HEAD -- <file> 的 stdout。
+    (b) 新增 FOREIGN-CHANGE-DETECTION gate（priority=45，在 CLAIM-REQUIRED(40) 后、
+        HELD-OVERLAP(50) 前）——commit 时遍历目标文件，若基线快照非空则阻断
+        （FOREIGN_CHANGE_VIOLATION），提示用 allow_overlap=True 逃生通道。
+    (c) fail-open 边界：无基线快照（reconciler auto-commit 等未走 claim_files 的路径）
+        → PASS；_claim_snapshots 读取异常 → 降级 PASS（不阻断 commit）。
+    (d) worktree 物理隔离消除搭便车风险——session_worktree_commit 跳过
+        FOREIGN-CHANGE-DETECTION（_WORKTREE_SKIP_GATES 已更新）。
+  related_adjudication: '#203'
+  created: '2026-07-09'
+  last_updated: '2026-07-09'
 - issue_id: '#ARCH-MM-001'
   title: '[MATURITY]标记与depgraph design_maturity关系裁定——声明vs验证'
   severity: P1中
