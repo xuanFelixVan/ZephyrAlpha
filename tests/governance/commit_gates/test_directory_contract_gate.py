@@ -255,8 +255,18 @@ class TestCheckDeprecatedDirectory:
     2026-06-30 补全：原 scan_files 漏检 deprecated_directories，新增本函数修复。
     """
 
-    def test_file_in_deprecated_dir_detected(self):
-        """文件在废弃目录内 → 命中 DCR-DEPRECATED。"""
+    def test_file_in_deprecated_dir_detected(self, monkeypatch, tmp_path):
+        """文件在废弃目录内 → 命中 DCR-DEPRECATED。
+
+        用 monkeypatch + tmp_path 创建真实文件（ARCH-DEBT-BACKUP-CLEANUP 2026-07-08：
+        check_deprecated_directory 现在检查文件存在性，虚构路径会被当作删除操作跳过）。
+        """
+        # 在 tmp_path 下创建废弃目录+文件
+        deprecated_dir = tmp_path / "docs" / "_archive"
+        deprecated_dir.mkdir(parents=True)
+        (deprecated_dir / "old.md").touch()
+        # monkeypatch REPO_ROOT 指向 tmp_path（check_deprecated_directory 用 REPOROOT / rel_path 检查存在性）
+        monkeypatch.setattr(_mod, "REPO_ROOT", tmp_path)
         contract = {
             "deprecated_directories": [
                 {"path": "docs/_archive", "reason": "已迁移", "migrated_to": "docs/01_policies"}
@@ -301,6 +311,24 @@ class TestCheckDeprecatedDirectory:
         """contract 无 deprecated_directories → 放行。"""
         findings = check_deprecated_directory("any/file.py", {})
         assert findings == []
+
+    def test_nonexistent_file_skipped(self):
+        """文件不存在=删除操作 → 跳过 deprecated 检查（ARCH-DEBT-BACKUP-CLEANUP 2026-07-08）。
+
+        deprecated_directories 设计意图是阻断**新建**文件进入废弃目录，而非阻断
+        **删除**废弃目录中的已有文件。删除废弃目录中的文件正是期望的迁移行为。
+        通过检测文件是否存在于磁盘上区分 add/modify vs delete：文件不存在=删除→放行。
+        """
+        contract = {
+            "deprecated_directories": [
+                {"path": "data/databases/backups", "reason": "已迁移", "migrated_to": "tmp/pg_backups"}
+            ]
+        }
+        # 传入一个磁盘上不存在的路径（模拟删除操作）
+        findings = check_deprecated_directory(
+            "data/databases/backups/ghost_autoclean_nonexistent_test/deleted.csv", contract
+        )
+        assert findings == [], "删除废弃目录中的文件应放行，不应报 DCR-DEPRECATED"
 
     def test_scan_files_calls_check_deprecated_directory(self, monkeypatch):
         """scan_files 集成——验证 scan_files 调用 check_deprecated_directory（防漏调）。
