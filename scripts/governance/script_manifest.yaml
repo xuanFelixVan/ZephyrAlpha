@@ -1,12 +1,12 @@
-# 自动生成于 2026-07-08T20:09:18Z
+# 自动生成于 2026-07-08T20:34:29Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-08T20:09:18Z'
+generated_at: '2026-07-08T20:34:29Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 336
-with_manifest: 312
+total_scripts: 333
+with_manifest: 309
 missing_manifest: 24
 categories:
   governance:_sync: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 22
   governance:d4_paths: 4
-  governance:d5_architecture: 102
+  governance:d5_architecture: 99
   governance:d6_security: 14
   governance:d7_code: 33
   governance:d8_doc_sync: 9
@@ -1850,21 +1850,6 @@ scripts:
   description: 'AI写入前强制门禁钩子: lock协议检查+GateEngine Phase评估+注册完整性验证'
   tags:
   - Quick
-- name: d5_architecture/score_architecture.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 60
-  args:
-  - --quarterly
-  - --dimension
-  - --compare
-  - --dashboard
-  warn_only: false
-  description: 12 维架构评分自动化（12-dimension-audit-matrix §6.1 — D1~D12 加权评分）
-  tags:
-  - Critical
 - name: d5_architecture/syncers/archive_rationale_log.py
   owner: governance:d5_architecture
   dimensions:
@@ -2012,19 +1997,6 @@ scripts:
   description: 模块生命周期校验（GOV-MOD-003 MLC-001/002/003 — 8阶段状态机+P0约束）
   tags:
   - Critical
-- name: d5_architecture/validators/lifecycle/validate_phase_transition.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 60
-  args:
-  - --from
-  - --to
-  warn_only: false
-  description: Phase 过渡双门协议合规率校验（dimension-audit-matrix §4.12 — Phase transition gates）
-  tags:
-  - Critical
 - name: d5_architecture/validators/session/validate_session_log_index_integrity.py
   owner: governance:d5_architecture
   dimensions:
@@ -2155,17 +2127,6 @@ scripts:
   warn_only: false
   description: GATE-XREF — 架构模型 YAML 跨引用完整性闸门（8 维检查：contract_id/invariant_id/kb_ref/owner/source_layer/events_published/孤儿合同/module_id
     注册链，根治引用漂移）
-  tags:
-  - Critical
-- name: d5_architecture/validators/validate_dag.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 代码级 import 依赖 DAG 无循环校验（dimension-audit-matrix §4.3 — D5依赖方向）
   tags:
   - Critical
 - name: d5_architecture/validators/validate_dependency_graph_template.py
