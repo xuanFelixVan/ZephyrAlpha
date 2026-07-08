@@ -581,13 +581,20 @@ capabilities:
       - generate_domain_dependency_diagram
       - generate_contracts
       - generate_project_depgraph
+      - generate_panorama_registry
     description: >-
-      depgraph（PostgreSQL，INFRA-DB-003）驱动的域架构文档自动生成器集（12 生成器）。
+      depgraph（PostgreSQL，INFRA-DB-003）驱动的域架构文档自动生成器集（13 生成器）。
       全部位于 scripts/governance/d5_architecture/generators/ 目录下。
       输出幂等（相同 DB 输入→相同输出），零时间戳（date: auto-generated，
       最后更新以 git log 为准），禁止在生成器中使用 datetime.now()。
       GATE-DOMAIN-DOC reconciler 在 commit depgraph（PostgreSQL）后自动触发
       generate_domain_doc.py 和 generate_domain_dependency_diagram.py。
+      GATE-ARCH-DIAGRAM reconciler（priority=630）在 post-commit 自动触发
+      11 个生成器（generate_decision_diagram / generate_dataflow_diagram /
+      generate_integration_topology / generate_design_vs_production /
+      generate_cross_domain_matrix / generate_constraint_violations /
+      generate_capacity_report / generate_capability_heatmap /
+      generate_navigation_index / generate_panorama_registry / align_panoramas）。
       AI 发现路径：搜索任一生成器名（如 generate_path_tree）→ 命中本条目 →
       outputs 字段列出生成器→输出目录映射 → scripts/governance/d5_architecture/generators/ 找源码。
     # 生成器→输出目录映射（生成器豁免区真源）
@@ -596,7 +603,7 @@ capabilities:
     # 不含 taskcards/ 子目录（手工任务卡）和 04_architecture_principles_decisions/（手工架构决策）
     outputs:
       - output_dir: docs/02_enterprise_architecture/00_overview_entry/
-        generators: [generate_navigation_index.py]
+        generators: [generate_navigation_index.py, generate_panorama_registry.py]
       - output_dir: docs/02_enterprise_architecture/01_global_architecture_diagram/
         generators: [generate_path_tree.py, generate_cross_domain_matrix.py, generate_integration_topology.py, generate_capability_heatmap.py]
       - output_dir: docs/02_enterprise_architecture/02_domain_architecture_docs/
@@ -2911,8 +2918,12 @@ capabilities:
       [GW: 标记）并 auto-revert（git reset --soft HEAD~1）。治本 --no-verify 绕过
       pre-commit 但不绕过 post-commit 的治理缺口（#ARCH-050）。canonical =
       scripts/governance/git_hooks/post_commit_guard.sh（auto 派生：basename
-      post_commit_guard 匹配 capability_id）。4 种合法 GW 标记放行 + merge commit
-      豁免。审计报告落盘 .runtime/reconcile_reports/post_commit_guard_<ts>.json。
+      post_commit_guard 匹配 capability_id）。两层验证：①标记存在性（不含 [GW:
+      且非 merge commit → reset）；②session_id 真实性（2026-07-08 强化：解析
+      [GW:{session_id}...] 要求 sess- 前缀，查询 .runtime/session_registry.json
+      注册表，未注册 → 伪造检测 → reset）。fail-open：注册表不存在/解析失败 →
+      放行。4 种合法 GW 标记放行 + merge commit 豁免。审计报告落盘
+      .runtime/reconcile_reports/post_commit_guard_<ts>.json。
 
   # --------------------------------------------------------------------------
   - capability_id: position_reconciler
