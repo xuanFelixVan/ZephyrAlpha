@@ -388,7 +388,16 @@ def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict | None =
 
 
 def check_deprecated_directory(rel_path: str, contract: dict) -> list[dict]:
-    """检测文件是否位于废弃目录（directory_contract.yaml §7 deprecated_directories）。"""
+    """检测文件是否位于废弃目录（directory_contract.yaml §7 deprecated_directories）。
+
+    治本（2026-07-08，ARCH-DEBT-BACKUP-CLEANUP）：deprecated_directories 的设计意图是
+    阻断**新建**文件进入废弃目录，而非阻断**删除**废弃目录中的已有文件。删除废弃目录中的
+    文件正是期望的迁移行为，应予放行。通过检测文件是否存在于磁盘上区分 add/modify vs delete：
+    文件不存在=删除操作→跳过 deprecated 检查。
+    """
+    # 文件不存在于磁盘 = 删除操作 → 放行（删除废弃目录中的文件是期望行为）
+    if not (REPO_ROOT / rel_path).exists():
+        return []
     findings: list[dict] = []
     for entry in (contract.get("deprecated_directories") or []):
         dep_path = entry.get("path", "").replace("\\", "/").rstrip("/")
