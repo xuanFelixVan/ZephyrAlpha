@@ -99,7 +99,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | 模块 | 入口 | 职责 |
 |------|------|------|
 | DatabaseService | `zephyr.infrastructure.database_service` | 业务数据库统一访问（ClickHouse/PostgreSQL），禁止裸 `duckdb.connect` |
-| EventBus (M-07) | `zephyr.shared.event_bus` → `bus` 单例 | 事件总线背压控制器，`from zephyr.shared.events.event_bus import bus` |
+| EventBus (M-07) | `zephyr.shared.event_bus` → `bus` 单例 | 事件总线背压控制器，`from zephyr.shared.event_bus import bus` |
 | EventStore (RI-13) | `zephyr.infrastructure.event_store` | SQLite 不可篡改审计日志（WAL+SHA256 checksum） |
 | CostTracker (RI-15) | `zephyr.infrastructure.cost_tracker` | Token/API 调用成本实时监控+日预算告警 |
 | SLAMonitor | `zephyr.infrastructure.sla.sla_monitor` | RTO/RPO 自动记录（事件驱动：pipeline_failed→rollback_completed），目标见 `config/sla_targets.yaml` |
