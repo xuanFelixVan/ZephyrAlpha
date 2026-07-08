@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-07-07'
-total_scripts: 563
+generated_at: '2026-07-08'
+total_scripts: 562
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -3441,14 +3441,6 @@ scripts:
 - name: governance/_archive/one_off/audit_post_sync_commands.py
   path: governance/_archive/one_off/audit_post_sync_commands.py
   description: 扫描 governance.db 中所有任务的 post_sync_standard 命令，逐条机械校验：
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_archive/one_off/audit_session_07.py
-  path: governance/_archive/one_off/audit_session_07.py
-  description: 验证所有新建/修改文件的落盘状态、语法正确性、导入解析性。
   domain: governance
   execution_plane: warm-path
   status: registered
