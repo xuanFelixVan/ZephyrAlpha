@@ -34,11 +34,10 @@ DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理（requests 实现）
 
 from __future__ import annotations
 
+import logging
 from typing import Final
-logger = logging.getLogger(__name__)
 
 import json
-import logging
 import os
 import random
 import re
@@ -46,6 +45,8 @@ import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 from zephyr.shared.io.paths import REPO_ROOT
+
+logger = logging.getLogger(__name__)
 from zephyr.shared.security.secrets import get_secret_or_default
 
 if TYPE_CHECKING:

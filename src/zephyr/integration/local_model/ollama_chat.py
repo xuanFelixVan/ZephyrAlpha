@@ -30,13 +30,12 @@ OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理
 
 from __future__ import annotations
 
+import logging
 from typing import Final
-logger = logging.getLogger(__name__)
 
 from http import HTTPStatus
 
 import json
-import logging
 import os
 import random
 import re
