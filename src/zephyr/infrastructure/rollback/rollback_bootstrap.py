@@ -35,7 +35,7 @@ Exit Codes:
     1  = git 不可用
     2  = 无可回滚历史
     3  = revert 冲突
-    10 = BOOTSTRAP_ESCALATED (主回滚器失败→bootstrap接管)
+    10 = BOOTSTRAP_ESCALATED (主回滚器失败->bootstrap接管)
 """
 
 from __future__ import annotations

@@ -59,7 +59,7 @@ class CapabilityChecker:
             write_to_core("capability_check", {"action": action, "caller": caller, "target": target, "result": reason})
             return True
 
-        logger.critical("CBAC DENIED: %s → %s / %s — %s", caller, target, action, reason)
+        logger.critical("CBAC DENIED: %s -> %s / %s — %s", caller, target, action, reason)
         self._audit_log.append(
             AuditLogEntry(
                 action=action,

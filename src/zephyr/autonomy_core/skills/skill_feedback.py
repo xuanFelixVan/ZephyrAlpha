@@ -21,7 +21,7 @@ Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.2.0
 
-Skill 反馈环 —— ModuleResult → SkillLifecycle → 自动优化闭.
+Skill 反馈环 —— ModuleResult -> SkillLifecycle -> 自动优化闭.
 每次 Skill 执行后自动记录质量指标，触发 freshness 衰减/boost，
 并在异常情况下自动触发 Kill Switch.
 """
@@ -64,7 +64,7 @@ class FeedbackSignal:
 
 
 class SkillFeedback:
-    """Skill 反馈环 —— ModuleResult→SkillLifecycle→自动优化."""
+    """Skill 反馈环 —— ModuleResult->SkillLifecycle->自动优化."""
 
     _FEEDBACK_LOG = Path("_journals/skill_feedback.jsonl")
     _MAX_HISTORY = 100

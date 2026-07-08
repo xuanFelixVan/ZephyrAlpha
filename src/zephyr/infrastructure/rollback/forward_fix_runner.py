@@ -21,7 +21,7 @@ ForwardFixRunner — Forward-Fix 执行器。
 依据: 蓝图 MOD-INF-021 §6.2 B51 + D-021-08
 
 回滚的替代决策路径: 优先产生 FIX commit 而非 revert commit。
-preview 评估 → 冲突风险低 + 变更文件 ≤3 → 自动生成 fix patch → commit。
+preview 评估 -> 冲突风险低 + 变更文件 ≤3 -> 自动生成 fix patch -> commit。
 """
 
 from __future__ import annotations

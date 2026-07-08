@@ -34,7 +34,7 @@ class InferenceEngineBase(abc.ABC):
     """
     推理引擎抽象基类（OCP 扩展点 D_ML_TRAIN-INF）
 
-    契约对齐：CTR-P1-004（ModelServingRequest 入站）→ CTR-P1-005（ModelServingResponse 出站）
+    契约对齐：CTR-P1-004（ModelServingRequest 入站）-> CTR-P1-005（ModelServingResponse 出站）
 
     实现者要求：
       - predict(): 接收推理请求，返回标准化推理响应
@@ -46,7 +46,7 @@ class InferenceEngineBase(abc.ABC):
 
     @abc.abstractmethod
     def predict(self, request: ModelServingRequest) -> ModelServingResponse:
-        """模型推理：请求 → 响应"""
+        """模型推理：请求 -> 响应"""
         ...
 
     def batch_predict(self, requests: list[ModelServingRequest]) -> list[ModelServingResponse]:

@@ -32,9 +32,9 @@
   - 质量问题分级告警
 
 CTR 契约：
-  生产者 — CTR-ERR-001 (DataQualityError) → D_FACTOR
+  生产者 — CTR-ERR-001 (DataQualityError) -> D_FACTOR
 
-SSoT: cross_layer_contracts.yaml → CTR-ERR-001
+SSoT: cross_layer_contracts.yaml -> CTR-ERR-001
 """
 
 from __future__ import annotations

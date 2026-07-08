@@ -57,8 +57,8 @@ class TaskStatus(str, Enum):
     """TaskStatus 真源（SSoT）— 全项目唯一 TaskStatus 定义。
 
     派生方（禁止反向修改）：
-      - zephyr.infrastructure.lifecycle.task_lifecycle_manager.TaskStatus → 本类 re-export
-      - zephyr.shared.protocols.a2a.a2a_coordination.TaskStatus → 本类 re-export
+      - zephyr.infrastructure.lifecycle.task_lifecycle_manager.TaskStatus -> 本类 re-export
+      - zephyr.shared.protocols.a2a.a2a_coordination.TaskStatus -> 本类 re-export
     """
 
     PENDING = "PENDING"
@@ -191,7 +191,7 @@ class Task(BaseModel):
     depgraph_layer: str | None = Field(default=None, description="依赖图层")
     dependency_rationale: str = Field(default="", description="依赖关系说明")
     root_cause_analysis: str | None = Field(
-        default=None, description="MTH-006 根源分析——COMPLETED 时如有 error 则 MUST 填写，含根因→治根→修复的完整追溯"
+        default=None, description="MTH-006 根源分析——COMPLETED 时如有 error 则 MUST 填写，含根因->治根->修复的完整追溯"
     )
     hallucination_risk: float = Field(default=0.0, ge=0.0, le=1.0, description="幻觉风险评分（0=安全，1=极度危险）")
     drift_risk: float = Field(default=0.0, ge=0.0, le=1.0, description="漂移风险评分（0=安全，1=极度危险）")

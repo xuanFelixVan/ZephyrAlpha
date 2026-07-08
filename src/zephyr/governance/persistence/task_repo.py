@@ -38,22 +38,22 @@ Safety : H（基础设施核心，状态机错误会影响整个任务流水线�
 
 状态转换表（合法路径，#13 裁定：对齐 Jira/ITIL 标准）
 ---------------------
-  PENDING     → IN_PROGRESS, BLOCKED, CANCELLED
-  IN_PROGRESS → COMPLETED, FAILED, BLOCKED, WAITING
-  COMPLETED   → VERIFIED, IN_PROGRESS
-  VERIFIED    → （终态，无出边）
-  FAILED      → RETRY, CANCELLED
-  BLOCKED     → READY, CANCELLED
-  WAITING     → READY, CANCELLED
-  READY       → IN_PROGRESS, CANCELLED
-  RETRY       → IN_PROGRESS, FAILED
-  CANCELLED   → （终态，无出边）
+  PENDING     -> IN_PROGRESS, BLOCKED, CANCELLED
+  IN_PROGRESS -> COMPLETED, FAILED, BLOCKED, WAITING
+  COMPLETED   -> VERIFIED, IN_PROGRESS
+  VERIFIED    -> （终态，无出边）
+  FAILED      -> RETRY, CANCELLED
+  BLOCKED     -> READY, CANCELLED
+  WAITING     -> READY, CANCELLED
+  READY       -> IN_PROGRESS, CANCELLED
+  RETRY       -> IN_PROGRESS, FAILED
+  CANCELLED   -> （终态，无出边）
 
-  注 1：COMPLETED → IN_PROGRESS 为验证失败返工路径（替代原 COMPLETED → CANCELLED）。
-  依据：Jira/ServiceNow/Linear/Azure DevOps 均不允许 COMPLETED → CANCELLED 直转；
+  注 1：COMPLETED -> IN_PROGRESS 为验证失败返工路径（替代原 COMPLETED -> CANCELLED）。
+  依据：Jira/ServiceNow/Linear/Azure DevOps 均不允许 COMPLETED -> CANCELLED 直转；
   ITIL v4 / ISO 10006 / CMMI 要求验证不通过走纠正措施循环（返回执行）。
-  注 2：RETRY → FAILED 为重试失败路径（替代原 RETRY → CANCELLED）。
-  取消只能从 FAILED 发起（FAILED → CANCELLED），RETRY 不直接取消。
+  注 2：RETRY -> FAILED 为重试失败路径（替代原 RETRY -> CANCELLED）。
+  取消只能从 FAILED 发起（FAILED -> CANCELLED），RETRY 不直接取消。
   依据：Jira/ServiceNow 要求重试失败先回到 FAILED 状态再决定取消，保持审计轨迹。
 
 线程安全
@@ -112,7 +112,7 @@ __all__ = [
     "search",
 ]
 
-# PENDING → IN_PROGRESS 转换时触发的门禁 ID
+# PENDING -> IN_PROGRESS 转换时触发的门禁 ID
 _STARTUP_GATE_ID = "G1"
 
 # ---------------------------------------------------------------------------
@@ -258,7 +258,7 @@ class RootCauseRequiredError(TaskRepositoryError):
     def __init__(self, task_id: str, *, error_code: str | None = None) -> None:
         super().__init__(
             f"任务 {task_id!r} 转换为 FAILED 必须提供根因分析（note 参数不得为空，"
-            f"且须包含根因→治根→修复的完整追溯，见 MTH-006）"
+            f"且须包含根因->治根->修复的完整追溯，见 MTH-006）"
         )
         if error_code is not None:
             self.error_code = error_code
@@ -721,14 +721,14 @@ class TaskRepository:
 
     @contextmanager
     def _write_tx(self) -> Iterator[sqlite3.Connection]:
-        """写事务上下文：BEGIN IMMEDIATE → yield → COMMIT / ROLLBACK。"""
+        """写事务上下文：BEGIN IMMEDIATE -> yield -> COMMIT / ROLLBACK。"""
         with self._lock:
             self._conn.execute("BEGIN IMMEDIATE")
             try:
                 yield self._conn
                 self._conn.execute("COMMIT")
             except BaseException:
-                # 5.163.2 修复: except Exception → BaseException,确保 Ctrl+C/SystemExit 时
+                # 5.163.2 修复: except Exception -> BaseException,确保 Ctrl+C/SystemExit 时
                 # 也执行 ROLLBACK 释放 SQLite BEGIN IMMEDIATE 写锁,避免写锁泄漏。
                 self._conn.execute("ROLLBACK")
                 raise
@@ -1174,7 +1174,7 @@ class TaskRepository:
                 session_id=task.session_id,
             )
             row = self._fetch_row(conn, task.task_id)
-        if row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
+        if row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(row)
 
     # ------------------------------------------------------------------
@@ -1313,7 +1313,7 @@ class TaskRepository:
             )
             updated_row = self._fetch_row(conn, task_id)
 
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
@@ -1325,13 +1325,13 @@ class TaskRepository:
 
         G7 交付门禁（transition(COMPLETED) 时评估）要求
         ``verification_status == "verified"``（g7_orc_gate_engine.yaml
-        G7-ORC-VERIFICATION, severity=error → P0）。本方法是设置该字段的
+        G7-ORC-VERIFICATION, severity=error -> P0）。本方法是设置该字段的
         唯一合法生产路径——填补"门禁已接线但无验证入口"的设计缺口。
 
         前置机械门禁：``batch_review`` 必须通过（``consecutive_zero >= 2``）。
         通过后设置：
           - ``verification_status = "verified"``（小写，匹配 G7 allowed_values）
-          - ``construction_status = "completed"``（DB 现有约定：pending → completed）
+          - ``construction_status = "completed"``（DB 现有约定：pending -> completed）
 
         典型调用顺序::
 
@@ -1380,7 +1380,7 @@ class TaskRepository:
             )
             updated_row = self._fetch_row(conn, task_id)
 
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
@@ -1400,13 +1400,13 @@ class TaskRepository:
         task_id: str,
         proposed_priority: str,
     ) -> TaskCard:
-        """AI 提议优先级升级（P4→P3→P2→P1→P0）。
+        """AI 提议优先级升级（P4->P3->P2->P1->P0）。
 
         规则（GOV-TASK-004 §2.4）：
         - 设置为 approval_required=True + priority_proposed=目标值
         - 不直接修改 priority 字段
         - 若已有拒绝且在 48h 冷却期内，抛出 RejectedUpgradeCoolingOffError
-        - 降级（如 P1→P2）直接生效，不走审批
+        - 降级（如 P1->P2）直接生效，不走审批
         """
         from zephyr.integration.shared.schema.severity_types import Priority as P
 
@@ -1512,11 +1512,11 @@ class TaskRepository:
             )
 
             updated_row = self._fetch_row(conn, task_id)
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     def approve_priority_upgrade(self, task_id: str) -> TaskCard:
-        """Owner 批准优先级升级。将 priority_proposed → priority，清除 approval 标记。"""
+        """Owner 批准优先级升级。将 priority_proposed -> priority，清除 approval 标记。"""
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
             if row is None:
@@ -1550,7 +1550,7 @@ class TaskRepository:
             )
 
             updated_row = self._fetch_row(conn, task_id)
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     def reject_priority_upgrade(self, task_id: str) -> TaskCard:
@@ -1589,7 +1589,7 @@ class TaskRepository:
             )
 
             updated_row = self._fetch_row(conn, task_id)
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
@@ -1687,7 +1687,7 @@ class TaskRepository:
                 from_status = TaskStatus(row["status"])
                 if not _is_valid_transition(from_status, to_status):
                     raise InvalidTransitionError(
-                        f"非法转换 {from_status.value} → {to_status.value}（task_id={task_id!r}）"
+                        f"非法转换 {from_status.value} -> {to_status.value}（task_id={task_id!r}）"
                     )
 
                 # 5.15.1 修复：循环验收已移到写事务之前（见上方），此处不再重复执行
@@ -1760,7 +1760,7 @@ class TaskRepository:
                 self._gate_engine._persist_result(exc.result, conn=None)
             raise
 
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
 
         from zephyr.governance.ops_governance.event_hook import TransitionEvent, hook_registry
 
@@ -1837,8 +1837,8 @@ class TaskRepository:
         4. 无文件可提交时跳过(不报错)
 
         修复历史:
-        - 2026-06-23: git commit 不带文件参数会提交所有 staged 文件 → 改为 git commit -- <files>
-        - 2026-06-25: 仍未防幽灵提交（pre-commit stash 冲突）→ 改用 GitCommitGateway 治本
+        - 2026-06-23: git commit 不带文件参数会提交所有 staged 文件 -> 改为 git commit -- <files>
+        - 2026-06-25: 仍未防幽灵提交（pre-commit stash 冲突）-> 改用 GitCommitGateway 治本
         """
         files_in_scope = getattr(task_obj, "files_in_scope", None) or []
         if not files_in_scope:
@@ -1902,12 +1902,12 @@ class TaskRepository:
         """执行 post_sync_standard 循环验收。
 
         CIRCULAR_ACCEPTANCE_ROUNDS=2: 所有命令必须连续 2 轮返回 exit=0。
-        任一命令任一轮失败 → 抛出 CircularAcceptanceError。
+        任一命令任一轮失败 -> 抛出 CircularAcceptanceError。
 
         失败模式区分（DM-210625）：
-          - exit=2：argparse 拒绝（flag 不存在）→ PostSyncConstructionError
+          - exit=2：argparse 拒绝（flag 不存在）-> PostSyncConstructionError
             （建卡缺陷，应修复 post_sync_standard 字段而非重试）
-          - exit≠0且≠2：真实工作质量问题 → CircularAcceptanceError
+          - exit≠0且≠2：真实工作质量问题 -> CircularAcceptanceError
           - 超时：计入 failures，按循环验收判定
         """
         import shlex
@@ -2121,8 +2121,8 @@ class TaskRepository:
         """当子任务状态变更时，重算依赖它的父任务状态。
 
         规则（蓝图 MOD-TASK_SYSTEM 盲点#1）：
-        - 所有子任务 COMPLETED/VERIFIED → 父任务 READY（解锁继续施工）
-        - 任一子任务 FAILED/CANCELLED → 父任务 BLOCKED
+        - 所有子任务 COMPLETED/VERIFIED -> 父任务 READY（解锁继续施工）
+        - 任一子任务 FAILED/CANCELLED -> 父任务 BLOCKED
         - 否则不改变父任务状态
         """
         if new_status not in (
@@ -2344,13 +2344,13 @@ class TaskRepository:
                     )
                     unblocked_count += 1
                 else:
-                    # blocked_by清空但depends_on未全满足 → 回填所有未完成/缺失依赖到blocked_by
+                    # blocked_by清空但depends_on未全满足 -> 回填所有未完成/缺失依赖到blocked_by
                     unmet_blockers = []
                     for d in deps:
                         if d:
                             dep_row = conn.execute("SELECT status FROM tasks WHERE task_id = ?", (d,)).fetchone()
                             if dep_row is None:
-                                # 依赖不存在于tasks表 → 也视为阻塞源
+                                # 依赖不存在于tasks表 -> 也视为阻塞源
                                 unmet_blockers.append(d)
                             elif dep_row["status"] not in (
                                 TaskStatus.COMPLETED.value,
@@ -2389,9 +2389,9 @@ class TaskRepository:
         """检查任务是否需要升级到 Owner。
 
         触发条件（GOV-TASK-004 §2.7）：
-        - P0 任务 BLOCKED 超过 2 次 → escalation:owner
-        - 任何任务 BLOCKED 超过 5 次 → escalation:owner
-        - P0 任务 FAILED 2 次 → escalation:owner
+        - P0 任务 BLOCKED 超过 2 次 -> escalation:owner
+        - 任何任务 BLOCKED 超过 5 次 -> escalation:owner
+        - P0 任务 FAILED 2 次 -> escalation:owner
 
         返回 None 表示无需升级；返回 dict 表示需要升级，含 reason 和 triggers 字段。
         """
@@ -2460,8 +2460,8 @@ class TaskRepository:
         """检查任务是否超时，返回超时信息或 None。
 
         GOV-TASK-004 §2.6 豁免规则：
-        - 标签含 exempt:timeout → 跳过超时检查
-        - 依赖外部第三方的任务（blocked_reason 注明"外部依赖"）→ 跳过超时检查
+        - 标签含 exempt:timeout -> 跳过超时检查
+        - 依赖外部第三方的任务（blocked_reason 注明"外部依赖"）-> 跳过超时检查
         """
         task = self.get(task_id)
         if task is None:
@@ -2881,7 +2881,7 @@ class TaskRepository:
                         (task.task_id, f["file_path"], f.get("role", "in_scope")),
                     )
             row = self._fetch_row(conn, task.task_id)
-        if row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert→if/raise
+        if row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.2 修复: assert->if/raise
         return _row_to_taskcard(row)
 
     # ------------------------------------------------------------------
@@ -2891,7 +2891,7 @@ class TaskRepository:
     def claim_next(self, batch_id: str, worker_id: str) -> TaskCard | None:
         """原子认领批量中下一个依赖已满足的 READY 任务。
 
-        多个 AI 对话并发调用 → 各拿各的，不重复。
+        多个 AI 对话并发调用 -> 各拿各的，不重复。
         依赖检查：depends_on 为 NULL/空 或所有依赖均已 COMPLETED。
 
         返回 None 表示当前无可认领任务。
@@ -2930,7 +2930,7 @@ class TaskRepository:
             return _row_to_taskcard(row)
 
     def recover_stale_claims(self, batch_id: str, timeout_minutes: int = 30) -> int:
-        """释放超时未完成的 IN_PROGRESS 任务 → 回到 READY。
+        """释放超时未完成的 IN_PROGRESS 任务 -> 回到 READY。
 
         每个 AI session 调用 claim_next() 前先调此方法，确保崩溃/超时的任务自动复活。
         返回回收的任务数。
@@ -3252,11 +3252,11 @@ class TaskRepository:
         """计算任务幻觉风险评分（0.0=安全，1.0=极度危险）。
 
         评分维度：
-        - description 缺少结构词 → +0.2/词
-        - description 过短（<100字）→ +0.3
-        - 无 allowed_touch → +0.2
-        - 无 acceptance → +0.2
-        - 无 source_blueprint → +0.1
+        - description 缺少结构词 -> +0.2/词
+        - description 过短（<100字）-> +0.3
+        - 无 allowed_touch -> +0.2
+        - 无 acceptance -> +0.2
+        - 无 source_blueprint -> +0.1
         """
         score = 0.0
         required_keywords = ("根因", "治根", "施工步骤", "验收标准")
@@ -3277,10 +3277,10 @@ class TaskRepository:
         """计算任务漂移风险评分（0.0=安全，1.0=极度危险）。
 
         评分维度：
-        - files_in_scope > 3 → +0.3
-        - deliverables > 1 → +0.3
-        - 无 forbidden_touch → +0.2
-        - 无 rollback_instructions → +0.2
+        - files_in_scope > 3 -> +0.3
+        - deliverables > 1 -> +0.3
+        - 无 forbidden_touch -> +0.2
+        - 无 rollback_instructions -> +0.2
         """
         score = 0.0
         if len(task.files_in_scope) > 3:

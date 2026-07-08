@@ -18,9 +18,9 @@
 """共享函数自我进化引擎 — 自动升降级 + 行为漂移锁定.
 
 职责：
-  - shared函数被频繁使用(>50次) → 自动晋升为[*A]autonomous
-  - 连续2月Health下降 → 自动降级
-  - 时态漂移3个月 → 自动锁定为[*R]劣化限制
+  - shared函数被频繁使用(>50次) -> 自动晋升为[*A]autonomous
+  - 连续2月Health下降 -> 自动降级
+  - 时态漂移3个月 -> 自动锁定为[*R]劣化限制
 """
 
 from dataclasses import dataclass, field

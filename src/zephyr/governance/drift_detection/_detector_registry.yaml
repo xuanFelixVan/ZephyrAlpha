@@ -140,7 +140,7 @@ detectors:
       drift_dimension: "AI_import_hallucination"
       severity: HIGH
       category: ai_engineering
-      method: "AST 解析所有 import/from 语句 → 交叉验证目标模块是否真实存在"
+      method: "AST 解析所有 import/from 语句 -> 交叉验证目标模块是否真实存在"
       status: "active"
       auto_fixable: false
 

@@ -22,19 +22,19 @@
 根据 CT-* 编号路由到对应的系统调用，集成 contract_registry 的 ai_read_only_hint 检查。
 
 路由映射：
-  CT-ORC-SCRIPT-001 → Script System
-  CT-ORC-CE-001 → Context Engine
-  CT-ORC-VMS-001 → Vector Memory
-  CT-ORC-GATE-001 → Gate Engine
-  CT-SCRIPT-KB-001 → Knowledge Base
-  CT-SCRIPT-GATE-001 → Gate Engine
-  CT-CE-VMS-001 → Vector Memory
-  CT-CE-LSG-001 → LLM Security
-  CT-KB-VMS-001 → Vector Memory
-  CT-FLE-ORC-001 → Orchestrator
-  CT-FLE-DB-001 → Database
-  CT-TELE-FLE-001 → Feedback Loop
-  CT-PIPE-ORC-001 → Pipeline
+  CT-ORC-SCRIPT-001 -> Script System
+  CT-ORC-CE-001 -> Context Engine
+  CT-ORC-VMS-001 -> Vector Memory
+  CT-ORC-GATE-001 -> Gate Engine
+  CT-SCRIPT-KB-001 -> Knowledge Base
+  CT-SCRIPT-GATE-001 -> Gate Engine
+  CT-CE-VMS-001 -> Vector Memory
+  CT-CE-LSG-001 -> LLM Security
+  CT-KB-VMS-001 -> Vector Memory
+  CT-FLE-ORC-001 -> Orchestrator
+  CT-FLE-DB-001 -> Database
+  CT-TELE-FLE-001 -> Feedback Loop
+  CT-PIPE-ORC-001 -> Pipeline
 """
 
 from __future__ import annotations

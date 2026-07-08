@@ -28,15 +28,15 @@
 
 CTR 契约：
   消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE
-  生产者 — CTR-005 (Fill) → D_REPORTING
-  生产者 — CTR-006 (PositionSnapshot) → D_RISK, D_REPORTING, D_ML_TRAIN
-  生产者 — CTR-ERR-005 (ExecutionRejectionError) → D_PORTFOLIO_CORE, D_REPORTING
-  生产者 — CTR-P1-007 (ExecutionReport，定义见 shared.contracts) → D_REPORTING
+  生产者 — CTR-005 (Fill) -> D_REPORTING
+  生产者 — CTR-006 (PositionSnapshot) -> D_RISK, D_REPORTING, D_ML_TRAIN
+  生产者 — CTR-ERR-005 (ExecutionRejectionError) -> D_PORTFOLIO_CORE, D_REPORTING
+  生产者 — CTR-P1-007 (ExecutionReport，定义见 shared.contracts) -> D_REPORTING
 
 说明：本模块内 ``ExecutionEngineRunRecord`` 为引擎内部聚合快照，非 CTR-P1-007；
 跨层传输的 ExecutionReport 须使用 ``zephyr.shared.contracts.execution_report``。
 
-SSoT: cross_layer_contracts.yaml → CTR-004 + CTR-005 + CTR-006 + CTR-P1-007
+SSoT: cross_layer_contracts.yaml -> CTR-004 + CTR-005 + CTR-006 + CTR-P1-007
 """
 
 from __future__ import annotations
@@ -134,7 +134,7 @@ class ExecutionEngine:
 
         violations = self._risk_validator.validate_order(
             symbol=order.symbol,
-            # 5.105.5 修复: 在Decimal域内计算后再转float, 避免大数量Decimal→float精度丢失
+            # 5.105.5 修复: 在Decimal域内计算后再转float, 避免大数量Decimal->float精度丢失
             target_weight=float(Decimal(str(order.quantity)) / Decimal("1000000")) if not isinstance(order.quantity, Decimal) else float(order.quantity / Decimal("1000000")),
             current_holdings={},
             limits=RiskLimits(

@@ -24,9 +24,9 @@ OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入
 用法
 ----
     embedder = OllamaEmbedder(model="BGE-M3:latest")
-    vec = embedder.encode("hello world")           # → np.ndarray (1024,)
-    vecs = embedder.encode(["a", "b", "c"])         # → np.ndarray (3, 1024)
-    dim = embedder.dim                              # → 1024
+    vec = embedder.encode("hello world")           # -> np.ndarray (1024,)
+    vecs = embedder.encode(["a", "b", "c"])         # -> np.ndarray (3, 1024)
+    dim = embedder.dim                              # -> 1024
 """
 
 from __future__ import annotations

@@ -79,7 +79,7 @@ class AuditDelegationBridge:
             chain_hash = writer.write(record)
             record["chain_hash"] = chain_hash
             _logger.info(
-                "Delegation audit: %s → %s (depth=%d, task=%s)",
+                "Delegation audit: %s -> %s (depth=%d, task=%s)",
                 from_agent,
                 to_agent,
                 depth,
@@ -182,7 +182,7 @@ class AuditDelegationBridge:
         seen_pairs: set[str] = set()
 
         for rec in delegation_records:
-            pair = f"{rec.get('from_agent', '')}→{rec.get('to_agent', '')}"
+            pair = f"{rec.get('from_agent', '')}->{rec.get('to_agent', '')}"
             if pair in seen_pairs:
                 issues.append(f"重复委托: {pair}")
             seen_pairs.add(pair)

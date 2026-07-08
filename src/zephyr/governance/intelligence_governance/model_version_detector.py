@@ -17,7 +17,7 @@
 
 """
 
-Model Version Detector — v0.10.0 模型版本突变检测: model version change→degraded auto_guard。
+Model Version Detector — v0.10.0 模型版本突变检测: model version change->degraded auto_guard。
 """
 
 from __future__ import annotations

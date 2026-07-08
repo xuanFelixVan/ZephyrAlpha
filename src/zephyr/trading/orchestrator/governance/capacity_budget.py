@@ -24,7 +24,7 @@
 规则：
 1. max_concurrent_tasks: 硬上限，超限任务自动 QUEUED
 2. WIP Limit: 每系统独立线程池容量预算
-3. 任务完成 → 从 QUEUED 队首出队
+3. 任务完成 -> 从 QUEUED 队首出队
 """
 
 from __future__ import annotations

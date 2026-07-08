@@ -32,8 +32,8 @@ FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写）
 1. register_from_triage — 从 triage-result.yaml 批量写入 tasks + task_files 表
 2. sync_file_state — 全量或单任务三态校验（磁盘/frontmatter/tasks）
 3. rollback — 删除 tasks + task_files + events；不碰磁盘文件
-4. resolve — 反向查询 file_path → task_id 列表（N:N，可能多个）
-5. resolve_reverse — 正向查询 task_id → file_path 列表（N:N，可能多个）
+4. resolve — 反向查询 file_path -> task_id 列表（N:N，可能多个）
+5. resolve_reverse — 正向查询 task_id -> file_path 列表（N:N，可能多个）
 """
 
 from __future__ import annotations
@@ -67,13 +67,13 @@ def classify_file_to_namespace(file_path: str) -> TaskNamespace:
     从文件路径推导命名空间（#21 裁定：分类字段，不是 ID 的一部分）。
 
     推导优先级：
-    1. KBG    → 路径含 02_enterprise_architecture（企业架构真源区）
-    2. CP     → 路径含 construction-plan-
-    3. KE     → 路径含 KE-{数字} 或 ke-{数字}
-    4. STD    → 路径在 01_policies_and_standards/
-    5. DW     → 路径在 19_development_workspace/
-    6. SRC    → 路径在 src/zephyr/
-    7. OPS    → 兜底
+    1. KBG    -> 路径含 02_enterprise_architecture（企业架构真源区）
+    2. CP     -> 路径含 construction-plan-
+    3. KE     -> 路径含 KE-{数字} 或 ke-{数字}
+    4. STD    -> 路径在 01_policies_and_standards/
+    5. DW     -> 路径在 19_development_workspace/
+    6. SRC    -> 路径在 src/zephyr/
+    7. OPS    -> 兜底
     """
     p = file_path.replace("\\", "/")
 
@@ -136,7 +136,7 @@ class FileTaskMapper:
         init_db(self._db_path)
 
     def resolve(self, file_path: str) -> list[str]:
-        """反向查询 file_path → task_id 列表（N:N，可能多个）。"""
+        """反向查询 file_path -> task_id 列表（N:N，可能多个）。"""
         conn = get_db_connection(self._db_path)
         try:
             cursor = conn.execute(
@@ -148,7 +148,7 @@ class FileTaskMapper:
             conn.close()
 
     def resolve_reverse(self, task_id: str) -> list[dict[str, str]]:
-        """正向查询 task_id → [{file_path, role}, ...] 列表。"""
+        """正向查询 task_id -> [{file_path, role}, ...] 列表。"""
         conn = get_db_connection(self._db_path)
         try:
             cursor = conn.execute(

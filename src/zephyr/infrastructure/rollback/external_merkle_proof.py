@@ -23,7 +23,7 @@ External Merkle Proof — 外部可验证回滚完整性证明。
     任务卡 TASK-INF-0250
 
 功能：
-    - 回滚 file tree → Merkle root hash 计算
+    - 回滚 file tree -> Merkle root hash 计算
     - 外部（审计者/第三方）无需完整仓库即可验证
     - Merkle root 写入回滚审计日志——不可伪造
     - 对标区块链式可验证状态 + Git LFS verifiable-pointer

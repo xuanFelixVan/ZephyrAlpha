@@ -20,7 +20,7 @@ constitutional_update.py —— 宪法自愈（Phase 14 | 盲点 B27）
 
 痛点修复：AGENTS.md 是静态的——AI 无法把"犯错-学到"写回宪法。
 SessionAuditTrail 记录了每次 session 的 errors/decisions/patterns，
-ConstitutionalAutoUpdate 从中提取 learnings → 提议 → 安全地写回 AGENTS.md。
+ConstitutionalAutoUpdate 从中提取 learnings -> 提议 -> 安全地写回 AGENTS.md。
 
 设计对标：
   - Claude Code CLAUDE.md auto-evolution: Agent 自我更新指南

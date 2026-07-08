@@ -26,7 +26,7 @@ random seed; re-running with different seeds would produce different conclusion.
 
 Mitigation: Re-run diagnosis pipeline with N different random seeds. Check
 diagnosis stability across runs. If top diagnosis varies >20% across seeds
-→ flag as unstable. Require consensus before acting on unstable diagnosis.
+-> flag as unstable. Require consensus before acting on unstable diagnosis.
 """
 
 from __future__ import annotations

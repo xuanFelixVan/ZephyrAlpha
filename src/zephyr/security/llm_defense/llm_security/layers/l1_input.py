@@ -93,7 +93,7 @@ _INDIRECT_INJECTION_PATTERNS = [
 _ZERO_WIDTH_CHARS = ["\u200b", "\u200c", "\u200d", "\u200e", "\u200f", "\ufeff"]
 _ZERO_WIDTH_RE = re.compile("[" + "".join(_ZERO_WIDTH_CHARS) + "]")
 
-# 同形字映射（西里尔→拉丁）
+# 同形字映射（西里尔->拉丁）
 _HOMOGLYPH_MAP = {
     "а": "a", "е": "e", "о": "o", "р": "p", "с": "c", "у": "y", "х": "x",
     "А": "A", "В": "B", "Е": "E", "К": "K", "М": "M", "Н": "H", "О": "O",
@@ -192,7 +192,7 @@ class InputDefenseLayer:
         return 1
 
     async def evaluate(self, ctx: Any) -> Any:
-        """评估输入安全：恶意注入 → DENY。"""
+        """评估输入安全：恶意注入 -> DENY。"""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
 

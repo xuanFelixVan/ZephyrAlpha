@@ -5,7 +5,7 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 
 八模块（phase_2_complete）：
   MOD-INF-018  agent_rbac      — Agent RBAC 权限管理（七层纵深防御+六横切面）
-  MOD-INF-019  agent_spec      — Agent Spec 规范约束（蓝图→可加载Skill升级引擎）
+  MOD-INF-019  agent_spec      — Agent Spec 规范约束（蓝图->可加载Skill升级引擎）
   MOD-INF-020  audit_trail     — 审计追踪（不可变+密码学Provenance+Agent签名）
   MOD-INF-021  rollback        — 回滚系统（Git-native + SQLite Checkpoint）
   MOD-INF-022  escalation      — 升级协议（规则驱动+自动委托+五层防御）引擎: v0.14.0
@@ -14,10 +14,10 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
   MOD-INF-025  a2a             — Agent-to-Agent 协议（Phase 4 Hold）引擎: v0.10.0
 
 集成契约（8条 G-CT，与 DOM-GOV-001 蓝图 §3 对齐）：
-  G-CT-001: RBAC → Audit          G-CT-005: Drift → Rollback
-  G-CT-002: Audit → Rollback       G-CT-006: Budget → Escalation
-  G-CT-003: Rollback → Escalation  G-CT-007: Agent Spec → RBAC+Audit
-  G-CT-004: Escalation → RBAC      G-CT-008: A2A → RBAC+Escalation
+  G-CT-001: RBAC -> Audit          G-CT-005: Drift -> Rollback
+  G-CT-002: Audit -> Rollback       G-CT-006: Budget -> Escalation
+  G-CT-003: Rollback -> Escalation  G-CT-007: Agent Spec -> RBAC+Audit
+  G-CT-004: Escalation -> RBAC      G-CT-008: A2A -> RBAC+Escalation
 
 桥接层架构：
   src/zephyr/governance/*  — 跨模块契约+桥接
@@ -74,7 +74,7 @@ try:
         ProposedUpdate,
     )
 except (ImportError, RuntimeError):
-    # RuntimeError: 捕获循环 import _DeadlockError（behavioral_admission → audit_trail 循环链）
+    # RuntimeError: 捕获循环 import _DeadlockError（behavioral_admission -> audit_trail 循环链）
     pass
 
 

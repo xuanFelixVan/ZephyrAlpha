@@ -33,7 +33,7 @@ ZephyrAlpha — shared/contracts/synthesized_signal.py
 
 CTR-P1-015: SynthesizedSignal / 合成交易信号
 
-D_SIGNAL → D_RISK/D_PORTFOLIO_CORE 合成交易信号契约。D_SIGNAL 信号合成引擎聚合多个 FactorSignal 后产出的综合交易信号。
+D_SIGNAL -> D_RISK/D_PORTFOLIO_CORE 合成交易信号契约。D_SIGNAL 信号合成引擎聚合多个 FactorSignal 后产出的综合交易信号。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-015
 Version: 1.0

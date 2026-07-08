@@ -32,7 +32,7 @@ D_COMPLIANCE — Governance & Compliance Layer
   - SecurityGateway    : OCP D_COMPLIANCE-AISG — AI 安全网关
   - ComplianceEngine   : OCP D_COMPLIANCE-CPL — 合规规则引擎
 
-依赖方向：全层监控 → 无上游依赖（D_COMPLIANCE 是横向 Johari 基础设施）
+依赖方向：全层监控 -> 无上游依赖（D_COMPLIANCE 是横向 Johari 基础设施）
 """
 
 from __future__ import annotations
@@ -72,7 +72,7 @@ class SecurityGateway(abc.ABC):
     AI Security Gateway 抽象基类
 
     所有 AI 生成内容必须经过：
-      pre_filter → security-scan → decision → audit_log
+      pre_filter -> security-scan -> decision -> audit_log
 
     INV-015：AISG 拦截门禁 — 任何跳过 AISG 的 AI 指令执行均违反此不变量。
     """
@@ -99,7 +99,7 @@ class ComplianceEngine(abc.ABC):
     """
     合规规则引擎（OCP 扩展点 D_COMPLIANCE-CPL）
 
-    契约对齐：CTR-P1-012（ComplianceRule 出站）→ D_RISK, D_EXECUTION_CORE, D_COMPLIANCE
+    契约对齐：CTR-P1-012（ComplianceRule 出站）-> D_RISK, D_EXECUTION_CORE, D_COMPLIANCE
 
     实现者要求：
       - evaluate(): 接收交易/持仓/事件上下文，返回参与评估的合规规则列表

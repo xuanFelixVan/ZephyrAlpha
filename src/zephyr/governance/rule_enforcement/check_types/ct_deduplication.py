@@ -38,7 +38,7 @@ class DeduplicationHandler(CheckTypeHandler):
         #   zephyr.governance.scanner 模块不存在，code_dedup 引擎的 Scanner API
         #   （scan_files/find_duplicates）尚未实现。本 handler 为 task_types
         #   集成预留入口，待 Scanner API 落地后接通。
-        # 生产侧去重通过 pre-commit → verify_dedup.py → cli.py verify 路径执行，
+        # 生产侧去重通过 pre-commit -> verify_dedup.py -> cli.py verify 路径执行，
         # 不经过本 handler。此处显式返回"未接通"违规，不再静默吞错。
         check_id = getattr(check, "id", "DD-CHK-INCREMENTAL")
         return [

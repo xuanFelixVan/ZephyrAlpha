@@ -27,7 +27,7 @@ Gateway 组合 MCPProcessPool + DaemonRegistry，提供:
   - launch_daemon(): 启动 daemon 进程（通过 ProcessPool + DaemonRegistry 注册）
   - terminate_all(): 关闭所有池中进程
 
-设计根因: 裸 Popen/Process 绕过 MCPProcessPool → 进程泄漏 → 统一入口 + Gate 防绕过。
+设计根因: 裸 Popen/Process 绕过 MCPProcessPool -> 进程泄漏 -> 统一入口 + Gate 防绕过。
 """
 
 from __future__ import annotations

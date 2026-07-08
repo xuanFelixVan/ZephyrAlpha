@@ -8,7 +8,7 @@
 # --- 治理锚定结束 ---
 # MAD-004 Interface Definability Gate
 # 接口可定义性门禁 —— 模块接口必须清晰定义
-# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → MAD-004
+# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml -> MAD-004
 
 module_id: MOD-GATE_ENGINE
 gate_id: MAD-004

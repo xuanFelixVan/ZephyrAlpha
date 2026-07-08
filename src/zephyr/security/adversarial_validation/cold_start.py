@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] New module/MCP server joining MUST auto-register adversarial scenarios; bootstrap per §8.1 onboarding protocol
-# [MODIFY-GUARD] Registration writes to _scenario-registry.yaml with atomic os.replace; bootstrap phases: SCAN→MAP→REGISTER→VERIFY
+# [MODIFY-GUARD] Registration writes to _scenario-registry.yaml with atomic os.replace; bootstrap phases: SCAN->MAP->REGISTER->VERIFY
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated

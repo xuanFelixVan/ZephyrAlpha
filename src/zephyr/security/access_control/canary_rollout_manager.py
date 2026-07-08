@@ -18,7 +18,7 @@
 
 依据蓝图 MOD-INF-018 §3:
 - 注册灰度权限规则
-- 控制灰度状态机（DRAFT → SAMPLING → ROLLOUT）
+- 控制灰度状态机（DRAFT -> SAMPLING -> ROLLOUT）
 """
 
 from __future__ import annotations

@@ -102,7 +102,7 @@ entry_conditions:
   rule_ids:
   - TRAE-047
   anti_pattern:
-    description: '>60s→CI阻塞→必须优化'
+    description: '>60s->CI阻塞->必须优化'
     example: AI ignores TRAE-047 gov_eng_003 requirement
   params: *id001
 mutating_rules: []

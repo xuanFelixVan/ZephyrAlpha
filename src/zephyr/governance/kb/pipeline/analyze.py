@@ -27,7 +27,7 @@ G3 Evaluate 门禁 — 深度评估（T-2-13-C）
 3. 评分维度：design_decision_density(0.3) + technical_specificity(0.25)
    + reuse_potential(0.25) + irreplaceability(0.2)
 4. 调用 gate_engine.py 执行 g3-evaluate.yaml 门禁
-5. 状态转换：triaged → analyzed / triaged → archived
+5. 状态转换：triaged -> analyzed / triaged -> archived
 6. 写入 03_analyzed/ 目录
 
 Safety : M

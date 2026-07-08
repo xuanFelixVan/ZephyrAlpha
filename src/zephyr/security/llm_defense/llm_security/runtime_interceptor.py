@@ -28,10 +28,10 @@ GATE-20 是 pre-commit AST 静态门禁，存在不可修复的静态分析上�
 2. install() 注册 sys.meta_path finder，拦截 openai/anthropic/litellm/langchain 的导入，
    在真实模块加载后 monkey-patch 其核心调用方法（chat.completions.create /
    messages.create / litellm.completion 等）。
-3. 被 patch 的方法在调用时检查“LSG 放行令牌”：存在且未过期→放行（LSG 扫描已通过）；
-   缺失→抛 BareLLMCallError 硬阻断。
+3. 被 patch 的方法在调用时检查“LSG 放行令牌”：存在且未过期->放行（LSG 扫描已通过）；
+   缺失->抛 BareLLMCallError 硬阻断。
 4. LSG 的 scan_input/full_scan/scan_agent_action 在返回 ALLOW 时调用 grant_allowance()
-   颁发放行令牌（TTL 30s），使合法的“LSG 扫描→LLM 调用”链路畅通。
+   颁发放行令牌（TTL 30s），使合法的“LSG 扫描->LLM 调用”链路畅通。
 
 放行令牌采用混合存储（覆盖同步与异步两种合法调用链）：
 - contextvar：异步路径（await gw.scan_input() 后直接 await async_openai.create()），
@@ -75,7 +75,7 @@ __all__ = [
 ]
 
 # ── kill-switch ──
-# ZEPHYR_RUNTIME_GATE=0 → 完全关闭运行时拦截（sitecustomize 与 install 内部双重尊重）
+# ZEPHYR_RUNTIME_GATE=0 -> 完全关闭运行时拦截（sitecustomize 与 install 内部双重尊重）
 _KILL_SWITCH_ENV = "ZEPHYR_RUNTIME_GATE"
 # 默认放行令牌 TTL（秒）：LSG 扫描通过后 30s 内允许发起 LLM 调用
 _DEFAULT_TTL = 30.0
@@ -221,7 +221,7 @@ async def allow_llm_call_async(ttl: float = _DEFAULT_TTL):
 # ============================================================================
 
 def _make_guard(orig_func, label: str):
-    """包装同步 LLM 调用方法：无令牌→raise，有令牌→调原方法。"""
+    """包装同步 LLM 调用方法：无令牌->raise，有令牌->调原方法。"""
 
     @functools.wraps(orig_func)
     def _wrapper(*args, **kwargs):
@@ -341,7 +341,7 @@ def _patch_langchain(module) -> None:
             continue
 
 
-# 顶层目标模块名 → patcher
+# 顶层目标模块名 -> patcher
 _PATCHERS: dict[str, callable] = {
     "openai": _patch_openai,
     "anthropic": _patch_anthropic,
@@ -351,7 +351,7 @@ _PATCHERS: dict[str, callable] = {
 
 
 # ============================================================================
-# sys.meta_path 导入钩子（拦截目标库导入 → 加载后 patch）
+# sys.meta_path 导入钩子（拦截目标库导入 -> 加载后 patch）
 # ============================================================================
 
 class _LLMGuardLoader(importlib.abc.Loader):
@@ -412,7 +412,7 @@ def _eager_patch_loaded() -> None:
 def install() -> bool:
     """安装运行时 LLM 裸调拦截器。
 
-    - 尊重 kill-switch：ZEPHYR_RUNTIME_GATE=0 → 不安装，返回 False。
+    - 尊重 kill-switch：ZEPHYR_RUNTIME_GATE=0 -> 不安装，返回 False。
     - 幂等：重复调用安全。
     - 注册 sys.meta_path finder + 对已导入的目标库立即 patch。
 

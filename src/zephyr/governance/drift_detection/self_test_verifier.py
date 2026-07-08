@@ -389,7 +389,7 @@ class SelfTestVerifier:
                 return {
                     "check": "dead_letter",
                     "status": "PASS",
-                    "detail": "DEAD_LETTER pathway: DETECTED→DEAD_LETTER→ACKNOWLEDGED",
+                    "detail": "DEAD_LETTER pathway: DETECTED->DEAD_LETTER->ACKNOWLEDGED",
                 }
 
             elif has_dead_letter:

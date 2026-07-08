@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] modified_files.json不存在→PASS(无文档可审查); 解析失败→RED
+# [ERROR_CONTRACT] modified_files.json不存在->PASS(无文档可审查); 解析失败->RED
 # [TESTS] tests/test_post_doc_review.py
 # [A_module] module_id=MOD-GOV_post_doc_review_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -252,7 +252,7 @@ class PostDocReviewScanner:
             # 使用 git 权威列表（不可篡改）
             modified_files = git_modified
         except GitUnavailableError:
-            # git 不可用 → RED 拒绝通过（不允许降级到自报告）
+            # git 不可用 -> RED 拒绝通过（不允许降级到自报告）
             report.git_unavailable = True
             report.is_clean = False
             report.tampering_detected = True
@@ -260,7 +260,7 @@ class PostDocReviewScanner:
             return report
 
         if not modified_files:
-            # 无文档修改 → PASS
+            # 无文档修改 -> PASS
             report.is_clean = True and not report.tampering_detected
             return report
 
@@ -274,7 +274,7 @@ class PostDocReviewScanner:
                 continue
             self._scan_file(file_path, file_rel, report)
 
-        # 标记数 >= 3 → 触发规格化流程
+        # 标记数 >= 3 -> 触发规格化流程
         if report.needs_regularization:
             report.regularization_triggered = True
             # 实际任务卡创建由调用方处理（避免循环依赖）
@@ -286,7 +286,7 @@ class PostDocReviewScanner:
         """读取 session 开始时记录的 commit hash。
 
         从 session_logs/<session_id>/session_start_commit.txt 读取。
-        如果文件不存在 → GitUnavailableError（session 未正确初始化）。
+        如果文件不存在 -> GitUnavailableError（session 未正确初始化）。
         """
         if not self._session_id:
             raise GitUnavailableError("session_id 为空")
@@ -312,7 +312,7 @@ class PostDocReviewScanner:
         start_commit = self._get_session_start_commit()
 
         try:
-            # 已跟踪文件的修改（start_commit → HEAD）
+            # 已跟踪文件的修改（start_commit -> HEAD）
             tracked_result = subprocess.run(
                 ["git", "diff", "--name-only", start_commit, "HEAD"],
                 cwd=str(self._root),
@@ -362,13 +362,13 @@ class PostDocReviewScanner:
     ) -> None:
         """R1 防御：篡改检测——对比 git 权威列表 vs 自报告列表。
 
-        - git 有但自报告无 → 删除修改记录（篡改）
-        - 自报告有但 git 无 → 虚报告（可疑）
+        - git 有但自报告无 -> 删除修改记录（篡改）
+        - 自报告有但 git 无 -> 虚报告（可疑）
         """
         git_set = set(git_modified)
         reported_set = set(self_reported)
 
-        # git 有但自报告无 → 删除修改记录
+        # git 有但自报告无 -> 删除修改记录
         deleted_from_report = git_set - reported_set
         if deleted_from_report:
             report.tampering_detected = True
@@ -376,7 +376,7 @@ class PostDocReviewScanner:
             for f in sorted(deleted_from_report):
                 report.tampering_details.append(f"篡改：文件 '{f}' 在 git 中有修改但 modified_files.json 中缺失")
 
-        # 自报告有但 git 无 → 虚报告
+        # 自报告有但 git 无 -> 虚报告
         fabricated_in_report = reported_set - git_set
         if fabricated_in_report:
             report.tampering_detected = True
@@ -422,14 +422,14 @@ class PostDocReviewScanner:
         try:
             raw_content = file_path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError) as exc:
-            # R10 防御：二进制文件伪装 .md → 优雅跳过
+            # R10 防御：二进制文件伪装 .md -> 优雅跳过
             logger.warning("读取文件失败 %s: %s", file_path, exc)
             return
 
         # 文件通过大小和读取检查，添加到已审查列表
         report.reviewed_files.append(file_rel)
 
-        # R4 防御：Unicode NFKC 归一化（全角→半角）
+        # R4 防御：Unicode NFKC 归一化（全角->半角）
         content = unicodedata.normalize("NFKC", raw_content)
         lines = content.splitlines()
 

@@ -32,9 +32,9 @@ ZephyrAlpha — system-telemetry/contract_metrics.py
 --------
 - 非侵入：通过 TraceContext（CTR-TRACE-001）的 span 时间戳测量延迟
 - 统计式漂移检测：比较近期窗口与历史基准（不变式是架构适应度函数的运行时版本）
-- 集成点：ContractEnforcer 违规 → 本模块记录 → Grafana dashboard 展示
+- 集成点：ContractEnforcer 违规 -> 本模块记录 -> Grafana dashboard 展示
 
-SSoT: cross_layer_contracts.yaml → CTR-SLA-001~006
+SSoT: cross_layer_contracts.yaml -> CTR-SLA-001~006
 """
 
 from __future__ import annotations

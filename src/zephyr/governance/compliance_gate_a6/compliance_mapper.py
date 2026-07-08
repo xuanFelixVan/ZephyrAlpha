@@ -17,7 +17,7 @@
 
 """
 
-Compliance Mapper — D-022-13 合规映射器: 操作→法规(SOX/GDPR/MiFID)映射+审计迹。
+Compliance Mapper — D-022-13 合规映射器: 操作->法规(SOX/GDPR/MiFID)映射+审计迹。
 """
 
 from __future__ import annotations

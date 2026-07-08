@@ -16,10 +16,10 @@
 # [TTL] permanent
 
 """
-Finding→TaskCard 桥接器
+Finding->TaskCard 桥接器
 ======================
 职责：将脚本系统的审计发现自动转换为任务卡，打通反馈回路（P0集成缺口修复）。
-数据流：script-system Findings → FindingTaskBridge → TaskRepository → TaskCards
+数据流：script-system Findings -> FindingTaskBridge -> TaskRepository -> TaskCards
 """
 
 import logging

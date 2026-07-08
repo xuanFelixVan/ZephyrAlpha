@@ -17,12 +17,12 @@
 """chart_factory · 图表统一工厂（v3.0.0新增, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §3.1 组件13
-ARCH-047: Streamlit→Panel+HoloViz技术栈切换, ChartFactory 作为图表生成统一入口
+ARCH-047: Streamlit->Panel+HoloViz技术栈切换, ChartFactory 作为图表生成统一入口
 
 设计原则:
   - 纯函数工厂: 无 Streamlit/Panel 依赖, 业务逻辑独立为纯函数
   - callback仅编排: Panel callback 仅调用 ChartFactory.make_xxx(), 不含图表生成逻辑
-  - G1升级路径: fetch→ChartFactory.make_xxx()→callback, G1升级时 fetch 可直接包装为 FastAPI 路由
+  - G1升级路径: fetch->ChartFactory.make_xxx()->callback, G1升级时 fetch 可直接包装为 FastAPI 路由
   - 可选依赖: holoviews/plotly/plotly_resampler/panel 通过 try/except 导入, 测试环境返回 dict payload
 
 工厂方法:
@@ -435,13 +435,13 @@ def make_orderbook(
             "title": title,
         }
 
-    # 构建5档标签 (ask5→ask1 降序显示, bid1→bid5 降序显示)
+    # 构建5档标签 (ask5->ask1 降序显示, bid1->bid5 降序显示)
     n_ask = len(ask_price)
     n_bid = len(bid_price)
     ask_labels = [f"ask{n_ask - i}" for i in range(n_ask)]  # ask5, ask4, ..., ask1
     bid_labels = [f"bid{i + 1}" for i in range(n_bid)]  # bid1, bid2, ..., bid5
 
-    # 卖盘条形图 (红色, 从上到下 ask5→ask1)
+    # 卖盘条形图 (红色, 从上到下 ask5->ask1)
     ask_bar = go.Bar(
         x=[-v for v in ask_vol],  # 负值让 ask 朝左
         y=ask_labels,
@@ -453,7 +453,7 @@ def make_orderbook(
         hovertemplate="Ask %{y}: %{text}<extra></extra>",
     )
 
-    # 买盘条形图 (绿色, 从上到下 bid1→bid5)
+    # 买盘条形图 (绿色, 从上到下 bid1->bid5)
     bid_bar = go.Bar(
         x=bid_vol,
         y=bid_labels,
@@ -468,7 +468,7 @@ def make_orderbook(
     fig = go.Figure(data=[ask_bar, bid_bar])
     fig.update_layout(
         title=f"{title} | Last={last_price:.3f} | Pressure={pressure_ratio:.2f}",
-        xaxis_title="Volume (ask ← / bid →)",
+        xaxis_title="Volume (ask ← / bid ->)",
         barmode="overlay",
         template="plotly_white",
         height=height,

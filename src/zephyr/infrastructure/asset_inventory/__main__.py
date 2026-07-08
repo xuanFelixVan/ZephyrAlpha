@@ -23,7 +23,7 @@
     python -m zephyr.data.asset_inventory reconcile   # 注册表 vs 磁盘对账
     python -m zephyr.data.asset_inventory dashboard   # 健康仪表盘
     python -m zephyr.data.asset_inventory check       # Gate 检查 (exit 0=GREEN, 1=RED)
-    python -m zephyr.data.asset_inventory bootstrap   # 从零自举 (scan→classify→reconcile→dashboard)
+    python -m zephyr.data.asset_inventory bootstrap   # 从零自举 (scan->classify->reconcile->dashboard)
     python -m zephyr.data.asset_inventory clean       # 清理过期产物
 
 共享标志: --dry-run, --output json/yaml/text, --verbose, --help
@@ -350,7 +350,7 @@ def _auto_fix_orphans(orphans: list) -> int:
 def _cmd_dashboard(args: argparse.Namespace) -> int:
     idx_p = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
     if not idx_p.exists():
-        print("错误: 索引文件不存在——先运行 scan → classify → reconcile", file=sys.stderr)
+        print("错误: 索引文件不存在——先运行 scan -> classify -> reconcile", file=sys.stderr)
         return 2
 
     import yaml
@@ -422,7 +422,7 @@ def _cmd_check(args: argparse.Namespace) -> int:
 
 
 def _cmd_bootstrap(args: argparse.Namespace) -> int:
-    """scan → classify → index → reconcile → dashboard"""
+    """scan -> classify -> index -> reconcile -> dashboard"""
     print("开始自举重建...")
 
     s = Scanner()
@@ -515,11 +515,11 @@ def _cmd_deps(args: argparse.Namespace) -> int:
     if graph.circular_dependencies:
         print(f"  cycles         {len(graph.circular_dependencies)} cycles detected!")
         for cycle in graph.circular_dependencies[:3]:
-            print(f"    → {' → '.join(cycle)}")
+            print(f"    -> {' -> '.join(cycle)}")
     if graph.orphan_imports:
         print(f"  orphan-imports {len(graph.orphan_imports)} unresolved")
         for imp in graph.orphan_imports[:5]:
-            print(f"    → {imp}")
+            print(f"    -> {imp}")
 
     print("  （依赖图统一由 generate_project_depgraph.py 产出到 depgraph (PostgreSQL)，不再产 JSON）")
     return 0
@@ -537,7 +537,7 @@ def _cmd_registries(args: argparse.Namespace) -> int:
     print(f"  skipped        {len(skipped)}")
     if skipped:
         for s in skipped[:5]:
-            print(f"    → {s}")
+            print(f"    -> {s}")
 
     reg_dist: dict[str, int] = {}
     for e in entries:

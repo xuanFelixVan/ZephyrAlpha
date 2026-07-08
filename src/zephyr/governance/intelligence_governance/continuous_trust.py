@@ -24,10 +24,10 @@ Continuous Trust Ledger — 持续信任评估引擎。
 
 功能：
     - continuous_trust_ledger 记录 trust_delta (±0.1)
-    - trust-score → tier 分级自主 (tier 0/1/2)
-    - trust > 0.8 → tier 2 auto-revert
-    - trust < 0.5 → tier 1 propose-only
-    - trust < -0.3 → tier 0 read-only + human
+    - trust-score -> tier 分级自主 (tier 0/1/2)
+    - trust > 0.8 -> tier 2 auto-revert
+    - trust < 0.5 -> tier 1 propose-only
+    - trust < -0.3 -> tier 0 read-only + human
     - 涵盖 R15-R20 AI agent 信任安全风险
 """
 

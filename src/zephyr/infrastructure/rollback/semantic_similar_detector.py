@@ -22,7 +22,7 @@ SemanticSimilarDetector — 语义变形攻击检测。
 
 检测 AI 通过 AST 改写绕过回滚门禁的 "morphing" 攻击:
     回滚前代码 vs 回滚后代码的 AST 语义相似度。
-    >70% 相似度 → 语义变形 (malicious rewrite) → exit code 12 → L2 Skill Kill。
+    >70% 相似度 -> 语义变形 (malicious rewrite) -> exit code 12 -> L2 Skill Kill。
 """
 
 from __future__ import annotations

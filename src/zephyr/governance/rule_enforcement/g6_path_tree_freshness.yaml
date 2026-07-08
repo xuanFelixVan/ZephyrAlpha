@@ -52,8 +52,8 @@ entry_conditions:
       - TRAE-001
       - TRAE-013
     anti_pattern:
-      description: "新建文件后不刷新路径树 → AI冷启动读到过时快照 → 路径幻觉 → 写错文件位置"
-      example: "AI 创建 src/zephyr/new_module/engine.py 但未刷新路径树 → 下一个 session 的 AI 不知道此文件存在 → 在错误位置创建同名文件"
+      description: "新建文件后不刷新路径树 -> AI冷启动读到过时快照 -> 路径幻觉 -> 写错文件位置"
+      example: "AI 创建 src/zephyr/new_module/engine.py 但未刷新路径树 -> 下一个 session 的 AI 不知道此文件存在 -> 在错误位置创建同名文件"
 
   - id: G6_PT-C01
     name: ownership_map_refresh_after_blueprint_change
@@ -68,8 +68,8 @@ entry_conditions:
       - TRAE-001
       - TRAE-013
     anti_pattern:
-      description: "蓝图 §0.1 新增文件但不刷新归属图 → 路径归属图缺失条目 → 路径冲突检测失效 → 两个蓝图声明同一路径"
-      example: "MOD-INF-037 §0.1 新增 generate_project_path_tree.py 但未刷新归属图 → 归属图中无此条目 → 其他蓝图也可声明同一路径而不被检测"
+      description: "蓝图 §0.1 新增文件但不刷新归属图 -> 路径归属图缺失条目 -> 路径冲突检测失效 -> 两个蓝图声明同一路径"
+      example: "MOD-INF-037 §0.1 新增 generate_project_path_tree.py 但未刷新归属图 -> 归属图中无此条目 -> 其他蓝图也可声明同一路径而不被检测"
 
   - id: G6_PT-C02
     name: path_tree_check_before_session_close
@@ -84,8 +84,8 @@ entry_conditions:
       - TRAE-001
       - TRAE-013
     anti_pattern:
-      description: "Session 关门不检查路径树 → 磁盘与快照漂移累积 → 下一个 session 的 AI 基于过时信息操作"
-      example: "Session 中删除了 3 个文件但未刷新路径树 → 下一个 AI 仍以为这 3 个文件存在 → 尝试读取/修改不存在的文件"
+      description: "Session 关门不检查路径树 -> 磁盘与快照漂移累积 -> 下一个 session 的 AI 基于过时信息操作"
+      example: "Session 中删除了 3 个文件但未刷新路径树 -> 下一个 AI 仍以为这 3 个文件存在 -> 尝试读取/修改不存在的文件"
 
 severity_levels:
   error: "硬阻断——Session 不得关闭，必须先执行 --write 刷新"

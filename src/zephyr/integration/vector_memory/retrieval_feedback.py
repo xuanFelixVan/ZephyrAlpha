@@ -104,7 +104,7 @@ class RetrievalFeedback:
         )
         self._feedback_log.append(entry)
         _logger.info(
-            "RetrievalFeedback: %s → %s (%d hits, rating=%s)",
+            "RetrievalFeedback: %s -> %s (%d hits, rating=%s)",
             entry.query[:30],
             entry.collection,
             entry.hit_count,

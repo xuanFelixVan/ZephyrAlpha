@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] run_task失败→返回False+alerter.notify; start/stop异常→log+不抛; 所有方法返回dict/bool不抛异常
+# [ERROR_CONTRACT] run_task失败->返回False+alerter.notify; start/stop异常->log+不抛; 所有方法返回dict/bool不抛异常
 # [TESTS] tests/zephyr/data/test_scheduler.py
 # [A_module] module_id=MOD-L00-004-scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -22,7 +22,7 @@ APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖
 核心组件：
 - IntegratorScheduler：封装 APScheduler + TaskQueue + ProgressStore + Alerter
 - 5 档调度时段（蓝图 §6.2）：盘后日K 16:30 / 盘后资金 17:00 / 盘后事件 18:00 / 周末财务 周六10:00 / 静态数据 月初09:00
-- DAG 依赖（蓝图 §6.3）：adj_factor → kline_daily_hfq；kline_daily → daily_valuation
+- DAG 依赖（蓝图 §6.3）：adj_factor -> kline_daily_hfq；kline_daily -> daily_valuation
 - 并发控制（蓝图 §6.4）：per-source 串行（heavy 池 2 线程），跨源并行（default 池 8 线程）
 
 事件订阅（满足永久系统全自动要求）：
@@ -121,7 +121,7 @@ class IntegratorScheduler:
             "shutdown": [],
             "task_completed": [],
         }
-        # 注册内部默认事件处理器（config_changed → 策略热更新）
+        # 注册内部默认事件处理器（config_changed -> 策略热更新）
         self.subscribe("config_changed", self._on_config_changed)
 
     # ============== 事件订阅 ==============
@@ -258,10 +258,10 @@ class IntegratorScheduler:
         2. 获取 Provider + 策略
         3. 查断点续传 last_key
         4. 构造 FetchPayload
-        5. Provider.fetch → FetchResult 迭代器
+        5. Provider.fetch -> FetchResult 迭代器
         6. ch_writer.write_result
         7. progress_store.save_progress
-        8. 失败 → alerter.notify
+        8. 失败 -> alerter.notify
 
         Returns:
             是否成功。
@@ -334,7 +334,7 @@ class IntegratorScheduler:
         latest_key = last_key or ""
 
         try:
-            # Provider.fetch → FetchResult 迭代器
+            # Provider.fetch -> FetchResult 迭代器
             for result in provider.fetch(payload, policy):
                 if result.error:
                     last_error = result.error
@@ -428,7 +428,7 @@ class IntegratorScheduler:
         while not self._task_queue.is_done():
             ready = self._task_queue.get_ready_tasks()
             if not ready:
-                # 无就绪任务但未完成 → 可能有 BLOCKED 任务
+                # 无就绪任务但未完成 -> 可能有 BLOCKED 任务
                 blocked = self._task_queue.list_by_status("BLOCKED")
                 if blocked:
                     log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
@@ -470,7 +470,7 @@ class IntegratorScheduler:
                 executor = sched_config.get("executor", "default")
                 if not cron_expr:
                     continue
-                # 解析 cron 表达式 "30 16 * * 1-5" → minute/hour/day/month/day_of_week
+                # 解析 cron 表达式 "30 16 * * 1-5" -> minute/hour/day/month/day_of_week
                 parts = cron_expr.split()
                 if len(parts) != 5:
                     log.warning("cron 格式错误: %s", cron_expr)

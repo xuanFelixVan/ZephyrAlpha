@@ -19,7 +19,7 @@
 健康聚合器（Health Aggregator）
 
 依据：MOD-MASTER-002 蓝图 §十四
-每15s轮询12系统三态探针→生成健康面板快照→年度审计。
+每15s轮询12系统三态探针->生成健康面板快照->年度审计。
 """
 
 from __future__ import annotations

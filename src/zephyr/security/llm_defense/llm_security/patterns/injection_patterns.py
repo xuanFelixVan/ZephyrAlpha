@@ -246,7 +246,7 @@ def scan_semantic_attacks(text: str) -> list[dict[str, Any]]:
     return hits
 
 
-# File-type → applicable scan patterns mapping
+# File-type -> applicable scan patterns mapping
 _FILE_TYPE_PATTERNS: dict[str, list] = {
     ".py": None,  # sentinel: returns PRECOMPILED_SHELL
     ".js": None,

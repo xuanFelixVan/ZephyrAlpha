@@ -24,13 +24,13 @@
 
 """D_SIGNAL — Default Signal Aggregator
 
-信号聚合器具体实现。多因子信号（FactorSignal）→ 合成信号（SynthesizedSignal）。
+信号聚合器具体实现。多因子信号（FactorSignal）-> 合成信号（SynthesizedSignal）。
 
 CTR 契约：
   消费者 — CTR-002 (FactorSignal) ← D_FACTOR
-  生产者 — CTR-P1-015 (SynthesizedSignal) → D_RISK, D_PORTFOLIO_CORE
+  生产者 — CTR-P1-015 (SynthesizedSignal) -> D_RISK, D_PORTFOLIO_CORE
 
-SSoT: cross_layer_contracts.yaml → CTR-002 + CTR-P1-015
+SSoT: cross_layer_contracts.yaml -> CTR-002 + CTR-P1-015
 """
 
 from __future__ import annotations

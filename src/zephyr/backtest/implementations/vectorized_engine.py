@@ -28,9 +28,9 @@
 CTR 契约:
   消费者 — CTR-001 (NormalizedMarketData) ← D_DATA
   消费者 — CTR-002 (FactorSignal) ← D_FACTOR
-  生产者 — CTR-P1-016 (BacktestResult) → 实验
+  生产者 — CTR-P1-016 (BacktestResult) -> 实验
 
-SSoT: cross_layer_contracts.yaml → CTR-001 + CTR-P1-016
+SSoT: cross_layer_contracts.yaml -> CTR-001 + CTR-P1-016
 """
 
 from __future__ import annotations
@@ -373,7 +373,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
         """过拟合检测（三维度：Walk-Forward稳定性/参数敏感性/泛化能力 + 样本内外对比）。
 
         接入 zephyr.backtest.core.overfitting_detector.OverfittingDetector。
-        蓝图 §16.7 P0-9 三维度三层 + 样本外Sharpe<70%→否决。
+        蓝图 §16.7 P0-9 三维度三层 + 样本外Sharpe<70%->否决。
 
         Args:
             walk_forward_results: Walk-Forward 各 fold 结果（维度1），None 跳过
@@ -404,7 +404,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
         param_sensitivity: dict[str, list[tuple[Any, float]]] | None = None,
         params_locked: bool = True,
     ) -> DecisionGateResult:
-        """3阶段决策门控评估（IS→WFA→OOS，不可跳级）。
+        """3阶段决策门控评估（IS->WFA->OOS，不可跳级）。
 
         接入 zephyr.backtest.core.decision_gate.DecisionGate。
         蓝图 §3.3 P0-14 三阶段决策门控 + 参数稳定性区域。

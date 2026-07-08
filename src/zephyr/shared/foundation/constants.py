@@ -19,11 +19,11 @@
 constants.py —— 共享枚举 & 常量集中 re-export（Single Source of Truth）
 
 痛点修复：此前 AI 施工时需要到多个文件找枚举定义——
-  - instrument.py → AssetClass / Exchange / Country / CurrencyCode / ...
-  - order.py → OrderSide / OrderType / OrderStatus
-  - observer.py → EventType
-  - runtime_plane_tag.py → RuntimePlane
-  - schemas.py → TaskStatus / SafetyLevel / KeCategory / ...
+  - instrument.py -> AssetClass / Exchange / Country / CurrencyCode / ...
+  - order.py -> OrderSide / OrderType / OrderStatus
+  - observer.py -> EventType
+  - runtime_plane_tag.py -> RuntimePlane
+  - schemas.py -> TaskStatus / SafetyLevel / KeCategory / ...
 
 本文件作为「共享枚举总目录」——AI 只需 import 此文件即可获取所有共享枚举。
 
@@ -33,7 +33,7 @@ constants.py —— 共享枚举 & 常量集中 re-export（Single Source of Tru
   - 本文件禁止定义新枚举——新枚举 MUST 先在对应领域文件中定义
 
 AI 施工约定：
-  - 新增枚举时：在原文件定义 → 在本文件追加 re-export → 更新 __all__
+  - 新增枚举时：在原文件定义 -> 在本文件追加 re-export -> 更新 __all__
   - 查找枚举时：优先查本文件，找不到再去原文件
 
 SSoT: MOD-INF-016 §2.4 shared-constants
@@ -71,7 +71,7 @@ HOT_PATH_ACTIVATED: Final[bool] = _HOT_PATH_ACTIVATED
 HOT_PATH_LATENCY_BUDGET_MS: Final[float] = _HOT_PATH_LATENCY_BUDGET_MS
 WARM_PATH_LATENCY_BUDGET_MS: Final[float] = _WARM_PATH_LATENCY_BUDGET_MS
 
-# Lazy imports for trading-domain symbols (upward dependency from L0 shared → L3 trading)
+# Lazy imports for trading-domain symbols (upward dependency from L0 shared -> L3 trading)
 _TRADING_SYMBOLS = {
     "ETF": "zephyr.trading.trading_contracts.market.instrument",
     "FX": "zephyr.trading.trading_contracts.market.instrument",
@@ -90,7 +90,7 @@ _TRADING_SYMBOLS = {
     "OrderType": "zephyr.trading.trading_contracts.execution.order",
 }
 
-# Lazy imports for governance-domain symbols (upward dependency from L0 shared → L2 governance)
+# Lazy imports for governance-domain symbols (upward dependency from L0 shared -> L2 governance)
 _GOVERNANCE_SYMBOLS = {
     "EscalationLevel": "zephyr.governance.escalation.escalation_models",
 }

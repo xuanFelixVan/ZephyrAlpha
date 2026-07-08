@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-ChromDB → FAISS + SQLite WAL 数据迁移脚本
+ChromDB -> FAISS + SQLite WAL 数据迁移脚本
 ==========================================
 VMS Blueprint §12 Step 5
 
@@ -144,7 +144,7 @@ def migrate_vms_collection(
 
                 if vec.shape[0] != target_dim:
                     _logger.warning(
-                        "维度不匹配: %s/%s 期望 %dd 实际 %dd → 仅存储元数据",
+                        "维度不匹配: %s/%s 期望 %dd 实际 %dd -> 仅存储元数据",
                         collection_name,
                         doc_id,
                         target_dim,
@@ -259,7 +259,7 @@ def migrate_kb_collection(
 
             if vec.shape[0] != target_dim:
                 _logger.warning(
-                    "维度不匹配: KB %s/%s 期望 %dd 实际 %dd → 仅存储元数据",
+                    "维度不匹配: KB %s/%s 期望 %dd 实际 %dd -> 仅存储元数据",
                     kb_collection,
                     doc_id,
                     target_dim,
@@ -317,7 +317,7 @@ def main() -> None:
     dry_run = "--dry-run" in sys.argv
 
     _logger.info("=" * 60)
-    _logger.info("ChromaDB → FAISS 迁移脚本 (VMS Blueprint §12 Step 5)")
+    _logger.info("ChromaDB -> FAISS 迁移脚本 (VMS Blueprint §12 Step 5)")
     _logger.info("模式: %s", "DRY-RUN" if dry_run else "EXECUTE")
     _logger.info("=" * 60)
 
@@ -342,12 +342,12 @@ def main() -> None:
 
     stats: dict[str, dict[str, int]] = {}
 
-    _logger.info("\n[Phase 1] VMS ChromaDB Collection → FAISS...")
+    _logger.info("\n[Phase 1] VMS ChromaDB Collection -> FAISS...")
     for name in COLLECTION_NAMES:
         stat = migrate_vms_collection(faiss_cm, meta_store, vms_client, name, dry_run=dry_run)
         stats[name] = stat
 
-    _logger.info("\n[Phase 2] KB ChromaDB → VMS Knowledge...")
+    _logger.info("\n[Phase 2] KB ChromaDB -> VMS Knowledge...")
     try:
         from zephyr.shared.io.paths import VECTOR_INDEX_DIR
 

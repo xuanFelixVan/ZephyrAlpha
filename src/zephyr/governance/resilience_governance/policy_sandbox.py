@@ -41,7 +41,7 @@ class PolicySandbox:
                 config/budget_policy.yaml 绝对路径（铁律：禁相对路径）。
         """
         if policy_path is None:
-            # 项目根 = src/zephyr/governance/resilience_governance → 上溯 4 级
+            # 项目根 = src/zephyr/governance/resilience_governance -> 上溯 4 级
             _project_root = Path(__file__).resolve().parents[4]
             self._policy_path = _project_root / "config" / "budget_policy.yaml"
         else:

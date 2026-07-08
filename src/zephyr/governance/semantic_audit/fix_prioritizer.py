@@ -17,7 +17,7 @@
 
 """[BLUEPRINT] MOD-INF-028 — 修复优先级排序 Stage 8
 
-按 severity → certainty → blast_radius 三级排序,分组输出批次。
+按 severity -> certainty -> blast_radius 三级排序,分组输出批次。
 """
 
 from __future__ import annotations

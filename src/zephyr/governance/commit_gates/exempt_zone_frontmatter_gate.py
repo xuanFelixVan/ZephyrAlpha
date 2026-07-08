@@ -14,15 +14,15 @@
 # [TESTS] tests/governance/commit_gates/test_exempt_zone_frontmatter_gate.py
 # [A_module] module_id=MOD-GOV-exempt_zone_frontmatter_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""exempt_zone_frontmatter_gate.py — 豁免区 frontmatter 门禁（Phase 3 reconciler→gate 收敛）
+"""exempt_zone_frontmatter_gate.py — 豁免区 frontmatter 门禁（Phase 3 reconciler->gate 收敛）
 
 从 make_exempt_zone_frontmatter_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
 豁免区（docs/_working/ / docs/_archive/ / .runtime/ / .trae/ / templates/）文件若带
 frontmatter + 非空 doc_type，说明本应放正式目录却被塞进豁免区——commit 前即阻断。
 
 历史违规豁免（progressive_convergence）：用 git ls-tree HEAD 判断文件是否已存在。
-- 存在 → 历史违规，跳过（允许正常维护）
-- 不存在 → 新引入违规，阻断
+- 存在 -> 历史违规，跳过（允许正常维护）
+- 不存在 -> 新引入违规，阻断
 
 治本动机：原 reconciler 是 post-commit 非阻断 warn，仅记录报告。本 gate 在 commit()
 内嵌等效校验，阻断新引入的豁免区 frontmatter 文件。

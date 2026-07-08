@@ -18,11 +18,11 @@
 """
 CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索
 ===============================================================
-蓝图 §3 · §6 · 多 Collection 并行检索 → 聚合 → 重排序
+蓝图 §3 · §6 · 多 Collection 并行检索 -> 聚合 -> 重排序
 
 策略
 ----
-- knead(): 跨 Collection 查询，各取 k*2 候选 → RRF 再融合
+- knead(): 跨 Collection 查询，各取 k*2 候选 -> RRF 再融合
 - context_assembly(): 多 Collection 结果拼接 + dedup
 """
 

@@ -19,9 +19,9 @@
 serialization.py —— 统一序列化/反序列化基础设施（Phase 7 新增 | 盲点 B10 修复）
 
 痛点修复：Pydantic 的 .model_dump() 能干活，但跨模块序列化契约未统一——
-  1. Decimal → str 还是 float？datetime → ISO 8601 还是 POSIX timestamp？
-  2. 每个消费者自己决定序列化格式 → D_DATA→D_FACTOR→D_RESEARCH 管道中可能产生不同格式
-  3. cross_layer_contracts.yaml 定了类型但没定序列化规则 → 契约半成品
+  1. Decimal -> str 还是 float？datetime -> ISO 8601 还是 POSIX timestamp？
+  2. 每个消费者自己决定序列化格式 -> D_DATA->D_FACTOR->D_RESEARCH 管道中可能产生不同格式
+  3. cross_layer_contracts.yaml 定了类型但没定序列化规则 -> 契约半成品
 
 设计对标：
   - Google Proto canonical JSON mapping
@@ -29,8 +29,8 @@ serialization.py —— 统一序列化/反序列化基础设施（Phase 7 新�
   - Stripe API 的 JSON 序列化一致性（Decimal "100.50" 从不裸输出 float）
 
 设计原则：
-  - 确定性序列化——同一对象同一输入 → 永远同一输出
-  - Decimal → str (ISO 格式，保留精度) / datetime → ISO 8601 with Z suffix (UTC)
+  - 确定性序列化——同一对象同一输入 -> 永远同一输出
+  - Decimal -> str (ISO 格式，保留精度) / datetime -> ISO 8601 with Z suffix (UTC)
   - 所有序列化/反序列化经过本模块 = SSoT
   - 零依赖第三方库——仅 Python 标准库 + decimal + datetime
 
@@ -86,9 +86,9 @@ class SerializationFormat(str, Enum):
 
 
 ENCODING_RULES: Final[dict[str, str]] = {
-    "Decimal": "str(ISO-decimal)——例 Decimal('100.50') → '100.50' 保留精度永不丢",
-    "datetime": "ISO-8601 with Z suffix (UTC)——例 datetime(2026,5,5,12,0,0,tzinfo=UTC) → '2026-05-05T12:00:00.000000Z'",
-    "date": "ISO-8601 date only——例 date(2026,5,5) → '2026-05-05'",
+    "Decimal": "str(ISO-decimal)——例 Decimal('100.50') -> '100.50' 保留精度永不丢",
+    "datetime": "ISO-8601 with Z suffix (UTC)——例 datetime(2026,5,5,12,0,0,tzinfo=UTC) -> '2026-05-05T12:00:00.000000Z'",
+    "date": "ISO-8601 date only——例 date(2026,5,5) -> '2026-05-05'",
     "Enum": "str(value)——枚举值转换为字符串表示",
     "int/float/bool/str": "直通——原生类型无需转换",
     "None": "JSON null",
@@ -184,7 +184,7 @@ def _deserialize_value(value: Any) -> Any:
 def to_dict(obj: Any) -> dict[str, Any]:
     """将 Pydantic 模型或 dataclass 转换为确定性 dict。
 
-    Decimal → str / datetime → ISO 8601 UTC / Enum → str(value)
+    Decimal -> str / datetime -> ISO 8601 UTC / Enum -> str(value)
 
     Args:
         obj: Pydantic BaseModel 实例 或 dataclass 实例。
@@ -244,7 +244,7 @@ def from_dict(
 def to_json(obj: Any, *, indent: int | None = None) -> str:
     """将对象序列化为确定性 JSON 字符串。
 
-    Decimal → str / datetime → ISO 8601 UTC / Enum → str(value)
+    Decimal -> str / datetime -> ISO 8601 UTC / Enum -> str(value)
 
     Args:
         obj: Pydantic BaseModel 实例 或 dataclass 实例。
@@ -267,7 +267,7 @@ def dumps(
     """将任意对象序列化为确定性 JSON 字符串（5.147.4 SSoT）。
 
     替代裸 ``json.dumps(obj, default=str)``——使用 ``_serialize_value`` 正确处理
-    datetime→ISO 8601 / Decimal→str / Enum→value，未知类型回退 ``str()`` 保持兼容。
+    datetime->ISO 8601 / Decimal->str / Enum->value，未知类型回退 ``str()`` 保持兼容。
 
     与 ``to_json`` 的区别：``to_json`` 要求 Pydantic/dataclass 输入，
     ``dumps`` 接受 dict/list/Any 原生对象。

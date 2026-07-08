@@ -24,7 +24,7 @@ HallucinationGuard — AI 幻觉防护：回滚后强制状态验证。
     要求 AI 逐文件列出 MD5 / 行数 / 关键函数签名，
     Guard 验证 AI 输出与实际 git 状态是否一致。
 
-连续 3 轮未通过 → exit code 11 (HALLUCINATION_DETECTED) → 暂停该 agent。
+连续 3 轮未通过 -> exit code 11 (HALLUCINATION_DETECTED) -> 暂停该 agent。
 对标: Microsoft VeriTrail DAG 溯源验证风格
 """
 

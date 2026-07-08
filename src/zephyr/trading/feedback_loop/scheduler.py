@@ -15,10 +15,10 @@
 # [A_module] module_id=MOD-UNK_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""FLE 全链路调度器 —— collect→detect→diagnose→act→verify 闭环。
+"""FLE 全链路调度器 —— collect->detect->diagnose->act->verify 闭环。
 
 对接 MOD-FEEDBACK_LOOP Feedback Loop Engine 蓝图 §4-§5:
-  - 30s 轮询指标 → EMA 异常检测 → 诊断 → 动作调度 → 事后验证
+  - 30s 轮询指标 -> EMA 异常检测 -> 诊断 -> 动作调度 -> 事后验证
   - 动作优先级: NOTIFY_OWNER > ADJUST_THRESHOLD > REPAIR > DEPLOY > SELF_UPGRADE
   - 安全门: 67 层 (L1-L67) 在 action 执行前后
   - v0.40.0: 集成 32 个治理级组件 (R470-R501)
@@ -103,7 +103,7 @@ class FLEPipelineEvent:
 
 @dataclass
 class FeedbackLoopScheduler:
-    """FLE 全链路调度器——wire collect→detect→diagnose→act→verify。
+    """FLE 全链路调度器——wire collect->detect->diagnose->act->verify。
 
     Usage:
         scheduler = FeedbackLoopScheduler()
@@ -287,9 +287,9 @@ class FeedbackLoopScheduler:
                 target = getattr(d, "target", "") or getattr(d, "file_path", "") or str(d)
                 action = engine.fix("drift_fixer", target, dry_run=False)
                 if action.status.value == "COMPLETED":
-                    logger.info("FLE auto-fix: drift fixed → %s", target)
+                    logger.info("FLE auto-fix: drift fixed -> %s", target)
                 else:
-                    logger.warning("FLE auto-fix: drift fix failed → %s (%s)", target, action.status)
+                    logger.warning("FLE auto-fix: drift fix failed -> %s (%s)", target, action.status)
         except Exception:
             logger.debug("FLE auto-fix drift failed", exc_info=True)
 
@@ -373,13 +373,13 @@ class FeedbackLoopScheduler:
 
         if self.vector_bridge is not None and event.diagnosis is not None:
             try:
-                # 治本(风险B): str(diagnosis) 含 uuid diagnosis_id → 内容哈希每次不同 = 无幂等
+                # 治本(风险B): str(diagnosis) 含 uuid diagnosis_id -> 内容哈希每次不同 = 无幂等
                 # 提取稳定 pattern_text: summary > root_cause(去 z_score 浮点) > str() 兜底
                 diag_text = getattr(event.diagnosis, "summary", None)
                 if diag_text is None:
                     root_cause = getattr(event.diagnosis, "root_cause", None)
                     if root_cause:
-                        # root_cause 格式 "Elevated {metric} (z={score:.2f})" → 保留稳定部分
+                        # root_cause 格式 "Elevated {metric} (z={score:.2f})" -> 保留稳定部分
                         diag_text = root_cause.split(" (")[0]
                     else:
                         diag_text = str(event.diagnosis)

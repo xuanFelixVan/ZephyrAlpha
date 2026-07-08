@@ -149,7 +149,7 @@ class HookRegistry:
                 h.callback(event)
             except Exception:
                 logger.exception(
-                    "Hook '%s' (prio=%d) crashed on task=%s (%s→%s)",
+                    "Hook '%s' (prio=%d) crashed on task=%s (%s->%s)",
                     h.name,
                     h.priority,
                     event.task_id,

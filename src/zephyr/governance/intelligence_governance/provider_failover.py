@@ -17,7 +17,7 @@
 
 """
 
-Provider Failover — v0.7.0 多LLM Provider容灾: deepseek→claude→gpt fallback链。
+Provider Failover — v0.7.0 多LLM Provider容灾: deepseek->claude->gpt fallback链。
 """
 
 from __future__ import annotations

@@ -15,7 +15,7 @@ migration_plan:
   plan_id: "MOD-INF-023-migration-2026"
 
   phases:
-    - phase: "Phase 1: SQLite → PostgreSQL"
+    - phase: "Phase 1: SQLite -> PostgreSQL"
       target: "2026-Q3"
       status: "planned"
       affected_modules:
@@ -30,7 +30,7 @@ migration_plan:
       rollback: "restore_sqlite_backup"
       validation: "db_schema_drift detector + alembic stamp"
 
-    - phase: "Phase 2: PostgreSQL → DuckDB (analytics)"
+    - phase: "Phase 2: PostgreSQL -> DuckDB (analytics)"
       target: "2026-Q4"
       status: "planned"
       affected_modules:

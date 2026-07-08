@@ -21,7 +21,7 @@ GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁决引擎（T-2-1
 依据：
 - 知识库架构 §4（G1-G5 脚本接口设计）
 - execution-order-v1.md beta.3（门禁策略引擎 P0）
-- CT-ORC-GATE-001（任务 G0/G7 → task/g0-orc-gate-engine.yaml、g7-orc-gate-engine.yaml）
+- CT-ORC-GATE-001（任务 G0/G7 -> task/g0-orc-gate-engine.yaml、g7-orc-gate-engine.yaml）
 - 交易类门：``gate_id`` 为 G10/G11/G12，YAML 文件名保留历史前缀（g7_position_limits / g8_leverage / g9_strategy_correlation）
 - 指令：325 + 344 + 999
 
@@ -35,8 +35,8 @@ Safety : M（治理层代码，门禁失败阻断任务启动）
 
 功能
 ----
-- load_gates()   → 从 YAML 文件加载门禁配置，返回 dict[gate_id, GateConfig]
-- evaluate(task, gate_id[, conn=…]) → 执行门禁检查，返回 GateResult，写入 gates 表；
+- load_gates()   -> 从 YAML 文件加载门禁配置，返回 dict[gate_id, GateConfig]
+- evaluate(task, gate_id[, conn=…]) -> 执行门禁检查，返回 GateResult，写入 gates 表；
   传入 ``conn`` 时使用调用方事务（例如 TaskRepository 写事务），不再单独 BEGIN/COMMIT。
 
 支持的 CheckType（三大核心场景 + 扩展）
@@ -592,7 +592,7 @@ def _run_check(
         # 第 18 种 CheckType（T-V2-011 G6 beta 硬合规）
         # 检查：AI 在修改目标模块文件前，是否已读取对应的蓝图
         # beta（硬合规，2026-05-04 激活）：
-        #   — severity=error → P0 阻断：未读蓝图就改代码的 task 直接 REJECT
+        #   — severity=error -> P0 阻断：未读蓝图就改代码的 task 直接 REJECT
         #   — AI 必须调用 blueprint_search.find_relevant_blueprint() 定位蓝图
         #   — 或在 session 日志中声明已手动阅读蓝图
         target_blueprint = str(check.params.get("target_blueprint", ""))
@@ -661,7 +661,7 @@ def _run_check(
             if not result.passed:
                 for cycle in result.cycles:
                     _add(
-                        f"Circular dependency: {' → '.join(cycle)} → {cycle[0]}",
+                        f"Circular dependency: {' -> '.join(cycle)} -> {cycle[0]}",
                         detail=f"Cycle length: {len(cycle)}",
                     )
         except Exception as exc:
@@ -1134,8 +1134,8 @@ class GateEngine:
         """
         对 task 执行指定门禁的所有检查，返回 GateResult。
 
-        - P0 违规存在 → passed=False（阻断）
-        - 仅 P1/P2 违规 → passed=True（警告，不阻断）
+        - P0 违规存在 -> passed=False（阻断）
+        - 仅 P1/P2 违规 -> passed=True（警告，不阻断）
         - 裁决结果写入 SQLite gates 表
 
         参数
@@ -1312,10 +1312,10 @@ def _check_blueprint_read_compliance(
     """检查 AI 在修改目标文件前是否已读取对应的蓝图。
 
     experimental（软合规，已退役）：
-    - severity=warning → 仅提醒，不阻断
+    - severity=warning -> 仅提醒，不阻断
 
     beta（硬合规，2026-05-04 激活）：
-    - severity=error → P0 硬阻断
+    - severity=error -> P0 硬阻断
     - 未读蓝图则返回 GateViolationError
     - AI 必须读蓝图后才能继续
     """
@@ -1365,7 +1365,7 @@ def _check_blueprint_read_compliance(
                 f"G6 硬合规阻断: AI 未读取 {target_blueprint} 蓝图即尝试修改 {' + '.join(target_files[:3])}。"
                 f"beta 硬合规生效——此 task 被 REJECT。",
                 detail=f"Action required: invoke blueprint_search.find_relevant_blueprint(task_description) "
-                f"→ read {target_blueprint} blueprint §1-§5 → retry task",
+                f"-> read {target_blueprint} blueprint §1-§5 -> retry task",
             )
         else:
             _add(

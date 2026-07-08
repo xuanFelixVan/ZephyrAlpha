@@ -35,7 +35,7 @@ ZephyrAlpha — shared/contracts/factor_signal.py
 
 CTR-002: FactorSignal / 因子信号
 
-D_FACTOR → D_SIGNAL/D_RISK/D_PORTFOLIO_CORE 核心数据契约。单个因子在单个时间截面对单个标的的信号值。
+D_FACTOR -> D_SIGNAL/D_RISK/D_PORTFOLIO_CORE 核心数据契约。单个因子在单个时间截面对单个标的的信号值。
 
 SSoT: cross_layer_contracts.yaml -> CTR-002
 Version: 1.0

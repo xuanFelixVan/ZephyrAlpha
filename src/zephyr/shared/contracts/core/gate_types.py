@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 # Lazy import to avoid circular dependency deadlock:
-# shared.contracts → governance.rule_enforcement → governance.__init__ → ... → governance (cycle)
+# shared.contracts -> governance.rule_enforcement -> governance.__init__ -> ... -> governance (cycle)
 # At module load time, governance may not be fully initialized yet.
 def __getattr__(name):
     _mod = __import__("zephyr.governance.rule_enforcement.gate_types", fromlist=[name])

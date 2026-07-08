@@ -21,8 +21,8 @@
 渲染依赖: Panel(布局) + ChartFactory.make_tick(图表)
 
 v3.0.0 变更 (#ARCH-047):
-  - Streamlit → Panel (布局)
-  - plotly 直接调用 → ChartFactory.make_tick (callback仅编排)
+  - Streamlit -> Panel (布局)
+  - plotly 直接调用 -> ChartFactory.make_tick (callback仅编排)
   - Datashader阈值触发(>50万点)由ChartFactory内置处理
 
 布局:

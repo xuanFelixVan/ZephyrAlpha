@@ -33,8 +33,8 @@ AI 创建临时文件（ttl=task_bound）时无路径约束，乱放根目录或
 新建 in-process gate FILE-PLACEMENT-TTL（priority=33），三重校验：
 1. 永久区准入（PROMOTION_BLOCKED）：permanent.paths 新文件需 allow_promote=True
    （exempt_subdirs 生成器输出豁免）
-2. TTL↔zone 一致性：frontmatter.ttl 与路径 zone 冲突 → 阻断
-3. 根目录子目录准入：第一级目录不在 directory_zones 所有 paths → 阻断
+2. TTL↔zone 一致性：frontmatter.ttl 与路径 zone 冲突 -> 阻断
+3. 根目录子目录准入：第一级目录不在 directory_zones 所有 paths -> 阻断
    （防止 audit_assignment/ 这类乱建子目录，临时文件应落 docs/_working/）
 
 规则边界说明：

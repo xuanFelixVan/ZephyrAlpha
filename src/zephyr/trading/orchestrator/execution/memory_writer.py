@@ -14,7 +14,7 @@
 # [TESTS] scripts/connect/orc_vms.py --trigger
 # [A_module] module_id=MOD-ORC_memory_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Orc→VMS 记忆写入器"""
+"""Orc->VMS 记忆写入器"""
 
 from zephyr.shared.io.serialization import dumps
 import logging

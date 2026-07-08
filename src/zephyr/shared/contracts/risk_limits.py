@@ -33,7 +33,7 @@ ZephyrAlpha — shared/contracts/risk_limits.py
 
 CTR-003: RiskLimits / 风险限额
 
-D_RISK → D_PORTFOLIO_CORE 核心数据契约。风险限额约束集合，由 D_PORTFOLIO_CORE 组合优化器强制执行。
+D_RISK -> D_PORTFOLIO_CORE 核心数据契约。风险限额约束集合，由 D_PORTFOLIO_CORE 组合优化器强制执行。
 
 SSoT: cross_layer_contracts.yaml -> CTR-003
 Version: 1.0

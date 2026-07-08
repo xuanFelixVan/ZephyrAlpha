@@ -21,8 +21,8 @@
 渲染依赖: Panel(布局) + ChartFactory.make_position(表格)
 
 v3.0.0 变更 (#ARCH-047):
-  - Streamlit → Panel (布局)
-  - Markdown 表格 → ChartFactory.make_position (callback仅编排)
+  - Streamlit -> Panel (布局)
+  - Markdown 表格 -> ChartFactory.make_position (callback仅编排)
   - 1s Bokeh WebSocket 推送(原生WebSocket, 无rerun开销)
 
 布局:
@@ -50,7 +50,7 @@ from zephyr.frontend.dashboard.components.chart_factory import (
 class PositionItem:
     """单标的持仓项
 
-    蓝图 §16.7.4: 含 T+1 标记（today_bought > 0 → is_t_plus_1_locked=True）
+    蓝图 §16.7.4: 含 T+1 标记（today_bought > 0 -> is_t_plus_1_locked=True）
     """
     symbol: str = ""
     name: str = ""
@@ -111,7 +111,7 @@ def fetch_position_monitor(
     蓝图 §16.7.4:
       - 输入: MiniQmtBroker 实例（依赖注入）
       - 输出: PositionMonitorData（持仓+盈亏+T+1标记）
-      - T+1标记: today_bought > 0 → is_t_plus_1_locked=True
+      - T+1标记: today_bought > 0 -> is_t_plus_1_locked=True
     """
     if miniqmt_broker is None:
         return PositionMonitorData()

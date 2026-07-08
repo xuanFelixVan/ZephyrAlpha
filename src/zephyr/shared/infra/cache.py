@@ -19,9 +19,9 @@
 cache.py —— 统一缓存抽象（Phase 8 新增 | 盲点 B13 修复）
 
 痛点修复：LLM API 响应、因子计算结果、配置数据缺少缓存层——
-  1. 重复调用 LLM API → 浪费 token 配额/费用
-  2. 每个模块自己写 lru_cache / dict 缓存 → 无 TTL、无驱逐策略、内存无限膨胀
-  3. 没有 Cache 接口 → 无法切换到 Redis / memcached
+  1. 重复调用 LLM API -> 浪费 token 配额/费用
+  2. 每个模块自己写 lru_cache / dict 缓存 -> 无 TTL、无驱逐策略、内存无限膨胀
+  3. 没有 Cache 接口 -> 无法切换到 Redis / memcached
 
 设计对标：
   - Spring Cache Abstraction（@Cacheable / CacheManager / 多后端）

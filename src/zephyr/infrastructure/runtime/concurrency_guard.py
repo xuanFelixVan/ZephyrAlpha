@@ -18,9 +18,9 @@
 concurrency_guard — 回滚操作并发安全守卫。
 
 检测回滚操作是否会破坏其他 AI session 的工作：
-1. 扫描 .ailocks/ 活跃文件锁 → 回滚文件与被锁文件有交集 → BLOCKED
-2. 未提交文件归属识别 → 通过 .ailocks 锁信息识别 owner → 非 owner 的未提交文件 → BLOCKED
-3. git stash 安全化 → 只允许 stash 本 session 的文件，其他 session 文件阻断
+1. 扫描 .ailocks/ 活跃文件锁 -> 回滚文件与被锁文件有交集 -> BLOCKED
+2. 未提交文件归属识别 -> 通过 .ailocks 锁信息识别 owner -> 非 owner 的未提交文件 -> BLOCKED
+3. git stash 安全化 -> 只允许 stash 本 session 的文件，其他 session 文件阻断
 
 根因：回滚系统与文件锁系统(RULE-ZERO .ailocks/)是两套独立机制未联动。
 本模块作为桥梁，在回滚执行前检测并发冲突，防止 session B 回滚覆盖 session A 的工作。
@@ -184,8 +184,8 @@ def classify_uncommitted_files(
     """将未提交文件按归属分类：本 session 的 vs 其他 session 的。
 
     归属判定：
-    - 文件被 .ailocks 锁定且 owner != current_session_id → other_files（不可 stash）
-    - 其余 → own_files（可 stash）
+    - 文件被 .ailocks 锁定且 owner != current_session_id -> other_files（不可 stash）
+    - 其余 -> own_files（可 stash）
 
     局限：未被锁定的未提交文件默认归为本 session，因为 .ailocks 只记录"正在写入"的锁，
     不记录"已写入未提交"的状态。这是已知局限——完整解决需要 git log author + 锁联合判定。

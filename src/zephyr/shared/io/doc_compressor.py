@@ -133,7 +133,7 @@ class CompressionPolicy(BaseModel):
                 raise ValueError(
                     f"preserve_immutable_blocks marker '{marker}' must contain 'START' "
                     f"(case-insensitive) — required to derive corresponding END marker "
-                    f"(e.g. '<!-- IMMUTABLE_START -->' → '<!-- IMMUTABLE_END -->')"
+                    f"(e.g. '<!-- IMMUTABLE_START -->' -> '<!-- IMMUTABLE_END -->')"
                 )
         return self
 
@@ -435,7 +435,7 @@ class DocCompressor:
         2. 移除行末尾多余空白
         3. 对超过 3 行的纯正文段落，保留前 2 行 + "..."
         """
-        # 规则 1: 压缩多余空行（4 个以上 → 2 个）
+        # 规则 1: 压缩多余空行（4 个以上 -> 2 个）
         body = re.sub(r"\n{4,}", "\n\n\n", body)
 
         # 规则 2: 移除行末尾空白

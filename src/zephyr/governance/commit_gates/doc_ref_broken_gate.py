@@ -32,9 +32,9 @@
 在 GitCommitGateway pre-commit 阶段（in-process）注册门禁：
   1. 正则提取 markdown 链接 ``[text](target)``
   2. URL/mailto/锚点链接豁免（``http://`` / ``https://`` / ``mailto:`` / ``#`` / ``ftp://``）
-  3. 去掉锚点部分（``target#section`` → ``target``）
+  3. 去掉锚点部分（``target#section`` -> ``target``）
   4. 相对 .md 文件目录解析，``os.path.exists`` 检查
-  5. 不存在 → 断链 → 违规
+  5. 不存在 -> 断链 -> 违规
 
 设计权衡
 --------

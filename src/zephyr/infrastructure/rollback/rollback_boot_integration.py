@@ -220,8 +220,8 @@ def _on_rollback_completed(payload: object) -> None:
 def _trigger_rollback(payload: object, source: str) -> None:
     """触发回滚评估——日志+调用已有公开方法。
 
-    流程: 构造 AutoGuardResult → AutoRollbackTrigger.classify() →
-          若 should_rollback 且 payload 含 commit_sha → RollbackExecutor.full_revert()
+    流程: 构造 AutoGuardResult -> AutoRollbackTrigger.classify() ->
+          若 should_rollback 且 payload 含 commit_sha -> RollbackExecutor.full_revert()
     """
     try:
         data = payload if isinstance(payload, dict) else {}

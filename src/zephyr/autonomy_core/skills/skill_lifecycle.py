@@ -92,7 +92,7 @@ class SkillLifecycle:
                 "from": from_status,
                 "to": to_status,
                 "allowed": False,
-                "reason": f"Invalid transition: {from_status} → {to_status}",
+                "reason": f"Invalid transition: {from_status} -> {to_status}",
             }
 
         for guard in self._guards.get(skill_id, []):

@@ -23,7 +23,7 @@ fresh code injected into already-degrading system compounds damage.
 Risk: R464 — Deployment during active incident amplifies blast radius.
 
 Mitigation: FLE-instability gate before deployment pipeline. If FLE
-reports DEGRADED or higher state → block deployment. Auto-release
+reports DEGRADED or higher state -> block deployment. Auto-release
 when system returns to NOMINAL for sustain_window seconds.
 """
 

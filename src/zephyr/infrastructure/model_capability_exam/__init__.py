@@ -24,7 +24,7 @@ ModelCapabilityExam — AI模型入职考试系统 (MOD-INF-036)
 
 五维评测: 横轴(能力覆盖) / 纵轴(精度深度) / 速轴(延迟吞吐) / 幻轴(幻觉率) / 稳轴(长时间漂移)
 
-产出: CapabilityPassport 能力护照 → 驱动 TaskGate 任务门控
+产出: CapabilityPassport 能力护照 -> 驱动 TaskGate 任务门控
 
 从 MOD-INF-034 (ModelProfiler) 提取为独立模块。
 

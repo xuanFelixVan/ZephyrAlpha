@@ -16,17 +16,17 @@
 # [TTL] permanent
 
 """
-PipelineSkillBridge — Agent Spec → Pipeline 双向桥接
+PipelineSkillBridge — Agent Spec -> Pipeline 双向桥接
 
 职责:
-  1. 接收 TaskCard → 通过 TriggerRouter 匹配 Domain Skill + Role Skill
+  1. 接收 TaskCard -> 通过 TriggerRouter 匹配 Domain Skill + Role Skill
   2. 通过 SkillLoader.progressive_load 加载对应 Skill
   3. 返回 SkillInjectionResult 供 Pipeline Module 执行时注入
 
 用法:
     bridge = PipelineSkillBridge()
     result = bridge.inject_for_task(task_description="修改数据库模型", stage="construction")
-    # → 加载 database-specialist + implementer
+    # -> 加载 database-specialist + implementer
 """
 
 from __future__ import annotations

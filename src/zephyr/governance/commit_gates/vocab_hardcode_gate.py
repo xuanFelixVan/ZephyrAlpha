@@ -69,7 +69,7 @@ _SCRIPT_PATH = (
         os.path.dirname(os.path.abspath(__file__))
     ))))
 )
-# src/zephyr/governance/commit_gates/ → 上 5 级 = 项目根
+# src/zephyr/governance/commit_gates/ -> 上 5 级 = 项目根
 _VOCAB_SCRIPT = os.path.join(_SCRIPT_PATH, "scripts", "governance", "d3_metadata", "check_vocab_hardcode.py")
 
 

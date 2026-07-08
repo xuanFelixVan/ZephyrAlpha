@@ -29,7 +29,7 @@ Hand-maintained OCP extension point. DO NOT overwrite via codegen.
 CTR 契约：
   OCP-003  BrokerInterface   券商扩展点
 
-SSoT: cross_layer_contracts.yaml v3.0 → OCP-003
+SSoT: cross_layer_contracts.yaml v3.0 -> OCP-003
 """
 
 from __future__ import annotations

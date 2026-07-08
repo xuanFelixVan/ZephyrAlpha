@@ -84,7 +84,7 @@ class ContextEvictor:
     """三维逐出器 (DD9)。
 
     公式: score = w_p × (1 - priority_norm) + w_f × (1 - freshness) + w_r × (1 - relevance)
-    分数越高 → 越先被逐出。低分块优先保留。
+    分数越高 -> 越先被逐出。低分块优先保留。
     """
 
     _instance: ContextEvictor | None = None

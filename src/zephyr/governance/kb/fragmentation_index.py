@@ -29,7 +29,7 @@ class FragmentationScore:
 
 
 class FragmentationIndex:
-    """per-domain KE count entropy; >0.7 → flag (DD108)."""
+    """per-domain KE count entropy; >0.7 -> flag (DD108)."""
 
     def compute(self, ke_counts: dict[str, int]) -> FragmentationScore:
         import math

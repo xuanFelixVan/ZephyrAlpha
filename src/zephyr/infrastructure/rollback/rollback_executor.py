@@ -30,11 +30,11 @@ RollbackExecutor — 回滚执行器核心封装。
     - hard_reset:       git reset --hard {commit_sha}（token-gated）
 
 两套流程区分 (B2 鸡与蛋悖论解决)：
-    - 已 commit 但后验失败 → git revert（有可 revert 的对象）
-    - pre-commit FAIL   → discard changes（git checkout/restore——代码尚未被 commit）
+    - 已 commit 但后验失败 -> git revert（有可 revert 的对象）
+    - pre-commit FAIL   -> discard changes（git checkout/restore——代码尚未被 commit）
 
 回滚流程：
-    preflight_check → is_committed? → revert or discard → verify → audit
+    preflight_check -> is_committed? -> revert or discard -> verify -> audit
 """
 
 from __future__ import annotations

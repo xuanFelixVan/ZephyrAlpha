@@ -46,7 +46,7 @@ CTR-VER-001: ContractRegistry / 契约版本注册与查询服务
     if not registry.check_version("CTR-001", incoming_schema_version):
         raise ContractViolationError(...)
 
-SSoT: cross_layer_contracts.yaml → CTR-VER-001
+SSoT: cross_layer_contracts.yaml -> CTR-VER-001
 """
 
 from __future__ import annotations
@@ -258,7 +258,7 @@ class ContractRegistry:
 
         consumers = self._consumers.get(contract_id, [])
         _logger.warning(
-            "[ContractRegistry] VER-R3: %s MAJOR 升级 %s → %s — 通知 %d 个消费者，过渡窗口=%d ms",
+            "[ContractRegistry] VER-R3: %s MAJOR 升级 %s -> %s — 通知 %d 个消费者，过渡窗口=%d ms",
             contract_id,
             transition.old_version,
             new_version,

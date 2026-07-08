@@ -35,7 +35,7 @@ WIN_MAX_CPU_LOAD: Final[float] = 0.75
 
 WIN11_RISKS: Final[dict[str, str]] = {
     "permissions": "UAC escalation blocked + firewall auto",
-    "paths": "反斜杠→all refs consistent WSL+",
+    "paths": "反斜杠->all refs consistent WSL+",
     "crlf": "gitattributes *.bat/proj eol=crlf",
     "memory": "Win ≥16GB load avg<75%",
     "process": "single python system_module=1",

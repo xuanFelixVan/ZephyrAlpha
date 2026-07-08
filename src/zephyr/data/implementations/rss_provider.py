@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] fetch 异常→yield FetchResult(error=str)
+# [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)
 # [TESTS] tests/zephyr/data/test_providers.py::TestRSSProvider
 # [A_module] module_id=MOD-L00-004-rss_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -194,7 +194,7 @@ class RSSProvider(DataSourceBase):
                 rp.read()
                 self._robots_cache[domain] = rp
             except Exception as e:
-                # robots.txt 读取失败 → 默认允许（fail-open）
+                # robots.txt 读取失败 -> 默认允许（fail-open）
                 self._log.debug(f"robots.txt 读取失败 {domain}: {e}，默认允许")
                 self._robots_cache[domain] = None
 

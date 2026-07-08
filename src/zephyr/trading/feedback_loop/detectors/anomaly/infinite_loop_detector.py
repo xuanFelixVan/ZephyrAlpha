@@ -18,7 +18,7 @@
 """Infinite Loop Detector — v0.15.0 R219
 
 Blindspot: FLE repair-recheck cycle can loop indefinitely; no loop detection.
-Risk: R219 — Repair→metric improves→threshold triggers another repair→same metric→loop.
+Risk: R219 — Repair->metric improves->threshold triggers another repair->same metric->loop.
 
 Mitigation: Loop detection via action ID repetition tracking with cooldown enforcement.
 """

@@ -22,10 +22,10 @@
 注册全部 17 条核心 CT-* 集成契约，提供查询、ai_read_only_hint 检查功能。
 
 ai_read_only_hint 四级：
-- DO_NOT_CALL → 拒绝调用（契约不存在/未实现）
-- IMPL_REQUIRED → 拒绝调用（需先完成实现）
-- CAUTION_STUB → 允许调用但 warn 消费者
-- SAFE → 允许调用
+- DO_NOT_CALL -> 拒绝调用（契约不存在/未实现）
+- IMPL_REQUIRED -> 拒绝调用（需先完成实现）
+- CAUTION_STUB -> 允许调用但 warn 消费者
+- SAFE -> 允许调用
 """
 
 from __future__ import annotations
@@ -75,7 +75,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="TaskCard",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="脚本系统产出 Findings → severity 评估 → CRITICAL/HIGH 创建 OPS 任务卡",
+        ai_prompt="脚本系统产出 Findings -> severity 评估 -> CRITICAL/HIGH 创建 OPS 任务卡",
         route_target="script-system",
     ),
     "CT-ORC-CE-001": Contract(
@@ -89,7 +89,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="ContextPackage",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Orc 请求构建上下文 → CE 四阶段处理 → 返回 ContextPackage",
+        ai_prompt="Orc 请求构建上下文 -> CE 四阶段处理 -> 返回 ContextPackage",
         route_target="context-engine",
     ),
     "CT-ORC-VMS-001": Contract(
@@ -103,7 +103,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="VectorEntry",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Orc 完成任务 → TaskCard 输出 → VMS 写入向量",
+        ai_prompt="Orc 完成任务 -> TaskCard 输出 -> VMS 写入向量",
         route_target="vector-memory",
     ),
     "CT-ORC-GATE-001": Contract(
@@ -117,7 +117,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="GateDecision",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Orc 在任务生命周期 → 调用 Gates 门禁 → G0-G7 判定",
+        ai_prompt="Orc 在任务生命周期 -> 调用 Gates 门禁 -> G0-G7 判定",
         route_target="gate-engine",
     ),
     "CT-SCRIPT-KB-001": Contract(
@@ -131,7 +131,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="KnowledgeEntry",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Script 产出 MEDIUM Finding → KB 入库为 KE",
+        ai_prompt="Script 产出 MEDIUM Finding -> KB 入库为 KE",
         route_target="knowledge-base",
     ),
     "CT-SCRIPT-GATE-001": Contract(
@@ -145,7 +145,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="GateDecision",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Script Exit Code → Gate 决策 → 通过/阻塞/告警",
+        ai_prompt="Script Exit Code -> Gate 决策 -> 通过/阻塞/告警",
         route_target="gate-engine",
     ),
     "CT-CE-VMS-001": Contract(
@@ -159,7 +159,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="VectorResult",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation", "error"],
-        ai_prompt="CE 构建上下文 → VMS 向量检索(8 collection: decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces) → 注入上下文",
+        ai_prompt="CE 构建上下文 -> VMS 向量检索(8 collection: decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces) -> 注入上下文",
         route_target="vector-memory",
     ),
     "CT-CE-LSG-001": Contract(
@@ -173,7 +173,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="SecurityDecision",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="CE 上下文注入前 → LSG 安全检查 → 通过/阻断",
+        ai_prompt="CE 上下文注入前 -> LSG 安全检查 -> 通过/阻断",
         route_target="llm-security",
     ),
     "CT-KB-VMS-001": Contract(
@@ -187,21 +187,21 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="VectorEntry",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="KB 管理 KE → VMS 向量同步 → 可检索",
+        ai_prompt="KB 管理 KE -> VMS 向量同步 -> 可检索",
         route_target="vector-memory",
     ),
     "CT-FLE-ORC-001": Contract(
         contract_id="CT-FLE-ORC-001",
         producer="Feedback Loop Engine",
         consumer="Orchestrator",
-        status="部分实现:decision_engine已创建(Orc→FLE方向),FLE→Orc方向通过Protocol适配器待接通",
+        status="部分实现:decision_engine已创建(Orc->FLE方向),FLE->Orc方向通过Protocol适配器待接通",
         ai_read_only_hint=AIReadOnlyHint.CAUTION_STUB,
-        trigger="FLE 检测到异常 → 调整调度策略",
+        trigger="FLE 检测到异常 -> 调整调度策略",
         input_schema="AnomalyReport",
         output_schema="ScheduleAdjustment",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="FLE 异常检测 → Orc 调度调整 → 闭环改进(Orc→FLE已通,FLE→Orc通过Protocol待接通)",
+        ai_prompt="FLE 异常检测 -> Orc 调度调整 -> 闭环改进(Orc->FLE已通,FLE->Orc通过Protocol待接通)",
         route_target="orchestrator",
     ),
     "CT-FLE-DB-001": Contract(
@@ -215,7 +215,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="DBWriteResult",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation", "error"],
-        ai_prompt="FLE 指标采集 → db 持久化 → 历史分析(metrics_collector已有sqlite3实现,需迁移到zephyr.trading.db正式契约)",
+        ai_prompt="FLE 指标采集 -> db 持久化 -> 历史分析(metrics_collector已有sqlite3实现,需迁移到zephyr.trading.db正式契约)",
         route_target="database",
     ),
     "CT-TELE-FLE-001": Contract(
@@ -229,7 +229,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="FLEIngestResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Telemetry 推送 → FLE 摄入 → 异常检测",
+        ai_prompt="Telemetry 推送 -> FLE 摄入 -> 异常检测",
         route_target="feedback-loop",
     ),
     "CT-PIPE-ORC-001": Contract(
@@ -243,7 +243,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="PipelineRoute",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Pipeline 接收 TaskCard → 路由决策 → A区/B区管线",
+        ai_prompt="Pipeline 接收 TaskCard -> 路由决策 -> A区/B区管线",
         route_target="pipeline",
     ),
     "CT-ORC-DB": Contract(
@@ -257,7 +257,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="DBWriteResult",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation", "error"],
-        ai_prompt="Orc → TaskRepository → db CRUD → FTS5 全文搜索",
+        ai_prompt="Orc -> TaskRepository -> db CRUD -> FTS5 全文搜索",
         route_target="database",
     ),
     "CT-CBAC-001": Contract(
@@ -271,7 +271,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="CapabilityDecision",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="CBAC 矩阵 → 能力边界检查 → Agent 准入判定",
+        ai_prompt="CBAC 矩阵 -> 能力边界检查 -> Agent 准入判定",
         route_target="gate-engine",
     ),
     "CT-CDC-001": Contract(
@@ -285,7 +285,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="DeployDecision",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="CDC 消费者驱动契约 → 预部署验证 → Can-I-Deploy",
+        ai_prompt="CDC 消费者驱动契约 -> 预部署验证 -> Can-I-Deploy",
         route_target="gate-engine",
     ),
     "CT-SESSION-handoff-001": Contract(
@@ -299,7 +299,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="HandoffManifest",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation"],
-        ai_prompt="Session 启停 → Handoff Manifest → 上下文可恢复",
+        ai_prompt="Session 启停 -> Handoff Manifest -> 上下文可恢复",
         route_target="session-state",
     ),
     "CT-RBK-GATE-001": Contract(
@@ -313,7 +313,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="GatePipelineAction",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Rollback Exit Code → Gate 判定 + Pipeline 行为 → 51 exit code 回滚出口(协议已定义,运行时桥接待接通)",
+        ai_prompt="Rollback Exit Code -> Gate 判定 + Pipeline 行为 -> 51 exit code 回滚出口(协议已定义,运行时桥接待接通)",
         route_target="rollback",
     ),
     "CT-RB-001": Contract(
@@ -327,7 +327,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="RedBlueReport",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="红白对抗验证→审计编排器Phase5:攻击注入→防御验证→绕过记录→自愈闭环",
+        ai_prompt="红白对抗验证->审计编排器Phase5:攻击注入->防御验证->绕过记录->自愈闭环",
         route_target="red-blue-validator.scan",
     ),
     "CT-RB-002": Contract(
@@ -341,7 +341,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="FixResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="红白对抗绕过→自动修复引擎:绕过条目→修复执行→修复验证",
+        ai_prompt="红白对抗绕过->自动修复引擎:绕过条目->修复执行->修复验证",
         route_target="auto-fix-engine.fix",
     ),
     "CT-RB-003": Contract(
@@ -355,7 +355,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="AuditEntry",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation"],
-        ai_prompt="红白对抗报告→审计轨迹:对抗结果→审计条目→不可篡改记录",
+        ai_prompt="红白对抗报告->审计轨迹:对抗结果->审计条目->不可篡改记录",
         route_target="audit-trail.record",
     ),
     "CT-HEALTH-001": Contract(
@@ -369,7 +369,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="HealthProbeResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="三态探针: liveness→alive / readiness→ready / healthz→healthy|degraded(实现已存在,需全系统注册)",
+        ai_prompt="三态探针: liveness->alive / readiness->ready / healthz->healthy|degraded(实现已存在,需全系统注册)",
         route_target="telemetry",
     ),
     "CT-DLQ-001": Contract(
@@ -383,7 +383,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="DLQWriteResult",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation", "error"],
-        ai_prompt="失败事件 → DLQ 持久化 → 定期重试/告警(DLQ实现已存在438行,需接入全系统事件总线)",
+        ai_prompt="失败事件 -> DLQ 持久化 -> 定期重试/告警(DLQ实现已存在438行,需接入全系统事件总线)",
         route_target="database",
     ),
     "CT-RECONCILE-001": Contract(
@@ -397,7 +397,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="ReconcileResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="对账扫描 → 差异报告 → 自动修复/告警",
+        ai_prompt="对账扫描 -> 差异报告 -> 自动修复/告警",
         route_target="gate-engine",
     ),
     "CT-STARTUP-001": Contract(
@@ -411,7 +411,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="StartupResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="冷启动序列: SYS-MASTER → MOD-MASTER → 12系统依序启动",
+        ai_prompt="冷启动序列: SYS-MASTER -> MOD-MASTER -> 12系统依序启动",
         route_target="orchestrator",
     ),
     "CT-TEARDOWN-001": Contract(
@@ -425,7 +425,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="TeardownResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="安全关闭: 释放锁 → 保存状态 → 关闭连接 → 确认零残留",
+        ai_prompt="安全关闭: 释放锁 -> 保存状态 -> 关闭连接 -> 确认零残留",
         route_target="orchestrator",
     ),
     "CT-SLO-001": Contract(
@@ -439,7 +439,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="SLOAlert",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="11 SLI 持续监控 → SLO 突破 → 记录事故 + 通知Owner",
+        ai_prompt="11 SLI 持续监控 -> SLO 突破 -> 记录事故 + 通知Owner",
         route_target="telemetry",
     ),
     "CT-BULKHEAD-001": Contract(
@@ -453,7 +453,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="BulkheadStatus",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Bulkhead: 线程池隔离 → 连接池隔离 → 故障不扩散",
+        ai_prompt="Bulkhead: 线程池隔离 -> 连接池隔离 -> 故障不扩散",
         route_target="gate-engine",
     ),
     "CT-WATCHDOG-001": Contract(
@@ -467,7 +467,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="WatchdogAction",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Watchdog: 心跳检测 → 僵死判定 → 自动重启/告警",
+        ai_prompt="Watchdog: 心跳检测 -> 僵死判定 -> 自动重启/告警",
         route_target="gate-engine",
     ),
     "CT-BACKUP-001": Contract(
@@ -481,7 +481,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="BackupResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="备份: 全量+增量 → 异地存储 → 定期恢复演练",
+        ai_prompt="备份: 全量+增量 -> 异地存储 -> 定期恢复演练",
         route_target="database",
     ),
     "CT-CONFIG-001": Contract(
@@ -495,7 +495,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="ConfigResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="配置变更 → 校验 → 热加载 → 失败自动回滚",
+        ai_prompt="配置变更 -> 校验 -> 热加载 -> 失败自动回滚",
         route_target="orchestrator",
     ),
     "CT-FEATUREFLAG-001": Contract(
@@ -509,7 +509,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="FlagResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Feature Flag: 暗启动 → 渐进式放量 → 异常自动关闭",
+        ai_prompt="Feature Flag: 暗启动 -> 渐进式放量 -> 异常自动关闭",
         route_target="orchestrator",
     ),
     "CT-SECRETS-001": Contract(
@@ -523,7 +523,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="SecretResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Secrets: 定期轮替 → 泄露检测 → 自动吊销",
+        ai_prompt="Secrets: 定期轮替 -> 泄露检测 -> 自动吊销",
         route_target="llm-security",
     ),
     "CT-KISS-001": Contract(
@@ -537,7 +537,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="KISSReport",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="KISS: 复杂度检查 → 超标告警 → 拒绝合并",
+        ai_prompt="KISS: 复杂度检查 -> 超标告警 -> 拒绝合并",
         route_target="gate-engine",
     ),
     "CT-DATA-LIFECYCLE-001": Contract(
@@ -546,12 +546,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="Hot→Warm→Cool→Cold→Purge 五阶段自动流转",
+        trigger="Hot->Warm->Cool->Cold->Purge 五阶段自动流转",
         input_schema="DataTier",
         output_schema="LifecycleAction",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation"],
-        ai_prompt="数据生命周期: 逐级冷却 → 自动清理 → 合规保留",
+        ai_prompt="数据生命周期: 逐级冷却 -> 自动清理 -> 合规保留",
         route_target="database",
     ),
     "CT-CHAOS-001": Contract(
@@ -565,7 +565,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="ChaosResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Chaos: 周日非交易时段 → 故障注入 → MTTR 度量",
+        ai_prompt="Chaos: 周日非交易时段 -> 故障注入 -> MTTR 度量",
         route_target="orchestrator",
     ),
     "CT-MODEL-REGISTRY-001": Contract(
@@ -574,12 +574,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="模型注册: capability_declaration → 模型版本追踪",
+        trigger="模型注册: capability_declaration -> 模型版本追踪",
         input_schema="ModelDeclaration",
         output_schema="ModelRegistryEntry",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation"],
-        ai_prompt="模型注册: key-based 引用 → 禁止硬编码模型名",
+        ai_prompt="模型注册: key-based 引用 -> 禁止硬编码模型名",
         route_target="orchestrator",
     ),
     "CT-DEPS-001": Contract(
@@ -593,7 +593,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="DependencyReport",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="依赖审计: 新增依赖 → CVE扫描 → 许可证检查 → 拒绝高危",
+        ai_prompt="依赖审计: 新增依赖 -> CVE扫描 -> 许可证检查 -> 拒绝高危",
         route_target="gate-engine",
     ),
     "CT-KNOWLEDGE-FRESHNESS-001": Contract(
@@ -602,12 +602,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="KE 新鲜度检查: TTL 过期 → 标记 stale → 触发更新",
+        trigger="KE 新鲜度检查: TTL 过期 -> 标记 stale -> 触发更新",
         input_schema="KEFreshnessCheck",
         output_schema="KEFreshnessReport",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="KB 新鲜度: 定期扫描 → stale KE 标记 → 通知Owner",
+        ai_prompt="KB 新鲜度: 定期扫描 -> stale KE 标记 -> 通知Owner",
         route_target="knowledge-base",
     ),
     "CT-HOUSEKEEPING-001": Contract(
@@ -621,7 +621,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="HousekeepResult",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation"],
-        ai_prompt="AutoHousekeep: 每日03:00 → 扫描临时文件 → 清理过期数据",
+        ai_prompt="AutoHousekeep: 每日03:00 -> 扫描临时文件 -> 清理过期数据",
         route_target="database",
     ),
     "CT-STABILITY-001": Contract(
@@ -635,7 +635,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="StabilityStatus",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="稳定性: CB 状态 → 熔断/半开/恢复 → 级联防护",
+        ai_prompt="稳定性: CB 状态 -> 熔断/半开/恢复 -> 级联防护",
         route_target="gate-engine",
     ),
     "CT-CANARY-001": Contract(
@@ -644,12 +644,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="Canary 部署: 小流量验证 → 渐进式推广 → 自动回滚",
+        trigger="Canary 部署: 小流量验证 -> 渐进式推广 -> 自动回滚",
         input_schema="CanaryDeploy",
         output_schema="CanaryResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Canary: 5%→25%→100% → 异常自动回滚 → 1h观察窗口",
+        ai_prompt="Canary: 5%->25%->100% -> 异常自动回滚 -> 1h观察窗口",
         route_target="orchestrator",
     ),
     "CT-INCIDENT-001": Contract(
@@ -663,7 +663,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="IncidentResponse",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Incident: 自动分级 → 升级矩阵 → Postmortem → 改进闭环",
+        ai_prompt="Incident: 自动分级 -> 升级矩阵 -> Postmortem -> 改进闭环",
         route_target="orchestrator",
     ),
     "CT-RACE-CONDITIONS-001": Contract(
@@ -677,7 +677,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="RaceReport",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="竞态检测: 并发写入 → 锁冲突 → 退避重试 → 告警",
+        ai_prompt="竞态检测: 并发写入 -> 锁冲突 -> 退避重试 -> 告警",
         route_target="gate-engine",
     ),
     "CT-COST-BUDGET-001": Contract(
@@ -686,12 +686,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="Token 成本预算: 任务前评估 → 超预算拒绝",
+        trigger="Token 成本预算: 任务前评估 -> 超预算拒绝",
         input_schema="CostBudgetRequest",
         output_schema="CostBudgetDecision",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="成本预算: 估算 Token → 分层预算 → 超预算 → 升级审批",
+        ai_prompt="成本预算: 估算 Token -> 分层预算 -> 超预算 -> 升级审批",
         route_target="orchestrator",
     ),
     "CT-DISK-GUARD-001": Contract(
@@ -700,12 +700,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="磁盘空间守卫: 剩余<10% → 自动清理 → 告警",
+        trigger="磁盘空间守卫: 剩余<10% -> 自动清理 -> 告警",
         input_schema="DiskGuardCheck",
         output_schema="DiskGuardAction",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation"],
-        ai_prompt="Disk Guard: 阈值告警 → 自动清理 → 紧急冻结写入",
+        ai_prompt="Disk Guard: 阈值告警 -> 自动清理 -> 紧急冻结写入",
         route_target="orchestrator",
     ),
     "CT-NETWORK-PARTITION-001": Contract(
@@ -714,12 +714,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="网络分区: 脑裂检测 → 仲裁 → 自动恢复",
+        trigger="网络分区: 脑裂检测 -> 仲裁 -> 自动恢复",
         input_schema="PartitionEvent",
         output_schema="PartitionAction",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Network Partition: 心跳超时 → 仲裁决策 → 隔离/恢复",
+        ai_prompt="Network Partition: 心跳超时 -> 仲裁决策 -> 隔离/恢复",
         route_target="orchestrator",
     ),
     "CT-BENCH-001": Contract(
@@ -728,12 +728,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="性能基准: SLO 回归检测 → 退化>10% → CI FAIL",
+        trigger="性能基准: SLO 回归检测 -> 退化>10% -> CI FAIL",
         input_schema="BenchmarkRun",
         output_schema="BenchmarkResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Benchmark: 每次变更后运行 → SLA退化检测 → 阻断合并",
+        ai_prompt="Benchmark: 每次变更后运行 -> SLA退化检测 -> 阻断合并",
         route_target="orchestrator",
     ),
     "CT-DEPLOY-001": Contract(
@@ -747,7 +747,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="DeployResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Rolling Upgrade: 逐实例 → HealthCheck → 失败自动回滚",
+        ai_prompt="Rolling Upgrade: 逐实例 -> HealthCheck -> 失败自动回滚",
         route_target="orchestrator",
     ),
     "CT-SCHEMA-MIGRATE-001": Contract(
@@ -761,7 +761,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="MigrationResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Schema Migrate: 向前兼容 → 双写过渡 → 旧字段废弃",
+        ai_prompt="Schema Migrate: 向前兼容 -> 双写过渡 -> 旧字段废弃",
         route_target="database",
     ),
     "CT-DEGRADE-CASCADE-001": Contract(
@@ -770,12 +770,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="级联降级预防: 依赖失败 → 隔舱阻断 → 局部降级",
+        trigger="级联降级预防: 依赖失败 -> 隔舱阻断 -> 局部降级",
         input_schema="DegradeEvent",
         output_schema="DegradeAction",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Degrade Cascade: 单点故障 → 不扩散 → 自动降级 → 恢复回升",
+        ai_prompt="Degrade Cascade: 单点故障 -> 不扩散 -> 自动降级 -> 恢复回升",
         route_target="gate-engine",
     ),
     "CT-AUTONOMY-001": Contract(
@@ -789,7 +789,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="AutonomyDecision",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Autonomy: Owner离线 → 四级决策 → 自动冻结/降级/继续",
+        ai_prompt="Autonomy: Owner离线 -> 四级决策 -> 自动冻结/降级/继续",
         route_target="orchestrator",
     ),
     "CT-AGENT-QUALITY-001": Contract(
@@ -803,7 +803,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="QualityReport",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Agent Quality: 每次施工后 → WQA七维 → SPC退化检测",
+        ai_prompt="Agent Quality: 每次施工后 -> WQA七维 -> SPC退化检测",
         route_target="orchestrator",
     ),
     "CT-PROMPT-VERSION-001": Contract(
@@ -812,12 +812,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="Prompt 版本演化: 变更→回归测试→3+退化→回滚",
+        trigger="Prompt 版本演化: 变更->回归测试->3+退化->回滚",
         input_schema="PromptVersionChange",
         output_schema="PromptVersionResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Prompt Version: 历史任务重放 → 一致性验证 → 回滚保护",
+        ai_prompt="Prompt Version: 历史任务重放 -> 一致性验证 -> 回滚保护",
         route_target="orchestrator",
     ),
     "CT-SESSION-CONFLICT-001": Contract(
@@ -826,12 +826,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="并行 Session 冲突预防: 同CT-* → WARN + 协调文件访问",
+        trigger="并行 Session 冲突预防: 同CT-* -> WARN + 协调文件访问",
         input_schema="SessionConflict",
         output_schema="ConflictResolution",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation"],
-        ai_prompt="Session Conflict: 同契约并发 → 协调 → 只读共享/写互斥",
+        ai_prompt="Session Conflict: 同契约并发 -> 协调 -> 只读共享/写互斥",
         route_target="orchestrator",
     ),
     "CT-LEAN-001": Contract(
@@ -845,7 +845,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="LeanReport",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Lean: 定期扫描 → 标记死代码 → 安全删除 → 减少熵",
+        ai_prompt="Lean: 定期扫描 -> 标记死代码 -> 安全删除 -> 减少熵",
         route_target="orchestrator",
     ),
     "CT-BLUEPRINT-HEALTH-001": Contract(
@@ -859,7 +859,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="BlueprintHealthReport",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Blueprint Health: 蓝图间交叉验证 → 不一致告警 → 自动修复建议",
+        ai_prompt="Blueprint Health: 蓝图间交叉验证 -> 不一致告警 -> 自动修复建议",
         route_target="gate-engine",
     ),
     "CT-TRANSFER-001": Contract(
@@ -868,12 +868,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="全系统",
         status="规划",
         ai_read_only_hint=AIReadOnlyHint.DO_NOT_CALL,
-        trigger="系统移交/迁移: 状态导出 → 新环境导入 → 验证",
+        trigger="系统移交/迁移: 状态导出 -> 新环境导入 -> 验证",
         input_schema="TransferPlan",
         output_schema="TransferResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Transfer: 全状态导出 → 幂等导入 → 逐项验证",
+        ai_prompt="Transfer: 全状态导出 -> 幂等导入 -> 逐项验证",
         route_target="orchestrator",
     ),
     "CT-KE-QUALITY-001": Contract(
@@ -887,7 +887,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="KEQualityReport",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["utilization", "saturation"],
-        ai_prompt="KE Quality: 评分 → 低分标记 → 触发改进/归档",
+        ai_prompt="KE Quality: 评分 -> 低分标记 -> 触发改进/归档",
         route_target="knowledge-base",
     ),
     "CT-EVT-BUS-001": Contract(
@@ -901,7 +901,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="EventEmitResult",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["rate", "error", "duration", "contract_rejected"],
-        ai_prompt="EventBus+ContractBus 桥接: emit(contract_id=X) → Schema校验 → 通过入队/拒绝丢弃",
+        ai_prompt="EventBus+ContractBus 桥接: emit(contract_id=X) -> Schema校验 -> 通过入队/拒绝丢弃",
         route_target="shared",
     ),
     "CT-FLE-EVT-001": Contract(
@@ -915,7 +915,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="EventEmitResult",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="FLE→EventBus: fle.{phase} / fle.anomaly / fle.action 三类事件",
+        ai_prompt="FLE->EventBus: fle.{phase} / fle.anomaly / fle.action 三类事件",
         route_target="feedback-loop",
     ),
     "CT-LLM-GW-001": Contract(
@@ -943,7 +943,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="VMSWriteResult",
         telemetry=TelemetryType.USE,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="VMS Bridge: topic→Collection 映射 + VMS不可用时降级到ChromaDB/InMemory",
+        ai_prompt="VMS Bridge: topic->Collection 映射 + VMS不可用时降级到ChromaDB/InMemory",
         route_target="vector-memory",
     ),
     "CT-RB-GATE-001": Contract(
@@ -957,7 +957,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         output_schema="DefenseResult",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Red-Blue 攻击 → DefenseRunner GATE_MAP 17 门禁映射 → Gate Engine 判定",
+        ai_prompt="Red-Blue 攻击 -> DefenseRunner GATE_MAP 17 门禁映射 -> Gate Engine 判定",
         route_target="gate-engine",
     ),
     "CT-RB-ESC-002": Contract(
@@ -966,12 +966,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="Escalation Protocol",
         status="已实现:BypassRecorder 3次绕过触发 escalation-engine.evaluate",
         ai_read_only_hint=AIReadOnlyHint.CAUTION_STUB,
-        trigger="BypassRecorder 检测到 3 次绕过 → EscalationEngine 升级",
+        trigger="BypassRecorder 检测到 3 次绕过 -> EscalationEngine 升级",
         input_schema="BypassEntry",
         output_schema="EscalationDecision",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="3 bypasses → EscalationEngine.evaluate(RuleCategory.SECURITY) → 升级/降级/告警",
+        ai_prompt="3 bypasses -> EscalationEngine.evaluate(RuleCategory.SECURITY) -> 升级/降级/告警",
         route_target="escalation-engine",
     ),
     "CT-RB-KB-003": Contract(
@@ -980,12 +980,12 @@ CONTRACTS: Final[dict[str, Contract]] = {
         consumer="Knowledge Base",
         status="已实现:ConstitutionEngine 新增 article 通过 kb.write 写入知识库",
         ai_read_only_hint=AIReadOnlyHint.CAUTION_STUB,
-        trigger="Convergence 卡住 3 轮无改善 → ConstitutionEngine.learn_from_bypass() 生成新 article → kb.write",
+        trigger="Convergence 卡住 3 轮无改善 -> ConstitutionEngine.learn_from_bypass() 生成新 article -> kb.write",
         input_schema="BypassEntry",
         output_schema="KnowledgeEntry",
         telemetry=TelemetryType.RED,
         telemetry_metrics=["rate", "error", "duration"],
-        ai_prompt="Convergence 停滞 → ConstitutionEngine 自动学习 → kb.write 写入新 article → 防御自进化",
+        ai_prompt="Convergence 停滞 -> ConstitutionEngine 自动学习 -> kb.write 写入新 article -> 防御自进化",
         route_target="knowledge-base",
     ),
 }

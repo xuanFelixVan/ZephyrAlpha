@@ -29,9 +29,9 @@
 CTR 契约：
   消费者 — CTR-003 (RiskLimits) ← 本层
   消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
-  生产者 — CTR-ERR-004 (RiskLimitViolationError) → D_PORTFOLIO_CORE, D_EXECUTION_CORE
+  生产者 — CTR-ERR-004 (RiskLimitViolationError) -> D_PORTFOLIO_CORE, D_EXECUTION_CORE
 
-SSoT: cross_layer_contracts.yaml → CTR-ERR-004 + CTR-003
+SSoT: cross_layer_contracts.yaml -> CTR-ERR-004 + CTR-003
 """
 
 from __future__ import annotations
@@ -81,7 +81,7 @@ class DefaultRiskValidator(RiskValidator):
             self._violation_history.extend(violations)
             return violations
 
-        # 5.145 审查修复：limits: Any → RiskLimits，消除 dict 双模式（死代码）
+        # 5.145 审查修复：limits: Any -> RiskLimits，消除 dict 双模式（死代码）
         override_limit = (limits.symbol_overrides or {}).get(symbol)
         effective_single = override_limit if override_limit is not None else limits.max_single_position
 
@@ -120,7 +120,7 @@ class DefaultRiskValidator(RiskValidator):
     ) -> list[ViolationDetail]:
         violations: list[ViolationDetail] = []
 
-        # 5.145 审查修复：limits: Any → RiskLimits，消除 dict 双模式（死代码）
+        # 5.145 审查修复：limits: Any -> RiskLimits，消除 dict 双模式（死代码）
         max_single = limits.max_single_position
         max_leverage = limits.max_gross_leverage
         max_sector = limits.max_sector_concentration

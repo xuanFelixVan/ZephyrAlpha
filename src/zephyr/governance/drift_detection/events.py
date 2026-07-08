@@ -23,7 +23,7 @@ ARCH-034 P3 改名说明（防 AI 重新造轮子）：
 
   两套数据类的职责分工（刚进项目的 AI 必读）：
   - ManagedDriftState(4态)/ManagedDriftEvent(9字段 BaseModel) — 本模块
-    用途：G-CT-005 管理事件的漂移状态机（DETECTED→FIXED/MANUAL_REQUIRED/IGNORED）
+    用途：G-CT-005 管理事件的漂移状态机（DETECTED->FIXED/MANUAL_REQUIRED/IGNORED）
     消费者：rule_enforcement/drift_detector, infrastructure/rollback/drift_fix 等
   - DriftState(10态)/DriftEvent(12字段 dataclass) — drift_models.py（canonical 真源）
     用途：drift_engine 扫描结果的漂移事件数据载体

@@ -34,7 +34,7 @@ ZephyrAlpha — shared/contracts/experiment_result.py
 
 CTR-P1-014: ExperimentResult / 实验结论
 
-实验 → D_RESEARCH/D_ML_TRAIN 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。
+实验 -> D_RESEARCH/D_ML_TRAIN 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-014
 Version: 1.0

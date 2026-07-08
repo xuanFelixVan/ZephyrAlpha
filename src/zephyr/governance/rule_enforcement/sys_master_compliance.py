@@ -52,7 +52,7 @@ CROSSCHECK_SCRIPT = REPO_ROOT / "scripts" / "governance" / "crosscheck_sys_maste
 def load_blueprint_path(module_id: str) -> Path | None:
     """从 blueprint_registry.yaml（SSoT 派生）查询蓝图磁盘路径，不硬编码。
 
-    真源链：blueprint.md frontmatter → sync_registry_from_blueprints.py → blueprint_registry.yaml
+    真源链：blueprint.md frontmatter -> sync_registry_from_blueprints.py -> blueprint_registry.yaml
     蓝图改名只需改 frontmatter + 重新 sync，本模块自动跟随，消除连字符/下划线漂移。
     """
     if not BLUEPRINT_REGISTRY.exists():

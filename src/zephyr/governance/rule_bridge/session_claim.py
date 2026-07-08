@@ -5,7 +5,7 @@
 # [CONSUMERS] 已废弃（superseded by session_worktree_start，FP-ISO.4C，2026-07-04）；generate_session_id 仍被 zephyr.governance.rule_bridge.session_worktree 调用
 # [STARTUP] imported
 # [MATURITY] deprecated
-# [INVARIANTS] 已废弃（superseded by session_worktree_start + HELD-OVERLAP gate，FP-ISO.4C，2026-07-04）：session_claim_start/add/check/heartbeat/end 零实际调用方（死代码），claim 语义已被 session_worktree_commit 的 HELD-OVERLAP 硬阻断完全替代且更强（编辑前软预警 → commit 时硬阻断）；generate_session_id 保留（纯函数，被 session_worktree.py 调用）；session_claim_start 原子注册+claim（register 后逐个 claim_file，冲突文件跳过并记录）；session_claim_add 返回 conflict=True 时 AI MUST 等待或换文件（软约束）；session_claim_end 释放所有 held_files 并 unregister；session_id 格式 sess-{PID}-{yyyyMMddHHmmss}（Trae 对话无内置 session_id，由 AI 自生成）；所有函数 project_root 默认 REPO_ROOT
+# [INVARIANTS] 已废弃（superseded by session_worktree_start + HELD-OVERLAP gate，FP-ISO.4C，2026-07-04）：session_claim_start/add/check/heartbeat/end 零实际调用方（死代码），claim 语义已被 session_worktree_commit 的 HELD-OVERLAP 硬阻断完全替代且更强（编辑前软预警 -> commit 时硬阻断）；generate_session_id 保留（纯函数，被 session_worktree.py 调用）；session_claim_start 原子注册+claim（register 后逐个 claim_file，冲突文件跳过并记录）；session_claim_add 返回 conflict=True 时 AI MUST 等待或换文件（软约束）；session_claim_end 释放所有 held_files 并 unregister；session_id 格式 sess-{PID}-{yyyyMMddHHmmss}（Trae 对话无内置 session_id，由 AI 自生成）；所有函数 project_root 默认 REPO_ROOT
 # [MODIFY-GUARD] session_id 生成规则；claim 冲突语义（conflict=True 不抛异常）；TTL 续期策略
 # [STABILITY] evolving
 # [SAFETY] L
@@ -19,7 +19,7 @@
 .. deprecated:: 2026-07-04
     ``session_claim_start``/``add``/``check``/``heartbeat``/``end`` 已废弃，
     被 ``session_worktree_start``（FP-ISO.4C worktree 物理隔离）+ ``HELD-OVERLAP`` gate
-    完全替代且更强（编辑前软预警 → commit 时硬阻断）。零实际调用方（死代码）。
+    完全替代且更强（编辑前软预警 -> commit 时硬阻断）。零实际调用方（死代码）。
     AI 对话启动请改用 ``zephyr.governance.rule_bridge.session_worktree.session_worktree_start``。
     ``generate_session_id`` 保留（纯函数，被 ``session_worktree.py`` 调用）。
 
@@ -30,15 +30,15 @@
 
 核心工作流（AI 对话生命周期）::
 
-    1. 对话启动 → session_claim_start(session_id, files=[...])
-       → 注册 session + claim 将修改的文件
-       → 冲突文件返回 conflict=True，AI 等待或换文件
-    2. 改新文件前 → session_claim_add(session_id, file)
-       → 追加声明，冲突时 conflict=True
-    3. 长对话续期 → session_claim_heartbeat(session_id)
-       → 防 TTL 过期（默认 3600s）
-    4. 对话结束 → session_claim_end(session_id)
-       → 释放所有 claim + 注销 session
+    1. 对话启动 -> session_claim_start(session_id, files=[...])
+       -> 注册 session + claim 将修改的文件
+       -> 冲突文件返回 conflict=True，AI 等待或换文件
+    2. 改新文件前 -> session_claim_add(session_id, file)
+       -> 追加声明，冲突时 conflict=True
+    3. 长对话续期 -> session_claim_heartbeat(session_id)
+       -> 防 TTL 过期（默认 3600s）
+    4. 对话结束 -> session_claim_end(session_id)
+       -> 释放所有 claim + 注销 session
 
 session_id 生成（Trae 对话无内置 session_id）::
 

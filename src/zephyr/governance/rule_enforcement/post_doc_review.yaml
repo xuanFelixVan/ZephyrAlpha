@@ -72,7 +72,7 @@ entry_conditions:
       如果没有修改任何文件，本门禁直接 PASS（无文档可审查）。
     check: >
       session_logs/<session_id>/modified_files.json 存在；
-      若不存在或为空 → PASS（本 session 无文档修改）。
+      若不存在或为空 -> PASS（本 session 无文档修改）。
     severity: info
     on_failure: flag
     verifiable: true
@@ -124,12 +124,12 @@ entry_conditions:
     type: "post_doc_review_check"
     description: >
       检查标记数≥3 时是否已触发 trae_030 规格化流程。
-      阈值 3 的依据：trae_030 §1.2 "标记数≥3 → 触发规格化流程"。
+      阈值 3 的依据：trae_030 §1.2 "标记数≥3 -> 触发规格化流程"。
     check: >
-      若 len(pending_regularization) >= 3 →
+      若 len(pending_regularization) >= 3 ->
       assert regularization_triggered == true AND
       regularization_task_id 非空（已创建规格化任务卡）。
-      若 len(pending_regularization) < 3 → PASS（未达阈值）。
+      若 len(pending_regularization) < 3 -> PASS（未达阈值）。
     severity: error
     on_failure: reject
     verifiable: true
@@ -144,15 +144,15 @@ entry_conditions:
     type: "post_doc_review_check"
     description: >
       R1 防御：篡改检测——对比 git 权威列表与 modified_files.json 自报告列表。
-      如果 git 可用但 modified_files.json 缺失或与 git 列表不一致 → 篡改告警。
-      git 不可用时 → RED 拒绝通过（不允许降级到自报告模式）。
+      如果 git 可用但 modified_files.json 缺失或与 git 列表不一致 -> 篡改告警。
+      git 不可用时 -> RED 拒绝通过（不允许降级到自报告模式）。
     check: >
-      git_available == false → RED (tampering_detected=true, is_clean=false)；
-      git_available == true AND start_commit 不存在 → RED；
+      git_available == false -> RED (tampering_detected=true, is_clean=false)；
+      git_available == true AND start_commit 不存在 -> RED；
       git_available == true AND (
         not modified_files_json_exists OR
         git_modified_list != self_reported_list
-      ) → 篡改告警 (tampering_detected=true)。
+      ) -> 篡改告警 (tampering_detected=true)。
     severity: error
     on_failure: reject
     verifiable: true

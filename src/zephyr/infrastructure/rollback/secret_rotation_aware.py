@@ -20,7 +20,7 @@ SecretRotationAware — 密钥轮替感知器。
 
 依据: 蓝图 MOD-INF-021 §6.12 B66 + exit code 15
 
-定期检查 API key/JWT/token 过期 → 自动轮替 → 不可自动则 DEFER_TO_HUMAN。
+定期检查 API key/JWT/token 过期 -> 自动轮替 -> 不可自动则 DEFER_TO_HUMAN。
 与 credential_rotation_trigger.py 联动——触发后调用本模块重试轮替。
 """
 
@@ -108,7 +108,7 @@ class SecretRotationAware:
                 details.append(f"Rotated {s.secret_type} in {s.file_path}")
             else:
                 deferred += 1
-                details.append(f"DEFER_TO_HUMAN: {s.secret_type} in {s.file_path} → {s.rotation_url}")
+                details.append(f"DEFER_TO_HUMAN: {s.secret_type} in {s.file_path} -> {s.rotation_url}")
 
         exit_code = self.EXIT_CODE_STALE if len(stale) > 0 else 0
         return RotationResult(

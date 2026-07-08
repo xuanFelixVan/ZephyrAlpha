@@ -13,7 +13,7 @@
 
 # G0 Task Entry Gate
 # 任务入口门禁 —— 所有 AI/人工作业任务进入系统前的准入检查
-# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → G0
+# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml -> G0
 
 module_id: MOD-GATE_ENGINE
 gate_id: G0

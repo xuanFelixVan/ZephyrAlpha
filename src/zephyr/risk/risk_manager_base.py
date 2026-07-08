@@ -34,7 +34,7 @@ OCP 扩展点：
 
 依赖方向：
   消费者：CTR-002(FactorSignal) ← D_FACTOR, CTR-003(RiskLimits), CTR-004(Order), CTR-006(PositionSnapshot)
-  生产者：CTR-003(RiskLimits) → D_PORTFOLIO_CORE, RiskDashboard → D_FRONTEND
+  生产者：CTR-003(RiskLimits) -> D_PORTFOLIO_CORE, RiskDashboard -> D_FRONTEND
 
 INV-001: Kill Switch 延迟 < 1ms
 INV-004: 每日亏损硬限
@@ -89,7 +89,7 @@ class RiskManagerOrchestratorBase(abc.ABC):
       - daily_pnl_check(): 日终盈亏检查——触发 INV-004 硬限
       - aggregate_report(): 综合风控报告
 
-    调用顺序：pre_trade → (emit order) → post_trade → daily_pnl → aggregate
+    调用顺序：pre_trade -> (emit order) -> post_trade -> daily_pnl -> aggregate
     """
 
     _registry: ClassVar[dict[str, type[RiskManagerOrchestratorBase]]] = {}

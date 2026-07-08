@@ -19,7 +19,7 @@
 
 当跨 Agent 操作需要原子性保证时，使用 Saga 模式:
   每个 Agent 执行一步操作 + 提供补偿函数
-  任一步失败 → 逆序执行所有已完成步骤的补偿函数
+  任一步失败 -> 逆序执行所有已完成步骤的补偿函数
 
 对标: 微服务 Saga Orchestrator + 长期事务(Long Lived Transaction)
 """
@@ -73,7 +73,7 @@ class SagaResult:
 class A2ASaga:
     """A2A Saga 事务协调器.
 
-    执行模式: 顺序执行 → 失败触发逆序补偿
+    执行模式: 顺序执行 -> 失败触发逆序补偿
     补偿注册: 每个 step 在 add_step 时声明其 compensate 策略
     """
 

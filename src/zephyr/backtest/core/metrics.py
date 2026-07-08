@@ -201,7 +201,7 @@ def calculate_ic_ir(
     ic = float(factor_values.corr(forward_returns, method="spearman"))
     n = len(factor_values)
     # ic_std: 相关系数标准误, 由t统计量关系反推
-    # t = ic*sqrt(n-2)/sqrt(1-ic^2) → se(ic) = sqrt((1-ic^2)/(n-2))
+    # t = ic*sqrt(n-2)/sqrt(1-ic^2) -> se(ic) = sqrt((1-ic^2)/(n-2))
     if n > 2 and abs(ic) < 1.0:
         ic_std = float(np.sqrt((1.0 - ic * ic) / (n - 2)))
     else:
@@ -260,8 +260,8 @@ def calculate_dsr(
         dict: dsr, adjusted_sharpe, expected_max_sharpe, is_overfitting
 
     Note:
-        - DSR < 0.5 → is_overfitting=True(来源:D-SIMULATION-24)
-        - n_samples < 60 → 样本不足,返回dsr=0.0, is_overfitting=True
+        - DSR < 0.5 -> is_overfitting=True(来源:D-SIMULATION-24)
+        - n_samples < 60 -> 样本不足,返回dsr=0.0, is_overfitting=True
     """
     # 样本量不足,统计不显著(与MIN_SAMPLES_FOR_SHARPE一致)
     if n_samples < MIN_SAMPLES_FOR_SHARPE:
@@ -316,7 +316,7 @@ def calculate_dsr(
     else:
         dsr = 0.0
 
-    # DSR < 0.5 → 存在过拟合(overfitting)(来源:D-SIMULATION-24)
+    # DSR < 0.5 -> 存在过拟合(overfitting)(来源:D-SIMULATION-24)
     is_overfitting = bool(dsr < 0.5)
 
     return {

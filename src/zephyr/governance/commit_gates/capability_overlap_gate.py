@@ -145,7 +145,7 @@ def make_capability_overlap_gate() -> GateSpec:
             return True, ""  # warn-only 契约：仍 return True
 
         # 3. 构建 capability token 索引（capability_id + aliases 分词）
-        cap_tokens: dict[str, set[str]] = {}  # capability_id → token set
+        cap_tokens: dict[str, set[str]] = {}  # capability_id -> token set
         for cap in data.get("capabilities", []) or []:
             if not isinstance(cap, dict):
                 continue

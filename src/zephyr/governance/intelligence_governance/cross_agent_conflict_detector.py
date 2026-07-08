@@ -20,8 +20,8 @@ CrossAgentConflictDetector — 多 Agent 并发冲突检测。
 
 依据: 蓝图 MOD-INF-021 §7 Phase 10 + §6.17 B128
 
-两个 AI agent 同时修改同一文件 → 检测冲突 → 仲裁 → 串行化。
-双写入检测：同一文件被不同 session_id 同时修改 → ConflictResolution。
+两个 AI agent 同时修改同一文件 -> 检测冲突 -> 仲裁 -> 串行化。
+双写入检测：同一文件被不同 session_id 同时修改 -> ConflictResolution。
 """
 
 from __future__ import annotations

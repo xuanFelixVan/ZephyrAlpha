@@ -276,10 +276,10 @@ class AIConstructionDetectors:
         两个检测维度：
 
 
-        1. 单文件中 TODO 注释占比 >5% → 未完成逻辑过多。
+        1. 单文件中 TODO 注释占比 >5% -> 未完成逻辑过多。
 
 
-        2. 函数参数 >5 但函数体行数 <3 → AI 生成时的上下文截断痕迹。
+        2. 函数参数 >5 但函数体行数 <3 -> AI 生成时的上下文截断痕迹。
 
 
 
@@ -447,10 +447,10 @@ class AIConstructionDetectors:
         检测两种典型模式：
 
 
-        1. ``@dataclass`` 装饰器与显式 ``__init__`` 并存 → 风格冲突。
+        1. ``@dataclass`` 装饰器与显式 ``__init__`` 并存 -> 风格冲突。
 
 
-        2. ``async def`` 与 ``def`` 混用 → 异步/同步风格不一致。
+        2. ``async def`` 与 ``def`` 混用 -> 异步/同步风格不一致。
 
 
 
@@ -550,10 +550,10 @@ class AIConstructionDetectors:
         两种检测：
 
 
-        1. 同一文件中类名与函数名重名 → 命名空间污染。
+        1. 同一文件中类名与函数名重名 -> 命名空间污染。
 
 
-        2. 同一文件同时出现 snake_case 和 CamelCase 函数命名 →
+        2. 同一文件同时出现 snake_case 和 CamelCase 函数命名 ->
 
 
            AI 在不同会话中使用了冲突的命名约定。

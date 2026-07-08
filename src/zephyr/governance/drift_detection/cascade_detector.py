@@ -236,7 +236,7 @@ def _trigger_cascade_rollback(
     module: str,
     cascade_events: list[CascadeEventRecord],
 ) -> None:
-    """CT-005: 级联修复循环 → MOD-INF-021 Rollback 回滚到 cascade 前状态。"""
+    """CT-005: 级联修复循环 -> MOD-INF-021 Rollback 回滚到 cascade 前状态。"""
 
     try:
         import importlib

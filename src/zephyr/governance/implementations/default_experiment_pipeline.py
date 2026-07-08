@@ -21,9 +21,9 @@
 
 CTR 契约：
   消费者 — CTR-P1-014 (BacktestResult) ← D_RESEARCH
-  生产者 — ExperimentResult → D_RESEARCH, D_ML_TRAIN
+  生产者 — ExperimentResult -> D_RESEARCH, D_ML_TRAIN
 
-SSoT: cross_layer_contracts.yaml → CTR-P1-014
+SSoT: cross_layer_contracts.yaml -> CTR-P1-014
 """
 
 from __future__ import annotations
@@ -110,7 +110,7 @@ class DefaultExperimentPipeline(ExperimentPipelineBase):
 
     @staticmethod
     def compute_effect_size(control: float, treatment: float, pooled_std: float) -> float:
-        if abs(pooled_std) < 1e-9:  # 5.167.7 修复: 浮点==0比较改 < epsilon (路径漂移 simulation/implementations/→governance/implementations/)
+        if abs(pooled_std) < 1e-9:  # 5.167.7 修复: 浮点==0比较改 < epsilon (路径漂移 simulation/implementations/->governance/implementations/)
             return 0.0
         return (treatment - control) / pooled_std
 

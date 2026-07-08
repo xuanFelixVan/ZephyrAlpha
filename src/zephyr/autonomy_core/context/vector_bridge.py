@@ -25,7 +25,7 @@ Depends    : MOD-CONTEXT_ENGINE-TASK-002 (Build 阶段)
 职责
 ----
 在 CE.build() 和 VMS.search() 之间建立调用桥接，接受 query Embedding +
-Collection name → 返回 top-K results。
+Collection name -> 返回 top-K results。
 
 设计决策
 --------
@@ -73,7 +73,7 @@ class VectorSearchResponse:
 class VectorBridge:
     """CE↔VMS 检索桥接。
 
-    接受 collection name + query embedding → 返回 top-K 结构化结果。
+    接受 collection name + query embedding -> 返回 top-K 结构化结果。
 
     Using::
 

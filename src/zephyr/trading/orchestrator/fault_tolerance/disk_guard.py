@@ -17,7 +17,7 @@ from typing import Final
 # [A_module] module_id=MOD-ORC_disk_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""磁盘空间耗尽防护（CT-DISK-GUARD）——剩余空间<5%→告警+只读模式。"""
+"""磁盘空间耗尽防护（CT-DISK-GUARD）——剩余空间<5%->告警+只读模式。"""
 
 DISK_THRESHOLD_PCT: Final[float] = 5.0
 

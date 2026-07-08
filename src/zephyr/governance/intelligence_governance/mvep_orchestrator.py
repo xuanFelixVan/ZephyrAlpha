@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.infrastructure.escalation
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] MVEP Phase Gate不可跳过;Phase 0→5顺序不可逆
+# [INVARIANTS] MVEP Phase Gate不可跳过;Phase 0->5顺序不可逆
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M

@@ -23,8 +23,8 @@ Owner Absent — 人力缺席分级处置。
     任务卡 TASK-INF-0266 (Part 2)
 
 功能：
-    - L3 Owner absent (30min timeout) → exit 31 → defer + retry
-    - L1 Owner absent (7天无响应) → exit 32 → escalate
+    - L3 Owner absent (30min timeout) -> exit 31 -> defer + retry
+    - L1 Owner absent (7天无响应) -> exit 32 -> escalate
     - 多层次 Owner absent 分级处置
 """
 

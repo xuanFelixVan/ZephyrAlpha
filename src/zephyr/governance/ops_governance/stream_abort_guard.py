@@ -20,9 +20,9 @@
 
 检查点（每 500 output token）
 -----------------------------
-  budget_exhausted → IMMEDIATE_ABORT
-  quality_low      → ABORT_AND_RETRY（切更便宜模型）
-  too_verbose      → ABORT_WITH_WARNING
+  budget_exhausted -> IMMEDIATE_ABORT
+  quality_low      -> ABORT_AND_RETRY（切更便宜模型）
+  too_verbose      -> ABORT_WITH_WARNING
 """
 
 from __future__ import annotations

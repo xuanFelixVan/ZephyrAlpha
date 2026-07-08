@@ -28,7 +28,7 @@
 
 CTR 契约：
   消费者 — CTR-001 (NormalizedMarketData) ← D_DATA
-  生产者 — CTR-002 (FactorSignal) → D_SIGNAL, D_RISK, D_PORTFOLIO_CORE
+  生产者 — CTR-002 (FactorSignal) -> D_SIGNAL, D_RISK, D_PORTFOLIO_CORE
 """
 
 from __future__ import annotations

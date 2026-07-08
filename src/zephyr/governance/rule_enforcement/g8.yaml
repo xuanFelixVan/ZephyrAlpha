@@ -25,9 +25,9 @@ entry_conditions:
     name: frontmatter_vs_blueprint_registry
     description: "对 docs/03_modules/**/blueprint.md 逐文件检查：frontmatter.construction_progress MUST == blueprint_registry.yaml 中同 module_id 的 construction_progress"
     check: |
-      1. 扫描 docs/03_modules/**/blueprint.md 收集全部 module_id → frontmatter.construction_progress
-      2. 解析 blueprint_registry.yaml → module_id → construction_progress
-      3. 逐对比较：任一不等 → 注册为矛盾（列出 frontmatter 值 vs registry 值）
+      1. 扫描 docs/03_modules/**/blueprint.md 收集全部 module_id -> frontmatter.construction_progress
+      2. 解析 blueprint_registry.yaml -> module_id -> construction_progress
+      3. 逐对比较：任一不等 -> 注册为矛盾（列出 frontmatter 值 vs registry 值）
       4. 排除 blocked_by_infrastructure 状态的 C 轨模块（本身不允许施工，不参与比较）
     severity: error
     on_failure: reject
@@ -42,9 +42,9 @@ entry_conditions:
     name: frontmatter_vs_module_registry
     description: "对 docs/03_modules/**/blueprint.md 逐文件检查：frontmatter.construction_progress MUST == module-registry.yaml 中同 module_id 的 construction_plan.status"
     check: |
-      1. 扫描 docs/03_modules/**/blueprint.md 收集全部 module_id → frontmatter.construction_progress
-      2. 解析 module-registry.yaml → module_id → construction_plan.status
-      3. 逐对比较：任一不等 → 注册为矛盾
+      1. 扫描 docs/03_modules/**/blueprint.md 收集全部 module_id -> frontmatter.construction_progress
+      2. 解析 module-registry.yaml -> module_id -> construction_plan.status
+      3. 逐对比较：任一不等 -> 注册为矛盾
     severity: error
     on_failure: reject
     applies_to: [docs, registries]
@@ -58,9 +58,9 @@ entry_conditions:
     name: registry_cross_consistency
     description: "blueprint_registry.yaml 的 construction_progress MUST == module-registry.yaml 同 module_id 的 construction_plan.status"
     check: |
-      1. 解析两份注册表 → module_id 为 key
+      1. 解析两份注册表 -> module_id 为 key
       2. 逐对比较 construction_progress vs construction_plan.status
-      3. 任一不等 → 注册为矛盾
+      3. 任一不等 -> 注册为矛盾
     severity: error
     on_failure: reject
     applies_to: [registries]
@@ -75,8 +75,8 @@ entry_conditions:
     description: "所有 construction_progress 值必须在受控词表内：[not_started, phase_1_partial, phase_1_complete, phase_2_complete, blocked_by_infrastructure, completed, phase_production_complete]"
     check: |
       1. 扫描所有 frontmatter + 两份注册表
-      2. 任一 construction_progress 值不在受控词表 → 注册为矛盾
-      3. 废弃值（phase_27_planned 等非标准写法）→ 阻断
+      2. 任一 construction_progress 值不在受控词表 -> 注册为矛盾
+      3. 废弃值（phase_27_planned 等非标准写法）-> 阻断
     severity: error
     on_failure: reject
     applies_to: [docs, registries]

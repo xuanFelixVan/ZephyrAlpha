@@ -10,7 +10,7 @@
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] baseline不存在→返回None;z-score<=5.0→返回None
+# [ERROR_CONTRACT] baseline不存在->返回None;z-score<=5.0->返回None
 # [TESTS] tests/telemetry/
 # [A_module] module_id=MOD-SEC_contract_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -56,7 +56,7 @@ def detect_contract_drift(
         else:
             return None
 
-    if abs(baseline_std) < 1e-9:  # 5.167.5 修复: 浮点==0比较改 < epsilon (路径漂移 governance/→governance/drift_detection/)
+    if abs(baseline_std) < 1e-9:  # 5.167.5 修复: 浮点==0比较改 < epsilon (路径漂移 governance/->governance/drift_detection/)
         baseline_std = 0.001
 
     deviation = abs(current_value - baseline_median) / baseline_std

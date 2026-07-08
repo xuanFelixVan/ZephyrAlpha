@@ -64,17 +64,17 @@ _DECISION_TABLE: list[DecisionEntry] = [
 
 
 class DecisionTable:
-    """五层判定结果 → 处置动作映射表。
+    """五层判定结果 -> 处置动作映射表。
 
     12行简化版决策表，按优先级从高到低匹配：
-      0. safety_blocked → ESCALATE（安全围栏拦截）
-      1. registered=True → KEEP
-      2. reachable=True → KEEP
-      3. 非重复 + 有独立价值 → KEEP_AND_REGISTER
-      4. 非重复 + 无独立价值 → DELETE
-      5. 重复 + 有独立价值 → EXTRACT_AND_MERGE
-      6. 重复 + 无独立价值 → DELETE
-      7. 不确定 → ESCALATE
+      0. safety_blocked -> ESCALATE（安全围栏拦截）
+      1. registered=True -> KEEP
+      2. reachable=True -> KEEP
+      3. 非重复 + 有独立价值 -> KEEP_AND_REGISTER
+      4. 非重复 + 无独立价值 -> DELETE
+      5. 重复 + 有独立价值 -> EXTRACT_AND_MERGE
+      6. 重复 + 无独立价值 -> DELETE
+      7. 不确定 -> ESCALATE
     """
 
     def __init__(self, custom_table: list[DecisionEntry] | None = None) -> None:

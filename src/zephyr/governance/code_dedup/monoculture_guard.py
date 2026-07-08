@@ -20,7 +20,7 @@
 职责：
   - BRS (Blast Radius Score) = min(100, caller_score + cross_layer_score + critical_path_score + test_gap_score)
   - 4级判定：SAFE(0-25) / CAUTION(26-50) / RISKY(51-75) / DANGEROUS(76-100)
-  - BRS≥76 → 停止去重 + 生成"不建议修复"报告
+  - BRS≥76 -> 停止去重 + 生成"不建议修复"报告
   - --force-monoculture CLI 覆盖逻辑
 """
 
@@ -79,7 +79,7 @@ class MonocultureGuard:
         )
 
     def should_block_dedup(self, brs: BlastRadiusScore) -> bool:
-        """BRS≥76 → 停止去重."""
+        """BRS≥76 -> 停止去重."""
         return brs.level == "DANGEROUS"
 
     def generate_report(self, func_name: str, brs: BlastRadiusScore) -> str:

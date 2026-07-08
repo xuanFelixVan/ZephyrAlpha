@@ -16,12 +16,12 @@
 # [TTL] permanent
 
 """
-CT-PIPE-ORC-001 — TaskCard → 管线入口节点路由
+CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由
 ============================================
 真源：`docs/03_modules/_master-blueprint/blueprint.md` §2.7 CT-PIPE-ORC-001
 
 与 ``config/blueprint_routing.yaml`` 的边界：本模块输出 **Mx 入口决策**（CT-PIPE-ORC-001）；
-**blueprint_routing** 仅为关键词/路径→蓝图文档索引（MOD-INF-009，供选读与 ``blueprint_search``），
+**blueprint_routing** 仅为关键词/路径->蓝图文档索引（MOD-INF-009，供选读与 ``blueprint_search``），
 **不参与** ``resolve_ct_pipe_orc001`` 的节点解析。
 
 激活条件（满足其一即可）：
@@ -61,10 +61,10 @@ _CT_PIPE_TAG_PREFIX = "ct_pipe."
 
 # 蓝图决策树隐含的低层路由（foundation domains）— 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001
 # + target_layer_vocabulary.yaml v1.0.0 foundation_domains
-# target_layer ∈ {D_MKT_DATA, D_INFRA_OPS, D_GOV_ENFORCEMENT} → M5；其余域 → M6
+# target_layer ∈ {D_MKT_DATA, D_INFRA_OPS, D_GOV_ENFORCEMENT} -> M5；其余域 -> M6
 _FOUNDATION_LAYERS = frozenset({"D_MKT_DATA", "D_INFRA_OPS", "D_GOV_ENFORCEMENT"})
 
-# node_id → (execution_model, sandbox_profile, gate_profile) — 对齐契约 YAML 枚举语义
+# node_id -> (execution_model, sandbox_profile, gate_profile) — 对齐契约 YAML 枚举语义
 _NODE_PROFILE: dict[str, tuple[str, str, str]] = {
     "M1": ("deepseek", "full", "full_g0_g7"),
     "M2": ("deepseek", "standard", "pre_commit_only"),
@@ -177,35 +177,35 @@ def _make_decision(node_id: str, rationale: str) -> PipelineRouteDecision:
 
 
 def resolve_ct_pipe_orc001(hints: CtPipeRoutingHints) -> PipelineRouteDecision:
-    """实现 CT-PIPE-ORC-001 decision_tree（+ 契约提示中的 OPS→M2）。"""
+    """实现 CT-PIPE-ORC-001 decision_tree（+ 契约提示中的 OPS->M2）。"""
     tt = hints.task_type.upper().replace("-", "_")
     pri = hints.priority_value.upper()
     lyr = (hints.target_layer or "").upper() or None
     comp = (hints.estimated_complexity or "").upper() or None
 
     if tt == "OPS":
-        return _make_decision("M2", "CT-PIPE: task_type=OPS → M2")
+        return _make_decision("M2", "CT-PIPE: task_type=OPS -> M2")
 
     if tt == "MODEL_BUILD":
         is_high = comp in ("HIGH", "H", "COMPLEX")
         node = "M1" if is_high else "M2"
         return _make_decision(
             node,
-            f"CT-PIPE: MODEL_BUILD + complexity={comp or 'DEFAULT_LOW'} → {node}",
+            f"CT-PIPE: MODEL_BUILD + complexity={comp or 'DEFAULT_LOW'} -> {node}",
         )
 
     if tt == "AUDIT":
         node = "M3" if pri == Priority.P0.value else "M4"
-        return _make_decision(node, f"CT-PIPE: AUDIT + priority={pri} → {node}")
+        return _make_decision(node, f"CT-PIPE: AUDIT + priority={pri} -> {node}")
 
     if tt in ("DOC_WRITE", "REFACTOR"):
         if not lyr:
             raise PipelineRoutingInputsError(f"CT-PIPE: task_type={tt} 需要 target_layer（字段或 ct_pipe.layer=）")
         node = "M5" if lyr in _FOUNDATION_LAYERS else "M6"
-        return _make_decision(node, f"CT-PIPE: {tt} + target_layer={lyr} → {node}")
+        return _make_decision(node, f"CT-PIPE: {tt} + target_layer={lyr} -> {node}")
 
     if tt in ("AUTO_FIX", "AUTOFIX"):
-        return _make_decision("M11", f"CT-PIPE: task_type={tt} → M11")
+        return _make_decision("M11", f"CT-PIPE: task_type={tt} -> M11")
 
     raise PipelineRoutingInputsError(f"CT-PIPE: 未支持的 task_type={tt!r}")
 
@@ -249,6 +249,6 @@ def enforce_affinity(
                     warnings.append(msg)
         elif constraint.constraint_type == "pipeline":
             if decision.node_id not in ("M5", "M6"):
-                warnings.append(f"WARN: {constraint.description} — A区→B区穿越需经M5/M6")
+                warnings.append(f"WARN: {constraint.description} — A区->B区穿越需经M5/M6")
 
     return warnings

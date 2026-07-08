@@ -21,9 +21,9 @@ AutoRollbackTrigger — 自动回滚触发器。
 依据: 蓝图 MOD-INF-021 §7 Phase 1.5 + §6.2 B15 + 决策 D-021-05
 
 监听 auto_guard 后验结果 + 失败信号三分类:
-    hard_failure  → 立即回滚
-    soft_failure  → forward-fix 优先
-    transient     → 重试 (不回滚)
+    hard_failure  -> 立即回滚
+    soft_failure  -> forward-fix 优先
+    transient     -> 重试 (不回滚)
 
 三分类规则:
     Hard:   Drift Detector 检测 / CI FAIL / G6 secrets leak / DB corruption

@@ -76,7 +76,7 @@ class ScanResult:
         if self.passed:
             return f"[PASS] EN-001: No circular dependencies ({len(self.topological_order)} nodes)"
         return f"[FAIL] EN-001: {len(self.cycles)} cycle(s) detected\n" + "\n".join(
-            f"  Cycle: {' → '.join(c)}" for c in self.cycles
+            f"  Cycle: {' -> '.join(c)}" for c in self.cycles
         )
 
 

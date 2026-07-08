@@ -17,7 +17,7 @@
 
 """MOD-INF-026 §26 — 三重信任锚验证门 R20。
 
-TripleTrustAnchorGate: Git clean + pytest green + audit continuity → trust level。
+TripleTrustAnchorGate: Git clean + pytest green + audit continuity -> trust level。
 对标 TUF 信任根模型 + Bitcoin "不信任，验证" 原则。
 """
 
@@ -183,7 +183,7 @@ class BypassState(BaseModel):
 
 
 class BypassManager:
-    """紧急旁路协议——inventory_override.yaml → 强制 GREEN + 自动过期 24h。"""
+    """紧急旁路协议——inventory_override.yaml -> 强制 GREEN + 自动过期 24h。"""
 
     OVERRIDE_FILENAME = "inventory_override.yaml"
     MAX_BYPASS_HOURS = 24

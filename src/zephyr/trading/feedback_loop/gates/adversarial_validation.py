@@ -18,7 +18,7 @@
 """Adversarial Validation Gate — FLE-ADVERSARIAL-VALIDATION + RED-BLUE-GATE bridge.
 
 Bridges feedback-loop gate engine with MOD-INF-030 Red-Blue Validator:
-红方注入 → 蓝方 Gate 判定 → 绕过检测 → 收敛验证 → 宪法自进化。
+红方注入 -> 蓝方 Gate 判定 -> 绕过检测 -> 收敛验证 -> 宪法自进化。
 """
 
 from __future__ import annotations

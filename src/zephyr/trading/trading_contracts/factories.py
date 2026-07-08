@@ -18,9 +18,9 @@
 """trading-contracts/factories.py — 交易域数据契约工厂方法
 
 从 shared/contracts/core/factories.py 迁移至此——工厂方法创建交易域对象，
-属于交易域而非基础设施层。消除 shared → trading-contracts 的架构违规。
+属于交易域而非基础设施层。消除 shared -> trading-contracts 的架构违规。
 
-Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float→Decimal 边界转换。
+Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float->Decimal 边界转换。
 
 SSoT: cross_layer_contracts.yaml v3.0
 Status: HAND-MAINTAINED — codegen disabled (Phase D)

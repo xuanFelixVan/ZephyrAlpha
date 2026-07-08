@@ -78,10 +78,10 @@ class RiskMitigation:
 
         阈值:
             score = likelihood * impact
-            score >= 0.5 → CRITICAL
-            score >= 0.2 → HIGH
-            score >= 0.05 → MEDIUM
-            else → LOW
+            score >= 0.5 -> CRITICAL
+            score >= 0.2 -> HIGH
+            score >= 0.05 -> MEDIUM
+            else -> LOW
 
         Args:
             scenario: 风险场景描述

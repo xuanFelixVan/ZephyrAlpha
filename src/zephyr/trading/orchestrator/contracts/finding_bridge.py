@@ -124,7 +124,7 @@ def report_findings(
         else:
             audit_findings.append(finding_to_audit_finding(f))
 
-    from zephyr.governance.persistence.task_repo import TaskRepository  # deferred: break trading→governance cycle (#8)
+    from zephyr.governance.persistence.task_repo import TaskRepository  # deferred: break trading->governance cycle (#8)
 
     repo = TaskRepository(db_path=Path(db_path), enable_gate=True)
     try:

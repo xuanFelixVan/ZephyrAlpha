@@ -27,7 +27,7 @@ FLE acts on data that is silently wrong, producing cascading bad decisions.
 
 Mitigation: Attach SHA256 checksum to every persisted data block. Validate
 checksum on every read. Track corruption events per storage sink. When
-corruption rate exceeds threshold → alert and quarantine the sink.
+corruption rate exceeds threshold -> alert and quarantine the sink.
 """
 
 from __future__ import annotations

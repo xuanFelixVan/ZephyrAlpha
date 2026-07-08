@@ -5,7 +5,7 @@
 # [CONSUMERS] 回测管线（vectorized_engine / event_driven_engine 完成后调用）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] BacktestResult → decision_node 映射单向（回测产出→决策流图节点）; evidence_hash 由 idempotency_key 派生
+# [INVARIANTS] BacktestResult -> decision_node 映射单向（回测产出->决策流图节点）; evidence_hash 由 idempotency_key 派生
 # [MODIFY-GUARD] CTR-P1-016 契约冻结（BacktestResult 15 字段）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,10 +14,10 @@
 # [TESTS] tests/test_backtest_decisiongraph_adapter.py
 # [TTL] permanent
 """
-BacktestResult → decisiongraph 适配器（TRAE-061 Phase 5）
+BacktestResult -> decisiongraph 适配器（TRAE-061 Phase 5）
 
 将 BacktestResult（CTR-P1-016，15 字段冻结契约）映射为 decisiongraph
-decision_nodes 表的 INSERT 参数，建立回测→决策流图的关联。
+decision_nodes 表的 INSERT 参数，建立回测->决策流图的关联。
 
 映射规则:
   - layer_id: L5（学习层——回测是学习/优化活动）
@@ -32,9 +32,9 @@ decision_nodes 表的 INSERT 参数，建立回测→决策流图的关联。
 
 数据流:
   BacktestResult(CTR-P1-016)
-    → backtest_result_to_decision_node() → decision_node 参数 dict
-    → register_backtest_result_in_decisiongraph() → 写入 PostgreSQL decision_nodes 表
-    → L5 学习层决策节点（供 L6 自评估层消费）
+    -> backtest_result_to_decision_node() -> decision_node 参数 dict
+    -> register_backtest_result_in_decisiongraph() -> 写入 PostgreSQL decision_nodes 表
+    -> L5 学习层决策节点（供 L6 自评估层消费）
 """
 
 from __future__ import annotations
@@ -66,7 +66,7 @@ def _compute_evidence_hash(idempotency_key: str) -> str:
 
 
 def _json_serializable(obj: Any) -> Any:
-    """datetime → ISO 字符串，用于 JSONB 序列化。"""
+    """datetime -> ISO 字符串，用于 JSONB 序列化。"""
     if isinstance(obj, datetime):
         return obj.isoformat()
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")

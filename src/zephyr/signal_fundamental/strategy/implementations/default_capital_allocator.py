@@ -24,13 +24,13 @@
 
 """D_SIGNAL — Default Capital Allocator
 
-资本分配器具体实现。合成信号 → 资本配置权重。
+资本分配器具体实现。合成信号 -> 资本配置权重。
 
 CTR 契约：
   消费者 — CTR-P1-015 (SynthesizedSignal) ← 本层
-  生产者 — CTR-P1-003 (CapitalAllocationResult) → D_PORTFOLIO_CORE
+  生产者 — CTR-P1-003 (CapitalAllocationResult) -> D_PORTFOLIO_CORE
 
-SSoT: cross_layer_contracts.yaml → CTR-P1-003 + CTR-P1-015
+SSoT: cross_layer_contracts.yaml -> CTR-P1-003 + CTR-P1-015
 """
 
 from __future__ import annotations

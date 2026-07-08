@@ -38,11 +38,11 @@ class RunMode(Enum):
 
 
 EXIT_CODE_DESCRIPTIONS: Final[dict] = {
-    ExitCode.PASS: "PASS — 扫描范围内零重复组 → GATE-DEDUP PASS",
-    ExitCode.WARN: "WARN — 发现低/中严重度重复（severity≤medium）→ GATE-DEDUP WARN 不阻断",
-    ExitCode.ERROR: "ERROR — 发现高/严重重复（severity=high/critical）→ GATE-DEDUP FAIL 阻断commit",
-    ExitCode.TOOL_ERROR: "TOOL-ERROR — 扫描器自身故障（AST解析失败/cache损坏且自愈失败/git不可用）→ GATE-DEDUP SKIP 记录审计",
-    ExitCode.DEGRADED: "DEGRADED — 降级运行完成（某Stage失败但降级到更低Stage完成扫描）→ GATE-DEDUP PASS with DEGRADED",
+    ExitCode.PASS: "PASS — 扫描范围内零重复组 -> GATE-DEDUP PASS",
+    ExitCode.WARN: "WARN — 发现低/中严重度重复（severity≤medium）-> GATE-DEDUP WARN 不阻断",
+    ExitCode.ERROR: "ERROR — 发现高/严重重复（severity=high/critical）-> GATE-DEDUP FAIL 阻断commit",
+    ExitCode.TOOL_ERROR: "TOOL-ERROR — 扫描器自身故障（AST解析失败/cache损坏且自愈失败/git不可用）-> GATE-DEDUP SKIP 记录审计",
+    ExitCode.DEGRADED: "DEGRADED — 降级运行完成（某Stage失败但降级到更低Stage完成扫描）-> GATE-DEDUP PASS with DEGRADED",
 }
 
 

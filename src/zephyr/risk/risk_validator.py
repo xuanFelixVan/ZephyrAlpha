@@ -29,16 +29,16 @@
 核心职责：
   - Pre-trade 风控校验（订单是否符合 RiskLimits）
   - 持仓突破检测（当前持仓是否触发风控线）
-  - 熔断判定（drawdown / VaR breach → kill_switch）
+  - 熔断判定（drawdown / VaR breach -> kill_switch）
   - 产出 RiskLimitViolationError（CTR-ERR-004）
 
 CTR 契约：
   消费者 — CTR-003 (RiskLimits) ← D_RISK（本层产出，内部消费）
   消费者 — CTR-002 (FactorSignal) ← D_FACTOR
   消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
-  生产者 — CTR-ERR-004 (RiskLimitViolationError) → D_PORTFOLIO_CORE, D_EXECUTION_CORE
+  生产者 — CTR-ERR-004 (RiskLimitViolationError) -> D_PORTFOLIO_CORE, D_EXECUTION_CORE
 
-依赖方向：D_FACTOR + D_EXECUTION_CORE → D_RISK → D_PORTFOLIO_CORE/D_EXECUTION_CORE
+依赖方向：D_FACTOR + D_EXECUTION_CORE -> D_RISK -> D_PORTFOLIO_CORE/D_EXECUTION_CORE
 """
 
 from __future__ import annotations
@@ -80,7 +80,7 @@ class RiskValidator(abc.ABC):
       - WARNING 级别违规记录日志但不断交易
 
     安全约束：
-      - 禁止降级 HALT → WARNING——如果这是代码逻辑导致的，降级等于资金安全风险
+      - 禁止降级 HALT -> WARNING——如果这是代码逻辑导致的，降级等于资金安全风险
       - position_limit / leverage_limit / drawdown_trigger 均为 HALT 级别
       - kill_switch 触发后 MUST 阻断所有订单，直到人工确认恢复
     """

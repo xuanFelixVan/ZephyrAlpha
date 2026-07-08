@@ -19,10 +19,10 @@
 context_pipeline — Context Engine **四段流水线组合根**
 ======================================================
 
-病根（为何审计会判「 Assembler ≠ build→compress→validate→inject 」）
+病根（为何审计会判「 Assembler ≠ build->compress->validate->inject 」）
 --------------------------------------------------------------------
 1. ``zephyr.autonomy_core`` 包文档与 ``docs/.../context-engine-interface.md``
-   将 **同一语义**约束为 ``build → compress → validate → inject``。
+   将 **同一语义**约束为 ``build -> compress -> validate -> inject``。
 2. 实现演进时三段能力落在 **独立类**：``ContextAssembler``（已将 build + 超限 compress
    内联在同一 ``assemble``）、``DocCompressor``、``ContextInjector``，
    **未提供组合根**，于是「等价性」无法在单模块内验证——这是**结构性缺口**，而非单点 bug。
@@ -93,7 +93,7 @@ def run_context_four_stage(
     architecture_context_path: Path | None = None,
     rule_registry: ContextRuleRegistry | None = None,
 ) -> ContextFourStageResult:
-    """按蓝图顺序执行 build(含压缩)→validate→(可选)inject。
+    """按蓝图顺序执行 build(含压缩)->validate->(可选)inject。
 
     Parameters
     ----------

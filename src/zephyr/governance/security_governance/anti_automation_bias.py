@@ -131,10 +131,10 @@ class AntiAutomationBias:
         """Evaluate whether an operation needs forced human review.
 
         Decision matrix:
-          - Random sampling hits → force_review
-          - Fatigue detected → block_and_notify (escalate more aggressively)
-          - Mechanical confirmation pattern → force_review
-          - Normal → pass
+          - Random sampling hits -> force_review
+          - Fatigue detected -> block_and_notify (escalate more aggressively)
+          - Mechanical confirmation pattern -> force_review
+          - Normal -> pass
         """
         if not is_autonomous:
             return OversightResult(OversightAction.PASS, "Not autonomous — no sampling needed")

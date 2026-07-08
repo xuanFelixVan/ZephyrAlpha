@@ -43,7 +43,7 @@ ARCH_BASE_CONTRACTS: Final[dict[str, Contract]] = {
     ),
     "C2_SYNC_ASYNC": Contract(
         name="同步/异步边界",
-        description="同步 Critical 信号→风控 <10ms· 异步 非关键 ≥50ms",
+        description="同步 Critical 信号->风控 <10ms· 异步 非关键 ≥50ms",
     ),
     "C3_IDEMPOTENCY": Contract(
         name="幂等性保证",
@@ -51,7 +51,7 @@ ARCH_BASE_CONTRACTS: Final[dict[str, Contract]] = {
     ),
     "C4_CIRCUIT_BREAKER": Contract(
         name="断路器",
-        description="Closed→failures>5/60s→OPEN(1min)→Half-Open→成功→Closed/失败→OPEN",
+        description="Closed->failures>5/60s->OPEN(1min)->Half-Open->成功->Closed/失败->OPEN",
     ),
     "C5_LAMPORT": Contract(
         name="最终一致性 Lamport",

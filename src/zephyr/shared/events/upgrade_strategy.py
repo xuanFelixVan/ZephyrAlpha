@@ -21,7 +21,7 @@
 原始路径保留为 compat shim，新代码应从此处导入。
 
 模块 ID: M-16 EventBusUpgrade（曾用名: infrastructure_runtime_integration/event_bus_upgrade.py）
-# SRC-0037: 版本分叉→独立命名 — 升级策略（非事件版本化）
+# SRC-0037: 版本分叉->独立命名 — 升级策略（非事件版本化）
 """
 
 from __future__ import annotations

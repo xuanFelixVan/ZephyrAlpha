@@ -17,7 +17,7 @@
 
 """[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 
-G-CT-004 契约：Rollback → Audit 记录回滚操作.
+G-CT-004 契约：Rollback -> Audit 记录回滚操作.
 
 """
 
@@ -34,14 +34,14 @@ class RollbackAuditor:
         rollback_target: str,
         session_id: str = "",
     ) -> dict:
-        # lazy import to avoid L0→L2 circular dependency (Phase 2 P2 import cycle fix)
+        # lazy import to avoid L0->L2 circular dependency (Phase 2 P2 import cycle fix)
         from zephyr.governance.audit_trail.contracts import AuditWriter
 
         return AuditWriter.write(
             agent_id=agent_id,
             permission="rollback",
             resource=resource,
-            decision_basis=f"Rollback→Audit: {rollback_target}",
+            decision_basis=f"Rollback->Audit: {rollback_target}",
             session_id=session_id,
             granted=True,
             metadata={"rollback_target": rollback_target},

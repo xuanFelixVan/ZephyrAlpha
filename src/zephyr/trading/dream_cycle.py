@@ -20,7 +20,7 @@ DreamCycle — 知识固化引擎
 ==========================
 蓝图: ARC-0001 §4.2 (三阶)
 借鉴: Claude Code Dream Cycle + Tulving 记忆分类
-归档→提取→遗忘→索引→commit
+归档->提取->遗忘->索引->commit
 """
 
 import json
@@ -52,7 +52,7 @@ class DreamCycle:
     """知识固化引擎——从情节记忆到语义记忆的转化。
 
     借鉴:
-      - Claude Code Dream Cycle: 归档→提取→遗忘→索引→commit
+      - Claude Code Dream Cycle: 归档->提取->遗忘->索引->commit
       - Tulving 记忆分类: episodic vs semantic
     """
 

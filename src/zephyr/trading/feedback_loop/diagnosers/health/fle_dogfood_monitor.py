@@ -21,10 +21,10 @@ Blindspot: "Who watches the watchmen?" — FLE monitors everything except itself
 FLE self-SLOs, self-diagnosis, and self-healing are assumed but never verified.
 FLE can silently degrade while reporting all other systems as healthy.
 
-Risk: R480 — FLE degrades → misses real anomalies → system fails with no
+Risk: R480 — FLE degrades -> misses real anomalies -> system fails with no
 warning. The monitoring system itself is the single point of failure.
 
-Mitigation: Dogfood the FLE: apply the same collect→detect→diagnose→act→verify
+Mitigation: Dogfood the FLE: apply the same collect->detect->diagnose->act->verify
 pipeline to FLE's own metrics. Track FLE-specific SLOs. Auto-diagnose FLE
 degradation. Three redundant health signals cross-validated.
 """

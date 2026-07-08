@@ -17,7 +17,7 @@
 
 """
 R502: PromptSelfOptimizationLoop
-DSPy/GEPA封闭自提示进化闭环 — 观察效果→LLM反思→生成变体→A/B测试→采纳
+DSPy/GEPA封闭自提示进化闭环 — 观察效果->LLM反思->生成变体->A/B测试->采纳
 """
 
 import hashlib

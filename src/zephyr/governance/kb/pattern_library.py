@@ -383,7 +383,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"(?i)ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|directions?|prompts?)",
         severity="error",
         description="提示词注入——要求忽略之前的指令",
-        fix_hint="LSG 拒绝 → 移除包含此模式的文本块",
+        fix_hint="LSG 拒绝 -> 移除包含此模式的文本块",
     ),
     DangerousPattern(
         pattern_id="DNG-002",
@@ -392,7 +392,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"(?i)(you\s+are\s+now\s+(dan|developer\s+mode)|jailbreak|bypass\s+safety)",
         severity="error",
         description="提示词注入——DAN/Jailbreak 攻击",
-        fix_hint="LSG 拒绝 → 移除包含此模式的文本块",
+        fix_hint="LSG 拒绝 -> 移除包含此模式的文本块",
     ),
     DangerousPattern(
         pattern_id="DNG-003",
@@ -401,7 +401,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"(?i)(new\s+system\s+(prompt|instruction|role)|override\s+system|act\s+as\s+a\s+different)",
         severity="error",
         description="提示词注入——覆盖系统提示词",
-        fix_hint="LSG 拒绝 → 移除包含此模式的文本块",
+        fix_hint="LSG 拒绝 -> 移除包含此模式的文本块",
     ),
     DangerousPattern(
         pattern_id="DNG-004",
@@ -410,7 +410,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"(?i)(api[_-]?key\s*[=:]\s*[\"']?[a-zA-Z0-9_\-]{20,}|sk-[a-zA-Z0-9]{32,}|ghp_[a-zA-Z0-9]{36,})",
         severity="error",
         description="敏感信息泄露——API Key / Token",
-        fix_hint="LSG 拒绝 → 移除包含凭据的文本块；检查 git history 是否已泄露",
+        fix_hint="LSG 拒绝 -> 移除包含凭据的文本块；检查 git history 是否已泄露",
     ),
     DangerousPattern(
         pattern_id="DNG-005",
@@ -419,7 +419,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"-----BEGIN\s+(RSA|EC|DSA|OPENSSH|PGP)\s+PRIVATE\s+KEY-----",
         severity="error",
         description="敏感信息泄露——私钥",
-        fix_hint="LSG 拒绝 → 移除包含私钥的文本块",
+        fix_hint="LSG 拒绝 -> 移除包含私钥的文本块",
     ),
     DangerousPattern(
         pattern_id="DNG-006",
@@ -428,7 +428,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"(?i)(connection[_-]?string|database[_-]?url|db[_-]?password)\s*[=:]\s*[\"']?[^\"'\s]{8,}",
         severity="error",
         description="敏感信息泄露——数据库连接凭据",
-        fix_hint="LSG 拒绝 → 移除包含凭据的文本块",
+        fix_hint="LSG 拒绝 -> 移除包含凭据的文本块",
     ),
     DangerousPattern(
         pattern_id="DNG-007",
@@ -437,7 +437,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"(?i)(rm\s+-rf\s+/|del\s+/[fsq]|format\s+[cdef]:|drop\s+table\s+\w+\s*(cascade)?)",
         severity="error",
         description="危险工具调用——删除/格式化操作",
-        fix_hint="LSG 拒绝 → 移除危险工具调用建议；标记 session.degraded=true",
+        fix_hint="LSG 拒绝 -> 移除危险工具调用建议；标记 session.degraded=true",
     ),
     DangerousPattern(
         pattern_id="DNG-008",
@@ -446,7 +446,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"(?i)(exec\s*\(|eval\s*\(|subprocess\.(call|popen|run)\s*\()",
         severity="warn",
         description="危险工具调用——执行任意代码",
-        fix_hint="LSG 警告 → 人工审核该工具调用",
+        fix_hint="LSG 警告 -> 人工审核该工具调用",
     ),
     DangerousPattern(
         pattern_id="DNG-009",
@@ -455,7 +455,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"(?i)(nmap|metasploit|wireshark|tcpdump|hydra|john\s+the\s+ripper)",
         severity="warn",
         description="危险工具调用——网络渗透工具",
-        fix_hint="LSG 警告 → 人工审核该工具调用",
+        fix_hint="LSG 警告 -> 人工审核该工具调用",
     ),
     DangerousPattern(
         pattern_id="DNG-010",
@@ -464,7 +464,7 @@ KNOWN_DANGEROUS_PATTERNS: Final[list[DangerousPattern]] = [
         detection=r"(?i)(concatenate|join.*answer|split.*across|hidden.*instruction|steganography)",
         severity="warn",
         description="提示词注入——Token 走私/隐藏指令",
-        fix_hint="LSG 拒绝 → 移除包含此模式的文本块",
+        fix_hint="LSG 拒绝 -> 移除包含此模式的文本块",
     ),
 ]
 
@@ -587,7 +587,7 @@ def validate_context(
       1. 扫描危险模式
       2. 移除匹配的文本块
       3. 最多 max_retries 次循环
-      4. 第 3 次仍被拒绝 → 丢弃该块并标记
+      4. 第 3 次仍被拒绝 -> 丢弃该块并标记
 
     Parameters
     ----------

@@ -28,13 +28,13 @@ module_id: MOD-INF-023
 removed_parameter: 基线(a,b,c) vs 当前(a,b) c被移除
 
 
-changed_return_type: Optional[X] → X
+changed_return_type: Optional[X] -> X
 
 
 renamed_function: Jaccard搜索相似签名
 
 
-changed_exception: ValueError → CustomError
+changed_exception: ValueError -> CustomError
 
 
 impact_analysis: 扫描调用方 BREAKING_CHANGE_REPORT
@@ -184,7 +184,7 @@ def compare_signatures(
                     event_id=f"compat-return-type-{name}",
                     source_file=cs.file_path,
                     severity="MAJOR",
-                    description=(f"Return type changed for '{name}': {bs.return_type} → {cs.return_type}"),
+                    description=(f"Return type changed for '{name}': {bs.return_type} -> {cs.return_type}"),
                     details=f"Baseline line {bs.line_no}, Current line {cs.line_no}",
                 )
             )
@@ -222,7 +222,7 @@ def find_renamed_functions(
                         event_id=f"compat-renamed-{rname}-to-{cs.name}",
                         source_file=cs.file_path,
                         severity="MAJOR",
-                        description=(f"Function possibly renamed: '{rname}' → '{cs.name}' (Jaccard={jaccard:.2f})"),
+                        description=(f"Function possibly renamed: '{rname}' -> '{cs.name}' (Jaccard={jaccard:.2f})"),
                     )
                 )
 

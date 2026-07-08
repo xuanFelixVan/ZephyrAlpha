@@ -19,8 +19,8 @@
 
 职责：
   - 对函数签名（param_types + return_type）计算 SHA256[:12] 指纹
-  - O(1) 字典查询——匹配已有函数签名 → 输出 COLLISION / NEAR_COLLISION
-  - 路径感知阈值：shared/ 内签名碰撞 → CRITICAL，tests/ → LOW
+  - O(1) 字典查询——匹配已有函数签名 -> 输出 COLLISION / NEAR_COLLISION
+  - 路径感知阈值：shared/ 内签名碰撞 -> CRITICAL，tests/ -> LOW
   - Vibe Coding 场景性价比最高的检测维度
 """
 

@@ -21,7 +21,7 @@ TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）
 任务编号 : T-V2-007（experimental RI-03）
 权限层级 : Human-Gated（M3 路由表修改 = 关键架构变更，R84 修正）
 真源声明 : ai_autonomy_authority_registry.yaml §2.9（RI-03）+ §2.10（三件套）
-关联决策 : rationale-log R84（RI-02/03 偏松 → Human-Gated 修正）
+关联决策 : rationale-log R84（RI-02/03 偏松 -> Human-Gated 修正）
            B6 §2.4（RI-03 设计）+ §3.4（experimental 部署）
 创建日期 : 2026-04-27
 版本     : v1.0.0
@@ -31,8 +31,8 @@ TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）
 根据 ``trigger_type`` 从 ``config/trigger_router.yaml`` 路由表分派到对应的处理器函数：
 
 1. **启动时一次性加载**：``TriggerRouter()`` 构造时读取 YAML，运行期不再 IO
-2. **延迟解析处理器**：处理器函数路径在首次 dispatch 时 import；import 失败 → 审计 + 跳过
-3. **路由失败静默**：未注册 ``trigger_type`` / 处理器 disabled → 写审计日志 + 返回 SKIPPED 不抛异常
+2. **延迟解析处理器**：处理器函数路径在首次 dispatch 时 import；import 失败 -> 审计 + 跳过
+3. **路由失败静默**：未注册 ``trigger_type`` / 处理器 disabled -> 写审计日志 + 返回 SKIPPED 不抛异常
 4. **CBAC 兼容**：路由本身是读操作不走 ``capability_check``；处理器内部按需自查
 5. **审计可观察**：每次 dispatch 通过 ``AuditLogger.log_rule_trigger`` 写 JSONL（可选注入）
 
@@ -70,7 +70,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 @runtime_checkable
 class AuditLoggerProtocol(Protocol):
-    """触发路由审计日志 duck-typed 接口（5.145.11 修复：Any→Protocol）。
+    """触发路由审计日志 duck-typed 接口（5.145.11 修复：Any->Protocol）。
 
     真源实现：``zephyr.security.llm_defense.llm_security.behavior_audit_logger.AuditLogger``。
     本 Protocol 仅声明 trigger_router 实际消费的 ``log_rule_trigger`` 方法。
@@ -354,7 +354,7 @@ class TriggerRouter:
     # ------------------------------------------------------------------
 
     def _resolve_handler(self, trigger_type: str, spec: TriggerHandlerSpec) -> Callable[..., Any] | None:
-        """按优先级解析处理器：注入字典 → import 字符串。失败返回 None。"""
+        """按优先级解析处理器：注入字典 -> import 字符串。失败返回 None。"""
         with self._lock:
             cached = self._resolved_handlers.get(trigger_type)
             if cached is not None:

@@ -30,7 +30,7 @@ flags.py —— Feature Flag / 功能开关系统（Phase 2 新增 | 盲点 B7 �
 设计对标：
   - Google //shared/flags (Guava FeatureFlag)
   - LaunchDarkly / Unleash 的配置驱动模式
-  - K8s feature gates（alpha → beta → GA 渐进式启用）
+  - K8s feature gates（alpha -> beta -> GA 渐进式启用）
 
 设计原则：
   - 配置驱动（YAML/JSON）——不改代码就能开关功能

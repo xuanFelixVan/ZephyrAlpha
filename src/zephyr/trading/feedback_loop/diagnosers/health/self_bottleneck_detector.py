@@ -17,7 +17,7 @@
 
 """Self-Bottleneck Detector — v0.38.0 R479
 
-Blindspot: FLE pipeline stages (collect→detect→diagnose→act→verify) have
+Blindspot: FLE pipeline stages (collect->detect->diagnose->act->verify) have
 unknown performance characteristics. One slow stage creates backpressure
 that cascades through the entire feedback loop. Anomaly detection delayed
 because diagnosis queue is full.

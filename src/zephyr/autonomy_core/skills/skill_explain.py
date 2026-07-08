@@ -24,7 +24,7 @@ Version: 0.2.0
 XAI 可解释性引擎
 ================
 让 Skill 决策不再黑箱:
-  1. ReasoningChain: 记录 Skill 加载→路由→执行的完整推理链
+  1. ReasoningChain: 记录 Skill 加载->路由->执行的完整推理链
   2. ConfidenceScore: 为每步决策计算置信度
   3. FactorIsolation: 隔离"Skill 本身"vs"LLM 能力"对结果的影响
   4. CounterfactualWhatIf: 如果选了其他 Skill 会怎样

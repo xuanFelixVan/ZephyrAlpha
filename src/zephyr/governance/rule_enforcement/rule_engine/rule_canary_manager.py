@@ -17,7 +17,7 @@
 
 """
 
-Rule Canary Manager — v0.10.0 规则金丝雀: 1%用户先上新规则→A/B对比→rollback。
+Rule Canary Manager — v0.10.0 规则金丝雀: 1%用户先上新规则->A/B对比->rollback。
 """
 
 from __future__ import annotations

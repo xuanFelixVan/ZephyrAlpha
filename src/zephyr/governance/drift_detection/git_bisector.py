@@ -25,7 +25,7 @@ Git Bisector — git_bisector.py
 module_id: MOD-INF-023
 
 
-Git bisect 自动溯源：bisect start→每step跑detector→定位root_cause commit。
+Git bisect 自动溯源：bisect start->每step跑detector->定位root_cause commit。
 
 
 对标 blueprint.md §5.6 / TASK-INF-0030 / D-023-15。"""

@@ -17,8 +17,8 @@
 
 """[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget-enforcer/blueprint.md | §12
 
-G-CT-007 契约：Budget → RBAC 配额限制.
-G-CT-005 契约：Escalation → RBAC 权限升级 + Pipeline 前置 RBAC 检查.
+G-CT-007 契约：Budget -> RBAC 配额限制.
+G-CT-005 契约：Escalation -> RBAC 权限升级 + Pipeline 前置 RBAC 检查.
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ except ImportError:
 
 
 class BudgetRBACBridge:
-    """预算消耗→RBAC权限降级."""
+    """预算消耗->RBAC权限降级."""
 
     def check_budget(self, agent_id: str, token_used: int, token_limit: int) -> dict:
         exceeded = token_used > token_limit
@@ -67,7 +67,7 @@ class RBACCheckResult:
 
 
 class EscalationRBACBridge:
-    """升级事件→RBAC权限提升 + Pipeline 前置 RBAC 检查."""
+    """升级事件->RBAC权限提升 + Pipeline 前置 RBAC 检查."""
 
     def __init__(self) -> None:
         self._guard = PermissionGuard() if _AGENT_RBAC_AVAILABLE else None

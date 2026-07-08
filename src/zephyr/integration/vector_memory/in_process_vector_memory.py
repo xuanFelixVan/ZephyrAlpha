@@ -143,7 +143,7 @@ class InProcessVectorMemory:
 
         self._collection_manager.persist_dir.mkdir(parents=True, exist_ok=True)
 
-        _logger.info("VMS: ChromaDB PersistentClient → %s (telemetry disabled)", self._collection_manager.persist_dir)
+        _logger.info("VMS: ChromaDB PersistentClient -> %s (telemetry disabled)", self._collection_manager.persist_dir)
 
         self._embedding_router.warmup()
 
@@ -245,7 +245,7 @@ class InProcessVectorMemory:
         """惰性创建 InMemoryMemoryBackend——仅在所有检索路径失败时才实例化。
 
         对标 Netflix Hystrix：fallback 按需触发，不预先创建。
-        蓝图 §6.2 退化矩阵 L3 级别：双嵌入模型全不可用 → InMemory 零向量检索。
+        蓝图 §6.2 退化矩阵 L3 级别：双嵌入模型全不可用 -> InMemory 零向量检索。
         """
         if self._in_memory_backend is None:
             from zephyr.integration.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend

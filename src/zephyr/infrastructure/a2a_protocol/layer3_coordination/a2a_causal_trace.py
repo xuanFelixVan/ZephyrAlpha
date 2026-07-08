@@ -18,7 +18,7 @@
 """A2A 因果追踪 — 跨 Agent 操作因果链图谱
 
 构建 Agent 间操作的因果关系图:
-  Agent A 写文件 X → Agent B 读到 X 的旧版本 → Agent B 输出错误 → 错误传播
+  Agent A 写文件 X -> Agent B 读到 X 的旧版本 -> Agent B 输出错误 -> 错误传播
   通过序列表 + 时间戳 + 文件依赖关系追溯到根因
 
 输出: CausalPath — 端到端因果路径
@@ -58,7 +58,7 @@ class CausalGraph:
 
     @property
     def trace_path(self) -> list[str]:
-        return [f"{e.from_node} → {e.to_node} ({e.dependency_type})" for e in self.edges]
+        return [f"{e.from_node} -> {e.to_node} ({e.dependency_type})" for e in self.edges]
 
 
 class A2ACausalTrace:

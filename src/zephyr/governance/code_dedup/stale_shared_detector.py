@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-UNK_stale_shared_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""过时共享函数检测器 — 无caller × 30天 → STALE标记."""
+"""过时共享函数检测器 — 无caller × 30天 -> STALE标记."""
 
 from datetime import UTC, datetime
 
@@ -26,7 +26,7 @@ class StaleSharedDetector:
     _STALE_AGE_DAYS: int = 30
 
     def detect(self, functions_with_callers: list[dict]) -> list[str]:
-        """无caller × 30天未使用 → STALE."""
+        """无caller × 30天未使用 -> STALE."""
         now = datetime.now(UTC)
         stale: list[str] = []
 

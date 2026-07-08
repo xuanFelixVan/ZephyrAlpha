@@ -22,7 +22,7 @@ ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行
 
 职责
 ----
-- validate(WriteTrace) → bool: 校验 origin/audit_chain/arbitration 三字段完整性
+- validate(WriteTrace) -> bool: 校验 origin/audit_chain/arbitration 三字段完整性
 - attach(metadata, WriteTrace): 给已写入向量绑定 provenance 元数据
 """
 

@@ -18,7 +18,7 @@
 """E2E Integration Health Monitor — v0.39.0 R489
 
 Blindspot: FLE monitors individual components but not their integration. Component
-A and Component B both report GREEN, but A→B communication is silently broken.
+A and Component B both report GREEN, but A->B communication is silently broken.
 The system as a whole can be DEGRADED while every part reports HEALTHY.
 
 Risk: R489 — False sense of security: all dashboards green but the end-to-end

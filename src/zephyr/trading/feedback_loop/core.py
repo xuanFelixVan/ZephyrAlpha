@@ -54,7 +54,7 @@ class FeedbackLoop:
     """反馈闭环——登记表裁定驱动规则进化。
 
     借鉴:
-      - K8s Controller: 调和失败→调整→重试
+      - K8s Controller: 调和失败->调整->重试
       - LangGraph: Human-in-the-Loop 反馈注入
       - Magentic-One: Progress Ledger 自我反思
     """

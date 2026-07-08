@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] fetch 异常→yield FetchResult(error=str)；配额耗尽→yield error 并 return
+# [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)；配额耗尽->yield error 并 return
 # [TESTS] tests/zephyr/data/test_providers.py::TestIFindHelpers
 # [A_module] module_id=MOD-L00-004-ifind_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -87,7 +87,7 @@ class IFindProvider(DataSourceBase):
                             "close", "volume", "amount", "advance_count",
                             "decline_count", "data_source", "quality_flag"]
     _INDEX_KLINE_TABLE = "c1_market.index_kline"
-    # 主要指数代码 → 名称 映射（iFind 格式）
+    # 主要指数代码 -> 名称 映射（iFind 格式）
     _INDEX_NAME_MAP = {
         "000001.SH": "上证指数",
         "399001.SZ": "深证成指",
@@ -406,7 +406,7 @@ class IFindProvider(DataSourceBase):
             if df is None or len(df) == 0:
                 continue
 
-            symbol = self._ts_code_to_symbol(ts_code)  # "600000.SH" → "600000"
+            symbol = self._ts_code_to_symbol(ts_code)  # "600000.SH" -> "600000"
 
             for idx, row in df.iterrows():
                 # 日期：DataFrame index 或 "time" 列
@@ -578,12 +578,12 @@ class IFindProvider(DataSourceBase):
         逐日查询 "{date} 主力资金流向" 获取全市场资金流数据。
 
         i问财返回中文字段，映射到 schema：
-            股票代码 → symbol（转 sh/sz 前缀格式）
-            收盘价 → close
-            涨跌幅 → pct_change
-            主力净流入-净额 → main_net_inflow
-            主力净流入-净占比 → main_net_inflow_pct
-            超大单净流入-净额 → super_large_net_inflow
+            股票代码 -> symbol（转 sh/sz 前缀格式）
+            收盘价 -> close
+            涨跌幅 -> pct_change
+            主力净流入-净额 -> main_net_inflow
+            主力净流入-净占比 -> main_net_inflow_pct
+            超大单净流入-净额 -> super_large_net_inflow
             ...（以此类推）
 
         Args:
@@ -660,7 +660,7 @@ class IFindProvider(DataSourceBase):
                 }]
             }
 
-        字段名中文→英文映射（模糊匹配，支持多种变体）。
+        字段名中文->英文映射（模糊匹配，支持多种变体）。
         """
         if not isinstance(raw, dict) or "tables" not in raw:
             self._log.warning(f"money_flow i问财返回格式异常: {type(raw)}")
@@ -737,7 +737,7 @@ class IFindProvider(DataSourceBase):
 
     @staticmethod
     def _ts_code_to_symbol(ts_code: str) -> str:
-        """ts_code 转纯代码：'000001.SZ' → '000001'。
+        """ts_code 转纯代码：'000001.SZ' -> '000001'。
 
         Args:
             ts_code: iFind 标的代码，格式 'XXXXXX.SZ/SH/BJ'。
@@ -923,9 +923,9 @@ class IFindProvider(DataSourceBase):
     def _ts_code_to_money_flow_symbol(ts_code: str) -> str:
         """ts_code 转 money_flow 表的 symbol 格式。
 
-        "600000.SH" → "sh600000"
-        "000001.SZ" → "sz000001"
-        "830001.BJ" → "bj830001"
+        "600000.SH" -> "sh600000"
+        "000001.SZ" -> "sz000001"
+        "830001.BJ" -> "bj830001"
 
         Returns:
             小写交易所前缀 + 6位代码；无法识别返回空串

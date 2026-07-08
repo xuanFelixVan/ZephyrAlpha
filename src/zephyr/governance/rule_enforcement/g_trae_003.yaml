@@ -38,7 +38,7 @@ entry_conditions:
   rule_ids:
   - TRAE-003
   anti_pattern:
-    description: 全NO→直接做
+    description: 全NO->直接做
     example: AI ignores TRAE-003 task_granularity requirement
   params: &id001
     required_fields:
@@ -62,7 +62,7 @@ entry_conditions:
   rule_ids:
   - TRAE-003
   anti_pattern:
-    description: 超限→拒绝建卡，提示拆卡
+    description: 超限->拒绝建卡，提示拆卡
     example: AI ignores TRAE-003 granularity_gate requirement
   params: *id001
 mutating_rules: []

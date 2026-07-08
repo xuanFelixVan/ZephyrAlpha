@@ -28,7 +28,7 @@ module_id: MOD-INF-023
 broken_symlinks: 目标不存在或删除的文件
 
 
-circular_symlinks: A→B→A
+circular_symlinks: A->B->A
 
 
 symlink_to_outside: VCS边界外的文件链接
@@ -92,7 +92,7 @@ def check_broken_symlinks(project_root: str) -> list[SymlinkIssue]:
                             symlink_path=full_path,
                             target_path=target,
                             issue_type="broken_symlink",
-                            description=f"Symlink {name} → {target} (missing)",
+                            description=f"Symlink {name} -> {target} (missing)",
                         )
                     )
 

@@ -7,7 +7,7 @@
 # [MODIFY-GUARD] event_sink.py; facade.py
 # [CONSUMERS] facade.py; behavioral-auditor
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] FeatureFlag关闭→跳过写入;写入失败→日志warning
+# [ERROR_CONTRACT] FeatureFlag关闭->跳过写入;写入失败->日志warning
 # [TESTS] tests/infrastructure/
 # [TTL] permanent
 """遥测 · ai_behavior — AI 行为遥测（7维度 + Error Taxonomy）"""

@@ -31,7 +31,7 @@
   - check_sector_concentration: 行业集中度检查（max_sector_concentration）
   - check_gross_leverage: 总杠杆检查（max_gross_leverage）
 
-SSoT: cross_layer_contracts.yaml → CTR-003 + CTR-ERR-004
+SSoT: cross_layer_contracts.yaml -> CTR-003 + CTR-ERR-004
 """
 
 from __future__ import annotations

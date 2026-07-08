@@ -22,9 +22,9 @@ Pipeline Routing Plugin System — K8s Scheduling Framework 对标
 关联：GOV-AI-002 v2.0.0 模型路由策略
 
 插件生命周期：
-  Filter 阶段 → 淘汰不合格节点（Predicates）
-  Score 阶段  → 给剩余节点打分（Priorities）
-  Bind 阶段   → 选最高分 + 生成 PipelineRouteDecision
+  Filter 阶段 -> 淘汰不合格节点（Predicates）
+  Score 阶段  -> 给剩余节点打分（Priorities）
+  Bind 阶段   -> 选最高分 + 生成 PipelineRouteDecision
 
 使用：
     from zephyr.infrastructure.pipeline.routing_plugins import PipelineRouter, DEFAULT_PLUGINS
@@ -63,7 +63,7 @@ __all__ = [
 ]
 
 # 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001 + target_layer_vocabulary.yaml v1.0.0
-# foundation_domains（D_MKT_DATA/D_INFRA_OPS/D_GOV_ENFORCEMENT → M5）
+# foundation_domains（D_MKT_DATA/D_INFRA_OPS/D_GOV_ENFORCEMENT -> M5）
 _FOUNDATION_LAYERS = frozenset({"D_MKT_DATA", "D_INFRA_OPS", "D_GOV_ENFORCEMENT"})
 
 _NODE_TASK_TYPE_MAP: dict[str, frozenset[str]] = {
@@ -124,8 +124,8 @@ class RoutingPlugin(ABC):
       - phase: ClassVar[str] —— "filter" | "score"
       - priority: ClassVar[int] —— 执行顺序（越小越先，默认 50）
 
-    Filter 插件：实现 `apply(ctx)` → 从 ctx.candidates 中移除不合格节点。
-    Score 插件：实现 `apply(ctx)` → 向 ctx.scores 累加分数。
+    Filter 插件：实现 `apply(ctx)` -> 从 ctx.candidates 中移除不合格节点。
+    Score 插件：实现 `apply(ctx)` -> 向 ctx.scores 累加分数。
     """
 
     name: ClassVar[str]
@@ -139,7 +139,7 @@ class RoutingPlugin(ABC):
 
 
 class TaskTypeFilter(RoutingPlugin):
-    """过滤：节点的 task_type 白名单不匹配 → 淘汰。"""
+    """过滤：节点的 task_type 白名单不匹配 -> 淘汰。"""
 
     name: ClassVar[str] = "task_type_filter"
     phase: ClassVar[str] = "filter"
@@ -208,9 +208,9 @@ class LayerFilter(RoutingPlugin):
 
 
 class PriorityScorer(RoutingPlugin):
-    """打分：任务优先级越高 → 高分节点获得的加成越多。
+    """打分：任务优先级越高 -> 高分节点获得的加成越多。
 
-    P0 AUDIT → M3(opus级审计) 得高分；P2 MODEL_BUILD → M2(标准) 得高分。
+    P0 AUDIT -> M3(opus级审计) 得高分；P2 MODEL_BUILD -> M2(标准) 得高分。
     """
 
     name: ClassVar[str] = "priority_scorer"
@@ -282,7 +282,7 @@ DEFAULT_PLUGINS: list[RoutingPlugin] = [
 
 
 class PipelineRouter:
-    """Pipeline 路由引擎——Filter→Score→Bind 三阶段。
+    """Pipeline 路由引擎——Filter->Score->Bind 三阶段。
 
     Parameters
     ----------
@@ -315,5 +315,5 @@ class PipelineRouter:
         detail = ", ".join(f"{n}={ctx.scores[n]:.0f}" for _, n in scored[:3])
         return _make_decision(
             best_node,
-            f"Filter→{len(ctx.candidates)} nodes; Score→{best_node}={best_score:.0f} [{detail}]",
+            f"Filter->{len(ctx.candidates)} nodes; Score->{best_node}={best_score:.0f} [{detail}]",
         )

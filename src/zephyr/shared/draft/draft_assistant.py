@@ -16,14 +16,14 @@
 # [TTL] permanent
 
 """
-Draft Assistant — 想法 → MTH-012 蓝图骨架生成。
+Draft Assistant — 想法 -> MTH-012 蓝图骨架生成。
 
 依据：
     蓝图 MOD-TASK_SYSTEM §13.3 路线图 #26 + v0.6.0
     任务卡 TASK-INF-0132 (Part 3/4)
 
 功能：
-    - 输入想法 → MTH-012 格式蓝图骨架
+    - 输入想法 -> MTH-012 格式蓝图骨架
     - 目标/边界/约束预填
     - Owner 填充 + 涌现式血肉补全
 """

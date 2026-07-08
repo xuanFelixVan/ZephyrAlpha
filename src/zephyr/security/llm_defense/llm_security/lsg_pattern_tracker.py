@@ -31,7 +31,7 @@ class LSGRejectionPattern:
 
 
 class LSGPatternTracker:
-    """LSG rejection_reason_code tracking; 3x→retry; 10x cross-session → escalate (DD94)."""
+    """LSG rejection_reason_code tracking; 3x->retry; 10x cross-session -> escalate (DD94)."""
 
     def __init__(self) -> None:
         self._counters: Counter[str] = Counter()

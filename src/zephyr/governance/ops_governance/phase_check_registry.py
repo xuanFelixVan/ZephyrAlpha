@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-GOV_phase_check_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""PhaseManager→GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.
+"""PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.
 
 本模块是 PhaseManager 与 GateEngine 之间的唯一桥梁：
 - PhaseManager.PHASE_SEQUENCE 定义了 43 个 check_name（字符串）
@@ -923,7 +923,7 @@ def check_lsg_security() -> GateResult:
 
 
 # ============================================================================
-# 检查注册表 —— 字符串 → 函数映射
+# 检查注册表 —— 字符串 -> 函数映射
 # ============================================================================
 
 _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
@@ -992,7 +992,7 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
 
 
 class PhaseCheckRegistry:
-    """PhaseManager 检查名 → 执行函数的静态注册表."""
+    """PhaseManager 检查名 -> 执行函数的静态注册表."""
 
     @staticmethod
     def get(check_name: str) -> Callable[[], GateResult] | None:

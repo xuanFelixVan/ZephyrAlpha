@@ -19,7 +19,7 @@
 
 职责：
   - 逐条遍历 R1-R45 风险项
-  - 检查对应的缓解代码块是否存在 → mitigation_status
+  - 检查对应的缓解代码块是否存在 -> mitigation_status
   - 生成 mitigation_tracker.yaml
 """
 

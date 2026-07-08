@@ -68,7 +68,7 @@ class CircuitBreakerManager:
             log_fn: 日志回调 (level, message) -> None
             failure_window_s: 失败统计窗口（秒），默认 60.0
             failure_threshold: 窗口内失败次数阈值，默认 3
-            cooldown_s: OPEN→HALF_OPEN 冷却时间（秒），默认 30.0
+            cooldown_s: OPEN->HALF_OPEN 冷却时间（秒），默认 30.0
         """
         self._states: dict[str, CircuitBreakerState] = {}
         self._failures: dict[str, list[float]] = {}
@@ -99,7 +99,7 @@ class CircuitBreakerManager:
     def record_result(self, cb_key: str, success: bool) -> None:
         """记录一次调用的结果。
 
-        - 成功：清除该 cb_key 的失败记录（CLOSED/HALF_OPEN→CLOSED）
+        - 成功：清除该 cb_key 的失败记录（CLOSED/HALF_OPEN->CLOSED）
         - 失败：追加失败时间戳
 
         Args:
@@ -112,7 +112,7 @@ class CircuitBreakerManager:
                 old = self._states[cb_key]
                 if old is CircuitBreakerState.HALF_OPEN:
                     self._states[cb_key] = CircuitBreakerState.CLOSED
-                    self._log("INFO", f"CircuitBreaker[{cb_key}] HALF_OPEN→CLOSED (试探成功)")
+                    self._log("INFO", f"CircuitBreaker[{cb_key}] HALF_OPEN->CLOSED (试探成功)")
         else:
             self._failures.setdefault(cb_key, []).append(time.time())
 
@@ -154,9 +154,9 @@ class CircuitBreakerManager:
     def _check_state(self, cb_key: str, model: str) -> CircuitBreakerState:
         """检查断路器状态（内部状态机）。
 
-        CLOSED → OPEN：窗口内失败 >= 阈值
-        OPEN → HALF_OPEN：超过冷却时间
-        HALF_OPEN → CLOSED/OPEN：由 record_result 决定
+        CLOSED -> OPEN：窗口内失败 >= 阈值
+        OPEN -> HALF_OPEN：超过冷却时间
+        HALF_OPEN -> CLOSED/OPEN：由 record_result 决定
         """
         now = time.time()
         state = self._states.get(cb_key, CircuitBreakerState.CLOSED)
@@ -169,7 +169,7 @@ class CircuitBreakerManager:
                     self._states[cb_key] = CircuitBreakerState.HALF_OPEN
                     self._log(
                         "INFO",
-                        f"CircuitBreaker[{model}] OPEN→HALF_OPEN (冷却{self._cooldown_s}s后尝试恢复)",
+                        f"CircuitBreaker[{model}] OPEN->HALF_OPEN (冷却{self._cooldown_s}s后尝试恢复)",
                     )
                     return CircuitBreakerState.HALF_OPEN
             return CircuitBreakerState.OPEN
@@ -181,7 +181,7 @@ class CircuitBreakerManager:
                 self._states[cb_key] = CircuitBreakerState.OPEN
                 self._log(
                     "WARN",
-                    f"CircuitBreaker[{model}] CLOSED→OPEN ({len(recent)} failures in {self._failure_window_s}s)",
+                    f"CircuitBreaker[{model}] CLOSED->OPEN ({len(recent)} failures in {self._failure_window_s}s)",
                 )
                 return CircuitBreakerState.OPEN
             return CircuitBreakerState.CLOSED

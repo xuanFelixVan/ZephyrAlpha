@@ -28,9 +28,9 @@
 
 CTR 契约：
   消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
-  生产者 — CTR-P1-009 (PerformanceAttributionReport) → D_FRONTEND, D_GOV_ENFORCEMENT
+  生产者 — CTR-P1-009 (PerformanceAttributionReport) -> D_FRONTEND, D_GOV_ENFORCEMENT
 
-SSoT: cross_layer_contracts.yaml → CTR-P1-009
+SSoT: cross_layer_contracts.yaml -> CTR-P1-009
 """
 
 from __future__ import annotations

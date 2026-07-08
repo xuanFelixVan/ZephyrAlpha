@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-GOV_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""G-CT-003 契约：Agent Spec → RBAC 能力检查.
+"""G-CT-003 契约：Agent Spec -> RBAC 能力检查.
 
 双向桥接：
   1. 通过 SkillRouter API 查询 agent-spec/skill-registry.yaml 中注册的技能

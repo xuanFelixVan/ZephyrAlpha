@@ -34,7 +34,7 @@ sentinel_server.py 对应 tool-contracts.yaml 中的 intent_router server。
 
 实现工具
 --------
-- intent_router.map_intent        — 核心意图路由（Stage 1→2→3 级联）
+- intent_router.map_intent        — 核心意图路由（Stage 1->2->3 级联）
 - intent_router.reload_keywords   — 热加载关键词词典
 - intent_router.evaluate_golden_set — 黄金集评测
 """
@@ -96,7 +96,7 @@ class SentinelServer(BaseMCPServer):
 
     SERVER_ID = "intent_router"
     VERSION = "1.0.0"
-    DESCRIPTION = "自然语言 → 10 域 + directive 链路由；Stage 1 关键词已激活，Stage 2/3 待 beta/stable"
+    DESCRIPTION = "自然语言 -> 10 域 + directive 链路由；Stage 1 关键词已激活，Stage 2/3 待 beta/stable"
 
     def __init__(self, *, enable_rbac: bool = True) -> None:
         super().__init__(self.SERVER_ID, self.VERSION, self.DESCRIPTION, enable_rbac=enable_rbac)
@@ -110,7 +110,7 @@ class SentinelServer(BaseMCPServer):
 
         self.register_tool(
             name="intent_router.map_intent",
-            description="核心意图路由；自动级联 Stage 1 → 2 → 3",
+            description="核心意图路由；自动级联 Stage 1 -> 2 -> 3",
             input_schema={
                 "type": "object",
                 "required": ["query"],

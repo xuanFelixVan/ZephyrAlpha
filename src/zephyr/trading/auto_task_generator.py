@@ -22,10 +22,10 @@ AutoTaskGenerator — 自动任务生成器
 持续送进 LocalModelScheduler 保持 GPU 忙碌。
 
 数据源:
-    src/**/*.py       → task_classification, tag_completion, naming_suggest
-    data/capability_cards/*.yaml → summary_extraction
-    data/audit_logs/*.jsonl      → anomaly_triage
-    architecture_model/**/*.yaml → summary_extraction
+    src/**/*.py       -> task_classification, tag_completion, naming_suggest
+    data/capability_cards/*.yaml -> summary_extraction
+    data/audit_logs/*.jsonl      -> anomaly_triage
+    architecture_model/**/*.yaml -> summary_extraction
 
 机制:
     - 每次 MAPE-K 调和周期生成一批任务
@@ -52,7 +52,7 @@ FILE_READ_LIMIT_CHARS: Final[int] = 800
 
 
 class AutoTaskGenerator:
-    """自动任务生成器——扫描项目 → 生成推理任务 → 送入调度器。"""
+    """自动任务生成器——扫描项目 -> 生成推理任务 -> 送入调度器。"""
 
     def __init__(
         self,

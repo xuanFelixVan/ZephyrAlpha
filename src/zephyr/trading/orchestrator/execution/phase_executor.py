@@ -19,7 +19,7 @@
 Phase 执行引擎（Phase Executor）
 
 依据：MOD-MASTER-002 蓝图 §六 施工 Phase 规划
-实现 Phase 0 → Phase A → Phase B → Phase C → Phase D 四级施工序列。
+实现 Phase 0 -> Phase A -> Phase B -> Phase C -> Phase D 四级施工序列。
 
 Phase 定义：
 - Phase 0: 管控契约优先（17条管控契约 + context check）

@@ -29,7 +29,7 @@ class EmbeddingVersionInfo:
 
 
 class EmbeddingVersionLock:
-    """KE metadata: {embedding_model, embedding_version}; embed change→cosine regress (DD92)."""
+    """KE metadata: {embedding_model, embedding_version}; embed change->cosine regress (DD92)."""
 
     _current: tuple[str, str] = ("all-MiniLM-L6-v2", "1.0.0")
 

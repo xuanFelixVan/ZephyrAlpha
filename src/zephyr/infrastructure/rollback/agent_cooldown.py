@@ -21,7 +21,7 @@ AgentCooldown — Agent 冷却隔离器。
 依据: 蓝图 MOD-INF-021 §7 Phase 2.2 + §6.2 B8 + AP6
 
 回滚后 5min 禁止修改被回滚文件。
-cooldown 记录: (agent_session, file_path, until_iso) → rollback_quarantine.db
+cooldown 记录: (agent_session, file_path, until_iso) -> rollback_quarantine.db
 cooldown 状态绑定到 Agent Identity session token。
 """
 

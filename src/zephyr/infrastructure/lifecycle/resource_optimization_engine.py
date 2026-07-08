@@ -772,7 +772,7 @@ class ResourceOptimizationEngine:
                 ]
                 if level_order.index(verify_snap.pressure) < level_order.index(snap.pressure):
                     logger.info(
-                        "ResourceOptimizationEngine: self-heal succeeded — %s → %s",
+                        "ResourceOptimizationEngine: self-heal succeeded — %s -> %s",
                         snap.pressure.value,
                         verify_snap.pressure.value,
                     )

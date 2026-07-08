@@ -17,7 +17,7 @@
 
 """
 R518: GuardInteractionTopologyMapper
-Guard交互有向图+环路检测 — A→B→C→A 循环
+Guard交互有向图+环路检测 — A->B->C->A 循环
 """
 
 from collections import deque

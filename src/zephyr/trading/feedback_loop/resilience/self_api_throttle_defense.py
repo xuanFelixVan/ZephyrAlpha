@@ -27,7 +27,7 @@ Positive feedback loop destroys system availability.
 
 Mitigation: Token bucket rate limiter for FLE's own outbound actions. Per-target
 concurrency cap. Global action budget with burst allowance. When budget exhausted
-→ queue or drop non-critical actions. Alert when throttling activates.
+-> queue or drop non-critical actions. Alert when throttling activates.
 """
 
 from __future__ import annotations

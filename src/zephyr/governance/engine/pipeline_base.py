@@ -22,16 +22,16 @@
 
 核心职责：
   - 实验注册与管理（experiment_id / hypothesis / parameters）
-  - Scout Agent 自动化实验（外部资讯 + repo diff → 对照实验 → 结论沉淀到 KMS）
+  - Scout Agent 自动化实验（外部资讯 + repo diff -> 对照实验 -> 结论沉淀到 KMS）
   - 参数网格搜索与贝叶斯优化
   - 实验结果统计验证（p-value / effect size / power analysis）
   - 胜出策略自动提升至 D_PORTFOLIO_CORE / D_RESEARCH
 
 扩展点：
-  - ExperimentPipelineBase : OCP 实验-EXP — 实验配置 → 实验指标
+  - ExperimentPipelineBase : OCP 实验-EXP — 实验配置 -> 实验指标
   - ScoutAgentBase         : OCP 实验-SCT — 自动化实验编排（CTR-P1-014 生产者）
 
-依赖方向：D_RESEARCH → 实验 → D_PORTFOLIO_CORE / D_SIGNAL（实验结果提升至生产管线）
+依赖方向：D_RESEARCH -> 实验 -> D_PORTFOLIO_CORE / D_SIGNAL（实验结果提升至生产管线）
 """
 
 from __future__ import annotations
@@ -101,7 +101,7 @@ class ScoutAgentBase(abc.ABC):
     """
     Scout Agent 自动化实验编排器（OCP 扩展点 实验-SCT）
 
-    契约对齐：CTR-P1-014（ExperimentResult 出站）→ D_RESEARCH, D_ML_TRAIN
+    契约对齐：CTR-P1-014（ExperimentResult 出站）-> D_RESEARCH, D_ML_TRAIN
 
     实现者要求：
       - scout(): 自动抓取外部资讯 + 内部 repo diff，设计并执行对照实验
@@ -115,7 +115,7 @@ class ScoutAgentBase(abc.ABC):
 
     @abc.abstractmethod
     def scout(self, context: dict[str, Any], idempotency_key: str) -> ExperimentResult:
-        """自动化实验编排：扫码外部信息 → 设计实验 → 执行 → 产出结论"""
+        """自动化实验编排：扫码外部信息 -> 设计实验 -> 执行 -> 产出结论"""
         ...
 
     @abc.abstractmethod

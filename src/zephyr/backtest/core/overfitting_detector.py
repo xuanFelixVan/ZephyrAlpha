@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 过拟合三维度三层; 样本外Sharpe<70%样本内→否决
+# [INVARIANTS] 过拟合三维度三层; 样本外Sharpe<70%样本内->否决
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -24,11 +24,11 @@
   - 过拟合检测三层(D-SIMULATION-18/38/56):
       1. SIM-18 研究时手动检测: 因子/策略回测后人工审查
       2. SIM-38 样本内外对比: 样本内vs样本外收益差异+交叉验证+多重比较偏差校正
-      3. SIM-56 上线前自动门禁: overfitting_flag=True→阻断上线
-  - 过拟合否决阈值(P0-9): 样本外Sharpe < 70%样本内Sharpe → 否决上线
+      3. SIM-56 上线前自动门禁: overfitting_flag=True->阻断上线
+  - 过拟合否决阈值(P0-9): 样本外Sharpe < 70%样本内Sharpe -> 否决上线
 
 约束:
-  - 三维度任一不稳定 → is_overfitting=True
+  - 三维度任一不稳定 -> is_overfitting=True
   - 样本内外比率使用Sharpe(年化), 样本内Sharpe<=0时不适用比率判定
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7
@@ -71,7 +71,7 @@ class OverfittingConfig:
     Attributes:
         parameter_perturbation_pct: 参数微调幅度, 默认±10%
         oos_sharpe_threshold_ratio: 样本外/样本内Sharpe比率否决阈值, 默认0.70
-            (样本外Sharpe < 70%样本内Sharpe → 否决上线, P0-9)
+            (样本外Sharpe < 70%样本内Sharpe -> 否决上线, P0-9)
         cross_validation_folds: 交叉验证折数(用于SIM-38样本内外对比)
     """
 
@@ -305,7 +305,7 @@ class OverfittingDetector:
     def compare_in_out_sample(self, is_sharpe: float, oos_sharpe: float) -> dict:
         """样本内外对比(SIM-38 / P0-9否决阈值)
 
-        样本外Sharpe < oos_sharpe_threshold_ratio * 样本内Sharpe → 否决上线。
+        样本外Sharpe < oos_sharpe_threshold_ratio * 样本内Sharpe -> 否决上线。
 
         Args:
             is_sharpe: 样本内(in-sample)Sharpe
@@ -324,7 +324,7 @@ class OverfittingDetector:
             if is_overfitting:
                 reason = (
                     f"样本外Sharpe({oos_sharpe:.4f})/样本内Sharpe({is_sharpe:.4f})"
-                    f"={ratio:.2%}低于阈值{threshold:.0%}→否决上线(P0-9)"
+                    f"={ratio:.2%}低于阈值{threshold:.0%}->否决上线(P0-9)"
                 )
             else:
                 reason = ""
@@ -352,7 +352,7 @@ class OverfittingDetector:
     ) -> dict:
         """综合过拟合检测(三维度 + 样本内外对比, SIM-56上线前自动门禁)
 
-        三维度任一不稳定或样本内外比率触发否决 → is_overfitting=True。
+        三维度任一不稳定或样本内外比率触发否决 -> is_overfitting=True。
         未提供的维度视为未检测(默认稳定, 不触发否决)。
 
         Args:

@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/compliance_rule.py
 
 CTR-P1-012: ComplianceRule / 合规规则
 
-D_COMPLIANCE → 合规规则定义契约。包含规则注册、评估接口和规则元数据。
+D_COMPLIANCE -> 合规规则定义契约。包含规则注册、评估接口和规则元数据。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-012
 Version: 1.0

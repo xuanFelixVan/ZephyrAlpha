@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息含 Unicode 箭头 →（U+2192）或以中文句号 。（U+3002）结尾时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `# noqa: MSG-STYLE` 注释的单行豁免
+# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息含 Unicode 箭头 ->（U+2192）或以中文句号 。（U+3002）结尾时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `# noqa: MSG-STYLE` 注释的单行豁免
 # [MODIFY-GUARD] gate_id="MSG-STYLE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -17,7 +17,7 @@
 """msg_style_gate.py — 错误消息标点/箭头风格阻断门禁（MSG-STYLE）
 
 检测 staged .py 文件中 ``raise XxxError(...)`` 模式——异常消息含 Unicode
-箭头 ``→``（U+2192）或以中文句号 ``。``（U+3002）结尾，违反"错误消息标点风格
+箭头 ``->``（U+2192）或以中文句号 ``。``（U+3002）结尾，违反"错误消息标点风格
 统一"原则（5.99.22 治本防复发）。
 
 病根（第一性原理）
@@ -25,7 +25,7 @@
 100% AI 开发场景下，AI 生成异常消息时标点风格不一致（训练数据混用 Unicode/ASCII
 箭头、有/无句号结尾）。这些不一致导致日志聚合/告警匹配困难、用户阅读体验差。
 
-铁律：错误消息统一使用 ASCII ``->``（非 Unicode ``→``）+ 无句号结尾。
+铁律：错误消息统一使用 ASCII ``->``（非 Unicode ``->``）+ 无句号结尾。
 
 治本方案
 --------
@@ -35,7 +35,7 @@
   1. raise 的 exc 是 ``ast.Call``（构造异常实例）
   2. 构造函数名以 ``Error`` 或 ``Exception`` 结尾（自定义异常类）
   3. 第一个参数是 ``ast.JoinedStr``（f-string）或 ``ast.Constant``（普通字符串）
-  4. 字符串字面量部分含 ``→``（U+2192）或以 ``。``（U+3002）结尾
+  4. 字符串字面量部分含 ``->``（U+2192）或以 ``。``（U+3002）结尾
 
 设计权衡
 --------
@@ -66,7 +66,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_msg_style_gate"]
 
 # 违规字符常量
-_UNICODE_ARROW = "\u2192"  # →
+_UNICODE_ARROW = "\u2192"  # ->
 _CN_PERIOD = "\u3002"      # 。
 
 # 行级豁免标记（与 MSG-EXPOSURE 一致的 noqa 风格）
@@ -150,7 +150,7 @@ def _detect_msg_style(tree: ast.AST) -> list[tuple[int, str, str]]:
 
         exc_name = _get_exc_name(call)
 
-        # 检查 Unicode 箭头 →（任一字面量部分含即违规）
+        # 检查 Unicode 箭头 ->（任一字面量部分含即违规）
         for part in parts:
             if _UNICODE_ARROW in part:
                 violations.append((node.lineno, exc_name, "unicode_arrow"))
@@ -235,7 +235,7 @@ def make_msg_style_gate() -> GateSpec:
         except Exception:
             added_set = set()
 
-        # 5. 门禁文件自豁免：检测器本身含违规字符（文档字符串中的 → 和 。）
+        # 5. 门禁文件自豁免：检测器本身含违规字符（文档字符串中的 -> 和 。）
         violations_all: list[str] = []
         for rel_path in py_files:
             if os.path.isabs(rel_path):
@@ -274,7 +274,7 @@ def make_msg_style_gate() -> GateSpec:
                 violations = _detect_msg_style(tree)
                 violations = _filter_noqa_violations(content, violations)
                 for lineno, exc_name, vtype in violations:
-                    desc = "Unicode 箭头 →" if vtype == "unicode_arrow" else "中文句号 。 结尾"
+                    desc = "Unicode 箭头 ->" if vtype == "unicode_arrow" else "中文句号 。 结尾"
                     violations_all.append(
                         f"{rel_path}:{lineno} raise {exc_name}(...) [{vtype}: {desc}]"
                     )
@@ -290,7 +290,7 @@ def make_msg_style_gate() -> GateSpec:
                     cur_lineno = 0
                     for line in diff_content.stdout.splitlines():
                         if line.startswith("@@"):
-                            # @@ -a,b +c,d @@ → c 是新增行起始行号
+                            # @@ -a,b +c,d @@ -> c 是新增行起始行号
                             try:
                                 plus_part = line.split("+")[1].split("@@")[0].strip()
                                 cur_lineno = int(plus_part.split(",")[0])
@@ -326,7 +326,7 @@ def make_msg_style_gate() -> GateSpec:
                     line_content = added_content_map.get(lineno, "")
                     if _NOQA_MARKER in line_content:
                         continue
-                    desc = "Unicode 箭头 →" if vtype == "unicode_arrow" else "中文句号 。 结尾"
+                    desc = "Unicode 箭头 ->" if vtype == "unicode_arrow" else "中文句号 。 结尾"
                     violations_all.append(
                         f"{rel_path}:{lineno} raise {exc_name}(...) [{vtype}: {desc}] (modified)"
                     )

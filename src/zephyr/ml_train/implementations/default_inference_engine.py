@@ -21,10 +21,10 @@ ML 推理引擎具体实现。实现 InferenceEngineBase。
 
 CTR 契约：
   消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
-  生产者 — CTR-P1-004 (ModelServingRequest) → D_SIGNAL/D_PORTFOLIO_CORE
-  生产者 — CTR-P1-005 (ModelServingResponse) → D_SIGNAL/D_PORTFOLIO_CORE
+  生产者 — CTR-P1-004 (ModelServingRequest) -> D_SIGNAL/D_PORTFOLIO_CORE
+  生产者 — CTR-P1-005 (ModelServingResponse) -> D_SIGNAL/D_PORTFOLIO_CORE
 
-SSoT: cross_layer_contracts.yaml → CTR-P1-004 + CTR-P1-005
+SSoT: cross_layer_contracts.yaml -> CTR-P1-004 + CTR-P1-005
 """
 
 from __future__ import annotations

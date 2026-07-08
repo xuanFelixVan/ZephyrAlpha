@@ -20,8 +20,8 @@ ComplexityBudget — 回滚复杂度元 Budget 监控。
 
 依据: 蓝图 MOD-INF-021 §7 Phase 9 + §6.16 B115 + exit code 38
 
-McCCabe 复杂度 > 15 / 文件 → 反向回溯 + Lint 阻断。
-复杂度超过阈值 → exit 38 (COMPLEXITY_OVER_BUDGET)。
+McCCabe 复杂度 > 15 / 文件 -> 反向回溯 + Lint 阻断。
+复杂度超过阈值 -> exit 38 (COMPLEXITY_OVER_BUDGET)。
 """
 
 from __future__ import annotations

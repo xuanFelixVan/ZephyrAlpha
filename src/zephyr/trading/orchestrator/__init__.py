@@ -25,7 +25,7 @@ Vibe Coding 2.0 基础设施 · 遥测 跨层支撑层 · 5 大核心服务之�
 
 状态机（真源：zephyr.governance.rule_enforcement.task_types.TaskStatus）
 ----------------------------------------------------------------------
-PENDING → READY → IN_PROGRESS → COMPLETED → VERIFIED
+PENDING -> READY -> IN_PROGRESS -> COMPLETED -> VERIFIED
 分支 : BLOCKED / FAILED / RETRY / WAITING / CANCELLED
 合法迁移定义见 TaskRepository.transition() + state_propagation.PROPAGATION_RULES（派生自 TaskStatus）
 
@@ -38,7 +38,7 @@ PENDING → READY → IN_PROGRESS → COMPLETED → VERIFIED
 
 P0 降级红线
 -----------
-DEGRADE-003: 沙箱创建失败 → 任务 FAIL，拒绝无沙箱运行（安全优于可用性）
+DEGRADE-003: 沙箱创建失败 -> 任务 FAIL，拒绝无沙箱运行（安全优于可用性）
 
 架构归属
 --------

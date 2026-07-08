@@ -22,7 +22,7 @@ RollbackDrill — 定期回滚演练调度器 (DiRT-style)。
 
 每周六 03:00 AM UTC 在 git worktree 副本中执行真实回滚演练。
 混沌场景: gc_concurrent / sqlite_locked / disk_90pct / cpu_saturation
-连续 2 次 drill FAIL → P0 Alert → 熔断所有自动回滚。
+连续 2 次 drill FAIL -> P0 Alert -> 熔断所有自动回滚。
 """
 
 from __future__ import annotations

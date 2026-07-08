@@ -22,7 +22,7 @@ before the project is in serious trouble. In 1-person+AI maintenance, bus factor
 by definition. But system knowledge also concentrates in specific agents/modules.
 
 Risk: R481 — The one human owner is also the only person who understands X subsystem.
-If owner is unavailable + that subsystem fails → no one (human or AI) can fix it.
+If owner is unavailable + that subsystem fails -> no one (human or AI) can fix it.
 
 Mitigation: Track knowledge distribution across subsystems. Assign and monitor
 "AI bus factor" — how many independent agents understand each subsystem. Alert when

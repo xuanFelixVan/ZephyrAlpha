@@ -21,8 +21,8 @@ ConfidenceQuantifier — AI 置信度量化。
 依据: 蓝图 MOD-INF-021 §7 Phase 9 + §6.16 B114 + exit code 37
 
 对 AI agent 每次操作输出量化置信度 (0.0 ~ 1.0):
-    连续 5 次低置信 (< 0.3) → exit 37 (LOW_CONFIDENCE_CONSEC) → tier 降低
-    连续 10 次低置信 → 暂停该 agent session
+    连续 5 次低置信 (< 0.3) -> exit 37 (LOW_CONFIDENCE_CONSEC) -> tier 降低
+    连续 10 次低置信 -> 暂停该 agent session
 """
 
 from __future__ import annotations

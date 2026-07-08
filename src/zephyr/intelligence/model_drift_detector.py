@@ -21,7 +21,7 @@ ModelDriftDetector — LLM 模型行为漂移检测。
 依据: 蓝图 MOD-INF-021 §7 Phase 9 + §6.16 B113 + exit code 34
 
 检测 LLM 模型版本的静默行为变化（无版本号变更但输出分布漂移）。
-建立基线输出 feature vector → 定期采样 → KL 散度/JS 距离 → 超过阈值 → exit 34。
+建立基线输出 feature vector -> 定期采样 -> KL 散度/JS 距离 -> 超过阈值 -> exit 34。
 """
 
 from __future__ import annotations

@@ -39,8 +39,8 @@ gate 内部增量检测（非 subprocess 复用真源模式），理由：
 -----------------------------------------------------
 trae_028 L1242: "历史违规目录在下次涉及该目录的refactor时顺带修正;不发起专门批量改名任务"
 实现：用 ``git ls-tree HEAD <dir>`` 判断目录是否已存在于 HEAD。
-- 存在 → 历史违规，跳过（允许正常维护）
-- 不存在 → 新引入违规，阻断
+- 存在 -> 历史违规，跳过（允许正常维护）
+- 不存在 -> 新引入违规，阻断
 
 设计决策
 --------
@@ -107,8 +107,8 @@ def make_r5_digit_suffix_gate() -> GateSpec:
             return True, "no digit-suffix directories in commit paths"
 
         # 2. 用 git ls-tree HEAD 判断每个可疑目录是否新建
-        #    存在 → 历史违规（progressive_convergence 跳过）
-        #    不存在 → 新引入违规（阻断）
+        #    存在 -> 历史违规（progressive_convergence 跳过）
+        #    不存在 -> 新引入违规（阻断）
         new_violations: list[str] = []
         historical: list[str] = []
         for dir_path in sorted(suspect_dirs):
@@ -124,21 +124,21 @@ def make_r5_digit_suffix_gate() -> GateSpec:
                 return False, f"R5 gate fail-closed: git ls-tree failed for {dir_path}: {e}"
 
             if result.stdout.strip():
-                # 目录已存在于 HEAD → 历史违规，跳过
+                # 目录已存在于 HEAD -> 历史违规，跳过
                 historical.append(dir_path)
             else:
-                # 目录不存在于 HEAD → 新引入违规
+                # 目录不存在于 HEAD -> 新引入违规
                 new_violations.append(dir_path)
 
         # 3. 返回结果
         if new_violations:
             return False, (
-                f"R5 数字后缀目录禁止: {' '.join(new_violations)} → "
+                f"R5 数字后缀目录禁止: {' '.join(new_violations)} -> "
                 f"gov_doc_003_directory_semantics R5 禁止 _NN 数字后缀（暗示多真源，"
                 f"违反 SSoT 原则）。如需区分版本请用语义不同的目录名。"
             )
 
-        # 全部是历史违规 → 通过（progressive_convergence 渐进收敛策略）
+        # 全部是历史违规 -> 通过（progressive_convergence 渐进收敛策略）
         return True, (
             f"digit-suffix dirs exist in HEAD (historical, skipped): "
             f"{', '.join(historical)}"

@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/risk_metrics.py
 
 CTR-P1-011: RiskMetricsReport / 风险指标报告
 
-D_RISK → 下游风险指标报告契约。包含VaR、CVaR、回撤等风险指标的计算结果。
+D_RISK -> 下游风险指标报告契约。包含VaR、CVaR、回撤等风险指标的计算结果。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-011
 Version: 1.0

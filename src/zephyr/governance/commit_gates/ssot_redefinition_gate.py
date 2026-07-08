@@ -22,7 +22,7 @@
 病根（ARCH-033 审核发现 P2）:
 - CREATE-GUARD 只管新建文件，不管文件内重新定义
 - 新 AI 可能在 privacy.py 里重新写 ``class PIICategory = ...`` 而非 import
-- SSoT 靠约定不靠强制 → 漂移风险
+- SSoT 靠约定不靠强制 -> 漂移风险
 
 治本:
 - 从 capability_canonical_file_registry.yaml 的 aliases 自动派生 SSoT 符号清单（非新真源）
@@ -95,7 +95,7 @@ def make_ssot_redefinition_gate() -> GateSpec:
         if not py_files:
             return True, ""
 
-        # 2. 从 capability registry 读取 SSoT 符号 → canonical 文件映射
+        # 2. 从 capability registry 读取 SSoT 符号 -> canonical 文件映射
         from zephyr.governance.capability_lookup import REGISTRY_YAML
 
         if not REGISTRY_YAML.exists():
@@ -117,7 +117,7 @@ def make_ssot_redefinition_gate() -> GateSpec:
         if not isinstance(data, dict):
             return True, ""
 
-        # symbol → canonical 文件路径（相对路径，/ 分隔）
+        # symbol -> canonical 文件路径（相对路径，/ 分隔）
         symbol_to_canonical: dict[str, str] = {}
         for cap in data.get("capabilities", []) or []:
             if not isinstance(cap, dict):
@@ -178,7 +178,7 @@ def make_ssot_redefinition_gate() -> GateSpec:
             detail = (
                 "SSoT 符号重复定义（硬阻断）：\n"
                 + "\n".join(violations)
-                + "\n→ 扩展现有 canonical 文件，勿重新定义。"
+                + "\n-> 扩展现有 canonical 文件，勿重新定义。"
                   "查 capability_canonical_file_registry.yaml 找 canonical 文件。"
             )
             return False, detail

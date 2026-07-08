@@ -154,7 +154,7 @@ class OutputSecurityLayer:
         return 3
 
     async def evaluate(self, ctx: Any) -> Any:
-        """评估输出安全：含密钥/敏感数据/不安全内容 → DENY。"""
+        """评估输出安全：含密钥/敏感数据/不安全内容 -> DENY。"""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
 

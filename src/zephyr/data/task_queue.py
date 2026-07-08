@@ -5,26 +5,26 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] DAG无环检测(有环则ValueError); 任务状态PENDING→RUNNING→SUCCESS/FAILED; 前置全SUCCESS才READY; 线程安全(threading.Lock)
+# [INVARIANTS] DAG无环检测(有环则ValueError); 任务状态PENDING->RUNNING->SUCCESS/FAILED; 前置全SUCCESS才READY; 线程安全(threading.Lock)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] load_yaml解析失败→ValueError; get_ready_tasks无就绪任务返回空列表; mark_completed未知task_id→KeyError
+# [ERROR_CONTRACT] load_yaml解析失败->ValueError; get_ready_tasks无就绪任务返回空列表; mark_completed未知task_id->KeyError
 # [TESTS] tests/zephyr/data/test_task_queue.py
 # [A_module] module_id=MOD-L00-004-task_queue | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务依赖图 + §6.4 并发控制）。
 
 管理任务间的 DAG 依赖关系，决定哪些任务可以执行：
-- 前置全部 SUCCESS → 当前任务 READY
-- 前置有 FAILED → 当前任务 BLOCKED（不执行）
-- 前置有 PENDING/RUNNING → 当前任务 PENDING（等待）
+- 前置全部 SUCCESS -> 当前任务 READY
+- 前置有 FAILED -> 当前任务 BLOCKED（不执行）
+- 前置有 PENDING/RUNNING -> 当前任务 PENDING（等待）
 
 DAG 依赖示例（蓝图 §6.3）：
-    adj_factor → kline_daily_hfq → kline_daily_none
-    kline_daily → daily_valuation
-    stock_list → (所有依赖标的列表的任务)
+    adj_factor -> kline_daily_hfq -> kline_daily_none
+    kline_daily -> daily_valuation
+    stock_list -> (所有依赖标的列表的任务)
 
 线程安全：所有状态操作用 threading.Lock 保护。
 """
@@ -61,9 +61,9 @@ class TaskQueue:
     """
 
     def __init__(self):
-        self._tasks: dict[str, dict] = {}  # task_id → task_def
-        self._status: dict[str, str] = {}  # task_id → status
-        self._dependencies: dict[str, list[str]] = {}  # task_id → [dep_task_id, ...]
+        self._tasks: dict[str, dict] = {}  # task_id -> task_def
+        self._status: dict[str, str] = {}  # task_id -> status
+        self._dependencies: dict[str, list[str]] = {}  # task_id -> [dep_task_id, ...]
         self._lock = threading.Lock()
 
     def load_yaml(self, path: str | Path) -> None:
@@ -156,7 +156,7 @@ class TaskQueue:
                 elif all(self._status.get(d) == SUCCESS for d in deps):
                     ready.append(tid)
                 elif any(self._status.get(d) == FAILED for d in deps):
-                    # 前置有失败 → 标记 BLOCKED
+                    # 前置有失败 -> 标记 BLOCKED
                     self._status[tid] = BLOCKED
             return sorted(ready)
 

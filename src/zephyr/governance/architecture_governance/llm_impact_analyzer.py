@@ -20,7 +20,7 @@ LLMImpactAnalyzer — LLM-based commit 语义影响分析器。
 
 依据: 蓝图 MOD-INF-021 §7 Phase 5.14 + §6.10 B55
 
-commit diff → LLM API → 语义级风险评估:
+commit diff -> LLM API -> 语义级风险评估:
     输出: RISK score (0.0~1.0) + 类别 (P0/P1/P2/P3) + 受影响模块 + 推荐操作
     离线模式: 基于关键词规则回退（不含 LLM API 调用）
 

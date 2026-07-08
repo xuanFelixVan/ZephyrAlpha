@@ -53,7 +53,7 @@ class DegradationLevel(int, Enum):
 
 DEGRADATION_LAYERS: Final[dict[DegradationLevel, str]] = {
     DegradationLevel.T0: "全功能——正常运作",
-    DegradationLevel.T1: "信号更新 1min→5min (CPU>80%)",
+    DegradationLevel.T1: "信号更新 1min->5min (CPU>80%)",
     DegradationLevel.T2: "仅用核心因子 (数据源异常)",
     DegradationLevel.T3: "暂停执行只 Hold 现有仓位 (Broker不可达)",
     DegradationLevel.T4: "全系统logging不动任何指令 (行情+信号都不可用)",

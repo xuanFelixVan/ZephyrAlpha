@@ -26,7 +26,7 @@
 
 方法: 基于 Z-Score 的相对基线偏离检测
   基线: 过去 N 个时间窗口的滑动平均值 + 标准差
-  异常: |z_score| > threshold → 触发告警
+  异常: |z_score| > threshold -> 触发告警
 """
 
 from __future__ import annotations

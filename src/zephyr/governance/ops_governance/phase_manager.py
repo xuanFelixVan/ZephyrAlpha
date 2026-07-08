@@ -34,7 +34,7 @@ PhaseManager ↔ GateEngine 桥梁:
 冷启动集成 — SYS-MASTER-001:
     新 AI session 进入本项目时，必须先读 docs/03_modules/_system_master/blueprint.md §0
     （81 域分派表）定位任务域，再使用本 PhaseManager 判断施工阶段。
-    冷启动序列：AGENTS.md → SYS-MASTER-001 §0 → project_rules.md → SessionContinuity → PhaseManager
+    冷启动序列：AGENTS.md -> SYS-MASTER-001 §0 -> project_rules.md -> SessionContinuity -> PhaseManager
 """
 
 from __future__ import annotations

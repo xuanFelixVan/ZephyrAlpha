@@ -24,14 +24,14 @@
 
 """D_EXECUTION_CORE — Order Manager
 
-订单管理器。管理订单全生命周期：创建→风控校验→路由→状态跟踪。
+订单管理器。管理订单全生命周期：创建->风控校验->路由->状态跟踪。
 
 CTR 契约：
   消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE
-  生产者 — CTR-005 (Fill) → D_REPORTING
-  生产者 — CTR-ERR-005 (ExecutionRejectionError) → D_PORTFOLIO_CORE, D_REPORTING
+  生产者 — CTR-005 (Fill) -> D_REPORTING
+  生产者 — CTR-ERR-005 (ExecutionRejectionError) -> D_PORTFOLIO_CORE, D_REPORTING
 
-SSoT: cross_layer_contracts.yaml → CTR-004 + CTR-005
+SSoT: cross_layer_contracts.yaml -> CTR-004 + CTR-005
 """
 
 from __future__ import annotations
@@ -133,7 +133,7 @@ class OrderManager:
         allowed = self.VALID_TRANSITIONS.get(order.status, set())
         if new_status not in allowed:
             raise ValueError(
-                f"非法状态转换: {order.status} → {new_status} (order_id={order.order_id})"
+                f"非法状态转换: {order.status} -> {new_status} (order_id={order.order_id})"
             )
         order.status = new_status
         order.updated_at = datetime.now(UTC)

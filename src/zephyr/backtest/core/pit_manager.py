@@ -79,7 +79,7 @@ class PITConfig:
 
 
 def _to_serializable(idx_val: Any) -> Any:
-    """将索引值转换为可序列化对象(Timestamp→ISO字符串, 元组递归处理)"""
+    """将索引值转换为可序列化对象(Timestamp->ISO字符串, 元组递归处理)"""
     if isinstance(idx_val, tuple):
         return [_to_serializable(v) for v in idx_val]
     if isinstance(idx_val, (pd.Timestamp, datetime)):
@@ -333,14 +333,14 @@ class PITManager:
                 "has_delisted": bool,       # 回测中是否包含已退市标的
                 "delisted_count": int,      # 回测中包含的已退市标的数量
                 "missing_delisted": list,   # 已退市但未纳入回测的标的(偏差来源)
-                "coverage_ratio": float,   # 回测标的占历史全部标的比例(越低→偏差风险越高)
+                "coverage_ratio": float,   # 回测标的占历史全部标的比例(越低->偏差风险越高)
             }
         """
         bt_set = set(backtest_symbols or [])
         dl_set = set(delisted_symbols or [])
         all_set = set(all_symbols or [])
 
-        # 覆盖率: 回测标的占历史全部标的的比例(越低→幸存者偏差风险越高)
+        # 覆盖率: 回测标的占历史全部标的的比例(越低->幸存者偏差风险越高)
         if all_set:
             coverage_ratio = len(bt_set & all_set) / len(all_set)
         else:

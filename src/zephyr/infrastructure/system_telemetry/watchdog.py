@@ -18,7 +18,7 @@
 """三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。
 
 支持两种运行模式:
-    1. 库模式: Watchdog(watchdog_id="wd-1") → 嵌入其他进程
+    1. 库模式: Watchdog(watchdog_id="wd-1") -> 嵌入其他进程
     2. 独立进程: python -m zephyr.infrastructure.system_telemetry.watchdog --id wd-1 [--interval 10]
 """
 

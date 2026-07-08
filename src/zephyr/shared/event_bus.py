@@ -31,8 +31,8 @@ v0.2.0: EventBus + ContractBus 桥接
 
 设计：
   - Queue 深度采样，每 emit() 检查
-  - 超过警戒水位 (CAP-006 = 500) → 生产者减速（sleep / 拒绝）
-  - 严重水位 (> 2× threshold) → 丢弃低优先级事件
+  - 超过警戒水位 (CAP-006 = 500) -> 生产者减速（sleep / 拒绝）
+  - 严重水位 (> 2× threshold) -> 丢弃低优先级事件
 """
 
 import logging

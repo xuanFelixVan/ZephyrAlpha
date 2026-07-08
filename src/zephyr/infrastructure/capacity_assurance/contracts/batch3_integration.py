@@ -46,7 +46,7 @@ class CT_HS_001(BaseModel):
 
 
 class CT_CT1(BaseModel):
-    """capacity-assurance → predict-router: 容量告警联动."""
+    """capacity-assurance -> predict-router: 容量告警联动."""
 
     alert_level: str
     slo_id: str
@@ -54,14 +54,14 @@ class CT_CT1(BaseModel):
 
 
 class CT_CT2(BaseModel):
-    """capacity-assurance → market-data-ingestor: 熔断传播."""
+    """capacity-assurance -> market-data-ingestor: 熔断传播."""
 
     kill_switch_active: bool
     dangerous_channels_paused: list[str] = Field(default_factory=list)
 
 
 class CT_CT3(BaseModel):
-    """task-system → capacity-assurance: Token 扣减."""
+    """task-system -> capacity-assurance: Token 扣减."""
 
     task_id: str
     estimated_tokens: int
@@ -70,7 +70,7 @@ class CT_CT3(BaseModel):
 
 
 class CT_CT4(BaseModel):
-    """capacity-assurance → iguana-rebalancer: 资本账户熔断."""
+    """capacity-assurance -> iguana-rebalancer: 资本账户熔断."""
 
     account_id: str
     can_open_new: bool = True
@@ -102,7 +102,7 @@ class CT_AI_001(BaseModel):
 
 
 class CT_FB_001(BaseModel):
-    """预警→修复闭环 Playbook 格式."""
+    """预警->修复闭环 Playbook 格式."""
 
     alert_id: str
     playbook_steps: list[dict] = Field(default_factory=list)

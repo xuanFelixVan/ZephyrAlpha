@@ -57,11 +57,11 @@ class OrphanCollector:
     """孤儿文件收集与处置器——整合 SafetyFence 安全检查后执行处置动作。
 
     处置策略：
-      KEEP / KEEP_AND_REGISTER → 保留（计数 kept）
-      DELETE → 通过 SafetyFence + CascadeAnalyzer 后删除（计数 disposed）
-      EXTRACT_AND_MERGE → 保留，标记为待合并（计数 kept）
-      DEPRECATE → 调用 DeprecationTracker 标记废弃（计数 kept）
-      ESCALATE → 上报人工处理（计数 escalated）
+      KEEP / KEEP_AND_REGISTER -> 保留（计数 kept）
+      DELETE -> 通过 SafetyFence + CascadeAnalyzer 后删除（计数 disposed）
+      EXTRACT_AND_MERGE -> 保留，标记为待合并（计数 kept）
+      DEPRECATE -> 调用 DeprecationTracker 标记废弃（计数 kept）
+      ESCALATE -> 上报人工处理（计数 escalated）
     """
 
     def __init__(

@@ -22,7 +22,7 @@
 渲染依赖: Panel(布局) + ChartFactory.make_trend_line(趋势折线图)
 
 v3.1.0 变更 (#ARCH-047):
-  - Streamlit(st.dataframe) → Panel(pn.pane.Markdown 表格 + ChartFactory.make_trend_line)
+  - Streamlit(st.dataframe) -> Panel(pn.pane.Markdown 表格 + ChartFactory.make_trend_line)
   - 图表生成委托 ChartFactory.make_trend_line (callback仅编排)
   - 测试环境(无 panel)仅返回 dict payload, 便于断言
 """

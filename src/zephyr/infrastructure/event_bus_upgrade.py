@@ -22,7 +22,7 @@ DEPRECATED: 此文件已废弃。
 本文件保留为 compat shim，将在 Phase 4 物理删除。
 """
 
-# SRC-0037: 版本分叉→独立命名 — compat shim
+# SRC-0037: 版本分叉->独立命名 — compat shim
 
 import warnings
 

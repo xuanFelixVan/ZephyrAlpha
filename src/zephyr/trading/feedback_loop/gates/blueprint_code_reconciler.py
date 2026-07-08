@@ -59,4 +59,4 @@ class BlueprintCodeReconciler:
         return results
 
     def autofix_pr(self, drifted_files: list[str]) -> dict[str, str]:
-        return {f: "auto-PR: sync blueprint → code" for f in drifted_files}
+        return {f: "auto-PR: sync blueprint -> code" for f in drifted_files}

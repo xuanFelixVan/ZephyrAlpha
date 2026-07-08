@@ -27,17 +27,17 @@
 信号合成引擎。将 D_FACTOR 产出的多因子信号 (FactorSignal) 聚合为统一的合成交易信号。
 
 核心职责：
-  - 多因子加权聚合 → SynthesizedSignal（CTR-P1-015）
+  - 多因子加权聚合 -> SynthesizedSignal（CTR-P1-015）
   - 信号归一化与去噪
   - 市场状态(regime)识别附着
-  - 信号降级检测 → SignalDegradationWarning（CTR-ERR-003）
+  - 信号降级检测 -> SignalDegradationWarning（CTR-ERR-003）
 
 CTR 契约：
   消费者 — CTR-002 (FactorSignal) ← D_FACTOR
-  生产者 — CTR-P1-015 (SynthesizedSignal) → D_RISK, D_PORTFOLIO_CORE
-  生产者 — CTR-ERR-003 (SignalDegradationWarning) → D_RISK, D_PORTFOLIO_CORE
+  生产者 — CTR-P1-015 (SynthesizedSignal) -> D_RISK, D_PORTFOLIO_CORE
+  生产者 — CTR-ERR-003 (SignalDegradationWarning) -> D_RISK, D_PORTFOLIO_CORE
 
-依赖方向：D_FACTOR → D_SIGNAL → D_RISK/D_PORTFOLIO_CORE
+依赖方向：D_FACTOR -> D_SIGNAL -> D_RISK/D_PORTFOLIO_CORE
 """
 
 from __future__ import annotations

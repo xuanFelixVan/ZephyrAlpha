@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] session_id 为空/保留词/未注册→阻断（强制 AI 调 session_worktree_start 注册）；allow_overlap=True 时放行（逃生通道，复用现有）；get_session 异常→安全降级放行（registry 故障不应卡死 commit 工作流）；保留词集合 = {"", "unknown", "none", "null"}（防 AI 传空串绕过）
+# [INVARIANTS] session_id 为空/保留词/未注册->阻断（强制 AI 调 session_worktree_start 注册）；allow_overlap=True 时放行（逃生通道，复用现有）；get_session 异常->安全降级放行（registry 故障不应卡死 commit 工作流）；保留词集合 = {"", "unknown", "none", "null"}（防 AI 传空串绕过）
 # [MODIFY-GUARD] gate_id="SESSION-REQUIRED"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；保留词集合 _RESERVED_SESSION_IDS
 # [STABILITY] evolving
 # [SAFETY] L
@@ -24,8 +24,8 @@
 ---------------------------------
 ``ClaimRequiredGate`` 在 session 未注册时放行（安全降级，为测试/内部调用设计）。
 但 Trae IDE 多 AI 并发模式下，AI 们不自觉 ``session_worktree_start``，传
-``session_id=""`` → ``commit`` 方法第306行变成 ``"unknown"`` → 未注册 →
-``ClaimRequiredGate`` 放行 → claim 机制形同虚设 → 编辑期覆盖无法在 commit 时拦截。
+``session_id=""`` -> ``commit`` 方法第306行变成 ``"unknown"`` -> 未注册 ->
+``ClaimRequiredGate`` 放行 -> claim 机制形同虚设 -> 编辑期覆盖无法在 commit 时拦截。
 
 本 gate 在 session 未注册时**阻断**（而非放行），强制 AI 注册 session。
 priority=30 优先于 CLAIM-REQUIRED(40) 和 HELD-OVERLAP(50)：先检查 session
@@ -33,9 +33,9 @@ priority=30 优先于 CLAIM-REQUIRED(40) 和 HELD-OVERLAP(50)：先检查 sessio
 
 与 ClaimRequiredGate 的关系
 ---------------------------
-- ``ClaimRequiredGate``（priority=40）：session 已注册但文件未 claim → 阻断
-- ``SessionRequiredGate``（priority=30，本 gate）：session 未注册 → 阻断
-- 二者互补：本 gate 堵住"session 未注册→放行"缺口，ClaimRequiredGate 堵住
+- ``ClaimRequiredGate``（priority=40）：session 已注册但文件未 claim -> 阻断
+- ``SessionRequiredGate``（priority=30，本 gate）：session 未注册 -> 阻断
+- 二者互补：本 gate 堵住"session 未注册->放行"缺口，ClaimRequiredGate 堵住
   "session 已注册但文件未 claim"缺口。allow_overlap=True 同时放行二者。
 
 Usage::
@@ -71,7 +71,7 @@ def make_session_required_gate() -> GateSpec:
 
         session_id = kwargs.get("session_id", "")
 
-        # 第一道：session_id 为空或保留词 → 阻断
+        # 第一道：session_id 为空或保留词 -> 阻断
         if session_id in _RESERVED_SESSION_IDS:
             return False, (
                 f"commit 必须提供有效 session_id（当前='{session_id}'，属保留词）。"
@@ -79,11 +79,11 @@ def make_session_required_gate() -> GateSpec:
                 f"逃生通道：commit(allow_overlap=True)。"
             )
 
-        # 第二道：session_id 非空但未注册 → 阻断
+        # 第二道：session_id 非空但未注册 -> 阻断
         try:
             info = gateway._registry.get_session(session_id)
         except Exception:
-            # registry 读取异常 → 安全降级放行
+            # registry 读取异常 -> 安全降级放行
             # 理由：registry 故障不应卡死 commit 工作流（与 ClaimRequiredGate 一致）
             return True, ""
 

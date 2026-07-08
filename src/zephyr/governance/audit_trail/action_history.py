@@ -21,11 +21,11 @@
 
 去重规则
 --------
-  identical_3x  → WARN  + 写入 loop_events
-  identical_5x  → BLOCK + 拒绝执行
-  no_effect_3x  → WARN  + 检测无效果动作链
-  spiral_5x     → HALT  + 系统介入（自修复螺旋）
-  semantic_10x  → KILL_SWITCH（疑似 runaway agent）
+  identical_3x  -> WARN  + 写入 loop_events
+  identical_5x  -> BLOCK + 拒绝执行
+  no_effect_3x  -> WARN  + 检测无效果动作链
+  spiral_5x     -> HALT  + 系统介入（自修复螺旋）
+  semantic_10x  -> KILL_SWITCH（疑似 runaway agent）
 """
 
 from __future__ import annotations

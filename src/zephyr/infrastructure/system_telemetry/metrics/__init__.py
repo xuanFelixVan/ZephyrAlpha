@@ -7,7 +7,7 @@
 # [MODIFY-GUARD] blueprint_metrics.py; facade.py
 # [CONSUMERS] facade.py; auto_bootstrap.py
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] JSONL写入失败→日志warning
+# [ERROR_CONTRACT] JSONL写入失败->日志warning
 # [TESTS] tests/infrastructure/
 # [TTL] permanent
 """遥测 · metrics — SLI/SLO 与业务指标流"""

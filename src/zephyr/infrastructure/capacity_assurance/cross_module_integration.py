@@ -17,10 +17,10 @@
 
 """Cross-module integration — CT-1~CT-4 跨模块集成契约实现（对标蓝图 §17）.
 
-CT-1: capacity-assurance → predict-router（Error Budget L3+ 触发模型路由切换）
-CT-2: capacity-assurance → market-data-ingestor（Kill Switch ON → 暂停高风险通道）
-CT-3: task-system → capacity-assurance（Token Budget 耗尽 → 返回限流而非崩溃）
-CT-4: capacity-assurance → iguana-rebalancer（资本容量告警 → 禁止新开仓）
+CT-1: capacity-assurance -> predict-router（Error Budget L3+ 触发模型路由切换）
+CT-2: capacity-assurance -> market-data-ingestor（Kill Switch ON -> 暂停高风险通道）
+CT-3: task-system -> capacity-assurance（Token Budget 耗尽 -> 返回限流而非崩溃）
+CT-4: capacity-assurance -> iguana-rebalancer（资本容量告警 -> 禁止新开仓）
 
 所有跨模块集成调用含 OTel Span 传播 + W3C TraceContext.
 """
@@ -62,10 +62,10 @@ class SpanContext:
 
 
 class PredictRouterIntegration:
-    """CT-1: capacity-assurance → predict-router.
+    """CT-1: capacity-assurance -> predict-router.
 
     Error Budget L3+ (Critical/Emergency) 触发自动模型路由切换.
-    OTel Span: capacity.alert.sent → predict.router.received
+    OTel Span: capacity.alert.sent -> predict.router.received
     """
 
     def __init__(self):
@@ -105,10 +105,10 @@ class PredictRouterIntegration:
 
 
 class MarketDataIngestorIntegration:
-    """CT-2: capacity-assurance → market-data-ingestor.
+    """CT-2: capacity-assurance -> market-data-ingestor.
 
-    Kill Switch ON → 暂停高风险通道，低风险通道（国债/货币市场）不受影响.
-    OTel Span: capacity.kill_switch → market_data.channel_pause
+    Kill Switch ON -> 暂停高风险通道，低风险通道（国债/货币市场）不受影响.
+    OTel Span: capacity.kill_switch -> market_data.channel_pause
     """
 
     LOW_RISK_CHANNELS = {"treasury", "money_market", "sofr", "libor"}
@@ -142,10 +142,10 @@ class MarketDataIngestorIntegration:
 
 
 class TaskSystemIntegration:
-    """CT-3: task-system → capacity-assurance.
+    """CT-3: task-system -> capacity-assurance.
 
-    Token Budget 耗尽 → 标记任务为 RATE_LIMITED 而非 FAILED.
-    OTel Span: task.token_deduct → capacity.token_budget
+    Token Budget 耗尽 -> 标记任务为 RATE_LIMITED 而非 FAILED.
+    OTel Span: task.token_deduct -> capacity.token_budget
     """
 
     def __init__(self, daily_budget: int = 5_000_000):
@@ -178,10 +178,10 @@ class TaskSystemIntegration:
 
 
 class IguanaRebalancerIntegration:
-    """CT-4: capacity-assurance → iguana-rebalancer.
+    """CT-4: capacity-assurance -> iguana-rebalancer.
 
-    资本容量告警 → 禁止新开仓.
-    OTel Span: capacity.capital_check → iguana.rebalance.gate
+    资本容量告警 -> 禁止新开仓.
+    OTel Span: capacity.capital_check -> iguana.rebalance.gate
     """
 
     def __init__(self, capacity_threshold: float = 0.9):

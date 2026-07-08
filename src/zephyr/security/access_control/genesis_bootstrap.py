@@ -17,7 +17,7 @@
 """GenesisBootstrap — RBAC系统启动引导器.
 
 依据蓝图 MOD-INF-018 §genesis:
-- 5阶段启动序列: COLD_START_LOCK → IMMUTABLE_CORE → KILL_SWITCH → ENGINE_DEGRADATION → BOOTSTRAP_SUPERADMIN
+- 5阶段启动序列: COLD_START_LOCK -> IMMUTABLE_CORE -> KILL_SWITCH -> ENGINE_DEGRADATION -> BOOTSTRAP_SUPERADMIN
 - 单例模式，确保全局唯一启动入口
 - 幂等性: 重复调用不会重复启动
 """

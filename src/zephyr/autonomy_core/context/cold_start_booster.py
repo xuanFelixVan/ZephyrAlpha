@@ -28,7 +28,7 @@ class ColdStartProfile:
 
 
 class ColdStartBooster:
-    """build 发现 KE count < min_count → 自动种子 KE (DD107)."""
+    """build 发现 KE count < min_count -> 自动种子 KE (DD107)."""
 
     def detect_cold_start(self, ke_count: int, min_count: int = 5) -> ColdStartProfile:
         if ke_count < min_count:

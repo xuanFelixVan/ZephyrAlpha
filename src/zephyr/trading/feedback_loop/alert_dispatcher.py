@@ -14,9 +14,9 @@
 # [TESTS] scripts/connect/fle_orc.py --trigger
 # [A_module] module_id=MOD-UNK_alert_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""FLE→Orc 告警分派器 — dispatch() 生产者
+"""FLE->Orc 告警分派器 — dispatch() 生产者
 
-CT-FLE-ORC-001: FLE 检测异常 → dispatch AlertEvent → Orc 创建修复任务。
+CT-FLE-ORC-001: FLE 检测异常 -> dispatch AlertEvent -> Orc 创建修复任务。
 """
 
 from __future__ import annotations
@@ -117,7 +117,7 @@ class AlertDispatcher:
                 blocked_tasks=blocked,
             )
             logger.info(
-                "[FLE-ORC] dispatched %s alert '%s' → task_id=%s blocked=%d",
+                "[FLE-ORC] dispatched %s alert '%s' -> task_id=%s blocked=%d",
                 event.severity.value,
                 event.title[:60],
                 task_id,

@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/money.py
 ═══════════════════════════════════════════════════════════════════════
 1. **禁止 float 参与金融计算**（浮点舍入误差累计 10 万笔单后 PnL 会漂）
 2. **所有金额强制 Decimal + Currency**（金额自带币种，跨币种运算必报错）
-3. **精度自动跟随货币**（JPY=0 位，USD=2 位，BTC=8 位），防止 1.005 → 1.01 错误舍入
+3. **精度自动跟随货币**（JPY=0 位，USD=2 位，BTC=8 位），防止 1.005 -> 1.01 错误舍入
 4. **常用运算内置**（加减乘除、比较、正负），使用体验接近 float
 
 **与 OQ-071 的关系**：
@@ -197,7 +197,7 @@ class Money:
                 f'Money.amount 禁止使用 float（{self.amount}）， 请用 str 或 Decimal 构造：Money("1234.56", "CNY")'
             )
 
-        # int / str / Decimal → Decimal（frozen=True 下用 object.__setattr__ 绕过）
+        # int / str / Decimal -> Decimal（frozen=True 下用 object.__setattr__ 绕过）
         if not isinstance(self.amount, Decimal):
             try:
                 object.__setattr__(self, "amount", Decimal(str(self.amount)))

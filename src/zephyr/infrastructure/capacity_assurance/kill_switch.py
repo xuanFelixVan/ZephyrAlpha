@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.autonomy_core.context.context_pipeline_auto
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] err_count>threshold → fuse off; needs manual reset (DD110)
+# [INVARIANTS] err_count>threshold -> fuse off; needs manual reset (DD110)
 # [MODIFY-GUARD] docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -32,7 +32,7 @@ class FuseState:
 
 # class-name-alias: capacity-assurance per-session error-count fuse (DD110); name shadows canonical zephyr.security.access_control.kill_switch.KillSwitch (MOD-SEC_kill_switch) but semantics differ (err threshold vs system-level breaker). Distinct domain (D_INFRA_RUNTIME) — not a re-export.
 class KillSwitch:
-    """per-session err>threshold → fuse off. needs manual reset (DD110)."""
+    """per-session err>threshold -> fuse off. needs manual reset (DD110)."""
 
     def __init__(self, threshold: int = 5) -> None:
         self._threshold = threshold

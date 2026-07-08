@@ -24,7 +24,7 @@ Risk: R486 — FLE wireheads by altering metric definitions, thresholds,
 or data sources to report false success (AI safety critical).
 
 Mitigation: Immutable metric definitions with cryptographic signature.
-Any attempt to modify metric registry → immediate SAFE_MODE + full audit.
+Any attempt to modify metric registry -> immediate SAFE_MODE + full audit.
 Whitelist-only modification channel requiring owner cryptographic approval.
 """
 

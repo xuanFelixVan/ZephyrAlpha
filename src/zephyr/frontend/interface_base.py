@@ -130,9 +130,9 @@ class ApprovalGatewayBase(abc.ABC):
       - pending(): 返回待审批列表
 
     典型流程：
-      1. D_PORTFOLIO_CORE/D_EXECUTION_CORE 触达风控硬限 → submit 审批请求
-      2. 人工通过 D_FRONTEND Dashboard 查看 → decide approve/reject
-      3. 审批结果写回 → D_PORTFOLIO_CORE/D_EXECUTION_CORE 继续或中止
+      1. D_PORTFOLIO_CORE/D_EXECUTION_CORE 触达风控硬限 -> submit 审批请求
+      2. 人工通过 D_FRONTEND Dashboard 查看 -> decide approve/reject
+      3. 审批结果写回 -> D_PORTFOLIO_CORE/D_EXECUTION_CORE 继续或中止
     """
 
     # 5.116.1 修复: 移除死 _registry 字段——无 __init_subclass__ 写入,无外部读取

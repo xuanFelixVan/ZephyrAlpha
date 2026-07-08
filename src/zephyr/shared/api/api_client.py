@@ -19,7 +19,7 @@
 api_client.py —— 统一 API Client 基类（Phase 7 新增 | 盲点 B11 修复）
 
 痛点修复：AI agent 调用 LLM API / 外部服务时需要手动处理 timeout、retry、circuit-breaker——
-  1. 每个 consumer 手写裸 aiohttp → 超时不统一、熔断不统一、重试不统一
+  1. 每个 consumer 手写裸 aiohttp -> 超时不统一、熔断不统一、重试不统一
   2. LLM API 调用是项目核心路径——没有统一 client = 不可预测的行为
   3. 没有内置 metrics hook——无法追踪 API 调用的成功率/延迟
 

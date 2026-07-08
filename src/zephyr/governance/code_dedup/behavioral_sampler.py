@@ -37,7 +37,7 @@ class BehavioralSampler:
     _SAMPLE_COUNT: int = 3
 
     def generate_samples(self, source: str) -> list[dict]:
-        """AST分析→生成采样输入."""
+        """AST分析->生成采样输入."""
         try:
             tree = ast.parse(source.lstrip())
         except SyntaxError:
@@ -47,7 +47,7 @@ class BehavioralSampler:
         return samples
 
     def verify_behavior(self, func_a: callable, func_b: callable, samples: list[Any]) -> BehaviorSample:
-        """对相同输入调用两个函数→输出一致=PASS."""
+        """对相同输入调用两个函数->输出一致=PASS."""
         passed = True
         for inp in samples[: self._SAMPLE_COUNT]:
             try:

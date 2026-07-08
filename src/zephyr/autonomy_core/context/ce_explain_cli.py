@@ -32,7 +32,7 @@ class InclusionRationale:
 
 
 def explain_ke(ke_id: str, *, query: str = "") -> str:
-    """CLI /ce:explain KE-0127 → JSON rationale."""
+    """CLI /ce:explain KE-0127 -> JSON rationale."""
     rationale = InclusionRationale(
         ke_id=ke_id,
         similarity_score=0.82,

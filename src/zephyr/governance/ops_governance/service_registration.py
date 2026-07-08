@@ -16,11 +16,11 @@
 # [TTL] permanent
 
 """
-D-DATA → ServiceRegistry 注册模块
+D-DATA -> ServiceRegistry 注册模块
 ==================================
 将 D-DATA 的实现注册到 shared_core.ServiceRegistry，
 使 D-INFRA 能通过 ServiceRegistry.get() 获取实现，
-消除 D-INFRA→D-DATA 的直接 import 依赖。
+消除 D-INFRA->D-DATA 的直接 import 依赖。
 """
 
 from __future__ import annotations

@@ -29,7 +29,7 @@ G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A）
 5. UTF-8 无 BOM 编码校验
 6. 输入清洗（黑名单：{{, {%, ignore all rules 等注入模式）
 7. 调用 gate_engine.py 执行 g1-ingest.yaml 门禁
-8. 状态转换：draft → raw / draft → rejected
+8. 状态转换：draft -> raw / draft -> rejected
 9. 写入 01_raw_intake/ 目录
 
 Safety : M（治理层代码，门禁失败阻断入库）

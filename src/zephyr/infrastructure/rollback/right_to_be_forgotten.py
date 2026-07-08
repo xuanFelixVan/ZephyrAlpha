@@ -24,8 +24,8 @@ Right to be Forgotten — GDPR 遗忘权合规检查器。
 
 功能：
     - right_to_be_forgotten_registry: 被遗忘权用户哈希集维护
-    - 回滚恢复含被遗忘用户数据 → 自动净化
-    - 无法自动净化 → exit 19 GDPR_BLOCKED → DEFER_TO_HUMAN
+    - 回滚恢复含被遗忘用户数据 -> 自动净化
+    - 无法自动净化 -> exit 19 GDPR_BLOCKED -> DEFER_TO_HUMAN
     - 对标 EU GDPR Article 17 "Right to be forgotten"
 """
 

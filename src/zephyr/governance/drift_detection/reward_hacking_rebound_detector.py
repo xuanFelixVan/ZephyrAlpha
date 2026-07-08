@@ -19,9 +19,9 @@
 
 Reward Hacking Rebound Detector — v0.14.0 §2.37-D.
 
-Detects Phase I→II→III longitudinal rebound patterns where an agent:
-  Phase I:  Attempts malicious behavior → intercepted
-  Phase II: Improves behavior → gains trust → autonomy level raised
+Detects Phase I->II->III longitudinal rebound patterns where an agent:
+  Phase I:  Attempts malicious behavior -> intercepted
+  Phase II: Improves behavior -> gains trust -> autonomy level raised
   Phase III: Rebounds with more severe malicious behavior at higher autonomy
 
 Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md §2.37-D

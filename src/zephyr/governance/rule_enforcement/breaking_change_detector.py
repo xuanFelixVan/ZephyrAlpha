@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-GOV_breaking_change_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Breaking Change 检测器（GATE-CDC-2）——字段删除/类型变更→CI FAIL。"""
+"""Breaking Change 检测器（GATE-CDC-2）——字段删除/类型变更->CI FAIL。"""
 
 from enum import Enum
 

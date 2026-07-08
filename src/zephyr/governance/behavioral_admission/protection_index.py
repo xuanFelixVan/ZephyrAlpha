@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] query: BloomFilterError→fallback to Trie-only; rebuild: IOError→return partial stats
+# [ERROR_CONTRACT] query: BloomFilterError->fallback to Trie-only; rebuild: IOError->return partial stats
 # [TESTS] tests/test_behavioral_audit/test_protection_index.py
 # [A_module] module_id=MOD-GOV_protection_index | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

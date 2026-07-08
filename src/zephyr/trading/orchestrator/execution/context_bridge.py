@@ -14,7 +14,7 @@
 # [TESTS] scripts/connect/orc_ce.py --trigger
 # [A_module] module_id=MOD-ORC_context_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Orc→CE 上下文桥接 — request_context() 生产者
+"""Orc->CE 上下文桥接 — request_context() 生产者
 
 CT-ORC-CE-001: 任务启动时向 Context Engine 请求构建执行上下文。
 """

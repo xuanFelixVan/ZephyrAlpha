@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/execution_report.py
 
 CTR-P1-007: ExecutionReport / 执行分析报告
 
-D_EXECUTION_CORE → D_REPORTING 执行分析报告契约（TCA 输入）。
+D_EXECUTION_CORE -> D_REPORTING 执行分析报告契约（TCA 输入）。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-007
 Version: 1.0

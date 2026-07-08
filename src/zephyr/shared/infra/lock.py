@@ -19,8 +19,8 @@
 lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点 B23 修复）
 
 痛点修复：多 Agent 并发操作时需要协调——防止重复处理同一资源——
-  1. 两个 AI agent 同时修改同一个 Task → 数据竞争
-  2. 没有 Lock 接口 → 无法在 Redis / etcd / SQL 之间切换后端
+  1. 两个 AI agent 同时修改同一个 Task -> 数据竞争
+  2. 没有 Lock 接口 -> 无法在 Redis / etcd / SQL 之间切换后端
   3. 本地 asyncio.Lock 无法跨进程/跨容器
 
 设计对标：

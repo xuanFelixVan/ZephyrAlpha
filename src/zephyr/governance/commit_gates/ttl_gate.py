@@ -26,8 +26,8 @@ gate-frontmatter / GATE-15），导致 ttl 字段校验在 gateway 路径完全�
 - pre-commit 钩子 gate-frontmatter（GATE-15）只在 ``git commit``（不带 --no-verify）时触发
 - GitCommitGateway 是项目唯一合法 commit 入口，但它用 --no-verify 绕过 pre-commit
 - 导致 ttl 字段校验（全格式：.md/.py/.sh/.ps1/.mmd/.yaml/.json）在 gateway 路径失效
-- 攻击者通过 GitCommitGateway 提交缺 ttl / ttl 值非法的文件 → gateway 不检 ttl →
-  提交成功 → ttl 约束被绕过（历史教训：2026-06-29 删除的 11 个漂移 YAML 正是利用
+- 攻击者通过 GitCommitGateway 提交缺 ttl / ttl 值非法的文件 -> gateway 不检 ttl ->
+  提交成功 -> ttl 约束被绕过（历史教训：2026-06-29 删除的 11 个漂移 YAML 正是利用
   ``# ttl: permanent`` 注释锚定自欺永久，绕过 frontmatter ttl 校验）
 
 治本方案

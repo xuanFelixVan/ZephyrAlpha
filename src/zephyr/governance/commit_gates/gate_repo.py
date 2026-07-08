@@ -23,7 +23,7 @@ gate_repo.py — gates 表持久化仓库（AUDIT-07 P1-5: 从 gate_engine.py �
 
 事务语义：
   - conn 参数非空时，不管理事务（由调用方负责 BEGIN/COMMIT/ROLLBACK）
-  - conn 参数为 None 时，自行 BEGIN IMMEDIATE → COMMIT/ROLLBACK
+  - conn 参数为 None 时，自行 BEGIN IMMEDIATE -> COMMIT/ROLLBACK
 """
 
 from __future__ import annotations

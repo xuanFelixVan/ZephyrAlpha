@@ -35,7 +35,7 @@ class EscalationLevel(str, Enum):
 
 
 class AlertEscalation(BaseModel):
-    """告警触达——触发→分级→行动→超时→自动升级。
+    """告警触达——触发->分级->行动->超时->自动升级。
 
     Re-homed from infrastructure_runtime_integration.pipeline.pipeline_roadmap.AlertEscalationTracker
     to eliminate shared->infrastructure circular import.

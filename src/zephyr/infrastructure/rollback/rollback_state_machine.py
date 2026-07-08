@@ -21,11 +21,11 @@ RollbackStateMachine — 回滚步骤级状态机。
 依据: 蓝图 MOD-INF-021 §6.10 B42, §7 Phase 5.2
 
 六步骤回滚流水线:
-    preflight → acquire_lock → git_revert → db_rebuild → verify → audit
+    preflight -> acquire_lock -> git_revert -> db_rebuild -> verify -> audit
 
 每步状态: PENDING / SUCCESS / FAILED / RETRYING
 可逆步: preflight, acquire_lock, db_rebuild, audit (可重试)
-不可逆步: git_revert (失败→forward-fix commit)
+不可逆步: git_revert (失败->forward-fix commit)
 """
 
 from __future__ import annotations

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] fetch 异常→yield FetchResult(error=str)；_ts_to_date 按 UTC 解释避免跨日
+# [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)；_ts_to_date 按 UTC 解释避免跨日
 # [TESTS] tests/zephyr/data/test_providers.py::TestMiniQMTHelpers
 # [A_module] module_id=MOD-L00-004-miniqmt_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -160,7 +160,7 @@ class MiniQMTProvider(DataSourceBase):
 
         步骤：
         1. 若 symbols 为 None，取沪深A股全部标的
-        2. 对每个 stock_code：download_history_data 下载 → get_market_data_ex 读取
+        2. 对每个 stock_code：download_history_data 下载 -> get_market_data_ex 读取
         3. DataFrame 转 tuple 列表，每个股票作为一批 yield
 
         period="1d" 时列为 trade_date+symbol+OHLCV+amount（日K）
@@ -232,7 +232,7 @@ class MiniQMTProvider(DataSourceBase):
                     [], [stock_code], period, start_str, end_str,
                 )
 
-                # 3. DataFrame → tuple 列表
+                # 3. DataFrame -> tuple 列表
                 rows = []
                 df = data.get(stock_code) if data else None
                 if df is not None and len(df) > 0:
@@ -250,7 +250,7 @@ class MiniQMTProvider(DataSourceBase):
                     for i in range(len(times)):
                         s = str(times[i])
                         if is_daily:
-                            # 日K：YYYYMMDD（8 位）→ YYYY-MM-DD
+                            # 日K：YYYYMMDD（8 位）-> YYYY-MM-DD
                             trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
                             # volume 在 ClickHouse 中是 UInt64，需转 int
                             vol = self.safe_float(volumes[i])
@@ -266,7 +266,7 @@ class MiniQMTProvider(DataSourceBase):
                                 self.safe_float(amounts[i]),
                             ))
                         else:
-                            # 分钟K：YYYYMMDDHHMMSS（14 位）→ 拆分 date 和 datetime
+                            # 分钟K：YYYYMMDDHHMMSS（14 位）-> 拆分 date 和 datetime
                             trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
                             trade_time = (
                                 f"{s[:4]}-{s[4:6]}-{s[6:8]} "
@@ -433,7 +433,7 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 指数成分股 ==============
 
-    # 板块名 → 指数代码映射（与 c1_market.index_constituent 现有数据一致）
+    # 板块名 -> 指数代码映射（与 c1_market.index_constituent 现有数据一致）
     _INDEX_SECTOR_MAP = {
         "上证50": "000016.SH",
         "沪深300": "000300.SH",
@@ -591,7 +591,7 @@ class MiniQMTProvider(DataSourceBase):
                 except Exception:
                     name = ""
 
-                # 4. DataFrame → tuple 列表
+                # 4. DataFrame -> tuple 列表
                 rows = []
                 df = data.get(index_code) if data else None
                 if df is not None and len(df) > 0:
@@ -604,7 +604,7 @@ class MiniQMTProvider(DataSourceBase):
                     amounts = df["amount"].tolist()
                     for i in range(len(times)):
                         s = str(times[i])
-                        # 日K索引 YYYYMMDD（8位）→ YYYY-MM-DD
+                        # 日K索引 YYYYMMDD（8位）-> YYYY-MM-DD
                         trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
                         vol = self.safe_float(volumes[i])
                         # volume 是 UInt64，负值（某些计算指数）转为 0
@@ -645,12 +645,12 @@ class MiniQMTProvider(DataSourceBase):
 
     @staticmethod
     def _date_to_str(d: datetime.date) -> str:
-        """datetime.date → "YYYYMMDD" 字符串。"""
+        """datetime.date -> "YYYYMMDD" 字符串。"""
         return d.strftime("%Y%m%d")
 
     @staticmethod
     def _ts_to_date(ts_ms) -> str:
-        """毫秒时间戳 → "YYYY-MM-DD" 字符串（按 UTC 解释，避免本地时区跨日）。
+        """毫秒时间戳 -> "YYYY-MM-DD" 字符串（按 UTC 解释，避免本地时区跨日）。
 
         xtquant 返回的 time 列为中国市场收盘后的毫秒时间戳，但 trade_date
         只取日期部分，使用 UTC 解释可避免本地时区偏移导致跨日。
@@ -659,7 +659,7 @@ class MiniQMTProvider(DataSourceBase):
 
     @staticmethod
     def _ts_to_datetime(ts_ms) -> str:
-        """毫秒时间戳 → "YYYY-MM-DD HH:MM:SS" 字符串（按 UTC 解释）。
+        """毫秒时间戳 -> "YYYY-MM-DD HH:MM:SS" 字符串（按 UTC 解释）。
 
         分钟K线需要完整时间戳，用于 trade_time 列。
         """
@@ -667,7 +667,7 @@ class MiniQMTProvider(DataSourceBase):
 
     @staticmethod
     def _stock_to_symbol(stock_code: str) -> str:
-        """stock_code 去后缀："000001.SZ" → "000001"。"""
+        """stock_code 去后缀："000001.SZ" -> "000001"。"""
         return stock_code.split(".")[0]
 
     @staticmethod

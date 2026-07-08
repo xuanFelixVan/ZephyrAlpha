@@ -29,7 +29,7 @@ class ModelStrategy:
 
 
 class ContextModelStrategy:
-    """task_type→model selection: simple task→small model, complex→large (DD118)."""
+    """task_type->model selection: simple task->small model, complex->large (DD118)."""
 
     _STRATEGIES: dict[str, ModelStrategy] = {
         "CODE_GEN": ModelStrategy("CODE_GEN", "L2", "Qwen2.5-3B-Instruct", "Qwen2.5-Coder-7B"),

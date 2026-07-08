@@ -46,7 +46,7 @@ Usage（每个 TRAE AI 对话侧）::
         except Exception as e:
             bo.mark_failed(card.task_id, str(e))
 
-    print(bo.progress())    # → {'READY': 0, 'IN_PROGRESS': 0,
+    print(bo.progress())    # -> {'READY': 0, 'IN_PROGRESS': 0,
                             #    'COMPLETED': 943, 'FAILED': 2, 'TOTAL': 945}
 """
 
@@ -121,7 +121,7 @@ class BatchOrchestrator:  # 5.143.3 修复: 移除Protocol显式继承, Protocol
         self._repo.transition(task_id, "FAILED")
 
     def recover_stale_claims(self) -> int:
-        """释放超时未完成的 IN_PROGRESS 任务 → 回到 READY。"""
+        """释放超时未完成的 IN_PROGRESS 任务 -> 回到 READY。"""
         return self._repo.recover_stale_claims(self.batch_id, self._stale_timeout)
 
     def progress(self) -> BatchProgress:

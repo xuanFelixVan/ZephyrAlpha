@@ -20,7 +20,7 @@
 Blindspot: FLE action log tamperable; no cryptographic chain of trust from genesis.
 Risk: R204 — Attacker rewrites FLE audit trail; first recorded state is fiction.
 
-Mitigation: Genesis→Current hash chain; every state transition cryptographically linked to predecessor.
+Mitigation: Genesis->Current hash chain; every state transition cryptographically linked to predecessor.
 """
 
 from __future__ import annotations

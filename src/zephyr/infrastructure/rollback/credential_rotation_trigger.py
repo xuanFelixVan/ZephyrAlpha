@@ -22,7 +22,7 @@ CredentialRotationTrigger — 凭据自动轮替。
 
 回滚可能恢复含旧凭据的配置文件。
 回滚后自动触发凭据轮替——轮替成功的凭据标记为已过期。
-若检测到凭据泄露 → exit 43 (CREDENTIAL_LEAK_DETECTED)。
+若检测到凭据泄露 -> exit 43 (CREDENTIAL_LEAK_DETECTED)。
 """
 
 from __future__ import annotations

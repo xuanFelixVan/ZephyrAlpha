@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/capital_allocation_result.py
 
 CTR-P1-003: CapitalAllocationResult / 资本配置结果
 
-D_SIGNAL → D_PORTFOLIO_CORE 资本配置结果契约。多策略资本分配的中间产物。
+D_SIGNAL -> D_PORTFOLIO_CORE 资本配置结果契约。多策略资本分配的中间产物。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-003
 Version: 1.0

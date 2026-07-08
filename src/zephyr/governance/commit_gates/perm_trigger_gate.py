@@ -38,7 +38,7 @@
      ``APScheduler`` / ``BackgroundScheduler`` / ``BlockingScheduler`` 标识符
   3. 事件订阅：``.subscribe(`` 调用 / ``@subscriber`` 装饰器 /
      ``@event_handler`` 装饰器 / ``register_handler(`` 调用 / ``event_bus.`` 属性访问
-  4. 时间触发存在但事件订阅缺失 → 违规
+  4. 时间触发存在但事件订阅缺失 -> 违规
 
 设计权衡
 --------

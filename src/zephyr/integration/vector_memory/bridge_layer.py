@@ -22,9 +22,9 @@ BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接
 
 功能
 ----
-- search_both(): 同时检索 kb/ 旧 Collection 和 VMS 新 Collection → 合并去重
-- migrate_collection(): 从 kb/ 读取数据 → 写入 VMS（含维度转换）
-- dry_run_topic_split(): unified_memory → target Collection 映射预览
+- search_both(): 同时检索 kb/ 旧 Collection 和 VMS 新 Collection -> 合并去重
+- migrate_collection(): 从 kb/ 读取数据 -> 写入 VMS（含维度转换）
+- dry_run_topic_split(): unified_memory -> target Collection 映射预览
 """
 
 from __future__ import annotations
@@ -213,12 +213,12 @@ class BridgeLayer:
             for meta in metas:
                 m = dict(meta or {})
                 m["migrated_from"] = source_kb
-                m["migration_dim_change"] = f"{mapping['source_dim']}→{mapping['target_dim']}"
+                m["migration_dim_change"] = f"{mapping['source_dim']}->{mapping['target_dim']}"
                 new_metas.append(m)
 
             target_col.add(ids=new_ids, documents=docs, metadatas=new_metas)
 
-        _logger.info("BridgeLayer: 迁移完成 %s → %s (%d 条)", source_kb, target_vms, len(source_data.get("ids", [])))
+        _logger.info("BridgeLayer: 迁移完成 %s -> %s (%d 条)", source_kb, target_vms, len(source_data.get("ids", [])))
         return target_info
 
     @staticmethod
@@ -254,7 +254,7 @@ class BridgeLayer:
         return results
 
     def dual_read_mode(self, collection_name: str, query: str, k: int = 5) -> dict[str, Any]:
-        _logger.info("BridgeLayer: 进入双读模式 → collection=%s (mitigates R14)", collection_name)
+        _logger.info("BridgeLayer: 进入双读模式 -> collection=%s (mitigates R14)", collection_name)
         return self.search_both(query, collection_name, k)
 
     def mark_deprecated_after_migration(self) -> bool:

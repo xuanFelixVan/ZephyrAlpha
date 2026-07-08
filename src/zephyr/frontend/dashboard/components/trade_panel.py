@@ -21,10 +21,10 @@
 渲染依赖: Panel(布局) + ChartFactory.make_orderflow(订单表格)
 
 v3.0.0 变更 (#ARCH-047):
-  - Streamlit → Panel (布局)
-  - Markdown 订单列表 → ChartFactory.make_orderflow (callback仅编排)
-  - streamlit.form → pn.widgets.Form (Panel 表单)
-  - streamlit.dialog → pn.modals.Modal (Panel 二次确认弹窗)
+  - Streamlit -> Panel (布局)
+  - Markdown 订单列表 -> ChartFactory.make_orderflow (callback仅编排)
+  - streamlit.form -> pn.widgets.Form (Panel 表单)
+  - streamlit.dialog -> pn.modals.Modal (Panel 二次确认弹窗)
 
 安全约束（蓝图 §16.7.5 D）:
   - human_gated: 实盘交易面板接入需 Owner 审批
@@ -186,7 +186,7 @@ def build_risk_warning(
         f"  价格: {sub.price:.3f}" + (f" (限价)" if sub.order_type == "limit" else " (市价参考)"),
         f"  算法: {sub.order_type.upper()}",
         f"  预估金额: {amount:,.2f}",
-        f"  资金影响: 可用资金 {available_cash:,.2f} → {cash_after:,.2f}",
+        f"  资金影响: 可用资金 {available_cash:,.2f} -> {cash_after:,.2f}",
     ]
     if is_t_plus_1_relevant and sub.side == "buy":
         lines.append("  T+1 提示: 买入当日不可卖出，次日方可卖出")

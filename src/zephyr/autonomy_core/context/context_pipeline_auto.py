@@ -45,7 +45,7 @@ __all__ = ["ContextPipelineAuto"]
 class ContextPipelineAuto:
     """ContextPipeline 自动化包装器——三层自动化机制。
 
-    自动启动 → 事件启动 → 自动运行 → 自动关闭
+    自动启动 -> 事件启动 -> 自动运行 -> 自动关闭
     """
 
     def __init__(

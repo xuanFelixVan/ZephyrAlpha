@@ -21,8 +21,8 @@ RollbackWAL — 回滚预写日志。
 依据: 蓝图 MOD-INF-021 §7 Phase 10 + §6.17 B127 + exit code 45
 
 回滚操作本身的 WAL (Write-Ahead Log):
-    每次回滚前记入 WAL → 确保回滚本身可回滚。
-    WAL 不完整 → exit 45 (ROLLBACK_WAL_INCOMPLETE)。
+    每次回滚前记入 WAL -> 确保回滚本身可回滚。
+    WAL 不完整 -> exit 45 (ROLLBACK_WAL_INCOMPLETE)。
 """
 
 from __future__ import annotations

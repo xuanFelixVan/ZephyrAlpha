@@ -18,11 +18,11 @@
 """gate_statistics · 门禁统计组件（v3.1.0 Panel 迁移, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §3.1
-数据源: OLAPEngine.get_gate_summary() → 通过率/阻断率/各门禁明细
+数据源: OLAPEngine.get_gate_summary() -> 通过率/阻断率/各门禁明细
 渲染依赖: Panel(布局) + ChartFactory.make_gate_chart(堆叠条形图)
 
 v3.1.0 变更 (#ARCH-047):
-  - Streamlit(st.metric) → Panel(pn.pane.Markdown 指标卡片)
+  - Streamlit(st.metric) -> Panel(pn.pane.Markdown 指标卡片)
   - 图表生成委托 ChartFactory.make_gate_chart (callback仅编排)
   - 测试环境(无 panel)仅返回 dict payload, 便于断言
 """

@@ -32,7 +32,7 @@ class PipelineTraceSpan:
 
 
 class OTelInstrumentation:
-    """OTEL trace Orc→CE.build→compress→validate→inject→Agent Action (DD86)."""
+    """OTEL trace Orc->CE.build->compress->validate->inject->Agent Action (DD86)."""
 
     def __init__(self) -> None:
         self._spans: list[PipelineTraceSpan] = []

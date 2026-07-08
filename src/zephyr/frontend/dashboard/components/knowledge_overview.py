@@ -22,7 +22,7 @@
 渲染依赖: Panel(布局) — 指标卡片+分布表，无专业图表需求故不调用 ChartFactory
 
 v3.1.0 变更 (#ARCH-047):
-  - Streamlit(st.metric) → Panel(pn.pane.Markdown 指标卡片 + 分布表)
+  - Streamlit(st.metric) -> Panel(pn.pane.Markdown 指标卡片 + 分布表)
   - callback仅编排: 数据计算在 fetch_knowledge_overview(纯函数)
   - 测试环境(无 panel)仅返回 dict payload, 便于断言
 """

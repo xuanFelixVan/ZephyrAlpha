@@ -36,7 +36,7 @@ CTR 契约依赖声明（承重墙标记）
   - CTR-P1-012  ComplianceRule         ← D_COMPLIANCE（规则由本层定义，反馈闭环）
 
 作为生产者（Producer）：
-  - CTR-P1-012  ComplianceRule         → D_RISK, D_EXECUTION_CORE, D_COMPLIANCE
+  - CTR-P1-012  ComplianceRule         -> D_RISK, D_EXECUTION_CORE, D_COMPLIANCE
 
 作为全局配置消费者（Consumer）：
   - CTR-P1-010  SystemConfiguration    ← 基础设施

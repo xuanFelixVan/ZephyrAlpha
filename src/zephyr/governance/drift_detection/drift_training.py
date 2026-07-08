@@ -25,7 +25,7 @@ Drift Detector AI 训练闭环 + 跨语言检测 — drift_training.py
 module_id: MOD-INF-023 (SRC-0034)
 
 
-漂移事件 → 训练模式提取 → Prompt 注入 → 效果追踪 → 跨语言漂移检测框架。
+漂移事件 -> 训练模式提取 -> Prompt 注入 -> 效果追踪 -> 跨语言漂移检测框架。
 
 
 从 drift_engine.py 提取，对标 blueprint.md §6.12/§6.18。"""

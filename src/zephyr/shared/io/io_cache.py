@@ -22,7 +22,7 @@ io_cache.py - File-level I/O cache with LRU eviction
 SSoT: MOD-RESOURCE_OPTIMIZATION_ENGINE resource-optimization-engine/blueprint.md §11 Phase 2
 
 Design:
-  - Cache key = (file_path, mtime) → file changes auto-invalidate
+  - Cache key = (file_path, mtime) -> file changes auto-invalidate
   - LRU eviction when max_entries reached
   - Supports YAML and JSON files
   - Memory usage tracking

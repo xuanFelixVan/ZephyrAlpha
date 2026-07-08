@@ -35,14 +35,14 @@ checks:
     parser: yaml
 
   - check_id: "gct024_escalation_bridge"
-    description: "G-CT-006 Budget→Escalation 桥接通路"
+    description: "G-CT-006 Budget->Escalation 桥接通路"
     severity: hard
     rule_ids:
       - TRAE-019
     runner: "python -c \"from zephyr.escalation_engine.budget_handler import on_budget_alert; from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert; a=BudgetAlert(alert_id='B001'); r=on_budget_alert(a); assert r is not None; print('G-CT-006 OK')\""
 
   - check_id: "gct024_rbac_bridge"
-    description: "G-CT-007 Budget→RBAC 桥接通路"
+    description: "G-CT-007 Budget->RBAC 桥接通路"
     severity: hard
     rule_ids:
       - TRAE-019

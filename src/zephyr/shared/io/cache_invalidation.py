@@ -36,7 +36,7 @@ class CacheVersion:
 
 
 class CacheInvalidationManager:
-    """Mem/Redis 缓存 + event-driven KE update → cache invalidation (DD113).
+    """Mem/Redis 缓存 + event-driven KE update -> cache invalidation (DD113).
 
     提供：
     - 自动失效：set_version 时自动调用已注册的失效回调
@@ -73,7 +73,7 @@ class CacheInvalidationManager:
     ) -> None:
         """注册失效回调——当 key 的版本被更新（set_version/bump_version）时自动调用。
 
-        允许数据更新组件订阅缓存失效事件，实现数据更新→缓存自动失效。
+        允许数据更新组件订阅缓存失效事件，实现数据更新->缓存自动失效。
         """
         self._handlers.setdefault(key, []).append(handler)
 

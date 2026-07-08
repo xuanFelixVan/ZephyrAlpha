@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] write_result失败→返回False+log; _wsl_ch超时→subprocess.TimeoutExpired; 查询失败→返回空字符串
+# [ERROR_CONTRACT] write_result失败->返回False+log; _wsl_ch超时->subprocess.TimeoutExpired; 查询失败->返回空字符串
 # [TESTS] tests/zephyr/data/test_ch_writer.py
 # [A_module] module_id=MOD-L00-004-ch_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -18,14 +18,14 @@
 
 封装 WSL clickhouse-client 调用，提供：
 - write_result(result): 把 FetchResult.rows 转 TSV 写入 CH
-- tsv_escape(v): 转义字段值（None/NaN → \\N，字符串去换行制表符）
+- tsv_escape(v): 转义字段值（None/NaN -> \\N，字符串去换行制表符）
 - delete_where(table, condition): 写前删除（MergeTree 幂等性）
 - query(sql): 查询 CH（用于 DESCRIBE TABLE 获取列清单）
 
 幂等性策略（§7.3）：
-- ReplacingMergeTree → 直接 INSERT（重复键由 CH 后台合并）
-- MergeTree → 写前 DELETE WHERE date = today()
-- 临时表 → staging + INSERT SELECT DISTINCT（阶段3+ 实现）
+- ReplacingMergeTree -> 直接 INSERT（重复键由 CH 后台合并）
+- MergeTree -> 写前 DELETE WHERE date = today()
+- 临时表 -> staging + INSERT SELECT DISTINCT（阶段3+ 实现）
 
 设计要点：
 - 不依赖 tmp/_ds_common.py（TTL=task_bound，src/ 不能长期依赖 tmp/）
@@ -93,7 +93,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
 def tsv_escape(v) -> str:
     """转义字段值用于 TSV。
 
-    - None / NaN → ``\\N``
+    - None / NaN -> ``\\N``
     - 字符串去掉换行制表符（替换为空格）
     - 反斜杠转义
 
@@ -249,7 +249,7 @@ def write_result(
                 keep_indices = [i for i, c in enumerate(result.columns) if c in table_cols]
                 rows = [tuple(row[i] for i in keep_indices) for row in result.rows]
                 log.info(
-                    "write_result(%s): 列过滤 %d→%d（忽略 %d 个不匹配列）",
+                    "write_result(%s): 列过滤 %d->%d（忽略 %d 个不匹配列）",
                     result.table, len(result.columns), len(common_cols),
                     len(result.columns) - len(common_cols),
                 )

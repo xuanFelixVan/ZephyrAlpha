@@ -28,8 +28,8 @@ degrades slowly with no one understanding why.
 
 Mitigation: Correlate failure occurrences with environmental context (time
 of day, day of week, load level, preceding actions, active features). When
-same failure type occurs only under specific conditions → flag as
-intermittent pattern → surface the triggering conditions for diagnosis.
+same failure type occurs only under specific conditions -> flag as
+intermittent pattern -> surface the triggering conditions for diagnosis.
 """
 
 from __future__ import annotations

@@ -27,14 +27,14 @@ MOD-INF-011 (vector-memory) ↔ MOD-CONTEXT_ENGINE (kb) 统一桥接
 
 路由策略
 --------
-- write(topic) → BridgeLayer.TOPIC_TO_COLLECTION 映射到 VMS Collection
+- write(topic) -> BridgeLayer.TOPIC_TO_COLLECTION 映射到 VMS Collection
   未匹配的 topic 写入 "knowledge"（默认兜底）
-- recall(topic) → VMS.recall(collection_name)
-- search(query) → VMS.search(collection_name, query) 使用 HybridRetriever
+- recall(topic) -> VMS.recall(collection_name)
+- search(query) -> VMS.search(collection_name, query) 使用 HybridRetriever
 
 降级链
 ------
-VMSMemoryBackend → InMemoryMemoryBackend
+VMSMemoryBackend -> InMemoryMemoryBackend
 """
 
 from __future__ import annotations

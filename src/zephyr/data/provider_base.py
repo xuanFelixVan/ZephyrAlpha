@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] _call_with_policy 超时/异常→RuntimeError；retry_exhausted→RuntimeError
+# [ERROR_CONTRACT] _call_with_policy 超时/异常->RuntimeError；retry_exhausted->RuntimeError
 # [TESTS] tests/zephyr/data/test_provider_base.py
 # [A_module] module_id=MOD-L00-004-provider_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

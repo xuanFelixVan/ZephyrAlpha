@@ -15,12 +15,12 @@
 # [A_module] module_id=MOD-INF_a2a_debate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 结构化辩论协议 — 多轮主张→反驳→合成
+"""A2A 结构化辩论协议 — 多轮主张->反驳->合成
 
 当两个 Agent 对同一决策持不同意见时，触发结构化辩论:
   Round 1: Agent A 主张 + Agent B 主张
   Round 2: Agent A 反驳B + Agent B 反驳A
-  Round 3: Agent A 综合 + Agent B 综合 → Synthesis(共识输出)
+  Round 3: Agent A 综合 + Agent B 综合 -> Synthesis(共识输出)
 
 输出: DebateResult — winner/consensus/synthesis
 """
@@ -59,7 +59,7 @@ class DebateResult:
 class A2ADebate:
     """A2A 结构化辩论协议.
 
-    三轮递进式辩论: claim → rebuttal → synthesis
+    三轮递进式辩论: claim -> rebuttal -> synthesis
     max_rounds=3 为默认深度，Phase 3+ 可扩展到 N+1 模式.
     """
 

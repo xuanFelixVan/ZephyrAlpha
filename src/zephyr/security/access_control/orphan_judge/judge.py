@@ -148,7 +148,7 @@ class _CheckerProto(Protocol):
 
 
 class _DuplicateDetectorAdapter:
-    """适配已有 DuplicateDetector.detect() → LayerResult check() 协议"""
+    """适配已有 DuplicateDetector.detect() -> LayerResult check() 协议"""
 
     def __init__(self, detector: Any) -> None:
         self._detector = detector
@@ -190,9 +190,9 @@ def _create_l2_checker() -> Any:
 
 
 class OrphanJudge:
-    """孤儿判定主控类——五层判定→决策路由→安全围栏→处置建议
+    """孤儿判定主控类——五层判定->决策路由->安全围栏->处置建议
 
-    编排 L0(注册检查)→L1(引用图)→L2(重复检测)→L3(独特价值)→L4(独立价值)
+    编排 L0(注册检查)->L1(引用图)->L2(重复检测)->L3(独特价值)->L4(独立价值)
     五层判定，经12行决策表路由，安全围栏兜底，输出确定性处置建议。
     """
 
@@ -256,7 +256,7 @@ class OrphanJudge:
         return judgment
 
     def judge(self, path: str, dry_run: bool = True) -> Judgment:
-        """单文件判定：L0→L1→L2→L3→L4→决策表→安全围栏→处置建议"""
+        """单文件判定：L0->L1->L2->L3->L4->决策表->安全围栏->处置建议"""
         target = Path(path)
         if not target.exists():
             raise OrphanJudgeError("File not found")

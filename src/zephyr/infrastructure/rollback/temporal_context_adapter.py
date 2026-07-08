@@ -20,9 +20,9 @@ TemporalContextAdapter — AI 时间上下文断裂修复。
 
 依据: 蓝图 MOD-INF-021 §6.12 B70 + exit code 26
 
-AI agent 回滚后时间上下文断裂 → NTP time attestation + TOTP 时间证明。
-Agent 恢复时提交时间证明 → Adapter 验证 → 对齐 AI 上下文。
-验伪失败 → exit code 26 (TIME_ATTEST_FAIL)。
+AI agent 回滚后时间上下文断裂 -> NTP time attestation + TOTP 时间证明。
+Agent 恢复时提交时间证明 -> Adapter 验证 -> 对齐 AI 上下文。
+验伪失败 -> exit code 26 (TIME_ATTEST_FAIL)。
 """
 
 from __future__ import annotations

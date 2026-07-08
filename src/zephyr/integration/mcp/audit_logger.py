@@ -17,7 +17,7 @@
 
 """MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。
 
-盲点关闭：B9（缺审计日志 → 无 trace/无 accountability）。
+盲点关闭：B9（缺审计日志 -> 无 trace/无 accountability）。
 
 审计字段：
 - timestamp + client_session_id + tool_name + arguments_hash

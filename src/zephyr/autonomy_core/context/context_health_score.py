@@ -28,7 +28,7 @@ class HealthScoreReport:
 
 
 class ContextHealthScore:
-    """PCA of 30 sub-metrics → Unified Health Score(0-100) (DD80)."""
+    """PCA of 30 sub-metrics -> Unified Health Score(0-100) (DD80)."""
 
     def compute(self, metrics: dict[str, float]) -> HealthScoreReport:
         if not metrics:

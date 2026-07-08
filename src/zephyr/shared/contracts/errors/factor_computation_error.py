@@ -20,7 +20,7 @@ CTR-ERR-002: FactorComputationError / 因子计算失败错误
 
 D_FACTOR 因子计算过程中遇到无法处理的异常时抛出的错误。
 
-SSoT: cross_layer_contracts.yaml → CTR-ERR-002
+SSoT: cross_layer_contracts.yaml -> CTR-ERR-002
 Version: 1.0
 Status: AUTO-GENERATED — DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

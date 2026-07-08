@@ -31,7 +31,7 @@
 #   - docs/02_enterprise_architecture/gate-strategy-standard.md（5 道 Gate）
 #   - T-2-23-A Session 状态机规则（已完成）
 #
-# 关联任务：T-2-23-C 本文件 → T-2-29（contract_template_manager.py）→ T-3-04（MCP Server 实现）
+# 关联任务：T-2-23-C 本文件 -> T-2-29（contract_template_manager.py）-> T-3-04（MCP Server 实现）
 
 module_id: MOD-INF-013
 schema_version: "1.0.0"
@@ -196,7 +196,7 @@ task_manager:
       errors: ["ZA-TSK-0003", "ZA-TSK-0004"]
 
     - name: task_manager.decompose_blueprint
-      description: "拆解蓝图 Markdown → 子任务 ID 列表与依赖图"
+      description: "拆解蓝图 Markdown -> 子任务 ID 列表与依赖图"
       safety_level: M
       stability: stable
       rate_limit_qps: 2
@@ -666,7 +666,7 @@ session_handoff:
 intent_router:
   server_id: intent_router
   version: "1.0.0"
-  description: "自然语言 → 10 域 + directive 链路由；包装 intent_keyword_mapper（Stage 1）/ embedding / llm 三阶段（ADR-0035）"
+  description: "自然语言 -> 10 域 + directive 链路由；包装 intent_keyword_mapper（Stage 1）/ embedding / llm 三阶段（ADR-0035）"
   status: beta
   backend:
     - "src/zephyr/context-engine/intent_keyword_mapper.py (Stage 1, T-2-21)"
@@ -707,7 +707,7 @@ intent_router:
   tools:
 
     - name: intent_router.map_intent
-      description: "核心意图路由；自动级联 Stage 1 → 2 → 3"
+      description: "核心意图路由；自动级联 Stage 1 -> 2 -> 3"
       safety_level: L
       stability: beta
       rate_limit_qps: 20
@@ -786,7 +786,7 @@ intent_router:
 blueprint_search:
   server_id: blueprint_search
   version: "1.0.0"
-  description: "任务描述 → 相关蓝图路由（关键词检索 config/blueprint_routing.yaml；stdio BaseMCPServer）"
+  description: "任务描述 -> 相关蓝图路由（关键词检索 config/blueprint_routing.yaml；stdio BaseMCPServer）"
   status: experimental
   backend:
     - "src/zephyr/mcp/blueprint_search_server.py"
@@ -1156,7 +1156,7 @@ changelog:
     author: "Trae GLM-5.1 (#12 裁定执行)"
     changes:
       - "#12 裁定：字段对齐 task-card-standard.md v2.0"
-      - "name → title（对齐 Jira Summary / Linear Title）"
+      - "name -> title（对齐 Jira Summary / Linear Title）"
       - "新增 priority 字段（P0-P3，对齐 Jira Priority）"
       - "新增 model_rationale / actual_hours / files_in_scope / tags / completed_at 字段"
       - "definitions.Task 新增所有 v2.0 字段"
@@ -1168,7 +1168,7 @@ changelog:
       - "#21 裁定修订：task_id 格式从 T-{SEQ} 改为 {NAMESPACE}-{SEQ}（对齐真源文件 metadata_registry.yaml §7.2）"
       - "新增 namespace 字段（ADR/CP/KE/STD/DW/SRC/OPS）和 seq 字段"
       - "create_task 接口：required 改为 [namespace, phase, name, directive]，新增 files 参数（N:N 映射）"
-      - "definitions.Task：删 file_path，加 namespace/seq，修正 classification 枚举（restricted→confidential），修正 evolution_policy 枚举（experimental→rewritable）"
+      - "definitions.Task：删 file_path，加 namespace/seq，修正 classification 枚举（restricted->confidential），修正 evolution_policy 枚举（experimental->rewritable）"
       - "get_task 的 task_id pattern 改为 ^T-\\d+$"
   - version: "1.0.0"
     date: "2026-04-24"
@@ -1293,7 +1293,7 @@ vector_memory:
   tools:
 
     - name: vector-memory.search
-      description: "语义检索——HybridRetriever(Vector+BM25+RRF) → EmbeddingRouter 双模型降级，跨8 Collection"
+      description: "语义检索——HybridRetriever(Vector+BM25+RRF) -> EmbeddingRouter 双模型降级，跨8 Collection"
       safety_level: L
       stability: beta
       rate_limit_qps: 20

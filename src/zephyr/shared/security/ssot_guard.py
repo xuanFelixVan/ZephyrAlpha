@@ -33,13 +33,13 @@ safety_level : H（治理层代码）
 
 真源
 ----
-- ``REGISTRY_REL_PATH`` → ``docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml``
+- ``REGISTRY_REL_PATH`` -> ``docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml``
 
 检查项
 ------
-C-1  新增治理敏感文件 → 注册表必须在同一 commit 中同步暂存
-C-2  注册表已暂存    → 声明的所有路径必须在磁盘上真实存在
-C-3  删除治理敏感文件 → 注册表必须在同一 commit 中同步暂存
+C-1  新增治理敏感文件 -> 注册表必须在同一 commit 中同步暂存
+C-2  注册表已暂存    -> 声明的所有路径必须在磁盘上真实存在
+C-3  删除治理敏感文件 -> 注册表必须在同一 commit 中同步暂存
 C-4  注册表路径声明格式必须合法（不允许绝对路径、反斜杠分隔符）
 
 治理敏感路径（WATCHED_PREFIXES）
@@ -419,7 +419,7 @@ class SsotGuard:
         declared = _extract_declared_paths(content)
         missing: list[str] = []
         for p in declared:
-            # 归一化：Windows 反斜杠 → 正斜杠，再用 Path 解析
+            # 归一化：Windows 反斜杠 -> 正斜杠，再用 Path 解析
             normalized = p.replace("\\", "/")
             full = self._repo_root / normalized
             if full.suffix and not full.exists():

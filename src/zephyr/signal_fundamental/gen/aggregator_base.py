@@ -29,17 +29,17 @@ D_SIGNAL — Signal Generation Layer
 
 核心职责：
   - 多因子信号聚合（Alpha / Macro / Sentiment / Flow 多域信号融合）
-  - 信号合成（→ SynthesizedSignal）传递给 D_RISK/D_PORTFOLIO_CORE
-  - 资本配置（→ CapitalAllocationResult）传递给 D_PORTFOLIO_CORE
-  - 信号质量降级检测（→ SignalDegradationWarning）通知 D_RISK/D_PORTFOLIO_CORE
+  - 信号合成（-> SynthesizedSignal）传递给 D_RISK/D_PORTFOLIO_CORE
+  - 资本配置（-> CapitalAllocationResult）传递给 D_PORTFOLIO_CORE
+  - 信号质量降级检测（-> SignalDegradationWarning）通知 D_RISK/D_PORTFOLIO_CORE
 
 扩展点：
-  - SignalAggregatorBase : OCP D_SIGNAL-AGG — 因子信号 → 合成信号
-  - CapitalAllocatorBase  : OCP D_SIGNAL-ALC — 合成信号 → 资本配置
+  - SignalAggregatorBase : OCP D_SIGNAL-AGG — 因子信号 -> 合成信号
+  - CapitalAllocatorBase  : OCP D_SIGNAL-ALC — 合成信号 -> 资本配置
   - DegradationMonitorBase: OCP D_SIGQC-DEG — 信号质量降级检测（真源已迁移至
     zephyr.signal_quality.degradation_monitor_base，D_SIGQC 域；本模块 re-export 向后兼容）
 
-依赖方向：D_FACTOR → D_SIGNAL → D_RISK/D_PORTFOLIO_CORE
+依赖方向：D_FACTOR -> D_SIGNAL -> D_RISK/D_PORTFOLIO_CORE
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ class SignalAggregatorBase(abc.ABC):
     """
     信号聚合器抽象基类（OCP 扩展点 D_SIGNAL-AGG）
 
-    契约对齐：CTR-002（FactorSignal 入站）→ CTR-P1-015（SynthesizedSignal 出站）
+    契约对齐：CTR-002（FactorSignal 入站）-> CTR-P1-015（SynthesizedSignal 出站）
 
     实现者要求：
       - aggregate(): 接收一批 FactorSignal，聚合为单个标的的合成信号
@@ -82,7 +82,7 @@ class CapitalAllocatorBase(abc.ABC):
     """
     资本配置器抽象基类（OCP 扩展点 D_SIGNAL-ALC）
 
-    契约对齐：CTR-P1-003（CapitalAllocationResult 出站）→ D_PORTFOLIO_CORE
+    契约对齐：CTR-P1-003（CapitalAllocationResult 出站）-> D_PORTFOLIO_CORE
 
     实现者要求：
       - allocate(): 接收多策略合成信号，产出各策略的资本权重
@@ -94,7 +94,7 @@ class CapitalAllocatorBase(abc.ABC):
 
     @abc.abstractmethod
     def allocate(self, signals: list[SynthesizedSignal], idempotency_key: str) -> CapitalAllocationResult:
-        """多策略信号 → 资本配置权重"""
+        """多策略信号 -> 资本配置权重"""
         ...
 
 

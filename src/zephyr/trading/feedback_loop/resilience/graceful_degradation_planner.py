@@ -19,8 +19,8 @@
 
 Blindspot: When FLE is overloaded or resource-constrained, it has no pre-planned
 degradation strategy. It either runs everything (causing more overload) or crashes
-entirely — no middle ground. Without a tiered degradation plan, overload → crash
-→ no monitoring at all.
+entirely — no middle ground. Without a tiered degradation plan, overload -> crash
+-> no monitoring at all.
 
 Risk: R496 — FLE disappears during peak load exactly when monitoring is most needed.
 System runs blind during crisis because the watchdog died from exhaustion.

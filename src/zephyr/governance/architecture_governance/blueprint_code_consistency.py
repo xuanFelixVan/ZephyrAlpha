@@ -274,7 +274,7 @@ def main():
             print()
             for r in results:
                 if r["drift"]:
-                    print(f"  ⚠ DRIFT: {r['decision_id']} ({r['title']}) → {r['code_module']} NOT FOUND")
+                    print(f"  ⚠ DRIFT: {r['decision_id']} ({r['title']}) -> {r['code_module']} NOT FOUND")
 
     return 1 if drift_count else 0
 

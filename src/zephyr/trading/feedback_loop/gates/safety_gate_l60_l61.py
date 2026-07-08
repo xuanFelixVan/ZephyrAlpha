@@ -17,7 +17,7 @@
 
 """Safety Gates L60-L61 — Environmental Grounding + Meta-System Integrity
 
-L60: Exchange Halt + Corporate Events + Model Retirement → environmental checks
+L60: Exchange Halt + Corporate Events + Model Retirement -> environmental checks
 L61: Cross-Blueprint Contract Drift + Owner Burnout + Cascading Rollback
 """
 

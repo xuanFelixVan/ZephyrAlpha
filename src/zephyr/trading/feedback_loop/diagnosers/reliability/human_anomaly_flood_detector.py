@@ -22,11 +22,11 @@ single human owner creates cognitive overload. The human stops responding not
 because of alert desensitization (system-level) but because of anomaly flood
 (human-level throughput limit).
 
-Risk: R500 — Human owner overwhelmed by anomaly volume → misses the one
-critical P0 among 49 P3s → system failure from human attention bottleneck.
+Risk: R500 — Human owner overwhelmed by anomaly volume -> misses the one
+critical P0 among 49 P3s -> system failure from human attention bottleneck.
 
 Mitigation: Track anomalies-per-human-per-hour. If rate exceeds human processing
-capacity → auto-triage: auto-resolve P3/P4, aggregate P2 into digest, only
+capacity -> auto-triage: auto-resolve P3/P4, aggregate P2 into digest, only
 surface P0/P1 individually. Alert when human is at risk of "flood dropout."
 """
 

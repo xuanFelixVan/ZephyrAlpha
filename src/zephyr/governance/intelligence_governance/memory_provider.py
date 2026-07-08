@@ -33,10 +33,10 @@
   - 标准化为 NormalizedMarketData (CTR-001)
 
 CTR 契约：
-  生产者 — CTR-001 (NormalizedMarketData) → D_FACTOR, D_SIGNAL, D_RESEARCH
-  生产者 — CTR-TRACE-001 (TraceContext) → D_FACTOR~D_REPORTING, D_ML_TRAIN
+  生产者 — CTR-001 (NormalizedMarketData) -> D_FACTOR, D_SIGNAL, D_RESEARCH
+  生产者 — CTR-TRACE-001 (TraceContext) -> D_FACTOR~D_REPORTING, D_ML_TRAIN
 
-SSoT: cross_layer_contracts.yaml → CTR-001
+SSoT: cross_layer_contracts.yaml -> CTR-001
 """
 
 from __future__ import annotations

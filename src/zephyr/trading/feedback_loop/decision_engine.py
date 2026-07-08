@@ -19,7 +19,7 @@
 Feedback Loop Decision Engine
 ================================
 
-CT-FLE-ORC-001 桥接模块：FLE 异常检测 → Orchestrator 调度调整
+CT-FLE-ORC-001 桥接模块：FLE 异常检测 -> Orchestrator 调度调整
 
 职责
 ----
@@ -130,7 +130,7 @@ class DecisionEngine:
                     },
                 )
             except Exception as exc:
-                _logger.warning("FLE→Orc dispatch failed, queuing: %s", exc, exc_info=True)
+                _logger.warning("FLE->Orc dispatch failed, queuing: %s", exc, exc_info=True)
                 self._pending.append(adjustment)
         else:
             self._pending.append(adjustment)

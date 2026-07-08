@@ -179,7 +179,7 @@ def classify_event_id(
         v2_sev = str(v2_map.get(eid, {}).get("severity", ""))
 
         if v1_sev != v2_sev and v1_sev and v2_sev:
-            classification["CHANGED_SEVERITY"].append(f"{eid}: {v1_sev}→{v2_sev}")
+            classification["CHANGED_SEVERITY"].append(f"{eid}: {v1_sev}->{v2_sev}")
 
         else:
             classification["IDENTICAL"].append(eid)

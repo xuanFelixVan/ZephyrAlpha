@@ -39,7 +39,7 @@ TIER_COMPLEXITY_MAP: Final[dict[ModelTier, set[TaskComplexity]]] = {
 }
 
 # performance-aware routing 权重
-# cost=0.5, speed=0.35, quality=0.15 → 优先便宜+快，质量作为 tie-breaker
+# cost=0.5, speed=0.35, quality=0.15 -> 优先便宜+快，质量作为 tie-breaker
 PERF_WEIGHT_COST: Final[float] = 0.50
 PERF_WEIGHT_SPEED: Final[float] = 0.35
 PERF_WEIGHT_QUALITY: Final[float] = 0.15
@@ -76,8 +76,8 @@ class ModelRouter:
     ) -> int:
         """加载 ModelProfiler 产出的 benchmark 结果。
 
-        从 ModelProfiler.profile_ollama_only() →
-        to_model_benchmark_result() → 传入此方法。
+        从 ModelProfiler.profile_ollama_only() ->
+        to_model_benchmark_result() -> 传入此方法。
         返回加载的 profile 数量。
         """
         count = 0

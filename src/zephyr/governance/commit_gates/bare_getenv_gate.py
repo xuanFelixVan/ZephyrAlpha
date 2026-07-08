@@ -33,7 +33,7 @@ architecture_debt §5.17.10：AI 在 10 个模块里写 10 种 os.getenv("API_KE
   2. 遍历 Call 节点，检测 os.getenv("...") / os.environ.get("...") 调用
   3. 遍历 Subscript 节点，检测 os.environ["..."] 访问
   4. 提取字符串字面量参数，检查是否含 SECRET_INDICATOR_PATTERNS 中的模式
-  5. 匹配 → 违规（应改用 get_secret / get_secret_or_default）
+  5. 匹配 -> 违规（应改用 get_secret / get_secret_or_default）
 
 设计权衡
 --------

@@ -21,16 +21,16 @@ ExamTestCases --- v3.0.5 扩展考试题库（96 题 / 29 能力 / 5 难度）
 5 难度: easy/medium/hard/extreme/olympiad
 命名空间: EX-{capability_abbr}-{序号}
 
-能力 → 缩写映射:
-    task_classification    → CL
-    tag_completion          → TG
-    summary_extraction      → SE
-    naming_suggest          → NS
-    anomaly_triage          → AT
-    code_fix                → CF
-    refactor                → RF
-    code_generate           → CG
-    dead_code_removal       → DC
+能力 -> 缩写映射:
+    task_classification    -> CL
+    tag_completion          -> TG
+    summary_extraction      -> SE
+    naming_suggest          -> NS
+    anomaly_triage          -> AT
+    code_fix                -> CF
+    refactor                -> RF
+    code_generate           -> CG
+    dead_code_removal       -> DC
     + v3.0.5 扩展能力（20 项）见各题定义
 """
 

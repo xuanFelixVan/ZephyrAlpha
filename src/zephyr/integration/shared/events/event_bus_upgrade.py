@@ -47,7 +47,7 @@ class EventBusUpgrader:
     事件总线升级器 (M-16)
     支持事件版本化迁移：
       - register_event(): 注册事件 Schema（含 version）
-      - check_compatibility(): 校验 vN→vN+1 兼容性
+      - check_compatibility(): 校验 vN->vN+1 兼容性
       - upgrade(): 执行迁移函数
     """
 

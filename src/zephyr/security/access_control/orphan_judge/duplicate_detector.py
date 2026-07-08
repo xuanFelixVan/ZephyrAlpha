@@ -45,7 +45,7 @@ class DuplicateDetector:
       2. 生成标准化 AST 哈希（函数名+参数+返回类型）
       3. 对目标文件与范围内所有文件计算 Jaccard 相似度
       4. 相似度 >= threshold 的归入 top_matches
-    降级原则：AST 解析失败 → 假设不重复，返回空结果
+    降级原则：AST 解析失败 -> 假设不重复，返回空结果
     """
 
     def __init__(self, similarity_threshold: float = _DEFAULT_THRESHOLD) -> None:

@@ -72,7 +72,7 @@ class EventHooks:
         self._event_log.append(record)
         if len(self._event_log) > 1000:
             self._event_log = self._event_log[-500:]
-        # 桥接 fix_completed/fix_failed 到主 EventBus (F15→F5/F30)
+        # 桥接 fix_completed/fix_failed 到主 EventBus (F15->F5/F30)
         if event in (FixEvent.FIX_COMPLETED, FixEvent.FIX_FAILED):
             try:
                 from zephyr.shared.events.event_bus import bus
@@ -135,8 +135,8 @@ def subscribe_eventbus() -> None:
     供 boot_hooks 统一调用。
 
     事件:
-      - drift_detected: 漂移检测→触发自动修复（若 payload 含 target）
-      - validation_result: 验证结果→仅日志记录
+      - drift_detected: 漂移检测->触发自动修复（若 payload 含 target）
+      - validation_result: 验证结果->仅日志记录
     """
     global _subscribed
     if _subscribed:

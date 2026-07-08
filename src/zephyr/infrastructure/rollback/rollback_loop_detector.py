@@ -20,7 +20,7 @@ RollbackLoopDetector — 回滚循环检测器。
 
 依据: 蓝图 MOD-INF-021 §7 Phase 2.2 + §6.2 B6 + D-021-10
 
-同一 (task_id, gate_id) 组合触发回滚 >3次/h → 暂停 agent 自动回滚权限 + DEFER_TO_HUMAN。
+同一 (task_id, gate_id) 组合触发回滚 >3次/h -> 暂停 agent 自动回滚权限 + DEFER_TO_HUMAN。
 """
 
 from __future__ import annotations

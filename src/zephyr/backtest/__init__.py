@@ -17,7 +17,7 @@ from zephyr.backtest.implementations.vectorized_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
-# v1.3.0 新增 io/ 子包（#ARCH-047, 配合前端 Streamlit→Panel+HoloViz 重构）
+# v1.3.0 新增 io/ 子包（#ARCH-047, 配合前端 Streamlit->Panel+HoloViz 重构）
 from zephyr.backtest.io import (
     ArtifactNotFoundError,
     BacktestSinkData,

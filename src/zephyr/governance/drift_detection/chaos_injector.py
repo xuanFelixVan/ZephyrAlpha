@@ -279,7 +279,7 @@ def run_chaos_experiment(
     state_dir: str,
     skip_safeguards: bool = False,
 ) -> list[ChaosInjection]:
-    """执行一次混沌实验：基线→注入→检测→回滚。"""
+    """执行一次混沌实验：基线->注入->检测->回滚。"""
 
     results: list[ChaosInjection] = []
 

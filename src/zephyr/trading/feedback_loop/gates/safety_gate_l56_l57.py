@@ -17,8 +17,8 @@
 
 """Safety Gates L56-L57 — Evolutionary Integrity + Cross-Generational Coherence
 
-L56: evolution_debt + purpose_drift + loop_detection → block evolutionary degradation
-L57: cross_temporal_consistency + self_mod_side_effects → protect across generations
+L56: evolution_debt + purpose_drift + loop_detection -> block evolutionary degradation
+L57: cross_temporal_consistency + self_mod_side_effects -> protect across generations
 """
 
 from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

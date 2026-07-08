@@ -17,7 +17,7 @@
 
 """Model Version Semantic Drift Monitor — v0.39.0 R493
 
-Blindspot: LLM model versions change (gpt-4→gpt-4-turbo→gpt-4o, claude-3→3.5→4)
+Blindspot: LLM model versions change (gpt-4->gpt-4-turbo->gpt-4o, claude-3->3.5->4)
 with different semantic behaviors. Same prompt produces different quality/format/tone.
 FLE diagnosis quality silently degrades because underlying model changed.
 

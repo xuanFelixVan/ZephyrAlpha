@@ -29,7 +29,7 @@ Hand-maintained OCP extension point. DO NOT overwrite via codegen.
 CTR 契约：
   OCP-002  StrategyBase + StrategyRegistry   策略扩展点
 
-SSoT: cross_layer_contracts.yaml v3.0 → OCP-002
+SSoT: cross_layer_contracts.yaml v3.0 -> OCP-002
 """
 
 from __future__ import annotations

@@ -79,7 +79,7 @@ class AdversarialMutator:
 
     变异技术:
       - zero_width: 关键字符间插入零宽字符 (\\u200b etc.)
-      - homoglyph: 同形字替换 (а→a, е→e etc.)
+      - homoglyph: 同形字替换 (а->a, е->e etc.)
       - base64_fragment: 对载荷中关键片段做 base64 编码
       - whitespace_split: 敏感词间插入换行/制表符
       - mixed_case: 随机大小写绕过
@@ -153,7 +153,7 @@ class AdversarialMutator:
                         technique=tech.value,
                         original=content[:200],
                         mutated=result[:500],
-                        mutation_desc=f"{tech.value}: {content[:50]}... → {result[:80]}...",
+                        mutation_desc=f"{tech.value}: {content[:50]}... -> {result[:80]}...",
                     )
                 )
         return mutated

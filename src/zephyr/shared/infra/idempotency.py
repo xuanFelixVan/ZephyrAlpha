@@ -19,8 +19,8 @@
 idempotency.py —— 幂等性基础设施（Phase 8 新增 | 盲点 B15 修复）
 
 痛点修复：cross_layer_contracts.yaml 定了 idempotency_key 字段，但没有幂等性存储/检查的实现——
-  1. AI agent 重复发送相同的 API 请求 → 重复扣费 / 重复创建资源
-  2. 网络重试导致重复处理同一个事件 → 数据不一致
+  1. AI agent 重复发送相同的 API 请求 -> 重复扣费 / 重复创建资源
+  2. 网络重试导致重复处理同一个事件 -> 数据不一致
   3. Stripe / AWS 等平台都内置幂等性——ZephyrAlpha 缺少这个基础设施
 
 设计对标：
@@ -29,7 +29,7 @@ idempotency.py —— 幂等性基础设施（Phase 8 新增 | 盲点 B15 修复
   - IETF HTTP Idempotency-Key draft（I-D draft-idempotency-header-01）
 
 设计原则：
-  - key-value 存储——key → (status, result) 映射
+  - key-value 存储——key -> (status, result) 映射
   - 结果缓存——相同 key 直接返回之前的结果
   - TTL——过期后清理避免内存膨胀
   - async-first

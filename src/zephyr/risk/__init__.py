@@ -42,9 +42,9 @@ CTR 契约依赖声明（承重墙标记）
   - CTR-P1-015  SynthesizedSignal      ← D_SIGNAL
 
 作为生产者（Producer）：
-  - CTR-003  RiskLimits                  → D_PORTFOLIO_CORE
-  - CTR-ERR-004  RiskLimitViolationError → D_PORTFOLIO_CORE, D_EXECUTION_CORE
-  - CTR-P1-008  RiskDashboardSnapshot    → D_FRONTEND
+  - CTR-003  RiskLimits                  -> D_PORTFOLIO_CORE
+  - CTR-ERR-004  RiskLimitViolationError -> D_PORTFOLIO_CORE, D_EXECUTION_CORE
+  - CTR-P1-008  RiskDashboardSnapshot    -> D_FRONTEND
 
 架构归属
 --------

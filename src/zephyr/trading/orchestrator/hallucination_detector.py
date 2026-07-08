@@ -38,9 +38,9 @@ Depends      :  三阶段）、 策略）、
 
 2. **触发矩阵（§4.1）**
    - L1 白名单：`source_stage in {semantic, llm}` 且 intent_confidence<0.90；
-     或 MCP `safety_level=H`；或 `requires_human=True`；或 frozen 资产 → 强制触发
-   - L2 灰名单：落盘到 docs/ 的 claim / MCP safety=M → 按预算条件触发
-   - L3 黑名单：纯代码补全 / session 元信息 → 禁止触发（节省成本）
+     或 MCP `safety_level=H`；或 `requires_human=True`；或 frozen 资产 -> 强制触发
+   - L2 灰名单：落盘到 docs/ 的 claim / MCP safety=M -> 按预算条件触发
+   - L3 黑名单：纯代码补全 / session 元信息 -> 禁止触发（节省成本）
 
 3. **风险分级阈值（§4.3）**
    - L：inconsistency_score ≤ 0.40 判定非幻觉；> 0.75 判定幻觉
@@ -48,9 +48,9 @@ Depends      :  三阶段）、 策略）、
    - H：≤ 0.10 / > 0.40；中间带强制人工介入（requires_human=True）
 
 4. **降级级联（§4.4）**
-   - 双模型全可达 → 正常 CoVe
-   - 仅一方可达 → 单模型 lite（fallback_used="single_model"）
-   - 两方都不可达 / 本地亦无 embedding → keyword 规则兜底（fallback_used="keyword"）
+   - 双模型全可达 -> 正常 CoVe
+   - 仅一方可达 -> 单模型 lite（fallback_used="single_model"）
+   - 两方都不可达 / 本地亦无 embedding -> keyword 规则兜底（fallback_used="keyword"）
 
 5. **预算控制（§4.5）**
    - 月度软上限 $15、日度软上限 $0.75、单次 ≤ $0.02
@@ -393,10 +393,10 @@ class HallucinationDetector:
     ----------
     primary_caller : Optional[ModelCaller]
         Step 1 Baseline+Plan 的主模型调用者（默认 Sonnet 4.6）。
-        None 表示不可达 → 跳过 Step 1，触发降级。
+        None 表示不可达 -> 跳过 Step 1，触发降级。
     verifier_caller : Optional[ModelCaller]
         Step 2 Verify 的异构验证模型调用者（默认 GLM-5.1）。
-        None 表示不可达 → 触发单模型降级或 keyword 兜底。
+        None 表示不可达 -> 触发单模型降级或 keyword 兜底。
     execution_model_name : str
         主模型名称（写入审计日志）。
     verifier_model_name : str
@@ -565,7 +565,7 @@ class HallucinationDetector:
         handoff_approved: bool,
         started_at: float,
     ) -> HallucinationResult:
-        if self._primary is None or self._verifier is None: raise RuntimeError("primary/verifier LLM 未注入")  # 5.88.4 修复: assert→if/raise
+        if self._primary is None or self._verifier is None: raise RuntimeError("primary/verifier LLM 未注入")  # 5.88.4 修复: assert->if/raise
 
         total_cost = 0.0
 
@@ -631,7 +631,7 @@ class HallucinationDetector:
 
     def _step1_baseline_plan(self, claim: str, context: dict[str, Any]) -> tuple[str, list[str], float]:
         """Step 1：Baseline 回答 + N 条 verify_questions（合并单次调用）。"""
-        if self._primary is None: raise RuntimeError("primary LLM 未注入")  # 5.88.4 修复: assert→if/raise
+        if self._primary is None: raise RuntimeError("primary LLM 未注入")  # 5.88.4 修复: assert->if/raise
         prompt = self._build_step1_prompt(claim, context)
         result = self._primary(prompt, purpose="cove_step1_baseline_plan")
         if not result.success:
@@ -651,7 +651,7 @@ class HallucinationDetector:
 
     def _step2_verify(self, verify_questions: list[str]) -> tuple[list[dict[str, Any]], float]:
         """Step 2：异构模型独立作答（不看 baseline，防止 prime）。"""
-        if self._verifier is None: raise RuntimeError("verifier LLM 未注入")  # 5.88.4 修复: assert→if/raise
+        if self._verifier is None: raise RuntimeError("verifier LLM 未注入")  # 5.88.4 修复: assert->if/raise
         prompt = self._build_step2_prompt(verify_questions)
         result = self._verifier(prompt, purpose="cove_step2_verify")
         if not result.success:
@@ -717,7 +717,7 @@ class HallucinationDetector:
 
     def _step4_final_check(self, baseline_answer: str, inconsistencies: list[str]) -> tuple[str, float, float]:
         """Step 4：仅 H 级触发；主模型修正 baseline。"""
-        if self._primary is None: raise RuntimeError("primary LLM 未注入")  # 5.88.4 修复: assert→if/raise
+        if self._primary is None: raise RuntimeError("primary LLM 未注入")  # 5.88.4 修复: assert->if/raise
         prompt = (
             "请基于以下不一致点修正原回答，保持简洁：\n"
             f"原回答：{baseline_answer}\n"

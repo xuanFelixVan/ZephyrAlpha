@@ -81,8 +81,8 @@ class SecretRotation:
 #
 # 设计：
 #   - 扫描规则复用 SECRET_INDICATOR_PATTERNS（secrets.py 已有真源），不硬编码密钥列表
-#   - 依赖方向正确：trading/ → shared/（单向）
-#   - 放在此模块（trading/）而非 secrets.py（shared/），避免 shared→trading 循环依赖
+#   - 依赖方向正确：trading/ -> shared/（单向）
+#   - 放在此模块（trading/）而非 secrets.py（shared/），避免 shared->trading 循环依赖
 
 
 def auto_configure(interval_days: int = 90) -> int:

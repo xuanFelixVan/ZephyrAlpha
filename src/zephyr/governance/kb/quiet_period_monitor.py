@@ -21,8 +21,8 @@
 任务: KB-INF-0032
 
 检测:
-  1. 7天内无KE创建/修改 → WARN
-  2. 14天内无KE创建/修改 → FAIL
+  1. 7天内无KE创建/修改 -> WARN
+  2. 14天内无KE创建/修改 -> FAIL
 
 原因诊断:
   - 管道是否堵塞
@@ -125,8 +125,8 @@ class QuietPeriodMonitor:
         if days_silent >= self._ALERT_DAYS:
             status = "silent"
             diagnostics.append(f"No KE activity for {days_silent} days (>= {self._ALERT_DAYS}d alert threshold)")
-            diagnostics.append("  → Pipeline may be blocked. Check G1-G5 gate health.")
-            diagnostics.append("  → AI sessions may not be writing KEs. Check STEP 4.7 in cold startup.")
+            diagnostics.append("  -> Pipeline may be blocked. Check G1-G5 gate health.")
+            diagnostics.append("  -> AI sessions may not be writing KEs. Check STEP 4.7 in cold startup.")
         elif days_silent >= self._WARN_DAYS:
             status = "quiet"
             diagnostics.append(f"No KE activity for {days_silent} days (>= {self._WARN_DAYS}d warn threshold)")

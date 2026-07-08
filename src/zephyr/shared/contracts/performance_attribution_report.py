@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/performance_attribution_report.py
 
 CTR-P1-009: PerformanceAttributionReport / 绩效归因报告
 
-D_REPORTING → D_FRONTEND/D_COMPLIANCE 绩效归因报告契约。
+D_REPORTING -> D_FRONTEND/D_COMPLIANCE 绩效归因报告契约。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-009
 Version: 1.0

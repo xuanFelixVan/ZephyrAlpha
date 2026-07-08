@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 from pydantic import BaseModel, Field
 
 if TYPE_CHECKING:
-    # 5.22.3 修复：消除 shared → governance 顶层 import 闭环
+    # 5.22.3 修复：消除 shared -> governance 顶层 import 闭环
     # GateResult 仅作为 Protocol 方法的字符串注解使用（from __future__ import annotations
     # 已启用，注解在运行时为字符串，无需 runtime import）
     from zephyr.governance.rule_enforcement.gate_types import GateResult

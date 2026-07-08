@@ -17,7 +17,7 @@
 
 """Safety Gates L58-L59 — Over-the-Horizon + Temporal Integrity
 
-L58: quantum_sig_degradation + strategic_withhold + tz_semantic → horizon risks
+L58: quantum_sig_degradation + strategic_withhold + tz_semantic -> horizon risks
 L59: explore_exploit_balance + third_party_model_dep + ontology_drift
 """
 

@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-ORC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""agent-spec MOD-INF-019 CLI — 蓝图→Skill 升级引擎入口.
+"""agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级引擎入口.
 
 用法
 ----
@@ -113,7 +113,7 @@ def main() -> int:
     elif cmd == "status":
         return cmd_status()
     else:
-        print("agent-spec  CLI  —  MOD-INF-019  蓝图→Skill 升级引擎")
+        print("agent-spec  CLI  —  MOD-INF-019  蓝图->Skill 升级引擎")
         print("  python -m zephyr.autonomy_core list      列出所有已注册 Skill")
         print("  python -m zephyr.autonomy_core status    显示模块健康状态")
         return 0

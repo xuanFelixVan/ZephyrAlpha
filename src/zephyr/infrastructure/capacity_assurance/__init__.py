@@ -17,7 +17,7 @@ ZephyrAlpha 容量保障体系 (Capacity Assurance) — MOD-INF-001 · 基础设
   1. SSoT Validation        — 单一事实源校验，蓝图与实现一致性守护
   2. Capacity SLO + Error Budget   — 容量 SLO 定义与 Error Budget 五级响应 (L0~BLACK)
   3. AI Audit Guard (Provenance Chain) — AI 修改全量溯源，不可篡改审计链
-  4. Multi-level Token Budget — 四级令牌预算 (Global→Module→Agent→Model) 驱动施工速率
+  4. Multi-level Token Budget — 四级令牌预算 (Global->Module->Agent->Model) 驱动施工速率
   5. Kill Switch + Sandbox  — 全局熔断 + 高风险操作沙箱隔离
   6. Graceful Degradation   — 模型降级链 + 自动回升 + 渐进式自治
 

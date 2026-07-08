@@ -24,7 +24,7 @@ DecompositionResult/GateCheckResult: 本模块本地定义
 ⚠️  AI SESSION NOTICE — 防漂移标识 ⚠️
 TaskCard = Task 是纯别名，不是第二个模型。禁止对 TaskCard 做任何修改。
 SSoT 唯一入口: from zephyr.governance.rule_enforcement.task_types import Task
-若需修改任务卡字段 → 改 gates/task_types.py Task 模型 → 同步 migration + INSERT + TEMPLATE_REQUIRED_FIELDS
+若需修改任务卡字段 -> 改 gates/task_types.py Task 模型 -> 同步 migration + INSERT + TEMPLATE_REQUIRED_FIELDS
 """
 
 from __future__ import annotations

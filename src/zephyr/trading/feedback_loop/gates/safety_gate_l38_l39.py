@@ -17,8 +17,8 @@
 
 """Safety Gates L38-L39 — Deterministic Safety + Architectural Integrity
 
-L38: HARD_BLOCK violated → BLOCK; SOFT_BLOCK → NEED_OVERRIDE
-L39: degradation > 5%/month → BLOCK SELF_UPGRADE; cyclical_deps > 5 → BLOCK
+L38: HARD_BLOCK violated -> BLOCK; SOFT_BLOCK -> NEED_OVERRIDE
+L39: degradation > 5%/month -> BLOCK SELF_UPGRADE; cyclical_deps > 5 -> BLOCK
 """
 
 from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

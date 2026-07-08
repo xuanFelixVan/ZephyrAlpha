@@ -17,7 +17,7 @@
 
 """
 
-Rule Shadow Runner — v0.10.0 规则影子模式: 新规则shadow运行3天→diff old vs new→promote。
+Rule Shadow Runner — v0.10.0 规则影子模式: 新规则shadow运行3天->diff old vs new->promote。
 """
 
 from __future__ import annotations

@@ -5,7 +5,7 @@
 # [CONSUMERS] AutoRuntime Core health check phase
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 12系统健康检查并行执行; 任一FAIL→整体WARN; 全部OK→OK; 任一项超时→SKIP
+# [INVARIANTS] 12系统健康检查并行执行; 任一FAIL->整体WARN; 全部OK->OK; 任一项超时->SKIP
 # [MODIFY-GUARD] 新增系统必须同步添加check_函数
 # [STABILITY] evolving; [SAFETY] L; [AI_AUTONOMY] ai_modifiable
 # [SAFETY] M

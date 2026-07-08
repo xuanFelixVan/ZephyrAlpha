@@ -23,7 +23,7 @@ PipelineOrchestrator — M1-M11 管线协调器
 **真源边界（AUDIT-08，与 route_manifest task_dual_pipeline 一致）**
   - **M1–M11 入口与模块切片**：``TaskCard``（含 ct_pipe 提示）+ ``ct_pipe_routing.resolve_ct_pipe_orc001``
     + 本协调器；**不以** ``config/blueprint_routing.yaml`` 解析 Mx 节点。
-  - **blueprint_routing.yaml**：关键词 / 路径模式 → 蓝图文献与人类检索（含 ``blueprint_search`` MCP），
+  - **blueprint_routing.yaml**：关键词 / 路径模式 -> 蓝图文献与人类检索（含 ``blueprint_search`` MCP），
     属 **MOD-INF-009 路由表**，与 **CT-PIPE** 编排正交。
 
 **真实 LLM API 集成**：
@@ -32,18 +32,18 @@ PipelineOrchestrator — M1-M11 管线协调器
   - fallback 路径仅在 API 不可用时返回 ``simulated=True`` 占位（防御性降级）
 
 双管线架构：
-  A区 M1-M5 → 生产（代码生成/校验/打包）
-  B区 M6-M11 → 审计（审查/合规/风险评估/门禁）
+  A区 M1-M5 -> 生产（代码生成/校验/打包）
+  B区 M6-M11 -> 审计（审查/合规/风险评估/门禁）
 
 三层模型策略（GOV-AI-002 §一）：
-  DeepSeek V4 Pro → 主力生产（M1-M4 + M6/M8/M9/M10/M11）—— 1.74/3.48/M
-  GLM-5.1        → 深度审查（M7 + M5）—— Trae CN免费
-  Claude Opus 4.7 → 特种救援（DeepSeek失败3次 / GLM驳回2次 / Owner关键标记 / security标签 / experimental标签）
+  DeepSeek V4 Pro -> 主力生产（M1-M4 + M6/M8/M9/M10/M11）—— 1.74/3.48/M
+  GLM-5.1        -> 深度审查（M7 + M5）—— Trae CN免费
+  Claude Opus 4.7 -> 特种救援（DeepSeek失败3次 / GLM驳回2次 / Owner关键标记 / security标签 / experimental标签）
 
 v0.3.2 集成：PipelineOrchestrator ↔ TaskRepository 修桥
-  - dispatch() 开始 → task_repo.transition(PENDING→IN_PROGRESS)
-  - dispatch() 成功 → task_repo.transition(IN_PROGRESS→COMPLETED)
-  - dispatch() 失败 → task_repo.transition(IN_PROGRESS→FAILED)
+  - dispatch() 开始 -> task_repo.transition(PENDING->IN_PROGRESS)
+  - dispatch() 成功 -> task_repo.transition(IN_PROGRESS->COMPLETED)
+  - dispatch() 失败 -> task_repo.transition(IN_PROGRESS->FAILED)
   - task_repo 可选——为 None 时跳过状态流转（向后兼容测试场景）
 
 使用：
@@ -387,16 +387,16 @@ class PipelineOrchestrator:
             self._log("INFO", "LocalModelScheduler stopped")
 
     def dispatch(self, task_card: TaskCard, *, dry_run: bool = False) -> PipelineResult:
-        """接收 TaskCard → 执行管线（含状态机集成）
+        """接收 TaskCard -> 执行管线（含状态机集成）
 
         流程：
-          ① CT-PIPE-ORC-001：若 TaskCard 激活路由提示 → 从入口 Mx 切片执行；否则整链
-          ② 状态流转 PENDING→IN_PROGRESS（如 task_repo 注入）
+          ① CT-PIPE-ORC-001：若 TaskCard 激活路由提示 -> 从入口 Mx 切片执行；否则整链
+          ② 状态流转 PENDING->IN_PROGRESS（如 task_repo 注入）
           ③ 模型路由（GOV-AI-002 决策树）
           ④ 逐模块执行（含 LSG 安全闸门 + 数据血缘追踪）
           ⑤ Claude 救援判定
           ⑥ 模型崩塌检测（M3+M7+Claude 同质化预警）
-          ⑦ 状态流转 IN_PROGRESS→COMPLETED/FAILED（如 task_repo 注入）
+          ⑦ 状态流转 IN_PROGRESS->COMPLETED/FAILED（如 task_repo 注入）
 
         Parameters
         ----------
@@ -961,7 +961,7 @@ class PipelineOrchestrator:
         try:
             task = self._task_repo.get(task_id)
             if task is None:
-                return f"_transition[{task_id}→{to_status.name}]: task not found in repo"
+                return f"_transition[{task_id}->{to_status.name}]: task not found in repo"
             if task.status == to_status:
                 return None
             from_status = task.status.name if hasattr(task.status, "name") else str(task.status).split(".")[-1]
@@ -970,7 +970,7 @@ class PipelineOrchestrator:
             return None
         except Exception as exc:
             self._failure_log[f"transition_{task_id}"] = self._failure_log.get(f"transition_{task_id}", 0) + 1
-            return f"_transition[{task_id}→{to_status.name}]: {type(exc).__name__}: {exc}"
+            return f"_transition[{task_id}->{to_status.name}]: {type(exc).__name__}: {exc}"
 
     def _update_runtime_metrics(self, task_id: str, total_tokens: int) -> str | None:
         """更新运行时指标。失败返回 warning 字符串，成功返回 None。"""
@@ -1225,7 +1225,7 @@ class PipelineOrchestrator:
         )
 
     # ------------------------------------------------------------------
-    # 多模型双盲审查 —— M3(DeepSeek) + M7(GLM) 并行→取交集
+    # 多模型双盲审查 —— M3(DeepSeek) + M7(GLM) 并行->取交集
     # ------------------------------------------------------------------
 
     def _blind_review(
@@ -1551,7 +1551,7 @@ class PipelineOrchestrator:
                 "dry_run": True,
                 "tokens_used": 0,
                 "cost_usd": 0.0,
-                "summary": f"[DRY-RUN {pipeline}区] {model}({model_version}) → {module_id}: {task.title[:60]}",
+                "summary": f"[DRY-RUN {pipeline}区] {model}({model_version}) -> {module_id}: {task.title[:60]}",
                 "skill_context": skill_context,
             }
 
@@ -1580,7 +1580,7 @@ class PipelineOrchestrator:
         ]
 
         # SRC-0022: Real LLM API via LLMGateway with explicit model ID mapping
-        #   Model → API ID: DeepSeek-V4-Pro/deepseek → deepseek-chat, GLM-5.1/glm → glm-4-flash
+        #   Model -> API ID: DeepSeek-V4-Pro/deepseek -> deepseek-chat, GLM-5.1/glm -> glm-4-flash
         #   Provider config (base_url, api_key_env, default_model) defined in
         #   zephyr.infrastructure.pipeline.llm_gateway._PROVIDERS.
         try:
@@ -1611,7 +1611,7 @@ class PipelineOrchestrator:
                 + (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_OUTPUT.get(model, 0.0),
                 6,
             )
-            summary_content = f"[{pipeline}区] {model}({model_version}) → {module_id}: {sanitized_title[:60]}"
+            summary_content = f"[{pipeline}区] {model}({model_version}) -> {module_id}: {sanitized_title[:60]}"
             simulated = True
             provider_used = model
 
@@ -1773,8 +1773,8 @@ class PipelineOrchestrator:
                 )
             except Exception:
                 # 5.12.1 修复：原 except: pass 静默吞跨区遥测失败（指标丢失不可见）
-                logger.debug("telemetry metrics.counter failed for %s→%s", from_zone, to_zone, exc_info=True)
-        label = f"zone_{from_zone}→{to_zone}"
+                logger.debug("telemetry metrics.counter failed for %s->%s", from_zone, to_zone, exc_info=True)
+        label = f"zone_{from_zone}->{to_zone}"
         self._metrics[label] = self._metrics.get(label, 0) + 1
 
     def get_telemetry_snapshot(self) -> dict[str, Any]:
@@ -1811,10 +1811,10 @@ class PipelineOrchestrator:
             EventBusBackpressure().emit("TASK_EVENT", payload=payload)
         except Exception:
             # 5.12.1 修复：原 except: pass 静默吞 TASK_EVENT 发布失败（状态变更信号丢失）
-            logger.debug("EventBus TASK_EVENT emit failed for task=%s %s→%s", task_id, from_status, to_status, exc_info=True)
+            logger.debug("EventBus TASK_EVENT emit failed for task=%s %s->%s", task_id, from_status, to_status, exc_info=True)
 
     # ------------------------------------------------------------------
-    # Zone Crossing 防线 —— B70（AP2: A区→B区 M6边界标记校验）
+    # Zone Crossing 防线 —— B70（AP2: A区->B区 M6边界标记校验）
     # ------------------------------------------------------------------
 
     def _validate_zone_crossing(
@@ -1841,7 +1841,7 @@ class PipelineOrchestrator:
         if prev_pipeline == "A" and next_pipeline == "B":
             if prev_module_id != "M5":
                 warnings.append(
-                    f"ZONE-CROSSING VIOLATION: A区{prev_module_id}→B区{next_module_id}"
+                    f"ZONE-CROSSING VIOLATION: A区{prev_module_id}->B区{next_module_id}"
                     f" 未经M5打包和M6边界标记（AP2）——policy:[A区产出物不得直接流入B区]"
                 )
             else:
@@ -1864,7 +1864,7 @@ class PipelineOrchestrator:
           - L2: Prompt 保护（防泄露/话题边界）
           - L5: 资源保护（Token预算/速率限制）
 
-        fail-closed: LSG 运行时异常 → 返回 [LSG-BLOCKED] 标记，不静默透传.
+        fail-closed: LSG 运行时异常 -> 返回 [LSG-BLOCKED] 标记，不静默透传.
         """
         try:
             import asyncio
@@ -1878,7 +1878,7 @@ class PipelineOrchestrator:
             gw = PipelineOrchestrator._lsg_gateway
             # 5.100.5 修复: 原 run_coroutine_threadsafe + future.result() 在 loop 线程内调用会死锁
             # (get_running_loop 成功=当前在 loop 线程, future.result 阻塞 loop 线程但协程需在 loop 上执行)
-            # run_sync 统一处理: 无运行 loop→asyncio.run; 有运行 loop→新线程+新 loop
+            # run_sync 统一处理: 无运行 loop->asyncio.run; 有运行 loop->新线程+新 loop
             result = run_sync(gw.scan_input(text, source="PipelineOrchestrator"))
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return f"[LSG-BLOCKED] {text[:200]}"
@@ -1897,7 +1897,7 @@ class PipelineOrchestrator:
           - L3: 敏感信息脱敏（PII/credential 模式匹配）+ 有害内容过滤
           - L6: 可观测性（安全日志/异常告警）
 
-        fail-closed: LSG 运行时异常 → 输出字段替换为 [LSG-BLOCKED]，不静默透传.
+        fail-closed: LSG 运行时异常 -> 输出字段替换为 [LSG-BLOCKED]，不静默透传.
         """
         try:
             import asyncio
@@ -1992,7 +1992,7 @@ class PipelineOrchestrator:
         崩塌判定条件：
           1. 两模 verdict 完全相同
           2. **且** 摘要相似度 > 80%（使用简单的 Jaccard/dice 相似度）
-          3. → 标记为 warn；三模(hypothetical Claude rescue)均一致 → critical
+          3. -> 标记为 warn；三模(hypothetical Claude rescue)均一致 -> critical
 
         少数派报告：
           当两模一致但摘要或结论有细微差异时，记录 difference signal。
@@ -2419,8 +2419,8 @@ class PipelineOrchestrator:
         1. 从 TaskCard 提取目标文件路径
         2. 通过 BlueprintSearchServer 定位相关的蓝图
         3. 查询 blueprint_reads.jsonl 确认蓝图已被读取
-        4. 若 hard_compliance=true 且未读 → 返回 violation 消息（阻断 dispatch）
-        5. 若已读 → 返回 None（PASS）
+        4. 若 hard_compliance=true 且未读 -> 返回 violation 消息（阻断 dispatch）
+        5. 若已读 -> 返回 None（PASS）
 
         返回 None 表示通过，返回 str 表示 G6-BLOCKED 原因。
         """
@@ -2483,8 +2483,8 @@ class PipelineOrchestrator:
             return (
                 f"G6 Phase 2 硬合规阻断: AI 未读取以下蓝图即尝试执行 Pipeline"
                 f"——{'·'.join(missing)}。"
-                f"Phase 2 hard_compliance=true → dispatch REJECTED。"
-                f"Action: invoke find_relevant_blueprint('{task_desc[:60]}') → read §1-§5 → record_blueprint_read() → retry。"
+                f"Phase 2 hard_compliance=true -> dispatch REJECTED。"
+                f"Action: invoke find_relevant_blueprint('{task_desc[:60]}') -> read §1-§5 -> record_blueprint_read() -> retry。"
                 + (f" Hint: {hint}" if hint else "")
             )
         return None

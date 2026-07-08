@@ -281,10 +281,10 @@ class DeterministicJudge:
         # 3. 长度合理性 (0-1)
         length = len(text)
         if length < self._MIN_LEN:
-            # 太短: 0~50 字 → 0~0.5 线性
+            # 太短: 0~50 字 -> 0~0.5 线性
             length_score = (length / self._MIN_LEN) * 0.5
         elif length > self._MAX_LEN:
-            # 太长: >10000 字 → 衰减但不归零
+            # 太长: >10000 字 -> 衰减但不归零
             length_score = max(0.5, 1.0 - (length - self._MAX_LEN) / 20_000)
         else:
             length_score = 1.0

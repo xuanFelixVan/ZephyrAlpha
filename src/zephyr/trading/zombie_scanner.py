@@ -19,10 +19,10 @@
 zombie_scanner.py — 僵尸 Python 进程检测与自动处置
 ====================================================
 四级分类处置：
-  SUSPICIOUS（>30min · CPU≈0） → 写入 status 上报，不 kill
-  ABNORMAL（>1hr · 从项目目录启动） → kill + 日志 + 模式计数
-  DANGEROUS（>10GB 或 >50子进程 或 >6hr） → kill + 日志 + 模式计数
-模式计数 >3次/24h → repeated_offender 标记到 status
+  SUSPICIOUS（>30min · CPU≈0） -> 写入 status 上报，不 kill
+  ABNORMAL（>1hr · 从项目目录启动） -> kill + 日志 + 模式计数
+  DANGEROUS（>10GB 或 >50子进程 或 >6hr） -> kill + 日志 + 模式计数
+模式计数 >3次/24h -> repeated_offender 标记到 status
 """
 
 from __future__ import annotations

@@ -5,7 +5,7 @@
 # [CONSUMERS] cli.py; game_day_runner.py; mcp_endpoints.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] run_adversarial_session() MUST follow: load→filter→defend→record→steady_state→cleanup; RedBlueReport.session_id MUST be unique per run
+# [INVARIANTS] run_adversarial_session() MUST follow: load->filter->defend->record->steady_state->cleanup; RedBlueReport.session_id MUST be unique per run
 # [MODIFY-GUARD] Adding new phases to adversarial session MUST update run_adversarial_session() flow; report fields per blueprint §4.4
 # [STABILITY] evolving
 # [SAFETY] H
@@ -116,7 +116,7 @@ class RedBlueValidator:
 
         logger.info("session_complete session_id=%s blocked=%d bypassed=%d", session_id, blocked, bypassed)
 
-        # F30 RedBlueValidator 验证完成时发布 validation_result 事件 (F30→F15)
+        # F30 RedBlueValidator 验证完成时发布 validation_result 事件 (F30->F15)
         try:
             from zephyr.shared.events.event_bus import EventBusBackpressure
 

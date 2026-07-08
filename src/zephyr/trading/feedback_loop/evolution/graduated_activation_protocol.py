@@ -24,7 +24,7 @@ model immediately affects all decisions.
 Risk: R485 — Single bad deployment breaks entire automated repair pipeline.
 No progressive confidence gating. No auto-rollback on regression detection.
 
-Mitigation: Canary → Beta → Stable activation pipeline. Each stage gates on
+Mitigation: Canary -> Beta -> Stable activation pipeline. Each stage gates on
 increasing confidence thresholds. AUTO_PROMOTE on sustained success, AUTO_ROLLBACK
 on any regression signal. Configurable stage durations and success criteria.
 """

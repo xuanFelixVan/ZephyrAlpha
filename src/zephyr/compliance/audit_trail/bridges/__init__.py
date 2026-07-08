@@ -5,7 +5,7 @@
 Audit Trail — MOD-INF-020
 
 不可变审计追踪：所有Agent操作记录 + 异常检测。
-G-CT-001 (RBAC→Audit), G-CT-002 (Audit→Rollback).
+G-CT-001 (RBAC->Audit), G-CT-002 (Audit->Rollback).
 """
 
 from zephyr.governance.audit_trail.bridges.audit_anomaly import AnomalyDetector, AnomalyEvent

@@ -20,7 +20,7 @@
 Blindspot: FLE upgrades deployed to 100% instantly; bad upgrade breaks everything.
 Risk: R194 — FLE self-upgrade introduces regression; no canary deployment strategy.
 
-Mitigation: 5%→100% canary deployment for FLE self-upgrades with auto-rollback.
+Mitigation: 5%->100% canary deployment for FLE self-upgrades with auto-rollback.
 """
 
 from __future__ import annotations

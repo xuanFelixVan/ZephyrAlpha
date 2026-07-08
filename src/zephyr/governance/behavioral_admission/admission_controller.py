@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] admit: RateLimited→retry_after_ms; admit: CircuitOpen→retry_after_cb_recovery
+# [ERROR_CONTRACT] admit: RateLimited->retry_after_ms; admit: CircuitOpen->retry_after_cb_recovery
 # [TESTS] tests/test_behavioral_audit/test_admission_controller.py
 # [A_module] module_id=MOD-GOV_admission_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

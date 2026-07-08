@@ -31,5 +31,5 @@ class IntegrityDim(str, Enum):
 PIT_MAX_DELAY_MINUTES: Final[int] = 15
 HEALTH_CHECK_INTERVAL: Final[dict[str, str]] = {
     "monthly": "所有dim+grid自动run",
-    "quarterly": "full2016-2024 re-run vs Sept→bias report",
+    "quarterly": "full2016-2024 re-run vs Sept->bias report",
 }

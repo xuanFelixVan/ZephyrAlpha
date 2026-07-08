@@ -31,7 +31,7 @@ hard_limits: 512MB内存 / 2GB磁盘 / 200文件句柄
 graceful_degradation四级: >75%并行减半 / >87.5%暂停非HIGH / >97.6% GC+checkpoint+5min重试 / OOM预警紧急退出
 
 
-scalability: 10→100→500→1500模块渐进路线
+scalability: 10->100->500->1500模块渐进路线
 
 
 对标 blueprint.md §6.16。"""

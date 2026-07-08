@@ -19,7 +19,7 @@
 
 架构对标 IBM ContextForge Gateway 模式。五模块：
 - **Route**：根据 tools/call 的 tool name 前缀自动路由到 7 Server
-- **Auth/ACL**：session identity → role → 过滤可见工具
+- **Auth/ACL**：session identity -> role -> 过滤可见工具
 - **RateLimit**：10 QPS per client（集成 rate_limiter.PerToolRateLimiter）
 - **Audit**：全量 tools/call 审计日志（集成 audit_logger.AuditLogger）
 - **Degrade**：Circuit Breaker 三态熔断 + 自动降级
@@ -111,7 +111,7 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
 
 
 class CircuitBreaker:
-    """三态断路器：CLOSED → OPEN（N 次失败）→ HALF_OPEN（试探恢复）。"""
+    """三态断路器：CLOSED -> OPEN（N 次失败）-> HALF_OPEN（试探恢复）。"""
 
     CLOSED = "CLOSED"
     OPEN = "OPEN"
@@ -261,7 +261,7 @@ def _default_routes() -> dict[str, dict[str, Any]]:
 class MCPGateway(BaseMCPServer):
     """MCP Gateway — 集中式治理节点。
 
-    外部 IDE/Agent → Gateway → Route → 7 Server
+    外部 IDE/Agent -> Gateway -> Route -> 7 Server
     """
 
     def __init__(
@@ -460,7 +460,7 @@ class MCPGateway(BaseMCPServer):
         request: dict[str, Any],
         session_id: str,
     ) -> dict[str, Any]:
-        """五阶段管道：Permission → RateLimit →Route → Audit →Degrade。"""
+        """五阶段管道：Permission -> RateLimit ->Route -> Audit ->Degrade。"""
         t0 = time.perf_counter()
         req_id = request.get("id")
         params: dict[str, Any] = request.get("params", {})

@@ -3,11 +3,11 @@
 # [MODULE] zephyr.infrastructure.system_telemetry.archive
 # [STABILITY] evolving
 # [SAFETY] M
-# [INVARIANTS] TTL分级策略严格执行;成本超限→三级降级;SQLite backup使用RULE-ONE原子写入
+# [INVARIANTS] TTL分级策略严格执行;成本超限->三级降级;SQLite backup使用RULE-ONE原子写入
 # [MODIFY-GUARD] cold_stub.py; facade.py
 # [CONSUMERS] facade.py
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] gzip失败→跳过压缩保留原文;SQLite backup失败→日志warning
+# [ERROR_CONTRACT] gzip失败->跳过压缩保留原文;SQLite backup失败->日志warning
 # [TESTS] tests/infrastructure/
 # [TTL] permanent
 """遥测 · archive — 冷存储归档管道（TTL + gzip + backup + 成本降级）"""

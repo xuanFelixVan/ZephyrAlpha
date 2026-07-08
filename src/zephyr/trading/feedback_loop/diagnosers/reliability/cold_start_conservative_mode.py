@@ -17,7 +17,7 @@
 
 """
 R509: ColdStartConservativeMode
-冷启动渐进激活 — collect→detect→diagnose→full，阈值×3衰减到×1
+冷启动渐进激活 — collect->detect->diagnose->full，阈值×3衰减到×1
 对标: Control Theory — Settling Time + progressive activation
 """
 

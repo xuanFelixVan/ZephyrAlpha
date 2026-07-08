@@ -46,14 +46,14 @@ from __future__ import annotations
 #         ai_construction_detectors, self_test_verifier
 #
 # 命名规则约定（未来新增文件遵循，便于按名定位归聚合）：
-#   - drift_* / *_drift_detector / cascade_detector / baseline_poisoning*  → _drift
-#   - *_scanner / *_checker / scan_mutex / data_* / cross_env_consistency   → _scanners
-#   - *_manager / *_controller / *_router / cold_start / dashboard          → _infrastructure
-#   - *_engine / *_analyzer / forensics_* / reconciler / runbook_*          → _analysis
-#   - events / state_machine / detector_dispatcher / architecture_*         → _core
+#   - drift_* / *_drift_detector / cascade_detector / baseline_poisoning*  -> _drift
+#   - *_scanner / *_checker / scan_mutex / data_* / cross_env_consistency   -> _scanners
+#   - *_manager / *_controller / *_router / cold_start / dashboard          -> _infrastructure
+#   - *_engine / *_analyzer / forensics_* / reconciler / runbook_*          -> _analysis
+#   - events / state_machine / detector_dispatcher / architecture_*         -> _core
 #
 # 新AI使用指引（对应向内收原则④：如何发现+如何不重造）：
-#   1. 定位符号：查 _SYMBOL_SOURCE 字典（符号→聚合映射），再 import 对应聚合
+#   1. 定位符号：查 _SYMBOL_SOURCE 字典（符号->聚合映射），再 import 对应聚合
 #   2. 定位模块：本地图按文件名前缀归位，直接 import zephyr.governance.drift_detection.<module>
 #   3. 新增功能前：先 CapabilityLookup.find("<关键词>") 反查是否已有实现（防重造）
 #   4. 新增文件：按命名规则命名，并更新对应聚合的 _SUBMODULES + 本地图 + 能力卡

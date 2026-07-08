@@ -14,7 +14,7 @@ from __future__ import annotations
 # [TTL] permanent
 
 # v2.2.0 新增5个组件（MiniQMT实盘+Tick回测仪表盘）
-# v3.0.0 新增 ChartFactory 图表统一工厂（#ARCH-047 Streamlit→Panel+HoloViz）
+# v3.0.0 新增 ChartFactory 图表统一工厂（#ARCH-047 Streamlit->Panel+HoloViz）
 # 用多行单 import 语句（ORPHAN-MODULE gate 的 git grep pattern: from .* import {short_name}）
 try:
     from zephyr.frontend.dashboard.components import backtest_results

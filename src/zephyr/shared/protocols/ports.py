@@ -19,7 +19,7 @@
 ports — D-DATA 服务的 Protocol 定义
 ===================================
 D-INFRA 通过 Protocol 引用 D-DATA 的实现（结构化子类型），
-消除 D-INFRA→D-DATA 的直接 import 依赖。
+消除 D-INFRA->D-DATA 的直接 import 依赖。
 运行时通过 ServiceRegistry 获取具体实现。
 """
 

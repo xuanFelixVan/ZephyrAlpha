@@ -17,9 +17,9 @@
 """AutoPilot — AI session 自动找活干、认领任务。
 
 职责边界：
-- scan / status_report → 只读，告诉 AI 当前有什么活
-- claim_next → 认领一个任务（Event Sourcing 原子争抢）
-- run_cycle → 扫描 + 逐 batch 认领，返回认领到的任务列表
+- scan / status_report -> 只读，告诉 AI 当前有什么活
+- claim_next -> 认领一个任务（Event Sourcing 原子争抢）
+- run_cycle -> 扫描 + 逐 batch 认领，返回认领到的任务列表
 - 不执行任务 —— 执行是 AI session 的事
 """
 
@@ -138,7 +138,7 @@ class AutoPilot:
         return self.repo.claim_next(batch_id, self.session_id)
 
     def run_cycle(self, max_tasks: int = 5) -> list[TaskCard]:
-        """自动驾驶主循环：扫描 → 逐 batch 认领 → 返回认领到的任务列表。
+        """自动驾驶主循环：扫描 -> 逐 batch 认领 -> 返回认领到的任务列表。
 
         策略：按 batch 遍历，每个 batch 最多认领 1 个任务，直到达到 max_tasks 或无任务可领。
 

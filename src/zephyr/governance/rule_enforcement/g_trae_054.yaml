@@ -38,7 +38,7 @@ entry_conditions:
   rule_ids:
   - TRAE-054
   anti_pattern:
-    description: 直接 Read/Write depgraph 文件 → OOM 崩溃
+    description: 直接 Read/Write depgraph 文件 -> OOM 崩溃
     example: AI ignores TRAE-054 depgraph_access_protocol requirement
   params: &id001
     required_fields:
@@ -58,7 +58,7 @@ entry_conditions:
   rule_ids:
   - TRAE-054
   anti_pattern:
-    description: 大文件加载 → OOM 崩溃
+    description: 大文件加载 -> OOM 崩溃
     example: AI ignores TRAE-054 depgraph_access_protocol requirement
   params: *id001
 mutating_rules: []

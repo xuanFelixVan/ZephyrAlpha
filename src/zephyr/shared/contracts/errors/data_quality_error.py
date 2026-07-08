@@ -20,7 +20,7 @@ CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误
 
 D_DATA 行情质量门禁不通过时抛出的错误。包含具体的质量缺陷分类和恢复建议。
 
-SSoT: cross_layer_contracts.yaml → CTR-ERR-001
+SSoT: cross_layer_contracts.yaml -> CTR-ERR-001
 Version: 1.0
 Status: AUTO-GENERATED — DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

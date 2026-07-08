@@ -420,7 +420,7 @@ class CollectionManager:
             )
 
         _logger.info(
-            "CollectionManager: 迁移 Collection '%s' → '%s' (%d 条记录)",
+            "CollectionManager: 迁移 Collection '%s' -> '%s' (%d 条记录)",
             from_name,
             to_name,
             len(source_data.get("ids", [])),
@@ -467,14 +467,14 @@ class CollectionManager:
         meta = self._flatten_metadata(metadata)
         meta["written_at"] = datetime.now(UTC).isoformat()
 
-        # col.add → col.upsert（治本：同 doc_id 覆盖，消除重复垃圾堆叠）
+        # col.add -> col.upsert（治本：同 doc_id 覆盖，消除重复垃圾堆叠）
         if self._embedding_router is not None:
             embedding = self._embedding_router.embed(content, collection_name)
             col.upsert(ids=[doc_id], documents=[content], metadatas=[meta], embeddings=[embedding])
         else:
             col.upsert(ids=[doc_id], documents=[content], metadatas=[meta])
 
-        _logger.debug("CollectionManager: 写入 '%s' → %s (provenance validated)", content[:40], collection_name)
+        _logger.debug("CollectionManager: 写入 '%s' -> %s (provenance validated)", content[:40], collection_name)
         return doc_id
 
     @staticmethod

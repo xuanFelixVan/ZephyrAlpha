@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.trading.orchestrator.script_runner; AutoRuntime Core post-scan phase
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] findings→KB entry 1:1映射; KB不可用时仅日志不阻塞; timestamp带时区
+# [INVARIANTS] findings->KB entry 1:1映射; KB不可用时仅日志不阻塞; timestamp带时区
 # [MODIFY-GUARD] CT-SCRIPT-KB-001 schema变更必须同步KB indexing规则
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,7 +14,7 @@
 # [TESTS] scripts/connect/script_kb.py --trigger
 # [A_module] module_id=MOD-INF_kb_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Script→KB 审计入库桥接器 — publish_to_kb() 生产者
+"""Script->KB 审计入库桥接器 — publish_to_kb() 生产者
 
 CT-SCRIPT-KB-001: 审计脚本执行完成后将 findings 写入 Knowledge Base。
 """

@@ -18,7 +18,7 @@
 """AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器
 
 蓝图 §3.5 + §22：三条自动化规则（TIME-DECAY / ZERO-REF / DIR-CONVENTION）
-从 active → stale → deprecated → archived 全自动生命周期管理。
+从 active -> stale -> deprecated -> archived 全自动生命周期管理。
 """
 
 import logging
@@ -186,7 +186,7 @@ class Lifecycle:
                         "session_id": "auto",
                         "target_path": evt.asset_path,
                         "operation": evt.event_type,
-                        "status": f"{evt.from_status.value}→{evt.to_status.value}",
+                        "status": f"{evt.from_status.value}->{evt.to_status.value}",
                         "payload": {
                             "from_status": evt.from_status.value,
                             "to_status": evt.to_status.value,
@@ -213,7 +213,7 @@ class Lifecycle:
 
         print(f"  LIFECYCLE   {len(events)} 个生命周期变更")
         for e in events:
-            print(f"    {e.event_type:18s}  {e.asset_path:50s}  {e.from_status.value:10s} → {e.to_status.value:10s}")
+            print(f"    {e.event_type:18s}  {e.asset_path:50s}  {e.from_status.value:10s} -> {e.to_status.value:10s}")
 
 
 def _generate_event_id() -> str:

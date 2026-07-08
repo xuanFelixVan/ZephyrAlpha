@@ -23,7 +23,7 @@
 - 当 schema 演进（字段新增/删除/重命名）时，旧持久化数据展开会触发 ``TypeError``
 - Pydantic ``BASE_CONFIG`` 含 ``extra="forbid"`` 同样硬拒未知字段
 - 5.147.12 已用 SSoT ``filter_dataclass_fields(cls, data)`` 修复 13 处存量债务
-- 但新 AI 写新功能时若不自觉，仍会制造同类债务 → 需 Gate 持续盯
+- 但新 AI 写新功能时若不自觉，仍会制造同类债务 -> 需 Gate 持续盯
 
 治本（warn 级，不阻断）:
 - 检测 ``\\b(\\w+)\\(\\*\\*([A-Za-z_]\\w*)\\s*\\)`` 模式
@@ -231,10 +231,10 @@ def make_unsafe_dict_spread_gate() -> GateSpec:
                 "UNSAFE-DICT-SPREAD warn（不阻断）：检测到 **data 直接展开模式，\n"
                 "  schema 演进时会触发 TypeError（5.147.5/5.147.12 同族债务）。\n"
                 + "\n".join(warnings)
-                + "\n→ 建议改用 filter_dataclass_fields(Cls, data) 过滤未知字段：\n"
+                + "\n-> 建议改用 filter_dataclass_fields(Cls, data) 过滤未知字段：\n"
                 "    from zephyr.shared.io.serialization import filter_dataclass_fields\n"
                 "    obj = Cls(**filter_dataclass_fields(Cls, data))\n"
-                "→ 若确为 **kwargs 透传或 dict(**other) 合法用法，可忽略本告警。"
+                "-> 若确为 **kwargs 透传或 dict(**other) 合法用法，可忽略本告警。"
             )
             # stderr 输出（用户可见）+ logger 记录
             print(f"[GATE] UNSAFE-DICT-SPREAD warn:\n{detail}", file=sys.stderr)

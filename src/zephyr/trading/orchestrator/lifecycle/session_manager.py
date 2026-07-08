@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] session_not_found→SessionError; invalid_transition→SessionTransitionError(→SessionError); duplicate_session→ValueError
+# [ERROR_CONTRACT] session_not_found->SessionError; invalid_transition->SessionTransitionError(->SessionError); duplicate_session->ValueError
 # [TESTS]
 # [A_module] module_id=MOD-ORC_session_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

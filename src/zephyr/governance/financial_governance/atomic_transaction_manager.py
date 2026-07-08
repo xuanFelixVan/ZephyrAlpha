@@ -36,8 +36,8 @@ References :
      * 对所有 staged 文件执行 ``os.replace(tmp, target)``
      * 对目录 ``fsync``（POSIX）
      * 更新 tx_idempotency 为 COMMITTED
-   - 任一阶段失败 → SQLite ``ROLLBACK`` + 删除 tmp + bak 恢复
-   - 文件 rename 失败但 SQLite 已 COMMIT → 写 compensation event + 标记 COMPENSATED
+   - 任一阶段失败 -> SQLite ``ROLLBACK`` + 删除 tmp + bak 恢复
+   - 文件 rename 失败但 SQLite 已 COMMIT -> 写 compensation event + 标记 COMPENSATED
 
 2. **事务超时**：每个 transaction 有超时限制（默认 30s）。超时自动 ROLLBACK。
 
@@ -209,7 +209,7 @@ class TransactionScope:
         """在当前事务中执行单条 SQL（参数化查询）。"""
         self._check_active()
         self._check_timeout()
-        if self._atm._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
+        if self._atm._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
         return self._atm._conn.execute(sql, params)
 
     def executemany(
@@ -220,7 +220,7 @@ class TransactionScope:
         """在当前事务中批量执行 SQL。"""
         self._check_active()
         self._check_timeout()
-        if self._atm._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
+        if self._atm._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
         return self._atm._conn.executemany(sql, seq_of_params)
 
     def write_file(
@@ -362,7 +362,7 @@ class AtomicTransactionManager:
 
     def _ensure_tx_idempotency_table(self) -> None:
         """确保 tx_idempotency 表存在（幂等）。"""
-        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
+        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
         self._conn.execute(
             """
             CREATE TABLE IF NOT EXISTS tx_idempotency (
@@ -391,10 +391,10 @@ class AtomicTransactionManager:
 
         异常语义
         --------
-        - with 块内抛任何异常 → ROLLBACK + 文件清理 + 重新抛出
-        - with 块正常退出 → COMMIT
-        - commit 过程中失败 → ROLLBACK（尽力）+ compensating event + re-raise
-        - 超时 → ROLLBACK + TransactionTimeoutError
+        - with 块内抛任何异常 -> ROLLBACK + 文件清理 + 重新抛出
+        - with 块正常退出 -> COMMIT
+        - commit 过程中失败 -> ROLLBACK（尽力）+ compensating event + re-raise
+        - 超时 -> ROLLBACK + TransactionTimeoutError
         """
         with self._lock:
             if self._active_tx is not None:
@@ -408,7 +408,7 @@ class AtomicTransactionManager:
             tx = TransactionScope(atm=self, tx_id=_new_tx_id(), timeout=self._tx_timeout)
             self._active_tx = tx
 
-            if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
+            if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
             self._conn.execute("BEGIN IMMEDIATE")
 
             # 登记到幂等去重表
@@ -416,7 +416,7 @@ class AtomicTransactionManager:
                 "INSERT OR IGNORE INTO tx_idempotency (tx_id, status, started_at, note) VALUES (?, 'PREPARED', ?, '')",
                 (tx.tx_id, _now_iso()),
             )
-            # 检查是否重复（tx_id 已存在 → 重复提交）
+            # 检查是否重复（tx_id 已存在 -> 重复提交）
             row = self._conn.execute("SELECT status FROM tx_idempotency WHERE tx_id = ?", (tx.tx_id,)).fetchone()
             if row and row[0] != "PREPARED":
                 self._conn.execute("ROLLBACK")
@@ -465,7 +465,7 @@ class AtomicTransactionManager:
 
     def _write_compensation_event(self, tx: TransactionScope) -> None:
         """SQLite COMMIT 已成功但文件 rename 失败时，写入补偿事件。"""
-        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
+        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
         try:
             self._conn.execute(
                 """
@@ -496,7 +496,7 @@ class AtomicTransactionManager:
             logger.error("[%s] failed to write compensation event: %s", tx.tx_id, exc)
 
     def _commit(self, tx: TransactionScope) -> None:
-        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
+        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
 
         self._pre_commit_verify(tx)
 
@@ -567,7 +567,7 @@ class AtomicTransactionManager:
         if tx._rolled_back:
             return
 
-        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert→if/raise
+        if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
         try:
             self._conn.execute("ROLLBACK")
         except sqlite3.Error as exc:

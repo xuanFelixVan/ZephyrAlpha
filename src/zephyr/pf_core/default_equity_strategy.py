@@ -30,9 +30,9 @@ CTR 契约：
   消费者 — CTR-002 (FactorSignal) ← D_FACTOR
   消费者 — CTR-003 (RiskLimits) ← D_RISK
   消费者 — CTR-P1-015 (SynthesizedSignal) ← D_SIGNAL
-  生产者 — CTR-004 (Order) → D_EXECUTION_CORE
+  生产者 — CTR-004 (Order) -> D_EXECUTION_CORE
 
-SSoT: cross_layer_contracts.yaml → OCP-002 + CTR-004
+SSoT: cross_layer_contracts.yaml -> OCP-002 + CTR-004
 """
 
 from __future__ import annotations

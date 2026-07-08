@@ -18,9 +18,9 @@
 """auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）
 
 触发时机 —— 零手动代码，完全自动：
-    zephyr 包被 import → auto_bootstrap 执行 → 全局 Telemetry 单例创建
-    SessionContinuity 初始化 → print_restore_summary 被 monkey-patch → 自动发送 session_start 事件
-    Phase Manager 运行检查 → PHASE_SEQUENCE 访问被拦截 → 自动发送 gate_check 事件
+    zephyr 包被 import -> auto_bootstrap 执行 -> 全局 Telemetry 单例创建
+    SessionContinuity 初始化 -> print_restore_summary 被 monkey-patch -> 自动发送 session_start 事件
+    Phase Manager 运行检查 -> PHASE_SEQUENCE 访问被拦截 -> 自动发送 gate_check 事件
 
 模块自动注册 —— 零代码接入：
     from zephyr.infrastructure.system_telemetry.auto_bootstrap import register_module
@@ -98,7 +98,7 @@ def get_global_telemetry():
 
 
 def _patch_session_continuity() -> bool:
-    """Monkey-patch SessionContinuity.print_restore_summary → 自动发送 session_start 遥测"""
+    """Monkey-patch SessionContinuity.print_restore_summary -> 自动发送 session_start 遥测"""
     try:
         from zephyr.shared.session.session_continuity import SessionContinuity
 
@@ -124,7 +124,7 @@ def _patch_session_continuity() -> bool:
 
 
 def _patch_phase_manager() -> bool:
-    """Monkey-patch PhaseGate.run_checks → 每次 gate check 自动发送遥测"""
+    """Monkey-patch PhaseGate.run_checks -> 每次 gate check 自动发送遥测"""
     try:
         from zephyr.governance.ops_governance.phase_manager import PhaseGate
 
@@ -157,7 +157,7 @@ def _patch_phase_manager() -> bool:
 
 
 def _patch_blueprint_metrics() -> bool:
-    """注入 export 钩子到 blueprint_metrics → 每次蓝图读取自动入遥测"""
+    """注入 export 钩子到 blueprint_metrics -> 每次蓝图读取自动入遥测"""
     try:
         from zephyr.infrastructure.system_telemetry.metrics import blueprint_metrics as bm
 

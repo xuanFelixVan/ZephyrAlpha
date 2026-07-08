@@ -65,7 +65,7 @@ MANIFEST = {
         },
         {
             "file": "rollback_loop_detector.py",
-            "responsibility": "循环检测器——同一 (task, gate) 组合 >3 次/h → 暂停 + 升级",
+            "responsibility": "循环检测器——同一 (task, gate) 组合 >3 次/h -> 暂停 + 升级",
             "blind_spots": ["B6"],
         },
         {
@@ -85,7 +85,7 @@ MANIFEST = {
         },
         {
             "file": "sqlite_dumper.py",
-            "responsibility": "SQLite dump 工具——schema + data → JSONL（Merkle 树签名 + HMAC）/ JSONL → 重建 SQLite + 完整性验证",
+            "responsibility": "SQLite dump 工具——schema + data -> JSONL（Merkle 树签名 + HMAC）/ JSONL -> 重建 SQLite + 完整性验证",
             "blind_spots": ["B1", "B3", "B49"],
         },
         {

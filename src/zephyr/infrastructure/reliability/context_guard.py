@@ -24,7 +24,7 @@ Context Guard — 上下文契约守卫。
 
 功能：
     - 上下文白名单：只允许 upstream_files + downstream_outputs 中声明的文件
-    - 超范围访问 → 告警 + 拒绝
+    - 超范围访问 -> 告警 + 拒绝
     - forbidden_touch 强制执行
 """
 

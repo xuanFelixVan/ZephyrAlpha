@@ -36,7 +36,7 @@ class CapabilityRegistry:
 
     对标:
       - Google A2A Agent Card: JSON 格式的能力自描述
-      - Anthropic MCP: tools/list → 列出所有可用工具
+      - Anthropic MCP: tools/list -> 列出所有可用工具
       - Cursor Rules: .cursor/rules/ 持久化上下文
     """
 

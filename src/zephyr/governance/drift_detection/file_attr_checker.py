@@ -34,7 +34,7 @@ execution_bit_shift: Unix +x位变更
 hidden_attribute_flip: Windows隐藏属性被翻转
 
 
-encoding_regression: UTF-8→其他编码(编码退化检测)
+encoding_regression: UTF-8->其他编码(编码退化检测)
 
 
 size_anomaly: 修改后体积突变(>10× or <0.1×)

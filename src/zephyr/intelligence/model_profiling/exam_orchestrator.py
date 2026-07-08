@@ -23,9 +23,9 @@ ExamOrchestrator --- 五轴入职考试主控
     2. DepthExam  (纵轴) — 对 breadth 通过的能力各跑 3 道标准题, 算精度
     3. SpeedTest   (速轴) — 测量延迟 + 吞吐
     4. HalluTest   (幻轴) — 幻觉检测 (编造/不一致/拒绝)
-    5. DriftTest   (稳轴) — 长时间漂移 (cold → load → hot 三阶段)
+    5. DriftTest   (稳轴) — 长时间漂移 (cold -> load -> hot 三阶段)
 
-输出: CapabilityPassport → data/brain/passports/{model_id}.json
+输出: CapabilityPassport -> data/brain/passports/{model_id}.json
 """
 
 from __future__ import annotations
@@ -102,11 +102,11 @@ def _time_weight(elapsed_ms: float, decay_ms: float = 260_000.0) -> float:
     """v3.0.5: 时间权重折扣——慢答案被折扣但不归零。
 
     对齐 project_memory ``exp(-t/260s)``：参数 260s（exp 衰减常数，非半衰期）。
-    - 0ms   → 1.000（即时满分）
-    - 9s    → 0.966（本地模型单题，轻微折扣）
-    - 60s   → 0.794（thinking 模型单题，明显折扣）
-    - 260s  → 0.368
-    - 600s  → 0.099（防卡死上限，不归零）
+    - 0ms   -> 1.000（即时满分）
+    - 9s    -> 0.966（本地模型单题，轻微折扣）
+    - 60s   -> 0.794（thinking 模型单题，明显折扣）
+    - 260s  -> 0.368
+    - 600s  -> 0.099（防卡死上限，不归零）
 
     用途：在 _score_capability 中对每 case 的 f1 折扣，
     替代已废除的 60s 硬熔断——慢但正确的答案仍得分，仅被折扣。
@@ -356,13 +356,13 @@ class ExamOrchestrator:
         """P1.5: OLYMPIAD 题三轨评分——judge*0.4 + executor*0.3 + rubric*0.3（归一化）。
 
         P1-4 升级: judge 轨始终存在 —
-          - judge_chat 可用 → LLM judge (语义级评分)
-          - judge_chat=None → DeterministicJudge (关键词+结构+长度, 零成本独立意见)
+          - judge_chat 可用 -> LLM judge (语义级评分)
+          - judge_chat=None -> DeterministicJudge (关键词+结构+长度, 零成本独立意见)
 
         executor 轨:
-          - code_generate 类 + expected_test_cases → 可执行断言
-          - 其他能力 + expected_static_assertions → 静态文本断言 (P1-4 新增)
-          - 两者皆无 → executor 轨缺失, 权重回退到 rubric/judge (归一化)
+          - code_generate 类 + expected_test_cases -> 可执行断言
+          - 其他能力 + expected_static_assertions -> 静态文本断言 (P1-4 新增)
+          - 两者皆无 -> executor 轨缺失, 权重回退到 rubric/judge (归一化)
 
         Returns:
             overall: float 0.0~1.0（三轨加权综合分）
@@ -660,7 +660,7 @@ class ExamOrchestrator:
             if not match:
                 em_all = 0
 
-        # 4. int 字段（expected_step_count → 检查 steps 长度）
+        # 4. int 字段（expected_step_count -> 检查 steps 长度）
         if case.expected_step_count and case.expected_step_count > 0:
             steps = result.get("steps", [])
             got_count = len(steps) if isinstance(steps, list) else 0
@@ -900,7 +900,7 @@ class ExamOrchestrator:
         )
 
     def _run_drift(self, breadth: BreadthResult) -> DriftResult:
-        """稳轴: cold → load → hot 三阶段漂移测试（v3.0.5 真实实现）。
+        """稳轴: cold -> load -> hot 三阶段漂移测试（v3.0.5 真实实现）。
 
         cold:  单次冷启（首个 breadth 通过能力），记录基线输出 + 延迟 + 幻觉标志
         load:  连续 N 次压载（轮换 breadth 通过的能力），施加热负载
@@ -981,7 +981,7 @@ class ExamOrchestrator:
         """v3.0.5: 综合分 = 加权原始分，经奥赛封顶。
 
         权重：breadth 0.35 + depth 0.50 + (1-halluc) 0.15
-        奥赛封顶：通过率 <25%→B+(0.80)；<50%→A(0.85)；<75%→A-(0.88)；≥75%→A+(1.0)
+        奥赛封顶：通过率 <25%->B+(0.80)；<50%->A(0.85)；<75%->A-(0.88)；≥75%->A+(1.0)
         """
         b = passport.breadth.score
         d = passport.depth.overall_score
@@ -1099,8 +1099,8 @@ class ExamOrchestrator:
         """验证模型返回结果是否有效（防作弊检测）。
 
         检测项:
-        1. 泄露答案字段: result 中包含 expected_* 字段 → 无效
-        2. 数值越界: precision/recall 超出 [0,1] 范围 → 无效
+        1. 泄露答案字段: result 中包含 expected_* 字段 -> 无效
+        2. 数值越界: precision/recall 超出 [0,1] 范围 -> 无效
         """
         if not isinstance(result, dict):
             return False

@@ -70,7 +70,7 @@ def make_held_overlap_gate() -> GateSpec:
         try:
             other_held = gateway._registry.other_held_files(session_id)
         except Exception:
-            # registry 读取异常 → 安全降级为空集（不阻断）
+            # registry 读取异常 -> 安全降级为空集（不阻断）
             # 理由：registry 故障不应卡死 commit 工作流；
             #       stash 隔离层（_get_session_held_non_target）同样降级为空集
             other_held = set()

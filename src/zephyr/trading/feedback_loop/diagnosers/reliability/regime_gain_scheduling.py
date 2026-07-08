@@ -23,7 +23,7 @@ high-vol regimes cause false alarms; low-vol regimes miss signals.
 Risk: R453 — One-size-fits-all sensitivity causes regime-specific blind spots.
 
 Mitigation: Per-regime gain scheduling. Map current market regime to gain multiplier.
-Low vol → higher sensitivity; high vol → damped response to avoid noise-triggered actions.
+Low vol -> higher sensitivity; high vol -> damped response to avoid noise-triggered actions.
 """
 
 from __future__ import annotations

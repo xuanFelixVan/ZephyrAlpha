@@ -41,10 +41,10 @@ def score_blueprint_route(
     """对单条 route 计算匹配分数。
 
     两级匹配：
-    1. path_patterns（高权重）：glob 匹配文件路径 → +10/命中
+    1. path_patterns（高权重）：glob 匹配文件路径 -> +10/命中
     2. task_keywords（中权重）：关键词匹配
-       - 整词出现在 task_text 中 → +5
-       - 子串匹配 task_keywords 中任一 → +2
+       - 整词出现在 task_text 中 -> +5
+       - 子串匹配 task_keywords 中任一 -> +2
 
     参数
     ----
@@ -104,7 +104,7 @@ def score_and_rank_routes(
 
     返回
     ----
-    [(score, priority, route), ...] 按 score 降序 → priority 降序排列
+    [(score, priority, route), ...] 按 score 降序 -> priority 降序排列
     """
     scored: list[tuple[int, int, dict[str, Any]]] = []
 

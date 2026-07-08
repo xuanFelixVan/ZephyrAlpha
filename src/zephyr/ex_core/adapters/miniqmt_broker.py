@@ -203,10 +203,10 @@ class MiniQmtBroker(BrokerInterface):
         # 线程安全锁（xttrader 非线程安全；保护共享状态如 _fill_callbacks）
         self._lock = threading.Lock()
 
-        # 幂等去重：idempotency_key → broker_order_id
+        # 幂等去重：idempotency_key -> broker_order_id
         self._idempotency_map: dict[str, str] = {}
 
-        # 订单状态缓存：broker_order_id → Order
+        # 订单状态缓存：broker_order_id -> Order
         self._order_cache: dict[str, Order] = {}
 
         # 成交回调（受 _lock 保护）

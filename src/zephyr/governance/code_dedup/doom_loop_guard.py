@@ -18,8 +18,8 @@
 """Doom Loop 防护 — 修复升级阶梯 L0-L4 状态机.
 
 职责：
-  - L0 Direct Fix → L1 Partial Fix → L2 Retry Once → L3 Escalate → L4 Stop+Alert
-  - 3次失败 → freeze_dup_group → 24h内不重复尝试
+  - L0 Direct Fix -> L1 Partial Fix -> L2 Retry Once -> L3 Escalate -> L4 Stop+Alert
+  - 3次失败 -> freeze_dup_group -> 24h内不重复尝试
   - 冻结列表 doom-loop-freeze-list.json 维护
   - Session Log ALERT 写入
 """

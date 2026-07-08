@@ -33,5 +33,5 @@ REVIEW_DIMENSIONS: dict[str, str] = {
     "completeness": "context manifest字段全",
     "traceability": "正反向链路",
     "token_efficiency": "审查Token/成果",
-    "no_regression": "无下降→对比上次",
+    "no_regression": "无下降->对比上次",
 }

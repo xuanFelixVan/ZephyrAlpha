@@ -29,7 +29,7 @@ INV-001 / CAP-009：Kill Switch 延迟 < 1ms（现阶段 T0 模拟器验证）
 
 功能：
   - 模拟硬件 Kill Switch 的触发/恢复时序
-  - 测量端到端延迟（触发 → 确认）
+  - 测量端到端延迟（触发 -> 确认）
   - 输出 JSONL 指标供 Prometheus / arch_guard 消费
 
 用法：
@@ -86,9 +86,9 @@ class KillSwitchSimulator:
     T0 级 Kill Switch 模拟器
 
     模拟硬件 Kill Switch 的信号回路：
-      1. trigger() → 发送 KILL 信号
-      2. wait_ack() → 等待硬件确认（模拟 GPIO 中断回路延迟）
-      3. log_probe() → 写 JSONL 探测记录
+      1. trigger() -> 发送 KILL 信号
+      2. wait_ack() -> 等待硬件确认（模拟 GPIO 中断回路延迟）
+      3. log_probe() -> 写 JSONL 探测记录
     """
 
     def __init__(self, target_ms: float = DEFAULT_TARGET_MS):
@@ -135,7 +135,7 @@ class KillSwitchSimulator:
         passed = probe.target_met
         print(
             f"[KILL_SWITCH] Health Check: latency={probe.latency_us:.1f}us, "
-            f"target={self.target_ms}ms → {'PASS' if passed else 'FAIL'}"
+            f"target={self.target_ms}ms -> {'PASS' if passed else 'FAIL'}"
         )
         return passed
 

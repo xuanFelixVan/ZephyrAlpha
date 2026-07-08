@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] fetch 异常→yield FetchResult(error=str)；token缺失→RuntimeError
+# [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)；token缺失->RuntimeError
 # [TESTS] tests/zephyr/data/test_providers.py::TestTushareProvider
 # [A_module] module_id=MOD-L00-004-tushare_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

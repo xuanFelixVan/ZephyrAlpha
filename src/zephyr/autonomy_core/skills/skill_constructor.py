@@ -21,7 +21,7 @@ Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.2.0
 
-蓝图→Skill 全自动构造器
+蓝图->Skill 全自动构造器
 =======================
 流程:
   1. 读取蓝图 markdown 文件
@@ -49,7 +49,7 @@ _REGISTRY_PATH = _BASE_DIR / "skill-registry.yaml"
 
 
 class SkillConstructor:
-    """蓝图→Skill 全自动生成器"""
+    """蓝图->Skill 全自动生成器"""
 
     KEYWORD_MAP = {
         "database": "database-specialist",

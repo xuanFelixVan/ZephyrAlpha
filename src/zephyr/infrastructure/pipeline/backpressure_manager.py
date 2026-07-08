@@ -17,7 +17,7 @@
 
 """Pipeline — Backpressure Manager
 
-跨层背压信号管理器。管理 D_DATA→D_FACTOR→D_SIGNAL 数据管道中的背压控制信号。
+跨层背压信号管理器。管理 D_DATA->D_FACTOR->D_SIGNAL 数据管道中的背压控制信号。
 
 三态背压模型（CTR-BP-001~003）：
   PAUSE   — 下游处理能力不足，暂停指定标的的数据下发 duration_ms 毫秒
@@ -25,15 +25,15 @@
   RESUME   — 处理能力恢复，恢复正常下发
 
 典型流：
-  1. D_FACTOR/D_SIGNAL 检测到队列堆积 → emit PAUSE / THROTTLE
+  1. D_FACTOR/D_SIGNAL 检测到队列堆积 -> emit PAUSE / THROTTLE
   2. BackpressureManager 记录状态并通知 D_DATA 停止/降速
-  3. 超时或下游处理完成 → emit RESUME
+  3. 超时或下游处理完成 -> emit RESUME
   4. BackpressureManager 清除状态并通知 D_DATA 恢复
 
 CTR 契约：
   消费者 — CTR-BP-001 (BackpressurePause), CTR-BP-002 (Throttle), CTR-BP-003 (Resume)
 
-SSoT: cross_layer_contracts.yaml → CTR-BP-001~003
+SSoT: cross_layer_contracts.yaml -> CTR-BP-001~003
 """
 
 from __future__ import annotations

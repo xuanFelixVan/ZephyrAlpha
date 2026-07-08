@@ -30,7 +30,7 @@ class DiversityReport:
 
 
 class DiversityConstraint:
-    """Source tracking + Gini >0.7 → diversify (DD119)."""
+    """Source tracking + Gini >0.7 -> diversify (DD119)."""
 
     def analyze(self, sources: list[str]) -> DiversityReport:
         dist = dict(Counter(sources))

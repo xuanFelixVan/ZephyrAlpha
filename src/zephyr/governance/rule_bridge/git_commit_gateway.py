@@ -279,7 +279,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_unsafe_dict_spread_gate())  # priority=66 warn 级 防复发 5.147.5/5.147.12 **data 直接展开模式（schema 演进会 TypeError，SSoT filter_dataclass_fields 已治本，gate 防新 AI 制造同类债务）
         self._gate_registry.register(make_vocab_hardcode_gate())  # priority=80 治本 --no-verify 绕过 GATE-VOCAB（Phase 1 AST 门禁，subprocess 调 check_vocab_hardcode.py --files --ci）
         self._gate_registry.register(make_file_copy_gate())  # priority=85 治本文件复制检测无 commit-time 强制（Phase 1 sub-task 3，subprocess 调 check_code_duplication.py --files --ast --threshold 0.7）
-        # Phase 3 reconciler→gate 收敛（2026-07-03）：3 个 B 类纯校验 reconciler 升级为 pre-commit 阻断 gate
+        # Phase 3 reconciler->gate 收敛（2026-07-03）：3 个 B 类纯校验 reconciler 升级为 pre-commit 阻断 gate
         self._gate_registry.register(make_id_uniqueness_gate())  # priority=86 治本 same-repo 重复 pre-commit hook id（原 post-commit warn reconciler）
         self._gate_registry.register(make_exempt_zone_frontmatter_gate())  # priority=87 治本豁免区 frontmatter doc_type 误放（原 post-commit warn reconciler）
         self._gate_registry.register(make_module_id_consistency_gate())  # priority=88 治本 module_id 三声明轨道一致性 + count 派生（原 post-commit warn reconciler）
@@ -291,7 +291,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_doc_ref_broken_gate())  # priority=91 治本文档引用断裂 .md 相对路径不存在（病根：文档引用断裂26）——原88与module_id_consistency撞号，调整至91
         self._gate_registry.register(make_function_dup_gate())  # priority=90 治本重复函数同目录同名同 body hash（病根：SSoT真源唯一性211）
         self._gate_registry.register(make_bare_getenv_gate())  # priority=81 治本裸os.getenv读密钥绕过SecretProvider（§5.17.10防复发，AST检测SECRET_INDICATOR_PATTERNS）
-        self._gate_registry.register(make_msg_style_gate())  # priority=92 治本错误消息标点/箭头风格不一致（5.99.22防复发：raise消息含→或。结尾阻断）
+        self._gate_registry.register(make_msg_style_gate())  # priority=92 治本错误消息标点/箭头风格不一致（5.99.22防复发：raise消息含->或。结尾阻断）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
 
@@ -333,7 +333,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_yaml_sync_reconciler(self))
         # Phase 3 收敛：以下 3 个纯校验 reconciler 已升级为 pre-commit gate（见上方 _gate_registry）
         # make_precommit_id_uniqueness_reconciler / make_exempt_zone_frontmatter_reconciler /
-        # make_module_id_consistency_reconciler 不再 post-commit 注册（warn→阻断前移）
+        # make_module_id_consistency_reconciler 不再 post-commit 注册（warn->阻断前移）
         self._reconciliation_registry.register(make_vocab_change_reconciler(self))
         self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))
         self._reconciliation_registry.register(make_delete_audit_reconciler(self))
@@ -496,7 +496,7 @@ class GitCommitGateway:
     def _stage_gitignored_tracked(
         self, files: list[str]
     ) -> tuple[bool, str, list[str]]:
-        """暂存 gitignored 且已跟踪的文件，返回 (ok, err, normal_files)。git add 对 gitignored 整批拒绝故分离处理：已删除+已跟踪→git rm --cached；已修改+已跟踪→git add -f；未跟踪的 gitignored→跳过。"""
+        """暂存 gitignored 且已跟踪的文件，返回 (ok, err, normal_files)。git add 对 gitignored 整批拒绝故分离处理：已删除+已跟踪->git rm --cached；已修改+已跟踪->git add -f；未跟踪的 gitignored->跳过。"""
         ignored = self._filter_gitignored(files)
         if not ignored:
             return True, "", list(files)
@@ -563,7 +563,7 @@ class GitCommitGateway:
         full_message: str,
         gw_marker: str,
     ) -> CommitResult:
-        """持锁状态下执行 add → commit（阶段3 移除 stash 隔离，worktree 物理隔离替代）。
+        """持锁状态下执行 add -> commit（阶段3 移除 stash 隔离，worktree 物理隔离替代）。
 
         统一路径：始终使用 --pathspec-from-file，避免 Windows CLI 长度限制 (WinError 206)。
         """
@@ -662,7 +662,7 @@ class GitCommitGateway:
                                 commit_hash=commit_hash,
                             )
         finally:
-            # 事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 → 写异步触发记录
+            # 事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 -> 写异步触发记录
             if result.status == CommitStatus.OK:
                 try:
                     self._post_commit_red_blue_trigger(files, session_id, result.commit_hash)
@@ -686,7 +686,7 @@ class GitCommitGateway:
     def _post_commit_red_blue_trigger(
         self, files: list[str], session_id: str, commit_hash: str,
     ) -> None:
-        """事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 → 写异步触发记录。"""
+        """事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 -> 写异步触发记录。"""
         from zephyr.security.adversarial_validation.commit_trigger import (
             detect_formal_files,
             write_trigger_record,

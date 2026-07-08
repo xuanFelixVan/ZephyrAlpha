@@ -17,7 +17,7 @@
 
 """AssetDashboard — MOD-INF-026 资产健康仪表盘生成器
 
-蓝图 §5 + §27：读取 unified-asset-index.yaml → 生成 dashboard.json
+蓝图 §5 + §27：读取 unified-asset-index.yaml -> 生成 dashboard.json
 含健康评分、分类统计、趋势数据、告警。"""
 
 import json

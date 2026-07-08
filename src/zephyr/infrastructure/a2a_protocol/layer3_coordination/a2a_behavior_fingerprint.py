@@ -18,12 +18,12 @@
 """A2A 行为指纹 — Agent 行为模式学习与画像
 
 记录每个 Agent 的操作历史, 建立行为指纹:
-  - action_distribution: action 名称 → 频率分布
+  - action_distribution: action 名称 -> 频率分布
   - file_touch_pattern: 哪些文件被修改过
   - avg_session_duration: 平均作业时长
   - inter_agent_interaction_rate: 与其他 Agent 的通信频率
 
-当 Agent 行为偏离其历史指纹时 → 触发 A2AAnomalyDetector
+当 Agent 行为偏离其历史指纹时 -> 触发 A2AAnomalyDetector
 """
 
 from __future__ import annotations

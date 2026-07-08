@@ -164,12 +164,12 @@ class RedBlueTriggerConsumer:
       - 始终轮询（就位：即使门禁未达标，钩子仍会 emit 记录到此队列）。
       - ZEPHYR_RED_BLUE_AUTO_ENABLED != "1" 时：log + 删队列文件（不累积，
         留可见性，fail-closed）。
-      - == "1" 时：CircuitBreaker.before_run → 跑 TIER_1 全量 14 场景
-        → after_run → 删队列文件。
+      - == "1" 时：CircuitBreaker.before_run -> 跑 TIER_1 全量 14 场景
+        -> after_run -> 删队列文件。
 
     频率保护:
       CircuitBreaker（模块级单例）防 commit 风暴烧 LLM 预算。OPEN 态
-      before_run 抛 CircuitBreakerOpenError → 跳过本条、留队列 cool-down
+      before_run 抛 CircuitBreakerOpenError -> 跳过本条、留队列 cool-down
       30s 后 HALF_OPEN 重试。
     """
 

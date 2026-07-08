@@ -100,7 +100,7 @@ class PostProcessHook:
 
 
 class PostProcessPipeline:
-    """AI 生成代码后处理管道——注册 hook → 按序执行 → 策略决策。
+    """AI 生成代码后处理管道——注册 hook -> 按序执行 -> 策略决策。
 
     Usage::
 

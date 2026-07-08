@@ -66,10 +66,10 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["make_empty_handler_gate"]
 
-# 装饰器名包含这些子串 → handler
+# 装饰器名包含这些子串 -> handler
 _HANDLER_DECORATOR_SUBSTRS = ("subscriber", "event_handler", "handler", "listener")
 
-# 函数名前缀 → handler
+# 函数名前缀 -> handler
 _HANDLER_FUNC_PREFIXES = ("handle_", "on_")
 
 # logger 方法名（logger.info/debug/warning/error 等）
@@ -154,7 +154,7 @@ def _is_empty_handler_body(func: ast.FunctionDef | ast.AsyncFunctionDef) -> bool
             continue
         if _is_empty_return(stmt):
             continue
-        # 其他语句 → 有实际逻辑
+        # 其他语句 -> 有实际逻辑
         return False
     return True  # 全部都是空壳语句
 

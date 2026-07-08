@@ -185,7 +185,7 @@ class ResultPushManager:
 
             self._save(state)
 
-        _log.info("push_result %s → %s", task_id, status.value)
+        _log.info("push_result %s -> %s", task_id, status.value)
         return status
 
     def _do_push(self, task: dict[str, Any], result: dict) -> PushStatus:
@@ -348,9 +348,9 @@ class ResultPushManager:
 
         # 5.53.4 修复：重试失败是负向事件，原用 INFO 记录被当正常信息。status≠PUSHED 时用 WARNING。
         if status != PushStatus.PUSHED:
-            _log.warning("retry_failed %s → %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))
+            _log.warning("retry_failed %s -> %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))
         else:
-            _log.info("retry_failed %s → %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))
+            _log.info("retry_failed %s -> %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))
         return status
 
     def subscribe_event(self, callback: Callable[[Any], None]) -> None:

@@ -85,7 +85,7 @@ class RedTeamScanner:
     - 每个载荷通过 LSG 网关输入侧、输出侧或双向验证
     - 按 OWASP LLM01-LLM10 分类统计阻断率
     - 按严重级别（critical/high/medium/low）统计覆盖率
-    - 发现漏过（allowed）载荷 → 自动登记到 failures 列表
+    - 发现漏过（allowed）载荷 -> 自动登记到 failures 列表
     - 生成结构化 ScanReport 供 CI/Gate 消费
     """
 

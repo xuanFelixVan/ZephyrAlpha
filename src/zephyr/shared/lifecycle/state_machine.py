@@ -24,9 +24,9 @@ StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038)
   - 聚合根持有 StateMachine 实例
 
 解决问题：
-  - 4 处同名 InvalidTransitionError → 统一为 zephyr.shared.state_machine.InvalidTransitionError
-  - 2 处同名 SessionState → 各领域独立命名空间
-  - 11+ 零复用状态机实现 → 统一基类
+  - 4 处同名 InvalidTransitionError -> 统一为 zephyr.shared.state_machine.InvalidTransitionError
+  - 2 处同名 SessionState -> 各领域独立命名空间
+  - 11+ 零复用状态机实现 -> 统一基类
 
 SSoT: MOD-INF-038 blueprint.md §4
 Version: 0.1.0
@@ -75,7 +75,7 @@ class InvalidTransitionError(ZephyrBaseError):
         self.target_state = target
         self.allowed_transitions = allowed
         allowed_str = f" allowed: {allowed}" if allowed else ""
-        super().__init__(f"[{fsm_id}] invalid transition: {current!r} → {target!r}{allowed_str}")
+        super().__init__(f"[{fsm_id}] invalid transition: {current!r} -> {target!r}{allowed_str}")
         if error_code is not None:
             self.error_code = error_code
 
@@ -88,7 +88,7 @@ class TransitionGuardError(ZephyrBaseError):
         self.source_state = source
         self.target_state = target
         self.reason = reason
-        super().__init__(f"[{fsm_id}] guard rejected: {source!r} → {target!r}: {reason}")
+        super().__init__(f"[{fsm_id}] guard rejected: {source!r} -> {target!r}: {reason}")
         if error_code is not None:
             self.error_code = error_code
 
@@ -240,7 +240,7 @@ class StateMachine(Generic[S]):
                     eff.on_enter(target, context)
                 except Exception as exc:
                     logger.error("[%s] on_enter error: %s", self._config.fsm_id, exc, exc_info=True)
-            logger.info("[%s] %s → %s", self._config.fsm_id, old, target)
+            logger.info("[%s] %s -> %s", self._config.fsm_id, old, target)
             return self._current
 
     def is_terminal(self) -> bool:

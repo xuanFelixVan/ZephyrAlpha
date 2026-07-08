@@ -25,7 +25,7 @@ Drift Engine — 编排器核心 (SRC-0030 精简后)
 module_id: MOD-INF-023
 
 
-检测器发现 → 调度 → 汇总 → 写入 + 风暴检测 + Evolution Engine 反馈。
+检测器发现 -> 调度 -> 汇总 -> 写入 + 风暴检测 + Evolution Engine 反馈。
 
 
 从原 1982 行拆分为：编排器 (本文件) + infrastructure + ai_construction_detectors

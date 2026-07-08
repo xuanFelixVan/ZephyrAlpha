@@ -27,8 +27,8 @@
 
 CI检查:
   python -m zephyr.knowledge.kb.integrity verify --layer 1|2|3|all
-    → 对比manifest vs 当前磁盘
-    → 发现漂移 → exit 1 + 详细diff
+    -> 对比manifest vs 当前磁盘
+    -> 发现漂移 -> exit 1 + 详细diff
 
 Manifest文件:
   data/snapshots/kb-integrity-manifest.json

@@ -19,7 +19,7 @@
 Gate-side Drift Detector Recovery — zephyr.governance.rule_enforcement.drift_detector
 
 module_id: GCT-023 (gate integration)
-trigger_router 消费端：drift_detected 事件 → 扫描确认 → 自动修复 → 回滚兜底。
+trigger_router 消费端：drift_detected 事件 -> 扫描确认 -> 自动修复 -> 回滚兜底。
 
 SRC-0038: 副本文件 — 保持独立实现，待后续审核。
   此文件是 drift-detector 真源 (src/zephyr/drift-detector/) 的**消费者/编排层**，
@@ -31,7 +31,7 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
   2. 调用 drift_engine.scan() 确认漂移
   3. 级联检测（cascade_detector.detect_cascade）
   4. 对可自动修复事件执行 AutoFixer.auto_fix()
-  5. 修复失败 → DriftFixHandler.on_drift_fix() 兜底回滚
+  5. 修复失败 -> DriftFixHandler.on_drift_fix() 兜底回滚
   6. Hotfix 旁路检查（[HOTFIX]/[EMERGENCY] commit 72h 抑制）
   7. 返回结构化恢复结果
 

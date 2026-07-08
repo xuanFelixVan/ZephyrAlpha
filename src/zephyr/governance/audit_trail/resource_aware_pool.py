@@ -5,7 +5,7 @@
 # [CONSUMERS] audit_admission_controller; orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 双池(CPU/GPU)互不干扰; GPU路由规则: llm_inference/semantic_analysis/embedding→gpu
+# [INVARIANTS] 双池(CPU/GPU)互不干扰; GPU路由规则: llm_inference/semantic_analysis/embedding->gpu
 # [MODIFY-GUARD] audit-orchestrator/blueprint.md; resource_aware_pool.py
 # [STABILITY] evolving
 # [SAFETY] M

@@ -17,7 +17,7 @@
 
 """[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 
-G-CT-009 契约：Rollback → Budget 回滚成本计入预算.
+G-CT-009 契约：Rollback -> Budget 回滚成本计入预算.
 
 """
 
@@ -25,7 +25,7 @@ from __future__ import annotations
 
 
 class RollbackBudgetTracker:
-    """回滚成本追踪→Budget."""
+    """回滚成本追踪->Budget."""
 
     def track_cost(self, agent_id: str, rollback_id: str, estimated_cost: float) -> dict:
         return {

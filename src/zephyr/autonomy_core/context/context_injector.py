@@ -150,7 +150,7 @@ class InjectionLayer(int, Enum):
 
 
 class ValidatedContext(BaseModel):
-    """Validate 阶段产物 → Inject 阶段输入。
+    """Validate 阶段产物 -> Inject 阶段输入。
 
     由 pattern_library.validate_context() 产生，
     经四层分类后由 context_injector.inject() 注入 session。
@@ -180,7 +180,7 @@ class InjectionResult(BaseModel):
     budget_remaining: int = Field(default=0, ge=0, description="剩余 token 预算")
     injected_successfully: bool = Field(default=True, description="注入是否成功")
     authority_score: float = Field(
-        default=0.0, ge=0.0, le=1.0, description="权威分数：CE build(0.7)→Orc check(0.85)→User review(1.0)"
+        default=0.0, ge=0.0, le=1.0, description="权威分数：CE build(0.7)->Orc check(0.85)->User review(1.0)"
     )
     authority_reviewed: bool = Field(default=False, description="是否通过 authority chain review")
 
@@ -278,7 +278,7 @@ def inject(
 ) -> InjectionResult:
     """INJECT 阶段入口——将校验上下文以四层结构注入。
 
-    注入顺序：Layer1(system) → Layer2(rules) → Layer3(knowledge) → Layer4(examples)
+    注入顺序：Layer1(system) -> Layer2(rules) -> Layer3(knowledge) -> Layer4(examples)
 
     AP1 防护：注入前必须通过 CT-CE-LSG-001 三层审查。
     AP3 防护：结构化分层注入，禁止 flat string concat。
@@ -441,7 +441,7 @@ AUTHORITY_CHAIN: Final[dict[str, float]] = {
 def with_authority_review(result: InjectionResult, level: str = "CE_build") -> InjectionResult:
     """TASK-018: 为注入结果标记 authority chain review 层级。
 
-    CE build(0.7) → Orc check(0.85) → User review(1.0)
+    CE build(0.7) -> Orc check(0.85) -> User review(1.0)
     """
     score = AUTHORITY_CHAIN.get(level, 0.7)
     result.authority_score = score

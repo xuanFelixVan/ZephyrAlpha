@@ -23,7 +23,7 @@ from typing import Self
 limiter.py —— 速率限制器（Phase 8 新增 | 盲点 B14 修复）
 
 痛点修复：LLM API 有 rate limit（如 DeepSeek 500 RPM），AI agent 不知道就会频繁 HTTP 429——
-  1. HTTP 429 → 自动重试 → 更频繁 429 → 雪崩
+  1. HTTP 429 -> 自动重试 -> 更频繁 429 -> 雪崩
   2. 没有 token bucket / sliding window——只能随机 sleep 碰运气
   3. 速率限制配置散落在各个 agent 代码中——不可审计
 
@@ -136,7 +136,7 @@ class TokenBucketLimiter:
                     },
                 )
 
-            # 5.100.1 修复: 原代码在持锁期间 release→sleep→acquire, 释放锁期间其他协程
+            # 5.100.1 修复: 原代码在持锁期间 release->sleep->acquire, 释放锁期间其他协程
             # 可修改 _tokens/_last_refill, 重新获取后覆盖其修改 (数据丢失).
             # 改为持锁期间 sleep, 简单正确. 并发优化 (条件变量) 属专项工程.
             logger.info("rate limit: waiting %.2fs for token", wait_time)

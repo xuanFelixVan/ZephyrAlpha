@@ -34,9 +34,9 @@
   );
 
 功能:
-  1. DELETE KE → 不物理删除 → 移入墓碑表
-  2. G2 dedup → 先查墓碑 → 避免"僵尸复活"
-  3. 定期 purge → 90天后的墓碑记录可以清理
+  1. DELETE KE -> 不物理删除 -> 移入墓碑表
+  2. G2 dedup -> 先查墓碑 -> 避免"僵尸复活"
+  3. 定期 purge -> 90天后的墓碑记录可以清理
 
 用法:
     python -m zephyr.knowledge.kb.ke_tombstone init            # 创建表

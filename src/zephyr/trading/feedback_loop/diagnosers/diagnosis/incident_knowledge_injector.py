@@ -17,8 +17,8 @@
 
 """
 R504: IncidentKnowledgeInjector
-RCA发现→规则/阈值自动注入闭环 — 不让知识腐烂
-对标: SRE Blameless Postmortem → Action Items automation
+RCA发现->规则/阈值自动注入闭环 — 不让知识腐烂
+对标: SRE Blameless Postmortem -> Action Items automation
 """
 
 import hashlib

@@ -18,9 +18,9 @@
 """FLE Self SLO Metrics — v0.17.0+ R249-R254
 
 七维SLO自观指标：
-  - MTTD: Mean-Time-To-Detect (异常发生→FLE检测)
-  - MTTR: Mean-Time-To-Repair (FLE检测→修复完成)
-  - MTTI: Mean-Time-To-Identify (异常发生→根因识别)
+  - MTTD: Mean-Time-To-Detect (异常发生->FLE检测)
+  - MTTR: Mean-Time-To-Repair (FLE检测->修复完成)
+  - MTTI: Mean-Time-To-Identify (异常发生->根因识别)
   - FP_RATE: 假阳性率
   - AVAILABILITY: FLE自体可用性
   - NET_VALUE: 净价值 (修复收益 - 修复成本)

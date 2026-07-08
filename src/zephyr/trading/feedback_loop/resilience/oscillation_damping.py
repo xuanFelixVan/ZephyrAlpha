@@ -20,10 +20,10 @@
 Blindspot: FLE actions in rapid succession cause oscillatory instability;
 system flips between corrective states without convergence.
 
-Risk: R450 — Unstable feedback loop; FLE overcorrects → re-corrects → oscillates indefinitely.
+Risk: R450 — Unstable feedback loop; FLE overcorrects -> re-corrects -> oscillates indefinitely.
 
 Mitigation: PID-style damping with action cooldown windows. Track reversal frequency;
-if >3 reversals in 60s → force cooldown + escalate to owner.
+if >3 reversals in 60s -> force cooldown + escalate to owner.
 """
 
 from __future__ import annotations

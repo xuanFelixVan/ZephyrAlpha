@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.io.result_repository; zephyr.frontend.dashboard.components.backtest_results
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] PIT铁律(零前瞻偏差); 转换幂等(相同BacktestResult→相同BacktestSinkData)
+# [INVARIANTS] PIT铁律(零前瞻偏差); 转换幂等(相同BacktestResult->相同BacktestSinkData)
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
@@ -166,7 +166,7 @@ def sink_backtest_result(
         BacktestResultSinkError: result 为 None 或关键字段为空
 
     副作用: 无（纯转换, 不持久化）
-    幂等性: 相同 BacktestResult + 相同时序输入 → 相同 BacktestSinkData
+    幂等性: 相同 BacktestResult + 相同时序输入 -> 相同 BacktestSinkData
     """
     if result is None:
         raise BacktestResultSinkError("BacktestResult 不能为 None")

@@ -31,7 +31,7 @@ append_only_events: SQLite TRIGGER禁止UPDATE/DELETE + event sourcing
 git_commit_audit_log: 每DEEP scan AUDIT_<scan_id>.yaml(sha256+per state计数)commit到Git
 
 
-anomaly_detection: 总行数减少/批量清洗/回溯修改 → P0 CRITICAL从Git恢复
+anomaly_detection: 总行数减少/批量清洗/回溯修改 -> P0 CRITICAL从Git恢复
 
 
 对标 blueprint.md §6.26。
@@ -356,7 +356,7 @@ def detect_anomalies(
                 AnomalyAlert(
                     alert_id=f"anomaly-resolved-rewind-{current.scan_id}",
                     anomaly_type="RESOLVED_REWIND",
-                    description=(f"RESOLVED count dropped: {resolved_before} → {resolved_after}"),
+                    description=(f"RESOLVED count dropped: {resolved_before} -> {resolved_after}"),
                     recovery_suggestion="Check for retroactive state modification",
                 )
             )

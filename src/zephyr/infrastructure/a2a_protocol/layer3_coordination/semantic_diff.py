@@ -18,9 +18,9 @@
 """A2A 语义差异引擎 — 结构感知的 Agent 间差异检测
 
 超越 line-level diff——识别函数/类/段落级别的语义差异:
-  - 同一函数被 Agent A 加日志、Agent B 改算法 → 语义冲突
-  - 同一类 Agent A 加方法、Agent B 删方法 → 架构冲突
-  - 同一段落 Agent A 改措辞、Agent B 删段落 → 上下文冲突
+  - 同一函数被 Agent A 加日志、Agent B 改算法 -> 语义冲突
+  - 同一类 Agent A 加方法、Agent B 删方法 -> 架构冲突
+  - 同一段落 Agent A 改措辞、Agent B 删段落 -> 上下文冲突
 
 输出: SemanticDiffReport — 冲突区域 + 类型 + 重合度评分
 """

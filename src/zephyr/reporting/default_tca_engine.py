@@ -24,14 +24,14 @@
 
 """D_REPORTING — Default TCA Engine
 
-交易成本分析引擎具体实现。成交回报 → 执行分析报告。
+交易成本分析引擎具体实现。成交回报 -> 执行分析报告。
 
 CTR 契约：
   消费者 — CTR-005 (Fill) ← D_EXECUTION_CORE
   消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE（关联委托）
-  生产者 — CTR-P1-007 (ExecutionReport) → D_FRONTEND, D_GOV_ENFORCEMENT
+  生产者 — CTR-P1-007 (ExecutionReport) -> D_FRONTEND, D_GOV_ENFORCEMENT
 
-SSoT: cross_layer_contracts.yaml → CTR-005 + CTR-P1-007
+SSoT: cross_layer_contracts.yaml -> CTR-005 + CTR-P1-007
 """
 
 from __future__ import annotations
@@ -99,7 +99,7 @@ class DefaultTCAEngine(TCAEngineBase):
             if order:
                 report = self.analyze(fill, order, idempotency_key)
                 reports.append(report)
-        _logger.info("Batch TCA: %d fills → %d reports", len(fills), len(reports))
+        _logger.info("Batch TCA: %d fills -> %d reports", len(fills), len(reports))
         return reports
 
     def _calc_shortfall(self, fill: Fill, order: Order) -> Decimal:

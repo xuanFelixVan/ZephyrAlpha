@@ -22,7 +22,7 @@ StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（T-2-04�
 
 功能
 ----
-1. sync_all — 全量同步：磁盘状态 → frontmatter → tasks 表
+1. sync_all — 全量同步：磁盘状态 -> frontmatter -> tasks 表
 2. sync_task — 单任务同步
 3. detect_orphans — 检测孤儿文件（磁盘存在但无 task 记录）
 4. detect_ghosts — 检测幽灵任务（task 存在但文件已删除）
@@ -34,9 +34,9 @@ StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（T-2-04�
 | 不存在 | — | PENDING/READY/WAITING | ✅ | — |
 | 存在 | draft | IN_PROGRESS | ✅ | — |
 | 存在 | accepted | COMPLETED/VERIFIED | ✅ | — |
-| 存在 | accepted | PENDING | ❌ | → VERIFIED |
-| 不存在 | — | COMPLETED/VERIFIED | ❌ | → PENDING |
-| 存在 | draft | VERIFIED | ❌ | → IN_PROGRESS |
+| 存在 | accepted | PENDING | ❌ | -> VERIFIED |
+| 不存在 | — | COMPLETED/VERIFIED | ❌ | -> PENDING |
+| 存在 | draft | VERIFIED | ❌ | -> IN_PROGRESS |
 """
 
 from __future__ import annotations
@@ -114,7 +114,7 @@ class StateSynchronizer:
 
     def sync_all(self, auto_fix: bool = False) -> list[SyncResult]:
         """
-        全量同步：磁盘状态 → frontmatter → tasks 表。
+        全量同步：磁盘状态 -> frontmatter -> tasks 表。
 
         Parameters
         ----------

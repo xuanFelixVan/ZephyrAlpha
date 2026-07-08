@@ -25,8 +25,8 @@ RollbackManager — 仅调试用途的 DB-state 快照，不用于自动回滚�
     仅保留用于手动调试场景的 DB 状态快照，不再参与自动回滚链路。
 
 自动回滚路径：
-    → src/zephyr/rollback/rollback_executor.py（文件+DB 双轨联动）
-    → src/zephyr/rollback/sqlite_dumper.py（SQLite dump/restore/verify）
+    -> src/zephyr/rollback/rollback_executor.py（文件+DB 双轨联动）
+    -> src/zephyr/rollback/sqlite_dumper.py（SQLite dump/restore/verify）
 
 原设计（已废弃）：
     依据： §4.5（回滚策略）

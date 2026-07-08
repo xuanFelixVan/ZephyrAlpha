@@ -23,8 +23,8 @@
   - 将 MatchingFill 转换为 BacktestFill（加 date 字段）
 
 v1.1.0 重构要点:
-  - 移除重复的 MatchingConfig（ARCH-034 CLASS-UNIQUENESS 违规）→ 从 matching_logic 导入并 re-export
-  - 移除重复的 _apply_slippage / _calc_commission → 委托给 MatchingLogic
+  - 移除重复的 MatchingConfig（ARCH-034 CLASS-UNIQUENESS 违规）-> 从 matching_logic 导入并 re-export
+  - 移除重复的 _apply_slippage / _calc_commission -> 委托给 MatchingLogic
   - 新增 generate_fills_with_order_book() 支持5档盘口撮合（Level 4 撮合）
   - 新增 generate_fills_with_tick() 支持 Tick级5档撮合（做T专用）
   - 新增 match_order/match_limit_order/match_tick_order 单笔撮合入口
@@ -83,7 +83,7 @@ class MatchingEngine:
       4. 差额 = 目标数量 - 当前持仓
       5. 先卖后买（避免现金不足）
       6. 委托 MatchingLogic.{match_market_order|match_limit_order|match_tick_order} 撮合
-      7. MatchingFill → BacktestFill（加 date 字段）
+      7. MatchingFill -> BacktestFill（加 date 字段）
 
     A股约束（本引擎校验）:
       - 100股整数倍（买入）
@@ -224,8 +224,8 @@ class MatchingEngine:
         """根据目标权重 + Tick快照生成成交记录（Tick级5档撮合，做T专用）
 
         v1.1.0 新增：基于 Tick 快照的5档逐档消化撮合。
-        委托 MatchingLogic.match_tick_order，逐档消化 ask1→ask2→...→ask5（BUY）
-        或 bid1→bid2→...→bid5（SELL），流动性约束为单档成交量上限=该档 vol。
+        委托 MatchingLogic.match_tick_order，逐档消化 ask1->ask2->...->ask5（BUY）
+        或 bid1->bid2->...->bid5（SELL），流动性约束为单档成交量上限=该档 vol。
 
         Args:
             target_weights: {symbol: weight} 目标权重
@@ -357,7 +357,7 @@ class MatchingEngine:
           3. 计算差额（目标 - 当前持仓）
           4. 先卖后买排序
           5. 委托 MatchingLogic 撮合（市价/限价/Tick）
-          6. MatchingFill → BacktestFill
+          6. MatchingFill -> BacktestFill
         """
         # 计算当前总 NAV（用 last_price 汇总市值）
         prices_for_nav = {

@@ -17,7 +17,7 @@
 
 """shared/contracts/factories.py — 跨层数据契约工厂方法
 
-Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float→Decimal 边界转换。
+Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float->Decimal 边界转换。
 
 SSoT: cross_layer_contracts.yaml v3.0
 Status: HAND-MAINTAINED — codegen disabled (Phase D)
@@ -32,7 +32,7 @@ from typing import Any
 
 
 def _to_decimal(value: Any) -> Decimal:
-    """Safe float/str/int → Decimal 转换，禁止 float 直接传入。"""
+    """Safe float/str/int -> Decimal 转换，禁止 float 直接传入。"""
     if isinstance(value, Decimal):
         return value
     if isinstance(value, float):
@@ -41,7 +41,7 @@ def _to_decimal(value: Any) -> Decimal:
 
 
 def _optional_decimal(value: Any) -> Decimal | None:
-    """Optional Decimal 转换——None → None。"""
+    """Optional Decimal 转换——None -> None。"""
     if value is None:
         return None
     return _to_decimal(value)
@@ -98,7 +98,7 @@ def make_risk_dashboard_snapshot(
     overall_risk_score: float = 0.0,
     idempotency_key: str = "",
 ):
-    """创建 RiskDashboardSnapshot——用于 D_RISK→D_FRONTEND 监控面板推送。"""
+    """创建 RiskDashboardSnapshot——用于 D_RISK->D_FRONTEND 监控面板推送。"""
     _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot")
     _RiskDashboardSnapshot = _mod.RiskDashboardSnapshot
     return _RiskDashboardSnapshot(
@@ -139,7 +139,7 @@ def make_risk_metrics_report(
     idempotency_key: str = "",
     as_of_date: datetime | None = None,
 ):
-    """创建 RiskMetricsReport——用于 D_RISK→D_PORTFOLIO_CORE/D_REPORTING/D_FRONTEND/D_COMPLIANCE 风险指标推送。"""
+    """创建 RiskMetricsReport——用于 D_RISK->D_PORTFOLIO_CORE/D_REPORTING/D_FRONTEND/D_COMPLIANCE 风险指标推送。"""
     _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_metrics")
     _RiskMetricsReport = _mod.RiskMetricsReport
     return _RiskMetricsReport(

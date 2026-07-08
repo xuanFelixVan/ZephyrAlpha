@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-M-14 WarmHotGate — Warm→Hot 阻断门
+M-14 WarmHotGate — Warm->Hot 阻断门
 ===================================
 职责：在系统进入 Hot 状态前强制检查——确保所有 Warm 阶段验证通过后才能进入 Hot 真正执行阶段。
 对标：K8s Admission Controller + CI/CD deployment gate
@@ -67,7 +67,7 @@ class GateCheckResult:
 
 
 class WarmHotGate:
-    """Warm→Hot 阻断门
+    """Warm->Hot 阻断门
 
     在系统状态从 Warm（准备就绪）切换到 Hot（真正执行）之前的最后一道闸门。
     检查项：

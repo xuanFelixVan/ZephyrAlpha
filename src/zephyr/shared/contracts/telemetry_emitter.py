@@ -30,7 +30,7 @@ ZephyrAlpha — shared/contracts/telemetry_emitter.py
 
 CTR-P1-013: TelemetryEmitter / 遥测发射器
 
-遥测 → 全系统遥测发射器契约。提供结构化指标、日志、追踪的发射接口。
+遥测 -> 全系统遥测发射器契约。提供结构化指标、日志、追踪的发射接口。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-013
 Version: 1.0

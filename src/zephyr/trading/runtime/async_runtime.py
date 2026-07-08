@@ -19,12 +19,12 @@ from __future__ import annotations
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 """AsyncRuntime — 事件循环引导 + run_in_executor 桥接（R1-1）
 
-渐进式 async 化的入口：提供事件循环生命周期管理 + 同步→异步桥接，
+渐进式 async 化的入口：提供事件循环生命周期管理 + 同步->异步桥接，
 不破坏现有 __main__.py 同步入口。现有同步代码通过 run_in_executor 在 async
 环境中调用，逐步迁移。
 
 蓝图: docs/02_enterprise_architecture/architecture_upgrade_discussion.md §4.1 R1-1
-风险表: asyncio 事件循环与 threading.Lock 死锁 → 本模块用 run_in_executor 桥接，
+风险表: asyncio 事件循环与 threading.Lock 死锁 -> 本模块用 run_in_executor 桥接，
         不混用 asyncio.Lock 与 threading.Lock
 """
 

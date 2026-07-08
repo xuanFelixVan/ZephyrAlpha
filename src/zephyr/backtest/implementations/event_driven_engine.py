@@ -32,7 +32,7 @@ v1.1.0 与 DefaultBacktestEngine 的区别:
   1. 初始化 Portfolio + TickReplayEngine + MatchingEngine
   2. TickReplayEngine.run(callback=on_tick)
   3. on_tick:
-     a. 调用 strategy_callback(tick_event) → target_weights
+     a. 调用 strategy_callback(tick_event) -> target_weights
      b. matching_engine.generate_fills_with_tick(target_weights, ticks, portfolio, date)
      c. portfolio.apply_fill(fill) 应用成交
      d. portfolio.update_market_value(timestamp, prices) 更新市值
@@ -364,7 +364,7 @@ class EventDrivenEngine(BacktestEngineBase):
         """过拟合检测（三维度：Walk-Forward稳定性/参数敏感性/泛化能力 + 样本内外对比）。
 
         接入 zephyr.backtest.core.overfitting_detector.OverfittingDetector。
-        蓝图 §16.7 P0-9 三维度三层 + 样本外Sharpe<70%→否决。
+        蓝图 §16.7 P0-9 三维度三层 + 样本外Sharpe<70%->否决。
 
         Args:
             walk_forward_results: Walk-Forward 各 fold 结果（维度1），None 跳过
@@ -395,7 +395,7 @@ class EventDrivenEngine(BacktestEngineBase):
         param_sensitivity: dict[str, list[tuple[Any, float]]] | None = None,
         params_locked: bool = True,
     ) -> DecisionGateResult:
-        """3阶段决策门控评估（IS→WFA→OOS，不可跳级）。
+        """3阶段决策门控评估（IS->WFA->OOS，不可跳级）。
 
         接入 zephyr.backtest.core.decision_gate.DecisionGate。
         蓝图 §3.3 P0-14 三阶段决策门控 + 参数稳定性区域。

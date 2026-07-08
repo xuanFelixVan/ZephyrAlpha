@@ -35,9 +35,9 @@
 CTR 契约：
   消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
   消费者 — CTR-P1-015 (SynthesizedSignal) ← D_SIGNAL（IV 调整输入）
-  生产者 — CTR-003 (RiskLimits) → D_PORTFOLIO_CORE
+  生产者 — CTR-003 (RiskLimits) -> D_PORTFOLIO_CORE
 
-SSoT: cross_layer_contracts.yaml → CTR-003
+SSoT: cross_layer_contracts.yaml -> CTR-003
 """
 
 from __future__ import annotations

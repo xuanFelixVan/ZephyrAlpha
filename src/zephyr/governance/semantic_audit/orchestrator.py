@@ -23,7 +23,7 @@
 - Stage 4: AlignmentEngine — 注册表↔磁盘双向对齐(6对)
 - Stage 5: IssueAggregator — 去重聚合问题清单
 - Stage 6: LLMBridge — LLM修复文本生成+模板降级
-- Stage 7: SelfHealer — 自愈闭环(修复→自测→回滚)
+- Stage 7: SelfHealer — 自愈闭环(修复->自测->回滚)
 - Stage 8: FixPrioritizer — 修复优先级排序+批处理分组
 - Stage 9: BlastRadius — 影响爆炸半径+级联过时检测(可选)
 """

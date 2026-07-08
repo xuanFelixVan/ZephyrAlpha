@@ -17,7 +17,7 @@
 
 """
 
-Formal Verifier — v0.6.0 形式验证器: 升级规则形式化验证→一致性+完备性检测。
+Formal Verifier — v0.6.0 形式验证器: 升级规则形式化验证->一致性+完备性检测。
 """
 
 from __future__ import annotations

@@ -21,14 +21,14 @@ circuit_breaker.py —— 轻量熔断器状态机（Phase 2 新增 | 零依赖�
 对标：gates/circuit_breaker.py（SQLite 持久化 + 门禁集成版）的轻量基类。
 
 本模块是 gates/circuit_breaker.py 的**零依赖互补品**：
-  - 本模块 → 纯内存状态机，适合本地调用保护（不持久化）
-  - gates/circuit_breaker.py → SQLite 持久化 + Capability 管控 + Gate Engine 集成
+  - 本模块 -> 纯内存状态机，适合本地调用保护（不持久化）
+  - gates/circuit_breaker.py -> SQLite 持久化 + Capability 管控 + Gate Engine 集成
 
 状态迁移（经典三态）：
-  CLOSED  ──(failure_rate ≥ threshold)──→  OPEN
-  OPEN    ──(timeout_ms 到期)─────────→  HALF_OPEN
-  HALF_OPEN ──(一次成功)───────────────→  CLOSED
-  HALF_OPEN ──(任意一次失败)───────────→  OPEN
+  CLOSED  ──(failure_rate ≥ threshold)──->  OPEN
+  OPEN    ──(timeout_ms 到期)─────────->  HALF_OPEN
+  HALF_OPEN ──(一次成功)───────────────->  CLOSED
+  HALF_OPEN ──(任意一次失败)───────────->  OPEN
 
 设计原则：
   - 线程安全（RLock）

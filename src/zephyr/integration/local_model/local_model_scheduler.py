@@ -22,17 +22,17 @@ LocalModelScheduler — L2 本地模型 24/7 调度循环
 
 架构
 ----
-    TaskCard → LocalModelScheduler.enqueue(task)
+    TaskCard -> LocalModelScheduler.enqueue(task)
                   │
-                  ├─ vector_embedding   → EmbeddingRouter (BGE-M3 1024d)
-                  ├─ semantic_search    → EmbeddingRouter + ChromaDB
-                  ├─ reranking          → Reranker (bge-reranker-v2-m3)
-                  ├─ task_classification → OllamaChat (qwen3:8b)
-                  ├─ tag_completion      → OllamaChat (qwen3:8b)
-                  ├─ summary_extraction  → OllamaChat (qwen3:8b)
-                  ├─ anomaly_triage      → OllamaChat (qwen3:8b)
-                  ├─ query_rewrite       → OllamaChat (qwen3:8b)
-                  └─ naming_suggest      → OllamaChat (qwen3:8b)
+                  ├─ vector_embedding   -> EmbeddingRouter (BGE-M3 1024d)
+                  ├─ semantic_search    -> EmbeddingRouter + ChromaDB
+                  ├─ reranking          -> Reranker (bge-reranker-v2-m3)
+                  ├─ task_classification -> OllamaChat (qwen3:8b)
+                  ├─ tag_completion      -> OllamaChat (qwen3:8b)
+                  ├─ summary_extraction  -> OllamaChat (qwen3:8b)
+                  ├─ anomaly_triage      -> OllamaChat (qwen3:8b)
+                  ├─ query_rewrite       -> OllamaChat (qwen3:8b)
+                  └─ naming_suggest      -> OllamaChat (qwen3:8b)
 
 用法
 ----
@@ -368,7 +368,7 @@ class LocalModelScheduler:
         if not text:
             raise ValueError("inference payload 缺少 text")
 
-        _log.info("LocalModelScheduler: inference %s → qwen3:8b", work_type)
+        _log.info("LocalModelScheduler: inference %s -> qwen3:8b", work_type)
         return self._ollama_chat.inference(work_type, text)
 
     def _cleanup_expired_results(self) -> None:

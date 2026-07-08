@@ -19,7 +19,7 @@
 
 职责：
   - 计算多维 Health Score（≥18 维度）
-  - 趋势判定（↑ up / → flat / ↓ down）
+  - 趋势判定（↑ up / -> flat / ↓ down）
   - Session Log 摘要写入（≤3行 MD：Health Score + Top3 热点 + 本次发现）
   - 引擎自观指标聚合
 """
@@ -168,7 +168,7 @@ class HealthMonitor:
         hotspots: list[dict[str, Any]],
         dimensions: list[HealthDimension],
     ) -> str:
-        trend_icon = {"up": "↑", "down": "↓", "flat": "→"}.get(trend, "→")
+        trend_icon = {"up": "↑", "down": "↓", "flat": "->"}.get(trend, "->")
         critical_dims = [d for d in dimensions if d.status == "critical"]
         hotspot_names = [h.get("category", "?") for h in hotspots[:3]]
 

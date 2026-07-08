@@ -25,10 +25,10 @@ GitCommitGateway 的 stash 隔离方案在多 session 并发下产生 stash 循�
 治本方案
 --------
 每个 AI session 分配独立 git worktree（物理隔离）：
-1. session 启动时 create_session_worktree → 在 .aidrafts/{sid}/ 创建独立 worktree
+1. session 启动时 create_session_worktree -> 在 .aidrafts/{sid}/ 创建独立 worktree
 2. session 在自己的 worktree 内编辑/commit，互不干扰（无需 stash）
-3. session 结束时 merge_session_worktree → 合并回主分支
-4. 异常/放弃时 cleanup_session_worktree → 丢弃修改并清理 worktree
+3. session 结束时 merge_session_worktree -> 合并回主分支
+4. 异常/放弃时 cleanup_session_worktree -> 丢弃修改并清理 worktree
 
 社区对标
 --------
@@ -152,8 +152,8 @@ def _force_rmtree(path: Path) -> bool:
 
     ``shutil.rmtree`` 默认遇 [WinError 32]（文件被占用）/ 只读位 直接失败。
     Windows 上 git/subprocess 刚退出时，文件句柄延迟释放（典型 0.3-2s），
-    立即删除会失败。本 helper 用 ``onerror`` 回调：清除只读位 → 重试 →
-    sleep 500ms 等句柄释放再试 → 记录失败（不再静默吞错，调用方据返回值决策）。
+    立即删除会失败。本 helper 用 ``onerror`` 回调：清除只读位 -> 重试 ->
+    sleep 500ms 等句柄释放再试 -> 记录失败（不再静默吞错，调用方据返回值决策）。
     被 ``create_session_worktree``（清残留以重建）和 ``_remove_worktree``（清残留）复用。
     """
     import shutil

@@ -19,8 +19,8 @@
 
 职责：
   - 5 组 Known-Answer Test 覆盖 Type-1/2/3 + 非重复 + 微克隆
-  - run_benchmark() 对每组运行对应 Stage 检测器 → 对比预期
-  - check_regression() 与上次结果对比 → 通过率下降则退化告警
+  - run_benchmark() 对每组运行对应 Stage 检测器 -> 对比预期
+  - check_regression() 与上次结果对比 -> 通过率下降则退化告警
   - 原子写入历史文件 (temp + os.replace)
 """
 

@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-CapabilityLookup — 能力→真源文件反查注册表的查询 API + 扫描/派生逻辑（合一）
+CapabilityLookup — 能力->真源文件反查注册表的查询 API + 扫描/派生逻辑（合一）
 ================================================================================
 
 解决"AI 不知道某功能已存在、真源在哪"的信息不可达问题。
@@ -38,8 +38,8 @@ CapabilityLookup — 能力→真源文件反查注册表的查询 API + 扫描/
   - canonical 候选：磁盘文件 basename(无 .py) ∈ {capability_id} ∪ aliases（标准化后）
   - canonical 选择优先级：
       1. canonical_override（人工裁定，最高优先级）
-      2. 单候选 → auto canonical
-      3. 多候选 → 成熟度排序(production > prototype > design) → import 数 → 歧义(需 override)
+      2. 单候选 -> auto canonical
+      3. 多候选 -> 成熟度排序(production > prototype > design) -> import 数 -> 歧义(需 override)
   - duplicates (auto)：磁盘上同 basename 的其他候选
       relation 由 blueprint 比对派生：同蓝图=conflicting；异蓝图=sibling
   - duplicates_manual：语义 sibling（auto 按 basename 匹配会漏掉，人工声明 relation + note）
@@ -56,7 +56,7 @@ CapabilityLookup — 能力→真源文件反查注册表的查询 API + 扫描/
     reg.check_file_canonical("src/zephyr/xxx.py")  # 反查某文件是哪个能力的 canonical
 
 设计边界（ARCH-031 局限2 文档化，2026-07-01）：
-  本模块是"能力→真源文件反查"（声明式能力索引），不是"符号发现"。
+  本模块是"能力->真源文件反查"（声明式能力索引），不是"符号发现"。
   - 能力发现（本模块）：查"某个能力是否存在 + canonical 在哪"，
     覆盖范围 = YAML 已声明的 capability 条目。
   - 符号发现（Grep）：查"某个符号（函数名/类名）定义在哪"，
@@ -239,7 +239,7 @@ class CapabilityEntry:
 # ---------------------------------------------------------------------------
 
 class CapabilityLookup:
-    """能力→真源文件反查注册表查询 API + 派生逻辑。
+    """能力->真源文件反查注册表查询 API + 派生逻辑。
 
     初始化时：
       1. 加载 YAML 真源（capability_id / aliases / description + 可选 manual 字段）
@@ -261,9 +261,9 @@ class CapabilityLookup:
     ) -> None:
         self._yaml_path: Path = Path(yaml_path) if yaml_path is not None else REGISTRY_YAML
         # 治本（P8 Phase 3）：scan_root 接受单根或多根（向后兼容）
-        # None → SCAN_ROOTS（默认双根：src/zephyr + scripts/governance）
-        # Path/str → [Path]（向后兼容单根测试场景）
-        # list → [Path(x) for x in list]
+        # None -> SCAN_ROOTS（默认双根：src/zephyr + scripts/governance）
+        # Path/str -> [Path]（向后兼容单根测试场景）
+        # list -> [Path(x) for x in list]
         if scan_root is None:
             self._scan_roots: list[Path] = list(SCAN_ROOTS)
         elif isinstance(scan_root, list):
@@ -284,9 +284,9 @@ class CapabilityLookup:
         self._loaded = False
         # git 派生缓存（惰性）：[(path, commit_hash), ...]，None=未加载
         self._git_deletions: list[tuple[str, str]] | None = None
-        # git show 头部缓存："{commit}:{path}" → HeaderInfo | None，避免多能力匹配同一删除文件时重复 subprocess
+        # git show 头部缓存："{commit}:{path}" -> HeaderInfo | None，避免多能力匹配同一删除文件时重复 subprocess
         self._git_show_cache: dict[str, HeaderInfo | None] = {}
-        # import 数缓存（tiebreaker）：module_path → importer count
+        # import 数缓存（tiebreaker）：module_path -> importer count
         self._import_count_cache: dict[str, int] = {}
         # removed_duplicates 惰性派生标志：__init__ 不派生，首次查询（_entry_to_dict）时触发
         self._removed_derived: bool = False
@@ -334,7 +334,7 @@ class CapabilityLookup:
         return caps
 
     def _scan_disk_headers(self) -> dict[str, HeaderInfo]:
-        """扫描所有 scan_roots/**/*.py 头部，返回 path → HeaderInfo 映射。
+        """扫描所有 scan_roots/**/*.py 头部，返回 path -> HeaderInfo 映射。
 
         path 用 _base_root 相对路径（与 YAML 中 canonical_file 格式 src/zephyr/xxx
         或 scripts/governance/yyy 对齐）。
@@ -358,7 +358,7 @@ class CapabilityLookup:
 
     @staticmethod
     def _parse_header(py: Path, rel: str) -> HeaderInfo:
-        """解析单个 .py 文件的头部（薄包装：读文件 → _parse_header_from_text）。"""
+        """解析单个 .py 文件的头部（薄包装：读文件 -> _parse_header_from_text）。"""
         try:
             text = py.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
@@ -427,7 +427,7 @@ class CapabilityLookup:
 
     @staticmethod
     def _normalize_token(s: str) -> str:
-        """标准化 token：lower + 连字符→下划线。用于 basename↔alias 匹配。"""
+        """标准化 token：lower + 连字符->下划线。用于 basename↔alias 匹配。"""
         return s.strip().lower().replace("-", "_")
 
     def _match_set(self, cap: CapabilityEntry) -> set[str]:
@@ -446,7 +446,7 @@ class CapabilityLookup:
         """对每个能力派生 canonical / duplicates / removed_duplicates（manual）。
 
         git 派生 removed_duplicates 不在初始化时执行——改为惰性（_ensure_removed_derived），
-        避免初始化时全量 git show 子进程调用导致超时（112 caps × 1305 deletions → 73 次
+        避免初始化时全量 git show 子进程调用导致超时（112 caps × 1305 deletions -> 73 次
         git show ≈ 8s+）。
         """
         for cap in self._capabilities:
@@ -512,7 +512,7 @@ class CapabilityLookup:
         if len(candidates) == 1:
             cap.derivation_note = "single candidate (auto canonical)"
         else:
-            # 判断 top-2 是否打平（成熟度 + import 数都相同 → 歧义）
+            # 判断 top-2 是否打平（成熟度 + import 数都相同 -> 歧义）
             _, second_header = sorted_cands[1]
             tied = (
                 self._maturity_rank(canonical_header) == self._maturity_rank(second_header)
@@ -554,7 +554,7 @@ class CapabilityLookup:
     def _rank_candidates(
         self, candidates: list[tuple[str, HeaderInfo]]
     ) -> list[tuple[str, HeaderInfo]]:
-        """排序候选：成熟度降序 → import 数降序 → 路径字典序（稳定 tiebreak）。"""
+        """排序候选：成熟度降序 -> import 数降序 -> 路径字典序（稳定 tiebreak）。"""
         def sort_key(ch: tuple[str, HeaderInfo]):
             _path, header = ch
             return (
@@ -631,7 +631,7 @@ class CapabilityLookup:
         """扫描 git 历史，返回 [(path, commit_hash), ...] 删除记录（src/zephyr/ 下）。
 
         单次 subprocess，结果缓存到 self._git_deletions。
-        git 不可用 / 非 git 仓库 → 返回空列表（降级，不阻断查询）。
+        git 不可用 / 非 git 仓库 -> 返回空列表（降级，不阻断查询）。
         """
         if self._git_deletions is not None:
             return self._git_deletions
@@ -664,7 +664,7 @@ class CapabilityLookup:
                     ):
                         deletions.append((line, current_commit))
         except (subprocess.SubprocessError, OSError):
-            # git 不可用或超时 → 降级为空（不阻断查询）
+            # git 不可用或超时 -> 降级为空（不阻断查询）
             pass
         self._git_deletions = deletions
         return deletions
@@ -820,12 +820,12 @@ class CapabilityLookup:
         """关键词搜索：匹配 capability_id / description / canonical_file / module_id / aliases（大小写不敏感）。
 
         匹配策略（治本：token 包含匹配，消除中文变体 alias 堆砌反模式）：
-          0. 退化查询守卫：len(query.strip()) < 2 → 直接返回 []（空/空白/单字符
+          0. 退化查询守卫：len(query.strip()) < 2 -> 直接返回 []（空/空白/单字符
              是噪声输入，旧版 find('a')/find('的') 因 '' in haystack 恒真或单字符
              作为子串出现在所有 description 而命中全部——守卫拦截）
           1. 精确子串匹配（保留原行为，大小写不敏感）——处理 alias 原样命中
           2. token 包含匹配（精确子串未命中时启用）：
-             - ASCII 词 token：全部必须在 haystack 中（AND，如 "repo root" → repo + root）
+             - ASCII 词 token：全部必须在 haystack 中（AND，如 "repo root" -> repo + root）
              - CJK 字符：query 的 CJK 字符序列与 haystack 须有 ≥_CJK_MIN_SUBSTRING 字符公共子串
                （捕获语义 core，如 "仓库根路径" 经 "仓库根" 命中 "仓库根目录"；
                避免"目录"单字 OR 误命中所有含"目"/"录"条目——公共子串要求连续）
@@ -853,9 +853,9 @@ class CapabilityLookup:
     def _tokenize(text: str) -> tuple[list[str], str]:
         """分词：返回 (ascii_tokens, cjk_str)。
 
-        - ASCII 词块：按非单词字符切分，整体小写（"REPO_ROOT" → ["repo_root"]，
-          "repo root" → ["repo","root"]）
-        - CJK 字符：合并为单一字符串（"仓库根路径" → "仓库根路径"），
+        - ASCII 词块：按非单词字符切分，整体小写（"REPO_ROOT" -> ["repo_root"]，
+          "repo root" -> ["repo","root"]）
+        - CJK 字符：合并为单一字符串（"仓库根路径" -> "仓库根路径"），
           交由 _token_match 做 ≥_CJK_MIN_SUBSTRING 字符公共子串匹配
         """
         ascii_tokens: list[str] = []
@@ -880,7 +880,7 @@ class CapabilityLookup:
     def _token_match(ascii_tokens: list[str], cjk_str: str, haystack: str) -> bool:
         """token 包含匹配：ASCII 词全在 + CJK ≥_CJK_MIN_SUBSTRING 字符公共子串。
 
-        守卫：ASCII 词数 + CJK 字符数 < 2 → 直接返回 False（避免单 token 过宽）。
+        守卫：ASCII 词数 + CJK 字符数 < 2 -> 直接返回 False（避免单 token 过宽）。
         CJK 阈值见 _CJK_MIN_SUBSTRING 常量（治本：阈值真源唯一，改常量全跟随）。
         短于阈值的 cjk_str：要求整体在 haystack 中（精确子串兜底，2 字符查询由 find()
         第一分支精确子串覆盖，此处仅"短 CJK + ASCII 词"混合查询时起作用）。
@@ -981,8 +981,8 @@ class CapabilityLookup:
 
         供 scaffold._check_duplicate_functionality 维度3 调用：
             新文件预期 module_path = zephyr.{package}.{name}
-            命中已有文件 → BLOCK（ScaffoldError，重定向去 extend）
-            未命中      → ALLOW
+            命中已有文件 -> BLOCK（ScaffoldError，重定向去 extend）
+            未命中      -> ALLOW
         """
         if not module_path:
             return []
@@ -1027,10 +1027,10 @@ class CapabilityLookup:
         已知限制（方案 E 固有边界，非缺陷）:
             1. 同批次互冲漏检：本方法只反查磁盘已有文件（find_files_by_module_path），
                不检查 new_py_files 列表内部互冲。若 AI 绕过 scaffold 批量 commit 两份
-               声明相同新 module_path 的文件，两者都查不到已有冲突 → 漏检。
+               声明相同新 module_path 的文件，两者都查不到已有冲突 -> 漏检。
                缓解：L1 scaffold 单文件创建不会触发此问题（scaffold 逐个创建+检查）。
             2. module_path 大小写敏感：find_files_by_module_path 精确匹配，AI 声明
-               Zephyr.Governance.X（大写）与已有 zephyr.governance.x（小写）不匹配 → 漏检。
+               Zephyr.Governance.X（大写）与已有 zephyr.governance.x（小写）不匹配 -> 漏检。
                缓解：写错 module_path 等于文件 import 不到，功能上等于不存在。
             修改门禁前 MUST 读此段落，避免误判为 bug 或重新创造已有限制。
         """
@@ -1055,7 +1055,7 @@ class CapabilityLookup:
     def check_capability_duplicates(
         self, new_py_files: list[tuple[str, str]]
     ) -> list[CapabilityDuplicate]:
-        """检测新增 .py 文件是否参与"同能力多实现"（basename 碰撞 → 阻断）。
+        """检测新增 .py 文件是否参与"同能力多实现"（basename 碰撞 -> 阻断）。
 
         与 check_ssot_conflicts 的分工（治本：检测逻辑唯一真源收拢到本方法，L2/L3 共用）：
           - check_ssot_conflicts：同 module_path 硬碰撞（[MODULE] 头字段精确匹配）。
@@ -1067,16 +1067,16 @@ class CapabilityLookup:
 
         决策矩阵（B 方案：所有信号皆阻断，无 advisory）：
           info = check_file_canonical(rel_path) 反查已派生状态：
-          - info is None（basename 不撞任何 cap）→ 追加未注册 basename 碰撞检测
+          - info is None（basename 不撞任何 cap）-> 追加未注册 basename 碰撞检测
             （ARCH-031 治本：_check_unregistered_basename_collision 收窄 governance/ 前缀）
-          - info.is_canonical=True + cap.duplicates 非空 → 阻断（canonical_displaced_*）
-          - info.is_canonical=True + cap.duplicates 空 → 无信号（合法首实现）
-          - info.is_canonical=False → 阻断（duplicate，relation=conflicting/sibling/unknown）
+          - info.is_canonical=True + cap.duplicates 非空 -> 阻断（canonical_displaced_*）
+          - info.is_canonical=True + cap.duplicates 空 -> 无信号（合法首实现）
+          - info.is_canonical=False -> 阻断（duplicate，relation=conflicting/sibling/unknown）
 
         设计裁定（B 方案，去掉软层 advisory 的理由）：
           软层原用 find(module_path 末段) 做语义召回，但 Python 标识符下划线是
           word char（handoff_v2 不可分割），find() 的 token-AND 匹配捕获不到硬层
-          漏掉的场景 → 软层 TP≈0。且 advisory 不阻断=无人行动=死数据。
+          漏掉的场景 -> 软层 TP≈0。且 advisory 不阻断=无人行动=死数据。
           commit 门禁只负责高置信阻断，低置信检测由 §9.0 手动查重兜底。
 
         参数:
@@ -1090,7 +1090,7 @@ class CapabilityLookup:
 
         已知限制（方案固有边界，非缺陷，修改门禁前 MUST 读此段落）:
           1. 无 [MODULE]/[A_module] 头的新文件不被 _scan_disk_headers 收录
-             → check_file_canonical 返回 None → 漏检（与 check_ssot_conflicts
+             -> check_file_canonical 返回 None -> 漏检（与 check_ssot_conflicts
              同边界，header 完整性由其他门禁负责）。
           2. "全新 basename + 全新 module_path 实现已有能力"不可约漏报，
              由 check_ssot_conflicts（同 module_path）+ AGENTS.md §9.0 查重习惯
@@ -1110,7 +1110,7 @@ class CapabilityLookup:
             if info is None:
                 # ARCH-031 门禁盲区治本（2026-07-01）：basename 不撞已注册 capability 时，
                 # 追加磁盘 basename 碰撞检测（根vs子目录同名文件）。
-                # 病根：原直接 continue → 新 AI 可在 governance/ 根目录重建子目录同名文件，
+                # 病根：原直接 continue -> 新 AI 可在 governance/ 根目录重建子目录同名文件，
                 # basename 不撞 capability 但构成磁盘碰撞，三层门禁无一层检测。
                 collision = self._check_unregistered_basename_collision(rel_path)
                 if collision:
@@ -1121,7 +1121,7 @@ class CapabilityLookup:
                 cap = self.get(own_cap_id)
                 dups = cap.get("duplicates", []) if cap else []
                 if not dups:
-                    continue  # 合法首实现 → 无信号
+                    continue  # 合法首实现 -> 无信号
                 # 新 canonical 挤占已有同 basename 文件（多实现）
                 relations = {d.get("relation", "unknown") for d in dups}
                 if "conflicting" in relations:
@@ -1134,7 +1134,7 @@ class CapabilityLookup:
                     f"（relation={sorted(relations)}）——多实现违反 SSoT"
                 )
             else:
-                # 新文件被派生为 duplicate → 阻断
+                # 新文件被派生为 duplicate -> 阻断
                 relation = info.get("relation", "unknown")
                 detail = (
                     f"新文件是 {own_cap_id} 的 {relation} duplicate"
@@ -1169,7 +1169,7 @@ class CapabilityLookup:
 
         已知限制：
           仅检测 _disk_headers 中收录的文件（有 [MODULE]/[A_module] 头的文件）。
-          已有文件无头部时不在 _disk_headers 中 → 漏检（与 check_file_canonical
+          已有文件无头部时不在 _disk_headers 中 -> 漏检（与 check_file_canonical
           同边界，header 完整性由其他门禁负责）。
         """
         _GOV_PREFIX = "src/zephyr/governance/"
@@ -1222,7 +1222,7 @@ class CapabilityLookup:
           - 共同前缀至少 3 级（src/zephyr/governance）
           - 一方 depth = common_depth + 1（直接在域根下，即根文件）
           - 另一方 depth > common_depth + 1（在子目录下，即子目录文件）
-          - 一根一子目录 → 碰撞；同层（都根或都子目录）→ 不碰撞
+          - 一根一子目录 -> 碰撞；同层（都根或都子目录）-> 不碰撞
         """
         parts_a = rel_a.split("/")
         parts_b = rel_b.split("/")
@@ -1351,7 +1351,7 @@ class CapabilityLookup:
 # ---------------------------------------------------------------------------
 
 def _normalize_path(p: str) -> str:
-    """路径标准化：反斜杠→正斜杠，去掉前导 ./ （正确剥离前缀，非字符集）"""
+    """路径标准化：反斜杠->正斜杠，去掉前导 ./ （正确剥离前缀，非字符集）"""
     p = p.replace("\\", "/")
     while p.startswith("./"):
         p = p[2:]
@@ -1371,7 +1371,7 @@ def yaml_safe_load(path: Path) -> dict:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m zephyr.governance.capability_lookup",
-        description="capability → canonical_file 反查注册表查询",
+        description="capability -> canonical_file 反查注册表查询",
     )
     parser.add_argument("--find", metavar="QUERY", help="关键词搜索能力")
     parser.add_argument("--get", metavar="CAP_ID", help="按 capability_id 精确查询")

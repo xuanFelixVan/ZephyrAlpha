@@ -24,7 +24,7 @@
 防御:
   1. 每个跨 Agent 消息必须带有源 Agent 的 HMAC 签名
   2. 接收方验证签名后才消费消息
-  3. 签名失败 → 标记为 session_smuggling_attempt → 记录 + block
+  3. 签名失败 -> 标记为 session_smuggling_attempt -> 记录 + block
 """
 
 from __future__ import annotations

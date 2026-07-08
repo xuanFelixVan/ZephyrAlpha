@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] transition: InvalidTransition→SessionError; session_not_found→SessionError; register_session: CapacityExceeded→RuntimeError
+# [ERROR_CONTRACT] transition: InvalidTransition->SessionError; session_not_found->SessionError; register_session: CapacityExceeded->RuntimeError
 # [TESTS] tests/test_behavioral_audit/test_session_lifecycle.py
 # [A_module] module_id=MOD-GOV_session_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

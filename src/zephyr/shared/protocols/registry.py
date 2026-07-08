@@ -19,7 +19,7 @@
 registry — 运行时 DI 容器
 =========================
 D-DATA 在初始化时注册实现，D-INFRA 通过 get() 获取。
-消除 D-INFRA→D-DATA 的 import 依赖。
+消除 D-INFRA->D-DATA 的 import 依赖。
 """
 
 from __future__ import annotations

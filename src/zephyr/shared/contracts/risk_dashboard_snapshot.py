@@ -30,7 +30,7 @@ ZephyrAlpha — shared/contracts/risk_dashboard_snapshot.py
 
 CTR-P1-008: RiskDashboardSnapshot / 风险仪表板快照
 
-D_RISK → D_FRONTEND 风险仪表板实时快照契约。
+D_RISK -> D_FRONTEND 风险仪表板实时快照契约。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-008
 Version: 1.0

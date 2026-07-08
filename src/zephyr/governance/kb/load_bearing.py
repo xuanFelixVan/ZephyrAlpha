@@ -28,7 +28,7 @@
 
 承重墙(load-bearing wall): 一组承重KE的集合
   - 定期自检——14 项额外检查
-  - 发现损坏 → 触发 ALARM → freeze.safe_mode
+  - 发现损坏 -> 触发 ALARM -> freeze.safe_mode
 
 14 项承重墙自检:
   1. 所有load-bearing KE的出厂hash是否匹配

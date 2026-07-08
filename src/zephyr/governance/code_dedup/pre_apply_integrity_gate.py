@@ -25,7 +25,7 @@ class PreApplyIntegrityGate:
     """修复前完整性门."""
 
     def verify(self, file_path: str | Path, expected_sha256: str) -> tuple[bool, str]:
-        """对即将修改的文件做SHA256验证——不匹配→ABORT."""
+        """对即将修改的文件做SHA256验证——不匹配->ABORT."""
         path = Path(file_path)
         if not path.exists():
             return False, "FILE_NOT_FOUND"

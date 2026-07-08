@@ -24,7 +24,7 @@ Task Lifecycle Manager — G0-G7 任务生命周期门禁。
 
 功能：
     - G0-G7 八级生命周期门禁
-    - 状态转换：created→locked→assigned→in_progress→reviewing→completed
+    - 状态转换：created->locked->assigned->in_progress->reviewing->completed
     - gate_g7_output: downstream_outputs 完整度 + rollback_instructions 非空
     - 与 task_completion_gate.py 互补（委托层）
 """
@@ -96,7 +96,7 @@ class TaskLifecycleManager:
                 status=TaskStatus.CREATED,
                 completed_gates=[],
                 blocked_gates={},
-                transition_history=[f"{datetime.now(UTC).isoformat()}: INITIALIZED → CREATED"],
+                transition_history=[f"{datetime.now(UTC).isoformat()}: INITIALIZED -> CREATED"],
                 last_updated=datetime.now(UTC).isoformat(),
             )
             self._states[task_id] = state
@@ -107,16 +107,16 @@ class TaskLifecycleManager:
 
         if to_status not in self.VALID_TRANSITIONS.get(state.status, []):
             return False, (
-                f"Invalid transition: {state.status.value} → {to_status.value}. "
+                f"Invalid transition: {state.status.value} -> {to_status.value}. "
                 f"Allowed: {[s.value for s in self.VALID_TRANSITIONS.get(state.status, [])]}"
             )
 
         old_status = state.status
         state.status = to_status
         state.last_updated = datetime.now(UTC).isoformat()
-        state.transition_history.append(f"{state.last_updated}: {old_status.value} → {to_status.value}")
+        state.transition_history.append(f"{state.last_updated}: {old_status.value} -> {to_status.value}")
 
-        return True, f"Transition succeeded: {old_status.value} → {to_status.value}"
+        return True, f"Transition succeeded: {old_status.value} -> {to_status.value}"
 
     def pass_gate(self, task_id: str, gate_id: GateID, details: str = "") -> GateResult:
         state = self.initialize(task_id)

@@ -33,7 +33,7 @@ ZephyrAlpha — shared/contracts/fill.py
 
 CTR-005: Fill / 成交回报
 
-D_EXECUTION_CORE → D_REPORTING 核心数据契约。单次成交回报（不可变）。
+D_EXECUTION_CORE -> D_REPORTING 核心数据契约。单次成交回报（不可变）。
 
 SSoT: cross_layer_contracts.yaml -> CTR-005
 Version: 1.0

@@ -26,7 +26,7 @@ Unauthorized modifications to FLE rules/config go undetected across restarts.
 
 Mitigation: At startup, compute SHA256 hash of all FLE source files and compare
 against known-good attestation manifest. Verify config integrity. If any hash
-mismatch → refuse to start in full-auto mode, degrade to observe-only.
+mismatch -> refuse to start in full-auto mode, degrade to observe-only.
 Require owner attestation override to proceed.
 """
 

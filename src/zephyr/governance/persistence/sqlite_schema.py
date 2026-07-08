@@ -488,7 +488,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         3,
-        "v2 fields: priority + model_rationale + actual_hours + files_in_scope + tags + completed_at + name→title (#12)",
+        "v2 fields: priority + model_rationale + actual_hours + files_in_scope + tags + completed_at + name->title (#12)",
         [
             "ALTER TABLE tasks RENAME COLUMN name TO title",
             "ALTER TABLE tasks ADD COLUMN priority TEXT NOT NULL DEFAULT 'P2' CHECK(priority IN ('P0','P1','P2','P3'))",
@@ -775,7 +775,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "ADR->KBG: Update tasks.namespace CHECK constraint to replace KB 决策记录 with KBG",
         [
             # 5.18.7 治本（2026-07-02）：writable_schema hack 已移除。
-            # _DDL_TASKS 在 v1 创建时已用 'KBG'（非 'KB 决策记录'），LIKE 模式不匹配→原 hack 在全新库上是 no-op。
+            # _DDL_TASKS 在 v1 创建时已用 'KBG'（非 'KB 决策记录'），LIKE 模式不匹配->原 hack 在全新库上是 no-op。
             # 生产库已通过 hack 修改，版本号已登记不会重跑。约束由 _DDL_TASKS 保证。
         ],
     ),
@@ -796,7 +796,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "Add DM namespace to tasks.namespace CHECK constraint for Domain Migration tasks",
         [
             # 5.18.7 治本（2026-07-02）：writable_schema hack 已移除。
-            # _DDL_TASKS 在 v1 创建时已含 'DM'，LIKE 模式 `NOT LIKE '%DM%'` 不匹配→原 hack 在全新库上是 no-op。
+            # _DDL_TASKS 在 v1 创建时已含 'DM'，LIKE 模式 `NOT LIKE '%DM%'` 不匹配->原 hack 在全新库上是 no-op。
             # 生产库已通过 hack 修改，版本号已登记不会重跑。约束由 _DDL_TASKS 保证。
         ],
     ),
@@ -825,7 +825,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
                     SELECT RAISE(ABORT, 'BLOCKED: blocked_by must be valid JSON array')
                     WHERE NOT json_valid(NEW.blocked_by);
                 END""",
-            # Trigger 3: UPDATE时校验blocked_by非空→status必须是BLOCKED
+            # Trigger 3: UPDATE时校验blocked_by非空->status必须是BLOCKED
             """CREATE TRIGGER IF NOT EXISTS validate_blocked_by_status_consistency
                 BEFORE UPDATE ON tasks
                 FOR EACH ROW
@@ -835,7 +835,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
                 BEGIN
                     SELECT RAISE(ABORT, 'BLOCKED: task with non-empty blocked_by must have status BLOCKED');
                 END""",
-            # Trigger 4: INSERT时校验blocked_by非空→status必须是BLOCKED
+            # Trigger 4: INSERT时校验blocked_by非空->status必须是BLOCKED
             """CREATE TRIGGER IF NOT EXISTS validate_blocked_by_status_insert
                 BEFORE INSERT ON tasks
                 FOR EACH ROW
@@ -853,7 +853,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         [
             # 5.18.7 治本（2026-07-02）：writable_schema hack 已移除。
             # _DDL_TASKS 在 v1 创建时已含 CHECK(files_in_scope LIKE '[%') 和 CHECK(deliverables LIKE '[%')，
-            # LIKE 模式 `NOT LIKE '%files_in_scope LIKE%'` 不匹配→原 hack 在全新库上是 no-op。
+            # LIKE 模式 `NOT LIKE '%files_in_scope LIKE%'` 不匹配->原 hack 在全新库上是 no-op。
             # 生产库已通过 hack 修改，版本号已登记不会重跑。约束由 _DDL_TASKS 保证。
             # 保留 events 表 dangling task_id 清理（安全的数据维护操作，非 hack）：
             "UPDATE events SET task_id = NULL WHERE task_id IS NOT NULL AND task_id NOT IN (SELECT task_id FROM tasks)",
@@ -863,7 +863,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         28,
         "DM-100267: Add 7 missing columns to tasks table + fix gate_decisions FK mismatch + clean tasks.domain_id orphans",
         [
-            # 修复 tasks→domains FK 违规: 485行 domain_id 引用不存在的 domains，SET NULL 清理
+            # 修复 tasks->domains FK 违规: 485行 domain_id 引用不存在的 domains，SET NULL 清理
             "UPDATE tasks SET domain_id = NULL WHERE domain_id IS NOT NULL AND domain_id NOT IN (SELECT domain_id FROM domains)",
             # 修复 gate_decisions FK mismatch: gates.gate_id 无 UNIQUE 约束（业务上可多次运行），
             # FK REFERENCES gates(gate_id) 非法。gate_decisions 表为空，安全重建移除 FK。
@@ -899,7 +899,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             # 执行步骤（_drop_tasks_domain_id 内）：
             # 1. 清理 events 表 dangling task_id（历史遗留脏数据：ON DELETE SET NULL 未生效）
             # 2. PRAGMA foreign_keys = OFF（避免 DROP COLUMN 表重建触发其他表 ON DELETE）
-            # 3. PRAGMA writable_schema = ON → 移除 tasks 的 FK(domain_id)→domains → RESET
+            # 3. PRAGMA writable_schema = ON -> 移除 tasks 的 FK(domain_id)->domains -> RESET
             # 4. ALTER TABLE tasks DROP COLUMN domain_id（FK 已移除，表重建不再报错）
             # 5. PRAGMA foreign_keys = ON（恢复 FK 检查）
             #
@@ -911,7 +911,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "5.18.6 治本: task_events v2 重建补 CHECK+UNIQUE 约束（v19 重建时丢失 v18 的 14 种 event_type 枚举约束和 UNIQUE(event_type,task_id,timestamp)）",
         [
             # SQLite 不支持 ALTER TABLE ADD CONSTRAINT，需表重建模式
-            # 步骤：建备份 → RENAME 旧表 → 建新表（含 CHECK+UNIQUE）→ 复制数据（过滤脏数据）→ DROP 备份 → 重建索引
+            # 步骤：建备份 -> RENAME 旧表 -> 建新表（含 CHECK+UNIQUE）-> 复制数据（过滤脏数据）-> DROP 备份 -> 重建索引
             "PRAGMA foreign_keys = OFF",
             "DROP TABLE IF EXISTS _task_events_v31_backup",
             "ALTER TABLE task_events RENAME TO _task_events_v31_backup",
@@ -957,11 +957,11 @@ def _get_current_version(conn: sqlite3.Connection) -> int:
     """返回当前数据库的 schema 版本（未初始化则返回 0）。"""
     cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='_schema_version'")
     if cursor.fetchone() is None:
-        # _schema_version 表不存在 → 可能是旧数据库（已有表但无版本记录）
+        # _schema_version 表不存在 -> 可能是旧数据库（已有表但无版本记录）
         # 检查核心表 tasks 是否存在来判断
         task_cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='tasks'")
         if task_cursor.fetchone() is not None:
-            # 旧数据库：有 tasks 表但没有 _schema_version → 标记为 v6（最后一个旧迁移）
+            # 旧数据库：有 tasks 表但没有 _schema_version -> 标记为 v6（最后一个旧迁移）
             return -6
         return 0
     cursor = conn.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
@@ -1003,7 +1003,7 @@ def _drop_tasks_domain_id(conn: sqlite3.Connection) -> None:
     # 2. 关闭 FK 检查（避免 DROP COLUMN 内部表重建触发其他表的 ON DELETE）
     conn.execute("PRAGMA foreign_keys = OFF")
 
-    # 3. 用 writable_schema 移除 tasks 的 FK(domain_id)→domains 约束
+    # 3. 用 writable_schema 移除 tasks 的 FK(domain_id)->domains 约束
     conn.execute("PRAGMA writable_schema = ON")
     try:
         sql = conn.execute(
@@ -1054,7 +1054,7 @@ def _run_migration(
         # v31 statement #4: 兼容 v18/v19 两版 task_events schema
         # v19 在某些旧库上标记 applied 却未执行 DDL，导致 task_events 仍是 v18 schema
         # （有 details 列，无 payload/session_id 列）。v31 INSERT 假设 v19 已成功（有 payload），
-        # 旧库需动态替换为 details→payload、NULL→session_id
+        # 旧库需动态替换为 details->payload、NULL->session_id
         if version == 31 and i == 4:
             backup_cols = {r[1] for r in conn.execute(
                 "PRAGMA table_info(_task_events_v31_backup)"
@@ -1146,7 +1146,7 @@ def init_db(
             # current == -6 表示 v6 之前的迁移已通过 IF NOT EXISTS 完成
             bootstrapped = abs(current)
             if echo:
-                print(f"[sqlite_schema] bootstrapping legacy DB → marking v1–v{abs(current)} as applied")
+                print(f"[sqlite_schema] bootstrapping legacy DB -> marking v1–v{abs(current)} as applied")
             from datetime import UTC, datetime
 
             now = datetime.now(UTC).isoformat()

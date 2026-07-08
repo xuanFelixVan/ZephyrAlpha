@@ -523,7 +523,7 @@ DISPATCH_TABLE: Final[dict[str, DomainDispatch]] = {
         blueprint_section="§七十五",
     ),
     "paper-to-live": DomainDispatch(
-        domain="模拟→实盘过渡",
+        domain="模拟->实盘过渡",
         pre_read="SYS-MASTER-001 §七十六",
         re_read="§五十三 + §六十四 + §五十六",
         token_budget=400,

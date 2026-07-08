@@ -37,7 +37,7 @@ class BootstrapGate:
 
 
 class CEBootstrap:
-    """三级递进建造序列: CE-MVP → Functional → FullCE (DD75)."""
+    """三级递进建造序列: CE-MVP -> Functional -> FullCE (DD75)."""
 
     def __init__(self) -> None:
         self._level = CEBootstrapLevel.CE_MVP

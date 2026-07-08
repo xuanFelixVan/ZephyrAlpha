@@ -24,7 +24,7 @@ Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T-MOD-KB-001-RERANKER）
 功能
 ----
 1. BGE-reranker-v2-m3 Cross-Encoder 模型加载（惰性）
-2. rerank(query, documents) → [(text, score)] 精排结果
+2. rerank(query, documents) -> [(text, score)] 精排结果
 3. 排序后截流截断
 4. 模型不可用时 fallback 降级为无重排直通
 5. score_threshold 阈值过滤

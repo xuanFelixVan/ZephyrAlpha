@@ -32,8 +32,8 @@ EmbeddingRouter — MOD-INF-011 双嵌入维度路由
 
 降级链
 ------
-    BGE-M3 加载失败 → 全局降级为 bge-small
-    bge-small 也失败 → InMemoryBackend（零向量兜底）
+    BGE-M3 加载失败 -> 全局降级为 bge-small
+    bge-small 也失败 -> InMemoryBackend（零向量兜底）
 """
 
 from __future__ import annotations
@@ -282,7 +282,7 @@ class EmbeddingRouter:
                 vec = self._embed_bge_m3(text)
                 elapsed = (time.perf_counter() - start) * 1000
                 _logger.debug(
-                    "EmbeddingRouter: BGE-M3 embed %s → %s (%dd, %.1fms)",
+                    "EmbeddingRouter: BGE-M3 embed %s -> %s (%dd, %.1fms)",
                     text[:30],
                     collection_name,
                     vec.shape[0],
@@ -291,7 +291,7 @@ class EmbeddingRouter:
                 return vec
             elif self._bge_small_available:
                 _logger.warning(
-                    "EmbeddingRouter: BGE-M3 不可用，降级为 bge-small (%dd) → %s", self._bge_small_dim, collection_name
+                    "EmbeddingRouter: BGE-M3 不可用，降级为 bge-small (%dd) -> %s", self._bge_small_dim, collection_name
                 )
                 return self._embed_bge_small(text)
             else:
@@ -303,7 +303,7 @@ class EmbeddingRouter:
                 vec = self._embed_bge_small(text)
                 elapsed = (time.perf_counter() - start) * 1000
                 _logger.debug(
-                    "EmbeddingRouter: bge-small embed %s → %s (%dd, %.1fms)",
+                    "EmbeddingRouter: bge-small embed %s -> %s (%dd, %.1fms)",
                     text[:30],
                     collection_name,
                     vec.shape[0],

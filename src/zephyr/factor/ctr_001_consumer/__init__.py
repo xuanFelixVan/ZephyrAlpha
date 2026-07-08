@@ -30,9 +30,9 @@ CTR 契约依赖声明（承重墙标记）
   - CTR-ERR-001  DataQualityError    ← D_DATA
 
 作为生产者（Producer）：
-  - CTR-002  FactorSignal            → D_SIGNAL, D_RISK, D_PORTFOLIO_CORE
-  - CTR-BP-001~003  Backpressure     → D_DATA（背压信号——暂停/降速/恢复数据推送）
-  - CTR-ERR-002  FactorComputationError → D_SIGNAL
+  - CTR-002  FactorSignal            -> D_SIGNAL, D_RISK, D_PORTFOLIO_CORE
+  - CTR-BP-001~003  Backpressure     -> D_DATA（背压信号——暂停/降速/恢复数据推送）
+  - CTR-ERR-002  FactorComputationError -> D_SIGNAL
 
 """
 

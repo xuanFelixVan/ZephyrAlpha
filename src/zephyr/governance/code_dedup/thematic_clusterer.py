@@ -24,7 +24,7 @@ class ThematicClusterer:
     """重复组主题聚类——将50组重复归约到3-5个主题."""
 
     def cluster(self, duplicate_groups: list[dict], max_clusters: int = 5) -> dict:
-        """元组→主题"""
+        """元组->主题"""
         themes: dict[str, list[dict]] = defaultdict(list)
         for group in duplicate_groups:
             members = group.get("members", [])

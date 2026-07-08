@@ -5,7 +5,7 @@
 
 八个 MCP 服务端通过 stdio 协议对外暴露内部系统能力：
 
-- task_manager_server.py — TaskManagerMCP: 蓝图→任务卡拆解、任务 CRUD（FastMCP）
+- task_manager_server.py — TaskManagerMCP: 蓝图->任务卡拆解、任务 CRUD（FastMCP）
 - knowledge_base_server.py — KnowledgeBaseServer: KE 查询/创建、健康检查（functional，内存存储）
 - gate_engine_server.py — GateEngineServer: Gate 判定/熔断状态（functional，6 门禁+熔断+豁免）
 - doc_guard_server.py — DocGuardServer: session_handoff 文档安全校验（functional，5 项反腐败校验，文件名≠server_id）

@@ -18,11 +18,11 @@
 """task_progress · 任务进度看板组件（v3.1.0 Panel 迁移, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §3.1
-数据源: TaskRepository.list_by_phase() → 4 阶段任务进度
+数据源: TaskRepository.list_by_phase() -> 4 阶段任务进度
 渲染依赖: Panel(布局) — 指标卡片+阶段进度条+明细表，无专业图表需求故不调用 ChartFactory
 
 v3.1.0 变更 (#ARCH-047):
-  - Streamlit(st.metric/st.progress/st.expander) → Panel(pn.pane.Markdown 卡片+进度条)
+  - Streamlit(st.metric/st.progress/st.expander) -> Panel(pn.pane.Markdown 卡片+进度条)
   - callback仅编排: 数据计算在 fetch_task_progress(纯函数)
   - 测试环境(无 panel)仅返回 dict payload, 便于断言
 """

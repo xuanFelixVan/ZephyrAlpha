@@ -5,12 +5,12 @@
 # [CONSUMERS] src/zephyr/system-telemetry/facade.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] TTL分级策略严格执行;成本超限→三级降级(CRITICAL/SEVERE/WARNING);SQLite backup使用RULE-ONE原子写入
+# [INVARIANTS] TTL分级策略严格执行;成本超限->三级降级(CRITICAL/SEVERE/WARNING);SQLite backup使用RULE-ONE原子写入
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] gzip失败→跳过压缩保留原文;SQLite backup失败→日志warning不阻塞
+# [ERROR_CONTRACT] gzip失败->跳过压缩保留原文;SQLite backup失败->日志warning不阻塞
 # [TESTS] tests/infrastructure/
 # [A_module] module_id=MOD-INF_cold_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -164,7 +164,7 @@ def apply_cost_degradation() -> list[str]:
     elif total >= _COST_CRITICAL_95PCT:
         actions.append("P1: dev telemetry paused; staging traces 1%; profiles OFF")
     elif total >= _COST_WARN_80PCT:
-        actions.append("P2: dev TTL halved (14→7d); traces sample 10→5%")
+        actions.append("P2: dev TTL halved (14->7d); traces sample 10->5%")
 
     return actions
 

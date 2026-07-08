@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] (True, msg)=通过；False=阻断（三声明轨道不一致或 count_mismatch 或 module_id 跨文件撞车）；OSError/git grep 超时跳过单文件不阻断
 # [TESTS] tests/governance/commit_gates/test_module_id_consistency_gate.py
 # [TTL] permanent
-"""module_id_consistency_gate.py — module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler→gate 收敛）
+"""module_id_consistency_gate.py — module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler->gate 收敛）
 
 从 make_module_id_consistency_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
 

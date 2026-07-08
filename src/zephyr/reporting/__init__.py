@@ -36,7 +36,7 @@ CTR 契约依赖声明（承重墙标记）
   - CTR-P1-013  TelemetryEmitter       ← 遥测
 
 作为生产者（Producer）：
-  - CTR-P1-009  PerformanceAttributionReport → D_FRONTEND, D_GOV_ENFORCEMENT
+  - CTR-P1-009  PerformanceAttributionReport -> D_FRONTEND, D_GOV_ENFORCEMENT
 
 SSoT: cross_layer_contracts.yaml v3.0
 

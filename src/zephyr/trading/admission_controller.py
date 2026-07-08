@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] admit: RateLimited→retry_after_ms; admit: CircuitOpen→retry_after_cb_recovery
+# [ERROR_CONTRACT] admit: RateLimited->retry_after_ms; admit: CircuitOpen->retry_after_cb_recovery
 # [TESTS] tests/test_behavioral_audit/test_admission_controller.py
 # [A_module] module_id=MOD-ORC_admission_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -178,7 +178,7 @@ class _CircuitBreaker:
 
     @property
     def state(self) -> str:
-        # 5.91.2 修复: getter仅返回当前状态,不触发OPEN→HALF_OPEN转换
+        # 5.91.2 修复: getter仅返回当前状态,不触发OPEN->HALF_OPEN转换
         # 转换逻辑已由_should_block()在行为方法中执行
         with self._lock:
             return self._state

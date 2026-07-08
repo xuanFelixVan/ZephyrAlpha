@@ -112,7 +112,7 @@ class F5ShutdownManager:
         self._lock = threading.Lock()
         self._installed = False
         # 事件驱动 idle 计时器（debounce 模式）：每次 update_activity() 重置 timer，
-        # timer 到期触发 _on_idle_timeout → shutdown。替代原 sleep-loop 轮询线程，
+        # timer 到期触发 _on_idle_timeout -> shutdown。替代原 sleep-loop 轮询线程，
         # 满足"永久系统主触发必须事件驱动"铁律。
         self._idle_timer: threading.Timer | None = None
         self._previous_sigint = None

@@ -15,9 +15,9 @@
 # [A_module] module_id=MOD-ORC_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Protocol-based interface layer for pipeline→mcp dependency abstraction.
+"""Protocol-based interface layer for pipeline->mcp dependency abstraction.
 
-Breaks the deep dependency chain: pipeline→mcp→rollback→llm_security→shared.schema
+Breaks the deep dependency chain: pipeline->mcp->rollback->llm_security->shared.schema
 by defining structural interfaces that pipeline depends on instead of importing
 mcp concrete implementations directly.
 """
@@ -38,7 +38,7 @@ class BlueprintSearchProtocol(Protocol):
     """Structural interface for blueprint search functionality.
 
     Pipeline depends on this protocol instead of importing
-    BlueprintSearchServer directly, breaking the pipeline→mcp link.
+    BlueprintSearchServer directly, breaking the pipeline->mcp link.
     """
 
     def find_relevant_blueprint(self, query: str, num_results: int = 3) -> dict[str, Any]: ...

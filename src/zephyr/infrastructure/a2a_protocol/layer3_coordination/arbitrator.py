@@ -15,12 +15,12 @@
 # [A_module] module_id=MOD-INF_arbitrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""A2A 三级仲裁引擎 — priority → rule → escalation
+"""A2A 三级仲裁引擎 — priority -> rule -> escalation
 
 当 ConflictDetector 检测到冲突后，Arbitrator 按三级策略仲裁:
   Tier 1 (priority):    按 Agent 优先级 — site:safety operator:superadmin > role:reviewer > role:builder
   Tier 2 (rule):        按文件归属规则 — 每个文件最多一个 owner Agent
-  Tier 3 (escalation):  不可自动解决 → 生成 ESC-A2A 升级 ticket
+  Tier 3 (escalation):  不可自动解决 -> 生成 ESC-A2A 升级 ticket
 
 输入: ConflictDetector 输出的冲突列表 + 两个 Agent 的 metadata
 输出: 仲裁结果 — winner + reason + 失败方补偿建议
@@ -113,7 +113,7 @@ class Arbitrator:
 
     Tier 1: 角色优先级 — SUPERADMIN > SAFETY_OPERATOR > ... > BUILDER
     Tier 2: 文件归属 — 检查 file_ownership 规则
-    Tier 3: 升级 — 无法自动解决 → 生成 ESC-A2A
+    Tier 3: 升级 — 无法自动解决 -> 生成 ESC-A2A
 
     扩展: 集成 EscalationEngine + DeadlockDetector + 审计日志
     """
@@ -294,5 +294,5 @@ class Arbitrator:
             reason=f"Cannot auto-resolve: {a.agent_id}({a.role.name}) vs "
             f"{b.agent_id}({b.role.name}) on {conflicted_files}",
             escalation_message=f"ESC-A2A: conflict on {conflicted_files} between {a.agent_id} and {b.agent_id}",
-            compensation="Both agents: pause conflicting files → escalate → await human or superadmin",
+            compensation="Both agents: pause conflicting files -> escalate -> await human or superadmin",
         )

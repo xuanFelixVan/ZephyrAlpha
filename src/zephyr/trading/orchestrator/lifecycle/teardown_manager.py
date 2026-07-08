@@ -21,7 +21,7 @@ from typing import Final
 资源清理管理器（Teardown Manager — CT-TEARDOWN-001）
 
 依据：MOD-MASTER-002 蓝图 §十六
-TaskCard CANCELLED/FAILED → 7系统资源清理。
+TaskCard CANCELLED/FAILED -> 7系统资源清理。
 """
 
 from datetime import UTC, datetime

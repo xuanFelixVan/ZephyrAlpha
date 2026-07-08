@@ -43,6 +43,6 @@ BROKER_FAILOVER: Final[dict[BrokerLevel, str]] = {
 EMERGENCY_LIQUIDATION_STEPS: Final[list[str]] = [
     "检测P0故障>容忍(90sP0/120sP1)",
     "简报Owner(new pending L0+unique brief)",
-    "P2 20% Exposure→每15min再降20%",
-    "P0恢复→5min转P0 / 未恢复→Owner 3×Go/No-go",
+    "P2 20% Exposure->每15min再降20%",
+    "P0恢复->5min转P0 / 未恢复->Owner 3×Go/No-go",
 ]

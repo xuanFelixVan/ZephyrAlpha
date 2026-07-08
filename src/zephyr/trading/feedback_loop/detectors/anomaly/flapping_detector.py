@@ -26,7 +26,7 @@ Risk: R494 — Flapping alerts consume attention budget, mask real anomalies,
 and cause human operators to ignore the alert channel entirely.
 
 Mitigation: Track state-change frequency per alert_id. If state toggles N
-times within window → classify as flapping → suppress or aggregate into
+times within window -> classify as flapping -> suppress or aggregate into
 a single "flapping group" notification.
 """
 

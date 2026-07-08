@@ -48,7 +48,7 @@ CTR-ERR-006: ContractEnforcer / 运行时契约强制执行
     def compute_factor(data: NormalizedMarketData) -> FactorSignal:
         ...
 
-SSoT: cross_layer_contracts.yaml → CTR-ERR-006
+SSoT: cross_layer_contracts.yaml -> CTR-ERR-006
 """
 
 from __future__ import annotations
@@ -167,7 +167,7 @@ def enforce_output(
                     )
                 else:
                     _logger.warning(
-                        "[ContractEnforcer:WARN] %s.%s → %s",
+                        "[ContractEnforcer:WARN] %s.%s -> %s",
                         contract_name,
                         func.__qualname__,
                         report,
@@ -247,7 +247,7 @@ def enforce_input(
                     )
                 else:
                     _logger.warning(
-                        "[ContractEnforcer:WARN] %s.%s param=%s → %s",
+                        "[ContractEnforcer:WARN] %s.%s param=%s -> %s",
                         contract_name,
                         func.__qualname__,
                         target_name,

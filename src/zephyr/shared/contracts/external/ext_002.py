@@ -35,7 +35,7 @@ EXT-002: Market Data Provider / 行情数据接口
 
 入站数据必须经过 data/quality/ 质量门禁方可下发；缺数据时触发 DataQualityError (INV-007: events crossing this boundary must carry idempotency_key)
 
-SSoT: cross_layer_contracts.yaml → EXT-002
+SSoT: cross_layer_contracts.yaml -> EXT-002
 Version: 1.0
 Status: AUTO-GENERATED — DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

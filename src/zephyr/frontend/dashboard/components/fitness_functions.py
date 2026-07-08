@@ -19,11 +19,11 @@
 """fitness_functions · Fitness Functions 仪表盘组件（v3.1.0 Panel 迁移, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §3.1
-数据源: FLE FitnessFunctionFramework.run_all() → FitnessReport
+数据源: FLE FitnessFunctionFramework.run_all() -> FitnessReport
 渲染依赖: Panel(布局) — 指标卡片+状态表，无专业图表需求故不调用 ChartFactory
 
 v3.1.0 变更 (#ARCH-047):
-  - Streamlit(st.metric/st.write) → Panel(pn.pane.Markdown 指标卡片 + 状态表)
+  - Streamlit(st.metric/st.write) -> Panel(pn.pane.Markdown 指标卡片 + 状态表)
   - callback仅编排: 布局组装在此, 数据计算在 fetch_fitness_data(纯函数)
   - 测试环境(无 panel)仅返回 dict payload, 便于断言
 """

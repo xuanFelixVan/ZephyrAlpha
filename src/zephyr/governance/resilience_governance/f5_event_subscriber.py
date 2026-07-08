@@ -21,10 +21,10 @@ F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3).
 接入 EventBus 事件驱动:
 
 1. EventBus 订阅 F5 相关事件:
-   - f5.deadlock_detected → 触发 DeadlockDetector.break_deadlock
-   - f5.escalation_needed → 触发 EscalationEngine.evaluate
-   - f5.conflict_detected → 触发 Arbitrator.arbitrate
-2. 规则引擎绑定: RuleCategory → 处理器映射 (deadlock/conflict/escalation)
+   - f5.deadlock_detected -> 触发 DeadlockDetector.break_deadlock
+   - f5.escalation_needed -> 触发 EscalationEngine.evaluate
+   - f5.conflict_detected -> 触发 Arbitrator.arbitrate
+2. 规则引擎绑定: RuleCategory -> 处理器映射 (deadlock/conflict/escalation)
 3. FeedbackLoop 集成: 事件驱动产生 EvolutionProposal
 4. A2A Protocol 事件驱动响应: 冲突事件触发仲裁
 
@@ -88,14 +88,14 @@ class EventHandlerResult:
 
 @dataclass
 class RuleBinding:
-    """规则引擎绑定 — RuleCategory → 处理器名称映射。"""
+    """规则引擎绑定 — RuleCategory -> 处理器名称映射。"""
     category: str
     topic: str
     handler_name: str
     priority: EventPriority = EventPriority.HIGH
 
 
-# 默认规则绑定表 (RuleCategory → F5 事件主题 + 处理器)
+# 默认规则绑定表 (RuleCategory -> F5 事件主题 + 处理器)
 DEFAULT_RULE_BINDINGS: Final[list[RuleBinding]] = [
     RuleBinding(
         category="deadlock",

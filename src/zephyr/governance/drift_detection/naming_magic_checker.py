@@ -25,7 +25,7 @@ Naming Magic Checker — 命名魔数与隐式约定检测 §6.27。
 module_id: MOD-INF-023
 
 
-pattern_a.txt_b_logic: a.txt→b.py→c.yaml, 规定不匹配
+pattern_a.txt_b_logic: a.txt->b.py->c.yaml, 规定不匹配
 
 
 lib_version_hardcode: import hashlib==2.0.1

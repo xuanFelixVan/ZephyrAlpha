@@ -407,8 +407,8 @@ class IdeHealthDaemon:
         """采集 drift 健康指标，写入 .runtime/drift_health.json（P1-DAE）。
 
         指标：
-        - stash_count: git stash 数量（>5 → warning；P1-STH 时触发自动清理）
-        - worktree_changes: git status 变更文件数（>50 → warning，防并行 session 漂移）
+        - stash_count: git stash 数量（>5 -> warning；P1-STH 时触发自动清理）
+        - worktree_changes: git status 变更文件数（>50 -> warning，防并行 session 漂移）
         - ghost_count: 幽灵窗口数（本轮回采）
         - timestamp: 采集时间
 

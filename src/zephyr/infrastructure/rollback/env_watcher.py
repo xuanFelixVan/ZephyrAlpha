@@ -20,8 +20,8 @@ EnvWatcher — 环境变量热重载监控器。
 
 依据: 蓝图 MOD-INF-021 §6.12 B69
 
-监控 .env 文件修改 → 写入 last_env_reload sentinel 文件。
-回滚涉及 .env 变更时 → watcher 检测 sentinel → 通知 Agent 需要 re-source。
+监控 .env 文件修改 -> 写入 last_env_reload sentinel 文件。
+回滚涉及 .env 变更时 -> watcher 检测 sentinel -> 通知 Agent 需要 re-source。
 """
 
 from __future__ import annotations

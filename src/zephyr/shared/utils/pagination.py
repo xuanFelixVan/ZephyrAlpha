@@ -18,9 +18,9 @@
 """
 pagination.py —— 通用分页工具（Phase 9 新增 | 盲点 B18 修复）
 
-痛点修复：每个消费模块都自己定义 page/limit/offset → AI 跨模块容易搞混——
+痛点修复：每个消费模块都自己定义 page/limit/offset -> AI 跨模块容易搞混——
   1. 有的用 offset+limit，有的用 page+page_size，有的用 cursor
-  2. 分页响应格式不一致 → 前端/消费者解析一团乱
+  2. 分页响应格式不一致 -> 前端/消费者解析一团乱
 
 设计对标：
   - GitHub API（Link header + per_page + page）

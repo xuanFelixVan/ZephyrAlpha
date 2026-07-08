@@ -21,8 +21,8 @@ RollbackAbuseDetector — 回滚滥用检测。
 依据: 蓝图 MOD-INF-021 §7 Phase 10 + §6.17 B130 + exit code 44
 
 检测异常高频回滚模式:
-    - >5 次/h → exit 44 (ROLLBACK_ABUSE_DETECTED) → L2 Skill Kill
-    - 连续 3 次同文件 → 怀疑目标文件系统性 bug → escalate
+    - >5 次/h -> exit 44 (ROLLBACK_ABUSE_DETECTED) -> L2 Skill Kill
+    - 连续 3 次同文件 -> 怀疑目标文件系统性 bug -> escalate
 """
 
 from __future__ import annotations
@@ -116,10 +116,10 @@ class RollbackAbuseDetector:
         if count_1h > self.MAX_ROLLBACKS_PER_HOUR:
             recommendation = (
                 f"ABUSE: {count_1h} rollbacks in last hour "
-                f"(max {self.MAX_ROLLBACKS_PER_HOUR}/h) → L2 Skill Kill recommended"
+                f"(max {self.MAX_ROLLBACKS_PER_HOUR}/h) -> L2 Skill Kill recommended"
             )
         elif len(target_abuse) > 0:
-            recommendation = f"ABUSE: {len(target_abuse)} files rolled back ≥3 times → escalate"
+            recommendation = f"ABUSE: {len(target_abuse)} files rolled back ≥3 times -> escalate"
 
         return AbuseReport(
             detected=detected,

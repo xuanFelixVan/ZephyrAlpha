@@ -19,11 +19,11 @@
 
 Delegation Manager — D-022-02 自动委托协议。
 
-delegate(task, capability)→Agent + 四级安全约束：
-1. 自委托禁止(SELF_DELEGATION→blocked)
-2. 循环检测(detected_cycle→blocked)
+delegate(task, capability)->Agent + 四级安全约束：
+1. 自委托禁止(SELF_DELEGATION->blocked)
+2. 循环检测(detected_cycle->blocked)
 3. 深度上限=3
-4. SLA超时30s→compensation
+4. SLA超时30s->compensation
 """
 
 from __future__ import annotations

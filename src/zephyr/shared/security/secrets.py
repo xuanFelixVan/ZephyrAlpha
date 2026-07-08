@@ -19,7 +19,7 @@
 secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12 修复）
 
 痛点修复：API key / token / 数据库密码散落在环境变量中——
-  1. AI 在 10 个模块里写 10 种 os.getenv("SOME_KEY") → 不可审计
+  1. AI 在 10 个模块里写 10 种 os.getenv("SOME_KEY") -> 不可审计
   2. 没有统一的 SecretProvider 接口——无法切换 secrets backend
   3. 没有 sanitization——AI 可能把 API key 打进日志
 

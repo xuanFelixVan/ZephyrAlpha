@@ -25,7 +25,7 @@ Auto Reconciler — reconciler.py
 module_id: MOD-INF-023
 
 
-自动对账引擎：pre-fix 快照 → 自动修复 → 验证 → 回滚闭环。
+自动对账引擎：pre-fix 快照 -> 自动修复 -> 验证 -> 回滚闭环。
 
 
 对标 blueprint.md §2.5（自动对账策略）。"""
@@ -154,7 +154,7 @@ class AutoFixer:
     def _fix_path_index(self, event: DriftEvent) -> bool:
         detail = event.resolution_detail or ""
 
-        if "→" not in detail and ": " not in detail:
+        if "->" not in detail and ": " not in detail:
             return False
 
         try:
@@ -165,8 +165,8 @@ class AutoFixer:
 
             path_info = parts[-1]
 
-            if "→" in path_info:
-                old_path, new_path = path_info.split("→", 1)
+            if "->" in path_info:
+                old_path, new_path = path_info.split("->", 1)
 
             else:
                 return False

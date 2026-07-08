@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-Circuit Breaker — 熔断器：连续失败 → OPEN → 暂停执行。
+Circuit Breaker — 熔断器：连续失败 -> OPEN -> 暂停执行。
 
 依据：
     蓝图 MOD-TASK_SYSTEM §6.2.1 + v0.6.0

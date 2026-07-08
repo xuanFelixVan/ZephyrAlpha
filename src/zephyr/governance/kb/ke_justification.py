@@ -28,7 +28,7 @@ class SelectedKE:
 
 
 class KEJustificationGenerator:
-    """Per-KE rational + score map → Table (DD99)."""
+    """Per-KE rational + score map -> Table (DD99)."""
 
     def justify(self, ke_ids: list[str], scores: list[float]) -> list[SelectedKE]:
         reasons = ["keyword_match", "similarity_top_k", "authority_boosted", "freshness_promoted"]

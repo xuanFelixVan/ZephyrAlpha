@@ -515,7 +515,7 @@ scenarios:
     test_file: "tests/adversarial/test_stale_task_adversarial.py::TestAdversarialStaleRecoveryBypass"
 
   # === TTL Frontmatter Metadata Gate Adversarial Scenarios (GATE-15) ===
-  # 攻击面：ttl 字段全链路治理（止血→治标→治本→防漂移 4 阶段施工）
+  # 攻击面：ttl 字段全链路治理（止血->治标->治本->防漂移 4 阶段施工）
   # 防御层：GATE-15 pre-commit 全量校验 + GitCommitGateway 等效校验 + 生成器源头注入
   # 爆炸半径：FILE（单文件攻击）/ MODULE（Gateway/Generator 级攻击）
   - scenario_id: RB-SCEN-047

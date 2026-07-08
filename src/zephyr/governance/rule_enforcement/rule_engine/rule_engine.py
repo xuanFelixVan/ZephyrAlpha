@@ -5,7 +5,7 @@
 # [CONSUMERS] SkillLoader; GateEngine; cold_start sequence; AI sessions
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] YAML files are content SSoT; depgraph is index only; sync direction YAML→DB
+# [INVARIANTS] YAML files are content SSoT; depgraph is index only; sync direction YAML->DB
 # [MODIFY-GUARD] sync_rule_registry.py; verify_rule_yaml_migration.py
 # [STABILITY] evolving
 # [SAFETY] M
@@ -17,9 +17,9 @@
 """
 RuleLoader — 规则加载核心 API
 =============================
-通过 depgraph rule_bindings 索引查找 rule_id → 读取 YAML 文件 → 返回规则字典。
+通过 depgraph rule_bindings 索引查找 rule_id -> 读取 YAML 文件 -> 返回规则字典。
 
-优先路径：depgraph rule_bindings → rule_id → YAML 文件
+优先路径：depgraph rule_bindings -> rule_id -> YAML 文件
 回退路径：直接扫描 docs/01_policies_and_standards/rules/ 目录
 
 用法：

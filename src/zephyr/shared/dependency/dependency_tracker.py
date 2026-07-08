@@ -28,7 +28,7 @@ class DependencyGraph:
 
 
 class DependencyTracker:
-    """TaskCard.depends_on→graph; circular dep detection (DD116)."""
+    """TaskCard.depends_on->graph; circular dep detection (DD116)."""
 
     def build_graph(self, tasks: list[dict]) -> DependencyGraph:
         nodes = [t.get("id", f"TASK-{i}") for i, t in enumerate(tasks)]

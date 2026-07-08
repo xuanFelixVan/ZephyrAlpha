@@ -16,7 +16,7 @@
 # [TTL] permanent
 """FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQLite
 
-CT-FLE-DB-001: Feedback Loop 采集的指标和告警 → Database 持久化落地。
+CT-FLE-DB-001: Feedback Loop 采集的指标和告警 -> Database 持久化落地。
 """
 
 from __future__ import annotations

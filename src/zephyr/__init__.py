@@ -108,7 +108,7 @@ class _LazyModule:
     def __getattr__(self, name: str) -> Any:
         # 5.98.4 修复: 防止 _module/_module_path 未初始化时 __getattr__ 无限递归
         # 若 __init__ 被绕过(pickle/copy/测试), _module 不在 __dict__ 中,
-        # __getattr__('_module') → _load() → self._module → __getattr__('_module') → RecursionError
+        # __getattr__('_module') -> _load() -> self._module -> __getattr__('_module') -> RecursionError
         if name in ("_module", "_module_path"):
             raise AttributeError(name)
         self._load()

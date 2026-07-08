@@ -18,9 +18,9 @@
 """Grandfather 三定律 — 古老重复管理.
 
 职责：
-  - 第一定律：≥30天 → auto_fix=false（永不自动修复，只能 manual review + --override-grandfather）
-  - 第二定律：≥60天 → severity=informational → 不参与 Health Score → fossilize()
-  - 第三定律考古豁免：3项测试通过 → --override-grandfather 可覆盖
+  - 第一定律：≥30天 -> auto_fix=false（永不自动修复，只能 manual review + --override-grandfather）
+  - 第二定律：≥60天 -> severity=informational -> 不参与 Health Score -> fossilize()
+  - 第三定律考古豁免：3项测试通过 -> --override-grandfather 可覆盖
 """
 
 from __future__ import annotations
@@ -66,7 +66,7 @@ class GrandfatherManager:
         self._load()
 
     def grandfather_check(self, dup_group_id: str, first_detected_at: str) -> tuple[bool, str]:
-        """第一定律：≥30天 → auto_fix=false."""
+        """第一定律：≥30天 -> auto_fix=false."""
         try:
             detected = datetime.fromisoformat(first_detected_at.replace("Z", "+00:00"))
         except ValueError:
@@ -84,7 +84,7 @@ class GrandfatherManager:
         file_path: str = "",
         first_detected_at: str = "",
     ) -> GrandfatherEntry | None:
-        """第二定律：≥60天 → severity=informational → fossil."""
+        """第二定律：≥60天 -> severity=informational -> fossil."""
         try:
             detected = datetime.fromisoformat(first_detected_at.replace("Z", "+00:00"))
         except ValueError:
@@ -115,7 +115,7 @@ class GrandfatherManager:
         all_tests_ok: bool = False,
         rollback_ok: bool = False,
     ) -> tuple[bool, str]:
-        """第三定律考古豁免：3项全部通过 → 可 override."""
+        """第三定律考古豁免：3项全部通过 -> 可 override."""
         passed = sum([git_log_ok, all_tests_ok, rollback_ok])
         if passed < 3:
             missing = []

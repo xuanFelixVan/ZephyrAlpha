@@ -25,7 +25,7 @@ SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / restore / verify�
 
 双轨架构：
     - file_layer: git commit = 文件 checkpoint（D-021-01）
-    - db_layer:   SQLite dump → JSONL → git track（D-021-04）
+    - db_layer:   SQLite dump -> JSONL -> git track（D-021-04）
     回滚时：git revert 恢复文件 + 从 JSONL 重建 SQLite
 
 JSONL 格式:
@@ -37,7 +37,7 @@ JSONL 格式:
     {"merkle_root": "sha256_hex"}
 
 Merkle 树验证：
-    每张表的数据行分别计算 SHA-256 哈希 → 构建 Merkle 树 → 根哈希签名
+    每张表的数据行分别计算 SHA-256 哈希 -> 构建 Merkle 树 -> 根哈希签名
     HMAC-SHA256 用于 JSONL 文件级别的完整性验证
 """
 

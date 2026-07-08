@@ -19,7 +19,7 @@
 
 Blindspot: Automated analysis is susceptible to statistical fallacies —
 p-hacking (trying many thresholds until one triggers), multiple comparisons
-(many metrics → some false-positive by chance), survivorship bias (only
+(many metrics -> some false-positive by chance), survivorship bias (only
 tracking successful actions), look-ahead bias (using future data in
 backtesting), data snooping (overfitting to historical patterns).
 

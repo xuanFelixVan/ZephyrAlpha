@@ -34,7 +34,7 @@ SystemSnapshot 是 M1 build() pipeline 末尾生成的系统状态镜像，记�
   3. 门禁注册表哈希（registry_hashes）— G1~G4 各 YAML 文件的 SHA-256
   4. 蓝图 V-12 通过率（blueprint_v12_pass_rate）— 从 SQLite gates 表统计
 
-输出路径：.runtime/snapshots/<timestamp>Z.json（UTC ISO 8601，符号 ":"→"T"）
+输出路径：.runtime/snapshots/<timestamp>Z.json（UTC ISO 8601，符号 ":"->"T"）
 
 设计原则
 --------
@@ -295,7 +295,7 @@ class SystemSnapshotter:
     def _persist(self, snapshot: SystemSnapshot) -> Path | None:
         """将 SystemSnapshot 写入 JSON 文件。
 
-        文件名：<timestamp_safe>Z.json（":"→"-"，适合文件名）
+        文件名：<timestamp_safe>Z.json（":"->"-"，适合文件名）
         写入失败时发出 UserWarning 并返回 None。
         """
         try:

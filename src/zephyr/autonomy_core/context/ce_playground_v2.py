@@ -29,7 +29,7 @@ class PlaygroundV2Result:
 
 
 class PlaygroundV2:
-    """展示完整决策链 + per-KE rationale → 支持排除某 KE 后重建."""
+    """展示完整决策链 + per-KE rationale -> 支持排除某 KE 后重建."""
 
     def dry_run(self, task: str) -> PlaygroundV2Result:
         return PlaygroundV2Result(task=task, selected_ke_ids=["KE-001", "KE-002"])

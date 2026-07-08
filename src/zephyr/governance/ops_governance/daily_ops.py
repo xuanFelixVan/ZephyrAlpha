@@ -39,6 +39,6 @@ class QuickCommand(str, Enum):
 QUICK_COMMANDS: Final[dict[QuickCommand, str]] = {
     QuickCommand.CRISIS: "立即Pause所有策略仅Emergency defense·内存Only",
     QuickCommand.STATUS: "实时关键指标clean dashboard",
-    QuickCommand.NOTES: "所有今天关键事件→markdown→daily_notes.md",
+    QuickCommand.NOTES: "所有今天关键事件->markdown->daily_notes.md",
     QuickCommand.PUBLISH: "将今天稳定变更发布到MOD-MASTER-001+bump版本号",
 }

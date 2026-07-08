@@ -28,7 +28,7 @@ class DisclosureResult:
 
 
 class ProgressiveDisclosureInjector:
-    """摘要先注→agent 请求展开完整 KE (DD81)."""
+    """摘要先注->agent 请求展开完整 KE (DD81)."""
 
     def inject_summary(self, ke_ids: list[str]) -> DisclosureResult:
         return DisclosureResult(summary_injected=True, ke_ids_available=ke_ids)

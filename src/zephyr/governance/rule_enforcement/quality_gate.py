@@ -32,9 +32,9 @@
   - 质量问题分级告警：DataQualityError（CTR-ERR-001）
 
 CTR 契约：
-  生产者 — CTR-ERR-001 (DataQualityError) → D_FACTOR
+  生产者 — CTR-ERR-001 (DataQualityError) -> D_FACTOR
 
-依赖方向：D_DATA 内部——provider → quality_gate → 下游 D_FACTOR/D_SIGNAL/D_RESEARCH
+依赖方向：D_DATA 内部——provider -> quality_gate -> 下游 D_FACTOR/D_SIGNAL/D_RESEARCH
 """
 
 from __future__ import annotations

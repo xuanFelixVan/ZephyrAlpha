@@ -103,7 +103,7 @@ class RunbookGenerator:
             details = r.get("details", {})
             if isinstance(details, dict) and "step" in details:
                 steps.add(details["step"])
-        return sorted(steps) if steps else ["Verify state → Execute revert → Verify result"]
+        return sorted(steps) if steps else ["Verify state -> Execute revert -> Verify result"]
 
 
 # 模块级工具函数（原 governance/runbook_generator.py 死副本合并，P2-1 价值保留）

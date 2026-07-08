@@ -22,7 +22,7 @@ IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
 
 功能
 ----
-- inspect_all() → HealthReport: 扫描所有 Collection 健康状态 · mitigates R0/R5/R8
+- inspect_all() -> HealthReport: 扫描所有 Collection 健康状态 · mitigates R0/R5/R8
 - auto_repair(collection): 自动修复索引损坏
 - detect_drift(): 比对蓝图 §2 与磁盘实际 Collection · mitigates R0
 - collect_ttl_expiry(): TTL 过期记录检查 · mitigates R5/R8
@@ -121,7 +121,7 @@ class IndexHealthMonitor:
         has_drift = bool(extra or missing)
 
         if has_drift:
-            _logger.warning("IndexHealthMonitor: 漂移检测 → 多余=%s, 缺失=%s", extra, missing)
+            _logger.warning("IndexHealthMonitor: 漂移检测 -> 多余=%s, 缺失=%s", extra, missing)
 
         return DriftReport(
             drift_detected=has_drift,

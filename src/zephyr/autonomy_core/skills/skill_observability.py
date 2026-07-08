@@ -22,7 +22,7 @@ Author: factory-agent
 Version: 0.3.0
 
 Skill 可观测性 —— Trace/Span/Metric/Log 四维信号.
-集成: skill_feedback → metrics, skill_executor → traces, skill_lifecycle → events.
+集成: skill_feedback -> metrics, skill_executor -> traces, skill_lifecycle -> events.
 """
 
 from __future__ import annotations

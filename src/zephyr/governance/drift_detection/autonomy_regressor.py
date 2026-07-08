@@ -17,7 +17,7 @@
 
 """
 
-Autonomy Regressor — v0.10.0 渐进自治可逆性管理器: confidence<阈值→自动regress自治级别。
+Autonomy Regressor — v0.10.0 渐进自治可逆性管理器: confidence<阈值->自动regress自治级别。
 """
 
 from __future__ import annotations

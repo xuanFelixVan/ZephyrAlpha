@@ -31,7 +31,7 @@ class VibeRuleLevel(str, Enum):
 
 
 VIBE_CODING_RULES: Final[dict[str, tuple[VibeRuleLevel, str]]] = {
-    "lock_before_write": (VibeRuleLevel.MUST, "写入前必须 lock_files.py check → acquire"),
+    "lock_before_write": (VibeRuleLevel.MUST, "写入前必须 lock_files.py check -> acquire"),
     "release_after_write": (VibeRuleLevel.MUST, "写入后必须 release 锁"),
     "encoding_utf8": (VibeRuleLevel.MUST, "所有文件写入必须 encoding='utf-8'"),
     "read_blueprint_first": (VibeRuleLevel.MUST, "写代码前必须先读 blueprint 对应 section"),

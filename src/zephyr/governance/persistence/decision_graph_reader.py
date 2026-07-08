@@ -372,7 +372,7 @@ class DecisionGraphReader:
     def get_full_graph(self) -> dict[str, Any]:
         """导出完整决策流图（layers + nodes + edges + tracks）。
 
-        用于 generate_decision_graph.py 的 YAML→DB 同步对比，或外部可视化工具。
+        用于 generate_decision_graph.py 的 YAML->DB 同步对比，或外部可视化工具。
         """
         return {
             "layers": self.get_all_layers(),

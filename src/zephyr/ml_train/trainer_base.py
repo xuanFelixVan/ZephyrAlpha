@@ -76,8 +76,8 @@ class ModelRegistry:
     模型注册表（OCP 扩展点 D_ML_TRAIN-REG）
 
     管理模型版本生命周期：
-      - 注册（register）→ 激活（activate）→ 废弃（deprecate）
-      - 每模型保留完整 lineage（训练数据 → 特征 → 参数 → 指标）
+      - 注册（register）-> 激活（activate）-> 废弃（deprecate）
+      - 每模型保留完整 lineage（训练数据 -> 特征 -> 参数 -> 指标）
     """
 
     _registry: ClassVar[dict[str, type[ModelTrainerBase]]] = {}

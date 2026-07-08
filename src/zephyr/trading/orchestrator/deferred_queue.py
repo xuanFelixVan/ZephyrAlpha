@@ -39,7 +39,7 @@ from zephyr.shared.infra.observer import EventType, Observer
 
 @unique
 class DeferredTaskStatus(str, Enum):
-    """DeferredQueue 内部任务状态（非全局 TaskStatus，仅 WAITING→READY→RUNNING→DONE/FAILED）。"""
+    """DeferredQueue 内部任务状态（非全局 TaskStatus，仅 WAITING->READY->RUNNING->DONE/FAILED）。"""
 
     WAITING = "WAITING"
     READY = "READY"

@@ -42,5 +42,5 @@ REVIEW_TIMEOUTS: Final[dict[ReviewLevel, int]] = {
 REVIEW_RULES: Final[list[str]] = [
     "所有AI产出MUST通过L3",
     "模块部署前L3+L4完整审查",
-    "黄金路径: AI自L2→AI同伴L3→Owner L4标志→终",
+    "黄金路径: AI自L2->AI同伴L3->Owner L4标志->终",
 ]

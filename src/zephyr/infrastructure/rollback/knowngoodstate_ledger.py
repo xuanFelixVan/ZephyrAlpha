@@ -21,7 +21,7 @@ KnowngoodstateLedger — 已验证正确状态收据。
 依据: 蓝图 MOD-INF-021 §7 Phase 10 + §6.17 B124
 
 回滚后自动声明当前状态为 "已知好状态" (known good state):
-    每个 commit_sha → 验证轮次 → 通过则签名 + 时间戳。
+    每个 commit_sha -> 验证轮次 -> 通过则签名 + 时间戳。
     下次回滚目标若存在 knowngoodstate 记录，优先选择。
 """
 

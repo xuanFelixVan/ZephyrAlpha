@@ -10,11 +10,11 @@
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] (True, msg)=通过；False=阻断（exit 1 violations）；exit 2 script error→(True, warn) fail-open
+# [ERROR_CONTRACT] (True, msg)=通过；False=阻断（exit 1 violations）；exit 2 script error->(True, warn) fail-open
 # [TESTS] tests/governance/commit_gates/test_id_uniqueness_gate.py
 # [A_module] module_id=MOD-GOV-id_uniqueness_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""id_uniqueness_gate.py — pre-commit hook ID 唯一性门禁（Phase 3 reconciler→gate 收敛）
+"""id_uniqueness_gate.py — pre-commit hook ID 唯一性门禁（Phase 3 reconciler->gate 收敛）
 
 从 make_precommit_id_uniqueness_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
 --no-verify 绕不过 in-process gate，same-repo 重复 hook id 在 commit 前即被阻断。
@@ -23,9 +23,9 @@
 违规已入 git 历史仅告警。本 gate 在 commit() 内嵌等效校验，阻断新引入的重复 id。
 
 fail-open/fail-closed 约定：
-- exit 0 = clean → pass
-- exit 1 = violations → block (fail-closed)
-- exit 2 = script error → pass with warning (fail-open)
+- exit 0 = clean -> pass
+- exit 1 = violations -> block (fail-closed)
+- exit 2 = script error -> pass with warning (fail-open)
 """
 
 from __future__ import annotations

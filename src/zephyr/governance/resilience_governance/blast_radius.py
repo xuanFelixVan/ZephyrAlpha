@@ -85,10 +85,10 @@ def _compute_risk_level(transitive: int, depth: int) -> str:
     """根据传递依赖数和级联深度判定风险等级.
 
     判定规则:
-    - transitive >= 20 或 depth >= 4 → CRITICAL
-    - transitive >= 10 或 depth >= 3 → HIGH
-    - transitive >= 3  或 depth >= 2 → MEDIUM
-    - 其余 → LOW
+    - transitive >= 20 或 depth >= 4 -> CRITICAL
+    - transitive >= 10 或 depth >= 3 -> HIGH
+    - transitive >= 3  或 depth >= 2 -> MEDIUM
+    - 其余 -> LOW
     """
     if transitive >= 20 or depth >= 4:
         return "CRITICAL"
@@ -221,7 +221,7 @@ class BlastRadiusAnalyzer:
     def _module_path_from_file(self, file_path: str) -> str:
         """将文件路径转换为 Python 模块路径.
 
-        例: src/zephyr/semantic-auditor/models.py → zephyr.governance.semantic_audit.models
+        例: src/zephyr/semantic-auditor/models.py -> zephyr.governance.semantic_audit.models
         """
         normalized = file_path.replace("\\", "/")
         if normalized.startswith("src/"):
@@ -322,7 +322,7 @@ class BlastRadiusAnalyzer:
             max_depth: 最大深度，None 使用实例默认值。
 
         Returns:
-            字典: depth(0-based) → 该层依赖文件列表。
+            字典: depth(0-based) -> 该层依赖文件列表。
         """
         self._ensure_loaded()
         effective_depth = max_depth if max_depth is not None else self._max_depth
@@ -357,7 +357,7 @@ class BlastRadiusAnalyzer:
 
         Args:
             prioritized_fixes: FixPrioritizer.prioritize() 的输出列表。
-                每项须有 .fix.finding 属性（FixResult → SemanticAuditFinding）。
+                每项须有 .fix.finding 属性（FixResult -> SemanticAuditFinding）。
 
         Returns:
             BlastRadiusReport 列表，与输入一一对应。

@@ -206,7 +206,7 @@ class RollbackScheduler:
             if status != "COMPLETE":
                 kept.append(entry)
                 continue
-            # COMPLETE 且超过保留期 → 删除
+            # COMPLETE 且超过保留期 -> 删除
             if written_at and written_at < cutoff_str:
                 removed.append(entry)
             else:

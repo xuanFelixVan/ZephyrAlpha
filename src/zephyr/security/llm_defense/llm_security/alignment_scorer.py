@@ -28,7 +28,7 @@ class AlignmentResult:
 
 
 class AlignmentScorer:
-    """Inject 后 ContextBlock vs TaskCard embedding cosine < 0.7 → rebuild (DD85)."""
+    """Inject 后 ContextBlock vs TaskCard embedding cosine < 0.7 -> rebuild (DD85)."""
 
     def score(self, context_embedding: list[float], task_embedding: list[float]) -> AlignmentResult:
         sim = 0.95

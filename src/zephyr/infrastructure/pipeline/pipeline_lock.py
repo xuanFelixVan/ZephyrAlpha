@@ -198,7 +198,7 @@ class FileLockBackend(LockBackend):
     基于原子目录创建（os.mkdir）实现互斥：
       - 锁目录路径 = lock_root / sanitized_file_path.lock
       - 目录内写入 owner.json（{task_id, pid, timestamp}）
-      - 获取锁前检测 stale lock（PID 已死 或 TTL 过期 → 自动清理）
+      - 获取锁前检测 stale lock（PID 已死 或 TTL 过期 -> 自动清理）
 
     v0.9.0 B167：新增 TTL 过期自动释放——锁超过 TTL 秒自动视为 stale。
     """

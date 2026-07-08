@@ -22,9 +22,9 @@ HybridRetriever — MOD-INF-011 混合检索架构
 
 Pipeline
 --------
-    query → dense_search(k*3) ─┐
-                                ├→ RRF fusion (k=60) → score filter(≥0.6) → top-k
-    query → sparse_search(k*3) ─┘
+    query -> dense_search(k*3) ─┐
+                                ├-> RRF fusion (k=60) -> score filter(≥0.6) -> top-k
+    query -> sparse_search(k*3) ─┘
 
 特性
 ----

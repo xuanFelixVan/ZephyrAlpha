@@ -19,13 +19,13 @@
 全局状态传播链（State Propagation Chain）
 
 依据：MOD-MASTER-002 蓝图 §四 全局状态传播链 (CT-ORC-DB)
-TaskCard 状态变更 → 所有关联系统得到通知。
+TaskCard 状态变更 -> 所有关联系统得到通知。
 
 传播规则：
-- PENDING → IN_PROGRESS: 通知 Gates + FLE
-- IN_PROGRESS → COMPLETED: 通知 VMS 向量化 + db 持久化
-- IN_PROGRESS → BLOCKED: 通知 Gates 检查阻塞 + FLE 记录
-- IN_PROGRESS → FAILED: 通知 FLE + db 持久化
+- PENDING -> IN_PROGRESS: 通知 Gates + FLE
+- IN_PROGRESS -> COMPLETED: 通知 VMS 向量化 + db 持久化
+- IN_PROGRESS -> BLOCKED: 通知 Gates 检查阻塞 + FLE 记录
+- IN_PROGRESS -> FAILED: 通知 FLE + db 持久化
 """
 
 from __future__ import annotations
@@ -52,28 +52,28 @@ PROPAGATION_RULES: Final[dict[str, dict[str, list[PropagationTarget]]]] = {
     # 真源：zephyr.governance.rule_enforcement.task_types.TaskStatus
     # 合法状态值（大写）：PENDING/CREATED/LOCKED/ASSIGNED/READY/IN_PROGRESS/
     #   REVIEWING/COMPLETED/VERIFIED/FAILED/BLOCKED/WAITING/RETRY/CANCELLED
-    # 迁移键格式："FROM→TO"，FROM/TO 必须是 SSoT 中的合法状态值。
+    # 迁移键格式："FROM->TO"，FROM/TO 必须是 SSoT 中的合法状态值。
     # 合法迁移边定义在 TaskRepository.transition() 中，本表仅定义通知传播目标。
-    "PENDING→IN_PROGRESS": {
+    "PENDING->IN_PROGRESS": {
         "sources": [],  # 改为直接映射
         "notify": [PropagationTarget.GATES, PropagationTarget.FLE],
     },
-    "IN_PROGRESS→COMPLETED": {
+    "IN_PROGRESS->COMPLETED": {
         "notify": [PropagationTarget.VMS, PropagationTarget.DB, PropagationTarget.FLE],
     },
-    "IN_PROGRESS→BLOCKED": {
+    "IN_PROGRESS->BLOCKED": {
         "notify": [PropagationTarget.GATES, PropagationTarget.FLE],
     },
-    "IN_PROGRESS→FAILED": {
+    "IN_PROGRESS->FAILED": {
         "notify": [PropagationTarget.FLE, PropagationTarget.DB],
     },
-    "COMPLETED→VERIFIED": {
+    "COMPLETED->VERIFIED": {
         "notify": [PropagationTarget.DB, PropagationTarget.FLE],
     },
-    "BLOCKED→IN_PROGRESS": {
+    "BLOCKED->IN_PROGRESS": {
         "notify": [PropagationTarget.GATES, PropagationTarget.FLE],
     },
-    "BLOCKED→CANCELLED": {
+    "BLOCKED->CANCELLED": {
         "notify": [PropagationTarget.DB, PropagationTarget.FLE],
     },
 }
@@ -100,7 +100,7 @@ class StatePropagator:
         new_status: str,
         payload: dict[str, Any] | None = None,
     ) -> list[PropagationTarget]:
-        transition_key = f"{old_status}→{new_status}"
+        transition_key = f"{old_status}->{new_status}"
         rule = PROPAGATION_RULES.get(transition_key)
 
         if rule is None:
@@ -125,7 +125,7 @@ class StatePropagator:
         return [e for e in self._events if e.task_id == task_id]
 
     def get_notifiable_targets(self, old_status: str, new_status: str) -> list[str]:
-        transition_key = f"{old_status}→{new_status}"
+        transition_key = f"{old_status}->{new_status}"
         rule = PROPAGATION_RULES.get(transition_key)
         if rule is None:
             return []

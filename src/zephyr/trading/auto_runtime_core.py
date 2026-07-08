@@ -505,13 +505,13 @@ class AutoRuntimeCore:
     def learn_from_task_result(
         self, task_type: str, model: str, duration_ms: float, tokens: int, confidence: float = 0.0
     ) -> None:
-        """记录一次任务执行结果——供大脑学习最优任务→模型映射。"""
+        """记录一次任务执行结果——供大脑学习最优任务->模型映射。"""
         if self._task_learner is None:
             return
         self._task_learner.record(task_type, model, duration_ms, tokens, confidence)
 
     def get_task_model_recommendations(self) -> list[dict[str, object]]:
-        """获取当前任务→模型推荐矩阵。"""
+        """获取当前任务->模型推荐矩阵。"""
         if self._task_learner is None:
             return []
         recs = self._task_learner.recommend_all()
@@ -528,7 +528,7 @@ class AutoRuntimeCore:
         ]
 
     def learner_summary(self) -> str:
-        """任务→模型学习器摘要。"""
+        """任务->模型学习器摘要。"""
         if self._task_learner is None:
             return "ModelTaskLearner: not initialized"
         return self._task_learner.summary()

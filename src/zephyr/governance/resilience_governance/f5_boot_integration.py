@@ -21,7 +21,7 @@ F5 = EscalationProtocol 五件套: EscalationEngine + DelegationEngine + Deadloc
 + Arbitrator + EscalationAPI. 本模块负责将 F5 组件接入系统启动/关闭生命周期:
 
 1. session_startup 钩子: 系统启动时按依赖顺序初始化 F5 四组件
-   (DeadlockDetector → EscalationEngine → DelegationEngine → Arbitrator)
+   (DeadlockDetector -> EscalationEngine -> DelegationEngine -> Arbitrator)
 2. FLE _periodic_checks() 集成: 巡检死锁/超时锁/升级队列/过期委托
 3. boot_hooks 触发接口: register_startup_hook() 注册到 hook_registry
 
@@ -143,7 +143,7 @@ class F5BootIntegration:
                 deadlock_detector=self._deadlock_detector,
             )
             details["arbitrator_initialized"] = True
-            logger.info("F5: Arbitrator initialized (3-tier: priority→rule→escalation)")
+            logger.info("F5: Arbitrator initialized (3-tier: priority->rule->escalation)")
         except Exception as e:
             errors.append(f"Arbitrator init failed: {e}")
             logger.error("F5: Arbitrator initialization failed: %s", e, exc_info=True)

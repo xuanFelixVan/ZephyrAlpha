@@ -25,7 +25,7 @@ G4 Activate 门禁 — 人工激活（T-2-13-D）
 1. 生成 Markdown 提案 + 通知
 2. auto_activate_score: 9.0（高分预授权自动激活）
 3. 调用 gate_engine.py 执行 g4-activate.yaml 门禁
-4. 状态转换：analyzed → active / analyzed → analyzed（驳回）
+4. 状态转换：analyzed -> active / analyzed -> analyzed（驳回）
 5. 写入 05_active_research/ 或 04_future_capabilities/
 
 Safety : M

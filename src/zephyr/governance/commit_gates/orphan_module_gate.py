@@ -35,7 +35,7 @@
      或路径含 ``scripts/`` / ``bin/``，或文件含 ``if __name__ == "__main__":`` 块
   3. ``git grep`` 搜索代码库 ``src/**/*.py`` 是否含 ``import {short_name}`` /
      ``from .* import {short_name}`` / ``from {module_path}``
-  4. 0 匹配 → 孤儿模块 → 违规
+  4. 0 匹配 -> 孤儿模块 -> 违规
 
 设计权衡
 --------
@@ -116,8 +116,8 @@ def _is_entry_point(rel_path: str, content: str) -> bool:
 def _compute_module_path(rel_path: str) -> tuple[str, str]:
     """从相对路径计算 dotted module path 和 short name。
 
-    ``src/zephyr/governance/foo.py`` → ("zephyr.governance.foo", "foo")
-    ``src/zephyr/governance/pkg/__init__.py`` → ("zephyr.governance.pkg", "pkg")
+    ``src/zephyr/governance/foo.py`` -> ("zephyr.governance.foo", "foo")
+    ``src/zephyr/governance/pkg/__init__.py`` -> ("zephyr.governance.pkg", "pkg")
 
     Args:
         rel_path: 相对路径（正斜杠）。
@@ -132,7 +132,7 @@ def _compute_module_path(rel_path: str) -> tuple[str, str]:
     # 去 .py
     if path.endswith(".py"):
         path = path[:-3]
-    # __init__.py → 取目录名作为模块名
+    # __init__.py -> 取目录名作为模块名
     if path.endswith("/__init__"):
         path = path[: -len("/__init__")]
     module_path = path.replace("/", ".")
@@ -264,9 +264,9 @@ def make_orphan_module_gate() -> GateSpec:
                 others = [f for f in matched_files if f != rel_name and f != rel_name.replace("/", os.sep)]
                 if others:
                     continue  # 有其他文件引用，非孤儿
-                # 仅自身匹配 → 孤儿
+                # 仅自身匹配 -> 孤儿
             elif grep_result.returncode == 1:
-                # 无匹配 → 孤儿
+                # 无匹配 -> 孤儿
                 pass
             else:
                 # git grep 错误（exit != 0 且 != 1）

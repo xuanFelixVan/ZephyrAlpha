@@ -17,7 +17,7 @@
 
 """UnifiedAssetIndex — MOD-INF-026 L3 统一资产索引生成器
 
-蓝图 §3.3 + §17：读取 24 个注册表 + 分类资产 → 生成 unified-asset-index.yaml
+蓝图 §3.3 + §17：读取 24 个注册表 + 分类资产 -> 生成 unified-asset-index.yaml
 作为项目 SSoT。使用 temp-file + atomic rename 写入。
 """
 
@@ -109,7 +109,7 @@ class IndexGenerator:
         klass_dir = self.root / "data" / "classified"
         klass_path = klass_dir / "classified-assets.json"
         if not klass_path.exists():
-            # 5.170.4 修复: 警告信息 print → logger.warning
+            # 5.170.4 修复: 警告信息 print -> logger.warning
             logger.warning("分类文件不存在，先运行 classifier: %s", klass_path)
             return
 
@@ -122,7 +122,7 @@ class IndexGenerator:
 
         index = self.generate(cr)
         out = self.save(index)
-        # 5.170.5 修复: 结果输出 print → logger.info (库代码 CLI 入口)
+        # 5.170.5 修复: 结果输出 print -> logger.info (库代码 CLI 入口)
         logger.info("INDEX %d 资产 | HEALTH %s | OUTPUT %s", index.total_assets, index.health_score, out)
 
 

@@ -18,9 +18,9 @@
 """去重债务预测器 — weeks_to_payoff + intake_rate vs fix_rate 蒙特卡洛模拟.
 
 职责：
-  - 基于当前债务数 + 引入速率 + 修复速率 → 预测清零日期
-  - 蒙特卡洛模拟（1000次迭代）→ 置信区间
-  - intake_rate > fix_rate → 债务正向增长 → ALERT
+  - 基于当前债务数 + 引入速率 + 修复速率 -> 预测清零日期
+  - 蒙特卡洛模拟（1000次迭代）-> 置信区间
+  - intake_rate > fix_rate -> 债务正向增长 -> ALERT
 """
 
 from __future__ import annotations

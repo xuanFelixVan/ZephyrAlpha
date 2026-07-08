@@ -28,7 +28,7 @@ Phase B 骨架——定义合规层的公共接口。
 ComplianceRule（CTR-P1-012）SSoT：``zephyr.shared.contracts.compliance_rule``。
 
 跨层契约：
-  CTR-P1-012  ComplianceRule         → D_RISK, D_EXECUTION_CORE, D_COMPLIANCE（生产者——合规规则定义）
+  CTR-P1-012  ComplianceRule         -> D_RISK, D_EXECUTION_CORE, D_COMPLIANCE（生产者——合规规则定义）
   CTR-P1-006  StrategyLifecycleEvent  ← D_PORTFOLIO_CORE（消费者——策略生命周期事件）
   CTR-P1-009  PerformanceAttributionReport ← D_REPORTING（消费者——绩效归因报告）
 

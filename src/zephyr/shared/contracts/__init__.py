@@ -102,7 +102,7 @@ from zephyr.shared.contracts.task_repository_protocol import (
 # DM-367: re-export module names for audit registration
 from . import llm_gateway_protocol, orchestration_protocol, skill_protocol
 
-# Lazy imports for trading-domain symbols (upward dependency from L0 shared → L3 trading)
+# Lazy imports for trading-domain symbols (upward dependency from L0 shared -> L3 trading)
 _TRADING_SYMBOLS = {
     "FactorSignal": "zephyr.execution_core.trading.trading_contracts.market.factor_signal",
     "Fill": "zephyr.execution_core.trading.trading_contracts.execution.fill",

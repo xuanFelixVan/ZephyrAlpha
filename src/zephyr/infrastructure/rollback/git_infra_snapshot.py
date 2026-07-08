@@ -20,8 +20,8 @@ GitInfraSnapshot — Git 基础设施快照与污染防护。
 
 依据: 蓝图 MOD-INF-021 §6.12 B64
 
-定期 .git/config + .git/hooks/ 快照 → 受保护位置。
-Watchdog 实时监控 git hooks/config 修改 → 检测到非Owner修改 → 告警+恢复。
+定期 .git/config + .git/hooks/ 快照 -> 受保护位置。
+Watchdog 实时监控 git hooks/config 修改 -> 检测到非Owner修改 -> 告警+恢复。
 防止 AI 通过篡改 git hooks 绕过门禁执行恶意代码。
 """
 

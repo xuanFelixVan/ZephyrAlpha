@@ -291,7 +291,7 @@ def detect_ownership_consistency(paths: list[str], owner_field: str = "owner") -
                     dimension="D5_semantic",
                     concept=owner_field,
                     drift_detected=True,
-                    detail=f"{p}: {owners[p]}→{ow}",
+                    detail=f"{p}: {owners[p]}->{ow}",
                 )
             )
         owners[p] = ow
@@ -995,7 +995,7 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
     两个维度：
 
 
-    1. **时序漂移**: 代码文件 mtime 比对应蓝图晚 >7 天 → 蓝图过期。
+    1. **时序漂移**: 代码文件 mtime 比对应蓝图晚 >7 天 -> 蓝图过期。
 
 
     2. **接口漂移**: 蓝图中声明的 ``func()`` 签名在代码中找不到定义。

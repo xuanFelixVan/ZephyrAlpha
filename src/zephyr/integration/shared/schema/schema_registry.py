@@ -31,7 +31,7 @@ schema_registry.py —— Schema 版本编目与查询（Phase 10 新增 | 盲�
 
 设计原则：
   - 集中式编目——所有版本化数据结构的 SSoT
-  - 版本查询——给定 schema_name → 当前最新版本 + 所有版本链
+  - 版本查询——给定 schema_name -> 当前最新版本 + 所有版本链
   - 兼容性检查——新增版本必须通过兼容性规则（同 MAJOR 追加字段 / 不同 MAJOR 拒绝）
 
 AI 施工约定：

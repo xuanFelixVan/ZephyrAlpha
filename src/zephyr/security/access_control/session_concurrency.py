@@ -21,7 +21,7 @@
    - TTL=3600s（session 超时自动注销）
 2. SessionHandoff：session 结束时写 handoff package
    - 对标 drift_detector/blueprint.md §6.14 Cross-Session HandoffPackage
-3. SessionConflictDetector：检测多 session 操作同一文件 → 走 lock_files.py 协调
+3. SessionConflictDetector：检测多 session 操作同一文件 -> 走 lock_files.py 协调
 
 设计约束：
 - 不替代 lock_files.py（文件级锁），而是在其上增加 session 级注册
@@ -69,7 +69,7 @@ class ConflictType(str, Enum):
 
 
 CONFLICT_SCENARIOS: dict[ConflictType, str] = {
-    ConflictType.SAME_FILE: "两session改同一文件→后写入覆盖",
+    ConflictType.SAME_FILE: "两session改同一文件->后写入覆盖",
     ConflictType.IMPORT_DEP: "session-A改imports session-B移除依赖",
     ConflictType.REFACTOR_SIG: "重构函数签名vs旧签名调用",
     ConflictType.BLUEPRINT_DRIFT: "改蓝图vs按旧蓝图施工",
@@ -201,9 +201,9 @@ class SessionRegistry:
         self._project_root: Path = Path(project_root) if project_root else Path.cwd()
         self._registry_path: Path = self._project_root / _REGISTRY_PATH
         self._registry_path.parent.mkdir(parents=True, exist_ok=True)
-        # 进程内读写锁：串行化 _load→修改→_save 的 read-modify-write 序列，
+        # 进程内读写锁：串行化 _load->修改->_save 的 read-modify-write 序列，
         # 消除 claim_file/release_file 等的 TOCTOU 竞态（两线程并发 claim 同一文件
-        # 都读到"无人持有"→都写回→双 claim）。跨进程并发由 gateway 全局锁 + 原子
+        # 都读到"无人持有"->都写回->双 claim）。跨进程并发由 gateway 全局锁 + 原子
         # os.replace 兜底；此处只解决进程内多线程竞态（红蓝对抗 TestConcurrentClaimRace）。
         self._lock = threading.RLock()
 
@@ -344,10 +344,10 @@ class SessionRegistry:
     def claim_file(self, session_id: str, file_path: str) -> bool:
         """为 session 声明持有某文件（动态 claim）。
 
-        - session 未注册/过期 → 懒注册（held_files=[]），记 warning
-        - 文件被其他活跃 session 持有 → 返回 False（冲突，调用方走 lock_files.py）
-        - 文件已被自己持有 → 幂等返回 True
-        - 文件无人持有 → 加入 held_files，顺带 heartbeat，原子写回，返回 True
+        - session 未注册/过期 -> 懒注册（held_files=[]），记 warning
+        - 文件被其他活跃 session 持有 -> 返回 False（冲突，调用方走 lock_files.py）
+        - 文件已被自己持有 -> 幂等返回 True
+        - 文件无人持有 -> 加入 held_files，顺带 heartbeat，原子写回，返回 True
 
         Returns: True=claim 成功（含幂等），False=被其他 session 持有。
         """
@@ -514,7 +514,7 @@ class SessionConflictDetector:
     """检测多 session 操作同一文件（P2-SES）。
 
     基于 SessionRegistry + ConcurrencyManager 检测跨 session 文件冲突。
-    检测到冲突 → 返回 ConflictType，由调用方走 lock_files.py 协调。
+    检测到冲突 -> 返回 ConflictType，由调用方走 lock_files.py 协调。
     """
 
     def __init__(self, registry: SessionRegistry) -> None:

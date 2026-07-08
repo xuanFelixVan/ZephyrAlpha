@@ -10,17 +10,17 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] notify失败→log+不抛异常; check_*返回bool不抛异常
+# [ERROR_CONTRACT] notify失败->log+不抛异常; check_*返回bool不抛异常
 # [TESTS] tests/zephyr/data/test_alerter.py
 # [A_module] module_id=MOD-L00-004-alerter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性）。
 
 告警触发条件（蓝图 §6.5）：
-- 任务 DEAD（重试耗尽）→ 立即告警
-- 单日失败率 > 5% → 汇总告警
-- 某数据源连续 3 天失败 → 升级告警
-- iFind 月度配额 -4318 → 立即告警并暂停该源所有任务
+- 任务 DEAD（重试耗尽）-> 立即告警
+- 单日失败率 > 5% -> 汇总告警
+- 某数据源连续 3 天失败 -> 升级告警
+- iFind 月度配额 -4318 -> 立即告警并暂停该源所有任务
 
 告警方式：
 - 日志（logging，输出到 logs/integrator.log）

@@ -16,14 +16,14 @@
 # [TTL] permanent
 
 """
-MOD-INF-019: Agent Spec — SpecEngine 蓝图→Skill 升级引擎
+MOD-INF-019: Agent Spec — SpecEngine 蓝图->Skill 升级引擎
 ============================================================
 Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
 Version: 0.1.0
 
 SpecEngine 是 agent-spec 的统一入口，负责将静态蓝图转化为可执行 Agent Skill。
-四阶段流程: discover(发现) → generate(生成) → validate(验证) → register(注册)
+四阶段流程: discover(发现) -> generate(生成) -> validate(验证) -> register(注册)
 """
 
 from __future__ import annotations
@@ -94,7 +94,7 @@ class UpgradeResult:
 
 
 class SpecEngine:
-    """蓝图→Skill 升级引擎 —— agent-spec 统一入口
+    """蓝图->Skill 升级引擎 —— agent-spec 统一入口
 
     用法:
         engine = SpecEngine()

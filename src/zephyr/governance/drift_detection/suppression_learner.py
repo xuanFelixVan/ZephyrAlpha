@@ -25,7 +25,7 @@ Suppression Learner — suppression_learner.py
 module_id: MOD-INF-023
 
 
-自动学习假阳性模式：同一 pattern_hash 被标记 FALSE_POSITIVE >=3 次 → 自动创建 suppression_rule。
+自动学习假阳性模式：同一 pattern_hash 被标记 FALSE_POSITIVE >=3 次 -> 自动创建 suppression_rule。
 
 
 对标 blueprint.md §2.14（自动学习假阳性模式识别与抑制）。"""

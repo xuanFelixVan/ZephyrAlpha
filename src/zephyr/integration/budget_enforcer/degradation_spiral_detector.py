@@ -18,8 +18,8 @@
 """
 Degradation Spiral Detector — 模型幻觉-容量正反馈螺旋检测 (盲点 #19, M-29)
 特性：
-  - 幻觉率 > 10% + Token 消耗 > 2× baseline → 螺旋预警
-  - SLI CAP-SPI-001: spiral_coefficient > 1.5 → 阻断
+  - 幻觉率 > 10% + Token 消耗 > 2× baseline -> 螺旋预警
+  - SLI CAP-SPI-001: spiral_coefficient > 1.5 -> 阻断
 """
 
 import time

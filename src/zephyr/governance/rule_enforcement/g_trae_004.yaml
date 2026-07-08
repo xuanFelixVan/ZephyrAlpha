@@ -38,7 +38,7 @@ entry_conditions:
   rule_ids:
   - TRAE-004
   anti_pattern:
-    description: 全NO→可串行
+    description: 全NO->可串行
     example: AI ignores TRAE-004 parallel_execution requirement
   params: &id001
     required_fields:

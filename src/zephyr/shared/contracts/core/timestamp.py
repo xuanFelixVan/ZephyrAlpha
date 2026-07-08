@@ -131,7 +131,7 @@ def ensure_utc(ts: Timestamp | datetime | str | int | float) -> Timestamp:
     **拒绝 naive datetime 是故意的**：强制所有输入必须明确时区，防止"以为是北京时间结果是 UTC"的灾难性错误。
 
     示例：
-        >>> ensure_utc("2026-04-18T10:30:00+08:00")  # 东八区 → UTC
+        >>> ensure_utc("2026-04-18T10:30:00+08:00")  # 东八区 -> UTC
         Timestamp('2026-04-18 02:30:00+0000', tz='UTC')
 
         >>> ensure_utc(now_utc())  # 抛 NaiveDatetimeError

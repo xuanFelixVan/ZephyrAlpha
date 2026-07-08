@@ -25,10 +25,10 @@ TaskGate --- 任务门控
     gate.load_passports()  # 加载所有护照
 
     ok, reason = gate.can_dispatch("qwen3:8b", "code_fix")
-    # → (False, "low_accuracy: low_precision_below_threshold")
+    # -> (False, "low_accuracy: low_precision_below_threshold")
 
     ok, reason = gate.can_dispatch("qwen3:8b", "task_classification")
-    # → (True, "ok")
+    # -> (True, "ok")
 """
 
 from __future__ import annotations

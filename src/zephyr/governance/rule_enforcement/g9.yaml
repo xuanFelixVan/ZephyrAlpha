@@ -98,7 +98,7 @@ checks:
   - check_id: G9-CHK-007
     title: blueprint status 与 construction_progress 一致
     rule: >
-      construction_plan=phase_2_complete → blueprint.status=Active (全自动化，零人工介入)
+      construction_plan=phase_2_complete -> blueprint.status=Active (全自动化，零人工介入)
     check_type: script
     script: python scripts/governance/sync_blueprint_status.py
     expect_exit_code: 0

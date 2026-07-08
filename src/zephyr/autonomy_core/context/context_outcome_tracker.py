@@ -30,7 +30,7 @@ class ContextOutcomeLink:
 
 
 class ContextOutcomeTracker:
-    """ContextBlock → Agent Action → Action Success 三级因果关联 (DD88)."""
+    """ContextBlock -> Agent Action -> Action Success 三级因果关联 (DD88)."""
 
     def __init__(self) -> None:
         self._links: dict[str, ContextOutcomeLink] = {}

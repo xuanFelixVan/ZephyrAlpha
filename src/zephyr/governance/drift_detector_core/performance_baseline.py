@@ -29,9 +29,9 @@ class LatencySegment:
 
 
 PERFORMANCE_BASELINE: Final[list[LatencySegment]] = [
-    LatencySegment(name="market_to_signal", max_ms=200, description="行情→信号"),
-    LatencySegment(name="signal_to_risk", max_ms=10, description="信号→风控"),
-    LatencySegment(name="risk_to_order", max_ms=50, description="风控→订单"),
+    LatencySegment(name="market_to_signal", max_ms=200, description="行情->信号"),
+    LatencySegment(name="signal_to_risk", max_ms=10, description="信号->风控"),
+    LatencySegment(name="risk_to_order", max_ms=50, description="风控->订单"),
 ]
 
 E2E_MAX_MS: Final[int] = 500

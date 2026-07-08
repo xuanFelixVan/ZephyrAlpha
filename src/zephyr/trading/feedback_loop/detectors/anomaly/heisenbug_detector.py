@@ -26,7 +26,7 @@ hid from the diagnostic instrumentation.
 Mitigation: Shadow monitoring with randomized sampling. Track observation-sensitive
 metrics via passive collection (no active probing). Compare anomaly rates between
 actively-monitored and passively-monitored windows. If anomaly rate drops >50% during
-active monitoring → flag as potential Heisenbug.
+active monitoring -> flag as potential Heisenbug.
 """
 
 from __future__ import annotations

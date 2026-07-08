@@ -19,17 +19,17 @@
 file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 #15 修复）
 
 痛点修复：此前 AI 直接 write/overwrite 文件——
-  1. 写入中途崩溃 → 文件损坏（无原子写保护）
+  1. 写入中途崩溃 -> 文件损坏（无原子写保护）
   2. 改错了无法回滚（无自动备份）
   3. 多个地方实现同样的 safe_write 逻辑
 
 设计对标：
-  - PostgreSQL WAL（Write-Ahead Log）→ 先写临时文件，再 rename
-  - Git object store → content-addressed 写入
+  - PostgreSQL WAL（Write-Ahead Log）-> 先写临时文件，再 rename
+  - Git object store -> content-addressed 写入
   - POSIX atomic rename 语义
 
 设计原则：
-  - 原子写：先写 .tmp 文件 → flush → rename（POSIX 保证 rename 是原子的）
+  - 原子写：先写 .tmp 文件 -> flush -> rename（POSIX 保证 rename 是原子的）
   - 自动备份：写入前自动创建 .bak（保留最近 N 个版本）
   - 校验读：读取后可选校验 SHA-256（防静默损坏）
 
@@ -273,7 +273,7 @@ def backup_and_rollback(
     try:
         yield target
     except BaseException:
-        # 5.163.3 修复: except Exception → BaseException,确保 Ctrl+C/SystemExit 时
+        # 5.163.3 修复: except Exception -> BaseException,确保 Ctrl+C/SystemExit 时
         # 也执行 restore_backup,避免文件停留在半修改状态。
         restore_backup(target, backup_index=0)
         raise

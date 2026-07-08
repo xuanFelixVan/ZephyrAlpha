@@ -66,10 +66,10 @@ class ScanResult:
 class LSGSecurityGateway:
     """LLM Security Gateway — L0-L8 九层纵深防御统一编排入口.
 
-    原则：fail-closed —— 任一层 DENY → 整体 DENY，LSG 不可用 → 拒绝所有流量.
+    原则：fail-closed —— 任一层 DENY -> 整体 DENY，LSG 不可用 -> 拒绝所有流量.
     L6/L7 为 pass-through 层（fail-open 降级例外）.
 
-    执行语义：严格顺序链式执行 L0→L1→...→L8，任一非 fail-open 层 DENY/BLOCK
+    执行语义：严格顺序链式执行 L0->L1->...->L8，任一非 fail-open 层 DENY/BLOCK
     立即中断后续层的评估。这是纵深防御的核心安全语义，不可并行化。
 
     用法:
@@ -139,9 +139,9 @@ class LSGSecurityGateway:
         metadata: dict[str, Any] | None = None,
         mode: ScanMode = ScanMode.INPUT_ONLY,
     ) -> ScanResult:
-        """输入扫描：L0→L1→L2→L5 顺序执行.
+        """输入扫描：L0->L1->L2->L5 顺序执行.
 
-        fail-closed: 任一层 DENY → 整体 DENY.
+        fail-closed: 任一层 DENY -> 整体 DENY.
         """
         meta = metadata or {}
         meta["source"] = source
@@ -162,9 +162,9 @@ class LSGSecurityGateway:
         metadata: dict[str, Any] | None = None,
         mode: ScanMode = ScanMode.OUTPUT_ONLY,
     ) -> ScanResult:
-        """输出扫描：L3→L6 顺序执行.
+        """输出扫描：L3->L6 顺序执行.
 
-        fail-closed: L3 DENY → 整体 DENY; L6 为 pass-through.
+        fail-closed: L3 DENY -> 整体 DENY; L6 为 pass-through.
         """
         meta = metadata or {}
         meta["source"] = source
@@ -186,9 +186,9 @@ class LSGSecurityGateway:
         metadata: dict[str, Any] | None = None,
         mode: ScanMode = ScanMode.AGENT_ONLY,
     ) -> ScanResult:
-        """Agent 动作扫描：L4→L5→L8 顺序执行.
+        """Agent 动作扫描：L4->L5->L8 顺序执行.
 
-        fail-closed: 任一层 DENY → 整体 DENY.
+        fail-closed: 任一层 DENY -> 整体 DENY.
         """
         meta = metadata or {}
         meta["tool_name"] = tool_name
@@ -208,9 +208,9 @@ class LSGSecurityGateway:
         text: str,
         metadata: dict[str, Any] | None = None,
     ) -> ScanResult:
-        """全链路扫描：L0→L1→L2→L2a→L3→L4→L5→L6→L7→L8 顺序执行.
+        """全链路扫描：L0->L1->L2->L2a->L3->L4->L5->L6->L7->L8 顺序执行.
 
-        fail-closed: 任一非 pass-through 层 DENY → 整体 DENY.
+        fail-closed: 任一非 pass-through 层 DENY -> 整体 DENY.
         """
         meta = metadata or {}
         ctx = SecurityContext(
@@ -240,9 +240,9 @@ class LSGSecurityGateway:
         layer_names: list[str],
         mode: ScanMode,
     ) -> ScanResult:
-        """顺序链式评估——纵深防御核心语义：L0→L1→...→LN 严格顺序执行.
+        """顺序链式评估——纵深防御核心语义：L0->L1->...->LN 严格顺序执行.
 
-        任一非 fail-open 层 DENY/BLOCK → 立即中断，不评估后续层.
+        任一非 fail-open 层 DENY/BLOCK -> 立即中断，不评估后续层.
         每层评估带超时保护，防止单层卡死导致整体阻塞.
         """
         t0 = time.perf_counter()
@@ -355,7 +355,7 @@ class LSGSecurityGateway:
 
         # 运行时 Gate 放行令牌：仅对“预调用”扫描（输入/全量/Agent 动作）且 ALLOW 时颁发。
         # scan_output（OUTPUT_ONLY）不颁发——输出扫描发生在 LLM 调用之后，不应放行后续裸调。
-        # 令牌 TTL 30s，使合法的“LSG 扫描通过 → 发起 LLM 调用”链路畅通（见 runtime_interceptor）。
+        # 令牌 TTL 30s，使合法的“LSG 扫描通过 -> 发起 LLM 调用”链路畅通（见 runtime_interceptor）。
         if final_decision is SecurityDecision.ALLOW and mode in (
             ScanMode.INPUT_ONLY,
             ScanMode.FULL,

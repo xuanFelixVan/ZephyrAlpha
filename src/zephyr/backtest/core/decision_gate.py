@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] IS→WFA→OOS不可跳级;参数锁定;Sharpe>0.5准入
+# [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -14,7 +14,7 @@
 # [TESTS]
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001-decision-gate | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-"""3阶段决策门控模块(IS→WFA→OOS)
+"""3阶段决策门控模块(IS->WFA->OOS)
 
 职责:
   - IS(In-Sample)阶段:样本内Sharpe准入(>0.5)+参数稳定性门控(避悬崖型参数)
@@ -24,7 +24,7 @@
   - 回测-实盘偏差监控:偏差>30%告警,偏差>50%退役
 
 约束:
-  - IS→WFA→OOS不可跳级:IS未通过不进入WFA;WFA未通过不进入OOS
+  - IS->WFA->OOS不可跳级:IS未通过不进入WFA;WFA未通过不进入OOS
   - 进入OOS后参数锁定,不可调整
   - 正式上线需人工审批(can_deploy仅表示技术门控通过)
 
@@ -158,7 +158,7 @@ class DecisionGateResult:
 
 
 class DecisionGate:
-    """3阶段决策门控(IS→WFA→OOS)
+    """3阶段决策门控(IS->WFA->OOS)
 
     按蓝图§3.3 P0-14编排三阶段决策:
       1. IS阶段:样本内Sharpe准入+参数稳定性门控
@@ -453,11 +453,11 @@ class DecisionGate:
         oos_sharpe: float,
         params_locked: bool = True,
     ) -> DecisionGateResult:
-        """编排3阶段决策门控(IS→WFA→OOS)
+        """编排3阶段决策门控(IS->WFA->OOS)
 
         阶段不可跳级:
-          - IS未通过 → 不进入WFA(WFA/OOS标记为跳过)
-          - WFA未通过 → 不进入OOS(OOS标记为跳过)
+          - IS未通过 -> 不进入WFA(WFA/OOS标记为跳过)
+          - WFA未通过 -> 不进入OOS(OOS标记为跳过)
 
         Args:
             is_sharpe: 样本内Sharpe比率
@@ -708,8 +708,8 @@ class DecisionGate:
         """监控回测-实盘Sharpe偏差
 
         偏差 = |backtest_sharpe - live_sharpe| / |backtest_sharpe|
-          - 偏差 > backtest_live_deviation_warn(默认30%) → 告警
-          - 偏差 > backtest_live_deviation_retire(默认50%) → 退役
+          - 偏差 > backtest_live_deviation_warn(默认30%) -> 告警
+          - 偏差 > backtest_live_deviation_retire(默认50%) -> 退役
 
         Args:
             backtest_sharpe: 回测Sharpe比率

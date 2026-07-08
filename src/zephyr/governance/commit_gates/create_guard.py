@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML→DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过→L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 9 个高风险核心模块，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 9 个高风险核心模块，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -17,18 +17,18 @@
 """create_guard.py — 新建 .py / 非 rules/ .yaml 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30 治本）
 
 检测 staged 新增 .py 文件与非 rules/ .yaml 文件是否在 capability_canonical_file_registry.yaml 的
-creation_tokens 字段登记。无 token 的 .py / .yaml 文件 → 硬阻断，提示"无 creation_token，
-禁止造第二真源（trae_060 §2）"。有 token 的 .py / .yaml 文件 → 放行。
+creation_tokens 字段登记。无 token 的 .py / .yaml 文件 -> 硬阻断，提示"无 creation_token，
+禁止造第二真源（trae_060 §2）"。有 token 的 .py / .yaml 文件 -> 放行。
 
 .yaml token 扩展（2026-07-01，trae_060 §2 向内收治本）
 -------------------------------------------------------
-病根：.yaml 是配置真源（YAML→DB 单向同步硬约束），第二份 .yaml 配置真源
+病根：.yaml 是配置真源（YAML->DB 单向同步硬约束），第二份 .yaml 配置真源
 的危害比 .py 更隐蔽（同步漂移会污染 9 个 readonly DB 表）。rules/ 目录已有
 命名检查（L232-278），但非 rules/ .yaml 无任何 commit-time 检测，--no-verify
 绕过 pre-commit hooks 后可造第二配置真源。
 治本：扩展现有 create_guard 检测范围到非 rules/ .yaml（不新增门禁，规避自指
 递归——同 reconciler 审查标记检测先例）。新增 .yaml 文件无 creation_token
-→ 硬阻断，复用 .py 的 token 索引（同一 registered_files 集合）。
+-> 硬阻断，复用 .py 的 token 索引（同一 registered_files 集合）。
 
 元问题3治本扩展（2026-06-30，AD-GOV-001 收敛约束技术强制）
 ------------------------------------------------------------
@@ -44,7 +44,7 @@ def 前 5 行内添加 ``# trae_060-reviewed: <审查结论>`` 标记，否则�
 ARCH-037 治本扩展（2026-07-01，DIM-5 commit-time 强制）
 -------------------------------------------------------
 扩展检测范围：若 commit 含 ``docs/01_policies_and_standards/rules/`` 下新增(A)
-或 rename(R) 的 ``.yaml`` 文件，检测两类命名违规 → 硬阻断：
+或 rename(R) 的 ``.yaml`` 文件，检测两类命名违规 -> 硬阻断：
   ① 非 trae 命名（不匹配 trae_NNN_ 前缀，如 foo.yaml）——红蓝漏洞1修复
   ② 单段 name（匹配 trae_NNN_ 但 name 段无下划线，如 trae_999_test.yaml）
 
@@ -231,7 +231,7 @@ def make_create_guard() -> GateSpec:
         # `git commit --no-verify` 绕过。治本：扩展已有 create_guard 检测范围（不新增门禁，
         # 规避自指递归——同 line 23-32 reconciler 审查标记检测先例）。
         # 病根：--no-verify 绕过所有 pre-commit hooks，DIM-5 君子协定无技术强制。
-        # 检测：staged 新增(A)+rename(R) docs/.../rules/*.yaml，两类违规→硬阻断：
+        # 检测：staged 新增(A)+rename(R) docs/.../rules/*.yaml，两类违规->硬阻断：
         #   ① 非 trae 命名（不匹配 trae_\d+_ 前缀，如 foo.yaml）——红蓝漏洞1修复
         #   ② 单段 name（匹配 trae_NNN_ 但 name 段无下划线，如 trae_999_test.yaml）
         # rename 检测（红蓝漏洞2修复）：--diff-filter=R 取新文件名检测，防 rename+--no-verify 绕过
@@ -302,7 +302,7 @@ def make_create_guard() -> GateSpec:
 
         # === ARCH-031 防复发（2026-07-02）：禁止 governance/ 根新增/rename .py 文件 ===
         # NOTE: rename 检测 MUST 在 early return 前——git mv 产生 R 不产生 A，
-        #   staged_new 为空 → new_py_files/new_yaml_files 均空 → early return True 跳过检测。
+        #   staged_new 为空 -> new_py_files/new_yaml_files 均空 -> early return True 跳过检测。
         _GOVERNANCE_ROOT_PREFIX = "src/zephyr/governance/"
         # 检测①: 新增(A) .py 到 governance/ 根
         _gov_root_new = [
@@ -431,7 +431,7 @@ def make_create_guard() -> GateSpec:
         # import 放 try 外（代码级故障不捕获，由 check_all 的 try-except 兜底为 fail-closed）。
         # P-2 修复（2026-07-06）：registry 路径随 gateway.project_root 解析（支持 worktree 路径）。
         # 病根：_pre_merge_gate_check 用 project_root=wt_path 创建 gateway，但本处读全局
-        # REGISTRY_YAML（主工作区路径）→ worktree 内更新的 capability 文件（如新增 creation_token）
+        # REGISTRY_YAML（主工作区路径）-> worktree 内更新的 capability 文件（如新增 creation_token）
         # 读不到，误判"未登记"阻断 merge。修复：路径随 project_root 解析，worktree 场景读
         # worktree 版本（session 分支内容）。与 L371 gateway.project_root / _py_file 模式一致。
         # 回退到全局 REGISTRY_YAML：worktree 是 tracked 文件必存在；tmp_path 测试场景无此文件
@@ -467,7 +467,7 @@ def make_create_guard() -> GateSpec:
                 f"禁止放行——结构异常=检测器失效。修复：检查 {_registry_yaml} 顶层结构后重试。"
             )
 
-        # 3. 构建 creation_tokens 文件索引（相对路径 → token 条目）
+        # 3. 构建 creation_tokens 文件索引（相对路径 -> token 条目）
         tokens = data.get("creation_tokens", []) or []
         registered_files: set[str] = set()
         if isinstance(tokens, list):
@@ -574,7 +574,7 @@ def make_create_guard() -> GateSpec:
 
         # === ARCH-031 门禁缺口治本（2026-07-01）：磁盘 basename 碰撞检测 ===
         # 病根：check_capability_duplicates 原只在 L3 pre-commit hook（check_ssot_gate.py）
-        # 调用，--no-verify 绕过 L3 → basename 碰撞检测被绕过。
+        # 调用，--no-verify 绕过 L3 -> basename 碰撞检测被绕过。
         # 治本：在 L2 create_guard（GitCommitGateway 注册 gate，--no-verify 绕不过）
         # 追加调用 check_capability_duplicates，复用检测逻辑唯一真源（不重复实现）。
         # 扩展：check_capability_duplicates 的 info is None 分支已追加未注册 basename

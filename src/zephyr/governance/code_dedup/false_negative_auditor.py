@@ -64,7 +64,7 @@ class FalseNegativeAuditor:
             total_scanned=len(full_ids),
             newly_found=len(missed),
             fnr=round(fnr, 3),
-            summary=f"L1 Sweep: 全量{len(full_ids)}组 → 增量漏{len(missed)}组 (FNR={fnr:.1%})",
+            summary=f"L1 Sweep: 全量{len(full_ids)}组 -> 增量漏{len(missed)}组 (FNR={fnr:.1%})",
         )
 
     def canary_audit(self, canary_functions: list[str]) -> FNAuditResult:
@@ -89,7 +89,7 @@ class FalseNegativeAuditor:
             total_scanned=sample_size,
             newly_found=discovered,
             fnr=round(fnr, 3),
-            summary=f"L3 Sampling: {sample_size}随机样本 → 发现{discovered}个 (FNR={fnr:.1%})",
+            summary=f"L3 Sampling: {sample_size}随机样本 -> 发现{discovered}个 (FNR={fnr:.1%})",
         )
 
     def full_audit(

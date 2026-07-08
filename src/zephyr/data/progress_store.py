@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 所有方法返回 dict/list/None，不抛异常（sqlite3.Error → log + return None/[]）
+# [ERROR_CONTRACT] 所有方法返回 dict/list/None，不抛异常（sqlite3.Error -> log + return None/[]）
 # [TESTS] tests/zephyr/data/test_progress_store.py
 # [A_module] module_id=MOD-L00-004-progress_store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -21,9 +21,9 @@
 - task_runs 表：每次运行的详细记录（started_at/finished_at/rows_fetched/error_msg）
 
 断点续传协议（§7.2）：
-1. 任务启动 → get_last_key(task_id) → 作为本次 payload.start
-2. 分批拉取 → 每批写完 CH → save_progress 更新 last_key
-3. 异常中断 → 下次启动从 last_key 继续
+1. 任务启动 -> get_last_key(task_id) -> 作为本次 payload.start
+2. 分批拉取 -> 每批写完 CH -> save_progress 更新 last_key
+3. 异常中断 -> 下次启动从 last_key 继续
 
 线程安全：
 - SQLite 连接用 check_same_thread=False（APScheduler 线程池共用）

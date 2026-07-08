@@ -8,7 +8,7 @@
 # --- 治理锚定结束 ---
 # G7C — 跨门禁时序一致性门禁
 # 蓝图: §N 跨门禁时序一致性
-# 检测: G1快照的blueprint_version vs 当前module blueprint_version 不一致 → WARNING
+# 检测: G1快照的blueprint_version vs 当前module blueprint_version 不一致 -> WARNING
 
 module_id: MOD-GATE_ENGINE
 gate_id: G7C
@@ -35,7 +35,7 @@ checks:
     severity: warning
     description: >
       检测任务执行期间蓝图版本变化：
-      G1快照时blueprint_version vs G7交付时blueprint_version 不一致 → WARNING
+      G1快照时blueprint_version vs G7交付时blueprint_version 不一致 -> WARNING
     rule_ids:
       - TRAE-002
       - TRAE-005

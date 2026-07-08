@@ -22,7 +22,7 @@ RollbackBudget — 回滚预算管理器。
 
 回滚操作消耗预算 token:
     日配额 / 并发限制 / 总预算上限。
-    预算耗尽 → 切换 forward-fix 模式。
+    预算耗尽 -> 切换 forward-fix 模式。
 """
 
 from __future__ import annotations

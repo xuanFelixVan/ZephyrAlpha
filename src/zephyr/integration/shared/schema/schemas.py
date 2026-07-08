@@ -64,7 +64,7 @@ _STABILITY_FROZEN = True
 _FROZEN_PUBLIC_API = frozenset(__all__)
 
 # Lazy-load governance task types to break circular dependency:
-# integration.shared.schema.schemas → governance.rule_enforcement.task_types → integration.shared.schema.*
+# integration.shared.schema.schemas -> governance.rule_enforcement.task_types -> integration.shared.schema.*
 # These symbols are re-export only (zero business usage in this module).
 _GOVERNANCE_TASK_TYPES = {
     "Task": "zephyr.governance.rule_enforcement.task_types",

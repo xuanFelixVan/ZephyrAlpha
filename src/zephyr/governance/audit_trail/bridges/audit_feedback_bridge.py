@@ -19,8 +19,8 @@
 
 蓝图 §5 Evolve 支柱 — 审计异常数据驱动 FLE 策略演进。
 双向数据流:
-  Audit → FLE: 异常事件作为 FLE 输入信号
-  FLE → Audit: 进化提案写入审计日志
+  Audit -> FLE: 异常事件作为 FLE 输入信号
+  FLE -> Audit: 进化提案写入审计日志
 """
 
 from __future__ import annotations
@@ -84,7 +84,7 @@ class AuditFeedbackBridge:
         }
 
         _logger.info(
-            "Audit→FLE: %s → %s (layer=%s, severity=%s)",
+            "Audit->FLE: %s -> %s (layer=%s, severity=%s)",
             sig_id,
             signal_name,
             layer,
@@ -113,7 +113,7 @@ class AuditFeedbackBridge:
         }
 
     def scan_and_bridge(self) -> list[dict[str, Any]]:
-        """扫描审计异常 → 转化为 FLE 信号列表."""
+        """扫描审计异常 -> 转化为 FLE 信号列表."""
         try:
             from zephyr.governance.audit_trail.anomaly import AnomalyDetector
             from zephyr.governance.audit_trail.query import AuditQuery
@@ -140,10 +140,10 @@ class AuditFeedbackBridge:
                 if sig:
                     signals.append(sig)
 
-            _logger.info("Audit→FLE: bridged %d/%d anomalies", len(signals), len(anomalies))
+            _logger.info("Audit->FLE: bridged %d/%d anomalies", len(signals), len(anomalies))
             return signals
         except Exception:
-            _logger.exception("Audit→FLE: bridge scan failed")
+            _logger.exception("Audit->FLE: bridge scan failed")
             return []
 
     @staticmethod

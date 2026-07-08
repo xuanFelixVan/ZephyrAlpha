@@ -59,7 +59,7 @@ class Handbook:
             "- Tasks: `docs/03_modules/_domain-infra_ops/task-system/changes/MOD-TASK_SYSTEM/`",
             "",
             "### State Machine",
-            "CREATED → LOCKED → ASSIGNED → IN_PROGRESS → REVIEWING → COMPLETED",
+            "CREATED -> LOCKED -> ASSIGNED -> IN_PROGRESS -> REVIEWING -> COMPLETED",
             "",
             "### Key Tools",
             "- `lock_files.py` — file lock protocol",

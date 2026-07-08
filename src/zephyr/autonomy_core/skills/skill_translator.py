@@ -24,8 +24,8 @@ Version: 0.2.0
 跨模型 Skill 翻译器
 ===================
 将 DeepSeek 风格的 Skill 指令翻译为 Claude/GLM/GPT 风格的等效指令:
-  1. StyleAdaptation: 从 {structured, step-by-step, table} → {section-by-section, chain-of-thought}
-  2. TerminologyTranslation: 从 DeepSeek 术语 → Claude 等效术语
+  1. StyleAdaptation: 从 {structured, step-by-step, table} -> {section-by-section, chain-of-thought}
+  2. TerminologyTranslation: 从 DeepSeek 术语 -> Claude 等效术语
   3. ToolRemapping: 工具名差异校正
 """
 
@@ -160,7 +160,7 @@ class SkillTranslator:
 
         translated = cls._apply_adaptation(body, target_adaptation, source_adaptation)
 
-        header = f"[Auto-translated by SkillTranslator: {source_family.capitalize()} → {target_model_family.capitalize()}]\n\n"
+        header = f"[Auto-translated by SkillTranslator: {source_family.capitalize()} -> {target_model_family.capitalize()}]\n\n"
         translated = header + translated
 
         return {

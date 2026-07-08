@@ -17,8 +17,8 @@
 
 """Safety Gates L42-L43 — Causal Integrity + Survivability
 
-L42: counterfactual_harm_rate + decision_entropy → severity-dependent action limit
-L43: net_negative_value → only P1; data_expired → no action; no_checkpoints → block upgrade
+L42: counterfactual_harm_rate + decision_entropy -> severity-dependent action limit
+L43: net_negative_value -> only P1; data_expired -> no action; no_checkpoints -> block upgrade
 """
 
 from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

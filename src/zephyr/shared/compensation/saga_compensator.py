@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-Saga Compensator — 补偿事务：多步操作任一失败 → 反向补偿。
+Saga Compensator — 补偿事务：多步操作任一失败 -> 反向补偿。
 
 依据：
     蓝图 MOD-TASK_SYSTEM §6.8 + v0.6.0

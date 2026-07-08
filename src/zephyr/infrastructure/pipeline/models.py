@@ -202,7 +202,7 @@ class PipelineResult(BaseModel):
     )
     bridge_result: dict | None = Field(
         default=None,
-        description="Pipeline→AgentOrchestrator 桥接结果——B34+B36",
+        description="Pipeline->AgentOrchestrator 桥接结果——B34+B36",
     )
     skill_injection: dict | None = Field(
         default=None, description="Agent Spec Skill 注入结果——domain/role skill 上下文"
@@ -449,8 +449,8 @@ class PipelineOrchestratorConfig(BaseModel):
 # ============================================================================
 
 M_MODULE_SPECS: dict[str, dict[str, str]] = {
-    "M1": {"pipeline": "A", "model": "deepseek", "role": "任务卡解析→结构化执行计划"},
-    "M2": {"pipeline": "A", "model": "deepseek", "role": "上下文装配→调用 context-engine"},
+    "M1": {"pipeline": "A", "model": "deepseek", "role": "任务卡解析->结构化执行计划"},
+    "M2": {"pipeline": "A", "model": "deepseek", "role": "上下文装配->调用 context-engine"},
     "M3": {"pipeline": "A", "model": "deepseek", "role": "代码/文档生成——核心生产"},
     "M4": {"pipeline": "A", "model": "deepseek", "role": "格式校验"},
     "M5": {"pipeline": "A", "model": "glm", "role": "产物打包"},
@@ -458,7 +458,7 @@ M_MODULE_SPECS: dict[str, dict[str, str]] = {
     "M7": {"pipeline": "B", "model": "glm", "role": "深度审查——逐个文件逻辑/合规"},
     "M8": {"pipeline": "B", "model": "deepseek", "role": "标准合规——PS/GOV/KB决策记录"},
     "M9": {"pipeline": "B", "model": "deepseek", "role": "风险评估——OWASP LLM Top 10"},
-    "M10": {"pipeline": "B", "model": "deepseek", "role": "审计报告→Finding 格式"},
+    "M10": {"pipeline": "B", "model": "deepseek", "role": "审计报告->Finding 格式"},
     "M11": {"pipeline": "B", "model": "deepseek", "role": "门禁裁决——G5/G6"},
 }
 
@@ -548,7 +548,7 @@ class PipelineDAG(BaseModel):
         return [s.stage_id for s in self.stages if not s.depends_on]
 
     def resolve_execution_order(self) -> list[list[str]]:
-        """拓扑排序→分层并行执行计划。
+        """拓扑排序->分层并行执行计划。
 
         Returns
         -------
@@ -598,7 +598,7 @@ class StageContext(BaseModel):
     aborted: bool = False
 
     def evaluate_skip(self, condition: str) -> bool:
-        # 5.17.6 修复：eval() 可经 ctx.__class__.__mro__ 逃逸 __builtins__ 限制→RCE
+        # 5.17.6 修复：eval() 可经 ctx.__class__.__mro__ 逃逸 __builtins__ 限制->RCE
         # 改为 AST 预校验拒绝 dunder 访问，再安全 eval
         if not condition or not condition.strip():
             return False
@@ -700,13 +700,13 @@ class PipelineAffinityConstraint(BaseModel):
     """管线亲和性/反亲和性约束。
 
     对标 K8s podAffinity/podAntiAffinity:
-      - HARD (requiredDuringSchedulingIgnoredDuringExecution): 违反→ABORT
-      - SOFT (preferredDuringSchedulingIgnoredDuringExecution): 违反→WARN
+      - HARD (requiredDuringSchedulingIgnoredDuringExecution): 违反->ABORT
+      - SOFT (preferredDuringSchedulingIgnoredDuringExecution): 违反->WARN
 
     constraint_type:
       - "model":      约束模型分配（防止同模审查）
       - "sandbox":    约束沙箱分配
-      - "pipeline":   约束管线流向（A区→B区穿越）
+      - "pipeline":   约束管线流向（A区->B区穿越）
     """
 
     constraint_type: str = Field(..., description="model | sandbox | pipeline")
@@ -741,7 +741,7 @@ AFFINITY_CONSTRAINTS: list[PipelineAffinityConstraint] = [
         constraint_type="pipeline",
         node_a="A",
         weight=AffinityWeight.HARD,
-        description="A区产出必须经M5打包→M6边界标记",
+        description="A区产出必须经M5打包->M6边界标记",
     ),
     PipelineAffinityConstraint(
         constraint_type="model",
@@ -752,8 +752,8 @@ AFFINITY_CONSTRAINTS: list[PipelineAffinityConstraint] = [
 ]
 
 # M3↔M7 antiAffinity 硬约束影响链路文档
-# deepseek不可用 → M3降级到glm → M7被迫改用claude (不能同模)
-# → claude成本上升但保证双盲独立性——这是双盲审计体系的安全底线
+# deepseek不可用 -> M3降级到glm -> M7被迫改用claude (不能同模)
+# -> claude成本上升但保证双盲独立性——这是双盲审计体系的安全底线
 
 
 # ============================================================================
@@ -842,9 +842,9 @@ class PipelineArtifactManifest(BaseModel):
     """一次 Pipeline 执行的完整产出物清单——对标 CI/CD Artifacts Summary。
 
     使用场景：
-      - M6 审查 M3 产出 → manifest.get("M3_generated_code")
-      - Claude 救援 → manifest 作为完整上下文注入
-      - FLE 反馈 → 对比 manifest.diff_to_expected
+      - M6 审查 M3 产出 -> manifest.get("M3_generated_code")
+      - Claude 救援 -> manifest 作为完整上下文注入
+      - FLE 反馈 -> 对比 manifest.diff_to_expected
     """
 
     run_id: str
@@ -939,7 +939,7 @@ class PipelineLineageChain(BaseModel):
 
 
 class M1ParseOutput(BaseModel):
-    """M1 输出：任务卡解析→结构化执行计划"""
+    """M1 输出：任务卡解析->结构化执行计划"""
 
     model_config = BASE_CONFIG
     task_id: str
@@ -994,7 +994,7 @@ class M9RiskOutput(BaseModel):
 
 
 class M10ReportOutput(BaseModel):
-    """M10 输出：审计报告→Finding 格式"""
+    """M10 输出：审计报告->Finding 格式"""
 
     model_config = BASE_CONFIG
     module_id: str = "M10"

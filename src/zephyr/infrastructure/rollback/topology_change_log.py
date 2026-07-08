@@ -21,7 +21,7 @@ TopologyChangeLog — 分支拓扑变更日志。
 依据: 蓝图 MOD-INF-021 §6.12 B63
 
 记录分支操作 (merge/rebase/cherry-pick/branch delete):
-    topology_change_log → 回滚时可重建操作前分支拓扑。
+    topology_change_log -> 回滚时可重建操作前分支拓扑。
     git reflog 恢复被删除的分支。
     zephyr rollback --branch-topology 回滚分支级操作。
 """

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] fetch 异常→yield FetchResult(error=str)
+# [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)
 # [TESTS] tests/zephyr/data/test_providers.py::TestAKShareHelpers
 # [A_module] module_id=MOD-L00-004-akshare_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -99,7 +99,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由到具体获取方法。
 
-        未知 capability → yield FetchResult(error=...)。
+        未知 capability -> yield FetchResult(error=...)。
         """
         cap = (payload.extra or {}).get("capability")
         if cap == "macro_data":
@@ -168,9 +168,9 @@ class AKShareProvider(DataSourceBase):
     def _transform_gdp(self, df) -> list[tuple]:
         """转换 GDP DataFrame。
 
-        列"季度"如"2025年第1季度" → 季度末日期；
-        "国内生产总值-绝对值" → indicator_name="GDP"，unit="亿元"；
-        "国内生产总值-同比增长" → indicator_name="GDP_同比"，unit="%"。
+        列"季度"如"2025年第1季度" -> 季度末日期；
+        "国内生产总值-绝对值" -> indicator_name="GDP"，unit="亿元"；
+        "国内生产总值-同比增长" -> indicator_name="GDP_同比"，unit="%"。
         frequency="季度"。
         """
         rows: list[tuple] = []
@@ -192,7 +192,7 @@ class AKShareProvider(DataSourceBase):
     def _transform_monthly(self, df) -> list[tuple]:
         """转换月度 DataFrame（CPI/PMI/货币供应量）。
 
-        第一列如"2025年6月" → 月末日期；其余列各自作为 indicator_name。
+        第一列如"2025年6月" -> 月末日期；其余列各自作为 indicator_name。
         unit=""，frequency="月度"。
         """
         rows: list[tuple] = []
@@ -212,7 +212,7 @@ class AKShareProvider(DataSourceBase):
 
     @staticmethod
     def _quarter_to_date(s: str) -> str:
-        """'2025年第1季度' → '2025-03-31'（季度末日期）。
+        """'2025年第1季度' -> '2025-03-31'（季度末日期）。
 
         支持 '2025年第1-3季度' 形式（取末季度）。
         """
@@ -231,7 +231,7 @@ class AKShareProvider(DataSourceBase):
 
     @staticmethod
     def _month_to_date(s: str) -> str:
-        """'2025年6月' → '2025-06-30'（月末日期）。"""
+        """'2025年6月' -> '2025-06-30'（月末日期）。"""
         m = re.match(r"(\d{4})年(\d{1,2})月?", s)
         if not m:
             return ""

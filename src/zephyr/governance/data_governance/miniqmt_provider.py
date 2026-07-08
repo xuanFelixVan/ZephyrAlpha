@@ -312,7 +312,7 @@ class MiniQmtProvider(DataSourceBase):
 
         start_str = start.strftime("%Y-%m-%d")
         end_str = end.strftime("%Y-%m-%d")
-        # symbol 格式 600000.SH → ClickHouse 可能存 600000 或 600000.SH
+        # symbol 格式 600000.SH -> ClickHouse 可能存 600000 或 600000.SH
         query = (
             f"SELECT date, open, high, low, close, volume, amount "
             f"FROM {table} "
@@ -355,14 +355,14 @@ class MiniQmtProvider(DataSourceBase):
     def _normalize_tick_data(self, raw_df: pd.DataFrame, symbol: str) -> pd.DataFrame:
         """标准化 Tick 数据（18字段映射）
 
-        xtdata 原始字段 → DataFrame 标准化列名:
-          time → timestamp, lastPrice → last_price, open → open, high → high,
-          low → low, lastClose → prev_close, amount → amount, volume → volume,
-          pvolume → pvolume, stockStatus → stock_status, openInt → open_interest,
-          lastSettlementPrice → last_settlement,
-          askPrice[0..4] → ask_price_1..5, bidPrice[0..4] → bid_price_1..5,
-          askVol[0..4] → ask_vol_1..5, bidVol[0..4] → bid_vol_1..5,
-          settlementPrice → settlement_price, transactionNum → transaction_num
+        xtdata 原始字段 -> DataFrame 标准化列名:
+          time -> timestamp, lastPrice -> last_price, open -> open, high -> high,
+          low -> low, lastClose -> prev_close, amount -> amount, volume -> volume,
+          pvolume -> pvolume, stockStatus -> stock_status, openInt -> open_interest,
+          lastSettlementPrice -> last_settlement,
+          askPrice[0..4] -> ask_price_1..5, bidPrice[0..4] -> bid_price_1..5,
+          askVol[0..4] -> ask_vol_1..5, bidVol[0..4] -> bid_vol_1..5,
+          settlementPrice -> settlement_price, transactionNum -> transaction_num
 
         Args:
             raw_df: xtdata 原始 DataFrame
@@ -401,7 +401,7 @@ class MiniQmtProvider(DataSourceBase):
                     )
                 df = df.drop(columns=[prefix])
 
-        # timestamp 毫秒 → datetime
+        # timestamp 毫秒 -> datetime
         if "timestamp" in df.columns:
             df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
 

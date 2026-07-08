@@ -21,14 +21,14 @@ CircuitBreakerGateway (CBG) — 模块间调用单向熔断器
 任务编号 : T-V2-005（experimental）
 权限层级 : Immutable Core
 真源声明 : ai_autonomy_authority_registry.yaml §2.10
-关联决策 : rationale-log R81 C-02（experimental 只实现 CLOSED→OPEN 单向）
+关联决策 : rationale-log R81 C-02（experimental 只实现 CLOSED->OPEN 单向）
            rationale-log R83（B6 §2.2 CBG 设计）
 创建日期 : 2026-04-27
 版本     : v1.0.0
 
 设计约束（C-02 裁决）
 --------------------
-- experimental 只实现 CLOSED → OPEN 单向（不实现 HALF_OPEN）
+- experimental 只实现 CLOSED -> OPEN 单向（不实现 HALF_OPEN）
 - OPEN 状态后由 Owner 通过 CLI `cbg.reset(caller, target)` 手动恢复
 - beta（Agent ≥ 3 时）升级为完整状态机（含 HALF_OPEN 探测）
 - 零新外部依赖：全部基于 SQLite + stdlib
@@ -38,7 +38,7 @@ CircuitBreakerGateway (CBG) — 模块间调用单向熔断器
 1. CircuitBreakerState — 状态枚举（CLOSED / OPEN，experimental 无 HALF_OPEN）
 2. CircuitBreakerRecord — SQLite circuit_breaker_state 表的内存镜像
 3. CircuitBreakerCheck  — 继承 gate_engine GateCheck 接口，注册第 17 种 CheckType
-4. @circuit_breaker(target_module)  — 装饰器，自动统计失败次数并触发 CLOSED→OPEN
+4. @circuit_breaker(target_module)  — 装饰器，自动统计失败次数并触发 CLOSED->OPEN
 5. CBGManager — 状态查询 / 手动重置 / 批量刷新
 
 装饰器用法
@@ -147,7 +147,7 @@ class CircuitOpenError(RuntimeError):
         self.caller = caller
         self.target = target
         self.reason = reason
-        msg = f"CircuitBreaker OPEN: {caller} → {target}"
+        msg = f"CircuitBreaker OPEN: {caller} -> {target}"
         if reason:
             msg += f" ({reason})"
         super().__init__(msg)
@@ -191,7 +191,7 @@ class CircuitBreakerCheck:
     def violation_message(self) -> str:
         """返回熔断触发的可读违规信息（含 caller / target 标识）。"""
         return (
-            f"CircuitBreaker OPEN: {self.caller_module} → {self.target_module} "
+            f"CircuitBreaker OPEN: {self.caller_module} -> {self.target_module} "
             f"（调用被熔断，请由 Owner 执行 `cbg.reset()` 后重试）"
         )
 
@@ -253,7 +253,7 @@ class CBGManager:
     def is_open(self, caller: str, target: str) -> bool:
         """快速判断 (caller, target) 是否处于 OPEN 状态。
 
-        记录不存在时视为 CLOSED → 返回 False。
+        记录不存在时视为 CLOSED -> 返回 False。
         """
         record = self.get_state(caller, target)
         return record is not None and record.state is CircuitBreakerState.OPEN
@@ -347,7 +347,7 @@ class CBGManager:
                 raise
 
         updated = self.get_state(caller, target)
-        if updated is None: raise RuntimeError("post-write fetch returned None")  # 5.88.6 修复: assert→if/raise
+        if updated is None: raise RuntimeError("post-write fetch returned None")  # 5.88.6 修复: assert->if/raise
         return updated
 
     def reset(
@@ -430,7 +430,7 @@ def circuit_breaker(
     caller_module: str | None = None,
     db_path: Path | str | None = None,
 ) -> Callable[[_F], _F]:
-    """装饰跨模块调用，自动统计失败并在达到阈值时触发 CLOSED→OPEN。
+    """装饰跨模块调用，自动统计失败并在达到阈值时触发 CLOSED->OPEN。
 
     参数
     ----
@@ -450,7 +450,7 @@ def circuit_breaker(
 
     CBAC 集成
     ---------
-    装饰器在执行前调用 capability_check，确保 caller→target 调用
+    装饰器在执行前调用 capability_check，确保 caller->target 调用
     已在 capabilities.yaml 中被显式授权。CBAC deny 时抛出 CapabilityDenied，
     不写熔断失败计数（CBAC 拦截不计入熔断统计）。
 
@@ -504,7 +504,7 @@ def circuit_breaker(
 # L08 注册入口（重试 + 限流策略写入 gate_engine 注册表）
 # ---------------------------------------------------------------------------
 
-#: L08 注册表：(caller_module, target_module) → 策略配置
+#: L08 注册表：(caller_module, target_module) -> 策略配置
 _L08_REGISTRY: dict[tuple[str, str], dict[str, Any]] = {}
 
 

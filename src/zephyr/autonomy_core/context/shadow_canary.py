@@ -29,7 +29,7 @@ class CanaryResult:
 
 
 class ShadowCanary:
-    """新策略影子生成但不注入; 3-sigma superiority → promote (DD78)."""
+    """新策略影子生成但不注入; 3-sigma superiority -> promote (DD78)."""
 
     def shadow(self, strategy: str, context: str) -> CanaryResult:
         return CanaryResult(strategy_name=strategy, shadow_generated=True)

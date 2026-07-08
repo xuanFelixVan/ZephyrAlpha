@@ -44,7 +44,7 @@ class BlindSpotTracker:
             6: "自身资源消耗未管控",
             7: "单一聚合容量健康评分缺失",
             8: "AI行为预测维度缺失",
-            9: "容量预警→修复闭环断裂",
+            9: "容量预警->修复闭环断裂",
             10: "成本回归后自动回升缺失",
             11: "渐进式流量切换缺失",
             12: "告警疲劳",
@@ -143,5 +143,5 @@ class BlindSpotTracker:
         ]
         for b in data["blinds"]:
             icon = "✅" if b["status"] == "covered" else "❌"
-            lines.append(f"  {icon} #{b['id']} (R{b['round']}): {b['description']} → {b['covered_by']}")
+            lines.append(f"  {icon} #{b['id']} (R{b['round']}): {b['description']} -> {b['covered_by']}")
         return "\n".join(lines)

@@ -21,9 +21,9 @@
 
 CTR 契约：
   消费者 — CTR-P1-014 (BacktestResult) ← D_RESEARCH
-  生产者 — ExperimentResult → D_RESEARCH, D_ML_TRAIN
+  生产者 — ExperimentResult -> D_RESEARCH, D_ML_TRAIN
 
-SSoT: cross_layer_contracts.yaml → CTR-P1-014
+SSoT: cross_layer_contracts.yaml -> CTR-P1-014
 """
 
 from __future__ import annotations

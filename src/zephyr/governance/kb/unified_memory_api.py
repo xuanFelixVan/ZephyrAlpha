@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-SRC-0042: Re-export shim → 真源在 kb/storage/unified_memory_api.py
+SRC-0042: Re-export shim -> 真源在 kb/storage/unified_memory_api.py
 
 本文件仅重新导出 storage/unified_memory_api.py 的符号以保证向后兼容。
 所有外部调用方（context_engine, bootstrap, mcp, vector-memory 等）无需修改 import 路径。

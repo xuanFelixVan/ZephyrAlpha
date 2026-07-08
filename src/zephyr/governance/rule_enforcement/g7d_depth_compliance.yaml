@@ -31,7 +31,7 @@ checks:
     name: unit_test_coverage
     type: script_execution
     severity: warning
-    description: pytest --cov → coverage >= 80%
+    description: pytest --cov -> coverage >= 80%
     rule_ids:
       - TRAE-002
       - TRAE-005
@@ -44,7 +44,7 @@ checks:
     name: dependency_cve_check
     type: security_artifact_scan
     severity: error
-    description: pip-audit → 零 CRITICAL CVE
+    description: pip-audit -> 零 CRITICAL CVE
     rule_ids:
       - TRAE-002
       - TRAE-005
@@ -70,7 +70,7 @@ checks:
     name: lint_pass
     type: script_execution
     severity: warning
-    description: ruff check → zero errors
+    description: ruff check -> zero errors
     rule_ids:
       - TRAE-002
       - TRAE-005

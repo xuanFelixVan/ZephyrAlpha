@@ -17,7 +17,7 @@
 """
 depgraph Schema DDL + 版本化迁移框架
 ========================================
-依据：数据库合并方案（9库→3库），depgraph 作为依赖图专用数据库（PostgreSQL）
+依据：数据库合并方案（9库->3库），depgraph 作为依赖图专用数据库（PostgreSQL）
 
 物理路径：PostgreSQL depgraph（连接串由 get_depgraph_pg_connection() 从环境变量派生；P2迁移后，原 SQLite data/databases/depgraph.db 已删除归档）
 Safety  : M（DDL 定义，init_db 幂等执行）
@@ -46,7 +46,7 @@ v15变更: domains 表 domain_id 添加 CHECK 约束（裁定#ARCH-target_layer_
         阻止连字符(D-DATA)/中文(基础设施)等废弃格式
         nodes.domain_id 已有 FK REFERENCES domains(domain_id)（02_create_pg_schema.sql L53）
         保留 cross_registry_rules（健康sync缓存）与 governance_audit_logs（auto_runner活跃写入）
-v16变更: domains 表 build_status DEFAULT 'unbuilt' → 'planned'（修复预存bug：
+v16变更: domains 表 build_status DEFAULT 'unbuilt' -> 'planned'（修复预存bug：
         'unbuilt' 不在 CHECK 允许值中，INSERT 不提供 build_status 时失败）
         _DDL_DOMAINS 补齐 lifecycle/build_status/layer_id 的 CHECK 约束（与 02_create_pg_schema.sql 对齐）
 
@@ -757,20 +757,20 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         3,
-        "v3: Align nodes/domains/arch_directory_tree with TPL-DEPGRAPH-001 v6 template. Merge duplicate fields (stability→change_policy, safety_level→impact_level, ai_autonomy→modification_permission). Rename design_state→build_status, runtime_state→module_lifecycle_state. Add can_build/gate_reason/hard_boundary_ref/consumed_interfaces to nodes. Add build_status/can_build/gate_reason/hard_boundary_ref to domains. Add build_status to arch_directory_tree, rename stability→change_policy, ai_autonomy→modification_permission.",
+        "v3: Align nodes/domains/arch_directory_tree with TPL-DEPGRAPH-001 v6 template. Merge duplicate fields (stability->change_policy, safety_level->impact_level, ai_autonomy->modification_permission). Rename design_state->build_status, runtime_state->module_lifecycle_state. Add can_build/gate_reason/hard_boundary_ref/consumed_interfaces to nodes. Add build_status/can_build/gate_reason/hard_boundary_ref to domains. Add build_status to arch_directory_tree, rename stability->change_policy, ai_autonomy->modification_permission.",
         [
             # --- nodes: merge data from old columns to standard columns ---
             "UPDATE nodes SET change_policy = COALESCE(NULLIF(change_policy,''), NULLIF(stability,'')) WHERE stability IS NOT NULL AND stability != ''",
             "UPDATE nodes SET impact_level = COALESCE(NULLIF(impact_level,''), NULLIF(safety_level,'')) WHERE safety_level IS NOT NULL AND safety_level != ''",
             "UPDATE nodes SET modification_permission = COALESCE(NULLIF(modification_permission,''), NULLIF(ai_autonomy,'')) WHERE ai_autonomy IS NOT NULL AND ai_autonomy != ''",
-            # --- nodes: rename design_state → build_status ---
+            # --- nodes: rename design_state -> build_status ---
             "ALTER TABLE nodes RENAME COLUMN design_state TO build_status",
-            # Migrate build_status values: draft→unbuilt, active→built, inactive→unbuilt
+            # Migrate build_status values: draft->unbuilt, active->built, inactive->unbuilt
             "UPDATE nodes SET build_status = 'unbuilt' WHERE build_status = 'draft' OR build_status = 'inactive'",
             "UPDATE nodes SET build_status = 'built' WHERE build_status = 'active'",
-            # --- nodes: rename runtime_state → module_lifecycle_state ---
+            # --- nodes: rename runtime_state -> module_lifecycle_state ---
             "ALTER TABLE nodes RENAME COLUMN runtime_state TO module_lifecycle_state",
-            # Migrate module_lifecycle_state values: inactive→planned, active→active, deprecated→deprecated
+            # Migrate module_lifecycle_state values: inactive->planned, active->active, deprecated->deprecated
             "UPDATE nodes SET module_lifecycle_state = 'planned' WHERE module_lifecycle_state = 'inactive'",
             # --- nodes: add new fields ---
             "ALTER TABLE nodes ADD COLUMN can_build INTEGER DEFAULT 1",
@@ -794,7 +794,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "ALTER TABLE domains ADD COLUMN gate_reason TEXT",
             "ALTER TABLE domains ADD COLUMN hard_boundary_ref TEXT",
             "CREATE INDEX IF NOT EXISTS idx_domains_can_build ON domains(can_build)",
-            # --- arch_directory_tree: rename stability→change_policy, ai_autonomy→modification_permission ---
+            # --- arch_directory_tree: rename stability->change_policy, ai_autonomy->modification_permission ---
             "ALTER TABLE arch_directory_tree RENAME COLUMN stability TO change_policy",
             "ALTER TABLE arch_directory_tree RENAME COLUMN ai_autonomy TO modification_permission",
             # --- arch_directory_tree: add build_status ---
@@ -816,7 +816,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         5,
         "v5: node_id INTEGER PK + edges from_node_id/to_node_id FK + dep_maturity + arch_directory_tree node_id + nodes 5 new fields",
         [
-            # 重建 nodes 表（node_id TEXT → INTEGER PK AUTOINCREMENT）
+            # 重建 nodes 表（node_id TEXT -> INTEGER PK AUTOINCREMENT）
             "DROP TABLE IF EXISTS edges",
             "DROP TABLE IF EXISTS nodes",
             "DROP TABLE IF EXISTS arch_directory_tree",
@@ -1399,8 +1399,8 @@ def backup_before_migration(backup_path: Path | str) -> Path:
     """在应用破坏性 migration 前备份 PG depgraph（pg_dump）。
 
     5.18.13 治本（2026-07-02）：为 PG migration 提供 downgrade 能力。
-    SQLite migration 的 downgrade 策略是"建备份表→重建→恢复"（见 v19/v31）；
-    PG migration 的 downgrade 策略是"pg_dump 备份→pg_restore 恢复"。
+    SQLite migration 的 downgrade 策略是"建备份表->重建->恢复"（见 v19/v31）；
+    PG migration 的 downgrade 策略是"pg_dump 备份->pg_restore 恢复"。
 
     :param backup_path: 备份文件路径（.dump 格式）
     :return: 备份文件 Path

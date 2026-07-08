@@ -52,7 +52,7 @@ __all__ = ["GateResult", "GateViolationError", "TransitionMixin"]
 
 from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
 
-# PENDING → IN_PROGRESS 转换时触发的门禁 ID
+# PENDING -> IN_PROGRESS 转换时触发的门禁 ID
 
 _STARTUP_GATE_ID = "G1"
 
@@ -72,9 +72,9 @@ class TransitionMixin:
 
     - self._lock: threading.RLock
 
-    - self._write_tx() → Iterator[sqlite3.Connection]
+    - self._write_tx() -> Iterator[sqlite3.Connection]
 
-    - self._fetch_row(conn, task_id) → sqlite3.Row | None
+    - self._fetch_row(conn, task_id) -> sqlite3.Row | None
 
     - self._record_event(conn, event_type, payload, task_id=None, session_id=None)
 
@@ -173,7 +173,7 @@ class TransitionMixin:
 
                 if not _is_valid_transition(from_status, to_status):
                     raise InvalidTransitionError(
-                        f"非法转换 {from_status.value} → {to_status.value}（task_id={task_id!r}）"
+                        f"非法转换 {from_status.value} -> {to_status.value}（task_id={task_id!r}）"
                     )
 
                 now = now_iso()
@@ -243,7 +243,7 @@ class TransitionMixin:
 
             raise
 
-        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.3 修复: assert→if/raise
+        if updated_row is None: raise RuntimeError("post-write fetch returned None")  # 5.88.3 修复: assert->if/raise
 
         from zephyr.governance.ops_governance.event_hook import TransitionEvent, hook_registry
 
@@ -271,9 +271,9 @@ class TransitionMixin:
 
         规则（蓝图 MOD-TASK_SYSTEM 盲点#1）：
 
-        - 所有子任务 COMPLETED/VERIFIED → 父任务 READY（解锁继续施工）
+        - 所有子任务 COMPLETED/VERIFIED -> 父任务 READY（解锁继续施工）
 
-        - 任一子任务 FAILED/CANCELLED → 父任务 BLOCKED
+        - 任一子任务 FAILED/CANCELLED -> 父任务 BLOCKED
 
         - 否则不改变父任务状态
 

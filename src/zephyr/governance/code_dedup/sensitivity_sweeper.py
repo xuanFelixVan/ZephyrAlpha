@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-UNK_sensitivity_sweeper | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""敏感性扫荡——threshold扫描→固化成new baseline（零假阳性+触达率保险）."""
+"""敏感性扫荡——threshold扫描->固化成new baseline（零假阳性+触达率保险）."""
 
 from dataclasses import dataclass, field
 

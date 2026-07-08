@@ -29,7 +29,7 @@ entry_conditions:
     severity: error
     on_failure: reject
     verifiable: true
-    verification_method: "Unit test: simulate code change without blueprint read → expect G6 rejection"
+    verification_method: "Unit test: simulate code change without blueprint read -> expect G6 rejection"
     rule_ids:
       - TRAE-013
       - TRAE-014
@@ -40,7 +40,7 @@ entry_conditions:
       grace_sessions: 0
     anti_pattern:
       description: "AI agent modifies code without first reading the corresponding blueprint — leads to uninformed decisions, architectural violations, and blueprint drift"
-      example: "AI fixes a bug in gate_engine.py without reading MOD-GATE_ENGINE Gate Engine blueprint → misses safety constraints documented in the blueprint"
+      example: "AI fixes a bug in gate_engine.py without reading MOD-GATE_ENGINE Gate Engine blueprint -> misses safety constraints documented in the blueprint"
 
 severity_levels:
   error: "Hard block — task is REJECTED, AI MUST read the specified blueprint and retry"

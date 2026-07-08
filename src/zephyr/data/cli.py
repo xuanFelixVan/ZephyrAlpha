@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 命令异常→打印错误+返回非零退出码; 不抛异常
+# [ERROR_CONTRACT] 命令异常->打印错误+返回非零退出码; 不抛异常
 # [TESTS] tests/zephyr/data/test_cli.py
 # [A_module] module_id=MOD-L00-004-cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -27,7 +27,7 @@
 
 入口：
 - pyproject.toml [project.scripts]: integrator = "zephyr.data.cli:main"
-- python -m zephyr.data → __main__.py re-export cli.main
+- python -m zephyr.data -> __main__.py re-export cli.main
 """
 from __future__ import annotations
 

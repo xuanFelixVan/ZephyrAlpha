@@ -17,7 +17,7 @@
 
 """
 R520: GuardCascadeDetector
-守卫触发级联检测与熔断 — G1→G2→G3→... 连锁反应
+守卫触发级联检测与熔断 — G1->G2->G3->... 连锁反应
 """
 
 import time

@@ -8,7 +8,7 @@
 # --- 治理锚定结束 ---
 # MAD-002 Phase Relevance Gate
 # 阶段相关性门禁 —— 确保新模块与当前开发阶段对齐
-# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → MAD-002
+# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml -> MAD-002
 
 module_id: MOD-GATE_ENGINE
 gate_id: MAD-002

@@ -242,7 +242,7 @@ def auto_fix_compat(
             # 当前仅返回修复描述。预留 pattern/replacement 供未来接通：
             #   pattern: r"(\w+|\w+\[\w+\]|\w+)\s*\|\s*(\w+|None)"
             #   replacement: r"Union[\1, \2]"
-            fixes[issue.issue_id] = f"Replace {issue.current_syntax[:40]}... → Union[X, Y]"
+            fixes[issue.issue_id] = f"Replace {issue.current_syntax[:40]}... -> Union[X, Y]"
 
         elif issue.issue_type == "stdlib_incompat":
             fixes[issue.issue_id] = (

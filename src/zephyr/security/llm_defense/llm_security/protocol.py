@@ -44,7 +44,7 @@ class LLMSecurityProtocol(ABC):
     """LLM Security Gateway 九层防御统一接口契约（L0-L8）。
 
     所有 LSG 防御层 MUST 继承本协议并实现 evaluate()。
-    原则：fail-closed — 层不可用 → 返回 DENY，禁止 bypass。
+    原则：fail-closed — 层不可用 -> 返回 DENY，禁止 bypass。
     """
 
     DEFAULT_BLOCK: bool = True

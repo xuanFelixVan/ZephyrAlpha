@@ -50,7 +50,7 @@ PRINCIPLE_DEFS: Final[dict[ArchPrinciple, dict[str, str]]] = {
     },
     ArchPrinciple.P2_YAML_SCHEMA: {
         "label": "P2-YAML Schema (ADR-0002)",
-        "statement": "单Schema，Phased Required Fields（Phase 0→Phase 5）",
+        "statement": "单Schema，Phased Required Fields（Phase 0->Phase 5）",
         "kb_ref": "ADR-0002",
     },
     ArchPrinciple.P3_DUAL_AI: {
@@ -65,7 +65,7 @@ PRINCIPLE_DEFS: Final[dict[ArchPrinciple, dict[str, str]]] = {
     },
     ArchPrinciple.P5_BLUEPRINT_FIRST: {
         "label": "P5-Blueprint First (G6)",
-        "statement": "先读蓝图→后写代码",
+        "statement": "先读蓝图->后写代码",
         "kb_ref": "G6",
     },
 }

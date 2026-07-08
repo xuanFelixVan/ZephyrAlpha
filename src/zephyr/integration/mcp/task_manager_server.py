@@ -303,7 +303,7 @@ class TaskManagerMCP:
 
         @mcp.tool(name="task_manager.decompose_blueprint")
         def decompose_blueprint(blueprint_path: str, namespace: str = "CP", phase: int = 1) -> dict:
-            """拆解蓝图→生成 TaskCard 列表——蓝图 MOD-TASK_SYSTEM §3.5 Tool 4"""
+            """拆解蓝图->生成 TaskCard 列表——蓝图 MOD-TASK_SYSTEM §3.5 Tool 4"""
             mgr._rbac_guard("decompose_blueprint")
             result: DecompositionResult = mgr.decomposer.decompose_blueprint(
                 blueprint_path=blueprint_path,

@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-GOV_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""G-CT-008 契约：A2A → Audit 审计 Agent 间通信."""
+"""G-CT-008 契约：A2A -> Audit 审计 Agent 间通信."""
 
 # STUB: from zephyr.governance.escalation.contracts import AuditWriter
 # Reason: zephyr.infrastructure.rollback.contracts does not export AuditWriter yet
@@ -45,7 +45,7 @@ class A2AAuditor:
             agent_id=from_agent,
             permission="a2a_message",
             resource=f"a2a://{to_agent}",
-            decision_basis=f"A2A→Audit: {message_type}",
+            decision_basis=f"A2A->Audit: {message_type}",
             session_id=session_id,
             granted=True,
             metadata={"from": from_agent, "to": to_agent, "type": message_type},

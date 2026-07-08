@@ -15,11 +15,11 @@
 # [A_module] module_id=MOD-UNK_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""AlphaSignalPipeline D_FACTOR→D_SIGNAL跨层集成管道
+"""AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道
 ============================================
 Domain   : _domain_signal (SIGNAL-DOMAIN-001)
 Contracts: AS-CT-001~005
-Layers   : D_FACTOR (AlphaFactor) → D_SIGNAL (SignalGeneration)
+Layers   : D_FACTOR (AlphaFactor) -> D_SIGNAL (SignalGeneration)
 Status   : Phase B — 骨架管道已就绪，底层C轨模块 blocked_by_infrastructure
 
 管线阶段
@@ -28,14 +28,14 @@ Stage 1: FactorDiscovery    — 发现已注册因子
 Stage 2: FactorCompute      — 并行计算因子信号
 Stage 3: SignalSynthesis    — 多因子加权聚合
 Stage 4: SignalValidation   — 信号降级/置信度/regime校验
-Stage 5: CapitalAllocation  — 信号→资金分配
+Stage 5: CapitalAllocation  — 信号->资金分配
 
 AS-CT 契约覆盖
 ---------------
 AS-CT-001: FactorSignal 生命周期管理
 AS-CT-002: 因子计算幂等性保证
 AS-CT-003: 信号合成加权策略契约
-AS-CT-004: 信号降级→告警路由
+AS-CT-004: 信号降级->告警路由
 AS-CT-005: 跨层审计追踪
 """
 
@@ -97,7 +97,7 @@ class PipelineResult:
 
 
 class AlphaSignalPipeline:
-    """D_FACTOR→D_SIGNAL Alpha-Signal 跨层集成管道。
+    """D_FACTOR->D_SIGNAL Alpha-Signal 跨层集成管道。
 
     将 D_FACTOR 因子层的原始因子信号通过 D_SIGNAL 信号合成引擎
     转化为统一的合成交易信号，并执行信号质量校验和降级路由。
@@ -191,7 +191,7 @@ class AlphaSignalPipeline:
             result.degraded = True
 
         if not self._factors:
-            # FactorBase 因子 compute(data) 需数据参数，与本管道 compute()→list 协议不兼容；
+            # FactorBase 因子 compute(data) 需数据参数，与本管道 compute()->list 协议不兼容；
             # 不自动发现 FactorBase 因子（避免 TypeError），因子须通过 register_factor() 显式注册。
             # 原代码 getattr(FB,"discover_factors") 调用不存在的方法名，已修正为 FactorRegistry 查询。
             try:

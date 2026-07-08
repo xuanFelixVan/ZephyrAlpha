@@ -38,7 +38,7 @@ entry_conditions:
   rule_ids:
   - TRAE-032
   anti_pattern:
-    description: 无层归属/层归属模糊/层归属冲突→拒绝注入
+    description: 无层归属/层归属模糊/层归属冲突->拒绝注入
     example: AI ignores TRAE-032 mod_001 requirement
   params: &id001
     required_fields:
@@ -57,7 +57,7 @@ entry_conditions:
   rule_ids:
   - TRAE-032
   anti_pattern:
-    description: 不在当前Phase范围→延迟注入
+    description: 不在当前Phase范围->延迟注入
     example: AI ignores TRAE-032 mod_001 requirement
   params: *id001
 - id: G_TRAE_032-C02
@@ -72,7 +72,7 @@ entry_conditions:
   rule_ids:
   - TRAE-032
   anti_pattern:
-    description: 引用不存在ID/循环依赖/违反跨层方向→延迟注入
+    description: 引用不存在ID/循环依赖/违反跨层方向->延迟注入
     example: AI ignores TRAE-032 mod_001 requirement
   params: *id001
 - id: G_TRAE_032-C03
@@ -87,7 +87,7 @@ entry_conditions:
   rule_ids:
   - TRAE-032
   anti_pattern:
-    description: 接口依赖AI推测→暂停等待
+    description: 接口依赖AI推测->暂停等待
     example: AI ignores TRAE-032 mod_001 requirement
   params: *id001
 - id: G_TRAE_032-C04

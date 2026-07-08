@@ -16,27 +16,27 @@
 # [TTL] permanent
 
 """
-Pipeline → Agent Bridge — 双编排器桥接层
+Pipeline -> Agent Bridge — 双编排器桥接层
 =========================================
 真源：MOD-INF-009 第四轮审计 B34+B36
-对标：K8s Scheduler → kubelet 的 Pod→Container 映射
+对标：K8s Scheduler -> kubelet 的 Pod->Container 映射
 
 PipelineOrchestrator 路由任务到 M1-M11 节点，
 AgentOrchestrator 将任务委派给 6 种 Agent 角色。
-此桥接负责将 PipelineResult → AgentOrchestrator.orchestrate()。
+此桥接负责将 PipelineResult -> AgentOrchestrator.orchestrate()。
 
-M→Role 映射（B36）:
-  M1(parse)          → ARCHITECT
-  M2(assemble)       → ARCHITECT
-  M3(generate)       → IMPLEMENTER
-  M4(validate)       → REVIEWER
-  M5(package)        → OPERATOR
-  M6(diff)           → REVIEWER
-  M7(deep_review)    → REVIEWER
-  M8(compliance)     → GOVERNOR
-  M9(risk)           → GOVERNOR
-  M10(report)        → REVIEWER
-  M11(gating)        → GOVERNOR
+M->Role 映射（B36）:
+  M1(parse)          -> ARCHITECT
+  M2(assemble)       -> ARCHITECT
+  M3(generate)       -> IMPLEMENTER
+  M4(validate)       -> REVIEWER
+  M5(package)        -> OPERATOR
+  M6(diff)           -> REVIEWER
+  M7(deep_review)    -> REVIEWER
+  M8(compliance)     -> GOVERNOR
+  M9(risk)           -> GOVERNOR
+  M10(report)        -> REVIEWER
+  M11(gating)        -> GOVERNOR
 
 使用:
     from zephyr.infrastructure.pipeline.pipeline_agent_bridge import PipelineAgentBridge
@@ -140,7 +140,7 @@ def _build_directive_chain(module_id: str) -> str:
 
 
 class PipelineAgentBridge:
-    """Pipeline → Agent 编排器桥接。
+    """Pipeline -> Agent 编排器桥接。
 
     Parameters
     ----------
@@ -165,7 +165,7 @@ class PipelineAgentBridge:
         """将 PipelineResult 中每个模块的执行结果桥接到 AgentOrchestrator。
 
         对每个 ModuleResult:
-          1. 解析 M→Role 映射
+          1. 解析 M->Role 映射
           2. 构建 directive chain
           3. 调用 agent_orc.orchestrate()
           4. 收集 OrchestrationResult

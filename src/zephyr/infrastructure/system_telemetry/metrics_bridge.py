@@ -14,9 +14,9 @@
 # [TESTS] scripts/connect/tele_fle.py --trigger
 # [A_module] module_id=MOD-INF_metrics_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""TELE→FLE 指标桥接 — emit_metrics() 生产者
+"""TELE->FLE 指标桥接 — emit_metrics() 生产者
 
-CT-TELE-FLE-001: SystemTelemetry → FeedbackLoop 数据管道。
+CT-TELE-FLE-001: SystemTelemetry -> FeedbackLoop 数据管道。
 Telemetry 暴露 metrics 聚合 API，FLE collector 定期拉取并缓存。
 """
 
@@ -59,7 +59,7 @@ class SourceSystem(str, Enum):
 
 
 class MetricPoint:
-    """TELE→FLE 协议数据单元"""
+    """TELE->FLE 协议数据单元"""
 
     __slots__ = (
         "metric_name",

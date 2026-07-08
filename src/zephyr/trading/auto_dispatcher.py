@@ -21,10 +21,10 @@ AutoDispatcher — 守护进程内的轻量 PipelineDispatcher
 实现 PipelineDispatcher Protocol，供 ActiveTaskQueue 在守护进程中自动调度 READY 任务。
 
 流程:
-    ActiveTaskQueue._tick() → transition(READY→IN_PROGRESS) → dispatch(task_card)
-        ├── ContextBridge.request_context()     → CE→LSG + CE→VMS 自动触发
-        ├── ScriptRunner.run_audit()            → Script→Gate + Script→KB 自动触发
-        └── transition(IN_PROGRESS→COMPLETED)   → Orc→VMS + KB→VMS hook 自动触发
+    ActiveTaskQueue._tick() -> transition(READY->IN_PROGRESS) -> dispatch(task_card)
+        ├── ContextBridge.request_context()     -> CE->LSG + CE->VMS 自动触发
+        ├── ScriptRunner.run_audit()            -> Script->Gate + Script->KB 自动触发
+        └── transition(IN_PROGRESS->COMPLETED)   -> Orc->VMS + KB->VMS hook 自动触发
 """
 
 from __future__ import annotations
@@ -106,7 +106,7 @@ class AutoDispatcher:
 
                 self._task_repo = TaskRepository()
             self._task_repo.transition(task_id, "COMPLETED", note="auto-dispatched by daemon")
-            result["step_transition"] = "ok (→COMPLETED)"
+            result["step_transition"] = "ok (->COMPLETED)"
         except Exception as exc:
             logger.warning("[AUTO-DISPATCH] transition failed for %s: %s", task_id, exc, exc_info=True)
             result["step_transition"] = f"failed: {exc}"

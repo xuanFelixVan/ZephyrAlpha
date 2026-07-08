@@ -49,7 +49,7 @@ def install_service() -> None:
         ["sc", "config", "ZephyrAlpha", "start=auto"],
         check=True,
     )
-    # 5.170.6 修复: 库代码 CLI 入口 print → logger.info
+    # 5.170.6 修复: 库代码 CLI 入口 print -> logger.info
     logger.info("ZephyrAlpha Windows Service installed and set to auto-start.")
 
 
@@ -57,7 +57,7 @@ def uninstall_service() -> None:
     import subprocess
 
     subprocess.run(["sc", "delete", "ZephyrAlpha"], check=True)
-    # 5.170.7 修复: 库代码 CLI 入口 print → logger.info
+    # 5.170.7 修复: 库代码 CLI 入口 print -> logger.info
     logger.info("ZephyrAlpha Windows Service uninstalled.")
 
 
@@ -67,9 +67,9 @@ def run_as_service() -> None:
         import win32service
         import win32serviceutil
     except ImportError:
-        # 5.170.8 修复: 缺失依赖错误 print → logger.error
+        # 5.170.8 修复: 缺失依赖错误 print -> logger.error
         logger.error("pywin32 not installed. Run: pip install pywin32")
-        # 5.170.9 修复: 降级提示 print → logger.warning
+        # 5.170.9 修复: 降级提示 print -> logger.warning
         logger.warning("Falling back to console mode...")
         from zephyr.trading.__main__ import main
 

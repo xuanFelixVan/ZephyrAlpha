@@ -22,7 +22,7 @@
 实现 CT-* mock 策略 + Phase 0 context check 强制执行。
 
 策略：
-1. Phase A→D 每个 CT-* 的 mock 实现策略（stub/partial/full）
+1. Phase A->D 每个 CT-* 的 mock 实现策略（stub/partial/full）
 2. 禁止未完成 Phase 0 context check 进入后续 Phase
 3. Mock 模式：开发环境使用 cheap_fast 模型、低 token 预算、跳过飞书通知
 """

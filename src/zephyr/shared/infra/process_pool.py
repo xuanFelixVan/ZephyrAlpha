@@ -62,7 +62,7 @@ def is_pid_alive(pid: int) -> bool:
     （_concurrency 调用点 holder.get("pid", -1) 可能返回非 int，无此检查会
     TypeError 中断）。Win32 GetLastError 区分"进程不存在"
     (ERROR_INVALID_PARAMETER 87) vs "权限不足"(ERROR_ACCESS_DENIED 5，
-    如 PID 4 System)→ 算存活。
+    如 PID 4 System)-> 算存活。
     """
     if not isinstance(pid, int) or pid <= 0:
         return False
@@ -240,7 +240,7 @@ class MCPProcessPool:
     def _remove_entry(self, name: str) -> None:
         entry = self._pool.pop(name, None)
         if entry is not None:
-            # 5.144.3 修复: 先 terminate()→wait()→关闭管道（申请逆序释放）
+            # 5.144.3 修复: 先 terminate()->wait()->关闭管道（申请逆序释放）
             # 原顺序：先关管道再 terminate, 子进程写日志触发 BrokenPipeError, 关 stdin 发 EOF 让子进程提前退出跳过自身清理
             try:
                 entry.process.terminate()

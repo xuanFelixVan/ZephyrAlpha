@@ -23,11 +23,11 @@ G5 Extract 门禁 — 知识升格（T-2-13-E）
 功能
 ----
 1. 知识升格路由：
-   - 失败经验 → 06_lessons_learned/
-   - 成功经验 → 07_best_practices/
-   - 设计决策 → 写入 ADR
+   - 失败经验 -> 06_lessons_learned/
+   - 成功经验 -> 07_best_practices/
+   - 设计决策 -> 写入 ADR
 2. 调用 gate_engine.py 执行 g5-extract.yaml 门禁
-3. 状态转换：active → graduated
+3. 状态转换：active -> graduated
 4. KE 编号自动分配（递增）
 
 Safety : M

@@ -24,7 +24,7 @@ L1 Session Kill: 中断单个 agent session 回滚权限
 L2 Skill Kill:   禁用特定模块的自动回滚
 L3 Global Kill:   完全禁用所有自动回滚——仅限 token-gated
 
-自动递进升级: L1→L2→L3 逐级升级直到修复。
+自动递进升级: L1->L2->L3 逐级升级直到修复。
 """
 
 from __future__ import annotations

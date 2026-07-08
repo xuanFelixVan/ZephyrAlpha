@@ -19,7 +19,7 @@
 Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测）
 =================================================================
 将 ModelProfile 结果写入 JSONL 文件，支持：
-  - 历史结果查询（同模型多次测试对比 → 漂移检测）
+  - 历史结果查询（同模型多次测试对比 -> 漂移检测）
   - 与 Pipeline ModelBenchmarkResult 数据模型对接
   - 增量写入（每次 benchmark 追加一行）
   - 历史趋势分析
@@ -72,7 +72,7 @@ def write_benchmark_results(
         os.fsync(f.fileno())
     os.replace(tmp_path, str(filepath))
 
-    _log.info("ResultsWriter: wrote %d profiles → %s", lines_written, filepath)
+    _log.info("ResultsWriter: wrote %d profiles -> %s", lines_written, filepath)
     return str(filepath)
 
 

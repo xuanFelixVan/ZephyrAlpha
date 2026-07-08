@@ -27,17 +27,17 @@
 
 核心工作流（AI 对话生命周期，君子协定模式）::
 
-    1. 对话启动 → session_worktree_start(session_id)
-       → 注册 session + 创建 worktree
-       → 返回 worktree_path
+    1. 对话启动 -> session_worktree_start(session_id)
+       -> 注册 session + 创建 worktree
+       -> 返回 worktree_path
     2. AI 正常编辑文件（Edit/Write 写到项目根，IDE 限制无法改）
-    3. 提交 → session_worktree_commit(session_id, files, message)
-       → 自动将 files 从项目根同步到 worktree（解决 Edit/Write 写项目根的问题）
-       → worktree 内直接 git add + commit（独立 index，无需 GitCommitGateway）
-    4. 任务完成 → session_worktree_merge(session_id)
-       → merge 回主分支 + 清理 worktree + 注销 session
-    5. 放弃任务 → session_worktree_abort(session_id)
-       → 丢弃修改 + 清理 worktree + 注销 session
+    3. 提交 -> session_worktree_commit(session_id, files, message)
+       -> 自动将 files 从项目根同步到 worktree（解决 Edit/Write 写项目根的问题）
+       -> worktree 内直接 git add + commit（独立 index，无需 GitCommitGateway）
+    4. 任务完成 -> session_worktree_merge(session_id)
+       -> merge 回主分支 + 清理 worktree + 注销 session
+    5. 放弃任务 -> session_worktree_abort(session_id)
+       -> 丢弃修改 + 清理 worktree + 注销 session
 
 为什么 worktree 内 commit 绕过 GitCommitGateway？
   - GitCommitGateway 的门禁（SESSION-REQUIRED/CLAIM-REQUIRED/HELD-OVERLAP）保护的是
@@ -237,8 +237,8 @@ def session_worktree_start(
     幂等：若 worktree 已存在，直接复用并返回其路径。
 
     治本变更并发阻断（§9.7 治本，2026-07-04）——双向阻断逻辑：
-    - ``breaking_change=True``：检查是否有其他活跃 session → 有则阻断（治本变更期间禁止并发）
-    - ``breaking_change=False``：检查是否有其他活跃 session 声明了 ``breaking_change=True`` → 有则阻断（避让治本变更）
+    - ``breaking_change=True``：检查是否有其他活跃 session -> 有则阻断（治本变更期间禁止并发）
+    - ``breaking_change=False``：检查是否有其他活跃 session 声明了 ``breaking_change=True`` -> 有则阻断（避让治本变更）
     - ``allow_concurrent=True``：逃生通道，跳过阻断（对标 ``allow_overlap``）
 
     Args:
@@ -389,7 +389,7 @@ def session_worktree_commit(
 
     **HELD-OVERLAP 硬阻断（2026-07-02 加硬）**：commit 前对每个文件调
     ``registry.claim_file()``（原子 check-and-claim，防 TOCTOU 竞态）。若被其他
-    活跃 session 持有 → ``HELD_OVERLAP_VIOLATION`` 硬阻断（回滚已 claim 的文件）。
+    活跃 session 持有 -> ``HELD_OVERLAP_VIOLATION`` 硬阻断（回滚已 claim 的文件）。
     claim 是 session 级（不 per-commit 释放），merge/abort 时 ``unregister`` 自动
     释放。这使 worktree 模式下的文件锁与 GitCommitGateway 的 HELD-OVERLAP gate
     一样硬——消除"两 session 编辑同一文件导致 merge conflict"的根因。
@@ -474,8 +474,8 @@ def session_worktree_commit(
     # HELD-OVERLAP 硬阻断 + auto-claim（2026-07-02 加硬）
     # 对标 GitCommitGateway 的 HELD-OVERLAP gate，使 worktree 模式下的文件锁一样硬。
     # 原子 check-and-claim（claim_file 内部加锁，防 TOCTOU 竞态）：
-    #   - 文件被其他活跃 session 持有 → claim_file 返回 False → 硬阻断
-    #   - 文件未被持有或已被自己持有 → claim_file 返回 True → claim 成功
+    #   - 文件被其他活跃 session 持有 -> claim_file 返回 False -> 硬阻断
+    #   - 文件未被持有或已被自己持有 -> claim_file 返回 True -> claim 成功
     # claim 是 session 级（不 per-commit 释放），merge/abort 时 unregister 自动释放。
     # allow_overlap=True 时跳过检查（逃生通道，对标 GitCommitGateway --allow-overlap）。
     if not allow_overlap:
@@ -837,8 +837,8 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
             skipped.append(rel_file)
 
     # 3b. 处理 untracked 文件（worktree branch 新增的文件在主工作区可能作为 untracked 存在）
-    # 场景：AI 用 Write 创建新文件 → session_worktree_commit 复制到 worktree 并 commit
-    # → 主工作区文件仍为 untracked → merge 时 git 拒绝覆盖 untracked 文件
+    # 场景：AI 用 Write 创建新文件 -> session_worktree_commit 复制到 worktree 并 commit
+    # -> 主工作区文件仍为 untracked -> merge 时 git 拒绝覆盖 untracked 文件
     # 修复：untracked 文件内容与 worktree branch 一致时，物理删除让 merge 可以创建
     untracked_r = subprocess.run(
         ["git", "ls-files", "--others", "--exclude-standard"],

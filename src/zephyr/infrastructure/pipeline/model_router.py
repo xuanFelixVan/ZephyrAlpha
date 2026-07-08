@@ -24,9 +24,9 @@ ModelRouter — 模型路由与降级链管理
 上下文限制、成本估算和降级链。
 
 三层模型策略（GOV-AI-002 §一）：
-  DeepSeek V4 Pro → 主力生产（M1-M4 + M6/M8/M9/M10/M11）—— 1.74/3.48/M
-  GLM-5.1        → 深度审查（M7 + M5）—— Trae CN免费
-  Claude Opus 4.7 → 特种救援（DeepSeek失败3次 / GLM驳回2次 / Owner关键标记 / security标签 / experimental标签）
+  DeepSeek V4 Pro -> 主力生产（M1-M4 + M6/M8/M9/M10/M11）—— 1.74/3.48/M
+  GLM-5.1        -> 深度审查（M7 + M5）—— Trae CN免费
+  Claude Opus 4.7 -> 特种救援（DeepSeek失败3次 / GLM驳回2次 / Owner关键标记 / security标签 / experimental标签）
 
 使用：
     from zephyr.infrastructure.pipeline.model_router import ModelRouter
@@ -111,12 +111,12 @@ class ModelRouter:
         """根据 TaskCard 解析执行模型。
 
         GOV-AI-002 §二 决策树：
-          - C管线 → "none"
-          - 关键/rescue 关键词 → claude
-          - security 标签 → claude
-          - experimental 标签 → claude
-          - ai_autonomy_level == "unsafe" → claude
-          - 其他 → task_card.execution_model
+          - C管线 -> "none"
+          - 关键/rescue 关键词 -> claude
+          - security 标签 -> claude
+          - experimental 标签 -> claude
+          - ai_autonomy_level == "unsafe" -> claude
+          - 其他 -> task_card.execution_model
 
         Args:
             task_card: 任务卡片

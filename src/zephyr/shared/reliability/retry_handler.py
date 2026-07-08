@@ -24,8 +24,8 @@ Retry Handler — 指数退避重试 + 可恢复/不可恢复错误分类。
 
 功能：
     - 指数退避：base_delay=1s, max_delay=64s, max_retries=5
-    - 可恢复错误（network/timeout）→ 重试
-    - 不可恢复错误（ValueError/AssertionError）→ 立即失败
+    - 可恢复错误（network/timeout）-> 重试
+    - 不可恢复错误（ValueError/AssertionError）-> 立即失败
 """
 
 from __future__ import annotations

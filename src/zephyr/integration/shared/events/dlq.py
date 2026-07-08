@@ -33,7 +33,7 @@ Phase 6 新增（盲点 B6）——解决 observer.emit() 静默吞 handler 异�
   - 零侵入——Observer 本身不需要修改，DLQ 作为外部 subscriber 挂载
 
 对标：
-  - Kafka Dead Letter Queue: failed messages → DLQ topic
+  - Kafka Dead Letter Queue: failed messages -> DLQ topic
   - Azure Service Bus: dead-letter queue with TTL + retry
   - AWS SQS: dead-letter queue + redrive policy
 
@@ -67,10 +67,10 @@ __all__ = [
 
 # 5.63.2 修复：traceback 脱敏防止敏感信息写入 DLQ
 # 敏感模式列表（顺序无关，均使用 re.sub 替换为占位符）：
-#   - PostgreSQL DSN: postgres://user:password@host → postgres://user:***@host
-#   - Bearer token:   Bearer sk-xxx → Bearer ***
-#   - API key:        sk-[a-zA-Z0-9]{20,} → sk-***
-#   - 密码赋值:        password=xxx → password=***
+#   - PostgreSQL DSN: postgres://user:password@host -> postgres://user:***@host
+#   - Bearer token:   Bearer sk-xxx -> Bearer ***
+#   - API key:        sk-[a-zA-Z0-9]{20,} -> sk-***
+#   - 密码赋值:        password=xxx -> password=***
 _SENSITIVE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     # PostgreSQL / 通用 DB DSN: scheme://user:password@host
     (re.compile(r"((?:postgres|postgresql|mysql|redis|mongodb)://[^:/:@]+):[^@/]+@"), r"\1:***@"),
@@ -155,13 +155,13 @@ class DeadLetterQueue:
         dlq = DeadLetterQueue(db_path="data/databases/governance.db")
         dlq.attach(global_observer)
 
-        # 任何 handler 失败 → 自动写入 dead_letters 表
+        # 任何 handler 失败 -> 自动写入 dead_letters 表
         # 定时重试:
         pending = dlq.pop_retryable()
         for dl in pending:
             global_observer.emit(dl.event_type, dl.payload)
-            # 成功 → dlq.mark_resolved(dl.db_id)
-            # 失败 → dlq.record_failure(dl)
+            # 成功 -> dlq.mark_resolved(dl.db_id)
+            # 失败 -> dlq.record_failure(dl)
 
         # 清理:
         dlq.purge_expired(max_age_hours=168)

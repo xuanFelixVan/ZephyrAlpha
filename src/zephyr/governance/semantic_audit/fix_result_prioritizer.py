@@ -5,7 +5,7 @@
 # [CONSUMERS] blast_radius.py; semantic-auditor/__init__.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 排序键: severity降序→impact降序→urgency降序→dependency_depth降序; 输入输出类型一致; 权重之和=1.0
+# [INVARIANTS] 排序键: severity降序->impact降序->urgency降序->dependency_depth降序; 输入输出类型一致; 权重之和=1.0
 # [MODIFY-GUARD] blueprint.md §3.1 Stage 8; semantic-auditor/__init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] M
@@ -18,13 +18,13 @@
 """
 fix_prioritizer — MOD-INF-028 §3.1 Stage 8
 ============================================
-修复优先级排序器：四维排序 severity→impact→urgency→dependency_depth
+修复优先级排序器：四维排序 severity->impact->urgency->dependency_depth
 
 维度映射（基于 FixResult 模型）:
 - severity:  FixResult.severity  (RED=3, YELLOW=2, INFO=1)
 - impact:    FixResult.affected_count (受影响项数)
 - urgency:   FixResult.certainty (触发确定性 0-1)
-- dependency_depth: 外部传入 (finding_id→深度映射)
+- dependency_depth: 外部传入 (finding_id->深度映射)
 """
 
 from __future__ import annotations
@@ -148,7 +148,7 @@ class FixPrioritizer:
 
         Args:
             fixes: 待排序的修复结果列表。
-            dependency_depths: finding_id→依赖深度映射。None 时所有深度为 0。
+            dependency_depths: finding_id->依赖深度映射。None 时所有深度为 0。
 
         Returns:
             排序后的 PrioritizedFixResult 列表（不修改原列表）。
@@ -182,11 +182,11 @@ class FixPrioritizer:
     ) -> list[PrioritizedFixResult]:
         """按四维字典序降序排序（严格逐维度比较）.
 
-        排序键优先级: severity → impact → urgency → dependency_depth
+        排序键优先级: severity -> impact -> urgency -> dependency_depth
 
         Args:
             fixes: 待排序的修复结果列表。
-            dependency_depths: finding_id→依赖深度映射。None 时所有深度为 0。
+            dependency_depths: finding_id->依赖深度映射。None 时所有深度为 0。
 
         Returns:
             排序后的 PrioritizedFixResult 列表（不修改原列表）。
@@ -229,7 +229,7 @@ class FixPrioritizer:
         Args:
             fixes: 待排序的修复结果列表。
             n: 返回数量，必须 > 0。
-            dependency_depths: finding_id→依赖深度映射。
+            dependency_depths: finding_id->依赖深度映射。
 
         Returns:
             排序后的前 N 个修复结果。

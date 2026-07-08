@@ -107,7 +107,7 @@ def register_ce_rules() -> int:
         ContextRule(
             rule_id="DEDUP-COLD-001",
             trigger_conditions={"on_demand": True},
-            content="完整去重策略树: config/policy-tree.yaml; 修复流程: extraction_safety→auto_fixer→atomic_fixer→verifier",
+            content="完整去重策略树: config/policy-tree.yaml; 修复流程: extraction_safety->auto_fixer->atomic_fixer->verifier",
             priority=30,
             injection_level="COLD",
             max_tokens=2000,

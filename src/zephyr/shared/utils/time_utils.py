@@ -19,9 +19,9 @@
 time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19 修复）
 
 痛点修复：测试中 freeze_time 是标配，没有的话每个测试文件都要手写 mock——
-  1. 没有统一的 now_utc() → 每个模块 datetime.now(UTC) 写法不统一
-  2. 没有 freeze_time() → 测试中 time-dependent 逻辑难以测试
-  3. 没有 parse_iso() → 各种时间字符串解析方式散落各处
+  1. 没有统一的 now_utc() -> 每个模块 datetime.now(UTC) 写法不统一
+  2. 没有 freeze_time() -> 测试中 time-dependent 逻辑难以测试
+  3. 没有 parse_iso() -> 各种时间字符串解析方式散落各处
 
 设计对标：
   - freezegun 库（freeze_time 测试装饰器）

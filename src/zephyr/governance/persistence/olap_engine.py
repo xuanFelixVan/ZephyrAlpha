@@ -263,7 +263,7 @@ class OLAPEngine:
         Returns
         -------
         list[TrendRow]
-            查询结果，每行为列名 → 值的 dict。
+            查询结果，每行为列名 -> 值的 dict。
         """
         try:
             rel = self._conn.execute(sql, params or [])

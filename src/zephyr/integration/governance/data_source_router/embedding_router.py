@@ -5,7 +5,7 @@
 # [CONSUMERS] in_process_vector_memory;hybrid_retriever;auto_runtime_core;skill_router
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 双后端嵌入路由;降级链BGE-M3→bge-small→InMemory
+# [INVARIANTS] 双后端嵌入路由;降级链BGE-M3->bge-small->InMemory
 # [MODIFY-GUARD] 嵌入维度映射变更需同步MOD-INF-011
 # [STABILITY] evolving
 # [SAFETY] M

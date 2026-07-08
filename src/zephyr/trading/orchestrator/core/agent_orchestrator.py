@@ -641,7 +641,7 @@ class HealthMonitor:
 # directive -> (tool_name, 默认参数构造器) 映射。生产可替换注入。
 DirectiveChain = list[tuple[str, str, dict[str, Any]]]
 
-# agent_orchestrator.py 位于 src/zephyr/orchestrator/ → 仓库根为 parents[3]
+# agent_orchestrator.py 位于 src/zephyr/orchestrator/ -> 仓库根为 parents[3]
 
 
 class AgentOrchestrator:

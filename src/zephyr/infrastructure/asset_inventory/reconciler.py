@@ -17,7 +17,7 @@
 
 """ReconciliationEngine — MOD-INF-026 L4 注册表 vs 磁盘对账引擎
 
-蓝图 §3.4：比对新扫描结果 vs unified-asset-index.yaml → 检测三类偏移
+蓝图 §3.4：比对新扫描结果 vs unified-asset-index.yaml -> 检测三类偏移
 （孤儿/幽灵/漂移），产出 reconciliation-report.md。
 """
 
@@ -252,7 +252,7 @@ def _format_report_md(report: ReconciliationReport) -> list[str]:
     if report.renames:
         lines.append("## 检测到重命名")
         for r in report.renames:
-            lines.append(f"- `{r.old_path}` → `{r.new_path}` (SHA256: `{r.sha256[:12]}...`, conf={r.confidence:.0%})")
+            lines.append(f"- `{r.old_path}` -> `{r.new_path}` (SHA256: `{r.sha256[:12]}...`, conf={r.confidence:.0%})")
         lines.append("")
 
     if report.orphans:

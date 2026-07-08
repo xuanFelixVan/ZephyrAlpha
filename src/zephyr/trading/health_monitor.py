@@ -134,7 +134,7 @@ class HealthMonitor:
             _longevity = LongevityMonitor()
             _longevity_component_id = "health_monitor"
 
-            # 注册时采集基线内存（psutil 不可用时基线为 0，退化分数始终为 0 → 永远 healthy）
+            # 注册时采集基线内存（psutil 不可用时基线为 0，退化分数始终为 0 -> 永远 healthy）
             _baseline_mb = 0.0
             try:
                 import psutil

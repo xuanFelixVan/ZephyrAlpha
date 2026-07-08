@@ -29,20 +29,20 @@ M05 检出 159 对文件复制（基线）。check_code_duplication.py 能检出
   1. in-process gate（--no-verify 绕不过）
   2. 只检测 staged 新增文件（diff-filter=A），不触碰存量违规
   3. subprocess 调用 check_code_duplication.py --files --ast（SSoT，不重复检测逻辑）
-  4. AST 归一化比较（parse→unparse→SequenceMatcher），剥离注释/格式差异
+  4. AST 归一化比较（parse->unparse->SequenceMatcher），剥离注释/格式差异
 
 设计权衡
 --------
 1. **只检测新增文件**：存量 159 对由第2期批量修复。本 gate 防止新增违规。
 2. **同名文件比对**：文件复制最常见模式=AI 复制 foo.py 从包 A 到包 B（同 basename）。
    跨 basename 比对成本高且误报多，同名比对覆盖主要场景。
-3. **AST 归一化**：parse→unparse 自动剥离注释/空白/格式差异，聚焦代码结构。
+3. **AST 归一化**：parse->unparse 自动剥离注释/空白/格式差异，聚焦代码结构。
    比 SequenceMatcher 原始行比较更鲁棒（改注释/格式不误报）。
 4. **threshold=0.7**：对标 architecture_debt_registry.md §六"AST共享行百分比>70%即阻断"。
 5. **fail-open on script error**：脚本故障（exit 2）是环境异常，不阻断 commit。
 6. **priority=85**：在 VOCAB-HARDCODE(80) 之后、CAPABILITY-OVERLAP(200) 之前。
 7. **路径解析用 gateway.project_root**：check_code_duplication.py 扫描主仓库已有文件，
-   新文件需在主仓库路径可达（AI 写项目根→session_worktree_commit 复制到 worktree）。
+   新文件需在主仓库路径可达（AI 写项目根->session_worktree_commit 复制到 worktree）。
    主仓库路径使 script 的 new_resolved 排除集正确排除新文件自身（避免自比自=100%）。
 
 Usage::
@@ -72,7 +72,7 @@ _SCRIPT_PATH = (
         os.path.dirname(os.path.abspath(__file__))
     ))))
 )
-# src/zephyr/governance/commit_gates/ → 上 5 级 = 项目根
+# src/zephyr/governance/commit_gates/ -> 上 5 级 = 项目根
 _DUP_SCRIPT = os.path.join(
     _SCRIPT_PATH, "scripts", "governance", "d5_architecture", "checkers", "check_code_duplication.py"
 )

@@ -139,7 +139,7 @@ DEFAULT_CONTRACTS: Final[dict[ContractPriority, SLOContractTerms]] = {
         priority=ContractPriority.P0,
         ack_timeout_s=900,
         resolve_timeout_s=14400,
-        penalty="超时→安全模式",
+        penalty="超时->安全模式",
     ),
     ContractPriority.P1: SLOContractTerms(
         priority=ContractPriority.P1,
@@ -181,7 +181,7 @@ TIER_POLICY: Final[dict[BudgetTier, dict[str, Any]]] = {
     BudgetTier.EXHAUSTED: {
         "threshold": -1.0,
         "auto_guard_modifier": 0.0,
-        "description": "锁定——禁止自主高风险→Owner手动重置+24h冷却",
+        "description": "锁定——禁止自主高风险->Owner手动重置+24h冷却",
     },
 }
 

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.trading.feedback_loop.alert_dispatcher; zephyr.trading.work_orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] CRITICAL→P0+HIGH→P1任务; MEDIUM→不创建任务仅日志; 同 event_id 不重复创建
+# [INVARIANTS] CRITICAL->P0+HIGH->P1任务; MEDIUM->不创建任务仅日志; 同 event_id 不重复创建
 # [MODIFY-GUARD] CT-FLE-ORC-001 协议变更必须同步更新 feedback-loop/alert_dispatcher
 # [STABILITY] evolving
 # [SAFETY] L
@@ -60,7 +60,7 @@ class AlertHandler:
                 detail=_get_detail(event),
                 task_repo=self._task_repo,
             )
-            logger.info("[ORC-FLE] %s alert → task %s created", severity_val, task.task_id)
+            logger.info("[ORC-FLE] %s alert -> task %s created", severity_val, task.task_id)
             return task
         except Exception as exc:
             # 5.53.7 修复：原实现 return None 使调用方无法区分"无告警(MEDIUM/LOW)"

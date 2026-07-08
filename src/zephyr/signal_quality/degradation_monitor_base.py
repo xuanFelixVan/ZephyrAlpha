@@ -31,7 +31,7 @@
 "信号降级"属于 D_SIGQC 域。已迁移至本文件（D_SIGQC 真源）。
 ``signal_fundamental`` 保留 re-export 向后兼容。
 
-契约对齐：CTR-ERR-003（SignalDegradationWarning 出站）→ D_RISK, D_PORTFOLIO_CORE
+契约对齐：CTR-ERR-003（SignalDegradationWarning 出站）-> D_RISK, D_PORTFOLIO_CORE
 
 当检测到信号质量下降时发布警告——不阻断流水线，但下游应据此降级处理。
 """
@@ -49,7 +49,7 @@ class DegradationMonitorBase(abc.ABC):
     """
     信号质量降级监视器（OCP 扩展点 D_SIGQC-DEG）
 
-    契约对齐：CTR-ERR-003（SignalDegradationWarning 出站）→ D_RISK, D_PORTFOLIO_CORE
+    契约对齐：CTR-ERR-003（SignalDegradationWarning 出站）-> D_RISK, D_PORTFOLIO_CORE
 
     当检测到信号质量下降时发布警告——不阻断流水线，但下游应据此降级处理。
 

@@ -15,13 +15,13 @@
 # [A_module] module_id=MOD-UNK_atomic_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""原子性修复引擎 — WAL 式 PREFLIGHT → CHECKPOINT → APPLY → RECOVER.
+"""原子性修复引擎 — WAL 式 PREFLIGHT -> CHECKPOINT -> APPLY -> RECOVER.
 
 职责：
   - PREFLIGHT：生成 fix_plan.yaml + 所有 diff + plan_hash SHA256
   - CHECKPOINT：备份受影响文件到 fix_checkpoint_{plan_hash}.tar.gz
-  - APPLY：按依赖顺序逐文件修改 + 每步 SHA256 验证（不匹配→ ABORT → RECOVER）
-  - RECOVER：引擎启动时扫描残留 tar.gz → 自动恢复原始文件
+  - APPLY：按依赖顺序逐文件修改 + 每步 SHA256 验证（不匹配-> ABORT -> RECOVER）
+  - RECOVER：引擎启动时扫描残留 tar.gz -> 自动恢复原始文件
 """
 
 from __future__ import annotations
@@ -184,7 +184,7 @@ class AtomicFixer:
             return False
 
     def scan_and_recover_all(self) -> list[str]:
-        """引擎启动时扫描所有残留 tar.gz → 自动恢复."""
+        """引擎启动时扫描所有残留 tar.gz -> 自动恢复."""
         recovered: list[str] = []
         for checkpoint_file in sorted(self._checkpoint_dir.glob("fix_checkpoint_*.tar.gz")):
             plan_hash = checkpoint_file.stem.replace("fix_checkpoint_", "")

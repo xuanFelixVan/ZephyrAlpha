@@ -122,7 +122,7 @@ SYSTEM_PROMPTS: Final[dict[str, str]] = {
     "refactor": (
         "You are a code refactorer. Given source code, "
         "suggest improvements: simplify logic, extract functions, rename variables, "
-        "improve readability. Output exact old_str → new_str replacements."
+        "improve readability. Output exact old_str -> new_str replacements."
         '\nOutput JSON: {"changes": [{"old_str": "exact source", "new_str": "improved code", "reason": "brief"}]}'
     ),
     "code_generate": (

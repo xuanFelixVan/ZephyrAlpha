@@ -26,7 +26,7 @@ Risk: R475 — FLE makes decisions on corrupted numerical values; phantom
 anomalies triggered by NaN; real anomalies hidden by Inf saturation.
 
 Mitigation: Intercept all numeric metrics entering the pipeline. Classify:
-NaN → quarantine, Inf → cap at sentinel, overflow → flag for type upgrade.
+NaN -> quarantine, Inf -> cap at sentinel, overflow -> flag for type upgrade.
 Track numerical health score per metric stream.
 """
 

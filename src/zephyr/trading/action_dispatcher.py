@@ -18,11 +18,11 @@
 """
 ActionDispatcher --- 大脑的"手" v2.0 (Phase 2)
 ================================================
-推理完成 → 直接把结果写回源文件，不产生中间文件。
+推理完成 -> 直接把结果写回源文件，不产生中间文件。
 
 Phase 2 新增:
     - Git 版本链备份: 每次修改前保存快照到 .brain_backups/
-    - SearchReplace 行级精确替换: old_str → new_str
+    - SearchReplace 行级精确替换: old_str -> new_str
     - brain_create_file: 创建新文件 + 自动注册 capability card
     - brain_delete_file: 删除文件(移到 .brain_trash/ 回收站)
 
@@ -32,7 +32,7 @@ Phase 2 新增:
     ActionDispatcher.dispatch(task)
         ↓              ↓              ↓              ↓              ↓
     Python 注释     YAML 标签      Blueprint 摘要   SearchReplace   创建/删除文件
-    # BRAIN 块      brain_tags     # brain-summary  old→new 替换    .brain_trash/
+    # BRAIN 块      brain_tags     # brain-summary  old->new 替换    .brain_trash/
 
 原则:
     - 只修改项目本身的文件，不创建 data/brain/ 中间产物
@@ -96,7 +96,7 @@ def _git_commit_hash(project_root: Path) -> str | None:
 
 
 class ActionDispatcher:
-    """推理结果→直接回写源文件 (Phase 2: 版本链 + 行级编辑 + 创建/删除)。"""
+    """推理结果->直接回写源文件 (Phase 2: 版本链 + 行级编辑 + 创建/删除)。"""
 
     def __init__(self, dry_run: bool = False) -> None:
         self._dry_run = dry_run
@@ -252,7 +252,7 @@ class ActionDispatcher:
         field: str = "fixes",
         remove: bool = False,
     ) -> ActionReport:
-        """SearchReplace 核心引擎: old_str → new_str 精确替换。
+        """SearchReplace 核心引擎: old_str -> new_str 精确替换。
 
         Args:
             source_text: payload 文本，用于提取文件名
@@ -444,7 +444,7 @@ class ActionDispatcher:
         else:
             shutil.move(str(target_file), str(trash_path))
 
-        _log.info("BrainHands: trashed %s → %s", target_file.name, trash_name)
+        _log.info("BrainHands: trashed %s -> %s", target_file.name, trash_name)
         return ActionReport(
             str(target_file.relative_to(REPO_ROOT)),
             "dead_code_removal",
@@ -664,7 +664,7 @@ class ActionDispatcher:
         return None
 
     def _find_capability_card(self, module_name: str) -> Path | None:
-        """匹配 Python 模块 → capability card YAML。"""
+        """匹配 Python 模块 -> capability card YAML。"""
         stem = module_name.replace("_", "-").replace(".py", "")
         candidate = CAPABILITY_CARDS_DIR / f"{stem}.yaml"
         if candidate.exists():

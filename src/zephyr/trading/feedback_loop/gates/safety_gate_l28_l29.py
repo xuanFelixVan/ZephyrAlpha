@@ -17,8 +17,8 @@
 
 """Safety Gates L28-L29 — DR Readiness + Supply Chain (MOD-FEEDBACK_LOOP §3 L28-L41)
 
-L28: DR Readiness — DR drill < 90d → allow REPAIR, overdue → block
-L29: Supply Chain — active CVE → only NOTIFY_OWNER; skill_trust < 0.5 → block all
+L28: DR Readiness — DR drill < 90d -> allow REPAIR, overdue -> block
+L29: Supply Chain — active CVE -> only NOTIFY_OWNER; skill_trust < 0.5 -> block all
 """
 
 from __future__ import annotations

@@ -16,7 +16,7 @@
 # [TTL] permanent
 """FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写入fle_metrics
 
-CT-FLE-DB-001: FLE采集的指标 → Database持久化落地。
+CT-FLE-DB-001: FLE采集的指标 -> Database持久化落地。
 DDL与sqlite_schema.py的_DDL_FLE_METRICS保持一致（SSoT）。
 """
 

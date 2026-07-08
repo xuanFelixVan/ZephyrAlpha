@@ -17,7 +17,7 @@
 
 """
 
-Escalation Loop Detector — v0.10.0 跨模块升级循环: escalate→block→auto_guard→escalate循环检测。
+Escalation Loop Detector — v0.10.0 跨模块升级循环: escalate->block->auto_guard->escalate循环检测。
 """
 
 from __future__ import annotations

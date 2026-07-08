@@ -259,7 +259,7 @@ class A2ARedTeam:
     # ==== AV-001: Agent Card 身份冒充攻击 ====
 
     def _attack_agent_card_spoofing(self) -> dict:
-        """尝试伪造未签名 Agent Card 注册 → IdentityVerifier 应拒绝."""
+        """尝试伪造未签名 Agent Card 注册 -> IdentityVerifier 应拒绝."""
         try:
             from zephyr.infrastructure.a2a_protocol.layer1_discovery.a2a_registry import A2ARegistry
             from zephyr.infrastructure.a2a_protocol.layer1_discovery.agent_card import AgentCapability, AgentCard
@@ -305,7 +305,7 @@ class A2ARedTeam:
     # ==== AV-002: Task 状态篡改攻击 ====
 
     def _attack_task_manipulation(self) -> dict:
-        """尝试非法状态跳转 (CREATED→COMPLETED) → A2AStateMachine 应拒绝."""
+        """尝试非法状态跳转 (CREATED->COMPLETED) -> A2AStateMachine 应拒绝."""
         try:
             from zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_state import (
                 A2AStateMachine,
@@ -320,8 +320,8 @@ class A2ARedTeam:
             )
 
             transitions_attempted = [
-                (A2ATaskStatus.COMPLETED, "CREATED→COMPLETED"),
-                (A2ATaskStatus.IN_PROGRESS, "CREATED→IN_PROGRESS"),
+                (A2ATaskStatus.COMPLETED, "CREATED->COMPLETED"),
+                (A2ATaskStatus.IN_PROGRESS, "CREATED->IN_PROGRESS"),
             ]
 
             violations = []
@@ -403,7 +403,7 @@ class A2ARedTeam:
     # ==== AV-003: 恶意内容 Artifact Poisoning ====
 
     def _attack_artifact_poisoning(self) -> dict:
-        """注入恶意 payload → A2ASecurityScanner 应检测并标记 MALICIOUS."""
+        """注入恶意 payload -> A2ASecurityScanner 应检测并标记 MALICIOUS."""
         try:
             from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_security import (
                 A2ASecurityScanner,
@@ -459,7 +459,7 @@ class A2ARedTeam:
     # ==== AV-004: Agent DoS (PollingStorm) ====
 
     def _attack_agent_dos(self) -> dict:
-        """尝试提交大量任务耗尽 Supervisor → Rate Limiter + IdleGuard 应防护."""
+        """尝试提交大量任务耗尽 Supervisor -> Rate Limiter + IdleGuard 应防护."""
         try:
             from zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_state import A2ATask
             from zephyr.infrastructure.a2a_protocol.layer3_coordination.supervisor import Supervisor
@@ -529,7 +529,7 @@ class A2ARedTeam:
     # ==== AV-005: Session Smuggling 走私攻击 ====
 
     def _attack_session_smuggling(self) -> dict:
-        """尝试传递伪造 session 上下文 → SessionSmugglingDefense 应检测并阻断."""
+        """尝试传递伪造 session 上下文 -> SessionSmugglingDefense 应检测并阻断."""
         try:
             from zephyr.infrastructure.a2a_protocol.layer3_coordination.session_smuggling_defense import (
                 SessionSmugglingDefense,

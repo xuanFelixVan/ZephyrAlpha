@@ -17,8 +17,8 @@
 
 """Safety Gates L40-L41 — Self-Integrity + Container Immutability
 
-L40: immutable core violation → BLOCK; operational_window prohibited → BLOCK
-L41: container mutability → OBSERVE_ONLY alert; image drift → block deploy
+L40: immutable core violation -> BLOCK; operational_window prohibited -> BLOCK
+L41: container mutability -> OBSERVE_ONLY alert; image drift -> block deploy
 """
 
 from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict

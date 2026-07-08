@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] fetch 异常→yield FetchResult(error=str)
+# [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)
 # [TESTS] tests/zephyr/data/test_providers.py::TestTickFlowProvider
 # [A_module] module_id=MOD-L00-004-tickflow_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -62,9 +62,9 @@ _DEFAULT_US_SYMBOLS = [
 
 # 美股指数 ETF 映射（us_index capability 用）
 _US_INDEX_ETF = {
-    "SPX": "SPY.US",    # 标普500 → SPY ETF
-    "DJI": "DIA.US",    # 道琼斯 → DIA ETF
-    "IXIC": "QQQ.US",   # 纳斯达克 → QQQ ETF
+    "SPX": "SPY.US",    # 标普500 -> SPY ETF
+    "DJI": "DIA.US",    # 道琼斯 -> DIA ETF
+    "IXIC": "QQQ.US",   # 纳斯达克 -> QQQ ETF
 }
 
 
@@ -189,7 +189,7 @@ class TickFlowProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """获取美股指数（用 ETF 替代真实指数）。
 
-        SPX→SPY, DJI→DIA, IXIC→QQQ。
+        SPX->SPY, DJI->DIA, IXIC->QQQ。
         """
         import tickflow as tf
 
@@ -224,7 +224,7 @@ class TickFlowProvider(DataSourceBase):
                             float(row.get("close", 0) or 0),
                             int(row.get("volume", 0) or 0),
                         ))
-                self._log.info(f"美股指数 {index_code}→{etf_symbol}: {len(rows)} 行")
+                self._log.info(f"美股指数 {index_code}->{etf_symbol}: {len(rows)} 行")
                 if rows:
                     yield FetchResult(
                         table=table, columns=columns, rows=rows,

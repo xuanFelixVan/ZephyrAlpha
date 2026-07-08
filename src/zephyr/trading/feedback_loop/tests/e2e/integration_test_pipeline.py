@@ -20,7 +20,7 @@
 验证 MOD-FEEDBACK_LOOP 全生命周期集成:
   1. 67层安全门L1-L67全量联动
   2. 16项集成目标逐一验证
-  3. 三相流水线(MetricsCollect→AnomalyDetect→Diagnose→Action→Verify)端到端
+  3. 三相流水线(MetricsCollect->AnomalyDetect->Diagnose->Action->Verify)端到端
 """
 
 from __future__ import annotations

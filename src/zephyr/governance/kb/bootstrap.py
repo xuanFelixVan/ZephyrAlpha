@@ -24,9 +24,9 @@
 功能
 ----
 1. 全项目文档扫描：AGENTS.md, KBG/, blueprints/, session_logs/, project_rules.md
-2. 按标题分段 + 碎片隔离（PII/hash/时间 → 无向脱敏）
+2. 按标题分段 + 碎片隔离（PII/hash/时间 -> 无向脱敏）
 3. 知识信号识别（排除目录/导航/样板文本）
-4. 管道注入：G1→G2→G3→G4→G5 全链路
+4. 管道注入：G1->G2->G3->G4->G5 全链路
 5. MVKB 验证（≥10 VERIFIED KE / ≥5 categories）
 6. 冷启动报告生成（summary + gaps）
 

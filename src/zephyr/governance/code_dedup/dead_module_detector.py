@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-UNK_dead_module_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""死共享模块检测器 — shared/子模块无人使用 → DEAD."""
+"""死共享模块检测器 — shared/子模块无人使用 -> DEAD."""
 
 from datetime import UTC, datetime
 from pathlib import Path

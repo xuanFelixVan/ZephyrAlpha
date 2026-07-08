@@ -90,7 +90,7 @@ def load_build_status_order() -> list[str]:
     """从 decision_graph_model.yaml 动态加载 build_status 状态机顺序。
 
     真源：architecture_model/domain/decision_graph_model.yaml 的 build_status_values 段。
-    5态单调推进：planned → generated → testing → stable → deprecated。
+    5态单调推进：planned -> generated -> testing -> stable -> deprecated。
     """
     with open(_YAML_MODEL_PATH, encoding="utf-8") as f:
         data = yaml.safe_load(f)
@@ -291,7 +291,7 @@ _DDL_INDEXES = [
 # DEC-INV-004: build_status 单调推进
 #   约束位置: decision_nodes.build_status CHECK IN ('planned','generated','testing','stable','deprecated')
 #   约束类型: DB CHECK + 应用层状态迁移校验（apply_decisiongraph.py）
-#   说明: 状态机为单调推进 planned→generated→testing→stable→deprecated，
+#   说明: 状态机为单调推进 planned->generated->testing->stable->deprecated，
 #         禁止跳态（如 generated 直接跃迁到 stable 必须经过 testing）。
 #         DB CHECK 保证值合法，状态迁移顺序由 apply_decisiongraph.py 应用层校验。
 #

@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF_pipeline_roadmap | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Pipeline 未来版本路线图——v0.10.0 → v0.12.0 规划骨架。
+"""Pipeline 未来版本路线图——v0.10.0 -> v0.12.0 规划骨架。
 
 本文件包含蓝图 §22-§24 定义的未来版本特性基类/桩实现。
 对标：蓝图 §22 (v0.10.0 / B173-B234)、§23 (v0.11.0 / B233-B289)、§24 (v0.12.0 / B284-B325)。
@@ -338,8 +338,8 @@ class OrchestratorIntegrationBridge(BaseModel):
 
     调用链:
         Orc.create_task(task_card)
-          → Pipeline.dispatch(task_card) → PipelineResult
-          → Orc.assign_session(result)
+          -> Pipeline.dispatch(task_card) -> PipelineResult
+          -> Orc.assign_session(result)
     """
 
     contract_version: str = "CT-PIPE-ORC-001"
@@ -386,7 +386,7 @@ class PhaseStatus(BaseModel):
 class ConstructionPhaseTracker:
     """蓝图 §26 施工 Phase 规划——38行施工条目状态追踪器。
 
-    覆盖从 scaffold→foundation→...→dynamic_reroute 的全部施工活动。
+    覆盖从 scaffold->foundation->...->dynamic_reroute 的全部施工活动。
     每项标注 ✅ implemented / 📋 Backlog / 📋 Planned(vX.X.X)。
     """
 
@@ -487,7 +487,7 @@ PIPELINE_DEPENDENCIES: list[Dependency] = [
         module_id="MOD-TASK_SYSTEM",
         module_name="Task System",
         relation="runtime_call",
-        description="读取TaskCard→dispatch()→PipelineResult",
+        description="读取TaskCard->dispatch()->PipelineResult",
         status="✅ implemented",
     ),
     Dependency(
@@ -501,21 +501,21 @@ PIPELINE_DEPENDENCIES: list[Dependency] = [
         module_id="MOD-CONTEXT_ENGINE",
         module_name="Context Engine",
         relation="config_consume",
-        description="blueprint_routing.yaml→触发路由匹配",
+        description="blueprint_routing.yaml->触发路由匹配",
         status="✅ implemented",
     ),
     Dependency(
         module_id="MOD-FEEDBACK_LOOP",
         module_name="Feedback Loop",
         relation="feedback_to",
-        description="FLE反馈→调复杂度估计→重新路由",
+        description="FLE反馈->调复杂度估计->重新路由",
         status="📋 Backlog",
     ),
     Dependency(
         module_id="MOD-INF-003",
         module_name="Orchestrator",
         relation="upstream",
-        description="Orc.create_task→Pipe.dispatch→Orc.assign_session",
+        description="Orc.create_task->Pipe.dispatch->Orc.assign_session",
         status="📋 Backlog",
     ),
     Dependency(
@@ -536,7 +536,7 @@ PIPELINE_DEPENDENCIES: list[Dependency] = [
         module_id="SH-DB-001",
         module_name="DeferredQueue",
         relation="downstream",
-        description="dispatch LOCKED→DeferredQueue.enqueue→auto-retry",
+        description="dispatch LOCKED->DeferredQueue.enqueue->auto-retry",
         status="📋 Backlog",
     ),
     Dependency(
@@ -550,7 +550,7 @@ PIPELINE_DEPENDENCIES: list[Dependency] = [
         module_id="MOD-INF-017",
         module_name="Audit Trail",
         relation="downstream",
-        description="Decision Log→audit_trail持久化",
+        description="Decision Log->audit_trail持久化",
         status="📋 Backlog",
     ),
     Dependency(
@@ -603,12 +603,12 @@ CROSS_MODULE_SYNC: list[CrossModuleSyncEntry] = [
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="src/zephyr/integration/mcp/blueprint_search_server.py",  # 5.12.4 修复：路径漂移 mcp/→integration/mcp/
+        file_path="src/zephyr/integration/mcp/blueprint_search_server.py",  # 5.12.4 修复：路径漂移 mcp/->integration/mcp/
         sync_content="routing 配置路径正确",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="src/zephyr/trading/orchestrator/trigger_router.py",  # 5.12.4 修复：路径漂移 orchestrator/→trading/orchestrator/
+        file_path="src/zephyr/trading/orchestrator/trigger_router.py",  # 5.12.4 修复：路径漂移 orchestrator/->trading/orchestrator/
         sync_content="blueprint_lookup handler 可用",
         last_synced="2026-05-07",
     ),
@@ -623,7 +623,7 @@ CROSS_MODULE_SYNC: list[CrossModuleSyncEntry] = [
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="src/zephyr/trading/orchestrator/deferred_queue.py",  # 5.12.4 修复：路径漂移 orchestrator/→trading/orchestrator/
+        file_path="src/zephyr/trading/orchestrator/deferred_queue.py",  # 5.12.4 修复：路径漂移 orchestrator/->trading/orchestrator/
         sync_content="waiting_for 条件 lock_release:* 正确",
         last_synced="2026-05-07",
     ),
@@ -833,7 +833,7 @@ class MarketDataPipelineStatus(BaseModel):
 
 
 class AlertEscalationTracker(BaseModel):
-    """B515: 告警触达——触发→分级→行动→超时→自动升级。"""
+    """B515: 告警触达——触发->分级->行动->超时->自动升级。"""
 
     alert_level: str = "INFO"
     triggered_at: str = ""
@@ -847,7 +847,7 @@ class AlertEscalationTracker(BaseModel):
 
 
 class DataProvenanceTracker(BaseModel):
-    """B526: 训练数据血缘→标准化来源→漂移→毒化→合规记录。"""
+    """B526: 训练数据血缘->标准化来源->漂移->毒化->合规记录。"""
 
     source: str = ""
     ingested_at: str = ""
@@ -856,7 +856,7 @@ class DataProvenanceTracker(BaseModel):
 
 
 class SupplyChainIntegrityCheck(BaseModel):
-    """B530: 供应链——pip/conda/docker→SBOM→不可变哈希→CVE扫描。"""
+    """B530: 供应链——pip/conda/docker->SBOM->不可变哈希->CVE扫描。"""
 
     packages_scanned: int = 0
     cve_found: int = 0

@@ -37,9 +37,9 @@
 CTR 契约：
   消费者 — CTR-002 (FactorSignal) ← D_FACTOR
   消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
-  生产者 — CTR-003 (RiskLimits) → D_PORTFOLIO_CORE
+  生产者 — CTR-003 (RiskLimits) -> D_PORTFOLIO_CORE
 
-依赖方向：D_FACTOR + D_EXECUTION_CORE → D_RISK → D_PORTFOLIO_CORE
+依赖方向：D_FACTOR + D_EXECUTION_CORE -> D_RISK -> D_PORTFOLIO_CORE
 """
 
 from __future__ import annotations

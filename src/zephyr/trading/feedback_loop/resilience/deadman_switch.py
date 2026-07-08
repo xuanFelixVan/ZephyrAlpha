@@ -20,7 +20,7 @@
 Blindspot: FLE runs autonomously with no external kill-switch; runaway unstoppable.
 Risk: R212 — Malicious skill takes over; FLE keeps running; no external forced shutdown.
 
-Mitigation: 60s heartbeat; 3 consecutive misses → automatic self-lock + external alert.
+Mitigation: 60s heartbeat; 3 consecutive misses -> automatic self-lock + external alert.
 """
 
 from __future__ import annotations

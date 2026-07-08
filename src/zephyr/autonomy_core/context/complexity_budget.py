@@ -28,7 +28,7 @@ class ComplexityAdjustedBudget:
 
 
 class ComplexityBudgetAdjuster:
-    """tree-sitter 复杂度×TaskCard.priority → budget coefficient (DD103)."""
+    """tree-sitter 复杂度×TaskCard.priority -> budget coefficient (DD103)."""
 
     def adjust(
         self, base_budget: int = 8000, ast_complexity: int = 10, priority: str = "P2"

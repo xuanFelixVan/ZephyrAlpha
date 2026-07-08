@@ -32,7 +32,7 @@ OCP 扩展点：
   - ConfigManagerBase           — 配置来源/验证/热重载
   - KillSwitchManagerBase       — 熔断控制策略
 
-依赖方向：基础设施 → D_DATA(data) / D_FACTOR~实验(all via CTR-P1-010)
+依赖方向：基础设施 -> D_DATA(data) / D_FACTOR~实验(all via CTR-P1-010)
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ class InfrastructureManagerBase(abc.ABC):
     """系统基础设施管理器（OCP 扩展点）
 
     实现者要求：
-      - initialize(): 按依赖序初始化子系统（config → db → kb → gates → pipeline）
+      - initialize(): 按依赖序初始化子系统（config -> db -> kb -> gates -> pipeline）
       - health(): 返回 SystemHealth 快照
       - shutdown(): 优雅关闭所有子系统
     """

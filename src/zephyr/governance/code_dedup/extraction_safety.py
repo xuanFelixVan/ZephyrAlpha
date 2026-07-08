@@ -18,7 +18,7 @@
 """安全提取适配性评估器 — Suitability Score 0-100 + 不安全提取模式检测.
 
 职责：
-  - 7维评估 → Suitability Score 0-100
+  - 7维评估 -> Suitability Score 0-100
   - 4档 verdict：<40 NEVER_EXTRACT / 40-69 NEEDS_REVIEW / 70-89 SAFE_EXTRACT / ≥90 SAFE_AUTO_EXTRACT
   - 7类不安全提取模式目录
   - 部分共享提取计划（LCS 公共核心 60% + 差异保留）
@@ -87,7 +87,7 @@ class ExtractionSafety:
         has_independent_test: bool = False,
         body: str = "",
     ) -> SuitabilityScore:
-        """7维评估 → Suitability Score."""
+        """7维评估 -> Suitability Score."""
         score = SuitabilityScore(
             caller_count=caller_count,
             call_depth=call_depth,

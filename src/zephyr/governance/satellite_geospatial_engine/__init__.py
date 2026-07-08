@@ -30,9 +30,9 @@ CTR 契约依赖声明（承重墙标记）
 任何修改本层接口的行为 MUST 先通过 ContractImpactAnalyzer 评估影响范围。
 
 作为生产者（Producer）：
-  - CTR-001  NormalizedMarketData      → D_FACTOR, D_SIGNAL, D_RESEARCH
-  - CTR-TRACE-001  TraceContext        → D_FACTOR~D_REPORTING, D_ML_TRAIN（链头——trace_id 由本层创建）
-  - CTR-ERR-001  DataQualityError      → D_FACTOR（质量门禁不通过时抛出）
+  - CTR-001  NormalizedMarketData      -> D_FACTOR, D_SIGNAL, D_RESEARCH
+  - CTR-TRACE-001  TraceContext        -> D_FACTOR~D_REPORTING, D_ML_TRAIN（链头——trace_id 由本层创建）
+  - CTR-ERR-001  DataQualityError      -> D_FACTOR（质量门禁不通过时抛出）
 
 作为消费者（Consumer）：
   - CTR-BP-001~003  Backpressure       ← D_FACTOR（背压信号——暂停/降速/恢复数据推送）

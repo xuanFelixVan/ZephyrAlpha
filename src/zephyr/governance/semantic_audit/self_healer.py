@@ -5,7 +5,7 @@
 # [CONSUMERS] FixPrioritizer; AuditOrchestrator (MOD-INF-027)
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 修复→自测→回滚闭环; 禁止修改 frozen/immutable_core 文件; 原子写入 tmp+replace
+# [INVARIANTS] 修复->自测->回滚闭环; 禁止修改 frozen/immutable_core 文件; 原子写入 tmp+replace
 # [MODIFY-GUARD] semantic-auditor/blueprint.md; semantic-auditor/__init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] H
@@ -17,7 +17,7 @@
 
 """[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 
-Stage 7 自愈闭环 — 修复→自测→回滚.
+Stage 7 自愈闭环 — 修复->自测->回滚.
 
 =============================================
 
@@ -25,7 +25,7 @@ Stage 7 自愈闭环 — 修复→自测→回滚.
 
 依赖: LLMBridge (接口注入), Rollback System (MOD-INF-021), AuditTrail (MOD-INF-020)
 
-数据流: 修复文本+目标文档 → Stage 7 自愈闭环 → HealResult
+数据流: 修复文本+目标文档 -> Stage 7 自愈闭环 -> HealResult
 
 """
 
@@ -112,7 +112,7 @@ def _is_modification_allowed(target_path: str) -> tuple[bool, str]:
 
 
 class SelfHealer:
-    """Stage 7 自愈闭环 — 修复→自测→回滚.
+    """Stage 7 自愈闭环 — 修复->自测->回滚.
 
     接收 IssueAggregator 的聚合问题和 LLMBridge 的修复建议,
     执行修复(原子写入), 自测验证(import测试), 失败则回滚(git checkout).

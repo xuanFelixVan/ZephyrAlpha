@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] submit: GPUTimeout→LOCAL_GPU降级; submit: APIUnavailable→SINGLE_API降级; submit: AllFailed→ConsensusResult(failed)
+# [ERROR_CONTRACT] submit: GPUTimeout->LOCAL_GPU降级; submit: APIUnavailable->SINGLE_API降级; submit: AllFailed->ConsensusResult(failed)
 # [TESTS] tests/test_behavioral_audit/test_gpu_consensus_scheduler.py
 # [A_module] module_id=MOD-GOV_gpu_consensus_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

@@ -155,7 +155,7 @@ class RollbackVerifier:
                     if status not in valid_statuses:
                         conn.execute("UPDATE tasks SET status='FAILED' WHERE task_id=?", (tid,))
                         tasks_fixed += 1
-                        details.append(f"task {tid}: status {status} → FAILED")
+                        details.append(f"task {tid}: status {status} -> FAILED")
                 except Exception as e:
                     logger.warning("suppressed error in rollback_verifier", exc_info=True)
 
@@ -168,7 +168,7 @@ class RollbackVerifier:
                     if result and result not in valid_results:
                         conn.execute("UPDATE gates SET result='FAIL' WHERE gate_id=?", (gid,))
                         gates_fixed += 1
-                        details.append(f"gate {gid}: result {result} → FAIL")
+                        details.append(f"gate {gid}: result {result} -> FAIL")
                 except Exception as e:
                     logger.warning("suppressed error in rollback_verifier", exc_info=True)
 

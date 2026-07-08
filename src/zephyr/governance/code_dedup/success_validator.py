@@ -51,7 +51,7 @@ class SuccessValidator:
             success=success,
             new_clones_introduced=new_clones,
             metrics_improved=improved,
-            detail=f"{before_count}→{after_count} clones" if success else "clone count increased or unchanged",
+            detail=f"{before_count}->{after_count} clones" if success else "clone count increased or unchanged",
         )
         self.results.append(result)
         return result

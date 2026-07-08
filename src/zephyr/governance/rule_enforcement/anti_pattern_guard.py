@@ -49,7 +49,7 @@ class AntiPatternGuard:
             self._violations.append(
                 APViolation(
                     ap_id="AP1",
-                    description=f"绕过集成契约：未登记 CT-* 的跨系统调用 → {target_system}",
+                    description=f"绕过集成契约：未登记 CT-* 的跨系统调用 -> {target_system}",
                     agent_id=agent_id,
                     context={"target_system": target_system, "has_ct": False},
                 )

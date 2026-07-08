@@ -22,7 +22,7 @@ leaves operator blind to critical FLE actions.
 
 Risk: R461 — Single-channel alerting creates single point of failure in human-FLE loop.
 
-Mitigation: Multi-channel fallback chain (primary → secondary → tertiary).
+Mitigation: Multi-channel fallback chain (primary -> secondary -> tertiary).
 Health-check each channel with heartbeat pings. Auto-failover when primary
 loses connectivity for >heartbeat_interval. Log all channel transitions.
 """

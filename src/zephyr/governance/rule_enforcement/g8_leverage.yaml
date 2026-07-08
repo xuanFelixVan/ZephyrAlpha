@@ -72,7 +72,7 @@ checks:
     name: "intraday_leverage_cap"
     description: >
       日内交易杠杆（按日内峰值）不得超过 max_gross_leverage × 1.5。
-      对标 FINRA 日内保证金规则的 4:1 → 零售 2:1 的宽松映射。
+      对标 FINRA 日内保证金规则的 4:1 -> 零售 2:1 的宽松映射。
     type: "leverage_limit"
     severity: "warning"
     failure_policy: "Ignore"

@@ -24,7 +24,7 @@ Risk: R460 — Rumor-driven FLE actions cause false trades or premature shutdown
 
 Mitigation: Multi-source corroboration requirement. News must be confirmed
 by ≥2 independent sources before FLE acts on it. Unconfirmed signals
-→ logging only, no actions.
+-> logging only, no actions.
 """
 
 from __future__ import annotations

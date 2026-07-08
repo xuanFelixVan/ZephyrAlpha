@@ -42,7 +42,7 @@ class KbBridge:
             return False
         try:
             prov = self._build_prov(origin="orphan-judge", audit_chain=["judgment"])
-            content = f"orphan_judge判决: {file_path} → {verdict}: {reason}"
+            content = f"orphan_judge判决: {file_path} -> {verdict}: {reason}"
             self._api.write(topic="orphan-judge", content=content, provenance=prov)
             return True
         except Exception as exc:

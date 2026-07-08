@@ -15,15 +15,15 @@
 # [A_module] module_id=MOD-UNK_backpressure_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""FLE → Pipeline 背压桥接（CTR-BP-001~003）
+"""FLE -> Pipeline 背压桥接（CTR-BP-001~003）
 
 AUDIT-08：在 EvolutionEngine 产出含 CRITICAL 提案时，对 BackpressureManager
-发出 THROTTLE，便于 D_DATA→D_FACTOR 数据扇区与「系统 stress」协同降速。
+发出 THROTTLE，便于 D_DATA->D_FACTOR 数据扇区与「系统 stress」协同降速。
 
 设计
 ----
 - 延迟 import ``zephyr.infrastructure.pipeline.backpressure_manager``，避免 feedback-loop 包被
-  import 时强依赖 pipeline（运行时仍单向：FLE → pipeline）。
+  import 时强依赖 pipeline（运行时仍单向：FLE -> pipeline）。
 - 仅 **CRITICAL** 触发；HIGH/MEDIUM 不扰动全局吞吐（可后续按 signal 类型扩展）。
 """
 

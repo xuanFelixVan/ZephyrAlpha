@@ -15,9 +15,9 @@
 # [A_module] module_id=MOD-ORC_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Protocol-based interface layer for runtime→pipeline dependency abstraction.
+"""Protocol-based interface layer for runtime->pipeline dependency abstraction.
 
-Breaks the deep dependency chain: runtime→pipeline→mcp→rollback→llm_security→shared.schema
+Breaks the deep dependency chain: runtime->pipeline->mcp->rollback->llm_security->shared.schema
 by defining structural interfaces that runtime depends on instead of importing
 pipeline concrete implementations directly.
 """
@@ -41,7 +41,7 @@ class PipelineDispatcherProtocol(Protocol):
     """Structural interface for pipeline task dispatching.
 
     Runtime depends on this protocol instead of importing
-    PipelineOrchestrator directly, breaking the runtime→pipeline link.
+    PipelineOrchestrator directly, breaking the runtime->pipeline link.
     """
 
     def dispatch(self, task: TaskCard) -> bool: ...

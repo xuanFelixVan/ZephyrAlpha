@@ -26,13 +26,13 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
       Anthropic CLAUDE.md 搜索优先原则
 
 使用方式：
-  1. 需要路径常量？→ 查 paths.py
-  2. 需要时间函数？→ 查 time_utils.py
-  3. 需要解析 frontmatter？→ 查 frontmatter_utils.py
-  4. 需要估算 token？→ 查 token_utils.py
-  5. 需要计算内容指纹？→ 查 content_fingerprint.py
-  6. 需要金融契约？→ 查 contracts/money.py, contracts/instrument.py
-  7. 需要其他？→ 先 grep 此目录再决定是否新建
+  1. 需要路径常量？-> 查 paths.py
+  2. 需要时间函数？-> 查 time_utils.py
+  3. 需要解析 frontmatter？-> 查 frontmatter_utils.py
+  4. 需要估算 token？-> 查 token_utils.py
+  5. 需要计算内容指纹？-> 查 content_fingerprint.py
+  6. 需要金融契约？-> 查 contracts/money.py, contracts/instrument.py
+  7. 需要其他？-> 先 grep 此目录再决定是否新建
 
 禁止行为（D-D-07 / AGENTS.md §8.2.1）：
   ❌ 在业务代码中本地重定义以下任何符号
@@ -85,10 +85,10 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
 # ├──────────────────────────────┼──────────────────────────────────────────┤
-# │ parse_frontmatter(content)   │ 解析 Markdown YAML frontmatter → dict   │
-# │ parse_frontmatter_from_file  │ 从文件路径解析 frontmatter → dict       │
-# │ parse_yaml_header(content)   │ 解析 YAML 文件顶层字段 → dict           │
-# │ extract_body(content)        │ 提取 frontmatter 之后的正文 → str       │
+# │ parse_frontmatter(content)   │ 解析 Markdown YAML frontmatter -> dict   │
+# │ parse_frontmatter_from_file  │ 从文件路径解析 frontmatter -> dict       │
+# │ parse_yaml_header(content)   │ 解析 YAML 文件顶层字段 -> dict           │
+# │ extract_body(content)        │ 提取 frontmatter 之后的正文 -> str       │
 # └──────────────────────────────┴──────────────────────────────────────────┘
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -249,7 +249,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # │ TaskEventPayload             │ TASK_EVENT 事件体 Schema                 │
 # │ ManualEventPayload           │ MANUAL_EVENT 事件体 Schema               │
 # │ MetricEventPayload           │ METRIC_EVENT 事件体 Schema               │
-# │ EVENT_PAYLOAD_MAP            │ EventType → Schema 映射字典              │
+# │ EVENT_PAYLOAD_MAP            │ EventType -> Schema 映射字典              │
 # └──────────────────────────────┴──────────────────────────────────────────┘
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -365,7 +365,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
 # ├──────────────────────────────┼──────────────────────────────────────────┤
-# │ atomic_write                  │ POSIX 原子写入（.tmp→rename）            │
+# │ atomic_write                  │ POSIX 原子写入（.tmp->rename）            │
 # │ safe_read                     │ 安全读取 + 可选 SHA-256 校验             │
 # │ backup_file                   │ 创建文件备份（轮转 .bak.N）              │
 # │ restore_backup                │ 从备份恢复文件                           │

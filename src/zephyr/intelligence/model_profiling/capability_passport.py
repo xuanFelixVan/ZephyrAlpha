@@ -88,8 +88,8 @@ def _compute_signature(data: dict) -> str:
 
 # ── 5.147.5: 版本兼容性修复 ──────────────────────────────────────────
 # 修复 `asdict() + **data.get(...)` 模式在 schema 演化时的 TypeError 缺陷：
-#   - 旧 JSON 含已删除字段 → TypeError: unexpected keyword argument
-#   - 字段重命名 → 旧名透传引发 TypeError
+#   - 旧 JSON 含已删除字段 -> TypeError: unexpected keyword argument
+#   - 字段重命名 -> 旧名透传引发 TypeError
 # 方案：用 SSoT 的 `zephyr.shared.io.serialization.filter_dataclass_fields`
 #       过滤无效键，仅保留目标 dataclass 实际声明的字段。
 
@@ -246,8 +246,8 @@ class CostBreakdown:
         策略 (D-MCE-07: 成本是维度非硬门):
             - local: 1.0 (成本≈0)
             - api: 按 estimated_cost_usd 衰减
-              cost <= 0.01 USD → 1.0 (近似免费, 如 zhipu 免费档)
-              cost >= 1.0 USD  → 0.0 (昂贵)
+              cost <= 0.01 USD -> 1.0 (近似免费, 如 zhipu 免费档)
+              cost >= 1.0 USD  -> 0.0 (昂贵)
               中间线性
         """
         if self.deployment_mode == "local":
@@ -416,7 +416,7 @@ def compute_grade_simple(score: float) -> str:
         return "F"
 
 
-# 能力分级 → 数值映射（用于 required 阈值比较，越高越好）
+# 能力分级 -> 数值映射（用于 required 阈值比较，越高越好）
 GRADE_LEVEL: Final[dict[str, int]] = {"A": 4, "B": 3, "C": 2, "D": 1, "F": 0}
 
 

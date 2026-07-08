@@ -19,8 +19,8 @@
 
 职责：
   - 加载/保存 function-cache.json
-  - 原子写入（.tmp → os.replace）防止写入中断损坏
-  - _integrity SHA256 自检——加载时校验→损坏→自动全量重建
+  - 原子写入（.tmp -> os.replace）防止写入中断损坏
+  - _integrity SHA256 自检——加载时校验->损坏->自动全量重建
   - 增量更新：仅更新变更文件的函数条目
   - 全量重建：重新扫描所有源文件生成缓存
 """
@@ -203,7 +203,7 @@ class CacheManager:
                 self._signature_index.setdefault(func.signature_fingerprint, []).append(func)
 
     def _rebuild_from_scratch(self) -> FunctionCache:
-        """缓存损坏或不存在→返回空缓存（外部负责全量扫描填充）."""
+        """缓存损坏或不存在->返回空缓存（外部负责全量扫描填充）."""
         self._cache = FunctionCache(
             cache_metadata=CacheMetadata(
                 generated_at=datetime.now(UTC).isoformat(),
@@ -220,7 +220,7 @@ class CacheManager:
     def _migrate(self, data: dict[str, Any]) -> dict[str, Any]:
         """根据 schema_version 运行迁移函数，直到达到 CURRENT_SCHEMA_VERSION。
 
-        迁移函数注册机制：_MIGRATIONS 字典映射 from_version → migration_function。
+        迁移函数注册机制：_MIGRATIONS 字典映射 from_version -> migration_function。
         旧数据缺少 schema_version 字段时视为版本 1。
         若某版本无对应迁移函数，中止迁移（由调用方决定是否全量重建）。
         """

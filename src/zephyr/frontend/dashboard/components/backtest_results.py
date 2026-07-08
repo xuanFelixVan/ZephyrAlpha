@@ -21,15 +21,15 @@
 渲染依赖: Panel(布局) + ChartFactory.make_equity/make_drawdown(图表)
 
 v3.0.0 变更 (#ARCH-047):
-  - Streamlit → Panel (布局)
-  - plotly 直接调用 → ChartFactory 工厂方法 (callback仅编排)
+  - Streamlit -> Panel (布局)
+  - plotly 直接调用 -> ChartFactory 工厂方法 (callback仅编排)
   - 净值曲线: HoloViews (via ChartFactory.make_equity)
   - 回撤曲线: plotly_resampler (via ChartFactory.make_drawdown)
 
 布局:
   - 顶部: 关键指标卡片(Sharpe/Sortino/MaxDD/IC/IR/胜率/年化)
   - 中部: 净值曲线(HoloViews)+回撤曲线(plotly_resampler)
-  - 底部: 3阶段门控状态(IS→WFA→OOS, 绿色=通过/红色=未通过)
+  - 底部: 3阶段门控状态(IS->WFA->OOS, 绿色=通过/红色=未通过)
 """
 from __future__ import annotations
 
@@ -62,7 +62,7 @@ class BacktestMetrics:
 
 @dataclass
 class BacktestGateStatus:
-    """3阶段决策门控状态（IS→WFA→OOS）
+    """3阶段决策门控状态（IS->WFA->OOS）
 
     蓝图约束: 回测流程必须包含3阶段决策门控
     命名: BacktestGateStatus（避免与 gate_context.GateStatus 同名，ARCH-034 CLASS-UNIQUENESS）
@@ -183,7 +183,7 @@ def render_backtest_results(data: BacktestResultData) -> dict[str, Any]:
     布局:
       - 顶部: 关键指标卡片(Sharpe/Sortino/MaxDD/IC/IR/胜率/年化)
       - 中部: 净值曲线(HoloViews)+回撤曲线(plotly_resampler)
-      - 底部: 3阶段门控状态(IS→WFA→OOS, 绿色=通过/红色=未通过)
+      - 底部: 3阶段门控状态(IS->WFA->OOS, 绿色=通过/红色=未通过)
 
     callback仅编排: 图表生成委托 ChartFactory.make_equity/make_drawdown.
     测试环境(无 panel)仅返回 dict payload，便于断言。
@@ -288,7 +288,7 @@ def render_backtest_results(data: BacktestResultData) -> dict[str, Any]:
     if charts_col is not None:
         layout_items.append(pn.pane.Markdown("### 净值曲线 + 回撤 (NAV & Drawdown)"))
         layout_items.append(charts_col)
-    layout_items.append(pn.pane.Markdown("### 3阶段决策门控 (IS → WFA → OOS)"))
+    layout_items.append(pn.pane.Markdown("### 3阶段决策门控 (IS -> WFA -> OOS)"))
     layout_items.append(gate_row)
     layout_items.append(gate_summary)
 

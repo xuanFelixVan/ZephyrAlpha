@@ -24,9 +24,9 @@ G2 Triage 门禁 — 知识分类评分（T-2-13-B）
 ----
 1. Domain 分类：将知识条目归入 AGENTS.md 定义的分类标签
 2. AI 评分：先规则评分，后接 AI（当前实现规则评分）
-3. ai_triage_score ≥ 0.7 → high_value；0.3-0.7 → 需复审；< 0.3 → rejected
+3. ai_triage_score ≥ 0.7 -> high_value；0.3-0.7 -> 需复审；< 0.3 -> rejected
 4. 调用 gate_engine.py 执行 g2-triage.yaml 门禁
-5. 状态转换：raw → triaged / raw → rejected
+5. 状态转换：raw -> triaged / raw -> rejected
 6. 写入 02_triaged/ 目录
 
 Safety : M
@@ -231,7 +231,7 @@ class TriageGate:
         category = fm.get("category", "").lower()
         doc_type = fm.get("doc_type", "").lower()
 
-        # RENAME_REVIEW: 以下分支按值名分组——若词表改名（如 blueprint→xxx），
+        # RENAME_REVIEW: 以下分支按值名分组——若词表改名（如 blueprint->xxx），
         # 需复核此分组映射。无法用词表属性（如 rule_form）替代，因为是业务分类逻辑。
         if doc_type == "blueprint":
             return "BLUEPRINT"

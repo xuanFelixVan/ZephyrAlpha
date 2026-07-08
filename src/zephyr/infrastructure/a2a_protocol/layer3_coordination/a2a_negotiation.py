@@ -18,7 +18,7 @@
 """A2A 协商协议 — Agent 间资源/任务分配协商
 
 当 Agent A 需要 Agent B 的资源(文件锁/DB表/计算资源)时触发协商:
-  Agent A → propose → Agent B → counter/accept/reject
+  Agent A -> propose -> Agent B -> counter/accept/reject
   循环直到达成协议或超时
 
 输出: NegotiationResult — 协议内容 + 妥协条款
@@ -58,7 +58,7 @@ class A2ANegotiation:
     """A2A 协商引擎.
 
     双向提议-反提议循环:
-      initiator propose → responder evaluate → accept/counter/reject
+      initiator propose -> responder evaluate -> accept/counter/reject
     max_rounds=5 防止无限协商循环.
     """
 

@@ -30,7 +30,7 @@ class PoisoningRisk:
 
 
 class PoisoningMonitor:
-    """SVD dimReduce→k-NN outlier→per-KE poisoning_risk flag (DD97)."""
+    """SVD dimReduce->k-NN outlier->per-KE poisoning_risk flag (DD97)."""
 
     def analyze(self, ke_id: str, embeddings: list[list[float]]) -> PoisoningRisk:
         return PoisoningRisk(

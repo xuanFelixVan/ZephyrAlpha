@@ -23,9 +23,9 @@ DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器
 
 映射约定
 --------
-- ``MemoryEntry.collection`` → ``UnifiedMemoryAPI.write(..., topic=collection)``
-- ``search`` → ``UnifiedMemoryAPI.search(query, k=top_k, topic=collection)``
-- ``delete``：当前后端无统一 delete API → 返回 False
+- ``MemoryEntry.collection`` -> ``UnifiedMemoryAPI.write(..., topic=collection)``
+- ``search`` -> ``UnifiedMemoryAPI.search(query, k=top_k, topic=collection)``
+- ``delete``：当前后端无统一 delete API -> 返回 False
 - ``get_collection_stats``：以 ``recall(topic=collection)`` 条数近似条目数
 """
 

@@ -34,11 +34,11 @@
 
 CTR 契约：
   消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE
-  生产者 — CTR-005 (Fill) → D_REPORTING
-  生产者 — CTR-006 (PositionSnapshot) → D_RISK, D_REPORTING, D_ML_TRAIN
-  生产者 — CTR-ERR-005 (ExecutionRejectionError) → D_PORTFOLIO_CORE, D_REPORTING
+  生产者 — CTR-005 (Fill) -> D_REPORTING
+  生产者 — CTR-006 (PositionSnapshot) -> D_RISK, D_REPORTING, D_ML_TRAIN
+  生产者 — CTR-ERR-005 (ExecutionRejectionError) -> D_PORTFOLIO_CORE, D_REPORTING
 
-SSoT: cross_layer_contracts.yaml → OCP-003 + CTR-004 + CTR-005 + CTR-006
+SSoT: cross_layer_contracts.yaml -> OCP-003 + CTR-004 + CTR-005 + CTR-006
 """
 
 from __future__ import annotations

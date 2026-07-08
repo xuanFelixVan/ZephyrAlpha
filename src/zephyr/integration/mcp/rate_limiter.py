@@ -23,7 +23,7 @@
 - 按 tool_name 粒度独立 bucket（对标 R98）
 - 可配置：10 req/s default, 30 burst（从 config/mcp.json 加载）
 
-盲点关闭：B10（缺限流 → 无 DoS 防护）。
+盲点关闭：B10（缺限流 -> 无 DoS 防护）。
 """
 
 from __future__ import annotations

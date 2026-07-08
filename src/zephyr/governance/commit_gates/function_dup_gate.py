@@ -33,7 +33,7 @@ name + body hash 的实现——重复代码违反 DRY 原则，应扩展现有�
   1. AST 解析 staged 新增 .py 文件，提取顶层 FunctionDef/AsyncFunctionDef
   2. 计算每个函数的 body hash（排除 docstring 后 ast.unparse(body)）
   3. 扫描同目录其他 .py 文件，找同名函数，比较 body hash
-  4. hash 相同 → 重复 → 违规
+  4. hash 相同 -> 重复 -> 违规
 
 设计权衡
 --------
@@ -92,13 +92,13 @@ def _function_body_hash(func: ast.FunctionDef | ast.AsyncFunctionDef) -> str:
 
 
 def _extract_top_level_functions(tree: ast.AST) -> dict[str, str]:
-    """提取 AST 中所有顶层函数的 name → body_hash 映射。
+    """提取 AST 中所有顶层函数的 name -> body_hash 映射。
 
     Args:
         tree: 已解析的 AST。
 
     Returns:
-        dict[str, str]：函数名 → body hash（前 16 字符）。
+        dict[str, str]：函数名 -> body hash（前 16 字符）。
     """
     result: dict[str, str] = {}
     for node in tree.body if hasattr(tree, "body") else []:

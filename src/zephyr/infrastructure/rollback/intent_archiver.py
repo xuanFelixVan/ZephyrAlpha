@@ -21,7 +21,7 @@ IntentArchiver — 意图存档保护。
 依据: 蓝图 MOD-INF-021 §7 Phase 10 + §6.17 B129 + exit code 46
 
 回滚前保存原始操作意图 (why was this done?) 的不可变记录。
-意图存档不可被 GC 清理 → 若检测到清理意图存档 → exit 46 (INTENT_ARCHIVE_PRUNE)。
+意图存档不可被 GC 清理 -> 若检测到清理意图存档 -> exit 46 (INTENT_ARCHIVE_PRUNE)。
 """
 
 from __future__ import annotations

@@ -22,7 +22,7 @@
   2. Progress: 所有提交的任务最终被完成
   3. Linearizability: 并发操作等价于某个串行执行
 
-Phase 1 策略: 有限状态机可达性分析 → 通过枚举所有状态序列
+Phase 1 策略: 有限状态机可达性分析 -> 通过枚举所有状态序列
 Phase 5+ 策略: TLA+/Coq 完整形式化证明
 
 输出: VerificationReport — 验证通过/失败 + 反例路径

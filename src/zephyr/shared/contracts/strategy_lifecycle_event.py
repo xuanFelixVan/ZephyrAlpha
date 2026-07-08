@@ -30,7 +30,7 @@ ZephyrAlpha — shared/contracts/strategy_lifecycle_event.py
 
 CTR-P1-006: StrategyLifecycleEvent / 策略生命周期事件
 
-D_PORTFOLIO_CORE → D_REPORTING/D_COMPLIANCE 策略生命周期事件契约。
+D_PORTFOLIO_CORE -> D_REPORTING/D_COMPLIANCE 策略生命周期事件契约。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-006
 Version: 1.0

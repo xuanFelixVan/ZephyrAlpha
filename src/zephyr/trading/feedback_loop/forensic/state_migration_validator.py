@@ -18,7 +18,7 @@
 """State Migration Validator — v0.40.0 R497
 
 Blindspot: FLE persists runtime state (checkpoints, baselines, event-store)
-across restarts and version upgrades. But _v0.39 state → _v0.40 code path
+across restarts and version upgrades. But _v0.39 state -> _v0.40 code path
 is never tested. Old persisted state may be incompatible with new code.
 
 Risk: R497 — FLE v0.40 starts, loads v0.39 persisted state, silently fails

@@ -24,7 +24,7 @@ Backend  : InProcessVectorMemory (11子模块 + 8 Collection + HybridRetriever)
 
 实现工具
 --------
-- vector-memory.search           — 语义检索 (HybridRetriever → EmbeddingRouter)
+- vector-memory.search           — 语义检索 (HybridRetriever -> EmbeddingRouter)
 - vector-memory.write            — 写入记忆 (provenance强制)
 - vector-memory.recall           — 时间序召回
 - vector-memory.list_collections — 列举8 Collection
@@ -72,7 +72,7 @@ class VectorMemoryServer(BaseMCPServer):
 
         self.register_tool(
             name="vector-memory.search",
-            description="语义检索——HybridRetriever(Vector+BM25+RRF) → EmbeddingRouter 双模型降级，跨8 Collection",
+            description="语义检索——HybridRetriever(Vector+BM25+RRF) -> EmbeddingRouter 双模型降级，跨8 Collection",
             input_schema={
                 "type": "object",
                 "required": ["collection_name", "query"],

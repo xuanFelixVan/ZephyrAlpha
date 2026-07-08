@@ -43,7 +43,7 @@ MCP 原语覆盖表
 | ``resources/read`` | ✅ | resource_provider.py read() 已实现 |
 | ``prompts/list`` | ✅ | prompt_provider.py 已实现 |
 | ``prompts/get`` | ✅ | prompt_provider.py get() 已实现 |
-| ``notifications/message`` | ❌ | 未实现（Server→Client 通知） |
+| ``notifications/message`` | ❌ | 未实现（Server->Client 通知） |
 
 错误码体系
 ----------

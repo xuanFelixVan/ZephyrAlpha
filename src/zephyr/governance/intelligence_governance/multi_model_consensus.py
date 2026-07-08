@@ -33,4 +33,4 @@ class DebateRound(str, Enum):
 
 
 def escalate_to_owner(reason: str) -> str:
-    return f"ESCALATED: {reason} → Owner"
+    return f"ESCALATED: {reason} -> Owner"

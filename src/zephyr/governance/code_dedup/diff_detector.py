@@ -58,7 +58,7 @@ class DiffDetector:
     # ── 公共 API ──────────────────────────────────────────────
 
     def detect(self) -> DiffResult:
-        """检测所有变更——暂存区 + 工作区 → 函数粒度."""
+        """检测所有变更——暂存区 + 工作区 -> 函数粒度."""
         staged = self._git_diff_files(cached=True)
         unstaged = self._git_diff_files(cached=False)
         all_files = sorted(set(staged + unstaged))

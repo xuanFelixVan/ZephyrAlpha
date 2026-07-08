@@ -87,7 +87,7 @@ class ConflictDetector:
     """A2A 冲突检测引擎.
 
     在 Supervisor 调度前运行——检测两个 Agent 的变更集是否存在冲突。
-    若存在冲突 → 交由 Arbitrator 仲裁。
+    若存在冲突 -> 交由 Arbitrator 仲裁。
     """
 
     def __init__(

@@ -37,7 +37,7 @@ _BLOCKED_KEYWORDS = (
     "rbac_roles", "superadmin", "delete",
 )
 
-# 父成熟度 → 子成熟度映射
+# 父成熟度 -> 子成熟度映射
 _MATURITY_DECAY_MAP: dict[str, str] = {
     "PROVEN": "MATURE",
     "MATURE": "GROWING",

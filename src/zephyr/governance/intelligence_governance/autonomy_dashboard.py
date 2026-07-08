@@ -24,7 +24,7 @@ Autonomy Dashboard — AI 自主感知健康仪表。
 
 功能：
     - autonomy_dashboard 实时指标：success/intervention/fp/token/RTO
-    - health < 0.3 连续 5 分钟 → autonomy_downgrade
+    - health < 0.3 连续 5 分钟 -> autonomy_downgrade
     - exit 35 (AUTONOMY_DOWNGRADED) + Owner 通知
     - 对标特斯拉 Autopilot disengagement 人工接管模式
 """

@@ -25,7 +25,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-# lazy import to avoid L0→L2 circular dependency (Phase 2 P2 import cycle fix)
+# lazy import to avoid L0->L2 circular dependency (Phase 2 P2 import cycle fix)
 if TYPE_CHECKING:
     from zephyr.governance.audit_trail.anomaly import AnomalyResult as AnomalyEvent
 
@@ -34,7 +34,7 @@ class RollbackHandler:
     """回滚处理器 — G-CT-002 消费端."""
 
     def on_audit_anomaly(self, event: AnomalyEvent) -> dict:
-        """接收 Audit 异常事件 → 触发回滚流程."""
+        """接收 Audit 异常事件 -> 触发回滚流程."""
 
         action = self._determine_action(event)
 

@@ -5,7 +5,7 @@
 # [CONSUMERS] orphan-judge.judge._run_layer L4
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 六指标加权评分; score≥0.5 → has_value=True; 不修改任何文件
+# [INVARIANTS] 六指标加权评分; score≥0.5 -> has_value=True; 不修改任何文件
 # [MODIFY-GUARD] 修改评分权重必须同步 blueprint.md §3.1
 # [STABILITY] evolving
 # [SAFETY] M

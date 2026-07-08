@@ -5,7 +5,7 @@
 # [CONSUMERS] cli.py; CI/CD workflow
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] Dual trigger: timer-based (daily/weekly/monthly) + webhook-based (git push → per_commit); MUST NOT schedule overlapping game days
+# [INVARIANTS] Dual trigger: timer-based (daily/weekly/monthly) + webhook-based (git push -> per_commit); MUST NOT schedule overlapping game days
 # [MODIFY-GUARD] Adding triggers MUST update _TRIGGER_MAP; scheduler state persisted to data/red_blue/scheduler-state.yaml
 # [STABILITY] evolving
 # [SAFETY] H

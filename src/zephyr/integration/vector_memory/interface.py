@@ -73,7 +73,7 @@ class EmbeddingEngineBase(abc.ABC):
     嵌入引擎抽象基类（OCP 扩展点 VMS-EMB）
 
     实现者要求：
-      - encode(): 文本 → 向量
+      - encode(): 文本 -> 向量
       - 默认模型：BGE-M3 ONNX
       - 维度：1024（BGE-M3）
     """
@@ -94,8 +94,8 @@ class VectorMemoryBase(abc.ABC):
     向量记忆基类（OCP 扩展点 VMS-MEM）
 
     实现者要求：
-      - store(): 文本 → embed → ChromaDB insert
-      - search(): query → embed → ChromaDB query（返回 top_k）
+      - store(): 文本 -> embed -> ChromaDB insert
+      - search(): query -> embed -> ChromaDB query（返回 top_k）
       - 默认使用 per-collection ChromaDB collections
       - 递归分块策略：默认 chunk_size=512 / overlap=64
     """
@@ -107,7 +107,7 @@ class VectorMemoryBase(abc.ABC):
 
     @abc.abstractmethod
     def search(self, query: str, collection: str, top_k: int = 10) -> list[MemoryEntry]:
-        """语义搜索：query → embed → top_k 结果"""
+        """语义搜索：query -> embed -> top_k 结果"""
         ...
 
     @abc.abstractmethod

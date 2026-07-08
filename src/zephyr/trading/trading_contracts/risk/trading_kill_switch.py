@@ -55,7 +55,7 @@ class KillSwitch(BaseModel):
 KILL_SWITCHES: Final[dict[KillSwitchLevel, KillSwitch]] = {
     KillSwitchLevel.POSITION_LIMIT: KillSwitch(
         level=KillSwitchLevel.POSITION_LIMIT,
-        label="位置超限 → reduce_only",
+        label="位置超限 -> reduce_only",
         trigger_condition="position > max_position_limit",
         action="REDUCE_ONLY: 禁止开仓, 允许平仓",
         cooldown_seconds=300,
@@ -63,7 +63,7 @@ KILL_SWITCHES: Final[dict[KillSwitchLevel, KillSwitch]] = {
     ),
     KillSwitchLevel.DAILY_LOSS: KillSwitch(
         level=KillSwitchLevel.DAILY_LOSS,
-        label="日亏>3% → cancel all + disable new",
+        label="日亏>3% -> cancel all + disable new",
         trigger_condition="daily_pnl < -0.03 * aum",
         action="CANCEL_ALL + DISABLE_NEW: 撤销所有挂单, 禁止新单",
         cooldown_seconds=86400,
@@ -71,7 +71,7 @@ KILL_SWITCHES: Final[dict[KillSwitchLevel, KillSwitch]] = {
     ),
     KillSwitchLevel.CIRCUIT_BREAKER: KillSwitch(
         level=KillSwitchLevel.CIRCUIT_BREAKER,
-        label="断路器 → disconnect",
+        label="断路器 -> disconnect",
         trigger_condition="consecutive_rejections >= 5 OR price_deviation > 5%",
         action="DISCONNECT: 断开Broker连接",
         cooldown_seconds=600,
@@ -79,7 +79,7 @@ KILL_SWITCHES: Final[dict[KillSwitchLevel, KillSwitch]] = {
     ),
     KillSwitchLevel.SECOND_LEVEL: KillSwitch(
         level=KillSwitchLevel.SECOND_LEVEL,
-        label="秒级熔断 → full shutdown",
+        label="秒级熔断 -> full shutdown",
         trigger_condition="latency > 1000ms OR fill_rate < 50%",
         action="FULL_SHUTDOWN: 全系统暂停",
         cooldown_seconds=300,
@@ -87,7 +87,7 @@ KILL_SWITCHES: Final[dict[KillSwitchLevel, KillSwitch]] = {
     ),
     KillSwitchLevel.API_TIMEOUT: KillSwitch(
         level=KillSwitchLevel.API_TIMEOUT,
-        label="API超时 → auto kill",
+        label="API超时 -> auto kill",
         trigger_condition="broker_api_timeout > 10s OR heartbeat_miss >= 3",
         action="AUTO_KILL: 自动终止当前Session",
         cooldown_seconds=120,

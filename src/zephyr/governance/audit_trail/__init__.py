@@ -50,17 +50,17 @@
 #   spec_auditor wqa_scorer
 #
 # 命名规则约定（未来新增文件遵循，便于按名定位归簇）：
-#   - audit_*           → 审计准入/写保护簇
-#   - *_bridge          → 桥接适配簇
-#   - trust_*           → 信任引擎簇
-#   - merkle_*          → Merkle 哈希簇
-#   - supply_chain*     → 供应链安全簇
-#   - finding_*         → 发现/摄入簇
-#   - feedback_*        → 反馈策略簇
-#   - 其他              → 功能单体（需在地图中补登职责说明）
+#   - audit_*           -> 审计准入/写保护簇
+#   - *_bridge          -> 桥接适配簇
+#   - trust_*           -> 信任引擎簇
+#   - merkle_*          -> Merkle 哈希簇
+#   - supply_chain*     -> 供应链安全簇
+#   - finding_*         -> 发现/摄入簇
+#   - feedback_*        -> 反馈策略簇
+#   - 其他              -> 功能单体（需在地图中补登职责说明）
 #
 # 新AI使用指引（对应向内收原则④：如何发现+如何不重造）：
-#   1. 定位符号：查 _LAZY_IMPORTS 字典（符号→模块路径+属性名映射），再 import 对应子模块
+#   1. 定位符号：查 _LAZY_IMPORTS 字典（符号->模块路径+属性名映射），再 import 对应子模块
 #   2. 定位模块：本地图按文件名前缀归位，直接 import zephyr.governance.audit_trail.<module>
 #   3. 新增功能前：先 CapabilityLookup.find("<关键词>") 反查是否已有实现（防重造）
 #   4. 新增文件：按命名规则命名（归对应前缀簇或功能单体），并更新 _LAZY_IMPORTS + 本地图 + 能力卡

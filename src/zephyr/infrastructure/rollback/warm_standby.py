@@ -24,9 +24,9 @@ WarmStandby — 温备热切（git worktree 副本维护）。
 
 依据: 蓝图 MOD-INF-021 §6.12 B61 + D-021-15
 
-维护 git worktree 温备副本 → Agent 在回滚期间切换到读备副本。
+维护 git worktree 温备副本 -> Agent 在回滚期间切换到读备副本。
 RTO 从 ~2s 降低到 <100ms（worktree 切换 + 指针替换）。
-后台异步完成回滚验证后更新温备 → exit code 14。
+后台异步完成回滚验证后更新温备 -> exit code 14。
 """
 
 from __future__ import annotations

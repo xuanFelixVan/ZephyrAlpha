@@ -28,7 +28,7 @@ class DistillationResult:
 
 
 class KnowledgeDistiller:
-    """DBSCAN 同类 KE → 1 代表 KE + 标记 superseded (DD84)."""
+    """DBSCAN 同类 KE -> 1 代表 KE + 标记 superseded (DD84)."""
 
     def distill(self, ke_entries: list[tuple[str, str]]) -> list[DistillationResult]:
         return [

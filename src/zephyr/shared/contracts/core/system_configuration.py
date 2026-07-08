@@ -34,7 +34,7 @@ ZephyrAlpha — shared/contracts/system_configuration.py
 
 CTR-P1-010: SystemConfiguration / 系统配置
 
-基础设施 → 全系统配置契约。基于dataclass的配置加载API，支持环境变量覆盖和热重载。
+基础设施 -> 全系统配置契约。基于dataclass的配置加载API，支持环境变量覆盖和热重载。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-010
 Version: 1.0

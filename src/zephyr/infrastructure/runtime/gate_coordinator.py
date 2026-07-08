@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.infrastructure.rollback.rollback_engine; zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] freeze → thaw 原子配对; 空操作不报错
+# [INVARIANTS] freeze -> thaw 原子配对; 空操作不报错
 # [MODIFY-GUARD] freeze/thaw流程变更必须同步Pipeline+Orc
 # [STABILITY] evolving
 # [SAFETY] M
@@ -14,7 +14,7 @@
 # [TESTS] scripts/connect/rbk_gate.py --trigger
 # [A_module] module_id=MOD-INF_gate_coordinator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Rollback→Gate 协调器 — freeze_all / thaw_all
+"""Rollback->Gate 协调器 — freeze_all / thaw_all
 
 SRC-0041: 2026-07-01 从 governance/gate_coordinator.py 迁移至真源位置
 infrastructure/rollback/gate_coordinator.py（MODULE头已声明本路径，物理位置修正）。

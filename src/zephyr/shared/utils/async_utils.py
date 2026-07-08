@@ -24,8 +24,8 @@
 替代散布 40+ 处的裸 asyncio.run() 调用（5.12.8 签名漂移/边界统一）。
 
 设计：
-  - 无运行中的事件循环 → asyncio.run(coro)（快速路径，与原行为完全一致）
-  - 有运行中的事件循环 → 在新线程中创建独立事件循环运行协程
+  - 无运行中的事件循环 -> asyncio.run(coro)（快速路径，与原行为完全一致）
+  - 有运行中的事件循环 -> 在新线程中创建独立事件循环运行协程
     （避免嵌套 RuntimeError；协程每次新建，不捕获 loop-bound 状态，线程隔离安全）
 
 SSoT: 5.12.8 修复方向「统一async/sync边界」
@@ -50,8 +50,8 @@ def run_sync(coro: Awaitable[T], *, timeout: float | None = None) -> T:
     5.12.8 修复：替代散布 40+ 处的裸 asyncio.run() 调用。
 
     行为：
-      - 无运行中的事件循环 → asyncio.run(coro)（快速路径，与原行为一致）
-      - 有运行中的事件循环 → 在新线程中创建独立事件循环运行协程
+      - 无运行中的事件循环 -> asyncio.run(coro)（快速路径，与原行为一致）
+      - 有运行中的事件循环 -> 在新线程中创建独立事件循环运行协程
         （避免 "asyncio.run() cannot be called from a running event loop"）
 
     Args:

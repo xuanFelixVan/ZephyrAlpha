@@ -281,7 +281,7 @@ class EvolutionEngine:
                         severity=Severity.HIGH,
                         title=f"Pattern detected: {signal.value}",
                         rationale=f"Aggregated {matched_count} tag(s) matching {signal.value}",
-                        evidence=[f"Matched tags: {tag_set} → count={matched_count}"],
+                        evidence=[f"Matched tags: {tag_set} -> count={matched_count}"],
                         affected_task_ids=[e.task_id for e in entries if set(e.tags) & tag_set],
                         recommended_action=f"Investigate {signal.value} pattern",
                         estimated_impact="Recurring pattern may affect stability",

@@ -31,7 +31,7 @@ handoff_package: JSON(drift_runbook + git bisect + pre-fix快照 + baseline diff
 resume_workflow: 自动加载注入context推进状态
 
 
-abort: 文件状态不一致→重新生成+通知Owner
+abort: 文件状态不一致->重新生成+通知Owner
 
 
 对标 blueprint.md §6.14。"""

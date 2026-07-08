@@ -34,7 +34,7 @@ ZephyrAlpha — shared/contracts/market_data.py
 
 CTR-001: NormalizedMarketData / 标准化行情数据
 
-D_DATA → D_FACTOR 核心数据契约。质量门禁通过后的标准化行情数据。
+D_DATA -> D_FACTOR 核心数据契约。质量门禁通过后的标准化行情数据。
 
 SSoT: cross_layer_contracts.yaml -> CTR-001
 Version: 1.0

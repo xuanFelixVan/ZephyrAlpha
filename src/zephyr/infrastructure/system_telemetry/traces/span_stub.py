@@ -170,7 +170,7 @@ def get_trace_tree(trace_id: str) -> list[dict[str, Any]]:
         return [s.snapshot() for s in _SPAN_REGISTRY.values() if s.context.trace_id == trace_id]
 
 
-# 5.132.3 修复: threading.local → contextvars,消除跨请求span栈泄漏
+# 5.132.3 修复: threading.local -> contextvars,消除跨请求span栈泄漏
 # 原 _THREAD_LOCAL._span_stack 在线程池复用线程时残留上个请求的span栈,
 # 新请求误将stale span作为parent,破坏trace树结构。contextvars在asyncio和
 # 经_wrap_ctx包装的线程池中正确传播且请求边界自动隔离。
@@ -220,7 +220,7 @@ def noop_span(
         yield span
         span.finish("OK")
     except BaseException:
-        # 5.163.5 修复: except Exception → BaseException,确保 Ctrl+C/SystemExit 时
+        # 5.163.5 修复: except Exception -> BaseException,确保 Ctrl+C/SystemExit 时
         # span 也调用 finish("ERROR"),避免 span 状态停留在 UNSET。
         span.finish("ERROR")
         raise

@@ -25,7 +25,7 @@
     3. match_tick_order:   Tick级5档撮合（逐档消化，流动性约束）
 
 约束:
-  - 纯函数式实现: 输入(order, order_book/tick_data, config) → 输出(MatchingFill)
+  - 纯函数式实现: 输入(order, order_book/tick_data, config) -> 输出(MatchingFill)
   - 无副作用: 不修改输入参数，不访问外部状态，不产生I/O
   - MatchingConfig 为 frozen dataclass，实例化后不可变
   - A股约束: 100股整数倍(由调用方校验)、涨跌停(由调用方校验)、T+1(由调用方校验)
@@ -221,9 +221,9 @@ class MatchingLogic:
             ...
 
     撮合规则:
-      - 市价单(MARKET): BUY→ask1价成交, SELL→bid1价成交, 应用滑点
-      - 限价单(LIMIT): BUY: limit_price>=ask1→ask1成交, SELL: limit_price<=bid1→bid1成交, 否则不成交
-      - Tick级(TICK): 市价单逐档消化(ask1→ask2→...→ask5), 流动性约束(单档成交量上限=该档vol)
+      - 市价单(MARKET): BUY->ask1价成交, SELL->bid1价成交, 应用滑点
+      - 限价单(LIMIT): BUY: limit_price>=ask1->ask1成交, SELL: limit_price<=bid1->bid1成交, 否则不成交
+      - Tick级(TICK): 市价单逐档消化(ask1->ask2->...->ask5), 流动性约束(单档成交量上限=该档vol)
     """
 
     def __init__(self, config: Optional[MatchingConfig] = None):
@@ -298,8 +298,8 @@ class MatchingLogic:
         """限价单撮合（限价内成交，否则不成交）
 
         撮合规则:
-          - BUY: limit_price >= ask1 → 以 ask1 成交(优于限价); 否则不成交
-          - SELL: limit_price <= bid1 → 以 bid1 成交(优于限价); 否则不成交
+          - BUY: limit_price >= ask1 -> 以 ask1 成交(优于限价); 否则不成交
+          - SELL: limit_price <= bid1 -> 以 bid1 成交(优于限价); 否则不成交
           - 应用滑点(在成交价基础上)
           - 计算手续费
 
@@ -361,9 +361,9 @@ class MatchingLogic:
         """Tick级5档撮合（做T专用，逐档消化，流动性约束）
 
         撮合规则:
-          - BUY(市价): 逐档消化 ask1→ask2→...→ask5, 单档成交量上限=该档askVol
+          - BUY(市价): 逐档消化 ask1->ask2->...->ask5, 单档成交量上限=该档askVol
             - 若订单量>5档总卖量, 部分成交(成交量为5档总卖量)
-          - SELL(市价): 逐档消化 bid1→bid2→...→bid5, 单档成交量上限=该档bidVol
+          - SELL(市价): 逐档消化 bid1->bid2->...->bid5, 单档成交量上限=该档bidVol
           - 限价单: 在Tick盘口上按限价单规则撮合(调用match_limit_order)
           - 加权平均成交价 = sum(单档成交量 * 单档价格) / 总成交量
           - 应用滑点(在加权均价基础上)

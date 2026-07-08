@@ -91,7 +91,7 @@ class DependencyGraph:
                     CycleDetection(
                         has_cycle=True,
                         cycle_path=path[cycle_start:] + [tid],
-                        message=f"Dependency cycle detected: {' → '.join(path[cycle_start:] + [tid])}",
+                        message=f"Dependency cycle detected: {' -> '.join(path[cycle_start:] + [tid])}",
                     )
                 )
                 return

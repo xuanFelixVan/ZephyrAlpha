@@ -21,7 +21,7 @@ SandboxEnforcer — Agent 沙盒隔离。
 依据: 蓝图 MOD-INF-021 §7 Phase 9 + §6.16 B121 + exit code 39
 
 强制执行或验证 AI Agent 在沙盒中执行:
-    - 非 sandbox 环境调用 → exit 39 (SANDBOX_BREACH)
+    - 非 sandbox 环境调用 -> exit 39 (SANDBOX_BREACH)
     - 物理隔离: sandbox 文件系统 + 网络隔离
     - Agent PID 与沙盒 NS 绑定
 """

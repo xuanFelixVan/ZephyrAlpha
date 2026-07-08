@@ -23,10 +23,10 @@ ZephyrAlpha 蓝图拆解器
 输出：双向存储——SQLite（task_repo.create）+ ``docs_dir/decomposition/`` 下
 ``decomposition_result.json`` 及逐任务 ``tasks/{task_id}.md``（human companion）。
 
-蓝图前缀 → Task.namespace（task-card-standard / schemas.TaskNamespace）映射：
-  ADR-* → KBG     TD-* → DW（技术债登记）
-  CS-*  → STD     CP-* → CP
-  INFRA-* / SCRIPT-* → OPS（基础设施与脚本治理并入 OPS 序号空间）
+蓝图前缀 -> Task.namespace（task-card-standard / schemas.TaskNamespace）映射：
+  ADR-* -> KBG     TD-* -> DW（技术债登记）
+  CS-*  -> STD     CP-* -> CP
+  INFRA-* / SCRIPT-* -> OPS（基础设施与脚本治理并入 OPS 序号空间）
 
 task_id 真源：`schemas.Task` 要求 `^(KBG|CP|KE|STD|DW|SRC|OPS)-\\d+$`
 
@@ -54,7 +54,7 @@ from zephyr.shared.schema.task_types import TaskNamespace, TaskStatus
 
 logger = logging.getLogger(__name__)
 
-# 蓝图里出现的别名 → schemas.TaskNamespace（合法 task_id 前缀）
+# 蓝图里出现的别名 -> schemas.TaskNamespace（合法 task_id 前缀）
 _BLUEPRINT_LABEL_TO_NAMESPACE: dict[str, TaskNamespace] = {
     "CP": TaskNamespace.CP,
     "KE": TaskNamespace.KE,
@@ -147,7 +147,7 @@ def _resolve_task_namespace(label: str) -> TaskNamespace | None:
 
 class BlueprintDecomposer:
     """
-    治理文档 → 逐条拆解 → 生成 TaskCard 列表。
+    治理文档 -> 逐条拆解 -> 生成 TaskCard 列表。
 
     每条列表项可从 marker 推断命名空间；否则使用 decompose_* 传入的 namespace。
     """
@@ -163,7 +163,7 @@ class BlueprintDecomposer:
 
     # === target_layer 自动映射（对齐 target_layer_vocabulary.yaml v1.0.0）===
 
-    # 功能域 → 域标识符映射（基于 target_layer_vocabulary.yaml）
+    # 功能域 -> 域标识符映射（基于 target_layer_vocabulary.yaml）
     _FUNC_DOMAIN_TO_TARGET_LAYER: dict[str, str] = {
         "data": "D_MKT_DATA",
         "factor": "D_FACTOR",
@@ -180,7 +180,7 @@ class BlueprintDecomposer:
         "safety_escalation": "D_AUTONOMY_PERM",
     }
 
-    # 架构层 → 域标识符映射（仅 L0 有明确1:1映射，其他层不映射）
+    # 架构层 -> 域标识符映射（仅 L0 有明确1:1映射，其他层不映射）
     # SSoT: layer_vocabulary.yaml — layer 合法值参考词表
     _LAYER_TO_TARGET_LAYER: dict[str, str] = {
         "L0_infrastructure": "D_INFRA_OPS",
@@ -222,7 +222,7 @@ class BlueprintDecomposer:
         phase: int = 1,
     ) -> DecompositionResult:
         """
-        拆解单个蓝图文件 → 生成 DecompositionResult。
+        拆解单个蓝图文件 -> 生成 DecompositionResult。
 
         Args:
             blueprint_path: 蓝图文件路径
@@ -553,7 +553,7 @@ class BlueprintDecomposer:
                         self.task_repo.transition(task.task_id, TaskStatus.READY)
                         task.status = TaskStatus.READY
                     except Exception as e:
-                        logger.warning(f"PENDING→READY 转换失败: {task.task_id} — {e}", exc_info=True)
+                        logger.warning(f"PENDING->READY 转换失败: {task.task_id} — {e}", exc_info=True)
             if failed_ids:
                 logger.warning(f"共 {len(failed_ids)} 张卡入库失败: {failed_ids}")
 

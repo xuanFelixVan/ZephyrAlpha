@@ -31,7 +31,7 @@ know which blueprint to read."
 对标
 ----
 Codified Context (arXiv 2602.20478) §3.3.1 Knowledge Retrieval Service:
-  find_relevant_context(task) → queries Tier 3 (Cold Memory) via keyword search
+  find_relevant_context(task) -> queries Tier 3 (Cold Memory) via keyword search
 
 This server extends the pattern from Tier-3 document retrieval to
 **blueprint-level** routing: given a task description, it ranks all

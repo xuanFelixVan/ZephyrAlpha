@@ -22,12 +22,12 @@ VectorBridge — MOD-INF-011 CE/KB 外部集成适配器
 
 接口
 ----
-- search_for_ce(query, k) → CE 检索专用接口
-- sync_knowledge(ke_id, content) → KB 同步写入 knowledge Collection
-- sync_rules(rule_id, content) → Governance 同步写入 rules Collection
-- write_decision(task_id, decision_text) → Orchestrator 写入 decisions Collection
-- write_session_summary(session_id, summary) → SessionMgr 写入 session_snapshots
-- audit_operation(operation, details) → 写入审计日志
+- search_for_ce(query, k) -> CE 检索专用接口
+- sync_knowledge(ke_id, content) -> KB 同步写入 knowledge Collection
+- sync_rules(rule_id, content) -> Governance 同步写入 rules Collection
+- write_decision(task_id, decision_text) -> Orchestrator 写入 decisions Collection
+- write_session_summary(session_id, summary) -> SessionMgr 写入 session_snapshots
+- audit_operation(operation, details) -> 写入审计日志
 """
 
 from __future__ import annotations

@@ -80,9 +80,9 @@ class AdversarialTester:
         AdversarialTestCase(
             test_id="ADV-BUDGET-006",
             category="degradation_chain_stress",
-            description="真实降级链L0→L4全链路推进——advance_degradation单调递增不可跳跃",
+            description="真实降级链L0->L4全链路推进——advance_degradation单调递增不可跳跃",
             expected_detected=True,
-            payload="record_consumption 50%→70%→80%→85%→95%→100%, verify advance_degradation L0→L4 monotonic",
+            payload="record_consumption 50%->70%->80%->85%->95%->100%, verify advance_degradation L0->L4 monotonic",
         ),
         AdversarialTestCase(
             test_id="ADV-BUDGET-007",
@@ -231,11 +231,11 @@ class AdversarialTester:
         return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
 
     def _run_degradation_chain_stress(self, test: AdversarialTestCase) -> AdversarialResult:
-        """ADV-BUDGET-006: 真实降级链L0→L4全链路推进。
+        """ADV-BUDGET-006: 真实降级链L0->L4全链路推进。
 
         连续调用 advance_degradation，验证：
         1. 每次返回 True（非最高级）
-        2. 级别单调递增 L0→L1→L2→L3→L4
+        2. 级别单调递增 L0->L1->L2->L3->L4
         3. 不可跳跃（每次只推进1级）
         4. 到达最高级后再 advance 返回 False
         """
@@ -284,7 +284,7 @@ class AdversarialTester:
         detected = True
         passed = detected == test.expected_detected
         confidence = 0.95
-        detail = f"PASS: degradation chain L0→L{max_steps} monotonic, no skip, max-level returns False ({[l.value for l in levels]})"
+        detail = f"PASS: degradation chain L0->L{max_steps} monotonic, no skip, max-level returns False ({[l.value for l in levels]})"
         return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
 
     def _run_multi_provider_race(self, test: AdversarialTestCase) -> AdversarialResult:
@@ -322,7 +322,7 @@ class AdversarialTester:
         detected = (success_count == 1 and fail_count == 3)
         passed = detected == test.expected_detected
         confidence = 0.95 if detected else 0.1
-        detail = f"{'PASS' if passed else 'FAIL'}: 4 concurrent claims → success={success_count}, fail={fail_count} (expected 1 success, 3 fail)"
+        detail = f"{'PASS' if passed else 'FAIL'}: 4 concurrent claims -> success={success_count}, fail={fail_count} (expected 1 success, 3 fail)"
         return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
 
     def _run_stream_abort_chunked(self, test: AdversarialTestCase) -> AdversarialResult:

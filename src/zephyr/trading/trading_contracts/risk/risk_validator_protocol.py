@@ -22,7 +22,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    # 5.145.12 修复：limits: Any → RiskLimits（SSoT: cross_layer_contracts.yaml CTR-003）
+    # 5.145.12 修复：limits: Any -> RiskLimits（SSoT: cross_layer_contracts.yaml CTR-003）
     # TYPE_CHECKING 导入避免运行期循环依赖；from __future__ import annotations 使注解惰性求值
     from zephyr.shared.contracts.risk_limits import RiskLimits
 

@@ -57,7 +57,7 @@ PHASE_SPECS: Final[dict[TransitionPhase, PhaseSpec]] = {
         phase=TransitionPhase.GRAY_RAMP,
         name="灰度上线",
         duration_days=30,
-        description="逐级放大(1%→5%→20%→50%→100%)至全量",
+        description="逐级放大(1%->5%->20%->50%->100%)至全量",
         key_gates=["drawdown < 1% per ramp step", "no circuit_breaker triggers", "daily_loss < 3%"],
     ),
 }

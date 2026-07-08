@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.trackers
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.code_dedup
-# [CONSUMERS] zephyr.governance.__init__（blind_spot_tracker→BlindSpotStatus）
+# [CONSUMERS] zephyr.governance.__init__（blind_spot_tracker->BlindSpotStatus）
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] tracker族子包; 新增文件MUST在capability_canonical_file_registry.yaml登记creation_token

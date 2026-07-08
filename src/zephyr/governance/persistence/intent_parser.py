@@ -31,9 +31,9 @@ safety_level: M
 将用户 query 转换为 ``IntentResult`` 输出，**级联**三个阶段：
 
   Stage 1 — keyword 匹配（``IntentKeywordMapper``）
-    confidence ≥ 0.9  → 直接执行
+    confidence ≥ 0.9  -> 直接执行
   Stage 2 — embedding 语义检索（ChromaDB，Protocol 注入）
-    confidence ≥ 0.7  → 直接执行
+    confidence ≥ 0.7  -> 直接执行
   Stage 3 — LLM 深度理解（Protocol 注入）
     **兜底**，永远返回一个结果（可能 requires_human=True）
 
@@ -98,7 +98,7 @@ DEFAULT_STAGE_THRESHOLDS: Final[dict[str, float]] = {
     "stage1_accept": 0.90,  # Stage 1 confidence ≥ 0.9 直接执行
     "stage2_accept": 0.70,  # Stage 2 confidence ≥ 0.7 直接执行
     # Stage 3 为兜底，无阈值
-    "stage3_human_floor": 0.30,  # LLM 结果 confidence < 此值 → requires_human=True
+    "stage3_human_floor": 0.30,  # LLM 结果 confidence < 此值 -> requires_human=True
 }
 
 # ---------------------------------------------------------------------------
@@ -258,7 +258,7 @@ class IntentParser:
             total_cost += s3.cost_usd
             return self._finalize(s3, trace, total_cost, start, source_stage="llm")
 
-        # 兜底：三阶段都不可用 → 返回 Stage 2 或 Stage 1 的结果并 requires_human
+        # 兜底：三阶段都不可用 -> 返回 Stage 2 或 Stage 1 的结果并 requires_human
         fallback_mid.requires_human = True
         fallback_mid.fallback_hint = fallback_mid.fallback_hint or "all-stages-unavailable"
         return self._finalize(fallback_mid, trace, total_cost, start, source_stage=fallback_mid.source_stage)
@@ -267,7 +267,7 @@ class IntentParser:
 
     def _run_stage2(self, query: str, stage1: IntentResult) -> IntentResult:
         """调用注入的 EmbeddingSearcher，按域聚合得分产出 IntentResult。"""
-        if self._emb is None: raise RuntimeError("embedding service not injected")  # 5.88.5 修复: assert→if/raise
+        if self._emb is None: raise RuntimeError("embedding service not injected")  # 5.88.5 修复: assert->if/raise
         try:
             hits = self._emb(query, top_k=5)
         except Exception as exc:  # — 检索失败降级到 Stage 3
@@ -320,7 +320,7 @@ class IntentParser:
         mid: IntentResult,
     ) -> IntentResult:
         """调用注入的 LLM，返回兜底 IntentResult。"""
-        if self._llm is None: raise RuntimeError("LLM service not injected")  # 5.88.5 修复: assert→if/raise
+        if self._llm is None: raise RuntimeError("LLM service not injected")  # 5.88.5 修复: assert->if/raise
         try:
             verdict = self._llm(query, context=context)
         except Exception as exc:  # — LLM 失败时保守兜底
@@ -466,7 +466,7 @@ class IntentType(str, Enum):
     """任务意图类型——10 分类，覆盖 task_type 枚举 + QUERY/DEBUG 辅助模式。
 
     DD4 决策：10 分类覆盖 task_type 枚举 + QUERY/DEBUG 辅助模式。
-    否决方案: "30+ 细粒度" — 分类过多→keyword 精度下降。
+    否决方案: "30+ 细粒度" — 分类过多->keyword 精度下降。
     重评条件: 混淆率 > 10%。
     """
 

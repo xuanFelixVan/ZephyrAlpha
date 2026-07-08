@@ -182,7 +182,7 @@ utilities:
     entry_point: from zephyr.shared.utils.file_utils import atomic_write, safe_read, backup_and_rollback
     exports:
     - symbol: atomic_write
-      note: POSIX 原子写——mkstemp→flush→fsync→os.replace
+      note: POSIX 原子写——mkstemp->flush->fsync->os.replace
     - symbol: safe_read
       note: ?+ SHA-256 校验
     - symbol: backup_and_rollback
@@ -334,7 +334,7 @@ health:
   - symbol: AggregateHealth
     note: 聚合健康检查器——check()/check_block_fast()
   - symbol: HealthSummary
-    note: 健康摘要 dataclass + to_dict()→JSON
+    note: 健康摘要 dataclass + to_dict()->JSON
   - symbol: HealthStatus
     note: ALL_HEALTHY / DEGRADED / UNHEALTHY / UNKNOWN
   - symbol: collect_health()
@@ -347,9 +347,9 @@ serialization:
     from_json, ENCODING_RULES
   key_exports:
   - symbol: to_dict(obj)
-    note: Pydantic/dataclass ?dict (Decimal→str, datetime→ISO 8601 UTC)
+    note: Pydantic/dataclass ?dict (Decimal->str, datetime->ISO 8601 UTC)
   - symbol: from_dict(data, cls)
-    note: 逆序列化——含 auto-coerce int→str
+    note: 逆序列化——含 auto-coerce int->str
   - symbol: to_json(obj)
     note: 对象 ?JSON 字节
   - symbol: from_json(data, cls)
@@ -622,7 +622,7 @@ agent_rbac:
       description: 参数护栏——schema 白名?+ 范围限制 + 危险模式检测（DROP TABLE/shell injection
     l4_sequence_guard:
       file: agent_rbac/sequence_guard.py
-      description: 序列护栏——会话级操作序列追踪 + 禁止序列阻断（read_sensitive→external_output
+      description: 序列护栏——会话级操作序列追踪 + 禁止序列阻断（read_sensitive->external_output
       note: 最关键盲点补丁——防止多步合法操作组成攻击链
     l5_output_guard:
       file: agent_rbac/output_guard.py
@@ -909,7 +909,7 @@ consumers:
   - flags.FeatureFlag
   - logging.get_logger
   - errors.FeedbackError
-  note: MOD-FEEDBACK_LOOP v0.5.0——基于历?Action→Effect)学习的Action推荐模型
+  note: MOD-FEEDBACK_LOOP v0.5.0——基于历?Action->Effect)学习的Action推荐模型
 - module: feedback_loop.session_awareness
   depends_on:
   - logging.get_logger
@@ -977,7 +977,7 @@ consumers:
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-FEEDBACK_LOOP v0.7.0—?我不知道'显式输出→HUMAN_REQUIRED'
+  note: MOD-FEEDBACK_LOOP v0.7.0—?我不知道'显式输出->HUMAN_REQUIRED'
 - module: feedback_loop.longitudinal_meta
   depends_on:
   - logging.get_logger
@@ -988,7 +988,7 @@ consumers:
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-FEEDBACK_LOOP v0.7.0——FLE vs EMA对照→真正的价值增
+  note: MOD-FEEDBACK_LOOP v0.7.0——FLE vs EMA对照->真正的价值增
 - module: feedback_loop.deprecation_advisor
   depends_on:
   - logging.get_logger
@@ -1191,9 +1191,9 @@ audit_trail:
     description: AI 行为异常检测引擎—? 种异常签?+ 行为基线模型 + 自动告警。Experimental 阶段落位
     key_exports:
     - symbol: AnomalyDetector.detect()
-      note: 单条目异常检测→返回 anomaly_score (0~1)
+      note: 单条目异常检测->返回 anomaly_score (0~1)
     - symbol: AnomalyDetector.detect_batch()
-      note: 批量异常检测→窗口内统
+      note: 批量异常检测->窗口内统
     signatures:
     - id: ANM-001
       pattern: 越权操作
@@ -1231,16 +1231,16 @@ audit_trail:
     description: 蓝图 vs 实际操作漂移检测器——对?AI 实际做了什?vs 蓝图规定该做什么。Experimental 阶段落位
     key_exports:
     - symbol: DriftDetector.compare()
-      note: 单条目漂移检测→DriftResult
+      note: 单条目漂移检测->DriftResult
     - symbol: DriftDetector.batch_compare()
-      note: 批量漂移检测→DriftReport
+      note: 批量漂移检测->DriftReport
     drift_types:
     - unauthorized_op——AI 执行了蓝图未授权的操
     - skipped_check——AI 跳过了蓝图规定的检查项
     - immutable_violation——AI 修改了不可变文件
   feedback:
     file: audit_trail/writer.py (aggregator)
-    description: 审计聚合数据回写 Policy——对?ADR-0010 §4.4 Runtime→Policy 接口。Beta 阶段落位
+    description: 审计聚合数据回写 Policy——对?ADR-0010 §4.4 Runtime->Policy 接口。Beta 阶段落位
     schedule: '每日 00:30 UTC 聚合: Top 10 异常 + 漂移摘要 + 权限违规趋势 + 高成本事'
     consumer: feedback_to_policy.py ?GitHub PR (Owner 审批)
   lifecycle:

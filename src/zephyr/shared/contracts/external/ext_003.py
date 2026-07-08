@@ -35,7 +35,7 @@ EXT-003: LLM Providers / 大模型推理接口
 
 支持降级（LLM 不可用时跳过 AI 增强，主流程不中断）；调用必须经过 AI Agent Ops 层，D_FACTOR~D_REPORTING 禁止直接调用 (INV-007: events crossing this boundary must carry idempotency_key)
 
-SSoT: cross_layer_contracts.yaml → EXT-003
+SSoT: cross_layer_contracts.yaml -> EXT-003
 Version: 1.0
 Status: AUTO-GENERATED — DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

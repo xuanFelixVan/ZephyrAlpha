@@ -25,7 +25,7 @@ tasks:
     source: ifind
     schedule: daily_kline
     incremental: true
-    dependencies: ["adj_factor_incremental"]  # DAG: adj_factor → kline_daily_hfq
+    dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_daily_hfq
     capability: kline_daily
     symbols: null
     extra:
@@ -47,7 +47,7 @@ tasks:
     source: ifind
     schedule: daily_kline
     incremental: true
-    dependencies: ["kline_daily_incremental"]  # DAG: kline_daily → daily_valuation
+    dependencies: ["kline_daily_incremental"]  # DAG: kline_daily -> daily_valuation
     capability: daily_valuation
     symbols: null
     extra:

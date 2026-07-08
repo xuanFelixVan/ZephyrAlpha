@@ -18,7 +18,7 @@
 """
 outbox.py —— 事务性 Outbox 模式（Phase 10 新增 | 盲点 B24 修复）
 
-痛点修复：事件发布不在事务内 → "写数据库成功但事件丢失" 或 "事件发出但数据库回滚"——
+痛点修复：事件发布不在事务内 -> "写数据库成功但事件丢失" 或 "事件发出但数据库回滚"——
   1. 当前 Observer.emit() 是 fire-and-forget——没有事务性保证
   2. dlq.py 只能捕获 handler 异常——不能解决 "事件根本没发出" 的问题
   3. 在数据库写入和事件发布之间存在根本性的原子性缺口
@@ -165,7 +165,7 @@ class MemoryOutboxStore:
 
 
 class OutboxPublisher:
-    """后台轮询型 Outbox 发布器——从 outbox 表取 PENDING 消息 → 调用 handler 发布。
+    """后台轮询型 Outbox 发布器——从 outbox 表取 PENDING 消息 -> 调用 handler 发布。
 
     对标 Debezium 的轮询模式（非 CDC，简单可靠）。
 
@@ -235,7 +235,7 @@ class OutboxPublisher:
                         if asyncio.iscoroutine(result):
                             await result
                         await self._store.mark_published(entry.id)
-                        logger.debug("outbox: %s published → %s", entry.id, entry.event_type)
+                        logger.debug("outbox: %s published -> %s", entry.id, entry.event_type)
                     except Exception as exc:
                         await self._store.mark_failed(entry.id)
                         logger.error("outbox: %s publish failed: %s", entry.id, exc, exc_info=True)

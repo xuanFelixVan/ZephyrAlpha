@@ -5,7 +5,7 @@
 # [CONSUMERS] issue_aggregator; alignment_engine
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 禁碰规则过滤; 置信度 < threshold → HOLD; FORBIDDEN 规则 100% 阻断
+# [INVARIANTS] 禁碰规则过滤; 置信度 < threshold -> HOLD; FORBIDDEN 规则 100% 阻断
 # [MODIFY-GUARD] 修改过滤逻辑必须同步 forbidden_patterns.yaml
 # [STABILITY] evolving
 # [SAFETY] H
@@ -63,7 +63,7 @@ class SafetyBoundary:
             results.append(FilteredTrigger(t, decision))
             if decision is not SafetyDecision.PROCEED:
                 logger.debug(
-                    "Trigger %s:%s → %s (certainty=%.2f)",
+                    "Trigger %s:%s -> %s (certainty=%.2f)",
                     t.trigger_type,
                     t.target_location,
                     decision,

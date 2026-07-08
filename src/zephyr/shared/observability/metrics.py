@@ -19,9 +19,9 @@
 metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增 | 盲点 B17 修复）
 
 痛点修复：health.py 能回答"是否健康"，但不能回答"有多快/多少错误"——
-  1. 没有 Counter / Gauge / Histogram → 无法追踪 API 调用成功率/延迟分布
-  2. 没有 Prometheus 风格的指标 → DevOps 无法接入监控系统
-  3. AI agent 的性能指标缺失 → 无法做 AI 工程质量分析
+  1. 没有 Counter / Gauge / Histogram -> 无法追踪 API 调用成功率/延迟分布
+  2. 没有 Prometheus 风格的指标 -> DevOps 无法接入监控系统
+  3. AI agent 的性能指标缺失 -> 无法做 AI 工程质量分析
 
 设计对标：
   - Prometheus Python client（Counter / Gauge / Histogram / Summary）

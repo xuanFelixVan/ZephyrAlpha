@@ -176,7 +176,7 @@ def cmd_history() -> None:
         except Exception as e:
             logger.warning("suppressed error in cli", exc_info=True)
         size_kb = f.stat().st_size / 1024
-        print(f"  {ts}  →  {record_count} models, {size_kb:.1f}KB")
+        print(f"  {ts}  ->  {record_count} models, {size_kb:.1f}KB")
     print()
 
 

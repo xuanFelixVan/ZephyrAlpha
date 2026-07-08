@@ -28,7 +28,7 @@ gate-directory-contract），导致 DCR-001~007 在 gateway 路径完全失效�
 - 导致 DCR-001（doc_type 目录归属）、DCR-002、DCR-005（扩展名白名单）、
   DCR-006（扩展名黑名单）、DCR-007（根目录白名单）在 gateway 路径全部失效
 - 攻击者通过 GitCommitGateway 提交 ``docs/03_modules/foo.py``（DCR-006 应阻断）
-  → gateway 不检扩展名 → 提交成功 → 目录契约被绕过
+  -> gateway 不检扩展名 -> 提交成功 -> 目录契约被绕过
 
 治本方案
 --------

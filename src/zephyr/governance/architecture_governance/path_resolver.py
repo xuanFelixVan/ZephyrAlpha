@@ -51,7 +51,7 @@ class PathResolver:
         self.src_root = os.path.join(self.project_root, "src", "zephyr")
         self._file_index = defaultdict(list)
         self._dir_index = set()
-        self._module_map = {}  # module_name → [directories]
+        self._module_map = {}  # module_name -> [directories]
         self._build_index()
 
     def _build_index(self):
@@ -278,7 +278,7 @@ if __name__ == "__main__":
         "kb",
     ]:
         dirs = resolver.resolve_module(mod)
-        print(f"  {mod:25s} → {[os.path.relpath(d, resolver.project_root) for d in dirs[:2]]}")
+        print(f"  {mod:25s} -> {[os.path.relpath(d, resolver.project_root) for d in dirs[:2]]}")
 
     print("\nPath validation test:")
     test_paths = [

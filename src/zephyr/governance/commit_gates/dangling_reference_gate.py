@@ -139,10 +139,10 @@ def _get_head_content(project_root: Path, rel_path: str) -> str | None:
             timeout=_GIT_SHOW_TIMEOUT,
         )
     except (subprocess.TimeoutExpired, OSError) as e:
-        # git 命令本身不可达 → 抛异常让调用方 fail-closed
+        # git 命令本身不可达 -> 抛异常让调用方 fail-closed
         raise OSError(f"git show HEAD:{rel_path} failed: {e}") from e
     if result.returncode != 0:
-        # 文件不在 HEAD 中（新文件）→ 返回 None 表示无历史版本
+        # 文件不在 HEAD 中（新文件）-> 返回 None 表示无历史版本
         return None
     return result.stdout.decode("utf-8", errors="replace")
 
@@ -205,7 +205,7 @@ def make_dangling_reference_gate() -> GateSpec:
             try:
                 head_content = _get_head_content(project_root, rel)
             except OSError as e:
-                # git 命令失败 → fail-closed 阻断
+                # git 命令失败 -> fail-closed 阻断
                 return False, f"git show failed for {rel} (fail-closed): {e}"
 
             if head_content is None:

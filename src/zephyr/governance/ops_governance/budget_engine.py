@@ -446,9 +446,9 @@ class BudgetEngine:
         except Exception as e:
             logger.warning("suppressed error in budget_engine", exc_info=True)
 
-        # 事件驱动响应链 1: 预算超限 → 自动降级
+        # 事件驱动响应链 1: 预算超限 -> 自动降级
         self._check_budget_exceeded()
-        # 事件驱动响应链 3: 螺旋预警 → 自动告警/降级
+        # 事件驱动响应链 3: 螺旋预警 -> 自动告警/降级
         self._check_spiral_warning(tokens, cost)
 
     def get_model_router_recommendation(self) -> tuple[ModelTier, int]:
@@ -640,7 +640,7 @@ class BudgetEngine:
             logger.warning("suppressed error in budget_engine", exc_info=True)
 
     def _check_budget_exceeded(self) -> None:
-        """响应链 1: 预算超限 → 自动降级。
+        """响应链 1: 预算超限 -> 自动降级。
 
         消费达到 hard_stop_threshold * 80% 或 emergency_threshold 时自动推进降级。
         """
@@ -684,7 +684,7 @@ class BudgetEngine:
                     self._alerts.append(alert)
 
     def _check_ipi_attack(self, prompt: str) -> bool:
-        """响应链 2: IPI 攻击 → 自动隔离。
+        """响应链 2: IPI 攻击 -> 自动隔离。
 
         检测到 IPI 攻击时，降级强制推进到 L4_EMERGENCY。
         返回 True 表示检测到攻击。
@@ -719,7 +719,7 @@ class BudgetEngine:
         return False
 
     def _check_spiral_warning(self, tokens: int, cost: float) -> None:
-        """响应链 3: 螺旋预警 → 自动告警/降级。
+        """响应链 3: 螺旋预警 -> 自动告警/降级。
 
         喂入消费数据到 SpiralEWS，检测到 WARNING/CRITICAL 时创建告警。
         """

@@ -144,7 +144,7 @@ class PromptProvider:
         return (
             f"Decompose blueprint {blueprint_id} into individual task cards. "
             f"Each task card should map to one blueprint section. "
-            f"Output a YAML mapping of sections → task cards."
+            f"Output a YAML mapping of sections -> task cards."
         )
 
     def _test_generation_template(self, tool_name: str) -> str:

@@ -19,8 +19,8 @@
 真源优先级裁决器（Truth Source Validator）
 
 依据：MOD-MASTER-002 蓝图 §零之零 真源优先级宪章
-实现 5 级优先级链：Tier 0(本蓝图) → Tier 1(architecture_model YAML)
-→ Tier 2(模块蓝图) → Tier 3(策略标准文档) → Tier 4(实际代码)
+实现 5 级优先级链：Tier 0(本蓝图) -> Tier 1(architecture_model YAML)
+-> Tier 2(模块蓝图) -> Tier 3(策略标准文档) -> Tier 4(实际代码)
 
 功能：
 1. 检测多文档源对同一事实的不同定义

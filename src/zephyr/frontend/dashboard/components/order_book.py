@@ -21,14 +21,14 @@
 渲染依赖: Panel(布局) + ChartFactory.make_orderbook(图表)
 
 v3.0.0 变更 (#ARCH-047):
-  - Streamlit → Panel (布局)
-  - plotly 直接调用 → ChartFactory.make_orderbook (callback仅编排)
+  - Streamlit -> Panel (布局)
+  - plotly 直接调用 -> ChartFactory.make_orderbook (callback仅编排)
   - 100ms Bokeh WebSocket 推送(原生WebSocket, 无rerun开销)
 
 布局:
-  - 左侧: 5档卖盘(红色, 价格降序 ask5→ask1)
+  - 左侧: 5档卖盘(红色, 价格降序 ask5->ask1)
   - 中间: 最新价 + 压力比仪表盘
-  - 右侧: 5档买盘(绿色, 价格降序 bid1→bid5)
+  - 右侧: 5档买盘(绿色, 价格降序 bid1->bid5)
 """
 from __future__ import annotations
 

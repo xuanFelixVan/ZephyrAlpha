@@ -28,10 +28,10 @@ Phase B 骨架——定义风控层的公共接口。
 跨层数据结构 MUST 仅来自 ``zephyr.shared.contracts``（SSoT）。
 
 跨层契约：
-  CTR-003  RiskLimits                  → D_PORTFOLIO_CORE（生产者——风险限额约束）
-  CTR-ERR-004  RiskLimitViolationError  → D_PORTFOLIO_CORE, D_EXECUTION_CORE（硬错误——阻止交易）
-  CTR-P1-008  RiskDashboardSnapshot     → D_FRONTEND（生产者——风险仪表板快照）
-  CTR-P1-011  RiskMetricsReport         → D_PORTFOLIO_CORE, D_REPORTING, D_FRONTEND, D_COMPLIANCE（生产者——风险指标）
+  CTR-003  RiskLimits                  -> D_PORTFOLIO_CORE（生产者——风险限额约束）
+  CTR-ERR-004  RiskLimitViolationError  -> D_PORTFOLIO_CORE, D_EXECUTION_CORE（硬错误——阻止交易）
+  CTR-P1-008  RiskDashboardSnapshot     -> D_FRONTEND（生产者——风险仪表板快照）
+  CTR-P1-011  RiskMetricsReport         -> D_PORTFOLIO_CORE, D_REPORTING, D_FRONTEND, D_COMPLIANCE（生产者——风险指标）
 
 SSoT: cross_layer_contracts.yaml v3.0
 """

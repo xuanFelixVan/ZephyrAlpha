@@ -74,7 +74,7 @@ class ExamExecutor:
     """执行式评测——运行模型生成代码 + 测试断言，沙箱隔离。
 
     参考 HumanEval pass@1: pass_rate = 通过测试数 / 总测试数。
-    语法错误/超时/异常 → 对应测试计为失败，pass_rate 降低但不抛异常。
+    语法错误/超时/异常 -> 对应测试计为失败，pass_rate 降低但不抛异常。
     """
 
     def execute(self, code: str, test_cases: list[str], timeout_s: int = 10) -> ExecResult:
@@ -116,7 +116,7 @@ class ExamExecutor:
             if result.returncode == 0 and "ALL_TESTS_PASSED" in result.stdout:
                 return ExecResult(pass_rate=1.0, passed=total, total=total)
         except subprocess.TimeoutExpired:
-            # 全量超时 → 退化为逐测试
+            # 全量超时 -> 退化为逐测试
             pass
         except Exception as e:
             logger.warning("suppressed error in exam_executor", exc_info=True)

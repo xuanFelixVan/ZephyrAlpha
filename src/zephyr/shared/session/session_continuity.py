@@ -324,7 +324,7 @@ class SessionContinuity:
         }
 
     def _generate_and_save_legacy(self, session_id: str, task_repo: object) -> dict:
-        """从 task_repo 汇总当前状态 → 生成 HandoffPackage → 写 SQLite + YAML
+        """从 task_repo 汇总当前状态 -> 生成 HandoffPackage -> 写 SQLite + YAML
 
         GOV-AI-008 (handoff-protocol.md) 合规实现：
         - 8 必填字段全部自动填充

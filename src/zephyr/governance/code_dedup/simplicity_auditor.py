@@ -19,7 +19,7 @@
 
 职责：
   - 每月计算 SAS (Simplicity Audit Score) 0-100
-  - NET_NEGATIVE → 自动退役建议
+  - NET_NEGATIVE -> 自动退役建议
   - 引擎Tax报告：认知负担 + 维护增值税 + TIOBE健康图表
 """
 

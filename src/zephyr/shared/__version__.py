@@ -28,8 +28,8 @@ Phase 9 增强（盲点 B21）——追加 SemVer 比较函数（版本兼容性
   - 运行时可查询——消费者可做 importlib.metadata.version("zephyr") 或直接导入
 
 对标：
-  - numpy: numpy.__version__ → "1.26.0"
-  - pydantic: pydantic.__version__ → "2.5.0"
+  - numpy: numpy.__version__ -> "1.26.0"
+  - pydantic: pydantic.__version__ -> "2.5.0"
   - pip：pip.__version__
   - PEP 396: Module Version Numbers
   - PEP 440: Version Identification and Dependency Specification
@@ -168,9 +168,9 @@ def version_compatible(a: str, b: str) -> bool:
 
     Usage::
 
-        version_compatible("0.7.0", "0.6.0") → True  # 同 MAJOR, a >= b
-        version_compatible("0.5.0", "0.7.0") → False  # 同 MAJOR, 但 a < b
-        version_compatible("1.0.0", "0.7.0") → False  # 不同 MAJOR
+        version_compatible("0.7.0", "0.6.0") -> True  # 同 MAJOR, a >= b
+        version_compatible("0.5.0", "0.7.0") -> False  # 同 MAJOR, 但 a < b
+        version_compatible("1.0.0", "0.7.0") -> False  # 不同 MAJOR
     """
     a_parts = _parse_semver(a)
     b_parts = _parse_semver(b)

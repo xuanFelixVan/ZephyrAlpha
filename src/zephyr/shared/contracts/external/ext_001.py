@@ -35,7 +35,7 @@ EXT-001: Broker API / 券商交易接口
 
 发单前必须通过 pre_trade/ 风控；成交回报必须触发 Fill 契约并回调策略 (INV-007: events crossing this boundary must carry idempotency_key)
 
-SSoT: cross_layer_contracts.yaml → EXT-001
+SSoT: cross_layer_contracts.yaml -> EXT-001
 Version: 1.0
 Status: AUTO-GENERATED — DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

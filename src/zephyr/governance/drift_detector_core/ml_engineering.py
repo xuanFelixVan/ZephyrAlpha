@@ -31,7 +31,7 @@ class DataLeakCheck(str, Enum):
 
 
 LEAK_CHECKS: Final[dict[DataLeakCheck, str]] = {
-    DataLeakCheck.C1_FACTOR_DATE_GT_MARKET: "factor_date > market_date → NEVER",
+    DataLeakCheck.C1_FACTOR_DATE_GT_MARKET: "factor_date > market_date -> NEVER",
     DataLeakCheck.C2_TRAIN_TEST_OVERLAP: "train < test — time ordering",
     DataLeakCheck.C3_FUTURE_ACCESS_FACTOR_STORE: "不可达 — future barrier",
     DataLeakCheck.C4_FACTOR_ANALYSIS_FUTURE_IC: "用历史IC only — look-forward prevention",

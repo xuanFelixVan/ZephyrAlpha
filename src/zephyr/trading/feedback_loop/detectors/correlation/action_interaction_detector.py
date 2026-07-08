@@ -27,7 +27,7 @@ interaction is the root cause.
 
 Mitigation: Build pairwise action interaction matrix. Track co-occurring
 actions within configurable time window. When two actions together produce
-negative outcomes while individually they're effective → flag interaction.
+negative outcomes while individually they're effective -> flag interaction.
 """
 
 from __future__ import annotations

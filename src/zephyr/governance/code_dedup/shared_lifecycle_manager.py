@@ -15,11 +15,11 @@
 # [A_module] module_id=MOD-UNK_shared_lifecycle_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""共享函数生命周期管理 — Active→Deprecated→Grace→Sunset→Retired 五阶段状态机.
+"""共享函数生命周期管理 — Active->Deprecated->Grace->Sunset->Retired 五阶段状态机.
 
 职责：
-  - 5阶段状态机：Active → Deprecated(0caller_30days) → Grace(30days) → Sunset(precommit_block) → Retired(kb_only)
-  - 迁移diff生成（from old_import → to new_import）
+  - 5阶段状态机：Active -> Deprecated(0caller_30days) -> Grace(30days) -> Sunset(precommit_block) -> Retired(kb_only)
+  - 迁移diff生成（from old_import -> to new_import）
   - 影子清单同步降级
   - shared-lifecycle.yaml 维护
 """

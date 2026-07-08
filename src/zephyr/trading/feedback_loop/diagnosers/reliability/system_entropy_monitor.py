@@ -17,7 +17,7 @@
 
 """
 R527: SystemEntropyMonitor
-FLE内部熵增趋势 — 配置/行为混乱度单调递增→即将混沌
+FLE内部熵增趋势 — 配置/行为混乱度单调递增->即将混沌
 """
 
 import hashlib

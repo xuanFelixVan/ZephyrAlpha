@@ -21,9 +21,9 @@
 
 三级告警
 --------
-  oversized   → instruction_token_count > session_budget × 0.25
-  growing     → growth_rate_weekly > 20%
-  dominance   → per_turn_instruction_overhead > productive_tokens
+  oversized   -> instruction_token_count > session_budget × 0.25
+  growing     -> growth_rate_weekly > 20%
+  dominance   -> per_turn_instruction_overhead > productive_tokens
 """
 
 from __future__ import annotations

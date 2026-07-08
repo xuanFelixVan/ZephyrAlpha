@@ -8,7 +8,7 @@
 # --- 治理锚定结束 ---
 # MAD-001 Architecture Necessity Gate
 # 架构必要性门禁 —— 新模块创建前的架构必要性质询
-# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → MAD-001
+# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml -> MAD-001
 
 module_id: MOD-GATE_ENGINE
 gate_id: MAD-001

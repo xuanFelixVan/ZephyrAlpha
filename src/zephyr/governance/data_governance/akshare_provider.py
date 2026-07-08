@@ -33,15 +33,15 @@ Akshare 数据源适配器。实现 DataSourceBase (OCP 扩展点)，接入 Aksh
   - 数据标准化为 NormalizedMarketData (CTR-001)
 
 CTR 契约：
-  生产者 — CTR-001 (NormalizedMarketData) → D_FACTOR, D_SIGNAL, D_RESEARCH
-  生产者 — CTR-TRACE-001 (TraceContext) → D_FACTOR~D_REPORTING, D_ML_TRAIN（链头——trace_id 由本层创建）
+  生产者 — CTR-001 (NormalizedMarketData) -> D_FACTOR, D_SIGNAL, D_RESEARCH
+  生产者 — CTR-TRACE-001 (TraceContext) -> D_FACTOR~D_REPORTING, D_ML_TRAIN（链头——trace_id 由本层创建）
 
 技术约束：
   - Akshare 是同步 HTTP 客户端，fetch_historical 为阻塞调用
   - 在线环境建议用 asyncio.to_thread 包装避免阻塞事件循环
   - 离线环境直接用同步调用即可
 
-SSoT: cross_layer_contracts.yaml → CTR-001
+SSoT: cross_layer_contracts.yaml -> CTR-001
 """
 
 from __future__ import annotations

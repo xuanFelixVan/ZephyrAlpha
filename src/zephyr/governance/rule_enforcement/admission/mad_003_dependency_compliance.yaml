@@ -8,7 +8,7 @@
 # --- 治理锚定结束 ---
 # MAD-003 Dependency Compliance Gate
 # 依赖合规门禁 —— 模块依赖关系必须符合架构约束
-# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → MAD-003
+# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml -> MAD-003
 
 module_id: MOD-GATE_ENGINE
 gate_id: MAD-003

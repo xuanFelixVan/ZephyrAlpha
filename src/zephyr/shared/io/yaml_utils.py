@@ -90,7 +90,7 @@ def load_vocabulary_values(
         if strict:
             raise FileNotFoundError(
                 f"vocabulary YAML 不存在: {p}\n"
-                f"提示：检查文件名拼写（误拼会导致合规检查变空集→DoS漂移）。"
+                f"提示：检查文件名拼写（误拼会导致合规检查变空集->DoS漂移）。"
                 f"如需测试隔离/渐进迁移，传 strict=False。"
             )
         return set()
@@ -188,7 +188,7 @@ def load_vocabulary_deprecated_map(
     deprecated_key: str = "deprecated_values",
     migrated_to_key: str = "migrated_to",
 ) -> dict[str, str | None]:
-    """从 vocabulary YAML 加载废弃值→迁移目标映射（SSoT 唯一真源）。
+    """从 vocabulary YAML 加载废弃值->迁移目标映射（SSoT 唯一真源）。
 
     收拢 check_frontmatter_metadata._load_deprecated_values 和
     migrate_illegal_doctype._load_deprecated_map 的重复逻辑。
@@ -201,7 +201,7 @@ def load_vocabulary_deprecated_map(
 
     Returns:
         ``{废弃值: 迁移目标|None}`` 字典。
-        单值迁移 → 目标字符串；多值/N/A → None（需人工判定）。
+        单值迁移 -> 目标字符串；多值/N/A -> None（需人工判定）。
 
     Raises:
         FileNotFoundError: 文件不存在
@@ -226,7 +226,7 @@ def load_vocabulary_deprecated_map(
         elif isinstance(mt, list) and len(mt) == 1 and mt[0] and not str(mt[0]).startswith("N/A"):
             result[str(val)] = str(mt[0])
         else:
-            result[str(val)] = None  # 多值/N/A → 需人工判定
+            result[str(val)] = None  # 多值/N/A -> 需人工判定
     return result
 
 

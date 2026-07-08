@@ -108,7 +108,7 @@ def _extract_name(node: ast.AST) -> str | None:
     if isinstance(node, ast.Name):
         return node.id.lower()
     if isinstance(node, ast.Attribute):
-        # self.path → "path"；obj.file_path → "file_path"
+        # self.path -> "path"；obj.file_path -> "file_path"
         return node.attr.lower()
     return None
 
@@ -336,7 +336,7 @@ def make_msg_exposure_gate() -> GateSpec:
                     cur_lineno = 0
                     for line in diff_content.stdout.splitlines():
                         if line.startswith("@@"):
-                            # @@ -a,b +c,d @@ → c 是新增行起始行号
+                            # @@ -a,b +c,d @@ -> c 是新增行起始行号
                             try:
                                 plus_part = line.split("+")[1].split("@@")[0].strip()
                                 cur_lineno = int(plus_part.split(",")[0])

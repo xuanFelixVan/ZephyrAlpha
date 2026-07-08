@@ -25,7 +25,7 @@ Submodule Sync — Submodule/Monorepo 多仓库同步回滚。
 功能：
     - 检测 git submodule / Monorepo layout
     - 逐 submodule 回滚 + 更新主仓库引用
-    - 引用不同步 → exit code 16 (SUBMODULE_OUT_OF_SYNC)
+    - 引用不同步 -> exit code 16 (SUBMODULE_OUT_OF_SYNC)
     - 多仓库版本视为单一单元回滚
 """
 

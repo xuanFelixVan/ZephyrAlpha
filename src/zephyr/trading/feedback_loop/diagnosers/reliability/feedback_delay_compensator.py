@@ -22,7 +22,7 @@ to propagate, model retraining takes hours, market impact takes days. FLE
 re-acts during the delay window, creating cascading overcorrections.
 
 Risk: R477 — Smith predictor problem: FLE sees no improvement after action,
-assumes action failed, dispatches stronger action → overshoot → oscillation.
+assumes action failed, dispatches stronger action -> overshoot -> oscillation.
 
 Mitigation: Track per-action-type expected effect latency. During delay window,
 suppress anomaly detection for the target metric. Use predicted trajectory
