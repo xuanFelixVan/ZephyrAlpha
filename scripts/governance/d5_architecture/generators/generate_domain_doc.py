@@ -199,14 +199,6 @@ MATURITY_DISPLAY = {
     "": "未知 / unknown",
 }
 
-# 构建状态中英文映射（build_status 字段值 → 中文/英文双显）
-BUILD_STATUS_DISPLAY = {
-    "generated": "已生成 / generated",
-    "handwritten": "手写 / handwritten",
-    "deprecated": "已废弃 / deprecated",
-    "": "—",
-}
-
 # 依赖类型中英文映射（dep_type 字段值 → 中文/英文双显）
 DEP_TYPE_DISPLAY = {
     "import_depends": "导入依赖 / import_depends",
@@ -221,11 +213,6 @@ DEP_TYPE_DISPLAY = {
 def _maturity_display(maturity: str) -> str:
     """成熟度值转中英文双显。"""
     return MATURITY_DISPLAY.get(maturity, f"{maturity} / {maturity}")
-
-
-def _build_status_display(status: str) -> str:
-    """构建状态值转中英文双显。"""
-    return BUILD_STATUS_DISPLAY.get(status, f"{status} / {status}")
 
 
 def _dep_type_display(dep_type: str) -> str:
@@ -779,9 +766,9 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
         lines.append(
             "| # | 模块路径 / Module Path | "
             "模块名称 / Module Name (功能简介 / Description) | "
-            "成熟度 / Maturity | 构建状态 / Build Status |"
+            "成熟度 / Maturity |"
         )
-        lines.append("|:--:|---------|---------|:---:|:---:|")
+        lines.append("|:--:|---------|---------|:---:|")
 
         for i, n in enumerate(shown, 1):
             path_display = _truncate(n["path"] or "", 60)
@@ -809,7 +796,7 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
                     pass
                 lines.append(
                     f"| {i} | {path_display} | "
-                    f"{collection_desc or name_display} | {_maturity_display(n['design_maturity'])} | {_build_status_display(n['build_status'])} |"
+                    f"{collection_desc or name_display} | {_maturity_display(n['design_maturity'])} |"
                 )
                 # 展开内部 items（最多显示前 100 个，避免表格过长）
                 MAX_ITEMS = 100
@@ -820,15 +807,15 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
                     item_path_display = _truncate(f"  ↳ {item_file}", 60)
                     lines.append(
                         f"| ↳{j} | {item_path_display} | "
-                        f"{item_desc} | - | - |"
+                        f"{item_desc} | - |"
                     )
                 if len(registry_data) > MAX_ITEMS:
-                    lines.append(f"| | | > (仅显示前 {MAX_ITEMS} 个 items，共 {len(registry_data)} 个) | | |")
+                    lines.append(f"| | | > (仅显示前 {MAX_ITEMS} 个 items，共 {len(registry_data)} 个) |")
             else:
                 # 普通节点——显示功能简介（docstring首行/yaml description）
                 lines.append(
                     f"| {i} | {path_display} | "
-                    f"{name_display} | {_maturity_display(n['design_maturity'])} | {_build_status_display(n['build_status'])} |"
+                    f"{name_display} | {_maturity_display(n['design_maturity'])} |"
                 )
 
         if len(layer_nodes_all) > MAX_PER_LAYER:
