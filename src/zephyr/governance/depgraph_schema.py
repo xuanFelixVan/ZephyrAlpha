@@ -187,7 +187,9 @@ CREATE TABLE IF NOT EXISTS nodes (
     hard_boundary_ref        TEXT,
     consumed_interfaces      TEXT,
     blueprint_id_invalid     INTEGER DEFAULT 0,
-    blueprint_path           TEXT
+    blueprint_path           TEXT,
+    entry_point              BOOLEAN DEFAULT FALSE,
+    public_api               TEXT
 )
 """
 
@@ -248,7 +250,11 @@ CREATE TABLE IF NOT EXISTS nodes_metadata (
     trust_zone               TEXT,
     deployment_lifecycle     TEXT,
     architecture_layer       TEXT,
-    last_updated             TEXT
+    last_updated             TEXT,
+    module_name_cn           TEXT,
+    module_name_en           TEXT,
+    description_cn           TEXT,
+    description_en           TEXT
 )
 """
 

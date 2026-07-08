@@ -255,7 +255,9 @@ CREATE TABLE IF NOT EXISTS nodes (
     hard_boundary_ref       TEXT,
     consumed_interfaces     TEXT,
     blueprint_id_invalid    INTEGER DEFAULT 0,
-    blueprint_path          TEXT
+    blueprint_path          TEXT,
+    entry_point             BOOLEAN DEFAULT FALSE,
+    public_api              TEXT
     -- 注意：blueprint_id 双轨制+历史兼容检查（MOD-*/D-*/SH-*/PLACEHOLDER*）由触发器实现，
     -- 而非 CHECK 约束。原因：SQLite 历史数据存在不符合双轨制+历史兼容的 blueprint_id
     -- （如 GOV-FSTR-001），CHECK 约束会阻止迁移。触发器只对新 INSERT/UPDATE 生效，
@@ -375,7 +377,11 @@ CREATE TABLE IF NOT EXISTS nodes_metadata (
     trust_zone               TEXT,
     deployment_lifecycle     TEXT,
     architecture_layer       TEXT,
-    last_updated             TEXT
+    last_updated             TEXT,
+    module_name_cn           TEXT,
+    module_name_en           TEXT,
+    description_cn           TEXT,
+    description_en           TEXT
 );
 
 -- edges_metadata: 边人工curated元数据（裁定#209 Stage 2 字段角色分离）
