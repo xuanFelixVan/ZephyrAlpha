@@ -95,6 +95,7 @@ class EventBus:
     def __init__(self) -> None:
         self._subscribers: dict[EventType, list[EventHandler]] = {et: [] for et in EventType}
         self._event_log: list[DomainEvent] = []
+        self._lock = threading.Lock()
 
     @classmethod
     def get_instance(cls) -> "EventBus":
@@ -103,8 +104,9 @@ class EventBus:
         return cls._instance
 
     def subscribe(self, event_type: EventType, handler: EventHandler) -> None:
-        if event_type in self._subscribers:
-            self._subscribers[event_type].append(handler)
+        with self._lock:
+            if event_type in self._subscribers:
+                self._subscribers[event_type].append(handler)
 
     def publish(self, event_type: EventType, task_id: str, payload: dict[str, Any] | None = None) -> DomainEvent:
         event = DomainEvent(
@@ -115,24 +117,34 @@ class EventBus:
             timestamp_utc=datetime.now(UTC).isoformat(),
         )
 
-        self._event_log.append(event)
+        with self._lock:
+            self._event_log.append(event)
+            handlers = list(self._subscribers.get(event_type, []))
 
-        for handler in self._subscribers.get(event_type, []):
+        for handler in handlers:
             try:
                 handler(event)
             except Exception:
-                pass
+                _logger.debug(
+                    "EventBus handler error event_type=%s task_id=%s",
+                    event_type,
+                    task_id,
+                    exc_info=True,
+                )
 
         return event
 
     def get_events_for_task(self, task_id: str) -> list[DomainEvent]:
-        return [e for e in self._event_log if e.task_id == task_id]
+        with self._lock:
+            return [e for e in self._event_log if e.task_id == task_id]
 
     def get_recent_events(self, limit: int = 50) -> list[DomainEvent]:
-        return self._event_log[-limit:]
+        with self._lock:
+            return self._event_log[-limit:]
 
     def clear(self) -> None:
-        self._event_log.clear()
+        with self._lock:
+            self._event_log.clear()
 
 
 # ── 原有符号（v0.1.0–v0.2.0）──────────────────────────────────────────
@@ -259,7 +271,11 @@ class EventBusBackpressure:
             for handler in handlers:
                 handler(event)
         except Exception:
-            pass
+            _logger.debug(
+                "EventBusBackpressure handler error topic=%s",
+                topic,
+                exc_info=True,
+            )
 
         return True
 
@@ -303,7 +319,7 @@ def _init_bridge() -> None:
 
         bus.set_contract_bus(get_bus())
     except Exception:
-        pass
+        _logger.debug("contract_bus bridge init failed", exc_info=True)
 
 
 bus = EventBusBackpressure()
