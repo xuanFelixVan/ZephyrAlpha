@@ -862,22 +862,38 @@ def generate_ascii_architecture_overview(
         display_name = LAYER_DISPLAY.get(layer, layer) if layer else "未分类 / Unclassified"
         count = len(layer_nodes)
 
-        # 最多显示20个模块（前18 + "...还有N个"）
-        MAX_PER_LAYER = 20
-        if count <= MAX_PER_LAYER:
-            shown = layer_nodes
-            more_count = 0
-        else:
-            shown = layer_nodes[: MAX_PER_LAYER - 2]
-            more_count = count - (MAX_PER_LAYER - 2)
+        # 层内按 design_maturity 分组（production / 其他），增加结构感
+        prod_nodes = [n for n in layer_nodes if n["design_maturity"] == "production"]
+        non_prod_nodes = [n for n in layer_nodes if n["design_maturity"] != "production"]
 
-        # 构建内容行：每行一个模块标签（中文功能简介在前+成熟度中英文）
         content = []
-        for n in shown:
-            content.append(f"  {_node_ascii_label(n)}")
-
-        if more_count > 0:
-            content.append(f"  ...还有 {more_count} 个模块 / {more_count} more modules")
+        if prod_nodes and non_prod_nodes:
+            # 有两种 maturity，分组显示
+            content.append(f"  ▸ 生产态 / production ({len(prod_nodes)} 个):")
+            shown_prod = prod_nodes[:18]
+            for n in shown_prod:
+                content.append(f"    {_node_ascii_label(n)}")
+            if len(prod_nodes) > 18:
+                content.append(f"    ...还有 {len(prod_nodes) - 18} 个")
+            content.append(f"  ▸ 非生产态 / non-production ({len(non_prod_nodes)} 个):")
+            shown_non = non_prod_nodes[:18]
+            for n in shown_non:
+                content.append(f"    {_node_ascii_label(n)}")
+            if len(non_prod_nodes) > 18:
+                content.append(f"    ...还有 {len(non_prod_nodes) - 18} 个")
+        else:
+            # 只有一种 maturity 或为空，直接列出
+            MAX_PER_LAYER = 20
+            if count <= MAX_PER_LAYER:
+                shown = layer_nodes
+                more_count = 0
+            else:
+                shown = layer_nodes[: MAX_PER_LAYER - 2]
+                more_count = count - (MAX_PER_LAYER - 2)
+            for n in shown:
+                content.append(f"  {_node_ascii_label(n)}")
+            if more_count > 0:
+                content.append(f"  ...还有 {more_count} 个模块 / {more_count} more modules")
 
         title = f"{display_name} ({count} modules)"
         box_lines = _make_box(title, content)
@@ -918,14 +934,17 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
 
         shown = layer_nodes_all[:MAX_PER_LAYER]
         lines.append(
-            "| # | 模块路径 / Module Path | 模块名称 / Module Name | "
-            "功能简介 / Description | 成熟度 / Maturity | 构建状态 / Build Status |"
+            "| # | 模块路径 / Module Path | "
+            "模块名称 / Module Name (功能简介 / Description) | "
+            "成熟度 / Maturity | 构建状态 / Build Status |"
         )
-        lines.append("|:--:|---------|---------|---------|:---:|:---:|")
+        lines.append("|:--:|---------|---------|:---:|:---:|")
 
         for i, n in enumerate(shown, 1):
             path_display = _truncate(n["path"] or "", 60)
-            name_display = _truncate(n["node_name"] or n["path"] or "", 40)
+            # 模块名称列：优先显示功能简介（中文docstring首行/yaml description），回退到短文件名
+            name_display = _node_desc_zh(n) or _node_short_name(n)
+            name_display = _truncate(name_display, 80)
             node_type = n.get("node_type", "")
 
             # ARCH-052: 聚合节点——显示自身一行 + 展开 registry.yaml 列出内部 items
@@ -946,8 +965,8 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
                 except Exception:
                     pass
                 lines.append(
-                    f"| {i} | {path_display} | {name_display} | "
-                    f"{collection_desc} | {_maturity_display(n['design_maturity'])} | {_build_status_display(n['build_status'])} |"
+                    f"| {i} | {path_display} | "
+                    f"{collection_desc or name_display} | {_maturity_display(n['design_maturity'])} | {_build_status_display(n['build_status'])} |"
                 )
                 # 展开内部 items（最多显示前 100 个，避免表格过长）
                 MAX_ITEMS = 100
@@ -956,22 +975,17 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
                     item_desc = (item.get("description", "") or "").strip().split('\n')[0].strip()
                     item_desc = _truncate(item_desc, 80)
                     item_path_display = _truncate(f"  ↳ {item_file}", 60)
-                    item_name_display = _truncate(item.get("gate_id", "") or item.get("title", "") or "", 40)
                     lines.append(
-                        f"| ↳{j} | {item_path_display} | {item_name_display} | "
+                        f"| ↳{j} | {item_path_display} | "
                         f"{item_desc} | - | - |"
                     )
                 if len(registry_data) > MAX_ITEMS:
-                    lines.append(f"| | | | > (仅显示前 {MAX_ITEMS} 个 items，共 {len(registry_data)} 个) | | |")
+                    lines.append(f"| | | > (仅显示前 {MAX_ITEMS} 个 items，共 {len(registry_data)} 个) | | |")
             else:
-                # 普通节点——保持原逻辑（docstring 提取）
-                # 对 .yaml 文件也尝试提取 description（ARCH-052 增强）
-                desc_display = _extract_docstring_first_line(n["path"] or "")
-                if not desc_display and n["path"] and n["path"].endswith(('.yaml', '.yml')):
-                    desc_display = _extract_yaml_description(n["path"])
+                # 普通节点——显示功能简介（docstring首行/yaml description）
                 lines.append(
-                    f"| {i} | {path_display} | {name_display} | "
-                    f"{desc_display} | {_maturity_display(n['design_maturity'])} | {_build_status_display(n['build_status'])} |"
+                    f"| {i} | {path_display} | "
+                    f"{name_display} | {_maturity_display(n['design_maturity'])} | {_build_status_display(n['build_status'])} |"
                 )
 
         if len(layer_nodes_all) > MAX_PER_LAYER:
@@ -1159,16 +1173,22 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append(f"| 描述 | {info['description']} | Description | {info['description']} |")
     lines.append("")
 
-    # 域内依赖图（内嵌 Mermaid，分页显示全部节点）
+    # 域内依赖图（内嵌 Mermaid，三视图：合并+运营态+设计态）
     lines.append("## 域内依赖图 / Internal Dependency Diagram")
     lines.append("")
-    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。")
+    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图。")
     lines.append(">")
     lines.append("> **图例说明 / Legend**：")
     lines.append("> - **实线边框 = 运营态模块**（production，已上线运行）")
-    lines.append("> - **虚线边框 = 设计态模块**（design，还在设计中）")
+    lines.append("> - **虚线边框 = 设计态模块**（design/prototype，还在设计中）")
     lines.append("> - **实线箭头 = 运营态依赖**（已生效的依赖关系）")
     lines.append("> - **虚线箭头 = 设计态依赖**（计划中的依赖关系）")
+    lines.append("")
+
+    # --- 视图1：合并全景图（标注 [production]/[prototype]，分页显示全部节点）---
+    lines.append("### 合并全景图（生产态 + 非生产态，标签标注状态）")
+    lines.append("")
+    lines.append(f"> 展示全部 {len(nodes)} 个模块（生产态 {production_count} + 非生产态 {design_count + prototype_count}），标签标注成熟度。")
     lines.append("")
 
     PAGE_SIZE = 30
@@ -1177,12 +1197,11 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         start = page_idx * PAGE_SIZE
         end = start + PAGE_SIZE
         page_nodes = nodes[start:end]
-        page_node_ids = {n["node_id"] for n in page_nodes}
         # 跨域边详情（仅涉及当前页节点）
         page_outgoing, page_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in page_nodes])
 
         if total_pages > 1:
-            lines.append(f"### 第 {page_idx + 1} 页 / 共 {total_pages} 页 / Page {page_idx + 1} of {total_pages}")
+            lines.append(f"#### 第 {page_idx + 1} 页 / 共 {total_pages} 页")
             lines.append("")
 
         mermaid_code = generate_internal_mermaid(
@@ -1192,6 +1211,50 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append(mermaid_code)
         lines.append("```")
         lines.append("")
+
+    # --- 视图2：运营态子图（仅 production 节点和边）---
+    prod_nodes_list = [n for n in nodes if n["design_maturity"] == "production"]
+    prod_node_ids = {n["node_id"] for n in prod_nodes_list}
+    prod_edges_list = [e for e in edges if e["from_node_id"] in prod_node_ids and e["to_node_id"] in prod_node_ids]
+    prod_outgoing, prod_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in prod_nodes_list])
+
+    lines.append("### 运营态子图（仅 design_maturity=production 的模块和依赖）")
+    lines.append("")
+    lines.append(f"> 仅展示已上线运行的模块（共 {len(prod_nodes_list)} 个，{len(prod_edges_list)} 条域内依赖）。")
+    lines.append("")
+
+    if prod_nodes_list:
+        mermaid_code = generate_internal_mermaid(
+            domain_id, domain_name_zh_hardcoded, prod_nodes_list, prod_edges_list, prod_outgoing, prod_incoming
+        )
+        lines.append("```mermaid")
+        lines.append(mermaid_code)
+        lines.append("```")
+    else:
+        lines.append("> （无运营态模块 / No production modules）")
+    lines.append("")
+
+    # --- 视图3：设计态子图（仅非 production 节点和边）---
+    design_nodes_list = [n for n in nodes if n["design_maturity"] != "production"]
+    design_node_ids = {n["node_id"] for n in design_nodes_list}
+    design_edges_list = [e for e in edges if e["from_node_id"] in design_node_ids and e["to_node_id"] in design_node_ids]
+    design_outgoing, design_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in design_nodes_list])
+
+    lines.append("### 设计态子图（仅 design_maturity≠production 的模块和依赖）")
+    lines.append("")
+    lines.append(f"> 仅展示设计态/原型态模块（共 {len(design_nodes_list)} 个，{len(design_edges_list)} 条域内依赖）。")
+    lines.append("")
+
+    if design_nodes_list:
+        mermaid_code = generate_internal_mermaid(
+            domain_id, domain_name_zh_hardcoded, design_nodes_list, design_edges_list, design_outgoing, design_incoming
+        )
+        lines.append("```mermaid")
+        lines.append(mermaid_code)
+        lines.append("```")
+    else:
+        lines.append("> （无设计态模块 / No design modules）")
+    lines.append("")
 
     # 跨域依赖（中英文对照）
     lines.append("## 跨域依赖 / Cross-domain Dependencies")
