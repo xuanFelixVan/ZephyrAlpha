@@ -39,10 +39,9 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-_PROJECT_ROOT = os.environ.get(
-    "ZEPHYR_PROJECT_ROOT",
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
-)
+# 5.155.20 修复：原独立计算项目根（重复SSoT），改用REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
+_PROJECT_ROOT = str(REPO_ROOT)
 
 
 class ProbeStatus:

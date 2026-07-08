@@ -124,11 +124,17 @@ DRIFT_EVENTS_SCHEMA = "drift_events"
 
 REQUIRED_DIRS = ["data/audit", "data/audit/evidence", "data/audit/reports"]
 
-REQUIRED_ENV_VARS = []
+REQUIRED_ENV_VARS = ["ZEPHYR_PROJECT_ROOT"]
 
 
 def detect_missing_env(required_vars: list[str] | None = None) -> list[str]:
-    return []
+    # 5.155.10 修复：原实现恒返回[]，现实现实际环境变量检测
+    vars_to_check = required_vars or REQUIRED_ENV_VARS
+    missing = []
+    for var in vars_to_check:
+        if not os.environ.get(var):
+            missing.append(var)
+    return missing
 
 
 def init_database(db_path: str | None = None) -> bool:

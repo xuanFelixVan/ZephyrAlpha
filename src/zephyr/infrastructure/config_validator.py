@@ -71,11 +71,12 @@ class ConfigValidator:
     - 引用完整性
     """
 
+    # 5.155.7 修复：原引用thresholds.yaml/pipelines.yaml/modules.yaml/gates.yaml均不存在，更新为实际存在的配置文件
     _REQUIRED_CONFIG_FIELDS: dict[str, list[str]] = {
-        "thresholds.yaml": ["version", "thresholds", "error_budget"],
-        "pipelines.yaml": ["version", "pipelines"],
-        "modules.yaml": ["version", "modules"],
-        "gates.yaml": ["version", "gates"],
+        "capacity_params.yaml": ["module_id", "design_capacity"],
+        "budget_policy.yaml": ["module_id"],
+        "flags.yaml": ["module_id"],
+        "capabilities.yaml": ["module_id"],
     }
 
     _NUMERIC_RANGES: dict[str, tuple[float, float]] = {

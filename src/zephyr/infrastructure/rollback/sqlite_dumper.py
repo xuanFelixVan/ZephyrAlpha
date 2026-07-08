@@ -125,7 +125,7 @@ class SqliteDumper:
     ) -> None:
         self._db_path = db_path or DB_PATH
         self._output_dir = output_dir or (REPO_ROOT / "data" / "rollback" / "db_snapshots")
-        self._hmac_key = hmac_key or HMAC_KEY_DEFAULT
+        self._hmac_key = _resolve_hmac_key(hmac_key)  # 5.155.1 修复
 
     def _get_all_tables(self, conn: sqlite3.Connection) -> list[str]:
         rows = conn.execute(

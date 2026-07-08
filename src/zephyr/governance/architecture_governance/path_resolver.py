@@ -253,7 +253,9 @@ class PathResolver:
 
 def reslove_path(module: str, filename: str, project_root: str = None) -> str | None:
     """快捷函数：解析模块路径"""
-    root = project_root or os.environ.get("ZEPHYR_ROOT", os.getcwd())
+    # 5.155.16 修复：原使用ZEPHYR_ROOT（仅此文件使用），统一为ZEPHYR_PROJECT_ROOT + REPO_ROOT SSoT
+    from zephyr.shared.io.paths import REPO_ROOT
+    root = project_root or os.environ.get("ZEPHYR_PROJECT_ROOT") or str(REPO_ROOT)
     pr = PathResolver(root)
     return pr.resolve_path(module, filename)
 
