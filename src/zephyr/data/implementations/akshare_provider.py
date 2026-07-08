@@ -67,7 +67,12 @@ class AKShareProvider(DataSourceBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=60,
-        capabilities=["macro_data", "dividend", "restricted_shares", "equity_pledge"],
+        capabilities=[
+            "macro_data", "dividend", "restricted_shares", "equity_pledge",
+            "daily_valuation", "margin_trading", "block_trade",
+            "dragon_tiger", "money_flow", "share_unlock",
+            "audit_opinion", "equity_pledge_summary",
+        ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
 
@@ -104,6 +109,24 @@ class AKShareProvider(DataSourceBase):
         cap = (payload.extra or {}).get("capability")
         if cap == "macro_data":
             yield from self._fetch_macro_data(payload, policy)
+        elif cap == "daily_valuation":
+            yield from self._fetch_daily_valuation(payload, policy)
+        elif cap == "margin_trading":
+            yield from self._fetch_margin_trading(payload, policy)
+        elif cap == "block_trade":
+            yield from self._fetch_block_trade(payload, policy)
+        elif cap == "dragon_tiger":
+            yield from self._fetch_dragon_tiger(payload, policy)
+        elif cap == "money_flow":
+            yield from self._fetch_money_flow(payload, policy)
+        elif cap == "share_unlock":
+            yield from self._fetch_share_unlock(payload, policy)
+        elif cap == "audit_opinion":
+            yield from self._fetch_audit_opinion(payload, policy)
+        elif cap == "equity_pledge":
+            yield from self._fetch_equity_pledge(payload, policy)
+        elif cap == "equity_pledge_summary":
+            yield from self._fetch_equity_pledge_summary(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -238,3 +261,561 @@ class AKShareProvider(DataSourceBase):
         y, mo = m.group(1), int(m.group(2))
         last_day = calendar.monthrange(int(y), mo)[1]
         return f"{y}-{mo:02d}-{last_day:02d}"
+
+    # ---- 通用辅助（日期/标的） ----
+
+    @staticmethod
+    def _date_range(start: datetime.date, end: datetime.date) -> Iterator[datetime.date]:
+        """生成 start 到 end（含）的自然日序列。"""
+        cur = start
+        while cur <= end:
+            yield cur
+            cur += datetime.timedelta(days=1)
+
+    @staticmethod
+    def _symbol_to_market(symbol: str) -> str:
+        """6位代码转 AKShare market 参数：sh/sz/bj。
+
+        60/68 开头->sh；00/30 开头->sz；其余（8/4等）->bj。
+        """
+        s = str(symbol).zfill(6)
+        if s.startswith(("60", "68")):
+            return "sh"
+        elif s.startswith(("00", "30")):
+            return "sz"
+        else:
+            return "bj"
+
+    @staticmethod
+    def _norm_date_str(v) -> str:
+        """把日期类值截成 'YYYY-MM-DD' 字符串；空值返回 ''。"""
+        s = str(v)
+        # 处理 'YYYY-MM-DD HH:MM:SS' / Timestamp / 'YYYY/MM/DD' 等
+        s = s.replace("/", "-")
+        if " " in s:
+            s = s.split(" ")[0]
+        return s[:10]
+
+    def _get_all_a_symbols(self, ak, policy: SourcePolicy) -> list[str]:
+        """获取全 A 股 6 位代码列表（用 ak.stock_zh_a_spot_em）。"""
+        df = self._call_with_policy(ak.stock_zh_a_spot_em, policy)
+        if df is None or len(df) == 0:
+            return []
+        return [str(c).zfill(6) for c in df["代码"].tolist()]
+
+    # ---- 1. 每日估值（daily_valuation） ----
+
+    def _fetch_daily_valuation(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取每日估值（PE/PB/PS/PCF），写入 c1_market.daily_valuation。
+
+        用 ak.stock_a_indicator_lg(symbol) 逐只获取估值历史；
+        K线字段（open/high/low/close/...）填 None；is_st 填 0。
+        若接口不存在则 yield error。
+        """
+        import akshare as ak
+
+        table = "c1_market.daily_valuation"
+        columns = [
+            "trade_date", "symbol", "open", "high", "low", "close",
+            "preclose", "volume", "amount", "turnover", "pct_change",
+            "pe_ttm", "pb_mrq", "ps_ttm", "pcf_ncf_ttm", "is_st",
+        ]
+        last_key = payload.end.isoformat()
+
+        if not hasattr(ak, "stock_a_indicator_lg"):
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=0.0,
+                error="暂无合适的AKShare估值接口（stock_a_indicator_lg 不存在）",
+            )
+            return
+
+        symbols = payload.symbols
+        if not symbols:
+            try:
+                symbols = self._get_all_a_symbols(ak, policy)
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key=last_key,
+                    elapsed_sec=0.0, error=f"获取全A股列表失败: {e}",
+                )
+                return
+
+        start_str = payload.start.isoformat()
+        end_str = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for sym in symbols:
+            sym = str(sym).zfill(6)
+            try:
+                df = self._call_with_policy(
+                    ak.stock_a_indicator_lg, policy, symbol=sym
+                )
+            except Exception as e:
+                self._log.warning(f"stock_a_indicator_lg({sym}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                trade_date = self._norm_date_str(row.get("date"))
+                if not trade_date:
+                    continue
+                if trade_date < start_str or trade_date > end_str:
+                    continue
+                batch_rows.append((
+                    trade_date, sym,
+                    None, None, None, None,        # open/high/low/close
+                    None, None, None, None, None,  # preclose/volume/amount/turnover/pct_change
+                    safe_float(row.get("pe_ttm")),
+                    safe_float(row.get("pb")),
+                    safe_float(row.get("ps_ttm")),
+                    None,  # pcf_ncf_ttm 接口未提供
+                    0,     # is_st
+                ))
+                if len(batch_rows) >= 500:
+                    yield FetchResult(
+                        table=table, columns=columns, rows=batch_rows[:],
+                        last_key=last_key, elapsed_sec=time.time() - t0,
+                    )
+                    batch_rows.clear()
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows[:],
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 2. 融资融券（margin_trading） ----
+
+    def _fetch_margin_trading(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取融资融券明细，写入 c1_market.margin_trading。
+
+        逐日调用 ak.stock_margin_detail_sse / stock_margin_detail_szse，
+        合并沪深两市。symbol 为 6 位代码。
+        """
+        import akshare as ak
+
+        table = "c1_market.margin_trading"
+        columns = [
+            "trade_date", "symbol", "margin_balance",
+            "margin_buy", "margin_repay", "short_balance",
+        ]
+
+        for d in self._date_range(payload.start, payload.end):
+            date_str = d.strftime("%Y%m%d")
+            iso_date = d.isoformat()
+            t0 = time.time()
+            rows: list[tuple] = []
+            for fn_name in ("stock_margin_detail_sse", "stock_margin_detail_szse"):
+                fn = getattr(ak, fn_name, None)
+                if fn is None:
+                    continue
+                try:
+                    df = self._call_with_policy(fn, policy, date=date_str)
+                except Exception as e:
+                    self._log.warning(f"{fn_name}({date_str}) 失败: {e}")
+                    continue
+                if df is None or len(df) == 0:
+                    continue
+                for _, row in df.iterrows():
+                    sym = str(
+                        row.get("标的证券代码") or row.get("证券代码") or ""
+                    ).zfill(6)
+                    if not sym or sym == "000000":
+                        continue
+                    rows.append((
+                        iso_date, sym,
+                        safe_float(row.get("融资余额")),
+                        safe_float(row.get("融资买入额")),
+                        safe_float(row.get("融资偿还额")),
+                        safe_float(row.get("融券余额")),
+                    ))
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=iso_date, elapsed_sec=time.time() - t0,
+            )
+
+    # ---- 3. 大宗交易（block_trade） ----
+
+    def _fetch_block_trade(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取大宗交易明细，写入 c1_market.block_trade。
+
+        调用 ak.stock_dzjy_mrmx(start_date, end_date, symbol="A股")。
+        列映射: 交易日期/证券代码/成交价/成交量/成交额/买方营业部/卖方营业部。
+        """
+        import akshare as ak
+
+        table = "c1_market.block_trade"
+        columns = [
+            "trade_date", "symbol", "price", "volume", "amount",
+            "buyer", "seller",
+        ]
+        last_key = payload.end.isoformat()
+        t0 = time.time()
+
+        start_str = payload.start.strftime("%Y%m%d")
+        end_str = payload.end.strftime("%Y%m%d")
+        try:
+            df = self._call_with_policy(
+                ak.stock_dzjy_mrmx, policy,
+                start_date=start_str, end_date=end_str, symbol="A股",
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                sym = str(row.get("证券代码") or "").zfill(6)
+                if not sym:
+                    continue
+                trade_date = self._norm_date_str(row.get("交易日期"))
+                if not trade_date:
+                    trade_date = last_key
+                rows.append((
+                    trade_date, sym,
+                    safe_float(row.get("成交价")),
+                    safe_float(row.get("成交量")),
+                    safe_float(row.get("成交额")),
+                    str(row.get("买方营业部") or ""),
+                    str(row.get("卖方营业部") or ""),
+                ))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 4. 龙虎榜（dragon_tiger） ----
+
+    def _fetch_dragon_tiger(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取龙虎榜明细，写入 c1_market.dragon_tiger。
+
+        调用 ak.stock_lhb_detail_em(start_date, end_date)。
+        列映射: 代码/名称/上榜原因/净买额/买入额/卖出额。
+        """
+        import akshare as ak
+
+        table = "c1_market.dragon_tiger"
+        columns = [
+            "trade_date", "symbol", "name", "reason",
+            "net_buy", "buy_amount", "sell_amount",
+        ]
+        last_key = payload.end.isoformat()
+        t0 = time.time()
+
+        start_str = payload.start.strftime("%Y%m%d")
+        end_str = payload.end.strftime("%Y%m%d")
+        try:
+            df = self._call_with_policy(
+                ak.stock_lhb_detail_em, policy,
+                start_date=start_str, end_date=end_str,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                sym = str(row.get("代码") or "").zfill(6)
+                if not sym:
+                    continue
+                trade_date = self._norm_date_str(
+                    row.get("上榜日") or row.get("日期")
+                )
+                if not trade_date:
+                    trade_date = last_key
+                rows.append((
+                    trade_date, sym,
+                    str(row.get("名称") or ""),
+                    str(row.get("上榜原因") or ""),
+                    safe_float(row.get("净买额") or row.get("净买入额")),
+                    safe_float(row.get("买入额") or row.get("买入金额")),
+                    safe_float(row.get("卖出额") or row.get("卖出金额")),
+                ))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 5. 资金流向（money_flow） ----
+
+    def _fetch_money_flow(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取个股资金流向，写入 c1_market.money_flow。
+
+        逐只调用 ak.stock_individual_fund_flow(stock, market)，
+        按 payload.start/end 过滤日期；market 由代码前缀推导。
+        """
+        import akshare as ak
+
+        table = "c1_market.money_flow"
+        columns = [
+            "trade_date", "symbol", "close", "pct_change",
+            "main_net_inflow", "main_net_inflow_pct",
+            "super_large_net_inflow", "super_large_net_inflow_pct",
+            "large_net_inflow", "large_net_inflow_pct",
+            "medium_net_inflow", "medium_net_inflow_pct",
+            "small_net_inflow", "small_net_inflow_pct",
+        ]
+        last_key = payload.end.isoformat()
+
+        symbols = payload.symbols
+        if not symbols:
+            try:
+                symbols = self._get_all_a_symbols(ak, policy)
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key=last_key,
+                    elapsed_sec=0.0, error=f"获取全A股列表失败: {e}",
+                )
+                return
+
+        start_str = payload.start.isoformat()
+        end_str = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for sym in symbols:
+            sym = str(sym).zfill(6)
+            market = self._symbol_to_market(sym)
+            try:
+                df = self._call_with_policy(
+                    ak.stock_individual_fund_flow, policy,
+                    stock=sym, market=market,
+                )
+            except Exception as e:
+                self._log.warning(f"stock_individual_fund_flow({sym}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                trade_date = self._norm_date_str(row.get("日期"))
+                if not trade_date:
+                    continue
+                if trade_date < start_str or trade_date > end_str:
+                    continue
+                batch_rows.append((
+                    trade_date, sym,
+                    safe_float(row.get("收盘价")),
+                    safe_float(row.get("涨跌幅")),
+                    safe_float(row.get("主力净流入-净额")),
+                    safe_float(row.get("主力净流入-净占比")),
+                    safe_float(row.get("超大单净流入-净额")),
+                    safe_float(row.get("超大单净流入-净占比")),
+                    safe_float(row.get("大单净流入-净额")),
+                    safe_float(row.get("大单净流入-净占比")),
+                    safe_float(row.get("中单净流入-净额")),
+                    safe_float(row.get("中单净流入-净占比")),
+                    safe_float(row.get("小单净流入-净额")),
+                    safe_float(row.get("小单净流入-净占比")),
+                ))
+                if len(batch_rows) >= 500:
+                    yield FetchResult(
+                        table=table, columns=columns, rows=batch_rows[:],
+                        last_key=last_key, elapsed_sec=time.time() - t0,
+                    )
+                    batch_rows.clear()
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows[:],
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 6. 限售解禁（share_unlock） ----
+
+    def _fetch_share_unlock(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取限售解禁明细，写入 c3_fundamental.share_unlock。
+
+        调用 ak.stock_restricted_release_detail_em(start_date, end_date)。
+        列映射: 股票代码/解除限售日期/解除限售数量/解除限售比例/实际解禁金额。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.share_unlock"
+        columns = ["symbol", "unlock_date", "shares", "ratio", "amount"]
+        last_key = payload.end.isoformat()
+        t0 = time.time()
+
+        start_str = payload.start.strftime("%Y%m%d")
+        end_str = payload.end.strftime("%Y%m%d")
+        try:
+            df = self._call_with_policy(
+                ak.stock_restricted_release_detail_em, policy,
+                start_date=start_str, end_date=end_str,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                sym = str(row.get("股票代码") or "").zfill(6)
+                if not sym:
+                    continue
+                unlock_date = self._norm_date_str(row.get("解除限售日期"))
+                rows.append((
+                    sym, unlock_date,
+                    safe_float(row.get("解除限售数量")),
+                    safe_float(row.get("解除限售比例")),
+                    safe_float(row.get("实际解禁金额")),
+                ))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 7. 审计意见（audit_opinion） ----
+
+    def _fetch_audit_opinion(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取审计意见，写入 c3_fundamental.audit_opinion。
+
+        AKShare 暂无专用审计意见接口，需通过财报接口间接获取，
+        此处直接 yield error 说明原因。
+        """
+        table = "c3_fundamental.audit_opinion"
+        columns = [
+            "symbol", "announce_date", "report_period", "audit_result",
+            "audit_fee", "accounting_firm", "signing_accountant", "data_source",
+        ]
+        yield FetchResult(
+            table=table, columns=columns, rows=[],
+            last_key=payload.end.isoformat(), elapsed_sec=0.0,
+            error="AKShare 暂无专用审计意见接口，需通过财报接口间接获取",
+        )
+
+    # ---- 8. 股权质押（equity_pledge） ----
+
+    def _fetch_equity_pledge(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取股权质押比例，写入 c3_fundamental.equity_pledge。
+
+        逐日调用 ak.stock_gpzy_pledge_ratio_em(date)，按截止日期获取全市场质押比例。
+        列映射: 股票代码/截止日期/质押次数/质押比例/总股本/质押到期日。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.equity_pledge"
+        columns = [
+            "symbol", "end_date", "pledge_count",
+            "pledge_ratio", "total_shares", "pledge_end_date",
+        ]
+
+        for d in self._date_range(payload.start, payload.end):
+            date_str = d.strftime("%Y%m%d")
+            iso_date = d.isoformat()
+            t0 = time.time()
+            rows: list[tuple] = []
+            try:
+                df = self._call_with_policy(
+                    ak.stock_gpzy_pledge_ratio_em, policy, date=date_str,
+                )
+            except Exception as e:
+                self._log.warning(f"stock_gpzy_pledge_ratio_em({date_str}) 失败: {e}")
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key=iso_date,
+                    elapsed_sec=time.time() - t0, error=str(e),
+                )
+                continue
+            if df is not None and len(df) > 0:
+                for _, row in df.iterrows():
+                    sym = str(row.get("股票代码") or "").zfill(6)
+                    if not sym:
+                        continue
+                    end_date = self._norm_date_str(row.get("截止日期"))
+                    if not end_date:
+                        end_date = iso_date
+                    rows.append((
+                        sym, end_date,
+                        safe_float(row.get("质押次数")),
+                        safe_float(row.get("质押比例")),
+                        safe_float(row.get("总股本")),
+                        None,  # pledge_end_date 接口未提供
+                    ))
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=iso_date, elapsed_sec=time.time() - t0,
+            )
+
+    # ---- 9. 股权质押摘要（equity_pledge_summary） ----
+
+    def _fetch_equity_pledge_summary(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取股权质押摘要，写入 c3_fundamental.equity_pledge_summary。
+
+        调用 ak.stock_gpzy_profile_em() 获取重要股东股权质押明细。
+        data_source 填 "akshare"。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.equity_pledge_summary"
+        columns = [
+            "symbol", "end_date", "pledge_count", "unrestricted_pledge",
+            "restricted_pledge", "total_shares", "pledge_ratio", "data_source",
+        ]
+        last_key = payload.end.isoformat()
+        t0 = time.time()
+
+        try:
+            df = self._call_with_policy(ak.stock_gpzy_profile_em, policy)
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                sym = str(row.get("股票代码") or "").zfill(6)
+                if not sym:
+                    continue
+                end_date = self._norm_date_str(row.get("公告日期"))
+                rows.append((
+                    sym, end_date,
+                    safe_float(row.get("质押次数")),
+                    safe_float(
+                        row.get("无限售条件股份质押数")
+                        or row.get("无限售股质押数")
+                    ),
+                    safe_float(
+                        row.get("限售股份质押数")
+                        or row.get("限售股质押数")
+                    ),
+                    safe_float(
+                        row.get("合计质押股数")
+                        or row.get("质押总股数")
+                    ),
+                    safe_float(row.get("质押比例")),
+                    "akshare",
+                ))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
