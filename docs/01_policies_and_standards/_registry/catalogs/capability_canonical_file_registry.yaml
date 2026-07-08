@@ -581,7 +581,10 @@ capabilities:
       - generate_domain_dependency_diagram
       - generate_contracts
       - generate_project_depgraph
-      - generate_panorama_registry
+      # generate_panorama_registry 已从 aliases 移除（2026-07-09）：
+      # 集合 capability（13 生成器）的 _derive_canonical_and_duplicates 只支持单 canonical，
+      # 新增生成器 basename 匹配 aliases → 被派生为 duplicate → CREATE-GUARD GATE-SSOT L2 阻断。
+      # 发现性由 description（按名提及）+ outputs 字段 + creation_tokens 三重保障，不依赖 aliases。
     description: >-
       depgraph（PostgreSQL，INFRA-DB-003）驱动的域架构文档自动生成器集（13 生成器）。
       全部位于 scripts/governance/d5_architecture/generators/ 目录下。
