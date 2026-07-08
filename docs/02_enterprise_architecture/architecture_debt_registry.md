@@ -759,6 +759,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **仍存在**：1簇（簇6 shared/schema↔integration/shared/schema 6对 = 6对）
 > **原最大债务**：簇1（governance↔rollback 71同名）和簇2（behavioral_audit↔drift_detection 51同名）贡献114对复制，现已消除。
 
+#### 5.1.3 ghost_autoclean 备份无保留策略（ARCH-DEBT-BACKUP-CLEANUP，2026-07-08 发现并 FIXED）
+
+> **发现背景**：复制簇#3 清理过程中发现 `_backup_depgraph_for_autoclean` 备份到 `data/databases/backups/`，与标杆 `backup_pg_depgraph`（`tmp/pg_backups/`，保留10，.gitignored）不一致。
+> **问题定性**：ARCH-DEBT（MEDIUM）—— 违反真源唯一（备份进git）+ 永久系统全自动（无自动清理）+ 对标一致。
+> **修复方案**：(1) 路径 `data/databases/backups/` → `tmp/pg_backups/`（.gitignored）；(2) 添加保留策略保留10个（对标 `backup_pg_depgraph`）；(3) `git rm --cached` 清理8目录16文件误提交；(4) `.gitignore` + `directory_contract.yaml` deprecated_directories 双重保障。
+> **状态**：✅ FIXED（2026-07-08，路径统一+保留策略+.gitignore+directory_contract+git rm --cached）
+
 #### 5.1.4 重复簇（6簇，1簇FIXED，3簇部分FIXED，2簇STILL_VALID）
 
 | # | 重复簇 | 定义位置数 | 真源候选 | 严重度 | 状态 |
@@ -2995,6 +3002,8 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第38轮修复状态（2026-07-05）**：FIXED=2(5.143.3 batch_orchestrator移除BatchOrchestratorProtocol显式继承+移除未使用导入 / 5.143.5 factor/__init__.py补充__all__声明的FactorBase/FactorMeta/FactorRegistry/autodiscover_factors导入), DRIFTED=1(5.143.4 intent_parser只有一份文件在governance/persistence/,注册表说的两个副本路径均不存在), NOT_NEEDED=2(5.143.21 risk_manager.snapshot注解合理[raise NotImplementedError描述将来返回类型] + 5.143.22 next_seq namespace:Any符合Protocol整体Any类型策略[line 25注释]), DEFERRED=17(5.143.1 generate_target_weights LSP违规需重写子类签名 + 5.143.2 Protocol实例方法vs classmethod需改调用方 + 5.143.6 FactorBase factor/base.py与factor/factor_base.py两份签名冲突需统一[governance/base.py已改shim] + 5.143.20 ComplianceManagerBase无子类实现需确认 + MEDIUM 13个未列具体条目需逐条审查). 维度5.143全部清零.
 > **第44轮修复状态（2026-07-06）**：FIXED=2(5.143.2 LLMGatewayProtocol 4个方法加@classmethod声明匹配实现 / 5.143.6 factor/base.py改为re-export shim from factor_base.py + governance/base.py SSoT改为factor_base.py,消除3份FactorBase签名冲突), DEFERRED=15(5.143.1 generate_target_weights LSP违规[基类dict[str,float] vs 子类list[Order]返回类型+参数列表脱钩,需设计决策统一契约语义] + 5.143.20 ComplianceManagerBase无子类实现[OCP扩展点待实现] + 13 MEDIUM未列具体条目需逐条审查), STILL_VALID=0. 维度5.143剩余15项DEFERRED属API契约统一专项工程.
 > **第47轮修复状态（2026-07-06）**：DRIFTED=1(5.143.1 generate_target_weights LSP违规已在之前会话修复:子类default_equity_strategy.py签名现为universe/signals/constraints可选参数+返回dict[str,float],与基类strategy_base.py一致), DEFERRED=14(5.143.20 ComplianceManagerBase 4个abstractmethod无子类实现→OCP扩展点专项[待未来compliance域实现] + 13 MEDIUM未列具体条目→API契约统一专项[需逐条审查后确定修复方案]), STILL_VALID=0. 维度5.143剩余14项DEFERRED属API契约统一专项工程.
+> **第82轮架构裁定状态（2026-07-08）**：DEFERRED-PERMANENT=14(5.143.20 ComplianceManagerBase 4个abstractmethod无子类实现[Phase B骨架OCP扩展点,蓝图MOD-L10-001明确支持,文件头标注status:phase_b_skeleton,abc.ABC TypeError机制+runtime_checkable双层防护,零运行时风险,等待compliance域进入Phase C时由人类架构师发起专项工程实现] + 5.143.7-5.143.19 13个MEDIUM盲盒[注册表从未记录具体条目,从第25轮新增到第47轮已历22轮代码变化,重新扫描结果无法验证是否原始13个,HIGH已全部修复,MEDIUM级在Python动态类型下运行时无TypeError影响只影响类型检查器提示,100%AI开发模式下AI不依赖IDE提示收益更低,逐条审查成本不可控,现有ssot_redefinition_gate+cross_layer_contracts.yaml SSoT+abc.ABC+runtime_checkable已提供部分防护]), DEFERRED=0, STILL_VALID=0. 维度5.143全部清零.
+> **防复发策略（可选,未来专项工程）**：新增AST gate检测Protocol违规(类声称实现Protocol但缺少方法)+签名漂移(子类重写方法参数列表与父类不一致). 不检测LSP违规(Python动态类型下难以静态检测,runtime_checkable已部分防护).
 
 审查接口定义与实现不匹配、抽象方法未实现、Protocol未遵守、参数签名漂移、返回值契约违反、LSP违规、SSoT重复与注册表分裂等问题。
 
