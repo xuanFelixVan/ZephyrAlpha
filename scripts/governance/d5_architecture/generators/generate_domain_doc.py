@@ -100,9 +100,6 @@ LAYER_DISPLAY = {
     "L3_application": "L3 应用层 / Application Layer",
 }
 
-# ASCII box 内部宽度（合并自 generate_domain_architecture_diagram.py）
-BOX_WIDTH = 64
-
 
 def _is_ghost(path: str) -> bool:
     """检查节点路径是否为 ghost（path 非空但磁盘上不存在）。
@@ -293,18 +290,6 @@ def _node_mermaid_label(n: dict) -> str:
         return f"({maturity}) {desc_zh}<br/>文件: {short_name}"
     else:
         return f"({maturity}) {short_name}"
-
-
-def _node_ascii_label(n: dict) -> str:
-    """生成 ASCII 视图节点标签（中文功能简介在前+成熟度中英文，单行）。"""
-    desc_zh = _node_desc_zh(n)
-    maturity = _maturity_display(n.get("design_maturity") or "unknown")
-    short_name = _node_short_name(n)
-
-    if desc_zh:
-        return f"{desc_zh} [{maturity}]"
-    else:
-        return f"{short_name} [{maturity}]"
 
 
 # ---------------------------------------------------------------------------
@@ -739,14 +724,6 @@ def _display_width(s: str) -> int:
     return width
 
 
-def _pad_to_width(s: str, width: int) -> str:
-    """按显示宽度右填充空格到指定宽度。"""
-    current = _display_width(s)
-    if current >= width:
-        return s
-    return s + " " * (width - current)
-
-
 def _truncate(text: str, max_len: int = 40) -> str:
     """截断文本到指定显示宽度，超出则加'...'。"""
     if not text:
@@ -773,140 +750,6 @@ def _layer_sort_key(layer: str) -> tuple[int, str]:
         return (len(LAYER_ORDER), layer)
     else:
         return (len(LAYER_ORDER) + 1, "")
-
-
-def _make_box(title: str, content_lines: list[str], width: int = BOX_WIDTH) -> list[str]:
-    """生成ASCII box（带标题行和内容行）。
-
-    结构:
-    ┌──────┐
-    │ title │  (居中)
-    ├──────┤
-    │ line │  (左对齐)
-    └──────┘
-    """
-    inner = width
-    top = "┌" + "─" * (inner + 2) + "┐"
-    bottom = "└" + "─" * (inner + 2) + "┘"
-    separator = "├" + "─" * (inner + 2) + "┤"
-
-    lines = [top]
-    # 标题行（居中）
-    title_w = _display_width(title)
-    if title_w >= inner:
-        title_padded = _truncate(title, inner)
-    else:
-        left_pad = (inner - title_w) // 2
-        title_padded = " " * left_pad + title
-    lines.append(f"│ {_pad_to_width(title_padded, inner)} │")
-
-    if content_lines:
-        lines.append(separator)
-        for line in content_lines:
-            line_trunc = _truncate(line, inner)
-            lines.append(f"│ {_pad_to_width(line_trunc, inner)} │")
-
-    lines.append(bottom)
-    return lines
-
-
-def _arrow_down(width: int = BOX_WIDTH) -> list[str]:
-    """生成向下箭头（层间连接）。"""
-    center = width // 2 + 2  # +2 for "│ " prefix offset
-    return [" " * center + "│", " " * center + "▼"]
-
-
-def _display_edge_name(name: str, path: str, max_len: int = 28) -> str:
-    """生成依赖边的节点显示名：优先 node_name，否则用 path 的 basename。"""
-    if name:
-        return _truncate(name, max_len)
-    if path:
-        # 用 basename 提高可读性（如 auto_dispatcher.py 而非完整路径）
-        base = path.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
-        return _truncate(base, max_len)
-    return "?"
-
-
-# ---------------------------------------------------------------------------
-# ASCII art 章节生成函数（合并自 generate_domain_architecture_diagram.py）
-# ---------------------------------------------------------------------------
-
-
-def generate_ascii_architecture_overview(
-    domain_id: str, domain_name: str, nodes: list[dict]
-) -> str:
-    """生成ASCII架构分层视图（按 architecture_layer 分层显示）。
-
-    - 按 architecture_layer 分组节点
-    - 每层一个ASCII box，最多显示20个模块（超过显示前18个+"...还有N个"）
-    - 层与层之间用箭头连接
-    """
-    # 按 architecture_layer 分组
-    layer_groups: dict[str, list[dict]] = {}
-    for n in nodes:
-        layer = n["architecture_layer"] or ""
-        layer_groups.setdefault(layer, []).append(n)
-
-    # 排序层级
-    sorted_layers = sorted(layer_groups.keys(), key=_layer_sort_key)
-
-    if not sorted_layers:
-        return "（无模块 / No modules）\n"
-
-    lines: list[str] = []
-    lines.append("```")
-    lines.append("")
-
-    for idx, layer in enumerate(sorted_layers):
-        layer_nodes = layer_groups[layer]
-        display_name = LAYER_DISPLAY.get(layer, layer) if layer else "未分类 / Unclassified"
-        count = len(layer_nodes)
-
-        # 层内按 design_maturity 分组（production / 其他），增加结构感
-        prod_nodes = [n for n in layer_nodes if n["design_maturity"] == "production"]
-        non_prod_nodes = [n for n in layer_nodes if n["design_maturity"] != "production"]
-
-        content = []
-        if prod_nodes and non_prod_nodes:
-            # 有两种 maturity，分组显示
-            content.append(f"  ▸ 生产态 / production ({len(prod_nodes)} 个):")
-            shown_prod = prod_nodes[:18]
-            for n in shown_prod:
-                content.append(f"    {_node_ascii_label(n)}")
-            if len(prod_nodes) > 18:
-                content.append(f"    ...还有 {len(prod_nodes) - 18} 个")
-            content.append(f"  ▸ 非生产态 / non-production ({len(non_prod_nodes)} 个):")
-            shown_non = non_prod_nodes[:18]
-            for n in shown_non:
-                content.append(f"    {_node_ascii_label(n)}")
-            if len(non_prod_nodes) > 18:
-                content.append(f"    ...还有 {len(non_prod_nodes) - 18} 个")
-        else:
-            # 只有一种 maturity 或为空，直接列出
-            MAX_PER_LAYER = 20
-            if count <= MAX_PER_LAYER:
-                shown = layer_nodes
-                more_count = 0
-            else:
-                shown = layer_nodes[: MAX_PER_LAYER - 2]
-                more_count = count - (MAX_PER_LAYER - 2)
-            for n in shown:
-                content.append(f"  {_node_ascii_label(n)}")
-            if more_count > 0:
-                content.append(f"  ...还有 {more_count} 个模块 / {more_count} more modules")
-
-        title = f"{display_name} ({count} modules)"
-        box_lines = _make_box(title, content)
-
-        # 层间箭头
-        if idx > 0:
-            lines.extend(_arrow_down())
-
-        lines.extend(box_lines)
-
-    lines.append("")
-    lines.append("```")
-    return "\n".join(lines)
 
 
 def generate_module_layered_list(nodes: list[dict]) -> str:
@@ -992,83 +835,6 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
             lines.append(f"\n> (仅显示前 {MAX_PER_LAYER} 个模块，共 {len(layer_nodes_all)} 个)")
         lines.append("")
 
-    return "\n".join(lines)
-
-
-def generate_ascii_dependency_graph(edges: list[dict]) -> str:
-    """生成ASCII依赖关系图（按 dep_type 分组显示域内依赖边）。
-
-    - 按 dep_type 分组
-    - 最多显示50条依赖边（超过显示前48条+"...还有N条"）
-    - 使用 → 表示方向
-    """
-    if not edges:
-        return "（无域内依赖 / No internal dependencies）\n"
-
-    # 按 dep_type 分组
-    type_groups: dict[str, list[dict]] = {}
-    for e in edges:
-        dtype = e["dep_type"] or "unknown"
-        type_groups.setdefault(dtype, []).append(e)
-
-    # 排序 dep_type（按数量降序）
-    sorted_types = sorted(type_groups.keys(), key=lambda t: -len(type_groups[t]))
-
-    MAX_EDGES = 50
-    total = len(edges)
-
-    lines: list[str] = []
-    lines.append("```")
-    lines.append("")
-
-    # 总览 box
-    overview_title = f"依赖关系图 / Dependency Graph (共 {total} 条 / {total} edges)"
-    overview_content = [f"  依赖类型数 / Dependency Types: {len(sorted_types)}"]
-    for dtype in sorted_types:
-        overview_content.append(
-            f"  [{_dep_type_display(dtype)}]: {len(type_groups[dtype])} 条 / edges"
-        )
-    lines.extend(_make_box(overview_title, overview_content))
-    lines.append("")
-
-    # 分组详情
-    shown_total = 0
-    for dtype in sorted_types:
-        group_edges = type_groups[dtype]
-        remaining = MAX_EDGES - shown_total
-        # 剩余空间不足以显示至少1条边时，输出摘要行而非空box
-        if remaining <= 1:
-            lines.append(f"**[{_dep_type_display(dtype)}]** ({len(group_edges)} 条 / edges) — 已达显示上限，省略 / limit reached")
-            lines.append("")
-            continue
-
-        if len(group_edges) <= remaining:
-            shown = group_edges
-            more = 0
-        else:
-            shown = group_edges[: remaining - 1]
-            more = len(group_edges) - (remaining - 1)
-
-        shown_total += len(shown)
-
-        group_title = f"[{_dep_type_display(dtype)}] ({len(group_edges)} 条 / edges)"
-        content = []
-        for e in shown:
-            from_name = _display_edge_name(e["from_name"], e["from_path"])
-            to_name = _display_edge_name(e["to_name"], e["to_path"])
-            content.append(f"  {from_name} → {to_name}")
-
-        if more > 0:
-            content.append(f"  ...还有 {more} 条 / {more} more edges")
-
-        lines.extend(_make_box(group_title, content))
-        lines.append("")
-
-    if total > MAX_EDGES:
-        lines.append(f"> (最多显示前 {MAX_EDGES} 条依赖边，共 {total} 条)")
-        lines.append("")
-
-    lines.append("```")
     return "\n".join(lines)
 
 
@@ -1284,17 +1050,6 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append("无跨域入边依赖 / No cross-domain incoming dependencies")
     lines.append("")
 
-    # 架构分层视图（ASCII art，合并自 generate_domain_architecture_diagram.py）
-    lines.append("## 架构分层视图 / Architecture Overview")
-    lines.append("")
-    lines.append(
-        f"> 按 architecture_layer 分层显示 {domain_name_zh_hardcoded}（{domain_id}）的模块分布。"
-        f"共 {len(nodes)} 个模块 / {len(nodes)} modules。"
-    )
-    lines.append("")
-    lines.append(generate_ascii_architecture_overview(domain_id, domain_name_zh_hardcoded, nodes))
-    lines.append("")
-
     # 模块分层清单（按 architecture_layer 分组，合并自 generate_domain_architecture_diagram.py）
     lines.append("## 模块分层清单 / Module Layered List")
     lines.append("")
@@ -1303,17 +1058,6 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     )
     lines.append("")
     lines.append(generate_module_layered_list(nodes))
-
-    # 依赖关系图（ASCII art，合并自 generate_domain_architecture_diagram.py）
-    lines.append("## 依赖关系图 / Dependency Graph")
-    lines.append("")
-    lines.append(
-        f"> 域内模块依赖关系（共 {len(edges)} 条 / {len(edges)} edges）。"
-        "按依赖类型分组，使用 → 表示方向。"
-    )
-    lines.append("")
-    lines.append(generate_ascii_dependency_graph(edges))
-    lines.append("")
 
     # 说明
     lines.append("## 说明 / Notes")
