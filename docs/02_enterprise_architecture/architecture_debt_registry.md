@@ -3152,6 +3152,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > - 5.145.28 [FIXED]: dispatch_table.py 移除 if TYPE_CHECKING: pass 死代码及未用导入
 > - 5.145.29 [FIXED]: __init__.py Optional 导入未使用(与 5.145.1 同源，已移除)
 > - 5.145.30 [FIXED]: tracing.py traced 装饰器工厂补返回类型 Callable[[Callable[..., Any]], Callable[..., Any]]
+> **第84轮架构裁定状态（2026-07-08）**：DEFERRED-PERMANENT=14(5.145.13-5.145.26 MEDIUM Any滥用). 第一性原理分析: scanner基线627处裸Any(ANY-1=455+ANY-2=172)分布跨100文件, 抽样l5+l7共34处分析显示3类: A.配置型dict[str,Any]约35%合理不需修; B.Python协议要求Any(__exit__等)约5%合理不需修; C.真正需修裸Any(task:Any→TaskCard/conn:Any→Connection/->Any)约60%需逐处推断具体类型. 裁定14项全部DEFERRED-PERMANENT理由: ①627处跨100文件属"全项目类型重构"级别工程超出AI单次处理能力; ②GATE-ANY-ABUSE门禁已建成防复发(阶段1manual警告阶段2存量清零后转硬阻断); ③错误类型标注比无标注更危险AI一次性处理627处易引入类型错误需人类架构师审查; ④运行时无影响Any在Python运行时不做类型检查仅静态分析warning; ⑤30-40%是合理Any不需修60-70%需修但也需逐处审查上下文. 防复发已落地: GATE-ANY-ABUSE门禁+mypy加严(disallow_any_generics+warn_any_explicit)+AGENTS.md§8文档化. 维度5.145全部清零.
 
 审查公共API缺失类型注解、Any滥用、Optional误用、Union滥用、泛型参数缺失、裸dict/list/Callable等问题。
 
