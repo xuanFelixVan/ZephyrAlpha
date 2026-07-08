@@ -44,6 +44,7 @@ Version: 0.1.0
 from __future__ import annotations
 
 import asyncio
+import contextvars
 import logging
 import time
 import uuid
@@ -231,9 +232,16 @@ class OutboxPublisher:
                         continue
 
                     try:
-                        result = self._handler(entry)
-                        if asyncio.iscoroutine(result):
-                            await result
+                        if asyncio.iscoroutinefunction(self._handler):
+                            await self._handler(entry)
+                        else:
+                            # 5.100.11 修复：同步handler用to_thread避免阻塞事件循环
+                            # copy_context传播trace_id_var等ContextVar到工作线程
+                            ctx = contextvars.copy_context()
+                            result = await asyncio.to_thread(ctx.run, self._handler, entry)
+                            # 兼容：同步handler返回协程的罕见情况
+                            if asyncio.iscoroutine(result):
+                                await result
                         await self._store.mark_published(entry.id)
                         logger.debug("outbox: %s published -> %s", entry.id, entry.event_type)
                     except Exception as exc:
