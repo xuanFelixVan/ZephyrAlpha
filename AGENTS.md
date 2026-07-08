@@ -594,7 +594,11 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 **病根**：`--no-verify` 绕过 pre-commit hook，导致 GitCommitGateway 的 in-process gates + pre-commit 检查全部被绕过，产生 non-GW commit（commit message 无 `[GW:` 标记）。`commit_gw_audit` reconciler 事后审计为 warn-only，不阻断，无法有效约束并发 AI 对话。
 
-**治本**：`--no-verify` 绕过 pre-commit，**但不绕过 post-commit**。在 post-commit 中检测 commit message 是否含 `[GW:` 标记，不含且非 merge commit → 自动 `git reset --soft HEAD~1`（保留修改在 staging area），强制所有 commit 必须通过 GitCommitGateway。
+**治本**（2026-07-08 强化 session_id 真实性验证）：`--no-verify` 绕过 pre-commit，**但不绕过 post-commit**。在 post-commit 中执行两层验证：
+1. **标记存在性**：commit message 是否含 `[GW:` 标记，不含且非 merge commit → 自动 `git reset --soft HEAD~1`（保留修改在 staging area），强制所有 commit 必须通过 GitCommitGateway。
+2. **session_id 真实性**（强化）：解析 `[GW:{session_id}...]` 中的 session_id（要求 `sess-` 前缀，避免匹配描述文本误含的片段），验证其在 `.runtime/session_registry.json` 中已注册。未注册 → 伪造检测 → `git reset --soft HEAD~1`。**fail-open**：注册表不存在/解析失败 → 放行（不阻断正常流程）。
+
+这闭环了"伪造 `[GW:fake-session]` 标记"的残余风险——只有真正的 GitCommitGateway/session_worktree_commit（产生真实 session_id 并注册到 SessionRegistry）的 commit 才被放行。
 
 **生效条件**：`.git/hooks/post-commit` 调用 [`scripts/governance/git_hooks/post_commit_guard.sh`](file:///d:/ZephyrAlpha/scripts/governance/git_hooks/post_commit_guard.sh)。源文件被 git-tracked，hook 安装见脚本头部注释。
 
