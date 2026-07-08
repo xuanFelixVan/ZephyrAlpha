@@ -994,14 +994,6 @@ items:
   name: validate_interface_contracts.py
   node_type: script
   status: active
-- file: scripts/governance/d5_architecture/validators/validate_layer_consistency.py
-  name: validate_layer_consistency.py
-  node_type: script
-  status: active
-- file: scripts/governance/d5_architecture/validators/validate_layer_deps.py
-  name: validate_layer_deps.py
-  node_type: script
-  status: active
 - file: scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
   name: validate_load_path_integrity.py
   node_type: script

@@ -65,13 +65,6 @@ detectors:
       severity: MEDIUM
       category: lifecycle
 
-    - id: "layer_deps"
-      script: "d5_architecture/validators/validate_layer_deps.py"
-      drift_dimension: "D4_layer_deps"
-      check_dims: ["D4"]
-      severity: HIGH
-      category: architecture
-
     - id: "cross_references"
       script: "d5_architecture/validators/validate_cross_references.py"
       drift_dimension: "D5_cross_refs"

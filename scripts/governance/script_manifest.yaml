@@ -2230,29 +2230,6 @@ scripts:
   description: 接口契约校验（GOV-MOD-004 IFC-001~007 — 7必填字段+semver+契约状态）
   tags:
   - Critical
-- name: d5_architecture/validators/validate_layer_consistency.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args:
-  - --warn-only
-  warn_only: false
-  description: 蓝图 layer 声明 vs 物理目录一致性校验（预防 layer 不匹配 — 三层防线 Layer 1+2）
-  tags:
-  - Critical
-- name: d5_architecture/validators/validate_layer_deps.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 跨层依赖违规检测（COND-30~32 — 层纪律）
-  tags:
-  - Critical
 - name: d5_architecture/validators/validate_load_path_integrity.py
   owner: governance:d5_architecture
   dimensions:

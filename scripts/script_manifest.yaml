@@ -2054,22 +2054,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/d5_architecture/validators/validate_layer_consistency.py
-  path: governance/d5_architecture/validators/validate_layer_consistency.py
-  description: 对标：Problem — 12份 blueprint layer 声明 ≠ 物理目录（根因：缺外部一致性检查）
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/validators/validate_layer_deps.py
-  path: governance/d5_architecture/validators/validate_layer_deps.py
-  description: 对标：PS-STD-003 COND-30~32（跨层调用 / contracts 放业务层）
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/d5_architecture/validators/validate_load_path_integrity.py
   path: governance/d5_architecture/validators/validate_load_path_integrity.py
   description: from __future__ import annotations

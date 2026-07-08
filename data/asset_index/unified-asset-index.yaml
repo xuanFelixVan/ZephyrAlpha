@@ -43513,21 +43513,6 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "scripts/governance/d5_architecture/validators/validate_layer_consistency.py"
-    asset_type: "script"
-    layer: "L01"
-    status: "active"
-    priority: "P3"
-    size_bytes: 5809
-    mtime_utc: "2026-07-04T06:56:03.790485Z"
-    sha256: "10766a39696e7a3abf92be68bfb2860a433439a10bc951c2c62d97c0eade99b4"
-    registered_in:
-    classification_confidence: 0.85
-    tags:
-    custom_metadata:
-
-    tags_last_updated: None
-  -
     relative_path: "scripts/governance/d5_architecture/validators/validate_load_path_integrity.py"
     asset_type: "script"
     layer: "L01"
@@ -43536,21 +43521,6 @@ assets:
     size_bytes: 6039
     mtime_utc: "2026-07-04T19:11:32.707696Z"
     sha256: "9444938e8ef8b8843e17acc601d5878e73b99d78e3428b5b63ffb3383ea80d89"
-    registered_in:
-    classification_confidence: 0.85
-    tags:
-    custom_metadata:
-
-    tags_last_updated: None
-  -
-    relative_path: "scripts/governance/d5_architecture/validators/validate_layer_deps.py"
-    asset_type: "script"
-    layer: "L01"
-    status: "active"
-    priority: "P3"
-    size_bytes: 5770
-    mtime_utc: "2026-07-04T00:23:48.669957Z"
-    sha256: "3f1617be3b67351fa19667ba64799751eba69fc65fae99188d70c8abb54ed1fd"
     registered_in:
     classification_confidence: 0.85
     tags:

@@ -837,7 +837,7 @@ entries:
     Why2: 为什么未同步？因为引用使用路径字符串而非模块ID，无法建立反向引用索引。
     Why3: 为什么使用路径字符串？因为蓝图设计早期未建立"模块ID→canonical路径"映射的强制约束。
     Why4: 为什么没有强制约束？因为缺少 commit gate 校验蓝图间路径引用一致性。
-    Why5: 为什么缺少 gate？因为 validate_layer_consistency.py 存在但未挂载到 commit gate 或 pre-commit（检测缺口）。
+    Why5: 为什么缺少 gate？因为 validate_layer_consistency.py 存在但未挂载到 commit gate 或 pre-commit（检测缺口）。[注：该文件已于2026-07-09作为死代码清理删除]
 
     根因：蓝图间引用使用路径字符串而非模块ID，导致无法自动追踪和更新引用关系。
     在 100% AI 开发模式下，错误会病毒式复制——每个新蓝图都可能引用错误的旧路径。
@@ -911,7 +911,7 @@ entries:
     【关联】
     - ARCH-039（D_INFRA_RUNTIME 域归属造假）——同类病根（路径/域归属错误），ARCH-044 是系统性延展
     - ARCH-042/043（bridges/ 同名分裂）——不同病根（文件名冲突），但同属"路径真源一致性"主题
-    - validate_layer_consistency.py——存在但未挂载，是 P1 PATH-REF-CONSISTENCY gate 的天然候选实现
+    - validate_layer_consistency.py——存在但未挂载，是 P1 PATH-REF-CONSISTENCY gate 的天然候选实现 [注：该文件已于2026-07-09作为死代码清理删除，PATH-REF-CONSISTENCY gate 需独立实现]
   fix_phase: |
     P0 DONE 2026-07-04：批量修复 31 处错误路径引用（11 个蓝图文件），全量 Grep 验证零残留。
     P1 TODO：补建 PATH-REF-CONSISTENCY commit gate（priority=77）
