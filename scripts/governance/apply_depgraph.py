@@ -3490,6 +3490,131 @@ def cmd_insert_domain_mapping(
                 conn.close()
 
 
+# ===== 模块全景对齐（four_graph_module_alignment Step 3 Task 3.4）=====
+
+
+def mark_entry_point(path: str, entry_flag: bool = True, db_path: str = None) -> bool:
+    """标记文件级节点为入口文件（nodes.entry_point）。
+
+    四图模块对齐 Step 3：为 nodes 表新增 entry_point 字段配套写入入口。
+    入口文件 = 模块对外暴露的执行入口（如 __main__.py、CLI 入口、app.py）。
+
+    :param path: 节点 path（nodes 表 PK 候选，唯一索引保证）
+    :param entry_flag: True=标记为入口，False=取消标记
+    :return: True=成功，False=失败
+    """
+    with _db_write_lock(db_path=db_path, task="mark_entry_point"):
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
+        try:
+            row = conn.execute(
+                "SELECT node_id, path, entry_point FROM nodes WHERE path=%s", (path,)
+            ).fetchone()
+            if not row:
+                print(f"ERROR: path='{path}' 在 nodes 表中不存在", file=sys.stderr)
+                return False
+            old_flag = bool(row["entry_point"])
+            if old_flag == entry_flag:
+                print(
+                    f"[SKIP] nodes.entry_point 已为 {entry_flag}（path={path}）",
+                    file=sys.stderr,
+                )
+                return True
+            conn.execute(
+                "UPDATE nodes SET entry_point=%s WHERE path=%s",
+                (entry_flag, path),
+            )
+            conn.commit()
+            print(
+                f"[OK] nodes.entry_point: {old_flag} -> {entry_flag} (path={path})",
+                file=sys.stderr,
+            )
+            return True
+        except Exception as e:
+            conn.rollback()
+            logger.error("mark_entry_point失败: %s", e)
+            return False
+        finally:
+            conn.close()
+
+
+# nodes_metadata 表可由 --update-module-metadata 更新的模块级字段白名单
+_MODULE_METADATA_FIELDS = {
+    "module_name_cn",
+    "module_name_en",
+    "description_cn",
+    "description_en",
+}
+
+
+def update_module_metadata(
+    path: str,
+    fields: dict,
+    db_path: str = None,
+) -> bool:
+    """更新模块级元数据（nodes_metadata 表 UPSERT）。
+
+    四图模块对齐 Step 3：为 nodes_metadata 表新增 4 个模块级字段配套写入入口。
+    path 为稳定 PK（裁定#209 Stage 2）。若行不存在则 INSERT，存在则 UPDATE 指定字段。
+
+    :param path: 节点 path（与 nodes.path 对齐）
+    :param fields: dict，key 必须在 _MODULE_METADATA_FIELDS 白名单内
+    :return: True=成功，False=失败
+    """
+    if not fields:
+        print("ERROR: fields 为空，无字段可更新", file=sys.stderr)
+        return False
+    invalid = set(fields.keys()) - _MODULE_METADATA_FIELDS
+    if invalid:
+        print(
+            f"ERROR: 非法字段 {invalid}（合法字段: {sorted(_MODULE_METADATA_FIELDS)}）",
+            file=sys.stderr,
+        )
+        return False
+
+    with _db_write_lock(db_path=db_path, task="update_module_metadata"):
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
+        try:
+            row = conn.execute(
+                "SELECT node_id, blueprint_id FROM nodes WHERE path=%s", (path,)
+            ).fetchone()
+            if not row:
+                print(f"ERROR: path='{path}' 在 nodes 表中不存在", file=sys.stderr)
+                return False
+            blueprint_id = row["blueprint_id"]
+
+            existing = conn.execute(
+                "SELECT path FROM nodes_metadata WHERE path=%s", (path,)
+            ).fetchone()
+            now = datetime.datetime.now().isoformat()
+            if existing:
+                set_clauses = ", ".join(f"{k}=%s" for k in fields)
+                params = list(fields.values()) + [now, path]
+                conn.execute(
+                    f"UPDATE nodes_metadata SET {set_clauses}, last_updated=%s WHERE path=%s",
+                    params,
+                )
+            else:
+                cols = ["path", "blueprint_id", "last_updated"] + list(fields.keys())
+                placeholders = ", ".join(["%s"] * len(cols))
+                params = [path, blueprint_id, now] + list(fields.values())
+                conn.execute(
+                    f"INSERT INTO nodes_metadata ({', '.join(cols)}) VALUES ({placeholders})",
+                    params,
+                )
+            conn.commit()
+            print(
+                f"[OK] nodes_metadata UPSERT path={path} fields={list(fields.keys())}",
+                file=sys.stderr,
+            )
+            return True
+        except Exception as e:
+            conn.rollback()
+            logger.error("update_module_metadata失败: %s", e)
+            return False
+        finally:
+            conn.close()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="depgraph 变更写入工具（禁止AI直接Write 157MB文件）",
@@ -3782,6 +3907,31 @@ def main() -> None:
         "安全保证：负向前瞻防止 MOD-SHARED 误匹配 MOD-SHARED-001。"
         "改名后自动扫描 docs/ 下 YAML 真源引用并输出 [YAML SYNC WARNING]（无需手动 grep）。"
         "配 --dry-run 预览。",
+    )
+    # 四图模块对齐 Step 3 Task 3.4：模块全景字段写入入口
+    parser.add_argument(
+        "--mark-entry",
+        type=str,
+        nargs="+",
+        metavar="PATH [--off]",
+        help="标记文件级节点为入口文件（nodes.entry_point）。"
+        "默认标记为 True，附加 --off 参数取消标记。"
+        "示例: --mark-entry src/zephyr/cli/main.py",
+    )
+    parser.add_argument(
+        "--off",
+        action="store_true",
+        help="--mark-entry 的取消标记开关（设 entry_point=FALSE）",
+    )
+    parser.add_argument(
+        "--update-module-metadata",
+        type=str,
+        nargs="+",
+        metavar="PATH KEY=VALUE [KEY=VALUE ...]",
+        help="更新模块级元数据（nodes_metadata 表 UPSERT）。"
+        "合法字段: module_name_cn/module_name_en/description_cn/description_en。"
+        "示例: --update-module-metadata src/zephyr/cli/main.py module_name_cn=CLI入口 "
+        "description_en=Command-line entry point",
     )
     args = parser.parse_args()
 
@@ -4167,6 +4317,38 @@ def main() -> None:
     if args.cleanup_orphan_nodes:
         count = cmd_cleanup_orphan_nodes(dry_run=args.dry_run)
         sys.exit(0 if count >= 0 else 4)
+
+    # 四图模块对齐 Step 3 Task 3.4：模块全景字段写入 dispatch
+    if args.mark_entry:
+        if len(args.mark_entry) != 1:
+            print(
+                "ERROR: --mark-entry 需要 1 个 PATH 参数（--off 单独作为开关）",
+                file=sys.stderr,
+            )
+            sys.exit(3)
+        path = args.mark_entry[0]
+        entry_flag = not args.off
+        ok = mark_entry_point(path, entry_flag=entry_flag)
+        sys.exit(0 if ok else 4)
+
+    if args.update_module_metadata:
+        if len(args.update_module_metadata) < 2:
+            print(
+                "ERROR: --update-module-metadata 需要 PATH + 至少 1 个 KEY=VALUE",
+                file=sys.stderr,
+            )
+            sys.exit(3)
+        path = args.update_module_metadata[0]
+        kv_pairs = args.update_module_metadata[1:]
+        fields: dict = {}
+        for kv in kv_pairs:
+            if "=" not in kv:
+                print(f"ERROR: KEY=VALUE 格式错误: {kv}", file=sys.stderr)
+                sys.exit(3)
+            k, v = kv.split("=", 1)
+            fields[k.strip()] = v
+        ok = update_module_metadata(path, fields)
+        sys.exit(0 if ok else 4)
 
     if args.list_ops:
         # op 清单从注册表自动派生（§6.16 铁律：禁止手工同步到 docstring/AGENTS.md）

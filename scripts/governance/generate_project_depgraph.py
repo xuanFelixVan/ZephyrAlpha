@@ -1164,6 +1164,35 @@ def extract_py_imports(filepath: Path) -> list:
     return imports
 
 
+def extract_public_api(filepath: Path) -> str:
+    """四图模块对齐 Step 3 Task 3.5：从 Python AST 提取 __all__ 列表作为 public_api。
+
+    __all__ 是 Python 模块的公开 API 约定（PEP 8）。
+    返回逗号分隔的字符串（便于 DB 存储），无 __all__ 时返回空串。
+
+    :param filepath: Python 文件路径
+    :return: "func_a,ClassB,const_C" 或 ""
+    """
+    try:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
+            source = f.read()
+        tree = ast.parse(source, filename=str(filepath))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id == "__all__":
+                        if isinstance(node.value, ast.List):
+                            names = []
+                            for elt in node.value.elts:
+                                if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                                    names.append(elt.value)
+                            return ", ".join(names)
+                        return ""
+    except Exception:
+        pass
+    return ""
+
+
 def extract_md_references(filepath: Path) -> list:
     refs = []
     try:
@@ -1260,6 +1289,7 @@ def scan_py_file(rel_path: str, domain_derivation: list = None) -> dict | None:
         return None
     header = parse_blueprint_header(filepath)
     imports = extract_py_imports(filepath)
+    public_api = extract_public_api(filepath)
     cat = classify_file(rel_path)
     if not cat:
         cat = "module"
@@ -1275,6 +1305,7 @@ def scan_py_file(rel_path: str, domain_derivation: list = None) -> dict | None:
         "file_header_score": count_header_completeness(filepath),
         "imports": imports,
         "content_hash": compute_file_hash(filepath),
+        "public_api": public_api,
     }
 
 
@@ -3062,9 +3093,10 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                     file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
                     trust_zone, license, drive_direction, type_specific_data, last_verified,
                     node_name, file_path, build_status,
-                    can_build, gate_reason, hard_boundary_ref, consumed_interfaces, content_hash
+                    can_build, gate_reason, hard_boundary_ref, consumed_interfaces, content_hash,
+                    public_api
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                          %s, %s, %s, %s, %s, %s, %s, %s)""",
+                          %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                     (
                         node.get("type", "module"),
                         node.get("path", ""),
@@ -3095,6 +3127,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                         node.get("hard_boundary_ref", ""),  # H6 fix
                         node.get("consumed_interfaces", ""),  # H6 fix
                         node.get("content_hash", ""),  # 裁定#209 Stage 3
+                        node.get("public_api", ""),  # 四图模块对齐 Step 3
                     ),
                 )
                 cursor.execute(f"RELEASE SAVEPOINT {_sp_name}")
