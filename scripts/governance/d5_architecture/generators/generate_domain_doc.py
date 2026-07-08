@@ -78,6 +78,54 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
 
+# 蓝图注册表路径（用于 blueprint_id → 蓝图 MD 文件路径跳转链接）
+_BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
+
+
+def _load_blueprint_path_map() -> dict[str, str]:
+    """加载 blueprint_registry.yaml，构建 {module_id: 相对路径} 映射。
+
+    用于模块清单表格的"蓝图"列——从节点的 blueprint_id 构造跳转链接。
+    registry 不存在或解析失败时返回空字典，表格该列显示为空。
+    """
+    if not _BLUEPRINT_REGISTRY_PATH.exists():
+        return {}
+    try:
+        data = yaml.safe_load(_BLUEPRINT_REGISTRY_PATH.read_text(encoding="utf-8", errors="replace"))
+        if not isinstance(data, dict):
+            return {}
+        blueprints = data.get("blueprints", []) or []
+        result: dict[str, str] = {}
+        for bp in blueprints:
+            if not isinstance(bp, dict):
+                continue
+            mid = bp.get("module_id", "")
+            fp = bp.get("file_path", "")
+            if mid and fp:
+                # file_path 格式如 "03_modules/_domain_xxx/yyy/blueprint.md"
+                result[mid] = fp
+        return result
+    except Exception:
+        return {}
+
+
+# 模块级缓存（一次生成周期内只加载一次）
+_BLUEPRINT_PATH_CACHE: dict[str, str] | None = None
+
+
+def _get_blueprint_link(blueprint_id: str) -> str:
+    """根据 blueprint_id 返回跳转链接 markdown 文本，无则返回空字符串。"""
+    global _BLUEPRINT_PATH_CACHE
+    if not blueprint_id:
+        return ""
+    if _BLUEPRINT_PATH_CACHE is None:
+        _BLUEPRINT_PATH_CACHE = _load_blueprint_path_map()
+    fp = _BLUEPRINT_PATH_CACHE.get(blueprint_id, "")
+    if not fp:
+        return ""
+    # 构造相对路径链接（相对仓库根）
+    return f"[{blueprint_id}](docs/03_modules/{fp.split('03_modules/', 1)[-1]})" if "03_modules/" in fp else ""
+
 # ARCH-052: 聚合节点类型——配置对象集（门禁/脚本/测试/规则文件）用 1 个聚合节点代表
 # 图视图只显示聚合节点本身；清单视图展开 registry.yaml 列出内部 items
 AGGREGATE_NODE_TYPES = {
@@ -423,6 +471,58 @@ def get_cross_domain_deps(conn: PgConnExecuteWrapper, domain_id: str) -> tuple[l
     return outgoing, incoming
 
 
+def generate_cross_domain_mermaid(
+    domain_id: str,
+    domain_name: str,
+    outgoing_agg: list[dict],
+    incoming_agg: list[dict],
+) -> str:
+    """生成跨域依赖 Mermaid 图（只显示直接连接的外部域，不显示具体节点）。
+
+    - 本域作为中心节点
+    - 出边（本域 → 外部域）：实线箭头，标注依赖数和类型
+    - 入边（外部域 → 本域）：实线箭头，标注依赖数和类型
+    - 只显示直接连接的域，不展开具体节点
+    """
+    lines = ["graph LR"]
+
+    # 本域节点
+    self_id = sanitize_node_id(domain_id)
+    safe_name = _sanitize_subgraph_label(domain_name)
+    lines.append(f'    {self_id}["{domain_id}<br/>{safe_name}"]')
+
+    # 收集所有外部域（去重）
+    external_domains: dict[str, str] = {}  # domain_id -> mermaid_id
+    for d in outgoing_agg:
+        ext = d["target_domain"]
+        if ext not in external_domains:
+            ext_id = sanitize_node_id(ext)
+            external_domains[ext] = ext_id
+            lines.append(f'    {ext_id}["{ext}"]')
+    for d in incoming_agg:
+        ext = d["source_domain"]
+        if ext not in external_domains:
+            ext_id = sanitize_node_id(ext)
+            external_domains[ext] = ext_id
+            lines.append(f'    {ext_id}["{ext}"]')
+
+    # 出边：本域 → 外部域
+    for d in outgoing_agg:
+        ext_id = external_domains.get(d["target_domain"])
+        if ext_id:
+            dep_label = _dep_types_display(d["dep_types"])
+            lines.append(f"    {self_id} -->|{d['count']}条 {dep_label}| {ext_id}")
+
+    # 入边：外部域 → 本域
+    for d in incoming_agg:
+        ext_id = external_domains.get(d["source_domain"])
+        if ext_id:
+            dep_label = _dep_types_display(d["dep_types"])
+            lines.append(f"    {ext_id} -->|{d['count']}条 {dep_label}| {self_id}")
+
+    return "\n".join(lines)
+
+
 def get_cross_domain_edges_detail(
     conn: PgConnExecuteWrapper, domain_id: str, internal_node_ids: list[int]
 ) -> tuple[list[dict], list[dict]]:
@@ -766,9 +866,9 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
         lines.append(
             "| # | 模块路径 / Module Path | "
             "模块名称 / Module Name (功能简介 / Description) | "
-            "成熟度 / Maturity |"
+            "成熟度 / Maturity | 蓝图 / Blueprint |"
         )
-        lines.append("|:--:|---------|---------|:---:|")
+        lines.append("|:--:|---------|---------|:---:|:---:|")
 
         for i, n in enumerate(shown, 1):
             path_display = _truncate(n["path"] or "", 60)
@@ -776,6 +876,8 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
             name_display = _node_desc_zh(n) or _node_short_name(n)
             name_display = _truncate(name_display, 80)
             node_type = n.get("node_type", "")
+            # 蓝图跳转链接（从 blueprint_id 构造，无则为空）
+            blueprint_link = _get_blueprint_link(n.get("blueprint_id", ""))
 
             # ARCH-052: 聚合节点——显示自身一行 + 展开 registry.yaml 列出内部 items
             if node_type in AGGREGATE_NODE_TYPES:
@@ -796,7 +898,7 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
                     pass
                 lines.append(
                     f"| {i} | {path_display} | "
-                    f"{collection_desc or name_display} | {_maturity_display(n['design_maturity'])} |"
+                    f"{collection_desc or name_display} | {_maturity_display(n['design_maturity'])} | {blueprint_link} |"
                 )
                 # 展开内部 items（最多显示前 100 个，避免表格过长）
                 MAX_ITEMS = 100
@@ -807,15 +909,15 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
                     item_path_display = _truncate(f"  ↳ {item_file}", 60)
                     lines.append(
                         f"| ↳{j} | {item_path_display} | "
-                        f"{item_desc} | - |"
+                        f"{item_desc} | - | - |"
                     )
                 if len(registry_data) > MAX_ITEMS:
-                    lines.append(f"| | | > (仅显示前 {MAX_ITEMS} 个 items，共 {len(registry_data)} 个) |")
+                    lines.append(f"| | | > (仅显示前 {MAX_ITEMS} 个 items，共 {len(registry_data)} 个) | | |")
             else:
                 # 普通节点——显示功能简介（docstring首行/yaml description）
                 lines.append(
                     f"| {i} | {path_display} | "
-                    f"{name_display} | {_maturity_display(n['design_maturity'])} |"
+                    f"{name_display} | {_maturity_display(n['design_maturity'])} | {blueprint_link} |"
                 )
 
         if len(layer_nodes_all) > MAX_PER_LAYER:
@@ -1058,6 +1160,27 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
             lines.append(f"| {d['source_domain']} | {d['count']} | {_dep_types_display(d['dep_types'])} |")
     else:
         lines.append("无跨域入边依赖 / No cross-domain incoming dependencies")
+    lines.append("")
+
+    # 跨域依赖图（第五视图：本域与直接连接的外部域）
+    lines.append("### 跨域依赖图 / Cross-domain Dependency Diagram")
+    lines.append("")
+    total_cross = total_outgoing + total_incoming
+    unique_external = len({d["target_domain"] for d in outgoing_agg} | {d["source_domain"] for d in incoming_agg})
+    lines.append(
+        f"> 本域与 {unique_external} 个外部域直接连接（出边 {total_outgoing} 条 + 入边 {total_incoming} 条 = {total_cross} 条）。"
+        "只显示直接连接的域，不展开具体节点。"
+    )
+    lines.append("")
+    if outgoing_agg or incoming_agg:
+        mermaid_code = generate_cross_domain_mermaid(
+            domain_id, domain_name_zh_hardcoded, outgoing_agg, incoming_agg
+        )
+        lines.append("```mermaid")
+        lines.append(mermaid_code)
+        lines.append("```")
+    else:
+        lines.append("> （无跨域依赖 / No cross-domain dependencies）")
     lines.append("")
 
     # 模块分层清单（按 architecture_layer 分组，合并自 generate_domain_architecture_diagram.py）
