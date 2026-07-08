@@ -689,6 +689,10 @@ DB_TABLE_GROUPS: list[dict] = [
             ("dataflow_datasets", "数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy"),
             ("dataflow_jobs", "作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context"),
             ("dataflow_edges", "数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），{count} 条"),
+            # metadata 表：骨架已建但数据为 0（设计态扩展属性待填），暴露空表缺口
+            ("dataflow_datasets_metadata", "Dataset 扩展属性——physical_type/pit_policy/contract_ref，{count} 行（0=未填，AI 查 dataflow 会幻觉物理类型）"),
+            ("dataflow_jobs_metadata", "Job 扩展属性——source_code_ref/trigger_type/run_context，{count} 行（0=未填，AI 查 job 找不到源码）"),
+            ("dataflow_runs", "运行记录——job 执行历史（status/耗时/参数），{count} 行（0=无运行时观测，依赖观测系统回填）"),
         ],
     },
     {
@@ -714,7 +718,103 @@ DB_TABLE_GROUPS: list[dict] = [
             ("service_assets", "服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，{count} 个"),
             ("config_assets", "配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），{count} 项"),
             ("infrastructure_components", "基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，{count} 个"),
+            # interface_contracts：表已建但仅 5 行（50 域只登记了 5 个模块接口），暴露部分缺失
+            ("interface_contracts", "接口级契约——模块对外 API（函数名/参数签名/返回值/消费方），{count} 行（仅 5=大部分模块接口未登记，AI 会幻觉函数名）"),
         ],
+    },
+]
+
+
+# ============================================================
+# 表级缺口清单（TABLE_GAPS）
+# 与 16 项待建全景图区分：这里记录底层 DB 表的真实状态（空表/部分缺失/完全缺失）
+# 真源：db_stats（运行时从 DB 实时查询行数）
+# 维护策略：缺口修复后（表填充或新建），从本清单移除
+# ============================================================
+TABLE_GAPS: list[dict] = [
+    {
+        "gap_id": "GAP-TBL-01",
+        "table": "dataflow_datasets_metadata",
+        "group": "dataflowgraph",
+        "status": "空表待填",
+        "current_rows": 0,
+        "expected": "14 行（每个 dataset 一行扩展属性）",
+        "what": "Dataset 的 physical_type / pit_policy / contract_ref 未填",
+        "ai_risk": "AI 查 dataflow 只能看到空壳名字，会幻觉编造物理类型（误把 ClickHouse 表当 PostgreSQL）",
+        "fix": "从 YAML 真源同步设计态扩展属性",
+        "priority": "P0 必做",
+        "truth_source_form": "YAML 真源 + DB 缓存",
+        "panorama_ref": "PAN-ASSET-03",
+    },
+    {
+        "gap_id": "GAP-TBL-02",
+        "table": "dataflow_jobs_metadata",
+        "group": "dataflowgraph",
+        "status": "空表待填",
+        "current_rows": 0,
+        "expected": "13 行（每个 job 一行扩展属性）",
+        "what": "Job 的 source_code_ref / trigger_type / run_context 未填",
+        "ai_risk": "AI 查 job 找不到源码文件，不知道怎么触发（定时/事件/手动），改代码会找错文件",
+        "fix": "从代码扫描派生（解析每个 job 的源码文件和触发配置）",
+        "priority": "P0 必做",
+        "truth_source_form": "代码扫描派生 + DB 缓存",
+        "panorama_ref": "PAN-ASSET-03",
+    },
+    {
+        "gap_id": "GAP-TBL-03",
+        "table": "dataflow_runs",
+        "group": "dataflowgraph",
+        "status": "空表待填",
+        "current_rows": 0,
+        "expected": "运行时动态产生（每个 job 每次执行一行）",
+        "what": "无任何 job 执行记录（status/耗时/参数）",
+        "ai_risk": "AI 排查问题时看不到运行历史，只看到设计态（应该每天跑），看不到实际态（三天没跑成功了）",
+        "fix": "依赖观测系统先建好，再回填 DB",
+        "priority": "P2 延后",
+        "truth_source_form": "DB 直写（运行时动态产生）",
+        "panorama_ref": "PAN-RUN-01",
+    },
+    {
+        "gap_id": "GAP-TBL-04",
+        "table": "interface_contracts",
+        "group": "assets",
+        "status": "部分缺失",
+        "current_rows": 5,
+        "expected": "50+ 行（每个暴露接口的模块一行）",
+        "what": "50 个域只登记了 5 个模块接口（MOD-DATA/BACKTEST/TRADING/GOVERNANCE/INF-012B）",
+        "ai_risk": "AI 调用别的模块时不知道暴露什么函数/参数签名，会瞎编函数名和参数",
+        "fix": "从代码扫描补全 exposed_interfaces / consumed_by_modules",
+        "priority": "P1 应做",
+        "truth_source_form": "YAML 真源 + DB 缓存",
+        "panorama_ref": "PAN-ASSET-02",
+    },
+    {
+        "gap_id": "GAP-TBL-05",
+        "table": "runtime_observations（待建）",
+        "group": "无表",
+        "status": "完全缺失",
+        "current_rows": None,
+        "expected": "新建表，记录运行时指标（延迟/错误率/吞吐）",
+        "what": "搜索 runtime/telemetry/metric/trace/observ = 0 张表",
+        "ai_risk": "AI 无法获得运行时性能数据，不知道哪个任务慢/哪个错误率高",
+        "fix": "新建 runtime_observations 表 + 观测系统采集",
+        "priority": "P2 延后",
+        "truth_source_form": "DB 直写（运行时动态产生）",
+        "panorama_ref": "PAN-RUN-01 / PAN-RUN-04",
+    },
+    {
+        "gap_id": "GAP-TBL-06",
+        "table": "field_lineage（待建）",
+        "group": "无表",
+        "status": "完全缺失",
+        "current_rows": None,
+        "expected": "新建表，记录 source_field → transformation → target_field",
+        "what": "field_vocabularies（321 行）只是字段枚举字典，不是血缘；dataflow_edges（28 行）是表级血缘，不够字段级",
+        "ai_risk": "AI 改一个字段时不知道下游哪些字段受影响（改 close 不知道 ma20/macd 都依赖它），会漏改下游",
+        "fix": "从代码静态分析派生（解析每个 job 的 SQL/Python 字段映射）或运行时追踪",
+        "priority": "P2 延后",
+        "truth_source_form": "代码分析派生 + DB 缓存",
+        "panorama_ref": "PAN-ASSET-04",
     },
 ]
 
@@ -871,6 +971,45 @@ def _generate_pending_section(pending: list[dict]) -> list[str]:
         lines.append(
             f"| {p['panorama_id']} | {p['name']} | {p['category']} | `{p['plan_folder']}` | "
             f"`{p['plan_generator']}` | {p['priority']} | {dsb} |"
+        )
+    lines.append("")
+    return lines
+
+
+def _generate_table_gaps_section(gaps: list[dict], db_stats: dict) -> list[str]:
+    """生成表级缺口清单章节。
+
+    与 16 项待建全景图区分：这里记录底层 DB 表的真实状态（空表/部分缺失/完全缺失）。
+    行数从 db_stats 实时查询，覆盖常量里的 current_rows（保持与 DB 实际一致）。
+    """
+    lines = []
+    lines.append("## 表级缺口清单")
+    lines.append("")
+    lines.append(f"> 共 {len(gaps)} 项表级缺口。与上方 16 项待建全景图区分：全景图是最终产物，表级缺口是底层 DB 真源的实际状态。")
+    lines.append(">")
+    lines.append("> **两类缺口的区别**：")
+    lines.append("> - 待建全景图（16 项）= 最终要给 AI/人看的产物目录，真源类型待裁定")
+    lines.append("> - 表级缺口（6 项）= 底层 DB 表的真实状态（空表/部分缺失/完全缺失），真源类型已确定")
+    lines.append("> - 一个表级缺口对应一个待建全景图（见 panorama_ref 列），但反过来不一定")
+    lines.append("")
+
+    # 按优先级分组：P0 必做 → P1 应做 → P2 延后
+    priority_order = {"P0 必做": 0, "P1 应做": 1, "P2 延后": 2}
+    sorted_gaps = sorted(gaps, key=lambda x: priority_order.get(x["priority"], 99))
+
+    lines.append("| 缺口ID | 表名 | 状态 | 实际行数 | 应有行数 | 缺什么 | AI 风险 | 怎么修 | 优先级 | 真源形式 | 对应全景图 |")
+    lines.append("|------|------|:---:|:---:|------|------|------|------|:---:|------|------|")
+    for g in sorted_gaps:
+        # 行数从 db_stats 实时取（覆盖常量里的 current_rows），取不到用常量值
+        table_key = g["table"].replace("（待建）", "")
+        actual = db_stats.get(table_key, g["current_rows"])
+        if actual is None:
+            actual_str = "—（表不存在）"
+        else:
+            actual_str = str(actual)
+        lines.append(
+            f"| {g['gap_id']} | `{g['table']}` | {g['status']} | {actual_str} | {g['expected']} | "
+            f"{g['what']} | {g['ai_risk']} | {g['fix']} | {g['priority']} | {g['truth_source_form']} | {g['panorama_ref']} |"
         )
     lines.append("")
     return lines
@@ -1076,6 +1215,9 @@ def generate_panorama_registry(db_stats: dict) -> str:
     lines.append("---")
     lines.append("")
     lines.extend(_generate_pending_section(PENDING_PANORAMAS))
+    lines.append("---")
+    lines.append("")
+    lines.extend(_generate_table_gaps_section(TABLE_GAPS, db_stats))
     lines.append("---")
     lines.append("")
     lines.extend(_generate_detail_section(BUILT_PANORAMAS, PENDING_PANORAMAS))
