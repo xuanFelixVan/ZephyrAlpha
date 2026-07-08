@@ -277,6 +277,8 @@ config/.env.postgres
 config/.env.clickhouse
 # PostgreSQL native data directory (Windows install)
 data/databases/postgres/
+# ARCH-DEBT-BACKUP-CLEANUP: ghost_autoclean 备份旧路径（已迁移到 tmp/pg_backups/，与 backup_runtime_state.py 标杆对齐）
+data/databases/backups/
 
 # Model quick exam profiles (runtime data, regenerable; same policy as data/brain/passports/)
 data/brain/quick_profiles/*
