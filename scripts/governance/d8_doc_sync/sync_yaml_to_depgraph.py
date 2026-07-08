@@ -20,7 +20,7 @@
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/sync_yaml_to_depgraph.py | §22.10
 [MODULE] 无（独立脚本）
-[INVARIANTS] YAML→DB单向同步; 24项同步; try/finally恢复触发器
+[INVARIANTS] YAML→DB单向同步; 27项同步; try/finally恢复触发器
 [MODIFY-GUARD] 本脚本由autopilot执行
 [CONSUMERS] autopilot session-20260618-001
 [STABILITY] stable
@@ -31,12 +31,13 @@
 
 P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph
 - 同步方向：YAML → DB 单向（禁止反向）
-- 23项同步：cross_module_dependencies/architecture_contract/contract_mapping/gate_registry/
+- 27项同步：cross_module_dependencies/architecture_contract/contract_mapping/gate_registry/
   functional_domain/vocabularies/architecture_rules/declarative_contract/frontmatter_field/
   registry_of_registries/directory_registry/rule_catalog/infrastructure/model_capability/
   hard_boundaries/business_streams/blueprint_links
   + ARCH-051 dataflow_registry + ARCH-052 aggregate_nodes + ARCH-053 interface_contracts/database_nodes
   + data_source_apis（#179）
+  + data_source_assets（#180）+ service_assets（#181）+ config_assets（#182）
 - 通行证机制：临时DROP只读触发器→同步→finally恢复触发器
 """
 
@@ -87,6 +88,8 @@ READONLY_TABLES = [
     "infrastructure_components",
     "model_capabilities",
     "data_source_apis",
+    "data_source_assets",
+    "service_assets",
 ]
 
 
@@ -1754,6 +1757,115 @@ def sync_data_source_apis(cur):
     print(f"  同步 {synced} 个数据源 API")
 
 
+def sync_data_source_assets(cur):
+    """#180: 外部数据源资产清单 → data_source_assets 表
+
+    SSoT: architecture_model/data/data_sources_registry.yaml
+    将 10 个外部数据源资产从 YAML 同步到 depgraph.data_source_assets 表。
+    派生关系：YAML → DB → generate_asset_catalog.py → asset_catalog.md。
+    """
+    print("同步 #180: 外部数据源资产 → data_source_assets...")
+    yaml_path = REPO_ROOT / "architecture_model" / "data" / "data_sources_registry.yaml"
+    if not yaml_path.exists():
+        print(f"  跳过: {yaml_path} 不存在")
+        return
+    with open(yaml_path, encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    sources = data.get("data_sources", [])
+    if not sources:
+        print("  跳过: YAML 中无 data_sources 条目")
+        return
+    cur.execute("DELETE FROM data_source_assets")
+    synced = 0
+    for s in sources:
+        cur.execute("""
+            INSERT INTO data_source_assets
+                (source_id, name, name_en, type, category, vendor,
+                 interface_types, api_count, auth_required, auth_method,
+                 rate_limit, status, coverage, limitations, owner, operation_manual)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            s.get("id", ""), s.get("name", ""), s.get("name_en", ""),
+            s.get("type", ""), s.get("category", ""), s.get("vendor", ""),
+            ", ".join(s.get("interface_types", [])) if isinstance(s.get("interface_types"), list) else s.get("interface_types", ""),
+            s.get("api_count", 0), s.get("auth_required", False),
+            s.get("auth_method", ""), s.get("rate_limit", ""), s.get("status", ""),
+            s.get("coverage", ""), s.get("limitations", ""), s.get("owner", ""),
+            s.get("operation_manual", ""),
+        ))
+        synced += 1
+    print(f"  同步 {synced} 个外部数据源资产")
+
+
+def sync_service_assets(cur):
+    """#181: 服务资产清单 → service_assets 表
+
+    SSoT: architecture_model/runtime/service_registry.yaml
+    将服务资产从 YAML 同步到 depgraph.service_assets 表。
+    派生关系：YAML → DB → generate_asset_catalog.py → asset_catalog.md。
+    """
+    print("同步 #181: 服务资产 → service_assets...")
+    yaml_path = REPO_ROOT / "architecture_model" / "runtime" / "service_registry.yaml"
+    if not yaml_path.exists():
+        print(f"  跳过: {yaml_path} 不存在")
+        return
+    with open(yaml_path, encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    services = data.get("services", [])
+    if not services:
+        print("  跳过: YAML 中无 services 条目")
+        return
+    cur.execute("DELETE FROM service_assets")
+    synced = 0
+    for s in services:
+        cur.execute("""
+            INSERT INTO service_assets
+                (service_id, name, type, component_ref, domain,
+                 port, host, protocol, status, description, owner)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            s.get("id", ""), s.get("name", ""), s.get("type", ""),
+            s.get("component_ref"), s.get("domain", ""),
+            s.get("port"), s.get("host", ""), s.get("protocol", ""),
+            s.get("status", ""), s.get("description", ""), s.get("owner", ""),
+        ))
+        synced += 1
+    print(f"  同步 {synced} 个服务资产")
+
+
+def sync_config_assets(cur):
+    """#182: 配置项资产 → config_assets 表（文件系统扫描派生）
+
+    真源：config/*.yaml 文件本身（文件系统，非单一 YAML）
+    扫描 config/ 目录下所有 .yaml 文件，写入 file_path/file_name/size_bytes/last_modified。
+    非 readonly 表（文件系统扫描派生，需定期重扫）。
+    """
+    print("同步 #182: 配置项资产 → config_assets（文件系统扫描）...")
+    config_dir = REPO_ROOT / "config"
+    if not config_dir.exists():
+        print(f"  跳过: {config_dir} 不存在")
+        return
+    yaml_files = sorted(config_dir.glob("*.yaml"))
+    if not yaml_files:
+        print("  跳过: config/ 下无 .yaml 文件")
+        return
+    cur.execute("DELETE FROM config_assets")
+    synced = 0
+    for f in yaml_files:
+        stat = f.stat()
+        rel_path = str(f.relative_to(REPO_ROOT)).replace("\\", "/")
+        cur.execute("""
+            INSERT INTO config_assets
+                (file_path, file_name, category, size_bytes, owner, last_modified)
+            VALUES (%s, %s, %s, %s, %s, to_timestamp(%s))
+        """, (
+            rel_path, f.name, "config", stat.st_size,
+            "ZephyrAlpha-Owner", stat.st_mtime,
+        ))
+        synced += 1
+    print(f"  同步 {synced} 个配置文件")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -1825,14 +1937,20 @@ def sync_all() -> bool:
         sync_interface_contracts(cur)  # #177 ARCH-053 接口契约→interface_contracts 表
         sync_database_nodes(cur)  # #178 ARCH-053 database 节点→nodes 表
 
-        # P9 优先级同步（数据源 API 结构化清单）
-        sync_data_source_apis(cur)  # #179 数据源 API→data_source_apis 表
+        # P9 优先级同步（资产清单扩展：数据源/服务/配置项资产）
+        # 注意执行顺序：data_source_assets 必须在 data_source_apis 之前，
+        # 因为 data_source_apis 有 FK 到 data_source_assets(source_id) ON DELETE CASCADE。
+        # 若 data_source_assets 后执行，其 DELETE 会级联清空 data_source_apis。
+        sync_data_source_assets(cur)  # #180 外部数据源资产→data_source_assets 表（先建父表）
+        sync_data_source_apis(cur)  # #179 数据源 API→data_source_apis 表（后建子表，FK 依赖父表）
+        sync_service_assets(cur)  # #181 服务资产→service_assets 表
+        sync_config_assets(cur)  # #182 配置项资产→config_assets 表（文件系统扫描）
 
         # 历史遗留清理：删除 sync 无法触及的 FK 违规孤立记录
         cleanup_legacy_fk_violations(cur)
 
         conn.commit()
-        print("\n[PASS] 24 项 YAML→DB 同步完成")
+        print("\n[PASS] 27 项 YAML→DB 同步完成")
 
         # S1.2: 验证 readonly 表 COMMENT（HB-001 table_comment_required）
         verify_readonly_table_comments(cur)

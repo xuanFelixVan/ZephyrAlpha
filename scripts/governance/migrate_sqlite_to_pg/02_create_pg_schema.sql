@@ -670,9 +670,11 @@ COMMENT ON TABLE infrastructure_components IS 'YAML 真源只读缓存表。禁�
 COMMENT ON TABLE model_capabilities IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
 
 -- =====================================================================
--- S1.3: 资产清单扩展表（2026-07-09 新增，#179）
--- data_source_assets: 外部数据源资产（非 readonly，由 data_sources_registry.yaml 派生）
+-- S1.3: 资产清单扩展表（2026-07-09 新增，#179/#180/#181/#182）
+-- data_source_assets: 外部数据源资产（readonly，#180 sync_data_source_assets 同步）
 -- data_source_apis: 数据源 API 结构化清单（readonly，#179 sync_data_source_apis 同步）
+-- service_assets: 服务资产（readonly，#181 sync_service_assets 同步）
+-- config_assets: 配置项资产（非 readonly，文件系统扫描派生表，#182 sync_config_assets 扫描 config/）
 -- =====================================================================
 
 CREATE TABLE IF NOT EXISTS data_source_assets (
@@ -695,6 +697,16 @@ CREATE TABLE IF NOT EXISTS data_source_assets (
     created_at       TIMESTAMPTZ DEFAULT now(),
     updated_at       TIMESTAMPTZ DEFAULT now()
 );
+
+-- data_source_assets 只读触发器（readonly，真源=YAML，sync_data_source_assets 同步）
+CREATE TRIGGER readonly_data_source_assets_delete
+    BEFORE DELETE ON data_source_assets FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+CREATE TRIGGER readonly_data_source_assets_insert
+    BEFORE INSERT ON data_source_assets FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+CREATE TRIGGER readonly_data_source_assets_update
+    BEFORE UPDATE ON data_source_assets FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+
+COMMENT ON TABLE data_source_assets IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：architecture_model/data/data_sources_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
 
 CREATE TABLE IF NOT EXISTS data_source_apis (
     api_id           TEXT PRIMARY KEY,
@@ -728,3 +740,58 @@ CREATE TRIGGER readonly_data_source_apis_update
     BEFORE UPDATE ON data_source_apis FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
 
 COMMENT ON TABLE data_source_apis IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：architecture_model/data/data_source_apis_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+-- =====================================================================
+-- S1.4: 服务资产表（2026-07-09 新增，#181）
+-- service_assets: 服务资产（readonly，真源=architecture_model/runtime/service_registry.yaml）
+-- =====================================================================
+
+CREATE TABLE IF NOT EXISTS service_assets (
+    service_id      TEXT PRIMARY KEY,
+    name            TEXT NOT NULL,
+    type            TEXT,
+    component_ref   TEXT,
+    domain          TEXT,
+    port            INTEGER,
+    host            TEXT,
+    protocol        TEXT,
+    status          TEXT,
+    description     TEXT,
+    owner           TEXT,
+    created_at       TIMESTAMPTZ DEFAULT now(),
+    updated_at       TIMESTAMPTZ DEFAULT now()
+);
+
+-- service_assets 只读触发器（readonly，真源=YAML，sync_service_assets 同步）
+CREATE TRIGGER readonly_service_assets_delete
+    BEFORE DELETE ON service_assets FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+CREATE TRIGGER readonly_service_assets_insert
+    BEFORE INSERT ON service_assets FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+CREATE TRIGGER readonly_service_assets_update
+    BEFORE UPDATE ON service_assets FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+
+COMMENT ON TABLE service_assets IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：architecture_model/runtime/service_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+-- =====================================================================
+-- S1.5: 配置项资产表（2026-07-09 新增，#182）
+-- config_assets: 配置项资产（非 readonly，文件系统扫描派生表）
+-- 真源=config/*.yaml 文件本身（文件系统），sync_config_assets 扫描目录派生
+-- 非 readonly 原因：真源是文件系统而非单一 YAML，派生表需定期重扫
+-- =====================================================================
+
+CREATE TABLE IF NOT EXISTS config_assets (
+    config_id       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    file_path       TEXT NOT NULL,
+    file_name       TEXT NOT NULL,
+    category        TEXT,
+    size_bytes      INTEGER,
+    owner           TEXT,
+    description     TEXT,
+    last_modified   TIMESTAMPTZ,
+    scanned_at      TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_config_assets_path ON config_assets(file_path);
+CREATE INDEX IF NOT EXISTS idx_config_assets_name ON config_assets(file_name);
+
+COMMENT ON TABLE config_assets IS '文件系统扫描派生表（非 readonly）。真源=config/*.yaml 文件本身。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py 的 sync_config_assets 函数扫描 config/ 目录';
