@@ -1761,7 +1761,8 @@ def sync_data_source_assets(cur):
     """#180: 外部数据源资产清单 → data_source_assets 表
 
     SSoT: architecture_model/data/data_sources_registry.yaml
-    将 10 个外部数据源资产从 YAML 同步到 depgraph.data_source_assets 表。
+    将外部数据源资产（v2.0.0 起 12 个；runtime_id/policy 字段不进 DB，AI 查调用策略应读 YAML 真源）
+    从 YAML 同步到 depgraph.data_source_assets 表。
     派生关系：YAML → DB → generate_asset_catalog.py → asset_catalog.md。
     """
     print("同步 #180: 外部数据源资产 → data_source_assets...")
