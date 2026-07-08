@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-09'
-total_scripts: 561
+total_scripts: 562
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1857,6 +1857,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_path_tree.py
   path: governance/d5_architecture/generators/generate_path_tree.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_policies.py
+  path: governance/d5_architecture/generators/generate_policies.py
+  description: 真源：architecture_model/data/data_sources_registry.yaml
   domain: governance
   execution_plane: warm-path
   status: registered
