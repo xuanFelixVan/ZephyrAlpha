@@ -480,6 +480,66 @@ def get_cross_domain_deps(conn: PgConnExecuteWrapper, domain_id: str) -> tuple[l
     return outgoing, incoming
 
 
+def get_cross_domain_deps_detail(conn: PgConnExecuteWrapper, domain_id: str) -> tuple[list[dict], list[dict]]:
+    """查询跨域依赖的详细信息（每条边的源模块→目标模块），排除 deprecated 节点的边。
+
+    返回: (出边明细列表, 入边明细列表)，每条含:
+    - from_path, to_path (模块路径)
+    - from_domain, to_domain
+    - dep_type
+    用于明细表格展示具体哪个模块依赖哪个模块。
+    """
+    # 出边明细：from_node 在本域，to_node 在外部域
+    cur = conn.execute(
+        """SELECT e.dep_type, n1.path AS from_path, n2.path AS to_path,
+                  n1.domain_id AS from_domain, n2.domain_id AS to_domain
+           FROM edges e
+           JOIN nodes n1 ON e.from_node_id = n1.node_id
+           JOIN nodes n2 ON e.to_node_id = n2.node_id
+           WHERE n1.domain_id=%s AND n2.domain_id != %s
+             AND n1.build_status != 'deprecated' AND n2.build_status != 'deprecated'
+           ORDER BY n2.domain_id, n1.path, n2.path""",
+        (domain_id, domain_id),
+    )
+    outgoing_detail = []
+    for r in cur.fetchall():
+        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+            continue
+        outgoing_detail.append({
+            "from_path": r["from_path"] or "",
+            "to_path": r["to_path"] or "",
+            "from_domain": r["from_domain"] or "",
+            "to_domain": r["to_domain"] or "",
+            "dep_type": r["dep_type"] or "",
+        })
+
+    # 入边明细：from_node 在外部域，to_node 在本域
+    cur = conn.execute(
+        """SELECT e.dep_type, n1.path AS from_path, n2.path AS to_path,
+                  n1.domain_id AS from_domain, n2.domain_id AS to_domain
+           FROM edges e
+           JOIN nodes n1 ON e.from_node_id = n1.node_id
+           JOIN nodes n2 ON e.to_node_id = n2.node_id
+           WHERE n2.domain_id=%s AND n1.domain_id != %s
+             AND n1.build_status != 'deprecated' AND n2.build_status != 'deprecated'
+           ORDER BY n1.domain_id, n1.path, n2.path""",
+        (domain_id, domain_id),
+    )
+    incoming_detail = []
+    for r in cur.fetchall():
+        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+            continue
+        incoming_detail.append({
+            "from_path": r["from_path"] or "",
+            "to_path": r["to_path"] or "",
+            "from_domain": r["from_domain"] or "",
+            "to_domain": r["to_domain"] or "",
+            "dep_type": r["dep_type"] or "",
+        })
+
+    return outgoing_detail, incoming_detail
+
+
 def generate_cross_domain_mermaid(
     domain_id: str,
     domain_name: str,
@@ -492,6 +552,7 @@ def generate_cross_domain_mermaid(
     - 出边（本域 → 外部域）：实线箭头，标注依赖数和类型
     - 入边（外部域 → 本域）：实线箭头，标注依赖数和类型
     - 只显示直接连接的域，不展开具体节点
+    - 外部域节点显示中英文域名
     """
     lines = ["graph LR"]
 
@@ -500,20 +561,24 @@ def generate_cross_domain_mermaid(
     safe_name = _sanitize_subgraph_label(domain_name)
     lines.append(f'    {self_id}["{domain_id}<br/>{safe_name}"]')
 
-    # 收集所有外部域（去重）
+    # 收集所有外部域（去重），显示中英文
     external_domains: dict[str, str] = {}  # domain_id -> mermaid_id
     for d in outgoing_agg:
         ext = d["target_domain"]
         if ext not in external_domains:
             ext_id = sanitize_node_id(ext)
+            ext_name_zh = DOMAIN_NAME_ZH.get(ext, "")
+            label = f"{ext}<br/>{ext_name_zh}" if ext_name_zh else ext
             external_domains[ext] = ext_id
-            lines.append(f'    {ext_id}["{ext}"]')
+            lines.append(f'    {ext_id}["{label}"]')
     for d in incoming_agg:
         ext = d["source_domain"]
         if ext not in external_domains:
             ext_id = sanitize_node_id(ext)
+            ext_name_zh = DOMAIN_NAME_ZH.get(ext, "")
+            label = f"{ext}<br/>{ext_name_zh}" if ext_name_zh else ext
             external_domains[ext] = ext_id
-            lines.append(f'    {ext_id}["{ext}"]')
+            lines.append(f'    {ext_id}["{label}"]')
 
     # 出边：本域 → 外部域
     for d in outgoing_agg:
@@ -971,6 +1036,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     nodes = get_domain_nodes(conn, domain_id)
     edges = get_domain_edges(conn, domain_id)
     outgoing_agg, incoming_agg = get_cross_domain_deps(conn, domain_id)
+    outgoing_detail, incoming_detail = get_cross_domain_deps_detail(conn, domain_id)
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -1147,26 +1213,48 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("## 跨域依赖 / Cross-domain Dependencies")
     lines.append("")
 
-    # 本域依赖的其他域
+    # 本域依赖的其他域（出边明细）
     lines.append("### 本域依赖的其他域（出边）/ Depends On")
     lines.append("")
-    if outgoing_agg:
-        lines.append("| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |")
-        lines.append("|--------|:---:|---------|")
-        for d in outgoing_agg:
-            lines.append(f"| {d['target_domain']} | {d['count']} | {_dep_types_display(d['dep_types'])} |")
+    if outgoing_detail:
+        lines.append("| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |")
+        lines.append("|:--:|---------|:--:|---------|---------|")
+        for i, d in enumerate(outgoing_detail, 1):
+            src_desc = _node_desc_zh({"path": d["from_path"], "description": ""}) or ""
+            src_short = _node_short_name({"path": d["from_path"]})
+            src_label = f"{src_desc} ({src_short})" if src_desc else src_short
+            src_label = _truncate(src_label, 50)
+            tgt_domain = d["to_domain"]
+            tgt_domain_zh = DOMAIN_NAME_ZH.get(tgt_domain, "")
+            tgt_domain_label = f"{tgt_domain} {tgt_domain_zh}" if tgt_domain_zh else tgt_domain
+            tgt_desc = _node_desc_zh({"path": d["to_path"], "description": ""}) or ""
+            tgt_short = _node_short_name({"path": d["to_path"]})
+            tgt_label = f"{tgt_desc} ({tgt_short})" if tgt_desc else tgt_short
+            tgt_label = _truncate(tgt_label, 50)
+            lines.append(f"| {i} | {src_label} | → | {tgt_domain_label}: {tgt_label} | {_dep_type_display(d['dep_type'])} |")
     else:
         lines.append("无跨域出边依赖 / No cross-domain outgoing dependencies")
     lines.append("")
 
-    # 依赖本域的其他域
+    # 依赖本域的其他域（入边明细）
     lines.append("### 依赖本域的其他域（入边）/ Depended By")
     lines.append("")
-    if incoming_agg:
-        lines.append("| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |")
-        lines.append("|------|:---:|---------|")
-        for d in incoming_agg:
-            lines.append(f"| {d['source_domain']} | {d['count']} | {_dep_types_display(d['dep_types'])} |")
+    if incoming_detail:
+        lines.append("| # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |")
+        lines.append("|:--:|---------|:--:|---------|---------|")
+        for i, d in enumerate(incoming_detail, 1):
+            src_domain = d["from_domain"]
+            src_domain_zh = DOMAIN_NAME_ZH.get(src_domain, "")
+            src_domain_label = f"{src_domain} {src_domain_zh}" if src_domain_zh else src_domain
+            src_desc = _node_desc_zh({"path": d["from_path"], "description": ""}) or ""
+            src_short = _node_short_name({"path": d["from_path"]})
+            src_label = f"{src_desc} ({src_short})" if src_desc else src_short
+            src_label = _truncate(src_label, 50)
+            tgt_desc = _node_desc_zh({"path": d["to_path"], "description": ""}) or ""
+            tgt_short = _node_short_name({"path": d["to_path"]})
+            tgt_label = f"{tgt_desc} ({tgt_short})" if tgt_desc else tgt_short
+            tgt_label = _truncate(tgt_label, 50)
+            lines.append(f"| {i} | {src_domain_label}: {src_label} | → | {tgt_label} | {_dep_type_display(d['dep_type'])} |")
     else:
         lines.append("无跨域入边依赖 / No cross-domain incoming dependencies")
     lines.append("")
