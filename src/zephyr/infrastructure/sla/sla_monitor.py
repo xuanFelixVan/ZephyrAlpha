@@ -1,7 +1,7 @@
-# [BLUEPRINT] SRC-142 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-014 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.sla.sla_monitor
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.events.event_bus
+# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.event_bus
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -226,7 +226,7 @@ class SLAMonitor:
         if self._subscribed:
             return
         try:
-            from zephyr.shared.events.event_bus import bus
+            from zephyr.shared.event_bus import bus
 
             bus.subscribe("pipeline_failed", self._on_recovery_start)
             bus.subscribe("kill_switch_triggered", self._on_recovery_start)

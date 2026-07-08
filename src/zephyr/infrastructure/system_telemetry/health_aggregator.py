@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.health_aggregator
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.system_telemetry.health_probes; zephyr.shared.events.event_bus
+# [DEPENDENCIES] zephyr.infrastructure.system_telemetry.health_probes; zephyr.shared.event_bus
 # [CONSUMERS] zephyr.security.access_control; zephyr.infrastructure.budget_enforcement
 # [STARTUP] imported
 # [MATURITY] production
@@ -93,7 +93,7 @@ class HealthAggregator:
         """事件驱动订阅——kill_switch_triggered/pipeline_failed 时立即采集健康快照（永久系统四要素：自动触发）。"""
         if self._subscribed:
             return
-        from zephyr.shared.events.event_bus import bus
+        from zephyr.shared.event_bus import bus
 
         aggregator = self
 
