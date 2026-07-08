@@ -147,13 +147,31 @@ def _en_zh(en: str | None, sep: str = " / ") -> str:
     return en
 
 
+def _truncate(text: str | None, max_len: int = 40) -> str:
+    """截断文本到指定长度，超出加省略号。None/空串返回空串。
+
+    用于 Mermaid 节点 label 内的功能简述（对标 decision_index.md 的 _truncate，
+    dataflow 的 description/format_summary 普遍较长，默认 40 字保留更多信息）。
+    """
+    if not text:
+        return ""
+    text = text.strip().replace("\n", " ").replace(">", "》")
+    if len(text) <= max_len:
+        return text
+    return text[:max_len - 1] + "…"
+
+
 def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
-    """从 PG 读取 datasets/jobs/edges。"""
+    """从 PG 读取 datasets/jobs/edges。
+
+    读取 Dataset 的 format_summary（功能简述，对标 decision_layers.description）
+    和 Job 的 description（作业描述，功能简述），供 Mermaid label + 清单表格渲染。
+    """
     with conn.cursor() as cur:
         cur.execute("""
             SELECT dataset_id, entity_name, scope, contract_ref, physical_type,
                    produced_by_job, domain_id, design_maturity, build_status, pit_policy,
-                   module_id
+                   module_id, format_summary
             FROM dataflow_datasets
             ORDER BY scope, entity_name
         """)
@@ -162,13 +180,14 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
                 "id": r[0], "name": r[1], "scope": r[2], "contract": r[3],
                 "physical_type": r[4], "produced_by": r[5], "domain": r[6],
                 "maturity": r[7], "build": r[8], "pit": r[9], "module_id": r[10],
+                "format_summary": r[11],
             }
             for r in cur.fetchall()
         ]
 
         cur.execute("""
             SELECT job_id, job_name, scope, source_code_ref, trigger_type,
-                   run_context, design_maturity, build_status, module_id
+                   run_context, design_maturity, build_status, module_id, description
             FROM dataflow_jobs
             ORDER BY scope, job_name
         """)
@@ -176,7 +195,7 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
             {
                 "id": r[0], "name": r[1], "scope": r[2], "source": r[3],
                 "trigger": r[4], "context": r[5], "maturity": r[6], "build": r[7],
-                "module_id": r[8],
+                "module_id": r[8], "description": r[9],
             }
             for r in cur.fetchall()
         ]
@@ -243,7 +262,7 @@ def _gen_mermaid(
     ds_ids = {d["id"] for d in ds_list}
     job_ids = {j["id"] for j in job_list}
 
-    # Dataset 节点（矩形）—— [maturity]标签前缀 + 英文+中文并列
+    # Dataset 节点（矩形）—— [maturity]标签前缀 + 英文+中文并列 + 功能简述
     for d in ds_list:
         tag = _maturity_tag(d.get("maturity"))
         label = f"{tag}{_en_zh(d['name'], sep='<br/>')}"
@@ -255,10 +274,14 @@ def _gen_mermaid(
         mid = d.get("module_id")
         if mid and d.get("maturity") != "design":
             label += f"<br/>蓝图: {mid}"
+        # 功能简述（截断到 40 字，对标 decision_index.md 的 功能: 渲染）
+        fmt = d.get("format_summary")
+        if fmt:
+            label += f"<br/>功能: {_truncate(fmt)}"
         node_class = _node_class(d["scope"], d.get("maturity"), is_job=False)
         lines.append(f'    DS{d["id"]}["{label}"]:::{node_class}')
 
-    # Job 节点（圆角矩形）—— [maturity]标签前缀 + 英文+中文并列
+    # Job 节点（圆角矩形）—— [maturity]标签前缀 + 英文+中文并列 + 功能简述
     for j in job_list:
         tag = _maturity_tag(j.get("maturity"))
         label = f"{tag}{_en_zh(j['name'], sep='<br/>')}"
@@ -268,6 +291,10 @@ def _gen_mermaid(
         mid = j.get("module_id")
         if mid and j.get("maturity") != "design":
             label += f"<br/>蓝图: {mid}"
+        # 功能简述（截断到 40 字，对标 decision_index.md 的 功能: 渲染）
+        jdesc = j.get("description")
+        if jdesc:
+            label += f"<br/>功能: {_truncate(jdesc)}"
         node_class = _node_class(j["scope"], j.get("maturity"), is_job=True)
         lines.append(f'    JOB{j["id"]}("{label}"):::{node_class}')
 
@@ -445,24 +472,26 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     # Dataset 清单
     lines.append("## Dataset 清单")
     lines.append("")
-    lines.append("| ID | entity_name / 实体名 | scope / 范围 | contract_ref / 契约引用 | domain / 域 | pit_policy / PIT策略 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 |")
-    lines.append("|----|----------------------|--------------|---------------------------|------------|------------------|------------------|---------------------------|--------------------|")
+    lines.append("| ID | entity_name / 实体名 | scope / 范围 | contract_ref / 契约引用 | domain / 域 | pit_policy / PIT策略 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 | 功能简述 |")
+    lines.append("|----|----------------------|--------------|---------------------------|------------|------------------|------------------|---------------------------|--------------------|----------|")
     for d in datasets:
+        fmt = (d.get("format_summary") or "").strip().replace("\n", " ").replace("|", "\\|") or "-"
         lines.append(
             f"| DS-{d['id']:03d} | {_en_zh(d['name'])} | {_en_zh(d['scope'])} | "
-            f"{d['contract'] or '-'} | {_en_zh(d['domain'] or '-')} | {_en_zh(d['pit'])} | {d.get('module_id') or '-'} | {_en_zh(d.get('maturity') or '-')} | {_en_zh(d['build'])} |"
+            f"{d['contract'] or '-'} | {_en_zh(d['domain'] or '-')} | {_en_zh(d['pit'])} | {d.get('module_id') or '-'} | {_en_zh(d.get('maturity') or '-')} | {_en_zh(d['build'])} | {fmt} |"
         )
 
     # Job 清单
     lines.append("")
     lines.append("## Job 清单")
     lines.append("")
-    lines.append("| ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 |")
-    lines.append("|----|-------------------|--------------|------------------------------|----------------------------|------------------------------|------------------|---------------------------|--------------------|")
+    lines.append("| ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 | 功能简述 |")
+    lines.append("|----|-------------------|--------------|------------------------------|----------------------------|------------------------------|------------------|---------------------------|--------------------|----------|")
     for j in jobs:
+        jdesc = (j.get("description") or "").strip().replace("\n", " ").replace("|", "\\|") or "-"
         lines.append(
             f"| JOB-{j['id']:03d} | {_en_zh(j['name'])} | {_en_zh(j['scope'])} | "
-            f"{j['source'] or '-'} | {_en_zh(j['trigger'] or '-')} | {_en_zh(j['context'] or '-')} | {j.get('module_id') or '-'} | {_en_zh(j.get('maturity') or '-')} | {_en_zh(j['build'])} |"
+            f"{j['source'] or '-'} | {_en_zh(j['trigger'] or '-')} | {_en_zh(j['context'] or '-')} | {j.get('module_id') or '-'} | {_en_zh(j.get('maturity') or '-')} | {_en_zh(j['build'])} | {jdesc} |"
         )
 
     return "\n".join(lines) + "\n"
