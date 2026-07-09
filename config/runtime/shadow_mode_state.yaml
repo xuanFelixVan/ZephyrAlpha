@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 module_id: MOD-INF-002
 scripts:
@@ -17,12 +18,6 @@ scripts:
     phase: phase1
     started_at: '2026-05-05T16:32:00.008611+00:00'
     target_phase3_at: '2026-05-19T16:32:00.008611+00:00'
-    false_positives_accumulated: 0
-    rollback_count: 0
-  d5_architecture/validate_layer_deps.py:
-    phase: phase1
-    started_at: '2026-05-05T16:32:00.081524+00:00'
-    target_phase3_at: '2026-05-19T16:32:00.081524+00:00'
     false_positives_accumulated: 0
     rollback_count: 0
   d5_architecture/check_architecture_gates.py:
