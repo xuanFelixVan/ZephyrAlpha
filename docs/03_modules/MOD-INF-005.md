@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-005
-responsibility_domain: D_GOVERNANCE
+responsibility_domain: D_GOV_SCRIPTS
 design_maturity: design
 build_status: planned
 doc_type: blueprint

@@ -1,6 +1,6 @@
 ---
 module_id: MOD-GOV-019
-responsibility_domain: D_GOV_ENFORCEMENT
+responsibility_domain: D_AUDITTEST
 design_maturity: prototype
 build_status: generated
 doc_type: blueprint

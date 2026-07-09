@@ -43,12 +43,17 @@ from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa
 # SQL 常量（SQL 集中化，§5.160.2）
 # ---------------------------------------------------------------------------
 # ORDER BY (blueprint_path IS NULL) → blueprint_path 非空的行优先（正确性：有路径的行
-# 更可能是模块主节点而非文件级子节点）；LIMIT 1 → depgraph 同一 blueprint_id 可有多行
+# 更可能是模块主节点而非文件级子节点）。
+# 注意：不使用 LIMIT 1 — 同一 blueprint_id 可有多行（跨域模块），_query_module_bp 在
+# Python 中用多数投票聚合，与 align_panoramas._fetch_depgraph_nodes 聚合策略一致。
 _SQL_QUERY_MODULE_BP = (
     "SELECT blueprint_id, domain_id, design_maturity, build_status, blueprint_path "
     "FROM nodes WHERE blueprint_id = %s "
-    "ORDER BY (blueprint_path IS NULL), blueprint_path LIMIT 1"
+    "ORDER BY (blueprint_path IS NULL), blueprint_path"
 )
+
+# design_maturity 排序：design < prototype < production（与 align_panoramas._maturity_rank 一致）
+_MATURITY_RANK = {"design": 0, "prototype": 1, "production": 2}
 
 _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 
@@ -83,25 +88,56 @@ def _update_frontmatter(content: str, updates: dict) -> str:
 
 
 def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
-    """从 depgraph 查询模块的蓝图路径和核心字段。
+    """从 depgraph 查询模块的蓝图路径和核心字段（多数投票聚合）。
+
+    depgraph.nodes 中同一 blueprint_id 可有多行（跨域模块的正常现象，如 MOD-INF-002
+    有 79 行分布在 8 个域）。聚合策略与 align_panoramas._fetch_depgraph_nodes 一致：
+    - domain_id: 多数投票（Counter.most_common），取代表性域
+    - design_maturity: 取最 design 的状态（design < prototype < production）
+    - build_status: 取第一个非空
+    - blueprint_path: 取第一个非空（ORDER BY 保证非空优先）
 
     Returns: (bp_path, domain_id, design_maturity, build_status) 或 None
     """
+    from collections import Counter
+
     conn = get_depgraph_pg_connection()
     try:
         with conn.cursor() as cur:
             cur.execute(_SQL_QUERY_MODULE_BP, (module_id,))
-            row = cur.fetchone()
-            if not row:
-                return None
+            rows = cur.fetchall()
+        if not rows:
+            return None
+        domains: list[str] = []
+        maturities: list[str] = []
+        build_status = ""
+        bp_path = ""
+        for row in rows:
             if isinstance(row, dict):
-                return (
-                    row.get("blueprint_path") or "",
-                    row.get("domain_id") or "",
-                    row.get("design_maturity") or "",
-                    row.get("build_status") or "",
-                )
-            return (row[4] or "", row[1] or "", row[2] or "", row[3] or "")
+                dom = row.get("domain_id")
+                dm = row.get("design_maturity")
+                bs = row.get("build_status")
+                path = row.get("blueprint_path")
+            else:
+                dom = row[1] if len(row) > 1 else None
+                dm = row[2] if len(row) > 2 else None
+                bs = row[3] if len(row) > 3 else None
+                path = row[4] if len(row) > 4 else None
+            if dom:
+                domains.append(dom)
+            if dm:
+                maturities.append(dm)
+            if not build_status and bs:
+                build_status = bs
+            if not bp_path and path:
+                bp_path = path
+        # domain_id: 多数投票
+        domain_id = Counter(domains).most_common(1)[0][0] if domains else ""
+        # design_maturity: 取最 design（min rank）
+        design_maturity = (
+            min(maturities, key=lambda v: _MATURITY_RANK.get(v, 99)) if maturities else ""
+        )
+        return (bp_path or "", domain_id or "", design_maturity or "", build_status or "")
     finally:
         conn.close()
 

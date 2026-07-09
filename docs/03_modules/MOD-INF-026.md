@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-026
-responsibility_domain: D_INTEGRATION
+responsibility_domain: D_INFRA_RUNTIME
 design_maturity: prototype
 build_status: generated
 doc_type: blueprint

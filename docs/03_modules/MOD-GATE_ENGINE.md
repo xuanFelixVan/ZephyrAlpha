@@ -1,6 +1,6 @@
 ---
 module_id: MOD-GATE_ENGINE
-responsibility_domain: D_GOVERNANCE
+responsibility_domain: D_AUDITTEST
 design_maturity: design
 build_status: planned
 doc_type: blueprint

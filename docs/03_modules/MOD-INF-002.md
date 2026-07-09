@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-002
-responsibility_domain: D_FACTOR
+responsibility_domain: D_GOVERNANCE
 design_maturity: prototype
 build_status: generated
 doc_type: blueprint

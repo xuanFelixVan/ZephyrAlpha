@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-011
-responsibility_domain: D_KNOWLEDGE
+responsibility_domain: D_INTEGRATION
 design_maturity: design
 build_status: planned
 doc_type: blueprint

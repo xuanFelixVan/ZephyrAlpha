@@ -1,6 +1,6 @@
 ---
 module_id: MOD-GOV-SCRIPTS
-responsibility_domain: D_GOVERNANCE
+responsibility_domain: D_GOV_SCRIPTS
 design_maturity: prototype
 build_status: generated
 doc_type: blueprint

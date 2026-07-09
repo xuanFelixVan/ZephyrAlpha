@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-035
-responsibility_domain: D_TRADING
+responsibility_domain: D_AUDITTEST
 design_maturity: prototype
 build_status: generated
 doc_type: blueprint

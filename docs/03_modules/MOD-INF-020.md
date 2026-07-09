@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-020
-responsibility_domain: D_GOV_AUDIT
+responsibility_domain: D_GOVERNANCE
 design_maturity: design
 build_status: planned
 doc_type: blueprint

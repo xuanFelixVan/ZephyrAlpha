@@ -1,7 +1,7 @@
 ---
 module_id: MOD-LLM_SECURITY
 responsibility_domain: D_SECURITY_LLM
-design_maturity: production
+design_maturity: prototype
 build_status: generated
 doc_type: blueprint
 ttl: permanent

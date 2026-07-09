@@ -36,10 +36,15 @@ def bfr():
 
 
 def _mock_depgraph_conn(fetchone_result):
-    """构造 mock depgraph 连接。"""
+    """构造 mock depgraph 连接。
+
+    同时设置 fetchone 和 fetchall，兼容 LIMIT 1 和聚合查询两种模式。
+    fetchall 返回 [fetchone_result]（单行列表），fetchone_result=None 时返回 []。
+    """
     conn = MagicMock()
     cursor = MagicMock()
     cursor.fetchone.return_value = fetchone_result
+    cursor.fetchall.return_value = [fetchone_result] if fetchone_result else []
     conn.cursor.return_value.__enter__.return_value = cursor
     return conn
 
@@ -63,15 +68,18 @@ class TestReconcileBlueprint:
         content = bp.read_text(encoding="utf-8")
         assert "D_NEW" in content
 
-    def test_no_blueprint_skip(self, bfr, monkeypatch):
-        """蓝图路径为空 → 跳过（exit 0）"""
+    def test_no_blueprint_skip(self, bfr, tmp_path, monkeypatch):
+        """蓝图路径为空 → 自动创建命名约定蓝图（exit 0）"""
         conn = _mock_depgraph_conn({
             "blueprint_id": "MOD-NOBP", "domain_id": "D_TEST",
             "design_maturity": "design", "build_status": "planned",
             "blueprint_path": "",
         })
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        monkeypatch.setattr(bfr, "_REPO_ROOT", tmp_path)
         assert bfr.reconcile_blueprint_frontmatter("MOD-NOBP") == 0
+        # 验证文件被创建在 tmp_path 下（非真实项目目录）
+        assert (tmp_path / "docs" / "03_modules" / "MOD-NOBP.md").exists()
 
     def test_module_not_in_depgraph(self, bfr, monkeypatch):
         """模块不在 depgraph → exit 3"""
