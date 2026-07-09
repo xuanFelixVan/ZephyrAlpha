@@ -232,14 +232,9 @@ def make_orphan_module_gate() -> GateSpec:
                 rf"from {module_path}\b"
             )
             try:
-                grep_result = subprocess.run(
+                grep_result = gateway._run_git(
                     ["git", "grep", "-l", "-E", pattern, "--", "src/**/*.py"],
-                    capture_output=True,
-                    text=True,
-                    encoding="utf-8",
-                    errors="replace",
                     cwd=wt_root,
-                    timeout=_GREP_TIMEOUT,
                 )
             except subprocess.TimeoutExpired:
                 logger.warning(
