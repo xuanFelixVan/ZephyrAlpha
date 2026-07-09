@@ -489,6 +489,32 @@ class TestDocstringExemption:
         assert "RealCode" in detail
         assert "**payload" in detail
 
+    def test_manifest_mode_spread_not_exempt(self):
+        """R95 修复：__manifest__ = \"\"\"...\"\"\" 模式中 **data 展开应被检测（不再被错误豁免）。
+
+        旧 bug：__manifest__ 结束独立 \"\"\" 行被误判为新 docstring 起始，导致后续
+        含 ``SomeClass(**data)`` 的代码行被错误豁免。
+        新方案：ast 只识别真正 docstring，__manifest__ 是 Assign 节点不豁免。
+        """
+        red_file = "src/zephyr/trading/some_module.py"
+        full_content = (
+            '__manifest__ = """\n'
+            'args: []\n'
+            '"""\n'
+            '\n'
+            'obj = RealCode(**payload)  # 这行应被检测\n'
+        )
+        gw = _make_mock_gateway(
+            [red_file],
+            {red_file: ["obj = RealCode(**payload)  # 这行应被检测"]},
+            file_contents={red_file: full_content},
+        )
+        gate = make_unsafe_dict_spread_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed  # UNSAFE-DICT-SPREAD 是 warn 级，passed 始终 True
+        assert "RealCode" in detail
+        assert "**payload" in detail
+
     def test_gate_self_docstring_no_warn(self):
         """gate 自身 docstring 中的示例不触发 warn（修复目标场景）"""
         gate_file = "src/zephyr/governance/commit_gates/unsafe_dict_spread_gate.py"
