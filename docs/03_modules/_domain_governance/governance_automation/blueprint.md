@@ -1429,7 +1429,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 | `scripts/governance/d5_architecture/check_architecture_gates.py` | ✅ 已实现 | |
 | `scripts/governance/d5_architecture/validate_blueprint_overlap.py` | ❌ 未实现 | |
 | `scripts/governance/d5_architecture/validate_depends_on_format.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_layer_deps.py` | ✅ 已实现 | |
+| `scripts/governance/d5_architecture/validate_layer_deps.py` | ❌ 已删除（2026-07-09死代码清理） | |
 | `scripts/governance/d5_architecture/validate_field_ownership.py` | ✅ 已实现 | |
 | `scripts/governance/d5_architecture/validate_directory_structure.py` | ✅ 已实现 | |
 | `scripts/governance/d5_architecture/validate_interface_contracts.py` | ✅ 已实现 | |

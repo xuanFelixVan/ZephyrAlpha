@@ -1171,7 +1171,7 @@ STEP 3: 拆分后验证
 | `scripts/governance/d11_compliance/validate_script_naming.py` | NAMING | 脚本命名规范 | P0 |
 | `scripts/governance/d5_architecture/detectors/detect_duplicate_module_names.py` | NAMING | 重复模块名检测 | P0 |
 | `scripts/governance/d5_architecture/validators/yaml_md/validate_md_yaml_number_drift.py` | SCALE | 数值漂移检测 | P1 |
-| `scripts/governance/d5_architecture/validators/validate_layer_consistency.py` | SCALE | 层一致性验证 | P1 |
+| `scripts/governance/d5_architecture/validators/validate_layer_consistency.py` | SCALE | 层一致性验证 | P1 | ❌ 已删除（2026-07-09死代码清理） |
 | `scripts/governance/d5_architecture/validators/validate_blueprint_code_sync.py` | SCALE | 蓝图代码同步 | P1 |
 | `scripts/governance/d5_architecture/validators/validate_adr_frontmatter_consistency.py` | KB 决策记录 | KB 决策记录 frontmatter 一致性 | P1 |
 | `scripts/governance/d5_architecture/detectors/detect_deprecated_adr_references.py` | KB 决策记录 | 废弃 KB 决策记录 引用检测 | P1 |
@@ -1186,7 +1186,7 @@ STEP 3: 拆分后验证
 | `scripts/governance/d8_doc_sync/detect_dated_snapshots.py` | DOC | 过期快照检测 | P1 |
 | `scripts/governance/d8_doc_sync/detect_ai_products_in_docs.py` | DOC | AI 产物检测 | P1 |
 | `scripts/governance/d5_architecture/validators/validate_architecture_contract_internal.py` | ARCH | 架构内部契约 | P0 |
-| `scripts/governance/d5_architecture/validators/validate_layer_deps.py` | ARCH | 层依赖验证 | P0 |
+| `scripts/governance/d5_architecture/validators/validate_layer_deps.py` | ARCH | 层依赖验证 | P0 | ❌ 已删除（2026-07-09死代码清理） |
 | `scripts/governance/d5_architecture/checkers/check_contract_code_drift.py` | ARCH | 契约代码漂移 | P0 |
 | `scripts/governance/d5_architecture/validators/validate_load_path_integrity.py` | ARCH | 加载路径完整性 | P1 |
 | `scripts/governance/d5_architecture/validators/validate_three_way_consistency.py` | ARCH | 三方一致性 | P1 |
