@@ -447,64 +447,20 @@ class ExamOrchestrator:
         case: ExamTestCase,
         result: dict,
     ) -> tuple[float, float, float, int]:
+        """5.158.12 重构：extract method，主函数降为纯分派（McCabe 17→8）。"""
         cap = case.capability
-
-        if cap in ("task_classification",):
-            cat = str(result.get("category", "")).lower()
-            exp = case.expected_category.lower()
-            em = 1 if cat == exp else 0
-            return (em, em, 0.0, em)
-
-        if cap in ("tag_completion",):
-            pred = set(str(t).lower() for t in result.get("tags", []))
-            gold = set(case.expected_tags)
-            p = len(pred & gold) / len(pred) if pred else 0.0
-            r = len(pred & gold) / len(gold) if gold else 0.0
-            return (p, r, 0.0, 1 if pred == gold else 0)
-
+        if cap == "task_classification":
+            return self._metrics_task_classification(case, result)
+        if cap == "tag_completion":
+            return self._metrics_tag_completion(case, result)
         if cap in ("summary_extraction", "naming_suggest"):
-            text = str(result)
-            hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
-            rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
-            return (rate, rate, 0.0, 1 if hits == len(case.expected_contains) else 0)
-
-        if cap in ("anomaly_triage",):
-            nh = bool(result.get("needs_human"))
-            em = 1 if nh == case.expected_needs_human else 0
-            return (em, em, 0.0, em)
-
+            return self._metrics_summary_extraction(case, result)
+        if cap == "anomaly_triage":
+            return self._metrics_anomaly_triage(case, result)
         if cap in ("code_fix", "code_edit_precision", "refactor", "dead_code_removal"):
-            field = "fixes" if cap in ("code_fix", "code_edit_precision") else ("changes" if cap == "refactor" else "dead_sections")
-            entries = result.get(field, [])
-            if not entries:
-                return (0.0, 0.0, 1.0, 0)
-
-            best_ed = 1.0
-            em = 0
-            for entry in entries:
-                old_s = entry.get("old_str", "")
-                ed_val = _normalized_edit_distance(old_s, case.expected_old_str)
-                if ed_val < best_ed:
-                    best_ed = ed_val
-                if old_s.strip() == case.expected_old_str.strip():
-                    em = 1
-
-            text = json.dumps(result)
-            kw_hits = sum(1 for kw in case.expected_contains if kw in text)
-            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            recall_rate = max(1 - best_ed, kw_rate)
-            precision_rate = max(em, kw_rate)
-
-            return (precision_rate, recall_rate, best_ed, em)
-
-        if cap in ("code_generate",):
-            content = result.get("content", result.get("codegen", {}).get("content", ""))
-            if not content:
-                return (0.0, 0.0, 1.0, 0)
-            hits = sum(1 for kw in case.expected_contains if kw in content)
-            rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
-            return (rate, rate, 0.0, 1 if hits == len(case.expected_contains) else 0)
-
+            return self._metrics_code_edit(case, result)
+        if cap == "code_generate":
+            return self._metrics_code_generate(case, result)
         # v3.0.8: 通用 depth fallback——对未在硬编码分支处理的能力，
         # 按 expected_* 字段类型做语义匹配。修复 depth 暴跌：原兜底 return 零
         # 导致 21 个新增能力 depth 全零（与 inference() 硬编码链同类架构缺陷）。
@@ -512,6 +468,75 @@ class ExamOrchestrator:
         if generic is not None:
             return generic
         return (0.0, 0.0, 1.0, 0)
+
+    def _metrics_task_classification(
+        self, case: ExamTestCase, result: dict,
+    ) -> tuple[float, float, float, int]:
+        cat = str(result.get("category", "")).lower()
+        exp = case.expected_category.lower()
+        em = 1 if cat == exp else 0
+        return (em, em, 0.0, em)
+
+    def _metrics_tag_completion(
+        self, case: ExamTestCase, result: dict,
+    ) -> tuple[float, float, float, int]:
+        pred = set(str(t).lower() for t in result.get("tags", []))
+        gold = set(case.expected_tags)
+        p = len(pred & gold) / len(pred) if pred else 0.0
+        r = len(pred & gold) / len(gold) if gold else 0.0
+        return (p, r, 0.0, 1 if pred == gold else 0)
+
+    def _metrics_summary_extraction(
+        self, case: ExamTestCase, result: dict,
+    ) -> tuple[float, float, float, int]:
+        text = str(result)
+        hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+        rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
+        return (rate, rate, 0.0, 1 if hits == len(case.expected_contains) else 0)
+
+    def _metrics_anomaly_triage(
+        self, case: ExamTestCase, result: dict,
+    ) -> tuple[float, float, float, int]:
+        nh = bool(result.get("needs_human"))
+        em = 1 if nh == case.expected_needs_human else 0
+        return (em, em, 0.0, em)
+
+    def _metrics_code_edit(
+        self, case: ExamTestCase, result: dict,
+    ) -> tuple[float, float, float, int]:
+        cap = case.capability
+        field = "fixes" if cap in ("code_fix", "code_edit_precision") else ("changes" if cap == "refactor" else "dead_sections")
+        entries = result.get(field, [])
+        if not entries:
+            return (0.0, 0.0, 1.0, 0)
+
+        best_ed = 1.0
+        em = 0
+        for entry in entries:
+            old_s = entry.get("old_str", "")
+            ed_val = _normalized_edit_distance(old_s, case.expected_old_str)
+            if ed_val < best_ed:
+                best_ed = ed_val
+            if old_s.strip() == case.expected_old_str.strip():
+                em = 1
+
+        text = json.dumps(result)
+        kw_hits = sum(1 for kw in case.expected_contains if kw in text)
+        kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+        recall_rate = max(1 - best_ed, kw_rate)
+        precision_rate = max(em, kw_rate)
+
+        return (precision_rate, recall_rate, best_ed, em)
+
+    def _metrics_code_generate(
+        self, case: ExamTestCase, result: dict,
+    ) -> tuple[float, float, float, int]:
+        content = result.get("content", result.get("codegen", {}).get("content", ""))
+        if not content:
+            return (0.0, 0.0, 1.0, 0)
+        hits = sum(1 for kw in case.expected_contains if kw in content)
+        rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
+        return (rate, rate, 0.0, 1 if hits == len(case.expected_contains) else 0)
 
     def _compute_metrics_generic(
         self,
