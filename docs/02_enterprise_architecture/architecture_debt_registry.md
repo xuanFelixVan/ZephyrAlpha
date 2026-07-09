@@ -4125,4 +4125,6 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第96轮修复状态（2026-07-10）**：FIXED=7(LOW 5.176.4: orphan_module_gate:235 subprocess.run 替换为 gateway._run_git(cwd=wt_root). _run_git 扩展可选 cwd: str | None = None 参数支持 worktree root 执行. 测试 mock 改用 MagicMock(side_effect=...) + side_effect 覆盖模式. 21测试全通过), DEFERRED-PERMANENT=7(不变), DEFERRED=0(5.176.4 全部清零). commit=9a4446b510 merged.
 
+> **第97轮修复状态（2026-07-10）**：FIXED=1(MEDIUM 5.176.1 Phase 1: _GATE_FILES 70条目硬编码字典改为从 _registry.yaml 动态加载. 新增模块级函数 _load_gate_files_from_registry + 实例方法 _load_gate_configs_from_registry 两遍加载策略(第一遍可执行checks/entry_conditions优先, 第二遍叙述型rules填补空缺). 自然解决 G0/G0_ORC 双条目冲突(g0_entry.yaml仅rules被跳过, g0_orc_gate_engine.yaml有checks加载为G0). reload_gates()不再迭代_GATE_FILES. _GATE_FILES保留为类变量(从registry动态填充)兼容tests/trae_rules/. 测试EXPECTED_GATE_IDS动态计算. 480 trae_rules + 252 gate测试通过). DEFERRED=2(5.176.1 Phase 2 _run_check分发器重构 + 5.176.3 check_type_registry死代码清理), DEFERRED-PERMANENT=7(不变). commit=da4e4a7b6e merged=396578d4d9.
+
 > **AI-11 审计小结**：4 项 DEFERRED 均为大规模重构/架构级变更，符合"专项工程"定义。审计同步修复的 10 项 P0 + 多项 P1/P2/P3 已通过 commit 落地，剩余 4 项 DEFERRED 待后续专项工程处理。
