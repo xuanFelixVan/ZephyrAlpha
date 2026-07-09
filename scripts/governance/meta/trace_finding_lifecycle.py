@@ -64,6 +64,14 @@ from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 _DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "findings_timeseries.db"
 _TRACE_DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "lifecycle_traces.db"
 
+# SQL 集中化（§5.160.2 NO-BARE-SQL gate）
+SQL_FIND_TRACES_BY_ID = "SELECT * FROM traces WHERE finding_id = ? ORDER BY completed_at"
+SQL_COUNT_ALL_TRACES = "SELECT COUNT(*) FROM traces"
+SQL_COUNT_COMPLETED = "SELECT COUNT(*) FROM traces WHERE status='completed'"
+SQL_COUNT_FAILED = "SELECT COUNT(*) FROM traces WHERE status='failed'"
+SQL_COUNT_BY_PHASE = "SELECT COUNT(*) FROM traces WHERE phase=?"
+SQL_AVG_DUR_BY_PHASE = "SELECT AVG(duration_ms) FROM traces WHERE phase=?"
+
 # C1-C5 阶段定义
 PHASES = {
     "C1_SCAN": {"order": 1, "label": "扫描执行"},
@@ -102,24 +110,28 @@ def _get_conn() -> sqlite3.Connection:
 def record_trace(finding_id: str, phase: str, duration_ms: float, status: str = "completed") -> None:
     """record_trace implementation."""
     conn = _get_conn()
-    now = datetime.now(UTC).isoformat()
-    trace_id = f"trace-{finding_id}-{phase}-{now[:19]}"
-    conn.execute(
-        "INSERT OR REPLACE INTO traces (trace_id, finding_id, phase, started_at, completed_at, duration_ms, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (trace_id, finding_id, phase, now, now, duration_ms, status),
-    )
-    conn.commit()
-    conn.close()
+    try:
+        now = datetime.now(UTC).isoformat()
+        trace_id = f"trace-{finding_id}-{phase}-{now[:19]}"
+        conn.execute(
+            "INSERT OR REPLACE INTO traces (trace_id, finding_id, phase, started_at, completed_at, duration_ms, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (trace_id, finding_id, phase, now, now, duration_ms, status),
+        )
+        conn.commit()
+    finally:
+        conn.close()
 
 
 def trace_finding(finding_id: str) -> dict:
     """trace_finding implementation."""
     conn = _get_conn()
-    rows = conn.execute(
-        "SELECT * FROM traces WHERE finding_id = ? ORDER BY completed_at",
-        (finding_id,),
-    ).fetchall()
-    conn.close()
+    try:
+        rows = conn.execute(
+            SQL_FIND_TRACES_BY_ID,
+            (finding_id,),
+        ).fetchall()
+    finally:
+        conn.close()
 
     phases_found: dict[str, dict] = {}
     for r in rows:
@@ -145,54 +157,58 @@ def trace_finding(finding_id: str) -> dict:
 def overview() -> dict:
     """overview implementation."""
     conn = _get_conn()
-    total_traces = conn.execute("SELECT COUNT(*) FROM traces").fetchone()[0]
-    completed = conn.execute("SELECT COUNT(*) FROM traces WHERE status='completed'").fetchone()[0]
-    failed = conn.execute("SELECT COUNT(*) FROM traces WHERE status='failed'").fetchone()[0]
+    try:
+        total_traces = conn.execute(SQL_COUNT_ALL_TRACES).fetchone()[0]
+        completed = conn.execute(SQL_COUNT_COMPLETED).fetchone()[0]
+        failed = conn.execute(SQL_COUNT_FAILED).fetchone()[0]
 
-    phase_stats = {}
-    for phase in PHASES:
-        count = conn.execute("SELECT COUNT(*) FROM traces WHERE phase=?", (phase,)).fetchone()[0]
-        avg_dur = conn.execute("SELECT AVG(duration_ms) FROM traces WHERE phase=?", (phase,)).fetchone()[0] or 0
-        phase_stats[phase] = {"count": count, "avg_duration_ms": round(avg_dur, 2)}
+        phase_stats = {}
+        for phase in PHASES:
+            count = conn.execute(SQL_COUNT_BY_PHASE, (phase,)).fetchone()[0]
+            avg_dur = conn.execute(SQL_AVG_DUR_BY_PHASE, (phase,)).fetchone()[0] or 0
+            phase_stats[phase] = {"count": count, "avg_duration_ms": round(avg_dur, 2)}
 
-    conn.close()
-    return {
-        "total_traces": total_traces,
-        "completed": completed,
-        "failed": failed,
-        "completion_rate": round(completed / max(1, total_traces) * 100, 1),
-        "phase_stats": phase_stats,
-    }
+        return {
+            "total_traces": total_traces,
+            "completed": completed,
+            "failed": failed,
+            "completion_rate": round(completed / max(1, total_traces) * 100, 1),
+            "phase_stats": phase_stats,
+        }
+    finally:
+        conn.close()
 
 
 def bottleneck_analysis() -> dict:
     """bottleneck_analysis implementation."""
     conn = _get_conn()
-    bottlenecks = []
-    for phase in PHASES:
-        row = conn.execute(
-            "SELECT AVG(duration_ms) as avg_dur, COUNT(*) as cnt FROM traces WHERE phase=?",
-            (phase,),
-        ).fetchone()
-        bottlenecks.append(
-            {
-                "phase": phase,
-                "label": PHASES[phase]["label"],
-                "avg_duration_ms": round(row["avg_dur"] or 0, 2),
-                "count": row["cnt"],
-            }
-        )
+    try:
+        bottlenecks = []
+        for phase in PHASES:
+            row = conn.execute(
+                "SELECT AVG(duration_ms) as avg_dur, COUNT(*) as cnt FROM traces WHERE phase=?",
+                (phase,),
+            ).fetchone()
+            bottlenecks.append(
+                {
+                    "phase": phase,
+                    "label": PHASES[phase]["label"],
+                    "avg_duration_ms": round(row["avg_dur"] or 0, 2),
+                    "count": row["cnt"],
+                }
+            )
 
-    bottlenecks.sort(key=lambda x: x["avg_duration_ms"], reverse=True)
+        bottlenecks.sort(key=lambda x: x["avg_duration_ms"], reverse=True)
 
-    worst = bottlenecks[0] if bottlenecks else {}
-    conn.close()
-    return {
-        "worst_phase": worst.get("phase", ""),
-        "worst_label": worst.get("label", ""),
-        "worst_duration_ms": worst.get("avg_duration_ms", 0),
-        "all_phases": bottlenecks,
-    }
+        worst = bottlenecks[0] if bottlenecks else {}
+        return {
+            "worst_phase": worst.get("phase", ""),
+            "worst_label": worst.get("label", ""),
+            "worst_duration_ms": worst.get("avg_duration_ms", 0),
+            "all_phases": bottlenecks,
+        }
+    finally:
+        conn.close()
 
 
 def main() -> None:

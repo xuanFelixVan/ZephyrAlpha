@@ -62,6 +62,11 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 _DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "findings_timeseries.db"
 
+# SQL 集中化（§5.160.2 NO-BARE-SQL gate）
+SQL_INSERT_SCAN_RUN = "INSERT INTO scan_runs (run_id, started_at, completed_at, total_findings, exit_code) VALUES (?, ?, ?, ?, ?)"
+SQL_COUNT_SINCE = "SELECT COUNT(*) FROM findings WHERE timestamp >= ?"
+SQL_COUNT_RANGE = "SELECT COUNT(*) FROM findings WHERE timestamp >= ? AND timestamp < ?"
+
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
@@ -112,129 +117,139 @@ def _get_conn() -> sqlite3.Connection:
 def import_findings(source: str | Path) -> dict:
     """import_findings implementation."""
     conn = _get_conn()
-    now = datetime.now(UTC).isoformat()
-    run_id = f"run-{now[:19]}"
-    count = 0
+    try:
+        now = datetime.now(UTC).isoformat()
+        run_id = f"run-{now[:19]}"
+        count = 0
 
-    with open(source, encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                finding = json_mod.loads(line)
-            except json_mod.JSONDecodeError:
-                continue
+        with open(source, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    finding = json_mod.loads(line)
+                except json_mod.JSONDecodeError:
+                    continue
 
-            target = finding.get("target", {})
-            conn.execute(
-                """INSERT INTO findings
-                   (finding_id, timestamp, scan_run_id, dimension, check_id,
-                    severity, description, file_path, confidence, status, imported_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                (
-                    finding.get("finding_id", ""),
-                    finding.get("timestamp", now),
-                    run_id,
-                    finding.get("dimension", ""),
-                    finding.get("check_id", ""),
-                    finding.get("severity", "LOW"),
-                    finding.get("description", ""),
-                    target.get("file_path", ""),
-                    finding.get("confidence", 0.5),
-                    finding.get("status", "OPEN"),
-                    now,
-                ),
-            )
-            count += 1
+                target = finding.get("target", {})
+                conn.execute(
+                    """INSERT INTO findings
+                       (finding_id, timestamp, scan_run_id, dimension, check_id,
+                        severity, description, file_path, confidence, status, imported_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        finding.get("finding_id", ""),
+                        finding.get("timestamp", now),
+                        run_id,
+                        finding.get("dimension", ""),
+                        finding.get("check_id", ""),
+                        finding.get("severity", "LOW"),
+                        finding.get("description", ""),
+                        target.get("file_path", ""),
+                        finding.get("confidence", 0.5),
+                        finding.get("status", "OPEN"),
+                        now,
+                    ),
+                )
+                count += 1
 
-    conn.execute(
-        "INSERT INTO scan_runs (run_id, started_at, completed_at, total_findings, exit_code) VALUES (?, ?, ?, ?, ?)",
-        (run_id, now, now, count, 0),
-    )
-    conn.commit()
-    conn.close()
-    return {"imported": count, "run_id": run_id}
+        conn.execute(
+            SQL_INSERT_SCAN_RUN,
+            (run_id, now, now, count, 0),
+        )
+        conn.commit()
+        return {"imported": count, "run_id": run_id}
+    finally:
+        conn.close()
 
 
 def trend(days: int = 30) -> dict:
     """trend implementation."""
     conn = _get_conn()
-    cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
+    try:
+        cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
 
-    total = conn.execute("SELECT COUNT(*) FROM findings WHERE timestamp >= ?", (cutoff,)).fetchone()[0]
-    by_severity = {}
-    for row in conn.execute(
-        "SELECT severity, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY severity", (cutoff,)
-    ):
-        by_severity[row[0]] = row[1]
-    by_dimension = {}
-    for row in conn.execute(
-        "SELECT dimension, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY dimension ORDER BY cnt DESC",
-        (cutoff,),
-    ):
-        by_dimension[row[0]] = row[1]
+        total = conn.execute(SQL_COUNT_SINCE, (cutoff,)).fetchone()[0]
+        by_severity = {}
+        for row in conn.execute(
+            "SELECT severity, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY severity", (cutoff,)
+        ):
+            by_severity[row[0]] = row[1]
+        by_dimension = {}
+        for row in conn.execute(
+            "SELECT dimension, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY dimension ORDER BY cnt DESC",
+            (cutoff,),
+        ):
+            by_dimension[row[0]] = row[1]
 
-    prev_cutoff = (datetime.now(UTC) - timedelta(days=days * 2)).isoformat()
-    prev_cutoff_end = cutoff
-    prev_total = conn.execute(
-        "SELECT COUNT(*) FROM findings WHERE timestamp >= ? AND timestamp < ?", (prev_cutoff, prev_cutoff_end)
-    ).fetchone()[0]
+        prev_cutoff = (datetime.now(UTC) - timedelta(days=days * 2)).isoformat()
+        prev_cutoff_end = cutoff
+        prev_total = conn.execute(
+            SQL_COUNT_RANGE, (prev_cutoff, prev_cutoff_end)
+        ).fetchone()[0]
 
-    if prev_total == 0:
-        direction = "stable"
-        change_pct = 0
-    else:
-        change_pct = round((total - prev_total) / prev_total * 100, 1)
-        if change_pct > 20:
-            direction = "degrading"
-        elif change_pct < -20:
-            direction = "improving"
-        else:
+        if prev_total == 0:
             direction = "stable"
+            change_pct = 0
+        else:
+            change_pct = round((total - prev_total) / prev_total * 100, 1)
+            if change_pct > 20:
+                direction = "degrading"
+            elif change_pct < -20:
+                direction = "improving"
+            else:
+                direction = "stable"
 
-    conn.close()
-    return {
-        "period": f"{days}d",
-        "current_total": total,
-        "previous_total": prev_total,
-        "change_pct": change_pct,
-        "direction": direction,
-        "by_severity": by_severity,
-        "by_dimension": by_dimension,
-    }
+        return {
+            "period": f"{days}d",
+            "current_total": total,
+            "previous_total": prev_total,
+            "change_pct": change_pct,
+            "direction": direction,
+            "by_severity": by_severity,
+            "by_dimension": by_dimension,
+        }
+    finally:
+        conn.close()
 
 
 def top_files(limit: int = 10, days: int = 90) -> list[dict]:
     """top_files implementation."""
     conn = _get_conn()
-    cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
-    rows = conn.execute(
-        "SELECT file_path, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY file_path ORDER BY cnt DESC LIMIT ?",
-        (cutoff, limit),
-    ).fetchall()
-    conn.close()
-    return [{"file_path": r[0], "finding_count": r[1]} for r in rows]
+    try:
+        cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
+        rows = conn.execute(
+            "SELECT file_path, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY file_path ORDER BY cnt DESC LIMIT ?",
+            (cutoff, limit),
+        ).fetchall()
+        return [{"file_path": r[0], "finding_count": r[1]} for r in rows]
+    finally:
+        conn.close()
 
 
 def severity_distribution(days: int = 90) -> dict:
     """severity_distribution implementation."""
     conn = _get_conn()
-    cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
-    rows = conn.execute(
-        "SELECT severity, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY severity ORDER BY cnt DESC",
-        (cutoff,),
-    ).fetchall()
-    conn.close()
-    return {r[0]: r[1] for r in rows}
+    try:
+        cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
+        rows = conn.execute(
+            "SELECT severity, COUNT(*) as cnt FROM findings WHERE timestamp >= ? GROUP BY severity ORDER BY cnt DESC",
+            (cutoff,),
+        ).fetchall()
+        return {r[0]: r[1] for r in rows}
+    finally:
+        conn.close()
 
 
 def raw_query(sql: str) -> list[dict]:
     """raw_query implementation."""
     conn = _get_conn()
-    rows = conn.execute(sql).fetchall()
-    conn.close()
-    return [{k: r[k] for k in r.keys()} for r in rows]
+    try:
+        rows = conn.execute(sql).fetchall()
+        return [{k: r[k] for k in r.keys()} for r in rows]
+    finally:
+        conn.close()
 
 
 def main() -> None:
