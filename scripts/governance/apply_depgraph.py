@@ -3966,6 +3966,13 @@ def main() -> None:
         if node_id < 0:
             sys.exit(4)
         print(f"node_id={node_id}")
+        # ARCH-056: 设计态节点添加后自动同步到 dataflow/decision/blueprint
+        if node_id > 0 and blueprint_id:
+            try:
+                from sync_panorama_module import sync_module_panorama
+                sync_module_panorama(blueprint_id)
+            except Exception as e:
+                print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
         return
 
     if args.add_design_edge:

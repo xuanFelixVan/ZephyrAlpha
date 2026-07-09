@@ -4092,6 +4092,13 @@ def main():
             db_path = str(PROJECT_ROOT / db_path)
         write_depgraph_to_db(depgraph, design_state=design_state)
 
+        # ARCH-056: depgraph 写入后自动同步到 dataflow/decision/blueprint
+        try:
+            from sync_panorama_module import sync_all_panorama
+            sync_all_panorama()
+        except Exception as e:
+            print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
+
     sys.exit(0)
 
 
