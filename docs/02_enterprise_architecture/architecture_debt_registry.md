@@ -142,7 +142,7 @@
   - [5.153 命名一致性（21个，第26轮新增）](#5153-命名一致性21个第26轮新增)
   - [5.154 接口边界清晰度（14个，第26轮新增）](#5154-接口边界清晰度14个第26轮新增)
   - [5.155 配置验证完整性（21个，第26轮新增）](#5155-配置验证完整性21个第26轮新增)
-  - [5.156 测试覆盖率盲区（12个，第26轮新增）](#5156-测试覆盖率盲区12个第26轮新增)
+  - [5.156 测试覆盖率盲区（15个，第26轮新增，#ARCH-057治本）](#5156-测试覆盖率盲区15个第26轮新增arch-057治本)
   - [5.157 文档与代码同步深度（25个，第26轮新增）](#5157-文档与代码同步深度25个第26轮新增)
   - [5.158 循环复杂度（12个，第27轮新增）](#5158-循环复杂度12个第27轮新增)
   - [5.159 死代码（9个，第27轮新增）](#5159-死代码9个第27轮新增)
@@ -3522,6 +3522,34 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 **核心模式总结**：(1)安全最严重：#1(HMAC硬编码)+#2(完整性校验恒True)构成回滚完整性伪造链路；(2)启动最脆弱：#3/#4(`int(env)`无异常防护)可在模块导入阶段崩溃；(3)配置漂移最广：#16/#17/#19(命名不一致+未文档化)影响20+处环境变量读取；(4)校验形同虚设：#5(默认值回退)+#7(validator覆盖空)+#9(热重载吞异常)三层校验同时失效
 
 **严重度汇总**：HIGH=4, MEDIUM=11, LOW=6, 合计=21
+
+---
+
+### 5.156 测试覆盖率盲区（15个，第26轮新增，#ARCH-057 治本）
+
+> **第80轮修复状态（2026-07-09）**：FIXED=15(全部15个缺失测试已补齐，747测试通过)，DEFERRED=0。#ARCH-057 治本：①新增 META-TESTS-COVERAGE meta-gate（priority=95）校验 `[TESTS]` 头部声明路径存在性，`[TESTS]` 头部从"声明"升级为"机器可校验契约"；②补齐 15 个 gate 缺失测试（function_dup/orphan_module/perm_trigger/import_direction/empty_handler/doc_ref_broken/exempt_zone_frontmatter/session_required/capability_overlap/id_uniqueness/bare_getenv/hardcoded_url/vocab_hardcode/file_copy/rule_four_way_alignment）；③AGENTS.md L464 澄清 GATE-NO-TESTS-UNIT 是 tests/unit/ 旧路径漂移检测（ARCH-029），非测试覆盖率检测。维度5.156全部清零。
+
+#### 原始债务（15个 gate 的 [TESTS] 声明但不兑现，覆盖率 58.3%）
+
+1. **[HIGH]** `commit_gates/function_dup_gate.py` — [TESTS] 声明 test_function_dup_gate.py 但文件不存在
+2. **[HIGH]** `commit_gates/orphan_module_gate.py` — [TESTS] 声明 test_orphan_module_gate.py 但文件不存在
+3. **[HIGH]** `commit_gates/perm_trigger_gate.py` — [TESTS] 声明 test_perm_trigger_gate.py 但文件不存在
+4. **[HIGH]** `commit_gates/import_direction_gate.py` — [TESTS] 声明 test_import_direction_gate.py 但文件不存在
+5. **[HIGH]** `commit_gates/empty_handler_gate.py` — [TESTS] 声明 test_empty_handler_gate.py 但文件不存在
+6. **[HIGH]** `commit_gates/doc_ref_broken_gate.py` — [TESTS] 声明 test_doc_ref_broken_gate.py 但文件不存在
+7. **[HIGH]** `commit_gates/exempt_zone_frontmatter_gate.py` — [TESTS] 声明 test_exempt_zone_frontmatter_gate.py 但文件不存在
+8. **[HIGH]** `commit_gates/session_required_gate.py` — [TESTS] 声明 test_session_required_gate.py 但文件不存在
+9. **[HIGH]** `commit_gates/capability_overlap_gate.py` — [TESTS] 声明 test_capability_overlap_gate.py 但文件不存在
+10. **[HIGH]** `commit_gates/id_uniqueness_gate.py` — [TESTS] 声明 test_id_uniqueness_gate.py 但文件不存在
+11. **[HIGH]** `commit_gates/bare_getenv_gate.py` — [TESTS] 声明 test_bare_getenv_gate.py 但文件不存在
+12. **[HIGH]** `commit_gates/hardcoded_url_gate.py` — [TESTS] 声明 test_hardcoded_url_gate.py 但文件不存在
+13. **[HIGH]** `commit_gates/vocab_hardcode_gate.py` — [TESTS] 声明 test_vocab_hardcode_gate.py 但文件不存在
+14. **[HIGH]** `commit_gates/file_copy_gate.py` — [TESTS] 声明 test_file_copy_gate.py 但文件不存在
+15. **[HIGH]** `commit_gates/rule_four_way_alignment_gate.py` — [TESTS] 声明 test_rule_four_way_alignment_gate.py 但文件不存在
+
+**核心模式总结**：36 个 gate 源文件头部都声明了 `# [TESTS] tests/.../test_xxx.py`，但 15 个 gate 的测试文件不存在（声明但不兑现，覆盖率 58.3%）。无 meta-gate 校验 `[TESTS]` 头部声明的路径是否实际存在，头部规范成摆设。100% AI 开发模式下无人类 PR review，AI 创建 gate 后立即提交，"守卫者无人守卫"（quis custodiet ipsos custodes）。GATE-NO-TESTS-UNIT 被误认为承担此职责，但它实际是 tests/unit/ 旧路径漂移检测（ARCH-029），非测试覆盖率检测。
+
+**严重度汇总**：HIGH=15，合计=15
 
 ---
 
