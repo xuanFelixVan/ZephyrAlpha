@@ -417,7 +417,7 @@ gate_engine:
   description: "门禁裁决服务；包装 gate_engine.py 的 5 道 Gate（详见 docs/02_enterprise_architecture/gate-strategy-standard.md）"
   status: beta
   backend:
-    - "src/zephyr/gates/gate_engine.py (T-2-17, Sonnet B10)"
+    - "src/zephyr/governance/rule_enforcement/gate_engine/gate_engine.py (T-2-17, Sonnet B10)"
   error_namespace: "ZA-GT"
   error_codes:
     - code: "ZA-GT-0001"

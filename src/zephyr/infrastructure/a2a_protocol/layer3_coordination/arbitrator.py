@@ -81,7 +81,7 @@ _DEFAULT_OWNERSHIP = [
     FileOwnership("docs/registry_of_registries.yaml", AgentRole.SUPERADMIN, "中央注册表"),
     FileOwnership("docs/03_modules/", AgentRole.GOVERNANCE, "蓝图"),
     FileOwnership("src/zephyr/governance/", AgentRole.GOVERNANCE, "治理模块"),
-    FileOwnership("src/zephyr/gates/", AgentRole.REVIEWER, "门禁"),
+    FileOwnership("src/zephyr/governance/rule_enforcement/", AgentRole.REVIEWER, "门禁"),
     FileOwnership("tests/", AgentRole.REVIEWER, "测试"),
     FileOwnership("scripts/", AgentRole.SITE_OWNER, "脚本"),
 ]

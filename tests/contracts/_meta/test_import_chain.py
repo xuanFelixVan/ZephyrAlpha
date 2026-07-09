@@ -44,7 +44,7 @@ REPO_ROOT = pathlib.REPO_ROOT
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 CONSUMERS: list[Consumer] = [
-    Consumer("gates.gate_engine", "src/zephyr/gates/gate_engine.py", "G7 门禁引擎"),
+    Consumer("gates.gate_engine", "src/zephyr/governance/rule_enforcement/gate_engine/gate_engine.py", "G7 门禁引擎"),
     Consumer("db.task_repo", "src/zephyr/db/task_repo.py", "Task 持久化仓库"),
     Consumer("db.sqlite_schema", "src/zephyr/db/sqlite_schema.py", "SQLite Schema 管理"),
     Consumer("mcp.task_manager_server", "src/zephyr/mcp/task_manager_server.py", "MCP Task 管理服务端"),

@@ -188,7 +188,7 @@ class ConstitutionGuard:
             "mcp_auth.verify_tool_access": "src/zephyr/infrastructure_runtime_integration/mcp_server",
             "session_audit.verify": "session_logs",
             "kb.verify_provenance": "src/zephyr/kb",
-            "gates_registry.verify_all": "src/zephyr/gates",
+            "gates_registry.verify_all": "src/zephyr/governance/rule_enforcement",
             "route_manifest.validate": "src/zephyr/orchestrator",
             "event_schemas.validate": "src/zephyr/orchestrator",
             "migration.verify_checksum": "src/zephyr/db",

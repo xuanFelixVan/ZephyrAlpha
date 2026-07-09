@@ -158,7 +158,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "gate-engine": {
         "module_id": "MOD-GATE_ENGINE",
-        "source_dirs": ["src/zephyr/gates"],
+        "source_dirs": ["src/zephyr/governance/rule_enforcement"],
         "extra_source_files": [],
         "test_patterns": [
             "tests/test_gate_engine.py",
@@ -298,8 +298,8 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
             "src/zephyr/mcp/task_manager_server.py",
             "src/zephyr/core/blueprint_decomposer.py",
             "src/zephyr/pipeline/pipeline_orchestrator.py",
-            "src/zephyr/gates/task_completion_gate.py",
-            "src/zephyr/gates/g4-activate.yaml",
+            "src/zephyr/governance/rule_enforcement/task_completion_gate.py",
+            "src/zephyr/governance/rule_enforcement/g4_activate.yaml",
         ],
         "test_patterns": [
             "tests/test_sqlite_schema.py",
@@ -318,7 +318,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
             "src/zephyr/db/task_repo.py",
             "src/zephyr/db/sqlite_schema.py",
             "src/zephyr/mcp/task_manager_server.py",
-            "src/zephyr/gates/task_completion_gate.py",
+            "src/zephyr/governance/rule_enforcement/task_completion_gate.py",
         ],
         "test_patterns": [
             "tests/test_task_repo.py",

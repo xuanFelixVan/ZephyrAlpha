@@ -87,7 +87,7 @@ print(f"  Layer YAML files: {len(layer_files)}")
 
 print()
 print("=== Gate registry ===")
-with open("src/zephyr/gates/_registry.yaml", encoding="utf-8") as f:
+with open("src/zephyr/governance/rule_enforcement/_registry.yaml", encoding="utf-8") as f:
     reg = yaml.safe_load(f)
 active = sum(1 for g in reg.get("gates", []) if g.get("status") == "active")
 impl = sum(1 for g in reg.get("gates", []) if g.get("status") == "implemented")

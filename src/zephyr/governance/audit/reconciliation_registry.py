@@ -3008,7 +3008,7 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
 
     trigger 裁定（注册表路径真源：index_generator.py REGISTRY_DIRS）：
     - src/zephyr/**/*.py：资产文件变更->索引可能漂移
-    - src/zephyr/gates/_registry.yaml：gates 注册表变更
+    - src/zephyr/governance/rule_enforcement/_registry.yaml：gates 注册表变更
     - docs/03_modules/module-registry.yaml：模块注册表变更
     - docs/03_modules/blueprint_registry.yaml：蓝图注册表变更
 
@@ -3031,7 +3031,7 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
     _INDEX_REL = "data/asset_index/unified-asset-index.yaml"
     # 注册表路径真源：index_generator.py REGISTRY_DIRS
     _REGISTRY_PATHS = (
-        "src/zephyr/gates/_registry.yaml",
+        "src/zephyr/governance/rule_enforcement/_registry.yaml",
         "docs/03_modules/module-registry.yaml",
         "docs/03_modules/blueprint_registry.yaml",
     )

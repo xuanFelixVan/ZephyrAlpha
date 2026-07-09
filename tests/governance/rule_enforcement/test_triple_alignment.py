@@ -328,7 +328,7 @@ class TestExtractDepMapModules:
 
     def test_returns_modules_from_database(self):
         fake_rows = [
-            ('MOD-GATE_ENGINE', 'src/zephyr/gates/triple_alignment.py', 'docs/03_modules/.../blueprint.md'),
+            ('MOD-GATE_ENGINE', 'src/zephyr/governance/rule_enforcement/triple_alignment.py', 'docs/03_modules/.../blueprint.md'),
             ('MOD-INF-020', 'src/zephyr/audit_trail/audit.py', None),
         ]
         mock_conn = MagicMock()
@@ -343,7 +343,7 @@ class TestExtractDepMapModules:
             modules = _extract_dep_map_modules()
 
         assert 'MOD-GATE_ENGINE' in modules
-        assert modules['MOD-GATE_ENGINE']['source_path'] == 'src/zephyr/gates/triple_alignment.py'
+        assert modules['MOD-GATE_ENGINE']['source_path'] == 'src/zephyr/governance/rule_enforcement/triple_alignment.py'
         assert 'MOD-INF-020' in modules
         assert modules['MOD-INF-020']['blueprint_path'] == ''
 

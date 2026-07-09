@@ -18,7 +18,7 @@
   4. task_repo + gate_engine 集成：状态变更触发门禁检查
   5. rollback 语义：门禁失败后 task 状态正确保持（未写入 DB）
 
-使用真实 gate YAML（src/zephyr/gates/g1~g5.yaml）。
+使用真实 gate YAML（src/zephyr/governance/rule_enforcement/g1_ingest.yaml ~ g5_extract.yaml）。
 """
 
 from __future__ import annotations

@@ -72,7 +72,7 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 |----------|---------|-----------|
 | `src/zephyr/<pkg>/<name>.py` | `scaffold.py module <pkg> <name>` | `<pkg>/__init__.py` `__all__` |
 | `scripts/<path>/<name>.py` | `scaffold.py script <path>` | `scripts/script-manifest.yaml` |
-| `src/zephyr/gates/<id>.yaml` | `scaffold.py gate <id>` | `src/zephyr/governance/rule_enforcement/_registry.yaml` |
+| `src/zephyr/governance/rule_enforcement/<id>.yaml` | `scaffold.py gate <id>` | `src/zephyr/governance/rule_enforcement/_registry.yaml` |
 
 **修改已有文件不走 scaffold**——走 RULE-ZERO 锁协议。
 

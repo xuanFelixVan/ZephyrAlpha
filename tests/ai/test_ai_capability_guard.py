@@ -5,7 +5,7 @@
 
 # [INVARIANTS] CapabilityLevel enum has exactly 3 members; _level_meets_min is deterministic
 
-# [MODIFY-GUARD] src/zephyr/gates/ai_capability_guard.py
+# [MODIFY-GUARD] src/zephyr/governance/rule_enforcement/ai_capability_guard.py
 
 # [CONSUMERS] CI pipeline
 
