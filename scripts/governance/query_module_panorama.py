@@ -12,7 +12,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] module_id 不存在时 exit 3；DB 异常时 exit 4
-# [TESTS] (none yet)
+# [TESTS] tests/governance/test_query_module_panorama.py
 # [TTL] permanent
 """query_module_panorama.py — 模块全景查询入口（四图模块对齐 Step 5）
 
