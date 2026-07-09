@@ -1,12 +1,12 @@
-# 自动生成于 2026-07-09T09:11:31Z
+# 自动生成于 2026-07-09T09:26:23Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-09T09:11:31Z'
+generated_at: '2026-07-09T09:26:23Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 335
-with_manifest: 307
+total_scripts: 336
+with_manifest: 308
 missing_manifest: 28
 categories:
   governance:_sync: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 22
   governance:d4_paths: 4
-  governance:d5_architecture: 99
+  governance:d5_architecture: 100
   governance:d6_security: 14
   governance:d7_code: 33
   governance:d8_doc_sync: 9
@@ -1724,6 +1724,18 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: d5_architecture/generators/generate_data_acquisition_flow.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 'G-acqflow: 从 data_acquisition_matrix.md 生成业务数据采集流图 MD（内嵌 Mermaid）'
+  tags:
+  - Critical
+  - Disruptive
 - name: d5_architecture/generators/generate_dataflow_diagram.py
   owner: governance:d5_architecture
   dimensions: []

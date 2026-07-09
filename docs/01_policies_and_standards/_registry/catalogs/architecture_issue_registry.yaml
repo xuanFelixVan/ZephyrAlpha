@@ -10,7 +10,7 @@ tier: tier_1_governance
 status: active
 version: 1.2.0
 created: '2026-06-26'
-last_updated: '2026-07-06'
+last_updated: '2026-07-09'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -1587,6 +1587,40 @@ entries:
     Phase 4: 触发机制集成
     Phase 5: 门禁升级 + capability 登记 + E2E 验证
   related_adjudication: '#ARCH-053'
+  created: '2026-07-09'
+  last_updated: '2026-07-09'
+- issue_id: '#ARCH-057'
+  title: Gate 测试覆盖率盲区——36 gate 中 15 个缺测试 + [TESTS] 头部声明无强制校验
+  category: test_governance
+  severity: P1高
+  status: decided
+  description: |
+    36 个 gate 源文件头部都声明了 # [TESTS] tests/.../test_xxx.py，但 15 个 gate
+    的测试文件不存在（声明但不兑现，覆盖率 58.3%）。无 meta-gate 校验 [TESTS]
+    头部声明的路径是否实际存在，头部规范成摆设。100% AI 开发模式下无人类
+    PR review，AI 创建 gate 后立即提交，"守卫者无人守卫"（quis custodiet
+    ipsos custodes）。post_commit_guard.sh 误回滚 bug 正是"gate 无测试"的
+    直接后果。GATE-NO-TESTS-UNIT 被误认为承担此职责，但它实际是 tests/unit/
+    旧路径漂移检测（ARCH-029），非测试覆盖率检测。
+  adjudication: |
+    4 项裁定：
+    (R1) 新增 META-TESTS-COVERAGE meta-gate（priority=95）：检测 gate 目录所有
+         .py 文件的 [TESTS] 头部声明路径是否存在，声明但文件不存在→硬阻断。
+         守卫者的守卫者。
+    (R2) 补齐 15 个缺失测试（724 测试全通过）：function_dup/orphan_module/
+         perm_trigger/import_direction/empty_handler/doc_ref_broken/
+         exempt_zone_frontmatter/session_required/capability_overlap/
+         id_uniqueness/bare_getenv/hardcoded_url/vocab_hardcode/
+         file_copy/rule_four_way_alignment。
+    (R3) AGENTS.md L464 澄清 GATE-NO-TESTS-UNIT 是路径漂移检测非测试覆盖率检测。
+    (R4) [TESTS] 头部从"声明"升级为"机器可校验契约"——META-TESTS-COVERAGE
+         解析头部并校验路径存在性。
+    这是防幻觉/防漂移体系 L4（gate 自身完整性）规则，补齐 L1/L2/L3 未覆盖盲区。
+  fix_phase: |
+    Phase 1: META-TESTS-COVERAGE meta-gate 创建+测试+注册（已完成）
+    Phase 2: 15 个缺失测试补齐（已完成，724 测试通过）
+    Phase 3: 文档修复（ARCH-057 登记+AGENTS.md 澄清+debt_registry §5.156 填充）
+    Phase 4: 自验证+commit+merge
   created: '2026-07-09'
   last_updated: '2026-07-09'
 - issue_id: '#ARCH-MM-001'
