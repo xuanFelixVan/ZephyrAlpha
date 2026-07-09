@@ -1,8 +1,10 @@
 # [A_module] module_id=MOD-EXE_adapters | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from zephyr.governance.trading_contracts.broker_interface import *
-from .risk_validation_bridge import *
-from .simulation_broker import *
+# 5.93.6 修复：from ... import * → 显式导入（消除命名空间污染）
+# 注：FillCallback 来自 broker_interface（simulation_broker.__all__ 不含 FillCallback）
+from zephyr.governance.trading_contracts.broker_interface import BrokerInterface, FillCallback
+from .risk_validation_bridge import RiskValidationBridge, RiskValidationPort, RiskViolation
+from .simulation_broker import SimulationBroker
 
 __all__ = [
     "BrokerInterface",

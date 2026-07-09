@@ -497,6 +497,40 @@ def _extract_hand_maintained(source: str, begin_marker: str, contract_class_name
     return "\n".join(result).rstrip() + "\n"
 
 
+def _extract_public_symbols(file_path: Path) -> list[str]:
+    """从 Python 文件中提取公开符号（class/def/常量），用于生成显式导入。
+
+    5.93.6: 替代 ``from .xxx import *``，消除命名空间污染。
+    优先解析 ``__all__``；无 ``__all__`` 时提取不以 ``_`` 开头的 class/def/常量。
+    """
+    if not file_path.exists():
+        return []
+    try:
+        content = file_path.read_text(encoding="utf-8")
+    except Exception:
+        return []
+    # 优先解析 __all__
+    all_match = re.search(r"^__all__\s*=\s*\[(.*?)\]", content, re.MULTILINE | re.DOTALL)
+    if all_match:
+        names = re.findall(r'"(\w+)"', all_match.group(1))
+        return [n for n in names if not n.startswith("_")]
+    # 无 __all__：提取公开 class/def/常量
+    symbols: list[str] = []
+    for line in content.splitlines():
+        m = re.match(r"^class (\w+)", line)
+        if m:
+            symbols.append(m.group(1))
+            continue
+        m = re.match(r"^def (\w+)", line)
+        if m and not m.group(1).startswith("_"):
+            symbols.append(m.group(1))
+            continue
+        m = re.match(r"^([A-Z][A-Za-z0-9_]*)\s*=", line)
+        if m:
+            symbols.append(m.group(1))
+    return symbols
+
+
 def generate_directory_init(directory: Path, module_names: list[str], dry_run: bool = False) -> None:
     """Generate output from input data."""
     init_file = directory / "__init__.py"
@@ -514,7 +548,14 @@ def generate_directory_init(directory: Path, module_names: list[str], dry_run: b
         "",
     ]
     for name in sorted(module_names):
-        init_lines.append(f"from .{name} import *  # noqa: F403")
+        # 5.93.6: 显式导入替代 import *（消除命名空间污染）
+        symbols = _extract_public_symbols(directory / f"{name}.py")
+        if symbols:
+            symbols_str = ", ".join(symbols)
+            init_lines.append(f"from .{name} import {symbols_str}")
+        else:
+            # fallback: 无法提取符号时保留 import *
+            init_lines.append(f"from .{name} import *  # noqa: F403")
 
     # DM-367: 显式 __all__ 用模块名（snake_case），满足 audit_registration 的
     # `module_name in registered[pkg]` 检查（PascalCase 推导在 system-telemetry 等命名不匹配场景会失败）
