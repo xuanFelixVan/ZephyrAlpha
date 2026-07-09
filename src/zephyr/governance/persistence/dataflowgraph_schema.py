@@ -142,6 +142,7 @@ CREATE TABLE IF NOT EXISTS dataflow_jobs (
     build_status     TEXT DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     module_id        TEXT,
+    domain_id        TEXT,
     last_updated     TEXT
 )
 """
