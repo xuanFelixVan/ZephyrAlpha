@@ -2,35 +2,31 @@
 # [MODULE] scripts.governance.d5_architecture.generators.generate_data_acquisition_flow
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] _common (DB_DISPLAY_NAME)
-# [CONSUMERS] CI自动触发;人工查看generated/dataflows/data_acquisition_flow.md
+# [CONSUMERS] 人工查看data_acquisition_flow.md
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 输出幂等(相同输入→相同输出);只读data_acquisition_matrix.md;输出到05_dataflow_architecture/
+# [INVARIANTS] 输出幂等(相同输入→相同输出);只读tasks.yaml;输出到05_dataflow_architecture/
 # [MODIFY-GUARD] 修改需通过MOD-L00-004任务或后续维护任务
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 输入MD不存在→exit 1;矩阵明细为空→exit 2
+# [ERROR_CONTRACT] tasks.yaml不存在→exit 1;tasks为空→exit 2
 # [TESTS]
 # [TTL] permanent
-"""G-acqflow: 从 data_acquisition_matrix.md 生成业务数据采集流图 MD（内嵌 Mermaid）
-
-依据：与 generate_dataflow_diagram.py 正交——后者画"运行时业务系统流"（tick→因子→订单），
-本生成器画"数据采集流"（外部源→采集Job→业务数据库表），互补关系。
-
-功能：
-  - 解析 data_acquisition_matrix.md 的"矩阵明细"表（61 任务 × 表 × 源 × 调度 × 行数 × 日期 × 状态）
-  - 生成 3 张 Mermaid 图（按数据源 / 按调度时段 / 按数据库分组）
-  - 自动判定数据新鲜度（基于最新日期 vs 运行日期）
-  - 输出交叉矩阵（数据源×调度时段、数据源×状态、库×状态）+ 完整表清单
-
-输出文件：
-  - docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_flow.md
+"""G-acqflow: 从 tasks.yaml 生成业务数据采集流图 MD（人类可读版，内嵌 Mermaid）
 
 真源链：
-  data_acquisition_matrix.md（人类+扫描器维护）
+  tasks.yaml（61 个任务，真源）
     → 本生成器解析
     → data_acquisition_flow.md（自动派生产物，禁止手工编辑）
+
+输出结构（按数据源分组，大白话人类可读）：
+  1. 一句话说清楚（8源/61任务/2库）
+  2. 数据源分布总览（一张表）
+  3. 各数据源详情（8个章节，每源一张明细表）
+  4. 调度时段总览
+  5. 数据流向图（Mermaid 总览图）
+  6. 已知问题与注意事项
 
 用法
 ----
@@ -58,7 +54,7 @@ except ImportError:
 
 __manifest__ = """
 args: []
-description: 'G-acqflow: 从 data_acquisition_matrix.md 生成业务数据采集流图 MD（内嵌 Mermaid）'
+description: 'G-acqflow: 从 tasks.yaml 生成业务数据采集流图 MD（人类可读版，按数据源分组）'
 dimensions:
 - D5
 priority: P2
@@ -66,168 +62,107 @@ timeout_seconds: 60
 warn_only: false
 """
 
-INPUT_PATH = _REPO_ROOT / "docs" / "03_modules" / "_domain_data" / "data_acquisition_matrix.md"
+# 真源：tasks.yaml
+TASKS_YAML = _REPO_ROOT / "src" / "zephyr" / "data" / "config" / "tasks.yaml"
+# 输出
 OUTPUT_PATH = (
     _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_architecture" / "data_acquisition_flow.md"
 )
-# tasks.yaml 真源：用于 task_id → 中文描述映射（Mermaid Job 节点双语 label）
-TASKS_YAML = _REPO_ROOT / "src" / "zephyr" / "data" / "config" / "tasks.yaml"
 
 # ============================================================
-# 中文术语映射
+# 术语映射
 # ============================================================
+
+# 数据源中文名
 _SOURCE_ZH: dict[str, str] = {
-    "ifind": "同花顺iFind",
     "miniqmt": "迅投QMT",
     "akshare": "AKShare",
-    "baostock": "BaoStock",
+    "ifind": "同花顺iFind",
     "tickflow": "TickFlow",
+    "tdx": "通达信",
+    "baostock": "BaoStock",
     "tushare": "Tushare",
     "rss": "RSS",
-    "tdx": "通达信",
-    "bdpan": "百度云",
 }
 
-_SLOT_ZH: dict[str, str] = {
-    "盘后日K(16:30)": "盘后日K / 16:30 周一-五 (Post-close Daily K)",
-    "盘后资金(17:00)": "盘后资金 / 17:00 周一-五 (Post-close Capital)",
-    "盘后事件(18:00)": "盘后事件 / 18:00 周一-五 (Post-close Event)",
-    "周末财务(周六10:00)": "周末财务 / 10:00 周六 (Weekend Financial)",
-    "静态数据(月初09:00)": "静态数据 / 09:00 月初 (Static Data)",
+# 数据源一句话总结
+_SOURCE_SUMMARY: dict[str, str] = {
+    "miniqmt": "主力数据源，采 A股/港股/期货的 K线行情（日/周/月/分钟级）和财务报表、股东数据、期权可转债等。",
+    "akshare": "开源数据源，采估值、融资融券、龙虎榜、大宗交易、宏观数据、限售解禁等事件类数据。",
+    "ifind": "付费数据源，采资金流向、股权质押、行业分类等 iFind 独有数据。",
+    "tickflow": "美股数据源，采美股日K线和美股指数（ETF替代）。",
+    "tdx": "板块数据源，采通达信板块分类、板块K线、板块成分股。",
+    "baostock": "开源数据源，采交易日历和沪深300成分股。",
+    "tushare": "付费数据源，采新闻快讯和证券新闻。",
+    "rss": "RSS爬虫，采财经新闻。",
 }
 
-# 状态中文
-_STATUS_ZH: dict[str, str] = {
-    "✅ 已配置定时": "已配置定时 / Scheduled",
-    "🔴 已禁用": "已禁用 / Disabled",
-    "🔵 待接入(空表)": "待接入(空表) / Pending",
+# 数据源主要采什么（用于总览表）
+_SOURCE_MAIN: dict[str, str] = {
+    "miniqmt": "K线行情、财务报表、股东数据、期权可转债",
+    "akshare": "估值、融资融券、龙虎榜、大宗交易、宏观",
+    "ifind": "资金流向、股权质押、行业分类",
+    "tickflow": "美股K线、美股指数",
+    "tdx": "板块分类、板块K线、板块成分股",
+    "baostock": "交易日历、沪深300成分股",
+    "tushare": "新闻快讯、证券新闻",
+    "rss": "财经新闻",
 }
 
-# 矩阵明细表格行正则（8 列：#/task_id/表名/数据源/调度时段/行数/最新日期/状态）
-_TABLE_ROW = re.compile(
-    r"^\|\s*(\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|"
-    r"\s*([^|]*?)\s*\|\s*([^|]*?)\s*\|\s*([^|]+?)\s*\|$"
-)
+# 调度时段 → 人类可读时间
+_SCHEDULE_TIME: dict[str, str] = {
+    "daily_kline": "盘后 16:30",
+    "daily_capital": "盘后 17:00",
+    "daily_event": "盘后 18:00",
+    "weekend_financial": "周六 10:00",
+    "monthly_static": "月初 09:00",
+}
 
+# 调度时段 → 完整描述
+_SCHEDULE_DESC: dict[str, str] = {
+    "daily_kline": "16:30 周一-五",
+    "daily_capital": "17:00 周一-五",
+    "daily_event": "18:00 周一-五",
+    "weekend_financial": "周六 10:00",
+    "monthly_static": "月初 09:00",
+}
 
-# ============================================================
-# 解析
-# ============================================================
-def _parse_rows(md_text: str) -> list[dict]:
-    """解析 data_acquisition_matrix.md 的"矩阵明细"表。
+# 调度时段 → 说明
+_SCHEDULE_NOTE: dict[str, str] = {
+    "daily_kline": "日K线、周月K线、分钟K线、估值",
+    "daily_capital": "融资融券、龙虎榜、期货、美股、港股、资金流向",
+    "daily_event": "新闻、股东、分红、质押、解禁、分析师预期",
+    "weekend_financial": "财务报表、板块、期权可转债、Tick快照",
+    "monthly_static": "交易日历、股票列表、行业分类、全量刷新",
+}
 
-    Returns:
-        list[dict]: 每行 {idx, task_id, table, source, slot, rows, latest, status}
-    """
-    rows: list[dict] = []
-    in_table = False
-    for line in md_text.splitlines():
-        if line.startswith("## 矩阵明细"):
-            in_table = True
-            continue
-        if in_table and line.startswith("## "):
-            break  # 进入下一节
-        if not in_table:
-            continue
-        m = _TABLE_ROW.match(line)
-        if not m:
-            continue
-        idx, task_id, table, source, slot, rows_str, latest, status = m.groups()
-        rows.append(
-            {
-                "idx": int(idx),
-                "task_id": task_id.strip(),
-                "table": table.strip(),
-                "source": source.strip(),
-                "slot": slot.strip(),
-                "rows": rows_str.strip(),
-                "latest": latest.strip(),
-                "status": status.strip(),
-            }
-        )
-    return rows
+# 调度时段排序优先级（用于排序）
+_SCHEDULE_ORDER: dict[str, int] = {
+    "daily_kline": 1,
+    "daily_capital": 2,
+    "daily_event": 3,
+    "weekend_financial": 4,
+    "monthly_static": 5,
+}
 
-
-def _parse_row_count(s: str) -> int | None:
-    """解析行数字符串为 int。N/A 或空返回 None。"""
-    s = s.strip()
-    if not s or s.upper() == "N/A":
-        return None
-    s = s.replace(",", "")
-    try:
-        return int(s)
-    except ValueError:
-        return None
-
-
-def _fmt_rows(n: int | None) -> str:
-    """行数格式化（万/亿为单位）。None 返回 '-'。"""
-    if n is None:
-        return "-"
-    if n < 10000:
-        return str(n)
-    if n < 100_000_000:  # < 1亿
-        return f"{n / 10000:.1f}万"
-    return f"{n / 100_000_000:.2f}亿"
-
-
-def _fmt_rows_en(n: int | None) -> str:
-    """行数英文格式化（rows/K rows/M rows）。None 返回 '-'。
-
-    阈值对齐中文万/亿体系：< 10K → 原数字；10K-1M → X.XXK；≥ 1M → X.XXXM。
-    """
-    if n is None:
-        return "-"
-    if n < 10000:
-        return f"{n} rows"
-    if n < 1_000_000:
-        return f"{n / 1000:.2f}K rows"
-    return f"{n / 1_000_000:.3f}M rows"
-
-
-def _freshness(latest: str, today: date) -> tuple[str, str]:
-    """判定数据新鲜度。返回 (图标, 文字描述)。"""
-    if not latest:
-        return "⚫", "未知(无日期)"
-    try:
-        d = datetime.strptime(latest, "%Y-%m-%d").date()
-    except ValueError:
-        return "⚫", f"日期格式异常({latest})"
-    delta = (today - d).days
-    if delta <= 1:
-        return "🟢", f"当日({delta}天)"
-    if delta <= 3:
-        return "🟡", f"滞后{delta}天"
-    if delta <= 7:
-        return "🟠", f"滞后{delta}天"
-    return "🔴", f"滞后{delta}天"
-
-
-def _table_id(table: str) -> str:
-    """表名转 Mermaid 合法节点 ID（c1_market.adj_factor → T_c1_market_adj_factor）。"""
-    return "T_" + re.sub(r"[^a-zA-Z0-9_]", "_", table)
-
-
-def _db_of(table: str) -> str:
-    """表名 → 数据库名（c1_market.xxx → c1_market）。"""
-    return table.split(".", 1)[0] if "." in table else "unknown"
-
-
-def _en_zh(en: str, mapping: dict[str, str]) -> str:
-    """英文 + 中文并列。无映射返回原值。"""
-    zh = mapping.get(en, "")
-    return f"{en} / {zh}" if zh else en
-
+# 已知问题（硬编码，基于实测经验，稳定知识）
+_KNOWN_ISSUES: list[dict[str, str]] = [
+    {"issue": "下载极慢", "task": "adj_factor_incremental", "note": "每只约11秒，5204只约需16小时，建议夜间运行"},
+    {"issue": "API限流", "task": "daily_valuation_incremental", "note": "百度股市通API高频返回空响应，每只休眠1秒"},
+    {"issue": "分类不兼容", "task": "tdx板块 vs 东财/同花顺/申万", "note": "通达信880xxx体系与其他分类不兼容，无法混用"},
+]
 
 # 匹配末尾的括号技术备注（全角（）或半角()，内容不含嵌套括号）
 _TRAILING_PAREN = re.compile(r"[（(][^（）()]*[)）]\s*$")
 
 
+# ============================================================
+# 解析 tasks.yaml
+# ============================================================
 def _strip_tech_note(desc: str) -> str:
     """去除 description 末尾的技术备注括号内容，保留有意义的中文描述。
 
     例："复权因子增量（miniQMT get_divid_factors）" → "复权因子增量"
-        "每日估值（PE/PB）增量（AKShare stock_zh_valuation_baidu）" → "每日估值（PE/PB）增量"
     """
     if not desc:
         return ""
@@ -247,455 +182,312 @@ def _extract_desc_from_task(task: dict) -> str:
     return ""
 
 
-def _load_task_descriptions() -> dict[str, str]:
-    """解析 tasks.yaml，返回 task_id → 中文描述（已去除末尾技术备注括号）。
+def _parse_tasks_yaml() -> list[dict]:
+    """解析 tasks.yaml，返回任务列表。
 
-    description 字段兼容两种位置：extra.description（当前真源）与 policy.description（向后兼容）。
-    文件缺失或 PyYAML 不可用时返回空 dict（调用方按取不到处理：Job 节点只显示 task_id）。
+    每个任务 dict:
+      task_id, table, source, schedule, incremental, dependencies,
+      description, disabled, requires_manual
     """
     try:
         import yaml  # type: ignore[import-untyped]
     except ImportError:
-        return {}
+        print("[ERROR] PyYAML 不可用", file=sys.stderr)
+        return []
     if not TASKS_YAML.exists():
-        return {}
+        print(f"[ERROR] 真源文件不存在: {TASKS_YAML}", file=sys.stderr)
+        return []
     try:
         data = yaml.safe_load(TASKS_YAML.read_text(encoding="utf-8"))
-    except Exception:
-        return {}
+    except Exception as e:
+        print(f"[ERROR] 解析 tasks.yaml 失败: {e}", file=sys.stderr)
+        return []
     if not isinstance(data, dict):
-        return {}
-    result: dict[str, str] = {}
+        return []
+
+    tasks: list[dict] = []
     for task in data.get("tasks", []) or []:
         if not isinstance(task, dict):
             continue
         task_id = task.get("task_id")
         if not task_id:
             continue
-        desc = _extract_desc_from_task(task)
-        result[str(task_id)] = _strip_tech_note(desc)
-    return result
+        extra = task.get("extra") or {}
+        if not isinstance(extra, dict):
+            extra = {}
+        deps = task.get("dependencies") or []
+        if not isinstance(deps, list):
+            deps = []
+        desc = _strip_tech_note(_extract_desc_from_task(task))
+        tasks.append({
+            "task_id": str(task_id),
+            "table": str(task.get("table", "")),
+            "source": str(task.get("source", "")),
+            "schedule": str(task.get("schedule", "")),
+            "incremental": bool(task.get("incremental", True)),
+            "dependencies": [str(d) for d in deps],
+            "description": desc,
+            "disabled": bool(extra.get("disabled", False)),
+            "requires_manual": bool(extra.get("requires_manual", False)),
+        })
+    return tasks
 
 
 # ============================================================
-# Mermaid 图生成
+# 辅助
 # ============================================================
-def _gen_mermaid_by_source(
-    rows: list[dict], today: date, task_descs: dict[str, str] | None = None
-) -> tuple[str, int, int, int]:
-    """按数据源分组的 Mermaid 图（subgraph 按源，Job → 表节点）。"""
-    task_descs = task_descs or {}
-    lines = ["flowchart LR"]
+def _db_of(table: str) -> str:
+    """表名 → 数据库名（c1_market.xxx → c1_market）。"""
+    return table.split(".", 1)[0] if "." in table else "unknown"
+
+
+def _format_desc(task: dict) -> str:
+    """格式化任务说明：description + 依赖标注 + 禁用标注。"""
+    desc = task.get("description", "")
+    deps = task.get("dependencies", [])
+    if deps:
+        dep_str = "、".join(deps)
+        desc = f"{desc}（依赖{dep_str}）" if desc else f"依赖{dep_str}"
+    if task.get("disabled"):
+        desc = f"{desc}（**已禁用**）" if desc else "**已禁用**"
+    elif task.get("requires_manual"):
+        desc = f"{desc}（需手动）" if desc else "需手动"
+    return desc
+
+
+def _sort_tasks(tasks: list[dict]) -> list[dict]:
+    """按调度时段排序，同时段按 task_id 排序。"""
+    return sorted(tasks, key=lambda t: (
+        _SCHEDULE_ORDER.get(t["schedule"], 99),
+        t["task_id"],
+    ))
+
+
+# ============================================================
+# 各部分 MD 生成
+# ============================================================
+def _gen_header(today: date, gen_timestamp: str) -> list[str]:
+    """生成 frontmatter + 头部说明。"""
+    return [
+        "---",
+        "doc_type: architecture_view",
+        "title: 数据采集流图 / Data Acquisition Flow",
+        'version: "2.0"',
+        "status: active",
+        f"date: {today.isoformat()}",
+        "owner: auto-generator",
+        "ttl: permanent",
+        "---",
+        "",
+        "# 数据采集流图 / Data Acquisition Flow",
+        "",
+        '> **这个文档是给人看的**：用大白话说清楚「系统从哪些数据源、采了什么数据、灌到哪张表、什么时候采」。',
+        f"> **真源是 [tasks.yaml](../../../src/zephyr/data/config/tasks.yaml)**，本文档是自动生成的派生产物，禁止手工编辑。",
+        "> **数据源连接和 API 细节**见 [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)。",
+        "",
+        "---",
+        "",
+    ]
+
+
+def _gen_overview(tasks: list[dict]) -> list[str]:
+    """生成'一句话说清楚' + '数据源分布总览'。"""
+    total = len(tasks)
+    sources = sorted({t["source"] for t in tasks})
+    dbs = sorted({_db_of(t["table"]) for t in tasks})
+
+    lines = [
+        "## 一句话说清楚",
+        "",
+        f"系统每天从 **{len(sources)} 个数据源**采集 **{total} 个任务**，灌进 ClickHouse 的 **{len(dbs)} 个库**：",
+        "",
+    ]
+    for db in dbs:
+        if db == "c1_market":
+            lines.append(f"- `{db}` — 行情库（K线、指数、期货、资金、估值等）")
+        elif db == "c3_fundamental":
+            lines.append(f"- `{db}` — 基本面库（财务报表、新闻、股东、分红等）")
+        else:
+            lines.append(f"- `{db}`")
+    lines += ["", "---", "", "## 数据源分布总览", "",
+              "| 数据源 | 任务数 | 主要采什么 |",
+              "|--------|--------|-----------|"]
+
+    # 按任务数降序
+    by_source: dict[str, int] = defaultdict(int)
+    for t in tasks:
+        by_source[t["source"]] += 1
+    for src in sorted(by_source.keys(), key=lambda s: -by_source[s]):
+        src_display = src
+        zh = _SOURCE_ZH.get(src)
+        if zh:
+            src_display = f"**{src}**（{zh}）"
+        lines.append(f"| {src_display} | {by_source[src]} | {_SOURCE_MAIN.get(src, '-')} |")
+    lines.append(f"| **合计** | **{total}** | |")
+    lines += ["", "---", ""]
+    return lines
+
+
+def _gen_source_detail(tasks: list[dict]) -> list[str]:
+    """生成'各数据源详情'（8个章节，每源一张明细表）。"""
+    lines = ["## 各数据源详情", ""]
 
     # 按数据源分组
     by_source: dict[str, list[dict]] = defaultdict(list)
-    for r in rows:
-        by_source[r["source"]].append(r)
+    for t in tasks:
+        by_source[t["source"]].append(t)
 
-    # 收集所有唯一表（同表多任务汇聚）
-    tables_seen: dict[str, dict] = {}
-    for r in rows:
-        if r["table"] not in tables_seen:
-            tables_seen[r["table"]] = {
-                "rows": _parse_row_count(r["rows"]),
-                "latest": r["latest"],
-                "fresh_icon": _freshness(r["latest"], today)[0],
-            }
-
-    # 数据源 subgraph + Job 节点
-    for src in sorted(by_source.keys()):
+    # 按任务数降序
+    for idx, src in enumerate(sorted(by_source.keys(), key=lambda s: -len(by_source[s])), 1):
         src_zh = _SOURCE_ZH.get(src, src)
-        src_rows = by_source[src]
-        lines.append(f'    subgraph S_{src}["{src_zh}（{len(src_rows)} 任务 / {len(src_rows)} tasks）"]')
-        for r in src_rows:
-            desc = task_descs.get(r["task_id"], "")
-            job_label = f'{r["task_id"]}<br/>{desc}' if desc else r["task_id"]
-            lines.append(f'        J{r["idx"]}["{job_label}"]:::jobNode')
-        lines.append("    end")
+        src_tasks = _sort_tasks(by_source[src])
+        is_primary = "，主力数据源" if idx == 1 else ""
 
-    # 表节点（按数据库分组）
-    by_db: dict[str, list[str]] = defaultdict(list)
-    for t in tables_seen:
-        by_db[_db_of(t)].append(t)
-    for db in sorted(by_db.keys()):
-        lines.append(f'    subgraph DB_{db}["{db}（{len(by_db[db])} 表 / {len(by_db[db])} tables）"]')
-        for t in sorted(by_db[db]):
-            info = tables_seen[t]
-            rows_str = _fmt_rows(info["rows"])
-            rows_en = _fmt_rows_en(info["rows"])
-            label = f'{info["fresh_icon"]} {t}<br/>{rows_str}行 / {rows_en}'
-            if info["latest"]:
-                label += f'<br/>{info["latest"]}'
-            lines.append(f'        {_table_id(t)}["{label}"]:::dsNode')
-        lines.append("    end")
+        lines.append(f"### {idx}. {src}（{src_zh}）— {len(src_tasks)} 个任务{is_primary}")
+        lines.append("")
+        lines.append(f"**一句话**：{_SOURCE_SUMMARY.get(src, '（待补充）')}")
+        lines.append("")
+        lines.append("**采集明细**：")
+        lines.append("")
+        lines.append("| 任务 | 灌到哪张表 | 什么时候采 | 说明 |")
+        lines.append("|------|-----------|-----------|------|")
+        for t in src_tasks:
+            slot_time = _SCHEDULE_TIME.get(t["schedule"], t["schedule"])
+            desc = _format_desc(t)
+            lines.append(f"| {t['task_id']} | {t['table']} | {slot_time} | {desc} |")
+        lines.append("")
 
-    # Job → 表 边
-    edge_count = 0
-    for r in rows:
-        lines.append(f'    J{r["idx"]} --> {_table_id(r["table"])}')
-        edge_count += 1
+        # 检查已知问题的 task 是否在该源的任务列表中
+        src_task_ids = {t["task_id"] for t in src_tasks}
+        src_issues = [i for i in _KNOWN_ISSUES
+                      if i["task"] in src_task_ids or src_zh in i["task"] or src in i["task"]]
+        if src_issues:
+            lines.append("**注意**：")
+            for iss in src_issues:
+                lines.append(f"- `{iss['task']}`：{iss['note']}")
+            lines.append("")
 
-    # 样式
-    lines.append("")
-    lines.append("    classDef jobNode fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20")
-    lines.append("    classDef dsNode fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1")
+        lines.append("---")
+        lines.append("")
 
-    return "\n".join(lines) + "\n", len(by_source), len(tables_seen), edge_count
+    return lines
 
 
-def _gen_mermaid_by_slot(
-    rows: list[dict], today: date, task_descs: dict[str, str] | None = None
-) -> tuple[str, int, int]:
-    """按调度时段分组的 Mermaid 图（subgraph 按时段，Job → 表节点）。"""
-    task_descs = task_descs or {}
-    lines = ["flowchart LR"]
-
-    by_slot: dict[str, list[dict]] = defaultdict(list)
-    for r in rows:
-        by_slot[r["slot"]].append(r)
-
-    # 调度时段 subgraph + Job 节点
-    for slot in sorted(by_slot.keys()):
-        slot_zh = _SLOT_ZH.get(slot, slot)
-        slot_rows = by_slot[slot]
-        # subgraph ID 不能含特殊字符
-        slot_id = "SL_" + re.sub(r"[^a-zA-Z0-9_]", "_", slot)
-        lines.append(f'    subgraph {slot_id}["{slot_zh}（{len(slot_rows)} 任务 / {len(slot_rows)} tasks）"]')
-        for r in slot_rows:
-            desc = task_descs.get(r["task_id"], "")
-            job_label = f'{r["task_id"]}<br/>{desc}' if desc else r["task_id"]
-            lines.append(f'        J{r["idx"]}["{job_label}"]:::jobNode')
-        lines.append("    end")
-
-    # 表节点（扁平，不分组，避免图过密）
-    tables_seen: set[str] = set()
-    for r in rows:
-        if r["table"] not in tables_seen:
-            tables_seen.add(r["table"])
-            info_rows = _parse_row_count(r["rows"])
-            icon = _freshness(r["latest"], today)[0]
-            label = f'{icon} {r["table"]}<br/>{_fmt_rows(info_rows)}行 / {_fmt_rows_en(info_rows)}'
-            if r["latest"]:
-                label += f'<br/>{r["latest"]}'
-            lines.append(f'    {_table_id(r["table"])}["{label}"]:::dsNode')
-
-    # Job → 表 边
-    edge_count = 0
-    for r in rows:
-        lines.append(f'    J{r["idx"]} --> {_table_id(r["table"])}')
-        edge_count += 1
-
-    lines.append("")
-    lines.append("    classDef jobNode fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17")
-    lines.append("    classDef dsNode fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1")
-
-    return "\n".join(lines) + "\n", len(by_slot), edge_count
-
-
-def _gen_mermaid_by_db(rows: list[dict], today: date) -> tuple[str, int, int]:
-    """按数据库分组的 Mermaid 图（subgraph 按库，表节点按库分组，标注数据源）。"""
-    lines = ["flowchart LR"]
-
-    by_db: dict[str, list[dict]] = defaultdict(list)
-    for r in rows:
-        by_db[_db_of(r["table"])].append(r)
-
-    # 外部数据源节点（左侧）
-    sources_seen = sorted({r["source"] for r in rows})
-    for src in sources_seen:
-        src_zh = _SOURCE_ZH.get(src, src)
-        lines.append(f'    SRC_{src}[("{src_zh}")]:::srcNode')
-
-    # 数据库 subgraph + 表节点
-    for db in sorted(by_db.keys()):
-        db_rows = by_db[db]
-        # 唯一表
-        tables_in_db: dict[str, set[str]] = defaultdict(set)
-        for r in db_rows:
-            tables_in_db[r["table"]].add(r["source"])
-        lines.append(f'    subgraph DB_{db}["{db}（{len(tables_in_db)} 表 / {len(tables_in_db)} tables）"]')
-        for t in sorted(tables_in_db.keys()):
-            # 取该表的代表行（第一个）用于行数/日期
-            rep = next(r for r in db_rows if r["table"] == t)
-            info_rows = _parse_row_count(rep["rows"])
-            icon = _freshness(rep["latest"], today)[0]
-            srcs = "/".join(sorted(tables_in_db[t]))
-            label = f'{icon} {t}<br/>{_fmt_rows(info_rows)}行 / {_fmt_rows_en(info_rows)}<br/>源: {srcs}'
-            if rep["latest"]:
-                label += f'<br/>{rep["latest"]}'
-            lines.append(f'        {_table_id(t)}["{label}"]:::dsNode')
-        lines.append("    end")
-
-    # 数据源 → 表 边（去重：同一 源→表 只画一次）
-    edges_seen: set[tuple[str, str]] = set()
-    edge_count = 0
-    for r in rows:
-        key = (r["source"], r["table"])
-        if key in edges_seen:
-            continue
-        edges_seen.add(key)
-        lines.append(f'    SRC_{r["source"]} --> {_table_id(r["table"])}')
-        edge_count += 1
-
-    lines.append("")
-    lines.append("    classDef srcNode fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c")
-    lines.append("    classDef dsNode fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1")
-
-    return "\n".join(lines) + "\n", len(by_db), edge_count
-
-
-# ============================================================
-# 交叉矩阵
-# ============================================================
-def _gen_cross_source_slot(rows: list[dict]) -> str:
-    """数据源 × 调度时段 交叉矩阵。"""
-    by_pair: dict[tuple[str, str], int] = defaultdict(int)
-    for r in rows:
-        by_pair[(r["source"], r["slot"])] += 1
-    sources = sorted({r["source"] for r in rows})
-    slots = sorted({r["slot"] for r in rows})
-
-    lines = []
-    header = "| 数据源 \\ 调度时段 | " + " | ".join(_SLOT_ZH.get(s, s) for s in slots) + " | 合计 |"
-    sep = "|" + "---|" * (len(slots) + 2)
-    lines.append(header)
-    lines.append(sep)
-    for src in sources:
-        src_zh = _SOURCE_ZH.get(src, src)
-        counts = [by_pair.get((src, s), 0) for s in slots]
-        total = sum(counts)
-        cells = " | ".join(str(c) if c > 0 else "-" for c in counts)
-        lines.append(f"| {src_zh} | {cells} | {total} |")
-    # 合计行
-    col_totals = [sum(by_pair.get((src, s), 0) for src in sources) for s in slots]
-    cells = " | ".join(str(c) for c in col_totals)
-    lines.append(f"| **合计** | {cells} | **{len(rows)}** |")
-    return "\n".join(lines) + "\n"
-
-
-def _gen_source_status(rows: list[dict]) -> str:
-    """数据源 × 状态 统计表。"""
-    by_pair: dict[tuple[str, str], int] = defaultdict(int)
-    for r in rows:
-        by_pair[(r["source"], r["status"])] += 1
-    sources = sorted({r["source"] for r in rows})
-    statuses = ["✅ 已配置定时", "🔴 已禁用", "🔵 待接入(空表)"]
-
-    lines = []
-    header = "| 数据源 / Source | " + " | ".join(_STATUS_ZH[s] for s in statuses) + " | 合计 / Total |"
-    sep = "|" + "---|" * (len(statuses) + 2)
-    lines.append(header)
-    lines.append(sep)
-    for src in sources:
-        src_zh = _SOURCE_ZH.get(src, src)
-        counts = [by_pair.get((src, s), 0) for s in statuses]
-        total = sum(counts)
-        cells = " | ".join(str(c) if c > 0 else "-" for c in counts)
-        lines.append(f"| {src_zh} | {cells} | {total} |")
-    return "\n".join(lines) + "\n"
-
-
-# ============================================================
-# 主文档生成
-# ============================================================
-def _gen_index_md(rows: list[dict], today: date, gen_timestamp: str) -> str:
-    """生成完整 MD 文档。
-
-    Args:
-        rows: 解析后的矩阵行。
-        today: 运行日期（用于新鲜度判定）。
-        gen_timestamp: 生成时间戳（从输入文件 mtime 派生，保证幂等：输入不变→输出时间戳不变）。
-    """
-    # task_id → 中文描述映射（来自 tasks.yaml，用于 Mermaid Job 节点双语 label）
-    task_descs = _load_task_descriptions()
-
-    # 统计
-    total = len(rows)
-    by_status: dict[str, int] = defaultdict(int)
-    by_source: dict[str, int] = defaultdict(int)
+def _gen_schedule_overview(tasks: list[dict]) -> list[str]:
+    """生成'调度时段总览'。"""
     by_slot: dict[str, int] = defaultdict(int)
-    by_db: dict[str, int] = defaultdict(int)
-    unique_tables: set[str] = set()
-    for r in rows:
-        by_status[r["status"]] += 1
-        by_source[r["source"]] += 1
-        by_slot[r["slot"]] += 1
-        by_db[_db_of(r["table"])] += 1
-        unique_tables.add(r["table"])
+    for t in tasks:
+        by_slot[t["schedule"]] += 1
 
-    # 新鲜度统计
-    fresh_counts: dict[str, int] = defaultdict(int)
-    for r in rows:
-        icon, _ = _freshness(r["latest"], today)
-        fresh_counts[icon] += 1
+    lines = [
+        "## 调度时段总览",
+        "",
+        "系统按 5 个时段调度，避免并发冲突：",
+        "",
+        "| 调度时段 | 时间 | 任务数 | 说明 |",
+        "|---------|------|--------|------|",
+    ]
+    total = 0
+    for slot in sorted(by_slot.keys(), key=lambda s: _SCHEDULE_ORDER.get(s, 99)):
+        count = by_slot[slot]
+        total += count
+        time_desc = _SCHEDULE_DESC.get(slot, slot)
+        note = _SCHEDULE_NOTE.get(slot, "-")
+        lines.append(f"| {_SCHEDULE_TIME.get(slot, slot)} | {time_desc} | {count} | {note} |")
+    lines.append(f"| **合计** | | **{total}** | |")
+    lines += ["", "---", ""]
+    return lines
 
-    lines = []
-    # frontmatter
-    lines.append("---")
-    lines.append("doc_type: architecture_view")
-    lines.append("title: 业务数据采集流图 / Data Acquisition Flow")
-    lines.append('version: "1.0"')
-    lines.append("status: active")
-    lines.append(f"date: {today.isoformat()}")
-    lines.append("owner: auto-generator")
-    lines.append("ttl: permanent")
-    lines.append("---")
+
+def _gen_flow_diagram(tasks: list[dict]) -> list[str]:
+    """生成'数据流向图' Mermaid 总览图。"""
+    by_source: dict[str, int] = defaultdict(int)
+    for t in tasks:
+        by_source[t["source"]] += 1
+
+    # 源 → 库映射
+    src_to_dbs: dict[str, set[str]] = defaultdict(set)
+    for t in tasks:
+        src_to_dbs[t["source"]].add(_db_of(t["table"]))
+    all_dbs = sorted({_db_of(t["table"]) for t in tasks})
+
+    # Mermaid 节点 ID 映射
+    src_ids = {src: f"S{i}" for i, src in enumerate(sorted(by_source.keys()))}
+    db_ids = {db: f"D{i}" for i, db in enumerate(all_dbs)}
+
+    lines = [
+        "## 数据流向图",
+        "",
+        "```mermaid",
+        "flowchart LR",
+        "    subgraph 外部数据源",
+    ]
+    for src in sorted(by_source.keys(), key=lambda s: -by_source[s]):
+        sid = src_ids[src]
+        zh = _SOURCE_ZH.get(src, src)
+        lines.append(f'        {sid}["{src}<br/>{zh}<br/>{by_source[src]}任务"]')
+    lines.append("    end")
     lines.append("")
-    lines.append("# 业务数据采集流图 / Data Acquisition Flow")
-    lines.append("")
-    lines.append(f"> 生成时间: {gen_timestamp}")
-    lines.append(f"> 运行日期: {today.isoformat()}")
-    lines.append(f"> 输入真源: `docs/03_modules/_domain_data/data_acquisition_matrix.md`（人类+扫描器维护）")
-    lines.append(f"> 输出: 本文档（自动派生产物，禁止手工编辑）")
-    lines.append("")
-    lines.append("## 概述 / Overview")
-    lines.append("")
-    lines.append("本文档展示**业务数据库表的数据采集流**——即外部数据源通过哪个采集 Job 把数据灌进哪张业务表。")
-    lines.append("")
-    lines.append("This document presents the **data acquisition flow of business database tables** — i.e., which external data source feeds which business table through which acquisition Job.")
-    lines.append("")
-    lines.append("**与 [dataflow_index.md](dataflow_index.md) 的关系 / Relationship with dataflow_index.md**：")
-    lines.append("- `dataflow_index.md` 画**运行时业务系统流**（tick → K线 → 因子 → 信号 → 订单 → 成交 → 持仓） / draws the **runtime business system flow** (tick → K-line → factor → signal → order → trade → position)")
-    lines.append("- 本文档画**数据采集流**（iFind/QMT/AKShare 等 → 采集 Job → ClickHouse 业务表） / this document draws the **data acquisition flow** (iFind/QMT/AKShare etc. → acquisition Job → ClickHouse business tables)")
-    lines.append("- 两者正交互补，共同构成数据全景。 / The two are orthogonal and complementary, together forming the full data landscape.")
-    lines.append("")
-    lines.append("## 统计概览 / Statistics Overview")
-    lines.append("")
-    lines.append("| 指标 / Metric | 值 / Value |")
-    lines.append("|------|-----|")
-    lines.append(f"| 采集任务总数 / Total Tasks | {total} |")
-    lines.append(f"| 唯一业务表数 / Unique Tables | {len(unique_tables)} |")
-    lines.append(f"| 数据源数 / Data Sources | {len(by_source)} |")
-    lines.append(f"| 调度时段数 / Schedule Slots | {len(by_slot)} |")
-    lines.append(f"| 数据库数 / Databases | {len(by_db)} |")
-    lines.append("")
-    lines.append("### 按状态统计 / By Status")
-    lines.append("")
-    lines.append("| 状态 / Status | 任务数 / Tasks | 占比 / Ratio |")
-    lines.append("|------|--------|------|")
-    for s in ["✅ 已配置定时", "🔴 已禁用", "🔵 待接入(空表)"]:
-        c = by_status.get(s, 0)
-        pct = f"{c / total * 100:.1f}%" if total > 0 else "0%"
-        lines.append(f"| {_STATUS_ZH[s]} | {c} | {pct} |")
-    lines.append("")
-    lines.append("### 按数据源统计 / By Data Source")
-    lines.append("")
-    lines.append("| 数据源 / Source | 任务数 / Tasks | 占比 / Ratio |")
-    lines.append("|--------|--------|------|")
-    for src in sorted(by_source.keys()):
-        c = by_source[src]
-        pct = f"{c / total * 100:.1f}%"
-        lines.append(f"| {_SOURCE_ZH.get(src, src)} | {c} | {pct} |")
-    lines.append("")
-    lines.append("### 按调度时段统计 / By Schedule Slot")
-    lines.append("")
-    lines.append("| 调度时段 / Slot | 任务数 / Tasks | 占比 / Ratio |")
-    lines.append("|----------|--------|------|")
-    for slot in sorted(by_slot.keys()):
-        c = by_slot[slot]
-        pct = f"{c / total * 100:.1f}%"
-        lines.append(f"| {_SLOT_ZH.get(slot, slot)} | {c} | {pct} |")
-    lines.append("")
-    lines.append("### 按数据库统计 / By Database")
-    lines.append("")
-    lines.append("| 数据库 / DB | 任务数 / Tasks | 唯一表数 / Unique Tables |")
-    lines.append("|--------|--------|----------|")
-    for db in sorted(by_db.keys()):
-        db_tables = {r["table"] for r in rows if _db_of(r["table"]) == db}
-        lines.append(f"| {db} | {by_db[db]} | {len(db_tables)} |")
-    lines.append("")
-    lines.append("### 数据新鲜度统计 / Data Freshness Statistics（基于最新日期 vs 运行日期 / Based on latest date vs run date）")
-    lines.append("")
-    lines.append("| 新鲜度 / Freshness | 任务数 / Tasks | 说明 / Note |")
-    lines.append("|--------|--------|------|")
-    lines.append(f"| 🟢 当日 / Today | {fresh_counts.get('🟢', 0)} | 滞后 ≤1 天 / Lag ≤1d |")
-    lines.append(f"| 🟡 滞后1-3天 / Lag 1-3d | {fresh_counts.get('🟡', 0)} | 滞后 2-3 天 / Lag 2-3d |")
-    lines.append(f"| 🟠 滞后4-7天 / Lag 4-7d | {fresh_counts.get('🟠', 0)} | 滞后 4-7 天 / Lag 4-7d |")
-    lines.append(f"| 🔴 滞后>7天 / Lag >7d | {fresh_counts.get('🔴', 0)} | 滞后 >7 天 / Lag >7d |")
-    lines.append(f"| ⚫ 未知 / Unknown | {fresh_counts.get('⚫', 0)} | 无最新日期 / No latest date |")
+    lines.append("    subgraph ClickHouse")
+    for db in all_dbs:
+        did = db_ids[db]
+        label = "行情库" if db == "c1_market" else "基本面库" if db == "c3_fundamental" else db
+        lines.append(f'        {did}["{db}<br/>{label}"]')
+    lines.append("    end")
     lines.append("")
 
-    # Mermaid 图
-    lines.append("## Mermaid 图表 / Charts")
-    lines.append("")
-    lines.append("> **图例说明 / Legend**：")
-    lines.append("> - **绿色圆角矩形 / Green rounded rect** = 采集 Job / Acquisition Job（jobNode）")
-    lines.append("> - **蓝色矩形 / Blue rect** = 业务表 Dataset / Business Table（dsNode）")
-    lines.append("> - **粉色圆角矩形 / Pink rounded rect** = 外部数据源 / External Source（srcNode）")
-    lines.append("> - **黄色圆角矩形 / Yellow rounded rect** = 调度时段内的 Job / Job in schedule slot（按时段图 / by-slot chart）")
-    lines.append("> - 表节点前缀图标 / Table node prefix icon 🟢/🟡/🟠/🔴/⚫ = 数据新鲜度 / Data freshness")
-    lines.append("")
+    # 边（去重）
+    edges_seen: set[tuple[str, str]] = set()
+    for src in sorted(src_to_dbs.keys()):
+        for db in sorted(src_to_dbs[src]):
+            key = (src, db)
+            if key in edges_seen:
+                continue
+            edges_seen.add(key)
+            lines.append(f"    {src_ids[src]} --> {db_ids[db]}")
 
-    # 图1：按数据源分组
-    lines.append("### 图1：按数据源分组 / By Data Source（外部源 → 采集Job → 业务表 / Source → Job → Table）")
-    lines.append("")
-    mmd1, n_src, n_tbl, n_edge = _gen_mermaid_by_source(rows, today, task_descs)
-    lines.append(f"> {n_src} 数据源 / Sources / {n_tbl} 业务表 / Tables / {n_edge} 采集边 / Edges")
-    lines.append("")
-    lines.append("```mermaid")
-    lines.append(mmd1.rstrip())
     lines.append("```")
-    lines.append("")
+    lines += ["", "---", ""]
+    return lines
 
-    # 图2：按调度时段分组
-    lines.append("### 图2：按调度时段分组 / By Schedule Slot（5档时段 → 采集Job → 业务表 / Slots → Job → Table）")
-    lines.append("")
-    mmd2, n_slot, n_edge2 = _gen_mermaid_by_slot(rows, today, task_descs)
-    lines.append(f"> {n_slot} 调度时段 / Slots / {n_edge2} 采集边 / Edges")
-    lines.append("")
-    lines.append("```mermaid")
-    lines.append(mmd2.rstrip())
-    lines.append("```")
-    lines.append("")
 
-    # 图3：按数据库分组
-    lines.append("### 图3：按数据库分组 / By Database（外部源 → ClickHouse 库 → 业务表 / Source → DB → Table）")
-    lines.append("")
-    mmd3, n_db, n_edge3 = _gen_mermaid_by_db(rows, today)
-    lines.append(f"> {n_db} 数据库 / DBs / {n_edge3} 源→表 边（去重）/ Source→Table edges (deduped)")
-    lines.append("")
-    lines.append("```mermaid")
-    lines.append(mmd3.rstrip())
-    lines.append("```")
-    lines.append("")
+def _gen_known_issues(tasks: list[dict]) -> list[str]:
+    """生成'已知问题与注意事项'。
 
-    # 交叉矩阵
-    lines.append("## 交叉矩阵 / Cross Matrix")
-    lines.append("")
-    lines.append("### 数据源 × 调度时段 / Source × Slot")
-    lines.append("")
-    lines.append(_gen_cross_source_slot(rows))
-    lines.append("")
-    lines.append("### 数据源 × 状态 / Source × Status")
-    lines.append("")
-    lines.append(_gen_source_status(rows))
-    lines.append("")
+    来源：① tasks.yaml 中 disabled/requires_manual 的任务 ② 硬编码的实测经验。
+    """
+    lines = [
+        "## 已知问题与注意事项",
+        "",
+        "| 问题 | 涉及任务 | 说明 |",
+        "|------|---------|------|",
+    ]
 
-    # 完整表清单
-    lines.append("## 完整表清单 / Full Table List")
-    lines.append("")
-    lines.append("| # | task_id | 表名 / Table | 数据库 / DB | 数据源 / Source | 调度时段 / Slot | 行数 / Rows | 最新日期 / Latest | 新鲜度 / Freshness | 状态 / Status |")
-    lines.append("|---|---------|------|--------|--------|---------|------|---------|--------|------|")
-    for r in rows:
-        icon, fresh_desc = _freshness(r["latest"], today)
-        rows_n = _parse_row_count(r["rows"])
-        rows_str = _fmt_rows(rows_n)
-        latest = r["latest"] or "-"
-        status_zh = _STATUS_ZH.get(r["status"], r["status"])
-        lines.append(
-            f"| {r['idx']} | {r['task_id']} | {r['table']} | {_db_of(r['table'])} | "
-            f"{_SOURCE_ZH.get(r['source'], r['source'])} | {_SLOT_ZH.get(r['slot'], r['slot'])} | "
-            f"{rows_str} | {latest} | {icon} {fresh_desc} | {status_zh} |"
-        )
-    lines.append("")
+    # 硬编码的已知问题
+    for iss in _KNOWN_ISSUES:
+        lines.append(f"| **{iss['issue']}** | {iss['task']} | {iss['note']} |")
 
-    # 变更历史
-    lines.append("## 变更历史 / Changelog")
-    lines.append("")
-    lines.append(f"- **{today.isoformat()}**: 初次生成 / Initial generation（generate_data_acquisition_flow.py）")
-    lines.append("")
+    # 从 tasks.yaml 提取已禁用/需手动的任务
+    for t in tasks:
+        if t.get("disabled"):
+            lines.append(f"| **已禁用** | {t['task_id']} | {t.get('description', '-')} |")
+        elif t.get("requires_manual"):
+            lines.append(f"| **需手动** | {t['task_id']} | {t.get('description', '-')} |")
 
-    return "\n".join(lines) + "\n"
+    lines.append("")
+    return lines
+
+
+def _gen_index_md(tasks: list[dict], today: date, gen_timestamp: str) -> str:
+    """组装完整 MD 文档。"""
+    lines: list[str] = []
+    lines += _gen_header(today, gen_timestamp)
+    lines += _gen_overview(tasks)
+    lines += _gen_source_detail(tasks)
+    lines += _gen_schedule_overview(tasks)
+    lines += _gen_flow_diagram(tasks)
+    lines += _gen_known_issues(tasks)
+    return "\n".join(lines)
 
 
 # ============================================================
@@ -703,10 +495,7 @@ def _gen_index_md(rows: list[dict], today: date, gen_timestamp: str) -> str:
 # ============================================================
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="从 data_acquisition_matrix.md 生成业务数据采集流图 MD（内嵌 Mermaid）",
-    )
-    parser.add_argument(
-        "--input", type=str, default=str(INPUT_PATH), help="输入文件（data_acquisition_matrix.md 路径）"
+        description="从 tasks.yaml 生成业务数据采集流图 MD（人类可读版，按数据源分组）",
     )
     parser.add_argument(
         "--output", type=str, default=str(OUTPUT_PATH), help="输出文件路径"
@@ -716,32 +505,26 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    in_path = Path(args.input)
-    if not in_path.exists():
-        print(f"[ERROR] 输入文件不存在: {in_path}", file=sys.stderr)
-        return 1
-
-    md_text = in_path.read_text(encoding="utf-8")
-    rows = _parse_rows(md_text)
-    if not rows:
-        print(f"[ERROR] 未解析到矩阵明细行，请检查 {in_path} 的 '## 矩阵明细' 节", file=sys.stderr)
+    tasks = _parse_tasks_yaml()
+    if not tasks:
+        print(f"[ERROR] 未解析到任务，请检查 {TASKS_YAML}", file=sys.stderr)
         return 2
 
     today = datetime.strptime(args.today, "%Y-%m-%d").date() if args.today else date.today()
 
-    # 生成时间戳从输入文件 mtime 派生（幂等保证：输入不变→输出时间戳不变，对标 AGENTS.md §11.1.1）
+    # 生成时间戳从真源文件 mtime 派生（幂等保证：输入不变→输出时间戳不变）
     try:
-        gen_timestamp = datetime.fromtimestamp(in_path.stat().st_mtime).isoformat(timespec="seconds")
+        gen_timestamp = datetime.fromtimestamp(TASKS_YAML.stat().st_mtime).isoformat(timespec="seconds")
     except OSError:
         gen_timestamp = today.isoformat()
 
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    md = _gen_index_md(rows, today, gen_timestamp)
+    md = _gen_index_md(tasks, today, gen_timestamp)
     out_path.write_text(md, encoding="utf-8", newline="\n")
 
     print(f"[OK] 生成 {out_path}")
-    print(f"     解析 {len(rows)} 个采集任务，覆盖 {len({r['table'] for r in rows})} 张唯一业务表")
+    print(f"     解析 {len(tasks)} 个采集任务，覆盖 {len({t['table'] for t in tasks})} 张唯一业务表")
     print(f"     运行日期: {today.isoformat()}")
     return 0
 
