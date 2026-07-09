@@ -53,7 +53,7 @@ runtime_plane: hot
 tags:
   - data-source
   - l00
-summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，对接69品类全景，多数据源标准化接入(AkShare/miniQMT/iFind/tushare/爬虫)，原料/成品/事务三层分类，质量门禁对接CTR契约，calc_mode标注(replay/preload/hybrid)支撑回测调度，为C1~C4仓库提供原料数据。"
+summary: "数据接入层——业务数据库母蓝图(MOD-ARCH-BIZDB)上游，对接69品类全景，多数据源标准化接入(AkShare/miniQMT/iFind/tushare/爬虫)，原料/成品/事务三层分类，质量门禁对接CTR契约，calc_mode标注(replay/preload/hybrid)支撑回测调度，为C1~C4仓库提供原料数据。"
 ---
 
 > **v4.0.0 重建中** — 旧C轨占位代码已清理（2026-07-01），抽象层+实现层已按业务数据库母蓝图重建，多品类扩展(对接母蓝图§6插拔机制)待施工。
@@ -81,7 +81,7 @@ summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 数据接入层——它是业务数据库母蓝图([ARCH-BIZDB-001](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/business_data_architecture.md))的**上游**，为 C1/C2/C3 仓库提供原料数据，解决外部数据源格式各异、API限流、数据质量参差不齐的标准化接入问题。
+本蓝图描述 ZephyrAlpha 数据接入层——它是业务数据库母蓝图([MOD-ARCH-BIZDB](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/business_data_architecture.md))的**上游**，为 C1/C2/C3 仓库提供原料数据，解决外部数据源格式各异、API限流、数据质量参差不齐的标准化接入问题。
 
 核心职责：
 - **数据源OCP扩展点**(DataSourceBase)：多数据源标准化接入
@@ -145,7 +145,7 @@ summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，
 
 ### 1.1 背景
 
-ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据品类全景**：行情数据(10)、基本面(10)、另类(10)、宏观(11)、因子值(5大类)、技术指标(1组)、图形识别(6类)、信号历史(1)、主力行为(1)、板块强度(1)、知识图谱(5类)、回测结果(2)、交易事务(3)、补充品类(9)。数据源接入层作为业务数据库的**上游**，需为 C1/C2/C3 仓库提供这 69 品类的原料数据摄取能力。
+ZephyrAlpha 业务数据库母蓝图(MOD-ARCH-BIZDB §5)定义了 **69 个数据品类全景**：行情数据(10)、基本面(10)、另类(10)、宏观(11)、因子值(5大类)、技术指标(1组)、图形识别(6类)、信号历史(1)、主力行为(1)、板块强度(1)、知识图谱(5类)、回测结果(2)、交易事务(3)、补充品类(9)。数据源接入层作为业务数据库的**上游**，需为 C1/C2/C3 仓库提供这 69 品类的原料数据摄取能力。
 
 各数据源 API 格式各异、限流策略不同、数据质量参差不齐，需统一接入层将原始数据标准化为 CTR 系列契约输出。母蓝图§6 要求**品类插拔式管理**（品类注册表 + DDL-as-Code + CTR 契约 + CategoryManager 发现 4 层机制）；母蓝图§7.5 要求品类标注 **calc_mode**（replay/preload/hybrid）以支撑回测调度策略；母蓝图§8 要求硬边界品类(Level-2/卫星/Barra等)以 enabled=false 预留接口。
 
@@ -160,7 +160,7 @@ ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据
 | 5 | ✅ 包含 | calc_mode 标注 | replay/preload/hybrid 支撑母蓝图§7回测调度 |
 | 6 | ✅ 包含 | 品类注册表 enabled 二元开关 | 硬边界品类 enabled=false 预留接口(母蓝图§8.2) |
 | 7 | ✅ 包含 | 原料/成品/事务三层分类 | 原料=tick/新闻原文接入即存，成品=K线/指标可预计算 |
-| 8 | ❌ 排除 | 数据存储(C1~C4仓库) | 母蓝图 ARCH-BIZDB-001 负责 |
+| 8 | ❌ 排除 | 数据存储(C1~C4仓库) | 母蓝图 MOD-ARCH-BIZDB 负责 |
 | 9 | ❌ 排除 | 因子计算 | D_FACTOR Alpha Factor 负责 |
 | 10 | ❌ 排除 | 信号生成 | D_SIGNAL Signal Generation 负责 |
 | 11 | ❌ 排除 | DDL-as-Code 建表 | 母蓝图§6.2 第2层负责 |
@@ -182,7 +182,7 @@ ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策 | 设计+施工 | 审批权限 |
-| 母蓝图 ARCH-BIZDB-001 | 品类全景/插拔机制/调度策略上游对齐 | 设计 | 数据源接入层为其上游 |
+| 母蓝图 MOD-ARCH-BIZDB | 品类全景/插拔机制/调度策略上游对齐 | 设计 | 数据源接入层为其上游 |
 | D_FACTOR Alpha Factor | CTR-001数据格式 | 消费 | 接口兼容性 |
 | D_SIGNAL Signal Generation | CTR-001数据格式 | 消费 | 接口兼容性 |
 | C1~C4 仓库层 | 原料数据摄取 | 消费 | 品类→库映射(母蓝图§5.2) |
@@ -224,7 +224,7 @@ ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据
 | 4 | ✅ 包含 | 品类注册表对接 | category_id + enabled 二元开关(母蓝图§6/§8.2) | 本模块 |
 | 5 | ✅ 包含 | calc_mode 标注 | replay/preload/hybrid(母蓝图§7.5) | 本模块 |
 | 6 | ✅ 包含 | 原料/成品/事务三层分类 | 原料接入即存，成品可预计算(母蓝图§5) | 本模块 |
-| 7 | ❌ 排除 | 数据持久化(C1~C4仓库) | 母蓝图 ARCH-BIZDB-001 负责 | 母蓝图 |
+| 7 | ❌ 排除 | 数据持久化(C1~C4仓库) | 母蓝图 MOD-ARCH-BIZDB 负责 | 母蓝图 |
 | 8 | ❌ 排除 | 因子计算 | D_FACTOR Alpha Factor 负责 | D_FACTOR |
 | 9 | ❌ 排除 | 信号生成 | D_SIGNAL Signal Generation 负责 | D_SIGNAL |
 | 10 | ❌ 排除 | DDL-as-Code 建表 | 母蓝图§6.2 第2层负责 | 母蓝图 |
@@ -576,7 +576,7 @@ class QualityReport:
 
 ## §16 施工指引
 
-> 🚧 v4.0.0 重建施工指引——对接母蓝图 ARCH-BIZDB-001 Spiral 开发顺序。抽象层+实现层已重建，多品类扩展(对接母蓝图§6插拔机制)为未来 Spiral 工作。
+> 🚧 v4.0.0 重建施工指引——对接母蓝图 MOD-ARCH-BIZDB Spiral 开发顺序。抽象层+实现层已重建，多品类扩展(对接母蓝图§6插拔机制)为未来 Spiral 工作。
 
 ### ⚠️ AI 施工前检查清单
 
@@ -603,7 +603,7 @@ class QualityReport:
 |---|--------|---------|:---:|:---:|
 | 1 | provider_base.py 重建 | hard | 已重建 | ✅ |
 | 2 | quality_gate.py 重建 | hard | 已重建 | ✅ |
-| 3 | 母蓝图 ARCH-BIZDB-001 品类注册表 | soft | 设计完成 | ☐ |
+| 3 | 母蓝图 MOD-ARCH-BIZDB 品类注册表 | soft | 设计完成 | ☐ |
 
 ### 16.3 实施步骤
 
@@ -930,7 +930,7 @@ class MiniQmtProvider(DataSourceBase):
 | CTR-001 | NormalizedMarketData跨层契约 | — | 本层为Producer，D_FACTOR/D_SIGNAL/D_RESEARCH为Consumer |
 | OHLCV | Open/High/Low/Close/Volume标准行情格式 | — | 本模块的标准化输出格式(CTR-001) |
 | QUALITY_THRESHOLD | 质量门禁阈值0.7 | — | 低于此值的数据标记为不合格 |
-| 母蓝图 | 业务数据库顶层架构设计书(ARCH-BIZDB-001) | — | 本数据源接入层的上游设计真源 |
+| 母蓝图 | 业务数据库顶层架构设计书(MOD-ARCH-BIZDB) | — | 本数据源接入层的上游设计真源 |
 | category_id | 品类标识(母蓝图§6 第1层注册表) | — | 对接母蓝图69品类唯一标识 |
 | calc_mode | 品类回测计算模式(母蓝图§7.5) | — | replay/preload/hybrid 三值 |
 | enabled | 品类启用开关(母蓝图§8.2) | — | 硬边界品类enabled=false预留接口 |
@@ -1044,7 +1044,7 @@ class MiniQmtProvider(DataSourceBase):
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
 | 9 | 架构层YAML | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l00_data_source.yaml` | 子模块定义真源 |
-| 10 | 业务数据库母蓝图 | ARCH-BIZDB-001 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\business_data_architecture.md` | 上游设计真源(§5品类/§6插拔/§7调度/§8边界) |
+| 10 | 业务数据库母蓝图 | MOD-ARCH-BIZDB | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\business_data_architecture.md` | 上游设计真源(§5品类/§6插拔/§7调度/§8边界) |
 
 ---
 
@@ -1079,7 +1079,7 @@ class MiniQmtProvider(DataSourceBase):
 | 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 | 子模块定义 | **架构层YAML** | 本蓝图（派生视图） |
-| 69品类全景/插拔机制/调度策略 | **母蓝图 ARCH-BIZDB-001** | 本蓝图（上游对接视图） |
+| 69品类全景/插拔机制/调度策略 | **母蓝图 MOD-ARCH-BIZDB** | 本蓝图（上游对接视图） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
 

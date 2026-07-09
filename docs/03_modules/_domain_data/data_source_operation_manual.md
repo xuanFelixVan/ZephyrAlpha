@@ -43,7 +43,7 @@ depends_on:
   - target: MOD-L00-001
     at: "§4"
     why: "数据接入层主蓝图"
-  - target: ARCH-BIZDB-001
+  - target: MOD-ARCH-BIZDB
     at: "§5"
     why: "业务数据库母蓝图品类全景"
 priority: P0
