@@ -22,21 +22,15 @@ ttl: permanent
 |------|-----|
 | 域总数 | 50 |
 | 超容域 | 2 |
-| 接近超容域（>80%） | 1 |
+| 接近超容域（>80%） | 0 |
 | 空域（0模块） | 21 |
 
 ## 超容域清单（需拆分）
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | registry_management | 497 | 150 | +347 |
+| D_GOVERNANCE | registry_management | 503 | 150 | +353 |
 | D_TRADING | 交易运营 | 280 | 150 | +130 |
-
-## 接近超容域清单（>80%，需关注）
-
-| 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage |
-|------|--------|:---:|:---:|:---:|
-| D_GOV_ENFORCEMENT | rule_enforcement | 133 | 150 | 88.7% |
 
 ## 空域清单（0模块，待开发）
 
@@ -85,20 +79,20 @@ ttl: permanent
 | D_FACTOR | 因子 | L2_domain | 4 | 150 | 2.7% | 正常 |
 | D_FRONTEND | 前端 | L1_foundation | 13 | 150 | 8.7% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | L2_domain | 4 | 150 | 2.7% | 正常 |
-| D_GOVERNANCE | registry_management | L2_domain | 497 | 150 | 331.3% | 超容 |
+| D_GOVERNANCE | registry_management | L2_domain | 503 | 150 | 335.3% | 超容 |
 | D_GOV_AUDIT | audit_orchestration | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_GOV_DOCS | architecture_docs | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | drift_detection | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_GOV_ENFORCEMENT | rule_enforcement | L2_domain | 133 | 150 | 88.7% | 接近超容 |
+| D_GOV_ENFORCEMENT | rule_enforcement | L2_domain | 49 | 150 | 32.7% | 正常 |
 | D_GOV_REPAIR | rollback | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_GOV_RULE | rule_governance | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_GOV_SCRIPTS | script_governance | L2_domain | 32 | 150 | 21.3% | 正常 |
+| D_GOV_SCRIPTS | script_governance | L2_domain | 34 | 150 | 22.7% | 正常 |
 | D_INFRA_A2A | a2a_communication | L0_infrastructure | 32 | 150 | 21.3% | 正常 |
 | D_INFRA_OPS | asset-inventory | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 48 | 150 | 32.0% | 正常 |
 | D_INFRA_RUNTIME | runtime_core | L0_infrastructure | 87 | 150 | 58.0% | 正常 |
 | D_INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 13 | 150 | 8.7% | 正常 |
-| D_INTEGRATION | pipeline_routing | L1_foundation | 30 | 150 | 20.0% | 正常 |
+| D_INTEGRATION | pipeline_routing | L1_foundation | 33 | 150 | 22.0% | 正常 |
 | D_INTEGRATION_GATEWAY | mcp_servers | L1_foundation | 14 | 150 | 9.3% | 正常 |
 | D_INTELLIGENCE | context_management | L2_domain | 21 | 150 | 14.0% | 正常 |
 | D_KNOWLEDGE | vector_storage | L2_domain | 0 | 150 | 0.0% | 空 |

@@ -1,12 +1,12 @@
 # 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-07-09 19:16:16
+- 生成时间: 2026-07-09 19:34:40
 - 数据源: depgraph (PostgreSQL)
 - 四图节点数: depgraph=140 / dataflow=165 / decision=296 / blueprint=110
 - 问题总数: 48
   - 孤儿（仅一图）: 18
-  - 状态漂移（design_maturity 不一致）: 27
-  - 域不一致（domain_id 不一致）: 3
+  - 状态漂移（design_maturity 不一致）: 8
+  - 域不一致（domain_id 不一致）: 22
   - 设计态孤立（design 仅一图）: 0
 
 ## 1. 孤儿节点（仅一图存在）
@@ -36,41 +36,41 @@
 
 | module_id | depgraph | dataflow | decision | blueprint |
 |---|---|---|---|---|
-| MOD-BT-001 | production | design | design | design |
-| MOD-CONTEXT_ENGINE | design | production | production | design |
-| MOD-GOV-019 | production | prototype | prototype | - |
-| MOD-GOV-SCRIPTS-ARCH | production | prototype | prototype | - |
-| MOD-GOV-SYNC-PANORAMA | production | prototype | prototype | - |
-| MOD-GOV-commit_gate_registry | production | prototype | prototype | - |
-| MOD-GOV-commit_gates | production | prototype | prototype | - |
-| MOD-GOV-session_worktree | production | prototype | prototype | - |
-| MOD-GOVERNANCE | production | design | design | design |
-| MOD-INF-002 | production | prototype | prototype |  |
-| MOD-INF-013 | prototype | production | production |  |
-| MOD-INF-015 | production | prototype | prototype |  |
-| MOD-INF-019 | design | prototype | prototype | design |
+| MOD-INF-019 | design | production | production | design |
 | MOD-INF-020 | design | prototype | prototype | design |
 | MOD-INF-022 | design | prototype | prototype | design |
-| MOD-INF-024 | production | design | design | design |
-| MOD-INF-025 | production | prototype | prototype |  |
-| MOD-INF-026 | production | prototype | prototype |  |
-| MOD-INF-037 | prototype | design | design | design |
-| MOD-L00-001 | prototype | design | design | design |
-| MOD-L02-001 | production | prototype | prototype |  |
 | MOD-L04-001 | prototype | prototype | design |  |
 | MOD-L05-001 | prototype | prototype | design |  |
-| MOD-L06-001 | production | prototype | prototype | design |
-| MOD-L08-001 | prototype | design | design | design |
-| MOD-SECURITY | production | prototype | prototype | - |
-| SH-DB-002 | production | prototype | prototype | - |
+| MOD-L06-001 | design | prototype | prototype | design |
+| MOD-LLM_SECURITY | prototype | production | production |  |
+| MOD-SECURITY | prototype | production | production | - |
 
 ## 3. 域不一致（domain_id 不一致）
 
 | module_id | depgraph | dataflow | decision | blueprint |
 |---|---|---|---|---|
-| MOD-INF-035 | D_GOV_SCRIPTS | - | - | auto_runtime_core |
-| MOD-INF-039 | D_GOVERNANCE | - | - | agent_orchestrator |
-| MOD-L08-001 | D_GOVERNANCE | - | - | D_FRONTEND |
+| MOD-CONTEXT_ENGINE | D_AUTONOMY_CORE | - | - | D_GOVERNANCE |
+| MOD-FEEDBACK_LOOP | D_AUDITTEST | - | - | D_GOVERNANCE |
+| MOD-GATE_ENGINE | D_AUDITTEST | - | - | D_GOVERNANCE |
+| MOD-INF-005 | D_GOV_SCRIPTS | - | - | D_GOVERNANCE |
+| MOD-INF-009 | D_INFRA_RUNTIME | - | - | D_GOVERNANCE |
+| MOD-INF-011 | D_INTEGRATION | - | - | D_KNOWLEDGE |
+| MOD-INF-016 | D_SHARED | - | - | D_GOVERNANCE |
+| MOD-INF-019 | D_AUDITTEST | - | - | D_GOVERNANCE |
+| MOD-INF-020 | D_GOVERNANCE | - | - | D_GOV_AUDIT |
+| MOD-INF-021 | D_AUDITTEST | - | - | D_GOVERNANCE |
+| MOD-INF-023 | D_GOVERNANCE | - | - | D_GOV_DRIFT |
+| MOD-INF-027 | D_AUDITTEST | - | - | D_GOV_AUDIT |
+| MOD-INF-029 | D_SECURITY | - | - | D_GOVERNANCE |
+| MOD-INF-030 | D_SECURITY | - | - | D_GOVERNANCE |
+| MOD-INF-031 | D_AUDITTEST | - | - | D_GOVERNANCE |
+| MOD-INF-033 | D_AUDITTEST | - | - | D_GOVERNANCE |
+| MOD-INF-034 | D_INTELLIGENCE | - | - | D_ML_TRAIN |
+| MOD-INF-035 | D_AUDITTEST | - | - | auto_runtime_core |
+| MOD-INF-036 | D_INTELLIGENCE | - | - | D_GOVERNANCE |
+| MOD-INF-039 | D_TRADING | - | - | agent_orchestrator |
+| MOD-KB-001 | D_GOVERNANCE | - | - | D_KNOWLEDGE |
+| MOD-RESOURCE_OPTIMIZATION_ENGINE | D_TRADING | - | - | D_GOVERNANCE |
 
 ## 4. 设计态孤立（design 仅一图）
 

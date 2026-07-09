@@ -123,9 +123,9 @@ ttl: permanent
 | C5 | 执行交易 | 4 | 511 | 286 | 1 | 224 | 1.75 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 19 | 0 | 1 | 18 | 1.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 59 | 11 | 10 | 38 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 6 | 920 | 627 | 31 | 262 | 1.33 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 6 | 836 | 549 | 31 | 256 | 1.33 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 4 | 212 | 113 | 0 | 99 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 11 | 659 | 374 | 9 | 276 | 1.91 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 11 | 660 | 377 | 9 | 274 | 1.91 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
@@ -153,10 +153,10 @@ ttl: permanent
 | D_DIGITAL_TWIN | 数字孪生 | C7 | L2_domain | 8 | 0 | 1 | 7 | 0 | L1 🔵 | 🟡 |
 | D_EXEC_SIM | 执行仿真 | C7 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_SIMULATION | 仿真 | C7 | L2_domain | 11 | 2 | 1 | 8 | 0 | L2 🟡 | 🟡 |
-| D_GOVERNANCE | registry_management | CC1 | L2_domain | 716 | 494 | 28 | 194 | 1 | L3 🟢 | ✅ |
+| D_GOVERNANCE | registry_management | CC1 | L2_domain | 716 | 500 | 28 | 188 | 1 | L3 🟢 | ✅ |
 | D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 2 | 0 | 2 | 0 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 1 | 0 | 1 | 0 | 0 | L1 🔵 | 🟡 |
-| D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 201 | 133 | 0 | 68 | 1 | L3 🟢 | ✅ |
+| D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 117 | 49 | 0 | 68 | 1 | L3 🟢 | ✅ |
 | D_GOV_REPAIR | rollback | CC1 | L2_domain | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_GOV_RULE | rule_governance | CC1 | L2_domain | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_AUTONOMY_PERM | budget_enforcement | CC2 | L2_domain | 14 | 0 | 0 | 14 | 0 | L1 🔵 | 🟡 |
@@ -166,8 +166,8 @@ ttl: permanent
 | D_AUTONOMY_CORE | agent_lifecycle | CC3 | L1_foundation | 114 | 111 | 0 | 3 | 0 | L2 🟡 | 🟡 |
 | D_FRONTEND | 前端 | CC3 | L1_foundation | 30 | 13 | 6 | 11 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_OPS | asset-inventory | CC3 | L0_infrastructure | 1 | 0 | 1 | 0 | 0 | L1 🔵 | 🟡 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 132 | 87 | 0 | 45 | 4 | L3 🟢 | ✅ |
-| D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 72 | 30 | 0 | 42 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 133 | 87 | 0 | 46 | 4 | L3 🟢 | ✅ |
+| D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 72 | 33 | 0 | 39 | 0 | L2 🟡 | 🟡 |
 | D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 20 | 14 | 0 | 6 | 0 | L2 🟡 | 🟡 |
 | D_INTELLIGENCE | context_management | CC3 | L2_domain | 43 | 21 | 0 | 22 | 0 | L2 🟡 | 🟡 |
 | D_KNOWLEDGE | vector_storage | CC3 | L2_domain | 9 | 0 | 2 | 7 | 0 | L1 🔵 | 🟡 |
@@ -242,8 +242,8 @@ ttl: permanent
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
 | D_GOVERNANCE | registry_management | CC1 | L3 | 716 |
-| D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L3 | 201 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 132 |
+| D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L3 | 117 |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 133 |
 
 ## 未映射域 / Unmapped Domains
 

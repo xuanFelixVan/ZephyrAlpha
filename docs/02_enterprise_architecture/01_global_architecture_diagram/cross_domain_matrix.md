@@ -22,14 +22,14 @@ ttl: permanent
 |------|-----|
 | 域总数 | 50 |
 | 跨域依赖对数 | 166 |
-| 跨域依赖边总数 | 3439 |
+| 跨域依赖边总数 | 3460 |
 
 ## 跨域依赖 Top 20（按边数降序）
 
 | 源域 / From Domain | 目标域 / To Domain | 边数 / Edges | 依赖类型 / Dep Types |
 |------|--------|:---:|---------|
-| D_AUDITTEST | D_TRADING | 639 | test_depends |
-| D_AUDITTEST | D_GOVERNANCE | 550 | test_depends |
+| D_AUDITTEST | D_TRADING | 640 | test_depends |
+| D_AUDITTEST | D_GOVERNANCE | 563 | test_depends |
 | D_AUDITTEST | D_GOV_ENFORCEMENT | 221 | test_depends |
 | D_AUDITTEST | D_SHARED | 170 | test_depends |
 | D_AUDITTEST | D_SECURITY | 168 | test_depends |
@@ -38,7 +38,7 @@ ttl: permanent
 | D_AUDITTEST | D_INFRA_RUNTIME | 124 | test_depends |
 | D_TRADING | D_SHARED | 101 | import_depends |
 | D_INFRA_RUNTIME | D_SHARED | 70 | import_depends |
-| D_AUDITTEST | D_INTEGRATION | 63 | test_depends |
+| D_AUDITTEST | D_INTEGRATION | 67 | test_depends |
 | D_AUDITTEST | D_INFRA_RECOVERY | 52 | test_depends |
 | D_GOV_SCRIPTS | D_SHARED | 44 | import_depends |
 | D_INTEGRATION | D_SHARED | 41 | import_depends |
@@ -53,8 +53,8 @@ ttl: permanent
 
 | # / No. | 源域 / From Domain | 目标域 / To Domain | 边数 / Edges | 依赖类型 / Dep Types |
 |:---:|------|--------|:---:|---------|
-| 1 | D_AUDITTEST | D_TRADING | 639 | test_depends |
-| 2 | D_AUDITTEST | D_GOVERNANCE | 550 | test_depends |
+| 1 | D_AUDITTEST | D_TRADING | 640 | test_depends |
+| 2 | D_AUDITTEST | D_GOVERNANCE | 563 | test_depends |
 | 3 | D_AUDITTEST | D_GOV_ENFORCEMENT | 221 | test_depends |
 | 4 | D_AUDITTEST | D_SHARED | 170 | test_depends |
 | 5 | D_AUDITTEST | D_SECURITY | 168 | test_depends |
@@ -63,7 +63,7 @@ ttl: permanent
 | 8 | D_AUDITTEST | D_INFRA_RUNTIME | 124 | test_depends |
 | 9 | D_TRADING | D_SHARED | 101 | import_depends |
 | 10 | D_INFRA_RUNTIME | D_SHARED | 70 | import_depends |
-| 11 | D_AUDITTEST | D_INTEGRATION | 63 | test_depends |
+| 11 | D_AUDITTEST | D_INTEGRATION | 67 | test_depends |
 | 12 | D_AUDITTEST | D_INFRA_RECOVERY | 52 | test_depends |
 | 13 | D_GOV_SCRIPTS | D_SHARED | 44 | import_depends |
 | 14 | D_INTEGRATION | D_SHARED | 41 | import_depends |
@@ -76,15 +76,15 @@ ttl: permanent
 | 21 | D_TRADING | D_INTEGRATION | 26 | import_depends |
 | 22 | D_TRADING | D_GOVERNANCE | 26 | import_depends |
 | 23 | D_GOVERNANCE | D_INTEGRATION | 20 | import_depends |
-| 24 | D_INTEGRATION_GATEWAY | D_SHARED | 19 | import_depends |
-| 25 | D_GOV_ENFORCEMENT | D_SHARED | 19 | import_depends |
-| 26 | D_TRADING | D_INFRA_RUNTIME | 18 | import_depends |
-| 27 | D_INFRA_RECOVERY | D_SHARED | 18 | import_depends |
+| 24 | D_GOV_ENFORCEMENT | D_SHARED | 19 | import_depends |
+| 25 | D_INTEGRATION_GATEWAY | D_SHARED | 19 | import_depends |
+| 26 | D_INFRA_RECOVERY | D_SHARED | 18 | import_depends |
+| 27 | D_TRADING | D_INFRA_RUNTIME | 18 | import_depends |
 | 28 | D_GOVERNANCE | D_GOV_ENFORCEMENT | 17 | import_depends |
 | 29 | D_SECURITY_LLM | D_SHARED | 17 | import_depends |
 | 30 | D_GOVERNANCE | D_INTELLIGENCE | 17 | import_depends |
 | 31 | D_INFRA_A2A | D_SHARED | 16 | import_depends |
-| 32 | D_INTELLIGENCE | D_SHARED | 15 | import_depends |
+| 32 | D_INTELLIGENCE | D_SHARED | 16 | import_depends |
 | 33 | D_FUNDAMENTAL_SIGNAL | D_TRADING | 14 | import_depends |
 | 34 | D_AUTONOMY_CORE | D_SHARED | 14 | import_depends |
 | 35 | D_INTEGRATION_GATEWAY | D_GOVERNANCE | 13 | import_depends |
@@ -100,81 +100,81 @@ ttl: permanent
 | 45 | D_GOV_SCRIPTS | D_GOV_ENFORCEMENT | 8 | import_depends |
 | 46 | D_AUDITTEST | D_FRONTEND | 8 | test_depends |
 | 47 | D_GOVERNANCE | D_SECURITY | 8 | import_depends |
-| 48 | D_FRONTEND | D_GOVERNANCE | 7 | import_depends,runtime |
-| 49 | D_INFRA_RUNTIME | D_GOVERNANCE | 7 | import_depends |
-| 50 | D_AUTONOMY_CORE | D_INFRA_RUNTIME | 7 | import_depends |
-| 51 | D_REPORTING | D_SHARED | 6 | import_depends |
-| 52 | D_EX_CORE | D_SHARED | 6 | import_depends |
-| 53 | D_GOV_SCRIPTS | D_INFRA_RUNTIME | 6 | import_depends |
-| 54 | D_TRADING | D_SECURITY | 6 | import_depends |
-| 55 | D_SECURITY | D_GOVERNANCE | 6 | import_depends |
-| 56 | D_GOV_ENFORCEMENT | D_INTEGRATION | 6 | import_depends |
-| 57 | D_AUTONOMY_CORE | D_INTEGRATION | 6 | import_depends |
-| 58 | D_AUDITTEST | D_RISK | 6 | test_depends |
-| 59 | D_SECURITY | D_GOV_ENFORCEMENT | 6 | import_depends |
-| 60 | D_GOVERNANCE | D_FRONTEND | 5 | import_depends |
+| 48 | D_INFRA_RUNTIME | D_GOVERNANCE | 7 | import_depends |
+| 49 | D_AUTONOMY_CORE | D_INFRA_RUNTIME | 7 | import_depends |
+| 50 | D_FRONTEND | D_GOVERNANCE | 7 | import_depends,runtime |
+| 51 | D_EX_CORE | D_SHARED | 6 | import_depends |
+| 52 | D_GOV_SCRIPTS | D_INFRA_RUNTIME | 6 | import_depends |
+| 53 | D_TRADING | D_SECURITY | 6 | import_depends |
+| 54 | D_REPORTING | D_SHARED | 6 | import_depends |
+| 55 | D_GOV_ENFORCEMENT | D_INTEGRATION | 6 | import_depends |
+| 56 | D_AUTONOMY_CORE | D_INTEGRATION | 6 | import_depends |
+| 57 | D_AUDITTEST | D_RISK | 6 | test_depends |
+| 58 | D_SECURITY | D_GOV_ENFORCEMENT | 6 | import_depends |
+| 59 | D_SECURITY | D_GOVERNANCE | 6 | import_depends |
+| 60 | D_TRADING | D_GOV_ENFORCEMENT | 5 | import_depends |
 | 61 | D_PF_CORE | D_GOVERNANCE | 5 | import_depends |
-| 62 | D_TRADING | D_GOV_ENFORCEMENT | 5 | import_depends |
-| 63 | D_GOVERNANCE | D_SECURITY_LLM | 5 | import_depends |
-| 64 | D_TRADING | D_INTELLIGENCE | 5 | import_depends |
-| 65 | D_INTELLIGENCE | D_ML_TRAIN | 4 | import_depends |
+| 62 | D_GOVERNANCE | D_FRONTEND | 5 | import_depends |
+| 63 | D_TRADING | D_INTELLIGENCE | 5 | import_depends |
+| 64 | D_GOVERNANCE | D_SECURITY_LLM | 5 | import_depends |
+| 65 | D_AUDITTEST | D_GOV_SCRIPTS | 4 | test_depends |
 | 66 | D_TRADING | D_AUTONOMY_CORE | 4 | import_depends |
 | 67 | D_TRADING | D_SECURITY_LLM | 4 | import_depends |
-| 68 | D_AUDITTEST | D_OPS | 4 | test_depends |
-| 69 | D_GOV_DRIFT | D_GOVERNANCE | 4 | runtime |
-| 70 | D_AUDITTEST | D_EX_CORE | 4 | test_depends |
-| 71 | D_AUTONOMY_CORE | D_GOVERNANCE | 4 | import_depends |
-| 72 | D_INTEGRATION_GATEWAY | D_INTEGRATION | 4 | import_depends |
-| 73 | D_INTELLIGENCE | D_GOVERNANCE | 4 | import_depends |
-| 74 | D_GOV_SCRIPTS | D_INTEGRATION | 3 | import_depends |
+| 68 | D_INTELLIGENCE | D_ML_TRAIN | 4 | import_depends |
+| 69 | D_AUDITTEST | D_OPS | 4 | test_depends |
+| 70 | D_GOV_DRIFT | D_GOVERNANCE | 4 | runtime |
+| 71 | D_AUDITTEST | D_EX_CORE | 4 | test_depends |
+| 72 | D_AUTONOMY_CORE | D_GOVERNANCE | 4 | import_depends |
+| 73 | D_INTEGRATION_GATEWAY | D_INTEGRATION | 4 | import_depends |
+| 74 | D_INTELLIGENCE | D_GOVERNANCE | 4 | import_depends |
 | 75 | D_INTELLIGENCE | D_BACKTEST | 3 | import_depends |
-| 76 | D_GOV_ENFORCEMENT | D_INFRA_RECOVERY | 3 | import_depends |
-| 77 | D_GOV_ENFORCEMENT | D_SECURITY | 3 | import_depends |
-| 78 | D_GOVERNANCE | D_GOV_DRIFT | 3 | contract,runtime |
-| 79 | D_FRONTEND | D_SHARED | 3 | import_depends |
-| 80 | D_TRADING | D_OPS | 3 | import_depends |
-| 81 | D_TRADING | D_INFRA_TELEMETRY | 3 | import_depends |
-| 82 | D_INFRA_RUNTIME | D_INTEGRATION | 3 | import_depends |
-| 83 | D_SHARED | D_INFRA_RUNTIME | 3 | import_depends |
-| 84 | D_EX_CORE | D_TRADING | 3 | import_depends |
-| 85 | D_BACKTEST | D_GOVERNANCE | 3 | import_depends |
-| 86 | D_SECURITY | D_TRADING | 3 | import_depends |
-| 87 | D_RISK | D_TRADING | 3 | import_depends |
-| 88 | D_INTEGRATION | D_INTELLIGENCE | 3 | import_depends |
-| 89 | D_RISK | D_SHARED | 3 | import_depends |
-| 90 | D_ML_TRAIN | D_SHARED | 3 | import_depends |
-| 91 | D_GOVERNANCE | D_RISK | 3 | import_depends |
-| 92 | D_GOVERNANCE | D_REPORTING | 3 | import_depends |
-| 93 | D_GOVERNANCE | D_INFRA_RECOVERY | 3 | import_depends |
-| 94 | D_FRONTEND | D_BACKTEST | 2 | import,import_depends |
+| 76 | D_GOVERNANCE | D_INFRA_RECOVERY | 3 | import_depends |
+| 77 | D_GOV_ENFORCEMENT | D_INFRA_RECOVERY | 3 | import_depends |
+| 78 | D_GOV_ENFORCEMENT | D_SECURITY | 3 | import_depends |
+| 79 | D_GOVERNANCE | D_GOV_DRIFT | 3 | contract,runtime |
+| 80 | D_GOV_SCRIPTS | D_INTEGRATION | 3 | import_depends |
+| 81 | D_FRONTEND | D_SHARED | 3 | import_depends |
+| 82 | D_TRADING | D_OPS | 3 | import_depends |
+| 83 | D_TRADING | D_INFRA_TELEMETRY | 3 | import_depends |
+| 84 | D_INFRA_RUNTIME | D_INTEGRATION | 3 | import_depends |
+| 85 | D_SHARED | D_INFRA_RUNTIME | 3 | import_depends |
+| 86 | D_EX_CORE | D_TRADING | 3 | import_depends |
+| 87 | D_BACKTEST | D_GOVERNANCE | 3 | import_depends |
+| 88 | D_SECURITY | D_TRADING | 3 | import_depends |
+| 89 | D_RISK | D_TRADING | 3 | import_depends |
+| 90 | D_INTEGRATION | D_INTELLIGENCE | 3 | import_depends |
+| 91 | D_RISK | D_SHARED | 3 | import_depends |
+| 92 | D_ML_TRAIN | D_SHARED | 3 | import_depends |
+| 93 | D_GOVERNANCE | D_RISK | 3 | import_depends |
+| 94 | D_GOVERNANCE | D_REPORTING | 3 | import_depends |
 | 95 | D_SHARED | D_ML_TRAIN | 2 | import_depends |
 | 96 | D_INFRA_RUNTIME | D_INFRA_TELEMETRY | 2 | import_depends |
-| 97 | D_OPS | D_SHARED | 2 | import_depends |
-| 98 | D_ML_TRAIN | D_TRADING | 2 | import_depends |
-| 99 | D_BACKTEST | D_SHARED | 2 | import_depends |
-| 100 | D_AUTONOMY_CORE | D_INTELLIGENCE | 2 | import_depends |
+| 97 | D_ML_TRAIN | D_TRADING | 2 | import_depends |
+| 98 | D_BACKTEST | D_SHARED | 2 | import_depends |
+| 99 | D_AUTONOMY_CORE | D_INTELLIGENCE | 2 | import_depends |
+| 100 | D_INTEGRATION_GATEWAY | D_SECURITY_LLM | 2 | import_depends |
 | 101 | D_SECURITY_LLM | D_GOVERNANCE | 2 | import_depends |
 | 102 | D_INTEGRATION | D_AUTONOMY_CORE | 2 | import_depends |
-| 103 | D_INTEGRATION_GATEWAY | D_SECURITY_LLM | 2 | import_depends |
+| 103 | D_AUDITTEST | D_PF_CORE | 2 | test_depends |
 | 104 | D_SECURITY | D_INTEGRATION | 2 | import_depends |
-| 105 | D_GOVERNANCE | D_INFRA_A2A | 2 | import_depends |
-| 106 | D_AUDITTEST | D_PF_CORE | 2 | test_depends |
-| 107 | D_AUDITTEST | D_INFRA_TELEMETRY | 2 | test_depends |
-| 108 | D_AUDITTEST | D_FUNDAMENTAL_SIGNAL | 2 | test_depends |
-| 109 | D_INTELLIGENCE | D_GOV_ENFORCEMENT | 2 | import_depends |
-| 110 | D_GOV_SCRIPTS | D_AUTONOMY_CORE | 2 | import_depends |
+| 105 | D_AUDITTEST | D_FUNDAMENTAL_SIGNAL | 2 | test_depends |
+| 106 | D_GOVERNANCE | D_INFRA_A2A | 2 | import_depends |
+| 107 | D_AUDITTEST | D_INTEGRATION_GATEWAY | 2 | test_depends |
+| 108 | D_AUDITTEST | D_INFRA_TELEMETRY | 2 | test_depends |
+| 109 | D_GOV_SCRIPTS | D_AUTONOMY_CORE | 2 | import_depends |
+| 110 | D_INTELLIGENCE | D_GOV_ENFORCEMENT | 2 | import_depends |
 | 111 | D_GOVERNANCE | D_AUTONOMY_CORE | 2 | import_depends |
 | 112 | D_FUNDAMENTAL_SIGNAL | D_SHARED | 2 | import_depends |
-| 113 | D_AUDITTEST | D_GOV_SCRIPTS | 2 | test_depends |
-| 114 | D_FRONTEND | D_TRADING | 2 | import_depends |
-| 115 | D_AUDITTEST | D_POSITION | 2 | test_depends |
-| 116 | D_AUDITTEST | D_INTEGRATION_GATEWAY | 2 | test_depends |
-| 117 | D_PF_CORE | D_SHARED | 2 | import_depends |
-| 118 | D_EX_CORE | D_BACKTEST | 2 | import_depends |
-| 119 | D_GOV_SCRIPTS | D_TRADING | 2 | import_depends |
-| 120 | D_TRADING | D_INFRA_RECOVERY | 2 | import_depends |
-| 121 | D_FRONTEND | D_EX_CORE | 2 | import_depends |
-| 122 | D_SIGQC | D_TRADING | 2 | import_depends |
+| 113 | D_FRONTEND | D_TRADING | 2 | import_depends |
+| 114 | D_AUDITTEST | D_POSITION | 2 | test_depends |
+| 115 | D_PF_CORE | D_SHARED | 2 | import_depends |
+| 116 | D_EX_CORE | D_BACKTEST | 2 | import_depends |
+| 117 | D_OPS | D_SHARED | 2 | import_depends |
+| 118 | D_GOV_SCRIPTS | D_TRADING | 2 | import_depends |
+| 119 | D_TRADING | D_INFRA_RECOVERY | 2 | import_depends |
+| 120 | D_FRONTEND | D_EX_CORE | 2 | import_depends |
+| 121 | D_SIGQC | D_TRADING | 2 | import_depends |
+| 122 | D_FRONTEND | D_BACKTEST | 2 | import,import_depends |
 | 123 | D_SHARED | D_GOVERNANCE | 1 | import_depends |
 | 124 | D_AUDITTEST | D_REPORTING | 1 | test_depends |
 | 125 | D_AUDITTEST | D_SIMULATION | 1 | test_depends |
