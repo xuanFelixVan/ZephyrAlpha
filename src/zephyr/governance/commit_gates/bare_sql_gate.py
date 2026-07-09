@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py added 行含裸SQL字面量(SELECT/INSERT INTO/UPDATE SET/DELETE FROM)时阻断commit(passed=False); tests/豁免; docstring/注释/import豁免; git diff不可达fail-open; 检出违规则fail-closed
+# [INVARIANTS] 硬阻断——staged .py added 行含裸SQL字面量(SELECT/INSERT INTO/UPDATE SET/DELETE FROM)时阻断commit(passed=False); tests/豁免; docstring/注释/import/SQL_*常量定义行豁免; git diff不可达fail-open; 检出违规则fail-closed
 # [MODIFY-GUARD] gate_id="NO-BARE-SQL"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -72,6 +72,10 @@ _SQL_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# SQL 常量定义行豁免：SQL_FOO = "..." — 这是 SQL 集中化的正确做法
+# 门禁建议"将 SQL 提取到模块级常量"，因此 SQL_* 常量定义行本身不应被阻断
+_SQL_CONSTANT_DEF_RE = re.compile(r"^\s*SQL_\w+\s*=")
+
 
 def make_bare_sql_gate() -> GateSpec:
     """构造裸SQL字面量阻断 GateSpec（硬阻断型）。
@@ -88,6 +92,8 @@ def make_bare_sql_gate() -> GateSpec:
             docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
             for line_no, content in _get_added_lines(gateway, py_file, "NO-BARE-SQL"):
                 if line_no in docstring_lines or _is_exempt_line(content):
+                    continue
+                if _SQL_CONSTANT_DEF_RE.match(content):
                     continue
                 if _SQL_PATTERN.search(content):
                     violations.append(f"  {py_file}:{line_no}: {content.strip()}")
