@@ -56,6 +56,10 @@ from _shared.constants import REPO_ROOT
 from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from zephyr.governance.rule_patterns import MODULE_ID_RE  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
 
+# v2.0.0: 数据源改为 depgraph.nodes（真源），不再解析蓝图 §0.1
+sys.path.insert(0, str(REPO_ROOT / "src"))
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
+
 PROJECT_ROOT = REPO_ROOT
 MODULES_DIR = PROJECT_ROOT / "docs" / "03_modules"
 OUTPUT_FILE = MODULES_DIR / "path_ownership_map.yaml"
@@ -134,8 +138,45 @@ def extract_ssot_claims(text: str) -> list[dict]:
     return claims
 
 
+SQL_SELECT_FILE_NODES = (
+    "SELECT blueprint_id, path, build_status FROM nodes "
+    "WHERE granularity = 'file' "
+    "AND path IS NOT NULL AND path <> '' "
+    "AND blueprint_id IS NOT NULL AND blueprint_id <> ''"
+)
+
+
+def _query_depgraph_files() -> list[dict]:
+    """v2.0.0: 从 depgraph.nodes 查询所有文件级节点（真源）。
+
+    返回: [{blueprint_id, path, build_status}, ...]
+    """
+    conn = get_depgraph_pg_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(SQL_SELECT_FILE_NODES)
+            rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    files = []
+    for row in rows:
+        bp = row[0] if not isinstance(row, dict) else row.get("blueprint_id", "")
+        path = row[1] if not isinstance(row, dict) else row.get("path", "")
+        bs = row[2] if not isinstance(row, dict) else row.get("build_status", "")
+        if bp and path:
+            files.append({"blueprint_id": bp, "path": path, "build_status": bs})
+    return files
+
+
 def scan_blueprints() -> tuple[list[dict], list[dict]]:
-    ownership_entries: list[dict] = []
+    """v2.0.0: 数据源改为 depgraph.nodes（真源），不再解析蓝图 §0.1。
+
+    文件路径来自 depgraph.nodes（生成器自动维护），
+    ssot_claims 仍然从蓝图 frontmatter 提取（蓝图独有信息）。
+    """
+    # 1. 从蓝图提取 module_id → declared_in 映射 + ssot_claims
+    blueprint_map: dict[str, str] = {}  # module_id → 蓝图相对路径
     all_claims: list[dict] = []
 
     for bp in sorted(MODULES_DIR.glob(BLUEPRINT_PATTERN)):
@@ -145,30 +186,7 @@ def scan_blueprints() -> tuple[list[dict], list[dict]]:
             continue
 
         relative_bp = str(bp.relative_to(PROJECT_ROOT)).replace("\\", "/")
-        disk_path = extract_actual_disk_path(text)
-
-        files = extract_section_01_files(text)
-        for f in files:
-            raw_path = f["path"]
-            # 支持 §0.1 中的子目录相对路径（如 skills/skill_model.py）
-            # 当 raw_path 不是项目根路径前缀开头时，拼接 disk_path
-            _PROJECT_PREFIXES = ("src/", "scripts/", "tests/", "docs/", "config/", "architecture_model/")
-            if raw_path.startswith(_PROJECT_PREFIXES):
-                full_path = raw_path
-            elif disk_path:
-                full_path = f"{disk_path.rstrip('/')}/{raw_path}"
-            else:
-                full_path = raw_path
-            ownership_entries.append(
-                {
-                    "path": full_path,
-                    "owner_blueprint": mod_id,
-                    "claim_type": "section_0_1",
-                    "declared_in": relative_bp,
-                    "existence": f["existence"],
-                    "ownership_judgment": f["ownership"],
-                }
-            )
+        blueprint_map[mod_id] = relative_bp
 
         claims = extract_ssot_claims(text)
         for c in claims:
@@ -180,6 +198,36 @@ def scan_blueprints() -> tuple[list[dict], list[dict]]:
                     "declared_in": relative_bp,
                 }
             )
+
+    # 2. 从 depgraph.nodes 查询文件路径（真源）
+    dg_files = _query_depgraph_files()
+
+    # 3. 生成 ownership_entries
+    ownership_entries: list[dict] = []
+    for f in dg_files:
+        mod_id = f["blueprint_id"]
+        path = f["path"]
+        bs = f.get("build_status", "")
+        # build_status → existence 映射
+        if bs == "production":
+            existence = "已实现"
+        elif bs in ("design", "planned"):
+            existence = "未实现"
+        else:
+            existence = bs or "unknown"
+
+        declared_in = blueprint_map.get(mod_id, "")
+
+        ownership_entries.append(
+            {
+                "path": path,
+                "owner_blueprint": mod_id,
+                "claim_type": "depgraph_node",  # v2.0.0: 数据源标记改为 depgraph
+                "declared_in": declared_in,
+                "existence": existence,
+                "ownership_judgment": "本模块",
+            }
+        )
 
     return ownership_entries, all_claims
 

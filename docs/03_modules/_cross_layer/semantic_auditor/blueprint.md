@@ -84,6 +84,9 @@ references:
     section: "full"
     why: "CFG-CAP-001——所有并发/容量参数真源"
 architecture_layer: "L1_分析引擎"
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接

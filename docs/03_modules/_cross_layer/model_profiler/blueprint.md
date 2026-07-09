@@ -37,6 +37,9 @@ references:
   - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\auto-runtime-core\\blueprint.md", section: "§3", why: "AutoRuntimeCore 集成架构"}
   - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\blueprint.md", section: "§3", why: "MOD-GOVERNANCE 集成契约定义"}
 codification_level: L1
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # Model Profiler 蓝图 — 模型画像器·LLM能力基线测量

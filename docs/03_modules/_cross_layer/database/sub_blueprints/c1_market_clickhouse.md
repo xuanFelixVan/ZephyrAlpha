@@ -46,6 +46,9 @@ depends_on:
 tags: [clickhouse, market-data, warehouse, c1, backtest, replay, preload, ddl-as-code, category-registry, sub-blueprint]
 priority: P1
 runtime_plane: warm
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # C1 market_clickhouse 行情仓库施工蓝图

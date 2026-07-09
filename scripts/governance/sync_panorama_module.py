@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # [BLUEPRINT] MOD-GOV-SYNC-PANORAMA | docs/_working/2026-07-09-panorama_module_sync_engine.md | §Phase2
 # [MODULE] scripts.governance.sync_panorama_module
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.persistence.dataflowgraph_schema (get_dataflowgraph_pg_connection); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection)
 # [CONSUMERS] generate_project_depgraph.py; apply_depgraph.py; GitCommitGateway
 # [STARTUP] manual

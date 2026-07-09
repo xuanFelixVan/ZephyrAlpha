@@ -58,6 +58,9 @@ references:
   - {id: "MOD-INF-029", at: "§0,§1,§17", why: "OrphanJudge——冷启动分派+模块身份+全系统集成最佳实践模板"}
   - {id: "MOD-INF-030", at: "§2,§3", why: "RedBlue Validator——红蓝对抗引擎，§15红队对抗协同"}
   - {id: "MOD-INF-031", at: "§2", why: "AutoFix Engine——回滚后修复"}
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控

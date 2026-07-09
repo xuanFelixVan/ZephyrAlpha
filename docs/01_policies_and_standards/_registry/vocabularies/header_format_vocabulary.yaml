@@ -36,9 +36,9 @@ depends_on:
 
 values:
   - value: A_full
-    definition: "Python 模块完整表头（14 字段）"
-    details: "适用: src/zephyr/**/*.py 模块文件 | 字段数: 14"
-    ai_keywords: ["A_full", "Python", "模块", "14字段"]
+    definition: "Python 模块完整表头（15 字段）"
+    details: "适用: src/zephyr/**/*.py 模块文件 | 字段数: 15"
+    ai_keywords: ["A_full", "Python", "模块", "15字段"]
 
   - value: A_test
     definition: "Python 测试简化表头（7 字段）"

@@ -63,6 +63,9 @@ tags:
   - index
   - cross-layer
   - integration
+responsibility_domain: 
+build_status: deprecated
+design_maturity: design
 ---
 
 # Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图

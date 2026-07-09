@@ -29,6 +29,9 @@ verifiability: hybrid
 depends_on:
   - {target: "MOD-INF-016-CONTRACTS", at: "全篇", why: "Contracts — core/models.py 继承 shared/schemas.py"}
   - {target: "MOD-INF-016-SHARED", at: "全篇", why: "Shared Infra — core/ 消费 event_bus/lifecycle/observer 等共享组件"}
+responsibility_domain: 
+build_status: generated
+design_maturity: production
 ---
 
 # Governance Core 蓝图 — 治理核心模块

@@ -51,6 +51,9 @@ ssot_claims:
   - {claim: "门禁评估管线SSoT", scope: "global"}
   - {claim: "法证审计协议SSoT", scope: "module"}
   - {claim: "自指硬化协议SSoT", scope: "module"}
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器

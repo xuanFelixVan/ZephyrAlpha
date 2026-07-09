@@ -96,7 +96,9 @@ tags:
   - self-audit
   - cross-boundary-clone
   - decision-audit-trail
-
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 > module\_id: MOD-INF-017 | version: 0.15.0 | status: active | layer: l01\_infrastructure

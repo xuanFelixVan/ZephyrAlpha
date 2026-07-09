@@ -91,6 +91,9 @@ ssot_claims:
     note: "D-GAP-01~12设计真源在MOD-GOV-CAP-001，本蓝图仅保留索引+引用"
   - claim: "治理域Phase施工路线图与进度"
     scope: layer
+responsibility_domain: 
+build_status: generated
+design_maturity: design
 ---
 
 # Governance Domain 蓝图 — Agent治理八件套跨模块集成契约

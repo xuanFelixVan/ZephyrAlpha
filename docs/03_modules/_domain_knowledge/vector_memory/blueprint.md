@@ -48,6 +48,9 @@ depends_on:
 references:
   - {id: "MOD-FEEDBACK_LOOP", at: "§3.1", why: "FLE 消费检索反馈——仅存 references，断开 depends_on DAG 环"}
   - {id: "MOD-INF-020", at: "§12", why: "VMS→线3审计追踪链输出嵌入结果——仅存 references，VMS不依赖Audit Trail运行"}
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 <!--

@@ -13,8 +13,8 @@
 # 同步到 DB data_source_assets 表,派生 asset_catalog.md;派生 policies.yaml(generate_policies.py)
 
 module_id: MOD-L00-001
-version: "2.0.0"
-description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。"
+version: "2.1.0"
+description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。"
 
 data_sources:
   - id: DS-IFIND
@@ -22,6 +22,7 @@ data_sources:
     name: "同花顺iFind"
     name_en: "THS iFind"
     type: commercial
+    account_type: trial
     category: market_data
     vendor: "同花顺"
     interface_types: ["THS_BD", "THS_DS", "THS_HF", "THS_RQ", "THS_WC", "THS_DateSerial"]
@@ -43,14 +44,19 @@ data_sources:
       session_ttl_sec: 86400
       relogin_on_auth_error: true
       extra:
-        monthly_quota_alert: true
-        quota_error_codes: ["-4318", "-4309"]
+        weekly_quota_alert: true
+        quota_error_codes: ["-4318", "-4309", "-4210", "-5100", "-4216"]
+        edb_quota_per_week: 50000
+        quota_reset_cycle: "weekly_monday"
+        quota_unit: "cell"
+        trial_equals_formal_edb: true
 
   - id: DS-MINIQMT
     runtime_id: miniqmt
     name: "miniQMT"
     name_en: "miniQMT"
     type: commercial
+    account_type: formal
     category: market_data
     vendor: "迅投"
     interface_types: ["XtQuantApi", "xtdata", "xttrader"]
@@ -79,6 +85,7 @@ data_sources:
     name: "AKShare"
     name_en: "AKShare"
     type: open_source
+    account_type: free
     category: market_data
     vendor: "开源社区"
     interface_types: ["Python函数"]
@@ -106,6 +113,7 @@ data_sources:
     name: "Baostock"
     name_en: "Baostock"
     type: open_source
+    account_type: free
     category: market_data
     vendor: "开源社区"
     interface_types: ["baostock.query"]
@@ -135,6 +143,7 @@ data_sources:
     name: "Tushare"
     name_en: "Tushare"
     type: commercial
+    account_type: formal
     category: market_data
     vendor: "Tushare"
     interface_types: ["Python函数"]
@@ -163,6 +172,7 @@ data_sources:
     name: "TickFlow"
     name_en: "TickFlow"
     type: open_source
+    account_type: free
     category: market_data
     vendor: "开源社区"
     interface_types: ["Python函数"]
@@ -187,6 +197,7 @@ data_sources:
     name: "通达信"
     name_en: "TDX"
     type: open_source
+    account_type: free
     category: market_data
     vendor: "通达信"
     interface_types: ["mootdx", "pytdx"]
@@ -214,6 +225,7 @@ data_sources:
     name: "RSS"
     name_en: "RSS"
     type: open_source
+    account_type: free
     category: news
     vendor: "开源"
     interface_types: ["RSS/Atom"]
@@ -239,6 +251,7 @@ data_sources:
     name: "百度云"
     name_en: "BaiduYun"
     type: commercial
+    account_type: formal
     category: market_data
     vendor: "百度"
     interface_types: ["BosClient"]
@@ -257,6 +270,7 @@ data_sources:
     name: "NewsAPI"
     name_en: "NewsAPI"
     type: commercial
+    account_type: free
     category: news
     vendor: "NewsAPI.org"
     interface_types: ["REST API"]
@@ -275,6 +289,7 @@ data_sources:
     name: "yfinance"
     name_en: "yfinance"
     type: open_source
+    account_type: free
     category: market_data
     vendor: "开源社区"
     interface_types: ["Python函数"]
@@ -293,6 +308,7 @@ data_sources:
     name: "Stooq"
     name_en: "Stooq"
     type: open_source
+    account_type: free
     category: market_data
     vendor: "Stooq.com"
     interface_types: ["CSV下载"]

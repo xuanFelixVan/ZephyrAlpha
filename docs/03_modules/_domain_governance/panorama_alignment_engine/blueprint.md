@@ -8,7 +8,6 @@ layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
 responsibility_domain: 
-design_maturity: prototype
 build_status: generated
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -32,6 +31,7 @@ summary: >
   四图模块对齐引擎——depgraph/dataflowgraph/decisiongraph/blueprint.md 四图模块对齐。
   4 核心字段（module_id/domain_id/design_maturity/build_status）跨四图同步。
   单模块同步+全量同步+transition 触发+blueprint 缺失标记+多数投票聚合。
+design_maturity: prototype
 ---
 
 # 四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐

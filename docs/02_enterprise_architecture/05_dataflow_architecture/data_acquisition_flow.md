@@ -13,12 +13,13 @@ ttl: permanent
 > **这个文档是给人看的**：用大白话说清楚「系统从哪些数据源、采了什么数据、灌到哪张表、什么时候采」。
 > **真源是 [tasks.yaml](../../../src/zephyr/data/config/tasks.yaml)**，本文档是自动生成的派生产物，禁止手工编辑。
 > **数据源连接和 API 细节**见 [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)。
+> **自动下载命令**：`python -m zephyr.data run <task_id>` 手动触发任务，`python -m zephyr.data start` 启动常驻调度（见 [cli.py](../../../src/zephyr/data/cli.py)）。
 
 ---
 
 ## 一句话说清楚
 
-系统每天从 **8 个数据源**采集 **61 个任务**，灌进 ClickHouse 的 **2 个库**：
+系统每天从 **8 个数据源**采集 **62 个任务**，灌进 ClickHouse 的 **2 个库**：
 
 - `c1_market` — 行情库（K线、指数、期货、资金、估值等）
 - `c3_fundamental` — 基本面库（财务报表、新闻、股东、分红等）
@@ -31,13 +32,13 @@ ttl: permanent
 |--------|--------|-----------|
 | **miniqmt**（迅投QMT） | 32 | K线行情、财务报表、股东数据、期权可转债 |
 | **akshare**（AKShare） | 11 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
-| **ifind**（同花顺iFind） | 6 | 资金流向、股权质押、行业分类 |
+| **ifind**（同花顺iFind） | 7 | 资金流向、股权质押、行业分类 |
 | **tickflow**（TickFlow） | 4 | 美股K线、美股指数 |
 | **tdx**（通达信） | 3 | 板块分类、板块K线、板块成分股 |
 | **tushare**（Tushare） | 2 | 新闻快讯、证券新闻 |
 | **baostock**（BaoStock） | 2 | 交易日历、沪深300成分股 |
 | **rss**（RSS） | 1 | 财经新闻 |
-| **合计** | **61** | |
+| **合计** | **62** | |
 
 ---
 
@@ -114,7 +115,7 @@ ttl: permanent
 
 ---
 
-### 3. ifind（同花顺iFind）— 6 个任务
+### 3. ifind（同花顺iFind）— 7 个任务
 
 **一句话**：付费数据源，采资金流向、股权质押、行业分类等 iFind 独有数据。
 
@@ -126,6 +127,7 @@ ttl: permanent
 | money_flow_incremental | c1_market.money_flow | 盘后 17:00 | 资金流向增量 |
 | equity_pledge_incremental | c3_fundamental.equity_pledge | 盘后 18:00 | 股权质押增量 |
 | equity_pledge_summary_incremental | c3_fundamental.equity_pledge_summary | 盘后 18:00 | 股权质押摘要增量 |
+| edb_data_incremental | c1_market.edb_data | 周六 10:00 | EDB宏观数据增量 |
 | industry_class_ifind_refresh | c3_fundamental.industry_class_ifind | 月初 09:00 | 申万/中证行业分类全量刷新 |
 | money_flow_full_refresh | c1_market.money_flow | 月初 09:00 | 资金流向全量刷新 |
 
@@ -210,9 +212,9 @@ ttl: permanent
 | 盘后 16:30 | 16:30 周一-五 | 12 | 日K线、周月K线、分钟K线、估值 |
 | 盘后 17:00 | 17:00 周一-五 | 11 | 融资融券、龙虎榜、期货、美股、港股、资金流向 |
 | 盘后 18:00 | 18:00 周一-五 | 13 | 新闻、股东、分红、质押、解禁、分析师预期 |
-| 周六 10:00 | 周六 10:00 | 13 | 财务报表、板块、期权可转债、Tick快照 |
+| 周六 10:00 | 周六 10:00 | 14 | 财务报表、板块、期权可转债、Tick快照 |
 | 月初 09:00 | 月初 09:00 | 12 | 交易日历、股票列表、行业分类、全量刷新 |
-| **合计** | | **61** | |
+| **合计** | | **62** | |
 
 ---
 
@@ -223,7 +225,7 @@ flowchart LR
     subgraph 外部数据源
         S3["miniqmt<br/>迅投QMT<br/>32任务"]
         S0["akshare<br/>AKShare<br/>11任务"]
-        S2["ifind<br/>同花顺iFind<br/>6任务"]
+        S2["ifind<br/>同花顺iFind<br/>7任务"]
         S6["tickflow<br/>TickFlow<br/>4任务"]
         S5["tdx<br/>通达信<br/>3任务"]
         S7["tushare<br/>Tushare<br/>2任务"]

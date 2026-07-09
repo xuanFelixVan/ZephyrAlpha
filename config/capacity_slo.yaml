@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: mod_inf_001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md | §
-# module_id: mod_inf_001
+# blueprint: MOD-INF-001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md | §
+# module_id: MOD-INF-001
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable

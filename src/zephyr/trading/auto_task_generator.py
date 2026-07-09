@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.auto_task_generator
-# [DOMAIN] D_TRADING
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] zephyr.trading.boot_hooks._subscribe_eventbus_consumers
 # [STARTUP] imported

@@ -131,6 +131,7 @@ SQL_COUNT_EDGES_BY_NODE = "SELECT COUNT(*) FROM edges WHERE from_node_id=%s OR t
 SQL_DEPRECATE_NODE = "UPDATE nodes SET build_status='deprecated' WHERE node_id=%s"
 SQL_DELETE_EDGE_BY_ID = "DELETE FROM edges WHERE edge_id=%s"
 SQL_DELETE_DOMAIN_BY_ID = "DELETE FROM domains WHERE domain_id=%s"
+SQL_UPDATE_NODE_PATH_BY_ID = "UPDATE nodes SET path=%s, file_path=%s WHERE node_id=%s"
 
 # Phase 7c-2: 重复 f-string SQL 提取为 .format() 模板（2026-07-09）
 SQL_UPDATE_TBL_REPLACE_LIKE = "UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s"
@@ -369,7 +370,8 @@ def _handle_update_domain_id(change: dict, dry_run: bool, conn=None) -> bool:
 def _handle_update_path(change: dict, dry_run: bool, conn=None) -> bool:
     count = cmd_update_path(
         module_id=change.get("module_id", ""),
-        new_path=change.get("new_path", ""),
+        old_prefix=change.get("old_prefix", ""),
+        new_prefix=change.get("new_prefix", ""),
         dry_run=dry_run,
         conn=conn,
     )
@@ -3164,9 +3166,12 @@ def cmd_migrate_nodes(
 
 
 def cmd_update_path(
-    module_id: str, new_path: str, dry_run: bool = False, db_path: str = None, conn=None
+    module_id: str, old_prefix: str, new_prefix: str, dry_run: bool = False, db_path: str = None, conn=None
 ) -> int:
     """UPDATE 模块的 path（物理路径迁移，ARCH-CAP-004 路径平铺）。
+
+    修复: 原实现把同模块所有节点 path 设成同一个值，触发 UNIQUE 冲突。
+    现在: 对每个节点的 path 做前缀替换（old_prefix → new_prefix），保持文件相对路径不变。
 
     按 belongs_to 或 blueprint_id 匹配节点。
     如果提供 conn 参数，使用该连接（不 commit/close）——用于 cmd_batch 统一事务。
@@ -3184,19 +3189,44 @@ def cmd_update_path(
                 print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
                 return -1
 
-            if dry_run:
-                for r in rows:
-                    print(f"[DRY RUN] 将 UPDATE node_id={r['node_id']} path: {r['path']} -> {new_path}", file=sys.stderr)
-                return len(rows)
+            # 计算每个节点的新 path（前缀替换）
+            updates = []
+            skipped = 0
+            for r in rows:
+                old_path = r["path"] or ""
+                if old_path.startswith(old_prefix):
+                    new_path = new_prefix + old_path[len(old_prefix):]
+                    updates.append((r["node_id"], old_path, new_path))
+                else:
+                    skipped += 1
+                    if dry_run:
+                        print(f"[DRY RUN] SKIP node_id={r['node_id']} path={old_path} (不以 old_prefix 开头)", file=sys.stderr)
 
-            cur = conn.execute(
-                "UPDATE nodes SET path=%s, file_path=%s WHERE belongs_to=%s OR blueprint_id=%s",
-                (new_path, new_path, module_id, module_id),
-            )
+            if skipped > 0:
+                print(f"WARNING: {skipped} 个节点 path 不以 '{old_prefix}' 开头，已跳过", file=sys.stderr)
+
+            if not updates:
+                print("WARNING: 没有需要更新的节点（全部跳过）", file=sys.stderr)
+                return 0
+
+            if dry_run:
+                for node_id, old_path, new_path in updates:
+                    print(f"[DRY RUN] 将 UPDATE node_id={node_id} path: {old_path} -> {new_path}", file=sys.stderr)
+                return len(updates)
+
+            # 逐个 UPDATE（每个节点的新 path 不同）
+            affected = 0
+            for node_id, old_path, new_path in updates:
+                cur = conn.execute(
+                    SQL_UPDATE_NODE_PATH_BY_ID,
+                    (new_path, new_path, node_id),
+                )
+                affected += cur.rowcount
+
             if own_conn:
                 conn.commit()
-            print(f"[OK] UPDATE {cur.rowcount} 个节点 path -> {new_path}", file=sys.stderr)
-            return cur.rowcount
+            print(f"[OK] UPDATE {affected} 个节点 path 前缀替换: {old_prefix} -> {new_prefix}", file=sys.stderr)
+            return affected
         except Exception as e:
             if own_conn:
                 conn.rollback()
@@ -3790,7 +3820,7 @@ def main() -> None:
         help="UPDATE 模块 domain_id（域拆分迁移模块归属）",
     )
     parser.add_argument(
-        "--update-path", type=str, nargs=2, metavar=("MODULE_ID", "NEW_PATH"), help="UPDATE 模块 path（物理路径迁移）"
+        "--update-path", type=str, nargs=3, metavar=("MODULE_ID", "OLD_PREFIX", "NEW_PREFIX"), help="UPDATE 模块 path 前缀替换（物理路径迁移）"
     )
     parser.add_argument(
         "--migrate-dependencies",
@@ -4166,8 +4196,8 @@ def main() -> None:
         return
 
     if args.update_path:
-        module_id, new_path = args.update_path
-        count = cmd_update_path(module_id, new_path, dry_run=args.dry_run)
+        module_id, old_prefix, new_prefix = args.update_path
+        count = cmd_update_path(module_id, old_prefix, new_prefix, dry_run=args.dry_run)
         if count < 0:
             sys.exit(4)
         print(f"affected={count}")

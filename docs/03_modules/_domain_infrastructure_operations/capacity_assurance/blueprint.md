@@ -60,6 +60,9 @@ tags:
  - graceful-degradation
  - otel
 summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Switch熔断+降级链+DR+容量预测
+responsibility_domain: 
+build_status: generated
+design_maturity: prototype
 ---
 
 # Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Token Budget限流+Kill Switch熔断

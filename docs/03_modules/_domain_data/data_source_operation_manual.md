@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据源操作手册 — iFind + miniQMT + 免费开源源 API调用方法与参数坑(实测验证)"
 doc_type: blueprint
 status: Active
-version: "2.1.0"
+version: "2.2.0"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -36,9 +36,6 @@ references:
   - path: "d:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\database\\sub_blueprints\\c1_market_clickhouse.md"
     section: "§0 8张表"
     why: "C1行情仓库8张表——数据源的下游消费方"
-  - path: "d:\\ZephyrAlpha\\docs\\03_modules\\_domain_data\\data_catalog.md"
-    section: "数据目录"
-    why: "数据目录——能力清单由生成器自动输出，可下载数据清单见该文件"
 depends_on:
   - target: MOD-L00-001
     at: "§4"
@@ -64,14 +61,17 @@ tags:
   - operation-manual
   - l00
   - ssot
-summary: "数据源操作手册——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻+公告+政策直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo) + 通达信(mootdx/pytdx)的API调用方法、参数坑与环境配置。定位为API操作手册：所有调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。可下载数据清单（能力清单）见 data_catalog.md，由生成器自动输出。v2.1.0更新：深度重构删除约268行噪音——压缩§7.4已废弃源(yfinance+Stooq，156→27行)、删除§7.8互补矩阵(与§4重复)、删除§7.9重复子章节(美股/财经新闻/研报/国内新闻示例)、精简§7.1概述(删除11源对比表)、删除§2.3/§3.3/§5.6占位符、批量重编号修复章节跳跃。v2.0.0更新：从数据源能力地图重命名为数据源操作手册。v1.9.0更新：新增§8 通达信(TDX)数据源章节。"
+summary: "数据源操作手册——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻+公告+政策直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo) + 通达信(mootdx/pytdx)的API调用方法、参数坑与环境配置。定位为API操作手册：所有调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。可下载数据清单见数据库 data_source_assets 表（PostgreSQL depgraph）。v2.1.0更新：深度重构删除约268行噪音——压缩§7.4已废弃源(yfinance+Stooq，156→27行)、删除§7.8互补矩阵(与§4重复)、删除§7.9重复子章节(美股/财经新闻/研报/国内新闻示例)、精简§7.1概述(删除11源对比表)、删除§2.3/§3.3/§5.6占位符、批量重编号修复章节跳跃。v2.0.0更新：从数据源能力地图重命名为数据源操作手册。v1.9.0更新：新增§8 通达信(TDX)数据源章节。"
+responsibility_domain: 
+build_status: stable
+design_maturity: design
 ---
 
 # 数据源操作手册
 
 ## 概述
 
-本文件是 ZephyrAlpha 项目**数据源 API 调用的操作手册（SSoT）**，详细记录 iFind、miniQMT 以及免费开源源（Baostock/TickFlow/AKShare/yfinance/Stooq）的 API 调用方法、环境配置与参数坑。所有调用方法均已通过实测验证并固化于本文档。**可下载数据清单（能力清单）见 [data_catalog.md](data_catalog.md)**，由生成器自动输出。
+本文件是 ZephyrAlpha 项目**数据源 API 调用的操作手册（SSoT）**，详细记录 iFind、miniQMT 以及免费开源源（Baostock/TickFlow/AKShare/yfinance/Stooq）的 API 调用方法、环境配置与参数坑。所有调用方法均已通过实测验证并固化于本文档。**可下载数据清单见数据库 `data_source_assets` 表**（PostgreSQL depgraph）。
 
 **核心价值**：AI 查询本文档 = 零幻觉空间；AI 绕过本文档自行推断 = 幻觉/漂移根源。本文档存在的意义是**避免 AI 重复探索数据源接入方法**——所有方法已固化，直接复制调用即可。
 
@@ -239,7 +239,7 @@ if not (r == 0 or r == -201):
 
 其他接口：THS_iEvent(事件)、THS_iResearch(研报)、THS_Snapshot(快照)、THS_realTimeValuation(实时估值)、THS_DateQuery(交易日历)、THS_ReportQuery(报告查询)
 
-> 可下载数据清单见 [data_catalog.md](data_catalog.md)（生成器自动输出）。
+> 可下载数据清单见数据库 `data_source_assets` 表（PostgreSQL depgraph）。
 
 ### §2.3 试用账号限制
 
@@ -613,7 +613,7 @@ xtquant 包含 87 个 API 函数，核心分类：
 | 板块 | get_sector_list, get_stock_list_in_sector, download_sector_data | 板块/成分股 |
 | 股票详情 | get_instrument_detail, get_instrument_type, get_stock_type | 股票基础信息 |
 
-> 可下载数据清单见 [data_catalog.md](data_catalog.md)（生成器自动输出）。
+> 可下载数据清单见数据库 `data_source_assets` 表（PostgreSQL depgraph）。
 
 ### §3.3 数据频率支持
 
@@ -875,6 +875,46 @@ fd = xtdata.get_financial_data(['600000.SH'], [], '20240101', '20250630', 'repor
 | **TDX/mootdx** | 通达信板块分类(880xxx体系)、本地通达信数据文件读取(.day/.lc1/.lc5) | 无板块分笔历史、无历史分笔(仅最近交易日)、无复权、无估值/EDB/新闻/研报 |
 | **三者均无** | — | 美股/港股(试用)、新闻事件、研究报告(试用)、**板块分笔历史**(淘宝购买/手工导出) |
 
+### §4.4 七源互补全景矩阵（v2.2.0 合并自 capability_map §7.8）
+
+> 7 个数据源 × 22 个数据品类的覆盖全景。✅=实测通过 ⏳=配额限制 ❌=不可用 ⚠️=部分覆盖 —=不适用
+
+| 数据品类 | iFind试用 | QMT | Baostock | TickFlow | AKShare | 财经RSS | TDX/mootdx | 补充说明 |
+|---------|:---------:|:---:|:--------:|:--------:|:-------:|:-------:|:----------:|---------|
+| A股日/周/月K线 | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | |
+| A股分钟K线 | ⚠️ | ✅ | ✅ | ❌ | — | — | ✅ | Baostock/TDX补历史 |
+| A股估值PE/PB | ✅ | — | ⚠️ | — | — | — | — | |
+| A股财务报表 | ✅ | ✅ | ✅ | — | — | — | ✅ | Baostock季频/TDX gpcw zip |
+| A股资金流向 | ✅ | — | — | — | — | — | — | |
+| 龙虎榜/大宗/融资 | ✅ | — | — | — | — | — | — | |
+| EDB宏观(CPI/PMI) | ⏳ | — | — | — | ✅ | — | — | AKShare补盲区(须断VPN) |
+| 3秒Tick | — | ✅ | — | — | — | — | — | QMT独有(含五档) |
+| 个股分笔(最近日) | — | ✅ | — | — | — | — | ✅ | TDX client.transaction() |
+| 个股分笔(历史) | — | — | — | — | — | — | — | 淘宝购买/手工导出 |
+| 期权/可转债/期货 | — | ✅ | — | — | — | — | — | |
+| 除权因子 | — | ✅ | — | — | — | — | — | |
+| 指数成分股 | ✅ | — | ✅ | — | — | — | — | Baostock 50/300/500 |
+| 交易日历 | — | ✅ | ✅ | — | — | — | — | Baostock |
+| 美股日/周/月/季/年 | ❌ | — | — | ✅ | ❌ | ❌ | — | TickFlow 12/12通过 |
+| 美股ETF | ❌ | — | — | ✅ | — | ❌ | — | TickFlow SPY/DIA/QQQ |
+| 美股真实指数 | ❌ | — | — | ❌ | — | ❌ | — | 用ETF替代(SPY/DIA/QQQ) |
+| 港股日K线 | ❌ | ✅ | — | ✅ | — | ❌ | — | TickFlow 00700.HK✅ |
+| 财经新闻(国内) | ❌ | — | — | — | ✅ | — | — | AKShare东财个股新闻(须断VPN) |
+| 财经新闻(国外) | ❌ | — | — | — | — | ✅ | — | RSS直连8源(Yahoo/Bloomberg/CNBC等) |
+| 研报/一致预期 | ❌ | — | — | — | ✅ | — | — | AKShare补盲区(须断VPN) |
+| **通达信板块分类** | — | — | — | — | — | — | ✅ | TDX独有(880xxx体系) |
+| **板块分笔历史** | — | — | — | — | — | — | — | 无API(淘宝购买/手工导出,§8.6) |
+| **本地TDX文件** | — | — | — | — | — | — | ✅ | TDX独有(.day/.lc1/.lc5,需装客户端) |
+
+> **实测结论（2026-07-06，含 VPN 对比 + 新闻源扩展 + TDX板块分类）**：
+> - iFind 试用账号 ❌ 盲区中，**EDB宏观 + 新闻 + 研报** 被 AKShare 覆盖（须断 VPN）
+> - **A股K线+财务** 被 Baostock 覆盖（实测 10/10，最稳定，不受 VPN 影响）
+> - **美股K线 + ETF** 被 TickFlow 覆盖（实测 12/12，不受 VPN 影响）—— 美股不再需要淘宝购买
+> - **国外财经新闻** 被 RSS 直连覆盖（8/10通过，免费无Key，不受VPN影响）
+> - **A股+美股+国内外新闻全品类数据 100% 可获取**（六源互补）
+> - **TDX/mootdx** 补充通达信板块分类、本地文件读取、个股最近交易日分笔；**关键限制——无板块分笔历史**(无API,只能手工导出)
+> - **运维建议**：下载免费源数据时**断开 VPN**（Baostock/TickFlow/财经RSS/TDX 不受影响，AKShare 必须断开）
+
 ---
 
 ## §5 数据获取策略（四步执行）
@@ -976,7 +1016,7 @@ data = xtdata.get_market_data_ex([], stocks, '1d', '20240101', '20250630')
 | P2 | 研究报告 | THS_iResearch | 解除-5100账号类型限制 |
 | P2 | CFFEX期货 | 中金所期货行情 | 解除-4216权限拒绝 |
 
-> C1 行情仓库填充状态见 [data_catalog.md](data_catalog.md)（生成器自动输出）。
+> C1 行情仓库填充状态见 ClickHouse 实时扫描。
 
 ---
 
@@ -1110,11 +1150,11 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 
 ### §6.9 文档维护规则
 
-1. **本文件是数据源 API 调用的操作手册（SSoT）**：AI 查询本文档 = 零幻觉空间；AI 绕过本文档自行推断 = 幻觉/漂移根源。可下载数据清单见 [data_catalog.md](data_catalog.md)。
+1. **本文件是数据源 API 调用的操作手册（SSoT）**：AI 查询本文档 = 零幻觉空间；AI 绕过本文档自行推断 = 幻觉/漂移根源。可下载数据清单见数据库 `data_source_assets` 表。
 2. **新增数据源时**：必须在 §1 总览 + §2/§3/§7 详细指南 + §4 对比矩阵 + §5 获取策略 中同步更新。
 3. **API 验证后**：必须将调用方法固化到 §2.4 / §3.4 / §7.6 的完整示例中，避免重复探索。
 4. **遇到新坑时**：必须记录到 §6 技术备注，包含症状、根因、修复方法。
-5. **C1 表填充状态变化时**：填充状态见 [data_catalog.md](data_catalog.md)，由生成器自动输出。
+5. **C1 表填充状态变化时**：填充状态见 ClickHouse 实时扫描。
 6. **免费源接口失效时**：必须记录到 §7.5 风险与限制，并提供替代方案（多源备份）。
 
 ---
@@ -2644,4 +2684,4 @@ if __name__ == "__main__":
 
 ---
 
-> **文档结束** — 本文档由 AI-session-20260703-datasource 创建，v1.1.0 新增 §7 免费开源数据源章节，v1.9.0 新增 §8 通达信 TDX/mootdx/pytdx 章节，v2.0.0 从数据源能力地图重命名为数据源操作手册并删除与 data_catalog.md 重叠的能力清单表格。所有 API 调用方法均已实测验证或通过 WebSearch+GitHub 验证。如遇数据源 API 变更或新数据源接入，请同步更新本文档并提升 version。
+> **文档结束** — 本文档由 AI-session-20260703-datasource 创建，v1.1.0 新增 §7 免费开源数据源章节，v1.9.0 新增 §8 通达信 TDX/mootdx/pytdx 章节，v2.0.0 从数据源能力地图重命名为数据源操作手册，v2.2.0 删除已废弃的 data_catalog.md/data_inventory.md/data_acquisition_matrix.md/data_source_capability_map.md 引用，数据清单真源统一到数据库 data_source_assets 表。所有 API 调用方法均已实测验证或通过 WebSearch+GitHub 验证。如遇数据源 API 变更或新数据源接入，请同步更新本文档并提升 version。

@@ -31,10 +31,7 @@ tags: [agent-orchestrator, task-queue, state-machine, sandbox, hallucination-det
 priority: P0
 runtime_plane: hot
 blueprint_level: module
-responsibility_domain: "D_INFRA_RUNTIME"
-depends_on:
-  - {target: "MOD-INF-035", at: "§2", why: "AutoRuntime Core——大脑调度，Orchestrator 接收 WorkDAG 并执行"}
-  - {target: "MOD-INF-016", at: "全篇", why: "Shared Core——事件总线/生命周期/日志/沙箱等公共基座"}
+responsibility_domain: 
   - {target: "MOD-CONTEXT_ENGINE", at: "§2", why: "Context Engine——任务开始前拉上下文"}
   - {target: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——入参/出参 Schema 校验"}
   - {target: "MOD-INF-011", at: "§2", why: "Vector Memory——任务完成写 task_history"}
@@ -50,6 +47,8 @@ references:
   - {id: "MOD-INF-030", at: "§12", why: "Red-Blue Validator——CT-RB-GATE-001 / CT-RB-ESC-002 / CT-RB-KB-003 集成契约"}
   - {id: "AI-ENG-ORC-001", at: "§4", why: "Agent Orchestrator Interface——B轨接口规范"}
 ssot_ref: "docs/03_modules/_cross_layer/_b_track_interfaces/agent_orchestrator_interface.md"
+design_maturity: design
+build_status: planned
 ---
 
 # Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎

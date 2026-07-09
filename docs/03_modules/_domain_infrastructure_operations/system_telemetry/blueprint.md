@@ -52,7 +52,9 @@ rule_form: structural
 scope: global
 stability: evolving
 verifiability: hybrid
-
+responsibility_domain: 
+build_status: generated
+design_maturity: prototype
 ---
 
 # System Telemetry 蓝图+施工图 — 全系统可观测性

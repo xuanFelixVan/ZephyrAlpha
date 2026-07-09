@@ -49,6 +49,9 @@ references:
   - {id: "MOD-INF-013", at: "full", why: "Governance MCP Server——orphan_judge MCP Tool暴露入口"}
   - {id: "MOD-INF-019", at: "full", why: "Agent Spec——SKILL-DOM-ORP-001技能注册与发现"}
   - {id: "MOD-GATE_ENGINE", at: "§2", why: "Phase Manager——gate_orphan_judge门禁检查注册"}
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 <!--

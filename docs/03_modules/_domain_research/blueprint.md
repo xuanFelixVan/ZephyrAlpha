@@ -47,6 +47,9 @@ references:
     why: "架构层YAML真源"
 codification_level: L1
 codification_at: "2026-05-15"
+responsibility_domain: 
+build_status: generated
+design_maturity: prototype
 ---
 
 > ✅ **业务层已开放——可施工**

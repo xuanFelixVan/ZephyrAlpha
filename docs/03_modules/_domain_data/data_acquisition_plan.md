@@ -27,9 +27,9 @@ scope: module
 stability: evolving
 verifiability: empirical
 references:
-  - path: "d:\\ZephyrAlpha\\docs\\03_modules\\_domain_data\\data_source_capability_map.md"
+  - path: "d:\\ZephyrAlpha\\docs\\03_modules\\_domain_data\\data_source_operation_manual.md"
     section: ""
-    why: "数据源能力地图——本清单的获取方法真源（API调用方法/配置/参数坑）"
+    why: "数据源操作手册——本清单的获取方法真源（API调用方法/配置/参数坑）"
   - path: "d:\\ZephyrAlpha\\docs\\03_modules\\_domain_data\\blueprint.md"
     section: "§4 接口契约"
     why: "数据接入层主蓝图"
@@ -39,7 +39,7 @@ references:
 depends_on:
   - target: MOD-L00-002
     at: ""
-    why: "数据源能力地图（获取方法真源）"
+    why: "数据源操作手册（获取方法真源）"
   - target: MOD-L00-001
     at: "§4"
     why: "数据接入层主蓝图"
@@ -51,11 +51,14 @@ tags:
   - l00
   - ssot
 summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据补齐实测。v1.5.0 VPN对比+TickFlow发现(Baostock 10/10+TickFlow 12/12+AKShare 11/16须断VPN+yfinance/Stooq废弃)。v1.6.0 数据补齐实测(2026-07-05)：kline_daily(iFind THS_RQ批量+5517行,max=2026-07-03)+index_kline(THS_RQ+953行,max=07-03)+equity_pledge_summary(THS_BD+4440行,max=07-03)+rights_issue(AKShare stock_history_dividend_detail多线程+283行,max=07-06)+margin_trading/block_trade(清理未来日期脏数据,max=06-30)全部补齐。分红明细数据源优先级：AKShare stock_history_dividend_detail>baostock(滞后1周+)>iFind THS_BD(-209全失败)>iFind问财(不适合个股明细)。其余表仍截止2025-11待增量。"
+responsibility_domain: 
+build_status: stable
+design_maturity: design
 ---
 
 # 数据获取需求清单与数据库现状对照
 
-> **互补关系**：本文档记录"需要什么 + 现状如何 + 缺什么 + 能否获取"；获取方法见 [数据源能力地图](data_source_capability_map.md)（MOD-L00-002）。
+> **互补关系**：本文档记录"需要什么 + 现状如何 + 缺什么 + 能否获取"；获取方法见 [数据源操作手册](data_source_operation_manual.md)（MOD-L00-002）。
 
 > **可获取性标记说明**：
 > - ✅ 已验证 = 实测验证可获取（API调用成功，有数据返回）
@@ -78,19 +81,19 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 
 ### 1.2 三种获取方式分工
 
-> **获取策略真源**：三种获取方式（A淘宝/B iFind/C QMT）的分工、成本、速度、限制，以及四步执行顺序，详见 [数据源能力地图 §5 数据获取策略](data_source_capability_map.md)。
+> **获取策略真源**：三种获取方式（A淘宝/B iFind/C QMT）的分工、成本、速度、限制，以及四步执行顺序，详见 [数据源操作手册 §5 数据获取策略](data_source_operation_manual.md)。
 
 > **核心铁律**：历史数据优先淘宝买（便宜快），买不到的用iFind下载，未来增量通过iFind(盘后批量)+QMT(实时)持续获取。
 
 ### 1.3 iFind + QMT 数据获取边界
 
-> **能力边界真源**：iFind + QMT 各数据类型的可获取性对比（27项）、推荐来源、获取方式，详见 [数据源能力地图 §4 对比矩阵](data_source_capability_map.md)。
+> **能力边界真源**：iFind + QMT 各数据类型的可获取性对比（27项）、推荐来源、获取方式，详见 [数据源操作手册 §4 对比矩阵](data_source_operation_manual.md)。
 
 > **核心结论**：iFind擅长基本面/估值/宏观/概念/龙虎榜；QMT擅长高频/期权/可转债/期货/港股通；两者互补覆盖几乎所有品类。边界外（美股/新闻/研报）需正式账号。
 
 ### 1.4 导入流程
 
-> **导入流程真源**：三种方式的导入流程（淘宝→检查格式→适配脚本→ClickHouse→验证→删本地；iFind→终端导出→导入脚本→ClickHouse→验证→删本地；QMT→xtquant实时接收→Redis+ClickHouse→自动运行），详见 [数据源能力地图 §5 数据获取策略](data_source_capability_map.md)。
+> **导入流程真源**：三种方式的导入流程（淘宝→检查格式→适配脚本→ClickHouse→验证→删本地；iFind→终端导出→导入脚本→ClickHouse→验证→删本地；QMT→xtquant实时接收→Redis+ClickHouse→自动运行），详见 [数据源操作手册 §5 数据获取策略](data_source_operation_manual.md)。
 
 ---
 
@@ -105,11 +108,11 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 
 | # | 表名 | 数据类型 | 行数 | 股票数 | 起始日期 | 结束日期 | 完整性 | 需补充 | 可获取性 |
 |---|------|---------|------|--------|---------|---------|--------|--------|---------|
-| 1 | kline_daily | 日K线(前复权) | 18,124,798 | 5,895 | 1990-12-19 | 2026-07-03 | ✅完整(已补齐) | ✅已补齐(iFind THS_RQ批量+5517行) | ✅ 已验证(THS_RQ批量,见能力地图§2.5.6) |
+| 1 | kline_daily | 日K线(前复权) | 18,124,798 | 5,895 | 1990-12-19 | 2026-07-03 | ✅完整(已补齐) | ✅已补齐(iFind THS_RQ批量+5517行) | ✅ 已验证(THS_RQ批量,见操作手册§2.5.6) |
 | 2 | adj_factor | 复权因子 | 17,950,034 | 5,778 | 1990-12-19 | 2025-11-12 | ✅完整(最全) | 增量更新 | ✅ 已验证(QMT get_divid_factors 26条) |
 | 3 | kline_weekly | 周K线 | 3,351,526 | 5,449 | 1990-12-21 | 2025-11-07 | ✅股票全 ⚠️需更新 | 增量更新 | ✅ 已验证(iFind5行+QMT 1w) |
 | 4 | kline_monthly | 月K线 | 804,028 | 5,677 | 1990-12-31 | 2025-10-31 | ✅股票全 ⚠️需更新 | 增量更新 | ✅ 已验证(iFind+QMT 1mon) |
-| 5 | index_kline | 指数K线 | 3,066,374 | 1,031 | 1990-12-19 | 2026-07-03 | ✅完整(已补齐) | ✅已补齐(iFind THS_RQ批量+953行) | ✅ 已验证(THS_RQ批量,见能力地图§2.5.6) |
+| 5 | index_kline | 指数K线 | 3,066,374 | 1,031 | 1990-12-19 | 2026-07-03 | ✅完整(已补齐) | ✅已补齐(iFind THS_RQ批量+953行) | ✅ 已验证(THS_RQ批量,见操作手册§2.5.6) |
 | 6 | kline_1min | 1分钟K线 | 3,639,361,518 | ~5,500 | 2000-06-09 | 2025-11-12 | ✅完整(25年) | 增量更新 | ✅ 已验证(QMT 241行)；历史需淘宝 |
 | 7 | kline_15min | 15分钟K线 | 241,618,057 | ~5,500 | 2000-06-09 | 2025-11-12 | ✅完整 | 增量更新 | ✅ 已验证(QMT 15m)；历史需淘宝 |
 | 8 | kline_30min | 30分钟K线 | 120,809,041 | ~5,500 | 2000-06-09 | 2025-11-12 | ✅完整 | 增量更新 | ✅ 已验证(QMT 30m)；历史需淘宝 |
@@ -143,8 +146,8 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 | 7 | earnings_forecast | 盈利预测 | 112,832 | 5,483 | 1999-01-09 | 2025-11-07 | ✅完整 | 增量更新 | ✅ API可用(QMT ProfitForecast表) |
 | 8 | audit_opinion | 审计意见 | 86,440 | 5,438 | 1998-02-21 | 2025-10-25 | ✅完整 | 增量更新 | ✅ 已验证(i问财"600000.SH 2024年审计意见") |
 | 9 | express_report | 业绩快报 | 27,066 | 4,313 | 2005-01-08 | 2025-10-22 | ✅完整 | 增量更新 | ✅ API可用(QMT Performance表) |
-| 10 | rights_issue | 分红配股 | 81,028 | ~5,800 | 1970-01-01 | 2026-07-06 | ✅完整(已补齐) | ✅已补齐(AKShare +283行) | ✅ 已验证(AKShare stock_history_dividend_detail,见能力地图§7.3.5) |
-| 11 | equity_pledge_summary | 股权质押 | 1,723,182 | ~5,500 | N/A | 2026-07-03 | ✅完整(已补齐) | ✅已补齐(iFind THS_BD +4440行) | ✅ 已验证(THS_BD,见能力地图§2.5.6) |
+| 10 | rights_issue | 分红配股 | 81,028 | ~5,800 | 1970-01-01 | 2026-07-06 | ✅完整(已补齐) | ✅已补齐(AKShare +283行) | ✅ 已验证(AKShare stock_history_dividend_detail,见操作手册§7.3.5) |
+| 11 | equity_pledge_summary | 股权质押 | 1,723,182 | ~5,500 | N/A | 2026-07-03 | ✅完整(已补齐) | ✅已补齐(iFind THS_BD +4440行) | ✅ 已验证(THS_BD,见操作手册§2.5.6) |
 
 ### 2.3 未建表的数据（需新建表+下载）
 
@@ -161,12 +164,12 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 | 9 | 行业分类 | industry_class | iFind | 申万/中证行业分类 | ✅ 已验证(iFind THS_DataPool 30行) |
 | 10 | 指数成分股 | index_constituent | iFind | 沪深300/中证500成分变动 | ✅ 已验证(iFind THS_DataPool 300行) |
 | 11 | 期货行情K线 | futures_kline | QMT | 商品期货日/分钟K线 | ✅ 已验证(QMT 上期所6982/大商所9559/郑商所7281/中金所88个期货) |
-| 12 | 美股日K线 | us_daily_kline | TickFlow(免费无Key) | 美股主要股票日K线 | ✅ 免费源替代(TickFlow `AAPL.US`实测12/12通过；详见能力地图§7.6) |
+| 12 | 美股日K线 | us_daily_kline | TickFlow(免费无Key) | 美股主要股票日K线 | ✅ 免费源替代(TickFlow `AAPL.US`实测12/12通过；详见操作手册§7.6) |
 | 13 | 美股指数 | us_index | TickFlow(ETF替代) | 道琼斯/纳指/标普500（用ETF替代） | ✅ 免费源替代(TickFlow SPY.US/DIA.US/QQQ.US实测通过；TickFlow免费服务无真实指数，用ETF替代) |
 | 14 | 港股日K线 | hk_daily_kline | QMT | 港股通标的日K线 | ✅ 已验证(QMT 香港联交所股票957只，01680.HK K线20行) |
-| 15 | 宏观经济 | macro_data | AKShare(主)/iFind EDB(备) | GDP/CPI/PMI/利率/汇率/M2 | ✅ 免费源实测9/10通过(AKShare `macro_china_gdp/cpi/pmi/m2`；详见能力地图§7.3.1) |
-| 16 | 新闻舆情 | news_data | AKShare | 财经新闻/公告/研报 | ⚠️ 免费源实测3/5通过(AKShare `stock_news_em`✅/`stock_research_report_em`✅；`stock_info_global_cls`⏳卡住超时；详见能力地图§7.3.2) |
-| 17 | 分析师预期 | analyst_forecast | AKShare | 一致预期EPS/评级 | ✅ 免费源实测通过(AKShare `stock_profit_forecast_ths` 同花顺一致预期EPS 3行；详见能力地图§7.3.2) |
+| 15 | 宏观经济 | macro_data | AKShare(主)/iFind EDB(备) | GDP/CPI/PMI/利率/汇率/M2 | ✅ 免费源实测9/10通过(AKShare `macro_china_gdp/cpi/pmi/m2`；详见操作手册§7.3.1) |
+| 16 | 新闻舆情 | news_data | AKShare | 财经新闻/公告/研报 | ⚠️ 免费源实测3/5通过(AKShare `stock_news_em`✅/`stock_research_report_em`✅；`stock_info_global_cls`⏳卡住超时；详见操作手册§7.3.2) |
+| 17 | 分析师预期 | analyst_forecast | AKShare | 一致预期EPS/评级 | ✅ 免费源实测通过(AKShare `stock_profit_forecast_ths` 同花顺一致预期EPS 3行；详见操作手册§7.3.2) |
 
 ---
 
@@ -199,16 +202,16 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 |---|--------|---------|---------|---------|
 | 12 | 龙虎榜/大宗/融资融券/限售解禁 | 历史资金面数据 | iFind i问财 | ✅ 已验证(全部4项i问财查询成功) |
 | 13 | 期货行情K线 | 商品期货日/分钟K线 | QMT | ✅ 已验证(4大交易所合约) |
-| 14 | 宏观数据 | GDP/CPI/PMI/利率/汇率 | AKShare(主)/iFind EDB(备) | ✅ 免费源实测9/10通过(AKShare `macro_china_gdp/cpi/pmi/m2`；详见能力地图§7.3.1) |
+| 14 | 宏观数据 | GDP/CPI/PMI/利率/汇率 | AKShare(主)/iFind EDB(备) | ✅ 免费源实测9/10通过(AKShare `macro_china_gdp/cpi/pmi/m2`；详见操作手册§7.3.1) |
 | 15 | 交易日历/股票列表/行业分类/指数成分股 | 基础信息 | QMT/iFind | ✅ 已验证(全部4项) |
-| 16 | 新闻/公告/研报 | 另类数据 | AKShare | ⚠️ 免费源实测3/5通过(AKShare `stock_news_em`✅/`stock_research_report_em`✅；`stock_info_global_cls`⏳卡住；详见能力地图§7.3.2) |
-| 17 | 分析师一致预期 | 分析师数据 | AKShare | ✅ 免费源实测通过(AKShare `stock_profit_forecast_ths` 同花顺一致预期EPS；详见能力地图§7.3.2) |
+| 16 | 新闻/公告/研报 | 另类数据 | AKShare | ⚠️ 免费源实测3/5通过(AKShare `stock_news_em`✅/`stock_research_report_em`✅；`stock_info_global_cls`⏳卡住；详见操作手册§7.3.2) |
+| 17 | 分析师一致预期 | 分析师数据 | AKShare | ✅ 免费源实测通过(AKShare `stock_profit_forecast_ths` 同花顺一致预期EPS；详见操作手册§7.3.2) |
 
 ### P3-远期（美股/港股）
 
 | # | 数据项 | 需要什么 | 获取方式 | 可获取性 |
 |---|--------|---------|---------|---------|
-| 18 | 美股日K线/指数 | 美股主要股票+三大指数(ETF替代) | TickFlow(免费无Key) | ✅ 免费源替代(TickFlow `AAPL.US`实测12/12通过+SPY/DIA/QQQ ETF替代真实指数；详见能力地图§7.6) |
+| 18 | 美股日K线/指数 | 美股主要股票+三大指数(ETF替代) | TickFlow(免费无Key) | ✅ 免费源替代(TickFlow `AAPL.US`实测12/12通过+SPY/DIA/QQQ ETF替代真实指数；详见操作手册§7.6) |
 | 19 | 港股日K线 | 港股通标的 | QMT | ✅ 已验证(QMT 957只+K线20行)；yfinance备用已失效 |
 
 ---
@@ -230,7 +233,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 - 龙虎榜/大宗交易/融资融券/限售解禁（i问财已验证可查）
 - 放到 `D:\A股数据\iFind\`
 
-> **iFind API 调用方法**：见 [数据源能力地图 §2](data_source_capability_map.md)
+> **iFind API 调用方法**：见 [数据源操作手册 §2](data_source_operation_manual.md)
 
 **免费源下载（v1.5.0实测验证+VPN对比，覆盖iFind试用盲区）**:
 - A股日/周/月/分钟K线 + 季频财务 + 成分股 + 交易日历 —— Baostock（实测10/10通过，不受VPN影响，A股主力免费源）
@@ -238,7 +241,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 - 宏观数据（CPI/PMI/M2/GDP/社融/LPR）—— AKShare `macro_china_*`（实测9/10通过，须断开VPN）
 - 财经新闻 + 研报 —— AKShare `stock_news_em`/`stock_research_report_em`（实测3/5通过，须断开VPN；`stock_info_global_cls`⏳卡住超时）
 - 一致预期EPS —— AKShare `stock_profit_forecast_ths`（实测通过，须断开VPN）
-- **分红明细** —— AKShare `stock_history_dividend_detail`（v1.6.0实测最可靠，多线程8 workers/5823 symbol约7.5分钟；baostock分红滞后勿用；详见能力地图§7.3.5）
+- **分红明细** —— AKShare `stock_history_dividend_detail`（v1.6.0实测最可靠，多线程8 workers/5823 symbol约7.5分钟；baostock分红滞后勿用；详见操作手册§7.3.5）
 - 放到 `D:\A股数据\免费源\`
 
 > ⚠️ **免费源实测结论（2026-07-03，含VPN对比）**：
@@ -247,7 +250,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 > - **AKShare 11/16通过**（须断开VPN，爬国内网站挂VPN后国内拒绝海外IP），EDB+新闻+研报+一致预期替代方案成立
 > - **yfinance 0/10失败**（VPN无效，Yahoo库级限流非IP限流），**Stooq 0/2失败**（VPN无效，JS浏览器验证与IP无关）→ 已废弃
 > - **运维铁律**：下载免费源数据时**断开VPN**（Baostock/TickFlow不受影响，AKShare必须断开）
-> - **免费源 API 调用方法**：见 [数据源能力地图 §7](data_source_capability_map.md)
+> - **免费源 API 调用方法**：见 [数据源操作手册 §7](data_source_operation_manual.md)
 
 **淘宝购买（仅历史大数据，免费源不覆盖）**:
 - 5分钟K线历史(2000-2018) —— QMT只保留最近交易日高频数据，需淘宝买历史
@@ -273,7 +276,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 - 期货K线(含openInterest) → futures_position表
 - 自动持续运行，从现在开始积累
 
-> **QMT API 调用方法**：见 [数据源能力地图 §3](data_source_capability_map.md)
+> **QMT API 调用方法**：见 [数据源操作手册 §3](data_source_operation_manual.md)
 
 ---
 
@@ -295,7 +298,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 
 ## 六、文档维护规则
 
-1. **本文件是数据获取需求的唯一真源（SSoT）**：记录"需要什么 + 现状如何 + 缺什么 + 能否获取"；获取方法见 [数据源能力地图](data_source_capability_map.md)。
+1. **本文件是数据获取需求的唯一真源（SSoT）**：记录"需要什么 + 现状如何 + 缺什么 + 能否获取"；获取方法见 [数据源操作手册](data_source_operation_manual.md)。
 2. **数据库状态变化时**：必须同步更新 §二 的现状对照表（行数/股票数/日期范围/完整性/可获取性）。
 3. **数据补充完成后**：必须将对应条目从 §三 待补充清单移除，并在 §二 标记为已完成。
 4. **新增数据品类时**：必须在 §2.3 未建表数据中登记，并在 §三 按优先级分类。
@@ -304,9 +307,9 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 
 ---
 
-## 七、能力地图有但需求清单未列的数据
+## 七、操作手册有但需求清单未列的数据
 
-> 以下数据在 [数据源能力地图](data_source_capability_map.md) 中已验证可获取，但 §二/§三 需求清单中未列出。如果策略需要，可随时纳入需求清单。
+> 以下数据在 [数据源操作手册](data_source_operation_manual.md) 中已验证可获取，但 §二/§三 需求清单中未列出。如果策略需要，可随时纳入需求清单。
 
 ### 7.1 已验证的额外可获取数据（合并表）
 
@@ -336,7 +339,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 
 > i问财(THS_iwencai)是同花顺的自然语言查询引擎，用中文提问即可获取数据。已实测验证16项查询全部成功（龙虎榜/融资融券/大宗交易/限售解禁/审计意见/涨停跌停/ST/新股/股东/机构持仓/业绩预告/回购/增减持/分红），另有研报评级和北向资金2项不可查。
 
-> **i问财查询能力详见**：[数据源能力地图 §2.5.7](data_source_capability_map.md)（含16项✅查询语句+返回行数+返回字段完整清单+2项❌不可查说明）
+> **i问财查询能力详见**：[数据源操作手册 §2.5.7](data_source_operation_manual.md)（含16项✅查询语句+返回行数+返回字段完整清单+2项❌不可查说明）
 
 ### 7.3 策略价值评估
 
@@ -346,7 +349,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 | iFind额外数据 | 3项 | 2项 | 1项(EDB配额) | 0 |
 | **合计** | **19项** | **14项** | **1项** | **3项** |
 
-> **结论**：能力地图中有 **19项** 数据已验证可获取但需求清单未列出。其中 **14项** 可立即使用（无需升级账号），未来策略扩展时可随时纳入。
+> **结论**：操作手册中有 **19项** 数据已验证可获取但需求清单未列出。其中 **14项** 可立即使用（无需升级账号），未来策略扩展时可随时纳入。
 
 ---
 
@@ -370,7 +373,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 | EDB宏观数据 | ⏳ | ✅(免费源) | AKShare `macro_china_gdp/cpi/pmi/m2` | 实测9/10通过(GDP/CPI/PPI/PMI/M2/LPR/社融/US_CPI/US_UNEMP✅；`macro_usa_fed_interest_rate`函数名已移除❌) |
 | A股日/周/月/分钟K线 | ✅ | ✅(免费源) | Baostock `bs.query_history_k_data_plus` | 实测10/10通过(日/周/月/5分钟K线全部✅) |
 | A股季频财务 | ✅ | ✅(免费源) | Baostock `query_profit_data`/`query_balance_data`等 | 实测4/4通过(盈利/资产负债/现金流/成长✅) |
-| 美股行情 | ❌ | ✅(免费源) | TickFlow `tf.klines.get("AAPL.US")` | 实测12/12通过(AAPL/MSFT/TSLA/NVDA/GOOG/AMZN/META/NFLX+SPY/DIA ETF+周月季年K线✅；详见能力地图§7.6) |
+| 美股行情 | ❌ | ✅(免费源) | TickFlow `tf.klines.get("AAPL.US")` | 实测12/12通过(AAPL/MSFT/TSLA/NVDA/GOOG/AMZN/META/NFLX+SPY/DIA ETF+周月季年K线✅；详见操作手册§7.6) |
 | 新闻/研报 | ❌ | ⚠️(部分) | AKShare `stock_news_em`/`stock_info_global_cls`/`stock_research_report_em` | 实测3/5通过(新闻✅+研报✅；财联社`stock_info_global_cls`⏳卡住超时；须断开VPN) |
 | 分析师预期 | ❌ | ✅(免费源) | AKShare `stock_profit_forecast_ths` (同花顺一致预期EPS) | 实测通过(3行一致预期EPS数据) |
 
@@ -415,7 +418,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 | **不满足(需正式账号)** | 1项 | 2% | ❌ 沪深港通北向资金(iFind试用+免费源均不可用) |
 | **不满足(API缺陷)** | 1项 | 2% | ❌ 期货主力合约(QMT API返回错误数据) |
 
-> **最终结论（v1.5.0）**：需求清单 98% 可获取（87% iFind/QMT 已验证 + 6项免费源实测通过 + 1项部分通过 + 3项派生计算），仅 1 项（沪深港通北向资金）需正式账号/淘宝 + 1项API缺陷。**v1.5.0 重大更新：TickFlow(12/12通过)填补美股免费源空白，美股2项从"需淘宝"升级为"免费源满足"；VPN对比测试确认yfinance(库级限流)/Stooq(JS验证)均VPN无效已废弃；Baostock/TickFlow不受VPN影响，AKShare须断开VPN**。**A股+美股全品类数据100%可获取**。详见 [数据源能力地图 §7 免费开源数据源](data_source_capability_map.md)。
+> **最终结论（v1.5.0）**：需求清单 98% 可获取（87% iFind/QMT 已验证 + 6项免费源实测通过 + 1项部分通过 + 3项派生计算），仅 1 项（沪深港通北向资金）需正式账号/淘宝 + 1项API缺陷。**v1.5.0 重大更新：TickFlow(12/12通过)填补美股免费源空白，美股2项从"需淘宝"升级为"免费源满足"；VPN对比测试确认yfinance(库级限流)/Stooq(JS验证)均VPN无效已废弃；Baostock/TickFlow不受VPN影响，AKShare须断开VPN**。**A股+美股全品类数据100%可获取**。详见 [数据源操作手册 §7 免费开源数据源](data_source_operation_manual.md)。
 
 ---
 
@@ -457,4 +460,4 @@ summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据�
 
 ---
 
-> **文档结束** — 本文档与 [数据源能力地图](data_source_capability_map.md)（MOD-L00-002）互补，共同构成数据接入层的完整真源：能力地图=能获取什么+怎么获取；本清单=需要什么+现状如何+缺什么+能否获取+建表规划。
+> **文档结束** — 本文档与 [数据源操作手册](data_source_operation_manual.md)（MOD-L00-002）互补，共同构成数据接入层的完整真源：操作手册=能获取什么+怎么获取；本清单=需要什么+现状如何+缺什么+能否获取+建表规划。

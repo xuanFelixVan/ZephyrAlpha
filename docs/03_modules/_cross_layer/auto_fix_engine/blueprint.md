@@ -51,6 +51,9 @@ references:
   - {id: "MOD-INF-030", at: "full", why: "RedBlue Validator——绕过场景修复的执行方"}
   - {id: "MOD-INF-028", at: "§8", why: "Semantic Auditor——L2 LLM 修复的文本生成方"}
   - {id: "MOD-INF-021", at: "§3", why: "Rollback Manager——DriftFixHandler G-CT-005 消费端收编"}
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # Auto Fix Engine 蓝图 — 自动修复引擎·模板化修复执行

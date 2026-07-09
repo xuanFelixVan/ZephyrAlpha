@@ -45,7 +45,9 @@ depends_on:
 references:
   - {id: "MOD-INF-020", at: "all", why: "Audit Trail——运行期写入；DAG 上不保留 depends_on"}
 last_updated: "2026-05-19"
-
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心

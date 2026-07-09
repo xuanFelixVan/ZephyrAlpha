@@ -5,6 +5,9 @@ ttl: permanent
 stability: evolving
 last_updated: "2026-07-06"
 generated_by: tmp/generate_acquisition_matrix.py
+responsibility_domain: 
+design_maturity: prototype
+build_status: generated
 ---
 
 # 数据获取能力矩阵

@@ -16,8 +16,8 @@
 """
 [BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md | §3
 [MODULE] scripts.governance.check_blueprint_compliance
-[INVARIANTS] REQUIRED_SECTIONS 必须与蓝图+施工图模板 v4.0 COMPLIANCE_CHECKLIST 一致
-[MODIFY-GUARD] __init__.py;script_manifest.yaml;蓝图模板v4.0
+[INVARIANTS] REQUIRED_SECTIONS 必须与蓝图+施工图模板 v2.0.0 COMPLIANCE_CHECKLIST 一致
+[MODIFY-GUARD] __init__.py;script_manifest.yaml;蓝图模板v2.0.0
 [CONSUMERS] CI pipeline;governance gate
 [STABILITY] stable
 [SAFETY] M
@@ -54,6 +54,9 @@ REQUIRED_SECTIONS = {
     "§0.1": ("代码文件清单", "子章节"),
     "§0.2": ("对齐验证矩阵", "子章节"),
     "§0.3": ("版本-代码映射", "子章节"),
+    "§0.4": ("SSoT与责任唯一性", "子章节"),  # v2.0.0 补齐
+    "§0.5": ("代码目录唯一性", "子章节"),  # v2.0.0 补齐
+    "§0.6": ("四图对齐视图", "子章节"),  # v2.0.0 新增
     "§1": ("设计背景与目标", "主章节"),
     "§1.1": ("背景", "子章节"),
     "§1.2": ("目标范围", "子章节"),
@@ -80,6 +83,7 @@ REQUIRED_SECTIONS = {
     "§5.2": ("容量估算", "子章节"),
     "§5.3": ("迁移", "子章节"),
     "§5.4": ("非功能需求与服务水平", "子章节"),
+    "§5.5": ("自动化触发机制", "子章节"),  # v2.0.0 补齐
     "§5.7": ("禁止模式与导入约束", "子章节"),
     "§6": ("错误处理", "主章节"),
     "§6.1": ("可观测性", "子章节"),
@@ -87,6 +91,8 @@ REQUIRED_SECTIONS = {
     "§8": ("安全考量", "主章节"),
     "§9": ("测试策略", "主章节"),
     "§10": ("依赖关系", "主章节"),
+    "§10.5": ("概念重叠声明", "子章节"),  # v2.0.0 补齐
+    "§10.6": ("依赖链风险评级", "子章节"),  # v2.0.0 补齐
     "§11": ("产出物", "主章节"),
     "§12": ("集成目标", "主章节"),
     "§13": ("需要更新", "主章节"),

@@ -253,20 +253,26 @@ def cmd_domains(dep: dict, domain_names: list[str], output: str | None) -> None:
 
 
 def cmd_modules(dep: dict, module_ids: list[str], output: str | None) -> None:
-    """提取指定 module_id 的完整数据。"""
+    """提取指定 module_id 的完整数据（含该模块下所有文件节点）。
+
+    修复: 原实现找到首个匹配就 break，只返回 1 个文件。
+    现在: 收集所有匹配的文件节点，返回完整文件列表。
+    """
     modules = _build_modules_view(dep)
     result = {}
     for module_id in module_ids:
-        found = False
+        found_items = []
         for domain_name, domain_data in modules.items():
             for item in domain_data.get("items", []):
                 if item.get("module_id") == module_id:
-                    result[module_id] = item
-                    found = True
-                    break
-            if found:
-                break
-        if not found:
+                    found_items.append(item)
+        if found_items:
+            result[module_id] = {
+                "module_id": module_id,
+                "file_count": len(found_items),
+                "files": found_items,
+            }
+        else:
             print(f"WARNING: Module '{module_id}' not found in depgraph", file=sys.stderr)
     _write_output(result, output)
 

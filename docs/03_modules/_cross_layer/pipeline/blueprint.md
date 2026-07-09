@@ -28,8 +28,7 @@ parent_module: ""
 rule_form: structural
 scope: global
 stability: evolving
-responsibility_domain: "D_INFRA_RUNTIME"
-verifiability: hybrid
+responsibility_domain: 
 depends_on:
   - {target: "MOD-MASTER_BLUEPRINT", at: "§2.7", why: "CT-PIPE-ORC-001 集成契约——Pipeline→Orc路由决策"}
   - {target: "MOD-TASK_SYSTEM", at: "§5", why: "任务系统——M1-M11节点的任务消费方"}
@@ -42,6 +41,8 @@ references:
   - {id: "MOD-INF-020", at: "全篇", why: "Decision Log——仅存 references（打破 009↔020↔022 环）"}
   - {id: "MOD-INF-018", at: "全篇", why: "SoD——仅存 references"}
   - {id: "architecture_model/layers/b_pipeline.yaml", at: "全篇", why: "Pipeline YAML SSoT——本蓝图真源"}
+design_maturity: design
+build_status: planned
 ---
 
 > module_id: MOD-INF-009 | version: 0.39.1 | status: active | layer: cross_layer
