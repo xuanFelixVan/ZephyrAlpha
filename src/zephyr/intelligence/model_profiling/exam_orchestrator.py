@@ -529,11 +529,41 @@ class ExamOrchestrator:
             (precision, recall, edit_distance, exact_match) 或 None（无可用字段时）。
         """
         text = json.dumps(result, ensure_ascii=False).lower()
+        matchers = (
+            self._match_bool_fields(case, result),
+            self._match_list_fields(case, result),
+            self._match_parallel_groups(case, result),
+            self._match_str_fields(case, result),
+            self._match_bug_location(case, result),
+            self._match_step_count(case, result),
+            self._match_function_args(case, result),
+            self._match_tool_sequence(case, result),
+            self._match_contains_keywords(case, text),
+        )
         p_rates: list[float] = []
         r_rates: list[float] = []
         em_all = 1
+        for matches in matchers:
+            for p, r, exact in matches:
+                p_rates.append(p)
+                r_rates.append(r)
+                if not exact:
+                    em_all = 0
 
-        # 1. 布尔字段（用 expected_structure_keys 判断是否为考点，因 dataclass 默认 False）
+        if not p_rates:
+            return None
+
+        p = sum(p_rates) / len(p_rates)
+        r = sum(r_rates) / len(r_rates)
+        ed = round(max(1.0 - (p + r) / 2, 0.0), 3)
+        return (round(p, 3), round(r, 3), ed, em_all)
+
+    def _match_bool_fields(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> list[tuple[float, float, bool]]:
+        """v3.0.8: 布尔字段匹配 (expected_compliant 等; 用 expected_structure_keys 判定考点)。"""
         bool_fields = [
             ("expected_compliant", "compliant"),
             ("expected_has_bug", "has_bug"),
@@ -541,6 +571,7 @@ class ExamOrchestrator:
             ("expected_has_cycle", "has_cycle"),
             ("expected_has_hallucination", "has_hallucination"),
         ]
+        out: list[tuple[float, float, bool]] = []
         for attr, key in bool_fields:
             if key not in case.expected_structure_keys:
                 continue
@@ -552,12 +583,15 @@ class ExamOrchestrator:
                 match = 0
             else:
                 match = 1 if str(got).lower() == str(exp).lower() else 0
-            p_rates.append(match)
-            r_rates.append(match)
-            if not match:
-                em_all = 0
+            out.append((float(match), float(match), bool(match)))
+        return out
 
-        # 2. 列表字段（集合交集率）
+    def _match_list_fields(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> list[tuple[float, float, bool]]:
+        """v3.0.8: 列表字段匹配 (集合交集率; 含 dict 子字段提取)。"""
         list_fields = [
             ("expected_affected_files", "affected_files"),
             ("expected_affected_files_k", "affected_files"),
@@ -577,6 +611,7 @@ class ExamOrchestrator:
             "files": "name",
             "changes": "file",
         }
+        out: list[tuple[float, float, bool]] = []
         for attr, key in list_fields:
             exp_list = getattr(case, attr, [])
             if not exp_list:
@@ -599,36 +634,43 @@ class ExamOrchestrator:
             inter = len(exp_set & got_set)
             p = inter / len(got_set) if got_set else 0.0
             r = inter / len(exp_set) if exp_set else 0.0
-            p_rates.append(p)
-            r_rates.append(r)
-            if exp_set != got_set:
-                em_all = 0
+            out.append((p, r, exp_set == got_set))
+        return out
 
-        # parallel_groups（列表的列表，按组集合匹配）
-        if case.expected_parallel_groups:
-            got_raw = result.get("parallel_groups", [])
-            exp_set = {tuple(sorted(g)) for g in case.expected_parallel_groups}
-            got_set = (
-                {tuple(sorted(g)) for g in got_raw}
-                if got_raw
-                and isinstance(got_raw, list)
-                and all(isinstance(g, list) for g in got_raw)
-                else set()
-            )
-            inter = len(exp_set & got_set)
-            p = inter / len(got_set) if got_set else 0.0
-            r = inter / len(exp_set) if exp_set else 0.0
-            p_rates.append(p)
-            r_rates.append(r)
-            if exp_set != got_set:
-                em_all = 0
+    def _match_parallel_groups(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> list[tuple[float, float, bool]]:
+        """v3.0.8: parallel_groups 列表的列表匹配 (按组集合)。"""
+        if not case.expected_parallel_groups:
+            return []
+        got_raw = result.get("parallel_groups", [])
+        exp_set = {tuple(sorted(g)) for g in case.expected_parallel_groups}
+        got_set = (
+            {tuple(sorted(g)) for g in got_raw}
+            if got_raw
+            and isinstance(got_raw, list)
+            and all(isinstance(g, list) for g in got_raw)
+            else set()
+        )
+        inter = len(exp_set & got_set)
+        p = inter / len(got_set) if got_set else 0.0
+        r = inter / len(exp_set) if exp_set else 0.0
+        return [(p, r, exp_set == got_set)]
 
-        # 3. 字符串字段（包含匹配）
+    def _match_str_fields(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> list[tuple[float, float, bool]]:
+        """v3.0.8: 字符串字段匹配 (expected_tool 等; 包含匹配)。"""
         str_fields = [
             ("expected_tool", "tool"),
             ("expected_root_cause", "root_cause"),
             ("expected_answer", "answer"),
         ]
+        out: list[tuple[float, float, bool]] = []
         for attr, key in str_fields:
             exp_str = getattr(case, attr, "")
             if not exp_str:
@@ -639,102 +681,106 @@ class ExamOrchestrator:
             else:
                 got = str(result.get(key, "")).lower()
             match = 1 if exp_str.lower() in got else 0
-            p_rates.append(match)
-            r_rates.append(match)
-            if not match:
-                em_all = 0
+            out.append((float(match), float(match), bool(match)))
+        return out
 
-        # bug_location 在 bugs[].location 里
-        if case.expected_bug_location:
-            bugs = result.get("bugs", [])
-            if isinstance(bugs, list):
-                loc_text = " ".join(
-                    str(b.get("location", "")) for b in bugs if isinstance(b, dict)
-                ).lower()
+    def _match_bug_location(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> list[tuple[float, float, bool]]:
+        """v3.0.8: bug_location 嵌套结构匹配 (bugs[].location)。"""
+        if not case.expected_bug_location:
+            return []
+        bugs = result.get("bugs", [])
+        if isinstance(bugs, list):
+            loc_text = " ".join(
+                str(b.get("location", "")) for b in bugs if isinstance(b, dict)
+            ).lower()
+        else:
+            loc_text = ""
+        match = 1 if case.expected_bug_location.lower() in loc_text else 0
+        return [(float(match), float(match), bool(match))]
+
+    def _match_step_count(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> list[tuple[float, float, bool]]:
+        """v3.0.8: int 字段匹配 (expected_step_count -> steps 长度)。"""
+        if not case.expected_step_count or case.expected_step_count <= 0:
+            return []
+        steps = result.get("steps", [])
+        got_count = len(steps) if isinstance(steps, list) else 0
+        match = 1 if got_count == case.expected_step_count else 0
+        return [(float(match), float(match), bool(match))]
+
+    def _match_function_args(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> list[tuple[float, float, bool]]:
+        """v3.0.8: P类 Tool 轴 function_calling 参数键值匹配 (ROADMAP-02)。"""
+        if not case.expected_function_args:
+            return []
+        args = result.get("arguments", {})
+        if not isinstance(args, dict):
+            args = {}
+        arg_hits = 0.0
+        for k, v in case.expected_function_args.items():
+            got_v = args.get(k)
+            if got_v is None:
+                continue
+            if v and str(v).lower() in str(got_v).lower():
+                arg_hits += 1.0
             else:
-                loc_text = ""
-            match = 1 if case.expected_bug_location.lower() in loc_text else 0
-            p_rates.append(match)
-            r_rates.append(match)
-            if not match:
-                em_all = 0
+                arg_hits += 0.5  # key 存在但 value 不符
+        arg_rate = arg_hits / len(case.expected_function_args)
+        return [(arg_rate, arg_rate, arg_rate >= 1.0)]
 
-        # 4. int 字段（expected_step_count -> 检查 steps 长度）
-        if case.expected_step_count and case.expected_step_count > 0:
-            steps = result.get("steps", [])
-            got_count = len(steps) if isinstance(steps, list) else 0
-            match = 1 if got_count == case.expected_step_count else 0
-            p_rates.append(match)
-            r_rates.append(match)
-            if not match:
-                em_all = 0
+    def _match_tool_sequence(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> list[tuple[float, float, bool]]:
+        """v3.0.8: expected_tool_sequence 有序子序列匹配 (tool_chaining)。"""
+        if not case.expected_tool_sequence:
+            return []
+        steps = result.get("steps", [])
+        got_tools: list[str] = []
+        if isinstance(steps, list):
+            for s in steps:
+                if isinstance(s, dict):
+                    t = s.get("tool") or s.get("function") or ""
+                    if t:
+                        got_tools.append(str(t).lower())
+                elif isinstance(s, str):
+                    got_tools.append(s.lower())
+        # 检查 expected 是否为 got 的有序子序列
+        seq_hits = 0
+        gi = 0
+        for et in case.expected_tool_sequence:
+            etl = et.lower()
+            while gi < len(got_tools) and got_tools[gi] != etl:
+                gi += 1
+            if gi < len(got_tools):
+                seq_hits += 1
+                gi += 1
+        seq_rate = seq_hits / len(case.expected_tool_sequence)
+        return [(seq_rate, seq_rate, seq_rate >= 1.0)]
 
-        # 4b. P类 Tool 轴字段 (ROADMAP-02)
-        # expected_function_args: function_calling 参数键值匹配
-        if case.expected_function_args:
-            args = result.get("arguments", {})
-            if not isinstance(args, dict):
-                args = {}
-            arg_hits = 0.0
-            for k, v in case.expected_function_args.items():
-                got_v = args.get(k)
-                if got_v is None:
-                    continue
-                if v and str(v).lower() in str(got_v).lower():
-                    arg_hits += 1.0
-                else:
-                    arg_hits += 0.5  # key 存在但 value 不符
-            arg_rate = arg_hits / len(case.expected_function_args)
-            p_rates.append(arg_rate)
-            r_rates.append(arg_rate)
-            if arg_rate < 1.0:
-                em_all = 0
-
-        # expected_tool_sequence: tool_chaining 有序子序列匹配
-        if case.expected_tool_sequence:
-            steps = result.get("steps", [])
-            got_tools: list[str] = []
-            if isinstance(steps, list):
-                for s in steps:
-                    if isinstance(s, dict):
-                        t = s.get("tool") or s.get("function") or ""
-                        if t:
-                            got_tools.append(str(t).lower())
-                    elif isinstance(s, str):
-                        got_tools.append(s.lower())
-            # 检查 expected 是否为 got 的有序子序列
-            seq_hits = 0
-            gi = 0
-            for et in case.expected_tool_sequence:
-                etl = et.lower()
-                while gi < len(got_tools) and got_tools[gi] != etl:
-                    gi += 1
-                if gi < len(got_tools):
-                    seq_hits += 1
-                    gi += 1
-            seq_rate = seq_hits / len(case.expected_tool_sequence)
-            p_rates.append(seq_rate)
-            r_rates.append(seq_rate)
-            if seq_rate < 1.0:
-                em_all = 0
-
-        # 5. expected_contains 关键词命中率（兜底，几乎所有 case 都有）
+    def _match_contains_keywords(
+        self,
+        case: ExamTestCase,
+        text: str,
+    ) -> list[tuple[float, float, bool]]:
+        """v3.0.8: expected_contains 关键词命中率 (兜底)。"""
         kws = list(case.expected_contains or [])
-        if kws:
-            hits = sum(1 for kw in kws if kw.lower() in text)
-            rate = hits / len(kws)
-            p_rates.append(rate)
-            r_rates.append(rate)
-            if hits != len(kws):
-                em_all = 0
-
-        if not p_rates:
-            return None
-
-        p = sum(p_rates) / len(p_rates)
-        r = sum(r_rates) / len(r_rates)
-        ed = round(max(1.0 - (p + r) / 2, 0.0), 3)
-        return (round(p, 3), round(r, 3), ed, em_all)
+        if not kws:
+            return []
+        hits = sum(1 for kw in kws if kw.lower() in text)
+        rate = hits / len(kws)
+        return [(rate, rate, hits == len(kws))]
 
     def _compute_speed(self) -> SpeedResult:
         latencies = self._all_latencies_ms
