@@ -79,15 +79,41 @@ class TestReconcileBlueprint:
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
         assert bfr.reconcile_blueprint_frontmatter("MOD-MISSING") == 3
 
-    def test_blueprint_file_not_exist_skip(self, bfr, monkeypatch):
-        """蓝图路径不为空但文件不存在 → 跳过（exit 0）"""
+    def test_blueprint_file_not_exist_auto_create(self, bfr, tmp_path, monkeypatch):
+        """蓝图路径不为空但文件不存在 → 自动创建最小蓝图（exit 0）"""
+        bp_path = tmp_path / "new_module" / "blueprint.md"
         conn = _mock_depgraph_conn({
-            "blueprint_id": "MOD-GHOST", "domain_id": "D_TEST",
+            "blueprint_id": "MOD-NEW", "domain_id": "D_TEST",
             "design_maturity": "design", "build_status": "planned",
-            "blueprint_path": "/nonexistent/path/blueprint.md",
+            "blueprint_path": str(bp_path),
         })
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
-        assert bfr.reconcile_blueprint_frontmatter("MOD-GHOST") == 0
+        assert bfr.reconcile_blueprint_frontmatter("MOD-NEW") == 0
+        # 文件应被创建
+        assert bp_path.exists()
+        content = bp_path.read_text(encoding="utf-8")
+        # 验证 frontmatter 4 核心字段
+        assert "module_id: MOD-NEW" in content
+        assert "responsibility_domain: D_TEST" in content
+        assert "design_maturity: design" in content
+        assert "build_status: planned" in content
+
+    def test_blueprint_path_no_extension_adds_md(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 无扩展名 → 自动补 .md 创建（DCR-005 合规）"""
+        # depgraph 中 blueprint_path 无扩展名（如 docs/03_modules/MOD-XXX/）
+        bp_path_no_ext = tmp_path / "docs" / "03_modules" / "MOD-NOEXT"
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-NOEXT", "domain_id": "D_TEST",
+            "design_maturity": "design", "build_status": "planned",
+            "blueprint_path": str(bp_path_no_ext),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        monkeypatch.setattr(bfr, "_REPO_ROOT", tmp_path)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-NOEXT") == 0
+        # 应创建 .md 文件而非无扩展名文件
+        expected = tmp_path / "docs" / "03_modules" / "MOD-NOEXT.md"
+        assert expected.exists()
+        assert not bp_path_no_ext.exists()  # 无扩展名文件不应存在
 
     def test_updates_design_maturity_if_present(self, bfr, tmp_path, monkeypatch):
         """frontmatter 有 design_maturity 字段时更新"""
@@ -119,3 +145,36 @@ class TestReconcileBlueprint:
         assert bfr.reconcile_blueprint_frontmatter("MOD-NOFM") == 0
         # 内容不应改变
         assert bp.read_text(encoding="utf-8") == "# Just a title\nNo frontmatter here\n"
+
+    def test_blueprint_path_empty_uses_naming_convention(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 为空但 docs/03_modules/<module_id>.md 存在 → 更新该文件"""
+        # 模拟 _REPO_ROOT/docs/03_modules/MOD-FALLBACK.md
+        repo_root = tmp_path
+        modules_dir = repo_root / "docs" / "03_modules"
+        modules_dir.mkdir(parents=True)
+        bp_file = modules_dir / "MOD-FALLBACK.md"
+        bp_file.write_text(
+            "---\nmodule_id: MOD-FALLBACK\nresponsibility_domain: D_OLD\n---\n# Test\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-FALLBACK", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": "",  # 空路径
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        monkeypatch.setattr(bfr, "_REPO_ROOT", repo_root)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-FALLBACK") == 0
+        content = bp_file.read_text(encoding="utf-8")
+        assert "responsibility_domain: D_NEW" in content
+
+    def test_blueprint_path_empty_and_no_convention_file_skip(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 为空且命名约定路径不存在 → 跳过（exit 0）"""
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-NOPATH", "domain_id": "D_TEST",
+            "design_maturity": "design", "build_status": "planned",
+            "blueprint_path": "",
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        monkeypatch.setattr(bfr, "_REPO_ROOT", tmp_path)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-NOPATH") == 0

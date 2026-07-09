@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] domain_mismatches>0 阻断 commit（passed=False）；orphans/state_drifts 保持 warn-only（passed=True）；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（logger.warning，return True）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
+# [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 四图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
 # [MODIFY-GUARD] gate_id="GATE-PANORAMA-ALIGNMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；domain_mismatches 阻断阈值=0（任何不一致即阻断）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -152,19 +152,38 @@ def make_panorama_alignment_gate() -> GateSpec:
         design_only_count = len(report.design_only_in_one)
 
         # 4a. 核心字段 domain_id 不一致 → 阻断 commit（ARCH-056 升级）
-        if domain_mismatch_count > 0:
+        #     ARCH-056 四图升级：只阻断三图（depgraph/dataflow/decision）内部的不一致；
+        #     blueprint 图的域不一致只 warn（blueprint 是 depgraph 的派生数据，
+        #     其不一致是同步延迟问题，需通过 sync_panorama_module.py 渐进修复）。
+        #     判定：三图内部不一致 = 三图中存在 ≥2 个不同的非空 domain；
+        #     blueprint-only = 三图 domain 一致，仅 blueprint 不同。
+        def _is_three_graph_internal(m: dict) -> bool:
+            three_graph_domains = {
+                v for v in (m.get("depgraph", "-"),
+                            m.get("dataflow", "-"),
+                            m.get("decision", "-"))
+                if v != "-"
+            }
+            return len(three_graph_domains) > 1
+
+        strict_mismatches = [
+            m for m in report.domain_mismatches if _is_three_graph_internal(m)
+        ]
+        if len(strict_mismatches) > 0:
             detail = (
-                f"核心字段 domain_id 不一致：{domain_mismatch_count} 处，"
+                f"核心字段 domain_id 不一致（三图内部）：{len(strict_mismatches)} 处，"
                 f"请运行 `python scripts/governance/sync_panorama_module.py --all` "
                 f"对齐四图后重试"
             )
             logger.error(
-                "GATE-PANORAMA-ALIGNMENT BLOCK: %s (orphans=%d, drifts=%d, design_only=%d)",
+                "GATE-PANORAMA-ALIGNMENT BLOCK: %s (orphans=%d, drifts=%d, design_only=%d, "
+                "blueprint_mismatches=%d)",
                 detail, orphan_count, drift_count, design_only_count,
+                domain_mismatch_count - len(strict_mismatches),
             )
             return False, detail
 
-        # 4b. orphans / state_drifts 保持 warn-only
+        # 4b. orphans / state_drifts / blueprint-only domain_mismatches 保持 warn-only
         warnings: list[str] = []
         if orphan_count > _ORPHAN_WARN_THRESHOLD:
             warnings.append(
@@ -173,6 +192,12 @@ def make_panorama_alignment_gate() -> GateSpec:
         if drift_count > _STATE_DRIFT_WARN_THRESHOLD:
             warnings.append(
                 f"状态漂移 {drift_count} > 阈值 {_STATE_DRIFT_WARN_THRESHOLD}"
+            )
+        blueprint_only_mismatches = domain_mismatch_count - len(strict_mismatches)
+        if blueprint_only_mismatches > 0:
+            warnings.append(
+                f"blueprint 域不一致 {blueprint_only_mismatches} 处（warn-only，"
+                f"运行 sync_panorama_module.py --all 对齐）"
             )
 
         if warnings:

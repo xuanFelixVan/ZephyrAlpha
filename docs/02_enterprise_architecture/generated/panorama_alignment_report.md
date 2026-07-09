@@ -1,287 +1,86 @@
-# 三图对齐报告 (Panorama Alignment Report)
+# 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-07-09 17:11:44
+- 生成时间: 2026-07-09 18:48:50
 - 数据源: depgraph (PostgreSQL)
-- 三图节点数: depgraph=4443 / dataflow=25 / decision=154
-- 问题总数: 4352
-  - 孤儿（仅一图）: 4302
-  - 状态漂移（design_maturity 不一致）: 6
-  - 域不一致（domain_id 不一致）: 0
-  - 设计态孤立（design 仅一图）: 44
+- 四图节点数: depgraph=140 / dataflow=166 / decision=296 / blueprint=109
+- 问题总数: 50
+  - 孤儿（仅一图）: 17
+  - 状态漂移（design_maturity 不一致）: 30
+  - 域不一致（domain_id 不一致）: 3
+  - 设计态孤立（design 仅一图）: 0
 
 ## 1. 孤儿节点（仅一图存在）
 
 | module_id | graph | entity_name |
 |---|---|---|
-| CFG-rule-enforcement-registry | depgraph | docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml |
-| CFG-rule-registry-collection | depgraph | docs/01_policies_and_standards/_registry/catalogs/rule_registry_collection.yaml |
-| CFG-scripts-registry | depgraph | docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml |
-| CFG-test-suite-registry | depgraph | docs/01_policies_and_standards/_registry/catalogs/test_suite_registry.yaml |
-| INFRA-DB-001 | depgraph | docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml |
-| INFRA-DB-002 | depgraph | docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml |
-| INFRA-DB-003 | depgraph | docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml |
-| INFRA-DB-006 | depgraph | docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml |
-| MOD-014 | depgraph | src/zephyr/infrastructure/observability/notifier.py |
-| MOD-014 | depgraph | src/zephyr/infrastructure/sla/sla_monitor.py |
-| MOD-AUTONOMY_CORE | depgraph | src/zephyr/autonomy_core/vibe_coding_quality_gate.py |
-| MOD-AUTONOMY_CORE | depgraph | src/zephyr/autonomy_core/__init__.py |
-| MOD-AUTONOMY_PERM | depgraph | src/zephyr/autonomy_perm/red_blue_validator/attack_registry.py |
-| MOD-AUTONOMY_PERM | depgraph | src/zephyr/autonomy_perm/red_blue_validator/bypass_recorder.py |
-| MOD-AUTONOMY_PERM | depgraph | src/zephyr/autonomy_perm/red_blue_validator/convergence_checker.py |
-| MOD-AUTONOMY_PERM | depgraph | src/zephyr/autonomy_perm/red_blue_validator/defense_runner.py |
-| MOD-AUTONOMY_PERM | depgraph | src/zephyr/autonomy_perm/red_blue_validator/constitution_guard.py |
-| MOD-AUTONOMY_PERM | depgraph | src/zephyr/autonomy_perm/red_blue_validator/game_day_runner.py |
-| MOD-BIZ-002 | depgraph | src/zephyr/trading/trading_contracts/portfolio/contracts/__init__.py |
-| MOD-CONTEXT_ENGINE | depgraph | docs/03_modules/_cross_layer/context_engine/blueprint.md |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_citation_walker.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_context_pipeline_red_blue.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_checkpoint_manager.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_complexity_budget.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_fragmentation_index.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_lsg_pattern_tracker.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_integrity_check.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_shadow_canary.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_staleness_manager.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_solo_dev_safety_net.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_verify_paths.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/autonomy/test_vector_bridge.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/ce/test_ce_bootstrap.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/ce/test_ce_explain_cli.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/ce/test_ce_vibe_shortcuts.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/ce/test_ce_playground_v2.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/cold/test_cold_start_booster.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/config/test_config_safety_guard.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/context/test_context_budget_tracker.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/context/test_context_debt_score.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/context/test_context_health_score.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/context/test_context_model_strategy.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/context/test_context_pipeline_auto.py |
-| MOD-CONTEXT_ENGINE | depgraph | tests/knowledge_engine/test_knowledge_distiller.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/ce_explain_cli.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/ce_bootstrap.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/atomic_injector.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/ce_file_lister.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/checkpoint_manager.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/cold_start_booster.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/ce_playground_v2.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/ce_vibe_shortcuts.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_assembler.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/contextual_fetch_api.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/complexity_budget.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_debt_score.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_budget.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_evaluator.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_evictor.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_budget_tracker.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_health_score.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_injector.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_model_strategy.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_playground.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_pipeline.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_outcome_tracker.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_pipeline_auto.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_rule_registry.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_rot_model.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/context_value_attribution.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/curation_loop.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/domain_decay_config.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/fallback_staleness_gate.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/diff_injector.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/memory_bank.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/diversity_constraint.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/integrity_check.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/mode_manager.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/position_optimizer.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/staleness_manager.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/shadow_canary.py |
-| MOD-CONTEXT_ENGINE | depgraph | src/zephyr/autonomy_core/context/vector_bridge.py |
-| MOD-CROSS_ASSET | depgraph | src/zephyr/cross_asset/ |
-| MOD-D5-ARCH-TOOLS | depgraph | tests/governance/test_query_module_panorama.py |
-| MOD-D5-ARCH-TOOLS | depgraph | scripts/governance/query_module_panorama.py |
-| MOD-DATABASE | depgraph | scripts/governance/meta/mutation_test_post_sync_validator.py |
-| MOD-DATABASE | depgraph | tests/db/test_db_transition.py |
-| MOD-DATABASE | depgraph | tests/db/test_db_query.py |
-| MOD-DATABASE | depgraph | tests/governance/data_layer/test_sqlite_schema_root.py |
-| MOD-DATABASE | depgraph | tests/governance/persistence/test_base_repo.py |
-| MOD-DATABASE | depgraph | tests/governance/shared/test_post_sync_validation.py |
-| MOD-DATABASE | depgraph | tests/io/test_depgraph_schema.py |
-| MOD-DATABASE | depgraph | tests/llm_security/test_db.py |
-| MOD-DATABASE | depgraph | tests/task/test_task_repo_auto_commit.py |
-| MOD-DIGITAL_TWIN | depgraph | src/zephyr/digital_twin/ |
-| MOD-FEEDBACK_LOOP | depgraph | docs/03_modules/_cross_layer/feedback_loop/blueprint.md |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/alert_dispatcher.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/db_writer.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/config.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/slo_manager.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/actors/saga_compensator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/collectors/feedback_collector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/collectors/metrics_collector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/collectors/__init__.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/emergent_behavior_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/anomaly_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/anomaly_clustering.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/flapping_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/heisenbug_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/infinite_loop_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/intermittent_failure_pattern.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/log_anomaly.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/synthetic_anomaly_generator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/silent_corruption_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/temporal_pattern.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/anomaly/__init__.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/action_efficacy_decay_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/agent_trajectory_anomaly_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/action_interaction_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/cross_signal_validator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/action_side_effect_cumulative_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/cross_system_correlator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/dependency_freshness_monitor.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/ensemble_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/external_validation_checkpoint.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/decision_provenance.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/external_health.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/fle_performance_regression_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/multi_signal_correlator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/rumor_noise_filter.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/trace_causal_bridge.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/traffic_replay_validator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/correlation/__init__.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/drift/concept_drift.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/drift/config_drift.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/drift/context_window_contamination_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/drift/diminishing_returns_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/drift/ensemble_drift.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/drift/gradual_poisoning_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/drift/trend_cycle_separator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/drift/__init__.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/alert_desensitization_curve.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/guard_cascade_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/guard_oscillation_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/placebo_action_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/self_audit.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/self_ha.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/positive_feedback_defense.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/self_diagnosis_data_leak_detector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/recursive_diagnosis_trust_evaluator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/temporal_coherence_of_self_model.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/blast_radius.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/capacity_forecast.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/blast_radius_budget.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/autoscale_remediation.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/guard/__init__.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/ebpf_monitor.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/chaos_engineering.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/maintenance_coordinator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/flag_lifecycle.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/metric_cardinality_guard.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/regulatory_audit.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/openfeature.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/otel_adapter.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/runbook_executor.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/resolution_tracker.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/version_migrator.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/detectors/reliability/__init__.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/adaptive_param_tuning.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/cognitive_load_budget.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/cognitive_load.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/collaborative_learning.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/confidence_decomposer.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/gamification.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/meta_guard_latency_budget.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/tone_adapter_v2.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/tone_adapter.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/__init__.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/auto_diagnosis.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/cognitive/socratic_questions.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/causal_inference_engine.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/diagnosis_engine.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/counterfactual.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/diagnosis_kpi.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/impact_predictor.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/incident_knowledge_injector.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/interactive_diagnosis.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/knowledge_bus_factor_monitor.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/knowledge_market.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/mtti_tracker.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/vertical_self_assessment.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/statistical_hygiene_auditor.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/nonstationary_effectiveness.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/health/action_composition_health_monitor.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/diagnosis/__init__.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/health/dr_resilience_metrics.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/health/fle_dogfood_monitor.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/health/self_benchmark.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/health/global_health_map.py |
-| MOD-FEEDBACK_LOOP | depgraph | src/zephyr/trading/feedback_loop/diagnosers/health/fle_self_slo_metrics.py |
-... 共 4302 行（仅展示前 200 行）
+| ARCH-BIZDB-001 | blueprint | _cross_layer/database/business_data_architecture.md |
+| C1-MARKET-CH | blueprint | _cross_layer/database/sub_blueprints/c1_market_clickhouse.md |
+| GOV-AI-ENG-ORC-001 | blueprint | _cross_layer/_b_track_interfaces/agent_orchestrator_interface.md |
+| GOV-AI-ENG-VMS-001 | blueprint | _cross_layer/_b_track_interfaces/vector_memory_service_interface.md |
+| MOD-003 | blueprint | _cross_layer/_b_track_interfaces/context_engine_interface.md |
+| MOD-013 | blueprint | _cross_layer/shared_core/contracts_blueprint.md |
+| MOD-015 | blueprint | _cross_layer/shared_core/shared_infra_blueprint.md |
+| MOD-DB_DEPGRAPH_PG | blueprint | _cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md |
+| MOD-DB_DEPGRAPH_PG | blueprint | _cross_layer/database/sub_blueprints/mod_inf_012b_p2_task_cards.md |
+| MOD-L00-002 | blueprint | _domain_data/data_source_capability_map.md |
+| MOD-L00-002 | blueprint | _domain_data/data_source_operation_manual.md |
+| MOD-L00-003 | blueprint | _domain_data/data_acquisition_plan.md |
+| MOD-MASTER-001 | blueprint | _master_blueprint/blueprint_agent_spec.md |
+| MOD-MASTER-002 | blueprint | _master_blueprint/blueprint_baseline.md |
+| MOD-MASTER-003 | blueprint | _master_blueprint/blueprint_capacity.md |
+| SYS-MASTER-001 | blueprint | _system_master/blueprint.md |
+| MOD-GOV-tests_coverage_gate | decision | layer:MOD-GOV-tests_coverage_gate |
 
 ## 2. 状态漂移（design_maturity 不一致）
 
-| module_id | depgraph | dataflow | decision |
-|---|---|---|---|
-| MOD-BT-001 | design | production | - |
-| MOD-L02-001 | prototype | production | production |
-| MOD-L04-001 | prototype | production | design |
-| MOD-L05-001 | prototype | production | design |
-| MOD-L06-001 | design | production | - |
-| MOD-MKT_DATA | prototype | production | production |
+| module_id | depgraph | dataflow | decision | blueprint |
+|---|---|---|---|---|
+| MOD-BT-001 | production | design | design | design |
+| MOD-GOV-019 | production | prototype | prototype | - |
+| MOD-GOV-SCRIPTS-ARCH | production | prototype | prototype | - |
+| MOD-GOV-SYNC-PANORAMA | production | prototype | prototype | - |
+| MOD-GOV-commit_gate_registry | production | prototype | prototype | - |
+| MOD-GOV-commit_gates | production | prototype | prototype | - |
+| MOD-GOV-rule_patterns | production | prototype | prototype | - |
+| MOD-GOV-session_worktree | production | prototype | prototype | - |
+| MOD-GOVERNANCE | production | design | design | design |
+| MOD-INF-002 | production | prototype | prototype |  |
+| MOD-INF-013 | prototype | production | production |  |
+| MOD-INF-015 | production | prototype | prototype |  |
+| MOD-INF-018 | production | prototype | prototype |  |
+| MOD-INF-019 | design | production | production | design |
+| MOD-INF-020 | design | prototype | prototype | design |
+| MOD-INF-022 | design | prototype | prototype | design |
+| MOD-INF-024 | production | design | design | design |
+| MOD-INF-025 | production | prototype | prototype |  |
+| MOD-INF-026 | production | prototype | prototype |  |
+| MOD-INF-037 | prototype | design | design | design |
+| MOD-L00-001 | prototype | design | design | design |
+| MOD-L02-001 | production | prototype | prototype |  |
+| MOD-L04-001 | prototype | prototype | design |  |
+| MOD-L05-001 | prototype | prototype | design |  |
+| MOD-L06-001 | production | prototype | prototype | design |
+| MOD-L08-001 | prototype | design | design | design |
+| MOD-LLM_SECURITY | production | prototype | prototype |  |
+| MOD-SECURITY | production | prototype | prototype | - |
+| SH-DB-002 | production | prototype | prototype | - |
+| SH-MAIN-001 | prototype | production | production | - |
 
 ## 3. 域不一致（domain_id 不一致）
 
-> 无域不一致。
+| module_id | depgraph | dataflow | decision | blueprint |
+|---|---|---|---|---|
+| MOD-INF-035 | D_GOV_SCRIPTS | - | - | auto_runtime_core |
+| MOD-INF-039 | D_GOVERNANCE | - | - | agent_orchestrator |
+| MOD-L08-001 | D_GOVERNANCE | - | - | D_FRONTEND |
 
 ## 4. 设计态孤立（design 仅一图）
 
-| module_id | graph | entity_name |
-|---|---|---|
-| MOD-CONTEXT_ENGINE | depgraph | docs/03_modules/_cross_layer/context_engine/blueprint.md |
-| MOD-CROSS_ASSET | depgraph | src/zephyr/cross_asset/ |
-| MOD-DIGITAL_TWIN | depgraph | src/zephyr/digital_twin/ |
-| MOD-FEEDBACK_LOOP | depgraph | docs/03_modules/_cross_layer/feedback_loop/blueprint.md |
-| MOD-GATE_ENGINE | depgraph | docs/03_modules/_cross_layer/gate_engine/blueprint.md |
-| MOD-GOV-ALIGN-PANORAMAS | depgraph | scripts/governance/d5_architecture/generators/ |
-| MOD-GOVERNANCE | depgraph | docs/03_modules/_domain_governance/blueprint.md |
-| MOD-INF-005 | depgraph | docs/03_modules/_domain_governance/governance_automation/blueprint.md |
-| MOD-INF-009 | depgraph | docs/03_modules/_cross_layer/pipeline/blueprint.md |
-| MOD-INF-011 | depgraph | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md |
-| MOD-INF-016 | depgraph | docs/03_modules/_cross_layer/shared_core/blueprint.md |
-| MOD-INF-017 | depgraph | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md |
-| MOD-INF-019 | depgraph | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md |
-| MOD-INF-020 | depgraph | docs/03_modules/_domain_governance/audit_trail/blueprint.md |
-| MOD-INF-021 | depgraph | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md |
-| MOD-INF-022 | depgraph | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md |
-| MOD-INF-023 | depgraph | docs/03_modules/_domain_governance/drift_detector/blueprint.md |
-| MOD-INF-024 | depgraph | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md |
-| MOD-INF-027 | depgraph | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md |
-| MOD-INF-028 | depgraph | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md |
-| MOD-INF-029 | depgraph | docs/03_modules/_cross_layer/orphan_judge/blueprint.md |
-| MOD-INF-030 | depgraph | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md |
-| MOD-INF-030 | depgraph | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md |
-| MOD-INF-031 | depgraph | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md |
-| MOD-INF-033 | depgraph | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md |
-| MOD-INF-034 | depgraph | docs/03_modules/_cross_layer/model_profiler/blueprint.md |
-| MOD-INF-036 | depgraph | docs/03_modules/_cross_layer/model_capability_exam/blueprint.md |
-| MOD-INF-037 | depgraph | docs/03_modules/_domain_governance/registry_governance/blueprint.md |
-| MOD-INF-039 | depgraph | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md |
-| MOD-INFRA_OPS | depgraph | src/zephyr/infra_ops/ |
-| MOD-L00-001 | depgraph | src/zephyr/governance/data_governance/miniqmt_provider.py/ |
-| MOD-L08-001 | depgraph | src/zephyr/frontend/dashboard/components/chart_factory.py/ |
-| MOD-L08-001 | depgraph | src/zephyr/frontend/dashboard/components/backtest_results.py/ |
-| MOD-L08-001 | depgraph | src/zephyr/frontend/dashboard/components/tick_replay.py/ |
-| MOD-L08-001 | depgraph | src/zephyr/frontend/dashboard/components/order_book.py/ |
-| MOD-L08-001 | depgraph | src/zephyr/frontend/dashboard/components/position_monitor.py/ |
-| MOD-L08-001 | depgraph | src/zephyr/frontend/dashboard/components/trade_panel.py/ |
-| MOD-MASTER_BLUEPRINT | depgraph | docs/03_modules/_master_blueprint/blueprint_agent_spec.md |
-| MOD-MASTER_BLUEPRINT | depgraph | docs/03_modules/_master_blueprint/blueprint.md |
-| MOD-PF_ALLOC | depgraph | src/zephyr/pf_alloc/ |
-| MOD-RESOURCE_OPTIMIZATION_ENGINE | depgraph | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md |
-| MOD-SIMULATION | depgraph | src/zephyr/simulation/ |
-| PLACEHOLDER-MOD-GOV-SYNC-PANORAMA | depgraph | scripts/governance/ |
-| SH-DB-001 | depgraph | docs/03_modules/_cross_layer/database/blueprint.md |
+> 无设计态孤立。
 
 ## 5. 处置建议
 
-- 孤儿节点：决定是否需在另两图登记对应 module_id，或在一图删除
+- 孤儿节点：决定是否需在另三图登记对应 module_id，或在一图删除
 - 状态漂移：以最成熟状态为准，统一更新（建议 production > prototype > design）
 - 域不一致：核对真源并统一 domain_id
-- 设计态孤立：评估设计态是否需要同步到另两图
+- 设计态孤立：评估设计态是否需要同步到另三图
