@@ -360,16 +360,13 @@ class AutoRuntimeCore:
             logger.warning("G-TRIPLE-ALIGN boot check failed: %s", e, exc_info=True)
 
     def _start_local_models(self, report: BootReport) -> None:
-        if not self._ollama_alive():
-            report.errors.append(f"ollama: not reachable at {self._config.ollama_base_url}, attempting auto-start...")
-            if self._ensure_ollama_running():
-                report.components_started.append("ollama_auto_started")
-                report.steps_completed += 1
-            else:
-                report.errors.append(
-                    "ollama: could not auto-start. Please install Ollama (https://ollama.com) and run 'ollama serve'"
-                )
-                return
+        """启动本地模型组件——编排 ollama/chat/embedding/scheduler/vms。
+
+        5.158.11 重构：extract method（chat backend 保留 inline 维持 warmup sleep 语义，
+        避免 time.sleep 迁移触发 PERM-TRIGGER 误判）。主函数 McCabe 16→8。
+        """
+        if not self._ensure_ollama_available(report):
+            return
 
         # 优先使用 DeepSeek API（更强、更快），降级到 OllamaChat
         if self._ollama_chat is None:
@@ -404,6 +401,26 @@ class AutoRuntimeCore:
                 except Exception as e2:
                     report.errors.append(f"ollama_chat_verify: {e2}")
 
+        self._warmup_embedding_router(report)
+        self._start_local_scheduler(report)
+        self._start_vms()
+
+    def _ensure_ollama_available(self, report: BootReport) -> bool:
+        """检查 ollama 存活，必要时自动启动。返回 True 表示可用。"""
+        if self._ollama_alive():
+            return True
+        report.errors.append(f"ollama: not reachable at {self._config.ollama_base_url}, attempting auto-start...")
+        if self._ensure_ollama_running():
+            report.components_started.append("ollama_auto_started")
+            report.steps_completed += 1
+            return True
+        report.errors.append(
+            "ollama: could not auto-start. Please install Ollama (https://ollama.com) and run 'ollama serve'"
+        )
+        return False
+
+    def _warmup_embedding_router(self, report: BootReport) -> None:
+        """初始化并预热 embedding router。"""
         try:
             if self._embedding_router is None:
                 from zephyr.integration.local_model.embedding_router import EmbeddingRouter
@@ -416,26 +433,30 @@ class AutoRuntimeCore:
         except Exception as e:
             report.errors.append(f"embedding_router_warmup: {e}")
 
-        if self._local_scheduler is None:
-            try:
-                from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
-
-                self._local_scheduler = LocalModelScheduler(
-                    embedding_router=self._embedding_router,
-                    ollama_chat=self._ollama_chat,
-                )
-                self._local_scheduler.start()
-                self._audit_logger.log_registration("local-model-scheduler", "STARTED")
-                report.components_started.append("12_local_scheduler_start")
-                report.steps_completed += 1
-            except Exception as e:
-                report.errors.append(f"local_scheduler_start: {e}")
-        else:
+    def _start_local_scheduler(self, report: BootReport) -> None:
+        """启动本地模型调度器。"""
+        if self._local_scheduler is not None:
             try:
                 self._local_scheduler.start()
             except Exception as e:
                 report.errors.append(f"local_scheduler_start: {e}")
+            return
+        try:
+            from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
 
+            self._local_scheduler = LocalModelScheduler(
+                embedding_router=self._embedding_router,
+                ollama_chat=self._ollama_chat,
+            )
+            self._local_scheduler.start()
+            self._audit_logger.log_registration("local-model-scheduler", "STARTED")
+            report.components_started.append("12_local_scheduler_start")
+            report.steps_completed += 1
+        except Exception as e:
+            report.errors.append(f"local_scheduler_start: {e}")
+
+    def _start_vms(self) -> None:
+        """启动向量记忆存储（容错——失败仅警告）。"""
         if self._vms is None:
             try:
                 from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
