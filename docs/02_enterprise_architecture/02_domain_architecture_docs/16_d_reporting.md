@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-09 17:02:36
+> 最后更新: 2026-07-09 17:06:40
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
-| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 6 | Cross-domain Outgoing | 6 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 9 | Prototype Modules | 9 |
@@ -85,8 +85,8 @@ graph TD
         src_zephyr_reporting_services_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
-    src_zephyr_reporting_init_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_init_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_SHARED
@@ -191,15 +191,17 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 2 个外部域直接连接（出边 6 条 + 入边 3 条 = 9 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 3 个外部域直接连接（出边 6 条 + 入边 4 条 = 10 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_REPORTING["D_REPORTING<br/>报告"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
+    D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
     D_REPORTING -->|6条 导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE -->|3条 导入依赖 / import_depends| D_REPORTING
+    D_AUDITTEST -->|1条 测试依赖 / test_depends| D_REPORTING
 ```
 
 ## 说明 / Notes

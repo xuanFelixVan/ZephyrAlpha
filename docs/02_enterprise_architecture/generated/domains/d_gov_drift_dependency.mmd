@@ -1,5 +1,5 @@
 %% D_GOV_DRIFT 域全景依赖图
-%% 生成时间: 2026-07-09 17:02:43
+%% 生成时间: 2026-07-09 17:06:46
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 1, 依赖边数: 13
 
@@ -13,6 +13,8 @@ graph TD
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
+    %% D_AUDITTEST -> D_GOV_DRIFT (1 条)
+    D_AUDITTEST[D_AUDITTEST] -->|runtime| docs_03_modules__domain_govern___drift_detector_blueprint_md
     %% D_AUTONOMY_CORE -> D_GOV_DRIFT (1 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| docs_03_modules__domain_govern___drift_detector_blueprint_md
     %% D_GOVERNANCE -> D_GOV_DRIFT (3 条)
@@ -21,12 +23,8 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|contract| docs_03_modules__domain_govern___drift_detector_blueprint_md
     %% D_GOV_ENFORCEMENT -> D_GOV_DRIFT (1 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|runtime| docs_03_modules__domain_govern___drift_detector_blueprint_md
-    %% D_INFRA_TELEMETRY -> D_GOV_DRIFT (1 条)
-    D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|runtime| docs_03_modules__domain_govern___drift_detector_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_DRIFT -> D_AUDITTEST (1 条)
-    docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_AUDITTEST[D_AUDITTEST]
     %% D_GOV_DRIFT -> D_GOVERNANCE (5 条)
     docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
     docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
@@ -35,6 +33,8 @@ graph TD
     docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
     %% D_GOV_DRIFT -> D_GOV_ENFORCEMENT (1 条)
     docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_GOV_DRIFT -> D_SECURITY (1 条)
+    docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_SECURITY[D_SECURITY]
 
     %% 统计
     %% 域内依赖: 0 条
