@@ -3580,6 +3580,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第85轮防复发gate落地（2026-07-09，Phase 6）**：NO-HIGH-COMPLEXITY gate(priority=85, AST检测新增函数McCabe循环复杂度>15) 已注册到GitCommitGateway. 防复发层就位——新AI写高复杂度函数(>15)将被commit-time硬阻断. 存量10项DEFERRED-PERMANENT维持(需人类架构师发起循环复杂度重构专项+回归测试覆盖先行). capability_canonical_file_registry.yaml已登记high_complexity_gate capability定义+creation_tokens. _diff_helpers.py新增_get_staged_py_files/_get_added_lines共享helper(降低4个新gate的_check复杂度<15, 避免NO-HIGH-COMPLEXITY自阻断).
 > **第86轮Phase 7a重构（2026-07-09）**：5.158.9 `resource_optimization._classify_pressure` 查表法重构完成. 13个连续if→9元组表+1个for循环, McCabe循环复杂度14→5. 行为等价验证通过(TestPressureClassification 13/13 PASSED, 覆盖NORMAL/WARNING/CRITICAL/EMERGENCY×memory/cpu/process+边界值). DEFERRED-PERMANENT 10→9(5.158.9清零).
 > **第89轮AST验证DRIFTED（2026-07-09，Phase 7d-pre）**：AST McCabe复算发现2项裁定值过时: 5.158.3 verdict_engine.evaluate 裁定17→实际8(_parse_event已提取为独立方法, 复杂度下沉) + 5.158.6 resource_optimization.snapshot 裁定12→实际9. 两者均低于NO-HIGH-COMPLEXITY gate阈值15, 标记DRIFTED(不再超标). DEFERRED-PERMANENT 9→7.
+> **第90轮Phase 7d重构（2026-07-09）**：5.158.10 `chaos_engine.inject` extract method重构完成. if/elif分发链→_dispatch_injection(McCabe=4) + except Exception路径→_handle_injection_failure(McCabe=3) + 未处理type前置检查. McCabe 20→15(低于gate阈值>15). 行为等价验证通过(TestChaosEngineInjectDirect 10新测试+15原有测试=25/25 PASSED, 覆盖直接inject_type调用/错误路径/_last_result/_injection_state/边界值). DEFERRED-PERMANENT 7→6(5.158.10清零).
 
 #### HIGH（1个）
 
@@ -3598,7 +3599,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\action_dispatcher.py:240` — `_search_replace_file` 复杂度12
 8. **[LOW]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\reconciler.py:300` — `_fix_dep_sync` 复杂度12
 9. **[FIXED-Phase7a]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:400` — `_classify_pressure` 13个连续if → 查表法重构(McCabe 14→5), TestPressureClassification 13/13 PASSED
-10. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\chaos_engine.py:130` — `inject` 7个return
+10. **[FIXED-Phase7d]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\fault_tolerance\chaos_engine.py:148` — `inject` McCabe 20→15(extract method: _dispatch_injection+_handle_injection_failure), 25/25 tests PASSED
 11. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\auto_runtime_core.py:334` — `_start_local_models` 4个串联try/except
 12. **[LOW]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:439` — `_compute_metrics` 6路if分支
 

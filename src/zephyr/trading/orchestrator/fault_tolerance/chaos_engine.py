@@ -119,6 +119,14 @@ INJECTION_POINTS: Final[list[dict[str, Any]]] = [
 
 _ACTIVE_LATENCY_TIMERS: list[threading.Timer] = []
 
+# Phase 7d: inject() 处理的 InjectType 子集（7 个枚举值中仅 4 个有 _inject_* 实现）
+_HANDLED_INJECT_TYPES: Final[frozenset[InjectType]] = frozenset({
+    InjectType.LATENCY,
+    InjectType.ERROR,
+    InjectType.CRASH,
+    InjectType.EXIT_CODE,
+})
+
 
 def _cleanup_latency_timers() -> None:
     for timer in _ACTIVE_LATENCY_TIMERS:
@@ -159,24 +167,18 @@ class ChaosEngine:
         except ValueError:
             return point is not None
 
+        # Phase 7d: 未处理的 InjectType 前置检查（原 else 分支提取）
+        if inject_type not in _HANDLED_INJECT_TYPES:
+            if point is not None:
+                return True
+            raise ChaosInjectError(f"Unknown injection type: {injection_type_or_point}")
+
         _cleanup_latency_timers()
 
         start = time.perf_counter()
 
         try:
-            if inject_type is InjectType.LATENCY:
-                result = self._inject_latency(delay_ms, target)
-            elif inject_type is InjectType.ERROR:
-                result = self._inject_error(target)
-            elif inject_type is InjectType.CRASH:
-                result = self._inject_crash(target)
-            elif inject_type is InjectType.EXIT_CODE:
-                result = self._inject_exit_code(target)
-            else:
-                if point is not None:
-                    return True
-                raise ChaosInjectError(f"Unknown injection type: {injection_type_or_point}")  # 5.99.13 修复: %格式化改f-string统一
-
+            result = self._dispatch_injection(inject_type, delay_ms, target)
             result.duration_ms = (time.perf_counter() - start) * 1000
             with self._lock:  # 5.172.M13 修复: _last_result 赋值移入锁内, 与 cleanup/verify 读取一致
                 self._last_result = result
@@ -197,24 +199,43 @@ class ChaosEngine:
                 return True
             raise
         except Exception as exc:
-            if point is not None:
-                return True
-            elapsed = (time.perf_counter() - start) * 1000
-            result = InjectionResult(
-                injected=False,
-                injection_type=injection_type_or_point,
-                target=target,
-                duration_ms=elapsed,
-                error_message=str(exc),
-            )
-            with self._lock:  # 5.172.M13 修复: _last_result 赋值移入锁内, 与 cleanup/verify 读取一致
-                self._last_result = result
-            logger.error(
-                "Chaos inject failed type=%s: %s",
-                injection_type_or_point,
-                exc,
-            )
-            return result
+            return self._handle_injection_failure(exc, point, target, injection_type_or_point, start)
+
+    def _dispatch_injection(
+        self, inject_type: InjectType, delay_ms: int, target: str
+    ) -> InjectionResult:
+        """Phase 7d: if/elif 分发链提取（调用前需确保 inject_type 在 _HANDLED_INJECT_TYPES 中）"""
+        if inject_type is InjectType.LATENCY:
+            return self._inject_latency(delay_ms, target)
+        if inject_type is InjectType.ERROR:
+            return self._inject_error(target)
+        if inject_type is InjectType.CRASH:
+            return self._inject_crash(target)
+        return self._inject_exit_code(target)
+
+    def _handle_injection_failure(
+        self, exc: Exception, point: dict | None, target: str,
+        injection_type_or_point: str, start: float,
+    ) -> InjectionResult | bool:
+        """Phase 7d: except Exception 路径提取"""
+        if point is not None:
+            return True
+        elapsed = (time.perf_counter() - start) * 1000
+        result = InjectionResult(
+            injected=False,
+            injection_type=injection_type_or_point,
+            target=target,
+            duration_ms=elapsed,
+            error_message=str(exc),
+        )
+        with self._lock:
+            self._last_result = result
+        logger.error(
+            "Chaos inject failed type=%s: %s",
+            injection_type_or_point,
+            exc,
+        )
+        return result
 
     def _inject_latency(self, delay_ms: int, target: str) -> InjectionResult:
         time.sleep(delay_ms / 1000.0)
