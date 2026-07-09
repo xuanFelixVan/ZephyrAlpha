@@ -52,6 +52,73 @@ from zephyr.governance.rule_bridge.git_commit_gateway import (  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
+# commit 结果状态查表：CommitStatus → (exit_code, line_template, help_text, to_stdout)
+# line_template 使用 {message}/{commit_hash}/{stash_ref} 占位符；
+# 未列出的状态走 _COMMIT_RESULT_DEFAULT（exit 1, FAILED）。
+_COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
+    CommitStatus.OK: (0, "OK: {message} (hash={commit_hash})", None, True),
+    CommitStatus.NOTHING_TO_COMMIT: (1, "SKIP: {message}", None, True),
+    CommitStatus.LOCK_TIMEOUT: (2, "LOCK_TIMEOUT: {message}", None, False),
+    CommitStatus.STASH_CONFLICT: (
+        2,
+        "STASH_CONFLICT: {message}",
+        "  stash_ref={stash_ref} (数据保留在 stash，未丢失)",
+        False,
+    ),
+    CommitStatus.PROMOTION_BLOCKED: (
+        3,
+        "PROMOTION_BLOCKED: {message}",
+        "  如确认晋升到永久区，请在终端手动添加 --allow-promote 重新执行。",
+        False,
+    ),
+    CommitStatus.SSOT_VIOLATION: (
+        4,
+        "SSOT_VIOLATION: {message}",
+        "  新增文件声明了已有 module_path——请扩展已有文件而非新建。",
+        False,
+    ),
+    CommitStatus.HELD_OVERLAP_VIOLATION: (
+        5,
+        "HELD_OVERLAP_VIOLATION: {message}",
+        "  目标文件被其他活跃 session 持有（搭便车防护）。"
+        "  如确认需提交，请在终端手动添加 --allow-overlap 重新执行。",
+        False,
+    ),
+    CommitStatus.CLAIM_REQUIRED_VIOLATION: (
+        6,
+        "CLAIM_REQUIRED_VIOLATION: {message}",
+        "  session 已注册但目标文件未 claim_files（红蓝对抗红攻1治本）。"
+        "  commit 前 MUST 调 claim_files 声明工作范围（AGENTS.md §8 L284）。"
+        "  如确认需提交，请在终端手动添加 --allow-overlap 重新执行。",
+        False,
+    ),
+}
+# 默认 fallback：COMMIT_FAILED / METADATA_VIOLATION / NAMING_VIOLATION / 等
+_COMMIT_RESULT_DEFAULT: tuple[int, str, str | None, bool] = (1, "FAILED: {message}", None, False)
+
+
+def _format_commit_result(result) -> int:
+    """查表分发 commit 结果状态 → 统一 print + return exit_code。
+
+    替代原 main() 中 9 路 if/elif 状态分发（L340-386），复杂度 5。
+    """
+    exit_code, line_template, help_text, to_stdout = _COMMIT_RESULT_MAP.get(
+        result.status, _COMMIT_RESULT_DEFAULT
+    )
+    out = sys.stdout if to_stdout else sys.stderr
+    line = line_template.format(
+        message=result.message,
+        commit_hash=(result.commit_hash[:8] if result.commit_hash else ""),
+        stash_ref=getattr(result, "stash_ref", ""),
+    )
+    print(line, file=out)
+    if help_text:
+        print(
+            help_text.format(stash_ref=getattr(result, "stash_ref", "")),
+            file=out,
+        )
+    return exit_code
+
 
 def _parse_files(files_arg: str) -> list[str]:
     """解析逗号分隔的文件列表，归一化为绝对路径。"""
@@ -113,6 +180,130 @@ def _check_staged_delete_fallback(
             if chk2.returncode != 0:
                 truly_missing.append(f)
     return truly_missing, missing
+
+
+def _validate_reconciler_verify(
+    args, is_pure_claim: bool, message: str, project_root: str
+) -> tuple[int | None, str]:
+    """reconciler-verify 模式前置校验（豁免 worktree 君子协定的三重防护）。
+
+    提取自原 main() L246-299，复杂度 10。
+
+    Returns:
+        (exit_code, message) — exit_code 非 None 时 main 应立即 return；
+        message 为可能追加 [RECONCILER-VERIFY] 标记后的新 message。
+    """
+    if not args.reconciler_verify:
+        return None, message
+
+    # 裁定 2026-07-02：reconciler 操作主分支数据无法在 worktree 内运行，验证场景豁免君子协定，
+    # 但须三重防护覆盖搭便车风险：干净环境 + 单 session + claim_files 全部成功。
+    # 互斥校验：reconciler-verify 是 commit 场景，与 claim-only/release-only 互斥
+    if is_pure_claim:
+        print("ERROR: --reconciler-verify 与 --claim-only/--release-only 互斥", file=sys.stderr)
+        return 1, message
+    # 条件1：主工作区必须 clean（无搭便车窗口——共享 index 下 dirty 工作区有污染风险）
+    import subprocess as _rv_sp
+    status_r = _rv_sp.run(
+        ["git", "status", "--short"],
+        capture_output=True, text=True, cwd=project_root,
+        encoding="utf-8", errors="replace",
+    )
+    if status_r.returncode != 0:
+        print(f"ERROR: --reconciler-verify: git status 检查失败: {status_r.stderr.strip()}",
+              file=sys.stderr)
+        return 1, message
+    if status_r.stdout.strip():
+        print(
+            "ERROR: --reconciler-verify: 主工作区不 clean（有未提交改动），存在搭便车风险。\n"
+            "请先 commit/stash 其他改动或等待其他 session 完成。\n"
+            f"git status --short 输出:\n{status_r.stdout.strip()}",
+            file=sys.stderr,
+        )
+        return 1, message
+    # 条件2：无其他活跃 session（除非 --allow-concurrent 逃生通道）
+    if not args.allow_concurrent:
+        try:
+            from zephyr.security.access_control.session_concurrency import SessionRegistry
+            _rv_reg = SessionRegistry(project_root)
+            _rv_active = _rv_reg.list_active()
+            # list_active 返回 list[SessionInfo]（dataclass），用属性而非 dict.get
+            _rv_others = [s for s in _rv_active if s.pid != os.getpid()]
+            if _rv_others:
+                print(
+                    f"ERROR: --reconciler-verify: 检测到 {len(_rv_others)} 个其他活跃 session，"
+                    f"违反单 session 诊断场景约束。sessions: "
+                    f"{[s.session_id for s in _rv_others]}\n"
+                    "如确认需并发验证，用 --allow-concurrent 逃生通道。",
+                    file=sys.stderr,
+                )
+                return 1, message
+        except Exception as e:
+            print(f"WARN: --reconciler-verify: session 检查异常（降级放行）: {e}", file=sys.stderr)
+    # 条件3：--allow-overlap 与 reconciler-verify 互斥（claim_files 必须全部成功）
+    if args.allow_overlap:
+        print(
+            "ERROR: --reconciler-verify 与 --allow-overlap 互斥——验证场景 claim_files 必须全部成功，"
+            "不允许搭便车逃生通道。",
+            file=sys.stderr,
+        )
+        return 1, message
+    # 自动追加 [RECONCILER-VERIFY] 标记（供 GATE-COMMIT-GW-AUDIT 事后审计追溯豁免通道使用，
+    # 不依赖人手动加——形成"事前三重校验 + 事后审计追溯"闭环）
+    message = f"{message} [RECONCILER-VERIFY]"
+    return None, message
+
+
+def _handle_pure_claim(gw, args, files: list[str]) -> int | None:
+    """claim-only / release-only 快速路径（claim 前移协议，不进入 commit 流程）。
+
+    提取自原 main() L301-315，复杂度 4。
+
+    Returns:
+        exit_code — 非 None 时 main 应立即 return；None 表示非快速路径，继续标准流程。
+    """
+    if args.release_only:
+        gw.release_files(args.session, files)
+        print(f"RELEASED: {len(files)} files (session={args.session})")
+        return 0
+    if args.claim_only:
+        claimed = gw.claim_files(args.session, files)
+        conflicts = [f for f in files if f not in claimed]
+        if conflicts:
+            print(f"CONFLICT: {len(conflicts)} files held by other session: {conflicts}", file=sys.stderr)
+            print(f"CLAIMED: {len(claimed)}/{len(files)} files (session={args.session})")
+            return 7
+        print(f"CLAIMED: {len(claimed)}/{len(files)} files (session={args.session})")
+        return 0
+    return None
+
+
+def _parse_message(args) -> tuple[int | None, str, bool]:
+    """解析 commit message（claim-only/release-only 时不需要 message）。
+
+    提取自原 main() message 解析段，复杂度 7。
+
+    Returns:
+        (exit_code, message, is_pure_claim) — exit_code 非 None 时 main 应立即 return。
+    """
+    is_pure_claim = args.claim_only or args.release_only
+    if is_pure_claim:
+        return None, "", True
+    if args.message_file:
+        try:
+            return None, Path(args.message_file).read_text(encoding="utf-8"), False
+        except (OSError, UnicodeDecodeError) as e:
+            print(f"ERROR: --message-file 读取失败: {e}", file=sys.stderr)
+            return 1, "", False
+    if args.message:
+        message = args.message
+    else:
+        print("ERROR: 必须提供 --message 或 --message-file", file=sys.stderr)
+        return 1, "", False
+    if not message.strip():
+        print("ERROR: message 不能为空", file=sys.stderr)
+        return 1, "", False
+    return None, message, False
 
 
 def main() -> int:
@@ -200,24 +391,10 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    # message 解析：claim-only / release-only 时不需要 message
-    is_pure_claim = args.claim_only or args.release_only
-    if is_pure_claim:
-        message = ""
-    elif args.message_file:
-        try:
-            message = Path(args.message_file).read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError) as e:
-            print(f"ERROR: --message-file 读取失败: {e}", file=sys.stderr)
-            return 1
-    elif args.message:
-        message = args.message
-    else:
-        print("ERROR: 必须提供 --message 或 --message-file", file=sys.stderr)
-        return 1
-    if not is_pure_claim and not message.strip():
-        print("ERROR: message 不能为空", file=sys.stderr)
-        return 1
+    # message 解析（claim-only / release-only 时不需要 message）
+    msg_exit, message, is_pure_claim = _parse_message(args)
+    if msg_exit is not None:
+        return msg_exit
 
     files = _parse_files(args.files)
     if not files:
@@ -240,79 +417,17 @@ def main() -> int:
         print(f"ERROR: GitCommitGateway 初始化失败: {e}", file=sys.stderr)
         return 2
 
-    # reconciler-verify 模式前置校验（豁免 worktree 君子协定的条件）
-    # 裁定 2026-07-02：reconciler 操作主分支数据无法在 worktree 内运行，验证场景豁免君子协定，
-    # 但须三重防护覆盖搭便车风险：干净环境 + 单 session + claim_files 全部成功。
-    if args.reconciler_verify:
-        # 互斥校验：reconciler-verify 是 commit 场景，与 claim-only/release-only 互斥
-        if is_pure_claim:
-            print("ERROR: --reconciler-verify 与 --claim-only/--release-only 互斥", file=sys.stderr)
-            return 1
-        # 条件1：主工作区必须 clean（无搭便车窗口——共享 index 下 dirty 工作区有污染风险）
-        import subprocess as _rv_sp
-        status_r = _rv_sp.run(
-            ["git", "status", "--short"],
-            capture_output=True, text=True, cwd=args.project_root,
-            encoding="utf-8", errors="replace",
-        )
-        if status_r.returncode != 0:
-            print(f"ERROR: --reconciler-verify: git status 检查失败: {status_r.stderr.strip()}",
-                  file=sys.stderr)
-            return 1
-        if status_r.stdout.strip():
-            print(
-                "ERROR: --reconciler-verify: 主工作区不 clean（有未提交改动），存在搭便车风险。\n"
-                "请先 commit/stash 其他改动或等待其他 session 完成。\n"
-                f"git status --short 输出:\n{status_r.stdout.strip()}",
-                file=sys.stderr,
-            )
-            return 1
-        # 条件2：无其他活跃 session（除非 --allow-concurrent 逃生通道）
-        if not args.allow_concurrent:
-            try:
-                from zephyr.security.access_control.session_concurrency import SessionRegistry
-                _rv_reg = SessionRegistry(args.project_root)
-                _rv_active = _rv_reg.list_active()
-                # list_active 返回 list[SessionInfo]（dataclass），用属性而非 dict.get
-                _rv_others = [s for s in _rv_active if s.pid != os.getpid()]
-                if _rv_others:
-                    print(
-                        f"ERROR: --reconciler-verify: 检测到 {len(_rv_others)} 个其他活跃 session，"
-                        f"违反单 session 诊断场景约束。sessions: "
-                        f"{[s.session_id for s in _rv_others]}\n"
-                        "如确认需并发验证，用 --allow-concurrent 逃生通道。",
-                        file=sys.stderr,
-                    )
-                    return 1
-            except Exception as e:
-                print(f"WARN: --reconciler-verify: session 检查异常（降级放行）: {e}", file=sys.stderr)
-        # 条件3：--allow-overlap 与 reconciler-verify 互斥（claim_files 必须全部成功）
-        if args.allow_overlap:
-            print(
-                "ERROR: --reconciler-verify 与 --allow-overlap 互斥——验证场景 claim_files 必须全部成功，"
-                "不允许搭便车逃生通道。",
-                file=sys.stderr,
-            )
-            return 1
-        # 自动追加 [RECONCILER-VERIFY] 标记（供 GATE-COMMIT-GW-AUDIT 事后审计追溯豁免通道使用，
-        # 不依赖人手动加——形成"事前三重校验 + 事后审计追溯"闭环）
-        message = f"{message} [RECONCILER-VERIFY]"
+    # reconciler-verify 模式前置校验（豁免 worktree 君子协定的三重防护）
+    rv_exit, message = _validate_reconciler_verify(
+        args, is_pure_claim, message, args.project_root
+    )
+    if rv_exit is not None:
+        return rv_exit
 
     # claim-only / release-only 快速路径（claim 前移协议，不进入 commit 流程）
-    if args.release_only:
-        gw.release_files(args.session, files)
-        print(f"RELEASED: {len(files)} files (session={args.session})")
-        return 0
-
-    if args.claim_only:
-        claimed = gw.claim_files(args.session, files)
-        conflicts = [f for f in files if f not in claimed]
-        if conflicts:
-            print(f"CONFLICT: {len(conflicts)} files held by other session: {conflicts}", file=sys.stderr)
-            print(f"CLAIMED: {len(claimed)}/{len(files)} files (session={args.session})")
-            return 7
-        print(f"CLAIMED: {len(claimed)}/{len(files)} files (session={args.session})")
-        return 0
+    pc_exit = _handle_pure_claim(gw, args, files)
+    if pc_exit is not None:
+        return pc_exit
 
     # 标准路径：claim → commit → release（claim 前移协议下 Edit 前已 claim，此处幂等）
     claimed = gw.claim_files(args.session, files)
@@ -337,53 +452,7 @@ def main() -> int:
     finally:
         gw.release_files(args.session, claimed)
 
-    if result.status == CommitStatus.OK:
-        print(f"OK: {result.message} (hash={result.commit_hash[:8]})")
-        return 0
-    elif result.status == CommitStatus.NOTHING_TO_COMMIT:
-        print(f"SKIP: {result.message}")
-        return 1
-    elif result.status == CommitStatus.LOCK_TIMEOUT:
-        print(f"LOCK_TIMEOUT: {result.message}", file=sys.stderr)
-        return 2
-    elif result.status == CommitStatus.STASH_CONFLICT:
-        print(f"STASH_CONFLICT: {result.message}", file=sys.stderr)
-        print(f"  stash_ref={result.stash_ref} (数据保留在 stash，未丢失)", file=sys.stderr)
-        return 2
-    elif result.status == CommitStatus.PROMOTION_BLOCKED:
-        print(f"PROMOTION_BLOCKED: {result.message}", file=sys.stderr)
-        print(
-            "  如确认晋升到永久区，请在终端手动添加 --allow-promote 重新执行。",
-            file=sys.stderr,
-        )
-        return 3
-    elif result.status == CommitStatus.SSOT_VIOLATION:
-        print(f"SSOT_VIOLATION: {result.message}", file=sys.stderr)
-        print(
-            "  新增文件声明了已有 module_path——请扩展已有文件而非新建。",
-            file=sys.stderr,
-        )
-        return 4
-    elif result.status == CommitStatus.HELD_OVERLAP_VIOLATION:
-        print(f"HELD_OVERLAP_VIOLATION: {result.message}", file=sys.stderr)
-        print(
-            "  目标文件被其他活跃 session 持有（搭便车防护）。"
-            "  如确认需提交，请在终端手动添加 --allow-overlap 重新执行。",
-            file=sys.stderr,
-        )
-        return 5
-    elif result.status == CommitStatus.CLAIM_REQUIRED_VIOLATION:
-        print(f"CLAIM_REQUIRED_VIOLATION: {result.message}", file=sys.stderr)
-        print(
-            "  session 已注册但目标文件未 claim_files（红蓝对抗红攻1治本）。"
-            "  commit 前 MUST 调 claim_files 声明工作范围（AGENTS.md §8 L284）。"
-            "  如确认需提交，请在终端手动添加 --allow-overlap 重新执行。",
-            file=sys.stderr,
-        )
-        return 6
-    else:  # COMMIT_FAILED / METADATA_VIOLATION
-        print(f"FAILED: {result.message}", file=sys.stderr)
-        return 1
+    return _format_commit_result(result)
 
 
 if __name__ == "__main__":
