@@ -92,6 +92,330 @@ from zephyr.shared.utils.time_utils import now_iso
 from zephyr.shared.schema.task_types import Task, TaskCard, TaskNamespace, TaskStatus
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
+
+# 5.160.1 修复：SQL常量集中化（72处裸SQL提取为模块级常量）
+
+SQL_SELECT_TASKS_SORTED = "SELECT * FROM tasks WHERE {where_sql} ORDER BY updated_at DESC LIMIT ?"
+SQL_INSERT_EVENTS = """
+            INSERT INTO events
+                (event_id, event_type, payload, task_id, session_id, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """
+SQL_SELECT_TASKS_BY_ID = "SELECT * FROM tasks WHERE task_id = ?"
+SQL_SELECT_TASKS_ACTIVE_BY_STATUS = "SELECT task_id, files_in_scope FROM tasks WHERE status IN ('READY', 'IN_PROGRESS') AND is_deleted = 0"
+SQL_SELECT_TASKS_ACTIVE_BY_ID = "SELECT * FROM tasks WHERE task_id = ? AND is_deleted = 0"
+SQL_SELECT_TASKS_ACTIVE = "SELECT task_id FROM tasks WHERE is_deleted = 0 AND depends_on LIKE ?"
+SQL_SELECT_TASKS_ACTIVE_BY_STATUS_SORTED = "SELECT * FROM tasks WHERE status = ? AND is_deleted = 0 ORDER BY phase ASC, updated_at DESC"
+SQL_SELECT_TASKS_ACTIVE_BY_PHASE_SORTED = "SELECT * FROM tasks WHERE phase = ? AND is_deleted = 0 ORDER BY status ASC, task_id ASC"
+SQL_SELECT_TASKS_ACTIVE_BY_SESSION_SORTED = "SELECT * FROM tasks WHERE session_id = ? AND is_deleted = 0 ORDER BY updated_at DESC"
+SQL_SELECT_TASKS_ACTIVE_COUNT_BY_STATUS = "SELECT COUNT(*) FROM tasks WHERE status = ? AND session_id = ? AND is_deleted = 0"
+SQL_SELECT_TASKS_ACTIVE_BY_NAMESPACE_SORTED = "SELECT * FROM tasks WHERE namespace = ? AND is_deleted = 0 ORDER BY seq ASC"
+SQL_SELECT_TASK_FILES_BY_ID_SORTED = "SELECT file_path, role FROM task_files WHERE task_id = ? ORDER BY role, file_path"
+SQL_SELECT_TASK_FILES_BY_FILE_PATH_SORTED = "SELECT task_id FROM task_files WHERE file_path = ? ORDER BY task_id"
+SQL_SELECT_TASKS_ACTIVE_BY_STATUS_SORTED_2 = """
+            SELECT * FROM tasks
+            WHERE status IN ('IN_PROGRESS','READY','RETRY','WAITING')
+              AND is_deleted = 0
+            ORDER BY phase ASC, updated_at DESC
+            """
+SQL_SELECT_TASKS_ACTIVE_COUNT_GROUPED = "SELECT status, COUNT(*) AS cnt FROM tasks WHERE is_deleted = 0 GROUP BY status"
+SQL_SELECT_TASKS_ACTIVE_SORTED = """
+            SELECT * FROM tasks
+            WHERE is_deleted = 0
+              AND json_valid(depends_on)
+              AND EXISTS (
+                  SELECT 1 FROM json_each(depends_on)
+                  WHERE value = ?
+              )
+            ORDER BY phase ASC, updated_at DESC
+            """
+SQL_SELECT_TASKS_ACTIVE_SORTED_2 = """
+            SELECT * FROM tasks
+            WHERE is_deleted = 0
+              AND json_valid(tags)
+              AND EXISTS (
+                  SELECT 1 FROM json_each(tags)
+                  WHERE value = ?
+              )
+            ORDER BY phase ASC, updated_at DESC
+            """
+SQL_SELECT_TASKS_ACTIVE_SORTED_3 = """
+            SELECT * FROM tasks
+            WHERE is_deleted = 0
+              AND json_valid(blocked_by)
+              AND EXISTS (
+                  SELECT 1 FROM json_each(blocked_by)
+                  WHERE value = ?
+              )
+            ORDER BY phase ASC, updated_at DESC
+            """
+SQL_SELECT_SQLITE_MASTER = "SELECT name FROM sqlite_master WHERE type='table' AND name='tasks_fts'"
+SQL_INSERT_TASKS_COUNT = """
+                INSERT INTO tasks (
+                    task_id, namespace, seq, title, status, priority, phase,
+                    execution_model, model_rationale, fallback_model,
+                    safety_level, directive, idempotent, classification,
+                    evolution_policy, estimate_hours, actual_hours,
+                    files_in_scope, deliverables, acceptance,
+                    depends_on, tags, session_id, waiting_for, ready_at,
+                    completed_at, created_at, updated_at,
+                    source_blueprint, source_section, description,
+                    upstream_files, downstream_outputs, allowed_touch,
+                    forbidden_touch, applicable_rules, context_assembly_manifest,
+                    rollback_instructions, estimated_tokens, timeout_minutes,
+                    completed_gates, blocked_gates, assigned_pipeline,
+                    pipeline_modules, blocked_by, artifact_paths,
+                    audit_findings, ke_entries, ai_autonomy_level,
+                    autonomy_checklist, construction_status, verification_status,
+                    schema_version, approval_required, priority_proposed,
+                    rejection_cooldown_until, block_sessions_count,
+                    post_sync_standard, post_sync_specific, depgraph_nodes,
+                    root_cause_analysis, pipeline_task_type, target_layer,
+                    estimated_complexity
+                ) VALUES (
+                    :task_id, :namespace, :seq, :title, :status, :priority, :phase,
+                    :execution_model, :model_rationale, :fallback_model,
+                    :safety_level, :directive, :idempotent, :classification,
+                    :evolution_policy, :estimate_hours, :actual_hours,
+                    :files_in_scope, :deliverables, :acceptance,
+                    :depends_on, :tags, :session_id, :waiting_for, :ready_at,
+                    :completed_at, :created_at, :updated_at,
+                    :source_blueprint, :source_section, :description,
+                    :upstream_files, :downstream_outputs, :allowed_touch,
+                    :forbidden_touch, :applicable_rules, :context_assembly_manifest,
+                    :rollback_instructions, :estimated_tokens, :timeout_minutes,
+                    :completed_gates, :blocked_gates, :assigned_pipeline,
+                    :pipeline_modules, :blocked_by, :artifact_paths,
+                    :audit_findings, :ke_entries, :ai_autonomy_level,
+                    :autonomy_checklist, :construction_status, :verification_status,
+                    :schema_version, :approval_required, :priority_proposed,
+                    :rejection_cooldown_until, :block_sessions_count,
+                    :post_sync_standard, :post_sync_specific, :depgraph_nodes,
+                    :root_cause_analysis, :pipeline_task_type, :target_layer,
+                    :estimated_complexity
+                )
+                """
+SQL_UPDATE_TASKS_BY_ID = "UPDATE tasks SET {set_clause} WHERE task_id = ?"
+SQL_UPDATE_TASKS_BY_ID_VERIFICATION_STATUS = "UPDATE tasks SET verification_status='verified', construction_status='completed', updated_at=? WHERE task_id=?"
+SQL_UPDATE_TASKS_BY_ID_APPROVAL_REQUIRED = "UPDATE tasks SET approval_required = 1, priority_proposed = ?, updated_at = ? WHERE task_id = ?"
+SQL_INSERT_EVENTS_2 = """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
+                   VALUES (?, 'task_event', ?, ?, ?)"""
+SQL_UPDATE_TASKS_BY_ID_PRIORITY = "UPDATE tasks SET priority = ?, approval_required = 0, priority_proposed = NULL, rejection_cooldown_until = NULL, updated_at = ? WHERE task_id = ?"
+SQL_UPDATE_TASKS_BY_ID_APPROVAL_REQUIRED_2 = "UPDATE tasks SET approval_required = 0, priority_proposed = NULL, rejection_cooldown_until = ?, updated_at = ? WHERE task_id = ?"
+SQL_UPDATE_TASKS_BY_ID_STATUS = "UPDATE tasks SET status = ?, blocked_by = ?, updated_at = ? WHERE task_id = ?"
+SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY = "UPDATE tasks SET blocked_by = '[]', updated_at = ? WHERE task_id = ?"
+SQL_UPDATE_TASKS_ACTIVE_BY_ID_IS_DELETED = "UPDATE tasks SET is_deleted = 1, deleted_at = ?, updated_at = ? WHERE task_id = ? AND is_deleted = 0"
+SQL_DELETE_TASK_FILES_BY_ID = "DELETE FROM task_files WHERE task_id = ?"
+SQL_DELETE_TASKS_BY_ID = "DELETE FROM tasks WHERE task_id = ?"
+SQL_SELECT_TASK_FILES_BY_ID = "SELECT file_path FROM task_files WHERE task_id = ?"
+SQL_INSERT_TASK_FILES_OR_IGNORE = "INSERT OR IGNORE INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)"
+SQL_DELETE_TASK_FILES_BY_ID_2 = "DELETE FROM task_files WHERE task_id = ? AND file_path = ?"
+SQL_SELECT_TASKS_BY_NAMESPACE = "SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM tasks WHERE namespace = ?"
+SQL_SELECT_TASKS = "SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM tasks"
+SQL_INSERT_TASKS_ACTIVE_COUNT = """
+                INSERT INTO tasks (
+                    task_id, namespace, seq, title, status, priority, phase,
+                    execution_model, model_rationale, fallback_model,
+                    safety_level, directive, idempotent, classification,
+                    evolution_policy, estimate_hours, actual_hours,
+                    files_in_scope, deliverables, acceptance,
+                    depends_on, tags, session_id, waiting_for, ready_at,
+                    completed_at, created_at, updated_at, is_deleted,
+                    source_blueprint, source_section, description,
+                    upstream_files, downstream_outputs, allowed_touch,
+                    forbidden_touch, applicable_rules, context_assembly_manifest,
+                    rollback_instructions, estimated_tokens, timeout_minutes,
+                    completed_gates, blocked_gates, assigned_pipeline,
+                    pipeline_modules, blocked_by, artifact_paths,
+                    audit_findings, ke_entries, ai_autonomy_level,
+                    autonomy_checklist, construction_status, verification_status,
+                    schema_version, approval_required, priority_proposed,
+                    rejection_cooldown_until, block_sessions_count,
+                    post_sync_standard, post_sync_specific, depgraph_nodes,
+                    root_cause_analysis, pipeline_task_type, target_layer,
+                    estimated_complexity
+                ) VALUES (
+                    :task_id, :namespace, :seq, :title, :status, :priority, :phase,
+                    :execution_model, :model_rationale, :fallback_model,
+                    :safety_level, :directive, :idempotent, :classification,
+                    :evolution_policy, :estimate_hours, :actual_hours,
+                    :files_in_scope, :deliverables, :acceptance,
+                    :depends_on, :tags, :session_id, :waiting_for, :ready_at,
+                    :completed_at, :created_at, :updated_at, 0,
+                    :source_blueprint, :source_section, :description,
+                    :upstream_files, :downstream_outputs, :allowed_touch,
+                    :forbidden_touch, :applicable_rules, :context_assembly_manifest,
+                    :rollback_instructions, :estimated_tokens, :timeout_minutes,
+                    :completed_gates, :blocked_gates, :assigned_pipeline,
+                    :pipeline_modules, :blocked_by, :artifact_paths,
+                    :audit_findings, :ke_entries, :ai_autonomy_level,
+                    :autonomy_checklist, :construction_status, :verification_status,
+                    :schema_version, :approval_required, :priority_proposed,
+                    :rejection_cooldown_until, :block_sessions_count,
+                    :post_sync_standard, :post_sync_specific, :depgraph_nodes,
+                    :root_cause_analysis, :pipeline_task_type, :target_layer,
+                    :estimated_complexity
+                )
+                ON CONFLICT(task_id) DO UPDATE SET
+                    namespace = excluded.namespace,
+                    seq = excluded.seq,
+                    title = excluded.title,
+                    status = excluded.status,
+                    priority = excluded.priority,
+                    phase = excluded.phase,
+                    execution_model = excluded.execution_model,
+                    model_rationale = excluded.model_rationale,
+                    fallback_model = excluded.fallback_model,
+                    safety_level = excluded.safety_level,
+                    directive = excluded.directive,
+                    idempotent = excluded.idempotent,
+                    classification = excluded.classification,
+                    evolution_policy = excluded.evolution_policy,
+                    estimate_hours = excluded.estimate_hours,
+                    actual_hours = excluded.actual_hours,
+                    files_in_scope = excluded.files_in_scope,
+                    deliverables = excluded.deliverables,
+                    acceptance = excluded.acceptance,
+                    depends_on = excluded.depends_on,
+                    tags = excluded.tags,
+                    session_id = excluded.session_id,
+                    waiting_for = excluded.waiting_for,
+                    ready_at = excluded.ready_at,
+                    completed_at = excluded.completed_at,
+                    updated_at = excluded.updated_at,
+                    is_deleted = 0,
+                    deleted_at = NULL,
+                    source_blueprint = excluded.source_blueprint,
+                    source_section = excluded.source_section,
+                    description = excluded.description,
+                    upstream_files = excluded.upstream_files,
+                    downstream_outputs = excluded.downstream_outputs,
+                    allowed_touch = excluded.allowed_touch,
+                    forbidden_touch = excluded.forbidden_touch,
+                    applicable_rules = excluded.applicable_rules,
+                    context_assembly_manifest = excluded.context_assembly_manifest,
+                    rollback_instructions = excluded.rollback_instructions,
+                    estimated_tokens = excluded.estimated_tokens,
+                    timeout_minutes = excluded.timeout_minutes,
+                    completed_gates = excluded.completed_gates,
+                    blocked_gates = excluded.blocked_gates,
+                    assigned_pipeline = excluded.assigned_pipeline,
+                    pipeline_modules = excluded.pipeline_modules,
+                    blocked_by = excluded.blocked_by,
+                    artifact_paths = excluded.artifact_paths,
+                    audit_findings = excluded.audit_findings,
+                    ke_entries = excluded.ke_entries,
+                    ai_autonomy_level = excluded.ai_autonomy_level,
+                    autonomy_checklist = excluded.autonomy_checklist,
+                    construction_status = excluded.construction_status,
+                    verification_status = excluded.verification_status,
+                    schema_version = excluded.schema_version,
+                    approval_required = excluded.approval_required,
+                    priority_proposed = excluded.priority_proposed,
+                    rejection_cooldown_until = excluded.rejection_cooldown_until,
+                    block_sessions_count = excluded.block_sessions_count,
+                    post_sync_standard = excluded.post_sync_standard,
+                    post_sync_specific = excluded.post_sync_specific,
+                    depgraph_nodes = excluded.depgraph_nodes,
+                    root_cause_analysis = excluded.root_cause_analysis,
+                    pipeline_task_type = excluded.pipeline_task_type,
+                    target_layer = excluded.target_layer,
+                    estimated_complexity = excluded.estimated_complexity
+                """
+SQL_UPDATE_TASKS_BY_STATUS_STATUS = """UPDATE tasks SET status = 'READY',
+                                     claimed_by = NULL,
+                                     claimed_at = NULL,
+                                     updated_at = :now
+                   WHERE status = 'IN_PROGRESS'
+                     AND batch_id = :batch_id
+                     AND claimed_at < :cutoff"""
+SQL_CREATE_IF_VIRTUAL = """CREATE VIRTUAL TABLE IF NOT EXISTS tasks_fts
+                   USING fts5(task_id, title, description, directive, content='tasks',
+                   content_rowid='rowid')"""
+SQL_INSERT_TASKS_FTS = "INSERT INTO tasks_fts(tasks_fts) VALUES('rebuild')"
+SQL_SELECT_TASKS_FTS_ACTIVE_SORTED = """SELECT t.{cols},
+                           snippet(tasks_fts, 1, '<b>', '</b>', '...', 32) AS snippet
+                    FROM tasks_fts
+                    JOIN tasks t ON tasks_fts.task_id = t.task_id
+                    WHERE tasks_fts MATCH ? AND t.namespace = ? AND t.is_deleted = 0
+                    ORDER BY rank
+                    LIMIT ?"""
+SQL_SELECT_TASKS_FTS_ACTIVE_SORTED_2 = """SELECT t.{cols},
+                           snippet(tasks_fts, 1, '<b>', '</b>', '...', 32) AS snippet
+                    FROM tasks_fts
+                    JOIN tasks t ON tasks_fts.task_id = t.task_id
+                    WHERE tasks_fts MATCH ? AND t.is_deleted = 0
+                    ORDER BY rank
+                    LIMIT ?"""
+SQL_SELECT_TASKS_ACTIVE_COUNT = "SELECT COUNT(*) FROM tasks WHERE priority = 'P0' AND status NOT IN ('CANCELLED','VERIFIED') AND is_deleted = 0"
+SQL_UPDATE_TASKS_BY_ID_PRIORITY_2 = "UPDATE tasks SET priority = ?, updated_at = ? WHERE task_id = ?"
+SQL_UPDATE_TASKS_COUNT_BY_ID_STATUS = """UPDATE tasks
+                    SET status = ?, session_id = COALESCE(?, session_id),
+                        waiting_for = ?,
+                        ready_at = CASE WHEN ? THEN ? ELSE ready_at END,
+                        completed_at = CASE WHEN ? THEN COALESCE(completed_at, ?) ELSE completed_at END,
+                        block_sessions_count = CASE WHEN ? THEN block_sessions_count + 1 ELSE block_sessions_count END,
+                        updated_at = ?{extra_updates}
+                    WHERE task_id = ?"""
+SQL_INSERT_TASK_REVIEWS_COUNT = "INSERT INTO task_reviews (review_id, task_id, review_round, dimension, issue_count, issues_json, passed, reviewer, session_id, reviewed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+SQL_UPDATE_TASKS_BY_ID_STATUS_2 = "UPDATE tasks SET status = ?, updated_at = ? WHERE task_id = ?"
+SQL_SELECT_TASKS_BY_ID_2 = "SELECT status FROM tasks WHERE task_id = ?"
+SQL_SELECT_TASKS_ACTIVE_2 = """SELECT task_id, blocked_by FROM tasks
+               WHERE is_deleted = 0
+                 AND status = 'READY'
+                 AND json_valid(depends_on)
+                 AND EXISTS (
+                     SELECT 1 FROM json_each(depends_on) WHERE value = ?
+                 )"""
+SQL_SELECT_TASKS_ACTIVE_3 = """SELECT task_id, blocked_by, depends_on, status FROM tasks
+               WHERE is_deleted = 0
+                 AND json_valid(blocked_by)
+                 AND EXISTS (
+                     SELECT 1 FROM json_each(blocked_by) WHERE value = ?
+                 )"""
+SQL_SELECT_TASKS_ACTIVE_4 = """SELECT task_id, blocked_by FROM tasks
+               WHERE is_deleted = 0
+                 AND blocked_by IS NOT NULL AND blocked_by != ''
+                 AND NOT json_valid(blocked_by)"""
+SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY_2 = "UPDATE tasks SET blocked_by = ?, updated_at = ? WHERE task_id = ?"
+SQL_SELECT_EVENTS_COUNT_BY_ID = "SELECT COUNT(*) FROM events WHERE task_id = ? AND event_type = 'state_transition' AND json_extract(payload, '$.to') = 'FAILED'"
+SQL_UPDATE_TASKS_BY_ID_DEPENDS_ON = "UPDATE tasks SET depends_on = ? WHERE task_id = ?"
+SQL_UPDATE_TASKS_BY_ID_PRIORITY_PROPOSED = "UPDATE tasks SET priority_proposed = ?, updated_at = ? WHERE task_id = ?"
+SQL_SELECT_TASK_REVIEWS_COUNT_BY_ID_SORTED = "SELECT review_round, passed, dimension, issue_count FROM task_reviews WHERE task_id=? ORDER BY review_round DESC, dimension"
+SQL_SELECT_TASK_REVIEWS_COUNT_BY_ID_SORTED_2 = "SELECT review_round, dimension, issue_count, passed, reviewed_at FROM task_reviews WHERE task_id=? ORDER BY review_round, dimension"
+SQL_UPDATE_TASKS_COUNT_BY_ID_STATUS_2 = "UPDATE tasks SET status = ?, updated_at = ?, block_sessions_count = block_sessions_count + 1 WHERE task_id = ?"
+SQL_UPDATE_TASKS_ACTIVE_BY_ID_SORTED_STATUS = """UPDATE tasks SET status = 'IN_PROGRESS',
+                                     claimed_by = :worker_id,
+                                     claimed_at = :now,
+                                     updated_at = :now
+                   WHERE task_id = (
+                       SELECT t.task_id FROM tasks t
+                       WHERE t.status = 'READY'
+                         AND t.batch_id = :batch_id
+                         AND t.is_deleted = 0
+                         AND (
+                             t.depends_on IS NULL
+                             OR t.depends_on = '[]'
+                             OR NOT EXISTS (
+                                 SELECT 1 FROM json_each(t.depends_on)
+                                 WHERE value != ''
+                                 AND (SELECT status FROM tasks WHERE task_id = value) != 'COMPLETED'
+                             )
+                         )
+                       ORDER BY t.priority ASC, t.created_at ASC
+                       LIMIT 1
+                   )
+                   RETURNING *"""
+SQL_SELECT_TASKS_BY_STATUS = """SELECT task_id FROM tasks
+                   WHERE status = 'IN_PROGRESS'
+                     AND batch_id = :batch_id
+                     AND claimed_at < :cutoff"""
+SQL_SELECT_TASKS_ACTIVE_COUNT_BY_BATCH_GROUPED = """SELECT status, COUNT(*) AS cnt
+                   FROM tasks
+                   WHERE batch_id = :batch_id AND is_deleted = 0
+                   GROUP BY status"""
+SQL_SELECT_TASKS_BY_ID_3 = "SELECT task_id FROM tasks WHERE task_id=?"
+
 __all__ = [
     "CIRCULAR_ACCEPTANCE_ROUNDS",
     "CircularAcceptanceError",
@@ -992,11 +1316,7 @@ class TaskRepository:
     ) -> None:
         """在同一事务连接中写入 events 表。"""
         conn.execute(
-            """
-            INSERT INTO events
-                (event_id, event_type, payload, task_id, session_id, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)
-            """,
+            SQL_INSERT_EVENTS,
             (
                 _new_id("ev-"),
                 event_type,
@@ -1012,7 +1332,7 @@ class TaskRepository:
     # ------------------------------------------------------------------
 
     def _fetch_row(self, conn: sqlite3.Connection, task_id: str) -> sqlite3.Row | None:
-        cursor = conn.execute("SELECT * FROM tasks WHERE task_id = ?", (task_id,))
+        cursor = conn.execute(SQL_SELECT_TASKS_BY_ID, (task_id,))
         result: sqlite3.Row | None = cursor.fetchone()
         return result
 
@@ -1030,7 +1350,7 @@ class TaskRepository:
             return
 
         cursor = conn.execute(
-            "SELECT task_id, files_in_scope FROM tasks WHERE status IN ('READY', 'IN_PROGRESS') AND is_deleted = 0"
+            SQL_SELECT_TASKS_ACTIVE_BY_STATUS
         )
         for row in cursor.fetchall():
             existing_task_id = row["task_id"]
@@ -1113,57 +1433,13 @@ class TaskRepository:
                 if not gate_result.passed:
                     raise GateViolationError(gate_result)
             conn.execute(
-                """
-                INSERT INTO tasks (
-                    task_id, namespace, seq, title, status, priority, phase,
-                    execution_model, model_rationale, fallback_model,
-                    safety_level, directive, idempotent, classification,
-                    evolution_policy, estimate_hours, actual_hours,
-                    files_in_scope, deliverables, acceptance,
-                    depends_on, tags, session_id, waiting_for, ready_at,
-                    completed_at, created_at, updated_at,
-                    source_blueprint, source_section, description,
-                    upstream_files, downstream_outputs, allowed_touch,
-                    forbidden_touch, applicable_rules, context_assembly_manifest,
-                    rollback_instructions, estimated_tokens, timeout_minutes,
-                    completed_gates, blocked_gates, assigned_pipeline,
-                    pipeline_modules, blocked_by, artifact_paths,
-                    audit_findings, ke_entries, ai_autonomy_level,
-                    autonomy_checklist, construction_status, verification_status,
-                    schema_version, approval_required, priority_proposed,
-                    rejection_cooldown_until, block_sessions_count,
-                    post_sync_standard, post_sync_specific, depgraph_nodes,
-                    root_cause_analysis, pipeline_task_type, target_layer,
-                    estimated_complexity
-                ) VALUES (
-                    :task_id, :namespace, :seq, :title, :status, :priority, :phase,
-                    :execution_model, :model_rationale, :fallback_model,
-                    :safety_level, :directive, :idempotent, :classification,
-                    :evolution_policy, :estimate_hours, :actual_hours,
-                    :files_in_scope, :deliverables, :acceptance,
-                    :depends_on, :tags, :session_id, :waiting_for, :ready_at,
-                    :completed_at, :created_at, :updated_at,
-                    :source_blueprint, :source_section, :description,
-                    :upstream_files, :downstream_outputs, :allowed_touch,
-                    :forbidden_touch, :applicable_rules, :context_assembly_manifest,
-                    :rollback_instructions, :estimated_tokens, :timeout_minutes,
-                    :completed_gates, :blocked_gates, :assigned_pipeline,
-                    :pipeline_modules, :blocked_by, :artifact_paths,
-                    :audit_findings, :ke_entries, :ai_autonomy_level,
-                    :autonomy_checklist, :construction_status, :verification_status,
-                    :schema_version, :approval_required, :priority_proposed,
-                    :rejection_cooldown_until, :block_sessions_count,
-                    :post_sync_standard, :post_sync_specific, :depgraph_nodes,
-                    :root_cause_analysis, :pipeline_task_type, :target_layer,
-                    :estimated_complexity
-                )
-                """,
+                SQL_INSERT_TASKS_COUNT,
                 _serialize_for_db(task),
             )
             if files:
                 for f in files:
                     conn.execute(
-                        "INSERT OR IGNORE INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)",
+                        SQL_INSERT_TASK_FILES_OR_IGNORE,
                         (task.task_id, f["file_path"], f.get("role", "in_scope")),
                     )
             self._record_event(
@@ -1184,7 +1460,7 @@ class TaskRepository:
     def get(self, task_id: str) -> TaskCard | None:
         """按 task_id 查询有效任务（默认排除软删除行），不存在返回 None。"""
         cursor = self._conn.execute(
-            "SELECT * FROM tasks WHERE task_id = ? AND is_deleted = 0",
+            SQL_SELECT_TASKS_ACTIVE_BY_ID,
             (task_id,),
         )
         row = cursor.fetchone()
@@ -1308,7 +1584,7 @@ class TaskRepository:
             set_clause = ", ".join(f"{col} = ?" for col, _ in updates)
             values = [v for _, v in updates]
             conn.execute(
-                f"UPDATE tasks SET {set_clause} WHERE task_id = ?",
+                SQL_UPDATE_TASKS_BY_ID.format(set_clause=set_clause),
                 (*values, task_id),
             )
             updated_row = self._fetch_row(conn, task_id)
@@ -1374,8 +1650,7 @@ class TaskRepository:
                 raise TaskNotFoundError("任务不存在")
 
             conn.execute(
-                "UPDATE tasks SET verification_status='verified', "
-                "construction_status='completed', updated_at=? WHERE task_id=?",
+                SQL_UPDATE_TASKS_BY_ID_VERIFICATION_STATUS,
                 (now_iso(), task_id),
             )
             updated_row = self._fetch_row(conn, task_id)
@@ -1390,8 +1665,7 @@ class TaskRepository:
     def _count_p0_tasks(self, conn: sqlite3.Connection) -> int:
         """统计当前活跃 P0 任务数（排除终态 CANCELLED/VERIFIED 和软删除）。"""
         row = conn.execute(
-            "SELECT COUNT(*) FROM tasks "
-            "WHERE priority = 'P0' AND status NOT IN ('CANCELLED','VERIFIED') AND is_deleted = 0"
+            SQL_SELECT_TASKS_ACTIVE_COUNT
         ).fetchone()
         return row[0] if row else 0
 
@@ -1440,7 +1714,7 @@ class TaskRepository:
 
             if proposed_idx >= current_idx:
                 conn.execute(
-                    "UPDATE tasks SET priority = ?, updated_at = ? WHERE task_id = ?",
+                    SQL_UPDATE_TASKS_BY_ID_PRIORITY_2,
                     (proposed_p, now_iso(), task_id),
                 )
                 updated_row = self._fetch_row(conn, task_id)
@@ -1450,7 +1724,7 @@ class TaskRepository:
             if current_approval:
                 if row["priority_proposed"] and row["priority_proposed"] != proposed_p:
                     conn.execute(
-                        "UPDATE tasks SET priority_proposed = ?, updated_at = ? WHERE task_id = ?",
+                        SQL_UPDATE_TASKS_BY_ID_PRIORITY_PROPOSED,
                         (proposed_p, now_iso(), task_id),
                     )
                     updated_row = self._fetch_row(conn, task_id)
@@ -1488,13 +1762,12 @@ class TaskRepository:
                     )
 
             conn.execute(
-                "UPDATE tasks SET approval_required = 1, priority_proposed = ?, updated_at = ? WHERE task_id = ?",
+                SQL_UPDATE_TASKS_BY_ID_APPROVAL_REQUIRED,
                 (proposed_p, now_iso(), task_id),
             )
 
             conn.execute(
-                """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
-                   VALUES (?, 'task_event', ?, ?, ?)""",
+                SQL_INSERT_EVENTS_2,
                 (
                     f"ev-{task_id}-priority-{proposed_p}",
                     json.dumps(
@@ -1527,13 +1800,12 @@ class TaskRepository:
 
             approved_p = row["priority_proposed"] or row["priority"]
             conn.execute(
-                "UPDATE tasks SET priority = ?, approval_required = 0, priority_proposed = NULL, rejection_cooldown_until = NULL, updated_at = ? WHERE task_id = ?",
+                SQL_UPDATE_TASKS_BY_ID_PRIORITY,
                 (approved_p, now_iso(), task_id),
             )
 
             conn.execute(
-                """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
-                   VALUES (?, 'task_event', ?, ?, ?)""",
+                SQL_INSERT_EVENTS_2,
                 (
                     f"ev-{task_id}-approved-{approved_p}",
                     json.dumps(
@@ -1566,13 +1838,12 @@ class TaskRepository:
                 raise TaskNotFoundError("任务不存在")
 
             conn.execute(
-                "UPDATE tasks SET approval_required = 0, priority_proposed = NULL, rejection_cooldown_until = ?, updated_at = ? WHERE task_id = ?",
+                SQL_UPDATE_TASKS_BY_ID_APPROVAL_REQUIRED_2,
                 (cooldown, now_iso(), task_id),
             )
 
             conn.execute(
-                """INSERT INTO events (event_id, event_type, payload, task_id, created_at)
-                   VALUES (?, 'task_event', ?, ?, ?)""",
+                SQL_INSERT_EVENTS_2,
                 (
                     f"ev-{task_id}-rejected",
                     json.dumps(
@@ -1705,16 +1976,7 @@ class TaskRepository:
                     extra_params.append(note)
 
                 conn.execute(
-                    f"""
-                    UPDATE tasks
-                    SET status = ?, session_id = COALESCE(?, session_id),
-                        waiting_for = ?,
-                        ready_at = CASE WHEN ? THEN ? ELSE ready_at END,
-                        completed_at = CASE WHEN ? THEN COALESCE(completed_at, ?) ELSE completed_at END,
-                        block_sessions_count = CASE WHEN ? THEN block_sessions_count + 1 ELSE block_sessions_count END,
-                        updated_at = ?{extra_updates}
-                    WHERE task_id = ?
-                    """,
+                    SQL_UPDATE_TASKS_COUNT_BY_ID_STATUS.format(extra_updates=extra_updates),
                     (
                         to_status.value,
                         session_id,
@@ -1970,7 +2232,7 @@ class TaskRepository:
 
         with self._write_tx() as conn:
             rows = conn.execute(
-                "SELECT review_round, passed, dimension, issue_count FROM task_reviews WHERE task_id=? ORDER BY review_round DESC, dimension",
+                SQL_SELECT_TASK_REVIEWS_COUNT_BY_ID_SORTED,
                 (task_id,),
             ).fetchall()
             max_round = max((r[0] for r in rows), default=0)
@@ -2000,7 +2262,7 @@ class TaskRepository:
 
             with self._write_tx() as conn:
                 conn.execute(
-                    "INSERT INTO task_reviews (review_id, task_id, review_round, dimension, issue_count, issues_json, passed, reviewer, session_id, reviewed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    SQL_INSERT_TASK_REVIEWS_COUNT,
                     (str(uuid.uuid4()), task_id, current_round, dim, len(issues), json.dumps(issues, ensure_ascii=False), 1 if passed else 0, reviewer, session_id, now),
                 )
 
@@ -2056,7 +2318,7 @@ class TaskRepository:
             for dep_id in bl:
                 try:
                     with self._write_tx() as conn:
-                        row = conn.execute("SELECT task_id FROM tasks WHERE task_id=?", (dep_id,)).fetchone()
+                        row = conn.execute(SQL_SELECT_TASKS_BY_ID_3, (dep_id,)).fetchone()
                     if row is None:
                         issues.append(f"blocked_by引用不存在的任务: {dep_id}")
                 except Exception:
@@ -2087,7 +2349,7 @@ class TaskRepository:
         """查询任务卡的审查状态。"""
         with self._read_tx() as conn:
             rows = conn.execute(
-                "SELECT review_round, dimension, issue_count, passed, reviewed_at FROM task_reviews WHERE task_id=? ORDER BY review_round, dimension",
+                SQL_SELECT_TASK_REVIEWS_COUNT_BY_ID_SORTED_2,
                 (task_id,),
             ).fetchall()
 
@@ -2134,7 +2396,7 @@ class TaskRepository:
             return
 
         cursor = conn.execute(
-            "SELECT task_id FROM tasks WHERE is_deleted = 0 AND depends_on LIKE ?",
+            SQL_SELECT_TASKS_ACTIVE,
             (f"%{changed_task_id}%",),
         )
         parent_rows = cursor.fetchall()
@@ -2165,7 +2427,7 @@ class TaskRepository:
             parent_status = TaskStatus(parent.status.value)
             if all_resolved and parent_status in (TaskStatus.BLOCKED, TaskStatus.WAITING, TaskStatus.PENDING):
                 conn.execute(
-                    "UPDATE tasks SET status = ?, updated_at = ? WHERE task_id = ?",
+                    SQL_UPDATE_TASKS_BY_ID_STATUS_2,
                     (TaskStatus.READY.value, now_iso(), parent_task_id),
                 )
                 self._record_event(
@@ -2181,7 +2443,7 @@ class TaskRepository:
                 )
             elif any_failed and parent_status not in (TaskStatus.BLOCKED, TaskStatus.CANCELLED, TaskStatus.VERIFIED):
                 conn.execute(
-                    "UPDATE tasks SET status = ?, updated_at = ?, block_sessions_count = block_sessions_count + 1 WHERE task_id = ?",
+                    SQL_UPDATE_TASKS_COUNT_BY_ID_STATUS_2,
                     (TaskStatus.BLOCKED.value, now_iso(), parent_task_id),
                 )
                 self._record_event(
@@ -2211,7 +2473,7 @@ class TaskRepository:
         返回被阻塞的任务数。
         """
         now = now_iso()
-        claimer_row = conn.execute("SELECT status FROM tasks WHERE task_id = ?", (task_id,)).fetchone()
+        claimer_row = conn.execute(SQL_SELECT_TASKS_BY_ID_2, (task_id,)).fetchone()
         if claimer_row is None or claimer_row["status"] != TaskStatus.IN_PROGRESS.value:
             logger.warning(
                 "_block_downstream_dependents: task %s is not IN_PROGRESS (status=%s), skip",
@@ -2221,13 +2483,7 @@ class TaskRepository:
             return 0
 
         downstream_rows = conn.execute(
-            """SELECT task_id, blocked_by FROM tasks
-               WHERE is_deleted = 0
-                 AND status = 'READY'
-                 AND json_valid(depends_on)
-                 AND EXISTS (
-                     SELECT 1 FROM json_each(depends_on) WHERE value = ?
-                 )""",
+            SQL_SELECT_TASKS_ACTIVE_2,
             (task_id,),
         ).fetchall()
 
@@ -2238,7 +2494,7 @@ class TaskRepository:
             if task_id not in current_blocked_by:
                 current_blocked_by.append(task_id)
             conn.execute(
-                "UPDATE tasks SET status = ?, blocked_by = ?, updated_at = ? WHERE task_id = ?",
+                SQL_UPDATE_TASKS_BY_ID_STATUS,
                 (TaskStatus.BLOCKED.value, json.dumps(current_blocked_by), now, ds_id),
             )
             self._record_event(
@@ -2274,20 +2530,12 @@ class TaskRepository:
         """
         now = now_iso()
         downstream_rows = conn.execute(
-            """SELECT task_id, blocked_by, depends_on, status FROM tasks
-               WHERE is_deleted = 0
-                 AND json_valid(blocked_by)
-                 AND EXISTS (
-                     SELECT 1 FROM json_each(blocked_by) WHERE value = ?
-                 )""",
+            SQL_SELECT_TASKS_ACTIVE_3,
             (task_id,),
         ).fetchall()
 
         corrupt_rows = conn.execute(
-            """SELECT task_id, blocked_by FROM tasks
-               WHERE is_deleted = 0
-                 AND blocked_by IS NOT NULL AND blocked_by != ''
-                 AND NOT json_valid(blocked_by)""",
+            SQL_SELECT_TASKS_ACTIVE_4,
         ).fetchall()
         for cr in corrupt_rows:
             logger.warning(
@@ -2295,7 +2543,7 @@ class TaskRepository:
                 cr["task_id"],
                 cr["blocked_by"],
             )
-            conn.execute("UPDATE tasks SET blocked_by = '[]', updated_at = ? WHERE task_id = ?", (now, cr["task_id"]))
+            conn.execute(SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY, (now, cr["task_id"]))
 
         unblocked_count = 0
         for ds_row in downstream_rows:
@@ -2317,7 +2565,7 @@ class TaskRepository:
 
                 all_deps_met = (
                     all(
-                        conn.execute("SELECT status FROM tasks WHERE task_id = ?", (d,)).fetchone()["status"]
+                        conn.execute(SQL_SELECT_TASKS_BY_ID_2, (d,)).fetchone()["status"]
                         in ("COMPLETED", "VERIFIED")
                         for d in deps
                         if d
@@ -2328,7 +2576,7 @@ class TaskRepository:
 
                 if all_deps_met and ds_row["status"] == "BLOCKED":
                     conn.execute(
-                        "UPDATE tasks SET status = ?, blocked_by = ?, updated_at = ? WHERE task_id = ?",
+                        SQL_UPDATE_TASKS_BY_ID_STATUS,
                         (TaskStatus.READY.value, new_blocked_by, now, ds_id),
                     )
                     self._record_event(
@@ -2348,7 +2596,7 @@ class TaskRepository:
                     unmet_blockers = []
                     for d in deps:
                         if d:
-                            dep_row = conn.execute("SELECT status FROM tasks WHERE task_id = ?", (d,)).fetchone()
+                            dep_row = conn.execute(SQL_SELECT_TASKS_BY_ID_2, (d,)).fetchone()
                             if dep_row is None:
                                 # 依赖不存在于tasks表 -> 也视为阻塞源
                                 unmet_blockers.append(d)
@@ -2364,12 +2612,12 @@ class TaskRepository:
                         # 保持blocked_by为空，状态仍BLOCKED（语义：被未知原因阻塞）
                         refilled_blocked_by = new_blocked_by
                     conn.execute(
-                        "UPDATE tasks SET blocked_by = ?, updated_at = ? WHERE task_id = ?",
+                        SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY_2,
                         (refilled_blocked_by, now, ds_id),
                     )
             else:
                 conn.execute(
-                    "UPDATE tasks SET blocked_by = ?, updated_at = ? WHERE task_id = ?",
+                    SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY_2,
                     (new_blocked_by, now, ds_id),
                 )
 
@@ -2437,9 +2685,7 @@ class TaskRepository:
     def _count_failed_events(self, task_id: str) -> int:
         """统计任务在 events 表中 FAILED 的次数。"""
         row = self._conn.execute(
-            "SELECT COUNT(*) FROM events "
-            "WHERE task_id = ? AND event_type = 'state_transition' "
-            "AND json_extract(payload, '$.to') = 'FAILED'",
+            SQL_SELECT_EVENTS_COUNT_BY_ID,
             (task_id,),
         ).fetchone()
         return row[0] if row else 0
@@ -2515,12 +2761,12 @@ class TaskRepository:
         """
         with self._write_tx() as conn:
             cursor = conn.execute(
-                "UPDATE tasks SET is_deleted = 1, deleted_at = ?, updated_at = ? WHERE task_id = ? AND is_deleted = 0",
+                SQL_UPDATE_TASKS_ACTIVE_BY_ID_IS_DELETED,
                 (now_iso(), now_iso(), task_id),
             )
             deleted = cursor.rowcount > 0
             if deleted:
-                conn.execute("DELETE FROM task_files WHERE task_id = ?", (task_id,))
+                conn.execute(SQL_DELETE_TASK_FILES_BY_ID, (task_id,))
         return deleted
 
     def hard_delete(self, task_id: str) -> bool:
@@ -2530,8 +2776,8 @@ class TaskRepository:
         仅在数据清理脚本中使用，日常开发用 soft delete。
         """
         with self._write_tx() as conn:
-            conn.execute("DELETE FROM task_files WHERE task_id = ?", (task_id,))
-            cursor = conn.execute("DELETE FROM tasks WHERE task_id = ?", (task_id,))
+            conn.execute(SQL_DELETE_TASK_FILES_BY_ID, (task_id,))
+            cursor = conn.execute(SQL_DELETE_TASKS_BY_ID, (task_id,))
             deleted = cursor.rowcount > 0
         return deleted
 
@@ -2544,7 +2790,7 @@ class TaskRepository:
         if isinstance(status, str):
             status = TaskStatus(status)
         cursor = self._conn.execute(
-            "SELECT * FROM tasks WHERE status = ? AND is_deleted = 0 ORDER BY phase ASC, updated_at DESC",
+            SQL_SELECT_TASKS_ACTIVE_BY_STATUS_SORTED,
             (status.value,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -2552,7 +2798,7 @@ class TaskRepository:
     def list_by_phase(self, phase: int) -> list[TaskCard]:
         """查询指定 Phase 的所有任务（按 status ASC, task_id ASC 排序）。"""
         cursor = self._conn.execute(
-            "SELECT * FROM tasks WHERE phase = ? AND is_deleted = 0 ORDER BY status ASC, task_id ASC",
+            SQL_SELECT_TASKS_ACTIVE_BY_PHASE_SORTED,
             (phase,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -2560,7 +2806,7 @@ class TaskRepository:
     def list_by_session(self, session_id: str) -> list[TaskCard]:
         """查询指定 session_id 的所有任务。"""
         cursor = self._conn.execute(
-            "SELECT * FROM tasks WHERE session_id = ? AND is_deleted = 0 ORDER BY updated_at DESC",
+            SQL_SELECT_TASKS_ACTIVE_BY_SESSION_SORTED,
             (session_id,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -2568,7 +2814,7 @@ class TaskRepository:
     def _count_by_status_and_session(self, status: str, session_id: str) -> int:
         """统计指定 session 下指定状态的任务数（DM-400: 用于提醒未关闭任务）。"""
         cursor = self._conn.execute(
-            "SELECT COUNT(*) FROM tasks WHERE status = ? AND session_id = ? AND is_deleted = 0",
+            SQL_SELECT_TASKS_ACTIVE_COUNT_BY_STATUS,
             (status, session_id),
         )
         return cursor.fetchone()[0]
@@ -2598,7 +2844,7 @@ class TaskRepository:
         where_sql = " AND ".join(clauses)
         cap = min(max(limit, 1), 500)
         fetch_limit = min(cap * 20, 2000) if file_path_glob else cap
-        sql = f"SELECT * FROM tasks WHERE {where_sql} ORDER BY updated_at DESC LIMIT ?"
+        sql = SQL_SELECT_TASKS_SORTED.format(where_sql=where_sql)
         params.append(fetch_limit)
         cursor = self._conn.execute(sql, tuple(params))
         tasks = [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -2607,7 +2853,7 @@ class TaskRepository:
         matched: list[TaskCard] = []
         for t in tasks:
             for r in self._conn.execute(
-                "SELECT file_path FROM task_files WHERE task_id = ?",
+                SQL_SELECT_TASK_FILES_BY_ID,
                 (t.task_id,),
             ):
                 if fnmatch.fnmatch(r["file_path"], file_path_glob):
@@ -2622,7 +2868,7 @@ class TaskRepository:
         if isinstance(namespace, TaskNamespace):
             namespace = namespace.value
         cursor = self._conn.execute(
-            "SELECT * FROM tasks WHERE namespace = ? AND is_deleted = 0 ORDER BY seq ASC",
+            SQL_SELECT_TASKS_ACTIVE_BY_NAMESPACE_SORTED,
             (namespace,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -2635,7 +2881,7 @@ class TaskRepository:
         """为任务添加文件映射。role 可选 primary/in_scope/output。"""
         with self._write_tx() as conn:
             conn.execute(
-                "INSERT OR IGNORE INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)",
+                SQL_INSERT_TASK_FILES_OR_IGNORE,
                 (task_id, file_path, role),
             )
 
@@ -2643,14 +2889,14 @@ class TaskRepository:
         """移除任务的文件映射。"""
         with self._write_tx() as conn:
             conn.execute(
-                "DELETE FROM task_files WHERE task_id = ? AND file_path = ?",
+                SQL_DELETE_TASK_FILES_BY_ID_2,
                 (task_id, file_path),
             )
 
     def get_files(self, task_id: str) -> list[dict[str, str]]:
         """获取任务的所有文件映射，返回 [{file_path, role}, ...]。"""
         cursor = self._conn.execute(
-            "SELECT file_path, role FROM task_files WHERE task_id = ? ORDER BY role, file_path",
+            SQL_SELECT_TASK_FILES_BY_ID_SORTED,
             (task_id,),
         )
         return [{"file_path": r["file_path"], "role": r["role"]} for r in cursor.fetchall()]
@@ -2658,7 +2904,7 @@ class TaskRepository:
     def get_tasks_for_file(self, file_path: str) -> list[str]:
         """获取涉及指定文件的所有任务 ID。"""
         cursor = self._conn.execute(
-            "SELECT task_id FROM task_files WHERE file_path = ? ORDER BY task_id",
+            SQL_SELECT_TASK_FILES_BY_FILE_PATH_SORTED,
             (file_path,),
         )
         return [r["task_id"] for r in cursor.fetchall()]
@@ -2669,28 +2915,23 @@ class TaskRepository:
             if isinstance(namespace, TaskNamespace):
                 namespace = namespace.value
             cursor = self._conn.execute(
-                "SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM tasks WHERE namespace = ?",
+                SQL_SELECT_TASKS_BY_NAMESPACE,
                 (namespace,),
             )
         else:
-            cursor = self._conn.execute("SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM tasks")
+            cursor = self._conn.execute(SQL_SELECT_TASKS)
         return cursor.fetchone()["next_seq"]
 
     def list_active(self) -> list[Task]:
         """查询活跃任务（IN_PROGRESS / READY / RETRY / WAITING），排除已删除。"""
         cursor = self._conn.execute(
-            """
-            SELECT * FROM tasks
-            WHERE status IN ('IN_PROGRESS','READY','RETRY','WAITING')
-              AND is_deleted = 0
-            ORDER BY phase ASC, updated_at DESC
-            """
+            SQL_SELECT_TASKS_ACTIVE_BY_STATUS_SORTED_2
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
 
     def count_by_status(self) -> dict[str, int]:
         """按状态统计任务数量（排除已删除）。"""
-        cursor = self._conn.execute("SELECT status, COUNT(*) AS cnt FROM tasks WHERE is_deleted = 0 GROUP BY status")
+        cursor = self._conn.execute(SQL_SELECT_TASKS_ACTIVE_COUNT_GROUPED)
         return {row["status"]: row["cnt"] for row in cursor.fetchall()}
 
     # ------------------------------------------------------------------
@@ -2700,16 +2941,7 @@ class TaskRepository:
     def list_by_dependency(self, dependency_task_id: str) -> list[TaskCard]:
         """查询所有依赖给定 task_id 的任务（利用 JSON1 扩展遍历 depends_on JSON 数组）。"""
         cursor = self._conn.execute(
-            """
-            SELECT * FROM tasks
-            WHERE is_deleted = 0
-              AND json_valid(depends_on)
-              AND EXISTS (
-                  SELECT 1 FROM json_each(depends_on)
-                  WHERE value = ?
-              )
-            ORDER BY phase ASC, updated_at DESC
-            """,
+            SQL_SELECT_TASKS_ACTIVE_SORTED,
             (dependency_task_id,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -2717,16 +2949,7 @@ class TaskRepository:
     def list_by_tag(self, tag: str) -> list[TaskCard]:
         """查询所有包含指定 tag 的任务（利用 JSON1 扩展遍历 tags JSON 数组）。"""
         cursor = self._conn.execute(
-            """
-            SELECT * FROM tasks
-            WHERE is_deleted = 0
-              AND json_valid(tags)
-              AND EXISTS (
-                  SELECT 1 FROM json_each(tags)
-                  WHERE value = ?
-              )
-            ORDER BY phase ASC, updated_at DESC
-            """,
+            SQL_SELECT_TASKS_ACTIVE_SORTED_2,
             (tag,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -2734,16 +2957,7 @@ class TaskRepository:
     def list_by_blocked_by(self, blocker_task_id: str) -> list[TaskCard]:
         """查询所有被给定 task_id 阻塞的任务（利用 JSON1 扩展遍历 blocked_by JSON 数组）。"""
         cursor = self._conn.execute(
-            """
-            SELECT * FROM tasks
-            WHERE is_deleted = 0
-              AND json_valid(blocked_by)
-              AND EXISTS (
-                  SELECT 1 FROM json_each(blocked_by)
-                  WHERE value = ?
-              )
-            ORDER BY phase ASC, updated_at DESC
-            """,
+            SQL_SELECT_TASKS_ACTIVE_SORTED_3,
             (blocker_task_id,),
         )
         return [_row_to_taskcard(r) for r in cursor.fetchall()]
@@ -2761,123 +2975,14 @@ class TaskRepository:
         now = now_iso()
         with self._write_tx() as conn:
             conn.execute(
-                """
-                INSERT INTO tasks (
-                    task_id, namespace, seq, title, status, priority, phase,
-                    execution_model, model_rationale, fallback_model,
-                    safety_level, directive, idempotent, classification,
-                    evolution_policy, estimate_hours, actual_hours,
-                    files_in_scope, deliverables, acceptance,
-                    depends_on, tags, session_id, waiting_for, ready_at,
-                    completed_at, created_at, updated_at, is_deleted,
-                    source_blueprint, source_section, description,
-                    upstream_files, downstream_outputs, allowed_touch,
-                    forbidden_touch, applicable_rules, context_assembly_manifest,
-                    rollback_instructions, estimated_tokens, timeout_minutes,
-                    completed_gates, blocked_gates, assigned_pipeline,
-                    pipeline_modules, blocked_by, artifact_paths,
-                    audit_findings, ke_entries, ai_autonomy_level,
-                    autonomy_checklist, construction_status, verification_status,
-                    schema_version, approval_required, priority_proposed,
-                    rejection_cooldown_until, block_sessions_count,
-                    post_sync_standard, post_sync_specific, depgraph_nodes,
-                    root_cause_analysis, pipeline_task_type, target_layer,
-                    estimated_complexity
-                ) VALUES (
-                    :task_id, :namespace, :seq, :title, :status, :priority, :phase,
-                    :execution_model, :model_rationale, :fallback_model,
-                    :safety_level, :directive, :idempotent, :classification,
-                    :evolution_policy, :estimate_hours, :actual_hours,
-                    :files_in_scope, :deliverables, :acceptance,
-                    :depends_on, :tags, :session_id, :waiting_for, :ready_at,
-                    :completed_at, :created_at, :updated_at, 0,
-                    :source_blueprint, :source_section, :description,
-                    :upstream_files, :downstream_outputs, :allowed_touch,
-                    :forbidden_touch, :applicable_rules, :context_assembly_manifest,
-                    :rollback_instructions, :estimated_tokens, :timeout_minutes,
-                    :completed_gates, :blocked_gates, :assigned_pipeline,
-                    :pipeline_modules, :blocked_by, :artifact_paths,
-                    :audit_findings, :ke_entries, :ai_autonomy_level,
-                    :autonomy_checklist, :construction_status, :verification_status,
-                    :schema_version, :approval_required, :priority_proposed,
-                    :rejection_cooldown_until, :block_sessions_count,
-                    :post_sync_standard, :post_sync_specific, :depgraph_nodes,
-                    :root_cause_analysis, :pipeline_task_type, :target_layer,
-                    :estimated_complexity
-                )
-                ON CONFLICT(task_id) DO UPDATE SET
-                    namespace = excluded.namespace,
-                    seq = excluded.seq,
-                    title = excluded.title,
-                    status = excluded.status,
-                    priority = excluded.priority,
-                    phase = excluded.phase,
-                    execution_model = excluded.execution_model,
-                    model_rationale = excluded.model_rationale,
-                    fallback_model = excluded.fallback_model,
-                    safety_level = excluded.safety_level,
-                    directive = excluded.directive,
-                    idempotent = excluded.idempotent,
-                    classification = excluded.classification,
-                    evolution_policy = excluded.evolution_policy,
-                    estimate_hours = excluded.estimate_hours,
-                    actual_hours = excluded.actual_hours,
-                    files_in_scope = excluded.files_in_scope,
-                    deliverables = excluded.deliverables,
-                    acceptance = excluded.acceptance,
-                    depends_on = excluded.depends_on,
-                    tags = excluded.tags,
-                    session_id = excluded.session_id,
-                    waiting_for = excluded.waiting_for,
-                    ready_at = excluded.ready_at,
-                    completed_at = excluded.completed_at,
-                    updated_at = excluded.updated_at,
-                    is_deleted = 0,
-                    deleted_at = NULL,
-                    source_blueprint = excluded.source_blueprint,
-                    source_section = excluded.source_section,
-                    description = excluded.description,
-                    upstream_files = excluded.upstream_files,
-                    downstream_outputs = excluded.downstream_outputs,
-                    allowed_touch = excluded.allowed_touch,
-                    forbidden_touch = excluded.forbidden_touch,
-                    applicable_rules = excluded.applicable_rules,
-                    context_assembly_manifest = excluded.context_assembly_manifest,
-                    rollback_instructions = excluded.rollback_instructions,
-                    estimated_tokens = excluded.estimated_tokens,
-                    timeout_minutes = excluded.timeout_minutes,
-                    completed_gates = excluded.completed_gates,
-                    blocked_gates = excluded.blocked_gates,
-                    assigned_pipeline = excluded.assigned_pipeline,
-                    pipeline_modules = excluded.pipeline_modules,
-                    blocked_by = excluded.blocked_by,
-                    artifact_paths = excluded.artifact_paths,
-                    audit_findings = excluded.audit_findings,
-                    ke_entries = excluded.ke_entries,
-                    ai_autonomy_level = excluded.ai_autonomy_level,
-                    autonomy_checklist = excluded.autonomy_checklist,
-                    construction_status = excluded.construction_status,
-                    verification_status = excluded.verification_status,
-                    schema_version = excluded.schema_version,
-                    approval_required = excluded.approval_required,
-                    priority_proposed = excluded.priority_proposed,
-                    rejection_cooldown_until = excluded.rejection_cooldown_until,
-                    block_sessions_count = excluded.block_sessions_count,
-                    post_sync_standard = excluded.post_sync_standard,
-                    post_sync_specific = excluded.post_sync_specific,
-                    depgraph_nodes = excluded.depgraph_nodes,
-                    root_cause_analysis = excluded.root_cause_analysis,
-                    pipeline_task_type = excluded.pipeline_task_type,
-                    target_layer = excluded.target_layer,
-                    estimated_complexity = excluded.estimated_complexity
-                """,
+                SQL_INSERT_TASKS_ACTIVE_COUNT,
                 _serialize_for_db(task),
             )
             if files:
-                conn.execute("DELETE FROM task_files WHERE task_id = ?", (task.task_id,))
+                conn.execute(SQL_DELETE_TASK_FILES_BY_ID, (task.task_id,))
                 for f in files:
                     conn.execute(
-                        "INSERT OR IGNORE INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)",
+                        SQL_INSERT_TASK_FILES_OR_IGNORE,
                         (task.task_id, f["file_path"], f.get("role", "in_scope")),
                     )
             row = self._fetch_row(conn, task.task_id)
@@ -2899,28 +3004,7 @@ class TaskRepository:
         now = datetime.now(UTC).isoformat()
         with self._write_tx() as conn:
             row = conn.execute(
-                """UPDATE tasks SET status = 'IN_PROGRESS',
-                                     claimed_by = :worker_id,
-                                     claimed_at = :now,
-                                     updated_at = :now
-                   WHERE task_id = (
-                       SELECT t.task_id FROM tasks t
-                       WHERE t.status = 'READY'
-                         AND t.batch_id = :batch_id
-                         AND t.is_deleted = 0
-                         AND (
-                             t.depends_on IS NULL
-                             OR t.depends_on = '[]'
-                             OR NOT EXISTS (
-                                 SELECT 1 FROM json_each(t.depends_on)
-                                 WHERE value != ''
-                                 AND (SELECT status FROM tasks WHERE task_id = value) != 'COMPLETED'
-                             )
-                         )
-                       ORDER BY t.priority ASC, t.created_at ASC
-                       LIMIT 1
-                   )
-                   RETURNING *""",
+                SQL_UPDATE_TASKS_ACTIVE_BY_ID_SORTED_STATUS,
                 {"batch_id": batch_id, "worker_id": worker_id, "now": now},
             ).fetchone()
             if row is None:
@@ -2940,10 +3024,7 @@ class TaskRepository:
         cutoff = (datetime.now(UTC) - td(minutes=timeout_minutes)).isoformat()
         with self._write_tx() as conn:
             stale_rows = conn.execute(
-                """SELECT task_id FROM tasks
-                   WHERE status = 'IN_PROGRESS'
-                     AND batch_id = :batch_id
-                     AND claimed_at < :cutoff""",
+                SQL_SELECT_TASKS_BY_STATUS,
                 {"batch_id": batch_id, "cutoff": cutoff},
             ).fetchall()
 
@@ -2952,13 +3033,7 @@ class TaskRepository:
 
             released_ids = [r["task_id"] for r in stale_rows]
             conn.execute(
-                """UPDATE tasks SET status = 'READY',
-                                     claimed_by = NULL,
-                                     claimed_at = NULL,
-                                     updated_at = :now
-                   WHERE status = 'IN_PROGRESS'
-                     AND batch_id = :batch_id
-                     AND claimed_at < :cutoff""",
+                SQL_UPDATE_TASKS_BY_STATUS_STATUS,
                 {"batch_id": batch_id, "cutoff": cutoff, "now": datetime.now(UTC).isoformat()},
             )
 
@@ -2971,10 +3046,7 @@ class TaskRepository:
         """返回批量进度聚合：READY / IN_PROGRESS / COMPLETED / FAILED 各多少。"""
         with self._write_tx() as conn:
             rows = conn.execute(
-                """SELECT status, COUNT(*) AS cnt
-                   FROM tasks
-                   WHERE batch_id = :batch_id AND is_deleted = 0
-                   GROUP BY status""",
+                SQL_SELECT_TASKS_ACTIVE_COUNT_BY_BATCH_GROUPED,
                 {"batch_id": batch_id},
             ).fetchall()
         result = {"READY": 0, "IN_PROGRESS": 0, "COMPLETED": 0, "FAILED": 0, "TOTAL": 0}
@@ -3060,7 +3132,7 @@ class TaskRepository:
             curr_id = created[i].task_id
             with self._write_tx() as conn:
                 conn.execute(
-                    "UPDATE tasks SET depends_on = ? WHERE task_id = ?",
+                    SQL_UPDATE_TASKS_BY_ID_DEPENDS_ON,
                     (json.dumps([prev_id], ensure_ascii=False), curr_id),
                 )
 
@@ -3468,15 +3540,13 @@ def search(
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode = WAL")
     try:
-        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='tasks_fts'")
+        cursor = conn.execute(SQL_SELECT_SQLITE_MASTER)
         has_fts = cursor.fetchone() is not None
         if not has_fts:
             conn.execute(
-                """CREATE VIRTUAL TABLE IF NOT EXISTS tasks_fts
-                   USING fts5(task_id, title, description, directive, content='tasks',
-                   content_rowid='rowid')"""
+                SQL_CREATE_IF_VIRTUAL
             )
-            conn.execute("""INSERT INTO tasks_fts(tasks_fts) VALUES('rebuild')""")
+            conn.execute(SQL_INSERT_TASKS_FTS)
 
         cols = "task_id, title, status, priority, phase"
         params: list[object] = [query]
@@ -3485,26 +3555,14 @@ def search(
             limit_val = min(max(limit, 1), 200)
             params.append(limit_val)
             result = conn.execute(
-                f"""SELECT t.{cols},
-                           snippet(tasks_fts, 1, '<b>', '</b>', '...', 32) AS snippet
-                    FROM tasks_fts
-                    JOIN tasks t ON tasks_fts.task_id = t.task_id
-                    WHERE tasks_fts MATCH ? AND t.namespace = ? AND t.is_deleted = 0
-                    ORDER BY rank
-                    LIMIT ?""",
+                SQL_SELECT_TASKS_FTS_ACTIVE_SORTED.format(cols=cols),
                 tuple(params),
             )
         else:
             limit_val = min(max(limit, 1), 200)
             params.append(limit_val)
             result = conn.execute(
-                f"""SELECT t.{cols},
-                           snippet(tasks_fts, 1, '<b>', '</b>', '...', 32) AS snippet
-                    FROM tasks_fts
-                    JOIN tasks t ON tasks_fts.task_id = t.task_id
-                    WHERE tasks_fts MATCH ? AND t.is_deleted = 0
-                    ORDER BY rank
-                    LIMIT ?""",
+                SQL_SELECT_TASKS_FTS_ACTIVE_SORTED_2.format(cols=cols),
                 tuple(params),
             )
         return [dict(r) for r in result.fetchall()]
