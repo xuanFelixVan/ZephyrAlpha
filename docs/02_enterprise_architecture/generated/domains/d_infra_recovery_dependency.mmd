@@ -1,7 +1,7 @@
 %% D_INFRA_RECOVERY 域全景依赖图
-%% 生成时间: 2026-07-10 04:43:42
+%% 生成时间: 2026-07-10 05:26:41
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 54, 依赖边数: 141
+%% 模块数: 54, 依赖边数: 140
 
 graph TD
 
@@ -70,10 +70,10 @@ graph TD
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_verifier_py
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
-    src_zephyr_infrastructure_rollback_rollback_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_contract_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| src_zephyr_infrastructure_rollback_contract_py
+    src_zephyr_infrastructure_rollback_rollback_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_contract_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_drill_py
     src_zephyr_infrastructure_rollback___init___py -->|import_depends| src_zephyr_infrastructure_rollback_agent_cooldown_py
@@ -137,8 +137,8 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_contract_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_checkpoint_gc_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_submodule_sync_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_checkpoint_gc_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_venv_sync_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_env_watcher_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_rollback_runbook_generator_py
@@ -154,9 +154,8 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_rollback_budget_tracker_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_rollback_rollback_verifier_py
-    %% D_GOV_ENFORCEMENT -> D_INFRA_RECOVERY (3 条)
+    %% D_GOV_ENFORCEMENT -> D_INFRA_RECOVERY (2 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_infrastructure_rollback_drift_fix_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_infrastructure_rollback_contract_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_infrastructure_rollback_contract_py
     %% D_INTEGRATION -> D_INFRA_RECOVERY (1 条)
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_infrastructure_rollback_contract_py
@@ -169,26 +168,26 @@ graph TD
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_INFRA_RECOVERY -> D_GOVERNANCE (8 条)
     src_zephyr_infrastructure_rollback_auditor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_infrastructure_rollback_contracts_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_drift_fix_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_roll____rollback_abuse_detector_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_infrastructure_rollback_contracts_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_INFRA_RECOVERY -> D_SHARED (18 条)
     src_zephyr_infrastructure_rollback_agent_cooldown_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_rollback_forensic_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_forward_fix_runner_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_external_merkle_proof_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_rollback_forensic_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_right_to_be_forgotten_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_drill_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_rollback_verifier_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_SHARED[D_SHARED]
@@ -198,5 +197,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 53 条
-    %% 跨域入边: 62 条
+    %% 跨域入边: 61 条
     %% 跨域出边: 26 条
