@@ -31,7 +31,6 @@ ExamOrchestrator --- 五轴入职考试主控
 from __future__ import annotations
 
 from typing import Final
-logger = logging.getLogger(__name__)
 
 import json
 import logging
@@ -884,7 +883,7 @@ class ExamOrchestrator:
                         if not self._outputs_similar(result, result2):
                             inc_count += 1
                     except Exception as e:
-                        logger.warning("suppressed error in exam_orchestrator", exc_info=True)
+                        _log.warning("suppressed error in exam_orchestrator", exc_info=True)
 
                     if self._check_refusal(result):
                         ref_count += 1
@@ -1359,7 +1358,7 @@ class ExamOrchestrator:
                     elif not self._outputs_similar(result, result2):
                         inc += 1  # 键集相同但值差异大
                 except Exception as e:
-                    logger.warning("suppressed error in exam_orchestrator", exc_info=True)
+                    _log.warning("suppressed error in exam_orchestrator", exc_info=True)
             except Exception:
                 ref += 1
 

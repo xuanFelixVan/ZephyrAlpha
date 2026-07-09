@@ -50,7 +50,6 @@ from zephyr.intelligence.model_profiling.benchmark_suite import (
     BenchmarkCase,
 )
 from zephyr.intelligence.model_profiling.model_discovery import (
-    DEFAULT_OLLAMA_URL,
     DiscoveredModel,
     ModelDiscovery,
 )
@@ -125,10 +124,13 @@ class ModelProfiler:
 
     def __init__(
         self,
-        ollama_url: str = DEFAULT_OLLAMA_URL,
+        ollama_url: str | None = None,
         timeout_per_case_s: float = 60.0,
         max_ollama_models: int = MAX_OLLAMA_MODELS,
     ) -> None:
+        if ollama_url is None:
+            from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
+            ollama_url = DEFAULT_OLLAMA_URL
         self._url = ollama_url.rstrip("/")
         self._timeout = timeout_per_case_s
         self._max_models = max_ollama_models

@@ -71,7 +71,6 @@ from zephyr.intelligence.model_profiling.benchmark_suite import (
     BenchmarkCase,
 )
 from zephyr.intelligence.model_profiling.model_discovery import (
-    DEFAULT_OLLAMA_URL,
     DiscoveredModel,
     ModelDiscovery,
 )
@@ -91,7 +90,6 @@ from zephyr.intelligence.model_profiling.task_model_learner import (
 __all__ = [
     "ALL_BENCHMARK_CASES",
     "CATEGORY_MAP",
-    "DEFAULT_OLLAMA_URL",
     "MAX_OLLAMA_MODELS",
     "SKIP_MODEL_PATTERNS",
     "BenchmarkCase",
