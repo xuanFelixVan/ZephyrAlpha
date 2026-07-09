@@ -2473,9 +2473,10 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > - 5.93.1 [DEFERRED-PERMANENT] import副作用需重构为显式 init() 函数, 属架构级变更。
 > - 5.93.3/5.93.4 [DEFERRED-PERMANENT] shared/trading __init__.py __all__ 170+/41名称无import, 需 PEP 562 __getattr__ 策略或显式import, 属大规模重构。
 > - 5.93.6 [DEFERRED] 83处 from ... import * 需逐文件改为显式导入, 属系统性重构。
-> - 5.93.7 [DEFERRED] infrastructure/config/__init__.py 定义类需迁移到子模块, 中等风险。
+> - 5.93.7 [FIXED] infrastructure/config/__init__.py 定义类需迁移到子模块, 中等风险。
 > - 5.93.8 [DEFERRED] (细节待评估)。
-> - FIXED=1(5.93.2), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=3(5.93.1/3/4), DEFERRED=3(5.93.6/7/8), STILL_VALID=0. 维度5.93全部清零。
+> - FIXED=2(5.93.2/5.93.7), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=3(5.93.1/3/4), DEFERRED=2(5.93.6/8), STILL_VALID=0. 维度5.93全部清零。
+> **第92轮Phase 7h修复（2026-07-09）**：5.93.7 `infrastructure/config/__init__.py` 业务代码迁移到 `app_config.py` 子模块 FIXED. AppConfig/load_config/reload_config/ConfigHolder 迁移到 app_config.py, __init__.py 仅做 re-export. 同时 extract method 降低 load_config McCabe 19→5(提取 _find_yaml_path + _apply_env_overrides). CREATE-GUARD 类名冲突豁免(# class-name-alias 标记). creation_token 登记. commit b182e38a45. 26/26 tests PASSED. DEFERRED 3→2(5.93.6/8 剩余).
 
 > 维度AJ：__init__.py中的重型import、无效__all__、命名空间污染
 
@@ -2523,6 +2524,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **文件**：`src/zephyr/infrastructure/config/__init__.py:46,53-66,69-72,75,154`
 - **证据**：`__init__.py` 中定义了 `AppConfig` dataclass、`load_config()` 函数、`reload_config()` 函数、`_deep_merge_lists()` 函数。`__init__.py` 应仅做包初始化和重导出，不应定义业务类/函数。
 - **修复**：移到 `app_config.py` 子模块，`__init__.py` 仅做 `from .app_config import AppConfig` 重导出。
+- **状态**：FIXED — 5.93.7 Phase 7h 完成. AppConfig/ConfigHolder/load_config/reload_config 迁移到 app_config.py, __init__.py 仅 re-export. extract method 降 load_config McCabe 19→5(_find_yaml_path + _apply_env_overrides). CREATE-GUARD 类名冲突豁免(# class-name-alias). commit b182e38a45. 26/26 tests PASSED.
 
 #### 5.93 严重度汇总
 
