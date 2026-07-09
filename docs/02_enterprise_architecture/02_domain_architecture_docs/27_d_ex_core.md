@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-10 02:59:57
+> 最后更新: 2026-07-10 03:03:07
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -101,7 +101,6 @@ graph TD
     D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     src_zephyr_ex_core_adapters_miniqmt_broker_py_1 -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_broker_interface_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_broker_interface_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_order_manager_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_ex_core_order_manager_py -.->|导入依赖 / import_depends| D_SHARED
@@ -110,10 +109,11 @@ graph TD
     src_zephyr_ex_core_execution_engine_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_core_execution_engine_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_broker_interface_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_BACKTEST
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_TRADING["(生产态 / production) D_TRADING"]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_TRADING
     D_FRONTEND["(设计态 / design) D_FRONTEND"]
     D_FRONTEND -.->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py_1
@@ -146,7 +146,6 @@ graph TD
     end
     src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    src_zephyr_ex_core_adapters_broker_interface_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_order_manager_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_ex_core_order_manager_py -.->|导入依赖 / import_depends| D_SHARED
@@ -155,6 +154,7 @@ graph TD
     src_zephyr_ex_core_execution_engine_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_core_execution_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_adapters_broker_interface_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_simulation_broker_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_ex_core_init_py
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
@@ -211,7 +211,6 @@ graph TD
     src_zephyr_ex_core_adapters_init_py -.->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_ex_core_broker_interface_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_BACKTEST
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_GOVERNANCE
@@ -221,6 +220,7 @@ graph TD
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_TRADING
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
