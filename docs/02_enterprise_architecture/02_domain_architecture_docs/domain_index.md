@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 50 |
-| 模块总数 | 5017 |
+| 模块总数 | 5018 |
 | 生产态模块 | 1612 |
 | 设计态模块 | 54 |
-| 原型态模块 | 3351 |
+| 原型态模块 | 3352 |
 
 ## 域清单（按架构层分组）
 
@@ -62,7 +62,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_ASHARE_SIGNAL | ashare_signal / A-Share Signal | 7 | 0 | 0 | 7 | 7/150 (OK) | [20_d_ashare_signal.md](20_d_ashare_signal.md) |
-| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1746 | 49 | 0 | 1697 | 1746/150 (超容) | [21_d_audittest.md](21_d_audittest.md) |
+| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1747 | 49 | 0 | 1698 | 1747/150 (超容) | [21_d_audittest.md](21_d_audittest.md) |
 | D_AUTONOMY_PERM | budget_enforcement / Autonomy Protection | 14 | 0 | 0 | 14 | 14/150 (OK) | [22_d_autonomy_perm.md](22_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 33 | 9 | 8 | 16 | 33/150 (OK) | [23_d_backtest.md](23_d_backtest.md) |
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 8 | 1 | 1 | 6 | 8/150 (OK) | [24_d_cross_asset.md](24_d_cross_asset.md) |
