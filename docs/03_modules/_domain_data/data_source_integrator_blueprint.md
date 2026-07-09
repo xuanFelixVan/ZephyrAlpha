@@ -549,7 +549,69 @@ integrator_session_uptime_seconds{source}    # Gauge
 
 输出为 Prometheus 文本格式 `data/metrics.prom`，可接 Grafana。
 
-### §8.3 告警通道
+### §8.3 Capability 实测性能记录表（c0_meta.fetch_perf）
+
+> **设计动机**：不同 source.capability 的下载速度差异巨大（实测从 5066 行/秒到 0.09 只/秒，跨度 5 万倍），且存在 API 限流/反爬/损坏等运行时问题。仅靠 `policy_registry` 的策略配置（预期 RPM）无法反映实际运行情况，需持久化实测数据供调度决策和运维排查。
+
+**表结构**（ClickHouse `c0_meta.fetch_perf`）：
+
+| 列 | 类型 | 说明 |
+|---|---|---|
+| source | String | 数据源（miniqmt/akshare/ifind/...） |
+| capability | String | 能力名（kline_daily/adj_factor/...） |
+| target_table | String | 目标 ClickHouse 表 |
+| test_date | Date | 测试日期 |
+| rows_fetched | UInt64 | 实测下载行数 |
+| elapsed_sec | Float64 | 实测耗时（秒） |
+| rows_per_sec | Float64 | 实测速度（行/秒），0=不适用 |
+| symbols_per_sec | Float64 | 标的速度（只/秒），0=不适用 |
+| error_count | UInt32 | 错误数 |
+| error_rate | Float64 | 错误率（0-1） |
+| rate_limited | UInt8 | 是否被限流：0=否，1=是 |
+| api_status | String | ok/rate_limited/blocked/broken/slow/pending |
+| known_issues | String | 已知问题描述 |
+| notes | String | 备注 |
+| recorded_at | DateTime | 记录时间（DEFAULT now()） |
+
+**ENGINE**: `ReplacingMergeTree(recorded_at)` ORDER BY (source, capability, test_date) —— 同一 source+capability+date 保留最新记录。
+
+**api_status 枚举**：
+
+| 状态 | 含义 | 示例 |
+|---|---|---|
+| ok | 正常可用 | miniqmt.kline_daily（14.5 行/秒） |
+| slow | 可用但极慢（<1 只/秒） | miniqmt.adj_factor（0.09 只/秒，16h/全量） |
+| rate_limited | 可用但被限流，需降速 | akshare.daily_valuation（百度API空响应率15%） |
+| blocked | API 被反爬封锁，不可用 | akshare.money_flow（东财 RemoteDisconnected） |
+| broken | API 接口损坏，不可用 | akshare.equity_pledge（data_json[result]为None） |
+| pending | 尚未测试 | miniqmt.kline_weekly（待下载验证） |
+
+**2026-07-09 首批实测数据**（14 条，覆盖 miniqmt 6 + akshare 8）：
+
+| source | capability | api_status | rows/s | 关键问题 |
+|---|---|---|---|---|
+| miniqmt | kline_daily | ok | 14.5 | — |
+| miniqmt | index_kline | ok | 3.6 | 595只指数逐只 |
+| miniqmt | adj_factor | **slow** | 0.09只/s | get_divid_factors 每只11秒，全量16h |
+| miniqmt | kline_daily_hfq | ok | 4.6 | 从日K×复权因子计算 |
+| miniqmt | kline_weekly | pending | — | 待测 |
+| miniqmt | kline_monthly | pending | — | 待测 |
+| akshare | daily_valuation | **rate_limited** | 0.17只/s | 百度API空响应率15%，需Event.wait(1s)/股 |
+| akshare | margin_trading | ok | 5066 | stock_margin_account_szse 批量 |
+| akshare | block_trade | ok | 135 | — |
+| akshare | dragon_tiger | ok | 176 | — |
+| akshare | share_unlock | ok | — | 无解禁数据 |
+| akshare | money_flow | **blocked** | — | 东财反爬封锁，已回退ifind |
+| akshare | equity_pledge | **broken** | — | API损坏，已回退ifind |
+| akshare | equity_pledge_summary | **broken** | — | 同上 |
+
+**派生用法**：
+- 调度器优先级排序：`ok` 状态的 capability 优先调度，`slow`/`rate_limited` 安排在低峰时段
+- 退化决策：`blocked`/`broken` 自动回退到备用源（如 akshare→ifind）
+- 运维告警：`error_rate > 0.1` 或 `api_status in ('blocked','broken')` 触发告警
+- 容量规划：`rows_per_sec` × `目标行数` 估算下载耗时，判断是否能在盘后窗口完成
+
+### §8.4 告警通道
 
 | 通道 | 触发 | 格式 |
 |------|------|------|
@@ -558,7 +620,7 @@ integrator_session_uptime_seconds{source}    # Gauge
 | 钉钉 Webhook（可选） | DEAD 任务 + 配额告警 | Markdown 卡片 |
 | 邮件（可选） | 连续 3 天失败 | 汇总邮件 |
 
-### §8.4 CLI 自查
+### §8.5 CLI 自查
 
 ```bash
 integrator status                 # 查看所有任务今日状态
