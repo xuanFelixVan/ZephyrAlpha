@@ -160,31 +160,25 @@ class TestDetectStateDrifts:
         ]
         assert _detect_state_drifts(nodes) == []
 
-    def test_drift_when_maturity_differs(self):
-        """四图 design_maturity 不一致 → 漂移。"""
+    def test_no_drift_when_maturity_differs_across_graphs(self):
+        """四图 design_maturity 不一致 → 不再报漂移（各图维度不同是正常的）。"""
         nodes = [
             _make_node("MOD-X", "depgraph", design_maturity="design"),
             _make_node("MOD-X", "dataflow", design_maturity="production"),
             _make_node("MOD-X", "decision", design_maturity="prototype"),
             _make_node("MOD-X", "blueprint", design_maturity="design"),
         ]
-        drifts = _detect_state_drifts(nodes)
-        assert len(drifts) == 1
-        assert drifts[0]["module_id"] == "MOD-X"
-        assert drifts[0]["depgraph"] == "design"
-        assert drifts[0]["dataflow"] == "production"
-        assert drifts[0]["decision"] == "prototype"
-        assert drifts[0]["blueprint"] == "design"
+        assert _detect_state_drifts(nodes) == []
 
     def test_drift_includes_blueprint_column(self):
-        """blueprint 图参与漂移检测，输出含 blueprint 列。"""
+        """blueprint 缺 design_maturity 时，漂移记录含 blueprint 列（值为 -）。"""
         nodes = [
             _make_node("MOD-X", "depgraph", design_maturity="production"),
-            _make_node("MOD-X", "blueprint", design_maturity="design"),
+            _make_node("MOD-X", "blueprint", design_maturity=None),
         ]
         drifts = _detect_state_drifts(nodes)
         assert len(drifts) == 1
-        assert drifts[0]["blueprint"] == "design"
+        assert drifts[0]["blueprint"] == "-"
         assert drifts[0]["depgraph"] == "production"
         assert drifts[0]["dataflow"] == "-"
         assert drifts[0]["decision"] == "-"
@@ -192,6 +186,25 @@ class TestDetectStateDrifts:
     def test_no_drift_when_only_one_graph(self):
         """仅一图存在 → 不构成漂移。"""
         nodes = [_make_node("MOD-SOLO", "depgraph", design_maturity="design")]
+        assert _detect_state_drifts(nodes) == []
+
+    def test_drift_when_blueprint_missing_design_maturity(self):
+        """blueprint 缺 design_maturity 字段 → 报字段缺失。"""
+        nodes = [
+            _make_node("MOD-X", "depgraph", design_maturity="prototype"),
+            _make_node("MOD-X", "blueprint", design_maturity=None),
+        ]
+        drifts = _detect_state_drifts(nodes)
+        assert len(drifts) == 1
+        assert drifts[0]["module_id"] == "MOD-X"
+        assert "missing" in drifts[0].get("issue", "").lower() or drifts[0]["blueprint"] == "-"
+
+    def test_no_drift_when_blueprint_has_maturity(self):
+        """blueprint 有 design_maturity 字段 → 不报。"""
+        nodes = [
+            _make_node("MOD-X", "depgraph", design_maturity="prototype"),
+            _make_node("MOD-X", "blueprint", design_maturity="prototype"),
+        ]
         assert _detect_state_drifts(nodes) == []
 
 
@@ -209,27 +222,24 @@ class TestDetectDomainMismatches:
         assert _detect_domain_mismatches(nodes) == []
 
     def test_mismatch_when_domains_differ(self):
+        """无 blueprint 时，depgraph 与 dataflow 域不一致 → 不报告（无逻辑真源可比）。"""
         nodes = [
             _make_node("MOD-X", "depgraph", domain_id="D_A"),
             _make_node("MOD-X", "dataflow", domain_id="D_B"),
         ]
-        mismatches = _detect_domain_mismatches(nodes)
-        assert len(mismatches) == 1
-        assert mismatches[0]["module_id"] == "MOD-X"
-        assert mismatches[0]["depgraph"] == "D_A"
-        assert mismatches[0]["dataflow"] == "D_B"
+        assert _detect_domain_mismatches(nodes) == []
 
     def test_mismatch_includes_blueprint_column(self):
-        """blueprint 图参与域不一致检测，输出含 blueprint 列。"""
+        """dataflow 与 blueprint 域不一致 → 报告且含 blueprint 列。"""
         nodes = [
-            _make_node("MOD-X", "depgraph", domain_id="D_A"),
+            _make_node("MOD-X", "dataflow", domain_id="D_A"),
             _make_node("MOD-X", "blueprint", domain_id="D_B"),
         ]
         mismatches = _detect_domain_mismatches(nodes)
         assert len(mismatches) == 1
         assert mismatches[0]["blueprint"] == "D_B"
-        assert mismatches[0]["depgraph"] == "D_A"
-        assert mismatches[0]["dataflow"] == "-"
+        assert mismatches[0]["dataflow"] == "D_A"
+        assert mismatches[0]["depgraph"] == "-"
         assert mismatches[0]["decision"] == "-"
 
     def test_no_mismatch_when_domain_null(self):
@@ -239,6 +249,26 @@ class TestDetectDomainMismatches:
             _make_node("MOD-X", "dataflow", domain_id="D_A"),
         ]
         assert _detect_domain_mismatches(nodes) == []
+
+    def test_depgraph_blueprint_mismatch_not_reported(self):
+        """depgraph 与 blueprint 域不一致 → 不报告（blueprint 是逻辑真源）。"""
+        nodes = [
+            _make_node("MOD-X", "depgraph", domain_id="D_TRADING"),
+            _make_node("MOD-X", "blueprint", domain_id="D_INFRA_RUNTIME"),
+        ]
+        assert _detect_domain_mismatches(nodes) == []
+
+    def test_dataflow_blueprint_mismatch_reported(self):
+        """dataflow 与 blueprint 域不一致 → 报告（dataflow 应向 blueprint 对齐）。"""
+        nodes = [
+            _make_node("MOD-X", "dataflow", domain_id="D_TRADING"),
+            _make_node("MOD-X", "blueprint", domain_id="D_INFRA_RUNTIME"),
+        ]
+        mismatches = _detect_domain_mismatches(nodes)
+        assert len(mismatches) == 1
+        assert mismatches[0]["module_id"] == "MOD-X"
+        assert mismatches[0]["dataflow"] == "D_TRADING"
+        assert mismatches[0]["blueprint"] == "D_INFRA_RUNTIME"
 
 
 # ---------------------------------------------------------------------------

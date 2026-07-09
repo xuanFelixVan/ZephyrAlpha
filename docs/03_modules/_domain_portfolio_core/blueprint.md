@@ -26,6 +26,7 @@ generation: 2
 rule_form: structural
 scope: module
 stability: evolving
+design_maturity: prototype
 verifiability: manual
 summary: "D_PORTFOLIO_CORE 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架 + 默认股票多头策略 + 注册表。"
 priority: P0
@@ -42,6 +43,8 @@ references:
   - path: "D:\\ZephyrAlpha\\architecture_model\\layers\\l05_portfolio_construction.yaml"
     section: "全篇"
     why: "YAML SSoT"
+responsibility_domain:
+build_status: generated
 ---
 
 > ✅ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，可以此蓝图为依据新增组合构建业务代码。

@@ -1572,7 +1572,7 @@ entries:
     裁定：建立四图模块同步引擎，depgraph 为真源，单向派生到 dataflow/decision/blueprint。
   adjudication: |
     6 项架构裁定：
-    (a) depgraph.nodes 为架构数据真源，dataflow/decision/blueprint 核心字段单向派生
+    (a) depgraph.nodes 为架构数据真源（模块存在性/依赖关系/文件路径/node_type）；domain_id 真源为 blueprint frontmatter（逻辑职责声明，非物理位置）；design_maturity 各图独立评估（维度不同，不强制一致）。2026-07-10 修正
     (b) 核心字段 4 个：module_id / domain_id / design_maturity / build_status
     (c) 占位记录策略：dataflow_jobs（entity_type='module_placeholder'）+ decision_layers（layer_id=module_id, track='placeholder'）
     (d) decision_layers/decision_nodes 新增 domain_id 字段（ALTER TABLE）
@@ -1588,7 +1588,7 @@ entries:
     Phase 5: 门禁升级 + capability 登记 + E2E 验证
   related_adjudication: '#ARCH-053'
   created: '2026-07-09'
-  last_updated: '2026-07-09'
+  last_updated: '2026-07-10'
 - issue_id: '#ARCH-057'
   title: Gate 测试覆盖率盲区——36 gate 中 15 个缺测试 + [TESTS] 头部声明无强制校验
   category: test_governance
