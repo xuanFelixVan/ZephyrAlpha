@@ -104,6 +104,7 @@ from zephyr.governance.commit_gates.high_complexity_gate import make_high_comple
 from zephyr.governance.commit_gates.rule_four_way_alignment_gate import (
     make_rule_four_way_alignment_gate,
 )
+from zephyr.governance.commit_gates.tests_coverage_gate import make_tests_coverage_gate
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -312,6 +313,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_bare_sql_gate())  # priority=87 治本裸SQL字面量（§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE）
         self._gate_registry.register(make_god_class_gate())  # priority=86 治本God Class方法数>20（§5.150防复发，AST检测新增类方法数）
         self._gate_registry.register(make_high_complexity_gate())  # priority=85 治本高循环复杂度>15（§5.158防复发，AST检测McCabe复杂度）
+        self._gate_registry.register(make_tests_coverage_gate())  # priority=95 治本gate测试覆盖率校验（#ARCH-057，守卫者的守卫者——[TESTS]头部声明必须兑现）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         # ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
