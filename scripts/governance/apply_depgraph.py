@@ -131,6 +131,12 @@ SQL_DEPRECATE_NODE = "UPDATE nodes SET build_status='deprecated' WHERE node_id=%
 SQL_DELETE_EDGE_BY_ID = "DELETE FROM edges WHERE edge_id=%s"
 SQL_DELETE_DOMAIN_BY_ID = "DELETE FROM domains WHERE domain_id=%s"
 
+# Phase 7c-2: 重复 f-string SQL 提取为 .format() 模板（2026-07-09）
+SQL_UPDATE_TBL_REPLACE_LIKE = "UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s"
+SQL_COUNT_TBL_BY_COL_LIKE = "SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE %s"
+SQL_COUNT_TBL_BY_COL_EQ = "SELECT COUNT(*) FROM {tbl} WHERE {col}=%s"
+SQL_UPDATE_TBL_COL_EQ = "UPDATE {tbl} SET {col}=%s WHERE {col}=%s"
+
 
 
 @contextlib.contextmanager
@@ -1867,26 +1873,26 @@ def cmd_rename_domain(
         for step, tbl, col, use_like in steps:
             if use_like:
                 cnt = c.execute(
-                    f"SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE %s",
+                    SQL_COUNT_TBL_BY_COL_LIKE.format(tbl=tbl, col=col),
                     (f"%{old_id}%",),
                 ).fetchone()["count"]
                 if cnt > 0:
                     print(f"  {mode} step{step:>2} {tbl}.{col} REPLACE+LIKE '%{old_id}%': {cnt} rows", file=sys.stderr)
                     if not dry_run:
                         c.execute(
-                            f"UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s",
+                            SQL_UPDATE_TBL_REPLACE_LIKE.format(tbl=tbl, col=col),
                             (old_id, new_id, f"%{old_id}%"),
                         )
             else:
                 cnt = c.execute(
-                    f"SELECT COUNT(*) FROM {tbl} WHERE {col}=%s",
+                    SQL_COUNT_TBL_BY_COL_EQ.format(tbl=tbl, col=col),
                     (old_id,),
                 ).fetchone()["count"]
                 if cnt > 0:
                     print(f"  {mode} step{step:>2} {tbl}.{col}='{old_id}': {cnt} rows", file=sys.stderr)
                     if not dry_run:
                         c.execute(
-                            f"UPDATE {tbl} SET {col}=%s WHERE {col}=%s",
+                            SQL_UPDATE_TBL_COL_EQ.format(tbl=tbl, col=col),
                             (new_id, old_id),
                         )
             total += cnt
@@ -2052,7 +2058,7 @@ def cmd_delete_domain(
                     print(f"  {mode} step{step:>2} {tbl}.{col} REPLACE '{domain_id}'->'': {cnt} rows", file=sys.stderr)
                     if not dry_run:
                         c.execute(
-                            f"UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s",
+                            SQL_UPDATE_TBL_REPLACE_LIKE.format(tbl=tbl, col=col),
                             (domain_id, "", f"%{domain_id}%"),
                         )
                         # 清理替换后变空或仅剩 domain_id 的行
@@ -2235,26 +2241,26 @@ def cmd_merge_domain(
         for step, tbl, col, use_like in steps:
             if use_like:
                 cnt = c.execute(
-                    f"SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE %s",
+                    SQL_COUNT_TBL_BY_COL_LIKE.format(tbl=tbl, col=col),
                     (f"%{old_id}%",),
                 ).fetchone()["count"]
                 if cnt > 0:
                     print(f"  {mode} step{step:>2} {tbl}.{col} REPLACE+LIKE '%{old_id}%': {cnt} rows", file=sys.stderr)
                     if not dry_run:
                         c.execute(
-                            f"UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s",
+                            SQL_UPDATE_TBL_REPLACE_LIKE.format(tbl=tbl, col=col),
                             (old_id, new_id, f"%{old_id}%"),
                         )
             else:
                 cnt = c.execute(
-                    f"SELECT COUNT(*) FROM {tbl} WHERE {col}=%s",
+                    SQL_COUNT_TBL_BY_COL_EQ.format(tbl=tbl, col=col),
                     (old_id,),
                 ).fetchone()["count"]
                 if cnt > 0:
                     print(f"  {mode} step{step:>2} {tbl}.{col}='{old_id}': {cnt} rows", file=sys.stderr)
                     if not dry_run:
                         c.execute(
-                            f"UPDATE {tbl} SET {col}=%s WHERE {col}=%s",
+                            SQL_UPDATE_TBL_COL_EQ.format(tbl=tbl, col=col),
                             (new_id, old_id),
                         )
             total += cnt
