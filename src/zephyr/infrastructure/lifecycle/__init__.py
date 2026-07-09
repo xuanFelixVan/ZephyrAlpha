@@ -15,39 +15,9 @@
 
 from . import scope_guard
 
-__all__ = [
-    "CacheStats",
-    "CircuitBreaker",
-    "CircuitBreakerState",
-    "ClampedPercent",
-    "DaemonEntry",
-    "DaemonPressureLevel",
-    "DaemonRegistry",
-    "DaemonResourceSnapshot",
-    "DaemonState",
-    "DefensiveStrategy",
-    "DegradationMatrix",
-    "HealthCheckResult",
-    "LazyModuleRegistry",
-    "LifecycleAware",
-    "LifecycleManager",
-    "LifecycleState",
-    "ModuleEntry",
-    "ModuleHealth",
-    "OptimizationRecord",
-    "OptimizationResult",
-    "OptimizationStrategy",
-    "PressureLevel",
-    "PressureState",
-    "ProcessPoolStats",
-    "ResourceOptimizationEngine",
-    "ResourceSnapshot",
-    "daemon_registry",
-    "hooks",
-    "lazy_loader",
-    "registry",
-    "resource_optimization_engine",
-    "resource_optimization_models",
-    "scope_guard",
-    "task_lifecycle_manager",
-]
+# NOTE: 本包仅保留 scope_guard 与 task_lifecycle_manager 两个活模块。
+# resource_optimization_engine.py / lazy_loader.py 已删除（死代码，canonical 在
+# zephyr.trading.resource_optimization 与 zephyr.shared.lifecycle.lazy_loader）。
+# 历史遗留的 __all__ façade 条目（CacheStats/DaemonRegistry/PressureLevel 等）从未在此
+# 导入，会引发 ImportError，已清除。
+__all__ = ["scope_guard"]

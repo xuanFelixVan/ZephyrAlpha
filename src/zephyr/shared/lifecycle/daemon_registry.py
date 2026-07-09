@@ -50,8 +50,6 @@ __all__ = [
     "DaemonEntry",
     "DaemonRegistry",
     "DaemonState",
-    "PressureLevel",
-    "ResourceSnapshot",
     "registry",
 ]
 
@@ -65,14 +63,6 @@ class DaemonState(StrEnum):
     RUNNING = "RUNNING"
     STOPPING = "STOPPING"
     FAILED = "FAILED"
-
-
-@unique
-class PressureLevel(StrEnum):
-    NORMAL = "NORMAL"
-    WARNING = "WARNING"
-    CRITICAL = "CRITICAL"
-    EMERGENCY = "EMERGENCY"
 
 
 @runtime_checkable
@@ -92,52 +82,9 @@ class DaemonEntry:
     last_error: str = ""
 
 
-@dataclass
-class ResourceSnapshot:
-    timestamp: float = 0.0
-    cpu_percent: float = 0.0
-    memory_percent: float = 0.0
-    memory_used_gb: float = 0.0
-    memory_total_gb: float = 0.0
-    process_count: int = 0
-    thread_count: int = 0
-    pressure: PressureLevel = PressureLevel.NORMAL
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "timestamp": self.timestamp,
-            "cpu_percent": round(self.cpu_percent, 1),
-            "memory_percent": round(self.memory_percent, 1),
-            "memory_used_gb": round(self.memory_used_gb, 2),
-            "memory_total_gb": round(self.memory_total_gb, 2),
-            "process_count": self.process_count,
-            "thread_count": self.thread_count,
-            "pressure": self.pressure.value,
-        }
-
-
-@dataclass
-class _Thresholds:
-    memory_warning_pct: float = 75.0
-    memory_critical_pct: float = 85.0
-    memory_emergency_pct: float = 95.0
-    process_warning: int = 80
-    process_critical: int = 150
-    process_emergency: int = 250
-    cpu_warning_pct: float = 80.0
-    cpu_critical_pct: float = 95.0
-
-
 class DaemonRegistry:
     _lock: ClassVar[threading.Lock] = threading.Lock()
     _entries: ClassVar[dict[str, DaemonEntry]] = {}
-    _thresholds: ClassVar[_Thresholds] = _Thresholds()
-    _pressure_history: ClassVar[list[ResourceSnapshot]] = []
-    _max_history: ClassVar[int] = 60
-    _monitor_thread: ClassVar[threading.Thread | None] = None
-    _monitor_running: ClassVar[bool] = False
-    _last_snapshot: ClassVar[ResourceSnapshot | None] = None
-    _on_pressure_callbacks: ClassVar[list[Callable[[PressureLevel, ResourceSnapshot], None]]] = []
 
     @classmethod
     def register(
@@ -270,121 +217,6 @@ class DaemonRegistry:
     def reset(cls) -> None:
         with cls._lock:
             cls._entries.clear()
-
-    @classmethod
-    def on_pressure(cls, callback: Callable[[PressureLevel, ResourceSnapshot], None]) -> None:
-        cls._on_pressure_callbacks.append(callback)
-
-    @classmethod
-    def snapshot_resources(cls) -> ResourceSnapshot:
-        snap = ResourceSnapshot(timestamp=time.time())
-        try:
-            import psutil
-
-            mem = psutil.virtual_memory()
-            snap.memory_percent = mem.percent
-            snap.memory_used_gb = mem.used / (1024**3)
-            snap.memory_total_gb = mem.total / (1024**3)
-            snap.cpu_percent = psutil.cpu_percent(interval=0)
-            snap.process_count = len(psutil.pids())
-        except ImportError:
-            try:
-                import os
-
-                if os.name == "nt":
-                    import ctypes
-
-                    kernel32 = ctypes.windll.kernel32
-                    MEMORYSTATUSEX = ctypes.c_ulonglong * 8
-                    mem_status = MEMORYSTATUSEX()
-                    kernel32.GlobalMemoryStatusEx(ctypes.byref(mem_status))
-                    snap.memory_total_gb = mem_status[0] / (1024**3)
-                    snap.memory_used_gb = mem_status[2] / (1024**3)
-                    snap.memory_percent = mem_status[4]
-            except Exception as e:
-                logger.warning("suppressed error in daemon_registry", exc_info=True)
-        snap.pressure = cls._classify_pressure(snap)
-        cls._last_snapshot = snap
-        return snap
-
-    @classmethod
-    def _classify_pressure(cls, snap: ResourceSnapshot) -> PressureLevel:
-        t = cls._thresholds
-        if snap.memory_percent >= t.memory_emergency_pct:
-            return PressureLevel.EMERGENCY
-        if snap.process_count >= t.process_emergency:
-            return PressureLevel.EMERGENCY
-        if snap.memory_percent >= t.memory_critical_pct:
-            return PressureLevel.CRITICAL
-        if snap.process_count >= t.process_critical:
-            return PressureLevel.CRITICAL
-        if snap.cpu_percent >= t.cpu_critical_pct:
-            return PressureLevel.CRITICAL
-        if snap.memory_percent >= t.memory_warning_pct:
-            return PressureLevel.WARNING
-        if snap.process_count >= t.process_warning:
-            return PressureLevel.WARNING
-        if snap.cpu_percent >= t.cpu_warning_pct:
-            return PressureLevel.WARNING
-        return PressureLevel.NORMAL
-
-    @classmethod
-    def _monitor_loop(cls, interval: float = 30.0) -> None:
-        while cls._monitor_running:
-            try:
-                snap = cls.snapshot_resources()
-                cls._pressure_history.append(snap)
-                if len(cls._pressure_history) > cls._max_history:
-                    cls._pressure_history = cls._pressure_history[-cls._max_history :]
-
-                if snap.pressure is not PressureLevel.NORMAL:
-                    logger.warning(
-                        "DaemonRegistry: resource pressure %s (mem=%.1f%%, procs=%d, cpu=%.1f%%)",
-                        snap.pressure.value,
-                        snap.memory_percent,
-                        snap.process_count,
-                        snap.cpu_percent,
-                    )
-                    for cb in cls._on_pressure_callbacks:
-                        try:
-                            cb(snap.pressure, snap)
-                        except Exception as e:
-                            logger.warning("suppressed error in daemon_registry", exc_info=True)
-
-                if snap.pressure is PressureLevel.EMERGENCY:
-                    cls.stop_low_priority(min_priority=5)
-                elif snap.pressure is PressureLevel.CRITICAL:
-                    cls.stop_low_priority(min_priority=2)
-
-            except Exception:
-                logger.exception("DaemonRegistry: monitor tick failed", exc_info=True)
-            time.sleep(interval)
-
-    @classmethod
-    def start_monitor(cls, interval: float = 30.0) -> None:
-        if cls._monitor_running:
-            return
-        cls._monitor_running = True
-        cls._monitor_thread = threading.Thread(
-            target=cls._monitor_loop,
-            args=(interval,),
-            daemon=True,
-            name="daemon-registry-monitor",
-        )
-        cls._monitor_thread.start()
-        logger.info("DaemonRegistry: resource monitor started (interval=%.0fs)", interval)
-
-    @classmethod
-    def stop_monitor(cls) -> None:
-        cls._monitor_running = False
-
-    @classmethod
-    def get_pressure_history(cls) -> list[dict[str, Any]]:
-        return [s.to_dict() for s in cls._pressure_history]
-
-    @classmethod
-    def get_last_snapshot(cls) -> ResourceSnapshot | None:
-        return cls._last_snapshot
 
 
 registry = DaemonRegistry
