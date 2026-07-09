@@ -99,7 +99,6 @@ design_maturity: design
 │  - TickFlow → 美股/港股日周月季年K线（免费无Key，不受VPN影响）│
 │  - AKShare → EDB宏观+国内新闻+研报（须断VPN）               │
 │  - 财经RSS → 国外财经新闻8源(Yahoo/Bloomberg/CNBC等,免费无Key)│
-│  - yfinance/Stooq → ❌ 不可用（已废弃，详见 §7.4/§7.5）      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -155,18 +154,15 @@ design_maturity: design
 | **Finnhub** | 公司新闻+行情(需Key) | **3/3 (100%)** | 无影响 | 2026-07-03 | 公司新闻+报价 | 市场新闻(100条)+AAPL报价(308.63),§7.1.1 |
 | **Newsdata.io** | 财经新闻(需Key) | **2/2 (100%)** | 无影响 | 2026-07-03 | 财经新闻补充 | business(5条)+stock(5条),200请求/天,§7.1.1 |
 | **Tiingo** | 行情API(需Key) | 1/2 (50%) | 无影响 | 2026-07-03 | 日K线backup | 日K线✅(21行); News❌(需付费),§7.1.1 |
-| **yfinance** | Yahoo非官方API | 0/10 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股(Yahoo**库级限流**非IP限流,VPN/代理无效) |
-| **Stooq** | 网站CSV | 0/2 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股CSV(JS浏览器验证,与IP无关) |
 | **TDX/mootdx/pytdx** | 通达信协议直连 | ⚠️ 文档级验证(未实测) | 无影响 | 2026-07-06 | A股K线+板块分类+财务(本地+在线) | A股日/周/月/分钟K线+指数行情+**通达信板块分类**(block_gn/block_fg)+财务数据+本地.day/.lc1/.lc5文件解析;**不支持板块分笔历史+不支持历史分笔**(详见§8) |
 
 > **实测结论（2026-07-03，含VPN对比测试）**：
 > - **Baostock 最稳定**（10/10），不受VPN影响，A股K线+财务主力免费源
 > - **TickFlow 美股可用**（12/12），不受VPN影响，美股K线主力免费源（2026-07-03新发现，§7.5）
 > - **AKShare 宏观+新闻+研报可用**（11/16），但**VPN有害**——爬国内网站(东财/金十/商务部)，挂VPN后国内网站拒绝海外IP，**使用时必须断开VPN**
-> - **yfinance VPN无效**——Yahoo是对yfinance**库本身全局限流**（非IP限流），挂VPN(海外IP)仍0/10失败，之前文档"需海外IP/代理"的结论**已修正为错误**
-> - **Stooq VPN无效**——JS浏览器验证(与IP无关)，pandas_datareader已移除
+> - yfinance/Stooq 已废弃（0%通过，VPN无效），详见 §7.4
 > - **财经RSS直连可用**（8/10通过，免费无Key，不受VPN影响）——国外新闻主力源，覆盖Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC
-> - **运维建议**：下载免费源数据时**断开VPN**（Baostock/TickFlow/财经RSS不受影响，AKShare必须断开）；yfinance/Stooq无论是否挂VPN都不可用
+> - **运维建议**：下载免费源数据时**断开VPN**（Baostock/TickFlow/财经RSS不受影响，AKShare必须断开）
 > - 免费源是 iFind 试用账号盲区的**补充**，不是替代。详见 §7。
 
 ### 1.4 能力边界一句话总结
@@ -1017,145 +1013,6 @@ data = xtdata.get_market_data_ex([], stocks, '1d', '20240101', '20250630')
 | P2 | CFFEX期货 | 中金所期货行情 | 解除-4216权限拒绝 |
 
 > C1 行情仓库填充状态见 ClickHouse 实时扫描。
-
----
-
-## §6 技术备注
-
-### §6.1 iFind 估值数据正确参数格式（坑）
-
-```python
-# ✅ 正确格式: 指标用分号分隔，参数格式为 "日期,类型"
-# 类型 100=静态值, 101=动态值
-THS_BasicData('600000.SH',
-    'ths_pe_stock;ths_pb_stock;ths_ps_stock',
-    '2025-06-30,100;2025-06-30,100;2025-06-30,100')
-# 返回: PE=11.45, PB=0.69
-
-# ❌ 错误格式（会返回 null）
-# THS_BasicData('600000.SH', 'ths_pe_stock', '2025-06-30')  # 缺少类型参数
-```
-
-**格式说明**：
-- 第2参数：指标代码，多个用分号 `;` 分隔
-- 第3参数：每个指标对应 `"日期,类型"`，多个用分号 `;` 分隔
-- 类型 `100` = 静态值（历史日期），`101` = 动态值（最新）
-
-### §6.2 miniQMT 运行要求与关键配置
-
-1. **Python 版本**：必须 3.11（pyd 文件最高 cp311，不支持 3.12）
-2. **QMT 客户端**：`XtMiniQmt.exe` 必须运行，`is_connected()` 返回 `True`
-3. **sys.path**：必须用 `append`，不能用 `insert`（会覆盖系统 numpy）
-4. **os.chdir**：必须 chdir 到 `D:\国金证券QMT交易端\bin.x64`（让相对路径 `../userdata_mini/datadir` 正确解析）
-5. **禁止**：不能修改 `xtdata.data_dir` 为绝对路径（会破坏底层 C++ 函数，导致"周期错误"）
-6. **下载流程**：K线/Tick 数据需要先 `download_history_data` 再 `get_market_data_ex`
-
-### §6.3 miniQMT "周期错误" 根因与修复
-
-**症状**：`get_market_data_ex` 返回"周期错误"（鍛ㄦ湡閿欒，GBK编码乱码），所有 period 值都报错。
-
-**根因**：参数顺序搞反了。`get_market_data_ex` 的参数顺序是 `(field_list, stock_list, period, start_time, end_time)`，period 在第3位，不是第5位。
-
-```python
-# ✅ 正确: period在第3位
-xtdata.get_market_data_ex([], ['600000.SH'], '1d', '20250601', '20250630')
-
-# ❌ 错误: period在第5位（会报"周期错误"）
-# xtdata.get_market_data_ex([], ['600000.SH'], '20250601', '20250630', '1d')
-# → period='20250601' 不在 {'1m','5m','15m','30m','1h','1d'} 中
-```
-
-**诊断方法**：
-1. 检查 `xtdata.get_client().is_connected()` 是否为 `True`
-2. 检查 `os.getcwd()` 是否为 `D:\国金证券QMT交易端\bin.x64`
-3. 检查参数顺序：period 必须在第3位
-4. 检查 period 值是否在 `{'tick','1m','5m','15m','30m','1h','1d','1w','1mon'}` 中
-
-### §6.4 miniQMT download_history_data 返回 None 是正常的
-
-```python
-result = xtdata.download_history_data('600000.SH', '1d', '20240101', '20250630')
-print(result)  # None
-# ✅ None 是正常的！源码中该函数没有 return 语句，数据已异步下载到本地
-```
-
-**原因**：`download_history_data` 源码中没有 `return` 语句，所以返回 `None`。数据是异步下载的，调用后立即返回，数据在后台写入本地 `datadir`。
-
-### §6.5 miniQMT get_trading_dates market 参数坑
-
-```python
-# ✅ 正确: market 用 'SH' 或 'SZ'
-xtdata.get_trading_dates('SH', '20250601', '20250701')  # 21天
-
-# ❌ 错误: market 用 'SSE' 或 'SZSE' 会返回空
-# xtdata.get_trading_dates('SSE', '20250601', '20250701')  # 空!
-```
-
-### §6.6 miniQMT 高频数据时间限制
-
-| 数据类型 | 时间范围 | 说明 |
-|---------|---------|------|
-| 日K线（1d） | 长历史（359行验证） | 可下载多年历史 |
-| 周K线（1w） | 长历史 | 同上 |
-| 月K线（1mon） | 长历史 | 同上 |
-| 1分钟K线（1m） | **仅最近交易日** | 历史需淘宝购买 |
-| 5分钟K线（5m） | **仅最近交易日** | 同上 |
-| 15/30/60分钟K线 | **仅最近交易日** | 同上 |
-| Tick数据（tick） | **仅最近交易日** | 同上 |
-
-**原因**：QMT 客户端本地不保留历史高频数据，只缓存最近交易日的高频数据。历史高频数据需通过淘宝购买后导入。
-
-### §6.7 iFind 试用账号错误码速查
-
-| 错误码 | 含义 | 影响数据 | 解决方案 |
-|--------|------|---------|---------|
-| -201 | 已登录 | 无 | 忽略，正常 |
-| -4309 | 试用账号只能获取1年历史 | 5分钟/分钟K线 | 升级正式账号 |
-| -4318 | ⏳ 月度配额限制(下月重置) | EDB宏观数据 | 下月自动恢复/升级正式账号 |
-| -4216 | 中金所权限被拒 | CFFEX期货 | 升级正式账号+期货权限 |
-| -4210 | 海外市场无权限 | 美股/港股 | 升级正式账号 |
-| -5100 | 账号类型不支持 | 事件/研报 | 升级正式账号 |
-| -4001 | 无数据 | 概念板块(DataPool) | 改用 i问财 |
-| -209 | 参数无效 | 情绪指标等 | 查找正确指标代码 |
-
-### §6.8 数据源连接验证脚本
-
-**iFind 验证**：
-```python
-from iFinDPy import *
-from zephyr.shared.security.secrets import get_secret_or_default
-r = THS_iFinDLogin(get_secret_or_default("IFIND_USERNAME"), get_secret_or_default("IFIND_PASSWORD"))
-assert r == 0 or r == -201, f"iFind登录失败: {r}"
-# 测试查询
-data = THS_HistoryQuotes('600000.SH', 'open,high,low,close', 'Interval:D', '2025-06-01', '2025-06-30')
-df = THS_Trans2DataFrame(data)
-assert len(df) > 0, "iFind查询返回空"
-print(f"iFind OK: {len(df)}行")
-```
-
-**miniQMT 验证**：
-```python
-import sys, os
-sys.path.append(r'D:\国金证券QMT交易端\bin.x64\Lib\site-packages')
-os.chdir(r'D:\国金证券QMT交易端\bin.x64')
-from xtquant import xtdata
-
-client = xtdata.get_client()
-assert client.is_connected(), "QMT未连接，请启动 XtMiniQmt.exe"
-# 测试查询
-data = xtdata.get_market_data_ex([], ['600000.SH'], '1d', '20250601', '20250630')
-assert '600000.SH' in data and len(data['600000.SH']) > 0, "QMT查询返回空"
-print(f"QMT OK: {len(data['600000.SH'])}行")
-```
-
-### §6.9 文档维护规则
-
-1. **本文件是数据源 API 调用的操作手册（SSoT）**：AI 查询本文档 = 零幻觉空间；AI 绕过本文档自行推断 = 幻觉/漂移根源。可下载数据清单见数据库 `data_source_assets` 表。
-2. **新增数据源时**：必须在 §1 总览 + §2/§3/§7 详细指南 + §4 对比矩阵 + §5 获取策略 中同步更新。
-3. **API 验证后**：必须将调用方法固化到 §2.4 / §3.4 / §7.6 的完整示例中，避免重复探索。
-4. **遇到新坑时**：必须记录到 §6 技术备注，包含症状、根因、修复方法。
-5. **C1 表填充状态变化时**：填充状态见 ClickHouse 实时扫描。
-6. **免费源接口失效时**：必须记录到 §7.5 风险与限制，并提供替代方案（多源备份）。
 
 ---
 
@@ -2050,15 +1907,6 @@ if __name__ == "__main__":
         sys.exit(1)
 ```
 
-### §7.9 免费源文档维护规则
-
-1. **免费源接口失效时**：必须记录到 §7.6 风险与限制，并提供替代方案（多源备份）。
-2. **新增免费源时**：必须在 §7.1 总览 + §7.2-§7.5 详细指南 + §7.7 互补矩阵 中同步更新。
-3. **免费源 API 验证后**：必须将调用方法固化到 §7.7 完整示例中，避免重复探索。
-4. **免费源与 iFind/QMT 交叉验证**：关键数据（如宏观CPI）应与 iFind EDB 交叉验证一致性。
-5. **TickFlow 失效应急**：TickFlow 限流或失效时，立即切换到需API Key的 Alpha Vantage/Twelve Data/Tiingo/Finnhub（需免费注册，见 §7.5 限制说明），并跟踪 TickFlow 官网修复进度。
-6. **VPN 使用规则**：下载免费源数据前**必须断开 VPN**（Baostock/TickFlow 不受影响，AKShare 爬国内网站挂 VPN 会失败）；VPN 对 yfinance/Stooq 无效（已废弃）。
-
 ---
 
 ## §8 通达信 TDX/mootdx/pytdx 数据源完整指南（v1.9.0 新增）
@@ -2674,13 +2522,19 @@ if __name__ == "__main__":
 | AKShare stock_news_em | ❌ 不可替代 | TDX无新闻数据 |
 | 淘宝购买的板块分笔历史 | ❌ **不可持续替代** | TDX无板块分笔历史API（§8.6） |
 
-### §8.10 TDX 数据源文档维护规则
+### §8.10 文档维护规则
 
-1. **TDX 接口失效时**：必须记录到 §8.5 对比表 + §8.8 运维规则，并提供替代方案
-2. **TDX API 验证后**：必须将调用方法固化到 §8.4 完整示例中，避免重复探索
-3. **TDX 与 iFind/QMT/Baostock 交叉验证**：首次使用 K线/财务数据时，应与其他源交叉验证一致性
-4. **TDX bestip 失效应急**：可手动指定服务器 IP:PORT（如 `Quotes.factory(market='std', server=('115.238.90.226', 7709))`），或切换到 Baostock 作为 A股 K线 backup
-5. **VPN 使用规则**：TDX 不受 VPN 影响，与 Baostock/TickFlow/财经RSS 一致
+1. **本文件是数据源 API 调用的操作手册（SSoT）**：AI 查询本文档 = 零幻觉空间；AI 绕过本文档自行推断 = 幻觉/漂移根源。可下载数据清单见数据库 `data_source_assets` 表。
+2. **新增数据源时**：必须在 §1 总览 + §2/§3/§7/§8 详细指南 + §4 对比矩阵 + §5 获取策略 中同步更新。
+3. **API 验证后**：必须将调用方法固化到 §2.4 / §3.4 / §7.7 / §8.4 的完整示例中，避免重复探索。
+4. **遇到新坑时**：必须记录到对应数据源章节的技术备注，包含症状、根因、修复方法。
+5. **免费源接口失效时**：必须记录到 §7.6 风险与限制，并提供替代方案（多源备份）。
+6. **TickFlow 失效应急**：TickFlow 限流或失效时，立即切换到需API Key的 Alpha Vantage/Tiingo/Finnhub（见 §7.5 限制说明），并跟踪 TickFlow 官网修复进度。
+7. **交叉验证**：免费源与 iFind/QMT 关键数据（如宏观CPI）应交叉验证一致性；TDX 首次使用 K线/财务数据时与其他源交叉验证。
+8. **VPN 使用规则**：下载免费源数据前**必须断开 VPN**（Baostock/TickFlow/TDX/财经RSS 不受影响，AKShare 爬国内网站挂 VPN 会失败）；VPN 对 yfinance/Stooq 无效（已废弃）。
+9. **TDX 接口失效时**：必须记录到 §8.5 对比表 + §8.8 运维规则，并提供替代方案。
+10. **TDX bestip 失效应急**：可手动指定服务器 IP:PORT（如 `Quotes.factory(market='std', server=('115.238.90.226', 7709))`），或切换到 Baostock 作为 A股 K线 backup。
+11. **C1 表填充状态变化时**：填充状态见 ClickHouse 实时扫描。
 
 ---
 

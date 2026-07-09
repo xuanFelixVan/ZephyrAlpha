@@ -7,7 +7,7 @@ version: "1.1.0"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
-responsibility_domain: 
+responsibility_domain: D_GOV_SCRIPTS
 build_status: generated
 owner: ZephyrAlpha-Owner
 classification: internal
