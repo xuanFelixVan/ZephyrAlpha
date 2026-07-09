@@ -32,7 +32,7 @@ tags: [auto-runtime, brain, core, orchestrator, mape-k, circadian, dream-cycle, 
 priority: P0
 runtime_plane: hot
 blueprint_level: module
-responsibility_domain: "auto_runtime_core"
+responsibility_domain: "D_INFRA_RUNTIME"
 depends_on:
   - {target: "SYS-MASTER-001", at: "全篇", why: "系统总蓝图——大脑是三级金字塔 Level 1 节点"}
   - {target: "MOD-INF-002", at: "全篇", why: "Runtime Integration——RI EventStore/DryRun/CostTracker 运行时桥接"}

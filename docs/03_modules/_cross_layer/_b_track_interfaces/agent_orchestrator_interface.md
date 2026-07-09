@@ -1,5 +1,5 @@
 ---
-module_id: GOV-AI-ENG-ORC-001
+module_id: MOD-INF-039
 title: Agent Orchestrator Interface / Agent 编排器接口规范
 doc_type: architecture_view
 status: Active

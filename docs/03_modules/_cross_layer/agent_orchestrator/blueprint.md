@@ -31,7 +31,7 @@ tags: [agent-orchestrator, task-queue, state-machine, sandbox, hallucination-det
 priority: P0
 runtime_plane: hot
 blueprint_level: module
-responsibility_domain: "agent_orchestrator"
+responsibility_domain: "D_INFRA_RUNTIME"
 depends_on:
   - {target: "MOD-INF-035", at: "§2", why: "AutoRuntime Core——大脑调度，Orchestrator 接收 WorkDAG 并执行"}
   - {target: "MOD-INF-016", at: "全篇", why: "Shared Core——事件总线/生命周期/日志/沙箱等公共基座"}
