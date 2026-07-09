@@ -5,20 +5,26 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] warn-only——永不阻断 commit（passed=True）；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-loud（logger.warning，仍 return True）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
-# [MODIFY-GUARD] gate_id="GATE-PANORAMA-ALIGNMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [INVARIANTS] domain_mismatches>0 阻断 commit（passed=False）；orphans/state_drifts 保持 warn-only（passed=True）；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（logger.warning，return True）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
+# [MODIFY-GUARD] gate_id="GATE-PANORAMA-ALIGNMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；domain_mismatches 阻断阈值=0（任何不一致即阻断）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——run_alignment/PanoramaEmptyError/DB 异常降级为 fail-loud warn（不阻断 commit 保留 warn-only 契约）
+# [ERROR_CONTRACT] check 永不抛异常——run_alignment/PanoramaEmptyError/DB 异常降级为 fail-open warn（不阻断 commit）；domain_mismatches>0 为确定性阻断（非异常路径）
 # [TESTS] tests/governance/commit_gates/test_panorama_alignment_gate.py
 # [A_module] module_id=MOD-GOV-panorama_alignment_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""panorama_alignment_gate.py — 三图模块对齐 warn-only 门禁（四图模块对齐 Step 4）
+"""panorama_alignment_gate.py — 三图模块对齐门禁（四图模块对齐 Step 4，ARCH-056 升级）
 
 在 GitCommitGateway pre-commit 阶段调用 align_panoramas.run_alignment() 检测三图
-（depgraph / dataflowgraph / decisiongraph）的模块对齐情况，命中阈值时 logger.warning
-告警（**不阻断 commit**），提示 AI 修复对齐问题。
+（depgraph / dataflowgraph / decisiongraph）的模块对齐情况：
+
+阻断策略（ARCH-056 升级）
+------------------------
+- domain_mismatches > 0 → **阻断 commit**（passed=False）：核心字段 domain_id 不一致
+  是真正的架构漂移，必须先运行 `sync_panorama_module.py --all` 对齐后才能提交。
+- orphans > _ORPHAN_WARN_THRESHOLD → warn-only：孤儿为历史遗留，渐进消除。
+- state_drifts > _STATE_DRIFT_WARN_THRESHOLD → warn-only：状态漂移可由设计态过渡期解释。
 
 触发条件：staged 文件路径触及 depgraph/dataflow/decision 相关变更：
   - src/zephyr/governance/depgraph_schema.py / persistence/{dataflow,decision}graph_schema.py
@@ -26,11 +32,6 @@
   - scripts/governance/generate_project_depgraph.py
   - docs/01_policies_and_standards/_registry/catalogs/{dataflow_graph,decision_layers}_registry.yaml
   - scripts/governance/d5_architecture/generators/align_panoramas.py
-
-warn-only 裁定
----------------
-三图对齐涉及 4273+ 孤儿（历史遗留），阻断会阻碍所有 depgraph 相关开发。
-初期仅 warn-only 告警，待孤儿数降至阈值以下后可改 block。
 
 Usage::
 
@@ -150,6 +151,20 @@ def make_panorama_alignment_gate() -> GateSpec:
         domain_mismatch_count = len(report.domain_mismatches)
         design_only_count = len(report.design_only_in_one)
 
+        # 4a. 核心字段 domain_id 不一致 → 阻断 commit（ARCH-056 升级）
+        if domain_mismatch_count > 0:
+            detail = (
+                f"核心字段 domain_id 不一致：{domain_mismatch_count} 处，"
+                f"请运行 `python scripts/governance/sync_panorama_module.py --all` "
+                f"对齐四图后重试"
+            )
+            logger.error(
+                "GATE-PANORAMA-ALIGNMENT BLOCK: %s (orphans=%d, drifts=%d, design_only=%d)",
+                detail, orphan_count, drift_count, design_only_count,
+            )
+            return False, detail
+
+        # 4b. orphans / state_drifts 保持 warn-only
         warnings: list[str] = []
         if orphan_count > _ORPHAN_WARN_THRESHOLD:
             warnings.append(
@@ -164,11 +179,11 @@ def make_panorama_alignment_gate() -> GateSpec:
             warn_msg = " | ".join(warnings)
             logger.warning(
                 "GATE-PANORAMA-ALIGNMENT gate warn-only: %s "
-                "(域不一致=%d, 设计态孤立=%d)",
-                warn_msg, domain_mismatch_count, design_only_count,
+                "(设计态孤立=%d)",
+                warn_msg, design_only_count,
             )
 
-        # warn-only：永远 passed=True
+        # domain_mismatches=0 + warn-only → 通过
         return True, ""
 
     return GateSpec(gate_id="GATE-PANORAMA-ALIGNMENT", check=_check, priority=830)

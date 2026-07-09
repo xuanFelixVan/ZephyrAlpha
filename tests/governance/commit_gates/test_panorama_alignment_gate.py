@@ -6,7 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 # [TTL] task_bound
-"""test_panorama_alignment_gate.py — 三图模块对齐 warn-only 门禁单测（GATE-PANORAMA-ALIGNMENT）
+"""test_panorama_alignment_gate.py — 三图模块对齐门禁单测（GATE-PANORAMA-ALIGNMENT，ARCH-056 升级）
 
 权威依据：panorama_alignment_gate.py（make_panorama_alignment_gate）
 
@@ -15,6 +15,8 @@
 - TestShouldTrigger: _should_trigger 路径匹配（命中/不命中/Windows 反斜杠）
 - TestCheckNoTrigger: staged 文件不触及三图 → 跳过检测（passed=True）
 - TestCheckTriggerClean: 触发但报告无问题 → passed=True
+- TestCheckTriggerBlockDomainMismatch: 触发且 domain_mismatches>0 → **阻断**（passed=False）【ARCH-056】
+- TestCheckTriggerBlockDomainMismatchWithOrphans: domain_mismatch+orphans 同时存在 → 仍阻断
 - TestCheckTriggerWarnOrphans: 触发且孤儿超阈值 → warn-only（passed=True）
 - TestCheckTriggerWarnDrift: 触发且状态漂移超阈值 → warn-only（passed=True）
 - TestCheckPanoramaEmpty: run_alignment 抛 PanoramaEmptyError → 跳过（passed=True）
@@ -22,7 +24,10 @@
 - TestCheckGitDiffFails: git diff 返回非零 → fail-open（passed=True）
 - TestCheckGitDiffRaises: git diff 抛异常 → fail-open（passed=True）
 
-warn-only 契约：所有分支永远 passed=True（不阻断 commit）。
+阻断契约（ARCH-056 升级）：
+- domain_mismatches > 0 → passed=False（阻断 commit）
+- orphans / state_drifts 超阈值 → warn-only（passed=True）
+- run_alignment / git diff 异常 → fail-open（passed=True）
 """
 from __future__ import annotations
 
@@ -199,6 +204,62 @@ class TestCheckTriggerClean:
         passed, detail = gate.check(gw, [])
         assert passed is True
         assert detail == ""
+
+
+class TestCheckTriggerBlockDomainMismatch:
+    """触发且 domain_mismatches>0 → **阻断**（passed=False）【ARCH-056 升级】。"""
+
+    def test_domain_mismatch_blocks_commit(self, tmp_path, monkeypatch):
+        report = FakeReport(
+            domain_mismatches=[
+                {"module_id": "MOD-X", "depgraph_domain": "D_A", "other_domain": "D_B"}
+            ]
+        )
+        _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
+        gw = _make_gateway(
+            tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n"
+        )
+        gate = make_panorama_alignment_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed is False
+        assert "domain_id" in detail
+        assert "1" in detail
+        assert "sync_panorama_module.py" in detail
+
+    def test_multiple_domain_mismatches_block(self, tmp_path, monkeypatch):
+        report = FakeReport(
+            domain_mismatches=[
+                {"module_id": "MOD-A"},
+                {"module_id": "MOD-B"},
+                {"module_id": "MOD-C"},
+            ]
+        )
+        _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
+        gw = _make_gateway(
+            tmp_path, diff_stdout="scripts/governance/generate_project_depgraph.py\n"
+        )
+        gate = make_panorama_alignment_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed is False
+        assert "3" in detail
+
+
+class TestCheckTriggerBlockDomainMismatchWithOrphans:
+    """domain_mismatch + orphans 同时存在 → 仍阻断（domain_mismatch 优先）。"""
+
+    def test_domain_mismatch_with_orphans_still_blocks(self, tmp_path, monkeypatch):
+        report = FakeReport(
+            domain_mismatches=[{"module_id": "MOD-X"}],
+            orphans=[{"m": "x"}] * (_ORPHAN_WARN_THRESHOLD + 5),
+        )
+        _install_fake_align_module(monkeypatch, run_alignment=lambda *a, **k: report)
+        gw = _make_gateway(
+            tmp_path, diff_stdout="scripts/governance/apply_depgraph.py\n"
+        )
+        gate = make_panorama_alignment_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed is False
+        assert "domain_id" in detail
 
 
 class TestCheckTriggerWarnOrphans:
