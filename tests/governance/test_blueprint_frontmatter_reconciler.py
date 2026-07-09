@@ -183,3 +183,494 @@ class TestReconcileBlueprint:
         # 验证文件未被创建（标记缺失，不自动创建）
         bp_file = tmp_path / "docs" / "03_modules" / "MOD-NOPATH.md"
         assert not bp_file.exists(), "不应自动创建蓝图文件"
+
+
+# ============================================================================
+# 极限测试（ARCH-056 Phase 3 — edge/extreme cases）
+# ============================================================================
+
+
+def _mock_depgraph_conn_multi(rows):
+    """构造 mock depgraph 连接（多行版本）。
+
+    rows: list[dict] | None。None 或 [] 模拟无数据。
+    fetchall 返回 rows，fetchone 返回 rows[0] 或 None。
+    用于测试跨域多行聚合（多数投票/min rank/first-non-empty）。
+    """
+    conn = MagicMock()
+    cursor = MagicMock()
+    cursor.fetchone.return_value = rows[0] if rows else None
+    cursor.fetchall.return_value = rows or []
+    conn.cursor.return_value.__enter__.return_value = cursor
+    return conn
+
+
+class TestExtremeAggregation:
+    """多行聚合极限测试——跨域/平局/全空/最design状态/first-non-empty。"""
+
+    def test_cross_domain_majority_vote(self, bfr, tmp_path, monkeypatch):
+        """D_A×2 + D_B×1 → domain_id=D_A（多数投票）"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-X\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn_multi([
+            {"blueprint_id": "MOD-X", "domain_id": "D_A", "design_maturity": "production",
+             "build_status": "stable", "blueprint_path": str(bp)},
+            {"blueprint_id": "MOD-X", "domain_id": "D_A", "design_maturity": "production",
+             "build_status": "", "blueprint_path": ""},
+            {"blueprint_id": "MOD-X", "domain_id": "D_B", "design_maturity": "design",
+             "build_status": "", "blueprint_path": ""},
+        ])
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-X") == 0
+        assert "responsibility_domain: D_A" in bp.read_text(encoding="utf-8")
+
+    def test_tie_takes_first_encountered(self, bfr, tmp_path, monkeypatch):
+        """平局 D_FIRST×1 + D_SECOND×1 → Counter.most_common 取第一个（按插入顺序）"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-TIE\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn_multi([
+            {"blueprint_id": "MOD-TIE", "domain_id": "D_FIRST", "design_maturity": "production",
+             "build_status": "stable", "blueprint_path": str(bp)},
+            {"blueprint_id": "MOD-TIE", "domain_id": "D_SECOND", "design_maturity": "production",
+             "build_status": "", "blueprint_path": ""},
+        ])
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-TIE") == 0
+        assert "responsibility_domain: D_FIRST" in bp.read_text(encoding="utf-8")
+
+    def test_all_empty_domain_id_writes_empty(self, bfr, tmp_path, monkeypatch):
+        """所有行 domain_id 为空 → responsibility_domain 写空值"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-EMPTY\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn_multi([
+            {"blueprint_id": "MOD-EMPTY", "domain_id": "", "design_maturity": "production",
+             "build_status": "stable", "blueprint_path": str(bp)},
+            {"blueprint_id": "MOD-EMPTY", "domain_id": "", "design_maturity": "",
+             "build_status": "", "blueprint_path": ""},
+        ])
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-EMPTY") == 0
+        content = bp.read_text(encoding="utf-8")
+        # responsibility_domain 被更新为空（OLD 被替换为空）
+        assert "responsibility_domain:" in content
+        assert "responsibility_domain: OLD" not in content
+
+    def test_design_maturity_takes_most_design(self, bfr, tmp_path, monkeypatch):
+        """production + design + prototype → design（min rank，最保守）"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-MM\ndesign_maturity: old\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn_multi([
+            {"blueprint_id": "MOD-MM", "domain_id": "D_A", "design_maturity": "production",
+             "build_status": "stable", "blueprint_path": str(bp)},
+            {"blueprint_id": "MOD-MM", "domain_id": "D_A", "design_maturity": "design",
+             "build_status": "", "blueprint_path": ""},
+            {"blueprint_id": "MOD-MM", "domain_id": "D_A", "design_maturity": "prototype",
+             "build_status": "", "blueprint_path": ""},
+        ])
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-MM") == 0
+        assert "design_maturity: design" in bp.read_text(encoding="utf-8")
+
+    def test_design_maturity_unknown_value_rank99(self, bfr, tmp_path, monkeypatch):
+        """未知 design_maturity 值 → rank 99，不优先于已知值 prototype(rank 1)"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-UNK\ndesign_maturity: old\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn_multi([
+            {"blueprint_id": "MOD-UNK", "domain_id": "D_A", "design_maturity": "weird_value",
+             "build_status": "stable", "blueprint_path": str(bp)},
+            {"blueprint_id": "MOD-UNK", "domain_id": "D_A", "design_maturity": "prototype",
+             "build_status": "", "blueprint_path": ""},
+        ])
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-UNK") == 0
+        # prototype (rank 1) < weird_value (rank 99)
+        assert "design_maturity: prototype" in bp.read_text(encoding="utf-8")
+
+    def test_build_status_takes_first_non_empty(self, bfr, tmp_path, monkeypatch):
+        """build_status 取第一个非空（空行在前不取，取 stable 不取 planned）"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-BS\nbuild_status: old\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn_multi([
+            {"blueprint_id": "MOD-BS", "domain_id": "D_A", "design_maturity": "production",
+             "build_status": "", "blueprint_path": str(bp)},
+            {"blueprint_id": "MOD-BS", "domain_id": "D_A", "design_maturity": "production",
+             "build_status": "stable", "blueprint_path": ""},
+            {"blueprint_id": "MOD-BS", "domain_id": "D_A", "design_maturity": "production",
+             "build_status": "planned", "blueprint_path": ""},
+        ])
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-BS") == 0
+        assert "build_status: stable" in bp.read_text(encoding="utf-8")
+
+    def test_blueprint_path_takes_first_non_empty(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 取第一个非空行（第一行空，第二行有路径）"""
+        bp = tmp_path / "real_bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-BP\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn_multi([
+            {"blueprint_id": "MOD-BP", "domain_id": "D_A", "design_maturity": "production",
+             "build_status": "stable", "blueprint_path": ""},
+            {"blueprint_id": "MOD-BP", "domain_id": "D_A", "design_maturity": "production",
+             "build_status": "stable", "blueprint_path": str(bp)},
+        ])
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-BP") == 0
+        assert "responsibility_domain: D_A" in bp.read_text(encoding="utf-8")
+
+    def test_all_fields_empty_writes_empty_strings(self, bfr, tmp_path, monkeypatch):
+        """所有字段为空 → 写入空值（不阻断，不创建文件）"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: OLD\nresponsibility_domain: OLD\ndesign_maturity: old\n"
+            "build_status: old\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn_multi([
+            {"blueprint_id": "MOD-ALLEMPTY", "domain_id": "", "design_maturity": "",
+             "build_status": "", "blueprint_path": str(bp)},
+        ])
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-ALLEMPTY") == 0
+        content = bp.read_text(encoding="utf-8")
+        assert "module_id: MOD-ALLEMPTY" in content
+        assert "responsibility_domain:" in content
+        # design_maturity / build_status 原本存在 → 更新为空
+        assert "design_maturity: old" not in content
+        assert "build_status: old" not in content
+
+
+class TestExtremeDBException:
+    """DB 异常极限测试——验证 [ERROR_CONTRACT] 声明的 exit 4。
+
+    [ERROR_CONTRACT] 声明 "DB异常→exit 4"，但 _query_module_bp 和
+    reconcile_blueprint_frontmatter 都没有 try-except 捕获 DB 异常。
+    以下测试断言 exit 4，若失败则暴露声明 vs 实现的 gap。
+    """
+
+    def test_db_connection_exception_returns_4(self, bfr, monkeypatch):
+        """get_depgraph_pg_connection 抛异常 → 应返回 4（[ERROR_CONTRACT]）"""
+        def raise_exc(**kw):
+            raise ConnectionError("DB down")
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", raise_exc)
+        result = bfr.reconcile_blueprint_frontmatter("MOD-DBERR")
+        assert result == 4, f"DB 连接异常应返回 4，实际返回 {result}"
+
+    def test_db_cursor_execute_exception_returns_4(self, bfr, monkeypatch):
+        """cursor.execute 抛异常 → 应返回 4（[ERROR_CONTRACT]）"""
+        conn = MagicMock()
+        cursor = MagicMock()
+        cursor.execute.side_effect = RuntimeError("SQL syntax error")
+        conn.cursor.return_value.__enter__.return_value = cursor
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        result = bfr.reconcile_blueprint_frontmatter("MOD-SQLERR")
+        assert result == 4, f"SQL 执行异常应返回 4，实际返回 {result}"
+
+    def test_db_fetchall_exception_returns_4(self, bfr, monkeypatch):
+        """cursor.fetchall 抛异常 → 应返回 4（[ERROR_CONTRACT]）"""
+        conn = MagicMock()
+        cursor = MagicMock()
+        cursor.fetchall.side_effect = OSError("network error")
+        conn.cursor.return_value.__enter__.return_value = cursor
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        result = bfr.reconcile_blueprint_frontmatter("MOD-FETCHERR")
+        assert result == 4, f"fetchall 异常应返回 4，实际返回 {result}"
+
+
+class TestExtremePathEdge:
+    """路径边界极限测试——中文/空格/目录/相对路径。"""
+
+    def test_chinese_blueprint_path(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 含中文 → 正常写入"""
+        bp = tmp_path / "蓝图.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-CN\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-CN", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-CN") == 0
+        assert "D_NEW" in bp.read_text(encoding="utf-8")
+
+    def test_space_in_blueprint_path(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 含空格 → 正常写入"""
+        bp = tmp_path / "my blueprint.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-SP\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-SP", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-SP") == 0
+        assert "D_NEW" in bp.read_text(encoding="utf-8")
+
+    def test_blueprint_path_is_directory_raises(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 指向目录（名为 *.md 的目录）→ read_text 抛 IsADirectoryError
+
+        当前代码无 try-except → 异常传播。此测试记录当前行为（gap）。
+        """
+        dir_path = tmp_path / "mydir.md"
+        dir_path.mkdir()
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-DIR", "domain_id": "D_TEST",
+            "design_maturity": "design", "build_status": "planned",
+            "blueprint_path": str(dir_path),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        # 目录存在 (exists()==True) 但 read_text 抛 IsADirectoryError
+        with pytest.raises((IsADirectoryError, PermissionError, OSError)):
+            bfr.reconcile_blueprint_frontmatter("MOD-DIR")
+
+    def test_relative_blueprint_path(self, bfr, tmp_path, monkeypatch):
+        """相对路径 blueprint_path → 拼接 _REPO_ROOT"""
+        repo_root = tmp_path
+        modules_dir = repo_root / "docs" / "03_modules"
+        modules_dir.mkdir(parents=True)
+        bp_file = modules_dir / "MOD-REL.md"
+        bp_file.write_text(
+            "---\nmodule_id: MOD-REL\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-REL", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": "docs/03_modules/MOD-REL",  # 相对路径无扩展名
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        monkeypatch.setattr(bfr, "_REPO_ROOT", repo_root)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-REL") == 0
+        assert "D_NEW" in bp_file.read_text(encoding="utf-8")
+
+    def test_blueprint_path_with_dotmd_directory(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 无扩展名且补 .md 后指向已存在目录 → 跳过（exists()=True 但读取异常）
+
+        补 .md 后路径恰好是目录名 → exists()==True → 进入 read_text → 抛异常。
+        记录当前行为（gap：目录路径未防护）。
+        """
+        # tmp_path/MOD-DIR2.md 是目录
+        dir_path = tmp_path / "MOD-DIR2"  # 无扩展名
+        dir_path.mkdir()
+        # 补 .md 后 = tmp_path/MOD-DIR2.md（不存在，是目录 MOD-DIR2 的兄弟）
+        # 实际上 with_suffix(".md") 对无扩展名路径 = path + ".md"
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-DIR2", "domain_id": "D_TEST",
+            "design_maturity": "design", "build_status": "planned",
+            "blueprint_path": str(dir_path),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        # MOD-DIR2.md 不存在 → 标记缺失跳过
+        assert bfr.reconcile_blueprint_frontmatter("MOD-DIR2") == 0
+
+
+class TestExtremeFrontmatter:
+    """frontmatter 边界极限测试——空/冒号/重复key/仅frontmatter/字段缺失。"""
+
+    def test_empty_frontmatter_with_blank_line(self, bfr, tmp_path, monkeypatch):
+        """空 frontmatter（含一个空行）→ 追加 module_id/responsibility_domain"""
+        bp = tmp_path / "bp.md"
+        bp.write_text("---\n\n---\n# Body\n", encoding="utf-8")
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-EFM", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-EFM") == 0
+        content = bp.read_text(encoding="utf-8")
+        assert "module_id: MOD-EFM" in content
+        assert "responsibility_domain: D_NEW" in content
+
+    def test_truly_empty_frontmatter_no_match(self, bfr, tmp_path, monkeypatch):
+        """frontmatter ---\\n---\\n（无空行）→ 正则不匹配 → 视为无 frontmatter 跳过"""
+        bp = tmp_path / "bp.md"
+        bp.write_text("---\n---\n# Body\n", encoding="utf-8")
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-TEFM", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-TEFM") == 0
+        # 正则不匹配 → 内容不变
+        assert bp.read_text(encoding="utf-8") == "---\n---\n# Body\n"
+
+    def test_value_contains_colon(self, bfr, tmp_path, monkeypatch):
+        """frontmatter 值含冒号 → partition 只切第一个冒号，正确解析与更新"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD:WEIRD\nresponsibility_domain: D:OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD:WEIRD", "domain_id": "D:NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD:WEIRD") == 0
+        content = bp.read_text(encoding="utf-8")
+        assert "module_id: MOD:WEIRD" in content
+        assert "responsibility_domain: D:NEW" in content
+        assert "D:OLD" not in content
+
+    def test_duplicate_keys_both_replaced(self, bfr, tmp_path, monkeypatch):
+        """重复 key → re.sub 替换所有匹配行（两行都被更新）"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: A\nmodule_id: B\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-DUP", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-DUP") == 0
+        content = bp.read_text(encoding="utf-8")
+        # re.sub 替换所有匹配，两行都变成 module_id: MOD-DUP
+        assert content.count("module_id: MOD-DUP") == 2
+
+    def test_only_frontmatter_no_body(self, bfr, tmp_path, monkeypatch):
+        """仅 frontmatter 无正文 → 正常更新"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-NOBODY\nresponsibility_domain: OLD\n---\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-NOBODY", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-NOBODY") == 0
+        assert "responsibility_domain: D_NEW" in bp.read_text(encoding="utf-8")
+
+    def test_design_maturity_not_appended_if_absent(self, bfr, tmp_path, monkeypatch):
+        """frontmatter 无 design_maturity 字段 → 不追加该字段"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-NODM\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-NODM", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-NODM") == 0
+        assert "design_maturity" not in bp.read_text(encoding="utf-8")
+
+    def test_build_status_not_appended_if_absent(self, bfr, tmp_path, monkeypatch):
+        """frontmatter 无 build_status 字段 → 不追加该字段"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-NOBS\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-NOBS", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-NOBS") == 0
+        assert "build_status" not in bp.read_text(encoding="utf-8")
+
+
+class TestExtremeIdempotency:
+    """幂等性极限测试——连续调用两次结果一致。"""
+
+    def test_idempotent_double_call(self, bfr, tmp_path, monkeypatch):
+        """连续调用两次 → 第二次内容无变化"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: OLD\nresponsibility_domain: OLD\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-IDEM", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-IDEM") == 0
+        content_after_first = bp.read_text(encoding="utf-8")
+        # 第二次调用（内容已对齐，不应再写）
+        assert bfr.reconcile_blueprint_frontmatter("MOD-IDEM") == 0
+        content_after_second = bp.read_text(encoding="utf-8")
+        assert content_after_first == content_after_second
+
+    def test_idempotent_with_dm_and_bs(self, bfr, tmp_path, monkeypatch):
+        """含 design_maturity/build_status 的幂等性"""
+        bp = tmp_path / "bp.md"
+        bp.write_text(
+            "---\nmodule_id: OLD\nresponsibility_domain: OLD\ndesign_maturity: old\n"
+            "build_status: old\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-IDEM2", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        bfr.reconcile_blueprint_frontmatter("MOD-IDEM2")
+        first = bp.read_text(encoding="utf-8")
+        bfr.reconcile_blueprint_frontmatter("MOD-IDEM2")
+        second = bp.read_text(encoding="utf-8")
+        assert first == second
+
+
+class TestExtremeFileIO:
+    """文件 I/O 异常极限测试——read_text/write_text 抛异常。"""
+
+    def test_read_text_io_error_propagates(self, bfr, tmp_path, monkeypatch):
+        """read_text 抛 OSError → 异常传播（当前无 try-except，gap）"""
+        bp = tmp_path / "bp.md"
+        bp.write_text("---\nmodule_id: MOD-IO\n---\n# T\n", encoding="utf-8")
+        conn = _mock_depgraph_conn({
+            "blueprint_id": "MOD-IO", "domain_id": "D_NEW",
+            "design_maturity": "production", "build_status": "stable",
+            "blueprint_path": str(bp),
+        })
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+
+        original_read = Path.read_text
+
+        def raise_io(self, *a, **kw):
+            raise OSError("disk read error")
+
+        monkeypatch.setattr(Path, "read_text", raise_io)
+        with pytest.raises(OSError):
+            bfr.reconcile_blueprint_frontmatter("MOD-IO")
+        monkeypatch.setattr(Path, "read_text", original_read)

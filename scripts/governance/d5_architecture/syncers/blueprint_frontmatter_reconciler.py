@@ -166,7 +166,11 @@ def reconcile_blueprint_frontmatter(module_id: str) -> int:
 
     Returns: 0=成功/跳过, 3=模块不在depgraph, 4=DB异常
     """
-    result = _query_module_bp(module_id)
+    try:
+        result = _query_module_bp(module_id)
+    except Exception as exc:
+        print(f"[ERROR] DB query failed for {module_id}: {exc}", file=sys.stderr)
+        return 4
     if result is None:
         return 3
     bp_path, domain_id, dm, bs = result
