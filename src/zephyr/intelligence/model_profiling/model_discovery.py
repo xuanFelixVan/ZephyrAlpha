@@ -37,11 +37,10 @@ import os
 from dataclasses import dataclass, field
 from typing import Any
 
-from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
-
 _log = logging.getLogger(__name__)
 
 # DEFAULT_OLLAMA_URL 已下沉到 zephyr.shared.foundation.constants（§5.160 SSoT）
+# 延迟导入：模块级导入会触发 constants→schemas→task_types 循环死锁
 
 
 @dataclass
@@ -66,9 +65,12 @@ class ModelDiscovery:
 
     def __init__(
         self,
-        ollama_url: str = DEFAULT_OLLAMA_URL,
+        ollama_url: str | None = None,
         timeout_s: float = 15.0,
     ) -> None:
+        if ollama_url is None:
+            from zephyr.shared.foundation.constants import DEFAULT_OLLAMA_URL
+            ollama_url = DEFAULT_OLLAMA_URL
         self._url = ollama_url.rstrip("/")
         self._timeout = timeout_s
 
