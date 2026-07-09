@@ -32,6 +32,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
+# 通过 importlib 加载 query_module_panorama.py 为独立模块。
+# 注：不能用 `import governance.query_module_panorama`，因为 tests/governance/
+# 与 scripts/governance/ 存在包名冲突（pytest 将 tests/ 加入 sys.path 后
+# `governance` 解析到 tests/governance/）。importlib 规避此冲突。
+# 副作用：generate_project_depgraph.py 的静态导入扫描无法检测 test→module 边，
+# 故 query_module_panorama.py 的 design_maturity 保持 prototype（与所有 scripts/
+# 模块一致，如 align_panoramas.py）。这是生成器的已知限制，非模块缺陷。
 _SCRIPT_PATH = (
     Path(__file__).resolve().parents[2]
     / "scripts"
@@ -42,10 +49,7 @@ _SCRIPT_PATH = (
 
 @pytest.fixture(scope="module")
 def qmp():
-    """通过 importlib 加载 query_module_panorama.py 为独立模块。
-
-    避免 scripts/ 路径与 governance 包名冲突。
-    """
+    """加载 query_module_panorama.py 为独立模块（规避 governance 包名冲突）。"""
     spec = importlib.util.spec_from_file_location(
         "query_module_panorama_under_test", _SCRIPT_PATH
     )
