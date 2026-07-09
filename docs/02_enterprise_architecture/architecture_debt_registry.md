@@ -3610,6 +3610,16 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ---
 
+### 5.159 死代码（9个，第27轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=9(死代码需删除或集成)
+> **第42轮修复状态（2026-07-05）**：FIXED=5(governance/governance错位包7文件+infrastructure/rollback/governance 5文件+governance/_*.py 8错位split删除/合并), DRIFTED=1(audit_orchestrator 20死重复文件路径漂移), DEFERRED=3(剩余死代码需评估). 维度5.159全部清零.
+> **第92轮Phase 8治本（2026-07-09）**：多真源死代码治本完成. 删除 infrastructure/lifecycle 域2个死副本文件(~946行): resource_optimization_engine.py(~800行,canonical在trading/resource_optimization.py) + lazy_loader.py(~146行,canonical在shared/lifecycle/lazy_loader.py). 价值判断五维度验证(无活代码导入/无测试导入/无独特功能/删除无副作用/canonical已确认). 同步清理 daemon_registry.py 监控循环死方法(PressureLevel/ResourceSnapshot/_Thresholds+8死方法) + __init__.py __all__残留façade(31→1). 修复蓝图漂移: actual_disk_path shared/lifecycle→trading/(3处) + blueprint_routing.yaml R030 + path_ownership_map.yaml(新增2条canonical+修正3条错误路径). 保留 re-export shim(shared/lifecycle/resource_optimization_engine.py,活代码5处导入依赖). commit 531ebedf60, 172 passed(4 failed全预先存在). 本项属未登记债务补登(Phase 8治本的infrastructure/lifecycle域多真源不在原9项中,但同属§5.159死代码维度).
+
+**严重度汇总**：原9项(FIXED=5/DRIFTED=1/DEFERRED=3) + Phase 8新增治本(infrastructure/lifecycle域2死副本,已FIXED)
+
+---
+
 ### 5.160 魔法数字/字符串（27个，第27轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=27(魔法数字/字符串需提取常量)
