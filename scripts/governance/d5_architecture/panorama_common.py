@@ -1,7 +1,7 @@
 # scripts/governance/d5_architecture/panorama_common.py
 # [BLUEPRINT] MOD-GOV-SYNC-PANORAMA | docs/_working/2026-07-10-panorama_remediation_plan.md | §Task1
 # [MODULE] scripts.governance.d5_architecture.panorama_common
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] 无（纯函数，无外部依赖）
 # [CONSUMERS] align_panoramas; blueprint_frontmatter_reconciler; sync_panorama_module
 # [STARTUP] manual
@@ -64,7 +64,7 @@ def weighted_domain_vote(rows: list) -> str:
 def min_maturity(maturities: list[str]) -> str:
     """取最 design 的状态（design < prototype < production）。
 
-    与 align_panoramas._maturity_rank 聚合策略一致。
+    聚合策略：min rank（design=0 < prototype=1 < production=2）。
     """
     if not maturities:
         return ""

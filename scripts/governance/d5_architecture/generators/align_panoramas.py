@@ -135,7 +135,7 @@ class PanoramaAlignmentReport:
                      f"blueprint={self.blueprint_count}")
         lines.append(f"- 问题总数: {self.issues_total}")
         lines.append("  - 孤儿（仅一图）: {}".format(len(self.orphans)))
-        lines.append("  - 状态漂移（design_maturity 不一致）: {}".format(len(self.state_drifts)))
+        lines.append("  - 状态漂移（blueprint 缺 design_maturity）: {}".format(len(self.state_drifts)))
         lines.append("  - 域不一致（domain_id 不一致）: {}".format(len(self.domain_mismatches)))
         lines.append("  - 设计态孤立（design 仅一图）: {}".format(len(self.design_only_in_one)))
         lines.append("")
@@ -155,7 +155,7 @@ class PanoramaAlignmentReport:
         lines.append("")
 
         # 状态漂移
-        lines.append("## 2. 状态漂移（design_maturity 不一致）")
+        lines.append("## 2. 状态漂移（blueprint 缺 design_maturity 字段）")
         lines.append("")
         if not self.state_drifts:
             lines.append("> 无状态漂移。")
@@ -198,8 +198,8 @@ class PanoramaAlignmentReport:
         lines.append("## 5. 处置建议")
         lines.append("")
         lines.append("- 孤儿节点：决定是否需在另三图登记对应 module_id，或在一图删除")
-        lines.append("- 状态漂移：以最成熟状态为准，统一更新（建议 production > prototype > design）")
-        lines.append("- 域不一致：核对真源并统一 domain_id")
+        lines.append("- 状态漂移：blueprint frontmatter 补齐 design_maturity 字段（四图维度差异不再报告）")
+        lines.append("- 域不一致：dataflow/decision 向 blueprint 对齐（depgraph 路径投票值不覆盖逻辑声明）")
         lines.append("- 设计态孤立：评估设计态是否需要同步到另三图")
         lines.append("")
 
@@ -558,61 +558,60 @@ def _detect_orphans(all_nodes: list[PanoramaNode],
 
 
 def _detect_state_drifts(all_nodes: list[PanoramaNode]) -> list[dict]:
-    """状态漂移：同一 module_id 在不同图 design_maturity 不一致。"""
+    """状态漂移：blueprint 缺 design_maturity 字段（ARCH-056 修正后新语义）。
+
+    四图 design_maturity 维度差异不再报告（各图评估维度不同是正常的）。
+    仅检测 blueprint 图中 design_maturity 字段缺失的情况。
+    """
     grouped = _group_by_module_id(all_nodes)
     drifts: list[dict] = []
     for mid, nodes in grouped.items():
         graphs = {n.graph for n in nodes}
-        if len(graphs) < 2:
-            continue  # 只有一图，不构成漂移
-        # 各图取 design_maturity
-        per_graph: dict[str, str] = {}
-        for n in nodes:
-            # 同一图多个节点时取最 design 的状态（design < prototype < production）
-            val = n.design_maturity or ""
-            existing = per_graph.get(n.graph)
-            if existing is None or _maturity_rank(val) < _maturity_rank(existing):
-                per_graph[n.graph] = val
-        unique_states = {v for v in per_graph.values() if v}
-        if len(unique_states) > 1:
-            drifts.append({
-                "module_id": mid,
-                "depgraph": per_graph.get("depgraph", "-"),
-                "dataflow": per_graph.get("dataflow", "-"),
-                "decision": per_graph.get("decision", "-"),
-                "blueprint": per_graph.get("blueprint", "-"),
-            })
+        if "blueprint" not in graphs:
+            continue  # 无 blueprint 节点，不检测
+        bp_nodes = [n for n in nodes if n.graph == "blueprint"]
+        for n in bp_nodes:
+            if not n.design_maturity:
+                drifts.append({
+                    "module_id": mid,
+                    "depgraph": next((x.design_maturity or "-" for x in nodes if x.graph == "depgraph"), "-"),
+                    "dataflow": next((x.design_maturity or "-" for x in nodes if x.graph == "dataflow"), "-"),
+                    "decision": next((x.design_maturity or "-" for x in nodes if x.graph == "decision"), "-"),
+                    "blueprint": "-",
+                    "issue": "missing_design_maturity",
+                })
+                break  # 一个 blueprint 节点缺字段就够了
     drifts.sort(key=lambda x: x["module_id"])
     return drifts
 
 
-def _maturity_rank(val: str | None) -> int:
-    """design_maturity 排序：design < prototype < production。"""
-    if not val:
-        return 99
-    return {"design": 0, "prototype": 1, "production": 2}.get(val, 99)
-
-
 def _detect_domain_mismatches(all_nodes: list[PanoramaNode]) -> list[dict]:
-    """域不一致：同一 module_id 在不同图 domain_id 不一致。"""
+    """域不一致：dataflow/decision 与 blueprint 域不一致（ARCH-056 修正后新语义）。
+
+    depgraph 与 blueprint 域不一致不报告（depgraph 是路径投票值，blueprint 是逻辑真源）。
+    仅检测 dataflow/decision 与 blueprint 不一致的情况。
+    """
     grouped = _group_by_module_id(all_nodes)
     mismatches: list[dict] = []
     for mid, nodes in grouped.items():
         graphs = {n.graph for n in nodes}
-        if len(graphs) < 2:
-            continue
+        if "blueprint" not in graphs:
+            continue  # 无 blueprint 节点，无法比较
+        bp_domain = next((n.domain_id for n in nodes if n.graph == "blueprint" and n.domain_id), None)
+        if not bp_domain:
+            continue  # blueprint 无 domain_id，无法比较
         per_graph: dict[str, str] = {}
         for n in nodes:
-            if n.domain_id:
+            if n.graph in ("dataflow", "decision") and n.domain_id:
                 per_graph[n.graph] = n.domain_id
-        unique_domains = {v for v in per_graph.values() if v}
-        if len(unique_domains) > 1:
+        mismatched = {g: d for g, d in per_graph.items() if d != bp_domain}
+        if mismatched:
             mismatches.append({
                 "module_id": mid,
-                "depgraph": per_graph.get("depgraph", "-"),
-                "dataflow": per_graph.get("dataflow", "-"),
-                "decision": per_graph.get("decision", "-"),
-                "blueprint": per_graph.get("blueprint", "-"),
+                "depgraph": "-",
+                "dataflow": mismatched.get("dataflow", "-"),
+                "decision": mismatched.get("decision", "-"),
+                "blueprint": bp_domain,
             })
     mismatches.sort(key=lambda x: x["module_id"])
     return mismatches

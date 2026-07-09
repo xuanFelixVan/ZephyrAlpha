@@ -27,6 +27,7 @@ generation: 2
 rule_form: structural
 scope: module
 stability: evolving
+design_maturity: prototype
 verifiability: manual
 depends_on:
   - target: "docs/03_modules/_domain_risk/blueprint.md"
@@ -53,6 +54,8 @@ tags: [risk-management, l04, phase-1-partial, stop-loss, kill-switch]
 priority: P0
 runtime_plane: hot
 ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
+responsibility_domain:
+build_status: generated
 ---
 
 > ⚠️ **业务层已开放，可施工** — D_RISK 属于 C 轨业务层，当前业务层处于冻结状态。
