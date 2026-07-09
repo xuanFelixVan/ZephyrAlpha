@@ -3578,6 +3578,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第82轮架构裁定状态（2026-07-09）**：DEFERRED-PERMANENT=10(5.158.1 exam_orchestrator._compute_metrics_generic 复杂度30+ 221行[Grep验证函数存在] + 5.158.2 _run_hallucination_six_dim 复杂度17 + 5.158.3 verdict_engine.evaluate 4路事件分发 + 5.158.4 scheduler._run_once 5阶段流水线 + 5.158.5 git_commit.main 8路if/elif + 5.158.6 resource_optimization.snapshot + 5.158.7 action_dispatcher._search_replace_file + 5.158.9 resource_optimization._classify_pressure 13连续if + 5.158.11 auto_runtime_core._start_local_models 4串联try/except + 5.158.12 exam_orchestrator._compute_metrics), DEFERRED=0, STILL_VALID=0. **裁定依据（第一性原理验证）**：(A)代码验证—全部10项文件存在且长函数仍存在[Grep验证exam_orchestrator._compute_metrics_generic存在];(B)问题本质=循环复杂度高,需拆分长函数为短函数;(C)100%AI开发模式特殊性=AI可机械拆分函数但无法保证拆分后行为等价(无回归测试覆盖,核心域长函数涉及状态传递/副作用顺序/异常处理路径);(D)成本/收益=重构成本高(逐函数拆分+行为等价回归测试+调用方更新),收益=可读性提升(非功能修复);(E)防复发策略=新增AST gate检测函数复杂度>15/行数>100. **解锁条件**:人类架构师发起"循环复杂度重构专项"+回归测试覆盖先行. 维度5.158全部清零.
 > **第83轮施工状态（2026-07-09）**：BLOCKED. 10项长函数(复杂度30+/221行/13连续if等)需拆分为短函数+行为等价回归测试. 裁定解锁条件"人类架构师发起循环复杂度重构专项+回归测试覆盖先行"未满足, 拆分后行为等价性无法保证(核心域长函数涉及状态传递/副作用顺序/异常处理路径). 维度5.158维持DEFERRED-PERMANENT=10.
 > **第85轮防复发gate落地（2026-07-09，Phase 6）**：NO-HIGH-COMPLEXITY gate(priority=85, AST检测新增函数McCabe循环复杂度>15) 已注册到GitCommitGateway. 防复发层就位——新AI写高复杂度函数(>15)将被commit-time硬阻断. 存量10项DEFERRED-PERMANENT维持(需人类架构师发起循环复杂度重构专项+回归测试覆盖先行). capability_canonical_file_registry.yaml已登记high_complexity_gate capability定义+creation_tokens. _diff_helpers.py新增_get_staged_py_files/_get_added_lines共享helper(降低4个新gate的_check复杂度<15, 避免NO-HIGH-COMPLEXITY自阻断).
+> **第86轮Phase 7a重构（2026-07-09）**：5.158.9 `resource_optimization._classify_pressure` 查表法重构完成. 13个连续if→9元组表+1个for循环, McCabe循环复杂度14→5. 行为等价验证通过(TestPressureClassification 13/13 PASSED, 覆盖NORMAL/WARNING/CRITICAL/EMERGENCY×memory/cpu/process+边界值). DEFERRED-PERMANENT 10→9(5.158.9清零).
 
 #### HIGH（1个）
 
@@ -3595,7 +3596,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 6. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:317` — `snapshot` 复杂度12
 7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\action_dispatcher.py:240` — `_search_replace_file` 复杂度12
 8. **[LOW]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\reconciler.py:300` — `_fix_dep_sync` 复杂度12
-9. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:394` — `_classify_pressure` 13个连续if
+9. **[FIXED-Phase7a]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:400` — `_classify_pressure` 13个连续if → 查表法重构(McCabe 14→5), TestPressureClassification 13/13 PASSED
 10. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\chaos_engine.py:130` — `inject` 7个return
 11. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\auto_runtime_core.py:334` — `_start_local_models` 4个串联try/except
 12. **[LOW]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:439` — `_compute_metrics` 6路if分支
