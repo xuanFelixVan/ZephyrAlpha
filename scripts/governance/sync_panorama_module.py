@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.persistence.dataflowgraph_schema (get_dataflowgraph_pg_connection); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection)
 # [CONSUMERS] generate_project_depgraph.py; apply_depgraph.py; GitCommitGateway
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 单向派生（depgraph→dataflow/decision/blueprint）;占位记录用 entity_type='module_placeholder' / track='placeholder'
 # [MODIFY-GUARD] sync_module_panorama/sync_all_panorama 为对外入口；SQL 常量集中在模块级 _SQL_*；占位记录策略不可改（entity_type/track 值为契约）
 # [STABILITY] evolving
