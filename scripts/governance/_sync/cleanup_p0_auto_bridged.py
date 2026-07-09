@@ -52,52 +52,53 @@ def main() -> int:
         return 1
 
     conn = sqlite3.connect(str(DB_PATH))
-    conn.execute("PRAGMA journal_mode=WAL")
+    try:
+        conn.execute("PRAGMA journal_mode=WAL")
 
-    cur = conn.execute(
-        "SELECT priority, status, count(1) FROM tasks "
-        "WHERE tags LIKE '%auto-bridged%' "
-        "AND status = 'PENDING' "
-        "AND is_deleted = 0 "
-        "GROUP BY priority, status"
-    )
-    report = cur.fetchall()
-    print("当前 PENDING auto-bridged 任务:")
-    total = 0
-    for pri, st, cnt in report:
-        print(f"  {pri}/{st}: {cnt}")
-        total += cnt
-    print(f"  总计: {total}")
+        cur = conn.execute(
+            "SELECT priority, status, count(1) FROM tasks "
+            "WHERE tags LIKE '%auto-bridged%' "
+            "AND status = 'PENDING' "
+            "AND is_deleted = 0 "
+            "GROUP BY priority, status"
+        )
+        report = cur.fetchall()
+        print("当前 PENDING auto-bridged 任务:")
+        total = 0
+        for pri, st, cnt in report:
+            print(f"  {pri}/{st}: {cnt}")
+            total += cnt
+        print(f"  总计: {total}")
 
-    if total == 0:
-        print("DB is clean.")
-        conn.close()
+        if total == 0:
+            print("DB is clean.")
+            return 0
+
+        downgraded = conn.execute(
+            "UPDATE tasks SET priority = 'P1' "
+            "WHERE tags LIKE '%auto-bridged%' "
+            "AND priority = 'P0' "
+            "AND status = 'PENDING' "
+            "AND is_deleted = 0"
+        ).rowcount
+
+        now = conn.execute("SELECT datetime('now')").fetchone()[0]
+        closed = conn.execute(
+            "UPDATE tasks SET status = 'COMPLETED', updated_at = ? "
+            "WHERE tags LIKE '%auto-bridged%' "
+            "AND status = 'PENDING' "
+            "AND is_deleted = 0",
+            (now,),
+        ).rowcount
+
+        conn.commit()
+
+        print("\n已完成:")
+        print(f"  P0→P1 降级: {downgraded}")
+        print(f"  PENDING→COMPLETED: {closed}")
         return 0
-
-    downgraded = conn.execute(
-        "UPDATE tasks SET priority = 'P1' "
-        "WHERE tags LIKE '%auto-bridged%' "
-        "AND priority = 'P0' "
-        "AND status = 'PENDING' "
-        "AND is_deleted = 0"
-    ).rowcount
-
-    now = conn.execute("SELECT datetime('now')").fetchone()[0]
-    closed = conn.execute(
-        "UPDATE tasks SET status = 'COMPLETED', updated_at = ? "
-        "WHERE tags LIKE '%auto-bridged%' "
-        "AND status = 'PENDING' "
-        "AND is_deleted = 0",
-        (now,),
-    ).rowcount
-
-    conn.commit()
-    conn.close()
-
-    print("\n已完成:")
-    print(f"  P0→P1 降级: {downgraded}")
-    print(f"  PENDING→COMPLETED: {closed}")
-    return 0
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":

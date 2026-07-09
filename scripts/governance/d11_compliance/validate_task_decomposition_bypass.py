@@ -279,8 +279,10 @@ def main() -> int:
             print(json.dumps({**stub, "hours": args.hours}, ensure_ascii=False))
         return EXIT_PASS
 
-    rows = _load_active_tasks(conn)
-    conn.close()
+    try:
+        rows = _load_active_tasks(conn)
+    finally:
+        conn.close()
     flags = analyze_bypasses(rows, args.hours)
     payload = {"rows_loaded": len(rows), "hits": flags, "hours": args.hours}
 

@@ -66,6 +66,11 @@ from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 _DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "findings_timeseries.db"
 _ROT_LOG = _REPO_ROOT / "scripts" / "governance" / "meta" / "script_rot_findings.jsonl"
 
+# SQL 集中化（§5.160.2 NO-BARE-SQL gate）
+SQL_COUNT_RECENT = "SELECT COUNT(*) FROM findings WHERE check_id = ? AND timestamp >= ?"
+SQL_COUNT_HISTORICAL = "SELECT COUNT(*) FROM findings WHERE check_id = ? AND timestamp >= ? AND timestamp < ?"
+SQL_LAST_FINDING_TS = "SELECT timestamp FROM findings WHERE check_id = ? ORDER BY timestamp DESC LIMIT 1"
+
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
@@ -89,51 +94,52 @@ def detect_rot(days: int = 30, alert_threshold: int = 0) -> dict:
     recent_cutoff = (now - timedelta(days=days)).isoformat()
     historical_cutoff = (now - timedelta(days=90)).isoformat()
 
-    scripts = conn.execute("SELECT DISTINCT check_id, dimension FROM findings").fetchall()
-    rotten: list[dict] = []
+    try:
+        scripts = conn.execute("SELECT DISTINCT check_id, dimension FROM findings").fetchall()
+        rotten: list[dict] = []
 
-    for script in scripts:
-        check_id = script["check_id"] or ""
-        dimension = script["dimension"] or ""
-        if not check_id:
-            continue
+        for script in scripts:
+            check_id = script["check_id"] or ""
+            dimension = script["dimension"] or ""
+            if not check_id:
+                continue
 
-        recent_count = conn.execute(
-            "SELECT COUNT(*) FROM findings WHERE check_id = ? AND timestamp >= ?",
-            (check_id, recent_cutoff),
-        ).fetchone()[0]
+            recent_count = conn.execute(
+                SQL_COUNT_RECENT,
+                (check_id, recent_cutoff),
+            ).fetchone()[0]
 
-        historical_count = conn.execute(
-            "SELECT COUNT(*) FROM findings WHERE check_id = ? AND timestamp >= ? AND timestamp < ?",
-            (check_id, historical_cutoff, recent_cutoff),
-        ).fetchone()[0]
+            historical_count = conn.execute(
+                SQL_COUNT_HISTORICAL,
+                (check_id, historical_cutoff, recent_cutoff),
+            ).fetchone()[0]
 
-        total_runs = conn.execute(
-            "SELECT COUNT(DISTINCT scan_run_id) FROM findings WHERE check_id = ?",
-            (check_id,),
-        ).fetchone()[0]
-
-        if recent_count <= alert_threshold and historical_count > 0:
-            last_finding = conn.execute(
-                "SELECT timestamp FROM findings WHERE check_id = ? ORDER BY timestamp DESC LIMIT 1",
+            total_runs = conn.execute(
+                "SELECT COUNT(DISTINCT scan_run_id) FROM findings WHERE check_id = ?",
                 (check_id,),
-            ).fetchone()
+            ).fetchone()[0]
 
-            rotten.append(
-                {
-                    "check_id": check_id,
-                    "dimension": dimension,
-                    "severity": "HIGH",
-                    "recent_findings": recent_count,
-                    "historical_findings": historical_count,
-                    "total_scan_runs": total_runs,
-                    "last_finding_at": last_finding["timestamp"] if last_finding else "never",
-                    "detail": f"脚本 {check_id} 过去 {days} 天产出 0 个 Finding (历史有 {historical_count} 个)——可能已过时",
-                    "recommendation": "检查脚本扫描的代码模式是否仍存于代码库，或标记为 DEPRECATED",
-                }
-            )
+            if recent_count <= alert_threshold and historical_count > 0:
+                last_finding = conn.execute(
+                    SQL_LAST_FINDING_TS,
+                    (check_id,),
+                ).fetchone()
 
-    conn.close()
+                rotten.append(
+                    {
+                        "check_id": check_id,
+                        "dimension": dimension,
+                        "severity": "HIGH",
+                        "recent_findings": recent_count,
+                        "historical_findings": historical_count,
+                        "total_scan_runs": total_runs,
+                        "last_finding_at": last_finding["timestamp"] if last_finding else "never",
+                        "detail": f"脚本 {check_id} 过去 {days} 天产出 0 个 Finding (历史有 {historical_count} 个)——可能已过时",
+                        "recommendation": "检查脚本扫描的代码模式是否仍存于代码库，或标记为 DEPRECATED",
+                    }
+                )
+    finally:
+        conn.close()
 
     if rotten:
         _ROT_LOG.parent.mkdir(parents=True, exist_ok=True)
