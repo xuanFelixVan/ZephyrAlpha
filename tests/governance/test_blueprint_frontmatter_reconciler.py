@@ -69,7 +69,7 @@ class TestReconcileBlueprint:
         assert "D_NEW" in content
 
     def test_no_blueprint_skip(self, bfr, tmp_path, monkeypatch):
-        """蓝图路径为空 → 自动创建命名约定蓝图（exit 0）"""
+        """蓝图路径为空且文件不存在 → 标记缺失跳过，不创建文件（exit 0）"""
         conn = _mock_depgraph_conn({
             "blueprint_id": "MOD-NOBP", "domain_id": "D_TEST",
             "design_maturity": "design", "build_status": "planned",
@@ -78,8 +78,8 @@ class TestReconcileBlueprint:
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
         monkeypatch.setattr(bfr, "_REPO_ROOT", tmp_path)
         assert bfr.reconcile_blueprint_frontmatter("MOD-NOBP") == 0
-        # 验证文件被创建在 tmp_path 下（非真实项目目录）
-        assert (tmp_path / "docs" / "03_modules" / "MOD-NOBP.md").exists()
+        # 验证文件未被创建（标记缺失，不自动创建）
+        assert not (tmp_path / "docs" / "03_modules" / "MOD-NOBP.md").exists()
 
     def test_module_not_in_depgraph(self, bfr, monkeypatch):
         """模块不在 depgraph → exit 3"""
@@ -87,8 +87,8 @@ class TestReconcileBlueprint:
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
         assert bfr.reconcile_blueprint_frontmatter("MOD-MISSING") == 3
 
-    def test_blueprint_file_not_exist_auto_create(self, bfr, tmp_path, monkeypatch):
-        """蓝图路径不为空但文件不存在 → 自动创建最小蓝图（exit 0）"""
+    def test_blueprint_file_not_exist_skip(self, bfr, tmp_path, monkeypatch):
+        """蓝图路径不为空但文件不存在 → 标记缺失跳过，不创建文件（exit 0）"""
         bp_path = tmp_path / "new_module" / "blueprint.md"
         conn = _mock_depgraph_conn({
             "blueprint_id": "MOD-NEW", "domain_id": "D_TEST",
@@ -97,18 +97,11 @@ class TestReconcileBlueprint:
         })
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
         assert bfr.reconcile_blueprint_frontmatter("MOD-NEW") == 0
-        # 文件应被创建
-        assert bp_path.exists()
-        content = bp_path.read_text(encoding="utf-8")
-        # 验证 frontmatter 4 核心字段
-        assert "module_id: MOD-NEW" in content
-        assert "responsibility_domain: D_TEST" in content
-        assert "design_maturity: design" in content
-        assert "build_status: planned" in content
+        # 文件不应被创建（标记缺失，不自动创建）
+        assert not bp_path.exists()
 
     def test_blueprint_path_no_extension_adds_md(self, bfr, tmp_path, monkeypatch):
-        """blueprint_path 无扩展名 → 自动补 .md 创建（DCR-005 合规）"""
-        # depgraph 中 blueprint_path 无扩展名（如 docs/03_modules/MOD-XXX/）
+        """blueprint_path 无扩展名 → 补 .md 后文件不存在则跳过（DCR-005 合规）"""
         bp_path_no_ext = tmp_path / "docs" / "03_modules" / "MOD-NOEXT"
         conn = _mock_depgraph_conn({
             "blueprint_id": "MOD-NOEXT", "domain_id": "D_TEST",
@@ -118,10 +111,10 @@ class TestReconcileBlueprint:
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
         monkeypatch.setattr(bfr, "_REPO_ROOT", tmp_path)
         assert bfr.reconcile_blueprint_frontmatter("MOD-NOEXT") == 0
-        # 应创建 .md 文件而非无扩展名文件
+        # 补 .md 后文件不存在 → 不创建
         expected = tmp_path / "docs" / "03_modules" / "MOD-NOEXT.md"
-        assert expected.exists()
-        assert not bp_path_no_ext.exists()  # 无扩展名文件不应存在
+        assert not expected.exists()
+        assert not bp_path_no_ext.exists()
 
     def test_updates_design_maturity_if_present(self, bfr, tmp_path, monkeypatch):
         """frontmatter 有 design_maturity 字段时更新"""
@@ -176,8 +169,8 @@ class TestReconcileBlueprint:
         content = bp_file.read_text(encoding="utf-8")
         assert "responsibility_domain: D_NEW" in content
 
-    def test_blueprint_path_empty_and_no_convention_file_auto_create(self, bfr, tmp_path, monkeypatch):
-        """blueprint_path 为空且命名约定路径不存在 → 自动创建最小蓝图（exit 0）"""
+    def test_blueprint_path_empty_and_no_convention_file_skip(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 为空且命名约定路径不存在 → 标记缺失跳过，不创建文件（exit 0）"""
         conn = _mock_depgraph_conn({
             "blueprint_id": "MOD-NOPATH", "domain_id": "D_TEST",
             "design_maturity": "design", "build_status": "planned",
@@ -187,11 +180,6 @@ class TestReconcileBlueprint:
         monkeypatch.setattr(bfr, "_REPO_ROOT", tmp_path)
         result = bfr.reconcile_blueprint_frontmatter("MOD-NOPATH")
         assert result == 0
-        # 验证文件被自动创建
+        # 验证文件未被创建（标记缺失，不自动创建）
         bp_file = tmp_path / "docs" / "03_modules" / "MOD-NOPATH.md"
-        assert bp_file.exists(), "最小蓝图应被自动创建"
-        content = bp_file.read_text(encoding="utf-8")
-        assert "module_id: MOD-NOPATH" in content
-        assert "responsibility_domain: D_TEST" in content
-        assert "design_maturity: design" in content
-        assert "build_status: planned" in content
+        assert not bp_file.exists(), "不应自动创建蓝图文件"

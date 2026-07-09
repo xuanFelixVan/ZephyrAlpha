@@ -6,12 +6,12 @@
 # [CONSUMERS] scripts.governance.sync_panorama_module
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 单向写入（depgraph→blueprint.md frontmatter）;只写4个核心字段;文档内容不动;蓝图不存在则自动创建最小蓝图(含frontmatter+空正文);blueprint_path为空时用命名约定docs/03_modules/<module_id>.md查找;blueprint_path无扩展名时补.md(DCR-005合规)
-# [MODIFY-GUARD] reconcile_blueprint_frontmatter 为对外入口;frontmatter 解析用 _FRONTMATTER_RE 正则;只更新 module_id/responsibility_domain/design_maturity/build_status;_create_minimal_blueprint 为唯一蓝图创建入口;_query_module_BP 优先返回 blueprint_path 非空行
+# [INVARIANTS] 单向写入（depgraph→blueprint.md frontmatter）;只写4个核心字段;文档内容不动;蓝图不存在则标记缺失跳过(不创建文件);blueprint_path为空时用命名约定docs/03_modules/<module_id>.md查找;blueprint_path无扩展名时补.md(DCR-005合规)
+# [MODIFY-GUARD] reconcile_blueprint_frontmatter 为对外入口;frontmatter 解析用 _FRONTMATTER_RE 正则;只更新 module_id/responsibility_domain/design_maturity/build_status;蓝图不存在时仅标记缺失不创建文件;_query_module_BP 优先返回 blueprint_path 非空行
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 模块不在depgraph→exit 3;蓝图不存在→exit 0(自动创建);DB异常→exit 4
+# [ERROR_CONTRACT] 模块不在depgraph→exit 3;蓝图不存在→exit 0(标记缺失跳过);DB异常→exit 4
 # [TESTS] tests/governance/test_blueprint_frontmatter_reconciler.py
 # [TTL] permanent
 # [ARCH-REF] #ARCH-056
@@ -21,9 +21,9 @@
 只写 4 个核心字段：module_id / responsibility_domain / design_maturity / build_status。
 蓝图文档内容（sections/description/lifecycle）不动。
 
-如蓝图文件不存在，自动创建最小蓝图（含 frontmatter 4 字段 + 空正文 TODO 标记）。
-如 blueprint_path 为空（depgraph 未登记路径），使用命名约定 docs/03_modules/<module_id>.md，
-文件不存在时自动创建。blueprint_path 无扩展名时自动补 .md（DCR-005 合规）。
+如蓝图文件不存在，标记缺失并跳过（不创建文件）——避免自动生成大量空蓝图。
+如 blueprint_path 为空（depgraph 未登记路径），使用命名约定 docs/03_modules/<module_id>.md
+查找已存在的蓝图。blueprint_path 无扩展名时自动补 .md（DCR-005 合规）。
 """
 from __future__ import annotations
 
@@ -142,30 +142,6 @@ def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
         conn.close()
 
 
-def _create_minimal_blueprint(bp_file: Path, module_id: str,
-                               domain_id: str, dm: str, bs: str) -> int:
-    """创建最小 blueprint.md（含 frontmatter 4 核心字段 + 空正文 TODO 标记）。
-
-    父目录不存在时自动创建（mkdir -p）。
-    """
-    bp_file.parent.mkdir(parents=True, exist_ok=True)
-    content = (
-        "---\n"
-        f"module_id: {module_id}\n"
-        f"responsibility_domain: {domain_id}\n"
-        f"design_maturity: {dm}\n"
-        f"build_status: {bs}\n"
-        "doc_type: blueprint\n"
-        "ttl: permanent\n"
-        "---\n\n"
-        f"# {module_id} Blueprint\n\n"
-        "> Auto-created by blueprint_frontmatter_reconciler (ARCH-056).\n"
-        "> TODO: Fill in module description, sections, dependencies, lifecycle.\n"
-    )
-    bp_file.write_text(content, encoding="utf-8")
-    return 0
-
-
 def _write_frontmatter_updates(bp_file: Path, module_id: str,
                                 domain_id: str, dm: str, bs: str) -> int:
     """读取蓝图文件，更新 frontmatter 核心字段。"""
@@ -203,11 +179,11 @@ def reconcile_blueprint_frontmatter(module_id: str) -> int:
         if bp_file.suffix == "":
             bp_file = bp_file.with_suffix(".md")
     else:
-        # blueprint_path 为空，使用命名约定 docs/03_modules/<module_id>.md
-        # 文件不存在时由下方 _create_minimal_blueprint 自动创建
+        # blueprint_path 为空，使用命名约定 docs/03_modules/<module_id>.md 查找已存在蓝图
         bp_file = _REPO_ROOT / "docs" / "03_modules" / f"{module_id}.md"
 
     if not bp_file.exists():
-        return _create_minimal_blueprint(bp_file, module_id, domain_id, dm, bs)
+        print(f"[WARN] blueprint not found, skip (marked missing): {bp_file}", file=sys.stderr)
+        return 0
 
     return _write_frontmatter_updates(bp_file, module_id, domain_id, dm, bs)
