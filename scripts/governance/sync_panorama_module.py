@@ -36,7 +36,8 @@ from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _SRC_DIR = _REPO_ROOT / "src"
-for _p in (str(_REPO_ROOT), str(_SRC_DIR)):
+_GOV_DIR = _REPO_ROOT / "scripts" / "governance"
+for _p in (str(_REPO_ROOT), str(_SRC_DIR), str(_GOV_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -199,7 +200,15 @@ def sync_module_panorama(module_id: str) -> int:
     finally:
         decision_conn.close()
 
-    # 蓝图 frontmatter 对齐由 blueprint_frontmatter_reconciler 单独处理
+    # 蓝图 frontmatter 对齐（如蓝图存在）
+    try:
+        from d5_architecture.syncers.blueprint_frontmatter_reconciler import (
+            reconcile_blueprint_frontmatter,
+        )
+        reconcile_blueprint_frontmatter(module_id)
+    except Exception as e:
+        print(f"[WARN] 蓝图 frontmatter 对齐失败（不阻断）: {e}", file=sys.stderr)
+
     return 0
 
 
