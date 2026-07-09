@@ -70,6 +70,8 @@ INPUT_PATH = _REPO_ROOT / "docs" / "03_modules" / "_domain_data" / "data_acquisi
 OUTPUT_PATH = (
     _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_architecture" / "data_acquisition_flow.md"
 )
+# tasks.yaml 真源：用于 task_id → 中文描述映射（Mermaid Job 节点双语 label）
+TASKS_YAML = _REPO_ROOT / "src" / "zephyr" / "data" / "config" / "tasks.yaml"
 
 # ============================================================
 # 中文术语映射
@@ -169,6 +171,20 @@ def _fmt_rows(n: int | None) -> str:
     return f"{n / 100_000_000:.2f}亿"
 
 
+def _fmt_rows_en(n: int | None) -> str:
+    """行数英文格式化（rows/K rows/M rows）。None 返回 '-'。
+
+    阈值对齐中文万/亿体系：< 10K → 原数字；10K-1M → X.XXK；≥ 1M → X.XXXM。
+    """
+    if n is None:
+        return "-"
+    if n < 10000:
+        return f"{n} rows"
+    if n < 1_000_000:
+        return f"{n / 1000:.2f}K rows"
+    return f"{n / 1_000_000:.3f}M rows"
+
+
 def _freshness(latest: str, today: date) -> tuple[str, str]:
     """判定数据新鲜度。返回 (图标, 文字描述)。"""
     if not latest:
@@ -203,11 +219,72 @@ def _en_zh(en: str, mapping: dict[str, str]) -> str:
     return f"{en} / {zh}" if zh else en
 
 
+# 匹配末尾的括号技术备注（全角（）或半角()，内容不含嵌套括号）
+_TRAILING_PAREN = re.compile(r"[（(][^（）()]*[)）]\s*$")
+
+
+def _strip_tech_note(desc: str) -> str:
+    """去除 description 末尾的技术备注括号内容，保留有意义的中文描述。
+
+    例："复权因子增量（miniQMT get_divid_factors）" → "复权因子增量"
+        "每日估值（PE/PB）增量（AKShare stock_zh_valuation_baidu）" → "每日估值（PE/PB）增量"
+    """
+    if not desc:
+        return ""
+    return _TRAILING_PAREN.sub("", desc).strip()
+
+
+def _extract_desc_from_task(task: dict) -> str:
+    """从单个 task dict 中提取 description，兼容 extra/policy/顶层三种位置。"""
+    extra = task.get("extra") or {}
+    if isinstance(extra, dict) and extra.get("description"):
+        return str(extra["description"])
+    policy = task.get("policy") or {}
+    if isinstance(policy, dict) and policy.get("description"):
+        return str(policy["description"])
+    if task.get("description"):
+        return str(task["description"])
+    return ""
+
+
+def _load_task_descriptions() -> dict[str, str]:
+    """解析 tasks.yaml，返回 task_id → 中文描述（已去除末尾技术备注括号）。
+
+    description 字段兼容两种位置：extra.description（当前真源）与 policy.description（向后兼容）。
+    文件缺失或 PyYAML 不可用时返回空 dict（调用方按取不到处理：Job 节点只显示 task_id）。
+    """
+    try:
+        import yaml  # type: ignore[import-untyped]
+    except ImportError:
+        return {}
+    if not TASKS_YAML.exists():
+        return {}
+    try:
+        data = yaml.safe_load(TASKS_YAML.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    result: dict[str, str] = {}
+    for task in data.get("tasks", []) or []:
+        if not isinstance(task, dict):
+            continue
+        task_id = task.get("task_id")
+        if not task_id:
+            continue
+        desc = _extract_desc_from_task(task)
+        result[str(task_id)] = _strip_tech_note(desc)
+    return result
+
+
 # ============================================================
 # Mermaid 图生成
 # ============================================================
-def _gen_mermaid_by_source(rows: list[dict], today: date) -> tuple[str, int, int, int]:
+def _gen_mermaid_by_source(
+    rows: list[dict], today: date, task_descs: dict[str, str] | None = None
+) -> tuple[str, int, int, int]:
     """按数据源分组的 Mermaid 图（subgraph 按源，Job → 表节点）。"""
+    task_descs = task_descs or {}
     lines = ["flowchart LR"]
 
     # 按数据源分组
@@ -229,9 +306,11 @@ def _gen_mermaid_by_source(rows: list[dict], today: date) -> tuple[str, int, int
     for src in sorted(by_source.keys()):
         src_zh = _SOURCE_ZH.get(src, src)
         src_rows = by_source[src]
-        lines.append(f'    subgraph S_{src}["{src_zh}（{len(src_rows)} 任务）"]')
+        lines.append(f'    subgraph S_{src}["{src_zh}（{len(src_rows)} 任务 / {len(src_rows)} tasks）"]')
         for r in src_rows:
-            lines.append(f'        J{r["idx"]}["{r["task_id"]}"]:::jobNode')
+            desc = task_descs.get(r["task_id"], "")
+            job_label = f'{r["task_id"]}<br/>{desc}' if desc else r["task_id"]
+            lines.append(f'        J{r["idx"]}["{job_label}"]:::jobNode')
         lines.append("    end")
 
     # 表节点（按数据库分组）
@@ -239,11 +318,12 @@ def _gen_mermaid_by_source(rows: list[dict], today: date) -> tuple[str, int, int
     for t in tables_seen:
         by_db[_db_of(t)].append(t)
     for db in sorted(by_db.keys()):
-        lines.append(f'    subgraph DB_{db}["{db}（{len(by_db[db])} 表）"]')
+        lines.append(f'    subgraph DB_{db}["{db}（{len(by_db[db])} 表 / {len(by_db[db])} tables）"]')
         for t in sorted(by_db[db]):
             info = tables_seen[t]
             rows_str = _fmt_rows(info["rows"])
-            label = f'{info["fresh_icon"]} {t}<br/>{rows_str}行'
+            rows_en = _fmt_rows_en(info["rows"])
+            label = f'{info["fresh_icon"]} {t}<br/>{rows_str}行 / {rows_en}'
             if info["latest"]:
                 label += f'<br/>{info["latest"]}'
             lines.append(f'        {_table_id(t)}["{label}"]:::dsNode')
@@ -263,8 +343,11 @@ def _gen_mermaid_by_source(rows: list[dict], today: date) -> tuple[str, int, int
     return "\n".join(lines) + "\n", len(by_source), len(tables_seen), edge_count
 
 
-def _gen_mermaid_by_slot(rows: list[dict], today: date) -> tuple[str, int, int]:
+def _gen_mermaid_by_slot(
+    rows: list[dict], today: date, task_descs: dict[str, str] | None = None
+) -> tuple[str, int, int]:
     """按调度时段分组的 Mermaid 图（subgraph 按时段，Job → 表节点）。"""
+    task_descs = task_descs or {}
     lines = ["flowchart LR"]
 
     by_slot: dict[str, list[dict]] = defaultdict(list)
@@ -277,9 +360,11 @@ def _gen_mermaid_by_slot(rows: list[dict], today: date) -> tuple[str, int, int]:
         slot_rows = by_slot[slot]
         # subgraph ID 不能含特殊字符
         slot_id = "SL_" + re.sub(r"[^a-zA-Z0-9_]", "_", slot)
-        lines.append(f'    subgraph {slot_id}["{slot_zh}（{len(slot_rows)} 任务）"]')
+        lines.append(f'    subgraph {slot_id}["{slot_zh}（{len(slot_rows)} 任务 / {len(slot_rows)} tasks）"]')
         for r in slot_rows:
-            lines.append(f'        J{r["idx"]}["{r["task_id"]}"]:::jobNode')
+            desc = task_descs.get(r["task_id"], "")
+            job_label = f'{r["task_id"]}<br/>{desc}' if desc else r["task_id"]
+            lines.append(f'        J{r["idx"]}["{job_label}"]:::jobNode')
         lines.append("    end")
 
     # 表节点（扁平，不分组，避免图过密）
@@ -289,7 +374,7 @@ def _gen_mermaid_by_slot(rows: list[dict], today: date) -> tuple[str, int, int]:
             tables_seen.add(r["table"])
             info_rows = _parse_row_count(r["rows"])
             icon = _freshness(r["latest"], today)[0]
-            label = f'{icon} {r["table"]}<br/>{_fmt_rows(info_rows)}行'
+            label = f'{icon} {r["table"]}<br/>{_fmt_rows(info_rows)}行 / {_fmt_rows_en(info_rows)}'
             if r["latest"]:
                 label += f'<br/>{r["latest"]}'
             lines.append(f'    {_table_id(r["table"])}["{label}"]:::dsNode')
@@ -328,14 +413,14 @@ def _gen_mermaid_by_db(rows: list[dict], today: date) -> tuple[str, int, int]:
         tables_in_db: dict[str, set[str]] = defaultdict(set)
         for r in db_rows:
             tables_in_db[r["table"]].add(r["source"])
-        lines.append(f'    subgraph DB_{db}["{db}（{len(tables_in_db)} 表）"]')
+        lines.append(f'    subgraph DB_{db}["{db}（{len(tables_in_db)} 表 / {len(tables_in_db)} tables）"]')
         for t in sorted(tables_in_db.keys()):
             # 取该表的代表行（第一个）用于行数/日期
             rep = next(r for r in db_rows if r["table"] == t)
             info_rows = _parse_row_count(rep["rows"])
             icon = _freshness(rep["latest"], today)[0]
             srcs = "/".join(sorted(tables_in_db[t]))
-            label = f'{icon} {t}<br/>{_fmt_rows(info_rows)}行<br/>源: {srcs}'
+            label = f'{icon} {t}<br/>{_fmt_rows(info_rows)}行 / {_fmt_rows_en(info_rows)}<br/>源: {srcs}'
             if rep["latest"]:
                 label += f'<br/>{rep["latest"]}'
             lines.append(f'        {_table_id(t)}["{label}"]:::dsNode')
@@ -419,8 +504,11 @@ def _gen_index_md(rows: list[dict], today: date, gen_timestamp: str) -> str:
     Args:
         rows: 解析后的矩阵行。
         today: 运行日期（用于新鲜度判定）。
-        gen_timestamp: 生成时间戳（从输入文件 mtime 派生，保证幂等：输入不变→输出不变）。
+        gen_timestamp: 生成时间戳（从输入文件 mtime 派生，保证幂等：输入不变→输出时间戳不变）。
     """
+    # task_id → 中文描述映射（来自 tasks.yaml，用于 Mermaid Job 节点双语 label）
+    task_descs = _load_task_descriptions()
+
     # 统计
     total = len(rows)
     by_status: dict[str, int] = defaultdict(int)
@@ -541,7 +629,7 @@ def _gen_index_md(rows: list[dict], today: date, gen_timestamp: str) -> str:
     # 图1：按数据源分组
     lines.append("### 图1：按数据源分组 / By Data Source（外部源 → 采集Job → 业务表 / Source → Job → Table）")
     lines.append("")
-    mmd1, n_src, n_tbl, n_edge = _gen_mermaid_by_source(rows, today)
+    mmd1, n_src, n_tbl, n_edge = _gen_mermaid_by_source(rows, today, task_descs)
     lines.append(f"> {n_src} 数据源 / Sources / {n_tbl} 业务表 / Tables / {n_edge} 采集边 / Edges")
     lines.append("")
     lines.append("```mermaid")
@@ -552,7 +640,7 @@ def _gen_index_md(rows: list[dict], today: date, gen_timestamp: str) -> str:
     # 图2：按调度时段分组
     lines.append("### 图2：按调度时段分组 / By Schedule Slot（5档时段 → 采集Job → 业务表 / Slots → Job → Table）")
     lines.append("")
-    mmd2, n_slot, n_edge2 = _gen_mermaid_by_slot(rows, today)
+    mmd2, n_slot, n_edge2 = _gen_mermaid_by_slot(rows, today, task_descs)
     lines.append(f"> {n_slot} 调度时段 / Slots / {n_edge2} 采集边 / Edges")
     lines.append("")
     lines.append("```mermaid")

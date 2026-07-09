@@ -99,140 +99,140 @@ This document presents the **data acquisition flow of business database tables**
 
 ```mermaid
 flowchart LR
-    subgraph S_akshare["AKShare（4 任务）"]
-        J10["macro_data_incremental"]:::jobNode
-        J29["analyst_forecast_incremental"]:::jobNode
-        J34["rights_issue_incremental"]:::jobNode
-        J56["macro_data_full_refresh"]:::jobNode
+    subgraph S_akshare["AKShare（4 任务 / 4 tasks）"]
+        J10["macro_data_incremental<br/>宏观数据增量"]:::jobNode
+        J29["analyst_forecast_incremental<br/>分析师一致预期增量"]:::jobNode
+        J34["rights_issue_incremental<br/>分红配股增量"]:::jobNode
+        J56["macro_data_full_refresh<br/>宏观数据全量刷新"]:::jobNode
     end
-    subgraph S_baostock["BaoStock（3 任务）"]
-        J50["trade_calendar_refresh"]:::jobNode
-        J52["index_constituent_refresh"]:::jobNode
-        J55["kline_daily_full_refresh"]:::jobNode
+    subgraph S_baostock["BaoStock（3 任务 / 3 tasks）"]
+        J50["trade_calendar_refresh<br/>交易日历全量刷新"]:::jobNode
+        J52["index_constituent_refresh<br/>沪深300成分股全量刷新"]:::jobNode
+        J55["kline_daily_full_refresh<br/>日K线全量刷新"]:::jobNode
     end
-    subgraph S_ifind["同花顺iFind（19 任务）"]
-        J1["adj_factor_incremental"]:::jobNode
-        J2["kline_daily_hfq_incremental"]:::jobNode
-        J3["kline_daily_incremental"]:::jobNode
-        J4["daily_valuation_incremental"]:::jobNode
-        J5["index_kline_incremental"]:::jobNode
-        J6["margin_trading_incremental"]:::jobNode
-        J7["block_trade_incremental"]:::jobNode
-        J8["dragon_tiger_incremental"]:::jobNode
-        J11["money_flow_incremental"]:::jobNode
-        J12["hk_connect_flow_incremental"]:::jobNode
-        J17["kline_weekly_incremental"]:::jobNode
-        J18["kline_monthly_incremental"]:::jobNode
-        J27["share_unlock_incremental"]:::jobNode
-        J32["audit_opinion_incremental"]:::jobNode
-        J35["equity_pledge_incremental"]:::jobNode
-        J36["equity_pledge_summary_incremental"]:::jobNode
-        J53["industry_class_ifind_refresh"]:::jobNode
-        J59["money_flow_full_refresh"]:::jobNode
-        J60["daily_valuation_full_refresh"]:::jobNode
+    subgraph S_ifind["同花顺iFind（19 任务 / 19 tasks）"]
+        J1["adj_factor_incremental<br/>复权因子增量"]:::jobNode
+        J2["kline_daily_hfq_incremental<br/>后复权日K线增量"]:::jobNode
+        J3["kline_daily_incremental<br/>不复权日K线增量"]:::jobNode
+        J4["daily_valuation_incremental<br/>每日估值（PE/PB）增量"]:::jobNode
+        J5["index_kline_incremental<br/>指数日K线增量"]:::jobNode
+        J6["margin_trading_incremental<br/>融资融券增量"]:::jobNode
+        J7["block_trade_incremental<br/>大宗交易增量"]:::jobNode
+        J8["dragon_tiger_incremental<br/>龙虎榜增量"]:::jobNode
+        J11["money_flow_incremental<br/>资金流向增量"]:::jobNode
+        J12["hk_connect_flow_incremental<br/>沪深港通资金增量"]:::jobNode
+        J17["kline_weekly_incremental<br/>周K线增量"]:::jobNode
+        J18["kline_monthly_incremental<br/>月K线增量"]:::jobNode
+        J27["share_unlock_incremental<br/>限售解禁增量"]:::jobNode
+        J32["audit_opinion_incremental<br/>审计意见增量"]:::jobNode
+        J35["equity_pledge_incremental<br/>股权质押增量"]:::jobNode
+        J36["equity_pledge_summary_incremental<br/>股权质押摘要增量"]:::jobNode
+        J53["industry_class_ifind_refresh<br/>申万/中证行业分类全量刷新"]:::jobNode
+        J59["money_flow_full_refresh<br/>资金流向全量刷新"]:::jobNode
+        J60["daily_valuation_full_refresh<br/>估值数据全量刷新"]:::jobNode
     end
-    subgraph S_miniqmt["迅投QMT（25 任务）"]
-        J9["hk_daily_kline_incremental"]:::jobNode
-        J13["futures_kline_incremental"]:::jobNode
-        J14["futures_position_incremental"]:::jobNode
-        J19["kline_1min_incremental"]:::jobNode
-        J20["kline_5min_incremental"]:::jobNode
-        J21["kline_15min_incremental"]:::jobNode
-        J22["kline_30min_incremental"]:::jobNode
-        J23["kline_60min_incremental"]:::jobNode
-        J28["shareholder_incremental"]:::jobNode
-        J30["earnings_forecast_incremental"]:::jobNode
-        J31["express_report_incremental"]:::jobNode
-        J33["dividend_incremental"]:::jobNode
-        J37["balance_sheet_incremental"]:::jobNode
-        J38["income_statement_incremental"]:::jobNode
-        J39["cashflow_statement_incremental"]:::jobNode
-        J40["financial_indicator_incremental"]:::jobNode
-        J41["main_business_incremental"]:::jobNode
-        J44["option_iv_surface_incremental"]:::jobNode
-        J45["convertible_bond_iv_incremental"]:::jobNode
-        J46["futures_term_structure_incremental"]:::jobNode
-        J47["tick_data_snapshot"]:::jobNode
-        J48["auction_snapshot"]:::jobNode
-        J49["index_quote_snapshot"]:::jobNode
-        J51["stock_list_refresh"]:::jobNode
-        J61["kline_5min_history_backfill"]:::jobNode
+    subgraph S_miniqmt["迅投QMT（25 任务 / 25 tasks）"]
+        J9["hk_daily_kline_incremental<br/>港股日K线增量"]:::jobNode
+        J13["futures_kline_incremental<br/>期货行情K线增量"]:::jobNode
+        J14["futures_position_incremental<br/>期货持仓增量"]:::jobNode
+        J19["kline_1min_incremental<br/>1分钟K线增量"]:::jobNode
+        J20["kline_5min_incremental<br/>5分钟K线增量"]:::jobNode
+        J21["kline_15min_incremental<br/>15分钟K线增量"]:::jobNode
+        J22["kline_30min_incremental<br/>30分钟K线增量"]:::jobNode
+        J23["kline_60min_incremental<br/>60分钟K线增量"]:::jobNode
+        J28["shareholder_incremental<br/>股东数据增量"]:::jobNode
+        J30["earnings_forecast_incremental<br/>盈利预测增量"]:::jobNode
+        J31["express_report_incremental<br/>业绩快报增量"]:::jobNode
+        J33["dividend_incremental<br/>分红送股增量"]:::jobNode
+        J37["balance_sheet_incremental<br/>资产负债表增量"]:::jobNode
+        J38["income_statement_incremental<br/>利润表增量"]:::jobNode
+        J39["cashflow_statement_incremental<br/>现金流量表增量"]:::jobNode
+        J40["financial_indicator_incremental<br/>财务指标增量"]:::jobNode
+        J41["main_business_incremental<br/>主营业务增量"]:::jobNode
+        J44["option_iv_surface_incremental<br/>期权IV曲面增量"]:::jobNode
+        J45["convertible_bond_iv_incremental<br/>可转债IV增量"]:::jobNode
+        J46["futures_term_structure_incremental<br/>期货期限结构增量"]:::jobNode
+        J47["tick_data_snapshot<br/>3秒Tick快照"]:::jobNode
+        J48["auction_snapshot<br/>集合竞价快照"]:::jobNode
+        J49["index_quote_snapshot<br/>指数3秒实时行情快照"]:::jobNode
+        J51["stock_list_refresh<br/>股票列表全量刷新"]:::jobNode
+        J61["kline_5min_history_backfill<br/>5分钟K线历史回补"]:::jobNode
     end
-    subgraph S_rss["RSS（1 任务）"]
-        J24["news_data_incremental"]:::jobNode
+    subgraph S_rss["RSS（1 任务 / 1 tasks）"]
+        J24["news_data_incremental<br/>财经新闻增量"]:::jobNode
     end
-    subgraph S_tdx["通达信（3 任务）"]
-        J42["industry_class_refresh"]:::jobNode
-        J43["sector_kline_incremental"]:::jobNode
-        J54["sector_constituent_refresh"]:::jobNode
+    subgraph S_tdx["通达信（3 任务 / 3 tasks）"]
+        J42["industry_class_refresh<br/>板块分类全量刷新"]:::jobNode
+        J43["sector_kline_incremental<br/>板块指数K线增量"]:::jobNode
+        J54["sector_constituent_refresh<br/>板块成分股全量刷新"]:::jobNode
     end
-    subgraph S_tickflow["TickFlow（4 任务）"]
-        J15["us_daily_kline_incremental"]:::jobNode
-        J16["us_index_incremental"]:::jobNode
-        J57["us_daily_kline_full_refresh"]:::jobNode
-        J58["us_index_full_refresh"]:::jobNode
+    subgraph S_tickflow["TickFlow（4 任务 / 4 tasks）"]
+        J15["us_daily_kline_incremental<br/>美股日K线增量"]:::jobNode
+        J16["us_index_incremental<br/>美股指数增量"]:::jobNode
+        J57["us_daily_kline_full_refresh<br/>美股日K线全量刷新"]:::jobNode
+        J58["us_index_full_refresh<br/>美股指数全量刷新"]:::jobNode
     end
-    subgraph S_tushare["Tushare（2 任务）"]
-        J25["news_news_info_incremental"]:::jobNode
-        J26["news_security_incremental"]:::jobNode
+    subgraph S_tushare["Tushare（2 任务 / 2 tasks）"]
+        J25["news_news_info_incremental<br/>新闻快讯增量"]:::jobNode
+        J26["news_security_incremental<br/>证券新闻增量"]:::jobNode
     end
-    subgraph DB_c1_market["c1_market（33 表）"]
-        T_c1_market_adj_factor["🟠 c1_market.adj_factor<br/>1879.8万行<br/>2026-07-03"]:::dsNode
-        T_c1_market_auction_snapshot["⚫ c1_market.auction_snapshot<br/>0行"]:::dsNode
-        T_c1_market_block_trade["🔴 c1_market.block_trade<br/>16.2万行<br/>2026-06-30"]:::dsNode
-        T_c1_market_convertible_bond_iv["⚫ c1_market.convertible_bond_iv<br/>0行"]:::dsNode
-        T_c1_market_daily_valuation["🟠 c1_market.daily_valuation<br/>878.8万行<br/>2026-07-03"]:::dsNode
-        T_c1_market_dragon_tiger["🟠 c1_market.dragon_tiger<br/>16.8万行<br/>2026-07-03"]:::dsNode
-        T_c1_market_futures_kline["🟠 c1_market.futures_kline<br/>306.7万行<br/>2026-07-03"]:::dsNode
-        T_c1_market_futures_position["⚫ c1_market.futures_position<br/>0行"]:::dsNode
-        T_c1_market_futures_term_structure["⚫ c1_market.futures_term_structure<br/>0行"]:::dsNode
-        T_c1_market_hk_connect_flow["⚫ c1_market.hk_connect_flow<br/>-行"]:::dsNode
-        T_c1_market_hk_daily_kline["🟠 c1_market.hk_daily_kline<br/>146.0万行<br/>2026-07-03"]:::dsNode
-        T_c1_market_index_constituent["🔴 c1_market.index_constituent<br/>6.0万行<br/>2026-06-30"]:::dsNode
-        T_c1_market_index_kline["🟠 c1_market.index_kline<br/>306.6万行<br/>2026-07-03"]:::dsNode
-        T_c1_market_index_quote["⚫ c1_market.index_quote<br/>0行"]:::dsNode
-        T_c1_market_kline_15min["🔴 c1_market.kline_15min<br/>2.54亿行<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_1min["🔴 c1_market.kline_1min<br/>38.31亿行<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_30min["🔴 c1_market.kline_30min<br/>1.27亿行<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_5min["⚫ c1_market.kline_5min<br/>9.76亿行"]:::dsNode
-        T_c1_market_kline_60min["🔴 c1_market.kline_60min<br/>6357.8万行<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_daily["🟠 c1_market.kline_daily<br/>1812.5万行<br/>2026-07-03"]:::dsNode
-        T_c1_market_kline_daily_hfq["🔴 c1_market.kline_daily_hfq<br/>1811.9万行<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_monthly["🔴 c1_market.kline_monthly<br/>89.9万行<br/>2026-06-30"]:::dsNode
-        T_c1_market_kline_weekly["🔴 c1_market.kline_weekly<br/>376.9万行<br/>2026-06-26"]:::dsNode
-        T_c1_market_macro_data["🔴 c1_market.macro_data<br/>5853行<br/>2026-06-30"]:::dsNode
-        T_c1_market_margin_trading["🔴 c1_market.margin_trading<br/>109.6万行<br/>2026-06-30"]:::dsNode
-        T_c1_market_money_flow["🟠 c1_market.money_flow<br/>49.5万行<br/>2026-07-03"]:::dsNode
-        T_c1_market_option_iv_surface["⚫ c1_market.option_iv_surface<br/>0行"]:::dsNode
-        T_c1_market_sector_kline["⚫ c1_market.sector_kline<br/>0行"]:::dsNode
-        T_c1_market_stock_list["⚫ c1_market.stock_list<br/>5534行"]:::dsNode
-        T_c1_market_tick_data["⚫ c1_market.tick_data<br/>0行"]:::dsNode
-        T_c1_market_trade_calendar["⚫ c1_market.trade_calendar<br/>1.3万行"]:::dsNode
-        T_c1_market_us_daily_kline["🔴 c1_market.us_daily_kline<br/>16.7万行<br/>2026-07-01"]:::dsNode
-        T_c1_market_us_index["🔴 c1_market.us_index<br/>2.2万行<br/>2026-07-02"]:::dsNode
+    subgraph DB_c1_market["c1_market（33 表 / 33 tables）"]
+        T_c1_market_adj_factor["🟠 c1_market.adj_factor<br/>1879.8万行 / 18.798M rows<br/>2026-07-03"]:::dsNode
+        T_c1_market_auction_snapshot["⚫ c1_market.auction_snapshot<br/>0行 / 0 rows"]:::dsNode
+        T_c1_market_block_trade["🔴 c1_market.block_trade<br/>16.2万行 / 161.71K rows<br/>2026-06-30"]:::dsNode
+        T_c1_market_convertible_bond_iv["⚫ c1_market.convertible_bond_iv<br/>0行 / 0 rows"]:::dsNode
+        T_c1_market_daily_valuation["🟠 c1_market.daily_valuation<br/>878.8万行 / 8.788M rows<br/>2026-07-03"]:::dsNode
+        T_c1_market_dragon_tiger["🟠 c1_market.dragon_tiger<br/>16.8万行 / 167.96K rows<br/>2026-07-03"]:::dsNode
+        T_c1_market_futures_kline["🟠 c1_market.futures_kline<br/>306.7万行 / 3.067M rows<br/>2026-07-03"]:::dsNode
+        T_c1_market_futures_position["⚫ c1_market.futures_position<br/>0行 / 0 rows"]:::dsNode
+        T_c1_market_futures_term_structure["⚫ c1_market.futures_term_structure<br/>0行 / 0 rows"]:::dsNode
+        T_c1_market_hk_connect_flow["⚫ c1_market.hk_connect_flow<br/>-行 / -"]:::dsNode
+        T_c1_market_hk_daily_kline["🟠 c1_market.hk_daily_kline<br/>146.0万行 / 1.460M rows<br/>2026-07-03"]:::dsNode
+        T_c1_market_index_constituent["🔴 c1_market.index_constituent<br/>6.0万行 / 59.58K rows<br/>2026-06-30"]:::dsNode
+        T_c1_market_index_kline["🟠 c1_market.index_kline<br/>306.6万行 / 3.066M rows<br/>2026-07-03"]:::dsNode
+        T_c1_market_index_quote["⚫ c1_market.index_quote<br/>0行 / 0 rows"]:::dsNode
+        T_c1_market_kline_15min["🔴 c1_market.kline_15min<br/>2.54亿行 / 254.314M rows<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_1min["🔴 c1_market.kline_1min<br/>38.31亿行 / 3830.589M rows<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_30min["🔴 c1_market.kline_30min<br/>1.27亿行 / 127.157M rows<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_5min["⚫ c1_market.kline_5min<br/>9.76亿行 / 975.947M rows"]:::dsNode
+        T_c1_market_kline_60min["🔴 c1_market.kline_60min<br/>6357.8万行 / 63.578M rows<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_daily["🟠 c1_market.kline_daily<br/>1812.5万行 / 18.125M rows<br/>2026-07-03"]:::dsNode
+        T_c1_market_kline_daily_hfq["🔴 c1_market.kline_daily_hfq<br/>1811.9万行 / 18.119M rows<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_monthly["🔴 c1_market.kline_monthly<br/>89.9万行 / 898.74K rows<br/>2026-06-30"]:::dsNode
+        T_c1_market_kline_weekly["🔴 c1_market.kline_weekly<br/>376.9万行 / 3.769M rows<br/>2026-06-26"]:::dsNode
+        T_c1_market_macro_data["🔴 c1_market.macro_data<br/>5853行 / 5853 rows<br/>2026-06-30"]:::dsNode
+        T_c1_market_margin_trading["🔴 c1_market.margin_trading<br/>109.6万行 / 1.096M rows<br/>2026-06-30"]:::dsNode
+        T_c1_market_money_flow["🟠 c1_market.money_flow<br/>49.5万行 / 494.66K rows<br/>2026-07-03"]:::dsNode
+        T_c1_market_option_iv_surface["⚫ c1_market.option_iv_surface<br/>0行 / 0 rows"]:::dsNode
+        T_c1_market_sector_kline["⚫ c1_market.sector_kline<br/>0行 / 0 rows"]:::dsNode
+        T_c1_market_stock_list["⚫ c1_market.stock_list<br/>5534行 / 5534 rows"]:::dsNode
+        T_c1_market_tick_data["⚫ c1_market.tick_data<br/>0行 / 0 rows"]:::dsNode
+        T_c1_market_trade_calendar["⚫ c1_market.trade_calendar<br/>1.3万行 / 13.16K rows"]:::dsNode
+        T_c1_market_us_daily_kline["🔴 c1_market.us_daily_kline<br/>16.7万行 / 167.18K rows<br/>2026-07-01"]:::dsNode
+        T_c1_market_us_index["🔴 c1_market.us_index<br/>2.2万行 / 22.44K rows<br/>2026-07-02"]:::dsNode
     end
-    subgraph DB_c3_fundamental["c3_fundamental（21 表）"]
-        T_c3_fundamental_analyst_forecast["⚫ c3_fundamental.analyst_forecast<br/>0行"]:::dsNode
-        T_c3_fundamental_audit_opinion["⚫ c3_fundamental.audit_opinion<br/>9.6万行"]:::dsNode
-        T_c3_fundamental_balance_sheet["⚫ c3_fundamental.balance_sheet<br/>33.5万行"]:::dsNode
-        T_c3_fundamental_cashflow_statement["⚫ c3_fundamental.cashflow_statement<br/>30.5万行"]:::dsNode
-        T_c3_fundamental_dividend["⚫ c3_fundamental.dividend<br/>11.5万行"]:::dsNode
-        T_c3_fundamental_earnings_forecast["⚫ c3_fundamental.earnings_forecast<br/>12.6万行"]:::dsNode
-        T_c3_fundamental_equity_pledge["⚫ c3_fundamental.equity_pledge<br/>0行"]:::dsNode
-        T_c3_fundamental_equity_pledge_summary["🟠 c3_fundamental.equity_pledge_summary<br/>172.3万行<br/>2026-07-03"]:::dsNode
-        T_c3_fundamental_express_report["⚫ c3_fundamental.express_report<br/>3.0万行"]:::dsNode
-        T_c3_fundamental_financial_indicator["⚫ c3_fundamental.financial_indicator<br/>34.8万行"]:::dsNode
-        T_c3_fundamental_income_statement["⚫ c3_fundamental.income_statement<br/>34.1万行"]:::dsNode
-        T_c3_fundamental_industry_class["⚫ c3_fundamental.industry_class<br/>0行"]:::dsNode
-        T_c3_fundamental_industry_class_ifind["⚫ c3_fundamental.industry_class_ifind<br/>0行"]:::dsNode
-        T_c3_fundamental_main_business["⚫ c3_fundamental.main_business<br/>209.0万行"]:::dsNode
-        T_c3_fundamental_news_data["⚫ c3_fundamental.news_data<br/>287行"]:::dsNode
-        T_c3_fundamental_news_news_info["⚫ c3_fundamental.news_news_info<br/>960.9万行"]:::dsNode
-        T_c3_fundamental_news_security["⚫ c3_fundamental.news_security<br/>372.9万行"]:::dsNode
-        T_c3_fundamental_rights_issue["⚫ c3_fundamental.rights_issue<br/>8.1万行"]:::dsNode
-        T_c3_fundamental_sector_constituent["⚫ c3_fundamental.sector_constituent<br/>0行"]:::dsNode
-        T_c3_fundamental_share_unlock["⚫ c3_fundamental.share_unlock<br/>0行"]:::dsNode
-        T_c3_fundamental_shareholder["⚫ c3_fundamental.shareholder<br/>0行"]:::dsNode
+    subgraph DB_c3_fundamental["c3_fundamental（21 表 / 21 tables）"]
+        T_c3_fundamental_analyst_forecast["⚫ c3_fundamental.analyst_forecast<br/>0行 / 0 rows"]:::dsNode
+        T_c3_fundamental_audit_opinion["⚫ c3_fundamental.audit_opinion<br/>9.6万行 / 96.01K rows"]:::dsNode
+        T_c3_fundamental_balance_sheet["⚫ c3_fundamental.balance_sheet<br/>33.5万行 / 334.52K rows"]:::dsNode
+        T_c3_fundamental_cashflow_statement["⚫ c3_fundamental.cashflow_statement<br/>30.5万行 / 305.23K rows"]:::dsNode
+        T_c3_fundamental_dividend["⚫ c3_fundamental.dividend<br/>11.5万行 / 115.35K rows"]:::dsNode
+        T_c3_fundamental_earnings_forecast["⚫ c3_fundamental.earnings_forecast<br/>12.6万行 / 125.58K rows"]:::dsNode
+        T_c3_fundamental_equity_pledge["⚫ c3_fundamental.equity_pledge<br/>0行 / 0 rows"]:::dsNode
+        T_c3_fundamental_equity_pledge_summary["🟠 c3_fundamental.equity_pledge_summary<br/>172.3万行 / 1.723M rows<br/>2026-07-03"]:::dsNode
+        T_c3_fundamental_express_report["⚫ c3_fundamental.express_report<br/>3.0万行 / 29.63K rows"]:::dsNode
+        T_c3_fundamental_financial_indicator["⚫ c3_fundamental.financial_indicator<br/>34.8万行 / 347.98K rows"]:::dsNode
+        T_c3_fundamental_income_statement["⚫ c3_fundamental.income_statement<br/>34.1万行 / 340.96K rows"]:::dsNode
+        T_c3_fundamental_industry_class["⚫ c3_fundamental.industry_class<br/>0行 / 0 rows"]:::dsNode
+        T_c3_fundamental_industry_class_ifind["⚫ c3_fundamental.industry_class_ifind<br/>0行 / 0 rows"]:::dsNode
+        T_c3_fundamental_main_business["⚫ c3_fundamental.main_business<br/>209.0万行 / 2.090M rows"]:::dsNode
+        T_c3_fundamental_news_data["⚫ c3_fundamental.news_data<br/>287行 / 287 rows"]:::dsNode
+        T_c3_fundamental_news_news_info["⚫ c3_fundamental.news_news_info<br/>960.9万行 / 9.609M rows"]:::dsNode
+        T_c3_fundamental_news_security["⚫ c3_fundamental.news_security<br/>372.9万行 / 3.729M rows"]:::dsNode
+        T_c3_fundamental_rights_issue["⚫ c3_fundamental.rights_issue<br/>8.1万行 / 81.03K rows"]:::dsNode
+        T_c3_fundamental_sector_constituent["⚫ c3_fundamental.sector_constituent<br/>0行 / 0 rows"]:::dsNode
+        T_c3_fundamental_share_unlock["⚫ c3_fundamental.share_unlock<br/>0行 / 0 rows"]:::dsNode
+        T_c3_fundamental_shareholder["⚫ c3_fundamental.shareholder<br/>0行 / 0 rows"]:::dsNode
     end
     J1 --> T_c1_market_adj_factor
     J2 --> T_c1_market_kline_daily_hfq
@@ -306,131 +306,131 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    subgraph SL________10_00_["周末财务 / 10:00 周六 (Weekend Financial)（13 任务）"]
-        J37["balance_sheet_incremental"]:::jobNode
-        J38["income_statement_incremental"]:::jobNode
-        J39["cashflow_statement_incremental"]:::jobNode
-        J40["financial_indicator_incremental"]:::jobNode
-        J41["main_business_incremental"]:::jobNode
-        J42["industry_class_refresh"]:::jobNode
-        J43["sector_kline_incremental"]:::jobNode
-        J44["option_iv_surface_incremental"]:::jobNode
-        J45["convertible_bond_iv_incremental"]:::jobNode
-        J46["futures_term_structure_incremental"]:::jobNode
-        J47["tick_data_snapshot"]:::jobNode
-        J48["auction_snapshot"]:::jobNode
-        J49["index_quote_snapshot"]:::jobNode
+    subgraph SL________10_00_["周末财务 / 10:00 周六 (Weekend Financial)（13 任务 / 13 tasks）"]
+        J37["balance_sheet_incremental<br/>资产负债表增量"]:::jobNode
+        J38["income_statement_incremental<br/>利润表增量"]:::jobNode
+        J39["cashflow_statement_incremental<br/>现金流量表增量"]:::jobNode
+        J40["financial_indicator_incremental<br/>财务指标增量"]:::jobNode
+        J41["main_business_incremental<br/>主营业务增量"]:::jobNode
+        J42["industry_class_refresh<br/>板块分类全量刷新"]:::jobNode
+        J43["sector_kline_incremental<br/>板块指数K线增量"]:::jobNode
+        J44["option_iv_surface_incremental<br/>期权IV曲面增量"]:::jobNode
+        J45["convertible_bond_iv_incremental<br/>可转债IV增量"]:::jobNode
+        J46["futures_term_structure_incremental<br/>期货期限结构增量"]:::jobNode
+        J47["tick_data_snapshot<br/>3秒Tick快照"]:::jobNode
+        J48["auction_snapshot<br/>集合竞价快照"]:::jobNode
+        J49["index_quote_snapshot<br/>指数3秒实时行情快照"]:::jobNode
     end
-    subgraph SL______18_00_["盘后事件 / 18:00 周一-五 (Post-close Event)（13 任务）"]
-        J24["news_data_incremental"]:::jobNode
-        J25["news_news_info_incremental"]:::jobNode
-        J26["news_security_incremental"]:::jobNode
-        J27["share_unlock_incremental"]:::jobNode
-        J28["shareholder_incremental"]:::jobNode
-        J29["analyst_forecast_incremental"]:::jobNode
-        J30["earnings_forecast_incremental"]:::jobNode
-        J31["express_report_incremental"]:::jobNode
-        J32["audit_opinion_incremental"]:::jobNode
-        J33["dividend_incremental"]:::jobNode
-        J34["rights_issue_incremental"]:::jobNode
-        J35["equity_pledge_incremental"]:::jobNode
-        J36["equity_pledge_summary_incremental"]:::jobNode
+    subgraph SL______18_00_["盘后事件 / 18:00 周一-五 (Post-close Event)（13 任务 / 13 tasks）"]
+        J24["news_data_incremental<br/>财经新闻增量"]:::jobNode
+        J25["news_news_info_incremental<br/>新闻快讯增量"]:::jobNode
+        J26["news_security_incremental<br/>证券新闻增量"]:::jobNode
+        J27["share_unlock_incremental<br/>限售解禁增量"]:::jobNode
+        J28["shareholder_incremental<br/>股东数据增量"]:::jobNode
+        J29["analyst_forecast_incremental<br/>分析师一致预期增量"]:::jobNode
+        J30["earnings_forecast_incremental<br/>盈利预测增量"]:::jobNode
+        J31["express_report_incremental<br/>业绩快报增量"]:::jobNode
+        J32["audit_opinion_incremental<br/>审计意见增量"]:::jobNode
+        J33["dividend_incremental<br/>分红送股增量"]:::jobNode
+        J34["rights_issue_incremental<br/>分红配股增量"]:::jobNode
+        J35["equity_pledge_incremental<br/>股权质押增量"]:::jobNode
+        J36["equity_pledge_summary_incremental<br/>股权质押摘要增量"]:::jobNode
     end
-    subgraph SL____K_16_30_["盘后日K / 16:30 周一-五 (Post-close Daily K)（12 任务）"]
-        J1["adj_factor_incremental"]:::jobNode
-        J2["kline_daily_hfq_incremental"]:::jobNode
-        J3["kline_daily_incremental"]:::jobNode
-        J4["daily_valuation_incremental"]:::jobNode
-        J5["index_kline_incremental"]:::jobNode
-        J17["kline_weekly_incremental"]:::jobNode
-        J18["kline_monthly_incremental"]:::jobNode
-        J19["kline_1min_incremental"]:::jobNode
-        J20["kline_5min_incremental"]:::jobNode
-        J21["kline_15min_incremental"]:::jobNode
-        J22["kline_30min_incremental"]:::jobNode
-        J23["kline_60min_incremental"]:::jobNode
+    subgraph SL____K_16_30_["盘后日K / 16:30 周一-五 (Post-close Daily K)（12 任务 / 12 tasks）"]
+        J1["adj_factor_incremental<br/>复权因子增量"]:::jobNode
+        J2["kline_daily_hfq_incremental<br/>后复权日K线增量"]:::jobNode
+        J3["kline_daily_incremental<br/>不复权日K线增量"]:::jobNode
+        J4["daily_valuation_incremental<br/>每日估值（PE/PB）增量"]:::jobNode
+        J5["index_kline_incremental<br/>指数日K线增量"]:::jobNode
+        J17["kline_weekly_incremental<br/>周K线增量"]:::jobNode
+        J18["kline_monthly_incremental<br/>月K线增量"]:::jobNode
+        J19["kline_1min_incremental<br/>1分钟K线增量"]:::jobNode
+        J20["kline_5min_incremental<br/>5分钟K线增量"]:::jobNode
+        J21["kline_15min_incremental<br/>15分钟K线增量"]:::jobNode
+        J22["kline_30min_incremental<br/>30分钟K线增量"]:::jobNode
+        J23["kline_60min_incremental<br/>60分钟K线增量"]:::jobNode
     end
-    subgraph SL______17_00_["盘后资金 / 17:00 周一-五 (Post-close Capital)（11 任务）"]
-        J6["margin_trading_incremental"]:::jobNode
-        J7["block_trade_incremental"]:::jobNode
-        J8["dragon_tiger_incremental"]:::jobNode
-        J9["hk_daily_kline_incremental"]:::jobNode
-        J10["macro_data_incremental"]:::jobNode
-        J11["money_flow_incremental"]:::jobNode
-        J12["hk_connect_flow_incremental"]:::jobNode
-        J13["futures_kline_incremental"]:::jobNode
-        J14["futures_position_incremental"]:::jobNode
-        J15["us_daily_kline_incremental"]:::jobNode
-        J16["us_index_incremental"]:::jobNode
+    subgraph SL______17_00_["盘后资金 / 17:00 周一-五 (Post-close Capital)（11 任务 / 11 tasks）"]
+        J6["margin_trading_incremental<br/>融资融券增量"]:::jobNode
+        J7["block_trade_incremental<br/>大宗交易增量"]:::jobNode
+        J8["dragon_tiger_incremental<br/>龙虎榜增量"]:::jobNode
+        J9["hk_daily_kline_incremental<br/>港股日K线增量"]:::jobNode
+        J10["macro_data_incremental<br/>宏观数据增量"]:::jobNode
+        J11["money_flow_incremental<br/>资金流向增量"]:::jobNode
+        J12["hk_connect_flow_incremental<br/>沪深港通资金增量"]:::jobNode
+        J13["futures_kline_incremental<br/>期货行情K线增量"]:::jobNode
+        J14["futures_position_incremental<br/>期货持仓增量"]:::jobNode
+        J15["us_daily_kline_incremental<br/>美股日K线增量"]:::jobNode
+        J16["us_index_incremental<br/>美股指数增量"]:::jobNode
     end
-    subgraph SL________09_00_["静态数据 / 09:00 月初 (Static Data)（12 任务）"]
-        J50["trade_calendar_refresh"]:::jobNode
-        J51["stock_list_refresh"]:::jobNode
-        J52["index_constituent_refresh"]:::jobNode
-        J53["industry_class_ifind_refresh"]:::jobNode
-        J54["sector_constituent_refresh"]:::jobNode
-        J55["kline_daily_full_refresh"]:::jobNode
-        J56["macro_data_full_refresh"]:::jobNode
-        J57["us_daily_kline_full_refresh"]:::jobNode
-        J58["us_index_full_refresh"]:::jobNode
-        J59["money_flow_full_refresh"]:::jobNode
-        J60["daily_valuation_full_refresh"]:::jobNode
-        J61["kline_5min_history_backfill"]:::jobNode
+    subgraph SL________09_00_["静态数据 / 09:00 月初 (Static Data)（12 任务 / 12 tasks）"]
+        J50["trade_calendar_refresh<br/>交易日历全量刷新"]:::jobNode
+        J51["stock_list_refresh<br/>股票列表全量刷新"]:::jobNode
+        J52["index_constituent_refresh<br/>沪深300成分股全量刷新"]:::jobNode
+        J53["industry_class_ifind_refresh<br/>申万/中证行业分类全量刷新"]:::jobNode
+        J54["sector_constituent_refresh<br/>板块成分股全量刷新"]:::jobNode
+        J55["kline_daily_full_refresh<br/>日K线全量刷新"]:::jobNode
+        J56["macro_data_full_refresh<br/>宏观数据全量刷新"]:::jobNode
+        J57["us_daily_kline_full_refresh<br/>美股日K线全量刷新"]:::jobNode
+        J58["us_index_full_refresh<br/>美股指数全量刷新"]:::jobNode
+        J59["money_flow_full_refresh<br/>资金流向全量刷新"]:::jobNode
+        J60["daily_valuation_full_refresh<br/>估值数据全量刷新"]:::jobNode
+        J61["kline_5min_history_backfill<br/>5分钟K线历史回补"]:::jobNode
     end
-    T_c1_market_adj_factor["🟠 c1_market.adj_factor<br/>1879.8万行<br/>2026-07-03"]:::dsNode
-    T_c1_market_kline_daily_hfq["🔴 c1_market.kline_daily_hfq<br/>1811.9万行<br/>2026-07-02"]:::dsNode
-    T_c1_market_kline_daily["🟠 c1_market.kline_daily<br/>1812.5万行<br/>2026-07-03"]:::dsNode
-    T_c1_market_daily_valuation["🟠 c1_market.daily_valuation<br/>878.8万行<br/>2026-07-03"]:::dsNode
-    T_c1_market_index_kline["🟠 c1_market.index_kline<br/>306.6万行<br/>2026-07-03"]:::dsNode
-    T_c1_market_margin_trading["🔴 c1_market.margin_trading<br/>109.6万行<br/>2026-06-30"]:::dsNode
-    T_c1_market_block_trade["🔴 c1_market.block_trade<br/>16.2万行<br/>2026-06-30"]:::dsNode
-    T_c1_market_dragon_tiger["🟠 c1_market.dragon_tiger<br/>16.8万行<br/>2026-07-03"]:::dsNode
-    T_c1_market_hk_daily_kline["🟠 c1_market.hk_daily_kline<br/>146.0万行<br/>2026-07-03"]:::dsNode
-    T_c1_market_macro_data["🔴 c1_market.macro_data<br/>5853行<br/>2026-06-30"]:::dsNode
-    T_c1_market_money_flow["🟠 c1_market.money_flow<br/>49.5万行<br/>2026-07-03"]:::dsNode
-    T_c1_market_hk_connect_flow["⚫ c1_market.hk_connect_flow<br/>-行"]:::dsNode
-    T_c1_market_futures_kline["🟠 c1_market.futures_kline<br/>306.7万行<br/>2026-07-03"]:::dsNode
-    T_c1_market_futures_position["⚫ c1_market.futures_position<br/>0行"]:::dsNode
-    T_c1_market_us_daily_kline["🔴 c1_market.us_daily_kline<br/>16.7万行<br/>2026-07-01"]:::dsNode
-    T_c1_market_us_index["🔴 c1_market.us_index<br/>2.2万行<br/>2026-07-02"]:::dsNode
-    T_c1_market_kline_weekly["🔴 c1_market.kline_weekly<br/>376.9万行<br/>2026-06-26"]:::dsNode
-    T_c1_market_kline_monthly["🔴 c1_market.kline_monthly<br/>89.9万行<br/>2026-06-30"]:::dsNode
-    T_c1_market_kline_1min["🔴 c1_market.kline_1min<br/>38.31亿行<br/>2026-07-02"]:::dsNode
-    T_c1_market_kline_5min["⚫ c1_market.kline_5min<br/>9.76亿行"]:::dsNode
-    T_c1_market_kline_15min["🔴 c1_market.kline_15min<br/>2.54亿行<br/>2026-07-02"]:::dsNode
-    T_c1_market_kline_30min["🔴 c1_market.kline_30min<br/>1.27亿行<br/>2026-07-02"]:::dsNode
-    T_c1_market_kline_60min["🔴 c1_market.kline_60min<br/>6357.8万行<br/>2026-07-02"]:::dsNode
-    T_c3_fundamental_news_data["⚫ c3_fundamental.news_data<br/>287行"]:::dsNode
-    T_c3_fundamental_news_news_info["⚫ c3_fundamental.news_news_info<br/>960.9万行"]:::dsNode
-    T_c3_fundamental_news_security["⚫ c3_fundamental.news_security<br/>372.9万行"]:::dsNode
-    T_c3_fundamental_share_unlock["⚫ c3_fundamental.share_unlock<br/>0行"]:::dsNode
-    T_c3_fundamental_shareholder["⚫ c3_fundamental.shareholder<br/>0行"]:::dsNode
-    T_c3_fundamental_analyst_forecast["⚫ c3_fundamental.analyst_forecast<br/>0行"]:::dsNode
-    T_c3_fundamental_earnings_forecast["⚫ c3_fundamental.earnings_forecast<br/>12.6万行"]:::dsNode
-    T_c3_fundamental_express_report["⚫ c3_fundamental.express_report<br/>3.0万行"]:::dsNode
-    T_c3_fundamental_audit_opinion["⚫ c3_fundamental.audit_opinion<br/>9.6万行"]:::dsNode
-    T_c3_fundamental_dividend["⚫ c3_fundamental.dividend<br/>11.5万行"]:::dsNode
-    T_c3_fundamental_rights_issue["⚫ c3_fundamental.rights_issue<br/>8.1万行"]:::dsNode
-    T_c3_fundamental_equity_pledge["⚫ c3_fundamental.equity_pledge<br/>0行"]:::dsNode
-    T_c3_fundamental_equity_pledge_summary["🟠 c3_fundamental.equity_pledge_summary<br/>172.3万行<br/>2026-07-03"]:::dsNode
-    T_c3_fundamental_balance_sheet["⚫ c3_fundamental.balance_sheet<br/>33.5万行"]:::dsNode
-    T_c3_fundamental_income_statement["⚫ c3_fundamental.income_statement<br/>34.1万行"]:::dsNode
-    T_c3_fundamental_cashflow_statement["⚫ c3_fundamental.cashflow_statement<br/>30.5万行"]:::dsNode
-    T_c3_fundamental_financial_indicator["⚫ c3_fundamental.financial_indicator<br/>34.8万行"]:::dsNode
-    T_c3_fundamental_main_business["⚫ c3_fundamental.main_business<br/>209.0万行"]:::dsNode
-    T_c3_fundamental_industry_class["⚫ c3_fundamental.industry_class<br/>0行"]:::dsNode
-    T_c1_market_sector_kline["⚫ c1_market.sector_kline<br/>0行"]:::dsNode
-    T_c1_market_option_iv_surface["⚫ c1_market.option_iv_surface<br/>0行"]:::dsNode
-    T_c1_market_convertible_bond_iv["⚫ c1_market.convertible_bond_iv<br/>0行"]:::dsNode
-    T_c1_market_futures_term_structure["⚫ c1_market.futures_term_structure<br/>0行"]:::dsNode
-    T_c1_market_tick_data["⚫ c1_market.tick_data<br/>0行"]:::dsNode
-    T_c1_market_auction_snapshot["⚫ c1_market.auction_snapshot<br/>0行"]:::dsNode
-    T_c1_market_index_quote["⚫ c1_market.index_quote<br/>0行"]:::dsNode
-    T_c1_market_trade_calendar["⚫ c1_market.trade_calendar<br/>1.3万行"]:::dsNode
-    T_c1_market_stock_list["⚫ c1_market.stock_list<br/>5534行"]:::dsNode
-    T_c1_market_index_constituent["🔴 c1_market.index_constituent<br/>6.0万行<br/>2026-06-30"]:::dsNode
-    T_c3_fundamental_industry_class_ifind["⚫ c3_fundamental.industry_class_ifind<br/>0行"]:::dsNode
-    T_c3_fundamental_sector_constituent["⚫ c3_fundamental.sector_constituent<br/>0行"]:::dsNode
+    T_c1_market_adj_factor["🟠 c1_market.adj_factor<br/>1879.8万行 / 18.798M rows<br/>2026-07-03"]:::dsNode
+    T_c1_market_kline_daily_hfq["🔴 c1_market.kline_daily_hfq<br/>1811.9万行 / 18.119M rows<br/>2026-07-02"]:::dsNode
+    T_c1_market_kline_daily["🟠 c1_market.kline_daily<br/>1812.5万行 / 18.125M rows<br/>2026-07-03"]:::dsNode
+    T_c1_market_daily_valuation["🟠 c1_market.daily_valuation<br/>878.8万行 / 8.788M rows<br/>2026-07-03"]:::dsNode
+    T_c1_market_index_kline["🟠 c1_market.index_kline<br/>306.6万行 / 3.066M rows<br/>2026-07-03"]:::dsNode
+    T_c1_market_margin_trading["🔴 c1_market.margin_trading<br/>109.6万行 / 1.096M rows<br/>2026-06-30"]:::dsNode
+    T_c1_market_block_trade["🔴 c1_market.block_trade<br/>16.2万行 / 161.71K rows<br/>2026-06-30"]:::dsNode
+    T_c1_market_dragon_tiger["🟠 c1_market.dragon_tiger<br/>16.8万行 / 167.96K rows<br/>2026-07-03"]:::dsNode
+    T_c1_market_hk_daily_kline["🟠 c1_market.hk_daily_kline<br/>146.0万行 / 1.460M rows<br/>2026-07-03"]:::dsNode
+    T_c1_market_macro_data["🔴 c1_market.macro_data<br/>5853行 / 5853 rows<br/>2026-06-30"]:::dsNode
+    T_c1_market_money_flow["🟠 c1_market.money_flow<br/>49.5万行 / 494.66K rows<br/>2026-07-03"]:::dsNode
+    T_c1_market_hk_connect_flow["⚫ c1_market.hk_connect_flow<br/>-行 / -"]:::dsNode
+    T_c1_market_futures_kline["🟠 c1_market.futures_kline<br/>306.7万行 / 3.067M rows<br/>2026-07-03"]:::dsNode
+    T_c1_market_futures_position["⚫ c1_market.futures_position<br/>0行 / 0 rows"]:::dsNode
+    T_c1_market_us_daily_kline["🔴 c1_market.us_daily_kline<br/>16.7万行 / 167.18K rows<br/>2026-07-01"]:::dsNode
+    T_c1_market_us_index["🔴 c1_market.us_index<br/>2.2万行 / 22.44K rows<br/>2026-07-02"]:::dsNode
+    T_c1_market_kline_weekly["🔴 c1_market.kline_weekly<br/>376.9万行 / 3.769M rows<br/>2026-06-26"]:::dsNode
+    T_c1_market_kline_monthly["🔴 c1_market.kline_monthly<br/>89.9万行 / 898.74K rows<br/>2026-06-30"]:::dsNode
+    T_c1_market_kline_1min["🔴 c1_market.kline_1min<br/>38.31亿行 / 3830.589M rows<br/>2026-07-02"]:::dsNode
+    T_c1_market_kline_5min["⚫ c1_market.kline_5min<br/>9.76亿行 / 975.947M rows"]:::dsNode
+    T_c1_market_kline_15min["🔴 c1_market.kline_15min<br/>2.54亿行 / 254.314M rows<br/>2026-07-02"]:::dsNode
+    T_c1_market_kline_30min["🔴 c1_market.kline_30min<br/>1.27亿行 / 127.157M rows<br/>2026-07-02"]:::dsNode
+    T_c1_market_kline_60min["🔴 c1_market.kline_60min<br/>6357.8万行 / 63.578M rows<br/>2026-07-02"]:::dsNode
+    T_c3_fundamental_news_data["⚫ c3_fundamental.news_data<br/>287行 / 287 rows"]:::dsNode
+    T_c3_fundamental_news_news_info["⚫ c3_fundamental.news_news_info<br/>960.9万行 / 9.609M rows"]:::dsNode
+    T_c3_fundamental_news_security["⚫ c3_fundamental.news_security<br/>372.9万行 / 3.729M rows"]:::dsNode
+    T_c3_fundamental_share_unlock["⚫ c3_fundamental.share_unlock<br/>0行 / 0 rows"]:::dsNode
+    T_c3_fundamental_shareholder["⚫ c3_fundamental.shareholder<br/>0行 / 0 rows"]:::dsNode
+    T_c3_fundamental_analyst_forecast["⚫ c3_fundamental.analyst_forecast<br/>0行 / 0 rows"]:::dsNode
+    T_c3_fundamental_earnings_forecast["⚫ c3_fundamental.earnings_forecast<br/>12.6万行 / 125.58K rows"]:::dsNode
+    T_c3_fundamental_express_report["⚫ c3_fundamental.express_report<br/>3.0万行 / 29.63K rows"]:::dsNode
+    T_c3_fundamental_audit_opinion["⚫ c3_fundamental.audit_opinion<br/>9.6万行 / 96.01K rows"]:::dsNode
+    T_c3_fundamental_dividend["⚫ c3_fundamental.dividend<br/>11.5万行 / 115.35K rows"]:::dsNode
+    T_c3_fundamental_rights_issue["⚫ c3_fundamental.rights_issue<br/>8.1万行 / 81.03K rows"]:::dsNode
+    T_c3_fundamental_equity_pledge["⚫ c3_fundamental.equity_pledge<br/>0行 / 0 rows"]:::dsNode
+    T_c3_fundamental_equity_pledge_summary["🟠 c3_fundamental.equity_pledge_summary<br/>172.3万行 / 1.723M rows<br/>2026-07-03"]:::dsNode
+    T_c3_fundamental_balance_sheet["⚫ c3_fundamental.balance_sheet<br/>33.5万行 / 334.52K rows"]:::dsNode
+    T_c3_fundamental_income_statement["⚫ c3_fundamental.income_statement<br/>34.1万行 / 340.96K rows"]:::dsNode
+    T_c3_fundamental_cashflow_statement["⚫ c3_fundamental.cashflow_statement<br/>30.5万行 / 305.23K rows"]:::dsNode
+    T_c3_fundamental_financial_indicator["⚫ c3_fundamental.financial_indicator<br/>34.8万行 / 347.98K rows"]:::dsNode
+    T_c3_fundamental_main_business["⚫ c3_fundamental.main_business<br/>209.0万行 / 2.090M rows"]:::dsNode
+    T_c3_fundamental_industry_class["⚫ c3_fundamental.industry_class<br/>0行 / 0 rows"]:::dsNode
+    T_c1_market_sector_kline["⚫ c1_market.sector_kline<br/>0行 / 0 rows"]:::dsNode
+    T_c1_market_option_iv_surface["⚫ c1_market.option_iv_surface<br/>0行 / 0 rows"]:::dsNode
+    T_c1_market_convertible_bond_iv["⚫ c1_market.convertible_bond_iv<br/>0行 / 0 rows"]:::dsNode
+    T_c1_market_futures_term_structure["⚫ c1_market.futures_term_structure<br/>0行 / 0 rows"]:::dsNode
+    T_c1_market_tick_data["⚫ c1_market.tick_data<br/>0行 / 0 rows"]:::dsNode
+    T_c1_market_auction_snapshot["⚫ c1_market.auction_snapshot<br/>0行 / 0 rows"]:::dsNode
+    T_c1_market_index_quote["⚫ c1_market.index_quote<br/>0行 / 0 rows"]:::dsNode
+    T_c1_market_trade_calendar["⚫ c1_market.trade_calendar<br/>1.3万行 / 13.16K rows"]:::dsNode
+    T_c1_market_stock_list["⚫ c1_market.stock_list<br/>5534行 / 5534 rows"]:::dsNode
+    T_c1_market_index_constituent["🔴 c1_market.index_constituent<br/>6.0万行 / 59.58K rows<br/>2026-06-30"]:::dsNode
+    T_c3_fundamental_industry_class_ifind["⚫ c3_fundamental.industry_class_ifind<br/>0行 / 0 rows"]:::dsNode
+    T_c3_fundamental_sector_constituent["⚫ c3_fundamental.sector_constituent<br/>0行 / 0 rows"]:::dsNode
     J1 --> T_c1_market_adj_factor
     J2 --> T_c1_market_kline_daily_hfq
     J3 --> T_c1_market_kline_daily
@@ -511,63 +511,63 @@ flowchart LR
     SRC_tdx[("通达信")]:::srcNode
     SRC_tickflow[("TickFlow")]:::srcNode
     SRC_tushare[("Tushare")]:::srcNode
-    subgraph DB_c1_market["c1_market（33 表）"]
-        T_c1_market_adj_factor["🟠 c1_market.adj_factor<br/>1879.8万行<br/>源: ifind<br/>2026-07-03"]:::dsNode
-        T_c1_market_auction_snapshot["⚫ c1_market.auction_snapshot<br/>0行<br/>源: miniqmt"]:::dsNode
-        T_c1_market_block_trade["🔴 c1_market.block_trade<br/>16.2万行<br/>源: ifind<br/>2026-06-30"]:::dsNode
-        T_c1_market_convertible_bond_iv["⚫ c1_market.convertible_bond_iv<br/>0行<br/>源: miniqmt"]:::dsNode
-        T_c1_market_daily_valuation["🟠 c1_market.daily_valuation<br/>878.8万行<br/>源: ifind<br/>2026-07-03"]:::dsNode
-        T_c1_market_dragon_tiger["🟠 c1_market.dragon_tiger<br/>16.8万行<br/>源: ifind<br/>2026-07-03"]:::dsNode
-        T_c1_market_futures_kline["🟠 c1_market.futures_kline<br/>306.7万行<br/>源: miniqmt<br/>2026-07-03"]:::dsNode
-        T_c1_market_futures_position["⚫ c1_market.futures_position<br/>0行<br/>源: miniqmt"]:::dsNode
-        T_c1_market_futures_term_structure["⚫ c1_market.futures_term_structure<br/>0行<br/>源: miniqmt"]:::dsNode
-        T_c1_market_hk_connect_flow["⚫ c1_market.hk_connect_flow<br/>-行<br/>源: ifind"]:::dsNode
-        T_c1_market_hk_daily_kline["🟠 c1_market.hk_daily_kline<br/>146.0万行<br/>源: miniqmt<br/>2026-07-03"]:::dsNode
-        T_c1_market_index_constituent["🔴 c1_market.index_constituent<br/>6.0万行<br/>源: baostock<br/>2026-06-30"]:::dsNode
-        T_c1_market_index_kline["🟠 c1_market.index_kline<br/>306.6万行<br/>源: ifind<br/>2026-07-03"]:::dsNode
-        T_c1_market_index_quote["⚫ c1_market.index_quote<br/>0行<br/>源: miniqmt"]:::dsNode
-        T_c1_market_kline_15min["🔴 c1_market.kline_15min<br/>2.54亿行<br/>源: miniqmt<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_1min["🔴 c1_market.kline_1min<br/>38.31亿行<br/>源: miniqmt<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_30min["🔴 c1_market.kline_30min<br/>1.27亿行<br/>源: miniqmt<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_5min["⚫ c1_market.kline_5min<br/>9.76亿行<br/>源: miniqmt"]:::dsNode
-        T_c1_market_kline_60min["🔴 c1_market.kline_60min<br/>6357.8万行<br/>源: miniqmt<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_daily["🟠 c1_market.kline_daily<br/>1812.5万行<br/>源: baostock/ifind<br/>2026-07-03"]:::dsNode
-        T_c1_market_kline_daily_hfq["🔴 c1_market.kline_daily_hfq<br/>1811.9万行<br/>源: ifind<br/>2026-07-02"]:::dsNode
-        T_c1_market_kline_monthly["🔴 c1_market.kline_monthly<br/>89.9万行<br/>源: ifind<br/>2026-06-30"]:::dsNode
-        T_c1_market_kline_weekly["🔴 c1_market.kline_weekly<br/>376.9万行<br/>源: ifind<br/>2026-06-26"]:::dsNode
-        T_c1_market_macro_data["🔴 c1_market.macro_data<br/>5853行<br/>源: akshare<br/>2026-06-30"]:::dsNode
-        T_c1_market_margin_trading["🔴 c1_market.margin_trading<br/>109.6万行<br/>源: ifind<br/>2026-06-30"]:::dsNode
-        T_c1_market_money_flow["🟠 c1_market.money_flow<br/>49.5万行<br/>源: ifind<br/>2026-07-03"]:::dsNode
-        T_c1_market_option_iv_surface["⚫ c1_market.option_iv_surface<br/>0行<br/>源: miniqmt"]:::dsNode
-        T_c1_market_sector_kline["⚫ c1_market.sector_kline<br/>0行<br/>源: tdx"]:::dsNode
-        T_c1_market_stock_list["⚫ c1_market.stock_list<br/>5534行<br/>源: miniqmt"]:::dsNode
-        T_c1_market_tick_data["⚫ c1_market.tick_data<br/>0行<br/>源: miniqmt"]:::dsNode
-        T_c1_market_trade_calendar["⚫ c1_market.trade_calendar<br/>1.3万行<br/>源: baostock"]:::dsNode
-        T_c1_market_us_daily_kline["🔴 c1_market.us_daily_kline<br/>16.7万行<br/>源: tickflow<br/>2026-07-01"]:::dsNode
-        T_c1_market_us_index["🔴 c1_market.us_index<br/>2.2万行<br/>源: tickflow<br/>2026-07-02"]:::dsNode
+    subgraph DB_c1_market["c1_market（33 表 / 33 tables）"]
+        T_c1_market_adj_factor["🟠 c1_market.adj_factor<br/>1879.8万行 / 18.798M rows<br/>源: ifind<br/>2026-07-03"]:::dsNode
+        T_c1_market_auction_snapshot["⚫ c1_market.auction_snapshot<br/>0行 / 0 rows<br/>源: miniqmt"]:::dsNode
+        T_c1_market_block_trade["🔴 c1_market.block_trade<br/>16.2万行 / 161.71K rows<br/>源: ifind<br/>2026-06-30"]:::dsNode
+        T_c1_market_convertible_bond_iv["⚫ c1_market.convertible_bond_iv<br/>0行 / 0 rows<br/>源: miniqmt"]:::dsNode
+        T_c1_market_daily_valuation["🟠 c1_market.daily_valuation<br/>878.8万行 / 8.788M rows<br/>源: ifind<br/>2026-07-03"]:::dsNode
+        T_c1_market_dragon_tiger["🟠 c1_market.dragon_tiger<br/>16.8万行 / 167.96K rows<br/>源: ifind<br/>2026-07-03"]:::dsNode
+        T_c1_market_futures_kline["🟠 c1_market.futures_kline<br/>306.7万行 / 3.067M rows<br/>源: miniqmt<br/>2026-07-03"]:::dsNode
+        T_c1_market_futures_position["⚫ c1_market.futures_position<br/>0行 / 0 rows<br/>源: miniqmt"]:::dsNode
+        T_c1_market_futures_term_structure["⚫ c1_market.futures_term_structure<br/>0行 / 0 rows<br/>源: miniqmt"]:::dsNode
+        T_c1_market_hk_connect_flow["⚫ c1_market.hk_connect_flow<br/>-行 / -<br/>源: ifind"]:::dsNode
+        T_c1_market_hk_daily_kline["🟠 c1_market.hk_daily_kline<br/>146.0万行 / 1.460M rows<br/>源: miniqmt<br/>2026-07-03"]:::dsNode
+        T_c1_market_index_constituent["🔴 c1_market.index_constituent<br/>6.0万行 / 59.58K rows<br/>源: baostock<br/>2026-06-30"]:::dsNode
+        T_c1_market_index_kline["🟠 c1_market.index_kline<br/>306.6万行 / 3.066M rows<br/>源: ifind<br/>2026-07-03"]:::dsNode
+        T_c1_market_index_quote["⚫ c1_market.index_quote<br/>0行 / 0 rows<br/>源: miniqmt"]:::dsNode
+        T_c1_market_kline_15min["🔴 c1_market.kline_15min<br/>2.54亿行 / 254.314M rows<br/>源: miniqmt<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_1min["🔴 c1_market.kline_1min<br/>38.31亿行 / 3830.589M rows<br/>源: miniqmt<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_30min["🔴 c1_market.kline_30min<br/>1.27亿行 / 127.157M rows<br/>源: miniqmt<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_5min["⚫ c1_market.kline_5min<br/>9.76亿行 / 975.947M rows<br/>源: miniqmt"]:::dsNode
+        T_c1_market_kline_60min["🔴 c1_market.kline_60min<br/>6357.8万行 / 63.578M rows<br/>源: miniqmt<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_daily["🟠 c1_market.kline_daily<br/>1812.5万行 / 18.125M rows<br/>源: baostock/ifind<br/>2026-07-03"]:::dsNode
+        T_c1_market_kline_daily_hfq["🔴 c1_market.kline_daily_hfq<br/>1811.9万行 / 18.119M rows<br/>源: ifind<br/>2026-07-02"]:::dsNode
+        T_c1_market_kline_monthly["🔴 c1_market.kline_monthly<br/>89.9万行 / 898.74K rows<br/>源: ifind<br/>2026-06-30"]:::dsNode
+        T_c1_market_kline_weekly["🔴 c1_market.kline_weekly<br/>376.9万行 / 3.769M rows<br/>源: ifind<br/>2026-06-26"]:::dsNode
+        T_c1_market_macro_data["🔴 c1_market.macro_data<br/>5853行 / 5853 rows<br/>源: akshare<br/>2026-06-30"]:::dsNode
+        T_c1_market_margin_trading["🔴 c1_market.margin_trading<br/>109.6万行 / 1.096M rows<br/>源: ifind<br/>2026-06-30"]:::dsNode
+        T_c1_market_money_flow["🟠 c1_market.money_flow<br/>49.5万行 / 494.66K rows<br/>源: ifind<br/>2026-07-03"]:::dsNode
+        T_c1_market_option_iv_surface["⚫ c1_market.option_iv_surface<br/>0行 / 0 rows<br/>源: miniqmt"]:::dsNode
+        T_c1_market_sector_kline["⚫ c1_market.sector_kline<br/>0行 / 0 rows<br/>源: tdx"]:::dsNode
+        T_c1_market_stock_list["⚫ c1_market.stock_list<br/>5534行 / 5534 rows<br/>源: miniqmt"]:::dsNode
+        T_c1_market_tick_data["⚫ c1_market.tick_data<br/>0行 / 0 rows<br/>源: miniqmt"]:::dsNode
+        T_c1_market_trade_calendar["⚫ c1_market.trade_calendar<br/>1.3万行 / 13.16K rows<br/>源: baostock"]:::dsNode
+        T_c1_market_us_daily_kline["🔴 c1_market.us_daily_kline<br/>16.7万行 / 167.18K rows<br/>源: tickflow<br/>2026-07-01"]:::dsNode
+        T_c1_market_us_index["🔴 c1_market.us_index<br/>2.2万行 / 22.44K rows<br/>源: tickflow<br/>2026-07-02"]:::dsNode
     end
-    subgraph DB_c3_fundamental["c3_fundamental（21 表）"]
-        T_c3_fundamental_analyst_forecast["⚫ c3_fundamental.analyst_forecast<br/>0行<br/>源: akshare"]:::dsNode
-        T_c3_fundamental_audit_opinion["⚫ c3_fundamental.audit_opinion<br/>9.6万行<br/>源: ifind"]:::dsNode
-        T_c3_fundamental_balance_sheet["⚫ c3_fundamental.balance_sheet<br/>33.5万行<br/>源: miniqmt"]:::dsNode
-        T_c3_fundamental_cashflow_statement["⚫ c3_fundamental.cashflow_statement<br/>30.5万行<br/>源: miniqmt"]:::dsNode
-        T_c3_fundamental_dividend["⚫ c3_fundamental.dividend<br/>11.5万行<br/>源: miniqmt"]:::dsNode
-        T_c3_fundamental_earnings_forecast["⚫ c3_fundamental.earnings_forecast<br/>12.6万行<br/>源: miniqmt"]:::dsNode
-        T_c3_fundamental_equity_pledge["⚫ c3_fundamental.equity_pledge<br/>0行<br/>源: ifind"]:::dsNode
-        T_c3_fundamental_equity_pledge_summary["🟠 c3_fundamental.equity_pledge_summary<br/>172.3万行<br/>源: ifind<br/>2026-07-03"]:::dsNode
-        T_c3_fundamental_express_report["⚫ c3_fundamental.express_report<br/>3.0万行<br/>源: miniqmt"]:::dsNode
-        T_c3_fundamental_financial_indicator["⚫ c3_fundamental.financial_indicator<br/>34.8万行<br/>源: miniqmt"]:::dsNode
-        T_c3_fundamental_income_statement["⚫ c3_fundamental.income_statement<br/>34.1万行<br/>源: miniqmt"]:::dsNode
-        T_c3_fundamental_industry_class["⚫ c3_fundamental.industry_class<br/>0行<br/>源: tdx"]:::dsNode
-        T_c3_fundamental_industry_class_ifind["⚫ c3_fundamental.industry_class_ifind<br/>0行<br/>源: ifind"]:::dsNode
-        T_c3_fundamental_main_business["⚫ c3_fundamental.main_business<br/>209.0万行<br/>源: miniqmt"]:::dsNode
-        T_c3_fundamental_news_data["⚫ c3_fundamental.news_data<br/>287行<br/>源: rss"]:::dsNode
-        T_c3_fundamental_news_news_info["⚫ c3_fundamental.news_news_info<br/>960.9万行<br/>源: tushare"]:::dsNode
-        T_c3_fundamental_news_security["⚫ c3_fundamental.news_security<br/>372.9万行<br/>源: tushare"]:::dsNode
-        T_c3_fundamental_rights_issue["⚫ c3_fundamental.rights_issue<br/>8.1万行<br/>源: akshare"]:::dsNode
-        T_c3_fundamental_sector_constituent["⚫ c3_fundamental.sector_constituent<br/>0行<br/>源: tdx"]:::dsNode
-        T_c3_fundamental_share_unlock["⚫ c3_fundamental.share_unlock<br/>0行<br/>源: ifind"]:::dsNode
-        T_c3_fundamental_shareholder["⚫ c3_fundamental.shareholder<br/>0行<br/>源: miniqmt"]:::dsNode
+    subgraph DB_c3_fundamental["c3_fundamental（21 表 / 21 tables）"]
+        T_c3_fundamental_analyst_forecast["⚫ c3_fundamental.analyst_forecast<br/>0行 / 0 rows<br/>源: akshare"]:::dsNode
+        T_c3_fundamental_audit_opinion["⚫ c3_fundamental.audit_opinion<br/>9.6万行 / 96.01K rows<br/>源: ifind"]:::dsNode
+        T_c3_fundamental_balance_sheet["⚫ c3_fundamental.balance_sheet<br/>33.5万行 / 334.52K rows<br/>源: miniqmt"]:::dsNode
+        T_c3_fundamental_cashflow_statement["⚫ c3_fundamental.cashflow_statement<br/>30.5万行 / 305.23K rows<br/>源: miniqmt"]:::dsNode
+        T_c3_fundamental_dividend["⚫ c3_fundamental.dividend<br/>11.5万行 / 115.35K rows<br/>源: miniqmt"]:::dsNode
+        T_c3_fundamental_earnings_forecast["⚫ c3_fundamental.earnings_forecast<br/>12.6万行 / 125.58K rows<br/>源: miniqmt"]:::dsNode
+        T_c3_fundamental_equity_pledge["⚫ c3_fundamental.equity_pledge<br/>0行 / 0 rows<br/>源: ifind"]:::dsNode
+        T_c3_fundamental_equity_pledge_summary["🟠 c3_fundamental.equity_pledge_summary<br/>172.3万行 / 1.723M rows<br/>源: ifind<br/>2026-07-03"]:::dsNode
+        T_c3_fundamental_express_report["⚫ c3_fundamental.express_report<br/>3.0万行 / 29.63K rows<br/>源: miniqmt"]:::dsNode
+        T_c3_fundamental_financial_indicator["⚫ c3_fundamental.financial_indicator<br/>34.8万行 / 347.98K rows<br/>源: miniqmt"]:::dsNode
+        T_c3_fundamental_income_statement["⚫ c3_fundamental.income_statement<br/>34.1万行 / 340.96K rows<br/>源: miniqmt"]:::dsNode
+        T_c3_fundamental_industry_class["⚫ c3_fundamental.industry_class<br/>0行 / 0 rows<br/>源: tdx"]:::dsNode
+        T_c3_fundamental_industry_class_ifind["⚫ c3_fundamental.industry_class_ifind<br/>0行 / 0 rows<br/>源: ifind"]:::dsNode
+        T_c3_fundamental_main_business["⚫ c3_fundamental.main_business<br/>209.0万行 / 2.090M rows<br/>源: miniqmt"]:::dsNode
+        T_c3_fundamental_news_data["⚫ c3_fundamental.news_data<br/>287行 / 287 rows<br/>源: rss"]:::dsNode
+        T_c3_fundamental_news_news_info["⚫ c3_fundamental.news_news_info<br/>960.9万行 / 9.609M rows<br/>源: tushare"]:::dsNode
+        T_c3_fundamental_news_security["⚫ c3_fundamental.news_security<br/>372.9万行 / 3.729M rows<br/>源: tushare"]:::dsNode
+        T_c3_fundamental_rights_issue["⚫ c3_fundamental.rights_issue<br/>8.1万行 / 81.03K rows<br/>源: akshare"]:::dsNode
+        T_c3_fundamental_sector_constituent["⚫ c3_fundamental.sector_constituent<br/>0行 / 0 rows<br/>源: tdx"]:::dsNode
+        T_c3_fundamental_share_unlock["⚫ c3_fundamental.share_unlock<br/>0行 / 0 rows<br/>源: ifind"]:::dsNode
+        T_c3_fundamental_shareholder["⚫ c3_fundamental.shareholder<br/>0行 / 0 rows<br/>源: miniqmt"]:::dsNode
     end
     SRC_ifind --> T_c1_market_adj_factor
     SRC_ifind --> T_c1_market_kline_daily_hfq
