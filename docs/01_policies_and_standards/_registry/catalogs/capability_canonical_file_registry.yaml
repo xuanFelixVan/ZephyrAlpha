@@ -3111,8 +3111,8 @@ capabilities:
       扫描 src/ 和 tests/ 下 .py 文件中 target_layer 赋值，校验值是否在
       target_layer_vocabulary.yaml 合法值集合（37个）或废弃值集合（9个）中。
       发现未知值 → exit 1 阻断（CI/CD 消费）。真源：target_layer_vocabulary.yaml
-      （TaskCard.target_layer 字段唯一真源）。对标 layer_boundary_check.py 的
-      架构层校验设计。解决发现性：新 AI 搜 "target_layer 校验/D_MKT_DATA 未知值"
+      （TaskCard.target_layer 字段唯一真源）。对标原 layer_boundary_check.py 的
+      架构层校验设计（该脚本已删除 2026-07-09，14层架构废弃）。解决发现性：新 AI 搜 "target_layer 校验/D_MKT_DATA 未知值"
       可定位真源。解决防重建：check_file_canonical() 反查阻止新 AI 重建校验脚本。
 
   # --------------------------------------------------------------------------

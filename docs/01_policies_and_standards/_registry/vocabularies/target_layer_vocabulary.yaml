@@ -290,8 +290,7 @@ deprecated_values:
 # 1. 下划线优先：functional_domain_registry.yaml（28域）和 cross_layer_contracts.yaml（11域）
 #    均用下划线，是活跃生产真源
 # 2. 缩写版优先：cross_layer_contracts.yaml 用 D_PF_CORE/D_EX_CORE（缩写），
-#    layer_boundary_check.py 用 D_PORTFOLIO_CORE/D_EXECUTION_CORE（全称），
-#    以契约真源为准统一为缩写版
+#    以契约真源为准统一为缩写版（原 layer_boundary_check.py 用全称，该脚本已删除 2026-07-09）
 # 3. 中文废弃："基础设施"违反全项目英文命名约定，改为 D_INFRA_OPS
 # 4. 幽灵域废弃：D_COMPLIANCE 未在 functional_domain_registry 和 cross_layer_contracts 登记，
 #    合规语义已由 D_GOV_ENFORCEMENT（门禁引擎/rule_enforcement）覆盖

@@ -55,7 +55,6 @@ TYPE_MAPPING: list[tuple[str, list[str], AssetType]] = [
 REGISTRY_PATTERNS = ["_registry.yaml", "manifest.yaml"]
 
 LAYER_BY_DIR: dict[str, AssetLayer] = {
-    "src/zephyr/gates/": AssetLayer.L01,
     "src/zephyr/governance/": AssetLayer.L01,
     "src/zephyr/": AssetLayer.CROSS_LAYER,
     "scripts/governance/": AssetLayer.L01,
