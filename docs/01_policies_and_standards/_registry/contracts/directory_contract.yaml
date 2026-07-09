@@ -48,7 +48,7 @@ title: "Directory Contract"
 status: active
 ttl: permanent
 contract_version: "1.0.0"
-last_updated: "2026-06-30"
+last_updated: "2026-07-09"
 
 # ============================================================
 # 0. 真源溯源（三维来源声明）
@@ -378,6 +378,13 @@ directory_extensions:
     zone: neutral
     allowed_doc_types: []
     overrides_parent: true
+  - path: "data/architecture_health/"
+    allowed: [".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    note: "架构体检报告最新快照——架构合规扫描结果，每次覆盖latest.json，运行时产物非源数据"
 
   # B 类 - 纯 JSONL 日志/流式数据（4 个目录）
   - path: "data/audit_logs/"
@@ -507,6 +514,15 @@ directory_extensions:
     overrides_parent: true
     note: "运行时缓存——含 .ndjson 新行分隔 JSON 格式"
 
+  # 数据摄入暂存（1 个目录，2026-07-09 补盲）
+  - path: "data/raw/"
+    allowed: [".zip", ".tsv", ".csv", ".tar.gz", ".json", ".yaml"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    note: "数据摄入暂存区——百度云一次性包等外部数据源下载缓存(.zip/.tsv)，导入数据库后即删除。瞬态目录非持久存储，备份系统应排除"
+
   # G 类 - 复合遥测（1 个目录）
   - path: "data/telemetry/"
     allowed: [".jsonl", ".json", ".md", ".tar.gz"]
@@ -561,6 +577,15 @@ directory_extensions:
     overrides_parent: true
     note: "模型大脑——passports/quick_profiles(.json)+岗位矩阵(.yaml)"
 
+  # J 类 - 模型文件（1 个目录，2026-07-09 补盲）
+  - path: "data/models/"
+    allowed: [".bin", ".safetensors", ".pt", ".onnx", ".onnx_data", ".model", ".json", ".txt", ".md", ".jpg", ".webp", ".yaml"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".csv", ".jsonl"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    note: "HuggingFace格式模型文件——bge-m3/bge-small-zh-v1.5/local_model等嵌入模型权重(.bin/.safetensors/.pt/.onnx)+配置(.json)+tokenizer(.txt)。可从HuggingFace重新下载，体积大(7GB+)。.gitattributes和无扩展名文件(如Constant_7_attr__value)由.gitignore排除不触发DCR-005"
+
   # Z 类 - 空占位目录（5 个 drift_* 目录）
   - path: "data/drift_audit/"
     allowed: [".gitkeep"]
@@ -599,6 +624,14 @@ directory_extensions:
     zone: neutral
     allowed_doc_types: []
     note: "归档区——已退役的脚本存放处，不参与活跃治理。allowed_doc_types=[] 豁免 doc_type 约束"
+
+  # --- 平台约定目录（2026-07-09 补盲）---
+  - path: ".github/"
+    allowed: [".yml", ".yaml", ".md"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".csv", ".jsonl", ".json"]
+    zone: neutral
+    allowed_doc_types: []
+    note: "GitHub平台专属配置——workflows/子目录放GitHub Actions CI/CD流水线YAML定义。平台约定目录非项目业务逻辑"
 
 # ============================================================
 # 3. 根目录白名单（Root Directory Whitelist）
