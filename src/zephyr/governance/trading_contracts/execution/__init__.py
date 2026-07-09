@@ -1,12 +1,13 @@
 # [A_module] module_id=MOD-EXE_execution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from .capital_allocation_result import *
-from .execution_rejection_error import *
-from .execution_report import *
-from .fill import *
-from .model_serving_request import *
-from .order import *
-from .position import *
+# 5.93.6 修复：from .xxx import * → 显式导入（消除命名空间污染）
+from .capital_allocation_result import CapitalAllocationResult
+from .execution_rejection_error import ExecutionRejectionError
+from .execution_report import ExecutionReport
+from .fill import Fill
+from .model_serving_request import ModelServingRequest
+from .order import Order, OrderSide, OrderStatus, OrderType
+from .position import PositionSnapshot
 
 __all__ = [
     "CapitalAllocationResult",
