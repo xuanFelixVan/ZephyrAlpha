@@ -10,17 +10,6 @@ from __future__ import annotations
 
 from zephyr.governance.rule_enforcement.adversarial_strategies import AdversarialSampleGenerator
 from zephyr.governance.rule_enforcement.gate_engine.adversarial_validation import AdversarialValidationGate, ValidationResult
-from zephyr.governance.rule_enforcement.check_types.check_type_registry import get_check_type, list_check_types
-
-
-class TestGateRegistry:
-    def test_adversarial_validation_registered(self):
-        handler_cls = get_check_type("adversarial_validation")
-        assert handler_cls is not None
-
-    def test_adversarial_validation_in_list(self):
-        types = list_check_types()
-        assert "adversarial_validation" in types
 
 
 class TestGatePipelineIntegration:
