@@ -3662,10 +3662,11 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第88轮Phase 7c裁定（2026-07-09）**：5.160.2 `apply_depgraph.py` 升级为DEFERRED-PERMANENT. **裁定依据（第一性原理验证）**：(A)代码验证—4002行, 156处SQL匹配(含23处f-string动态构造+133处静态字面量), 文件头声明`[TESTS] 无`+`SAFETY H`+`[MODIFY-GUARD] project_rules.md(RULE-SIXTEEN)`; (B)问题本质=SQL散落+动态构造(表名/列名参数化), 非纯机械提取; (C)100%AI开发模式特殊性=AI可提取静态SQL但无法验证133处常量替换的行为等价(无测试+SAFETY H+157MB depgraph原子写入工具, 一个typo破坏depgraph同步); (D)成本/收益=重构成本极高(133处常量提取+全仓引用更新+行为等价验证需先编写测试), 收益=可读性提升(非功能修复); (E)防复发策略=NO-BARE-SQL gate(priority=87, Phase 6已注册)检测新增裸SQL字面量, 存量133处静态SQL维持. **解锁条件**:人类架构师发起"apply_depgraph.py SQL集中化专项"+测试覆盖先行(至少覆盖关键函数: update_module/insert_node/insert_edge/rename_domain). 维度5.160全部清零(DEFERRED-PERMANENT=1, DEFERRED=0).
 > **第89轮Phase 7c-1部分推进（2026-07-09）**：5.160.2 `apply_depgraph.py` 重复SQL常量提取. 9个非f-string重复SQL(共28处使用)提取为模块级SQL_*常量(L122-132), 方法体裸SQL替换为常量引用. 行为等价性显而易见(同一SQL字符串→常量引用, 语义不变), 语法验证通过(py_compile OK), --help加载正常. 自引用bug修复(常量定义块中SQL字面量被误替换为常量名自身, 已用Python脚本恢复). 剩余: 105处静态SQL(非重复)+23处f-string SQL(动态构造), 仍需测试覆盖先行. DEFERRED-PERMANENT维持(部分推进, 未完全清零).
 > **第90轮Phase 7c-2部分推进（2026-07-09）**：5.160.2 `apply_depgraph.py` 重复f-string SQL提取. 4个重复f-string SQL(共9处使用)提取为.format()模板常量(L135-138), 方法体f-string替换为常量.format(tbl=tbl,col=col)调用. f-string中{tbl}/{col}是Python变量插值, .format()传递相同变量, 行为等价. 语法验证通过(py_compile OK), --help加载正常. 累计: 13个SQL_*常量(9静态+4模板), 37处方法体裸SQL已清除. 剩余~118处(105静态非重复+19 f-string非重复+17多行), 仍需测试覆盖先行. DEFERRED-PERMANENT维持.
+> **第91轮Phase 7g修复（2026-07-09）**：5.160.1 `task_repo.py` SQL常量集中化FIXED. 72处裸SQL提取为62个模块级SQL_*常量, 方法体0裸SQL(AST验证). 同时修复NO-BARE-SQL gate设计缺陷——添加`_SQL_CONSTANT_DEF_RE`豁免SQL_*常量定义行(gate原建议"提取到模块级常量"但阻断常量定义本身, chicken-and-egg问题需分两次session合并). commit a43be1a71a(gate fix)+5bc2b220d6(SQL提取). 测试基线不变(79f/41p/14e, 全为预先存在的模板校验问题). HIGH=6→5.
 
-#### HIGH（6个）
+#### HIGH（5个）
 
-1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\task_repo.py` — 单文件40+条裸SQL散落方法体（SELECT/INSERT INTO/UPDATE/DELETE FROM tasks/events/task_files），未集中到SQL常量
+1. **[FIXED-Phase7g]** `d:\ZephyrAlpha\src\zephyr\governance\persistence\task_repo.py` — 72处裸SQL已提取为62个模块级SQL_*常量, 方法体0裸SQL(AST验证), 67常量引用+5 .format()调用+1变量引用. 同时修复NO-BARE-SQL gate豁免SQL_*常量定义行(gate原建议"提取到模块级常量"但阻断常量定义本身). commit a43be1a71a(gate fix)+5bc2b220d6(SQL提取). 测试基线不变(79f/41p/14e, 全为预先存在的模板校验问题)
 2. **[DEFERRED-PERMANENT-Phase7c-2部分推进]** `d:\ZephyrAlpha\scripts\governance\apply_depgraph.py` — 4417行/155处SQL. Phase 7c-1+7c-2: 13个SQL_*常量(9静态+4模板), 37处方法体裸SQL已清除. 剩余~118处(105静态非重复+19 f-string非重复+17多行), [TESTS]无+SAFETY H, 需测试覆盖先行, NO-BARE-SQL gate防复发就位
 3. **[FIXED-Phase7b]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\file_task_mapper.py` — 13条SQL已提取为模块级SQL_*常量(L66-94), 方法体0裸SQL, 63/68 tests PASSED
 4. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\` 7文件 — drift_events相关SQL散落7+文件（含trigger DDL）
@@ -3701,7 +3702,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 **核心模式总结**：(1)6处HIGH中4处为"裸SQL散落"（task_repo/apply_depgraph/file_task_mapper×4/behavioral_audit 7文件），SQL未集中到常量模块是规模化现象；(2)3类安全扫描器正则阈值不一致（{20,} vs {32,}）是安全检测一致性问题；(3)17处MEDIUM多为"配置值散落N+文件"（Ollama URL/OTLP/timeout/PRAGMA/max_workers等），应抽取到统一配置；(4)4处正则重复（SEMVER/frontmatter/header_field/hallucination_pattern）应集中到共享正则模块
 
-**严重度汇总**：HIGH=6, MEDIUM=17, LOW=4, 合计=27
+**严重度汇总**：HIGH=5, MEDIUM=17, LOW=4, 合计=27（5.160.1 FIXED-Phase7g）
 
 **第34轮修复明细（2026-07-04）**：
 - **FIXED**：
