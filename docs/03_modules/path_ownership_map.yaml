@@ -6,9 +6,9 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-07-09T11:12:29Z'
+  generated_at: '2026-07-09T11:18:26Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
-  total_path_claims: 743
+  total_path_claims: 744
   total_ssot_claims: 16
   total_conflicts: 2
   conflict_resolution: 'ssot_claims_priority'
@@ -4639,6 +4639,13 @@ ownership:
     declared_in: 'docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md'
     existence: '已阻塞'
     ownership_judgment: '首版待完善'
+
+  - path: 'scripts/backup/backup_reconciler.py'
+    owner_blueprint: 'MOD-INF-027'
+    claim_type: 'section_0_1'
+    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    existence: '待实现'
+    ownership_judgment: ''
 
   - path: 'scripts/backup/backup.ps1'
     owner_blueprint: 'MOD-INF-027'
