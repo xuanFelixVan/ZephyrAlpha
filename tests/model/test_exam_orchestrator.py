@@ -1469,3 +1469,227 @@ class TestToolAxisCasesRegistered:
             CASES_BY_CAPABILITY,
         )
         assert len(CASES_BY_CAPABILITY) == 31
+
+
+# ══════════════════════════════════════════════════════════
+# 5.158.12 回归测试——_compute_metrics 硬编码分支行为等价验证
+# 重构前编写，验证 extract method 后行为不变。
+# ══════════════════════════════════════════════════════════
+
+class TestComputeMetricsHardcodedBranches:
+    """_compute_metrics 6 个硬编码分支的直接回归测试。"""
+
+    def _make_orch(self):
+        return ExamOrchestrator(MagicMock(), model_id="t")
+
+    # --- task_classification ---
+
+    def test_task_classification_match(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="task_classification",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_category="utils",
+        )
+        p, r, ed, em = orch._compute_metrics(case, {"category": "utils"})
+        assert em == 1
+        assert p == 1.0 and r == 1.0
+
+    def test_task_classification_mismatch(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="task_classification",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_category="utils",
+        )
+        p, r, ed, em = orch._compute_metrics(case, {"category": "governance"})
+        assert em == 0
+
+    # --- tag_completion ---
+
+    def test_tag_completion_exact(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="tag_completion",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_tags=["a", "b"],
+        )
+        p, r, ed, em = orch._compute_metrics(case, {"tags": ["a", "b"]})
+        assert em == 1
+        assert p == 1.0 and r == 1.0
+
+    def test_tag_completion_partial(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="tag_completion",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_tags=["a", "b"],
+        )
+        p, r, ed, em = orch._compute_metrics(case, {"tags": ["a"]})
+        assert em == 0
+        assert 0.0 < p <= 1.0
+
+    def test_tag_completion_empty_pred(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="tag_completion",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_tags=["a"],
+        )
+        p, r, ed, em = orch._compute_metrics(case, {"tags": []})
+        assert em == 0
+        assert p == 0.0
+
+    # --- summary_extraction / naming_suggest ---
+
+    def test_summary_extraction_all_hits(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="summary_extraction",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_contains=["hello", "world"],
+        )
+        p, r, ed, em = orch._compute_metrics(case, "hello world text")
+        assert em == 1
+        assert p == 1.0
+
+    def test_summary_extraction_partial(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="summary_extraction",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_contains=["hello", "world"],
+        )
+        p, r, ed, em = orch._compute_metrics(case, "hello only")
+        assert em == 0
+        assert p == pytest.approx(0.5, abs=0.01)
+
+    def test_naming_suggest_uses_same_logic(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="naming_suggest",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_contains=["foo"],
+        )
+        p, r, ed, em = orch._compute_metrics(case, "the foo bar")
+        assert em == 1
+
+    # --- anomaly_triage ---
+
+    def test_anomaly_triage_match_true(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="anomaly_triage",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_needs_human=True,
+        )
+        p, r, ed, em = orch._compute_metrics(case, {"needs_human": True})
+        assert em == 1
+
+    def test_anomaly_triage_mismatch(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="anomaly_triage",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_needs_human=True,
+        )
+        p, r, ed, em = orch._compute_metrics(case, {"needs_human": False})
+        assert em == 0
+
+    # --- code_fix / code_edit_precision / refactor / dead_code_removal ---
+
+    def test_code_fix_exact_old_str(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="code_fix",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_old_str="old code",
+            expected_contains=["kw"],
+        )
+        result = {"fixes": [{"old_str": "old code"}], "kw": 1}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 1
+        assert ed == pytest.approx(0.0, abs=0.01)
+
+    def test_code_fix_no_entries(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="code_fix",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_old_str="old code",
+        )
+        p, r, ed, em = orch._compute_metrics(case, {"fixes": []})
+        assert em == 0
+        assert ed == 1.0
+
+    def test_code_edit_precision_best_ed(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="code_edit_precision",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_old_str="abc",
+        )
+        result = {"fixes": [{"old_str": "axc"}, {"old_str": "abd"}]}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 0
+        assert 0.0 < ed < 1.0
+
+    def test_refactor_uses_changes_field(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="refactor",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_old_str="target",
+        )
+        result = {"changes": [{"old_str": "target"}]}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 1
+
+    def test_dead_code_removal_uses_dead_sections(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="dead_code_removal",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_old_str="dead",
+        )
+        result = {"dead_sections": [{"old_str": "dead"}]}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 1
+
+    # --- code_generate ---
+
+    def test_code_generate_with_content(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="code_generate",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_contains=["def", "main"],
+        )
+        result = {"content": "def main(): pass"}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 1
+        assert p == 1.0
+
+    def test_code_generate_empty_content(self):
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="code_generate",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_contains=["def"],
+        )
+        result = {"content": ""}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 0
+        assert ed == 1.0
+
+    def test_code_generate_codegen_nested(self):
+        """content 嵌套在 codegen.content 中也能取到。"""
+        orch = self._make_orch()
+        case = ExamTestCase(
+            case_id="T", capability="code_generate",
+            difficulty=Difficulty.EASY, prompt="x",
+            expected_contains=["hello"],
+        )
+        result = {"codegen": {"content": "hello world"}}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 1
