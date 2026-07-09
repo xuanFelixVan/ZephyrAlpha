@@ -14,6 +14,13 @@
 #   不含则自动 git reset --soft HEAD~1（保留修改在 staging area），
 #   强制所有 commit 必须通过 GitCommitGateway。
 #
+# session_id 未注册时的双层检测（修复 2026-07-09）：
+#   1. ZEPHYR_COMMIT_GATEWAY=1 → 通过 GitCommitGateway 的合法 commit
+#      （session 过期/allow_overlap 逃生通道）→ warn-only，不 reset
+#   2. ZEPHYR_COMMIT_GATEWAY 未设置 → 伪造 GW 标记 → reset
+#   原逻辑：session_id 未注册一律 reset，导致 allow_overlap 逃生通道的
+#   合法 commit 被误判为伪造，连带回滚主 commit + auto-sync commits
+#
 # 合法标识（含 [GW: 标记的 commit）：
 #   - GitCommitGateway 常规 commit: [GW:{session_id}]
 #   - GitCommitGateway auto-commit: [GW:{session_id}:auto]
@@ -61,9 +68,31 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
         exit 0  # session_id 已注册 → 合法放行
     fi
 
-    # session_id 未注册 → 伪造检测
+    # session_id 未注册 → 检查环境变量确认是否通过 GitCommitGateway
+    # ZEPHYR_COMMIT_GATEWAY=1 由 GitCommitGateway._run_git 设置，post-commit hook 继承
+    # 修复 bug（2026-07-09）：allow_overlap=True 逃生通道不注册 session，
+    # 导致合法 commit 被误判为伪造并 reset，连带回滚主 commit + auto-sync commits
+    if [ "$ZEPHYR_COMMIT_GATEWAY" = "1" ]; then
+        # 环境变量确认通过 GitCommitGateway → warn-only（session 过期/allow_overlap 逃生通道）
+        echo ""
+        echo "[POST-COMMIT-GUARD] WARN: session_id=$session_id 未在 SessionRegistry 注册"
+        echo "[POST-COMMIT-GUARD] ZEPHYR_COMMIT_GATEWAY=1 确认通过 GitCommitGateway，commit 保留"
+        echo ""
+
+        # 记录到审计日志
+        mkdir -p .runtime/reconcile_reports
+        timestamp=$(date +%s)
+        hash=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+        report_file=".runtime/reconcile_reports/post_commit_guard_${timestamp}.json"
+        escaped_sid=$(echo "$session_id" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr -d '\n' | head -c 200)
+        echo "{\"gate_id\":\"POST-COMMIT-GUARD\",\"timestamp\":$timestamp,\"hash\":\"$hash\",\"violation\":\"unregistered_session_id\",\"session_id\":\"$escaped_sid\",\"gw_env\":\"1\",\"action\":\"warn_only\"}" > "$report_file"
+
+        exit 0
+    fi
+
+    # 环境变量不存在 → 伪造 GW 标记 → reset
     echo ""
-    echo "[POST-COMMIT-GUARD] 检测到伪造 GW 标记（session_id=$session_id 未在 SessionRegistry 注册）"
+    echo "[POST-COMMIT-GUARD] 检测到伪造 GW 标记（session_id=$session_id 未注册且 ZEPHYR_COMMIT_GATEWAY 未设置）"
     echo "[POST-COMMIT-GUARD] 自动执行 git reset --soft HEAD~1（保留修改在 staging area）"
     echo "[POST-COMMIT-GUARD] 请通过 GitCommitGateway/session_worktree_commit 重新提交（见 AGENTS.md §8）"
     echo ""
