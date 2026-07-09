@@ -39,21 +39,28 @@ for _p in (str(_REPO_ROOT), str(_SRC_DIR)):
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 
+try:
+    from d5_architecture.panorama_common import weighted_domain_vote, min_maturity as _min_mat
+except ImportError:
+    import sys as _sys
+    _pc_path = str(Path(__file__).resolve().parents[1])  # d5_architecture/
+    if _pc_path not in _sys.path:
+        _sys.path.insert(0, _pc_path)
+    from panorama_common import weighted_domain_vote, min_maturity as _min_mat
+
 # ---------------------------------------------------------------------------
 # SQL 常量（SQL 集中化，§5.160.2）
 # ---------------------------------------------------------------------------
-# ORDER BY (blueprint_path IS NULL) → blueprint_path 非空的行优先（正确性：有路径的行
+# ORDER BY (path IS NULL), path → path 非空的行优先（正确性：有路径的行
 # 更可能是模块主节点而非文件级子节点）。
 # 注意：不使用 LIMIT 1 — 同一 blueprint_id 可有多行（跨域模块），_query_module_bp 在
-# Python 中用多数投票聚合，与 align_panoramas._fetch_depgraph_nodes 聚合策略一致。
+# Python 中用加权投票聚合，与 align_panoramas._fetch_depgraph_nodes 聚合策略一致。
 _SQL_QUERY_MODULE_BP = (
-    "SELECT blueprint_id, domain_id, design_maturity, build_status, blueprint_path "
+    "SELECT blueprint_id, domain_id, design_maturity, build_status, "
+    "blueprint_path, path "
     "FROM nodes WHERE blueprint_id = %s "
-    "ORDER BY (blueprint_path IS NULL), blueprint_path"
+    "ORDER BY (path IS NULL), path"
 )
-
-# design_maturity 排序：design < prototype < production（与 align_panoramas._maturity_rank 一致）
-_MATURITY_RANK = {"design": 0, "prototype": 1, "production": 2}
 
 _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 
@@ -88,19 +95,17 @@ def _update_frontmatter(content: str, updates: dict) -> str:
 
 
 def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
-    """从 depgraph 查询模块的蓝图路径和核心字段（多数投票聚合）。
+    """从 depgraph 查询模块的蓝图路径和核心字段（加权投票聚合）。
 
     depgraph.nodes 中同一 blueprint_id 可有多行（跨域模块的正常现象，如 MOD-INF-002
     有 79 行分布在 8 个域）。聚合策略与 align_panoramas._fetch_depgraph_nodes 一致：
-    - domain_id: 多数投票（Counter.most_common），取代表性域
-    - design_maturity: 取最 design 的状态（design < prototype < production）
+    - domain_id: 加权投票（panorama_common.weighted_domain_vote，测试文件降权）
+    - design_maturity: 取最 design 的状态（panorama_common.min_maturity）
     - build_status: 取第一个非空
     - blueprint_path: 取第一个非空（ORDER BY 保证非空优先）
 
     Returns: (bp_path, domain_id, design_maturity, build_status) 或 None
     """
-    from collections import Counter
-
     conn = get_depgraph_pg_connection()
     try:
         with conn.cursor() as cur:
@@ -131,12 +136,10 @@ def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
                 build_status = bs
             if not bp_path and path:
                 bp_path = path
-        # domain_id: 多数投票
-        domain_id = Counter(domains).most_common(1)[0][0] if domains else ""
-        # design_maturity: 取最 design（min rank）
-        design_maturity = (
-            min(maturities, key=lambda v: _MATURITY_RANK.get(v, 99)) if maturities else ""
-        )
+        # domain_id: 加权投票（测试文件降权，共享工具 panorama_common）
+        domain_id = weighted_domain_vote(rows)
+        # design_maturity: 取最 design（min rank，共享工具 panorama_common）
+        design_maturity = _min_mat(maturities) if maturities else ""
         return (bp_path or "", domain_id or "", design_maturity or "", build_status or "")
     finally:
         conn.close()

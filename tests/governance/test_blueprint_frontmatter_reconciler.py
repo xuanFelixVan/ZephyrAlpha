@@ -674,3 +674,38 @@ class TestExtremeFileIO:
         with pytest.raises(OSError):
             bfr.reconcile_blueprint_frontmatter("MOD-IO")
         monkeypatch.setattr(Path, "read_text", original_read)
+
+
+class TestWeightedVoting:
+    def test_test_file_downweighted(self, bfr, tmp_path, monkeypatch):
+        """测试文件降权：2源码(D_GOV_SCRIPTS) vs 2测试(D_AUDITTEST) → D_GOV_SCRIPTS"""
+        bp = tmp_path / "blueprint.md"
+        bp.write_text(
+            "---\nmodule_id: MOD-GOV-SYNC-PANORAMA\nresponsibility_domain: old\n---\n# T\n",
+            encoding="utf-8",
+        )
+        conn = MagicMock()
+        cursor = MagicMock()
+        # 行顺序：测试文件行在前 → Counter 平局时取 D_AUDITTEST（先插入）；
+        # 加权投票时 D_GOV_SCRIPTS(2.0) > D_AUDITTEST(0.2) → D_GOV_SCRIPTS 胜出
+        cursor.fetchall.return_value = [
+            {"blueprint_id": "MOD-GOV-SYNC-PANORAMA", "domain_id": "D_AUDITTEST",
+             "design_maturity": "production", "build_status": "stable",
+             "blueprint_path": None, "path": "tests/test_gov.py"},
+            {"blueprint_id": "MOD-GOV-SYNC-PANORAMA", "domain_id": "D_AUDITTEST",
+             "design_maturity": "production", "build_status": "stable",
+             "blueprint_path": None, "path": "tests/test_gov2.py"},
+            {"blueprint_id": "MOD-GOV-SYNC-PANORAMA", "domain_id": "D_GOV_SCRIPTS",
+             "design_maturity": "production", "build_status": "stable",
+             "blueprint_path": str(bp), "path": "scripts/gov.py"},
+            {"blueprint_id": "MOD-GOV-SYNC-PANORAMA", "domain_id": "D_GOV_SCRIPTS",
+             "design_maturity": "production", "build_status": "stable",
+             "blueprint_path": str(bp), "path": "scripts/gov2.py"},
+        ]
+        cursor.fetchone.return_value = None
+        conn.cursor.return_value.__enter__.return_value = cursor
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-GOV-SYNC-PANORAMA") == 0
+        content = bp.read_text(encoding="utf-8")
+        assert "D_GOV_SCRIPTS" in content
+        assert "D_AUDITTEST" not in content
