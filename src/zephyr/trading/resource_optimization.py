@@ -399,32 +399,21 @@ class ResourceOptimizationEngine:
 
     def _classify_pressure(self, snap: ResourceSnapshot) -> PressureLevel:
         t = self._thresholds
-        if snap.memory_percent >= t.memory_emergency_percent:
-            return PressureLevel.EMERGENCY
-        if snap.process_count >= t.process_emergency_count:
-            return PressureLevel.EMERGENCY
-        if snap.cpu_percent >= t.cpu_emergency_percent:
-            return PressureLevel.EMERGENCY
-        if snap.gpu_available and snap.gpu_percent >= t.gpu_emergency_percent:
-            return PressureLevel.EMERGENCY
-        if snap.memory_percent >= t.memory_critical_percent:
-            return PressureLevel.CRITICAL
-        if snap.process_count >= t.process_critical_count:
-            return PressureLevel.CRITICAL
-        if snap.cpu_percent >= t.cpu_critical_percent:
-            return PressureLevel.CRITICAL
-        if snap.gpu_available and snap.gpu_percent >= t.gpu_critical_percent:
-            return PressureLevel.CRITICAL
-        if snap.memory_percent >= t.memory_warning_percent:
-            return PressureLevel.WARNING
-        if snap.process_count >= t.process_warning_count:
-            return PressureLevel.WARNING
-        if snap.cpu_percent >= t.cpu_warning_percent:
-            return PressureLevel.WARNING
-        if snap.gpu_available and snap.gpu_percent >= t.gpu_warning_percent:
-            return PressureLevel.WARNING
-        if snap.ide_ghost_windows > 0:
-            return PressureLevel.WARNING
+        # 查表法：按优先级降序检查 (level, metric_value, threshold_value)
+        checks = (
+            (PressureLevel.EMERGENCY, snap.memory_percent, t.memory_emergency_percent),
+            (PressureLevel.EMERGENCY, snap.process_count, t.process_emergency_count),
+            (PressureLevel.EMERGENCY, snap.cpu_percent, t.cpu_emergency_percent),
+            (PressureLevel.CRITICAL, snap.memory_percent, t.memory_critical_percent),
+            (PressureLevel.CRITICAL, snap.process_count, t.process_critical_count),
+            (PressureLevel.CRITICAL, snap.cpu_percent, t.cpu_critical_percent),
+            (PressureLevel.WARNING, snap.memory_percent, t.memory_warning_percent),
+            (PressureLevel.WARNING, snap.process_count, t.process_warning_count),
+            (PressureLevel.WARNING, snap.cpu_percent, t.cpu_warning_percent),
+        )
+        for level, metric, threshold in checks:
+            if metric >= threshold:
+                return level
         return PressureLevel.NORMAL
 
     def optimize(
