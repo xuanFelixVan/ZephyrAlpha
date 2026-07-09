@@ -1,5 +1,5 @@
 ---
-module_id: ARCH-BIZDB-001
+module_id: MOD-ARCH-BIZDB
 submodule_path: docs/03_modules/_cross_layer/database
 title: "业务数据库顶层架构设计书 — 回测引擎数据仓库 + 实盘分析数据中台（ClickHouse目标 / SQLite事务 / Neo4j图谱）"
 doc_type: blueprint
@@ -50,7 +50,7 @@ references:
 
 # 业务数据库顶层架构设计书 — 回测引擎数据仓库 + 实盘分析数据中台
 
-> module_id: ARCH-BIZDB-001 | version: 1.0.0 | status: Active | layer: cross_layer | blueprint_level: architecture
+> module_id: MOD-ARCH-BIZDB | version: 1.0.0 | status: Active | layer: cross_layer | blueprint_level: architecture
 > 本文档为**母蓝图**，指导 C1~C4 / G2 / L4 各子施工蓝图。表级细化，不到字段级（字段级见各子蓝图 DDL-as-Code）。
 > **推导过程完整记录**：[业务数据库架构_讨论记录.md](file:///D:/ZephyrAlpha/docs/_working/业务数据库架构_讨论记录.md)（11章）
 

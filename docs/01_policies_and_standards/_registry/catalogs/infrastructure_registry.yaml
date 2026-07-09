@@ -321,7 +321,7 @@ infrastructure:
     sla: "持久化, 列式压缩, < 50ms write p95, < 200ms OLAP query p95"
     status: connected
     provisioned_at: "2026-07-01"
-    note: "ClickHouse 26.6.1 部署在 WSL2 Ubuntu (D:\\WSL\\Ubuntu\\ext4.vhdx)，已创建 c1_market 数据库及 daily_kline 表。DatabaseService L86-101 已实现 get_clickhouse_conn()。ARCH-BIZDB-001 业务数据库顶层架构。母蓝图: docs/03_modules/_cross_layer/database/business_data_architecture.md。"
+    note: "ClickHouse 26.6.1 部署在 WSL2 Ubuntu (D:\\WSL\\Ubuntu\\ext4.vhdx)，已创建 c1_market 数据库及 daily_kline 表。DatabaseService L86-101 已实现 get_clickhouse_conn()。MOD-ARCH-BIZDB 业务数据库顶层架构。母蓝图: docs/03_modules/_cross_layer/database/business_data_architecture.md。"
 
 # ============================================================================
 # 汇总统计

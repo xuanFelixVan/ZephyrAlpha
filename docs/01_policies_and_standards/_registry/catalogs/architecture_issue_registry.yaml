@@ -1186,7 +1186,7 @@ entries:
 
 # --- #ARCH-048: 数据库边界裁定（采纳母蓝图硬性边界二元判定，Redis/EventStore降为P2，ClickHouse门禁解除） ---
 - issue_id: '#ARCH-048'
-  title: 数据库边界裁定——采纳ARCH-BIZDB-001硬性边界二元判定，Redis/EventStore优先级降为P2，ClickHouse门禁解除
+  title: 数据库边界裁定——采纳MOD-ARCH-BIZDB硬性边界二元判定，Redis/EventStore优先级降为P2，ClickHouse门禁解除
   severity: P1高
   adjudication: |
     ARCH-048 裁定：母蓝图（database/blueprint.md）的"硬性边界二元判定"优先于子蓝图（SH-DB-001 §3）的门禁逻辑。
