@@ -1,0 +1,19 @@
+# [A_config] module_id=CFG-panorama-exempt-list | layer=config | stability=evolving | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 四图对齐检测豁免清单
+# 列入此清单的 module_id 不参与 align_panoramas 孤儿检测
+# 用途：已完成的一次性施工蓝图、历史归档文件等
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-07-10
+
+exempt_module_ids: []
+  # 示例：
+  # - MOD-SOME-HISTORICAL-ARCHIVE
