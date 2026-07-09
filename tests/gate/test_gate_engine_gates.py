@@ -27,6 +27,7 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
+import yaml
 
 from _shared.constants import REPO_ROOT
 from zephyr.governance.persistence.task_repo import TaskRepository
@@ -50,31 +51,41 @@ from zephyr.shared.foundation.models import TaskCard
 
 GATES_DIR = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 
-EXPECTED_GATE_IDS = frozenset(
-    {
-        "G0",
-        "G1",
-        "G2",
-        "G3",
-        "G4",
-        "G5",
-        "G6",
-        "G6_BP",
-        "G7",
-        "G10",
-        "G11",
-        "G12",
-        "EN-001",
-        "EN-002",
-        "EN-003",
-        "ZERO-RESIDUE",
-        "MAD-001",
-        "MAD-002",
-        "MAD-003",
-        "MAD-004",
-        "GATE-DEDUP",
-    }
-)
+
+def _compute_expected_gate_ids() -> frozenset[str]:
+    """从 _registry.yaml 动态计算期望的 gate_id 集合（5.176.1 Phase 1）。
+
+    镜像 GateEngine._load_gate_configs_from_registry 的两遍加载逻辑：
+    - 第一遍：有 checks:/entry_conditions: 的可执行 gate 优先
+    - 第二遍：仅有 rules: 的叙述型 gate 填补空缺
+    - gate_id 取自 YAML 文件本身（hyphen 格式）
+    """
+    registry_path = GATES_DIR / "_registry.yaml"
+    with registry_path.open(encoding="utf-8") as fh:
+        raw_registry = yaml.safe_load(fh)
+    executable: set[str] = set()
+    narrative: set[str] = set()
+    for entry in raw_registry.get("gates", []):
+        filename = str(entry.get("file", "")).strip()
+        if not filename or not filename.endswith((".yaml", ".yml")):
+            continue
+        yaml_path = GATES_DIR / filename
+        if not yaml_path.exists():
+            continue
+        with yaml_path.open(encoding="utf-8") as fh:
+            raw = yaml.safe_load(fh)
+        gate_id = str(raw.get("gate_id", ""))
+        if not gate_id:
+            continue
+        if raw.get("checks") or raw.get("entry_conditions"):
+            executable.add(gate_id)
+        elif raw.get("rules"):
+            narrative.add(gate_id)
+    # 合并：可执行优先，叙述型填补空缺
+    return frozenset(narrative | executable)
+
+
+EXPECTED_GATE_IDS = _compute_expected_gate_ids()
 
 
 @pytest.fixture()
