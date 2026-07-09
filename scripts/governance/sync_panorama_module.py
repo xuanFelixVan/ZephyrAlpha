@@ -45,6 +45,15 @@ from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa
 from zephyr.governance.persistence.dataflowgraph_schema import get_dataflowgraph_pg_connection  # noqa: E402
 from zephyr.governance.persistence.decisiongraph_schema import get_decisiongraph_pg_connection  # noqa: E402
 
+try:
+    from d5_architecture.panorama_common import weighted_domain_vote, min_maturity as _min_mat
+except ImportError:
+    import sys as _sys
+    _pc_path = str(Path(__file__).resolve().parent / "d5_architecture")
+    if _pc_path not in _sys.path:
+        _sys.path.insert(0, _pc_path)
+    from panorama_common import weighted_domain_vote, min_maturity as _min_mat
+
 # ---------------------------------------------------------------------------
 # SQL 常量（SQL 集中化，§5.160.2）
 # ---------------------------------------------------------------------------
@@ -56,9 +65,6 @@ _SQL_QUERY_MODULE = (
     "FROM nodes WHERE blueprint_id = %s AND blueprint_id <> '' "
     "ORDER BY (path IS NULL), path"
 )
-
-# design_maturity 排序：design < prototype < production（与 align_panoramas._maturity_rank 一致）
-_MATURITY_RANK = {"design": 0, "prototype": 1, "production": 2}
 _SQL_QUERY_ALL_MODULES = (
     "SELECT DISTINCT blueprint_id "
     "FROM nodes "
@@ -104,49 +110,40 @@ _SQL_UPSERT_DECISION_PLACEHOLDER = (
 
 
 def _query_depgraph_module(conn, module_id: str) -> dict | None:
-    """从 depgraph.nodes 查询单个模块的核心字段（多数投票聚合）。
+    """从 depgraph.nodes 查询单个模块的核心字段（加权投票聚合）。
 
     depgraph.nodes 中同一 blueprint_id 可有多行（跨域模块的正常现象）。
     聚合策略与 align_panoramas._fetch_depgraph_nodes 一致：
-    - domain_id: 多数投票（Counter.most_common）
-    - design_maturity: 取最 design 的状态（design < prototype < production）
+    - domain_id: 加权投票（测试文件降权，平局字母序，panorama_common.weighted_domain_vote）
+    - design_maturity: 取最 design 的状态（design < prototype < production，panorama_common.min_maturity）
     - build_status: 取第一个非空
     - path: 取第一个非空（ORDER BY 保证非空优先）
     """
-    from collections import Counter
-
     with conn.cursor() as cur:
         cur.execute(_SQL_QUERY_MODULE, (module_id,))
         rows = cur.fetchall()
     if not rows:
         return None
-    domains: list[str] = []
     maturities: list[str] = []
     build_status = ""
     path = ""
     for row in rows:
         if isinstance(row, dict):
-            dom = row.get("domain_id")
             dm = row.get("design_maturity")
             bs = row.get("build_status")
             p = row.get("path")
         else:
-            dom = row[1] if len(row) > 1 else None
             dm = row[2] if len(row) > 2 else None
             bs = row[3] if len(row) > 3 else None
             p = row[4] if len(row) > 4 else None
-        if dom:
-            domains.append(dom)
         if dm:
             maturities.append(dm)
         if not build_status and bs:
             build_status = bs
         if not path and p:
             path = p
-    domain_id = Counter(domains).most_common(1)[0][0] if domains else ""
-    design_maturity = (
-        min(maturities, key=lambda v: _MATURITY_RANK.get(v, 99)) if maturities else ""
-    )
+    domain_id = weighted_domain_vote(rows)
+    design_maturity = _min_mat(maturities) if maturities else ""
     return {
         "module_id": module_id,
         "domain_id": domain_id,

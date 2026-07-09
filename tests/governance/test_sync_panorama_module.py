@@ -176,3 +176,23 @@ class TestSyncExistingRealJob:
             decision_fetchone=None,
         )
         assert spm.sync_module_panorama("MOD-TEST") == 0
+
+
+class TestWeightedVoting:
+    def test_test_file_downweighted(self, spm):
+        """测试文件降权：2源码 vs 2测试 → 源码域胜出
+
+        行序刻意将测试域放前：Counter.most_common 平局按首次出现取值，
+        会错误地返回 D_AUDITTEST；加权投票因测试文件降权 → 源码域胜出。
+        """
+        conn = MagicMock()
+        cursor = MagicMock()
+        cursor.fetchall.return_value = [
+            _make_module_row("MOD-T", "D_AUDITTEST", "production", "stable", "tests/test_gov.py"),
+            _make_module_row("MOD-T", "D_AUDITTEST", "production", "stable", "tests/test_gov2.py"),
+            _make_module_row("MOD-T", "D_GOV_SCRIPTS", "production", "stable", "scripts/gov.py"),
+            _make_module_row("MOD-T", "D_GOV_SCRIPTS", "production", "stable", "scripts/gov2.py"),
+        ]
+        conn.cursor.return_value.__enter__.return_value = cursor
+        result = spm._query_depgraph_module(conn, "MOD-T")
+        assert result["domain_id"] == "D_GOV_SCRIPTS"
