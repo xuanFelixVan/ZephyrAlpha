@@ -3820,6 +3820,14 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > - Phase 2: 新增20个测试用例(TestSqlPatternExtended 18正则覆盖+2豁免测试),全部41测试通过
 > - Phase 3: 根因调查——cleanup_p0_auto_bridged.py UPDATE SQL 未被gate检测的原因:_extract_docstring_lines函数误判__manifest__="""..."""的闭合"""为新docstring起始,导致L36-105全部被标记为docstring而被豁免。此pre-existing bug影响所有含var="""..."""模式的文件,需专项修复_diff_helpers._extract_docstring_lines
 > - Phase 4: 注册表第42轮统计错误修正(DEFERRED=6→DEFERRED=5,实际只有5个编号23/32/33/34/38)
+> **第95轮修复状态（2026-07-10，_extract_docstring_lines 治本 ast 重写）**：
+> - 根因：_diff_helpers._extract_docstring_lines 用 stripped.startswith('"""') 作判据，是正则近似（heuristic），无法区分 docstring vs 行内字符串赋值。__manifest__ = """...""" 的结束独立 """ 行被误判为新 docstring 起始，后续所有行被错误豁免（cleanup_p0_auto_bridged.py L78/L87 裸 SQL 漏检根因）。
+> - 修复方案：改用 ast 模块精确识别 Module/ClassDef/FunctionDef/AsyncFunctionDef 的 docstring（body[0] 是 ast.Expr(value=ast.Constant(str))）。ast 是 Python 官方解析器，100% 准确识别 docstring，消除正则近似的误判。语法错误时 fail-open 返回空集合（可能误报但不漏检）。
+> - 影响：5个 gate 消费者（NO-BARE-SQL hard-block / NO-HARDCODED-URL hard-block / DATETIME-NOW-FORBIDDEN hard-block / UNSAFE-DICT-SPREAD warn / _diff_helpers 自身），100个 __manifest__ 模式文件不再被错误豁免。
+> - 测试：新建 test_diff_helpers.py 直接测试 35 用例（TestExtractDocstringLinesCore 11 + TestExtractDocstringLinesManifestBug 7 + TestExtractDocstringLinesEdgeCases 6 + TestIsExemptLine 6 + TestParseDiffWithLineNumbers 5）；4个 gate 测试各新增 __manifest__ 模式集成测试（test_bare_sql_gate 2 + test_hardcoded_url_gate 1 + test_unsafe_dict_spread_gate 1 + test_datetime_now_forbidden_gate 1）。
+> - 设计意图（第一性原理）：豁免的真正需求是 docstring 中的示例代码（如 SomeClass(**varname) 在 docstring 中是合法示例），不是所有字符串字面量内容。ast 只识别真正 docstring（Module/ClassDef/FunctionDef 的 body[0]），不豁免行内字符串赋值（__manifest__ = """...""" 是 Assign 节点）。
+> - 已知副作用：多行 SQL 常量定义后续行可能误报（_SQL_CONSTANT_DEF_RE 既有缺陷，只豁免定义行不跟踪多行字符串，待后续单独修复）。
+> - 100% AI 开发模式考量：ast 是 Python 内置模块，新 AI 无需学习复杂正则状态机即可理解逻辑；函数 docstring 说明设计意图；test_diff_helpers.py 直接测试防 AI 误判"不存在"；第95轮注册表记录作为可追溯触发点。
 
 #### HIGH（5个）
 

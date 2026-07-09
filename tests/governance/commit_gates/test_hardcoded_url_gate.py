@@ -197,6 +197,27 @@ class TestGatewayIntegration:
         assert passed  # docstring 内行豁免
         assert msg == ""
 
+    def test_manifest_mode_url_not_exempt(self):
+        """R95 修复：__manifest__ = \"\"\"...\"\"\" 模式中 URL 应被检测（不再被错误豁免）。
+
+        旧 bug：__manifest__ 结束独立 \"\"\" 行被误判为新 docstring 起始，导致后续
+        含硬编码 URL 的代码行被错误豁免。
+        新方案：ast 只识别真正 docstring，__manifest__ 是 Assign 节点不豁免。
+        """
+        red = "src/zephyr/trading/mod.py"
+        content = (
+            '__manifest__ = """\n'
+            'args: []\n'
+            '"""\n'
+            '\n'
+            'url = "http://localhost:11434"\n'
+        )
+        gw = _make_gateway(staged_files=[red], file_contents={red: content})
+        passed, msg = make_hardcoded_url_gate().check(gw, [])
+        assert not passed  # 应被阻断（R95 修复）
+        assert "NO-HARDCODED-URL" in msg
+        assert "localhost" in msg
+
     def test_comment_line_exempt(self):
         blue = "src/zephyr/trading/mod.py"
         content = '# url = "http://localhost:11434"\n'
