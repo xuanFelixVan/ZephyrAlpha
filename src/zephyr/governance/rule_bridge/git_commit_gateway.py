@@ -308,7 +308,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_msg_style_gate())  # priority=92 治本错误消息标点/箭头风格不一致（5.99.22防复发：raise消息含->或。结尾阻断）
         self._gate_registry.register(make_import_direction_gate())  # priority=93 治本shared层向上依赖（§5.152防复发）
         self._gate_registry.register(make_hardcoded_url_gate())  # priority=94 治本硬编码localhost URL（§5.160.9防复发）
-        self._gate_registry.register(make_panorama_alignment_gate())  # priority=830 warn-only 三图模块对齐检测（四图模块对齐 Step 4）
+        self._gate_registry.register(make_panorama_alignment_gate())  # priority=830 domain_mismatches 阻断 + orphans/drifts warn-only（ARCH-056 升级）
         self._gate_registry.register(make_long_param_list_gate())  # priority=88 治本长参数列表>7参数（§5.150防复发，AST检测新增函数参数数）
         self._gate_registry.register(make_bare_sql_gate())  # priority=87 治本裸SQL字面量（§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE）
         self._gate_registry.register(make_god_class_gate())  # priority=86 治本God Class方法数>20（§5.150防复发，AST检测新增类方法数）

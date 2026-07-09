@@ -1581,7 +1581,7 @@ entries:
     触发：generate_project_depgraph.py / apply_depgraph.py 执行后自动调用 + commit 兜底 + CI 兜底
   fix_phase: |
     Phase 0: ARCH-056 登记 + L1 depgraph 登记
-    Phase 1: schema 变更（decision 加 domain_id）
+    Phase 1: schema 变更（decision 加 domain_id；dataflow_jobs 加 domain_id 于 Phase 5 E2E 补修复）
     Phase 2: 同步引擎核心（sync_panorama_module.py）
     Phase 3: 蓝图 frontmatter 对齐（blueprint_frontmatter_reconciler.py）
     Phase 4: 触发机制集成
