@@ -198,6 +198,7 @@ ssot_claims:
 | `commit_gates/datetime_now_forbidden_gate.py` | §0.1 | 生成器代码datetime.now()硬阻断门禁（AGENTS.md §11.1.1） | 已实现 | | 本模块 |
 | `commit_gates/import_direction_gate.py` | §0.1 | shared层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152防复发） | 已实现 | | 本模块 |
 | `commit_gates/hardcoded_url_gate.py` | §0.1 | 硬编码localhost URL阻断门禁（NO-HARDCODED-URL，§5.160.9防复发） | 已实现 | | 本模块 |
+| `commit_gates/panorama_alignment_gate.py` | §0.1 | 三图模块对齐warn-only门禁（GATE-PANORAMA-ALIGNMENT，四图模块对齐Step 4） | 已实现 | | 本模块 |
 | `commit_gates/long_param_list_gate.py` | §0.1 | 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150防复发，AST检测新增函数参数数>7） | 已实现 | | 本模块 |
 | `commit_gates/bare_sql_gate.py` | §0.1 | 裸SQL字面量阻断门禁（NO-BARE-SQL，§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE） | 已实现 | | 本模块 |
 | `commit_gates/god_class_gate.py` | §0.1 | God Class阻断门禁（NO-GOD-CLASS，§5.150防复发，AST检测新增类方法数>20） | 已实现 | | 本模块 |

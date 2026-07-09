@@ -39,7 +39,7 @@ architecture_debt §5.158：10 处长函数（复杂度 30+/17/16 等），
 1. **只检测新增函数**：存量高复杂度由人工排查，gate 只防新增。
 2. **AST-based McCabe**：统计 If/For/While/ExceptHandler/BoolOp/comprehension-if。
 3. **阈值=15**：与 §5.158 裁定一致（>15 即反模式）。
-4. **priority=85**：在 god_class_gate(86) 之前。
+4. **priority=85**：在 NO-GOD-CLASS(86) 之前，FILE-COPY(85) 同级。
 
 Usage::
 
@@ -96,7 +96,7 @@ def make_high_complexity_gate() -> GateSpec:
     """构造高循环复杂度阻断 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="NO-HIGH-COMPLEXITY", priority=89)。
+        GateSpec(gate_id="NO-HIGH-COMPLEXITY", priority=85)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
