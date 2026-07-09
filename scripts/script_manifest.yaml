@@ -1720,7 +1720,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/generators/align_panoramas.py
   path: governance/d5_architecture/generators/align_panoramas.py
-  description: 依据：ARCH-053 裁定（2026-07-06）
+  description: 依据：ARCH-053 裁定（2026-07-06）；ARCH-056 四图升级（2026-07-09）
   domain: governance
   execution_plane: warm-path
   status: registered
