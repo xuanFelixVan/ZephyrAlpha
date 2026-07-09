@@ -417,8 +417,6 @@ def check_d5_missing_entries() -> list[Finding]:
         if any(p.name in _EXCLUDE_NAMES or p.name in _EXCLUDE_SUBDIRS for p in index_path.parents):
             continue
         index_dir = index_path.parent
-        if index_dir in _DOMAIN_PARENT_DIRS:
-            continue
         table = _parse_index_table(index_path)
         disk_files = [
             f
