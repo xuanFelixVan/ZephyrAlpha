@@ -143,8 +143,8 @@ class MiniQMTProvider(DataSourceBase):
             # 周K：miniQMT 不支持 1w 周期，从日K聚合
             yield from self._fetch_kline_aggregated(payload, policy, "W")
         elif capability == "kline_monthly":
-            # 月K：miniQMT 不支持 1M 周期，从日K聚合
-            yield from self._fetch_kline_aggregated(payload, policy, "M")
+            # 月K：miniQMT 不支持 1M 周期，从日K聚合（pandas>=2.2 需用 'ME' 替代 'M'）
+            yield from self._fetch_kline_aggregated(payload, policy, "ME")
         elif capability == "adj_factor":
             yield from self._fetch_adj_factor(payload, policy)
         elif capability in _FINANCIAL_CAPABILITIES:
@@ -788,7 +788,7 @@ class MiniQMTProvider(DataSourceBase):
         Args:
             payload: 下载请求
             policy: 调用策略
-            freq: 聚合频率（"W"=周K，"M"=月K）
+            freq: 聚合频率（"W"=周K，"ME"=月K，pandas>=2.2 用 ME 替代 M）
 
         Yields:
             FetchResult: 每个股票一批
@@ -860,7 +860,7 @@ class MiniQMTProvider(DataSourceBase):
                     df["_orig_date"] = orig_dates
                     df.index = pd.to_datetime(orig_dates, format="%Y%m%d")
 
-                    # resample 聚合（W=周、M=月）
+                    # resample 聚合（W=周、ME=月）
                     agg = df.resample(freq).agg({
                         "open": "first",
                         "close": "last",
