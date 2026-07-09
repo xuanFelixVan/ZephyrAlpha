@@ -135,6 +135,63 @@ _PLACEHOLDER_PATTERNS: list[str] = [
     r"# Not implemented",
 ]
 
+
+# ---------------------------------------------------------------------------
+# 5.176.1 Phase 1: 从 _registry.yaml 动态加载 gate_id → filename 映射
+# ---------------------------------------------------------------------------
+
+def _load_gate_files_from_registry(gate_dir: Path) -> dict[str, str]:
+    """从 _registry.yaml 加载 gate_id → filename 映射。
+
+    _registry.yaml 是门禁注册表的唯一真源，替代硬编码的 _GATE_FILES 字典。
+    两遍加载策略（与 ``_load_gate_configs_from_registry`` 一致）：
+    - 第一遍：有 ``checks:`` / ``entry_conditions:`` 的可执行 gate 优先
+    - 第二遍：仅有 ``rules:`` 的叙述型 gate 填补空缺
+
+    Args:
+        gate_dir: 门禁 YAML 根目录（``rule_enforcement/``）。
+
+    Returns:
+        ``{gate_id: filename}`` 字典；``gate_id`` 取自 YAML 文件本身
+        （hyphen 格式如 ``EN-001``），而非 _registry.yaml 的 underscore 格式。
+        若 _registry.yaml 不存在或解析失败，返回空字典（容错）。
+    """
+    registry_path = gate_dir / "_registry.yaml"
+    if not registry_path.exists():
+        return {}
+    try:
+        with registry_path.open(encoding="utf-8") as fh:
+            raw_registry = yaml.safe_load(fh)
+    except Exception:
+        logger.warning("门禁注册表解析失败：%s", registry_path, exc_info=True)
+        return {}
+    executable: dict[str, str] = {}
+    narrative: dict[str, str] = {}
+    for entry in raw_registry.get("gates", []):
+        filename = str(entry.get("file", "")).strip()
+        if not filename or not filename.endswith((".yaml", ".yml")):
+            continue
+        yaml_path = gate_dir / filename
+        if not yaml_path.exists():
+            continue
+        try:
+            with yaml_path.open(encoding="utf-8") as fh:
+                raw = yaml.safe_load(fh)
+        except Exception:
+            logger.warning("门禁 YAML 解析失败：%s", yaml_path, exc_info=True)
+            continue
+        gate_id = str(raw.get("gate_id", ""))
+        if not gate_id:
+            continue
+        if raw.get("checks") or raw.get("entry_conditions"):
+            executable[gate_id] = filename
+        elif raw.get("rules"):
+            narrative[gate_id] = filename
+    # 合并：可执行优先，叙述型填补空缺
+    result = dict(narrative)
+    result.update(executable)
+    return result
+
 # ---------------------------------------------------------------------------
 # 配置模型（轻量 dataclass，不用 Pydantic 避免循环依赖）
 # ---------------------------------------------------------------------------
@@ -984,78 +1041,10 @@ class GateEngine:
         首次连接时是否调用 init_db()（默认 True）。
     """
 
-    _GATE_FILES: dict[str, str] = {
-        "G0": "task/g0_orc_gate_engine.yaml",
-        "G1": "g1_ingest.yaml",
-        "G2": "g2_triage.yaml",
-        "G3": "g3_evaluate.yaml",
-        "G4": "g4_activate.yaml",
-        "G5": "g5_extract.yaml",
-        "G6": "g6_ctr_compliance.yaml",
-        "G6_BP": "g6_blueprint_compliance.yaml",
-        "G7": "task/g7_orc_gate_engine.yaml",
-        "G10": "g7_position_limits.yaml",
-        "G11": "g8_leverage.yaml",
-        "G12": "g9_strategy_correlation.yaml",
-        "EN-001": "invariants/en_001_circular_dependency.yaml",
-        "EN-002": "invariants/en_002_enforcement_validator.yaml",
-        "EN-003": "invariants/en_003_contract_compatibility.yaml",
-        "ZERO-RESIDUE": "zero_residue.yaml",
-        "MAD-001": "admission/mad_001_architecture_necessity.yaml",
-        "MAD-002": "admission/mad_002_phase_relevance.yaml",
-        "MAD-003": "admission/mad_003_dependency_compliance.yaml",
-        "MAD-004": "admission/mad_004_interface_definability.yaml",
-        "GATE-DEDUP": "gate_dedup.yaml",
-        "G_TRAE_003": "g_trae_003.yaml",
-        "G_TRAE_004": "g_trae_004.yaml",
-        "G_TRAE_006": "g_trae_006.yaml",
-        "G_TRAE_007": "g_trae_007.yaml",
-        "G_TRAE_008": "g_trae_008.yaml",
-        "G_TRAE_009": "g_trae_009.yaml",
-        "G_TRAE_018": "g_trae_018.yaml",
-        "G_TRAE_020": "g_trae_020.yaml",
-        "G_TRAE_021": "g_trae_021.yaml",
-        "G_TRAE_052": "g_trae_052.yaml",
-        "G_TRAE_053": "g_trae_053.yaml",
-        "G_TRAE_054": "g_trae_054.yaml",
-        "G_TRAE_055": "g_trae_055.yaml",
-        "G_TRAE_010": "g_trae_010.yaml",
-        "G_TRAE_011": "g_trae_011.yaml",
-        "G_TRAE_012": "g_trae_012.yaml",
-        "G_TRAE_016": "g_trae_016.yaml",
-        "G_TRAE_017": "g_trae_017.yaml",
-        "G_TRAE_022": "g_trae_022.yaml",
-        "G_TRAE_023": "g_trae_023.yaml",
-        "G_TRAE_028": "g_trae_028.yaml",
-        "G_TRAE_029": "g_trae_029.yaml",
-        "G_TRAE_030": "g_trae_030.yaml",
-        "G_TRAE_031": "g_trae_031.yaml",
-        "G_TRAE_032": "g_trae_032.yaml",
-        "G_TRAE_033": "g_trae_033.yaml",
-        "G_TRAE_034": "g_trae_034.yaml",
-        "G_TRAE_035": "g_trae_035.yaml",
-        "G_TRAE_036": "g_trae_036.yaml",
-        "G_TRAE_037": "g_trae_037.yaml",
-        "G_TRAE_038": "g_trae_038.yaml",
-        "G_TRAE_039": "g_trae_039.yaml",
-        "G_TRAE_040": "g_trae_040.yaml",
-        "G_TRAE_044": "g_trae_044.yaml",
-        "G_TRAE_045": "g_trae_045.yaml",
-        "G_TRAE_046": "g_trae_046.yaml",
-        "G_TRAE_047": "g_trae_047.yaml",
-        "G_TRAE_024": "g_trae_024.yaml",
-        "G_TRAE_025": "g_trae_025.yaml",
-        "G_TRAE_026": "g_trae_026.yaml",
-        "G_TRAE_027": "g_trae_027.yaml",
-        "G_TRAE_041": "g_trae_041.yaml",
-        "G_TRAE_042": "g_trae_042.yaml",
-        "G_TRAE_043": "g_trae_043.yaml",
-        "G_TRAE_048": "g_trae_048.yaml",
-        "G_TRAE_049": "g_trae_049.yaml",
-        "G_TRAE_050": "g_trae_050.yaml",
-        "G_TRAE_051": "g_trae_051.yaml",
-        "POST_DOC_REVIEW": "post_doc_review.yaml",
-    }
+    # 5.176.1 Phase 1: _GATE_FILES 从 _registry.yaml 动态加载（替代硬编码字典）。
+    # 保留为类变量以兼容 tests/trae_rules/ 中的成员检查（GateEngine._GATE_FILES）。
+    # reload_gates() 不再使用此变量——直接从 _registry.yaml 加载。
+    _GATE_FILES: dict[str, str] = _load_gate_files_from_registry(GATES_DIR)
 
     MANDATORY_GATES: frozenset[str] = frozenset(
         {
@@ -1108,20 +1097,62 @@ class GateEngine:
         return self.reload_gates()
 
     def reload_gates(self) -> dict[str, GateConfig]:
-        """强制重新从文件加载门禁配置（清除缓存）。"""
+        """强制重新从文件加载门禁配置（清除缓存）。
+
+        5.176.1 Phase 1: 从 ``_registry.yaml`` 动态加载，替代硬编码
+        ``_GATE_FILES`` 迭代。``_registry.yaml`` 是门禁注册表的唯一真源。
+        """
+        registry_path = self._gate_dir / "_registry.yaml"
+        if not registry_path.exists():
+            raise GateEngineError(f"门禁配置文件不存在：{registry_path}")
+        configs = self._load_gate_configs_from_registry()
+        self._gate_cache = configs
+        return configs
+
+    def _load_gate_configs_from_registry(self) -> dict[str, GateConfig]:
+        """从 ``_registry.yaml`` 加载并解析所有门禁配置。
+
+        5.176.1 Phase 1 核心方法——替代 ``reload_gates`` 中对 ``_GATE_FILES``
+        的迭代。
+
+        两遍加载策略（解决 G0/G0_ORC 双条目冲突）：
+        - 第一遍：加载有 ``checks:`` / ``entry_conditions:`` 的可执行 gate
+        - 第二遍：加载仅有 ``rules:`` 的叙述型 gate，但跳过 gate_id 已在
+          第一遍加载的条目（避免 ``g0_entry.yaml`` 覆盖 ``g0_orc_gate_engine.yaml``）
+
+        ``gate_id`` 取自 YAML 文件本身（hyphen 格式如 ``EN-001``），而非
+        ``_registry.yaml`` 的 underscore 格式（如 ``EN_001``）。
+        """
+        registry_path = self._gate_dir / "_registry.yaml"
+        raw_registry = self._yaml_cache.get_or_load(str(registry_path))
+        if raw_registry is None:
+            with registry_path.open(encoding="utf-8") as fh:
+                raw_registry = yaml.safe_load(fh)
+
         configs: dict[str, GateConfig] = {}
-        for gate_id, filename in self._GATE_FILES.items():
+        narrative_configs: dict[str, GateConfig] = {}
+        for entry in raw_registry.get("gates", []):
+            filename = str(entry.get("file", "")).strip()
+            if not filename or not filename.endswith((".yaml", ".yml")):
+                continue
             yaml_path = self._gate_dir / filename
             if not yaml_path.exists():
-                raise GateEngineError(f"门禁配置文件不存在：{yaml_path}")
-            cached = self._yaml_cache.get_or_load(str(yaml_path))
-            if cached is None:
+                continue
+            raw = self._yaml_cache.get_or_load(str(yaml_path))
+            if raw is None:
                 with yaml_path.open(encoding="utf-8") as fh:
-                    raw: dict[str, Any] = yaml.safe_load(fh)
-            else:
-                raw = cached
-            configs[gate_id] = self._parse_config(raw)
-        self._gate_cache = configs
+                    raw = yaml.safe_load(fh)
+            cfg = self._parse_config(raw)
+            if raw.get("checks") or raw.get("entry_conditions"):
+                # 可执行 gate 优先
+                configs[cfg.gate_id] = cfg
+            elif raw.get("rules"):
+                # 叙述型 gate 暂存，第二遍再合并
+                narrative_configs[cfg.gate_id] = cfg
+        # 合并：可执行 gate 优先，叙述型 gate 仅填补空缺
+        for gate_id, cfg in narrative_configs.items():
+            if gate_id not in configs:
+                configs[gate_id] = cfg
         return configs
 
     def evaluate(

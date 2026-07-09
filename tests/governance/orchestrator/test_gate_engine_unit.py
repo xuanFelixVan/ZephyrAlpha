@@ -27,6 +27,7 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
+import yaml
 
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
@@ -49,42 +50,40 @@ from zephyr.shared.foundation.models import TaskCard
 # tests/governance/orchestrator/ → 项目根需 4 层 parent
 GATES_DIR = Path(__file__).parent.parent.parent.parent / "src" / "zephyr" / "governance" / "rule_enforcement"
 
-EXPECTED_GATE_IDS = frozenset(
-    {
-        "G0",
-        "G1",
-        "G2",
-        "G3",
-        "G4",
-        "G5",
-        "G6",
-        "G6_BP",
-        "G7",
-        "G10",
-        "G11",
-        "G12",
-        "EN-001",
-        "EN-002",
-        "EN-003",
-        "ZERO-RESIDUE",
-        "MAD-001",
-        "MAD-002",
-        "MAD-003",
-        "MAD-004",
-        "GATE-DEDUP",
-        "POST_DOC_REVIEW",
-        "G_TRAE_003", "G_TRAE_004", "G_TRAE_006", "G_TRAE_007", "G_TRAE_008",
-        "G_TRAE_009", "G_TRAE_010", "G_TRAE_011", "G_TRAE_012", "G_TRAE_016",
-        "G_TRAE_017", "G_TRAE_018", "G_TRAE_020", "G_TRAE_021", "G_TRAE_022",
-        "G_TRAE_023", "G_TRAE_024", "G_TRAE_025", "G_TRAE_026", "G_TRAE_027",
-        "G_TRAE_028", "G_TRAE_029", "G_TRAE_030", "G_TRAE_031", "G_TRAE_032",
-        "G_TRAE_033", "G_TRAE_034", "G_TRAE_035", "G_TRAE_036", "G_TRAE_037",
-        "G_TRAE_038", "G_TRAE_039", "G_TRAE_040", "G_TRAE_041", "G_TRAE_042",
-        "G_TRAE_043", "G_TRAE_044", "G_TRAE_045", "G_TRAE_046", "G_TRAE_047",
-        "G_TRAE_048", "G_TRAE_049", "G_TRAE_050", "G_TRAE_051", "G_TRAE_052",
-        "G_TRAE_053", "G_TRAE_054", "G_TRAE_055",
-    }
-)
+
+def _compute_expected_gate_ids() -> frozenset[str]:
+    """从 _registry.yaml 动态计算期望的 gate_id 集合（5.176.1 Phase 1）。
+
+    镜像 GateEngine._load_gate_configs_from_registry 的两遍加载逻辑：
+    - 第一遍：有 checks:/entry_conditions: 的可执行 gate 优先
+    - 第二遍：仅有 rules: 的叙述型 gate 填补空缺
+    - gate_id 取自 YAML 文件本身（hyphen 格式）
+    """
+    registry_path = GATES_DIR / "_registry.yaml"
+    with registry_path.open(encoding="utf-8") as fh:
+        raw_registry = yaml.safe_load(fh)
+    executable: set[str] = set()
+    narrative: set[str] = set()
+    for entry in raw_registry.get("gates", []):
+        filename = str(entry.get("file", "")).strip()
+        if not filename or not filename.endswith((".yaml", ".yml")):
+            continue
+        yaml_path = GATES_DIR / filename
+        if not yaml_path.exists():
+            continue
+        with yaml_path.open(encoding="utf-8") as fh:
+            raw = yaml.safe_load(fh)
+        gate_id = str(raw.get("gate_id", ""))
+        if not gate_id:
+            continue
+        if raw.get("checks") or raw.get("entry_conditions"):
+            executable.add(gate_id)
+        elif raw.get("rules"):
+            narrative.add(gate_id)
+    return frozenset(narrative | executable)
+
+
+EXPECTED_GATE_IDS = _compute_expected_gate_ids()
 
 
 @pytest.fixture()
