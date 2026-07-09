@@ -1,5 +1,5 @@
 ---
-module_id: GOV-AI-ENG-VMS-001
+module_id: MOD-INF-011
 title: Vector Memory Service Interface / 向量记忆服务接口规范
 doc_type: architecture_view
 status: Active

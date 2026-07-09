@@ -28,6 +28,7 @@ parent_module: ""
 rule_form: structural
 scope: global
 stability: evolving
+responsibility_domain: "D_INFRA_RUNTIME"
 verifiability: hybrid
 depends_on:
   - {target: "MOD-MASTER_BLUEPRINT", at: "§2.7", why: "CT-PIPE-ORC-001 集成契约——Pipeline→Orc路由决策"}
