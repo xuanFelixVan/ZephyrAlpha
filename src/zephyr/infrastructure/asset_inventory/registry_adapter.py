@@ -591,7 +591,7 @@ class RegistryManager:
         self._known["docs/03_modules/blueprint_registry.yaml"] = YamlListAdapter(
             "REG-BP-001", "blueprint_registry.yaml", asset_key="blueprint_id"
         )
-        self._known["src/zephyr/gates/_registry.yaml"] = YamlListAdapter(
+        self._known["src/zephyr/governance/rule_enforcement/_registry.yaml"] = YamlListAdapter(
             "REG-GATE-001", "_registry.yaml", asset_key="gate_id"
         )
         self._known["scripts/script-manifest.yaml"] = YamlDictAdapter("REG-SCRIPT-001", "script-manifest.yaml")

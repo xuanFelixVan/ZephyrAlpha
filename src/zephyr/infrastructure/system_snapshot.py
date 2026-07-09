@@ -154,7 +154,7 @@ class SystemSnapshotter:
     db_path
         SQLite 数据库路径（用于查询 G4 通过率）；默认 DB_PATH_DEFAULT。
     gates_dir
-        门禁 YAML 所在目录；默认 src/zephyr/gates/。
+        门禁 YAML 所在目录；默认 src/zephyr/governance/rule_enforcement/。
     module_manifests
         模块版本字典；默认 _MODULE_MANIFESTS（运行时可覆盖以注入真实版本）。
 

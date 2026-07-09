@@ -31,7 +31,7 @@ def sample_registry(tmp_path):
                 "domain": "governance",
                 "subdomain": "gate_engine",
                 "ssot_module": "MOD-GATE_ENGINE",
-                "ssot_path": "src/zephyr/gates/",
+                "ssot_path": "src/zephyr/governance/rule_enforcement/",
                 "covers": ["rule_checking", "admission_control"],
                 "aliases": ["gate", "门禁", "admission"],
                 "stability": "stable",

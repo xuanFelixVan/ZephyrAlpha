@@ -61,7 +61,7 @@ class TestYamlListAdapterParse:
         yaml_content = """
 tiers:
   - registries:
-      - physical_path: src/zephyr/gates/_registry.yaml
+      - physical_path: src/zephyr/governance/rule_enforcement/_registry.yaml
         registry_id: REG-GATE-001
       - physical_path: scripts/script-manifest.yaml
         registry_id: REG-SCRIPT-001
@@ -69,7 +69,7 @@ tiers:
         a = YamlListAdapter("REG-TIER", "registry.yaml", asset_key="physical_path")
         entries = a.parse(yaml_content)
         assert len(entries) == 2
-        assert entries[0].entry_path == "src/zephyr/gates/_registry.yaml"
+        assert entries[0].entry_path == "src/zephyr/governance/rule_enforcement/_registry.yaml"
 
     def test_parse_invalid_yaml(self):
         a = YamlListAdapter("REG-TEST", "test.yaml")

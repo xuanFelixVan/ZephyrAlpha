@@ -22,7 +22,7 @@
 创建模式:
     module: src/zephyr/<package>/<name>.py → 更新 <package>/__init__.py
     script: scripts/<path>/<name>.py       → 更新 script_manifest.yaml
-    gate:   src/zephyr/gates/<name>.yaml   → 更新 _registry.yaml
+    gate:   src/zephyr/governance/rule_enforcement/<name>.yaml   → 更新 _registry.yaml
     yaml:   <path>/<name>.yaml             → 通知资产盘点（kebab-case 强制）
     rule:   docs/.../rules/trae_XXX.yaml   → 自动分配 rule_id + 标准 frontmatter
     json:   <path>/<name>.json             → 通知资产盘点（kebab-case 强制）
@@ -1324,7 +1324,7 @@ def main() -> None:
     p_scr.add_argument("--force-override", action="store_true", help="跳过蓝图关键词匹配检查（SSoT误报时使用）")
 
     # gate
-    p_gate = sub.add_parser("gate", help="创建 src/zephyr/gates/<id>.yaml")
+    p_gate = sub.add_parser("gate", help="创建 src/zephyr/governance/rule_enforcement/<id>.yaml")
     p_gate.add_argument("gate_id", help="Gate 标识 (e.g. G7)")
     p_gate.add_argument("--title", default="", help="门禁标题")
     p_gate.add_argument("--category", default="kms", help="门禁分类")

@@ -233,7 +233,7 @@ class TestConstitutionGuardE2E:
                     "immutable_core.verify_roles": "src/zephyr/agent-rbac",
                     "circuit_breaker.hard_check": "src/zephyr/escalation-engine/circuit_breaker.py",
                     "budget_engine.pre_flight": "src/zephyr/budget-enforcer",
-                    "gates_registry.verify_all": "src/zephyr/gates",
+                    "gates_registry.verify_all": "src/zephyr/governance/rule_enforcement",
                 }
                 target = target_map.get(first_article.defense_action)
                 if target and Path(target).exists():

@@ -139,7 +139,7 @@ def check_blueprint_mandatory() -> GateResult:
     required = [
         "docs/03_modules/blueprint_registry.yaml",
         "docs/03_modules/module-registry.yaml",
-        "src/zephyr/gates/_registry.yaml",
+        "src/zephyr/governance/rule_enforcement/_registry.yaml",
     ]
     missing = [p for p in required if not (REPO_ROOT / p).exists()]
     if not missing:

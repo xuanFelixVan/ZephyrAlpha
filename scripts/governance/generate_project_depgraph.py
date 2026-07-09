@@ -493,7 +493,7 @@ PATH_MAPPINGS = [
         "test_root": "D:/ZephyrAlpha/tests",
         "script_root": "",
         "naming_rule": "snake_case, package/__init__.py",
-        "examples": ["src/zephyr/shared/event_bus.py", "src/zephyr/gates/EN-001.yaml"],
+        "examples": ["src/zephyr/shared/event_bus.py", "src/zephyr/governance/rule_enforcement/g_trae_001.yaml"],
     },
     {
         "pattern": "scripts/**",
@@ -1220,7 +1220,7 @@ def extract_json_references(filepath: Path) -> list:
 def classify_file(rel_path: str) -> str:
     rp = rel_path.replace("\\", "/")
 
-    if rp.startswith("src/zephyr/gates/") and rp.endswith(".yaml"):
+    if rp.startswith("src/zephyr/governance/rule_enforcement/") and rp.endswith(".yaml"):
         return "gate"
     if rp.startswith("src/zephyr/") and rp.endswith(".py"):
         return "module"
