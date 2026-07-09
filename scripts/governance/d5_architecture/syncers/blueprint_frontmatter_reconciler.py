@@ -22,8 +22,8 @@
 蓝图文档内容（sections/description/lifecycle）不动。
 
 如蓝图文件不存在，自动创建最小蓝图（含 frontmatter 4 字段 + 空正文 TODO 标记）。
-如 blueprint_path 为空（depgraph 未登记路径），尝试命名约定 docs/03_modules/<module_id>.md；
-约定文件也不存在则跳过（exit 0）。blueprint_path 无扩展名时自动补 .md（DCR-005 合规）。
+如 blueprint_path 为空（depgraph 未登记路径），使用命名约定 docs/03_modules/<module_id>.md，
+文件不存在时自动创建。blueprint_path 无扩展名时自动补 .md（DCR-005 合规）。
 """
 from __future__ import annotations
 
@@ -167,13 +167,9 @@ def reconcile_blueprint_frontmatter(module_id: str) -> int:
         if bp_file.suffix == "":
             bp_file = bp_file.with_suffix(".md")
     else:
-        # blueprint_path 为空，尝试命名约定 docs/03_modules/<module_id>.md
-        # （depgraph 未登记路径但文件可能已存在，如自动创建的最小蓝图）
-        candidate = _REPO_ROOT / "docs" / "03_modules" / f"{module_id}.md"
-        if candidate.exists():
-            bp_file = candidate
-    if bp_file is None:
-        return 0  # 无路径且约定路径不存在，跳过
+        # blueprint_path 为空，使用命名约定 docs/03_modules/<module_id>.md
+        # 文件不存在时由下方 _create_minimal_blueprint 自动创建
+        bp_file = _REPO_ROOT / "docs" / "03_modules" / f"{module_id}.md"
 
     if not bp_file.exists():
         return _create_minimal_blueprint(bp_file, module_id, domain_id, dm, bs)

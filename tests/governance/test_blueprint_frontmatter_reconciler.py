@@ -168,8 +168,8 @@ class TestReconcileBlueprint:
         content = bp_file.read_text(encoding="utf-8")
         assert "responsibility_domain: D_NEW" in content
 
-    def test_blueprint_path_empty_and_no_convention_file_skip(self, bfr, tmp_path, monkeypatch):
-        """blueprint_path 为空且命名约定路径不存在 → 跳过（exit 0）"""
+    def test_blueprint_path_empty_and_no_convention_file_auto_create(self, bfr, tmp_path, monkeypatch):
+        """blueprint_path 为空且命名约定路径不存在 → 自动创建最小蓝图（exit 0）"""
         conn = _mock_depgraph_conn({
             "blueprint_id": "MOD-NOPATH", "domain_id": "D_TEST",
             "design_maturity": "design", "build_status": "planned",
@@ -177,4 +177,13 @@ class TestReconcileBlueprint:
         })
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
         monkeypatch.setattr(bfr, "_REPO_ROOT", tmp_path)
-        assert bfr.reconcile_blueprint_frontmatter("MOD-NOPATH") == 0
+        result = bfr.reconcile_blueprint_frontmatter("MOD-NOPATH")
+        assert result == 0
+        # 验证文件被自动创建
+        bp_file = tmp_path / "docs" / "03_modules" / "MOD-NOPATH.md"
+        assert bp_file.exists(), "最小蓝图应被自动创建"
+        content = bp_file.read_text(encoding="utf-8")
+        assert "module_id: MOD-NOPATH" in content
+        assert "responsibility_domain: D_TEST" in content
+        assert "design_maturity: design" in content
+        assert "build_status: planned" in content
