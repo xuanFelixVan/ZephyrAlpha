@@ -21,9 +21,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 50 |
-| 模块总数 | 4943 |
+| 模块总数 | 4953 |
 | 生产态模块 | 1539 |
-| 设计态模块 | 54 |
+| 设计态模块 | 64 |
 | 原型态模块 | 3350 |
 
 ## 域清单（按架构层分组）
@@ -33,9 +33,9 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_INFRA_A2A | a2a_communication / A2A Communication | 89 | 32 | 0 | 57 | 89/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
-| D_INFRA_OPS | asset-inventory / Asset Inventory | 1 | 0 | 1 | 0 | 1/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
+| D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 54 | 48 | 0 | 6 | 54/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 133 | 87 | 0 | 46 | 133/150 (OK) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 135 | 87 | 2 | 46 | 135/150 (OK) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 25 | 13 | 0 | 12 | 25/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (14 个域 / 14 domains)
@@ -50,7 +50,7 @@ ttl: permanent
 | D_FRONTEND | 前端 / Frontend | 30 | 13 | 6 | 11 | 30/150 (OK) | [11_d_frontend.md](11_d_frontend.md) |
 | D_INTEGRATION | pipeline_routing / Pipeline Routing | 72 | 33 | 0 | 39 | 72/150 (OK) | [12_d_integration.md](12_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 20 | 14 | 0 | 6 | 20/150 (OK) | [13_d_integration_gateway.md](13_d_integration_gateway.md) |
-| D_MKT_DATA | 行情数据 / Market Data | 7 | 0 | 0 | 7 | 7/150 (OK) | [14_d_mkt_data.md](14_d_mkt_data.md) |
+| D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [14_d_mkt_data.md](14_d_mkt_data.md) |
 | D_OPS | telemetry / Feedback Loop | 3 | 3 | 0 | 0 | 3/150 (OK) | [15_d_ops.md](15_d_ops.md) |
 | D_REPORTING | 报告 / Reporting | 10 | 1 | 0 | 9 | 10/150 (OK) | [16_d_reporting.md](16_d_reporting.md) |
 | D_SECURITY | orphan_judge / Adversarial Validation | 147 | 80 | 0 | 67 | 147/150 (OK) | [17_d_security.md](17_d_security.md) |
@@ -72,7 +72,7 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [28_d_ex_sor.md](28_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 14 | 4 | 0 | 10 | 14/150 (OK) | [29_d_factor.md](29_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 25 | 4 | 0 | 21 | 25/150 (OK) | [30_d_fundamental_signal.md](30_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 860 | 503 | 28 | 329 | 860/150 (超容) | [31_d_governance.md](31_d_governance.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 864 | 503 | 32 | 329 | 864/150 (超容) | [31_d_governance.md](31_d_governance.md) |
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 2 | 0 | 2 | 0 | 2/150 (OK) | [32_d_gov_audit.md](32_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 2 | 2 | 0 | 0 | 2/150 (OK) | [33_d_gov_docs.md](33_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 1 | 0 | 1 | 0 | 1/150 (OK) | [34_d_gov_drift.md](34_d_gov_drift.md) |

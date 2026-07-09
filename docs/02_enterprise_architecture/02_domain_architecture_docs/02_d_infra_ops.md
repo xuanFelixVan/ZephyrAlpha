@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-10 03:16:08
+> 最后更新: 2026-07-10 03:34:25
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,11 +26,11 @@ ttl: permanent
 | 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
 | 域名称 | 基础设施运维 | Domain Name | Asset Inventory |
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
-| 模块数 | 0 | Module Count | 0 |
+| 模块数 | 1 | Module Count | 1 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
@@ -38,9 +38,13 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
+> 按 architecture_layer 分组的模块清单（共 1 个模块 / 1 modules）。
 
-（无模块 / No modules）
+### L0 基础设施层 / Infrastructure Layer (1 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
+|:--:|---------|---------|:---:|:---:|
+| 1 | docs/03_modules/_cross_layer/database/business_data_archi... |  | 设计态 / design |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -55,16 +59,18 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 0 个模块（生产态 0 + 设计态 0 + 原型态 0），标签标注成熟度。
+> 展示全部 1 个模块（生产态 0 + 设计态 1 + 原型态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
     subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
+        docs_03_modules_cross_layer_database_business_data_architecture_md["(设计态 / design) "]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class docs_03_modules_cross_layer_database_business_data_architecture_md design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -75,9 +81,19 @@ graph TD
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 1 个，0 条域内依赖）。
 
-> （无设计态模块 / No design modules）
+```mermaid
+graph TD
+    subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
+        docs_03_modules_cross_layer_database_business_data_architecture_md["(设计态 / design) "]
+    end
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class docs_03_modules_cross_layer_database_business_data_architecture_md design
+```
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
