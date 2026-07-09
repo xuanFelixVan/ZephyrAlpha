@@ -276,6 +276,22 @@ class ActionDispatcher:
         if original is None:
             return ActionReport(module_name, "search_replace", "error", "cannot read file")
 
+        modified, applied, failed, reasons = self._apply_replacement_entries(py_file, original, entries, remove)
+
+        return self._finalize_replacement(py_file, original, modified, applied, failed, reasons, remove)
+
+    def _apply_replacement_entries(
+        self,
+        py_file: Path,
+        original: str,
+        entries: list,
+        remove: bool,
+    ) -> tuple[str, int, int, list[str]]:
+        """Phase 7e: 替换循环提取——遍历 entries 执行精确/宽松匹配替换。
+
+        Returns:
+            (modified_text, applied_count, failed_count, reasons)
+        """
         modified = original
         applied = 0
         failed = 0
@@ -309,6 +325,19 @@ class ActionDispatcher:
                     failed += 1
                     _log.debug("SearchReplace: old_str not found in %s: %r", py_file.name, old_str[:60])
 
+        return modified, applied, failed, reasons
+
+    def _finalize_replacement(
+        self,
+        py_file: Path,
+        original: str,
+        modified: str,
+        applied: int,
+        failed: int,
+        reasons: list[str],
+        remove: bool,
+    ) -> ActionReport:
+        """Phase 7e: 结果构建提取——校验变更、备份、写入、组装 ActionReport。"""
         if applied == 0:
             return ActionReport(py_file.name, "search_replace", "skipped", f"{failed} match(es) failed")
 

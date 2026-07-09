@@ -116,6 +116,134 @@ class TestActionDispatcherSearchReplace:
         assert report.status == "skipped"
 
 
+class TestActionDispatcherSearchReplacePaths:
+    """Phase 7e 补充测试：覆盖 _search_replace_file 的宽松匹配/remove/unchanged/空old_str/部分失败/实际写入/backup 路径"""
+
+    def test_search_replace_fuzzy_match_stripped(self, tmp_path):
+        """宽松匹配: old_str 带首尾空白, strip 后命中"""
+        d = ActionDispatcher(dry_run=True)
+        py_file = tmp_path / "fuzzy.py"
+        py_file.write_text("target_value = 1\n", encoding="utf-8")
+        with patch.object(d, "_find_module_file", return_value=py_file):
+            with patch.object(d, "_extract_module_name", return_value="fuzzy"):
+                with patch.object(d, "_version_backup", return_value="bak"):
+                    report = d._search_replace_file(
+                        "fuzzy",
+                        {"fixes": [{"old_str": "  target_value  ", "new_str": "replaced"}]},
+                    )
+        assert report.status == "search_replaced"
+        assert "1 replaced" in report.detail
+
+    def test_search_replace_remove_mode(self, tmp_path):
+        """remove=True: dead_code_removal, new_str='', 多余空行清理"""
+        d = ActionDispatcher(dry_run=True)
+        py_file = tmp_path / "remove.py"
+        py_file.write_text("keep\n\n\n\ndelete_me\n\n\n\nkeep2\n", encoding="utf-8")
+        with patch.object(d, "_find_module_file", return_value=py_file):
+            with patch.object(d, "_extract_module_name", return_value="remove"):
+                with patch.object(d, "_version_backup", return_value="bak"):
+                    report = d._search_replace_file(
+                        "remove",
+                        {"dead_sections": [{"old_str": "delete_me"}]},
+                        field="dead_sections",
+                        remove=True,
+                    )
+        assert report.status == "search_replaced"
+
+    def test_search_replace_unchanged_returns_skipped(self, tmp_path):
+        """modified == original (替换为相同内容) → skipped"""
+        d = ActionDispatcher(dry_run=True)
+        py_file = tmp_path / "same.py"
+        py_file.write_text("value = 1\n", encoding="utf-8")
+        with patch.object(d, "_find_module_file", return_value=py_file):
+            with patch.object(d, "_extract_module_name", return_value="same"):
+                report = d._search_replace_file(
+                    "same",
+                    {"fixes": [{"old_str": "value", "new_str": "value"}]},
+                )
+        assert report.status == "skipped"
+        assert "unchanged" in report.detail
+
+    def test_search_replace_empty_old_str_counts_failed(self, tmp_path):
+        """entry 无 old_str → failed++, applied=0 → skipped"""
+        d = ActionDispatcher(dry_run=True)
+        py_file = tmp_path / "emptyold.py"
+        py_file.write_text("x = 1\n", encoding="utf-8")
+        with patch.object(d, "_find_module_file", return_value=py_file):
+            with patch.object(d, "_extract_module_name", return_value="emptyold"):
+                report = d._search_replace_file(
+                    "emptyold",
+                    {"fixes": [{"old_str": "", "new_str": "y"}]},
+                )
+        assert report.status == "skipped"
+        assert "match" in report.detail
+
+    def test_search_replace_partial_failure_includes_failed(self, tmp_path):
+        """部分成功部分失败: applied>0 && failed>0 → detail 含 failed"""
+        d = ActionDispatcher(dry_run=True)
+        py_file = tmp_path / "partial.py"
+        py_file.write_text("alpha = 1\n", encoding="utf-8")
+        with patch.object(d, "_find_module_file", return_value=py_file):
+            with patch.object(d, "_extract_module_name", return_value="partial"):
+                with patch.object(d, "_version_backup", return_value="bak"):
+                    report = d._search_replace_file(
+                        "partial",
+                        {"fixes": [
+                            {"old_str": "alpha", "new_str": "beta"},
+                            {"old_str": "not_found", "new_str": "gamma"},
+                        ]},
+                    )
+        assert report.status == "search_replaced"
+        assert "1 replaced" in report.detail
+        assert "failed" in report.detail
+
+    def test_search_replace_writes_file_when_not_dry_run(self, tmp_path):
+        """非 dry_run 模式: 文件实际被写入"""
+        d = ActionDispatcher(dry_run=False)
+        py_file = tmp_path / "writetest.py"
+        py_file.write_text("old_content = 1\n", encoding="utf-8")
+        with patch.object(d, "_find_module_file", return_value=py_file):
+            with patch.object(d, "_extract_module_name", return_value="writetest"):
+                with patch.object(d, "_version_backup", return_value="bak"):
+                    report = d._search_replace_file(
+                        "writetest",
+                        {"fixes": [{"old_str": "old_content", "new_str": "new_content"}]},
+                    )
+        assert report.status == "search_replaced"
+        assert "new_content" in py_file.read_text(encoding="utf-8")
+
+    def test_search_replace_backup_increments_stats(self, tmp_path):
+        """_version_backup 返回非空 → stats['backups'] 递增"""
+        d = ActionDispatcher(dry_run=True)
+        py_file = tmp_path / "backup.py"
+        py_file.write_text("val = 1\n", encoding="utf-8")
+        original_backups = d.stats["backups"]
+        with patch.object(d, "_find_module_file", return_value=py_file):
+            with patch.object(d, "_extract_module_name", return_value="backup"):
+                with patch.object(d, "_version_backup", return_value="backup_001.bak"):
+                    report = d._search_replace_file(
+                        "backup",
+                        {"fixes": [{"old_str": "val", "new_str": "newval"}]},
+                    )
+        assert report.status == "search_replaced"
+        assert d.stats["backups"] == original_backups + 1
+
+    def test_search_replace_reason_accumulated_in_detail(self, tmp_path):
+        """reason 字段被累积到 detail 字符串中"""
+        d = ActionDispatcher(dry_run=True)
+        py_file = tmp_path / "reason.py"
+        py_file.write_text("target = 1\n", encoding="utf-8")
+        with patch.object(d, "_find_module_file", return_value=py_file):
+            with patch.object(d, "_extract_module_name", return_value="reason"):
+                with patch.object(d, "_version_backup", return_value="bak"):
+                    report = d._search_replace_file(
+                        "reason",
+                        {"fixes": [{"old_str": "target", "new_str": "replaced", "reason": "security fix"}]},
+                    )
+        assert report.status == "search_replaced"
+        assert "security fix" in report.detail
+
+
 class TestActionDispatcherCreateFile:
     def test_create_file_no_path(self):
         d = ActionDispatcher()
