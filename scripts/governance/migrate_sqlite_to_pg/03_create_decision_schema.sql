@@ -27,6 +27,7 @@
 -- 变更历史：
 --   v1.0.0 (2026-07-05): 初版——4张表 + 5索引 + 2触发器
 --   v1.1.0 (2026-07-06): decision_layers 加 module_id + source_code_ref；decision_nodes 加 source_code_ref
+--   v1.2.0 (2026-07-09): decision_layers/decision_nodes 加 domain_id（ARCH-056 四图模块同步引擎核心字段对齐）
 -- =====================================================================
 
 -- ========== 1. decision_tracks（四轨定义，无外键依赖，先创建） ==========
@@ -52,6 +53,7 @@ CREATE TABLE IF NOT EXISTS decision_layers (
     build_status           TEXT DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     module_id              TEXT,
+    domain_id              TEXT,
     source_code_ref        TEXT
 );
 
@@ -62,6 +64,7 @@ CREATE TABLE IF NOT EXISTS decision_nodes (
     node_type              TEXT NOT NULL,
     path                   TEXT NOT NULL UNIQUE,
     module_id              TEXT,
+    domain_id              TEXT,
     decision_name          TEXT NOT NULL,
     decision_name_en       TEXT NOT NULL,
     inputs                 JSONB,
@@ -116,6 +119,11 @@ ALTER TABLE decision_edges ADD COLUMN IF NOT EXISTS design_maturity TEXT DEFAULT
     CHECK (design_maturity IN ('design', 'production', 'prototype'));
 ALTER TABLE decision_edges ADD COLUMN IF NOT EXISTS build_status TEXT DEFAULT 'generated'
     CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated'));
+-- v1.2.0 (ARCH-056): decision_layers/decision_nodes 加 domain_id（四图模块同步引擎核心字段对齐）
+ALTER TABLE decision_layers ADD COLUMN IF NOT EXISTS domain_id TEXT;
+ALTER TABLE decision_nodes ADD COLUMN IF NOT EXISTS domain_id TEXT;
+CREATE INDEX IF NOT EXISTS idx_decision_layers_domain ON decision_layers(domain_id);
+CREATE INDEX IF NOT EXISTS idx_decision_nodes_domain ON decision_nodes(domain_id);
 
 -- ========== 6. 触发器：承重墙不变量 ==========
 -- DEC-INV-002 信号仓位分离：signal 节点不能直接连 order 节点
