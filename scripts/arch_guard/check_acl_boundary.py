@@ -48,13 +48,13 @@ if str(_GOV_DIR) not in sys.path:
 from _shared.constants import REPO_ROOT  # noqa: E402
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
-L06_ROOT = SRC_ROOT / "ex_core"
+EX_CORE_ROOT = SRC_ROOT / "ex_core"
 # INV-005：仅 adapters/ 可直接触达券商 SDK；OCP 接口定义文件不含 SDK 调用，免检
-ADAPTERS_DIR = L06_ROOT / "adapters"
-L06_SDK_EXEMPT_FILES = frozenset(
+ADAPTERS_DIR = EX_CORE_ROOT / "adapters"
+EX_CORE_SDK_EXEMPT_FILES = frozenset(
     {
-        L06_ROOT / "broker_interface.py",
-        L06_ROOT / "__init__.py",
+        EX_CORE_ROOT / "broker_interface.py",
+        EX_CORE_ROOT / "__init__.py",
     }
 )
 
@@ -80,7 +80,7 @@ EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "shared", "gates", "mcp", "pipel
 
 def is_allowed(file_path: Path) -> bool:
     resolved = file_path.resolve()
-    if resolved in {p.resolve() for p in L06_SDK_EXEMPT_FILES}:
+    if resolved in {p.resolve() for p in EX_CORE_SDK_EXEMPT_FILES}:
         return True
     try:
         resolved.relative_to(ADAPTERS_DIR.resolve())

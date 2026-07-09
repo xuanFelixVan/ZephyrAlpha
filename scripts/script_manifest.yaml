@@ -406,14 +406,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: arch_guard/import_linter/layer_boundary_check.py
-  path: arch_guard/import_linter/layer_boundary_check.py
-  description: layer_boundary_check.py — 层依赖方向强制执行 (INV-008)
-  domain: arch_guard
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: arch_guard/_tools/build_ocp_manifest.py
   path: arch_guard/_tools/build_ocp_manifest.py
   description: from __future__ import annotations

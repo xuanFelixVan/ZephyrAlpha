@@ -41,7 +41,7 @@ GUARD_SCRIPTS = [
     ("check_hot_path_purity", ARCH_GUARD_ROOT / "check_hot_path_purity.py"),
 ]
 
-LAYER_BOUNDARY_SCRIPT = ARCH_GUARD_ROOT / "import_linter" / "layer_boundary_check.py"
+LAYER_BOUNDARY_SCRIPT_RETIRED = "import_linter/layer_boundary_check.py（已删除 2026-07-09，14层架构废弃）"
 
 
 def _import_ff_module(name: str):
@@ -80,18 +80,6 @@ def test_guard_script_importable(name: str, script_path: Path):
     sys.modules[f"arch_guard.{name}"] = mod
     spec.loader.exec_module(mod)
     assert hasattr(mod, "main"), f"{name} 缺少 main() 函数"
-
-
-def test_layer_boundary_check_importable():
-    assert LAYER_BOUNDARY_SCRIPT.is_file(), f"Layer boundary 脚本不存在: {LAYER_BOUNDARY_SCRIPT}"
-    spec = importlib.util.spec_from_file_location(
-        "arch_guard.import_linter.layer_boundary_check", LAYER_BOUNDARY_SCRIPT
-    )
-    assert spec is not None
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules["arch_guard.import_linter.layer_boundary_check"] = mod
-    spec.loader.exec_module(mod)
-    assert hasattr(mod, "main")
 
 
 def _load_run_all():

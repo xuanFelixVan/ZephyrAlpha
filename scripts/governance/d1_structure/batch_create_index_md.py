@@ -213,14 +213,6 @@ RESPONSIBILITY_MAP = {
     ),
 }
 
-# DOMAIN LAYER RESPONSIBILITIES
-DOMAIN_LAYER_MAP = {
-    "L00_data_source": "D_DATA 数据接入域 — 数据源连接/清洗规则/Connector 治理与操作",
-    "L02_alpha_factor": "D_FACTOR 因子域 — 因子质量门禁/因子上线流程",
-    "L04_risk_management": "D_RISK 风控域 — 风险限额策略/止损配置",
-    "L07_post_trade_analytics": "D_REPORTING 归因分析域 — 盘后报告策略/分析流水线",
-}
-
 MODULE_LAYER_MAP = {
     "data": "D_DATA 数据接入域 — 数据源连接器 / 行情 / 基本面 / 另类数据",
     "infrastructure_runtime_integration": "基础设施域 — AI 基础设施（容量保障 / 运行时集成 / KMS / Vibe Coding 管线 / 触发器路由）",
@@ -331,18 +323,6 @@ def build_index_content(rel_dir, files) -> dict:
 
     # Look up responsibility
     resp_info = RESPONSIBILITY_MAP.get(rel_dir) or RESPONSIBILITY_MAP.get(dir_name)
-
-    # Check for domain layers
-    if not resp_info and dir_name.startswith("L") and "_" in dir_name:
-        idx = dir_name.upper()
-        desc = DOMAIN_LAYER_MAP.get(dir_name) or DOMAIN_LAYER_MAP.get(idx, "")
-        if desc:
-            resp_info = (
-                desc,
-                [
-                    ("全局规则", "01_policies_and_standards/governance/"),
-                ],
-            )
 
     # Check for module layers
     if not resp_info and dir_name.startswith("l") and dir_name[1:3].isdigit():

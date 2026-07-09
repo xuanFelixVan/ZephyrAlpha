@@ -609,7 +609,6 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
             part_map[p["id"]] = p
 
     actual_dirs: dict[str, list[str]] = {}
-    layer_dirs: set[str] = set()
     root_dirs: set[str] = set()
 
     for entry in sorted(src_zephyr.iterdir()):
@@ -619,30 +618,7 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
             continue
         files = [f.name for f in entry.rglob("*.py") if f.name != "__init__.py"]
         actual_dirs[entry.name] = files
-        if re.match(r"^l\d{2}_", entry.name):
-            layer_dirs.add(entry.name)
-        else:
-            root_dirs.add(entry.name)
-
-    for dir_name in sorted(layer_dirs):
-        layer_num = dir_name[:3]
-        if layer_num not in part_map:
-            errors.append(f"CRITICAL: src/zephyr/{dir_name}/ 存在但 index.yaml 无对应分区 ({layer_num})")
-
-    for pid in sorted(part_map):
-        if not (pid.startswith("l") and len(pid) == 3 and pid[1:].isdigit()):
-            continue
-        layer_yaml_path = ARCH_MODEL / part_map[pid].get("path", "")
-        if not layer_yaml_path.exists():
-            continue
-        layer_data = load_yaml(layer_yaml_path)
-        if not layer_data:
-            continue
-
-        matching = [d for d in layer_dirs if d.startswith(pid + "_")]
-        has_implemented = any(m.get("status") in ("implemented", "active") for m in layer_data.get("modules", []))
-        if not matching and has_implemented:
-            errors.append(f"CRITICAL: 分区 {pid} 有 implemented/active 模块但 src/zephyr/{pid}_*/ 目录不存在")
+        root_dirs.add(entry.name)
 
     for infra_id in ["core-services", "shared-infra"]:
         if infra_id not in part_map:

@@ -6,4 +6,4 @@
 INV-008: 低层不得 import 高层（D_DATA 不得 import D_RISK+），依赖只能向上。
 """
 
-__all__ = ["layer_boundary_check"]
+__all__: list[str] = []

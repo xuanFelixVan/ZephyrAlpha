@@ -8,33 +8,45 @@
 
 ## 一、逐文件内容类型清单
 
-### 1. domains/L00_data_source/
+### 1. ~~domains/L00_data_source/~~（已迁移 2026-07-09）
 
-| 文件 | module_id | 内容类型 | 说明 |
+> **路径迁移**：原 `domains/L00_data_source/` 物理目录已废弃（14层架构降级）。
+> 内容已合并到 `rules/trae_050_domain_policy_data_factor.yaml`（DOM-L00-001）和 `rules/trae_049_ops_domain_manual.yaml`（DOM-L00-002）。
+
+| 原文件 | module_id | 迁移目标 | 说明 |
 |------|-----------|---------|------|
-| governance/data_source_connection_policy.md | DOM-L00-001 | A1,A2,A3,A4,A5, B1,B6, C1,C3, D1,D4,D5,D6,D7, E1,E2,E3,E4,E5,E6,E7,E8, H2,H3, I5 | 数据源连接策略：ABS/COND规则、分层分类、超时/重试表、SSoT声明、消费者注册表 |
-| operational/connector_onboarding_runbook.md | DOM-L00-002 | A1,A2, B1,B5,B6,B7,B8, C3, D1,D7, E1, H1, I3 | 连接器入职Runbook：步骤式入职流程、验证检查清单、回滚程序 |
+| governance/data_source_connection_policy.md | DOM-L00-001 | trae_050_domain_policy_data_factor.yaml | 数据源连接策略：ABS/COND规则、分层分类、超时/重试表、SSoT声明、消费者注册表 |
+| operational/connector_onboarding_runbook.md | DOM-L00-002 | trae_049_ops_domain_manual.yaml | 连接器入职Runbook：步骤式入职流程、验证检查清单、回滚程序 |
 
-### 2. domains/L02_alpha_factor/
+### 2. ~~domains/L02_alpha_factor/~~（已迁移 2026-07-09）
 
-| 文件 | module_id | 内容类型 | 说明 |
+> **路径迁移**：原 `domains/L02_alpha_factor/` 物理目录已废弃（14层架构降级）。
+> 内容已合并到 `rules/trae_050_domain_policy_data_factor.yaml`（DOM-L02-001）和 `rules/trae_049_ops_domain_manual.yaml`（DOM-L02-002）。
+
+| 原文件 | module_id | 迁移目标 | 说明 |
 |------|-----------|---------|------|
-| governance/factor_quality_policy.md | DOM-L02-001 | A1,A2,A3, B1,B6, C1,C3, D1,D5,D6, E1,E2,E3,E4,E5, F4,F5, I5 | 因子质量策略：4维度质量检查、衰减检测、度量指标 |
-| operational/factor_onboarding_runbook.md | DOM-L02-002 | A1,A2, B1,B5,B6,B8, C3, D1,D7, E1, H1,H2, I3 | 因子入职Runbook：灰度部署、相关性检查、配置参数 |
+| governance/factor_quality_policy.md | DOM-L02-001 | trae_050_domain_policy_data_factor.yaml | 因子质量策略：4维度质量检查、衰减检测、度量指标 |
+| operational/factor_onboarding_runbook.md | DOM-L02-002 | trae_049_ops_domain_manual.yaml | 因子入职Runbook：灰度部署、相关性检查、配置参数 |
 
-### 3. domains/L04_risk_management/
+### 3. ~~domains/L04_risk_management/~~（已迁移 2026-07-09）
 
-| 文件 | module_id | 内容类型 | 说明 |
+> **路径迁移**：原 `domains/L04_risk_management/` 物理目录已废弃（14层架构降级）。
+> 内容已合并到 `rules/trae_051_domain_policy_risk_backtest.yaml`（DOM-L04-001）和 `rules/trae_049_ops_domain_manual.yaml`（DOM-L04-002）。
+
+| 原文件 | module_id | 迁移目标 | 说明 |
 |------|-----------|---------|------|
-| governance/risk_limits_policy.md | DOM-L04-001 | A1,A2,A3,A4, B1,B6, C1,C3, D1,D5,D6, E1,E2,E3,E4,E5, H2,H3, I5 | 风险限额策略：止损/敞口/杠杆约束、阈值设置 |
-| operational/stop_loss_config_runbook.md | DOM-L04-002 | A1,A2, B1,B5,B6, C3, D1,D7, E1, G1, H1,H2, I3 | 止损配置Runbook：YAML配置模板、边界值检查 |
+| governance/risk_limits_policy.md | DOM-L04-001 | trae_051_domain_policy_risk_backtest.yaml | 风险限额策略：止损/敞口/杠杆约束、阈值设置 |
+| operational/stop_loss_config_runbook.md | DOM-L04-002 | trae_049_ops_domain_manual.yaml | 止损配置Runbook：YAML配置模板、边界值检查 |
 
-### 4. domains/L07_post_trade_analytics/
+### 4. ~~domains/L07_post_trade_analytics/~~（已迁移 2026-07-09）
 
-| 文件 | module_id | 内容类型 | 说明 |
+> **路径迁移**：原 `domains/L07_post_trade_analytics/` 物理目录已废弃（14层架构降级）。
+> 内容已合并到 `rules/trae_051_domain_policy_risk_backtest.yaml`（DOM-L07-001）和 `rules/trae_049_ops_domain_manual.yaml`（DOM-L07-002）。
+
+| 原文件 | module_id | 迁移目标 | 说明 |
 |------|-----------|---------|------|
-| governance/post_trade_reporting_policy.md | DOM-L07-001 | A1,A2,A3,A4, B1,B6, C1,C3, D1,D5,D6, E1,E2,E3,E4,E5, H2, I5 | 盘后报告策略：SLA截止期、临时报告触发条件 |
-| operational/analytics_pipeline_runbook.md | DOM-L07-002 | A1,A2, B1,B5,B6, C3, D1,D7, E1, H1, I3 | 分析管线Runbook：幂等检查、部分失败处理 |
+| governance/post_trade_reporting_policy.md | DOM-L07-001 | trae_051_domain_policy_risk_backtest.yaml | 盘后报告策略：SLA截止期、临时报告触发条件 |
+| operational/analytics_pipeline_runbook.md | DOM-L07-002 | trae_049_ops_domain_manual.yaml | 分析管线Runbook：幂等检查、部分失败处理 |
 
 ### 5. governance/ai/
 

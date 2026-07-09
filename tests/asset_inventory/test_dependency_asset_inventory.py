@@ -112,20 +112,20 @@ class TestBuildDependencyGraph:
 
 
 class TestInferLayer:
-    def test_core_layer(self) -> None:
-        assert _infer_layer("src/zephyr/models.py") == "L00_core"
+    def test_domain_layer(self) -> None:
+        assert _infer_layer("src/zephyr/models.py") == "L2_domain"
 
-    def test_gates_layer(self) -> None:
-        assert _infer_layer("src/zephyr/gates/g1.yaml") == "L02_gates"
+    def test_infrastructure_layer(self) -> None:
+        assert _infer_layer("src/zephyr/infrastructure/db.py") == "L0_infrastructure"
 
     def test_governance_layer(self) -> None:
-        assert _infer_layer("src/zephyr/governance/phase.py") == "L01_governance"
+        assert _infer_layer("src/zephyr/governance/phase.py") == "L1_foundation"
 
     def test_scripts_layer(self) -> None:
-        assert _infer_layer("scripts/lock_files.py") == "L03_scripts"
+        assert _infer_layer("scripts/lock_files.py") == "L1_foundation"
 
     def test_tests_layer(self) -> None:
-        assert _infer_layer("tests/test_foo.py") == "L04_tests"
+        assert _infer_layer("tests/test_foo.py") == "cross_layer"
 
     def test_cross_layer_default(self) -> None:
         assert _infer_layer("README.md") == "cross_layer"

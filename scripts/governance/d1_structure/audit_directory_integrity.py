@@ -78,12 +78,6 @@ _PS_ROOT = REPO_ROOT / "docs" / "01_policies_and_standards"
 _EXCLUDE_NAMES = frozenset({".git", "__pycache__", ".venv", "node_modules", ".mypy_cache"})
 _EXCLUDE_SUBDIRS = frozenset({"_reorg_snapshots", "archive"})
 _TEMPLATE_DIR = _PS_ROOT / "templates"
-_DOMAIN_PARENT_DIRS = frozenset(
-    {
-        _PS_ROOT / "domains" / d
-        for d in ("L00_data_source", "L02_alpha_factor", "L04_risk_management", "L07_post_trade_analytics")
-    }
-)
 # 真源单一化：后缀规则是 doc_type 的属性，由 doc_type_vocabulary.yaml 唯一维护。
 # 本模块直接消费词表（非同步复制），词表改即生效。禁止在此硬编码值名或后缀。
 # 阶段4修复：原硬编码 _DOC_TYPE_SUFFIX_MAP 含幽灵值（playbook/runbook 不在 26 合法值中）
@@ -334,38 +328,11 @@ def check_d3_index_counts() -> list[Finding]:
             continue
         index_dir = index_path.parent
         table = _parse_index_table(index_path)
-        if index_dir in _DOMAIN_PARENT_DIRS:
-            actual_count = sum(
-                1
-                for sub in ("governance", "operational")
-                for _ in (index_dir / sub / "index.md").parent.iterdir()
-                if (index_dir / sub / "index.md").exists() and (index_dir / sub / "index.md").parent == index_dir / sub
-            )
-            sub_gov_files = (
-                sum(
-                    1
-                    for f in (index_dir / "governance").iterdir()
-                    if f.is_file() and f.name != "index.md" and (f.suffix.lower() in (".md", ".yaml", ".yml", ".json"))
-                )
-                if (index_dir / "governance").exists()
-                else 0
-            )
-            sub_ops_files = (
-                sum(
-                    1
-                    for f in (index_dir / "operational").iterdir()
-                    if f.is_file() and f.name != "index.md" and (f.suffix.lower() in (".md", ".yaml", ".yml", ".json"))
-                )
-                if (index_dir / "operational").exists()
-                else 0
-            )
-            actual_count = sub_gov_files + sub_ops_files
-        else:
-            disk_files = [
-                f
-                for f in index_dir.iterdir()
-                if f.is_file() and f.name != "index.md" and (f.suffix.lower() in (".md", ".yaml", ".yml", ".json"))
-            ]
+        disk_files = [
+            f
+            for f in index_dir.iterdir()
+            if f.is_file() and f.name != "index.md" and (f.suffix.lower() in (".md", ".yaml", ".yml", ".json"))
+        ]
         disk_names = {f.name for f in disk_files}
         actual_count = len(disk_files)
         local_entries = sum(1 for fname in table if fname in disk_names)
