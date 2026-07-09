@@ -3611,6 +3611,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第90轮Phase 7d重构（2026-07-09）**：5.158.10 `chaos_engine.inject` extract method重构完成. if/elif分发链→_dispatch_injection(McCabe=4) + except Exception路径→_handle_injection_failure(McCabe=3) + 未处理type前置检查. McCabe 20→15(低于gate阈值>15). 行为等价验证通过(TestChaosEngineInjectDirect 10新测试+15原有测试=25/25 PASSED, 覆盖直接inject_type调用/错误路径/_last_result/_injection_state/边界值). DEFERRED-PERMANENT 7→6(5.158.10清零).
 > **第91轮Phase 7e重构（2026-07-09）**：5.158.7 `action_dispatcher._search_replace_file` extract method重构完成. 替换循环→_apply_replacement_entries(McCabe=8) + 结果构建→_finalize_replacement(McCabe=9). McCabe 20→5(裁定值12为DRIFTED, AST复算实际20; 重构后远低于gate阈值>15). 行为等价验证通过(TestActionDispatcherSearchReplacePaths 8新测试+4原有测试=12/12 PASSED, 覆盖宽松匹配/remove模式/unchanged/空old_str/部分失败/实际写入/backup递增/reason累积). DEFERRED-PERMANENT 6→5(5.158.7清零).
 > **第92轮Phase 7f重构（2026-07-09）**：5.158.1 `_compute_metrics_generic` + 5.158.2 `_run_hallucination_six_dim` extract method重构完成. (1)5.158.1: 9段匹配逻辑→9个_match_*方法(bool_fields/list_fields/parallel_groups/str_fields/bug_location/step_count/function_args/tool_sequence/contains_keywords), 主函数McCabe 30+→5, 每个_match_*返回list[tuple[p,r,exact]]平展聚合保持精确平均行为. (2)5.158.2: 内联9维检测→_check_hallucination_for_case(单case计数)+_check_inconsistency_drift(2次推断对比), 主函数McCabe 17→4. 行为等价验证通过(test_exam_orchestrator 139/140 PASSED, 1预先存在失败test_invalid_env_var_falls_back_to_1与本次重构无关; TestRunHallucinationSixDim 5/5 PASSED + TestComputeMetricsFunctionCalling/TestComputeMetricsToolChaining覆盖_match_function_args/_match_tool_sequence). DEFERRED-PERMANENT 5→3(5.158.1+5.158.2清零).
+> **第93轮Phase 3/4重构（2026-07-09，循环复杂度专项收尾）**：人类架构师发起循环复杂度重构专项，剩余4项DEFERRED-PERMANENT全部清零. (1)5.158.11 `auto_runtime_core._start_local_models` extract method: 4串联try/except→_ensure_ollama_available+_warmup_embedding_router+_start_local_scheduler+_start_vms, chat backend(含time.sleep)保留inline避免PERM-TRIGGER误判, McCabe 16→7, 7测试PASSED(commit fd4f1d043c). (2)5.158.12 `exam_orchestrator._compute_metrics` extract method: 7路if分支→纯分派+6个_metrics_*方法(task_classification/tag_completion/summary_extraction/anomaly_triage/code_edit/code_generate), McCabe 17→8, 18测试PASSED(commit 2b1995e216). (3)5.158.4 `feedback_loop.scheduler._run_once` extract method: VMS失败模式持久化块→_persist_failure_pattern(提取稳定pattern_text: summary>root_cause去z_score>str兜底, 治本str(diagnosis)含uuid导致无幂等), McCabe 16→7, 8测试PASSED(commit 152ed8b21b). (4)5.158.5 `git_commit.main` extract method: 8路if/elif状态分发→6个helpers(_parse_message/_parse_files/_check_staged_delete_fallback/_validate_reconciler_verify/_handle_pure_claim/_format_commit_result)+_COMMIT_RESULT_MAP查表, McCabe 16→11(commit 8808a37d04). DEFERRED-PERMANENT 3→0. **§5.158循环复杂度维度全部清零**——12项(5 FIXED-Phase7a/7d/7e/7f + 4 FIXED-Phase3/4 + 2 DRIFTED-Phase7d + 1原LOW未超标未编号). NO-HIGH-COMPLEXITY gate(priority=85)防复发层就位.
 
 #### HIGH（1个）
 
@@ -3620,8 +3621,8 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 2. **[FIXED-Phase7f]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:1278` — `_run_hallucination_six_dim` McCabe 17→4(extract method: _check_hallucination_for_case+_check_inconsistency_drift, 主函数循环+dict聚合), TestRunHallucinationSixDim 5/5 PASSED
 3. **[DRIFTED-Phase7d]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:183` — `evaluate` 裁定复杂度17→AST复算实际8(_parse_event已提取), 低于阈值15, 不再超标
-4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\ops\scheduler.py:327` — `_run_once` 105行，5阶段流水线挤在单函数，5个return
-5. **[MEDIUM]** `d:\ZephyrAlpha\scripts\git_commit.py:118` — `main` 复杂度16，151行，8路if/elif状态分发
+4. **[FIXED-Phase3/4]** `d:\ZephyrAlpha\src\zephyr\trading\feedback_loop\scheduler.py` — `_run_once` McCabe 16→7(extract method: _persist_failure_pattern, 治本str(diagnosis)含uuid无幂等→提取稳定pattern_text), 8/8 tests PASSED
+5. **[FIXED-Phase3/4]** `d:\ZephyrAlpha\scripts\git_commit.py` — `main` McCabe 16→11(extract method: 6个helpers+_COMMIT_RESULT_MAP查表, 8路if/elif状态分发降为纯编排), 已通过现有测试验证
 
 #### LOW（7个）
 
@@ -3630,12 +3631,12 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 8. **[LOW]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\reconciler.py:300` — `_fix_dep_sync` 复杂度12
 9. **[FIXED-Phase7a]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:400` — `_classify_pressure` 13个连续if → 查表法重构(McCabe 14→5), TestPressureClassification 13/13 PASSED
 10. **[FIXED-Phase7d]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\fault_tolerance\chaos_engine.py:148` — `inject` McCabe 20→15(extract method: _dispatch_injection+_handle_injection_failure), 25/25 tests PASSED
-11. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\auto_runtime_core.py:334` — `_start_local_models` 4个串联try/except
-12. **[LOW]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:439` — `_compute_metrics` 6路if分支
+11. **[FIXED-Phase3/4]** `d:\ZephyrAlpha\src\zephyr\trading\auto_runtime_core.py:334` — `_start_local_models` McCabe 16→7(extract method: _ensure_ollama_available+_warmup_embedding_router+_start_local_scheduler+_start_vms, chat backend保留inline避免PERM-TRIGGER误判), 7/7 tests PASSED
+12. **[FIXED-Phase3/4]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:439` — `_compute_metrics` McCabe 17→8(extract method: 纯分派+6个_metrics_*方法), 18/18 tests PASSED
 
 **核心模式总结**：(1)最高危集中在exam_orchestrator（3处，含1个30+复杂度221行巨型函数）；(2)MEDIUM均为"多路分发挤在单函数"——事件类型分发/状态机if-elif/流水线阶段；(3)7个LOW多为"连续if分类"与"多return出口"，可通过查表/早返回/策略模式降解
 
-**严重度汇总**：HIGH=0, MEDIUM=2, LOW=3, FIXED=5(Phase7a/7d/7e/7f), DRIFTED=2(Phase7d), 合计=12
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=1(5.158.8 _fix_dep_sync 复杂度12低于阈值15未超标), FIXED=9(Phase7a/7d/7e/7f + Phase3/4), DRIFTED=2(Phase7d), 合计=12. **§5.158循环复杂度维度全部清零（DEFERRED-PERMANENT=0）**——人类架构师发起的循环复杂度重构专项完成，NO-HIGH-COMPLEXITY gate(priority=85)防复发层就位.
 
 ---
 
