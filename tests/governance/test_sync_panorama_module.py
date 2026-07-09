@@ -61,12 +61,20 @@ def _make_module_row(module_id="MOD-TEST", domain_id="D_TEST",
 def _mock_three_conns(spm, monkeypatch, depgraph_fetchone=None,
                       dataflow_fetchone=None, decision_fetchone=None,
                       depgraph_fetchall=None):
-    """统一 mock 三个 DB 连接，返回 (depgraph_conn, dataflow_conn, decision_conn)"""
+    """统一 mock 三个 DB 连接，返回 (depgraph_conn, dataflow_conn, decision_conn)
+
+    fetchall 兼容：_query_depgraph_module 改用 fetchall 聚合后，
+    当 fetchone=None 且 fetchall 未显式传入时，fetchall 默认返回 [fetchone] 或 []。
+    """
     depgraph_conn = MagicMock()
     dep_cursor = MagicMock()
     dep_cursor.fetchone.return_value = depgraph_fetchone
     if depgraph_fetchall is not None:
         dep_cursor.fetchall.return_value = depgraph_fetchall
+    elif depgraph_fetchone is not None:
+        dep_cursor.fetchall.return_value = [depgraph_fetchone]
+    else:
+        dep_cursor.fetchall.return_value = []
     depgraph_conn.cursor.return_value.__enter__.return_value = dep_cursor
 
     dataflow_conn = MagicMock()
