@@ -1366,62 +1366,73 @@ class ExamOrchestrator:
         if not caps:
             return HallucinationBreakdown()
 
-        fab = inc = ref = ovc = sc = cd = idr = fmh = qh = 0
+        totals: dict[str, int] = dict(fab=0, inc=0, ref=0, ovc=0, sc=0, cd=0, idr=0, fmh=0, qh=0)
         total = 0
 
         for cap_name in caps:
             cases = CASES_BY_CAPABILITY.get(cap_name, [])
             if not cases:
                 continue
-            case = cases[0]
             total += 1
-            try:
-                result = self._infer(case)
-                if self._check_fabrication(case, result):
-                    fab += 1
-                if self._check_overclaim(case, result):
-                    ovc += 1
-                if self._check_source_confusion(case, result):
-                    sc += 1
-                if self._check_refusal(result):
-                    ref += 1
-                if self._check_instruction_drift(case, result):
-                    idr += 1
-                if self._check_format_hallucination(case, result):
-                    fmh += 1
-                if self._check_quantity_hallucination(case, result):
-                    qh += 1
-                # inconsistency + context_drift: 2次推断对比 (独立检测)
-                try:
-                    result2 = self._infer(case)
-                    # context_drift: 两次输出键集不同 = 忘记指令结构
-                    keys1 = set(k for k in (result.keys() if isinstance(result, dict) else [])
-                                if not k.startswith("_"))
-                    keys2 = set(k for k in (result2.keys() if isinstance(result2, dict) else [])
-                                if not k.startswith("_"))
-                    if keys1 != keys2:
-                        cd += 1  # 键集漂移
-                    elif not self._outputs_similar(result, result2):
-                        inc += 1  # 键集相同但值差异大
-                except Exception as e:
-                    _log.warning("suppressed error in exam_orchestrator", exc_info=True)
-            except Exception:
-                ref += 1
+            counts = self._check_hallucination_for_case(cases[0])
+            for k in totals:
+                totals[k] += counts[k]
 
         if total == 0:
             return HallucinationBreakdown()
 
         return HallucinationBreakdown(
-            fabrication=round(fab / total, 3),
-            inconsistency=round(inc / total, 3),
-            refusal=round(ref / total, 3),
-            overclaim=round(ovc / total, 3),
-            context_drift=round(cd / total, 3),
-            source_confusion=round(sc / total, 3),
-            instruction_drift=round(idr / total, 3),
-            format_hallucination=round(fmh / total, 3),
-            quantity_hallucination=round(qh / total, 3),
+            fabrication=round(totals["fab"] / total, 3),
+            inconsistency=round(totals["inc"] / total, 3),
+            refusal=round(totals["ref"] / total, 3),
+            overclaim=round(totals["ovc"] / total, 3),
+            context_drift=round(totals["cd"] / total, 3),
+            source_confusion=round(totals["sc"] / total, 3),
+            instruction_drift=round(totals["idr"] / total, 3),
+            format_hallucination=round(totals["fmh"] / total, 3),
+            quantity_hallucination=round(totals["qh"] / total, 3),
         )
+
+    def _check_hallucination_for_case(self, case: ExamTestCase) -> dict[str, int]:
+        """Phase 7f: 单 case 幻觉检测，返回 9 维计数 (0/1)。"""
+        counts: dict[str, int] = dict(fab=0, inc=0, ref=0, ovc=0, sc=0, cd=0, idr=0, fmh=0, qh=0)
+        try:
+            result = self._infer(case)
+            if self._check_fabrication(case, result):
+                counts["fab"] = 1
+            if self._check_overclaim(case, result):
+                counts["ovc"] = 1
+            if self._check_source_confusion(case, result):
+                counts["sc"] = 1
+            if self._check_refusal(result):
+                counts["ref"] = 1
+            if self._check_instruction_drift(case, result):
+                counts["idr"] = 1
+            if self._check_format_hallucination(case, result):
+                counts["fmh"] = 1
+            if self._check_quantity_hallucination(case, result):
+                counts["qh"] = 1
+            counts.update(self._check_inconsistency_drift(case, result))
+        except Exception:
+            counts["ref"] = 1
+        return counts
+
+    def _check_inconsistency_drift(self, case: ExamTestCase, result: dict) -> dict[str, int]:
+        """Phase 7f: 2次推断对比 → inconsistency + context_drift 计数。"""
+        try:
+            result2 = self._infer(case)
+            # context_drift: 两次输出键集不同 = 忘记指令结构
+            keys1 = set(k for k in (result.keys() if isinstance(result, dict) else [])
+                        if not k.startswith("_"))
+            keys2 = set(k for k in (result2.keys() if isinstance(result2, dict) else [])
+                        if not k.startswith("_"))
+            if keys1 != keys2:
+                return {"cd": 1, "inc": 0}
+            if not self._outputs_similar(result, result2):
+                return {"cd": 0, "inc": 1}
+        except Exception:
+            _log.warning("suppressed error in exam_orchestrator", exc_info=True)
+        return {"cd": 0, "inc": 0}
 
     def _pick_representative_case(self, cap_name: str) -> ExamTestCase | None:
         """P2 Quick Mode: 选代表题 (优先 medium, fallback easy)。"""
