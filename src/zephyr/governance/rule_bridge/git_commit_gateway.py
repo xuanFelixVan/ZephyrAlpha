@@ -1018,8 +1018,14 @@ class GitCommitGateway:
                 f.write(f":(icase){rel}\n")
         return path
 
-    def _run_git(self, cmd: list[str]) -> subprocess.CompletedProcess:
-        """执行 git 命令（统一 cwd + encoding）。reconciler 禁止裸调 git commit——必须走 _commit_auto()，commit 守卫 _in_commit_flow 技术强制。"""
+    def _run_git(self, cmd: list[str], cwd: str | None = None) -> subprocess.CompletedProcess:
+        """执行 git 命令（统一 cwd + encoding）。reconciler 禁止裸调 git commit——必须走 _commit_auto()，commit 守卫 _in_commit_flow 技术强制。
+
+        Args:
+            cmd: git 命令列表（如 ``["git", "show", "HEAD:foo.py"]``）。
+            cwd: 可选工作目录（默认使用 ``self.project_root``）。某些 gate 需在
+                 ``git rev-parse --show-toplevel`` 返回的 worktree root 下执行。
+        """
         if (
             len(cmd) >= 2
             and cmd[0] == "git"
@@ -1040,7 +1046,7 @@ class GitCommitGateway:
         env[_GATEWAY_ENV] = "1"
         return subprocess.run(
             cmd,
-            cwd=str(self.project_root),
+            cwd=cwd or str(self.project_root),
             capture_output=True,
             text=True,
             encoding="utf-8",

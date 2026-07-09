@@ -64,10 +64,10 @@ def _make_gateway(tmp_path, staged_files=None, diff_fails=False, diff_raises=Fal
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw._run_git = MagicMock(side_effect=_raise)
         return gw
 
-    def _run_git(cmd):
+    def _run_git(cmd, cwd=None):
         if diff_fails and "--name-only" in cmd:
             return _MockResult(1, "")
         if "--name-only" in cmd:
@@ -76,7 +76,7 @@ def _make_gateway(tmp_path, staged_files=None, diff_fails=False, diff_raises=Fal
             return _MockResult(0, str(tmp_path))
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw._run_git = MagicMock(side_effect=_run_git)
     return gw
 
 
@@ -98,21 +98,25 @@ class _GrepResult:
         self.stderr = stderr
 
 
-def _patch_grep(monkeypatch, returncode=1, stdout="", raises=None):
-    """patch orphan_module_gate 的 subprocess.run。
+def _patch_grep(gateway, returncode=1, stdout="", raises=None):
+    """patch gateway._run_git 的 git grep 调用。
     returncode=1 → 无匹配（孤儿）；0 → 有匹配（非孤儿）。"""
-    import zephyr.governance.commit_gates.orphan_module_gate as mod
+    original_side_effect = gateway._run_git.side_effect
 
     if raises is not None:
-        def _raise(*a, **k):
-            raise raises
-        monkeypatch.setattr(mod.subprocess, "run", _raise)
+        def _grep_run(cmd, cwd=None):
+            if len(cmd) >= 2 and cmd[0:2] == ["git", "grep"]:
+                raise raises
+            return original_side_effect(cmd)
+        gateway._run_git.side_effect = _grep_run
         return
 
-    def _fake_run(cmd, *args, **kwargs):
-        return _GrepResult(returncode=returncode, stdout=stdout)
+    def _grep_run(cmd, cwd=None):
+        if len(cmd) >= 2 and cmd[0:2] == ["git", "grep"]:
+            return _GrepResult(returncode=returncode, stdout=stdout)
+        return original_side_effect(cmd)
 
-    monkeypatch.setattr(mod.subprocess, "run", _fake_run)
+    gateway._run_git.side_effect = _grep_run
 
 
 @pytest.fixture(autouse=True)
@@ -211,9 +215,9 @@ class TestGatewayIntegration:
     def test_orphan_module_blocked(self, tmp_path, monkeypatch):
         red = "src/zephyr/trading/orphan.py"
         _write_file(tmp_path, red, "X = 1\n")
-        # git grep 无匹配（returncode=1）→ 孤儿
-        _patch_grep(monkeypatch, returncode=1)
         gw = _make_gateway(tmp_path, staged_files=[red])
+        # git grep 无匹配（returncode=1）→ 孤儿
+        _patch_grep(gw, returncode=1)
         passed, msg = make_orphan_module_gate().check(gw, [])
         assert not passed
         assert "ORPHAN-MODULE" in msg or "孤儿模块" in msg
@@ -221,13 +225,13 @@ class TestGatewayIntegration:
     def test_imported_module_passes(self, tmp_path, monkeypatch):
         red = "src/zephyr/trading/used.py"
         _write_file(tmp_path, red, "X = 1\n")
+        gw = _make_gateway(tmp_path, staged_files=[red])
         # git grep 有匹配，且匹配的是其他文件 → 非孤儿
         _patch_grep(
-            monkeypatch,
+            gw,
             returncode=0,
             stdout="src/zephyr/trading/caller.py",
         )
-        gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_orphan_module_gate().check(gw, [])
         assert passed
         assert msg == ""
@@ -235,17 +239,17 @@ class TestGatewayIntegration:
     def test_only_self_match_is_orphan(self, tmp_path, monkeypatch):
         red = "src/zephyr/trading/self_ref.py"
         _write_file(tmp_path, red, "X = 1\n")
-        # git grep 仅匹配文件自身 → 仍为孤儿
-        _patch_grep(monkeypatch, returncode=0, stdout=red)
         gw = _make_gateway(tmp_path, staged_files=[red])
+        # git grep 仅匹配文件自身 → 仍为孤儿
+        _patch_grep(gw, returncode=0, stdout=red)
         passed, msg = make_orphan_module_gate().check(gw, [])
         assert not passed
 
     def test_entry_file_exempt(self, tmp_path, monkeypatch):
         red = "src/zephyr/cli/__main__.py"
         _write_file(tmp_path, red, "X = 1\n")
-        _patch_grep(monkeypatch, returncode=1)  # 无引用
         gw = _make_gateway(tmp_path, staged_files=[red])
+        _patch_grep(gw, returncode=1)  # 无引用
         passed, msg = make_orphan_module_gate().check(gw, [])
         assert passed  # 入口文件豁免
         assert msg == ""
@@ -253,8 +257,8 @@ class TestGatewayIntegration:
     def test_tests_dir_exempt(self, tmp_path, monkeypatch):
         red = "tests/governance/test_something.py"
         _write_file(tmp_path, red, "X = 1\n")
-        _patch_grep(monkeypatch, returncode=1)
         gw = _make_gateway(tmp_path, staged_files=[red])
+        _patch_grep(gw, returncode=1)
         passed, msg = make_orphan_module_gate().check(gw, [])
         assert passed
         assert msg == ""
@@ -274,8 +278,8 @@ class TestGatewayIntegration:
     def test_fail_open_on_grep_timeout(self, tmp_path, monkeypatch):
         red = "src/zephyr/trading/orphan.py"
         _write_file(tmp_path, red, "X = 1\n")
-        _patch_grep(monkeypatch, raises=subprocess.TimeoutExpired(cmd=["git"], timeout=30))
         gw = _make_gateway(tmp_path, staged_files=[red])
+        _patch_grep(gw, raises=subprocess.TimeoutExpired(cmd=["git"], timeout=30))
         passed, msg = make_orphan_module_gate().check(gw, [])
         assert passed  # fail-open
         assert msg == ""
@@ -283,8 +287,8 @@ class TestGatewayIntegration:
     def test_fail_open_on_grep_exception(self, tmp_path, monkeypatch):
         red = "src/zephyr/trading/orphan.py"
         _write_file(tmp_path, red, "X = 1\n")
-        _patch_grep(monkeypatch, raises=RuntimeError("git not found"))
         gw = _make_gateway(tmp_path, staged_files=[red])
+        _patch_grep(gw, raises=RuntimeError("git not found"))
         passed, msg = make_orphan_module_gate().check(gw, [])
         assert passed  # fail-open
         assert msg == ""
@@ -292,9 +296,9 @@ class TestGatewayIntegration:
     def test_fail_open_on_grep_error_returncode(self, tmp_path, monkeypatch):
         red = "src/zephyr/trading/orphan.py"
         _write_file(tmp_path, red, "X = 1\n")
-        # git grep 返回 rc=2（错误，非 0/1）→ fail-open
-        _patch_grep(monkeypatch, returncode=2)
         gw = _make_gateway(tmp_path, staged_files=[red])
+        # git grep 返回 rc=2（错误，非 0/1）→ fail-open
+        _patch_grep(gw, returncode=2)
         passed, msg = make_orphan_module_gate().check(gw, [])
         assert passed
         assert msg == ""
