@@ -10,11 +10,14 @@
 
 权威依据：_diff_helpers.py
 
-测试组（聚焦 R95 治本：_extract_docstring_lines 用 ast 精确识别 docstring）：
+测试组（聚焦 R95/R96 治本：_extract_docstring_lines 用 ast 精确识别 docstring，
+_extract_sql_constant_lines 用 ast 精确识别 SQL_* 常量定义行范围）：
 - TestExtractDocstringLinesCore: docstring 标准场景（模块/函数/类/方法）
 - TestExtractDocstringLinesManifestBug: __manifest__=\"\"\"...\"\"\" 行内字符串赋值
   不被识别为 docstring（R95 修复核心，cleanup_p0_auto_bridged.py L78/L87 漏检根因）
 - TestExtractDocstringLinesEdgeCases: 边界场景（语法错误 fail-open/空文件/无 docstring）
+- TestExtractSqlConstantLines: SQL_* 常量定义行范围提取（R96 修复核心，
+  file_task_mapper.py L67/L70/L73 误报根因）
 - TestIsExemptLine: 行级豁免（注释/import）回归测试
 - TestParseDiffWithLineNumbers: git diff 解析回归测试
 
@@ -25,6 +28,14 @@ R95 修复背景：
   cleanup_p0_auto_bridged.py L78/L87 裸 SQL 漏检。
   新实现用 ast 模块精确识别 Module/ClassDef/FunctionDef/AsyncFunctionDef 的
   body[0]（ast.Expr(value=ast.Constant(str))）作为 docstring。
+
+R96 修复背景：
+  旧实现用 ``_SQL_CONSTANT_DEF_RE = re.compile(r"^\\s*_?SQL_\\w+\\s*=")``
+  只豁免 SQL_* 常量定义行，不跟踪多行续行，导致括号隐式连接的续行含完整
+  SQL 字符串字面量时被 ``_SQL_PATTERN`` 误报（file_task_mapper.py L67/L70/L73
+  误报根因）。
+  新实现用 ast 模块精确识别 Assign 节点，目标名匹配 ``^_?SQL_\\w+$``，
+  豁免整个 Assign 节点的行范围（lineno 到 end_lineno）。
 
 测试隔离：纯函数测试，无 mock/无 git/无文件 I/O。
 """
@@ -41,6 +52,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from zephyr.governance.commit_gates._diff_helpers import (  # noqa: E402
     _extract_docstring_lines,
+    _extract_sql_constant_lines,
     _is_exempt_line,
     _parse_diff_with_line_numbers,
 )
@@ -389,3 +401,88 @@ class TestParseDiffWithLineNumbers:
     def test_no_added_lines(self):
         diff = '+++ b/file.py\n@@ -0,0 +1,0 @@\n'
         assert _parse_diff_with_line_numbers(diff) == []
+
+
+# ---------------------------------------------------------------------------
+# TestExtractSqlConstantLines — SQL_* 常量定义行范围提取（R96 治本）
+# ---------------------------------------------------------------------------
+class TestExtractSqlConstantLines:
+    """SQL_* / _SQL_* 常量定义行范围提取（R96 用 ast 精确识别）。
+
+    覆盖4种多行定义模式 + 边界场景。
+    """
+
+    def test_single_line_constant(self):
+        """单行定义：SQL_X = "SELECT..." → 豁免 L1。"""
+        content = 'SQL_GET_USER = "SELECT col FROM tbl"\n'
+        assert _extract_sql_constant_lines(content) == {1}
+
+    def test_paren_multiline_complete_sql(self):
+        """括号多行定义（模式1，误报根因）：续行含完整 SQL → 全部豁免。
+
+        file_task_mapper.py L66-68 实际场景。
+        """
+        content = (
+            'SQL_SELECT = (\n'           # L1
+            '    "SELECT task_id FROM task_files WHERE file_path = ?"\n'  # L2
+            ')\n'                         # L3
+        )
+        assert _extract_sql_constant_lines(content) == {1, 2, 3}
+
+    def test_triple_quote_multiline(self):
+        """三引号多行定义（模式3）：整个三引号范围豁免。"""
+        content = (
+            'SQL_INSERT = """INSERT INTO tasks\n'  # L1
+            '    (id, name) VALUES (?, ?)"""\n'   # L2
+        )
+        assert _extract_sql_constant_lines(content) == {1, 2}
+
+    def test_backslash_continuation(self):
+        """反斜杠续行定义：续行也被豁免。"""
+        content = (
+            'SQL_X = \\\n'                          # L1
+            '    "SELECT * FROM users"\n'            # L2
+        )
+        assert _extract_sql_constant_lines(content) == {1, 2}
+
+    def test_paren_multiline_sql_fragments(self):
+        """括号多行 + SQL 跨行拼接（模式2）：每行都被豁免。"""
+        content = (
+            'SQL_JOIN = (\n'                              # L1
+            '    "SELECT tf.task_id, tf.file_path "\n'    # L2
+            '    "FROM task_files tf JOIN tasks t "\n'    # L3
+            '    "WHERE tf.task_id = ?"\n'                 # L4
+            ')\n'                                         # L5
+        )
+        assert _extract_sql_constant_lines(content) == {1, 2, 3, 4, 5}
+
+    def test_multiple_sql_constants(self):
+        """多个 SQL 常量混合：每个 Assign 节点都被识别。"""
+        content = (
+            'SQL_A = "SELECT 1"\n'           # L1
+            'foo = "not sql"\n'              # L2（非 SQL_* 前缀）
+            'SQL_B = "INSERT INTO t VALUES(1)"\n'  # L3
+        )
+        assert _extract_sql_constant_lines(content) == {1, 3}
+
+    def test_non_sql_prefix_not_exempt(self):
+        """非 SQL_* 前缀变量不豁免。"""
+        content = (
+            'QUERY = "SELECT * FROM tbl"\n'     # L1
+            'FOO_SQL = "SELECT 1"\n'            # L2（SQL 不在开头）
+        )
+        assert _extract_sql_constant_lines(content) == set()
+
+    def test_private_sql_prefix_exempt(self):
+        """_SQL_PATTERN 等 _SQL_* 前缀也豁免（gate 内部变量）。"""
+        content = '_SQL_PATTERN = re.compile(r"SELECT")\n'
+        assert _extract_sql_constant_lines(content) == {1}
+
+    def test_syntax_error_fail_open(self):
+        """语法错误时 fail-open 返回空集合（不豁免，可能误报但不漏检）。"""
+        content = 'def foo(:\n    SQL_X = "SELECT 1"\n'
+        assert _extract_sql_constant_lines(content) == set()
+
+    def test_empty_file(self):
+        """空文件返回空集合。"""
+        assert _extract_sql_constant_lines('') == set()

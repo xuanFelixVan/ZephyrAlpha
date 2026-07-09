@@ -5,8 +5,8 @@
 # [CONSUMERS] zephyr.governance.commit_gates.unsafe_dict_spread_gate; zephyr.governance.commit_gates.datetime_now_forbidden_gate; zephyr.governance.commit_gates.bare_sql_gate; zephyr.governance.commit_gates.hardcoded_url_gate
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似
-# [MODIFY-GUARD] 函数签名：_is_exempt_line(str)->bool, _extract_docstring_lines(str)->set[int], _parse_diff_with_line_numbers(str)->list[tuple[int,str]], _read_staged_file(gateway,str)->str|None
+# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似；_extract_sql_constant_lines 用 ast 精确识别 SQL_*/_SQL_* 常量定义行范围（R96 治本），替代 bare_sql_gate 的 _SQL_CONSTANT_DEF_RE 正则近似
+# [MODIFY-GUARD] 函数签名：_is_exempt_line(str)->bool, _extract_docstring_lines(str)->set[int], _extract_sql_constant_lines(str)->set[int], _parse_diff_with_line_numbers(str)->list[tuple[int,str]], _read_staged_file(gateway,str)->str|None
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -22,6 +22,7 @@
 公共函数：
 - _is_exempt_line: 行级豁免判定（注释/import）
 - _extract_docstring_lines: docstring 行号集合提取（R95 用 ast 精确识别）
+- _extract_sql_constant_lines: SQL_*/_SQL_* 常量定义行号集合提取（R96 用 ast 精确识别）
 - _parse_diff_with_line_numbers: git diff 输出解析为 [(line_no, content)]
 - _read_staged_file: 读取 staged 文件内容（git show :path）
 - _get_staged_py_files: 获取 staged .py 文件列表
@@ -32,6 +33,7 @@ Usage::
     from zephyr.governance.commit_gates._diff_helpers import (
         _is_exempt_line,
         _extract_docstring_lines,
+        _extract_sql_constant_lines,
         _parse_diff_with_line_numbers,
         _read_staged_file,
     )
@@ -49,8 +51,10 @@ __all__ = [
     "_COMMENT_RE",
     "_IMPORT_RE",
     "_HUNK_HEADER_RE",
+    "_SQL_CONSTANT_NAME_RE",
     "_is_exempt_line",
     "_extract_docstring_lines",
+    "_extract_sql_constant_lines",
     "_parse_diff_with_line_numbers",
     "_read_staged_file",
     "_get_staged_py_files",
@@ -63,6 +67,10 @@ _IMPORT_RE = re.compile(r"^\s*(from\s+\S+\s+import|import\s)")
 
 # hunk header: @@ -old_start,old_count +new_start,new_count @@
 _HUNK_HEADER_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
+
+# SQL 常量名判定：匹配 _?SQL_ 前缀的变量名（SQL_FOO / _SQL_PATTERN 等）
+# R96 治本：替代 bare_sql_gate._SQL_CONSTANT_DEF_RE 正则近似（只豁免定义行不跟踪多行）
+_SQL_CONSTANT_NAME_RE = re.compile(r"^_?SQL_\w+$")
 
 
 def _is_exempt_line(content: str) -> bool:
@@ -124,6 +132,57 @@ def _extract_docstring_lines(file_content: str) -> set[int]:
                 for i in range(start, end + 1):
                     docstring_lines.add(i)
     return docstring_lines
+
+
+def _extract_sql_constant_lines(file_content: str) -> set[int]:
+    """返回文件中所有 SQL_* / _SQL_* 常量定义覆盖的行号集合（1-based）。
+
+    使用 ast 模块精确识别 Assign 节点，目标名匹配 ``^_?SQL_\\w+$``。
+    豁免整个 Assign 节点的行范围（lineno 到 end_lineno），覆盖：
+    - 单行定义：``SQL_X = "SELECT..."``
+    - 括号多行：``SQL_X = (\\n    "SELECT..."\\n)``
+    - 三引号多行：``SQL_X = \"\"\"\\nSELECT...\\n\"\"\"``
+    - 反斜杠续行：``SQL_X = \\\\\\n    "SELECT..."``
+
+    设计意图（R96 治本，2026-07-10）：
+    旧实现用 ``_SQL_CONSTANT_DEF_RE = re.compile(r"^\\s*_?SQL_\\w+\\s*=")``
+    只豁免定义行，不跟踪多行续行，导致括号隐式连接的续行含完整 SQL
+    字符串字面量时被 ``_SQL_PATTERN`` 误报（file_task_mapper.py L67/L70/L73
+    误报根因）。
+
+    fail-open：ast.parse 失败（语法错误）时返回空集合——所有行都不豁免，
+    可能误报但不漏检（语法错误文件本就会在其他阶段失败）。
+
+    Args:
+        file_content: Python 文件完整内容。
+
+    Returns:
+        SQL 常量定义覆盖的行号集合（1-based）。
+    """
+    try:
+        tree = ast.parse(file_content)
+    except SyntaxError:
+        logger.warning(
+            "_extract_sql_constant_lines: ast.parse 失败（语法错误），"
+            "fail-open 返回空集合——所有行都不豁免",
+            exc_info=True,
+        )
+        return set()
+
+    sql_const_lines: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if (
+                    isinstance(target, ast.Name)
+                    and _SQL_CONSTANT_NAME_RE.match(target.id)
+                ):
+                    start = node.lineno
+                    end = getattr(node, "end_lineno", start)
+                    for i in range(start, end + 1):
+                        sql_const_lines.add(i)
+                    break  # 一个 target 命中即可豁免整个 Assign
+    return sql_const_lines
 
 
 def _parse_diff_with_line_numbers(diff_stdout: str) -> list[tuple[int, str]]:

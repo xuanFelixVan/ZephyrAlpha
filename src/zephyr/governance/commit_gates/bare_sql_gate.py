@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py added 行含裸SQL字面量(SELECT/INSERT INTO/UPDATE SET/DELETE FROM)时阻断commit(passed=False); tests/豁免; docstring/注释/import/SQL_*常量定义行豁免; git diff不可达fail-open; 检出违规则fail-closed
+# [INVARIANTS] 硬阻断——staged .py added 行含裸SQL字面量(SELECT/INSERT INTO/UPDATE SET/DELETE FROM)时阻断commit(passed=False); tests/豁免; docstring/注释/import/SQL_*常量定义行豁免（R96 用 ast 精确识别多行常量定义范围，替代旧正则近似只豁免定义行）; git diff不可达fail-open; 检出违规则fail-closed
 # [MODIFY-GUARD] gate_id="NO-BARE-SQL"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -54,6 +54,7 @@ import re
 
 from zephyr.governance.commit_gates._diff_helpers import (
     _extract_docstring_lines,
+    _extract_sql_constant_lines,
     _get_added_lines,
     _get_staged_py_files,
     _is_exempt_line,
@@ -71,16 +72,12 @@ __all__ = ["make_bare_sql_gate"]
 # 无法覆盖多列 SELECT(col1,col2 FROM)/DISTINCT/COUNT(DISTINCT)等常见模式。
 # 改用 \b.*?\b 词边界匹配，并启用 DOTALL 以覆盖跨行 SQL 字面量。
 # 注意：正则定义必须在单行内（_SQL_PATTERN = re.compile(...)），否则
-# 续行中的 SQL 关键词会被 gate 自身检测到。_SQL_CONSTANT_DEF_RE 豁免
-# _SQL_*/SQL_* 前缀变量的定义行。
+# 续行中的 SQL 关键词会被 gate 自身检测到。
+# SQL_* 常量定义行豁免由 _diff_helpers._extract_sql_constant_lines 用 ast
+# 精确识别（R96 治本），替代旧 _SQL_CONSTANT_DEF_RE 正则近似。
 # fmt: off
 _SQL_PATTERN = re.compile(r"""['"`].*?(?:SELECT\b.*?\bFROM\b|INSERT\s+INTO\b|UPDATE\b.*?\bSET\b|DELETE\s+FROM\b)""", re.IGNORECASE | re.DOTALL)
 # fmt: on
-
-# SQL 常量定义行豁免：SQL_FOO = "..." 或 _SQL_PATTERN = re.compile(...) — 这是 SQL 集中化的正确做法
-# 门禁建议"将 SQL 提取到模块级常量"，因此 SQL_*/_SQL_* 常量定义行本身不应被阻断
-# R94 扩展：_? 匹配可选前导下划线，覆盖 _SQL_PATTERN 等 gate 内部变量
-_SQL_CONSTANT_DEF_RE = re.compile(r"^\s*_?SQL_\w+\s*=")
 
 
 def make_bare_sql_gate() -> GateSpec:
@@ -96,10 +93,11 @@ def make_bare_sql_gate() -> GateSpec:
         for py_file in py_files:
             file_content = _read_staged_file(gateway, py_file)
             docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
+            sql_const_lines = _extract_sql_constant_lines(file_content) if file_content else set()
             for line_no, content in _get_added_lines(gateway, py_file, "NO-BARE-SQL"):
                 if line_no in docstring_lines or _is_exempt_line(content):
                     continue
-                if _SQL_CONSTANT_DEF_RE.match(content):
+                if line_no in sql_const_lines:
                     continue
                 if _SQL_PATTERN.search(content):
                     violations.append(f"  {py_file}:{line_no}: {content.strip()}")
