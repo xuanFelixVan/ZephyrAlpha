@@ -2,33 +2,36 @@
 # [MODULE] scripts.governance.d5_architecture.generators.align_panoramas
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.depgraph_schema; zephyr.governance.persistence.dataflowgraph_schema; zephyr.governance.persistence.decisiongraph_schema; _common (DB_DISPLAY_NAME)
-# [CONSUMERS] CI自动触发;人工审查三图对齐报告
+# [CONSUMERS] CI自动触发;人工审查四图对齐报告
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 只读PG（零写入）;输出幂等(相同输入→相同输出);输出到generated/panorama_alignment_report.md
+# [INVARIANTS] 只读PG（零写入）;只读blueprint.md文件（零写入）;输出幂等(相同输入→相同输出);输出到generated/panorama_alignment_report.md
 # [MODIFY-GUARD] 修改需通过ARCH-053任务或后续维护任务
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] depgraph不存在→exit 1;三图任一为空→exit 2
+# [ERROR_CONTRACT] depgraph不存在→exit 1;三图任一为空→exit 2(blueprint图不参与此检查)
 # [TESTS] tests/test_align_panoramas.py
 # [TTL] permanent
-# [ARCH-REF] #ARCH-053
-# 真源说明：本检测器从 depgraph / dataflowgraph / decisiongraph (PostgreSQL) 读取数据，
-# 生成三图对齐报告（孤儿/状态漂移/域不一致/设计态孤立）。
-# 详见 AGENTS.md §真源分类（11.0.2）+ ARCH-053 裁定。
-"""G-panorama-align: 三图对齐检测器（ARCH-053）
+# [ARCH-REF] #ARCH-053 #ARCH-056
+# 真源说明：本检测器从 depgraph / dataflowgraph / decisiongraph (PostgreSQL) 读取三图节点，
+# 并从 docs/03_modules/ 下的 blueprint.md / 模块文件 frontmatter 采集第四张图（blueprint），
+# 生成四图对齐报告（孤儿/状态漂移/域不一致/设计态孤立）。
+# 详见 AGENTS.md §真源分类（11.0.2）+ ARCH-053 / ARCH-056 裁定。
+"""G-panorama-align: 四图对齐检测器（ARCH-053 + ARCH-056 四图升级）
 
-依据：ARCH-053 裁定（2026-07-06）
+依据：ARCH-053 裁定（2026-07-06）；ARCH-056 四图升级（2026-07-09）
 
 功能：
-  - 从 depgraph.nodes / dataflow_datasets+jobs / decision_nodes+layers 读取三图节点
-  - 用 module_id 作为对齐 key（depgraph 用 blueprint_id 派生，dataflow/decision 用 module_id）
+  - 从 depgraph.nodes / dataflow_datasets+jobs / decision_nodes+layers 读取三图节点（DB 真源）
+  - 从 docs/03_modules/ 下的 blueprint.md / 模块文件 frontmatter 采集第四张图节点（blueprint）
+  - 用 module_id 作为对齐 key（depgraph 用 blueprint_id 派生，dataflow/decision 用 module_id，
+    blueprint 用 frontmatter.module_id）
   - 检测四类问题：
-      (1) 孤儿：仅在一图存在的 module_id（其它两图无对应记录）
+      (1) 孤儿：仅在一图存在的 module_id（其它三图无对应记录）
       (2) 状态漂移：同一 module_id 在不同图 design_maturity 不一致
       (3) 域不一致：同一 module_id 在不同图 domain_id 不一致
-      (4) 设计态孤立：design 状态仅出现在一图，其它两图无对应
+      (4) 设计态孤立：design 状态仅出现在一图，其它三图无对应
   - 输出 MD 报告到 docs/02_enterprise_architecture/generated/panorama_alignment_report.md
 
 定位：只读检测器（不做自动修复），由人工或后续工具根据报告处理。
@@ -42,6 +45,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -73,15 +77,18 @@ from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
 
 
 class PanoramaEmptyError(RuntimeError):
-    """三图任一为空时抛出（ERROR_CONTRACT exit 2）。"""
+    """三图（depgraph/dataflow/decision）任一为空时抛出（ERROR_CONTRACT exit 2）。
+
+    blueprint 图不参与此检查（blueprint 文件可能尚未生成）。
+    """
 
 
 @dataclass
 class PanoramaNode:
-    """三图任一节点视图（统一字段供对齐检测）。"""
+    """四图任一节点视图（统一字段供对齐检测）。"""
 
     module_id: str
-    graph: str  # "depgraph" | "dataflow" | "decision"
+    graph: str  # "depgraph" | "dataflow" | "decision" | "blueprint"
     entity_name: str
     design_maturity: str | None
     build_status: str | None
@@ -90,14 +97,15 @@ class PanoramaNode:
 
 @dataclass
 class PanoramaAlignmentReport:
-    """三图对齐检测报告。"""
+    """四图对齐检测报告。"""
 
     generated_at: str = ""
     db_name: str = DB_DISPLAY_NAME
-    # 三图统计
+    # 四图统计
     depgraph_count: int = 0
     dataflow_count: int = 0
     decision_count: int = 0
+    blueprint_count: int = 0
     # 四类问题
     orphans: list[dict] = field(default_factory=list)  # 仅在一图
     state_drifts: list[dict] = field(default_factory=list)  # design_maturity 不一致
@@ -109,12 +117,13 @@ class PanoramaAlignmentReport:
     def to_markdown(self) -> str:
         """渲染为 Markdown 报告。"""
         lines: list[str] = []
-        lines.append("# 三图对齐报告 (Panorama Alignment Report)")
+        lines.append("# 四图对齐报告 (Panorama Alignment Report)")
         lines.append("")
         lines.append(f"- 生成时间: {self.generated_at}")
         lines.append(f"- 数据源: {self.db_name}")
-        lines.append(f"- 三图节点数: depgraph={self.depgraph_count} / "
-                     f"dataflow={self.dataflow_count} / decision={self.decision_count}")
+        lines.append(f"- 四图节点数: depgraph={self.depgraph_count} / "
+                     f"dataflow={self.dataflow_count} / decision={self.decision_count} / "
+                     f"blueprint={self.blueprint_count}")
         lines.append(f"- 问题总数: {self.issues_total}")
         lines.append("  - 孤儿（仅一图）: {}".format(len(self.orphans)))
         lines.append("  - 状态漂移（design_maturity 不一致）: {}".format(len(self.state_drifts)))
@@ -126,7 +135,7 @@ class PanoramaAlignmentReport:
         lines.append("## 1. 孤儿节点（仅一图存在）")
         lines.append("")
         if not self.orphans:
-            lines.append("> 无孤儿节点，三图在 module_id 维度对齐。")
+            lines.append("> 无孤儿节点，四图在 module_id 维度对齐。")
         else:
             lines.append("| module_id | graph | entity_name |")
             lines.append("|---|---|---|")
@@ -142,10 +151,11 @@ class PanoramaAlignmentReport:
         if not self.state_drifts:
             lines.append("> 无状态漂移。")
         else:
-            lines.append("| module_id | depgraph | dataflow | decision |")
-            lines.append("|---|---|---|---|")
+            lines.append("| module_id | depgraph | dataflow | decision | blueprint |")
+            lines.append("|---|---|---|---|---|")
             for d in self.state_drifts:
-                lines.append(f"| {d['module_id']} | {d['depgraph']} | {d['dataflow']} | {d['decision']} |")
+                lines.append(f"| {d['module_id']} | {d['depgraph']} | {d['dataflow']} | "
+                             f"{d['decision']} | {d['blueprint']} |")
         lines.append("")
 
         # 域不一致
@@ -154,10 +164,11 @@ class PanoramaAlignmentReport:
         if not self.domain_mismatches:
             lines.append("> 无域不一致。")
         else:
-            lines.append("| module_id | depgraph | dataflow | decision |")
-            lines.append("|---|---|---|---|")
+            lines.append("| module_id | depgraph | dataflow | decision | blueprint |")
+            lines.append("|---|---|---|---|---|")
             for d in self.domain_mismatches:
-                lines.append(f"| {d['module_id']} | {d['depgraph']} | {d['dataflow']} | {d['decision']} |")
+                lines.append(f"| {d['module_id']} | {d['depgraph']} | {d['dataflow']} | "
+                             f"{d['decision']} | {d['blueprint']} |")
         lines.append("")
 
         # 设计态孤立
@@ -177,10 +188,10 @@ class PanoramaAlignmentReport:
         # 处置建议
         lines.append("## 5. 处置建议")
         lines.append("")
-        lines.append("- 孤儿节点：决定是否需在另两图登记对应 module_id，或在一图删除")
+        lines.append("- 孤儿节点：决定是否需在另三图登记对应 module_id，或在一图删除")
         lines.append("- 状态漂移：以最成熟状态为准，统一更新（建议 production > prototype > design）")
         lines.append("- 域不一致：核对真源并统一 domain_id")
-        lines.append("- 设计态孤立：评估设计态是否需要同步到另两图")
+        lines.append("- 设计态孤立：评估设计态是否需要同步到另三图")
         lines.append("")
 
         return "\n".join(lines)
@@ -192,14 +203,22 @@ class PanoramaAlignmentReport:
 
 
 def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
-    """从 depgraph.nodes 读取（blueprint_id 作为 module_id 对齐 key）。"""
+    """从 depgraph.nodes 读取（blueprint_id 作为 module_id 对齐 key）。
+
+    去重：depgraph.nodes 中同一 blueprint_id 可有多行（不同文件路径实例），
+    每行可能有不同的 domain_id/design_maturity。为避免对齐检测因多行取值不一致
+    而产生误报，每个 blueprint_id 只保留第一行（path 非空优先，与
+    blueprint_frontmatter_reconciler._query_module_bp 的取值策略一致）。
+    """
     nodes: list[PanoramaNode] = []
+    seen: set[str] = set()
     with conn.cursor() as cur:
         cur.execute(
             """
             SELECT blueprint_id, path, design_maturity, build_status, domain_id
             FROM nodes
             WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''
+            ORDER BY blueprint_id, (path IS NULL), path
             """
         )
         for row in cur.fetchall():
@@ -218,6 +237,9 @@ def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
                 dom = row[4] if len(row) > 4 else None
             if not bp:
                 continue
+            if bp in seen:
+                continue  # 去重：同一 blueprint_id 只保留第一行
+            seen.add(bp)
             nodes.append(PanoramaNode(
                 module_id=bp,
                 graph="depgraph",
@@ -372,6 +394,83 @@ def _fetch_decision_nodes(conn) -> list[PanoramaNode]:
     return nodes
 
 
+# blueprint frontmatter 解析（与 blueprint_frontmatter_reconciler.py 一致风格）
+_BP_FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
+
+# blueprint 文件扫描根目录
+_BP_SCAN_ROOT = _REPO_ROOT / "docs" / "03_modules"
+
+# 跳过的文件名（非模块蓝图文件）
+_BP_SKIP_NAMES = {"index.md"}
+
+
+def _parse_simple_frontmatter(content: str) -> dict[str, str]:
+    """解析 YAML frontmatter 为扁平 dict（简单实现，跳过嵌套字段）。
+
+    跳过以 [ 或 { 开头的值（列表/字典），只提取标量字段。
+    """
+    match = _BP_FRONTMATTER_RE.match(content)
+    if not match:
+        return {}
+    fm: dict[str, str] = {}
+    for line in match.group(1).split("\n"):
+        if ":" not in line:
+            continue
+        key, _, val = line.partition(":")
+        v = val.strip().strip('"').strip("'")
+        if v and not v.startswith("[") and not v.startswith("{"):
+            fm[key.strip()] = v
+    return fm
+
+
+def _fetch_blueprint_nodes(scan_root: Path | None = None) -> list[PanoramaNode]:
+    """从 docs/03_modules/ 下的蓝图文件 frontmatter 采集节点（ARCH-056 第四张图）。
+
+    扫描策略：递归遍历 scan_root，对每个文件尝试解析 YAML frontmatter，
+    提取 module_id 字段（缺失则跳过）。
+
+    兼容两种布局：
+      1. docs/03_modules/<MODULE_ID>.md（由 blueprint_frontmatter_reconciler 自动创建）
+      2. docs/03_modules/<path>/blueprint.md（人工维护的蓝图）
+
+    字段映射：
+      module_id        ← frontmatter.module_id
+      responsibility_domain → domain_id
+      design_maturity  ← frontmatter.design_maturity
+      build_status     ← frontmatter.build_status
+      entity_name      ← 文件相对路径
+    """
+    root = scan_root if scan_root is not None else _BP_SCAN_ROOT
+    nodes: list[PanoramaNode] = []
+    if not root.exists():
+        return nodes
+
+    for fpath in root.rglob("*"):
+        if not fpath.is_file() or fpath.name in _BP_SKIP_NAMES:
+            continue
+        try:
+            content = fpath.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        fm = _parse_simple_frontmatter(content)
+        mid = fm.get("module_id")
+        if not mid:
+            continue  # 无 module_id 不参与对齐
+        try:
+            rel = str(fpath.relative_to(root)).replace("\\", "/")
+        except ValueError:
+            rel = str(fpath)
+        nodes.append(PanoramaNode(
+            module_id=mid,
+            graph="blueprint",
+            entity_name=rel,
+            design_maturity=fm.get("design_maturity") or None,
+            build_status=fm.get("build_status") or None,
+            domain_id=fm.get("responsibility_domain") or None,
+        ))
+    return nodes
+
+
 # ---------------------------------------------------------------------------
 # 对齐检测
 # ---------------------------------------------------------------------------
@@ -427,6 +526,7 @@ def _detect_state_drifts(all_nodes: list[PanoramaNode]) -> list[dict]:
                 "depgraph": per_graph.get("depgraph", "-"),
                 "dataflow": per_graph.get("dataflow", "-"),
                 "decision": per_graph.get("decision", "-"),
+                "blueprint": per_graph.get("blueprint", "-"),
             })
     drifts.sort(key=lambda x: x["module_id"])
     return drifts
@@ -458,13 +558,14 @@ def _detect_domain_mismatches(all_nodes: list[PanoramaNode]) -> list[dict]:
                 "depgraph": per_graph.get("depgraph", "-"),
                 "dataflow": per_graph.get("dataflow", "-"),
                 "decision": per_graph.get("decision", "-"),
+                "blueprint": per_graph.get("blueprint", "-"),
             })
     mismatches.sort(key=lambda x: x["module_id"])
     return mismatches
 
 
 def _detect_design_only_in_one(all_nodes: list[PanoramaNode]) -> list[dict]:
-    """设计态孤立：design 状态仅出现在一图，其它两图无对应。"""
+    """设计态孤立：design 状态仅出现在一图，其它三图无对应。"""
     grouped = _group_by_module_id(all_nodes)
     design_only: list[dict] = []
     for mid, nodes in grouped.items():
@@ -497,7 +598,7 @@ def run_alignment(
     *,
     write_report: bool = True,
 ) -> PanoramaAlignmentReport:
-    """运行三图对齐检测，生成报告。
+    """运行四图对齐检测，生成报告。
 
     Args:
         output_path: 报告输出路径。None 时使用默认路径
@@ -514,7 +615,7 @@ def run_alignment(
             / "panorama_alignment_report.md"
         )
 
-    # 采集三图节点
+    # 采集三图节点（DB 真源）
     depgraph_conn = get_depgraph_pg_connection()
     try:
         depgraph_nodes = _fetch_depgraph_nodes(depgraph_conn)
@@ -533,9 +634,13 @@ def run_alignment(
     finally:
         decision_conn.close()
 
-    all_nodes = depgraph_nodes + dataflow_nodes + decision_nodes
+    # 采集第四张图（blueprint，文件系统真源，ARCH-056）
+    blueprint_nodes = _fetch_blueprint_nodes()
 
-    # ERROR_CONTRACT: 三图任一为空 → exit 2（检测无意义）
+    all_nodes = depgraph_nodes + dataflow_nodes + decision_nodes + blueprint_nodes
+
+    # ERROR_CONTRACT: 三图（depgraph/dataflow/decision）任一为空 → exit 2（检测无意义）
+    # blueprint 图不参与此检查（blueprint 文件可能尚未生成，属合法状态）
     empty_graphs = []
     if not depgraph_nodes:
         empty_graphs.append("depgraph")
@@ -545,7 +650,8 @@ def run_alignment(
         empty_graphs.append("decision")
     if empty_graphs:
         raise PanoramaEmptyError(
-            f"三图任一为空（exit 2）: {','.join(empty_graphs)} 无节点；检测无意义"
+            f"三图（depgraph/dataflow/decision）任一为空（exit 2）: "
+            f"{','.join(empty_graphs)} 无节点；检测无意义"
         )
 
     # 检测四类问题
@@ -559,6 +665,7 @@ def run_alignment(
         depgraph_count=len(depgraph_nodes),
         dataflow_count=len(dataflow_nodes),
         decision_count=len(decision_nodes),
+        blueprint_count=len(blueprint_nodes),
         orphans=orphans,
         state_drifts=state_drifts,
         domain_mismatches=domain_mismatches,
@@ -570,7 +677,7 @@ def run_alignment(
     if write_report:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(report.to_markdown(), encoding="utf-8")
-        print(f"OK: 三图对齐报告已写入 {output_path}")
+        print(f"OK: 四图对齐报告已写入 {output_path}")
         print(f"    问题总数: {report.issues_total} "
               f"(孤儿={len(orphans)}, 状态漂移={len(state_drifts)}, "
               f"域不一致={len(domain_mismatches)}, 设计态孤立={len(design_only_in_one)})")
@@ -580,7 +687,7 @@ def run_alignment(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="三图对齐检测器（ARCH-053）"
+        description="四图对齐检测器（ARCH-053 + ARCH-056）"
     )
     parser.add_argument(
         "--output",
@@ -593,7 +700,7 @@ def main() -> int:
     try:
         run_alignment(output_path=args.output)
     except PanoramaEmptyError as e:
-        # ERROR_CONTRACT: 三图任一为空 → exit 2
+        # ERROR_CONTRACT: 三图（depgraph/dataflow/decision）任一为空 → exit 2
         print(f"ERROR: {e}", file=sys.stderr)
         return 2
     except Exception as e:
