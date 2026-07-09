@@ -433,7 +433,7 @@ _BP_SKIP_NAMES = {"index.md"}
 
 # exempt_list 配置文件（历史归档豁免，Task 8 创建）
 _EXEMPT_LIST_PATH = (
-    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "configs"
+    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
     / "panorama_exempt_list.yaml"
 )
 

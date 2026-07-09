@@ -1,5 +1,5 @@
 ---
-module_id: C1-MARKET-CH
+module_id: MOD-C1-MARKETCH
 submodule_path: data/databases/c1_market_clickhouse
 title: "C1 market_clickhouse 行情仓库施工蓝图"
 doc_type: blueprint

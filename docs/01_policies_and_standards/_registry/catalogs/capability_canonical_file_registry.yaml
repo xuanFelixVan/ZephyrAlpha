@@ -3780,6 +3780,10 @@ creation_tokens:
     token: "auto-test-panorama-common-20260710"
     created_by: "session-sess-20780-20260710024721"
     capability: "panorama_alignment_detection"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/panorama_exempt_list.yaml"
+    token: "auto-panorama-exempt-list-20260710"
+    created_by: "session-sess-19716-20260710033125"
+    capability: "panorama_alignment_detection"
 
   # --- ARCH-055 commit_gates 模块清单漂移检测（2026-07-09）---
   - file: "scripts/governance/generators/check_gate_inventory_drift.py"
