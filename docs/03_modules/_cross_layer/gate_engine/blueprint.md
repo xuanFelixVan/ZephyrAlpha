@@ -203,6 +203,7 @@ ssot_claims:
 | `commit_gates/bare_sql_gate.py` | §0.1 | 裸SQL字面量阻断门禁（NO-BARE-SQL，§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE） | 已实现 | | 本模块 |
 | `commit_gates/god_class_gate.py` | §0.1 | God Class阻断门禁（NO-GOD-CLASS，§5.150防复发，AST检测新增类方法数>20） | 已实现 | | 本模块 |
 | `commit_gates/high_complexity_gate.py` | §0.1 | 高循环复杂度阻断门禁（NO-HIGH-COMPLEXITY，§5.158防复发，AST检测McCabe复杂度>15） | 已实现 | | 本模块 |
+| `commit_gates/tests_coverage_gate.py` | §0.1 | Gate测试覆盖率校验meta-gate（META-TESTS-COVERAGE，#ARCH-057，守卫者的守卫者） | 已实现 | | 本模块 |
 | `commit_gates/gate_repo.py` | §0.1 | gate仓库（已正确指向MOD-GATE_ENGINE） | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
