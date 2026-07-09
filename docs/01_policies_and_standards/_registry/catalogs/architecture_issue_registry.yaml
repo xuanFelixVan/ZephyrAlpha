@@ -1307,10 +1307,17 @@ entries:
         注册表，未注册 → 伪造检测 → reset --soft HEAD~1
     (e) fail-open 设计：注册表不存在/解析失败 → 放行（避免环境问题阻断所有 commit）
     (f) AGENTS.md §10.1 同步更新两层验证描述
+    P2 DONE 2026-07-09：session_id 未注册时环境变量检查（修复 allow_overlap 逃生通道误判）
+    (g) post_commit_guard.sh L64-84 新增 ZEPHYR_COMMIT_GATEWAY 环境变量检查层：
+        session_id 未注册时，检查 $ZEPHYR_COMMIT_GATEWAY=1（由 GitCommitGateway._run_git
+        设置，post-commit hook 继承），=1 → warn-only（不 reset），未设置 → reset
+    (h) 修复 bug：allow_overlap=True 逃生通道不注册 session，P1.5 的 session_id 验证
+        误判合法 commit 为伪造，执行 reset --soft HEAD~1 连带回滚主 commit + auto-sync commits
+    (i) 保留防伪造保护：环境变量不存在时仍 reset（裸 git commit 伪造 [GW: 标记仍被阻断）
     P1 TODO：验证 hook 在并发 AI 对话场景下的行为（自动 revert 是否影响其他 AI 的工作流）
   status: decided
   created: '2026-07-05'
-  last_updated: '2026-07-08'
+  last_updated: '2026-07-09'
 
 # --- #ARCH-051: dataflowgraph 数据流图架构建设（同库不同表 + Dataset/Job 双类型） ---
 - issue_id: '#ARCH-051'
