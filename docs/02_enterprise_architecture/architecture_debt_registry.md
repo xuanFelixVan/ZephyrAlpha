@@ -4093,4 +4093,6 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **专项工程计划**：(1) 扩展 `_run_git` 支持查询类命令；(2) 批量替换 13 处 subprocess.run；(3) 测试验证。
 - **DEFERRED 理由**：非阻断，各 gate 自行处理 cwd/timeout 工作正常；批量替换需先验证 `_run_git` 兼容性，属一致性优化非正确性修复。
 
+> **第95轮修复状态（2026-07-10）**：FIXED=6(LOW 5.176.4: arch_reference_gate/dangling_reference_gate/exempt_zone_frontmatter_gate/r5_digit_suffix_gate/module_id_consistency_gate 共6处 git 命令 subprocess.run 替换为 gateway._run_git, 对齐 _diff_helpers.py 模式. _get_head_content/_is_tracked_in_head 模块级函数改为接收 gateway 参数. 3个测试文件 mock 同步更新. 63测试全通过), DEFERRED-PERMANENT=7(directory_contract_gate/ttl_gate/file_copy_gate/vocab_hardcode_gate/rule_four_way_alignment_gate/id_uniqueness_gate 共7处 [sys.executable, script] Python脚本调用, 非git命令不适合_run_git替换), DEFERRED=1(orphan_module_gate:235 cwd=wt_root可能!=project_root需扩展_run_git支持cwd参数). commit=90c5b09772 merged.
+
 > **AI-11 审计小结**：4 项 DEFERRED 均为大规模重构/架构级变更，符合"专项工程"定义。审计同步修复的 10 项 P0 + 多项 P1/P2/P3 已通过 commit 落地，剩余 4 项 DEFERRED 待后续专项工程处理。
