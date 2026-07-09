@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——get_session 异常降级为放行（registry 故障不应卡死 commit 工作流）
-# [TESTS] tests/governance/rule_enforcement/test_session_required_gate.py
+# [TESTS] tests/governance/commit_gates/test_session_required_gate.py
 # [A_module] module_id=MOD-GOV-session_required_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """session_required_gate.py — session 注册强制门禁（SESSION-REQUIRED，2026-07-01 治本 FP-ISO.4B 件1改）
