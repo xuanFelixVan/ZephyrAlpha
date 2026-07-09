@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 50 |
-| 模块总数 | 5004 |
+| 模块总数 | 5005 |
 | 生产态模块 | 1603 |
 | 设计态模块 | 54 |
-| 原型态模块 | 3347 |
+| 原型态模块 | 3348 |
 
 ## 域清单（按架构层分组）
 
@@ -72,7 +72,7 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [28_d_ex_sor.md](28_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 14 | 4 | 0 | 10 | 14/150 (OK) | [29_d_factor.md](29_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 25 | 4 | 0 | 21 | 25/150 (OK) | [30_d_fundamental_signal.md](30_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 860 | 488 | 28 | 344 | 860/150 (超容) | [31_d_governance.md](31_d_governance.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 861 | 488 | 28 | 345 | 861/150 (超容) | [31_d_governance.md](31_d_governance.md) |
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 2 | 0 | 2 | 0 | 2/150 (OK) | [32_d_gov_audit.md](32_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 2 | 2 | 0 | 0 | 2/150 (OK) | [33_d_gov_docs.md](33_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 1 | 0 | 1 | 0 | 1/150 (OK) | [34_d_gov_drift.md](34_d_gov_drift.md) |
