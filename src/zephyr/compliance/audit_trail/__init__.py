@@ -2,6 +2,7 @@
 # [TTL] permanent
 """Re-export wrapper: audit-trail has migrated to zephyr.governance.audit_trail"""
 
-from zephyr.governance.audit_trail import *  # noqa: F403
+# 5.93.6 修复：import * → 显式导入
+from zephyr.governance.audit_trail import bridges
 
 __all__ = ["bridges"]
