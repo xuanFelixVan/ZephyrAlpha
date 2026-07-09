@@ -469,3 +469,28 @@ class TestFetchBlueprintNodes:
         assert len(nodes) == 3
         mids = {n.module_id for n in nodes}
         assert mids == {"MOD-0", "MOD-1", "MOD-2"}
+
+
+# ---------------------------------------------------------------------------
+# exempt_list 豁免测试（历史归档豁免）
+# ---------------------------------------------------------------------------
+
+
+class TestExemptList:
+    def test_exempt_module_skipped(self):
+        """exempt_list 中的 module_id 不参与对齐检测"""
+        nodes = [
+            PanoramaNode("MOD-EXEMPT", "depgraph", "src/a.py", "production", "stable", "D_GOV"),
+            PanoramaNode("MOD-EXEMPT", "dataflow", "ds_a", "production", "stable", "D_GOV"),
+            # blueprint 图缺失 → 正常情况会报孤儿
+        ]
+        orphans = _detect_orphans(nodes, exempt_list={"MOD-EXEMPT"})
+        assert len(orphans) == 0
+
+    def test_non_exempt_module_reported(self):
+        """不在 exempt_list 的模块正常检测"""
+        nodes = [
+            PanoramaNode("MOD-NORMAL", "depgraph", "src/a.py", "production", "stable", "D_GOV"),
+        ]
+        orphans = _detect_orphans(nodes, exempt_list=set())
+        assert len(orphans) == 1
