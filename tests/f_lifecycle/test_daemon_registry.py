@@ -19,23 +19,14 @@ from zephyr.shared.lifecycle.daemon_registry import (
     DaemonEntry,
     DaemonRegistry,
     DaemonState,
-    PressureLevel,
-    ResourceSnapshot,
 )
 
 
 @pytest.fixture(autouse=True)
 def _reset_registry():
     DaemonRegistry.reset()
-    DaemonRegistry._pressure_history.clear()
-    DaemonRegistry._on_pressure_callbacks.clear()
-    DaemonRegistry._last_snapshot = None
-    DaemonRegistry._monitor_running = False
     yield
     DaemonRegistry.reset()
-    DaemonRegistry._pressure_history.clear()
-    DaemonRegistry._on_pressure_callbacks.clear()
-    DaemonRegistry._monitor_running = False
 
 
 class TestDaemonEntry:
@@ -64,40 +55,6 @@ class TestDaemonEntry:
         assert entry.last_error == "boom"
 
 
-class TestResourceSnapshot:
-    def test_defaults(self):
-        snap = ResourceSnapshot()
-        assert snap.pressure == PressureLevel.NORMAL
-        assert snap.cpu_percent == 0.0
-        assert snap.memory_percent == 0.0
-        assert snap.process_count == 0
-
-    def test_to_dict(self):
-        snap = ResourceSnapshot(
-            timestamp=1000.0,
-            cpu_percent=50.123,
-            memory_percent=75.456,
-            memory_used_gb=8.0,
-            memory_total_gb=16.0,
-            process_count=42,
-            thread_count=100,
-            pressure=PressureLevel.WARNING,
-        )
-        d = snap.to_dict()
-        assert d["cpu_percent"] == 50.1
-        assert d["memory_percent"] == 75.5
-        assert d["memory_used_gb"] == 8.0
-        assert d["memory_total_gb"] == 16.0
-        assert d["process_count"] == 42
-        assert d["pressure"] == "WARNING"
-
-    def test_to_dict_rounding(self):
-        snap = ResourceSnapshot(cpu_percent=33.999, memory_percent=66.001)
-        d = snap.to_dict()
-        assert d["cpu_percent"] == 34.0
-        assert d["memory_percent"] == 66.0
-
-
 class TestDaemonState:
     def test_values(self):
         assert DaemonState.STOPPED == "STOPPED"
@@ -105,14 +62,6 @@ class TestDaemonState:
         assert DaemonState.RUNNING == "RUNNING"
         assert DaemonState.STOPPING == "STOPPING"
         assert DaemonState.FAILED == "FAILED"
-
-
-class TestPressureLevel:
-    def test_values(self):
-        assert PressureLevel.NORMAL == "NORMAL"
-        assert PressureLevel.WARNING == "WARNING"
-        assert PressureLevel.CRITICAL == "CRITICAL"
-        assert PressureLevel.EMERGENCY == "EMERGENCY"
 
 
 class TestDaemonRegistryRegister:
@@ -258,88 +207,6 @@ class TestDaemonRegistryIsRunning:
         DaemonRegistry.register("d1", lambda: None, lambda: None)
         DaemonRegistry.start("d1")
         assert DaemonRegistry.is_running("d1") is True
-
-
-class TestDaemonRegistryClassifyPressure:
-    def test_normal(self):
-        snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=50.0, process_count=10)
-        assert DaemonRegistry._classify_pressure(snap) == PressureLevel.NORMAL
-
-    def test_warning_memory(self):
-        snap = ResourceSnapshot(memory_percent=76.0, cpu_percent=10.0, process_count=10)
-        assert DaemonRegistry._classify_pressure(snap) == PressureLevel.WARNING
-
-    def test_warning_cpu(self):
-        snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=81.0, process_count=10)
-        assert DaemonRegistry._classify_pressure(snap) == PressureLevel.WARNING
-
-    def test_warning_process(self):
-        snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=10.0, process_count=85)
-        assert DaemonRegistry._classify_pressure(snap) == PressureLevel.WARNING
-
-    def test_critical_memory(self):
-        snap = ResourceSnapshot(memory_percent=86.0, cpu_percent=10.0, process_count=10)
-        assert DaemonRegistry._classify_pressure(snap) == PressureLevel.CRITICAL
-
-    def test_critical_cpu(self):
-        snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=96.0, process_count=10)
-        assert DaemonRegistry._classify_pressure(snap) == PressureLevel.CRITICAL
-
-    def test_critical_process(self):
-        snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=10.0, process_count=155)
-        assert DaemonRegistry._classify_pressure(snap) == PressureLevel.CRITICAL
-
-    def test_emergency_memory(self):
-        snap = ResourceSnapshot(memory_percent=96.0, cpu_percent=10.0, process_count=10)
-        assert DaemonRegistry._classify_pressure(snap) == PressureLevel.EMERGENCY
-
-    def test_emergency_process(self):
-        snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=10.0, process_count=260)
-        assert DaemonRegistry._classify_pressure(snap) == PressureLevel.EMERGENCY
-
-
-class TestDaemonRegistrySnapshotResources:
-    def test_returns_snapshot(self):
-        snap = DaemonRegistry.snapshot_resources()
-        assert isinstance(snap, ResourceSnapshot)
-        assert snap.timestamp > 0
-
-    def test_last_snapshot_stored(self):
-        snap = DaemonRegistry.snapshot_resources()
-        assert DaemonRegistry.get_last_snapshot() is snap
-
-
-class TestDaemonRegistryPressureCallbacks:
-    def test_on_pressure_callback_registered(self):
-        calls = []
-        DaemonRegistry.on_pressure(lambda lvl, snap: calls.append(lvl))
-        assert len(DaemonRegistry._on_pressure_callbacks) == 1
-
-
-class TestDaemonRegistryMonitor:
-    def test_start_stop_monitor(self):
-        DaemonRegistry.start_monitor(interval=1.0)
-        assert DaemonRegistry._monitor_running is True
-        DaemonRegistry.stop_monitor()
-        assert DaemonRegistry._monitor_running is False
-
-    def test_start_monitor_idempotent(self):
-        DaemonRegistry.start_monitor(interval=1.0)
-        DaemonRegistry.start_monitor(interval=1.0)
-        assert DaemonRegistry._monitor_running is True
-        DaemonRegistry.stop_monitor()
-
-
-class TestDaemonRegistryGetPressureHistory:
-    def test_empty_history(self):
-        DaemonRegistry._pressure_history.clear()
-        assert DaemonRegistry.get_pressure_history() == []
-
-    def test_history_after_snapshot(self):
-        DaemonRegistry._pressure_history.clear()
-        DaemonRegistry.snapshot_resources()
-        history = DaemonRegistry.get_pressure_history()
-        assert len(history) == 0
 
 
 class TestDaemonRegistryReset:

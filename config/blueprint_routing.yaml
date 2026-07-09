@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # ZephyrAlpha 2.0 — 蓝图触发路由表（Blueprint Routing Table）
 #
@@ -760,7 +761,7 @@ routes:
     blueprint_id: "mod_inf_032"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/infrastructure/shared_services/lifecycle/resource_optimization_engine.py"
+      - "src/zephyr/trading/resource_optimization.py"
       - "src/zephyr/shared/io/io_cache.py"
       - "src/zephyr/shared/io/streaming_reader.py"
       - "src/zephyr/shared/infra/process_pool.py"

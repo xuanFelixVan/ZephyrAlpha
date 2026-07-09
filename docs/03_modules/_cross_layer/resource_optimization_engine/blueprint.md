@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: "src/zephyr/shared/lifecycle/"
+actual_disk_path: "src/zephyr/trading/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 submodule_path: src/zephyr/runtime/
 summary: "MAPE-K 驱动的资源优化引擎：进程池化、I/O缓存、智能调度、GPU监控、IDE幽灵窗口检测、自愈闭环"
@@ -41,7 +41,7 @@ references:
 # Resource Optimization Engine 蓝图 — MAPE-K 驱动的进程池化/I/O零拷贝/缓存复用/自愈闭环
 
 > module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE | version: 5.3.0 | status: Active | layer: cross_layer
-> actual_disk_path: src/zephyr/lifecycle_manager/ | generation: 2 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/trading/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
 
@@ -1487,11 +1487,11 @@ AI 通过 `config/blueprint_routing.yaml` R030 规则自动定位：
   blueprint_id: "MOD-RESOURCE_OPTIMIZATION_ENGINE"
   blueprint_level: module
   path_patterns:
-    - "src/zephyr/infrastructure/shared_services/lifecycle/resource_optimization_engine.py"
+    - "src/zephyr/trading/resource_optimization.py"
     - "src/zephyr/shared/io/io_cache.py"
     - "src/zephyr/shared/io/streaming_reader.py"
     - "src/zephyr/shared/infra/process_pool.py"
-    - "src/zephyr/infrastructure/shared_services/lifecycle/lazy_loader.py"
+    - "src/zephyr/shared/lifecycle/lazy_loader.py"
     - "config/resource_optimization.yaml"
   task_keywords:
     - "资源优化"
