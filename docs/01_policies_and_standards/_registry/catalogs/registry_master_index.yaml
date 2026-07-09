@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-09T09:10:18Z
+# 自动生成于 2026-07-09T09:19:05Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-09T09:10:18Z'
+generated_at: '2026-07-09T09:19:05Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 26
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 58
+  entry_count: 59
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
