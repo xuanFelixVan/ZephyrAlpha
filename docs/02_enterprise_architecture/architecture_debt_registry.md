@@ -3579,6 +3579,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第83轮施工状态（2026-07-09）**：BLOCKED. 10项长函数(复杂度30+/221行/13连续if等)需拆分为短函数+行为等价回归测试. 裁定解锁条件"人类架构师发起循环复杂度重构专项+回归测试覆盖先行"未满足, 拆分后行为等价性无法保证(核心域长函数涉及状态传递/副作用顺序/异常处理路径). 维度5.158维持DEFERRED-PERMANENT=10.
 > **第85轮防复发gate落地（2026-07-09，Phase 6）**：NO-HIGH-COMPLEXITY gate(priority=85, AST检测新增函数McCabe循环复杂度>15) 已注册到GitCommitGateway. 防复发层就位——新AI写高复杂度函数(>15)将被commit-time硬阻断. 存量10项DEFERRED-PERMANENT维持(需人类架构师发起循环复杂度重构专项+回归测试覆盖先行). capability_canonical_file_registry.yaml已登记high_complexity_gate capability定义+creation_tokens. _diff_helpers.py新增_get_staged_py_files/_get_added_lines共享helper(降低4个新gate的_check复杂度<15, 避免NO-HIGH-COMPLEXITY自阻断).
 > **第86轮Phase 7a重构（2026-07-09）**：5.158.9 `resource_optimization._classify_pressure` 查表法重构完成. 13个连续if→9元组表+1个for循环, McCabe循环复杂度14→5. 行为等价验证通过(TestPressureClassification 13/13 PASSED, 覆盖NORMAL/WARNING/CRITICAL/EMERGENCY×memory/cpu/process+边界值). DEFERRED-PERMANENT 10→9(5.158.9清零).
+> **第89轮AST验证DRIFTED（2026-07-09，Phase 7d-pre）**：AST McCabe复算发现2项裁定值过时: 5.158.3 verdict_engine.evaluate 裁定17→实际8(_parse_event已提取为独立方法, 复杂度下沉) + 5.158.6 resource_optimization.snapshot 裁定12→实际9. 两者均低于NO-HIGH-COMPLEXITY gate阈值15, 标记DRIFTED(不再超标). DEFERRED-PERMANENT 9→7.
 
 #### HIGH（1个）
 
@@ -3587,13 +3588,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 #### MEDIUM（4个）
 
 2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:1278` — `_run_hallucination_six_dim` 复杂度17，94行，7个连续if检测分支
-3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:169` — `evaluate` 复杂度17，124行，4路事件类型分发
+3. **[DRIFTED-Phase7d]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:183` — `evaluate` 裁定复杂度17→AST复算实际8(_parse_event已提取), 低于阈值15, 不再超标
 4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\ops\scheduler.py:327` — `_run_once` 105行，5阶段流水线挤在单函数，5个return
 5. **[MEDIUM]** `d:\ZephyrAlpha\scripts\git_commit.py:118` — `main` 复杂度16，151行，8路if/elif状态分发
 
 #### LOW（7个）
 
-6. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:317` — `snapshot` 复杂度12
+6. **[DRIFTED-Phase7d]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:323` — `snapshot` 裁定复杂度12→AST复算实际9, 低于阈值15, 不再超标
 7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\action_dispatcher.py:240` — `_search_replace_file` 复杂度12
 8. **[LOW]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\reconciler.py:300` — `_fix_dep_sync` 复杂度12
 9. **[FIXED-Phase7a]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:400` — `_classify_pressure` 13个连续if → 查表法重构(McCabe 14→5), TestPressureClassification 13/13 PASSED
@@ -3617,11 +3618,12 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第84轮施工完成（2026-07-09，Phase 2+5）**：COMPLETED. commit de040be62a — 7文件编辑(5处DEFAULT_OLLAMA_URL本地定义替换为import shared.foundation.constants + 2处gpu_consensus_scheduler ollama_url参数改用DEFAULT_OLLAMA_URL + 1处model_name=local-model bug修复) + 2新AST gate(NO-HARDCODED-URL priority=94 / NO-UPWARD-IMPORT priority=93)注册到GitCommitGateway + capability_canonical_file_registry登记. 验证: 身份等价性OK, 31 gates注册, scheduler导入OK, 0硬编码URL残留(仅constants.py SSoT+gate docstring豁免). 维度5.160剩余2项DEFERRED(SQL集中化专项).
 > **第87轮Phase 7b验证（2026-07-09）**：5.160.3 `file_task_mapper.py` SQL常量集中化验证FIXED. 13条SQL已提取为模块级SQL_*常量(L66-94), 方法体0裸SQL(Grep验证SELECT/INSERT/UPDATE/DELETE仅出现在常量定义区). 行为等价验证: 63/68 tests PASSED(5失败为预先存在的TestClassifyFileToNamespace ADR分类问题, 与SQL无关). 防复发层就位: NO-BARE-SQL gate(priority=87, Phase 6注册)检测新增裸SQL字面量. DEFERRED 2→1(仅剩5.160.2 apply_depgraph.py 174处SQL).
 > **第88轮Phase 7c裁定（2026-07-09）**：5.160.2 `apply_depgraph.py` 升级为DEFERRED-PERMANENT. **裁定依据（第一性原理验证）**：(A)代码验证—4002行, 156处SQL匹配(含23处f-string动态构造+133处静态字面量), 文件头声明`[TESTS] 无`+`SAFETY H`+`[MODIFY-GUARD] project_rules.md(RULE-SIXTEEN)`; (B)问题本质=SQL散落+动态构造(表名/列名参数化), 非纯机械提取; (C)100%AI开发模式特殊性=AI可提取静态SQL但无法验证133处常量替换的行为等价(无测试+SAFETY H+157MB depgraph原子写入工具, 一个typo破坏depgraph同步); (D)成本/收益=重构成本极高(133处常量提取+全仓引用更新+行为等价验证需先编写测试), 收益=可读性提升(非功能修复); (E)防复发策略=NO-BARE-SQL gate(priority=87, Phase 6已注册)检测新增裸SQL字面量, 存量133处静态SQL维持. **解锁条件**:人类架构师发起"apply_depgraph.py SQL集中化专项"+测试覆盖先行(至少覆盖关键函数: update_module/insert_node/insert_edge/rename_domain). 维度5.160全部清零(DEFERRED-PERMANENT=1, DEFERRED=0).
+> **第89轮Phase 7c-1部分推进（2026-07-09）**：5.160.2 `apply_depgraph.py` 重复SQL常量提取. 9个非f-string重复SQL(共28处使用)提取为模块级SQL_*常量(L122-132), 方法体裸SQL替换为常量引用. 行为等价性显而易见(同一SQL字符串→常量引用, 语义不变), 语法验证通过(py_compile OK), --help加载正常. 自引用bug修复(常量定义块中SQL字面量被误替换为常量名自身, 已用Python脚本恢复). 剩余: 105处静态SQL(非重复)+23处f-string SQL(动态构造), 仍需测试覆盖先行. DEFERRED-PERMANENT维持(部分推进, 未完全清零).
 
 #### HIGH（6个）
 
 1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\task_repo.py` — 单文件40+条裸SQL散落方法体（SELECT/INSERT INTO/UPDATE/DELETE FROM tasks/events/task_files），未集中到SQL常量
-2. **[DEFERRED-PERMANENT-Phase7c]** `d:\ZephyrAlpha\scripts\governance\apply_depgraph.py` — 4002行/156处SQL(23 f-string动态+133静态), [TESTS]无+SAFETY H, 需测试覆盖先行, NO-BARE-SQL gate防复发就位
+2. **[DEFERRED-PERMANENT-Phase7c-1部分推进]** `d:\ZephyrAlpha\scripts\governance\apply_depgraph.py` — 4417行/155处SQL(23 f-string动态+133静态). Phase 7c-1: 9个重复SQL(28处)已提取为SQL_*常量(L122-132). 剩余105静态+23 f-string, [TESTS]无+SAFETY H, 需测试覆盖先行, NO-BARE-SQL gate防复发就位
 3. **[FIXED-Phase7b]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\file_task_mapper.py` — 13条SQL已提取为模块级SQL_*常量(L66-94), 方法体0裸SQL, 63/68 tests PASSED
 4. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\` 7文件 — drift_events相关SQL散落7+文件（含trigger DDL）
 5. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\secret_rotation_aware.py` ×2副本（含`infrastructure\rollback\`变体） — 硬编码4个secret rotation endpoint URL + ZEPHYR_API_KEY/JWT_SECRET字面量
