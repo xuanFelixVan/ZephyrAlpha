@@ -67,14 +67,20 @@ __all__ = ["make_bare_sql_gate"]
 
 # 匹配字符串字面量中的 SQL DML 语句
 # 覆盖 SELECT...FROM / INSERT INTO / UPDATE...SET / DELETE FROM
-_SQL_PATTERN = re.compile(
-    r"""['"`].*?(?:SELECT\s+\S+\s+FROM|INSERT\s+INTO\s+|UPDATE\s+\S+\s+SET|DELETE\s+FROM\s+)""",
-    re.IGNORECASE,
-)
+# 修正（R94）：旧正则 SELECT\s+\S+\s+FROM 中 \S+ 只匹配单个非空白 token，
+# 无法覆盖多列 SELECT(col1,col2 FROM)/DISTINCT/COUNT(DISTINCT)等常见模式。
+# 改用 \b.*?\b 词边界匹配，并启用 DOTALL 以覆盖跨行 SQL 字面量。
+# 注意：正则定义必须在单行内（_SQL_PATTERN = re.compile(...)），否则
+# 续行中的 SQL 关键词会被 gate 自身检测到。_SQL_CONSTANT_DEF_RE 豁免
+# _SQL_*/SQL_* 前缀变量的定义行。
+# fmt: off
+_SQL_PATTERN = re.compile(r"""['"`].*?(?:SELECT\b.*?\bFROM\b|INSERT\s+INTO\b|UPDATE\b.*?\bSET\b|DELETE\s+FROM\b)""", re.IGNORECASE | re.DOTALL)
+# fmt: on
 
-# SQL 常量定义行豁免：SQL_FOO = "..." — 这是 SQL 集中化的正确做法
-# 门禁建议"将 SQL 提取到模块级常量"，因此 SQL_* 常量定义行本身不应被阻断
-_SQL_CONSTANT_DEF_RE = re.compile(r"^\s*SQL_\w+\s*=")
+# SQL 常量定义行豁免：SQL_FOO = "..." 或 _SQL_PATTERN = re.compile(...) — 这是 SQL 集中化的正确做法
+# 门禁建议"将 SQL 提取到模块级常量"，因此 SQL_*/_SQL_* 常量定义行本身不应被阻断
+# R94 扩展：_? 匹配可选前导下划线，覆盖 _SQL_PATTERN 等 gate 内部变量
+_SQL_CONSTANT_DEF_RE = re.compile(r"^\s*_?SQL_\w+\s*=")
 
 
 def make_bare_sql_gate() -> GateSpec:

@@ -132,11 +132,93 @@ class TestSqlPattern:
         assert not _SQL_PATTERN.search("x = 1")
 
     def test_safe_select_without_from(self):
-        # SELECT 但无 FROM → 不匹配 SELECT\s+\S+\s+FROM
+        # SELECT 但无 FROM → 不匹配 SELECT\b.*?\bFROM\b
         assert not _SQL_PATTERN.search('"SELECT col"')
 
     def test_safe_from_without_select(self):
         assert not _SQL_PATTERN.search('"FROM tbl"')
+
+
+# ---------------------------------------------------------------------------
+# TestSqlPatternExtended — R94 正则修正后新增覆盖（多列/DISTINCT/跨行等）
+# ---------------------------------------------------------------------------
+class TestSqlPatternExtended:
+    """覆盖旧正则 SELECT\s+\S+\s+FROM 漏检的 SQL 模式。
+
+    旧正则中 \\S+ 只匹配单个非空白 token，无法覆盖：
+    - 多列 SELECT (col1, col2 FROM)
+    - SELECT DISTINCT ... FROM
+    - SELECT COUNT(DISTINCT ...) FROM
+    - 多表 UPDATE (UPDATE tbl1, tbl2 SET)
+    - 跨行 SQL 字面量（DOTALL）
+    """
+
+    def test_multi_column_select(self):
+        assert _SQL_PATTERN.search('"SELECT col1, col2 FROM tbl"')
+
+    def test_multi_column_select_with_table_prefix(self):
+        assert _SQL_PATTERN.search('"SELECT t.col1, t.col2 FROM tbl t"')
+
+    def test_select_distinct(self):
+        assert _SQL_PATTERN.search('"SELECT DISTINCT col FROM tbl"')
+
+    def test_select_count_distinct(self):
+        assert _SQL_PATTERN.search('"SELECT COUNT(DISTINCT scan_run_id) FROM findings"')
+
+    def test_select_with_join(self):
+        assert _SQL_PATTERN.search(
+            '"SELECT a.col FROM tbl_a a JOIN tbl_b b ON a.id = b.id"'
+        )
+
+    def test_select_with_where(self):
+        assert _SQL_PATTERN.search(
+            '"SELECT col FROM tbl WHERE id = ? AND status = ?"'
+        )
+
+    def test_multi_table_update(self):
+        assert _SQL_PATTERN.search('"UPDATE tasks SET status = ? WHERE id = ?"')
+
+    def test_update_with_table_prefix(self):
+        assert _SQL_PATTERN.search('"UPDATE schema.tasks SET status = ?"')
+
+    def test_insert_into_with_columns(self):
+        assert _SQL_PATTERN.search(
+            '"INSERT INTO tbl (col1, col2) VALUES (?, ?)"'
+        )
+
+    def test_delete_from_with_where(self):
+        assert _SQL_PATTERN.search('"DELETE FROM tbl WHERE id = ?"')
+
+    def test_multiline_sql_dotall(self):
+        # DOTALL 模式：跨行 SQL 字面量（三引号字符串中的 SQL）
+        multiline = '"""SELECT col\nFROM tbl\nWHERE x=1"""'
+        assert _SQL_PATTERN.search(multiline)
+
+    def test_safe_no_sql_keyword_in_string(self):
+        assert not _SQL_PATTERN.search('"just a regular string"')
+
+    def test_safe_variable_name_with_select(self):
+        # "selection" 不应匹配 SELECT\b（词边界保护）
+        assert not _SQL_PATTERN.search('"the selection is from here"')
+
+    def test_safe_settings_not_update_set(self):
+        # "settings" 不应匹配 UPDATE...SET（词边界保护）
+        assert not _SQL_PATTERN.search('"update the settings"')
+
+    def test_safe_from_in_non_sql_context(self):
+        # 无 SELECT 前缀的 FROM 不匹配
+        assert not _SQL_PATTERN.search('"data from source"')
+
+    def test_case_insensitive_multi_column(self):
+        assert _SQL_PATTERN.search('"select col1, col2 from tbl"')
+
+    def test_select_star(self):
+        assert _SQL_PATTERN.search('"SELECT * FROM tbl"')
+
+    def test_select_with_subquery(self):
+        assert _SQL_PATTERN.search(
+            '"SELECT col FROM (SELECT * FROM sub) t"'
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -186,6 +268,26 @@ class TestGatewayIntegration:
         gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
         passed, msg = make_bare_sql_gate().check(gw, [])
         assert passed  # 注释行豁免
+        assert msg == ""
+
+    def test_sql_constant_def_exempt(self):
+        """SQL_FOO = 'SELECT col FROM tbl' 行应豁免（SQL 集中化正确做法）。"""
+        blue = "src/zephyr/trading/mod.py"
+        content = 'SQL_GET_USER = "SELECT col1, col2 FROM tbl WHERE id = ?"\n'
+        gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
+        passed, msg = make_bare_sql_gate().check(gw, [])
+        assert passed  # SQL_* 常量定义行豁免
+        assert msg == ""
+
+    def test_private_sql_pattern_def_exempt(self):
+        """_SQL_PATTERN = re.compile(...) 行应豁免（gate 自身定义）。"""
+        blue = "src/zephyr/trading/mod.py"
+        content = (
+            '_SQL_PATTERN = re.compile(r"""SELECT col FROM tbl""")\n'
+        )
+        gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
+        passed, msg = make_bare_sql_gate().check(gw, [])
+        assert passed  # _SQL_* 常量定义行豁免
         assert msg == ""
 
     def test_fail_open_on_git_diff_failure(self):
