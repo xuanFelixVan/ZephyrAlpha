@@ -1,7 +1,7 @@
 %% D_INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-07-10 02:50:17
+%% 生成时间: 2026-07-10 02:51:58
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 133, 依赖边数: 383
+%% 模块数: 133, 依赖边数: 390
 
 graph TD
 
@@ -194,7 +194,7 @@ graph TD
     %% ... 还有 36 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_INFRA_RUNTIME (124 条)
+    %% D_AUDITTEST -> D_INFRA_RUNTIME (125 条)
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_state_machine_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_auto_diagnostics_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py
@@ -235,7 +235,9 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_kill_switch_py
     %% D_BACKTEST -> D_INFRA_RUNTIME (1 条)
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_infrastructure_database_service_py
-    %% D_GOVERNANCE -> D_INFRA_RUNTIME (12 条)
+    %% D_FACTOR -> D_INFRA_RUNTIME (1 条)
+    D_FACTOR[D_FACTOR] -->|runtime| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
+    %% D_GOVERNANCE -> D_INFRA_RUNTIME (17 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_state_machine_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
@@ -248,6 +250,11 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_config___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_runtime___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr___init___py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_shared_lifecycle_state_machine_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
     %% D_GOV_SCRIPTS -> D_INFRA_RUNTIME (6 条)
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure_script_system_finding_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure_finding_task_bridge_py
@@ -347,5 +354,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 116 条
-    %% 跨域入边: 184 条
+    %% 跨域入边: 191 条
     %% 跨域出边: 83 条
