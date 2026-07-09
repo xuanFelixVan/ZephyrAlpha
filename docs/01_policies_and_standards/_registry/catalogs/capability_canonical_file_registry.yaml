@@ -650,6 +650,9 @@ capabilities:
       输出报告到 docs/02_enterprise_architecture/generated/panorama_alignment_report.md。
       定位：只读检测器（不自动修复），由人工或后续工具根据报告处理。
       canonical = scripts/governance/d5_architecture/generators/align_panoramas.py。
+      门禁集成（ARCH-056 升级）：panorama_alignment_gate 在 pre-commit 阶段调用
+      run_alignment()，domain_mismatches>0 时**阻断** commit（passed=False），
+      orphans/state_drifts 保持 warn-only。修复入口：sync_panorama_module.py --all。
       注意区别：本能力是"三图间 module_id 对齐检测"（depgraph/dataflow/decision
       三大全景图横向对齐），与 rule_four_way_alignment_gate（规则 YAML↔DB↔code↔path
       四方纵向对齐）职责不同，勿混淆。
@@ -4476,9 +4479,10 @@ creation_tokens:
     created_by: "session-sess-41912-20260706173706"
     capability: "panorama_alignment_detection"
 
-  # --- 四图模块对齐项目 Step 4+5（2026-07-09，ARCH-053 配套）---
-  # panorama_alignment_gate.py：align_panoramas 的 in-process gate 封装（warn-only）
-  # 触发条件：commit 含 depgraph/dataflow/decision 相关变更；检测孤儿/状态漂移
+  # --- 四图模块对齐项目 Step 4+5（2026-07-09，ARCH-053/056 配套）---
+  # panorama_alignment_gate.py：align_panoramas 的 in-process gate 封装
+  # 触发条件：commit 含 depgraph/dataflow/decision 相关变更
+  # 阻断策略（ARCH-056 升级）：domain_mismatches>0 阻断；orphans/state_drifts warn-only
   - file: "src/zephyr/governance/commit_gates/panorama_alignment_gate.py"
     token: "auto-panorama-alignment-gate-20260709"
     created_by: "session-sess-28836-20260709052022"
