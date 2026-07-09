@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 漂移检测（D_GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-10 02:51:42
+> 最后更新: 2026-07-10 02:55:37
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -68,11 +68,12 @@ graph TD
     end
     D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
-    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    D_FACTOR["(生产态 / production) D_FACTOR"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_FACTOR
     D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOV_ENFORCEMENT
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_AUDITTEST
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_SECURITY
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
@@ -82,13 +83,15 @@ graph TD
     D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_governance_drift_detector_blueprint_md
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|runtime / runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
-    D_AUDITTEST -.->|runtime / runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
+    D_INFRA_TELEMETRY["(生产态 / production) D_INFRA_TELEMETRY"]
+    D_INFRA_TELEMETRY -.->|runtime / runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_domain_governance_drift_detector_blueprint_md design
-    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_AUDITTEST,D_AUTONOMY_CORE external_design
+    class D_FACTOR,D_SECURITY,D_INFRA_TELEMETRY external_prod
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -108,11 +111,12 @@ graph TD
     end
     D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
-    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    D_FACTOR["(生产态 / production) D_FACTOR"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_FACTOR
     D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOV_ENFORCEMENT
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_AUDITTEST
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_SECURITY
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
@@ -122,13 +126,15 @@ graph TD
     D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_governance_drift_detector_blueprint_md
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|runtime / runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
-    D_AUDITTEST -.->|runtime / runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
+    D_INFRA_TELEMETRY["(生产态 / production) D_INFRA_TELEMETRY"]
+    D_INFRA_TELEMETRY -.->|runtime / runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_domain_governance_drift_detector_blueprint_md design
-    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_AUDITTEST,D_AUTONOMY_CORE external_design
+    class D_FACTOR,D_SECURITY,D_INFRA_TELEMETRY external_prod
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE external_design
 ```
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
@@ -143,43 +149,46 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | blueprint.md | → | D_AUDITTEST 审计测试套件: test_a2a_check.py | runtime / runtime |
+| 1 | blueprint.md | → | D_FACTOR 因子: bus_factor_defense.py | runtime / runtime |
 | 2 | blueprint.md | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
 | 3 | blueprint.md | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
 | 4 | blueprint.md | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
 | 5 | blueprint.md | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
-| 6 | blueprint.md | → | D_GOVERNANCE 生命周期管理: Construction Verifier — 施工验证器: 任务卡完成... | runtime / runtime |
-| 7 | blueprint.md | → | D_GOV_ENFORCEMENT 规则执行: Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 6 | blueprint.md | → | D_GOV_ENFORCEMENT 规则执行: Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 7 | blueprint.md | → | D_SECURITY 对抗验证: PathGuard — 路径守卫. (path_guard.py) | runtime / runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUDITTEST 审计测试套件: test_auto_bootstrap.py | → | blueprint.md | runtime / runtime |
-| 2 | D_AUTONOMY_CORE 自治核心: file_autoregister.py | → | blueprint.md | runtime / runtime |
+| 1 | D_AUTONOMY_CORE 自治核心: file_autoregister.py | → | blueprint.md | runtime / runtime |
+| 2 | D_GOVERNANCE 生命周期管理: blueprint.md | → | blueprint.md | runtime / runtime |
 | 3 | D_GOVERNANCE 生命周期管理: blueprint.md | → | blueprint.md | runtime / runtime |
-| 4 | D_GOVERNANCE 生命周期管理: blueprint.md | → | blueprint.md | runtime / runtime |
-| 5 | D_GOVERNANCE 生命周期管理: blueprint.md | → | blueprint.md | contract / contract |
-| 6 | D_GOV_ENFORCEMENT 规则执行: Audit Trail — MOD-INF-020 (__init__.py) | → | blueprint.md | runtime / runtime |
+| 4 | D_GOVERNANCE 生命周期管理: blueprint.md | → | blueprint.md | contract / contract |
+| 5 | D_GOV_ENFORCEMENT 规则执行: Audit Trail — MOD-INF-020 (__init__.py) | → | blueprint.md | runtime / runtime |
+| 6 | D_INFRA_TELEMETRY 可观测性: health subsystem — 模块健康注册与 LifecycleMan... | → | blueprint.md | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 7 条 + 入边 6 条 = 13 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 6 个外部域直接连接（出边 7 条 + 入边 6 条 = 13 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
-    D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
+    D_FACTOR["D_FACTOR<br/>因子"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
+    D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
-    D_GOV_DRIFT -->|5条 runtime / runtime| D_GOVERNANCE
-    D_GOV_DRIFT -->|1条 runtime / runtime| D_AUDITTEST
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>可观测性"]
+    D_GOV_DRIFT -->|4条 runtime / runtime| D_GOVERNANCE
+    D_GOV_DRIFT -->|1条 runtime / runtime| D_FACTOR
     D_GOV_DRIFT -->|1条 runtime / runtime| D_GOV_ENFORCEMENT
+    D_GOV_DRIFT -->|1条 runtime / runtime| D_SECURITY
     D_GOVERNANCE -->|3条 contract / contract, runtime / runtime| D_GOV_DRIFT
-    D_AUDITTEST -->|1条 runtime / runtime| D_GOV_DRIFT
     D_AUTONOMY_CORE -->|1条 runtime / runtime| D_GOV_DRIFT
     D_GOV_ENFORCEMENT -->|1条 runtime / runtime| D_GOV_DRIFT
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_GOV_DRIFT
 ```
 
 ## 说明 / Notes
