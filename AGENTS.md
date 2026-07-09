@@ -730,6 +730,11 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 > - **三图对齐检测器**：[`align_panoramas.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/align_panoramas.py)（只读，manual 启动）。从三图读取节点，用 `module_id` 作为对齐 key（depgraph 用 `blueprint_id` 派生），检测 4 类问题：孤儿（仅一图）/ 状态漂移（design_maturity 不一致）/ 域不一致（domain_id 不一致）/ 设计态孤立（design 仅一图）。输出 `docs/02_enterprise_architecture/generated/panorama_alignment_report.md`。退出码：0=成功 / 1=错误 / 2=三图任一为空（检测无意义）。
 > - **GATE-ARCH-DIAGRAM 触发器盲点修复**：`apply_dataflowgraph.py` 已加入 `_PG_WRITE_SCRIPTS` 触发列表，DB 写入后自动重生架构图。
 > - **capability 反查入口**：`panorama_alignment_detection`（aliases: align_panoramas/panorama_alignment/three_panoramas_alignment/ARCH-053/design_maturity_alignment）+ `design_maturity_trigger_protection`（aliases: protect_design_maturity/design_maturity_delete_protection/allow_design_maturity_delete/ARCH-053-trigger）。
+> - **ARCH-056 四图模块同步引擎 + 门禁阻断升级（2026-07-09）**：
+>   - **同步引擎**：[`sync_panorama_module.py`](file:///d:/ZephyrAlpha/scripts/governance/sync_panorama_module.py) 从 depgraph.nodes 读取模块核心字段（module_id/domain_id/design_maturity/build_status），单向派生到 dataflow_jobs（占位 `entity_type='module_placeholder'`）+ decision_layers（占位 `track='placeholder'`）+ blueprint.md frontmatter。触发：`generate_project_depgraph.py`（sync_all）+ `apply_depgraph.py`（sync_module）执行后自动调用。
+>   - **蓝图 frontmatter 对齐**：[`blueprint_frontmatter_reconciler.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/syncers/blueprint_frontmatter_reconciler.py) 只更新 4 个核心字段（module_id/responsibility_domain/design_maturity/build_status），文档内容不动，蓝图不存在则跳过。
+>   - **门禁阻断升级**：`GATE-PANORAMA-ALIGNMENT`（priority=830）原 warn-only，现升级为 **domain_mismatches>0 阻断**（passed=False）；orphans/state_drifts 保持 warn-only。修复入口：`python scripts/governance/sync_panorama_module.py --all`。
+>   - **capability 反查入口**：`panorama_module_sync`（aliases: sync_panorama_module/four_panoramas_sync/ARCH-056/module_panorama_sync）。
 
 > depgraph 是唯一全景真源（PostgreSQL 16，localhost:5432），禁止创建派生 YAML 副本。连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()`。遇到 depgraph 相关问题，直接问工具：
 
