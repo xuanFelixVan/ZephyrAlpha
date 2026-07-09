@@ -119,6 +119,20 @@ _DEPGRAPH_WRITE_LOCK_KEY = 424242
 _depgraph_lock_local = _threading.local()
 
 
+# 5.160.2 SQL 常量集中化（Phase 7c-1：重复 SQL 提取，2026-07-09）
+# 防复发：NO-BARE-SQL gate (priority=87) 检测新增裸 SQL 字面量
+SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID = "SELECT domain_id FROM domains WHERE domain_id=%s"
+SQL_CHECK_DOMAIN_EXISTS = "SELECT 1 FROM domains WHERE domain_id=%s"
+SQL_DROP_READONLY_TRIGGER = "DROP TRIGGER IF EXISTS readonly_blueprint_links_update"
+SQL_SELECT_NODE_MATURITY_BY_ID = "SELECT node_id, design_maturity FROM nodes WHERE node_id=%s"
+SQL_SELECT_NODE_ID_BY_ID = "SELECT node_id FROM nodes WHERE node_id=%s"
+SQL_COUNT_EDGES_BY_NODE = "SELECT COUNT(*) FROM edges WHERE from_node_id=%s OR to_node_id=%s"
+SQL_DEPRECATE_NODE = "UPDATE nodes SET build_status='deprecated' WHERE node_id=%s"
+SQL_DELETE_EDGE_BY_ID = "DELETE FROM edges WHERE edge_id=%s"
+SQL_DELETE_DOMAIN_BY_ID = "DELETE FROM domains WHERE domain_id=%s"
+
+
+
 @contextlib.contextmanager
 def _db_write_lock(
     owner_id: str | None = None,
@@ -567,7 +581,7 @@ def add_design_node(
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # 校验domain_id存在
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
+            domain = conn.execute(SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID, (domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: domain_id '{domain_id}' 不在domains表中", file=sys.stderr)
                 return -1
@@ -682,7 +696,7 @@ def add_file_node(
     with _db_write_lock(db_path=db_path, task="add_file_node"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
+            domain = conn.execute(SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID, (domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: domain_id '{domain_id}' 不在domains表中", file=sys.stderr)
                 return -1
@@ -755,7 +769,7 @@ def add_design_edge(
         try:
             # 校验from_node_id和to_node_id存在且为设计态
             from_node = conn.execute(
-                "SELECT node_id, design_maturity FROM nodes WHERE node_id=%s", (from_node_id,)
+                SQL_SELECT_NODE_MATURITY_BY_ID, (from_node_id,)
             ).fetchone()
             if not from_node:
                 print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
@@ -767,7 +781,7 @@ def add_design_edge(
                 return -1
 
             to_node = conn.execute(
-                "SELECT node_id, design_maturity FROM nodes WHERE node_id=%s", (to_node_id,)
+                SQL_SELECT_NODE_MATURITY_BY_ID, (to_node_id,)
             ).fetchone()
             if not to_node:
                 print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
@@ -894,13 +908,13 @@ def add_edge(
         try:
             # 校验节点存在性（不校验 design_maturity）
             from_node = conn.execute(
-                "SELECT node_id FROM nodes WHERE node_id=%s", (from_node_id,)
+                SQL_SELECT_NODE_ID_BY_ID, (from_node_id,)
             ).fetchone()
             if not from_node:
                 print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
                 return -1
             to_node = conn.execute(
-                "SELECT node_id FROM nodes WHERE node_id=%s", (to_node_id,)
+                SQL_SELECT_NODE_ID_BY_ID, (to_node_id,)
             ).fetchone()
             if not to_node:
                 print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
@@ -1069,14 +1083,14 @@ def remove_design_node(node_id: int, db_path: str = None) -> bool:
 
             # STEP 3: 功能价值检查 - 检查是否有边引用此节点
             edge_count = conn.execute(
-                "SELECT COUNT(*) FROM edges WHERE from_node_id=%s OR to_node_id=%s", (node_id, node_id)
+                SQL_COUNT_EDGES_BY_NODE, (node_id, node_id)
             ).fetchone()["count"]
             if edge_count > 0:
                 print(f"WARNING: node_id={node_id} 有{edge_count}条边引用，将先删除边", file=sys.stderr)
                 conn.execute("DELETE FROM edges WHERE from_node_id=%s OR to_node_id=%s", (node_id, node_id))
 
             # 软删除（build_status='deprecated'）
-            conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=%s", (node_id,))
+            conn.execute(SQL_DEPRECATE_NODE, (node_id,))
             conn.commit()
             print(f"[OK] node_id={node_id}: 软删除（build_status='deprecated'）", file=sys.stderr)
             return True
@@ -1125,7 +1139,7 @@ def deprecate_node(node_id: int, db_path: str = None) -> bool:
 
             # 检查边引用
             edge_count = conn.execute(
-                "SELECT COUNT(*) FROM edges WHERE from_node_id=%s OR to_node_id=%s", (node_id, node_id)
+                SQL_COUNT_EDGES_BY_NODE, (node_id, node_id)
             ).fetchone()["count"]
             if edge_count > 0:
                 print(f"WARNING: node_id={node_id} 有{edge_count}条边引用（软废弃不删边）", file=sys.stderr)
@@ -1150,7 +1164,7 @@ def deprecate_node(node_id: int, db_path: str = None) -> bool:
                     file=sys.stderr,
                 )
 
-            conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=%s", (node_id,))
+            conn.execute(SQL_DEPRECATE_NODE, (node_id,))
             conn.commit()
             print(
                 f"[OK] node_id={node_id} file_path={row['file_path']} design_maturity={row['design_maturity']}: "
@@ -1228,7 +1242,7 @@ def delete_design_edge(edge_id: int, db_path: str = None) -> bool:
                     file=sys.stderr,
                 )
                 return False
-            conn.execute("DELETE FROM edges WHERE edge_id=%s", (edge_id,))
+            conn.execute(SQL_DELETE_EDGE_BY_ID, (edge_id,))
             conn.commit()
             print(
                 f"[OK] 删除设计态边 edge_id={edge_id} ({row['from_node_id']}->{row['to_node_id']})",
@@ -1260,7 +1274,7 @@ def delete_edge(edge_id: int, db_path: str = None) -> bool:
             if not row:
                 print(f"ERROR: edge_id={edge_id} 不存在", file=sys.stderr)
                 return False
-            conn.execute("DELETE FROM edges WHERE edge_id=%s", (edge_id,))
+            conn.execute(SQL_DELETE_EDGE_BY_ID, (edge_id,))
             conn.commit()
             print(
                 f"[OK] 删除边 edge_id={edge_id} ({row['from_node_id']}->{row['to_node_id']} dep_type={row['dep_type']} dep_maturity={row['dep_maturity']})",
@@ -1604,7 +1618,7 @@ def cmd_insert_domain(
         if own_conn:
             conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            existing = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
+            existing = conn.execute(SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID, (domain_id,)).fetchone()
             if existing:
                 print(f"ERROR: domain_id '{domain_id}' 已存在", file=sys.stderr)
                 return False
@@ -1656,7 +1670,7 @@ def cmd_update_domain_id(
         if own_conn:
             conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_domain_id,)).fetchone()
+            domain = conn.execute(SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID, (new_domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: new_domain_id '{new_domain_id}' 不在 domains 表中", file=sys.stderr)
                 return -1
@@ -1816,10 +1830,10 @@ def cmd_rename_domain(
 
     def _run(c) -> int:
         # 0. 校验 old 存在、new 不存在（禁止覆盖）
-        if not c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (old_id,)).fetchone():
+        if not c.execute(SQL_CHECK_DOMAIN_EXISTS, (old_id,)).fetchone():
             print(f"ERROR: old_id '{old_id}' 不在 domains 表中", file=sys.stderr)
             return -1
-        if c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (new_id,)).fetchone():
+        if c.execute(SQL_CHECK_DOMAIN_EXISTS, (new_id,)).fetchone():
             print(f"ERROR: new_id '{new_id}' 已存在 domains 表中（禁止覆盖）", file=sys.stderr)
             return -1
 
@@ -1986,7 +2000,7 @@ def cmd_delete_domain(
 
     def _run(c) -> int:
         # 0. 校验 domain 存在
-        if not c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (domain_id,)).fetchone():
+        if not c.execute(SQL_CHECK_DOMAIN_EXISTS, (domain_id,)).fetchone():
             print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
             return -1
 
@@ -2078,7 +2092,7 @@ def cmd_delete_domain(
         # step1 最后：DELETE FROM domains（FK 约束要求外部引用先清完）
         print(f"  {mode} step 1 domains.domain_id='{domain_id}': DELETE 1 row", file=sys.stderr)
         if not dry_run:
-            c.execute("DELETE FROM domains WHERE domain_id=%s", (domain_id,))
+            c.execute(SQL_DELETE_DOMAIN_BY_ID, (domain_id,))
         total += 1
 
         if not dry_run and own_conn:
@@ -2157,10 +2171,10 @@ def cmd_merge_domain(
 
     def _run(c) -> int:
         # 0. 校验 old 存在、new 存在（merge：两者必须都在 domains 表中）
-        if not c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (old_id,)).fetchone():
+        if not c.execute(SQL_CHECK_DOMAIN_EXISTS, (old_id,)).fetchone():
             print(f"ERROR: old_id '{old_id}' 不在 domains 表中", file=sys.stderr)
             return -1
-        if not c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (new_id,)).fetchone():
+        if not c.execute(SQL_CHECK_DOMAIN_EXISTS, (new_id,)).fetchone():
             print(f"ERROR: new_id '{new_id}' 不在 domains 表中（merge 要求目标域已存在；若要重命名请用 --rename-domain）", file=sys.stderr)
             return -1
 
@@ -2251,7 +2265,7 @@ def cmd_merge_domain(
         # FK 约束要求外部引用先清完（step2-17 已执行），此时 DELETE 安全。
         print(f"  {mode} step 1 domains.domain_id='{old_id}': DELETE 1 row", file=sys.stderr)
         if not dry_run:
-            c.execute("DELETE FROM domains WHERE domain_id=%s", (old_id,))
+            c.execute(SQL_DELETE_DOMAIN_BY_ID, (old_id,))
         total += 1
 
         # B1 值扫描兜底（与 rename 一致）：step2-17 枚举列之外的全表 TEXT 列残留替换
@@ -2642,7 +2656,7 @@ def _with_bp_rename_tx(
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             # 临时禁用 blueprint_links 只读触发器（裁定#207 R1 B2 通行证机制）
-            c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
+            c.execute(SQL_DROP_READONLY_TRIGGER)
             try:
                 n = run_fn(c)
                 # 成功后恢复只读触发器并 commit
@@ -2872,7 +2886,7 @@ def cmd_rename_blueprint_id(
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             # 临时禁用 blueprint_links 只读触发器（裁定#207 R1 B2 通行证机制）
-            c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
+            c.execute(SQL_DROP_READONLY_TRIGGER)
             try:
                 n = _run(c)
                 # 成功后恢复只读触发器并 commit
@@ -2993,7 +3007,7 @@ def cmd_propagate_node_paths(
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             # 临时禁用 blueprint_links 只读触发器（仅当有 bl_mapping 时）
             if bl_mapping:
-                c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
+                c.execute(SQL_DROP_READONLY_TRIGGER)
             try:
                 n = _run(c)
                 # 成功后恢复只读触发器并 commit
@@ -3082,7 +3096,7 @@ def cmd_migrate_nodes(
         if own_conn:
             conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_domain_id,)).fetchone()
+            domain = conn.execute(SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID, (new_domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: new_domain_id '{new_domain_id}' 不在 domains 表中", file=sys.stderr)
                 return -1
@@ -3195,12 +3209,12 @@ def cmd_migrate_dependencies(
                 return -1
 
             if new_from_domain:
-                d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_from_domain,)).fetchone()
+                d = conn.execute(SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID, (new_from_domain,)).fetchone()
                 if not d:
                     print(f"ERROR: new_from_domain '{new_from_domain}' 不在 domains 表中", file=sys.stderr)
                     return -1
             if new_to_domain:
-                d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_to_domain,)).fetchone()
+                d = conn.execute(SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID, (new_to_domain,)).fetchone()
                 if not d:
                     print(f"ERROR: new_to_domain '{new_to_domain}' 不在 domains 表中", file=sys.stderr)
                     return -1
@@ -3442,7 +3456,7 @@ def cmd_insert_domain_mapping(
             conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # 校验 domain_id 存在
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
+            domain = conn.execute(SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID, (domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
                 return False
