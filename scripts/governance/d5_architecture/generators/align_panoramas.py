@@ -47,7 +47,7 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -205,13 +205,16 @@ class PanoramaAlignmentReport:
 def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
     """从 depgraph.nodes 读取（blueprint_id 作为 module_id 对齐 key）。
 
-    去重：depgraph.nodes 中同一 blueprint_id 可有多行（不同文件路径实例），
-    每行可能有不同的 domain_id/design_maturity。为避免对齐检测因多行取值不一致
-    而产生误报，每个 blueprint_id 只保留第一行（path 非空优先，与
-    blueprint_frontmatter_reconciler._query_module_bp 的取值策略一致）。
+    聚合：depgraph.nodes 中同一 blueprint_id 可有多行（不同文件路径实例），
+    每行可能有不同的 domain_id/design_maturity（跨域模块的正常现象）。
+    每个 blueprint_id 聚合所有行，避免单行取值不稳定导致对齐误报：
+    - domain_id: 多数投票（Counter.most_common），取代表性域
+    - design_maturity: 取最 design 的状态（design < prototype < production），
+      与 _detect_state_drifts 聚合策略一致
+    - build_status: 取第一个非空
+    - entity_name: 取第一个非空 path（path 非空优先，ORDER BY 保证）
     """
-    nodes: list[PanoramaNode] = []
-    seen: set[str] = set()
+    grouped: dict[str, list[dict]] = {}
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -237,17 +240,34 @@ def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
                 dom = row[4] if len(row) > 4 else None
             if not bp:
                 continue
-            if bp in seen:
-                continue  # 去重：同一 blueprint_id 只保留第一行
-            seen.add(bp)
-            nodes.append(PanoramaNode(
-                module_id=bp,
-                graph="depgraph",
-                entity_name=path or bp,
-                design_maturity=dm,
-                build_status=bs,
-                domain_id=dom,
-            ))
+            grouped.setdefault(bp, []).append({
+                "path": path,
+                "design_maturity": dm,
+                "build_status": bs,
+                "domain_id": dom,
+            })
+
+    nodes: list[PanoramaNode] = []
+    for bp, rows in grouped.items():
+        # domain_id: 多数投票
+        domain_counter = Counter(r["domain_id"] for r in rows if r["domain_id"])
+        domain_id = domain_counter.most_common(1)[0][0] if domain_counter else None
+        # design_maturity: 取最 design（min rank）
+        maturities = [r["design_maturity"] for r in rows if r["design_maturity"]]
+        design_maturity = min(maturities, key=_maturity_rank) if maturities else None
+        # build_status: 取第一个非空
+        build_status = next((r["build_status"] for r in rows if r["build_status"]), None)
+        # entity_name: 取第一个非空 path
+        entity_name = next((r["path"] for r in rows if r["path"]), bp)
+
+        nodes.append(PanoramaNode(
+            module_id=bp,
+            graph="depgraph",
+            entity_name=entity_name,
+            design_maturity=design_maturity,
+            build_status=build_status,
+            domain_id=domain_id,
+        ))
     return nodes
 
 

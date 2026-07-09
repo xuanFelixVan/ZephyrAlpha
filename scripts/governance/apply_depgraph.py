@@ -126,6 +126,7 @@ SQL_CHECK_DOMAIN_EXISTS = "SELECT 1 FROM domains WHERE domain_id=%s"
 SQL_DROP_READONLY_TRIGGER = "DROP TRIGGER IF EXISTS readonly_blueprint_links_update"
 SQL_SELECT_NODE_MATURITY_BY_ID = "SELECT node_id, design_maturity FROM nodes WHERE node_id=%s"
 SQL_SELECT_NODE_ID_BY_ID = "SELECT node_id FROM nodes WHERE node_id=%s"
+SQL_SELECT_BLUEPRINT_ID_BY_NODE_ID = "SELECT blueprint_id FROM nodes WHERE node_id=%s"
 SQL_COUNT_EDGES_BY_NODE = "SELECT COUNT(*) FROM edges WHERE from_node_id=%s OR to_node_id=%s"
 SQL_DEPRECATE_NODE = "UPDATE nodes SET build_status='deprecated' WHERE node_id=%s"
 SQL_DELETE_EDGE_BY_ID = "DELETE FROM edges WHERE edge_id=%s"
@@ -1057,6 +1058,32 @@ def transition_design_maturity(node_id: int, to: str, db_path: str = None) -> bo
             return False
         finally:
             conn.close()
+
+
+def _sync_panorama_after_transition(node_id: int) -> None:
+    """状态转换后自动同步四图核心字段（ARCH-056）。
+
+    查询 node 的 blueprint_id，如非空则调用 sync_module_panorama
+    将新状态（design_maturity/build_status）同步到 dataflow/decision/blueprint。
+    失败不阻断（warn-only，与 add_design_node 一致）。
+    """
+    try:
+        conn = get_depgraph_pg_connection()
+        try:
+            row = conn.execute(
+                SQL_SELECT_BLUEPRINT_ID_BY_NODE_ID, (node_id,)
+            ).fetchone()
+        finally:
+            conn.close()
+        if not row:
+            return
+        blueprint_id = row["blueprint_id"] if isinstance(row, dict) else row[0]
+        if not blueprint_id:
+            return
+        from sync_panorama_module import sync_module_panorama
+        sync_module_panorama(blueprint_id)
+    except Exception as e:
+        print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
 
 
 def remove_design_node(node_id: int, db_path: str = None) -> bool:
@@ -3989,6 +4016,7 @@ def main() -> None:
         ok = transition_build_status(node_id, to_status)
         if not ok:
             sys.exit(4)
+        _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步四图
         return
 
     if args.transition_design_maturity:
@@ -3997,6 +4025,7 @@ def main() -> None:
         ok = transition_design_maturity(node_id, to_maturity)
         if not ok:
             sys.exit(4)
+        _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步四图
         return
 
     if args.remove_design_node is not None:

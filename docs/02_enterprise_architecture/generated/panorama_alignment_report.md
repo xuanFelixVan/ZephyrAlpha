@@ -1,11 +1,11 @@
 # 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-07-09 18:48:50
+- 生成时间: 2026-07-09 19:16:16
 - 数据源: depgraph (PostgreSQL)
-- 四图节点数: depgraph=140 / dataflow=166 / decision=296 / blueprint=109
-- 问题总数: 50
-  - 孤儿（仅一图）: 17
-  - 状态漂移（design_maturity 不一致）: 30
+- 四图节点数: depgraph=140 / dataflow=165 / decision=296 / blueprint=110
+- 问题总数: 48
+  - 孤儿（仅一图）: 18
+  - 状态漂移（design_maturity 不一致）: 27
   - 域不一致（domain_id 不一致）: 3
   - 设计态孤立（design 仅一图）: 0
 
@@ -29,6 +29,7 @@
 | MOD-MASTER-002 | blueprint | _master_blueprint/blueprint_baseline.md |
 | MOD-MASTER-003 | blueprint | _master_blueprint/blueprint_capacity.md |
 | SYS-MASTER-001 | blueprint | _system_master/blueprint.md |
+| MOD-GOV-ENFORCEMENT | decision | layer:MOD-GOV-ENFORCEMENT |
 | MOD-GOV-tests_coverage_gate | decision | layer:MOD-GOV-tests_coverage_gate |
 
 ## 2. 状态漂移（design_maturity 不一致）
@@ -36,19 +37,18 @@
 | module_id | depgraph | dataflow | decision | blueprint |
 |---|---|---|---|---|
 | MOD-BT-001 | production | design | design | design |
+| MOD-CONTEXT_ENGINE | design | production | production | design |
 | MOD-GOV-019 | production | prototype | prototype | - |
 | MOD-GOV-SCRIPTS-ARCH | production | prototype | prototype | - |
 | MOD-GOV-SYNC-PANORAMA | production | prototype | prototype | - |
 | MOD-GOV-commit_gate_registry | production | prototype | prototype | - |
 | MOD-GOV-commit_gates | production | prototype | prototype | - |
-| MOD-GOV-rule_patterns | production | prototype | prototype | - |
 | MOD-GOV-session_worktree | production | prototype | prototype | - |
 | MOD-GOVERNANCE | production | design | design | design |
 | MOD-INF-002 | production | prototype | prototype |  |
 | MOD-INF-013 | prototype | production | production |  |
 | MOD-INF-015 | production | prototype | prototype |  |
-| MOD-INF-018 | production | prototype | prototype |  |
-| MOD-INF-019 | design | production | production | design |
+| MOD-INF-019 | design | prototype | prototype | design |
 | MOD-INF-020 | design | prototype | prototype | design |
 | MOD-INF-022 | design | prototype | prototype | design |
 | MOD-INF-024 | production | design | design | design |
@@ -61,10 +61,8 @@
 | MOD-L05-001 | prototype | prototype | design |  |
 | MOD-L06-001 | production | prototype | prototype | design |
 | MOD-L08-001 | prototype | design | design | design |
-| MOD-LLM_SECURITY | production | prototype | prototype |  |
 | MOD-SECURITY | production | prototype | prototype | - |
 | SH-DB-002 | production | prototype | prototype | - |
-| SH-MAIN-001 | prototype | production | production | - |
 
 ## 3. 域不一致（domain_id 不一致）
 
