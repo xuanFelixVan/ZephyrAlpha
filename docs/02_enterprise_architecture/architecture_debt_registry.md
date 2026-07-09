@@ -2528,6 +2528,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **修复**：移到 `app_config.py` 子模块，`__init__.py` 仅做 `from .app_config import AppConfig` 重导出。
 - **状态**：FIXED — 5.93.7 Phase 7h 完成. AppConfig/ConfigHolder/load_config/reload_config 迁移到 app_config.py, __init__.py 仅 re-export. extract method 降 load_config McCabe 19→5(_find_yaml_path + _apply_env_overrides). CREATE-GUARD 类名冲突豁免(# class-name-alias). commit b182e38a45. 26/26 tests PASSED.
 
+#### 5.93.8 [MEDIUM] __init__.py 未scope占位项
+
+- **文件**：无（原始审计未记录具体文件）
+- **证据**：R70 审计中 5.93.8 标注为"(细节待评估)"，从未被 scope。搜索 data/scans/、data/reports/、docs/ 全仓未找到 5.93.8 原始审计详情。维度 5.93（__init__.py 重型import/无效__all__/命名空间污染）的 7 个已scope项（5.93.1-7）已全部处理完毕。
+- **修复**：无 actionable item。5.93.8 是未 scope 的占位项，无具体文件/证据/修复方向。
+- **状态**：DEFERRED-PERMANENT — 未 scope 占位项, 无 actionable item. R93 评估确认无原始审计详情, 维度5.93 其余7项已全部处理(FIXED=3/DRIFTED=1/DEFERRED-PERMANENT=3). 正式关闭.
+
 #### 5.93 严重度汇总
 
 | 严重度 | 数量 | 编号 |
@@ -2537,7 +2544,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | **合计** | **8** | |
 
 > **R70 状态汇总（2026-07-06）**：FIXED=1(5.93.2), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=3(5.93.1/3/4), DEFERRED=3(5.93.6/7/8), STILL_VALID=0。维度5.93全部清零。
-> **R93 状态汇总（2026-07-09）**：FIXED=3(5.93.2/5.93.6/5.93.7), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=3(5.93.1/3/4), DEFERRED=1(5.93.8), STILL_VALID=0。维度5.93全部清零。
+> **R93 状态汇总（2026-07-09）**：FIXED=3(5.93.2/5.93.6/5.93.7), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=4(5.93.1/3/4/8), DEFERRED=0, STILL_VALID=0。维度5.93全部清零。
 
 ### 5.94 类型注解准确性（68个，第19轮新增）
 
