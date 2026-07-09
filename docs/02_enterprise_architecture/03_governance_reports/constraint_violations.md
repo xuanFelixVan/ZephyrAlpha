@@ -48,107 +48,107 @@ ttl: permanent
 
 | 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 执行方式 / Enforcement | 描述 / Description |
 |--------|------|------|------|--------|---------|---------|------|
-| V-ORPHAN-1527414 | 孤儿节点: 1527414 | orphan_node | D_INFRA_RUNTIME |  | warn | advisory | 节点 1527414 路径 src/zephyr/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527415 | 孤儿节点: 1527415 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1527415 路径 src/zephyr/alt_data/api/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527416 | 孤儿节点: 1527416 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1527416 路径 src/zephyr/alt_data/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527417 | 孤儿节点: 1527417 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1527417 路径 src/zephyr/alt_data/infrastructure/__init__.py... |
-| V-ORPHAN-1527418 | 孤儿节点: 1527418 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1527418 路径 src/zephyr/alt_data/models/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527419 | 孤儿节点: 1527419 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1527419 路径 src/zephyr/alt_data/core/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527420 | 孤儿节点: 1527420 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1527420 路径 src/zephyr/alt_data/_extensions/__init__.py 未注... |
-| V-ORPHAN-1527421 | 孤儿节点: 1527421 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1527421 路径 src/zephyr/alt_data/services/__init__.py 未注册到目... |
-| V-ORPHAN-1527422 | 孤儿节点: 1527422 | orphan_node | D_AUTONOMY_CORE |  | warn | advisory | 节点 1527422 路径 src/zephyr/autonomy_core/file_autoregister.py ... |
-| V-ORPHAN-1527423 | 孤儿节点: 1527423 | orphan_node | D_AUTONOMY_CORE |  | warn | advisory | 节点 1527423 路径 src/zephyr/autonomy_core/agent_observability.p... |
-| V-ORPHAN-1527476 | 孤儿节点: 1527476 | orphan_node | D_AUTONOMY_CORE |  | warn | advisory | 节点 1527476 路径 src/zephyr/autonomy_core/integration/__init__.... |
-| V-ORPHAN-1527535 | 孤儿节点: 1527535 | orphan_node | D_AUTONOMY_CORE |  | warn | advisory | 节点 1527535 路径 src/zephyr/autonomy_core/skills/__init__.py 未注... |
-| V-ORPHAN-1527536 | 孤儿节点: 1527536 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527536 路径 src/zephyr/autonomy_perm/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527537 | 孤儿节点: 1527537 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527537 路径 src/zephyr/autonomy_perm/infrastructure/__init... |
-| V-ORPHAN-1527538 | 孤儿节点: 1527538 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527538 路径 src/zephyr/autonomy_perm/api/__init__.py 未注册到目... |
-| V-ORPHAN-1527539 | 孤儿节点: 1527539 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527539 路径 src/zephyr/autonomy_perm/models/__init__.py 未注... |
-| V-ORPHAN-1527540 | 孤儿节点: 1527540 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527540 路径 src/zephyr/autonomy_perm/core/__init__.py 未注册到... |
-| V-ORPHAN-1527541 | 孤儿节点: 1527541 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527541 路径 src/zephyr/autonomy_perm/red_blue_validator/by... |
-| V-ORPHAN-1527542 | 孤儿节点: 1527542 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527542 路径 src/zephyr/autonomy_perm/red_blue_validator/at... |
-| V-ORPHAN-1527543 | 孤儿节点: 1527543 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527543 路径 src/zephyr/autonomy_perm/red_blue_validator/co... |
-| V-ORPHAN-1527544 | 孤儿节点: 1527544 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527544 路径 src/zephyr/autonomy_perm/red_blue_validator/co... |
-| V-ORPHAN-1527545 | 孤儿节点: 1527545 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527545 路径 src/zephyr/autonomy_perm/red_blue_validator/de... |
-| V-ORPHAN-1527546 | 孤儿节点: 1527546 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527546 路径 src/zephyr/autonomy_perm/red_blue_validator/ga... |
-| V-ORPHAN-1527547 | 孤儿节点: 1527547 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527547 路径 src/zephyr/autonomy_perm/services/__init__.py ... |
-| V-ORPHAN-1527548 | 孤儿节点: 1527548 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527548 路径 src/zephyr/autonomy_perm/red_blue_validator/__... |
-| V-ORPHAN-1527549 | 孤儿节点: 1527549 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527549 路径 src/zephyr/backtest/api/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527550 | 孤儿节点: 1527550 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1527550 路径 src/zephyr/autonomy_perm/_extensions/__init__.... |
-| V-ORPHAN-1527551 | 孤儿节点: 1527551 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527551 路径 src/zephyr/backtest/core/decision_gate.py 未注册到... |
-| V-ORPHAN-1527552 | 孤儿节点: 1527552 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527552 路径 src/zephyr/backtest/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527558 | 孤儿节点: 1527558 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527558 路径 src/zephyr/backtest/core/metrics.py 未注册到目录树 |
-| V-ORPHAN-1527559 | 孤儿节点: 1527559 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527559 路径 src/zephyr/backtest/core/overfitting_detector.... |
-| V-ORPHAN-1527561 | 孤儿节点: 1527561 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527561 路径 src/zephyr/backtest/core/pit_manager.py 未注册到目录... |
-| V-ORPHAN-1527562 | 孤儿节点: 1527562 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527562 路径 src/zephyr/backtest/core/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527563 | 孤儿节点: 1527563 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527563 路径 src/zephyr/backtest/core/walk_forward.py 未注册到目... |
-| V-ORPHAN-1527567 | 孤儿节点: 1527567 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527567 路径 src/zephyr/backtest/io/backtest_result_sink.py... |
-| V-ORPHAN-1527569 | 孤儿节点: 1527569 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527569 路径 src/zephyr/backtest/infrastructure/__init__.py... |
-| V-ORPHAN-1527570 | 孤儿节点: 1527570 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527570 路径 src/zephyr/backtest/io/result_repository.py 未注... |
-| V-ORPHAN-1527571 | 孤儿节点: 1527571 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527571 路径 src/zephyr/backtest/io/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527572 | 孤儿节点: 1527572 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527572 路径 src/zephyr/backtest/models/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527573 | 孤儿节点: 1527573 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527573 路径 src/zephyr/backtest/services/__init__.py 未注册到目... |
-| V-ORPHAN-1527574 | 孤儿节点: 1527574 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527574 路径 src/zephyr/compliance/aisg_sandbox.py 未注册到目录树 |
-| V-ORPHAN-1527575 | 孤儿节点: 1527575 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1527575 路径 src/zephyr/backtest/_extensions/__init__.py 未注... |
-| V-ORPHAN-1527576 | 孤儿节点: 1527576 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527576 路径 src/zephyr/compliance/compliance_manager.py 未注... |
-| V-ORPHAN-1527577 | 孤儿节点: 1527577 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527577 路径 src/zephyr/compliance/artifact_scanner.py 未注册到... |
-| V-ORPHAN-1527578 | 孤儿节点: 1527578 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527578 路径 src/zephyr/compliance/default_security_gateway... |
-| V-ORPHAN-1527579 | 孤儿节点: 1527579 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527579 路径 src/zephyr/compliance/evidence_pack.py 未注册到目录树 |
-| V-ORPHAN-1527580 | 孤儿节点: 1527580 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527580 路径 src/zephyr/compliance/financial_compliance.py ... |
-| V-ORPHAN-1527581 | 孤儿节点: 1527581 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527581 路径 src/zephyr/compliance/merkle_hourly.py 未注册到目录树 |
-| V-ORPHAN-1527582 | 孤儿节点: 1527582 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527582 路径 src/zephyr/compliance/integrity.py 未注册到目录树 |
-| V-ORPHAN-1527583 | 孤儿节点: 1527583 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527583 路径 src/zephyr/compliance/security_gateway_base.py... |
-| V-ORPHAN-1527584 | 孤儿节点: 1527584 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527584 路径 src/zephyr/compliance/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527585 | 孤儿节点: 1527585 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527585 路径 src/zephyr/compliance/api/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527586 | 孤儿节点: 1527586 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527586 路径 src/zephyr/compliance/audit_trail/__init__.py ... |
-| V-ORPHAN-1527587 | 孤儿节点: 1527587 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527587 路径 src/zephyr/compliance/audit_orchestrator/__ini... |
-| V-ORPHAN-1527588 | 孤儿节点: 1527588 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527588 路径 src/zephyr/compliance/audit_trail/bridges/__in... |
-| V-ORPHAN-1527589 | 孤儿节点: 1527589 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527589 路径 src/zephyr/compliance/behavioral_admission/__i... |
-| V-ORPHAN-1527590 | 孤儿节点: 1527590 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527590 路径 src/zephyr/compliance/core/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527591 | 孤儿节点: 1527591 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527591 路径 src/zephyr/compliance/behavioral_auditor/__ini... |
-| V-ORPHAN-1527592 | 孤儿节点: 1527592 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527592 路径 src/zephyr/compliance/implementations/__init__... |
-| V-ORPHAN-1527593 | 孤儿节点: 1527593 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527593 路径 src/zephyr/compliance/infrastructure/__init__.... |
-| V-ORPHAN-1527594 | 孤儿节点: 1527594 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527594 路径 src/zephyr/compliance/compliance_gate_a6/__ini... |
-| V-ORPHAN-1527595 | 孤儿节点: 1527595 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527595 路径 src/zephyr/compliance/models/__init__.py 未注册到目... |
-| V-ORPHAN-1527596 | 孤儿节点: 1527596 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527596 路径 src/zephyr/compliance/_extensions/__init__.py ... |
-| V-ORPHAN-1527597 | 孤儿节点: 1527597 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527597 路径 src/zephyr/compliance/zero_knowledge_audit_stu... |
-| V-ORPHAN-1527598 | 孤儿节点: 1527598 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1527598 路径 src/zephyr/compliance/services/__init__.py 未注册... |
-| V-ORPHAN-1527599 | 孤儿节点: 1527599 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1527599 路径 src/zephyr/cross_asset/infrastructure/__init__... |
-| V-ORPHAN-1527600 | 孤儿节点: 1527600 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1527600 路径 src/zephyr/cross_asset/api/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527601 | 孤儿节点: 1527601 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1527601 路径 src/zephyr/cross_asset/core/__init__.py 未注册到目录... |
-| V-ORPHAN-1527602 | 孤儿节点: 1527602 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1527602 路径 src/zephyr/cross_asset/models/__init__.py 未注册到... |
-| V-ORPHAN-1527604 | 孤儿节点: 1527604 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1527604 路径 src/zephyr/cross_asset/_extensions/__init__.py... |
-| V-ORPHAN-1527605 | 孤儿节点: 1527605 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1527605 路径 src/zephyr/cross_asset/services/__init__.py 未注... |
-| V-ORPHAN-1527607 | 孤儿节点: 1527607 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527607 路径 src/zephyr/data/metrics.py 未注册到目录树 |
-| V-ORPHAN-1527609 | 孤儿节点: 1527609 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527609 路径 src/zephyr/data/alerter.py 未注册到目录树 |
-| V-ORPHAN-1527610 | 孤儿节点: 1527610 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527610 路径 src/zephyr/data/ch_writer.py 未注册到目录树 |
-| V-ORPHAN-1527611 | 孤儿节点: 1527611 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527611 路径 src/zephyr/data/progress_store.py 未注册到目录树 |
-| V-ORPHAN-1527612 | 孤儿节点: 1527612 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527612 路径 src/zephyr/data/provider_base.py 未注册到目录树 |
-| V-ORPHAN-1527615 | 孤儿节点: 1527615 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527615 路径 src/zephyr/data/implementations/akshare_provid... |
-| V-ORPHAN-1527616 | 孤儿节点: 1527616 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527616 路径 src/zephyr/data/scheduler.py 未注册到目录树 |
-| V-ORPHAN-1527617 | 孤儿节点: 1527617 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527617 路径 src/zephyr/data/implementations/baostock_provi... |
-| V-ORPHAN-1527618 | 孤儿节点: 1527618 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527618 路径 src/zephyr/data/task_queue.py 未注册到目录树 |
-| V-ORPHAN-1527619 | 孤儿节点: 1527619 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527619 路径 src/zephyr/data/implementations/miniqmt_provid... |
-| V-ORPHAN-1527620 | 孤儿节点: 1527620 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527620 路径 src/zephyr/data/implementations/ifind_provider... |
-| V-ORPHAN-1527621 | 孤儿节点: 1527621 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527621 路径 src/zephyr/data/implementations/rss_provider.p... |
-| V-ORPHAN-1527622 | 孤儿节点: 1527622 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527622 路径 src/zephyr/data/implementations/tushare_provid... |
-| V-ORPHAN-1527623 | 孤儿节点: 1527623 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527623 路径 src/zephyr/data/implementations/tdx_provider.p... |
-| V-ORPHAN-1527624 | 孤儿节点: 1527624 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527624 路径 src/zephyr/data/implementations/tickflow_provi... |
-| V-ORPHAN-1527625 | 孤儿节点: 1527625 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1527625 路径 src/zephyr/data/implementations/__init__.py 未注... |
-| V-ORPHAN-1527626 | 孤儿节点: 1527626 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1527626 路径 src/zephyr/data_eng/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527627 | 孤儿节点: 1527627 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1527627 路径 src/zephyr/data_eng/api/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527628 | 孤儿节点: 1527628 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1527628 路径 src/zephyr/data_eng/core/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527629 | 孤儿节点: 1527629 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1527629 路径 src/zephyr/data_eng/services/__init__.py 未注册到目... |
-| V-ORPHAN-1527630 | 孤儿节点: 1527630 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1527630 路径 src/zephyr/data_eng/infrastructure/__init__.py... |
-| V-ORPHAN-1527631 | 孤儿节点: 1527631 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1527631 路径 src/zephyr/data_eng/models/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527632 | 孤儿节点: 1527632 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1527632 路径 src/zephyr/data_governance/__init__.py 未注册到目录树 |
-| V-ORPHAN-1527633 | 孤儿节点: 1527633 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1527633 路径 src/zephyr/data_eng/_extensions/__init__.py 未注... |
-| V-ORPHAN-1527634 | 孤儿节点: 1527634 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1527634 路径 src/zephyr/data_governance/api/__init__.py 未注册... |
-| V-ORPHAN-1527635 | 孤儿节点: 1527635 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1527635 路径 src/zephyr/data_governance/services/__init__.p... |
-| V-ORPHAN-1527636 | 孤儿节点: 1527636 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1527636 路径 src/zephyr/data_governance/core/__init__.py 未注... |
-| V-ORPHAN-1527637 | 孤儿节点: 1527637 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1527637 路径 src/zephyr/data_governance/models/__init__.py ... |
-| V-ORPHAN-1527638 | 孤儿节点: 1527638 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1527638 路径 src/zephyr/data_governance/infrastructure/__in... |
-| V-CAP-D_GOVERNANCE | 容量超限: D_GOVERNANCE | capacity_exceeded | D_GOVERNANCE |  | hard | gate | 域 D_GOVERNANCE(registry_management) production 节点 483 超过上限 1... |
+| V-ORPHAN-1601873 | 孤儿节点: 1601873 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1601873 路径 src/zephyr/alt_data/__init__.py 未注册到目录树 |
+| V-ORPHAN-1601875 | 孤儿节点: 1601875 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1601875 路径 src/zephyr/alt_data/_extensions/__init__.py 未注... |
+| V-ORPHAN-1601876 | 孤儿节点: 1601876 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1601876 路径 src/zephyr/alt_data/api/__init__.py 未注册到目录树 |
+| V-ORPHAN-1601877 | 孤儿节点: 1601877 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1601877 路径 src/zephyr/alt_data/infrastructure/__init__.py... |
+| V-ORPHAN-1601878 | 孤儿节点: 1601878 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1601878 路径 src/zephyr/alt_data/core/__init__.py 未注册到目录树 |
+| V-ORPHAN-1601879 | 孤儿节点: 1601879 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1601879 路径 src/zephyr/alt_data/services/__init__.py 未注册到目... |
+| V-ORPHAN-1601880 | 孤儿节点: 1601880 | orphan_node | D_ALT_DATA |  | warn | advisory | 节点 1601880 路径 src/zephyr/alt_data/models/__init__.py 未注册到目录树 |
+| V-ORPHAN-1601882 | 孤儿节点: 1601882 | orphan_node | D_AUTONOMY_CORE |  | warn | advisory | 节点 1601882 路径 src/zephyr/autonomy_core/file_autoregister.py ... |
+| V-ORPHAN-1601906 | 孤儿节点: 1601906 | orphan_node | D_AUTONOMY_CORE |  | warn | advisory | 节点 1601906 路径 src/zephyr/autonomy_core/context/context_evalu... |
+| V-ORPHAN-1601936 | 孤儿节点: 1601936 | orphan_node | D_AUTONOMY_CORE |  | warn | advisory | 节点 1601936 路径 src/zephyr/autonomy_core/integration/__init__.... |
+| V-ORPHAN-1601992 | 孤儿节点: 1601992 | orphan_node | D_AUTONOMY_CORE |  | warn | advisory | 节点 1601992 路径 src/zephyr/autonomy_core/skills/__init__.py 未注... |
+| V-ORPHAN-1601995 | 孤儿节点: 1601995 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1601995 路径 src/zephyr/autonomy_perm/api/__init__.py 未注册到目... |
+| V-ORPHAN-1601996 | 孤儿节点: 1601996 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1601996 路径 src/zephyr/autonomy_perm/__init__.py 未注册到目录树 |
+| V-ORPHAN-1601997 | 孤儿节点: 1601997 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1601997 路径 src/zephyr/autonomy_perm/models/__init__.py 未注... |
+| V-ORPHAN-1601998 | 孤儿节点: 1601998 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1601998 路径 src/zephyr/autonomy_perm/infrastructure/__init... |
+| V-ORPHAN-1601999 | 孤儿节点: 1601999 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1601999 路径 src/zephyr/autonomy_perm/core/__init__.py 未注册到... |
+| V-ORPHAN-1602000 | 孤儿节点: 1602000 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1602000 路径 src/zephyr/autonomy_perm/red_blue_validator/at... |
+| V-ORPHAN-1602001 | 孤儿节点: 1602001 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1602001 路径 src/zephyr/autonomy_perm/red_blue_validator/by... |
+| V-ORPHAN-1602002 | 孤儿节点: 1602002 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1602002 路径 src/zephyr/autonomy_perm/red_blue_validator/co... |
+| V-ORPHAN-1602003 | 孤儿节点: 1602003 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1602003 路径 src/zephyr/autonomy_perm/red_blue_validator/co... |
+| V-ORPHAN-1602004 | 孤儿节点: 1602004 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1602004 路径 src/zephyr/autonomy_perm/red_blue_validator/__... |
+| V-ORPHAN-1602005 | 孤儿节点: 1602005 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1602005 路径 src/zephyr/autonomy_perm/services/__init__.py ... |
+| V-ORPHAN-1602006 | 孤儿节点: 1602006 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1602006 路径 src/zephyr/autonomy_perm/red_blue_validator/ga... |
+| V-ORPHAN-1602007 | 孤儿节点: 1602007 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1602007 路径 src/zephyr/autonomy_perm/red_blue_validator/de... |
+| V-ORPHAN-1602008 | 孤儿节点: 1602008 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602008 路径 src/zephyr/backtest/api/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602009 | 孤儿节点: 1602009 | orphan_node | D_AUTONOMY_PERM |  | warn | advisory | 节点 1602009 路径 src/zephyr/autonomy_perm/_extensions/__init__.... |
+| V-ORPHAN-1602010 | 孤儿节点: 1602010 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602010 路径 src/zephyr/backtest/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602011 | 孤儿节点: 1602011 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602011 路径 src/zephyr/backtest/core/decision_gate.py 未注册到... |
+| V-ORPHAN-1602015 | 孤儿节点: 1602015 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602015 路径 src/zephyr/backtest/core/matching_logic.py 未注册... |
+| V-ORPHAN-1602016 | 孤儿节点: 1602016 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602016 路径 src/zephyr/backtest/core/pit_manager.py 未注册到目录... |
+| V-ORPHAN-1602017 | 孤儿节点: 1602017 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602017 路径 src/zephyr/backtest/core/overfitting_detector.... |
+| V-ORPHAN-1602018 | 孤儿节点: 1602018 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602018 路径 src/zephyr/backtest/core/metrics.py 未注册到目录树 |
+| V-ORPHAN-1602021 | 孤儿节点: 1602021 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602021 路径 src/zephyr/backtest/core/walk_forward.py 未注册到目... |
+| V-ORPHAN-1602022 | 孤儿节点: 1602022 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602022 路径 src/zephyr/backtest/core/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602025 | 孤儿节点: 1602025 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602025 路径 src/zephyr/backtest/infrastructure/__init__.py... |
+| V-ORPHAN-1602027 | 孤儿节点: 1602027 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602027 路径 src/zephyr/backtest/io/backtest_result_sink.py... |
+| V-ORPHAN-1602028 | 孤儿节点: 1602028 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602028 路径 src/zephyr/backtest/io/result_repository.py 未注... |
+| V-ORPHAN-1602030 | 孤儿节点: 1602030 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602030 路径 src/zephyr/backtest/io/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602031 | 孤儿节点: 1602031 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602031 路径 src/zephyr/compliance/artifact_scanner.py 未注册到... |
+| V-ORPHAN-1602032 | 孤儿节点: 1602032 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602032 路径 src/zephyr/compliance/aisg_sandbox.py 未注册到目录树 |
+| V-ORPHAN-1602033 | 孤儿节点: 1602033 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602033 路径 src/zephyr/backtest/services/__init__.py 未注册到目... |
+| V-ORPHAN-1602034 | 孤儿节点: 1602034 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602034 路径 src/zephyr/backtest/_extensions/__init__.py 未注... |
+| V-ORPHAN-1602035 | 孤儿节点: 1602035 | orphan_node | D_BACKTEST |  | warn | advisory | 节点 1602035 路径 src/zephyr/backtest/models/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602036 | 孤儿节点: 1602036 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602036 路径 src/zephyr/compliance/compliance_manager.py 未注... |
+| V-ORPHAN-1602037 | 孤儿节点: 1602037 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602037 路径 src/zephyr/compliance/default_security_gateway... |
+| V-ORPHAN-1602038 | 孤儿节点: 1602038 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602038 路径 src/zephyr/compliance/evidence_pack.py 未注册到目录树 |
+| V-ORPHAN-1602039 | 孤儿节点: 1602039 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602039 路径 src/zephyr/compliance/integrity.py 未注册到目录树 |
+| V-ORPHAN-1602040 | 孤儿节点: 1602040 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602040 路径 src/zephyr/compliance/financial_compliance.py ... |
+| V-ORPHAN-1602041 | 孤儿节点: 1602041 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602041 路径 src/zephyr/compliance/audit_orchestrator/__ini... |
+| V-ORPHAN-1602042 | 孤儿节点: 1602042 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602042 路径 src/zephyr/compliance/merkle_hourly.py 未注册到目录树 |
+| V-ORPHAN-1602043 | 孤儿节点: 1602043 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602043 路径 src/zephyr/compliance/security_gateway_base.py... |
+| V-ORPHAN-1602044 | 孤儿节点: 1602044 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602044 路径 src/zephyr/compliance/audit_trail/__init__.py ... |
+| V-ORPHAN-1602045 | 孤儿节点: 1602045 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602045 路径 src/zephyr/compliance/api/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602046 | 孤儿节点: 1602046 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602046 路径 src/zephyr/compliance/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602047 | 孤儿节点: 1602047 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602047 路径 src/zephyr/compliance/audit_trail/bridges/__in... |
+| V-ORPHAN-1602048 | 孤儿节点: 1602048 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602048 路径 src/zephyr/compliance/behavioral_auditor/__ini... |
+| V-ORPHAN-1602049 | 孤儿节点: 1602049 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602049 路径 src/zephyr/compliance/behavioral_admission/__i... |
+| V-ORPHAN-1602050 | 孤儿节点: 1602050 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602050 路径 src/zephyr/compliance/compliance_gate_a6/__ini... |
+| V-ORPHAN-1602051 | 孤儿节点: 1602051 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602051 路径 src/zephyr/compliance/core/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602052 | 孤儿节点: 1602052 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602052 路径 src/zephyr/compliance/models/__init__.py 未注册到目... |
+| V-ORPHAN-1602053 | 孤儿节点: 1602053 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602053 路径 src/zephyr/compliance/implementations/__init__... |
+| V-ORPHAN-1602054 | 孤儿节点: 1602054 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602054 路径 src/zephyr/compliance/infrastructure/__init__.... |
+| V-ORPHAN-1602055 | 孤儿节点: 1602055 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602055 路径 src/zephyr/compliance/services/__init__.py 未注册... |
+| V-ORPHAN-1602056 | 孤儿节点: 1602056 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602056 路径 src/zephyr/compliance/_extensions/__init__.py ... |
+| V-ORPHAN-1602058 | 孤儿节点: 1602058 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1602058 路径 src/zephyr/cross_asset/models/__init__.py 未注册到... |
+| V-ORPHAN-1602059 | 孤儿节点: 1602059 | orphan_node | D_GOV_ENFORCEMENT |  | warn | advisory | 节点 1602059 路径 src/zephyr/compliance/zero_knowledge_audit_stu... |
+| V-ORPHAN-1602060 | 孤儿节点: 1602060 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1602060 路径 src/zephyr/cross_asset/api/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602061 | 孤儿节点: 1602061 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1602061 路径 src/zephyr/cross_asset/infrastructure/__init__... |
+| V-ORPHAN-1602062 | 孤儿节点: 1602062 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1602062 路径 src/zephyr/cross_asset/core/__init__.py 未注册到目录... |
+| V-ORPHAN-1602063 | 孤儿节点: 1602063 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1602063 路径 src/zephyr/cross_asset/services/__init__.py 未注... |
+| V-ORPHAN-1602064 | 孤儿节点: 1602064 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602064 路径 src/zephyr/data/alerter.py 未注册到目录树 |
+| V-ORPHAN-1602065 | 孤儿节点: 1602065 | orphan_node | D_CROSS_ASSET |  | warn | advisory | 节点 1602065 路径 src/zephyr/cross_asset/_extensions/__init__.py... |
+| V-ORPHAN-1602066 | 孤儿节点: 1602066 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602066 路径 src/zephyr/data/ch_writer.py 未注册到目录树 |
+| V-ORPHAN-1602067 | 孤儿节点: 1602067 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602067 路径 src/zephyr/data/metrics.py 未注册到目录树 |
+| V-ORPHAN-1602068 | 孤儿节点: 1602068 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602068 路径 src/zephyr/data/provider_base.py 未注册到目录树 |
+| V-ORPHAN-1602070 | 孤儿节点: 1602070 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602070 路径 src/zephyr/data/policy_registry.py 未注册到目录树 |
+| V-ORPHAN-1602071 | 孤儿节点: 1602071 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602071 路径 src/zephyr/data/progress_store.py 未注册到目录树 |
+| V-ORPHAN-1602072 | 孤儿节点: 1602072 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602072 路径 src/zephyr/data/scheduler.py 未注册到目录树 |
+| V-ORPHAN-1602075 | 孤儿节点: 1602075 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602075 路径 src/zephyr/data/task_queue.py 未注册到目录树 |
+| V-ORPHAN-1602076 | 孤儿节点: 1602076 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602076 路径 src/zephyr/data/implementations/akshare_provid... |
+| V-ORPHAN-1602077 | 孤儿节点: 1602077 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602077 路径 src/zephyr/data/implementations/ifind_provider... |
+| V-ORPHAN-1602078 | 孤儿节点: 1602078 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602078 路径 src/zephyr/data/implementations/baostock_provi... |
+| V-ORPHAN-1602079 | 孤儿节点: 1602079 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602079 路径 src/zephyr/data/implementations/miniqmt_provid... |
+| V-ORPHAN-1602080 | 孤儿节点: 1602080 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602080 路径 src/zephyr/data/implementations/rss_provider.p... |
+| V-ORPHAN-1602081 | 孤儿节点: 1602081 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602081 路径 src/zephyr/data/implementations/tdx_provider.p... |
+| V-ORPHAN-1602082 | 孤儿节点: 1602082 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602082 路径 src/zephyr/data/implementations/__init__.py 未注... |
+| V-ORPHAN-1602083 | 孤儿节点: 1602083 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602083 路径 src/zephyr/data/implementations/tushare_provid... |
+| V-ORPHAN-1602084 | 孤儿节点: 1602084 | orphan_node | D_GOVERNANCE |  | warn | advisory | 节点 1602084 路径 src/zephyr/data/implementations/tickflow_provi... |
+| V-ORPHAN-1602085 | 孤儿节点: 1602085 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1602085 路径 src/zephyr/data_eng/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602086 | 孤儿节点: 1602086 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1602086 路径 src/zephyr/data_eng/infrastructure/__init__.py... |
+| V-ORPHAN-1602087 | 孤儿节点: 1602087 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1602087 路径 src/zephyr/data_eng/core/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602088 | 孤儿节点: 1602088 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1602088 路径 src/zephyr/data_eng/api/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602089 | 孤儿节点: 1602089 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1602089 路径 src/zephyr/data_eng/models/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602090 | 孤儿节点: 1602090 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1602090 路径 src/zephyr/data_eng/_extensions/__init__.py 未注... |
+| V-ORPHAN-1602091 | 孤儿节点: 1602091 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1602091 路径 src/zephyr/data_governance/__init__.py 未注册到目录树 |
+| V-ORPHAN-1602092 | 孤儿节点: 1602092 | orphan_node | D_DATA_ENG |  | warn | advisory | 节点 1602092 路径 src/zephyr/data_eng/services/__init__.py 未注册到目... |
+| V-ORPHAN-1602093 | 孤儿节点: 1602093 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1602093 路径 src/zephyr/data_governance/api/__init__.py 未注册... |
+| V-ORPHAN-1602094 | 孤儿节点: 1602094 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1602094 路径 src/zephyr/data_governance/models/__init__.py ... |
+| V-ORPHAN-1602095 | 孤儿节点: 1602095 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1602095 路径 src/zephyr/data_governance/core/__init__.py 未注... |
+| V-ORPHAN-1602096 | 孤儿节点: 1602096 | orphan_node | D_DATA_GOV |  | warn | advisory | 节点 1602096 路径 src/zephyr/data_governance/infrastructure/__in... |
+| V-CAP-D_GOVERNANCE | 容量超限: D_GOVERNANCE | capacity_exceeded | D_GOVERNANCE |  | hard | gate | 域 D_GOVERNANCE(registry_management) production 节点 489 超过上限 1... |
 | V-CAP-D_TRADING | 容量超限: D_TRADING | capacity_exceeded | D_TRADING |  | hard | gate | 域 D_TRADING(交易运营) production 节点 280 超过上限 150，需拆分或提升上限 (ARCH-... |
 |  | procedural policy 必须可验证（不能是 inspection） | architecture_contract |  |  | error | code |  |
 | V-CROSS-D_AUTONOMY_CORE-D_GOVERNANCE | 跨域违规: D_AUTONOMY_CORE -> D_GOVERNANCE | cross_domain_violation | D_AUTONOMY_CORE | D_GOVERNANCE | error | gate | 跨域依赖未声明: D_AUTONOMY_CORE -> D_GOVERNANCE |
@@ -187,126 +187,126 @@ ttl: permanent
 | V-CROSS-D_INFRA_RUNTIME-D_TRADING | 跨域违规: D_INFRA_RUNTIME -> D_TRADING | cross_domain_violation | D_INFRA_RUNTIME | D_TRADING | error | gate | 跨域依赖未声明: D_INFRA_RUNTIME -> D_TRADING |
 | V-CROSS-D_SECURITY-D_GOVERNANCE | 跨域违规: D_SECURITY -> D_GOVERNANCE | cross_domain_violation | D_SECURITY | D_GOVERNANCE | error | gate | 跨域依赖未声明: D_SECURITY -> D_GOVERNANCE |
 | V-CROSS-D_SECURITY-D_GOV_ENFORCEMENT | 跨域违规: D_SECURITY -> D_GOV_ENFORCEMENT | cross_domain_violation | D_SECURITY | D_GOV_ENFORCEMENT | error | gate | 跨域依赖未声明: D_SECURITY -> D_GOV_ENFORCEMENT |
-| V-HARD150-D_GOVERNANCE | 硬上限违规: D_GOVERNANCE | hard_limit_exceeded | D_GOVERNANCE |  | error | gate | 域 D_GOVERNANCE(registry_management) production 节点 483 超过硬上限 ... |
+| V-HARD150-D_GOVERNANCE | 硬上限违规: D_GOVERNANCE | hard_limit_exceeded | D_GOVERNANCE |  | error | gate | 域 D_GOVERNANCE(registry_management) production 节点 489 超过硬上限 ... |
 | V-HARD150-D_TRADING | 硬上限违规: D_TRADING | hard_limit_exceeded | D_TRADING |  | error | gate | 域 D_TRADING(交易运营) production 节点 280 超过硬上限 150 (ARCH-CAP-002 ... |
-| V-LAYER-D_AUTONOMY_CORE-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_AUTONOMY_CORE | D_GOVERNANCE | error | gate | 层级违规: 1527526 -> 1527757 (L1_foundation -> L2_domain) |
-| V-LAYER-D_AUTONOMY_CORE-D_GOV_ENFORCEMENT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_AUTONOMY_CORE | D_GOV_ENFORCEMENT | error | gate | 层级违规: 1527495 -> 1528260 (L1_foundation -> L2_domain) |
-| V-LAYER-D_AUTONOMY_CORE-D_INTELLIGENCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_AUTONOMY_CORE | D_INTELLIGENCE | error | gate | 层级违规: 1527444 -> 1528741 (L1_foundation -> L2_domain) |
-| V-LAYER-D_FRONTEND-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_FRONTEND | D_GOVERNANCE | error | gate | 层级违规: 1527700 -> 1528167 (L1_foundation -> L2_domain) |
-| V-LAYER-D_FRONTEND-D_TRADING | 层级违规: L1_foundation -> L2_domain | layer_violation | D_FRONTEND | D_TRADING | error | gate | 层级违规: 1527713 -> 1529798 (L1_foundation -> L2_domain) |
-| V-LAYER-D_INFRA_A2A-D_GOVERNANCE | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_A2A | D_GOVERNANCE | error | gate | 层级违规: 1528449 -> 1528038 (L0_infrastructure -> L2_domain) |
-| V-LAYER-D_INFRA_A2A-D_SHARED | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_A2A | D_SHARED | error | gate | 层级违规: 1528456 -> 1529285 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_GOVERNANCE | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_GOVERNANCE | error | gate | 层级违规: 1528489 -> 1527771 (L0_infrastructure -> L2_domain) |
-| V-LAYER-D_INFRA_RUNTIME-D_INTEGRATION | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_INTEGRATION | error | gate | 层级违规: 1528368 -> 1528699 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_SHARED | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_SHARED | error | gate | 层级违规: 1528543 -> 1529262 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_TRADING | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_TRADING | error | gate | 层级违规: 1527414 -> 1529689 (L0_infrastructure -> L2_domain) |
-| V-LAYER-D_SECURITY-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOVERNANCE | error | gate | 层级违规: 1528056 -> 1528024 (L1_foundation -> L2_domain) |
-| V-LAYER-D_SECURITY-D_GOV_ENFORCEMENT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_ENFORCEMENT | error | gate | 层级违规: 1527926 -> 1528201 (L1_foundation -> L2_domain) |
+| V-LAYER-D_AUTONOMY_CORE-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_AUTONOMY_CORE | D_GOVERNANCE | error | gate | 层级违规: 1601981 -> 1602213 (L1_foundation -> L2_domain) |
+| V-LAYER-D_AUTONOMY_CORE-D_GOV_ENFORCEMENT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_AUTONOMY_CORE | D_GOV_ENFORCEMENT | error | gate | 层级违规: 1601956 -> 1602727 (L1_foundation -> L2_domain) |
+| V-LAYER-D_AUTONOMY_CORE-D_INTELLIGENCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_AUTONOMY_CORE | D_INTELLIGENCE | error | gate | 层级违规: 1601905 -> 1603202 (L1_foundation -> L2_domain) |
+| V-LAYER-D_FRONTEND-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_FRONTEND | D_GOVERNANCE | error | gate | 层级违规: 1602159 -> 1602629 (L1_foundation -> L2_domain) |
+| V-LAYER-D_FRONTEND-D_TRADING | 层级违规: L1_foundation -> L2_domain | layer_violation | D_FRONTEND | D_TRADING | error | gate | 层级违规: 1602175 -> 1604266 (L1_foundation -> L2_domain) |
+| V-LAYER-D_INFRA_A2A-D_GOVERNANCE | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_A2A | D_GOVERNANCE | error | gate | 层级违规: 1602914 -> 1602498 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_INFRA_A2A-D_SHARED | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_A2A | D_SHARED | error | gate | 层级违规: 1602922 -> 1603748 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_GOVERNANCE | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_GOVERNANCE | error | gate | 层级违规: 1602955 -> 1602788 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_INFRA_RUNTIME-D_INTEGRATION | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_INTEGRATION | error | gate | 层级违规: 1602834 -> 1603168 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_SHARED | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_SHARED | error | gate | 层级违规: 1603007 -> 1603728 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_TRADING | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_TRADING | error | gate | 层级违规: 1601874 -> 1604150 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_SECURITY-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOVERNANCE | error | gate | 层级违规: 1602522 -> 1602753 (L1_foundation -> L2_domain) |
+| V-LAYER-D_SECURITY-D_GOV_ENFORCEMENT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_ENFORCEMENT | error | gate | 层级违规: 1602393 -> 1602666 (L1_foundation -> L2_domain) |
 
 ## 完整约束清单
 
 | 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 状态 / Status |
 |--------|------|------|------|--------|---------|------|
-| V-ORPHAN-1527414 | 孤儿节点: 1527414 | orphan_node | D_INFRA_RUNTIME |  | warn | open |
-| V-ORPHAN-1527415 | 孤儿节点: 1527415 | orphan_node | D_ALT_DATA |  | warn | open |
-| V-ORPHAN-1527416 | 孤儿节点: 1527416 | orphan_node | D_ALT_DATA |  | warn | open |
-| V-ORPHAN-1527417 | 孤儿节点: 1527417 | orphan_node | D_ALT_DATA |  | warn | open |
-| V-ORPHAN-1527418 | 孤儿节点: 1527418 | orphan_node | D_ALT_DATA |  | warn | open |
-| V-ORPHAN-1527419 | 孤儿节点: 1527419 | orphan_node | D_ALT_DATA |  | warn | open |
-| V-ORPHAN-1527420 | 孤儿节点: 1527420 | orphan_node | D_ALT_DATA |  | warn | open |
-| V-ORPHAN-1527421 | 孤儿节点: 1527421 | orphan_node | D_ALT_DATA |  | warn | open |
-| V-ORPHAN-1527422 | 孤儿节点: 1527422 | orphan_node | D_AUTONOMY_CORE |  | warn | open |
-| V-ORPHAN-1527423 | 孤儿节点: 1527423 | orphan_node | D_AUTONOMY_CORE |  | warn | open |
-| V-ORPHAN-1527476 | 孤儿节点: 1527476 | orphan_node | D_AUTONOMY_CORE |  | warn | open |
-| V-ORPHAN-1527535 | 孤儿节点: 1527535 | orphan_node | D_AUTONOMY_CORE |  | warn | open |
-| V-ORPHAN-1527536 | 孤儿节点: 1527536 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527537 | 孤儿节点: 1527537 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527538 | 孤儿节点: 1527538 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527539 | 孤儿节点: 1527539 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527540 | 孤儿节点: 1527540 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527541 | 孤儿节点: 1527541 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527542 | 孤儿节点: 1527542 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527543 | 孤儿节点: 1527543 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527544 | 孤儿节点: 1527544 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527545 | 孤儿节点: 1527545 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527546 | 孤儿节点: 1527546 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527547 | 孤儿节点: 1527547 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527548 | 孤儿节点: 1527548 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527549 | 孤儿节点: 1527549 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527550 | 孤儿节点: 1527550 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
-| V-ORPHAN-1527551 | 孤儿节点: 1527551 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527552 | 孤儿节点: 1527552 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527558 | 孤儿节点: 1527558 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527559 | 孤儿节点: 1527559 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527561 | 孤儿节点: 1527561 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527562 | 孤儿节点: 1527562 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527563 | 孤儿节点: 1527563 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527567 | 孤儿节点: 1527567 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527569 | 孤儿节点: 1527569 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527570 | 孤儿节点: 1527570 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527571 | 孤儿节点: 1527571 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527572 | 孤儿节点: 1527572 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527573 | 孤儿节点: 1527573 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527574 | 孤儿节点: 1527574 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527575 | 孤儿节点: 1527575 | orphan_node | D_BACKTEST |  | warn | open |
-| V-ORPHAN-1527576 | 孤儿节点: 1527576 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527577 | 孤儿节点: 1527577 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527578 | 孤儿节点: 1527578 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527579 | 孤儿节点: 1527579 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527580 | 孤儿节点: 1527580 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527581 | 孤儿节点: 1527581 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527582 | 孤儿节点: 1527582 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527583 | 孤儿节点: 1527583 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527584 | 孤儿节点: 1527584 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527585 | 孤儿节点: 1527585 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527586 | 孤儿节点: 1527586 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527587 | 孤儿节点: 1527587 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527588 | 孤儿节点: 1527588 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527589 | 孤儿节点: 1527589 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527590 | 孤儿节点: 1527590 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527591 | 孤儿节点: 1527591 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527592 | 孤儿节点: 1527592 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527593 | 孤儿节点: 1527593 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527594 | 孤儿节点: 1527594 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527595 | 孤儿节点: 1527595 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527596 | 孤儿节点: 1527596 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527597 | 孤儿节点: 1527597 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527598 | 孤儿节点: 1527598 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
-| V-ORPHAN-1527599 | 孤儿节点: 1527599 | orphan_node | D_CROSS_ASSET |  | warn | open |
-| V-ORPHAN-1527600 | 孤儿节点: 1527600 | orphan_node | D_CROSS_ASSET |  | warn | open |
-| V-ORPHAN-1527601 | 孤儿节点: 1527601 | orphan_node | D_CROSS_ASSET |  | warn | open |
-| V-ORPHAN-1527602 | 孤儿节点: 1527602 | orphan_node | D_CROSS_ASSET |  | warn | open |
-| V-ORPHAN-1527604 | 孤儿节点: 1527604 | orphan_node | D_CROSS_ASSET |  | warn | open |
-| V-ORPHAN-1527605 | 孤儿节点: 1527605 | orphan_node | D_CROSS_ASSET |  | warn | open |
-| V-ORPHAN-1527607 | 孤儿节点: 1527607 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527609 | 孤儿节点: 1527609 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527610 | 孤儿节点: 1527610 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527611 | 孤儿节点: 1527611 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527612 | 孤儿节点: 1527612 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527615 | 孤儿节点: 1527615 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527616 | 孤儿节点: 1527616 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527617 | 孤儿节点: 1527617 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527618 | 孤儿节点: 1527618 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527619 | 孤儿节点: 1527619 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527620 | 孤儿节点: 1527620 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527621 | 孤儿节点: 1527621 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527622 | 孤儿节点: 1527622 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527623 | 孤儿节点: 1527623 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527624 | 孤儿节点: 1527624 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527625 | 孤儿节点: 1527625 | orphan_node | D_GOVERNANCE |  | warn | open |
-| V-ORPHAN-1527626 | 孤儿节点: 1527626 | orphan_node | D_DATA_ENG |  | warn | open |
-| V-ORPHAN-1527627 | 孤儿节点: 1527627 | orphan_node | D_DATA_ENG |  | warn | open |
-| V-ORPHAN-1527628 | 孤儿节点: 1527628 | orphan_node | D_DATA_ENG |  | warn | open |
-| V-ORPHAN-1527629 | 孤儿节点: 1527629 | orphan_node | D_DATA_ENG |  | warn | open |
-| V-ORPHAN-1527630 | 孤儿节点: 1527630 | orphan_node | D_DATA_ENG |  | warn | open |
-| V-ORPHAN-1527631 | 孤儿节点: 1527631 | orphan_node | D_DATA_ENG |  | warn | open |
-| V-ORPHAN-1527632 | 孤儿节点: 1527632 | orphan_node | D_DATA_GOV |  | warn | open |
-| V-ORPHAN-1527633 | 孤儿节点: 1527633 | orphan_node | D_DATA_ENG |  | warn | open |
-| V-ORPHAN-1527634 | 孤儿节点: 1527634 | orphan_node | D_DATA_GOV |  | warn | open |
-| V-ORPHAN-1527635 | 孤儿节点: 1527635 | orphan_node | D_DATA_GOV |  | warn | open |
-| V-ORPHAN-1527636 | 孤儿节点: 1527636 | orphan_node | D_DATA_GOV |  | warn | open |
-| V-ORPHAN-1527637 | 孤儿节点: 1527637 | orphan_node | D_DATA_GOV |  | warn | open |
-| V-ORPHAN-1527638 | 孤儿节点: 1527638 | orphan_node | D_DATA_GOV |  | warn | open |
+| V-ORPHAN-1601873 | 孤儿节点: 1601873 | orphan_node | D_ALT_DATA |  | warn | open |
+| V-ORPHAN-1601875 | 孤儿节点: 1601875 | orphan_node | D_ALT_DATA |  | warn | open |
+| V-ORPHAN-1601876 | 孤儿节点: 1601876 | orphan_node | D_ALT_DATA |  | warn | open |
+| V-ORPHAN-1601877 | 孤儿节点: 1601877 | orphan_node | D_ALT_DATA |  | warn | open |
+| V-ORPHAN-1601878 | 孤儿节点: 1601878 | orphan_node | D_ALT_DATA |  | warn | open |
+| V-ORPHAN-1601879 | 孤儿节点: 1601879 | orphan_node | D_ALT_DATA |  | warn | open |
+| V-ORPHAN-1601880 | 孤儿节点: 1601880 | orphan_node | D_ALT_DATA |  | warn | open |
+| V-ORPHAN-1601882 | 孤儿节点: 1601882 | orphan_node | D_AUTONOMY_CORE |  | warn | open |
+| V-ORPHAN-1601906 | 孤儿节点: 1601906 | orphan_node | D_AUTONOMY_CORE |  | warn | open |
+| V-ORPHAN-1601936 | 孤儿节点: 1601936 | orphan_node | D_AUTONOMY_CORE |  | warn | open |
+| V-ORPHAN-1601992 | 孤儿节点: 1601992 | orphan_node | D_AUTONOMY_CORE |  | warn | open |
+| V-ORPHAN-1601995 | 孤儿节点: 1601995 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1601996 | 孤儿节点: 1601996 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1601997 | 孤儿节点: 1601997 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1601998 | 孤儿节点: 1601998 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1601999 | 孤儿节点: 1601999 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602000 | 孤儿节点: 1602000 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602001 | 孤儿节点: 1602001 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602002 | 孤儿节点: 1602002 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602003 | 孤儿节点: 1602003 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602004 | 孤儿节点: 1602004 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602005 | 孤儿节点: 1602005 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602006 | 孤儿节点: 1602006 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602007 | 孤儿节点: 1602007 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602008 | 孤儿节点: 1602008 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602009 | 孤儿节点: 1602009 | orphan_node | D_AUTONOMY_PERM |  | warn | open |
+| V-ORPHAN-1602010 | 孤儿节点: 1602010 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602011 | 孤儿节点: 1602011 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602015 | 孤儿节点: 1602015 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602016 | 孤儿节点: 1602016 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602017 | 孤儿节点: 1602017 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602018 | 孤儿节点: 1602018 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602021 | 孤儿节点: 1602021 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602022 | 孤儿节点: 1602022 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602025 | 孤儿节点: 1602025 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602027 | 孤儿节点: 1602027 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602028 | 孤儿节点: 1602028 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602030 | 孤儿节点: 1602030 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602031 | 孤儿节点: 1602031 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602032 | 孤儿节点: 1602032 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602033 | 孤儿节点: 1602033 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602034 | 孤儿节点: 1602034 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602035 | 孤儿节点: 1602035 | orphan_node | D_BACKTEST |  | warn | open |
+| V-ORPHAN-1602036 | 孤儿节点: 1602036 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602037 | 孤儿节点: 1602037 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602038 | 孤儿节点: 1602038 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602039 | 孤儿节点: 1602039 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602040 | 孤儿节点: 1602040 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602041 | 孤儿节点: 1602041 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602042 | 孤儿节点: 1602042 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602043 | 孤儿节点: 1602043 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602044 | 孤儿节点: 1602044 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602045 | 孤儿节点: 1602045 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602046 | 孤儿节点: 1602046 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602047 | 孤儿节点: 1602047 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602048 | 孤儿节点: 1602048 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602049 | 孤儿节点: 1602049 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602050 | 孤儿节点: 1602050 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602051 | 孤儿节点: 1602051 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602052 | 孤儿节点: 1602052 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602053 | 孤儿节点: 1602053 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602054 | 孤儿节点: 1602054 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602055 | 孤儿节点: 1602055 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602056 | 孤儿节点: 1602056 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602058 | 孤儿节点: 1602058 | orphan_node | D_CROSS_ASSET |  | warn | open |
+| V-ORPHAN-1602059 | 孤儿节点: 1602059 | orphan_node | D_GOV_ENFORCEMENT |  | warn | open |
+| V-ORPHAN-1602060 | 孤儿节点: 1602060 | orphan_node | D_CROSS_ASSET |  | warn | open |
+| V-ORPHAN-1602061 | 孤儿节点: 1602061 | orphan_node | D_CROSS_ASSET |  | warn | open |
+| V-ORPHAN-1602062 | 孤儿节点: 1602062 | orphan_node | D_CROSS_ASSET |  | warn | open |
+| V-ORPHAN-1602063 | 孤儿节点: 1602063 | orphan_node | D_CROSS_ASSET |  | warn | open |
+| V-ORPHAN-1602064 | 孤儿节点: 1602064 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602065 | 孤儿节点: 1602065 | orphan_node | D_CROSS_ASSET |  | warn | open |
+| V-ORPHAN-1602066 | 孤儿节点: 1602066 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602067 | 孤儿节点: 1602067 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602068 | 孤儿节点: 1602068 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602070 | 孤儿节点: 1602070 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602071 | 孤儿节点: 1602071 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602072 | 孤儿节点: 1602072 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602075 | 孤儿节点: 1602075 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602076 | 孤儿节点: 1602076 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602077 | 孤儿节点: 1602077 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602078 | 孤儿节点: 1602078 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602079 | 孤儿节点: 1602079 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602080 | 孤儿节点: 1602080 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602081 | 孤儿节点: 1602081 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602082 | 孤儿节点: 1602082 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602083 | 孤儿节点: 1602083 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602084 | 孤儿节点: 1602084 | orphan_node | D_GOVERNANCE |  | warn | open |
+| V-ORPHAN-1602085 | 孤儿节点: 1602085 | orphan_node | D_DATA_ENG |  | warn | open |
+| V-ORPHAN-1602086 | 孤儿节点: 1602086 | orphan_node | D_DATA_ENG |  | warn | open |
+| V-ORPHAN-1602087 | 孤儿节点: 1602087 | orphan_node | D_DATA_ENG |  | warn | open |
+| V-ORPHAN-1602088 | 孤儿节点: 1602088 | orphan_node | D_DATA_ENG |  | warn | open |
+| V-ORPHAN-1602089 | 孤儿节点: 1602089 | orphan_node | D_DATA_ENG |  | warn | open |
+| V-ORPHAN-1602090 | 孤儿节点: 1602090 | orphan_node | D_DATA_ENG |  | warn | open |
+| V-ORPHAN-1602091 | 孤儿节点: 1602091 | orphan_node | D_DATA_GOV |  | warn | open |
+| V-ORPHAN-1602092 | 孤儿节点: 1602092 | orphan_node | D_DATA_ENG |  | warn | open |
+| V-ORPHAN-1602093 | 孤儿节点: 1602093 | orphan_node | D_DATA_GOV |  | warn | open |
+| V-ORPHAN-1602094 | 孤儿节点: 1602094 | orphan_node | D_DATA_GOV |  | warn | open |
+| V-ORPHAN-1602095 | 孤儿节点: 1602095 | orphan_node | D_DATA_GOV |  | warn | open |
+| V-ORPHAN-1602096 | 孤儿节点: 1602096 | orphan_node | D_DATA_GOV |  | warn | open |
 | V-CAP-D_GOVERNANCE | 容量超限: D_GOVERNANCE | capacity_exceeded | D_GOVERNANCE |  | hard | open |
 | V-CAP-D_TRADING | 容量超限: D_TRADING | capacity_exceeded | D_TRADING |  | hard | open |
 |  | procedural policy 必须可验证（不能是 inspection） | architecture_contract |  |  | error | open |

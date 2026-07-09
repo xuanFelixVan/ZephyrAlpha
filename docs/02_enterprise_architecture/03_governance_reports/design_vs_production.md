@@ -20,18 +20,18 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 1598 | 32.0% |
-| design（设计态） | 53 | 1.1% |
-| prototype（原型态） | 3338 | 66.9% |
+| production（生产态） | 1604 | 32.0% |
+| design（设计态） | 54 | 1.1% |
+| prototype（原型态） | 3350 | 66.9% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **4989** | **100%** |
+| **总计** | **5008** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4935 | 98.9% |
-| planned | 36 | 0.7% |
+| generated | 4953 | 98.9% |
+| planned | 37 | 0.7% |
 | stable | 18 | 0.4% |
 
 ## 各域设计成熟度统计
@@ -40,7 +40,7 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D_ASHARE_SIGNAL | ashare_signal | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_AUDITTEST | audit_test_suite | 1727 | 49 | 0 | 1678 | 0 | 2.8% |
+| D_AUDITTEST | audit_test_suite | 1737 | 49 | 0 | 1688 | 0 | 2.8% |
 | D_AUTONOMY_CORE | agent_lifecycle | 114 | 111 | 0 | 3 | 0 | 97.4% |
 | D_AUTONOMY_PERM | budget_enforcement | 14 | 0 | 0 | 14 | 0 | 0.0% |
 | D_BACKTEST | 回测 | 33 | 9 | 8 | 16 | 0 | 27.3% |
@@ -55,14 +55,14 @@ ttl: permanent
 | D_FACTOR | 因子 | 14 | 4 | 0 | 10 | 0 | 28.6% |
 | D_FRONTEND | 前端 | 30 | 13 | 6 | 11 | 0 | 43.3% |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | 25 | 4 | 0 | 21 | 0 | 16.0% |
-| D_GOVERNANCE | registry_management | 854 | 483 | 27 | 344 | 0 | 56.6% |
+| D_GOVERNANCE | registry_management | 861 | 489 | 28 | 344 | 0 | 56.8% |
 | D_GOV_AUDIT | audit_orchestration | 2 | 0 | 2 | 0 | 0 | 0.0% |
 | D_GOV_DOCS | architecture_docs | 2 | 2 | 0 | 0 | 0 | 100.0% |
 | D_GOV_DRIFT | drift_detection | 1 | 0 | 1 | 0 | 0 | 0.0% |
 | D_GOV_ENFORCEMENT | rule_enforcement | 201 | 133 | 0 | 68 | 0 | 66.2% |
 | D_GOV_REPAIR | rollback | 0 | 0 | 0 | 0 | 0 | N/A |
 | D_GOV_RULE | rule_governance | 0 | 0 | 0 | 0 | 0 | N/A |
-| D_GOV_SCRIPTS | script_governance | 435 | 32 | 0 | 403 | 0 | 7.4% |
+| D_GOV_SCRIPTS | script_governance | 437 | 32 | 0 | 405 | 0 | 7.3% |
 | D_INFRA_A2A | a2a_communication | 89 | 32 | 0 | 57 | 0 | 36.0% |
 | D_INFRA_OPS | asset-inventory | 1 | 0 | 1 | 0 | 0 | 0.0% |
 | D_INFRA_RECOVERY | rollback_recovery | 54 | 48 | 0 | 6 | 0 | 88.9% |
