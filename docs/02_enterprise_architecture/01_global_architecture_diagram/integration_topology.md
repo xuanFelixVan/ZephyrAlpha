@@ -2,14 +2,14 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-07-09 17:01:26
+> 自动生成时间: 2026-07-09 17:11:37
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 > 跨域依赖对数: 166
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-07-09 17:01:26
+%% 生成时间: 2026-07-09 17:11:37
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 %% 跨域依赖对数: 166
 
@@ -41,7 +41,7 @@ graph LR
     end
     subgraph L2_domain[L2_domain]
         D_ASHARE_SIGNAL["D_ASHARE_SIGNAL<br/>ashare_signal<br/>(7模块)"]
-        D_AUDITTEST["D_AUDITTEST<br/>audit_test_suite<br/>(1737模块)"]
+        D_AUDITTEST["D_AUDITTEST<br/>audit_test_suite<br/>(1747模块)"]
         D_AUTONOMY_PERM["D_AUTONOMY_PERM<br/>budget_enforcement<br/>(14模块)"]
         D_BACKTEST["D_BACKTEST<br/>回测<br/>(33模块)"]
         D_CROSS_ASSET["D_CROSS_ASSET<br/>跨资产<br/>(8模块)"]
@@ -75,7 +75,7 @@ graph LR
 
     %% 跨域依赖（按依赖数排序，最多显示 100 条）
     D_AUDITTEST -->|639条 test_depends| D_TRADING
-    D_AUDITTEST -->|532条 test_depends| D_GOVERNANCE
+    D_AUDITTEST -->|550条 test_depends| D_GOVERNANCE
     D_AUDITTEST -->|221条 test_depends| D_GOV_ENFORCEMENT
     D_AUDITTEST -->|170条 test_depends| D_SHARED
     D_AUDITTEST -->|168条 test_depends| D_SECURITY
@@ -179,11 +179,11 @@ graph LR
     %% 统计
     %% 域总数: 50
     %% 跨域依赖对数: 166
-    %% 跨域依赖边总数: 3421
+    %% 跨域依赖边总数: 3439
 
     %% Top 10 依赖对
     %% 1. D_AUDITTEST -> D_TRADING: 639 条
-    %% 2. D_AUDITTEST -> D_GOVERNANCE: 532 条
+    %% 2. D_AUDITTEST -> D_GOVERNANCE: 550 条
     %% 3. D_AUDITTEST -> D_GOV_ENFORCEMENT: 221 条
     %% 4. D_AUDITTEST -> D_SHARED: 170 条
     %% 5. D_AUDITTEST -> D_SECURITY: 168 条

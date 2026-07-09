@@ -29,7 +29,7 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | registry_management | 489 | 150 | +339 |
+| D_GOVERNANCE | registry_management | 497 | 150 | +347 |
 | D_TRADING | 交易运营 | 280 | 150 | +130 |
 
 ## 接近超容域清单（>80%，需关注）
@@ -85,7 +85,7 @@ ttl: permanent
 | D_FACTOR | 因子 | L2_domain | 4 | 150 | 2.7% | 正常 |
 | D_FRONTEND | 前端 | L1_foundation | 13 | 150 | 8.7% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | L2_domain | 4 | 150 | 2.7% | 正常 |
-| D_GOVERNANCE | registry_management | L2_domain | 489 | 150 | 326.0% | 超容 |
+| D_GOVERNANCE | registry_management | L2_domain | 497 | 150 | 331.3% | 超容 |
 | D_GOV_AUDIT | audit_orchestration | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_GOV_DOCS | architecture_docs | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | drift_detection | L2_domain | 0 | 150 | 0.0% | 空 |

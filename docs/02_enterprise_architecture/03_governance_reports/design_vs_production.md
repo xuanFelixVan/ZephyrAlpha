@@ -20,17 +20,17 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 1604 | 32.0% |
+| production（生产态） | 1612 | 32.1% |
 | design（设计态） | 54 | 1.1% |
-| prototype（原型态） | 3350 | 66.9% |
+| prototype（原型态） | 3352 | 66.8% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **5008** | **100%** |
+| **总计** | **5018** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4953 | 98.9% |
+| generated | 4963 | 98.9% |
 | planned | 37 | 0.7% |
 | stable | 18 | 0.4% |
 
@@ -40,7 +40,7 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D_ASHARE_SIGNAL | ashare_signal | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_AUDITTEST | audit_test_suite | 1737 | 49 | 0 | 1688 | 0 | 2.8% |
+| D_AUDITTEST | audit_test_suite | 1747 | 49 | 0 | 1698 | 0 | 2.8% |
 | D_AUTONOMY_CORE | agent_lifecycle | 114 | 111 | 0 | 3 | 0 | 97.4% |
 | D_AUTONOMY_PERM | budget_enforcement | 14 | 0 | 0 | 14 | 0 | 0.0% |
 | D_BACKTEST | 回测 | 33 | 9 | 8 | 16 | 0 | 27.3% |
@@ -55,7 +55,7 @@ ttl: permanent
 | D_FACTOR | 因子 | 14 | 4 | 0 | 10 | 0 | 28.6% |
 | D_FRONTEND | 前端 | 30 | 13 | 6 | 11 | 0 | 43.3% |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | 25 | 4 | 0 | 21 | 0 | 16.0% |
-| D_GOVERNANCE | registry_management | 861 | 489 | 28 | 344 | 0 | 56.8% |
+| D_GOVERNANCE | registry_management | 861 | 497 | 28 | 336 | 0 | 57.7% |
 | D_GOV_AUDIT | audit_orchestration | 2 | 0 | 2 | 0 | 0 | 0.0% |
 | D_GOV_DOCS | architecture_docs | 2 | 2 | 0 | 0 | 0 | 100.0% |
 | D_GOV_DRIFT | drift_detection | 1 | 0 | 1 | 0 | 0 | 0.0% |
