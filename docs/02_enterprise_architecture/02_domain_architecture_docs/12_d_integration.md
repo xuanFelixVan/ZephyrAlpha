@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 管线路由（D_INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-10 03:03:23
+> 最后更新: 2026-07-10 03:13:59
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -183,11 +183,11 @@ graph TD
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_deepseek_chat_py
+    src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_chat_py
-    src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
-    src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py
     src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py
+    src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
@@ -221,8 +221,8 @@ graph TD
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -270,20 +270,20 @@ graph TD
         src_zephyr_integration_vector_memory_in_process_vector_memory_py["(生产态 / production) InProcessVectorMemory — MOD-INF-011 VMS 统一入口<br/>文件: in_process_vector_memory.py"]
     end
     src_zephyr_integration_shared_events_dlq_bridge_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
-    src_zephyr_integration_shared_events_event_schemas_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_base_config_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_bridge_py
-    src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_bus_upgrade_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
+    src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_bus_upgrade_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_schemas_py
+    src_zephyr_integration_shared_events_event_schemas_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_base_config_py
     src_zephyr_integration_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_execution_model_py
     src_zephyr_integration_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_base_config_py
     src_zephyr_integration_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_severity_types_py
     src_zephyr_integration_shared_schema_init_py -.->|config_depends / config_depends| src_zephyr_integration_shared_schema_execution_model_py
     src_zephyr_integration_vector_memory_bridge_layer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_context_ingest_py -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_fake_vms_py
-    src_zephyr_integration_vector_memory_cross_collection_retriever_py -.->|config_depends / config_depends| src_zephyr_integration_vector_memory_init_py
     src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
+    src_zephyr_integration_vector_memory_cross_collection_retriever_py -.->|config_depends / config_depends| src_zephyr_integration_vector_memory_init_py
     src_zephyr_integration_vector_memory_faiss_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_in_memory_fake_vms_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_chunk_strategy_router_py
@@ -443,8 +443,8 @@ graph TD
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_chunk_strategy_router_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_memory_backend_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_retrieval_feedback_py
@@ -558,12 +558,12 @@ graph TD
     src_zephyr_integration_governance_data_source_router_init_py -.->|config_depends / config_depends| src_zephyr_integration_governance_data_source_router_embedding_router_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_shared_events_dlq_bridge_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
-    src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py
     src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py
+    src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py
     src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_bridge_py
-    src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_bus_upgrade_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
+    src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_bus_upgrade_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_schemas_py
     src_zephyr_integration_vector_memory_ollama_embedding_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_vector_memory_vector_writer_py -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_context_ingest_py
@@ -576,8 +576,8 @@ graph TD
     src_zephyr_integration_layer1_discovery_init_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_layer3_coordination_init_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_local_model_ollama_embedding_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_shared_events_dlq_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_shared_events_dlq_py -.->|导入依赖 / import_depends| D_SHARED

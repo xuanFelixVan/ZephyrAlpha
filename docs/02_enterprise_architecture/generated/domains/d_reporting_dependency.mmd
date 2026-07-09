@@ -1,5 +1,5 @@
 %% D_REPORTING 域全景依赖图
-%% 生成时间: 2026-07-10 03:03:32
+%% 生成时间: 2026-07-10 03:14:10
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 10, 依赖边数: 12
 
@@ -20,9 +20,9 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_reporting_default_tca_engine_py -->|import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -->|import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting___init___py -->|import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_tca_engine_py -->|import_depends| src_zephyr_reporting_analytics_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_GOVERNANCE -> D_REPORTING (3 条)

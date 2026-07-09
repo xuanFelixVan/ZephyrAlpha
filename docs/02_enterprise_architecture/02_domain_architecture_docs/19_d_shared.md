@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-10 03:03:26
+> 最后更新: 2026-07-10 03:14:03
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -298,10 +298,10 @@ graph TD
         src_zephyr_shared_capacity_governance_capacity_digital_twin_py["(生产态 / production) capacity_digital_twin.py"]
         src_zephyr_shared_capacity_governance_capacity_fingerprint_py["(生产态 / production) capacity_fingerprint.py"]
     end
-    src_zephyr_shared_api_init_py -.->|config_depends / config_depends| src_zephyr_shared_api_api_client_py
     src_zephyr_shared_api_api_index_py -.->|config_depends / config_depends| src_zephyr_shared_api_init_py
+    src_zephyr_shared_blueprint_tools_init_py -.->|config_depends / config_depends| src_zephyr_shared_blueprint_tools_architecture_context_loader_py
     src_zephyr_shared_blueprint_tools_blueprint_scorer_py -.->|config_depends / config_depends| src_zephyr_shared_blueprint_tools_init_py
-    src_zephyr_shared_capacity_governance_init_py -.->|config_depends / config_depends| src_zephyr_shared_capacity_governance_adaptive_sampler_py
+    src_zephyr_shared_capacity_governance_init_py -.->|config_depends / config_depends| src_zephyr_shared_capacity_governance_budget_aware_prompt_py
     src_zephyr_shared_cross_layer_init_py -.->|config_depends / config_depends| src_zephyr_shared_cross_layer_ml_experiment_pipeline_py
     src_zephyr_shared_api_shared_quickref_yaml -.->|config_depends / config_depends| src_zephyr_shared_api_init_py
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
@@ -370,8 +370,8 @@ graph TD
         src_zephyr_shared_contracts_errors_init_py["(原型态 / prototype) Auto-generated contracts package — errors<br/>文件: __init__.py"]
         src_zephyr_shared_contracts_errors_contract_violation_error_py["(原型态 / prototype) contract_violation_error.py"]
     end
-    src_zephyr_shared_contracts_contract_tester_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_contract_bus_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
+    src_zephyr_shared_contracts_contract_tester_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_enforcer_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_factories_py
@@ -381,13 +381,13 @@ graph TD
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_timestamp_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_init_py
-    src_zephyr_shared_contracts_backpressure_types_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_resume_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_backpressure_throttle_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_types_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_pause_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_throttle_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_resume_py
-    src_zephyr_shared_contracts_backpressure_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_throttle_py
     src_zephyr_shared_contracts_backpressure_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_pause_py
+    src_zephyr_shared_contracts_backpressure_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_throttle_py
     src_zephyr_shared_contracts_core_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_base_event_py
     src_zephyr_shared_contracts_core_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_gate_types_py
     src_zephyr_shared_contracts_enums_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
@@ -462,19 +462,19 @@ graph TD
         src_zephyr_shared_contracts_identity_permission_py["(生产态 / production) permission.py"]
         src_zephyr_shared_contracts_llm_gateway_protocol_py["(原型态 / prototype) LLMGatewayProtocol — LLM 网关抽象接口<br/>文件: llm_gateway_protocol.py"]
     end
-    src_zephyr_shared_contracts_execution_capital_allocation_result_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
-    src_zephyr_shared_contracts_execution_model_serving_request_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
     src_zephyr_shared_contracts_escalation_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     src_zephyr_shared_contracts_execution_execution_report_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
+    src_zephyr_shared_contracts_execution_capital_allocation_result_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
     src_zephyr_shared_contracts_execution_fill_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
+    src_zephyr_shared_contracts_execution_model_serving_request_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
     src_zephyr_shared_contracts_execution_order_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
+    src_zephyr_shared_contracts_experiment_init_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_experiment_model_serving_response_py
+    src_zephyr_shared_contracts_external_ext_001_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
     src_zephyr_shared_contracts_external_ext_002_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
     src_zephyr_shared_contracts_external_ext_003_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
-    src_zephyr_shared_contracts_experiment_init_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_experiment_experiment_result_py
-    src_zephyr_shared_contracts_external_ext_001_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
     src_zephyr_shared_contracts_external_ext_004_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
-    src_zephyr_shared_contracts_identity_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_permission_py
     src_zephyr_shared_contracts_identity_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
+    src_zephyr_shared_contracts_identity_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_permission_py
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
@@ -541,27 +541,27 @@ graph TD
         src_zephyr_shared_contracts_risk_metrics_py["(原型态 / prototype) risk_metrics.py"]
         src_zephyr_shared_contracts_runtime_types_py["(生产态 / production) runtime_types.py"]
     end
-    src_zephyr_shared_contracts_portfolio_performance_attribution_report_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_factor_monitor_report_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_factor_signal_py
+    src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_market_data_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_macro_factor_signal_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_instrument_py
-    src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_market_data_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_synthesized_signal_py
+    src_zephyr_shared_contracts_portfolio_performance_attribution_report_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
+    src_zephyr_shared_contracts_portfolio_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_position_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_compliance_rule_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_risk_limits_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_risk_metrics_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_risk_validator_protocol_py
-    src_zephyr_shared_contracts_portfolio_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_position_py
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
+    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_position_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_position_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_model_serving_request_py
@@ -622,10 +622,9 @@ graph TD
     end
     src_zephyr_shared_database_init_py -.->|config_depends / config_depends| src_zephyr_shared_database_database_crud_mixin_py
     src_zephyr_shared_contracts_security_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_security_security_decision_py
-    src_zephyr_shared_dependency_init_py -.->|config_depends / config_depends| src_zephyr_shared_dependency_dependency_tracker_py
     src_zephyr_shared_events_dlq_bridge_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
-    src_zephyr_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_bridge_py
     src_zephyr_shared_events_upgrade_strategy_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_observer_py
+    src_zephyr_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_bridge_py
     src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_foundation_constants_py
@@ -695,9 +694,10 @@ graph TD
     src_zephyr_shared_infra_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_infra_cache_py
     src_zephyr_shared_infra_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_infra_process_lifecycle_gateway_py
     src_zephyr_shared_io_doc_compressor_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_sqlite_factory_py -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_yaml_utils_py -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_init_py -.->|config_depends / config_depends| src_zephyr_shared_io_cache_invalidation_py
-    src_zephyr_shared_io_sqlite_factory_py -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_maintenance_init_py -.->|config_depends / config_depends| src_zephyr_shared_maintenance_code_economy_analyzer_py
     src_zephyr_shared_protocols_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_init_py
     src_zephyr_shared_protocols_a2a_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_coordination_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
@@ -710,12 +710,12 @@ graph TD
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
+    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
-    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
-    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
+    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
@@ -723,7 +723,7 @@ graph TD
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_FRONTEND["(原型态 / prototype) D_FRONTEND"]
     D_FRONTEND -.->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -772,9 +772,9 @@ graph TD
     end
     src_zephyr_shared_protocols_capability_py -.->|导入依赖 / import_depends| src_zephyr_shared_security_capability_py
     src_zephyr_shared_protocols_a2a_layer3_coordination_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_governance_py
-    src_zephyr_shared_schema_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
     src_zephyr_shared_schema_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
-    src_zephyr_shared_schema_init_py -.->|config_depends / config_depends| src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_schema_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
+    src_zephyr_shared_schema_init_py -.->|config_depends / config_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_security_init_py -.->|config_depends / config_depends| src_zephyr_shared_security_capability_py
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| D_TRADING
@@ -795,7 +795,7 @@ graph TD
     D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
     D_INFRA_A2A -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
     D_INFRA_A2A -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
-    D_INFRA_A2A -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
+    D_INFRA_A2A -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
     D_INFRA_A2A -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -971,10 +971,10 @@ graph TD
     src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
-    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_io_doc_compressor_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_doc_compressor_py -->|导入依赖 / import_depends| src_zephyr_shared_security_capability_py
     src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
@@ -998,15 +998,15 @@ graph TD
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
+    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
-    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_architecture_context_loader_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_BACKTEST -.->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
@@ -1028,7 +1028,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 131 个，79 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 131 个，78 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -1165,14 +1165,13 @@ graph TD
         src_zephyr_shared_utils_async_utils_py["(原型态 / prototype) async_utils.py — async/sync 边界桥接（5.12.8 ...<br/>文件: async_utils.py"]
         src_zephyr_shared_utils_migration_py["(原型态 / prototype) migration.py —— ZephyrAlpha Schema 版本化迁移系统<br/>文件: migration.py"]
     end
-    src_zephyr_shared_api_init_py -.->|config_depends / config_depends| src_zephyr_shared_api_api_client_py
     src_zephyr_shared_api_api_index_py -.->|config_depends / config_depends| src_zephyr_shared_api_init_py
     src_zephyr_shared_blueprint_tools_blueprint_scorer_py -.->|config_depends / config_depends| src_zephyr_shared_blueprint_tools_init_py
-    src_zephyr_shared_contracts_contract_tester_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_contract_bus_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
+    src_zephyr_shared_contracts_contract_tester_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
-    src_zephyr_shared_contracts_risk_dashboard_snapshot_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_risk_metrics_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
+    src_zephyr_shared_contracts_risk_dashboard_snapshot_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_system_configuration_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
@@ -1185,64 +1184,64 @@ graph TD
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_timestamp_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_escalation_init_py
-    src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_experiment_experiment_result_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_experiment_model_serving_response_py
+    src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_experiment_experiment_result_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_init_py
-    src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_performance_attribution_report_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py
+    src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_performance_attribution_report_py
     src_zephyr_shared_contracts_backpressure_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_resume_py
-    src_zephyr_shared_contracts_backpressure_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_throttle_py
     src_zephyr_shared_contracts_backpressure_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_pause_py
+    src_zephyr_shared_contracts_backpressure_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_throttle_py
     src_zephyr_shared_contracts_core_registry_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_contracts_core_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_base_event_py
     src_zephyr_shared_contracts_core_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_gate_types_py
     src_zephyr_shared_contracts_enums_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
-    src_zephyr_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_execution_rejection_error_py
     src_zephyr_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_contract_violation_error_py
     src_zephyr_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_data_quality_error_py
-    src_zephyr_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_risk_limit_violation_error_py
+    src_zephyr_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_execution_rejection_error_py
     src_zephyr_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_factor_computation_error_py
     src_zephyr_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_signal_degradation_warning_py
-    src_zephyr_shared_contracts_execution_capital_allocation_result_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
-    src_zephyr_shared_contracts_execution_model_serving_request_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
+    src_zephyr_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_risk_limit_violation_error_py
     src_zephyr_shared_contracts_execution_execution_report_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
+    src_zephyr_shared_contracts_execution_capital_allocation_result_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
     src_zephyr_shared_contracts_execution_fill_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
+    src_zephyr_shared_contracts_execution_model_serving_request_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
     src_zephyr_shared_contracts_execution_order_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_execution_init_py
+    src_zephyr_shared_contracts_experiment_init_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_experiment_model_serving_response_py
+    src_zephyr_shared_contracts_external_ext_001_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
     src_zephyr_shared_contracts_external_ext_002_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
     src_zephyr_shared_contracts_external_ext_003_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
-    src_zephyr_shared_contracts_experiment_init_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_experiment_experiment_result_py
-    src_zephyr_shared_contracts_external_ext_001_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
     src_zephyr_shared_contracts_external_ext_004_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_external_init_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_factor_monitor_report_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_factor_signal_py
+    src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_market_data_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_macro_factor_signal_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_instrument_py
-    src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_market_data_py
     src_zephyr_shared_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_synthesized_signal_py
+    src_zephyr_shared_contracts_portfolio_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_position_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_compliance_rule_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_risk_limits_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_risk_metrics_py
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_risk_validator_protocol_py
-    src_zephyr_shared_contracts_portfolio_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_position_py
     src_zephyr_shared_database_init_py -.->|config_depends / config_depends| src_zephyr_shared_database_database_crud_mixin_py
     src_zephyr_shared_events_dlq_py -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
     src_zephyr_shared_events_dlq_bridge_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
     src_zephyr_shared_events_event_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
-    src_zephyr_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_bridge_py
     src_zephyr_shared_events_upgrade_strategy_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_observer_py
+    src_zephyr_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_bridge_py
     src_zephyr_shared_foundation_constants_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
     src_zephyr_shared_foundation_constants_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_protocols_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_init_py
     src_zephyr_shared_protocols_a2a_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_governance_py
-    src_zephyr_shared_protocols_a2a_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
-    src_zephyr_shared_protocols_a2a_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_coordination_py
-    src_zephyr_shared_protocols_a2a_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
     src_zephyr_shared_protocols_a2a_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
+    src_zephyr_shared_protocols_a2a_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
+    src_zephyr_shared_protocols_a2a_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    src_zephyr_shared_protocols_a2a_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_coordination_py
     src_zephyr_shared_protocols_a2a_layer3_coordination_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_governance_py
     src_zephyr_shared_protocols_a2a_layer3_coordination_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_coordination_py
     src_zephyr_shared_schema_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
-    src_zephyr_shared_schema_init_py -.->|config_depends / config_depends| src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_schema_init_py -.->|config_depends / config_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_cross_layer_init_py -.->|config_depends / config_depends| src_zephyr_shared_cross_layer_ml_experiment_pipeline_py
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
     src_zephyr_shared_protocols_a2a_a2a_coordination_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
@@ -1256,9 +1255,9 @@ graph TD
     D_AUTONOMY_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_utils_async_utils_py
     D_AUTONOMY_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_foundation_constants_py
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
+    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_FRONTEND["(生产态 / production) D_FRONTEND"]
     D_FRONTEND -.->|导入依赖 / import_depends| src_zephyr_shared_foundation_constants_py
