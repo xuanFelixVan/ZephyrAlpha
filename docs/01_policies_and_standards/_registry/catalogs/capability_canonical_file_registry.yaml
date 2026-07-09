@@ -655,6 +655,23 @@ capabilities:
       四方纵向对齐）职责不同，勿混淆。
 
   # --------------------------------------------------------------------------
+  - capability_id: panorama_module_sync
+    aliases:
+      - sync_panorama_module
+      - four_panoramas_sync
+      - ARCH-056
+      - module_panorama_sync
+    description: >-
+      四图模块同步引擎（ARCH-056）。从 depgraph.nodes 读取模块核心字段
+      （module_id/domain_id/design_maturity/build_status），单向派生到
+      dataflow_jobs（占位记录 entity_type='module_placeholder'）和
+      decision_layers（占位记录 track='placeholder'）。
+      触发：generate_project_depgraph.py / apply_depgraph.py 执行后自动调用。
+      canonical = scripts/governance/sync_panorama_module.py。
+      与 panorama_alignment_detection 区别：本能力是"自动同步"（写入），
+      alignment_detection 是"只读检测"（报告）。
+
+  # --------------------------------------------------------------------------
   - capability_id: design_maturity_trigger_protection
     aliases:
       - protect_design_maturity
@@ -3713,6 +3730,16 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+
+  # --- ARCH-056 四图模块同步引擎（2026-07-09）---
+  - file: "scripts/governance/sync_panorama_module.py"
+    token: "auto-sync-panorama-module-20260709"
+    created_by: "session-sess-17744-20260709162729"
+    capability: "panorama_module_sync"
+  - file: "tests/governance/test_sync_panorama_module.py"
+    token: "auto-test-sync-panorama-module-20260709"
+    created_by: "session-sess-17744-20260709162729"
+    capability: "panorama_module_sync"
 
   # --- ARCH-055 commit_gates 模块清单漂移检测（2026-07-09）---
   - file: "scripts/governance/generators/check_gate_inventory_drift.py"

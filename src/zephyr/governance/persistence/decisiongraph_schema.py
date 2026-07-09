@@ -178,6 +178,7 @@ CREATE TABLE IF NOT EXISTS decision_layers (
     build_status        TEXT    DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     module_id           TEXT,
+    domain_id           TEXT,
     source_code_ref     TEXT
 )
 """
@@ -196,6 +197,7 @@ CREATE TABLE IF NOT EXISTS decision_nodes (
     node_type        TEXT    NOT NULL,
     path             TEXT    NOT NULL UNIQUE,
     module_id        TEXT,
+    domain_id        TEXT,
     decision_name    TEXT    NOT NULL,
     decision_name_en TEXT    NOT NULL,
     inputs           JSONB,
