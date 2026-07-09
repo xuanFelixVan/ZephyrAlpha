@@ -1307,17 +1307,10 @@ entries:
         注册表，未注册 → 伪造检测 → reset --soft HEAD~1
     (e) fail-open 设计：注册表不存在/解析失败 → 放行（避免环境问题阻断所有 commit）
     (f) AGENTS.md §10.1 同步更新两层验证描述
-    P2 DONE 2026-07-09：session_id 未注册时环境变量检查（修复 allow_overlap 逃生通道误判）
-    (g) post_commit_guard.sh L64-84 新增 ZEPHYR_COMMIT_GATEWAY 环境变量检查层：
-        session_id 未注册时，检查 $ZEPHYR_COMMIT_GATEWAY=1（由 GitCommitGateway._run_git
-        设置，post-commit hook 继承），=1 → warn-only（不 reset），未设置 → reset
-    (h) 修复 bug：allow_overlap=True 逃生通道不注册 session，P1.5 的 session_id 验证
-        误判合法 commit 为伪造，执行 reset --soft HEAD~1 连带回滚主 commit + auto-sync commits
-    (i) 保留防伪造保护：环境变量不存在时仍 reset（裸 git commit 伪造 [GW: 标记仍被阻断）
     P1 TODO：验证 hook 在并发 AI 对话场景下的行为（自动 revert 是否影响其他 AI 的工作流）
   status: decided
   created: '2026-07-05'
-  last_updated: '2026-07-09'
+  last_updated: '2026-07-08'
 
 # --- #ARCH-051: dataflowgraph 数据流图架构建设（同库不同表 + Dataset/Job 双类型） ---
 - issue_id: '#ARCH-051'
@@ -1566,6 +1559,34 @@ entries:
         foreign_change_gate/msg_exposure_gate/msg_style_gate/rule_four_way_alignment_gate/
         unsafe_dict_spread_gate）+ AGENTS.md 并发防护章节同步 FOREIGN-CHANGE-DETECTION。
   related_adjudication: '#203'
+  created: '2026-07-09'
+  last_updated: '2026-07-09'
+- issue_id: '#ARCH-056'
+  title: 四图模块同步引擎（depgraph → dataflow/decision/blueprint 核心字段单向派生）
+  category: architecture_governance
+  severity: P1高
+  status: decided
+  description: |
+    四图（depgraph/dataflow/decision/blueprint）模块核心字段不对齐。
+    当前只有事后检测（align_panoramas.py），无自动同步引擎。
+    裁定：建立四图模块同步引擎，depgraph 为真源，单向派生到 dataflow/decision/blueprint。
+  adjudication: |
+    6 项架构裁定：
+    (a) depgraph.nodes 为架构数据真源，dataflow/decision/blueprint 核心字段单向派生
+    (b) 核心字段 4 个：module_id / domain_id / design_maturity / build_status
+    (c) 占位记录策略：dataflow_jobs（entity_type='module_placeholder'）+ decision_layers（layer_id=module_id, track='placeholder'）
+    (d) decision_layers/decision_nodes 新增 domain_id 字段（ALTER TABLE）
+    (e) 蓝图不强制创建，存在则 frontmatter 核心字段对齐
+    (f) sync_registry_from_blueprints.py 方向反转：depgraph → blueprint_registry.yaml
+    触发：generate_project_depgraph.py / apply_depgraph.py 执行后自动调用 + commit 兜底 + CI 兜底
+  fix_phase: |
+    Phase 0: ARCH-056 登记 + L1 depgraph 登记
+    Phase 1: schema 变更（decision 加 domain_id）
+    Phase 2: 同步引擎核心（sync_panorama_module.py）
+    Phase 3: 蓝图 frontmatter 对齐（blueprint_frontmatter_reconciler.py）
+    Phase 4: 触发机制集成
+    Phase 5: 门禁升级 + capability 登记 + E2E 验证
+  related_adjudication: '#ARCH-053'
   created: '2026-07-09'
   last_updated: '2026-07-09'
 - issue_id: '#ARCH-MM-001'
