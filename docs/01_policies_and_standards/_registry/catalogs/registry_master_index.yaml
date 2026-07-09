@@ -1,11 +1,11 @@
-# 自动生成于 2026-07-09T19:26:12Z
+# 自动生成于 2026-07-09T19:33:32Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-09T19:26:12Z'
+generated_at: '2026-07-09T19:33:32Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 26
+total_registries: 27
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -159,6 +159,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: draft
+- registry_id: CFG-panorama-exempt-list
+  name: panorama_exempt_list
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/panorama_exempt_list.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: unknown
 - registry_id: PS-REG-016
   name: 登记表的登记表 — 跨登记表一致性契约
   category: governance_rule
