@@ -53,7 +53,7 @@ tasks:
     capability: daily_valuation
     symbols: null
     extra:
-      description: "每日估值（PE/PB）增量（AKShare stock_a_indicator_lg）"
+      description: "每日估值（PE/PB）增量（AKShare stock_zh_valuation_baidu）"
 
   - task_id: index_kline_incremental
     table: c1_market.index_kline
@@ -124,7 +124,7 @@ tasks:
 
   - task_id: money_flow_incremental
     table: c1_market.money_flow
-    source: akshare
+    source: ifind
     schedule: daily_capital
     incremental: true
     dependencies: []
@@ -391,7 +391,7 @@ tasks:
 
   - task_id: equity_pledge_incremental
     table: c3_fundamental.equity_pledge
-    source: akshare
+    source: ifind
     schedule: daily_event
     incremental: true
     dependencies: []
@@ -402,7 +402,7 @@ tasks:
 
   - task_id: equity_pledge_summary_incremental
     table: c3_fundamental.equity_pledge_summary
-    source: akshare
+    source: ifind
     schedule: daily_event
     incremental: true
     dependencies: []
@@ -658,7 +658,7 @@ tasks:
 
   - task_id: money_flow_full_refresh
     table: c1_market.money_flow
-    source: akshare
+    source: ifind
     schedule: monthly_static
     incremental: false
     dependencies: []
@@ -676,7 +676,7 @@ tasks:
     capability: daily_valuation
     symbols: null
     extra:
-      description: "估值数据全量刷新（AKShare stock_a_indicator_lg）"
+      description: "估值数据全量刷新（AKShare stock_zh_valuation_baidu）"
 
   - task_id: kline_5min_history_backfill
     table: c1_market.kline_5min
