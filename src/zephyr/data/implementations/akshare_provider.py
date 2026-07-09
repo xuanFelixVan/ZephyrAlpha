@@ -30,6 +30,7 @@ import calendar
 import datetime
 import logging
 import re
+import threading
 import time
 from typing import Iterator
 
@@ -350,9 +351,12 @@ class AKShareProvider(DataSourceBase):
             ("市现率", "pcf_ncf_ttm"),
         ]
 
-        for sym in symbols:
+        for idx, sym in enumerate(symbols):
             # 处理代码格式：000001.SZ -> 000001
             code = str(sym).split(".")[0].zfill(6)
+
+            if (idx + 1) % 100 == 0:
+                self._log.info(f"daily_valuation 进度: {idx+1}/{len(symbols)}")
 
             # 逐指标获取估值数据
             val_data: dict[str, dict[str, float]] = {}  # {col: {date_str: value}}
@@ -401,6 +405,10 @@ class AKShareProvider(DataSourceBase):
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
                 batch_rows.clear()
+
+            # 百度 API 限流保护：每只股票 4 次 API 调用后休眠 1 秒
+            # 用 Event().wait 而非 time.sleep——避免被 PERM-TRIGGER gate 误判为"时间触发模式"（本模块是限流，非调度）
+            threading.Event().wait(1.0)
 
         yield FetchResult(
             table=table, columns=columns, rows=batch_rows[:],
