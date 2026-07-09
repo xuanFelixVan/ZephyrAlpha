@@ -3772,6 +3772,14 @@ creation_tokens:
     token: "auto-test-blueprint-frontmatter-reconciler-20260709"
     created_by: "session-sess-17744-20260709162729"
     capability: "panorama_module_sync"
+  - file: "scripts/governance/d5_architecture/panorama_common.py"
+    token: "auto-panorama-common-20260710"
+    created_by: "session-sess-20780-20260710024721"
+    capability: "panorama_alignment_detection"
+  - file: "tests/governance/test_panorama_common.py"
+    token: "auto-test-panorama-common-20260710"
+    created_by: "session-sess-20780-20260710024721"
+    capability: "panorama_alignment_detection"
 
   # --- ARCH-055 commit_gates 模块清单漂移检测（2026-07-09）---
   - file: "scripts/governance/generators/check_gate_inventory_drift.py"
