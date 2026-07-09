@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-015
-responsibility_domain: D_AUDITTEST
+responsibility_domain: D_INFRA_TELEMETRY
 design_maturity: prototype
 build_status: generated
 doc_type: blueprint

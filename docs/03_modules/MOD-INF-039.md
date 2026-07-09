@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-039
-responsibility_domain: D_GOVERNANCE
+responsibility_domain: D_TRADING
 design_maturity: design
 build_status: planned
 doc_type: blueprint

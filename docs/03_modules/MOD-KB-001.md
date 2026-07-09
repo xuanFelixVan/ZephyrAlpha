@@ -1,6 +1,6 @@
 ---
 module_id: MOD-KB-001
-responsibility_domain: D_KNOWLEDGE
+responsibility_domain: D_GOVERNANCE
 design_maturity: design
 build_status: planned
 doc_type: blueprint

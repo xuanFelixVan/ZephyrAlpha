@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-034
-responsibility_domain: D_ML_TRAIN
+responsibility_domain: D_INTELLIGENCE
 design_maturity: design
 build_status: planned
 doc_type: blueprint
