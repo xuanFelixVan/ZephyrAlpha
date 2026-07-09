@@ -198,20 +198,30 @@ def _resolve_module_to_file(module_name: str, module_to_file: dict[str, str]) ->
 
 
 def _infer_layer(file_path: str) -> str:
-    if file_path.startswith("src/zephyr/gates/"):
-        return "L02_gates"
+    """Infer layer_id from file path (aligned with layer_vocabulary.yaml v2.0.0).
+
+    L0_infrastructure / L1_foundation / L2_domain / L3_application / cross_layer
+    """
+    if file_path.startswith("src/zephyr/infrastructure/"):
+        return "L0_infrastructure"
+    if file_path.startswith("src/zephyr/shared/"):
+        return "L0_infrastructure"
     if file_path.startswith("src/zephyr/governance/"):
-        return "L01_governance"
+        return "L1_foundation"
+    if file_path.startswith("src/zephyr/integration/"):
+        return "L1_foundation"
+    if file_path.startswith("src/zephyr/security/"):
+        return "L1_foundation"
     if file_path.startswith("src/zephyr/"):
-        return "L00_core"
-    if file_path.startswith("scripts/"):
-        return "L03_scripts"
-    if file_path.startswith("tests/"):
-        return "L04_tests"
+        return "L2_domain"
     if file_path.startswith("config/"):
-        return "L05_config"
+        return "L0_infrastructure"
+    if file_path.startswith("scripts/"):
+        return "L1_foundation"
+    if file_path.startswith("tests/"):
+        return "cross_layer"
     if file_path.startswith("docs/"):
-        return "L06_docs"
+        return "cross_layer"
     return "cross_layer"
 
 

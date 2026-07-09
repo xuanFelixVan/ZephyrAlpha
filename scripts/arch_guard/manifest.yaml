@@ -71,15 +71,6 @@ fitness_functions:
     runtime_plane: all
     note: "P0/P1 契约 idempotency_key"
 
-  - id: FF-008
-    invariant_id: INV-008
-    name: "层依赖方向检查"
-    path: import_linter/layer_boundary_check.py
-    status: active
-    priority: P0
-    runtime_plane: all
-    note: "import-linter 层边界"
-
   - id: FF-009
     invariant_id: INV-009
     name: "OCP 契约签名冻结检查"

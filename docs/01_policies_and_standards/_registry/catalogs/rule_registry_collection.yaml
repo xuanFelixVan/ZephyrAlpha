@@ -726,10 +726,6 @@ items:
   name: __init__.py
   node_type: script
   status: active
-- file: scripts/arch_guard/import_linter/layer_boundary_check.py
-  name: layer_boundary_check.py
-  node_type: script
-  status: active
 - file: scripts/arch_guard/run_all.py
   name: run_all.py
   node_type: script

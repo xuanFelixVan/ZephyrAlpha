@@ -108,14 +108,6 @@ class PhasePlanner:
         ("discovery", 35, "automatic skill discovery from blueprints", ["team-optimization"]),
     ]
 
-    LayerExpansion = {
-        "L00_foundation": ["configuration", "logging", "health-check"],
-        "L01_infrastructure": ["all current blueprints"],
-        "L02_factor": ["factor-definition", "factor-computation", "factor-registry", "factor-evaluation"],
-        "L04_risk": ["position-limits", "stress-testing", "stop-loss"],
-        "L06_execution": ["order-router", "algorithmic-execution", "slippage-control"],
-    }
-
     SkillProjection = {"Phase1": 8, "Phase2": 20, "Phase3": 50, "Final": 100}
 
     def __init__(self):

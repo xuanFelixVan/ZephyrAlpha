@@ -382,38 +382,40 @@ registered_ids:
     status: draft
 
   # === DOM 层域规则层 ===
+  # 路径迁移（2026-07-09）：原 domains/LNN_*/ 物理目录已废弃（14层架构降级），
+  # 规则内容已合并到 trae_049/050/051 规则 YAML，DOM-Lxx ID 作为 aliases 保留交叉引用。
   - module_id: DOM-L00-001
     title: "数据源连接策略"
-    path: "docs/01_policies_and_standards/domains/L00_data_source/governance/data-source-connection-policy.md"
-    status: draft
+    path: "docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml"
+    status: production
   - module_id: DOM-L00-002
     title: "连接器入职操作手册"
-    path: "docs/01_policies_and_standards/domains/L00_data_source/operational/connector-onboarding-runbook.md"
-    status: draft
+    path: "docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml"
+    status: production
   - module_id: DOM-L02-001
     title: "因子质量门控"
-    path: "docs/01_policies_and_standards/domains/L02_alpha_factor/governance/factor-quality-policy.md"
-    status: draft
+    path: "docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml"
+    status: production
   - module_id: DOM-L02-002
     title: "因子入职操作手册"
-    path: "docs/01_policies_and_standards/domains/L02_alpha_factor/operational/factor-onboarding-runbook.md"
-    status: draft
+    path: "docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml"
+    status: production
   - module_id: DOM-L04-001
     title: "风控限额策略"
-    path: "docs/01_policies_and_standards/domains/L04_risk_management/governance/risk-limits-policy.md"
-    status: draft
+    path: "docs/01_policies_and_standards/rules/trae_051_domain_policy_risk_backtest.yaml"
+    status: production
   - module_id: DOM-L04-002
     title: "止损配置操作手册"
-    path: "docs/01_policies_and_standards/domains/L04_risk_management/operational/stop-loss-config-runbook.md"
-    status: draft
+    path: "docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml"
+    status: production
   - module_id: DOM-L07-001
     title: "盘后报告策略"
-    path: "docs/01_policies_and_standards/domains/L07_post_trade_analytics/governance/post-trade-reporting-policy.md"
-    status: draft
+    path: "docs/01_policies_and_standards/rules/trae_051_domain_policy_risk_backtest.yaml"
+    status: production
   - module_id: DOM-L07-002
     title: "分析管线操作手册"
-    path: "docs/01_policies_and_standards/domains/L07_post_trade_analytics/operational/analytics-pipeline-runbook.md"
-    status: draft
+    path: "docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml"
+    status: production
 
 # 代码模块 ID 注册表
 # population_status: deferred_until_phase1 — 当前不阻塞施工，experimental 模块边界确定后从各 layers/*.yaml 的 modules[].id 字段批量提取填充

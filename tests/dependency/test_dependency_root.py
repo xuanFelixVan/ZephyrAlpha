@@ -118,26 +118,32 @@ class TestDependencyExtractorExtract:
 
 
 class TestInferLayer:
-    def test_gates(self):
-        assert _infer_layer("src/zephyr/gates/g1.yaml") == "L02_gates"
+    def test_infrastructure(self):
+        assert _infer_layer("src/zephyr/infrastructure/db.py") == "L0_infrastructure"
+
+    def test_shared(self):
+        assert _infer_layer("src/zephyr/shared/events/bus.py") == "L0_infrastructure"
 
     def test_governance(self):
-        assert _infer_layer("src/zephyr/governance/check.py") == "L01_governance"
+        assert _infer_layer("src/zephyr/governance/check.py") == "L1_foundation"
 
-    def test_core(self):
-        assert _infer_layer("src/zephyr/core.py") == "L00_core"
+    def test_integration(self):
+        assert _infer_layer("src/zephyr/integration/mcp_server.py") == "L1_foundation"
+
+    def test_domain(self):
+        assert _infer_layer("src/zephyr/factor/base.py") == "L2_domain"
 
     def test_scripts(self):
-        assert _infer_layer("scripts/scan.py") == "L03_scripts"
+        assert _infer_layer("scripts/scan.py") == "L1_foundation"
 
     def test_tests(self):
-        assert _infer_layer("tests/test_foo.py") == "L04_tests"
+        assert _infer_layer("tests/test_foo.py") == "cross_layer"
 
     def test_config(self):
-        assert _infer_layer("config/settings.yaml") == "L05_config"
+        assert _infer_layer("config/settings.yaml") == "L0_infrastructure"
 
     def test_docs(self):
-        assert _infer_layer("docs/guide.md") == "L06_docs"
+        assert _infer_layer("docs/guide.md") == "cross_layer"
 
     def test_unknown(self):
         assert _infer_layer("random/file.txt") == "cross_layer"

@@ -47,7 +47,7 @@ if str(_GOV_DIR) not in sys.path:
 
 from _shared.constants import REPO_ROOT  # noqa: E402
 
-L02_DIR = REPO_ROOT / "src" / "zephyr" / "factor"
+FACTOR_DIR = REPO_ROOT / "src" / "zephyr" / "factor"
 
 PIT_SUSPECT_PATTERNS = [
     (re.compile(r"\.shift\(\s*\+?\d+"), "正向 shift（+N）可能存在未来信息泄露——应使用 shift(-N) 引用历史数据"),
@@ -87,12 +87,12 @@ def check_file(file_path: Path) -> list[str]:
     return warnings_found
 
 def main() -> int:
-    if not L02_DIR.exists():
-        print(f"⚠ D_FACTOR 目录不存在: {L02_DIR} — 跳过 PIT 检查")
+    if not FACTOR_DIR.exists():
+        print(f"⚠ D_FACTOR 目录不存在: {FACTOR_DIR} — 跳过 PIT 检查")
         return 0
 
     all_warnings: list[str] = []
-    for py_file in L02_DIR.rglob("*.py"):
+    for py_file in FACTOR_DIR.rglob("*.py"):
         if any(excl in py_file.parts for excl in EXCLUDE_DIRS):
             continue
         warnings_found = check_file(py_file)
@@ -109,7 +109,7 @@ def main() -> int:
         return 1
 
     print("✅ INV-004 PIT 铁律 —— 无可疑模式")
-    print(f"   已扫描 {L02_DIR.relative_to(REPO_ROOT)}/ 下所有 .py 文件。")
+    print(f"   已扫描 {FACTOR_DIR.relative_to(REPO_ROOT)}/ 下所有 .py 文件。")
     return 0
 
 if __name__ == "__main__":

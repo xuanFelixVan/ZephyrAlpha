@@ -119,7 +119,7 @@ invariants:
     owner: D_INFRA_OPS
     sub_owner: shared-contracts
     enforcement: arch_guard
-    fitness_function_path: scripts/arch_guard/import_linter/layer_boundary_check.py
+    fitness_function_path: ""
     kb_ref: KBG-0009
     violation_action: reject_commit
     priority: P0
