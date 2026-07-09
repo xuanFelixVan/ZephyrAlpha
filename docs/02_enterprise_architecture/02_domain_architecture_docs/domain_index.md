@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 50 |
-| 模块总数 | 4941 |
-| 生产态模块 | 1539 |
+| 模块总数 | 4878 |
+| 生产态模块 | 1522 |
 | 设计态模块 | 54 |
-| 原型态模块 | 3348 |
+| 原型态模块 | 3302 |
 
 ## 域清单（按架构层分组）
 
@@ -62,7 +62,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_ASHARE_SIGNAL | ashare_signal / A-Share Signal | 7 | 0 | 0 | 7 | 7/150 (OK) | [20_d_ashare_signal.md](20_d_ashare_signal.md) |
-| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1753 | 49 | 0 | 1704 | 1753/150 (超容) | [21_d_audittest.md](21_d_audittest.md) |
+| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1707 | 49 | 0 | 1658 | 1707/150 (超容) | [21_d_audittest.md](21_d_audittest.md) |
 | D_AUTONOMY_PERM | budget_enforcement / Autonomy Protection | 14 | 0 | 0 | 14 | 14/150 (OK) | [22_d_autonomy_perm.md](22_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 33 | 9 | 8 | 16 | 33/150 (OK) | [23_d_backtest.md](23_d_backtest.md) |
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 8 | 1 | 1 | 6 | 8/150 (OK) | [24_d_cross_asset.md](24_d_cross_asset.md) |
@@ -91,4 +91,4 @@ ttl: permanent
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 7 | 0 | 0 | 7 | 7/150 (OK) | [47_d_sell_decision.md](47_d_sell_decision.md) |
 | D_SIGQC | signal_quality / Signal Quality Control | 8 | 0 | 0 | 8 | 8/150 (OK) | [48_d_sigqc.md](48_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 11 | 2 | 1 | 8 | 11/150 (OK) | [49_d_simulation.md](49_d_simulation.md) |
-| D_TRADING | 交易运营 / Trading Operations | 481 | 280 | 0 | 201 | 481/150 (超容) | [50_d_trading.md](50_d_trading.md) |
+| D_TRADING | 交易运营 / Trading Operations | 464 | 263 | 0 | 201 | 464/150 (超容) | [50_d_trading.md](50_d_trading.md) |
