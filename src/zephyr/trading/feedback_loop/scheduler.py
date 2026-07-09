@@ -371,25 +371,7 @@ class FeedbackLoopScheduler:
         self._append_event(event)
         self._post_pipeline_checks(event)
 
-        if self.vector_bridge is not None and event.diagnosis is not None:
-            try:
-                # 治本(风险B): str(diagnosis) 含 uuid diagnosis_id -> 内容哈希每次不同 = 无幂等
-                # 提取稳定 pattern_text: summary > root_cause(去 z_score 浮点) > str() 兜底
-                diag_text = getattr(event.diagnosis, "summary", None)
-                if diag_text is None:
-                    root_cause = getattr(event.diagnosis, "root_cause", None)
-                    if root_cause:
-                        # root_cause 格式 "Elevated {metric} (z={score:.2f})" -> 保留稳定部分
-                        diag_text = root_cause.split(" (")[0]
-                    else:
-                        diag_text = str(event.diagnosis)
-                if diag_text and event.verification is not None:
-                    verdict = getattr(event.verification, "verdict", None)
-                    if verdict is not None and str(verdict) not in ("HEALTHY", "NOMINAL"):
-                        self.vector_bridge.write_failure_pattern(diag_text)
-                        logger.debug("FLE-Scheduler: failure pattern persisted to VMS lessons")
-            except Exception:
-                logger.debug("FLE-Scheduler: failed to persist failure pattern to VMS", exc_info=True)
+        self._persist_failure_pattern(event)
 
         logger.info(
             "FLE run=%s anomaly=%s action=%s verdict=%s",
@@ -399,6 +381,31 @@ class FeedbackLoopScheduler:
             verification.verdict.value,
         )
         return event
+
+    def _persist_failure_pattern(self, event: FLEPipelineEvent) -> None:
+        """5.158.4 重构：从 _run_once 提取 VMS 失败模式持久化逻辑。
+
+        治本(风险B): str(diagnosis) 含 uuid diagnosis_id -> 内容哈希每次不同 = 无幂等
+        提取稳定 pattern_text: summary > root_cause(去 z_score 浮点) > str() 兜底。
+        """
+        if self.vector_bridge is None or event.diagnosis is None:
+            return
+        try:
+            diag_text = getattr(event.diagnosis, "summary", None)
+            if diag_text is None:
+                root_cause = getattr(event.diagnosis, "root_cause", None)
+                if root_cause:
+                    # root_cause 格式 "Elevated {metric} (z={score:.2f})" -> 保留稳定部分
+                    diag_text = root_cause.split(" (")[0]
+                else:
+                    diag_text = str(event.diagnosis)
+            if diag_text and event.verification is not None:
+                verdict = getattr(event.verification, "verdict", None)
+                if verdict is not None and str(verdict) not in ("HEALTHY", "NOMINAL"):
+                    self.vector_bridge.write_failure_pattern(diag_text)
+                    logger.debug("FLE-Scheduler: failure pattern persisted to VMS lessons")
+        except Exception:
+            logger.debug("FLE-Scheduler: failed to persist failure pattern to VMS", exc_info=True)
 
     def _run_safety_gates(self, anomaly: AnomalyEvent, diagnosis: Diagnosis) -> dict[str, bool]:
         return self.safety_gate_manager.run_safety_gates(anomaly, diagnosis)

@@ -231,3 +231,117 @@ class TestSchedulerEvents:
         """health_report() returns a dict."""
         report = scheduler.health_report()
         assert isinstance(report, dict)
+
+
+# ══════════════════════════════════════════════════════════
+# 5.158.4 回归测试——_persist_failure_pattern (extracted from _run_once)
+# ══════════════════════════════════════════════════════════
+
+class TestPersistFailurePattern:
+    """5.158.4 回归测试——_persist_failure_pattern 行为等价验证。
+
+    使用 object.__new__ 创建轻量实例，避免重量级 __init__，
+    只设置 vector_bridge 字段测试提取的方法。
+    """
+
+    def _make_bare_scheduler(self):
+        from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+        s = object.__new__(FeedbackLoopScheduler)
+        return s
+
+    def _make_event(self, diagnosis=None, verification=None):
+        event = MagicMock()
+        event.diagnosis = diagnosis
+        event.verification = verification
+        return event
+
+    def test_no_vector_bridge_skips(self):
+        """vector_bridge is None → no-op, no exception."""
+        s = self._make_bare_scheduler()
+        s.vector_bridge = None
+        event = self._make_event(diagnosis=MagicMock(summary="x"))
+        s._persist_failure_pattern(event)
+
+    def test_no_diagnosis_skips(self):
+        """diagnosis is None → no write."""
+        s = self._make_bare_scheduler()
+        s.vector_bridge = MagicMock()
+        event = self._make_event(diagnosis=None)
+        s._persist_failure_pattern(event)
+        s.vector_bridge.write_failure_pattern.assert_not_called()
+
+    def test_summary_present_writes(self):
+        """diagnosis.summary present → uses summary as pattern."""
+        s = self._make_bare_scheduler()
+        s.vector_bridge = MagicMock()
+        diag = MagicMock()
+        diag.summary = "CPU elevated"
+        diag.root_cause = None
+        verification = MagicMock()
+        verification.verdict = "ANOMALY"
+        event = self._make_event(diagnosis=diag, verification=verification)
+        s._persist_failure_pattern(event)
+        s.vector_bridge.write_failure_pattern.assert_called_once_with("CPU elevated")
+
+    def test_root_cause_strips_zscore(self):
+        """summary None + root_cause present → strips ' (z=...)' suffix."""
+        s = self._make_bare_scheduler()
+        s.vector_bridge = MagicMock()
+        diag = MagicMock()
+        diag.summary = None
+        diag.root_cause = "Elevated cpu_usage (z=3.50)"
+        verification = MagicMock()
+        verification.verdict = "ANOMALY"
+        event = self._make_event(diagnosis=diag, verification=verification)
+        s._persist_failure_pattern(event)
+        s.vector_bridge.write_failure_pattern.assert_called_once_with("Elevated cpu_usage")
+
+    def test_no_verification_skips(self):
+        """diag_text present but verification None → no write."""
+        s = self._make_bare_scheduler()
+        s.vector_bridge = MagicMock()
+        diag = MagicMock()
+        diag.summary = "test"
+        diag.root_cause = None
+        event = self._make_event(diagnosis=diag, verification=None)
+        s._persist_failure_pattern(event)
+        s.vector_bridge.write_failure_pattern.assert_not_called()
+
+    def test_healthy_verdict_skips(self):
+        """verdict is HEALTHY → no write."""
+        s = self._make_bare_scheduler()
+        s.vector_bridge = MagicMock()
+        diag = MagicMock()
+        diag.summary = "test"
+        diag.root_cause = None
+        verification = MagicMock()
+        verification.verdict = "HEALTHY"
+        event = self._make_event(diagnosis=diag, verification=verification)
+        s._persist_failure_pattern(event)
+        s.vector_bridge.write_failure_pattern.assert_not_called()
+
+    def test_nominal_verdict_skips(self):
+        """verdict is NOMINAL → no write."""
+        s = self._make_bare_scheduler()
+        s.vector_bridge = MagicMock()
+        diag = MagicMock()
+        diag.summary = "test"
+        diag.root_cause = None
+        verification = MagicMock()
+        verification.verdict = "NOMINAL"
+        event = self._make_event(diagnosis=diag, verification=verification)
+        s._persist_failure_pattern(event)
+        s.vector_bridge.write_failure_pattern.assert_not_called()
+
+    def test_write_exception_suppressed(self):
+        """write_failure_pattern raises → suppressed, no propagation."""
+        s = self._make_bare_scheduler()
+        s.vector_bridge = MagicMock()
+        s.vector_bridge.write_failure_pattern.side_effect = RuntimeError("VMS down")
+        diag = MagicMock()
+        diag.summary = "test"
+        diag.root_cause = None
+        verification = MagicMock()
+        verification.verdict = "ANOMALY"
+        event = self._make_event(diagnosis=diag, verification=verification)
+        s._persist_failure_pattern(event)  # should not raise
