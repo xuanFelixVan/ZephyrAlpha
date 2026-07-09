@@ -334,6 +334,48 @@ class TestGatewayIntegration:
         assert "NO-BARE-SQL" in msg
         assert "UPDATE" in msg
 
+    def test_multiline_sql_constant_paren_exempt(self):
+        """R96 修复：括号多行 SQL 常量定义续行不误报。
+
+        file_task_mapper.py L66-68 实际场景：续行含完整 SELECT...FROM，
+        旧 _SQL_CONSTANT_DEF_RE 只豁免定义行，续行被 _SQL_PATTERN 误报。
+        新方案：_extract_sql_constant_lines 用 ast 豁免整个 Assign 节点行范围。
+        """
+        blue = "src/zephyr/trading/mod.py"
+        content = (
+            'SQL_SELECT = (\n'                                                # L1
+            '    "SELECT task_id FROM task_files WHERE file_path = ?"\n'      # L2
+            ')\n'                                                             # L3
+        )
+        gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
+        passed, msg = make_bare_sql_gate().check(gw, [])
+        assert passed  # R96 修复：整个 Assign 节点豁免
+        assert msg == ""
+
+    def test_multiline_sql_constant_triple_quote_exempt(self):
+        """R96 修复：三引号多行 SQL 常量定义不误报。"""
+        blue = "src/zephyr/trading/mod.py"
+        content = (
+            'SQL_INSERT = """INSERT INTO tasks\n'     # L1
+            '    (id, name) VALUES (?, ?)"""\n'       # L2
+        )
+        gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
+        passed, msg = make_bare_sql_gate().check(gw, [])
+        assert passed  # R96 修复
+        assert msg == ""
+
+    def test_multiline_sql_constant_backslash_exempt(self):
+        """R96 修复：反斜杠续行 SQL 常量定义不误报。"""
+        blue = "src/zephyr/trading/mod.py"
+        content = (
+            'SQL_X = \\\n'                                # L1
+            '    "UPDATE tasks SET x=1 WHERE id=?"\n'     # L2
+        )
+        gw = _make_gateway(staged_files=[blue], file_contents={blue: content})
+        passed, msg = make_bare_sql_gate().check(gw, [])
+        assert passed  # R96 修复
+        assert msg == ""
+
     def test_fail_open_on_git_diff_failure(self):
         gw = _make_gateway(diff_fails=True)
         passed, msg = make_bare_sql_gate().check(gw, [])

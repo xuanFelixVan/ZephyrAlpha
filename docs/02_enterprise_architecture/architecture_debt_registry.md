@@ -3828,6 +3828,14 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > - 设计意图（第一性原理）：豁免的真正需求是 docstring 中的示例代码（如 SomeClass(**varname) 在 docstring 中是合法示例），不是所有字符串字面量内容。ast 只识别真正 docstring（Module/ClassDef/FunctionDef 的 body[0]），不豁免行内字符串赋值（__manifest__ = """...""" 是 Assign 节点）。
 > - 已知副作用：多行 SQL 常量定义后续行可能误报（_SQL_CONSTANT_DEF_RE 既有缺陷，只豁免定义行不跟踪多行字符串，待后续单独修复）。
 > - 100% AI 开发模式考量：ast 是 Python 内置模块，新 AI 无需学习复杂正则状态机即可理解逻辑；函数 docstring 说明设计意图；test_diff_helpers.py 直接测试防 AI 误判"不存在"；第95轮注册表记录作为可追溯触发点。
+> **第96轮修复状态（2026-07-10，_extract_sql_constant_lines 治本 ast 重写）**：
+> - 根因：bare_sql_gate._SQL_CONSTANT_DEF_RE = re.compile(r"^\s*_?SQL_\w+\s*=") 只匹配单行 SQL 常量定义行，不跟踪多行续行。当 SQL 常量跨多行定义时（括号隐式连接），续行含完整 SQL 字符串字面量（"SELECT...FROM"）被 _SQL_PATTERN 误报为裸 SQL（file_task_mapper.py L67/L70/L73 误报根因，实测验证3行误报）。
+> - 修复方案：在 _diff_helpers.py 新增 _extract_sql_constant_lines 函数，用 ast 模块精确识别 Assign 节点，目标名匹配 ^_?SQL_\w+$，豁免整个 Assign 节点的行范围（lineno 到 end_lineno）。覆盖4种多行定义模式：单行/括号多行/三引号多行/反斜杠续行。bare_sql_gate.py 删除 _SQL_CONSTANT_DEF_RE 旧正则，改用 _extract_sql_constant_lines。语法错误时 fail-open 返回空集合。
+> - 影响：1个 gate 消费者（NO-BARE-SQL hard-block），file_task_mapper.py L67/L70/L73 不再误报。_SQL_CONSTANT_DEF_RE 旧正则已删除（死代码清理）。
+> - 测试：test_diff_helpers.py 新增 TestExtractSqlConstantLines 10 用例（单行/括号多行/三引号多行/反斜杠续行/SQL跨行拼接/多常量混合/非SQL前缀不豁免/_SQL_*前缀豁免/语法错误fail-open/空文件）；test_bare_sql_gate.py 新增3个多行常量集成测试（括号多行/三引号多行/反斜杠续行）。全 commit_gates 822 测试通过无回归（R95时809+R96新增13）。
+> - 设计意图（第一性原理）：豁免的真正需求是"SQL 集中化的正确做法"（把 SQL 提取到模块级常量），不是"匹配 SQL_* = 正则的行"。ast 识别 Assign 节点的完整行范围，无论单行还是多行定义，100% 准确。与 R95 保持一致的架构风格（都用 ast 替代正则近似）。
+> - 附加发现（不在本次范围）：_SQL_PATTERN 的 INSERT\s+INTO\b 不匹配 INSERT OR IGNORE INTO（SQLite 语法），file_task_mapper.py L80 含 INSERT OR IGNORE INTO 未被检测（漏检）。待后续单独修复。
+> - 100% AI 开发模式考量：与 R95 同类缺陷同类治本方案，ast 逻辑简单清晰；_extract_sql_constant_lines 函数 docstring 说明设计意图；TestExtractSqlConstantLines 直接测试防 AI 误判"不存在"；第96轮注册表记录作为可追溯触发点。
 
 #### HIGH（5个）
 
