@@ -29,26 +29,14 @@ template_for: blueprint
 title: Blueprint Construction Template
 ttl: permanent
 verifiability: manual
-version: 1.0.0
-# === 蓝图精简方案B（v1.0.0）===
-# 蓝图只存全景图(depgraph.db)没有的独有信息：设计意图/职责边界/接口契约/施工指引/验收标准/决策记录/约束条件/错误处理
-# 禁止存储与全景图重叠的结构态信息：文件清单/依赖关系/域归属/物理路径（委托全景图作为SSoT）
-# 蓝图颗粒度标准：模块级1-10个文件/50-300行；域级≤500行；系统级≤1000行
-# 蓝图创建顺序（混合模式）：先在全景图创建设计态(phase_2)→再创建蓝图(phase_4)→再创建代码文件(phase_5)
-# === 以下结构化字段已委托全景图，蓝图不再存储（v0.9.0定义但未落地，v1.0.0正式废弃）===
-# file_manifest: 委托全景图 nodes 表 code_path 字段
-# dependency_graph: 委托全景图 edges 表
+version: 2.0.0
+# === 蓝图模板 v2.0.0 — 四图对齐（ARCH-056）===
+# depgraph.nodes 是架构数据真源（SSoT），蓝图是派生视图。
+# 蓝图只存全景图(depgraph)没有的独有信息：设计意图/职责边界/接口契约/施工指引/验收标准/决策记录/约束条件/错误处理
+# §0.1 代码文件清单 = 自动生成（派生自 depgraph.nodes），禁止手写
+# §0.6 四图对齐视图 = 自动生成（派生自 depgraph + dataflow + decision）
 # 查询文件清单：python scripts/governance/extract_depgraph.py --modules <module_id>
 # 查询依赖关系：python scripts/governance/extract_depgraph.py --paths
-file_manifest: []  # DEPRECATED v1.0.0 - 委托全景图，禁止填写
-dependency_graph:  # DEPRECATED v1.0.0 - 委托全景图，禁止填写
-  internal: []
-  external: []
-  #  - from: "module_a.py"                  # 源文件
-  #    to: "zephyr.other_pkg.module_b"      # 目标模块全限定名
-  #    blueprint: "MOD-XXX"                 # 目标蓝图ID
-  #    symbols: ["ClassName"]               # 导入/调用的符号列表
-  #    dep_type: "import"                   # import / implements / provides_interface
 ---
 
 <!--
@@ -60,11 +48,12 @@ COMPLIANCE_CHECKLIST — 机器可解析合规清单
 REQUIRED_SECTIONS:
   overview: "概述"
   §0: "代码对齐验证"
-  §0.1: "代码文件清单"
+  §0.1: "代码文件清单"  # v2.0.0: 自动生成（派生自 depgraph.nodes），禁止手写
   §0.2: "对齐验证矩阵"
   §0.3: "版本-代码映射"
   §0.4: "SSoT与责任唯一性"
   §0.5: "代码目录唯一性"
+  §0.6: "四图对齐视图"  # v2.0.0 新增：自动生成（depgraph + dataflow + decision + blueprint 四图对齐）
   §1: "设计背景与目标"
   §1.1: "背景"
   §1.2: "目标范围"
@@ -158,9 +147,13 @@ END_REQUIRED_SECTIONS
 
 ### §0.1 代码文件清单
 
+> **v2.0.0 变更**：本节为自动生成（派生自 depgraph.nodes），禁止手写。
+> 真源：PostgreSQL depgraph.nodes 表（`blueprint_id = {module_id}` 的所有 file 粒度节点）
+> 生成命令：`python scripts/governance/extract_depgraph.py --modules {module_id}`
+> 手写漂移率 20.7%（ARCH-055），v2.0.0 起由 depgraph 单向派生消除漂移。
+
 > 存在性：未实现/已实现/已阻塞（MUST注明原因）/已废弃（MUST在§5.3说明）
 > 归属判定：本模块 / ⚠️建议迁移至{模块} / ⚠️与{文件}重叠。编写时 MUST 逐文件判断：此文件的职责是否属于本蓝图 §2.1 声明的职责边界？不属于→标注建议迁移。与同包内其他文件功能重叠→标注重叠。
-> **结构化数据**：详细文件清单 MUST 同时填写在 frontmatter.file_manifest 字段中（机器可校验+三方对齐）。本表格为摘要视图。
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 归属判定 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|---------|-------------------|
@@ -216,6 +209,35 @@ END_REQUIRED_SECTIONS
 | 3 | 副本处置状态 | {无副本 / 已迁移消费者数：N/总消费者数：M / 全部迁移完成可删除} |
 
 > 副本存在时 MUST 在 §16.10 故障与操作 中记录迁移进度。全部消费者迁移完成前禁止删除副本。
+
+---
+
+### §0.6 四图对齐视图
+
+> **v2.0.0 新增**：自动生成（派生自 depgraph + dataflow + decision + blueprint 四图对齐，ARCH-056）。
+> 本节展示模块在四图中的位置和核心字段，满足"模块清单含四图对齐信息"需求。
+> 生成命令：`python scripts/governance/d5_architecture/generators/align_panoramas.py --module {module_id}`
+> 禁止手写——depgraph 是架构数据真源，蓝图是派生视图。
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id={module_id}` 的 file 节点 | {production/design} | `extract_depgraph.py --modules {module_id}` |
+| 数据流图 (dataflow) | {JOB-NNN 生产的 Dataset / 消费的 Dataset} | {active/planned} | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | {decision_nodes 中的节点} | {production/design} | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | {Draft/Active} | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | {module_id} | {module_id} | ✅/❌ |
+| domain_id | {D_XXX} | {responsibility_domain} | ✅/❌ |
+| build_status | {production/design} | {construction_progress} | ✅/❌ |
+| file_count | {N 文件} | {§0.1 行数} | ✅/❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ---
 
@@ -515,10 +537,13 @@ class {DataModel}(BaseModel):
 
 ## §10 依赖关系
 
-> **结构化数据**：文件级依赖图 MUST 同时填写在 frontmatter.dependency_graph 字段中（机器可校验+三方对齐）。本节表格为摘要视图。
-> 依赖图颗粒度：文件级持久化（frontmatter.dependency_graph）+ 函数级按需计算（AST实时解析，不持久化）。
+> **v2.0.0 变更**：文件级依赖委托 depgraph.edges 表（真源），蓝图不再存储。
+> §10.1 仅声明模块级依赖（模块间关系），文件级依赖通过 depgraph 查询。
+> 查询命令：`python scripts/governance/extract_depgraph.py --modules {module_id}`
 
 ### 10.1 依赖声明
+
+> 模块级依赖声明。文件级依赖由 depgraph.edges 自动维护，禁止在此重复声明。
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|

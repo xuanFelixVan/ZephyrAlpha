@@ -8,6 +8,9 @@ generated_at: "2026-07-06 03:50:17"
 generator: tmp/generate_data_inventory.py
 language: zh
 description: ClickHouse 业务数据库实时扫描结果
+responsibility_domain: 
+build_status: generated
+design_maturity: design
 ---
 
 # 业务数据清单

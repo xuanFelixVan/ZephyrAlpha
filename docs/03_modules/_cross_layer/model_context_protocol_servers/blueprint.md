@@ -1,5 +1,5 @@
 ---
-module_id: "MOD-INF-013"
+module_id: MOD-INF-013
 submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"
 doc_type: blueprint
@@ -37,6 +37,9 @@ depends_on:
   - {target: "architecture_model/layers/b_mcp.yaml", at: "全篇", why: "MCP YAML SSoT——本蓝图真源"}
 references: []
 last_updated: "2026-05-15"
+responsibility_domain: 
+build_status: generated
+design_maturity: prototype
 ---
 
 <!--

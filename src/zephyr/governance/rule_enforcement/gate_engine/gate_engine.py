@@ -76,6 +76,7 @@ import json
 import re
 import sqlite3
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, ClassVar
@@ -537,487 +538,851 @@ def _is_text_check_target(file_path: str | Path) -> bool:
     return Path(file_path).suffix.lower() in _TEXT_CHECK_EXTENSIONS
 
 
+# ---------------------------------------------------------------------------
+# 5.176.1 Phase 2: 违规构造辅助 + check_type 分发表（替代 if-elif 链）
+# ---------------------------------------------------------------------------
+
+
+def _make_violation(
+    check: CheckConfig,
+    msg: str,
+    detail: str | None = None,
+    severity: str | None = None,
+) -> GateViolation:
+    """Create a GateViolation from check config, with optional severity override."""
+    return GateViolation(
+        check_id=check.check_id,
+        check_name=check.name,
+        severity=severity or check.severity,
+        message=msg,
+        detail=detail,
+        rule_ids=list(check.rule_ids),
+    )
+
+
+CheckHandler = Callable[[CheckConfig, Task, Path, list[str], list[Path]], list[GateViolation]]
+
+
+def _handle_encoding(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    for fp in dep_paths:
+        if not _is_text_check_target(fp):
+            continue
+        err = _check_encoding(fp, check.params)
+        if err:
+            _add(err)
+    return violations
+
+
+def _handle_line_ending(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    for fp in dep_paths:
+        if not _is_text_check_target(fp):
+            continue
+        err = _check_line_ending(fp, check.params)
+        if err:
+            _add(err)
+    return violations
+
+
+def _handle_path_blacklist(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    errs = _check_path_blacklist(deliverables, check.params)
+    for e in errs:
+        _add(e)
+    return violations
+
+
+def _handle_content_quality(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    for fp in dep_paths:
+        if not _is_text_check_target(fp):
+            continue
+        err = _check_empty_shell(fp, check.params)
+        if err:
+            _add(err)
+    return violations
+
+
+def _handle_content_length(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    for fp in dep_paths:
+        if not _is_text_check_target(fp):
+            continue
+        err = _check_content_length(fp, check.params)
+        if err:
+            _add(err)
+    return violations
+
+
+def _handle_frontmatter(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    for fp in dep_paths:
+        if not _is_text_check_target(fp):
+            continue
+        err = _check_frontmatter(fp, check.params)
+        if err:
+            _add(err)
+    return violations
+
+
+def _handle_file_extension(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    allowed: list[str] = list(check.params.get("allowed_extensions", []))
+    for p in deliverables:
+        ext = Path(p).suffix.lower()
+        if allowed and ext not in allowed:
+            _add(f"不允许的文件扩展名 '{ext}'：{p}")
+    return violations
+
+
+def _handle_circuit_breaker(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    # 第 17 种 CheckType（T-V2-005 CBG experimental）
+    # 在 gate 配置 YAML 中通过 params.caller_module + params.target_module 指定
+    caller = str(check.params.get("caller_module", ""))
+    target = str(check.params.get("target_module", ""))
+    if not caller or not target:
+        _add(
+            "circuit_breaker 检查缺少 caller_module / target_module 参数",
+            detail=f"check_id={check.check_id}",
+        )
+    else:
+        try:
+            from zephyr.governance.rule_enforcement.circuit_breaker import CircuitBreakerCheck
+
+            cb_check = CircuitBreakerCheck(
+                caller_module=caller,
+                target_module=target,
+            )
+            if cb_check.is_open():
+                _add(cb_check.violation_message())
+        except Exception as exc:
+            # CBGManager 初始化失败时降级为 P2 警告，不阻断门禁
+            violations.append(
+                _make_violation(
+                    check,
+                    f"circuit_breaker 检查初始化失败（降级 P2）：{exc}",
+                    severity="P2",
+                )
+            )
+    return violations
+
+
+def _handle_blueprint_read_check(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    # 第 18 种 CheckType（T-V2-011 G6 beta 硬合规）
+    # 检查：AI 在修改目标模块文件前，是否已读取对应的蓝图
+    # beta（硬合规，2026-05-04 激活）：
+    #   — severity=error -> P0 阻断：未读蓝图就改代码的 task 直接 REJECT
+    #   — AI 必须调用 blueprint_search.find_relevant_blueprint() 定位蓝图
+    #   — 或在 session 日志中声明已手动阅读蓝图
+    target_blueprint = str(check.params.get("target_blueprint", ""))
+    target_files = list(check.params.get("target_files", []))
+    hard_compliance = bool(check.params.get("hard_compliance", False))
+    if not target_blueprint:
+        _add(
+            "blueprint_read_check 缺少 target_blueprint 参数",
+            detail=f"check_id={check.check_id}",
+        )
+    else:
+        _check_blueprint_read_compliance(
+            target_blueprint,
+            target_files,
+            check,
+            _add,
+            hard_compliance=hard_compliance,
+        )
+    return violations
+
+
+def _handle_drift_budget(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    target_module = str(check.params.get("target_module", task.task_id))
+    try:
+        from zephyr.governance.drift_detection.drift_infrastructure import check_budget_for_gate
+
+        budget = check_budget_for_gate(target_module)
+        if not budget.get("allowed", False):
+            _add(
+                f"漂移预算耗尽，模块 {target_module} 必须先修复漂移再提交变更",
+                detail=budget.get("reason", "drift budget exceeded"),
+            )
+    except Exception as exc:
+        violations.append(
+            _make_violation(
+                check,
+                f"drift_budget 检查初始化失败（降级 P2）：{exc}",
+                severity="P2",
+            )
+        )
+    return violations
+
+
+def _handle_field_presence(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    missing = _check_field_presence_task(task, check.params)
+    for mf in missing:
+        _add(f"缺少或为空必填字段：{mf}")
+    return violations
+
+
+def _handle_classification(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    err = _check_classification_task(task, check.params)
+    if err:
+        _add(err)
+    return violations
+
+
+def _handle_regex_pattern(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    err = _check_regex_pattern_task(task, check.params)
+    if err:
+        _add(err)
+    return violations
+
+
+def _handle_audit_findings_resolved(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    for msg in _check_audit_findings_messages(task):
+        _add(msg)
+    return violations
+
+
+def _handle_circular_dependency_scan(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    try:
+        from zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency import run_scan
+
+        result = run_scan()
+        if not result.passed:
+            for cycle in result.cycles:
+                _add(
+                    f"Circular dependency: {' -> '.join(cycle)} -> {cycle[0]}",
+                    detail=f"Cycle length: {len(cycle)}",
+                )
+    except Exception as exc:
+        _add(f"EN-001 scan failed: {exc}", detail=str(exc))
+    return violations
+
+
+def _handle_enforcement_mode_check(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    try:
+        from zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator import (
+            run_check as en2_check,
+        )
+
+        result = en2_check()
+        if not result.passed:
+            for v in result.violations:
+                _add(v)
+    except Exception as exc:
+        _add(f"EN-002 check failed: {exc}", detail=str(exc))
+    return violations
+
+
+def _handle_contract_compatibility_check(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    try:
+        from zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility import (
+            run_check as en3_check,
+        )
+
+        result = en3_check()
+        if not result.passed:
+            for m in result.mismatches:
+                _add(m)
+    except Exception as exc:
+        _add(f"EN-003 check failed: {exc}", detail=str(exc))
+    return violations
+
+
+def _handle_security_artifact_scan(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    try:
+        import importlib
+
+        _mod = importlib.import_module("zephyr.governance.drift_detection.artifact_scanner")
+        ArtifactScanner = _mod.ArtifactScanner
+
+        scanner = ArtifactScanner()
+        scanner._RULES = []
+
+        scan_paths: list[str] = check.params.get("scan_paths", [])
+        target_patterns: list[str] = check.params.get("target_patterns", ["*.py"])
+
+        for sp in scan_paths:
+            path = Path(sp)
+            if not path.exists():
+                _add(f"Artifact scan path not found: {sp}", severity="warning")
+                continue
+            if path.is_file():
+                report = scanner.scan_file(path)
+            else:
+                py_files = list(path.rglob("*.py"))
+                reports = scanner.scan_files(py_files)
+                for report in reports:
+                    if not report.is_clean:
+                        for f in report.findings:
+                            _add(
+                                f"{report.target}:L{f.line_number}: {f.message}",
+                                detail=f"[{f.rule_id}] {f.snippet}",
+                                severity=f.severity,
+                            )
+                continue
+
+            if not report.is_clean:  # type: ignore[reportPossiblyUnbound]
+                for f in report.findings:  # type: ignore[reportPossiblyUnbound]
+                    _add(
+                        f"{report.target}:L{f.line_number}: {f.message}",  # type: ignore[reportPossiblyUnbound]
+                        detail=f"[{f.rule_id}] {f.snippet}",
+                        severity=f.severity,
+                    )
+    except Exception as exc:
+        _add(f"Security artifact scan failed: {exc}", detail=str(exc))
+    return violations
+
+
+def _handle_position_limit(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    ssot = load_risk_params_ssot(project_root)
+    p = check.params
+    nav = ssot.get("max_single_position_nav_ratio")
+    d_default = p.get("max_single_position_default")
+    if d_default is not None and nav is not None:
+        if float(d_default) > float(nav) + 1e-12:
+            _add(
+                f"G10 与 risk_params SSoT 冲突：max_single_position_default={d_default} "
+                f"> max_single_position_nav_ratio={nav}（{check.name}）",
+            )
+    sec_cap = ssot.get("max_sector_concentration_nav_ratio")
+    s_default = p.get("max_sector_concentration_default")
+    if s_default is not None and sec_cap is not None:
+        if float(s_default) > float(sec_cap) + 1e-12:
+            _add(
+                f"G10 与 risk_params SSoT 冲突：max_sector_concentration_default={s_default} "
+                f"> max_sector_concentration_nav_ratio={sec_cap}（{check.name}）",
+            )
+    adv_cap = ssot.get("max_adv_participation_ratio")
+    adv_p = p.get("max_adv_ratio")
+    if adv_p is not None and adv_cap is not None:
+        if float(adv_p) > float(adv_cap) + 1e-12:
+            _add(
+                f"G10 与 risk_params SSoT 冲突：max_adv_ratio={adv_p} "
+                f"> max_adv_participation_ratio={adv_cap}（{check.name}）",
+            )
+    return violations
+
+
+def _handle_leverage_limit(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    ssot = load_risk_params_ssot(project_root)
+    p = check.params
+    lev = p.get("max_gross_leverage_default")
+    cap = ssot.get("max_gross_leverage")
+    if lev is not None and cap is not None:
+        if float(lev) > float(cap) + 1e-12:
+            _add(
+                f"G11 与 risk_params SSoT 冲突：max_gross_leverage_default={lev} "
+                f"> max_gross_leverage={cap}（{check.name}）",
+            )
+    return violations
+
+
+def _handle_strategy_correlation(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    ssot = load_risk_params_ssot(project_root)
+    p = check.params
+    ct_thr = p.get("correlation_threshold")
+    ss_thr = ssot.get("max_strategy_correlation_threshold")
+    if ct_thr is not None and ss_thr is not None:
+        if float(ct_thr) > float(ss_thr) + 1e-12:
+            _add(
+                f"G12 策略相关性阈值过于宽松：correlation_threshold={ct_thr} "
+                f"> max_strategy_correlation_threshold={ss_thr}（{check.name}）",
+            )
+    mo = p.get("max_factor_overlap")
+    ss_mo = ssot.get("max_factor_overlap_threshold")
+    if mo is not None and ss_mo is not None:
+        if float(mo) > float(ss_mo) + 1e-12:
+            _add(
+                f"G12 因子重叠上限过于宽松：max_factor_overlap={mo} "
+                f"> max_factor_overlap_threshold={ss_mo}（{check.name}）",
+            )
+    uo = p.get("max_universe_overlap")
+    ss_uo = ssot.get("max_universe_overlap_threshold")
+    if uo is not None and ss_uo is not None:
+        if float(uo) > float(ss_uo) + 1e-12:
+            _add(
+                f"G12 股票池重叠上限过于宽松：max_universe_overlap={uo} "
+                f"> max_universe_overlap_threshold={ss_uo}（{check.name}）",
+            )
+    return violations
+
+
+def _handle_zero_residue_check(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    try:
+        from zephyr.governance.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner
+
+        scanner = ZeroResidueScanner(project_root=project_root)
+        report = scanner.scan()
+        if not report.is_clean:
+            for fg in report.findings:
+                sev: str = "P0" if fg.severity == "error" else "P1"
+                _add(
+                    fg.message,
+                    detail=f"[{fg.rule_id}] {fg.file_rel}",
+                    severity=sev,
+                )
+    except Exception as exc:
+        _add(f"Zero residue scan failed: {exc}", detail=str(exc))
+    return violations
+
+
+def _handle_post_doc_review_check(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    try:
+        from zephyr.governance.rule_enforcement.invariants.post_doc_review_check import (
+            PostDocReviewScanner,
+        )
+
+        session_id = str(check.params.get("session_id", "")) if hasattr(check, "params") else ""
+        scanner = PostDocReviewScanner(project_root=project_root, session_id=session_id)
+        report = scanner.scan()
+        if not report.is_clean:
+            for fg in report.pending_regularization:
+                _add(
+                    f"待规格化项: {fg.issue_type} in {fg.file_path}:{fg.line_number}",
+                    detail=f"[{fg.rule_ref}] {fg.issue_text}",
+                    severity="P1",
+                )
+        if report.regularization_triggered:
+            _add(
+                f"待规格化项≥3，已触发规格化流程 (task_id={report.regularization_task_id})",
+                detail=f"pending_count={len(report.pending_regularization)}",
+                severity="P1",
+            )
+    except Exception as exc:
+        _add(f"Post doc review scan failed: {exc}", detail=str(exc))
+    return violations
+
+
+def _handle_p2_skip(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    _add(
+        f"检查类型 '{check.check_type}' 在任务门禁路径未实现（依赖 KMS / 额外数据），已跳过",
+        detail="gate_engine._run_check",
+        severity="P2",
+    )
+    return violations
+
+
+def _handle_fle_gate(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    gate_module = str(check.params.get("gate_module", ""))
+    gate_method = str(check.params.get("gate_method", "check"))
+    if not gate_module:
+        _add("fle_gate 检查缺少 gate_module 参数", detail=f"check_id={check.check_id}")
+    else:
+        try:
+            import importlib
+
+            mod = importlib.import_module(gate_module)
+            candidates = [a for a in dir(mod) if isinstance(getattr(mod, a), type) and not a.startswith("_")]
+            if not candidates:
+                _add(f"FLE 门禁模块 {gate_module} 无可用类")
+            else:
+                gate_cls = getattr(mod, candidates[0])
+                try:
+                    gate_inst = gate_cls()
+                except TypeError:
+                    gate_inst = gate_cls
+                method = getattr(gate_inst, gate_method, None)
+                if method is None:
+                    _add(f"FLE 门禁 {gate_module} 无 {gate_method} 方法")
+                else:
+                    import inspect
+
+                    sig = inspect.signature(method)
+                    params = list(sig.parameters.keys())
+                    if len(params) == 0:
+                        result = method()
+                    else:
+                        result = method(task.task_id)
+                    if isinstance(result, dict):
+                        if not result.get("allowed", result.get("passed", result.get("ok", True))):
+                            _add(
+                                f"FLE 门禁 {gate_module}.{gate_method} 拒绝",
+                                detail=str(result),
+                            )
+                    elif isinstance(result, bool) and not result:
+                        _add(f"FLE 门禁 {gate_module}.{gate_method} 返回 False")
+        except Exception as exc:
+            violations.append(
+                _make_violation(
+                    check,
+                    f"fle_gate 检查初始化失败（降级 P2）：{exc}",
+                    severity="P2",
+                )
+            )
+    return violations
+
+
+def _handle_rollback_exit_code(
+    check: CheckConfig,
+    task: Task,
+    project_root: Path,
+    deliverables: list[str],
+    dep_paths: list[Path],
+) -> list[GateViolation]:
+    violations: list[GateViolation] = []
+
+    def _add(msg: str, detail: str | None = None, severity: str | None = None) -> None:
+        violations.append(_make_violation(check, msg, detail, severity))
+
+    exit_code_raw = check.params.get("exit_code", 0)
+    try:
+        exit_code = int(exit_code_raw)
+    except (TypeError, ValueError):
+        exit_code = -1
+    try:
+        from zephyr.infrastructure.rollback.contract import get_gate_action
+
+        gate_action, description = get_gate_action(exit_code)
+        if gate_action in ("FAIL", "BLOCK", "BLOCK_AUTO") or gate_action in (
+            "WARN",
+            "RETRY",
+            "PAUSE_AGENT",
+            "PAUSE_AUTO",
+            "REDUCE_TIER",
+        ):
+            _add(
+                f"Rollback exit code {exit_code} -> {gate_action}: {description}",
+                detail=f"check_id={check.check_id} exit_code={exit_code}",
+            )
+    except Exception as exc:
+        violations.append(
+            _make_violation(
+                check,
+                f"rollback_exit_code check failed (degrade P2): {exc}",
+                severity="P2",
+            )
+        )
+    return violations
+
+
+_CHECK_DISPATCH: dict[str, CheckHandler] = {
+    "encoding": _handle_encoding,
+    "line_ending": _handle_line_ending,
+    "path_blacklist": _handle_path_blacklist,
+    "content_quality": _handle_content_quality,
+    "content_length": _handle_content_length,
+    "frontmatter": _handle_frontmatter,
+    "file_extension": _handle_file_extension,
+    "circuit_breaker": _handle_circuit_breaker,
+    "blueprint_read_check": _handle_blueprint_read_check,
+    "drift_budget": _handle_drift_budget,
+    "field_presence": _handle_field_presence,
+    "classification": _handle_classification,
+    "regex_pattern": _handle_regex_pattern,
+    "audit_findings_resolved": _handle_audit_findings_resolved,
+    "circular_dependency_scan": _handle_circular_dependency_scan,
+    "enforcement_mode_check": _handle_enforcement_mode_check,
+    "contract_compatibility_check": _handle_contract_compatibility_check,
+    "security_artifact_scan": _handle_security_artifact_scan,
+    "position_limit": _handle_position_limit,
+    "leverage_limit": _handle_leverage_limit,
+    "strategy_correlation": _handle_strategy_correlation,
+    "zero_residue_check": _handle_zero_residue_check,
+    "post_doc_review_check": _handle_post_doc_review_check,
+    "score_threshold": _handle_p2_skip,
+    "manual_approval": _handle_p2_skip,
+    "path_whitelist": _handle_p2_skip,
+    "path_routing": _handle_p2_skip,
+    "temporal": _handle_p2_skip,
+    "reference_check": _handle_p2_skip,
+    "deduplication": _handle_p2_skip,
+    "threshold": _handle_p2_skip,
+    "fle_gate": _handle_fle_gate,
+    "rollback_exit_code": _handle_rollback_exit_code,
+}
+
+
 def _run_check(
     check: CheckConfig,
     task: Task,
     project_root: Path,
 ) -> list[GateViolation]:
-    """根据 check_type 调度到对应实现，返回零或多条违规。"""
-    violations: list[GateViolation] = []
+    """根据 check_type 调度到对应实现，返回零或多条违规。
+
+    5.176.1 Phase 2: 使用 _CHECK_DISPATCH 分发表替代 if-elif 链。
+    """
     deliverables: list[str] = list(task.deliverables or [])
     dep_paths = [project_root / p for p in deliverables]
-
-    def _add(msg: str, detail: str | None = None) -> None:
-        violations.append(
-            GateViolation(
-                check_id=check.check_id,
-                check_name=check.name,
-                severity=check.severity,
-                message=msg,
-                detail=detail,
-                rule_ids=list(check.rule_ids),
-            )
-        )
-
-    ct = check.check_type
-
-    if ct == "encoding":
-        for fp in dep_paths:
-            if not _is_text_check_target(fp):
-                continue
-            err = _check_encoding(fp, check.params)
-            if err:
-                _add(err)
-
-    elif ct == "line_ending":
-        for fp in dep_paths:
-            if not _is_text_check_target(fp):
-                continue
-            err = _check_line_ending(fp, check.params)
-            if err:
-                _add(err)
-
-    elif ct == "path_blacklist":
-        errs = _check_path_blacklist(deliverables, check.params)
-        for e in errs:
-            _add(e)
-
-    elif ct == "content_quality":
-        for fp in dep_paths:
-            if not _is_text_check_target(fp):
-                continue
-            err = _check_empty_shell(fp, check.params)
-            if err:
-                _add(err)
-
-    elif ct == "content_length":
-        for fp in dep_paths:
-            if not _is_text_check_target(fp):
-                continue
-            err = _check_content_length(fp, check.params)
-            if err:
-                _add(err)
-
-    elif ct == "frontmatter":
-        for fp in dep_paths:
-            if not _is_text_check_target(fp):
-                continue
-            err = _check_frontmatter(fp, check.params)
-            if err:
-                _add(err)
-
-    elif ct == "file_extension":
-        allowed: list[str] = list(check.params.get("allowed_extensions", []))
-        for p in deliverables:
-            ext = Path(p).suffix.lower()
-            if allowed and ext not in allowed:
-                _add(f"不允许的文件扩展名 '{ext}'：{p}")
-
-    elif ct == "circuit_breaker":
-        # 第 17 种 CheckType（T-V2-005 CBG experimental）
-        # 在 gate 配置 YAML 中通过 params.caller_module + params.target_module 指定
-        caller = str(check.params.get("caller_module", ""))
-        target = str(check.params.get("target_module", ""))
-        if not caller or not target:
-            _add(
-                "circuit_breaker 检查缺少 caller_module / target_module 参数",
-                detail=f"check_id={check.check_id}",
-            )
-        else:
-            try:
-                from zephyr.governance.rule_enforcement.circuit_breaker import CircuitBreakerCheck
-
-                cb_check = CircuitBreakerCheck(
-                    caller_module=caller,
-                    target_module=target,
-                )
-                if cb_check.is_open():
-                    _add(cb_check.violation_message())
-            except Exception as exc:
-                # CBGManager 初始化失败时降级为 P2 警告，不阻断门禁
-                violations.append(
-                    GateViolation(
-                        check_id=check.check_id,
-                        check_name=check.name,
-                        severity="P2",
-                        message=f"circuit_breaker 检查初始化失败（降级 P2）：{exc}",
-                        rule_ids=list(check.rule_ids),
-                    )
-                )
-
-    elif ct == "blueprint_read_check":
-        # 第 18 种 CheckType（T-V2-011 G6 beta 硬合规）
-        # 检查：AI 在修改目标模块文件前，是否已读取对应的蓝图
-        # beta（硬合规，2026-05-04 激活）：
-        #   — severity=error -> P0 阻断：未读蓝图就改代码的 task 直接 REJECT
-        #   — AI 必须调用 blueprint_search.find_relevant_blueprint() 定位蓝图
-        #   — 或在 session 日志中声明已手动阅读蓝图
-        target_blueprint = str(check.params.get("target_blueprint", ""))
-        target_files = list(check.params.get("target_files", []))
-        hard_compliance = bool(check.params.get("hard_compliance", False))
-        if not target_blueprint:
-            _add(
-                "blueprint_read_check 缺少 target_blueprint 参数",
-                detail=f"check_id={check.check_id}",
-            )
-        else:
-            _check_blueprint_read_compliance(
-                target_blueprint,
-                target_files,
+    handler = _CHECK_DISPATCH.get(check.check_type)
+    if handler is None:
+        return [
+            _make_violation(
                 check,
-                _add,
-                hard_compliance=hard_compliance,
-            )
-
-    elif ct == "drift_budget":
-        target_module = str(check.params.get("target_module", task.task_id))
-        try:
-            from zephyr.governance.drift_detection.drift_infrastructure import check_budget_for_gate
-
-            budget = check_budget_for_gate(target_module)
-            if not budget.get("allowed", False):
-                _add(
-                    f"漂移预算耗尽，模块 {target_module} 必须先修复漂移再提交变更",
-                    detail=budget.get("reason", "drift budget exceeded"),
-                )
-        except Exception as exc:
-            violations.append(
-                GateViolation(
-                    check_id=check.check_id,
-                    check_name=check.name,
-                    severity="P2",
-                    message=f"drift_budget 检查初始化失败（降级 P2）：{exc}",
-                    rule_ids=list(check.rule_ids),
-                )
-            )
-
-    elif ct == "field_presence":
-        missing = _check_field_presence_task(task, check.params)
-        for mf in missing:
-            _add(f"缺少或为空必填字段：{mf}")
-
-    elif ct == "classification":
-        err = _check_classification_task(task, check.params)
-        if err:
-            _add(err)
-
-    elif ct == "regex_pattern":
-        err = _check_regex_pattern_task(task, check.params)
-        if err:
-            _add(err)
-
-    elif ct == "audit_findings_resolved":
-        for msg in _check_audit_findings_messages(task):
-            _add(msg)
-
-    elif ct == "circular_dependency_scan":
-        try:
-            from zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency import run_scan
-
-            result = run_scan()
-            if not result.passed:
-                for cycle in result.cycles:
-                    _add(
-                        f"Circular dependency: {' -> '.join(cycle)} -> {cycle[0]}",
-                        detail=f"Cycle length: {len(cycle)}",
-                    )
-        except Exception as exc:
-            _add(f"EN-001 scan failed: {exc}", detail=str(exc))
-
-    elif ct == "enforcement_mode_check":
-        try:
-            from zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator import (
-                run_check as en2_check,
-            )
-
-            result = en2_check()
-            if not result.passed:
-                for v in result.violations:
-                    _add(v)
-        except Exception as exc:
-            _add(f"EN-002 check failed: {exc}", detail=str(exc))
-
-    elif ct == "contract_compatibility_check":
-        try:
-            from zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility import (
-                run_check as en3_check,
-            )
-
-            result = en3_check()
-            if not result.passed:
-                for m in result.mismatches:
-                    _add(m)
-        except Exception as exc:
-            _add(f"EN-003 check failed: {exc}", detail=str(exc))
-
-    elif ct == "security_artifact_scan":
-        try:
-            import importlib
-
-            _mod = importlib.import_module("zephyr.governance.drift_detection.artifact_scanner")
-            ArtifactScanner = _mod.ArtifactScanner
-
-            scanner = ArtifactScanner()
-            scanner._RULES = []
-
-            scan_paths: list[str] = check.params.get("scan_paths", [])
-            target_patterns: list[str] = check.params.get("target_patterns", ["*.py"])
-
-            for sp in scan_paths:
-                path = Path(sp)
-                if not path.exists():
-                    _add(f"Artifact scan path not found: {sp}", severity="warning")
-                    continue
-                if path.is_file():
-                    report = scanner.scan_file(path)
-                else:
-                    py_files = list(path.rglob("*.py"))
-                    reports = scanner.scan_files(py_files)
-                    for report in reports:
-                        if not report.is_clean:
-                            for f in report.findings:
-                                _add(
-                                    f"{report.target}:L{f.line_number}: {f.message}",
-                                    detail=f"[{f.rule_id}] {f.snippet}",
-                                    severity=f.severity,
-                                )
-                    continue
-
-                if not report.is_clean:  # type: ignore[reportPossiblyUnbound]
-                    for f in report.findings:  # type: ignore[reportPossiblyUnbound]
-                        _add(
-                            f"{report.target}:L{f.line_number}: {f.message}",  # type: ignore[reportPossiblyUnbound]
-                            detail=f"[{f.rule_id}] {f.snippet}",
-                            severity=f.severity,
-                        )
-        except Exception as exc:
-            _add(f"Security artifact scan failed: {exc}", detail=str(exc))
-
-    elif ct == "position_limit":
-        ssot = load_risk_params_ssot(project_root)
-        p = check.params
-        nav = ssot.get("max_single_position_nav_ratio")
-        d_default = p.get("max_single_position_default")
-        if d_default is not None and nav is not None:
-            if float(d_default) > float(nav) + 1e-12:
-                _add(
-                    f"G10 与 risk_params SSoT 冲突：max_single_position_default={d_default} "
-                    f"> max_single_position_nav_ratio={nav}（{check.name}）",
-                )
-        sec_cap = ssot.get("max_sector_concentration_nav_ratio")
-        s_default = p.get("max_sector_concentration_default")
-        if s_default is not None and sec_cap is not None:
-            if float(s_default) > float(sec_cap) + 1e-12:
-                _add(
-                    f"G10 与 risk_params SSoT 冲突：max_sector_concentration_default={s_default} "
-                    f"> max_sector_concentration_nav_ratio={sec_cap}（{check.name}）",
-                )
-        adv_cap = ssot.get("max_adv_participation_ratio")
-        adv_p = p.get("max_adv_ratio")
-        if adv_p is not None and adv_cap is not None:
-            if float(adv_p) > float(adv_cap) + 1e-12:
-                _add(
-                    f"G10 与 risk_params SSoT 冲突：max_adv_ratio={adv_p} "
-                    f"> max_adv_participation_ratio={adv_cap}（{check.name}）",
-                )
-
-    elif ct == "leverage_limit":
-        ssot = load_risk_params_ssot(project_root)
-        p = check.params
-        lev = p.get("max_gross_leverage_default")
-        cap = ssot.get("max_gross_leverage")
-        if lev is not None and cap is not None:
-            if float(lev) > float(cap) + 1e-12:
-                _add(
-                    f"G11 与 risk_params SSoT 冲突：max_gross_leverage_default={lev} "
-                    f"> max_gross_leverage={cap}（{check.name}）",
-                )
-
-    elif ct == "strategy_correlation":
-        ssot = load_risk_params_ssot(project_root)
-        p = check.params
-        ct_thr = p.get("correlation_threshold")
-        ss_thr = ssot.get("max_strategy_correlation_threshold")
-        if ct_thr is not None and ss_thr is not None:
-            if float(ct_thr) > float(ss_thr) + 1e-12:
-                _add(
-                    f"G12 策略相关性阈值过于宽松：correlation_threshold={ct_thr} "
-                    f"> max_strategy_correlation_threshold={ss_thr}（{check.name}）",
-                )
-        mo = p.get("max_factor_overlap")
-        ss_mo = ssot.get("max_factor_overlap_threshold")
-        if mo is not None and ss_mo is not None:
-            if float(mo) > float(ss_mo) + 1e-12:
-                _add(
-                    f"G12 因子重叠上限过于宽松：max_factor_overlap={mo} "
-                    f"> max_factor_overlap_threshold={ss_mo}（{check.name}）",
-                )
-        uo = p.get("max_universe_overlap")
-        ss_uo = ssot.get("max_universe_overlap_threshold")
-        if uo is not None and ss_uo is not None:
-            if float(uo) > float(ss_uo) + 1e-12:
-                _add(
-                    f"G12 股票池重叠上限过于宽松：max_universe_overlap={uo} "
-                    f"> max_universe_overlap_threshold={ss_uo}（{check.name}）",
-                )
-
-    elif ct == "zero_residue_check":
-        try:
-            from zephyr.governance.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner
-
-            scanner = ZeroResidueScanner(project_root=project_root)
-            report = scanner.scan()
-            if not report.is_clean:
-                for fg in report.findings:
-                    sev: str = "P0" if fg.severity == "error" else "P1"
-                    _add(
-                        fg.message,
-                        detail=f"[{fg.rule_id}] {fg.file_rel}",
-                        severity=sev,
-                    )
-        except Exception as exc:
-            _add(f"Zero residue scan failed: {exc}", detail=str(exc))
-
-    elif ct == "post_doc_review_check":
-        try:
-            from zephyr.governance.rule_enforcement.invariants.post_doc_review_check import (
-                PostDocReviewScanner,
-            )
-
-            session_id = str(check.params.get("session_id", "")) if hasattr(check, "params") else ""
-            scanner = PostDocReviewScanner(project_root=project_root, session_id=session_id)
-            report = scanner.scan()
-            if not report.is_clean:
-                for fg in report.pending_regularization:
-                    _add(
-                        f"待规格化项: {fg.issue_type} in {fg.file_path}:{fg.line_number}",
-                        detail=f"[{fg.rule_ref}] {fg.issue_text}",
-                        severity="P1",
-                    )
-            if report.regularization_triggered:
-                _add(
-                    f"待规格化项≥3，已触发规格化流程 (task_id={report.regularization_task_id})",
-                    detail=f"pending_count={len(report.pending_regularization)}",
-                    severity="P1",
-                )
-        except Exception as exc:
-            _add(f"Post doc review scan failed: {exc}", detail=str(exc))
-
-    elif ct in {
-        "score_threshold",
-        "manual_approval",
-        "path_whitelist",
-        "path_routing",
-        "temporal",
-        "reference_check",
-        "deduplication",
-        "threshold",
-    }:
-        violations.append(
-            GateViolation(
-                check_id=check.check_id,
-                check_name=check.name,
-                severity="P2",
-                message=f"检查类型 '{ct}' 在任务门禁路径未实现（依赖 KMS / 额外数据），已跳过",
+                f"Unknown check type '{check.check_type}', skipped",
                 detail="gate_engine._run_check",
-                rule_ids=list(check.rule_ids),
-            )
-        )
-
-    elif ct == "fle_gate":
-        gate_module = str(check.params.get("gate_module", ""))
-        gate_method = str(check.params.get("gate_method", "check"))
-        if not gate_module:
-            _add("fle_gate 检查缺少 gate_module 参数", detail=f"check_id={check.check_id}")
-        else:
-            try:
-                import importlib
-
-                mod = importlib.import_module(gate_module)
-                candidates = [a for a in dir(mod) if isinstance(getattr(mod, a), type) and not a.startswith("_")]
-                if not candidates:
-                    _add(f"FLE 门禁模块 {gate_module} 无可用类")
-                else:
-                    gate_cls = getattr(mod, candidates[0])
-                    try:
-                        gate_inst = gate_cls()
-                    except TypeError:
-                        gate_inst = gate_cls
-                    method = getattr(gate_inst, gate_method, None)
-                    if method is None:
-                        _add(f"FLE 门禁 {gate_module} 无 {gate_method} 方法")
-                    else:
-                        import inspect
-
-                        sig = inspect.signature(method)
-                        params = list(sig.parameters.keys())
-                        if len(params) == 0:
-                            result = method()
-                        else:
-                            result = method(task.task_id)
-                        if isinstance(result, dict):
-                            if not result.get("allowed", result.get("passed", result.get("ok", True))):
-                                _add(
-                                    f"FLE 门禁 {gate_module}.{gate_method} 拒绝",
-                                    detail=str(result),
-                                )
-                        elif isinstance(result, bool) and not result:
-                            _add(f"FLE 门禁 {gate_module}.{gate_method} 返回 False")
-            except Exception as exc:
-                violations.append(
-                    GateViolation(
-                        check_id=check.check_id,
-                        check_name=check.name,
-                        severity="P2",
-                        message=f"fle_gate 检查初始化失败（降级 P2）：{exc}",
-                        rule_ids=list(check.rule_ids),
-                    )
-                )
-
-    elif ct == "rollback_exit_code":
-        exit_code_raw = check.params.get("exit_code", 0)
-        try:
-            exit_code = int(exit_code_raw)
-        except (TypeError, ValueError):
-            exit_code = -1
-        try:
-            from zephyr.infrastructure.rollback.contract import get_gate_action
-
-            gate_action, description = get_gate_action(exit_code)
-            if gate_action in ("FAIL", "BLOCK", "BLOCK_AUTO") or gate_action in (
-                "WARN",
-                "RETRY",
-                "PAUSE_AGENT",
-                "PAUSE_AUTO",
-                "REDUCE_TIER",
-            ):
-                _add(
-                    f"Rollback exit code {exit_code} -> {gate_action}: {description}",
-                    detail=f"check_id={check.check_id} exit_code={exit_code}",
-                )
-        except Exception as exc:
-            violations.append(
-                GateViolation(
-                    check_id=check.check_id,
-                    check_name=check.name,
-                    severity="P2",
-                    message=f"rollback_exit_code check failed (degrade P2): {exc}",
-                    rule_ids=list(check.rule_ids),
-                )
-            )
-
-    else:
-        violations.append(
-            GateViolation(
-                check_id=check.check_id,
-                check_name=check.name,
                 severity="P2",
-                message=f"Unknown check type '{ct}', skipped",
-                rule_ids=list(check.rule_ids),
             )
-        )
-
-    return violations
+        ]
+    return handler(check, task, project_root, deliverables, dep_paths)
 
 
 # ---------------------------------------------------------------------------

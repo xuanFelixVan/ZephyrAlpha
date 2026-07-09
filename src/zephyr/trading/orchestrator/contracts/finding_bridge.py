@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.contracts.finding_bridge
-# [DOMAIN] D_TRADING
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported

@@ -49,6 +49,9 @@ ssot_claims:
     scope: global
   - claim: "通用StateMachine[S]泛型基类的唯一真源"
     scope: global
+responsibility_domain: 
+build_status: generated
+design_maturity: prototype
 ---
 
 ## 概述

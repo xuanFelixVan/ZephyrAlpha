@@ -1,30 +1,31 @@
 {
-  "dashboard_id": "DASH-20260705-107",
-  "generated_at": "2026-07-05T10:39:35.514107",
+  "dashboard_id": "DASH-20260709-325",
+  "generated_at": "2026-07-09T20:16:32.765325",
   "health_score": "C",
-  "total_assets": 8789,
-  "orphan_rate_pct": 26.3,
+  "total_assets": 9048,
+  "orphan_rate_pct": 26.4,
   "ghost_rate_pct": 0.0,
   "drift_rate_pct": 0.0,
   "by_type": {
-    "module": 2538,
-    "unknown": 2311,
-    "registry": 34,
-    "script": 454,
-    "doc": 266,
-    "config": 36,
-    "test": 2134,
-    "data": 1016
+    "module": 2547,
+    "unknown": 2385,
+    "registry": 39,
+    "gate": 84,
+    "script": 462,
+    "doc": 284,
+    "config": 37,
+    "test": 2190,
+    "data": 1020
   },
   "by_layer": {
-    "cross_layer": 4890,
-    "L01": 1378,
-    "L02": 169,
-    "L03": 144,
-    "L04": 2208
+    "cross_layer": 5028,
+    "L01": 1427,
+    "L02": 178,
+    "L03": 149,
+    "L04": 2266
   },
   "alerts": [
-    "孤儿率 26.3% 超过 2% 阈值"
+    "孤儿率 26.4% 超过 2% 阈值"
   ],
   "trend_orphan": [],
   "trend_health": [],

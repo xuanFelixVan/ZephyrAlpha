@@ -23,6 +23,9 @@ activation_phase: current
 runtime_plane: hot
 depends_on:
 - {target: MOD-LLM_SECURITY", at: "§2", why: "LLM Security Gateway——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
+responsibility_domain: 
+build_status: generated
+design_maturity: design
 ---
 ssot_claims:
   - claim: "Token/Cost/Time 三维预算策略唯一真源"

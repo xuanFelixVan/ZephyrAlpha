@@ -35,6 +35,9 @@ ssot_declarations:
   sync_rule: 运行时配置变更时MUST同步
 ttl: permanent
 doc_type: blueprint
+responsibility_domain: 
+build_status: generated
+design_maturity: prototype
 ---
 ## §0 代码对齐验证 {temporal_type=permanent}
 

@@ -70,6 +70,9 @@ references:
     why: "蓝图规格化铁律"
 summary: >
   Git-native+SQLite dump双轨回滚+auto_guard后验自动触发+四级回滚操作+130盲点覆盖+8层防御架构+容量升级至1500模块。62代码文件，completed。v7.0.0模板v3.5/v3.6升级。
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 > module_id: MOD-INF-021 | version: 9.0.0 | status: Active | layer: L01_infrastructure

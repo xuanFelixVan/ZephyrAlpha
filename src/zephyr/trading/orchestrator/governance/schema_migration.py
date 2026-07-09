@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.governance.schema_migration
-# [DOMAIN] D_TRADING
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.events.event_bus_upgrade
 # [CONSUMERS]
 # [STARTUP] imported

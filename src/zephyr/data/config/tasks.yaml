@@ -556,6 +556,17 @@ tasks:
     extra:
       description: "指数3秒实时行情快照"
 
+  - task_id: edb_data_incremental
+    table: c1_market.edb_data
+    source: ifind
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: edb_data
+    symbols: null  # 关键指标列表在 Provider 内配置（约 50-100 个，CPI/PPI/PMI/M0/M1/M2/GDP/社融/利率等）
+    extra:
+      description: "EDB宏观数据增量（iFind THS_EDBQuery，约50-100个关键指标，配额5万条/周）"
+
   # ============== 静态数据月初刷新（每月1日 09:00）==============
   - task_id: trade_calendar_refresh
     table: c1_market.trade_calendar

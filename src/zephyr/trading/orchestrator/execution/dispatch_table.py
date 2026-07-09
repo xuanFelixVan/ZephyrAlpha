@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.execution.dispatch_table
-# [DOMAIN] D_AUTONOMY_CORE
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]
 # [STARTUP] imported

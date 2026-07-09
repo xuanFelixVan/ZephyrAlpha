@@ -52,6 +52,7 @@ A_FULL_REQUIRED = [  # noqa: gate-vocab  # frontmatter 字段名（非 node_type
     "consumers", "startup", "maturity",
     "invariants", "modify-guard",
     "stability", "safety", "ai_autonomy",
+    "error_contract", "tests", "ttl",  # v2.0.0: 补齐 15 字段全硬校验
 ]
 # A_test：.py test（tests/ 下）
 A_TEST_REQUIRED = ["blueprint", "module", "stability", "safety", "ai_autonomy"]

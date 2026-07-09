@@ -284,6 +284,7 @@ def _gen_header(today: date, gen_timestamp: str) -> list[str]:
         '> **这个文档是给人看的**：用大白话说清楚「系统从哪些数据源、采了什么数据、灌到哪张表、什么时候采」。',
         f"> **真源是 [tasks.yaml](../../../src/zephyr/data/config/tasks.yaml)**，本文档是自动生成的派生产物，禁止手工编辑。",
         "> **数据源连接和 API 细节**见 [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)。",
+        "> **自动下载命令**：`python -m zephyr.data run <task_id>` 手动触发任务，`python -m zephyr.data start` 启动常驻调度（见 [cli.py](../../../src/zephyr/data/cli.py)）。",
         "",
         "---",
         "",

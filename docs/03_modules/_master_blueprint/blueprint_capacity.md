@@ -51,6 +51,9 @@ tags:
   - incremental-scan
   - multi-agent-concurrency
   - 10000-scripts
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # Capacity 蓝图 — 容量升级设计·十个升级章+12缺口审计

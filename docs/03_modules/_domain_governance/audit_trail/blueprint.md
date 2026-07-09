@@ -60,6 +60,9 @@ references:
   - {target: "MOD-INF-022", at: "§2", why: "Escalation Engine——异常检测升级路径 + 委托链终端判断"}
   - {id: "MOD-INF-005", at: "§5.7", why: "Script System——BulkheadExecutor 脚本执行结果输入审计"}
   - {id: "MOD-INF-009", at: "§4", why: "Pipeline——PipelineDAG 模块执行顺序影响审计时间线重建"}
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 > module_id: MOD-INF-020 | version: 2.1.0 | status: active | domain: infra_ops

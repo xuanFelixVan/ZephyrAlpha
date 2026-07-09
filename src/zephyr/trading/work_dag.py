@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.work_dag
-# [DOMAIN] D_TRADING
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported

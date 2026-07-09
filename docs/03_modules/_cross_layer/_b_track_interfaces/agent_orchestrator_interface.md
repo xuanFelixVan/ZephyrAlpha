@@ -50,6 +50,9 @@ tags:
   - sandbox
   - hallucination-detection
   - vibe-coding-infrastructure
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # Agent Orchestrator Interface / Agent 编排器接口规范

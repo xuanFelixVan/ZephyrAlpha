@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "dcc1d5a89741c5ba",
+      "hash": "1581be9ecc31b3e7",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -21,7 +21,7 @@
       "desc": "Kill Switch 状态"
     },
     "scripts/governance/meta/shadow_mode_state.yaml": {
-      "hash": "910c30de2ad401c2",
+      "hash": "fb878afae35054e4",
       "critical": false,
       "desc": "Shadow Mode 状态"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "9312c14333ff5b07",
+      "hash": "9656076845ccf2ed",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/rule_bridge/git_commit_gateway.py": {
-      "hash": "b55ee12e1e0dcdfe",
+      "hash": "139f7992edf2cd4d",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "9e2a4be52a3c3775",
+      "hash": "6d4af64059be9f24",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,19 +61,24 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "5e5107f416028f6a",
+      "hash": "bee4ca5a90d4f241",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
     "src/zephyr/governance/rule_bridge/commit_gate_registry.py": {
-      "hash": "24f1979ce084e00e",
+      "hash": "85d0d6f08b402f86",
       "critical": true,
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     },
     "src/zephyr/governance/commit_gates/__init__.py": {
-      "hash": "625af84e5383f73e",
+      "hash": "54482a4afc4b590e",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: __init__.py）"
+    },
+    "src/zephyr/governance/commit_gates/_diff_helpers.py": {
+      "hash": "5f79785d597907c2",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: _diff_helpers.py）"
     },
     "src/zephyr/governance/commit_gates/arch_reference_gate.py": {
       "hash": "781460cfc074777b",
@@ -81,97 +86,152 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: arch_reference_gate.py）"
     },
     "src/zephyr/governance/commit_gates/bare_getenv_gate.py": {
-      "hash": "862cdee9b01b1ea4",
+      "hash": "d170998ff804a8e2",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: bare_getenv_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/bare_sql_gate.py": {
+      "hash": "afb7e47721627689",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: bare_sql_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/capability_overlap_gate.py": {
-      "hash": "76a81d3ab9b6b37a",
+      "hash": "74bace6029c883a4",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: capability_overlap_gate.py）"
     },
     "src/zephyr/governance/commit_gates/claim_required_gate.py": {
-      "hash": "dfeca06da62629f0",
+      "hash": "a87074701c8d4947",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: claim_required_gate.py）"
     },
     "src/zephyr/governance/commit_gates/create_guard.py": {
-      "hash": "b4ee0d598021aca6",
+      "hash": "bc42ff6625ac6a4e",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: create_guard.py）"
     },
     "src/zephyr/governance/commit_gates/dangling_reference_gate.py": {
-      "hash": "93c5c514d4d07c2a",
+      "hash": "4b5af0629abee4ac",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: dangling_reference_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/datetime_now_forbidden_gate.py": {
+      "hash": "0c5dda6301f1254b",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: datetime_now_forbidden_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/directory_contract_gate.py": {
-      "hash": "e01738f1c14a0aba",
+      "hash": "80d4c93a5606d372",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: directory_contract_gate.py）"
     },
     "src/zephyr/governance/commit_gates/doc_ref_broken_gate.py": {
-      "hash": "4b5fa35fb32c02b6",
+      "hash": "2c36d9a2bfcac188",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: doc_ref_broken_gate.py）"
     },
     "src/zephyr/governance/commit_gates/empty_handler_gate.py": {
-      "hash": "75304159071afc03",
+      "hash": "febb7276ee6b4c0c",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: empty_handler_gate.py）"
     },
     "src/zephyr/governance/commit_gates/exempt_zone_frontmatter_gate.py": {
-      "hash": "ac8d759ade28d229",
+      "hash": "e4679c6f73128bd2",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: exempt_zone_frontmatter_gate.py）"
     },
     "src/zephyr/governance/commit_gates/file_copy_gate.py": {
-      "hash": "fd9c272fec7236a1",
+      "hash": "9c58b82cce180aaf",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: file_copy_gate.py）"
     },
     "src/zephyr/governance/commit_gates/file_placement_ttl_gate.py": {
-      "hash": "41f41216bc684ea9",
+      "hash": "cd75bcd6f3c7d299",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: file_placement_ttl_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/foreign_change_gate.py": {
+      "hash": "d67101c8e83656e0",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: foreign_change_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/function_dup_gate.py": {
-      "hash": "99ff4a7238da2131",
+      "hash": "f88878301336c5e3",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: function_dup_gate.py）"
     },
     "src/zephyr/governance/commit_gates/gate_repo.py": {
-      "hash": "d1e1117eee964f52",
+      "hash": "67d8670d74952854",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: gate_repo.py）"
     },
+    "src/zephyr/governance/commit_gates/god_class_gate.py": {
+      "hash": "2e1f1c7f07a4547d",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: god_class_gate.py）"
+    },
+    "src/zephyr/governance/commit_gates/hardcoded_url_gate.py": {
+      "hash": "8feefe39faa822db",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: hardcoded_url_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/held_overlap_gate.py": {
-      "hash": "079c5a97569b923c",
+      "hash": "a04325bc905c3c42",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: held_overlap_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/high_complexity_gate.py": {
+      "hash": "0b053f9af8f7bbe3",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: high_complexity_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/id_uniqueness_gate.py": {
-      "hash": "ef15031ff9b08610",
+      "hash": "63d218073d893584",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: id_uniqueness_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/import_direction_gate.py": {
+      "hash": "04bf150d8f040ab1",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: import_direction_gate.py）"
+    },
+    "src/zephyr/governance/commit_gates/long_param_list_gate.py": {
+      "hash": "c1081bcf602d7c1b",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: long_param_list_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/module_id_consistency_gate.py": {
-      "hash": "d4fe8939917cbeb5",
+      "hash": "ac5db66cc720a80d",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: module_id_consistency_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/msg_exposure_gate.py": {
+      "hash": "f2bbcfc3ac0873d5",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: msg_exposure_gate.py）"
+    },
+    "src/zephyr/governance/commit_gates/msg_style_gate.py": {
+      "hash": "bf73767888fab0d4",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: msg_style_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/orphan_module_gate.py": {
-      "hash": "f882321fbfba9084",
+      "hash": "f60a0c27a221d1c3",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: orphan_module_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/panorama_alignment_gate.py": {
+      "hash": "2016828cfb67f2a6",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: panorama_alignment_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/perm_trigger_gate.py": {
-      "hash": "4db00c8e07b0e86e",
+      "hash": "dbb17b0394e82f76",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: perm_trigger_gate.py）"
     },
     "src/zephyr/governance/commit_gates/r5_digit_suffix_gate.py": {
-      "hash": "041d6e35bb5491cd",
+      "hash": "97c6be53e8553751",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: r5_digit_suffix_gate.py）"
     },
@@ -181,26 +241,36 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: rule_four_way_alignment_gate.py）"
     },
     "src/zephyr/governance/commit_gates/session_required_gate.py": {
-      "hash": "2ba85938759898fa",
+      "hash": "c0ba4f4ad246a77e",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: session_required_gate.py）"
     },
     "src/zephyr/governance/commit_gates/ssot_redefinition_gate.py": {
-      "hash": "f60a8e31c5720e73",
+      "hash": "2dd479631a218272",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: ssot_redefinition_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/tests_coverage_gate.py": {
+      "hash": "03ff1a4ff9766b21",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: tests_coverage_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/ttl_gate.py": {
-      "hash": "74cc0deed97487b4",
+      "hash": "eec723eac09e2638",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: ttl_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/unsafe_dict_spread_gate.py": {
+      "hash": "7f8c763dfacfc98e",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: unsafe_dict_spread_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/vocab_hardcode_gate.py": {
-      "hash": "a687e9ef3e82f7f4",
+      "hash": "8020c56306fa3d02",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: vocab_hardcode_gate.py）"
     }
   },
-  "registered_at": "2026-07-05T20:09:46.440434+00:00",
+  "registered_at": "2026-07-09T20:17:02.984463+00:00",
   "last_check_at": "2026-07-05T20:02:44.389071+00:00"
 }

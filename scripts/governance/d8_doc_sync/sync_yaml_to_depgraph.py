@@ -54,6 +54,7 @@ warn_only: false
 
 
 import argparse
+import json
 import os
 import sys
 from datetime import UTC
@@ -1863,9 +1864,10 @@ def sync_data_source_assets(cur):
     """#180: 外部数据源资产清单 → data_source_assets 表
 
     SSoT: architecture_model/data/data_sources_registry.yaml
-    将外部数据源资产（v2.0.0 起 12 个；runtime_id/policy 字段不进 DB，AI 查调用策略应读 YAML 真源）
+    将外部数据源资产（v2.1.0 起 12 个；account_type + policy 字段同步到 DB）
     从 YAML 同步到 depgraph.data_source_assets 表。
     派生关系：YAML → DB → generate_asset_catalog.py → asset_catalog.md。
+    v2.1.0: 新增 account_type + policy(JSONB) 同步，AI 可直接查 DB 获取配额/策略。
     """
     print("同步 #180: 外部数据源资产 → data_source_assets...")
     yaml_path = REPO_ROOT / "architecture_model" / "data" / "data_sources_registry.yaml"
@@ -1883,18 +1885,19 @@ def sync_data_source_assets(cur):
     for s in sources:
         cur.execute("""
             INSERT INTO data_source_assets
-                (source_id, name, name_en, type, category, vendor,
+                (source_id, name, name_en, type, account_type, category, vendor,
                  interface_types, api_count, auth_required, auth_method,
-                 rate_limit, status, coverage, limitations, owner, operation_manual)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                 rate_limit, status, coverage, limitations, owner, operation_manual, policy)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb)
         """, (
             s.get("id", ""), s.get("name", ""), s.get("name_en", ""),
-            s.get("type", ""), s.get("category", ""), s.get("vendor", ""),
+            s.get("type", ""), s.get("account_type", ""), s.get("category", ""), s.get("vendor", ""),
             ", ".join(s.get("interface_types", [])) if isinstance(s.get("interface_types"), list) else s.get("interface_types", ""),
             s.get("api_count", 0), s.get("auth_required", False),
             s.get("auth_method", ""), s.get("rate_limit", ""), s.get("status", ""),
             s.get("coverage", ""), s.get("limitations", ""), s.get("owner", ""),
             s.get("operation_manual", ""),
+            json.dumps(s.get("policy", {}), ensure_ascii=False),
         ))
         synced += 1
     print(f"  同步 {synced} 个外部数据源资产")

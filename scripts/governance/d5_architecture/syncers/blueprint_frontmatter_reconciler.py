@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # [BLUEPRINT] MOD-GOV-SYNC-PANORAMA | docs/_working/2026-07-09-panorama_module_sync_engine.md | §Phase3
 # [MODULE] scripts.governance.d5_architecture.syncers.blueprint_frontmatter_reconciler
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection)
 # [CONSUMERS] scripts.governance.sync_panorama_module
 # [STARTUP] manual
@@ -147,21 +147,59 @@ def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
 
 def _write_frontmatter_updates(bp_file: Path, module_id: str,
                                 domain_id: str, dm: str, bs: str) -> int:
-    """读取蓝图文件，更新 frontmatter 核心字段。"""
+    """读取蓝图文件，更新 frontmatter 核心字段。
+
+    v2.0.0：design_maturity/build_status 总是写入（depgraph 为真源），
+    不再只在已存在时更新——消除 align_panoramas 状态漂移。
+    """
     content = bp_file.read_text(encoding="utf-8")
     updates = {
         "module_id": module_id,
         "responsibility_domain": domain_id,
+        "design_maturity": dm,
+        "build_status": bs,
     }
-    fm = _parse_frontmatter(content)
-    if "design_maturity" in fm:
-        updates["design_maturity"] = dm
-    if "build_status" in fm:
-        updates["build_status"] = bs
     new_content = _update_frontmatter(content, updates)
     if new_content != content:
         bp_file.write_text(new_content, encoding="utf-8")
     return 0
+
+
+# 蓝图扫描根目录（fallback：bp_path 找不到文件时扫描匹配 module_id）
+_BP_SCAN_ROOT = _REPO_ROOT / "docs" / "03_modules"
+_BP_SCAN_FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
+_BP_SCAN_SKIP_NAMES = {"index.md"}
+
+
+def _find_blueprint_by_scan(module_id: str) -> list[Path]:
+    """扫描 docs/03_modules/ 下所有文件，通过 frontmatter.module_id 匹配。
+
+    Fallback：depgraph 中 blueprint_path 为空或指向错误路径时使用。
+    与 align_panoramas._fetch_blueprint_nodes 扫描策略一致。
+    返回所有匹配的文件（一个 module_id 可能有多个 .md 文件声明它）。
+    """
+    results: list[Path] = []
+    if not _BP_SCAN_ROOT.exists():
+        return results
+    for fpath in _BP_SCAN_ROOT.rglob("*"):
+        if not fpath.is_file() or fpath.name in _BP_SCAN_SKIP_NAMES:
+            continue
+        try:
+            content = fpath.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        match = _BP_SCAN_FRONTMATTER_RE.match(content)
+        if not match:
+            continue
+        for line in match.group(1).split("\n"):
+            if ":" in line:
+                key, _, val = line.partition(":")
+                if key.strip() == "module_id":
+                    v = val.strip().strip('"').strip("'")
+                    if v == module_id:
+                        results.append(fpath)
+                    break  # 找到 module_id 行，无论是否匹配都跳过此文件
+    return results
 
 
 def reconcile_blueprint_frontmatter(module_id: str) -> int:
@@ -190,7 +228,16 @@ def reconcile_blueprint_frontmatter(module_id: str) -> int:
         bp_file = _REPO_ROOT / "docs" / "03_modules" / f"{module_id}.md"
 
     if not bp_file.exists():
-        print(f"[WARN] blueprint not found, skip (marked missing): {bp_file}", file=sys.stderr)
-        return 0
+        # Fallback: depgraph 中 blueprint_path 为空或指向错误路径，
+        # 扫描 docs/03_modules/ 通过 frontmatter.module_id 匹配
+        scanned = _find_blueprint_by_scan(module_id)
+        if scanned:
+            # 更新所有匹配的文件（一个 module_id 可能有多个 .md 文件）
+            for f in scanned:
+                _write_frontmatter_updates(f, module_id, domain_id, dm, bs)
+            return 0
+        else:
+            print(f"[WARN] blueprint not found, skip (marked missing): {bp_file}", file=sys.stderr)
+            return 0
 
     return _write_frontmatter_updates(bp_file, module_id, domain_id, dm, bs)

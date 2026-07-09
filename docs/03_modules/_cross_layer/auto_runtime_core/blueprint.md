@@ -1,5 +1,5 @@
 ---
-module_id: "MOD-INF-035"
+module_id: MOD-INF-035
 submodule_path: src/zephyr/trading/autopilot
 title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
 doc_type: blueprint
@@ -32,8 +32,7 @@ tags: [auto-runtime, brain, core, orchestrator, mape-k, circadian, dream-cycle, 
 priority: P0
 runtime_plane: hot
 blueprint_level: module
-responsibility_domain: "D_INFRA_RUNTIME"
-depends_on:
+responsibility_domain: 
   - {target: "SYS-MASTER-001", at: "全篇", why: "系统总蓝图——大脑是三级金字塔 Level 1 节点"}
   - {target: "MOD-INF-002", at: "全篇", why: "Runtime Integration——RI EventStore/DryRun/CostTracker 运行时桥接"}
   - {target: "MOD-INF-016", at: "全篇", why: "Shared Core——事件总线/生命周期/日志/沙箱等公共基座"}
@@ -54,6 +53,8 @@ references:
   - {id: "MOD-CONTEXT_ENGINE", at: "§2", why: "Context Engine——大脑消费上下文注入"}
   - {id: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——大脑 LLM 调用的安全闸门"}
   - {id: "MOD-INF-022", at: "§2", why: "Escalation Protocol——大脑异常升级路径"}
+design_maturity: prototype
+build_status: generated
 ---
 
 # AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心

@@ -59,6 +59,9 @@ references:
     why: "MiniQmtProvider.get_order_book(5档盘口), order_book组件数据源"
 codification_level: L1
 codification_at: "2026-05-15"
+responsibility_domain: 
+build_status: generated
+design_maturity: design
 ---
 
 > ✅ **C轨业务层已开放，可施工**

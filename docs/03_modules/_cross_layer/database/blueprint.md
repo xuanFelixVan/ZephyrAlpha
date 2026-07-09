@@ -43,6 +43,9 @@ references:
   - {id: "MOD-FEEDBACK_LOOP", at: "§2.1", why: "FLE 消费 olap_engine——集成关系"}
   - {id: "MOD-INF-020", at: "全篇", why: "审计事件入库"}
   - {id: "MOD-INF-015", at: "全篇", why: "query_metrics 等遥测读写"}
+responsibility_domain: 
+build_status: planned
+design_maturity: design
 ---
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级

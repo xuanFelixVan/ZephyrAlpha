@@ -35,6 +35,9 @@ mod_master_contracts:
   - "CT-ORC-VMS-001"
   - "CT-CE-VMS-001"
   - "CT-KB-VMS-001"
+responsibility_domain: 
+design_maturity: design
+build_status: planned
 ---
 
 # Vector Memory Service Interface / 向量记忆服务接口规范

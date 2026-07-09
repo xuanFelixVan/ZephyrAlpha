@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_domain_infra_runtime/task-system/blueprint.md
 # [MODULE] zephyr.trading.task_gate
-# [DOMAIN] D_TRADING
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport
 # [CONSUMERS]
 # [STARTUP] imported

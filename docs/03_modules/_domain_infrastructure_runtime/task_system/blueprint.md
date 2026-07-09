@@ -54,6 +54,9 @@ depends_on:
   - {target: KBG-0030, at: "全篇", why: "SQLite元数据层——tasks/events/gates四表"}
 priority: P0
 runtime_plane: hot
+responsibility_domain: 
+build_status: generated
+design_maturity: prototype
 ---
 
 # Task System 蓝图 — 全链路任务卡生命周期管理

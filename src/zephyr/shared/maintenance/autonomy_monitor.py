@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-116 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] zephyr.shared.maintenance.autonomy_monitor
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.maintenance.zero_config
