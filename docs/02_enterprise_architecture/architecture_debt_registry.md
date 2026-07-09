@@ -3582,14 +3582,15 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第89轮AST验证DRIFTED（2026-07-09，Phase 7d-pre）**：AST McCabe复算发现2项裁定值过时: 5.158.3 verdict_engine.evaluate 裁定17→实际8(_parse_event已提取为独立方法, 复杂度下沉) + 5.158.6 resource_optimization.snapshot 裁定12→实际9. 两者均低于NO-HIGH-COMPLEXITY gate阈值15, 标记DRIFTED(不再超标). DEFERRED-PERMANENT 9→7.
 > **第90轮Phase 7d重构（2026-07-09）**：5.158.10 `chaos_engine.inject` extract method重构完成. if/elif分发链→_dispatch_injection(McCabe=4) + except Exception路径→_handle_injection_failure(McCabe=3) + 未处理type前置检查. McCabe 20→15(低于gate阈值>15). 行为等价验证通过(TestChaosEngineInjectDirect 10新测试+15原有测试=25/25 PASSED, 覆盖直接inject_type调用/错误路径/_last_result/_injection_state/边界值). DEFERRED-PERMANENT 7→6(5.158.10清零).
 > **第91轮Phase 7e重构（2026-07-09）**：5.158.7 `action_dispatcher._search_replace_file` extract method重构完成. 替换循环→_apply_replacement_entries(McCabe=8) + 结果构建→_finalize_replacement(McCabe=9). McCabe 20→5(裁定值12为DRIFTED, AST复算实际20; 重构后远低于gate阈值>15). 行为等价验证通过(TestActionDispatcherSearchReplacePaths 8新测试+4原有测试=12/12 PASSED, 覆盖宽松匹配/remove模式/unchanged/空old_str/部分失败/实际写入/backup递增/reason累积). DEFERRED-PERMANENT 6→5(5.158.7清零).
+> **第92轮Phase 7f重构（2026-07-09）**：5.158.1 `_compute_metrics_generic` + 5.158.2 `_run_hallucination_six_dim` extract method重构完成. (1)5.158.1: 9段匹配逻辑→9个_match_*方法(bool_fields/list_fields/parallel_groups/str_fields/bug_location/step_count/function_args/tool_sequence/contains_keywords), 主函数McCabe 30+→5, 每个_match_*返回list[tuple[p,r,exact]]平展聚合保持精确平均行为. (2)5.158.2: 内联9维检测→_check_hallucination_for_case(单case计数)+_check_inconsistency_drift(2次推断对比), 主函数McCabe 17→4. 行为等价验证通过(test_exam_orchestrator 139/140 PASSED, 1预先存在失败test_invalid_env_var_falls_back_to_1与本次重构无关; TestRunHallucinationSixDim 5/5 PASSED + TestComputeMetricsFunctionCalling/TestComputeMetricsToolChaining覆盖_match_function_args/_match_tool_sequence). DEFERRED-PERMANENT 5→3(5.158.1+5.158.2清零).
 
 #### HIGH（1个）
 
-1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:510` — `_compute_metrics_generic` 复杂度30+，221行，5个for循环段+4层嵌套
+1. **[FIXED-Phase7f]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:510` — `_compute_metrics_generic` McCabe 30+→5(extract method: 9个_match_*方法, 主函数查表循环+平展聚合), 139/140 tests PASSED
 
 #### MEDIUM（4个）
 
-2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:1278` — `_run_hallucination_six_dim` 复杂度17，94行，7个连续if检测分支
+2. **[FIXED-Phase7f]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:1278` — `_run_hallucination_six_dim` McCabe 17→4(extract method: _check_hallucination_for_case+_check_inconsistency_drift, 主函数循环+dict聚合), TestRunHallucinationSixDim 5/5 PASSED
 3. **[DRIFTED-Phase7d]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:183` — `evaluate` 裁定复杂度17→AST复算实际8(_parse_event已提取), 低于阈值15, 不再超标
 4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\ops\scheduler.py:327` — `_run_once` 105行，5阶段流水线挤在单函数，5个return
 5. **[MEDIUM]** `d:\ZephyrAlpha\scripts\git_commit.py:118` — `main` 复杂度16，151行，8路if/elif状态分发
@@ -3606,7 +3607,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 **核心模式总结**：(1)最高危集中在exam_orchestrator（3处，含1个30+复杂度221行巨型函数）；(2)MEDIUM均为"多路分发挤在单函数"——事件类型分发/状态机if-elif/流水线阶段；(3)7个LOW多为"连续if分类"与"多return出口"，可通过查表/早返回/策略模式降解
 
-**严重度汇总**：HIGH=1, MEDIUM=4, LOW=7, 合计=12
+**严重度汇总**：HIGH=0, MEDIUM=2, LOW=3, FIXED=5(Phase7a/7d/7e/7f), DRIFTED=2(Phase7d), 合计=12
 
 ---
 
