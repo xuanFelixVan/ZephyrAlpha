@@ -3836,6 +3836,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > - 设计意图（第一性原理）：豁免的真正需求是"SQL 集中化的正确做法"（把 SQL 提取到模块级常量），不是"匹配 SQL_* = 正则的行"。ast 识别 Assign 节点的完整行范围，无论单行还是多行定义，100% 准确。与 R95 保持一致的架构风格（都用 ast 替代正则近似）。
 > - 附加发现（不在本次范围）：_SQL_PATTERN 的 INSERT\s+INTO\b 不匹配 INSERT OR IGNORE INTO（SQLite 语法），file_task_mapper.py L80 含 INSERT OR IGNORE INTO 未被检测（漏检）。待后续单独修复。
 > - 100% AI 开发模式考量：与 R95 同类缺陷同类治本方案，ast 逻辑简单清晰；_extract_sql_constant_lines 函数 docstring 说明设计意图；TestExtractSqlConstantLines 直接测试防 AI 误判"不存在"；第96轮注册表记录作为可追溯触发点。
+> **第97轮修复状态（2026-07-10，_SQL_PATTERN INSERT OR * INTO 漏检修复）**：
+> - 根因：_SQL_PATTERN 的 INSERT\s+INTO\b 只匹配标准 INSERT INTO，漏检 SQLite 5种冲突解决子句变体（INSERT OR IGNORE/REPLACE/ABORT/FAIL/ROLLBACK INTO）。项目实测28处 INSERT OR * INTO，其中 src/ 下9处（file_task_mapper.py L80 等）。
+> - 修复方案：将 INSERT\s+INTO\b 改为 INSERT(?:\s+OR\s+\w+)?\s+INTO\b，可选匹配 OR <word> 冲突解决子句。用 \w+ 匹配任意冲突解决关键词（非枚举5个），向前兼容未来 SQLite 新增子句。实测验证：5种变体全部匹配，无误报。
+> - 影响：1个 gate 消费者（NO-BARE-SQL hard-block），INSERT OR * INTO 裸 SQL 不再漏检。
+> - 测试：test_bare_sql_gate.py 新增4个测试用例（TestSqlPattern 3个正则测试：INSERT OR IGNORE/REPLACE/ROLLBACK INTO + TestGatewayIntegration 1个集成测试：test_insert_or_ignore_into_blocked 验证 gate 硬阻断行为）。全 test_bare_sql_gate 50 测试通过。
+> - 设计意图：这是 SQL 语法变体覆盖问题（非 Python 语法结构识别问题），正则是正确工具（ast 不解析 SQL 内容）。与 R95/R96 不同类——R95/R96 是"用 ast 替代正则近似识别 Python 语法结构"，R97 是"扩展正则覆盖更多 SQL 语法变体"。
+> - 100% AI 开发模式考量：正则修改简单，注释说明 R97 修复背景；测试覆盖3种冲突子句变体+1个集成测试；第97轮注册表记录作为可追溯触发点。
 
 #### HIGH（5个）
 

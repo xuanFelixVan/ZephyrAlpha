@@ -113,6 +113,18 @@ class TestSqlPattern:
     def test_insert_into(self):
         assert _SQL_PATTERN.search('"INSERT INTO tbl VALUES(1)"')
 
+    def test_insert_or_ignore_into(self):
+        """R97 修复：INSERT OR IGNORE INTO（SQLite 冲突解决子句）应被检测。"""
+        assert _SQL_PATTERN.search('"INSERT OR IGNORE INTO tbl VALUES(1)"')
+
+    def test_insert_or_replace_into(self):
+        """R97 修复：INSERT OR REPLACE INTO 应被检测。"""
+        assert _SQL_PATTERN.search('"INSERT OR REPLACE INTO tbl VALUES(1)"')
+
+    def test_insert_or_rollback_into(self):
+        """R97 修复：INSERT OR ROLLBACK INTO 应被检测（覆盖较少见的冲突子句）。"""
+        assert _SQL_PATTERN.search('"INSERT OR ROLLBACK INTO tbl VALUES(1)"')
+
     def test_update_set(self):
         assert _SQL_PATTERN.search('"UPDATE tbl SET x=1"')
 
@@ -233,6 +245,16 @@ class TestGatewayIntegration:
         assert not passed
         assert "NO-BARE-SQL" in msg
         assert "SELECT" in msg
+
+    def test_insert_or_ignore_into_blocked(self):
+        """R97 修复：INSERT OR IGNORE INTO 裸 SQL 应被阻断（旧正则漏检）。"""
+        red = "src/zephyr/trading/mod.py"
+        content = 'sql = "INSERT OR IGNORE INTO task_files VALUES (1, 2, 3)"\n'
+        gw = _make_gateway(staged_files=[red], file_contents={red: content})
+        passed, msg = make_bare_sql_gate().check(gw, [])
+        assert not passed  # R97 修复后应被阻断
+        assert "NO-BARE-SQL" in msg
+        assert "INSERT" in msg
 
     def test_new_file_safe_passes(self):
         blue = "src/zephyr/trading/mod.py"

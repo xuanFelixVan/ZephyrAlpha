@@ -67,16 +67,19 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_bare_sql_gate"]
 
 # 匹配字符串字面量中的 SQL DML 语句
-# 覆盖 SELECT...FROM / INSERT INTO / UPDATE...SET / DELETE FROM
+# 覆盖 SELECT...FROM / INSERT [OR <conflict>] INTO / UPDATE...SET / DELETE FROM
 # 修正（R94）：旧正则 SELECT\s+\S+\s+FROM 中 \S+ 只匹配单个非空白 token，
 # 无法覆盖多列 SELECT(col1,col2 FROM)/DISTINCT/COUNT(DISTINCT)等常见模式。
 # 改用 \b.*?\b 词边界匹配，并启用 DOTALL 以覆盖跨行 SQL 字面量。
+# 修正（R97）：INSERT\s+INTO\b 漏检 SQLite 冲突解决子句变体
+# (INSERT OR IGNORE/REPLACE/ABORT/FAIL/ROLLBACK INTO)，
+# 改用 INSERT(?:\s+OR\s+\w+)?\s+INTO\b 可选匹配 OR <word> 子句。
 # 注意：正则定义必须在单行内（_SQL_PATTERN = re.compile(...)），否则
 # 续行中的 SQL 关键词会被 gate 自身检测到。
 # SQL_* 常量定义行豁免由 _diff_helpers._extract_sql_constant_lines 用 ast
 # 精确识别（R96 治本），替代旧 _SQL_CONSTANT_DEF_RE 正则近似。
 # fmt: off
-_SQL_PATTERN = re.compile(r"""['"`].*?(?:SELECT\b.*?\bFROM\b|INSERT\s+INTO\b|UPDATE\b.*?\bSET\b|DELETE\s+FROM\b)""", re.IGNORECASE | re.DOTALL)
+_SQL_PATTERN = re.compile(r"""['"`].*?(?:SELECT\b.*?\bFROM\b|INSERT(?:\s+OR\s+\w+)?\s+INTO\b|UPDATE\b.*?\bSET\b|DELETE\s+FROM\b)""", re.IGNORECASE | re.DOTALL)
 # fmt: on
 
 
