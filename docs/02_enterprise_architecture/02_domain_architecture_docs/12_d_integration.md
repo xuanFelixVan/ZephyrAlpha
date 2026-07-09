@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 管线路由（D_INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-09 17:30:52
+> 最后更新: 2026-07-09 17:34:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 72 | Module Count | 72 |
 | 域内依赖 | 70 | Internal Dependencies | 70 |
-| 跨域入边 | 139 | Cross-domain Incoming | 139 |
+| 跨域入边 | 138 | Cross-domain Incoming | 138 |
 | 跨域出边 | 68 | Cross-domain Outgoing | 68 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 39 | Prototype Modules | 39 |
@@ -169,23 +169,23 @@ graph TD
         src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py["(原型态 / prototype) risk_limit_violation_error.py"]
     end
     src_zephyr_integration_ports_py -.->|config_depends / config_depends| src_zephyr_integration_init_py
-    src_zephyr_integration_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_llm_bridge_py
-    src_zephyr_integration_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_server_py
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
-    src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py -.->|config_depends / config_depends| src_zephyr_integration_budget_enforcer_init_py
+    src_zephyr_integration_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_llm_bridge_py
+    src_zephyr_integration_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_server_py
+    src_zephyr_integration_budget_enforcer_init_py -.->|config_depends / config_depends| src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py
     src_zephyr_integration_governance_embedding_router_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
-    src_zephyr_integration_governance_data_source_router_embedding_router_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_governance_data_source_router_init_py -.->|config_depends / config_depends| src_zephyr_integration_governance_data_source_router_embedding_router_py
+    src_zephyr_integration_governance_data_source_router_embedding_router_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_local_model_embedding_router_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_local_model_local_model_scheduler_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_local_model_local_model_scheduler_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_chat_py
+    src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_deepseek_chat_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
-    src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
-    src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_chat_py
+    src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py
     src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
@@ -206,11 +206,6 @@ graph TD
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_SHARED
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_local_model_deepseek_chat_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_local_model_embedding_router_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_local_model_local_model_scheduler_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_local_model_ollama_chat_py
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_TRADING["(生产态 / production) D_TRADING"]
@@ -224,6 +219,10 @@ graph TD
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_chat_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -231,7 +230,6 @@ graph TD
     class src_zephyr_integration_local_model_cache_layer_py,src_zephyr_integration_local_model_deepseek_chat_py,src_zephyr_integration_local_model_embedding_router_py,src_zephyr_integration_local_model_local_model_scheduler_py,src_zephyr_integration_local_model_ollama_chat_py,src_zephyr_integration_pipeline_orchestrator_py production
     class src_zephyr_integration_init_py,src_zephyr_integration_extensions_init_py,src_zephyr_integration_api_init_py,src_zephyr_integration_behavioral_admission_init_py,src_zephyr_integration_budget_enforcer_init_py,src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py,src_zephyr_integration_core_init_py,src_zephyr_integration_governance_init_py,src_zephyr_integration_governance_data_source_router_init_py,src_zephyr_integration_governance_data_source_router_embedding_router_py,src_zephyr_integration_governance_embedding_router_py,src_zephyr_integration_infrastructure_init_py,src_zephyr_integration_layer1_discovery_init_py,src_zephyr_integration_layer2_communication_init_py,src_zephyr_integration_layer3_coordination_init_py,src_zephyr_integration_llm_bridge_py,src_zephyr_integration_local_model_init_py,src_zephyr_integration_local_model_ollama_embedding_py,src_zephyr_integration_mcp_server_py,src_zephyr_integration_ports_py,src_zephyr_integration_services_init_py,src_zephyr_integration_shared_contracts_errors_init_py,src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py,src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py design
     class D_GOVERNANCE,D_SHARED,D_INFRA_RUNTIME,D_AUTONOMY_CORE,D_TRADING external_prod
-    class D_AUDITTEST external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -272,47 +270,45 @@ graph TD
     end
     src_zephyr_integration_shared_events_dlq_bridge_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
     src_zephyr_integration_shared_events_event_schemas_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_base_config_py
-    src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_bridge_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_bus_upgrade_py
+    src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_schemas_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
     src_zephyr_integration_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_base_config_py
     src_zephyr_integration_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_execution_model_py
     src_zephyr_integration_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_severity_types_py
-    src_zephyr_integration_shared_schema_init_py -.->|config_depends / config_depends| src_zephyr_integration_shared_schema_base_config_py
     src_zephyr_integration_vector_memory_bridge_layer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_shared_schema_init_py -.->|config_depends / config_depends| src_zephyr_integration_shared_schema_base_config_py
     src_zephyr_integration_vector_memory_context_ingest_py -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_fake_vms_py
     src_zephyr_integration_vector_memory_cross_collection_retriever_py -.->|config_depends / config_depends| src_zephyr_integration_vector_memory_init_py
     src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
     src_zephyr_integration_vector_memory_faiss_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_in_memory_fake_vms_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_chunk_strategy_router_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_memory_backend_py
-    src_zephyr_integration_vector_memory_in_memory_fake_vms_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_delegated_vector_memory_py
     src_zephyr_integration_vector_memory_init_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_shared_events_dlq_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_shared_events_dlq_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_shared_events_dlq_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_shared_events_event_schemas_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_shared_events_upgrade_strategy_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_shared_schema_schema_registry_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_shared_schema_schema_registry_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_shared_schema_severity_types_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_vector_memory_chunk_strategy_router_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_vector_memory_collection_manager_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_vector_memory_collection_schemas_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_vector_memory_collection_schemas_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_integration_vector_memory_delegated_vector_memory_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_shared_events_upgrade_strategy_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_shared_schema_severity_types_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_shared_schema_schema_registry_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_shared_schema_schema_registry_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_vector_memory_chunk_strategy_router_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_vector_memory_collection_schemas_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_vector_memory_collection_schemas_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_vector_memory_collection_manager_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| D_SHARED
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_schemas_py
@@ -328,6 +324,7 @@ graph TD
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_schemas_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_schemas_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -335,7 +332,7 @@ graph TD
     class src_zephyr_integration_shared_events_upgrade_strategy_py,src_zephyr_integration_shared_schema_base_config_py,src_zephyr_integration_shared_schema_execution_model_py,src_zephyr_integration_shared_schema_schema_registry_py,src_zephyr_integration_shared_schema_schemas_py,src_zephyr_integration_shared_schema_severity_types_py,src_zephyr_integration_vector_memory_init_py,src_zephyr_integration_vector_memory_bm25_index_py,src_zephyr_integration_vector_memory_bridge_layer_py,src_zephyr_integration_vector_memory_cache_layer_py,src_zephyr_integration_vector_memory_chunk_strategy_router_py,src_zephyr_integration_vector_memory_collection_manager_py,src_zephyr_integration_vector_memory_collection_schemas_py,src_zephyr_integration_vector_memory_design_principles_py,src_zephyr_integration_vector_memory_faiss_collection_manager_py,src_zephyr_integration_vector_memory_hybrid_retriever_py,src_zephyr_integration_vector_memory_in_memory_fake_vms_py,src_zephyr_integration_vector_memory_in_memory_memory_backend_py,src_zephyr_integration_vector_memory_in_process_vector_memory_py production
     class src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py,src_zephyr_integration_shared_events_init_py,src_zephyr_integration_shared_events_dlq_py,src_zephyr_integration_shared_events_dlq_bridge_py,src_zephyr_integration_shared_events_event_bus_upgrade_py,src_zephyr_integration_shared_events_event_schemas_py,src_zephyr_integration_shared_schema_init_py,src_zephyr_integration_vector_memory_context_ingest_py,src_zephyr_integration_vector_memory_cross_collection_retriever_py,src_zephyr_integration_vector_memory_delegated_vector_memory_py,src_zephyr_integration_vector_memory_embedding_router_py design
     class D_SHARED,D_AUTONOMY_CORE external_prod
-    class D_GOVERNANCE,D_AUDITTEST external_design
+    class D_GOVERNANCE external_design
 ```
 
 #### 第 3 页 / 共 3 页
@@ -360,10 +357,10 @@ graph TD
     src_zephyr_integration_vector_memory_provenance_enforcer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_integration_vector_memory_index_health_monitor_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_vector_memory_retrieval_feedback_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_vector_memory_vector_bridge_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_vector_memory_sqlite_metadata_store_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_vector_memory_vector_bridge_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_vector_memory_vms_schemas_py -.->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION_GATEWAY["(原型态 / prototype) D_INTEGRATION_GATEWAY"]
     D_INTEGRATION_GATEWAY -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_errors_py
@@ -439,20 +436,20 @@ graph TD
     src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
     src_zephyr_integration_vector_memory_faiss_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_index_health_monitor_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
+    src_zephyr_integration_vector_memory_in_memory_fake_vms_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_chunk_strategy_router_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_memory_backend_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_retrieval_feedback_py
-    src_zephyr_integration_vector_memory_in_memory_fake_vms_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
+    src_zephyr_integration_vector_memory_sqlite_metadata_store_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_provenance_enforcer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_provenance_enforcer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
-    src_zephyr_integration_vector_memory_sqlite_metadata_store_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_init_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_interface_py
     src_zephyr_integration_vector_memory_init_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_vms_config_yaml -->|config_depends / config_depends| src_zephyr_integration_vector_memory_init_py
@@ -475,12 +472,6 @@ graph TD
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_local_model_deepseek_chat_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_local_model_embedding_router_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_local_model_local_model_scheduler_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_local_model_ollama_chat_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_schemas_py
@@ -492,13 +483,17 @@ graph TD
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_base_config_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_base_config_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_schemas_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_severity_types_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_schemas_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_shared_schema_schemas_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_integration_local_model_cache_layer_py,src_zephyr_integration_local_model_deepseek_chat_py,src_zephyr_integration_local_model_embedding_router_py,src_zephyr_integration_local_model_local_model_scheduler_py,src_zephyr_integration_local_model_ollama_chat_py,src_zephyr_integration_pipeline_orchestrator_py,src_zephyr_integration_shared_events_upgrade_strategy_py,src_zephyr_integration_shared_schema_base_config_py,src_zephyr_integration_shared_schema_execution_model_py,src_zephyr_integration_shared_schema_schema_registry_py,src_zephyr_integration_shared_schema_schemas_py,src_zephyr_integration_shared_schema_severity_types_py,src_zephyr_integration_vector_memory_init_py,src_zephyr_integration_vector_memory_bm25_index_py,src_zephyr_integration_vector_memory_bridge_layer_py,src_zephyr_integration_vector_memory_cache_layer_py,src_zephyr_integration_vector_memory_chunk_strategy_router_py,src_zephyr_integration_vector_memory_collection_manager_py,src_zephyr_integration_vector_memory_collection_schemas_py,src_zephyr_integration_vector_memory_design_principles_py,src_zephyr_integration_vector_memory_faiss_collection_manager_py,src_zephyr_integration_vector_memory_hybrid_retriever_py,src_zephyr_integration_vector_memory_in_memory_fake_vms_py,src_zephyr_integration_vector_memory_in_memory_memory_backend_py,src_zephyr_integration_vector_memory_in_process_vector_memory_py,src_zephyr_integration_vector_memory_index_health_monitor_py,src_zephyr_integration_vector_memory_interface_py,src_zephyr_integration_vector_memory_provenance_enforcer_py,src_zephyr_integration_vector_memory_retrieval_feedback_py,src_zephyr_integration_vector_memory_sqlite_metadata_store_py,src_zephyr_integration_vector_memory_vms_config_yaml,src_zephyr_integration_vector_memory_vms_errors_py,src_zephyr_integration_vector_memory_vms_schemas_py production
     class D_INFRA_RUNTIME,D_SHARED,D_INTELLIGENCE,D_GOVERNANCE,D_AUTONOMY_CORE external_prod
-    class D_AUDITTEST external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -557,17 +552,17 @@ graph TD
     src_zephyr_integration_ports_py -.->|config_depends / config_depends| src_zephyr_integration_init_py
     src_zephyr_integration_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_llm_bridge_py
     src_zephyr_integration_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_server_py
-    src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py -.->|config_depends / config_depends| src_zephyr_integration_budget_enforcer_init_py
+    src_zephyr_integration_budget_enforcer_init_py -.->|config_depends / config_depends| src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py
     src_zephyr_integration_governance_embedding_router_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_governance_data_source_router_init_py -.->|config_depends / config_depends| src_zephyr_integration_governance_data_source_router_embedding_router_py
     src_zephyr_integration_local_model_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
+    src_zephyr_integration_shared_events_dlq_bridge_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
     src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py
     src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py
     src_zephyr_integration_shared_contracts_errors_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py
-    src_zephyr_integration_shared_events_dlq_bridge_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
-    src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_bridge_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_bus_upgrade_py
+    src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_dlq_py
     src_zephyr_integration_shared_events_init_py -.->|导入依赖 / import_depends| src_zephyr_integration_shared_events_event_schemas_py
     src_zephyr_integration_vector_memory_ollama_embedding_py -.->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_vector_memory_vector_writer_py -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_context_ingest_py
@@ -692,145 +687,144 @@ graph TD
 | 2 | D_AUDITTEST 审计测试套件: test_auto_runtime_core.py | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 测试依赖 / test_depends |
 | 3 | D_AUDITTEST 审计测试套件: test_auto_runtime_core.py | → | LocalModelScheduler — L2 本地模型 24/7 调度循... | 测试依赖 / test_depends |
 | 4 | D_AUDITTEST 审计测试套件: test_auto_runtime_core.py | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | 测试依赖 / test_depends |
-| 5 | D_AUDITTEST 审计测试套件: test_auto_runtime_core.py | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 测试依赖 / test_depends |
-| 6 | D_AUDITTEST 审计测试套件: test_auto_split.py | → | execution_model.py | 测试依赖 / test_depends |
-| 7 | D_AUDITTEST 审计测试套件: test_auto_split.py | → | severity_types.py | 测试依赖 / test_depends |
-| 8 | D_AUDITTEST 审计测试套件: test_ct_audit_findings_resolved.py | → | severity_types.py | 测试依赖 / test_depends |
-| 9 | D_AUDITTEST 审计测试套件: test_ct_blueprint_read_check.py | → | severity_types.py | 测试依赖 / test_depends |
-| 10 | D_AUDITTEST 审计测试套件: test_ct_circuit_breaker.py | → | severity_types.py | 测试依赖 / test_depends |
-| 11 | D_AUDITTEST 审计测试套件: test_ct_circular_dependency_scan.py | → | severity_types.py | 测试依赖 / test_depends |
-| 12 | D_AUDITTEST 审计测试套件: test_ct_classification.py | → | severity_types.py | 测试依赖 / test_depends |
-| 13 | D_AUDITTEST 审计测试套件: test_ct_content_length.py | → | severity_types.py | 测试依赖 / test_depends |
-| 14 | D_AUDITTEST 审计测试套件: test_ct_content_quality.py | → | severity_types.py | 测试依赖 / test_depends |
-| 15 | D_AUDITTEST 审计测试套件: test_ct_contract_compatibility_check.py | → | severity_types.py | 测试依赖 / test_depends |
-| 16 | D_AUDITTEST 审计测试套件: test_ct_deduplication.py | → | severity_types.py | 测试依赖 / test_depends |
-| 17 | D_AUDITTEST 审计测试套件: test_ct_drift_budget.py | → | severity_types.py | 测试依赖 / test_depends |
-| 18 | D_AUDITTEST 审计测试套件: test_ct_encoding.py | → | severity_types.py | 测试依赖 / test_depends |
-| 19 | D_AUDITTEST 审计测试套件: test_ct_enforcement_mode_check.py | → | severity_types.py | 测试依赖 / test_depends |
-| 20 | D_AUDITTEST 审计测试套件: test_ct_field_presence.py | → | severity_types.py | 测试依赖 / test_depends |
-| 21 | D_AUDITTEST 审计测试套件: test_ct_file_extension.py | → | severity_types.py | 测试依赖 / test_depends |
-| 22 | D_AUDITTEST 审计测试套件: test_ct_fle_gate.py | → | severity_types.py | 测试依赖 / test_depends |
-| 23 | D_AUDITTEST 审计测试套件: test_ct_frontmatter.py | → | severity_types.py | 测试依赖 / test_depends |
-| 24 | D_AUDITTEST 审计测试套件: test_ct_leverage_limit.py | → | severity_types.py | 测试依赖 / test_depends |
-| 25 | D_AUDITTEST 审计测试套件: test_ct_line_ending.py | → | severity_types.py | 测试依赖 / test_depends |
-| 26 | D_AUDITTEST 审计测试套件: test_ct_manual_approval.py | → | severity_types.py | 测试依赖 / test_depends |
-| 27 | D_AUDITTEST 审计测试套件: test_ct_path_blacklist.py | → | severity_types.py | 测试依赖 / test_depends |
-| 28 | D_AUDITTEST 审计测试套件: test_ct_path_routing.py | → | severity_types.py | 测试依赖 / test_depends |
-| 29 | D_AUDITTEST 审计测试套件: test_ct_path_whitelist.py | → | severity_types.py | 测试依赖 / test_depends |
-| 30 | D_AUDITTEST 审计测试套件: test_ct_position_limit.py | → | severity_types.py | 测试依赖 / test_depends |
-| 31 | D_AUDITTEST 审计测试套件: test_ct_reference_check.py | → | severity_types.py | 测试依赖 / test_depends |
-| 32 | D_AUDITTEST 审计测试套件: test_ct_regex_pattern.py | → | severity_types.py | 测试依赖 / test_depends |
-| 33 | D_AUDITTEST 审计测试套件: test_ct_restructuring_safety.py | → | severity_types.py | 测试依赖 / test_depends |
-| 34 | D_AUDITTEST 审计测试套件: test_ct_rollback_exit_code.py | → | severity_types.py | 测试依赖 / test_depends |
-| 35 | D_AUDITTEST 审计测试套件: test_ct_score_threshold.py | → | severity_types.py | 测试依赖 / test_depends |
-| 36 | D_AUDITTEST 审计测试套件: test_ct_security_artifact_scan.py | → | severity_types.py | 测试依赖 / test_depends |
-| 37 | D_AUDITTEST 审计测试套件: test_ct_strategy_correlation.py | → | severity_types.py | 测试依赖 / test_depends |
-| 38 | D_AUDITTEST 审计测试套件: test_ct_temporal.py | → | severity_types.py | 测试依赖 / test_depends |
-| 39 | D_AUDITTEST 审计测试套件: test_ct_zero_residue_check.py | → | severity_types.py | 测试依赖 / test_depends |
-| 40 | D_AUDITTEST 审计测试套件: test_gate_types.py | → | schemas.py | 测试依赖 / test_depends |
-| 41 | D_AUDITTEST 审计测试套件: test_schema_schema_registry.py | → | schema_registry.py | 测试依赖 / test_depends |
-| 42 | D_AUDITTEST 审计测试套件: test_schema_schemas.py | → | schemas.py | 测试依赖 / test_depends |
-| 43 | D_AUDITTEST 审计测试套件: test_schema_schemas.py | → | severity_types.py | 测试依赖 / test_depends |
-| 44 | D_AUDITTEST 审计测试套件: test_boot_hooks_unlock.py | → | execution_model.py | 测试依赖 / test_depends |
-| 45 | D_AUDITTEST 审计测试套件: test_boot_hooks_unlock.py | → | severity_types.py | 测试依赖 / test_depends |
-| 46 | D_AUDITTEST 审计测试套件: test_cross_module_integration_llm_security.py | → | PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
-| 47 | D_AUDITTEST 审计测试套件: test_db.py | → | base_config.py | 测试依赖 / test_depends |
-| 48 | D_AUDITTEST 审计测试套件: test_db.py | → | execution_model.py | 测试依赖 / test_depends |
-| 49 | D_AUDITTEST 审计测试套件: test_db.py | → | severity_types.py | 测试依赖 / test_depends |
-| 50 | D_AUDITTEST 审计测试套件: DM-202208 红蓝对抗-知识污染与检索劫持测试 (test... | → | HybridRetriever — MOD-INF-011 混合检索架构 (hy... | 测试依赖 / test_depends |
-| 51 | D_AUDITTEST 审计测试套件: VMS 红蓝对抗测试 — 向量注入与投毒检测 (test_vm... | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 测试依赖 / test_depends |
-| 52 | D_AUDITTEST 审计测试套件: VMS 红蓝对抗测试 — 向量注入与投毒检测 (test_vm... | → | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 测试依赖 / test_depends |
-| 53 | D_AUDITTEST 审计测试套件: VMS 红蓝对抗测试 — 向量注入与投毒检测 (test_vm... | → | ProvenanceEnforcer — MOD-INF-011 写入溯源强制... | 测试依赖 / test_depends |
-| 54 | D_AUDITTEST 审计测试套件: VMS 红蓝对抗测试 — 向量注入与投毒检测 (test_vm... | → | VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 .... | 测试依赖 / test_depends |
-| 55 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LR... | 测试依赖 / test_depends |
-| 56 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | CollectionManager — MOD-INF-011 八大 Collectio... | 测试依赖 / test_depends |
-| 57 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 测试依赖 / test_depends |
-| 58 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | IndexHealthMonitor — MOD-INF-011 索引健康自检.... | 测试依赖 / test_depends |
-| 59 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | RetrievalFeedback — MOD-INF-011 FLE 检索质量消... | 测试依赖 / test_depends |
-| 60 | D_AUDITTEST 审计测试套件: DM-202209 自动化机制-启动与关闭生命周期测试 (te... | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 测试依赖 / test_depends |
-| 61 | D_AUDITTEST 审计测试套件: DM-202209 自动化机制-启动与关闭生命周期测试 (te... | → | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 测试依赖 / test_depends |
-| 62 | D_AUDITTEST 审计测试套件: DM-202209 自动化机制-启动与关闭生命周期测试 (te... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 测试依赖 / test_depends |
-| 63 | D_AUDITTEST 审计测试套件: DM-202010: PipelineOrchestrator 自动启动/周期运... | → | PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
-| 64 | D_AUDITTEST 审计测试套件: test_pipeline_orchestrator_root.py | → | PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
-| 65 | D_AUDITTEST 审计测试套件: test_task_types.py | → | base_config.py | 测试依赖 / test_depends |
-| 66 | D_AUDITTEST 审计测试套件: test_task_types.py | → | severity_types.py | 测试依赖 / test_depends |
-| 67 | D_AUDITTEST 审计测试套件: test_utils_testing.py | → | schemas.py | 测试依赖 / test_depends |
-| 68 | D_AUDITTEST 审计测试套件: test_utils_testing.py | → | severity_types.py | 测试依赖 / test_depends |
-| 69 | D_AUTONOMY_CORE 自治核心: ContextAssembler — 上下文装配、校验、影子留档 ... | → | schemas.py | 导入依赖 / import_depends |
-| 70 | D_AUTONOMY_CORE 自治核心: ContextInjector: retrieve and inject relevant k... | → | schemas.py | 导入依赖 / import_depends |
-| 71 | D_AUTONOMY_CORE 自治核心: context_pipeline — Context Engine **四段流水线... | → | schemas.py | 导入依赖 / import_depends |
-| 72 | D_AUTONOMY_CORE 自治核心: PromptRegistry: YAML-driven Prompt 模板注册表 (... | → | schemas.py | 导入依赖 / import_depends |
-| 73 | D_AUTONOMY_CORE 自治核心: skill-registry.py —— Skill 注册基座（Phase 14... | → | schemas.py | 导入依赖 / import_depends |
-| 74 | D_AUTONOMY_CORE 自治核心: skill_router.py | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 导入依赖 / import_depends |
-| 75 | D_GOVERNANCE 生命周期管理: A2A Protocol 全链路满分验证脚本 (a2a_full_verif... | → | __init__.py | 导入依赖 / import_depends |
-| 76 | D_GOVERNANCE 生命周期管理: 初始化任务系统数据库 + 创建任务系统自身的施工任... | → | __init__.py | 导入依赖 / import_depends |
-| 77 | D_GOVERNANCE 生命周期管理: A2A 协议协调任务演示 (demo_a2a_coordination.py) | → | __init__.py | 导入依赖 / import_depends |
-| 78 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (dem... | → | __init__.py | 导入依赖 / import_depends |
-| 79 | D_GOVERNANCE 生命周期管理: finalize_tasks.py | → | __init__.py | 导入依赖 / import_depends |
-| 80 | D_GOVERNANCE 生命周期管理: local_layer_daemon.py — L2 本地模型层守护进程.... | → | LocalModelScheduler — L2 本地模型 24/7 调度循... | 导入依赖 / import_depends |
-| 81 | D_GOVERNANCE 生命周期管理: test_event_hook.py | → | __init__.py | 导入依赖 / import_depends |
-| 82 | D_GOVERNANCE 生命周期管理: 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。... | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | 导入依赖 / import_depends |
-| 83 | D_GOVERNANCE 生命周期管理: Ollama 入职考试运行脚本 (run_ollama_exam.py) | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | 导入依赖 / import_depends |
-| 84 | D_GOVERNANCE 生命周期管理: finding_model.py | → | base_config.py | 导入依赖 / import_depends |
-| 85 | D_GOVERNANCE 生命周期管理: pipeline_runner.py | → | base_config.py | 导入依赖 / import_depends |
-| 86 | D_GOVERNANCE 生命周期管理: text_to_finding_adapter.py | → | base_config.py | 导入依赖 / import_depends |
-| 87 | D_GOVERNANCE 生命周期管理: EmbeddingMigrate · Embedding 版本管理 + 迁移管... | → | schemas.py | 导入依赖 / import_depends |
-| 88 | D_GOVERNANCE 生命周期管理: KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | → | severity_types.py | 导入依赖 / import_depends |
-| 89 | D_GOVERNANCE 生命周期管理: PatternLibrary · 成功模式库（KB refactor 后独.... | → | schemas.py | 导入依赖 / import_depends |
-| 90 | D_GOVERNANCE 生命周期管理: VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | → | BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 ... | 导入依赖 / import_depends |
-| 91 | D_GOVERNANCE 生命周期管理: VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
-| 92 | D_GOVERNANCE 生命周期管理: IntentKeywordMapper - Stage 1 of three-stage in... | → | schemas.py | 导入依赖 / import_depends |
-| 93 | D_GOVERNANCE 生命周期管理: IntentParser · 意图三阶段级联解析器（V-09） (i... | → | schemas.py | 导入依赖 / import_depends |
-| 94 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | → | severity_types.py | 导入依赖 / import_depends |
-| 95 | D_GOV_ENFORCEMENT 规则执行: ContractTemplateManager: manage MCP tool contra... | → | schemas.py | 导入依赖 / import_depends |
-| 96 | D_GOV_ENFORCEMENT 规则执行: gate_types.py | → | schemas.py | 导入依赖 / import_depends |
-| 97 | D_GOV_ENFORCEMENT 规则执行: EN-002 — Enforcement Mode Validator (en_002_en... | → | schemas.py | 导入依赖 / import_depends |
-| 98 | D_GOV_ENFORCEMENT 规则执行: task_types.py | → | base_config.py | 导入依赖 / import_depends |
-| 99 | D_GOV_ENFORCEMENT 规则执行: task_types.py | → | execution_model.py | 导入依赖 / import_depends |
-| 100 | D_GOV_ENFORCEMENT 规则执行: task_types.py | → | severity_types.py | 导入依赖 / import_depends |
-| 101 | D_GOV_SCRIPTS 脚本治理: task_self_check.py — 任务系统自身健康检查 (tas... | → | __init__.py | 导入依赖 / import_depends |
-| 102 | D_GOV_SCRIPTS 脚本治理: create_task_from_finding.py — Finding → 任务.... | → | __init__.py | 导入依赖 / import_depends |
-| 103 | D_GOV_SCRIPTS 脚本治理: validate_gate_engine_external.py — Gate Engine... | → | __init__.py | 导入依赖 / import_depends |
-| 104 | D_INFRA_RUNTIME 运行时集成: DEPRECATED: 此文件已废弃。 (event_bus_upgrade.py) | → | EventBus 升级策略引擎 (upgrade_strategy.py) | 导入依赖 / import_depends |
-| 105 | D_INFRA_RUNTIME 运行时集成: Finding->TaskCard 桥接器 (finding_task_bridge.py) | → | schemas.py | 导入依赖 / import_depends |
-| 106 | D_INFRA_RUNTIME 运行时集成: Finding Schema — 审计发现标准化数据模型 (findi... | → | schemas.py | 导入依赖 / import_depends |
-| 107 | D_INTEGRATION_GATEWAY 集成网关: KnowledgeBaseServer: 知识库语义检索 MCP Server ... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
-| 108 | D_INTEGRATION_GATEWAY 集成网关: VectorMemoryServer: VMS 向量记忆 MCP Server (MO... | → | CollectionManager — MOD-INF-011 八大 Collectio... | 导入依赖 / import_depends |
-| 109 | D_INTEGRATION_GATEWAY 集成网关: VectorMemoryServer: VMS 向量记忆 MCP Server (MO... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
-| 110 | D_INTEGRATION_GATEWAY 集成网关: VectorMemoryServer: VMS 向量记忆 MCP Server (MO... | → | vms_errors.py | 导入依赖 / import_depends |
-| 111 | D_INTELLIGENCE 上下文管理: KB->VMS 同步引擎 — sync_to_vms() 生产者 (sync_... | → | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 导入依赖 / import_depends |
-| 112 | D_SECURITY 对抗验证: defense_runner.py | → | execution_model.py | 导入依赖 / import_depends |
-| 113 | D_SECURITY 对抗验证: defense_runner.py | → | severity_types.py | 导入依赖 / import_depends |
-| 114 | D_TRADING 交易运营: AiAuditLogger — AI 行为审计日志 (ai_audit_logg... | → | schemas.py | 导入依赖 / import_depends |
-| 115 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理... | 导入依赖 / import_depends |
-| 116 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 导入依赖 / import_depends |
-| 117 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | LocalModelScheduler — L2 本地模型 24/7 调度循... | 导入依赖 / import_depends |
-| 118 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | 导入依赖 / import_depends |
-| 119 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 导入依赖 / import_depends |
-| 120 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
-| 121 | D_TRADING 交易运营: CapabilityCard — 能力卡片数据模型 (capability_... | → | schemas.py | 导入依赖 / import_depends |
-| 122 | D_TRADING 交易运营: DreamCycle — 知识固化引擎 (dream_cycle.py) | → | schemas.py | 导入依赖 / import_depends |
-| 123 | D_TRADING 交易运营: FeedbackLoop core — 反馈闭环核心类。 (core.py) | → | schemas.py | 导入依赖 / import_depends |
-| 124 | D_TRADING 交易运营: FeedbackCollector: collect task execution feedb... | → | schemas.py | 导入依赖 / import_depends |
-| 125 | D_TRADING 交易运营: FLE 全链路调度器 —— collect->detect->diagnose... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
-| 126 | D_TRADING 交易运营: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | schemas.py | 导入依赖 / import_depends |
-| 127 | D_TRADING 交易运营: IntegrationRegistry — 集成注册表 (integration_... | → | schemas.py | 导入依赖 / import_depends |
-| 128 | D_TRADING 交易运营: NightShiftQueue — 夜班登记表持久化 (night_shif... | → | schemas.py | 导入依赖 / import_depends |
-| 129 | D_TRADING 交易运营: AgentHealthMonitor · Agent 健康监控（三态 + 5 ... | → | schemas.py | 导入依赖 / import_depends |
-| 130 | D_TRADING 交易运营: AgentOrchestrator · 多角色 Agent 路由、工具链.... | → | schemas.py | 导入依赖 / import_depends |
-| 131 | D_TRADING 交易运营: Orc 告警接收器 — handle_alert() 消费者 (alert_... | → | base_config.py | 导入依赖 / import_depends |
-| 132 | D_TRADING 交易运营: Orc 告警接收器 — handle_alert() 消费者 (alert_... | → | execution_model.py | 导入依赖 / import_depends |
-| 133 | D_TRADING 交易运营: Orc 告警接收器 — handle_alert() 消费者 (alert_... | → | severity_types.py | 导入依赖 / import_depends |
-| 134 | D_TRADING 交易运营: agent_orchestrator.py | → | schemas.py | 导入依赖 / import_depends |
-| 135 | D_TRADING 交易运营: Orc->CE 上下文桥接 — request_context() 生产者 ... | → | CE 向量写入器 — vectorize_and_store() 生产者 (... | 导入依赖 / import_depends |
-| 136 | D_TRADING 交易运营: Orc->VMS 记忆写入器 (memory_writer.py) | → | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 导入依赖 / import_depends |
-| 137 | D_TRADING 交易运营: CE 任务上下文构建器 — build_from_task() 消费者... | → | schemas.py | 导入依赖 / import_depends |
-| 138 | D_TRADING 交易运营: HallucinationDetector · Chain-of-Verification.... | → | schemas.py | 导入依赖 / import_depends |
-| 139 | D_TRADING 交易运营: WorkDAG + WorkItem — 工作编排数据模型 (work_da... | → | schemas.py | 导入依赖 / import_depends |
+| 5 | D_AUDITTEST 审计测试套件: test_auto_split.py | → | execution_model.py | 测试依赖 / test_depends |
+| 6 | D_AUDITTEST 审计测试套件: test_auto_split.py | → | severity_types.py | 测试依赖 / test_depends |
+| 7 | D_AUDITTEST 审计测试套件: test_ct_audit_findings_resolved.py | → | severity_types.py | 测试依赖 / test_depends |
+| 8 | D_AUDITTEST 审计测试套件: test_ct_blueprint_read_check.py | → | severity_types.py | 测试依赖 / test_depends |
+| 9 | D_AUDITTEST 审计测试套件: test_ct_circuit_breaker.py | → | severity_types.py | 测试依赖 / test_depends |
+| 10 | D_AUDITTEST 审计测试套件: test_ct_circular_dependency_scan.py | → | severity_types.py | 测试依赖 / test_depends |
+| 11 | D_AUDITTEST 审计测试套件: test_ct_classification.py | → | severity_types.py | 测试依赖 / test_depends |
+| 12 | D_AUDITTEST 审计测试套件: test_ct_content_length.py | → | severity_types.py | 测试依赖 / test_depends |
+| 13 | D_AUDITTEST 审计测试套件: test_ct_content_quality.py | → | severity_types.py | 测试依赖 / test_depends |
+| 14 | D_AUDITTEST 审计测试套件: test_ct_contract_compatibility_check.py | → | severity_types.py | 测试依赖 / test_depends |
+| 15 | D_AUDITTEST 审计测试套件: test_ct_deduplication.py | → | severity_types.py | 测试依赖 / test_depends |
+| 16 | D_AUDITTEST 审计测试套件: test_ct_drift_budget.py | → | severity_types.py | 测试依赖 / test_depends |
+| 17 | D_AUDITTEST 审计测试套件: test_ct_encoding.py | → | severity_types.py | 测试依赖 / test_depends |
+| 18 | D_AUDITTEST 审计测试套件: test_ct_enforcement_mode_check.py | → | severity_types.py | 测试依赖 / test_depends |
+| 19 | D_AUDITTEST 审计测试套件: test_ct_field_presence.py | → | severity_types.py | 测试依赖 / test_depends |
+| 20 | D_AUDITTEST 审计测试套件: test_ct_file_extension.py | → | severity_types.py | 测试依赖 / test_depends |
+| 21 | D_AUDITTEST 审计测试套件: test_ct_fle_gate.py | → | severity_types.py | 测试依赖 / test_depends |
+| 22 | D_AUDITTEST 审计测试套件: test_ct_frontmatter.py | → | severity_types.py | 测试依赖 / test_depends |
+| 23 | D_AUDITTEST 审计测试套件: test_ct_leverage_limit.py | → | severity_types.py | 测试依赖 / test_depends |
+| 24 | D_AUDITTEST 审计测试套件: test_ct_line_ending.py | → | severity_types.py | 测试依赖 / test_depends |
+| 25 | D_AUDITTEST 审计测试套件: test_ct_manual_approval.py | → | severity_types.py | 测试依赖 / test_depends |
+| 26 | D_AUDITTEST 审计测试套件: test_ct_path_blacklist.py | → | severity_types.py | 测试依赖 / test_depends |
+| 27 | D_AUDITTEST 审计测试套件: test_ct_path_routing.py | → | severity_types.py | 测试依赖 / test_depends |
+| 28 | D_AUDITTEST 审计测试套件: test_ct_path_whitelist.py | → | severity_types.py | 测试依赖 / test_depends |
+| 29 | D_AUDITTEST 审计测试套件: test_ct_position_limit.py | → | severity_types.py | 测试依赖 / test_depends |
+| 30 | D_AUDITTEST 审计测试套件: test_ct_reference_check.py | → | severity_types.py | 测试依赖 / test_depends |
+| 31 | D_AUDITTEST 审计测试套件: test_ct_regex_pattern.py | → | severity_types.py | 测试依赖 / test_depends |
+| 32 | D_AUDITTEST 审计测试套件: test_ct_restructuring_safety.py | → | severity_types.py | 测试依赖 / test_depends |
+| 33 | D_AUDITTEST 审计测试套件: test_ct_rollback_exit_code.py | → | severity_types.py | 测试依赖 / test_depends |
+| 34 | D_AUDITTEST 审计测试套件: test_ct_score_threshold.py | → | severity_types.py | 测试依赖 / test_depends |
+| 35 | D_AUDITTEST 审计测试套件: test_ct_security_artifact_scan.py | → | severity_types.py | 测试依赖 / test_depends |
+| 36 | D_AUDITTEST 审计测试套件: test_ct_strategy_correlation.py | → | severity_types.py | 测试依赖 / test_depends |
+| 37 | D_AUDITTEST 审计测试套件: test_ct_temporal.py | → | severity_types.py | 测试依赖 / test_depends |
+| 38 | D_AUDITTEST 审计测试套件: test_ct_zero_residue_check.py | → | severity_types.py | 测试依赖 / test_depends |
+| 39 | D_AUDITTEST 审计测试套件: test_gate_types.py | → | schemas.py | 测试依赖 / test_depends |
+| 40 | D_AUDITTEST 审计测试套件: test_schema_schema_registry.py | → | schema_registry.py | 测试依赖 / test_depends |
+| 41 | D_AUDITTEST 审计测试套件: test_schema_schemas.py | → | schemas.py | 测试依赖 / test_depends |
+| 42 | D_AUDITTEST 审计测试套件: test_schema_schemas.py | → | severity_types.py | 测试依赖 / test_depends |
+| 43 | D_AUDITTEST 审计测试套件: test_boot_hooks_unlock.py | → | execution_model.py | 测试依赖 / test_depends |
+| 44 | D_AUDITTEST 审计测试套件: test_boot_hooks_unlock.py | → | severity_types.py | 测试依赖 / test_depends |
+| 45 | D_AUDITTEST 审计测试套件: test_cross_module_integration_llm_security.py | → | PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
+| 46 | D_AUDITTEST 审计测试套件: test_db.py | → | base_config.py | 测试依赖 / test_depends |
+| 47 | D_AUDITTEST 审计测试套件: test_db.py | → | execution_model.py | 测试依赖 / test_depends |
+| 48 | D_AUDITTEST 审计测试套件: test_db.py | → | severity_types.py | 测试依赖 / test_depends |
+| 49 | D_AUDITTEST 审计测试套件: DM-202208 红蓝对抗-知识污染与检索劫持测试 (test... | → | HybridRetriever — MOD-INF-011 混合检索架构 (hy... | 测试依赖 / test_depends |
+| 50 | D_AUDITTEST 审计测试套件: VMS 红蓝对抗测试 — 向量注入与投毒检测 (test_vm... | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 测试依赖 / test_depends |
+| 51 | D_AUDITTEST 审计测试套件: VMS 红蓝对抗测试 — 向量注入与投毒检测 (test_vm... | → | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 测试依赖 / test_depends |
+| 52 | D_AUDITTEST 审计测试套件: VMS 红蓝对抗测试 — 向量注入与投毒检测 (test_vm... | → | ProvenanceEnforcer — MOD-INF-011 写入溯源强制... | 测试依赖 / test_depends |
+| 53 | D_AUDITTEST 审计测试套件: VMS 红蓝对抗测试 — 向量注入与投毒检测 (test_vm... | → | VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 .... | 测试依赖 / test_depends |
+| 54 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LR... | 测试依赖 / test_depends |
+| 55 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | CollectionManager — MOD-INF-011 八大 Collectio... | 测试依赖 / test_depends |
+| 56 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 测试依赖 / test_depends |
+| 57 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | IndexHealthMonitor — MOD-INF-011 索引健康自检.... | 测试依赖 / test_depends |
+| 58 | D_AUDITTEST 审计测试套件: DM-202210 自动化机制-事件触发与定时任务测试 (te... | → | RetrievalFeedback — MOD-INF-011 FLE 检索质量消... | 测试依赖 / test_depends |
+| 59 | D_AUDITTEST 审计测试套件: DM-202209 自动化机制-启动与关闭生命周期测试 (te... | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 测试依赖 / test_depends |
+| 60 | D_AUDITTEST 审计测试套件: DM-202209 自动化机制-启动与关闭生命周期测试 (te... | → | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 测试依赖 / test_depends |
+| 61 | D_AUDITTEST 审计测试套件: DM-202209 自动化机制-启动与关闭生命周期测试 (te... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 测试依赖 / test_depends |
+| 62 | D_AUDITTEST 审计测试套件: DM-202010: PipelineOrchestrator 自动启动/周期运... | → | PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
+| 63 | D_AUDITTEST 审计测试套件: test_pipeline_orchestrator_root.py | → | PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
+| 64 | D_AUDITTEST 审计测试套件: test_task_types.py | → | base_config.py | 测试依赖 / test_depends |
+| 65 | D_AUDITTEST 审计测试套件: test_task_types.py | → | severity_types.py | 测试依赖 / test_depends |
+| 66 | D_AUDITTEST 审计测试套件: test_utils_testing.py | → | schemas.py | 测试依赖 / test_depends |
+| 67 | D_AUDITTEST 审计测试套件: test_utils_testing.py | → | severity_types.py | 测试依赖 / test_depends |
+| 68 | D_AUTONOMY_CORE 自治核心: ContextAssembler — 上下文装配、校验、影子留档 ... | → | schemas.py | 导入依赖 / import_depends |
+| 69 | D_AUTONOMY_CORE 自治核心: ContextInjector: retrieve and inject relevant k... | → | schemas.py | 导入依赖 / import_depends |
+| 70 | D_AUTONOMY_CORE 自治核心: context_pipeline — Context Engine **四段流水线... | → | schemas.py | 导入依赖 / import_depends |
+| 71 | D_AUTONOMY_CORE 自治核心: PromptRegistry: YAML-driven Prompt 模板注册表 (... | → | schemas.py | 导入依赖 / import_depends |
+| 72 | D_AUTONOMY_CORE 自治核心: skill-registry.py —— Skill 注册基座（Phase 14... | → | schemas.py | 导入依赖 / import_depends |
+| 73 | D_AUTONOMY_CORE 自治核心: skill_router.py | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 导入依赖 / import_depends |
+| 74 | D_GOVERNANCE 生命周期管理: A2A Protocol 全链路满分验证脚本 (a2a_full_verif... | → | __init__.py | 导入依赖 / import_depends |
+| 75 | D_GOVERNANCE 生命周期管理: 初始化任务系统数据库 + 创建任务系统自身的施工任... | → | __init__.py | 导入依赖 / import_depends |
+| 76 | D_GOVERNANCE 生命周期管理: A2A 协议协调任务演示 (demo_a2a_coordination.py) | → | __init__.py | 导入依赖 / import_depends |
+| 77 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (dem... | → | __init__.py | 导入依赖 / import_depends |
+| 78 | D_GOVERNANCE 生命周期管理: finalize_tasks.py | → | __init__.py | 导入依赖 / import_depends |
+| 79 | D_GOVERNANCE 生命周期管理: local_layer_daemon.py — L2 本地模型层守护进程.... | → | LocalModelScheduler — L2 本地模型 24/7 调度循... | 导入依赖 / import_depends |
+| 80 | D_GOVERNANCE 生命周期管理: test_event_hook.py | → | __init__.py | 导入依赖 / import_depends |
+| 81 | D_GOVERNANCE 生命周期管理: 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。... | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | 导入依赖 / import_depends |
+| 82 | D_GOVERNANCE 生命周期管理: Ollama 入职考试运行脚本 (run_ollama_exam.py) | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | 导入依赖 / import_depends |
+| 83 | D_GOVERNANCE 生命周期管理: finding_model.py | → | base_config.py | 导入依赖 / import_depends |
+| 84 | D_GOVERNANCE 生命周期管理: pipeline_runner.py | → | base_config.py | 导入依赖 / import_depends |
+| 85 | D_GOVERNANCE 生命周期管理: text_to_finding_adapter.py | → | base_config.py | 导入依赖 / import_depends |
+| 86 | D_GOVERNANCE 生命周期管理: EmbeddingMigrate · Embedding 版本管理 + 迁移管... | → | schemas.py | 导入依赖 / import_depends |
+| 87 | D_GOVERNANCE 生命周期管理: KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | → | severity_types.py | 导入依赖 / import_depends |
+| 88 | D_GOVERNANCE 生命周期管理: PatternLibrary · 成功模式库（KB refactor 后独.... | → | schemas.py | 导入依赖 / import_depends |
+| 89 | D_GOVERNANCE 生命周期管理: VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | → | BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 ... | 导入依赖 / import_depends |
+| 90 | D_GOVERNANCE 生命周期管理: VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
+| 91 | D_GOVERNANCE 生命周期管理: IntentKeywordMapper - Stage 1 of three-stage in... | → | schemas.py | 导入依赖 / import_depends |
+| 92 | D_GOVERNANCE 生命周期管理: IntentParser · 意图三阶段级联解析器（V-09） (i... | → | schemas.py | 导入依赖 / import_depends |
+| 93 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | → | severity_types.py | 导入依赖 / import_depends |
+| 94 | D_GOV_ENFORCEMENT 规则执行: ContractTemplateManager: manage MCP tool contra... | → | schemas.py | 导入依赖 / import_depends |
+| 95 | D_GOV_ENFORCEMENT 规则执行: gate_types.py | → | schemas.py | 导入依赖 / import_depends |
+| 96 | D_GOV_ENFORCEMENT 规则执行: EN-002 — Enforcement Mode Validator (en_002_en... | → | schemas.py | 导入依赖 / import_depends |
+| 97 | D_GOV_ENFORCEMENT 规则执行: task_types.py | → | base_config.py | 导入依赖 / import_depends |
+| 98 | D_GOV_ENFORCEMENT 规则执行: task_types.py | → | execution_model.py | 导入依赖 / import_depends |
+| 99 | D_GOV_ENFORCEMENT 规则执行: task_types.py | → | severity_types.py | 导入依赖 / import_depends |
+| 100 | D_GOV_SCRIPTS 脚本治理: task_self_check.py — 任务系统自身健康检查 (tas... | → | __init__.py | 导入依赖 / import_depends |
+| 101 | D_GOV_SCRIPTS 脚本治理: create_task_from_finding.py — Finding → 任务.... | → | __init__.py | 导入依赖 / import_depends |
+| 102 | D_GOV_SCRIPTS 脚本治理: validate_gate_engine_external.py — Gate Engine... | → | __init__.py | 导入依赖 / import_depends |
+| 103 | D_INFRA_RUNTIME 运行时集成: DEPRECATED: 此文件已废弃。 (event_bus_upgrade.py) | → | EventBus 升级策略引擎 (upgrade_strategy.py) | 导入依赖 / import_depends |
+| 104 | D_INFRA_RUNTIME 运行时集成: Finding->TaskCard 桥接器 (finding_task_bridge.py) | → | schemas.py | 导入依赖 / import_depends |
+| 105 | D_INFRA_RUNTIME 运行时集成: Finding Schema — 审计发现标准化数据模型 (findi... | → | schemas.py | 导入依赖 / import_depends |
+| 106 | D_INTEGRATION_GATEWAY 集成网关: KnowledgeBaseServer: 知识库语义检索 MCP Server ... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
+| 107 | D_INTEGRATION_GATEWAY 集成网关: VectorMemoryServer: VMS 向量记忆 MCP Server (MO... | → | CollectionManager — MOD-INF-011 八大 Collectio... | 导入依赖 / import_depends |
+| 108 | D_INTEGRATION_GATEWAY 集成网关: VectorMemoryServer: VMS 向量记忆 MCP Server (MO... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
+| 109 | D_INTEGRATION_GATEWAY 集成网关: VectorMemoryServer: VMS 向量记忆 MCP Server (MO... | → | vms_errors.py | 导入依赖 / import_depends |
+| 110 | D_INTELLIGENCE 上下文管理: KB->VMS 同步引擎 — sync_to_vms() 生产者 (sync_... | → | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 导入依赖 / import_depends |
+| 111 | D_SECURITY 对抗验证: defense_runner.py | → | execution_model.py | 导入依赖 / import_depends |
+| 112 | D_SECURITY 对抗验证: defense_runner.py | → | severity_types.py | 导入依赖 / import_depends |
+| 113 | D_TRADING 交易运营: AiAuditLogger — AI 行为审计日志 (ai_audit_logg... | → | schemas.py | 导入依赖 / import_depends |
+| 114 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理... | 导入依赖 / import_depends |
+| 115 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 导入依赖 / import_depends |
+| 116 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | LocalModelScheduler — L2 本地模型 24/7 调度循... | 导入依赖 / import_depends |
+| 117 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | 导入依赖 / import_depends |
+| 118 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 导入依赖 / import_depends |
+| 119 | D_TRADING 交易运营: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
+| 120 | D_TRADING 交易运营: CapabilityCard — 能力卡片数据模型 (capability_... | → | schemas.py | 导入依赖 / import_depends |
+| 121 | D_TRADING 交易运营: DreamCycle — 知识固化引擎 (dream_cycle.py) | → | schemas.py | 导入依赖 / import_depends |
+| 122 | D_TRADING 交易运营: FeedbackLoop core — 反馈闭环核心类。 (core.py) | → | schemas.py | 导入依赖 / import_depends |
+| 123 | D_TRADING 交易运营: FeedbackCollector: collect task execution feedb... | → | schemas.py | 导入依赖 / import_depends |
+| 124 | D_TRADING 交易运营: FLE 全链路调度器 —— collect->detect->diagnose... | → | InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
+| 125 | D_TRADING 交易运营: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | schemas.py | 导入依赖 / import_depends |
+| 126 | D_TRADING 交易运营: IntegrationRegistry — 集成注册表 (integration_... | → | schemas.py | 导入依赖 / import_depends |
+| 127 | D_TRADING 交易运营: NightShiftQueue — 夜班登记表持久化 (night_shif... | → | schemas.py | 导入依赖 / import_depends |
+| 128 | D_TRADING 交易运营: AgentHealthMonitor · Agent 健康监控（三态 + 5 ... | → | schemas.py | 导入依赖 / import_depends |
+| 129 | D_TRADING 交易运营: AgentOrchestrator · 多角色 Agent 路由、工具链.... | → | schemas.py | 导入依赖 / import_depends |
+| 130 | D_TRADING 交易运营: Orc 告警接收器 — handle_alert() 消费者 (alert_... | → | base_config.py | 导入依赖 / import_depends |
+| 131 | D_TRADING 交易运营: Orc 告警接收器 — handle_alert() 消费者 (alert_... | → | execution_model.py | 导入依赖 / import_depends |
+| 132 | D_TRADING 交易运营: Orc 告警接收器 — handle_alert() 消费者 (alert_... | → | severity_types.py | 导入依赖 / import_depends |
+| 133 | D_TRADING 交易运营: agent_orchestrator.py | → | schemas.py | 导入依赖 / import_depends |
+| 134 | D_TRADING 交易运营: Orc->CE 上下文桥接 — request_context() 生产者 ... | → | CE 向量写入器 — vectorize_and_store() 生产者 (... | 导入依赖 / import_depends |
+| 135 | D_TRADING 交易运营: Orc->VMS 记忆写入器 (memory_writer.py) | → | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 导入依赖 / import_depends |
+| 136 | D_TRADING 交易运营: CE 任务上下文构建器 — build_from_task() 消费者... | → | schemas.py | 导入依赖 / import_depends |
+| 137 | D_TRADING 交易运营: HallucinationDetector · Chain-of-Verification.... | → | schemas.py | 导入依赖 / import_depends |
+| 138 | D_TRADING 交易运营: WorkDAG + WorkItem — 工作编排数据模型 (work_da... | → | schemas.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 13 个外部域直接连接（出边 68 条 + 入边 139 条 = 207 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 13 个外部域直接连接（出边 68 条 + 入边 138 条 = 206 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -855,7 +849,7 @@ graph LR
     D_INTEGRATION -->|2条 导入依赖 / import_depends| D_AUTONOMY_CORE
     D_INTEGRATION -->|1条 导入依赖 / import_depends| D_INFRA_RECOVERY
     D_INTEGRATION -->|1条 导入依赖 / import_depends| D_SECURITY_LLM
-    D_AUDITTEST -->|68条 测试依赖 / test_depends| D_INTEGRATION
+    D_AUDITTEST -->|67条 测试依赖 / test_depends| D_INTEGRATION
     D_TRADING -->|26条 导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE -->|20条 导入依赖 / import_depends| D_INTEGRATION
     D_GOV_ENFORCEMENT -->|6条 导入依赖 / import_depends| D_INTEGRATION

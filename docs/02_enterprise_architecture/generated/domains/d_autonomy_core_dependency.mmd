@@ -1,7 +1,7 @@
 %% D_AUTONOMY_CORE 域全景依赖图
-%% 生成时间: 2026-07-09 17:31:01
+%% 生成时间: 2026-07-09 17:34:57
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 114, 依赖边数: 230
+%% 模块数: 114, 依赖边数: 213
 
 graph TD
 
@@ -128,12 +128,12 @@ graph TD
     src_zephyr_autonomy_core_skills_skill_consensus_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_constructor_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_contract_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_evaluator_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_evaluator_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_executor_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_evaluator_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
+    src_zephyr_autonomy_core_skills_skill_evaluator_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_executor_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
     src_zephyr_autonomy_core_skills_skill_feedback_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
@@ -141,9 +141,9 @@ graph TD
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_model_py
+    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_lifecycle_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_kya_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_postmortem_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_prompt_opt_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_shadow_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
@@ -155,39 +155,38 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_AUTONOMY_CORE (127 条)
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_agent_observability_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core___main___py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_skill_rbac_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_all_skill_modules_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core___main___py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_assembler_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_atomic_injector_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_all_skill_modules_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_injector_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_assembler_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_pipeline_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_atomic_injector_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core___main___py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_checkpoint_manager_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_contextual_fetch_api_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_complexity_budget_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_diff_injector_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_assembler_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_contextual_fetch_api_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_curation_loop_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_diff_injector_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_diversity_constraint_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_domain_decay_config_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_diversity_constraint_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_fallback_staleness_gate_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_ide_watcher_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_integrity_check_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_budget_tracker_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_ce_file_lister_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_evictor_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_mode_manager_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_budget_tracker_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_context_rot_model_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_position_optimizer_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_mode_manager_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_progressive_disclosure_injector_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_shadow_canary_py
-    %% D_GOVERNANCE -> D_AUTONOMY_CORE (3 条)
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_context_position_optimizer_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_autonomy_core_skill_rbac_registry_py
+    %% D_GOVERNANCE -> D_AUTONOMY_CORE (2 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_autonomy_core_skills_skill_executor_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_autonomy_core_agent_observability_py
     %% D_GOV_SCRIPTS -> D_AUTONOMY_CORE (2 条)
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_autonomy_core___init___py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_autonomy_core___init___py
@@ -203,32 +202,17 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_AUTONOMY_CORE -> D_GOVERNANCE (14 条)
+    %% D_AUTONOMY_CORE -> D_GOVERNANCE (4 条)
     src_zephyr_autonomy_core_spec_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_autonomy_core_skills_skill_executor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_autonomy_core_skills_skill_sandbox_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|contract| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|data| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_AUTONOMY_CORE -> D_GOV_DRIFT (1 条)
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
-    %% D_AUTONOMY_CORE -> D_GOV_ENFORCEMENT (2 条)
+    %% D_AUTONOMY_CORE -> D_GOV_ENFORCEMENT (1 条)
     src_zephyr_autonomy_core_skills_skill_executor_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    %% D_AUTONOMY_CORE -> D_INFRA_A2A (1 条)
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_INFRA_A2A[D_INFRA_A2A]
     %% D_AUTONOMY_CORE -> D_INFRA_RUNTIME (7 条)
     src_zephyr_autonomy_core_prompt_registry_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_autonomy_core_context_context_budget_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_autonomy_core_context_context_budget_tracker_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_autonomy_core_context_context_injector_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_autonomy_core_context_context_pipeline_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
@@ -243,13 +227,8 @@ graph TD
     %% D_AUTONOMY_CORE -> D_INTELLIGENCE (2 条)
     src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
-    %% D_AUTONOMY_CORE -> D_KNOWLEDGE (1 条)
-    src_zephyr_autonomy_core_agent_observability_py -->|contract| D_KNOWLEDGE[D_KNOWLEDGE]
-    %% D_AUTONOMY_CORE -> D_SECURITY (1 条)
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_SECURITY[D_SECURITY]
-    %% D_AUTONOMY_CORE -> D_SECURITY_LLM (2 条)
+    %% D_AUTONOMY_CORE -> D_SECURITY_LLM (1 条)
     src_zephyr_autonomy_core_context_context_injector_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
-    src_zephyr_autonomy_core_agent_observability_py -->|runtime| D_SECURITY_LLM[D_SECURITY_LLM]
     %% D_AUTONOMY_CORE -> D_SHARED (14 条)
     src_zephyr_autonomy_core_file_autoregister_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_autonomy_core_prompt_registry_py -->|import_depends| D_SHARED[D_SHARED]
@@ -268,5 +247,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 40 条
-    %% 跨域入边: 139 条
-    %% 跨域出边: 51 条
+    %% 跨域入边: 138 条
+    %% 跨域出边: 35 条

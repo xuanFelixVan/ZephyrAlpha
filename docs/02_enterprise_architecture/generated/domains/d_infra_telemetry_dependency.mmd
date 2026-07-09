@@ -1,5 +1,5 @@
 %% D_INFRA_TELEMETRY 域全景依赖图
-%% 生成时间: 2026-07-09 17:31:02
+%% 生成时间: 2026-07-09 17:34:57
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 25, 依赖边数: 56
 
@@ -35,10 +35,7 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_syst____budget_telemetry_bridge_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_metrics___init___py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_contract_metrics_py
+    src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___elemetry_alerts___init___py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___elemetry_health___init___py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___emetry_profiles___init___py
@@ -49,7 +46,10 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___y_ai_behavior_event_sink_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___emetry_archive_cold_stub_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_archive___init___py
-    src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_syst____budget_telemetry_bridge_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_metrics___init___py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_contract_metrics_py
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_syst___try_ai_behavior___init___py
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_syst___elemetry_alerts___init___py
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_syst___lemetry_archive___init___py
@@ -92,11 +92,11 @@ graph TD
     %% D_INFRA_TELEMETRY -> D_GOVERNANCE (1 条)
     src_zephyr_infrastructure_syst___lemetry_contract_metrics_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_INFRA_TELEMETRY -> D_SHARED (10 条)
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_system_telemetry_health_probes_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_system_telemetry_watchdog_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_syst___elemetry_alerts___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_syst___emetry_archive_cold_stub_py -->|import_depends| D_SHARED[D_SHARED]
