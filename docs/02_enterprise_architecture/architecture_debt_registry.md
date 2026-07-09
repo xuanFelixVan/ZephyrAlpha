@@ -3581,6 +3581,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第86轮Phase 7a重构（2026-07-09）**：5.158.9 `resource_optimization._classify_pressure` 查表法重构完成. 13个连续if→9元组表+1个for循环, McCabe循环复杂度14→5. 行为等价验证通过(TestPressureClassification 13/13 PASSED, 覆盖NORMAL/WARNING/CRITICAL/EMERGENCY×memory/cpu/process+边界值). DEFERRED-PERMANENT 10→9(5.158.9清零).
 > **第89轮AST验证DRIFTED（2026-07-09，Phase 7d-pre）**：AST McCabe复算发现2项裁定值过时: 5.158.3 verdict_engine.evaluate 裁定17→实际8(_parse_event已提取为独立方法, 复杂度下沉) + 5.158.6 resource_optimization.snapshot 裁定12→实际9. 两者均低于NO-HIGH-COMPLEXITY gate阈值15, 标记DRIFTED(不再超标). DEFERRED-PERMANENT 9→7.
 > **第90轮Phase 7d重构（2026-07-09）**：5.158.10 `chaos_engine.inject` extract method重构完成. if/elif分发链→_dispatch_injection(McCabe=4) + except Exception路径→_handle_injection_failure(McCabe=3) + 未处理type前置检查. McCabe 20→15(低于gate阈值>15). 行为等价验证通过(TestChaosEngineInjectDirect 10新测试+15原有测试=25/25 PASSED, 覆盖直接inject_type调用/错误路径/_last_result/_injection_state/边界值). DEFERRED-PERMANENT 7→6(5.158.10清零).
+> **第91轮Phase 7e重构（2026-07-09）**：5.158.7 `action_dispatcher._search_replace_file` extract method重构完成. 替换循环→_apply_replacement_entries(McCabe=8) + 结果构建→_finalize_replacement(McCabe=9). McCabe 20→5(裁定值12为DRIFTED, AST复算实际20; 重构后远低于gate阈值>15). 行为等价验证通过(TestActionDispatcherSearchReplacePaths 8新测试+4原有测试=12/12 PASSED, 覆盖宽松匹配/remove模式/unchanged/空old_str/部分失败/实际写入/backup递增/reason累积). DEFERRED-PERMANENT 6→5(5.158.7清零).
 
 #### HIGH（1个）
 
@@ -3596,7 +3597,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 #### LOW（7个）
 
 6. **[DRIFTED-Phase7d]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:323` — `snapshot` 裁定复杂度12→AST复算实际9, 低于阈值15, 不再超标
-7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\action_dispatcher.py:240` — `_search_replace_file` 复杂度12
+7. **[FIXED-Phase7e]** `d:\ZephyrAlpha\src\zephyr\trading\action_dispatcher.py:248` — `_search_replace_file` McCabe 20→5(裁定值12为DRIFTED, extract method: _apply_replacement_entries(8)+_finalize_replacement(9)), 12/12 tests PASSED
 8. **[LOW]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\reconciler.py:300` — `_fix_dep_sync` 复杂度12
 9. **[FIXED-Phase7a]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:400` — `_classify_pressure` 13个连续if → 查表法重构(McCabe 14→5), TestPressureClassification 13/13 PASSED
 10. **[FIXED-Phase7d]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\fault_tolerance\chaos_engine.py:148` — `inject` McCabe 20→15(extract method: _dispatch_injection+_handle_injection_failure), 25/25 tests PASSED
