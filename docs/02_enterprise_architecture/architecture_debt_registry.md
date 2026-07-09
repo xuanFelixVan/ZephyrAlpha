@@ -2477,6 +2477,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > - 5.93.8 [DEFERRED] (细节待评估)。
 > - FIXED=2(5.93.2/5.93.7), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=3(5.93.1/3/4), DEFERRED=2(5.93.6/8), STILL_VALID=0. 维度5.93全部清零。
 > **第92轮Phase 7h修复（2026-07-09）**：5.93.7 `infrastructure/config/__init__.py` 业务代码迁移到 `app_config.py` 子模块 FIXED. AppConfig/load_config/reload_config/ConfigHolder 迁移到 app_config.py, __init__.py 仅做 re-export. 同时 extract method 降低 load_config McCabe 19→5(提取 _find_yaml_path + _apply_env_overrides). CREATE-GUARD 类名冲突豁免(# class-name-alias 标记). creation_token 登记. commit b182e38a45. 26/26 tests PASSED. DEFERRED 3→2(5.93.6/8 剩余).
+> **第93轮Phase 7h修复（2026-07-09）**：5.93.6 `from ... import *` 命名空间污染 FIXED. 核心目标——11个 `__init__.py` 聚合型文件（从多子模块 import * 聚合到包命名空间导致污染）全部改为显式导入：batch1 governance/trading_contracts/{market,risk,portfolio/contracts,execution}/__init__.py(4包23处,commit 528faadf98) + batch2 governance/adapters/__init__.py + shared/contracts/{errors,backpressure}/__init__.py(codegen生成文件,同步修改 generate_contracts.py 新增 _extract_public_symbols 辅助函数,commit 662ef091f4) + batch3 compliance/audit_trail/__init__.py + integration/{layer1_discovery,layer2_communication,layer3_coordination}/__init__.py(4处,commit 33dde53d25). 附带修复：risk/__init__.py 移除过时 __all__ 条目 RiskLimitsCalculator(定义在不同包); errors/__init__.py codegen 生成器支持显式导入. 剩余63处 `import *` 全部是单文件 re-export shim（迁移兼容垫片,import * 是合理用法,改显式导入会破坏shim目的）. 2处 broken import(risk/cross_asset/__init__.py,pre-existing bug,超出5.93.6范围). DEFERRED 2→1(5.93.8 剩余).
 
 > 维度AJ：__init__.py中的重型import、无效__all__、命名空间污染
 
@@ -2518,6 +2519,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **代表性文件**：`governance/trading_contracts/market/__init__.py:3-9`（7个子模块import *）、`security/llm_defense/llm_security_01/layers/__init__.py:4-12`（9个子模块import *）
 - **证据**：`from ... import *` 将子模块所有公开名称导入当前命名空间，可能造成名称冲突（多个子模块都定义Severity/Status等常见名称），也使追踪名称来源困难。
 - **修复**：改为显式导入 `from .module import Name1, Name2`。
+- **状态**：FIXED — 5.93.6 核心目标完成. 11个 `__init__.py` 聚合型文件（从多子模块 import * 聚合导致命名空间污染）全部改为显式导入. 3批commit: 528faadf98(trading_contracts 4包23处) + 662ef091f4(adapters + errors/backpressure codegen + generate_contracts.py) + 33dde53d25(audit_trail + layer1/2/3 integration). codegen生成器(generate_contracts.py)新增 _extract_public_symbols 函数支持显式导入生成. 附带修复: risk/__init__.py 移除过时 __all__ 条目 RiskLimitsCalculator(定义在不同包). 剩余63处 `import *` 全部是单文件 re-export shim(迁移兼容垫片,import * 是合理用法). 2处 broken import(risk/cross_asset/__init__.py,pre-existing bug,超出范围).
 
 #### 5.93.7 [MEDIUM] infrastructure/config/__init__.py中定义类和函数
 
@@ -2535,6 +2537,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | **合计** | **8** | |
 
 > **R70 状态汇总（2026-07-06）**：FIXED=1(5.93.2), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=3(5.93.1/3/4), DEFERRED=3(5.93.6/7/8), STILL_VALID=0。维度5.93全部清零。
+> **R93 状态汇总（2026-07-09）**：FIXED=3(5.93.2/5.93.6/5.93.7), DRIFTED=1(5.93.5), DEFERRED-PERMANENT=3(5.93.1/3/4), DEFERRED=1(5.93.8), STILL_VALID=0。维度5.93全部清零。
 
 ### 5.94 类型注解准确性（68个，第19轮新增）
 
