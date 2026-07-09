@@ -70,6 +70,15 @@ from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
     get_decisiongraph_pg_connection,
 )
 
+try:
+    from d5_architecture.panorama_common import weighted_domain_vote, min_maturity as _min_mat
+except ImportError:
+    import sys as _sys
+    _pc_path = str(Path(__file__).resolve().parents[1])  # d5_architecture/
+    if _pc_path not in _sys.path:
+        _sys.path.insert(0, _pc_path)
+    from panorama_common import weighted_domain_vote, min_maturity as _min_mat
+
 
 # ---------------------------------------------------------------------------
 # 数据模型
@@ -249,12 +258,11 @@ def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
 
     nodes: list[PanoramaNode] = []
     for bp, rows in grouped.items():
-        # domain_id: 多数投票
-        domain_counter = Counter(r["domain_id"] for r in rows if r["domain_id"])
-        domain_id = domain_counter.most_common(1)[0][0] if domain_counter else None
+        # domain_id: 加权域投票（测试文件降权，平局字母序）
+        domain_id = weighted_domain_vote(rows) or None
         # design_maturity: 取最 design（min rank）
         maturities = [r["design_maturity"] for r in rows if r["design_maturity"]]
-        design_maturity = min(maturities, key=_maturity_rank) if maturities else None
+        design_maturity = _min_mat(maturities) or None
         # build_status: 取第一个非空
         build_status = next((r["build_status"] for r in rows if r["build_status"]), None)
         # entity_name: 取第一个非空 path
@@ -423,6 +431,25 @@ _BP_SCAN_ROOT = _REPO_ROOT / "docs" / "03_modules"
 # 跳过的文件名（非模块蓝图文件）
 _BP_SKIP_NAMES = {"index.md"}
 
+# exempt_list 配置文件（历史归档豁免，Task 8 创建）
+_EXEMPT_LIST_PATH = (
+    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "configs"
+    / "panorama_exempt_list.yaml"
+)
+
+
+def _load_exempt_list() -> set[str]:
+    """加载 exempt_list 配置（历史归档豁免）。文件不存在时返回空集合。"""
+    if not _EXEMPT_LIST_PATH.exists():
+        return set()
+    try:
+        import yaml
+        data = yaml.safe_load(_EXEMPT_LIST_PATH.read_text(encoding="utf-8"))
+        ids = data.get("exempt_module_ids", []) if data else []
+        return {str(i) for i in ids if i}
+    except Exception:
+        return set()
+
 
 def _parse_simple_frontmatter(content: str) -> dict[str, str]:
     """解析 YAML frontmatter 为扁平 dict（简单实现，跳过嵌套字段）。
@@ -504,11 +531,18 @@ def _group_by_module_id(all_nodes: list[PanoramaNode]) -> dict[str, list[Panoram
     return grouped
 
 
-def _detect_orphans(all_nodes: list[PanoramaNode]) -> list[dict]:
-    """孤儿：仅在一图存在的 module_id。"""
+def _detect_orphans(all_nodes: list[PanoramaNode],
+                    exempt_list: set[str] | None = None) -> list[dict]:
+    """孤儿：仅在一图存在的 module_id。
+
+    exempt_list 中的 module_id 跳过检测（历史归档豁免）。
+    """
+    exempt = exempt_list or set()
     grouped = _group_by_module_id(all_nodes)
     orphans: list[dict] = []
     for mid, nodes in grouped.items():
+        if mid in exempt:
+            continue
         graphs = {n.graph for n in nodes}
         if len(graphs) == 1:
             g = next(iter(graphs))
@@ -675,7 +709,8 @@ def run_alignment(
         )
 
     # 检测四类问题
-    orphans = _detect_orphans(all_nodes)
+    exempt = _load_exempt_list()
+    orphans = _detect_orphans(all_nodes, exempt_list=exempt)
     state_drifts = _detect_state_drifts(all_nodes)
     domain_mismatches = _detect_domain_mismatches(all_nodes)
     design_only_in_one = _detect_design_only_in_one(all_nodes)
