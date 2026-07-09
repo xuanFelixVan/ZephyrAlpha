@@ -193,7 +193,9 @@ class TestCrossFileUniqueness:
         import zephyr.governance.commit_gates.module_id_consistency_gate as mod
 
         # mock: 文件不在 HEAD（新增文件 A）
-        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda rel, pr: False)
+        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
+
+        gw = _make_gateway(tmp_path)
 
         # mock: git grep 返回两个文件（含当前文件）
         class _FakeResult:
@@ -203,9 +205,7 @@ class TestCrossFileUniqueness:
                 "tests/other/test_other.py\n"
             )
 
-        monkeypatch.setattr(mod.subprocess, "run", lambda *a, **kw: _FakeResult())
-
-        gw = _make_gateway(tmp_path)
+        gw._run_git.return_value = _FakeResult()
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_current.py"
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -224,16 +224,16 @@ class TestCrossFileUniqueness:
         """新增文件（不在 HEAD），module_id 唯一 → 通过。"""
         import zephyr.governance.commit_gates.module_id_consistency_gate as mod
 
-        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda rel, pr: False)
+        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
+
+        gw = _make_gateway(tmp_path)
 
         # mock: git grep 无匹配（returncode=1）
         class _FakeResult:
             returncode = 1
             stdout = ""
 
-        monkeypatch.setattr(mod.subprocess, "run", lambda *a, **kw: _FakeResult())
-
-        gw = _make_gateway(tmp_path)
+        gw._run_git.return_value = _FakeResult()
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_unique.py"
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -250,7 +250,9 @@ class TestCrossFileUniqueness:
         import zephyr.governance.commit_gates.module_id_consistency_gate as mod
 
         # mock: 文件在 HEAD（修改文件 M）→ 历史豁免
-        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda rel, pr: True)
+        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: True)
+
+        gw = _make_gateway(tmp_path)
 
         # 即使 git grep 会返回碰撞，也不应触发（因为已跳过）
         call_count = {"n": 0}
@@ -263,9 +265,7 @@ class TestCrossFileUniqueness:
             call_count["n"] += 1
             return _FakeResult()
 
-        monkeypatch.setattr(mod.subprocess, "run", _counting_run)
-
-        gw = _make_gateway(tmp_path)
+        gw._run_git.side_effect = _counting_run
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_tracked.py"
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -283,7 +283,7 @@ class TestCrossFileUniqueness:
         """无 [A_*] module_id 头的 .py 文件 → 跳过碰撞检查（通过）。"""
         import zephyr.governance.commit_gates.module_id_consistency_gate as mod
 
-        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda rel, pr: False)
+        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
 
         gw = _make_gateway(tmp_path)
         gate = make_module_id_consistency_gate()
@@ -303,14 +303,14 @@ class TestCrossFileUniqueness:
 
         import zephyr.governance.commit_gates.module_id_consistency_gate as mod
 
-        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda rel, pr: False)
+        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
+
+        gw = _make_gateway(tmp_path)
 
         def _raising_run(*a, **kw):
             raise _sp.TimeoutExpired(cmd=a[0] if a else "git", timeout=10)
 
-        monkeypatch.setattr(mod.subprocess, "run", _raising_run)
-
-        gw = _make_gateway(tmp_path)
+        gw._run_git.side_effect = _raising_run
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_timeout.py"
         target.parent.mkdir(parents=True, exist_ok=True)

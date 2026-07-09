@@ -66,7 +66,7 @@ _RE_HEADER_MODULE_ID = re.compile(
 )
 
 
-def _is_tracked_in_head(rel: str, project_root) -> bool:
+def _is_tracked_in_head(gateway, rel: str) -> bool:
     """判断文件是否已存在于 HEAD（即 tracked/修改态 M，而非新增 A）。
 
     用于 cross-file 碰撞检查的历史豁免：HEAD 中已存在的文件属存量基线违规，
@@ -74,13 +74,7 @@ def _is_tracked_in_head(rel: str, project_root) -> bool:
     返回 True（假定已跟踪，避免误阻断）。
     """
     try:
-        result = subprocess.run(
-            ["git", "ls-tree", "HEAD", rel],
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
+        result = gateway._run_git(["git", "ls-tree", "HEAD", rel])
         return result.returncode == 0 and bool(result.stdout.strip())
     except (subprocess.TimeoutExpired, OSError):
         return True
@@ -162,7 +156,7 @@ def make_module_id_consistency_gate() -> GateSpec:
             if not os.path.isfile(f) or not f.endswith(".py"):
                 continue
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if _is_tracked_in_head(rel, project_root):
+            if _is_tracked_in_head(gateway, rel):
                 continue  # 修改文件（M）——存量基线违规，跳过碰撞检查
             try:
                 content = Path(f).read_text(encoding="utf-8", errors="replace")
@@ -173,12 +167,8 @@ def make_module_id_consistency_gate() -> GateSpec:
                 continue
             mid = m.group(1)
             try:
-                result = subprocess.run(
+                result = gateway._run_git(
                     ["git", "grep", "-l", "-F", mid, "--", "*.py"],
-                    cwd=str(project_root),
-                    capture_output=True,
-                    text=True,
-                    timeout=10,
                 )
             except (subprocess.TimeoutExpired, OSError):
                 continue  # fail-open on git grep error
