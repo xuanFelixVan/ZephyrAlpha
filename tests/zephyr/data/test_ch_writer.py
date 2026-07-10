@@ -66,35 +66,82 @@ class TestTsvEscape:
 
 
 class TestQuery:
-    """query 函数测试（mock _wsl_ch）。"""
+    """query 函数测试（混合传输：clickhouse-driver TCP + WSL fallback）。"""
 
-    def test_query_success(self):
-        """成功查询返回 stdout。"""
-        mock_proc = MagicMock()
-        mock_proc.returncode = 0
-        mock_proc.stdout = b"col1\tcol2\n"
-        mock_proc.stderr = b""
-        with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
+    def setup_method(self):
+        """每个测试前重置客户端单例。"""
+        import src.zephyr.data.ch_writer as cw
+        cw._ch_client = None
+
+    def test_query_select_success(self):
+        """SELECT 查询通过 clickhouse-driver 返回 TSV 格式。"""
+        mock_client = MagicMock()
+        mock_client.execute.return_value = [("col1", "col2")]
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
             result = query("SELECT 1")
         assert result == "col1\tcol2\n"
 
-    def test_query_failure(self):
-        """查询失败返回空字符串。"""
+    def test_query_describe_success(self):
+        """DESCRIBE TABLE 查询通过 clickhouse-driver 返回 TSV。"""
+        mock_client = MagicMock()
+        mock_client.execute.return_value = [
+            ("code", "String", "", "", "", "", ""),
+            ("date", "Date", "DEFAULT", "today()", "", "", ""),
+        ]
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
+            result = query("DESCRIBE TABLE c1_market.kline_daily")
+        assert "code\tString" in result
+        assert "date\tDate" in result
+
+    def test_query_ddl_returns_empty(self):
+        """DDL 语句（TRUNCATE/ALTER）返回空字符串。"""
+        mock_client = MagicMock()
+        mock_client.execute.return_value = []
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
+            result = query("TRUNCATE TABLE c1_market.test")
+        assert result == ""
+
+    def test_query_select_empty_result(self):
+        """SELECT 返回空结果时返回空字符串。"""
+        mock_client = MagicMock()
+        mock_client.execute.return_value = []
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
+            result = query("SELECT 1 WHERE 0")
+        assert result == ""
+
+    def test_query_driver_fails_fallback_wsl(self):
+        """clickhouse-driver 不可用时（返回 None）降级到 WSL subprocess。"""
+        mock_proc = MagicMock()
+        mock_proc.returncode = 0
+        mock_proc.stdout = b"fallback_result\n"
+        mock_proc.stderr = b""
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
+            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
+                result = query("SELECT 1")
+        assert result == "fallback_result\n"
+
+    def test_query_driver_exception_fallback_wsl(self):
+        """clickhouse-driver execute 异常时降级到 WSL subprocess。"""
+        mock_client = MagicMock()
+        mock_client.execute.side_effect = Exception("query failed")
+        mock_proc = MagicMock()
+        mock_proc.returncode = 0
+        mock_proc.stdout = b"fallback_result\n"
+        mock_proc.stderr = b""
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
+            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
+                result = query("SELECT 1")
+        assert result == "fallback_result\n"
+
+    def test_query_both_fail_returns_empty(self):
+        """driver 不可用且 WSL 也失败时返回空字符串。"""
         mock_proc = MagicMock()
         mock_proc.returncode = 1
         mock_proc.stdout = b""
-        mock_proc.stderr = b"Table not found"
-        with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
-            result = query("SELECT * FROM nonexistent")
-        assert result == ""
-
-    def test_query_timeout(self):
-        """超时返回空字符串。"""
-        with patch(
-            "src.zephyr.data.ch_writer._wsl_ch",
-            side_effect=subprocess.TimeoutExpired(cmd="wsl", timeout=1),
-        ):
-            result = query("SELECT 1")
+        mock_proc.stderr = b"error"
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
+            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
+                result = query("SELECT 1")
         assert result == ""
 
 
@@ -223,24 +270,41 @@ class TestWriteResult:
 
 
 class TestDeleteWhere:
-    """delete_where 函数测试（mock _wsl_ch）。"""
+    """delete_where 函数测试（混合传输：clickhouse-driver TCP + WSL fallback）。"""
 
-    def test_delete_success(self):
+    def setup_method(self):
+        """每个测试前重置客户端单例。"""
+        import src.zephyr.data.ch_writer as cw
+        cw._ch_client = None
+
+    def test_delete_success_via_driver(self):
+        """通过 clickhouse-driver 成功删除。"""
+        mock_client = MagicMock()
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client) as mock_gc:
+            ok = delete_where("c1_market.kline_daily", "date = '2026-07-05'")
+        assert ok is True
+        mock_client.execute.assert_called_once()
+
+    def test_delete_driver_fails_fallback_wsl(self):
+        """clickhouse-driver 不可用时（返回 None）降级到 WSL 并成功。"""
         mock_proc = MagicMock()
         mock_proc.returncode = 0
         mock_proc.stderr = b""
-        with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc) as mock_ch:
-            ok = delete_where("c1_market.kline_daily", "date = '2026-07-05'")
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
+            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc) as mock_ch:
+                ok = delete_where("c1_market.kline_daily", "date = '2026-07-05'")
         assert ok is True
         args = mock_ch.call_args[0][0]
         assert any("ALTER TABLE" in a and "DELETE" in a for a in args)
 
-    def test_delete_failure(self):
+    def test_delete_both_fail_returns_false(self):
+        """driver 不可用且 WSL 也失败时返回 False。"""
         mock_proc = MagicMock()
         mock_proc.returncode = 1
         mock_proc.stderr = b"Unknown table"
-        with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
-            ok = delete_where("nonexistent", "1=1")
+        with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
+            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
+                ok = delete_where("nonexistent", "1=1")
         assert ok is False
 
 

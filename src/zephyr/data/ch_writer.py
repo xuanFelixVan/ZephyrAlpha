@@ -1,22 +1,26 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.ch_writer
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] subprocess(标准库); clickhouse-client(via WSL,系统工具)
+# [DEPENDENCIES] subprocess(标准库); clickhouse-driver(pip); clickhouse-client(via WSL,系统工具)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 通过 WSL subprocess 调用 clickhouse-client; TSV 格式批量写入; 不依赖 tmp/_ds_common.py(自封装); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE)
+# [INVARIANTS] 混合传输：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 WSL subprocess TSV(TSV 自动处理类型转换); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] write_result失败->返回False+log; _wsl_ch超时->subprocess.TimeoutExpired; 查询失败->返回空字符串
+# [ERROR_CONTRACT] write_result失败->返回False+log; query失败->返回空字符串; delete_where失败->返回False
 # [TESTS] tests/zephyr/data/test_ch_writer.py
 # [A_module] module_id=MOD-L00-004-ch_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）。
 
-封装 WSL clickhouse-client 调用，提供：
+混合传输架构（裁定 #ARCH-CH-004，2026-07-10）：
+- query/delete_where → clickhouse-driver TCP（9000端口，2.9x 加速，连接复用）
+- write_tsv → WSL subprocess TSV（TSV 自动处理类型转换，Provider 返回字符串日期无需转换）
+
+提供：
 - write_result(result): 把 FetchResult.rows 转 TSV 写入 CH
 - tsv_escape(v): 转义字段值（None/NaN -> \\N，字符串去换行制表符）
 - delete_where(table, condition): 写前删除（MergeTree 幂等性）
@@ -31,7 +35,7 @@
 设计要点：
 - 不依赖 tmp/_ds_common.py（TTL=task_bound，src/ 不能长期依赖 tmp/）
 - 自封装 _wsl_ch / tsv_escape / _get_insert_columns 逻辑
-- subprocess 调用 clickhouse-client，不依赖 Python clickhouse-driver 包
+- query/delete_where 用 clickhouse-driver TCP，write_tsv 用 WSL subprocess（混合传输）
 """
 from __future__ import annotations
 
@@ -50,6 +54,72 @@ _DEFAULT_TIMEOUT = 600
 # SQL 常量集中化（NO-BARE-SQL gate 豁免 SQL_* 前缀）
 SQL_ENGINE_BY_DB = "SELECT engine FROM system.tables WHERE database = '{}' AND name = '{}'"
 SQL_ENGINE_BY_NAME = "SELECT engine FROM system.tables WHERE name = '{}'"
+
+# clickhouse-driver TCP 客户端单例（裁定 #ARCH-CH-004，混合传输）
+_ch_client = None
+
+
+def _discover_wsl_ip() -> str:
+    """发现 WSL2 的 IP 地址（用于 clickhouse-driver TCP 连接）。
+
+    WSL2 的 localhost 转发可能失效（Windows 服务问题），
+    需要直接查询 WSL2 IP 建立连接。
+
+    Returns:
+        WSL2 IP 地址字符串。失败返回空字符串。
+    """
+    try:
+        r = subprocess.run(
+            ["wsl", "-d", "Ubuntu", "-e", "hostname", "-I"],
+            capture_output=True, timeout=5,
+        )
+        if r.returncode == 0:
+            ip = r.stdout.decode("utf-8", errors="replace").strip().split()[0]
+            if ip:
+                return ip
+    except Exception as e:
+        log.warning("发现 WSL2 IP 失败: %s", e)
+    return ""
+
+
+def _get_client():
+    """获取 clickhouse-driver TCP 客户端单例（懒初始化）。
+
+    clickhouse-driver 使用 ClickHouse 原生 TCP 协议（9000 端口），
+    相比 WSL subprocess 有 2.9x 查询加速 + 连接复用。
+
+    连接策略：
+    1. 先尝试 localhost（WSL2 localhost 转发正常时）
+    2. 失败则发现 WSL2 IP 直连（绕过 localhost 转发）
+    3. 均失败则返回 None（触发 WSL subprocess fallback）
+    """
+    global _ch_client
+    if _ch_client is not None:
+        return _ch_client
+    from clickhouse_driver import Client
+    # 策略1: localhost（WSL2 localhost 转发）
+    for host in ("localhost",):
+        try:
+            c = Client(host=host, port=9000, connect_timeout=3)
+            c.execute("SELECT 1")
+            _ch_client = c
+            log.info("clickhouse-driver TCP 已连接 (%s:9000)", host)
+            return _ch_client
+        except Exception as e:
+            log.debug("clickhouse-driver localhost 连接失败: %s", e)
+    # 策略2: WSL2 IP 直连
+    wsl_ip = _discover_wsl_ip()
+    if wsl_ip:
+        try:
+            c = Client(host=wsl_ip, port=9000, connect_timeout=3)
+            c.execute("SELECT 1")
+            _ch_client = c
+            log.info("clickhouse-driver TCP 已连接 (%s:9000)", wsl_ip)
+            return _ch_client
+        except Exception as e:
+            log.warning("clickhouse-driver WSL IP 连接失败 (%s:9000): %s", wsl_ip, e)
+    log.warning("clickhouse-driver TCP 不可用，所有查询将走 WSL subprocess fallback")
+    return None
 
 
 def _wsl_ch(
@@ -77,21 +147,47 @@ def _wsl_ch(
 
 
 def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
-    """执行 CH 查询，返回 stdout 字符串。
+    """执行 CH 查询，返回 TSV 格式字符串（向后兼容 WSL clickhouse-client 输出）。
+
+    混合传输（裁定 #ARCH-CH-004）：
+    - SELECT → clickhouse-driver TCP，结果格式化为 TSV 返回
+    - DDL（TRUNCATE/ALTER/CREATE 等）→ clickhouse-driver TCP，返回空字符串
+    - clickhouse-driver 不可用时降级到 WSL subprocess（fallback）
 
     失败时 log 错误并返回空字符串（不抛异常）。
     """
+    # 尝试 clickhouse-driver TCP
+    client = _get_client()
+    if client is not None:
+        try:
+            sql_stripped = sql.strip()
+            # SELECT 查询：返回 TSV 格式
+            if sql_stripped.upper().startswith("SELECT") or sql_stripped.upper().startswith("DESCRIBE"):
+                rows = client.execute(sql, settings={"max_execution_time": timeout})
+                if not rows:
+                    return ""
+                lines = []
+                for row in rows:
+                    lines.append("\t".join(str(v) for v in row))
+                return "\n".join(lines) + "\n"
+            else:
+                # DDL 语句
+                client.execute(sql, settings={"max_execution_time": timeout})
+                return ""
+        except Exception as e:
+            log.warning("clickhouse-driver query 失败，降级到 WSL: %s", e)
+    # 降级到 WSL subprocess
     try:
         r = _wsl_ch(["--query", sql], timeout=timeout)
         if r.returncode != 0:
-            log.error("CH query 失败: %s", r.stderr.decode("utf-8", errors="replace"))
+            log.error("CH query (WSL fallback) 失败: %s", r.stderr.decode("utf-8", errors="replace"))
             return ""
         return r.stdout.decode("utf-8", errors="replace")
     except subprocess.TimeoutExpired:
         log.error("CH query 超时(%ds): %s", timeout, sql[:200])
         return ""
-    except Exception as e:
-        log.error("CH query 异常: %s", e)
+    except Exception as e2:
+        log.error("CH query 异常(driver+WSL 均失败): %s", e2)
         return ""
 
 
@@ -324,6 +420,8 @@ def delete_where(
 ) -> bool:
     """删除满足条件的行（用于 MergeTree 幂等性：写前 DELETE）。
 
+    混合传输（裁定 #ARCH-CH-004）：优先 clickhouse-driver TCP，失败降级 WSL。
+
     Args:
         table: 表名
         condition: WHERE 条件（如 "date = '2026-07-05'"）
@@ -333,6 +431,15 @@ def delete_where(
         是否成功。
     """
     sql = f"ALTER TABLE {table} DELETE WHERE {condition}"
+    # 尝试 clickhouse-driver TCP
+    client = _get_client()
+    if client is not None:
+        try:
+            client.execute(sql, settings={"max_execution_time": timeout})
+            return True
+        except Exception as e:
+            log.warning("clickhouse-driver delete 失败，降级到 WSL: %s", e)
+    # 降级到 WSL subprocess
     try:
         r = _wsl_ch(["--query", sql], timeout=timeout)
         if r.returncode != 0:
@@ -347,6 +454,6 @@ def delete_where(
     except subprocess.TimeoutExpired:
         log.error("CH delete 超时(%ds): %s", timeout, table)
         return False
-    except Exception as e:
-        log.error("CH delete 异常(%s): %s", table, e)
+    except Exception as e2:
+        log.error("CH delete 异常(driver+WSL 均失败, %s): %s", table, e2)
         return False
