@@ -658,7 +658,7 @@ def session_worktree_commit(
         # 临时让 git 命令在 worktree 内执行（查 worktree index 的 staged 状态）
         _orig_run_git = _gw._run_git
 
-        def _wt_run_git(cmd, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
+        def _wt_run_git(cmd, cwd=None, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
             _env = os.environ.copy()
             _env[_env_var] = "1"
             # 阻断 git commit（同 _run_git 守卫，gate 检查不应触发 commit）
@@ -667,8 +667,9 @@ def session_worktree_commit(
                 return subprocess.CompletedProcess(
                     cmd, 1, "", "git commit blocked in worktree gate check"
                 )
+            _effective_cwd = cwd if cwd is not None else _wt
             return subprocess.run(
-                cmd, cwd=_wt, capture_output=True, text=True,
+                cmd, cwd=_effective_cwd, capture_output=True, text=True,
                 encoding="utf-8", errors="replace", timeout=60, env=_env,
             )
 
@@ -998,7 +999,7 @@ def _pre_merge_gate_check(
             # monkeypatch _run_git 重定向 cwd 到 worktree（使 git diff --cached 查 worktree index）
             _orig_run_git = _gw._run_git
 
-            def _wt_run_git(cmd, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
+            def _wt_run_git(cmd, cwd=None, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
                 _env = os.environ.copy()
                 _env[_env_var] = "1"
                 # 阻断 git commit（gate 检查不应触发 commit）
@@ -1007,8 +1008,9 @@ def _pre_merge_gate_check(
                     return subprocess.CompletedProcess(
                         cmd, 1, "", "git commit blocked in pre-merge gate check"
                     )
+                _effective_cwd = cwd if cwd is not None else _wt
                 return subprocess.run(
-                    cmd, cwd=_wt, capture_output=True, text=True,
+                    cmd, cwd=_effective_cwd, capture_output=True, text=True,
                     encoding="utf-8", errors="replace", timeout=60, env=_env,
                 )
 

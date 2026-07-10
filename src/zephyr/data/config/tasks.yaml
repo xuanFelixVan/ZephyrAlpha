@@ -53,7 +53,7 @@ tasks:
     capability: daily_valuation
     symbols: null
     extra:
-      description: "每日估值（PE/PB/PS）增量（iFind THS_BasicData 逐指标查询，PE/PB/PS可用，PCF不可用；速度0.4851只/秒 快AKShare 2.35倍）"
+      description: "每日估值（PE/PB/PS/PCF）增量（iFind THS_BasicData 逐指标查PE/PB/PS + i问财补齐PCF当天值；速度0.4851只/秒 快AKShare 2.35倍）"
 
   - task_id: index_kline_incremental
     table: c1_market.index_kline
