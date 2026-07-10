@@ -16,8 +16,8 @@ construction_progress: stage3_done
 language: zh
 description: 统一管理多个数据源的自动下载——Provider 抽象 + per-source 策略注册表 + APScheduler 调度编排 + 进度/告警统一管理
 responsibility_domain: 
-design_maturity: prototype
 build_status: generated
+design_maturity: prototype
 ---
 
 # 数据源集成器蓝图（MOD-L00-004）
@@ -838,7 +838,7 @@ akshare:
 | AKShare 接口不稳定 | 高 | 低 | 5 次重试 + 失败标的跳过 + 次日补跑 |
 | 迁移期间新旧脚本冲突 | 中 | 中 | 任务级互斥锁；迁移一个切一个 |
 | 调度器进程崩溃 | 低 | 高 | Windows 任务计划守护 + misfire_grace_time |
-| ClickHouse WSL 调用性能 | 中 | 中 | **BufferedWriter 强制攒批**（每批 ≥ 50000 行或 ≥ 30 秒触发）；详见 §18.3 裁定 #ARCH-CH-003 |
+| ClickHouse WSL 调用性能 | 中 | 中 | **BufferedWriter 强制攒批**（每批 ≥ 50000 行或 ≥ 30 秒触发）+ **混合传输**（query/delete_where 走 clickhouse-driver TCP 2.9x 加速，write_tsv 保留 WSL TSV）；详见 §18.3 #ARCH-CH-003 + §18.5 #ARCH-CH-005 |
 
 ---
 
@@ -855,6 +855,8 @@ akshare:
 | 2026-07-10 | 废弃 MergeTree 先删后插，统一 ReplacingMergeTree | #ARCH-CH-002：5204 只股票逐个写入时先删后插=双倍 data parts |
 | 2026-07-10 | 引入 BufferedWriter 批量聚合层 | #ARCH-CH-003：ch_writer 逐个写入是 CH 不稳定根因，蓝图 §16"每批≥1万行"从未实现 |
 | 2026-07-10 | 引擎选择不可依赖 AI 自觉回查蓝图 | #ARCH-CH-004：100% AI 开发模式需运行时门禁强制蓝图约束 |
+| 2026-07-10 | ch_writer 混合传输（query/delete_where 走 TCP，write_tsv 保留 WSL） | #ARCH-CH-005：2.9x 查询加速，TSV 保留类型自动转换，driver 不可用自动降级 WSL |
+| 2026-07-10 | 幂等策略自动检测引擎（get_table_engine/is_replacing_engine） | #ARCH-CH-002 补充：ReplacingMergeTree 跳过写前删除，避免 mutation 开销 |
 
 ---
 
@@ -932,14 +934,39 @@ akshare:
 
 **施工内容**：新增 CH-BATCH-SIZE gate（priority=34），检测 `ch_writer.write_result` 在 for 循环内直接调用（无 BufferedWriter 中间层）时阻断
 
-### §18.5 治本施工方案（4 阶段）
+### §18.5 裁定 #ARCH-CH-005：ch_writer 混合传输架构（clickhouse-driver TCP + WSL fallback）
+
+**问题本质**：ch_writer 全部通过 WSL subprocess 调用 clickhouse-client，每次查询/写入都 spawn 一个 WSL 进程，开销 ~129ms/次。虽然 BufferedWriter 已大幅减少 INSERT 次数，但元数据查询（DESCRIBE TABLE、system.tables）仍频繁走 WSL subprocess。
+
+**基准测试数据**（2026-07-10）：
+
+| 场景 | clickhouse-driver TCP | WSL subprocess | 加速比 |
+|------|:--------------------:|:--------------:|:------:|
+| 查询（100次） | 4.5s（45ms/次） | 12.9s（129ms/次） | 2.9x |
+| INSERT 50000行 | 0.141s | 0.221s | 1.6x |
+
+**类型安全约束**：clickhouse-driver 要求 Python 类型匹配 CH 列类型（Date 列需 `datetime.date` 对象），而 Provider 返回日期为字符串。完整迁移需改造 8 个 Provider 的类型转换，风险高。
+
+**裁定**：采用混合传输架构
+- `query()` / `delete_where()` → clickhouse-driver TCP（2.9x 查询加速，无类型问题）
+- `write_tsv()` → 保留 WSL subprocess TSV（TSV 自动处理类型转换，1.6x 提速不显著）
+- clickhouse-driver 不可用时自动降级到 WSL subprocess（fallback）
+- WSL2 localhost 转发失效时自动发现 WSL2 IP 直连
+
+**已实现**：
+- `_get_client()` 单例 + `_discover_wsl_ip()` WSL2 IP 发现
+- `query()` / `delete_where()` 双路径（driver → WSL fallback）
+- `write_tsv()` 保留 WSL TSV
+- 36 单元测试全通过
+
+### §18.6 治本施工方案（4 阶段）
 
 | 阶段 | 优先级 | 内容 | 状态 |
 |------|:------:|------|:----:|
-| 阶段1 止血 | P0 | BufferedWriter + scheduler/_backfill 改造 + 引擎统一 | 🔄 施工中 |
-| 阶段2 治本 | P1 | OPTIMIZE TABLE 清理 parts + 引擎迁移脚本 + 幂等策略统一 | ⬜ 待施工 |
-| 阶段3 长效 | P2 | ch_writer 升级（WSL subprocess → clickhouse-driver TCP） | ⬜ 待施工 |
-| 阶段4 防线 | P2 | CH-BATCH-SIZE gate + 蓝图同步 | ⬜ 待施工 |
+| 阶段1 止血 | P0 | BufferedWriter + scheduler/_backfill 改造 + 引擎统一 | ✅ 完成 |
+| 阶段2 治本 | P1 | OPTIMIZE TABLE 清理 parts + 幂等策略（get_table_engine 自动检测） | ✅ 完成 |
+| 阶段3 长效 | P2 | ch_writer 混合传输（clickhouse-driver TCP + WSL fallback） | ✅ 完成 |
+| 阶段4 防线 | P2 | CH-BATCH-SIZE gate 防回退 | ⬜ 待施工 |
 
 ---
 
