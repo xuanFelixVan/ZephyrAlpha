@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据源操作手册 — iFind + miniQMT + 免费开源源 API调用方法与参数坑(实测验证)"
 doc_type: blueprint
 status: Active
-version: "2.2.0"
+version: "2.3.0"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -20,7 +20,7 @@ actual_disk_path: "src/zephyr/data/"
 belongs_to: "MOD-L00-001"
 parent_module: "MOD-L00-001"
 codification_level: L1
-last_updated: "2026-07-06"
+last_updated: "2026-07-10"
 generation: 1
 rule_form: reference
 scope: module
@@ -61,17 +61,17 @@ tags:
   - operation-manual
   - l00
   - ssot
-summary: "数据源操作手册——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻+公告+政策直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo) + 通达信(mootdx/pytdx)的API调用方法、参数坑与环境配置。定位为API操作手册：所有调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。可下载数据清单见数据库 data_source_assets 表（PostgreSQL depgraph）。v2.1.0更新：深度重构删除约268行噪音——压缩§7.4已废弃源(yfinance+Stooq，156→27行)、删除§7.8互补矩阵(与§4重复)、删除§7.9重复子章节(美股/财经新闻/研报/国内新闻示例)、精简§7.1概述(删除11源对比表)、删除§2.3/§3.3/§5.6占位符、批量重编号修复章节跳跃。v2.0.0更新：从数据源能力地图重命名为数据源操作手册。v1.9.0更新：新增§8 通达信(TDX)数据源章节。"
+summary: "数据源操作手册——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻+公告+政策直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo) + 通达信(mootdx/pytdx)的API调用方法、参数坑与环境配置。定位为API操作手册：所有调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。可下载数据清单见数据库 data_source_assets 表（PostgreSQL depgraph）。"
 responsibility_domain: 
-build_status: stable
 design_maturity: design
+build_status: stable
 ---
 
 # 数据源操作手册
 
 ## 概述
 
-本文件是 ZephyrAlpha 项目**数据源 API 调用的操作手册（SSoT）**，详细记录 iFind、miniQMT 以及免费开源源（Baostock/TickFlow/AKShare/yfinance/Stooq）的 API 调用方法、环境配置与参数坑。所有调用方法均已通过实测验证并固化于本文档。**可下载数据清单见数据库 `data_source_assets` 表**（PostgreSQL depgraph）。
+本文件是 ZephyrAlpha 项目**数据源 API 调用的操作手册（SSoT）**，详细记录 iFind、miniQMT 以及免费开源源（Baostock/TickFlow/AKShare）的 API 调用方法、环境配置与参数坑。所有调用方法均已通过实测验证并固化于本文档。**可下载数据清单见数据库 `data_source_assets` 表**（PostgreSQL depgraph）。
 
 **核心价值**：AI 查询本文档 = 零幻觉空间；AI 绕过本文档自行推断 = 幻觉/漂移根源。本文档存在的意义是**避免 AI 重复探索数据源接入方法**——所有方法已固化，直接复制调用即可。
 
@@ -103,18 +103,6 @@ design_maturity: design
 ```
 
 **核心铁律**：iFind + QMT 能获取的数据优先用 iFind/QMT（已付费、稳定、有 SLA）；免费源作为**补充**，覆盖 iFind 试用账号盲区（A股K线历史/美股/国内外新闻/EDB宏观）。**运维铁律**：下载免费源数据时断开 VPN（Baostock/TickFlow/财经RSS 不受影响，AKShare 必须断开）。详见 §7 免费开源数据源。
-
-### 实测验证状态（2026-07-03）
-
-| 数据源 | 环境 | 验证状态 | 实测日期 |
-|--------|------|---------|---------|
-| iFind | 试用账号（IFIND_USERNAME） | ✅ 12类API逐个验证 | 2026-07-03 |
-| miniQMT | XtMiniQmt.exe 运行中 | ✅ 15类API逐个验证 | 2026-07-03 |
-| Baostock | baostock 0.9.2 / py -3.11 | ✅ 实测 10/10 通过（含 VPN 对比） | 2026-07-03 |
-| TickFlow | tickflow 0.1.24 / py -3.11 | ✅ 实测 12/12 通过（含 VPN 对比） | 2026-07-03 |
-| AKShare | akshare 1.18.64 / py -3.11 | ✅ 实测 11/16 通过（VPN 有害，须断开） | 2026-07-03 |
-| yfinance | yfinance 1.5.1 / py -3.11 | ❌ 实测 0/10 失败（VPN 无效，Yahoo 库级限流） | 2026-07-03 |
-| Stooq | stooq.com | ❌ 实测 0/2 失败（VPN 无效，JS 浏览器验证） | 2026-07-03 |
 
 ---
 
@@ -164,27 +152,6 @@ design_maturity: design
 > - **财经RSS直连可用**（8/10通过，免费无Key，不受VPN影响）——国外新闻主力源，覆盖Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC
 > - **运维建议**：下载免费源数据时**断开VPN**（Baostock/TickFlow/财经RSS不受影响，AKShare必须断开）
 > - 免费源是 iFind 试用账号盲区的**补充**，不是替代。详见 §7。
-
-### 1.4 能力边界一句话总结
-
-- **iFind 擅长**：估值数据、财务数据、宏观EDB、i问财自然语言查询、概念板块
-- **QMT 擅长**：3秒Tick、分钟K线、期权/可转债/ETF/期货、除权因子、实时快照
-- **Baostock 擅长**：A股日/周/月/分钟K线、季频财务(盈利/营运/成长/偿债/现金流/杜邦)、成分股、交易日历
-- **TickFlow 擅长**：美股个股/ETF日周月季年K线、港股日K线、A股日K线（免费无需Key，60次/min限制）
-- **AKShare 擅长**：宏观EDB(CPI/PMI/M2/GDP)、**国内财经新闻**(东财)、研报、一致预期EPS、**十大股东/股权质押/高管增减持/主营业务构成/申万行业三级**（**须断开VPN**，§7.1.3）
-- **财经RSS直连擅长**：**国外财经新闻**(Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC，免费无Key)
-- **iFind 独有**：i问财、估值PE/PB/PS（精确到个股）
-- **QMT 独有**：3秒Tick(含五档)、除权除息因子、指数权重、期权/可转债/期货合约
-- **Baostock 独有**：A股历史K线+财务的稳定免费源(服务端推送，非爬虫)
-- **TickFlow 独有**：美股日K线的免费源(无需注册无需Key，A股+美股+港股统一API)
-- **AKShare 独有**：国内财经新闻(东财个股)、研报、一致预期EPS、**十大股东+股权质押+高管增减持+主营业务构成+申万行业三级分类**（§7.1.3）
-- **财经RSS独有**：国外权威财经媒体实时新闻(Yahoo/Bloomberg/CNBC/FT/MarketWatch等8源，免费无Key)
-- **TDX/mootdx 独有**：通达信板块分类(block_gn.dat概念板块/block_fg.dat行业板块，880xxx.TDX体系，与同花顺/申万/东财分类不兼容)、本地通达信数据文件读取(.day/.lc1/.lc5)
-- **yfinance/Stooq**：❌ 不可用(yfinance库级限流VPN无效/Stooq JS反爬虫VPN无效，详见§7.4/§7.5)
-- **股权穿透盲区**：董事长/法人代表/实际控制人/控股关系链 AKShare拿不到 → 需天眼查(付费)/iFind正式账号/巨潮公告PDF解析（§7.1.3）
-- **产业链地图盲区**：无开源数据库，业界产业链图谱都是商业付费产品(iFind/Choice/Wind) → 建议方案A申万骨架+主营业务填充自建（§7.1.3）
-- **六源互补**：iFind + QMT + Baostock + TickFlow + AKShare + 财经RSS 覆盖策略所需的A股+美股+国内外新闻+股东信息+行业分类全品类数据
-- **七源互补(v1.9.0)**：上述六源 + TDX/mootdx 补充通达信板块分类(880xxx体系)与本地通达信数据文件读取能力（详见§8）
 
 ---
 
@@ -244,7 +211,7 @@ if not (r == 0 or r == -201):
 | # | 数据类型 | 错误码 | 限制说明 | 正式账号预期 |
 |---|---------|--------|---------|-------------|
 | 11 | **5分钟/分钟K线** | -4309 | 试用账号只能获取1年历史 | ✅ 正式账号无限制 |
-| 12 | **EDB宏观数据** | -4318 | ⏳ 月度配额限制(下月重置) | ✅ 正式账号无限制 |
+| 12 | **EDB宏观数据** | -4318 | ⏳ 5万条/周(每周一重置) | ✅ 正式账号同试用版(5万条/周) |
 | 13 | **CFFEX期货(中金所)** | -4216 | 中金所权限被拒 | ⚠️ 需正式账号+期货权限 |
 
 #### ❌ 试用账号不支持（4类）
@@ -360,7 +327,7 @@ df = THS_Trans2DataFrame(data)
 
 ##### THS_RQ 批量行情查询（v1.9.0 新增实测，补齐日K线/指数K线缺失数据）
 
-> **2026-07-05 数据补齐实测**：THS_RQ 支持批量查询多个代码（逗号分隔），返回最近交易日 OHLCV，可用于**批量补齐 kline_daily 和 index_kline 缺失的最新交易日数据**。非交易时段调用返回最近交易日收盘数据。
+> THS_RQ 支持批量查询多个代码（逗号分隔），返回最近交易日 OHLCV，可用于**批量补齐 kline_daily 和 index_kline 缺失的最新交易日数据**。非交易时段调用返回最近交易日收盘数据。
 
 ```python
 from iFinDPy import *
@@ -372,7 +339,7 @@ df = THS_RQ(codes_str, "close;open;high;low;volume;amount", "pricetype:1", "form
 # ✅ 返回 DataFrame，每行一个代码，含最近交易日 OHLCV
 # pricetype:1 = 前复权价
 
-# === 批量补齐 kline_daily（5517个A股，分111批，每批50个）===
+# === 批量补齐 kline_daily（A股，分批每批50个）===
 # 代码转换: 6位数字 → iFind 格式
 def to_ifind_code(symbol: str) -> str:
     if symbol.startswith(('60', '68', '69')):
@@ -388,7 +355,7 @@ batch_codes = ",".join([to_ifind_code(s) for s in symbols[:50]])
 df = THS_RQ(batch_codes, "close;open;high;low;volume;amount", "pricetype:1", "format:dataframe")
 # ✅ 50行，列: thscode/close/open/high/low/volume/amount
 
-# === 批量补齐 index_kline（953个指数）===
+# === 批量补齐 index_kline（指数）===
 # 指数代码转换: 000xxx→.SH, 399xxx→.SZ, 880xxx→.TDX, 881xxx→.TI
 def to_ifind_index_code(code: str):
     if code.startswith('000'):
@@ -402,14 +369,11 @@ def to_ifind_index_code(code: str):
     return None, None
 ```
 
-> **实测结果（2026-07-05）**：
-> - kline_daily 补齐：5517 行写入 c1_market.kline_daily，max_date=2026-07-03 ✅
-> - index_kline 补齐：953 行写入 c1_market.index_kline，max_date=2026-07-03 ✅
-> - THS_RQ 是批量补齐日K线/指数K线缺失数据的**最优方案**（批量+快速+前复权）
+> THS_RQ 是批量补齐日K线/指数K线缺失数据的**最优方案**（批量+快速+前复权）
 
 ##### THS_BD 基础数据接口限制（v1.9.0 实测补充）
 
-> **2026-07-05 数据补齐实测**：THS_BD 有以下重要限制需注意：
+> THS_BD 有以下重要限制需注意：
 
 | 限制 | 说明 | 影响 |
 |------|------|------|
@@ -417,8 +381,7 @@ def to_ifind_index_code(code: str):
 | **分红相关指标全部失败** | ths_latest_dividend_plan_stock / ths_dividend_announce_date_stock / ths_dividend_cash_ps_stock 等全部 -209 | 分红明细不可用 THS_BD 获取，需用 AKShare stock_history_dividend_detail |
 | **股权质押字段部分不可用** | ths_pledge_ratio_stock ✅ + ths_total_shares_stock ✅，但 pledge_count/unrestricted_pledge/restricted_pledge ❌ | 股权质押只能拿比例和总股本，其他字段留空 |
 | **单位转换坑** | ths_total_shares_stock 返回单位为"股"，表字段 total_shares 单位为"万" → 需 /1e4 | 不转换会导致数量级错误 |
-
-> **实测结果（2026-07-05）**：equity_pledge_summary 补齐 4440 行写入 c3_fundamental.equity_pledge_summary，max_end_date=2026-07-03 ✅
+| **PCF指标不可用** | ths_pcf_stock_ttm 返回 -209 | PCF改用i问财(THS_iwencai)查`"{ts_code} 市现率"`补齐当天值，历史值由AKShare全量刷新补齐（见§2.4.7 i问财） |
 
 ##### THS_DS 日期序列接口限制（v1.9.0 实测补充）
 
@@ -473,7 +436,7 @@ data = THS_iwencai('600000.SH 近5天主力资金流向', 'stock')
 
 **i问财局限**：查询"美股"/"港股"/"期货"时返回的是A股相关概念股，不是真正的海外/期货数据。试用账号通过i问财只能查询A股数据。但i问财可灵活查询A股的龙虎榜/融资融券/大宗交易/限售解禁/审计意见/涨停跌停/ST/新股/股东/机构持仓/业绩预告/回购/增减持/分红等16类数据，是iFind中最灵活的接口。
 
-#### 2.4.8 EDB宏观数据（THS_EDBQuery）— ⏳ 月度配额限制
+#### 2.4.8 EDB宏观数据（THS_EDBQuery）— ⏳ 5万条/周(每周一重置)
 
 ```python
 # EDB = Economic Data Base，77,909个宏观/行业经济指标
@@ -483,8 +446,7 @@ data = THS_EDBQuery(
     '2025-01-01',
     '2025-06-30'
 )
-# ⏳ 试用账号 -4318 "exceeded this month" 月度配额超限，下月自动重置
-# ✅ 正式账号无配额限制，可立即下载
+# ⏳ 试用账号 -4318 "exceeded this week" 周配额超限，每周一自动重置(试用版=正式版,均5万条/周)
 ```
 
 #### 2.4.9 组合查询（获取行业成分股的实时行情）
@@ -825,7 +787,7 @@ fd = xtdata.get_financial_data(['600000.SH'], [], '20240101', '20250630', 'repor
 | 13 | 指数成分股 | ✅ 300行 | ✅ API可用 | ⚠️ 板块成分(block_*.dat) | iFind | iFind 已验证；TDX仅板块成分非指数成分 |
 | 14 | 行业分类 | ✅ 30行 | ⚠️ 返回空 | ✅ **通达信板块分类** | iFind+TDX | iFind同花顺行业；TDX 880xxx体系(详见§8) |
 | 15 | 概念板块 | ✅ i问财 | ❌ | ✅ **block_gn.dat** | iFind+TDX | iFind i问财；TDX通达信概念板块 |
-| 16 | EDB 宏观数据 | ⏳ 配额限制(-4318,下月重置) | ❌ | ❌ | iFind 正式账号 | 仅 iFind 有，77,909指标 |
+| 16 | EDB 宏观数据 | ⏳ 5万条/周(-4318,每周一重置) | ❌ | ❌ | iFind(试用=正式) | 仅 iFind 有，77,909指标 |
 | 17 | 期货数据 | ❌ 无权限 | ✅ 802个合约 | ⚠️ ExtQuotes | **QMT 独有** | QMT 有中金所/上期所/大商所；TDX扩展行情支持期货 |
 | 18 | 期权数据 | ❌ | ✅ 662个合约 | ❌ | **QMT 独有** | QMT 有上证期权 |
 | 19 | 可转债数据 | ❌ | ✅ 152个+K线 | ❌ | **QMT 独有** | QMT 有上证转债 |
@@ -871,7 +833,7 @@ fd = xtdata.get_financial_data(['600000.SH'], [], '20240101', '20250630', 'repor
 | **TDX/mootdx** | 通达信板块分类(880xxx体系)、本地通达信数据文件读取(.day/.lc1/.lc5) | 无板块分笔历史、无历史分笔(仅最近交易日)、无复权、无估值/EDB/新闻/研报 |
 | **三者均无** | — | 美股/港股(试用)、新闻事件、研究报告(试用)、**板块分笔历史**(淘宝购买/手工导出) |
 
-### §4.4 七源互补全景矩阵（v2.2.0 合并自 capability_map §7.8）
+### §4.4 七源互补全景矩阵
 
 > 7 个数据源 × 22 个数据品类的覆盖全景。✅=实测通过 ⏳=配额限制 ❌=不可用 ⚠️=部分覆盖 —=不适用
 
@@ -1005,7 +967,7 @@ data = xtdata.get_market_data_ex([], stocks, '1d', '20240101', '20250630')
 
 | 优先级 | 数据项 | 说明 | 解锁后能力 |
 |--------|--------|------|-----------|
-| P1 | EDB宏观数据 | 77,909个宏观/行业指标 | 解除-4318配额限制 |
+| P1 | EDB宏观数据 | 77,909个宏观/行业指标 | 5万条/周(试用=正式,每周一重置) |
 | P1 | 美股/港股行情 | 海外市场数据 | 解除-4210权限拒绝 |
 | P1 | 5分钟/分钟K线历史 | iFind历史高频 | 解除-4309一年限制 |
 | P2 | 新闻/事件 | THS_iEvent | 解除-5100账号类型限制 |
@@ -1020,7 +982,7 @@ data = xtdata.get_market_data_ex([], stocks, '1d', '20240101', '20250630')
 
 ### §7.1 概述与定位
 
-本章节记录 iFind 试用账号盲区的**免费开源替代源**（免费无Key）+ **需免费注册API Key的源**。iFind 试用账号（IFIND_USERNAME）有 4 类数据不可用：美股(-4210)、港股(-4210)、新闻事件(-5100)、研究报告(-5100)，另有 EDB 宏观(-4318)月度配额限制。本章节的源完全覆盖这些盲区。
+本章节记录 iFind 试用账号盲区的**免费开源替代源**（免费无Key）+ **需免费注册API Key的源**。iFind 试用账号（IFIND_USERNAME）有 4 类数据不可用：美股(-4210)、港股(-4210)、新闻事件(-5100)、研究报告(-5100)，另有 EDB 宏观(-4318)5万条/周配额限制(每周一重置,试用版=正式版)。本章节的源完全覆盖这些盲区。
 
 **核心定位**：
 - 免费源是**补充**，不是替代。iFind/QMT 能获取的数据优先用 iFind/QMT（已付费、稳定、有 SLA）。
@@ -1033,14 +995,14 @@ data = xtdata.get_market_data_ex([], stocks, '1d', '20240101', '20250630')
 
 > **安全说明**：所有 API key/账号密码通过环境变量读取（见 `.env.example`），禁止在文档中记录明文。QMT/Baostock/TickFlow/AKShare/财经RSS 不需要账号密码。
 
-| 数据源 | 环境变量 | 注册邮箱 | 免费额度 | 实测状态 | 实测日期 |
-|--------|---------|---------|---------|:--------:|:--------:|
-| **NewsAPI.org** | `NEWSAPI_KEY` | — | 100请求/天 | ✅ 2/2通过 | 2026-07-03 |
-| **Tiingo** | `TIINGO_API_KEY` | — | 免费tier(日K线✅/News❌需付费) | ⚠️ 1/2通过 | 2026-07-03 |
-| **Finnhub** | `FINNHUB_API_KEY` | 434419932@qq.com | 免费tier | ✅ 3/3通过 | 2026-07-03 |
-| **Newsdata.io** | `NEWSDATA_API_KEY` | — | 200请求/天 | ✅ 2/2通过 | 2026-07-03 |
-| **Alpha Vantage** | `ALPHAVANTAGE_API_KEY` | — | 5次/min | ✅ 2/2通过 | 2026-07-03 |
-| iFind(试用) | `IFIND_USERNAME` / `IFIND_PASSWORD` | — | 试用账号(有限制) | ✅ 已验证 | 2026-07-03 |
+| 数据源 | 环境变量 | 免费额度 | 实测状态 | 实测日期 |
+|--------|---------|---------|:--------:|:--------:|
+| **NewsAPI.org** | `NEWSAPI_KEY` | 100请求/天 | ✅ 2/2通过 | 2026-07-03 |
+| **Tiingo** | `TIINGO_API_KEY` | 免费tier(日K线✅/News❌需付费) | ⚠️ 1/2通过 | 2026-07-03 |
+| **Finnhub** | `FINNHUB_API_KEY` | 免费tier | ✅ 3/3通过 | 2026-07-03 |
+| **Newsdata.io** | `NEWSDATA_API_KEY` | 200请求/天 | ✅ 2/2通过 | 2026-07-03 |
+| **Alpha Vantage** | `ALPHAVANTAGE_API_KEY` | 5次/min | ✅ 2/2通过 | 2026-07-03 |
+| iFind(试用) | `IFIND_USERNAME` / `IFIND_PASSWORD` | 试用账号(有限制) | ✅ 已验证 | 2026-07-03 |
 
 > **Tiingo认证方式**：用Header `Authorization: Token <key>`，不是URL `apiKey=`参数。News API返回403"You do not have permission"（免费tier不含），日K线API `tiingo/daily/<symbol>/prices` 可用。
 > **Alpha Vantage限流**：5次/min，请求间隔需≥12秒。
@@ -1272,12 +1234,12 @@ bs.logout()
 
 #### §7.2.5 分红数据滞后实测（v1.9.0，2026-07-05）
 
-> **2026-07-05 实测**：baostock `query_dividend_data(year, yearType="report")` **数据严重滞后**——查询 5823 个 symbol 的 2025/2026 年分红数据，前 3000 个全部返回 0 条新数据（announce_date > 2026-06-27），脚本卡在 3000/5823。同期 AKShare `stock_history_dividend_detail` 能拿到 2026-07-04 的分红公告（如 600036 招商银行）。
+> baostock `query_dividend_data(year, yearType="report")` **数据严重滞后**——批量查询近期分红数据时大量返回 0 条新数据，且脚本会卡住。同期 AKShare `stock_history_dividend_detail` 能拿到最新分红公告。
 
-| 数据源 | 接口 | 最新数据日期 | 结论 |
-|--------|------|------------|------|
-| baostock | `query_dividend_data(yearType="report")` | ≤ 2026-06-27 | ❌ 滞后约1周+，且 query 返回空 |
-| AKShare | `stock_history_dividend_detail(indicator="分红")` | 2026-07-04 | ✅ 实时 |
+| 数据源 | 接口 | 结论 |
+|--------|------|------|
+| baostock | `query_dividend_data(yearType="report")` | ❌ 滞后约1周+，且 query 返回空 |
+| AKShare | `stock_history_dividend_detail(indicator="分红")` | ✅ 实时 |
 
 > **结论**：分红明细数据**不要使用 baostock**，改用 [AKShare stock_history_dividend_detail](#735-stock_history_dividend_detail-最可靠的分红数据源v190-新增实测)（见 §7.3.5）。baostock 的 K线/季频财务/成分股接口依然稳定可用，仅分红接口存在滞后。
 
@@ -1304,7 +1266,7 @@ bs.logout()
 
 #### §7.3.1 宏观经济数据（替代 iFind EDB，实测 9/10 通过）
 
-**iFind EDB 盲区**：试用账号 -4318 "exceeded this month"（月度配额超限，下月重置），且 EDB 的 77,909 指标中策略常用的核心宏观指标在 AKShare 中都有对应。
+**iFind EDB 盲区**：试用账号 -4318 "exceeded this week"（周配额超限，每周一重置,试用版=正式版均5万条/周），且 EDB 的 77,909 指标中策略常用的核心宏观指标在 AKShare 中都有对应。
 
 > **API 清单已结构化**：10 个 AKShare 宏观 API（7 中国宏观 + 3 美国宏观）记录在 `depgraph.data_source_apis` 表（DS-AKSHARE-API-001~010），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留 iFind EDB 覆盖对照矩阵（覆盖度分析属价值增量，不入 DB）。
 
@@ -1355,7 +1317,7 @@ bs.logout()
 
 ```python
 import akshare as ak
-# 美股历史K线（备用，yfinance更全更稳）
+# 美股历史K线（备用，TickFlow为主力）
 df = ak.stock_us_hist(symbol="AAPL", period="daily", start_date="20200101", end_date="20251231")
 ```
 
@@ -1374,7 +1336,7 @@ df = ak.stock_us_hist(symbol="AAPL", period="daily", start_date="20200101", end_
 
 > **API 清单已结构化**：`stock_history_dividend_detail` 已记录在 `depgraph.data_source_apis` 表（DS-AKSHARE-API-027），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。本节保留参数坑（列名前导空格）、字段映射表和批量补齐脚本（实测过程属价值增量，不入 DB）。
 
-> **2026-07-05 实测**：AKShare `stock_history_dividend_detail` 是分红明细数据的**最优数据源**——比 baostock（滞后约1周+，见 §7.2.5）、iFind THS_BD 分红指标（-209 全部失败，见 §2.4.6）、iFind 问财（不适合个股明细查询，见 §2.4.6）都可靠。多线程 8 workers 约 7.5 分钟完成 5823 个 symbol 查询，获取 283 条新数据（max announce_date=2026-07-06）。
+> AKShare `stock_history_dividend_detail` 是分红明细数据的**最优数据源**——比 baostock（滞后约1周+，见 §7.2.5）、iFind THS_BD 分红指标（-209 全部失败，见 §2.4.6）、iFind 问财（不适合个股明细查询，见 §2.4.6）都可靠。
 
 **API 调用方法**：
 
@@ -1400,7 +1362,7 @@ df = ak.stock_history_dividend_detail(symbol="600036", indicator="分红")
 | 股权登记日 | record_date | YYYY-MM-DD |
 | 红股上市日 | listing_date | YYYY-MM-DD |
 
-**多线程批量补齐示例**（8 workers，5823 symbol 约 7.5 分钟）：
+**多线程批量补齐示例**：
 
 ```python
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -1442,45 +1404,20 @@ with ThreadPoolExecutor(max_workers=8) as executor:
         # ... 构建 TSV 写入 ClickHouse (data_source='akshare')
 ```
 
-> **实测结果（2026-07-05）**：
-> - 查询 5823 个 symbol，获取 283 条新数据（announce_date > 2026-06-27）
-> - max(announce_date) = 2026-07-06 ✅
-> - 耗时约 7.5 分钟（8 workers）
 > - data_source 字段值：`akshare`
-> - 0 个 symbol 失败
 
 > **分红明细数据源优先级**：
-> 1. ✅ **AKShare `stock_history_dividend_detail`**（最可靠，实时，多线程7.5分钟/5823symbol）
+> 1. ✅ **AKShare `stock_history_dividend_detail`**（最可靠，实时）
 > 2. ❌ baostock `query_dividend_data`（滞后约1周+，见 §7.2.5）
 > 3. ❌ iFind THS_BD 分红指标（-209 全部失败，见 §2.4.6）
 > 4. ❌ iFind 问财 THS_WC（不适合个股明细查询，见 §2.4.6）
 
 ### §7.4 已废弃数据源（yfinance + Stooq，实测0%通过，VPN无效）
 
-> 以下两个数据源在 2026-07-03 实测中 **0% 通过**，已废弃。**VPN 无法解决**（根因非IP限制）。完整API示例已删除，仅保留废弃原因供参考。美股K线主力源改用 [TickFlow](#75-tickflow-完整指南✅-实测-1212-通过美股k线主力免费源2026-07-03新发现)（§7.5）。
-
-#### yfinance（Yahoo非官方API，0/10失败）
-
-| 属性 | 值 |
-|------|-----|
-| GitHub | `ranaroussi/yfinance` |
-| 许可证 | Apache-2.0 |
-| 安装 | `pip install yfinance --upgrade` |
-| 实测结果 | **0/10 (0%)** — 2026-07-03 |
-| VPN影响 | ❌ **VPN无效**（Yahoo对yfinance**库级全局限流**，非IP限流） |
-| 废弃原因 | Yahoo Finance 对 yfinance 库本身全局限流，挂VPN（海外IP）仍0/10失败。之前文档"需海外IP/代理"的结论**已修正为错误** |
-| 替代方案 | 美股K线用 [TickFlow](#75-tickflow-完整指南✅-实测-1212-通过美股k线主力免费源2026-07-03新发现)（§7.5，12/12通过，免费无Key，不受VPN影响） |
-
-#### Stooq（网站CSV，0/2失败）
-
-| 属性 | 值 |
-|------|-----|
-| 网址 | `https://stooq.com/db/` |
-| 数据格式 | CSV（zip压缩下载） |
-| 实测结果 | **0/2 (0%)** — 2026-07-03 |
-| VPN影响 | ❌ **VPN无效**（JS浏览器验证与IP无关） |
-| 废弃原因 | ①pandas_datareader 0.11.1 已移除 stooq 数据源；②直接CSV下载返回JS验证页（`This site requires JavaScript to verify your browser`）；③挂VPN后仍返回JS验证页——浏览器验证(Cloudflare/类似)与IP无关 |
-| 替代方案 | 同 yfinance，用 TickFlow（§7.5） |
+| 源 | 废弃原因 | 替代方案 |
+|----|---------|---------|
+| yfinance | Yahoo对yfinance库级全局限流(非IP限流),VPN无效 | TickFlow(美股K线/ETF) |
+| Stooq | JS浏览器验证阻断,pandas_datareader已移除 | TickFlow(美股K线/ETF) |
 
 ### §7.5 TickFlow 完整指南（✅ 实测 12/12 通过——美股K线主力免费源，2026-07-03新发现）
 
@@ -1505,16 +1442,16 @@ with ThreadPoolExecutor(max_workers=8) as executor:
 
 | # | 数据类型 | 代码格式 | 实测样本 | 实测结果 |
 |---|---------|---------|---------|---------|
-| 1 | A股日K线 | `600000.SH`/`000001.SZ` | 600000.SH 5行 | ✅ close=8.76 |
-| 2 | 美股日K线 | `AAPL.US` | AAPL.US 5行 | ✅ close=275.15 |
+| 1 | A股日K线 | `600000.SH`/`000001.SZ` | 600000.SH 5行 | ✅ 通过 |
+| 2 | 美股日K线 | `AAPL.US` | AAPL.US 5行 | ✅ 通过 |
 | 3 | 美股多只 | `XXXX.US` | AAPL/MSFT/TSLA/NVDA/GOOG/AMZN/META/NFLX 8只 | ✅ 全部通过 |
-| 4 | 美股ETF | `SPY.US`/`DIA.US` | SPY.US/DIA.US | ✅ SPY close=734.3, DIA close=519.26 |
-| 5 | 港股日K线 | `00700.HK` | 00700.HK 5行 | ✅ close=421.4 |
-| 6 | 周K线 | period=`1w` | AAPL.US 5行 | ✅ close=307.34 |
-| 7 | 月K线 | period=`1M` | AAPL.US 5行 | ✅ close=253.79 |
-| 8 | 季K线 | period=`1Q` | AAPL.US 5行 | ✅ close=254.63 |
-| 9 | 年K线 | period=`1Y` | AAPL.US 5行 | ✅ close=128.12 (2022年) |
-| 10 | 历史深度 | count=100 | AAPL.US 100行 | ✅ 2026-02-06~2026-07-01（5个月） |
+| 4 | 美股ETF | `SPY.US`/`DIA.US` | SPY.US/DIA.US | ✅ 通过 |
+| 5 | 港股日K线 | `00700.HK` | 00700.HK 5行 | ✅ 通过 |
+| 6 | 周K线 | period=`1w` | AAPL.US 5行 | ✅ 通过 |
+| 7 | 月K线 | period=`1M` | AAPL.US 5行 | ✅ 通过 |
+| 8 | 季K线 | period=`1Q` | AAPL.US 5行 | ✅ 通过 |
+| 9 | 年K线 | period=`1Y` | AAPL.US 5行 | ✅ 通过 |
+| 10 | 历史深度 | count=100 | AAPL.US 100行 | ✅ 5个月历史 |
 | 11 | 标的信息 | `tf.instruments.batch` | 600000.SH | ✅ 含上市日期/总股本/涨跌停价 |
 | 12 | A股代码格式 | `XXXXXX.SH/SZ` | 600000.SH/000001.SZ | ✅ 正确格式（sh.600000不可用） |
 
@@ -1605,7 +1542,7 @@ info = tf.instruments.batch(symbols=["600000.SH", "AAPL.US"])
 | A股日K线 | ✅ 已付费 | ✅ Baostock | **iFind/QMT**（已付费，稳定） |
 | A股估值PE/PB | ✅ 已付费 | ⚠️ AKShare(部分) | **iFind**（精确到个股） |
 | A股财务报表 | ✅ 已付费 | ✅ Baostock | **iFind/QMT**（已付费） |
-| EDB宏观CPI/PMI/M2 | ⏳ 配额限制 | ✅ AKShare | **AKShare**（免费无限制） |
+| EDB宏观CPI/PMI/M2 | ⏳ 5万条/周 | ✅ AKShare | **AKShare**（免费无限制） |
 | 美股日K线 | ❌ 试用不支持 | ✅ TickFlow | **TickFlow**（免费无Key，12/12通过） |
 | 美股指数 | ❌ 试用不支持 | ✅ TickFlow(ETF替代) | **TickFlow**（SPY/DIA/QQQ 替代真实指数） |
 | 财经新闻 | ❌ 试用不支持 | ✅ AKShare | **AKShare**（免费，须断开VPN） |
@@ -1623,10 +1560,8 @@ info = tf.instruments.batch(symbols=["600000.SH", "AAPL.US"])
 ```powershell
 # 一次性安装所有免费源库（须用 Python 3.11）
 pip install akshare --upgrade
-pip install yfinance --upgrade
 pip install baostock --upgrade
 pip install "tickflow[all]" --upgrade
-# 注意: pandas-datareader 已移除 stooq 数据源，无需安装
 ```
 
 #### §7.7.2 EDB 宏观数据下载（替代 iFind THS_EDBQuery，须断开VPN）
@@ -1843,7 +1778,7 @@ print(f"金十数据: {len(jin10_news)}条 | 样本={jin10_news[0].get('data',{}
 ```python
 """免费源连接验证脚本——运行此脚本确认主力免费源可用
 主力源 = Baostock(A股) + TickFlow(美股) + AKShare(宏观/国内新闻/研报) + 财经RSS(国外新闻)
-废弃源 = yfinance(Yahoo库级限流) + Stooq(JS浏览器验证) + Inshorts(已收费) + GDELT(不稳定)
+废弃源 = yfinance(Yahoo库级限流) + Stooq(JS浏览器验证)
 注意: 须用 py -3.11 运行；AKShare 测试前须断开 VPN；RSS/TickFlow/Baostock 不受VPN影响
 """
 import sys
@@ -2152,7 +2087,7 @@ data2 = fetch_minute('600036')
 | 个股分笔 | ⚠️ **仅最近交易日** | ❌ | ❌ | ❌ | ✅ 3秒Tick |
 | 复权数据 | ❌ 仅原始价格 | ✅ 前复权 | ⚠️ 部分 | ✅ 前复权 | ✅ 除权因子 |
 | 估值PE/PB | ❌ | ⚠️ 部分 | ❌ | ✅ 精确个股 | ❌ |
-| 宏观EDB | ❌ | ❌ | ✅ CPI/PMI/M2 | ⏳ 配额限制 | ❌ |
+| 宏观EDB | ❌ | ❌ | ✅ CPI/PMI/M2 | ⏳ 5万条/周 | ❌ |
 | 美股 | ❌ | ❌ | ❌ | ❌ 试用不支持 | ❌ |
 | 新闻/研报 | ❌ | ❌ | ✅ 东财个股 | ❌ 试用不支持 | ❌ |
 
@@ -2538,4 +2473,4 @@ if __name__ == "__main__":
 
 ---
 
-> **文档结束** — 本文档由 AI-session-20260703-datasource 创建，v1.1.0 新增 §7 免费开源数据源章节，v1.9.0 新增 §8 通达信 TDX/mootdx/pytdx 章节，v2.0.0 从数据源能力地图重命名为数据源操作手册，v2.2.0 删除已废弃的 data_catalog.md/data_inventory.md/data_acquisition_matrix.md/data_source_capability_map.md 引用，数据清单真源统一到数据库 data_source_assets 表。所有 API 调用方法均已实测验证或通过 WebSearch+GitHub 验证。如遇数据源 API 变更或新数据源接入，请同步更新本文档并提升 version。
+--- 文档结束 ---

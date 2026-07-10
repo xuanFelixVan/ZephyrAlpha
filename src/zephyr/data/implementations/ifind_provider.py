@@ -282,10 +282,16 @@ class IFindProvider(DataSourceBase):
                     if is_error:
                         if code in (-4318, -4309):
                             fatal_error = f"iFind配额耗尽: {code}"
+                            self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
+                            break
+                        elif code == -209 and col_name == "pcf_ncf_ttm":
+                            # PCF 在 THS_BD 中不支持(-209)，跳过，稍后用 i问财补齐
+                            self._log.debug(f"PCF THS_BD 不支持(-209) {ts_code}@{date}，将用 i问财补齐")
+                            continue
                         else:
                             fatal_error = f"iFind错误: {code} {msg}".strip()
-                        self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
-                        break
+                            self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
+                            break
 
                     # 转 DataFrame 提取值
                     try:
@@ -294,6 +300,17 @@ class IFindProvider(DataSourceBase):
                             vals[col_name] = self.safe_float(df.iloc[0].get(ind_name))
                     except Exception as e:
                         self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}@{date}/{ind_name}: {e}")
+
+                # PCF 用 i问财补齐（THS_BD 不支持 ths_pcf_stock_ttm，i问财可查当天值）
+                if "pcf_ncf_ttm" not in vals and not fatal_error:
+                    today_str = datetime.date.today().isoformat()
+                    if date == today_str:
+                        try:
+                            pcf_val = self._fetch_pcf_via_iwencai(ts_code, policy)
+                            if pcf_val is not None:
+                                vals["pcf_ncf_ttm"] = pcf_val
+                        except Exception as e:
+                            self._log.warning(f"i问财查 PCF 失败 {ts_code}: {e}")
 
                 # 致命错误（配额/连接）→ yield error 并 return
                 if fatal_error and ("配额" in fatal_error or "-4318" in fatal_error):
@@ -339,6 +356,31 @@ class IFindProvider(DataSourceBase):
                 )
                 batch_rows.clear()
                 start_ts = time.time()
+
+    def _fetch_pcf_via_iwencai(self, ts_code: str, policy: SourcePolicy) -> float | None:
+        """用 i问财(THS_iwencai) 查 PCF（市现率）。
+
+        THS_BD 不支持 ths_pcf_stock_ttm（返回 -209），改用 i问财查当天最新值。
+        i问财只返回当天值，不支持历史日期查询。
+
+        Args:
+            ts_code: 股票代码，如 "600000.SH"
+            policy: 调用策略
+
+        Returns:
+            PCF 值或 None
+        """
+        from iFinDPy import THS_iwencai, THS_Trans2DataFrame
+
+        query = f"{ts_code} 市现率"
+        raw = self._call_with_policy(THS_iwencai, policy, query, "stock")
+        df = THS_Trans2DataFrame(raw)
+        if df is not None and len(df) > 0:
+            # 列名格式: 市现率(pcf,经营现金流)[20260710]
+            for col in df.columns:
+                if "市现率" in col or "pcf" in col.lower():
+                    return self.safe_float(df.iloc[0][col])
+        return None
 
     # ============== kline_daily 能力 ==============
 
