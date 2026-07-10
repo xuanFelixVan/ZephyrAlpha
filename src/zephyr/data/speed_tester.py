@@ -47,55 +47,107 @@ SAMPLE_END = datetime.date(2026, 7, 9)
 SAMPLE_SNAPSHOT_DATES = ["2026-06-30", "2026-07-09"]
 
 # ============== 测速矩阵 ==============
-# (source, capability, target_table, extra, symbols_override)
-TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list]]] = [
+# (source, capability, target_table, extra, symbols_override, start_override, end_override)
+# start_override/end_override 为 None 时用 SAMPLE_START/SAMPLE_END
+# 财务报表是季度数据，10天窗口内 0 行，需用 1 年范围
+_YEAR_AGO = datetime.date(2025, 7, 10)
+TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.date], Optional[datetime.date]]] = [
     # kline_daily 三源对比
-    ("miniqmt", "kline_daily", "c1_market.kline_daily", {"capability": "kline_daily"}, None),
-    ("ifind", "kline_daily", "c1_market.kline_daily", {"capability": "kline_daily"}, None),
+    ("miniqmt", "kline_daily", "c1_market.kline_daily", {"capability": "kline_daily"}, None, None, None),
+    ("ifind", "kline_daily", "c1_market.kline_daily", {"capability": "kline_daily"}, None, None, None),
     ("baostock", "kline_daily", "c1_market.kline_daily", {"capability": "kline_daily"},
-     ["sh.600000", "sz.000001", "sz.000002"]),
+     ["sh.600000", "sz.000001", "sz.000002"], None, None),
 
     # daily_valuation 两源对比
-    ("akshare", "daily_valuation", "c1_market.daily_valuation", {"capability": "daily_valuation"}, None),
+    ("akshare", "daily_valuation", "c1_market.daily_valuation", {"capability": "daily_valuation"}, None, None, None),
     ("ifind", "daily_valuation", "c1_market.daily_valuation",
-     {"capability": "daily_valuation", "snapshot_dates": SAMPLE_SNAPSHOT_DATES}, None),
+     {"capability": "daily_valuation", "snapshot_dates": SAMPLE_SNAPSHOT_DATES}, None, None, None),
 
     # index_kline 两源对比
     ("miniqmt", "index_kline", "c1_market.index_kline", {"capability": "index_kline"},
-     ["000300.SH", "000905.SH", "000001.SH"]),
+     ["000300.SH", "000905.SH", "000001.SH"], None, None),
     ("ifind", "index_kline", "c1_market.index_kline", {"capability": "index_kline"},
-     ["000300.SH", "000905.SH", "000001.SH"]),
+     ["000300.SH", "000905.SH", "000001.SH"], None, None),
 
     # index_constituent 两源对比
     ("miniqmt", "index_constituent", "c1_market.index_constituent",
-     {"capability": "index_constituent"}, None),
+     {"capability": "index_constituent"}, None, None, None),
     ("baostock", "index_constituent", "c1_market.index_constituent",
-     {"capability": "index_constituent"}, None),
+     {"capability": "index_constituent"}, None, None, None),
 
     # money_flow: iFind 唯一
-    ("ifind", "money_flow", "c1_market.money_flow", {"capability": "money_flow"}, None),
+    ("ifind", "money_flow", "c1_market.money_flow", {"capability": "money_flow"}, None, None, None),
 
-    # adj_factor: miniQMT 唯一
+    # adj_factor: miniQMT 唯一（事件驱动，改用 1 年范围重测）
     ("miniqmt", "adj_factor", "c1_market.adj_factor", {"capability": "adj_factor"},
-     ["000001.SZ", "600000.SH"]),
+     ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
 
     # AKShare 快源
-    ("akshare", "margin_trading", "c1_market.margin_trading", {"capability": "margin_trading"}, None),
-    ("akshare", "block_trade", "c1_market.block_trade", {"capability": "block_trade"}, None),
-    ("akshare", "dragon_tiger", "c1_market.dragon_tiger", {"capability": "dragon_tiger"}, None),
-    ("akshare", "macro_data", "c1_market.macro_data", {"capability": "macro_data"}, None),
+    ("akshare", "margin_trading", "c1_market.margin_trading", {"capability": "margin_trading"}, None, None, None),
+    ("akshare", "block_trade", "c1_market.block_trade", {"capability": "block_trade"}, None, None, None),
+    ("akshare", "dragon_tiger", "c1_market.dragon_tiger", {"capability": "dragon_tiger"}, None, None, None),
+    ("akshare", "macro_data", "c1_market.macro_data", {"capability": "macro_data"}, None, None, None),
 
-    # 财务报表
+    # 财务报表（季度数据，用 1 年范围）
     ("miniqmt", "balance_sheet", "c3_fundamental.balance_sheet",
-     {"capability": "balance_sheet"}, ["000001.SZ", "600000.SH"]),
+     {"capability": "balance_sheet"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
+    ("miniqmt", "income_statement", "c3_fundamental.income_statement",
+     {"capability": "income_statement"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
+    ("miniqmt", "cashflow_statement", "c3_fundamental.cashflow_statement",
+     {"capability": "cashflow_statement"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
+    ("miniqmt", "financial_indicator", "c3_fundamental.financial_indicator",
+     {"capability": "financial_indicator"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
+    ("miniqmt", "main_business", "c3_fundamental.main_business",
+     {"capability": "main_business"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
 
     # trade_calendar
     ("baostock", "trade_calendar", "c1_market.trade_calendar",
-     {"capability": "trade_calendar"}, None),
+     {"capability": "trade_calendar"}, None, None, None),
 
     # 复权日K
     ("miniqmt", "kline_daily_hfq", "c1_market.kline_daily_hfq",
-     {"capability": "kline_daily_hfq"}, None),
+     {"capability": "kline_daily_hfq"}, None, None, None),
+
+    # 周/月K（日K聚合）
+    ("miniqmt", "kline_weekly", "c1_market.kline_weekly",
+     {"capability": "kline_weekly"}, ["000001.SZ", "600000.SH"], None, None),
+    ("miniqmt", "kline_monthly", "c1_market.kline_monthly",
+     {"capability": "kline_monthly"}, ["000001.SZ", "600000.SH"], None, None),
+
+    # 分钟K线（数据量大，用 1 只样本）
+    ("miniqmt", "kline_1min", "c1_market.kline_1min",
+     {"capability": "kline_1min"}, ["000001.SZ"], None, None),
+    ("miniqmt", "kline_5min", "c1_market.kline_5min",
+     {"capability": "kline_5min"}, ["000001.SZ"], None, None),
+    ("miniqmt", "kline_15min", "c1_market.kline_15min",
+     {"capability": "kline_15min"}, ["000001.SZ"], None, None),
+    ("miniqmt", "kline_30min", "c1_market.kline_30min",
+     {"capability": "kline_30min"}, ["000001.SZ"], None, None),
+    ("miniqmt", "kline_60min", "c1_market.kline_60min",
+     {"capability": "kline_60min"}, ["000001.SZ"], None, None),
+
+    # ===== 4 个未验证源（P2）=====
+    # tickflow 美股数据
+    ("tickflow", "us_daily_kline", "c1_market.us_daily_kline",
+     {"capability": "us_daily_kline"}, ["SPY.US", "AAPL.US"], None, None),
+    ("tickflow", "us_index", "c1_market.us_index",
+     {"capability": "us_index"}, None, None, None),
+
+    # tushare 新闻数据（需 TUSHARE_TOKEN）
+    ("tushare", "news_news_info", "c3_fundamental.news_news_info",
+     {"capability": "news_news_info"}, None, None, None),
+    ("tushare", "news_security", "c3_fundamental.news_security",
+     {"capability": "news_security"}, None, None, None),
+
+    # rss 财经新闻
+    ("rss", "news_data", "c3_fundamental.news_data",
+     {"capability": "news_data"}, None, None, None),
+
+    # tdx 通达信板块数据
+    ("tdx", "industry_class", "c3_fundamental.industry_class",
+     {"capability": "industry_class"}, None, None, None),
+    ("tdx", "sector_kline", "c1_market.sector_kline",
+     {"capability": "sector_kline"}, ["sh.000001"], None, None),
 ]
 
 
@@ -114,6 +166,18 @@ def _make_provider(source: str):
     elif source == "baostock":
         from zephyr.data.implementations.baostock_provider import BaostockProvider
         return BaostockProvider()
+    elif source == "tickflow":
+        from zephyr.data.implementations.tickflow_provider import TickFlowProvider
+        return TickFlowProvider()
+    elif source == "tushare":
+        from zephyr.data.implementations.tushare_provider import TushareProvider
+        return TushareProvider()
+    elif source == "rss":
+        from zephyr.data.implementations.rss_provider import RSSProvider
+        return RSSProvider()
+    elif source == "tdx":
+        from zephyr.data.implementations.tdx_provider import TdxProvider
+        return TdxProvider()
     else:
         raise ValueError("不支持的数据源类型")
 
@@ -279,7 +343,11 @@ def run_speed_tests(
 
     print(f"共 {len(tests)} 项测速任务")
     results = []
-    for source, capability, table, extra, sym_override in tests:
+    for entry in tests:
+        # 兼容 5 元素（旧）和 7 元素（新）元组
+        source, capability, table, extra, sym_override = entry[:5]
+        start_override = entry[5] if len(entry) > 5 else None
+        end_override = entry[6] if len(entry) > 6 else None
         print(f"\n{'='*60}")
         print(f"  测速: {source} / {capability}")
         print(f"{'='*60}")
@@ -287,6 +355,7 @@ def run_speed_tests(
             cfg = SpeedTestConfig(
                 source=source, capability=capability, target_table=table,
                 extra=extra, symbols_override=sym_override,
+                sample_start=start_override, sample_end=end_override,
             )
             r = speed_test_one(cfg)
             results.append(r)
