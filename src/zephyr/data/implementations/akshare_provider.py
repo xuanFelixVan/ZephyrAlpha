@@ -79,6 +79,8 @@ class AKShareProvider(DataSourceBase):
             "news_baidu", "news_stock",
             # 分析师预期 & 配股
             "analyst_forecast", "rights_issue",
+            # 研报 & 北向资金 & 期货主力合约
+            "research_report", "hk_connect_flow", "futures_kline",
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -152,6 +154,12 @@ class AKShareProvider(DataSourceBase):
             yield from self._fetch_analyst_forecast(payload, policy)
         elif cap == "rights_issue":
             yield from self._fetch_rights_issue(payload, policy)
+        elif cap == "research_report":
+            yield from self._fetch_research_report(payload, policy)
+        elif cap == "hk_connect_flow":
+            yield from self._fetch_hk_connect_flow(payload, policy)
+        elif cap == "futures_kline":
+            yield from self._fetch_futures_kline(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -1326,4 +1334,245 @@ class AKShareProvider(DataSourceBase):
             safe_float(row.get("配股数量", row.get("配股股数"))),
             safe_float(row.get("配股募集资金", row.get("募集资金"))),
             "akshare",
+        )
+
+    # ---- 20. 东方财富研报（research_report） ----
+
+    @staticmethod
+    def _parse_research_row(row) -> tuple | None:
+        """解析单行研报数据为 news_data 行，无标题时返回 None。"""
+        title = str(row.get("报告名称") or "")
+        if not title:
+            return None
+        pub_date = AKShareProvider._norm_date_str(row.get("日期"))
+        link = str(row.get("报告PDF链接") or "")
+        parts = []
+        org = str(row.get("机构") or "").strip()
+        if org:
+            parts.append(f"机构:{org}")
+        rating = str(row.get("东财评级") or "").strip()
+        if rating:
+            parts.append(f"评级:{rating}")
+        industry = str(row.get("行业") or "").strip()
+        if industry:
+            parts.append(f"行业:{industry}")
+        summary = " | ".join(parts)
+        return build_news_row(
+            pub_date, title, link, summary,
+            "akshare_research_report", "akshare",
+        )
+
+    def _fetch_research_report(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取东方财富个股研报，写入 c3_fundamental.news_data。
+
+        调用 ak.stock_research_report_em(symbol) 逐只获取。
+        映射：报告名称→title，机构+评级+行业→summary，PDF链接→link，日期→pub_date
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.news_data"
+        columns = NEWS_DATA_COLUMNS
+        symbols = payload.symbols
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error="research_report 需提供 symbols 列表",
+            )
+            return
+
+        last_key = datetime.date.today().isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for idx, sym in enumerate(symbols):
+            code = str(sym).split(".")[0].zfill(6)
+            if (idx + 1) % 50 == 0:
+                self._log.info(f"research_report 进度: {idx+1}/{len(symbols)}")
+            try:
+                df = self._call_with_policy(
+                    ak.stock_research_report_em, policy, symbol=code,
+                )
+            except Exception as e:
+                self._log.debug(f"stock_research_report_em({code}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                parsed = self._parse_research_row(row)
+                if parsed:
+                    batch_rows.append(parsed)
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 21. 沪深港通北向资金（hk_connect_flow） ----
+
+    def _fetch_hk_connect_flow(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取沪深港通北向资金历史数据，写入 c1_market.hk_connect_flow。
+
+        调用 ak.stock_hsgt_hist_em(symbol="沪股通") 和 ak.stock_hsgt_hist_em(symbol="深股通")。
+        返回列：日期/当日成交净买额/买入成交额/卖出成交额/历史累计净买额/
+              当日资金流入/当日余额/持股市值/等
+
+        表结构 c1_market.hk_connect_flow：
+            trade_date, channel, net_buy_amount, buy_amount, sell_amount,
+            cumulative_net_buy, daily_inflow, daily_balance,
+            holding_market_value, data_source
+        """
+        import akshare as ak
+
+        table = "c1_market.hk_connect_flow"
+        columns = [
+            "trade_date", "channel", "net_buy_amount", "buy_amount",
+            "sell_amount", "cumulative_net_buy", "daily_inflow",
+            "daily_balance", "holding_market_value", "data_source",
+        ]
+        start_str = payload.start.isoformat()
+        end_str = payload.end.isoformat()
+        last_key = end_str
+        t0 = time.time()
+        batch_rows: list[tuple] = []
+
+        for channel in ("沪股通", "深股通"):
+            try:
+                df = self._call_with_policy(
+                    ak.stock_hsgt_hist_em, policy, symbol=channel,
+                )
+            except Exception as e:
+                self._log.warning(f"stock_hsgt_hist_em({channel}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                trade_date = self._norm_date_str(row.get("日期"))
+                if not trade_date:
+                    continue
+                if trade_date < start_str or trade_date > end_str:
+                    continue
+                batch_rows.append((
+                    trade_date,
+                    channel,
+                    safe_float(row.get("当日成交净买额")),
+                    safe_float(row.get("买入成交额")),
+                    safe_float(row.get("卖出成交额")),
+                    safe_float(row.get("历史累计净买额")),
+                    safe_float(row.get("当日资金流入")),
+                    safe_float(row.get("当日余额")),
+                    safe_float(row.get("持股市值")),
+                    "akshare",
+                ))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 22. 期货主力合约K线（futures_kline） ----
+
+    @staticmethod
+    def _parse_futures_kline_row(row, contract_sym: str, start_str: str, end_str: str) -> tuple | None:
+        """解析单行期货K线数据，不在日期范围内返回 None。"""
+        trade_date = AKShareProvider._norm_date_str(row.get("日期"))
+        if not trade_date or trade_date < start_str or trade_date > end_str:
+            return None
+        vol = safe_float(row.get("成交量"))
+        oi = safe_float(row.get("持仓量"))
+        return (
+            trade_date,
+            f"{trade_date} 00:00:00",
+            contract_sym,
+            safe_float(row.get("开盘价")),
+            safe_float(row.get("最高价")),
+            safe_float(row.get("最低价")),
+            safe_float(row.get("收盘价")),
+            int(vol) if vol is not None else 0,
+            None,  # amount 接口未提供
+            int(oi) if oi is not None else 0,
+            "1d",
+            "akshare",
+        )
+
+    def _fetch_futures_kline(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取期货主力合约K线，写入 c1_market.futures_kline。
+
+        1. 调用 ak.futures_display_main_sina() 获取当前主力合约列表
+        2. 对每个主力合约调用 ak.futures_main_sina(symbol) 获取历史K线
+        """
+        import akshare as ak
+
+        table = "c1_market.futures_kline"
+        columns = [
+            "trade_date", "timestamp", "symbol", "open", "high", "low",
+            "close", "volume", "amount", "open_interest", "period",
+            "data_source",
+        ]
+        start_str = payload.start.isoformat()
+        end_str = payload.end.isoformat()
+        last_key = end_str
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        # 步骤1：获取主力合约列表
+        try:
+            contracts_df = self._call_with_policy(
+                ak.futures_display_main_sina, policy,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0,
+                error=f"futures_display_main_sina 失败: {e}",
+            )
+            return
+
+        if contracts_df is None or len(contracts_df) == 0:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0,
+                error="futures_display_main_sina 返回空",
+            )
+            return
+
+        sym_col = "symbol" if "symbol" in contracts_df.columns else contracts_df.columns[0]
+        contract_list = [str(s) for s in contracts_df[sym_col].tolist() if s]
+        self._log.info(f"期货主力合约: {len(contract_list)} 个")
+
+        # 步骤2：逐合约获取K线
+        for idx, contract_sym in enumerate(contract_list):
+            if (idx + 1) % 20 == 0:
+                self._log.info(f"futures_kline 进度: {idx+1}/{len(contract_list)}")
+            try:
+                df = self._call_with_policy(
+                    ak.futures_main_sina, policy, symbol=contract_sym,
+                )
+            except Exception as e:
+                self._log.debug(f"futures_main_sina({contract_sym}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                parsed = self._parse_futures_kline_row(row, contract_sym, start_str, end_str)
+                if parsed:
+                    batch_rows.append(parsed)
+
+            if len(batch_rows) >= 500:
+                yield FetchResult(
+                    table=table, columns=columns, rows=batch_rows[:],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+                batch_rows.clear()
+
+            threading.Event().wait(0.5)
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
         )

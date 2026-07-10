@@ -52,14 +52,20 @@ log = logging.getLogger(__name__)
 # 依赖本地 RSSHub 实例（D:\RSSHub，pm2 守护，监听 localhost:1200）
 from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
 _DEFAULT_RSS_FEEDS = [
+    # 直连 RSS
     "https://36kr.com/feed",                              # 36氪（直连）
     "https://www.tmtpost.com/feed",                       # 钛媒体（直连）
-    f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",            # 华尔街见闻（本地RSSHub）
-    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/strategyreport",  # 东方财富-策略报告（本地RSSHub）
-    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/macresearch",     # 东方财富-宏观研究（本地RSSHub）
-    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/brokerreport",    # 东方财富-券商晨报（本地RSSHub）
-    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/industry",        # 东方财富-行业研报（本地RSSHub）
-    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/stock",           # 东方财富-个股研报（本地RSSHub）
+    # 本地 RSSHub 路由（D:\RSSHub，pm2 守护，监听 localhost:1200）
+    f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",            # 华尔街见闻
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/strategyreport",  # 东方财富-策略报告
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/macresearch",     # 东方财富-宏观研究
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/brokerreport",    # 东方财富-券商晨报
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/industry",        # 东方财富-行业研报
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/stock",           # 东方财富-个股研报
+    f"{DEFAULT_RSSHUB_URL}/yicai/news",                   # 第一财经
+    f"{DEFAULT_RSSHUB_URL}/caixin/latest",                # 财新网
+    f"{DEFAULT_RSSHUB_URL}/36kr/newsflashes",             # 36氪快讯
+    f"{DEFAULT_RSSHUB_URL}/jin10/index",                  # 金十数据
 ]
 
 

@@ -145,9 +145,17 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
      {"capability": "news_data"},
      ["https://36kr.com/feed",
       f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",
-      f"{DEFAULT_RSSHUB_URL}/eastmoney/report/industry",
-      f"{DEFAULT_RSSHUB_URL}/eastmoney/report/stock"],
+      f"{DEFAULT_RSSHUB_URL}/yicai/news",
+      f"{DEFAULT_RSSHUB_URL}/caixin/latest"],
      None, None),
+
+    # akshare 研报/北向资金/期货
+    ("akshare", "research_report", "c3_fundamental.news_data",
+     {"capability": "research_report"}, ["000001.SZ", "600000.SH"], None, None),
+    ("akshare", "hk_connect_flow", "c1_market.hk_connect_flow",
+     {"capability": "hk_connect_flow"}, None, None, None),
+    ("akshare", "futures_kline", "c1_market.futures_kline",
+     {"capability": "futures_kline"}, None, None, None),
 
     # tdx 通达信板块数据
     ("tdx", "industry_class", "c3_fundamental.industry_class",

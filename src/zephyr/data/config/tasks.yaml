@@ -275,7 +275,7 @@ tasks:
     incremental: true
     dependencies: []
     capability: news_data
-    symbols: null  # 默认 8 个财经 RSS 源（2直连+6 RSSHub）
+    symbols: null  # 默认 12 个财经 RSS 源（2直连+10 RSSHub）
     extra:
       description: "财经新闻增量（RSS 爬虫）"
 
@@ -736,7 +736,7 @@ tasks:
     capability: news_data
     symbols: null
     extra:
-      description: "RSS财经新闻增量（36氪/钛媒体/华尔街见闻/东方财富5类研报：策略/宏观/券商/行业/个股）"
+      description: "RSS财经新闻增量（36氪/钛媒体/华尔街见闻/东方财富5类研报/第一财经/财新网/36氪快讯/金十数据）"
 
   - task_id: news_stock_em_incremental
     table: c3_fundamental.news_data
@@ -792,3 +792,37 @@ tasks:
     symbols: null
     extra:
       description: "AKShare股票新闻增量（ak.stock_news_global_em）"
+
+  # --- 研报 & 北向资金 & 期货主力合约（2026-07-11 新增）---
+  - task_id: research_report_incremental
+    table: c3_fundamental.news_data
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: research_report
+    symbols: null
+    extra:
+      description: "AKShare东方财富个股研报增量（ak.stock_research_report_em，含机构评级+盈利预测+PDF链接）"
+
+  - task_id: hk_connect_flow_full
+    table: c1_market.hk_connect_flow
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: hk_connect_flow
+    symbols: null
+    extra:
+      description: "AKShare沪深港通北向资金（ak.stock_hsgt_hist_em，沪股通+深股通历史净买额/余额/持股市值）"
+
+  - task_id: futures_kline_full
+    table: c1_market.futures_kline
+    source: akshare
+    schedule: weekly
+    incremental: true
+    dependencies: []
+    capability: futures_kline
+    symbols: null
+    extra:
+      description: "AKShare期货主力合约K线（ak.futures_main_sina，82个主力合约历史K线，含持仓量）"
