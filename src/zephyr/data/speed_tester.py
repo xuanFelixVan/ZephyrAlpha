@@ -144,7 +144,9 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
     ("rss", "news_data", "c3_fundamental.news_data",
      {"capability": "news_data"},
      ["https://36kr.com/feed",
-      f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news"],
+      f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",
+      f"{DEFAULT_RSSHUB_URL}/eastmoney/report/industry",
+      f"{DEFAULT_RSSHUB_URL}/eastmoney/report/stock"],
      None, None),
 
     # tdx 通达信板块数据
