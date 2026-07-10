@@ -1476,13 +1476,14 @@ class MiniQMTProvider(DataSourceBase):
         payload: FetchPayload,
         policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
-        """抓取分笔（Tick）数据。
+        """抓取分笔（Tick）数据，写入 c1_market.tick_history。
 
         使用 xtdata.get_market_data_ex(period='tick') 获取分笔行情。
         tick 数据量很大，每次只取 1 只股票 1 天。
-        表 schema: (trade_date, timestamp, symbol, price, volume, amount,
-                    bid_price, ask_price, bid_volume, ask_volume, data_source)
-        market_type / quality_flag 有 DEFAULT，不返回。
+        统一写入 tick_history 表（百度云历史 + QMT 增量），百度云历史无 bid/ask 列为 NULL。
+        表 schema: (trade_date, timestamp, symbol, market_type, price, volume,
+                    amount, direction, data_source, bid_price, ask_price,
+                    bid_volume, ask_volume, quality_flag)
 
         Args:
             payload: 下载请求
@@ -1493,10 +1494,11 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.tick_data"
+        table = payload.table or "c1_market.tick_history"
         columns = [
-            "trade_date", "timestamp", "symbol", "price", "volume", "amount",
-            "bid_price", "ask_price", "bid_volume", "ask_volume", "data_source",
+            "trade_date", "timestamp", "symbol", "market_type", "price",
+            "volume", "amount", "direction", "data_source",
+            "bid_price", "ask_price", "bid_volume", "ask_volume",
         ]
 
         try:
@@ -1541,6 +1543,10 @@ class MiniQMTProvider(DataSourceBase):
     def _parse_tick_rows(self, df, stock_code: str, end_date) -> list[tuple]:
         """解析 tick DataFrame 为行列表（降低 _fetch_tick_data 复杂度）。
 
+        行格式对齐 tick_history 表：
+        (trade_date, timestamp, symbol, market_type, price, volume, amount,
+         direction, data_source, bid_price, ask_price, bid_volume, ask_volume)
+
         Args:
             df: xtdata.get_market_data_ex 返回的 DataFrame
             stock_code: 标的代码
@@ -1552,6 +1558,7 @@ class MiniQMTProvider(DataSourceBase):
         if df is None or len(df) == 0:
             return []
         symbol = self._stock_to_symbol(stock_code)
+        market_type = self._detect_market_type(stock_code)
         rows: list[tuple] = []
         for ts, row in df.iterrows():
             s = str(int(ts))
@@ -1561,14 +1568,35 @@ class MiniQMTProvider(DataSourceBase):
             vol = int(vol) if vol is not None else None
             amt = self.safe_float(row.get("amount"))
             rows.append((
-                trade_date, timestamp, symbol, price, vol, amt,
+                trade_date, timestamp, symbol, market_type, price, vol, amt,
+                "",  # direction: QMT 不提供买卖方向
+                "miniqmt",
                 self.safe_float(row.get("bid_price") or row.get("bid1")),
                 self.safe_float(row.get("ask_price") or row.get("ask1")),
                 self.safe_float(row.get("bid_volume") or row.get("bidSize1")),
                 self.safe_float(row.get("ask_volume") or row.get("askSize1")),
-                "miniqmt",
             ))
         return rows
+
+    @staticmethod
+    def _detect_market_type(stock_code: str) -> str:
+        """根据代码后缀和前缀推断 market_type。
+
+        .BJ → stock_bj；指数(000/399.SH/SZ) → index；
+        ETF(15/51/52) → etf；可转债(11/12) → cb；其余 → stock。
+        """
+        code = stock_code.split(".")[0].zfill(6)
+        suffix = stock_code.split(".")[-1] if "." in stock_code else ""
+        if suffix == "BJ":
+            return "stock_bj"
+        prefix = code[:3]
+        if prefix in ("399",) or (prefix == "000" and suffix == "SH"):
+            return "index"
+        if prefix[:2] in ("15", "51", "52"):
+            return "etf"
+        if prefix[:2] in ("11", "12"):
+            return "cb"
+        return "stock"
 
     @staticmethod
     def _format_tick_timestamp(s: str, end_date) -> tuple[str, str]:
