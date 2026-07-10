@@ -42,8 +42,10 @@ from ..policy_registry import SourcePolicy
 
 log = logging.getLogger(__name__)
 
-# 财联社电报（通过RSSHub公共实例，财联社直连API需sign加密）
-_CLS_RSSHUB_URL = "https://rsshub.app/cls/telegraph"
+# 财联社电报（通过本地 RSSHub 实例，财联社直连API需sign加密）
+# 部署：D:\RSSHub，npm start，监听 localhost:1200
+from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
+_CLS_RSSHUB_URL = f"{DEFAULT_RSSHUB_URL}/cls/telegraph"
 _CLS_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
 }
@@ -65,7 +67,7 @@ class ClsProvider(DataSourceBase):
         thread_safety="shared",
         rate_limit_default=30,
         capabilities=["news_data"],
-        known_issues=["无认证", "高频请求可能被限制", "RSSHub公共实例国内超时，需自建实例"],
+        known_issues=["无认证", "高频请求可能被限制", "依赖本地RSSHub实例(D:\RSSHub)"],
     )
 
     # ---- 生命周期 ----
@@ -151,13 +153,27 @@ class ClsProvider(DataSourceBase):
     def _parse_cls_news(items: list) -> list[tuple]:
         """解析RSSHub财联社电报条目为统一格式行 (pub_date, title, link, summary, source)。
 
-        RSSHub items 字段：pubDate(ISO8601)/title/link/description。
+        本地 RSSHub 返回 JSON Feed 格式：
+        - date_published (ISO8601) / pubDate
+        - title
+        - url / id / link
+        - summary / content_html / description
         """
         rows: list[tuple] = []
         for item in items:
-            pub_date = str(item.get("pubDate") or item.get("published") or "")
+            pub_date = str(
+                item.get("date_published")
+                or item.get("pubDate")
+                or item.get("published")
+                or ""
+            )
             title = str(item.get("title") or "")
-            link = str(item.get("link") or item.get("url") or "")
-            summary = str(item.get("description") or item.get("summary") or item.get("content") or "")
+            link = str(item.get("url") or item.get("id") or item.get("link") or "")
+            summary = str(
+                item.get("summary")
+                or item.get("content_html")
+                or item.get("description")
+                or ""
+            )
             rows.append((pub_date, title, link, summary, "cls"))
         return rows

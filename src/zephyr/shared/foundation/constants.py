@@ -83,6 +83,9 @@ SEMVER_PATTERN: Final[re.Pattern] = re.compile(
 # 5.160.9 修复：Ollama URL 集中化为共享常量（原散落 6 文件，DEFAULT_OLLAMA_URL 重复定义 3 处）
 DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
+# RSSHub 本地实例 URL（部署在 D:\RSSHub，npm start，监听 1200 端口）
+DEFAULT_RSSHUB_URL: Final[str] = os.getenv("RSSHUB_BASE_URL", "http://localhost:1200")
+
 # Lazy imports for trading-domain symbols (upward dependency from L0 shared -> L3 trading)
 _TRADING_SYMBOLS = {
     "ETF": "zephyr.trading.trading_contracts.market.instrument",
@@ -121,6 +124,7 @@ __all__ = [
     "COLD_PATH_LATENCY_BUDGET_MS",
     "COLD_PATH_PARTIAL_ACTIVATED",
     "DEFAULT_OLLAMA_URL",
+    "DEFAULT_RSSHUB_URL",
     "ETF",
     "FX",
     "HOT_PATH_ACTIVATED",
