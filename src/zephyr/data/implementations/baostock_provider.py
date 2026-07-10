@@ -151,7 +151,10 @@ class BaostockProvider(DataSourceBase):
     def _fetch_index_constituent(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取沪深300成分股（bs.query_hs300_stocks）。"""
+        """获取沪深300成分股（bs.query_hs300_stocks）。
+
+        baostock API 变更：返回 3 列（updateDate/code/code_name），无 weight 列。
+        """
         bs = self._tls.bs
         table = payload.table or "c1_market.index_constituent"
         columns = ["update_date", "code", "code_name", "weight"]
@@ -161,8 +164,8 @@ class BaostockProvider(DataSourceBase):
             rows: list[tuple] = []
             while rs.error_code == "0" and rs.next():
                 item = rs.get_row_data()
-                # update_date, code, code_name, weight
-                rows.append((item[0], item[1], item[2], float(item[3]) if item[3] else None))
+                # API 变更后返回 3 列: updateDate, code, code_name（无 weight）
+                rows.append((item[0], item[1], item[2], None))
             self._log.info(f"沪深300成分股获取完成，{len(rows)} 行")
             yield FetchResult(
                 table=table, columns=columns, rows=rows,
@@ -181,7 +184,11 @@ class BaostockProvider(DataSourceBase):
     def _fetch_trade_calendar(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取交易日历（bs.query_trade_date）。"""
+        """获取交易日历（bs.query_trade_dates）。
+
+        baostock API 变更：方法名 query_trade_date → query_trade_dates（加 s）。
+        返回 2 列: calendar_date, is_trading_day。
+        """
         bs = self._tls.bs
         table = payload.table or "c1_market.trade_calendar"
         columns = ["calendar_date", "is_trading_day"]
@@ -190,13 +197,13 @@ class BaostockProvider(DataSourceBase):
             start = payload.start.isoformat() if payload.start else "2010-01-01"
             end = payload.end.isoformat() if payload.end else datetime.date.today().isoformat()
             rs = self._call_with_policy(
-                bs.query_trade_date, policy, start_date=start, end_date=end
+                bs.query_trade_dates, policy, start_date=start, end_date=end
             )
             rows: list[tuple] = []
             while rs.error_code == "0" and rs.next():
                 item = rs.get_row_data()
-                # calendar_date, is_trading_day
-                rows.append((item[1], int(item[2]) if item[2] else 0))
+                # API 变更后返回 2 列: calendar_date(item[0]), is_trading_day(item[1])
+                rows.append((item[0], int(item[1]) if item[1] else 0))
             self._log.info(f"交易日历获取完成，{len(rows)} 行")
             yield FetchResult(
                 table=table, columns=columns, rows=rows,

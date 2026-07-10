@@ -62,10 +62,14 @@ class IFindProvider(DataSourceBase):
         known_issues=["月度配额-4318", "试用账号不支持沪深港通"],
     )
 
-    # iFind 估值指标串（PE/PB/PS/PCF_TTM）
-    _VALUATION_INDICATORS = "ths_pe_stock;ths_pb_stock;ths_ps_stock;ths_pcf_stock_ttm"
-    # iFind 估值参数模板（100=静态），4 个指标对应 4 段参数
-    _VALUATION_PARAM_TEMPLATE = "{date},100;{date},100;{date},100;{date},100"
+    # iFind 估值指标列表（THS_BD 不支持分号分隔多指标，需逐个查询）
+    # (iFind指标名, 目标列名)
+    _VALUATION_INDICATOR_LIST = [
+        ("ths_pe_stock", "pe_ttm"),
+        ("ths_pb_stock", "pb_mrq"),
+        ("ths_ps_stock", "ps_ttm"),
+        ("ths_pcf_stock_ttm", "pcf_ncf_ttm"),
+    ]
 
     # 估值表列顺序
     _VALUATION_COLUMNS = ["trade_date", "symbol", "pe_ttm", "pb_mrq", "ps_ttm", "pcf_ncf_ttm"]
@@ -217,6 +221,8 @@ class IFindProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """拉取日频估值（PE/PB/PS/PCF），写入 c1_market.daily_valuation。
 
+        THS_BD 不支持分号分隔多指标（返回 -209），需逐个指标单独查询后合并。
+
         输入：
             payload.symbols: ts_code 列表，如 ["000001.SZ","000002.SZ"]
             payload.extra["snapshot_dates"]: 日期字符串列表，如 ["2024-12-31","2024-06-30"]
@@ -247,66 +253,60 @@ class IFindProvider(DataSourceBase):
         start_ts = time.time()
 
         for date in snapshot_dates:
-            params = self._VALUATION_PARAM_TEMPLATE.format(date=date)
-
             for ts_code in symbols:
-                # 调用 SDK（自动限流 + 重试）
-                try:
-                    raw = self._call_with_policy(
-                        THS_BasicData, policy,
-                        ts_code, self._VALUATION_INDICATORS, params,
-                    )
-                except Exception as e:
-                    self._log.error(f"THS_BasicData 调用异常 {ts_code}@{date}: {e}")
+                # THS_BD 不支持分号多指标，逐个查询
+                vals: dict[str, float] = {}
+                fatal_error = None
+                for ind_name, col_name in self._VALUATION_INDICATOR_LIST:
+                    params = f"{date},100"
+                    try:
+                        raw = self._call_with_policy(
+                            THS_BasicData, policy,
+                            ts_code, ind_name, params,
+                        )
+                    except Exception as e:
+                        self._log.error(f"THS_BasicData 调用异常 {ts_code}@{date}/{ind_name}: {e}")
+                        fatal_error = str(e)
+                        break
+
+                    # 检查 iFind 错误码
+                    is_error, code, msg = self._check_ifind_error(raw)
+                    if is_error:
+                        if code in (-4318, -4309):
+                            fatal_error = f"iFind配额耗尽: {code}"
+                        else:
+                            fatal_error = f"iFind错误: {code} {msg}".strip()
+                        self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
+                        break
+
+                    # 转 DataFrame 提取值
+                    try:
+                        df = THS_Trans2DataFrame(raw)
+                        if df is not None and len(df) > 0:
+                            vals[col_name] = self.safe_float(df.iloc[0].get(ind_name))
+                    except Exception as e:
+                        self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}@{date}/{ind_name}: {e}")
+
+                # 致命错误（配额/连接）→ yield error 并 return
+                if fatal_error and ("配额" in fatal_error or "-4318" in fatal_error):
                     yield FetchResult(
                         table=self._VALUATION_TABLE,
                         columns=self._VALUATION_COLUMNS,
                         rows=[],
                         last_key=date,
                         elapsed_sec=time.time() - start_ts,
-                        error=str(e),
+                        error=fatal_error,
                     )
                     return
-
-                # 检查 iFind 错误码（配额耗尽等），错误则终止
-                is_error, code, msg = self._check_ifind_error(raw)
-                if is_error:
-                    if code in (-4318, -4309):
-                        err_msg = f"iFind配额耗尽: {code}"
-                    else:
-                        err_msg = f"iFind错误: {code} {msg}".strip()
-                    self._log.error(f"{ts_code}@{date} {err_msg}")
-                    yield FetchResult(
-                        table=self._VALUATION_TABLE,
-                        columns=self._VALUATION_COLUMNS,
-                        rows=[],
-                        last_key=date,
-                        elapsed_sec=time.time() - start_ts,
-                        error=err_msg,
-                    )
-                    return
-
-                # 转换为 DataFrame
-                try:
-                    df = THS_Trans2DataFrame(raw)
-                except Exception as e:
-                    self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}@{date}: {e}")
-                    continue
-
-                # 从 DataFrame 提取 4 个指标值
-                pe = pb = ps = pcf = None
-                try:
-                    if df is not None and len(df) > 0:
-                        row = df.iloc[0]
-                        pe = self.safe_float(row.get("ths_pe_stock"))
-                        pb = self.safe_float(row.get("ths_pb_stock"))
-                        ps = self.safe_float(row.get("ths_ps_stock"))
-                        pcf = self.safe_float(row.get("ths_pcf_stock_ttm"))
-                except Exception as e:
-                    self._log.warning(f"提取指标值失败 {ts_code}@{date}: {e}")
 
                 symbol = self._ts_code_to_symbol(ts_code)
-                batch_rows.append((date, symbol, pe, pb, ps, pcf))
+                batch_rows.append((
+                    date, symbol,
+                    vals.get("pe_ttm"),
+                    vals.get("pb_mrq"),
+                    vals.get("ps_ttm"),
+                    vals.get("pcf_ncf_ttm"),
+                ))
 
                 # 每 500 行 yield 一次
                 if len(batch_rows) >= self._BATCH_SIZE:
@@ -320,7 +320,7 @@ class IFindProvider(DataSourceBase):
                     batch_rows.clear()
                     start_ts = time.time()
 
-            # 当前 date 处理完，yield 剩余行（避免跨 date 拼批）
+            # 当前 date 处理完，yield 剩余行
             if batch_rows:
                 yield FetchResult(
                     table=self._VALUATION_TABLE,
