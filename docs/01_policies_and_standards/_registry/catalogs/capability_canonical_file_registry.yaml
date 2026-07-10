@@ -1502,6 +1502,23 @@ capabilities:
       - make_bare_sql_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: ch_batch_size_gate
+    aliases:
+      - CH-BATCH-SIZE
+      - ch-batch-size
+      - make_ch_batch_size_gate
+      - ch_batch_write_prevention
+    description: >-
+      CH 批量写入防回退门禁(CH-BATCH-SIZE, #ARCH-CH-004 防复发). AST 检测
+      staged .py 文件中 write_result 在 for/async for 循环体内直接调用
+      (无 BufferedWriter 中间层). 违反裁定 #ARCH-CH-003 批量聚合层要求.
+      AST parent map 精确检测, tests/ 豁免, ch_writer.py/buffered_writer.py
+      自身豁免, ast.parse 失败 fail-open, git diff 不可达 fail-open,
+      检出违规则 fail-closed (passed=False). priority=36.
+    integrity_anchors:
+      - make_ch_batch_size_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: god_class_gate
     aliases:
       - NO-GOD-CLASS
@@ -4150,6 +4167,10 @@ creation_tokens:
     token: "auto-high-complexity-gate-20260709"
     created_by: "session-sess-15832-20260709055056"
     capability: "high_complexity_gate"
+  - file: "src/zephyr/governance/commit_gates/ch_batch_size_gate.py"
+    token: "auto-ch-batch-size-gate-20260710"
+    created_by: "session-sess-14956-20260710111553"
+    capability: "ch_batch_size_gate"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
   - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"

@@ -932,7 +932,7 @@ akshare:
 
 **裁定**：蓝图中的关键约束必须有运行时门禁检测违规，不能依赖 AI 自觉
 
-**施工内容**：新增 CH-BATCH-SIZE gate（priority=34），检测 `ch_writer.write_result` 在 for 循环内直接调用（无 BufferedWriter 中间层）时阻断
+**施工内容**：新增 CH-BATCH-SIZE gate（priority=36，原定 34 与 datetime_now_forbidden_gate 冲突），AST 检测 `ch_writer.write_result` 在 for/async for 循环内直接调用（无 BufferedWriter 中间层）时阻断。豁免 tests/、ch_writer.py、buffered_writer.py。已交付：`ch_batch_size_gate.py` + 38 单元测试 + git_commit_gateway 注册 + capability 登记。
 
 ### §18.5 裁定 #ARCH-CH-005：ch_writer 混合传输架构（clickhouse-driver TCP + WSL fallback）
 
@@ -966,7 +966,7 @@ akshare:
 | 阶段1 止血 | P0 | BufferedWriter + scheduler/_backfill 改造 + 引擎统一 | ✅ 完成 |
 | 阶段2 治本 | P1 | OPTIMIZE TABLE 清理 parts + 幂等策略（get_table_engine 自动检测） | ✅ 完成 |
 | 阶段3 长效 | P2 | ch_writer 混合传输（clickhouse-driver TCP + WSL fallback） | ✅ 完成 |
-| 阶段4 防线 | P2 | CH-BATCH-SIZE gate 防回退 | ⬜ 待施工 |
+| 阶段4 防线 | P2 | CH-BATCH-SIZE gate 防回退 | ✅ 完成 |
 
 ---
 
