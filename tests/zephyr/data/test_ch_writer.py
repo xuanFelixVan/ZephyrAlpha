@@ -22,6 +22,8 @@ from src.zephyr.data.ch_writer import (
     delete_where,
     query,
     _get_insert_columns,
+    get_table_engine,
+    is_replacing_engine,
 )
 from src.zephyr.data.provider_base import FetchResult
 
@@ -259,3 +261,46 @@ class TestGetInsertColumns:
         with patch("src.zephyr.data.ch_writer.query", return_value=""):
             cols = _get_insert_columns("nonexistent")
         assert cols == "*"
+
+
+class TestGetTableEngine:
+    """get_table_engine / is_replacing_engine 测试（mock query）。"""
+
+    def setup_method(self):
+        """每个测试前清空引擎缓存，避免测试间污染。"""
+        import src.zephyr.data.ch_writer as cw
+        cw._table_engine_cache.clear()
+
+    def test_replacing_engine(self):
+        """ReplacingMergeTree 引擎正确识别。"""
+        with patch("src.zephyr.data.ch_writer.query", return_value="ReplacingMergeTree\n"):
+            engine = get_table_engine("c1_market.adj_factor")
+        assert engine == "ReplacingMergeTree"
+        assert is_replacing_engine("c1_market.adj_factor") is True
+
+    def test_plain_mergetree(self):
+        """MergeTree 引擎识别为非 replacing。"""
+        with patch("src.zephyr.data.ch_writer.query", return_value="MergeTree\n"):
+            engine = get_table_engine("c1_market.kline_daily")
+        assert engine == "MergeTree"
+        assert is_replacing_engine("c1_market.kline_daily") is False
+
+    def test_replicated_replacing(self):
+        """ReplicatedReplacingMergeTree 也算 replacing 族。"""
+        with patch("src.zephyr.data.ch_writer.query", return_value="ReplicatedReplacingMergeTree\n"):
+            assert is_replacing_engine("c1_market.replicated_tbl") is True
+
+    def test_engine_cache(self):
+        """第二次查询命中缓存，不再次调用 query。"""
+        with patch("src.zephyr.data.ch_writer.query", return_value="ReplacingMergeTree\n") as mock_q:
+            get_table_engine("c1_market.cached_tbl")
+            get_table_engine("c1_market.cached_tbl")
+        # query 只被调用一次（缓存命中）
+        assert mock_q.call_count == 1
+
+    def test_empty_engine(self):
+        """查询失败（空字符串）返回空，is_replacing 返回 False。"""
+        with patch("src.zephyr.data.ch_writer.query", return_value=""):
+            engine = get_table_engine("nonexistent.table")
+        assert engine == ""
+        assert is_replacing_engine("nonexistent.table") is False
