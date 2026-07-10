@@ -126,30 +126,21 @@ class TDXProvider(DataSourceBase):
     def _fetch_industry_class(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取板块分类列表（client.get_stock_list_in_sector）。
+        """获取板块分类列表（client.block）。
 
-        获取所有板块名称 + 每个板块的成分股。
+        mootdx block() 返回 DataFrame: [blockname, block_type, code_index, code]。
         """
         table = payload.table or "c3_fundamental.industry_class"
         columns = ["sector_code", "sector_name", "stock_code", "stock_name"]
         t0 = time.time()
         try:
-            # 获取板块列表
-            sectors = self._call_with_policy(
-                self._client.get_stock_list_in_sector,
-                policy,
-                sector="",
-            )
+            df = self._call_with_policy(self._client.block, policy)
             rows: list[tuple] = []
-            if sectors:
-                for sector_info in sectors:
-                    # mootdx 返回格式可能为 (板块名, [成分股列表])
-                    sector_name = sector_info[0] if isinstance(sector_info, (list, tuple)) else str(sector_info)
-                    stock_list = sector_info[1] if isinstance(sector_info, (list, tuple)) and len(sector_info) > 1 else []
-                    for stock in stock_list:
-                        stock_code = stock[0] if isinstance(stock, (list, tuple)) else str(stock)
-                        stock_name = stock[1] if isinstance(stock, (list, tuple)) and len(stock) > 1 else ""
-                        rows.append((sector_name, sector_name, stock_code, stock_name))
+            if df is not None and not df.empty:
+                # 列提取替代 iterrows（38万行性能）
+                blocknames = df["blockname"].astype(str).tolist()
+                codes = df["code"].astype(str).tolist()
+                rows = list(zip([""] * len(df), blocknames, codes, [""] * len(df)))
 
             self._log.info(f"板块分类获取完成，{len(rows)} 行")
             yield FetchResult(
@@ -171,9 +162,8 @@ class TDXProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """获取板块指数K线（client.index_bars）。
 
-        通达信板块代码需从 payload.symbols 传入。
-        category: 4=日线
-        market: 0=深圳, 1=上海
+        mootdx index_bars(symbol, frequency=9, start, offset) 返回 DataFrame。
+        frequency: 9=日线。
         """
         table = payload.table or "c1_market.sector_kline"
         columns = ["trade_date", "code", "open", "high", "low", "close", "volume", "amount"]
@@ -183,23 +173,20 @@ class TDXProvider(DataSourceBase):
         for code in symbols:
             t0 = time.time()
             try:
-                # 判断市场：通达信代码 sh/sz 前缀
-                market = 1 if code.startswith("sh") or code.startswith("SH") else 0
-                raw_code = code.split(".")[0] if "." in code else code
+                # 提取纯代码：sh.000001 -> 000001
+                raw_code = code.split(".")[-1] if "." in code else code
 
                 bars = self._call_with_policy(
                     self._client.index_bars,
                     policy,
-                    category=4,       # 日线
-                    market=market,
-                    code=raw_code,
+                    symbol=raw_code,
+                    frequency=9,     # 日线
                     start=0,
-                    count=count,
+                    offset=count,
                 )
                 rows: list[tuple] = []
-                if bars:
-                    for bar in bars:
-                        # mootdx 返回 dict 列表
+                if bars is not None and not bars.empty:
+                    for _, bar in bars.iterrows():
                         rows.append((
                             str(bar.get("datetime", "")),
                             code,
