@@ -4590,6 +4590,12 @@ creation_tokens:
     created_by: "session-sess-11488-20260709185510"
     capability: "app_config_management"
 
+  # --- ARCH-CH-003 BufferedWriter 批量聚合层（2026-07-10）---
+  - file: "src/zephyr/data/buffered_writer.py"
+    token: "auto-buffered-writer-20260710"
+    created_by: "session-sess-21108-20260710100906"
+    capability: "ch_batch_write"
+
 # ============================================================================
 # 维护日志
 # ============================================================================

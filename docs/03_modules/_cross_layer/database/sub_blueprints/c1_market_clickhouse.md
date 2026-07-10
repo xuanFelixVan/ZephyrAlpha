@@ -47,8 +47,8 @@ tags: [clickhouse, market-data, warehouse, c1, backtest, replay, preload, ddl-as
 priority: P1
 runtime_plane: warm
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 # C1 market_clickhouse 行情仓库施工蓝图
@@ -300,13 +300,19 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 ### §4.0 ClickHouse 引擎策略
 
+> **架构裁定 #ARCH-CH-002（2026-07-10）**：废弃"全部 MergeTree"策略，统一为 `ReplacingMergeTree`。
+> 原蓝图设计"数据源唯一不需要去重"的假设在增量回填场景不成立（同一日期重复下载是常态）；
+> "先删后插"在 5204 只股票场景 = 5204 次 ALTER DELETE mutation + 5204 次 INSERT = 双倍 data parts。
+> 详见 MOD-L00-004 §18.2 裁定记录。
+
 | 策略项 | 设计 | 理由 |
 |--------|------|------|
-| 引擎 | 全部 MergeTree | 数据源唯一（D_DATA），不需要 ReplacingMergeTree 去重 |
+| 引擎 | **全部 ReplacingMergeTree**（裁定 #ARCH-CH-002） | 直接 INSERT，CH 后台去重，零 mutation 开销；增量回填幂等 |
 | 分区策略 | PARTITION BY toYYYYMMDD(trade_date)（高频表）/ toYYYYMM(trade_date)（日频表） | 按天/月分区，方便分区裁剪和 TTL |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp)（高频）/ ORDER BY (symbol, trade_date)（日频） | 回测主要查单只股票历史数据，symbol 前缀 |
 | TTL | tick_data/index_quote 保留 90 天后归档 Parquet | 高频数据体积大，超期归档 |
 | 数据类型 | Decimal(18,4) 价格 / UInt64 成交量 / LowCardinality(String) 枚举 | ClickHouse 推荐类型 |
+| 批量写入 | **BufferedWriter 强制攒批**（≥ 50000 行或 ≥ 30 秒触发）（裁定 #ARCH-CH-003） | 每次 INSERT 创建 1 个 data part，逐个写入导致 parts 爆炸 |
 
 ### §4.1 tick_data（3秒Tick — replay模式）
 

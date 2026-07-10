@@ -44,6 +44,7 @@ from zephyr.data.progress_store import ProgressStore, get_store
 from zephyr.data.task_queue import TaskQueue, SUCCESS, FAILED, PENDING, RUNNING
 from zephyr.data.alerter import Alerter, LEVEL_ERROR, LEVEL_CRITICAL
 from zephyr.data import ch_writer
+from zephyr.data.buffered_writer import BufferedWriter
 from zephyr.data.metrics import IntegratorMetrics, get_metrics
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -334,20 +335,20 @@ class IntegratorScheduler:
         latest_key = last_key or ""
 
         try:
-            # Provider.fetch -> FetchResult 迭代器
+            # BufferedWriter 批量聚合写入（裁定 #ARCH-CH-003）：
+            # 攒批后一次性 write_tsv，避免逐个 FetchResult = 1 次 INSERT 导致 data parts 爆炸
+            writer = BufferedWriter(table)
             for result in provider.fetch(payload, policy):
                 if result.error:
                     last_error = result.error
                     log.error("任务 %s FetchResult.error: %s", task_id, result.error)
                     break
 
-                # 写入 ClickHouse
-                if result.rows:
-                    ok = ch_writer.write_result(result)
-                    if not ok:
-                        last_error = f"ClickHouse 写入失败: {result.table}"
-                        log.error("任务 %s CH写入失败", task_id)
-                        break
+                # 攒批写入 ClickHouse（达 50000 行或 30 秒自动 flush）
+                if not writer.add(result):
+                    last_error = f"ClickHouse 写入失败: {result.table}"
+                    log.error("任务 %s CH写入失败", task_id)
+                    break
 
                 total_rows += result.rows_fetched
                 if result.last_key:
@@ -357,6 +358,11 @@ class IntegratorScheduler:
                 self._progress_store.save_progress(
                     task_id, source, latest_key, "RUNNING", total_rows
                 )
+
+            # flush 缓冲区残留数据
+            if last_error is None and not writer.flush():
+                last_error = f"ClickHouse 写入失败(flush): {table}"
+                log.error("任务 %s CH flush 失败", task_id)
 
             # 完成
             task_elapsed = time.time() - task_start_ts
