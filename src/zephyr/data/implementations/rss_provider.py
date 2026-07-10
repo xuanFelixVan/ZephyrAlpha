@@ -47,10 +47,13 @@ from ..policy_registry import SourcePolicy
 log = logging.getLogger(__name__)
 
 
-# 默认财经 RSS 源（国内可访问）
+# 默认财经 RSS 源（国内可访问 + 本地 RSSHub 路由）
+# 依赖本地 RSSHub 实例（D:\RSSHub，npm start，监听 localhost:1200）
+from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
 _DEFAULT_RSS_FEEDS = [
-    "https://36kr.com/feed",         # 36氪（实测可访问）
-    "https://www.tmtpost.com/feed",  # 钛媒体（实测可访问）
+    "https://36kr.com/feed",                              # 36氪（直连）
+    "https://www.tmtpost.com/feed",                       # 钛媒体（直连）
+    f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",            # 华尔街见闻（本地RSSHub）
 ]
 
 

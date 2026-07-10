@@ -37,6 +37,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from zephyr.data.provider_base import FetchPayload, FetchResult
+from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
 
 log = logging.getLogger(__name__)
 
@@ -142,8 +143,8 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
     # rss 财经新闻（symbols_override 传 RSS feed URL，非股票代码）
     ("rss", "news_data", "c3_fundamental.news_data",
      {"capability": "news_data"},
-     ["https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC&region=US&lang=en-US",
-      "https://www.cnbc.com/id/100003114/device/rss/rss.html"],
+     ["https://36kr.com/feed",
+      f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news"],
      None, None),
 
     # tdx 通达信板块数据
