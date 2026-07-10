@@ -12,12 +12,12 @@ supersedes:
 depends_on:
   - "MOD-L00-002 数据源操作手册（策略参数来源）"
   - "MOD-L00-003 数据获取需求清单（任务清单来源）"
-construction_progress: stage3_done
+construction_progress: stage4_done
 language: zh
 description: 统一管理多个数据源的自动下载——Provider 抽象 + per-source 策略注册表 + APScheduler 调度编排 + 进度/告警统一管理
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 # 数据源集成器蓝图（MOD-L00-004）
