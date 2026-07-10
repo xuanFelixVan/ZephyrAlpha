@@ -136,15 +136,14 @@ class TickFlowProvider(DataSourceBase):
         """获取美股日K线（TickFlow free klines.get）。
 
         每个标的作为一批 yield FetchResult。
-        免费版仅支持 A 股日K，美股可能返回 0 行。
+        免费版支持 A股/美股/港股日K线，用 period+count 参数（不支持 start_time/end_time）。
         """
         table = payload.table or "c1_market.us_daily_kline"
         columns = ["trade_date", "code", "open", "high", "low", "close", "volume"]
         symbols = payload.symbols or _DEFAULT_US_SYMBOLS
         start = (payload.start or datetime.date.today() - datetime.timedelta(days=365))
         end = payload.end or datetime.date.today()
-        start_ts = int(datetime.datetime(start.year, start.month, start.day).timestamp())
-        end_ts = int(datetime.datetime(end.year, end.month, end.day).timestamp())
+        count = max((end - start).days, 1)
 
         for symbol in symbols:
             t0 = time.time()
@@ -152,9 +151,9 @@ class TickFlowProvider(DataSourceBase):
                 df = self._call_with_policy(
                     self._client.klines.get,
                     policy,
-                    symbol=symbol,
-                    start_time=start_ts,
-                    end_time=end_ts,
+                    symbol,
+                    period="1d",
+                    count=count,
                     as_dataframe=True,
                 )
                 rows: list[tuple] = []
@@ -190,14 +189,13 @@ class TickFlowProvider(DataSourceBase):
         """获取美股指数（用 ETF 替代真实指数）。
 
         SPX->SPY, DJI->DIA, IXIC->QQQ。
-        免费版仅支持 A 股，美股 ETF 可能返回 0 行。
+        免费版支持美股日K线，用 period+count 参数。
         """
         table = payload.table or "c1_market.us_index"
         columns = ["trade_date", "index_code", "etf_code", "open", "high", "low", "close", "volume"]
         start = (payload.start or datetime.date.today() - datetime.timedelta(days=365))
         end = payload.end or datetime.date.today()
-        start_ts = int(datetime.datetime(start.year, start.month, start.day).timestamp())
-        end_ts = int(datetime.datetime(end.year, end.month, end.day).timestamp())
+        count = max((end - start).days, 1)
 
         for index_code, etf_symbol in _US_INDEX_ETF.items():
             t0 = time.time()
@@ -205,9 +203,9 @@ class TickFlowProvider(DataSourceBase):
                 df = self._call_with_policy(
                     self._client.klines.get,
                     policy,
-                    symbol=etf_symbol,
-                    start_time=start_ts,
-                    end_time=end_ts,
+                    etf_symbol,
+                    period="1d",
+                    count=count,
                     as_dataframe=True,
                 )
                 rows: list[tuple] = []
