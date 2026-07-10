@@ -238,6 +238,14 @@ class IFindProvider(DataSourceBase):
         extra = payload.extra or {}
         snapshot_dates = extra.get("snapshot_dates", [])
 
+        # snapshot_dates 为空时，自动从 payload.start/end 生成（每日一条）
+        if not snapshot_dates and payload.start and payload.end:
+            cur = payload.start
+            while cur <= payload.end:
+                # 简单按日生成（含非交易日，THS_BD 对非交易日返回空值，不影响）
+                snapshot_dates.append(cur.isoformat())
+                cur += datetime.timedelta(days=1)
+
         if not symbols or not snapshot_dates:
             yield FetchResult(
                 table=self._VALUATION_TABLE,

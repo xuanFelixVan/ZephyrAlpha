@@ -5,7 +5,7 @@
 # [CONSUMERS] integrator(CLI入口); python -m zephyr.data
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] argparse+subparsers; 7子命令(status/list/run/rerun-failed/pause/resume/start); get_integrator()单例; pause/resume通过PolicyRegistry熔断
+# [INVARIANTS] argparse+subparsers; 8子命令(status/list/run/rerun-failed/pause/resume/start/speed-test); get_integrator()单例; pause/resume通过PolicyRegistry熔断
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,7 +16,7 @@
 # [TTL] permanent
 """数据源集成器 CLI（MOD-L00-004 §8.4）。
 
-7 个子命令（蓝图 §8.4）：
+7 个子命令（蓝图 §8.4）+ speed-test（§8.5）：
     integrator status [task_id]       查看所有任务今日状态 / 单任务详情
     integrator list [--source <src>]  列出任务（支持源过滤）
     integrator run <task_id>          手动触发单任务
@@ -24,6 +24,7 @@
     integrator pause <source>         紧急熔断某源
     integrator resume <source>        恢复已熔断的源
     integrator start                  启动常驻调度进程
+    integrator speed-test [--source] [--capability]  数据源测速（选型主备源）
 
 入口：
 - pyproject.toml [project.scripts]: integrator = "zephyr.data.cli:main"
@@ -244,6 +245,13 @@ def _cmd_resume(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_speed_test(args: argparse.Namespace) -> int:
+    """speed-test [--source <src>] [--capability <cap>] — 数据源测速。"""
+    from zephyr.data.speed_tester import run_speed_tests
+    run_speed_tests(source_filter=args.source, cap_filter=args.capability)
+    return 0
+
+
 def _cmd_start(args: argparse.Namespace) -> int:
     """start — 启动常驻调度进程。"""
     # start 是常驻进程，直接 new 实例（不依赖单例，进程结束即销毁）
@@ -331,6 +339,11 @@ def _build_parser() -> argparse.ArgumentParser:
     # start
     sub.add_parser("start", help="启动常驻调度进程")
 
+    # speed-test [--source] [--capability]
+    p_speed = sub.add_parser("speed-test", help="数据源测速（小样本测速，选型主备源）")
+    p_speed.add_argument("--source", default=None, help="只测某数据源（如 ifind/miniqmt/akshare/baostock）")
+    p_speed.add_argument("--capability", default=None, help="只测某能力（如 kline_daily/daily_valuation）")
+
     return parser
 
 
@@ -360,6 +373,7 @@ def main(argv: list[str] | None = None) -> int:
         "pause": _cmd_pause,
         "resume": _cmd_resume,
         "start": _cmd_start,
+        "speed-test": _cmd_speed_test,
     }
     handler = handlers.get(args.cmd)
     if handler is None:
