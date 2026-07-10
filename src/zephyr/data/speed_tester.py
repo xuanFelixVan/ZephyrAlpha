@@ -139,9 +139,12 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
     ("tushare", "news_security", "c3_fundamental.news_security",
      {"capability": "news_security"}, None, None, None),
 
-    # rss 财经新闻
+    # rss 财经新闻（symbols_override 传 RSS feed URL，非股票代码）
     ("rss", "news_data", "c3_fundamental.news_data",
-     {"capability": "news_data"}, None, None, None),
+     {"capability": "news_data"},
+     ["https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC&region=US&lang=en-US",
+      "https://www.cnbc.com/id/100003114/device/rss/rss.html"],
+     None, None),
 
     # tdx 通达信板块数据
     ("tdx", "industry_class", "c3_fundamental.industry_class",
@@ -176,8 +179,8 @@ def _make_provider(source: str):
         from zephyr.data.implementations.rss_provider import RSSProvider
         return RSSProvider()
     elif source == "tdx":
-        from zephyr.data.implementations.tdx_provider import TdxProvider
-        return TdxProvider()
+        from zephyr.data.implementations.tdx_provider import TDXProvider
+        return TDXProvider()
     else:
         raise ValueError("不支持的数据源类型")
 
