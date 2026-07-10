@@ -275,7 +275,7 @@ tasks:
     incremental: true
     dependencies: []
     capability: news_data
-    symbols: null  # 默认 4 个财经 RSS 源
+    symbols: null  # 默认 8 个财经 RSS 源（2直连+6 RSSHub）
     extra:
       description: "财经新闻增量（RSS 爬虫）"
 
@@ -736,7 +736,7 @@ tasks:
     capability: news_data
     symbols: null
     extra:
-      description: "RSS财经新闻增量（36氪/钛媒体/华尔街见闻/财联社/东方财富研报）"
+      description: "RSS财经新闻增量（36氪/钛媒体/华尔街见闻/东方财富5类研报：策略/宏观/券商/行业/个股）"
 
   - task_id: news_stock_em_incremental
     table: c3_fundamental.news_data

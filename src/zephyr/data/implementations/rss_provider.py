@@ -48,12 +48,17 @@ log = logging.getLogger(__name__)
 
 
 # 默认财经 RSS 源（国内可访问 + 本地 RSSHub 路由）
-# 依赖本地 RSSHub 实例（D:\RSSHub，npm start，监听 localhost:1200）
+# 依赖本地 RSSHub 实例（D:\RSSHub，pm2 守护，监听 localhost:1200）
 from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
 _DEFAULT_RSS_FEEDS = [
     "https://36kr.com/feed",                              # 36氪（直连）
     "https://www.tmtpost.com/feed",                       # 钛媒体（直连）
     f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",            # 华尔街见闻（本地RSSHub）
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/strategyreport",  # 东方财富-策略报告（本地RSSHub）
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/macresearch",     # 东方财富-宏观研究（本地RSSHub）
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/brokerreport",    # 东方财富-券商晨报（本地RSSHub）
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/industry",        # 东方财富-行业研报（本地RSSHub）
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/stock",           # 东方财富-个股研报（本地RSSHub）
 ]
 
 
@@ -73,7 +78,7 @@ class RSSProvider(DataSourceBase):
         thread_safety="shared",
         rate_limit_default=0,
         capabilities=["news_data"],
-        known_issues=["偶发SSL错误", "须尊重robots.txt"],
+        known_issues=["偶发SSL错误", "须尊重robots.txt", "依赖本地RSSHub实例(D:\RSSHub)"],
     )
 
     # robots.txt 缓存（per-domain）
@@ -156,7 +161,7 @@ class RSSProvider(DataSourceBase):
                 # feedparser 解析 XML
                 parsed = feedparser.parse(response.content)
                 rows: list[tuple] = []
-                source_name = urlparse(feed_url).netloc
+                source_name = self._extract_source_name(feed_url)
                 for entry in parsed.entries:
                     pub_date = entry.get("published", entry.get("updated", ""))
                     title = entry.get("title", "")
@@ -177,6 +182,22 @@ class RSSProvider(DataSourceBase):
                     table=table, columns=columns, rows=[],
                     last_key="", elapsed_sec=time.time() - t0, error=str(e),
                 )
+
+    # ---- source_name 提取 ----
+
+    @staticmethod
+    def _extract_source_name(feed_url: str) -> str:
+        """从 feed URL 提取可区分的 source 标识。
+
+        - 直连 RSS（36kr/tmtpost）：用 netloc（如 36kr.com）
+        - 本地 RSSHub 路由（localhost:1200）：用路径段（如 eastmoney/report/industry）
+        """
+        parsed = urlparse(feed_url)
+        host = parsed.netloc.lower()
+        if host.startswith("localhost") or host.startswith("127.0.0.1"):
+            path = parsed.path.strip("/")
+            return path if path else host
+        return host
 
     # ---- robots.txt 检查 ----
 
