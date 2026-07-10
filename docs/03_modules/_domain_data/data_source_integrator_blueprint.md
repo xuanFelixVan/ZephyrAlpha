@@ -16,8 +16,8 @@ construction_progress: stage3_done
 language: zh
 description: 统一管理多个数据源的自动下载——Provider 抽象 + per-source 策略注册表 + APScheduler 调度编排 + 进度/告警统一管理
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 # 数据源集成器蓝图（MOD-L00-004）
@@ -515,11 +515,15 @@ CREATE TABLE task_runs (
 
 ### §7.3 幂等性保证
 
-| 表引擎 | 幂等策略 |
-|--------|---------|
-| ReplacingMergeTree | 直接 INSERT，重复键由 CH 后台合并 |
-| MergeTree | 写前 `ALTER TABLE ... DELETE WHERE date = today()`（盘后数据） |
-| 临时表 | 写入 staging 表，再 `INSERT SELECT DISTINCT` 合并 |
+> **架构裁定 #ARCH-CH-002（2026-07-10）**：废弃"MergeTree 先删后插"策略，全部表统一 `ReplacingMergeTree` + 直接 INSERT。
+> 原因：5204 只股票逐个写入场景下，"先删后插"= 5204 次 ALTER DELETE mutation + 5204 次 INSERT = 双倍 data parts；
+> ReplacingMergeTree 直接 INSERT，CH 后台去重，零 mutation 开销。详见 §18.2。
+
+| 表引擎 | 幂等策略 | 状态 |
+|--------|---------|:----:|
+| ReplacingMergeTree（**统一**） | 直接 INSERT，重复键由 CH 后台合并 | ✅ 采用 |
+| ~~MergeTree 先删后插~~ | 写前 `ALTER TABLE ... DELETE WHERE` | ❌ 废弃（mutation 开销过大） |
+| ~~临时表 staging~~ | 写入 staging 表，再 `INSERT SELECT DISTINCT` | ❌ 废弃（复杂度过高） |
 
 ---
 
@@ -834,7 +838,7 @@ akshare:
 | AKShare 接口不稳定 | 高 | 低 | 5 次重试 + 失败标的跳过 + 次日补跑 |
 | 迁移期间新旧脚本冲突 | 中 | 中 | 任务级互斥锁；迁移一个切一个 |
 | 调度器进程崩溃 | 低 | 高 | Windows 任务计划守护 + misfire_grace_time |
-| ClickHouse WSL 调用性能 | 中 | 中 | 批量写入（每批 ≥ 1 万行） |
+| ClickHouse WSL 调用性能 | 中 | 中 | **BufferedWriter 强制攒批**（每批 ≥ 50000 行或 ≥ 30 秒触发）；详见 §18.3 裁定 #ARCH-CH-003 |
 
 ---
 
@@ -848,6 +852,94 @@ akshare:
 | 2026-07-06 | 接管 blueprint.md 的 Provider 部分 | 原蓝图声称已实现但磁盘不存在，借此次一并重建 |
 | 2026-07-06 | SQLite 存进度而非 ClickHouse | 进度查询高频但量小，SQLite 单文件部署简单 |
 | 2026-07-06 | 代码进 src/zephyr/data/ 而非 tmp/ | tmp/ 是 TTL=task_bound 临时目录，集成器是长期资产 |
+| 2026-07-10 | 废弃 MergeTree 先删后插，统一 ReplacingMergeTree | #ARCH-CH-002：5204 只股票逐个写入时先删后插=双倍 data parts |
+| 2026-07-10 | 引入 BufferedWriter 批量聚合层 | #ARCH-CH-003：ch_writer 逐个写入是 CH 不稳定根因，蓝图 §16"每批≥1万行"从未实现 |
+| 2026-07-10 | 引擎选择不可依赖 AI 自觉回查蓝图 | #ARCH-CH-004：100% AI 开发模式需运行时门禁强制蓝图约束 |
+
+---
+
+## §18 架构裁定记录（CH 写入不稳定根因分析）
+
+> **裁定日期**：2026-07-10
+> **触发事件**：2026-07-09 夜间数据下载期间 CH 写入大量失败，CPU 352% merge 满载，data parts 爆炸（kline_daily 788 parts / kline_1min 1039 parts）
+> **分析方法**：第一性原理——从 ClickHouse 写入模型底层约束出发，逐层下钻到 ch_writer 实现、Provider 数据流、蓝图-实现鸿沟
+
+### §18.1 裁定 #ARCH-CH-001：ch_writer 逐个写入架构是 CH 不稳定根因
+
+**问题现象**：
+- CH 写入大量失败（stderr 为空，WSL 进程崩溃）
+- CH CPU 352%，`MergeTreeReaderCompactSingleBuffer::readRows` merge 崩溃，LogError=14
+- data parts 爆炸：kline_1min 1039 parts / kline_daily 788 parts / daily_valuation 693 parts
+
+**根因分析**（ClickHouse 写入模型底层约束）：
+- ClickHouse 每次 `INSERT` 创建 1 个 **data part**（不可变数据块）
+- CH 后台线程异步 merge 多个小 part → 大 part（CPU 密集）
+- CH 官方建议：**每秒不超过 1 次 INSERT，每次 ≥ 1 万行**
+- 当前实现：`ch_writer.write_result` 每个 FetchResult（1 只股票 ~3 行）= 1 次 WSL 进程启动 + 1 次 INSERT + 1 个 data part
+- 5204 只股票 = **5204 个 WSL 进程 + 5204 次 INSERT + 5204 个 data parts**（每表每批次）
+- 后台 merge 跟不上 → CPU 饱和 → WSL 命令超时 → 写入失败
+
+**证据链**：
+1. `ch_writer.py` L65: `subprocess.run(["wsl", "-d", "Ubuntu", "-e", "clickhouse-client"] + args)` — 每次 INSERT 启动 1 个 WSL 进程
+2. `ch_writer.py` L195: `write_tsv` → `_wsl_ch` → 1 次 INSERT → 1 个 data part
+3. `provider_base.py` L163: `fetch` 返回 `Iterator[FetchResult]`，每批一个 FetchResult
+4. `scheduler.py` L338-350: `for result in provider.fetch(): ch_writer.write_result(result)` — 逐个写入无聚合
+5. `_backfill.py` L123-144: 同样的逐个写入循环
+6. `system.parts`: 788-1039 parts/表（正常应 < 50）
+
+**裁定**：ch_writer 的"每个 FetchResult = 1 次 INSERT"架构违反 ClickHouse 批量写入约束，是 data parts 爆炸和 CPU 饱和的**直接根因**。
+
+### §18.2 裁定 #ARCH-CH-002：引擎统一为 ReplacingMergeTree
+
+**原蓝图设计**（c1_market_clickhouse.md §4.0）：全部 MergeTree + 先删后插，理由"数据源唯一不需要去重"
+
+**实际状态**：部分表已漂移为 ReplacingMergeTree（adj_factor / index_kline / equity_pledge_summary），蓝图未同步
+
+**裁定**：废弃"全部 MergeTree + 先删后插"，统一为 `ReplacingMergeTree` + 直接 INSERT
+
+**理由**：
+1. "先删后插"在 5204 只股票场景 = 5204 次 `ALTER TABLE DELETE`（重量级 mutation）+ 5204 次 INSERT = **双倍 data parts**
+2. ReplacingMergeTree 直接 INSERT，CH 后台去重，**零 mutation 开销**
+3. 增量回填场景同一日期重复下载是常态，"数据源唯一不需要去重"假设不成立
+4. 实际已有 3 张表用 ReplacingMergeTree，证明该引擎在本项目可行
+
+### §18.3 裁定 #ARCH-CH-003：必须引入 BufferedWriter 批量聚合层
+
+**蓝图-实现鸿沟**：
+- 蓝图 §16 风险缓解措施："批量写入（每批 ≥ 1 万行）"——**从未实现**
+- 蓝图 c1_market_clickhouse.md §3.2 设计了 `C1MarketWriter.batch_insert` 接口——**从未落地**
+- 实际实现：ch_writer.write_result 逐个写入，无任何批量聚合
+
+**裁定**：在 Provider 和 ch_writer 之间插入 `BufferedWriter`，攒批写入（按行数 ≥ 50000 或时间窗口 ≥ 30 秒触发）
+
+**预期效果**：5204 次 INSERT → 1-3 次 INSERT，data parts 从 5204 → 1-3
+
+**施工内容**：
+1. 新建 `src/zephyr/data/buffered_writer.py`（BufferedWriter 类）
+2. 改造 `scheduler.py` 写入循环（逐个 → BufferedWriter.add + flush）
+3. 改造 `_backfill.py` 写入循环（同上）
+
+### §18.4 裁定 #ARCH-CH-004：100% AI 开发模式需蓝图约束运行时门禁
+
+**问题本质**：在 100% AI 开发模式下，蓝图中的关键约束（如"每批 ≥ 1 万行"）不能仅靠 AI 自觉——AI 在演进中不会主动回查蓝图约束，导致缓解措施被遗漏。
+
+**AI 开发模式的放大效应**：
+1. AI 写下载循环时，最直观模式是 `for result in fetch(): write(result)`——逐个处理，不会主动设计缓冲区攒批
+2. AI 在解决具体问题时改 MergeTree → ReplacingMergeTree（合理），但不会同步回蓝图，导致真源失真
+3. 蓝图设计 vs 实际实现的鸿沟，在 AI 开发模式下会被系统性放大
+
+**裁定**：蓝图中的关键约束必须有运行时门禁检测违规，不能依赖 AI 自觉
+
+**施工内容**：新增 CH-BATCH-SIZE gate（priority=34），检测 `ch_writer.write_result` 在 for 循环内直接调用（无 BufferedWriter 中间层）时阻断
+
+### §18.5 治本施工方案（4 阶段）
+
+| 阶段 | 优先级 | 内容 | 状态 |
+|------|:------:|------|:----:|
+| 阶段1 止血 | P0 | BufferedWriter + scheduler/_backfill 改造 + 引擎统一 | 🔄 施工中 |
+| 阶段2 治本 | P1 | OPTIMIZE TABLE 清理 parts + 引擎迁移脚本 + 幂等策略统一 | ⬜ 待施工 |
+| 阶段3 长效 | P2 | ch_writer 升级（WSL subprocess → clickhouse-driver TCP） | ⬜ 待施工 |
+| 阶段4 防线 | P2 | CH-BATCH-SIZE gate + 蓝图同步 | ⬜ 待施工 |
 
 ---
 
