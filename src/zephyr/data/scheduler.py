@@ -242,6 +242,12 @@ class IntegratorScheduler:
             elif source == "rss":
                 from zephyr.data.implementations.rss_provider import RSSProvider
                 return RSSProvider()
+            elif source == "cls":
+                from zephyr.data.implementations.cls_provider import ClsProvider
+                return ClsProvider()
+            elif source == "eastmoney_news":
+                from zephyr.data.implementations.eastmoney_news_provider import EastmoneyNewsProvider
+                return EastmoneyNewsProvider()
             else:
                 log.warning("未知数据源: %s", source)
                 return None
@@ -343,6 +349,11 @@ class IntegratorScheduler:
                     last_error = result.error
                     log.error("任务 %s FetchResult.error: %s", task_id, result.error)
                     break
+
+                # 新闻数据去重（基于标题MD5哈希）
+                if "news_data" in (result.table or ""):
+                    from zephyr.data.news_dedup import dedup_news_result
+                    result = dedup_news_result(result)
 
                 # 攒批写入 ClickHouse（达 50000 行或 30 秒自动 flush）
                 if not writer.add(result):

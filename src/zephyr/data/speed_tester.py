@@ -181,6 +181,12 @@ def _make_provider(source: str):
     elif source == "tdx":
         from zephyr.data.implementations.tdx_provider import TDXProvider
         return TDXProvider()
+    elif source == "cls":
+        from zephyr.data.implementations.cls_provider import ClsProvider
+        return ClsProvider()
+    elif source == "eastmoney_news":
+        from zephyr.data.implementations.eastmoney_news_provider import EastmoneyNewsProvider
+        return EastmoneyNewsProvider()
     else:
         raise ValueError("不支持的数据源类型")
 
