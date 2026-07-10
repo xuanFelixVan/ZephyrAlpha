@@ -487,7 +487,8 @@ class MiniQMTProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """抓取指数成分股列表。
 
-        使用 xtdata.get_stock_list_in_sector 获取各指数成分股。
+        先调用 xtdata.download_sector_data() 自动下载最新板块数据，
+        再用 xtdata.get_stock_list_in_sector 获取各指数成分股。
         遍历 _INDEX_SECTOR_MAP 中的 6 个核心指数，每个指数作为一批 yield。
 
         表 schema: (trade_date, index_code, symbol, weight, action, data_source)
@@ -510,6 +511,14 @@ class MiniQMTProvider(DataSourceBase):
         extra = payload.extra or {}
         # 允许 payload.extra["sectors"] 覆盖默认列表
         sectors = extra.get("sectors", list(self._INDEX_SECTOR_MAP.keys()))
+
+        # 先下载板块数据（确保 get_stock_list_in_sector 能返回成分股）
+        # QMT 客户端需在运行，否则 download_sector_data 报"无法连接行情服务"
+        try:
+            self._call_with_policy(xtdata.download_sector_data, policy)
+            self._log.info("download_sector_data 完成")
+        except Exception as e:
+            self._log.warning(f"download_sector_data 失败（不影响已有缓存数据）: {e}")
 
         for sector_name in sectors:
             index_code = self._INDEX_SECTOR_MAP.get(sector_name, sector_name)
