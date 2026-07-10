@@ -58,7 +58,8 @@ class IFindProvider(DataSourceBase):
         requires_process=False,
         thread_safety="thread_local",
         rate_limit_default=0,
-        capabilities=["kline_daily", "daily_valuation", "money_flow", "index_kline"],
+        capabilities=["kline_daily", "daily_valuation", "money_flow", "index_kline",
+                      "edb_data", "industry_class_ifind"],
         known_issues=["月度配额-4318", "试用账号不支持沪深港通"],
     )
 
@@ -206,6 +207,11 @@ class IFindProvider(DataSourceBase):
             yield from self._fetch_index_kline(payload, policy)
         elif capability == "money_flow":
             yield from self._fetch_money_flow(payload, policy)
+        # ---- 新增能力路由（MOD-L00-004 fetch 路由扩展）----
+        elif capability == "edb_data":
+            yield from self._fetch_edb_data(payload, policy)
+        elif capability == "industry_class_ifind":
+            yield from self._fetch_industry_class_ifind(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -782,6 +788,299 @@ class IFindProvider(DataSourceBase):
             ))
 
         return rows
+
+    # ============== edb_data 能力（宏观经济数据库） ==============
+
+    # EDB 默认指标列表（CPI/PPI/PMI/M0/M1/M2/GDP/社融/利率等关键宏观指标）
+    # 实际使用时应扩展至 50-100 个指标；可通过 payload.extra["indices"] 覆盖
+    _EDB_DEFAULT_INDICES = [
+        "M001620326",  # 示例指标（应按需扩展为完整宏观指标清单）
+        "M002822183",
+    ]
+
+    def _fetch_edb_data(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取宏观经济数据库（EDB）指标，写入 c1_market.edb_data。
+
+        使用 THS_EDBQuery(indicator_codes, start_date, end_date) 获取宏观指标序列。
+        指标代码从 payload.extra["indices"] 获取，缺省用 _EDB_DEFAULT_INDICES。
+
+        表 schema: (report_date, indicator_code, indicator_name,
+                    indicator_value, data_source)
+
+        Args:
+            payload: 下载请求，extra["indices"] 可指定指标代码列表
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个指标一批
+        """
+        table = payload.table or "c1_market.edb_data"
+        columns = [
+            "report_date", "indicator_code", "indicator_name",
+            "indicator_value", "data_source",
+        ]
+
+        extra = payload.extra or {}
+        indices = extra.get("indices") or self._EDB_DEFAULT_INDICES
+        if not indices:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error="指标列表为空",
+            )
+            return
+
+        start_str = payload.start.strftime("%Y-%m-%d")
+        end_str = payload.end.strftime("%Y-%m-%d")
+        last_key = end_str
+        batch_rows: list[tuple] = []
+        start_ts = time.time()
+
+        # 逐指标查询（THS_EDBQuery 每次查一个指标序列）
+        for ind_code in indices:
+            df, fatal_code = self._query_edb_indicator(
+                ind_code, start_str, end_str, policy,
+            )
+            # 配额耗尽 → yield error 并 return
+            if fatal_code is not None:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.time() - start_ts,
+                    error=f"iFind配额耗尽: {fatal_code}",
+                )
+                return
+            if df is None or len(df) == 0:
+                continue
+
+            # 逐行解析并累积
+            for idx, row in df.iterrows():
+                parsed = self._parse_edb_row(idx, row, ind_code)
+                if parsed is not None:
+                    batch_rows.append(parsed)
+                    if len(batch_rows) >= self._BATCH_SIZE:
+                        yield FetchResult(
+                            table=table, columns=columns,
+                            rows=batch_rows[:], last_key=last_key,
+                            elapsed_sec=time.time() - start_ts,
+                        )
+                        batch_rows.clear()
+                        start_ts = time.time()
+
+        if batch_rows:
+            yield FetchResult(
+                table=table, columns=columns,
+                rows=batch_rows[:], last_key=last_key,
+                elapsed_sec=time.time() - start_ts,
+            )
+
+    def _query_edb_indicator(
+        self, ind_code: str, start_str: str, end_str: str, policy: "SourcePolicy",
+    ) -> tuple:
+        """查询单个 EDB 指标并转 DataFrame（降低 _fetch_edb_data 复杂度）。
+
+        Args:
+            ind_code: 指标代码
+            start_str: 开始日期
+            end_str: 结束日期
+            policy: 调用策略
+
+        Returns:
+            (df, fatal_code) 二元组。fatal_code 非 None 表示配额耗尽（调用方应中止）；
+            df 为 None 表示该指标跳过（错误或无数据）。
+        """
+        from iFinDPy import THS_EDBQuery, THS_Trans2DataFrame
+
+        try:
+            raw = self._call_with_policy(
+                THS_EDBQuery, policy,
+                ind_code, start_str, end_str,
+            )
+        except Exception as e:
+            self._log.warning(f"THS_EDBQuery 调用失败: {e}")
+            return (None, None)
+
+        # 检查错误码
+        is_error, code, msg = self._check_ifind_error(raw)
+        if is_error:
+            if code in (-4318, -4309):
+                return (None, code)
+            self._log.warning(f"EDB iFind错误: {code} {msg}")
+            return (None, None)
+
+        # 解析返回结果（尝试 DataFrame 转换）
+        try:
+            df = THS_Trans2DataFrame(raw)
+        except Exception as e:
+            self._log.warning(f"THS_Trans2DataFrame 失败: {e}")
+            return (None, None)
+        return (df, None)
+
+    def _parse_edb_row(self, idx, row, ind_code: str):
+        """解析 EDB DataFrame 单行为元组（降低 _fetch_edb_data 复杂度）。
+
+        Args:
+            idx: DataFrame 行索引
+            row: DataFrame 行
+            ind_code: 指标代码
+
+        Returns:
+            (report_date, ind_code, ind_name, ind_value, "ifind") 元组；
+            日期无效时返回 None。
+        """
+        report_date = self._extract_date(idx, row)
+        if not report_date:
+            return None
+        # 指标值：尝试指标代码列或 'value' 列
+        ind_value = None
+        for key in (ind_code, "value", "指标值", "valueData"):
+            v = row.get(key)
+            if v is not None:
+                ind_value = self.safe_float(v)
+                break
+        # 指标名称：尝试 'name' / 'ths_edb_name' 列
+        ind_name = ""
+        for key in ("name", "ths_edb_name", "指标名称", "indicator_name"):
+            v = row.get(key)
+            if v is not None:
+                ind_name = str(v)
+                break
+        return (report_date, ind_code, ind_name, ind_value, "ifind")
+
+    # ============== industry_class_ifind 能力（同花顺板块分类） ==============
+
+    def _fetch_industry_class_ifind(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取同花顺行业分类，写入 c3_fundamental.industry_class_ifind。
+
+        使用 THS_BasicData 逐股查询申万行业（ths_the_sw_industry）和中证行业
+        （ths_the_zs_industry）分类。
+        表 schema: (symbol, industry_sw, industry_zsi, industry_level, data_source)
+        quality_flag 有 DEFAULT 1，不返回。
+
+        Args:
+            payload: 下载请求（symbols 为 ts_code 列表，None 时取全部A股）
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每 500 行一批
+        """
+        from iFinDPy import THS_BasicData, THS_Trans2DataFrame
+
+        table = payload.table or "c3_fundamental.industry_class_ifind"
+        columns = ["symbol", "industry_sw", "industry_zsi", "industry_level", "data_source"]
+
+        symbols = payload.symbols
+        if not symbols:
+            symbols = self._get_all_a_share_codes(policy)
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error="无法获取标的清单",
+            )
+            return
+
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        last_key = today_str
+        batch_rows: list[tuple] = []
+        start_ts = time.time()
+
+        for ts_code in symbols:
+            industry_sw, industry_zsi, fatal_error = self._query_symbol_industries(
+                ts_code, today_str, policy,
+            )
+
+            # 配额耗尽 → yield error 并 return
+            if fatal_error and "配额" in fatal_error:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.time() - start_ts,
+                    error=fatal_error,
+                )
+                return
+
+            symbol = self._ts_code_to_symbol(ts_code)
+            batch_rows.append((
+                symbol, industry_sw, industry_zsi, 0, "ifind",
+            ))
+
+            if len(batch_rows) >= self._BATCH_SIZE:
+                yield FetchResult(
+                    table=table, columns=columns,
+                    rows=batch_rows[:], last_key=last_key,
+                    elapsed_sec=time.time() - start_ts,
+                )
+                batch_rows.clear()
+                start_ts = time.time()
+
+        if batch_rows:
+            yield FetchResult(
+                table=table, columns=columns,
+                rows=batch_rows[:], last_key=last_key,
+                elapsed_sec=time.time() - start_ts,
+            )
+
+    def _query_symbol_industries(
+        self, ts_code: str, today_str: str, policy: "SourcePolicy",
+    ) -> tuple[str, str, str | None]:
+        """查询单只股票的申万/中证行业分类（降低 _fetch_industry_class_ifind 复杂度）。
+
+        Args:
+            ts_code: 标的代码
+            today_str: 今日日期字符串
+            policy: 调用策略
+
+        Returns:
+            (industry_sw, industry_zsi, fatal_error) 三元组。
+            fatal_error 非 None 且含"配额"时表示配额耗尽需中止。
+        """
+        from iFinDPy import THS_BasicData, THS_Trans2DataFrame
+
+        industry_sw = ""
+        industry_zsi = ""
+        fatal_error = None
+
+        for ind_name, col_target in [
+            ("ths_the_sw_industry", "sw"),
+            ("ths_the_zs_industry", "zsi"),
+        ]:
+            try:
+                raw = self._call_with_policy(
+                    THS_BasicData, policy,
+                    ts_code, ind_name, f"{today_str},100",
+                )
+            except Exception as e:
+                self._log.warning(f"THS_BasicData 调用失败: {e}")
+                fatal_error = str(e)
+                break
+
+            is_error, code, msg = self._check_ifind_error(raw)
+            if is_error:
+                if code in (-4318, -4309):
+                    fatal_error = f"iFind配额耗尽: {code}"
+                    break
+                # -209 表示不支持该指标，跳过
+                if code == -209:
+                    continue
+                self._log.warning(f"行业分类 iFind错误: {code} {msg}")
+                continue
+
+            try:
+                df = THS_Trans2DataFrame(raw)
+                if df is not None and len(df) > 0:
+                    val = df.iloc[0].get(ind_name)
+                    if val is not None:
+                        if col_target == "sw":
+                            industry_sw = str(val)
+                        else:
+                            industry_zsi = str(val)
+            except Exception as e:
+                self._log.warning(f"THS_Trans2DataFrame 失败: {e}")
+
+        return industry_sw, industry_zsi, fatal_error
 
     # ============== 辅助方法 ==============
 
