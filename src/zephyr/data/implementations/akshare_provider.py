@@ -1411,19 +1411,40 @@ class AKShareProvider(DataSourceBase):
 
     # ---- 21. 沪深港通北向资金（hk_connect_flow） ----
 
+    @staticmethod
+    def _parse_hk_connect_row(row, channel: str) -> tuple | None:
+        """解析单行北向资金数据，net_buy_amount 为 NaN 时返回 None。
+
+        港交所 2024-08-16 后停止公布实时北向资金，AKShare 返回 NaN 行需过滤。
+        """
+        trade_date = AKShareProvider._norm_date_str(row.get("日期"))
+        if not trade_date:
+            return None
+        net_buy = safe_float(row.get("当日成交净买额"))
+        # NaN 检测：val != val 是 True 当且仅当 val 是 NaN
+        if net_buy != net_buy:
+            return None
+        return (
+            trade_date,
+            channel,
+            net_buy,
+            safe_float(row.get("买入成交额")),
+            safe_float(row.get("卖出成交额")),
+            safe_float(row.get("历史累计净买额")),
+            safe_float(row.get("当日资金流入")),
+            safe_float(row.get("当日余额")),
+            safe_float(row.get("持股市值")),
+            "akshare",
+        )
+
     def _fetch_hk_connect_flow(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
         """获取沪深港通北向资金历史数据，写入 c1_market.hk_connect_flow。
 
-        调用 ak.stock_hsgt_hist_em(symbol="沪股通") 和 ak.stock_hsgt_hist_em(symbol="深股通")。
-        返回列：日期/当日成交净买额/买入成交额/卖出成交额/历史累计净买额/
-              当日资金流入/当日余额/持股市值/等
-
-        表结构 c1_market.hk_connect_flow：
-            trade_date, channel, net_buy_amount, buy_amount, sell_amount,
-            cumulative_net_buy, daily_inflow, daily_balance,
-            holding_market_value, data_source
+        调用 ak.stock_hsgt_hist_em(symbol="沪股通"/"深股通")。
+        注：港交所 2024-08-16 后停止公布实时数据，NaN 行自动过滤。
+        有效数据范围：2014-11-17 ~ 2024-08-16。
         """
         import akshare as ak
 
@@ -1433,9 +1454,7 @@ class AKShareProvider(DataSourceBase):
             "sell_amount", "cumulative_net_buy", "daily_inflow",
             "daily_balance", "holding_market_value", "data_source",
         ]
-        start_str = payload.start.isoformat()
-        end_str = payload.end.isoformat()
-        last_key = end_str
+        last_key = datetime.date.today().isoformat()
         t0 = time.time()
         batch_rows: list[tuple] = []
 
@@ -1450,23 +1469,9 @@ class AKShareProvider(DataSourceBase):
             if df is None or len(df) == 0:
                 continue
             for _, row in df.iterrows():
-                trade_date = self._norm_date_str(row.get("日期"))
-                if not trade_date:
-                    continue
-                if trade_date < start_str or trade_date > end_str:
-                    continue
-                batch_rows.append((
-                    trade_date,
-                    channel,
-                    safe_float(row.get("当日成交净买额")),
-                    safe_float(row.get("买入成交额")),
-                    safe_float(row.get("卖出成交额")),
-                    safe_float(row.get("历史累计净买额")),
-                    safe_float(row.get("当日资金流入")),
-                    safe_float(row.get("当日余额")),
-                    safe_float(row.get("持股市值")),
-                    "akshare",
-                ))
+                parsed = self._parse_hk_connect_row(row, channel)
+                if parsed:
+                    batch_rows.append(parsed)
 
         yield FetchResult(
             table=table, columns=columns, rows=batch_rows,
