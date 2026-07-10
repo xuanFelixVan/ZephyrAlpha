@@ -4636,6 +4636,20 @@ creation_tokens:
     created_by: "session-sess-21108-20260710100906"
     capability: "ch_batch_write"
 
+  # --- MOD-L00-004 新闻数据源扩展（2026-07-10，全部免费新闻源+去重机制）---
+  - file: "src/zephyr/data/implementations/cls_provider.py"
+    token: "auto-cls-provider-20260710"
+    created_by: "session-sess-22344-20260710222800"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/implementations/eastmoney_news_provider.py"
+    token: "auto-eastmoney-news-provider-20260710"
+    created_by: "session-sess-22344-20260710222800"
+    capability: "data_source_provider_abstraction"
+  - file: "src/zephyr/data/news_dedup.py"
+    token: "auto-news-dedup-20260710"
+    created_by: "session-sess-22344-20260710222800"
+    capability: "data_source_provider_abstraction"
+
 # ============================================================================
 # 维护日志
 # ============================================================================

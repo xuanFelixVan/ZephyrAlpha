@@ -73,6 +73,11 @@ class AKShareProvider(DataSourceBase):
             "daily_valuation", "margin_trading", "block_trade",
             "dragon_tiger", "money_flow", "share_unlock",
             "audit_opinion", "equity_pledge_summary",
+            # 新闻数据
+            "stock_news_em", "news_cctv", "news_economic_baidu",
+            "news_baidu", "news_stock",
+            # 分析师预期 & 配股
+            "analyst_forecast", "rights_issue",
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -128,6 +133,24 @@ class AKShareProvider(DataSourceBase):
             yield from self._fetch_equity_pledge(payload, policy)
         elif cap == "equity_pledge_summary":
             yield from self._fetch_equity_pledge_summary(payload, policy)
+        elif cap == "dividend":
+            yield from self._fetch_dividend(payload, policy)
+        elif cap == "restricted_shares":
+            yield from self._fetch_restricted_shares(payload, policy)
+        elif cap == "stock_news_em":
+            yield from self._fetch_stock_news_em(payload, policy)
+        elif cap == "news_cctv":
+            yield from self._fetch_news_cctv(payload, policy)
+        elif cap == "news_economic_baidu":
+            yield from self._fetch_news_economic_baidu(payload, policy)
+        elif cap == "news_baidu":
+            yield from self._fetch_news_baidu(payload, policy)
+        elif cap == "news_stock":
+            yield from self._fetch_news_stock(payload, policy)
+        elif cap == "analyst_forecast":
+            yield from self._fetch_analyst_forecast(payload, policy)
+        elif cap == "rights_issue":
+            yield from self._fetch_rights_issue(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -862,4 +885,442 @@ class AKShareProvider(DataSourceBase):
         yield FetchResult(
             table=table, columns=columns, rows=rows,
             last_key=iso_date, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 10. 分红明细（dividend） ----
+
+    def _fetch_dividend(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取分红明细，写入 c3_fundamental.dividend。
+
+        调用 ak.stock_history_dividend_detail(symbol, indicator="分红") 逐只获取。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.dividend"
+        columns = [
+            "symbol", "ex_date", "record_date", "announce_date",
+            "dividend_per_10_shares", "stock_div_per_10_shares",
+            "transfer_per_10_shares", "total_dividend", "progress",
+        ]
+        symbols = payload.symbols
+        if not symbols:
+            symbols = self._get_all_a_symbols(ak, policy)
+        last_key = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for idx, sym in enumerate(symbols):
+            code = str(sym).split(".")[0].zfill(6)
+            if (idx + 1) % 100 == 0:
+                self._log.info(f"dividend 进度: {idx+1}/{len(symbols)}")
+            try:
+                df = self._call_with_policy(
+                    ak.stock_history_dividend_detail, policy,
+                    symbol=code, indicator="分红",
+                )
+            except Exception as e:
+                self._log.debug(f"stock_history_dividend_detail({code}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                batch_rows.append(self._parse_dividend_row(code, row))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    @staticmethod
+    def _parse_dividend_row(code: str, row) -> tuple:
+        """解析单行分红数据。"""
+        return (
+            code,
+            AKShareProvider._norm_date_str(row.get("除权除息日")),
+            AKShareProvider._norm_date_str(row.get("股权登记日")),
+            AKShareProvider._norm_date_str(row.get("公告日期")),
+            safe_float(row.get("每10股派息")),
+            safe_float(row.get("每10股送股")),
+            safe_float(row.get("每10股转增")),
+            safe_float(row.get("分红总额")),
+            str(row.get("分红进度", "")),
+        )
+
+    # ---- 11. 限售解禁（restricted_shares） ----
+
+    def _fetch_restricted_shares(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取限售解禁明细，写入 c3_fundamental.restricted_shares。
+
+        调用 ak.stock_restricted_release_queue_em(symbol) 逐只获取。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.restricted_shares"
+        columns = [
+            "symbol", "release_date", "release_shares", "release_ratio",
+            "pre_float_shares", "post_float_shares",
+        ]
+        symbols = payload.symbols
+        if not symbols:
+            symbols = self._get_all_a_symbols(ak, policy)
+        last_key = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for idx, sym in enumerate(symbols):
+            code = str(sym).split(".")[0].zfill(6)
+            if (idx + 1) % 100 == 0:
+                self._log.info(f"restricted_shares 进度: {idx+1}/{len(symbols)}")
+            try:
+                df = self._call_with_policy(
+                    ak.stock_restricted_release_queue_em, policy,
+                    symbol=code,
+                )
+            except Exception as e:
+                self._log.debug(f"stock_restricted_release_queue_em({code}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                batch_rows.append(self._parse_restricted_row(code, row))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    @staticmethod
+    def _parse_restricted_row(code: str, row) -> tuple:
+        """解析单行限售解禁数据。"""
+        return (
+            code,
+            AKShareProvider._norm_date_str(row.get("解禁时间")),
+            safe_float(row.get("解禁数量")),
+            safe_float(row.get("解禁股本占比")),
+            safe_float(row.get("解禁前流通股本")),
+            safe_float(row.get("解禁后流通股本")),
+        )
+
+    # ---- 12. 新闻数据通用辅助 ----
+
+    @staticmethod
+    def _news_rows_from_df(df, source_name: str) -> list[tuple]:
+        """从新闻 DataFrame 提取统一格式行 (pub_date, title, link, summary, source)。
+
+        兼容多种 AKShare 新闻接口的列名：
+        - stock_news_em: 关键词/新闻标题/新闻内容/发布时间/文章来源/新闻链接
+        - news_cctv: date/title/content
+        - news_economic_baidu: 日期/时间/地区/事件/公布/预期/前值/重要性
+        - stock_news_main_cx: tag/summary/url
+        """
+        rows: list[tuple] = []
+        if df is None or len(df) == 0:
+            return rows
+        for _, row in df.iterrows():
+            title = AKShareProvider._row_first(row, "新闻标题", "标题", "title", "事件", "tag", "event")
+            pub_date = AKShareProvider._row_first(row, "发布时间", "时间", "日期", "date")
+            link = AKShareProvider._row_first(row, "新闻链接", "链接", "url", "link")
+            summary = AKShareProvider._row_first(row, "新闻内容", "摘要", "内容", "content", "summary")
+            rows.append((pub_date, title, link, summary, source_name))
+        return rows
+
+    @staticmethod
+    def _row_first(row, *keys) -> str:
+        """从 DataFrame row 中按优先级取第一个非空值，均为空则返回空字符串。"""
+        for key in keys:
+            val = row.get(key)
+            if val is not None and str(val).strip():
+                return str(val)
+        return ""
+
+    # ---- 13. 个股新闻（stock_news_em） ----
+
+    def _fetch_stock_news_em(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取个股新闻，写入 c3_fundamental.news_data。
+
+        调用 ak.stock_news_em(symbol) 逐只获取。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.news_data"
+        columns = ["pub_date", "title", "link", "summary", "source"]
+        symbols = payload.symbols
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error="stock_news_em 需提供 symbols 列表",
+            )
+            return
+        last_key = datetime.date.today().isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for sym in symbols:
+            code = str(sym).split(".")[0].zfill(6)
+            try:
+                df = self._call_with_policy(
+                    ak.stock_news_em, policy, symbol=code,
+                )
+            except Exception as e:
+                self._log.debug(f"stock_news_em({code}) 失败: {e}")
+                continue
+            batch_rows.extend(self._news_rows_from_df(df, "akshare_stock_news"))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 14. 央视新闻联播（news_cctv） ----
+
+    def _fetch_news_cctv(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取央视新闻联播，写入 c3_fundamental.news_data。
+
+        调用 ak.news_cctv(date) 逐日获取。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.news_data"
+        columns = ["pub_date", "title", "link", "summary", "source"]
+        last_key = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for d in self._date_range(payload.start, payload.end):
+            date_str = d.strftime("%Y%m%d")
+            try:
+                df = self._call_with_policy(
+                    ak.news_cctv, policy, date=date_str,
+                )
+            except Exception as e:
+                self._log.debug(f"news_cctv({date_str}) 失败: {e}")
+                continue
+            batch_rows.extend(self._news_rows_from_df(df, "akshare_cctv"))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 15. 百度经济日历（news_economic_baidu） ----
+
+    def _fetch_news_economic_baidu(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取百度经济日历，写入 c3_fundamental.news_data。
+
+        调用 ak.news_economic_baidu(date) 逐日获取。
+        AKShare 签名：news_economic_baidu(date='YYYYMMDD', cookie=None)。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.news_data"
+        columns = ["pub_date", "title", "link", "summary", "source"]
+        last_key = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for d in self._date_range(payload.start, payload.end):
+            date_str = d.strftime("%Y%m%d")
+            try:
+                df = self._call_with_policy(
+                    ak.news_economic_baidu, policy, date=date_str,
+                )
+            except Exception as e:
+                self._log.debug(f"news_economic_baidu({date_str}) 失败: {e}")
+                continue
+            batch_rows.extend(self._news_rows_from_df(df, "akshare_economic_baidu"))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 16. 财新网数据通（news_baidu，原 news_baidu 已废弃） ----
+
+    def _fetch_news_baidu(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取财新网数据通新闻，写入 c3_fundamental.news_data。
+
+        AKShare 的 news_baidu() 已不存在，改用 stock_news_main_cx()（财新网数据通）。
+        返回列：tag/summary/url。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.news_data"
+        columns = ["pub_date", "title", "link", "summary", "source"]
+        t0 = time.time()
+
+        try:
+            df = self._call_with_policy(ak.stock_news_main_cx, policy)
+            batch_rows = self._news_rows_from_df(df, "akshare_caixin")
+        except Exception as e:
+            self._log.warning(f"stock_news_main_cx 失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=datetime.date.today().isoformat(),
+            elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 17. 股票新闻（news_stock） ----
+
+    def _fetch_news_stock(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取股票新闻，写入 c3_fundamental.news_data。
+
+        AKShare 的 stock_news_global_em() 已不存在，改用 stock_news_main_cx()（财新网数据通）。
+        返回列：tag/summary/url。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.news_data"
+        columns = ["pub_date", "title", "link", "summary", "source"]
+        t0 = time.time()
+
+        try:
+            df = self._call_with_policy(ak.stock_news_main_cx, policy)
+            batch_rows = self._news_rows_from_df(df, "akshare_news_stock")
+        except Exception as e:
+            self._log.warning(f"stock_news_main_cx 失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=datetime.date.today().isoformat(),
+            elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 18. 分析师一致预期（analyst_forecast） ----
+
+    def _fetch_analyst_forecast(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取分析师盈利预测，写入 c3_fundamental.analyst_forecast。
+
+        调用 ak.stock_profit_forecast_em(symbol) 逐只获取。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.analyst_forecast"
+        columns = [
+            "symbol", "forecast_date", "report_year",
+            "eps_forecast", "pe_forecast", "net_profit_forecast",
+            "org_count", "data_source",
+        ]
+        symbols = payload.symbols
+        if not symbols:
+            symbols = self._get_all_a_symbols(ak, policy)
+        last_key = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for idx, sym in enumerate(symbols):
+            code = str(sym).split(".")[0].zfill(6)
+            if (idx + 1) % 100 == 0:
+                self._log.info(f"analyst_forecast 进度: {idx+1}/{len(symbols)}")
+            try:
+                df = self._call_with_policy(
+                    ak.stock_profit_forecast_em, policy,
+                    symbol=code,
+                )
+            except Exception as e:
+                self._log.debug(f"stock_profit_forecast_em({code}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                batch_rows.append(self._parse_forecast_row(code, row))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    @staticmethod
+    def _parse_forecast_row(code: str, row) -> tuple:
+        """解析单行分析师预测数据。"""
+        return (
+            code,
+            AKShareProvider._norm_date_str(row.get("预测日期")),
+            str(row.get("年度", "")),
+            safe_float(row.get("每股收益预测", row.get("EPS"))),
+            safe_float(row.get("市盈率预测", row.get("PE"))),
+            safe_float(row.get("净利润预测", row.get("净利润"))),
+            safe_float(row.get("机构数", row.get("机构家数"))),
+            "akshare",
+        )
+
+    # ---- 19. 配股（rights_issue） ----
+
+    def _fetch_rights_issue(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取配股明细，写入 c3_fundamental.rights_issue。
+
+        调用 ak.stock_rights_issue_detail_sina() 获取全市场配股数据。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.rights_issue"
+        columns = [
+            "symbol", "company_name", "rights_date", "rights_price",
+            "rights_ratio", "rights_shares", "total_funds", "data_source",
+        ]
+        t0 = time.time()
+        batch_rows: list[tuple] = []
+
+        try:
+            df = self._call_with_policy(
+                ak.stock_rights_issue_detail_sina, policy,
+            )
+        except Exception as e:
+            self._log.warning(f"stock_rights_issue_detail_sina 失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                batch_rows.append(self._parse_rights_row(row))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=datetime.date.today().isoformat(),
+            elapsed_sec=time.time() - t0,
+        )
+
+    @staticmethod
+    def _parse_rights_row(row) -> tuple:
+        """解析单行配股数据。"""
+        return (
+            str(row.get("股票代码", "")).zfill(6),
+            str(row.get("公司简称", row.get("名称", ""))),
+            AKShareProvider._norm_date_str(row.get("配股公告日", row.get("配股日期"))),
+            safe_float(row.get("配股价", row.get("配股价格"))),
+            safe_float(row.get("配股比例", row.get("配股比例"))),
+            safe_float(row.get("配股数量", row.get("配股股数"))),
+            safe_float(row.get("配股募集资金", row.get("募集资金"))),
+            "akshare",
         )

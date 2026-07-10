@@ -701,3 +701,94 @@ tasks:
       description: "5分钟K线历史回补（2000-2018 需淘宝购买）"
       disabled: true
       requires_manual: true
+
+  # ============== 盘后新闻时段（daily_event 新闻源自动下载）==============
+  # 所有新闻源写入同一表 c3_fundamental.news_data
+  # scheduler 在写入前自动调用 news_dedup.dedup_news_result 去重（基于标题MD5哈希）
+  - task_id: news_cls_incremental
+    table: c3_fundamental.news_data
+    source: cls
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_data
+    symbols: null
+    extra:
+      description: "财联社电报增量（HTTP直连 cls.cn/nodeapi/updateTelegraphList）"
+
+  - task_id: news_eastmoney_incremental
+    table: c3_fundamental.news_data
+    source: eastmoney_news
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_data
+    symbols: null
+    extra:
+      description: "东方财富7x24快讯增量（HTTP直连 np-listapi.eastmoney.com）"
+
+  - task_id: news_rss_incremental
+    table: c3_fundamental.news_data
+    source: rss
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_data
+    symbols: null
+    extra:
+      description: "RSS财经新闻增量（36氪/钛媒体/华尔街见闻/财联社/东方财富研报）"
+
+  - task_id: news_stock_em_incremental
+    table: c3_fundamental.news_data
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: stock_news_em
+    symbols: null
+    extra:
+      description: "AKShare个股新闻增量（ak.stock_news_em）"
+
+  - task_id: news_cctv_incremental
+    table: c3_fundamental.news_data
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_cctv
+    symbols: null
+    extra:
+      description: "AKShare央视新闻联播增量（ak.news_cctv）"
+
+  - task_id: news_economic_baidu_incremental
+    table: c3_fundamental.news_data
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_economic_baidu
+    symbols: null
+    extra:
+      description: "AKShare百度经济日历增量（ak.news_economic_baidu）"
+
+  - task_id: news_baidu_incremental
+    table: c3_fundamental.news_data
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_baidu
+    symbols: null
+    extra:
+      description: "AKShare百度热搜新闻增量（ak.news_baidu）"
+
+  - task_id: news_stock_incremental
+    table: c3_fundamental.news_data
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_stock
+    symbols: null
+    extra:
+      description: "AKShare股票新闻增量（ak.stock_news_global_em）"

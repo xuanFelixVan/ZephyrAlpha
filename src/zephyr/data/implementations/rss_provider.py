@@ -47,12 +47,10 @@ from ..policy_registry import SourcePolicy
 log = logging.getLogger(__name__)
 
 
-# 默认财经 RSS 源
+# 默认财经 RSS 源（国内可访问）
 _DEFAULT_RSS_FEEDS = [
-    "https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC&region=US&lang=en-US",
-    "https://www.cnbc.com/id/100003114/device/rss/rss.html",
-    "https://feeds.reuters.com/reuters/businessNews",
-    "https://www.ft.com/rss/home",
+    "https://36kr.com/feed",         # 36氪（实测可访问）
+    "https://www.tmtpost.com/feed",  # 钛媒体（实测可访问）
 ]
 
 
