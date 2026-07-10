@@ -124,7 +124,7 @@ class MiniQMTProvider(DataSourceBase):
             "kline_5min": "5m",
             "kline_15min": "15m",
             "kline_30min": "30m",
-            "kline_60min": "60m",
+            "kline_60min": "1h",
         }
         # 财务报表类能力统一路由到 _fetch_financial_statement，按 table_list 区分
         _FINANCIAL_CAPABILITIES = {

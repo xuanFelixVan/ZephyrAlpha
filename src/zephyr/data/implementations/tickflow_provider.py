@@ -90,10 +90,11 @@ class TickFlowProvider(DataSourceBase):
     # ---- 生命周期 ----
 
     def connect(self) -> None:
-        """建立连接：验证 tickflow 可导入。"""
-        import tickflow  # noqa: F401
+        """建立连接：创建 TickFlow 免费实例。"""
+        import tickflow as tf
+        self._client = tf.TickFlow.free()
         self._connected = True
-        self._log.info("TickFlow 已连接（匿名访问）")
+        self._log.info("TickFlow 已连接（免费版）")
 
     def health_check(self) -> bool:
         """探活：尝试 import tickflow。"""
@@ -132,36 +133,35 @@ class TickFlowProvider(DataSourceBase):
     def _fetch_us_daily_kline(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取美股日K线（tf.klines.get）。
+        """获取美股日K线（TickFlow free klines.get）。
 
         每个标的作为一批 yield FetchResult。
+        免费版仅支持 A 股日K，美股可能返回 0 行。
         """
-        import tickflow as tf
-
         table = payload.table or "c1_market.us_daily_kline"
         columns = ["trade_date", "code", "open", "high", "low", "close", "volume"]
         symbols = payload.symbols or _DEFAULT_US_SYMBOLS
         start = (payload.start or datetime.date.today() - datetime.timedelta(days=365))
         end = payload.end or datetime.date.today()
-        start_str = start.strftime("%Y-%m-%d")
-        end_str = end.strftime("%Y-%m-%d")
+        start_ts = int(datetime.datetime(start.year, start.month, start.day).timestamp())
+        end_ts = int(datetime.datetime(end.year, end.month, end.day).timestamp())
 
         for symbol in symbols:
             t0 = time.time()
             try:
                 df = self._call_with_policy(
-                    tf.klines.get,
+                    self._client.klines.get,
                     policy,
                     symbol=symbol,
-                    freq="D",
-                    start_date=start_str,
-                    end_date=end_str,
+                    start_time=start_ts,
+                    end_time=end_ts,
+                    as_dataframe=True,
                 )
                 rows: list[tuple] = []
                 if df is not None and not df.empty:
                     for _, row in df.iterrows():
                         rows.append((
-                            str(row.get("date", "")),
+                            str(row.get("trade_date", "")),
                             symbol,
                             float(row.get("open", 0) or 0),
                             float(row.get("high", 0) or 0),
@@ -190,32 +190,31 @@ class TickFlowProvider(DataSourceBase):
         """获取美股指数（用 ETF 替代真实指数）。
 
         SPX->SPY, DJI->DIA, IXIC->QQQ。
+        免费版仅支持 A 股，美股 ETF 可能返回 0 行。
         """
-        import tickflow as tf
-
         table = payload.table or "c1_market.us_index"
         columns = ["trade_date", "index_code", "etf_code", "open", "high", "low", "close", "volume"]
         start = (payload.start or datetime.date.today() - datetime.timedelta(days=365))
         end = payload.end or datetime.date.today()
-        start_str = start.strftime("%Y-%m-%d")
-        end_str = end.strftime("%Y-%m-%d")
+        start_ts = int(datetime.datetime(start.year, start.month, start.day).timestamp())
+        end_ts = int(datetime.datetime(end.year, end.month, end.day).timestamp())
 
         for index_code, etf_symbol in _US_INDEX_ETF.items():
             t0 = time.time()
             try:
                 df = self._call_with_policy(
-                    tf.klines.get,
+                    self._client.klines.get,
                     policy,
                     symbol=etf_symbol,
-                    freq="D",
-                    start_date=start_str,
-                    end_date=end_str,
+                    start_time=start_ts,
+                    end_time=end_ts,
+                    as_dataframe=True,
                 )
                 rows: list[tuple] = []
                 if df is not None and not df.empty:
                     for _, row in df.iterrows():
                         rows.append((
-                            str(row.get("date", "")),
+                            str(row.get("trade_date", "")),
                             index_code,
                             etf_symbol,
                             float(row.get("open", 0) or 0),
