@@ -524,7 +524,7 @@ tasks:
       description: "期货期限结构增量（基差需自己计算）"
 
   - task_id: tick_data_snapshot
-    table: c1_market.tick_data
+    table: c1_market.tick_history
     source: miniqmt
     schedule: weekend_financial
     incremental: true
@@ -532,7 +532,7 @@ tasks:
     capability: tick_data
     symbols: null
     extra:
-      description: "3秒Tick快照（仅实时积累）"
+      description: "QMT 3秒Tick增量（写入 tick_history，补充 bid/ask 买卖一档；百度云历史 bid/ask 为 NULL）"
 
   - task_id: auction_snapshot
     table: c1_market.auction_snapshot
