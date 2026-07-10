@@ -589,10 +589,12 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """获取个股资金流向，写入 c1_market.money_flow。
 
-        逐只调用 ak.stock_individual_fund_flow(stock, market)，
-        按 payload.start/end 过滤日期；market 由代码前缀推导。
+        直接 HTTP 请求东方财富 API（绕过 AKShare 反爬封锁）。
+        API: push2.eastmoney.com/api/qt/stock/fflow/daykline/get
+        klines 格式: 日期,主力净流入,小单净流入,中单净流入,大单净流入,超大单净流入,主力占比,小单占比,中单占比,大单占比,超大单占比
+        close/pct_change 接口未提供，填 None。
         """
-        import akshare as ak
+        import requests
 
         table = "c1_market.money_flow"
         columns = [
@@ -604,63 +606,76 @@ class AKShareProvider(DataSourceBase):
             "small_net_inflow", "small_net_inflow_pct",
         ]
         last_key = payload.end.isoformat()
+        start_str = payload.start.isoformat()
+        end_str = payload.end.isoformat()
 
         symbols = payload.symbols
         if not symbols:
-            try:
-                symbols = self._get_all_a_symbols(ak, policy)
-            except Exception as e:
-                yield FetchResult(
-                    table=table, columns=columns, rows=[], last_key=last_key,
-                    elapsed_sec=0.0, error=f"获取全A股列表失败: {e}",
-                )
-                return
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=0.0, error="资金流向需指定 symbols",
+            )
+            return
 
-        start_str = payload.start.isoformat()
-        end_str = payload.end.isoformat()
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Referer": "https://data.eastmoney.com/",
+        }
+        url = "https://push2.eastmoney.com/api/qt/stock/fflow/daykline/get"
+        fields2 = "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63,f64,f65"
+
         batch_rows: list[tuple] = []
         t0 = time.time()
 
         for sym in symbols:
             sym = str(sym).split(".")[0].zfill(6)
-            market = self._symbol_to_market(sym)
+            market = "1" if sym.startswith(("6", "5", "9")) else "0"
+            secid = f"{market}.{sym}"
+            params = {
+                "secid": secid, "lmt": 100, "klt": "1",
+                "fields1": "f1,f2,f3,f7",
+                "fields2": fields2,
+            }
             try:
-                df = self._call_with_policy(
-                    ak.stock_individual_fund_flow, policy,
-                    stock=sym, market=market,
+                resp = self._call_with_policy(
+                    requests.get, policy, url,
+                    params=params, headers=headers, timeout=15,
                 )
+                if resp is None or resp.status_code != 200:
+                    continue
+                data = resp.json()
+                klines = (data.get("data") or {}).get("klines") or []
+                for line in klines:
+                    parts = line.split(",")
+                    if len(parts) < 11:
+                        continue
+                    trade_date = parts[0]
+                    if trade_date < start_str or trade_date > end_str:
+                        continue
+                    batch_rows.append((
+                        trade_date, sym,
+                        None,  # close 接口未提供
+                        None,  # pct_change 接口未提供
+                        safe_float(parts[1]),    # 主力净流入
+                        safe_float(parts[6]),    # 主力净流入占比
+                        safe_float(parts[5]),    # 超大单净流入
+                        safe_float(parts[10]),   # 超大单净流入占比
+                        safe_float(parts[4]),    # 大单净流入
+                        safe_float(parts[9]),    # 大单净流入占比
+                        safe_float(parts[3]),    # 中单净流入
+                        safe_float(parts[8]),    # 中单净流入占比
+                        safe_float(parts[2]),    # 小单净流入
+                        safe_float(parts[7]),    # 小单净流入占比
+                    ))
+                    if len(batch_rows) >= 500:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=batch_rows[:],
+                            last_key=last_key, elapsed_sec=time.time() - t0,
+                        )
+                        batch_rows.clear()
             except Exception as e:
-                self._log.warning(f"stock_individual_fund_flow({sym}) 失败: {e}")
+                self._log.warning(f"money_flow({sym}) 失败: {e}")
                 continue
-            if df is None or len(df) == 0:
-                continue
-            for _, row in df.iterrows():
-                trade_date = self._norm_date_str(row.get("日期"))
-                if not trade_date:
-                    continue
-                if trade_date < start_str or trade_date > end_str:
-                    continue
-                batch_rows.append((
-                    trade_date, sym,
-                    safe_float(row.get("收盘价")),
-                    safe_float(row.get("涨跌幅")),
-                    safe_float(row.get("主力净流入-净额")),
-                    safe_float(row.get("主力净流入-净占比")),
-                    safe_float(row.get("超大单净流入-净额")),
-                    safe_float(row.get("超大单净流入-净占比")),
-                    safe_float(row.get("大单净流入-净额")),
-                    safe_float(row.get("大单净流入-净占比")),
-                    safe_float(row.get("中单净流入-净额")),
-                    safe_float(row.get("中单净流入-净占比")),
-                    safe_float(row.get("小单净流入-净额")),
-                    safe_float(row.get("小单净流入-净占比")),
-                ))
-                if len(batch_rows) >= 500:
-                    yield FetchResult(
-                        table=table, columns=columns, rows=batch_rows[:],
-                        last_key=last_key, elapsed_sec=time.time() - t0,
-                    )
-                    batch_rows.clear()
         yield FetchResult(
             table=table, columns=columns, rows=batch_rows[:],
             last_key=last_key, elapsed_sec=time.time() - t0,
@@ -745,8 +760,10 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """获取股权质押比例，写入 c3_fundamental.equity_pledge。
 
-        逐日调用 ak.stock_gpzy_pledge_ratio_em(date)，按截止日期获取全市场质押比例。
-        列映射: 股票代码/截止日期/质押次数/质押比例/总股本/质押到期日。
+        调用 ak.stock_gpzy_pledge_ratio_em() 获取最新日期全市场质押比例。
+        接口只返回最新交易日数据，不支持按日期查询未来日期。
+        列映射: 股票代码/交易日期/质押笔数/质押比例。
+        total_shares/pledge_end_date 接口未提供，填 None。
         """
         import akshare as ak
 
@@ -756,50 +773,49 @@ class AKShareProvider(DataSourceBase):
             "pledge_ratio", "total_shares", "pledge_end_date",
         ]
 
-        for d in self._date_range(payload.start, payload.end):
-            date_str = d.strftime("%Y%m%d")
-            iso_date = d.isoformat()
-            t0 = time.time()
-            rows: list[tuple] = []
-            try:
-                df = self._call_with_policy(
-                    ak.stock_gpzy_pledge_ratio_em, policy, date=date_str,
-                )
-            except Exception as e:
-                self._log.warning(f"stock_gpzy_pledge_ratio_em({date_str}) 失败: {e}")
-                yield FetchResult(
-                    table=table, columns=columns, rows=[], last_key=iso_date,
-                    elapsed_sec=time.time() - t0, error=str(e),
-                )
-                continue
-            if df is not None and len(df) > 0:
-                for _, row in df.iterrows():
-                    sym = str(row.get("股票代码") or "").zfill(6)
-                    if not sym:
-                        continue
-                    end_date = self._norm_date_str(row.get("截止日期"))
-                    if not end_date:
-                        end_date = iso_date
-                    rows.append((
-                        sym, end_date,
-                        safe_float(row.get("质押次数")),
-                        safe_float(row.get("质押比例")),
-                        safe_float(row.get("总股本")),
-                        None,  # pledge_end_date 接口未提供
-                    ))
-            yield FetchResult(
-                table=table, columns=columns, rows=rows,
-                last_key=iso_date, elapsed_sec=time.time() - t0,
+        t0 = time.time()
+        iso_date = datetime.date.today().isoformat()
+        rows: list[tuple] = []
+        try:
+            df = self._call_with_policy(
+                ak.stock_gpzy_pledge_ratio_em, policy,
             )
+        except Exception as e:
+            self._log.warning(f"stock_gpzy_pledge_ratio_em 失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=iso_date,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                sym = str(row.get("股票代码") or "").zfill(6)
+                if not sym:
+                    continue
+                end_date = self._norm_date_str(row.get("交易日期"))
+                if not end_date:
+                    end_date = iso_date
+                rows.append((
+                    sym, end_date,
+                    safe_float(row.get("质押笔数")),
+                    safe_float(row.get("质押比例")),
+                    None,  # total_shares 接口未提供
+                    None,  # pledge_end_date 接口未提供
+                ))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=iso_date, elapsed_sec=time.time() - t0,
+        )
 
     # ---- 9. 股权质押摘要（equity_pledge_summary） ----
 
     def _fetch_equity_pledge_summary(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取股权质押摘要，写入 c3_fundamental.equity_pledge_summary。
+        """获取股权质押摘要（全市场），写入 c3_fundamental.equity_pledge_summary。
 
-        逐日调用 ak.stock_gpzy_pledge_ratio_em(date) 获取个股质押比例。
+        调用 ak.stock_gpzy_profile_em() 获取全市场质押摘要（无参数）。
+        symbol 填 "ALL"（全市场聚合）。
         unrestricted_pledge/restricted_pledge 接口未提供，填 None。
         data_source 填 "akshare"。
         """
@@ -811,40 +827,39 @@ class AKShareProvider(DataSourceBase):
             "restricted_pledge", "total_shares", "pledge_ratio", "data_source",
         ]
 
-        for d in self._date_range(payload.start, payload.end):
-            date_str = d.strftime("%Y%m%d")
-            iso_date = d.isoformat()
-            t0 = time.time()
-            rows: list[tuple] = []
-            try:
-                df = self._call_with_policy(
-                    ak.stock_gpzy_pledge_ratio_em, policy, date=date_str,
-                )
-            except Exception as e:
-                self._log.warning(f"stock_gpzy_pledge_ratio_em({date_str}) 失败: {e}")
-                yield FetchResult(
-                    table=table, columns=columns, rows=[], last_key=iso_date,
-                    elapsed_sec=time.time() - t0, error=str(e),
-                )
-                continue
-            if df is not None and len(df) > 0:
-                for _, row in df.iterrows():
-                    sym = str(row.get("股票代码") or "").zfill(6)
-                    if not sym:
-                        continue
-                    end_date = self._norm_date_str(row.get("截止日期"))
-                    if not end_date:
-                        end_date = iso_date
-                    rows.append((
-                        sym, end_date,
-                        safe_float(row.get("质押次数")),
-                        None,  # unrestricted_pledge 接口未提供
-                        None,  # restricted_pledge 接口未提供
-                        safe_float(row.get("总股本")),
-                        safe_float(row.get("质押比例")),
-                        "akshare",
-                    ))
-            yield FetchResult(
-                table=table, columns=columns, rows=rows,
-                last_key=iso_date, elapsed_sec=time.time() - t0,
+        t0 = time.time()
+        iso_date = datetime.date.today().isoformat()
+        rows: list[tuple] = []
+        try:
+            df = self._call_with_policy(
+                ak.stock_gpzy_profile_em, policy,
             )
+        except Exception as e:
+            self._log.warning(f"stock_gpzy_profile_em 失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=iso_date,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+        if df is not None and len(df) > 0:
+            start_str = payload.start.isoformat()
+            end_str = payload.end.isoformat()
+            for _, row in df.iterrows():
+                end_date = self._norm_date_str(row.get("交易日期"))
+                if not end_date:
+                    continue
+                if end_date < start_str or end_date > end_str:
+                    continue
+                rows.append((
+                    "ALL", end_date,
+                    safe_float(row.get("质押笔数")),
+                    None,  # unrestricted_pledge 接口未提供
+                    None,  # restricted_pledge 接口未提供
+                    safe_float(row.get("质押总股数")),
+                    safe_float(row.get("A股质押总比例")),
+                    "akshare",
+                ))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=iso_date, elapsed_sec=time.time() - t0,
+        )
