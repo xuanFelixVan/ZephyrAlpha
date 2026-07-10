@@ -21,6 +21,7 @@
 - tsv_escape(v): 转义字段值（None/NaN -> \\N，字符串去换行制表符）
 - delete_where(table, condition): 写前删除（MergeTree 幂等性）
 - query(sql): 查询 CH（用于 DESCRIBE TABLE 获取列清单）
+- get_table_engine(table) / is_replacing_engine(table): 查询表引擎，辅助幂等性决策（裁定 #ARCH-CH-002）
 
 幂等性策略（§7.3）：
 - ReplacingMergeTree -> 直接 INSERT（重复键由 CH 后台合并）
@@ -45,6 +46,10 @@ log = logging.getLogger(__name__)
 
 # WSL 中 clickhouse-client 的默认超时（秒）
 _DEFAULT_TIMEOUT = 600
+
+# SQL 常量集中化（NO-BARE-SQL gate 豁免 SQL_* 前缀）
+SQL_ENGINE_BY_DB = "SELECT engine FROM system.tables WHERE database = '{}' AND name = '{}'"
+SQL_ENGINE_BY_NAME = "SELECT engine FROM system.tables WHERE name = '{}'"
 
 
 def _wsl_ch(
@@ -165,6 +170,45 @@ def _get_table_columns_set(table: str) -> set[str]:
             cols.add(parts[0])
     _table_cols_cache[table] = cols
     return cols
+
+
+# 表引擎缓存（避免每次都查 system.tables）
+_table_engine_cache: dict[str, str] = {}
+
+
+def get_table_engine(table: str) -> str:
+    """查询表的引擎类型（如 'MergeTree' / 'ReplacingMergeTree'）。
+
+    用于幂等性决策（裁定 #ARCH-CH-002）：
+    - ReplacingMergeTree -> 直接 INSERT（后台去重，无需写前 DELETE）
+    - MergeTree -> 写前 DELETE WHERE（避免重复行）
+
+    Returns:
+        引擎名字符串。查询失败返回空字符串。
+    """
+    if table in _table_engine_cache:
+        return _table_engine_cache[table]
+    # table 形如 "c1_market.kline_daily"，拆成 database + name
+    parts = table.split(".", 1)
+    if len(parts) == 2:
+        db, name = parts
+        sql = SQL_ENGINE_BY_DB.format(db, name)
+    else:
+        sql = SQL_ENGINE_BY_NAME.format(table)
+    out = query(sql)
+    engine = out.strip()
+    _table_engine_cache[table] = engine
+    return engine
+
+
+def is_replacing_engine(table: str) -> bool:
+    """判断表是否使用 ReplacingMergeTree 引擎族（含 Replicated 变体）。
+
+    Returns:
+        True 表示可直接 INSERT（后台去重），False 表示需写前 DELETE。
+    """
+    engine = get_table_engine(table)
+    return "Replacing" in engine
 
 
 def write_tsv(
