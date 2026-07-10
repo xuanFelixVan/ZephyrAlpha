@@ -391,7 +391,7 @@ tasks:
 
   - task_id: equity_pledge_incremental
     table: c3_fundamental.equity_pledge
-    source: ifind
+    source: akshare
     schedule: daily_event
     incremental: true
     dependencies: []
@@ -402,7 +402,7 @@ tasks:
 
   - task_id: equity_pledge_summary_incremental
     table: c3_fundamental.equity_pledge_summary
-    source: ifind
+    source: akshare
     schedule: daily_event
     incremental: true
     dependencies: []
