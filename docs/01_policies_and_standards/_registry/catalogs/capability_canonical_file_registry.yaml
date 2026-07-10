@@ -1519,6 +1519,21 @@ capabilities:
       - make_ch_batch_size_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: speed_test
+    aliases:
+      - speed-test
+      - speed_tester
+      - run_speed_tests
+      - speed_test_one
+    description: >-
+      数据源测速器(speed_test, MOD-L00-004 §8.5). 对每个数据能力×每个可用源
+      做小样本测速, 记录 rows/sec/symbols/sec/error_rate. 用于主备源选型
+      和数据源健康监控. 结果写入 c0_meta.fetch_perf 表.
+      CLI: integrator speed-test [--source] [--capability].
+    integrity_anchors:
+      - run_speed_tests  # 批量测速入口(删则 CLI speed-test 不可用)
+
+  # --------------------------------------------------------------------------
   - capability_id: god_class_gate
     aliases:
       - NO-GOD-CLASS
@@ -4171,6 +4186,10 @@ creation_tokens:
     token: "auto-ch-batch-size-gate-20260710"
     created_by: "session-sess-14956-20260710111553"
     capability: "ch_batch_size_gate"
+  - file: "src/zephyr/data/speed_tester.py"
+    token: "auto-speed-tester-20260710"
+    created_by: "session-sess-32844-20260710170551"
+    capability: "speed_test"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
   - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"

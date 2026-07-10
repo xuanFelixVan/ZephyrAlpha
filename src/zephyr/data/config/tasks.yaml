@@ -46,14 +46,14 @@ tasks:
 
   - task_id: daily_valuation_incremental
     table: c1_market.daily_valuation
-    source: akshare
+    source: ifind
     schedule: daily_kline
     incremental: true
     dependencies: ["kline_daily_incremental"]  # DAG: kline_daily -> daily_valuation
     capability: daily_valuation
     symbols: null
     extra:
-      description: "每日估值（PE/PB）增量（AKShare stock_zh_valuation_baidu）"
+      description: "每日估值（PE/PB/PS）增量（iFind THS_BasicData 逐指标查询，PE/PB/PS可用，PCF不可用；速度0.4851只/秒 快AKShare 2.35倍）"
 
   - task_id: index_kline_incremental
     table: c1_market.index_kline
