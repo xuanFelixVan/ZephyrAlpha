@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+from datetime import datetime
 
 from . import ch_writer
 from .provider_base import FetchResult
@@ -42,8 +43,78 @@ _DEDUP_WINDOW_DAYS = 7
 # SQL 集中化：查询最近 N 天已有新闻标题
 _SQL_DEDUP_QUERY_TEMPLATE = (
     "SELECT title FROM c3_fundamental.news_data "
-    "WHERE pub_date >= now() - INTERVAL {days} DAY"
+    "WHERE publish_time >= now() - INTERVAL {days} DAY"
 )
+
+# news_data 表标准列顺序（与 c3_fundamental.news_data schema 对齐）
+# 必填列（无 DEFAULT）：news_id, publish_time, title, content, source, data_source
+# 可选列（有 DEFAULT）：summary, source_url, category, region, ...
+NEWS_DATA_COLUMNS = [
+    "news_id", "publish_time", "title", "content",
+    "summary", "source", "source_url", "data_source",
+]
+
+# title 在 NEWS_DATA_COLUMNS 中的索引（dedup_news_result 用）
+_TITLE_INDEX = NEWS_DATA_COLUMNS.index("title")
+
+
+def _parse_datetime(dt_str: str) -> str:
+    """解析各种格式的日期时间字符串为 ClickHouse DateTime 格式。
+
+    支持 RFC 2822（RSS）、ISO 8601（JSON Feed）、常见中文格式等。
+    解析失败时返回原始字符串前 19 字符或当前时间。
+    """
+    if not dt_str or not str(dt_str).strip():
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        from dateutil import parser as date_parser
+        dt = date_parser.parse(str(dt_str))
+        return dt.strftime("%Y-%m-%d %H:%M:%S")
+    except Exception:
+        s = str(dt_str).strip()
+        return s[:19] if len(s) >= 19 else s
+
+
+def build_news_row(
+    pub_date: str,
+    title: str,
+    link: str,
+    summary: str,
+    source: str,
+    data_source: str,
+) -> tuple:
+    """构造 news_data 表标准行，对齐 ClickHouse schema。
+
+    自动计算 news_id（MD5 of source+title+publish_time），
+    解析 pub_date 为标准 DateTime 格式。
+
+    Args:
+        pub_date: 发布时间（各种格式，RSS/JSON/API 原始值）
+        title: 标题
+        link: 原文链接 → source_url
+        summary: 摘要/内容 → 同时填入 content 和 summary
+        source: 来源标识
+        data_source: 数据源名称（Provider 的 source_name）
+
+    Returns:
+        tuple: (news_id, publish_time, title, content, summary, source, source_url, data_source)
+    """
+    publish_time = _parse_datetime(str(pub_date))
+    title_str = str(title) or ""
+    content_str = str(summary) or ""
+    summary_str = str(summary) or ""
+    source_str = str(source) or ""
+    source_url_str = str(link) or ""
+    data_source_str = str(data_source) or ""
+
+    news_id = hashlib.md5(
+        f"{source_str}{title_str}{publish_time}".encode("utf-8")
+    ).hexdigest()
+
+    return (
+        news_id, publish_time, title_str, content_str,
+        summary_str, source_str, source_url_str, data_source_str,
+    )
 
 
 def _title_hash(title: str) -> str:
@@ -80,7 +151,7 @@ def dedup_news_result(result: FetchResult) -> FetchResult:
     同时过滤同一批次内的重复新闻。
 
     Args:
-        result: 原始 FetchResult，rows 格式为 (pub_date, title, link, summary, source)
+        result: 原始 FetchResult，rows 格式为 NEWS_DATA_COLUMNS 对应的 tuple
 
     Returns:
         去重后的 FetchResult（替换 rows 和 rows_fetched）
@@ -99,7 +170,7 @@ def dedup_news_result(result: FetchResult) -> FetchResult:
     skipped = 0
 
     for row in result.rows:
-        title = str(row[1]) if len(row) > 1 else ""
+        title = str(row[_TITLE_INDEX]) if len(row) > _TITLE_INDEX else ""
         h = _title_hash(title)
         if h in existing_hashes or h in seen_hashes:
             skipped += 1

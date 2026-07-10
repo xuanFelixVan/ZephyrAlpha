@@ -43,6 +43,7 @@ from ..provider_base import (
     FetchResult,
 )
 from ..policy_registry import SourcePolicy
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 
 log = logging.getLogger(__name__)
 
@@ -136,7 +137,7 @@ class RSSProvider(DataSourceBase):
         import requests
 
         table = payload.table or "c3_fundamental.news_data"
-        columns = ["pub_date", "title", "link", "summary", "source"]
+        columns = NEWS_DATA_COLUMNS
         feeds = payload.symbols or _DEFAULT_RSS_FEEDS
         respect_robots = policy.respect_robots_txt if policy else True
 
@@ -167,7 +168,9 @@ class RSSProvider(DataSourceBase):
                     title = entry.get("title", "")
                     link = entry.get("link", "")
                     summary = entry.get("summary", entry.get("description", ""))
-                    rows.append((pub_date, title, link, summary, source_name))
+                    rows.append(build_news_row(
+                        pub_date, title, link, summary, source_name, "rss",
+                    ))
 
                 self._log.info(f"RSS {source_name}: {len(rows)} 行")
                 if rows:

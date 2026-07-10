@@ -39,6 +39,7 @@ from ..provider_base import (
     FetchResult,
 )
 from ..policy_registry import SourcePolicy
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 
 log = logging.getLogger(__name__)
 
@@ -121,7 +122,7 @@ class ClsProvider(DataSourceBase):
         import requests
 
         table = payload.table or "c3_fundamental.news_data"
-        columns = ["pub_date", "title", "link", "summary", "source"]
+        columns = NEWS_DATA_COLUMNS
         t0 = time.time()
 
         try:
@@ -151,7 +152,7 @@ class ClsProvider(DataSourceBase):
 
     @staticmethod
     def _parse_cls_news(items: list) -> list[tuple]:
-        """解析RSSHub财联社电报条目为统一格式行 (pub_date, title, link, summary, source)。
+        """解析RSSHub财联社电报条目为 news_data 表标准行。
 
         本地 RSSHub 返回 JSON Feed 格式：
         - date_published (ISO8601) / pubDate
@@ -175,5 +176,5 @@ class ClsProvider(DataSourceBase):
                 or item.get("description")
                 or ""
             )
-            rows.append((pub_date, title, link, summary, "cls"))
+            rows.append(build_news_row(pub_date, title, link, summary, "cls", "cls"))
         return rows

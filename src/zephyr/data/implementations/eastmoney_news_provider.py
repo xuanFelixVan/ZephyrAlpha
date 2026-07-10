@@ -38,6 +38,7 @@ from ..provider_base import (
     FetchResult,
 )
 from ..policy_registry import SourcePolicy
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 
 log = logging.getLogger(__name__)
 
@@ -119,7 +120,7 @@ class EastmoneyNewsProvider(DataSourceBase):
         import requests
 
         table = payload.table or "c3_fundamental.news_data"
-        columns = ["pub_date", "title", "link", "summary", "source"]
+        columns = NEWS_DATA_COLUMNS
         page_size = (payload.extra or {}).get("page_size", 50)
         t0 = time.time()
 
@@ -159,7 +160,7 @@ class EastmoneyNewsProvider(DataSourceBase):
 
     @staticmethod
     def _parse_em_news(news_list: list) -> list[tuple]:
-        """解析东方财富新闻列表为统一格式行 (pub_date, title, link, summary, source)。
+        """解析东方财富新闻列表为 news_data 表标准行。
 
         实测字段名：title, showTime, uniqueUrl, summary, mediaName, url。
         兼容 Art_Title 等旧格式。
@@ -191,5 +192,7 @@ class EastmoneyNewsProvider(DataSourceBase):
                 or item.get("Art_Summary")
                 or ""
             )
-            rows.append((pub_date, title, link, summary, "eastmoney"))
+            rows.append(build_news_row(
+                pub_date, title, link, summary, "eastmoney", "eastmoney_news",
+            ))
         return rows

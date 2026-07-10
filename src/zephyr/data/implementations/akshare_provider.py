@@ -41,6 +41,7 @@ from ..provider_base import (
     FetchResult,
 )
 from ..policy_registry import SourcePolicy
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 
 log = logging.getLogger(__name__)
 
@@ -1009,7 +1010,7 @@ class AKShareProvider(DataSourceBase):
 
     @staticmethod
     def _news_rows_from_df(df, source_name: str) -> list[tuple]:
-        """从新闻 DataFrame 提取统一格式行 (pub_date, title, link, summary, source)。
+        """从新闻 DataFrame 提取 news_data 表标准行。
 
         兼容多种 AKShare 新闻接口的列名：
         - stock_news_em: 关键词/新闻标题/新闻内容/发布时间/文章来源/新闻链接
@@ -1025,7 +1026,9 @@ class AKShareProvider(DataSourceBase):
             pub_date = AKShareProvider._row_first(row, "发布时间", "时间", "日期", "date")
             link = AKShareProvider._row_first(row, "新闻链接", "链接", "url", "link")
             summary = AKShareProvider._row_first(row, "新闻内容", "摘要", "内容", "content", "summary")
-            rows.append((pub_date, title, link, summary, source_name))
+            rows.append(build_news_row(
+                pub_date, title, link, summary, source_name, "akshare",
+            ))
         return rows
 
     @staticmethod
@@ -1049,7 +1052,7 @@ class AKShareProvider(DataSourceBase):
         import akshare as ak
 
         table = "c3_fundamental.news_data"
-        columns = ["pub_date", "title", "link", "summary", "source"]
+        columns = NEWS_DATA_COLUMNS
         symbols = payload.symbols
         if not symbols:
             yield FetchResult(
@@ -1089,7 +1092,7 @@ class AKShareProvider(DataSourceBase):
         import akshare as ak
 
         table = "c3_fundamental.news_data"
-        columns = ["pub_date", "title", "link", "summary", "source"]
+        columns = NEWS_DATA_COLUMNS
         last_key = payload.end.isoformat()
         batch_rows: list[tuple] = []
         t0 = time.time()
@@ -1123,7 +1126,7 @@ class AKShareProvider(DataSourceBase):
         import akshare as ak
 
         table = "c3_fundamental.news_data"
-        columns = ["pub_date", "title", "link", "summary", "source"]
+        columns = NEWS_DATA_COLUMNS
         last_key = payload.end.isoformat()
         batch_rows: list[tuple] = []
         t0 = time.time()
@@ -1157,7 +1160,7 @@ class AKShareProvider(DataSourceBase):
         import akshare as ak
 
         table = "c3_fundamental.news_data"
-        columns = ["pub_date", "title", "link", "summary", "source"]
+        columns = NEWS_DATA_COLUMNS
         t0 = time.time()
 
         try:
@@ -1190,7 +1193,7 @@ class AKShareProvider(DataSourceBase):
         import akshare as ak
 
         table = "c3_fundamental.news_data"
-        columns = ["pub_date", "title", "link", "summary", "source"]
+        columns = NEWS_DATA_COLUMNS
         t0 = time.time()
 
         try:
