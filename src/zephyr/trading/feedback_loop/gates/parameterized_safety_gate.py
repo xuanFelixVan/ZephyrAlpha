@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.gates.parameterized_safety_gate
-# [DOMAIN] D_OPS
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.trading.feedback_loop.gates.__init__
 # [CONSUMERS] blueprint.md §0; zephyr.trading.feedback_loop 内部模块; zephyr.trading
 # [STARTUP] imported

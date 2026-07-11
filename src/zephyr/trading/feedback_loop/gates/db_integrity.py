@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.gates.db_integrity
-# [DOMAIN] D_OPS
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.trading.feedback_loop.gates.__init__
 # [CONSUMERS]
 # [STARTUP] imported

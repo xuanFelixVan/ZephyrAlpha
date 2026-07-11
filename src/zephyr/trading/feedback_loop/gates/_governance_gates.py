@@ -2,7 +2,7 @@ from typing import Final
 
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.gates._governance_gates
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.trading.feedback_loop.gates.__init__
 # [CONSUMERS] zephyr.trading.feedback_loop.gates.__init__
 # [STARTUP] imported
