@@ -19,16 +19,16 @@ governance:
     改 depgraph 后由 GATE-ARCH-MODEL reconciler 自动重生。
 
 # === 分区管理约定（Partition Management Convention）===
-# 51域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
+# 56域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 # AI找模块只有一条路：按域找。
 # b_track 是横切基础设施模块的施工视图（代码目录对齐），独立于域分类。
 
 partitions:
-# === 51域索引（物理分类唯一真源：depgraph domains表）===
+# === 56域索引（物理分类唯一真源：depgraph domains表）===
 - id: domains
   path: depgraph (PostgreSQL)
   description: >
-    51域物理分类唯一真源。
+    56域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary
     4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 
@@ -133,7 +133,7 @@ partitions:
     status: skeleton
     description: 向量化存储与检索：ChromaDB + BGE-M3 ONNX（代码以骨架为主，部分能力由 kb/ 过渡承担）
 
-# === 51域清单（从depgraph派生，禁止手工编辑）===
+# === 56域清单（从depgraph派生，禁止手工编辑）===
 domains:
 - id: D_ALT_DATA
   name: 另类数据
@@ -180,11 +180,14 @@ domains:
 - id: D_FACTOR
   name: 因子
   layer_id: L2_domain
-- id: D_FRONTEND
-  name: 前端
+- id: D_FBL_VERIFICATION
+  name: feedback_verification
   layer_id: L1_foundation
 - id: D_FEEDBACK_LOOP
   name: feedback_loop_engine
+  layer_id: L1_foundation
+- id: D_FRONTEND
+  name: 前端
   layer_id: L1_foundation
 - id: D_FUNDAMENTAL_SIGNAL
   name: fundamental_signal
@@ -195,6 +198,9 @@ domains:
 - id: D_GOV_AUDIT
   name: audit_orchestration
   layer_id: L2_domain
+- id: D_GOV_CODE_QUALITY
+  name: code_quality_governance
+  layer_id: L1_foundation
 - id: D_GOV_DOCS
   name: architecture_docs
   layer_id: L2_domain
@@ -207,6 +213,9 @@ domains:
 - id: D_GOV_KB
   name: knowledge_base_governance
   layer_id: L2_domain
+- id: D_GOV_OPS_RESILIENCE
+  name: ops_resilience_governance
+  layer_id: L1_foundation
 - id: D_GOV_REPAIR
   name: rollback
   layer_id: L2_domain
@@ -252,11 +261,11 @@ domains:
 - id: D_ML_TRAIN
   name: model_evaluation
   layer_id: L2_domain
-- id: D_ORCHESTRATOR
-  name: agent_orchestrator
-  layer_id: L1_foundation
 - id: D_OPS
   name: telemetry
+  layer_id: L1_foundation
+- id: D_ORCHESTRATOR
+  name: agent_orchestrator
   layer_id: L1_foundation
 - id: D_PF_ALLOC
   name: 组合分配
@@ -296,20 +305,20 @@ domains:
   layer_id: L2_domain
 
 global_stats:
-  total_domains: 51
+  total_domains: 56
   total_partitions: 12
   b_track_modules: 12
   b_track_implemented: 11
   b_track_skeleton: 1
   notes: >
-    51域唯一物理分类体系，14层是域的layer_id属性枚举。
+    56域唯一物理分类体系，14层是域的layer_id属性枚举。
     b_track 12横切基础设施模块（context_engine/core/db等），implemented 11 + skeleton 1(vector_memory)。
     结构化数据从depgraph派生，禁止在MD中硬编码会变化的数字。
   last_updated: '2026-06-30'
 
 query_hints:
 - question: 系统有哪些域？
-  answer: 51域，见domains列表，真源为depgraph domains表
+  answer: 56域，见domains列表，真源为depgraph domains表
 - question: 某域有哪些模块？
   answer: "查询depgraph: python scripts/governance/extract_depgraph.py --domains <域ID>"
 - question: 模块间的依赖关系？
@@ -321,7 +330,7 @@ query_hints:
 - question: 运行平面分布？
   answer: 读cross_cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
-  answer: 读cross_cutting/capability_heatmap.yaml（51域×10能力域矩阵）
+  answer: 读cross_cutting/capability_heatmap.yaml（56域×10能力域矩阵）
 - question: 前端有哪些模块？
   answer: 读frontend/frontend_model.yaml
 - question: 治理/审计脚本有哪些？
