@@ -318,14 +318,17 @@ class IntegratorScheduler:
         else:
             start = today.replace(day=1)  # 全量从月初开始
 
-        # 构造 FetchPayload
+        # 构造 FetchPayload（capability 注入 extra 供 provider 路由）
+        extra = dict(task.get("extra", {}) or {})
+        if task.get("capability"):
+            extra.setdefault("capability", task["capability"])
         payload = FetchPayload(
             table=table,
             symbols=task.get("symbols"),
             start=start,
             end=today,
             incremental=incremental,
-            extra=task.get("extra", {}),
+            extra=extra,
         )
 
         # 记录运行开始
