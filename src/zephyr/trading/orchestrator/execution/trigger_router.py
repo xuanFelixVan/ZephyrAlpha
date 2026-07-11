@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.execution.trigger_router
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.governance.rule_enforcement.drift_detector; zephyr.trading.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] imported

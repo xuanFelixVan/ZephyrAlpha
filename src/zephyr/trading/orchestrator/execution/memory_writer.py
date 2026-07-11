@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.execution.memory_writer
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.autonomy_core.__init__
 # [CONSUMERS] zephyr.trading.orchestrator.work_orchestrator
 # [STARTUP] imported

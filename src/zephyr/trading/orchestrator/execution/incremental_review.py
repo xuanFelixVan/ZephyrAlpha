@@ -2,7 +2,7 @@ from typing import Final
 
 # [BLUEPRINT] SRC-018 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.execution.incremental_review
-# [DOMAIN] D_GOV_AUDIT
+# [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

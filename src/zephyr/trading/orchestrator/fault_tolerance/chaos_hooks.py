@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §chaos_hooks
 # [MODULE] zephyr.trading.orchestrator.fault_tolerance.chaos_hooks
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.orchestration_protocol
 # [CONSUMERS] zephyr.trading.orchestrator.core.agent_orchestrator
 # [STARTUP] imported

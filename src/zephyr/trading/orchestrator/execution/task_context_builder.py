@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | CT-ORC-CE-001
 # [MODULE] zephyr.trading.orchestrator.execution.task_context_builder
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS] zephyr.trading.orchestrator.context_bridge
 # [STARTUP] imported

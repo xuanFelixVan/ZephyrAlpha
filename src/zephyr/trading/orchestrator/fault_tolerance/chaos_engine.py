@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §chaos_engine
 # [MODULE] zephyr.trading.orchestrator.fault_tolerance.chaos_engine
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.trading.orchestrator.__init__
 # [CONSUMERS] red-blue-validator.injection_engine; game_day_runner; zephyr.trading.orchestrator.chaos_hooks
 # [STARTUP] imported
