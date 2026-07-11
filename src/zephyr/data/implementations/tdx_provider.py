@@ -173,8 +173,11 @@ class TDXProvider(DataSourceBase):
         for code in symbols:
             t0 = time.time()
             try:
-                # 提取纯代码：sh.000001 -> 000001
-                raw_code = code.split(".")[-1] if "." in code else code
+                # 提取纯代码：sh.000001 -> 000001, 881101.TI -> 881101
+                if "." in code:
+                    raw_code = code.split(".")[0] if code[0].isdigit() else code.split(".")[-1]
+                else:
+                    raw_code = code
 
                 bars = self._call_with_policy(
                     self._client.index_bars,
@@ -187,8 +190,11 @@ class TDXProvider(DataSourceBase):
                 rows: list[tuple] = []
                 if bars is not None and not bars.empty:
                     for _, bar in bars.iterrows():
+                        # datetime 格式 "2026-02-06 15:00"，截取日期部分
+                        dt = str(bar.get("datetime", ""))
+                        trade_date = dt[:10] if len(dt) >= 10 else dt
                         rows.append((
-                            str(bar.get("datetime", "")),
+                            trade_date,
                             code,
                             float(bar.get("open", 0) or 0),
                             float(bar.get("high", 0) or 0),
