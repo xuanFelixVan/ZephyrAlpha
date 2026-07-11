@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_GOV_AUDIT 审计追踪架构文档
 version: "1.0"
 status: active
-date: 2026-07-10
+date: 2026-07-12
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-10 05:26:12
+> 最后更新: 2026-07-12 02:28:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,8 +28,8 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 2 | Module Count | 2 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
+| 跨域入边 | 7 | Cross-domain Incoming | 7 |
+| 跨域出边 | 5 | Cross-domain Outgoing | 5 |
 | 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
@@ -70,12 +70,27 @@ graph TD
     end
     D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     docs_03_modules_cross_layer_audit_orchestrator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|contract / contract| D_GOVERNANCE
+    D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
+    D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_GOVERNANCE -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_INFRA_TELEMETRY["(生产态 / production) D_INFRA_TELEMETRY"]
+    D_INFRA_TELEMETRY -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_audit_orchestrator_blueprint_md,docs_03_modules_domain_governance_audit_trail_blueprint_md design
-    class D_GOVERNANCE external_design
+    class D_AUTONOMY_CORE,D_INFRA_TELEMETRY external_prod
+    class D_GOVERNANCE,D_GOV_DRIFT external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -96,12 +111,27 @@ graph TD
     end
     D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     docs_03_modules_cross_layer_audit_orchestrator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|contract / contract| D_GOVERNANCE
+    D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
+    D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_GOVERNANCE -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
+    D_INFRA_TELEMETRY["(生产态 / production) D_INFRA_TELEMETRY"]
+    D_INFRA_TELEMETRY -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_audit_orchestrator_blueprint_md,docs_03_modules_domain_governance_audit_trail_blueprint_md design
-    class D_GOVERNANCE external_design
+    class D_AUTONOMY_CORE,D_INFRA_TELEMETRY external_prod
+    class D_GOVERNANCE,D_GOV_DRIFT external_design
 ```
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
@@ -117,20 +147,40 @@ graph TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | blueprint.md | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
+| 2 | blueprint.md | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
+| 3 | blueprint.md | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
+| 4 | blueprint.md | → | D_GOVERNANCE 生命周期管理: blueprint.md | contract / contract |
+| 5 | blueprint.md | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-无跨域入边依赖 / No cross-domain incoming dependencies
+| # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
+|:--:|---------|:--:|---------|---------|
+| 1 | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — Agent Observability ... | → | blueprint.md | runtime / runtime |
+| 2 | D_GOVERNANCE 生命周期管理: blueprint.md | → | blueprint.md | contract / contract |
+| 3 | D_GOVERNANCE 生命周期管理: blueprint.md | → | blueprint.md | contract / contract |
+| 4 | D_GOVERNANCE 生命周期管理: blueprint.md | → | blueprint.md | contract / contract |
+| 5 | D_GOVERNANCE 生命周期管理: blueprint.md | → | blueprint.md | runtime / runtime |
+| 6 | D_GOV_DRIFT 漂移检测: blueprint.md | → | blueprint.md | runtime / runtime |
+| 7 | D_INFRA_TELEMETRY 可观测性: otel_instrumentation.py — 全链路 OTel (B12, DD... | → | blueprint.md | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 1 个外部域直接连接（出边 1 条 + 入边 0 条 = 1 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 5 条 + 入边 7 条 = 12 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
-    D_GOV_AUDIT -->|1条 runtime / runtime| D_GOVERNANCE
+    D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>可观测性"]
+    D_GOV_AUDIT -->|4条 contract / contract, runtime / runtime| D_GOVERNANCE
+    D_GOV_AUDIT -->|1条 runtime / runtime| D_GOV_DRIFT
+    D_GOVERNANCE -->|4条 contract / contract, runtime / runtime| D_GOV_AUDIT
+    D_AUTONOMY_CORE -->|1条 runtime / runtime| D_GOV_AUDIT
+    D_GOV_DRIFT -->|1条 runtime / runtime| D_GOV_AUDIT
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_GOV_AUDIT
 ```
 
 ## 说明 / Notes
