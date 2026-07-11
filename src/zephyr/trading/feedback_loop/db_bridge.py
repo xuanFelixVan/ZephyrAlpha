@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | CT-FLE-DB-001
 # [MODULE] zephyr.trading.feedback_loop.db_bridge
-# [DOMAIN] D_OPS
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.trading.feedback_loop.metrics_collector; tests.test_db_bridge; tests.test_fl_db_bridge
 # [STARTUP] imported

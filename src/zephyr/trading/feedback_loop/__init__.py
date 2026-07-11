@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop
-# [DOMAIN] D_OPS
+# [DOMAIN] D_FEEDBACK_LOOP
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=cross_layer | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

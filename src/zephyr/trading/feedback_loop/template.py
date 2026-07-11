@@ -2,7 +2,7 @@ from typing import Final
 
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9
 # [MODULE] zephyr.trading.feedback_loop.template
-# [DOMAIN] D_OPS
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
 # [CONSUMERS] blueprint.md §0; zephyr.trading.feedback_loop 内部模块; zephyr.trading
 # [STARTUP] imported

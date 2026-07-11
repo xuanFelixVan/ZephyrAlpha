@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.self_diagnosis
-# [DOMAIN] D_AUTONOMY_CORE
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]
 # [STARTUP] imported

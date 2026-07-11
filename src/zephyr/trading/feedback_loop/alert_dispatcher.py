@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | CT-FLE-ORC-001
 # [MODULE] zephyr.trading.feedback_loop.alert_dispatcher
-# [DOMAIN] D_OPS
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.orchestrator.alert_handler
 # [STARTUP] imported

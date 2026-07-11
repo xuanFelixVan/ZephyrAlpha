@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.auto_evolution
-# [DOMAIN] D_OPS
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.trading.feedback_loop.__init__; zephyr.shared.alert_manager; zephyr.shared.alert_precision_tracker; zephyr.shared.dual_channel_alert; zephyr.shared.error_budget_tracker; zephyr.shared.lifecycle.resource_optimization_engine; zephyr.trading.feedback_loop.collectors.__init__; scripts.governance.d5_architecture.detectors.__init__; zephyr.trading.feedback_loop.diagnosers.__init__; D_FACTOR.FactorSignal 因子信号; zephyr.trading.feedback_loop.verifiers.__init__; D_AUTONOMY_CORE.Evolution Agent 进化Agent; zephyr.governance.drift_detection.forensics_engine; D_AUTONOMY_CORE.对抗性韧性 Adversarial Resilience; D_AUTONOMY_CORE.AWS Agentic AI安全范围矩阵 AWS Agentic AI Security Scope Matrix; architecture_model.layers.b_gates.yaml; zephyr.shared.contracts.protocols; zephyr.trading.feedback_loop.scheduler_act; zephyr.trading.feedback_loop.scheduler_collect_detect; zephyr.trading.feedback_loop.scheduler_health; zephyr.trading.feedback_loop.scheduler_safety
 # [CONSUMERS]
 # [STARTUP] imported

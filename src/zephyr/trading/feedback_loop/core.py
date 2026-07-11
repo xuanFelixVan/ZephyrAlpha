@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.core
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS] zephyr.trading.auto_runtime_core; zephyr.trading.lifecycle_manager; zephyr.governance.audit_trail.feedback_bridge; zephyr.security.access_control.orphan_judge.feedback_bridge
 # [STARTUP] imported
