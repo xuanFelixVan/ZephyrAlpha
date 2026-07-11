@@ -779,6 +779,11 @@ class AKShareProvider(DataSourceBase):
                 ak.stock_restricted_release_detail_em, policy,
                 start_date=start_str, end_date=end_str,
             )
+        except TypeError as e:
+            # AKShare bug: 非交易日查询时东财API返回result=None，
+            # AKShare内部对None做["pages"]索引导致TypeError，视为无数据
+            self._log.info(f"share_unlock: 日期范围 {start_str}-{end_str} 无数据（可能非交易日）: {e}")
+            df = None
         except Exception as e:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
@@ -792,14 +797,14 @@ class AKShareProvider(DataSourceBase):
                 sym = str(row.get("股票代码") or "").zfill(6)
                 if not sym:
                     continue
-                unlock_date = self._norm_date_str(row.get("解除限售日期"))
+                unlock_date = self._norm_date_str(row.get("解禁时间"))
                 if not unlock_date:
                     continue
                 rows.append((
                     sym, unlock_date,
-                    safe_float(row.get("解除限售数量")),
-                    safe_float(row.get("解除限售比例")),
-                    safe_float(row.get("实际解禁金额")),
+                    safe_float(row.get("解禁数量")),
+                    safe_float(row.get("占解禁前流通市值比例")),
+                    safe_float(row.get("实际解禁市值")),
                 ))
         yield FetchResult(
             table=table, columns=columns, rows=rows,
