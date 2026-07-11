@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates._diff_helpers
-# [DOMAIN] D_GOV_ENFORCEMENT
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] —
 # [CONSUMERS] zephyr.governance.commit_gates.unsafe_dict_spread_gate; zephyr.governance.commit_gates.datetime_now_forbidden_gate; zephyr.governance.commit_gates.bare_sql_gate; zephyr.governance.commit_gates.hardcoded_url_gate
 # [STARTUP] imported

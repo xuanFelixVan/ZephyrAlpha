@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
 # [MODULE] zephyr.governance.code_dedup.trackers
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.code_dedup
 # [CONSUMERS] zephyr.governance.__init__（blind_spot_tracker->BlindSpotStatus）
 # [STARTUP] imported

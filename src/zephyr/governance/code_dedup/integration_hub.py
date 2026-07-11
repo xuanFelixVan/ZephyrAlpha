@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
 # [MODULE] zephyr.governance.code_dedup.integration_hub
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] tests/governance/code_quality/test_code_dedup_engine_red_team.py; tests/governance/integration/test_integration_hub.py
 # [STARTUP] imported

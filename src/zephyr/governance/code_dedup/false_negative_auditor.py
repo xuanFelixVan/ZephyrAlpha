@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
 # [MODULE] zephyr.governance.code_dedup.false_negative_auditor
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] tests/governance/audit/test_false_negative_auditor.py
 # [STARTUP] imported

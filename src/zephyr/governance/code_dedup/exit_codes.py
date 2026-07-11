@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
 # [MODULE] zephyr.governance.code_dedup.exit_codes
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.code_dedup.cli; tests/code_dedup_engine/test_degradation_edge.py; tests/governance/code_quality/test_code_dedup_engine_red_team.py; tests/governance/ops/test_exit_codes.py
 # [STARTUP] imported
