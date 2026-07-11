@@ -16,9 +16,10 @@
 # [TTL] permanent
 """ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）。
 
-混合传输架构（裁定 #ARCH-CH-004，2026-07-10）：
+混合传输架构（裁定 #ARCH-CH-004，2026-07-10，2026-07-12 修订）：
 - query/delete_where → clickhouse-driver TCP（9000端口，2.9x 加速，连接复用）
-- write_tsv → WSL subprocess TSV（TSV 自动处理类型转换，Provider 返回字符串日期无需转换）
+- write_tsv → HTTP API（8123端口，POST TSV body）优先，WSL subprocess fallback
+  （2026-07-12 修订：WSL 服务不稳定会导致 write_tsv 卡 600 秒超时，改用 HTTP API 主路径）
 
 提供：
 - write_result(result): 把 FetchResult.rows 转 TSV 写入 CH
@@ -34,13 +35,15 @@
 
 设计要点：
 - 不依赖 tmp/_ds_common.py（TTL=task_bound，src/ 不能长期依赖 tmp/）
-- 自封装 _wsl_ch / tsv_escape / _get_insert_columns 逻辑
-- query/delete_where 用 clickhouse-driver TCP，write_tsv 用 WSL subprocess（混合传输）
+- 自封装 _http_ch / _wsl_ch / tsv_escape / _get_insert_columns 逻辑
+- query/delete_where 用 clickhouse-driver TCP，write_tsv 用 HTTP API（WSL fallback）
 """
 from __future__ import annotations
 
 import logging
 import subprocess
+import urllib.request
+import urllib.error
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -144,6 +147,56 @@ def _wsl_ch(
         capture_output=True,
         timeout=timeout,
     )
+
+
+# ClickHouse HTTP 端口（8123）
+_CH_HTTP_HOST = "localhost"
+_CH_HTTP_PORT = 8123
+
+
+def _http_insert(
+    sql: str,
+    tsv_bytes: bytes,
+    timeout: int = _DEFAULT_TIMEOUT,
+) -> bool:
+    """通过 ClickHouse HTTP API（8123端口）执行 INSERT。
+
+    HTTP API 比 WSL subprocess 更稳定：
+    - 不依赖 WSL 服务（WSL 可能卡住导致 600 秒超时）
+    - 连接复用（urllib 内部 keep-alive）
+    - POST body 传输 TSV 数据
+
+    Args:
+        sql: INSERT SQL 语句（如 "INSERT INTO table (cols) FORMAT TSV"）
+        tsv_bytes: TSV 格式字节数据
+        timeout: 超时秒数
+
+    Returns:
+        是否成功。
+    """
+    url = f"http://{_CH_HTTP_HOST}:{_CH_HTTP_PORT}/"
+    # URL 编码 query 参数
+    import urllib.parse
+    full_url = f"{url}?query={urllib.parse.quote(sql)}"
+    try:
+        req = urllib.request.Request(
+            full_url,
+            data=tsv_bytes,
+            method="POST",
+        )
+        resp = urllib.request.urlopen(req, timeout=timeout)
+        body = resp.read()
+        if resp.status == 200:
+            return True
+        log.error("HTTP insert 失败: status=%s, body=%s", resp.status, body[:200])
+        return False
+    except urllib.error.HTTPError as e:
+        err_body = e.read().decode("utf-8", errors="replace")[:500]
+        log.error("HTTP insert HTTPError: %s, body=%s", e.code, err_body)
+        return False
+    except Exception as e:
+        log.error("HTTP insert 异常: %s", e)
+        return False
 
 
 def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
@@ -315,6 +368,10 @@ def write_tsv(
 ) -> bool:
     """TSV 批量写入表。
 
+    传输优先级（2026-07-12 修订）：
+    1. HTTP API（8123端口）— 主路径，不依赖 WSL
+    2. WSL subprocess — fallback（HTTP 不可用时降级）
+
     Args:
         table: 完整表名（如 c1_market.kline_daily）
         columns: "(col1, col2, ...)" 字符串，None 时自动查询列清单
@@ -329,6 +386,13 @@ def write_tsv(
         return False
     cols_clause = columns if columns else _get_insert_columns(table)
     sql = f"INSERT INTO {table} {cols_clause} FORMAT TSV"
+
+    # 策略1: HTTP API（主路径，不依赖 WSL）
+    if _http_insert(sql, tsv_bytes, timeout=timeout):
+        return True
+    log.warning("write_tsv(%s): HTTP API 失败，降级到 WSL subprocess", table)
+
+    # 策略2: WSL subprocess（fallback）
     # 避免 "Too many parts" 错误
     full_args = ["--query", sql, "--max_partitions_per_insert_block", "0"]
     try:
