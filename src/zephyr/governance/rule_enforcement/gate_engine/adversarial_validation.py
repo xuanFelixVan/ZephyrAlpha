@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.rule_enforcement.gate_engine.adversarial_validation
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.rule_enforcement.check_types.adversarial_validation;zephyr.governance.rule_enforcement.gate_pipeline
+# [CONSUMERS] zephyr.governance.rule_enforcement.gate_pipeline
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] validate() MUST return pass/fail with confidence; adversarial_test() MUST test all provided strategies
@@ -187,14 +187,3 @@ class AdversarialValidationGate:
 
     def get_history(self) -> list[ValidationResult]:
         return list(self._history)
-
-
-class AdversarialValidation:
-    def __init__(self, config=None):
-        self.config = config or {}
-
-    def validate(self, target):
-        return True
-
-    def run_checks(self):
-        return []
