@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.rule_enforcement.adversarial_strategies
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.rule_enforcement.adversarial_validation;zephyr.governance.rule_enforcement.check_types.adversarial_validation
+# [CONSUMERS] zephyr.governance.rule_enforcement.adversarial_validation
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Each strategy MUST have generate()/detect() methods; detect() MUST return bool

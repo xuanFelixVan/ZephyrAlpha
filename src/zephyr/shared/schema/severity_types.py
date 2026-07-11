@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.schema.severity_types
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] gates.task_types; gates.check_types.ct_audit_findings_resolved; shared.schema.schemas; shared.schema.audit_types; kb.knowledge_types
+# [CONSUMERS] gates.task_types; shared.schema.schemas; shared.schema.audit_types; kb.knowledge_types
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Priority P0-P4 MUST align with GOV-TASK-004 §2.2; AuditSeverity MUST be backward-compatible alias for Priority P0-P2
