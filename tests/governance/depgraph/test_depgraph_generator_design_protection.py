@@ -24,7 +24,7 @@ _TEST_PATH_MODULE = "test/design_protection/module.py"
 _TEST_PATH_RULE = "test/design_protection/rule.yaml"
 _TEST_PATH_TEMPLATE = "test/design_protection/template.yaml"
 # 用真实存在的域（外键约束要求 domain_id 必须在 domains 表中存在）
-_TEST_DOMAIN = "D_GOVERNANCE"
+_TEST_DOMAIN = "D_GOV_KB"
 
 
 def _cleanup_test_nodes(conn):

@@ -1433,7 +1433,7 @@ entries:
   title: 聚合节点模式治理配置对象过细（门禁/脚本/测试/规则文件）
   category: architecture_governance
   severity: P2中
-  status: decided
+  status: in_progress
   description: |
     5 个超容域（D_GOV_ENFORCEMENT 200/150, D_GOV_SCRIPTS 432/150, D_GOVERNANCE 847/150,
     D_TRADING 481/150, D_AUDITTEST 1718/150）的根因是配置对象（门禁 yaml/脚本/测试/规则文件）
@@ -1467,7 +1467,8 @@ entries:
     - Phase 5：验证与重生（50 个域文档）
   fix_phase: Phase 1-5 逐步实施
   created: '2026-07-06'
-  last_updated: '2026-07-06'
+  last_updated: '2026-07-12'
+  phase1_progress: '2026-07-12 D_GOVERNANCE 域拆分 Phase 1 完成——5子域(AUDIT/DRIFT/ENFORCEMENT/KB/SCRIPTS)366节点迁移，D_GOVERNANCE 506→303 production'
 
 # --- #ARCH-053: 三图设计态保护机制 + 对齐检测器（depgraph/dataflow/decision） ---
 - issue_id: '#ARCH-053'

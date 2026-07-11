@@ -52,8 +52,8 @@ references:
   - {id: "MOD-INF-024", at: "§2", why: "Knowledge Base——绕过模式知识条目存储与检索"}
   - {id: "MOD-INF-026", at: "§1", why: "Asset Inventory——攻击目标资产发现与枚举"}
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 # Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认

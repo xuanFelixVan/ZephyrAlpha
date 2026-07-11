@@ -38,8 +38,8 @@ depends_on:
 references: []
 last_updated: "2026-05-15"
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 <!--

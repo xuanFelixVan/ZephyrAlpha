@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.bootstrapping_calibrator
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] tests/governance/budget/test_budget_enforcer_submodules.py; tests/governance/lifecycle/test_bootstrapping_calibrator.py
 # [STARTUP] imported

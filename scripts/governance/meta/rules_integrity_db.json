@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "9656076845ccf2ed",
+      "hash": "d7336a1268f3c91c",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,7 +46,7 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/rule_bridge/git_commit_gateway.py": {
-      "hash": "139f7992edf2cd4d",
+      "hash": "aa2ab02d027cfcff",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "bee4ca5a90d4f241",
+      "hash": "64749d802cf28c98",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -99,6 +99,11 @@
       "hash": "74bace6029c883a4",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: capability_overlap_gate.py）"
+    },
+    "src/zephyr/governance/commit_gates/ch_batch_size_gate.py": {
+      "hash": "6b430dcaf0ff2aa5",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: ch_batch_size_gate.py）"
     },
     "src/zephyr/governance/commit_gates/claim_required_gate.py": {
       "hash": "a87074701c8d4947",
@@ -271,6 +276,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: vocab_hardcode_gate.py）"
     }
   },
-  "registered_at": "2026-07-09T20:17:02.984463+00:00",
+  "registered_at": "2026-07-11T18:09:57.990029+00:00",
   "last_check_at": "2026-07-05T20:02:44.389071+00:00"
 }

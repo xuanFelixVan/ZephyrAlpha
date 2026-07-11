@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §3
 # [MODULE] zephyr.governance.audit_trail.finding_ingest
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.writer; zephyr.shared.event_bus
 # [CONSUMERS] pipeline_runner.py; run_all.py
 # [STARTUP] imported

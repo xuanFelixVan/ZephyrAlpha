@@ -71,8 +71,8 @@ depends_on:
   - {target: MOD-INF-024, at: "$TODO", why: "TODO -- auto-converted"}
   - {target: MOD-INF-025, at: "$TODO", why: "TODO -- auto-converted"}
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 ## MOD-GOVERNANCE 集成契约锚点

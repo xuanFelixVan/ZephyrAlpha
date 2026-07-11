@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-commit_gate_registry | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
 # [MODULE] zephyr.governance.rule_bridge.commit_gate_registry
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] (none — pure stdlib)
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported

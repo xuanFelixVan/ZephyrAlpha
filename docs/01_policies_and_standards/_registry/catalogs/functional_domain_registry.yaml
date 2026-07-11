@@ -116,6 +116,27 @@ entries:
   - chaos injection
   stability: stable
   ai_autonomy: human_gated
+- domain: D_GOV_KB
+  subdomain: knowledge_base_governance
+  ssot_module: MOD-KB-001
+  ssot_path: src/zephyr/governance/kb/
+  covers:
+  - 知识管线(ingest/triage/extract/activate/analyze)
+  - 知识仓库(kb_repo)
+  - 统一记忆API(unified_memory_api)
+  - 知识完整性(integrity)
+  - 重排序(reranker)
+  - 安全制动(safety_brake)
+  - VMS记忆后端(vms_memory_backend)
+  - 知识引擎(knowledge_engine)
+  - 知识蒸馏(knowledge_distiller)
+  - 嵌入版本锁(embedding_version_lock)
+  aliases:
+  - knowledge base governance
+  - 知识库治理
+  - KB governance
+  stability: stable
+  ai_autonomy: ai_modifiable
 - domain: D_GOVERNANCE
   subdomain: registry_management
   ssot_module: MOD-INF-037

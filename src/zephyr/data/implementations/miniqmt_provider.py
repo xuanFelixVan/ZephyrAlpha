@@ -2025,7 +2025,7 @@ class MiniQMTProvider(DataSourceBase):
         """抓取可转债日K线数据。
 
         使用 xtdata.get_market_data_ex(period='1d')，symbols 格式如 '113001.SH'。
-        若 symbols 为空，尝试从'可转债'板块获取标的列表。
+        若 symbols 为空，尝试从'沪深转债'板块获取标的列表。
         表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
 
         Args:
@@ -2037,11 +2037,11 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        # symbols 为空时尝试取可转债板块
+        # symbols 为空时尝试取沪深转债板块
         if not payload.symbols:
             try:
                 cb_list = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "可转债"
+                    xtdata.get_stock_list_in_sector, policy, "沪深转债"
                 )
                 if cb_list:
                     payload = FetchPayload(
@@ -2074,16 +2074,20 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        # symbols 为空时尝试取期权列表（以 50ETF 为标的）
+        # symbols 为空时从上证期权+深证期权板块获取合约列表
         if not payload.symbols:
             try:
-                # 取近月期权合约
-                opts = self._call_with_policy(
-                    xtdata.get_option_list, policy, "510050.SH", "",
-                )
+                opts = []
+                for sector_name in ("上证期权", "深证期权"):
+                    lst = self._call_with_policy(
+                        xtdata.get_stock_list_in_sector, policy, sector_name
+                    )
+                    if lst:
+                        opts.extend(lst)
                 if opts:
+                    # 限制前 100 个（期权合约太多）
                     payload = FetchPayload(
-                        table=payload.table, symbols=opts[:50],
+                        table=payload.table, symbols=opts[:100],
                         start=payload.start, end=payload.end,
                         incremental=payload.incremental, extra=payload.extra,
                     )
@@ -2530,6 +2534,7 @@ class MiniQMTProvider(DataSourceBase):
         """抓取期货日K线数据（QMT 专用表）。
 
         使用 xtdata.get_market_data_ex(period='1d')，symbols 格式如 'IF2407.CFFEX'。
+        若 symbols 为空，从'商品期货'+'股指期货期货板块'获取合约列表。
         表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
 
         Args:
@@ -2539,6 +2544,26 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每个合约一批
         """
+        from xtquant import xtdata
+
+        if not payload.symbols:
+            try:
+                futures = []
+                for sector_name in ("商品期货", "股指期货期货板块"):
+                    lst = self._call_with_policy(
+                        xtdata.get_stock_list_in_sector, policy, sector_name
+                    )
+                    if lst:
+                        futures.extend(lst)
+                if futures:
+                    payload = FetchPayload(
+                        table=payload.table, symbols=futures,
+                        start=payload.start, end=payload.end,
+                        incremental=payload.incremental, extra=payload.extra,
+                    )
+            except Exception as e:
+                self._log.warning(f"获取期货合约列表失败: {e}")
+
         yield from self._fetch_simple_kline(payload, policy, "c1_market.futures_kline_qmt")
 
     # ============== 港股K线 ==============
@@ -2549,6 +2574,7 @@ class MiniQMTProvider(DataSourceBase):
         """抓取港股日K线数据。
 
         使用 xtdata.get_market_data_ex(period='1d')，symbols 格式如 '00700.HK'。
+        若 symbols 为空，从'港股主板'板块获取前200只港股。
         表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
 
         Args:
@@ -2558,6 +2584,23 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每个港股一批
         """
+        from xtquant import xtdata
+
+        if not payload.symbols:
+            try:
+                hk_list = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, "港股主板"
+                )
+                if hk_list:
+                    # 限制前 200 只（港股太多，避免超时）
+                    payload = FetchPayload(
+                        table=payload.table, symbols=hk_list[:200],
+                        start=payload.start, end=payload.end,
+                        incremental=payload.incremental, extra=payload.extra,
+                    )
+            except Exception as e:
+                self._log.warning(f"获取港股列表失败: {e}")
+
         yield from self._fetch_simple_kline(payload, policy, "c1_market.hk_kline")
 
     # ============== 美股K线 ==============
@@ -2568,16 +2611,24 @@ class MiniQMTProvider(DataSourceBase):
         """抓取美股日K线数据。
 
         使用 xtdata.get_market_data_ex(period='1d')，symbols 格式如 'AAPL.US'。
-        需 QMT 开通美股行情权限。
+        需 QMT 开通美股行情权限。QMT 板块列表无美股板块，symbols 必须手动指定。
         表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
 
         Args:
-            payload: 下载请求
+            payload: 下载请求（symbols 必须指定美股代码列表）
             policy: 调用策略
 
         Yields:
             FetchResult: 每个美股一批
         """
+        if not payload.symbols:
+            yield FetchResult(
+                table=payload.table or "c1_market.us_kline",
+                columns=[], rows=[], last_key="",
+                elapsed_sec=0.0,
+                error="QMT 无美股板块，需在 tasks.yaml 中手动指定 symbols（如 ['AAPL.US', 'MSFT.US']），且需开通美股行情权限",
+            )
+            return
         yield from self._fetch_simple_kline(payload, policy, "c1_market.us_kline")
 
     # ============== ETF净值 ==============
@@ -2603,6 +2654,16 @@ class MiniQMTProvider(DataSourceBase):
         columns = ["trade_date", "symbol", "etf_code", "nav", "cash_balance", "data_source"]
         trade_date = payload.end.isoformat()
         symbols = payload.symbols or []
+        # symbols 为空时从沪深ETF板块获取前200只
+        if not symbols:
+            try:
+                etf_list = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, "沪深ETF"
+                )
+                if etf_list:
+                    symbols = etf_list[:200]
+            except Exception as e:
+                self._log.warning(f"获取ETF列表失败: {e}")
         last_key = self._date_to_str(payload.end)
 
         for stock_code in symbols:

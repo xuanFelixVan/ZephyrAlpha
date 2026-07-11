@@ -59,8 +59,8 @@ stability: evolving
 verifiability: hybrid
 references: []
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 # Agent Spec 蓝图+施工图 — 蓝图→Skill 升级引擎

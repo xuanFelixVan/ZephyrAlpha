@@ -44,8 +44,8 @@ stability: evolving
 verifiability: hybrid
 references: []
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 <!--

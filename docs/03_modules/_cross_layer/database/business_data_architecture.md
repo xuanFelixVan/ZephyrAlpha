@@ -47,8 +47,8 @@ references:
   - {id: "DD-P6-01", at: "数据架构.md §6.4", why: "图谱存储NetworkX→Neo4j修正(551K关系超舒适区)"}
   - {id: "ARCH-BIZDB-DISCUSSION", at: "docs/_working/业务数据库架构_讨论记录.md", why: "11章推导过程记录，本母蓝图的完整输入"}
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 # 业务数据库顶层架构设计书 — 回测引擎数据仓库 + 实盘分析数据中台

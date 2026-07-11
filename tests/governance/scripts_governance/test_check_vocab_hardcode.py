@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-check_vocab_hardcode | tests/test_check_vocab_hardcode.py | §gate-vocab-detection7-tests
 # [MODULE] tests.test_check_vocab_hardcode
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d3_metadata.check_vocab_hardcode
 # [CONSUMERS]
 # [STARTUP] manual

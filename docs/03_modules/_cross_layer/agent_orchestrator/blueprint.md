@@ -32,7 +32,6 @@ priority: P0
 runtime_plane: hot
 blueprint_level: module
 responsibility_domain: 
-  - {target: "MOD-CONTEXT_ENGINE", at: "§2", why: "Context Engine——任务开始前拉上下文"}
   - {target: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——入参/出参 Schema 校验"}
   - {target: "MOD-INF-011", at: "§2", why: "Vector Memory——任务完成写 task_history"}
   - {target: "MOD-GATE_ENGINE", at: "§2", why: "Gate Engine——TaskGate 门禁验证"}

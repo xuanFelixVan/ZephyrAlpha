@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.governance.kb.pipeline.batch_ingest
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_KB
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported

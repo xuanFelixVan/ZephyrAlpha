@@ -63,8 +63,8 @@ depends_on:
 summary: "Agent间通信协议与冲突解决——九层十二协议架构，覆盖发现/通信/协商/辩论/共识/经济/路由/事务/协调九层+脚本执行基础设施层，150条盲点全覆盖，57代码骨架+14容量扩展文件。"
 tags: [a2a, agent-coordination, multi-agent, conflict-resolution, infrastructure, agent-card, task-state-machine, message-security, owasp-asi07, deadlock-prevention, saga-transaction, structured-negotiation, anp, formal-verification, tla-plus, vector-reputation, trustflow, context-rot, user-consent, constitutional-governance, agent-immune-system, agent-forgetting, multi-protocol-gateway, causal-trace, blame-attribution, capacity-upgrade, script-execution]
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 > ⛔ **自动化准入门禁 (AUTOMATION-GATE)**

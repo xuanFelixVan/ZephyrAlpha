@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §8
 # [MODULE] zephyr.governance.audit_trail.merkle_audit
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.integrity
 # [CONSUMERS] zephyr.governance.__init__
 # [STARTUP] imported

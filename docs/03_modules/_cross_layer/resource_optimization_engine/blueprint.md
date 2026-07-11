@@ -37,8 +37,8 @@ references:
   - {id: "MOD-INF-015", at: "§10", why: "System Telemetry——SLI指标上报与健康检查"}
   - {id: "MOD-INF-009", at: "全篇", why: "Pipeline——pipeline_lock与资源调度协调"}
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 # Resource Optimization Engine 蓝图 — MAPE-K 驱动的进程池化/I/O零拷贝/缓存复用/自愈闭环

@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-021 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.behavioral_admission.code_review_ai
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

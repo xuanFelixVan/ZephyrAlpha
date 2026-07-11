@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain_reporting/blueprint.md
 # [MODULE] zephyr.governance.audit.default_attribution_engine
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.reporting.default_attribution_engine
 # [CONSUMERS]
 # [STARTUP] imported

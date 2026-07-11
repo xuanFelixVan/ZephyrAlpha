@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §4.1
 # [MODULE] zephyr.governance.semantic_audit.alignment_engine
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models; zephyr.governance.semantic_audit.reference_extractor
 # [CONSUMERS] issue_aggregator
 # [STARTUP] imported

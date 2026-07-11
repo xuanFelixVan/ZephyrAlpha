@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-09T20:17:05.665711+00:00",
+  "timestamp": "2026-07-11T18:09:47.347335+00:00",
   "dashboard": "architecture_health",
   "phase": "第0期-自动化检测基线",
   "metrics": [
@@ -23,7 +23,7 @@
     {
       "metric_id": "M02",
       "name": "manual-only 永久脚本数",
-      "count": 30,
+      "count": 31,
       "target": 0,
       "details": [
         "scripts\\governance\\apply_dataflowgraph.py [STARTUP]=manual [TTL]=permanent",
@@ -42,10 +42,10 @@
         "scripts\\governance\\d5_architecture\\generators\\generate_contracts.py [STARTUP]=manual [TTL]=permanent",
         "scripts\\governance\\d5_architecture\\generators\\generate_cross_domain_matrix.py [STARTUP]=manual [TTL]=permanent",
         "scripts\\governance\\d5_architecture\\generators\\generate_data_acquisition_flow.py [STARTUP]=manual [TTL]=permanent",
+        "scripts\\governance\\d5_architecture\\generators\\generate_data_inventory.py [STARTUP]=manual [TTL]=permanent",
         "scripts\\governance\\d5_architecture\\generators\\generate_dataflow_diagram.py [STARTUP]=manual [TTL]=permanent",
         "scripts\\governance\\d5_architecture\\generators\\generate_decision_diagram.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\d5_architecture\\generators\\generate_design_vs_production.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\d5_architecture\\generators\\generate_domain_dependency_diagram.py [STARTUP]=manual [TTL]=permanent"
+        "scripts\\governance\\d5_architecture\\generators\\generate_design_vs_production.py [STARTUP]=manual [TTL]=permanent"
       ],
       "source": "inline",
       "error": ""
@@ -53,11 +53,12 @@
     {
       "metric_id": "M03",
       "name": "重复簇函数数",
-      "count": 529,
+      "count": 530,
       "target": 0,
       "details": [
         "簇(91): src\\zephyr\\autonomy_core\\prompt_registry.py:__init__() L140 | src\\zephyr\\autonomy_core\\context\\context_assembler.py:__init__() L113 | src\\zephyr\\backtest\\core\\data_handler.py:__init__() L58",
-        "簇(33): src\\zephyr\\governance\\audit_trail\\delegation_auditor.py:__init__() L110 | src\\zephyr\\governance\\audit_trail\\external_tool_audit.py:__init__() L107 | src\\zephyr\\governance\\audit_trail\\feedback_policy.py:__init__() L155",
+        "簇(32): src\\zephyr\\governance\\audit_trail\\delegation_auditor.py:__init__() L110 | src\\zephyr\\governance\\audit_trail\\external_tool_audit.py:__init__() L107 | src\\zephyr\\governance\\audit_trail\\feedback_policy.py:__init__() L155",
+        "簇(26): src\\zephyr\\governance\\rule_enforcement\\gate_engine\\gate_engine.py:_add() L575 | src\\zephyr\\governance\\rule_enforcement\\gate_engine\\gate_engine.py:_add() L596 | src\\zephyr\\governance\\rule_enforcement\\gate_engine\\gate_engine.py:_add() L617",
         "簇(19): src\\zephyr\\governance\\intelligence_governance\\cross_agent_conflict_detector.py:__init__() L50 | src\\zephyr\\infrastructure\\impact\\impact_propagator.py:__init__() L51 | src\\zephyr\\infrastructure\\impact\\llm_impact_analyzer.py:__init__() L51",
         "簇(17): src\\zephyr\\shared\\contracts\\execution\\capital_allocation_result.py:__getattr__() L24 | src\\zephyr\\shared\\contracts\\execution\\execution_report.py:__getattr__() L24 | src\\zephyr\\shared\\contracts\\execution\\fill.py:__getattr__() L24",
         "簇(16): src\\zephyr\\governance\\merkle_hourly.py:is_available() L63 | src\\zephyr\\governance\\audit_trail\\delegation_auditor.py:is_available() L97 | src\\zephyr\\governance\\audit_trail\\delegation_bridge.py:is_available() L80",
@@ -73,7 +74,6 @@
         "簇(7): src\\zephyr\\infrastructure\\asset_inventory\\registry_adapter.py:registry_id() L95 | src\\zephyr\\infrastructure\\asset_inventory\\registry_adapter.py:registry_id() L253 | src\\zephyr\\infrastructure\\asset_inventory\\registry_adapter.py:registry_id() L319",
         "簇(6): src\\zephyr\\autonomy_core\\context\\mode_manager.py:current_mode() L41 | src\\zephyr\\autonomy_core\\skills\\skill_context_isolation.py:isolation_level() L54 | src\\zephyr\\infrastructure\\a2a_protocol\\offline_autonomy.py:mode() L35",
         "簇(6): src\\zephyr\\backtest\\implementations\\event_driven_engine.py:results() L323 | src\\zephyr\\backtest\\implementations\\vectorized_engine.py:results() L338 | src\\zephyr\\governance\\rule_enforcement\\end_to_end_walkthrough.py:results() L50",
-        "簇(6): src\\zephyr\\governance\\rule_enforcement\\check_types\\ct_manual_approval.py:run() L38 | src\\zephyr\\governance\\rule_enforcement\\check_types\\ct_path_routing.py:run() L38 | src\\zephyr\\governance\\rule_enforcement\\check_types\\ct_path_whitelist.py:run() L38",
         "簇(5): src\\zephyr\\frontend\\dashboard\\components\\backtest_results.py:_metric_card() L156 | src\\zephyr\\frontend\\dashboard\\components\\fitness_functions.py:_metric_card() L90 | src\\zephyr\\frontend\\dashboard\\components\\gate_statistics.py:_metric_card() L93",
         "簇(5): src\\zephyr\\governance\\behavioral_admission\\gpu_consensus_scheduler.py:_limited_submit() L231 | src\\zephyr\\governance\\behavioral_admission\\verdict_engine.py:_limited_eval() L372 | src\\zephyr\\shared\\lifecycle\\health.py:_limited_check() L229"
       ],
@@ -110,7 +110,7 @@
     {
       "metric_id": "M07",
       "name": "死代码数(orphan模块)",
-      "count": 1014,
+      "count": 983,
       "target": 0,
       "details": [
         "src\\zephyr\\governance\\drift_detection\\_analysis.py",
@@ -199,7 +199,7 @@
       "error": ""
     }
   ],
-  "total_auto": 1927,
+  "total_auto": 1898,
   "manual_baseline_total": 3193,
   "note": "自动化检测基线（第0期）。total_auto 为自动化检出总数；manual_baseline_total=3193 为手动调研基线。二者差异源于自动化覆盖度（部分病根需 AST 门禁第1期才覆盖）。"
 }

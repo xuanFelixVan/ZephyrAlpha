@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.spiral_ews
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] src/zephyr/governance/ops_governance/budget_engine.py; tests/budget/test_budget_shutdown.py; tests/governance/budget/test_budget_enforcer_submodules.py; tests/governance/resilience/test_spiral_ews.py
 # [STARTUP] imported

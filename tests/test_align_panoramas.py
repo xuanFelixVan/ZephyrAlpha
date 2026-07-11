@@ -446,7 +446,7 @@ class TestFetchBlueprintNodes:
         sub = tmp_path / "_cross_layer" / "gate_engine"
         sub.mkdir(parents=True)
         (sub / "blueprint.md").write_text(
-            "---\nmodule_id: MOD-GATE_ENGINE\nresponsibility_domain: D_GOVERNANCE\n---\n# Gate\n",
+            "---\nmodule_id: MOD-GATE_ENGINE\nresponsibility_domain: D_GOV_ENFORCEMENT\n---\n# Gate\n",
             encoding="utf-8",
         )
         nodes = _fetch_blueprint_nodes(scan_root=tmp_path)

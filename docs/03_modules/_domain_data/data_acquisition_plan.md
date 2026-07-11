@@ -52,8 +52,8 @@ tags:
   - ssot
 summary: "数据获取需求清单与数据库现状对照——v1.6.0：数据补齐实测。v1.5.0 VPN对比+TickFlow发现(Baostock 10/10+TickFlow 12/12+AKShare 11/16须断VPN+yfinance/Stooq废弃)。v1.6.0 数据补齐实测(2026-07-05)：kline_daily(iFind THS_RQ批量+5517行,max=2026-07-03)+index_kline(THS_RQ+953行,max=07-03)+equity_pledge_summary(THS_BD+4440行,max=07-03)+rights_issue(AKShare stock_history_dividend_detail多线程+283行,max=07-06)+margin_trading/block_trade(清理未来日期脏数据,max=06-30)全部补齐。分红明细数据源优先级：AKShare stock_history_dividend_detail>baostock(滞后1周+)>iFind THS_BD(-209全失败)>iFind问财(不适合个股明细)。其余表仍截止2025-11待增量。"
 responsibility_domain: 
-build_status: stable
 design_maturity: design
+build_status: stable
 ---
 
 # 数据获取需求清单与数据库现状对照

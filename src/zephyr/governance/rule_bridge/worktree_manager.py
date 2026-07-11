@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-worktree_manager | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §worktree-manager
 # [MODULE] zephyr.governance.rule_bridge.worktree_manager
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT)
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.commit
 # [STARTUP] imported
