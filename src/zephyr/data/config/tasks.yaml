@@ -567,6 +567,29 @@ tasks:
     extra:
       description: "EDB宏观数据增量（iFind THS_EDBQuery，约50-100个关键指标，配额5万条/周）"
 
+  # ============== iFind 新增能力（concept_sector / realtime_snapshot，2026-07-11）==============
+  - task_id: concept_sector_refresh
+    table: c1_market.concept_sector
+    source: ifind
+    schedule: monthly_static  # 概念板块列表低频变化，月初刷新
+    incremental: false  # 全量重建
+    dependencies: []
+    capability: concept_sector
+    symbols: null  # 全市场查询（THS_iwencai）
+    extra:
+      description: "概念板块列表全量刷新（iFind THS_iwencai 查询'概念板块'，解析'所属概念'字段提取唯一板块名）"
+
+  - task_id: realtime_snapshot_incremental
+    table: c1_market.realtime_snapshot
+    source: ifind
+    schedule: daily_kline  # 盘后时段写入当日收盘快照
+    incremental: true
+    dependencies: []
+    capability: realtime_snapshot
+    symbols: null  # null=全A股（THS_DataPool），也可指定标的列表
+    extra:
+      description: "实时行情快照增量（iFind THS_RealtimeQuotes，OHLCV+成交额，分批50个标的；非交易时段返回-4001属正常）"
+
   # ============== 静态数据月初刷新（每月1日 09:00）==============
   - task_id: trade_calendar_refresh
     table: c1_market.trade_calendar
@@ -826,3 +849,240 @@ tasks:
     symbols: null
     extra:
       description: "AKShare期货主力合约K线（ak.futures_main_sina，82个主力合约历史K线，含持仓量）"
+
+  # ============== AKShare 新增 6 个能力（2026-07-11）==============
+  - task_id: limit_up_down_incremental
+    table: c1_market.limit_up_down
+    source: akshare
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: limit_up_down
+    symbols: null
+    extra:
+      description: "AKShare涨跌停增量（ak.stock_zt_pool_em涨停 + ak.stock_zt_pool_dtgc_em跌停）"
+
+  - task_id: share_change_incremental
+    table: c3_fundamental.share_change
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: share_change
+    symbols: null
+    extra:
+      description: "AKShare股本变动增量（ak.stock_share_change_cninfo，含变动原因/总股本）"
+
+  - task_id: st_stock_list_refresh
+    table: c1_market.st_stock_list
+    source: akshare
+    schedule: daily_event
+    incremental: false  # 全量刷新（ST状态每日变化）
+    dependencies: []
+    capability: st_stock_list
+    symbols: null
+    extra:
+      description: "AKShare ST股票列表刷新（ak.stock_info_sh/sz_name_code 过滤ST/*ST/退市）"
+
+  - task_id: concept_board_refresh
+    table: c1_market.concept_board
+    source: akshare
+    schedule: weekend_financial
+    incremental: false  # 全量刷新（概念板块列表低频变化）
+    dependencies: []
+    capability: concept_board
+    symbols: null
+    extra:
+      description: "AKShare概念板块及成分股刷新（ak.stock_board_concept_name_ths + stock_board_concept_cons_em）"
+
+  - task_id: stock_indicator_incremental
+    table: c1_market.stock_indicator
+    source: akshare
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: stock_indicator
+    symbols: null
+    extra:
+      description: "AKShare指标数据增量（ak.stock_value_em，PE/PB/PS/PCF历史指标）"
+
+  - task_id: block_trade_detail_incremental
+    table: c1_market.block_trade
+    source: akshare
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: block_trade_detail
+    symbols: null
+    extra:
+      description: "AKShare大宗交易每日统计增量（ak.stock_dzjy_mrtj，按日期范围查每日统计）"
+
+  # ============== miniQMT 第二批新增能力（15 个数据下载，2026-07-11）==============
+  - task_id: cb_kline_incremental
+    table: c1_market.cb_kline
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: cb_kline
+    symbols: null  # null=自动取可转债板块
+    extra:
+      description: "可转债日K线增量（miniQMT get_market_data_ex，symbols如113001.SH）"
+
+  - task_id: option_kline_incremental
+    table: c1_market.option_kline
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: option_kline
+    symbols: null  # null=自动取50ETF期权列表
+    extra:
+      description: "期权日K线增量（miniQMT get_market_data_ex，symbols如10000001.SH）"
+
+  - task_id: option_greeks_incremental
+    table: c1_market.option_greeks
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: ["option_kline_incremental"]
+    capability: option_greeks
+    symbols: null
+    extra:
+      description: "期权Greeks增量（miniQMT get_option_detail_data + Black-Scholes计算delta/gamma/theta/vega）"
+
+  - task_id: index_weight_refresh
+    table: c1_market.index_weight
+    source: miniqmt
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: index_weight
+    symbols: null  # null=默认核心指数（上证50/沪深300/中证500/中证1000）
+    extra:
+      description: "指数成分股权重全量刷新（miniQMT get_index_weight，需先download_index_weight）"
+
+  - task_id: sector_list_refresh
+    table: c1_market.sector_list
+    source: miniqmt
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: sector_list
+    symbols: null
+    extra:
+      description: "板块成分股列表全量刷新（miniQMT get_stock_list_in_sector，默认沪深A股）"
+
+  - task_id: l2_tick_snapshot
+    table: c1_market.l2_tick
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: l2_tick
+    symbols: null  # 需指定标的（L2数据量大）
+    extra:
+      description: "Level-2逐笔行情增量（miniQMT get_l2_quote，需L2行情权限）"
+
+  - task_id: auction_data_snapshot
+    table: c1_market.auction_snapshot
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: auction_data
+    symbols: null
+    extra:
+      description: "集合竞价数据快照（miniQMT get_full_tick，9:15-9:25实时积累）"
+
+  - task_id: futures_kline_qmt_incremental
+    table: c1_market.futures_kline_qmt
+    source: miniqmt
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: futures_kline_qmt
+    symbols: null  # 需指定合约代码如IF2407.CFFEX
+    extra:
+      description: "期货日K线增量-QMT专用表（miniQMT get_market_data_ex，symbols如IF2407.CFFEX）"
+
+  - task_id: hk_kline_incremental
+    table: c1_market.hk_kline
+    source: miniqmt
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: hk_kline
+    symbols: null  # 需指定港股代码如00700.HK
+    extra:
+      description: "港股日K线增量（miniQMT get_market_data_ex，symbols如00700.HK）"
+
+  - task_id: us_kline_incremental
+    table: c1_market.us_kline
+    source: miniqmt
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: us_kline
+    symbols: null  # 需指定美股代码如AAPL.US
+    extra:
+      description: "美股日K线增量（miniQMT get_market_data_ex，symbols如AAPL.US，需美股行情权限）"
+
+  - task_id: etf_nav_refresh
+    table: c1_market.etf_nav
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: etf_nav
+    symbols: null  # 需指定ETF代码如510050.SH
+    extra:
+      description: "ETF基金净值增量（miniQMT get_etf_info，含净值/现金余额）"
+
+  - task_id: repurchase_placeholder
+    table: c1_market.repurchase
+    source: miniqmt
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: repurchase
+    symbols: null
+    extra:
+      description: "回购数据（QMT无接口占位，建议使用AKShare stock_repurchase_em）"
+      disabled: true
+
+  - task_id: margin_trading_qmt_placeholder
+    table: c1_market.margin_trading_qmt
+    source: miniqmt
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: margin_trading_qmt
+    symbols: null
+    extra:
+      description: "融资融券-QMT占位（QMT无接口，已由AKShare margin_trading_incremental覆盖）"
+      disabled: true
+
+  - task_id: dragon_tiger_qmt_placeholder
+    table: c1_market.dragon_tiger_qmt
+    source: miniqmt
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: dragon_tiger_qmt
+    symbols: null
+    extra:
+      description: "龙虎榜-QMT占位（QMT无接口，已由AKShare dragon_tiger_incremental覆盖）"
+      disabled: true
+
+  - task_id: block_trade_qmt_placeholder
+    table: c1_market.block_trade_qmt
+    source: miniqmt
+    schedule: daily_capital
+    incremental: true
+    dependencies: []
+    capability: block_trade_qmt
+    symbols: null
+    extra:
+      description: "大宗交易-QMT占位（QMT无接口，已由AKShare block_trade_incremental覆盖）"
+      disabled: true

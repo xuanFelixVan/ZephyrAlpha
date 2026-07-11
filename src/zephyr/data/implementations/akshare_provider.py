@@ -81,6 +81,9 @@ class AKShareProvider(DataSourceBase):
             "analyst_forecast", "rights_issue",
             # 研报 & 北向资金 & 期货主力合约
             "research_report", "hk_connect_flow", "futures_kline",
+            # 涨跌停 & 股本变动 & ST股票 & 概念板块 & 指标 & 大宗交易明细
+            "limit_up_down", "share_change", "st_stock_list",
+            "concept_board", "stock_indicator", "block_trade_detail",
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -160,6 +163,18 @@ class AKShareProvider(DataSourceBase):
             yield from self._fetch_hk_connect_flow(payload, policy)
         elif cap == "futures_kline":
             yield from self._fetch_futures_kline(payload, policy)
+        elif cap == "limit_up_down":
+            yield from self._fetch_limit_up_down(payload, policy)
+        elif cap == "share_change":
+            yield from self._fetch_share_change(payload, policy)
+        elif cap == "st_stock_list":
+            yield from self._fetch_st_stock_list(payload, policy)
+        elif cap == "concept_board":
+            yield from self._fetch_concept_board(payload, policy)
+        elif cap == "stock_indicator":
+            yield from self._fetch_stock_indicator(payload, policy)
+        elif cap == "block_trade_detail":
+            yield from self._fetch_block_trade_detail(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -1475,6 +1490,398 @@ class AKShareProvider(DataSourceBase):
 
         yield FetchResult(
             table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 23. 涨跌停（limit_up_down） ----
+
+    def _collect_limit_rows(
+        self, ak, policy, date_str: str, iso_date: str, limit_type: str, fn
+    ) -> list[tuple]:
+        """收集单日涨停或跌停行（通用辅助）。"""
+        rows: list[tuple] = []
+        try:
+            df = self._call_with_policy(fn, policy, date=date_str)
+        except Exception as e:
+            self._log.warning(f"{fn.__name__}({date_str}) 失败: {e}")
+            return rows
+        if df is None or len(df) == 0:
+            return rows
+        for _, row in df.iterrows():
+            sym = str(row.get("代码") or "").zfill(6)
+            if not sym:
+                continue
+            rows.append((
+                iso_date, sym, str(row.get("名称") or ""),
+                safe_float(row.get("最新价")),
+                safe_float(row.get("涨跌幅")),
+                safe_float(row.get("成交额")),
+                limit_type, "akshare",
+            ))
+        return rows
+
+    def _fetch_limit_up_down(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取涨跌停数据，写入 c1_market.limit_up_down。
+
+        逐日调用 ak.stock_zt_pool_em(date) 涨停 + ak.stock_zt_pool_dtgc_em(date) 跌停。
+        列映射: 代码/名称/最新价/涨跌幅/成交额 + limit_type(涨停/跌停)。
+        """
+        import akshare as ak
+
+        table = "c1_market.limit_up_down"
+        columns = [
+            "trade_date", "symbol", "name", "close", "pct_change",
+            "amount", "limit_type", "data_source",
+        ]
+        last_key = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for d in self._date_range(payload.start, payload.end):
+            date_str = d.strftime("%Y%m%d")
+            iso_date = d.isoformat()
+            batch_rows.extend(self._collect_limit_rows(
+                ak, policy, date_str, iso_date, "涨停", ak.stock_zt_pool_em,
+            ))
+            batch_rows.extend(self._collect_limit_rows(
+                ak, policy, date_str, iso_date, "跌停", ak.stock_zt_pool_dtgc_em,
+            ))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 24. 股本变动（share_change） ----
+
+    @staticmethod
+    def _parse_share_change_row(code: str, row) -> tuple:
+        """解析单行股本变动数据。"""
+        return (
+            code,
+            AKShareProvider._norm_date_str(row.get("公告日期")),
+            str(row.get("变动原因") or ""),
+            None,  # change_amount 接口未直接提供
+            safe_float(row.get("总股本")),
+            "akshare",
+        )
+
+    def _fetch_share_change(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取股本变动，写入 c3_fundamental.share_change。
+
+        调用 ak.stock_share_change_cninfo(symbol) 逐只获取。
+        列映射: 证券代码/公告日期/变动原因/总股本。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.share_change"
+        columns = [
+            "symbol", "announce_date", "change_type",
+            "change_amount", "total_shares_after", "data_source",
+        ]
+        symbols = payload.symbols
+        if not symbols:
+            symbols = self._get_all_a_symbols(ak, policy)
+        last_key = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for idx, sym in enumerate(symbols):
+            code = str(sym).split(".")[0].zfill(6)
+            if (idx + 1) % 100 == 0:
+                self._log.info(f"share_change 进度: {idx+1}/{len(symbols)}")
+            try:
+                df = self._call_with_policy(
+                    ak.stock_share_change_cninfo, policy, symbol=code,
+                )
+            except Exception as e:
+                self._log.debug(f"stock_share_change_cninfo({code}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                batch_rows.append(self._parse_share_change_row(code, row))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 25. ST股票（st_stock_list） ----
+
+    @staticmethod
+    def _classify_st_type(name: str) -> str:
+        """根据名称判断 ST 类型：ST/*ST/退市，非 ST 返回空。"""
+        if "退市" in name:
+            return "退市"
+        if name.startswith("*ST"):
+            return "*ST"
+        if name.startswith("ST"):
+            return "ST"
+        return ""
+
+    def _collect_st_rows(
+        self, ak, policy, fn, fn_arg: str, code_col: str, name_col: str
+    ) -> list[tuple]:
+        """从沪深交易所股票列表中过滤 ST 行（通用辅助）。"""
+        rows: list[tuple] = []
+        try:
+            df = self._call_with_policy(fn, policy, symbol=fn_arg)
+        except Exception as e:
+            self._log.warning(f"{fn.__name__} 失败: {e}")
+            return rows
+        if df is None or len(df) == 0:
+            return rows
+        iso_date = datetime.date.today().isoformat()
+        for _, row in df.iterrows():
+            name = str(row.get(name_col) or "")
+            st_type = self._classify_st_type(name)
+            if not st_type:
+                continue
+            sym = str(row.get(code_col) or "").zfill(6)
+            if not sym:
+                continue
+            rows.append((iso_date, sym, name, st_type, "akshare"))
+        return rows
+
+    def _fetch_st_stock_list(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取 ST 股票列表，写入 c1_market.st_stock_list。
+
+        调用 ak.stock_info_sh_name_code + ak.stock_info_sz_name_code 过滤 ST。
+        st_type: ST/*ST/退市（按名称前缀分类）。
+        """
+        import akshare as ak
+
+        table = "c1_market.st_stock_list"
+        columns = ["trade_date", "symbol", "name", "st_type", "data_source"]
+        iso_date = datetime.date.today().isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        batch_rows.extend(self._collect_st_rows(
+            ak, policy, ak.stock_info_sh_name_code, "主板A股",
+            "证券代码", "证券简称",
+        ))
+        batch_rows.extend(self._collect_st_rows(
+            ak, policy, ak.stock_info_sz_name_code, "A股列表",
+            "A股代码", "A股简称",
+        ))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=iso_date, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 26. 概念板块（concept_board） ----
+
+    def _collect_concept_cons(
+        self, ak, policy, board_name: str, board_code: str
+    ) -> list[tuple]:
+        """获取单个概念板块的成分股行（通用辅助）。"""
+        rows: list[tuple] = []
+        try:
+            df = self._call_with_policy(
+                ak.stock_board_concept_cons_em, policy, symbol=board_name,
+            )
+        except Exception as e:
+            self._log.debug(f"stock_board_concept_cons_em({board_name}) 失败: {e}")
+            return rows
+        if df is None or len(df) == 0:
+            return rows
+        for _, row in df.iterrows():
+            sym = str(row.get("代码") or "").zfill(6)
+            if sym:
+                rows.append((board_code, sym, "akshare"))
+        return rows
+
+    def _fetch_concept_board(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取概念板块列表及成分股，写入两张表。
+
+        1. ak.stock_board_concept_name_ths() -> c1_market.concept_board
+        2. ak.stock_board_concept_cons_em(symbol) -> c1_market.concept_board_constituent
+        注：cons_em 为东财接口，反爬严重时成分股可能为空。
+        """
+        import akshare as ak
+
+        board_table = "c1_market.concept_board"
+        cons_table = "c1_market.concept_board_constituent"
+        board_cols = ["board_code", "board_name", "data_source"]
+        cons_cols = ["board_code", "symbol", "data_source"]
+        iso_date = datetime.date.today().isoformat()
+        t0 = time.time()
+
+        try:
+            boards_df = self._call_with_policy(
+                ak.stock_board_concept_name_ths, policy,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=board_table, columns=board_cols, rows=[],
+                last_key=iso_date, elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        board_rows: list[tuple] = []
+        cons_rows: list[tuple] = []
+        if boards_df is not None and len(boards_df) > 0:
+            for _, brow in boards_df.iterrows():
+                board_code = str(brow.get("code") or "")
+                board_name = str(brow.get("name") or "")
+                if not board_code:
+                    continue
+                board_rows.append((board_code, board_name, "akshare"))
+                cons_rows.extend(self._collect_concept_cons(
+                    ak, policy, board_name, board_code,
+                ))
+                threading.Event().wait(0.3)
+
+        yield FetchResult(
+            table=board_table, columns=board_cols, rows=board_rows,
+            last_key=iso_date, elapsed_sec=time.time() - t0,
+        )
+        yield FetchResult(
+            table=cons_table, columns=cons_cols, rows=cons_rows,
+            last_key=iso_date, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 27. 指标数据（stock_indicator） ----
+
+    def _collect_indicator_rows(
+        self, ak, policy, code: str, start_str: str, end_str: str
+    ) -> list[tuple]:
+        """获取单只股票的指标行（通用辅助，按日期范围过滤）。"""
+        rows: list[tuple] = []
+        try:
+            df = self._call_with_policy(
+                ak.stock_value_em, policy, symbol=code,
+            )
+        except Exception as e:
+            self._log.debug(f"stock_value_em({code}) 失败: {e}")
+            return rows
+        if df is None or len(df) == 0:
+            return rows
+        for _, row in df.iterrows():
+            d = self._norm_date_str(row.get("数据日期"))
+            if not d or d < start_str or d > end_str:
+                continue
+            rows.append((
+                d, code,
+                safe_float(row.get("PE(TTM)")),
+                safe_float(row.get("市净率")),
+                safe_float(row.get("市销率")),
+                safe_float(row.get("市现率")),
+                None,  # dividend_yield 接口未提供
+                "akshare",
+            ))
+        return rows
+
+    def _fetch_stock_indicator(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取指标数据(PE/PB/PS/PCF)，写入 c1_market.stock_indicator。
+
+        调用 ak.stock_value_em(symbol) 逐只获取历史指标。
+        dividend_yield 接口未提供，填 None。
+        """
+        import akshare as ak
+
+        table = "c1_market.stock_indicator"
+        columns = [
+            "trade_date", "symbol", "pe", "pb", "ps", "pcf",
+            "dividend_yield", "data_source",
+        ]
+        symbols = payload.symbols
+        if not symbols:
+            symbols = self._get_all_a_symbols(ak, policy)
+        last_key = payload.end.isoformat()
+        start_str = payload.start.isoformat()
+        end_str = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        for idx, sym in enumerate(symbols):
+            code = str(sym).split(".")[0].zfill(6)
+            if (idx + 1) % 100 == 0:
+                self._log.info(f"stock_indicator 进度: {idx+1}/{len(symbols)}")
+            batch_rows.extend(self._collect_indicator_rows(
+                ak, policy, code, start_str, end_str,
+            ))
+            if len(batch_rows) >= 500:
+                yield FetchResult(
+                    table=table, columns=columns, rows=batch_rows[:],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+                batch_rows.clear()
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 28. 大宗交易明细（block_trade_detail） ----
+
+    @staticmethod
+    def _parse_block_trade_detail_row(row) -> tuple:
+        """解析单行大宗交易每日统计数据。"""
+        sym = str(row.get("证券代码") or "").zfill(6)
+        trade_date = AKShareProvider._norm_date_str(row.get("交易日期"))
+        vol = safe_float(row.get("成交总量"))
+        return (
+            trade_date, sym,
+            safe_float(row.get("成交价")),
+            int(vol) if vol is not None else 0,
+            safe_float(row.get("成交总额")),
+            "",  # buyer 每日统计无营业部明细
+            "",  # seller 每日统计无营业部明细
+        )
+
+    def _fetch_block_trade_detail(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取大宗交易每日统计，写入 c1_market.block_trade。
+
+        调用 ak.stock_dzjy_mrtj(start_date, end_date) 获取每日统计。
+        buyer/seller 每日统计无营业部明细，填空字符串。
+        """
+        import akshare as ak
+
+        table = "c1_market.block_trade"
+        columns = [
+            "trade_date", "symbol", "price", "volume", "amount",
+            "buyer", "seller",
+        ]
+        last_key = payload.end.isoformat()
+        t0 = time.time()
+
+        start_str = payload.start.strftime("%Y%m%d")
+        end_str = payload.end.strftime("%Y%m%d")
+        try:
+            df = self._call_with_policy(
+                ak.stock_dzjy_mrtj, policy,
+                start_date=start_str, end_date=end_str,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                rows.append(self._parse_block_trade_detail_row(row))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
             last_key=last_key, elapsed_sec=time.time() - t0,
         )
 
