@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.file_task_mapper
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.shared.io.paths; zephyr.shared.__init__; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.hallucination_detector
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] imported

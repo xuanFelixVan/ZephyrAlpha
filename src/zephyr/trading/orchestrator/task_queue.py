@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.task_queue
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS]
 # [STARTUP] imported

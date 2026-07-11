@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.verifiers.cross_module_integration
-# [DOMAIN] D_OPS
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
