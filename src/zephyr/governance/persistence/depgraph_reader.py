@@ -71,7 +71,7 @@ class _PgConnExecuteWrapper:
 class DepgraphReader:
     """依赖图数据库读取器"""
 
-    def __init__(self, db_path: str | Path | None = None):
+    def __init__(self, db_path: str | Path | None = None) -> None:
         # db_path 参数保留向后兼容（P2迁移后 PG 连接配置由 depgraph_schema.get_depgraph_pg_connection 管理）
         # 治本（2026-06-27）：不再保存 DB_PATH 常量，防止路径污染
         self._conn: _PgConnExecuteWrapper | None = None
