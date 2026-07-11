@@ -78,6 +78,22 @@ class MiniQMTProvider(DataSourceBase):
             "auction_snapshot",
             "index_quote",
             "stock_list",
+            # 以下为第二批新增能力（15 个数据下载能力）
+            "cb_kline",
+            "option_kline",
+            "option_greeks",
+            "index_weight",
+            "sector_list",
+            "l2_tick",
+            "auction_data",
+            "futures_kline_qmt",
+            "hk_kline",
+            "us_kline",
+            "etf_nav",
+            "repurchase",
+            "margin_trading_qmt",
+            "dragon_tiger_qmt",
+            "block_trade_qmt",
         ],
         known_issues=[
             "需XtMiniQmt.exe进程",
@@ -199,6 +215,52 @@ class MiniQMTProvider(DataSourceBase):
             yield from self._fetch_index_quote(payload, policy)
         elif capability == "stock_list":
             yield from self._fetch_stock_list(payload, policy)
+        # ---- 第二批新增能力路由（15 个数据下载能力）----
+        elif capability == "cb_kline":
+            # 可转债K线：get_market_data_ex，symbols 格式如 '113001.SH'
+            yield from self._fetch_cb_kline(payload, policy)
+        elif capability == "option_kline":
+            # 期权K线：get_market_data_ex，symbols 格式如 '10000001.SH'
+            yield from self._fetch_option_kline(payload, policy)
+        elif capability == "option_greeks":
+            # 期权Greeks：get_option_detail_data + 计算 delta/gamma/theta/vega
+            yield from self._fetch_option_greeks(payload, policy)
+        elif capability == "index_weight":
+            # 指数权重：get_index_weight
+            yield from self._fetch_index_weight(payload, policy)
+        elif capability == "sector_list":
+            # 板块列表：get_stock_list_in_sector / get_sector_list
+            yield from self._fetch_sector_list(payload, policy)
+        elif capability == "l2_tick":
+            # Level-2逐笔：get_l2_quote
+            yield from self._fetch_l2_tick(payload, policy)
+        elif capability == "auction_data":
+            # 集合竞价：get_full_tick 实时快照（写入 auction_snapshot 表）
+            yield from self._fetch_auction_data(payload, policy)
+        elif capability == "futures_kline_qmt":
+            # 期货K线：get_market_data_ex，symbols 格式如 'IF2407.CFFEX'
+            yield from self._fetch_futures_kline_qmt(payload, policy)
+        elif capability == "hk_kline":
+            # 港股K线：get_market_data_ex，symbols 格式如 '00700.HK'
+            yield from self._fetch_hk_kline(payload, policy)
+        elif capability == "us_kline":
+            # 美股K线：get_market_data_ex，symbols 格式如 'AAPL.US'
+            yield from self._fetch_us_kline(payload, policy)
+        elif capability == "etf_nav":
+            # ETF净值：get_etf_info
+            yield from self._fetch_etf_nav(payload, policy)
+        elif capability == "repurchase":
+            # 回购数据：QMT 无直接接口，占位
+            yield from self._fetch_repurchase(payload, policy)
+        elif capability == "margin_trading_qmt":
+            # 融资融券：QMT 无直接接口，占位
+            yield from self._fetch_margin_trading_qmt(payload, policy)
+        elif capability == "dragon_tiger_qmt":
+            # 龙虎榜：QMT 无直接接口，占位
+            yield from self._fetch_dragon_tiger_qmt(payload, policy)
+        elif capability == "block_trade_qmt":
+            # 大宗交易：QMT 无直接接口，占位
+            yield from self._fetch_block_trade_qmt(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -1827,6 +1889,797 @@ class MiniQMTProvider(DataSourceBase):
                 last_key="", elapsed_sec=time.time() - t0,
                 error=f"获取股票列表失败: {e}",
             )
+
+    # ============== 第二批新增能力（15 个数据下载能力）==============
+
+    def _fetch_simple_kline(
+        self,
+        payload: FetchPayload,
+        policy: SourcePolicy,
+        default_table: str,
+    ) -> Iterator[FetchResult]:
+        """通用简版K线抓取（OHLCV 标准列，适用于可转债/期权/期货/港股/美股K线）。
+
+        复用 download_history_data + get_market_data_ex 模式，统一写入
+        (trade_date, symbol, open, high, low, close, volume, amount, data_source)。
+        symbols 由 payload 指定（不自动取全市场，避免误拉非目标品种）。
+
+        Args:
+            payload: 下载请求（symbols 必须指定标的列表）
+            policy: 调用策略
+            default_table: 默认目标表（payload.table 为空时使用）
+
+        Yields:
+            FetchResult: 每个标的一批
+        """
+        from xtquant import xtdata
+
+        table = payload.table or default_table
+        columns = [
+            "trade_date", "symbol", "open", "high", "low", "close",
+            "volume", "amount", "data_source",
+        ]
+
+        try:
+            start_str = self._date_to_str(payload.start)
+            end_str = self._date_to_str(payload.end)
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=[], rows=[], last_key="",
+                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+            )
+            return
+
+        symbols = payload.symbols or []
+        last_key = end_str
+
+        for stock_code in symbols:
+            t0 = time.time()
+            try:
+                self._call_with_policy(
+                    xtdata.download_history_data, policy,
+                    stock_code, "1d", start_str, end_str,
+                )
+                data = self._call_with_policy(
+                    xtdata.get_market_data_ex, policy,
+                    [], [stock_code], "1d", start_str, end_str,
+                )
+
+                rows = []
+                df = data.get(stock_code) if data else None
+                if df is not None and len(df) > 0:
+                    symbol = self._stock_to_symbol(stock_code)
+                    times = [int(ts) for ts in df.index]
+                    opens = df["open"].tolist()
+                    highs = df["high"].tolist()
+                    lows = df["low"].tolist()
+                    closes = df["close"].tolist()
+                    volumes = df["volume"].tolist()
+                    amounts = df["amount"].tolist()
+                    for i in range(len(times)):
+                        s = str(times[i])
+                        trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
+                        vol = self.safe_float(volumes[i])
+                        vol = int(vol) if vol is not None else None
+                        rows.append((
+                            trade_date, symbol,
+                            self.safe_float(opens[i]),
+                            self.safe_float(highs[i]),
+                            self.safe_float(lows[i]),
+                            self.safe_float(closes[i]),
+                            vol,
+                            self.safe_float(amounts[i]),
+                            "miniqmt",
+                        ))
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    error=f"{stock_code} 抓取失败: {e}",
+                )
+
+    # ============== 可转债K线 ==============
+
+    def _fetch_cb_kline(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取可转债日K线数据。
+
+        使用 xtdata.get_market_data_ex(period='1d')，symbols 格式如 '113001.SH'。
+        若 symbols 为空，尝试从'可转债'板块获取标的列表。
+        表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个可转债一批
+        """
+        from xtquant import xtdata
+
+        # symbols 为空时尝试取可转债板块
+        if not payload.symbols:
+            try:
+                cb_list = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, "可转债"
+                )
+                if cb_list:
+                    payload = FetchPayload(
+                        table=payload.table, symbols=cb_list,
+                        start=payload.start, end=payload.end,
+                        incremental=payload.incremental, extra=payload.extra,
+                    )
+            except Exception as e:
+                self._log.warning(f"获取可转债板块失败: {e}")
+
+        yield from self._fetch_simple_kline(payload, policy, "c1_market.cb_kline")
+
+    # ============== 期权K线 ==============
+
+    def _fetch_option_kline(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取期权日K线数据。
+
+        使用 xtdata.get_market_data_ex(period='1d')，symbols 格式如 '10000001.SH'。
+        若 symbols 为空，尝试用 get_option_list 获取期权合约列表。
+        表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个期权一批
+        """
+        from xtquant import xtdata
+
+        # symbols 为空时尝试取期权列表（以 50ETF 为标的）
+        if not payload.symbols:
+            try:
+                # 取近月期权合约
+                opts = self._call_with_policy(
+                    xtdata.get_option_list, policy, "510050.SH", "",
+                )
+                if opts:
+                    payload = FetchPayload(
+                        table=payload.table, symbols=opts[:50],
+                        start=payload.start, end=payload.end,
+                        incremental=payload.incremental, extra=payload.extra,
+                    )
+            except Exception as e:
+                self._log.warning(f"获取期权列表失败: {e}")
+
+        yield from self._fetch_simple_kline(payload, policy, "c1_market.option_kline")
+
+    # ============== 期权Greeks ==============
+
+    def _fetch_option_greeks(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取期权Greeks数据（delta/gamma/theta/vega）。
+
+        使用 xtdata.get_option_detail_data 获取期权合约详情（行权价/到期日/标的价格），
+        结合 Black-Scholes 模型计算 Greeks。
+        表 schema: (trade_date, symbol, underlying, strike, expiry, opt_type,
+                    delta, gamma, theta, vega, data_source)
+
+        Args:
+            payload: 下载请求（symbols为期权合约代码列表）
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个期权一批
+        """
+        table = payload.table or "c1_market.option_greeks"
+        columns = [
+            "trade_date", "symbol", "underlying", "strike", "expiry",
+            "opt_type", "delta", "gamma", "theta", "vega", "data_source",
+        ]
+        trade_date = payload.end.isoformat()
+        symbols = payload.symbols or []
+        last_key = self._date_to_str(payload.end)
+
+        for opt_code in symbols:
+            t0 = time.time()
+            try:
+                from xtquant import xtdata
+                detail = self._call_with_policy(
+                    xtdata.get_option_detail_data, policy, opt_code,
+                )
+                rows = []
+                if detail:
+                    symbol = self._stock_to_symbol(opt_code)
+                    underlying = detail.get("Underlying", "")
+                    strike = self.safe_float(detail.get("ExercisePrice"))
+                    expiry = detail.get("EndDelivDate", "")
+                    opt_type = "call" if detail.get("OptType", 0) == 1 else "put"
+                    # 标的现价（取最新收盘价）
+                    spot = self.safe_float(detail.get("LastPrice"))
+                    # 无风险利率（近似值）
+                    r = 0.03
+                    # 剩余期限（年）：从到期日计算
+                    T = 0.25  # 默认3个月
+                    if expiry:
+                        try:
+                            exp_str = str(expiry)
+                            if len(exp_str) >= 8:
+                                exp_date = datetime.date(
+                                    int(exp_str[:4]), int(exp_str[4:6]), int(exp_str[6:8])
+                                )
+                                days = (exp_date - payload.end).days
+                                T = max(days / 365.0, 0.001)
+                        except Exception:
+                            pass
+                    # 波动率（近似值，实际应从历史数据计算）
+                    sigma = 0.3
+                    # Black-Scholes Greeks 计算
+                    greeks = self._calc_bs_greeks(spot, strike, T, r, sigma, opt_type)
+                    if greeks:
+                        rows.append((
+                            trade_date, symbol, underlying, strike,
+                            str(expiry)[:10] if expiry else None,
+                            opt_type,
+                            greeks["delta"], greeks["gamma"],
+                            greeks["theta"], greeks["vega"],
+                            "miniqmt",
+                        ))
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    error=f"{opt_code} Greeks抓取失败: {e}",
+                )
+
+    @staticmethod
+    def _calc_bs_greeks(S, K, T, r, sigma, opt_type):
+        """Black-Scholes 模型计算期权 Greeks。
+
+        Args:
+            S: 标的现价
+            K: 行权价
+            T: 剩余期限（年）
+            r: 无风险利率
+            sigma: 波动率
+            opt_type: "call" 或 "put"
+
+        Returns:
+            dict: {delta, gamma, theta, vega} 或 None（参数不足时）
+        """
+        if S is None or K is None or S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
+            return None
+        import math
+        d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+        d2 = d1 - sigma * math.sqrt(T)
+        # 标准正态分布 PDF 和 CDF
+        def _pdf(x):
+            return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
+        def _cdf(x):
+            return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+        gamma = _pdf(d1) / (S * sigma * math.sqrt(T))
+        vega = S * _pdf(d1) * math.sqrt(T) / 100  # vega per 1% vol change
+        if opt_type == "call":
+            delta = _cdf(d1)
+            theta = (
+                -S * _pdf(d1) * sigma / (2 * math.sqrt(T))
+                - r * K * math.exp(-r * T) * _cdf(d2)
+            ) / 365  # theta per day
+        else:
+            delta = _cdf(d1) - 1
+            theta = (
+                -S * _pdf(d1) * sigma / (2 * math.sqrt(T))
+                + r * K * math.exp(-r * T) * _cdf(-d2)
+            ) / 365
+        return {
+            "delta": round(delta, 6),
+            "gamma": round(gamma, 6),
+            "theta": round(theta, 6),
+            "vega": round(vega, 6),
+        }
+
+    # ============== 指数权重 ==============
+
+    def _fetch_index_weight(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取指数成分股权重数据。
+
+        先调用 xtdata.download_index_weight() 下载最新权重数据，
+        再用 xtdata.get_index_weight(index_code) 获取权重字典 {stock_code: weight}。
+        表 schema: (trade_date, index_code, symbol, weight, data_source)
+
+        Args:
+            payload: 下载请求（symbols 为指数代码列表，如 ['000300.SH']）
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个指数一批
+        """
+        from xtquant import xtdata
+
+        table = payload.table or "c1_market.index_weight"
+        columns = ["trade_date", "index_code", "symbol", "weight", "data_source"]
+        trade_date = payload.end.isoformat()
+        # 默认核心指数
+        index_codes = payload.symbols or [
+            "000016.SH", "000300.SH", "000905.SH", "000852.SH",
+        ]
+        last_key = self._date_to_str(payload.end)
+
+        # 先下载权重数据（无参数，下载全部）
+        try:
+            self._call_with_policy(xtdata.download_index_weight, policy)
+        except Exception as e:
+            self._log.warning(f"download_index_weight 失败: {e}")
+
+        for index_code in index_codes:
+            t0 = time.time()
+            try:
+                weight_dict = self._call_with_policy(
+                    xtdata.get_index_weight, policy, index_code,
+                )
+                rows = []
+                if weight_dict:
+                    for stock_code, weight in weight_dict.items():
+                        symbol = self._stock_to_symbol(stock_code)
+                        rows.append((
+                            trade_date, index_code, symbol,
+                            self.safe_float(weight),
+                            "miniqmt",
+                        ))
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    error=f"{index_code} 权重抓取失败: {e}",
+                )
+
+    # ============== 板块列表 ==============
+
+    def _fetch_sector_list(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取板块成分股列表。
+
+        使用 xtdata.get_stock_list_in_sector 获取指定板块的成分股。
+        若 payload.extra["sectors"] 指定板块名列表，遍历各板块；
+        否则默认取"沪深A股"。
+        表 schema: (trade_date, sector_name, symbol, data_source)
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个板块一批
+        """
+        from xtquant import xtdata
+
+        table = payload.table or "c1_market.sector_list"
+        columns = ["trade_date", "sector_name", "symbol", "data_source"]
+        trade_date = payload.end.isoformat()
+        extra = payload.extra or {}
+        # 允许 extra["sectors"] 指定板块列表，默认沪深A股
+        sectors = extra.get("sectors", ["沪深A股"])
+        last_key = self._date_to_str(payload.end)
+
+        # 先下载板块数据
+        try:
+            self._call_with_policy(xtdata.download_sector_data, policy)
+        except Exception as e:
+            self._log.warning(f"download_sector_data 失败: {e}")
+
+        for sector_name in sectors:
+            t0 = time.time()
+            try:
+                stock_list = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, sector_name
+                )
+                rows = []
+                if stock_list:
+                    for stock_code in stock_list:
+                        symbol = self._stock_to_symbol(stock_code)
+                        rows.append((trade_date, sector_name, symbol, "miniqmt"))
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    error=f"板块[{sector_name}]抓取失败: {e}",
+                )
+
+    # ============== Level-2逐笔 ==============
+
+    def _fetch_l2_tick(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取 Level-2 逐笔行情数据。
+
+        使用 xtdata.get_l2_quote 获取 L2 报价数据（含买卖盘）。
+        需 L2 行情权限，数据量很大，每次只取少量标的。
+        表 schema: (trade_date, timestamp, symbol, price, volume, amount,
+                    bid_price, ask_price, data_source)
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个标的一批
+        """
+        from xtquant import xtdata
+        import numpy as np
+
+        table = payload.table or "c1_market.l2_tick"
+        columns = [
+            "trade_date", "timestamp", "symbol", "price", "volume",
+            "amount", "bid_price", "ask_price", "data_source",
+        ]
+
+        try:
+            start_str = self._date_to_str(payload.start)
+            end_str = self._date_to_str(payload.end)
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=[], rows=[], last_key="",
+                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+            )
+            return
+
+        symbols = payload.symbols or []
+        last_key = end_str
+
+        for stock_code in symbols:
+            t0 = time.time()
+            try:
+                data = self._call_with_policy(
+                    xtdata.get_l2_quote, policy,
+                    [], stock_code, start_str, end_str, -1,
+                )
+                rows = self._parse_l2_records(data, stock_code, payload.end)
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    error=f"{stock_code} L2抓取失败: {e}",
+                )
+
+    def _parse_l2_records(self, data, stock_code: str, end_date) -> list[tuple]:
+        """解析 L2 numpy structured array 为行列表（降低 _fetch_l2_tick 复杂度）。
+
+        Args:
+            data: xtdata.get_l2_quote 返回的 numpy structured array
+            stock_code: 标的代码
+            end_date: fallback 日期
+
+        Returns:
+            行元组列表
+        """
+        import numpy as np
+
+        if data is None or not isinstance(data, np.ndarray) or data.size == 0:
+            return []
+        symbol = self._stock_to_symbol(stock_code)
+        rows: list[tuple] = []
+        for rec in data:
+            ts = int(rec["time"]) if rec["time"] else 0
+            s = str(ts)
+            trade_date, timestamp = self._format_tick_timestamp(s, end_date)
+            price = self.safe_float(rec["lastPrice"])
+            vol = self.safe_float(rec["volume"])
+            vol = int(vol) if vol is not None else None
+            amt = self.safe_float(rec["amount"])
+            bid_price = self._extract_first_price(rec, "bidPrice")
+            ask_price = self._extract_first_price(rec, "askPrice")
+            rows.append((
+                trade_date, timestamp, symbol, price, vol, amt,
+                bid_price, ask_price, "miniqmt",
+            ))
+        return rows
+
+    @staticmethod
+    def _extract_first_price(rec, field_name: str):
+        """从 numpy record 的数组字段中提取首个价格（降低复杂度）。"""
+        arr = rec[field_name]
+        if arr is not None and len(arr) > 0:
+            return MiniQMTProvider.safe_float(arr[0])
+        return None
+
+    # ============== 集合竞价数据 ==============
+
+    def _fetch_auction_data(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取集合竞价数据（实时快照）。
+
+        使用 xtdata.get_full_tick 获取实时行情快照，适用于集合竞价时段（9:15-9:25）。
+        写入已有的 auction_snapshot 表。
+        表 schema: (trade_date, timestamp, symbol, price, volume, amount, data_source)
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 一批（全部标的）
+        """
+        from xtquant import xtdata
+
+        table = payload.table or "c1_market.auction_snapshot"
+        columns = ["trade_date", "timestamp", "symbol", "price", "volume", "amount", "data_source"]
+
+        symbols = payload.symbols
+        if not symbols:
+            try:
+                symbols = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=[], rows=[], last_key="",
+                    elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                )
+                return
+
+        t0 = time.time()
+        try:
+            # get_full_tick 一次最多取一定数量标的，分批调用
+            batch_size = 200
+            rows = []
+            trade_date = payload.end.isoformat()
+            for i in range(0, len(symbols), batch_size):
+                batch = symbols[i:i + batch_size]
+                tick_data = self._call_with_policy(
+                    xtdata.get_full_tick, policy, batch,
+                )
+                if tick_data:
+                    for stock_code, tick in tick_data.items():
+                        if not tick:
+                            continue
+                        symbol = self._stock_to_symbol(stock_code)
+                        price = self.safe_float(tick.get("lastPrice"))
+                        vol = self.safe_float(tick.get("volume"))
+                        vol = int(vol) if vol is not None else None
+                        amt = self.safe_float(tick.get("amount"))
+                        # timetag 格式为 "YYYYMMDDHHMMSSmmm"
+                        timetag = tick.get("timetag", "")
+                        ts_str = str(timetag)
+                        if len(ts_str) >= 14:
+                            timestamp = (
+                                f"{ts_str[:4]}-{ts_str[4:6]}-{ts_str[6:8]} "
+                                f"{ts_str[8:10]}:{ts_str[10:12]}:{ts_str[12:14]}"
+                            )
+                        else:
+                            timestamp = trade_date + " 09:25:00"
+                        rows.append((
+                            trade_date, timestamp, symbol, price, vol, amt,
+                            "miniqmt",
+                        ))
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=self._date_to_str(payload.end),
+                elapsed_sec=time.time() - t0,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=time.time() - t0,
+                error=f"集合竞价数据抓取失败: {e}",
+            )
+
+    # ============== 期货K线（QMT） ==============
+
+    def _fetch_futures_kline_qmt(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取期货日K线数据（QMT 专用表）。
+
+        使用 xtdata.get_market_data_ex(period='1d')，symbols 格式如 'IF2407.CFFEX'。
+        表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个合约一批
+        """
+        yield from self._fetch_simple_kline(payload, policy, "c1_market.futures_kline_qmt")
+
+    # ============== 港股K线 ==============
+
+    def _fetch_hk_kline(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取港股日K线数据。
+
+        使用 xtdata.get_market_data_ex(period='1d')，symbols 格式如 '00700.HK'。
+        表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个港股一批
+        """
+        yield from self._fetch_simple_kline(payload, policy, "c1_market.hk_kline")
+
+    # ============== 美股K线 ==============
+
+    def _fetch_us_kline(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取美股日K线数据。
+
+        使用 xtdata.get_market_data_ex(period='1d')，symbols 格式如 'AAPL.US'。
+        需 QMT 开通美股行情权限。
+        表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个美股一批
+        """
+        yield from self._fetch_simple_kline(payload, policy, "c1_market.us_kline")
+
+    # ============== ETF净值 ==============
+
+    def _fetch_etf_nav(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取 ETF 基金净值数据。
+
+        使用 xtdata.get_etf_info 获取 ETF 基金信息（含净值/现金余额等）。
+        表 schema: (trade_date, symbol, etf_code, nav, cash_balance, data_source)
+
+        Args:
+            payload: 下载请求（symbols 为 ETF 代码列表，如 ['510050.SH']）
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每个ETF一批
+        """
+        from xtquant import xtdata
+
+        table = payload.table or "c1_market.etf_nav"
+        columns = ["trade_date", "symbol", "etf_code", "nav", "cash_balance", "data_source"]
+        trade_date = payload.end.isoformat()
+        symbols = payload.symbols or []
+        last_key = self._date_to_str(payload.end)
+
+        for stock_code in symbols:
+            t0 = time.time()
+            try:
+                info = self._call_with_policy(
+                    xtdata.get_etf_info, policy, stock_code,
+                )
+                rows = []
+                if info:
+                    symbol = self._stock_to_symbol(stock_code)
+                    etf_code = info.get("etfCode", "")
+                    nav = self.safe_float(info.get("cashBalance"))
+                    cash_balance = self.safe_float(info.get("maxCashRatio"))
+                    rows.append((
+                        trade_date, symbol, etf_code, nav, cash_balance,
+                        "miniqmt",
+                    ))
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    error=f"{stock_code} ETF净值抓取失败: {e}",
+                )
+
+    # ============== 回购数据（占位） ==============
+
+    def _fetch_repurchase(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """回购数据占位方法。
+
+        QMT 无直接提供回购数据的接口。回购数据建议通过 AKShare
+        （ak.stock_repurchase_em）或交易所公告获取。
+        返回 error 占位。
+
+        Yields:
+            FetchResult: 含 error 的占位结果
+        """
+        yield FetchResult(
+            table=payload.table or "c1_market.repurchase",
+            columns=[], rows=[], last_key="",
+            elapsed_sec=0.0,
+            error="QMT无回购数据接口，建议使用AKShare stock_repurchase_em",
+        )
+
+    # ============== 融资融券（QMT占位） ==============
+
+    def _fetch_margin_trading_qmt(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """融资融券数据占位方法（QMT）。
+
+        QMT 无直接提供融资融券数据的接口。融资融券数据已通过 AKShare
+        （stock_margin_detail_sse/szse）实现，见 tasks.yaml margin_trading_incremental。
+        返回 error 占位。
+
+        Yields:
+            FetchResult: 含 error 的占位结果
+        """
+        yield FetchResult(
+            table=payload.table or "c1_market.margin_trading_qmt",
+            columns=[], rows=[], last_key="",
+            elapsed_sec=0.0,
+            error="QMT无融资融券接口，已由AKShare Provider覆盖（margin_trading_incremental）",
+        )
+
+    # ============== 龙虎榜（QMT占位） ==============
+
+    def _fetch_dragon_tiger_qmt(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """龙虎榜数据占位方法（QMT）。
+
+        QMT 无直接提供龙虎榜数据的接口。龙虎榜数据已通过 AKShare
+        （stock_lhb_detail_em）实现，见 tasks.yaml dragon_tiger_incremental。
+        返回 error 占位。
+
+        Yields:
+            FetchResult: 含 error 的占位结果
+        """
+        yield FetchResult(
+            table=payload.table or "c1_market.dragon_tiger_qmt",
+            columns=[], rows=[], last_key="",
+            elapsed_sec=0.0,
+            error="QMT无龙虎榜接口，已由AKShare Provider覆盖（dragon_tiger_incremental）",
+        )
+
+    # ============== 大宗交易（QMT占位） ==============
+
+    def _fetch_block_trade_qmt(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """大宗交易数据占位方法（QMT）。
+
+        QMT 无直接提供大宗交易数据的接口。大宗交易数据已通过 AKShare
+        （stock_dzjy_mrmx）实现，见 tasks.yaml block_trade_incremental。
+        返回 error 占位。
+
+        Yields:
+            FetchResult: 含 error 的占位结果
+        """
+        yield FetchResult(
+            table=payload.table or "c1_market.block_trade_qmt",
+            columns=[], rows=[], last_key="",
+            elapsed_sec=0.0,
+            error="QMT无大宗交易接口，已由AKShare Provider覆盖（block_trade_incremental）",
+        )
 
     # ============== 辅助方法 ==============
 

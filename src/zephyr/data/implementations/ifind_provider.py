@@ -59,7 +59,8 @@ class IFindProvider(DataSourceBase):
         thread_safety="thread_local",
         rate_limit_default=0,
         capabilities=["kline_daily", "daily_valuation", "money_flow", "index_kline",
-                      "edb_data", "industry_class_ifind"],
+                      "edb_data", "industry_class_ifind",
+                      "concept_sector", "realtime_snapshot"],
         known_issues=["月度配额-4318", "试用账号不支持沪深港通"],
     )
 
@@ -212,6 +213,10 @@ class IFindProvider(DataSourceBase):
             yield from self._fetch_edb_data(payload, policy)
         elif capability == "industry_class_ifind":
             yield from self._fetch_industry_class_ifind(payload, policy)
+        elif capability == "concept_sector":
+            yield from self._fetch_concept_sector(payload, policy)
+        elif capability == "realtime_snapshot":
+            yield from self._fetch_realtime_snapshot(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -1082,7 +1087,354 @@ class IFindProvider(DataSourceBase):
 
         return industry_sw, industry_zsi, fatal_error
 
+    # ============== concept_sector 能力（概念板块列表） ==============
+
+    # 概念板块表列顺序
+    _CONCEPT_SECTOR_COLUMNS = ["sector_code", "sector_name", "data_source"]
+    _CONCEPT_SECTOR_TABLE = "c1_market.concept_sector"
+
+    def _fetch_concept_sector(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取概念板块列表，写入 c1_market.concept_sector。
+
+        使用 THS_iwencai（i问财）查询"概念板块"，获取全市场股票的概念板块归属，
+        然后解析"所属概念"字段提取唯一概念板块名称。
+
+        THS_BasicData/THS_DataPool 不支持直接获取概念板块列表（返回 -209 参数错误），
+        i问财是唯一可用的接口。
+
+        表 schema: (sector_code, sector_name, data_source)
+        - sector_code: 概念板块名称（i问财不返回独立代码，用名称作代码）
+        - sector_name: 概念板块名称
+        - data_source: "ifind_iwencai"
+
+        Args:
+            payload: 下载请求（symbols 忽略，全市场查询）
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 一批（概念板块列表通常约 200-400 个）
+        """
+        from iFinDPy import THS_iwencai
+
+        table = payload.table or self._CONCEPT_SECTOR_TABLE
+        columns = self._CONCEPT_SECTOR_COLUMNS
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        start_ts = time.time()
+
+        try:
+            raw = self._call_with_policy(
+                THS_iwencai, policy,
+                "概念板块 代码 名称", "stock",
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.time() - start_ts,
+                error=f"THS_iwencai 调用失败: {e}",
+            )
+            return
+
+        # 检查错误码
+        is_error, code, msg = self._check_ifind_error(raw)
+        if is_error:
+            if code in (-4318, -4309):
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key=today_str,
+                    elapsed_sec=time.time() - start_ts,
+                    error=f"iFind配额耗尽: {code}",
+                )
+                return
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=today_str,
+                elapsed_sec=time.time() - start_ts,
+                error=f"iFind错误: {code} {msg}".strip(),
+            )
+            return
+
+        # 解析 i问财返回，提取唯一概念板块名称
+        rows = self._parse_concept_sectors(raw)
+        if rows:
+            yield FetchResult(
+                table=table, columns=columns,
+                rows=rows, last_key=today_str,
+                elapsed_sec=time.time() - start_ts,
+            )
+        else:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=today_str,
+                elapsed_sec=time.time() - start_ts,
+                error="概念板块列表为空（i问财返回无所属概念列）",
+            )
+
+    def _parse_concept_sectors(self, raw) -> list[tuple]:
+        """解析 i问财概念板块返回，提取唯一概念板块名称。
+
+        i问财返回 dict 格式：
+            {'tables': [{'table': {'股票代码': [...], '所属概念': [...]}}]}
+
+        "所属概念"字段为分号分隔的概念板块名称列表，如：
+            "融资融券;深股通;小金属概念;黄金概念"
+
+        Returns:
+            (sector_code, sector_name, "ifind_iwencai") 元组列表，按名称排序
+        """
+        if not isinstance(raw, dict) or "tables" not in raw:
+            self._log.warning("concept_sector i问财返回格式异常")
+            return []
+
+        try:
+            table_data = raw["tables"][0]["table"]
+        except (IndexError, KeyError, TypeError):
+            self._log.warning("concept_sector i问财返回无 table 数据")
+            return []
+
+        # 查找"所属概念"列
+        concept_col = self._find_column(table_data, ["所属概念", "概念板块", "概念"])
+        if not concept_col:
+            self._log.warning("concept_sector i问财返回无'所属概念'列")
+            return []
+
+        # 提取唯一概念板块名称
+        unique_sectors: set[str] = set()
+        for concepts_str in concept_col:
+            if not concepts_str or not isinstance(concepts_str, str):
+                continue
+            # 分号分隔的概念板块名称
+            for name in concepts_str.split(";"):
+                name = name.strip()
+                if name:
+                    unique_sectors.add(name)
+
+        # 转为元组列表，按名称排序
+        rows = [
+            (name, name, "ifind_iwencai")
+            for name in sorted(unique_sectors)
+        ]
+        self._log.info(f"concept_sector 提取到 {len(rows)} 个概念板块")
+        return rows
+
+    # ============== realtime_snapshot 能力（实时行情快照） ==============
+
+    # 实时快照表列顺序
+    _REALTIME_SNAPSHOT_COLUMNS = [
+        "snapshot_time", "symbol", "open", "high", "low",
+        "close", "volume", "amount", "data_source",
+    ]
+    _REALTIME_SNAPSHOT_TABLE = "c1_market.realtime_snapshot"
+    # THS_RealtimeQuotes 指标（分号分隔，支持多指标）
+    _REALTIME_INDICATORS = "ths_open;ths_high;ths_low;ths_close;ths_volume;ths_amount"
+
+    def _fetch_realtime_snapshot(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取实时行情快照，写入 c1_market.realtime_snapshot。
+
+        使用 THS_RealtimeQuotes(thscode, jsonIndicator) 获取实时 OHLCV 数据。
+        非交易时段返回 -4001（无数据），属正常行为。
+
+        表 schema: (snapshot_time, symbol, open, high, low, close, volume, amount, data_source)
+
+        Args:
+            payload: symbols 为 ts_code 列表（如 ["000001.SZ","600000.SH"]）；
+                     None 时通过 THS_DataPool 获取全部A股。
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 每批一个
+        """
+        from iFinDPy import THS_RealtimeQuotes
+
+        table = payload.table or self._REALTIME_SNAPSHOT_TABLE
+        columns = self._REALTIME_SNAPSHOT_COLUMNS
+
+        symbols = payload.symbols
+        if not symbols:
+            symbols = self._get_all_a_share_codes(policy)
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error="无法获取标的清单（symbols 为空且 THS_DataPool 失败）",
+            )
+            return
+
+        now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        batch_rows: list[tuple] = []
+        start_ts = time.time()
+        last_key = now_str
+
+        # 逐批查询（THS_RealtimeQuotes 支持逗号分隔多标的，但为避免超限分批处理）
+        chunk_size = 50
+        for i in range(0, len(symbols), chunk_size):
+            chunk = symbols[i:i + chunk_size]
+            codes_str = ",".join(chunk)
+
+            rows, fatal_error = self._query_realtime_chunk(
+                codes_str, policy,
+            )
+            # 配额耗尽 → yield error 并 return
+            if fatal_error:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.time() - start_ts,
+                    error=fatal_error,
+                )
+                return
+
+            # 为每行补充 snapshot_time 和 symbol
+            for row in rows:
+                batch_rows.append(row)
+
+            if len(batch_rows) >= self._BATCH_SIZE:
+                yield FetchResult(
+                    table=table, columns=columns,
+                    rows=batch_rows[:], last_key=last_key,
+                    elapsed_sec=time.time() - start_ts,
+                )
+                batch_rows.clear()
+                start_ts = time.time()
+
+        if batch_rows:
+            yield FetchResult(
+                table=table, columns=columns,
+                rows=batch_rows[:], last_key=last_key,
+                elapsed_sec=time.time() - start_ts,
+            )
+
+    def _query_realtime_chunk(
+        self, codes_str: str, policy: "SourcePolicy",
+    ) -> tuple[list[tuple], str | None]:
+        """查询单批实时行情并解析为行元组（降低 _fetch_realtime_snapshot 复杂度）。
+
+        Args:
+            codes_str: 逗号分隔的 ts_code 字符串（如 "000001.SZ,600000.SH"）
+            policy: 调用策略
+
+        Returns:
+            (rows, fatal_error) 二元组。fatal_error 非 None 表示配额耗尽或致命错误；
+            rows 为解析后的元组列表，每行格式：
+            (snapshot_time, symbol, open, high, low, close, volume, amount, "ifind_realtime")
+        """
+        from iFinDPy import THS_RealtimeQuotes
+
+        now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        try:
+            raw = self._call_with_policy(
+                THS_RealtimeQuotes, policy,
+                codes_str, self._REALTIME_INDICATORS,
+            )
+        except Exception as e:
+            self._log.warning(f"THS_RealtimeQuotes 调用失败: {e}")
+            return ([], None)
+
+        # 检查错误码
+        is_error, code, msg = self._check_ifind_error(raw)
+        if is_error:
+            if code in (-4318, -4309):
+                return ([], f"iFind配额耗尽: {code}")
+            # -4001 表示无数据（非交易时段），不视为致命错误
+            if code == -4001:
+                self._log.info("THS_RealtimeQuotes 返回 -4001（非交易时段无数据）")
+                return ([], None)
+            self._log.warning(f"realtime_snapshot iFind错误: {code} {msg}")
+            return ([], None)
+
+        # 解析返回结果
+        rows = self._parse_realtime_quotes(raw, now_str, codes_str)
+        return (rows, None)
+
+    def _parse_realtime_quotes(
+        self, raw, now_str: str, codes_str: str,
+    ) -> list[tuple]:
+        """解析 THS_RealtimeQuotes 返回为行元组列表。
+
+        THS_RealtimeQuotes 返回 dict 格式：
+            {'tables': [{'table': {
+                'thscode': ['000001.SZ', ...],
+                'ths_open': [10.5, ...],
+                'ths_high': [...],
+                ...
+            }}]}
+
+        Args:
+            raw: iFind 返回值
+            now_str: 快照时间字符串
+            codes_str: 原始请求的代码字符串（用于回退取代码）
+
+        Returns:
+            元组列表，每行 (snapshot_time, symbol, open, high, low, close, volume, amount, "ifind_realtime")
+        """
+        if not isinstance(raw, dict) or "tables" not in raw:
+            return []
+
+        try:
+            table_data = raw["tables"][0]["table"]
+        except (IndexError, KeyError, TypeError):
+            return []
+
+        # 获取股票代码列表
+        codes = self._find_column(table_data, ["thscode", "THSCODE", "股票代码"])
+        if not codes:
+            # 回退：用请求的 codes_str 拆分
+            codes = codes_str.split(",")
+        n = len(codes)
+
+        # 提取各指标列
+        col_map = {
+            "open": ["ths_open", "open", "开盘价"],
+            "high": ["ths_high", "high", "最高价"],
+            "low": ["ths_low", "low", "最低价"],
+            "close": ["ths_close", "close", "收盘价"],
+            "volume": ["ths_volume", "volume", "成交量"],
+            "amount": ["ths_amount", "amount", "成交额"],
+        }
+        col_data = {}
+        for schema_key, candidates in col_map.items():
+            col_data[schema_key] = self._find_column(table_data, candidates)
+
+        rows = []
+        for i in range(n):
+            ts_code = str(codes[i])
+            symbol = self._ts_code_to_symbol(ts_code)
+
+            open_val = self._get_list_val(col_data, "open", i)
+            high_val = self._get_list_val(col_data, "high", i)
+            low_val = self._get_list_val(col_data, "low", i)
+            close_val = self._get_list_val(col_data, "close", i)
+            volume_val = self._get_list_val(col_data, "volume", i)
+            amount_val = self._get_list_val(col_data, "amount", i)
+
+            rows.append((
+                now_str, symbol,
+                open_val, high_val, low_val, close_val,
+                int(volume_val) if volume_val else None,
+                amount_val,
+                "ifind_realtime",
+            ))
+
+        return rows
+
     # ============== 辅助方法 ==============
+
+    @staticmethod
+    def _get_list_val(col_data: dict, key: str, idx: int) -> float | None:
+        """从字典中按键取列表值并安全转 float。
+
+        Args:
+            col_data: 列数据字典 {key: [val1, val2, ...]}
+            key: 列键名
+            idx: 列表索引
+
+        Returns:
+            float 值或 None
+        """
+        vals = col_data.get(key)
+        if not vals or idx >= len(vals):
+            return None
+        return IFindProvider.safe_float(vals[idx])
 
     @staticmethod
     def _ts_code_to_symbol(ts_code: str) -> str:
