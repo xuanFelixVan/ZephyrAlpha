@@ -130,7 +130,7 @@ class TDXProvider(DataSourceBase):
 
         mootdx block() 返回 DataFrame: [blockname, block_type, code_index, code]。
         """
-        table = payload.table or "c3_fundamental.industry_class"
+        table = payload.table or "c1_market.industry_class"
         columns = ["sector_code", "sector_name", "stock_code", "stock_name"]
         t0 = time.time()
         try:

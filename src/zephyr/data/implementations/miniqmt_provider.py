@@ -94,6 +94,19 @@ class MiniQMTProvider(DataSourceBase):
             "margin_trading_qmt",
             "dragon_tiger_qmt",
             "block_trade_qmt",
+            # 以下为第三批新增能力（ETF/LOF分钟K线 + 后复权周月K）
+            "etf_kline_1min",
+            "etf_kline_5min",
+            "etf_kline_15min",
+            "etf_kline_30min",
+            "etf_kline_60min",
+            "lof_kline_1min",
+            "lof_kline_5min",
+            "lof_kline_15min",
+            "lof_kline_30min",
+            "lof_kline_60min",
+            "kline_weekly_hfq",
+            "kline_monthly_hfq",
         ],
         known_issues=[
             "需XtMiniQmt.exe进程",
@@ -150,12 +163,22 @@ class MiniQMTProvider(DataSourceBase):
         capability = extra.get("capability")
         # K线类能力统一路由到 _fetch_kline，按 period 区分
         _KLINE_CAPABILITIES = {
-            "kline_daily": "1d",
-            "kline_1min": "1m",
-            "kline_5min": "5m",
-            "kline_15min": "15m",
-            "kline_30min": "30m",
-            "kline_60min": "1h",
+            "kline_daily": ("1d", "沪深A股"),
+            "kline_1min": ("1m", "沪深A股"),
+            "kline_5min": ("5m", "沪深A股"),
+            "kline_15min": ("15m", "沪深A股"),
+            "kline_30min": ("30m", "沪深A股"),
+            "kline_60min": ("1h", "沪深A股"),
+            "etf_kline_1min": ("1m", "ETF"),
+            "etf_kline_5min": ("5m", "ETF"),
+            "etf_kline_15min": ("15m", "ETF"),
+            "etf_kline_30min": ("30m", "ETF"),
+            "etf_kline_60min": ("1h", "ETF"),
+            "lof_kline_1min": ("1m", "LOF"),
+            "lof_kline_5min": ("5m", "LOF"),
+            "lof_kline_15min": ("15m", "LOF"),
+            "lof_kline_30min": ("30m", "LOF"),
+            "lof_kline_60min": ("1h", "LOF"),
         }
         # 财务报表类能力统一路由到 _fetch_financial_statement，按 table_list 区分
         _FINANCIAL_CAPABILITIES = {
@@ -166,7 +189,8 @@ class MiniQMTProvider(DataSourceBase):
             "main_business": "Income",
         }
         if capability in _KLINE_CAPABILITIES:
-            yield from self._fetch_kline(payload, policy, _KLINE_CAPABILITIES[capability])
+            _period, _sector = _KLINE_CAPABILITIES[capability]
+            yield from self._fetch_kline(payload, policy, _period, sector=_sector)
         elif capability == "kline_daily_hfq":
             # 后复权日K：复用 _fetch_kline，传 dividend_type="back"
             yield from self._fetch_kline(payload, policy, "1d", dividend_type="back")
@@ -176,6 +200,12 @@ class MiniQMTProvider(DataSourceBase):
         elif capability == "kline_monthly":
             # 月K：miniQMT 不支持 1M 周期，从日K聚合（pandas>=2.2 需用 'ME' 替代 'M'）
             yield from self._fetch_kline_aggregated(payload, policy, "ME")
+        elif capability == "kline_weekly_hfq":
+            # 后复权周K：从后复权日K聚合
+            yield from self._fetch_kline_aggregated(payload, policy, "W", dividend_type="back")
+        elif capability == "kline_monthly_hfq":
+            # 后复权月K：从后复权日K聚合
+            yield from self._fetch_kline_aggregated(payload, policy, "ME", dividend_type="back")
         elif capability == "adj_factor":
             yield from self._fetch_adj_factor(payload, policy)
         elif capability in _FINANCIAL_CAPABILITIES:
@@ -279,11 +309,12 @@ class MiniQMTProvider(DataSourceBase):
         policy: SourcePolicy,
         period: str,
         dividend_type: str = "none",
+        sector: str = "沪深A股",
     ) -> Iterator[FetchResult]:
-        """抓取K线数据（日K/分钟K通用）。
+        """抓取K线数据（日K/分钟K通用，支持A股/ETF/LOF）。
 
         步骤：
-        1. 若 symbols 为 None，取沪深A股全部标的
+        1. 若 symbols 为 None，取指定板块全部标的（沪深A股/ETF/LOF）
         2. 对每个 stock_code：download_history_data 下载 -> get_market_data_ex 读取
         3. DataFrame 转 tuple 列表，每个股票作为一批 yield
 
@@ -295,6 +326,7 @@ class MiniQMTProvider(DataSourceBase):
             policy: 调用策略
             period: K线周期（"1d"/"1m"/"5m"/"15m"/"30m"/"60m"）
             dividend_type: 复权类型（"none"=不复权/"back"=后复权），默认 "none"
+            sector: 板块名称（"沪深A股"/"ETF"/"LOF"），默认 "沪深A股"
 
         Yields:
             FetchResult: 每个股票一批
@@ -336,7 +368,7 @@ class MiniQMTProvider(DataSourceBase):
             symbols = payload.symbols
             if not symbols:
                 symbols = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
+                    xtdata.get_stock_list_in_sector, policy, sector
                 )
         except Exception as e:
             yield FetchResult(
@@ -893,8 +925,9 @@ class MiniQMTProvider(DataSourceBase):
         payload: FetchPayload,
         policy: SourcePolicy,
         freq: str,
+        dividend_type: str = "none",
     ) -> Iterator[FetchResult]:
-        """抓取日K数据并聚合为周K/月K。
+        """抓取日K数据并聚合为周K/月K（支持不复权/后复权）。
 
         miniQMT 不支持直接下载 "1w"/"1M" 周期，需下载日K后用 pandas resample 聚合。
         聚合规则：open=首日、close=末日、high=max、low=min、volume/amount=sum。
@@ -906,6 +939,7 @@ class MiniQMTProvider(DataSourceBase):
             payload: 下载请求
             policy: 调用策略
             freq: 聚合频率（"W"=周K，"ME"=月K，pandas>=2.2 用 ME 替代 M）
+            dividend_type: 复权类型（"none"=不复权/"back"=后复权），默认 "none"
 
         Yields:
             FetchResult: 每个股票一批
@@ -913,10 +947,11 @@ class MiniQMTProvider(DataSourceBase):
         from xtquant import xtdata
         import pandas as pd
 
+        is_hfq = (dividend_type == "back")
         if freq == "W":
-            table = payload.table or "c1_market.kline_weekly"
+            table = payload.table or ("c1_market.kline_weekly_hfq" if is_hfq else "c1_market.kline_weekly")
         else:
-            table = payload.table or "c1_market.kline_monthly"
+            table = payload.table or ("c1_market.kline_monthly_hfq" if is_hfq else "c1_market.kline_monthly")
 
         columns = [
             "trade_date", "symbol", "open", "close", "high", "low",
@@ -959,11 +994,11 @@ class MiniQMTProvider(DataSourceBase):
                     policy,
                     stock_code, "1d", start_str, end_str,
                 )
-                # 读取日K行情
+                # 读取日K行情（后复权时传 dividend_type='back'，count=-1 表示全部）
                 data = self._call_with_policy(
                     xtdata.get_market_data_ex,
                     policy,
-                    [], [stock_code], "1d", start_str, end_str,
+                    [], [stock_code], "1d", start_str, end_str, -1, dividend_type,
                 )
 
                 rows = []
@@ -1117,7 +1152,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c3_fundamental.shareholder"
+        table = payload.table or "c3_fundamental.shareholder_count"
         columns = ["symbol", "end_date", "holder_count", "data_source"]
         start_str = self._date_to_str(payload.start)
         end_str = self._date_to_str(payload.end)

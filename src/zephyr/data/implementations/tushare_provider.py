@@ -40,6 +40,7 @@ from ..provider_base import (
     FetchResult,
 )
 from ..policy_registry import SourcePolicy
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 from zephyr.shared.security.secrets import get_required_secret, get_secret_or_default
 
 log = logging.getLogger(__name__)
@@ -60,7 +61,7 @@ class TushareProvider(DataSourceBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=200,
-        capabilities=["news_news_info", "news_security"],
+        capabilities=["news_data"],
         known_issues=["历史数据截止2024-08", "积分不足API受限"],
     )
 
@@ -109,9 +110,8 @@ class TushareProvider(DataSourceBase):
             return
 
         cap = (payload.extra or {}).get("capability")
-        if cap == "news_news_info":
+        if cap == "news_data":
             yield from self._fetch_news_news_info(payload, policy)
-        elif cap == "news_security":
             yield from self._fetch_news_security(payload, policy)
         else:
             yield FetchResult(
@@ -125,12 +125,12 @@ class TushareProvider(DataSourceBase):
     def _fetch_news_news_info(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取新闻快讯（pro.news_info）。
+        """获取新闻快讯（pro.news_info），写入 news_data 统一表。
 
         按 trade_date 分批拉取，每批一天。
         """
-        table = payload.table or "c3_fundamental.news_news_info"
-        columns = ["trade_date", "news_id", "title", "content", "news_source", "pub_time"]
+        table = "c3_fundamental.news_data"
+        columns = NEWS_DATA_COLUMNS
         start = payload.start or datetime.date.today() - datetime.timedelta(days=30)
         end = payload.end or datetime.date.today()
 
@@ -149,13 +149,13 @@ class TushareProvider(DataSourceBase):
                 rows: list[tuple] = []
                 if df is not None and not df.empty:
                     for _, row in df.iterrows():
-                        rows.append((
-                            str(row.get("datetime", "")),
-                            str(row.get("news_id", "")),
-                            str(row.get("title", "")),
-                            str(row.get("content", "")),
-                            str(row.get("src", "")),
-                            str(row.get("datetime", "")),
+                        rows.append(build_news_row(
+                            pub_date=str(row.get("datetime", "")),
+                            title=str(row.get("title", "")),
+                            link="",
+                            summary=str(row.get("content", "")),
+                            source=str(row.get("src", "")),
+                            data_source="tushare",
                         ))
                 self._log.info(f"新闻快讯 {trade_date}: {len(rows)} 行")
                 yield FetchResult(
@@ -176,12 +176,12 @@ class TushareProvider(DataSourceBase):
     def _fetch_news_security(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取证券新闻（pro.news）。
+        """获取证券新闻（pro.news），写入 news_data 统一表。
 
         按 trade_date 分批拉取，每批一天。
         """
-        table = payload.table or "c3_fundamental.news_security"
-        columns = ["trade_date", "ts_code", "title", "content", "news_source", "pub_time"]
+        table = "c3_fundamental.news_data"
+        columns = NEWS_DATA_COLUMNS
         start = payload.start or datetime.date.today() - datetime.timedelta(days=30)
         end = payload.end or datetime.date.today()
 
@@ -200,13 +200,13 @@ class TushareProvider(DataSourceBase):
                 rows: list[tuple] = []
                 if df is not None and not df.empty:
                     for _, row in df.iterrows():
-                        rows.append((
-                            str(row.get("datetime", "")),
-                            str(row.get("ts_code", "")),
-                            str(row.get("title", "")),
-                            str(row.get("content", "")),
-                            str(row.get("src", "")),
-                            str(row.get("datetime", "")),
+                        rows.append(build_news_row(
+                            pub_date=str(row.get("datetime", "")),
+                            title=str(row.get("title", "")),
+                            link="",
+                            summary=str(row.get("content", "")),
+                            source=str(row.get("src", "")),
+                            data_source="tushare",
                         ))
                 self._log.info(f"证券新闻 {trade_date}: {len(rows)} 行")
                 yield FetchResult(

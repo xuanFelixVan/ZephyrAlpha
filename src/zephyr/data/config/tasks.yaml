@@ -267,6 +267,140 @@ tasks:
     extra:
       description: "60分钟K线增量"
 
+  # ============== ETF/LOF 分钟K线增量（2026-07-11 新增）==============
+  - task_id: etf_kline_1min_incremental
+    table: c1_market.etf_kline_1min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: etf_kline_1min
+    symbols: null  # null=自动取ETF板块
+    extra:
+      description: "ETF 1分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+
+  - task_id: etf_kline_5min_incremental
+    table: c1_market.etf_kline_5min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: etf_kline_5min
+    symbols: null
+    extra:
+      description: "ETF 5分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+
+  - task_id: etf_kline_15min_incremental
+    table: c1_market.etf_kline_15min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: etf_kline_15min
+    symbols: null
+    extra:
+      description: "ETF 15分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+
+  - task_id: etf_kline_30min_incremental
+    table: c1_market.etf_kline_30min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: etf_kline_30min
+    symbols: null
+    extra:
+      description: "ETF 30分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+
+  - task_id: etf_kline_60min_incremental
+    table: c1_market.etf_kline_60min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: etf_kline_60min
+    symbols: null
+    extra:
+      description: "ETF 60分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+
+  - task_id: lof_kline_1min_incremental
+    table: c1_market.lof_kline_1min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: lof_kline_1min
+    symbols: null  # null=自动取LOF板块
+    extra:
+      description: "LOF 1分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+
+  - task_id: lof_kline_5min_incremental
+    table: c1_market.lof_kline_5min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: lof_kline_5min
+    symbols: null
+    extra:
+      description: "LOF 5分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+
+  - task_id: lof_kline_15min_incremental
+    table: c1_market.lof_kline_15min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: lof_kline_15min
+    symbols: null
+    extra:
+      description: "LOF 15分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+
+  - task_id: lof_kline_30min_incremental
+    table: c1_market.lof_kline_30min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: lof_kline_30min
+    symbols: null
+    extra:
+      description: "LOF 30分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+
+  - task_id: lof_kline_60min_incremental
+    table: c1_market.lof_kline_60min
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: lof_kline_60min
+    symbols: null
+    extra:
+      description: "LOF 60分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+
+  # ============== 后复权周月K线增量（2026-07-11 新增）==============
+  - task_id: kline_weekly_hfq_incremental
+    table: c1_market.kline_weekly_hfq
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_weekly_hfq
+    capability: kline_weekly_hfq
+    symbols: null
+    extra:
+      description: "后复权周K线增量（miniQMT 后复权日K聚合 resample W）"
+
+  - task_id: kline_monthly_hfq_incremental
+    table: c1_market.kline_monthly_hfq
+    source: miniqmt
+    schedule: daily_kline
+    incremental: true
+    dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_monthly_hfq
+    capability: kline_monthly_hfq
+    symbols: null
+    extra:
+      description: "后复权月K线增量（miniQMT 后复权日K聚合 resample ME）"
+
   # ============== 盘后事件时段（18:00 周一-五）==============
   - task_id: news_data_incremental
     table: c3_fundamental.news_data
@@ -278,28 +412,6 @@ tasks:
     symbols: null  # 默认 12 个财经 RSS 源（2直连+10 RSSHub）
     extra:
       description: "财经新闻增量（RSS 爬虫）"
-
-  - task_id: news_news_info_incremental
-    table: c3_fundamental.news_news_info
-    source: tushare
-    schedule: daily_event
-    incremental: true
-    dependencies: []
-    capability: news_news_info
-    symbols: null
-    extra:
-      description: "新闻快讯增量（tushare pro.news_info）"
-
-  - task_id: news_security_incremental
-    table: c3_fundamental.news_security
-    source: tushare
-    schedule: daily_event
-    incremental: true
-    dependencies: []
-    capability: news_security
-    symbols: null
-    extra:
-      description: "证券新闻增量（tushare pro.news）"
 
   - task_id: share_unlock_incremental
     table: c3_fundamental.share_unlock
@@ -313,7 +425,7 @@ tasks:
       description: "限售解禁增量（AKShare stock_restricted_release_detail_em）"
 
   - task_id: shareholder_incremental
-    table: c3_fundamental.shareholder
+    table: c3_fundamental.shareholder_count
     source: miniqmt
     schedule: daily_event
     incremental: true
@@ -324,7 +436,7 @@ tasks:
       description: "股东数据增量（十大股东/股东人数）"
 
   - task_id: analyst_forecast_incremental
-    table: c3_fundamental.analyst_forecast
+    table: c1_market.analyst_forecast
     source: akshare
     schedule: daily_event
     incremental: true
@@ -390,7 +502,7 @@ tasks:
       description: "分红配股增量（AKShare stock_history_dividend_detail）"
 
   - task_id: equity_pledge_incremental
-    table: c3_fundamental.equity_pledge
+    table: c3_fundamental.equity_pledge_detail
     source: akshare
     schedule: daily_event
     incremental: true
@@ -468,7 +580,7 @@ tasks:
       description: "主营业务增量"
 
   - task_id: industry_class_refresh
-    table: c3_fundamental.industry_class
+    table: c1_market.industry_class
     source: tdx
     schedule: weekend_financial
     incremental: false  # 全量重建
@@ -634,17 +746,6 @@ tasks:
     symbols: null
     extra:
       description: "申万/中证行业分类全量刷新（iFind THS_DataPool）"
-
-  - task_id: sector_constituent_refresh
-    table: c3_fundamental.sector_constituent
-    source: tdx
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
-    capability: industry_class
-    symbols: null
-    extra:
-      description: "板块成分股全量刷新（mootdx 通达信板块）"
 
   - task_id: kline_daily_full_refresh
     table: c1_market.kline_daily
@@ -815,6 +916,30 @@ tasks:
     symbols: null
     extra:
       description: "AKShare股票新闻增量（ak.stock_news_global_em）"
+
+  # --- Tushare 新闻增量（写入 news_data 统一表，2026-07-11 新增）---
+  - task_id: news_tushare_incremental
+    table: c3_fundamental.news_data
+    source: tushare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: news_data
+    symbols: null
+    extra:
+      description: "Tushare新闻增量（pro.news_info 快讯 + pro.news 证券新闻，统一写入 news_data，历史数据截止2024-08）"
+
+  # --- 限售股明细增量（2026-07-11 新增）---
+  - task_id: restricted_shares_incremental
+    table: c3_fundamental.restricted_shares
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: restricted_shares
+    symbols: null
+    extra:
+      description: "AKShare限售股明细增量（ak.stock_restricted_release_detail_em，含解禁日期/解禁数量/解禁市值）"
 
   # --- 研报 & 北向资金 & 期货主力合约（2026-07-11 新增）---
   - task_id: research_report_incremental
