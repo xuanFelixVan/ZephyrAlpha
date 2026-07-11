@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.governance.ops_governance.event_hook
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

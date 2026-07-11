@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-060 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.ops_governance.phase_check_registry
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.trading.orchestrator.contract_registry; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.trading.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.trading.orchestrator.batch_orchestrator
 # [CONSUMERS]
 # [STARTUP] imported

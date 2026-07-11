@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.governance.escalation.result_types
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.shared.contracts.rollback_types
 # [CONSUMERS] tests/governance/escalation/test_result_types;tests/governance/governance_misc/test_governance_result_types;tests/governance/governance_e2e/test_gct_003_rollback_to_escalation;tests/governance/drift/test_gct_integration;tests/governance/shared/test_phase_gates;tests/governance/security/test_p0_u1_contract_smoke
 # [STARTUP] imported

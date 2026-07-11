@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.resilience_governance.decision_fatigue
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES]
 # [CONSUMERS] MOD-INF-027;MOD-INF-020;MOD-INF-018
 # [STARTUP] imported

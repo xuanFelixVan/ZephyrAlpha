@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_resilience_governance | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.resilience_governance
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-073 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.resilience_governance.offline_resilience
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.offline_resilience
 # [CONSUMERS]
 # [STARTUP] imported

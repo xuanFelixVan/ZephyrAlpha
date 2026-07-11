@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-061 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.ops_governance.phase_manager
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.governance.ops_governance.phase_check_registry
 # [CONSUMERS]
 # [STARTUP] imported

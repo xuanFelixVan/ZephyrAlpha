@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.governance.ops_governance.burn_rate_monitor
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.governance.ops_governance.budget_models
 # [CONSUMERS]
 # [STARTUP] imported
