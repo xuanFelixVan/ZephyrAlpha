@@ -185,7 +185,7 @@ class EventBusBackpressure:
     ):
         self._queue: deque[Event] = deque()
         self._lock = threading.Lock()
-        self._handlers: dict[str, list[Callable]] = {}
+        self._handlers: dict[str, list[Callable[[Event], None]]] = {}
         self.max_queue_size = max_queue_size
         self.warn_threshold = warn_threshold
         self.critical_threshold = critical_threshold
@@ -198,11 +198,11 @@ class EventBusBackpressure:
     def set_contract_bus(self, contract_bus: Any) -> None:
         self._contract_bus = contract_bus
 
-    def subscribe(self, topic: str, handler: Callable):
+    def subscribe(self, topic: str, handler: Callable[[Event], None]):
         with self._lock:
             self._handlers.setdefault(topic, []).append(handler)
 
-    def unsubscribe(self, topic: str, handler: Callable) -> bool:
+    def unsubscribe(self, topic: str, handler: Callable[[Event], None]) -> bool:
         with self._lock:
             handlers = self._handlers.get(topic, [])
             if handler in handlers:
@@ -283,7 +283,7 @@ class EventBusBackpressure:
         with self._lock:
             return len(self._queue)
 
-    def get_stats(self) -> dict:
+    def get_stats(self) -> dict[str, int]:
         with self._lock:
             return {
                 "queue_depth": len(self._queue),
