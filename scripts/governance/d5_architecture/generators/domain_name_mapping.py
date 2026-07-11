@@ -67,6 +67,7 @@ DOMAIN_NAME_ZH = {
     "D_OPS": "反馈循环",
     "D_FEEDBACK_LOOP": "反馈循环引擎",
     "D_ORCHESTRATOR": "代理编排器",
+    "D_FBL_VERIFICATION": "反馈验证",
     "D_REPORTING": "报告",
     "D_SECURITY": "对抗验证",
     "D_SECURITY_LLM": "LLM防御",
@@ -123,6 +124,8 @@ DOMAIN_NAME_ZH = {
     "D_GOV_KB": "知识库治理",
     "D_GOV_RULE": "规则治理",
     "D_GOV_SCRIPTS": "脚本治理",
+    "D_GOV_CODE_QUALITY": "代码质量治理",
+    "D_GOV_OPS_RESILIENCE": "运维弹性治理",
 
     # 测试域（测试域不插入生产 depgraph (PostgreSQL)，仅硬编码 fallback 维护）
     "D-T3-W0": "测试域T3-0",
@@ -212,8 +215,11 @@ DOMAIN_NAME_EN: dict[str, str] = {
     "D_GOV_KB": "Knowledge Base Governance",
     "D_FEEDBACK_LOOP": "Feedback Loop Engine",
     "D_ORCHESTRATOR": "Agent Orchestrator",
+    "D_FBL_VERIFICATION": "Feedback Verification",
     "D_GOV_RULE": "Rule Governance",
     "D_GOV_SCRIPTS": "Script Governance",
+    "D_GOV_CODE_QUALITY": "Code Quality Governance",
+    "D_GOV_OPS_RESILIENCE": "Ops Resilience Governance",
 }
 
 # 域ID → 中文功能简介映射（用于域文档标题下方的功能简介行）
@@ -293,8 +299,11 @@ DOMAIN_DESC_ZH: dict[str, str] = {
     "D_GOV_KB": "知识库治理，负责知识管线、知识引擎和向量记忆后端管理",
     "D_FEEDBACK_LOOP": "反馈循环引擎，负责系统自我改进闭环：异常检测、根因诊断、自动修复和自我进化",
     "D_ORCHESTRATOR": "代理编排器，负责 Agent 任务全生命周期：任务入队、调度、沙箱执行、幻觉检测和收尾归档",
+    "D_FBL_VERIFICATION": "反馈验证，负责反馈循环门禁拦截、结果验证器执行和反馈质量检查",
     "D_GOV_RULE": "规则治理，负责规则注册、规则版本和规则依赖管理",
     "D_GOV_SCRIPTS": "脚本治理，负责脚本生命周期管理和脚本质量门禁",
+    "D_GOV_CODE_QUALITY": "代码质量治理，负责代码去重引擎、函数重复检测、AST语义分析和提交门禁引擎",
+    "D_GOV_OPS_RESILIENCE": "运维弹性治理，负责运维治理、安全治理、弹性治理和升级协议",
 }
 
 

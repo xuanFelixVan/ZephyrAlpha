@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md | §4
 # [MODULE] zephyr.governance.code_dedup.cli
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] pre-commit/verify_dedup.py; ct_deduplication.DeduplicationHandler; CI pipeline
 # [STARTUP] manual

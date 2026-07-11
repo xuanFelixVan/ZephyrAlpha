@@ -55,8 +55,8 @@ depends_on:
 priority: P0
 runtime_plane: hot
 responsibility_domain: 
-design_maturity: prototype
 build_status: generated
+design_maturity: prototype
 ---
 
 # Task System 蓝图 — 全链路任务卡生命周期管理

@@ -42,8 +42,8 @@ references:
 codification_level: L1
 codification_at: "2026-05-15"
 responsibility_domain: 
-design_maturity: prototype
 build_status: generated
+design_maturity: prototype
 ---
 
 > module_id: MOD-L07-001 | version: 2.1.0 | status: active | domain: reporting

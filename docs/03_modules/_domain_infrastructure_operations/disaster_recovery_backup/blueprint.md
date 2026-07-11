@@ -39,8 +39,8 @@ references: []
 codification_level: L2
 codification_at: "2026-07-09"
 responsibility_domain: 
-design_maturity: design
 build_status: planned
+design_maturity: design
 ---
 > module_id: MOD-INF-027 | version: 1.1.0 | status: active | layer: L0_infrastructure
 > actual_disk_path: scripts/backup/ | generation: 1 | construction_progress: planned

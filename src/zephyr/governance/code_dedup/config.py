@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
 # [MODULE] zephyr.governance.code_dedup.config
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.code_dedup.policy_tree_validator; tests/code_dedup_engine/test_config_test_code_dedup_engine.py; tests/code_dedup_engine/test_self_scan_integrity.py; tests/config/test_config_root.py; tests/governance/shared/test_app_config_yaml.py
 # [STARTUP] imported

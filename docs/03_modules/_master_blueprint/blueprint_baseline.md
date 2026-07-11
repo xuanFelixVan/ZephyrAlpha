@@ -53,8 +53,8 @@ references:
 codification_level: L1
 codification_at: "2026-05-15"
 responsibility_domain: 
-design_maturity: design
 build_status: stable
+design_maturity: design
 ---
 
 # Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12系统拓扑+63条CT-*契约）
