@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.dlq_retry_policy
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.infrastructure.pipeline.dead_letter_queue; AutoRuntime Core retry phase
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §event-sourcing
 # [MODULE] zephyr.governance.audit_trail.event_store
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.governance.observability_governance.projection_engine; zephyr.governance.audit.snapshot_manager; zephyr.governance.persistence.task_repo
 # [STARTUP] imported

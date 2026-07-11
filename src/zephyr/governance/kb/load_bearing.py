@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.governance.kb.load_bearing
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_KB
 # [DEPENDENCIES] zephyr.governance.kb.__init__
 # [CONSUMERS]
 # [STARTUP] manual

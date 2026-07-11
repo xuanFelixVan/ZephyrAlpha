@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §3.1
 # [MODULE] zephyr.governance.behavioral_admission.verdict_engine
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.audit_trail.models
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-031(auto-fix-engine);zephyr.governance.behavioral_admission.admission_controller
 # [STARTUP] imported

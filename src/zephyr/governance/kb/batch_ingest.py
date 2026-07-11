@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.governance.kb.batch_ingest (re-export shim)
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_KB
 # [DEPENDENCIES] zephyr.governance.kb.pipeline.batch_ingest
 # [CONSUMERS]
 # [STARTUP] imported

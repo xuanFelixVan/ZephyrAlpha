@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.governance.kb._backend_protocol (re-export shim)
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_KB
 # [DEPENDENCIES] zephyr.governance.kb.storage._backend_protocol
 # [CONSUMERS] zephyr.research.unified_memory_api; zephyr.knowledge.kb.vms_memory_backend
 # [STARTUP] imported

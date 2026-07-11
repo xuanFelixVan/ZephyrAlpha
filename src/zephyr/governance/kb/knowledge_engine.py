@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-003 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.kb.knowledge_engine
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_KB
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

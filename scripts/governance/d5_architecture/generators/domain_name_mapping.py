@@ -118,6 +118,7 @@ DOMAIN_NAME_ZH = {
     "D_GOV_DOCS": "架构文档治理",
     "D_GOV_DRIFT": "漂移检测",
     "D_GOV_ENFORCEMENT": "规则执行",
+    "D_GOV_KB": "知识库治理",
     "D_GOV_RULE": "规则治理",
     "D_GOV_SCRIPTS": "脚本治理",
 
@@ -206,6 +207,7 @@ DOMAIN_NAME_EN: dict[str, str] = {
     "D_GOV_DOCS": "Architecture Docs Governance",
     "D_GOV_DRIFT": "Drift Detection",
     "D_GOV_ENFORCEMENT": "Rule Enforcement",
+    "D_GOV_KB": "Knowledge Base Governance",
     "D_GOV_RULE": "Rule Governance",
     "D_GOV_SCRIPTS": "Script Governance",
 }
@@ -284,6 +286,7 @@ DOMAIN_DESC_ZH: dict[str, str] = {
     "D_GOV_DOCS": "架构文档治理，负责架构文档生成、一致性和版本管理",
     "D_GOV_DRIFT": "漂移检测，负责架构漂移检测和漂移告警",
     "D_GOV_ENFORCEMENT": "规则执行，负责治理规则执行和门禁拦截",
+    "D_GOV_KB": "知识库治理，负责知识管线、知识引擎和向量记忆后端管理",
     "D_GOV_RULE": "规则治理，负责规则注册、规则版本和规则依赖管理",
     "D_GOV_SCRIPTS": "脚本治理，负责脚本生命周期管理和脚本质量门禁",
 }

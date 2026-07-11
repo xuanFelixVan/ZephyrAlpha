@@ -40,8 +40,8 @@ depends_on:
   - {target: "MOD-GATE_ENGINE", at: "blueprint.md", why: "Gate Engine 消费 Shared AsyncObserver"}
   - {target: "MOD-INF-009", at: "blueprint.md", why: "Pipeline 消费 Shared 分层限流+PriorityLock"}
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 # Shared Core 蓝图 — 跨层共享基础设施：事件总线/配置/缓存/限流/契约

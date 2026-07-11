@@ -201,6 +201,9 @@ domains:
 - id: D_GOV_ENFORCEMENT
   name: rule_enforcement
   layer_id: L2_domain
+- id: D_GOV_KB
+  name: knowledge_base_governance
+  layer_id: L2_domain
 - id: D_GOV_REPAIR
   name: rollback
   layer_id: L2_domain

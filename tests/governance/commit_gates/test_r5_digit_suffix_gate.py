@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-r5_digit_suffix_gate | tests/governance/commit_gates/test_r5_digit_suffix_gate.py
 # [MODULE] tests.governance.commit_gates.test_r5_digit_suffix_gate
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.commit_gates.r5_digit_suffix_gate, zephyr.governance.rule_bridge.commit_gate_registry
 # [CONSUMERS]
 # [STARTUP] manual

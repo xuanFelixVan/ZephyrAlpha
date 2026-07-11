@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 # [MODULE] zephyr.governance.semantic_audit.feedback_self_audit
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.semantic_audit.__init__
 # [CONSUMERS] 见蓝图 §4 接口契约
 # [STARTUP] imported

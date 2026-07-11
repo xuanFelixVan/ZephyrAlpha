@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md
 # [MODULE] zephyr.governance.audit_trail.audit_schema
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported

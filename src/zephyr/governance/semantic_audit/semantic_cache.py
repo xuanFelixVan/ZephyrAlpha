@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.governance.semantic_audit.semantic_cache
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

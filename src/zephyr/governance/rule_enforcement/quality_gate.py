@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.quality_gate
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

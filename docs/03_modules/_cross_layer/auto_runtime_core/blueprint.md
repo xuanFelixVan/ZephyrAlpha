@@ -33,7 +33,6 @@ priority: P0
 runtime_plane: hot
 blueprint_level: module
 responsibility_domain: 
-  - {target: "SYS-MASTER-001", at: "全篇", why: "系统总蓝图——大脑是三级金字塔 Level 1 节点"}
   - {target: "MOD-INF-002", at: "全篇", why: "Runtime Integration——RI EventStore/DryRun/CostTracker 运行时桥接"}
   - {target: "MOD-INF-016", at: "全篇", why: "Shared Core——事件总线/生命周期/日志/沙箱等公共基座"}
   - {target: "MOD-INF-009", at: "全篇", why: "Pipeline——大脑调度管线任务"}

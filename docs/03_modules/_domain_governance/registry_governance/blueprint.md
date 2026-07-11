@@ -58,8 +58,8 @@ ssot_claims:
   - claim: "路径归属声明(path_ownership_map.yaml)是蓝图→文件路径映射的唯一真源"
     scope: global
 responsibility_domain: 
-build_status: generated
 design_maturity: design
+build_status: generated
 ---
 
 <!--

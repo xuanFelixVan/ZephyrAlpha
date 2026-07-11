@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_commit_gates | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.commit_gates
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway
 # [STARTUP] imported

@@ -60,8 +60,8 @@ references:
     section: "§16.7"
     why: "matching_engine Tick级5档撮合规格, MiniQMT Broker 实盘撮合逻辑需保持一致"
 responsibility_domain: 
-build_status: generated
 design_maturity: design
+build_status: generated
 ---
 
 > module_id: MOD-L06-001 | version: 2.2.0 | status: Active | layer: l06

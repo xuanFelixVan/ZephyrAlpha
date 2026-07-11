@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_watcher
 # [MODULE] zephyr.governance.rule_enforcement.rule_engine.rule_watcher
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES]
 # [CONSUMERS] cold_start sequence; AI sessions; governance pipeline
 # [STARTUP] manual

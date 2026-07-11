@@ -29,7 +29,6 @@ rule_form: structural
 scope: global
 stability: evolving
 responsibility_domain: 
-depends_on:
   - {target: "MOD-MASTER_BLUEPRINT", at: "§2.7", why: "CT-PIPE-ORC-001 集成契约——Pipeline→Orc路由决策"}
   - {target: "MOD-TASK_SYSTEM", at: "§5", why: "任务系统——M1-M11节点的任务消费方"}
   - {target: "GOV-AI-002", at: "全篇", why: "模型路由策略——Pipeline决策树依据"}

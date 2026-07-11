@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-create_guard | tests/test_create_guard.py | §create-guard-tests
 # [MODULE] tests.test_create_guard
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.commit_gates.create_guard, zephyr.governance.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual

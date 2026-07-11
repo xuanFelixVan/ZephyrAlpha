@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-session_claim | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4B
 # [MODULE] zephyr.governance.rule_bridge.session_claim
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.security.access_control.session_concurrency (SessionRegistry)
 # [CONSUMERS] 已废弃（superseded by session_worktree_start，FP-ISO.4C，2026-07-04）；generate_session_id 仍被 zephyr.governance.rule_bridge.session_worktree 调用
 # [STARTUP] imported

@@ -129,7 +129,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | Dashboard (Panel) | `src/zephyr/frontend/dashboard/app_panel.py` | Panel+HoloViz 仪表盘主入口（v3.1.0, #ARCH-047），10 Tab 治理+交易/回测；`panel serve app_panel.py --show --port 5006` |
 | Data Source Integrator | `integrator` / `python -m zephyr.data` | 数据源集成器 CLI（MOD-L00-004 §8.4），7 子命令：`status`/`list`/`run`/`rerun-failed`/`pause <source>`/`resume <source>`/`start`；统一管理 8 源 61 任务的自动下载+断点续传+熔断 |
 
-### 基础设施层（D_INFRA_RUNTIME / D_INFRA_RECOVERY / D_GOVERNANCE）
+### 基础设施层（D_INFRA_RUNTIME / D_INFRA_RECOVERY / D_GOV_ENFORCEMENT）
 
 | 模块 | 入口 | 职责 |
 |------|------|------|

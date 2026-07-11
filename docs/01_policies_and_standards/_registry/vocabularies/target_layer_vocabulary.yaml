@@ -54,7 +54,7 @@ version: "1.0.0"
 title: "target_layer 受控词表"
 status: active
 vocabulary_name: target_layer
-total_values: 38
+total_values: 39
 depends_on:
   - target: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
     at: "_FOUNDATION_LAYERS 集合"
@@ -150,6 +150,10 @@ values:
     definition: "治理规则域——规则引擎/规则桥接"
     is_foundation: false
     ai_keywords: ["规则", "rule"]
+  - value: D_GOV_KB
+    definition: "治理知识库域——知识管线/知识引擎/向量记忆后端"
+    is_foundation: false
+    ai_keywords: ["知识库", "kb", "knowledge base"]
 
   # === 基础设施域（来源：functional_domain_registry.yaml）===
   - value: D_INFRA_RUNTIME

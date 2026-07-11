@@ -60,6 +60,9 @@ SQL_ENGINE_BY_NAME = "SELECT engine FROM system.tables WHERE name = '{}'"
 
 # clickhouse-driver TCP 客户端单例（裁定 #ARCH-CH-004，混合传输）
 _ch_client = None
+# TCP 失败冷却时间戳（避免每次 query 都重试 TCP 连接）
+_tcp_fail_ts: float = 0
+_TCP_COOLDOWN_SEC = 60  # TCP 连接失败后 60 秒内不再重试
 
 
 def _discover_wsl_ip() -> str:
@@ -94,11 +97,16 @@ def _get_client():
     连接策略：
     1. 先尝试 localhost（WSL2 localhost 转发正常时）
     2. 失败则发现 WSL2 IP 直连（绕过 localhost 转发）
-    3. 均失败则返回 None（触发 WSL subprocess fallback）
+    3. 均失败则返回 None（触发 HTTP API fallback）
+    4. TCP 失败后 60 秒冷却，避免每次 query 都重试
     """
-    global _ch_client
+    global _ch_client, _tcp_fail_ts
     if _ch_client is not None:
         return _ch_client
+    # 冷却期内跳过 TCP 连接尝试
+    import time as _time
+    if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
+        return None
     from clickhouse_driver import Client
     # 策略1: localhost（WSL2 localhost 转发）
     for host in ("localhost",):
@@ -121,7 +129,8 @@ def _get_client():
             return _ch_client
         except Exception as e:
             log.warning("clickhouse-driver WSL IP 连接失败 (%s:9000): %s", wsl_ip, e)
-    log.warning("clickhouse-driver TCP 不可用，所有查询将走 WSL subprocess fallback")
+    log.warning("clickhouse-driver TCP 不可用，所有查询将走 HTTP API fallback")
+    _tcp_fail_ts = _time.time()
     return None
 
 
@@ -202,14 +211,15 @@ def _http_insert(
 def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
     """执行 CH 查询，返回 TSV 格式字符串（向后兼容 WSL clickhouse-client 输出）。
 
-    混合传输（裁定 #ARCH-CH-004）：
-    - SELECT → clickhouse-driver TCP，结果格式化为 TSV 返回
-    - DDL（TRUNCATE/ALTER/CREATE 等）→ clickhouse-driver TCP，返回空字符串
-    - clickhouse-driver 不可用时降级到 WSL subprocess（fallback）
+    混合传输（裁定 #ARCH-CH-004，2026-07-12 修订）：
+    - SELECT/DESCRIBE → clickhouse-driver TCP → HTTP API → WSL（三级降级）
+    - DDL → clickhouse-driver TCP → HTTP API → WSL（三级降级）
+    - 2026-07-12 修订：TCP 连接可能被拒绝（端口 9000 不稳定），WSL 可能卡住，
+      新增 HTTP API(8123) 作为中间路径
 
     失败时 log 错误并返回空字符串（不抛异常）。
     """
-    # 尝试 clickhouse-driver TCP
+    # 策略1: clickhouse-driver TCP
     client = _get_client()
     if client is not None:
         try:
@@ -228,8 +238,21 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
                 client.execute(sql, settings={"max_execution_time": timeout})
                 return ""
         except Exception as e:
-            log.warning("clickhouse-driver query 失败，降级到 WSL: %s", e)
-    # 降级到 WSL subprocess
+            log.warning("clickhouse-driver query 失败，降级到 HTTP: %s", e)
+
+    # 策略2: HTTP API（8123，不依赖 WSL）
+    import urllib.parse
+    url = f"http://{_CH_HTTP_HOST}:{_CH_HTTP_PORT}/?query={urllib.parse.quote(sql)}"
+    try:
+        req = urllib.request.Request(url, method="GET")
+        resp = urllib.request.urlopen(req, timeout=timeout)
+        if resp.status == 200:
+            return resp.read().decode("utf-8", errors="replace")
+        log.warning("HTTP query 失败: status=%s，降级到 WSL", resp.status)
+    except Exception as e:
+        log.warning("HTTP query 失败，降级到 WSL: %s", e)
+
+    # 策略3: WSL subprocess（最终 fallback）
     try:
         r = _wsl_ch(["--query", sql], timeout=timeout)
         if r.returncode != 0:
@@ -240,7 +263,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
         log.error("CH query 超时(%ds): %s", timeout, sql[:200])
         return ""
     except Exception as e2:
-        log.error("CH query 异常(driver+WSL 均失败): %s", e2)
+        log.error("CH query 异常(driver+HTTP+WSL 均失败): %s", e2)
         return ""
 
 
@@ -495,15 +518,26 @@ def delete_where(
         是否成功。
     """
     sql = f"ALTER TABLE {table} DELETE WHERE {condition}"
-    # 尝试 clickhouse-driver TCP
+    # 策略1: clickhouse-driver TCP
     client = _get_client()
     if client is not None:
         try:
             client.execute(sql, settings={"max_execution_time": timeout})
             return True
         except Exception as e:
-            log.warning("clickhouse-driver delete 失败，降级到 WSL: %s", e)
-    # 降级到 WSL subprocess
+            log.warning("clickhouse-driver delete 失败，降级到 HTTP: %s", e)
+    # 策略2: HTTP API
+    import urllib.parse
+    url = f"http://{_CH_HTTP_HOST}:{_CH_HTTP_PORT}/?query={urllib.parse.quote(sql)}"
+    try:
+        req = urllib.request.Request(url, method="POST")
+        resp = urllib.request.urlopen(req, timeout=timeout)
+        if resp.status == 200:
+            return True
+        log.warning("HTTP delete 失败: status=%s，降级到 WSL", resp.status)
+    except Exception as e:
+        log.warning("HTTP delete 失败，降级到 WSL: %s", e)
+    # 策略3: WSL subprocess
     try:
         r = _wsl_ch(["--query", sql], timeout=timeout)
         if r.returncode != 0:

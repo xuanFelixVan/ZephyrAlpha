@@ -41,8 +41,8 @@ priority: P1
 runtime_plane: warm
 ssot_yaml: "architecture_model/layers/l11_ml_platform.yaml"
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 > ✅ **业务层已开放，可施工** — 本蓝图处于 C 轨占位状态，当前仅有 Phase B 骨架代码，可启动新施工。待 B 轨容量升级完成后按 ARB-11 三梯队策略激活。

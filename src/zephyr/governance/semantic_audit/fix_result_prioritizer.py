@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1 Stage 8
 # [MODULE] zephyr.governance.semantic_audit.fix_result_prioritizer
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] blast_radius.py; semantic-auditor/__init__.py
 # [STARTUP] imported

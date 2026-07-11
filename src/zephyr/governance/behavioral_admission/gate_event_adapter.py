@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §event-sourcing
 # [MODULE] zephyr.governance.behavioral_admission.gate_event_adapter
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.audit_trail.event_store; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine
 # [STARTUP] imported

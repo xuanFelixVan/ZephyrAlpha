@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.governance.kb.storage._backend_protocol
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_KB
 # [DEPENDENCIES] zephyr.governance.kb.storage.__init__
 # [CONSUMERS] zephyr.knowledge.kb.storage.unified_memory_api; zephyr.knowledge.kb.vms_memory_backend
 # [STARTUP] imported
