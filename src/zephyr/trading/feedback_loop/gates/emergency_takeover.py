@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.gates.emergency_takeover
-# [DOMAIN] D_FEEDBACK_LOOP
+# [DOMAIN] D_FBL_VERIFICATION
 # [DEPENDENCIES] zephyr.trading.feedback_loop.gates.__init__
 # [CONSUMERS]
 # [STARTUP] imported

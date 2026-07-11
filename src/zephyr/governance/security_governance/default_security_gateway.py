@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain_compliance/blueprint.md
 # [MODULE] zephyr.governance.security_governance.default_security_gateway
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.governance.security_governance.security_gateway_base; zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.governance.intelligence_governance.aisg_sandbox; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.security_decision
 # [CONSUMERS]
 # [STARTUP] imported

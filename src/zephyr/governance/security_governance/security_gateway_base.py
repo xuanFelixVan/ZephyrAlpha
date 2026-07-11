@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain_compliance/blueprint.md
 # [MODULE] zephyr.governance.security_governance.security_gateway_base
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.governance.compliance_rule
 # [CONSUMERS]
 # [STARTUP] imported
