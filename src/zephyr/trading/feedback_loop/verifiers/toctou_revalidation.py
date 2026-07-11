@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.verifiers.toctou_revalidation
-# [DOMAIN] D_FEEDBACK_LOOP
+# [DOMAIN] D_FBL_VERIFICATION
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
