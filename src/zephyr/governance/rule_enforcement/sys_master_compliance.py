@@ -117,12 +117,12 @@ def check_cold_start_integration() -> list[dict]:
             }
         ]
     content = PROJECT_RULES.read_text(encoding="utf-8")
-    has_sys_master = "SYS-MASTER-001" in content or "_sys_master" in content
+    has_sys_master = "SYS-MASTER-001" in content or "_system_master" in content
     in_cold_start = False
     cold_start_section = re.search(r"STEP 1.*?STEP 5", content, re.DOTALL)
     if cold_start_section:
         section_text = cold_start_section.group(0)
-        in_cold_start = "SYS-MASTER" in section_text or "_sys_master" in section_text
+        in_cold_start = "SYS-MASTER" in section_text or "_system_master" in section_text
     status = "PASS" if in_cold_start else ("WARN" if has_sys_master else "FAIL")
     return [
         {

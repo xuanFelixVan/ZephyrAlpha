@@ -53,7 +53,7 @@ class GatePersistence:
 
         self._audit_dir = os.path.join(project_root, "data", "drift_audit")
 
-        self._db_path = str(DB_PATH)
+        self._db_path = os.path.join(self._audit_dir, "drift_events.db")
 
         os.makedirs(self._audit_dir, exist_ok=True)
 
