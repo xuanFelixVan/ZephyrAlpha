@@ -1,12 +1,12 @@
-# 自动生成于 2026-07-09T21:27:11Z
+# 自动生成于 2026-07-11T18:29:17Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-09T21:27:11Z'
+generated_at: '2026-07-11T18:29:17Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 338
-with_manifest: 309
+total_scripts: 337
+with_manifest: 308
 missing_manifest: 29
 categories:
   governance:_sync: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 22
   governance:d4_paths: 4
-  governance:d5_architecture: 102
+  governance:d5_architecture: 101
   governance:d6_security: 14
   governance:d7_code: 33
   governance:d8_doc_sync: 9
@@ -1733,18 +1733,6 @@ scripts:
   args: []
   warn_only: false
   description: 'G-acqflow: 从 tasks.yaml 生成业务数据采集流图 MD（人类可读版，按数据源分组）'
-  tags:
-  - Critical
-  - Disruptive
-- name: d5_architecture/generators/generate_data_inventory.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P2
-  timeout_seconds: 300
-  args: []
-  warn_only: false
-  description: 'G-inventory: 扫描 ClickHouse 业务表，生成数据清单 MD（表名/中文名/时间范围/标的数/总行数）'
   tags:
   - Critical
   - Disruptive
