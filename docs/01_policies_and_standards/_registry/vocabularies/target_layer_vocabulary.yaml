@@ -54,7 +54,7 @@ version: "1.0.0"
 title: "target_layer 受控词表"
 status: active
 vocabulary_name: target_layer
-total_values: 39
+total_values: 41
 depends_on:
   - target: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
     at: "_FOUNDATION_LAYERS 集合"
@@ -184,6 +184,14 @@ values:
     definition: "运维域——运维编排/运维自动化"
     is_foundation: false
     ai_keywords: ["运维", "ops"]
+  - value: D_FEEDBACK_LOOP
+    definition: "反馈循环引擎域——自我改进闭环/异常检测/根因诊断/自动进化"
+    is_foundation: false
+    ai_keywords: ["反馈循环", "feedback loop", "fle", "self-improvement"]
+  - value: D_ORCHESTRATOR
+    definition: "代理编排器域——Agent全生命周期编排/任务队列/沙箱执行/幻觉检测"
+    is_foundation: false
+    ai_keywords: ["编排器", "orchestrator", "agent orchestrator", "task queue"]
 
   # === AI/智能域（来源：functional_domain_registry.yaml）===
   - value: D_AUTONOMY_CORE

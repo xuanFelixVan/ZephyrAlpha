@@ -65,6 +65,8 @@ DOMAIN_NAME_ZH = {
     "D_INTEGRATION_GATEWAY": "集成网关",
     "D_MKT_DATA": "行情数据",
     "D_OPS": "反馈循环",
+    "D_FEEDBACK_LOOP": "反馈循环引擎",
+    "D_ORCHESTRATOR": "代理编排器",
     "D_REPORTING": "报告",
     "D_SECURITY": "对抗验证",
     "D_SECURITY_LLM": "LLM防御",
@@ -208,6 +210,8 @@ DOMAIN_NAME_EN: dict[str, str] = {
     "D_GOV_DRIFT": "Drift Detection",
     "D_GOV_ENFORCEMENT": "Rule Enforcement",
     "D_GOV_KB": "Knowledge Base Governance",
+    "D_FEEDBACK_LOOP": "Feedback Loop Engine",
+    "D_ORCHESTRATOR": "Agent Orchestrator",
     "D_GOV_RULE": "Rule Governance",
     "D_GOV_SCRIPTS": "Script Governance",
 }
@@ -287,6 +291,8 @@ DOMAIN_DESC_ZH: dict[str, str] = {
     "D_GOV_DRIFT": "漂移检测，负责架构漂移检测和漂移告警",
     "D_GOV_ENFORCEMENT": "规则执行，负责治理规则执行和门禁拦截",
     "D_GOV_KB": "知识库治理，负责知识管线、知识引擎和向量记忆后端管理",
+    "D_FEEDBACK_LOOP": "反馈循环引擎，负责系统自我改进闭环：异常检测、根因诊断、自动修复和自我进化",
+    "D_ORCHESTRATOR": "代理编排器，负责 Agent 任务全生命周期：任务入队、调度、沙箱执行、幻觉检测和收尾归档",
     "D_GOV_RULE": "规则治理，负责规则注册、规则版本和规则依赖管理",
     "D_GOV_SCRIPTS": "脚本治理，负责脚本生命周期管理和脚本质量门禁",
 }

@@ -183,6 +183,9 @@ domains:
 - id: D_FRONTEND
   name: 前端
   layer_id: L1_foundation
+- id: D_FEEDBACK_LOOP
+  name: feedback_loop_engine
+  layer_id: L1_foundation
 - id: D_FUNDAMENTAL_SIGNAL
   name: fundamental_signal
   layer_id: L2_domain
@@ -249,6 +252,9 @@ domains:
 - id: D_ML_TRAIN
   name: model_evaluation
   layer_id: L2_domain
+- id: D_ORCHESTRATOR
+  name: agent_orchestrator
+  layer_id: L1_foundation
 - id: D_OPS
   name: telemetry
   layer_id: L1_foundation

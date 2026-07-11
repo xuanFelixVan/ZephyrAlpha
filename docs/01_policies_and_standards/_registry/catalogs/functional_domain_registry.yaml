@@ -1022,3 +1022,60 @@ entries:
   - 规则配置
   stability: planned
   ai_autonomy: human_gated
+- domain: D_FEEDBACK_LOOP
+  subdomain: feedback_loop_engine
+  ssot_module: MOD-FEEDBACK_LOOP
+  ssot_path: src/zephyr/trading/feedback_loop/
+  covers:
+  - 反馈收集器(collectors)
+  - 反馈检测器(detectors)
+  - 反馈诊断器(diagnosers)
+  - 反馈执行器(actors)
+  - SLO管理(slo_manager)
+  - 错误预算(error_budget)
+  - 评估线束(eval_harness)
+  - 自动进化(auto_evolution)
+  - 自适应学习循环(adaptive_learning)
+  - 规则自优化(rule_optimizer)
+  - 策略进化(policy_evolution)
+  - 知识沉淀(knowledge_crystallizer)
+  aliases:
+  - feedback loop
+  - 反馈环
+  - feedback
+  - 反馈
+  - SLO
+  - error budget
+  - self evolution
+  - 自进化
+  - auto evolution
+  - 自适应
+  - adaptive learning
+  - policy evolution
+  - FLE
+  stability: evolving
+  ai_autonomy: ai_modifiable
+- domain: D_ORCHESTRATOR
+  subdomain: agent_orchestrator
+  ssot_module: MOD-INF-039
+  ssot_path: src/zephyr/trading/orchestrator/
+  covers:
+  - Agent全生命周期编排
+  - 任务队列(task_queue)
+  - Agent调度(agent_orchestrator)
+  - 沙箱执行(script_runner)
+  - 幻觉检测(hallucination_detector)
+  - 滚动升级(rolling_upgrade)
+  - 状态同步(state_synchronizer)
+  - 故障恢复(rollback_manager)
+  - 会话管理(session_manager)
+  aliases:
+  - orchestrator
+  - 编排器
+  - agent orchestrator
+  - task queue
+  - 任务队列
+  - hallucination detection
+  - 幻觉检测
+  stability: evolving
+  ai_autonomy: ai_modifiable
