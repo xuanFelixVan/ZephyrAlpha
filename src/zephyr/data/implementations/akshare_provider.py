@@ -814,7 +814,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.equity_pledge"
+        table = "c3_fundamental.equity_pledge_detail"
         columns = [
             "symbol", "end_date", "pledge_count",
             "pledge_ratio", "total_shares", "pledge_end_date",
@@ -1247,7 +1247,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.analyst_forecast"
+        table = "c1_market.analyst_forecast"
         columns = [
             "symbol", "forecast_date", "report_year",
             "eps_forecast", "pe_forecast", "net_profit_forecast",
