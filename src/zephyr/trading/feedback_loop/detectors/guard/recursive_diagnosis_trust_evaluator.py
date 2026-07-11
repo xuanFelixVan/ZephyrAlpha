@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.detectors.guard.recursive_diagnosis_trust_evaluator
-# [DOMAIN] D_OPS
+# [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.trading.feedback_loop.detectors.__init__
 # [CONSUMERS]
 # [STARTUP] imported
