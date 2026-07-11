@@ -1,6 +1,6 @@
 # [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_GOVERNANCE)
 # [MODULE] zephyr.governance.escalation.owner_absent
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.governance.escalation.__init__
 # [CONSUMERS]
 # [STARTUP] imported

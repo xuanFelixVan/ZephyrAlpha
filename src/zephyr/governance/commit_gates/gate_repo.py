@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.gate_repo
-# [DOMAIN] D_GOV_ENFORCEMENT
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.shared.utils.db_utils
 # [CONSUMERS]
 # [STARTUP] imported
