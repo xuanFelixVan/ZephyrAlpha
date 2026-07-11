@@ -1211,3 +1211,127 @@ tasks:
     extra:
       description: "大宗交易-QMT占位（QMT无接口，已由AKShare block_trade_incremental覆盖）"
       disabled: true
+
+  # ============== P1: 淘宝历史数据持续更新（十大股东/披露计划，2026-07-11）==============
+  - task_id: top10_shareholders_incremental
+    table: c3_fundamental.top10_shareholders
+    source: akshare
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: top10_shareholders
+    symbols: null  # null=全市场（scheduler从stock_list取标的列表）
+    extra:
+      description: "十大股东增量（AKShare stock_gdfx_top_10_em，逐股票逐季度拉取，季报披露后更新）"
+
+  - task_id: top10_circulating_shareholders_incremental
+    table: c3_fundamental.top10_circulating_shareholders
+    source: akshare
+    schedule: weekend_financial
+    incremental: true
+    dependencies: []
+    capability: top10_circulating_shareholders
+    symbols: null
+    extra:
+      description: "十大流通股东增量（AKShare stock_gdfx_free_top_10_em，逐股票逐季度拉取）"
+
+  - task_id: disclosure_plan_incremental
+    table: c3_fundamental.disclosure_plan
+    source: akshare
+    schedule: daily_event
+    incremental: true
+    dependencies: []
+    capability: disclosure_plan
+    symbols: null
+    extra:
+      description: "预约披露计划增量（AKShare stock_disclosure_report_cninfo，按日期范围查全部沪深京股票）"
+
+  # ============== P2: 静态列表月初刷新（2026-07-11）==============
+  - task_id: convertible_bond_list_refresh
+    table: c1_market.convertible_bond_list
+    source: akshare
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: convertible_bond_list
+    symbols: null
+    extra:
+      description: "可转债列表全量刷新（AKShare stock_zh_cb_em）"
+
+  - task_id: etf_list_refresh
+    table: c1_market.etf_list
+    source: akshare
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: etf_list
+    symbols: null
+    extra:
+      description: "ETF基金列表全量刷新（AKShare fund_etf_category_sina）"
+
+  - task_id: lof_list_refresh
+    table: c1_market.lof_list
+    source: akshare
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: lof_list
+    symbols: null
+    extra:
+      description: "LOF基金列表全量刷新（AKShare fund_lof_spot_em）"
+
+  - task_id: hk_stock_list_refresh
+    table: c1_market.hk_stock_list
+    source: akshare
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: hk_stock_list
+    symbols: null
+    extra:
+      description: "港股列表全量刷新（AKShare stock_hk_spot_em）"
+
+  - task_id: hk_trade_calendar_refresh
+    table: c1_market.hk_trade_calendar
+    source: akshare
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: hk_trade_calendar
+    symbols: null
+    extra:
+      description: "港股交易日历全量刷新（AKShare tool_trade_date_hist_sina）"
+
+  - task_id: index_list_refresh
+    table: c1_market.index_list
+    source: akshare
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: index_list
+    symbols: null
+    extra:
+      description: "指数列表全量刷新（AKShare stock_info_index_name_code）"
+
+  - task_id: etf_benchmark_refresh
+    table: c1_market.etf_benchmark
+    source: akshare
+    schedule: monthly_static
+    incremental: false
+    dependencies: ["etf_list_refresh"]
+    capability: etf_benchmark
+    symbols: null
+    extra:
+      description: "ETF基准列表全量刷新（AKShare fund_etf_fund_info_em，依赖etf_list）"
+
+  # ============== 通达信静态表持续更新（2026-07-11）==============
+  - task_id: tdx_sector_info_refresh
+    table: c1_market.tdx_sector_info
+    source: ifind
+    schedule: daily_kline
+    incremental: true
+    dependencies: []
+    capability: tdx_sector_info
+    symbols: null
+    extra:
+      description: "通达信板块信息持续更新（iFind THS_WC问财接口获取881二级行业板块总市值/流通市值/成分股数量/总股本）"

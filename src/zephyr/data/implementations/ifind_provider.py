@@ -60,7 +60,8 @@ class IFindProvider(DataSourceBase):
         rate_limit_default=0,
         capabilities=["kline_daily", "daily_valuation", "money_flow", "index_kline",
                       "edb_data", "industry_class_ifind",
-                      "concept_sector", "realtime_snapshot"],
+                      "concept_sector", "realtime_snapshot",
+                      "tdx_sector_info"],
         known_issues=["月度配额-4318", "试用账号不支持沪深港通"],
     )
 
@@ -217,6 +218,8 @@ class IFindProvider(DataSourceBase):
             yield from self._fetch_concept_sector(payload, policy)
         elif capability == "realtime_snapshot":
             yield from self._fetch_realtime_snapshot(payload, policy)
+        elif capability == "tdx_sector_info":
+            yield from self._fetch_tdx_sector_info(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -1638,3 +1641,116 @@ class IFindProvider(DataSourceBase):
         if suffix_lower in ("sh", "sz", "bj"):
             return f"{suffix_lower}{code}"
         return ""
+
+    # ============== tdx_sector_info 能力（同花顺881二级行业板块） ==============
+
+    def _fetch_tdx_sector_info(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取同花顺881二级行业板块信息，写入 c1_market.tdx_sector_info。
+
+        通过 THS_WC 问财接口查询881二级行业板块的：
+        - 板块代码(sector_code)、板块名称(sector_name)
+        - 成分股数量(constituent_num)
+        - 总股本(total_share)、流通股本(float_share)
+        - 总市值(total_mv)、流通市值(float_mv)
+
+        每日盘后更新，trade_date 为当日。
+        """
+        from iFinDPy import THS_WC
+
+        table = "c1_market.tdx_sector_info"
+        columns = [
+            "sector_code", "trade_date", "sector_name", "sector_type",
+            "constituent_num", "total_share", "float_share",
+            "total_mv", "float_mv",
+        ]
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        t0 = time.time()
+
+        # 问财查询：同花顺881二级行业板块
+        query = "同花顺二级行业板块 总市值 流通市值 成分股数量 总股本 流通A股"
+        try:
+            raw = self._call_with_policy(
+                THS_WC, policy,
+                "同花顺二级行业板块",
+                "总市值,流通市值,成份股个数,总股本,流通A股",
+                "",
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=today_str,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        is_error, code, msg = self._check_ifind_error(raw)
+        if is_error:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=today_str,
+                elapsed_sec=time.time() - t0,
+                error=f"iFind错误: {code} {msg}",
+            )
+            return
+
+        # 解析问财返回结果
+        rows: list[tuple] = []
+        try:
+            tables = raw.get("tables", []) if isinstance(raw, dict) else []
+            if tables:
+                tbl = tables[0].get("table", {})
+                sector_codes = tbl.get("thscode", [])
+                sector_names = self._extract_wencai_column(tbl, ["板块名称", "名称", "sector_name"])
+                total_mv = self._extract_wencai_column(tbl, ["总市值", "ths_total_mv_index"])
+                float_mv = self._extract_wencai_column(tbl, ["流通市值", "ths_float_mv_index"])
+                constituent_num = self._extract_wencai_column(tbl, ["成份股个数", "成分股数量", "ths_constituent_num_index"])
+                total_share = self._extract_wencai_column(tbl, ["总股本", "ths_total_shares_index"])
+                float_share = self._extract_wencai_column(tbl, ["流通A股", "ths_float_a_share_index"])
+
+                for i, sc in enumerate(sector_codes):
+                    def _safe_get(lst, idx):
+                        if lst and idx < len(lst):
+                            return lst[idx]
+                        return None
+                    rows.append((
+                        str(sc),
+                        today_str,
+                        str(_safe_get(sector_names, i) or ""),
+                        "同花顺二级行业",
+                        int(self.safe_float(_safe_get(constituent_num, i)) or 0),
+                        self.safe_float(_safe_get(total_share, i)) or 0.0,
+                        self.safe_float(_safe_get(float_share, i)) or 0.0,
+                        self.safe_float(_safe_get(total_mv, i)) or 0.0,
+                        self.safe_float(_safe_get(float_mv, i)) or 0.0,
+                    ))
+        except Exception as e:
+            self._log.warning(f"tdx_sector_info 解析失败: {e}")
+
+        self._log.info(f"tdx_sector_info: {len(rows)} 行")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=today_str, elapsed_sec=time.time() - t0,
+        )
+
+    @staticmethod
+    def _extract_wencai_column(table_data: dict, candidates: list[str]) -> list:
+        """从问财返回的table数据中提取列值。
+
+        Args:
+            table_data: 问财返回的 table 字典
+            candidates: 候选列名列表
+
+        Returns:
+            列数据列表，未找到返回空列表
+        """
+        if not isinstance(table_data, dict):
+            return []
+        for key in candidates:
+            if key in table_data:
+                return table_data[key]
+        # 前缀匹配
+        for key in candidates:
+            for actual_key in table_data:
+                if isinstance(actual_key, str) and key in actual_key:
+                    return table_data[actual_key]
+        return []

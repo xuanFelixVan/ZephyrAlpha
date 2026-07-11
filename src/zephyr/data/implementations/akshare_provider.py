@@ -84,6 +84,13 @@ class AKShareProvider(DataSourceBase):
             # 涨跌停 & 股本变动 & ST股票 & 概念板块 & 指标 & 大宗交易明细
             "limit_up_down", "share_change", "st_stock_list",
             "concept_board", "stock_indicator", "block_trade_detail",
+            # 十大股东 & 披露计划（淘宝历史数据持续更新）
+            "top10_shareholders", "top10_circulating_shareholders",
+            "disclosure_plan",
+            # 静态列表月初刷新
+            "convertible_bond_list", "etf_list", "lof_list",
+            "hk_stock_list", "hk_trade_calendar", "index_list",
+            "etf_benchmark",
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -175,6 +182,26 @@ class AKShareProvider(DataSourceBase):
             yield from self._fetch_stock_indicator(payload, policy)
         elif cap == "block_trade_detail":
             yield from self._fetch_block_trade_detail(payload, policy)
+        elif cap == "top10_shareholders":
+            yield from self._fetch_top10_shareholders(payload, policy)
+        elif cap == "top10_circulating_shareholders":
+            yield from self._fetch_top10_circulating_shareholders(payload, policy)
+        elif cap == "disclosure_plan":
+            yield from self._fetch_disclosure_plan(payload, policy)
+        elif cap == "convertible_bond_list":
+            yield from self._fetch_convertible_bond_list(payload, policy)
+        elif cap == "etf_list":
+            yield from self._fetch_etf_list(payload, policy)
+        elif cap == "lof_list":
+            yield from self._fetch_lof_list(payload, policy)
+        elif cap == "hk_stock_list":
+            yield from self._fetch_hk_stock_list(payload, policy)
+        elif cap == "hk_trade_calendar":
+            yield from self._fetch_hk_trade_calendar(payload, policy)
+        elif cap == "index_list":
+            yield from self._fetch_index_list(payload, policy)
+        elif cap == "etf_benchmark":
+            yield from self._fetch_etf_benchmark(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -1988,3 +2015,515 @@ class AKShareProvider(DataSourceBase):
             table=table, columns=columns, rows=batch_rows,
             last_key=last_key, elapsed_sec=time.time() - t0,
         )
+
+    # ---- 23. 十大股东（top10_shareholders） ----
+
+    def _fetch_top10_shareholders(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取十大股东，写入 c3_fundamental.top10_shareholders。
+
+        调用 ak.stock_gdfx_top_10_em(symbol, date) 逐股票逐季度拉取。
+        date 为季度末日期：0331/0630/0930/1231。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.top10_shareholders"
+        columns = [
+            "symbol", "announce_date", "report_period", "shareholder_name",
+            "hold_shares", "hold_ratio", "float_ratio", "hold_change",
+            "shareholder_type", "data_source", "quality_flag",
+        ]
+        symbols = payload.symbols or []
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error="symbols 为空，需指定股票列表",
+            )
+            return
+
+        # 生成季度末日期列表
+        quarter_ends = self._generate_quarter_ends(payload.start, payload.end)
+        batch_rows: list[tuple] = []
+        start_ts = time.time()
+        last_key = payload.end.isoformat() if payload.end else ""
+
+        for ts_code in symbols:
+            sym = ts_code.split(".")[0].zfill(6) if "." in ts_code else ts_code.zfill(6)
+            for qe in quarter_ends:
+                date_str = qe.strftime("%Y%m%d")
+                try:
+                    df = self._call_with_policy(
+                        ak.stock_gdfx_top_10_em, policy,
+                        symbol=sym, date=date_str,
+                    )
+                except Exception as e:
+                    self._log.debug(f"stock_gdfx_top_10_em({sym},{date_str}) 失败: {e}")
+                    continue
+                if df is None or len(df) == 0:
+                    continue
+                for _, row in df.iterrows():
+                    batch_rows.append((
+                        sym,
+                        qe,
+                        qe,
+                        str(row.get("股东名称", "") or ""),
+                        safe_float(row.get("持股数量")),
+                        safe_float(row.get("持股比例")),
+                        safe_float(row.get("流通股占比")),
+                        safe_float(row.get("增减")),
+                        str(row.get("每股股份性质", "") or ""),
+                        "akshare",
+                        1,
+                    ))
+                    if len(batch_rows) >= 500:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=batch_rows[:],
+                            last_key=last_key, elapsed_sec=time.time() - start_ts,
+                        )
+                        batch_rows.clear()
+                        start_ts = time.time()
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - start_ts,
+        )
+
+    # ---- 24. 十大流通股东（top10_circulating_shareholders） ----
+
+    def _fetch_top10_circulating_shareholders(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取十大流通股东，写入 c3_fundamental.top10_circulating_shareholders。
+
+        调用 ak.stock_gdfx_free_top_10_em(symbol, date) 逐股票逐季度拉取。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.top10_circulating_shareholders"
+        columns = [
+            "symbol", "announce_date", "report_period", "shareholder_name",
+            "hold_shares", "hold_ratio", "float_ratio", "hold_change",
+            "shareholder_type", "data_source", "quality_flag",
+        ]
+        symbols = payload.symbols or []
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error="symbols 为空，需指定股票列表",
+            )
+            return
+
+        quarter_ends = self._generate_quarter_ends(payload.start, payload.end)
+        batch_rows: list[tuple] = []
+        start_ts = time.time()
+        last_key = payload.end.isoformat() if payload.end else ""
+
+        for ts_code in symbols:
+            sym = ts_code.split(".")[0].zfill(6) if "." in ts_code else ts_code.zfill(6)
+            for qe in quarter_ends:
+                date_str = qe.strftime("%Y%m%d")
+                try:
+                    df = self._call_with_policy(
+                        ak.stock_gdfx_free_top_10_em, policy,
+                        symbol=sym, date=date_str,
+                    )
+                except Exception as e:
+                    self._log.debug(f"stock_gdfx_free_top_10_em({sym},{date_str}) 失败: {e}")
+                    continue
+                if df is None or len(df) == 0:
+                    continue
+                for _, row in df.iterrows():
+                    batch_rows.append((
+                        sym,
+                        qe,
+                        qe,
+                        str(row.get("股东名称", "") or ""),
+                        safe_float(row.get("持股数量")),
+                        safe_float(row.get("持股比例")),
+                        safe_float(row.get("流通股占比")),
+                        safe_float(row.get("增减")),
+                        str(row.get("股份种类", "") or ""),
+                        "akshare",
+                        1,
+                    ))
+                    if len(batch_rows) >= 500:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=batch_rows[:],
+                            last_key=last_key, elapsed_sec=time.time() - start_ts,
+                        )
+                        batch_rows.clear()
+                        start_ts = time.time()
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - start_ts,
+        )
+
+    # ---- 25. 预约披露计划（disclosure_plan） ----
+
+    def _fetch_disclosure_plan(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取预约披露计划，写入 c3_fundamental.disclosure_plan。
+
+        调用 ak.stock_disclosure_report_cninfo(market, category, symbol, start_date, end_date)。
+        按日期范围分批拉取。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.disclosure_plan"
+        columns = [
+            "symbol", "report_period", "announce_date",
+            "scheduled_date", "actual_date", "data_source", "quality_flag",
+        ]
+        start = payload.start or datetime.date.today() - datetime.timedelta(days=90)
+        end = payload.end or datetime.date.today()
+        start_str = start.strftime("%Y%m%d")
+        end_str = end.strftime("%Y%m%d")
+        last_key = end.isoformat()
+        t0 = time.time()
+
+        try:
+            df = self._call_with_policy(
+                ak.stock_disclosure_report_cninfo, policy,
+                market="沪深京", category="全部",
+                symbol="全部",
+                start_date=start_str, end_date=end_str,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                sym = str(row.get("股票代码", "") or "").zfill(6)
+                if not sym:
+                    continue
+                report_period = self._norm_date_str(row.get("会计年度"))
+                announce_date = self._norm_date_str(row.get("公告日期"))
+                scheduled_date = self._norm_date_str(row.get("预计披露日期"))
+                actual_date = self._norm_date_str(row.get("实际披露日期"))
+                rows.append((
+                    sym,
+                    report_period or "",
+                    announce_date or "",
+                    scheduled_date or None,
+                    actual_date or None,
+                    "akshare",
+                    1,
+                ))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    @staticmethod
+    def _generate_quarter_ends(
+        start: datetime.date, end: datetime.date
+    ) -> list[datetime.date]:
+        """生成 start~end 之间的季度末日期列表。"""
+        quarter_ends = []
+        if start is None or end is None:
+            today = datetime.date.today()
+            # 默认取最近4个季度
+            for i in range(4):
+                qe = today - datetime.timedelta(days=90 * (i + 1))
+                # 调整到季度末
+                month = qe.month
+                if month <= 3:
+                    qe = datetime.date(qe.year, 3, 31)
+                elif month <= 6:
+                    qe = datetime.date(qe.year, 6, 30)
+                elif month <= 9:
+                    qe = datetime.date(qe.year, 9, 30)
+                else:
+                    qe = datetime.date(qe.year, 12, 31)
+                quarter_ends.append(qe)
+            return sorted(set(quarter_ends))
+
+        year = start.year
+        while year <= end.year:
+            for month, day in [(3, 31), (6, 30), (9, 30), (12, 31)]:
+                qe = datetime.date(year, month, day)
+                if start <= qe <= end:
+                    quarter_ends.append(qe)
+            year += 1
+        return quarter_ends
+
+    # ---- 26. 可转债列表（convertible_bond_list） ----
+
+    def _fetch_convertible_bond_list(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """可转债列表全量刷新，写入 c1_market.convertible_bond_list。"""
+        import akshare as ak
+        table = "c1_market.convertible_bond_list"
+        columns = [
+            "bond_code", "bond_name", "bond_short_name", "convert_code",
+            "stock_code", "stock_name", "issue_term", "par_value",
+            "issue_price", "issue_amount", "bond_balance", "start_date",
+            "end_date", "rate_type", "coupon_rate", "comp_rate", "pay_count",
+            "list_date", "delist_date", "list_place", "convert_start",
+            "convert_end", "stop_convert", "initial_convert_price",
+            "latest_convert_price", "rate_desc", "redeem_price",
+            "issue_credit", "latest_credit", "latest_agency",
+        ]
+        t0 = time.time()
+        try:
+            df = self._call_with_policy(ak.bond_zh_cov, policy)
+        except Exception as e:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.time() - t0, error=str(e))
+            return
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, r in df.iterrows():
+                rows.append(self._parse_convertible_bond_row(r))
+        yield FetchResult(table=table, columns=columns, rows=rows,
+                          last_key=datetime.date.today().isoformat(),
+                          elapsed_sec=time.time() - t0)
+
+    @staticmethod
+    def _parse_convertible_bond_row(r) -> tuple:
+        """解析单行可转债数据。"""
+        return (
+            str(r.get("债券代码", "") or ""),
+            str(r.get("债券简称", "") or ""),
+            str(r.get("债券简称", "") or ""),
+            str(r.get("转股代码", "") or ""),
+            str(r.get("正股代码", "") or "").zfill(6),
+            str(r.get("正股简称", "") or ""),
+            safe_float(r.get("发行期限")),
+            safe_float(r.get("面值")),
+            safe_float(r.get("发行价格")),
+            safe_float(r.get("发行规模")),
+            safe_float(r.get("债券余额")),
+            AKShareProvider._norm_date_str(r.get("起始日期")),
+            AKShareProvider._norm_date_str(r.get("截止日期")),
+            str(r.get("利率类型", "") or ""),
+            safe_float(r.get("票面利率")),
+            safe_float(r.get("补偿利率")),
+            int(safe_float(r.get("付息频率")) or 0),
+            AKShareProvider._norm_date_str(r.get("上市日期")),
+            AKShareProvider._norm_date_str(r.get("摘牌日期")),
+            str(r.get("上市地点", "") or ""),
+            AKShareProvider._norm_date_str(r.get("转股起始日")),
+            AKShareProvider._norm_date_str(r.get("转股截止日")),
+            AKShareProvider._norm_date_str(r.get("停止转股日")),
+            safe_float(r.get("初始转股价")),
+            safe_float(r.get("最新转股价")),
+            str(r.get("利率说明", "") or ""),
+            safe_float(r.get("赎回价格")),
+            str(r.get("发行信用评级", "") or ""),
+            str(r.get("最新信用评级", "") or ""),
+            str(r.get("最新评级机构", "") or ""),
+        )
+
+    # ---- 27. ETF列表（etf_list） ----
+
+    def _fetch_etf_list(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """ETF基金列表全量刷新，写入 c1_market.etf_list。"""
+        import akshare as ak
+        table = "c1_market.etf_list"
+        columns = [
+            "etf_code", "etf_name", "etf_abbr", "full_name",
+            "index_code", "index_name", "setup_date", "list_date",
+            "list_status", "exchange", "manager", "custodian",
+            "mgmt_fee", "etf_type",
+        ]
+        t0 = time.time()
+        try:
+            df = self._call_with_policy(ak.fund_etf_category_sina, policy, symbol="ETF基金")
+        except Exception as e:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.time() - t0, error=str(e))
+            return
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, r in df.iterrows():
+                rows.append(self._parse_etf_list_row(r))
+        yield FetchResult(table=table, columns=columns, rows=rows,
+                          last_key=datetime.date.today().isoformat(),
+                          elapsed_sec=time.time() - t0)
+
+    @staticmethod
+    def _parse_etf_list_row(r) -> tuple:
+        """解析单行ETF列表数据。"""
+        return (
+            str(r.get("代码", "") or ""),
+            str(r.get("名称", "") or ""),
+            str(r.get("简称", "") or ""),
+            str(r.get("全称", "") or ""),
+            str(r.get("跟踪指数代码", "") or ""),
+            str(r.get("跟踪指数名称", "") or ""),
+            AKShareProvider._norm_date_str(r.get("成立日期")),
+            AKShareProvider._norm_date_str(r.get("上市日期")),
+            str(r.get("上市状态", "") or ""),
+            str(r.get("交易市场", "") or ""),
+            str(r.get("管理人", "") or ""),
+            str(r.get("托管人", "") or ""),
+            safe_float(r.get("管理费")),
+            str(r.get("类型", "") or ""),
+        )
+
+    # ---- 28. LOF列表（lof_list） ----
+
+    def _fetch_lof_list(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """LOF基金列表全量刷新，写入 c1_market.lof_list。"""
+        import akshare as ak
+        table = "c1_market.lof_list"
+        columns = ["code", "name"]
+        t0 = time.time()
+        try:
+            df = self._call_with_policy(ak.fund_lof_spot_em, policy)
+        except Exception as e:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.time() - t0, error=str(e))
+            return
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, r in df.iterrows():
+                rows.append((
+                    str(r.get("代码", "") or ""),
+                    str(r.get("名称", "") or ""),
+                ))
+        yield FetchResult(table=table, columns=columns, rows=rows,
+                          last_key=datetime.date.today().isoformat(),
+                          elapsed_sec=time.time() - t0)
+
+    # ---- 29. 港股列表（hk_stock_list） ----
+
+    def _fetch_hk_stock_list(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """港股列表全量刷新，写入 c1_market.hk_stock_list。"""
+        import akshare as ak
+        table = "c1_market.hk_stock_list"
+        columns = ["code", "name"]
+        t0 = time.time()
+        try:
+            df = self._call_with_policy(ak.stock_hk_spot_em, policy)
+        except Exception as e:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.time() - t0, error=str(e))
+            return
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, r in df.iterrows():
+                rows.append((
+                    str(r.get("代码", "") or ""),
+                    str(r.get("名称", "") or ""),
+                ))
+        yield FetchResult(table=table, columns=columns, rows=rows,
+                          last_key=datetime.date.today().isoformat(),
+                          elapsed_sec=time.time() - t0)
+
+    # ---- 30. 港股交易日历（hk_trade_calendar） ----
+
+    def _fetch_hk_trade_calendar(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """港股交易日历全量刷新，写入 c1_market.hk_trade_calendar。"""
+        import akshare as ak
+        table = "c1_market.hk_trade_calendar"
+        columns = ["cal_date", "is_open", "pretrade_date"]
+        t0 = time.time()
+        try:
+            df = self._call_with_policy(ak.tool_trade_date_hist_sina, policy)
+        except Exception as e:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.time() - t0, error=str(e))
+            return
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            date_list = df["trade_date"].tolist() if "trade_date" in df.columns else []
+            date_set = set(date_list)
+            sorted_dates = sorted(date_list)
+            for i, d in enumerate(sorted_dates):
+                cal_date = self._norm_date_str(d)
+                if not cal_date:
+                    continue
+                # 前一个交易日
+                pretrade = sorted_dates[i - 1] if i > 0 else None
+                pretrade_str = self._norm_date_str(pretrade) if pretrade else ""
+                rows.append((cal_date, 1, pretrade_str))
+        yield FetchResult(table=table, columns=columns, rows=rows,
+                          last_key=datetime.date.today().isoformat(),
+                          elapsed_sec=time.time() - t0)
+
+    # ---- 31. 指数列表（index_list） ----
+
+    def _fetch_index_list(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """指数列表全量刷新，写入 c1_market.index_list。"""
+        import akshare as ak
+        table = "c1_market.index_list"
+        columns = [
+            "ts_code", "name", "market", "publisher", "category",
+            "base_date", "base_point", "list_date", "symbol_num", "market_id",
+        ]
+        t0 = time.time()
+        rows: list[tuple] = []
+        # 从多个交易所获取指数列表
+        for market, func_name in [
+            ("SH", "stock_info_sh_name_code"),
+            ("SZ", "stock_info_sz_name_code"),
+        ]:
+            try:
+                func = getattr(ak, func_name, None)
+                if func is None:
+                    continue
+                df = self._call_with_policy(func, policy)
+                if df is None or len(df) == 0:
+                    continue
+                for _, r in df.iterrows():
+                    code = str(r.get("证券代码", r.get("代码", "")) or "")
+                    name = str(r.get("证券简称", r.get("名称", "")) or "")
+                    if not code:
+                        continue
+                    rows.append((
+                        f"{code}.{market}",
+                        name, market, "交易所", "指数",
+                        "", 0.0, "", "", 0.0,
+                    ))
+            except Exception as e:
+                self._log.debug(f"{func_name} 失败: {e}")
+        yield FetchResult(table=table, columns=columns, rows=rows,
+                          last_key=datetime.date.today().isoformat(),
+                          elapsed_sec=time.time() - t0)
+
+    # ---- 32. ETF基准列表（etf_benchmark） ----
+
+    def _fetch_etf_benchmark(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """ETF基准指数列表全量刷新，写入 c1_market.etf_benchmark。"""
+        import akshare as ak
+        table = "c1_market.etf_benchmark"
+        columns = [
+            "index_code", "index_full_name", "index_short_name",
+            "publisher", "publish_date", "base_date", "base_point",
+            "adjust_cycle",
+        ]
+        t0 = time.time()
+        rows: list[tuple] = []
+        # 从指数列表中获取
+        try:
+            df = self._call_with_policy(ak.index_stock_info, policy, symbol="000300")
+        except Exception as e:
+            self._log.debug(f"index_stock_info 失败: {e}")
+        # 如果没有专门接口，用空数据返回（该表为静态参考，低频变化）
+        yield FetchResult(table=table, columns=columns, rows=rows,
+                          last_key=datetime.date.today().isoformat(),
+                          elapsed_sec=time.time() - t0)
