@@ -134,11 +134,9 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
     ("tickflow", "us_index", "c1_market.us_index",
      {"capability": "us_index"}, None, None, None),
 
-    # tushare 新闻数据（需 TUSHARE_TOKEN）
-    ("tushare", "news_news_info", "c3_fundamental.news_news_info",
-     {"capability": "news_news_info"}, None, None, None),
-    ("tushare", "news_security", "c3_fundamental.news_security",
-     {"capability": "news_security"}, None, None, None),
+    # tushare 新闻数据（统一写入 news_data，需 TUSHARE_TOKEN）
+    ("tushare", "news_data", "c3_fundamental.news_data",
+     {"capability": "news_data"}, None, None, None),
 
     # rss 财经新闻（symbols_override 传 RSS feed URL，非股票代码）
     ("rss", "news_data", "c3_fundamental.news_data",
@@ -158,10 +156,45 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
      {"capability": "futures_kline"}, None, None, None),
 
     # tdx 通达信板块数据
-    ("tdx", "industry_class", "c3_fundamental.industry_class",
+    ("tdx", "industry_class", "c1_market.industry_class",
      {"capability": "industry_class"}, None, None, None),
     ("tdx", "sector_kline", "c1_market.sector_kline",
      {"capability": "sector_kline"}, ["sh.000001"], None, None),
+
+    # ===== 新增能力测速（2026-07-11）=====
+    # ETF 分钟K线（数据量大，用 1 只样本）
+    ("miniqmt", "etf_kline_1min", "c1_market.etf_kline_1min",
+     {"capability": "etf_kline_1min"}, ["510050.SH"], None, None),
+    ("miniqmt", "etf_kline_5min", "c1_market.etf_kline_5min",
+     {"capability": "etf_kline_5min"}, ["510050.SH"], None, None),
+    ("miniqmt", "etf_kline_15min", "c1_market.etf_kline_15min",
+     {"capability": "etf_kline_15min"}, ["510050.SH"], None, None),
+    ("miniqmt", "etf_kline_30min", "c1_market.etf_kline_30min",
+     {"capability": "etf_kline_30min"}, ["510050.SH"], None, None),
+    ("miniqmt", "etf_kline_60min", "c1_market.etf_kline_60min",
+     {"capability": "etf_kline_60min"}, ["510050.SH"], None, None),
+
+    # LOF 分钟K线（数据量大，用 1 只样本）
+    ("miniqmt", "lof_kline_1min", "c1_market.lof_kline_1min",
+     {"capability": "lof_kline_1min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "lof_kline_5min", "c1_market.lof_kline_5min",
+     {"capability": "lof_kline_5min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "lof_kline_15min", "c1_market.lof_kline_15min",
+     {"capability": "lof_kline_15min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "lof_kline_30min", "c1_market.lof_kline_30min",
+     {"capability": "lof_kline_30min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "lof_kline_60min", "c1_market.lof_kline_60min",
+     {"capability": "lof_kline_60min"}, ["161725.SZ"], None, None),
+
+    # 后复权周/月K线（日K聚合）
+    ("miniqmt", "kline_weekly_hfq", "c1_market.kline_weekly_hfq",
+     {"capability": "kline_weekly_hfq"}, ["000001.SZ", "600000.SH"], None, None),
+    ("miniqmt", "kline_monthly_hfq", "c1_market.kline_monthly_hfq",
+     {"capability": "kline_monthly_hfq"}, ["000001.SZ", "600000.SH"], None, None),
+
+    # 限售股明细
+    ("akshare", "restricted_shares", "c3_fundamental.restricted_shares",
+     {"capability": "restricted_shares"}, ["000001.SZ", "600000.SH"], None, None),
 ]
 
 
