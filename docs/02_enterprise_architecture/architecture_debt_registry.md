@@ -162,6 +162,7 @@
   - [5.174 导入循环/模块耦合（17个，第30轮新增）](#5174-导入循环模块耦合17个第30轮新增)
   - [5.176 SQL注入风险（27个，第31轮新增）](#5176-sql注入风险27个第31轮新增)
   - [5.177 命名规范违反（24个，第31轮新增）](#5177-命名规范违反24个第31轮新增)
+  - [5.178 测试-源码一致性门禁缺失（DEFERRED专项工程）](#5178-测试-源码一致性门禁缺失deferred专项工程)
 - [六、治本施工方案（4期）](#六治本施工方案4期)
 - [七、客观立场声明](#七客观立场声明)
 
@@ -4136,3 +4137,50 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第99轮修复状态（2026-07-12）**：FIXED=1(MEDIUM 5.176.2 rule_enforcement容量治理). 运行generate_project_depgraph.py重新生成depgraph快照, D_GOV_ENFORCEMENT域production nodes=82(81 module + 1 gate_rule_set, build_status=generated/stable), 远低于ARCH-CAP-002 ≤150硬上限和>120早期预警阈值. 5.176.1 Phase 3删除check_types/包(35源文件)后depgraph中check_types/节点已全部清除(0残留ghost节点). 域容量安全无需拆分. 维度5.176全部清零(5.176.1/2/3/4全部FIXED), DEFERRED=0, DEFERRED-PERMANENT=7(不变).
 
 > **AI-11 审计小结**：4 项 DEFERRED 均为大规模重构/架构级变更，符合"专项工程"定义。审计同步修复的 10 项 P0 + 多项 P1/P2/P3 已通过 commit 落地，剩余 4 项 DEFERRED 待后续专项工程处理。
+
+---
+
+### 5.178 测试-源码一致性门禁缺失（DEFERRED专项工程）
+
+> **裁定状态（2026-07-12）**：DEFERRED=1（测试-源码一致性 commit-time 门禁未实现）
+> **发现背景**：5.176.1 三阶段治本施工（删除 check_types/ 35 源文件死代码）后发现 43 个测试失败，根因分析确认为测试漂移（Test Drift）——源码进化后测试未同步更新。
+
+**5 种测试漂移类型（本次修复中确认）**：
+
+1. **名称漂移**：测试 import 旧模块路径/旧类名，源码已迁移或重命名
+   - 例：`AdversarialValidation` 从 `gate_engine.adversarial_validation` 迁移到 `trading.feedback_loop.gates.adversarial_validation`，但 2 个测试文件 import 路径未更新
+   - 例：`MOD-MASTER-001` 重命名为 `MOD-MASTER_BLUEPRINT`，测试断言旧 ID
+
+2. **Schema 漂移**：DB schema 进化后测试 INSERT/SELECT 使用旧列名
+   - 例：`task_events` 从 `(old_status, new_status, actor)` 改为 `(payload, session_id)`，且 `event_type` 新增 CHECK 约束（仅允许 14 种枚举值）
+   - 例：`gates` 从 `(gate_name, gate_type, phase, status)` 改为 `(passed, details, task_id, created_at)`
+   - 例：`circuit_breaker_state` 从 `breaker_id` 改为 `(caller_module, target_module)`
+   - 例：`fle_metrics` 从 `(metric_value, threshold, status, recorded_at)` 改为 `(value, collected_at, source_system)`
+   - 例：`task_files` 从 `(file_type, action)` 改为 `role`（CHECK 约束: `IN ('primary','in_scope','output')`）
+
+3. **Mock 漂移**：测试 mock 了不存在的属性/方法，或 mock 次数与源码实际调用次数不匹配
+   - 例：`MODULE_REGISTRY.exists()` 未 mock 导致返回 False，`mod_progress="unknown"` → `all_match=False` → FAIL
+   - 例：`yaml.safe_load` 调用从 4 次增加到 5 次，但测试 `side_effect` 列表长度仍为 4 → `StopIteration`
+
+4. **阈值漂移**：源码阈值改变但测试断言旧值
+   - 例：`check_ai_rules_count` 阈值从 30 改为 32，测试 mock 返回 31 条规则仍期望 PASS
+
+5. **字符串匹配漂移**：源码检查的字符串与文档/配置不一致
+   - 例：`sys_master_compliance.py` 检查 `"_sys_master"` 但 `project_rules.md` 用 `"_system_master"`（子串不匹配：`"_sys_master" not in "_system_master"` 为 True）
+
+**本次修复（43 个测试失败 → 全部通过）**：
+- `test_adversarial_validation.py`：删除 stub 死代码 + 修正 2 个 import 路径（commit `ffa7c9fc1e`）
+- `test_sys_master_compliance.py`：5 处漂移修复 + ExitStack mock + xfail 标记（commit `cfc8b7e4c1`）
+- `test_gate_persistence.py`：`_db_path` 从全局 `governance.db` 改为 `drift_events.db` 独立库（commit `cfc8b7e4c1`）
+- `test_governance_db.py`：5 处 schema 漂移修复 + 幂等性（前置清理）+ `sys.exit()` 改为 `AssertionError`（本次 commit）
+
+**治本方案（DEFERRED）**：
+新增 `TEST-SOURCE-CONSISTENCY` commit-time gate，在 pre-commit 阶段检测：
+- 测试文件 import 的符号在源码中不存在（名称漂移）
+- 测试 mock 的属性/方法在源码类中不存在（mock 漂移）
+- 测试 INSERT 的 DB 列名在实际 schema 中不存在（schema 漂移）
+- 测试断言的阈值与源码常量不一致（阈值漂移）
+
+**DEFERRED 理由**：实现需 AST 解析 + DB schema introspection + 符号表交叉引用，属专项工程。当前通过手动修复已消除现有漂移，但无自动化防止未来复发。
+
+**解锁条件**：人类架构师发起"测试-源码一致性门禁专项"或 AI 在后续 cycle 中实现 AST gate。

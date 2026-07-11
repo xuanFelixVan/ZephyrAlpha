@@ -28,6 +28,23 @@ def test_all():
             failed += 1
             print(f"  FAIL: {name} - {detail}")
 
+    # === 0. 前置清理：保证幂等（防止上次残留导致UNIQUE约束失败） ===
+    for tbl, col, val in [
+        ("tasks", "task_id", "TEST-001"),
+        ("task_events", "task_id", "TEST-001"),
+        ("task_snapshots", "task_id", "TEST-001"),
+        ("task_files", "task_id", "TEST-001"),
+        ("gates", "gate_id", "GATE-TEST-001"),
+        ("knowledge", "ke_id", "KE-TEST-001"),
+        ("ke_tombstones", "ke_id", "KE-DEAD-001"),
+        ("circuit_breaker_state", "caller_module", "test_caller"),
+        ("tx_idempotency", "idempotency_key", "key-001"),
+    ]:
+        c.execute(f"DELETE FROM {tbl} WHERE {col}=?", (val,))
+    c.execute("DELETE FROM drift_events WHERE target='tasks_test'")
+    c.execute("DELETE FROM scan_results WHERE scan_type='depgraph_test'")
+    conn.commit()
+
     # === 1. 任务系统 ===
     print("\n=== 1. 任务系统 ===")
     now = datetime.now().isoformat()
@@ -46,9 +63,9 @@ def test_all():
     check("tasks UPDATE status", row["status"] == "IN_PROGRESS")
 
     c.execute(
-        """INSERT INTO task_events (task_id, event_type, old_status, new_status, actor, timestamp)
-        VALUES (?, ?, ?, ?, ?, ?)""",
-        ("TEST-001", "status_change", "PENDING", "IN_PROGRESS", "test", now),
+        """INSERT INTO task_events (task_id, event_type, payload, timestamp, session_id)
+        VALUES (?, ?, ?, ?, ?)""",
+        ("TEST-001", "TASK_IN_PROGRESS", '{"old":"PENDING","new":"IN_PROGRESS","actor":"test"}', now, "session-001"),
     )
     conn.commit()
     ev = c.execute("SELECT * FROM task_events WHERE task_id='TEST-001'").fetchone()
@@ -65,8 +82,8 @@ def test_all():
     )
 
     c.execute(
-        """INSERT INTO task_files (task_id, file_path, file_type, action) VALUES (?, ?, ?, ?)""",
-        ("TEST-001", "test.py", "source", "modified"),
+        """INSERT INTO task_files (task_id, file_path, role) VALUES (?, ?, ?)""",
+        ("TEST-001", "test.py", "in_scope"),
     )
     conn.commit()
     check("task_files INSERT", c.execute("SELECT COUNT(*) FROM task_files WHERE task_id='TEST-001'").fetchone()[0] > 0)
@@ -74,8 +91,8 @@ def test_all():
     # === 2. 门禁系统 ===
     print("\n=== 2. 门禁系统 ===")
     c.execute(
-        "INSERT INTO gates (gate_id, gate_name, gate_type, phase, status) VALUES (?, ?, ?, ?, ?)",
-        ("GATE-TEST-001", "Test Gate", "pre_check", "phase_1", "PASS"),
+        "INSERT INTO gates (gate_run_id, gate_id, passed, details, task_id, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+        ("GATE-RUN-TEST-001", "GATE-TEST-001", 1, "all checks passed", "TEST-001", now),
     )
     conn.commit()
     check("gates INSERT+SELECT", c.execute("SELECT * FROM gates WHERE gate_id='GATE-TEST-001'").fetchone() is not None)
@@ -133,17 +150,17 @@ def test_all():
     c.execute(
         """INSERT INTO drift_events (drift_type, target, expected_value, actual_value, severity, detected_at)
         VALUES (?, ?, ?, ?, ?, ?)""",
-        ("schema_drift", "tasks", "v1", "v2", "medium", now),
+        ("schema_drift", "tasks_test", "v1", "v2", "medium", now),
     )
     conn.commit()
-    check("drift_events INSERT", c.execute("SELECT COUNT(*) FROM drift_events").fetchone()[0] > 0)
+    check("drift_events INSERT", c.execute("SELECT COUNT(*) FROM drift_events WHERE target='tasks_test'").fetchone()[0] > 0)
 
     c.execute(
         "INSERT INTO scan_results (scan_type, target, result, details, scanned_at) VALUES (?, ?, ?, ?, ?)",
-        ("depgraph", "nodes", "PASS", "6352 nodes", now),
+        ("depgraph_test", "nodes_test", "PASS", "test scan", now),
     )
     conn.commit()
-    check("scan_results INSERT", c.execute("SELECT COUNT(*) FROM scan_results").fetchone()[0] > 0)
+    check("scan_results INSERT", c.execute("SELECT COUNT(*) FROM scan_results WHERE scan_type='depgraph_test'").fetchone()[0] > 0)
 
     c.execute(
         "INSERT INTO gate_decisions (gate_id, decision, reason, decided_at, decided_by) VALUES (?, ?, ?, ?, ?)",
@@ -155,8 +172,8 @@ def test_all():
     # === 6. FLE系统 ===
     print("\n=== 6. FLE系统 ===")
     c.execute(
-        "INSERT INTO fle_metrics (metric_name, metric_value, threshold, status, recorded_at) VALUES (?, ?, ?, ?, ?)",
-        ("orphan_rate", 0.05, 0.1, "OK", now),
+        "INSERT INTO fle_metrics (timestamp, source_system, metric_name, value, collected_at) VALUES (?, ?, ?, ?, ?)",
+        (now, "test", "orphan_rate", 0.05, now),
     )
     conn.commit()
     check("fle_metrics INSERT", c.execute("SELECT COUNT(*) FROM fle_metrics").fetchone()[0] > 0)
@@ -186,13 +203,13 @@ def test_all():
     # === 7. 基础设施 ===
     print("\n=== 7. 基础设施 ===")
     c.execute(
-        "INSERT INTO circuit_breaker_state (breaker_id, state, failure_count, updated_at) VALUES (?, ?, ?, ?)",
-        ("llm_api", "closed", 0, now),
+        "INSERT INTO circuit_breaker_state (caller_module, target_module, state, failure_count) VALUES (?, ?, ?, ?)",
+        ("test_caller", "llm_api", "closed", 0),
     )
     conn.commit()
     check(
         "circuit_breaker_state INSERT",
-        c.execute("SELECT * FROM circuit_breaker_state WHERE breaker_id='llm_api'").fetchone() is not None,
+        c.execute("SELECT * FROM circuit_breaker_state WHERE caller_module='test_caller' AND target_module='llm_api'").fetchone() is not None,
     )
 
     c.execute(
@@ -241,7 +258,7 @@ def test_all():
     # === 9. Schema版本 ===
     print("\n=== 9. Schema版本 ===")
     v = c.execute("SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1").fetchone()
-    check("_schema_version", v is not None and v["version"] == 1)
+    check("_schema_version", v is not None and v["version"] >= 1)
 
     # === 清理测试数据 ===
     print("\n=== Cleanup ===")
@@ -252,8 +269,10 @@ def test_all():
     c.execute("DELETE FROM gates WHERE gate_id='GATE-TEST-001'")
     c.execute("DELETE FROM knowledge WHERE ke_id='KE-TEST-001'")
     c.execute("DELETE FROM ke_tombstones WHERE ke_id='KE-DEAD-001'")
-    c.execute("DELETE FROM circuit_breaker_state WHERE breaker_id='llm_api'")
+    c.execute("DELETE FROM circuit_breaker_state WHERE caller_module='test_caller'")
     c.execute("DELETE FROM tx_idempotency WHERE idempotency_key='key-001'")
+    c.execute("DELETE FROM drift_events WHERE target='tasks_test'")
+    c.execute("DELETE FROM scan_results WHERE scan_type='depgraph_test'")
     conn.commit()
     check("cleanup", True)
 
@@ -262,11 +281,11 @@ def test_all():
     print(f"\n{'=' * 50}")
     print(f"Results: {passed} passed, {failed} failed, {passed + failed} total")
     if failed > 0:
-        sys.exit(1)
+        raise AssertionError(f"{failed} governance.db checks failed")
     else:
         print("ALL TESTS PASSED")
-        sys.exit(0)
 
 
 if __name__ == "__main__":
     test_all()
+    sys.exit(0)
