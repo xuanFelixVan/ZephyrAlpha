@@ -120,39 +120,6 @@ build_status: planned
 | `capability_checker.py` | § — | — | 已实现 | | 本模块 |
 | `cbac_matrix.py` | § — | — | 已实现 | | 本模块 |
 | `cdc_broker.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/check_type_registry.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_audit_findings_resolved.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_blueprint_read_check.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_circuit_breaker.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_circular_dependency_scan.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_classification.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_content_length.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_content_quality.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_contract_compatibility_check.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_deduplication.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_drift_budget.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_encoding.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_enforcement_mode_check.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_field_presence.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_file_extension.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_fle_gate.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_frontmatter.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_leverage_limit.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_line_ending.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_manual_approval.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_path_blacklist.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_path_routing.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_path_whitelist.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_position_limit.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_reference_check.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_regex_pattern.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_restructuring_safety.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_rollback_exit_code.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_score_threshold.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_security_artifact_scan.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_strategy_correlation.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_temporal.py` | § — | — | 已实现 | | 本模块 |
-| `check_types/ct_zero_residue_check.py` | § — | — | 已实现 | | 本模块 |
 | `drift_detector.py` | § — | — | 已实现 | | 本模块 |
 | `end_to_end_walkthrough.py` | § — | — | 已实现 | | 本模块 |
 | `gate_types.py` | § — | — | 已实现 | | 本模块 |
@@ -204,7 +171,6 @@ build_status: planned
 | `commit_gates/panorama_alignment_gate.py` | §0.1 | 三图模块对齐warn-only门禁（GATE-PANORAMA-ALIGNMENT，四图模块对齐Step 4） | 已实现 | | 本模块 |
 | `commit_gates/long_param_list_gate.py` | §0.1 | 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150防复发，AST检测新增函数参数数>7） | 已实现 | | 本模块 |
 | `commit_gates/bare_sql_gate.py` | §0.1 | 裸SQL字面量阻断门禁（NO-BARE-SQL，§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE） | 已实现 | | 本模块 |
-| `commit_gates/ch_batch_size_gate.py` | §0.1 | CH批量写入防回退门禁（CH-BATCH-SIZE，#ARCH-CH-004防复发，AST检测write_result在for循环内直接调用） | 已实现 | | 本模块 |
 | `commit_gates/god_class_gate.py` | §0.1 | God Class阻断门禁（NO-GOD-CLASS，§5.150防复发，AST检测新增类方法数>20） | 已实现 | | 本模块 |
 | `commit_gates/high_complexity_gate.py` | §0.1 | 高循环复杂度阻断门禁（NO-HIGH-COMPLEXITY，§5.158防复发，AST检测McCabe复杂度>15） | 已实现 | | 本模块 |
 | `commit_gates/tests_coverage_gate.py` | §0.1 | Gate测试覆盖率校验meta-gate（META-TESTS-COVERAGE，#ARCH-057，守卫者的守卫者） | 已实现 | | 本模块 |
@@ -545,7 +511,7 @@ class ManualApprovalGate:
 
 | 扩展点 | 基类/接口 | 默认实现 | 扩展契约 | 注册方式 |
 |--------|----------|---------|---------|---------|
-| CheckType | check_types/ct_*.py | field_presence/classification/regex_pattern等30+ | MUST继承CheckType基类+实现check()方法+注册到check_type_registry.py | check_type_registry.py自动发现 |
+| CheckType | gate_engine.py _CHECK_DISPATCH | _handle_encoding/_handle_field_presence等26个handler函数 | MUST添加_handle_<type>函数+注册到_CHECK_DISPATCH dict | gate_engine.py手动注册 |
 | 门禁YAML | _template.yaml | 11节完整字段 | MUST遵循_template.yaml schema+写入_registry.yaml | _registry.yaml手动注册 |
 | Bulkhead池 | circuit_breaker.py CBGManager | 4池(quick/content_analysis/ai_generated/disruptive) | 新增池MUST声明workers+threshold+cooldown | CBGManager配置注入 |
 
@@ -1421,39 +1387,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/rule_enforcement/capability_checker.py` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/cbac_matrix.py` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/cdc_broker.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/check_type_registry.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_audit_findings_resolved.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_blueprint_read_check.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_circuit_breaker.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_circular_dependency_scan.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_classification.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_content_length.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_content_quality.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_contract_compatibility_check.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_deduplication.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_drift_budget.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_encoding.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_enforcement_mode_check.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_field_presence.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_file_extension.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_fle_gate.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_frontmatter.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_leverage_limit.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_line_ending.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_manual_approval.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_path_blacklist.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_path_routing.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_path_whitelist.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_position_limit.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_reference_check.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_regex_pattern.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_restructuring_safety.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_rollback_exit_code.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_score_threshold.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_security_artifact_scan.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_strategy_correlation.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_temporal.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/check_types/ct_zero_residue_check.py` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/contract_template_manager.py` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/drift-detector.py` | ✅ 已实现 | |

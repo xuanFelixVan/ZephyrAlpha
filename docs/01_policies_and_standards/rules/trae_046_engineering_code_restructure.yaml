@@ -298,7 +298,7 @@ sections:
     - description: IntentParser
       details: '真源: context_engine/parsing/intent_parser.py | 废弃: context_engine/intent_parser.py(shim) | 状态: shim已建立'
     - description: CheckType
-      details: '真源: gates/check_types/ct_*.py+check_type_registry.py | 废弃: gate_engine.py内if/elif链 | 状态: 已注册表化'
+      details: '真源: gate_engine.py _CHECK_DISPATCH分发表(33条目)+26个handler函数 | 废弃: check_types/包(35源文件已删除)+原gate_engine.py内if/elif链(27分支已替换) | 状态: 5.176.1三阶段治本完成(Phase2分发表+Phase3死代码清除)'
     - description: AssetInventory
       details: '真源: asset_inventory/(15文件) | 废弃: 原22文件 | 状态: 已合并'
   gov_eng_004_split_mapping:
