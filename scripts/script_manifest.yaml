@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-13'
-total_scripts: 565
+total_scripts: 566
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -2449,6 +2449,14 @@ scripts:
 - name: governance/d7_code/check_idempotency.py
   path: governance/d7_code/check_idempotency.py
   description: 对标：GOV-AI-009 HC-9（幂等性缺失——D_EXECUTION_CORE 执行层代码缺少幂等 Key）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d7_code/check_module_id_consistency.py
+  path: governance/d7_code/check_module_id_consistency.py
+  description: python scripts/governance/d7_code/check_module_id_consistency.py --scan-existing
   domain: governance
   execution_plane: warm-path
   status: registered
