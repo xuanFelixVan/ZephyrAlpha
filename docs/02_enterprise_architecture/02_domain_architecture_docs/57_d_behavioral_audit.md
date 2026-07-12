@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行为审计（D_BEHAVIORAL_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 05:42:32
+> 最后更新: 2026-07-13 07:00:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,25 +26,21 @@ ttl: permanent
 | 域ID | D_BEHAVIORAL_AUDIT | Domain ID | D_BEHAVIORAL_AUDIT |
 | 域名称 | 行为审计 | Domain Name | Behavioral Audit |
 | 层级 |  | Layer |  |
-| 模块数 | 1 | Module Count | 1 |
+| 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 5 | Cross-domain Outgoing | 5 |
+| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 1 | Prototype Modules | 1 |
+| 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | AI决策行为可追溯审计 | Description | AI决策行为可追溯审计 |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 1 个模块 / 1 modules）。
+> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
 
-### L2 领域层 / Domain Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/governance/drift_detector_core/bridges/__init_... | __init__.py | 原型态 / prototype | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
+（无模块 / No modules）
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -59,27 +55,16 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 1 个模块（生产态 0 + 设计态 0 + 原型态 1），标签标注成熟度。
+> 展示全部 0 个模块（生产态 0 + 设计态 0 + 原型态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
     subgraph D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT 行为审计"]
-        src_zephyr_governance_drift_detector_core_bridges_init_py["(原型态 / prototype) __init__.py"]
     end
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    D_SECURITY["(原型态 / prototype) D_SECURITY"]
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_governance_drift_detector_core_bridges_init_py design
-    class D_GOV_DRIFT external_prod
-    class D_SECURITY external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -96,40 +81,15 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 1 个，0 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 0 个，0 条域内依赖）。
 
-```mermaid
-graph TD
-    subgraph D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT 行为审计"]
-        src_zephyr_governance_drift_detector_core_bridges_init_py["(原型态 / prototype) __init__.py"]
-    end
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    D_SECURITY["(原型态 / prototype) D_SECURITY"]
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_governance_drift_detector_core_bridges_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_governance_drift_detector_core_bridges_init_py design
-    class D_GOV_DRIFT external_prod
-    class D_SECURITY external_design
-```
+> （无原型态模块 / No prototype modules）
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
-|:--:|---------|:--:|---------|---------|
-| 1 | __init__.py | → | D_GOV_DRIFT 漂移检测: Drift Detector AI 施工检测器 — ai_construction... | 导入依赖 / import_depends |
-| 2 | __init__.py | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (d... | 导入依赖 / import_depends |
-| 3 | __init__.py | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (dri... | 导入依赖 / import_depends |
-| 4 | __init__.py | → | D_SECURITY 对抗验证: Auto Reconciler — reconciler.py (reconciler.py) | 导入依赖 / import_depends |
-| 5 | __init__.py | → | D_SECURITY 对抗验证: Drift State Machine — state_machine.py (state_... | 导入依赖 / import_depends |
+无跨域出边依赖 / No cross-domain outgoing dependencies
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -137,16 +97,9 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 2 个外部域直接连接（出边 5 条 + 入边 0 条 = 5 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 0 个外部域直接连接（出边 0 条 + 入边 0 条 = 0 条）。只显示直接连接的域，不展开具体节点。
 
-```mermaid
-graph LR
-    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT<br/>行为审计"]
-    D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
-    D_SECURITY["D_SECURITY<br/>对抗验证"]
-    D_BEHAVIORAL_AUDIT -->|3条 导入依赖 / import_depends| D_GOV_DRIFT
-    D_BEHAVIORAL_AUDIT -->|2条 导入依赖 / import_depends| D_SECURITY
-```
+> （无跨域依赖 / No cross-domain dependencies）
 
 ## 说明 / Notes
 

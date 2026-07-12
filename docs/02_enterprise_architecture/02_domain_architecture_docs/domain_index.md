@@ -78,13 +78,13 @@ ttl: permanent
 | D_FACTOR | 因子 / Factor | 14 | 4 | 0 | 10 | 14/150 (OK) | [34_d_factor.md](34_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 9 | 3 | 0 | 6 | 9/150 (OK) | [35_d_fundamental_signal.md](35_d_fundamental_signal.md) |
 | D_GOVERNANCE | registry_management / Lifecycle Management | 1074 | 134 | 3 | 937 | 1074/150 (超容) | [36_d_governance.md](36_d_governance.md) |
-| D_GOV_AUDIT | audit_orchestration / Audit Trail | 293 | 66 | 2 | 225 | 293/150 (超容) | [37_d_gov_audit.md](37_d_gov_audit.md) |
+| D_GOV_AUDIT | audit_orchestration / Audit Trail | 292 | 66 | 2 | 224 | 292/150 (超容) | [37_d_gov_audit.md](37_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 96 | 68 | 28 | 0 | 96/150 (OK) | [38_d_gov_docs.md](38_d_gov_docs.md) |
-| D_GOV_DRIFT | drift_detection / Drift Detection | 76 | 71 | 1 | 4 | 76/150 (OK) | [39_d_gov_drift.md](39_d_gov_drift.md) |
+| D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [39_d_gov_drift.md](39_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 164 | 100 | 0 | 64 | 164/150 (超容) | [40_d_gov_enforcement.md](40_d_gov_enforcement.md) |
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 30 | 16 | 0 | 14 | 30/150 (OK) | [41_d_gov_kb.md](41_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 0 | 0 | 0 | 0 | 0/200 (OK) | [42_d_gov_repair.md](42_d_gov_repair.md) |
-| D_GOV_RULE | rule_governance / Rule Governance | 34 | 30 | 0 | 4 | 34/200 (OK) | [43_d_gov_rule.md](43_d_gov_rule.md) |
+| D_GOV_RULE | rule_governance / Rule Governance | 35 | 30 | 0 | 5 | 35/200 (OK) | [43_d_gov_rule.md](43_d_gov_rule.md) |
 | D_GOV_SCRIPTS | script_governance / Script Governance | 74 | 3 | 0 | 71 | 74/150 (OK) | [44_d_gov_scripts.md](44_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 109 | 22 | 0 | 87 | 109/150 (OK) | [45_d_intelligence.md](45_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 43 | 0 | 2 | 41 | 43/150 (OK) | [46_d_knowledge.md](46_d_knowledge.md) |
@@ -103,7 +103,7 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
-| D_BEHAVIORAL_AUDIT | drift_detector_core / Behavioral Audit | 1 | 0 | 0 | 1 | 1/200 (OK) | [57_d_behavioral_audit.md](57_d_behavioral_audit.md) |
+| D_BEHAVIORAL_AUDIT | drift_detector_core / Behavioral Audit | 0 | 0 | 0 | 0 | 0/200 (OK) | [57_d_behavioral_audit.md](57_d_behavioral_audit.md) |
 | D_COMPLIANCE | compliance_gate / Compliance | 24 | 0 | 0 | 24 | 24/200 (OK) | [58_d_compliance.md](58_d_compliance.md) |
 | D_DATA | data_source_integrator / D_DATA | 53 | 6 | 0 | 47 | 53/200 (OK) | [59_d_data.md](59_d_data.md) |
 | D_INFRASTRUCTURE | shared_contracts / D_INFRASTRUCTURE | 61 | 9 | 0 | 52 | 61/200 (OK) | [60_d_infrastructure.md](60_d_infrastructure.md) |
