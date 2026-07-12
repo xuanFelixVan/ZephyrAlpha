@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.behavioral_admission.code_review_ai import (
+from zephyr.gov_enforcement.behavioral_admission.code_review_ai import (
     REVIEW_RULES,
     REVIEW_TIMEOUTS,
     ReviewLevel,

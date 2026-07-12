@@ -34,7 +34,7 @@
 Safety: HIGH（后处理管道是代码质量的最后防线）
 """
 
-from zephyr.governance.behavioral_admission.post_process import (
+from zephyr.gov_enforcement.behavioral_admission.post_process import (
     HookResult,
     HookStrategy,
     PipelineResult,

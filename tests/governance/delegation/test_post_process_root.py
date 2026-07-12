@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.behavioral_admission.post_process import (
+from zephyr.gov_enforcement.behavioral_admission.post_process import (
     HookResult,
     HookStrategy,
     PipelineResult,

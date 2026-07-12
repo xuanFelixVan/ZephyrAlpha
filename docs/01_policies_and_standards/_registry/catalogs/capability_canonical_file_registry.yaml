@@ -2143,7 +2143,7 @@ capabilities:
       roduction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "chao
       s_injector" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_code_review_ai
-    canonical_override: src/zephyr/governance/drift_detection/code_review_ai.py
+    canonical_override: src/zephyr/gov_enforcement/behavioral_admission/code_review_ai.py
     aliases:
       - code_review_ai
     description: >-
@@ -4708,6 +4708,62 @@ creation_tokens:
     token: "auto-news-dedup-20260710"
     created_by: "session-sess-22344-20260710222800"
     capability: "data_source_provider_abstraction"
+
+  # --- Phase 2 Batch 1: behavioral_admission physical migration (2026-07-13) ---
+  # 迁移文件（从 src/zephyr/governance/behavioral_admission/ -> src/zephyr/gov_enforcement/behavioral_admission/）
+  # 不是新建能力，是物理路径迁移。token 登记满足 CREATE-GUARD 要求。
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/__init__.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/admission_response.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/ai_code_standards.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/code_review_ai.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/gate_event_adapter.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/gpu_consensus_scheduler.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/mcp_result_push.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/post_process.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/protection_index.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/session_lifecycle.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/behavioral_admission/vibe_coding_enforcer.py"
+    token: "migration-batch1-behavioral-admission-20260713"
+    created_by: "session-fix-batch1-full"
+    capability: "behavioral_admission"
 
 # ============================================================================
 # 维护日志

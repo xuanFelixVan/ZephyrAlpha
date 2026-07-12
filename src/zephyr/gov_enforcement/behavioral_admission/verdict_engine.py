@@ -1,0 +1,473 @@
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §3.1
+# [MODULE] zephyr.gov_enforcement.behavioral_admission.verdict_engine
+# [DOMAIN] D_GOV_ENFORCEMENT
+# [DEPENDENCIES] zephyr.governance.audit_trail.models
+# [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-031(auto-fix-engine);zephyr.gov_enforcement.behavioral_admission.admission_controller
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] VerdictLevel三态判定不可扩展；GraduatedLevel升级矩阵由protection_level+gate+violations联合决定
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
+# [STABILITY] evolving
+# [SAFETY] H
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] evaluate: PermissionCheckTimeout->Verdict(RED); evaluate_batch: partial_failure->individual RED
+# [TESTS] tests/test_behavioral_audit/test_verdict_engine.py
+# [A_module] module_id=MOD-GOV_verdict_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+
+from __future__ import annotations
+
+import asyncio
+import logging
+import time
+from enum import Enum, IntEnum
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field
+
+logger = logging.getLogger(__name__)
+
+try:
+    from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType
+
+    _HAS_AUDIT_ENTRY = True
+except ImportError:
+    _HAS_AUDIT_ENTRY = False
+    AuditEntryV1 = None
+    AuditEventType = None
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class AuditEvent(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    event_type: str = ""
+    agent_id: str = ""
+    session_id: str = ""
+    target_path: str = ""
+    operation: str = ""
+    is_human: bool = False
+    is_cross_module: bool = False
+    protection_level: str = "normal"
+    gate_passed: bool = False
+    trust_score: float = 50.0
+    violation_count: int = 0
+    timestamp: str = ""
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class VerdictLevel(str, Enum):
+    PASS = "PASS"
+    YELLOW = "YELLOW"
+    RED = "RED"
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class ProtectionLevel(str, Enum):
+    anchor = "anchor"
+    protected = "protected"
+    normal = "normal"
+    public = "public"
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class GraduatedLevel(IntEnum):
+    L0 = 0
+    L1 = 1
+    L2 = 2
+    L3 = 3
+    L4 = 4
+    L5 = 5
+    L6 = 6
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class ActorInfo(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    agent_id: str = ""
+    is_human: bool = False
+    trust_score: float = 50.0
+    violation_count: int = 0
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class OperationInfo(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    operation: str = ""
+    target_path: str = ""
+    is_cross_module: bool = False
+    protection_level: ProtectionLevel = ProtectionLevel.normal
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class AuthCheckResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    gate_passed: bool = False
+    gate_id: str = ""
+    check_duration_ms: float = 0.0
+    error: str = ""
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class ResponseInfo(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    verdict: VerdictLevel = VerdictLevel.PASS
+    graduated_level: GraduatedLevel = GraduatedLevel.L0
+    reason: str = ""
+    requires_consensus: bool = False
+    latency_ms: float = 0.0
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class EvidenceChain(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    actor: ActorInfo = Field(default_factory=ActorInfo)
+    operation: OperationInfo = Field(default_factory=OperationInfo)
+    auth_check: AuthCheckResult = Field(default_factory=AuthCheckResult)
+    response: ResponseInfo = Field(default_factory=ResponseInfo)
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class MultiModelResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    model_id: str = ""
+    verdict: VerdictLevel = VerdictLevel.PASS
+    confidence: float = 0.0
+    reasoning: str = ""
+    latency_ms: float = 0.0
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class Verdict(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    verdict_level: VerdictLevel = VerdictLevel.PASS
+    graduated_level: GraduatedLevel = GraduatedLevel.L0
+    protection_level: ProtectionLevel = ProtectionLevel.normal
+    gate_passed: bool = False
+    requires_consensus: bool = False
+    evidence: EvidenceChain = Field(default_factory=EvidenceChain)
+    multi_model_results: list[MultiModelResult] = Field(default_factory=list)
+    timestamp: float = Field(default_factory=time.time)
+    reason: str = ""
+
+
+_YELLOW_TRUST_THRESHOLD: float = 30.0
+_YELLOW_VIOLATION_THRESHOLD: int = 3
+
+
+# class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
+class VerdictEngine:
+    def __init__(
+        self,
+        protection_index: Any = None,
+        gpu_scheduler: Any = None,
+        verdict_timeout_s: float = 10.0,
+        max_batch_size: int = 100,
+        batch_timeout_s: float = 300.0,
+    ) -> None:
+        self._protection_index = protection_index
+        self._gpu_scheduler = gpu_scheduler
+        self._verdict_timeout_s = verdict_timeout_s
+        # 5.44.1 修复：批次大小限制 + 整体超时，防止单次大批次阻塞数分钟
+        self._max_batch_size = max_batch_size
+        self._batch_timeout_s = batch_timeout_s
+        self._eval_count: int = 0
+        self._red_count: int = 0
+        self._yellow_count: int = 0
+        self._pass_count: int = 0
+
+    async def evaluate(self, event: Any) -> Verdict:
+        start = time.monotonic()
+        self._eval_count += 1
+
+        extracted = self._extract_event_info(event)
+        if extracted is None:
+            self._red_count += 1
+            return Verdict(
+                verdict_level=VerdictLevel.RED,
+                graduated_level=GraduatedLevel.L6,
+                reason="unknown_event_type",
+            )
+        actor, operation, gate_passed, violation_count, prot_level = extracted
+
+        if self._protection_index is not None and operation.target_path:
+            try:
+                resolved_level = self._protection_index.query(operation.target_path)
+                if resolved_level is not None:
+                    operation = OperationInfo(
+                        operation=operation.operation,
+                        target_path=operation.target_path,
+                        is_cross_module=operation.is_cross_module,
+                        protection_level=resolved_level,
+                    )
+                    prot_level = resolved_level
+            except Exception as e:
+                logger.warning("suppressed error in verdict_engine", exc_info=True)
+
+        verdict_level, reason = self._apply_decision_tree(actor, operation, gate_passed, violation_count)
+
+        graduated = self.resolve_graduated_level(verdict_level, prot_level, gate_passed, violation_count)
+        needs_consensus = self.should_trigger_consensus(verdict_level, prot_level)
+
+        latency = (time.monotonic() - start) * 1000.0
+
+        if verdict_level is VerdictLevel.RED:
+            self._red_count += 1
+        elif verdict_level is VerdictLevel.YELLOW:
+            self._yellow_count += 1
+        else:
+            self._pass_count += 1
+
+        auth_check = AuthCheckResult(
+            gate_passed=gate_passed,
+            check_duration_ms=latency,
+        )
+        response = ResponseInfo(
+            verdict=verdict_level,
+            graduated_level=graduated,
+            reason=reason,
+            requires_consensus=needs_consensus,
+            latency_ms=latency,
+        )
+        evidence = EvidenceChain(
+            actor=actor,
+            operation=operation,
+            auth_check=auth_check,
+            response=response,
+        )
+
+        return Verdict(
+            verdict_level=verdict_level,
+            graduated_level=graduated,
+            protection_level=prot_level,
+            gate_passed=gate_passed,
+            requires_consensus=needs_consensus,
+            evidence=evidence,
+            reason=reason,
+        )
+
+    def _extract_event_info(self, event: Any) -> tuple | None:
+        """Extract actor/operation/gate info from event. Returns None if unknown type."""
+        if _HAS_AUDIT_ENTRY and isinstance(event, AuditEntryV1):
+            return self._extract_from_audit_entry(event)
+        if isinstance(event, AuditEvent):
+            return self._extract_from_audit_event(event)
+        if isinstance(event, dict):
+            return self._extract_from_dict(event)
+        return None
+
+    @staticmethod
+    def _extract_from_audit_entry(event: AuditEntryV1) -> tuple:
+        actor = ActorInfo(
+            agent_id=event.agent_id,
+            is_human=False,
+            trust_score=event.trust_score if event.trust_score is not None else 50.0,
+            violation_count=0,
+        )
+        prot_level_str = getattr(event, "permission_level", "normal") or "normal"
+        try:
+            prot_level = ProtectionLevel(prot_level_str)
+        except ValueError:
+            prot_level = ProtectionLevel.normal
+        operation = OperationInfo(
+            operation=event.operation,
+            target_path=event.target_path,
+            is_cross_module=getattr(event, "indirect_operation", False),
+            protection_level=prot_level,
+        )
+        gate_passed = bool(getattr(event, "guard_checks_passed", []))
+        violation_count = 0
+        return actor, operation, gate_passed, violation_count, prot_level
+
+    @staticmethod
+    def _extract_from_audit_event(event: AuditEvent) -> tuple:
+        actor = ActorInfo(
+            agent_id=event.agent_id,
+            is_human=event.is_human,
+            trust_score=event.trust_score,
+            violation_count=event.violation_count,
+        )
+        try:
+            prot_level = ProtectionLevel(event.protection_level)
+        except ValueError:
+            prot_level = ProtectionLevel.normal
+        operation = OperationInfo(
+            operation=event.operation,
+            target_path=event.target_path,
+            is_cross_module=event.is_cross_module,
+            protection_level=prot_level,
+        )
+        gate_passed = event.gate_passed
+        violation_count = event.violation_count
+        return actor, operation, gate_passed, violation_count, prot_level
+
+    @staticmethod
+    def _extract_from_dict(event: dict) -> tuple:
+        actor = ActorInfo(
+            agent_id=event.get("agent_id", ""),
+            is_human=event.get("is_human", False),
+            trust_score=event.get("trust_score", 50.0),
+            violation_count=event.get("violation_count", 0),
+        )
+        try:
+            prot_level = ProtectionLevel(event.get("protection_level", "normal"))
+        except ValueError:
+            prot_level = ProtectionLevel.normal
+        operation = OperationInfo(
+            operation=event.get("operation", ""),
+            target_path=event.get("target_path", ""),
+            is_cross_module=event.get("is_cross_module", False),
+            protection_level=prot_level,
+        )
+        gate_passed = event.get("gate_passed", False)
+        violation_count = event.get("violation_count", 0)
+        return actor, operation, gate_passed, violation_count, prot_level
+
+    def _apply_decision_tree(
+        self,
+        actor: ActorInfo,
+        operation: OperationInfo,
+        gate_passed: bool,
+        violation_count: int,
+    ) -> tuple[VerdictLevel, str]:
+        if actor.is_human:
+            # 修复 is_human 绕过：人Actor在anchor/protected路径仍需门控
+            if operation.protection_level is ProtectionLevel.anchor:
+                return VerdictLevel.RED, "human_on_anchor_blocked"
+            if operation.protection_level is ProtectionLevel.protected:
+                if not gate_passed:
+                    return VerdictLevel.HOLD, "human_on_protected_no_gate"
+            return VerdictLevel.PASS, "human_actor_auto_pass"
+
+        if operation.is_cross_module:
+            return VerdictLevel.RED, "cross_module_blocked"
+
+        if operation.protection_level is ProtectionLevel.anchor:
+            return VerdictLevel.RED, "ai_on_anchor_blocked"
+
+        if operation.protection_level is ProtectionLevel.protected:
+            if not gate_passed:
+                return VerdictLevel.RED, "ai_on_protected_no_gate"
+            return VerdictLevel.PASS, "ai_on_protected_gate_passed"
+
+        if operation.protection_level is ProtectionLevel.normal:
+            if actor.trust_score < _YELLOW_TRUST_THRESHOLD:
+                return VerdictLevel.YELLOW, "low_trust_score"
+            if violation_count >= _YELLOW_VIOLATION_THRESHOLD:
+                return VerdictLevel.YELLOW, "high_violation_count"
+            return VerdictLevel.PASS, "ai_on_normal"
+
+        return VerdictLevel.PASS, "ai_on_public"
+
+    async def evaluate_batch(self, events: list[Any]) -> list[Verdict]:
+        if not events:
+            return []
+
+        # 5.44.1 修复：批次大小校验，超过 max_batch_size 抛 ValueError
+        if len(events) > self._max_batch_size:
+            raise ValueError(
+                f"evaluate_batch 批次大小 {len(events)} 超过上限 {self._max_batch_size}，请分片处理"
+            )
+
+        loop = asyncio.get_running_loop()
+        results: list[Verdict] = []
+
+        async def _eval_one(evt: Any) -> Verdict:
+            try:
+                return await asyncio.wait_for(
+                    self.evaluate(evt),
+                    timeout=self._verdict_timeout_s,
+                )
+            except TimeoutError:
+                self._red_count += 1
+                return Verdict(
+                    verdict_level=VerdictLevel.RED,
+                    graduated_level=GraduatedLevel.L6,
+                    reason="evaluate_timeout",
+                )
+            except (TimeoutError, asyncio.TimeoutError, ConnectionError) as exc:
+                self._red_count += 1
+                return Verdict(
+                    verdict_level=VerdictLevel.RED,
+                    graduated_level=GraduatedLevel.L6,
+                    reason=f"evaluate_error:{exc}",
+                )
+
+        sem = asyncio.Semaphore(8)
+
+        async def _limited_eval(coro):
+            async with sem:
+                return await coro
+
+        tasks = [_limited_eval(_eval_one(evt)) for evt in events]
+        # 5.44.1 修复：整体超时包裹，超时抛 TimeoutError 给调用方
+        results = await asyncio.wait_for(
+            asyncio.gather(*tasks), timeout=self._batch_timeout_s
+        )
+        return list(results)
+
+    def resolve_graduated_level(
+        self,
+        verdict_level: VerdictLevel,
+        protection_level: ProtectionLevel,
+        gate_passed: bool,
+        session_violation_count: int,
+    ) -> GraduatedLevel:
+        if verdict_level is VerdictLevel.PASS:
+            if protection_level is ProtectionLevel.public:
+                return GraduatedLevel.L0
+            if protection_level is ProtectionLevel.normal:
+                return GraduatedLevel.L1
+            if protection_level is ProtectionLevel.protected and gate_passed:
+                return GraduatedLevel.L2
+            return GraduatedLevel.L3
+
+        if verdict_level is VerdictLevel.YELLOW:
+            if session_violation_count >= 5:
+                return GraduatedLevel.L5
+            if session_violation_count >= 3:
+                return GraduatedLevel.L4
+            return GraduatedLevel.L3
+
+        if verdict_level is VerdictLevel.RED:
+            if protection_level is ProtectionLevel.anchor:
+                return GraduatedLevel.L6
+            if protection_level is ProtectionLevel.protected:
+                return GraduatedLevel.L5
+            return GraduatedLevel.L4
+
+        return GraduatedLevel.L3
+
+    def should_trigger_consensus(
+        self,
+        verdict_level: VerdictLevel,
+        protection_level: ProtectionLevel,
+    ) -> bool:
+        if verdict_level is VerdictLevel.RED and protection_level in (
+            ProtectionLevel.anchor,
+            ProtectionLevel.protected,
+        ):
+            return True
+        if verdict_level is VerdictLevel.YELLOW and protection_level is ProtectionLevel.anchor:
+            return True
+        return False
+
+    def health_check(self) -> dict[str, Any]:
+        return {
+            "status": "healthy",
+            "total_evaluations": self._eval_count,
+            "red_count": self._red_count,
+            "yellow_count": self._yellow_count,
+            "pass_count": self._pass_count,
+            "red_rate": round(self._red_count / max(self._eval_count, 1), 4),
+            "has_protection_index": self._protection_index is not None,
+            "has_gpu_scheduler": self._gpu_scheduler is not None,
+            "verdict_timeout_s": self._verdict_timeout_s,
+        }

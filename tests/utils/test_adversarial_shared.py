@@ -36,7 +36,7 @@ from zephyr.autonomy_core.skills.skill_registry import (
     PromptVariable,
     SkillDefinition,
 )
-from zephyr.governance.behavioral_admission.post_process import (
+from zephyr.gov_enforcement.behavioral_admission.post_process import (
     HookStrategy,
     PostProcessPipeline,
 )

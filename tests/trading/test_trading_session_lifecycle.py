@@ -21,7 +21,7 @@ import time
 
 import pytest
 
-from zephyr.governance.behavioral_admission.session_lifecycle import (
+from zephyr.gov_enforcement.behavioral_admission.session_lifecycle import (
     GCStats,
     SESSION_TRANSITIONS,
     SessionLifecycle,

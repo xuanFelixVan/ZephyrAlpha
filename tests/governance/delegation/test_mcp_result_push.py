@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.behavioral_admission.mcp_result_push import (
+from zephyr.gov_enforcement.behavioral_admission.mcp_result_push import (
     CallbackConnectionError,
     PushError,
     PushStatus,

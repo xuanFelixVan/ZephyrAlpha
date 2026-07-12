@@ -25,8 +25,8 @@ from zephyr.governance.persistence.sqlite_schema import SchemaManager
 from zephyr.governance.observability_governance.projection_engine import ProjectionEngine
 from zephyr.governance.audit.snapshot_manager import SnapshotManager
 
-# gate_event_adapter 真源在 zephyr.governance.behavioral_admission.gate_event_adapter（DW-0006 已补全）
-gate_event_adapter_mod = pytest.importorskip("zephyr.governance.behavioral_admission.gate_event_adapter")
+# gate_event_adapter 真源在 zephyr.gov_enforcement.behavioral_admission.gate_event_adapter（DW-0006 已补全）
+gate_event_adapter_mod = pytest.importorskip("zephyr.gov_enforcement.behavioral_admission.gate_event_adapter")
 GateEventAdapter = gate_event_adapter_mod.GateEventAdapter
 
 

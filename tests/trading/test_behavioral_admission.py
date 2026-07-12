@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-0420 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §test
-# [MODULE] zephyr.governance.behavioral_admission
+# [MODULE] zephyr.gov_enforcement.behavioral_admission
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline
@@ -22,7 +22,7 @@ from zephyr.shared.foundation.errors import SessionError
 ve_mod = pytest.importorskip("zephyr.trading.verdict_engine")
 ac_mod = pytest.importorskip("zephyr.trading.admission_controller")
 pi_mod = pytest.importorskip("zephyr.trading.protection_index")
-sl_mod = pytest.importorskip("zephyr.governance.behavioral_admission.session_lifecycle")
+sl_mod = pytest.importorskip("zephyr.gov_enforcement.behavioral_admission.session_lifecycle")
 
 VerdictEngine = ve_mod.VerdictEngine
 VerdictLevel = ve_mod.VerdictLevel

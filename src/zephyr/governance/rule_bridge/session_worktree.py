@@ -378,6 +378,7 @@ def session_worktree_commit(
     project_root: str | Path | None = None,
     allow_overlap: bool = False,
     allow_promote: bool = False,
+    allow_migration: bool = False,
 ) -> dict:
     """在 worktree 内提交修改（直接 git add + commit，绕过 GitCommitGateway）。
 
@@ -412,6 +413,10 @@ def session_worktree_commit(
         allow_promote: True 时允许新增文件进入永久区（对标 GitCommitGateway 的
             ``allow_promote``）。用于 YAML 真源/规则/词表等合法永久文件准入。
             默认 False（FILE-PLACEMENT-TTL gate 阻断永久区新文件）。
+        allow_migration: True 时跳过 FILE-COPY 和 ORPHAN-MODULE 门禁。用于物理路径
+            迁移场景（git mv + import 重写）——迁移文件天然与旧路径同名文件高度相似
+           （FILE-COPY 误报），且迁移过程中 import 引用可能尚未完全更新（ORPHAN-MODULE
+            误报）。仅在确认为合法迁移操作时使用。默认 False。
 
     Returns:
         {
@@ -682,9 +687,16 @@ def session_worktree_commit(
             )
         finally:
             _gw._run_git = _orig_run_git
+        _skip_gates = _WORKTREE_SKIP_GATES
+        if allow_migration:
+            # P14 fix (2026-07-13): 迁移场景跳过 FILE-COPY（迁移文件天然与旧路径
+            # 同名文件高度相似）、ORPHAN-MODULE（迁移过程中 import 引用可能尚未
+            # 完全更新）和 TEST-SOURCE-CONSISTENCY（worktree 环境下模块路径检测
+            # 误报）。仅限合法迁移操作使用。
+            _skip_gates = _skip_gates | frozenset({"FILE-COPY", "ORPHAN-MODULE", "TEST-SOURCE-CONSISTENCY"})
         _blocking = [
             gr for gr in _gate_results
-            if not gr.passed and gr.gate_id not in _WORKTREE_SKIP_GATES
+            if not gr.passed and gr.gate_id not in _skip_gates
         ]
         if _blocking:
             _details = "; ".join(f"{gr.gate_id}: {gr.detail}" for gr in _blocking)
@@ -927,7 +939,8 @@ def _run_reconcilers_after_merge(
 
 
 def _pre_merge_gate_check(
-    root: Path, session_id: str, wt_path: Path
+    root: Path, session_id: str, wt_path: Path,
+    allow_migration: bool = False,
 ) -> tuple[bool, list[dict]]:
     """pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）。
 
@@ -1028,9 +1041,12 @@ def _pre_merge_gate_check(
             finally:
                 _gw._run_git = _orig_run_git
 
+            _skip_gates = _WORKTREE_SKIP_GATES
+            if allow_migration:
+                _skip_gates = _skip_gates | frozenset({"FILE-COPY", "ORPHAN-MODULE", "TEST-SOURCE-CONSISTENCY"})
             _blocking = [
                 gr for gr in _gate_results
-                if not gr.passed and gr.gate_id not in _WORKTREE_SKIP_GATES
+                if not gr.passed and gr.gate_id not in _skip_gates
             ]
             if _blocking:
                 return False, [
@@ -1053,6 +1069,7 @@ def session_worktree_merge(
     session_id: str,
     project_root: str | Path | None = None,
     reconcile_verify: bool = True,
+    allow_migration: bool = False,
 ) -> dict:
     """将 worktree 修改 merge 回主分支 + 清理 worktree + 注销 session。
 
@@ -1083,7 +1100,7 @@ def session_worktree_merge(
     # Pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）
     # 用最新主分支状态重新检查 session 分支变更，捕获 commit 后到 merge 前的 gate 漂移
     wt_path = manager._wt_path(session_id)
-    gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path)
+    gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path, allow_migration=allow_migration)
     if not gate_passed:
         _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in gate_violations)
         return {

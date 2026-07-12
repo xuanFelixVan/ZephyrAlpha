@@ -226,10 +226,15 @@ def make_orphan_module_gate() -> GateSpec:
 
             # git grep 搜索 import 引用
             # pattern: import {short_name} | from .* import {short_name} | from {module_path}
+            # P13 fix (2026-07-13): 添加 import {module_path} 模式，匹配
+            # `import <full.dotted.path> as <alias>` 形式（原 pattern 只匹配
+            # `import {short_name}` 和 `from ... import {short_name}`，
+            # 漏检 `import zephyr.pkg.mod as mod` 这种常见写法）
             pattern = (
                 rf"import {short_name}\b|"
                 rf"from .* import {short_name}\b|"
-                rf"from {module_path}\b"
+                rf"from {module_path}\b|"
+                rf"import {module_path}\b"
             )
             try:
                 grep_result = gateway._run_git(
