@@ -62,12 +62,12 @@ except (ImportError, RuntimeError):
     escalation_protocol = None
 try:
     from zephyr.governance.architecture_governance.path_resolver import PathResolution, PathResolver
-    from zephyr.governance.behavioral_admission.admission_response import (
+    from zephyr.gov_enforcement.behavioral_admission.admission_response import (
         AdmissionResponse,
         AdmissionResponseBuilder,
         AdmissionResponseStatus,
     )
-    from zephyr.governance.behavioral_admission.mcp_result_push import PushStatus, ResultPushManager
+    from zephyr.gov_enforcement.behavioral_admission.mcp_result_push import PushStatus, ResultPushManager
     from zephyr.governance.constitutional_update.constitutional_update import (
         ConstitutionalAutoUpdate,
         Learning,
@@ -120,7 +120,7 @@ try:
     from zephyr.governance.audit_trail.feedback_self_audit import FeedbackNode
     from zephyr.governance.finding_ingest import IngestResult
     from zephyr.governance.semantic_audit.fix_result_prioritizer import PrioritizedFixResult
-    from zephyr.governance.behavioral_admission.gate_event_adapter import GateEventAdapter
+    from zephyr.gov_enforcement.behavioral_admission.gate_event_adapter import GateEventAdapter
     from zephyr.governance.audit_trail.glossary_matrix import GlossaryEntry
     from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
     from zephyr.governance.audit_trail.kb_gate import KBWriteCheckResult
@@ -150,7 +150,7 @@ except (ImportError, RuntimeError):
 # 5 个大写符号（HookResult 等）定义在 behavioral_admission/post_process.py
 # 55 个小写模块名（22 根目录 + 33 子目录）此前只在 __all__ 声明但从未 import
 try:
-    from zephyr.governance.behavioral_admission.post_process import (
+    from zephyr.gov_enforcement.behavioral_admission.post_process import (
         HookResult,
         HookStrategy,
         PipelineResult,
@@ -182,23 +182,23 @@ try:
     import zephyr.infrastructure.runtime.startup_shutdown as startup_shutdown
     import zephyr.governance.ops_governance.startup_shutdown_cli as startup_shutdown_cli
     # 子目录模块（33个）
-    import zephyr.governance.behavioral_admission.admission_response as admission_response
+    import zephyr.gov_enforcement.behavioral_admission.admission_response as admission_response
     import zephyr.governance.intelligence_governance.agent_debate as agent_debate
     import zephyr.governance.ops_governance.agent_dispatch as agent_dispatch
-    import zephyr.governance.behavioral_admission.ai_code_standards as ai_code_standards
+    import zephyr.gov_enforcement.behavioral_admission.ai_code_standards as ai_code_standards
     import zephyr.governance.intelligence_governance.ai_self_diagnosis as ai_self_diagnosis
     import zephyr.governance.architecture_governance.architecture_contracts as architecture_contracts
     import zephyr.governance.architecture_governance.architecture_principles as architecture_principles
     import zephyr.governance.drift_detector_core.benchmark_integrity as benchmark_integrity
     import zephyr.governance.resilience_governance.bus_factor_defense as bus_factor_defense
-    import zephyr.governance.behavioral_admission.code_review_ai as code_review_ai
+    import zephyr.gov_enforcement.behavioral_admission.code_review_ai as code_review_ai
     import zephyr.governance.architecture_governance.cross_env_consistency as cross_env_consistency
     import zephyr.governance.data_governance.data_classification as data_classification
     import zephyr.governance.data_governance.data_source_reliability as data_source_reliability
     import zephyr.governance.architecture_governance.dependency_manager as dependency_manager
     import zephyr.governance.ops_governance.environment_manager as environment_manager
     import zephyr.governance.architecture_governance.local_first_arch as local_first_arch
-    import zephyr.governance.behavioral_admission.mcp_result_push as mcp_result_push
+    import zephyr.gov_enforcement.behavioral_admission.mcp_result_push as mcp_result_push
     import zephyr.governance.financial_governance.microstructure_defense as microstructure_defense
     import zephyr.governance.lifecycle_governance.migration_strategy as migration_strategy
     import zephyr.governance.drift_detector_core.model_drift_monitor as model_drift_monitor
@@ -208,11 +208,11 @@ try:
     import zephyr.governance.financial_governance.oms_risk_engine as oms_risk_engine
     import zephyr.governance.architecture_governance.path_resolver as path_resolver
     import zephyr.governance.drift_detector_core.performance_baseline as performance_baseline
-    import zephyr.governance.behavioral_admission.post_process as post_process
+    import zephyr.gov_enforcement.behavioral_admission.post_process as post_process
     import zephyr.governance.context_governance.prompt_lifecycle as prompt_lifecycle
     import zephyr.governance.drift_detector_core.regime_detector as regime_detector
     import zephyr.governance.architecture_governance.strategy_portfolio as strategy_portfolio
-    import zephyr.governance.behavioral_admission.vibe_coding_enforcer as vibe_coding_enforcer
+    import zephyr.gov_enforcement.behavioral_admission.vibe_coding_enforcer as vibe_coding_enforcer
 except (ImportError, RuntimeError):
     # RuntimeError: 捕获循环 import _DeadlockError（同上）
     pass

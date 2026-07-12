@@ -124,16 +124,41 @@ class ImportRewriter:
                         new_seg = f"import {new_name}"
                         self._apply_line_replace(lines, node.lineno, old_seg, new_seg, "Import", changes)
 
-        # --- Update [MODULE] header ---
+        # --- Update header fields: [MODULE], [DEPENDENCIES], [CONSUMERS] ---
+        # P1 fix (2026-07-13): previously only [MODULE] was rewritten, leaving
+        # [DEPENDENCIES] / [CONSUMERS] module-path references stale after migration.
         for i, line in enumerate(lines[:20]):
-            m = re.search(r'\[MODULE\]\s*(\S+)', line)
-            if m:
-                old_mod = m.group(1)
+            # [MODULE] zephyr.foo -> zephyr.new.foo
+            m_mod = re.search(r'\[MODULE\]\s*(\S+)', line)
+            if m_mod:
+                old_mod = m_mod.group(1)
                 new_mod = self._find_replacement(old_mod)
                 if new_mod:
                     lines[i] = line.replace(old_mod, new_mod)
                     changes.append(Change(i + 1, 0, old_mod, new_mod, "MODULE_HEADER"))
-                break
+                continue
+            # [DEPENDENCIES] / [CONSUMERS]: semicolon-separated list;
+            # rewrite items that start with zephyr.* (skip MOD-XXX(ref) entries)
+            m_dep = re.search(r'\[(DEPENDENCIES|CONSUMERS)\]\s*(.*)', line)
+            if m_dep:
+                body = m_dep.group(2)
+                items = body.split(';')
+                new_items: list[str] = []
+                modified = False
+                for item in items:
+                    stripped = item.strip()
+                    if stripped.startswith('zephyr.'):
+                        new_mod = self._find_replacement(stripped)
+                        if new_mod:
+                            lead = item[:len(item) - len(item.lstrip())]
+                            new_items.append(lead + new_mod)
+                            modified = True
+                            continue
+                    new_items.append(item)
+                if modified:
+                    new_body = ';'.join(new_items)
+                    lines[i] = line.replace(body, new_body)
+                    changes.append(Change(i + 1, 0, body, new_body, "HEADER_FIELD"))
 
         if not changes:
             return result
@@ -145,14 +170,21 @@ class ImportRewriter:
 
     def scan_project(self, root: Path, exclude_dirs: set[str] | None = None) -> list[Path]:
         """Return all .py files under *root* that might reference moved modules."""
+        import os
         if exclude_dirs is None:
-            exclude_dirs = {".git", "__pycache__", ".venv", "site-packages", "node_modules", ".runtime", ".aidrafts"}
+            exclude_dirs = {".git", "__pycache__", ".venv", "site-packages", "node_modules", ".runtime", ".aidrafts", "metadata", "data"}
         py_files: list[Path] = []
-        for p in root.rglob("*.py"):
-            rel = p.relative_to(root)
-            if any(part in exclude_dirs for part in rel.parts):
-                continue
-            py_files.append(p)
+
+        def _on_error(err):
+            pass  # skip inaccessible dirs (e.g. Windows system protected)
+
+        for dirpath, dirnames, filenames in os.walk(root, onerror=_on_error):
+            # prune excluded dirs in-place for performance
+            dirnames[:] = [d for d in dirnames if d not in exclude_dirs]
+            for fname in filenames:
+                if not fname.endswith(".py"):
+                    continue
+                py_files.append(Path(dirpath) / fname)
         return py_files
 
     def rewrite_project(self, root: Path, dry_run: bool = False,

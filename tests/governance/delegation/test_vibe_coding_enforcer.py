@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.behavioral_admission.vibe_coding_enforcer import (
+from zephyr.gov_enforcement.behavioral_admission.vibe_coding_enforcer import (
     VIBE_CODING_RULES,
     VibeRuleLevel,
     enforce,

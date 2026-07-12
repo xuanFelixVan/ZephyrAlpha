@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.behavioral_admission.ai_code_standards import AI_FORBIDDEN, CODE_CONVENTIONS
+from zephyr.gov_enforcement.behavioral_admission.ai_code_standards import AI_FORBIDDEN, CODE_CONVENTIONS
 
 
 class TestCodeConventions:

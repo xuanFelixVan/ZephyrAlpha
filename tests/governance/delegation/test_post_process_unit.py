@@ -10,7 +10,7 @@
 Unit tests for post_process.py
 """
 
-from zephyr.governance.behavioral_admission.post_process import (
+from zephyr.gov_enforcement.behavioral_admission.post_process import (
     HookResult,
     HookStrategy,
     PipelineResult,
