@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
 # [MODULE] scripts.pre_commit.verify_dedup
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.code_dedup.cli
+# [DEPENDENCIES] zephyr.gov_code_quality.code_dedup.cli
 # [CONSUMERS] .pre-commit-config.yaml gate-dedup hook
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -44,7 +44,7 @@ SRC_DIR = REPO_ROOT / "src"
 
 def main() -> int:
     result = subprocess.run(
-        [sys.executable, "-m", "zephyr.governance.code_dedup.cli", "verify"],
+        [sys.executable, "-m", "zephyr.gov_code_quality.code_dedup.cli", "verify"],
         cwd=str(SRC_DIR.parent),
         capture_output=True,
         text=True,

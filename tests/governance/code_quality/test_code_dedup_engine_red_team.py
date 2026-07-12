@@ -44,19 +44,19 @@ class TestStage00_ImportChain:
         assert s is not None
 
     def test_monoculture_guard(self):
-        from zephyr.governance.code_dedup.monoculture_guard import MonocultureGuard
+        from zephyr.gov_code_quality.code_dedup.monoculture_guard import MonocultureGuard
 
         g = MonocultureGuard()
         assert g is not None
 
     def test_self_scanner(self):
-        from zephyr.governance.code_dedup.self_scanner import SelfScanner
+        from zephyr.gov_code_quality.code_dedup.self_scanner import SelfScanner
 
         ss = SelfScanner()
         assert ss is not None
 
     def test_decision_auditor(self):
-        from zephyr.governance.code_dedup.decision_auditor import DecisionAuditor
+        from zephyr.gov_code_quality.code_dedup.decision_auditor import DecisionAuditor
 
         da = DecisionAuditor()
         assert da is not None
@@ -70,13 +70,13 @@ class TestStage00_ImportChain:
         assert len(sig.parameters) == 0, f"main() should take no args, got: {sig}"
 
     def test_integration_hub(self):
-        from zephyr.governance.code_dedup.integration_hub import IntegrationHub
+        from zephyr.gov_code_quality.code_dedup.integration_hub import IntegrationHub
 
         hub = IntegrationHub()
         assert hub is not None
 
     def test_exit_codes(self):
-        from zephyr.governance.code_dedup.exit_codes import ExitCode
+        from zephyr.gov_code_quality.code_dedup.exit_codes import ExitCode
 
         assert ExitCode.PASS is not None
 
@@ -133,7 +133,7 @@ class TestStage01_ScannerAdversarial:
 
 class TestStage02_MonocultureAdversarial:
     def test_brs_computation(self):
-        from zephyr.governance.code_dedup.monoculture_guard import BlastRadiusScore, MonocultureGuard
+        from zephyr.gov_code_quality.code_dedup.monoculture_guard import BlastRadiusScore, MonocultureGuard
 
         guard = MonocultureGuard()
         brs = guard.compute_brs(
@@ -146,7 +146,7 @@ class TestStage02_MonocultureAdversarial:
         assert 0 <= brs.blast_radius_score <= 100, f"BRS out of range: {brs.blast_radius_score}"
 
     def test_should_not_block_trivial(self):
-        from zephyr.governance.code_dedup.monoculture_guard import MonocultureGuard
+        from zephyr.gov_code_quality.code_dedup.monoculture_guard import MonocultureGuard
 
         guard = MonocultureGuard()
         brs = guard.compute_brs(
@@ -161,7 +161,7 @@ class TestStage02_MonocultureAdversarial:
 
 class TestStage03_SelfScanIntegrity:
     def test_self_scan_no_crash(self):
-        from zephyr.governance.code_dedup.self_scanner import SelfScanner
+        from zephyr.gov_code_quality.code_dedup.self_scanner import SelfScanner
 
         scanner = SelfScanner()
         report = scanner.scan_self()
@@ -172,7 +172,7 @@ class TestStage03_SelfScanIntegrity:
 
 class TestStage04_DecisionAuditChain:
     def test_log_decision_chain(self):
-        from zephyr.governance.code_dedup.decision_auditor import DecisionAuditor
+        from zephyr.gov_code_quality.code_dedup.decision_auditor import DecisionAuditor
 
         auditor = DecisionAuditor()
         auditor.log_decision(

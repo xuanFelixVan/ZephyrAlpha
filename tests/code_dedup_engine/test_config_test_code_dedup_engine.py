@@ -15,28 +15,28 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_config_import():
-    from zephyr.governance.code_dedup.config import PROJECT_SCALE_TIERS
+    from zephyr.gov_code_quality.code_dedup.config import PROJECT_SCALE_TIERS
 
     assert len(PROJECT_SCALE_TIERS) == 4
     assert "Tier1_small" in PROJECT_SCALE_TIERS
 
 
 def test_get_tier_for_small_project():
-    from zephyr.governance.code_dedup.config import get_tier_for_project
+    from zephyr.gov_code_quality.code_dedup.config import get_tier_for_project
 
     tier = get_tier_for_project(3000)
     assert tier["name"] == "小型项目"
 
 
 def test_get_tier_for_large_project():
-    from zephyr.governance.code_dedup.config import get_tier_for_project
+    from zephyr.gov_code_quality.code_dedup.config import get_tier_for_project
 
     tier = get_tier_for_project(30000)
     assert tier["name"] == "大型项目"
 
 
 def test_path_thresholds():
-    from zephyr.governance.code_dedup.config import PATH_THRESHOLDS
+    from zephyr.gov_code_quality.code_dedup.config import PATH_THRESHOLDS
 
     assert PATH_THRESHOLDS["shared"] == 0.3
     assert PATH_THRESHOLDS["tests"] == 0.9

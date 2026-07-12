@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.code_dedup.policy_tree_validator import (
+from zephyr.gov_code_quality.code_dedup.policy_tree_validator import (
     PolicyTreeReport,
     PolicyTreeValidator,
 )

@@ -40,7 +40,7 @@ from zephyr.gov_enforcement.behavioral_admission.post_process import (
     HookStrategy,
     PostProcessPipeline,
 )
-from zephyr.governance.constitutional_update.constitutional_update import (
+from zephyr.gov_rule.constitutional_update.constitutional_update import (
     ConstitutionalAutoUpdate,
     Learning,
     ProposedUpdate,

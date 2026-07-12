@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.code_dedup.path_index_validator import (
+from zephyr.gov_code_quality.code_dedup.path_index_validator import (
     PathIndexValidator,
 )
 

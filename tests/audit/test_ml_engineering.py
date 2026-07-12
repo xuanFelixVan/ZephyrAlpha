@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_detector_core.ml_engineering import (
+from zephyr.gov_drift.detector_core.ml_engineering import (
     FEATURE_STORE_SCHEMA,
     LEAK_CHECKS,
     DataLeakCheck,

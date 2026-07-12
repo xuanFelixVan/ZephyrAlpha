@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.code_dedup.micro_clone_detector import MicroCloneDetector
+from zephyr.gov_code_quality.code_dedup.micro_clone_detector import MicroCloneDetector
 
 
 class TestMicroCloneDetector:

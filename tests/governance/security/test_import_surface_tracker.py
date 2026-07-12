@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.code_dedup.trackers.import_surface_tracker import ImportSurfaceTracker
+from zephyr.gov_code_quality.code_dedup.trackers.import_surface_tracker import ImportSurfaceTracker
 
 
 class TestImportSurfaceTracker:

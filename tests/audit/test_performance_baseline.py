@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.governance.drift_detector_core.performance_baseline import (
+from zephyr.gov_drift.detector_core.performance_baseline import (
     E2E_BUDGET_BREAKDOWN,
     E2E_MAX_MS,
     PERFORMANCE_BASELINE,

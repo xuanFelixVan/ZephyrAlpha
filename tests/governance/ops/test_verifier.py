@@ -16,7 +16,7 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-from zephyr.governance.code_dedup.verifier import Verifier, VerifyResult
+from zephyr.gov_code_quality.code_dedup.verifier import Verifier, VerifyResult
 
 
 class TestVerifyResult:

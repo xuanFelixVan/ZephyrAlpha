@@ -1488,6 +1488,76 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 期权波动率曲面 ==============
 
+    def _get_option_detail_safe(self, opt_code: str, policy) -> dict | None:
+        """安全获取期权合约详情（绕过 xtquant get_option_detail_data bug）。
+
+        xtquant 的 get_option_detail_data 内部代码：
+            ret['OptUndlCodeFull'] = ret['OptUndlUniCode'] + '.' + ret['OptUndlMarket']
+        当 OptUndlUniCode 为 None 时崩溃（TypeError: NoneType + str）。
+
+        本方法改用 get_instrument_detail 获取详情，并解析出原有字段：
+        - Underlying: 标的代码（如 "588000.SH"）
+        - ExercisePrice: 行权价（float）
+        - EndDelivDate: 到期日（如 "20260826"）
+        - OptType: 1=认购(call), 0=认沽(put)
+
+        从 InstrumentName 解析行权价和认购/认沽：
+        - "科创50购8月2400" → 购=call, 2400/1000=2.4
+        - "沪深300ETF沽7月5500" → 沽=put, 5500/1000=5.5
+
+        从 ProductID 解析标的代码：
+        - "科创50(588000)" → 588000 + 交易所后缀
+
+        Args:
+            opt_code: 期权合约代码（如 "10011948.SHO"）
+            policy: 调用策略
+
+        Returns:
+            dict: {Underlying, ExercisePrice, EndDelivDate, OptType} 或 None
+        """
+        import re
+        from xtquant import xtdata
+
+        detail = self._call_with_policy(
+            xtdata.get_instrument_detail, policy, opt_code,
+        )
+        if not detail:
+            return None
+
+        name = detail.get("InstrumentName", "")
+        product_id = detail.get("ProductID", "")
+        expire_date = detail.get("ExpireDate", "")
+        exchange = detail.get("ExchangeID", "")
+
+        # 解析认购/认沽：购=call(1), 沽=put(0)
+        opt_type = 1 if "购" in name else 0
+
+        # 解析行权价：从名称末尾提取数字 / 1000
+        strike = None
+        m = re.search(r"(\d{3,5})$", name)
+        if m:
+            strike = int(m.group(1)) / 1000.0
+
+        # 解析标的代码：从 ProductID "科创50(588000)" 提取 588000
+        underlying = ""
+        m2 = re.search(r"\((\d{6})\)", product_id)
+        if m2:
+            code = m2.group(1)
+            # 根据交易所确定后缀：SHO→SH, SZO→SZ
+            if exchange in ("SHO", "SH"):
+                underlying = f"{code}.SH"
+            elif exchange in ("SZO", "SZ"):
+                underlying = f"{code}.SZ"
+            else:
+                underlying = code
+
+        return {
+            "Underlying": underlying,
+            "ExercisePrice": strike,
+            "EndDelivDate": str(expire_date) if expire_date else "",
+            "OptType": opt_type,
+        }
+
     def _fetch_option_iv_surface(
         self,
         payload: FetchPayload,
@@ -1579,9 +1649,9 @@ class MiniQMTProvider(DataSourceBase):
             t0 = time.time()
             try:
                 from xtquant import xtdata
-                detail = self._call_with_policy(
-                    xtdata.get_option_detail_data, policy, opt_code,
-                )
+                # 使用 _get_option_detail_safe 绕过 xtquant get_option_detail_data bug
+                # （get_option_detail_data 内部 OptUndlUniCode 为 None 时崩溃）
+                detail = self._get_option_detail_safe(opt_code, policy)
                 rows = []
                 if detail:
                     symbol = self._stock_to_symbol(opt_code)
@@ -1670,11 +1740,9 @@ class MiniQMTProvider(DataSourceBase):
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
             except Exception as e:
-                yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
-                    error=f"{opt_code} IV曲面抓取失败: {e}",
-                )
+                # 单个期权合约出错不中断整个任务（xtquant get_option_detail_data 可能有 bug）
+                self._log.warning(f"{opt_code} IV曲面抓取失败，跳过: {e}")
+                continue
 
     # ============== 可转债波动率 ==============
 
@@ -2577,9 +2645,8 @@ class MiniQMTProvider(DataSourceBase):
             try:
                 from xtquant import xtdata
                 import pandas as pd
-                detail = self._call_with_policy(
-                    xtdata.get_option_detail_data, policy, opt_code,
-                )
+                # 使用 _get_option_detail_safe 绕过 xtquant get_option_detail_data bug
+                detail = self._get_option_detail_safe(opt_code, policy)
                 rows = []
                 if detail:
                     symbol = self._stock_to_symbol(opt_code)
@@ -2682,11 +2749,9 @@ class MiniQMTProvider(DataSourceBase):
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
             except Exception as e:
-                yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
-                    error=f"{opt_code} Greeks抓取失败: {e}",
-                )
+                # 单个期权合约出错不中断整个任务（xtquant get_option_detail_data 可能有 bug）
+                self._log.warning(f"{opt_code} Greeks抓取失败，跳过: {e}")
+                continue
 
     @staticmethod
     def _calc_bs_greeks(S, K, T, r, sigma, opt_type):
