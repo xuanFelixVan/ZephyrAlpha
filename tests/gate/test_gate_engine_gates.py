@@ -29,7 +29,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
     GateEngine,
