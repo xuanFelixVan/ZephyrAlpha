@@ -445,7 +445,7 @@ class TestAgentOrchestrator:
 
 
 def test_exports_present() -> None:
-    from zephyr.orchestrator.core import agent_orchestrator as m
+    import zephyr.orchestrator.agent_orchestrator as m
 
     for name in [
         "AgentRole",
