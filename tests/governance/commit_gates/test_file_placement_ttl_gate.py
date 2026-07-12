@@ -24,7 +24,7 @@ _SRC = Path(__file__).parent.parent.parent.parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from zephyr.governance.commit_gates.file_placement_ttl_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.file_placement_ttl_gate import (  # noqa: E402
     make_file_placement_ttl_gate,
 )
 

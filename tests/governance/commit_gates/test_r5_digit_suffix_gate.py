@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV-r5_digit_suffix_gate | tests/governance/commit_gates/test_r5_digit_suffix_gate.py
 # [MODULE] tests.governance.commit_gates.test_r5_digit_suffix_gate
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.governance.commit_gates.r5_digit_suffix_gate, zephyr.governance.rule_bridge.commit_gate_registry
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate, zephyr.governance.rule_bridge.commit_gate_registry
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -37,7 +37,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates.r5_digit_suffix_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate import (  # noqa: E402
     make_r5_digit_suffix_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402

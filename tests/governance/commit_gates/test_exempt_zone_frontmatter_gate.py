@@ -38,7 +38,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates.exempt_zone_frontmatter_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.exempt_zone_frontmatter_gate import (  # noqa: E402
     _EXEMPT_ZONE_PREFIXES,
     _FRONTMATTER_EXTS,
     _extract_doc_type,
@@ -64,7 +64,7 @@ def _install_ls_tree(monkeypatch, historical=None, raises=False):
     """mock subprocess.run（git ls-tree HEAD <rel>）。
     historical: set of rel paths 视为 HEAD 已存在（历史违规豁免）。"""
     historical = set(historical or [])
-    import zephyr.governance.commit_gates.exempt_zone_frontmatter_gate as mod
+    import zephyr.gov_enforcement.commit_gates.exempt_zone_frontmatter_gate as mod
 
     if raises:
         def _raise(*a, **k):

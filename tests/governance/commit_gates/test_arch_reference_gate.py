@@ -26,7 +26,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.governance.commit_gates.arch_reference_gate import (
+from zephyr.gov_enforcement.commit_gates.arch_reference_gate import (
     make_arch_reference_gate,
 )
 
@@ -146,7 +146,7 @@ class TestIncrementalOnly:
         target.write_text("# see #ARCH-999\n", encoding="utf-8")
 
         # mock _get_head_content 返回含 #ARCH-999 的 HEAD 版本（历史已有此引用）
-        import zephyr.governance.commit_gates.arch_reference_gate as mod
+        import zephyr.gov_enforcement.commit_gates.arch_reference_gate as mod
 
         monkeypatch.setattr(
             mod, "_get_head_content", lambda pr, rel: "# see #ARCH-999\n"

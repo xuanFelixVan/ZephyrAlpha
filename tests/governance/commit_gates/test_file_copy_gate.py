@@ -45,8 +45,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-import zephyr.governance.commit_gates.file_copy_gate as _fc_mod  # noqa: E402
-from zephyr.governance.commit_gates.file_copy_gate import (  # noqa: E402
+import zephyr.gov_enforcement.commit_gates.file_copy_gate as _fc_mod  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.file_copy_gate import (  # noqa: E402
     _THRESHOLD,
     make_file_copy_gate,
 )

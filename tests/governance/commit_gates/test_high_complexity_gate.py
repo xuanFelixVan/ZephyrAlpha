@@ -37,7 +37,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates.high_complexity_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.high_complexity_gate import (  # noqa: E402
     _MAX_COMPLEXITY,
     _cyclomatic_complexity,
     make_high_complexity_gate,

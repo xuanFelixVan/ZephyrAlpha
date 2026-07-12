@@ -43,7 +43,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates.ch_batch_size_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import (  # noqa: E402
     _build_parent_map,
     _find_enclosing_for,
     _is_exempt_file,

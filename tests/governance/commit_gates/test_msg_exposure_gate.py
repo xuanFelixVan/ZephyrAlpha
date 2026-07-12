@@ -47,7 +47,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates.msg_exposure_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.msg_exposure_gate import (  # noqa: E402
     _detect_msg_exposure,
     _f_string_has_sensitive_value,
     _filter_noqa_violations,

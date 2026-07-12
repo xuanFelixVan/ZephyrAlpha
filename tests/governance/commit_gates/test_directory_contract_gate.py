@@ -22,7 +22,7 @@ _SRC = Path(__file__).parent.parent.parent.parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from zephyr.governance.commit_gates.directory_contract_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.directory_contract_gate import (  # noqa: E402
     make_directory_contract_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402

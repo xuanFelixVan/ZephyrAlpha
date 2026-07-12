@@ -23,7 +23,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.governance.commit_gates.module_id_consistency_gate import (
+from zephyr.gov_enforcement.commit_gates.module_id_consistency_gate import (
     make_module_id_consistency_gate,
 )
 
@@ -190,7 +190,7 @@ class TestCrossFileUniqueness:
 
     def test_collision_blocked(self, tmp_path, monkeypatch):
         """新增文件（不在 HEAD），module_id 被其他文件声明 → 阻断。"""
-        import zephyr.governance.commit_gates.module_id_consistency_gate as mod
+        import zephyr.gov_enforcement.commit_gates.module_id_consistency_gate as mod
 
         # mock: 文件不在 HEAD（新增文件 A）
         monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
@@ -222,7 +222,7 @@ class TestCrossFileUniqueness:
 
     def test_unique_passes(self, tmp_path, monkeypatch):
         """新增文件（不在 HEAD），module_id 唯一 → 通过。"""
-        import zephyr.governance.commit_gates.module_id_consistency_gate as mod
+        import zephyr.gov_enforcement.commit_gates.module_id_consistency_gate as mod
 
         monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
 
@@ -247,7 +247,7 @@ class TestCrossFileUniqueness:
 
     def test_tracked_file_exempt(self, tmp_path, monkeypatch):
         """已跟踪文件（在 HEAD，M 状态）→ 跳过碰撞检查（通过）。"""
-        import zephyr.governance.commit_gates.module_id_consistency_gate as mod
+        import zephyr.gov_enforcement.commit_gates.module_id_consistency_gate as mod
 
         # mock: 文件在 HEAD（修改文件 M）→ 历史豁免
         monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: True)
@@ -281,7 +281,7 @@ class TestCrossFileUniqueness:
 
     def test_no_module_id_header_skipped(self, tmp_path, monkeypatch):
         """无 [A_*] module_id 头的 .py 文件 → 跳过碰撞检查（通过）。"""
-        import zephyr.governance.commit_gates.module_id_consistency_gate as mod
+        import zephyr.gov_enforcement.commit_gates.module_id_consistency_gate as mod
 
         monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
 
@@ -301,7 +301,7 @@ class TestCrossFileUniqueness:
         """git grep 超时/异常 → fail-open（通过）。"""
         import subprocess as _sp
 
-        import zephyr.governance.commit_gates.module_id_consistency_gate as mod
+        import zephyr.gov_enforcement.commit_gates.module_id_consistency_gate as mod
 
         monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
 

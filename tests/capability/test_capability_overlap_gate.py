@@ -28,7 +28,7 @@ import logging
 from unittest.mock import MagicMock
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
-from zephyr.governance.commit_gates.capability_overlap_gate import (
+from zephyr.gov_enforcement.commit_gates.capability_overlap_gate import (
     make_capability_overlap_gate,
 )
 

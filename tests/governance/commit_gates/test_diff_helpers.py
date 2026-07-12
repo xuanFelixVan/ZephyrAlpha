@@ -50,7 +50,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates._diff_helpers import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: E402
     _extract_docstring_lines,
     _extract_sql_constant_lines,
     _is_exempt_line,

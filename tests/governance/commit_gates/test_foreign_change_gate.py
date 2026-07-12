@@ -27,7 +27,7 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
-from zephyr.governance.commit_gates.foreign_change_gate import (
+from zephyr.gov_enforcement.commit_gates.foreign_change_gate import (
     make_foreign_change_gate,
 )
 

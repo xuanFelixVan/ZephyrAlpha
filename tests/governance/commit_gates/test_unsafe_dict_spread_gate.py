@@ -43,7 +43,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates.unsafe_dict_spread_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate import (  # noqa: E402
     make_unsafe_dict_spread_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402

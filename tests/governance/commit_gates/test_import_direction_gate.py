@@ -40,7 +40,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates.import_direction_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.import_direction_gate import (  # noqa: E402
     _UPWARD_PREFIXES,
     _collect_type_checking_imports,
     make_import_direction_gate,
@@ -117,7 +117,7 @@ def _shadow_open(monkeypatch):
     def _shadow(file, mode="r", *args, **kwargs):
         return _AutoClose(_real_open(file, mode, *args, **kwargs))
 
-    import zephyr.governance.commit_gates.import_direction_gate as mod
+    import zephyr.gov_enforcement.commit_gates.import_direction_gate as mod
     monkeypatch.setattr(mod, "open", _shadow, raising=False)
 
 

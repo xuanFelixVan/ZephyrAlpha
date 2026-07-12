@@ -45,8 +45,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-import zephyr.governance.commit_gates.vocab_hardcode_gate as _vocab_mod  # noqa: E402
-from zephyr.governance.commit_gates.vocab_hardcode_gate import (  # noqa: E402
+import zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate as _vocab_mod  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate import (  # noqa: E402
     make_vocab_hardcode_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402

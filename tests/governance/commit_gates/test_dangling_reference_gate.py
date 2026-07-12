@@ -27,7 +27,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.governance.commit_gates.dangling_reference_gate import (
+from zephyr.gov_enforcement.commit_gates.dangling_reference_gate import (
     make_dangling_reference_gate,
 )
 
@@ -158,7 +158,7 @@ class TestIncrementalOnly:
         target.write_text(f"# see AGENTS.md {_SEC}6.9\n", encoding="utf-8")
 
         # mock _get_head_content 返回含 §6.9 的 HEAD 版本（历史已有此引用）
-        import zephyr.governance.commit_gates.dangling_reference_gate as mod
+        import zephyr.gov_enforcement.commit_gates.dangling_reference_gate as mod
 
         monkeypatch.setattr(
             mod, "_get_head_content", lambda pr, rel: f"# see AGENTS.md {_SEC}6.9\n"

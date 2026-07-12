@@ -41,7 +41,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.governance.commit_gates.panorama_alignment_gate import (
+from zephyr.gov_enforcement.commit_gates.panorama_alignment_gate import (
     _ORPHAN_WARN_THRESHOLD,
     _STATE_DRIFT_WARN_THRESHOLD,
     _TRIGGER_PATTERNS,

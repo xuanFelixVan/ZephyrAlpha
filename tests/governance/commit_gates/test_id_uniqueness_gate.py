@@ -36,7 +36,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates.id_uniqueness_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.id_uniqueness_gate import (  # noqa: E402
     _CHECK_SCRIPT,
     _CONFIG_REL,
     make_id_uniqueness_gate,
@@ -53,7 +53,7 @@ def _make_gateway(project_root=None):
 
 def _install_subprocess(monkeypatch, returncode=0, stdout="", stderr=""):
     """mock subprocess.run 返回指定 returncode/stdout/stderr。"""
-    import zephyr.governance.commit_gates.id_uniqueness_gate as mod
+    import zephyr.gov_enforcement.commit_gates.id_uniqueness_gate as mod
 
     def _run(cmd, **kwargs):
         class _R:

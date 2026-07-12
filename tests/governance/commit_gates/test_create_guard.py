@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV-create_guard | tests/test_create_guard.py | §create-guard-tests
 # [MODULE] tests.test_create_guard
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.governance.commit_gates.create_guard, zephyr.governance.rule_bridge.git_commit_gateway
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates.create_guard, zephyr.governance.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -45,7 +45,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.commit_gates.create_guard import make_create_guard  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.create_guard import make_create_guard  # noqa: E402
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway  # noqa: E402
 
 

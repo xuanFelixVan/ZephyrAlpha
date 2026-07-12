@@ -28,7 +28,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.commit_gates.gate_repo import GateRepo, GateRunRecord
+from zephyr.gov_enforcement.commit_gates.gate_repo import GateRepo, GateRunRecord
 from zephyr.shared.utils.db_utils import ensure_schema
 
 
