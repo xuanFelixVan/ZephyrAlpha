@@ -124,13 +124,15 @@ def _make_task(
         safety_level=SafetyLevel.M,
         source_blueprint="test",
         source_section="test",
-        description="测试任务：门禁引擎验证——足够长度的描述",
+        description="测试任务：门禁引擎验证。根因：需验证GateEngine的load_gates/evaluate API及5道门禁G1~G5的pass/fail样本。治根：通过单元测试覆盖编码损坏/废弃路径/空壳文件拦截场景及GateResult结构。施工步骤：创建任务并触发对应门禁检查，验证P0违规判定与结果持久化。验收标准：门禁结果正确写入SQLite gates表且task_repo集成PENDING→IN_PROGRESS触发G1门禁正常工作。",
+        verification_status="verified",  # G7交付门禁：verification_status MUST be verified
         files_in_scope=["tests/gate/test_gate_engine_gates.py"],
         deliverables=deliverables or [],
-        applicable_rules=[{"module_id": "GOV-TASK-001", "section": "v3.0.0", "reason": "test"}],
+        applicable_rules=[{"module_id": "GOV-TASK-001", "section": "v3.2.0", "reason": "test"}],
         allowed_touch=["tests/gate/test_gate_engine_gates.py"],
-        rollback_instructions="git checkout",
-        post_sync_standard=["echo ok"],
+        rollback_instructions="git checkout -- tests/gate/test_gate_engine_gates.py",
+        directive="999",
+        post_sync_standard=[],
         acceptance=["exit=0"],
         dependency_type="none",
         created_at="2026-01-01T00:00:00+00:00",
@@ -514,15 +516,17 @@ def test_task_repo_other_transitions_no_gate(tmp_path: Path) -> None:
     )
     task = _make_task(
         task_id="SRC-081",
-        deliverables=["bom2.md"],
+        deliverables=["src/zephyr/output.py"],
         status="PENDING",
     )
     repo.create(task)
     # 先用 enable_gate=False 的方式把任务推进到 IN_PROGRESS
     repo._enable_gate = False
     repo.transition("SRC-081", TaskStatus.IN_PROGRESS)
-    repo._enable_gate = True
-    # IN_PROGRESS → COMPLETED 不触发门禁
+    # DM-200921: COMPLETED 前需连续2次 batch_review 0问题
+    repo.batch_review("SRC-081")
+    repo.batch_review("SRC-081")
+    # IN_PROGRESS → COMPLETED：G1(startup)不触发，G7(交付)始终评估（DM-200921）
     updated = repo.transition("SRC-081", TaskStatus.COMPLETED)
     assert updated.status == TaskStatus.COMPLETED
     repo.close()
