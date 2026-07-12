@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.protocols
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_types
-# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement;zephyr.governance.behavioral_auditor;zephyr.gov_audit;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
+# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement;zephyr.compliance.behavioral_auditor;zephyr.gov_audit;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Protocols define structural interfaces only; no concrete implementations
