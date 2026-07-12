@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged tests/ .py 文件 from zephyr.* import 的符号在源码中不存在时阻断 commit（passed=False）；tests/ 专属 gate（只检测测试文件，不检测源码）；module-level pytest.skip/importorskip 豁免（已标记漂移的测试文件不重复检测）；检查所有顶层符号（class/def/assign/annassign），不依赖 __all__（Python 允许显式 import 任何顶层符号）；源码文件不存在/解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged tests/ .py 文件 added 行中 from zephyr.* import 的符号在源码中不存在时阻断 commit（passed=False）；只检查 added 行（防误阻断现有漂移）；tests/ 专属 gate（只检测测试文件，不检测源码）；module-level pytest.skip/importorskip 豁免（已标记漂移的测试文件不重复检测）；检查所有顶层符号（class/def/assign/annassign），不依赖 __all__（Python 允许显式 import 任何顶层符号）；源码文件不存在/解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="TEST-SOURCE-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -58,6 +58,7 @@ import logging
 from pathlib import Path
 
 from zephyr.governance.commit_gates._diff_helpers import (
+    _get_added_lines,
     _get_staged_py_files,
     _read_staged_file,
 )
@@ -248,12 +249,17 @@ def _check_import_node(node: ast.ImportFrom, test_file: str) -> list[str]:
     return violations
 
 
-def _check_test_file(content: str, test_file: str) -> list[str]:
+def _check_test_file(
+    content: str, test_file: str, added_lines: set[int] | None = None
+) -> list[str]:
     """检查单个测试文件的 import 符号一致性，返回违规列表。
 
     Args:
         content: 测试文件内容。
         test_file: 测试文件路径（用于错误消息）。
+        added_lines: 新增行号集合（1-based）。若为 None 则检查所有 import；
+            若非 None 则只检查 ``node.lineno in added_lines`` 的 ImportFrom 节点。
+            这确保 gate 只防新增漂移，不误阻断现有漂移。
 
     Returns:
         违规描述列表（空列表表示无违规或跳过）。
@@ -267,10 +273,12 @@ def _check_test_file(content: str, test_file: str) -> list[str]:
     if _has_module_level_skip(tree):
         return []
 
-    # 检查每个 from zephyr.* import yyy
+    # 检查每个 from zephyr.* import yyy（仅 added 行）
     violations: list[str] = []
     for node in ast.walk(tree):
         if isinstance(node, ast.ImportFrom):
+            if added_lines is not None and node.lineno not in added_lines:
+                continue
             violations.extend(_check_import_node(node, test_file))
     return violations
 
@@ -293,13 +301,18 @@ def make_test_source_consistency_gate() -> GateSpec:
         if not test_files:
             return True, ""
 
-        # 3. 检测每个测试文件的 import 符号一致性
+        # 3. 检测每个测试文件的 import 符号一致性（仅 added 行）
         violations: list[str] = []
         for test_file in test_files:
             content = _read_staged_file(gateway, test_file)
             if not content:
                 continue
-            violations.extend(_check_test_file(content, test_file))
+            # 获取 added 行号集合——只检查新增的 import，不误阻断现有漂移
+            added = _get_added_lines(gateway, test_file, gate_name="TEST-SOURCE-CONSISTENCY")
+            added_lines = {line_no for line_no, _ in added} if added else set()
+            if not added_lines:
+                continue  # 无新增行，跳过
+            violations.extend(_check_test_file(content, test_file, added_lines))
 
         # 4. 硬阻断
         if violations:
