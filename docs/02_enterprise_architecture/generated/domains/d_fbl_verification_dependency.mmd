@@ -1,5 +1,5 @@
 %% D_FBL_VERIFICATION 域全景依赖图
-%% 生成时间: 2026-07-12 22:29:34
+%% 生成时间: 2026-07-13 00:56:30
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 55, 依赖边数: 113
 
@@ -84,8 +84,8 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___iers_toctou_revalidation_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___iers_verification_engine_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_verifiers_auto_rollback_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_maturity_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_credit_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_maturity_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___lueprint_code_reconciler_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___ates_blueprint_validator_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_verifiers_canary_repair_py
@@ -103,9 +103,9 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___lueprint_code_reconciler_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___ates_blueprint_validator_py
     %% D_FEEDBACK_LOOP -> D_FBL_VERIFICATION (30 条)
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___iers_verification_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___cading_rollback_analyzer_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___astic_diagnosis_verifier_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___iers_verification_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___iers_verification_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___s_deployment_suppression_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_loop_gates_safety_gate_l1_l27_py

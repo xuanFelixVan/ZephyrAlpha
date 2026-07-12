@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_AUTONOMY_PERM 自治保护架构文档
 version: "1.0"
 status: active
-date: 2026-07-12
+date: 2026-07-13
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治保护（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-12 22:29:06
+> 最后更新: 2026-07-13 00:56:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -97,18 +97,18 @@ graph TD
         src_zephyr_autonomy_perm_services_init_py["(原型态 / prototype) __init__.py"]
     end
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
-    src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -.->|config_depends / config_depends| D_GOVERNANCE
     D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
@@ -158,18 +158,18 @@ graph TD
         src_zephyr_autonomy_perm_services_init_py["(原型态 / prototype) __init__.py"]
     end
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
-    src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -.->|config_depends / config_depends| D_GOVERNANCE
     D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]

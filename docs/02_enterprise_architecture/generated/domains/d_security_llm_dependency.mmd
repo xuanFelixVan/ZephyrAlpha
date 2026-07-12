@@ -1,5 +1,5 @@
 %% D_SECURITY_LLM 域全景依赖图
-%% 生成时间: 2026-07-12 22:29:34
+%% 生成时间: 2026-07-13 00:56:31
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 13, 依赖边数: 19
 
@@ -24,10 +24,10 @@ graph TD
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_security_llm_defens___curity_red_team_corpus_yaml -->|config_depends| src_zephyr_security_llm_defense_llm_security___init___py
-    src_zephyr_security_llm_defens___ads_injection_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
-    src_zephyr_security_llm_defens___ads_leak_probe_phrases_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
-    src_zephyr_security_llm_defens___oads_red_team_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
     src_zephyr_security_llm_defens___ads_tool_call_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
+    src_zephyr_security_llm_defens___ads_injection_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
+    src_zephyr_security_llm_defens___oads_red_team_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
+    src_zephyr_security_llm_defens___ads_leak_probe_phrases_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_GOVERNANCE -> D_SECURITY_LLM (1 条)

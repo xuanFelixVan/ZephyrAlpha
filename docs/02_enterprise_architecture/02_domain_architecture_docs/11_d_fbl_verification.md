@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_FBL_VERIFICATION 反馈验证架构文档
 version: "1.0"
 status: active
-date: 2026-07-12
+date: 2026-07-13
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈验证（D_FBL_VERIFICATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-12 22:29:06
+> 最后更新: 2026-07-13 00:56:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,8 +28,8 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 55 | Module Count | 55 |
 | 域内依赖 | 4 | Internal Dependencies | 4 |
-| 跨域入边 | 177 | Cross-domain Incoming | 177 |
-| 跨域出边 | 2 | Cross-domain Outgoing | 2 |
+| 跨域入边 | 108 | Cross-domain Incoming | 108 |
+| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 5 | Prototype Modules | 5 |
 | 生产态模块 | 50 | Production Modules | 50 |
@@ -152,8 +152,8 @@ graph TD
         src_zephyr_trading_feedback_loop_gates_parameterized_safety_gate_py["(生产态 / production) GateVerdict — GateVerdict<br/>文件: parameterized_safety_gate.py"]
     end
     src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_governance_gates_py
-    src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_security_gates_py
     src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_operational_gates_py
+    src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_security_gates_py
     src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_safety_gates_py
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     src_zephyr_trading_feedback_loop_gates_adversarial_validation_py -.->|导入依赖 / import_depends| D_SECURITY
@@ -161,8 +161,8 @@ graph TD
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_deployment_suppression_py
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_trading_feedback_loop_gates_action_reversibility_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_maturity_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_credit_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_maturity_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_trading_feedback_loop_gates_blueprint_code_reconciler_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_trading_feedback_loop_gates_blueprint_validator_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_trading_feedback_loop_gates_config_complexity_budget_py
@@ -216,9 +216,9 @@ graph TD
         src_zephyr_trading_feedback_loop_verifiers_verification_engine_py["(生产态 / production) verification_engine.py"]
     end
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_cascading_rollback_analyzer_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_stochastic_diagnosis_verifier_py
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_safety_gate_l1_l27_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_safety_gate_l1_l27_py
@@ -300,9 +300,9 @@ graph TD
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     src_zephyr_trading_feedback_loop_gates_adversarial_validation_py -.->|导入依赖 / import_depends| D_SECURITY
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_cascading_rollback_analyzer_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_stochastic_diagnosis_verifier_py
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_deployment_suppression_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_safety_gate_l1_l27_py
@@ -344,8 +344,8 @@ graph TD
         src_zephyr_trading_feedback_loop_gates_security_gates_py["(原型态 / prototype) _security_gates.py"]
     end
     src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_governance_gates_py
-    src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_security_gates_py
     src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_operational_gates_py
+    src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_security_gates_py
     src_zephyr_trading_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_feedback_loop_gates_safety_gates_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -477,19 +477,17 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 2 条 + 入边 177 条 = 179 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 3 个外部域直接连接（出边 1 条 + 入边 108 条 = 109 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
-    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
-    D_FBL_VERIFICATION -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
     D_FBL_VERIFICATION -->|1条 导入依赖 / import_depends| D_SECURITY
-    D_AUDITTEST -->|146条 测试依赖 / test_depends| D_FBL_VERIFICATION
-    D_FEEDBACK_LOOP -->|31条 导入依赖 / import_depends| D_FBL_VERIFICATION
+    D_AUDITTEST -->|78条 测试依赖 / test_depends| D_FBL_VERIFICATION
+    D_FEEDBACK_LOOP -->|30条 导入依赖 / import_depends| D_FBL_VERIFICATION
 ```
 
 ## 说明 / Notes
