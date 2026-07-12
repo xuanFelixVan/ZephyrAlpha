@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.id_uniqueness_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d5_architecture.checkers.check_precommit_id_uniqueness (subprocess 调用，检测真源)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d5_architecture.checkers.check_precommit_id_uniqueness (subprocess 调用，检测真源)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] fail-closed on exit 1 (violations); fail-open on exit 2 (script error)
@@ -35,7 +35,7 @@ import os
 import subprocess
 import sys
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 

@@ -40,7 +40,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 from zephyr.governance.commit_gates.r5_digit_suffix_gate import (  # noqa: E402
     make_r5_digit_suffix_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 class _MockGateway:

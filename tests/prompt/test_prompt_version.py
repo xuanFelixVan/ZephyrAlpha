@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.contracts.prompt_version import PromptVersionManager
+from zephyr.orchestrator.contracts.prompt_version import PromptVersionManager
 
 
 class TestPromptVersionManagerInstantiation:

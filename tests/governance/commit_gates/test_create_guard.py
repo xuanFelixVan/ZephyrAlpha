@@ -46,7 +46,7 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.governance.commit_gates.create_guard import make_create_guard  # noqa: E402
-from zephyr.governance.rule_bridge.git_commit_gateway import GitCommitGateway  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway  # noqa: E402
 
 
 def _init_git_repo(repo_dir: Path) -> None:

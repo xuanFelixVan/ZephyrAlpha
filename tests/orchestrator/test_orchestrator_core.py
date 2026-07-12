@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.trading.orchestrator.contracts.contract_registry import (
+from zephyr.orchestrator.contracts.contract_registry import (
     CONTRACTS,
     AIReadOnlyHint,
     Contract,
@@ -22,7 +22,7 @@ from zephyr.trading.orchestrator.contracts.contract_registry import (
     ContractRegistry,
     TelemetryType,
 )
-from zephyr.trading.orchestrator.execution.trigger_router import (
+from zephyr.orchestrator.execution.trigger_router import (
     TriggerHandlerSpec,
     TriggerRouter,
     TriggerRouterConfigError,

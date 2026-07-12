@@ -17,7 +17,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.trading.orchestrator.agent_orchestrator import (
+from zephyr.orchestrator.agent_orchestrator import (
     AgentOrchestrator,
     AgentProfile,
     AgentRole,

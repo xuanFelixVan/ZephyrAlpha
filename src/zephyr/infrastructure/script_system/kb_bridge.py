@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.script_system.kb_bridge
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.__init__
-# [CONSUMERS] zephyr.trading.orchestrator.script_runner; AutoRuntime Core post-scan phase
+# [CONSUMERS] zephyr.orchestrator.script_runner; AutoRuntime Core post-scan phase
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] findings->KB entry 1:1映射; KB不可用时仅日志不阻塞; timestamp带时区

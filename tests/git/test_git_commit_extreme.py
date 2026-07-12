@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_git_commit_extreme.py | §ghost-commit-extreme-test
 # [MODULE] tests.test_git_commit_extreme
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] tests.__init__; zephyr.governance.rule_bridge.git_commit_gateway
+# [DEPENDENCIES] tests.__init__; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -47,7 +47,7 @@ from unittest.mock import patch
 import pytest
 
 from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.governance.rule_bridge.git_commit_gateway import (
+from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
     CommitStatus,
     GatewayError,
     GitCommitGateway,
@@ -397,7 +397,7 @@ class TestTimeoutAndResourceExhaustion:
         )
 
         # 用短超时的锁替换默认锁（避免测试等 60 秒）
-        from zephyr.governance.rule_bridge.git_commit_gateway import _GlobalCommitLock
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import _GlobalCommitLock
 
         class FastLock(_GlobalCommitLock):
             def __init__(self, project_root):

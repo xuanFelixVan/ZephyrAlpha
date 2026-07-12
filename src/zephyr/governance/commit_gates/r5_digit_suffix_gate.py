@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.r5_digit_suffix_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] fail-closed——git ls-tree 失败时阻断 commit；增量检测只阻断新引入的 _NN 目录，历史违规目录（progressive_convergence）跳过
@@ -65,7 +65,7 @@ import os
 import re
 import subprocess
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 

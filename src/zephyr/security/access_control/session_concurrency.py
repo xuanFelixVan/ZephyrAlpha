@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.session_concurrency
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_session_concurrency; zephyr.governance.rule_bridge.git_commit_gateway; zephyr.governance.rule_bridge.session_worktree (find_breaking_change_session)
+# [CONSUMERS] tests.test_session_concurrency; zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.gov_enforcement.rule_bridge.session_worktree (find_breaking_change_session)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session TTL=3600s 自动过期；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略过期，供 session_worktree_start 双向阻断调用）

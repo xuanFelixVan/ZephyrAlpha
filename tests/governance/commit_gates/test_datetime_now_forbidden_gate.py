@@ -46,7 +46,7 @@ from zephyr.governance.commit_gates.datetime_now_forbidden_gate import (  # noqa
     _is_generator_file,
     make_datetime_now_forbidden_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 def _make_mock_gateway(

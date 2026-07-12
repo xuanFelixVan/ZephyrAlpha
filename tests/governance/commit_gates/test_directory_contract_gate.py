@@ -25,7 +25,7 @@ if str(_SRC) not in sys.path:
 from zephyr.governance.commit_gates.directory_contract_gate import (  # noqa: E402
     make_directory_contract_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 # ── check_directory_contract.py 纯函数加载（TestCheckDeprecatedDirectory 用） ──
 # check_directory_contract.py 在 scripts/ 下（非包模块），用 importlib 从文件路径加载。

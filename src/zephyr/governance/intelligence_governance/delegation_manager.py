@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.intelligence_governance.delegation_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] zephyr.governance.services.adapter;zephyr.trading.orchestrator
+# [CONSUMERS] zephyr.governance.services.adapter;zephyr.orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 委托链深度≤3;四级安全约束不可降级

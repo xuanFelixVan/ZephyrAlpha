@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GOV-commit_gates | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
 # [MODULE] zephyr.governance.commit_gates.unsafe_dict_spread_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.commit_gates._diff_helpers; zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.governance.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] warn 级（passed=True 不阻断，仅 stderr+logger 告警）——检测 staged .py 新增行中 SomeClass(**varname) 直接展开模式，varname 来自反序列化（json.loads/yaml.safe_load/DB row）时遇 schema 演进会 TypeError；合法模式豁免：**kwargs/**kwds（显式关键字参数透传）、**filter_dataclass_fields(...)（已用 SSoT 过滤，5.147.12）、**{...}（字典字面量）、**func(...)（函数调用，正则不匹配）；tests/ 豁免；import/注释/docstring 豁免；YAML/git diff 不可达 fail-open（logger.warning 检测器失效）
@@ -60,7 +60,7 @@ from zephyr.governance.commit_gates._diff_helpers import (
     _parse_diff_with_line_numbers,
     _read_staged_file,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

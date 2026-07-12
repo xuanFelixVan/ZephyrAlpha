@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.file_copy_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d5_architecture.checkers.check_code_duplication (subprocess 调用，检测真源)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d5_architecture.checkers.check_code_duplication (subprocess 调用，检测真源)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 硬阻断——staged 新增 .py 文件与已有同名文件 AST 归一化相似度>70%时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不检测修改文件（避免基线 159 对存量重复卡死工作流，存量违规由第2期批量修复）；检测真源=check_code_duplication.py（subprocess 调用 --files --ast --threshold 0.7），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_code_duplication.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断）；exit 1（检出违规）时硬阻断；路径解析对标 gateway.project_root（主仓库根，非 worktree root）——因 check_code_duplication.py 扫描主仓库已有文件做比对，新文件在主仓库工作树存在（AI 用 Write/Edit 写项目根，session_worktree_commit 复制到 worktree），主仓库路径使 script 的 new_resolved 排除集正确排除新文件自身
@@ -60,7 +60,7 @@ import os
 import subprocess
 import sys
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

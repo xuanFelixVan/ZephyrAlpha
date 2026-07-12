@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.contracts.contract_registry import (
+from zephyr.orchestrator.contracts.contract_registry import (
     CONTRACTS,
     AIReadOnlyHint,
     ContractRegistry,

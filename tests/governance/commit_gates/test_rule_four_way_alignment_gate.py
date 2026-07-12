@@ -48,7 +48,7 @@ from zephyr.governance.commit_gates.rule_four_way_alignment_gate import (  # noq
     _should_trigger,
     make_rule_four_way_alignment_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 @dataclass

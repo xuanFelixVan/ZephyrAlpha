@@ -3,7 +3,7 @@
 # [MODULE] zephyr.security.access_control
 # [INVARIANTS] access_control 包——七层纵深防御权限强制执行器的根包；子模块按后缀簇归位 guards/verifiers/detectors/
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway; zephyr.security.access_control.guards.rbac_guard; tests.unit.agent_rbac
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.security.access_control.guards.rbac_guard; tests.unit.agent_rbac
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

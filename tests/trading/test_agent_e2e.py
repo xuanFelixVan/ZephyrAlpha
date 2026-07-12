@@ -23,8 +23,8 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.trading.orchestrator.agent_health_monitor import AgentHealthMonitor, HealthState
-from zephyr.trading.orchestrator.agent_orchestrator import (
+from zephyr.orchestrator.agent_health_monitor import AgentHealthMonitor, HealthState
+from zephyr.orchestrator.agent_orchestrator import (
     AgentOrchestrator,
     AgentProfile,
     AgentRole,

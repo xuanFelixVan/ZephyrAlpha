@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.fault_tolerance.degrade_cascade import DEGRADE_PROPAGATION_CHAIN, DegradeCascadeGuard
+from zephyr.orchestrator.fault_tolerance.degrade_cascade import DEGRADE_PROPAGATION_CHAIN, DegradeCascadeGuard
 
 
 class TestDegradeCascadeGuardInstantiation:

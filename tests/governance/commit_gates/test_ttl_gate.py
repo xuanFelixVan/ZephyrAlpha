@@ -23,7 +23,7 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from zephyr.governance.commit_gates.ttl_gate import make_ttl_gate  # noqa: E402
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 class _MockGateway:

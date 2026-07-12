@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.quality.blueprint_scorer import score_and_rank_routes, score_blueprint_route
+from zephyr.orchestrator.quality.blueprint_scorer import score_and_rank_routes, score_blueprint_route
 
 
 class TestScoreBlueprintRouteInstantiation:

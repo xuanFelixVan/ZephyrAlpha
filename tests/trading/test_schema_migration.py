@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.governance.schema_migration import SchemaMigration
+from zephyr.orchestrator.governance.schema_migration import SchemaMigration
 
 
 class TestSchemaMigrationInstantiation:

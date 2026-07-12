@@ -8,8 +8,8 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.fault_tolerance.chaos_engine import ChaosEngine
-from zephyr.trading.orchestrator.fault_tolerance.chaos_hooks import (
+from zephyr.orchestrator.fault_tolerance.chaos_engine import ChaosEngine
+from zephyr.orchestrator.fault_tolerance.chaos_hooks import (
     ChaosHook,
     ChaosHookPolicy,
     HookContext,

@@ -46,7 +46,7 @@ from zephyr.governance.commit_gates.perm_trigger_gate import (  # noqa: E402
     _has_permanent_ttl,
     make_perm_trigger_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 @dataclass

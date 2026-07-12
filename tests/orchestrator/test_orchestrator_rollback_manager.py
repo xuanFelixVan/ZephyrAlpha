@@ -18,7 +18,7 @@ import sqlite3
 
 import pytest
 
-from zephyr.trading.orchestrator.rollback_manager import Checkpoint, RollbackManager
+from zephyr.orchestrator.rollback_manager import Checkpoint, RollbackManager
 
 
 def _create_test_db(tmp_path):

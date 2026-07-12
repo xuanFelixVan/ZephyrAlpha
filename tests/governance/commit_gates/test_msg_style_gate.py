@@ -53,7 +53,7 @@ from zephyr.governance.commit_gates.msg_style_gate import (  # noqa: E402
     _is_line_noqa,
     make_msg_style_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

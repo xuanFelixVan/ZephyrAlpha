@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.orchestrator.quality.ke_quality import KnowledgeEntryQuality
+from zephyr.orchestrator.quality.ke_quality import KnowledgeEntryQuality
 
 
 class TestKnowledgeEntryQualityInstantiation:

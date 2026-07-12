@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.file_placement_ttl_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml (真源：directory_zones); docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml (真源：decision_tree Q1)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml (真源：directory_zones); docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml (真源：decision_tree Q1)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] fail-closed——真源 YAML 缺失/解析失败时阻断 commit；动态加载 directory_contract.yaml + ttl_vocabulary.yaml，禁止硬编码路径列表
@@ -74,7 +74,7 @@ import re
 
 import yaml
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.execution.phase_executor import (
+from zephyr.orchestrator.execution.phase_executor import (
     PHASE_DEPENDENCIES,
     PHASE_ORDER,
     ConstructionPhase,

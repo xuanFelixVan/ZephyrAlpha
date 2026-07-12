@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.ttl_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d3_metadata.check_frontmatter_metadata (subprocess 调用，检测真源)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d3_metadata.check_frontmatter_metadata (subprocess 调用，检测真源)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] fail-closed——checker 缺失/执行失败时阻断 commit（ttl 是强制字段，环境损坏必须阻断）；通过 subprocess 调用 check_frontmatter_metadata.py 复用真源，禁止在 gateway 内复制 ttl 校验逻辑
@@ -63,7 +63,7 @@ import os
 import subprocess
 import sys
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 

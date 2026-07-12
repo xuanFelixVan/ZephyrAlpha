@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.lifecycle.rolling_upgrade import RollingUpgradeManager
+from zephyr.orchestrator.lifecycle.rolling_upgrade import RollingUpgradeManager
 
 
 class TestRollingUpgradeManagerInstantiation:

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.audit.reconciliation_registry
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] (none — pure stdlib)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] ReconciliationRegistry.register 幂等（同 gate_id 覆盖旧 spec）；reconcile_for 按 priority 升序执行命中 trigger 的 reconciler；reconciler 异常被捕获为 warn 结果（不阻断后续 reconciler）

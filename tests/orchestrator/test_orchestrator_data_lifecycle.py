@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.execution.data_lifecycle import DATA_LIFECYCLE, DataLifecycleManager
+from zephyr.orchestrator.execution.data_lifecycle import DATA_LIFECYCLE, DataLifecycleManager
 
 
 class TestDataLifecycleConstant:

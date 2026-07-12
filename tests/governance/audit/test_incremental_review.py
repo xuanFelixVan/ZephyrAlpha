@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.execution.incremental_review import (
+from zephyr.orchestrator.execution.incremental_review import (
     REVIEW_DIMENSIONS,
     ReviewChunk,
 )

@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.session_required_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] session_id 为空/保留词/未注册->阻断（强制 AI 调 session_worktree_start 注册）；allow_overlap=True 时放行（逃生通道，复用现有）；get_session 异常->安全降级放行（registry 故障不应卡死 commit 工作流）；保留词集合 = {"", "unknown", "none", "null"}（防 AI 传空串绕过）
@@ -46,7 +46,7 @@ Usage::
 
 from __future__ import annotations
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 __all__ = ["make_session_required_gate"]
 

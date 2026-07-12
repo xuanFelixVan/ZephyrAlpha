@@ -32,7 +32,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from scripts.scaffold import ScaffoldError, _check_duplicate_functionality
 from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SSoTConflict
-from zephyr.governance.rule_bridge.git_commit_gateway import CommitStatus, GitCommitGateway
+from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitStatus, GitCommitGateway
 
 
 # ---------------------------------------------------------------------------

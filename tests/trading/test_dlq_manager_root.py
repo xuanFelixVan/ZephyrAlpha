@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from zephyr.trading.orchestrator.execution.dlq_manager import DLQManager, DLQMessage
+from zephyr.orchestrator.execution.dlq_manager import DLQManager, DLQMessage
 
 
 class TestDLQMessage:

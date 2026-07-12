@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.commit_gates
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

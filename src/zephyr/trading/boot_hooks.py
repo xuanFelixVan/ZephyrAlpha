@@ -422,7 +422,7 @@ def _hook_orc_vms_archive(event: object, task_repo: TaskRepositoryProtocol | Non
         to_status = getattr(event, "to_status", "")
         if to_status.upper() != TaskStatus.COMPLETED:
             return
-        from zephyr.trading.orchestrator.execution.memory_writer import archive_to_vms
+        from zephyr.orchestrator.execution.memory_writer import archive_to_vms
 
         tr = _resolve_task_repo(task_repo)
         task = tr.get(task_id)

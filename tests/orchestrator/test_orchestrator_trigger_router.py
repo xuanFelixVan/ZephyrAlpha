@@ -16,7 +16,7 @@ from __future__ import annotations
 import pytest
 import yaml
 
-from zephyr.trading.orchestrator.execution.trigger_router import (
+from zephyr.orchestrator.execution.trigger_router import (
     PHASE1D_TRIGGER_TYPES,
     RouterDispatchResult,
     TriggerHandlerSpec,

@@ -63,7 +63,7 @@ from zephyr.governance.commit_gates.test_source_consistency_gate import (  # noq
     _module_to_path,
     make_test_source_consistency_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 import zephyr.governance.commit_gates.test_source_consistency_gate as _gate_mod  # noqa: E402
 

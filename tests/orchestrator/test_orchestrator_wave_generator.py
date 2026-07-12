@@ -18,7 +18,7 @@ import sqlite3
 
 import pytest
 
-from zephyr.trading.orchestrator.execution.wave_generator import Wave, WaveGenerator, WaveStatus
+from zephyr.orchestrator.execution.wave_generator import Wave, WaveGenerator, WaveStatus
 
 
 def _create_test_db(tmp_path):

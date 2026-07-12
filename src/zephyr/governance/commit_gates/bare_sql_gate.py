@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.bare_sql_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.commit_gates._diff_helpers; zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.governance.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged .py added 行含裸SQL字面量(SELECT/INSERT INTO/UPDATE SET/DELETE FROM)时阻断commit(passed=False); tests/豁免; docstring/注释/import/SQL_*常量定义行豁免（R96 用 ast 精确识别多行常量定义范围，替代旧正则近似只豁免定义行）; git diff不可达fail-open; 检出违规则fail-closed
@@ -60,7 +60,7 @@ from zephyr.governance.commit_gates._diff_helpers import (
     _is_exempt_line,
     _read_staged_file,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

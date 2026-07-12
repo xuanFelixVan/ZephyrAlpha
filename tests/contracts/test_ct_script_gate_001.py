@@ -10,8 +10,8 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.contracts.contract_registry import ContractRegistry
-from zephyr.trading.orchestrator.contracts.contract_router import ContractRouter
+from zephyr.orchestrator.contracts.contract_registry import ContractRegistry
+from zephyr.orchestrator.contracts.contract_router import ContractRouter
 
 
 def test_ct_script_gate_registered():

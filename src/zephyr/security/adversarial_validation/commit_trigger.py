@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.adversarial_validation.commit_trigger
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.circuit_breaker; zephyr.security.adversarial_validation.models
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway; zephyr.trading.boot_hooks
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] detect_formal_files MUST be ms-cost (no YAML/import); write_trigger_record MUST be atomic; consumer thread MUST fail-closed on gate

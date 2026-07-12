@@ -41,7 +41,7 @@ def test_trigger_recovery_via_gates_init():
 
 
 def test_handle_drift_detected_uses_trigger_recovery():
-    from zephyr.trading.orchestrator.execution.trigger_router import handle_drift_detected
+    from zephyr.orchestrator.execution.trigger_router import handle_drift_detected
 
     assert callable(handle_drift_detected)
 
@@ -59,7 +59,7 @@ def test_handle_drift_detected_uses_trigger_recovery():
 
 
 def test_handle_drift_detected_fallback_on_import_error():
-    from zephyr.trading.orchestrator.execution.trigger_router import handle_drift_detected
+    from zephyr.orchestrator.execution.trigger_router import handle_drift_detected
 
     payload = {"module_id": "MOD-INF-023"}
 

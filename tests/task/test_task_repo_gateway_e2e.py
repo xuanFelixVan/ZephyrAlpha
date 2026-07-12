@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_task_repo_gateway_e2e.py | §ghost-commit-e2e
 # [MODULE] tests.test_task_repo_gateway_e2e
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] tests.__init__; zephyr.governance.persistence.task_repo; zephyr.governance.rule_bridge.git_commit_gateway
+# [DEPENDENCIES] tests.__init__; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -42,7 +42,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.rule_bridge.git_commit_gateway import CommitResult, CommitStatus
+from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitResult, CommitStatus
 from zephyr.governance.persistence.task_repo import TaskRepository
 
 
@@ -257,7 +257,7 @@ class TestAutoCommitE2E:
             TaskRepository._auto_commit_on_completion,
         ):
             # 直接调用，但需要 patch GitCommitGateway 的初始化
-            from zephyr.governance.rule_bridge.git_commit_gateway import GitCommitGateway
+            from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
             original_init = GitCommitGateway.__init__
 
             def patched_init(self, project_root=None):

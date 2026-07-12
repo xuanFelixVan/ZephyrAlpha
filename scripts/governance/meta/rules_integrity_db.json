@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "fd9a0f104d7bfef9",
+      "hash": "894556f554b34073",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,7 +46,7 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/rule_bridge/git_commit_gateway.py": {
-      "hash": "de88ce38dcdedec1",
+      "hash": "93722149ddab48c1",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "80d7ccd75cca1f2f",
+      "hash": "3412961995f664bb",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -221,7 +221,7 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: msg_style_gate.py）"
     },
     "src/zephyr/governance/commit_gates/orphan_module_gate.py": {
-      "hash": "0f5d299899a3f59d",
+      "hash": "8e1c3e284c15d7c9",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: orphan_module_gate.py）"
     },
@@ -255,6 +255,11 @@
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: ssot_redefinition_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/test_source_consistency_gate.py": {
+      "hash": "0a79b4ffc35be492",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: test_source_consistency_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/tests_coverage_gate.py": {
       "hash": "929a1b24cf48f988",
       "critical": true,
@@ -276,6 +281,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: vocab_hardcode_gate.py）"
     }
   },
-  "registered_at": "2026-07-12T14:29:52.767982+00:00",
+  "registered_at": "2026-07-12T18:37:17.646698+00:00",
   "last_check_at": "2026-07-12T05:07:45.509500+00:00"
 }

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.quality.agent_quality import AgentQualityTracker
+from zephyr.orchestrator.quality.agent_quality import AgentQualityTracker
 
 
 class TestAgentQualityTrackerInstantiation:

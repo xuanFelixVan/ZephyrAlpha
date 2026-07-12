@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
-from zephyr.trading.orchestrator.lifecycle.state_synchronizer import StateSynchronizer
+from zephyr.orchestrator.lifecycle.state_synchronizer import StateSynchronizer
 
 
 @pytest.fixture

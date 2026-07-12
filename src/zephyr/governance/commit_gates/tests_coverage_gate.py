@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.tests_coverage_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 文件含 src/zephyr/governance/commit_gates/*.py 变更时，扫描整个 gate 目录，检测每个 .py 文件 [TESTS] 头部声明的测试文件路径是否实际存在；声明但文件不存在 → 阻断 commit（passed=False）；[TESTS] — / 空 / none 豁免；_*.py 前缀文件豁免（helpers）；文件系统异常 fail-open（logger.warning）；守卫者的守卫者（quis custodiet ipsos custodes）——确保每个 gate 自身有测试
@@ -60,7 +60,7 @@ import logging
 import os
 import re
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 

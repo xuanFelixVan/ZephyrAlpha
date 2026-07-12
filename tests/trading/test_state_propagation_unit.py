@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.lifecycle.state_propagation import (
+from zephyr.orchestrator.lifecycle.state_propagation import (
     PROPAGATION_RULES,
     PropagationTarget,
     StatePropagator,

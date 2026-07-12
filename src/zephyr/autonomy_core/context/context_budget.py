@@ -2,7 +2,7 @@
 # [MODULE] zephyr.autonomy_core.context.context_budget
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
-# [CONSUMERS] blueprint.md §0; zephyr.autonomy_core 内部模块; zephyr.trading.orchestrator
+# [CONSUMERS] blueprint.md §0; zephyr.autonomy_core 内部模块; zephyr.orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] MOD-CONTEXT_ENGINE 四阶段流水线不可绕过; Token 预算硬限制; 原子写入 temp-file+os.replace()

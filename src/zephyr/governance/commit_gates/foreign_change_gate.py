@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.foreign_change_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] allow_overlap=True 时直接放行（逃生通道，与 HELD-OVERLAP 对齐）；无基线快照时 PASS（reconciler auto-commit 等未走 claim_files 的路径不阻断）；基线为空时 PASS（claim 时文件干净，所有变更都是本 session 的）；基线非空时 BLOCK（claim 时文件已有外来变更）；_claim_snapshots 读取异常安全降级为无快照（不阻断 commit）
@@ -61,7 +61,7 @@ from __future__ import annotations
 
 import os
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 __all__ = ["make_foreign_change_gate"]
 

@@ -33,7 +33,7 @@ import logging
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from zephyr.trading.orchestrator.core.task_queue import TaskCard
+    from zephyr.orchestrator.core.task_queue import TaskCard
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
 
 # 5.160.11 修复：TaskStatus字符串替换为Enum引用
@@ -72,7 +72,7 @@ class AutoDispatcher:
         }
 
         try:
-            from zephyr.trading.orchestrator.execution.context_bridge import ContextBridge
+            from zephyr.orchestrator.execution.context_bridge import ContextBridge
 
             bridge = ContextBridge()
             bridge.request_context(task_id=task_id, session_id=session_id)
@@ -84,7 +84,7 @@ class AutoDispatcher:
 
         if files_in_scope:
             try:
-                from zephyr.trading.orchestrator.execution.script_runner import ScriptRunner
+                from zephyr.orchestrator.execution.script_runner import ScriptRunner
 
                 runner = ScriptRunner()
                 audit_result = runner.run_audit(task_id, files_in_scope)

@@ -36,7 +36,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.rule_bridge.session_worktree import (
+from zephyr.gov_enforcement.rule_bridge.session_worktree import (
     session_worktree_abort,
     session_worktree_commit,
     session_worktree_merge,
@@ -152,8 +152,8 @@ def _clean_worktree_env(_isolated_repo, monkeypatch):
     """
     # 用模块对象 patch（字符串路径在 pytest 下不可靠）
     import sys
-    import zephyr.governance.rule_bridge.session_worktree as sw_mod
-    import zephyr.governance.rule_bridge.worktree_manager as wm_mod
+    import zephyr.gov_enforcement.rule_bridge.session_worktree as sw_mod
+    import zephyr.gov_enforcement.rule_bridge.worktree_manager as wm_mod
     test_mod = sys.modules[__name__]
     monkeypatch.setattr(sw_mod, "REPO_ROOT", _isolated_repo)
     monkeypatch.setattr(wm_mod, "REPO_ROOT", _isolated_repo)
@@ -478,8 +478,8 @@ def test_end_to_end_lifecycle():
 
 def test_sweep_cleans_stale_orphan():
     """sweep 清理老化的孤儿物理目录（git worktree 未注册，判据通过）。"""
-    from zephyr.governance.rule_bridge.session_worktree import _sweep_stale_worktrees
-    from zephyr.governance.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_stale_worktrees
+    from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
     from zephyr.security.access_control.session_concurrency import SessionRegistry
 
     orphan = Path(REPO_ROOT) / ".aidrafts" / "sess-stale-orphan"
@@ -502,8 +502,8 @@ def test_sweep_cleans_stale_orphan():
 
 def test_sweep_preserves_active_session():
     """sweep 不清理活跃 session 的 worktree（判据2：在 active registry）。"""
-    from zephyr.governance.rule_bridge.session_worktree import _sweep_stale_worktrees
-    from zephyr.governance.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_stale_worktrees
+    from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
     from zephyr.security.access_control.session_concurrency import SessionRegistry
 
     # 创建活跃 session worktree（start 会注册到 active registry）
@@ -523,8 +523,8 @@ def test_sweep_preserves_active_session():
 
 def test_sweep_skips_recent_dirs():
     """sweep 跳过太新的目录（判据1：age < threshold，防误清并发 AI 正在创建的）。"""
-    from zephyr.governance.rule_bridge.session_worktree import _sweep_stale_worktrees
-    from zephyr.governance.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_stale_worktrees
+    from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
     from zephyr.security.access_control.session_concurrency import SessionRegistry
 
     fresh = Path(REPO_ROOT) / ".aidrafts" / "sess-fresh-orphan"

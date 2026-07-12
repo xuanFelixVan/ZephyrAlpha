@@ -63,14 +63,14 @@ from zephyr.trading.feedback_loop.fitness_functions import (
     MetricStatus,
     from_gate_results,
 )
-from zephyr.trading.orchestrator.agent_orchestrator import (
+from zephyr.orchestrator.agent_orchestrator import (
     AgentOrchestrator,
     AgentRole,
     AgentRouter,
     HealthMonitor,
     RoutingStrategy,
 )
-from zephyr.trading.orchestrator.hallucination_detector import (
+from zephyr.orchestrator.hallucination_detector import (
     FallbackMode,
     HallucinationDetector,
     ModelCallResult,

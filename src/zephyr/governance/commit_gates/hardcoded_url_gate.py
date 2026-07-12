@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.hardcoded_url_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.commit_gates._diff_helpers; zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.governance.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged .py 文件 added 行含 http://localhost: 字面量时阻断 commit（passed=False）；shared/foundation/constants.py 豁免（SSoT 定义位置）；tests/ 豁免；import/注释/docstring 豁免；git diff 不可达 fail-open（logger.warning）；检出违规则 fail-closed（passed=False）
@@ -64,7 +64,7 @@ from zephyr.governance.commit_gates._diff_helpers import (
     _parse_diff_with_line_numbers,
     _read_staged_file,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

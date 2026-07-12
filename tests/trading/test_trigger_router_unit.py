@@ -32,7 +32,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.trading.orchestrator.execution.trigger_router import (
+from zephyr.orchestrator.execution.trigger_router import (
     DEFAULT_ROUTER_YAML_PATH,
     PHASE1D_TRIGGER_TYPES,
     RouterDispatchResult,

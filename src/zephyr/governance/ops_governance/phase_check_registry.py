@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-060 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.ops_governance.phase_check_registry
 # [DOMAIN] D_GOV_OPS_RESILIENCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.trading.orchestrator.contract_registry; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.trading.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.trading.orchestrator.batch_orchestrator
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.orchestrator.contract_registry; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.orchestrator.batch_orchestrator
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -399,7 +399,7 @@ def check_contract_compliance() -> GateResult:
         return GateResult.YELLOW
 
     try:
-        from zephyr.trading.orchestrator.contracts.contract_registry import AIReadOnlyHint, ContractRegistry
+        from zephyr.orchestrator.contracts.contract_registry import AIReadOnlyHint, ContractRegistry
 
         cr = ContractRegistry()
         contracts = cr.list_all()
@@ -660,7 +660,7 @@ def check_full_backtest() -> GateResult:
 
 def check_chaos_test() -> GateResult:
     try:
-        from zephyr.trading.orchestrator.fault_tolerance.chaos_engine import ChaosEngine
+        from zephyr.orchestrator.fault_tolerance.chaos_engine import ChaosEngine
         from zephyr.governance.drift_detection.chaos_injector import ChaosInjector
 
         return GateResult.GREEN
@@ -877,7 +877,7 @@ def check_code_dedup() -> GateResult:
 
 def check_task_system() -> GateResult:
     try:
-        from zephyr.trading.orchestrator.execution.batch_orchestrator import BatchOrchestrator
+        from zephyr.orchestrator.execution.batch_orchestrator import BatchOrchestrator
         from zephyr.governance.persistence.task_repo import TaskRepository
 
         return GateResult.GREEN

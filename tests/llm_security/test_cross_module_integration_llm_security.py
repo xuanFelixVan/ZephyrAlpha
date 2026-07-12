@@ -52,13 +52,13 @@ class TestPipelineLSGIntegration:
 
 class TestOrchestratorLSGIntegration:
     def test_lsg_scan_agent_action_method_exists(self):
-        from zephyr.trading.orchestrator.agent_orchestrator import AgentOrchestrator
+        from zephyr.orchestrator.agent_orchestrator import AgentOrchestrator
 
         ao = AgentOrchestrator.__new__(AgentOrchestrator)
         assert hasattr(ao, "_lsg_scan_agent_action")
 
     def test_lsg_scan_blocks_dangerous_tool(self):
-        from zephyr.trading.orchestrator.agent_orchestrator import AgentOrchestrator
+        from zephyr.orchestrator.agent_orchestrator import AgentOrchestrator
 
         ao = AgentOrchestrator.__new__(AgentOrchestrator)
         result = ao._lsg_scan_agent_action(

@@ -13,7 +13,7 @@
 
 from datetime import UTC, datetime, timedelta
 
-from zephyr.trading.orchestrator.quality.knowledge_freshness import KnowledgeFreshnessManager
+from zephyr.orchestrator.quality.knowledge_freshness import KnowledgeFreshnessManager
 
 
 class TestKnowledgeFreshnessManagerInstantiation:

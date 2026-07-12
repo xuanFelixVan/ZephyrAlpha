@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from unittest.mock import MagicMock
 
-from zephyr.trading.orchestrator.task_queue import PipelineDispatcher, TaskQueue, get_queue
+from zephyr.orchestrator.task_queue import PipelineDispatcher, TaskQueue, get_queue
 
 
 @dataclass
@@ -165,7 +165,7 @@ class TestPipelineDispatcherProtocol:
 
 class TestGetQueue:
     def teardown_method(self):
-        import zephyr.trading.orchestrator.task_queue as tq_mod
+        import zephyr.orchestrator.task_queue as tq_mod
 
         tq_mod._queue = None
 

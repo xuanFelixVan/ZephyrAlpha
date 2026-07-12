@@ -20,7 +20,7 @@
 """
 from __future__ import annotations
 
-from zephyr.governance.rule_bridge.commit_gate_registry import (
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     CommitGateRegistry,
     GateResult,
     GateSpec,

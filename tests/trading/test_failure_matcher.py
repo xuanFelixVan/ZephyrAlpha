@@ -11,7 +11,7 @@
 # [TESTS] pytest tests/test_failure_matcher.py -q
 # [TTL] task_bound
 
-from zephyr.trading.orchestrator.resilience.failure_matcher import (
+from zephyr.orchestrator.resilience.failure_matcher import (
     FailureCategory,
     FailureMatch,
     FailureMatcher,

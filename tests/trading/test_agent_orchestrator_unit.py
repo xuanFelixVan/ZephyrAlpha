@@ -25,7 +25,7 @@ from typing import Any
 
 import pytest
 
-from zephyr.trading.orchestrator.agent_orchestrator import (
+from zephyr.orchestrator.agent_orchestrator import (
     DEFAULT_ROLE_DOMAIN_MATRIX,
     AgentOrchestrator,
     AgentProfile,
@@ -445,7 +445,7 @@ class TestAgentOrchestrator:
 
 
 def test_exports_present() -> None:
-    from zephyr.trading.orchestrator import agent_orchestrator as m
+    from zephyr.orchestrator import agent_orchestrator as m
 
     for name in [
         "AgentRole",

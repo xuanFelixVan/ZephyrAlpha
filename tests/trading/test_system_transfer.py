@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.lifecycle.system_transfer import SystemTransferManager
+from zephyr.orchestrator.lifecycle.system_transfer import SystemTransferManager
 
 
 class TestSystemTransferManagerInstantiation:

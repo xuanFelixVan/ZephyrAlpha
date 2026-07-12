@@ -245,7 +245,7 @@ class TestDLQOverflow:
 
     def test_massive_dlq_enqueue_no_loss(self):
         """大量消息入队DLQ，验证不丢数据。"""
-        from zephyr.trading.orchestrator.execution.dlq_manager import DLQManager
+        from zephyr.orchestrator.execution.dlq_manager import DLQManager
 
         dlq = DLQManager()
 
@@ -273,7 +273,7 @@ class TestDLQOverflow:
 
     def test_dlq_replay_after_max_retries(self):
         """验证DLQ重试超限后标记为dead。"""
-        from zephyr.trading.orchestrator.execution.dlq_manager import DLQManager
+        from zephyr.orchestrator.execution.dlq_manager import DLQManager
 
         dlq = DLQManager()
 
@@ -296,7 +296,7 @@ class TestDLQOverflow:
 
     def test_dlq_concurrent_enqueue_thread_safety(self):
         """多线程并发入队DLQ，验证线程安全。"""
-        from zephyr.trading.orchestrator.execution.dlq_manager import DLQManager
+        from zephyr.orchestrator.execution.dlq_manager import DLQManager
 
         dlq = DLQManager()
         enqueued_count = 0

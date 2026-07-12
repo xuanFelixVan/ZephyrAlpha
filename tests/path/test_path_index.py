@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.governance.path_index import PATH_INDEX, PathIndex
+from zephyr.orchestrator.governance.path_index import PATH_INDEX, PathIndex
 
 
 @pytest.fixture(autouse=True)

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.governance.version_manifest import VERSION_MANIFEST, VersionManifest
+from zephyr.orchestrator.governance.version_manifest import VERSION_MANIFEST, VersionManifest
 
 
 class TestVersionManifestInstantiation:

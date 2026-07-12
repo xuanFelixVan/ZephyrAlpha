@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.fault_tolerance.network_partition import NetworkPartitionGuard
+from zephyr.orchestrator.fault_tolerance.network_partition import NetworkPartitionGuard
 
 
 class TestNetworkPartitionGuardInstantiation:

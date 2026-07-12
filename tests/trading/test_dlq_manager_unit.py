@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.execution.dlq_manager import DLQManager
+from zephyr.orchestrator.execution.dlq_manager import DLQManager
 
 
 @pytest.fixture

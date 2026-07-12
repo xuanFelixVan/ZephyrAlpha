@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.fault_tolerance.fault_types import (
+from zephyr.orchestrator.fault_tolerance.fault_types import (
     DataCorruptionFault,
     ExceptionFault,
     FaultTypeNotFoundError,

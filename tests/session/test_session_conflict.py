@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.lifecycle.session_conflict import SessionConflictGuard
+from zephyr.orchestrator.lifecycle.session_conflict import SessionConflictGuard
 
 
 class TestSessionConflictGuard:

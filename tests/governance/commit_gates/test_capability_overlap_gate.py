@@ -40,7 +40,7 @@ from zephyr.governance.commit_gates.capability_overlap_gate import (  # noqa: E4
     _tokenize,
     make_capability_overlap_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 import zephyr.governance.capability_lookup as _cap_lookup  # noqa: E402
 

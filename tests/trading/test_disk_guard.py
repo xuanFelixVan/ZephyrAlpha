@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.fault_tolerance.disk_guard import DISK_THRESHOLD_PCT, DiskGuard
+from zephyr.orchestrator.fault_tolerance.disk_guard import DISK_THRESHOLD_PCT, DiskGuard
 
 
 class TestDiskThresholdConstant:

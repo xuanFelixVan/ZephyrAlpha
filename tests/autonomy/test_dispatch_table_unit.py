@@ -11,7 +11,7 @@ from __future__ import annotations
 """分派表单元测试——验证 13 系统分派映射的正确性。"""
 
 
-from zephyr.trading.orchestrator.execution.dispatch_table import (
+from zephyr.orchestrator.execution.dispatch_table import (
     DISPATCH_TABLE,
     cold_start_reading,
     get_ct_contracts,

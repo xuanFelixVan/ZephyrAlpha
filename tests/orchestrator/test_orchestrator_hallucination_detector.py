@@ -18,7 +18,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from zephyr.trading.orchestrator.hallucination_detector import (
+from zephyr.orchestrator.hallucination_detector import (
     BudgetState,
     FallbackMode,
     HallucinationDetector,

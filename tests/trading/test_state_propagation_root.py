@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.lifecycle.state_propagation import (
+from zephyr.orchestrator.lifecycle.state_propagation import (
     PROPAGATION_RULES,
     PropagationTarget,
     StatePropagationEvent,

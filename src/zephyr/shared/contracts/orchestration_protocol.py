@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.orchestration_protocol
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.infrastructure.rollback; zephyr.governance.ops_governance; zephyr.infrastructure.rollback; zephyr.trading.orchestrator.chaos_hooks; zephyr.trading.orchestrator.batch_orchestrator
+# [CONSUMERS] zephyr.infrastructure.rollback; zephyr.governance.ops_governance; zephyr.infrastructure.rollback; zephyr.orchestrator.chaos_hooks; zephyr.orchestrator.batch_orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Protocol MUST NOT import from zephyr.trading; only structural subtyping

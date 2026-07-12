@@ -45,7 +45,7 @@ from zephyr.governance.commit_gates.import_direction_gate import (  # noqa: E402
     _collect_type_checking_imports,
     make_import_direction_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 @dataclass

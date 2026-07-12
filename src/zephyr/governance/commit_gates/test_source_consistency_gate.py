@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.test_source_consistency_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.commit_gates._diff_helpers; zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.shared.io.paths (REPO_ROOT)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.governance.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.shared.io.paths (REPO_ROOT)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged tests/ .py 文件 added 行中 from zephyr.* import 的符号在源码中不存在时阻断 commit（passed=False）；只检查 added 行（防误阻断现有漂移）；tests/ 专属 gate（只检测测试文件，不检测源码）；module-level pytest.skip/importorskip 豁免（已标记漂移的测试文件不重复检测）；检查所有顶层符号（class/def/assign/annassign），不依赖 __all__（Python 允许显式 import 任何顶层符号）；源码文件不存在/解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）
@@ -62,7 +62,7 @@ from zephyr.governance.commit_gates._diff_helpers import (
     _get_staged_py_files,
     _read_staged_file,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)

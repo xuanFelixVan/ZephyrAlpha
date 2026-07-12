@@ -28,7 +28,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from zephyr.trading.orchestrator.hallucination_detector import (
+from zephyr.orchestrator.hallucination_detector import (
     KEYWORD_HALLU_RULES,
     FallbackMode,
     HallucinationDetector,

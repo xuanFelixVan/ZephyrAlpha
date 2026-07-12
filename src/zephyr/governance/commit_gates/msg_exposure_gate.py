@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.msg_exposure_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息 f-string 中含敏感变量名（tx_id/path/file_path/password/secret/token 等）时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `# noqa: MSG-EXPOSURE` 注释的单行豁免
@@ -68,7 +68,7 @@ import ast
 import logging
 import os
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.contracts.contract_registry import AIReadOnlyHint, ContractRegistry
-from zephyr.trading.orchestrator.contracts.contract_router import (
+from zephyr.orchestrator.contracts.contract_registry import AIReadOnlyHint, ContractRegistry
+from zephyr.orchestrator.contracts.contract_router import (
     ROUTE_MAP,
     SYSTEM_NAME_MAP,
     ContractRouter,

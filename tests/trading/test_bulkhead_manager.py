@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.fault_tolerance.bulkhead_manager import BULKHEAD_QUOTAS, SHARED_POOLS, BulkheadManager
+from zephyr.orchestrator.fault_tolerance.bulkhead_manager import BULKHEAD_QUOTAS, SHARED_POOLS, BulkheadManager
 
 
 class TestBulkheadManagerInstantiation:

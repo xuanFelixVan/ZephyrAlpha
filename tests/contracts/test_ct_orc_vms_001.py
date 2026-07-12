@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.contracts.contract_registry import ContractRegistry
+from zephyr.orchestrator.contracts.contract_registry import ContractRegistry
 
 
 def test_ct_orc_vms_registered():

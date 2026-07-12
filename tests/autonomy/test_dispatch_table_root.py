@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.trading.orchestrator.execution.dispatch_table import (
+    from zephyr.orchestrator.execution.dispatch_table import (
         SystemDispatch,
         cold_start_reading,
         get_ct_contracts,

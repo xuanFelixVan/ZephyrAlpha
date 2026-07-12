@@ -35,7 +35,7 @@ class _MockAgentOrchestrator:
 
 
 def _patched_agent_role():
-    from zephyr.trading.orchestrator.agent_orchestrator import AgentRole as _Real
+    from zephyr.orchestrator.agent_orchestrator import AgentRole as _Real
 
     mock = MagicMock()
     mock.__members__ = _Real.__members__

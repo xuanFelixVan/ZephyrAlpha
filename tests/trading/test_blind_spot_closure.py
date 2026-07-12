@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.quality.blind_spot_closure import BLIND_SPOTS, BlindSpot, BlindSpotClosure
+from zephyr.orchestrator.quality.blind_spot_closure import BLIND_SPOTS, BlindSpot, BlindSpotClosure
 
 
 class TestBlindSpotInstantiation:

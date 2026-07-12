@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.governance.dependency_lock import DependencyLock
+from zephyr.orchestrator.governance.dependency_lock import DependencyLock
 
 
 class TestDependencyLock:

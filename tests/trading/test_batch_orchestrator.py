@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.trading.orchestrator.execution.batch_orchestrator import BatchOrchestrator, BatchProgress
+from zephyr.orchestrator.execution.batch_orchestrator import BatchOrchestrator, BatchProgress
 
 
 class TestBatchProgressInstantiation:

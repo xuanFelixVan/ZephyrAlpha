@@ -16,8 +16,8 @@ from zephyr.infrastructure.system_telemetry.health_probes import (
     HealthProbeManager,
     ProbeStatus,
 )
-from zephyr.trading.orchestrator.contracts.contract_registry import ContractRegistry
-from zephyr.trading.orchestrator.contracts.contract_router import ContractRouter
+from zephyr.orchestrator.contracts.contract_registry import ContractRegistry
+from zephyr.orchestrator.contracts.contract_router import ContractRouter
 
 
 def test_ct_health_registered():

@@ -2115,7 +2115,7 @@ class TaskRepository:
 
         # 使用 GitCommitGateway 串行化 commit（治本：防幽灵提交）
         try:
-            from zephyr.governance.rule_bridge.git_commit_gateway import (
+            from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
                 CommitStatus,
                 GitCommitGateway,
             )

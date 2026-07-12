@@ -13,7 +13,7 @@
 
 from datetime import UTC, datetime
 
-from zephyr.trading.orchestrator.lifecycle.incident_postmortem import Incident, IncidentManager
+from zephyr.orchestrator.lifecycle.incident_postmortem import Incident, IncidentManager
 
 
 class TestIncidentModel:

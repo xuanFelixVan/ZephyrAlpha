@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.script_system.gate_bridge
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.script_system.__init__
-# [CONSUMERS] zephyr.trading.orchestrator.script_runner; AutoRuntime Core post-scan phase
+# [CONSUMERS] zephyr.orchestrator.script_runner; AutoRuntime Core post-scan phase
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 12维->gate_id 映射; 维度聚合后批量提交; gate不可用时仅日志不阻塞

@@ -14,7 +14,7 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.trading.orchestrator.lifecycle.state_synchronizer import (
+from zephyr.orchestrator.lifecycle.state_synchronizer import (
     GhostTask,
     OrphanFile,
     StateSynchronizer,

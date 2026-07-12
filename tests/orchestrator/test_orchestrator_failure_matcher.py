@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.failure_matcher import FailureDiagnosis, FailurePatternMatcher
+from zephyr.orchestrator.failure_matcher import FailureDiagnosis, FailurePatternMatcher
 
 
 class TestFailureDiagnosis:

@@ -41,7 +41,7 @@ from zephyr.governance.commit_gates.id_uniqueness_gate import (  # noqa: E402
     _CONFIG_REL,
     make_id_uniqueness_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 def _make_gateway(project_root=None):

@@ -47,7 +47,7 @@ from zephyr.governance.commit_gates.ssot_redefinition_gate import (  # noqa: E40
     _is_ssot_symbol,
     make_ssot_redefinition_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 # ============================================================================

@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.panorama_alignment_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d5_architecture.generators.align_panoramas (run_alignment, PanoramaEmptyError)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d5_architecture.generators.align_panoramas (run_alignment, PanoramaEmptyError)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 四图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
@@ -47,7 +47,7 @@ import logging
 import os
 import sys
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 

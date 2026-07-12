@@ -44,7 +44,7 @@ from zephyr.governance.commit_gates.bare_sql_gate import (  # noqa: E402
     _SQL_PATTERN,
     make_bare_sql_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 @dataclass

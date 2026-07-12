@@ -47,7 +47,7 @@ from zephyr.governance.commit_gates.orphan_module_gate import (  # noqa: E402
     _is_entry_point,
     make_orphan_module_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 @dataclass

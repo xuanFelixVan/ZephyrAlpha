@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.feedback_loop.alert_dispatcher
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.trading.__init__
-# [CONSUMERS] zephyr.trading.orchestrator.alert_handler
+# [CONSUMERS] zephyr.orchestrator.alert_handler
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] severity 必须是 CRITICAL/HIGH/MEDIUM/LOW; 同一 event_id 不重复 dispatch
@@ -101,7 +101,7 @@ class DispatchError(Exception):
 class AlertDispatcher:
     def dispatch(self, event: AlertEvent) -> DispatchResult:
         try:
-            from zephyr.trading.orchestrator.contracts.alert_handler import AlertHandler
+            from zephyr.orchestrator.contracts.alert_handler import AlertHandler
 
             handler = AlertHandler()
             task_card = handler.handle_alert(event)

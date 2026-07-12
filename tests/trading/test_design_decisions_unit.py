@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.contracts.design_decisions import (
+from zephyr.orchestrator.contracts.design_decisions import (
     DECISIONS,
     DecisionRegistry,
 )

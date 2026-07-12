@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/git_commit.py | §ghost-commit-gateway-cli
 # [MODULE] scripts.git_commit
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.rule_bridge.git_commit_gateway
+# [DEPENDENCIES] scripts.governance.__init__; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -45,7 +45,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.rule_bridge.git_commit_gateway import (  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
     CommitStatus,
     GitCommitGateway,
 )

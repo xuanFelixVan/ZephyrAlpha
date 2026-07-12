@@ -182,7 +182,7 @@ def check_manifest(manifest_path: Path) -> dict:
 def get_expected_contracts() -> list[str]:
     """get_expected_contracts implementation."""
     try:
-        from zephyr.trading.orchestrator.contracts.contract_registry import ContractRegistry
+        from zephyr.orchestrator.contracts.contract_registry import ContractRegistry
 
         cr = ContractRegistry()
         return [c.contract_id for c in cr.list_all()]
@@ -204,7 +204,7 @@ def check_missing_manifests() -> list[dict]:
     for ct_id in expected:
         if ct_id not in existing_ct_ids:
             try:
-                from zephyr.trading.orchestrator.contracts.contract_registry import AIReadOnlyHint, ContractRegistry
+                from zephyr.orchestrator.contracts.contract_registry import AIReadOnlyHint, ContractRegistry
 
                 cr = ContractRegistry()
                 contract = cr.get(ct_id)

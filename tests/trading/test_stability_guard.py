@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.quality.stability_guard import StabilityGuard
+from zephyr.orchestrator.quality.stability_guard import StabilityGuard
 
 
 class TestStabilityGuard:

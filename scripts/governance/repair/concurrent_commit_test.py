@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/repair/concurrent_commit_test.py | §ghost-commit-red-blue
 # [MODULE] scripts.governance.repair.concurrent_commit_test
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.rule_bridge.git_commit_gateway
+# [DEPENDENCIES] scripts.governance.__init__; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -66,7 +66,7 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT：zephyr.shared.io.paths）
-from zephyr.governance.rule_bridge.git_commit_gateway import (  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
     CommitStatus,
     GitCommitGateway,
 )

@@ -40,7 +40,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from zephyr.trading.orchestrator.hallucination_detector import (
+from zephyr.orchestrator.hallucination_detector import (
     KEYWORD_HALLU_RULES,
     BudgetState,
     FallbackMode,

@@ -45,7 +45,7 @@ from zephyr.governance.commit_gates.doc_ref_broken_gate import (  # noqa: E402
     _is_url_or_anchor,
     make_doc_ref_broken_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 @dataclass

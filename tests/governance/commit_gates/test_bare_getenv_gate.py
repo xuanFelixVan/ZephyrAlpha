@@ -46,7 +46,7 @@ from zephyr.governance.commit_gates.bare_getenv_gate import (  # noqa: E402
     _BareGetenvVisitor,
     make_bare_getenv_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 @dataclass

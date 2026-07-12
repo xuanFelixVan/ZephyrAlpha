@@ -49,7 +49,7 @@ import zephyr.governance.commit_gates.vocab_hardcode_gate as _vocab_mod  # noqa:
 from zephyr.governance.commit_gates.vocab_hardcode_gate import (  # noqa: E402
     make_vocab_hardcode_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 @dataclass

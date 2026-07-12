@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.ssot_redefinition_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.governance.capability_lookup (REGISTRY_YAML)
-# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.governance.capability_lookup (REGISTRY_YAML)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged .py 文件中重新定义已 SSoT 化的符号(class/赋值)则阻断;SSoT 符号清单从 capability_canonical_file_registry.yaml aliases 自动派生(非新真源);canonical 文件本身定义豁免;tests/ 豁免;import/注释行豁免;registry 缺失/解析失败 fail-closed(阻断,除非 registry 本身在 staged 中正在修复);git diff 不可达 fail-open(logger.warning 告警检测器失效)
@@ -45,7 +45,7 @@ from __future__ import annotations
 import logging
 import re
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

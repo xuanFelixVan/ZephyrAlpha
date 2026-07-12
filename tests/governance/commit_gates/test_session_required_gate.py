@@ -39,7 +39,7 @@ from zephyr.governance.commit_gates.session_required_gate import (  # noqa: E402
     _RESERVED_SESSION_IDS,
     make_session_required_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 def _make_gateway(session_info=None, get_session_raises=False):

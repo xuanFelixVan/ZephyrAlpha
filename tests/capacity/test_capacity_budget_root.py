@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.governance.capacity_budget import (
+from zephyr.orchestrator.governance.capacity_budget import (
     DEFAULT_POOL_QUOTAS,
     CapacityBudget,
     CapacityBudgetController,

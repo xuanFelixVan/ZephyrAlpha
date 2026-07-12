@@ -46,7 +46,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 from zephyr.governance.commit_gates.unsafe_dict_spread_gate import (  # noqa: E402
     make_unsafe_dict_spread_gate,
 )
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
 
 def _make_mock_gateway(

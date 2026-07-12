@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.fault_tolerance.canary_manager import CanaryManager
+from zephyr.orchestrator.fault_tolerance.canary_manager import CanaryManager
 
 
 class TestCanaryManagerInstantiation:

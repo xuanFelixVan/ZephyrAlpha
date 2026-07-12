@@ -15,7 +15,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace
-from zephyr.trading.orchestrator.file_task_mapper import (
+from zephyr.orchestrator.file_task_mapper import (
     FileTaskMapper,
     RegisterReport,
     SyncInconsistency,

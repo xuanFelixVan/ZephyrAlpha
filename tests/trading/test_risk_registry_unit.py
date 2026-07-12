@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.governance.risk_registry import RiskRegistry, RiskStatus
+from zephyr.orchestrator.governance.risk_registry import RiskRegistry, RiskStatus
 
 
 @pytest.fixture

@@ -22,7 +22,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.governance.commit_gates.held_overlap_gate import (
     make_held_overlap_gate,
 )
