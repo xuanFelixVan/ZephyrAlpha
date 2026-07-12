@@ -135,15 +135,14 @@ tasks:
 
   - task_id: hk_connect_flow_incremental
     table: c1_market.hk_connect_flow
-    source: ifind
+    source: akshare
     schedule: daily_capital
-    incremental: true
+    incremental: false  # AKShare stock_hsgt_hist_em 返回完整历史，全量刷新
     dependencies: []
     capability: hk_connect_flow
     symbols: null
     extra:
-      description: "沪深港通资金增量（试用账号不可用，需正式账号）"
-      disabled: true
+      description: "沪深港通资金历史（AKShare stock_hsgt_hist_em，有效范围 2014-11-17~2024-08-16 港交所停止公布前）"
 
   - task_id: kline_futures_incremental
     table: c1_market.kline_futures
