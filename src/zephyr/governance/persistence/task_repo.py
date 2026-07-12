@@ -2005,10 +2005,11 @@ class TaskRepository:
                 )
                 # 5.15.2 修复：COMPLETED 时记录 git_commit_pending 事件，与状态转换原子落盘
                 # 若后续 git commit 失败，该事件保留为 pending，可被 reconciler 重试（Outbox 模式）
+                # 5.178 修复: event_type 改为 task_event（events表CHECK约束仅允许7种枚举值）
                 if to_status == TaskStatus.COMPLETED:
                     self._record_event(
                         conn,
-                        "git_commit_pending",
+                        "task_event",
                         {"task_id": task_id},
                         task_id=task_id,
                         session_id=session_id,
@@ -2045,7 +2046,7 @@ class TaskRepository:
                 with self._write_tx() as ev_conn:
                     self._record_event(
                         ev_conn,
-                        "git_commit_completed",
+                        "task_event",  # 5.178: git_commit_completed→task_event（CHECK约束）
                         {"task_id": task_id},
                         task_id=task_id,
                         session_id=session_id,
@@ -2055,7 +2056,7 @@ class TaskRepository:
                 with self._write_tx() as ev_conn:
                     self._record_event(
                         ev_conn,
-                        "git_commit_failed",
+                        "task_event",  # 5.178: git_commit_failed→task_event（CHECK约束）
                         {"task_id": task_id, "error": str(exc)[:500]},
                         task_id=task_id,
                         session_id=session_id,
