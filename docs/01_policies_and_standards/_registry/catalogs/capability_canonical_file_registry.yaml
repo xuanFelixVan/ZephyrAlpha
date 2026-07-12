@@ -4653,6 +4653,14 @@ creation_tokens:
     created_by: "session-sess-37316-20260706155138"
     capability: "rule_registry_collection_registry"
 
+  # --- P2-2: module_id 全仓一致性扫描脚本（2026-07-13）---
+  # check_module_id_consistency.py：--scan-existing 模式扫描全仓所有 .py 文件的 module_id 冲突
+  # 冲突分类: Type A(__init__复制)/B(跨域副本)/C(bridges副本)/D(其他) + 游离声明行检测
+  - file: "scripts/governance/d7_code/check_module_id_consistency.py"
+    token: "auto-check-module-id-consistency-20260713"
+    created_by: "session-sess-25680-20260713053523"
+    capability: "module_id_consistency_gate"
+
   # --- 全景图修复批次:契约目录+资产清单生成器（2026-07-06）---
   - file: "scripts/governance/d5_architecture/generators/generate_contract_catalog.py"
     token: "auto-generate-contract-catalog-20260706"
