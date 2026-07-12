@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.ai_construction_detectors
-# [DOMAIN] D_BEHAVIORAL_AUDIT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
 # [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detector_core/bridges/__init__.py; tests/ai/test_ai_construction_detectors.py (+3 more)
 # [STARTUP] imported

@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.contract_drift_detector
-# [DOMAIN] D_BEHAVIORAL_AUDIT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
 # [CONSUMERS] src/zephyr/infra_ops/observability/contract_metrics.py(委托调用)
 # [STARTUP] imported

@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.drift_hotfix_bypass
-# [DOMAIN] D_BEHAVIORAL_AUDIT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
 # [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_drift.py; src/zephyr/governance/rule_enforcement/drift_detector.py (+3 more)
 # [STARTUP] imported

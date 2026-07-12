@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.file_attr_checker
-# [DOMAIN] D_BEHAVIORAL_AUDIT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
 # [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; tests/file/test_file_attr_checker.py
 # [STARTUP] imported

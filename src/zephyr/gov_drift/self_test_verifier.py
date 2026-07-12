@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.self_test_verifier
-# [DOMAIN] D_BEHAVIORAL_AUDIT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
 # [CONSUMERS] src/zephyr/governance/drift_detection/__main__.py; tests/infrastructure/drift_red_blue_adversarial.py; tests/infrastructure/test_drift_e2e_pipeline.py; tests/self_check/test_self_test_verifier.py
 # [STARTUP] imported
