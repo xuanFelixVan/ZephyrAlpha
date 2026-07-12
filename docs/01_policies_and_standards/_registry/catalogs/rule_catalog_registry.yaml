@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-12T21:28:39Z'
+generated_at: '2026-07-12T21:30:20Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 156
@@ -1035,7 +1035,7 @@ files:
   aliases:
   - GOV-ENG-002
   - GOV-ENG-003
-  section_count: 23
+  section_count: 24
 - path: docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml
   module_id: TRAE-048
   title: 操作-Vibe Coding会话管理
