@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md
 # [MODULE] zephyr.governance.drift_detector_core.model_drift_monitor
-# [DOMAIN] D_BEHAVIORAL_AUDIT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
 # [CONSUMERS] MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020
 # [STARTUP] imported
