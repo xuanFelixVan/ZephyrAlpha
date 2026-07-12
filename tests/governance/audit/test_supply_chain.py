@@ -17,7 +17,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.audit_trail.supply_chain import (
+from zephyr.gov_audit.supply_chain import (
     AuditPackageResult,
     IntegrityVerifyResult,
     PackageRecord,

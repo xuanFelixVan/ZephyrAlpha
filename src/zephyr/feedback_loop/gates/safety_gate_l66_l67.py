@@ -26,7 +26,7 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 
-from zephyr.governance.audit_trail.bridge import write_to_core
+from zephyr.gov_audit.bridge import write_to_core
 from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateResult, GateType, GateVerdict
 
 

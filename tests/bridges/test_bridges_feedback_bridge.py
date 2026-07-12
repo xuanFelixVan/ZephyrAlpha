@@ -17,7 +17,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.audit_trail.bridges.audit_feedback_bridge import AuditFeedbackBridge
+from zephyr.gov_audit.bridges.audit_feedback_bridge import AuditFeedbackBridge
 
 
 @pytest.fixture

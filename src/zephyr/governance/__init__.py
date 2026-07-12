@@ -98,50 +98,50 @@ def __getattr__(name):
 # ARCH-036: 路径漂移防御——部分模块已被重构到子目录，直接 import 可能失败。
 # 用 try/except 包裹避免单个 import 失败阻塞整个包初始化（符合 __getattr__ 延迟导入设计）。
 try:
-    from zephyr.governance.audit_trail.agent_signer import AgentSigner
+    from zephyr.gov_audit.agent_signer import AgentSigner
     from zephyr.governance.data_governance.akshare_provider import AkshareProvider
     from zephyr.governance.base import FactorMeta
     from zephyr.governance.code_dedup.trackers.blind_spot_tracker import BlindSpotStatus
     from zephyr.governance.capability_lookup import CapabilityLookup
     from zephyr.governance.code_dedup.canary_manager import CanaryFile
-    from zephyr.governance.audit_trail.changelog_manager import ChangeImpact
+    from zephyr.gov_audit.changelog_manager import ChangeImpact
     from zephyr.infrastructure.asset_inventory.classifier import Classifier
     from zephyr.governance.code_dedup.cli import main
-    from zephyr.governance.audit_trail.code_archaeology import BlameRecord
+    from zephyr.gov_audit.code_archaeology import BlameRecord
     from zephyr.infrastructure.rollback.complexity_budget import ComplexityReport
-    from zephyr.governance.audit_trail.compliance_map import ComplianceFramework
+    from zephyr.gov_audit.compliance_map import ComplianceFramework
     from zephyr.governance.architecture_governance.construction_verifier import ConstructionVerifier
-    from zephyr.governance.audit_trail.corporate_actions import CorporateActionType
+    from zephyr.gov_audit.corporate_actions import CorporateActionType
     from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
     from zephyr.governance.persistence.database_service import DatabaseService
     from zephyr.infrastructure.asset_inventory.dependency import DependencyNode
     from zephyr.governance.rule_enforcement.dlq_retry_policy import RetryResult
-    from zephyr.governance.audit_trail.dora_metrics import DORATargets
-    from zephyr.governance.audit_trail.feedback_self_audit import FeedbackNode
+    from zephyr.gov_audit.dora_metrics import DORATargets
+    from zephyr.gov_audit.feedback_self_audit import FeedbackNode
     from zephyr.governance.finding_ingest import IngestResult
     from zephyr.governance.semantic_audit.fix_result_prioritizer import PrioritizedFixResult
     from zephyr.gov_enforcement.behavioral_admission.gate_event_adapter import GateEventAdapter
-    from zephyr.governance.audit_trail.glossary_matrix import GlossaryEntry
+    from zephyr.gov_audit.glossary_matrix import GlossaryEntry
     from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
-    from zephyr.governance.audit_trail.kb_gate import KBWriteCheckResult
+    from zephyr.gov_audit.kb_gate import KBWriteCheckResult
     from zephyr.infrastructure.asset_inventory.lifecycle import Lifecycle
     from zephyr.governance.architecture_governance.llm_impact_analyzer import RiskLevel
     from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
     from zephyr.infrastructure.asset_inventory.models import AssetType
     from zephyr.governance.code_dedup.phase_executor import PhaseStatus
     from zephyr.governance.engine.pipeline_base import ExperimentConfig
-    from zephyr.governance.audit_trail.privacy import PIICategory
+    from zephyr.gov_audit.privacy import PIICategory
     from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
     from zephyr.infrastructure.asset_inventory.registry_adapter import RegistryParseError
-    from zephyr.governance.audit_trail.sbom_generator import LicenseType
+    from zephyr.gov_audit.sbom_generator import LicenseType
     from zephyr.governance.semantic_audit.self_healer import SelfHealError
     from zephyr.governance.semantic_audit.self_health import SLIResult
     from zephyr.governance.audit.snapshot_manager import SnapshotError
-    from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
-    from zephyr.governance.audit_trail.supply_chain import PackageRecord
+    from zephyr.gov_audit.spec_auditor import record_agent_spec
+    from zephyr.gov_audit.supply_chain import PackageRecord
     from zephyr.governance.ops_governance.token_budget import PoolLevel
     from zephyr.infrastructure.asset_inventory.trust_anchor import TrustLevel
-    from zephyr.governance.audit_trail.wqa_scorer import WQAScore
+    from zephyr.gov_audit.wqa_scorer import WQAScore
 except (ImportError, RuntimeError):
     # RuntimeError: 捕获循环 import _DeadlockError（importlib._bootstrap._DeadlockError 是 RuntimeError 子类）
     pass

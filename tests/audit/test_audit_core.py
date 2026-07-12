@@ -16,7 +16,7 @@ import tempfile
 
 import pytest
 
-from zephyr.governance.audit_trail.models import (
+from zephyr.gov_audit.models import (
     AuditEntryV1,
     AuditEventType,
     AuditMetrics,
@@ -29,7 +29,7 @@ from zephyr.governance.audit_trail.models import (
     ProvenanceStandard,
     TaskAuditSummary,
 )
-from zephyr.governance.audit_trail.writer import AuditWriter
+from zephyr.gov_audit.writer import AuditWriter
 
 
 class TestAuditWriterCreation:

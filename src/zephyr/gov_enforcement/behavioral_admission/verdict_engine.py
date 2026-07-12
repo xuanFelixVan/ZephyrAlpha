@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §3.1
 # [MODULE] zephyr.gov_enforcement.behavioral_admission.verdict_engine
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.governance.audit_trail.models
+# [DEPENDENCIES] zephyr.gov_audit.models
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-031(auto-fix-engine);zephyr.gov_enforcement.behavioral_admission.admission_controller
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -28,7 +28,7 @@ from pydantic import BaseModel, ConfigDict, Field
 logger = logging.getLogger(__name__)
 
 try:
-    from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType
+    from zephyr.gov_audit.models import AuditEntryV1, AuditEventType
 
     _HAS_AUDIT_ENTRY = True
 except ImportError:

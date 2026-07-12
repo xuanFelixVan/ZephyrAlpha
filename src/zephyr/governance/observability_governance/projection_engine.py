@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §event-sourcing
 # [MODULE] zephyr.governance.observability_governance.projection_engine
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.audit_trail.event_store; zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.gov_audit.event_store; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.governance.persistence.task_repo; zephyr.governance.audit.snapshot_manager
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -36,7 +36,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.audit_trail.event_store import EventStore
+from zephyr.gov_audit.event_store import EventStore
 from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)

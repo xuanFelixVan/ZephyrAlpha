@@ -13,13 +13,13 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.compliance_map import (
+from zephyr.gov_audit.compliance_map import (
     ComplianceFramework,
     ComplianceMapper,
     ComplianceMapping,
     ComplianceRequirement,
 )
-from zephyr.governance.audit_trail.models import AuditEventType
+from zephyr.gov_audit.models import AuditEventType
 
 
 class TestComplianceFramework:

@@ -22,7 +22,7 @@ class TestGCT007SpecToAudit:
 
     def test_spec_auditor_records_capability(self):
         from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
-        from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
+        from zephyr.gov_audit.spec_auditor import record_agent_spec
 
         cap = AgentCapability(agent_id="test", capabilities=["read:docs"])
         result = record_agent_spec(cap)

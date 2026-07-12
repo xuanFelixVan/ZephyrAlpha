@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_anomaly_event_creation():
-    from zephyr.governance.audit_trail.anomaly import AnomalyEvent, AnomalySignature
+    from zephyr.gov_audit.anomaly import AnomalyEvent, AnomalySignature
 
     event = AnomalyEvent(
         signature=AnomalySignature.UNAUTHORIZED_ACCESS,
@@ -41,7 +41,7 @@ def test_anomaly_detector_positive():
     import json
     import tempfile
 
-    from zephyr.governance.audit_trail.anomaly import AnomalyDetector
+    from zephyr.gov_audit.anomaly import AnomalyDetector
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False, encoding="utf-8") as f:
         f.write(
@@ -69,7 +69,7 @@ def test_anomaly_detector_negative():
     import json
     import tempfile
 
-    from zephyr.governance.audit_trail.anomaly import AnomalyDetector
+    from zephyr.gov_audit.anomaly import AnomalyDetector
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False, encoding="utf-8") as f:
         f.write(
@@ -92,7 +92,7 @@ def test_anomaly_detector_negative():
 
 
 def test_rollback_on_anomaly():
-    from zephyr.governance.audit_trail.anomaly import AnomalyEvent, AnomalySignature
+    from zephyr.gov_audit.anomaly import AnomalyEvent, AnomalySignature
     from zephyr.governance.escalation.contracts import RollbackHandler
 
     handler = RollbackHandler()

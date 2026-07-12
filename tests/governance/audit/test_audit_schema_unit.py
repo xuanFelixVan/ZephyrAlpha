@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.audit_trail.audit_schema import AuditQuery
+from zephyr.gov_audit.audit_schema import AuditQuery
 from zephyr.governance.persistence.sqlite_schema import init_db
 
 

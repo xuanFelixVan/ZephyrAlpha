@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.incremental_review import REVIEW_DIMENSIONS, ReviewChunk
+from zephyr.gov_audit.incremental_review import REVIEW_DIMENSIONS, ReviewChunk
 
 
 class TestReviewChunk:

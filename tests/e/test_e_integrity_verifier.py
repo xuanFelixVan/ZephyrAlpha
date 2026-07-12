@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.integrity_verifier import IntegrityVerifier
+from zephyr.gov_audit.integrity_verifier import IntegrityVerifier
 
 
 class TestIntegrityVerifierInit:

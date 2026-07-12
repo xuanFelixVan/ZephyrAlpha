@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.auditor
 # [DOMAIN] D_INFRA_RECOVERY
-# [DEPENDENCIES] zephyr.governance.audit_trail.contracts
+# [DEPENDENCIES] zephyr.gov_audit.contracts
 # [CONSUMERS] rollback_executor;rollback_verifier;auto_rollback_trigger
 # [STARTUP] imported
 # [MATURITY] production
@@ -35,7 +35,7 @@ class RollbackAuditor:
         session_id: str = "",
     ) -> dict:
         # lazy import to avoid L0->L2 circular dependency (Phase 2 P2 import cycle fix)
-        from zephyr.governance.audit_trail.contracts import AuditWriter
+        from zephyr.gov_audit.contracts import AuditWriter
 
         return AuditWriter.write(
             agent_id=agent_id,

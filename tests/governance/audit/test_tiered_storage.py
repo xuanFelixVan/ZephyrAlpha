@@ -18,7 +18,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from zephyr.governance.audit_trail.tiered_storage import (
+from zephyr.gov_audit.tiered_storage import (
     MigrationRecord,
     StorageTier,
     TierConfig,

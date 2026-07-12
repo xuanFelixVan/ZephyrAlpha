@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] zephyr.infrastructure.rollback.rollback_abuse_detector
 # [DOMAIN] D_INFRA_RECOVERY
-# [DEPENDENCIES] zephyr.governance.audit_trail.query
+# [DEPENDENCIES] zephyr.gov_audit.query
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -64,7 +64,7 @@ class RollbackAbuseDetector:
         entries = self._read_audit_entries()
         if not entries:
             try:
-                from zephyr.governance.audit_trail.query import AuditQuery
+                from zephyr.gov_audit.query import AuditQuery
 
                 query = AuditQuery()
                 core_events = query.by_event_type("rollback_operation")

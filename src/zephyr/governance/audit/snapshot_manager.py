@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §event-sourcing
 # [MODULE] zephyr.governance.audit.snapshot_manager
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.audit_trail.event_store; zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] zephyr.governance.observability_governance.projection_engine; zephyr.governance.audit_trail.event_store
+# [DEPENDENCIES] zephyr.gov_audit.event_store; zephyr.governance.persistence.sqlite_schema
+# [CONSUMERS] zephyr.governance.observability_governance.projection_engine; zephyr.gov_audit.event_store
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] snapshot_json is valid JSON; last_event_timestamp tracks replay cutoff; create_snapshot is atomic
@@ -37,7 +37,7 @@ import sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.governance.audit_trail.event_store import EventRecord, EventStore
+from zephyr.gov_audit.event_store import EventRecord, EventStore
 from zephyr.governance.persistence.sqlite_schema import SchemaManager, get_db_connection
 from zephyr.shared.io.paths import DB_PATH
 

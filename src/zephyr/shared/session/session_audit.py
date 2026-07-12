@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.session.session_audit
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.governance.audit_trail.writer
+# [DEPENDENCIES] zephyr.gov_audit.writer
 # [CONSUMERS] governance/constitutional_update.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -328,7 +328,7 @@ class SessionAuditTrail:
         with self._lock, open(filepath, "a", encoding="utf-8") as f:
             f.write(json.dumps(record_dict, ensure_ascii=False) + "\n")
         try:
-            from zephyr.governance.audit_trail.writer import get_audit_writer
+            from zephyr.gov_audit.writer import get_audit_writer
         except ImportError as e:
             logger.warning(
                 "session_audit: audit_trail.writer import failed, skipping audit (%s: %s)",

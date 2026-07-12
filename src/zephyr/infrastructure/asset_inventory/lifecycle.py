@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md
 # [MODULE] zephyr.infrastructure.asset_inventory.lifecycle
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.audit_trail.writer
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.gov_audit.writer
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -175,7 +175,7 @@ class Lifecycle:
         if not events:
             return
         try:
-            from zephyr.governance.audit_trail.writer import AuditWriter
+            from zephyr.gov_audit.writer import AuditWriter
 
             writer = AuditWriter()
             for evt in events:

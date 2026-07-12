@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_audit_write_basic():
-    from zephyr.governance.audit_trail.contracts import AuditWriter
+    from zephyr.gov_audit.contracts import AuditWriter
 
     record = AuditWriter.write(
         agent_id="agent-001",

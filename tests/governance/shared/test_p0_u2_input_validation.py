@@ -39,7 +39,7 @@ class TestP0U2InputValidation:
 
     def test_audit_rejects_empty_agent_id(self):
         from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
-        from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
+        from zephyr.gov_audit.spec_auditor import record_agent_spec
 
         cap = AgentCapability(agent_id="", capabilities=["cap"])
         result = record_agent_spec(cap)

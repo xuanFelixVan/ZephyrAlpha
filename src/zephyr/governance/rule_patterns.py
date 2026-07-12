@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.rule_patterns
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] (none — pure constants module)
-# [CONSUMERS] zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate; zephyr.gov_enforcement.commit_gates.create_guard; scripts/governance/d5_architecture/validators/validate_directory_structure.py; scripts/governance/d3_metadata/validate_rule_frontmatter.py; scripts/generate_pathway_registry.py; scripts/governance/generators/generate_path_ownership_map.py; scripts/governance/d5_architecture/validators/validate_ssot_construction_progress.py; zephyr.governance.semantic_auditor.kb_gate; zephyr.governance.semantic_audit.kb_gate; zephyr.governance.audit_trail.kb_gate; zephyr.governance.semantic_auditor.privacy; zephyr.governance.semantic_audit.privacy; zephyr.governance.audit_trail.privacy
+# [CONSUMERS] zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate; zephyr.gov_enforcement.commit_gates.create_guard; scripts/governance/d5_architecture/validators/validate_directory_structure.py; scripts/governance/d3_metadata/validate_rule_frontmatter.py; scripts/generate_pathway_registry.py; scripts/governance/generators/generate_path_ownership_map.py; scripts/governance/d5_architecture/validators/validate_ssot_construction_progress.py; zephyr.governance.semantic_auditor.kb_gate; zephyr.governance.semantic_audit.kb_gate; zephyr.gov_audit.kb_gate; zephyr.governance.semantic_auditor.privacy; zephyr.governance.semantic_audit.privacy; zephyr.gov_audit.privacy
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 治理规则正则 + 安全审计模式唯一真源——gate/validator/三包共同 import,禁止在其他文件重新定义;治理正则标注 trae_028 来源,安全模式(PIICategory+POISONING_INDICATORS+PII_PATTERNS)原位于 security_patterns.py(已合并,ARCH-033 Phase7修正,违反 governance/ 根目录9模块硬约束)

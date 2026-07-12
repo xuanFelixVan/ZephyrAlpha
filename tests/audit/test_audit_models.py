@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.audit_trail.models import (
+from zephyr.gov_audit.models import (
     AuditChain,
     AuditEntryV1,
     AuditEventType,

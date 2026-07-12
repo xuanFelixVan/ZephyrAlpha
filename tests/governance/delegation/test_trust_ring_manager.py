@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.audit_trail.trust_ring_manager import (
+from zephyr.gov_audit.trust_ring_manager import (
     PREMISSION_MAP,
     RING_LABELS,
     RingLevel,

@@ -17,7 +17,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.audit_trail.bridges.audit_trust_bridge import AuditTrustBridge
+from zephyr.gov_audit.bridges.audit_trust_bridge import AuditTrustBridge
 
 
 @pytest.fixture

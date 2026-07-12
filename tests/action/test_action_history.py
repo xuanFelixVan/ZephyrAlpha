@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.action_history import (
+from zephyr.gov_audit.action_history import (
     ActionHistory,
     ActionSignature,
     DedupAction,

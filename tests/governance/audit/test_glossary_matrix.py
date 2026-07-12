@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.glossary_matrix import (
+from zephyr.gov_audit.glossary_matrix import (
     GLOSSARY,
     GLOSSARY_COUNT,
     GlossaryEntry,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.gate_engine.gate_override
 # [DOMAIN] D_GOV_RULE
-# [DEPENDENCIES] zephyr.governance.audit_trail.bridge
+# [DEPENDENCIES] zephyr.gov_audit.bridge
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -22,7 +22,7 @@ import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.audit_trail.bridge import write_to_core
+from zephyr.gov_audit.bridge import write_to_core
 
 logger = logging.getLogger(__name__)
 

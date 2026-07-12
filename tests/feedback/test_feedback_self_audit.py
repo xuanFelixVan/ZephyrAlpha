@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.audit_trail.feedback_self_audit import (
+from zephyr.gov_audit.feedback_self_audit import (
     CircularDependencyResult,
     FeedbackNode,
     FeedbackSelfAuditor,

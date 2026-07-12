@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-060 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.ops_governance.phase_check_registry
 # [DOMAIN] D_GOV_OPS_RESILIENCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.orchestrator.contract_registry; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.orchestrator.batch_orchestrator
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.orchestrator.contract_registry; zephyr.gov_audit.integrity; zephyr.gov_audit.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.orchestrator.batch_orchestrator
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -470,7 +470,7 @@ def check_audit_trail() -> GateResult:
         return GateResult.RED
 
     try:
-        from zephyr.governance.audit_trail.integrity import IntegrityVerifier
+        from zephyr.gov_audit.integrity import IntegrityVerifier
 
         verifier = IntegrityVerifier()
         report = verifier.verify_chain()
@@ -497,7 +497,7 @@ def check_audit_trail_context() -> GateResult:
     对标：project_rules.md STEP 4.5 资产盘点 + STEP 4.7 KB 自检
     """
     try:
-        from zephyr.governance.audit_trail.query import AuditQuery
+        from zephyr.gov_audit.query import AuditQuery
 
         query = AuditQuery()
         context = query.trail_for_ai_context(max_entries=50)
@@ -622,7 +622,7 @@ def check_execution_pipeline() -> GateResult:
 
 def check_full_audit_regression() -> GateResult:
     try:
-        from zephyr.governance.audit_trail.integrity import IntegrityVerifier
+        from zephyr.gov_audit.integrity import IntegrityVerifier
 
         verifier = IntegrityVerifier()
         report = verifier.verify_chain()

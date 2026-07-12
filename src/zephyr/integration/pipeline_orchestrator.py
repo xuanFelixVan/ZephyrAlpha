@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §4.1
 # [MODULE] zephyr.integration.pipeline_orchestrator
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.__init__; zephyr.shared.__init__; zephyr.shared.contracts.protocols; zephyr.shared.models; zephyr.intelligence.model_profiling.pipeline_routing.profiler; zephyr.integration.local_model.local_model_scheduler; zephyr.governance.__init__; zephyr.governance.audit_trail.writer; zephyr.autonomy_core.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.intelligence.model_profiling.pipeline_routing.results_writer; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.infra.observer; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.intelligence.model_evaluation.reranker; zephyr.infrastructure.pipeline.models; zephyr.infrastructure.pipeline.circuit_breaker_manager; zephyr.infrastructure.pipeline.cost_tracker; zephyr.infrastructure.pipeline.ct_pipe_routing; zephyr.infrastructure.pipeline.dead_letter_queue; zephyr.infrastructure.pipeline.model_router; zephyr.infrastructure.pipeline.pipeline_lock; zephyr.infrastructure.pipeline.preemption_manager; zephyr.infrastructure.pipeline.routing_plugins
+# [DEPENDENCIES] zephyr.integration.__init__; zephyr.shared.__init__; zephyr.shared.contracts.protocols; zephyr.shared.models; zephyr.intelligence.model_profiling.pipeline_routing.profiler; zephyr.integration.local_model.local_model_scheduler; zephyr.governance.__init__; zephyr.gov_audit.writer; zephyr.autonomy_core.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.intelligence.model_profiling.pipeline_routing.results_writer; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.infra.observer; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.intelligence.model_evaluation.reranker; zephyr.infrastructure.pipeline.models; zephyr.infrastructure.pipeline.circuit_breaker_manager; zephyr.infrastructure.pipeline.cost_tracker; zephyr.infrastructure.pipeline.ct_pipe_routing; zephyr.infrastructure.pipeline.dead_letter_queue; zephyr.infrastructure.pipeline.model_router; zephyr.infrastructure.pipeline.pipeline_lock; zephyr.infrastructure.pipeline.preemption_manager; zephyr.infrastructure.pipeline.routing_plugins
 # [CONSUMERS] zephyr.trading.auto_runtime_core; tests/trading/test_pipeline_orchestrator_unit.py; tests/pipeline/test_pipeline_orchestrator.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -131,7 +131,7 @@ except ImportError:
 
 _AUDIT_AVAILABLE = False
 try:
-    from zephyr.governance.audit_trail.writer import AuditWriter
+    from zephyr.gov_audit.writer import AuditWriter
     from zephyr.shared.contracts.protocols import AuditWriterProtocol
 
     _AUDIT_AVAILABLE = True

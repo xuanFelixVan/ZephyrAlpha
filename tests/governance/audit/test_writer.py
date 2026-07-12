@@ -19,7 +19,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.audit_trail.writer import AuditWriter, _generate_entry_id, _resolve_hmac_key
+from zephyr.gov_audit.writer import AuditWriter, _generate_entry_id, _resolve_hmac_key
 
 
 @pytest.fixture

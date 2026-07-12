@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §event-sourcing
 # [MODULE] zephyr.gov_enforcement.behavioral_admission.gate_event_adapter
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.governance.audit_trail.event_store; zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.gov_audit.event_store; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -31,7 +31,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from zephyr.governance.audit_trail.event_store import EventStore
+from zephyr.gov_audit.event_store import EventStore
 from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)

@@ -8,13 +8,13 @@ Audit Trail — MOD-INF-020
 G-CT-001 (RBAC->Audit), G-CT-002 (Audit->Rollback).
 """
 
-from zephyr.governance.audit_trail.bridges.audit_anomaly import AnomalyDetector, AnomalyEvent
-from zephyr.governance.audit_trail.bridges.audit_contracts import AuditWriter
-from zephyr.governance.audit_trail.bridges.audit_delegation_bridge import AuditDelegationBridge
-from zephyr.governance.audit_trail.bridges.audit_drift_bridge import BridgeResult, DriftBridge
-from zephyr.governance.audit_trail.bridges.audit_feedback_bridge import AuditFeedbackBridge
-from zephyr.governance.audit_trail.bridges.audit_tiered_storage_bridge import AuditTieredStorageBridge
-from zephyr.governance.audit_trail.bridges.audit_trust_bridge import AuditTrustBridge
+from zephyr.gov_audit.bridges.audit_anomaly import AnomalyDetector, AnomalyEvent
+from zephyr.gov_audit.bridges.audit_contracts import AuditWriter
+from zephyr.gov_audit.bridges.audit_delegation_bridge import AuditDelegationBridge
+from zephyr.gov_audit.bridges.audit_drift_bridge import BridgeResult, DriftBridge
+from zephyr.gov_audit.bridges.audit_feedback_bridge import AuditFeedbackBridge
+from zephyr.gov_audit.bridges.audit_tiered_storage_bridge import AuditTieredStorageBridge
+from zephyr.gov_audit.bridges.audit_trust_bridge import AuditTrustBridge
 
 __all__ = [
     "AnomalyDetector",

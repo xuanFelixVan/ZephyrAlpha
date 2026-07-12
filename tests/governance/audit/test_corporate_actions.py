@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.corporate_actions import (
+from zephyr.gov_audit.corporate_actions import (
     CAPIPELINE_SOURCES,
     CORPORATE_ACTION_PRIORITY,
     DAILY_PRE_CHECK_ITEMS,

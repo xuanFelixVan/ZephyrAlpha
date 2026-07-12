@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.external_tool_audit import (
+from zephyr.gov_audit.external_tool_audit import (
     ChainValidationResult,
     ExternalToolCallAuditor,
     ToolCallRecord,

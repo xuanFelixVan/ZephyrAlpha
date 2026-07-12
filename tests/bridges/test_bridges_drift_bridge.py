@@ -19,7 +19,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.audit_trail.drift_bridge import BridgeResult, DriftBridge
+from zephyr.gov_audit.drift_bridge import BridgeResult, DriftBridge
 
 
 @pytest.fixture

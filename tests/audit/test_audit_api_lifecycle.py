@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.audit_trail.api_lifecycle import (
+from zephyr.gov_audit.api_lifecycle import (
     APIEndpoint,
     APIState,
     DeprecationNotice,

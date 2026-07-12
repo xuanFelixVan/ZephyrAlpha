@@ -17,7 +17,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from zephyr.governance.audit_trail.retention import (
+from zephyr.gov_audit.retention import (
     ExpiredEntry,
     RetentionEnforcer,
     RetentionPolicy,

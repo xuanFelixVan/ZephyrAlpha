@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.provenance_tracker import (
+from zephyr.gov_audit.provenance_tracker import (
     ProvenanceRecord,
     embed_provenance,
     extract_provenance,

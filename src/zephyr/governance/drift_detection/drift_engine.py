@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.drift_engine
 # [DOMAIN] D_BEHAVIORAL_AUDIT
-# [DEPENDENCIES] zephyr.governance.drift_detection.drift_infrastructure; zephyr.governance.drift_detection.drift_models; zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.__init__
+# [DEPENDENCIES] zephyr.governance.drift_detection.drift_infrastructure; zephyr.governance.drift_detection.drift_models; zephyr.gov_audit.finding_model; zephyr.gov_audit.__init__
 # [CONSUMERS] src/zephyr/governance/audit_trail/bridges/drift_bridge.py; src/zephyr/governance/audit_trail/cli.py; src/zephyr/governance/behavioral_auditor/__init__.py (+12 more)
 # [STARTUP] imported
 # [MATURITY] production
@@ -76,7 +76,7 @@ from .drift_models import (
 )
 
 try:
-    from zephyr.governance.audit_trail.finding_model import (
+    from zephyr.gov_audit.finding_model import (
         AuditFinding,
         BlastRadius,
         FindingDimension,
@@ -703,7 +703,7 @@ def _output_findings_as_jsonl(result: ScanResult) -> list[str]:
         jsonl_lines.append(f.to_jsonl())
     if jsonl_lines:
         try:
-            from zephyr.governance.audit_trail.finding_ingest import FindingIngest
+            from zephyr.gov_audit.finding_ingest import FindingIngest
 
             ingest = FindingIngest()
             ingest.ingest_findings(findings)

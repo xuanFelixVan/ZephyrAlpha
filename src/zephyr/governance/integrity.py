@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §8
 # [MODULE] zephyr.governance.integrity
 # [DOMAIN] D_GOV_DRIFT
-# [DEPENDENCIES] zephyr.governance.audit_trail.models; zephyr.governance.merkle_hourly; zephyr.governance.audit_trail.trust_bridge
+# [DEPENDENCIES] zephyr.gov_audit.models; zephyr.governance.merkle_hourly; zephyr.gov_audit.trust_bridge
 # [CONSUMERS] audit-orchestrator.pipeline_runner; cli
 # [STARTUP] imported
 # [MATURITY] production
@@ -17,7 +17,7 @@
 import logging
 from typing import Any
 
-from zephyr.governance.audit_trail.models import AuditContext
+from zephyr.gov_audit.models import AuditContext
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class IntegrityGuard:
             logger.warning("MerkleHourlyBridge not available: %s", exc, exc_info=True)
 
         try:
-            from zephyr.governance.audit_trail.trust_bridge import TrustBridge
+            from zephyr.gov_audit.trust_bridge import TrustBridge
 
             self._trust_bridge = TrustBridge()
         except Exception as exc:

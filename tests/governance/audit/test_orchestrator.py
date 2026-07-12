@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail._orchestrator_compat import (
+from zephyr.gov_audit._orchestrator_compat import (
     AuditEntryV1,
     AuditEventType,
     AuditIndexer,

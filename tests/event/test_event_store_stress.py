@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.audit_trail.event_store import EventStore
+from zephyr.gov_audit.event_store import EventStore
 from zephyr.governance.persistence.sqlite_schema import SchemaManager
 from zephyr.governance.observability_governance.projection_engine import ProjectionEngine
 from zephyr.governance.audit.snapshot_manager import SnapshotManager

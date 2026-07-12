@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.audit_trail.bridge import _AVAILABLE, _get_writer, write_to_core
+from zephyr.gov_audit.bridge import _AVAILABLE, _get_writer, write_to_core
 
 
 class TestWriteToCoreUnavailable:
@@ -75,7 +75,7 @@ class TestWriteToCoreSuccess:
 
 class TestGetWriterCaching:
     def test_get_writer_caches_instance(self):
-        import zephyr.governance.audit_trail.bridge as bridge_mod
+        import zephyr.gov_audit.bridge as bridge_mod
 
         original_writer = bridge_mod._WRITER
         try:

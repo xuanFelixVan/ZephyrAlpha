@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.audit_trail.log_rotation import (
+from zephyr.gov_audit.log_rotation import (
     LogRotationManager,
     RotatedLogInfo,
     RotationRecord,

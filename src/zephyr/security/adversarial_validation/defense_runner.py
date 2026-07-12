@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.1 + §16 Phase 1
 # [MODULE] zephyr.security.adversarial_validation.defense_runner
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.governance.audit_trail.finding_model; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.task_types; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.gov_audit.finding_model; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.task_types; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model
 # [CONSUMERS] validator.py; game_day_runner.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -25,7 +25,7 @@ import sys
 from zephyr.security.adversarial_validation.models import AttackScenario, DefenseResult
 
 try:
-    from zephyr.governance.audit_trail.finding_model import (
+    from zephyr.gov_audit.finding_model import (
         AuditFinding,
         FindingDimension,
         FindingImpact,

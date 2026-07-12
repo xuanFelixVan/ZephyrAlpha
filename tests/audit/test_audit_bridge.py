@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.audit_trail.bridge import write_to_core
+from zephyr.gov_audit.bridge import write_to_core
 
 
 class TestWriteToCore:

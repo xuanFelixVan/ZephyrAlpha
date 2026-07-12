@@ -23,7 +23,7 @@ class TestP0I2ConstructionOrder:
             assert phases[i] > phases[i - 1], f"Phase {phases[i]} should come after Phase {phases[i - 1]}"
 
     def test_all_modules_have_contracts_interface(self):
-        from zephyr.governance.audit_trail.contracts import AuditWriter
+        from zephyr.gov_audit.contracts import AuditWriter
         from zephyr.governance.escalation.contracts import EscalationContracts, RollbackHandler
         from zephyr.security.access_control.contracts import RBACAuditBridge
 

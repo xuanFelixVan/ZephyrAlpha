@@ -32,14 +32,14 @@ class TestAuditTrailImportSmoke:
     def test_import_audit_trail_init(self) -> None:
         """测试导入 zephyr.governance.audit_trail 包自身."""
         _ensure_path()
-        import zephyr.governance.audit_trail
+        import zephyr.gov_audit
 
         assert hasattr(zephyr.governance.audit_trail, "__all__")
 
     def test_import_models(self) -> None:
         """Can import AuditEntryV1, AuditEventType, LamportClock from audit-trail.models."""
         _ensure_path()
-        from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType, LamportClock, ProvenanceLevel
+        from zephyr.gov_audit.models import AuditEntryV1, AuditEventType, LamportClock, ProvenanceLevel
 
         assert AuditEntryV1
         assert AuditEventType
@@ -49,7 +49,7 @@ class TestAuditTrailImportSmoke:
     def test_import_writer(self) -> None:
         """测试导入 AuditWriter — 不可变审计写入器."""
         _ensure_path()
-        from zephyr.governance.audit_trail.writer import AuditWriter
+        from zephyr.gov_audit.writer import AuditWriter
 
         assert AuditWriter is not None
 
@@ -63,14 +63,14 @@ class TestAuditTrailImportSmoke:
     def test_import_agent_signer(self) -> None:
         """测试导入 AgentSigner — Ed25519密码学签名."""
         _ensure_path()
-        from zephyr.governance.audit_trail.agent_signer import AgentSigner
+        from zephyr.gov_audit.agent_signer import AgentSigner
 
         assert AgentSigner is not None
 
     def test_import_query(self) -> None:
         """测试导入 AuditQuery — 审计查询接口."""
         _ensure_path()
-        from zephyr.governance.audit_trail.query import AuditQuery
+        from zephyr.gov_audit.query import AuditQuery
 
         assert AuditQuery is not None
 

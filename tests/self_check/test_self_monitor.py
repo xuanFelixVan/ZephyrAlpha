@@ -20,7 +20,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.audit_trail.self_monitor import SelfMonitor
+from zephyr.gov_audit.self_monitor import SelfMonitor
 
 
 @pytest.fixture

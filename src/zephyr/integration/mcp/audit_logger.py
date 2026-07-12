@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.audit_logger
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.governance.audit_trail.writer
+# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.gov_audit.writer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -40,7 +40,7 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 _CORE_AUDIT_AVAILABLE = False
 try:
-    from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
+    from zephyr.gov_audit.writer import AuditWriter as _CoreAuditWriter
 
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:

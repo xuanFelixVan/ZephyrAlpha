@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.behavior_audit_logger
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.shared.utils.time_utils; zephyr.governance.audit_trail.bridge
+# [DEPENDENCIES] zephyr.shared.utils.time_utils; zephyr.gov_audit.bridge
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -43,7 +43,7 @@ from typing import Any
 
 import structlog
 
-from zephyr.governance.audit_trail.bridge import write_to_core
+from zephyr.gov_audit.bridge import write_to_core
 
 __all__ = [
     "AuditAction",

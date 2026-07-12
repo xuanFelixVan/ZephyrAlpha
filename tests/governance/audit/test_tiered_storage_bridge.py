@@ -18,7 +18,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from zephyr.governance.audit_trail.bridges.audit_tiered_storage_bridge import AuditTieredStorageBridge
+from zephyr.gov_audit.bridges.audit_tiered_storage_bridge import AuditTieredStorageBridge
 
 
 @pytest.fixture

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.audit_trail.anomaly import AnomalyDetector, AnomalyEvent
+from zephyr.gov_audit.anomaly import AnomalyDetector, AnomalyEvent
 
 
 class TestAnomalyEventInstantiation:

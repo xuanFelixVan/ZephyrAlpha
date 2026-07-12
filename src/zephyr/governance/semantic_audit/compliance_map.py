@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 # [MODULE] zephyr.governance.semantic_audit.compliance_map
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.audit_trail.models
+# [DEPENDENCIES] zephyr.gov_audit.models
 # [CONSUMERS] 见蓝图 §4 接口契约
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -41,7 +41,7 @@ from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.governance.audit_trail.models import AuditEventType
+from zephyr.gov_audit.models import AuditEventType
 
 _logger = logging.getLogger(__name__)
 

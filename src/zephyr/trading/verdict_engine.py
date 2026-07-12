@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §3.1
 # [MODULE] zephyr.trading.verdict_engine
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.governance.audit_trail.models
+# [DEPENDENCIES] zephyr.gov_audit.models
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-031(auto-fix-engine);zephyr.trading.admission_controller
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -32,7 +32,7 @@ _YELLOW_L5_VIOLATION_THRESHOLD = 5
 _YELLOW_L4_VIOLATION_THRESHOLD = 3
 
 try:
-    from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType
+    from zephyr.gov_audit.models import AuditEntryV1, AuditEventType
 
     _HAS_AUDIT_ENTRY = True
 except ImportError as e:

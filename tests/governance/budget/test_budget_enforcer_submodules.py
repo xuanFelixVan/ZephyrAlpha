@@ -14,7 +14,7 @@ from pathlib import Path
 
 class TestActionHistory:
     def test_record_and_dedup(self):
-        from zephyr.governance.audit_trail.action_history import ActionHistory, DedupAction
+        from zephyr.gov_audit.action_history import ActionHistory, DedupAction
 
         ah = ActionHistory()
         r1 = ah.record("tool_a", "params")
@@ -25,7 +25,7 @@ class TestActionHistory:
         assert r3.identical_count >= 2
 
     def test_block_at_5x(self):
-        from zephyr.governance.audit_trail.action_history import ActionHistory, DedupAction
+        from zephyr.gov_audit.action_history import ActionHistory, DedupAction
 
         ah = ActionHistory()
         for _ in range(5):
@@ -34,7 +34,7 @@ class TestActionHistory:
         assert r.action == DedupAction.BLOCK
 
     def test_spiral_detection(self):
-        from zephyr.governance.audit_trail.action_history import ActionHistory, DedupAction
+        from zephyr.gov_audit.action_history import ActionHistory, DedupAction
 
         ah = ActionHistory()
         for _ in range(5):
@@ -168,7 +168,7 @@ class TestTamperEvidentLog:
 
 class TestTrustRingManager:
     def test_register_and_check(self):
-        from zephyr.governance.audit_trail.trust_ring_manager import TrustRingManager
+        from zephyr.gov_audit.trust_ring_manager import TrustRingManager
 
         mgr = TrustRingManager()
         mgr.register_identity("agent-1", 2)

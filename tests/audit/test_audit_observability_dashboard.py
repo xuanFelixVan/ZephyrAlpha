@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.observability_dashboard import (
+from zephyr.gov_audit.observability_dashboard import (
     SLI,
     DashboardConfig,
     DashboardPanel,

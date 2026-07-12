@@ -56,7 +56,7 @@ from zephyr.infrastructure.auto_fix_engine.models import (
 from zephyr.infrastructure.auto_fix_engine.shadow_workspace import ShadowWorkspace
 
 try:
-    from zephyr.governance.audit_trail.finding_model import (
+    from zephyr.gov_audit.finding_model import (
         AuditFinding,
         BlastRadius,
         FindingDimension,

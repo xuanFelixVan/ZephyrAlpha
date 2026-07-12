@@ -419,7 +419,7 @@ class TestEvaluate:
 class TestEvaluateAuditEntryV1:
     async def test_audit_entry_v1(self):
         try:
-            from zephyr.governance.audit_trail.models import AuditEntryV1
+            from zephyr.gov_audit.models import AuditEntryV1
         except ImportError:
             pytest.skip("AuditEntryV1 not available")
 
@@ -439,7 +439,7 @@ class TestEvaluateAuditEntryV1:
 
     async def test_audit_entry_v1_with_gate(self):
         try:
-            from zephyr.governance.audit_trail.models import AuditEntryV1
+            from zephyr.gov_audit.models import AuditEntryV1
         except ImportError:
             pytest.skip("AuditEntryV1 not available")
 
@@ -459,7 +459,7 @@ class TestEvaluateAuditEntryV1:
 
     async def test_audit_entry_v1_cross_module(self):
         try:
-            from zephyr.governance.audit_trail.models import AuditEntryV1
+            from zephyr.gov_audit.models import AuditEntryV1
         except ImportError:
             pytest.skip("AuditEntryV1 not available")
 
@@ -479,7 +479,7 @@ class TestEvaluateAuditEntryV1:
 
     async def test_audit_entry_v1_none_trust_score(self):
         try:
-            from zephyr.governance.audit_trail.models import AuditEntryV1
+            from zephyr.gov_audit.models import AuditEntryV1
         except ImportError:
             pytest.skip("AuditEntryV1 not available")
 
@@ -498,7 +498,7 @@ class TestEvaluateAuditEntryV1:
 
     async def test_audit_entry_v1_invalid_permission_level(self):
         try:
-            from zephyr.governance.audit_trail.models import AuditEntryV1
+            from zephyr.gov_audit.models import AuditEntryV1
         except ImportError:
             pytest.skip("AuditEntryV1 not available")
 

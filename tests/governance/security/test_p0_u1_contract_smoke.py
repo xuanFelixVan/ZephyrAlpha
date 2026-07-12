@@ -29,7 +29,7 @@ class TestP0U1ContractSmoke:
         assert hasattr(bridge, "check_and_log")
 
     def test_gct_002_audit_to_rollback_trigger(self):
-        from zephyr.governance.audit_trail.anomaly import AnomalyDetector, AnomalyEvent
+        from zephyr.gov_audit.anomaly import AnomalyDetector, AnomalyEvent
 
         event = AnomalyEvent(agent_id="test", operation_signature="delete", resource_path="/tmp")
         detector = AnomalyDetector()
@@ -74,7 +74,7 @@ class TestP0U1ContractSmoke:
 
     def test_gct_007_agent_spec_to_audit(self):
         from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
-        from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
+        from zephyr.gov_audit.spec_auditor import record_agent_spec
 
         cap = AgentCapability(agent_id="test_agent", capabilities=["cap_1"])
         result = record_agent_spec(cap)

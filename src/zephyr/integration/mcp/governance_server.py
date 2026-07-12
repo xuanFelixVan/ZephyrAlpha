@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md
 # [MODULE] zephyr.integration.mcp.governance_server
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.guards.permission_guard; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_trail.writer; zephyr.infrastructure.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.guards.permission_guard; zephyr.shared.contracts.skill_protocol; zephyr.gov_audit.writer; zephyr.infrastructure.__init__; zephyr.governance.__init__
 # [CONSUMERS] zephyr.integration.mcp.gateway_server; zephyr.integration.mcp.__init__
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -744,7 +744,7 @@ class GovernanceServer(BaseMCPServer):
         self, event_type: str, description: str, agent_id: str | None = None, target_path: str | None = None
     ) -> dict[str, Any]:
         try:
-            from zephyr.governance.audit_trail.writer import AuditWriter
+            from zephyr.gov_audit.writer import AuditWriter
 
             writer = AuditWriter()
             entry_id = writer.write(

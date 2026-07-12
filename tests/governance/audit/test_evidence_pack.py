@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from zephyr.governance.audit_trail.evidence_pack import (
+from zephyr.gov_audit.evidence_pack import (
     EvidencePackExporter,
     EvidencePackMetadata,
     ExportResult,

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.audit_trail.agent_signer import AgentSigner
+from zephyr.gov_audit.agent_signer import AgentSigner
 
 
 class TestAgentSignerGenerateKeyPair:

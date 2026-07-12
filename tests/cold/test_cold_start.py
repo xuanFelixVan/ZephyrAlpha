@@ -19,7 +19,7 @@ import tempfile
 from datetime import UTC, datetime
 from unittest.mock import patch
 
-from zephyr.governance.audit_trail.cold_start import (
+from zephyr.gov_audit.cold_start import (
     DEFAULT_DB_PATH,
     DRIFT_EVENTS_SCHEMA,
     REQUIRED_DIRS,

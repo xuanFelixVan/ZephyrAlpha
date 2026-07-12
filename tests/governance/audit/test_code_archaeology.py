@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.code_archaeology import (
+from zephyr.gov_audit.code_archaeology import (
     BlameRecord,
     CommitNode,
     EvolutionGraph,

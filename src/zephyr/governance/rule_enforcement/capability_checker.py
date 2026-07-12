@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.capability_checker
 # [DOMAIN] D_GOV_RULE
-# [DEPENDENCIES] zephyr.governance.audit_trail.bridge; zephyr.governance.rule_enforcement.cbac_matrix
+# [DEPENDENCIES] zephyr.gov_audit.bridge; zephyr.governance.rule_enforcement.cbac_matrix
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -24,7 +24,7 @@ Runtime capability_check() + checksum校验 + 离线更新流程 T。
 
 import logging
 
-from zephyr.governance.audit_trail.bridge import write_to_core
+from zephyr.gov_audit.bridge import write_to_core
 from zephyr.governance.rule_enforcement.cbac_matrix import CbacMatrix
 
 logger = logging.getLogger(__name__)

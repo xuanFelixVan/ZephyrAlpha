@@ -31,7 +31,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.audit_trail.writer import AuditWriter
+from zephyr.gov_audit.writer import AuditWriter
 from zephyr.governance.integrity import IntegrityVerifier
 
 
@@ -213,7 +213,7 @@ class TestEd25519KeySubstitution:
     """A8: Ed25519 密钥替换攻击."""
 
     def test_wrong_key_verification_fails(self, temp_audit_dir: Path):
-        from zephyr.governance.audit_trail.agent_signer import AgentSigner
+        from zephyr.gov_audit.agent_signer import AgentSigner
 
         priv1, pub1 = AgentSigner.generate_key_pair()
         priv2, pub2 = AgentSigner.generate_key_pair()
@@ -225,7 +225,7 @@ class TestEd25519KeySubstitution:
         assert AgentSigner.verify(event, pub2, signature) is False
 
     def test_tampered_event_fails_verification(self, temp_audit_dir: Path):
-        from zephyr.governance.audit_trail.agent_signer import AgentSigner
+        from zephyr.gov_audit.agent_signer import AgentSigner
 
         priv, pub = AgentSigner.generate_key_pair()
         event = {"event": "original", "agent_id": "agent-1"}
@@ -235,7 +235,7 @@ class TestEd25519KeySubstitution:
         assert AgentSigner.verify(tampered_event, pub, signature) is False
 
     def test_invalid_signature_rejected(self, temp_audit_dir: Path):
-        from zephyr.governance.audit_trail.agent_signer import AgentSigner
+        from zephyr.gov_audit.agent_signer import AgentSigner
 
         priv, pub = AgentSigner.generate_key_pair()
         event = {"event": "test", "agent_id": "agent-1"}

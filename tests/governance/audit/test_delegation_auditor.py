@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.audit_trail.delegation_auditor import (
+from zephyr.gov_audit.delegation_auditor import (
     DelegationAuditResult,
     DelegationChainAuditor,
     DelegationNode,

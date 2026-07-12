@@ -54,7 +54,7 @@ class TestAuditRBACIsolation:
 
     def test_audit_can_run_independently(self):
         try:
-            from zephyr.governance.audit_trail.contracts import AuditContract
+            from zephyr.gov_audit.contracts import AuditContract
 
             assert AuditContract is not None
         except ImportError as e:

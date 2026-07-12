@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.governance.security_governance.tamper_evident_log
 # [DOMAIN] D_GOV_OPS_RESILIENCE
-# [DEPENDENCIES] zephyr.governance.audit_trail.writer
+# [DEPENDENCIES] zephyr.gov_audit.writer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -157,7 +157,7 @@ class TamperEvidentLog:
             os.chmod(str(self._log_path), 0o600)
 
         try:
-            from zephyr.governance.audit_trail.writer import get_audit_writer
+            from zephyr.gov_audit.writer import get_audit_writer
 
             get_audit_writer().write(
                 {

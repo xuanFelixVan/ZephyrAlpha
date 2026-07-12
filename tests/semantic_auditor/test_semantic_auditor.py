@@ -53,7 +53,7 @@ class TestComplianceMapper:
 
     def test_map_event_known(self):
         mapper = ComplianceMapper()
-        from zephyr.governance.audit_trail.models import AuditEventType
+        from zephyr.gov_audit.models import AuditEventType
 
         mapping = mapper.map_event(AuditEventType.PERMISSION_VIOLATION.value)
         assert isinstance(mapping, ComplianceMapping)
@@ -80,7 +80,7 @@ class TestComplianceMapper:
 
     def test_get_frameworks_for_event(self):
         mapper = ComplianceMapper()
-        from zephyr.governance.audit_trail.models import AuditEventType
+        from zephyr.gov_audit.models import AuditEventType
 
         frameworks = mapper.get_frameworks_for_event(AuditEventType.PERMISSION_VIOLATION.value)
         assert isinstance(frameworks, list)

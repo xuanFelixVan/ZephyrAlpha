@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.audit_trail.genesis import (
+from zephyr.gov_audit.genesis import (
     GenesisBlock,
     GenesisManager,
     GenesisVerificationResult,

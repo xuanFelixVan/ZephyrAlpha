@@ -15,8 +15,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.audit_trail.anomaly import AnomalyDetector, AnomalyResult, AnomalySignature
-from zephyr.governance.audit_trail.models import AuditEventType
+from zephyr.gov_audit.anomaly import AnomalyDetector, AnomalyResult, AnomalySignature
+from zephyr.gov_audit.models import AuditEventType
 
 
 class TestAnomalySignature:

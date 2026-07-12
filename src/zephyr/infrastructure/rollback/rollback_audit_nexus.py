@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] zephyr.infrastructure.rollback.rollback_audit_nexus
 # [DOMAIN] D_INFRA_RECOVERY
-# [DEPENDENCIES] zephyr.governance.audit_trail.writer
+# [DEPENDENCIES] zephyr.gov_audit.writer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -40,7 +40,7 @@ from typing import Any
 
 _CORE_AUDIT_AVAILABLE = False
 try:
-    from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
+    from zephyr.gov_audit.writer import AuditWriter as _CoreAuditWriter
 
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:

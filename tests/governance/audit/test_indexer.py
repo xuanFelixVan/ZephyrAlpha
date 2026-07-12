@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from zephyr.governance.audit_trail.indexer import AuditIndexer, IndexResult
+from zephyr.gov_audit.indexer import AuditIndexer, IndexResult
 
 
 def _make_event(

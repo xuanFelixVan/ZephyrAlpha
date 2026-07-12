@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.feedback_policy import (
+from zephyr.gov_audit.feedback_policy import (
     FeedbackSummary,
     PolicyAction,
     PolicyFeedbackBridge,

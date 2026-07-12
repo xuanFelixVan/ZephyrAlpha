@@ -16,7 +16,7 @@ from __future__ import annotations
 import hashlib
 import json
 
-from zephyr.governance.audit_trail.forensic_package import ForensicPackage
+from zephyr.gov_audit.forensic_package import ForensicPackage
 
 
 class TestForensicPackageInstantiation:

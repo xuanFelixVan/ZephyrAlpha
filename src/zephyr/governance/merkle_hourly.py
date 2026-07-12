@@ -27,7 +27,7 @@ class MerkleHourlyBridge:
         self._aggregator = None
         self._available = False
         try:
-            from zephyr.governance.audit_trail.merkle_hourly import HourlyMerkleAggregator
+            from zephyr.gov_audit.merkle_hourly import HourlyMerkleAggregator
 
             self._aggregator = HourlyMerkleAggregator()
             self._available = True

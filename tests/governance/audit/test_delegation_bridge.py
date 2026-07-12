@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from zephyr.governance.audit_trail.bridges.audit_delegation_bridge import AuditDelegationBridge
+from zephyr.gov_audit.bridges.audit_delegation_bridge import AuditDelegationBridge
 
 
 class TestAuditDelegationBridgeInstantiation:

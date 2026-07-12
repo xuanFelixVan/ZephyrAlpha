@@ -19,8 +19,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.audit_trail.models import IntegrityReport
-from zephyr.governance.audit_trail.query import (
+from zephyr.gov_audit.models import IntegrityReport
+from zephyr.gov_audit.query import (
     AuditQuery,
     MetaAuditLogger,
     _sanitize_for_ai_context,
@@ -242,7 +242,7 @@ class TestAuditQuery:
         assert len(report) >= 1
 
     def test_verify_integrity(self, query):
-        from zephyr.governance.audit_trail import integrity
+        from zephyr.gov_audit import integrity
 
         with patch.object(integrity, "IntegrityVerifier") as mock_cls:
             mock_verifier = MagicMock()
@@ -253,7 +253,7 @@ class TestAuditQuery:
             assert report.is_valid is True
 
     def test_rebuild_index(self, query):
-        from zephyr.governance.audit_trail import indexer
+        from zephyr.gov_audit import indexer
 
         with patch.object(indexer, "AuditIndexer") as mock_cls:
             mock_indexer = MagicMock()

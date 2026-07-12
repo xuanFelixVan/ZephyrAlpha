@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.audit_chain_verifier
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_context; zephyr.governance.audit_trail.writer
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_context; zephyr.gov_audit.writer
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -29,7 +29,7 @@ from zephyr.governance.rule_enforcement.gate_engine.gate_context import GateCont
 
 _CORE_AUDIT_AVAILABLE = False
 try:
-    from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
+    from zephyr.gov_audit.writer import AuditWriter as _CoreAuditWriter
 
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:

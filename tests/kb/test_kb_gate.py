@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.kb_gate import KBAuditGate, KBWriteCheckResult, PoisoningScanResult
+from zephyr.gov_audit.kb_gate import KBAuditGate, KBWriteCheckResult, PoisoningScanResult
 
 
 class TestKBAuditGateInit:

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.audit_trail.feedback_bridge import AuditFeedbackBridge
+from zephyr.gov_audit.feedback_bridge import AuditFeedbackBridge
 
 
 class TestAuditFeedbackBridgeInit:
@@ -158,7 +158,7 @@ class TestScanAndBridge:
 
     def test_scan_and_bridge_handles_import_error(self, monkeypatch):
         bridge = AuditFeedbackBridge()
-        import zephyr.governance.audit_trail.feedback_bridge as mod
+        import zephyr.gov_audit.feedback_bridge as mod
 
         original = mod.AuditFeedbackBridge.scan_and_bridge
 

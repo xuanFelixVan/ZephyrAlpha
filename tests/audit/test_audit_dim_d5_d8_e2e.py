@@ -90,13 +90,13 @@ class TestDimD5D8E2E:
         assert result.failed == 0
 
     def test_chain_a_contains_d5_d8(self):
-        from zephyr.governance.audit_trail.pipeline_runner import DEPENDENCY_CHAINS
+        from zephyr.gov_audit.pipeline_runner import DEPENDENCY_CHAINS
 
         assert "D5" in DEPENDENCY_CHAINS["chain_a"]
         assert "D8" in DEPENDENCY_CHAINS["chain_a"]
 
     def test_chain_c_contains_d6_d7(self):
-        from zephyr.governance.audit_trail.pipeline_runner import DEPENDENCY_CHAINS
+        from zephyr.gov_audit.pipeline_runner import DEPENDENCY_CHAINS
 
         assert "D6" in DEPENDENCY_CHAINS["chain_c"]
         assert "D7" in DEPENDENCY_CHAINS["chain_c"]

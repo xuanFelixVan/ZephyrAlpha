@@ -32,7 +32,7 @@ from typing import Any, Protocol
 from pydantic import BaseModel, Field
 
 try:
-    from zephyr.governance.audit_trail.finding_model import (
+    from zephyr.gov_audit.finding_model import (
         AuditFinding,
         FindingDimension,
         FindingImpact,

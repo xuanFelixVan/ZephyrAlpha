@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.truth_source_validator
 # [DOMAIN] D_GOV_DRIFT
-# [DEPENDENCIES] zephyr.governance.audit_trail.bridge; zephyr.shared.schemas
+# [DEPENDENCIES] zephyr.gov_audit.bridge; zephyr.shared.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -41,7 +41,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
 
-from zephyr.governance.audit_trail.bridge import write_to_core
+from zephyr.gov_audit.bridge import write_to_core
 from zephyr.shared.schema.schemas import AuditFinding, AuditSeverity
 
 logger = logging.getLogger(__name__)

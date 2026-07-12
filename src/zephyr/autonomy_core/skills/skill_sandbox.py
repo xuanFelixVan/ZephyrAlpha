@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.skills.skill_sandbox
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.governance.audit_trail.bridge
+# [DEPENDENCIES] zephyr.gov_audit.bridge
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -39,7 +39,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.audit_trail.bridge import write_to_core
+from zephyr.gov_audit.bridge import write_to_core
 
 _DEFAULT_SAFE_TOOLS = {
     "read_file",

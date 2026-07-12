@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 # [MODULE] zephyr.governance.semantic_audit.kb_gate
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.audit_trail.models
+# [DEPENDENCIES] zephyr.gov_audit.models
 # [CONSUMERS] 见蓝图 §4 接口契约
 # [STARTUP] imported
 # [MATURITY] prototype

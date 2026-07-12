@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.wqa_scorer import WQA_DIMENSIONS, WQAScore
+from zephyr.gov_audit.wqa_scorer import WQA_DIMENSIONS, WQAScore
 
 
 class TestWQAScore:

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm-security/blueprint.md
 # [MODULE] zephyr.security.llm_defense.llm_security.self_protection.isolation
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.governance.audit_trail.bridge
+# [DEPENDENCIES] zephyr.gov_audit.bridge
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -22,7 +22,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-from zephyr.governance.audit_trail.bridge import write_to_core
+from zephyr.gov_audit.bridge import write_to_core
 
 
 class IsolationLevel(str, Enum):

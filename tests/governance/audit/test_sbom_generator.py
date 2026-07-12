@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.sbom_generator import (
+from zephyr.gov_audit.sbom_generator import (
     ALLOWED_LICENSES,
     DepInfo,
     LicenseType,
@@ -127,7 +127,7 @@ class TestGenerateSBOM:
         assert any("depth" in w for w in report.warnings)
 
     def test_license_warning(self):
-        from zephyr.governance.audit_trail import sbom_generator as sg
+        from zephyr.gov_audit import sbom_generator as sg
 
         original_SBOMReport = sg.SBOMReport
         raw_dep = DepInfo.model_construct(

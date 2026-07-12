@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.privacy import (
+from zephyr.gov_audit.privacy import (
     PIICategory,
     PIIScanResult,
     PrivacyGuard,

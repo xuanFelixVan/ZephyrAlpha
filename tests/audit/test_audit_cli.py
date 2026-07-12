@@ -17,7 +17,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.audit_trail.cli import (
+from zephyr.gov_audit.cli import (
     COMMANDS,
     main,
 )

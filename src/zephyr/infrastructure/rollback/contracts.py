@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.contracts
 # [DOMAIN] D_INFRA_RECOVERY
-# [DEPENDENCIES] zephyr.governance.audit_trail.anomaly
+# [DEPENDENCIES] zephyr.gov_audit.anomaly
 # [CONSUMERS] rollback包内所有模块
 # [STARTUP] imported
 # [MATURITY] production
@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING
 
 # lazy import to avoid L0->L2 circular dependency (Phase 2 P2 import cycle fix)
 if TYPE_CHECKING:
-    from zephyr.governance.audit_trail.anomaly import AnomalyResult as AnomalyEvent
+    from zephyr.gov_audit.anomaly import AnomalyResult as AnomalyEvent
 
 
 class RollbackHandler:

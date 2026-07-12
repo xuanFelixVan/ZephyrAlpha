@@ -3,6 +3,6 @@
 """Re-export wrapper: audit-trail has migrated to zephyr.governance.audit_trail"""
 
 # 5.93.6 修复：import * → 显式导入
-from zephyr.governance.audit_trail import bridges
+from zephyr.gov_audit import bridges
 
 __all__ = ["bridges"]

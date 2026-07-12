@@ -17,7 +17,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from zephyr.governance.audit_trail.replay_engine import (
+from zephyr.gov_audit.replay_engine import (
     ReplayEngine,
     ReplayResult,
     ReplaySnapshot,

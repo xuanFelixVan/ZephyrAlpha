@@ -2,4 +2,4 @@
 # [TTL] permanent
 """Re-export wrapper: audit-orchestrator has migrated to zephyr.governance.audit_trail"""
 
-from zephyr.governance.audit_trail import *  # noqa: F403
+from zephyr.gov_audit import *  # noqa: F403

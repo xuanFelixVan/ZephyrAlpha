@@ -17,7 +17,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from zephyr.governance.audit_trail.trust_engine import (
+from zephyr.gov_audit.trust_engine import (
     TrustAdjustment,
     TrustRecord,
     TrustScoreEngine,

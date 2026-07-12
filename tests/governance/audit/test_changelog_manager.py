@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.changelog_manager import (
+from zephyr.gov_audit.changelog_manager import (
     CHANGELOG,
     ChangeImpact,
     ChangeRecord,

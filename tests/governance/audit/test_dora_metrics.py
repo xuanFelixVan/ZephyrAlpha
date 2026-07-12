@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.dora_metrics import DORACollector, DORATargets
+from zephyr.gov_audit.dora_metrics import DORACollector, DORATargets
 
 
 class TestDORATargets:
