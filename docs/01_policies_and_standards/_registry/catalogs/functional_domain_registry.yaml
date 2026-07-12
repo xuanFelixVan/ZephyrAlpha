@@ -1145,3 +1145,87 @@ entries:
   - 幻觉检测
   stability: evolving
   ai_autonomy: ai_modifiable
+# 裁定#204: D-SIGNAL→D_SIGLEGACY（旧版信号管线，设计态保留）
+- domain: D_SIGLEGACY
+  subdomain: signal_legacy
+  ssot_module: MOD-INF-002
+  ssot_path: src/zephyr/signal_fundamental/
+  covers:
+  - 旧版信号管线（裁定#204改名D-SIGNAL→D_SIGLEGACY）
+  - 信号合成与集成(pipeline)
+  aliases:
+  - signal legacy
+  - 信号遗留
+  - legacy signal
+  stability: evolving
+  ai_autonomy: ai_modifiable
+# 补注册: D_BEHAVIORAL_AUDIT（drift_detector_core 7-file subset, MOD-INF-023）
+- domain: D_BEHAVIORAL_AUDIT
+  subdomain: drift_detector_core
+  ssot_module: MOD-INF-023
+  ssot_path: src/zephyr/governance/drift_detector_core/
+  covers:
+  - AI决策行为可追溯审计
+  - 漂移检测核心子集(benchmark_integrity/ml_engineering/model_drift_monitor)
+  - 性能基线与模型漂移监控
+  - regime检测与 regimes 分析
+  aliases:
+  - behavioral audit
+  - 行为审计
+  - drift detector core
+  stability: stable
+  ai_autonomy: ai_modifiable
+# 补注册: D_COMPLIANCE（合规层, MOD-L10-001）
+- domain: D_COMPLIANCE
+  subdomain: compliance_gate
+  ssot_module: MOD-L10-001
+  ssot_path: src/zephyr/compliance/
+  covers:
+  - 合规校验引擎
+  - 法规约束检查
+  - 持仓合规审计
+  - 前置审批门禁
+  - 监管报告生成
+  - SecurityGateway三层防御
+  - ArtifactScanner多类别扫描
+  aliases:
+  - compliance
+  - 合规
+  - compliance gate
+  stability: evolving
+  ai_autonomy: ai_modifiable
+# 补注册: D_DATA（数据接入层, MOD-L00-004）
+- domain: D_DATA
+  subdomain: data_source_integrator
+  ssot_module: MOD-L00-004
+  ssot_path: src/zephyr/data/
+  covers:
+  - 数据源集成器
+  - Provider抽象层(DataSourceBase/DataSourceMeta)
+  - 策略注册表(SourcePolicy/PolicyRegistry)
+  - 多源自动下载编排(iFind/miniQMT/AKShare/Tushare/Baostock/CLS/EastMoney/TDX/TickFlow/RSS)
+  - 卫星地理空间数据引擎(satellite_geospatial_engine)
+  aliases:
+  - data
+  - 数据接入
+  - data source integrator
+  stability: evolving
+  ai_autonomy: ai_modifiable
+# 补注册: D_INFRASTRUCTURE（跨层契约基础设施, MOD-INF-016）
+- domain: D_INFRASTRUCTURE
+  subdomain: shared_contracts
+  ssot_module: MOD-INF-016
+  ssot_path: src/zephyr/shared/contracts/
+  covers:
+  - 跨层契约数据类(CTR-001 NormalizedMarketData 等)
+  - 基础设施配置(app_config/SystemConfiguration)
+  - 共享契约re-export facade
+  - 错误契约(CTR-ERR-001 DataQualityError 等)
+  - 背压契约(CTR-BP-001~003)
+  aliases:
+  - infrastructure
+  - 基础设施
+  - shared contracts
+  - cross layer contracts
+  stability: stable
+  ai_autonomy: human_gated
