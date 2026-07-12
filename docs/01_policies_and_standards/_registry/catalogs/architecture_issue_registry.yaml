@@ -1468,7 +1468,7 @@ entries:
   fix_phase: Phase 1-5 逐步实施
   created: '2026-07-06'
   last_updated: '2026-07-12'
-  phase1_progress: '2026-07-12 D_GOVERNANCE + D_TRADING 平行域拆分完成——11个新平级域建立，663节点迁移（568 governance/95 docs），ARCH-CAP-002 全部37域合规（最大D_GOVERNANCE=119≤150）。聚合节点模式（Phase 2-5）仍为后续专项。'
+  phase1_progress: '2026-07-12 D_GOVERNANCE + D_TRADING 平行域拆分完成——11个新平级域建立，663节点迁移（568 governance/95 docs）。修复生成器正则 bug（_extract_domain_override 正则 D-[\w-]+ → D[_-][A-Z0-9_]+ 支持下划线格式域ID）+ domain_mapping 表更新（25条映射）+ arch_directory_tree 更新（31条 docs/ 路径 D_GOVERNANCE→D_GOV_DOCS）+ 生成器 --output-db --force 重运行（DB写入4718节点）。ARCH-CAP-002 全部56域0违规（最大D_FEEDBACK_LOOP=111≤150，D_GOVERNANCE=109≤150，D_TRADING=19≤150）。聚合节点模式（Phase 2-5）仍为后续专项。'
 
 # --- #ARCH-053: 三图设计态保护机制 + 对齐检测器（depgraph/dataflow/decision） ---
 - issue_id: '#ARCH-053'
