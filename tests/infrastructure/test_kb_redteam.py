@@ -85,7 +85,7 @@ test whether a near-duplicate can bypass semantic deduplication.
         dupe_path.write_text(near_dupe_content, encoding="utf-8")
 
         try:
-            from zephyr.governance.kb.graph_validator import GraphValidator
+            from zephyr.gov_kb.graph_validator import GraphValidator
 
             gv = GraphValidator()
             result = gv.check_near_duplicate(str(orig_path), str(dupe_path))
@@ -122,7 +122,7 @@ Document B with standard content for collision boundary testing.
         mod_path.write_text(modified, encoding="utf-8")
 
         try:
-            from zephyr.governance.kb.graph_validator import GraphValidator
+            from zephyr.gov_kb.graph_validator import GraphValidator
 
             gv = GraphValidator()
             result = gv.check_near_duplicate(str(base_path), str(mod_path))
@@ -146,7 +146,7 @@ class TestRedTeamChromaDBBypass:
         ke_dir.mkdir(parents=True, exist_ok=True)
 
         try:
-            from zephyr.governance.kb.self_test import _check_ghost_scan as ghost_scan
+            from zephyr.gov_kb.self_test import _check_ghost_scan as ghost_scan
 
             report = ghost_scan(PROJECT_ROOT)
 
@@ -179,7 +179,7 @@ class TestRedTeamContextOverflow:
         if file_size > MAX_KE_SIZE:
             try:
                 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
-                from zephyr.governance.kb.self_test import SelfTest
+                from zephyr.gov_kb.self_test import SelfTest
 
                 os.environ["ZEPHYR_PROJECT_ROOT"] = str(PROJECT_ROOT)
                 st = SelfTest()

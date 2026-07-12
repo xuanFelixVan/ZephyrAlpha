@@ -16,7 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from zephyr.governance.kb.pipeline.analyze import (
+from zephyr.gov_kb.pipeline.analyze import (
     SCORING_DIMENSIONS,
     VALUE_SCORE_THRESHOLD,
     AnalyzeGate,

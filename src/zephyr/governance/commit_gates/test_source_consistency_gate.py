@@ -58,6 +58,7 @@ import logging
 from pathlib import Path
 
 from zephyr.governance.commit_gates._diff_helpers import (
+    _get_added_lines,
     _get_staged_py_files,
     _read_staged_file,
 )

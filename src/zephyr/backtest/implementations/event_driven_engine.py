@@ -100,7 +100,7 @@ class EventDrivenEngine(BacktestEngineBase):
       - PIT 铁律（按 timestamp 严格排序）
 
     Usage（Tick 级回测）:
-        provider = MiniQmtProvider(path="D:/国金QMT/userdata_mini")
+        provider = MiniQmtProvider(path="E:/国金证券QMT交易端/userdata_mini")
         engine = EventDrivenEngine(
             config=BacktestConfig(initial_capital=Decimal("100000")),
         )

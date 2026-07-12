@@ -171,7 +171,7 @@ try:
     import zephyr.governance.financial_governance.financial_compliance as financial_compliance
     import zephyr.governance.financial_governance.fsm_verifier as fsm_verifier
     import zephyr.governance.escalation.incident_response as incident_response
-    import zephyr.governance.kb.knowledge_engine as knowledge_engine
+    import zephyr.gov_kb.knowledge_engine as knowledge_engine
     import zephyr.governance.ops_governance.ops_foundation as ops_foundation
     import zephyr.governance.lifecycle_governance.paper_live_transition as paper_live_transition
     import zephyr.governance.ops_governance.phase_check_registry as phase_check_registry

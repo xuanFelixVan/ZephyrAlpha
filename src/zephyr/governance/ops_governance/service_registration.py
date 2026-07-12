@@ -76,7 +76,7 @@ def register_services() -> None:
 
     # reranker — Reranker instance
     def _make_reranker() -> Any:
-        from zephyr.governance.kb.reranker import Reranker
+        from zephyr.gov_kb.reranker import Reranker
 
         return Reranker()
 

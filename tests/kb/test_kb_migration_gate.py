@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.kb.kb_gate_task import _GATE_SEQ, build_kb_gate_eval_task
+from zephyr.gov_kb.kb_gate_task import _GATE_SEQ, build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
 
 

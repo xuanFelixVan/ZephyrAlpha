@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.kb.embedding_migrate import (
+from zephyr.gov_kb.embedding_migrate import (
     EmbeddingMigrator,
     EmbeddingVersion,
     MigrationCheckpoint,

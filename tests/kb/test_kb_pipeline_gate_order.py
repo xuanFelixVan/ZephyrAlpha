@@ -12,9 +12,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.kb.ingest import IngestGate
-from zephyr.governance.kb.pipeline.analyze import AnalyzeGate
-from zephyr.governance.kb.pipeline.extract import ExtractGate
+from zephyr.gov_kb.ingest import IngestGate
+from zephyr.gov_kb.pipeline.analyze import AnalyzeGate
+from zephyr.gov_kb.pipeline.extract import ExtractGate
 from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateResult
 from zephyr.governance.escalation.triage import TriageGate
 from zephyr.intelligence.model_evaluation.activate import ActivateGate

@@ -50,7 +50,7 @@ ADR      : ADR-0019(FLE单向依赖) + ADR-0031(ChromaDB选型) + ADR-0016(BGE-M
 
 from __future__ import annotations
 
-from zephyr.governance.kb.unified_memory_api import UnifiedMemoryAPI, get_unified_memory_api
+from zephyr.gov_kb.unified_memory_api import UnifiedMemoryAPI, get_unified_memory_api
 from zephyr.integration.vector_memory.delegated_vector_memory import UnifiedVectorMemoryAdapter
 from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 from zephyr.integration.vector_memory.interface import (

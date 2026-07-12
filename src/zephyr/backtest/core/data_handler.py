@@ -368,7 +368,7 @@ class MultiSourceDataHandler:
 
     Usage:
         # Tick 模式（做T回测）
-        provider = MiniQmtProvider(path="D:/国金QMT/userdata_mini")
+        provider = MiniQmtProvider(path="E:/国金证券QMT交易端/userdata_mini")
         handler = MultiSourceDataHandler(
             tick_provider=provider,
             symbols=["600000.SH"],

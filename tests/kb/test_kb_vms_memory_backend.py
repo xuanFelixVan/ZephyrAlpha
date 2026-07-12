@@ -15,11 +15,11 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.governance.kb._backend_protocol import (
+from zephyr.gov_kb._backend_protocol import (
     InMemoryMemoryBackend,
     MemoryRecord,
 )
-from zephyr.governance.kb.vms_memory_backend import VMSMemoryBackend
+from zephyr.gov_kb.vms_memory_backend import VMSMemoryBackend
 
 
 def _make_record(topic: str = "knowledge_test", content: str = "test content") -> MemoryRecord:

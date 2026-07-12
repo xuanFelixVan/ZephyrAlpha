@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.kb.verify import FactChecker, FactResult
+from zephyr.gov_kb.verify import FactChecker, FactResult
 
 
 class TestFactResult:

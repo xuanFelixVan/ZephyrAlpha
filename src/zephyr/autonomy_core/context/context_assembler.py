@@ -635,7 +635,7 @@ def _get_or_init_kb() -> UnifiedMemoryAPI | None:
     try:
         from pathlib import Path
 
-        from zephyr.governance.kb.bootstrap import Bootstrap, BootstrapConfig
+        from zephyr.gov_kb.bootstrap import Bootstrap, BootstrapConfig
         from zephyr.intelligence.model_evaluation.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
 
         kb = UnifiedMemoryAPI(backend=InMemoryMemoryBackend(), enforce_capability=False)

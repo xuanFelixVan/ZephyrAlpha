@@ -12,7 +12,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.governance.kb.embedding_version_lock import EmbeddingVersionInfo, EmbeddingVersionLock
+from zephyr.gov_kb.embedding_version_lock import EmbeddingVersionInfo, EmbeddingVersionLock
 
 
 class TestEmbeddingVersionInfo:

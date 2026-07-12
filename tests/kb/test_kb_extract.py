@@ -18,7 +18,7 @@ from unittest.mock import MagicMock
 
 import yaml
 
-from zephyr.governance.kb.pipeline.extract import (
+from zephyr.gov_kb.pipeline.extract import (
     BEST_PRACTICES_DIR_NAME,
     EXTRACTION_TEMPLATES,
     LESSONS_DIR_NAME,

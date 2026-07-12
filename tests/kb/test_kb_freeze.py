@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.kb.freeze import (
+from zephyr.gov_kb.freeze import (
     FreezeCircuitBreaker,
     FreezeMode,
     FreezeReason,

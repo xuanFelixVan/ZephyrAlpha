@@ -17,7 +17,7 @@ import os
 import time
 from pathlib import Path
 
-from zephyr.governance.kb.quiet_period_monitor import QuietPeriodMonitor, QuietPeriodReport
+from zephyr.gov_kb.quiet_period_monitor import QuietPeriodMonitor, QuietPeriodReport
 
 
 class TestQuietPeriodMonitor:

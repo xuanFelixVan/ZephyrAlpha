@@ -25,7 +25,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.kb.pipeline.analyze import SCORING_DIMENSIONS, VALUE_SCORE_THRESHOLD, AnalyzeGate
+from zephyr.gov_kb.pipeline.analyze import SCORING_DIMENSIONS, VALUE_SCORE_THRESHOLD, AnalyzeGate
 
 
 @pytest.fixture()

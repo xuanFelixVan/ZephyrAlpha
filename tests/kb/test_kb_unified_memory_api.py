@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.kb._backend_protocol import (
+from zephyr.gov_kb._backend_protocol import (
     InMemoryMemoryBackend,
 )
 from zephyr.intelligence.model_evaluation.unified_memory_api import (

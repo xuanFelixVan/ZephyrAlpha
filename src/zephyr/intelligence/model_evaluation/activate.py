@@ -42,7 +42,7 @@ from typing import Any
 
 import yaml
 
-from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
+from zephyr.gov_kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
 
