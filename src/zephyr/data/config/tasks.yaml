@@ -220,7 +220,7 @@ tasks:
     capability: kline_1min
     symbols: null
     extra:
-      description: "1分钟K线增量（历史需淘宝）"
+      description: "1分钟K线增量（百度云已下载2000年起完整历史，miniQMT持续增量）"
 
   - task_id: kline_5min_incremental
     table: c1_market.kline_5min
@@ -231,7 +231,7 @@ tasks:
     capability: kline_5min
     symbols: null
     extra:
-      description: "5分钟K线增量（2019年前需淘宝补历史）"
+      description: "5分钟K线增量（百度云已下载2000年起完整历史，miniQMT持续增量）"
 
   - task_id: kline_15min_incremental
     table: c1_market.kline_15min
@@ -1202,7 +1202,7 @@ tasks:
       description: "大宗交易-QMT占位（QMT无接口，已由AKShare block_trade_incremental覆盖）"
       disabled: true
 
-  # ============== P1: 淘宝历史数据持续更新（十大股东/披露计划，2026-07-11）==============
+  # ============== P1: 百度云历史数据持续更新（十大股东/披露计划，2026-07-11）==============
   - task_id: top10_shareholders_incremental
     table: c3_fundamental.top10_shareholders
     source: akshare
