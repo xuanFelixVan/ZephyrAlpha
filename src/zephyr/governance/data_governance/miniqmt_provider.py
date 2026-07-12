@@ -96,7 +96,7 @@ class MiniQmtProvider(DataSourceBase):
       - ClickHouse 历史日线（通过 DatabaseService）
 
     Usage:
-        provider = MiniQmtProvider(path="D:/国金QMT/userdata_mini", session_id="zephyr")
+        provider = MiniQmtProvider(path="E:/国金证券QMT交易端/userdata_mini", session_id="zephyr")
         # 历史 Tick
         df = provider.fetch_historical("600000.SH", start, end, interval="tick")
         # 5档盘口

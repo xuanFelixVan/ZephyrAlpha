@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.kb.load_bearing import LBEntry, LBStatus, LoadBearingWall, WallReport
+from zephyr.gov_kb.load_bearing import LBEntry, LBStatus, LoadBearingWall, WallReport
 
 
 def _write_ke(directory: Path, name: str, frontmatter: dict, body: str = "content") -> Path:

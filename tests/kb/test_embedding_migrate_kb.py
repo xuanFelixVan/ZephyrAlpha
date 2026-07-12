@@ -21,7 +21,7 @@ from typing import Any
 
 import pytest
 
-from zephyr.governance.kb.embedding_migrate import (
+from zephyr.gov_kb.embedding_migrate import (
     EmbeddingMigrator,
     MigrationStatus,
 )

@@ -66,7 +66,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.governance.kb._backend_protocol import (
+from zephyr.gov_kb._backend_protocol import (
     InMemoryMemoryBackend,
     MemoryBackend,
     MemoryBackendError,
@@ -357,7 +357,7 @@ def get_unified_memory_api(
             resolved_backend = backend
             if resolved_backend is None and prefer_vms:
                 try:
-                    from zephyr.governance.kb.vms_memory_backend import create_vms_backend
+                    from zephyr.gov_kb.vms_memory_backend import create_vms_backend
 
                     resolved_backend = create_vms_backend()
                     _logger.info("get_unified_memory_api: using VMSMemoryBackend")

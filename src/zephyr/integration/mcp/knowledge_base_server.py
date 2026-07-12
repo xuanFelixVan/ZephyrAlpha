@@ -225,7 +225,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         self._backend_mode = "memory_fallback(kb_repo removed)"
 
         try:
-            from zephyr.governance.kb.unified_memory_api import get_unified_memory_api
+            from zephyr.gov_kb.unified_memory_api import get_unified_memory_api
 
             self._kb_api = get_unified_memory_api(enforce_capability=False)
         except Exception as e:
@@ -339,7 +339,7 @@ class KnowledgeBaseServer(BaseMCPServer):
 
         if self._kb_api is not None:
             try:
-                from zephyr.governance.kb.unified_memory_api import build_provenance
+                from zephyr.gov_kb.unified_memory_api import build_provenance
 
                 prov = build_provenance(
                     origin=f"mcp:knowledge_base:upsert_ke:{ke_id}",

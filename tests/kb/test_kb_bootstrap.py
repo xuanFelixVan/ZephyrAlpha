@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.kb.bootstrap import (
+from zephyr.gov_kb.bootstrap import (
     Bootstrap,
     BootstrapChunk,
     BootstrapConfig,

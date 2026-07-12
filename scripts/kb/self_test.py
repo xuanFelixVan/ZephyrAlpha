@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/kb/self_test.py | §
 # [MODULE] scripts.kb.self_test
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.kb.self_test
+# [DEPENDENCIES] zephyr.gov_kb.self_test
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import sys
 
-from zephyr.governance.kb.self_test import SelfTest
+from zephyr.gov_kb.self_test import SelfTest
 
 
 def main() -> None:

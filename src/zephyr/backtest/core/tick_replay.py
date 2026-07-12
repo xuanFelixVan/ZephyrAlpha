@@ -136,7 +136,7 @@ class TickReplayEngine:
       - 盘口挂单监控: 实时推送 askVol/bidVol 变化
 
     Usage:
-        provider = MiniQmtProvider(path="D:/国金QMT/userdata_mini")
+        provider = MiniQmtProvider(path="E:/国金证券QMT交易端/userdata_mini")
         engine = TickReplayEngine(
             provider=provider,
             symbols=["600000.SH", "000001.SZ"],

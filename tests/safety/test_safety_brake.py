@@ -16,7 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
-from zephyr.governance.kb.safety_brake import (
+from zephyr.gov_kb.safety_brake import (
     OperationType,
     PreFlightResult,
     RiskLevel,

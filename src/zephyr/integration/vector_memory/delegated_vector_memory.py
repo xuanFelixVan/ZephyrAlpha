@@ -34,7 +34,7 @@ from __future__ import annotations
 import logging
 from datetime import UTC, datetime
 
-from zephyr.governance.kb.unified_memory_api import UnifiedMemoryAPI, WriteTrace, get_unified_memory_api
+from zephyr.gov_kb.unified_memory_api import UnifiedMemoryAPI, WriteTrace, get_unified_memory_api
 from zephyr.integration.vector_memory.interface import MemoryEntry, VectorMemoryBase
 
 _logger = logging.getLogger(__name__)

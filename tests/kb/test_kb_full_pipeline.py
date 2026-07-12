@@ -27,8 +27,8 @@ from pathlib import Path
 
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
-from zephyr.governance.kb.ingest import IngestGate
-from zephyr.governance.kb.bootstrap import (
+from zephyr.gov_kb.ingest import IngestGate
+from zephyr.gov_kb.bootstrap import (
     Bootstrap,
     BootstrapConfig,
     BootstrapResult,

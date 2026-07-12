@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.governance.kb.pattern_library import (
+    from zephyr.gov_kb.pattern_library import (
         KNOWN_DANGEROUS_PATTERNS,
         DangerousPattern,
         DangerousPatternLibrary,

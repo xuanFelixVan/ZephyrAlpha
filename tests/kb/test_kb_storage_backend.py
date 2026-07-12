@@ -17,7 +17,7 @@ import threading
 
 import pytest
 
-from zephyr.governance.kb._backend_protocol import (
+from zephyr.gov_kb._backend_protocol import (
     InMemoryMemoryBackend,
     MemoryBackend,
     MemoryBackendError,

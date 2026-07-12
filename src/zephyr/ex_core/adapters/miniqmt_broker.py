@@ -131,9 +131,9 @@ class MiniQmtBroker(BrokerInterface):
 
     Usage:
         # 与 D_DATA 共用 xtquant 连接
-        provider = MiniQmtProvider(path="D:/国金QMT/userdata_mini")
+        provider = MiniQmtProvider(path="E:/国金证券QMT交易端/userdata_mini")
         broker = MiniQmtBroker(
-            path="D:/国金QMT/userdata_mini",
+            path="E:/国金证券QMT交易端/userdata_mini",
             session_id="zephyr_session",
             shared_xtquant_conn=provider,  # 共用连接
             matching_logic=MatchingLogic(MatchingConfig()),  # 共用撮合逻辑

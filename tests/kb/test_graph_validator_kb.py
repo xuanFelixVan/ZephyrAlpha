@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.kb.graph_validator import GraphValidator, ValidationSeverity
+from zephyr.gov_kb.graph_validator import GraphValidator, ValidationSeverity
 from zephyr.governance.persistence.sqlite_schema import init_db
 
 

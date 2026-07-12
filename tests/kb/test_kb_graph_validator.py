@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.kb.graph_validator import (
+from zephyr.gov_kb.graph_validator import (
     ValidationIssue,
     ValidationReport,
     ValidationSeverity,
