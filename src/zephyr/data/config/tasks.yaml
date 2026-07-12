@@ -103,7 +103,7 @@ tasks:
   - task_id: kline_hk_daily_incremental
     table: c1_market.kline_hk_daily
     source: miniqmt
-    schedule: daily_capital
+    schedule: intraday_realtime
     incremental: true
     dependencies: []
     capability: kline_hk_daily
@@ -114,7 +114,7 @@ tasks:
   - task_id: macro_data_incremental
     table: c1_market.macro_data
     source: akshare
-    schedule: daily_capital
+    schedule: event_driven
     incremental: true
     dependencies: []
     capability: macro_data
@@ -215,7 +215,7 @@ tasks:
   - task_id: kline_1min_incremental
     table: c1_market.kline_1min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_1min
@@ -226,7 +226,7 @@ tasks:
   - task_id: kline_5min_incremental
     table: c1_market.kline_5min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_5min
@@ -237,7 +237,7 @@ tasks:
   - task_id: kline_15min_incremental
     table: c1_market.kline_15min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_15min
@@ -248,7 +248,7 @@ tasks:
   - task_id: kline_30min_incremental
     table: c1_market.kline_30min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_30min
@@ -259,7 +259,7 @@ tasks:
   - task_id: kline_60min_incremental
     table: c1_market.kline_60min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_60min
@@ -271,7 +271,7 @@ tasks:
   - task_id: kline_etf_1min_incremental
     table: c1_market.kline_etf_1min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_etf_1min
@@ -282,7 +282,7 @@ tasks:
   - task_id: kline_etf_5min_incremental
     table: c1_market.kline_etf_5min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_etf_5min
@@ -293,7 +293,7 @@ tasks:
   - task_id: kline_etf_15min_incremental
     table: c1_market.kline_etf_15min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_etf_15min
@@ -304,7 +304,7 @@ tasks:
   - task_id: kline_etf_30min_incremental
     table: c1_market.kline_etf_30min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_etf_30min
@@ -315,7 +315,7 @@ tasks:
   - task_id: kline_etf_60min_incremental
     table: c1_market.kline_etf_60min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_etf_60min
@@ -326,7 +326,7 @@ tasks:
   - task_id: kline_lof_1min_incremental
     table: c1_market.kline_lof_1min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_lof_1min
@@ -337,7 +337,7 @@ tasks:
   - task_id: kline_lof_5min_incremental
     table: c1_market.kline_lof_5min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_lof_5min
@@ -348,7 +348,7 @@ tasks:
   - task_id: kline_lof_15min_incremental
     table: c1_market.kline_lof_15min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_lof_15min
@@ -359,7 +359,7 @@ tasks:
   - task_id: kline_lof_30min_incremental
     table: c1_market.kline_lof_30min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_lof_30min
@@ -370,7 +370,7 @@ tasks:
   - task_id: kline_lof_60min_incremental
     table: c1_market.kline_lof_60min
     source: miniqmt
-    schedule: daily_minute
+    schedule: intraday_minute
     incremental: true
     dependencies: []
     capability: kline_lof_60min
@@ -427,7 +427,7 @@ tasks:
   - task_id: shareholder_incremental
     table: c3_fundamental.shareholder_count
     source: miniqmt
-    schedule: daily_capital
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: shareholder
@@ -438,7 +438,7 @@ tasks:
   - task_id: analyst_forecast_incremental
     table: c3_fundamental.analyst_forecast
     source: akshare
-    schedule: daily_capital
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: analyst_forecast
@@ -449,7 +449,7 @@ tasks:
   - task_id: earnings_forecast_incremental
     table: c3_fundamental.earnings_forecast
     source: miniqmt
-    schedule: daily_capital
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: earnings_forecast
@@ -460,7 +460,7 @@ tasks:
   - task_id: express_report_incremental
     table: c3_fundamental.express_report
     source: miniqmt
-    schedule: daily_capital
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: express_report
@@ -471,7 +471,7 @@ tasks:
   - task_id: audit_opinion_incremental
     table: c3_fundamental.audit_opinion
     source: akshare
-    schedule: daily_capital
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: audit_opinion
@@ -482,7 +482,7 @@ tasks:
   - task_id: dividend_incremental
     table: c3_fundamental.dividend
     source: miniqmt
-    schedule: daily_capital
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: dividend
@@ -493,7 +493,7 @@ tasks:
   - task_id: rights_issue_incremental
     table: c3_fundamental.rights_issue
     source: akshare
-    schedule: daily_capital
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: rights_issue
@@ -504,7 +504,7 @@ tasks:
   - task_id: equity_pledge_incremental
     table: c3_fundamental.equity_pledge_detail
     source: akshare
-    schedule: daily_capital
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: equity_pledge
@@ -515,7 +515,7 @@ tasks:
   - task_id: equity_pledge_summary_incremental
     table: c3_fundamental.equity_pledge_summary
     source: akshare
-    schedule: daily_capital
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: equity_pledge_summary
@@ -646,16 +646,8 @@ tasks:
     extra:
       description: "QMT 3秒Tick增量（写入 tick_data，补充 bid/ask 买卖一档；百度云历史 bid/ask 为 NULL）"
 
-  - task_id: auction_snapshot
-    table: c1_market.auction_snapshot
-    source: miniqmt
-    schedule: weekend_financial
-    incremental: true
-    dependencies: []
-    capability: auction_snapshot
-    symbols: null
-    extra:
-      description: "集合竞价快照（9:15-9:25 实时积累）"
+  # [REMOVED] auction_snapshot — 旧任务，已被 auction_data_snapshot（intraday_realtime）替代，
+  # 两者写同一张表 c1_market.auction_snapshot，保留新实现 auction_data（get_full_tick 实时快照）
 
   - task_id: index_quote_snapshot
     table: c1_market.index_quote
@@ -1134,7 +1126,7 @@ tasks:
   - task_id: hk_kline_incremental
     table: c1_market.hk_kline
     source: miniqmt
-    schedule: daily_capital
+    schedule: intraday_realtime
     incremental: true
     dependencies: []
     capability: hk_kline
@@ -1238,7 +1230,7 @@ tasks:
   - task_id: disclosure_plan_incremental
     table: c3_fundamental.disclosure_plan
     source: akshare
-    schedule: event_driven
+    schedule: daily_event
     incremental: true
     dependencies: []
     capability: disclosure_plan
