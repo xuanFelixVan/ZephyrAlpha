@@ -801,7 +801,7 @@ def _extract_domain_override(filepath: Path) -> str | None:
     """从文件头提取 [DOMAIN] 字段，返回 domain_id 或 None。
 
     覆盖路径派生的 domain_id，用于跨域模块的显式声明。
-    只读前20行，支持 # [DOMAIN] D-XXX 格式。
+    只读前20行，支持 # [DOMAIN] D_XXX 和 D-XXX 格式。
     """
     try:
         with open(filepath, encoding="utf-8", errors="ignore") as f:
@@ -809,7 +809,7 @@ def _extract_domain_override(filepath: Path) -> str | None:
                 line = f.readline()
                 if not line:
                     break
-                m = re.match(r"^#\s*\[DOMAIN\]\s*(D-[\w-]+)", line)
+                m = re.match(r"^#\s*\[DOMAIN\]\s*(D[_-][A-Z0-9_]+)", line)
                 if m:
                     return m.group(1)
     except (OSError, UnicodeDecodeError):
