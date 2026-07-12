@@ -9,8 +9,8 @@ generator: tmp/generate_data_inventory.py
 language: zh
 description: ClickHouse 业务数据库实时扫描结果
 responsibility_domain: 
-build_status: generated
 design_maturity: design
+build_status: generated
 ---
 
 # 业务数据清单
@@ -40,11 +40,11 @@ design_maturity: design
 | `daily_valuation` | 每日估值 | 1990-12-19 | 2026-07-03 | 5708 | 8,787,985 | local_valuation | 每日 |
 | `dragon_tiger` | 龙虎榜 | 2006-07-17 | 2026-07-03 | 5047 | 167,961 | ifind | 每日 |
 | `etf_benchmark` | ETF基准 | 1991-04-04 | 2025-07-21 | — | 732 | — | 静态 |
-| `etf_kline_15min` | ETF15分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 22,813,741 | bdpan | 实时 |
-| `etf_kline_1min` | ETF1分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 343,553,536 | bdpan | 实时 |
-| `etf_kline_30min` | ETF30分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 11,398,303 | bdpan | 实时 |
-| `etf_kline_5min` | ETF5分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 68,389,859 | bdpan | 实时 |
-| `etf_kline_60min` | ETF60分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 5,699,152 | bdpan | 实时 |
+| `kline_etf_15min` | ETF15分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 22,813,741 | bdpan | 实时 |
+| `kline_etf_1min` | ETF1分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 343,553,536 | bdpan | 实时 |
+| `kline_etf_30min` | ETF30分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 11,398,303 | bdpan | 实时 |
+| `kline_etf_5min` | ETF5分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 68,389,859 | bdpan | 实时 |
+| `kline_etf_60min` | ETF60分钟K线 | 2005-02-23 | 2026-07-03 | 1581 | 5,699,152 | bdpan | 实时 |
 | `etf_list` | ETF列表 | 2005-02-23 | 2026-07-06 | — | 1,764 | — | 静态 |
 | `futures_kline` | 期货K线 | 2010-01-04 | 2026-07-03 | 17592 | 3,067,213 | qmt | 每日 |
 | `futures_position` | 期货持仓 | — | — | 0 | 0 | — | 每日 |
@@ -53,7 +53,7 @@ design_maturity: design
 | `hk_stock_list` | 港股股票列表 | — | — | — | 4,688 | — | 静态 |
 | `hk_trade_calendar` | 港股交易日历 | 1980-01-01 | 2026-07-06 | — | 17,167 | — | 静态 |
 | `index_constituent` | 指数成分股 | 2009-12-31 | 2026-06-30 | 3551 | 59,583 | ifind | 静态 |
-| `index_kline` | 指数日K线 | 1990-12-19 | 2026-07-03 | 1031 | 3,066,374 | bdpan | 每日 |
+| `kline_index` | 指数日K线 | 1990-12-19 | 2026-07-03 | 1031 | 3,066,374 | bdpan | 每日 |
 | `index_list` | 指数列表 | 1991-04-04 | 2025-07-21 | 732 | 732 | — | 静态 |
 | `index_quote` | 指数报价 | — | — | 0 | 0 | — | 每日 |
 | `industry_class` | 行业分类 | — | — | 5534 | 16,600 | ifind | 静态 |
@@ -71,11 +71,11 @@ design_maturity: design
 | `kline_weekly` | A股周K线（前复权） | 1990-12-20 | 2026-06-26 | 5856 | 3,769,062 | bdpan_qfq | 每周 |
 | `kline_weekly_hfq` | A股周K线（后复权） | 1990-12-20 | 2026-06-26 | 5853 | 3,768,249 | bdpan_hfq | 每周 |
 | `kline_weekly_none` | A股周K线（不复权） | 1990-12-20 | 2026-06-26 | 5856 | 3,769,209 | bdpan_none | 每周 |
-| `lof_kline_15min` | LOF15分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 12,064,844 | bdpan | 实时 |
-| `lof_kline_1min` | LOF1分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 181,720,142 | bdpan | 实时 |
-| `lof_kline_30min` | LOF30分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 6,032,451 | bdpan | 实时 |
-| `lof_kline_5min` | LOF5分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 36,194,482 | bdpan | 实时 |
-| `lof_kline_60min` | LOF60分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 3,016,252 | bdpan | 实时 |
+| `kline_lof_15min` | LOF15分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 12,064,844 | bdpan | 实时 |
+| `kline_lof_1min` | LOF1分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 181,720,142 | bdpan | 实时 |
+| `kline_lof_30min` | LOF30分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 6,032,451 | bdpan | 实时 |
+| `kline_lof_5min` | LOF5分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 36,194,482 | bdpan | 实时 |
+| `kline_lof_60min` | LOF60分钟K线 | 2010-08-16 | 2026-07-03 | 2750 | 3,016,252 | bdpan | 实时 |
 | `lof_list` | LOF列表 | — | — | — | 361 | — | 静态 |
 | `macro_data` | 宏观经济数据 | 2006-03-31 | 2026-06-30 | 27 | 5,853 | akshare | 静态 |
 | `margin_trading` | 融资融券 | 2010-01-31 | 2026-06-30 | 5534 | 1,095,732 | ifind | 每日 |
@@ -85,7 +85,7 @@ design_maturity: design
 | `tdx_market_index` | 通达信板块指数 | — | — | 50 | 50 | — | 每日 |
 | `tdx_sector_info` | 通达信板块信息 | 2026-07-03 | 2026-07-03 | 90 | 90 | — | 每日 |
 | `tick_data` | Tick数据（实时） | — | — | 0 | 0 | — | 实时 |
-| `tick_history` | Tick数据（历史） | 2000-07-14 | 2026-07-02 | 8740 | 7,143,133,916 | bdpan | 每日 |
+| `tick_data` | Tick数据（历史） | 2000-07-14 | 2026-07-02 | 8740 | 7,143,133,916 | bdpan | 每日 |
 | `trade_calendar` | 交易日历 | 1990-12-19 | 2026-07-06 | — | 13,162 | — | 静态 |
 | `us_daily_kline` | 美股日K线 | 2006-08-15 | 2026-07-01 | 34 | 167,175 | tickflow | 每日 |
 | `us_index` | 美股指数 | 1993-01-29 | 2026-07-02 | 3 | 22,441 | tickflow | 每日 |
@@ -130,17 +130,17 @@ design_maturity: design
 | `c1_market.daily_valuation` | 2026-07-03 | 3天 | 🟡 轻微滞后 |
 | `c1_market.dragon_tiger` | 2026-07-03 | 3天 | 🟡 轻微滞后 |
 | `c1_market.etf_benchmark` | 2025-07-21 | 350天 | ℹ️ 静态型 |
-| `c1_market.etf_kline_15min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
-| `c1_market.etf_kline_1min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
-| `c1_market.etf_kline_30min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
-| `c1_market.etf_kline_5min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
-| `c1_market.etf_kline_60min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_etf_15min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_etf_1min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_etf_30min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_etf_5min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_etf_60min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
 | `c1_market.etf_list` | 2026-07-06 | 0天 | ℹ️ 静态型 |
 | `c1_market.futures_kline` | 2026-07-03 | 3天 | 🟡 轻微滞后 |
 | `c1_market.hk_daily_kline` | 2026-07-03 | 3天 | 🟡 轻微滞后 |
 | `c1_market.hk_trade_calendar` | 2026-07-06 | 0天 | ℹ️ 静态型 |
 | `c1_market.index_constituent` | 2026-06-30 | 6天 | ℹ️ 静态型 |
-| `c1_market.index_kline` | 2026-07-03 | 3天 | 🟡 轻微滞后 |
+| `c1_market.kline_index` | 2026-07-03 | 3天 | 🟡 轻微滞后 |
 | `c1_market.index_list` | 2025-07-21 | 350天 | ℹ️ 静态型 |
 | `c1_market.kline_15min` | 2026-07-02 | 4天 | ℹ️ 实时型 |
 | `c1_market.kline_1min` | 2026-07-02 | 4天 | ℹ️ 实时型 |
@@ -156,17 +156,17 @@ design_maturity: design
 | `c1_market.kline_weekly` | 2026-06-26 | 10天 | 🟠 滞后 |
 | `c1_market.kline_weekly_hfq` | 2026-06-26 | 10天 | 🟠 滞后 |
 | `c1_market.kline_weekly_none` | 2026-06-26 | 10天 | 🟠 滞后 |
-| `c1_market.lof_kline_15min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
-| `c1_market.lof_kline_1min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
-| `c1_market.lof_kline_30min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
-| `c1_market.lof_kline_5min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
-| `c1_market.lof_kline_60min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_lof_15min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_lof_1min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_lof_30min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_lof_5min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
+| `c1_market.kline_lof_60min` | 2026-07-03 | 3天 | ℹ️ 实时型 |
 | `c1_market.macro_data` | 2026-06-30 | 6天 | ℹ️ 静态型 |
 | `c1_market.margin_trading` | 2026-06-30 | 6天 | 🟠 滞后 |
 | `c1_market.money_flow` | 2026-07-03 | 3天 | 🟡 轻微滞后 |
 | `c1_market.stock_list` | 2026-07-02 | 4天 | ℹ️ 静态型 |
 | `c1_market.tdx_sector_info` | 2026-07-03 | 3天 | 🟡 轻微滞后 |
-| `c1_market.tick_history` | 2026-07-02 | 4天 | 🟡 轻微滞后 |
+| `c1_market.tick_data` | 2026-07-02 | 4天 | 🟡 轻微滞后 |
 | `c1_market.trade_calendar` | 2026-07-06 | 0天 | ℹ️ 静态型 |
 | `c1_market.us_daily_kline` | 2026-07-01 | 5天 | 🟠 滞后 |
 | `c1_market.us_index` | 2026-07-02 | 4天 | 🟡 轻微滞后 |
