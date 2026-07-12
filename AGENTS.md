@@ -685,6 +685,36 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 **AI 收到 warn 后的操作**：编辑 [blueprint.md §0.1](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/gate_engine/blueprint.md) 补登记缺失的 gate 文件行（格式：`- commit_gates/<filename>.py → "<gate 中文名>门禁（<GATE-ID>）"`），然后 commit blueprint.md。
 
+### 10.3 GATE-TMP-CLEANUP：tmp/ TTL 自动清理（治本 249+ 文件残留，2026-07-12）
+
+**病根**：`tmp/` 在 [directory_contract.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml) 属 neutral zone（`default_ttl=null, gate=none`），[.gitignore L228-232](file:///d:/ZephyrAlpha/.gitignore) 全目录忽略——无自动清理机制，依赖 AI 自觉删除 task_bound 脚本。100% AI 开发模式下"依赖AI自觉"反模式最终必被违反，导致 tmp/ 堆积 249+ 历史残留文件（审查脚本、调试脚本、临时数据等）。
+
+**治本**（2026-07-12，遗留项1根因）：新增 post-commit reconciler `GATE-TMP-CLEANUP`（priority=49，在 GATE-RUNTIME-CLEANUP priority=50 之前执行），对标 [`make_runtime_cleanup_reconciler`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py)（清理 `.runtime/` 下 mtime>7 天文件）。
+- **触发条件**：每次 commit 后（trigger=always True）。
+- **清理逻辑**：`os.walk(tmp/)` 扫描所有文件，删除 `mtime > 7 天` 的文件（`_PROTECTED_NAMES={".gitkeep"}` 跳过）。
+- **action 语义**：`clean`（成功删除）/ `warn`（有 OSError）/ `skip`（tmp/ 不存在）。
+- **非阻断**：reconciler 性质决定 warn-only，不阻断 commit。
+
+**设计理由**：将"依赖AI自觉"转为"自动事件触发"——对标 trae_060 §2.2 向内收原则（自动触发+自动维护+自动关闭）。与 GATE-RUNTIME-CLEANUP 互补：runtime/ 清理 7 天 mtime（priority=50），tmp/ 清理 7 天 mtime（priority=49）——两套 TTL 清理覆盖所有 neutral zone 瞬态目录。
+
+**生效条件**：[`reconciliation_registry.py` `make_tmp_cleanup_reconciler`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py) 注册到 [`GitCommitGateway._register_default_reconcilers`](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py)（post-commit 自动触发，无需人工安装 hook）。
+
+### 10.4 GATE-COMMIT-GW-AUDIT 升级：并发冲突检测（治本 commit 丢弃根因，2026-07-12）
+
+**病根**：本会话审查发现 commit `2ca738d478` 被 sess-49920 的 `reset HEAD~1` 丢弃——治本变更（breaking_change=True session）期间发生并发 AI 对话，违反 AGENTS.md L522"治本变更未提交前禁止并发 AI 对话"铁律。`commit_gw_audit` reconciler 仅检测 non-GW commit，不检测并发冲突——即使最终结果正确（merge commit 包含全部修改），并发过程违规无法被审计发现。
+
+**治本**（2026-07-12，遗留项2根因）：升级 [`_reconcile_commit_gw_audit`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py)（在 `make_integrity_audit_reconciler` 闭包内），增加并发冲突检测分支。
+- **检测逻辑**：审计发现 violations（non-GW commit）时，联动 [`SessionRegistry`](file:///d:/ZephyrAlpha/src/zephyr/security/access_control/session_concurrency.py) 检测活跃 breaking_change session。
+  - `registry.find_breaking_change_session(exclude_session_id=session_id)` 命中 → `concurrent_conflict=True`
+  - 补充 `registry.list_active()` 收集所有活跃 session（排除自身）作为 `conflict_sessions`
+- **报告字段**：审计报告 JSON 新增 `concurrent_conflict`（bool）+ `conflict_sessions`（list[str]）。
+- **action 语义**：命中并发冲突 → `warn`（非阻断），detail 含 `CONCURRENT_BREAKING_CHANGE_CONFLICT: audit detected N non-GW commits with M active breaking_change session(s) [...]`。
+- **fail-open**：SessionRegistry 异常时不阻断审计主流程（`except Exception: pass`）。
+
+**判定依据**：`find_breaking_change_session` 是 [`session_worktree_start`](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/session_worktree.py) 的 `breaking_change=True` 阻断逻辑（BREAKING_CHANGE_CONCURRENCY_BLOCKED）的反向检测——start 时阻断其他 session 进入，本 reconciler 事后审计是否有违规进入。
+
+**生效条件**：升级已并入 [`make_integrity_audit_reconciler`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py)（3-way 合并入口，GATE-COMMIT-GW-AUDIT 是其中一轨），post-commit 自动触发，无需人工安装 hook。
+
 ## 11. depgraph 使用指引（唯一全景真源）
 
 > **三图正交声明（TRAE-061，2026-07-06）**：项目有三张架构图，正交分离，通过 `module_id` 关联：

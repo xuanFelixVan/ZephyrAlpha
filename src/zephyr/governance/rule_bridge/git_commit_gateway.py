@@ -64,6 +64,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_arch_diagram_reconciler,
     make_constraint_detect_reconciler,
     make_gate_inventory_sync_reconciler,
+    make_tmp_cleanup_reconciler,
 )
 from zephyr.governance.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -416,6 +417,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_arch_diagram_reconciler(self))  # 议题3: 02_enterprise_architecture 下 9 个架构图生成器自动重生（decision/dataflow/integration/cross_domain/constraint/capacity/capability/navigation）
         self._reconciliation_registry.register(make_constraint_detect_reconciler(self))  # 补齐断链: 5 类违规检测器（跨域/容量/硬上限/孤儿/层级），写 PG arch_constraints 表，在 GATE-ARCH-DIAGRAM 之前跑
         self._reconciliation_registry.register(make_gate_inventory_sync_reconciler(self))  # ARCH-055 commit_gates 模块清单漂移正向检测（post-commit warn-only，priority=820）
+        self._reconciliation_registry.register(make_tmp_cleanup_reconciler(self))  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
 
     # ------------------------------------------------------------------
     # 公开 API

@@ -958,24 +958,59 @@ capabilities:
     aliases:
       - GATE-COMMIT-GW-AUDIT
       - make_commit_gateway_audit_reconciler
+      - make_integrity_audit_reconciler
       - commit_audit_reconciler
       - non_gw_commit_detector
+      - concurrent_breaking_change_conflict_detector
     description: >-
-      post-commit 审计 reconciler（GATE-COMMIT-GW-AUDIT，C级 缺口4）。
-      每次 commit 后审计最近 20 个 commit，标记无 [GW: 标记的裸 commit
-      （merge commit 跳过），报告落盘 .runtime/reconcile_reports/commit_gateway_audit_<ts>.json。
-      非阻断（warn），供追责。检测逻辑：git log -20 --oneline → 逐行检查 subject
-      是否含 [GW: → 不含则记为 violation。
+      post-commit 审计 reconciler（GATE-COMMIT-GW-AUDIT，C级 缺口4；2026-07-12 升级并入
+      make_integrity_audit_reconciler 3-way 合并）。每次 commit 后审计最近 20 个 commit，
+      标记无 [GW: 标记的裸 commit（merge commit 跳过），报告落盘
+      .runtime/reconcile_reports/commit_gateway_audit_<ts>.json。非阻断（warn），供追责。
+      检测逻辑：git log -20 --oneline → 逐行检查 subject 是否含 [GW: → 不含则记为 violation。
       与 gate_commit_gw 互补：gate_commit_gw 是 pre-commit 拦截（可被 --no-verify 绕过），
       本 reconciler 是 post-commit 审计（不可绕过，但非阻断）。
-      解决发现性：新 AI 搜 "commit审计/裸commit检测/non-GW commit" 可定位真源。
+      治本升级（2026-07-12，遗留项2根因）：审计发现 violations 时联动 SessionRegistry
+      检测活跃 breaking_change session，命中则报告 CONCURRENT_BREAKING_CHANGE_CONFLICT
+      （判定并发违规：治本变更期间发生裸 commit，违反"治本变更未提交前禁止并发AI对话"铁律）。
+      fail-open：SessionRegistry 异常时不阻断审计主流程。报告新增 concurrent_conflict +
+      conflict_sessions 字段。
+      解决发现性：新 AI 搜 "commit审计/裸commit检测/non-GW commit/并发冲突检测" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重建同类审计 reconciler。
     # 治本（2026-06-30 病根1 看门人无人看）：reconciler 工厂函数 A 层 AST 锚点保护。
     # 红蓝对抗发现 commit_gateway_audit_reconciler 无 integrity_anchors——篡改
     # make_commit_gateway_audit_reconciler 后 A 层不检测，裸 commit 审计可被静默关闭。
     integrity_anchors:
       - make_commit_gateway_audit_reconciler  # reconciler工厂(删则reconciler不注册,裸commit审计失效)
+      - make_integrity_audit_reconciler       # 3-way合并入口(2026-07-12升级,删则GATE-COMMIT-GW-AUDIT不注册)
       - _audit_commit_history                  # 审计逻辑真源(git log -20扫描,删则检测逻辑失效)
+      - _reconcile_commit_gw_audit             # 并发冲突检测分支(2026-07-12升级,删则CONCURRENT_BREAKING_CHANGE_CONFLICT漏报)
+
+  # --------------------------------------------------------------------------
+  - capability_id: tmp_cleanup_reconciler
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
+    aliases:
+      - GATE-TMP-CLEANUP
+      - make_tmp_cleanup_reconciler
+      - tmp_ttl_cleanup
+      - tmp_dir_auto_cleanup
+      - tmp_residual_cleaner
+    description: >-
+      tmp/ 目录 TTL 自动清理 reconciler（GATE-TMP-CLEANUP，2026-07-12 治本 249+ 文件残留）。
+      post-commit 事件驱动（trigger=always True）：扫描 tmp/ 下所有文件，删除 mtime > 7 天
+      的文件（_PROTECTED_NAMES={".gitkeep"} 跳过）。对标 make_runtime_cleanup_reconciler
+      （GATE-RUNTIME-CLEANUP priority=50 清理 .runtime/），priority=49 在其之前执行。
+      病根（遗留项1根因）：tmp/ 在 directory_contract.yaml 属 neutral zone
+      （default_ttl=null, gate=none），.gitignore L228-232 全目录忽略——无自动清理机制，
+      依赖 AI 自觉删除 task_bound 脚本。100% AI 开发模式下"依赖AI自觉"反模式最终必被违反，
+      导致 tmp/ 堆积 249+ 历史残留文件。本 reconciler 将"依赖AI自觉"转为"自动事件触发"，
+      对标 trae_060 §2.2 向内收原则（自动触发+自动维护+自动关闭）。
+      与 make_runtime_cleanup_reconciler 互补：runtime/ 清理 7 天 mtime（priority=50），
+      tmp/ 清理 7 天 mtime（priority=49）——两套 TTL 清理覆盖所有 neutral zone 瞬态目录。
+      解决发现性：新 AI 搜 "tmp清理/TTL cleanup/tmp残留" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 tmp 清理 reconciler。
+    integrity_anchors:
+      - make_tmp_cleanup_reconciler  # reconciler工厂(删则reconciler不注册,tmp/残留无人清)
 
   # --------------------------------------------------------------------------
   - capability_id: asset_index_reconciler

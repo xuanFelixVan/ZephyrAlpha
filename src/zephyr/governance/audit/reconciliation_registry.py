@@ -93,6 +93,7 @@ __all__ = [
     "make_session_log_index_reconciler",
     "make_arch_diagram_reconciler",
     "make_gate_inventory_sync_reconciler",
+    "make_tmp_cleanup_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -2712,6 +2713,26 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         if err:
             return ReconcileResult(action="warn", detail=err)
 
+        # 并发冲突检测（治本 2026-07-12，遗留项2根因）：
+        # 检测到裸 commit 时，检查是否有活跃的 breaking_change session。
+        # 如果有 → 说明可能发生了并发冲突（裸 commit + 治本变更 session 并发），
+        # 在报告中标记 CONCURRENT_BREAKING_CHANGE_CONFLICT 供 AI 查阅。
+        concurrent_conflict = False
+        conflict_sessions: list[str] = []
+        if violations:
+            try:
+                from zephyr.security.access_control.session_concurrency import SessionRegistry
+                registry = SessionRegistry(str(project_root))
+                breaker = registry.find_breaking_change_session(exclude_session_id=session_id)
+                if breaker is not None:
+                    concurrent_conflict = True
+                    conflict_sessions = [breaker.session_id]
+                    # 额外列出所有活跃 session
+                    active = registry.list_active()
+                    conflict_sessions = [s.session_id for s in active if s.session_id != session_id]
+            except Exception:
+                pass  # fail-open：SessionRegistry 异常不阻断审计
+
         # 3. 报告落盘
         report = {
             "gate_id": "GATE-COMMIT-GW-AUDIT",
@@ -2721,6 +2742,8 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
             "violations": violations,
             "reconciler_verify_uses_count": len(rv_uses),
             "reconciler_verify_uses": rv_uses,
+            "concurrent_conflict": concurrent_conflict,
+            "conflict_sessions": conflict_sessions,
         }
         report_path, write_err = _write_reconcile_report(
             project_root, "commit_gateway_audit", report
@@ -2736,6 +2759,14 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
             return ReconcileResult(
                 action="clean",
                 detail=f"audit clean (window={_AUDIT_WINDOW}), report={report_path.name}",
+            )
+        if concurrent_conflict:
+            return ReconcileResult(
+                action="warn",
+                detail=f"CONCURRENT_BREAKING_CHANGE_CONFLICT: audit detected {len(violations)} non-GW commits "
+                       f"with {len(conflict_sessions)} active breaking_change session(s) {conflict_sessions}. "
+                       f"Likely concurrency violation (bare git commit during breaking_change session). "
+                       f"report={report_path.name}",
             )
         return ReconcileResult(
             action="warn",
@@ -3714,4 +3745,73 @@ def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=820,  # 在 GATE-AGENTS-MD-REFS(810) 之后
+    )
+
+
+# trae_060-reviewed: 该存在+可合并入已有框架。tmp/ 清理对标 make_runtime_cleanup_reconciler，
+# 复用 ReconciliationRegistry 框架（第20个 reconciler），不新建独立清理系统。
+# 病根：tmp/ 是 task_bound 退役区（.gitignore L228-232）无自动清理，249+ 文件残留，
+# 依赖 AI 自觉=反模式。治本：post-commit 事件触发 TTL 清理（对标 runtime_cleanup）。
+def make_tmp_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-TMP-CLEANUP post-commit tmp/ TTL 清理 reconciler。
+
+    病根：tmp/ 是 task_bound 一次性脚本退役区（.gitignore 全目录忽略），但无自动
+    清理机制——249+ 文件残留，磁盘空间线性增长。原依赖 AI 自觉删除，在 100% AI
+    开发模式下不可靠（AI 上下文有限，任务完成后忘记清理）。
+
+    治本（事件触发 TTL 清理，对标 make_runtime_cleanup_reconciler）：
+    - trigger: 每次 commit 都触发（扫描 tmp/ mtime 成本 <0.01s）
+    - reconcile: 删除 mtime > 7 天的文件，保留 .gitkeep
+    - 自维护/自关闭：每次 commit 后自动清理，返回 ReconcileResult
+
+    保护规则（第一性原理：tmp/ 全目录 .gitignore，所有文件都是临时产物）：
+    - .gitkeep：目录结构标记
+    - mtime < 7 天的文件：可能在当前任务中使用中
+    - 其余 > 7 天文件：过期安全删除
+
+    向内收：扩展 ReconciliationRegistry 框架，复用 make_runtime_cleanup_reconciler
+    的 TTL+mtime 模式，零新真源。
+    """
+    import os
+    import time
+
+    project_root = gateway.project_root
+    _TTL_SECONDS = 7 * 86400  # 7 天（对标 make_runtime_cleanup_reconciler）
+    _PROTECTED_NAMES = {".gitkeep"}
+
+    def _trigger(committed_files: list[str]) -> bool:
+        return True  # tmp/ 清理与每次 commit 正相关（commit 意味着任务推进）
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        tmp_dir = project_root / "tmp"
+        if not tmp_dir.exists():
+            return ReconcileResult(action="skip", detail="tmp/ not found")
+
+        now = time.time()
+        deleted = 0
+        errors = 0
+        for dirpath, _dirnames, filenames in os.walk(tmp_dir):
+            for filename in filenames:
+                filepath = os.path.join(dirpath, filename)
+                try:
+                    mtime = os.path.getmtime(filepath)
+                    if now - mtime < _TTL_SECONDS:
+                        continue  # 仍在 TTL 内（可能当前任务使用中）
+                    if filename in _PROTECTED_NAMES:
+                        continue  # 目录结构标记
+                    os.remove(filepath)
+                    deleted += 1
+                except OSError:
+                    errors += 1
+
+        return ReconcileResult(
+            action="clean" if errors == 0 else "warn",
+            detail=f"tmp/ TTL cleanup: deleted={deleted}, errors={errors}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-TMP-CLEANUP",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=49,  # 在 GATE-RUNTIME-CLEANUP(50) 之前执行——先清理 tmp/
     )
