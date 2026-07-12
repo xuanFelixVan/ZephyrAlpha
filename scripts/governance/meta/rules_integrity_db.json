@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "0b5e54c9d3034a28",
+      "hash": "60b473f1de6e5aa8",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/rule_bridge/git_commit_gateway.py": {
-      "hash": "c277b75062703f67",
+      "hash": "de88ce38dcdedec1",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "5e209a2973c73d1d",
+      "hash": "e4866e61fa5396ba",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "64749d802cf28c98",
+      "hash": "80d7ccd75cca1f2f",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -276,6 +276,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: vocab_hardcode_gate.py）"
     }
   },
-  "registered_at": "2026-07-11T20:48:27.405813+00:00",
+  "registered_at": "2026-07-12T05:37:59.366850+00:00",
   "last_check_at": "2026-07-12T05:07:45.509500+00:00"
 }

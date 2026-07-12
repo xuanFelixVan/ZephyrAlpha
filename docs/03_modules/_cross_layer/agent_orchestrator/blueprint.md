@@ -31,10 +31,7 @@ tags: [agent-orchestrator, task-queue, state-machine, sandbox, hallucination-det
 priority: P0
 runtime_plane: hot
 blueprint_level: module
-responsibility_domain: D_ORCHESTRATOR
-cross_references:
-  - {target: "MOD-INF-011", at: "§2", why: "Vector Memory——任务完成写 task_history"}
-  - {target: "MOD-GATE_ENGINE", at: "§2", why: "Gate Engine——TaskGate 门禁验证"}
+responsibility_domain: 
   - {target: "MOD-INF-020", at: "§2", why: "Audit Trail——操作审计日志写入"}
   - {target: "MOD-FEEDBACK_LOOP", at: "§2", why: "Feedback Loop——质量数据上报"}
   - {target: "MOD-INF-021", at: "§2", why: "Rollback——操作失败触发回滚"}

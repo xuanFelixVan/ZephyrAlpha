@@ -8,10 +8,6 @@ layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
 responsibility_domain: 
-classification: internal
-language: zh
-created_by: AI-GLM-5.2
-valid_from: 2026-07-09
 actual_disk_path: "scripts/governance/sync_panorama_module.py; scripts/governance/d5_architecture/generators/align_panoramas.py; scripts/governance/d5_architecture/syncers/blueprint_frontmatter_reconciler.py"
 ttl: permanent
 construction_progress: partially_implemented

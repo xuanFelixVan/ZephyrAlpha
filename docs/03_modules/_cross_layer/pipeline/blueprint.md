@@ -29,10 +29,6 @@ rule_form: structural
 scope: global
 stability: evolving
 responsibility_domain: 
-  - {target: "MOD-TASK_SYSTEM", at: "§5", why: "任务系统——M1-M11节点的任务消费方"}
-  - {target: "GOV-AI-002", at: "全篇", why: "模型路由策略——Pipeline决策树依据"}
-  - {target: "MOD-INF-016", at: "全篇", why: "共享基础设施——LifecycleAware/EventBus/TelemetryEmitter/MetricsRegistry 契约"}
-  - {target: "MOD-LLM_SECURITY", at: "全篇", why: "LSG安全闸门——Pipeline L1/L3 输入输出检测"}
   - {target: "MOD-DATABASE", at: "全篇", why: "DeferredQueue——LOCKED任务自动重试"}
   - {target: "MOD-INF-001", at: "§Kill Switch+§Token Budget", why: "Capacity Assurance——Kill Switch前置检查+Token Budget扣减"}
 references:
