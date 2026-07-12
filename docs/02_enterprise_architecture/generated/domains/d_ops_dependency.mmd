@@ -1,38 +1,95 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-12 04:14:07
+%% 生成时间: 2026-07-12 22:29:34
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 3, 依赖边数: 10
+%% 模块数: 8, 依赖边数: 55
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_OPS[telemetry]
-        src_zephyr_shared_observability_metrics_py["...ephyr/shared/observability/metrics.py [production]"]
-        src_zephyr_shared_observability_reasoning_spans_py["...ared/observability/reasoning_spans.py [production]"]
-        src_zephyr_shared_observability_tracing_py["...ephyr/shared/observability/tracing.py [production]"]
+        src_zephyr_governance_ops_governance_budget_engine_py["...nance/ops_governance/budget_engine.py [production]"]
+        src_zephyr_governance_ops_governance_budget_handler_py["...ance/ops_governance/budget_handler.py [production]"]
+        src_zephyr_governance_ops_governance_budget_models_py["...nance/ops_governance/budget_models.py [production]"]
+        src_zephyr_governance_ops_gove___e_budget_profile_manager_py["..._governance/budget_profile_manager.py [production]"]
+        src_zephyr_governance_ops_governance_budget_tracker_py["...ance/ops_governance/budget_tracker.py [production]"]
+        src_zephyr_governance_ops_governance_cost_budget_py["...ernance/ops_governance/cost_budget.py [production]"]
+        src_zephyr_governance_ops_governance_meta_observability_py[".../ops_governance/meta_observability.py [production]"]
+        src_zephyr_governance_ops_governance_token_budget_py["...rnance/ops_governance/token_budget.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
+    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    src_zephyr_governance_ops_governance_budget_tracker_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_OPS (4 条)
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_observability_metrics_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_observability_metrics_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_observability_metrics_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_observability_tracing_py
-    %% D_GOV_OPS_RESILIENCE -> D_OPS (1 条)
-    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_shared_observability_metrics_py
-    %% D_TRADING -> D_OPS (3 条)
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_observability_metrics_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_observability_metrics_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_observability_metrics_py
+    %% D_AUDITTEST -> D_OPS (25 条)
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_gove___e_budget_profile_manager_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_meta_observability_py
+    %% D_GOVERNANCE -> D_OPS (7 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_tracker_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    %% D_GOV_ENFORCEMENT -> D_OPS (2 条)
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    %% D_GOV_OPS_RESILIENCE -> D_OPS (5 条)
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    %% D_INFRA_RUNTIME -> D_OPS (1 条)
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    %% D_INTEGRATION -> D_OPS (4 条)
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_OPS -> D_SHARED (2 条)
-    src_zephyr_shared_observability_metrics_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_observability_tracing_py -->|import_depends| D_SHARED[D_SHARED]
+    %% D_OPS -> D_GOVERNANCE (1 条)
+    src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_OPS -> D_GOV_DRIFT (1 条)
+    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    %% D_OPS -> D_GOV_OPS_RESILIENCE (2 条)
+    src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    %% D_OPS -> D_INFRA_RECOVERY (1 条)
+    src_zephyr_governance_ops_governance_budget_tracker_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    %% D_OPS -> D_SHARED (4 条)
+    src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_ops_governance_cost_budget_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_ops_governance_cost_budget_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 0 条
-    %% 跨域入边: 8 条
-    %% 跨域出边: 2 条
+    %% 域内依赖: 2 条
+    %% 跨域入边: 44 条
+    %% 跨域出边: 9 条

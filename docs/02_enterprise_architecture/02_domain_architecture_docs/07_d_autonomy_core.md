@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-12 04:13:27
+> 最后更新: 2026-07-12 22:29:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,21 +26,28 @@ ttl: permanent
 | 域ID | D_AUTONOMY_CORE | Domain ID | D_AUTONOMY_CORE |
 | 域名称 | 自治核心 | Domain Name | Autonomy Core |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
-| 模块数 | 114 | Module Count | 114 |
-| 域内依赖 | 40 | Internal Dependencies | 40 |
-| 跨域入边 | 139 | Cross-domain Incoming | 139 |
-| 跨域出边 | 51 | Cross-domain Outgoing | 51 |
+| 模块数 | 141 | Module Count | 141 |
+| 域内依赖 | 45 | Internal Dependencies | 45 |
+| 跨域入边 | 176 | Cross-domain Incoming | 176 |
+| 跨域出边 | 74 | Cross-domain Outgoing | 74 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 3 | Prototype Modules | 3 |
-| 生产态模块 | 111 | Production Modules | 111 |
-| 容量 | 111/150 (正常) | Capacity | 111/150 (正常) |
+| 原型态模块 | 8 | Prototype Modules | 8 |
+| 生产态模块 | 133 | Production Modules | 133 |
+| 容量 | 133/150 (正常) | Capacity | 133/150 (正常) |
 | 描述 | Skill渐进披露(L0永久/L1触发/L2组合/L3按需) | Description | Skill渐进披露(L0永久/L1触发/L2组合/L3按需) |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 114 个模块 / 114 modules）。
+> 按 architecture_layer 分组的模块清单（共 141 个模块 / 141 modules）。
 
-### L1 基础层 / Foundation Layer (114 modules)
+### L0 基础设施层 / Infrastructure Layer (2 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/infrastructure/system_snapshot.py | SystemSnapshotter — M1 系统状态镜像（CL-017 RI... | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
+| 2 | src/zephyr/infrastructure/system_telemetry/otel_instrumen... | otel_instrumentation.py — 全链路 OTel (B12, DD... | 生产态 / production | [MOD-INF-015](../../03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md) |
+
+### L1 基础层 / Foundation Layer (127 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
@@ -158,6 +165,36 @@ ttl: permanent
 | 112 | src/zephyr/autonomy_core/spec_engine.py | MOD-INF-019: Agent Spec — SpecEngine 蓝图->Ski... | 生产态 / production | [MOD-INF-019](../../03_modules/_domain_autonomy_core/agent_spec/blueprint.md) |
 | 113 | src/zephyr/autonomy_core/trigger_router.py | trigger_router.py | 生产态 / production | [MOD-INF-019](../../03_modules/_domain_autonomy_core/agent_spec/blueprint.md) |
 | 114 | src/zephyr/autonomy_core/vibe_coding_quality_gate.py | vibe_coding_quality_gate.py | 生产态 / production |  |
+| 115 | src/zephyr/integration/vector_memory/vector_writer.py | CE 向量写入器 — vectorize_and_store() 生产者 | 原型态 / prototype | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
+| 116 | src/zephyr/security/llm_defense/llm_security/adversarial_... | adversarial_robustness.py — 对抗鲁棒性 (B8, DD... | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| 117 | src/zephyr/security/llm_defense/llm_security/alignment_sc... | alignment_scorer.py — 对齐评分 (B11, DD85, TAS... | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| 118 | src/zephyr/security/llm_defense/llm_security/lsg_pattern_... | lsg_pattern_tracker.py — LSG 模式逃逸追踪 (B20... | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| 119 | src/zephyr/security/llm_defense/llm_security/poisoning_mo... | poisoning_monitor.py — Embed 污染检测 (DD97, T... | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| 120 | src/zephyr/security/llm_defense/llm_security/sensitivity_... | sensitivity_classifier.py — 数据分级 (B9, DD83... | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| 121 | src/zephyr/security/llm_defense/llm_security/solo_dev_saf... | solo_dev_safety_net.py — 单人无审查安全网 (B15... | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| 122 | src/zephyr/shared/ai_guards/config_safety_guard.py | config_safety_guard.py — 配置自毁防护 (B16, DD... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 123 | src/zephyr/shared/blueprint_tools/architecture_context_lo... | architecture_context_loader — 加载 ``generate_... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 124 | src/zephyr/shared/dependency/dependency_tracker.py | dependency_tracker.py — 依赖追踪 (DD116, TASK-020) | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 125 | src/zephyr/shared/io/cache_invalidation.py | cache_invalidation.py — 缓存一致性 (DD113, TAS... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 126 | src/zephyr/shared/io/doc_compressor.py | DocCompressor — 文档压缩服务（CL-018 RI 扩展模式） | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
+| 127 | src/zephyr/shared/utils/verify_paths.py | verify_paths.py — 代码路径索引验证 (TASK-012) | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+
+### L2 领域层 / Domain Layer (12 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/governance/kb/citation_walker.py | citation_walker.py — 引用行走 (DD117, TASK-020) | 生产态 / production | [MOD-KB-001](../../03_modules/_domain_knowledge/knowledge_base/blueprint.md) |
+| 2 | src/zephyr/governance/kb/embedding_version_lock.py | embedding_version_lock.py — 嵌入模型版本锁 (B1... | 生产态 / production | [MOD-KB-001](../../03_modules/_domain_knowledge/knowledge_base/blueprint.md) |
+| 3 | src/zephyr/governance/kb/fragmentation_index.py | fragmentation_index.py — 知识碎片化指数 (DD108... | 生产态 / production | [MOD-KB-001](../../03_modules/_domain_knowledge/knowledge_base/blueprint.md) |
+| 4 | src/zephyr/governance/kb/ke_justification.py | rational.py — 注入理由 (DD99, TASK-019) | 生产态 / production | [MOD-KB-001](../../03_modules/_domain_knowledge/knowledge_base/blueprint.md) |
+| 5 | src/zephyr/governance/kb/knowledge_distiller.py | knowledge_distiller.py — 知识蒸馏 (B10, DD84, ... | 生产态 / production | [MOD-KB-001](../../03_modules/_domain_knowledge/knowledge_base/blueprint.md) |
+| 6 | src/zephyr/governance/kb/pattern_library.py | PatternLibrary · 成功模式库（KB refactor 后独... | 生产态 / production | [MOD-KB-001](../../03_modules/_domain_knowledge/knowledge_base/blueprint.md) |
+| 7 | src/zephyr/governance/persistence/intent_keyword_mapper.py | IntentKeywordMapper - Stage 1 of three-stage in... | 生产态 / production | [MOD-TASK_SYSTEM](../../03_modules/_domain_infrastructure_runtime/task_system/blueprint.md) |
+| 8 | src/zephyr/governance/persistence/intent_parser.py | IntentParser · 意图三阶段级联解析器（V-09） | 生产态 / production | [MOD-TASK_SYSTEM](../../03_modules/_domain_infrastructure_runtime/task_system/blueprint.md) |
+| 9 | tests/automation/test_auto_runtime_e2e.py | F1 AutoRuntimeCore 非mock端到端集成测试 | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 10 | tests/f_lifecycle/test_f1_event_trigger.py | F1 事件触发启动测试 | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 11 | tests/trading/test_f14_pipeline_extreme.py | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 12 | tests/trading/test_f1_extreme.py | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -172,9 +209,9 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 114 个模块（生产态 111 + 设计态 0 + 原型态 3），标签标注成熟度。
+> 展示全部 141 个模块（生产态 133 + 设计态 0 + 原型态 8），标签标注成熟度。
 
-#### 第 1 页 / 共 4 页
+#### 第 1 页 / 共 5 页
 
 ```mermaid
 graph TD
@@ -211,14 +248,13 @@ graph TD
         src_zephyr_autonomy_core_context_context_value_attribution_py["(生产态 / production) context_value_attribution.py — KE 级 ROI 归因 ...<br/>文件: context_value_attribution.py"]
     end
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_assembler_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
+    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_autonomy_core_context_checkpoint_manager_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    src_zephyr_autonomy_core_context_context_budget_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_INTEGRATION
@@ -226,43 +262,45 @@ graph TD
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_GOV_KB
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_INTELLIGENCE
-    src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_INTELLIGENCE
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_autonomy_core_context_context_budget_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_autonomy_core_context_context_injector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_autonomy_core_context_context_injector_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_autonomy_core_context_context_injector_py -.->|导入依赖 / import_depends| D_SHARED
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    src_zephyr_autonomy_core_context_context_injector_py -->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_init_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_init_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_init_py
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_agent_observability_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_main_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_all_skill_modules_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_context_assembler_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_context_injector_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_context_assembler_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_context_pipeline_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_context_injector_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_all_skill_modules_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_atomic_injector_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_context_assembler_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_main_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_checkpoint_manager_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_complexity_budget_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_context_pipeline_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_context_assembler_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_autonomy_core_init_py,src_zephyr_autonomy_core_main_py,src_zephyr_autonomy_core_agent_observability_py,src_zephyr_autonomy_core_all_skill_modules_py,src_zephyr_autonomy_core_context_init_py,src_zephyr_autonomy_core_context_atomic_injector_py,src_zephyr_autonomy_core_context_ce_bootstrap_py,src_zephyr_autonomy_core_context_ce_explain_cli_py,src_zephyr_autonomy_core_context_ce_file_lister_py,src_zephyr_autonomy_core_context_ce_playground_v2_py,src_zephyr_autonomy_core_context_ce_vibe_shortcuts_py,src_zephyr_autonomy_core_context_checkpoint_manager_py,src_zephyr_autonomy_core_context_cold_start_booster_py,src_zephyr_autonomy_core_context_complexity_budget_py,src_zephyr_autonomy_core_context_context_assembler_py,src_zephyr_autonomy_core_context_context_budget_py,src_zephyr_autonomy_core_context_context_budget_tracker_py,src_zephyr_autonomy_core_context_context_debt_score_py,src_zephyr_autonomy_core_context_context_evaluator_py,src_zephyr_autonomy_core_context_context_evictor_py,src_zephyr_autonomy_core_context_context_health_score_py,src_zephyr_autonomy_core_context_context_injector_py,src_zephyr_autonomy_core_context_context_model_strategy_py,src_zephyr_autonomy_core_context_context_outcome_tracker_py,src_zephyr_autonomy_core_context_context_pipeline_py,src_zephyr_autonomy_core_context_context_pipeline_auto_py,src_zephyr_autonomy_core_context_context_playground_py,src_zephyr_autonomy_core_context_context_rot_model_py,src_zephyr_autonomy_core_context_context_rule_registry_py,src_zephyr_autonomy_core_context_context_value_attribution_py production
-    class D_SHARED,D_INFRA_RUNTIME,D_INTEGRATION,D_GOV_KB,D_INTELLIGENCE,D_GOV_CODE_QUALITY external_prod
-    class D_GOV_SCRIPTS,D_AUDITTEST external_design
+    class D_SHARED,D_INFRA_RUNTIME,D_INTEGRATION,D_GOV_KB,D_INTELLIGENCE,D_SECURITY,D_GOV_CODE_QUALITY external_prod
+    class D_GOVERNANCE,D_AUDITTEST external_design
 ```
 
-#### 第 2 页 / 共 4 页
+#### 第 2 页 / 共 5 页
 
 ```mermaid
 graph TD
@@ -298,60 +336,64 @@ graph TD
         src_zephyr_autonomy_core_skills_skill_cognitive_preservation_py["(生产态 / production) MOD-INF-019: Agent Spec — Skill Cognitive Pres...<br/>文件: skill_cognitive_preservation.py"]
         src_zephyr_autonomy_core_skills_skill_compliance_py["(生产态 / production) MOD-INF-019: Agent Spec — Skill Compliance<br/>文件: skill_compliance.py"]
     end
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| src_zephyr_autonomy_core_context_memory_bank_py
     src_zephyr_autonomy_core_integration_init_py -.->|config_depends / config_depends| src_zephyr_autonomy_core_integration_pipeline_bridge_py
-    src_zephyr_autonomy_core_skills_init_py -.->|config_depends / config_depends| src_zephyr_autonomy_core_skills_skill_attention_py
-    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
+    src_zephyr_autonomy_core_skills_init_py -.->|config_depends / config_depends| src_zephyr_autonomy_core_skills_skill_breakage_checker_py
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_ENFORCEMENT
+    D_GOV_KB["(原型态 / prototype) D_GOV_KB"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_KB
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_AUDITTEST
-    D_GOV_AUDIT["(设计态 / design) D_GOV_AUDIT"]
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_AUDIT
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_ENFORCEMENT
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_DRIFT
-    D_INFRA_A2A["(原型态 / prototype) D_INFRA_A2A"]
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_INFRA_A2A
-    src_zephyr_autonomy_core_file_autoregister_py -.->|contract / contract| D_GOVERNANCE
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|contract / contract| D_GOV_DOCS
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_DOCS
     src_zephyr_autonomy_core_file_autoregister_py -.->|data / data| D_GOVERNANCE
-    D_SECURITY_LLM["(生产态 / production) D_SECURITY_LLM"]
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_SECURITY_LLM
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
+    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_SECURITY
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_DOCS
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
     D_KNOWLEDGE["(设计态 / design) D_KNOWLEDGE"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|contract / contract| D_KNOWLEDGE
-    D_GOVERNANCE -.->|contract / contract| src_zephyr_autonomy_core_file_autoregister_py
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_INFRA_RUNTIME
+    D_GOV_CODE_QUALITY["(原型态 / prototype) D_GOV_CODE_QUALITY"]
+    D_GOV_CODE_QUALITY -.->|contract / contract| src_zephyr_autonomy_core_context_memory_bank_py
+    D_GOV_DOCS -.->|contract / contract| src_zephyr_autonomy_core_file_autoregister_py
+    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_autonomy_core_context_memory_bank_py
+    D_AUDITTEST -.->|runtime / runtime| src_zephyr_autonomy_core_context_memory_bank_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_autonomy_core_integration_pipeline_bridge_py
     D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
-    D_TRADING["(原型态 / prototype) D_TRADING"]
-    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
+    D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skill_rbac_registry_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_curation_loop_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_contextual_fetch_api_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_diff_injector_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_diversity_constraint_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_curation_loop_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_domain_decay_config_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_diversity_constraint_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_fallback_staleness_gate_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_ide_watcher_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_integrity_check_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_mode_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_autonomy_core_context_contextual_fetch_api_py,src_zephyr_autonomy_core_context_curation_loop_py,src_zephyr_autonomy_core_context_diff_injector_py,src_zephyr_autonomy_core_context_diversity_constraint_py,src_zephyr_autonomy_core_context_domain_decay_config_py,src_zephyr_autonomy_core_context_fallback_staleness_gate_py,src_zephyr_autonomy_core_context_integrity_check_py,src_zephyr_autonomy_core_context_memory_bank_py,src_zephyr_autonomy_core_context_mode_manager_py,src_zephyr_autonomy_core_context_position_optimizer_py,src_zephyr_autonomy_core_context_shadow_canary_py,src_zephyr_autonomy_core_context_staleness_manager_py,src_zephyr_autonomy_core_context_vector_bridge_py,src_zephyr_autonomy_core_ide_watcher_py,src_zephyr_autonomy_core_integration_pipeline_bridge_py,src_zephyr_autonomy_core_phase_planner_py,src_zephyr_autonomy_core_progressive_disclosure_injector_py,src_zephyr_autonomy_core_prompt_registry_py,src_zephyr_autonomy_core_self_evolution_fidelity_gate_py,src_zephyr_autonomy_core_skill_rbac_registry_py,src_zephyr_autonomy_core_skills_skill_attention_py,src_zephyr_autonomy_core_skills_skill_breakage_checker_py,src_zephyr_autonomy_core_skills_skill_cache_provider_py,src_zephyr_autonomy_core_skills_skill_calibration_py,src_zephyr_autonomy_core_skills_skill_canary_py,src_zephyr_autonomy_core_skills_skill_cognitive_preservation_py,src_zephyr_autonomy_core_skills_skill_compliance_py production
     class src_zephyr_autonomy_core_file_autoregister_py,src_zephyr_autonomy_core_integration_init_py,src_zephyr_autonomy_core_skills_init_py design
-    class D_SECURITY_LLM,D_INTEGRATION,D_FEEDBACK_LOOP external_prod
-    class D_GOVERNANCE,D_AUDITTEST,D_GOV_AUDIT,D_GOV_DRIFT,D_INFRA_A2A,D_KNOWLEDGE,D_INTELLIGENCE,D_TRADING external_design
+    class D_INTEGRATION,D_FEEDBACK_LOOP external_prod
+    class D_GOV_ENFORCEMENT,D_GOV_KB,D_AUDITTEST,D_GOV_DRIFT,D_GOVERNANCE,D_GOV_DOCS,D_SECURITY,D_KNOWLEDGE,D_INFRA_RUNTIME,D_GOV_CODE_QUALITY,D_INTELLIGENCE,D_ORCHESTRATOR external_design
 ```
 
-#### 第 3 页 / 共 4 页
+#### 第 3 页 / 共 5 页
 
 ```mermaid
 graph TD
@@ -388,59 +430,60 @@ graph TD
         src_zephyr_autonomy_core_skills_skill_model_py["(生产态 / production) skill_model.py"]
     end
     src_zephyr_autonomy_core_skills_skill_consensus_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_constructor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_contract_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_constructor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
+    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_kya_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_lifecycle_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
-    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
-    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
+    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
+    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| D_GOV_RULE
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_skills_skill_factory_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_executor_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_feedback_py
-    D_TRADING["(生产态 / production) D_TRADING"]
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_ext_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_ext_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_constructor_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_context_isolation_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_consensus_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_contract_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_di_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_constructor_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_cross_model_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_context_isolation_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_di_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_discovery_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_executor_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_durable_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_economics_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_explain_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_autonomy_core_skills_skill_consensus_py,src_zephyr_autonomy_core_skills_skill_constructor_py,src_zephyr_autonomy_core_skills_skill_context_isolation_py,src_zephyr_autonomy_core_skills_skill_contract_py,src_zephyr_autonomy_core_skills_skill_cross_model_py,src_zephyr_autonomy_core_skills_skill_di_py,src_zephyr_autonomy_core_skills_skill_discovery_py,src_zephyr_autonomy_core_skills_skill_durable_py,src_zephyr_autonomy_core_skills_skill_economics_py,src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py,src_zephyr_autonomy_core_skills_skill_evaluator_py,src_zephyr_autonomy_core_skills_skill_executor_py,src_zephyr_autonomy_core_skills_skill_explain_py,src_zephyr_autonomy_core_skills_skill_factory_py,src_zephyr_autonomy_core_skills_skill_feature_flags_py,src_zephyr_autonomy_core_skills_skill_feedback_py,src_zephyr_autonomy_core_skills_skill_freshness_py,src_zephyr_autonomy_core_skills_skill_freshness_ext_py,src_zephyr_autonomy_core_skills_skill_gitops_py,src_zephyr_autonomy_core_skills_skill_guardrails_py,src_zephyr_autonomy_core_skills_skill_idempotency_py,src_zephyr_autonomy_core_skills_skill_kill_switch_py,src_zephyr_autonomy_core_skills_skill_knowledge_base_py,src_zephyr_autonomy_core_skills_skill_kya_py,src_zephyr_autonomy_core_skills_skill_learning_py,src_zephyr_autonomy_core_skills_skill_lifecycle_py,src_zephyr_autonomy_core_skills_skill_lineage_py,src_zephyr_autonomy_core_skills_skill_loader_py,src_zephyr_autonomy_core_skills_skill_locking_py,src_zephyr_autonomy_core_skills_skill_model_py production
-    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_SHARED,D_INTEGRATION,D_TRADING external_prod
+    class D_GOV_AUDIT,D_GOV_RULE,D_SHARED,D_GOVERNANCE,D_INTEGRATION,D_INFRA_RUNTIME external_prod
     class D_AUDITTEST external_design
 ```
 
-#### 第 4 页 / 共 4 页
+#### 第 4 页 / 共 5 页
 
 ```mermaid
 graph TD
@@ -469,44 +512,125 @@ graph TD
         src_zephyr_autonomy_core_spec_engine_py["(生产态 / production) MOD-INF-019: Agent Spec — SpecEngine 蓝图->Ski...<br/>文件: spec_engine.py"]
         src_zephyr_autonomy_core_trigger_router_py["(生产态 / production) trigger_router.py"]
         src_zephyr_autonomy_core_vibe_coding_quality_gate_py["(生产态 / production) vibe_coding_quality_gate.py"]
+        src_zephyr_governance_kb_citation_walker_py["(生产态 / production) citation_walker.py — 引用行走 (DD117, TASK-020)<br/>文件: citation_walker.py"]
+        src_zephyr_governance_kb_embedding_version_lock_py["(生产态 / production) embedding_version_lock.py — 嵌入模型版本锁 (B1...<br/>文件: embedding_version_lock.py"]
+        src_zephyr_governance_kb_fragmentation_index_py["(生产态 / production) fragmentation_index.py — 知识碎片化指数 (DD108...<br/>文件: fragmentation_index.py"]
+        src_zephyr_governance_kb_ke_justification_py["(生产态 / production) rational.py — 注入理由 (DD99, TASK-019)<br/>文件: ke_justification.py"]
+        src_zephyr_governance_kb_knowledge_distiller_py["(生产态 / production) knowledge_distiller.py — 知识蒸馏 (B10, DD84, ...<br/>文件: knowledge_distiller.py"]
+        src_zephyr_governance_kb_pattern_library_py["(生产态 / production) PatternLibrary · 成功模式库（KB refactor 后独...<br/>文件: pattern_library.py"]
     end
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_trigger_router_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
+    src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_autonomy_core_skills_skill_registry_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_autonomy_core_skills_skill_registry_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_autonomy_core_skills_skill_sandbox_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_autonomy_core_skills_skill_router_py -->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_autonomy_core_skills_skill_sandbox_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_kb_pattern_library_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_governance_kb_pattern_library_py -->|导入依赖 / import_depends| D_SHARED
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_governance_kb_citation_walker_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_governance_kb_embedding_version_lock_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_governance_kb_fragmentation_index_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_governance_kb_pattern_library_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_governance_kb_ke_justification_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_trigger_router_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_governance_kb_knowledge_distiller_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_trigger_router_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_observability_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_postmortem_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_resilience_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_ontology_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_prompt_cache_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_prompt_opt_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_registry_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_sandbox_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_risk_mitigator_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_schema_registry_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_team_optimizer_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_shadow_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_prompt_cache_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_ontology_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skills_skill_resilience_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_autonomy_core_skills_skill_model_evolution_py,src_zephyr_autonomy_core_skills_skill_observability_py,src_zephyr_autonomy_core_skills_skill_ontology_py,src_zephyr_autonomy_core_skills_skill_postmortem_py,src_zephyr_autonomy_core_skills_skill_prompt_cache_py,src_zephyr_autonomy_core_skills_skill_prompt_opt_py,src_zephyr_autonomy_core_skills_skill_registry_py,src_zephyr_autonomy_core_skills_skill_resilience_py,src_zephyr_autonomy_core_skills_skill_risk_mitigator_py,src_zephyr_autonomy_core_skills_skill_router_py,src_zephyr_autonomy_core_skills_skill_sandbox_py,src_zephyr_autonomy_core_skills_skill_schema_registry_py,src_zephyr_autonomy_core_skills_skill_security_py,src_zephyr_autonomy_core_skills_skill_shadow_py,src_zephyr_autonomy_core_skills_skill_silent_failure_py,src_zephyr_autonomy_core_skills_skill_team_optimizer_py,src_zephyr_autonomy_core_skills_skill_telemetry_py,src_zephyr_autonomy_core_skills_skill_temperature_py,src_zephyr_autonomy_core_skills_skill_tokenomics_py,src_zephyr_autonomy_core_skills_skill_translator_py,src_zephyr_autonomy_core_skills_skill_workflow_py,src_zephyr_autonomy_core_spec_engine_py,src_zephyr_autonomy_core_trigger_router_py,src_zephyr_autonomy_core_vibe_coding_quality_gate_py production
-    class D_GOVERNANCE,D_INTEGRATION external_prod
+    class src_zephyr_autonomy_core_skills_skill_model_evolution_py,src_zephyr_autonomy_core_skills_skill_observability_py,src_zephyr_autonomy_core_skills_skill_ontology_py,src_zephyr_autonomy_core_skills_skill_postmortem_py,src_zephyr_autonomy_core_skills_skill_prompt_cache_py,src_zephyr_autonomy_core_skills_skill_prompt_opt_py,src_zephyr_autonomy_core_skills_skill_registry_py,src_zephyr_autonomy_core_skills_skill_resilience_py,src_zephyr_autonomy_core_skills_skill_risk_mitigator_py,src_zephyr_autonomy_core_skills_skill_router_py,src_zephyr_autonomy_core_skills_skill_sandbox_py,src_zephyr_autonomy_core_skills_skill_schema_registry_py,src_zephyr_autonomy_core_skills_skill_security_py,src_zephyr_autonomy_core_skills_skill_shadow_py,src_zephyr_autonomy_core_skills_skill_silent_failure_py,src_zephyr_autonomy_core_skills_skill_team_optimizer_py,src_zephyr_autonomy_core_skills_skill_telemetry_py,src_zephyr_autonomy_core_skills_skill_temperature_py,src_zephyr_autonomy_core_skills_skill_tokenomics_py,src_zephyr_autonomy_core_skills_skill_translator_py,src_zephyr_autonomy_core_skills_skill_workflow_py,src_zephyr_autonomy_core_spec_engine_py,src_zephyr_autonomy_core_trigger_router_py,src_zephyr_autonomy_core_vibe_coding_quality_gate_py,src_zephyr_governance_kb_citation_walker_py,src_zephyr_governance_kb_embedding_version_lock_py,src_zephyr_governance_kb_fragmentation_index_py,src_zephyr_governance_kb_ke_justification_py,src_zephyr_governance_kb_knowledge_distiller_py,src_zephyr_governance_kb_pattern_library_py production
+    class D_GOV_AUDIT,D_INTEGRATION external_prod
     class D_SHARED,D_AUDITTEST external_design
+```
+
+#### 第 5 页 / 共 5 页
+
+```mermaid
+graph TD
+    subgraph D_AUTONOMY_CORE["D_AUTONOMY_CORE 自治核心"]
+        src_zephyr_governance_persistence_intent_keyword_mapper_py["(生产态 / production) IntentKeywordMapper - Stage 1 of three-stage in...<br/>文件: intent_keyword_mapper.py"]
+        src_zephyr_governance_persistence_intent_parser_py["(生产态 / production) IntentParser · 意图三阶段级联解析器（V-09）<br/>文件: intent_parser.py"]
+        src_zephyr_infrastructure_system_snapshot_py["(生产态 / production) SystemSnapshotter — M1 系统状态镜像（CL-017 RI...<br/>文件: system_snapshot.py"]
+        src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py["(生产态 / production) otel_instrumentation.py — 全链路 OTel (B12, DD...<br/>文件: otel_instrumentation.py"]
+        src_zephyr_integration_vector_memory_vector_writer_py["(原型态 / prototype) CE 向量写入器 — vectorize_and_store() 生产者<br/>文件: vector_writer.py"]
+        src_zephyr_security_llm_defense_llm_security_adversarial_robustness_py["(生产态 / production) adversarial_robustness.py — 对抗鲁棒性 (B8, DD...<br/>文件: adversarial_robustness.py"]
+        src_zephyr_security_llm_defense_llm_security_alignment_scorer_py["(生产态 / production) alignment_scorer.py — 对齐评分 (B11, DD85, TAS...<br/>文件: alignment_scorer.py"]
+        src_zephyr_security_llm_defense_llm_security_lsg_pattern_tracker_py["(生产态 / production) lsg_pattern_tracker.py — LSG 模式逃逸追踪 (B20...<br/>文件: lsg_pattern_tracker.py"]
+        src_zephyr_security_llm_defense_llm_security_poisoning_monitor_py["(生产态 / production) poisoning_monitor.py — Embed 污染检测 (DD97, T...<br/>文件: poisoning_monitor.py"]
+        src_zephyr_security_llm_defense_llm_security_sensitivity_classifier_py["(生产态 / production) sensitivity_classifier.py — 数据分级 (B9, DD83...<br/>文件: sensitivity_classifier.py"]
+        src_zephyr_security_llm_defense_llm_security_solo_dev_safety_net_py["(生产态 / production) solo_dev_safety_net.py — 单人无审查安全网 (B15...<br/>文件: solo_dev_safety_net.py"]
+        src_zephyr_shared_ai_guards_config_safety_guard_py["(生产态 / production) config_safety_guard.py — 配置自毁防护 (B16, DD...<br/>文件: config_safety_guard.py"]
+        src_zephyr_shared_blueprint_tools_architecture_context_loader_py["(生产态 / production) architecture_context_loader — 加载 ``generate_...<br/>文件: architecture_context_loader.py"]
+        src_zephyr_shared_dependency_dependency_tracker_py["(生产态 / production) dependency_tracker.py — 依赖追踪 (DD116, TASK-020)<br/>文件: dependency_tracker.py"]
+        src_zephyr_shared_io_cache_invalidation_py["(生产态 / production) cache_invalidation.py — 缓存一致性 (DD113, TAS...<br/>文件: cache_invalidation.py"]
+        src_zephyr_shared_io_doc_compressor_py["(生产态 / production) DocCompressor — 文档压缩服务（CL-018 RI 扩展模式）<br/>文件: doc_compressor.py"]
+        src_zephyr_shared_utils_verify_paths_py["(生产态 / production) verify_paths.py — 代码路径索引验证 (TASK-012)<br/>文件: verify_paths.py"]
+        tests_automation_test_auto_runtime_e2e_py["(原型态 / prototype) F1 AutoRuntimeCore 非mock端到端集成测试<br/>文件: test_auto_runtime_e2e.py"]
+        tests_f_lifecycle_test_f1_event_trigger_py["(原型态 / prototype) F1 事件触发启动测试<br/>文件: test_f1_event_trigger.py"]
+        tests_trading_test_f14_pipeline_extreme_py["(原型态 / prototype) F14 管线编排/反馈环 — 红蓝对抗端到端极端测试<br/>文件: test_f14_pipeline_extreme.py"]
+        tests_trading_test_f1_extreme_py["(原型态 / prototype) F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试<br/>文件: test_f1_extreme.py"]
+    end
+    src_zephyr_governance_persistence_intent_parser_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    src_zephyr_governance_persistence_intent_keyword_mapper_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_governance_persistence_intent_parser_py -->|导入依赖 / import_depends| D_INTEGRATION
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_infrastructure_system_snapshot_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_system_snapshot_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_integration_vector_memory_vector_writer_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_shared_io_doc_compressor_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_io_doc_compressor_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_f_lifecycle_test_f1_event_trigger_py -.->|测试依赖 / test_depends| D_SHARED
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
+    D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_writer_py
+    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_adversarial_robustness_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_shared_blueprint_tools_architecture_context_loader_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_alignment_scorer_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_shared_io_cache_invalidation_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_shared_io_doc_compressor_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_lsg_pattern_tracker_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_governance_persistence_intent_parser_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_poisoning_monitor_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_sensitivity_classifier_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_solo_dev_safety_net_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_governance_persistence_intent_keyword_mapper_py,src_zephyr_governance_persistence_intent_parser_py,src_zephyr_infrastructure_system_snapshot_py,src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py,src_zephyr_security_llm_defense_llm_security_adversarial_robustness_py,src_zephyr_security_llm_defense_llm_security_alignment_scorer_py,src_zephyr_security_llm_defense_llm_security_lsg_pattern_tracker_py,src_zephyr_security_llm_defense_llm_security_poisoning_monitor_py,src_zephyr_security_llm_defense_llm_security_sensitivity_classifier_py,src_zephyr_security_llm_defense_llm_security_solo_dev_safety_net_py,src_zephyr_shared_ai_guards_config_safety_guard_py,src_zephyr_shared_blueprint_tools_architecture_context_loader_py,src_zephyr_shared_dependency_dependency_tracker_py,src_zephyr_shared_io_cache_invalidation_py,src_zephyr_shared_io_doc_compressor_py,src_zephyr_shared_utils_verify_paths_py production
+    class src_zephyr_integration_vector_memory_vector_writer_py,tests_automation_test_auto_runtime_e2e_py,tests_f_lifecycle_test_f1_event_trigger_py,tests_trading_test_f14_pipeline_extreme_py,tests_trading_test_f1_extreme_py design
+    class D_INTEGRATION,D_INFRA_RUNTIME external_prod
+    class D_SHARED,D_ORCHESTRATOR,D_AUDITTEST external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 111 个，38 条域内依赖）。
+> 仅展示已上线运行的模块（共 133 个，42 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -622,93 +746,119 @@ graph TD
         src_zephyr_autonomy_core_spec_engine_py["(生产态 / production) MOD-INF-019: Agent Spec — SpecEngine 蓝图->Ski...<br/>文件: spec_engine.py"]
         src_zephyr_autonomy_core_trigger_router_py["(生产态 / production) trigger_router.py"]
         src_zephyr_autonomy_core_vibe_coding_quality_gate_py["(生产态 / production) vibe_coding_quality_gate.py"]
+        src_zephyr_governance_kb_citation_walker_py["(生产态 / production) citation_walker.py — 引用行走 (DD117, TASK-020)<br/>文件: citation_walker.py"]
+        src_zephyr_governance_kb_embedding_version_lock_py["(生产态 / production) embedding_version_lock.py — 嵌入模型版本锁 (B1...<br/>文件: embedding_version_lock.py"]
+        src_zephyr_governance_kb_fragmentation_index_py["(生产态 / production) fragmentation_index.py — 知识碎片化指数 (DD108...<br/>文件: fragmentation_index.py"]
+        src_zephyr_governance_kb_ke_justification_py["(生产态 / production) rational.py — 注入理由 (DD99, TASK-019)<br/>文件: ke_justification.py"]
+        src_zephyr_governance_kb_knowledge_distiller_py["(生产态 / production) knowledge_distiller.py — 知识蒸馏 (B10, DD84, ...<br/>文件: knowledge_distiller.py"]
+        src_zephyr_governance_kb_pattern_library_py["(生产态 / production) PatternLibrary · 成功模式库（KB refactor 后独...<br/>文件: pattern_library.py"]
+        src_zephyr_governance_persistence_intent_keyword_mapper_py["(生产态 / production) IntentKeywordMapper - Stage 1 of three-stage in...<br/>文件: intent_keyword_mapper.py"]
+        src_zephyr_governance_persistence_intent_parser_py["(生产态 / production) IntentParser · 意图三阶段级联解析器（V-09）<br/>文件: intent_parser.py"]
+        src_zephyr_infrastructure_system_snapshot_py["(生产态 / production) SystemSnapshotter — M1 系统状态镜像（CL-017 RI...<br/>文件: system_snapshot.py"]
+        src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py["(生产态 / production) otel_instrumentation.py — 全链路 OTel (B12, DD...<br/>文件: otel_instrumentation.py"]
+        src_zephyr_security_llm_defense_llm_security_adversarial_robustness_py["(生产态 / production) adversarial_robustness.py — 对抗鲁棒性 (B8, DD...<br/>文件: adversarial_robustness.py"]
+        src_zephyr_security_llm_defense_llm_security_alignment_scorer_py["(生产态 / production) alignment_scorer.py — 对齐评分 (B11, DD85, TAS...<br/>文件: alignment_scorer.py"]
+        src_zephyr_security_llm_defense_llm_security_lsg_pattern_tracker_py["(生产态 / production) lsg_pattern_tracker.py — LSG 模式逃逸追踪 (B20...<br/>文件: lsg_pattern_tracker.py"]
+        src_zephyr_security_llm_defense_llm_security_poisoning_monitor_py["(生产态 / production) poisoning_monitor.py — Embed 污染检测 (DD97, T...<br/>文件: poisoning_monitor.py"]
+        src_zephyr_security_llm_defense_llm_security_sensitivity_classifier_py["(生产态 / production) sensitivity_classifier.py — 数据分级 (B9, DD83...<br/>文件: sensitivity_classifier.py"]
+        src_zephyr_security_llm_defense_llm_security_solo_dev_safety_net_py["(生产态 / production) solo_dev_safety_net.py — 单人无审查安全网 (B15...<br/>文件: solo_dev_safety_net.py"]
+        src_zephyr_shared_ai_guards_config_safety_guard_py["(生产态 / production) config_safety_guard.py — 配置自毁防护 (B16, DD...<br/>文件: config_safety_guard.py"]
+        src_zephyr_shared_blueprint_tools_architecture_context_loader_py["(生产态 / production) architecture_context_loader — 加载 ``generate_...<br/>文件: architecture_context_loader.py"]
+        src_zephyr_shared_dependency_dependency_tracker_py["(生产态 / production) dependency_tracker.py — 依赖追踪 (DD116, TASK-020)<br/>文件: dependency_tracker.py"]
+        src_zephyr_shared_io_cache_invalidation_py["(生产态 / production) cache_invalidation.py — 缓存一致性 (DD113, TAS...<br/>文件: cache_invalidation.py"]
+        src_zephyr_shared_io_doc_compressor_py["(生产态 / production) DocCompressor — 文档压缩服务（CL-018 RI 扩展模式）<br/>文件: doc_compressor.py"]
+        src_zephyr_shared_utils_verify_paths_py["(生产态 / production) verify_paths.py — 代码路径索引验证 (TASK-012)<br/>文件: verify_paths.py"]
     end
     src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_trigger_router_py
-    src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
+    src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
+    src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_assembler_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
+    src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_architecture_context_loader_py
+    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     src_zephyr_autonomy_core_integration_pipeline_bridge_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_trigger_router_py
     src_zephyr_autonomy_core_integration_pipeline_bridge_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_consensus_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_constructor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_contract_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_constructor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
+    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_kya_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_lifecycle_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
-    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_postmortem_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_prompt_opt_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_shadow_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_workflow_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_translator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_governance_persistence_intent_parser_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_autonomy_core_prompt_registry_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
+    src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_autonomy_core_context_checkpoint_manager_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_autonomy_core_context_context_budget_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_GOV_KB["(生产态 / production) D_GOV_KB"]
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_GOV_KB
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_INTELLIGENCE
-    src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_INTELLIGENCE
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_autonomy_core_context_context_budget_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_autonomy_core_context_context_injector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOV_CODE_QUALITY["(原型态 / prototype) D_GOV_CODE_QUALITY"]
+    D_GOV_CODE_QUALITY -.->|contract / contract| src_zephyr_autonomy_core_context_memory_bank_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_autonomy_core_context_memory_bank_py
+    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
+    D_AUDITTEST -.->|runtime / runtime| src_zephyr_autonomy_core_context_memory_bank_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_executor_py
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_autonomy_core_integration_pipeline_bridge_py
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_feedback_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
-    D_TRADING["(生产态 / production) D_TRADING"]
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_ext_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_ext_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
-    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_init_py
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_agent_observability_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_main_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_skill_rbac_registry_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_autonomy_core_context_context_assembler_py
+    D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_init_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_autonomy_core_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_autonomy_core_init_py,src_zephyr_autonomy_core_main_py,src_zephyr_autonomy_core_agent_observability_py,src_zephyr_autonomy_core_all_skill_modules_py,src_zephyr_autonomy_core_context_init_py,src_zephyr_autonomy_core_context_atomic_injector_py,src_zephyr_autonomy_core_context_ce_bootstrap_py,src_zephyr_autonomy_core_context_ce_explain_cli_py,src_zephyr_autonomy_core_context_ce_file_lister_py,src_zephyr_autonomy_core_context_ce_playground_v2_py,src_zephyr_autonomy_core_context_ce_vibe_shortcuts_py,src_zephyr_autonomy_core_context_checkpoint_manager_py,src_zephyr_autonomy_core_context_cold_start_booster_py,src_zephyr_autonomy_core_context_complexity_budget_py,src_zephyr_autonomy_core_context_context_assembler_py,src_zephyr_autonomy_core_context_context_budget_py,src_zephyr_autonomy_core_context_context_budget_tracker_py,src_zephyr_autonomy_core_context_context_debt_score_py,src_zephyr_autonomy_core_context_context_evaluator_py,src_zephyr_autonomy_core_context_context_evictor_py,src_zephyr_autonomy_core_context_context_health_score_py,src_zephyr_autonomy_core_context_context_injector_py,src_zephyr_autonomy_core_context_context_model_strategy_py,src_zephyr_autonomy_core_context_context_outcome_tracker_py,src_zephyr_autonomy_core_context_context_pipeline_py,src_zephyr_autonomy_core_context_context_pipeline_auto_py,src_zephyr_autonomy_core_context_context_playground_py,src_zephyr_autonomy_core_context_context_rot_model_py,src_zephyr_autonomy_core_context_context_rule_registry_py,src_zephyr_autonomy_core_context_context_value_attribution_py,src_zephyr_autonomy_core_context_contextual_fetch_api_py,src_zephyr_autonomy_core_context_curation_loop_py,src_zephyr_autonomy_core_context_diff_injector_py,src_zephyr_autonomy_core_context_diversity_constraint_py,src_zephyr_autonomy_core_context_domain_decay_config_py,src_zephyr_autonomy_core_context_fallback_staleness_gate_py,src_zephyr_autonomy_core_context_integrity_check_py,src_zephyr_autonomy_core_context_memory_bank_py,src_zephyr_autonomy_core_context_mode_manager_py,src_zephyr_autonomy_core_context_position_optimizer_py,src_zephyr_autonomy_core_context_shadow_canary_py,src_zephyr_autonomy_core_context_staleness_manager_py,src_zephyr_autonomy_core_context_vector_bridge_py,src_zephyr_autonomy_core_ide_watcher_py,src_zephyr_autonomy_core_integration_pipeline_bridge_py,src_zephyr_autonomy_core_phase_planner_py,src_zephyr_autonomy_core_progressive_disclosure_injector_py,src_zephyr_autonomy_core_prompt_registry_py,src_zephyr_autonomy_core_self_evolution_fidelity_gate_py,src_zephyr_autonomy_core_skill_rbac_registry_py,src_zephyr_autonomy_core_skills_skill_attention_py,src_zephyr_autonomy_core_skills_skill_breakage_checker_py,src_zephyr_autonomy_core_skills_skill_cache_provider_py,src_zephyr_autonomy_core_skills_skill_calibration_py,src_zephyr_autonomy_core_skills_skill_canary_py,src_zephyr_autonomy_core_skills_skill_cognitive_preservation_py,src_zephyr_autonomy_core_skills_skill_compliance_py,src_zephyr_autonomy_core_skills_skill_consensus_py,src_zephyr_autonomy_core_skills_skill_constructor_py,src_zephyr_autonomy_core_skills_skill_context_isolation_py,src_zephyr_autonomy_core_skills_skill_contract_py,src_zephyr_autonomy_core_skills_skill_cross_model_py,src_zephyr_autonomy_core_skills_skill_di_py,src_zephyr_autonomy_core_skills_skill_discovery_py,src_zephyr_autonomy_core_skills_skill_durable_py,src_zephyr_autonomy_core_skills_skill_economics_py,src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py,src_zephyr_autonomy_core_skills_skill_evaluator_py,src_zephyr_autonomy_core_skills_skill_executor_py,src_zephyr_autonomy_core_skills_skill_explain_py,src_zephyr_autonomy_core_skills_skill_factory_py,src_zephyr_autonomy_core_skills_skill_feature_flags_py,src_zephyr_autonomy_core_skills_skill_feedback_py,src_zephyr_autonomy_core_skills_skill_freshness_py,src_zephyr_autonomy_core_skills_skill_freshness_ext_py,src_zephyr_autonomy_core_skills_skill_gitops_py,src_zephyr_autonomy_core_skills_skill_guardrails_py,src_zephyr_autonomy_core_skills_skill_idempotency_py,src_zephyr_autonomy_core_skills_skill_kill_switch_py,src_zephyr_autonomy_core_skills_skill_knowledge_base_py,src_zephyr_autonomy_core_skills_skill_kya_py,src_zephyr_autonomy_core_skills_skill_learning_py,src_zephyr_autonomy_core_skills_skill_lifecycle_py,src_zephyr_autonomy_core_skills_skill_lineage_py,src_zephyr_autonomy_core_skills_skill_loader_py,src_zephyr_autonomy_core_skills_skill_locking_py,src_zephyr_autonomy_core_skills_skill_model_py,src_zephyr_autonomy_core_skills_skill_model_evolution_py,src_zephyr_autonomy_core_skills_skill_observability_py,src_zephyr_autonomy_core_skills_skill_ontology_py,src_zephyr_autonomy_core_skills_skill_postmortem_py,src_zephyr_autonomy_core_skills_skill_prompt_cache_py,src_zephyr_autonomy_core_skills_skill_prompt_opt_py,src_zephyr_autonomy_core_skills_skill_registry_py,src_zephyr_autonomy_core_skills_skill_resilience_py,src_zephyr_autonomy_core_skills_skill_risk_mitigator_py,src_zephyr_autonomy_core_skills_skill_router_py,src_zephyr_autonomy_core_skills_skill_sandbox_py,src_zephyr_autonomy_core_skills_skill_schema_registry_py,src_zephyr_autonomy_core_skills_skill_security_py,src_zephyr_autonomy_core_skills_skill_shadow_py,src_zephyr_autonomy_core_skills_skill_silent_failure_py,src_zephyr_autonomy_core_skills_skill_team_optimizer_py,src_zephyr_autonomy_core_skills_skill_telemetry_py,src_zephyr_autonomy_core_skills_skill_temperature_py,src_zephyr_autonomy_core_skills_skill_tokenomics_py,src_zephyr_autonomy_core_skills_skill_translator_py,src_zephyr_autonomy_core_skills_skill_workflow_py,src_zephyr_autonomy_core_spec_engine_py,src_zephyr_autonomy_core_trigger_router_py,src_zephyr_autonomy_core_vibe_coding_quality_gate_py production
-    class D_INFRA_RUNTIME,D_INTEGRATION,D_GOVERNANCE,D_GOV_KB,D_INTELLIGENCE,D_GOV_CODE_QUALITY,D_TRADING,D_FEEDBACK_LOOP external_prod
-    class D_SHARED,D_GOV_SCRIPTS,D_AUDITTEST external_design
+    class src_zephyr_autonomy_core_init_py,src_zephyr_autonomy_core_main_py,src_zephyr_autonomy_core_agent_observability_py,src_zephyr_autonomy_core_all_skill_modules_py,src_zephyr_autonomy_core_context_init_py,src_zephyr_autonomy_core_context_atomic_injector_py,src_zephyr_autonomy_core_context_ce_bootstrap_py,src_zephyr_autonomy_core_context_ce_explain_cli_py,src_zephyr_autonomy_core_context_ce_file_lister_py,src_zephyr_autonomy_core_context_ce_playground_v2_py,src_zephyr_autonomy_core_context_ce_vibe_shortcuts_py,src_zephyr_autonomy_core_context_checkpoint_manager_py,src_zephyr_autonomy_core_context_cold_start_booster_py,src_zephyr_autonomy_core_context_complexity_budget_py,src_zephyr_autonomy_core_context_context_assembler_py,src_zephyr_autonomy_core_context_context_budget_py,src_zephyr_autonomy_core_context_context_budget_tracker_py,src_zephyr_autonomy_core_context_context_debt_score_py,src_zephyr_autonomy_core_context_context_evaluator_py,src_zephyr_autonomy_core_context_context_evictor_py,src_zephyr_autonomy_core_context_context_health_score_py,src_zephyr_autonomy_core_context_context_injector_py,src_zephyr_autonomy_core_context_context_model_strategy_py,src_zephyr_autonomy_core_context_context_outcome_tracker_py,src_zephyr_autonomy_core_context_context_pipeline_py,src_zephyr_autonomy_core_context_context_pipeline_auto_py,src_zephyr_autonomy_core_context_context_playground_py,src_zephyr_autonomy_core_context_context_rot_model_py,src_zephyr_autonomy_core_context_context_rule_registry_py,src_zephyr_autonomy_core_context_context_value_attribution_py,src_zephyr_autonomy_core_context_contextual_fetch_api_py,src_zephyr_autonomy_core_context_curation_loop_py,src_zephyr_autonomy_core_context_diff_injector_py,src_zephyr_autonomy_core_context_diversity_constraint_py,src_zephyr_autonomy_core_context_domain_decay_config_py,src_zephyr_autonomy_core_context_fallback_staleness_gate_py,src_zephyr_autonomy_core_context_integrity_check_py,src_zephyr_autonomy_core_context_memory_bank_py,src_zephyr_autonomy_core_context_mode_manager_py,src_zephyr_autonomy_core_context_position_optimizer_py,src_zephyr_autonomy_core_context_shadow_canary_py,src_zephyr_autonomy_core_context_staleness_manager_py,src_zephyr_autonomy_core_context_vector_bridge_py,src_zephyr_autonomy_core_ide_watcher_py,src_zephyr_autonomy_core_integration_pipeline_bridge_py,src_zephyr_autonomy_core_phase_planner_py,src_zephyr_autonomy_core_progressive_disclosure_injector_py,src_zephyr_autonomy_core_prompt_registry_py,src_zephyr_autonomy_core_self_evolution_fidelity_gate_py,src_zephyr_autonomy_core_skill_rbac_registry_py,src_zephyr_autonomy_core_skills_skill_attention_py,src_zephyr_autonomy_core_skills_skill_breakage_checker_py,src_zephyr_autonomy_core_skills_skill_cache_provider_py,src_zephyr_autonomy_core_skills_skill_calibration_py,src_zephyr_autonomy_core_skills_skill_canary_py,src_zephyr_autonomy_core_skills_skill_cognitive_preservation_py,src_zephyr_autonomy_core_skills_skill_compliance_py,src_zephyr_autonomy_core_skills_skill_consensus_py,src_zephyr_autonomy_core_skills_skill_constructor_py,src_zephyr_autonomy_core_skills_skill_context_isolation_py,src_zephyr_autonomy_core_skills_skill_contract_py,src_zephyr_autonomy_core_skills_skill_cross_model_py,src_zephyr_autonomy_core_skills_skill_di_py,src_zephyr_autonomy_core_skills_skill_discovery_py,src_zephyr_autonomy_core_skills_skill_durable_py,src_zephyr_autonomy_core_skills_skill_economics_py,src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py,src_zephyr_autonomy_core_skills_skill_evaluator_py,src_zephyr_autonomy_core_skills_skill_executor_py,src_zephyr_autonomy_core_skills_skill_explain_py,src_zephyr_autonomy_core_skills_skill_factory_py,src_zephyr_autonomy_core_skills_skill_feature_flags_py,src_zephyr_autonomy_core_skills_skill_feedback_py,src_zephyr_autonomy_core_skills_skill_freshness_py,src_zephyr_autonomy_core_skills_skill_freshness_ext_py,src_zephyr_autonomy_core_skills_skill_gitops_py,src_zephyr_autonomy_core_skills_skill_guardrails_py,src_zephyr_autonomy_core_skills_skill_idempotency_py,src_zephyr_autonomy_core_skills_skill_kill_switch_py,src_zephyr_autonomy_core_skills_skill_knowledge_base_py,src_zephyr_autonomy_core_skills_skill_kya_py,src_zephyr_autonomy_core_skills_skill_learning_py,src_zephyr_autonomy_core_skills_skill_lifecycle_py,src_zephyr_autonomy_core_skills_skill_lineage_py,src_zephyr_autonomy_core_skills_skill_loader_py,src_zephyr_autonomy_core_skills_skill_locking_py,src_zephyr_autonomy_core_skills_skill_model_py,src_zephyr_autonomy_core_skills_skill_model_evolution_py,src_zephyr_autonomy_core_skills_skill_observability_py,src_zephyr_autonomy_core_skills_skill_ontology_py,src_zephyr_autonomy_core_skills_skill_postmortem_py,src_zephyr_autonomy_core_skills_skill_prompt_cache_py,src_zephyr_autonomy_core_skills_skill_prompt_opt_py,src_zephyr_autonomy_core_skills_skill_registry_py,src_zephyr_autonomy_core_skills_skill_resilience_py,src_zephyr_autonomy_core_skills_skill_risk_mitigator_py,src_zephyr_autonomy_core_skills_skill_router_py,src_zephyr_autonomy_core_skills_skill_sandbox_py,src_zephyr_autonomy_core_skills_skill_schema_registry_py,src_zephyr_autonomy_core_skills_skill_security_py,src_zephyr_autonomy_core_skills_skill_shadow_py,src_zephyr_autonomy_core_skills_skill_silent_failure_py,src_zephyr_autonomy_core_skills_skill_team_optimizer_py,src_zephyr_autonomy_core_skills_skill_telemetry_py,src_zephyr_autonomy_core_skills_skill_temperature_py,src_zephyr_autonomy_core_skills_skill_tokenomics_py,src_zephyr_autonomy_core_skills_skill_translator_py,src_zephyr_autonomy_core_skills_skill_workflow_py,src_zephyr_autonomy_core_spec_engine_py,src_zephyr_autonomy_core_trigger_router_py,src_zephyr_autonomy_core_vibe_coding_quality_gate_py,src_zephyr_governance_kb_citation_walker_py,src_zephyr_governance_kb_embedding_version_lock_py,src_zephyr_governance_kb_fragmentation_index_py,src_zephyr_governance_kb_ke_justification_py,src_zephyr_governance_kb_knowledge_distiller_py,src_zephyr_governance_kb_pattern_library_py,src_zephyr_governance_persistence_intent_keyword_mapper_py,src_zephyr_governance_persistence_intent_parser_py,src_zephyr_infrastructure_system_snapshot_py,src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py,src_zephyr_security_llm_defense_llm_security_adversarial_robustness_py,src_zephyr_security_llm_defense_llm_security_alignment_scorer_py,src_zephyr_security_llm_defense_llm_security_lsg_pattern_tracker_py,src_zephyr_security_llm_defense_llm_security_poisoning_monitor_py,src_zephyr_security_llm_defense_llm_security_sensitivity_classifier_py,src_zephyr_security_llm_defense_llm_security_solo_dev_safety_net_py,src_zephyr_shared_ai_guards_config_safety_guard_py,src_zephyr_shared_blueprint_tools_architecture_context_loader_py,src_zephyr_shared_dependency_dependency_tracker_py,src_zephyr_shared_io_cache_invalidation_py,src_zephyr_shared_io_doc_compressor_py,src_zephyr_shared_utils_verify_paths_py production
+    class D_INFRA_RUNTIME,D_INTEGRATION,D_GOV_AUDIT,D_GOV_KB,D_INTELLIGENCE,D_FEEDBACK_LOOP external_prod
+    class D_SHARED,D_GOV_CODE_QUALITY,D_GOVERNANCE,D_AUDITTEST,D_ORCHESTRATOR external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -719,7 +869,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 3 个，0 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 8 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -727,37 +877,45 @@ graph TD
         src_zephyr_autonomy_core_file_autoregister_py["(原型态 / prototype) file_autoregister.py"]
         src_zephyr_autonomy_core_integration_init_py["(原型态 / prototype) Agent Spec -> Pipeline 集成桥接层<br/>文件: __init__.py"]
         src_zephyr_autonomy_core_skills_init_py["(原型态 / prototype) Skill 子包：原根目录平铺的 skill_*.py 按 ARCH-0...<br/>文件: __init__.py"]
+        src_zephyr_integration_vector_memory_vector_writer_py["(原型态 / prototype) CE 向量写入器 — vectorize_and_store() 生产者<br/>文件: vector_writer.py"]
+        tests_automation_test_auto_runtime_e2e_py["(原型态 / prototype) F1 AutoRuntimeCore 非mock端到端集成测试<br/>文件: test_auto_runtime_e2e.py"]
+        tests_f_lifecycle_test_f1_event_trigger_py["(原型态 / prototype) F1 事件触发启动测试<br/>文件: test_f1_event_trigger.py"]
+        tests_trading_test_f14_pipeline_extreme_py["(原型态 / prototype) F14 管线编排/反馈环 — 红蓝对抗端到端极端测试<br/>文件: test_f14_pipeline_extreme.py"]
+        tests_trading_test_f1_extreme_py["(原型态 / prototype) F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试<br/>文件: test_f1_extreme.py"]
     end
-    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_ENFORCEMENT
+    D_GOV_KB["(原型态 / prototype) D_GOV_KB"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_KB
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_AUDITTEST
-    D_GOV_AUDIT["(设计态 / design) D_GOV_AUDIT"]
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_AUDIT
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_ENFORCEMENT
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_DRIFT
-    D_INFRA_A2A["(原型态 / prototype) D_INFRA_A2A"]
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_INFRA_A2A
-    src_zephyr_autonomy_core_file_autoregister_py -.->|contract / contract| D_GOVERNANCE
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|contract / contract| D_GOV_DOCS
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_DOCS
     src_zephyr_autonomy_core_file_autoregister_py -.->|data / data| D_GOVERNANCE
-    D_SECURITY_LLM["(生产态 / production) D_SECURITY_LLM"]
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_SECURITY_LLM
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
+    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_SECURITY
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOV_DOCS
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_GOVERNANCE
     D_KNOWLEDGE["(设计态 / design) D_KNOWLEDGE"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|contract / contract| D_KNOWLEDGE
-    D_GOVERNANCE -.->|contract / contract| src_zephyr_autonomy_core_file_autoregister_py
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime / runtime| D_INFRA_RUNTIME
+    D_GOV_DOCS -.->|contract / contract| src_zephyr_autonomy_core_file_autoregister_py
+    D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_writer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_autonomy_core_file_autoregister_py,src_zephyr_autonomy_core_integration_init_py,src_zephyr_autonomy_core_skills_init_py design
-    class D_SECURITY_LLM external_prod
-    class D_GOVERNANCE,D_AUDITTEST,D_GOV_AUDIT,D_GOV_DRIFT,D_INFRA_A2A,D_KNOWLEDGE external_design
+    class src_zephyr_autonomy_core_file_autoregister_py,src_zephyr_autonomy_core_integration_init_py,src_zephyr_autonomy_core_skills_init_py,src_zephyr_integration_vector_memory_vector_writer_py,tests_automation_test_auto_runtime_e2e_py,tests_f_lifecycle_test_f1_event_trigger_py,tests_trading_test_f14_pipeline_extreme_py,tests_trading_test_f1_extreme_py design
+    class D_GOV_ENFORCEMENT,D_GOV_KB,D_AUDITTEST,D_GOV_DRIFT,D_GOVERNANCE,D_GOV_DOCS,D_SECURITY,D_KNOWLEDGE,D_INFRA_RUNTIME,D_ORCHESTRATOR external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -767,56 +925,79 @@ graph TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | file_autoregister.py | → | D_AUDITTEST 审计测试套件: test_a2a_check.py | runtime / runtime |
-| 2 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
-| 3 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: blueprint.md | data / data |
-| 4 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
-| 5 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
-| 6 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
-| 7 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
-| 8 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
-| 9 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: blueprint.md | runtime / runtime |
-| 10 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: blueprint.md | contract / contract |
-| 11 | skill_executor.py | → | D_GOVERNANCE 生命周期管理: writer.py | 导入依赖 / import_depends |
-| 12 | MOD-INF-019: Agent Spec — Skill Sandbox (skill... | → | D_GOVERNANCE 生命周期管理: bridge.py | 导入依赖 / import_depends |
-| 13 | MOD-INF-019: Agent Spec — SpecEngine 蓝图->Ski... | → | D_GOVERNANCE 生命周期管理: writer.py | 导入依赖 / import_depends |
-| 14 | file_autoregister.py | → | D_GOV_AUDIT 审计追踪: blueprint.md | runtime / runtime |
-| 15 | file_autoregister.py | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
-| 16 | skill_executor.py | → | D_GOV_ENFORCEMENT 规则执行: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 2 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (... | → | D_FEEDBACK_LOOP 反馈循环引擎: Error Budget 状态机——monthly budget + burn_ra... | 测试依赖 / test_depends |
+| 3 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (... | → | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | 测试依赖 / test_depends |
+| 4 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: Construction Verifier — 施工验证器: 任务卡完成... | runtime / runtime |
+| 5 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: model_provider_data.py | runtime / runtime |
+| 6 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: dataflowgraph Schema DDL + 连接入口 (dataflowgr... | data / data |
+| 7 | file_autoregister.py | → | D_GOVERNANCE 生命周期管理: audit_logger.py | runtime / runtime |
+| 8 | skill_executor.py | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
+| 9 | MOD-INF-019: Agent Spec — Skill Sandbox (skill... | → | D_GOV_AUDIT 审计追踪: bridge.py | 导入依赖 / import_depends |
+| 10 | MOD-INF-019: Agent Spec — SpecEngine 蓝图->Ski... | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
+| 11 | file_autoregister.py | → | D_GOV_DOCS 架构文档治理: blueprint.md | runtime / runtime |
+| 12 | file_autoregister.py | → | D_GOV_DOCS 架构文档治理: blueprint.md | runtime / runtime |
+| 13 | file_autoregister.py | → | D_GOV_DOCS 架构文档治理: blueprint.md | contract / contract |
+| 14 | file_autoregister.py | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
+| 15 | file_autoregister.py | → | D_GOV_ENFORCEMENT 规则执行: Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 16 | file_autoregister.py | → | D_GOV_ENFORCEMENT 规则执行: GateEventAdapter — GateRepo 事件适配器（DW-000... | runtime / runtime |
 | 17 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_GOV_KB 知识库治理: 冷启动引导引擎 — 从存量文档自动生成首批KE（T-M... | 导入依赖 / import_depends |
-| 18 | file_autoregister.py | → | D_INFRA_A2A A2A通信: audit_logger.py | runtime / runtime |
-| 19 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
-| 20 | TruncationStrategy — TruncationStrategy (conte... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
-| 21 | ContextBudgetTracker: token budget management w... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
-| 22 | ContextInjector: retrieve and inject relevant k... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
-| 23 | context_pipeline — Context Engine **四段流水线... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
-| 24 | context_pipeline_auto.py — ContextPipeline 三.... | → | D_INFRA_RUNTIME 运行时集成: kill_switch.py -- safety circuit breaker (DD110... | 导入依赖 / import_depends |
-| 25 | file_autoregister.py | → | D_INFRA_RUNTIME 运行时集成: blueprint.md | runtime / runtime |
-| 26 | PromptRegistry: YAML-driven Prompt 模板注册表 (... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
-| 27 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
-| 28 | ContextInjector: retrieve and inject relevant k... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
-| 29 | context_pipeline — Context Engine **四段流水线... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
-| 30 | PromptRegistry: YAML-driven Prompt 模板注册表 (... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
-| 31 | skill-registry.py —— Skill 注册基座（Phase 14... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
-| 32 | skill_router.py | → | D_INTEGRATION 管线路由: EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 导入依赖 / import_depends |
-| 33 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_INTELLIGENCE 上下文管理: Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T... | 导入依赖 / import_depends |
-| 34 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | 导入依赖 / import_depends |
-| 35 | file_autoregister.py | → | D_KNOWLEDGE 知识管理: blueprint.md | contract / contract |
-| 36 | ContextInjector: retrieve and inject relevant k... | → | D_SECURITY_LLM LLM防御: gateway.py | 导入依赖 / import_depends |
-| 37 | file_autoregister.py | → | D_SECURITY_LLM LLM防御: lsg_pattern_tracker.py — LSG 模式逃逸追踪 (B20... | runtime / runtime |
-| 38 | checkpoint_manager.py — Inject 前快照 (DD100, ... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 39 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_SHARED 共享服务: DocCompressor — 文档压缩服务（CL-018 RI 扩展模... | 导入依赖 / import_depends |
-| 40 | ContextBudgetTracker: token budget management w... | → | D_SHARED 共享服务: Zero-dependency Observer pattern (subscribe/emi... | 导入依赖 / import_depends |
-| 41 | ContextBudgetTracker: token budget management w... | → | D_SHARED 共享服务: DocCompressor — 文档压缩服务（CL-018 RI 扩展模... | 导入依赖 / import_depends |
-| 42 | ContextBudgetTracker: token budget management w... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 43 | ContextInjector: retrieve and inject relevant k... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
-| 44 | context_pipeline — Context Engine **四段流水线... | → | D_SHARED 共享服务: architecture_context_loader — 加载 ``generate_... | 导入依赖 / import_depends |
-| 45 | context_pipeline_auto.py — ContextPipeline 三.... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 46 | file_autoregister.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 47 | PromptRegistry: YAML-driven Prompt 模板注册表 (... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 48 | skill_factory.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 49 | MOD-INF-019: Agent Spec — Skill Feedback Loop ... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 50 | MOD-INF-019: Agent Spec — Skill Freshness Exte... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 51 | skill-registry.py —— Skill 注册基座（Phase 14... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 18 | file_autoregister.py | → | D_GOV_KB 知识库治理: G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | runtime / runtime |
+| 19 | skill_executor.py | → | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 20 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
+| 21 | TruncationStrategy — TruncationStrategy (conte... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
+| 22 | ContextBudgetTracker: token budget management w... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
+| 23 | ContextInjector: retrieve and inject relevant k... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
+| 24 | context_pipeline — Context Engine **四段流水线... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
+| 25 | context_pipeline_auto.py — ContextPipeline 三.... | → | D_INFRA_RUNTIME 运行时集成: kill_switch.py -- safety circuit breaker (DD110... | 导入依赖 / import_depends |
+| 26 | file_autoregister.py | → | D_INFRA_RUNTIME 运行时集成: blueprint.md | runtime / runtime |
+| 27 | PromptRegistry: YAML-driven Prompt 模板注册表 (... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (token_b... | 导入依赖 / import_depends |
+| 28 | F1 AutoRuntimeCore 非mock端到端集成测试 (test_a... | → | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | 测试依赖 / test_depends |
+| 29 | F1 AutoRuntimeCore 非mock端到端集成测试 (test_a... | → | D_INFRA_RUNTIME 运行时集成: CapabilityRegistry — 能力注册中心 (capability_... | 测试依赖 / test_depends |
+| 30 | F1 AutoRuntimeCore 非mock端到端集成测试 (test_a... | → | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (dream_cycle.py) | 测试依赖 / test_depends |
+| 31 | F1 AutoRuntimeCore 非mock端到端集成测试 (test_a... | → | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | 测试依赖 / test_depends |
+| 32 | F1 AutoRuntimeCore 非mock端到端集成测试 (test_a... | → | D_INFRA_RUNTIME 运行时集成: runtime_config.py | 测试依赖 / test_depends |
+| 33 | F1 AutoRuntimeCore 非mock端到端集成测试 (test_a... | → | D_INFRA_RUNTIME 运行时集成: WorkDAG + WorkItem — 工作编排数据模型 (work_da... | 测试依赖 / test_depends |
+| 34 | F1 AutoRuntimeCore 非mock端到端集成测试 (test_a... | → | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | 测试依赖 / test_depends |
+| 35 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (... | → | D_INFRA_RUNTIME 运行时集成: Pipeline — Backpressure Manager (backpressure_... | 测试依赖 / test_depends |
+| 36 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (... | → | D_INFRA_RUNTIME 运行时集成: backpressure_types.py - Pipeline backpressure s... | 测试依赖 / test_depends |
+| 37 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (... | → | D_INFRA_RUNTIME 运行时集成: DeadLetterQueue — 死信队列 (dead_letter_queue.py) | 测试依赖 / test_depends |
+| 38 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (... | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
+| 39 | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测... | → | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (dream_cycle.py) | 测试依赖 / test_depends |
+| 40 | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测... | → | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | 测试依赖 / test_depends |
+| 41 | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测... | → | D_INFRA_RUNTIME 运行时集成: WorkDAG + WorkItem — 工作编排数据模型 (work_da... | 测试依赖 / test_depends |
+| 42 | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测... | → | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | 测试依赖 / test_depends |
+| 43 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
+| 44 | ContextInjector: retrieve and inject relevant k... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
+| 45 | context_pipeline — Context Engine **四段流水线... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
+| 46 | PromptRegistry: YAML-driven Prompt 模板注册表 (... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
+| 47 | skill-registry.py —— Skill 注册基座（Phase 14... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
+| 48 | skill_router.py | → | D_INTEGRATION 管线路由: EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (... | 导入依赖 / import_depends |
+| 49 | PatternLibrary · 成功模式库（KB refactor 后独.... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
+| 50 | IntentKeywordMapper - Stage 1 of three-stage in... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
+| 51 | IntentParser · 意图三阶段级联解析器（V-09） (i... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
+| 52 | CE 向量写入器 — vectorize_and_store() 生产者 (... | → | D_INTEGRATION 管线路由: VMS 上下文注入器 — ingest_context() 消费者 (co... | 导入依赖 / import_depends |
+| 53 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_INTELLIGENCE 上下文管理: Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T... | 导入依赖 / import_depends |
+| 54 | ContextAssembler — 上下文装配、校验、影子留档 ... | → | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | 导入依赖 / import_depends |
+| 55 | file_autoregister.py | → | D_KNOWLEDGE 知识管理: blueprint.md | contract / contract |
+| 56 | ContextInjector: retrieve and inject relevant k... | → | D_SECURITY 对抗验证: gateway.py | 导入依赖 / import_depends |
+| 57 | file_autoregister.py | → | D_SECURITY 对抗验证: LLM Security Gateway - Streamlit Dashboard. (ap... | runtime / runtime |
+| 58 | checkpoint_manager.py — Inject 前快照 (DD100, ... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 59 | ContextBudgetTracker: token budget management w... | → | D_SHARED 共享服务: Zero-dependency Observer pattern (subscribe/emi... | 导入依赖 / import_depends |
+| 60 | ContextBudgetTracker: token budget management w... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 61 | ContextInjector: retrieve and inject relevant k... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 62 | context_pipeline_auto.py — ContextPipeline 三.... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 63 | file_autoregister.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 64 | PromptRegistry: YAML-driven Prompt 模板注册表 (... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 65 | skill_factory.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 66 | MOD-INF-019: Agent Spec — Skill Feedback Loop ... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 67 | MOD-INF-019: Agent Spec — Skill Freshness Exte... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 68 | skill-registry.py —— Skill 注册基座（Phase 14... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 69 | PatternLibrary · 成功模式库（KB refactor 后独.... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 70 | SystemSnapshotter — M1 系统状态镜像（CL-017 RI... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 71 | SystemSnapshotter — M1 系统状态镜像（CL-017 RI... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 72 | DocCompressor — 文档压缩服务（CL-018 RI 扩展模... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 73 | DocCompressor — 文档压缩服务（CL-018 RI 扩展模... | → | D_SHARED 共享服务: CBAC 能力检查器 (Capability-Based Access Contro... | 导入依赖 / import_depends |
+| 74 | F1 事件触发启动测试 (test_f1_event_trigger.py) | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 测试依赖 / test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -825,188 +1006,229 @@ graph TD
 | 1 | D_AUDITTEST 审计测试套件: test_agent_observability.py | → | MOD-INF-019: Agent Spec — Agent Observability ... | 测试依赖 / test_depends |
 | 2 | D_AUDITTEST 审计测试套件: test_agent_spec_main.py | → | agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级.... | 测试依赖 / test_depends |
 | 3 | D_AUDITTEST 审计测试套件: test_agent_spec_registry.py | → | G-CT-003: Agent Spec -> RBAC capability check. ... | 测试依赖 / test_depends |
-| 4 | D_AUDITTEST 审计测试套件: test_all_skill_modules.py | → | MOD-INF-019: Agent Spec — All Skill Modules (a... | 测试依赖 / test_depends |
-| 5 | D_AUDITTEST 审计测试套件: test_assembly_context_assembler.py | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
-| 6 | D_AUDITTEST 审计测试套件: test_assembly_context_injector.py | → | ContextInjector: retrieve and inject relevant k... | 测试依赖 / test_depends |
-| 7 | D_AUDITTEST 审计测试套件: test_assembly_context_pipeline.py | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
-| 8 | D_AUDITTEST 审计测试套件: test_assembly_context_pipeline.py | → | context_pipeline — Context Engine **四段流水线... | 测试依赖 / test_depends |
-| 9 | D_AUDITTEST 审计测试套件: test_atomic_injector.py | → | atomic_injector.py — 原子注入 (DD101, TASK-019... | 测试依赖 / test_depends |
-| 10 | D_AUDITTEST 审计测试套件: test_behavioral_auditor_main.py | → | agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级.... | 测试依赖 / test_depends |
-| 11 | D_AUDITTEST 审计测试套件: test_checkpoint_manager.py | → | checkpoint_manager.py — Inject 前快照 (DD100, ... | 测试依赖 / test_depends |
-| 12 | D_AUDITTEST 审计测试套件: test_complexity_budget.py | → | complexity_budget.py — Token 预算复杂度因子 (D... | 测试依赖 / test_depends |
-| 13 | D_AUDITTEST 审计测试套件: F11 ContextPipeline 红蓝对抗极端测试 (test_cont... | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
-| 14 | D_AUDITTEST 审计测试套件: F11 ContextPipeline 红蓝对抗极端测试 (test_cont... | → | context_pipeline — Context Engine **四段流水线... | 测试依赖 / test_depends |
-| 15 | D_AUDITTEST 审计测试套件: test_contextual_fetch_api.py | → | contextual_fetch_api.py — HTTP FE 对外 API (DD... | 测试依赖 / test_depends |
-| 16 | D_AUDITTEST 审计测试套件: test_curation_loop_root.py | → | curation_loop.py — Per-Turn Curation 策展 (DD1... | 测试依赖 / test_depends |
-| 17 | D_AUDITTEST 审计测试套件: test_diff_injector.py | → | diff_injector.py — 增量注入 (DD98, TASK-019) (... | 测试依赖 / test_depends |
-| 18 | D_AUDITTEST 审计测试套件: test_diversity_constraint.py | → | diversity_constraint.py — 多样性约束 (DD119, T... | 测试依赖 / test_depends |
-| 19 | D_AUDITTEST 审计测试套件: test_domain_decay_config.py | → | domain_decay_config.py — 每领域半衰期 (DD105, ... | 测试依赖 / test_depends |
-| 20 | D_AUDITTEST 审计测试套件: test_fallback_staleness_gate.py | → | fallback_staleness_gate.py — 兜底层自腐检测 (B... | 测试依赖 / test_depends |
-| 21 | D_AUDITTEST 审计测试套件: test_ide_watcher.py | → | MOD-INF-019: Agent Spec — IDE Watcher (ide_wat... | 测试依赖 / test_depends |
-| 22 | D_AUDITTEST 审计测试套件: test_integrity_check.py | → | integrity_check.py — 注入后完整性 (DD106, TASK... | 测试依赖 / test_depends |
-| 23 | D_AUDITTEST 审计测试套件: test_list_ce_files.py | → | list_ce_files.py — CE 文件清单生成器 (ce_file_... | 测试依赖 / test_depends |
-| 24 | D_AUDITTEST 审计测试套件: test_mgmt_context_budget_tracker.py | → | ContextBudgetTracker: token budget management w... | 测试依赖 / test_depends |
-| 25 | D_AUDITTEST 审计测试套件: test_mgmt_context_evictor.py | → | context_evictor.py — 三维逐出器 (DD9, TASK-014... | 测试依赖 / test_depends |
-| 26 | D_AUDITTEST 审计测试套件: test_mgmt_context_rot_model.py | → | context_rot_model.py — n² Attention 衰减数学.... | 测试依赖 / test_depends |
-| 27 | D_AUDITTEST 审计测试套件: test_mode_manager.py | → | mode_manager.py — 模式管理器 (DD102, TASK-019)... | 测试依赖 / test_depends |
-| 28 | D_AUDITTEST 审计测试套件: test_position_optimizer.py | → | position_optimizer.py — 位置优化 (DD104, TASK-... | 测试依赖 / test_depends |
-| 29 | D_AUDITTEST 审计测试套件: test_progressive_disclosure_injector.py | → | progressive_disclosure_injector.py — 渐进式披.... | 测试依赖 / test_depends |
-| 30 | D_AUDITTEST 审计测试套件: test_registry.py | → | G-CT-003: Agent Spec -> RBAC capability check. ... | 测试依赖 / test_depends |
-| 31 | D_AUDITTEST 审计测试套件: test_shadow_canary.py | → | shadow_canary.py — 金丝雀部署 (B4, DD78, TASK-... | 测试依赖 / test_depends |
-| 32 | D_AUDITTEST 审计测试套件: test_staleness_manager.py | → | staleness_manager.py — 全局过期检测 (DD112, TA... | 测试依赖 / test_depends |
-| 33 | D_AUDITTEST 审计测试套件: test_support_prompt_registry.py | → | PromptRegistry: YAML-driven Prompt 模板注册表 (... | 测试依赖 / test_depends |
-| 34 | D_AUDITTEST 审计测试套件: test_trigger_router_root.py | → | trigger_router.py | 测试依赖 / test_depends |
-| 35 | D_AUDITTEST 审计测试套件: test_vector_bridge.py | → | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE... | 测试依赖 / test_depends |
-| 36 | D_AUDITTEST 审计测试套件: test_ba_main.py | → | agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级.... | 测试依赖 / test_depends |
-| 37 | D_AUDITTEST 审计测试套件: test_capability_check.py | → | G-CT-003: Agent Spec -> RBAC capability check. ... | 测试依赖 / test_depends |
-| 38 | D_AUDITTEST 审计测试套件: test_ce_bootstrap.py | → | ce_bootstrap.py — CE 自举架构 (B1, DD75, TASK-... | 测试依赖 / test_depends |
-| 39 | D_AUDITTEST 审计测试套件: test_ce_explain_cli.py | → | ce_explain_cli.py — KE inclusion rationale 解.... | 测试依赖 / test_depends |
-| 40 | D_AUDITTEST 审计测试套件: test_ce_integrity_check.py | → | integrity_check.py — 注入后完整性 (DD106, TASK... | 测试依赖 / test_depends |
-| 41 | D_AUDITTEST 审计测试套件: test_ce_playground_v2.py | → | ce_playground_v2.py — V2 Playground with full ... | 测试依赖 / test_depends |
-| 42 | D_AUDITTEST 审计测试套件: test_ce_vibe_shortcuts.py | → | ce_vibe_shortcuts.py — Vibe/Strict 模式切换 (T... | 测试依赖 / test_depends |
-| 43 | D_AUDITTEST 审计测试套件: test_cold_start_booster.py | → | cold_start_booster.py — 冷启动 (DD107, TASK-01... | 测试依赖 / test_depends |
-| 44 | D_AUDITTEST 审计测试套件: test_context_assembler_root.py | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
-| 45 | D_AUDITTEST 审计测试套件: test_context_budget_tracker.py | → | ContextBudgetTracker: token budget management w... | 测试依赖 / test_depends |
-| 46 | D_AUDITTEST 审计测试套件: Tests for zephyr.autonomy_core.context.context_... | → | context_debt_score.py — 上下文债务评分 (B19, D... | 测试依赖 / test_depends |
-| 47 | D_AUDITTEST 审计测试套件: test_context_evaluator_root.py | → | context_evaluator.py — AI 引用率评估 (TASK-014... | 测试依赖 / test_depends |
-| 48 | D_AUDITTEST 审计测试套件: test_context_evictor_root.py | → | context_evictor.py — 三维逐出器 (DD9, TASK-014... | 测试依赖 / test_depends |
-| 49 | D_AUDITTEST 审计测试套件: test_context_health_score.py | → | ContextHealthScore.py — 统一健康分 (B6, DD80, ... | 测试依赖 / test_depends |
-| 50 | D_AUDITTEST 审计测试套件: test_context_injector_root.py | → | ContextInjector: retrieve and inject relevant k... | 测试依赖 / test_depends |
-| 51 | D_AUDITTEST 审计测试套件: test_context_model_strategy.py | → | context_model_strategy.py — 模型选择策略 (DD11... | 测试依赖 / test_depends |
-| 52 | D_AUDITTEST 审计测试套件: test_context_outcome_tracker.py | → | context_outcome_tracker.py — 因果链追踪 (B14, ... | 测试依赖 / test_depends |
-| 53 | D_AUDITTEST 审计测试套件: F11 ContextPipeline 三层自动化机制测试 (test_co... | → | context_pipeline_auto.py — ContextPipeline 三.... | 测试依赖 / test_depends |
-| 54 | D_AUDITTEST 审计测试套件: test_context_pipeline_root.py | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
-| 55 | D_AUDITTEST 审计测试套件: test_context_pipeline_root.py | → | context_pipeline — Context Engine **四段流水线... | 测试依赖 / test_depends |
-| 56 | D_AUDITTEST 审计测试套件: test_context_playground.py | → | context_playground.py — 上下文沙箱 dry-run (B5... | 测试依赖 / test_depends |
-| 57 | D_AUDITTEST 审计测试套件: test_context_rot_model_root.py | → | context_rot_model.py — n² Attention 衰减数学.... | 测试依赖 / test_depends |
-| 58 | D_AUDITTEST 审计测试套件: test_context_rule_registry_root.py | → | context_rule_registry.py | 测试依赖 / test_depends |
-| 59 | D_AUDITTEST 审计测试套件: test_context_rule_registry_unit.py | → | context_rule_registry.py | 测试依赖 / test_depends |
-| 60 | D_AUDITTEST 审计测试套件: test_context_value_attribution.py | → | context_value_attribution.py — KE 级 ROI 归因 ... | 测试依赖 / test_depends |
-| 61 | D_AUDITTEST 审计测试套件: test_governance_capability_check.py | → | G-CT-003: Agent Spec -> RBAC capability check. ... | 测试依赖 / test_depends |
-| 62 | D_AUDITTEST 审计测试套件: test_memory_bank_root.py | → | memory_bank.py — AI 读写结构化持久上下文 (DD: ... | 测试依赖 / test_depends |
-| 63 | D_AUDITTEST 审计测试套件: test_phase_planner.py | → | MOD-INF-019: Agent Spec — Phase Planner (phase... | 测试依赖 / test_depends |
-| 64 | D_AUDITTEST 审计测试套件: test_pipeline_bridge.py | → | PipelineSkillBridge — Agent Spec -> Pipeline .... | 测试依赖 / test_depends |
-| 65 | D_AUDITTEST 审计测试套件: test_pipeline_bridge.py | → | trigger_router.py | 测试依赖 / test_depends |
-| 66 | D_AUDITTEST 审计测试套件: test_prompt_registry_root.py | → | PromptRegistry: YAML-driven Prompt 模板注册表 (... | 测试依赖 / test_depends |
-| 67 | D_AUDITTEST 审计测试套件: test_self_evolution_fidelity_gate.py | → | MOD-INF-019: Agent Spec — Self Evolution Fidel... | 测试依赖 / test_depends |
-| 68 | D_AUDITTEST 审计测试套件: test_skill_attention.py | → | MOD-INF-019: Agent Spec — Skill Attention Mana... | 测试依赖 / test_depends |
-| 69 | D_AUDITTEST 审计测试套件: test_skill_breakage_checker.py | → | MOD-INF-019: Agent Spec — Skill Breakage Check... | 测试依赖 / test_depends |
-| 70 | D_AUDITTEST 审计测试套件: test_skill_cache_provider.py | → | MOD-INF-019: Agent Spec — Skill Cache Provider... | 测试依赖 / test_depends |
-| 71 | D_AUDITTEST 审计测试套件: test_skill_calibration.py | → | MOD-INF-019: Agent Spec — Skill Calibration (s... | 测试依赖 / test_depends |
-| 72 | D_AUDITTEST 审计测试套件: test_skill_canary.py | → | MOD-INF-019: Agent Spec — Skill Canary (skill_... | 测试依赖 / test_depends |
-| 73 | D_AUDITTEST 审计测试套件: test_skill_cognitive_preservation.py | → | MOD-INF-019: Agent Spec — Skill Cognitive Pres... | 测试依赖 / test_depends |
-| 74 | D_AUDITTEST 审计测试套件: test_skill_compliance.py | → | MOD-INF-019: Agent Spec — Skill Compliance (sk... | 测试依赖 / test_depends |
-| 75 | D_AUDITTEST 审计测试套件: test_skill_consensus.py | → | MOD-INF-019: Agent Spec — Skill Consensus (ski... | 测试依赖 / test_depends |
-| 76 | D_AUDITTEST 审计测试套件: test_skill_constructor.py | → | MOD-INF-019: Agent Spec — Skill Constructor (s... | 测试依赖 / test_depends |
-| 77 | D_AUDITTEST 审计测试套件: test_skill_context_isolation.py | → | MOD-INF-019: Agent Spec — Context Isolation (s... | 测试依赖 / test_depends |
-| 78 | D_AUDITTEST 审计测试套件: test_skill_contract.py | → | MOD-INF-019: Agent Spec — Skill Contract (skil... | 测试依赖 / test_depends |
-| 79 | D_AUDITTEST 审计测试套件: test_skill_cross_model.py | → | MOD-INF-019: Agent Spec — Skill Cross-Model (s... | 测试依赖 / test_depends |
-| 80 | D_AUDITTEST 审计测试套件: test_skill_di.py | → | MOD-INF-019: Agent Spec — Skill Dependency Inj... | 测试依赖 / test_depends |
-| 81 | D_AUDITTEST 审计测试套件: test_skill_discovery.py | → | MOD-INF-019: Agent Spec — Skill Discovery (ski... | 测试依赖 / test_depends |
-| 82 | D_AUDITTEST 审计测试套件: test_skill_durable.py | → | MOD-INF-019: Agent Spec — Durable Execution (s... | 测试依赖 / test_depends |
-| 83 | D_AUDITTEST 审计测试套件: test_skill_economics.py | → | MOD-INF-019: Agent Spec — Skill Economics (ski... | 测试依赖 / test_depends |
-| 84 | D_AUDITTEST 审计测试套件: test_skill_efficacy_calibrator.py | → | MOD-INF-019: Agent Spec — Skill Efficacy Calib... | 测试依赖 / test_depends |
-| 85 | D_AUDITTEST 审计测试套件: test_skill_evaluator.py | → | MOD-INF-019: Agent Spec — Skill Evaluator (ski... | 测试依赖 / test_depends |
-| 86 | D_AUDITTEST 审计测试套件: test_skill_executor.py | → | skill_executor.py | 测试依赖 / test_depends |
-| 87 | D_AUDITTEST 审计测试套件: test_skill_explain.py | → | MOD-INF-019: Agent Spec — XAI Explainable Skil... | 测试依赖 / test_depends |
-| 88 | D_AUDITTEST 审计测试套件: test_skill_factory.py | → | skill_factory.py | 测试依赖 / test_depends |
-| 89 | D_AUDITTEST 审计测试套件: test_skill_feature_flags.py | → | MOD-INF-019: Agent Spec — Skill Feature Flags ... | 测试依赖 / test_depends |
-| 90 | D_AUDITTEST 审计测试套件: test_skill_feedback.py | → | MOD-INF-019: Agent Spec — Skill Feedback Loop ... | 测试依赖 / test_depends |
-| 91 | D_AUDITTEST 审计测试套件: test_skill_freshness.py | → | MOD-INF-019: Agent Spec — Skill Freshness Deca... | 测试依赖 / test_depends |
-| 92 | D_AUDITTEST 审计测试套件: test_skill_freshness_ext.py | → | MOD-INF-019: Agent Spec — Skill Freshness Exte... | 测试依赖 / test_depends |
-| 93 | D_AUDITTEST 审计测试套件: test_skill_freshness_ext.py | → | skill_model.py | 测试依赖 / test_depends |
-| 94 | D_AUDITTEST 审计测试套件: test_skill_gitops.py | → | MOD-INF-019: Agent Spec — Skill GitOps (skill_... | 测试依赖 / test_depends |
-| 95 | D_AUDITTEST 审计测试套件: test_skill_guardrails.py | → | MOD-INF-019: Agent Spec — Skill Guardrails (sk... | 测试依赖 / test_depends |
-| 96 | D_AUDITTEST 审计测试套件: test_skill_idempotency.py | → | MOD-INF-019: Agent Spec — Skill Idempotency (s... | 测试依赖 / test_depends |
-| 97 | D_AUDITTEST 审计测试套件: test_skill_kill_switch.py | → | MOD-INF-019: Agent Spec — Skill Kill Switch (s... | 测试依赖 / test_depends |
-| 98 | D_AUDITTEST 审计测试套件: test_skill_kill_switch.py | → | skill_model.py | 测试依赖 / test_depends |
-| 99 | D_AUDITTEST 审计测试套件: test_skill_knowledge_base.py | → | MOD-INF-019: Agent Spec — Skill Knowledge Base... | 测试依赖 / test_depends |
-| 100 | D_AUDITTEST 审计测试套件: test_skill_kya.py | → | MOD-INF-019: Agent Spec — Skill KYA (skill_kya.py) | 测试依赖 / test_depends |
-| 101 | D_AUDITTEST 审计测试套件: test_skill_learning.py | → | MOD-INF-019: Agent Spec — Skill Self-Learning ... | 测试依赖 / test_depends |
-| 102 | D_AUDITTEST 审计测试套件: test_skill_lifecycle.py | → | MOD-INF-019: Agent Spec — Skill Lifecycle (ski... | 测试依赖 / test_depends |
-| 103 | D_AUDITTEST 审计测试套件: test_skill_lifecycle.py | → | skill_model.py | 测试依赖 / test_depends |
-| 104 | D_AUDITTEST 审计测试套件: test_skill_lineage.py | → | MOD-INF-019: Agent Spec — Skill Lineage (skill... | 测试依赖 / test_depends |
-| 105 | D_AUDITTEST 审计测试套件: test_skill_loader.py | → | skill_loader.py | 测试依赖 / test_depends |
-| 106 | D_AUDITTEST 审计测试套件: test_skill_locking.py | → | MOD-INF-019: Agent Spec — Skill Locking (Produ... | 测试依赖 / test_depends |
-| 107 | D_AUDITTEST 审计测试套件: test_skill_model.py | → | skill_model.py | 测试依赖 / test_depends |
-| 108 | D_AUDITTEST 审计测试套件: test_skill_model_evolution.py | → | MOD-INF-019: Agent Spec — Skill Model Evolutio... | 测试依赖 / test_depends |
-| 109 | D_AUDITTEST 审计测试套件: test_skill_observability.py | → | MOD-INF-019: Agent Spec — Skill Observability ... | 测试依赖 / test_depends |
-| 110 | D_AUDITTEST 审计测试套件: test_skill_ontology.py | → | MOD-INF-019: Agent Spec — Skill Ontology (skil... | 测试依赖 / test_depends |
-| 111 | D_AUDITTEST 审计测试套件: test_skill_postmortem.py | → | MOD-INF-019: Agent Spec — Skill Postmortem (追... | 测试依赖 / test_depends |
-| 112 | D_AUDITTEST 审计测试套件: test_skill_prompt_cache.py | → | MOD-INF-019: Agent Spec — Skill Prompt Cache (... | 测试依赖 / test_depends |
-| 113 | D_AUDITTEST 审计测试套件: test_skill_prompt_opt.py | → | MOD-INF-019: Agent Spec — Skill Prompt Optimiz... | 测试依赖 / test_depends |
-| 114 | D_AUDITTEST 审计测试套件: test_skill_registry_root.py | → | skill-registry.py —— Skill 注册基座（Phase 14... | 测试依赖 / test_depends |
-| 115 | D_AUDITTEST 审计测试套件: test_skill_resilience.py | → | MOD-INF-019: Agent Spec — Skill Resilience (sk... | 测试依赖 / test_depends |
-| 116 | D_AUDITTEST 审计测试套件: test_skill_risk_mitigator.py | → | MOD-INF-019: Agent Spec — Skill Risk Mitigator... | 测试依赖 / test_depends |
-| 117 | D_AUDITTEST 审计测试套件: test_skill_sandbox.py | → | MOD-INF-019: Agent Spec — Skill Sandbox (skill... | 测试依赖 / test_depends |
-| 118 | D_AUDITTEST 审计测试套件: test_skill_schema_registry.py | → | MOD-INF-019: Agent Spec — Skill Schema Registr... | 测试依赖 / test_depends |
-| 119 | D_AUDITTEST 审计测试套件: test_skill_security.py | → | MOD-INF-019: Agent Spec — Skill Security (skil... | 测试依赖 / test_depends |
-| 120 | D_AUDITTEST 审计测试套件: test_skill_shadow.py | → | MOD-INF-019: Agent Spec — Skill Shadow Deploym... | 测试依赖 / test_depends |
-| 121 | D_AUDITTEST 审计测试套件: test_skill_silent_failure.py | → | MOD-INF-019: Agent Spec — Silent Failure Detec... | 测试依赖 / test_depends |
-| 122 | D_AUDITTEST 审计测试套件: test_skill_team_optimizer.py | → | MOD-INF-019: Agent Spec — Skill Team Optimizer... | 测试依赖 / test_depends |
-| 123 | D_AUDITTEST 审计测试套件: test_skill_telemetry.py | → | MOD-INF-019: Agent Spec — Skill Telemetry (ski... | 测试依赖 / test_depends |
-| 124 | D_AUDITTEST 审计测试套件: test_skill_temperature.py | → | MOD-INF-019: Agent Spec — Skill Temperature (s... | 测试依赖 / test_depends |
-| 125 | D_AUDITTEST 审计测试套件: test_skill_tokenomics.py | → | MOD-INF-019: Agent Spec — Skill Tokenomics (sk... | 测试依赖 / test_depends |
-| 126 | D_AUDITTEST 审计测试套件: test_skill_translator.py | → | MOD-INF-019: Agent Spec — Skill Translator (sk... | 测试依赖 / test_depends |
-| 127 | D_AUDITTEST 审计测试套件: test_skill_workflow.py | → | MOD-INF-019: Agent Spec — Skill Workflow Orche... | 测试依赖 / test_depends |
-| 128 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE... | 导入依赖 / import_depends |
-| 129 | D_GOVERNANCE 生命周期管理: blueprint.md | → | file_autoregister.py | contract / contract |
-| 130 | D_GOVERNANCE 生命周期管理: budget_enforcement.py | → | skill_executor.py | 导入依赖 / import_depends |
-| 131 | D_GOV_CODE_QUALITY 代码质量治理: 集成协调器 — 24集成+19更新+16GitHub整合. (inte... | → | context_rule_registry.py | 导入依赖 / import_depends |
-| 132 | D_GOV_SCRIPTS 脚本治理: G9 四蓝图跨模块集成合规门禁执行器. (g9_complian... | → | autonomy_core 包结构指引（ARCH-033 治本）： (__... | 导入依赖 / import_depends |
-| 133 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] agent-spec 审计完整性 (audit_agent... | → | autonomy_core 包结构指引（ARCH-033 治本）： (__... | 导入依赖 / import_depends |
-| 134 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | PipelineSkillBridge — Agent Spec -> Pipeline .... | 导入依赖 / import_depends |
-| 135 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | MOD-INF-019: Agent Spec — Skill Feedback Loop ... | 导入依赖 / import_depends |
-| 136 | D_INTELLIGENCE 上下文管理: KB->VMS 同步引擎 — sync_to_vms() 生产者 (sync_... | → | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE... | 导入依赖 / import_depends |
-| 137 | D_TRADING 交易运营: boot_hooks.py | → | MOD-INF-019: Agent Spec — Skill Freshness Exte... | 导入依赖 / import_depends |
-| 138 | D_TRADING 交易运营: boot_hooks.py | → | MOD-INF-019: Agent Spec — Skill Lifecycle (ski... | 导入依赖 / import_depends |
-| 139 | D_TRADING 交易运营: Orc->VMS 记忆写入器 (memory_writer.py) | → | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE... | 导入依赖 / import_depends |
+| 4 | D_AUDITTEST 审计测试套件: test_auto_bootstrap.py | → | memory_bank.py — AI 读写结构化持久上下文 (DD: ... | runtime / runtime |
+| 5 | D_AUDITTEST 审计测试套件: test_adversarial_robustness.py | → | adversarial_robustness.py — 对抗鲁棒性 (B8, DD... | 测试依赖 / test_depends |
+| 6 | D_AUDITTEST 审计测试套件: test_alignment_scorer.py | → | alignment_scorer.py — 对齐评分 (B11, DD85, TAS... | 测试依赖 / test_depends |
+| 7 | D_AUDITTEST 审计测试套件: test_all_skill_modules.py | → | MOD-INF-019: Agent Spec — All Skill Modules (a... | 测试依赖 / test_depends |
+| 8 | D_AUDITTEST 审计测试套件: test_architecture_context_loader.py | → | architecture_context_loader — 加载 ``generate_... | 测试依赖 / test_depends |
+| 9 | D_AUDITTEST 审计测试套件: test_assembly_context_assembler.py | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
+| 10 | D_AUDITTEST 审计测试套件: test_assembly_context_injector.py | → | ContextInjector: retrieve and inject relevant k... | 测试依赖 / test_depends |
+| 11 | D_AUDITTEST 审计测试套件: test_assembly_context_pipeline.py | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
+| 12 | D_AUDITTEST 审计测试套件: test_assembly_context_pipeline.py | → | context_pipeline — Context Engine **四段流水线... | 测试依赖 / test_depends |
+| 13 | D_AUDITTEST 审计测试套件: test_atomic_injector.py | → | atomic_injector.py — 原子注入 (DD101, TASK-019... | 测试依赖 / test_depends |
+| 14 | D_AUDITTEST 审计测试套件: test_behavioral_auditor_main.py | → | agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级.... | 测试依赖 / test_depends |
+| 15 | D_AUDITTEST 审计测试套件: test_cache_invalidation.py | → | cache_invalidation.py — 缓存一致性 (DD113, TAS... | 测试依赖 / test_depends |
+| 16 | D_AUDITTEST 审计测试套件: test_checkpoint_manager.py | → | checkpoint_manager.py — Inject 前快照 (DD100, ... | 测试依赖 / test_depends |
+| 17 | D_AUDITTEST 审计测试套件: test_citation_walker.py | → | citation_walker.py — 引用行走 (DD117, TASK-020... | 测试依赖 / test_depends |
+| 18 | D_AUDITTEST 审计测试套件: test_complexity_budget.py | → | complexity_budget.py — Token 预算复杂度因子 (D... | 测试依赖 / test_depends |
+| 19 | D_AUDITTEST 审计测试套件: F11 ContextPipeline 红蓝对抗极端测试 (test_cont... | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
+| 20 | D_AUDITTEST 审计测试套件: F11 ContextPipeline 红蓝对抗极端测试 (test_cont... | → | context_pipeline — Context Engine **四段流水线... | 测试依赖 / test_depends |
+| 21 | D_AUDITTEST 审计测试套件: test_contextual_fetch_api.py | → | contextual_fetch_api.py — HTTP FE 对外 API (DD... | 测试依赖 / test_depends |
+| 22 | D_AUDITTEST 审计测试套件: test_curation_loop_root.py | → | curation_loop.py — Per-Turn Curation 策展 (DD1... | 测试依赖 / test_depends |
+| 23 | D_AUDITTEST 审计测试套件: test_diff_injector.py | → | diff_injector.py — 增量注入 (DD98, TASK-019) (... | 测试依赖 / test_depends |
+| 24 | D_AUDITTEST 审计测试套件: test_diversity_constraint.py | → | diversity_constraint.py — 多样性约束 (DD119, T... | 测试依赖 / test_depends |
+| 25 | D_AUDITTEST 审计测试套件: test_doc_compressor_root.py | → | DocCompressor — 文档压缩服务（CL-018 RI 扩展模... | 测试依赖 / test_depends |
+| 26 | D_AUDITTEST 审计测试套件: test_domain_decay_config.py | → | domain_decay_config.py — 每领域半衰期 (DD105, ... | 测试依赖 / test_depends |
+| 27 | D_AUDITTEST 审计测试套件: test_embedding_version_lock.py | → | embedding_version_lock.py — 嵌入模型版本锁 (B1... | 测试依赖 / test_depends |
+| 28 | D_AUDITTEST 审计测试套件: test_fallback_staleness_gate.py | → | fallback_staleness_gate.py — 兜底层自腐检测 (B... | 测试依赖 / test_depends |
+| 29 | D_AUDITTEST 审计测试套件: test_fragmentation_index.py | → | fragmentation_index.py — 知识碎片化指数 (DD108... | 测试依赖 / test_depends |
+| 30 | D_AUDITTEST 审计测试套件: test_ide_watcher.py | → | MOD-INF-019: Agent Spec — IDE Watcher (ide_wat... | 测试依赖 / test_depends |
+| 31 | D_AUDITTEST 审计测试套件: test_integrity_check.py | → | integrity_check.py — 注入后完整性 (DD106, TASK... | 测试依赖 / test_depends |
+| 32 | D_AUDITTEST 审计测试套件: test_list_ce_files.py | → | list_ce_files.py — CE 文件清单生成器 (ce_file_... | 测试依赖 / test_depends |
+| 33 | D_AUDITTEST 审计测试套件: test_lsg_pattern_tracker.py | → | lsg_pattern_tracker.py — LSG 模式逃逸追踪 (B20... | 测试依赖 / test_depends |
+| 34 | D_AUDITTEST 审计测试套件: test_mgmt_context_budget_tracker.py | → | ContextBudgetTracker: token budget management w... | 测试依赖 / test_depends |
+| 35 | D_AUDITTEST 审计测试套件: test_mgmt_context_evictor.py | → | context_evictor.py — 三维逐出器 (DD9, TASK-014... | 测试依赖 / test_depends |
+| 36 | D_AUDITTEST 审计测试套件: test_mgmt_context_rot_model.py | → | context_rot_model.py — n² Attention 衰减数学.... | 测试依赖 / test_depends |
+| 37 | D_AUDITTEST 审计测试套件: test_mode_manager.py | → | mode_manager.py — 模式管理器 (DD102, TASK-019)... | 测试依赖 / test_depends |
+| 38 | D_AUDITTEST 审计测试套件: test_otel_instrumentation.py | → | otel_instrumentation.py — 全链路 OTel (B12, DD... | 测试依赖 / test_depends |
+| 39 | D_AUDITTEST 审计测试套件: test_parsing_intent_keyword_mapper.py | → | IntentKeywordMapper - Stage 1 of three-stage in... | 测试依赖 / test_depends |
+| 40 | D_AUDITTEST 审计测试套件: test_parsing_intent_parser.py | → | IntentKeywordMapper - Stage 1 of three-stage in... | 测试依赖 / test_depends |
+| 41 | D_AUDITTEST 审计测试套件: test_parsing_intent_parser.py | → | IntentParser · 意图三阶段级联解析器（V-09） (i... | 测试依赖 / test_depends |
+| 42 | D_AUDITTEST 审计测试套件: test_pattern_library_root.py | → | PatternLibrary · 成功模式库（KB refactor 后独.... | 测试依赖 / test_depends |
+| 43 | D_AUDITTEST 审计测试套件: test_poisoning_monitor.py | → | poisoning_monitor.py — Embed 污染检测 (DD97, T... | 测试依赖 / test_depends |
+| 44 | D_AUDITTEST 审计测试套件: test_position_optimizer.py | → | position_optimizer.py — 位置优化 (DD104, TASK-... | 测试依赖 / test_depends |
+| 45 | D_AUDITTEST 审计测试套件: test_progressive_disclosure_injector.py | → | progressive_disclosure_injector.py — 渐进式披.... | 测试依赖 / test_depends |
+| 46 | D_AUDITTEST 审计测试套件: test_rational.py | → | rational.py — 注入理由 (DD99, TASK-019) (ke_ju... | 测试依赖 / test_depends |
+| 47 | D_AUDITTEST 审计测试套件: test_registry.py | → | G-CT-003: Agent Spec -> RBAC capability check. ... | 测试依赖 / test_depends |
+| 48 | D_AUDITTEST 审计测试套件: test_sensitivity_classifier.py | → | sensitivity_classifier.py — 数据分级 (B9, DD83... | 测试依赖 / test_depends |
+| 49 | D_AUDITTEST 审计测试套件: test_shadow_canary.py | → | shadow_canary.py — 金丝雀部署 (B4, DD78, TASK-... | 测试依赖 / test_depends |
+| 50 | D_AUDITTEST 审计测试套件: test_solo_dev_safety_net.py | → | solo_dev_safety_net.py — 单人无审查安全网 (B15... | 测试依赖 / test_depends |
+| 51 | D_AUDITTEST 审计测试套件: test_staleness_manager.py | → | staleness_manager.py — 全局过期检测 (DD112, TA... | 测试依赖 / test_depends |
+| 52 | D_AUDITTEST 审计测试套件: test_support_architecture_context_loader.py | → | architecture_context_loader — 加载 ``generate_... | 测试依赖 / test_depends |
+| 53 | D_AUDITTEST 审计测试套件: test_support_doc_compressor.py | → | DocCompressor — 文档压缩服务（CL-018 RI 扩展模... | 测试依赖 / test_depends |
+| 54 | D_AUDITTEST 审计测试套件: test_support_prompt_registry.py | → | PromptRegistry: YAML-driven Prompt 模板注册表 (... | 测试依赖 / test_depends |
+| 55 | D_AUDITTEST 审计测试套件: test_support_system_snapshot.py | → | SystemSnapshotter — M1 系统状态镜像（CL-017 RI... | 测试依赖 / test_depends |
+| 56 | D_AUDITTEST 审计测试套件: test_system_snapshot_root.py | → | SystemSnapshotter — M1 系统状态镜像（CL-017 RI... | 测试依赖 / test_depends |
+| 57 | D_AUDITTEST 审计测试套件: test_trigger_router_root.py | → | trigger_router.py | 测试依赖 / test_depends |
+| 58 | D_AUDITTEST 审计测试套件: test_vector_bridge.py | → | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE... | 测试依赖 / test_depends |
+| 59 | D_AUDITTEST 审计测试套件: test_verify_paths.py | → | verify_paths.py — 代码路径索引验证 (TASK-012) ... | 测试依赖 / test_depends |
+| 60 | D_AUDITTEST 审计测试套件: test_ba_main.py | → | agent-spec MOD-INF-019 CLI — 蓝图->Skill 升级.... | 测试依赖 / test_depends |
+| 61 | D_AUDITTEST 审计测试套件: test_capability_check.py | → | G-CT-003: Agent Spec -> RBAC capability check. ... | 测试依赖 / test_depends |
+| 62 | D_AUDITTEST 审计测试套件: test_ce_bootstrap.py | → | ce_bootstrap.py — CE 自举架构 (B1, DD75, TASK-... | 测试依赖 / test_depends |
+| 63 | D_AUDITTEST 审计测试套件: test_ce_cache_invalidation.py | → | cache_invalidation.py — 缓存一致性 (DD113, TAS... | 测试依赖 / test_depends |
+| 64 | D_AUDITTEST 审计测试套件: test_ce_explain_cli.py | → | ce_explain_cli.py — KE inclusion rationale 解.... | 测试依赖 / test_depends |
+| 65 | D_AUDITTEST 审计测试套件: test_ce_integrity_check.py | → | integrity_check.py — 注入后完整性 (DD106, TASK... | 测试依赖 / test_depends |
+| 66 | D_AUDITTEST 审计测试套件: test_ce_playground_v2.py | → | ce_playground_v2.py — V2 Playground with full ... | 测试依赖 / test_depends |
+| 67 | D_AUDITTEST 审计测试套件: test_ce_vibe_shortcuts.py | → | ce_vibe_shortcuts.py — Vibe/Strict 模式切换 (T... | 测试依赖 / test_depends |
+| 68 | D_AUDITTEST 审计测试套件: test_cold_start_booster.py | → | cold_start_booster.py — 冷启动 (DD107, TASK-01... | 测试依赖 / test_depends |
+| 69 | D_AUDITTEST 审计测试套件: test_config_safety_guard.py | → | config_safety_guard.py — 配置自毁防护 (B16, DD... | 测试依赖 / test_depends |
+| 70 | D_AUDITTEST 审计测试套件: test_context_assembler_root.py | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
+| 71 | D_AUDITTEST 审计测试套件: test_context_budget_tracker.py | → | ContextBudgetTracker: token budget management w... | 测试依赖 / test_depends |
+| 72 | D_AUDITTEST 审计测试套件: Tests for zephyr.autonomy_core.context.context_... | → | context_debt_score.py — 上下文债务评分 (B19, D... | 测试依赖 / test_depends |
+| 73 | D_AUDITTEST 审计测试套件: test_context_evaluator_root.py | → | context_evaluator.py — AI 引用率评估 (TASK-014... | 测试依赖 / test_depends |
+| 74 | D_AUDITTEST 审计测试套件: test_context_evictor_root.py | → | context_evictor.py — 三维逐出器 (DD9, TASK-014... | 测试依赖 / test_depends |
+| 75 | D_AUDITTEST 审计测试套件: test_context_health_score.py | → | ContextHealthScore.py — 统一健康分 (B6, DD80, ... | 测试依赖 / test_depends |
+| 76 | D_AUDITTEST 审计测试套件: test_context_injector_root.py | → | ContextInjector: retrieve and inject relevant k... | 测试依赖 / test_depends |
+| 77 | D_AUDITTEST 审计测试套件: test_context_model_strategy.py | → | context_model_strategy.py — 模型选择策略 (DD11... | 测试依赖 / test_depends |
+| 78 | D_AUDITTEST 审计测试套件: test_context_outcome_tracker.py | → | context_outcome_tracker.py — 因果链追踪 (B14, ... | 测试依赖 / test_depends |
+| 79 | D_AUDITTEST 审计测试套件: F11 ContextPipeline 三层自动化机制测试 (test_co... | → | context_pipeline_auto.py — ContextPipeline 三.... | 测试依赖 / test_depends |
+| 80 | D_AUDITTEST 审计测试套件: test_context_pipeline_root.py | → | ContextAssembler — 上下文装配、校验、影子留档 ... | 测试依赖 / test_depends |
+| 81 | D_AUDITTEST 审计测试套件: test_context_pipeline_root.py | → | context_pipeline — Context Engine **四段流水线... | 测试依赖 / test_depends |
+| 82 | D_AUDITTEST 审计测试套件: test_context_playground.py | → | context_playground.py — 上下文沙箱 dry-run (B5... | 测试依赖 / test_depends |
+| 83 | D_AUDITTEST 审计测试套件: test_context_rot_model_root.py | → | context_rot_model.py — n² Attention 衰减数学.... | 测试依赖 / test_depends |
+| 84 | D_AUDITTEST 审计测试套件: test_context_rule_registry_root.py | → | context_rule_registry.py | 测试依赖 / test_depends |
+| 85 | D_AUDITTEST 审计测试套件: test_context_rule_registry_unit.py | → | context_rule_registry.py | 测试依赖 / test_depends |
+| 86 | D_AUDITTEST 审计测试套件: test_context_value_attribution.py | → | context_value_attribution.py — KE 级 ROI 归因 ... | 测试依赖 / test_depends |
+| 87 | D_AUDITTEST 审计测试套件: test_dependency_tracker.py | → | dependency_tracker.py — 依赖追踪 (DD116, TASK-... | 测试依赖 / test_depends |
+| 88 | D_AUDITTEST 审计测试套件: test_governance_capability_check.py | → | G-CT-003: Agent Spec -> RBAC capability check. ... | 测试依赖 / test_depends |
+| 89 | D_AUDITTEST 审计测试套件: test_intent_keyword_mapper_root.py | → | IntentKeywordMapper - Stage 1 of three-stage in... | 测试依赖 / test_depends |
+| 90 | D_AUDITTEST 审计测试套件: test_intent_parser_root.py | → | IntentKeywordMapper - Stage 1 of three-stage in... | 测试依赖 / test_depends |
+| 91 | D_AUDITTEST 审计测试套件: test_intent_parser_root.py | → | IntentParser · 意图三阶段级联解析器（V-09） (i... | 测试依赖 / test_depends |
+| 92 | D_AUDITTEST 审计测试套件: test_knowledge_distiller.py | → | knowledge_distiller.py — 知识蒸馏 (B10, DD84, ... | 测试依赖 / test_depends |
+| 93 | D_AUDITTEST 审计测试套件: test_memory_bank_root.py | → | memory_bank.py — AI 读写结构化持久上下文 (DD: ... | 测试依赖 / test_depends |
+| 94 | D_AUDITTEST 审计测试套件: test_phase_planner.py | → | MOD-INF-019: Agent Spec — Phase Planner (phase... | 测试依赖 / test_depends |
+| 95 | D_AUDITTEST 审计测试套件: test_pipeline_bridge.py | → | PipelineSkillBridge — Agent Spec -> Pipeline .... | 测试依赖 / test_depends |
+| 96 | D_AUDITTEST 审计测试套件: test_pipeline_bridge.py | → | trigger_router.py | 测试依赖 / test_depends |
+| 97 | D_AUDITTEST 审计测试套件: test_prompt_registry_root.py | → | PromptRegistry: YAML-driven Prompt 模板注册表 (... | 测试依赖 / test_depends |
+| 98 | D_AUDITTEST 审计测试套件: test_self_evolution_fidelity_gate.py | → | MOD-INF-019: Agent Spec — Self Evolution Fidel... | 测试依赖 / test_depends |
+| 99 | D_AUDITTEST 审计测试套件: test_skill_attention.py | → | MOD-INF-019: Agent Spec — Skill Attention Mana... | 测试依赖 / test_depends |
+| 100 | D_AUDITTEST 审计测试套件: test_skill_breakage_checker.py | → | MOD-INF-019: Agent Spec — Skill Breakage Check... | 测试依赖 / test_depends |
+| 101 | D_AUDITTEST 审计测试套件: test_skill_cache_provider.py | → | MOD-INF-019: Agent Spec — Skill Cache Provider... | 测试依赖 / test_depends |
+| 102 | D_AUDITTEST 审计测试套件: test_skill_calibration.py | → | MOD-INF-019: Agent Spec — Skill Calibration (s... | 测试依赖 / test_depends |
+| 103 | D_AUDITTEST 审计测试套件: test_skill_canary.py | → | MOD-INF-019: Agent Spec — Skill Canary (skill_... | 测试依赖 / test_depends |
+| 104 | D_AUDITTEST 审计测试套件: test_skill_cognitive_preservation.py | → | MOD-INF-019: Agent Spec — Skill Cognitive Pres... | 测试依赖 / test_depends |
+| 105 | D_AUDITTEST 审计测试套件: test_skill_compliance.py | → | MOD-INF-019: Agent Spec — Skill Compliance (sk... | 测试依赖 / test_depends |
+| 106 | D_AUDITTEST 审计测试套件: test_skill_consensus.py | → | MOD-INF-019: Agent Spec — Skill Consensus (ski... | 测试依赖 / test_depends |
+| 107 | D_AUDITTEST 审计测试套件: test_skill_constructor.py | → | MOD-INF-019: Agent Spec — Skill Constructor (s... | 测试依赖 / test_depends |
+| 108 | D_AUDITTEST 审计测试套件: test_skill_context_isolation.py | → | MOD-INF-019: Agent Spec — Context Isolation (s... | 测试依赖 / test_depends |
+| 109 | D_AUDITTEST 审计测试套件: test_skill_contract.py | → | MOD-INF-019: Agent Spec — Skill Contract (skil... | 测试依赖 / test_depends |
+| 110 | D_AUDITTEST 审计测试套件: test_skill_cross_model.py | → | MOD-INF-019: Agent Spec — Skill Cross-Model (s... | 测试依赖 / test_depends |
+| 111 | D_AUDITTEST 审计测试套件: test_skill_di.py | → | MOD-INF-019: Agent Spec — Skill Dependency Inj... | 测试依赖 / test_depends |
+| 112 | D_AUDITTEST 审计测试套件: test_skill_discovery.py | → | MOD-INF-019: Agent Spec — Skill Discovery (ski... | 测试依赖 / test_depends |
+| 113 | D_AUDITTEST 审计测试套件: test_skill_durable.py | → | MOD-INF-019: Agent Spec — Durable Execution (s... | 测试依赖 / test_depends |
+| 114 | D_AUDITTEST 审计测试套件: test_skill_economics.py | → | MOD-INF-019: Agent Spec — Skill Economics (ski... | 测试依赖 / test_depends |
+| 115 | D_AUDITTEST 审计测试套件: test_skill_efficacy_calibrator.py | → | MOD-INF-019: Agent Spec — Skill Efficacy Calib... | 测试依赖 / test_depends |
+| 116 | D_AUDITTEST 审计测试套件: test_skill_evaluator.py | → | MOD-INF-019: Agent Spec — Skill Evaluator (ski... | 测试依赖 / test_depends |
+| 117 | D_AUDITTEST 审计测试套件: test_skill_executor.py | → | skill_executor.py | 测试依赖 / test_depends |
+| 118 | D_AUDITTEST 审计测试套件: test_skill_explain.py | → | MOD-INF-019: Agent Spec — XAI Explainable Skil... | 测试依赖 / test_depends |
+| 119 | D_AUDITTEST 审计测试套件: test_skill_factory.py | → | skill_factory.py | 测试依赖 / test_depends |
+| 120 | D_AUDITTEST 审计测试套件: test_skill_feature_flags.py | → | MOD-INF-019: Agent Spec — Skill Feature Flags ... | 测试依赖 / test_depends |
+| 121 | D_AUDITTEST 审计测试套件: test_skill_feedback.py | → | MOD-INF-019: Agent Spec — Skill Feedback Loop ... | 测试依赖 / test_depends |
+| 122 | D_AUDITTEST 审计测试套件: test_skill_freshness.py | → | MOD-INF-019: Agent Spec — Skill Freshness Deca... | 测试依赖 / test_depends |
+| 123 | D_AUDITTEST 审计测试套件: test_skill_freshness_ext.py | → | MOD-INF-019: Agent Spec — Skill Freshness Exte... | 测试依赖 / test_depends |
+| 124 | D_AUDITTEST 审计测试套件: test_skill_freshness_ext.py | → | skill_model.py | 测试依赖 / test_depends |
+| 125 | D_AUDITTEST 审计测试套件: test_skill_gitops.py | → | MOD-INF-019: Agent Spec — Skill GitOps (skill_... | 测试依赖 / test_depends |
+| 126 | D_AUDITTEST 审计测试套件: test_skill_guardrails.py | → | MOD-INF-019: Agent Spec — Skill Guardrails (sk... | 测试依赖 / test_depends |
+| 127 | D_AUDITTEST 审计测试套件: test_skill_idempotency.py | → | MOD-INF-019: Agent Spec — Skill Idempotency (s... | 测试依赖 / test_depends |
+| 128 | D_AUDITTEST 审计测试套件: test_skill_kill_switch.py | → | MOD-INF-019: Agent Spec — Skill Kill Switch (s... | 测试依赖 / test_depends |
+| 129 | D_AUDITTEST 审计测试套件: test_skill_kill_switch.py | → | skill_model.py | 测试依赖 / test_depends |
+| 130 | D_AUDITTEST 审计测试套件: test_skill_knowledge_base.py | → | MOD-INF-019: Agent Spec — Skill Knowledge Base... | 测试依赖 / test_depends |
+| 131 | D_AUDITTEST 审计测试套件: test_skill_kya.py | → | MOD-INF-019: Agent Spec — Skill KYA (skill_kya.py) | 测试依赖 / test_depends |
+| 132 | D_AUDITTEST 审计测试套件: test_skill_learning.py | → | MOD-INF-019: Agent Spec — Skill Self-Learning ... | 测试依赖 / test_depends |
+| 133 | D_AUDITTEST 审计测试套件: test_skill_lifecycle.py | → | MOD-INF-019: Agent Spec — Skill Lifecycle (ski... | 测试依赖 / test_depends |
+| 134 | D_AUDITTEST 审计测试套件: test_skill_lifecycle.py | → | skill_model.py | 测试依赖 / test_depends |
+| 135 | D_AUDITTEST 审计测试套件: test_skill_lineage.py | → | MOD-INF-019: Agent Spec — Skill Lineage (skill... | 测试依赖 / test_depends |
+| 136 | D_AUDITTEST 审计测试套件: test_skill_loader.py | → | skill_loader.py | 测试依赖 / test_depends |
+| 137 | D_AUDITTEST 审计测试套件: test_skill_locking.py | → | MOD-INF-019: Agent Spec — Skill Locking (Produ... | 测试依赖 / test_depends |
+| 138 | D_AUDITTEST 审计测试套件: test_skill_model.py | → | skill_model.py | 测试依赖 / test_depends |
+| 139 | D_AUDITTEST 审计测试套件: test_skill_model_evolution.py | → | MOD-INF-019: Agent Spec — Skill Model Evolutio... | 测试依赖 / test_depends |
+| 140 | D_AUDITTEST 审计测试套件: test_skill_observability.py | → | MOD-INF-019: Agent Spec — Skill Observability ... | 测试依赖 / test_depends |
+| 141 | D_AUDITTEST 审计测试套件: test_skill_ontology.py | → | MOD-INF-019: Agent Spec — Skill Ontology (skil... | 测试依赖 / test_depends |
+| 142 | D_AUDITTEST 审计测试套件: test_skill_postmortem.py | → | MOD-INF-019: Agent Spec — Skill Postmortem (追... | 测试依赖 / test_depends |
+| 143 | D_AUDITTEST 审计测试套件: test_skill_prompt_cache.py | → | MOD-INF-019: Agent Spec — Skill Prompt Cache (... | 测试依赖 / test_depends |
+| 144 | D_AUDITTEST 审计测试套件: test_skill_prompt_opt.py | → | MOD-INF-019: Agent Spec — Skill Prompt Optimiz... | 测试依赖 / test_depends |
+| 145 | D_AUDITTEST 审计测试套件: test_skill_registry_root.py | → | skill-registry.py —— Skill 注册基座（Phase 14... | 测试依赖 / test_depends |
+| 146 | D_AUDITTEST 审计测试套件: test_skill_resilience.py | → | MOD-INF-019: Agent Spec — Skill Resilience (sk... | 测试依赖 / test_depends |
+| 147 | D_AUDITTEST 审计测试套件: test_skill_risk_mitigator.py | → | MOD-INF-019: Agent Spec — Skill Risk Mitigator... | 测试依赖 / test_depends |
+| 148 | D_AUDITTEST 审计测试套件: test_skill_sandbox.py | → | MOD-INF-019: Agent Spec — Skill Sandbox (skill... | 测试依赖 / test_depends |
+| 149 | D_AUDITTEST 审计测试套件: test_skill_schema_registry.py | → | MOD-INF-019: Agent Spec — Skill Schema Registr... | 测试依赖 / test_depends |
+| 150 | D_AUDITTEST 审计测试套件: test_skill_security.py | → | MOD-INF-019: Agent Spec — Skill Security (skil... | 测试依赖 / test_depends |
+| 151 | D_AUDITTEST 审计测试套件: test_skill_shadow.py | → | MOD-INF-019: Agent Spec — Skill Shadow Deploym... | 测试依赖 / test_depends |
+| 152 | D_AUDITTEST 审计测试套件: test_skill_silent_failure.py | → | MOD-INF-019: Agent Spec — Silent Failure Detec... | 测试依赖 / test_depends |
+| 153 | D_AUDITTEST 审计测试套件: test_skill_team_optimizer.py | → | MOD-INF-019: Agent Spec — Skill Team Optimizer... | 测试依赖 / test_depends |
+| 154 | D_AUDITTEST 审计测试套件: test_skill_telemetry.py | → | MOD-INF-019: Agent Spec — Skill Telemetry (ski... | 测试依赖 / test_depends |
+| 155 | D_AUDITTEST 审计测试套件: test_skill_temperature.py | → | MOD-INF-019: Agent Spec — Skill Temperature (s... | 测试依赖 / test_depends |
+| 156 | D_AUDITTEST 审计测试套件: test_skill_tokenomics.py | → | MOD-INF-019: Agent Spec — Skill Tokenomics (sk... | 测试依赖 / test_depends |
+| 157 | D_AUDITTEST 审计测试套件: test_skill_translator.py | → | MOD-INF-019: Agent Spec — Skill Translator (sk... | 测试依赖 / test_depends |
+| 158 | D_AUDITTEST 审计测试套件: test_skill_workflow.py | → | MOD-INF-019: Agent Spec — Skill Workflow Orche... | 测试依赖 / test_depends |
+| 159 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE... | 导入依赖 / import_depends |
+| 160 | D_GOVERNANCE 生命周期管理: G9 四蓝图跨模块集成合规门禁执行器. (g9_complian... | → | autonomy_core 包结构指引（ARCH-033 治本）： (__... | 导入依赖 / import_depends |
+| 161 | D_GOVERNANCE 生命周期管理: [INVARIANTS] agent-spec 审计完整性 (audit_agent... | → | autonomy_core 包结构指引（ARCH-033 治本）： (__... | 导入依赖 / import_depends |
+| 162 | D_GOVERNANCE 生命周期管理: budget_enforcement.py | → | skill_executor.py | 导入依赖 / import_depends |
+| 163 | D_GOVERNANCE 生命周期管理: model_provider_data.py | → | memory_bank.py — AI 读写结构化持久上下文 (DD: ... | runtime / runtime |
+| 164 | D_GOV_CODE_QUALITY 代码质量治理: 金丝雀工厂——生成已知oracle 文件 用于引擎检出+... | → | memory_bank.py — AI 读写结构化持久上下文 (DD: ... | contract / contract |
+| 165 | D_GOV_CODE_QUALITY 代码质量治理: 集成协调器 — 24集成+19更新+16GitHub整合. (inte... | → | context_rule_registry.py | 导入依赖 / import_depends |
+| 166 | D_GOV_DOCS 架构文档治理: blueprint.md | → | file_autoregister.py | contract / contract |
+| 167 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | MOD-INF-019: Agent Spec — Skill Freshness Exte... | 导入依赖 / import_depends |
+| 168 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | MOD-INF-019: Agent Spec — Skill Lifecycle (ski... | 导入依赖 / import_depends |
+| 169 | D_INTEGRATION 管线路由: SentinelServer: 意图路由哨兵 MCP Server (sentin... | → | IntentKeywordMapper - Stage 1 of three-stage in... | 导入依赖 / import_depends |
+| 170 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | PipelineSkillBridge — Agent Spec -> Pipeline .... | 导入依赖 / import_depends |
+| 171 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | MOD-INF-019: Agent Spec — Skill Feedback Loop ... | 导入依赖 / import_depends |
+| 172 | D_INTELLIGENCE 上下文管理: KB->VMS 同步引擎 — sync_to_vms() 生产者 (sync_... | → | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE... | 导入依赖 / import_depends |
+| 173 | D_ORCHESTRATOR 代理编排器: Orc->CE 上下文桥接 — request_context() 生产者 ... | → | CE 向量写入器 — vectorize_and_store() 生产者 (... | 导入依赖 / import_depends |
+| 174 | D_ORCHESTRATOR 代理编排器: Orc->VMS 记忆写入器 (memory_writer.py) | → | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE... | 导入依赖 / import_depends |
+| 175 | D_SHARED 共享服务: 包 shared.dependency 的初始化文件。 (__init__.py) | → | dependency_tracker.py — 依赖追踪 (DD116, TASK-... | config_depends / config_depends |
+| 176 | D_SHARED 共享服务: shared.io — auto-generated package init. (__in... | → | cache_invalidation.py — 缓存一致性 (DD113, TAS... | config_depends / config_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 17 个外部域直接连接（出边 51 条 + 入边 139 条 = 190 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 17 个外部域直接连接（出边 74 条 + 入边 176 条 = 250 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
-    D_SHARED["D_SHARED<br/>共享服务"]
-    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
+    D_SHARED["D_SHARED<br/>共享服务"]
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
-    D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
-    D_SECURITY_LLM["D_SECURITY_LLM<br/>LLM防御"]
-    D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理"]
-    D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信"]
+    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
-    D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
+    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_GOV_KB["D_GOV_KB<br/>知识库治理"]
-    D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
-    D_TRADING["D_TRADING<br/>交易运营"]
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
-    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
-    D_AUTONOMY_CORE -->|14条 导入依赖 / import_depends| D_SHARED
-    D_AUTONOMY_CORE -->|12条 contract / contract, data / data, 导入依赖 / import_depends, runtime / runtime| D_GOVERNANCE
-    D_AUTONOMY_CORE -->|8条 导入依赖 / import_depends, runtime / runtime| D_INFRA_RUNTIME
-    D_AUTONOMY_CORE -->|6条 导入依赖 / import_depends| D_INTEGRATION
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
+    D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
+    D_SECURITY["D_SECURITY<br/>对抗验证"]
+    D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
+    D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理"]
+    D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
+    D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
+    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
+    D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
+    D_AUTONOMY_CORE -->|23条 导入依赖 / import_depends, runtime / runtime, 测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_AUTONOMY_CORE -->|17条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
+    D_AUTONOMY_CORE -->|10条 导入依赖 / import_depends| D_INTEGRATION
+    D_AUTONOMY_CORE -->|4条 data / data, runtime / runtime| D_GOVERNANCE
+    D_AUTONOMY_CORE -->|3条 导入依赖 / import_depends| D_GOV_AUDIT
+    D_AUTONOMY_CORE -->|3条 contract / contract, runtime / runtime| D_GOV_DOCS
+    D_AUTONOMY_CORE -->|2条 导入依赖 / import_depends, runtime / runtime| D_GOV_KB
+    D_AUTONOMY_CORE -->|2条 测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_AUTONOMY_CORE -->|2条 runtime / runtime| D_GOV_ENFORCEMENT
     D_AUTONOMY_CORE -->|2条 导入依赖 / import_depends| D_INTELLIGENCE
-    D_AUTONOMY_CORE -->|2条 导入依赖 / import_depends, runtime / runtime| D_SECURITY_LLM
-    D_AUTONOMY_CORE -->|1条 contract / contract| D_KNOWLEDGE
-    D_AUTONOMY_CORE -->|1条 runtime / runtime| D_INFRA_A2A
-    D_AUTONOMY_CORE -->|1条 runtime / runtime| D_GOV_AUDIT
+    D_AUTONOMY_CORE -->|2条 导入依赖 / import_depends, runtime / runtime| D_SECURITY
     D_AUTONOMY_CORE -->|1条 runtime / runtime| D_GOV_DRIFT
-    D_AUTONOMY_CORE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    D_AUTONOMY_CORE -->|1条 导入依赖 / import_depends| D_GOV_KB
+    D_AUTONOMY_CORE -->|1条 contract / contract| D_KNOWLEDGE
+    D_AUTONOMY_CORE -->|1条 导入依赖 / import_depends| D_GOV_RULE
     D_AUTONOMY_CORE -->|1条 runtime / runtime| D_AUDITTEST
-    D_AUDITTEST -->|127条 测试依赖 / test_depends| D_AUTONOMY_CORE
-    D_TRADING -->|3条 导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_GOVERNANCE -->|2条 contract / contract, 导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_GOV_SCRIPTS -->|2条 导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_INTEGRATION -->|2条 导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_GOV_CODE_QUALITY -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_AUDITTEST -->|158条 runtime / runtime, 测试依赖 / test_depends| D_AUTONOMY_CORE
+    D_GOVERNANCE -->|4条 导入依赖 / import_depends, runtime / runtime| D_AUTONOMY_CORE
+    D_INTEGRATION -->|3条 导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_SHARED -->|2条 config_depends / config_depends| D_AUTONOMY_CORE
+    D_GOV_CODE_QUALITY -->|2条 contract / contract, 导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_INFRA_RUNTIME -->|2条 导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_ORCHESTRATOR -->|2条 导入依赖 / import_depends| D_AUTONOMY_CORE
     D_INTELLIGENCE -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
     D_FEEDBACK_LOOP -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_GOV_DOCS -->|1条 contract / contract| D_AUTONOMY_CORE
 ```
 
 ## 说明 / Notes

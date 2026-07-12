@@ -1,7 +1,7 @@
 %% D_PF_CORE 域全景依赖图
-%% 生成时间: 2026-07-12 04:14:07
+%% 生成时间: 2026-07-12 22:29:34
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 14, 依赖边数: 10
+%% 模块数: 13, 依赖边数: 6
 
 graph TD
 
@@ -12,7 +12,6 @@ graph TD
         src_zephyr_pf_core_api___init___py["src/zephyr/pf_core/api/__init__.py [prototype]"]
         src_zephyr_pf_core_compliance_rule_py["src/zephyr/pf_core/compliance_rule.py [production]"]
         src_zephyr_pf_core_core___init___py["src/zephyr/pf_core/core/__init__.py [prototype]"]
-        src_zephyr_pf_core_default_equity_strategy_py["...yr/pf_core/default_equity_strategy.py [production]"]
         src_zephyr_pf_core_infrastructure___init___py["...yr/pf_core/infrastructure/__init__.py [prototype]"]
         src_zephyr_pf_core_performance_attribution_report_py["...ore/performance_attribution_report.py [production]"]
         src_zephyr_pf_core_risk_limits_py["src/zephyr/pf_core/risk_limits.py [prototype]"]
@@ -27,23 +26,17 @@ graph TD
     src_zephyr_pf_core___init___py -->|config_depends| src_zephyr_pf_core_compliance_rule_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_GOVERNANCE -> D_PF_CORE (1 条)
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_pf_core_default_equity_strategy_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_PF_CORE -> D_GOVERNANCE (5 条)
-    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_pf_core_strategy_registry_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_PF_CORE -> D_GOVERNANCE (4 条)
     src_zephyr_pf_core_risk_limits_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_pf_core_strategy_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_pf_core_strategy_registry_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_pf_core_strategy_engine___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_PF_CORE -> D_GOV_ENFORCEMENT (1 条)
     src_zephyr_pf_core_compliance_rule_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    %% D_PF_CORE -> D_SHARED (2 条)
-    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 1 条
-    %% 跨域入边: 1 条
-    %% 跨域出边: 8 条
+    %% 跨域入边: 0 条
+    %% 跨域出边: 5 条

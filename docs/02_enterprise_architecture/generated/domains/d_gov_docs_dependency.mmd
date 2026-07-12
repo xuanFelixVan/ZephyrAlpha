@@ -1,23 +1,189 @@
 %% D_GOV_DOCS 域全景依赖图
-%% 生成时间: 2026-07-12 04:14:05
+%% 生成时间: 2026-07-12 22:29:34
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 2, 依赖边数: 0
+%% 模块数: 94, 依赖边数: 54
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_GOV_DOCS[architecture_docs]
+        docs_01_policies_and_standards___mas_session_log_schema_yaml["...istry/schemas/session_log_schema.yaml [production]"]
+        docs_01_policies_and_standards___ile_operation_security_yaml["...trae_001_file_operation_security.yaml [production]"]
+        docs_01_policies_and_standards___ti_orphan_search_first_yaml["...rae_002_anti_orphan_search_first.yaml [production]"]
+        docs_01_policies_and_standards____granularity_threshold_yaml["...e_003_task_granularity_threshold.yaml [production]"]
+        docs_01_policies_and_standards___lel_atomic_transaction_yaml["..._004_parallel_atomic_transaction.yaml [production]"]
+        docs_01_policies_and_standards___odification_governance_yaml["...trae_005_modification_governance.yaml [production]"]
+        docs_01_policies_and_standards___allucination_structure_yaml["...006_anti_hallucination_structure.yaml [production]"]
+        docs_01_policies_and_standards___hallucination_behavior_yaml["..._007_anti_hallucination_behavior.yaml [production]"]
+        docs_01_policies_and_standards___i_hallucination_output_yaml["...ae_008_anti_hallucination_output.yaml [production]"]
+        docs_01_policies_and_standards___i_hallucination_safety_yaml["...ae_009_anti_hallucination_safety.yaml [production]"]
+        docs_01_policies_and_standards___de_naming_organization_yaml["...rae_010_code_naming_organization.yaml [production]"]
+        docs_01_policies_and_standards___e_011_code_type_import_yaml[".../rules/trae_011_code_type_import.yaml [production]"]
+        docs_01_policies_and_standards___012_code_test_security_yaml["...ules/trae_012_code_test_security.yaml [production]"]
+        docs_01_policies_and_standards___arch_cross_package_dep_yaml[".../trae_013_arch_cross_package_dep.yaml [production]"]
+        docs_01_policies_and_standards___ch_blueprint_alignment_yaml["...rae_014_arch_blueprint_alignment.yaml [production]"]
+        docs_01_policies_and_standards___arch_path_registration_yaml[".../trae_015_arch_path_registration.yaml [production]"]
+        docs_01_policies_and_standards___6_arch_drift_detection_yaml["...es/trae_016_arch_drift_detection.yaml [production]"]
+        docs_01_policies_and_standards____arch_governance_order_yaml["...s/trae_017_arch_governance_order.yaml [production]"]
+        docs_01_policies_and_standards___avior_code_prohibition_yaml["...ae_018_behavior_code_prohibition.yaml [production]"]
+        docs_01_policies_and_standards___r_security_prohibition_yaml["...19_behavior_security_prohibition.yaml [production]"]
+        docs_01_policies_and_standards___governance_prohibition_yaml["..._behavior_governance_prohibition.yaml [production]"]
+        docs_01_policies_and_standards___vior_other_prohibition_yaml["...e_021_behavior_other_prohibition.yaml [production]"]
+        docs_01_policies_and_standards___avior_conditional_code_yaml["...ae_022_behavior_conditional_code.yaml [production]"]
+        docs_01_policies_and_standards___conditional_governance_yaml["..._behavior_conditional_governance.yaml [production]"]
+        docs_01_policies_and_standards____methodology_diagnosis_yaml["...s/trae_024_methodology_diagnosis.yaml [production]"]
+        docs_01_policies_and_standards___5_methodology_decision_yaml["...es/trae_025_methodology_decision.yaml [production]"]
+        docs_01_policies_and_standards___26_methodology_quality_yaml["...les/trae_026_methodology_quality.yaml [production]"]
+        docs_01_policies_and_standards___hodology_collaboration_yaml["...ae_027_methodology_collaboration.yaml [production]"]
+        docs_01_policies_and_standards___8_doc_structure_naming_yaml["...es/trae_028_doc_structure_naming.yaml [production]"]
+        docs_01_policies_and_standards___doc_operation_security_yaml[".../trae_029_doc_operation_security.yaml [production]"]
+        docs_01_policies_and_standards___doc_numbering_metadata_yaml[".../trae_030_doc_numbering_metadata.yaml [production]"]
+        docs_01_policies_and_standards___31_security_key_access_yaml["...les/trae_031_security_key_access.yaml [production]"]
+        docs_01_policies_and_standards___e_032_module_lifecycle_yaml[".../rules/trae_032_module_lifecycle.yaml [production]"]
+        docs_01_policies_and_standards___dule_registration_sync_yaml["...rae_033_module_registration_sync.yaml [production]"]
+        docs_01_policies_and_standards___034_task_card_standard_yaml["...ules/trae_034_task_card_standard.yaml [production]"]
+        docs_01_policies_and_standards___struction_verification_yaml["...5_task_construction_verification.yaml [production]"]
+        docs_01_policies_and_standards___6_arch_gate_transition_yaml["...es/trae_036_arch_gate_transition.yaml [production]"]
+        docs_01_policies_and_standards___alification_versioning_yaml["...37_arch_qualification_versioning.yaml [production]"]
+        docs_01_policies_and_standards___038_arch_ctr_injection_yaml["...ules/trae_038_arch_ctr_injection.yaml [production]"]
+        docs_01_policies_and_standards___allucination_detection_yaml["...e_039_ai_hallucination_detection.yaml [production]"]
+        docs_01_policies_and_standards___e_040_ai_model_routing_yaml[".../rules/trae_040_ai_model_routing.yaml [production]"]
+        docs_01_policies_and_standards___ta_rule_classification_yaml["...rae_041_meta_rule_classification.yaml [production]"]
+        docs_01_policies_and_standards___042_meta_rule_standard_yaml["...ules/trae_042_meta_rule_standard.yaml [production]"]
+        docs_01_policies_and_standards___043_meta_rule_metadata_yaml["...ules/trae_043_meta_rule_metadata.yaml [production]"]
+        docs_01_policies_and_standards___e_044_compliance_audit_yaml[".../rules/trae_044_compliance_audit.yaml [production]"]
+        docs_01_policies_and_standards___5_data_quality_lineage_yaml["...es/trae_045_data_quality_lineage.yaml [production]"]
+        docs_01_policies_and_standards___ering_code_restructure_yaml["...046_engineering_code_restructure.yaml [production]"]
+        docs_01_policies_and_standards___ngineering_file_header_yaml["...trae_047_engineering_file_header.yaml [production]"]
+        docs_01_policies_and_standards___ps_vibe_coding_session_yaml["...trae_048_ops_vibe_coding_session.yaml [production]"]
+        docs_01_policies_and_standards____049_ops_domain_manual_yaml["...rules/trae_049_ops_domain_manual.yaml [production]"]
+        docs_01_policies_and_standards___ain_policy_data_factor_yaml["...ae_050_domain_policy_data_factor.yaml [production]"]
+        docs_01_policies_and_standards___n_policy_risk_backtest_yaml["..._051_domain_policy_risk_backtest.yaml [production]"]
+        docs_01_policies_and_standards___ueprint_change_cleanup_yaml["...2_cross_blueprint_change_cleanup.yaml [production]"]
+        docs_01_policies_and_standards____automation_dual_track_yaml["...s/trae_053_automation_dual_track.yaml [production]"]
+        docs_01_policies_and_standards___pgraph_access_protocol_yaml["...rae_054_depgraph_access_protocol.yaml [production]"]
+        docs_01_policies_and_standards___5_arch_domain_capacity_yaml["...es/trae_055_arch_domain_capacity.yaml [production]"]
+        docs_01_policies_and_standards___dule_creation_workflow_yaml["...rae_056_module_creation_workflow.yaml [production]"]
+        docs_01_policies_and_standards____057_ai_consumer_first_yaml["...rules/trae_057_ai_consumer_first.yaml [production]"]
+        docs_01_policies_and_standards___pgraph_scan_exclusions_yaml["...rae_058_depgraph_scan_exclusions.yaml [production]"]
+        docs_01_policies_and_standards___rsion_write_protection_yaml["..._schema_version_write_protection.yaml [production]"]
+        docs_01_policies_and_standards___0_inward_consolidation_yaml["...es/trae_060_inward_consolidation.yaml [production]"]
+        docs_01_policies_and_standards___ngraph_access_protocol_yaml["...61_decisiongraph_access_protocol.yaml [production]"]
+        docs_01_policies_and_standards___62_ssot_classification_yaml["...les/trae_062_ssot_classification.yaml [production]"]
         docs_02_enterprise_architecture_migration_registry_yaml["..._architecture/migration-registry.yaml [production]"]
+        docs_03_modules__cross_layer_auto_fix_engine_blueprint_md["...ss_layer/auto_fix_engine/blueprint.md [design]"]
+        docs_03_modules__cross_layer_auto_runtime_core_blueprint_md["..._layer/auto_runtime_core/blueprint.md [design]"]
+        docs_03_modules__cross_layer_behavioral_auditor_blueprint_md["...layer/behavioral_auditor/blueprint.md [design]"]
+        docs_03_modules__cross_layer_context_engine_blueprint_md["...oss_layer/context_engine/blueprint.md [design]"]
+        docs_03_modules__cross_layer_database_blueprint_md["...es/_cross_layer/database/blueprint.md [design]"]
         docs_03_modules__cross_layer_d___siness_data_categories_yaml["...atabase/business_data_categories.yaml [production]"]
+        docs_03_modules__cross_layer_feedback_loop_blueprint_md["...ross_layer/feedback_loop/blueprint.md [design]"]
+        docs_03_modules__cross_layer_gate_engine_blueprint_md["..._cross_layer/gate_engine/blueprint.md [design]"]
+        docs_03_modules__cross_layer_m___apability_exam_blueprint_md["...er/model_capability_exam/blueprint.md [design]"]
+        docs_03_modules__cross_layer_orphan_judge_blueprint_md["...cross_layer/orphan_judge/blueprint.md [design]"]
+        docs_03_modules__cross_layer_pipeline_blueprint_md["...es/_cross_layer/pipeline/blueprint.md [design]"]
+        docs_03_modules__cross_layer_red_blue_validator_blueprint_md["...layer/red_blue_validator/blueprint.md [design]"]
+        docs_03_modules__cross_layer_r___ization_engine_blueprint_md["...urce_optimization_engine/blueprint.md [design]"]
+        docs_03_modules__cross_layer_semantic_auditor_blueprint_md["...s_layer/semantic_auditor/blueprint.md [design]"]
+        docs_03_modules__cross_layer_shared_core_blueprint_md["..._cross_layer/shared_core/blueprint.md [design]"]
+        docs_03_modules__domain_autono___ore_agent_spec_blueprint_md["...autonomy_core/agent_spec/blueprint.md [design]"]
+        docs_03_modules__domain_autono___ollback_system_blueprint_md["...omy_core/rollback_system/blueprint.md [design]"]
+        docs_03_modules__domain_autono___udget_enforcer_blueprint_md["...omy_perm/budget_enforcer/blueprint.md [design]"]
+        docs_03_modules__domain_autono___ation_protocol_blueprint_md["...perm/escalation_protocol/blueprint.md [design]"]
+        docs_03_modules__domain_governance_blueprint_md["...dules/_domain_governance/blueprint.md [design]"]
+        docs_03_modules__domain_govern___e_dedup_engine_blueprint_md["...rnance/code_dedup_engine/blueprint.md [design]"]
+        docs_03_modules__domain_govern___nce_automation_blueprint_md["...ce/governance_automation/blueprint.md [design]"]
+        docs_03_modules__domain_govern___try_governance_blueprint_md["...ance/registry_governance/blueprint.md [design]"]
+        docs_03_modules__domain_infras___ocol_arbitration_rules_yaml["...agent_protocol/arbitration_rules.yaml [production]"]
+        docs_03_modules__domain_infras___rotocol_trigger_config_yaml["...to_agent_protocol/trigger_config.yaml [production]"]
+        docs_03_modules__master_blueprint_blueprint_agent_spec_md_["...er_blueprint/blueprint_agent_spec.md/ [design]"]
+        docs_03_modules__master_blueprint_blueprint_baseline_md_["...ster_blueprint/blueprint_baseline.md/ [design]"]
+        docs_03_modules__master_blueprint_blueprint_capacity_md_["...ster_blueprint/blueprint_capacity.md/ [design]"]
+        docs_03_modules__system_master_blueprint_md_["..._modules/_system_master/blueprint.md/ [design]"]
+        docs_03_modules_path_ownership_map_yaml["docs/03_modules/path_ownership_map.yaml [production]"]
     end
 
     %% 域内依赖（最多显示 80 条）
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__cross_layer_orphan_judge_blueprint_md
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__cross_layer_auto_fix_engine_blueprint_md
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| docs_03_modules__cross_layer_feedback_loop_blueprint_md
 
     %% 跨域依赖（入）- 最多显示 30 条
+    %% D_AUDITTEST -> D_GOV_DOCS (2 条)
+    D_AUDITTEST[D_AUDITTEST] -->|runtime| docs_03_modules__cross_layer_feedback_loop_blueprint_md
+    D_AUDITTEST[D_AUDITTEST] -->|runtime| docs_03_modules__domain_autono___ollback_system_blueprint_md
+    %% D_AUTONOMY_CORE -> D_GOV_DOCS (3 条)
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|contract| docs_03_modules__domain_govern___nce_automation_blueprint_md
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| docs_03_modules__cross_layer_feedback_loop_blueprint_md
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| docs_03_modules__domain_autono___ollback_system_blueprint_md
+    %% D_FRONTEND -> D_GOV_DOCS (1 条)
+    D_FRONTEND[D_FRONTEND] -->|runtime| docs_03_modules__domain_governance_blueprint_md
+    %% D_GOVERNANCE -> D_GOV_DOCS (2 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|contract| docs_03_modules__domain_govern___nce_automation_blueprint_md
+    D_GOVERNANCE[D_GOVERNANCE] -->|contract| docs_03_modules__domain_autono___ollback_system_blueprint_md
+    %% D_GOV_AUDIT -> D_GOV_DOCS (1 条)
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|runtime| docs_03_modules__cross_layer_red_blue_validator_blueprint_md
+    %% D_GOV_CODE_QUALITY -> D_GOV_DOCS (2 条)
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|contract| docs_03_modules__domain_govern___nce_automation_blueprint_md
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|runtime| docs_03_modules__cross_layer_feedback_loop_blueprint_md
+    %% D_GOV_DRIFT -> D_GOV_DOCS (1 条)
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__domain_autono___ollback_system_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
+    %% D_GOV_DOCS -> D_AUDITTEST (7 条)
+    docs_03_modules__domain_autono___ollback_system_blueprint_md -->|runtime| D_AUDITTEST[D_AUDITTEST]
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_AUDITTEST[D_AUDITTEST]
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_AUDITTEST[D_AUDITTEST]
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_AUDITTEST[D_AUDITTEST]
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_AUDITTEST[D_AUDITTEST]
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_AUDITTEST[D_AUDITTEST]
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_AUDITTEST[D_AUDITTEST]
+    %% D_GOV_DOCS -> D_AUTONOMY_CORE (1 条)
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    %% D_GOV_DOCS -> D_FEEDBACK_LOOP (5 条)
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    %% D_GOV_DOCS -> D_GOVERNANCE (5 条)
+    docs_03_modules__domain_govern___nce_automation_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    docs_03_modules__domain_govern___nce_automation_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|data| D_GOVERNANCE[D_GOVERNANCE]
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_GOV_DOCS -> D_GOV_AUDIT (1 条)
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_GOV_DOCS -> D_GOV_CODE_QUALITY (2 条)
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    %% D_GOV_DOCS -> D_GOV_DRIFT (2 条)
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
+    %% D_GOV_DOCS -> D_GOV_ENFORCEMENT (8 条)
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    docs_03_modules__domain_autono___ollback_system_blueprint_md -->|contract| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    docs_03_modules__domain_autono___ollback_system_blueprint_md -->|runtime| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_GOV_DOCS -> D_GOV_KB (1 条)
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_GOV_KB[D_GOV_KB]
+    %% D_GOV_DOCS -> D_GOV_OPS_RESILIENCE (1 条)
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    %% D_GOV_DOCS -> D_INTEGRATION (2 条)
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_INTEGRATION[D_INTEGRATION]
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_INTEGRATION[D_INTEGRATION]
+    %% D_GOV_DOCS -> D_SECURITY (3 条)
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_SECURITY[D_SECURITY]
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_SECURITY[D_SECURITY]
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_SECURITY[D_SECURITY]
+    %% D_GOV_DOCS -> D_SHARED (1 条)
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 0 条
-    %% 跨域入边: 0 条
-    %% 跨域出边: 0 条
+    %% 域内依赖: 3 条
+    %% 跨域入边: 12 条
+    %% 跨域出边: 39 条
