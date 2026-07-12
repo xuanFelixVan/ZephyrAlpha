@@ -4764,6 +4764,10 @@ creation_tokens:
     token: "migration-batch1-behavioral-admission-20260713"
     created_by: "session-fix-batch1-full"
     capability: "behavioral_admission"
+  - file: "src/zephyr/gov_enforcement/__init__.py"
+    token: "migration-domain-init-gov-enforcement-20260713"
+    created_by: "session-fix-phase2-remainder"
+    capability: "gov_enforcement"
 
 # ============================================================================
 # 维护日志
