@@ -84,7 +84,7 @@ class TestTaskModel:
         assert ExecutionModel.qwen.value == "qwen"
 
     def test_normalize_execution_model(self):
-        from zephyr.governance.rule_enforcement.task_types import normalize_execution_model
+        from zephyr.gov_enforcement.rule_enforcement.task_types import normalize_execution_model
 
         assert normalize_execution_model("deepseek") == ExecutionModel.deepseek
         assert normalize_execution_model("glm") == ExecutionModel.glm

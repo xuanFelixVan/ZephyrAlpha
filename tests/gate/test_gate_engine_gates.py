@@ -31,7 +31,7 @@ import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
     GateEngine,
     GateEngineError,
     GateResult,
@@ -41,7 +41,7 @@ from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
     _check_line_ending,
     _check_path_blacklist,
 )
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import SafetyLevel
 from zephyr.shared.foundation.models import TaskCard
 

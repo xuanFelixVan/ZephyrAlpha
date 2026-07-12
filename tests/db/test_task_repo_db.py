@@ -40,7 +40,7 @@ from zephyr.governance.persistence.task_repo import (
     allowed_transitions,
     is_terminal,
 )
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
 from zephyr.integration.shared.schema.severity_types import SafetyLevel
 from zephyr.shared.foundation.models import TaskCard

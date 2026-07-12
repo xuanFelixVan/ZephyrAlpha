@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.1 + §16 Phase 1
 # [MODULE] zephyr.security.adversarial_validation.defense_runner
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.gov_audit.finding_model; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.task_types; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.gov_audit.finding_model; zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model
 # [CONSUMERS] validator.py; game_day_runner.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -45,7 +45,7 @@ except ImportError:
     _FINDING_AVAILABLE = False
 
 try:
-    from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
+    from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 except ImportError:
     GateEngine = None  # type: ignore[assignment,misc]
 
@@ -178,7 +178,7 @@ class DefenseRunner:
         try:
             from datetime import UTC, datetime
 
-            from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
+            from zephyr.gov_enforcement.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
             from zephyr.integration.shared.schema.execution_model import ExecutionModel
             from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 

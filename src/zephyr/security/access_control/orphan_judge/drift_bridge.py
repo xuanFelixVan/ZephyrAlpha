@@ -29,7 +29,7 @@ class DriftBridge:
     def __init__(self) -> None:
         self._available = False
         try:
-            from zephyr.governance.rule_enforcement.drift_detector import trigger_recovery
+            from zephyr.gov_enforcement.rule_enforcement.drift_detector import trigger_recovery
 
             self._trigger = trigger_recovery
             self._available = True

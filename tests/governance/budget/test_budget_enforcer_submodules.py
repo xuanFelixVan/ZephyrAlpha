@@ -240,7 +240,7 @@ class TestPolicySandbox:
 
 class TestPreFlightGate:
     def test_allow(self):
-        from zephyr.governance.rule_enforcement.pre_flight_gate import PreFlightDecision, PreFlightGate
+        from zephyr.gov_enforcement.rule_enforcement.pre_flight_gate import PreFlightDecision, PreFlightGate
 
         gate = PreFlightGate()
         report = gate.gate("read_file", estimated_tokens=100, estimated_cost=0.001)
@@ -271,7 +271,7 @@ class TestContextWasteDetector:
 
 class TestOutputQualityGate:
     def test_quality_check(self):
-        from zephyr.governance.rule_enforcement.output_quality_gate import OutputQualityGate
+        from zephyr.gov_enforcement.rule_enforcement.output_quality_gate import OutputQualityGate
 
         gate = OutputQualityGate()
         verdict = gate.evaluate("This is a good response with useful content.", cost=0.01)

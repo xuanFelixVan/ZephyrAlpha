@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.breaking_change_detector import BreakingChangeDetector, ChangeType
+from zephyr.gov_enforcement.rule_enforcement.breaking_change_detector import BreakingChangeDetector, ChangeType
 
 
 class TestChangeType:

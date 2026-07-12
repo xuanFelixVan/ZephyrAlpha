@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_adversarial_validation
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.governance.rule_enforcement.adversarial_validation
+# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement.adversarial_validation
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

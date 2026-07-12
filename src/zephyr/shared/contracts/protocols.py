@@ -1,8 +1,8 @@
 # [BLUEPRINT] SRC-183 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.shared.contracts.protocols
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_types
-# [CONSUMERS] zephyr.governance.rule_enforcement;zephyr.governance.behavioral_auditor;zephyr.gov_audit;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_types
+# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement;zephyr.governance.behavioral_auditor;zephyr.gov_audit;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Protocols define structural interfaces only; no concrete implementations
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     # 5.22.3 修复：消除 shared -> governance 顶层 import 闭环
     # GateResult 仅作为 Protocol 方法的字符串注解使用（from __future__ import annotations
     # 已启用，注解在运行时为字符串，无需 runtime import）
-    from zephyr.governance.rule_enforcement.gate_types import GateResult
+    from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult
 
 # ── 9 Protocol interfaces ────────────────────────────────────────────
 

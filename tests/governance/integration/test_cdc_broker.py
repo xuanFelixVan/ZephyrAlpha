@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.cdc_broker import CdcBroker
+from zephyr.gov_enforcement.rule_enforcement.cdc_broker import CdcBroker
 
 
 @pytest.fixture

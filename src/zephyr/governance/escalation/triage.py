@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.governance.escalation.triage
 # [DOMAIN] D_GOV_OPS_RESILIENCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -45,8 +45,8 @@ import yaml
 
 from zephyr.gov_kb.ingest import COLLOQUIAL_PATTERNS
 from zephyr.gov_kb.kb_gate_task import build_kb_gate_eval_task
-from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
-from zephyr.governance.rule_enforcement.gate_types import GateResult
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
+from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult
 from zephyr.shared.io.yaml_utils import load_vocabulary_values  # 词表合法值加载 SSoT（D-D-05：禁止复制 _load_xxx()）
 
 __all__ = [

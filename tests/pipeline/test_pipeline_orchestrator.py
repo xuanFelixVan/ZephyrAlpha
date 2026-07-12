@@ -23,7 +23,7 @@ from zephyr.shared.foundation.models import TaskCard
 
 
 def _make_task(task_id: str, **overrides) -> TaskCard:
-    from zephyr.governance.rule_enforcement.task_types import TaskNamespace
+    from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace
     from zephyr.integration.shared.schema.severity_types import Priority
 
     parts = task_id.split("-", 2)

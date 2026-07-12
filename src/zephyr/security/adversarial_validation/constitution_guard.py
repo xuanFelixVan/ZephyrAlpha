@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.1 + §16 Phase 2a
 # [MODULE] zephyr.security.adversarial_validation.constitution_guard
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.governance.rule_enforcement.gate_engine
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.gov_enforcement.rule_enforcement.gate_engine
 # [CONSUMERS] validator.py; convergence_checker.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -25,7 +25,7 @@ import yaml
 from zephyr.security.adversarial_validation.models import AttackScenario
 
 try:
-    from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
+    from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 except ImportError:
     GateEngine = None  # type: ignore[assignment,misc]
 

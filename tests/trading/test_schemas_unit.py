@@ -28,7 +28,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
 from zephyr.integration.shared.schema.schemas import (
     AuditFinding,

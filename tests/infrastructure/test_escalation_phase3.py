@@ -249,7 +249,7 @@ class TestAntiAutomationBias:
 
 class TestSLOContractEngine:
     def test_init_all_budgets_healthy(self):
-        from zephyr.governance.rule_enforcement.slo_contract import SLIName, SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         for sli in SLIName:
@@ -257,14 +257,14 @@ class TestSLOContractEngine:
             assert budget.tier.value == "healthy", f"{sli.value} not healthy"
 
     def test_record_within_slo(self):
-        from zephyr.governance.rule_enforcement.slo_contract import SLIName, SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         reading = engine.record(SLIName.CODE_REJECTION, 0.96)
         assert reading.within_slo
 
     def test_record_violation_reduces_budget(self):
-        from zephyr.governance.rule_enforcement.slo_contract import SLIName, SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         for _ in range(10):
@@ -273,7 +273,7 @@ class TestSLOContractEngine:
         assert budget.error_budget_remaining_pct < 100.0
 
     def test_budget_exhausted_after_many_violations(self):
-        from zephyr.governance.rule_enforcement.slo_contract import BudgetTier, SLIName, SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import BudgetTier, SLIName, SLOContractEngine
 
         engine = SLOContractEngine(window_seconds=86400)
         for _ in range(100):
@@ -282,7 +282,7 @@ class TestSLOContractEngine:
         assert budget.tier == BudgetTier.EXHAUSTED
 
     def test_should_escalate_on_exhausted(self):
-        from zephyr.governance.rule_enforcement.slo_contract import SLIName, SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         engine.force_exhaust(SLIName.CODE_REJECTION)
@@ -290,7 +290,7 @@ class TestSLOContractEngine:
         assert do_escalate
 
     def test_contract_terms(self):
-        from zephyr.governance.rule_enforcement.slo_contract import ContractPriority, SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import ContractPriority, SLOContractEngine
 
         engine = SLOContractEngine()
         p0 = engine.get_contract(ContractPriority.P0)
@@ -298,7 +298,7 @@ class TestSLOContractEngine:
         assert p0.resolve_timeout_s == 14400
 
     def test_trading_override(self):
-        from zephyr.governance.rule_enforcement.slo_contract import SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import SLOContractEngine
 
         engine = SLOContractEngine()
         t = engine.get_trading_override()
@@ -306,7 +306,7 @@ class TestSLOContractEngine:
         assert t.resolve_timeout_s == 900
 
     def test_worst_budget_tier(self):
-        from zephyr.governance.rule_enforcement.slo_contract import BudgetTier, SLIName, SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import BudgetTier, SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         engine.force_exhaust(SLIName.CODE_REJECTION)
@@ -314,7 +314,7 @@ class TestSLOContractEngine:
         assert worst.tier == BudgetTier.EXHAUSTED
 
     def test_reset_budget(self):
-        from zephyr.governance.rule_enforcement.slo_contract import SLIName, SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         for _ in range(100):
@@ -325,7 +325,7 @@ class TestSLOContractEngine:
         assert budget.error_budget_remaining_pct == 100.0
 
     def test_recommended_scaling_healthy(self):
-        from zephyr.governance.rule_enforcement.slo_contract import SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import SLOContractEngine
 
         engine = SLOContractEngine()
         scaling = engine.get_recommended_scaling()
@@ -333,7 +333,7 @@ class TestSLOContractEngine:
         assert scaling["auto_guard_modifier"] == 1.0
 
     def test_recommended_scaling_exhausted(self):
-        from zephyr.governance.rule_enforcement.slo_contract import SLIName, SLOContractEngine
+        from zephyr.gov_enforcement.rule_enforcement.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         engine.force_exhaust(SLIName.CODE_REJECTION)

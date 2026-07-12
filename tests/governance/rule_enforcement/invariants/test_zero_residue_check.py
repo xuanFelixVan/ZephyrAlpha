@@ -16,7 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.rule_enforcement.invariants.zero_residue_check import (
+from zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check import (
     ResidueFinding,
     ResidueReport,
     ZeroResidueScanner,

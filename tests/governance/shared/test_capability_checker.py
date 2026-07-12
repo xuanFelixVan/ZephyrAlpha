@@ -13,8 +13,8 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.capability_checker import CapabilityChecker
-from zephyr.governance.rule_enforcement.cbac_matrix import CbacMatrix
+from zephyr.gov_enforcement.rule_enforcement.capability_checker import CapabilityChecker
+from zephyr.gov_enforcement.rule_enforcement.cbac_matrix import CbacMatrix
 
 
 @pytest.fixture

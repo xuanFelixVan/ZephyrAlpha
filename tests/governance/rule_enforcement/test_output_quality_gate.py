@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.rule_enforcement.output_quality_gate import (
+from zephyr.gov_enforcement.rule_enforcement.output_quality_gate import (
     DEFAULT_RULES,
     OutputQualityGate,
     QualityRule,

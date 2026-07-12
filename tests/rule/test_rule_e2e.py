@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.governance.rule_enforcement.rule_engine.rule_engine import RuleLoader
+from zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_engine import RuleLoader
 
 
 @pytest.fixture

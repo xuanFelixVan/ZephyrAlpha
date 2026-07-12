@@ -16,7 +16,7 @@ from __future__ import annotations
 import dataclasses
 from unittest.mock import patch
 
-from zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility import (
+from zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility import (
     TYPE_ALIAS_MAP,
     CompatibilityResult,
     _get_dataclass_fields,

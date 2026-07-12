@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.rule_enforcement.invariants.post_doc_review_check import (
+from zephyr.gov_enforcement.rule_enforcement.invariants.post_doc_review_check import (
     DocReviewReport,
     GitUnavailableError,
     PostDocReviewScanner,

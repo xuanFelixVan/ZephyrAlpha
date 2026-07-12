@@ -1,7 +1,7 @@
 # [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.judge
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.duplicate_detector; zephyr.governance.rule_enforcement.gate_types
+# [DEPENDENCIES] zephyr.security.access_control.orphan_judge.duplicate_detector; zephyr.gov_enforcement.rule_enforcement.gate_types
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -392,7 +392,7 @@ class OrphanJudge:
           GREEN(无孤儿)/YELLOW(有孤儿无ESCALATE)/RED(有ESCALATE)
         """
         try:
-            from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolation
+            from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolation
         except ImportError:
             raise OrphanJudgeError(
                 "GateResult not available; ensure zephyr.governance.rule_enforcement.gate_types is importable"

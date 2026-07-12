@@ -75,7 +75,7 @@ class TestGTrae037:
         import sys
 
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
-        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
+        from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 
         assert "G_TRAE_037" in GateEngine._GATE_FILES, "Gate G_TRAE_037 not in _GATE_FILES"
 
@@ -84,7 +84,7 @@ class TestGTrae037:
         import sys
 
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
-        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
+        from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 
         engine = GateEngine(project_root=str(PROJECT_ROOT))
         # Temporarily add to _GATE_FILES if not there
@@ -106,8 +106,8 @@ class TestGTrae037:
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
         from datetime import datetime
 
-        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
-        from zephyr.governance.rule_enforcement.task_types import Task
+        from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
+        from zephyr.gov_enforcement.rule_enforcement.task_types import Task
 
         engine = GateEngine(project_root=str(PROJECT_ROOT))
         # Temporarily register gate
@@ -150,8 +150,8 @@ class TestGTrae037:
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
         from datetime import datetime
 
-        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
-        from zephyr.governance.rule_enforcement.task_types import Task
+        from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
+        from zephyr.gov_enforcement.rule_enforcement.task_types import Task
 
         engine = GateEngine(project_root=str(PROJECT_ROOT))
         original = dict(GateEngine._GATE_FILES)
@@ -190,7 +190,7 @@ class TestGTrae037:
         import sys
 
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
-        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
+        from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 
         original = dict(GateEngine._GATE_FILES)
         try:

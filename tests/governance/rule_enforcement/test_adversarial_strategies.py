@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.adversarial_strategies import (
+from zephyr.gov_enforcement.rule_enforcement.adversarial_strategies import (
     AdversarialSample,
     AdversarialSampleGenerator,
     DataPoisoning,

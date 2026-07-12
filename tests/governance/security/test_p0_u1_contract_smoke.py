@@ -46,7 +46,7 @@ class TestP0U1ContractSmoke:
         assert hasattr(esc, "on_rollback_failure")
 
     def test_gct_004_escalation_to_rbac(self):
-        from zephyr.governance.rule_enforcement.approval import ApprovalRequest
+        from zephyr.gov_enforcement.rule_enforcement.approval import ApprovalRequest
         from zephyr.security.access_control.approver_check import verify_approver
 
         req = ApprovalRequest(task_id="T001", requested_action="deploy", human_approver="admin", reason="emergency")

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.boot_hooks
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -382,7 +382,7 @@ def _hook_auto_retry_on_failure(event: object, task_repo: TaskRepositoryProtocol
 
 def _hook_triple_alignment_on_verified(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
     try:
-        from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
+        from zephyr.gov_enforcement.rule_enforcement.triple_alignment import check_triple_alignment
 
         task_id = getattr(event, "task_id", "")
         source_bp = _get_source_blueprint(task_id, task_repo=task_repo)
@@ -527,7 +527,7 @@ def _hook_session_shutdown_budget_close(event: object) -> None:
 
 def _hook_triple_align_event(event: object) -> None:
     try:
-        from zephyr.governance.rule_enforcement.triple_alignment import check_triple_alignment
+        from zephyr.gov_enforcement.rule_enforcement.triple_alignment import check_triple_alignment
 
         source_bp = getattr(event, "blueprint_path", "") or getattr(event, "path", "")
         result = check_triple_alignment(specific_module=source_bp or None, warn_only=True)

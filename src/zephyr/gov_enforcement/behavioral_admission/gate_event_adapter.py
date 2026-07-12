@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.behavioral_admission.gate_event_adapter
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.gov_audit.event_store; zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine
+# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement.gate_engine
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] gate events are appended to task_events atomically with gate persistence

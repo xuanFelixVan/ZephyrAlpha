@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.maintenance.slo_review_assistant
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine; zephyr.infrastructure.capacity_assurance.modules.__init__; tests.unit.shared.test_orphan_integration
+# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.infrastructure.capacity_assurance.modules.__init__; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

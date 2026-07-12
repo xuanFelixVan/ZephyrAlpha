@@ -14,7 +14,7 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace
 from zephyr.orchestrator.file_task_mapper import (
     FileTaskMapper,
     RegisterReport,

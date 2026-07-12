@@ -15,7 +15,7 @@ from pathlib import Path
 from zephyr.gov_kb.ingest import IngestGate
 from zephyr.gov_kb.pipeline.analyze import AnalyzeGate
 from zephyr.gov_kb.pipeline.extract import ExtractGate
-from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateResult
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateResult
 from zephyr.governance.escalation.triage import TriageGate
 from zephyr.intelligence.model_evaluation.activate import ActivateGate
 

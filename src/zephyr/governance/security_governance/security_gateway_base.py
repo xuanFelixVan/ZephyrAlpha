@@ -43,7 +43,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, ClassVar
 
-from zephyr.governance.rule_enforcement.compliance_rule import ComplianceRule
+from zephyr.gov_enforcement.rule_enforcement.compliance_rule import ComplianceRule
 
 
 class AuditAction(str, Enum):

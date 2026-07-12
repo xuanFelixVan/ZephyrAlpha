@@ -22,7 +22,7 @@ from zephyr.gov_kb.pipeline.analyze import (
     AnalyzeGate,
     AnalyzeResult,
 )
-from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolation
+from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolation
 
 
 def _high_score_text() -> str:

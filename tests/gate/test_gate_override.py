@@ -25,7 +25,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
 
-from zephyr.governance.rule_enforcement.gate_engine.gate_override import GateOverride, OverrideRecord
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_override import GateOverride, OverrideRecord
 
 
 class TestOverrideRecord:

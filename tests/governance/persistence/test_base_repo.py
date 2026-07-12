@@ -33,7 +33,7 @@ _new_id = base_repo._new_id
 now_iso = base_repo.now_iso
 
 try:
-    from zephyr.governance.rule_enforcement.task_types import TaskStatus
+    from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 
     HAS_TASK_TYPES = True
 except Exception:

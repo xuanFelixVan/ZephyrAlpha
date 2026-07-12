@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.rule_enforcement.rule_engine.rule_canary_manager import RuleCanaryManager
+from zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_canary_manager import RuleCanaryManager
 
 
 class TestRuleCanaryManagerInit:

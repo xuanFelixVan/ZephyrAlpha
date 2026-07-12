@@ -115,7 +115,7 @@ try:
     from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
     from zephyr.governance.persistence.database_service import DatabaseService
     from zephyr.infrastructure.asset_inventory.dependency import DependencyNode
-    from zephyr.governance.rule_enforcement.dlq_retry_policy import RetryResult
+    from zephyr.gov_enforcement.rule_enforcement.dlq_retry_policy import RetryResult
     from zephyr.gov_audit.dora_metrics import DORATargets
     from zephyr.gov_audit.feedback_self_audit import FeedbackNode
     from zephyr.governance.finding_ingest import IngestResult

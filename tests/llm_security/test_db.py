@@ -36,7 +36,7 @@ TransactionTimeoutError = atm_mod.TransactionTimeoutError
 transition_mod = pytest.importorskip("zephyr.governance.lifecycle_governance.transition")
 
 try:
-    from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
+    from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
     from zephyr.integration.shared.schema.execution_model import ExecutionModel
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel

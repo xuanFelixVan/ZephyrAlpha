@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-060 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.ops_governance.phase_check_registry
 # [DOMAIN] D_GOV_OPS_RESILIENCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.orchestrator.contract_registry; zephyr.gov_audit.integrity; zephyr.gov_audit.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.gov_drift.chaos_injector; zephyr.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.orchestrator.batch_orchestrator
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.gov_enforcement.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.orchestrator.contract_registry; zephyr.gov_audit.integrity; zephyr.gov_audit.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.gov_drift.chaos_injector; zephyr.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.orchestrator.batch_orchestrator
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -265,7 +265,7 @@ def check_precommit_config() -> GateResult:
 def check_sys_master_compliance() -> GateResult:
     """验证 SYS-MASTER-001 合规——调用 sys_master_compliance gate."""
     try:
-        from zephyr.governance.rule_enforcement.sys_master_compliance import SysMasterCompliance
+        from zephyr.gov_enforcement.rule_enforcement.sys_master_compliance import SysMasterCompliance
 
         checker = SysMasterCompliance()
         if checker.passed:

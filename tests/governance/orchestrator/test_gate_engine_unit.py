@@ -30,7 +30,7 @@ import pytest
 import yaml
 
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
     GateEngine,
     GateEngineError,
     GateResult,
@@ -40,7 +40,7 @@ from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
     _check_line_ending,
     _check_path_blacklist,
 )
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 from zephyr.shared.foundation.models import TaskCard
 
 # ---------------------------------------------------------------------------

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 from zephyr.infrastructure.pipeline.preemption_manager import PreemptionManager
 
 

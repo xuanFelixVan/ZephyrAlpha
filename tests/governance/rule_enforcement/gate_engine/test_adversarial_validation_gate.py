@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.rule_enforcement.gate_engine.adversarial_validation import (
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.adversarial_validation import (
     AdversarialTestResult,
     AdversarialValidationGate,
     ValidationResult,

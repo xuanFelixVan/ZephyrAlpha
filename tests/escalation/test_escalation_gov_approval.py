@@ -16,7 +16,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from zephyr.governance.rule_enforcement.approval import ApprovalRequest
+from zephyr.gov_enforcement.rule_enforcement.approval import ApprovalRequest
 
 
 class TestApprovalRequestInstantiation:

@@ -29,7 +29,7 @@ from pathlib import Path
 import pytest
 
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.base_config import Classification
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel

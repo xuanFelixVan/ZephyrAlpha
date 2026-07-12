@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_gate_engine_external.py | §
 # [MODULE] scripts.governance.meta.validate_gate_engine_external
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.integration.__init__; zephyr.governance.rule_enforcement.circuit_breaker
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.integration.__init__; zephyr.gov_enforcement.rule_enforcement.circuit_breaker
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -221,7 +221,7 @@ def run_canary_injection_test() -> dict[str, Any]:
     try:
         from zephyr.integration.schema.schemas import SafetyLevel, Task, TaskNamespace
 
-        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
+        from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
     except Exception as exc:
         return {
             "label": "V4. Canary 注入测试",
@@ -356,8 +356,8 @@ def verify_import_integrity() -> dict[str, Any]:
 
     sys.path.insert(0, str(_SRC))
     try:
-        import zephyr.governance.rule_enforcement.circuit_breaker
-        import zephyr.governance.rule_enforcement.gate_engine.gate_engine
+        import zephyr.gov_enforcement.rule_enforcement.circuit_breaker
+        import zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine
 
         importable = True
     except SyntaxError as exc:

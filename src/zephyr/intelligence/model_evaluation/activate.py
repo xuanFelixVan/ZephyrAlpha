@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.activate
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -43,8 +43,8 @@ from typing import Any
 import yaml
 
 from zephyr.gov_kb.kb_gate_task import build_kb_gate_eval_task
-from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
-from zephyr.governance.rule_enforcement.gate_types import GateResult
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
+from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult
 
 __all__ = [
     "ACTIVE_DIR_NAME",

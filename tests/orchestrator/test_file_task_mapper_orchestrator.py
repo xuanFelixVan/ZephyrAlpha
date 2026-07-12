@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace
 from zephyr.orchestrator.file_task_mapper import (
     FileTaskMapper,
     classify_file_to_namespace,

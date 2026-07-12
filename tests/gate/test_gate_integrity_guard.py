@@ -16,7 +16,7 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
-from zephyr.governance.rule_enforcement.gate_engine.gate_integrity_guard import GateIntegrityGuard, IntegrityReport
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_integrity_guard import GateIntegrityGuard, IntegrityReport
 
 
 class TestIntegrityReport:

@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.governance.rule_enforcement.kiss_enforcer import KissEnforcer
+from zephyr.gov_enforcement.rule_enforcement.kiss_enforcer import KissEnforcer
 
 
 class TestKissEnforcerInstantiation:

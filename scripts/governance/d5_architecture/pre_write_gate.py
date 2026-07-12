@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/pre_write_gate.py | §
 # [MODULE] scripts.governance.d5_architecture.pre_write_gate
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.__init__
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -137,7 +137,7 @@ def _check_root_pollution(file_path: str) -> tuple[bool, str]:
 def _check_phase_health() -> tuple[bool, str]:
     """_check_phase_health implementation."""
     try:
-        from zephyr.governance.rule_enforcement.phase_manager import GateResult, session_startup
+        from zephyr.gov_enforcement.rule_enforcement.phase_manager import GateResult, session_startup
 
         result = session_startup(quick=True)
         if result["ready"]:

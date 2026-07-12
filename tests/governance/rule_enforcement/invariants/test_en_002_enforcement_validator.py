@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator import (
+from zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator import (
     VALID_ENFORCEMENT_MODES,
     EnforcementResult,
     _load_contracts,

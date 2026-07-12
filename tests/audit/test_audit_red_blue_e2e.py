@@ -43,7 +43,7 @@ SteadyState = ss_mod.SteadyState
 DOMAIN_METRICS = ss_mod.DOMAIN_METRICS
 
 try:
-    from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
+    from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 except ImportError:
     GateEngine = None
 

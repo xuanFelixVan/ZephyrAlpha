@@ -18,7 +18,7 @@ from zephyr.governance.persistence.task_repo import (
     P0InflationFrozenError,
     TaskRepository,
 )
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import Priority as P
 from zephyr.shared.foundation.models import TaskCard
 

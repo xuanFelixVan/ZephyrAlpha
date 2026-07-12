@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.rule_enforcement.contract_template_manager import (
+from zephyr.gov_enforcement.rule_enforcement.contract_template_manager import (
     ContractParameter,
     ContractTemplate,
     ContractTemplateManager,

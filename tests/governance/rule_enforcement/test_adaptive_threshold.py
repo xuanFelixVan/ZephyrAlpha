@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from collections import deque
 
-from zephyr.governance.rule_enforcement.adaptive_threshold import AdaptiveThreshold, ThresholdState
+from zephyr.gov_enforcement.rule_enforcement.adaptive_threshold import AdaptiveThreshold, ThresholdState
 
 
 class TestThresholdState:

@@ -21,7 +21,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.governance.rule_enforcement.slo_contract import (
+from zephyr.gov_enforcement.rule_enforcement.slo_contract import (
     DEFAULT_CONTRACTS,
     DEFAULT_SLIS,
     TIER_POLICY,

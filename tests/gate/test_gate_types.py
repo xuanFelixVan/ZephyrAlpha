@@ -26,7 +26,7 @@ from datetime import datetime
 
 import pytest
 
-from zephyr.governance.rule_enforcement.gate_types import (
+from zephyr.gov_enforcement.rule_enforcement.gate_types import (
     GateEngineError,
     GateResult,
     GateViolation,

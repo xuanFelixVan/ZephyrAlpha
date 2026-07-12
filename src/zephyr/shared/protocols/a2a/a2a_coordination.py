@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_domain-shared/protocols/blueprint.md
 # [MODULE] zephyr.shared.protocols.a2a.a2a_coordination
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.task_types
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.task_types
 # [CONSUMERS] zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -32,7 +32,7 @@ from dataclasses import dataclass
 from enum import Enum, IntEnum
 from typing import Any, Protocol, runtime_checkable
 
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 
 
 class AgentRole(IntEnum):

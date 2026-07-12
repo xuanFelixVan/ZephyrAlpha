@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.approval import ApprovalRequest
+from zephyr.gov_enforcement.rule_enforcement.approval import ApprovalRequest
 from zephyr.shared.contracts.approval_types import ApprovalRequest as DirectApprovalRequest
 
 

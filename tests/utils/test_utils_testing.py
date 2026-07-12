@@ -20,7 +20,7 @@
 # [TESTS] pytest tests/test_utils_testing.py -q
 # [TTL] task_bound
 
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 from zephyr.integration.shared.schema.schemas import AuditReport, FailurePattern, HandoffPackage, KnowledgeEntry, Task
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.utils.testing import (

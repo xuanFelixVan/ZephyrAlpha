@@ -30,7 +30,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.blueprint_tools.blueprint_decomposer import (

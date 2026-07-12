@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/gate_engine_selfcheck.py | §
 # [MODULE] scripts.governance.meta.gate_engine_selfcheck
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.circuit_breaker
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.circuit_breaker
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -195,7 +195,7 @@ def check_gate_engine_import() -> dict[str, Any]:
     """Check compliance and report findings."""
     issues: list[str] = []
     try:
-        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
+        from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
             GateEngine,
         )
 

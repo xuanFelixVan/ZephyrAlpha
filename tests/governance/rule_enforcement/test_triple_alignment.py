@@ -16,7 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.rule_enforcement.triple_alignment import (
+from zephyr.gov_enforcement.rule_enforcement.triple_alignment import (
     AlignmentViolation,
     Severity,
     TripleAlignmentResult,

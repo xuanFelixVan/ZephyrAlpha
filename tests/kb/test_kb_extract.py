@@ -25,7 +25,7 @@ from zephyr.gov_kb.pipeline.extract import (
     ExtractGate,
     ExtractResult,
 )
-from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolation
+from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolation
 
 
 def _mock_gate_engine(passed: bool = True) -> MagicMock:

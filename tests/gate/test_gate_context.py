@@ -27,7 +27,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from zephyr.governance.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus, GateViolation
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus, GateViolation
 
 
 class TestGateStatus:

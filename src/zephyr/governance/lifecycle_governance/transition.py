@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 # [MODULE] zephyr.governance.lifecycle_governance.transition
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.governance.rule_enforcement.task_types; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.ops_governance.event_hook
+# [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.gov_enforcement.rule_enforcement.gate_types.__init__; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] task_repo;pipeline
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -43,14 +43,14 @@ from zephyr.governance.persistence.base_repo import (
     _row_to_taskcard,
     now_iso,
 )
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 
 __all__ = ["GateResult", "GateViolationError", "TransitionMixin"]
 
 
 # Re-export GateViolationError / GateResult for backward compat
 
-from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
+from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolationError
 
 # PENDING -> IN_PROGRESS 转换时触发的门禁 ID
 

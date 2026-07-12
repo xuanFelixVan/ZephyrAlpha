@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md | §task-system
 # [MODULE] zephyr.governance.persistence.task_repo
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.task_types; zephyr.governance.persistence.sqlite_schema; zephyr.gov_audit.event_store; zephyr.governance.observability_governance.projection_engine; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.integration.shared.schema.severity_types; zephyr.shared.utils.time_utils; zephyr.governance.ops_governance.event_hook
+# [DEPENDENCIES] zephyr.shared.task_types; zephyr.governance.persistence.sqlite_schema; zephyr.gov_audit.event_store; zephyr.governance.observability_governance.projection_engine; zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.gate_types.__init__; zephyr.integration.shared.schema.severity_types; zephyr.shared.utils.time_utils; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] zephyr.infrastructure.shared_services.blueprint_decomposer; zephyr.integration.mcp.task_manager_server; zephyr.trading.boot_hooks; scripts/governance/*; scripts/lock_files.py (cleanup_terminal_tasks)
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -80,14 +80,14 @@ from pathlib import Path
 from threading import RLock
 
 from zephyr.governance.observability_governance.projection_engine import ProjectionEngine
-from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
     GATES_DIR,
     GateEngine,
 )
 from zephyr.governance.persistence.sqlite_schema import get_db_connection, init_db
 from zephyr.shared.io.paths import DB_PATH
 from zephyr.integration.shared.schema.severity_types import Priority
-from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
+from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolationError
 from zephyr.shared.utils.time_utils import now_iso
 from zephyr.shared.schema.task_types import Task, TaskCard, TaskNamespace, TaskStatus
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT

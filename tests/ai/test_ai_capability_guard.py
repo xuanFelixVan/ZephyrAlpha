@@ -27,7 +27,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.rule_enforcement.ai_capability_guard import (
+from zephyr.gov_enforcement.rule_enforcement.ai_capability_guard import (
     CapabilityLevel,
     _check_file_level,
     _level_meets_min,

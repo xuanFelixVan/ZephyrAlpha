@@ -48,6 +48,6 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 from __future__ import annotations
 
 from zephyr.data.provider_base import DataSourceBase, DataSourceMeta
-from zephyr.governance.rule_enforcement.quality_gate import DataQualityGate
+from zephyr.gov_enforcement.rule_enforcement.quality_gate import DataQualityGate
 
 __all__ = ["DataQualityGate", "DataSourceBase", "DataSourceMeta", "provider_base", "quality_gate"]

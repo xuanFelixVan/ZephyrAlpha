@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.anti_pattern_guard import AntiPatternGuard
+from zephyr.gov_enforcement.rule_enforcement.anti_pattern_guard import AntiPatternGuard
 
 
 @pytest.fixture

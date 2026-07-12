@@ -218,8 +218,8 @@ class TestGatesAuditChainVerifierIntegration:
         import datetime
 
         from zephyr.gov_audit.writer import AuditWriter
-        from zephyr.governance.rule_enforcement.audit_chain_verifier import AuditChainVerifier
-        from zephyr.governance.rule_enforcement.gate_engine.gate_context import GateResult, GateStatus
+        from zephyr.gov_enforcement.rule_enforcement.audit_chain_verifier import AuditChainVerifier
+        from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_context import GateResult, GateStatus
 
         writer = AuditWriter(data_dir=data_dir)
         verifier = AuditChainVerifier()

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.gov_kb.pipeline.extract
 # [DOMAIN] D_GOV_KB
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -45,8 +45,8 @@ from typing import Any
 import yaml
 
 from zephyr.gov_kb.kb_gate_task import build_kb_gate_eval_task
-from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
-from zephyr.governance.rule_enforcement.gate_types import GateResult
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
+from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult
 
 __all__ = [
     "BEST_PRACTICES_DIR_NAME",

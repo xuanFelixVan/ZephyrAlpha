@@ -145,7 +145,7 @@ def test_e2e_gate_engine_drift_budget():
     """
     E2E STEP 4: Gate Engine 执行 drift_budget check
     """
-    from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
+    from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
         CheckConfig,
         _run_check,
     )

@@ -15,4 +15,4 @@
 # [TTL] permanent
 """Re-export wrapper: compliance_rule has migrated to zephyr.portfolio.core.compliance_rule"""
 
-from zephyr.governance.rule_enforcement.compliance_rule import *  # noqa: F403
+from zephyr.gov_enforcement.rule_enforcement.compliance_rule import *  # noqa: F403

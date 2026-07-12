@@ -36,12 +36,12 @@ from zephyr.governance.persistence.task_repo import (
     GateViolationError,
     TaskRepository,
 )
-from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
     GateEngine,
     GateEngineError,
     GateResult,
 )
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 from zephyr.shared.foundation.models import TaskCard
 
 # ---------------------------------------------------------------------------

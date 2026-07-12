@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.governance.rule_enforcement.rule_engine.rule_shadow_runner import RuleShadowRunner
+from zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_shadow_runner import RuleShadowRunner
 
 
 class TestRuleShadowRunnerInit:

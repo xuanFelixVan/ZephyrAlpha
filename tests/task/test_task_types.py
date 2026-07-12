@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
-from zephyr.governance.rule_enforcement.task_types import (
+from zephyr.gov_enforcement.rule_enforcement.task_types import (
     ExecutionModel,
     Task,
     TaskNamespace,

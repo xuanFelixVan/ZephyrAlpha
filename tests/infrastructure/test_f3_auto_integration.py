@@ -39,7 +39,7 @@ _NOW = datetime.now(UTC)
 
 def _make_taskcard(task_id: str, depends_on: list[str] | None = None) -> "TaskCard":
     """创建最小化测试 TaskCard，含全部 18 必填字段。"""
-    from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
+    from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.schema.task_types import TaskCard
 
@@ -151,7 +151,7 @@ class TestBootHooksRealIntegration:
 
     def test_auto_unblock_dependents_hook_fires(self):
         """auto_unblock_dependents 钩子：COMPLETED 任务自动解锁下游 BLOCKED 任务。"""
-        from zephyr.governance.rule_enforcement.task_types import TaskStatus
+        from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
         from zephyr.trading.boot_hooks import register_boot_hooks
 
         tmp_dir, repo = _make_temp_db()
@@ -186,7 +186,7 @@ class TestBootHooksRealIntegration:
 
     def test_auto_unblock_partial_deps_not_unlocked(self):
         """auto_unblock_dependents：部分依赖未完成时不解锁。"""
-        from zephyr.governance.rule_enforcement.task_types import TaskStatus
+        from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
         from zephyr.trading.boot_hooks import register_boot_hooks
 
         tmp_dir, repo = _make_temp_db()
@@ -375,7 +375,7 @@ class TestTaskQueueDispatchIntegration:
 
         PENDING 不能直接转到 READY（非法转换），使用 PENDING → BLOCKED → READY 路径。
         """
-        from zephyr.governance.rule_enforcement.task_types import TaskStatus
+        from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
         from zephyr.governance.persistence.task_repo import TaskRepository
 
         db_path = tmp_path / "test.db"
@@ -403,7 +403,7 @@ class TestTaskQueueDispatchIntegration:
 
     def test_dispatch_handler_ignores_non_ready_tasks(self, tmp_path):
         """dispatch handler 忽略非 READY/PENDING 状态的任务。"""
-        from zephyr.governance.rule_enforcement.task_types import TaskStatus
+        from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
         from zephyr.governance.persistence.task_repo import TaskRepository
 
         db_path = tmp_path / "test.db"
@@ -442,7 +442,7 @@ class TestShutdownStatePersistence:
 
     def test_task_state_persists_after_repo_close(self, tmp_path):
         """任务状态在 repo.close() 后仍持久化在 SQLite。"""
-        from zephyr.governance.rule_enforcement.task_types import TaskStatus
+        from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
         from zephyr.governance.persistence.task_repo import TaskRepository
 
         db_path = tmp_path / "persist.db"
@@ -471,7 +471,7 @@ class TestShutdownStatePersistence:
 
     def test_boot_shutdown_preserves_task_data(self, tmp_path):
         """模拟 boot/shutdown 循环后任务数据完整。"""
-        from zephyr.governance.rule_enforcement.task_types import TaskStatus
+        from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
         from zephyr.governance.persistence.task_repo import TaskRepository
 
         db_path = tmp_path / "lifecycle.db"

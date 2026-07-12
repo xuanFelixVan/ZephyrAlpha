@@ -13,7 +13,7 @@
 
 """trading-contracts.risk — risk management domain contracts."""
 
-from zephyr.governance.rule_enforcement.compliance_rule import ComplianceRule
+from zephyr.gov_enforcement.rule_enforcement.compliance_rule import ComplianceRule
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError
 from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits

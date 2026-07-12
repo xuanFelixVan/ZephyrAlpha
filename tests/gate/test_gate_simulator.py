@@ -27,9 +27,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.governance.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
-from zephyr.governance.rule_enforcement.gate_engine.gate_pipeline import GatePipeline, GateStep
-from zephyr.governance.rule_enforcement.gate_engine.gate_simulator import GateSimulator, SimulationReport
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_pipeline import GatePipeline, GateStep
+from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_simulator import GateSimulator, SimulationReport
 
 
 def _make_pass_checker(gate_id: str) -> GateStep:

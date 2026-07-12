@@ -18,7 +18,7 @@ import os
 import uuid
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.rule_enforcement.integration_test_runner import (
+from zephyr.gov_enforcement.rule_enforcement.integration_test_runner import (
     IntegrationTestRunner,
     SelfTestResult,
 )

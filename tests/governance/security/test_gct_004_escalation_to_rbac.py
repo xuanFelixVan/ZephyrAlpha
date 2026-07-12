@@ -15,13 +15,13 @@ class TestGCT004EscalationToRBAC:
     """验证 escalation/approval.py 的 ApprovalRequest 可被 agent-rbac/approver_check.py 验证."""
 
     def test_approval_request_creatable(self):
-        from zephyr.governance.rule_enforcement.approval import ApprovalRequest
+        from zephyr.gov_enforcement.rule_enforcement.approval import ApprovalRequest
 
         req = ApprovalRequest(task_id="T001", requested_action="deploy", human_approver="admin", reason="emergency")
         assert req.task_id == "T001"
 
     def test_approver_check_accepts_request(self):
-        from zephyr.governance.rule_enforcement.approval import ApprovalRequest
+        from zephyr.gov_enforcement.rule_enforcement.approval import ApprovalRequest
         from zephyr.security.access_control.approver_check import verify_approver
 
         req = ApprovalRequest(task_id="T002", requested_action="read:docs", human_approver="bytebuddy", reason="test")

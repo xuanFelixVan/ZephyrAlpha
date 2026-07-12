@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.skills.skill_executor
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.contracts.protocols; zephyr.gov_audit.writer; zephyr.governance.rule_enforcement.gate_engine
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.contracts.protocols; zephyr.gov_audit.writer; zephyr.gov_enforcement.rule_enforcement.gate_engine
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -337,7 +337,7 @@ class SkillExecutor:
     def _run_gate_checks(self, skill_id: str, l1: dict[str, Any], results: dict[str, Any]) -> list[GateResult]:
         gate_results: list[GateResult] = []
 
-        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
+        from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 
         engine = GateEngine()
         gate_results.append(GateResult("G0", True, "GateEngine accessible"))

@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.governance.rule_enforcement.secrets_guard import SecretsGuard
+from zephyr.gov_enforcement.rule_enforcement.secrets_guard import SecretsGuard
 
 
 class TestSecretsGuardInstantiation:

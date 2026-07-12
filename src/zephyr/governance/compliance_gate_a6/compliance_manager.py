@@ -40,7 +40,7 @@ from __future__ import annotations
 import abc
 from typing import ClassVar
 
-from zephyr.governance.rule_enforcement.compliance_rule import ComplianceRule
+from zephyr.gov_enforcement.rule_enforcement.compliance_rule import ComplianceRule
 
 
 class ComplianceManagerBase(abc.ABC):

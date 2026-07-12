@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.can_i_deploy import CanIDeploy
+from zephyr.gov_enforcement.rule_enforcement.can_i_deploy import CanIDeploy
 
 
 @pytest.fixture

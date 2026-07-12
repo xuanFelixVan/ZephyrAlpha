@@ -17,7 +17,7 @@ import json
 import os
 import uuid
 
-from zephyr.governance.rule_enforcement.integration_test_runner import (
+from zephyr.gov_enforcement.rule_enforcement.integration_test_runner import (
     IntegrationTestRunner,
     SelfTestResult,
 )

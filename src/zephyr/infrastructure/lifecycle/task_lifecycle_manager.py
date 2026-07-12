@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-114 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.lifecycle.task_lifecycle_manager
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.task_types
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.task_types
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -37,7 +37,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.rule_enforcement.task_types import TaskStatus
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 
 # TaskStatus 真源：zephyr.governance.rule_enforcement.task_types.TaskStatus（SSoT）
 # P2 修复（2026-07-05）：原本地 class TaskStatus 定义已删除，改为 import re-export，

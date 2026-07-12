@@ -229,7 +229,7 @@ class TestAkshareRealData:
             AkshareProvider,
         )
 
-        from zephyr.governance.rule_enforcement.default_quality_gate import (
+        from zephyr.gov_enforcement.rule_enforcement.default_quality_gate import (
             DefaultQualityGate,
         )
 
@@ -291,7 +291,7 @@ class TestAkshareMiniPipeline:
 
     def test_quality_gate_batch_on_real_data(self, real_data):
         """批量质检真实数据"""
-        from zephyr.governance.rule_enforcement.default_quality_gate import (
+        from zephyr.gov_enforcement.rule_enforcement.default_quality_gate import (
             DefaultQualityGate,
         )
 

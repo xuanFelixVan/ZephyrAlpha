@@ -253,7 +253,7 @@ def test_01_taskcard_string_dates():
 def test_02_task_repo_crud():
     """测试 TaskRepo CRUD + 状态机"""
     from zephyr.governance.persistence.task_repo import InvalidTransitionError, TaskRepository
-    from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
+    from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard
 
@@ -302,7 +302,7 @@ def test_02_task_repo_crud():
 def test_02_task_repo_lifecycle():
     """测试完整状态生命周期 PENDING→IN_PROGRESS→COMPLETED→VERIFIED"""
     from zephyr.governance.persistence.task_repo import TaskRepository
-    from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
+    from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard
 
@@ -750,7 +750,7 @@ def test_06_mcp_persist_and_load():
 
 def test_07_inheritance_chain():
     """验证 TaskCard 是 Task 的子类"""
-    from zephyr.governance.rule_enforcement.task_types import Task
+    from zephyr.gov_enforcement.rule_enforcement.task_types import Task
     from zephyr.shared.foundation.models import TaskCard
 
     assert issubclass(TaskCard, Task), "TaskCard MUST be subclass of Task"
@@ -758,7 +758,7 @@ def test_07_inheritance_chain():
 
 def test_07_field_statistics():
     """统计 TaskCard 字段数"""
-    from zephyr.governance.rule_enforcement.task_types import Task
+    from zephyr.gov_enforcement.rule_enforcement.task_types import Task
     from zephyr.shared.foundation.models import TaskCard
 
     tc_fields = set(TaskCard.model_fields.keys())
@@ -776,7 +776,7 @@ def test_07_field_statistics():
 
 def test_08_triage_task_construction():
     """测试 TriageGate 内部 Task(title=...) 构造"""
-    from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus, normalize_execution_model
+    from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus, normalize_execution_model
     from zephyr.integration.shared.schema.severity_types import SafetyLevel
     from zephyr.shared.foundation.models import TaskCard
 
@@ -802,7 +802,7 @@ def test_08_triage_task_construction():
 
 def test_08_task_name_field_rejected():
     """测试 Task(name=...) 字段应被 extra=forbid 拒绝"""
-    from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus, normalize_execution_model
+    from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus, normalize_execution_model
     from zephyr.integration.shared.schema.severity_types import SafetyLevel
     from zephyr.shared.foundation.models import TaskCard
 

@@ -35,7 +35,7 @@ def test_trigger_recovery_importable():
 
 
 def test_trigger_recovery_via_gates_init():
-    from zephyr.governance.rule_enforcement import trigger_recovery
+    from zephyr.gov_enforcement.rule_enforcement import trigger_recovery
 
     assert callable(trigger_recovery)
 

@@ -18,7 +18,7 @@ from unittest.mock import MagicMock
 
 import yaml
 
-from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolation
+from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolation
 from zephyr.intelligence.model_evaluation.activate import (
     ACTIVE_DIR_NAME,
     FUTURE_DIR_NAME,

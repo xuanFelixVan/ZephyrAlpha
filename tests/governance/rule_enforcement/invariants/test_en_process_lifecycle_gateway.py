@@ -18,7 +18,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.rule_enforcement.invariants.en_process_lifecycle_gateway import (
+from zephyr.gov_enforcement.rule_enforcement.invariants.en_process_lifecycle_gateway import (
     ALLOWED_FILES,
     GateResult,
     ProcessCreationScanner,

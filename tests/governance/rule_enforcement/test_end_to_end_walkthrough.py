@@ -1,7 +1,7 @@
 # [A_test] module_id: SRC-TST-0835 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 
-# [MODULE] zephyr.governance.rule_enforcement.end_to_end_walkthrough
+# [MODULE] zephyr.gov_enforcement.rule_enforcement.end_to_end_walkthrough
 
 # [INVARIANTS] WalkthroughScenario has 7 members; ScenarioResult.failures defaults to empty list; pass_rate returns 0.0 when no results
 
@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.end_to_end_walkthrough import (
+from zephyr.gov_enforcement.rule_enforcement.end_to_end_walkthrough import (
     EndToEndWalkthrough,
     ScenarioResult,
     WalkthroughScenario,

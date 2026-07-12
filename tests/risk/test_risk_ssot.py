@@ -26,7 +26,7 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
+from zephyr.gov_enforcement.rule_enforcement.risk_ssot import load_risk_params_ssot
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 

@@ -14,7 +14,7 @@ Minimum: 5 tests
 
 from pathlib import Path
 
-from zephyr.governance.rule_enforcement.task_completion_gate import (
+from zephyr.gov_enforcement.rule_enforcement.task_completion_gate import (
     Disposition,
     GateReport,
     ResidualFile,

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.truth_source_validator import (
+from zephyr.gov_enforcement.rule_enforcement.truth_source_validator import (
     TruthClaim,
     TruthSourceValidator,
     TruthTier,

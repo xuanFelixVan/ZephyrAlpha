@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.orchestrator.execution.trigger_router
 # [DOMAIN] D_ORCHESTRATOR
-# [DEPENDENCIES] zephyr.trading.__init__; zephyr.governance.rule_enforcement.drift_detector; zephyr.feedback_loop.__init__
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.gov_enforcement.rule_enforcement.drift_detector; zephyr.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -649,7 +649,7 @@ def handle_drift_detected(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     对标 MOD-INF-023 (drift-detector)。
     """
     try:
-        from zephyr.governance.rule_enforcement.drift_detector import trigger_recovery
+        from zephyr.gov_enforcement.rule_enforcement.drift_detector import trigger_recovery
 
         result = trigger_recovery(payload)
         return {

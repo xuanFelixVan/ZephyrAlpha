@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/adversarial_sys_master_test.py | §
 # [MODULE] scripts.governance.adversarial_sys_master_test
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.sys_master_compliance
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.sys_master_compliance
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -37,7 +37,7 @@ GATE = [sys.executable, str(PROJECT_ROOT / "src" / "zephyr" / "gates" / "sys_mas
 
 def run_gate() -> list[dict]:
     """run_gate implementation - call check functions directly to avoid subprocess/argv issues."""
-    from zephyr.governance.rule_enforcement.sys_master_compliance import (
+    from zephyr.gov_enforcement.rule_enforcement.sys_master_compliance import (
         check_ai_rules_count,
         check_blueprint_existence,
         check_cold_start_integration,
