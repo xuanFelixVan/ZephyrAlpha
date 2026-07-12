@@ -1,7 +1,7 @@
 %% D_GOV_OPS_RESILIENCE 域全景依赖图
-%% 生成时间: 2026-07-13 01:56:15
+%% 生成时间: 2026-07-13 04:28:36
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 79, 依赖边数: 183
+%% 模块数: 79, 依赖边数: 182
 
 graph TD
 
@@ -96,11 +96,11 @@ graph TD
     src_zephyr_governance_escalation___init___py -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_escalation___init___py -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation___init___py -->|import_depends| src_zephyr_governance_resilien___vernance_circuit_breaker_py
+    src_zephyr_governance_resilien___nce_decision_fatigue_cli_py -->|import_depends| src_zephyr_governance_resilien___ernance_decision_fatigue_py
     src_zephyr_governance_resilien___ance_f5_boot_integration_py -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_resilien___ance_f5_boot_integration_py -->|import_depends| src_zephyr_governance_resilien___rnance_deadlock_detector_py
     src_zephyr_governance_resilien___ance_f5_boot_integration_py -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilien___ance_f5_event_subscriber_py -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
-    src_zephyr_governance_resilien___nce_decision_fatigue_cli_py -->|import_depends| src_zephyr_governance_resilien___ernance_decision_fatigue_py
     src_zephyr_governance_security___nance_adversarial_tester_py -->|import_depends| src_zephyr_governance_security_governance_ipi_defense_py
     src_zephyr_governance_security___nance_adversarial_tester_py -->|import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
     src_zephyr_governance_security___default_security_gateway_py -->|import_depends| src_zephyr_governance_security___ce_security_gateway_base_py
@@ -112,27 +112,27 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_security_governance_ipi_defense_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_security_governance_config_scanner_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_resilien___vernance_circuit_breaker_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_clock_guard_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_consequence_manager_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_resilien___vernance_circuit_breaker_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_resilien___rnance_deadlock_detector_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_consequence_manager_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_resilien___ernance_decision_fatigue_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_gove___ror_budget_burst_limiter_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_api_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_metrics_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_api_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_gove___ror_budget_burst_limiter_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_security_governance_ghost_scan_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_contracts_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_identity_verifier_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_interrupt_handler_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_contracts_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_api_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalati___calation_fatigue_manager_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_contracts_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_contracts_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_loop_detector_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_incident_response_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_metrics_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_smoke_tests_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_auto_runner_py
@@ -161,8 +161,6 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation___init___py
     %% D_GOV_AUDIT -> D_GOV_OPS_RESILIENCE (1 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
-    %% D_GOV_DOCS -> D_GOV_OPS_RESILIENCE (1 条)
-    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_governance_resilience_governance___init___py
     %% D_GOV_ENFORCEMENT -> D_GOV_OPS_RESILIENCE (2 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_security___default_security_gateway_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_security___ce_security_gateway_base_py
@@ -225,5 +223,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 17 条
-    %% 跨域入边: 135 条
+    %% 跨域入边: 134 条
     %% 跨域出边: 31 条

@@ -20,11 +20,11 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 域总数 | 56 |
-| 模块总数 | 4792 |
-| 生产态模块 | 1478 |
+| 域总数 | 61 |
+| 模块总数 | 4916 |
+| 生产态模块 | 1609 |
 | 设计态模块 | 64 |
-| 原型态模块 | 3250 |
+| 原型态模块 | 3243 |
 
 ## 域清单（按架构层分组）
 
@@ -47,8 +47,8 @@ ttl: permanent
 | D_DATA_ENG | 数据工程 / Data Engineering | 7 | 0 | 0 | 7 | 7/150 (OK) | [08_d_data_eng.md](08_d_data_eng.md) |
 | D_DATA_GOV | 数据治理 / Data Governance | 7 | 0 | 0 | 7 | 7/150 (OK) | [09_d_data_gov.md](09_d_data_gov.md) |
 | D_DATA_SEC | 数据安全与契约 / Data Security & Contracts | 7 | 0 | 0 | 7 | 7/150 (OK) | [10_d_data_sec.md](10_d_data_sec.md) |
-| D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 72 | 67 | 0 | 5 | 72/150 (OK) | [11_d_fbl_verification.md](11_d_fbl_verification.md) |
-| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 264 | 111 | 0 | 153 | 264/150 (超容) | [12_d_feedback_loop.md](12_d_feedback_loop.md) |
+| D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 54 | 50 | 0 | 4 | 54/150 (OK) | [11_d_fbl_verification.md](11_d_fbl_verification.md) |
+| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 253 | 107 | 0 | 146 | 253/150 (超容) | [12_d_feedback_loop.md](12_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 31 | 13 | 6 | 12 | 31/150 (OK) | [13_d_frontend.md](13_d_frontend.md) |
 | D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 107 | 100 | 0 | 7 | 107/150 (OK) | [14_d_gov_code_quality.md](14_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 79 | 76 | 0 | 3 | 79/150 (OK) | [15_d_gov_ops_resilience.md](15_d_gov_ops_resilience.md) |
@@ -56,7 +56,7 @@ ttl: permanent
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 2 | 1 | 0 | 1 | 2/150 (OK) | [17_d_integration_gateway.md](17_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [18_d_mkt_data.md](18_d_mkt_data.md) |
 | D_OPS | telemetry / Feedback Loop | 8 | 7 | 0 | 1 | 8/150 (OK) | [19_d_ops.md](19_d_ops.md) |
-| D_ORCHESTRATOR | agent_orchestrator / Agent Orchestrator | 74 | 60 | 0 | 14 | 74/150 (OK) | [20_d_orchestrator.md](20_d_orchestrator.md) |
+| D_ORCHESTRATOR | agent_orchestrator / Agent Orchestrator | 70 | 58 | 0 | 12 | 70/150 (OK) | [20_d_orchestrator.md](20_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 10 | 1 | 0 | 9 | 10/150 (OK) | [21_d_reporting.md](21_d_reporting.md) |
 | D_SECURITY | orphan_judge / Adversarial Validation | 180 | 101 | 0 | 79 | 180/150 (超容) | [22_d_security.md](22_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 13 | 5 | 0 | 8 | 13/150 (OK) | [23_d_security_llm.md](23_d_security_llm.md) |
@@ -67,7 +67,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_ASHARE_SIGNAL | ashare_signal / A-Share Signal | 7 | 0 | 0 | 7 | 7/150 (OK) | [25_d_ashare_signal.md](25_d_ashare_signal.md) |
-| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1703 | 49 | 0 | 1654 | 1703/150 (超容) | [26_d_audittest.md](26_d_audittest.md) |
+| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1657 | 49 | 0 | 1608 | 1657/150 (超容) | [26_d_audittest.md](26_d_audittest.md) |
 | D_AUTONOMY_PERM | budget_enforcement / Autonomy Protection | 16 | 0 | 0 | 16 | 16/150 (OK) | [27_d_autonomy_perm.md](27_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 33 | 9 | 8 | 16 | 33/150 (OK) | [28_d_backtest.md](28_d_backtest.md) |
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 8 | 1 | 1 | 6 | 8/150 (OK) | [29_d_cross_asset.md](29_d_cross_asset.md) |
@@ -77,12 +77,12 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [33_d_ex_sor.md](33_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 14 | 4 | 0 | 10 | 14/150 (OK) | [34_d_factor.md](34_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 24 | 3 | 0 | 21 | 24/150 (OK) | [35_d_fundamental_signal.md](35_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 699 | 109 | 3 | 587 | 699/150 (超容) | [36_d_governance.md](36_d_governance.md) |
-| D_GOV_AUDIT | audit_orchestration / Audit Trail | 103 | 63 | 2 | 38 | 103/150 (OK) | [37_d_gov_audit.md](37_d_gov_audit.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 716 | 114 | 3 | 599 | 716/150 (超容) | [36_d_governance.md](36_d_governance.md) |
+| D_GOV_AUDIT | audit_orchestration / Audit Trail | 101 | 63 | 2 | 36 | 101/150 (OK) | [37_d_gov_audit.md](37_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 96 | 68 | 28 | 0 | 96/150 (OK) | [38_d_gov_docs.md](38_d_gov_docs.md) |
-| D_GOV_DRIFT | drift_detection / Drift Detection | 26 | 22 | 1 | 3 | 26/150 (OK) | [39_d_gov_drift.md](39_d_gov_drift.md) |
-| D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 57 | 16 | 0 | 41 | 57/150 (OK) | [40_d_gov_enforcement.md](40_d_gov_enforcement.md) |
-| D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 34 | 16 | 0 | 18 | 34/150 (OK) | [41_d_gov_kb.md](41_d_gov_kb.md) |
+| D_GOV_DRIFT | drift_detection / Drift Detection | 71 | 66 | 1 | 4 | 71/150 (OK) | [39_d_gov_drift.md](39_d_gov_drift.md) |
+| D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 140 | 100 | 0 | 40 | 140/150 (OK) | [40_d_gov_enforcement.md](40_d_gov_enforcement.md) |
+| D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 30 | 16 | 0 | 14 | 30/150 (OK) | [41_d_gov_kb.md](41_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 0 | 0 | 0 | 0 | 0/200 (OK) | [42_d_gov_repair.md](42_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 33 | 30 | 0 | 3 | 33/200 (OK) | [43_d_gov_rule.md](43_d_gov_rule.md) |
 | D_GOV_SCRIPTS | script_governance / Script Governance | 89 | 25 | 0 | 64 | 89/150 (OK) | [44_d_gov_scripts.md](44_d_gov_scripts.md) |
@@ -98,3 +98,13 @@ ttl: permanent
 | D_SIGQC | signal_quality / Signal Quality Control | 8 | 0 | 0 | 8 | 8/150 (OK) | [54_d_sigqc.md](54_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 11 | 2 | 1 | 8 | 11/150 (OK) | [55_d_simulation.md](55_d_simulation.md) |
 | D_TRADING | 交易运营 / Trading Operations | 43 | 19 | 0 | 24 | 43/150 (OK) | [56_d_trading.md](56_d_trading.md) |
+
+### 未分类 / 未分类 (5 个域 / 5 domains)
+
+| 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
+|------|--------|:---:|:---:|:---:|:---:|------|------|
+| D_BEHAVIORAL_AUDIT | drift_detector_core / Behavioral Audit | 6 | 5 | 0 | 1 | 6/200 (OK) | [57_d_behavioral_audit.md](57_d_behavioral_audit.md) |
+| D_COMPLIANCE | compliance_gate / Compliance | 2 | 0 | 0 | 2 | 2/200 (OK) | [58_d_compliance.md](58_d_compliance.md) |
+| D_DATA | data_source_integrator / D_DATA | 31 | 6 | 0 | 25 | 31/200 (OK) | [59_d_data.md](59_d_data.md) |
+| D_INFRASTRUCTURE | shared_contracts / D_INFRASTRUCTURE | 24 | 9 | 0 | 15 | 24/200 (OK) | [60_d_infrastructure.md](60_d_infrastructure.md) |
+| D_SIGLEGACY | signal_legacy / Signal Legacy (Design) | 1 | 1 | 0 | 0 | 1/200 (OK) | [61_d_siglegacy.md](61_d_siglegacy.md) |

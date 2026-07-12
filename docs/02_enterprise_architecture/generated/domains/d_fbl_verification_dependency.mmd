@@ -1,144 +1,157 @@
 %% D_FBL_VERIFICATION 域全景依赖图
-%% 生成时间: 2026-07-13 01:56:15
+%% 生成时间: 2026-07-13 04:28:36
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 55, 依赖边数: 113
+%% 模块数: 54, 依赖边数: 120
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_FBL_VERIFICATION[feedback_verification]
-        src_zephyr_trading_feedback_loop_gates___init___py["...ading/feedback_loop/gates/__init__.py [prototype]"]
-        src_zephyr_trading_feedback_loop_gates__governance_gates_py["...dback_loop/gates/_governance_gates.py [prototype]"]
-        src_zephyr_trading_feedback_loop_gates__operational_gates_py["...back_loop/gates/_operational_gates.py [prototype]"]
-        src_zephyr_trading_feedback_loop_gates__safety_gates_py[".../feedback_loop/gates/_safety_gates.py [prototype]"]
-        src_zephyr_trading_feedback_loop_gates__security_gates_py["...eedback_loop/gates/_security_gates.py [prototype]"]
-        src_zephyr_trading_feedback_lo___tes_action_reversibility_py["...ck_loop/gates/action_reversibility.py [production]"]
-        src_zephyr_trading_feedback_lo___s_adversarial_validation_py["..._loop/gates/adversarial_validation.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_autonomy_credit_py["...eedback_loop/gates/autonomy_credit.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_autonomy_maturity_py["...dback_loop/gates/autonomy_maturity.py [production]"]
-        src_zephyr_trading_feedback_lo___lueprint_code_reconciler_py["...op/gates/blueprint_code_reconciler.py [production]"]
-        src_zephyr_trading_feedback_lo___ates_blueprint_validator_py["...ack_loop/gates/blueprint_validator.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_checkpoint_manager_py["...back_loop/gates/checkpoint_manager.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_ci_cd_pre_scanner_py["...dback_loop/gates/ci_cd_pre_scanner.py [production]"]
-        src_zephyr_trading_feedback_lo___ent_change_deconfliction_py["...es/concurrent_change_deconfliction.py [production]"]
-        src_zephyr_trading_feedback_lo___config_complexity_budget_py["...oop/gates/config_complexity_budget.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_config_governance_py["...dback_loop/gates/config_governance.py [production]"]
-        src_zephyr_trading_feedback_lo___tes_conflict_arbitration_py["...ck_loop/gates/conflict_arbitration.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_cve_scanner_py["...ng/feedback_loop/gates/cve_scanner.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_data_quality_gate_py["...dback_loop/gates/data_quality_gate.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_db_integrity_py["...g/feedback_loop/gates/db_integrity.py [production]"]
-        src_zephyr_trading_feedback_lo___s_deployment_suppression_py["..._loop/gates/deployment_suppression.py [production]"]
-        src_zephyr_trading_feedback_lo____dynamic_llm_cost_router_py["...loop/gates/dynamic_llm_cost_router.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_emergency_takeover_py["...back_loop/gates/emergency_takeover.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_federated_security_py["...back_loop/gates/federated_security.py [production]"]
-        src_zephyr_trading_feedback_lo___s_flag_lifecycle_manager_py["..._loop/gates/flag_lifecycle_manager.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_license_compliance_py["...back_loop/gates/license_compliance.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_llm_cost_router_py["...eedback_loop/gates/llm_cost_router.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_merkle_audit_root_py["...dback_loop/gates/merkle_audit_root.py [production]"]
-        src_zephyr_trading_feedback_lo___es_meta_performance_gate_py["...k_loop/gates/meta_performance_gate.py [production]"]
-        src_zephyr_trading_feedback_lo___arameterized_safety_gate_py["...op/gates/parameterized_safety_gate.py [production]"]
-        src_zephyr_trading_feedback_loop_gates_safety_gate_l1_l27_py["...back_loop/gates/safety_gate_l1_l27.py [production]"]
-        src_zephyr_trading_feedback_lo___ates_scope_creep_monitor_py["...ack_loop/gates/scope_creep_monitor.py [production]"]
-        src_zephyr_trading_feedback_loop_verifiers_ab_test_py["...ng/feedback_loop/verifiers/ab_test.py [production]"]
-        src_zephyr_trading_feedback_lo___rs_action_explainability_py["...op/verifiers/action_explainability.py [production]"]
-        src_zephyr_trading_feedback_lo___iers_ai_comment_veracity_py["...loop/verifiers/ai_comment_veracity.py [production]"]
-        src_zephyr_trading_feedback_lo___rifiers_attack_simulator_py["...ck_loop/verifiers/attack_simulator.py [production]"]
-        src_zephyr_trading_feedback_loop_verifiers_auto_rollback_py["...dback_loop/verifiers/auto_rollback.py [production]"]
-        src_zephyr_trading_feedback_lo___reproducibility_verifier_py["...ers/build_reproducibility_verifier.py [production]"]
-        src_zephyr_trading_feedback_loop_verifiers_canary_repair_py["...dback_loop/verifiers/canary_repair.py [production]"]
-        src_zephyr_trading_feedback_lo___cading_rollback_analyzer_py["...ifiers/cascading_rollback_analyzer.py [production]"]
-        src_zephyr_trading_feedback_lo___blueprint_contract_drift_py["...ers/cross_blueprint_contract_drift.py [production]"]
-        src_zephyr_trading_feedback_lo___cross_module_integration_py["...verifiers/cross_module_integration.py [production]"]
-        src_zephyr_trading_feedback_lo___sion_knowledge_integrity_py[".../cross_session_knowledge_integrity.py [production]"]
-        src_zephyr_trading_feedback_lo___ers_digital_twin_sandbox_py["...oop/verifiers/digital_twin_sandbox.py [production]"]
-        src_zephyr_trading_feedback_lo___erifiers_dry_run_sandbox_py["...ack_loop/verifiers/dry_run_sandbox.py [production]"]
-        src_zephyr_trading_feedback_lo___fiers_federated_protocol_py["..._loop/verifiers/federated_protocol.py [production]"]
-        src_zephyr_trading_feedback_lo___ers_golden_test_external_py["...oop/verifiers/golden_test_external.py [production]"]
-        src_zephyr_trading_feedback_lo___fiers_no_llm_degradation_py["..._loop/verifiers/no_llm_degradation.py [production]"]
-        src_zephyr_trading_feedback_lo___ers_pre_flight_simulator_py["...oop/verifiers/pre_flight_simulator.py [production]"]
-        src_zephyr_trading_feedback_lo___ifiers_preventive_repair_py["...k_loop/verifiers/preventive_repair.py [production]"]
-        src_zephyr_trading_feedback_lo___fiers_rollback_integrity_py["..._loop/verifiers/rollback_integrity.py [production]"]
-        src_zephyr_trading_feedback_lo___ers_sim2real_calibration_py["...oop/verifiers/sim2real_calibration.py [production]"]
-        src_zephyr_trading_feedback_lo___astic_diagnosis_verifier_py["...iers/stochastic_diagnosis_verifier.py [production]"]
-        src_zephyr_trading_feedback_lo___iers_toctou_revalidation_py["...loop/verifiers/toctou_revalidation.py [production]"]
-        src_zephyr_trading_feedback_lo___iers_verification_engine_py["...loop/verifiers/verification_engine.py [production]"]
+        src_zephyr_feedback_loop_gates__governance_gates_py["...dback_loop/gates/_governance_gates.py [prototype]"]
+        src_zephyr_feedback_loop_gates__operational_gates_py["...back_loop/gates/_operational_gates.py [prototype]"]
+        src_zephyr_feedback_loop_gates__safety_gates_py[".../feedback_loop/gates/_safety_gates.py [prototype]"]
+        src_zephyr_feedback_loop_gates__security_gates_py["...eedback_loop/gates/_security_gates.py [prototype]"]
+        src_zephyr_feedback_loop_gates_action_reversibility_py["...ck_loop/gates/action_reversibility.py [production]"]
+        src_zephyr_feedback_loop_gates_adversarial_validation_py["..._loop/gates/adversarial_validation.py [production]"]
+        src_zephyr_feedback_loop_gates_autonomy_credit_py["...eedback_loop/gates/autonomy_credit.py [production]"]
+        src_zephyr_feedback_loop_gates_autonomy_maturity_py["...dback_loop/gates/autonomy_maturity.py [production]"]
+        src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py["...op/gates/blueprint_code_reconciler.py [production]"]
+        src_zephyr_feedback_loop_gates_blueprint_validator_py["...ack_loop/gates/blueprint_validator.py [production]"]
+        src_zephyr_feedback_loop_gates_checkpoint_manager_py["...back_loop/gates/checkpoint_manager.py [production]"]
+        src_zephyr_feedback_loop_gates_ci_cd_pre_scanner_py["...dback_loop/gates/ci_cd_pre_scanner.py [production]"]
+        src_zephyr_feedback_loop_gates___ent_change_deconfliction_py["...es/concurrent_change_deconfliction.py [production]"]
+        src_zephyr_feedback_loop_gates_config_complexity_budget_py["...oop/gates/config_complexity_budget.py [production]"]
+        src_zephyr_feedback_loop_gates_config_governance_py["...dback_loop/gates/config_governance.py [production]"]
+        src_zephyr_feedback_loop_gates_conflict_arbitration_py["...ck_loop/gates/conflict_arbitration.py [production]"]
+        src_zephyr_feedback_loop_gates_cve_scanner_py["...yr/feedback_loop/gates/cve_scanner.py [production]"]
+        src_zephyr_feedback_loop_gates_data_quality_gate_py["...dback_loop/gates/data_quality_gate.py [production]"]
+        src_zephyr_feedback_loop_gates_db_integrity_py["...r/feedback_loop/gates/db_integrity.py [production]"]
+        src_zephyr_feedback_loop_gates_deployment_suppression_py["..._loop/gates/deployment_suppression.py [production]"]
+        src_zephyr_feedback_loop_gates_dynamic_llm_cost_router_py["...loop/gates/dynamic_llm_cost_router.py [production]"]
+        src_zephyr_feedback_loop_gates_emergency_takeover_py["...back_loop/gates/emergency_takeover.py [production]"]
+        src_zephyr_feedback_loop_gates_federated_security_py["...back_loop/gates/federated_security.py [production]"]
+        src_zephyr_feedback_loop_gates_flag_lifecycle_manager_py["..._loop/gates/flag_lifecycle_manager.py [production]"]
+        src_zephyr_feedback_loop_gates_license_compliance_py["...back_loop/gates/license_compliance.py [production]"]
+        src_zephyr_feedback_loop_gates_llm_cost_router_py["...eedback_loop/gates/llm_cost_router.py [production]"]
+        src_zephyr_feedback_loop_gates_merkle_audit_root_py["...dback_loop/gates/merkle_audit_root.py [production]"]
+        src_zephyr_feedback_loop_gates_meta_performance_gate_py["...k_loop/gates/meta_performance_gate.py [production]"]
+        src_zephyr_feedback_loop_gates_parameterized_safety_gate_py["...op/gates/parameterized_safety_gate.py [production]"]
+        src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py["...back_loop/gates/safety_gate_l1_l27.py [production]"]
+        src_zephyr_feedback_loop_gates_scope_creep_monitor_py["...ack_loop/gates/scope_creep_monitor.py [production]"]
+        src_zephyr_feedback_loop_verifiers_ab_test_py["...yr/feedback_loop/verifiers/ab_test.py [production]"]
+        src_zephyr_feedback_loop_verifiers_action_explainability_py["...op/verifiers/action_explainability.py [production]"]
+        src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py["...loop/verifiers/ai_comment_veracity.py [production]"]
+        src_zephyr_feedback_loop_verifiers_attack_simulator_py["...ck_loop/verifiers/attack_simulator.py [production]"]
+        src_zephyr_feedback_loop_verifiers_auto_rollback_py["...dback_loop/verifiers/auto_rollback.py [production]"]
+        src_zephyr_feedback_loop_verif___reproducibility_verifier_py["...ers/build_reproducibility_verifier.py [production]"]
+        src_zephyr_feedback_loop_verifiers_canary_repair_py["...dback_loop/verifiers/canary_repair.py [production]"]
+        src_zephyr_feedback_loop_verif___cading_rollback_analyzer_py["...ifiers/cascading_rollback_analyzer.py [production]"]
+        src_zephyr_feedback_loop_verif___blueprint_contract_drift_py["...ers/cross_blueprint_contract_drift.py [production]"]
+        src_zephyr_feedback_loop_verif___cross_module_integration_py["...verifiers/cross_module_integration.py [production]"]
+        src_zephyr_feedback_loop_verif___sion_knowledge_integrity_py[".../cross_session_knowledge_integrity.py [production]"]
+        src_zephyr_feedback_loop_verifiers_digital_twin_sandbox_py["...oop/verifiers/digital_twin_sandbox.py [production]"]
+        src_zephyr_feedback_loop_verifiers_dry_run_sandbox_py["...ack_loop/verifiers/dry_run_sandbox.py [production]"]
+        src_zephyr_feedback_loop_verifiers_federated_protocol_py["..._loop/verifiers/federated_protocol.py [production]"]
+        src_zephyr_feedback_loop_verifiers_golden_test_external_py["...oop/verifiers/golden_test_external.py [production]"]
+        src_zephyr_feedback_loop_verifiers_no_llm_degradation_py["..._loop/verifiers/no_llm_degradation.py [production]"]
+        src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py["...oop/verifiers/pre_flight_simulator.py [production]"]
+        src_zephyr_feedback_loop_verifiers_preventive_repair_py["...k_loop/verifiers/preventive_repair.py [production]"]
+        src_zephyr_feedback_loop_verifiers_rollback_integrity_py["..._loop/verifiers/rollback_integrity.py [production]"]
+        src_zephyr_feedback_loop_verifiers_sim2real_calibration_py["...oop/verifiers/sim2real_calibration.py [production]"]
+        src_zephyr_feedback_loop_verif___astic_diagnosis_verifier_py["...iers/stochastic_diagnosis_verifier.py [production]"]
+        src_zephyr_feedback_loop_verifiers_toctou_revalidation_py["...loop/verifiers/toctou_revalidation.py [production]"]
+        src_zephyr_feedback_loop_verifiers_verification_engine_py["...loop/verifiers/verification_engine.py [production]"]
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_trading_feedback_loop_gates___init___py -->|import_depends| src_zephyr_trading_feedback_loop_gates__governance_gates_py
-    src_zephyr_trading_feedback_loop_gates___init___py -->|import_depends| src_zephyr_trading_feedback_loop_gates__operational_gates_py
-    src_zephyr_trading_feedback_loop_gates___init___py -->|import_depends| src_zephyr_trading_feedback_loop_gates__safety_gates_py
-    src_zephyr_trading_feedback_loop_gates___init___py -->|import_depends| src_zephyr_trading_feedback_loop_gates__security_gates_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_FBL_VERIFICATION (78 条)
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___rs_action_explainability_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___tes_action_reversibility_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___iers_ai_comment_veracity_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_verifiers_ab_test_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___reproducibility_verifier_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___reproducibility_verifier_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___ifiers_preventive_repair_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___ers_pre_flight_simulator_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___ers_sim2real_calibration_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___iers_toctou_revalidation_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___iers_verification_engine_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_verifiers_auto_rollback_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_credit_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_maturity_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___lueprint_code_reconciler_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___ates_blueprint_validator_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_verifiers_canary_repair_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___config_complexity_budget_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_config_governance_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___blueprint_contract_drift_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___cross_module_integration_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___sion_knowledge_integrity_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_data_quality_gate_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_db_integrity_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___tes_action_reversibility_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___s_adversarial_validation_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_credit_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_maturity_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_checkpoint_manager_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___lueprint_code_reconciler_py
-    %% D_FEEDBACK_LOOP -> D_FBL_VERIFICATION (30 条)
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___iers_verification_engine_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___cading_rollback_analyzer_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___astic_diagnosis_verifier_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___iers_verification_engine_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___s_deployment_suppression_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_loop_gates_safety_gate_l1_l27_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_loop_gates_safety_gate_l1_l27_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_loop_verifiers_ab_test_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___rs_action_explainability_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___iers_ai_comment_veracity_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___rifiers_attack_simulator_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_loop_verifiers_auto_rollback_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___reproducibility_verifier_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_loop_verifiers_canary_repair_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___cading_rollback_analyzer_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___blueprint_contract_drift_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___cross_module_integration_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___sion_knowledge_integrity_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___ers_digital_twin_sandbox_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___erifiers_dry_run_sandbox_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___fiers_federated_protocol_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___ers_golden_test_external_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___fiers_no_llm_degradation_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___ers_pre_flight_simulator_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___ifiers_preventive_repair_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___fiers_rollback_integrity_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___ers_sim2real_calibration_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___astic_diagnosis_verifier_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___iers_toctou_revalidation_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___iers_verification_engine_py
+    %% D_AUDITTEST -> D_FBL_VERIFICATION (77 条)
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_action_explainability_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_action_reversibility_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_ab_test_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verif___reproducibility_verifier_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verif___reproducibility_verifier_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_preventive_repair_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_sim2real_calibration_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_toctou_revalidation_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_auto_rollback_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_credit_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_maturity_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_validator_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verifiers_canary_repair_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_config_complexity_budget_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_config_governance_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verif___blueprint_contract_drift_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verif___cross_module_integration_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_verif___sion_knowledge_integrity_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_db_integrity_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_action_reversibility_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_adversarial_validation_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_maturity_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_credit_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_checkpoint_manager_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_validator_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py
+    %% D_AUTONOMY_CORE -> D_FBL_VERIFICATION (1 条)
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_feedback_loop_gates__governance_gates_py
+    %% D_FEEDBACK_LOOP -> D_FBL_VERIFICATION (8 条)
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verif___cading_rollback_analyzer_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verif___astic_diagnosis_verifier_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates_deployment_suppression_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|runtime| src_zephyr_feedback_loop_gates__governance_gates_py
+    %% D_GOVERNANCE -> D_FBL_VERIFICATION (27 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_gates__governance_gates_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_gates__operational_gates_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_gates__safety_gates_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_gates__security_gates_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_ab_test_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_action_explainability_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_attack_simulator_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_auto_rollback_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verif___reproducibility_verifier_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_canary_repair_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verif___cading_rollback_analyzer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verif___blueprint_contract_drift_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verif___cross_module_integration_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verif___sion_knowledge_integrity_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_digital_twin_sandbox_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_dry_run_sandbox_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_federated_protocol_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_golden_test_external_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_no_llm_degradation_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_preventive_repair_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_rollback_integrity_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_sim2real_calibration_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verif___astic_diagnosis_verifier_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_toctou_revalidation_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
+    %% D_GOV_CODE_QUALITY -> D_FBL_VERIFICATION (1 条)
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|runtime| src_zephyr_feedback_loop_gates__governance_gates_py
+    %% D_GOV_DOCS -> D_FBL_VERIFICATION (3 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_gates__governance_gates_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_gates__governance_gates_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_feedback_loop_gates__governance_gates_py
+    %% D_GOV_DRIFT -> D_FBL_VERIFICATION (1 条)
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| src_zephyr_feedback_loop_gates__governance_gates_py
+    %% D_GOV_ENFORCEMENT -> D_FBL_VERIFICATION (1 条)
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|runtime| src_zephyr_feedback_loop_gates__governance_gates_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_FBL_VERIFICATION -> D_SECURITY (1 条)
-    src_zephyr_trading_feedback_lo___s_adversarial_validation_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_feedback_loop_gates_adversarial_validation_py -->|import_depends| D_SECURITY[D_SECURITY]
 
     %% 统计
-    %% 域内依赖: 4 条
-    %% 跨域入边: 108 条
+    %% 域内依赖: 0 条
+    %% 跨域入边: 119 条
     %% 跨域出边: 1 条

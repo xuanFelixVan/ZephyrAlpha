@@ -1,7 +1,7 @@
 %% D_GOV_ENFORCEMENT 域全景依赖图
-%% 生成时间: 2026-07-13 01:56:15
+%% 生成时间: 2026-07-13 04:28:36
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 57, 依赖边数: 237
+%% 模块数: 140, 依赖边数: 315
 
 graph TD
 
@@ -17,7 +17,6 @@ graph TD
         src_zephyr_compliance_audit_trail___init___py["...yr/compliance/audit_trail/__init__.py [prototype]"]
         src_zephyr_compliance_audit_trail_bridges___init___py["...iance/audit_trail/bridges/__init__.py [prototype]"]
         src_zephyr_compliance_behavioral_admission___init___py["...ance/behavioral_admission/__init__.py [prototype]"]
-        src_zephyr_compliance_behavioral_auditor___init___py["...liance/behavioral_auditor/__init__.py [prototype]"]
         src_zephyr_compliance_compliance_gate_a6___init___py["...liance/compliance_gate_a6/__init__.py [prototype]"]
         src_zephyr_compliance_compliance_manager_py["...phyr/compliance/compliance_manager.py [prototype]"]
         src_zephyr_compliance_core___init___py["src/zephyr/compliance/core/__init__.py [prototype]"]
@@ -31,7 +30,7 @@ graph TD
         src_zephyr_compliance_models___init___py["src/zephyr/compliance/models/__init__.py [prototype]"]
         src_zephyr_compliance_security_gateway_base_py["...r/compliance/security_gateway_base.py [prototype]"]
         src_zephyr_compliance_services___init___py["...ephyr/compliance/services/__init__.py [prototype]"]
-        src_zephyr_compliance_zero_knowledge_audit_stub___init___py["...zero_knowledge_audit_stub/__init__.py [prototype]"]
+        src_zephyr_gov_enforcement___init___py["src/zephyr/gov_enforcement/__init__.py [prototype]"]
         src_zephyr_gov_enforcement_behavioral_admission___init___py["...ment/behavioral_admission/__init__.py [prototype]"]
         src_zephyr_gov_enforcement_beh___ion_admission_controller_py["...ral_admission/admission_controller.py [prototype]"]
         src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py["...ioral_admission/gate_event_adapter.py [prototype]"]
@@ -39,42 +38,80 @@ graph TD
         src_zephyr_gov_enforcement_beh___mission_protection_index_py["...avioral_admission/protection_index.py [prototype]"]
         src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py["...vioral_admission/session_lifecycle.py [production]"]
         src_zephyr_gov_enforcement_beh___admission_verdict_engine_py["...ehavioral_admission/verdict_engine.py [prototype]"]
-        src_zephyr_governance_rule_bridge___init___py["...yr/governance/rule_bridge/__init__.py [prototype]"]
-        src_zephyr_governance_rule_bridge_commit_gate_registry_py["...e/rule_bridge/commit_gate_registry.py [production]"]
-        src_zephyr_governance_rule_bridge_git_commit_gateway_py["...nce/rule_bridge/git_commit_gateway.py [production]"]
-        src_zephyr_governance_rule_bridge_session_claim_py["...vernance/rule_bridge/session_claim.py [prototype]"]
-        src_zephyr_governance_rule_bridge_session_worktree_py["...nance/rule_bridge/session_worktree.py [production]"]
-        src_zephyr_governance_rule_bridge_worktree_manager_py["...nance/rule_bridge/worktree_manager.py [production]"]
-        src_zephyr_governance_rule_enforcement___init___py["...vernance/rule_enforcement/__init__.py [production]"]
-        src_zephyr_governance_rule_enforcement_admission___init___py["...ule_enforcement/admission/__init__.py [prototype]"]
-        src_zephyr_governance_rule_enforcement_approval_py["...vernance/rule_enforcement/approval.py [production]"]
-        src_zephyr_governance_rule_enforcement_compliance_rule_py["...e/rule_enforcement/compliance_rule.py [prototype]"]
-        src_zephyr_governance_rule_enf___ent_default_quality_gate_py["...e_enforcement/default_quality_gate.py [production]"]
-        src_zephyr_governance_rule_enforcement_dlq_retry_policy_py[".../rule_enforcement/dlq_retry_policy.py [prototype]"]
-        src_zephyr_governance_rule_enf___ment_invariants___init___py["...le_enforcement/invariants/__init__.py [prototype]"]
-        src_zephyr_governance_rule_enf___ts_post_doc_review_check_py["...t/invariants/post_doc_review_check.py [production]"]
-        src_zephyr_governance_rule_enf___ment_output_quality_gate_py["...le_enforcement/output_quality_gate.py [production]"]
-        src_zephyr_governance_rule_enforcement_pre_flight_gate_py["...e/rule_enforcement/pre_flight_gate.py [production]"]
-        src_zephyr_governance_rule_enforcement_quality_gate_py["...ance/rule_enforcement/quality_gate.py [prototype]"]
-        src_zephyr_governance_rule_enf___gine_rule_canary_manager_py["...nt/rule_engine/rule_canary_manager.py [production]"]
-        src_zephyr_governance_rule_enf___engine_rule_debt_auditor_py["...ment/rule_engine/rule_debt_auditor.py [production]"]
-        src_zephyr_governance_rule_enf___ngine_rule_shadow_runner_py["...ent/rule_engine/rule_shadow_runner.py [production]"]
-        src_zephyr_governance_rule_enf___rule_engine_rule_watcher_py["...forcement/rule_engine/rule_watcher.py [prototype]"]
-        src_zephyr_governance_rule_enforcement_slo_contract_py["...ance/rule_enforcement/slo_contract.py [production]"]
-        src_zephyr_governance_rule_enforcement_task___init___py["...nce/rule_enforcement/task/__init__.py [prototype]"]
-        tests_governance_commit_gates_test_create_guard_py["...nce/commit_gates/test_create_guard.py [prototype]"]
-        tests_governance_commit_gates_test_r5_digit_suffix_gate_py["...it_gates/test_r5_digit_suffix_gate.py [prototype]"]
+        src_zephyr_gov_enforcement_rule_bridge___init___py["...v_enforcement/rule_bridge/__init__.py [prototype]"]
+        src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py["...t/rule_bridge/commit_gate_registry.py [production]"]
+        src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py["...ent/rule_bridge/git_commit_gateway.py [production]"]
+        src_zephyr_gov_enforcement_rule_bridge_session_claim_py["...orcement/rule_bridge/session_claim.py [prototype]"]
+        src_zephyr_gov_enforcement_rule_bridge_session_worktree_py["...ement/rule_bridge/session_worktree.py [production]"]
+        src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py["...ement/rule_bridge/worktree_manager.py [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement___init___py["...orcement/rule_enforcement/__init__.py [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement__template_yaml["...ement/rule_enforcement/_template.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___ement_admission___init___py["...ule_enforcement/admission/__init__.py [prototype]"]
+        src_zephyr_gov_enforcement_rul___architecture_necessity_yaml["...n/mad_001_architecture_necessity.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___ad_002_phase_relevance_yaml["...dmission/mad_002_phase_relevance.yaml [production]"]
+        src_zephyr_gov_enforcement_rul____dependency_compliance_yaml["...on/mad_003_dependency_compliance.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___interface_definability_yaml["...n/mad_004_interface_definability.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___endency_graph_template_yaml["...ad_005_dependency_graph_template.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_approval_py["...orcement/rule_enforcement/approval.py [production]"]
+        src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py["...t/rule_enforcement/compliance_rule.py [prototype]"]
+        src_zephyr_gov_enforcement_rul___ent_default_quality_gate_py["...e_enforcement/default_quality_gate.py [production]"]
+        src_zephyr_gov_enforcement_rul___rcement_dlq_retry_policy_py[".../rule_enforcement/dlq_retry_policy.py [prototype]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g1_ingest_yaml["...ement/rule_enforcement/g1_ingest.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g2_triage_yaml["...ement/rule_enforcement/g2_triage.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g3_evaluate_yaml["...ent/rule_enforcement/g3_evaluate.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g4_activate_yaml["...ent/rule_enforcement/g4_activate.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g5_extract_yaml["...ment/rule_enforcement/g5_extract.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___6_blueprint_compliance_yaml["...orcement/g6_blueprint_compliance.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___ment_g6_ctr_compliance_yaml["...le_enforcement/g6_ctr_compliance.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___g6_path_tree_freshness_yaml["...forcement/g6_path_tree_freshness.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___ent_g7_position_limits_yaml["...e_enforcement/g7_position_limits.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___cross_gate_consistency_yaml["...ement/g7c_cross_gate_consistency.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___t_g7d_depth_compliance_yaml["...enforcement/g7d_depth_compliance.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g8_yaml["..._enforcement/rule_enforcement/g8.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g8_leverage_yaml["...ent/rule_enforcement/g8_leverage.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g9_yaml["..._enforcement/rule_enforcement/g9.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___9_strategy_correlation_yaml["...orcement/g9_strategy_correlation.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___ment_g_asset_inventory_yaml["...le_enforcement/g_asset_inventory.yaml [production]"]
+        src_zephyr_gov_enforcement_rul___nt_g_forward_reference_yaml["..._enforcement/g_forward_reference.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_003_yaml["...ment/rule_enforcement/g_trae_003.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_004_yaml["...ment/rule_enforcement/g_trae_004.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_006_yaml["...ment/rule_enforcement/g_trae_006.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_007_yaml["...ment/rule_enforcement/g_trae_007.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_008_yaml["...ment/rule_enforcement/g_trae_008.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_009_yaml["...ment/rule_enforcement/g_trae_009.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_010_yaml["...ment/rule_enforcement/g_trae_010.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_011_yaml["...ment/rule_enforcement/g_trae_011.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_012_yaml["...ment/rule_enforcement/g_trae_012.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_016_yaml["...ment/rule_enforcement/g_trae_016.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_017_yaml["...ment/rule_enforcement/g_trae_017.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_018_yaml["...ment/rule_enforcement/g_trae_018.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_020_yaml["...ment/rule_enforcement/g_trae_020.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_021_yaml["...ment/rule_enforcement/g_trae_021.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_022_yaml["...ment/rule_enforcement/g_trae_022.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_023_yaml["...ment/rule_enforcement/g_trae_023.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_024_yaml["...ment/rule_enforcement/g_trae_024.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_025_yaml["...ment/rule_enforcement/g_trae_025.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_026_yaml["...ment/rule_enforcement/g_trae_026.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_027_yaml["...ment/rule_enforcement/g_trae_027.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_028_yaml["...ment/rule_enforcement/g_trae_028.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_029_yaml["...ment/rule_enforcement/g_trae_029.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_030_yaml["...ment/rule_enforcement/g_trae_030.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_031_yaml["...ment/rule_enforcement/g_trae_031.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_032_yaml["...ment/rule_enforcement/g_trae_032.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_033_yaml["...ment/rule_enforcement/g_trae_033.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_034_yaml["...ment/rule_enforcement/g_trae_034.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_035_yaml["...ment/rule_enforcement/g_trae_035.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_036_yaml["...ment/rule_enforcement/g_trae_036.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_037_yaml["...ment/rule_enforcement/g_trae_037.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_038_yaml["...ment/rule_enforcement/g_trae_038.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_039_yaml["...ment/rule_enforcement/g_trae_039.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_040_yaml["...ment/rule_enforcement/g_trae_040.yaml [production]"]
+        src_zephyr_gov_enforcement_rule_enforcement_g_trae_041_yaml["...ment/rule_enforcement/g_trae_041.yaml [production]"]
+        %% ... 还有 40 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_compliance_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_behavioral_admission___init___py
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| src_zephyr_governance_rule_bridge_worktree_manager_py
-    src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_governance_rule_bridge_worktree_manager_py
-    src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_governance_rule_bridge_session_claim_py
-    src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    src_zephyr_governance_rule_enf___ent_default_quality_gate_py -->|import_depends| src_zephyr_governance_rule_enforcement_quality_gate_py
-    src_zephyr_governance_rule_enf___ment_invariants___init___py -->|import_depends| src_zephyr_governance_rule_enf___ts_post_doc_review_check_py
     src_zephyr_gov_enforcement_beh____gpu_consensus_scheduler_py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_verdict_engine_py
     src_zephyr_gov_enforcement_beh___mission_protection_index_py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___ion_admission_controller_py
@@ -83,122 +120,187 @@ graph TD
     src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py
     src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py
-    tests_governance_commit_gates_test_create_guard_py -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    tests_governance_commit_gates_test_r5_digit_suffix_gate_py -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    src_zephyr_compliance___init___py -->|config_depends| src_zephyr_compliance_artifact_scanner_py
-    src_zephyr_governance_rule_bridge___init___py -->|config_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|contract| src_zephyr_governance_rule_enforcement_compliance_rule_py
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_gov_enforcement_rule_bridge_session_claim_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    src_zephyr_gov_enforcement_rul___ent_default_quality_gate_py -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
+    src_zephyr_gov_enforcement_rul___ment_invariants___init___py -->|import_depends| src_zephyr_gov_enforcement_rul___ts_post_doc_review_check_py
+    tests_governance_commit_gates_test_create_guard_py -->|test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    tests_governance_commit_gates_test_r5_digit_suffix_gate_py -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    src_zephyr_compliance___init___py -->|config_depends| src_zephyr_compliance_aisg_sandbox_py
+    src_zephyr_gov_enforcement_rule_bridge___init___py -->|config_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    src_zephyr_gov_enforcement_rule_enforcement_g1_ingest_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g2_triage_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g4_activate_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g5_extract_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___6_blueprint_compliance_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g3_evaluate_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___ment_g6_ctr_compliance_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___t_g7d_depth_compliance_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___g6_path_tree_freshness_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g8_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___ent_g7_position_limits_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g8_leverage_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___cross_gate_consistency_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___9_strategy_correlation_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g9_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_dedup_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___ct_024_budget_enforcer_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___ment_g_asset_inventory_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_003_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rul___nt_g_forward_reference_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_004_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_006_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_008_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_007_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_010_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_009_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_011_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_017_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_016_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_012_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_018_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_020_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_021_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_022_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_023_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_027_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_028_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_025_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_024_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_026_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_029_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_030_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_032_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_031_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_034_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_035_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_033_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_037_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_036_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_038_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_040_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_041_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_042_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_043_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_044_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_039_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_045_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_047_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_048_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_046_yaml -->|config_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    %% ... 还有 24 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_GOV_ENFORCEMENT (48 条)
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_approval_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_slo_contract_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_approval_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_approval_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_pre_flight_gate_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    %% D_AUTONOMY_CORE -> D_GOV_ENFORCEMENT (3 条)
+    %% D_AUDITTEST -> D_GOV_ENFORCEMENT (49 条)
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_approval_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_approval_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_approval_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___orcement_pre_flight_gate_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    %% D_AUTONOMY_CORE -> D_GOV_ENFORCEMENT (1 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|contract| src_zephyr_governance_rule_enforcement_compliance_rule_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
-    %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (14 条)
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_quality_gate_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement___init___py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
-    D_GOVERNANCE[D_GOVERNANCE] -->|data| src_zephyr_governance_rule_enforcement_compliance_rule_py
-    %% D_GOV_CODE_QUALITY -> D_GOV_ENFORCEMENT (40 条)
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    %% D_GOV_DOCS -> D_GOV_ENFORCEMENT (5 条)
-    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_compliance_default_security_gateway_py
+    %% D_DATA -> D_GOV_ENFORCEMENT (1 条)
+    D_DATA[D_DATA] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
+    %% D_FEEDBACK_LOOP -> D_GOV_ENFORCEMENT (1 条)
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|runtime| src_zephyr_compliance_default_security_gateway_py
+    %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (11 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement___init___py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    %% D_GOV_CODE_QUALITY -> D_GOV_ENFORCEMENT (39 条)
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
+    %% D_GOV_DOCS -> D_GOV_ENFORCEMENT (4 条)
     D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_compliance_audit_trail_bridges___init___py
     D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_compliance_audit_trail_bridges___init___py
-    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_governance_rule_enforcement_compliance_rule_py
     D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_compliance_audit_trail_bridges___init___py
-    %% D_GOV_DRIFT -> D_GOV_ENFORCEMENT (2 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
+    %% D_GOV_DRIFT -> D_GOV_ENFORCEMENT (1 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
-    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| src_zephyr_governance_rule_enforcement_compliance_rule_py
     %% D_GOV_OPS_RESILIENCE -> D_GOV_ENFORCEMENT (1 条)
-    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py
     %% D_GOV_RULE -> D_GOV_ENFORCEMENT (2 条)
-    D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_governance_rule_enf___ts_post_doc_review_check_py
-    D_GOV_RULE[D_GOV_RULE] -->|config_depends| src_zephyr_governance_rule_enf___gine_rule_canary_manager_py
+    D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_gov_enforcement_rul___ts_post_doc_review_check_py
+    D_GOV_RULE[D_GOV_RULE] -->|config_depends| src_zephyr_gov_enforcement_rul___gine_rule_canary_manager_py
     %% D_PF_CORE -> D_GOV_ENFORCEMENT (1 条)
-    D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
+    D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py
     %% D_TRADING -> D_GOV_ENFORCEMENT (2 条)
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_ENFORCEMENT -> D_GOVERNANCE (5 条)
+    %% D_GOV_ENFORCEMENT -> D_FBL_VERIFICATION (1 条)
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|runtime| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    %% D_GOV_ENFORCEMENT -> D_GOVERNANCE (4 条)
     src_zephyr_compliance_aisg_sandbox_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_compliance_manager_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_evidence_pack_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_governance_rule_enforcement_dlq_retry_policy_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_GOV_ENFORCEMENT -> D_GOV_AUDIT (15 条)
+    src_zephyr_compliance_compliance_manager_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_gov_enforcement_rul___rcement_dlq_retry_policy_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_GOV_ENFORCEMENT -> D_GOV_AUDIT (13 条)
     src_zephyr_compliance_merkle_hourly_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_compliance_audit_orchestrator___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_compliance_audit_trail___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -209,86 +311,89 @@ graph TD
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_compliance_zero_knowledge_audit_stub___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_gov_enforcement_beh___admission_verdict_engine_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    %% D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY (42 条)
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY (41 条)
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    %% D_GOV_ENFORCEMENT -> D_GOV_DOCS (2 条)
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|runtime| D_GOV_DOCS[D_GOV_DOCS]
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|contract| D_GOV_DOCS[D_GOV_DOCS]
     %% D_GOV_ENFORCEMENT -> D_GOV_DRIFT (6 条)
     src_zephyr_compliance_artifact_scanner_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_compliance_integrity_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_GOV_ENFORCEMENT -> D_GOV_OPS_RESILIENCE (2 条)
     src_zephyr_compliance_default_security_gateway_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     src_zephyr_compliance_security_gateway_base_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     %% D_GOV_ENFORCEMENT -> D_GOV_RULE (8 条)
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    %% D_GOV_ENFORCEMENT -> D_INFRASTRUCTURE (1 条)
+    src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_GOV_ENFORCEMENT -> D_OPS (2 条)
-    src_zephyr_governance_rule_enforcement_pre_flight_gate_py -->|import_depends| D_OPS[D_OPS]
-    src_zephyr_governance_rule_enforcement_pre_flight_gate_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_gov_enforcement_rul___orcement_pre_flight_gate_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_gov_enforcement_rul___orcement_pre_flight_gate_py -->|import_depends| D_OPS[D_OPS]
     %% D_GOV_ENFORCEMENT -> D_SECURITY (6 条)
     src_zephyr_compliance_compliance_gate_a6___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_compliance_implementations___init___py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_governance_rule_bridge_session_claim_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|import_depends| D_SECURITY[D_SECURITY]
     %% D_GOV_ENFORCEMENT -> D_SHARED (12 条)
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_bridge_session_claim_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_bridge_worktree_manager_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_enf___ts_post_doc_review_check_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_enf___rule_engine_rule_watcher_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_beh____gpu_consensus_scheduler_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rul___ts_post_doc_review_check_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rul___rule_engine_rule_watcher_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 21 条
-    %% 跨域入边: 118 条
+    %% 域内依赖: 104 条
+    %% 跨域入边: 113 条
     %% 跨域出边: 98 条
