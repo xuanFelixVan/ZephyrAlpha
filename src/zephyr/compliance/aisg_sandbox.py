@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.aisg_sandbox
-# [DOMAIN] D_GOV_ENFORCEMENT
+# [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.aisg_sandbox
 # [CONSUMERS]
 # [STARTUP] imported

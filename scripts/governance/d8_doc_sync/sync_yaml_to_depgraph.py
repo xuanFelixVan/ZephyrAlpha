@@ -686,24 +686,25 @@ def sync_functional_domain_registry(cur):
             if isinstance(domain_group, str) and domain_group.startswith("tier_"):
                 domain_group = domain_group.replace("tier_", "").replace("_governance", "").replace("_", "")
 
+            ssot_path = d.get("ssot_path", "")
             cur.execute(
                 """
-        INSERT INTO domains (domain_id, domain_name, domain_group, description,
+        INSERT INTO domains (domain_id, domain_name, domain_group, description, ssot_path,
                              modification_permission, build_status, created_at, updated_at)
-        VALUES (%s, %s, %s, %s, %s, 'planned', %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, 'planned', %s, %s)
         ON CONFLICT(domain_id) DO UPDATE SET
             domain_name=excluded.domain_name,
             description=excluded.description,
+            ssot_path=excluded.ssot_path,
             modification_permission=excluded.modification_permission,
             updated_at=excluded.updated_at
         """,
-                (domain_id, d.get("subdomain", ""), domain_group, description, ai_autonomy, now, now),
+                (domain_id, d.get("subdomain", ""), domain_group, description, ssot_path or None, ai_autonomy, now, now),
             )
             synced += 1
         else:
             deduped += 1
 
-        ssot_path = d.get("ssot_path", "")
         if ssot_path:
             # arch_path_mappings 需要 path_type NOT NULL 和 state NOT NULL
             cur.execute(

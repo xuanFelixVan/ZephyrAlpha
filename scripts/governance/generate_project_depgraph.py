@@ -749,7 +749,9 @@ def load_panorama():
 
     # Add tree-section domain mappings (current operational paths)
     # Build set of unregistered prefixes to skip in tree extraction
+    # ARCH-CAP-005: non_src mappings also take precedence over tree derivation
     unreg_prefixes = set(prefix for prefix, _, _ in unregistered_src_mappings)
+    unreg_prefixes.update(prefix for prefix, _, _ in non_src_mappings)
     tree_data = data.get("tree", {})
     _extract_tree_domains(tree_data, "", domain_derivation, domains_data, unreg_prefixes, domain_id_to_layer)
 

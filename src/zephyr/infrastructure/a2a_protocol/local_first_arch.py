@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.local_first_arch
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_INFRA_A2A
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.__init__
 # [CONSUMERS] MOD-INF-027;MOD-INF-018;MOD-INF-022
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_negotiation
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_INFRA_A2A
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
