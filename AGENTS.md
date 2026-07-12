@@ -163,6 +163,29 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 **关键契约**：CTR-ERR-003（SignalDegradationWarning，source_domain=D_SIGQC，[`cross_layer_contracts.yaml`](file:///d:/ZephyrAlpha/architecture_model/contracts/cross_layer_contracts.yaml) L421）。
 **capability 反查**：`factor_base_abstraction` / `alpha_signal_pipeline` / `signal_synthesizer_base` / `degradation_monitor_base`（[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)）。新 AI 实现因子/信号/降级监视器前 MUST 反查此 4 项 capability，禁止重复造轮子。
 
+### 域拆分变更（D_GOVERNANCE + D_TRADING 拆分，2026-07-12 ARCH-052）
+
+D_GOVERNANCE（原506 production）和 D_TRADING（原281 production）超 ARCH-CAP-002 上限（≤150），拆分为11个新平级域（域注册表 `functional_domain_registry.yaml`）：
+
+| 域 | ssot_path | production | 职责 |
+|----|-----------|------------|------|
+| D_GOVERNANCE | `src/zephyr/governance/` | 119 | 核心治理——注册表/持久化/审计/规则桥/上下文/智能/金融 |
+| D_GOV_AUDIT | `src/zephyr/governance/audit_trail/` | 59 | 治理审计——审计追踪/法证审计 |
+| D_GOV_DRIFT | `src/zephyr/governance/drift_detection/` | 56 | 漂移检测——概念漂移/配置漂移/回归检测 |
+| D_GOV_ENFORCEMENT | `src/zephyr/governance/rule_enforcement/` | 48 | 规则执行——准入门禁/CBAC/合规规则 |
+| D_GOV_KB | `src/zephyr/governance/kb/` | 22 | 知识库治理——知识管线/知识引擎/向量记忆 |
+| D_GOV_SCRIPTS | `scripts/governance/` | 34 | 脚本治理——治理脚本注册/版本管理 |
+| D_GOV_CODE_QUALITY | `src/zephyr/governance/code_dedup/` + `commit_gates/` | 99 | 代码质量——去重引擎/提交门禁/AST分析 |
+| D_GOV_OPS_RESILIENCE | `src/zephyr/governance/ops_governance/` + `security_governance/` + `resilience_governance/` + `escalation/` | 84 | 运维弹性——运维/安全/弹性/升级 |
+| D_GOV_DOCS | `docs/02_enterprise_architecture/` | 69 | 架构文档——规则文档/模块文档/域架构文档 |
+| D_TRADING | `src/zephyr/trading/` | 43 | 交易运营——订单执行/持仓管理 |
+| D_FEEDBACK_LOOP | `src/zephyr/trading/feedback_loop/` | 111 | 反馈循环——收集/诊断/执行/进化/取证 |
+| D_FBL_VERIFICATION | `src/zephyr/trading/feedback_loop/gates/` + `verifiers/` | 67 | 反馈验证——门禁检查/结果验证/安全门禁 |
+| D_ORCHESTRATOR | `src/zephyr/trading/orchestrator/` | 60 | 代理编排——任务队列/调度/沙箱/幻觉检测 |
+
+**ARCH-CAP-002 验证**：全部域 ≤150，无超限域。真源：depgraph `domains.production_nodes`。
+**capability 反查**：新 AI 涉及代码去重/提交门禁/运维弹性/反馈验证/Agent编排前 MUST 查 `functional_domain_registry.yaml` 确认域归属，禁止按旧 D_GOVERNANCE/D_TRADING 归类。
+
 ### config/ 发现契约（ARCH-038 P2）
 
 新 AI 需发现 `config/` 下有哪些配置文件、用途线索、消费者时，运行：

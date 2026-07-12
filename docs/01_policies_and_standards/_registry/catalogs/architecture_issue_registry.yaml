@@ -1468,7 +1468,7 @@ entries:
   fix_phase: Phase 1-5 逐步实施
   created: '2026-07-06'
   last_updated: '2026-07-12'
-  phase1_progress: '2026-07-12 D_GOVERNANCE 域拆分 Phase 1 完成——5子域(AUDIT/DRIFT/ENFORCEMENT/KB/SCRIPTS)366节点迁移，D_GOVERNANCE 506→303 production'
+  phase1_progress: '2026-07-12 D_GOVERNANCE + D_TRADING 平行域拆分完成——11个新平级域建立，663节点迁移（568 governance/95 docs），ARCH-CAP-002 全部37域合规（最大D_GOVERNANCE=119≤150）。聚合节点模式（Phase 2-5）仍为后续专项。'
 
 # --- #ARCH-053: 三图设计态保护机制 + 对齐检测器（depgraph/dataflow/decision） ---
 - issue_id: '#ARCH-053'

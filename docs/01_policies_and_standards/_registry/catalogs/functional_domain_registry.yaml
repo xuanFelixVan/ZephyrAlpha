@@ -960,6 +960,72 @@ entries:
   - 规则文档
   stability: stable
   ai_autonomy: human_gated
+- domain: D_GOV_CODE_QUALITY
+  subdomain: code_quality_governance
+  ssot_module: MOD-INF-024
+  ssot_path: src/zephyr/governance/code_dedup/
+  covers:
+  - 代码去重引擎(code_dedup)
+  - 提交门禁引擎(commit_gates)
+  - 函数重复检测(function_dup_gate)
+  - AST语义分析(ast_comparator)
+  - 微克隆检测(micro_clone_detector)
+  - 行为信任检查(behavioral_trust_checker)
+  aliases:
+  - code quality
+  - 代码质量
+  - commit gates
+  - 提交门禁
+  - code dedup
+  - 代码去重
+  - function dup
+  stability: evolving
+  ai_autonomy: ai_modifiable
+- domain: D_GOV_OPS_RESILIENCE
+  subdomain: ops_resilience_governance
+  ssot_module: MOD-INF-022
+  ssot_path: src/zephyr/governance/ops_governance/
+  covers:
+  - 运维治理(ops_governance)
+  - 安全治理(security_governance)
+  - 弹性治理(resilience_governance)
+  - 升级协议(escalation)
+  - 预算引擎(budget_engine)
+  - 熔断器(circuit_breaker)
+  - 故障容错(fault_tolerance)
+  aliases:
+  - ops resilience
+  - 运维弹性
+  - escalation
+  - 升级
+  - security governance
+  - 安全治理
+  - resilience
+  - 弹性
+  stability: evolving
+  ai_autonomy: ai_modifiable
+- domain: D_FBL_VERIFICATION
+  subdomain: feedback_verification
+  ssot_module: MOD-FEEDBACK_LOOP
+  ssot_path: src/zephyr/trading/feedback_loop/gates/
+  covers:
+  - 反馈循环门禁(feedback_loop/gates)
+  - 结果验证器(feedback_loop/verifiers)
+  - 安全门禁(safety_gate_lXX)
+  - AB测试验证(ab_test)
+  - 自动回滚(auto_rollback)
+  - 沙箱验证(dry_run_sandbox)
+  - 蓝图对齐(blueprint_validator)
+  aliases:
+  - feedback verification
+  - 反馈验证
+  - safety gates
+  - 安全门禁
+  - verifiers
+  - 验证器
+  - FBL verification
+  stability: evolving
+  ai_autonomy: ai_modifiable
 - domain: D_ASHARE_SIGNAL
   subdomain: ashare_signal
   ssot_module: MOD-INF-038

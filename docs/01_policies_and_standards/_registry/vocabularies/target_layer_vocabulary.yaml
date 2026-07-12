@@ -54,7 +54,7 @@ version: "1.0.0"
 title: "target_layer 受控词表"
 status: active
 vocabulary_name: target_layer
-total_values: 41
+total_values: 45
 depends_on:
   - target: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
     at: "_FOUNDATION_LAYERS 集合"
@@ -154,6 +154,18 @@ values:
     definition: "治理知识库域——知识管线/知识引擎/向量记忆后端"
     is_foundation: false
     ai_keywords: ["知识库", "kb", "knowledge base"]
+  - value: D_GOV_CODE_QUALITY
+    definition: "代码质量治理域——代码去重/提交门禁/函数重复检测/AST语义分析"
+    is_foundation: false
+    ai_keywords: ["代码质量", "code quality", "commit gates", "提交门禁", "code dedup"]
+  - value: D_GOV_OPS_RESILIENCE
+    definition: "运维弹性治理域——运维治理/安全治理/弹性治理/升级协议"
+    is_foundation: false
+    ai_keywords: ["运维弹性", "ops resilience", "escalation", "升级", "安全治理", "弹性"]
+  - value: D_FBL_VERIFICATION
+    definition: "反馈验证域——反馈循环门禁/结果验证器/安全门禁/AB测试验证"
+    is_foundation: false
+    ai_keywords: ["反馈验证", "feedback verification", "safety gates", "安全门禁", "verifiers"]
 
   # === 基础设施域（来源：functional_domain_registry.yaml）===
   - value: D_INFRA_RUNTIME
