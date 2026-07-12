@@ -675,6 +675,20 @@ capabilities:
       alignment_detection 是"只读检测"（报告）。
 
   # --------------------------------------------------------------------------
+  - capability_id: yaml_db_sync_validation
+    aliases:
+      - verify_sync_integrity
+      - sync_integrity_check
+      - yaml_db_consistency_check
+    description: >-
+      YAML→DB 同步完整性校验工具（Phase E1，2026-07-13）。验证规则数据
+      （trae_*.yaml/契约/门禁/词汇表/注册表）从 YAML 同步到 depgraph (PostgreSQL)
+      的一致性。4维校验：①YAML→DB完整性（每个YAML域在DB存在）②ssot_path非空
+      ③arch_path_mappings同步 ④域计数一致性。canonical = scripts/governance/verify_sync_integrity.py。
+      与 panorama_module_sync 区别：本能力是"只读校验"（不写入），
+      panorama_module_sync 是"自动同步"（写入 depgraph/dataflow/decision）。
+
+  # --------------------------------------------------------------------------
   - capability_id: design_maturity_trigger_protection
     aliases:
       - protect_design_maturity
@@ -3846,7 +3860,7 @@ creation_tokens:
   - file: "scripts/governance/verify_sync_integrity.py"
     token: "auto-verify-sync-integrity-20260713"
     created_by: "session-sess-2600-20260713050906"
-    capability: "panorama_module_sync"
+    capability: "yaml_db_sync_validation"
 
   # --- ARCH-056 四图模块同步引擎（2026-07-09）---
   - file: "scripts/governance/sync_panorama_module.py"
