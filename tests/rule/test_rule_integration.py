@@ -21,7 +21,7 @@ import yaml
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.governance.rule_enforcement.rule_engine.rule_engine import RuleLoader
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 _PROJECT_ROOT = REPO_ROOT
 # 注：depgraph 已迁移到 PostgreSQL（P2迁移），_DB_PATH / _ARCH_PANORAMA 路径常量已移除

@@ -25,7 +25,7 @@ import pytest
 import yaml
 
 from zephyr.autonomy_core.skills.skill_loader import SkillLoader, _count_tokens
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 class TestNonExistentSkill:

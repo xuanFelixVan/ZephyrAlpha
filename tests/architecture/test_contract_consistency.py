@@ -32,7 +32,7 @@ from pathlib import Path
 
 import pytest
 import yaml
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 YAML_PATH = REPO_ROOT / (
     "architecture_model/contracts/cross_layer_contracts.yaml"

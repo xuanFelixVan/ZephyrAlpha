@@ -46,7 +46,7 @@ _SCRIPTS_GOV = _PROJECT_ROOT / "scripts" / "governance"
 if str(_SCRIPTS_GOV) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_GOV))
 
-from _shared.constants import GOV_DOCS_DIR  # noqa: E402
+GOV_DOCS_DIR = REPO_ROOT / "docs" / "01_policies_and_standards"  # noqa: E402
 
 _VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
 _CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"

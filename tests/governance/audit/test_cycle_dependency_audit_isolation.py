@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import ast
 from pathlib import Path
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 GOVERNANCE_ROOT = REPO_ROOT / "src" / "zephyr" / "governance"
 

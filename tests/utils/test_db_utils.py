@@ -81,7 +81,7 @@ class TestGetDbConnection:
         assert timeout == 5000
 
 
-from _shared.constants import DB_PATH
+from zephyr.shared.io.paths import DB_PATH
 class TestDBPath:
     def test_db_path_is_path_instance(self) -> None:
         assert isinstance(DB_PATH, Path)

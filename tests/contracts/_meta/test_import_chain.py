@@ -30,7 +30,7 @@ import re
 from typing import NamedTuple
 
 import pytest
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 class Consumer(NamedTuple):
@@ -40,7 +40,6 @@ class Consumer(NamedTuple):
     is_package: bool = False
 
 
-REPO_ROOT = pathlib.REPO_ROOT
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 CONSUMERS: list[Consumer] = [

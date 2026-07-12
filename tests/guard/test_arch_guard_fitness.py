@@ -26,7 +26,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 ARCH_GUARD_ROOT = REPO_ROOT / "scripts" / "arch_guard"
 FF_ROOT = ARCH_GUARD_ROOT / "fitness_functions"

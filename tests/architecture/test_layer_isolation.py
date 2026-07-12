@@ -27,7 +27,7 @@ import ast
 from pathlib import Path
 
 import pytest
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 LAYER_ORDER = [
     "l00-data-source",
