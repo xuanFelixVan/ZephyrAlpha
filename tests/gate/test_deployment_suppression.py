@@ -33,7 +33,7 @@ class TestDeploymentSuppressionInstantiation:
         assert ds.sustain_window == 300.0
         assert ds.state == DeployGateState.OPEN
         assert ds.blocked_since == 0.0
-        assert ds.stable_since == 0.0
+        assert ds.stable_since is None
         assert ds.blocked_count == 0
 
     def test_custom_sustain_window(self):
@@ -95,7 +95,7 @@ class TestUpdateFromFleState:
         ds.update_from_fle_state("NOMINAL")
         assert ds.stable_since > 0.0
         ds.update_from_fle_state("DEGRADED")
-        assert ds.stable_since == 0.0
+        assert ds.stable_since is None
 
 
 class TestIsDeployAllowed:

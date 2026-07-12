@@ -89,7 +89,7 @@ def _make_task(
         applicable_rules=[{"module_id": "GOV-TASK-001", "section": "§4", "reason": "模板校验"}],
         allowed_touch=["tests/gate/test_gate_e2e.py"],
         rollback_instructions="git checkout -- tests/gate/test_gate_e2e.py",
-        post_sync_standard=["echo ok"],
+        post_sync_standard=[],  # Windows: echo是shell内置命令,shell=False下不可执行
         created_at="2026-01-01T00:00:00+00:00",
         updated_at="2026-01-01T00:00:00+00:00",
     )
