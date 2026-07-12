@@ -56,6 +56,7 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.governance.commit_gates.test_source_consistency_gate import (  # noqa: E402
+    _check_test_file,
     _extract_all_list,
     _extract_source_symbols,
     _has_module_level_skip,
@@ -92,6 +93,17 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
         if len(cmd) >= 3 and cmd[1] == "show" and cmd[2].startswith(":"):
             py_file = cmd[2][1:].replace("\\", "/")
             return _MockResult(0, (file_contents or {}).get(py_file, ""))
+        if "--unified=0" in cmd:
+            # per-file diff: 生成全文件 added diff（模拟新文件）
+            py_file = cmd[-1].replace("\\", "/")
+            content = (file_contents or {}).get(py_file, "")
+            lines = content.splitlines()
+            if not lines:
+                return _MockResult(0, "")
+            diff = f"@@ -0,0 +1,{len(lines)} @@\n"
+            for line in lines:
+                diff += "+" + line + "\n"
+            return _MockResult(0, diff)
         return _MockResult(0, "")
 
     gw._run_git = _run_git
@@ -437,3 +449,52 @@ class TestGatewayIntegration:
         passed, msg = make_test_source_consistency_gate().check(gw, [])
         assert passed is True
         assert msg == ""
+
+
+# ---------------------------------------------------------------------------
+# TestAddedLinesFilter — added 行过滤（防误阻断现有漂移）
+# ---------------------------------------------------------------------------
+class TestAddedLinesFilter:
+    """验证 _check_test_file 的 added_lines 参数——只检查 added 行的 import。"""
+
+    def test_existing_drift_not_blocked(self, tmp_path, monkeypatch):
+        """现有漂移（不在 added 行）不阻断——只防新增漂移。"""
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        test_content = "from zephyr.deleted.module import OldSymbol\n"
+        violations = _check_test_file(test_content, "tests/test_foo.py", added_lines={999})
+        assert violations == []
+
+    def test_new_drift_blocked(self, tmp_path, monkeypatch):
+        """新增漂移（在 added 行）阻断。"""
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        test_content = "from zephyr.deleted.module import NewSymbol\n"
+        violations = _check_test_file(test_content, "tests/test_foo.py", added_lines={1})
+        assert len(violations) == 1
+        assert "NewSymbol" in violations[0]
+
+    def test_no_added_lines_no_violations(self, tmp_path, monkeypatch):
+        """added_lines 为空集合 → 无违规（无新增行）。"""
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        test_content = "from zephyr.deleted.module import Symbol\n"
+        violations = _check_test_file(test_content, "tests/test_foo.py", added_lines=set())
+        assert violations == []
+
+    def test_none_added_lines_checks_all(self, tmp_path, monkeypatch):
+        """added_lines=None → 检查所有 import（向后兼容）。"""
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        test_content = "from zephyr.deleted.module import Symbol\n"
+        violations = _check_test_file(test_content, "tests/test_foo.py", added_lines=None)
+        assert len(violations) == 1
+
+    def test_mixed_added_and_existing(self, tmp_path, monkeypatch):
+        """混合场景：第1行现有漂移，第2行新增有效 import。"""
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        src_dir = tmp_path / "zephyr" / "valid"
+        src_dir.mkdir(parents=True)
+        (src_dir / "mod.py").write_text("class Foo:\n    pass\n", encoding="utf-8")
+        test_content = (
+            "from zephyr.deleted.module import OldSymbol\n"
+            "from zephyr.valid.mod import Foo\n"
+        )
+        violations = _check_test_file(test_content, "tests/test_foo.py", added_lines={2})
+        assert violations == []
