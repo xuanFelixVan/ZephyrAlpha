@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.code_dedup.dead_module_detector import DeadModuleDetector
+from zephyr.gov_code_quality.code_dedup.dead_module_detector import DeadModuleDetector
 
 
 class TestDeadModuleDetector:

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.code_dedup.health_monitor import (
+from zephyr.gov_code_quality.code_dedup.health_monitor import (
     HealthDimension,
     HealthMonitor,
     HealthReport,

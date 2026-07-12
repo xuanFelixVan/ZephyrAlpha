@@ -14,7 +14,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from zephyr.governance.constitutional_update.constitutional_update import (
+from zephyr.gov_rule.constitutional_update.constitutional_update import (
     ConstitutionalAutoUpdate,
     Learning,
     ProposedUpdate,

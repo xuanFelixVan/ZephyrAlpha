@@ -68,7 +68,7 @@ try:
         AdmissionResponseStatus,
     )
     from zephyr.gov_enforcement.behavioral_admission.mcp_result_push import PushStatus, ResultPushManager
-    from zephyr.governance.constitutional_update.constitutional_update import (
+    from zephyr.gov_rule.constitutional_update.constitutional_update import (
         ConstitutionalAutoUpdate,
         Learning,
         ProposedUpdate,
@@ -101,12 +101,12 @@ try:
     from zephyr.gov_audit.agent_signer import AgentSigner
     from zephyr.governance.data_governance.akshare_provider import AkshareProvider
     from zephyr.governance.base import FactorMeta
-    from zephyr.governance.code_dedup.trackers.blind_spot_tracker import BlindSpotStatus
+    from zephyr.gov_code_quality.code_dedup.trackers.blind_spot_tracker import BlindSpotStatus
     from zephyr.governance.capability_lookup import CapabilityLookup
-    from zephyr.governance.code_dedup.canary_manager import CanaryFile
+    from zephyr.gov_code_quality.code_dedup.canary_manager import CanaryFile
     from zephyr.gov_audit.changelog_manager import ChangeImpact
     from zephyr.infrastructure.asset_inventory.classifier import Classifier
-    from zephyr.governance.code_dedup.cli import main
+    from zephyr.gov_code_quality.code_dedup.cli import main
     from zephyr.gov_audit.code_archaeology import BlameRecord
     from zephyr.infrastructure.rollback.complexity_budget import ComplexityReport
     from zephyr.gov_audit.compliance_map import ComplianceFramework
@@ -128,7 +128,7 @@ try:
     from zephyr.governance.architecture_governance.llm_impact_analyzer import RiskLevel
     from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
     from zephyr.infrastructure.asset_inventory.models import AssetType
-    from zephyr.governance.code_dedup.phase_executor import PhaseStatus
+    from zephyr.gov_code_quality.code_dedup.phase_executor import PhaseStatus
     from zephyr.governance.engine.pipeline_base import ExperimentConfig
     from zephyr.gov_audit.privacy import PIICategory
     from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
@@ -189,7 +189,7 @@ try:
     import zephyr.governance.intelligence_governance.ai_self_diagnosis as ai_self_diagnosis
     import zephyr.governance.architecture_governance.architecture_contracts as architecture_contracts
     import zephyr.governance.architecture_governance.architecture_principles as architecture_principles
-    import zephyr.governance.drift_detector_core.benchmark_integrity as benchmark_integrity
+    import zephyr.gov_drift.detector_core.benchmark_integrity as benchmark_integrity
     import zephyr.governance.resilience_governance.bus_factor_defense as bus_factor_defense
     import zephyr.gov_enforcement.behavioral_admission.code_review_ai as code_review_ai
     import zephyr.governance.architecture_governance.cross_env_consistency as cross_env_consistency
@@ -201,16 +201,16 @@ try:
     import zephyr.gov_enforcement.behavioral_admission.mcp_result_push as mcp_result_push
     import zephyr.governance.financial_governance.microstructure_defense as microstructure_defense
     import zephyr.governance.lifecycle_governance.migration_strategy as migration_strategy
-    import zephyr.governance.drift_detector_core.model_drift_monitor as model_drift_monitor
+    import zephyr.gov_drift.detector_core.model_drift_monitor as model_drift_monitor
     import zephyr.governance.intelligence_governance.multi_model_consensus as multi_model_consensus
     import zephyr.governance.resilience_governance.offline_autonomy as offline_autonomy
     import zephyr.governance.resilience_governance.offline_resilience as offline_resilience
     import zephyr.governance.financial_governance.oms_risk_engine as oms_risk_engine
     import zephyr.governance.architecture_governance.path_resolver as path_resolver
-    import zephyr.governance.drift_detector_core.performance_baseline as performance_baseline
+    import zephyr.gov_drift.detector_core.performance_baseline as performance_baseline
     import zephyr.gov_enforcement.behavioral_admission.post_process as post_process
     import zephyr.governance.context_governance.prompt_lifecycle as prompt_lifecycle
-    import zephyr.governance.drift_detector_core.regime_detector as regime_detector
+    import zephyr.gov_drift.detector_core.regime_detector as regime_detector
     import zephyr.governance.architecture_governance.strategy_portfolio as strategy_portfolio
     import zephyr.gov_enforcement.behavioral_admission.vibe_coding_enforcer as vibe_coding_enforcer
 except (ImportError, RuntimeError):

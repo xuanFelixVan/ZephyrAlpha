@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 
-from zephyr.governance.code_dedup.report import (
+from zephyr.gov_code_quality.code_dedup.report import (
     DebtProjection,
     DuplicationIntakeRate,
     EngineSelfMetrics,
@@ -24,7 +24,7 @@ from zephyr.governance.code_dedup.report import (
     ReportGenerator,
     ScanMetadata,
 )
-from zephyr.governance.code_dedup.report import (
+from zephyr.gov_code_quality.code_dedup.report import (
     ExitCode as ReportExitCode,
 )
 

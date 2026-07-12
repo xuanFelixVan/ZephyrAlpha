@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.code_dedup.behavioral_sampler import (
+from zephyr.gov_code_quality.code_dedup.behavioral_sampler import (
     BehavioralSampler,
     BehaviorSample,
 )

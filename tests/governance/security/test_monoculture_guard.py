@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.code_dedup.monoculture_guard import (
+from zephyr.gov_code_quality.code_dedup.monoculture_guard import (
     BlastRadiusScore,
     MonocultureGuard,
 )

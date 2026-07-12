@@ -11,7 +11,7 @@
 # [TESTS] test_regime_detector.py
 # [TTL] task_bound
 
-from zephyr.governance.drift_detector_core.regime_detector import (
+from zephyr.gov_drift.detector_core.regime_detector import (
     MACRO_INDICATORS,
     REGIME_ALLOCATIONS,
     REGIME_SWITCH_SIGNALS,

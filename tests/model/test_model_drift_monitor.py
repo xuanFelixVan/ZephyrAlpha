@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.drift_detector_core.model_drift_monitor import (
+from zephyr.gov_drift.detector_core.model_drift_monitor import (
     DRIFT_MONITORS,
     DriftConfig,
     ModelDriftType,

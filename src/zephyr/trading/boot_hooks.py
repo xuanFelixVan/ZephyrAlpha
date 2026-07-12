@@ -203,7 +203,7 @@ def _subscribe_eventbus_consumers() -> None:
         ("F15 auto_fix_engine.event_hooks", "zephyr.infrastructure.auto_fix_engine.event_hooks"),
         ("F30 validator_event_bridge", "zephyr.security.adversarial_validation.validator_event_bridge"),
         ("F1 autopilot", "zephyr.trading.autopilot"),
-        ("F6 drift_bridge", "zephyr.governance.drift_detector_core.bridges.drift_bridge"),
+        ("F6 drift_bridge", "zephyr.gov_drift.detector_core.bridges.drift_bridge"),
         ("auto_task_generator", "zephyr.trading.auto_task_generator"),
     ]
 

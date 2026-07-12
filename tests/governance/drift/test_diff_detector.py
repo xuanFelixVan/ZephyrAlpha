@@ -16,7 +16,7 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-from zephyr.governance.code_dedup.diff_detector import (
+from zephyr.gov_code_quality.code_dedup.diff_detector import (
     ChangedFunction,
     DiffDetector,
     DiffResult,

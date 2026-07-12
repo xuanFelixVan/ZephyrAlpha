@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.code_dedup.thematic_clusterer import ThematicClusterer
+from zephyr.gov_code_quality.code_dedup.thematic_clusterer import ThematicClusterer
 
 
 class TestThematicClusterer:

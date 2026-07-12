@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.governance.code_dedup.config import AppConfig, load_config, reload_config
+from zephyr.gov_code_quality.code_dedup.config import AppConfig, load_config, reload_config
 
 
 def test_load_config_default_when_missing_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, caplog) -> None:

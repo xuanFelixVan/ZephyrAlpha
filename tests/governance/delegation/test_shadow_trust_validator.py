@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.code_dedup.shadow_trust_validator import ShadowTrustValidator
+from zephyr.gov_code_quality.code_dedup.shadow_trust_validator import ShadowTrustValidator
 
 
 class TestShadowTrustValidator:

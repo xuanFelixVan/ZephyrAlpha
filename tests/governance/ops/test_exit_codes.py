@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.code_dedup.exit_codes import (
+from zephyr.gov_code_quality.code_dedup.exit_codes import (
     EXIT_CODE_DESCRIPTIONS,
     ExitCode,
     determine_exit_code,

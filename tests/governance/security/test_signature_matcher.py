@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.code_dedup.signature_matcher import (
+from zephyr.gov_code_quality.code_dedup.signature_matcher import (
     SignatureMatch,
     SignatureMatcher,
 )

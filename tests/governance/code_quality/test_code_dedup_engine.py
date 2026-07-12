@@ -16,13 +16,13 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.code_dedup.auto_fixer import (
+from zephyr.gov_code_quality.code_dedup.auto_fixer import (
     AutoFixer,
     FixLevel,
     FixParams,
     SafetyTier,
 )
-from zephyr.governance.code_dedup.monoculture_guard import (
+from zephyr.gov_code_quality.code_dedup.monoculture_guard import (
     BlastRadiusScore,
     MonocultureGuard,
 )

@@ -31,7 +31,7 @@
 Safety: HIGH（宪法自愈直接修改 AGENTS.md 工程宪法）
 """
 
-from zephyr.governance.constitutional_update.constitutional_update import (
+from zephyr.gov_rule.constitutional_update.constitutional_update import (
     ConstitutionalAutoUpdate,
     Learning,
     ProposedUpdate,

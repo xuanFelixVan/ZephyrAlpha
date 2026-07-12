@@ -1,0 +1,209 @@
+%% D_DATA 域全景依赖图
+%% 生成时间: 2026-07-13 05:43:14
+%% 数据源: depgraph (PostgreSQL) nodes表 + edges表
+%% 模块数: 52, 依赖边数: 124
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_DATA[data_source_integrator]
+        scripts_register_scheduler_task_ps1["scripts/register_scheduler_task.ps1 [prototype]"]
+        scripts_start_scheduler_ps1["scripts/start_scheduler.ps1 [prototype]"]
+        src_zephyr_data___init___py["src/zephyr/data/__init__.py [production]"]
+        src_zephyr_data___main___py["src/zephyr/data/__main__.py [prototype]"]
+        src_zephyr_data_alerter_py["src/zephyr/data/alerter.py [prototype]"]
+        src_zephyr_data_buffered_writer_py["src/zephyr/data/buffered_writer.py [prototype]"]
+        src_zephyr_data_ch_writer_py["src/zephyr/data/ch_writer.py [prototype]"]
+        src_zephyr_data_cli_py["src/zephyr/data/cli.py [production]"]
+        src_zephyr_data_config_policies_yaml["src/zephyr/data/config/policies.yaml [production]"]
+        src_zephyr_data_config_schedule_yaml["src/zephyr/data/config/schedule.yaml [production]"]
+        src_zephyr_data_config_tasks_yaml["src/zephyr/data/config/tasks.yaml [production]"]
+        src_zephyr_data_implementations___init___py["...phyr/data/implementations/__init__.py [prototype]"]
+        src_zephyr_data_implementations_akshare_provider_py["...a/implementations/akshare_provider.py [prototype]"]
+        src_zephyr_data_implementations_baostock_provider_py[".../implementations/baostock_provider.py [prototype]"]
+        src_zephyr_data_implementations_cls_provider_py[".../data/implementations/cls_provider.py [prototype]"]
+        src_zephyr_data_implementations_eastmoney_news_provider_py["...mentations/eastmoney_news_provider.py [prototype]"]
+        src_zephyr_data_implementations_ifind_provider_py["...ata/implementations/ifind_provider.py [prototype]"]
+        src_zephyr_data_implementations_miniqmt_provider_py["...a/implementations/miniqmt_provider.py [prototype]"]
+        src_zephyr_data_implementations_rss_provider_py[".../data/implementations/rss_provider.py [prototype]"]
+        src_zephyr_data_implementations_tdx_provider_py[".../data/implementations/tdx_provider.py [prototype]"]
+        src_zephyr_data_implementations_tickflow_provider_py[".../implementations/tickflow_provider.py [prototype]"]
+        src_zephyr_data_implementations_tushare_provider_py["...a/implementations/tushare_provider.py [prototype]"]
+        src_zephyr_data_metrics_py["src/zephyr/data/metrics.py [prototype]"]
+        src_zephyr_data_news_dedup_py["src/zephyr/data/news_dedup.py [prototype]"]
+        src_zephyr_data_policy_registry_py["src/zephyr/data/policy_registry.py [production]"]
+        src_zephyr_data_progress_store_py["src/zephyr/data/progress_store.py [prototype]"]
+        src_zephyr_data_provider_base_py["src/zephyr/data/provider_base.py [prototype]"]
+        src_zephyr_data_satellite_geospatial_engine___init___py["...tellite_geospatial_engine/__init__.py [prototype]"]
+        src_zephyr_data_scheduler_py["src/zephyr/data/scheduler.py [prototype]"]
+        src_zephyr_data_speed_tester_py["src/zephyr/data/speed_tester.py [prototype]"]
+        src_zephyr_data_task_queue_py["src/zephyr/data/task_queue.py [prototype]"]
+        tests_asset_inventory_test_asset_inventory_py["...set_inventory/test_asset_inventory.py [prototype]"]
+        tests_data_test_data_lifecycle_py["tests/data/test_data_lifecycle.py [prototype]"]
+        tests_data_test_data_pipeline_guard_py["tests/data/test_data_pipeline_guard.py [prototype]"]
+        tests_data_test_data_quality_gate_py["tests/data/test_data_quality_gate.py [prototype]"]
+        tests_data_test_data_source_reliability_py[".../data/test_data_source_reliability.py [prototype]"]
+        tests_data_test_data_volume_growth_monitor_py["...ta/test_data_volume_growth_monitor.py [prototype]"]
+        tests_db_test_db_auto_ops_py["tests/db/test_db_auto_ops.py [prototype]"]
+        tests_db_test_db_bridge_py["tests/db/test_db_bridge.py [prototype]"]
+        tests_db_test_db_integration_py["tests/db/test_db_integration.py [prototype]"]
+        tests_db_test_db_integrity_py["tests/db/test_db_integrity.py [prototype]"]
+        tests_db_test_db_query_py["tests/db/test_db_query.py [prototype]"]
+        tests_db_test_db_red_blue_py["tests/db/test_db_red_blue.py [prototype]"]
+        tests_db_test_db_transition_py["tests/db/test_db_transition.py [prototype]"]
+        tests_db_test_dm400_stale_task_fix_py["tests/db/test_dm400_stale_task_fix.py [prototype]"]
+        tests_io_test_io_content_fingerprint_py["tests/io/test_io_content_fingerprint.py [prototype]"]
+        tests_io_test_io_file_utils_py["tests/io/test_io_file_utils.py [prototype]"]
+        tests_io_test_io_frontmatter_utils_py["tests/io/test_io_frontmatter_utils.py [prototype]"]
+        tests_io_test_io_paths_py["tests/io/test_io_paths.py [prototype]"]
+        tests_io_test_io_serialization_py["tests/io/test_io_serialization.py [prototype]"]
+        tests_io_test_mcp_launcher_py["tests/io/test_mcp_launcher.py [prototype]"]
+        tests_io_test_mcp_task_claim_py["tests/io/test_mcp_task_claim.py [prototype]"]
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_data_buffered_writer_py -->|import_depends| src_zephyr_data_ch_writer_py
+    src_zephyr_data_buffered_writer_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_ch_writer_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_cli_py -->|import_depends| src_zephyr_data_scheduler_py
+    src_zephyr_data_cli_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_cli_py -->|import_depends| src_zephyr_data_progress_store_py
+    src_zephyr_data_cli_py -->|import_depends| src_zephyr_data_speed_tester_py
+    src_zephyr_data_cli_py -->|import_depends| src_zephyr_data___init___py
+    src_zephyr_data_news_dedup_py -->|import_depends| src_zephyr_data_ch_writer_py
+    src_zephyr_data_news_dedup_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_provider_base_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_progress_store_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_task_queue_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_alerter_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data___init___py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_buffered_writer_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_metrics_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_ifind_provider_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_miniqmt_provider_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_akshare_provider_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_baostock_provider_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_tushare_provider_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_tickflow_provider_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_tdx_provider_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_rss_provider_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_cls_provider_py
+    src_zephyr_data_scheduler_py -->|import_depends| src_zephyr_data_implementations_eastmoney_news_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_miniqmt_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data___init___py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_ifind_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_akshare_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_baostock_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_tickflow_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_tushare_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_rss_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_tdx_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_cls_provider_py
+    src_zephyr_data_speed_tester_py -->|import_depends| src_zephyr_data_implementations_eastmoney_news_provider_py
+    src_zephyr_data___init___py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data___init___py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data___init___py -->|import_depends| src_zephyr_data_scheduler_py
+    src_zephyr_data___main___py -->|import_depends| src_zephyr_data_cli_py
+    src_zephyr_data_implementations_baostock_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_baostock_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_akshare_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_akshare_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_akshare_provider_py -->|import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_cls_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_cls_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_cls_provider_py -->|import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_rss_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_rss_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_rss_provider_py -->|import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_ifind_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_ifind_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_miniqmt_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_miniqmt_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_tdx_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tdx_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_satellite_geospatial_engine___init___py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tushare_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tushare_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_tushare_provider_py -->|import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations___init___py -->|import_depends| src_zephyr_data_implementations_ifind_provider_py
+    src_zephyr_data_implementations___init___py -->|import_depends| src_zephyr_data_implementations_miniqmt_provider_py
+    src_zephyr_data_implementations___init___py -->|import_depends| src_zephyr_data_implementations_akshare_provider_py
+    src_zephyr_data_implementations_tickflow_provider_py -->|import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tickflow_provider_py -->|import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_buffered_writer_py -->|contract| src_zephyr_data_satellite_geospatial_engine___init___py
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D_GOVERNANCE -> D_DATA (2 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_data_provider_base_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_data___init___py
+    %% D_SHARED -> D_DATA (3 条)
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_data_cli_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_data_policy_registry_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_data_policy_registry_py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D_DATA -> D_FBL_VERIFICATION (1 条)
+    tests_db_test_db_integrity_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    %% D_DATA -> D_FEEDBACK_LOOP (1 条)
+    tests_db_test_db_bridge_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    %% D_DATA -> D_GOVERNANCE (11 条)
+    tests_data_test_data_pipeline_guard_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_db_test_db_auto_ops_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_db_test_db_auto_ops_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_db_test_db_integration_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_db_test_db_query_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_db_test_dm400_stale_task_fix_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_db_test_db_transition_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_db_test_db_transition_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_io_test_mcp_task_claim_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_register_scheduler_task_ps1 -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_start_scheduler_ps1 -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_DATA -> D_GOV_AUDIT (1 条)
+    tests_db_test_db_query_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_DATA -> D_GOV_ENFORCEMENT (1 条)
+    src_zephyr_data_satellite_geospatial_engine___init___py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_DATA -> D_GOV_RULE (1 条)
+    tests_db_test_db_transition_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    %% D_DATA -> D_INTEGRATION (1 条)
+    tests_io_test_mcp_task_claim_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
+    %% D_DATA -> D_MKT_DATA (2 条)
+    src_zephyr_data_buffered_writer_py -->|data| D_MKT_DATA[D_MKT_DATA]
+    src_zephyr_data_buffered_writer_py -->|data| D_MKT_DATA[D_MKT_DATA]
+    %% D_DATA -> D_SHARED (21 条)
+    src_zephyr_data_alerter_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_data_alerter_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_data_metrics_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_data_progress_store_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_data_progress_store_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_data_scheduler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_data_speed_tester_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_data_implementations_cls_provider_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_data_implementations_rss_provider_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_data_implementations_tushare_provider_py -->|import_depends| D_SHARED[D_SHARED]
+    tests_db_test_db_auto_ops_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_db_test_db_integration_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_db_test_db_red_blue_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_io_test_io_content_fingerprint_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_io_test_io_frontmatter_utils_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_io_test_io_serialization_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_io_test_io_serialization_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_io_test_mcp_launcher_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_io_test_io_file_utils_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_io_test_io_paths_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_io_test_mcp_task_claim_py -->|test_depends| D_SHARED[D_SHARED]
+    %% D_DATA -> D_TRADING (2 条)
+    tests_data_test_data_quality_gate_py -->|test_depends| D_TRADING[D_TRADING]
+    tests_data_test_data_volume_growth_monitor_py -->|test_depends| D_TRADING[D_TRADING]
+
+    %% 统计
+    %% 域内依赖: 77 条
+    %% 跨域入边: 5 条
+    %% 跨域出边: 42 条

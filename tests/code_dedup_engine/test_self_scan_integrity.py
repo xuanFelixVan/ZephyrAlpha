@@ -47,6 +47,6 @@ def test_all_modules_importable():
 
 
 def test_config_tier_count():
-    from zephyr.governance.code_dedup.config import PROJECT_SCALE_TIERS
+    from zephyr.gov_code_quality.code_dedup.config import PROJECT_SCALE_TIERS
 
     assert len(PROJECT_SCALE_TIERS) == 4
