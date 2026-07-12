@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.self_test_verifier
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,7 +17,7 @@
 
 """
 Self Test Verifier — self_test_verifier.py
-module_id: MOD-INF-023
+
 至少 8 项收敛性检查（循环import / 逻辑碎片化 / 级联递归等）。
 对标 blueprint.md §2.20 / TASK-INF-0021。
 """

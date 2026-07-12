@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.config_consistency
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Config Consistency Checker — 配置多源一致性 D-023-29 · §6.21。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 三源(.env / YAML / 硬编码defaults)提取所有配置键

@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.baseline_poisoning_guard
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 cross_validation: 基线快照 vs git对应commit原始代码diff，每DEEP scan抽样10%

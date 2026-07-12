@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_feedback_loop_imports.py
-# [A_module] module_id=MOD-UNK_reliability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK_reliability_diagnosers_reliability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [GOV-DOC-018] 子包reliability: 可靠性/守卫族（DW-242分类，原_reliability.py聚合迁移而来）
 

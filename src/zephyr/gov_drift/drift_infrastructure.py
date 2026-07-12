@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.drift_infrastructure
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
@@ -17,12 +17,6 @@
 
 """
 Drift Detector 基础设施 — drift_infrastructure.py
-
-
-
-
-
-module_id: MOD-INF-023 (SRC-0031)
 
 
 维护窗口、预算系统、检查点写入器、恢复管理器、环境感知/差分检测、部分部署检测。

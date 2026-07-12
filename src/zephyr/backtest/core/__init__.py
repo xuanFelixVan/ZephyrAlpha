@@ -1,4 +1,4 @@
-"""[A_module] module_id=MOD-BT-001 | layer=domain | stability=evolving | safety=L | ai_autonomy=ai_modifiable"""
+"""[A_module] module_id=MOD-BT-001_core | layer=domain | stability=evolving | safety=L | ai_autonomy=ai_modifiable"""
 
 from zephyr.backtest.core.data_handler import BacktestDataHandler, DataHandlerError
 from zephyr.backtest.core.decision_gate import (

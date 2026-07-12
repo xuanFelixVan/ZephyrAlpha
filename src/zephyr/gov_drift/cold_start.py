@@ -19,12 +19,6 @@
 Cold Start Bootstrapper — 冷启动引导 §6.31。
 
 
-
-
-
-module_id: MOD-INF-023
-
-
 init_dirs: 需要物理目录的模块先创建(temp/log/data/cache/checkpoints)
 
 
@@ -129,9 +123,6 @@ CREATE TABLE IF NOT EXISTS drift_events (
 
 
 );
-
-
-
 
 
 CREATE INDEX IF NOT EXISTS idx_drift_detector ON drift_events(detector_id);
@@ -270,9 +261,6 @@ def _trigger_light_scan(project_root: str) -> bool:
 
 def session_entry_activate(project_root: str) -> ColdStartResult:
     """STEP 4.9: 每次 session 进入时触发的冷启动激活。
-
-
-
 
 
     1. 确保目录和DB存在

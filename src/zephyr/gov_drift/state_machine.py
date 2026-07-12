@@ -19,7 +19,6 @@
 
 Drift State Machine — state_machine.py
 
-module_id: MOD-INF-023
 
 10 状态漂移生命周期状态机。控制 DETECTED->VERIFIED 正向修复链路和异常路径。
 
@@ -142,9 +141,6 @@ class DriftStateMachine:
 
     def trigger_rollback(self, event_id: uuid.UUID, record: DriftEventRecord) -> None:
         """CT-005: FIX_FAILED/DRIFT_FAILED -> MOD-INF-021 Rollback 自动回滚。
-
-
-
 
 
         向 Rollback 模块发送回滚请求，回滚到 fix-attempt 之前的基线状态。

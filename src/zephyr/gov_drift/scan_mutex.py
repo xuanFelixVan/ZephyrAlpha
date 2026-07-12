@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.scan_mutex
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
@@ -17,12 +17,6 @@
 
 """
 Scan Mutex — scan_mutex.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 多实例竞态控制：文件锁 + 排队/合并策略 + 优先级抢占 + stale lock 检测。

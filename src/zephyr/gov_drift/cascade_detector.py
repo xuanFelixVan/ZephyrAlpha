@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.cascade_detector
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Cascade Failure Detector — 级联故障检测 D-023-22 · §6.15。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 trigger: 同一module 30min内>=3新漂移且每次前一个被修复

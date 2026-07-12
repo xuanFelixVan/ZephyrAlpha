@@ -224,11 +224,16 @@ def check_file_encoding(filepath: str) -> tuple[list[str], list[str]]:
     if CRLF in raw:
         crlf_count = raw.count(CRLF)
         warnings.append(f"INJ-007 WARNING: file '{filepath}' has {crlf_count} CRLF line endings — should use LF")
-    for pattern in AUTO_GUESS_PATTERNS:
-        if pattern in raw:
-            findings.append(
-                f"INJ-007 FAIL: file '{filepath}' contains '{pattern.decode()}' — autoGuessEncoding must be false"
-            )
+    # 规则文件豁免：docs/01_policies_and_standards/rules/ 下的文件描述规则时
+    # 引用 autoGuessEncoding 属合理引用，非违规（如 trae_028 描述 files.autoGuessEncoding=false）
+    _filepath_norm = str(p).replace("\\", "/")
+    _is_rules_file = "docs/01_policies_and_standards/rules/" in _filepath_norm
+    if not _is_rules_file:
+        for pattern in AUTO_GUESS_PATTERNS:
+            if pattern in raw:
+                findings.append(
+                    f"INJ-007 FAIL: file '{filepath}' contains '{pattern.decode()}' — autoGuessEncoding must be false"
+                )
     try:
         content = raw.decode("utf-8")
         if _detect_mojibake(content):

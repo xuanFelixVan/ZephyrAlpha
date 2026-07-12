@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_risk | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK_risk_trading_contracts_risk | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.risk
 # [STABILITY] evolving

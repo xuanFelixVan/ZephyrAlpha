@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.trend_analyzer
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
@@ -17,12 +17,6 @@
 
 """
 Trend Analyzer — trend_analyzer.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 时序存储与趋势分析：drift_velocity/resolution_rate/MTTR/fp_ratio + 3种trend_alert。

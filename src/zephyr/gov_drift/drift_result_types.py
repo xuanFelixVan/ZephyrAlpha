@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.drift_result_types
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models; zephyr.gov_drift.drift_engine
@@ -17,12 +17,6 @@
 
 """
 Drift Detector 结果类型 + 专项检测函数 — drift_result_types.py
-
-
-
-
-
-module_id: MOD-INF-023 (SRC-0033)
 
 
 7 个专项检测结果数据类 + 对应的 detect_*() 函数：
@@ -61,13 +55,7 @@ class SemanticDriftResult:
     """语义漂移检测结果（§6.2）。
 
 
-
-
-
     对比两个 YAML 文件在指定 key_path 下的概念基数或枚举值是否一致。
-
-
-
 
 
     Fields:
@@ -110,9 +98,6 @@ def detect_concept_cardinality(yaml_a_path: str, yaml_b_path: str, key_path: str
     """检测概念基数漂移 — 对比两 YAML 在 key_path 下的条目数。
 
 
-
-
-
     Args:
 
 
@@ -123,9 +108,6 @@ def detect_concept_cardinality(yaml_a_path: str, yaml_b_path: str, key_path: str
 
 
         key_path: 以 ``.`` 分隔的嵌套字段路径（如 ``agents.models``）。
-
-
-
 
 
     Returns:
@@ -171,9 +153,6 @@ def detect_enum_value_sync(yaml_a_path: str, yaml_b_path: str, field_path: str) 
     """检测枚举值同步 — 对比两 YAML 在 field_path 下的枚举集合是否一致。
 
 
-
-
-
     Args:
 
 
@@ -184,9 +163,6 @@ def detect_enum_value_sync(yaml_a_path: str, yaml_b_path: str, field_path: str) 
 
 
         field_path: 以 ``.`` 分隔的枚举字段路径。
-
-
-
 
 
     Returns:
@@ -236,9 +212,6 @@ def detect_ownership_consistency(paths: list[str], owner_field: str = "owner") -
     """检测所有权一致性 — 同一文件在被多次读取期间 owner 字段是否漂移。
 
 
-
-
-
     Args:
 
 
@@ -246,9 +219,6 @@ def detect_ownership_consistency(paths: list[str], owner_field: str = "owner") -
 
 
         owner_field: 文件中表示所有者的字段名，默认 ``"owner"``。
-
-
-
 
 
     Returns:
@@ -329,9 +299,6 @@ class DBSchemaDriftResult:
     """数据库 Schema 三方对账结果（§6.3）。
 
 
-
-
-
     Fields:
 
 
@@ -362,9 +329,6 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
     """检测 DB Schema 三方对账漂移 — SQLite 实际 schema vs ORM 模型 vs 迁移脚本。
 
 
-
-
-
     过程：
 
 
@@ -380,16 +344,10 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
     4. 对实际 schema、ORM 模型、迁移定义做三方交叉对比。
 
 
-
-
-
     Args:
 
 
         project_root: 项目根目录。
-
-
-
 
 
     Returns:
@@ -557,9 +515,6 @@ class DepVersionDriftResult:
     """依赖版本漂移结果（§6.4）。
 
 
-
-
-
     Fields:
 
 
@@ -590,25 +545,16 @@ def detect_dep_version_drift(project_root: str) -> list[DriftEvent]:
     """检测依赖版本漂移 — ``requirements.txt`` vs ``pip freeze`` 三方对账。
 
 
-
-
-
     对比 declared（requirements.txt）、installed（pip freeze）、
 
 
     和 implicitly imported（import 语句），检测版本不一致和未声明依赖。
 
 
-
-
-
     Args:
 
 
         project_root: 项目根目录。
-
-
-
 
 
     Returns:
@@ -779,9 +725,6 @@ class SecurityPolicyDriftResult:
     """安全策略漂移结果（§6.5）。
 
 
-
-
-
     Fields:
 
 
@@ -812,9 +755,6 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
     """检测安全策略漂移 — 端点安全检查与密钥泄露扫描。
 
 
-
-
-
     三步检测：
 
 
@@ -827,16 +767,10 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
     3. 全项目正则扫描硬编码密钥（API key / password / token / private key）。
 
 
-
-
-
     Args:
 
 
         project_root: 项目根目录。
-
-
-
 
 
     Returns:
@@ -961,9 +895,6 @@ class DocCodeCoevolutionResult:
     """文档-代码共演化漂移结果（§6.6）。
 
 
-
-
-
     Fields:
 
 
@@ -989,9 +920,6 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
     """检测文档-代码共演化漂移 — 蓝图与代码的双向同步检查。
 
 
-
-
-
     两个维度：
 
 
@@ -1001,16 +929,10 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
     2. **接口漂移**: 蓝图中声明的 ``func()`` 签名在代码中找不到定义。
 
 
-
-
-
     Args:
 
 
         project_root: 项目根目录。
-
-
-
 
 
     Returns:
@@ -1168,9 +1090,6 @@ class TestCoverageDriftResult:
     """测试覆盖漂移结果（§6.7）。
 
 
-
-
-
     Fields:
 
 
@@ -1196,25 +1115,16 @@ def detect_test_coverage_drift(project_root: str) -> list[DriftEvent]:
     """检测测试覆盖漂移 — 模块级 test/src 行数比低于 30% 阈值即告警。
 
 
-
-
-
     统计每个 ``src/<module>/`` 与 ``tests/<module>/`` 下的
 
 
     总代码行数，计算覆盖率比例。
 
 
-
-
-
     Args:
 
 
         project_root: 项目根目录。
-
-
-
 
 
     Returns:
@@ -1305,9 +1215,6 @@ class KnowledgeGraphSyncResult:
     """知识图谱同步结果（§6.10）。
 
 
-
-
-
     Fields:
 
 
@@ -1341,16 +1248,10 @@ def detect_knowledge_graph_sync(
     """检测知识图谱同步漂移 — 将 DriftEvent 流同步为 KG 实体与关系。
 
 
-
-
-
     从事件流中提取 detector_id 和 module_id，与 ``load_detector_registry()``
 
 
     对比，发现未在注册表中出现的 detector 视为知识图谱缺少同步。
-
-
-
 
 
     Args:
@@ -1360,9 +1261,6 @@ def detect_knowledge_graph_sync(
 
 
         events: 当前批次的 DriftEvent 列表。
-
-
-
 
 
     Returns:

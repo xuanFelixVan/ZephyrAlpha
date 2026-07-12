@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.drift_hotfix_bypass
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
@@ -17,12 +17,6 @@
 
 """
 Drift Hotfix Bypass — drift_hotfix_bypass.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 P0 Hotfix 快速旁路处理：[HOTFIX]/[EMERGENCY] commit 自动标记为 ACKNOWLEDGED + SUPPRESSED(72h)。

@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-SEC_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC_security_feedback_loop_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.security
 # [INVARIANTS] pending_review

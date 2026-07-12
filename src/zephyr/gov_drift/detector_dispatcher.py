@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.detector_dispatcher
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
@@ -17,12 +17,6 @@
 
 """
 Detector Dispatcher — detector_dispatcher.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 并行调度器：asyncio subprocess pool 执行检测器脚本，含结果缓存和并行度控制。

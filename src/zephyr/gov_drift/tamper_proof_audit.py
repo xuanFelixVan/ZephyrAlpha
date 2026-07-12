@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.tamper_proof_audit
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
@@ -17,12 +17,6 @@
 
 """
 Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 append_only_events: SQLite TRIGGER禁止UPDATE/DELETE + event sourcing
@@ -109,9 +103,6 @@ BEGIN
 
 
 END;
-
-
-
 
 
 CREATE TRIGGER IF NOT EXISTS drift_events_no_delete

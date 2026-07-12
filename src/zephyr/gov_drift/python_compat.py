@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.python_compat
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Python Compatibility Checker — Python版本兼容性漂移 D-023-30 · §6.22。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 syntax_incompatibility: pyright/mypy 目标 Python 版本类型检查

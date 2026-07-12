@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.handoff_manager
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Cross-Session Handoff Manager — 跨Session修复上下文交接 §6.14。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 handoff_package: JSON(drift_runbook + git bisect + pre-fix快照 + baseline diff + 关联漂移)<5000token

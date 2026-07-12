@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_implementations | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK_implementations_strategy_implementations | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain-signal/signal-generation-core/blueprint.md
 # [MODULE] zephyr.signal_fundamental.strategy.implementations
 # [STABILITY] evolving

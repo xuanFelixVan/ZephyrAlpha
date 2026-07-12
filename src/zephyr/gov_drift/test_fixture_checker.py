@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.test_fixture_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Test Fixture Checker — 测试夹具漂移检测 D-023-28 · §6.20。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 fixture_schema_drift: 夹具硬编码数据结构 vs ORM/pydantic schema

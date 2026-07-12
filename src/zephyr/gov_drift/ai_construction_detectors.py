@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.ai_construction_detectors
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
@@ -19,7 +19,6 @@
 
 Drift Detector AI 施工检测器 — ai_construction_detectors.py
 
-module_id: MOD-INF-023 (SRC-0032)
 
 AI 生成代码的质量/安全检测：幻觉导入、死代码、损坏逻辑、重复功能、
 
@@ -70,9 +69,6 @@ class AIConstructionDetectors:
         """检测 AI 幻觉导入 — 导入不存在或无法解析的模块。
 
 
-
-
-
         扫描目录下所有 .py 文件，对每个 import / from-import 使用
 
 
@@ -82,16 +78,10 @@ class AIConstructionDetectors:
         标准库、相对导入和 ``__future__``/``builtins`` 等安全前缀。
 
 
-
-
-
         Args:
 
 
             module_dir: 待扫描的 Python 模块目录路径。
-
-
-
 
 
         Returns:
@@ -173,25 +163,16 @@ class AIConstructionDetectors:
         """检测 AI 死代码 — 函数体或类体仅含 ``pass``/``...``。
 
 
-
-
-
         遍历目录下所有 .py 文件，收集顶层函数/类定义，将正文只有
 
 
         ``pass`` 或 ``Ellipsis`` 的函数和类标记为死代码。
 
 
-
-
-
         Args:
 
 
             module_dir: 待扫描的 Python 模块目录路径。
-
-
-
 
 
         Returns:
@@ -270,9 +251,6 @@ class AIConstructionDetectors:
         """检测 AI 损坏逻辑 — 高 TODO 密度或上下文截断信号。
 
 
-
-
-
         两个检测维度：
 
 
@@ -282,16 +260,10 @@ class AIConstructionDetectors:
         2. 函数参数 >5 但函数体行数 <3 -> AI 生成时的上下文截断痕迹。
 
 
-
-
-
         Args:
 
 
             module_dir: 待扫描的 Python 模块目录路径。
-
-
-
 
 
         Returns:
@@ -362,25 +334,16 @@ class AIConstructionDetectors:
         """检测 AI 重复功能 — 跨文件存在 AST 完全相同的函数体。
 
 
-
-
-
         对每个函数体的 AST dump 计算 SHA-256 哈希，不同文件中相同
 
 
         函数名且相同哈希视为 AI 重复生成（排除 dunder 方法）。
 
 
-
-
-
         Args:
 
 
             module_dir: 待扫描的 Python 模块目录路径。
-
-
-
 
 
         Returns:
@@ -441,9 +404,6 @@ class AIConstructionDetectors:
         """检测 AI 会话间风格漂移 — 同一模块混用不兼容的编码风格。
 
 
-
-
-
         检测两种典型模式：
 
 
@@ -453,16 +413,10 @@ class AIConstructionDetectors:
         2. ``async def`` 与 ``def`` 混用 -> 异步/同步风格不一致。
 
 
-
-
-
         Args:
 
 
             module_dir: 待扫描的 Python 模块目录路径。
-
-
-
 
 
         Returns:
@@ -544,9 +498,6 @@ class AIConstructionDetectors:
         """检测 AI 知识污染 — 命名冲突与命名约定不一致。
 
 
-
-
-
         两种检测：
 
 
@@ -559,16 +510,10 @@ class AIConstructionDetectors:
            AI 在不同会话中使用了冲突的命名约定。
 
 
-
-
-
         Args:
 
 
             module_dir: 待扫描的 Python 模块目录路径。
-
-
-
 
 
         Returns:
@@ -656,25 +601,16 @@ class AIConstructionDetectors:
         """检测跨会话修复冲突 — 多个会话对同一 DriftEvent 重复修复。
 
 
-
-
-
         对活跃事件按 ``detector_id:drift_dimension:resolved_by`` 分组，
 
 
         同一 key 出现超过 1 次表示多个 AI 会话"修复"了同一问题。
 
 
-
-
-
         Args:
 
 
             active_events: 当前活跃的 DriftEvent 列表。
-
-
-
 
 
         Returns:
