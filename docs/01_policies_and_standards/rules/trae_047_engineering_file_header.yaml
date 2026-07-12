@@ -1,6 +1,6 @@
 rule_id: TRAE-047
 title: 工程治理-文件头部与扩展
-version: 1.2.1
+version: 1.3.0
 layer: L1_foundation
 module_id: TRAE-047
 depends_on: []
@@ -478,6 +478,9 @@ sections:
     - version: 1.2.1
       date: '2026-07-06'
       change: ARCH-MM-001裁定——明确[MATURITY]标记是声明(AI/人工声明的预期成熟度),depgraph nodes.design_maturity是验证(生成器根据has_test推导的实际成熟度);冲突时以depgraph为真源;生成器推导规则:tests/目录下test类型节点的import_depends边目标模块→production,无测试覆盖→prototype
+    - version: 1.3.0
+      date: '2026-07-13'
+      change: 新增gov_eng_002_module_id_naming section——module_id全局唯一性规则(子包__init__.py用{parent_id}_{child_name}/bridges文件用{parent_id}_bridge/禁止游离module_id声明行);P0-P1修复124→86冲突组(Type A/C 100%修复)后的规则固化
     context:
       summary: GOV-ENG-002 v1.0.0从GOV-ENG-001§7独立；GOV-ENG-003 v1.0.0基于2026-05-19基线数据
       impact_on_rules: GOV-ENG-002独立后GOV-ENG-001§7仅保留速查表
@@ -527,6 +530,46 @@ sections:
     - PS-STD-001(元标准)——修改本标准MUST同步检查PS-STD-001
     - GOV-DOC-011(压缩工作流标准)——规格化时STEP 5检查表头完整性
     - REG-FRONTMATTER-001(frontmatter字段注册表)——字段数据SSoT，新增枚举MUST同步
+  gov_eng_002_module_id_naming:
+    title: module_id命名规则(全局唯一性)
+    section_type: rule
+    original_rules:
+    - GOV-ENG-002
+    conditions:
+    - type: constraint
+      check: module_id全局唯一性
+      pass: 每个文件的[A_module] module_id声明全局唯一
+      fail: 多个文件声明相同module_id（冲突）
+    - type: constraint
+      check: 子包__init__.py命名格式
+      pass: 子包__init__.py使用{parent_id}_{child_name}格式（如MOD-BT-001_core）
+      fail: 子包__init__.py复制父包module_id（Type A冲突）
+    - type: constraint
+      check: bridges文件命名格式
+      pass: bridges/目录下文件使用{parent_id}_bridge格式（如MOD-GOV_anomaly_bridge）
+      fail: bridges文件复制父目录文件module_id（Type C冲突）
+    - type: constraint
+      check: 游离module_id声明
+      pass: module_id仅出现在[A_module]头部声明行
+      fail: 文件体内出现游离的module_id:声明行（非头部声明）
+    actions:
+    - type: mandatory
+      step: '子包__init__.py命名——{parent_id}_{child_name}（如MOD-BT-001_core, MOD-ALT_DATA_api）'
+    - type: mandatory
+      step: 'bridges/文件命名——{parent_id}_bridge（如MOD-GOV_anomaly_bridge）'
+    - type: mandatory
+      step: '禁止游离声明——module_id仅出现在文件头部[A_module]行，文件体内禁止出现module_id:声明行'
+    - type: mandatory
+      step: '命名后缀使用下划线连接（_child_name），禁止用连字符避免与module_id前缀MOD-XXX的连字符混淆'
+    prohibitions:
+    - 禁止多个文件声明相同module_id——MODULE-ID-CONSISTENCY gate硬阻断
+    - 禁止子包__init__.py复制父包module_id——Type A冲突
+    - 禁止bridges文件复制父目录文件module_id——Type C冲突
+    - 禁止文件体内出现游离的module_id:声明行——非真实声明，导致扫描器误匹配
+    enforcement:
+      gate: MODULE-ID-CONSISTENCY
+      checks: [module_id_collision, stray_module_id_line]
+    rationale: module_id是文件唯一标识——冲突导致gate误判/depgraph节点歧义/AI幻觉; 子包复制父包module_id是常见错误(100+文件), bridges复制是第二常见错误(9组); 游离声明行干扰扫描器精确匹配
 references:
   rule_ids: []
   scripts:
@@ -549,6 +592,13 @@ metadata:
   modification_permission: human_gated
   superseded_by:
   change_history:
+  - version: 1.3.0
+    date: '2026-07-13'
+    by: session-20260713-module-id-fix
+    changes:
+    - 新增gov_eng_002_module_id_naming section——module_id全局唯一性命名规则
+    - 子包__init__.py用{parent_id}_{child_name}格式，bridges文件用{parent_id}_bridge格式
+    - 禁止文件体内游离module_id声明行——P0-P1修复124→86冲突组后的规则固化
   - version: 1.2.1
     date: '2026-07-06'
     by: session-20260706-arch-mm-001
