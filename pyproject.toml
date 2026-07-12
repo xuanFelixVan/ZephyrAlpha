@@ -92,6 +92,7 @@ markers = [
     "security: marks security-critical tests",
     "financial: marks financial calculation tests",
     "filterwarnings: marks tests that suppress specific warnings (required by --strict-markers)",
+    "asyncio: marks asyncio async tests (requires pytest-asyncio plugin to run)",
 ]
 filterwarnings = [
     "error",

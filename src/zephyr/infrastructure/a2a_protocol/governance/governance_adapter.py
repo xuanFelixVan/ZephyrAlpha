@@ -21,13 +21,13 @@ G-CT-008: A2A -> RBAC + Escalation
 触发条件：Phase 4 激活后，A2A 通信需要经过 RBAC 验证 + Escalation 升级。
 """
 
-logger = logging.getLogger(__name__)
-
 import asyncio
 import logging
 from dataclasses import dataclass, field
 from typing import Any
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
+
+logger = logging.getLogger(__name__)
 
 __all__ = ["A2AGovernanceRecord", "GovernanceAdapter"]
 
