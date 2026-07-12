@@ -535,8 +535,9 @@ class IntegratorScheduler:
                 "default": SQLAlchemyJobStore(url=self._jobs_db),
             },
             executors={
-                "default": ThreadPoolExecutor(8),  # 通用任务（可并行源）
-                "heavy": ThreadPoolExecutor(2),    # 串行源（iFind/QMT）
+                "default": ThreadPoolExecutor(8),    # 通用任务（可并行源）
+                "heavy": ThreadPoolExecutor(2),      # 串行源（iFind/QMT）
+                "realtime": ThreadPoolExecutor(4),   # 盘中实时层（独立线程池，不与批量争抢）
             },
             job_defaults={
                 "coalesce": True,                  # 错过多次只跑一次

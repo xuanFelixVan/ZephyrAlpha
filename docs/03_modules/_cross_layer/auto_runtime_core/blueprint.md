@@ -33,10 +33,6 @@ priority: P0
 runtime_plane: hot
 blueprint_level: module
 responsibility_domain: 
-  - {target: "MOD-INF-016", at: "全篇", why: "Shared Core——事件总线/生命周期/日志/沙箱等公共基座"}
-  - {target: "MOD-INF-009", at: "全篇", why: "Pipeline——大脑调度管线任务"}
-  - {target: "MOD-INF-034", at: "全篇", why: "Model Profiler——大脑消费 benchmark 结果做模型路由"}
-  - {target: "MOD-GATE_ENGINE", at: "§2", why: "Gate Engine——大脑执行结果需过门禁验证"}
   - {target: "MOD-INF-020", at: "§2", why: "Audit Trail——大脑操作写入审计日志"}
   - {target: "MOD-FEEDBACK_LOOP", at: "§2", why: "Feedback Loop——大脑异常上报反馈闭环"}
 references:

@@ -2,32 +2,72 @@
 # [MODULE] zephyr.data.config.schedule
 # [DOMAIN] D_DATA
 # [TTL] permanent
-# 调度计划真源（蓝图 §6.2 调度计划 4 档时段）
+# 调度计划真源（蓝图 §6.2 调度计划 9 档时段）
 # cron 格式: 分 时 日 月 周（APScheduler 标准）
-# executor: default(8线程池,可并行源) / heavy(2线程池,串行源如iFind/QMT)
+# executor: realtime(4线程,盘中实时) / intraday_minute(4线程,盘中分钟K线) / default(8线程,可并行源) / heavy(2线程,串行源如iFind/QMT)
+#
+# 9档分层架构（对标专业机构实践 2026-07-12 v2）：
+# L1 盘中实时层 — 交易时段高频轮询，独占realtime算力，含港股K线（影响盘中决策）
+# L2 盘中分钟K线层 — 交易时段分钟K线滚动更新（替代盘后一次性拉取）
+# L3 事件驱动层 — 7×24 持续轮询，来了就处理（新闻/研报/EDB宏观）
+# L4 盘后日K线层 — 收盘后日/周/月K线+复权+估值+指标
+# L5 盘后资金面层 — 资金流向/龙虎榜/大宗/期货/股本变动/美股（盘后拉取昨日数据）
+# L6 盘后事件层 — 分析师预期/财报快报/审计/分红配股/质押/披露计划
+# L7 夜间财务层 — 财务报表/融资融券(T+1)/十大股东
+# L8 周末校准层 — 全量校准/TDX板块/概念板块/美股全量
+# L9 月初静态层 — 静态列表刷新
 
 schedules:
+  # L1 盘中实时层：每5分钟在交易时段轮询（9:00-15:59，周一至周五）
+  intraday_realtime:
+    cron: "*/5 9-15 * * 1-5"
+    executor: realtime
+    description: "盘中实时层——Tick/L2/Greeks/IV/期货/涨跌停/集合竞价/港股K线"
+
+  # L2 盘中分钟K线层：每5分钟在交易时段滚动更新（9:00-15:59，周一至周五）
+  intraday_minute:
+    cron: "*/5 9-15 * * 1-5"
+    executor: intraday_minute
+    description: "盘中分钟K线层——A股/ETF/LOF分钟K线盘中滚动更新"
+
+  # L3 事件驱动层：每15分钟持续轮询（7×24）
+  event_driven:
+    cron: "*/15 * * * *"
+    executor: default
+    description: "事件驱动层——新闻/研报/EDB宏观数据，来了就处理"
+
+  # L4 盘后日K线层：16:30 周一至周五
   daily_kline:
     cron: "30 16 * * 1-5"
     executor: heavy
-    description: "盘后日K时段——日频核心，先跑"
+    description: "盘后日K线层——日/周/月K线+复权+估值+指标+ETF净值"
 
+  # L5 盘后资金面层：18:00 周一至周五
   daily_capital:
-    cron: "00 17 * * 1-5"
-    executor: default
-    description: "盘后资金时段——资金面+外盘"
-
-  daily_event:
     cron: "00 18 * * 1-5"
     executor: default
-    description: "盘后事件时段——事件驱动数据"
+    description: "盘后资金面层——资金流向/龙虎榜/大宗/期货/股本变动/限售解禁/美股"
 
-  weekend_financial:
-    cron: "00 10 * * 6"
-    executor: heavy
-    description: "周末财务时段——低频财务数据"
-
-  monthly_static:
-    cron: "00 09 1 * *"
+  # L6 盘后事件层：19:00 周一至周五（从daily_capital拆分，错峰执行）
+  daily_event:
+    cron: "00 19 * * 1-5"
     executor: default
-    description: "静态数据月初刷新"
+    description: "盘后事件层——分析师预期/财报快报/审计/分红配股/质押/披露计划"
+
+  # L7 夜间财务层：22:00 周一至周五（融资融券T+1此时已发布）
+  nightly_financial:
+    cron: "00 22 * * 1-5"
+    executor: heavy
+    description: "夜间财务层——财报/财务指标/十大股东/融资融券(T+1)"
+
+  # L8 周末校准层：周六 02:00（利用无交易窗口）
+  weekend_calibration:
+    cron: "00 2 * * 6"
+    executor: heavy
+    description: "周末校准层——全量校准/TDX板块/概念板块/美股全量"
+
+  # L9 月初静态层：每月1日 09:00
+  monthly_static:
+    cron: "00 9 1 * *"
+    executor: default
+    description: "月初静态层——股票列表/板块分类/指数成分/交易日历"
