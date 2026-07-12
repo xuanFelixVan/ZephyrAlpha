@@ -1156,17 +1156,16 @@ tasks:
     extra:
       description: "ETF基金净值增量（miniQMT get_etf_info，含净值/现金余额）"
 
-  - task_id: repurchase_placeholder
-    table: c1_market.repurchase
-    source: miniqmt
+  - task_id: repurchase_refresh
+    table: c3_fundamental.repurchase
+    source: akshare
     schedule: daily_event
-    incremental: true
+    incremental: false  # 全量刷新（stock_repurchase_em 返回当前所有活跃回购）
     dependencies: []
     capability: repurchase
     symbols: null
     extra:
-      description: "回购数据（QMT无接口占位，建议使用AKShare stock_repurchase_em）"
-      disabled: true
+      description: "AKShare回购数据全量刷新（ak.stock_repurchase_em，含计划/已回购数量金额）"
 
   - task_id: margin_trading_qmt_placeholder
     table: c1_market.margin_trading_qmt

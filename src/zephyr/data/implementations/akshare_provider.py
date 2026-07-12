@@ -87,6 +87,8 @@ class AKShareProvider(DataSourceBase):
             # 十大股东 & 披露计划（淘宝历史数据持续更新）
             "top10_shareholders", "top10_circulating_shareholders",
             "disclosure_plan",
+            # 回购数据
+            "repurchase",
             # 静态列表月初刷新
             "convertible_bond_list", "etf_list", "lof_list",
             "hk_stock_list", "hk_trade_calendar", "index_list",
@@ -188,6 +190,8 @@ class AKShareProvider(DataSourceBase):
             yield from self._fetch_top10_circulating_shareholders(payload, policy)
         elif cap == "disclosure_plan":
             yield from self._fetch_disclosure_plan(payload, policy)
+        elif cap == "repurchase":
+            yield from self._fetch_repurchase(payload, policy)
         elif cap == "convertible_bond_list":
             yield from self._fetch_convertible_bond_list(payload, policy)
         elif cap == "etf_list":
@@ -1715,21 +1719,36 @@ class AKShareProvider(DataSourceBase):
     def _collect_concept_cons(
         self, ak, policy, board_name: str, board_code: str
     ) -> list[tuple]:
-        """获取单个概念板块的成分股行（通用辅助）。"""
+        """获取单个概念板块的成分股行（通用辅助）。
+
+        东财接口反爬严重，增加 3 次重试 + 1s 延迟。
+        反爬导致空结果时返回空列表（不影响其他板块）。
+        """
+        import threading
         rows: list[tuple] = []
-        try:
-            df = self._call_with_policy(
-                ak.stock_board_concept_cons_em, policy, symbol=board_name,
-            )
-        except Exception as e:
-            self._log.debug(f"stock_board_concept_cons_em({board_name}) 失败: {e}")
-            return rows
-        if df is None or len(df) == 0:
-            return rows
-        for _, row in df.iterrows():
-            sym = str(row.get("代码") or "").zfill(6)
-            if sym:
-                rows.append((board_code, sym, "akshare"))
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                df = self._call_with_policy(
+                    ak.stock_board_concept_cons_em, policy, symbol=board_name,
+                )
+                if df is not None and len(df) > 0:
+                    for _, row in df.iterrows():
+                        sym = str(row.get("代码") or "").zfill(6)
+                        if sym:
+                            rows.append((board_code, sym, "akshare"))
+                    return rows
+                if attempt < max_retries - 1:
+                    threading.Event().wait(1.0)
+            except Exception as e:
+                self._log.debug(
+                    f"stock_board_concept_cons_em({board_name}) "
+                    f"第{attempt+1}次失败: {e}"
+                )
+                if attempt < max_retries - 1:
+                    threading.Event().wait(1.0)
+        if not rows:
+            self._log.warning(f"概念板块 {board_name}({board_code}) 成分股获取失败（东财反爬）")
         return rows
 
     def _fetch_concept_board(
@@ -2262,7 +2281,78 @@ class AKShareProvider(DataSourceBase):
             year += 1
         return quarter_ends
 
-    # ---- 26. 可转债列表（convertible_bond_list） ----
+    # ---- 26. 回购数据（repurchase） ----
+
+    def _fetch_repurchase(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取A股回购数据全量刷新，写入 c3_fundamental.repurchase。
+
+        调用 ak.stock_repurchase_em() 获取当前所有活跃回购记录。
+        该接口返回全量数据（非按日期增量），每次刷新覆盖最新状态。
+        """
+        import akshare as ak
+
+        table = "c3_fundamental.repurchase"
+        columns = [
+            "announce_date", "symbol", "name", "plan_price_range",
+            "plan_qty_min", "plan_qty_max", "plan_pct_min", "plan_pct_max",
+            "plan_amount_min", "plan_amount_max", "start_date", "progress",
+            "done_price_min", "done_price_max", "done_qty", "done_amount",
+            "data_source",
+        ]
+        iso_date = datetime.date.today().isoformat()
+        t0 = time.time()
+
+        try:
+            df = self._call_with_policy(
+                ak.stock_repurchase_em, policy,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=iso_date,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                sym = str(row.get("股票代码") or "").zfill(6)
+                if not sym:
+                    continue
+                ann_date_raw = str(row.get("最新公告日期") or "")
+                ann_date = ann_date_raw[:10] if len(ann_date_raw) >= 10 else iso_date
+                try:
+                    ann_date = datetime.date.fromisoformat(ann_date).isoformat()
+                except (ValueError, TypeError):
+                    ann_date = iso_date
+                rows.append((
+                    ann_date,
+                    sym,
+                    str(row.get("股票简称") or ""),
+                    str(row.get("计划回购价格区间") or ""),
+                    safe_float(row.get("计划回购数量区间-下限")),
+                    safe_float(row.get("计划回购数量区间-上限")),
+                    safe_float(row.get("占公告前一日总股本比例-下限")),
+                    safe_float(row.get("占公告前一日总股本比例-上限")),
+                    safe_float(row.get("计划回购金额区间-下限")),
+                    safe_float(row.get("计划回购金额区间-上限")),
+                    str(row.get("回购起始时间") or ""),
+                    str(row.get("实施进度") or ""),
+                    safe_float(row.get("已回购股份价格区间-下限")),
+                    safe_float(row.get("已回购股份价格区间-上限")),
+                    safe_float(row.get("已回购股份数量")),
+                    safe_float(row.get("已回购金额")),
+                    "akshare",
+                ))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=iso_date, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 27. 可转债列表（convertible_bond_list） ----
 
     def _fetch_convertible_bond_list(
         self, payload: FetchPayload, policy: SourcePolicy
