@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.symlink_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Symlink Integrity Checker — 软链接完整性检测 §6.29。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 broken_symlinks: 目标不存在或删除的文件

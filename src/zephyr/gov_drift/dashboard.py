@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.dashboard
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Coverage Dashboard — dashboard.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 覆盖率仪表板：detector_coverage_matrix / module_health_index / drift_heatmap + MCP JSON导出。

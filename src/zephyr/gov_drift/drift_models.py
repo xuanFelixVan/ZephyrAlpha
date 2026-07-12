@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.drift_models
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Drift Detector 数据模型 — drift_models.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 定义漂移检测系统的所有核心数据类、枚举和类型别名。

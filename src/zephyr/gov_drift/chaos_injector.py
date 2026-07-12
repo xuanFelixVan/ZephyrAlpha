@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.chaos_injector
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_engine
@@ -17,12 +17,6 @@
 
 """
 Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 4种注入类型: path_rename / yaml_field_flip / fake_todo_bomb / import_hallucination

@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.headless_scanner
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
@@ -17,12 +17,6 @@
 
 """
 Headless Scanner — headless_scanner.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 LIGHT+DEEP 与会话日志 _interrupt_log.jsonl 扫描。

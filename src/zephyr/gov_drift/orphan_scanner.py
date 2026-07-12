@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.orphan_scanner
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Orphan Resource Scanner — 孤儿资源检测 §6.28。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 orphan_script: scripts/下.py文件不在script-manifest.yaml

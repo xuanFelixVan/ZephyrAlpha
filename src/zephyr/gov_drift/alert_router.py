@@ -19,12 +19,6 @@
 Alert Router — alert_router.py
 
 
-
-
-
-module_id: MOD-INF-023
-
-
 告警路由与疲劳管理：四级路由 + 去重(6h) + 聚合(batch/causal) + 静默策略。
 
 

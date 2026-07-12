@@ -19,12 +19,6 @@
 Drift Runbook Generator — 漂移演练手册自动生成。
 
 
-
-
-
-module_id: MOD-INF-023
-
-
 生成 Markdown + YAML frontmatter 格式的漂移演练手册
 
 

@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_implementations | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK_implementations_simulation_implementations | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain-simulation/experiment-core/blueprint.md
 # [MODULE] zephyr.simulation.implementations
 # [INVARIANTS] pending_review

@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.credibility_engine
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Credibility Engine — credibility_engine.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 告警可信度评分：credibility = base_score × (1-fp_rate) × precision × recency_factor。

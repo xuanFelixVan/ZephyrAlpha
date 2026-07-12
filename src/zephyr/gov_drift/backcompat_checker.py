@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.backcompat_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 removed_parameter: 基线(a,b,c) vs 当前(a,b) c被移除

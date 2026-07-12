@@ -1,4 +1,4 @@
-# [A_module] module_id: MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id: MOD-INF-015_profiles | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.profiles
 # [INVARIANTS] start/stop/snapshot must not block; test_mode returns mock data; thread-safe using threading.Lock

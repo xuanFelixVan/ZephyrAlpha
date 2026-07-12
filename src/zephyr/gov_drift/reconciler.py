@@ -19,12 +19,6 @@
 Auto Reconciler — reconciler.py
 
 
-
-
-
-module_id: MOD-INF-023
-
-
 自动对账引擎：pre-fix 快照 -> 自动修复 -> 验证 -> 回滚闭环。
 
 

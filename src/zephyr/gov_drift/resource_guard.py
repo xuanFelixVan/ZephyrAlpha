@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.resource_guard
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Resource Guard — 资源上限与优雅降级 D-023-23 · §6.16。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 hard_limits: 512MB内存 / 2GB磁盘 / 200文件句柄

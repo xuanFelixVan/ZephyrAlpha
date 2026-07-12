@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.cross_module_score
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Cross Module Score — cross_module_score.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 跨模块全局健康度评分（加权平均 + 允许阈值 + rustiness系数）。

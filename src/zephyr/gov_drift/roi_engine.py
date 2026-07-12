@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.roi_engine
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 ROI Engine — roi_engine.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 修复ROI优先级：ROI = impact_weight × frequency / effort + 4级effort + 持续校准。

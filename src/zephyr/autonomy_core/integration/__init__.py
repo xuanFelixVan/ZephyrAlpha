@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INT_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INT_integration_autonomy_core_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.integration
 # [INVARIANTS] pending_review

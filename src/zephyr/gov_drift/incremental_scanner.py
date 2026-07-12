@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.incremental_scanner
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Incremental Scanner — incremental_scanner.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 git diff 驱动的增量扫描器，变更影响范围计算与检测器匹配。

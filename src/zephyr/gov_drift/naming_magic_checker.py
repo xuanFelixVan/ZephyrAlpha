@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.naming_magic_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Naming Magic Checker — 命名魔数与隐式约定检测 §6.27。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 pattern_a.txt_b_logic: a.txt->b.py->c.yaml, 规定不匹配

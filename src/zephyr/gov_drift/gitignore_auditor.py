@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.gitignore_auditor
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 .gitignore Integrity Auditor — gitignore完整性审计 D-023-32 · §6.24。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 untracked_generated_files: 扫描可能生成的文件(*.pkl/*.joblib/*.cache)检查gitignore

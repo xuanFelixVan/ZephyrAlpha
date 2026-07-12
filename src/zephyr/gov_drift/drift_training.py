@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.drift_training
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
@@ -17,12 +17,6 @@
 
 """
 Drift Detector AI 训练闭环 + 跨语言检测 — drift_training.py
-
-
-
-
-
-module_id: MOD-INF-023 (SRC-0034)
 
 
 漂移事件 -> 训练模式提取 -> Prompt 注入 -> 效果追踪 -> 跨语言漂移检测框架。
@@ -47,9 +41,6 @@ from .drift_models import DriftEvent, DriftState, ScanLevel, Severity
 @dataclass
 class DriftTrainingPattern:
     """AI 训练模式 — 从重复漂移事件中提取的可训练模式（§6.12）。
-
-
-
 
 
     Fields:
@@ -113,9 +104,6 @@ class AITrainingLoopResult:
     """AI 训练闭环结果（§6.12）。
 
 
-
-
-
     Fields:
 
 
@@ -146,16 +134,10 @@ def extract_training_patterns(project_root: str, days: int = 30) -> list[DriftTr
     """从 ``data/drift/`` 目录中提取重复漂移事件作为训练模式。
 
 
-
-
-
     扫描 drift JSON 日志，对同一 detector_id 多次出现的事件
 
 
     聚合成 ``DriftTrainingPattern``，记录频次和根因摘要。
-
-
-
 
 
     Args:
@@ -165,9 +147,6 @@ def extract_training_patterns(project_root: str, days: int = 30) -> list[DriftTr
 
 
         days: 回溯天数，默认 30。
-
-
-
 
 
     Returns:
@@ -240,25 +219,16 @@ def inject_patterns_to_prompt(
     """将训练模式注入 Prompt — 生成 Markdown 格式的防御规则文本。
 
 
-
-
-
     选取频次最高的 5 个模式，生成 ``## AI Error-Prone Patterns`` 段落，
 
 
     可追加到 AGENTS.md 或系统 Prompt 中。
 
 
-
-
-
     Args:
 
 
         patterns: 待注入的训练模式列表（按频次排序）。
-
-
-
 
 
     Returns:
@@ -288,9 +258,6 @@ def track_training_effectiveness(
     """追踪训练效果 — 计算注入后的复发减少率。
 
 
-
-
-
     Args:
 
 
@@ -298,9 +265,6 @@ def track_training_effectiveness(
 
 
         post_injection_freq: 注入后的复发次数。
-
-
-
 
 
     Returns:
@@ -323,9 +287,6 @@ def detect_ai_training_loop(project_root: str) -> list[DriftEvent]:
     """检测 AI 训练闭环 — 周期性提取模式并评估注入效果。
 
 
-
-
-
     组合 ``extract_training_patterns`` + ``inject_patterns_to_prompt``
 
 
@@ -335,16 +296,10 @@ def detect_ai_training_loop(project_root: str) -> list[DriftEvent]:
     候选永久纳入 AGENTS.md。
 
 
-
-
-
     Args:
 
 
         project_root: 项目根目录。
-
-
-
 
 
     Returns:
@@ -435,9 +390,6 @@ class CrossLanguageConfig:
     """跨语言漂移检测配置（§6.18）。
 
 
-
-
-
     Fields:
 
 
@@ -466,16 +418,10 @@ def parse_python_imports(file_path: str) -> list[str]:
     """解析 Python 文件的 import 语句列表。
 
 
-
-
-
     Args:
 
 
         file_path: Python 源文件路径。
-
-
-
 
 
     Returns:
@@ -511,16 +457,10 @@ def parse_python_public_api(file_path: str) -> list[str]:
     """解析 Python 文件的公开 API — 非下划线开头的顶层函数名。
 
 
-
-
-
     Args:
 
 
         file_path: Python 源文件路径。
-
-
-
 
 
     Returns:
@@ -556,25 +496,16 @@ def detect_python_dead_code(file_path: str) -> list[str]:
     """检测 Python 死代码 — 仅定义一次且仅调用一次的公开函数。
 
 
-
-
-
     对于每个非下划线开头的顶层函数，统计其调用次数。
 
 
     若调用次数 ≤ 定义次数（且只定义了一次），视为死代码。
 
 
-
-
-
     Args:
 
 
         file_path: Python 源文件路径。
-
-
-
 
 
     Returns:
@@ -630,25 +561,16 @@ def detect_cross_language_drift(project_root: str) -> list[DriftEvent]:
     """检测跨语言漂移 — 按启用的语言枚举文件覆盖与维度对齐（§6.18）。
 
 
-
-
-
     对每种启用的语言统计源文件数量，与语言无关维度数对比，
 
 
     生成覆盖率事件。未来可扩展为语言特定检测器的路由。
 
 
-
-
-
     Args:
 
 
         project_root: 项目根目录。
-
-
-
 
 
     Returns:

@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.canary_controller
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Detector Canary Controller — 检测器金丝雀部署 §6.11。
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 v2独立ID运行，不入drift_events，对比v1分类NEW_FINDING/LOST_FINDING/CHANGED_SEVERITY

@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.drift_engine
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_infrastructure; zephyr.gov_drift.drift_models; zephyr.gov_audit.finding_model; zephyr.gov_audit.__init__
@@ -17,12 +17,6 @@
 
 """
 Drift Engine — 编排器核心 (SRC-0030 精简后)
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 检测器发现 -> 调度 -> 汇总 -> 写入 + 风暴检测 + Evolution Engine 反馈。

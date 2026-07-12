@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-PRT_strategies | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-PRT_strategies_pf_core_strategies | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Re-export wrapper: true source is zephyr.pf_core.default_equity_strategy.
 

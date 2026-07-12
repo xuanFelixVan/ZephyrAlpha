@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.correlation_engine
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
@@ -17,12 +17,6 @@
 
 """
 Correlation Engine — correlation_engine.py
-
-
-
-
-
-module_id: MOD-INF-023
 
 
 关联引擎：co_occurrence(Jaccard) / causal_chain(Granger) / dimension_cluster。
