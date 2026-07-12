@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] zephyr.gov_audit.bridges.audit_drift_bridge
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.gov_audit.anomaly; zephyr.governance.drift_detection.drift_engine; zephyr.governance.drift_detection.drift_models
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.gov_audit.anomaly; zephyr.gov_drift.drift_engine; zephyr.gov_drift.drift_models
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -140,8 +140,8 @@ class DriftBridge:
 
     def _scan_drift_events(self) -> list[dict[str, Any]]:
         try:
-            from zephyr.governance.drift_detection.drift_engine import DriftEngine
-            from zephyr.governance.drift_detection.drift_models import DriftEvent
+            from zephyr.gov_drift.drift_engine import DriftEngine
+            from zephyr.gov_drift.drift_models import DriftEvent
 
             engine = DriftEngine()
             events = engine.recent_events(limit=50)

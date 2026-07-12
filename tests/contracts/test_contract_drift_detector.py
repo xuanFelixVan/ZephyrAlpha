@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_detection.contract_drift_detector import (
+from zephyr.gov_drift.contract_drift_detector import (
     DriftAlert,
     detect_contract_drift,
 )

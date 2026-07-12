@@ -16,7 +16,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from zephyr.governance.drift_detection.drift_models import (
+from zephyr.gov_drift.drift_models import (
     BaselineSnapshot,
     BreakingChange,
     BulkDriftEvent,

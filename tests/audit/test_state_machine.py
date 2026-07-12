@@ -18,7 +18,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from zephyr.governance.drift_detection.drift_models import DriftState
+from zephyr.gov_drift.drift_models import DriftState
 from zephyr.infrastructure.auto_fix_engine.state_machine import (
     TERMINAL_STATES,
     DriftEventRecord,

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_detection.naming_magic_checker import (
+from zephyr.gov_drift.naming_magic_checker import (
     NamingMagicAlert,
     scan_naming_magic,
 )

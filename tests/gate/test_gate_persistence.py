@@ -20,7 +20,7 @@ import uuid
 
 import pytest
 
-from zephyr.governance.drift_detection.gate_persistence import GatePersistence
+from zephyr.gov_drift.gate_persistence import GatePersistence
 
 
 class TestGatePersistenceInstantiation:

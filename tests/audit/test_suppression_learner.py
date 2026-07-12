@@ -14,7 +14,7 @@
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.drift_detection.suppression_learner import (
+from zephyr.gov_drift.suppression_learner import (
     SuppressionLearner,
     SuppressionRule,
 )

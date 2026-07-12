@@ -11,7 +11,7 @@ from __future__ import annotations
 """ArtifactScanner — SSRF / 凭据等规则冒烟测试。"""
 
 
-from zephyr.governance.drift_detection.artifact_scanner import ArtifactScanner
+from zephyr.gov_drift.artifact_scanner import ArtifactScanner
 
 
 def test_artifact_scanner_flags_localhost_ssrf() -> None:

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_detection.canary_controller import (
+from zephyr.gov_drift.canary_controller import (
     CanaryComparison,
     CanaryConfig,
     CanaryResult,

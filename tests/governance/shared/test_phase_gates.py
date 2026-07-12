@@ -110,7 +110,7 @@ class TestP0InputValidation:
         assert RollbackStatus.FAILED.value == "FAILED"
 
     def test_drift_type_enum(self):
-        from zephyr.governance.drift_detection.events import DriftType
+        from zephyr.gov_drift.events import DriftType
 
         assert DriftType.CODE_DIVERGENCE.value == "CODE_DIVERGENCE"
 

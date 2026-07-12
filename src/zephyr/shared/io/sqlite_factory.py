@@ -3,7 +3,7 @@
 # [MODULE] zephyr.shared.io.sqlite_factory
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.io.paths
-# [CONSUMERS] zephyr.governance.persistence.sqlite_schema; zephyr.shared.events.dlq; zephyr.infrastructure.*; zephyr.governance.drift_detection.*
+# [CONSUMERS] zephyr.governance.persistence.sqlite_schema; zephyr.shared.events.dlq; zephyr.infrastructure.*; zephyr.gov_drift.*
 # [STARTUP] imported
 # [MATURITY] stable
 # [INVARIANTS] 所有SQLite连接必须通过get_db_connection工厂创建,确保PRAGMA基线一致

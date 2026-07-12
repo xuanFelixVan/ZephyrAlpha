@@ -20,7 +20,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.drift_detection.drift_detector import trigger_recovery
+from zephyr.gov_drift.drift_detector import trigger_recovery
 
 _EXPECTED_KEYS = {
     "recovery_id",
@@ -55,7 +55,7 @@ def _make_event(dimension="code"):
 
 class TestTriggerRecoveryImport:
     def test_function_importable(self):
-        from zephyr.governance.drift_detection.drift_detector import trigger_recovery as fn
+        from zephyr.gov_drift.drift_detector import trigger_recovery as fn
 
         assert callable(fn)
 

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_detection.orphan_scanner import (
+from zephyr.gov_drift.orphan_scanner import (
     OrphanResource,
     find_orphan_data,
     find_orphan_docs,

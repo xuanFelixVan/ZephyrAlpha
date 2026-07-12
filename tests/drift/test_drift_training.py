@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.drift_detection.drift_training import (
+from zephyr.gov_drift.drift_training import (
     CROSS_LANG_CONFIG,
     LANGUAGE_AGNOSTIC_DIMENSIONS,
     LANGUAGE_SPECIFIC_INTERFACES,

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.drift_detection.credibility_engine import (
+from zephyr.gov_drift.credibility_engine import (
     CredibilityEngine,
     CredibilityScore,
 )

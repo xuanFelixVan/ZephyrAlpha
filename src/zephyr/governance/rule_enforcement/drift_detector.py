@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.drift_detector
 # [DOMAIN] D_GOV_DRIFT
-# [DEPENDENCIES] zephyr.shared.contracts.protocols; zephyr.governance.drift_detection.drift_hotfix_bypass; zephyr.governance.drift_detection.drift_engine; zephyr.governance.drift_detection.cascade_detector; zephyr.governance.drift_detection.reconciler; zephyr.governance.__init__; zephyr.governance.drift_detection.events
+# [DEPENDENCIES] zephyr.shared.contracts.protocols; zephyr.gov_drift.drift_hotfix_bypass; zephyr.gov_drift.drift_engine; zephyr.gov_drift.cascade_detector; zephyr.gov_drift.reconciler; zephyr.governance.__init__; zephyr.gov_drift.events
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -87,7 +87,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
     try:
-        from zephyr.governance.drift_detection.drift_hotfix_bypass import HotfixBypass
+        from zephyr.gov_drift.drift_hotfix_bypass import HotfixBypass
 
         bypass = HotfixBypass(project_root=_PROJECT_ROOT)
         if commit_message and bypass.is_hotfix_commit(commit_message):
@@ -99,7 +99,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
         logger.debug("Hotfix bypass check failed (non-fatal): %s", exc, exc_info=True)
 
     try:
-        from zephyr.governance.drift_detection.drift_engine import (
+        from zephyr.gov_drift.drift_engine import (
             ScanLevel,
             build_report,
             scan,
@@ -138,7 +138,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
         return result
 
     try:
-        from zephyr.governance.drift_detection.cascade_detector import detect_cascade, is_auto_fix_paused
+        from zephyr.gov_drift.cascade_detector import detect_cascade, is_auto_fix_paused
 
         event_dicts = []
         for evt in scan_result.events:
@@ -171,7 +171,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
         logger.debug("Cascade detection failed (non-fatal): %s", exc, exc_info=True)
 
     try:
-        from zephyr.governance.drift_detection.reconciler import AutoFixer
+        from zephyr.gov_drift.reconciler import AutoFixer
 
         fixer = AutoFixer(project_root=_PROJECT_ROOT)
     except ImportError as exc:
@@ -247,13 +247,13 @@ def _fallback_to_rollback_handler(event: Any) -> dict[str, Any]:
         return handler.on_drift_fix(event)
     except ImportError:
         try:
-            from zephyr.governance.drift_detection.events import (
+            from zephyr.gov_drift.events import (
                 ManagedDriftEvent as GovDriftEvent,
             )
-            from zephyr.governance.drift_detection.events import (
+            from zephyr.gov_drift.events import (
                 ManagedDriftState as GovDriftState,
             )
-            from zephyr.governance.drift_detection.events import (
+            from zephyr.gov_drift.events import (
                 DriftType,
             )
 

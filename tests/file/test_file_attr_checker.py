@@ -17,7 +17,7 @@ import os
 import stat
 from datetime import UTC, datetime
 
-from zephyr.governance.drift_detection.file_attr_checker import (
+from zephyr.gov_drift.file_attr_checker import (
     _FILE_ATTR_CACHE,
     FileAttrIssue,
     _snapshot_file_attrs,

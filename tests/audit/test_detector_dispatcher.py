@@ -15,13 +15,13 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.drift_detection.detector_dispatcher import (
+from zephyr.gov_drift.detector_dispatcher import (
     DetectorDispatcher,
     DetectorResult,
     ResultCache,
     get_max_parallel_for_level,
 )
-from zephyr.governance.drift_detection.drift_models import Detector, ScanLevel, Severity
+from zephyr.gov_drift.drift_models import Detector, ScanLevel, Severity
 
 
 class TestDetectorResult:

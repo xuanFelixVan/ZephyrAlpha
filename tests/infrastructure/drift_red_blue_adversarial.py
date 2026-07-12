@@ -20,8 +20,8 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from zephyr.governance.drift_detection.ai_construction_detectors import AIConstructionDetectors
-from zephyr.governance.drift_detection.chaos_injector import (
+from zephyr.gov_drift.ai_construction_detectors import AIConstructionDetectors
+from zephyr.gov_drift.chaos_injector import (
     ChaosInjection,
     ChaosInjectionType,
     ChaosMetrics,
@@ -31,8 +31,8 @@ from zephyr.governance.drift_detection.chaos_injector import (
     inject_path_rename,
     inject_yaml_field_flip,
 )
-from zephyr.governance.drift_detection.drift_models import DriftEvent
-from zephyr.governance.drift_detection.self_test_verifier import SelfTestVerifier
+from zephyr.gov_drift.drift_models import DriftEvent
+from zephyr.gov_drift.self_test_verifier import SelfTestVerifier
 
 
 def setup_target_files(tmp_dir: str) -> list[Path]:

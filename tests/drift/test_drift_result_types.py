@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import yaml
 
-from zephyr.governance.drift_detection.drift_result_types import (
+from zephyr.gov_drift.drift_result_types import (
     DBSchemaDriftResult,
     DepVersionDriftResult,
     DocCodeCoevolutionResult,
@@ -33,7 +33,7 @@ from zephyr.governance.drift_detection.drift_result_types import (
     detect_security_policy_drift,
     detect_test_coverage_drift,
 )
-from zephyr.governance.drift_detection.drift_result_types import (
+from zephyr.gov_drift.drift_result_types import (
     TestCoverageDriftResult as CovDriftResult,
 )
 

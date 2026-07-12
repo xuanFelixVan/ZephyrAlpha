@@ -27,7 +27,7 @@ from zephyr.security.access_control.a2a_check import verify_a2a_pair
 from zephyr.security.access_control.approver_check import verify_approver
 from zephyr.security.access_control.capability_check import verify_capability_scope
 from zephyr.security.access_control.contracts import RBACAuditBridge
-from zephyr.governance.drift_detection.events import ManagedDriftEvent, DriftType
+from zephyr.gov_drift.events import ManagedDriftEvent, DriftType
 
 # ===== 红方攻击 1: G-CT-001 — RBAC→Audit 契约旁路攻击 =====
 

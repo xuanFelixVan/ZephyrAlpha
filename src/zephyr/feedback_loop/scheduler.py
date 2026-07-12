@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.scheduler
 # [DOMAIN] D_FEEDBACK_LOOP
-# [DEPENDENCIES] zephyr.feedback_loop.__init__; zephyr.governance.integrity; zephyr.governance.drift_detection.drift_engine; zephyr.infrastructure.auto_fix_engine.__init__; zephyr.infrastructure.__init__; zephyr.shared.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.feedback_loop.__init__; zephyr.governance.integrity; zephyr.gov_drift.drift_engine; zephyr.infrastructure.auto_fix_engine.__init__; zephyr.infrastructure.__init__; zephyr.shared.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
 # [CONSUMERS] ide_health_service.py; auto_runtime_core.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -262,7 +262,7 @@ class FeedbackLoopScheduler:
         try:
             import asyncio
 
-            from zephyr.governance.drift_detection.drift_engine import scheduled_light
+            from zephyr.gov_drift.drift_engine import scheduled_light
 
             result = run_sync(scheduled_light())
             high_drifts = [

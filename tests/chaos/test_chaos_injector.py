@@ -18,7 +18,7 @@ import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.governance.drift_detection.chaos_injector import (
+from zephyr.gov_drift.chaos_injector import (
     INJECTORS,
     ChaosInjection,
     ChaosInjectionType,

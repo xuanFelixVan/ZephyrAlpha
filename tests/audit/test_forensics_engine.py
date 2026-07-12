@@ -17,7 +17,7 @@ import json
 import os
 from datetime import UTC, datetime
 
-from zephyr.governance.drift_detection.forensics_engine import (
+from zephyr.gov_drift.forensics_engine import (
     FORENSICS_CONFIG,
     ForensicsConfig,
     ForensicsReport,

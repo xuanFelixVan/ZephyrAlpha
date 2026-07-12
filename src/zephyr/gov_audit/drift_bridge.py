@@ -30,7 +30,7 @@ class DriftBridge:
         self._detector = None
         self._available = False
         try:
-            from zephyr.governance.drift_detection.drift_detector import DriftDetector
+            from zephyr.gov_drift.drift_detector import DriftDetector
 
             self._detector = DriftDetector()
             self._available = True

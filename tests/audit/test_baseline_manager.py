@@ -13,7 +13,7 @@
 
 import os
 
-from zephyr.governance.drift_detection.baseline_manager import BaselineManager, DiffReport
+from zephyr.gov_drift.baseline_manager import BaselineManager, DiffReport
 
 
 class TestDiffReport:

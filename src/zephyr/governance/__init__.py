@@ -53,7 +53,7 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 
 
 try:
-    import zephyr.governance.drift_detection.drift_detector as drift_detector_mod
+    import zephyr.gov_drift.drift_detector as drift_detector_mod
 except (ImportError, RuntimeError):
     drift_detector_mod = None
 try:

@@ -17,7 +17,7 @@ import uuid
 
 import pytest
 
-from zephyr.governance.drift_detection.git_bisector import BisectResult, GitBisector
+from zephyr.gov_drift.git_bisector import BisectResult, GitBisector
 
 
 class TestBisectResultInstantiation:

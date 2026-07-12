@@ -15,14 +15,14 @@ class TestGCT005DriftToRollback:
     """验证 drift-detector/events.py 的 ManagedDriftEvent 可被 rollback/drift_fix.py 处理."""
 
     def test_drift_event_creatable(self):
-        from zephyr.governance.drift_detection.events import ManagedDriftEvent
+        from zephyr.gov_drift.events import ManagedDriftEvent
 
         e = ManagedDriftEvent(drift_id="D001", target="test_config")
         assert e.drift_id == "D001"
 
     def test_drift_fix_handler_accepts_event(self):
         from zephyr.governance.drift_fix import DriftFixHandler
-        from zephyr.governance.drift_detection.events import ManagedDriftEvent
+        from zephyr.gov_drift.events import ManagedDriftEvent
 
         e = ManagedDriftEvent(drift_id="D001", target="test_config")
         handler = DriftFixHandler()
@@ -30,7 +30,7 @@ class TestGCT005DriftToRollback:
         assert result is not None
 
     def test_drift_state_enum(self):
-        from zephyr.governance.drift_detection.events import ManagedDriftState, DriftType
+        from zephyr.gov_drift.events import ManagedDriftState, DriftType
 
         assert ManagedDriftState.DETECTED is not None
         assert DriftType.CONFIG_DRIFT is not None

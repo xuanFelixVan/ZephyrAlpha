@@ -26,18 +26,18 @@ from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.drift_detection.ai_construction_detectors import AIConstructionDetectors
-from zephyr.governance.drift_detection.drift_engine import (
+from zephyr.gov_drift.ai_construction_detectors import AIConstructionDetectors
+from zephyr.gov_drift.drift_engine import (
     _create_bulk_event,
     _detect_expected_storm,
     load_detector_registry,
 )
-from zephyr.governance.drift_detection.drift_infrastructure import (
+from zephyr.gov_drift.drift_infrastructure import (
     check_budget_for_gate,
     declare_maintenance_window,
     get_maintenance_window,
 )
-from zephyr.governance.drift_detection.drift_models import DriftEvent, DriftState
+from zephyr.gov_drift.drift_models import DriftEvent, DriftState
 
 
 def _make_event(
@@ -176,21 +176,21 @@ class TestHotfixBypass:
     """验证 [HOTFIX]/[EMERGENCY] commit 旁路逻辑。"""
 
     def test_hotfix_commit_detected(self):
-        from zephyr.governance.drift_detection.drift_hotfix_bypass import HotfixBypass
+        from zephyr.gov_drift.drift_hotfix_bypass import HotfixBypass
 
         bypass = HotfixBypass(project_root=tempfile.gettempdir())
         assert bypass.is_hotfix_commit("[HOTFIX] critical production fix") is True
         assert bypass.is_hotfix_commit("[EMERGENCY] data loss prevention") is True
 
     def test_normal_commit_not_bypassed(self):
-        from zephyr.governance.drift_detection.drift_hotfix_bypass import HotfixBypass
+        from zephyr.gov_drift.drift_hotfix_bypass import HotfixBypass
 
         bypass = HotfixBypass(project_root=tempfile.gettempdir())
         assert bypass.is_hotfix_commit("fix: minor typo") is False
         assert bypass.is_hotfix_commit("feat: add new feature") is False
 
     def test_hotfix_bypass_in_trigger_recovery(self):
-        from zephyr.governance.drift_detection.drift_detector import trigger_recovery
+        from zephyr.gov_drift.drift_detector import trigger_recovery
 
         payload = {
             "module_id": "MOD-INF-023",
@@ -236,7 +236,7 @@ class TestNoDeprecationWarning:
     """验证 _fallback_to_rollback_handler 不触发 DeprecationWarning。"""
 
     def test_fallback_no_deprecation_warning(self):
-        from zephyr.governance.drift_detection.drift_detector import _fallback_to_rollback_handler
+        from zephyr.gov_drift.drift_detector import _fallback_to_rollback_handler
 
         mock_event = MagicMock()
         mock_event.event_id = uuid.uuid4()
@@ -269,7 +269,7 @@ class TestDeepDetectorInterfaces:
     """验证深度检测器可正常调用并返回结果。"""
 
     def test_semantic_drift_concept_cardinality(self):
-        from zephyr.governance.drift_detection.drift_result_types import detect_concept_cardinality
+        from zephyr.gov_drift.drift_result_types import detect_concept_cardinality
 
         tmp = tempfile.mkdtemp(prefix="drift_semantic_")
         try:
@@ -283,7 +283,7 @@ class TestDeepDetectorInterfaces:
             shutil.rmtree(tmp, ignore_errors=True)
 
     def test_semantic_drift_enum_value_sync(self):
-        from zephyr.governance.drift_detection.drift_result_types import detect_enum_value_sync
+        from zephyr.gov_drift.drift_result_types import detect_enum_value_sync
 
         tmp = tempfile.mkdtemp(prefix="drift_enum_")
         try:

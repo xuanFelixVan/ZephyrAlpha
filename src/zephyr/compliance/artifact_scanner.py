@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.artifact_scanner
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.governance.drift_detection.artifact_scanner
+# [DEPENDENCIES] zephyr.gov_drift.artifact_scanner
 # [CONSUMERS] zephyr.compliance.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -15,4 +15,4 @@
 # [TTL] permanent
 """Re-export wrapper: artifact_scanner has migrated to zephyr.governance.drift_detection.artifact_scanner"""
 
-from zephyr.governance.drift_detection.artifact_scanner import *  # noqa: F403
+from zephyr.gov_drift.artifact_scanner import *  # noqa: F403

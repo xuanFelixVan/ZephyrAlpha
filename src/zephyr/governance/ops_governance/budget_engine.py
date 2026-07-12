@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §2-4
 # [MODULE] zephyr.governance.ops_governance.budget_engine
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.governance.ops_governance.budget_models; zephyr.governance.drift_detection.drift_infrastructure
+# [DEPENDENCIES] zephyr.governance.ops_governance.budget_models; zephyr.gov_drift.drift_infrastructure
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -373,7 +373,7 @@ class BudgetEngine:
                 worst = cost_result
 
         try:
-            from zephyr.governance.drift_detection.drift_infrastructure import check_budget_for_gate
+            from zephyr.gov_drift.drift_infrastructure import check_budget_for_gate
 
             drift_result = check_budget_for_gate("MOD-INF-024", tier="P1")
             if not drift_result.get("allowed", True):
@@ -727,7 +727,7 @@ class BudgetEngine:
 
         if self._spiral_ews is None:
             try:
-                from zephyr.governance.drift_detection.spiral_ews import SpiralEarlyWarningSystem
+                from zephyr.gov_drift.spiral_ews import SpiralEarlyWarningSystem
 
                 self._spiral_ews = SpiralEarlyWarningSystem()
             except ImportError:

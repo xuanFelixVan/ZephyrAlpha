@@ -15,7 +15,7 @@ import os
 import tempfile
 import uuid
 
-from zephyr.governance.drift_detection.self_test_verifier import (
+from zephyr.gov_drift.self_test_verifier import (
     SelfTestVerifier,
     VerifierResult,
 )

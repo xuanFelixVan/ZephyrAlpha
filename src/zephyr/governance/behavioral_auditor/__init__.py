@@ -25,7 +25,7 @@ from __future__ import annotations
 
 behavioral-auditor — MOD-INF-023 · 行为审计器 / 漂移检测引擎"""
 
-from zephyr.governance.drift_detection.absence_manager import (
+from zephyr.gov_drift.absence_manager import (
     AbsenceManagerConfig,
     EscalationEntry,
     OwnerStatus,
@@ -35,8 +35,8 @@ from zephyr.governance.drift_detection.absence_manager import (
     record_activity,
     set_severity_limit,
 )
-from zephyr.governance.drift_detection.ai_construction_detectors import AIConstructionDetectors
-from zephyr.governance.drift_detection.ai_context_injector import (
+from zephyr.gov_drift.ai_construction_detectors import AIConstructionDetectors
+from zephyr.gov_drift.ai_context_injector import (
     HealthSnapshot,
     InjectedContext,
     InjectionLevel,
@@ -47,8 +47,8 @@ from zephyr.governance.drift_detection.ai_context_injector import (
     inject_minimal,
     inject_standard,
 )
-from zephyr.governance.drift_detection.alert_router import Alert, AlertRouter
-from zephyr.governance.drift_detection.backcompat_checker import (
+from zephyr.gov_drift.alert_router import Alert, AlertRouter
+from zephyr.gov_drift.backcompat_checker import (
     CompatBreakEvent,
     FunctionSignature,
     compare_signatures,
@@ -58,8 +58,8 @@ from zephyr.governance.drift_detection.backcompat_checker import (
     run_backcompat_check,
     scan_impact,
 )
-from zephyr.governance.drift_detection.baseline_manager import BaselineManager, DiffReport
-from zephyr.governance.drift_detection.baseline_poisoning_guard import (
+from zephyr.gov_drift.baseline_manager import BaselineManager, DiffReport
+from zephyr.gov_drift.baseline_poisoning_guard import (
     FileBaselineSnapshot,
     HashChainEntry,
     MultiBaselineVote,
@@ -69,7 +69,7 @@ from zephyr.governance.drift_detection.baseline_poisoning_guard import (
     multi_baseline_vote,
     verify_hash_chain,
 )
-from zephyr.governance.drift_detection.canary_controller import (
+from zephyr.gov_drift.canary_controller import (
     CanaryComparison,
     CanaryConfig,
     CanaryResult,
@@ -80,7 +80,7 @@ from zephyr.governance.drift_detection.canary_controller import (
     rollback_detector,
     run_canary,
 )
-from zephyr.governance.drift_detection.cascade_detector import (
+from zephyr.gov_drift.cascade_detector import (
     CascadeAlert,
     CascadeConfig,
     CascadeEventRecord,
@@ -88,7 +88,7 @@ from zephyr.governance.drift_detection.cascade_detector import (
     dry_run_impact_analysis,
     is_auto_fix_paused,
 )
-from zephyr.governance.drift_detection.chaos_injector import (
+from zephyr.gov_drift.chaos_injector import (
     ChaosInjection,
     ChaosInjectionType,
     ChaosMetrics,
@@ -100,7 +100,7 @@ from zephyr.governance.drift_detection.chaos_injector import (
     inject_yaml_field_flip,
     run_chaos_experiment,
 )
-from zephyr.governance.drift_detection.cold_start import (
+from zephyr.gov_drift.cold_start import (
     ColdStartResult,
     bootstrap,
     detect_missing_env,
@@ -108,7 +108,7 @@ from zephyr.governance.drift_detection.cold_start import (
     init_directories,
     session_entry_activate,
 )
-from zephyr.governance.drift_detection.config_consistency import (
+from zephyr.gov_drift.config_consistency import (
     ConfigAuditReport,
     ConfigConflict,
     ConfigSource,
@@ -119,23 +119,23 @@ from zephyr.governance.drift_detection.config_consistency import (
     parse_yaml_config,
     run_config_audit,
 )
-from zephyr.governance.drift_detection.contract_drift_detector import DriftAlert as ContractDriftAlert
-from zephyr.governance.drift_detection.contract_drift_detector import detect_contract_drift
-from zephyr.governance.drift_detection.correlation_engine import CorrelationEngine, CorrelationReport
-from zephyr.governance.drift_detection.credibility_engine import CredibilityEngine, CredibilityScore
-from zephyr.governance.drift_detection.cross_module_score import (
+from zephyr.gov_drift.contract_drift_detector import DriftAlert as ContractDriftAlert
+from zephyr.gov_drift.contract_drift_detector import detect_contract_drift
+from zephyr.gov_drift.correlation_engine import CorrelationEngine, CorrelationReport
+from zephyr.gov_drift.credibility_engine import CredibilityEngine, CredibilityScore
+from zephyr.gov_drift.cross_module_score import (
     CrossModuleReport,
     CrossModuleScorer,
     ModuleScore,
 )
-from zephyr.governance.drift_detection.dashboard import Dashboard, DashboardData
-from zephyr.governance.drift_detection.detector_dispatcher import (
+from zephyr.gov_drift.dashboard import Dashboard, DashboardData
+from zephyr.gov_drift.detector_dispatcher import (
     DetectorDispatcher,
     DetectorResult,
     ResultCache,
     get_max_parallel_for_level,
 )
-from zephyr.governance.drift_detection.drift_engine import (
+from zephyr.gov_drift.drift_engine import (
     build_report,
     load_detector_registry,
     push_to_evolution_engine,
@@ -145,8 +145,8 @@ from zephyr.governance.drift_detection.drift_engine import (
     scheduled_deep,
     scheduled_light,
 )
-from zephyr.governance.drift_detection.drift_hotfix_bypass import HotfixAuditEntry, HotfixBypass
-from zephyr.governance.drift_detection.drift_infrastructure import (
+from zephyr.gov_drift.drift_hotfix_bypass import HotfixAuditEntry, HotfixBypass
+from zephyr.gov_drift.drift_infrastructure import (
     CheckpointWriter,
     EnvDiffReport,
     MaintenanceWindow,
@@ -165,7 +165,7 @@ from zephyr.governance.drift_detection.drift_infrastructure import (
 # ARCH-034 P3: DriftState/DriftEvent 从 drift_models 导入（canonical 10态/12字段版本）
 # events.py 的同名类已改名 ManagedDriftState/ManagedDriftEvent（4态/9字段，管理事件专用）
 # 两者职责不同：drift_models=扫描结果数据载体, events.Managed*=管理事件状态机
-from zephyr.governance.drift_detection.drift_models import (
+from zephyr.gov_drift.drift_models import (
     BaselineSnapshot,
     BreakingChange,
     BulkDriftEvent,
@@ -182,7 +182,7 @@ from zephyr.governance.drift_detection.drift_models import (
     ScanResult,
     Severity,
 )
-from zephyr.governance.drift_detection.drift_result_types import (
+from zephyr.gov_drift.drift_result_types import (
     DBSchemaDriftResult,
     DepVersionDriftResult,
     DocCodeCoevolutionResult,
@@ -200,7 +200,7 @@ from zephyr.governance.drift_detection.drift_result_types import (
     detect_security_policy_drift,
     detect_test_coverage_drift,
 )
-from zephyr.governance.drift_detection.drift_training import (
+from zephyr.gov_drift.drift_training import (
     AITrainingLoopResult,
     CrossLanguageConfig,
     DriftTrainingPattern,
@@ -216,14 +216,14 @@ from zephyr.governance.drift_detection.drift_training import (
 # ARCH-034 P3: DriftType(5值) 从 events 导入（唯一定义源，无同名冲突）
 # 之前 drift_models 导入块不含 DriftType，此处补齐；events 的 DriftState/DriftEvent
 # 已改名 Managed*，不再从此导入（消除"后导入覆盖前导入"的包命名空间静默错乱）
-from zephyr.governance.drift_detection.events import DriftType
-from zephyr.governance.drift_detection.file_attr_checker import (
+from zephyr.gov_drift.events import DriftType
+from zephyr.gov_drift.file_attr_checker import (
     FileAttrIssue,
     capture_baseline,
     check_encoding,
     check_size_anomaly,
 )
-from zephyr.governance.drift_detection.forensics_engine import (
+from zephyr.gov_drift.forensics_engine import (
     ForensicsConfig,
     ForensicsReport,
     ForensicsTimelineEntry,
@@ -232,9 +232,9 @@ from zephyr.governance.drift_detection.forensics_engine import (
     replay_baseline_history,
     serialize_report,
 )
-from zephyr.governance.drift_detection.gate_persistence import GatePersistence
-from zephyr.governance.drift_detection.git_bisector import BisectResult, GitBisector
-from zephyr.governance.drift_detection.gitignore_auditor import (
+from zephyr.gov_drift.gate_persistence import GatePersistence
+from zephyr.gov_drift.git_bisector import BisectResult, GitBisector
+from zephyr.gov_drift.gitignore_auditor import (
     GitignoreAudit,
     audit_gitignore,
     find_over_ignored_critical,
@@ -242,7 +242,7 @@ from zephyr.governance.drift_detection.gitignore_auditor import (
     find_untracked_generated,
     parse_gitignore,
 )
-from zephyr.governance.drift_detection.handoff_manager import (
+from zephyr.gov_drift.handoff_manager import (
     FileIntegrityRecord,
     HandoffPackage,
     abort_handoff,
@@ -252,34 +252,34 @@ from zephyr.governance.drift_detection.handoff_manager import (
     serialize_package,
     verify_integrity,
 )
-from zephyr.governance.drift_detection.headless_scanner import (
+from zephyr.gov_drift.headless_scanner import (
     HeadlessDiffEntry,
     InterruptLog,
     headless_scan_light,
     parse_interrupt_log,
 )
-from zephyr.governance.drift_detection.incremental_scanner import (
+from zephyr.gov_drift.incremental_scanner import (
     ChangeSet,
     DetectorFileMapping,
     FileChange,
     IncrementalScanner,
 )
-from zephyr.governance.drift_detection.naming_magic_checker import NamingMagicAlert, scan_naming_magic
-from zephyr.governance.drift_detection.orphan_scanner import (
+from zephyr.gov_drift.naming_magic_checker import NamingMagicAlert, scan_naming_magic
+from zephyr.gov_drift.orphan_scanner import (
     OrphanResource,
     find_orphan_data,
     find_orphan_docs,
     find_orphan_scripts,
     scan_orphan_resources,
 )
-from zephyr.governance.drift_detection.python_compat import (
+from zephyr.gov_drift.python_compat import (
     PythonCompatIssue,
     auto_fix_compat,
     generate_compat_report,
     scan_python_compat,
 )
-from zephyr.governance.drift_detection.reconciler import AutoFixer, FixSnapshot, Suggestion
-from zephyr.governance.drift_detection.resource_guard import (
+from zephyr.gov_drift.reconciler import AutoFixer, FixSnapshot, Suggestion
+from zephyr.gov_drift.resource_guard import (
     DegradationLevel,
     ResourceLimits,
     ResourceSnapshot,
@@ -292,24 +292,24 @@ from zephyr.governance.drift_detection.resource_guard import (
     stop_guard_loop,
     validate_scalability,
 )
-from zephyr.governance.drift_detection.roi_engine import ROIEngine, ROIScore
-from zephyr.governance.drift_detection.rollback_bridge import DriftRollbackBridge
-from zephyr.governance.drift_detection.runbook_generator import (
+from zephyr.gov_drift.roi_engine import ROIEngine, ROIScore
+from zephyr.gov_drift.rollback_bridge import DriftRollbackBridge
+from zephyr.gov_drift.runbook_generator import (
     build_runbook_frontmatter,
     generate_bulk_runbook,
     generate_runbook,
 )
-from zephyr.governance.drift_detection.scan_mutex import QueuedScan, ScanLockRecord, ScanMutex
-from zephyr.governance.drift_detection.self_check import (
+from zephyr.gov_drift.scan_mutex import QueuedScan, ScanLockRecord, ScanMutex
+from zephyr.gov_drift.self_check import (
     bootstrap_self_check,
     check_core_files,
     check_registry_parsable,
     run_self_check,
     sha256_file,
 )
-from zephyr.governance.drift_detection.suppression_learner import SuppressionLearner, SuppressionRule
-from zephyr.governance.drift_detection.symlink_checker import SymlinkIssue, check_broken_symlinks
-from zephyr.governance.drift_detection.tamper_proof_audit import (
+from zephyr.gov_drift.suppression_learner import SuppressionLearner, SuppressionRule
+from zephyr.gov_drift.symlink_checker import SymlinkIssue, check_broken_symlinks
+from zephyr.gov_drift.tamper_proof_audit import (
     AnomalyAlert,
     AuditRecord,
     count_states,
@@ -318,14 +318,14 @@ from zephyr.governance.drift_detection.tamper_proof_audit import (
     setup_append_only,
     snapshot_event_hash,
 )
-from zephyr.governance.drift_detection.test_fixture_checker import (
+from zephyr.gov_drift.test_fixture_checker import (
     FixtureDriftEvent,
     run_fixture_check,
     scan_expected_output_drift,
     scan_fixture_schema_drift,
     scan_mock_target_drift,
 )
-from zephyr.governance.drift_detection.trend_analyzer import TrendAlert, TrendAnalyzer, TrendMetrics
+from zephyr.gov_drift.trend_analyzer import TrendAlert, TrendAnalyzer, TrendMetrics
 from zephyr.infrastructure.auto_fix_engine.state_machine import (
     DriftEventRecord,
     DriftStateMachine,

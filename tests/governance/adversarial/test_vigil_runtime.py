@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.governance.drift_detection.vigil_runtime import VigilRuntime
+from zephyr.gov_drift.vigil_runtime import VigilRuntime
 
 
 class TestVigilRuntimeInstantiation:

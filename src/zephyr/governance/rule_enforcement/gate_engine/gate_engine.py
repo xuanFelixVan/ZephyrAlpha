@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.gate_engine.gate_engine
 # [DOMAIN] D_GOV_RULE
-# [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.governance.rule_enforcement.gate_types; zephyr.governance.rule_enforcement.risk_ssot; zephyr.governance.rule_enforcement.task_types; zephyr.shared.io.io_cache; zephyr.shared.blueprint_code_auditor; zephyr.shared.code_economy_analyzer; zephyr.shared.combinatorial_gate; zephyr.shared.core_integrity_guard; zephyr.shared.slo_review_assistant; zephyr.governance.rule_enforcement.circuit_breaker; zephyr.governance.drift_detection.drift_infrastructure; zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency; zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator; zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility; zephyr.governance.rule_enforcement.invariants.zero_residue_check; zephyr.shared.contracts.protocols; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.governance.rule_enforcement.gate_types; zephyr.governance.rule_enforcement.risk_ssot; zephyr.governance.rule_enforcement.task_types; zephyr.shared.io.io_cache; zephyr.shared.blueprint_code_auditor; zephyr.shared.code_economy_analyzer; zephyr.shared.combinatorial_gate; zephyr.shared.core_integrity_guard; zephyr.shared.slo_review_assistant; zephyr.governance.rule_enforcement.circuit_breaker; zephyr.gov_drift.drift_infrastructure; zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency; zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator; zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility; zephyr.governance.rule_enforcement.invariants.zero_residue_check; zephyr.shared.contracts.protocols; zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.persistence.task_repo; zephyr.governance.lifecycle_governance.transition; zephyr.knowledge.kb.pipeline.triage; zephyr.knowledge.kb.pipeline.ingest; zephyr.knowledge.kb.pipeline.extract; zephyr.knowledge.kb.pipeline.activate; zephyr.knowledge.kb.pipeline.analyze; zephyr.autonomy_core.skills.skill_executor
 # [STARTUP] imported
 # [MATURITY] production
@@ -800,7 +800,7 @@ def _handle_drift_budget(
 
     target_module = str(check.params.get("target_module", task.task_id))
     try:
-        from zephyr.governance.drift_detection.drift_infrastructure import check_budget_for_gate
+        from zephyr.gov_drift.drift_infrastructure import check_budget_for_gate
 
         budget = check_budget_for_gate(target_module)
         if not budget.get("allowed", False):

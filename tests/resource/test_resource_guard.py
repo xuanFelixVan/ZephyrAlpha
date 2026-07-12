@@ -13,7 +13,7 @@
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.drift_detection.resource_guard import (
+from zephyr.gov_drift.resource_guard import (
     LIMITS,
     DegradationLevel,
     ResourceLimits,

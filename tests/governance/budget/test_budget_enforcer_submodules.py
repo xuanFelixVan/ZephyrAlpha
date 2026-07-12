@@ -125,7 +125,7 @@ class TestAdversarialTester:
 
 class TestBootstrappingCalibrator:
     def test_record_and_calibrate(self):
-        from zephyr.governance.drift_detection.bootstrapping_calibrator import BootstrappingCalibrator
+        from zephyr.gov_drift.bootstrapping_calibrator import BootstrappingCalibrator
 
         cal = BootstrappingCalibrator()
         cal.record(actual_tokens=800, estimated_tokens=1000)
@@ -193,7 +193,7 @@ class TestPoisonCascadeDetector:
 
 class TestSpiralEWS:
     def test_normal(self):
-        from zephyr.governance.drift_detection.spiral_ews import SpiralEarlyWarningSystem
+        from zephyr.gov_drift.spiral_ews import SpiralEarlyWarningSystem
 
         ews = SpiralEarlyWarningSystem()
         for i in range(10):

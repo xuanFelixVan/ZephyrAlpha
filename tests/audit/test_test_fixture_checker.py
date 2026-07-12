@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_detection.test_fixture_checker import (
+from zephyr.gov_drift.test_fixture_checker import (
     FixtureDriftEvent,
     run_fixture_check,
     scan_expected_output_drift,

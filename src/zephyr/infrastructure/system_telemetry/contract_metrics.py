@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.contract_metrics
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.governance.drift_detection.contract_drift_detector
+# [DEPENDENCIES] zephyr.gov_drift.contract_drift_detector
 # [CONSUMERS] zephyr.security.access_control
 # [STARTUP] imported
 # [MATURITY] production
@@ -142,7 +142,7 @@ class ContractMetricsCollector:
         baseline_median: float | None = None,
         baseline_std: float | None = None,
     ) -> DriftAlert | None:
-        from zephyr.governance.drift_detection.contract_drift_detector import detect_contract_drift as _detect
+        from zephyr.gov_drift.contract_drift_detector import detect_contract_drift as _detect
 
         return _detect(
             contract_id=contract_id,

@@ -26,11 +26,11 @@ warnings.warn(
 )
 
 try:
-    from zephyr.governance.drift_detection.ai_construction_detectors import AIConstructionDetectors
-    from zephyr.governance.drift_detection.drift_engine import scan
-    from zephyr.governance.drift_detection.drift_models import DriftEvent, DriftState
-    from zephyr.governance.drift_detection.reconciler import AutoFixer
-    from zephyr.governance.drift_detection.state_machine import DriftStateMachine
+    from zephyr.gov_drift.ai_construction_detectors import AIConstructionDetectors
+    from zephyr.gov_drift.drift_engine import scan
+    from zephyr.gov_drift.drift_models import DriftEvent, DriftState
+    from zephyr.gov_drift.reconciler import AutoFixer
+    from zephyr.gov_drift.state_machine import DriftStateMachine
 except ImportError:
     pass
 

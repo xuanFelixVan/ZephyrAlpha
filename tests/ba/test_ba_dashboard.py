@@ -17,7 +17,7 @@ import json
 import os
 import sqlite3
 
-from zephyr.governance.drift_detection.dashboard import Dashboard, DashboardData
+from zephyr.gov_drift.dashboard import Dashboard, DashboardData
 
 
 class TestDashboardData:

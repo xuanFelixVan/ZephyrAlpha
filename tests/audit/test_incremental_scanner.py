@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import hashlib
 
-from zephyr.governance.drift_detection.incremental_scanner import (
+from zephyr.gov_drift.incremental_scanner import (
     ChangeSet,
     DetectorFileMapping,
     FileChange,

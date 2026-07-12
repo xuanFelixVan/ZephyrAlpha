@@ -24,7 +24,7 @@ from __future__ import annotations
 
 # ARCH-034 P3 / SRC-038 合并：governance/drift_fix.py 冗余副本已删除，改为从 canonical 真源 import
 from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler
-from zephyr.governance.drift_detection.events import ManagedDriftEvent, ManagedDriftState, DriftType
+from zephyr.gov_drift.events import ManagedDriftEvent, ManagedDriftState, DriftType
 
 
 class TestDriftFixHandlerInit:

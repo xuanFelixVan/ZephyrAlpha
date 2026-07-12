@@ -15,8 +15,8 @@ from datetime import UTC, datetime
 
 import pytest
 
-from zephyr.governance.drift_detection.baseline_manager import BaselineManager, DiffReport
-from zephyr.governance.drift_detection.drift_engine import (
+from zephyr.gov_drift.baseline_manager import BaselineManager, DiffReport
+from zephyr.gov_drift.drift_engine import (
     STORM_THRESHOLD,
     _create_bulk_event,
     _detect_expected_storm,
@@ -27,7 +27,7 @@ from zephyr.governance.drift_detection.drift_engine import (
     build_report,
     load_detector_registry,
 )
-from zephyr.governance.drift_detection.drift_models import (
+from zephyr.gov_drift.drift_models import (
     BulkDriftEvent,
     Detector,
     DriftBudget,
@@ -494,7 +494,7 @@ class TestBaselineManager:
 
 class TestDriftInfrastructure:
     def test_maintenance_window(self):
-        from zephyr.governance.drift_detection.drift_infrastructure import (
+        from zephyr.gov_drift.drift_infrastructure import (
             declare_maintenance_window,
             get_maintenance_window,
         )
@@ -506,7 +506,7 @@ class TestDriftInfrastructure:
         assert retrieved is not None
 
     def test_budget_consume(self):
-        from zephyr.governance.drift_detection.drift_infrastructure import consume_budget, get_or_create_budget
+        from zephyr.gov_drift.drift_infrastructure import consume_budget, get_or_create_budget
 
         budget = get_or_create_budget("MOD-BUDGET-TEST", "P0")
         assert budget.monthly_budget == 5
@@ -514,7 +514,7 @@ class TestDriftInfrastructure:
         assert isinstance(exhausted, bool)
 
     def test_differential_detection_drift(self):
-        from zephyr.governance.drift_detection.drift_infrastructure import differential_detection
+        from zephyr.gov_drift.drift_infrastructure import differential_detection
 
         diffs = [{"drift_dimension": "architecture"}]
         report = differential_detection("MOD-ENV-TEST", diffs, {})
@@ -522,14 +522,14 @@ class TestDriftInfrastructure:
         assert report.diff_type == "DRIFT"
 
     def test_differential_detection_env_only(self):
-        from zephyr.governance.drift_detection.drift_infrastructure import differential_detection
+        from zephyr.gov_drift.drift_infrastructure import differential_detection
 
         diffs = [{"drift_dimension": "env_python_version"}]
         report = differential_detection("MOD-ENV-TEST2", diffs, {"python": "3.12"})
         assert report.diff_type == "ENV_DIFF"
 
     def test_partial_deployment_detection(self):
-        from zephyr.governance.drift_detection.drift_infrastructure import detect_partial_deployment
+        from zephyr.gov_drift.drift_infrastructure import detect_partial_deployment
 
         result = detect_partial_deployment(["MOD-A", "MOD-B"])
         assert result is not None
@@ -537,7 +537,7 @@ class TestDriftInfrastructure:
         assert result.module_b == "MOD-B"
 
     def test_partial_deployment_single_module(self):
-        from zephyr.governance.drift_detection.drift_infrastructure import detect_partial_deployment
+        from zephyr.gov_drift.drift_infrastructure import detect_partial_deployment
 
         result = detect_partial_deployment(["MOD-A"])
         assert result is None

@@ -18,7 +18,7 @@ import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.governance.drift_detection.config_consistency import (
+from zephyr.gov_drift.config_consistency import (
     SECRET_KEY_INDICATORS,
     ConfigAuditReport,
     ConfigConflict,

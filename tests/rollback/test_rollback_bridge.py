@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.governance.drift_detection.rollback_bridge import DriftRollbackBridge
+from zephyr.gov_drift.rollback_bridge import DriftRollbackBridge
 
 
 class TestDriftRollbackBridgeInstantiation:

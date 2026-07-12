@@ -27,7 +27,7 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from zephyr.governance.drift_detection.absence_manager import (
+from zephyr.gov_drift.absence_manager import (
     CONFIG,
     EscalationEntry,
     OwnerStatus,

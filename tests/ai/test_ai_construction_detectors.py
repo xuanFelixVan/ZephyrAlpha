@@ -19,8 +19,8 @@ from uuid import uuid4
 
 import pytest
 
-from zephyr.governance.drift_detection.ai_construction_detectors import AIConstructionDetectors
-from zephyr.governance.drift_detection.drift_models import DriftEvent, DriftState
+from zephyr.gov_drift.ai_construction_detectors import AIConstructionDetectors
+from zephyr.gov_drift.drift_models import DriftEvent, DriftState
 
 
 @pytest.fixture

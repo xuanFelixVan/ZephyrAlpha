@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §4
 # [MODULE] zephyr.gov_audit.cli
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.gov_audit.audit_admission_controller; zephyr.gov_audit.resource_aware_pool; zephyr.governance.integrity; zephyr.governance.semantic_audit.kb_gate; zephyr.security.access_control.orphan_judge.judge; zephyr.security.adversarial_validation.validator; zephyr.governance.drift_detection.drift_engine
+# [DEPENDENCIES] zephyr.gov_audit.audit_admission_controller; zephyr.gov_audit.resource_aware_pool; zephyr.governance.integrity; zephyr.governance.semantic_audit.kb_gate; zephyr.security.access_control.orphan_judge.judge; zephyr.security.adversarial_validation.validator; zephyr.gov_drift.drift_engine
 # [CONSUMERS] End users; CI/CD; MCP tool wrappers
 # [STARTUP] manual
 # [MATURITY] production
@@ -175,7 +175,7 @@ def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any
         try:
             import asyncio
 
-            from zephyr.governance.drift_detection.drift_engine import ScanLevel, scan
+            from zephyr.gov_drift.drift_engine import ScanLevel, scan
 
             level_enum = ScanLevel[level.upper()]
             # 5.100.18 修复: 保存原 loop 并在 finally 中恢复, 避免污染调用方 loop 上下文

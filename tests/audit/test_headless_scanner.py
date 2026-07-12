@@ -16,8 +16,8 @@ from __future__ import annotations
 import json
 import uuid
 
-from zephyr.governance.drift_detection.drift_models import ScanResult
-from zephyr.governance.drift_detection.headless_scanner import (
+from zephyr.gov_drift.drift_models import ScanResult
+from zephyr.gov_drift.headless_scanner import (
     HeadlessDiffEntry,
     InterruptLog,
     _scan_script,

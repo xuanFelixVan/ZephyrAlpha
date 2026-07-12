@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
-# [MODULE] zephyr.governance.drift_detection.bridges.drift_bridge
+# [MODULE] zephyr.gov_drift.bridges.drift_bridge
 # [DOMAIN] D_GOV_DRIFT
-# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.drift_detection.drift_engine
+# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.gov_drift.drift_engine
 # [CONSUMERS] zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] production

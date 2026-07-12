@@ -15,7 +15,7 @@ import uuid
 
 import yaml
 
-from zephyr.governance.drift_detection.drift_engine import (
+from zephyr.gov_drift.drift_engine import (
     _create_drift_event,
     _detect_expected_storm,
     _event_to_dict,
@@ -25,7 +25,7 @@ from zephyr.governance.drift_detection.drift_engine import (
     build_report,
     load_detector_registry,
 )
-from zephyr.governance.drift_detection.drift_models import (
+from zephyr.gov_drift.drift_models import (
     Detector,
     DriftEvent,
     DriftReport,

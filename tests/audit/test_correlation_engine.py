@@ -17,7 +17,7 @@ import sqlite3
 
 import pytest
 
-from zephyr.governance.drift_detection.correlation_engine import (
+from zephyr.gov_drift.correlation_engine import (
     CorrelationEngine,
     CorrelationReport,
 )

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_detection.bootstrapping_calibrator import (
+from zephyr.gov_drift.bootstrapping_calibrator import (
     BootstrappingCalibrator,
     CalibrationPoint,
 )

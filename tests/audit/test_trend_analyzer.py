@@ -17,7 +17,7 @@ import os
 import sqlite3
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.drift_detection.trend_analyzer import (
+from zephyr.gov_drift.trend_analyzer import (
     TrendAlert,
     TrendAnalyzer,
     TrendMetrics,
