@@ -36,8 +36,8 @@ depends_on:
 - {target: "architecture_model/layers/b_context_engine.yaml", at: "全篇", why: "CE YAML SSoT——本蓝图真源"}
 child_modules:
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 # Context Engine 集成蓝图 — 上下文引擎集成索引

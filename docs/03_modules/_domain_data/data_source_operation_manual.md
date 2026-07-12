@@ -63,8 +63,8 @@ tags:
   - ssot
 summary: "数据源操作手册——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻+公告+政策直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo) + 通达信(mootdx/pytdx)的API调用方法、参数坑与环境配置。定位为API操作手册：所有调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。可下载数据清单见数据库 data_source_assets 表（PostgreSQL depgraph）。"
 responsibility_domain: 
-design_maturity: design
 build_status: stable
+design_maturity: design
 ---
 
 # 数据源操作手册

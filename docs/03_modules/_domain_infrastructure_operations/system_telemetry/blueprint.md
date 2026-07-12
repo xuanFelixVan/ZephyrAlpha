@@ -53,8 +53,8 @@ scope: global
 stability: evolving
 verifiability: hybrid
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 # System Telemetry 蓝图+施工图 — 全系统可观测性

@@ -42,8 +42,8 @@ ttl: permanent
 verifiability: automated
 version: 1.3.0
 responsibility_domain: 
-design_maturity: design
 build_status: generated
+design_maturity: design
 ---
 
 # Backtest Engine 蓝图+施工图 — D_BACKTEST回测引擎域,双模式架构+Tick回放统一归口

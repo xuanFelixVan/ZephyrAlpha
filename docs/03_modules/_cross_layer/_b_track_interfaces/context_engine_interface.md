@@ -41,8 +41,8 @@ mod_master_contracts:
   - "CT-CE-VMS-001"
   - "CT-CE-LSG-001"
 responsibility_domain: 
-design_maturity: design
 build_status: planned
+design_maturity: design
 ---
 
 # Context Engine Interface / 上下文引擎接口规范

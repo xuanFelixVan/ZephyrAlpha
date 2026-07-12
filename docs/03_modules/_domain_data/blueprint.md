@@ -55,8 +55,8 @@ tags:
   - l00
 summary: "数据接入层——业务数据库母蓝图(MOD-ARCH-BIZDB)上游，对接69品类全景，多数据源标准化接入(AkShare/miniQMT/iFind/tushare/爬虫)，原料/成品/事务三层分类，质量门禁对接CTR契约，calc_mode标注(replay/preload/hybrid)支撑回测调度，为C1~C4仓库提供原料数据。"
 responsibility_domain: 
-build_status: generated
 design_maturity: design
+build_status: generated
 ---
 
 > **v4.0.0 重建中** — 旧C轨占位代码已清理（2026-07-01），抽象层+实现层已按业务数据库母蓝图重建，多品类扩展(对接母蓝图§6插拔机制)待施工。

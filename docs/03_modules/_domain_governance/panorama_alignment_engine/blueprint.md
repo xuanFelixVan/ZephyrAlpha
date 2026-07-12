@@ -8,7 +8,6 @@ layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
 responsibility_domain: 
-owner: ZephyrAlpha-Owner
 classification: internal
 language: zh
 created_by: AI-GLM-5.2

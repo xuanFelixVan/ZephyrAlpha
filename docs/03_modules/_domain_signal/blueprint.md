@@ -157,8 +157,8 @@ strategy_pool:
   max_total_strategies: 50     # 总策略上限（含休眠）
   rollout_phases: [0.05, 0.20, 1.0]  # 灰度发布：5%→20%→100%
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 > ✅ **业务层已开放——可施工**

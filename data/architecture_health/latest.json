@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-11T18:09:47.347335+00:00",
+  "timestamp": "2026-07-11T20:48:12.919102+00:00",
   "dashboard": "architecture_health",
   "phase": "第0期-自动化检测基线",
   "metrics": [
@@ -11,8 +11,8 @@
       "details": [
         "WARN: src\\zephyr\\governance\\persistence\\decisiongraph_schema.py:101 def load_edge_type_values() 函数体含 yaml.safe_load 读取词表逻辑(疑似复制词表加载，应使用 load_vocabulary_values SSoT 函数)",
         "WARN: src\\zephyr\\infrastructure\\database_service.py:6 [STARTUP] 标记值 'auto' 不在 startup_vocabulary.yaml 合法值中(合法值: ['auto_start', 'event_driven', 'imported', 'manual'])",
-        "WARN: src\\zephyr\\infrastructure\\pipeline\\ct_pipe_routing.py:65 字面量集合含 3/37 个 target_layer 词表值(疑似硬编码，应从 target_layer_vocabulary.yaml 动态加载)",
-        "WARN: src\\zephyr\\infrastructure\\pipeline\\routing_plugins.py:67 字面量集合含 3/37 个 target_layer 词表值(疑似硬编码，应从 target_layer_vocabulary.yaml 动态加载)",
+        "WARN: src\\zephyr\\infrastructure\\pipeline\\ct_pipe_routing.py:65 字面量集合含 3/40 个 target_layer 词表值(疑似硬编码，应从 target_layer_vocabulary.yaml 动态加载)",
+        "WARN: src\\zephyr\\infrastructure\\pipeline\\routing_plugins.py:67 字面量集合含 3/40 个 target_layer 词表值(疑似硬编码，应从 target_layer_vocabulary.yaml 动态加载)",
         "WARN: scripts\\governance\\generate_project_depgraph.py:3721 _GHOST_WARNING_THRESHOLD 硬编码阈值数值(应从 thresholds.yaml 通过 _get_threshold() 读取)",
         "WARN: scripts\\governance\\d5_architecture\\generators\\generate_domain_doc.py:149 字面量集合含 3/4 个 layer 词表值(疑似硬编码，应从 layer_vocabulary.yaml 动态加载)",
         "WARN: scripts\\governance\\d5_architecture\\validators\\validate_dependency_graph_template.py:73 字面量集合含 4/4 个 layer 词表值(疑似硬编码，应从 layer_vocabulary.yaml 动态加载)"
@@ -23,7 +23,7 @@
     {
       "metric_id": "M02",
       "name": "manual-only 永久脚本数",
-      "count": 31,
+      "count": 30,
       "target": 0,
       "details": [
         "scripts\\governance\\apply_dataflowgraph.py [STARTUP]=manual [TTL]=permanent",
@@ -42,10 +42,10 @@
         "scripts\\governance\\d5_architecture\\generators\\generate_contracts.py [STARTUP]=manual [TTL]=permanent",
         "scripts\\governance\\d5_architecture\\generators\\generate_cross_domain_matrix.py [STARTUP]=manual [TTL]=permanent",
         "scripts\\governance\\d5_architecture\\generators\\generate_data_acquisition_flow.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\d5_architecture\\generators\\generate_data_inventory.py [STARTUP]=manual [TTL]=permanent",
         "scripts\\governance\\d5_architecture\\generators\\generate_dataflow_diagram.py [STARTUP]=manual [TTL]=permanent",
         "scripts\\governance\\d5_architecture\\generators\\generate_decision_diagram.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\d5_architecture\\generators\\generate_design_vs_production.py [STARTUP]=manual [TTL]=permanent"
+        "scripts\\governance\\d5_architecture\\generators\\generate_design_vs_production.py [STARTUP]=manual [TTL]=permanent",
+        "scripts\\governance\\d5_architecture\\generators\\generate_domain_dependency_diagram.py [STARTUP]=manual [TTL]=permanent"
       ],
       "source": "inline",
       "error": ""
@@ -199,7 +199,7 @@
       "error": ""
     }
   ],
-  "total_auto": 1898,
+  "total_auto": 1897,
   "manual_baseline_total": 3193,
   "note": "自动化检测基线（第0期）。total_auto 为自动化检出总数；manual_baseline_total=3193 为手动调研基线。二者差异源于自动化覆盖度（部分病根需 AST 门禁第1期才覆盖）。"
 }

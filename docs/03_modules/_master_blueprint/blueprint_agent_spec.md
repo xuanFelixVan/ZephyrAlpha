@@ -55,8 +55,8 @@ tags:
   - skill-routing
   - access-control
 responsibility_domain: 
-build_status: stable
 design_maturity: design
+build_status: stable
 ---
 
 # Agent Spec 蓝图 — CBAC能力矩阵·Skill路由

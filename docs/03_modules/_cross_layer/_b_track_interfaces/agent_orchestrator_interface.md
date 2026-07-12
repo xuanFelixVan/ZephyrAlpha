@@ -51,8 +51,8 @@ tags:
   - hallucination-detection
   - vibe-coding-infrastructure
 responsibility_domain: 
-design_maturity: design
 build_status: planned
+design_maturity: design
 ---
 
 # Agent Orchestrator Interface / Agent 编排器接口规范

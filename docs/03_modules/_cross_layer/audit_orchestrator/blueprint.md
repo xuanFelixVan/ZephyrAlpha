@@ -91,8 +91,8 @@ references:
     at: "section 3"
     why: "Agent Spec"
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 # Audit Orchestrator 蓝图 — 审计编排器·三子系统架构
