@@ -813,7 +813,7 @@ tasks:
     capability: kline_5min
     symbols: null
     extra:
-      description: "5分钟K线历史回补（2000-2018 需淘宝购买）"
+      description: "5分钟K线历史回补（百度云已下载2000-2024，此任务已退役）"
       disabled: true
       requires_manual: true
 

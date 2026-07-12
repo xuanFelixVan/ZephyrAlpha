@@ -43,7 +43,7 @@ description: 数据目录唯一真源——含4视角章节（总览/回测/实�
 | `c1_market.adj_factor` | 复权因子 | 1990-12-19 | 2026-07-03 | 5876 | 18,797,511 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.kline_weekly` | 周K线 | 1990-12-20 | 2026-06-26 | 5856 | 3,769,062 | bdpan_qfq | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.kline_monthly` | 月K线 | 1990-12-25 | 2026-06-30 | 5854 | 898,736 | bdpan_qfq | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.index_kline` | 指数K线 | 1990-12-19 | 2026-07-03 | 1031 | 3,066,374 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_index` | 指数K线 | 1990-12-19 | 2026-07-03 | 1031 | 3,066,374 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.kline_1min` | 1分钟K线 | 2000-06-09 | 2026-07-02 | 5480 | 3,830,588,993 | local_intraday | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.kline_15min` | 15分钟K线 | 2000-06-09 | 2026-07-02 | 5480 | 254,313,641 | local_intraday | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.kline_30min` | 30分钟K线 | 2000-06-09 | 2026-07-02 | 5480 | 127,156,825 | local_intraday | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
@@ -65,11 +65,11 @@ description: 数据目录唯一真源——含4视角章节（总览/回测/实�
 | `c1_market.daily_kline` | A股日K线(原始) | 1990-12-19 | 2026-07-02 | 5898 | 18,122,192 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.dragon_tiger` | 龙虎榜 | 2006-07-17 | 2026-07-03 | 5047 | 167,961 | ifind | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.etf_benchmark` | ETF基准 | 1991-04-04 | 2025-07-21 | — | 732 | — | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.etf_kline_15min` | etf_kline_15min | 2005-02-23 | 2026-07-03 | 1581 | 22,813,741 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.etf_kline_1min` | etf_kline_1min | 2005-02-23 | 2026-07-03 | 1581 | 343,553,536 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.etf_kline_30min` | etf_kline_30min | 2005-02-23 | 2026-07-03 | 1581 | 11,398,303 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.etf_kline_5min` | ETF K线(多周期) | 2005-02-23 | 2026-07-03 | 1581 | 68,389,859 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.etf_kline_60min` | etf_kline_60min | 2005-02-23 | 2026-07-03 | 1581 | 5,699,152 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_etf_15min` | kline_etf_15min | 2005-02-23 | 2026-07-03 | 1581 | 22,813,741 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_etf_1min` | kline_etf_1min | 2005-02-23 | 2026-07-03 | 1581 | 343,553,536 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_etf_30min` | kline_etf_30min | 2005-02-23 | 2026-07-03 | 1581 | 11,398,303 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_etf_5min` | ETF K线(多周期) | 2005-02-23 | 2026-07-03 | 1581 | 68,389,859 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_etf_60min` | kline_etf_60min | 2005-02-23 | 2026-07-03 | 1581 | 5,699,152 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.etf_list` | ETF列表 | 2005-02-23 | 2026-07-06 | — | 1,764 | — | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.futures_kline` | 期货K线 | 2010-01-04 | 2026-07-03 | 17592 | 3,067,213 | qmt | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.hk_daily_kline` | 港股日K线 | 2015-05-29 | 2026-07-03 | 923 | 1,459,915 | qmt | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
@@ -84,18 +84,18 @@ description: 数据目录唯一真源——含4视角章节（总览/回测/实�
 | `c1_market.kline_monthly_none` | A股月K线(不复权) | 1990-12-25 | 2026-06-30 | 5854 | 904,274 | bdpan_none | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.kline_weekly_hfq` | A股周K线(后复权) | 1990-12-20 | 2026-06-26 | 5853 | 3,768,249 | bdpan_hfq | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.kline_weekly_none` | A股周K线(不复权) | 1990-12-20 | 2026-06-26 | 5856 | 3,769,209 | bdpan_none | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.lof_kline_15min` | lof_kline_15min | 2010-08-16 | 2026-07-03 | 2750 | 12,064,844 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.lof_kline_1min` | lof_kline_1min | 2010-08-16 | 2026-07-03 | 2750 | 181,720,142 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.lof_kline_30min` | lof_kline_30min | 2010-08-16 | 2026-07-03 | 2750 | 6,032,451 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.lof_kline_5min` | LOF K线(多周期) | 2010-08-16 | 2026-07-03 | 2750 | 36,194,482 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.lof_kline_60min` | lof_kline_60min | 2010-08-16 | 2026-07-03 | 2750 | 3,016,252 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_lof_15min` | kline_lof_15min | 2010-08-16 | 2026-07-03 | 2750 | 12,064,844 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_lof_1min` | kline_lof_1min | 2010-08-16 | 2026-07-03 | 2750 | 181,720,142 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_lof_30min` | kline_lof_30min | 2010-08-16 | 2026-07-03 | 2750 | 6,032,451 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_lof_5min` | LOF K线(多周期) | 2010-08-16 | 2026-07-03 | 2750 | 36,194,482 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.kline_lof_60min` | kline_lof_60min | 2010-08-16 | 2026-07-03 | 2750 | 3,016,252 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.lof_list` | LOF列表 | — | — | — | 361 | — | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.macro_data` | 宏观经济数据 | 2006-03-31 | 2026-06-30 | 27 | 5,853 | akshare | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.margin_trading` | 融资融券 | 2010-01-31 | 2026-06-30 | 5534 | 1,095,732 | ifind | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.stock_list` | A股股票列表 | 1990-12-01 | 2026-07-02 | 5534 | 5,534 | — | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.tdx_market_index` | 通达信板块指数 | — | — | 50 | 50 | — | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.tdx_sector_info` | 通达信板块信息 | 2026-07-03 | 2026-07-03 | 90 | 90 | — | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
-| `c1_market.tick_history` | Tick数据(历史) | 2000-07-14 | 2026-07-02 | 8740 | 7,143,133,916 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
+| `c1_market.tick_data` | Tick数据(历史) | 2000-07-14 | 2026-07-02 | 8740 | 7,143,133,916 | bdpan | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.trade_calendar` | 交易日历 | 1990-12-19 | 2026-07-06 | — | 13,162 | — | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.us_daily_kline` | 美股日K线 | 2006-08-15 | 2026-07-01 | 34 | 167,175 | tickflow | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
 | `c1_market.us_index` | 美股指数 | 1993-01-29 | 2026-07-02 | 3 | 22,441 | tickflow | 每日 | ✅已验证 | 手动触发 | ⚠️ 手动触发 |
@@ -155,36 +155,36 @@ description: 数据目录唯一真源——含4视角章节（总览/回测/实�
 
 | 数据项 | 表 | 起始 | 截止 | 标的数 | 行数 | 数据源 | 更新方式 |
 |--------|-----|------|------|--------|------|--------|----------|
-| Tick数据(历史) | `c1_market.tick_history` | 2000-07-14 | 2026-07-02 | 8740 | 7,143,133,916 | bdpan | 每日 |
+| Tick数据(历史) | `c1_market.tick_data` | 2000-07-14 | 2026-07-02 | 8740 | 7,143,133,916 | bdpan | 每日 |
 | 1分钟K线 | `c1_market.kline_1min` | 2000-06-09 | 2026-07-02 | 5480 | 3,830,588,993 | local_intraday | 每日 |
 | 5分钟K线 | `c1_market.kline_5min` | 2000-06-09 | 2026-07-02 | 5238 | 975,946,697 | bdpan | 每日 |
-| etf_kline_1min | `c1_market.etf_kline_1min` | 2005-02-23 | 2026-07-03 | 1581 | 343,553,536 | bdpan | 每日 |
+| kline_etf_1min | `c1_market.kline_etf_1min` | 2005-02-23 | 2026-07-03 | 1581 | 343,553,536 | bdpan | 每日 |
 | 15分钟K线 | `c1_market.kline_15min` | 2000-06-09 | 2026-07-02 | 5480 | 254,313,641 | local_intraday | 每日 |
-| lof_kline_1min | `c1_market.lof_kline_1min` | 2010-08-16 | 2026-07-03 | 2750 | 181,720,142 | bdpan | 每日 |
+| kline_lof_1min | `c1_market.kline_lof_1min` | 2010-08-16 | 2026-07-03 | 2750 | 181,720,142 | bdpan | 每日 |
 | 30分钟K线 | `c1_market.kline_30min` | 2000-06-09 | 2026-07-02 | 5480 | 127,156,825 | local_intraday | 每日 |
-| ETF K线(多周期) | `c1_market.etf_kline_5min` | 2005-02-23 | 2026-07-03 | 1581 | 68,389,859 | bdpan | 每日 |
+| ETF K线(多周期) | `c1_market.kline_etf_5min` | 2005-02-23 | 2026-07-03 | 1581 | 68,389,859 | bdpan | 每日 |
 | 60分钟K线 | `c1_market.kline_60min` | 2000-06-09 | 2026-07-02 | 5480 | 63,578,425 | local_intraday | 每日 |
-| LOF K线(多周期) | `c1_market.lof_kline_5min` | 2010-08-16 | 2026-07-03 | 2750 | 36,194,482 | bdpan | 每日 |
-| etf_kline_15min | `c1_market.etf_kline_15min` | 2005-02-23 | 2026-07-03 | 1581 | 22,813,741 | bdpan | 每日 |
+| LOF K线(多周期) | `c1_market.kline_lof_5min` | 2010-08-16 | 2026-07-03 | 2750 | 36,194,482 | bdpan | 每日 |
+| kline_etf_15min | `c1_market.kline_etf_15min` | 2005-02-23 | 2026-07-03 | 1581 | 22,813,741 | bdpan | 每日 |
 | 复权因子 | `c1_market.adj_factor` | 1990-12-19 | 2026-07-03 | 5876 | 18,797,511 | bdpan | 每日 |
 | 日K线(前复权) | `c1_market.kline_daily` | 1990-12-19 | 2026-07-03 | 5895 | 18,124,798 | bdpan_qfq | 每日 |
 | A股日K线(原始) | `c1_market.daily_kline` | 1990-12-19 | 2026-07-02 | 5898 | 18,122,192 | bdpan | 每日 |
 | A股日K线(后复权) | `c1_market.kline_daily_hfq` | 1990-12-19 | 2026-07-02 | 5895 | 18,119,282 | bdpan_hfq | 每日 |
 | A股日K线(不复权) | `c1_market.kline_daily_none` | 1990-12-19 | 2026-07-02 | 5893 | 18,118,948 | bdpan_none | 每日 |
-| lof_kline_15min | `c1_market.lof_kline_15min` | 2010-08-16 | 2026-07-03 | 2750 | 12,064,844 | bdpan | 每日 |
-| etf_kline_30min | `c1_market.etf_kline_30min` | 2005-02-23 | 2026-07-03 | 1581 | 11,398,303 | bdpan | 每日 |
+| kline_lof_15min | `c1_market.kline_lof_15min` | 2010-08-16 | 2026-07-03 | 2750 | 12,064,844 | bdpan | 每日 |
+| kline_etf_30min | `c1_market.kline_etf_30min` | 2005-02-23 | 2026-07-03 | 1581 | 11,398,303 | bdpan | 每日 |
 | 限售解禁 | `c3_fundamental.restricted_shares` | 2005-01-10 | 2026-07-02 | 5747 | 11,359,865 | bdpan | 每日 |
 | 新闻信息(tushare) | `c3_fundamental.news_news_info` | 2000-01-01 | 2024-07-07 | 9608745 | 9,609,089 | — | 每日 |
 | 估值数据 | `c1_market.daily_valuation` | 1990-12-19 | 2026-07-03 | 5708 | 8,787,985 | local_valuation | 每日 |
-| lof_kline_30min | `c1_market.lof_kline_30min` | 2010-08-16 | 2026-07-03 | 2750 | 6,032,451 | bdpan | 每日 |
-| etf_kline_60min | `c1_market.etf_kline_60min` | 2005-02-23 | 2026-07-03 | 1581 | 5,699,152 | bdpan | 每日 |
+| kline_lof_30min | `c1_market.kline_lof_30min` | 2010-08-16 | 2026-07-03 | 2750 | 6,032,451 | bdpan | 每日 |
+| kline_etf_60min | `c1_market.kline_etf_60min` | 2005-02-23 | 2026-07-03 | 1581 | 5,699,152 | bdpan | 每日 |
 | A股周K线(不复权) | `c1_market.kline_weekly_none` | 1990-12-20 | 2026-06-26 | 5856 | 3,769,209 | bdpan_none | 每日 |
 | 周K线 | `c1_market.kline_weekly` | 1990-12-20 | 2026-06-26 | 5856 | 3,769,062 | bdpan_qfq | 每日 |
 | A股周K线(后复权) | `c1_market.kline_weekly_hfq` | 1990-12-20 | 2026-06-26 | 5853 | 3,768,249 | bdpan_hfq | 每日 |
 | 新闻-股票关联 | `c3_fundamental.news_security` | 1997-04-30 | 2024-08-22 | 12590 | 3,728,723 | — | 每日 |
 | 期货K线 | `c1_market.futures_kline` | 2010-01-04 | 2026-07-03 | 17592 | 3,067,213 | qmt | 每日 |
-| 指数K线 | `c1_market.index_kline` | 1990-12-19 | 2026-07-03 | 1031 | 3,066,374 | bdpan | 每日 |
-| lof_kline_60min | `c1_market.lof_kline_60min` | 2010-08-16 | 2026-07-03 | 2750 | 3,016,252 | bdpan | 每日 |
+| 指数K线 | `c1_market.kline_index` | 1990-12-19 | 2026-07-03 | 1031 | 3,066,374 | bdpan | 每日 |
+| kline_lof_60min | `c1_market.kline_lof_60min` | 2010-08-16 | 2026-07-03 | 2750 | 3,016,252 | bdpan | 每日 |
 | 十大流通股东 | `c3_fundamental.top10_circulating_shareholders` | 2005-01-29 | 2026-05-15 | 5768 | 2,145,705 | bdpan | 每日 |
 | 主营业务 | `c3_fundamental.main_business` | 2000-12-31 | 2026-03-31 | 5850 | 2,090,334 | bdpan | 每日 |
 | 股权质押 | `c3_fundamental.equity_pledge_summary` | 2014-03-07 | 2026-07-03 | 4440 | 1,723,182 | bdpan | 每日 |
@@ -256,7 +256,7 @@ description: 数据目录唯一真源——含4视角章节（总览/回测/实�
 
 | 表 | 读取速度 | 说明 |
 |----|---------|------|
-| `tick_history` | ~500万行/秒 | MergeTree, 按 date+symbol 过滤 |
+| `tick_data` | ~500万行/秒 | MergeTree, 按 date+symbol 过滤 |
 | `kline_1min` | ~200万行/秒 | 分钟线, 按日期范围查询 |
 | `kline_daily` | ~10万行/秒 | 全表扫描; 单symbol ~5万行/秒 |
 | `kline_5min` | ~100万行/秒 | 5分钟线 |
@@ -322,7 +322,7 @@ description: 数据目录唯一真源——含4视角章节（总览/回测/实�
 | 复权因子 | `c1_market.adj_factor` | 18,797,511 | ✅已验证 | 手动触发 | 最全5778只 |
 | 周K线 | `c1_market.kline_weekly` | 3,769,062 | ✅已验证 | 手动触发 | QMT 1w |
 | 月K线 | `c1_market.kline_monthly` | 898,736 | ✅已验证 | 手动触发 | QMT 1mon |
-| 指数K线 | `c1_market.index_kline` | 3,066,374 | ✅已验证 | 手动触发 | THS_RQ批量补齐至2026-07-03 |
+| 指数K线 | `c1_market.kline_index` | 3,066,374 | ✅已验证 | 手动触发 | THS_RQ批量补齐至2026-07-03 |
 | 1分钟K线 | `c1_market.kline_1min` | 3,830,588,993 | ✅已验证 | 手动触发 | 历史需淘宝 |
 | 15分钟K线 | `c1_market.kline_15min` | 254,313,641 | ✅已验证 | 手动触发 | 历史需淘宝 |
 | 30分钟K线 | `c1_market.kline_30min` | 127,156,825 | ✅已验证 | 手动触发 | 历史需淘宝 |
@@ -348,11 +348,11 @@ description: 数据目录唯一真源——含4视角章节（总览/回测/实�
 | A股日K线(原始) | `c1_market.daily_kline` | 18,122,192 | ✅已验证 | 手动触发 | — |
 | 龙虎榜 | `c1_market.dragon_tiger` | 167,961 | ✅已验证 | 手动触发 | — |
 | ETF基准 | `c1_market.etf_benchmark` | 732 | ✅已验证 | 手动触发 | — |
-| etf_kline_15min | `c1_market.etf_kline_15min` | 22,813,741 | ✅已验证 | 手动触发 | — |
-| etf_kline_1min | `c1_market.etf_kline_1min` | 343,553,536 | ✅已验证 | 手动触发 | — |
-| etf_kline_30min | `c1_market.etf_kline_30min` | 11,398,303 | ✅已验证 | 手动触发 | — |
-| ETF K线(多周期) | `c1_market.etf_kline_5min` | 68,389,859 | ✅已验证 | 手动触发 | — |
-| etf_kline_60min | `c1_market.etf_kline_60min` | 5,699,152 | ✅已验证 | 手动触发 | — |
+| kline_etf_15min | `c1_market.kline_etf_15min` | 22,813,741 | ✅已验证 | 手动触发 | — |
+| kline_etf_1min | `c1_market.kline_etf_1min` | 343,553,536 | ✅已验证 | 手动触发 | — |
+| kline_etf_30min | `c1_market.kline_etf_30min` | 11,398,303 | ✅已验证 | 手动触发 | — |
+| ETF K线(多周期) | `c1_market.kline_etf_5min` | 68,389,859 | ✅已验证 | 手动触发 | — |
+| kline_etf_60min | `c1_market.kline_etf_60min` | 5,699,152 | ✅已验证 | 手动触发 | — |
 | ETF列表 | `c1_market.etf_list` | 1,764 | ✅已验证 | 手动触发 | — |
 | 期货K线 | `c1_market.futures_kline` | 3,067,213 | ✅已验证 | 手动触发 | — |
 | 港股日K线 | `c1_market.hk_daily_kline` | 1,459,915 | ✅已验证 | 手动触发 | — |
@@ -367,18 +367,18 @@ description: 数据目录唯一真源——含4视角章节（总览/回测/实�
 | A股月K线(不复权) | `c1_market.kline_monthly_none` | 904,274 | ✅已验证 | 手动触发 | — |
 | A股周K线(后复权) | `c1_market.kline_weekly_hfq` | 3,768,249 | ✅已验证 | 手动触发 | — |
 | A股周K线(不复权) | `c1_market.kline_weekly_none` | 3,769,209 | ✅已验证 | 手动触发 | — |
-| lof_kline_15min | `c1_market.lof_kline_15min` | 12,064,844 | ✅已验证 | 手动触发 | — |
-| lof_kline_1min | `c1_market.lof_kline_1min` | 181,720,142 | ✅已验证 | 手动触发 | — |
-| lof_kline_30min | `c1_market.lof_kline_30min` | 6,032,451 | ✅已验证 | 手动触发 | — |
-| LOF K线(多周期) | `c1_market.lof_kline_5min` | 36,194,482 | ✅已验证 | 手动触发 | — |
-| lof_kline_60min | `c1_market.lof_kline_60min` | 3,016,252 | ✅已验证 | 手动触发 | — |
+| kline_lof_15min | `c1_market.kline_lof_15min` | 12,064,844 | ✅已验证 | 手动触发 | — |
+| kline_lof_1min | `c1_market.kline_lof_1min` | 181,720,142 | ✅已验证 | 手动触发 | — |
+| kline_lof_30min | `c1_market.kline_lof_30min` | 6,032,451 | ✅已验证 | 手动触发 | — |
+| LOF K线(多周期) | `c1_market.kline_lof_5min` | 36,194,482 | ✅已验证 | 手动触发 | — |
+| kline_lof_60min | `c1_market.kline_lof_60min` | 3,016,252 | ✅已验证 | 手动触发 | — |
 | LOF列表 | `c1_market.lof_list` | 361 | ✅已验证 | 手动触发 | — |
 | 宏观经济数据 | `c1_market.macro_data` | 5,853 | ✅已验证 | 手动触发 | — |
 | 融资融券 | `c1_market.margin_trading` | 1,095,732 | ✅已验证 | 手动触发 | — |
 | A股股票列表 | `c1_market.stock_list` | 5,534 | ✅已验证 | 手动触发 | — |
 | 通达信板块指数 | `c1_market.tdx_market_index` | 50 | ✅已验证 | 手动触发 | — |
 | 通达信板块信息 | `c1_market.tdx_sector_info` | 90 | ✅已验证 | 手动触发 | — |
-| Tick数据(历史) | `c1_market.tick_history` | 7,143,133,916 | ✅已验证 | 手动触发 | — |
+| Tick数据(历史) | `c1_market.tick_data` | 7,143,133,916 | ✅已验证 | 手动触发 | — |
 | 交易日历 | `c1_market.trade_calendar` | 13,162 | ✅已验证 | 手动触发 | — |
 | 美股日K线 | `c1_market.us_daily_kline` | 167,175 | ✅已验证 | 手动触发 | — |
 | 美股指数 | `c1_market.us_index` | 22,441 | ✅已验证 | 手动触发 | — |
