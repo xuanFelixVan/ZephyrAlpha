@@ -19,16 +19,16 @@ governance:
     改 depgraph 后由 GATE-ARCH-MODEL reconciler 自动重生。
 
 # === 分区管理约定（Partition Management Convention）===
-# 56域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
+# 61域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 # AI找模块只有一条路：按域找。
 # b_track 是横切基础设施模块的施工视图（代码目录对齐），独立于域分类。
 
 partitions:
-# === 56域索引（物理分类唯一真源：depgraph domains表）===
+# === 61域索引（物理分类唯一真源：depgraph domains表）===
 - id: domains
   path: depgraph (PostgreSQL)
   description: >
-    56域物理分类唯一真源。
+    61域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary
     4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 
@@ -133,7 +133,7 @@ partitions:
     status: skeleton
     description: 向量化存储与检索：ChromaDB + BGE-M3 ONNX（代码以骨架为主，部分能力由 kb/ 过渡承担）
 
-# === 56域清单（从depgraph派生，禁止手工编辑）===
+# === 61域清单（从depgraph派生，禁止手工编辑）===
 domains:
 - id: D_ALT_DATA
   name: 另类数据
@@ -153,9 +153,18 @@ domains:
 - id: D_BACKTEST
   name: 回测
   layer_id: L2_domain
+- id: D_BEHAVIORAL_AUDIT
+  name: drift_detector_core
+  layer_id:
+- id: D_COMPLIANCE
+  name: compliance_gate
+  layer_id:
 - id: D_CROSS_ASSET
   name: 跨资产
   layer_id: L2_domain
+- id: D_DATA
+  name: data_source_integrator
+  layer_id:
 - id: D_DATA_ENG
   name: 数据工程
   layer_id: L1_foundation
@@ -225,6 +234,9 @@ domains:
 - id: D_GOV_SCRIPTS
   name: script_governance
   layer_id: L2_domain
+- id: D_INFRASTRUCTURE
+  name: shared_contracts
+  layer_id:
 - id: D_INFRA_A2A
   name: a2a_communication
   layer_id: L0_infrastructure
@@ -294,6 +306,9 @@ domains:
 - id: D_SHARED
   name: shared_services
   layer_id: L1_foundation
+- id: D_SIGLEGACY
+  name: signal_legacy
+  layer_id:
 - id: D_SIGQC
   name: signal_quality
   layer_id: L2_domain
@@ -305,20 +320,20 @@ domains:
   layer_id: L2_domain
 
 global_stats:
-  total_domains: 56
+  total_domains: 61
   total_partitions: 12
   b_track_modules: 12
   b_track_implemented: 11
   b_track_skeleton: 1
   notes: >
-    56域唯一物理分类体系，14层是域的layer_id属性枚举。
+    61域唯一物理分类体系，14层是域的layer_id属性枚举。
     b_track 12横切基础设施模块（context_engine/core/db等），implemented 11 + skeleton 1(vector_memory)。
     结构化数据从depgraph派生，禁止在MD中硬编码会变化的数字。
   last_updated: '2026-06-30'
 
 query_hints:
 - question: 系统有哪些域？
-  answer: 56域，见domains列表，真源为depgraph domains表
+  answer: 61域，见domains列表，真源为depgraph domains表
 - question: 某域有哪些模块？
   answer: "查询depgraph: python scripts/governance/extract_depgraph.py --domains <域ID>"
 - question: 模块间的依赖关系？
@@ -330,7 +345,7 @@ query_hints:
 - question: 运行平面分布？
   answer: 读cross_cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
-  answer: 读cross_cutting/capability_heatmap.yaml（56域×10能力域矩阵）
+  answer: 读cross_cutting/capability_heatmap.yaml（61域×10能力域矩阵）
 - question: 前端有哪些模块？
   answer: 读frontend/frontend_model.yaml
 - question: 治理/审计脚本有哪些？
