@@ -8,7 +8,6 @@ layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
 responsibility_domain: 
-actual_disk_path: "scripts/governance/sync_panorama_module.py; scripts/governance/d5_architecture/generators/align_panoramas.py; scripts/governance/d5_architecture/syncers/blueprint_frontmatter_reconciler.py"
 ttl: permanent
 construction_progress: partially_implemented
 date: "2026-07-10"

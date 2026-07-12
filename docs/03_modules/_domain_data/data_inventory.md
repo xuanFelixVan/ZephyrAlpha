@@ -9,8 +9,8 @@ generator: tmp/generate_data_inventory.py
 language: zh
 description: ClickHouse 业务数据库实时扫描结果
 responsibility_domain: 
-design_maturity: design
 build_status: generated
+design_maturity: design
 ---
 
 # 业务数据清单

@@ -61,8 +61,8 @@ tags:
 summary: >
   15核心RI模块跨层协同+48项设计约束+交易基础设施+模块通信模式+确定性复现+AI施工模式库。v6.1.0模板v3.5/v3.6升级完成。
 responsibility_domain: 
-design_maturity: prototype
 build_status: generated
+design_maturity: prototype
 ---
 
 > actual_disk_path: src/zephyr/shared/ (Shared Core 承载) + src/zephyr/infra_ops/ (独立落地) + src/zephyr/lifecycle_manager/ (RI-02)

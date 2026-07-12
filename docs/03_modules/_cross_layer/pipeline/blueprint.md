@@ -29,7 +29,6 @@ rule_form: structural
 scope: global
 stability: evolving
 responsibility_domain: 
-  - {target: "MOD-DATABASE", at: "全篇", why: "DeferredQueue——LOCKED任务自动重试"}
   - {target: "MOD-INF-001", at: "§Kill Switch+§Token Budget", why: "Capacity Assurance——Kill Switch前置检查+Token Budget扣减"}
 references:
   - {id: "MOD-INF-020", at: "全篇", why: "Decision Log——仅存 references（打破 009↔020↔022 环）"}

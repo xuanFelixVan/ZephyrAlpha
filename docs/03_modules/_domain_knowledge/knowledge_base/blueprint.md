@@ -41,8 +41,8 @@ codification_level: L2
 codification_at: "2026-05-13"
 belongs_to: MOD-MASTER_BLUEPRINT
 responsibility_domain: 
-design_maturity: design
 build_status: planned
+design_maturity: design
 ---
 
 # Knowledge Base 蓝图 — 五门禁知识采集与检索系统

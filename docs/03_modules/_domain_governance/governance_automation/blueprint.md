@@ -49,8 +49,8 @@ codification_level: L1
 codification_at: "2026-05-13"
 references: []
 responsibility_domain: 
-design_maturity: design
 build_status: planned
+design_maturity: design
 ---
 
 > actual_disk_path: src/zephyr/infrastructure/script_system/ + scripts/governance/ + scripts/governance/meta/ + scripts/governance/generators/ (12 .py files)

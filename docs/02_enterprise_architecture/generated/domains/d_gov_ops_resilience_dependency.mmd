@@ -1,0 +1,229 @@
+%% D_GOV_OPS_RESILIENCE 域全景依赖图
+%% 生成时间: 2026-07-12 22:29:34
+%% 数据源: depgraph (PostgreSQL) nodes表 + edges表
+%% 模块数: 79, 依赖边数: 183
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_GOV_OPS_RESILIENCE[ops_resilience_governance]
+        src_zephyr_governance_escalation___init___py["...hyr/governance/escalation/__init__.py [production]"]
+        src_zephyr_governance_escalation_alternative_path_blocker_py["...scalation/alternative_path_blocker.py [production]"]
+        src_zephyr_governance_escalation_consequence_manager_py["...nce/escalation/consequence_manager.py [production]"]
+        src_zephyr_governance_escalation_contracts_py["...yr/governance/escalation/contracts.py [production]"]
+        src_zephyr_governance_escalation_escalation_api_py["...vernance/escalation/escalation_api.py [production]"]
+        src_zephyr_governance_escalation_escalation_engine_py["...nance/escalation/escalation_engine.py [production]"]
+        src_zephyr_governance_escalati___calation_fatigue_manager_py["...alation/escalation_fatigue_manager.py [production]"]
+        src_zephyr_governance_escalation_escalation_loop_detector_py["...scalation/escalation_loop_detector.py [production]"]
+        src_zephyr_governance_escalation_escalation_metrics_py["...ance/escalation/escalation_metrics.py [production]"]
+        src_zephyr_governance_escalation_escalation_models_py["...nance/escalation/escalation_models.py [production]"]
+        src_zephyr_governance_escalation_escalation_smoke_tests_py[".../escalation/escalation_smoke_tests.py [production]"]
+        src_zephyr_governance_escalation_git_hook_pre_scanner_py["...ce/escalation/git_hook_pre_scanner.py [production]"]
+        src_zephyr_governance_escalation_human_factors_py["...overnance/escalation/human_factors.py [production]"]
+        src_zephyr_governance_escalation_identity_verifier_py["...nance/escalation/identity_verifier.py [production]"]
+        src_zephyr_governance_escalation_incident_response_py["...nance/escalation/incident_response.py [production]"]
+        src_zephyr_governance_escalation_result_types_py["...governance/escalation/result_types.py [production]"]
+        src_zephyr_governance_escalation_spof_checker_py["...governance/escalation/spof_checker.py [production]"]
+        src_zephyr_governance_escalation_triage_py["...ephyr/governance/escalation/triage.py [production]"]
+        src_zephyr_governance_ops_governance___init___py["...governance/ops_governance/__init__.py [prototype]"]
+        src_zephyr_governance_ops_governance_auto_runner_py["...ernance/ops_governance/auto_runner.py [production]"]
+        src_zephyr_governance_ops_governance_bandwidth_optimizer_py["...ops_governance/bandwidth_optimizer.py [production]"]
+        src_zephyr_governance_ops_governance_burn_rate_monitor_py["...e/ops_governance/burn_rate_monitor.py [production]"]
+        src_zephyr_governance_ops_governance_clock_guard_py["...ernance/ops_governance/clock_guard.py [production]"]
+        src_zephyr_governance_ops_governance_coldstart_manager_py["...e/ops_governance/coldstart_manager.py [production]"]
+        src_zephyr_governance_ops_governance_cost_attributor_py["...nce/ops_governance/cost_attributor.py [production]"]
+        src_zephyr_governance_ops_governance_cost_router_py["...ernance/ops_governance/cost_router.py [production]"]
+        src_zephyr_governance_ops_governance_daily_ops_py["...overnance/ops_governance/daily_ops.py [production]"]
+        src_zephyr_governance_ops_governance_degradation_manager_py["...ops_governance/degradation_manager.py [production]"]
+        src_zephyr_governance_ops_gove___ror_budget_burst_limiter_py["...ernance/error_budget_burst_limiter.py [production]"]
+        src_zephyr_governance_ops_governance_event_hook_py["...vernance/ops_governance/event_hook.py [production]"]
+        src_zephyr_governance_ops_governance_interrupt_handler_py["...e/ops_governance/interrupt_handler.py [production]"]
+        src_zephyr_governance_ops_gove___intenance_window_adapter_py["...ernance/maintenance_window_adapter.py [production]"]
+        src_zephyr_governance_ops_governance_ops_foundation_py["...ance/ops_governance/ops_foundation.py [production]"]
+        src_zephyr_governance_ops_gove____parent_child_attributor_py["...governance/parent_child_attributor.py [production]"]
+        src_zephyr_governance_ops_governance_roi_calculator_py["...ance/ops_governance/roi_calculator.py [production]"]
+        src_zephyr_governance_ops_governance_self_budget_tracker_py["...ops_governance/self_budget_tracker.py [production]"]
+        src_zephyr_governance_ops_governance_stream_abort_guard_py[".../ops_governance/stream_abort_guard.py [production]"]
+        src_zephyr_governance_ops_governance_tco_model_py["...overnance/ops_governance/tco_model.py [production]"]
+        src_zephyr_governance_ops_governance_time_sync_py["...overnance/ops_governance/time_sync.py [production]"]
+        src_zephyr_governance_ops_governance_timeout_guard_py["...nance/ops_governance/timeout_guard.py [production]"]
+        src_zephyr_governance_resilience_governance___init___py["...nce/resilience_governance/__init__.py [prototype]"]
+        src_zephyr_governance_resilien___ernance_account_isolator_py["...lience_governance/account_isolator.py [production]"]
+        src_zephyr_governance_resilience_governance_blast_radius_py["...resilience_governance/blast_radius.py [production]"]
+        src_zephyr_governance_resilien___rnance_broker_resilience_py["...ience_governance/broker_resilience.py [production]"]
+        src_zephyr_governance_resilien___vernance_circuit_breaker_py["...ilience_governance/circuit_breaker.py [production]"]
+        src_zephyr_governance_resilien___rnance_deadlock_detector_py["...ience_governance/deadlock_detector.py [production]"]
+        src_zephyr_governance_resilien___ernance_decision_fatigue_py["...lience_governance/decision_fatigue.py [production]"]
+        src_zephyr_governance_resilien___nce_decision_fatigue_cli_py["...ce_governance/decision_fatigue_cli.py [production]"]
+        src_zephyr_governance_resilien___overnance_engine_sandbox_py["...silience_governance/engine_sandbox.py [production]"]
+        src_zephyr_governance_resilien___ance_f5_boot_integration_py["...nce_governance/f5_boot_integration.py [production]"]
+        src_zephyr_governance_resilien___ance_f5_event_subscriber_py["...nce_governance/f5_event_subscriber.py [production]"]
+        src_zephyr_governance_resilien___ance_f5_shutdown_manager_py["...nce_governance/f5_shutdown_manager.py [production]"]
+        src_zephyr_governance_resilien___rnance_fail_mode_manager_py["...ience_governance/fail_mode_manager.py [production]"]
+        src_zephyr_governance_resilien___nce_last_resort_watchdog_py["...ce_governance/last_resort_watchdog.py [production]"]
+        src_zephyr_governance_resilien___overnance_policy_sandbox_py["...silience_governance/policy_sandbox.py [production]"]
+        src_zephyr_governance_resilien___ernance_process_isolator_py["...lience_governance/process_isolator.py [production]"]
+        src_zephyr_governance_resilien___rnance_witness_isolation_py["...ience_governance/witness_isolation.py [production]"]
+        src_zephyr_governance_security_governance___init___py["...nance/security_governance/__init__.py [prototype]"]
+        src_zephyr_governance_security___nance_adversarial_tester_py["...rity_governance/adversarial_tester.py [production]"]
+        src_zephyr_governance_security___nce_anti_automation_bias_py["...ty_governance/anti_automation_bias.py [production]"]
+        src_zephyr_governance_security___e_api_response_sanitizer_py["..._governance/api_response_sanitizer.py [production]"]
+        src_zephyr_governance_security___rnance_bare_repo_scanner_py["...urity_governance/bare_repo_scanner.py [production]"]
+        src_zephyr_governance_security___positional_safety_tester_py["...rnance/compositional_safety_tester.py [production]"]
+        src_zephyr_governance_security_governance_config_scanner_py["...security_governance/config_scanner.py [production]"]
+        src_zephyr_governance_security___ernance_credential_guard_py["...curity_governance/credential_guard.py [production]"]
+        src_zephyr_governance_security___default_security_gateway_py["...overnance/default_security_gateway.py [production]"]
+        src_zephyr_governance_security_governance_ghost_scan_py["...nce/security_governance/ghost_scan.py [production]"]
+        src_zephyr_governance_security___ernance_github_api_guard_py["...curity_governance/github_api_guard.py [production]"]
+        src_zephyr_governance_security___ce_hooks_integrity_guard_py["...y_governance/hooks_integrity_guard.py [production]"]
+        src_zephyr_governance_security_governance_ipi_defense_py["...ce/security_governance/ipi_defense.py [production]"]
+        src_zephyr_governance_security___ance_memory_poison_guard_py["...ity_governance/memory_poison_guard.py [production]"]
+        src_zephyr_governance_security___ance_persuasion_detector_py["...ity_governance/persuasion_detector.py [production]"]
+        src_zephyr_governance_security____poison_cascade_detector_py["...governance/poison_cascade_detector.py [production]"]
+        src_zephyr_governance_security_governance_sbom_guard_py["...nce/security_governance/sbom_guard.py [production]"]
+        src_zephyr_governance_security____security_config_scanner_py["...governance/security_config_scanner.py [production]"]
+        src_zephyr_governance_security___ce_security_gateway_base_py["...y_governance/security_gateway_base.py [production]"]
+        src_zephyr_governance_security___nance_tamper_evident_log_py["...rity_governance/tamper_evident_log.py [production]"]
+        src_zephyr_governance_security___nce_vibe_security_verify_py["...ty_governance/vibe_security_verify.py [production]"]
+        src_zephyr_governance_security____vibe_verify_integration_py["...governance/vibe_verify_integration.py [production]"]
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_governance_escalation_escalation_api_py -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    src_zephyr_governance_escalation_escalation_engine_py -->|import_depends| src_zephyr_governance_escalation_escalation_metrics_py
+    src_zephyr_governance_escalation_escalation_engine_py -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    src_zephyr_governance_escalation_escalation_engine_py -->|import_depends| src_zephyr_governance_resilien___vernance_circuit_breaker_py
+    src_zephyr_governance_escalation___init___py -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    src_zephyr_governance_escalation___init___py -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    src_zephyr_governance_escalation___init___py -->|import_depends| src_zephyr_governance_resilien___vernance_circuit_breaker_py
+    src_zephyr_governance_resilien___nce_decision_fatigue_cli_py -->|import_depends| src_zephyr_governance_resilien___ernance_decision_fatigue_py
+    src_zephyr_governance_resilien___ance_f5_event_subscriber_py -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    src_zephyr_governance_resilien___ance_f5_boot_integration_py -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    src_zephyr_governance_resilien___ance_f5_boot_integration_py -->|import_depends| src_zephyr_governance_resilien___rnance_deadlock_detector_py
+    src_zephyr_governance_resilien___ance_f5_boot_integration_py -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    src_zephyr_governance_security___nance_adversarial_tester_py -->|import_depends| src_zephyr_governance_security_governance_ipi_defense_py
+    src_zephyr_governance_security___nance_adversarial_tester_py -->|import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
+    src_zephyr_governance_security___default_security_gateway_py -->|import_depends| src_zephyr_governance_security___ce_security_gateway_base_py
+    src_zephyr_governance_resilience_governance___init___py -->|config_depends| src_zephyr_governance_resilien___ernance_account_isolator_py
+    src_zephyr_governance_security_governance___init___py -->|config_depends| src_zephyr_governance_security___nance_adversarial_tester_py
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D_AUDITTEST -> D_GOV_OPS_RESILIENCE (104 条)
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_security_governance_ipi_defense_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_security_governance_config_scanner_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_clock_guard_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_resilien___vernance_circuit_breaker_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_resilien___ernance_decision_fatigue_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_consequence_manager_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_resilien___rnance_deadlock_detector_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_gove___ror_budget_burst_limiter_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_metrics_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_api_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_security_governance_ghost_scan_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_contracts_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_identity_verifier_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_interrupt_handler_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_api_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_contracts_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalati___calation_fatigue_manager_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_contracts_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_loop_detector_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_incident_response_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_metrics_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_smoke_tests_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_auto_runner_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_auto_runner_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_resilien___ance_f5_boot_integration_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_resilien___ance_f5_shutdown_manager_py
+    %% D_FEEDBACK_LOOP -> D_GOV_OPS_RESILIENCE (2 条)
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    %% D_GOVERNANCE -> D_GOV_OPS_RESILIENCE (16 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation_contracts_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_burn_rate_monitor_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_degradation_manager_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_timeout_guard_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_security___default_security_gateway_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_resilien___vernance_circuit_breaker_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_escalation___init___py
+    %% D_GOV_AUDIT -> D_GOV_OPS_RESILIENCE (1 条)
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    %% D_GOV_DOCS -> D_GOV_OPS_RESILIENCE (1 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_governance_resilience_governance___init___py
+    %% D_GOV_ENFORCEMENT -> D_GOV_OPS_RESILIENCE (2 条)
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_security___default_security_gateway_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_security___ce_security_gateway_base_py
+    %% D_INFRA_RECOVERY -> D_GOV_OPS_RESILIENCE (1 条)
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    %% D_INFRA_RUNTIME -> D_GOV_OPS_RESILIENCE (3 条)
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_ops_governance_coldstart_manager_py
+    %% D_OPS -> D_GOV_OPS_RESILIENCE (2 条)
+    D_OPS[D_OPS] -->|import_depends| src_zephyr_governance_escalation_contracts_py
+    D_OPS[D_OPS] -->|import_depends| src_zephyr_governance_security_governance_ipi_defense_py
+    %% D_ORCHESTRATOR -> D_GOV_OPS_RESILIENCE (2 条)
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    %% D_SECURITY -> D_GOV_OPS_RESILIENCE (1 条)
+    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D_GOV_OPS_RESILIENCE -> D_GOVERNANCE (6 条)
+    src_zephyr_governance_escalation___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_ops_governance_auto_runner_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_resilien___ance_f5_event_subscriber_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_resilien___ance_f5_boot_integration_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_resilien___ance_f5_shutdown_manager_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_security___default_security_gateway_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_GOV_OPS_RESILIENCE -> D_GOV_AUDIT (2 条)
+    src_zephyr_governance_resilience_governance_blast_radius_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    src_zephyr_governance_security___nance_tamper_evident_log_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_GOV_OPS_RESILIENCE -> D_GOV_ENFORCEMENT (1 条)
+    src_zephyr_governance_security___ce_security_gateway_base_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_GOV_OPS_RESILIENCE -> D_GOV_KB (2 条)
+    src_zephyr_governance_escalation_triage_py -->|import_depends| D_GOV_KB[D_GOV_KB]
+    src_zephyr_governance_escalation_triage_py -->|import_depends| D_GOV_KB[D_GOV_KB]
+    %% D_GOV_OPS_RESILIENCE -> D_GOV_RULE (2 条)
+    src_zephyr_governance_escalation_triage_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_governance_escalation_triage_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    %% D_GOV_OPS_RESILIENCE -> D_INFRA_RUNTIME (2 条)
+    src_zephyr_governance_resilien___ance_f5_event_subscriber_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_governance_resilien___ance_f5_boot_integration_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    %% D_GOV_OPS_RESILIENCE -> D_OPS (5 条)
+    src_zephyr_governance_ops_governance_burn_rate_monitor_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_governance_ops_governance_cost_attributor_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_governance_ops_governance_degradation_manager_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_governance_security___nance_adversarial_tester_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_governance_security___nance_adversarial_tester_py -->|import_depends| D_OPS[D_OPS]
+    %% D_GOV_OPS_RESILIENCE -> D_SECURITY (3 条)
+    src_zephyr_governance_escalation_escalation_engine_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_governance_security___default_security_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_governance_security___default_security_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
+    %% D_GOV_OPS_RESILIENCE -> D_SHARED (8 条)
+    src_zephyr_governance_escalation_contracts_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_escalation_escalation_engine_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_escalation_triage_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_resilience_governance_blast_radius_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_resilien___ance_f5_event_subscriber_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_resilien___ance_f5_shutdown_manager_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_security___default_security_gateway_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_security___default_security_gateway_py -->|import_depends| D_SHARED[D_SHARED]
+
+    %% 统计
+    %% 域内依赖: 17 条
+    %% 跨域入边: 135 条
+    %% 跨域出边: 31 条

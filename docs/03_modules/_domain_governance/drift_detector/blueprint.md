@@ -74,8 +74,8 @@ tags:
 summary: >
   39检测器漂移检测引擎+10状态漂移生命周期+基线快照+自动对账+漂移预算+告警路由+混沌注入+漂移取证+防篡改审计。54文件，4Phase全部完成，红白对抗验证通过。
 responsibility_domain: 
-design_maturity: design
 build_status: planned
+design_maturity: design
 ---
 
 > module_id: MOD-INF-023 | version: 3.1.0 | status: Active | layer: cross_layer

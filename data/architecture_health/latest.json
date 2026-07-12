@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-12T06:16:08.622737+00:00",
+  "timestamp": "2026-07-12T14:28:56.228481+00:00",
   "dashboard": "architecture_health",
   "phase": "第0期-自动化检测基线",
   "metrics": [
@@ -149,7 +149,7 @@
     {
       "metric_id": "M09",
       "name": "三方对齐违规数",
-      "count": 0,
+      "count": 28,
       "target": 0,
       "details": [],
       "source": "validate_three_way_consistency.py",
@@ -188,18 +188,18 @@
     {
       "metric_id": "M11",
       "name": "PG域引用一致性违规数",
-      "count": 323,
+      "count": 212,
       "target": 0,
       "details": [
         "dataflow_datasets.domain_id 幽灵域: D_SIGLEGACY",
-        "dataflow_jobs.domain_id 空字符串脏数据: 161条",
+        "dataflow_jobs.domain_id 空字符串脏数据: 50条",
         "decision_layers.domain_id 空字符串脏数据: 161条"
       ],
       "source": "pg_depgraph",
       "error": ""
     }
   ],
-  "total_auto": 1899,
+  "total_auto": 1816,
   "manual_baseline_total": 3193,
   "note": "自动化检测基线（第0期）。total_auto 为自动化检出总数；manual_baseline_total=3193 为手动调研基线。二者差异源于自动化覆盖度（部分病根需 AST 门禁第1期才覆盖）。"
 }

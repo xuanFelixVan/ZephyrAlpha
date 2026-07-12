@@ -32,7 +32,6 @@ priority: P0
 runtime_plane: hot
 blueprint_level: module
 responsibility_domain: 
-  - {target: "MOD-INF-020", at: "§2", why: "Audit Trail——操作审计日志写入"}
   - {target: "MOD-FEEDBACK_LOOP", at: "§2", why: "Feedback Loop——质量数据上报"}
   - {target: "MOD-INF-021", at: "§2", why: "Rollback——操作失败触发回滚"}
 references:

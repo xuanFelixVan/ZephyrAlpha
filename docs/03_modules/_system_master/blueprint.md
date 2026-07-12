@@ -56,8 +56,8 @@ references:
     why: "压缩工作流标准"
 tags: [system-master, blueprint, architecture, topology, cold-start, capacity-upgrade, level-0, meta, ai-entry-point, 102-chapters, system-blueprint, three-tier-pyramid]
 responsibility_domain: 
-design_maturity: design
 build_status: stable
+design_maturity: design
 ---
 
 # System Master 蓝图 — 三级金字塔架构·全部子系统拓扑

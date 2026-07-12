@@ -51,8 +51,8 @@ depends_on:
     at: "§10"
     why: "权限联动"
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 > ⚠️ **业务层已开放，可施工** — D_COMPLIANCE 属于 C 轨 T2-deferred 层，当前阶段仅做设计审查和代码验证，不开放新功能施工。

@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "c6bde25637b21da2",
+      "hash": "fd9a0f104d7bfef9",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -276,6 +276,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: vocab_hardcode_gate.py）"
     }
   },
-  "registered_at": "2026-07-12T05:37:59.366850+00:00",
+  "registered_at": "2026-07-12T14:29:52.767982+00:00",
   "last_check_at": "2026-07-12T05:07:45.509500+00:00"
 }
