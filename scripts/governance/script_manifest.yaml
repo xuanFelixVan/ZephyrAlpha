@@ -1,17 +1,17 @@
-# 自动生成于 2026-07-12T20:28:52Z
+# 自动生成于 2026-07-12T21:28:31Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-12T20:28:52Z'
+generated_at: '2026-07-12T21:28:31Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 337
+total_scripts: 338
 with_manifest: 308
-missing_manifest: 29
+missing_manifest: 30
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 16
+  governance: 17
   governance:d10_performance: 1
   governance:d11_compliance: 22
   governance:d12_ai_hallucination: 4
@@ -4140,6 +4140,16 @@ scripts:
   tags:
   - Quick
 - name: sync_panorama_module.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: verify_sync_integrity.py
   owner: governance
   dimensions: []
   priority: P2
