@@ -1,5 +1,5 @@
 %% D_GOV_RULE 域全景依赖图
-%% 生成时间: 2026-07-13 04:28:36
+%% 生成时间: 2026-07-13 05:28:17
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 33, 依赖边数: 216
 
@@ -57,40 +57,13 @@ graph TD
     src_zephyr_gov_enforcement_rul___ent_gate_engine___init___py -->|config_depends| src_zephyr_gov_enforcement_rul___e_adversarial_validation_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_GOV_RULE (137 条)
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___ment_ai_capability_guard_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___gate_engine_gate_context_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul____integration_test_runner_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___gate_engine_gate_context_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___gate_engine_gate_context_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___ate_engine_gate_pipeline_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___ate_engine_gate_override_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___gate_engine_gate_context_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___ate_engine_gate_pipeline_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___te_engine_gate_simulator_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___ement_adaptive_threshold_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___t_adversarial_strategies_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___t_end_to_end_walkthrough_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul____integration_test_runner_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___t_adversarial_strategies_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___e_adversarial_validation_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___rcement_triple_alignment_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___e_adversarial_validation_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul____001_circular_dependency_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___rocess_lifecycle_gateway_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___3_contract_compatibility_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_gov_enforcement_rul___iants_zero_residue_check_py
-    %% D_AUTONOMY_CORE -> D_GOV_RULE (1 条)
+    %% D_AUTONOMY_CORE -> D_GOV_RULE (3 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
-    %% D_GOVERNANCE -> D_GOV_RULE (10 条)
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    %% D_DATA -> D_GOV_RULE (1 条)
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    %% D_GOVERNANCE -> D_GOV_RULE (25 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
@@ -101,9 +74,27 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_enforcement_rul___orcement_circuit_breaker_py
-    %% D_GOV_AUDIT -> D_GOV_RULE (1 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___ement_adaptive_threshold_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___t_adversarial_strategies_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___t_end_to_end_walkthrough_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul____integration_test_runner_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___e_adversarial_validation_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___t_adversarial_strategies_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___e_adversarial_validation_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul____001_circular_dependency_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___rcement_triple_alignment_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___rocess_lifecycle_gateway_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___3_contract_compatibility_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_enforcement_rul___iants_zero_residue_check_py
+    %% D_GOV_AUDIT -> D_GOV_RULE (4 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_gov_enforcement_rul___gate_engine_gate_context_py
-    %% D_GOV_ENFORCEMENT -> D_GOV_RULE (8 条)
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_enforcement_rul___gate_engine_gate_context_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_enforcement_rul____integration_test_runner_py
+    %% D_GOV_ENFORCEMENT -> D_GOV_RULE (18 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_rul___ement_adaptive_threshold_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_rul___ment_ai_capability_guard_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_rul___t_end_to_end_walkthrough_py
@@ -112,6 +103,16 @@ graph TD
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_rul___ate_engine_gate_override_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_rul___te_engine_gate_simulator_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul___gate_engine_gate_context_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul___ate_engine_gate_override_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul___gate_engine_gate_context_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul___ate_engine_gate_pipeline_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul___te_engine_gate_simulator_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul___gate_engine_gate_context_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul___ate_engine_gate_pipeline_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul____rule_engine_rule_engine_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul____rule_engine_rule_engine_py
     %% D_GOV_KB -> D_GOV_RULE (8 条)
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
@@ -124,26 +125,71 @@ graph TD
     %% D_GOV_OPS_RESILIENCE -> D_GOV_RULE (2 条)
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
-    %% D_INFRA_RUNTIME -> D_GOV_RULE (2 条)
+    %% D_GOV_SCRIPTS -> D_GOV_RULE (96 条)
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    %% D_INFRA_RUNTIME -> D_GOV_RULE (3 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_gov_enforcement_rul___rcement_triple_alignment_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_gov_enforcement_rul___rcement_triple_alignment_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
     %% D_INTEGRATION -> D_GOV_RULE (1 条)
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    %% D_INTELLIGENCE -> D_GOV_RULE (2 条)
+    %% D_INTELLIGENCE -> D_GOV_RULE (3 条)
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_gov_enforcement_rul___ment_ai_capability_guard_py
+    %% D_KNOWLEDGE -> D_GOV_RULE (4 条)
+    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
+    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
+    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
+    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    %% D_RISK -> D_GOV_RULE (1 条)
+    D_RISK[D_RISK] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py
     %% D_SECURITY -> D_GOV_RULE (4 条)
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    %% D_SHARED -> D_GOV_RULE (1 条)
+    %% D_SECURITY_LLM -> D_GOV_RULE (1 条)
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    %% D_SHARED -> D_GOV_RULE (3 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_RULE -> D_GOVERNANCE (2 条)
+    %% D_GOV_RULE -> D_GOVERNANCE (3 条)
     src_zephyr_gov_enforcement_rul___rcement_triple_alignment_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_gov_enforcement_rul____rule_engine_rule_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_governance_generators_generate_script_manifest_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_GOV_RULE -> D_GOV_AUDIT (2 条)
     src_zephyr_gov_enforcement_rul___ement_capability_checker_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_gov_enforcement_rul___ate_engine_gate_override_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -153,8 +199,6 @@ graph TD
     %% D_GOV_RULE -> D_GOV_ENFORCEMENT (2 条)
     src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_rul___ent_rule_engine___init___py -->|config_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    %% D_GOV_RULE -> D_GOV_SCRIPTS (1 条)
-    scripts_governance_generators_generate_script_manifest_py -->|config_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
     %% D_GOV_RULE -> D_INFRA_RECOVERY (1 条)
     src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     %% D_GOV_RULE -> D_INTEGRATION (5 条)
@@ -164,10 +208,10 @@ graph TD
     src_zephyr_gov_enforcement_rule_enforcement_task_types_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_gov_enforcement_rule_enforcement_task_types_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     %% D_GOV_RULE -> D_SHARED (12 条)
+    src_zephyr_gov_enforcement_rul___orcement_circuit_breaker_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rul___orcement_circuit_breaker_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rul___orcement_circuit_breaker_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rul___ontract_template_manager_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_enforcement_rul___orcement_circuit_breaker_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_enforcement_rul___orcement_circuit_breaker_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_enforcement_rul___orcement_circuit_breaker_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rul___rcement_triple_alignment_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rul____gate_engine_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]

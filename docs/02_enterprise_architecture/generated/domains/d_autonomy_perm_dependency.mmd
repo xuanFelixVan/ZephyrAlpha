@@ -1,7 +1,7 @@
 %% D_AUTONOMY_PERM 域全景依赖图
-%% 生成时间: 2026-07-13 04:28:36
+%% 生成时间: 2026-07-13 05:28:17
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 16, 依赖边数: 14
+%% 模块数: 55, 依赖边数: 135
 
 graph TD
 
@@ -23,6 +23,45 @@ graph TD
         src_zephyr_autonomy_perm_red_b___validator_defense_runner_py[".../red_blue_validator/defense_runner.py [prototype]"]
         src_zephyr_autonomy_perm_red_b___alidator_game_day_runner_py["...red_blue_validator/game_day_runner.py [prototype]"]
         src_zephyr_autonomy_perm_services___init___py["...yr/autonomy_perm/services/__init__.py [prototype]"]
+        tests_agent_rbac_conftest_py["tests/agent_rbac/conftest.py [prototype]"]
+        tests_agent_rbac_test_abac_guard_agent_rbac_py["...nt_rbac/test_abac_guard_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_adversarial_agent_rbac_py["...t_rbac/test_adversarial_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_adversarial_resilience_py["...t_rbac/test_adversarial_resilience.py [prototype]"]
+        tests_agent_rbac_test_cross_model_consistency_py["..._rbac/test_cross_model_consistency.py [prototype]"]
+        tests_agent_rbac_test_crosscut_d_py["tests/agent_rbac/test_crosscut_d.py [prototype]"]
+        tests_agent_rbac_test_cybersec_2026_py["tests/agent_rbac/test_cybersec_2026.py [prototype]"]
+        tests_agent_rbac_test_decision_explainer_agent_rbac_py["...test_decision_explainer_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_decisions_py["tests/agent_rbac/test_decisions.py [prototype]"]
+        tests_agent_rbac_test_derive_rbac_py["tests/agent_rbac/test_derive_rbac.py [prototype]"]
+        tests_agent_rbac_test_dry_run_agent_rbac_py["...agent_rbac/test_dry_run_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_engine_degradation_agent_rbac_py["...test_engine_degradation_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_enhanced_security_py[".../agent_rbac/test_enhanced_security.py [prototype]"]
+        tests_agent_rbac_test_exceptions_agent_rbac_py["...nt_rbac/test_exceptions_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_forensic_a_py["tests/agent_rbac/test_forensic_a.py [prototype]"]
+        tests_agent_rbac_test_forensic_b_py["tests/agent_rbac/test_forensic_b.py [prototype]"]
+        tests_agent_rbac_test_forensic_c_py["tests/agent_rbac/test_forensic_c.py [prototype]"]
+        tests_agent_rbac_test_guard_layers_agent_rbac_py["..._rbac/test_guard_layers_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_identity_py["tests/agent_rbac/test_identity.py [prototype]"]
+        tests_agent_rbac_test_immutable_core_agent_rbac_py["...bac/test_immutable_core_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_input_guard_agent_rbac_py["...t_rbac/test_input_guard_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_integration_agent_rbac_py["...t_rbac/test_integration_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_integration_root_py["...s/agent_rbac/test_integration_root.py [prototype]"]
+        tests_agent_rbac_test_integrity_agent_rbac_py["...ent_rbac/test_integrity_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_intent_binder_agent_rbac_py["...rbac/test_intent_binder_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_kill_switch_agent_rbac_py["...t_rbac/test_kill_switch_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_novel_attack_py["tests/agent_rbac/test_novel_attack.py [prototype]"]
+        tests_agent_rbac_test_observability_agent_rbac_py["...rbac/test_observability_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_output_guard_agent_rbac_py["..._rbac/test_output_guard_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_permission_guard_py["...s/agent_rbac/test_permission_guard.py [prototype]"]
+        tests_agent_rbac_test_permissions_py["tests/agent_rbac/test_permissions.py [prototype]"]
+        tests_agent_rbac_test_post_action_py["tests/agent_rbac/test_post_action.py [prototype]"]
+        tests_agent_rbac_test_rbac_auto_lifecycle_py["...gent_rbac/test_rbac_auto_lifecycle.py [prototype]"]
+        tests_agent_rbac_test_rbac_guard_agent_rbac_py["...nt_rbac/test_rbac_guard_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_redteam_adversarial_py["...gent_rbac/test_redteam_adversarial.py [prototype]"]
+        tests_agent_rbac_test_risk_mitigation_agent_rbac_py["...ac/test_risk_mitigation_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_sequence_guard_agent_rbac_py["...bac/test_sequence_guard_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_toctou_guard_agent_rbac_py["..._rbac/test_toctou_guard_agent_rbac.py [prototype]"]
+        tests_agent_rbac_test_vibe_coding_py["tests/agent_rbac/test_vibe_coding.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -30,16 +69,20 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_AUTONOMY_PERM -> D_GOVERNANCE (1 条)
+    %% D_AUTONOMY_PERM -> D_GOVERNANCE (2 条)
     scripts_arch_guard_fitness_fun___heck_kill_switch_latency_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_AUTONOMY_PERM -> D_GOV_SCRIPTS (1 条)
-    scripts_governance_meta_manage_kill_switch_py -->|config_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
-    %% D_AUTONOMY_PERM -> D_SECURITY (12 条)
-    src_zephyr_autonomy_perm_red_b___ator_convergence_checker_py -->|import_depends| D_SECURITY[D_SECURITY]
+    scripts_governance_meta_manage_kill_switch_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_AUTONOMY_PERM -> D_GOV_OPS_RESILIENCE (1 条)
+    tests_agent_rbac_test_rbac_auto_lifecycle_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    %% D_AUTONOMY_PERM -> D_INFRA_RUNTIME (2 条)
+    tests_agent_rbac_test_rbac_auto_lifecycle_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_agent_rbac_test_rbac_auto_lifecycle_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    %% D_AUTONOMY_PERM -> D_SECURITY (130 条)
     src_zephyr_autonomy_perm_red_b___alidator_attack_registry_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_autonomy_perm_red_b___alidator_bypass_recorder_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_autonomy_perm_red_b___dator_constitution_guard_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_autonomy_perm_red_b___alidator_game_day_runner_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_b___alidator_bypass_recorder_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_b___ator_convergence_checker_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_autonomy_perm_red_b___validator_defense_runner_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
@@ -47,8 +90,26 @@ graph TD
     src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_abac_guard_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_abac_guard_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_adversarial_resilience_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cybersec_2026_py -->|test_depends| D_SECURITY[D_SECURITY]
 
     %% 统计
     %% 域内依赖: 0 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 14 条
+    %% 跨域出边: 135 条

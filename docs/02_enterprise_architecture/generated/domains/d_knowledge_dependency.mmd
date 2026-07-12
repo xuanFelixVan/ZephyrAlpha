@@ -1,7 +1,7 @@
 %% D_KNOWLEDGE 域全景依赖图
-%% 生成时间: 2026-07-13 04:28:36
+%% 生成时间: 2026-07-13 05:28:17
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 9, 依赖边数: 2
+%% 模块数: 43, 依赖边数: 39
 
 graph TD
 
@@ -16,6 +16,40 @@ graph TD
         src_zephyr_knowledge_infrastructure___init___py[".../knowledge/infrastructure/__init__.py [prototype]"]
         src_zephyr_knowledge_models___init___py["src/zephyr/knowledge/models/__init__.py [prototype]"]
         src_zephyr_knowledge_services___init___py["...zephyr/knowledge/services/__init__.py [prototype]"]
+        tests_kb_test_kb_activate_py["tests/kb/test_kb_activate.py [prototype]"]
+        tests_kb_test_kb_analyze_py["tests/kb/test_kb_analyze.py [prototype]"]
+        tests_kb_test_kb_batch_ingest_py["tests/kb/test_kb_batch_ingest.py [prototype]"]
+        tests_kb_test_kb_bootstrap_py["tests/kb/test_kb_bootstrap.py [prototype]"]
+        tests_kb_test_kb_embedding_migrate_py["tests/kb/test_kb_embedding_migrate.py [prototype]"]
+        tests_kb_test_kb_extract_py["tests/kb/test_kb_extract.py [prototype]"]
+        tests_kb_test_kb_freeze_py["tests/kb/test_kb_freeze.py [prototype]"]
+        tests_kb_test_kb_gate_py["tests/kb/test_kb_gate.py [prototype]"]
+        tests_kb_test_kb_gate_task_py["tests/kb/test_kb_gate_task.py [prototype]"]
+        tests_kb_test_kb_graph_validator_py["tests/kb/test_kb_graph_validator.py [prototype]"]
+        tests_kb_test_kb_ingest_py["tests/kb/test_kb_ingest.py [prototype]"]
+        tests_kb_test_kb_integrity_py["tests/kb/test_kb_integrity.py [prototype]"]
+        tests_kb_test_kb_migration_embedding_py["tests/kb/test_kb_migration_embedding.py [prototype]"]
+        tests_kb_test_kb_migration_gate_py["tests/kb/test_kb_migration_gate.py [prototype]"]
+        tests_kb_test_kb_pipeline_activate_py["tests/kb/test_kb_pipeline_activate.py [prototype]"]
+        tests_kb_test_kb_reranker_py["tests/kb/test_kb_reranker.py [prototype]"]
+        tests_kb_test_kb_self_test_py["tests/kb/test_kb_self_test.py [prototype]"]
+        tests_kb_test_kb_storage_backend_py["tests/kb/test_kb_storage_backend.py [prototype]"]
+        tests_kb_test_kb_triage_py["tests/kb/test_kb_triage.py [prototype]"]
+        tests_kb_test_kb_unified_memory_api_py["tests/kb/test_kb_unified_memory_api.py [prototype]"]
+        tests_kb_test_kb_verify_py["tests/kb/test_kb_verify.py [prototype]"]
+        tests_kb_test_kb_vms_memory_backend_py["tests/kb/test_kb_vms_memory_backend.py [prototype]"]
+        tests_kb_test_vector_memory_root_py["tests/kb/test_vector_memory_root.py [prototype]"]
+        tests_knowledge_engine_test_ke_quality_py["...s/knowledge_engine/test_ke_quality.py [prototype]"]
+        tests_knowledge_engine_test_ke_tombstone_py["...knowledge_engine/test_ke_tombstone.py [prototype]"]
+        tests_knowledge_engine_test_knowledge_bus_factor_monitor_py[".../test_knowledge_bus_factor_monitor.py [prototype]"]
+        tests_knowledge_engine_test_knowledge_capture_py["...edge_engine/test_knowledge_capture.py [prototype]"]
+        tests_knowledge_engine_test_knowledge_distillation_py["...engine/test_knowledge_distillation.py [prototype]"]
+        tests_knowledge_engine_test_knowledge_distiller_py["...ge_engine/test_knowledge_distiller.py [prototype]"]
+        tests_knowledge_engine_test_knowledge_freshness_py["...ge_engine/test_knowledge_freshness.py [prototype]"]
+        tests_knowledge_engine_test_knowledge_injection_py["...ge_engine/test_knowledge_injection.py [prototype]"]
+        tests_knowledge_engine_test_kn___tion_pre_flight_verifier_py["...edge_injection_pre_flight_verifier.py [prototype]"]
+        tests_knowledge_engine_test_knowledge_market_py["...ledge_engine/test_knowledge_market.py [prototype]"]
+        tests_knowledge_engine_test_knowledge_packaging_py["...ge_engine/test_knowledge_packaging.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -25,10 +59,57 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|contract| docs_03_modules__domain_knowle___knowledge_base_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
+    %% D_KNOWLEDGE -> D_AUTONOMY_CORE (1 条)
+    tests_knowledge_engine_test_knowledge_distiller_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    %% D_KNOWLEDGE -> D_FEEDBACK_LOOP (5 条)
+    tests_knowledge_engine_test_knowledge_distillation_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_knowledge_engine_test_knowledge_capture_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_knowledge_engine_test_knowledge_injection_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_knowledge_engine_test_kn___tion_pre_flight_verifier_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_knowledge_engine_test_knowledge_packaging_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    %% D_KNOWLEDGE -> D_GOVERNANCE (2 条)
+    tests_knowledge_engine_test_knowledge_bus_factor_monitor_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_knowledge_engine_test_knowledge_market_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_KNOWLEDGE -> D_GOV_AUDIT (1 条)
+    tests_kb_test_kb_gate_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_KNOWLEDGE -> D_GOV_DRIFT (1 条)
+    tests_kb_test_kb_integrity_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    %% D_KNOWLEDGE -> D_GOV_KB (16 条)
+    tests_kb_test_kb_analyze_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_bootstrap_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_extract_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_embedding_migrate_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_freeze_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_gate_task_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_graph_validator_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_migration_embedding_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_migration_gate_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_storage_backend_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_self_test_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_unified_memory_api_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_verify_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_vms_memory_backend_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_vms_memory_backend_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_knowledge_engine_test_ke_tombstone_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    %% D_KNOWLEDGE -> D_GOV_OPS_RESILIENCE (1 条)
+    tests_kb_test_kb_triage_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    %% D_KNOWLEDGE -> D_GOV_RULE (4 条)
+    tests_kb_test_kb_analyze_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_kb_test_kb_activate_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_kb_test_kb_extract_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_kb_test_kb_migration_gate_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_KNOWLEDGE -> D_INFRA_RUNTIME (1 条)
     docs_03_modules__domain_knowledge_vector_memory_blueprint_md -->|runtime| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    %% D_KNOWLEDGE -> D_INTELLIGENCE (4 条)
+    tests_kb_test_kb_activate_py -->|test_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    tests_kb_test_kb_pipeline_activate_py -->|test_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    tests_kb_test_kb_reranker_py -->|test_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    tests_kb_test_kb_unified_memory_api_py -->|test_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    %% D_KNOWLEDGE -> D_ORCHESTRATOR (2 条)
+    tests_knowledge_engine_test_ke_quality_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
+    tests_knowledge_engine_test_knowledge_freshness_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
 
     %% 统计
     %% 域内依赖: 0 条
     %% 跨域入边: 1 条
-    %% 跨域出边: 1 条
+    %% 跨域出边: 38 条

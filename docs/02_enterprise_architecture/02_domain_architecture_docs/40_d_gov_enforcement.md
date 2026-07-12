@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 规则执行（D_GOV_ENFORCEMENT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 04:28:15
+> 最后更新: 2026-07-13 05:27:50
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,19 +26,19 @@ ttl: permanent
 | 域ID | D_GOV_ENFORCEMENT | Domain ID | D_GOV_ENFORCEMENT |
 | 域名称 | 规则执行 | Domain Name | Rule Enforcement |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 140 | Module Count | 140 |
-| 域内依赖 | 104 | Internal Dependencies | 104 |
-| 跨域入边 | 113 | Cross-domain Incoming | 113 |
-| 跨域出边 | 98 | Cross-domain Outgoing | 98 |
+| 模块数 | 164 | Module Count | 164 |
+| 域内依赖 | 105 | Internal Dependencies | 105 |
+| 跨域入边 | 103 | Cross-domain Incoming | 103 |
+| 跨域出边 | 121 | Cross-domain Outgoing | 121 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 40 | Prototype Modules | 40 |
+| 原型态模块 | 64 | Prototype Modules | 64 |
 | 生产态模块 | 100 | Production Modules | 100 |
 | 容量 | 100/150 (正常) | Capacity | 100/150 (正常) |
 | 描述 | 门禁引擎流程编排(GatePipeline/GateEngine) | Description | 门禁引擎流程编排(GatePipeline/GateEngine) |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 140 个模块 / 140 modules）。
+> 按 architecture_layer 分组的模块清单（共 164 个模块 / 164 modules）。
 
 ### L1 基础层 / Foundation Layer (1 modules)
 
@@ -129,149 +129,173 @@ ttl: permanent
 | ↳82 |   ↳ src/zephyr/governance/rule_enforcement/task/g7_orc_g... | 收尾校验：TaskCard.verification_status=verified；audit_findings 全部 resolved... | - | - |
 | ↳83 |   ↳ src/zephyr/governance/rule_enforcement/zero_residue.yaml | 零残留原则自动化执行层——每次 GateEngine.evaluate("ZERO-RESIDUE") 触发时， ... | - | - |
 
-### L2 领域层 / Domain Layer (139 modules)
+### L2 领域层 / Domain Layer (163 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/compliance/__init__.py | D_COMPLIANCE Compliance — Re-export wrapper (D... | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 2 | src/zephyr/compliance/_extensions/__init__.py | __init__.py | 原型态 / prototype |  |
-| 3 | src/zephyr/compliance/aisg_sandbox.py | Re-export wrapper: aisg_sandbox has migrated to... | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 4 | src/zephyr/compliance/api/__init__.py | __init__.py | 原型态 / prototype |  |
-| 5 | src/zephyr/compliance/artifact_scanner.py | Re-export wrapper: artifact_scanner has migrate... | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 6 | src/zephyr/compliance/audit_orchestrator/__init__.py | Re-export wrapper: audit-orchestrator has migra... | 原型态 / prototype |  |
-| 7 | src/zephyr/compliance/audit_trail/__init__.py | Re-export wrapper: audit-trail has migrated to ... | 原型态 / prototype |  |
-| 8 | src/zephyr/compliance/audit_trail/bridges/__init__.py | Audit Trail — MOD-INF-020 | 原型态 / prototype | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 9 | src/zephyr/compliance/behavioral_admission/__init__.py | Re-export wrapper: behavioral-admission has mig... | 原型态 / prototype |  |
-| 10 | src/zephyr/compliance/compliance_gate_a6/__init__.py | Re-export wrapper: compliance_gate_a6 has migra... | 原型态 / prototype |  |
-| 11 | src/zephyr/compliance/compliance_manager.py | Re-export wrapper: compliance_manager has migra... | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 12 | src/zephyr/compliance/core/__init__.py | __init__.py | 原型态 / prototype |  |
-| 13 | src/zephyr/compliance/default_security_gateway.py | default_security_gateway.py | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 14 | src/zephyr/compliance/evidence_pack.py | Re-export wrapper: evidence_pack has migrated t... | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 15 | src/zephyr/compliance/financial_compliance.py | Re-export wrapper: financial_compliance has mig... | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 16 | src/zephyr/compliance/implementations/__init__.py | Re-export wrapper: implementations has migrated... | 原型态 / prototype |  |
-| 17 | src/zephyr/compliance/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
-| 18 | src/zephyr/compliance/integrity.py | Re-export wrapper: integrity has migrated to ze... | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 19 | src/zephyr/compliance/merkle_hourly.py | Re-export wrapper: merkle_hourly has migrated t... | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 20 | src/zephyr/compliance/models/__init__.py | __init__.py | 原型态 / prototype |  |
-| 21 | src/zephyr/compliance/security_gateway_base.py | security_gateway_base.py | 原型态 / prototype | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 22 | src/zephyr/compliance/services/__init__.py | __init__.py | 原型态 / prototype |  |
-| 23 | src/zephyr/gov_enforcement/__init__.py | gov_enforcement package — 执行治理域（D_GOV_EN... | 原型态 / prototype |  |
-| 24 | src/zephyr/gov_enforcement/behavioral_admission/__init__.py | __init__.py | 原型态 / prototype |  |
-| 25 | src/zephyr/gov_enforcement/behavioral_admission/admission... | admission_controller.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 26 | src/zephyr/gov_enforcement/behavioral_admission/gate_even... | GateEventAdapter — GateRepo 事件适配器（DW-0006） | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 27 | src/zephyr/gov_enforcement/behavioral_admission/gpu_conse... | gpu_consensus_scheduler.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 28 | src/zephyr/gov_enforcement/behavioral_admission/protectio... | protection_index.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 29 | src/zephyr/gov_enforcement/behavioral_admission/session_l... | session_lifecycle.py | 生产态 / production | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 30 | src/zephyr/gov_enforcement/behavioral_admission/verdict_e... | verdict_engine.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 31 | src/zephyr/gov_enforcement/rule_bridge/__init__.py | governance.rule_bridge — auto-generated packag... | 原型态 / prototype |  |
-| 32 | src/zephyr/gov_enforcement/rule_bridge/commit_gate_regist... | commit_gate_registry.py — GitCommitGateway pre... | 生产态 / production |  |
-| 33 | src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py | GitCommitGateway — 全项目唯一合法 git commit ... | 生产态 / production | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 34 | src/zephyr/gov_enforcement/rule_bridge/session_claim.py | session_claim.py — AI 对话并发声明 helper（FP-... | 原型态 / prototype |  |
-| 35 | src/zephyr/gov_enforcement/rule_bridge/session_worktree.py | session_worktree.py — AI 对话 worktree 物理隔... | 生产态 / production |  |
-| 36 | src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py | worktree_manager.py — session worktree 物理隔... | 生产态 / production |  |
-| 37 | src/zephyr/gov_enforcement/rule_enforcement/__init__.py | ZephyrAlpha 门禁子包 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 38 | src/zephyr/gov_enforcement/rule_enforcement/_template.yaml | <一句话职责描述，≤200字> | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 39 | src/zephyr/gov_enforcement/rule_enforcement/admission/__i... | ZephyrAlpha — gates/admission/ — 模块准入门禁... | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 40 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：Architecture Decision Records (KB 决策记... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 41 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：Wardley Mapping + Phase-based delivery。 ... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 42 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：Layer Isolation Principle + ArchUnit fitn... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 43 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：Interface Segregation Principle (ISP) + C... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 44 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：TPL-DEPGRAPH-001 v4.0.0 + project_rules.m... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 45 | src/zephyr/gov_enforcement/rule_enforcement/approval.py | G-CT-004 — Backward-compat re-export of Approv... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 46 | src/zephyr/gov_enforcement/rule_enforcement/compliance_ru... | Re-export shim — ComplianceRule 真源已合并至 z... | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 47 | src/zephyr/gov_enforcement/rule_enforcement/default_quali... | D_DATA — Default Data Quality Gate | 生产态 / production | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-| 48 | src/zephyr/gov_enforcement/rule_enforcement/dlq_retry_pol... | DLQ 重试策略 — 指数退避自动重试 | 原型态 / prototype | [SH-DB-001](../../03_modules/_cross_layer/database/blueprint.md) |
-| 49 | src/zephyr/gov_enforcement/rule_enforcement/g1_ingest.yaml | Ingest stage admission gate - validates file ex... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 50 | src/zephyr/gov_enforcement/rule_enforcement/g2_triage.yaml | Triage stage admission gate - validates classif... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 51 | src/zephyr/gov_enforcement/rule_enforcement/g3_evaluate.yaml | Evaluate stage admission gate - ensures knowled... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 52 | src/zephyr/gov_enforcement/rule_enforcement/g4_activate.yaml | Activate stage admission gate - ensures depende... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 53 | src/zephyr/gov_enforcement/rule_enforcement/g5_extract.yaml | Extract stage admission gate - ensures extracti... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 54 | src/zephyr/gov_enforcement/rule_enforcement/g6_blueprint_... | beta hard compliance gate — AI agent MUST read... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 55 | src/zephyr/gov_enforcement/rule_enforcement/g6_ctr_compli... | CTR contract compliance gate - ensures all data... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 56 | src/zephyr/gov_enforcement/rule_enforcement/g6_path_tree_... | GOV-DOC-004 §四-A 强制门禁 — 文件创建/删除/移... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 57 | src/zephyr/gov_enforcement/rule_enforcement/g7_position_l... | AI 生成的策略配置（D_PORTFOLIO_CORE/D_EXECUTION... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 58 | src/zephyr/gov_enforcement/rule_enforcement/g7c_cross_gat... | 跨门禁时序一致性校验：检测任务执行期间蓝图版本... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 59 | src/zephyr/gov_enforcement/rule_enforcement/g7d_depth_com... | G7交付门禁通过后的深度合规校验：单元测试覆盖率... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 60 | src/zephyr/gov_enforcement/rule_enforcement/g8.yaml | SSoT 一致性门禁——校验每份 blueprint.md 的 fro... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 61 | src/zephyr/gov_enforcement/rule_enforcement/g8_leverage.yaml | 检查 AI 生成的策略总杠杆（含衍生品）不超过 Risk... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 62 | src/zephyr/gov_enforcement/rule_enforcement/g9.yaml | 机械验证四个关键蓝图系统与 Pipeline 的跨模块集... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 63 | src/zephyr/gov_enforcement/rule_enforcement/g9_strategy_c... | 当 AI 生成新策略或修改现有策略时，检查新策略与... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 64 | src/zephyr/gov_enforcement/rule_enforcement/g_asset_inven... | 资产盘点系统健康门禁 — 验证 unified-asset-inde... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 65 | src/zephyr/gov_enforcement/rule_enforcement/g_forward_ref... | 前向引用检测门禁——检测 class X 定义内部引用 X... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 66 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_003.yaml | 自动化门禁：强制执行 TRAE-003（任务粒度与完成门... | 生产态 / production |  |
-| 67 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_004.yaml | 自动化门禁：强制执行 TRAE-004（并行执行与原子事... | 生产态 / production |  |
-| 68 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_006.yaml | 自动化门禁：强制执行 TRAE-006（防幻觉-结构追溯... | 生产态 / production |  |
-| 69 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_007.yaml | 自动化门禁：强制执行 TRAE-007（防幻觉-行为约束... | 生产态 / production |  |
-| 70 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_008.yaml | 自动化门禁：强制执行 TRAE-008（防幻觉-输出验证... | 生产态 / production |  |
-| 71 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_009.yaml | 自动化门禁：强制执行 TRAE-009（防幻觉-安全防护... | 生产态 / production |  |
-| 72 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_010.yaml | 自动化门禁：强制执行 TRAE-010（代码构建-命名与... | 生产态 / production |  |
-| 73 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_011.yaml | 自动化门禁：强制执行 TRAE-011（代码构建-类型与... | 生产态 / production |  |
-| 74 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_012.yaml | 自动化门禁：强制执行 TRAE-012（代码构建-测试与... | 生产态 / production |  |
-| 75 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_016.yaml | 自动化门禁：强制执行 TRAE-016（架构约束-漂移检... | 生产态 / production |  |
-| 76 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_017.yaml | 自动化门禁：强制执行 TRAE-017（架构约束-治理顺... | 生产态 / production |  |
-| 77 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_018.yaml | 自动化门禁：强制执行 TRAE-018（行为边界-代码操... | 生产态 / production |  |
-| 78 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_020.yaml | 自动化门禁：强制执行 TRAE-020（行为边界-治理纪... | 生产态 / production |  |
-| 79 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_021.yaml | 自动化门禁：强制执行 TRAE-021（行为边界-其余绝... | 生产态 / production |  |
-| 80 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_022.yaml | 自动化门禁：强制执行 TRAE-022（行为边界-条件禁... | 生产态 / production |  |
-| 81 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_023.yaml | 自动化门禁：强制执行 TRAE-023（行为边界-条件禁... | 生产态 / production |  |
-| 82 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_024.yaml | 自动化门禁：强制执行 TRAE-024（方法论-诊断与根... | 生产态 / production |  |
-| 83 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_025.yaml | 自动化门禁：强制执行 TRAE-025（方法论-决策与执... | 生产态 / production |  |
-| 84 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_026.yaml | 自动化门禁：强制执行 TRAE-026（方法论-质量与度... | 生产态 / production |  |
-| 85 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_027.yaml | 自动化门禁：强制执行 TRAE-027（方法论-协作与演... | 生产态 / production |  |
-| 86 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_028.yaml | 自动化门禁：强制执行 TRAE-028（文档治理-结构与... | 生产态 / production |  |
-| 87 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_029.yaml | 自动化门禁：强制执行 TRAE-029（文档治理-操作安... | 生产态 / production |  |
-| 88 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_030.yaml | 自动化门禁：强制执行 TRAE-030（文档治理-编号与... | 生产态 / production |  |
-| 89 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_031.yaml | 自动化门禁：强制执行 TRAE-031（安全治理-密钥与... | 生产态 / production |  |
-| 90 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_032.yaml | 自动化门禁：强制执行 TRAE-032（模块治理-准入与... | 生产态 / production |  |
-| 91 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_033.yaml | 自动化门禁：强制执行 TRAE-033（模块治理-注册与... | 生产态 / production |  |
-| 92 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_034.yaml | 自动化门禁：强制执行 TRAE-034（任务系统-卡片标... | 生产态 / production |  |
-| 93 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_035.yaml | 自动化门禁：强制执行 TRAE-035（任务系统-施工与... | 生产态 / production |  |
-| 94 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_036.yaml | 自动化门禁：强制执行 TRAE-036（架构治理-门禁与... | 生产态 / production |  |
-| 95 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_037.yaml | 自动化门禁：强制执行 TRAE-037（架构治理-合格与... | 生产态 / production |  |
-| 96 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_038.yaml | 自动化门禁：强制执行 TRAE-038（架构治理-CTR注入... | 生产态 / production |  |
-| 97 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_039.yaml | 自动化门禁：强制执行 TRAE-039（AI治理-幻觉检测... | 生产态 / production |  |
-| 98 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_040.yaml | 自动化门禁：强制执行 TRAE-040（AI治理-模型路由... | 生产态 / production |  |
-| 99 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_041.yaml | 自动化门禁：强制执行 TRAE-041（元规则-规则分类... | 生产态 / production |  |
-| 100 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_042.yaml | 自动化门禁：强制执行 TRAE-042（元规则-标准体系... | 生产态 / production |  |
-| 101 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_043.yaml | 自动化门禁：强制执行 TRAE-043（元规则-元数据与... | 生产态 / production |  |
-| 102 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_044.yaml | 自动化门禁：强制执行 TRAE-044（合规治理-审计与... | 生产态 / production |  |
-| 103 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_045.yaml | 自动化门禁：强制执行 TRAE-045（数据治理-质量与... | 生产态 / production |  |
-| 104 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_046.yaml | 自动化门禁：强制执行 TRAE-046（工程治理-代码重... | 生产态 / production |  |
-| 105 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_047.yaml | 自动化门禁：强制执行 TRAE-047（工程治理-文件头... | 生产态 / production |  |
-| 106 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_048.yaml | 自动化门禁：强制执行 TRAE-048（操作-Vibe Coding... | 生产态 / production |  |
-| 107 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_049.yaml | 自动化门禁：强制执行 TRAE-049（操作-领域操作手... | 生产态 / production |  |
-| 108 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_050.yaml | 自动化门禁：强制执行 TRAE-050（域策略-数据源与... | 生产态 / production |  |
-| 109 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_051.yaml | 自动化门禁：强制执行 TRAE-051（域策略-风控与盘... | 生产态 / production |  |
-| 110 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_052.yaml | 自动化门禁：强制执行 TRAE-052（铁律补充-跨蓝图... | 生产态 / production |  |
-| 111 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_053.yaml | 自动化门禁：强制执行 TRAE-053（铁律补充-自动化... | 生产态 / production |  |
-| 112 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_054.yaml | 自动化门禁：强制执行 TRAE-054（depgraph 程序化... | 生产态 / production |  |
-| 113 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_055.yaml | 自动化门禁：强制执行 TRAE-055（架构容量与域治理... | 生产态 / production |  |
-| 114 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_059.yaml | 自动化门禁：强制执行 TRAE-059（_schema_version ... | 生产态 / production |  |
-| 115 | src/zephyr/gov_enforcement/rule_enforcement/gate_dedup.yaml | 代码去重门禁——每次 GateEngine.evaluate("GATE-... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 116 | src/zephyr/gov_enforcement/rule_enforcement/gct_024_budge... | gct_024_budget_enforcer.yaml | 生产态 / production |  |
-| 117 | src/zephyr/gov_enforcement/rule_enforcement/invariants/__... | __init__.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 118 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 扫描 14 层 + shared/contracts 的全部 Python 导... | 生产态 / production |  |
-| 119 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 读取 cross_layer_contracts.yaml，验证每条 P0 契... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 120 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 读取 cross_layer_contracts.yaml 中的字段定义，... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 121 | src/zephyr/gov_enforcement/rule_enforcement/invariants/po... | PostDocReviewScanner — Session 关门时文档内容... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 122 | src/zephyr/gov_enforcement/rule_enforcement/observability... | Phase 1 observability baseline gate — validate... | 生产态 / production |  |
-| 123 | src/zephyr/gov_enforcement/rule_enforcement/output_qualit... | output_quality_gate.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 124 | src/zephyr/gov_enforcement/rule_enforcement/post_doc_revi... | Session 关门时审查本次 session 修改的文档+蓝图/... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 125 | src/zephyr/gov_enforcement/rule_enforcement/pre_flight_ga... | pre_flight_gate.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 126 | src/zephyr/gov_enforcement/rule_enforcement/quality_gate.py | D_DATA — Data Quality Gate | 原型态 / prototype | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-| 127 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/r... | Rule Canary Manager — v0.10.0 规则金丝雀: 1%用... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 128 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/r... | Rule Debt Auditor — v0.7.0 规则债务审计器: 分... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 129 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/r... | Rule Shadow Runner — v0.10.0 规则影子模式: 新... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 130 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/r... | RuleWatcher — YAML 规则文件变更检测与自动同步 | 原型态 / prototype |  |
-| 131 | src/zephyr/gov_enforcement/rule_enforcement/slo_contract.py | SLO-Driven Escalation Contract — D-022-12. | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 132 | src/zephyr/gov_enforcement/rule_enforcement/sys_master_co... | 系统总蓝图合规门禁——验证 SYS-MASTER-001（三级... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 133 | src/zephyr/gov_enforcement/rule_enforcement/task/__init__.py | ZephyrAlpha — gates/task/ — 任务触发门禁 | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 134 | src/zephyr/gov_enforcement/rule_enforcement/task/g0_entry... | G0 是所有任务（AI Agent 任务 + 人工作业）进入 Z... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 135 | src/zephyr/gov_enforcement/rule_enforcement/task/g0_orc_g... | 任务进入执行队列前的可自动化校验：priority 枚举... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 136 | src/zephyr/gov_enforcement/rule_enforcement/task/g7_orc_g... | 收尾校验：TaskCard.verification_status=verified... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 137 | src/zephyr/gov_enforcement/rule_enforcement/zero_residue.... | 零残留原则自动化执行层——每次 GateEngine.evalu... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 138 | tests/governance/commit_gates/test_create_guard.py | test_create_guard.py — CREATE-GUARD 门禁单元测... | 原型态 / prototype |  |
-| 139 | tests/governance/commit_gates/test_r5_digit_suffix_gate.py | test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX... | 原型态 / prototype |  |
+| 1 | src/zephyr/gov_enforcement/__init__.py | gov_enforcement package — 执行治理域（D_GOV_EN... | 原型态 / prototype |  |
+| 2 | src/zephyr/gov_enforcement/behavioral_admission/__init__.py | __init__.py | 原型态 / prototype |  |
+| 3 | src/zephyr/gov_enforcement/behavioral_admission/admission... | admission_controller.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 4 | src/zephyr/gov_enforcement/behavioral_admission/gate_even... | GateEventAdapter — GateRepo 事件适配器（DW-0006） | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 5 | src/zephyr/gov_enforcement/behavioral_admission/gpu_conse... | gpu_consensus_scheduler.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 6 | src/zephyr/gov_enforcement/behavioral_admission/protectio... | protection_index.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 7 | src/zephyr/gov_enforcement/behavioral_admission/session_l... | session_lifecycle.py | 生产态 / production | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 8 | src/zephyr/gov_enforcement/behavioral_admission/verdict_e... | verdict_engine.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 9 | src/zephyr/gov_enforcement/rule_bridge/__init__.py | governance.rule_bridge — auto-generated packag... | 原型态 / prototype |  |
+| 10 | src/zephyr/gov_enforcement/rule_bridge/commit_gate_regist... | commit_gate_registry.py — GitCommitGateway pre... | 生产态 / production |  |
+| 11 | src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py | GitCommitGateway — 全项目唯一合法 git commit ... | 生产态 / production | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 12 | src/zephyr/gov_enforcement/rule_bridge/session_claim.py | session_claim.py — AI 对话并发声明 helper（FP-... | 原型态 / prototype |  |
+| 13 | src/zephyr/gov_enforcement/rule_bridge/session_worktree.py | session_worktree.py — AI 对话 worktree 物理隔... | 生产态 / production |  |
+| 14 | src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py | worktree_manager.py — session worktree 物理隔... | 生产态 / production |  |
+| 15 | src/zephyr/gov_enforcement/rule_enforcement/__init__.py | ZephyrAlpha 门禁子包 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 16 | src/zephyr/gov_enforcement/rule_enforcement/_template.yaml | <一句话职责描述，≤200字> | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 17 | src/zephyr/gov_enforcement/rule_enforcement/admission/__i... | ZephyrAlpha — gates/admission/ — 模块准入门禁... | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 18 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：Architecture Decision Records (KB 决策记... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 19 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：Wardley Mapping + Phase-based delivery。 ... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 20 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：Layer Isolation Principle + ArchUnit fitn... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 21 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：Interface Segregation Principle (ISP) + C... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 22 | src/zephyr/gov_enforcement/rule_enforcement/admission/mad... | 对标：TPL-DEPGRAPH-001 v4.0.0 + project_rules.m... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 23 | src/zephyr/gov_enforcement/rule_enforcement/approval.py | G-CT-004 — Backward-compat re-export of Approv... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 24 | src/zephyr/gov_enforcement/rule_enforcement/compliance_ru... | Re-export shim — ComplianceRule 真源已合并至 z... | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 25 | src/zephyr/gov_enforcement/rule_enforcement/default_quali... | D_DATA — Default Data Quality Gate | 生产态 / production | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
+| 26 | src/zephyr/gov_enforcement/rule_enforcement/dlq_retry_pol... | DLQ 重试策略 — 指数退避自动重试 | 原型态 / prototype | [SH-DB-001](../../03_modules/_cross_layer/database/blueprint.md) |
+| 27 | src/zephyr/gov_enforcement/rule_enforcement/g1_ingest.yaml | Ingest stage admission gate - validates file ex... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 28 | src/zephyr/gov_enforcement/rule_enforcement/g2_triage.yaml | Triage stage admission gate - validates classif... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 29 | src/zephyr/gov_enforcement/rule_enforcement/g3_evaluate.yaml | Evaluate stage admission gate - ensures knowled... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 30 | src/zephyr/gov_enforcement/rule_enforcement/g4_activate.yaml | Activate stage admission gate - ensures depende... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 31 | src/zephyr/gov_enforcement/rule_enforcement/g5_extract.yaml | Extract stage admission gate - ensures extracti... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 32 | src/zephyr/gov_enforcement/rule_enforcement/g6_blueprint_... | beta hard compliance gate — AI agent MUST read... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 33 | src/zephyr/gov_enforcement/rule_enforcement/g6_ctr_compli... | CTR contract compliance gate - ensures all data... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 34 | src/zephyr/gov_enforcement/rule_enforcement/g6_path_tree_... | GOV-DOC-004 §四-A 强制门禁 — 文件创建/删除/移... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 35 | src/zephyr/gov_enforcement/rule_enforcement/g7_position_l... | AI 生成的策略配置（D_PORTFOLIO_CORE/D_EXECUTION... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 36 | src/zephyr/gov_enforcement/rule_enforcement/g7c_cross_gat... | 跨门禁时序一致性校验：检测任务执行期间蓝图版本... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 37 | src/zephyr/gov_enforcement/rule_enforcement/g7d_depth_com... | G7交付门禁通过后的深度合规校验：单元测试覆盖率... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 38 | src/zephyr/gov_enforcement/rule_enforcement/g8.yaml | SSoT 一致性门禁——校验每份 blueprint.md 的 fro... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 39 | src/zephyr/gov_enforcement/rule_enforcement/g8_leverage.yaml | 检查 AI 生成的策略总杠杆（含衍生品）不超过 Risk... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 40 | src/zephyr/gov_enforcement/rule_enforcement/g9.yaml | 机械验证四个关键蓝图系统与 Pipeline 的跨模块集... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 41 | src/zephyr/gov_enforcement/rule_enforcement/g9_strategy_c... | 当 AI 生成新策略或修改现有策略时，检查新策略与... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 42 | src/zephyr/gov_enforcement/rule_enforcement/g_asset_inven... | 资产盘点系统健康门禁 — 验证 unified-asset-inde... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 43 | src/zephyr/gov_enforcement/rule_enforcement/g_forward_ref... | 前向引用检测门禁——检测 class X 定义内部引用 X... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 44 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_003.yaml | 自动化门禁：强制执行 TRAE-003（任务粒度与完成门... | 生产态 / production |  |
+| 45 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_004.yaml | 自动化门禁：强制执行 TRAE-004（并行执行与原子事... | 生产态 / production |  |
+| 46 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_006.yaml | 自动化门禁：强制执行 TRAE-006（防幻觉-结构追溯... | 生产态 / production |  |
+| 47 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_007.yaml | 自动化门禁：强制执行 TRAE-007（防幻觉-行为约束... | 生产态 / production |  |
+| 48 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_008.yaml | 自动化门禁：强制执行 TRAE-008（防幻觉-输出验证... | 生产态 / production |  |
+| 49 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_009.yaml | 自动化门禁：强制执行 TRAE-009（防幻觉-安全防护... | 生产态 / production |  |
+| 50 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_010.yaml | 自动化门禁：强制执行 TRAE-010（代码构建-命名与... | 生产态 / production |  |
+| 51 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_011.yaml | 自动化门禁：强制执行 TRAE-011（代码构建-类型与... | 生产态 / production |  |
+| 52 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_012.yaml | 自动化门禁：强制执行 TRAE-012（代码构建-测试与... | 生产态 / production |  |
+| 53 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_016.yaml | 自动化门禁：强制执行 TRAE-016（架构约束-漂移检... | 生产态 / production |  |
+| 54 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_017.yaml | 自动化门禁：强制执行 TRAE-017（架构约束-治理顺... | 生产态 / production |  |
+| 55 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_018.yaml | 自动化门禁：强制执行 TRAE-018（行为边界-代码操... | 生产态 / production |  |
+| 56 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_020.yaml | 自动化门禁：强制执行 TRAE-020（行为边界-治理纪... | 生产态 / production |  |
+| 57 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_021.yaml | 自动化门禁：强制执行 TRAE-021（行为边界-其余绝... | 生产态 / production |  |
+| 58 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_022.yaml | 自动化门禁：强制执行 TRAE-022（行为边界-条件禁... | 生产态 / production |  |
+| 59 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_023.yaml | 自动化门禁：强制执行 TRAE-023（行为边界-条件禁... | 生产态 / production |  |
+| 60 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_024.yaml | 自动化门禁：强制执行 TRAE-024（方法论-诊断与根... | 生产态 / production |  |
+| 61 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_025.yaml | 自动化门禁：强制执行 TRAE-025（方法论-决策与执... | 生产态 / production |  |
+| 62 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_026.yaml | 自动化门禁：强制执行 TRAE-026（方法论-质量与度... | 生产态 / production |  |
+| 63 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_027.yaml | 自动化门禁：强制执行 TRAE-027（方法论-协作与演... | 生产态 / production |  |
+| 64 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_028.yaml | 自动化门禁：强制执行 TRAE-028（文档治理-结构与... | 生产态 / production |  |
+| 65 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_029.yaml | 自动化门禁：强制执行 TRAE-029（文档治理-操作安... | 生产态 / production |  |
+| 66 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_030.yaml | 自动化门禁：强制执行 TRAE-030（文档治理-编号与... | 生产态 / production |  |
+| 67 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_031.yaml | 自动化门禁：强制执行 TRAE-031（安全治理-密钥与... | 生产态 / production |  |
+| 68 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_032.yaml | 自动化门禁：强制执行 TRAE-032（模块治理-准入与... | 生产态 / production |  |
+| 69 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_033.yaml | 自动化门禁：强制执行 TRAE-033（模块治理-注册与... | 生产态 / production |  |
+| 70 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_034.yaml | 自动化门禁：强制执行 TRAE-034（任务系统-卡片标... | 生产态 / production |  |
+| 71 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_035.yaml | 自动化门禁：强制执行 TRAE-035（任务系统-施工与... | 生产态 / production |  |
+| 72 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_036.yaml | 自动化门禁：强制执行 TRAE-036（架构治理-门禁与... | 生产态 / production |  |
+| 73 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_037.yaml | 自动化门禁：强制执行 TRAE-037（架构治理-合格与... | 生产态 / production |  |
+| 74 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_038.yaml | 自动化门禁：强制执行 TRAE-038（架构治理-CTR注入... | 生产态 / production |  |
+| 75 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_039.yaml | 自动化门禁：强制执行 TRAE-039（AI治理-幻觉检测... | 生产态 / production |  |
+| 76 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_040.yaml | 自动化门禁：强制执行 TRAE-040（AI治理-模型路由... | 生产态 / production |  |
+| 77 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_041.yaml | 自动化门禁：强制执行 TRAE-041（元规则-规则分类... | 生产态 / production |  |
+| 78 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_042.yaml | 自动化门禁：强制执行 TRAE-042（元规则-标准体系... | 生产态 / production |  |
+| 79 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_043.yaml | 自动化门禁：强制执行 TRAE-043（元规则-元数据与... | 生产态 / production |  |
+| 80 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_044.yaml | 自动化门禁：强制执行 TRAE-044（合规治理-审计与... | 生产态 / production |  |
+| 81 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_045.yaml | 自动化门禁：强制执行 TRAE-045（数据治理-质量与... | 生产态 / production |  |
+| 82 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_046.yaml | 自动化门禁：强制执行 TRAE-046（工程治理-代码重... | 生产态 / production |  |
+| 83 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_047.yaml | 自动化门禁：强制执行 TRAE-047（工程治理-文件头... | 生产态 / production |  |
+| 84 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_048.yaml | 自动化门禁：强制执行 TRAE-048（操作-Vibe Coding... | 生产态 / production |  |
+| 85 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_049.yaml | 自动化门禁：强制执行 TRAE-049（操作-领域操作手... | 生产态 / production |  |
+| 86 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_050.yaml | 自动化门禁：强制执行 TRAE-050（域策略-数据源与... | 生产态 / production |  |
+| 87 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_051.yaml | 自动化门禁：强制执行 TRAE-051（域策略-风控与盘... | 生产态 / production |  |
+| 88 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_052.yaml | 自动化门禁：强制执行 TRAE-052（铁律补充-跨蓝图... | 生产态 / production |  |
+| 89 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_053.yaml | 自动化门禁：强制执行 TRAE-053（铁律补充-自动化... | 生产态 / production |  |
+| 90 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_054.yaml | 自动化门禁：强制执行 TRAE-054（depgraph 程序化... | 生产态 / production |  |
+| 91 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_055.yaml | 自动化门禁：强制执行 TRAE-055（架构容量与域治理... | 生产态 / production |  |
+| 92 | src/zephyr/gov_enforcement/rule_enforcement/g_trae_059.yaml | 自动化门禁：强制执行 TRAE-059（_schema_version ... | 生产态 / production |  |
+| 93 | src/zephyr/gov_enforcement/rule_enforcement/gate_dedup.yaml | 代码去重门禁——每次 GateEngine.evaluate("GATE-... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 94 | src/zephyr/gov_enforcement/rule_enforcement/gct_024_budge... | gct_024_budget_enforcer.yaml | 生产态 / production |  |
+| 95 | src/zephyr/gov_enforcement/rule_enforcement/invariants/__... | __init__.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 96 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 扫描 14 层 + shared/contracts 的全部 Python 导... | 生产态 / production |  |
+| 97 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 读取 cross_layer_contracts.yaml，验证每条 P0 契... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 98 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 读取 cross_layer_contracts.yaml 中的字段定义，... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 99 | src/zephyr/gov_enforcement/rule_enforcement/invariants/po... | PostDocReviewScanner — Session 关门时文档内容... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 100 | src/zephyr/gov_enforcement/rule_enforcement/observability... | Phase 1 observability baseline gate — validate... | 生产态 / production |  |
+| 101 | src/zephyr/gov_enforcement/rule_enforcement/output_qualit... | output_quality_gate.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 102 | src/zephyr/gov_enforcement/rule_enforcement/post_doc_revi... | Session 关门时审查本次 session 修改的文档+蓝图/... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 103 | src/zephyr/gov_enforcement/rule_enforcement/pre_flight_ga... | pre_flight_gate.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 104 | src/zephyr/gov_enforcement/rule_enforcement/quality_gate.py | D_DATA — Data Quality Gate | 原型态 / prototype | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
+| 105 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/r... | Rule Canary Manager — v0.10.0 规则金丝雀: 1%用... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 106 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/r... | Rule Debt Auditor — v0.7.0 规则债务审计器: 分... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 107 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/r... | Rule Shadow Runner — v0.10.0 规则影子模式: 新... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 108 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/r... | RuleWatcher — YAML 规则文件变更检测与自动同步 | 原型态 / prototype |  |
+| 109 | src/zephyr/gov_enforcement/rule_enforcement/slo_contract.py | SLO-Driven Escalation Contract — D-022-12. | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 110 | src/zephyr/gov_enforcement/rule_enforcement/sys_master_co... | 系统总蓝图合规门禁——验证 SYS-MASTER-001（三级... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 111 | src/zephyr/gov_enforcement/rule_enforcement/task/__init__.py | ZephyrAlpha — gates/task/ — 任务触发门禁 | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 112 | src/zephyr/gov_enforcement/rule_enforcement/task/g0_entry... | G0 是所有任务（AI Agent 任务 + 人工作业）进入 Z... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 113 | src/zephyr/gov_enforcement/rule_enforcement/task/g0_orc_g... | 任务进入执行队列前的可自动化校验：priority 枚举... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 114 | src/zephyr/gov_enforcement/rule_enforcement/task/g7_orc_g... | 收尾校验：TaskCard.verification_status=verified... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 115 | src/zephyr/gov_enforcement/rule_enforcement/zero_residue.... | 零残留原则自动化执行层——每次 GateEngine.evalu... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 116 | tests/capacity/test_batch1_infra.py | test_batch1_infra.py | 原型态 / prototype | [MOD-INF-001](../../03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md) |
+| 117 | tests/capacity/test_batch2_governance.py | test_batch2_governance.py | 原型态 / prototype | [MOD-INF-001](../../03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md) |
+| 118 | tests/capacity/test_batch3_integration.py | test_batch3_integration.py | 原型态 / prototype | [MOD-INF-001](../../03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md) |
+| 119 | tests/capacity/test_capacity_assurance.py | test_capacity_assurance.py | 原型态 / prototype | [MOD-INF-001](../../03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md) |
+| 120 | tests/capacity/test_capacity_aware_repair.py | test_capacity_aware_repair.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 121 | tests/capacity/test_capacity_budget_root.py | test_capacity_budget_root.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 122 | tests/capacity/test_capacity_forecast.py | test_capacity_forecast.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 123 | tests/capacity/test_tech_stack.py | test_tech_stack.py | 原型态 / prototype | [MOD-INF-001](../../03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md) |
+| 124 | tests/gate/test_ci_cd_pre_scanner.py | test_ci_cd_pre_scanner.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 125 | tests/gate/test_circuit_breaker_types.py | test_circuit_breaker_types.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 126 | tests/gate/test_concurrent_change_deconfliction.py | test_concurrent_change_deconfliction.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 127 | tests/gate/test_conflict_arbitration.py | test_conflict_arbitration.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 128 | tests/gate/test_cve_scanner.py | test_cve_scanner.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 129 | tests/gate/test_deployment_suppression.py | test_deployment_suppression.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 130 | tests/gate/test_dynamic_llm_cost_router.py | test_dynamic_llm_cost_router.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 131 | tests/gate/test_emergency_takeover.py | test_emergency_takeover.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 132 | tests/gate/test_federated_security.py | test_federated_security.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 133 | tests/gate/test_flag_lifecycle_manager.py | test_flag_lifecycle_manager.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 134 | tests/gate/test_gate_context.py | test_gate_context.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 135 | tests/gate/test_gate_health.py | test_gate_health.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 136 | tests/gate/test_gate_integrity_guard.py | test_gate_integrity_guard.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 137 | tests/gate/test_gate_override.py | test_gate_override.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 138 | tests/gate/test_gate_persistence.py | test_gate_persistence.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 139 | tests/gate/test_gate_pipeline.py | test_gate_pipeline.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 140 | tests/gate/test_gate_simulator.py | test_gate_simulator.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 141 | tests/gate/test_gate_types.py | test_gate_types.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 142 | tests/gate/test_license_compliance.py | test_license_compliance.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 143 | tests/gate/test_merkle_audit_root.py | test_merkle_audit_root.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 144 | tests/gate/test_meta_performance_gate.py | test_meta_performance_gate.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 145 | tests/gate/test_parameterized_safety_gate.py | test_parameterized_safety_gate.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 146 | tests/gate/test_resilience_circuit_breaker.py | test_resilience_circuit_breaker.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 147 | tests/gate/test_scope_creep_monitor.py | test_scope_creep_monitor.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 148 | tests/governance/commit_gates/test_create_guard.py | test_create_guard.py — CREATE-GUARD 门禁单元测... | 原型态 / prototype |  |
+| 149 | tests/governance/commit_gates/test_r5_digit_suffix_gate.py | test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX... | 原型态 / prototype |  |
+| 150 | tests/guard/test_guard_cascade_detector.py | test_guard_cascade_detector.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 151 | tests/guard/test_guard_complexity_budget.py | test_guard_complexity_budget.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 152 | tests/guard/test_guard_configuration_drift_monitor.py | test_guard_configuration_drift_monitor.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 153 | tests/guard/test_guard_interaction_topology_mapper.py | test_guard_interaction_topology_mapper.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 154 | tests/guard/test_guard_layers_root.py | test_guard_layers_root.py | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 155 | tests/guard/test_guard_oscillation_detector.py | test_guard_oscillation_detector.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 156 | tests/guard/test_guard_self_consistency_auditor.py | test_guard_self_consistency_auditor.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 157 | tests/rule/test_rule_canary_manager.py | test_rule_canary_manager.py | 原型态 / prototype | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
+| 158 | tests/rule/test_rule_debt_auditor.py | test_rule_debt_auditor.py | 原型态 / prototype | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 159 | tests/rule/test_rule_e2e.py | test_rule_e2e.py | 原型态 / prototype |  |
+| 160 | tests/rule/test_rule_injection_guard.py | test_rule_injection_guard.py | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 161 | tests/rule/test_rule_integration.py | test_rule_integration.py | 原型态 / prototype |  |
+| 162 | tests/rule/test_rule_red_blue.py | test_rule_red_blue.py | 原型态 / prototype |  |
+| 163 | tests/rule/test_rule_shadow_runner.py | test_rule_shadow_runner.py | 原型态 / prototype | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -286,36 +310,14 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 140 个模块（生产态 100 + 设计态 0 + 原型态 40），标签标注成熟度。
+> 展示全部 164 个模块（生产态 100 + 设计态 0 + 原型态 64），标签标注成熟度。
 
-#### 第 1 页 / 共 5 页
+#### 第 1 页 / 共 6 页
 
 ```mermaid
 graph TD
     subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
         docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml["(生产态 / production)  Gate Rule Set — ARCH-052 聚合节点 production"]
-        src_zephyr_compliance_init_py["(原型态 / prototype) D_COMPLIANCE Compliance — Re-export wrapper (D...<br/>文件: __init__.py"]
-        src_zephyr_compliance_extensions_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_aisg_sandbox_py["(原型态 / prototype) Re-export wrapper: aisg_sandbox has migrated to...<br/>文件: aisg_sandbox.py"]
-        src_zephyr_compliance_api_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_artifact_scanner_py["(原型态 / prototype) Re-export wrapper: artifact_scanner has migrate...<br/>文件: artifact_scanner.py"]
-        src_zephyr_compliance_audit_orchestrator_init_py["(原型态 / prototype) Re-export wrapper: audit-orchestrator has migra...<br/>文件: __init__.py"]
-        src_zephyr_compliance_audit_trail_init_py["(原型态 / prototype) Re-export wrapper: audit-trail has migrated to ...<br/>文件: __init__.py"]
-        src_zephyr_compliance_audit_trail_bridges_init_py["(原型态 / prototype) Audit Trail — MOD-INF-020<br/>文件: __init__.py"]
-        src_zephyr_compliance_behavioral_admission_init_py["(原型态 / prototype) Re-export wrapper: behavioral-admission has mig...<br/>文件: __init__.py"]
-        src_zephyr_compliance_compliance_gate_a6_init_py["(原型态 / prototype) Re-export wrapper: compliance_gate_a6 has migra...<br/>文件: __init__.py"]
-        src_zephyr_compliance_compliance_manager_py["(原型态 / prototype) Re-export wrapper: compliance_manager has migra...<br/>文件: compliance_manager.py"]
-        src_zephyr_compliance_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_default_security_gateway_py["(原型态 / prototype) default_security_gateway.py"]
-        src_zephyr_compliance_evidence_pack_py["(原型态 / prototype) Re-export wrapper: evidence_pack has migrated t...<br/>文件: evidence_pack.py"]
-        src_zephyr_compliance_financial_compliance_py["(原型态 / prototype) Re-export wrapper: financial_compliance has mig...<br/>文件: financial_compliance.py"]
-        src_zephyr_compliance_implementations_init_py["(原型态 / prototype) Re-export wrapper: implementations has migrated...<br/>文件: __init__.py"]
-        src_zephyr_compliance_infrastructure_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_integrity_py["(原型态 / prototype) Re-export wrapper: integrity has migrated to ze...<br/>文件: integrity.py"]
-        src_zephyr_compliance_merkle_hourly_py["(原型态 / prototype) Re-export wrapper: merkle_hourly has migrated t...<br/>文件: merkle_hourly.py"]
-        src_zephyr_compliance_models_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_security_gateway_base_py["(原型态 / prototype) security_gateway_base.py"]
-        src_zephyr_compliance_services_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_gov_enforcement_init_py["(原型态 / prototype) gov_enforcement package — 执行治理域（D_GOV_EN...<br/>文件: __init__.py"]
         src_zephyr_gov_enforcement_behavioral_admission_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["(原型态 / prototype) admission_controller.py"]
@@ -323,62 +325,6 @@ graph TD
         src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py["(原型态 / prototype) gpu_consensus_scheduler.py"]
         src_zephyr_gov_enforcement_behavioral_admission_protection_index_py["(原型态 / prototype) protection_index.py"]
         src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py["(生产态 / production) session_lifecycle.py"]
-    end
-    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_aisg_sandbox_py
-    src_zephyr_compliance_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_init_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_protection_index_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_compliance_aisg_sandbox_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    src_zephyr_compliance_artifact_scanner_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_evidence_pack_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_compliance_manager_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    src_zephyr_compliance_merkle_hourly_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_compliance_audit_orchestrator_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_compliance_audit_trail_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_GOV_DOCS
-    D_FBL_VERIFICATION["(原型态 / prototype) D_FBL_VERIFICATION"]
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_FBL_VERIFICATION
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|contract / contract| D_GOV_DOCS
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_GOV_DRIFT
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_compliance_default_security_gateway_py
-    D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml,src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py production
-    class src_zephyr_compliance_init_py,src_zephyr_compliance_extensions_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_api_init_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_core_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_infrastructure_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_merkle_hourly_py,src_zephyr_compliance_models_init_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_services_init_py,src_zephyr_gov_enforcement_init_py,src_zephyr_gov_enforcement_behavioral_admission_init_py,src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py,src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py,src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_gov_enforcement_behavioral_admission_protection_index_py design
-    class D_GOVERNANCE,D_GOV_DRIFT,D_GOV_OPS_RESILIENCE,D_GOV_AUDIT external_prod
-    class D_GOV_DOCS,D_FBL_VERIFICATION,D_FEEDBACK_LOOP,D_AUTONOMY_CORE,D_AUDITTEST external_design
-```
-
-#### 第 2 页 / 共 5 页
-
-```mermaid
-graph TD
-    subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
         src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py["(原型态 / prototype) verdict_engine.py"]
         src_zephyr_gov_enforcement_rule_bridge_init_py["(原型态 / prototype) governance.rule_bridge — auto-generated packag...<br/>文件: __init__.py"]
         src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py["(生产态 / production) commit_gate_registry.py — GitCommitGateway pre...<br/>文件: commit_gate_registry.py"]
@@ -401,62 +347,57 @@ graph TD
         src_zephyr_gov_enforcement_rule_enforcement_g1_ingest_yaml["(生产态 / production) Ingest stage admission gate - validates file ex...<br/>文件: g1_ingest.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g2_triage_yaml["(生产态 / production) Triage stage admission gate - validates classif...<br/>文件: g2_triage.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g3_evaluate_yaml["(生产态 / production) Evaluate stage admission gate - ensures knowled...<br/>文件: g3_evaluate.yaml"]
-        src_zephyr_gov_enforcement_rule_enforcement_g4_activate_yaml["(生产态 / production) Activate stage admission gate - ensures depende...<br/>文件: g4_activate.yaml"]
-        src_zephyr_gov_enforcement_rule_enforcement_g5_extract_yaml["(生产态 / production) Extract stage admission gate - ensures extracti...<br/>文件: g5_extract.yaml"]
-        src_zephyr_gov_enforcement_rule_enforcement_g6_blueprint_compliance_yaml["(生产态 / production) beta hard compliance gate — AI agent MUST read...<br/>文件: g6_blueprint_compliance.yaml"]
-        src_zephyr_gov_enforcement_rule_enforcement_g6_ctr_compliance_yaml["(生产态 / production) CTR contract compliance gate - ensures all data...<br/>文件: g6_ctr_compliance.yaml"]
-        src_zephyr_gov_enforcement_rule_enforcement_g6_path_tree_freshness_yaml["(生产态 / production) GOV-DOC-004 §四-A 强制门禁 — 文件创建/删除/移...<br/>文件: g6_path_tree_freshness.yaml"]
-        src_zephyr_gov_enforcement_rule_enforcement_g7_position_limits_yaml["(生产态 / production) AI 生成的策略配置（D_PORTFOLIO_CORE/D_EXECUTION...<br/>文件: g7_position_limits.yaml"]
-        src_zephyr_gov_enforcement_rule_enforcement_g7c_cross_gate_consistency_yaml["(生产态 / production) 跨门禁时序一致性校验：检测任务执行期间蓝图版本...<br/>文件: g7c_cross_gate_consistency.yaml"]
-        src_zephyr_gov_enforcement_rule_enforcement_g7d_depth_compliance_yaml["(生产态 / production) G7交付门禁通过后的深度合规校验：单元测试覆盖率...<br/>文件: g7d_depth_compliance.yaml"]
     end
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
-    src_zephyr_gov_enforcement_rule_bridge_init_py -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
+    src_zephyr_gov_enforcement_behavioral_admission_protection_index_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_protection_index_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_claim_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    src_zephyr_gov_enforcement_rule_bridge_init_py -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     src_zephyr_gov_enforcement_rule_enforcement_g1_ingest_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g2_triage_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g4_activate_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g5_extract_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g6_blueprint_compliance_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g3_evaluate_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g6_ctr_compliance_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g7d_depth_compliance_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g6_path_tree_freshness_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g7_position_limits_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g7c_cross_gate_consistency_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_template_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_admission_mad_003_dependency_compliance_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_admission_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_admission_mad_002_phase_relevance_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_admission_init_py
     src_zephyr_gov_enforcement_rule_enforcement_admission_mad_001_architecture_necessity_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_admission_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_admission_mad_002_phase_relevance_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_admission_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_admission_mad_003_dependency_compliance_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_admission_init_py
     src_zephyr_gov_enforcement_rule_enforcement_admission_mad_005_dependency_graph_template_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_admission_init_py
     src_zephyr_gov_enforcement_rule_enforcement_admission_mad_004_interface_definability_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_admission_init_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
+    src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py -->|导入依赖 / import_depends| D_SHARED
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
+    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_init_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
-    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
@@ -471,16 +412,25 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py,src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py,src_zephyr_gov_enforcement_rule_bridge_session_worktree_py,src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py,src_zephyr_gov_enforcement_rule_enforcement_init_py,src_zephyr_gov_enforcement_rule_enforcement_template_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_001_architecture_necessity_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_002_phase_relevance_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_003_dependency_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_004_interface_definability_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_005_dependency_graph_template_yaml,src_zephyr_gov_enforcement_rule_enforcement_approval_py,src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_g1_ingest_yaml,src_zephyr_gov_enforcement_rule_enforcement_g2_triage_yaml,src_zephyr_gov_enforcement_rule_enforcement_g3_evaluate_yaml,src_zephyr_gov_enforcement_rule_enforcement_g4_activate_yaml,src_zephyr_gov_enforcement_rule_enforcement_g5_extract_yaml,src_zephyr_gov_enforcement_rule_enforcement_g6_blueprint_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_g6_ctr_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_g6_path_tree_freshness_yaml,src_zephyr_gov_enforcement_rule_enforcement_g7_position_limits_yaml,src_zephyr_gov_enforcement_rule_enforcement_g7c_cross_gate_consistency_yaml,src_zephyr_gov_enforcement_rule_enforcement_g7d_depth_compliance_yaml production
-    class src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py,src_zephyr_gov_enforcement_rule_bridge_init_py,src_zephyr_gov_enforcement_rule_bridge_session_claim_py,src_zephyr_gov_enforcement_rule_enforcement_admission_init_py,src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py,src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py design
-    class D_GOV_AUDIT,D_GOV_CODE_QUALITY,D_GOVERNANCE,D_GOV_OPS_RESILIENCE external_prod
+    class docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml,src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py,src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py,src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py,src_zephyr_gov_enforcement_rule_bridge_session_worktree_py,src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py,src_zephyr_gov_enforcement_rule_enforcement_init_py,src_zephyr_gov_enforcement_rule_enforcement_template_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_001_architecture_necessity_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_002_phase_relevance_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_003_dependency_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_004_interface_definability_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_005_dependency_graph_template_yaml,src_zephyr_gov_enforcement_rule_enforcement_approval_py,src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_g1_ingest_yaml,src_zephyr_gov_enforcement_rule_enforcement_g2_triage_yaml,src_zephyr_gov_enforcement_rule_enforcement_g3_evaluate_yaml production
+    class src_zephyr_gov_enforcement_init_py,src_zephyr_gov_enforcement_behavioral_admission_init_py,src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py,src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py,src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_gov_enforcement_behavioral_admission_protection_index_py,src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py,src_zephyr_gov_enforcement_rule_bridge_init_py,src_zephyr_gov_enforcement_rule_bridge_session_claim_py,src_zephyr_gov_enforcement_rule_enforcement_admission_init_py,src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py,src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py design
+    class D_GOV_AUDIT,D_SHARED,D_SECURITY,D_GOV_CODE_QUALITY,D_GOVERNANCE,D_GOV_OPS_RESILIENCE external_prod
+    class D_COMPLIANCE external_design
 ```
 
-#### 第 3 页 / 共 5 页
+#### 第 2 页 / 共 6 页
 
 ```mermaid
 graph TD
     subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
+        src_zephyr_gov_enforcement_rule_enforcement_g4_activate_yaml["(生产态 / production) Activate stage admission gate - ensures depende...<br/>文件: g4_activate.yaml"]
+        src_zephyr_gov_enforcement_rule_enforcement_g5_extract_yaml["(生产态 / production) Extract stage admission gate - ensures extracti...<br/>文件: g5_extract.yaml"]
+        src_zephyr_gov_enforcement_rule_enforcement_g6_blueprint_compliance_yaml["(生产态 / production) beta hard compliance gate — AI agent MUST read...<br/>文件: g6_blueprint_compliance.yaml"]
+        src_zephyr_gov_enforcement_rule_enforcement_g6_ctr_compliance_yaml["(生产态 / production) CTR contract compliance gate - ensures all data...<br/>文件: g6_ctr_compliance.yaml"]
+        src_zephyr_gov_enforcement_rule_enforcement_g6_path_tree_freshness_yaml["(生产态 / production) GOV-DOC-004 §四-A 强制门禁 — 文件创建/删除/移...<br/>文件: g6_path_tree_freshness.yaml"]
+        src_zephyr_gov_enforcement_rule_enforcement_g7_position_limits_yaml["(生产态 / production) AI 生成的策略配置（D_PORTFOLIO_CORE/D_EXECUTION...<br/>文件: g7_position_limits.yaml"]
+        src_zephyr_gov_enforcement_rule_enforcement_g7c_cross_gate_consistency_yaml["(生产态 / production) 跨门禁时序一致性校验：检测任务执行期间蓝图版本...<br/>文件: g7c_cross_gate_consistency.yaml"]
+        src_zephyr_gov_enforcement_rule_enforcement_g7d_depth_compliance_yaml["(生产态 / production) G7交付门禁通过后的深度合规校验：单元测试覆盖率...<br/>文件: g7d_depth_compliance.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g8_yaml["(生产态 / production) SSoT 一致性门禁——校验每份 blueprint.md 的 fro...<br/>文件: g8.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g8_leverage_yaml["(生产态 / production) 检查 AI 生成的策略总杠杆（含衍生品）不超过 Risk...<br/>文件: g8_leverage.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g9_yaml["(生产态 / production) 机械验证四个关键蓝图系统与 Pipeline 的跨模块集...<br/>文件: g9.yaml"]
@@ -503,6 +453,19 @@ graph TD
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_021_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-021（行为边界-其余绝...<br/>文件: g_trae_021.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_022_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-022（行为边界-条件禁...<br/>文件: g_trae_022.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_023_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-023（行为边界-条件禁...<br/>文件: g_trae_023.yaml"]
+    end
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_gov_enforcement_rule_enforcement_g4_activate_yaml,src_zephyr_gov_enforcement_rule_enforcement_g5_extract_yaml,src_zephyr_gov_enforcement_rule_enforcement_g6_blueprint_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_g6_ctr_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_g6_path_tree_freshness_yaml,src_zephyr_gov_enforcement_rule_enforcement_g7_position_limits_yaml,src_zephyr_gov_enforcement_rule_enforcement_g7c_cross_gate_consistency_yaml,src_zephyr_gov_enforcement_rule_enforcement_g7d_depth_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_g8_yaml,src_zephyr_gov_enforcement_rule_enforcement_g8_leverage_yaml,src_zephyr_gov_enforcement_rule_enforcement_g9_yaml,src_zephyr_gov_enforcement_rule_enforcement_g9_strategy_correlation_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_asset_inventory_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_forward_reference_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_003_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_004_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_006_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_007_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_008_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_009_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_010_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_011_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_012_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_016_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_017_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_018_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_020_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_021_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_022_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_023_yaml production
+```
+
+#### 第 3 页 / 共 6 页
+
+```mermaid
+graph TD
+    subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_024_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-024（方法论-诊断与根...<br/>文件: g_trae_024.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_025_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-025（方法论-决策与执...<br/>文件: g_trae_025.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_026_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-026（方法论-质量与度...<br/>文件: g_trae_026.yaml"]
@@ -511,19 +474,6 @@ graph TD
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_029_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-029（文档治理-操作安...<br/>文件: g_trae_029.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_030_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-030（文档治理-编号与...<br/>文件: g_trae_030.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_031_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-031（安全治理-密钥与...<br/>文件: g_trae_031.yaml"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_gov_enforcement_rule_enforcement_g8_yaml,src_zephyr_gov_enforcement_rule_enforcement_g8_leverage_yaml,src_zephyr_gov_enforcement_rule_enforcement_g9_yaml,src_zephyr_gov_enforcement_rule_enforcement_g9_strategy_correlation_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_asset_inventory_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_forward_reference_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_003_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_004_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_006_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_007_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_008_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_009_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_010_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_011_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_012_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_016_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_017_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_018_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_020_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_021_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_022_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_023_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_024_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_025_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_026_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_027_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_028_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_029_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_030_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_031_yaml production
-```
-
-#### 第 4 页 / 共 5 页
-
-```mermaid
-graph TD
-    subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_032_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-032（模块治理-准入与...<br/>文件: g_trae_032.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_033_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-033（模块治理-注册与...<br/>文件: g_trae_033.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_034_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-034（任务系统-卡片标...<br/>文件: g_trae_034.yaml"]
@@ -546,6 +496,19 @@ graph TD
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_051_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-051（域策略-风控与盘...<br/>文件: g_trae_051.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_052_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-052（铁律补充-跨蓝图...<br/>文件: g_trae_052.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_053_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-053（铁律补充-自动化...<br/>文件: g_trae_053.yaml"]
+    end
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_gov_enforcement_rule_enforcement_g_trae_024_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_025_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_026_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_027_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_028_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_029_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_030_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_031_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_032_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_033_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_034_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_035_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_036_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_037_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_038_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_039_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_040_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_041_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_042_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_043_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_044_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_045_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_046_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_047_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_048_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_049_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_050_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_051_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_052_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_053_yaml production
+```
+
+#### 第 4 页 / 共 6 页
+
+```mermaid
+graph TD
+    subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_054_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-054（depgraph 程序化...<br/>文件: g_trae_054.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_055_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-055（架构容量与域治理...<br/>文件: g_trae_055.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_g_trae_059_yaml["(生产态 / production) 自动化门禁：强制执行 TRAE-059（_schema_version ...<br/>文件: g_trae_059.yaml"]
@@ -554,22 +517,6 @@ graph TD
         src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_yaml["(生产态 / production) 扫描 14 层 + shared/contracts 的全部 Python 导...<br/>文件: en_001_circular_dependency.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_yaml["(生产态 / production) 读取 cross_layer_contracts.yaml，验证每条 P0 契...<br/>文件: en_002_enforcement_validator.yaml"]
-    end
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_gov_enforcement_rule_enforcement_g_trae_032_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_033_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_034_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_035_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_036_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_037_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_038_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_039_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_040_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_041_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_042_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_043_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_044_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_045_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_046_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_047_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_048_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_049_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_050_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_051_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_052_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_053_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_054_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_055_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_059_yaml,src_zephyr_gov_enforcement_rule_enforcement_gate_dedup_yaml,src_zephyr_gov_enforcement_rule_enforcement_gct_024_budget_enforcer_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_yaml production
-    class src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py design
-```
-
-#### 第 5 页 / 共 5 页
-
-```mermaid
-graph TD
-    subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
         src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_yaml["(生产态 / production) 读取 cross_layer_contracts.yaml 中的字段定义，...<br/>文件: en_003_contract_compatibility.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_invariants_post_doc_review_check_py["(生产态 / production) PostDocReviewScanner — Session 关门时文档内容...<br/>文件: post_doc_review_check.py"]
         src_zephyr_gov_enforcement_rule_enforcement_observability_baseline_yaml["(生产态 / production) Phase 1 observability baseline gate — validate...<br/>文件: observability_baseline.yaml"]
@@ -588,43 +535,155 @@ graph TD
         src_zephyr_gov_enforcement_rule_enforcement_task_g0_orc_gate_engine_yaml["(生产态 / production) 任务进入执行队列前的可自动化校验：priority 枚举...<br/>文件: g0_orc_gate_engine.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_task_g7_orc_gate_engine_yaml["(生产态 / production) 收尾校验：TaskCard.verification_status=verified...<br/>文件: g7_orc_gate_engine.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_zero_residue_yaml["(生产态 / production) 零残留原则自动化执行层——每次 GateEngine.evalu...<br/>文件: zero_residue.yaml"]
-        tests_governance_commit_gates_test_create_guard_py["(原型态 / prototype) test_create_guard.py — CREATE-GUARD 门禁单元测...<br/>文件: test_create_guard.py"]
-        tests_governance_commit_gates_test_r5_digit_suffix_gate_py["(原型态 / prototype) test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX...<br/>文件: test_r5_digit_suffix_gate.py"]
+        tests_capacity_test_batch1_infra_py["(原型态 / prototype) test_batch1_infra.py"]
+        tests_capacity_test_batch2_governance_py["(原型态 / prototype) test_batch2_governance.py"]
+        tests_capacity_test_batch3_integration_py["(原型态 / prototype) test_batch3_integration.py"]
+        tests_capacity_test_capacity_assurance_py["(原型态 / prototype) test_capacity_assurance.py"]
     end
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_post_doc_review_check_py
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py
     src_zephyr_gov_enforcement_rule_enforcement_task_g0_entry_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_task_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py
     src_zephyr_gov_enforcement_rule_enforcement_task_g0_orc_gate_engine_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_task_init_py
     src_zephyr_gov_enforcement_rule_enforcement_task_g7_orc_gate_engine_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_task_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_yaml -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py
     D_OPS["(生产态 / production) D_OPS"]
     src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py -->|导入依赖 / import_depends| D_OPS
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_enforcement_rule_enforcement_invariants_post_doc_review_check_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
-    tests_governance_commit_gates_test_create_guard_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
-    tests_governance_commit_gates_test_r5_digit_suffix_gate_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_DATA["(原型态 / prototype) D_DATA"]
     D_DATA -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     D_GOV_RULE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_post_doc_review_check_py
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_post_doc_review_check_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_post_doc_review_check_py
     D_GOV_RULE -.->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_post_doc_review_check_py,src_zephyr_gov_enforcement_rule_enforcement_observability_baseline_yaml,src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_post_doc_review_yaml,src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py,src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py,src_zephyr_gov_enforcement_rule_enforcement_sys_master_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_task_g0_entry_yaml,src_zephyr_gov_enforcement_rule_enforcement_task_g0_orc_gate_engine_yaml,src_zephyr_gov_enforcement_rule_enforcement_task_g7_orc_gate_engine_yaml,src_zephyr_gov_enforcement_rule_enforcement_zero_residue_yaml production
-    class src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_gov_enforcement_rule_enforcement_task_init_py,tests_governance_commit_gates_test_create_guard_py,tests_governance_commit_gates_test_r5_digit_suffix_gate_py design
-    class D_OPS,D_SHARED,D_GOV_CODE_QUALITY,D_GOV_RULE external_prod
-    class D_DATA,D_AUDITTEST external_design
+    class src_zephyr_gov_enforcement_rule_enforcement_g_trae_054_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_055_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_059_yaml,src_zephyr_gov_enforcement_rule_enforcement_gate_dedup_yaml,src_zephyr_gov_enforcement_rule_enforcement_gct_024_budget_enforcer_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_post_doc_review_check_py,src_zephyr_gov_enforcement_rule_enforcement_observability_baseline_yaml,src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_post_doc_review_yaml,src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py,src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py,src_zephyr_gov_enforcement_rule_enforcement_sys_master_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_task_g0_entry_yaml,src_zephyr_gov_enforcement_rule_enforcement_task_g0_orc_gate_engine_yaml,src_zephyr_gov_enforcement_rule_enforcement_task_g7_orc_gate_engine_yaml,src_zephyr_gov_enforcement_rule_enforcement_zero_residue_yaml production
+    class src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py,src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_gov_enforcement_rule_enforcement_task_init_py,tests_capacity_test_batch1_infra_py,tests_capacity_test_batch2_governance_py,tests_capacity_test_batch3_integration_py,tests_capacity_test_capacity_assurance_py design
+    class D_OPS,D_SHARED,D_GOV_RULE external_prod
+    class D_DATA,D_GOVERNANCE external_design
+```
+
+#### 第 5 页 / 共 6 页
+
+```mermaid
+graph TD
+    subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
+        tests_capacity_test_capacity_aware_repair_py["(原型态 / prototype) test_capacity_aware_repair.py"]
+        tests_capacity_test_capacity_budget_root_py["(原型态 / prototype) test_capacity_budget_root.py"]
+        tests_capacity_test_capacity_forecast_py["(原型态 / prototype) test_capacity_forecast.py"]
+        tests_capacity_test_tech_stack_py["(原型态 / prototype) test_tech_stack.py"]
+        tests_gate_test_ci_cd_pre_scanner_py["(原型态 / prototype) test_ci_cd_pre_scanner.py"]
+        tests_gate_test_circuit_breaker_types_py["(原型态 / prototype) test_circuit_breaker_types.py"]
+        tests_gate_test_concurrent_change_deconfliction_py["(原型态 / prototype) test_concurrent_change_deconfliction.py"]
+        tests_gate_test_conflict_arbitration_py["(原型态 / prototype) test_conflict_arbitration.py"]
+        tests_gate_test_cve_scanner_py["(原型态 / prototype) test_cve_scanner.py"]
+        tests_gate_test_deployment_suppression_py["(原型态 / prototype) test_deployment_suppression.py"]
+        tests_gate_test_dynamic_llm_cost_router_py["(原型态 / prototype) test_dynamic_llm_cost_router.py"]
+        tests_gate_test_emergency_takeover_py["(原型态 / prototype) test_emergency_takeover.py"]
+        tests_gate_test_federated_security_py["(原型态 / prototype) test_federated_security.py"]
+        tests_gate_test_flag_lifecycle_manager_py["(原型态 / prototype) test_flag_lifecycle_manager.py"]
+        tests_gate_test_gate_context_py["(原型态 / prototype) test_gate_context.py"]
+        tests_gate_test_gate_health_py["(原型态 / prototype) test_gate_health.py"]
+        tests_gate_test_gate_integrity_guard_py["(原型态 / prototype) test_gate_integrity_guard.py"]
+        tests_gate_test_gate_override_py["(原型态 / prototype) test_gate_override.py"]
+        tests_gate_test_gate_persistence_py["(原型态 / prototype) test_gate_persistence.py"]
+        tests_gate_test_gate_pipeline_py["(原型态 / prototype) test_gate_pipeline.py"]
+        tests_gate_test_gate_simulator_py["(原型态 / prototype) test_gate_simulator.py"]
+        tests_gate_test_gate_types_py["(原型态 / prototype) test_gate_types.py"]
+        tests_gate_test_license_compliance_py["(原型态 / prototype) test_license_compliance.py"]
+        tests_gate_test_merkle_audit_root_py["(原型态 / prototype) test_merkle_audit_root.py"]
+        tests_gate_test_meta_performance_gate_py["(原型态 / prototype) test_meta_performance_gate.py"]
+        tests_gate_test_parameterized_safety_gate_py["(原型态 / prototype) test_parameterized_safety_gate.py"]
+        tests_gate_test_resilience_circuit_breaker_py["(原型态 / prototype) test_resilience_circuit_breaker.py"]
+        tests_gate_test_scope_creep_monitor_py["(原型态 / prototype) test_scope_creep_monitor.py"]
+        tests_governance_commit_gates_test_create_guard_py["(原型态 / prototype) test_create_guard.py — CREATE-GUARD 门禁单元测...<br/>文件: test_create_guard.py"]
+        tests_governance_commit_gates_test_r5_digit_suffix_gate_py["(原型态 / prototype) test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX...<br/>文件: test_r5_digit_suffix_gate.py"]
+    end
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    tests_capacity_test_capacity_forecast_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_capacity_test_capacity_aware_repair_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    tests_capacity_test_capacity_budget_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    D_SHARED["(生产态 / production) D_SHARED"]
+    tests_gate_test_circuit_breaker_types_py -.->|测试依赖 / test_depends| D_SHARED
+    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
+    tests_gate_test_concurrent_change_deconfliction_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_gate_test_ci_cd_pre_scanner_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_gate_test_conflict_arbitration_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_gate_test_cve_scanner_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_gate_test_deployment_suppression_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_gate_test_emergency_takeover_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_gate_test_dynamic_llm_cost_router_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_gate_test_flag_lifecycle_manager_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_gate_test_federated_security_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
+    tests_gate_test_gate_context_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    tests_gate_test_gate_health_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class tests_capacity_test_capacity_aware_repair_py,tests_capacity_test_capacity_budget_root_py,tests_capacity_test_capacity_forecast_py,tests_capacity_test_tech_stack_py,tests_gate_test_ci_cd_pre_scanner_py,tests_gate_test_circuit_breaker_types_py,tests_gate_test_concurrent_change_deconfliction_py,tests_gate_test_conflict_arbitration_py,tests_gate_test_cve_scanner_py,tests_gate_test_deployment_suppression_py,tests_gate_test_dynamic_llm_cost_router_py,tests_gate_test_emergency_takeover_py,tests_gate_test_federated_security_py,tests_gate_test_flag_lifecycle_manager_py,tests_gate_test_gate_context_py,tests_gate_test_gate_health_py,tests_gate_test_gate_integrity_guard_py,tests_gate_test_gate_override_py,tests_gate_test_gate_persistence_py,tests_gate_test_gate_pipeline_py,tests_gate_test_gate_simulator_py,tests_gate_test_gate_types_py,tests_gate_test_license_compliance_py,tests_gate_test_merkle_audit_root_py,tests_gate_test_meta_performance_gate_py,tests_gate_test_parameterized_safety_gate_py,tests_gate_test_resilience_circuit_breaker_py,tests_gate_test_scope_creep_monitor_py,tests_governance_commit_gates_test_create_guard_py,tests_governance_commit_gates_test_r5_digit_suffix_gate_py design
+    class D_GOVERNANCE,D_ORCHESTRATOR,D_SHARED,D_FBL_VERIFICATION,D_GOV_RULE,D_GOV_DRIFT external_prod
+```
+
+#### 第 6 页 / 共 6 页
+
+```mermaid
+graph TD
+    subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
+        tests_guard_test_guard_cascade_detector_py["(原型态 / prototype) test_guard_cascade_detector.py"]
+        tests_guard_test_guard_complexity_budget_py["(原型态 / prototype) test_guard_complexity_budget.py"]
+        tests_guard_test_guard_configuration_drift_monitor_py["(原型态 / prototype) test_guard_configuration_drift_monitor.py"]
+        tests_guard_test_guard_interaction_topology_mapper_py["(原型态 / prototype) test_guard_interaction_topology_mapper.py"]
+        tests_guard_test_guard_layers_root_py["(原型态 / prototype) test_guard_layers_root.py"]
+        tests_guard_test_guard_oscillation_detector_py["(原型态 / prototype) test_guard_oscillation_detector.py"]
+        tests_guard_test_guard_self_consistency_auditor_py["(原型态 / prototype) test_guard_self_consistency_auditor.py"]
+        tests_rule_test_rule_canary_manager_py["(原型态 / prototype) test_rule_canary_manager.py"]
+        tests_rule_test_rule_debt_auditor_py["(原型态 / prototype) test_rule_debt_auditor.py"]
+        tests_rule_test_rule_e2e_py["(原型态 / prototype) test_rule_e2e.py"]
+        tests_rule_test_rule_injection_guard_py["(原型态 / prototype) test_rule_injection_guard.py"]
+        tests_rule_test_rule_integration_py["(原型态 / prototype) test_rule_integration.py"]
+        tests_rule_test_rule_red_blue_py["(原型态 / prototype) test_rule_red_blue.py"]
+        tests_rule_test_rule_shadow_runner_py["(原型态 / prototype) test_rule_shadow_runner.py"]
+    end
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    tests_guard_test_guard_cascade_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_guard_test_guard_configuration_drift_monitor_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_guard_test_guard_layers_root_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_guard_test_guard_complexity_budget_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_guard_test_guard_oscillation_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_guard_test_guard_interaction_topology_mapper_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_guard_test_guard_self_consistency_auditor_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_rule_test_rule_injection_guard_py -.->|测试依赖 / test_depends| D_SECURITY
+    D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
+    tests_rule_test_rule_e2e_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_rule_test_rule_integration_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_rule_test_rule_integration_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    D_SHARED["(生产态 / production) D_SHARED"]
+    tests_rule_test_rule_integration_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_rule_test_rule_red_blue_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_rule_test_rule_red_blue_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class tests_guard_test_guard_cascade_detector_py,tests_guard_test_guard_complexity_budget_py,tests_guard_test_guard_configuration_drift_monitor_py,tests_guard_test_guard_interaction_topology_mapper_py,tests_guard_test_guard_layers_root_py,tests_guard_test_guard_oscillation_detector_py,tests_guard_test_guard_self_consistency_auditor_py,tests_rule_test_rule_canary_manager_py,tests_rule_test_rule_debt_auditor_py,tests_rule_test_rule_e2e_py,tests_rule_test_rule_injection_guard_py,tests_rule_test_rule_integration_py,tests_rule_test_rule_red_blue_py,tests_rule_test_rule_shadow_runner_py design
+    class D_GOVERNANCE,D_FEEDBACK_LOOP,D_SECURITY,D_GOV_RULE,D_SHARED external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -735,93 +794,94 @@ graph TD
         src_zephyr_gov_enforcement_rule_enforcement_task_g7_orc_gate_engine_yaml["(生产态 / production) 收尾校验：TaskCard.verification_status=verified...<br/>文件: g7_orc_gate_engine.yaml"]
         src_zephyr_gov_enforcement_rule_enforcement_zero_residue_yaml["(生产态 / production) 零残留原则自动化执行层——每次 GateEngine.evalu...<br/>文件: zero_residue.yaml"]
     end
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     src_zephyr_gov_enforcement_rule_enforcement_g1_ingest_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g2_triage_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g3_evaluate_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g4_activate_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g5_extract_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g6_blueprint_compliance_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g3_evaluate_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g6_ctr_compliance_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g7d_depth_compliance_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g6_path_tree_freshness_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g8_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g7d_depth_compliance_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g7_position_limits_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g8_leverage_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g7c_cross_gate_consistency_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g9_strategy_correlation_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g9_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_dedup_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g8_leverage_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g9_strategy_correlation_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_003_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_gct_024_budget_enforcer_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_asset_inventory_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_003_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_forward_reference_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_dedup_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_007_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_004_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_006_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_008_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_007_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_010_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_009_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_011_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_017_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_016_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_012_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_018_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_020_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_021_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_009_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_010_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_016_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_017_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_011_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_012_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_022_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_023_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_027_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_028_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_025_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_021_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_020_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_024_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_027_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_026_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_025_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_028_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_031_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_029_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_030_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_032_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_031_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_033_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_036_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_034_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_035_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_033_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_037_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_036_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_038_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_040_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_041_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_042_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_043_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_044_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_039_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_041_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_040_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_037_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_044_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_043_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_042_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_045_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_047_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_048_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_046_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_049_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_048_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_050_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_049_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_051_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_052_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_053_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_055_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_g_trae_054_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_053_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_g_trae_059_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_observability_baseline_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_post_doc_review_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_055_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_zero_residue_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
-    src_zephyr_gov_enforcement_rule_enforcement_g_trae_059_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_sys_master_compliance_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
+    src_zephyr_gov_enforcement_rule_enforcement_zero_residue_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     src_zephyr_gov_enforcement_rule_enforcement_template_yaml -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_init_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py -->|导入依赖 / import_depends| D_SHARED
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
@@ -851,7 +911,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml,src_zephyr_gov_enforcement_behavioral_admission_session_lifecycle_py,src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py,src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py,src_zephyr_gov_enforcement_rule_bridge_session_worktree_py,src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py,src_zephyr_gov_enforcement_rule_enforcement_init_py,src_zephyr_gov_enforcement_rule_enforcement_template_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_001_architecture_necessity_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_002_phase_relevance_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_003_dependency_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_004_interface_definability_yaml,src_zephyr_gov_enforcement_rule_enforcement_admission_mad_005_dependency_graph_template_yaml,src_zephyr_gov_enforcement_rule_enforcement_approval_py,src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_g1_ingest_yaml,src_zephyr_gov_enforcement_rule_enforcement_g2_triage_yaml,src_zephyr_gov_enforcement_rule_enforcement_g3_evaluate_yaml,src_zephyr_gov_enforcement_rule_enforcement_g4_activate_yaml,src_zephyr_gov_enforcement_rule_enforcement_g5_extract_yaml,src_zephyr_gov_enforcement_rule_enforcement_g6_blueprint_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_g6_ctr_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_g6_path_tree_freshness_yaml,src_zephyr_gov_enforcement_rule_enforcement_g7_position_limits_yaml,src_zephyr_gov_enforcement_rule_enforcement_g7c_cross_gate_consistency_yaml,src_zephyr_gov_enforcement_rule_enforcement_g7d_depth_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_g8_yaml,src_zephyr_gov_enforcement_rule_enforcement_g8_leverage_yaml,src_zephyr_gov_enforcement_rule_enforcement_g9_yaml,src_zephyr_gov_enforcement_rule_enforcement_g9_strategy_correlation_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_asset_inventory_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_forward_reference_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_003_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_004_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_006_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_007_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_008_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_009_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_010_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_011_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_012_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_016_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_017_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_018_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_020_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_021_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_022_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_023_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_024_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_025_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_026_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_027_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_028_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_029_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_030_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_031_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_032_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_033_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_034_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_035_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_036_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_037_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_038_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_039_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_040_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_041_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_042_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_043_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_044_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_045_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_046_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_047_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_048_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_049_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_050_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_051_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_052_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_053_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_054_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_055_yaml,src_zephyr_gov_enforcement_rule_enforcement_g_trae_059_yaml,src_zephyr_gov_enforcement_rule_enforcement_gate_dedup_yaml,src_zephyr_gov_enforcement_rule_enforcement_gct_024_budget_enforcer_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_yaml,src_zephyr_gov_enforcement_rule_enforcement_invariants_post_doc_review_check_py,src_zephyr_gov_enforcement_rule_enforcement_observability_baseline_yaml,src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_post_doc_review_yaml,src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py,src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py,src_zephyr_gov_enforcement_rule_enforcement_sys_master_compliance_yaml,src_zephyr_gov_enforcement_rule_enforcement_task_g0_entry_yaml,src_zephyr_gov_enforcement_rule_enforcement_task_g0_orc_gate_engine_yaml,src_zephyr_gov_enforcement_rule_enforcement_task_g7_orc_gate_engine_yaml,src_zephyr_gov_enforcement_rule_enforcement_zero_residue_yaml production
-    class D_SHARED,D_GOV_AUDIT,D_GOV_CODE_QUALITY,D_GOVERNANCE external_prod
+    class D_SHARED,D_SECURITY,D_GOV_AUDIT,D_GOV_CODE_QUALITY,D_GOVERNANCE external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -862,33 +922,11 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 40 个，9 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 64 个，7 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT 规则执行"]
-        src_zephyr_compliance_init_py["(原型态 / prototype) D_COMPLIANCE Compliance — Re-export wrapper (D...<br/>文件: __init__.py"]
-        src_zephyr_compliance_extensions_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_aisg_sandbox_py["(原型态 / prototype) Re-export wrapper: aisg_sandbox has migrated to...<br/>文件: aisg_sandbox.py"]
-        src_zephyr_compliance_api_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_artifact_scanner_py["(原型态 / prototype) Re-export wrapper: artifact_scanner has migrate...<br/>文件: artifact_scanner.py"]
-        src_zephyr_compliance_audit_orchestrator_init_py["(原型态 / prototype) Re-export wrapper: audit-orchestrator has migra...<br/>文件: __init__.py"]
-        src_zephyr_compliance_audit_trail_init_py["(原型态 / prototype) Re-export wrapper: audit-trail has migrated to ...<br/>文件: __init__.py"]
-        src_zephyr_compliance_audit_trail_bridges_init_py["(原型态 / prototype) Audit Trail — MOD-INF-020<br/>文件: __init__.py"]
-        src_zephyr_compliance_behavioral_admission_init_py["(原型态 / prototype) Re-export wrapper: behavioral-admission has mig...<br/>文件: __init__.py"]
-        src_zephyr_compliance_compliance_gate_a6_init_py["(原型态 / prototype) Re-export wrapper: compliance_gate_a6 has migra...<br/>文件: __init__.py"]
-        src_zephyr_compliance_compliance_manager_py["(原型态 / prototype) Re-export wrapper: compliance_manager has migra...<br/>文件: compliance_manager.py"]
-        src_zephyr_compliance_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_default_security_gateway_py["(原型态 / prototype) default_security_gateway.py"]
-        src_zephyr_compliance_evidence_pack_py["(原型态 / prototype) Re-export wrapper: evidence_pack has migrated t...<br/>文件: evidence_pack.py"]
-        src_zephyr_compliance_financial_compliance_py["(原型态 / prototype) Re-export wrapper: financial_compliance has mig...<br/>文件: financial_compliance.py"]
-        src_zephyr_compliance_implementations_init_py["(原型态 / prototype) Re-export wrapper: implementations has migrated...<br/>文件: __init__.py"]
-        src_zephyr_compliance_infrastructure_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_integrity_py["(原型态 / prototype) Re-export wrapper: integrity has migrated to ze...<br/>文件: integrity.py"]
-        src_zephyr_compliance_merkle_hourly_py["(原型态 / prototype) Re-export wrapper: merkle_hourly has migrated t...<br/>文件: merkle_hourly.py"]
-        src_zephyr_compliance_models_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_security_gateway_base_py["(原型态 / prototype) security_gateway_base.py"]
-        src_zephyr_compliance_services_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_gov_enforcement_init_py["(原型态 / prototype) gov_enforcement package — 执行治理域（D_GOV_EN...<br/>文件: __init__.py"]
         src_zephyr_gov_enforcement_behavioral_admission_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["(原型态 / prototype) admission_controller.py"]
@@ -905,11 +943,55 @@ graph TD
         src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py["(原型态 / prototype) D_DATA — Data Quality Gate<br/>文件: quality_gate.py"]
         src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py["(原型态 / prototype) RuleWatcher — YAML 规则文件变更检测与自动同步<br/>文件: rule_watcher.py"]
         src_zephyr_gov_enforcement_rule_enforcement_task_init_py["(原型态 / prototype) ZephyrAlpha — gates/task/ — 任务触发门禁<br/>文件: __init__.py"]
+        tests_capacity_test_batch1_infra_py["(原型态 / prototype) test_batch1_infra.py"]
+        tests_capacity_test_batch2_governance_py["(原型态 / prototype) test_batch2_governance.py"]
+        tests_capacity_test_batch3_integration_py["(原型态 / prototype) test_batch3_integration.py"]
+        tests_capacity_test_capacity_assurance_py["(原型态 / prototype) test_capacity_assurance.py"]
+        tests_capacity_test_capacity_aware_repair_py["(原型态 / prototype) test_capacity_aware_repair.py"]
+        tests_capacity_test_capacity_budget_root_py["(原型态 / prototype) test_capacity_budget_root.py"]
+        tests_capacity_test_capacity_forecast_py["(原型态 / prototype) test_capacity_forecast.py"]
+        tests_capacity_test_tech_stack_py["(原型态 / prototype) test_tech_stack.py"]
+        tests_gate_test_ci_cd_pre_scanner_py["(原型态 / prototype) test_ci_cd_pre_scanner.py"]
+        tests_gate_test_circuit_breaker_types_py["(原型态 / prototype) test_circuit_breaker_types.py"]
+        tests_gate_test_concurrent_change_deconfliction_py["(原型态 / prototype) test_concurrent_change_deconfliction.py"]
+        tests_gate_test_conflict_arbitration_py["(原型态 / prototype) test_conflict_arbitration.py"]
+        tests_gate_test_cve_scanner_py["(原型态 / prototype) test_cve_scanner.py"]
+        tests_gate_test_deployment_suppression_py["(原型态 / prototype) test_deployment_suppression.py"]
+        tests_gate_test_dynamic_llm_cost_router_py["(原型态 / prototype) test_dynamic_llm_cost_router.py"]
+        tests_gate_test_emergency_takeover_py["(原型态 / prototype) test_emergency_takeover.py"]
+        tests_gate_test_federated_security_py["(原型态 / prototype) test_federated_security.py"]
+        tests_gate_test_flag_lifecycle_manager_py["(原型态 / prototype) test_flag_lifecycle_manager.py"]
+        tests_gate_test_gate_context_py["(原型态 / prototype) test_gate_context.py"]
+        tests_gate_test_gate_health_py["(原型态 / prototype) test_gate_health.py"]
+        tests_gate_test_gate_integrity_guard_py["(原型态 / prototype) test_gate_integrity_guard.py"]
+        tests_gate_test_gate_override_py["(原型态 / prototype) test_gate_override.py"]
+        tests_gate_test_gate_persistence_py["(原型态 / prototype) test_gate_persistence.py"]
+        tests_gate_test_gate_pipeline_py["(原型态 / prototype) test_gate_pipeline.py"]
+        tests_gate_test_gate_simulator_py["(原型态 / prototype) test_gate_simulator.py"]
+        tests_gate_test_gate_types_py["(原型态 / prototype) test_gate_types.py"]
+        tests_gate_test_license_compliance_py["(原型态 / prototype) test_license_compliance.py"]
+        tests_gate_test_merkle_audit_root_py["(原型态 / prototype) test_merkle_audit_root.py"]
+        tests_gate_test_meta_performance_gate_py["(原型态 / prototype) test_meta_performance_gate.py"]
+        tests_gate_test_parameterized_safety_gate_py["(原型态 / prototype) test_parameterized_safety_gate.py"]
+        tests_gate_test_resilience_circuit_breaker_py["(原型态 / prototype) test_resilience_circuit_breaker.py"]
+        tests_gate_test_scope_creep_monitor_py["(原型态 / prototype) test_scope_creep_monitor.py"]
         tests_governance_commit_gates_test_create_guard_py["(原型态 / prototype) test_create_guard.py — CREATE-GUARD 门禁单元测...<br/>文件: test_create_guard.py"]
         tests_governance_commit_gates_test_r5_digit_suffix_gate_py["(原型态 / prototype) test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX...<br/>文件: test_r5_digit_suffix_gate.py"]
+        tests_guard_test_guard_cascade_detector_py["(原型态 / prototype) test_guard_cascade_detector.py"]
+        tests_guard_test_guard_complexity_budget_py["(原型态 / prototype) test_guard_complexity_budget.py"]
+        tests_guard_test_guard_configuration_drift_monitor_py["(原型态 / prototype) test_guard_configuration_drift_monitor.py"]
+        tests_guard_test_guard_interaction_topology_mapper_py["(原型态 / prototype) test_guard_interaction_topology_mapper.py"]
+        tests_guard_test_guard_layers_root_py["(原型态 / prototype) test_guard_layers_root.py"]
+        tests_guard_test_guard_oscillation_detector_py["(原型态 / prototype) test_guard_oscillation_detector.py"]
+        tests_guard_test_guard_self_consistency_auditor_py["(原型态 / prototype) test_guard_self_consistency_auditor.py"]
+        tests_rule_test_rule_canary_manager_py["(原型态 / prototype) test_rule_canary_manager.py"]
+        tests_rule_test_rule_debt_auditor_py["(原型态 / prototype) test_rule_debt_auditor.py"]
+        tests_rule_test_rule_e2e_py["(原型态 / prototype) test_rule_e2e.py"]
+        tests_rule_test_rule_injection_guard_py["(原型态 / prototype) test_rule_injection_guard.py"]
+        tests_rule_test_rule_integration_py["(原型态 / prototype) test_rule_integration.py"]
+        tests_rule_test_rule_red_blue_py["(原型态 / prototype) test_rule_red_blue.py"]
+        tests_rule_test_rule_shadow_runner_py["(原型态 / prototype) test_rule_shadow_runner.py"]
     end
-    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_aisg_sandbox_py
-    src_zephyr_compliance_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_init_py
     src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
@@ -917,43 +999,36 @@ graph TD
     src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_protection_index_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_compliance_aisg_sandbox_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    src_zephyr_compliance_artifact_scanner_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_evidence_pack_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_compliance_manager_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    src_zephyr_compliance_merkle_hourly_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_compliance_audit_orchestrator_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_compliance_audit_trail_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_GOV_DOCS
-    D_FBL_VERIFICATION["(原型态 / prototype) D_FBL_VERIFICATION"]
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_FBL_VERIFICATION
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|contract / contract| D_GOV_DOCS
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_GOV_DRIFT
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_compliance_default_security_gateway_py
-    D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
+    src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py -.->|导入依赖 / import_depends| D_SHARED
+    tests_capacity_test_capacity_forecast_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_capacity_test_capacity_aware_repair_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    tests_capacity_test_capacity_budget_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_gate_test_circuit_breaker_types_py -.->|测试依赖 / test_depends| D_SHARED
+    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
+    tests_gate_test_concurrent_change_deconfliction_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_gate_test_ci_cd_pre_scanner_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_init_py
     D_DATA["(原型态 / prototype) D_DATA"]
     D_DATA -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
+    D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
     D_PF_CORE["(生产态 / production) D_PF_CORE"]
     D_PF_CORE -.->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
     D_TRADING["(原型态 / prototype) D_TRADING"]
@@ -963,9 +1038,9 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_compliance_init_py,src_zephyr_compliance_extensions_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_api_init_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_core_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_infrastructure_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_merkle_hourly_py,src_zephyr_compliance_models_init_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_services_init_py,src_zephyr_gov_enforcement_init_py,src_zephyr_gov_enforcement_behavioral_admission_init_py,src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py,src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py,src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_gov_enforcement_behavioral_admission_protection_index_py,src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py,src_zephyr_gov_enforcement_rule_bridge_init_py,src_zephyr_gov_enforcement_rule_bridge_session_claim_py,src_zephyr_gov_enforcement_rule_enforcement_admission_init_py,src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py,src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py,src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_gov_enforcement_rule_enforcement_task_init_py,tests_governance_commit_gates_test_create_guard_py,tests_governance_commit_gates_test_r5_digit_suffix_gate_py design
-    class D_GOVERNANCE,D_GOV_DRIFT,D_GOV_OPS_RESILIENCE,D_GOV_AUDIT,D_PF_CORE external_prod
-    class D_GOV_DOCS,D_FBL_VERIFICATION,D_FEEDBACK_LOOP,D_AUTONOMY_CORE,D_AUDITTEST,D_DATA,D_TRADING external_design
+    class src_zephyr_gov_enforcement_init_py,src_zephyr_gov_enforcement_behavioral_admission_init_py,src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py,src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py,src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_gov_enforcement_behavioral_admission_protection_index_py,src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py,src_zephyr_gov_enforcement_rule_bridge_init_py,src_zephyr_gov_enforcement_rule_bridge_session_claim_py,src_zephyr_gov_enforcement_rule_enforcement_admission_init_py,src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py,src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_init_py,src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_gov_enforcement_rule_enforcement_task_init_py,tests_capacity_test_batch1_infra_py,tests_capacity_test_batch2_governance_py,tests_capacity_test_batch3_integration_py,tests_capacity_test_capacity_assurance_py,tests_capacity_test_capacity_aware_repair_py,tests_capacity_test_capacity_budget_root_py,tests_capacity_test_capacity_forecast_py,tests_capacity_test_tech_stack_py,tests_gate_test_ci_cd_pre_scanner_py,tests_gate_test_circuit_breaker_types_py,tests_gate_test_concurrent_change_deconfliction_py,tests_gate_test_conflict_arbitration_py,tests_gate_test_cve_scanner_py,tests_gate_test_deployment_suppression_py,tests_gate_test_dynamic_llm_cost_router_py,tests_gate_test_emergency_takeover_py,tests_gate_test_federated_security_py,tests_gate_test_flag_lifecycle_manager_py,tests_gate_test_gate_context_py,tests_gate_test_gate_health_py,tests_gate_test_gate_integrity_guard_py,tests_gate_test_gate_override_py,tests_gate_test_gate_persistence_py,tests_gate_test_gate_pipeline_py,tests_gate_test_gate_simulator_py,tests_gate_test_gate_types_py,tests_gate_test_license_compliance_py,tests_gate_test_merkle_audit_root_py,tests_gate_test_meta_performance_gate_py,tests_gate_test_parameterized_safety_gate_py,tests_gate_test_resilience_circuit_breaker_py,tests_gate_test_scope_creep_monitor_py,tests_governance_commit_gates_test_create_guard_py,tests_governance_commit_gates_test_r5_digit_suffix_gate_py,tests_guard_test_guard_cascade_detector_py,tests_guard_test_guard_complexity_budget_py,tests_guard_test_guard_configuration_drift_monitor_py,tests_guard_test_guard_interaction_topology_mapper_py,tests_guard_test_guard_layers_root_py,tests_guard_test_guard_oscillation_detector_py,tests_guard_test_guard_self_consistency_auditor_py,tests_rule_test_rule_canary_manager_py,tests_rule_test_rule_debt_auditor_py,tests_rule_test_rule_e2e_py,tests_rule_test_rule_injection_guard_py,tests_rule_test_rule_integration_py,tests_rule_test_rule_red_blue_py,tests_rule_test_rule_shadow_runner_py design
+    class D_GOV_AUDIT,D_SHARED,D_SECURITY,D_GOVERNANCE,D_ORCHESTRATOR,D_FBL_VERIFICATION,D_GOV_OPS_RESILIENCE,D_PF_CORE external_prod
+    class D_INFRASTRUCTURE,D_COMPLIANCE,D_DATA,D_TRADING external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -974,272 +1049,286 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_FBL_VERIFICATION 反馈验证: _governance_gates.py | runtime / runtime |
-| 2 | Re-export wrapper: aisg_sandbox has migrated to... | → | D_GOVERNANCE 生命周期管理: AISG Sandbox Testing — AI Security Gateway 沙.... | 导入依赖 / import_depends |
-| 3 | Re-export wrapper: compliance_manager has migra... | → | D_GOVERNANCE 生命周期管理: ZephyrAlpha — D_COMPLIANCE Compliance Layer —... | 导入依赖 / import_depends |
-| 4 | Re-export wrapper: evidence_pack has migrated t... | → | D_GOVERNANCE 生命周期管理: evidence_pack.py | 导入依赖 / import_depends |
-| 5 | DLQ 重试策略 — 指数退避自动重试 (dlq_retry_pol... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
-| 6 | Re-export wrapper: audit-orchestrator has migra... | → | D_GOV_AUDIT 审计追踪: __init__.py | 导入依赖 / import_depends |
-| 7 | Re-export wrapper: audit-trail has migrated to ... | → | D_GOV_AUDIT 审计追踪: __init__.py | 导入依赖 / import_depends |
-| 8 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: G-CT-002 Audit 异常检测器 — AnomalyEvent Pydan... | 导入依赖 / import_depends |
-| 9 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: G-CT-001 契约消费端 — Audit.write() 公共接口. ... | 导入依赖 / import_depends |
-| 10 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ DelegationManager 委托链审计桥接. (aud... | 导入依赖 / import_depends |
-| 11 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: G-CT-007 Audit ↔ Drift 双向桥接 — MOD-INF-020... | 导入依赖 / import_depends |
-| 12 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ Feedback Loop 三角闭环桥接. (audit_fee... | 导入依赖 / import_depends |
-| 13 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ WarmHotGate 三层存储桥接. (audit_tiere... | 导入依赖 / import_depends |
-| 14 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ ContinuousTrust 信任分数桥接. (audit_t... | 导入依赖 / import_depends |
-| 15 | Re-export wrapper: merkle_hourly has migrated t... | → | D_GOV_AUDIT 审计追踪: merkle_hourly.py | 导入依赖 / import_depends |
-| 16 | GateEventAdapter — GateRepo 事件适配器（DW-000... | → | D_GOV_AUDIT 审计追踪: EventStore — Event Sourcing 事件追加与回放（DW... | 导入依赖 / import_depends |
-| 17 | verdict_engine.py | → | D_GOV_AUDIT 审计追踪: models.py | 导入依赖 / import_depends |
-| 18 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway ... | 导入依赖 / import_depends |
-| 19 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: arch_reference_gate.py — #ARCH-NNN 悬空引用自.... | 导入依赖 / import_depends |
-| 20 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: bare_getenv_gate.py — 裸 os.getenv 读密钥阻断.... | 导入依赖 / import_depends |
-| 21 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: bare_sql_gate.py — 裸SQL字面量阻断门禁（NO-BAR... | 导入依赖 / import_depends |
-| 22 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: capability_overlap_gate.py — 新建 .py 文件 Cap... | 导入依赖 / import_depends |
-| 23 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: ch_batch_size_gate.py — CH 批量写入防回退门禁.... | 导入依赖 / import_depends |
-| 24 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: claim_required_gate.py — claim_files 前置检查.... | 导入依赖 / import_depends |
-| 25 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: create_guard.py — 新建 .py / 非 rules/ .yaml .... | 导入依赖 / import_depends |
-| 26 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: dangling_reference_gate.py — AGENTS.md §X.Y .... | 导入依赖 / import_depends |
-| 27 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: datetime_now_forbidden_gate.py — 生成器代码 da... | 导入依赖 / import_depends |
-| 28 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: directory_contract_gate.py — DCR-001~007 等效.... | 导入依赖 / import_depends |
-| 29 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: doc_ref_broken_gate.py — 文档相对路径断裂引用.... | 导入依赖 / import_depends |
-| 30 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: empty_handler_gate.py — 空事件 handler 函数阻.... | 导入依赖 / import_depends |
-| 31 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: exempt_zone_frontmatter_gate.py — 豁免区 front... | 导入依赖 / import_depends |
-| 32 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: file_copy_gate.py — 新增 .py 文件复制检测阻断.... | 导入依赖 / import_depends |
-| 33 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: file_placement_ttl_gate.py — 文件放置与 TTL 一... | 导入依赖 / import_depends |
-| 34 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: foreign_change_gate.py — 外来变更检测门禁（FOR... | 导入依赖 / import_depends |
-| 35 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: function_dup_gate.py — 重复函数实现阻断门禁（F... | 导入依赖 / import_depends |
-| 36 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: god_class_gate.py — God Class 阻断门禁（NO-GOD... | 导入依赖 / import_depends |
-| 37 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: hardcoded_url_gate.py — 硬编码 localhost URL .... | 导入依赖 / import_depends |
-| 38 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: held_overlap_gate.py — 搭便车防护门禁（HELD-OV... | 导入依赖 / import_depends |
-| 39 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: high_complexity_gate.py — 高循环复杂度阻断门禁... | 导入依赖 / import_depends |
-| 40 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: id_uniqueness_gate.py — pre-commit hook ID 唯.... | 导入依赖 / import_depends |
-| 41 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: import_direction_gate.py — shared 层向上依赖阻... | 导入依赖 / import_depends |
-| 42 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: long_param_list_gate.py — 长参数列表阻断门禁（... | 导入依赖 / import_depends |
-| 43 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: module_id_consistency_gate.py — module_id 三声... | 导入依赖 / import_depends |
-| 44 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: msg_exposure_gate.py — 错误消息暴露敏感信息阻.... | 导入依赖 / import_depends |
-| 45 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: msg_style_gate.py — 错误消息标点/箭头风格阻断.... | 导入依赖 / import_depends |
-| 46 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: orphan_module_gate.py — 孤儿模块（无 import 引... | 导入依赖 / import_depends |
-| 47 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: panorama_alignment_gate.py — 三图模块对齐门禁.... | 导入依赖 / import_depends |
-| 48 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: perm_trigger_gate.py — 永久系统脚本时间触发模.... | 导入依赖 / import_depends |
-| 49 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: r5_digit_suffix_gate.py — R5 数字后缀目录禁止.... | 导入依赖 / import_depends |
-| 50 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: rule_four_way_alignment_gate.py — 规则四方对齐... | 导入依赖 / import_depends |
-| 51 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: session_required_gate.py — session 注册强制门.... | 导入依赖 / import_depends |
-| 52 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: ssot_redefinition_gate.py — SSoT 符号重复定义.... | 导入依赖 / import_depends |
-| 53 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: test_source_consistency_gate.py — 测试-源码符.... | 导入依赖 / import_depends |
-| 54 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: tests_coverage_gate.py — Gate 测试覆盖率校验 m... | 导入依赖 / import_depends |
-| 55 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: ttl_gate.py — ttl 字段校验门禁（治本：弥补 --n... | 导入依赖 / import_depends |
-| 56 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: unsafe_dict_spread_gate.py — ``**data`` 直接展... | 导入依赖 / import_depends |
-| 57 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: vocab_hardcode_gate.py — 新增 .py 文件词表硬编... | 导入依赖 / import_depends |
-| 58 | test_create_guard.py — CREATE-GUARD 门禁单元测... | → | D_GOV_CODE_QUALITY 代码质量治理: create_guard.py — 新建 .py / 非 rules/ .yaml .... | 测试依赖 / test_depends |
-| 59 | test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX... | → | D_GOV_CODE_QUALITY 代码质量治理: r5_digit_suffix_gate.py — R5 数字后缀目录禁止.... | 测试依赖 / test_depends |
-| 60 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_DOCS 架构文档治理: blueprint.md | runtime / runtime |
-| 61 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_DOCS 架构文档治理: blueprint.md | contract / contract |
-| 62 | Re-export wrapper: artifact_scanner has migrate... | → | D_GOV_DRIFT 漂移检测: ArtifactScanner — SSRF / Path Traversal / Cred... | 导入依赖 / import_depends |
-| 63 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
-| 64 | Re-export wrapper: integrity has migrated to ze... | → | D_GOV_DRIFT 漂移检测: integrity.py | 导入依赖 / import_depends |
-| 65 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_DRIFT 漂移检测: Breaking Change 检测器（GATE-CDC-2）——字段删.... | 导入依赖 / import_depends |
-| 66 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_DRIFT 漂移检测: 门禁健康仪表板——per-gate SLI 报告、误报率、延... | 导入依赖 / import_depends |
-| 67 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_DRIFT 漂移检测: 门禁引擎完整性守卫——自检SHA-256校验+trust roo... | 导入依赖 / import_depends |
-| 68 | default_security_gateway.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层.... | 导入依赖 / import_depends |
-| 69 | security_gateway_base.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: D_COMPLIANCE — Governance & Compliance Layer (... | 导入依赖 / import_depends |
-| 70 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: 自适应阈值——从历史 FAIL/PASS 数据学习门禁参数... | 导入依赖 / import_depends |
-| 71 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: ZephyrAlpha — gates/ai_capability_guard.py (ai... | 导入依赖 / import_depends |
-| 72 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: 端到端场景走查验证器（End-to-End Walkthrough Va... | 导入依赖 / import_depends |
-| 73 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: Owner 紧急旁路——时间限定的门禁临时绕过 + 审计... | 导入依赖 / import_depends |
-| 74 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: 门禁模拟器——dry-run 全链路门禁演练，不修改任.... | 导入依赖 / import_depends |
-| 75 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: 集成测试运行器（Integration Test Runner） (inte... | 导入依赖 / import_depends |
-| 76 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: KISS 约束执行器（CT-KISS-001）——AI产出复杂度.... | 导入依赖 / import_depends |
-| 77 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: Secrets 守护（CT-SECRETS-001）——.env校验+git ... | 导入依赖 / import_depends |
-| 78 | Re-export shim — ComplianceRule 真源已合并至 z... | → | D_INFRASTRUCTURE: compliance_rule.py | 导入依赖 / import_depends |
-| 79 | pre_flight_gate.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 80 | pre_flight_gate.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 81 | Re-export wrapper: compliance_gate_a6 has migra... | → | D_SECURITY 对抗验证: D_COMPLIANCE — Compliance Concrete Implementat... | 导入依赖 / import_depends |
-| 82 | Re-export wrapper: implementations has migrated... | → | D_SECURITY 对抗验证: D_COMPLIANCE — Compliance Concrete Implementat... | 导入依赖 / import_depends |
-| 83 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 84 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN... | 导入依赖 / import_depends |
-| 85 | session_claim.py — AI 对话并发声明 helper（FP-... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 86 | session_worktree.py — AI 对话 worktree 物理隔.... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 87 | GateEventAdapter — GateRepo 事件适配器（DW-000... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 88 | gpu_consensus_scheduler.py | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 89 | session_lifecycle.py | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 导入依赖 / import_depends |
-| 90 | session_lifecycle.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 91 | session_lifecycle.py | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
-| 92 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
-| 93 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 94 | session_claim.py — AI 对话并发声明 helper（FP-... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 95 | session_worktree.py — AI 对话 worktree 物理隔.... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 96 | worktree_manager.py — session worktree 物理隔.... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 97 | PostDocReviewScanner — Session 关门时文档内容.... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 98 | RuleWatcher — YAML 规则文件变更检测与自动同步 ... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 1 | test_ci_cd_pre_scanner.py | → | D_FBL_VERIFICATION 反馈验证: CI/CD Pre-Scanner — v0.8.0 R107 (ci_cd_pre_sca... | 测试依赖 / test_depends |
+| 2 | test_concurrent_change_deconfliction.py | → | D_FBL_VERIFICATION 反馈验证: Concurrent Change Deconfliction — v0.16.0 R230... | 测试依赖 / test_depends |
+| 3 | test_conflict_arbitration.py | → | D_FBL_VERIFICATION 反馈验证: Conflict Arbitration — v0.10.0 R130 (conflict_... | 测试依赖 / test_depends |
+| 4 | test_cve_scanner.py | → | D_FBL_VERIFICATION 反馈验证: CVE Scanner — v0.8.0 R106 (cve_scanner.py) | 测试依赖 / test_depends |
+| 5 | test_deployment_suppression.py | → | D_FBL_VERIFICATION 反馈验证: Deployment Suppression — v0.37.0 R464 (deploym... | 测试依赖 / test_depends |
+| 6 | test_dynamic_llm_cost_router.py | → | D_FBL_VERIFICATION 反馈验证: Dynamic LLM Cost Router — v0.8.0 R109 (dynamic... | 测试依赖 / test_depends |
+| 7 | test_emergency_takeover.py | → | D_FBL_VERIFICATION 反馈验证: Emergency Takeover — v0.7.0 R88 (emergency_tak... | 测试依赖 / test_depends |
+| 8 | test_federated_security.py | → | D_FBL_VERIFICATION 反馈验证: Federated Security — v0.10.0 R131 (federated_s... | 测试依赖 / test_depends |
+| 9 | test_flag_lifecycle_manager.py | → | D_FBL_VERIFICATION 反馈验证: Flag Lifecycle Manager — v0.3.0 R11 (flag_life... | 测试依赖 / test_depends |
+| 10 | test_license_compliance.py | → | D_FBL_VERIFICATION 反馈验证: License Compliance — v0.14.0 R198 (license_com... | 测试依赖 / test_depends |
+| 11 | test_merkle_audit_root.py | → | D_FBL_VERIFICATION 反馈验证: Merkle Audit Root — v0.8.0 R104 (merkle_audit_... | 测试依赖 / test_depends |
+| 12 | test_meta_performance_gate.py | → | D_FBL_VERIFICATION 反馈验证: Meta Performance Gate — v0.11.0 R158 (meta_per... | 测试依赖 / test_depends |
+| 13 | test_parameterized_safety_gate.py | → | D_FBL_VERIFICATION 反馈验证: GateVerdict — GateVerdict (parameterized_safet... | 测试依赖 / test_depends |
+| 14 | test_scope_creep_monitor.py | → | D_FBL_VERIFICATION 反馈验证: Scope Creep Monitor — v0.15.0 R220 (scope_cree... | 测试依赖 / test_depends |
+| 15 | test_guard_complexity_budget.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R523: GuardComplexityBudget (guard_complexity_b... | 测试依赖 / test_depends |
+| 16 | test_guard_configuration_drift_monitor.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R521: GuardConfigurationDriftMonitor (guard_con... | 测试依赖 / test_depends |
+| 17 | DLQ 重试策略 — 指数退避自动重试 (dlq_retry_pol... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
+| 18 | test_capacity_aware_repair.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
+| 19 | test_capacity_forecast.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
+| 20 | test_guard_cascade_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
+| 21 | test_guard_interaction_topology_mapper.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
+| 22 | test_guard_oscillation_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
+| 23 | test_guard_self_consistency_auditor.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
+| 24 | test_rule_integration.py | → | D_GOVERNANCE 生命周期管理: depgraph Schema DDL + 版本化迁移框架 (depgraph_... | 测试依赖 / test_depends |
+| 25 | test_rule_red_blue.py | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | 测试依赖 / test_depends |
+| 26 | GateEventAdapter — GateRepo 事件适配器（DW-000... | → | D_GOV_AUDIT 审计追踪: EventStore — Event Sourcing 事件追加与回放（DW... | 导入依赖 / import_depends |
+| 27 | verdict_engine.py | → | D_GOV_AUDIT 审计追踪: models.py | 导入依赖 / import_depends |
+| 28 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway ... | 导入依赖 / import_depends |
+| 29 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: arch_reference_gate.py — #ARCH-NNN 悬空引用自.... | 导入依赖 / import_depends |
+| 30 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: bare_getenv_gate.py — 裸 os.getenv 读密钥阻断.... | 导入依赖 / import_depends |
+| 31 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: bare_sql_gate.py — 裸SQL字面量阻断门禁（NO-BAR... | 导入依赖 / import_depends |
+| 32 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: capability_overlap_gate.py — 新建 .py 文件 Cap... | 导入依赖 / import_depends |
+| 33 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: ch_batch_size_gate.py — CH 批量写入防回退门禁.... | 导入依赖 / import_depends |
+| 34 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: claim_required_gate.py — claim_files 前置检查.... | 导入依赖 / import_depends |
+| 35 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: create_guard.py — 新建 .py / 非 rules/ .yaml .... | 导入依赖 / import_depends |
+| 36 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: dangling_reference_gate.py — AGENTS.md §X.Y .... | 导入依赖 / import_depends |
+| 37 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: datetime_now_forbidden_gate.py — 生成器代码 da... | 导入依赖 / import_depends |
+| 38 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: directory_contract_gate.py — DCR-001~007 等效.... | 导入依赖 / import_depends |
+| 39 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: doc_ref_broken_gate.py — 文档相对路径断裂引用.... | 导入依赖 / import_depends |
+| 40 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: empty_handler_gate.py — 空事件 handler 函数阻.... | 导入依赖 / import_depends |
+| 41 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: exempt_zone_frontmatter_gate.py — 豁免区 front... | 导入依赖 / import_depends |
+| 42 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: file_copy_gate.py — 新增 .py 文件复制检测阻断.... | 导入依赖 / import_depends |
+| 43 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: file_placement_ttl_gate.py — 文件放置与 TTL 一... | 导入依赖 / import_depends |
+| 44 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: foreign_change_gate.py — 外来变更检测门禁（FOR... | 导入依赖 / import_depends |
+| 45 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: function_dup_gate.py — 重复函数实现阻断门禁（F... | 导入依赖 / import_depends |
+| 46 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: god_class_gate.py — God Class 阻断门禁（NO-GOD... | 导入依赖 / import_depends |
+| 47 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: hardcoded_url_gate.py — 硬编码 localhost URL .... | 导入依赖 / import_depends |
+| 48 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: held_overlap_gate.py — 搭便车防护门禁（HELD-OV... | 导入依赖 / import_depends |
+| 49 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: high_complexity_gate.py — 高循环复杂度阻断门禁... | 导入依赖 / import_depends |
+| 50 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: id_uniqueness_gate.py — pre-commit hook ID 唯.... | 导入依赖 / import_depends |
+| 51 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: import_direction_gate.py — shared 层向上依赖阻... | 导入依赖 / import_depends |
+| 52 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: long_param_list_gate.py — 长参数列表阻断门禁（... | 导入依赖 / import_depends |
+| 53 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: module_id_consistency_gate.py — module_id 三声... | 导入依赖 / import_depends |
+| 54 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: msg_exposure_gate.py — 错误消息暴露敏感信息阻.... | 导入依赖 / import_depends |
+| 55 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: msg_style_gate.py — 错误消息标点/箭头风格阻断.... | 导入依赖 / import_depends |
+| 56 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: orphan_module_gate.py — 孤儿模块（无 import 引... | 导入依赖 / import_depends |
+| 57 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: panorama_alignment_gate.py — 三图模块对齐门禁.... | 导入依赖 / import_depends |
+| 58 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: perm_trigger_gate.py — 永久系统脚本时间触发模.... | 导入依赖 / import_depends |
+| 59 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: r5_digit_suffix_gate.py — R5 数字后缀目录禁止.... | 导入依赖 / import_depends |
+| 60 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: rule_four_way_alignment_gate.py — 规则四方对齐... | 导入依赖 / import_depends |
+| 61 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: session_required_gate.py — session 注册强制门.... | 导入依赖 / import_depends |
+| 62 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: ssot_redefinition_gate.py — SSoT 符号重复定义.... | 导入依赖 / import_depends |
+| 63 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: test_source_consistency_gate.py — 测试-源码符.... | 导入依赖 / import_depends |
+| 64 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: tests_coverage_gate.py — Gate 测试覆盖率校验 m... | 导入依赖 / import_depends |
+| 65 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: ttl_gate.py — ttl 字段校验门禁（治本：弥补 --n... | 导入依赖 / import_depends |
+| 66 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: unsafe_dict_spread_gate.py — ``**data`` 直接展... | 导入依赖 / import_depends |
+| 67 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_GOV_CODE_QUALITY 代码质量治理: vocab_hardcode_gate.py — 新增 .py 文件词表硬编... | 导入依赖 / import_depends |
+| 68 | test_create_guard.py — CREATE-GUARD 门禁单元测... | → | D_GOV_CODE_QUALITY 代码质量治理: create_guard.py — 新建 .py / 非 rules/ .yaml .... | 测试依赖 / test_depends |
+| 69 | test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX... | → | D_GOV_CODE_QUALITY 代码质量治理: r5_digit_suffix_gate.py — R5 数字后缀目录禁止.... | 测试依赖 / test_depends |
+| 70 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_DRIFT 漂移检测: Breaking Change 检测器（GATE-CDC-2）——字段删.... | 导入依赖 / import_depends |
+| 71 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_DRIFT 漂移检测: 门禁健康仪表板——per-gate SLI 报告、误报率、延... | 导入依赖 / import_depends |
+| 72 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_DRIFT 漂移检测: 门禁引擎完整性守卫——自检SHA-256校验+trust roo... | 导入依赖 / import_depends |
+| 73 | test_gate_health.py | → | D_GOV_DRIFT 漂移检测: 门禁健康仪表板——per-gate SLI 报告、误报率、延... | 测试依赖 / test_depends |
+| 74 | test_gate_integrity_guard.py | → | D_GOV_DRIFT 漂移检测: 门禁引擎完整性守卫——自检SHA-256校验+trust roo... | 测试依赖 / test_depends |
+| 75 | test_gate_persistence.py | → | D_GOV_DRIFT 漂移检测: Gate Persistence — gate_persistence.py (gate_p... | 测试依赖 / test_depends |
+| 76 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: 自适应阈值——从历史 FAIL/PASS 数据学习门禁参数... | 导入依赖 / import_depends |
+| 77 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: ZephyrAlpha — gates/ai_capability_guard.py (ai... | 导入依赖 / import_depends |
+| 78 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: 端到端场景走查验证器（End-to-End Walkthrough Va... | 导入依赖 / import_depends |
+| 79 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: Owner 紧急旁路——时间限定的门禁临时绕过 + 审计... | 导入依赖 / import_depends |
+| 80 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: 门禁模拟器——dry-run 全链路门禁演练，不修改任.... | 导入依赖 / import_depends |
+| 81 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: 集成测试运行器（Integration Test Runner） (inte... | 导入依赖 / import_depends |
+| 82 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: KISS 约束执行器（CT-KISS-001）——AI产出复杂度.... | 导入依赖 / import_depends |
+| 83 | ZephyrAlpha 门禁子包 (__init__.py) | → | D_GOV_RULE 规则治理: Secrets 守护（CT-SECRETS-001）——.env校验+git ... | 导入依赖 / import_depends |
+| 84 | test_gate_context.py | → | D_GOV_RULE 规则治理: 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
+| 85 | test_gate_override.py | → | D_GOV_RULE 规则治理: Owner 紧急旁路——时间限定的门禁临时绕过 + 审计... | 测试依赖 / test_depends |
+| 86 | test_gate_pipeline.py | → | D_GOV_RULE 规则治理: 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
+| 87 | test_gate_pipeline.py | → | D_GOV_RULE 规则治理: 门禁评估管线——排序解析、组合逻辑（AND/OR/NOT.... | 测试依赖 / test_depends |
+| 88 | test_gate_simulator.py | → | D_GOV_RULE 规则治理: 门禁上下文传播——GateContext 构建/序列化/跨模.... | 测试依赖 / test_depends |
+| 89 | test_gate_simulator.py | → | D_GOV_RULE 规则治理: 门禁评估管线——排序解析、组合逻辑（AND/OR/NOT.... | 测试依赖 / test_depends |
+| 90 | test_gate_simulator.py | → | D_GOV_RULE 规则治理: 门禁模拟器——dry-run 全链路门禁演练，不修改任.... | 测试依赖 / test_depends |
+| 91 | test_gate_types.py | → | D_GOV_RULE 规则治理: gate_types.py | 测试依赖 / test_depends |
+| 92 | test_rule_e2e.py | → | D_GOV_RULE 规则治理: RuleLoader — 规则加载核心 API (rule_engine.py) | 测试依赖 / test_depends |
+| 93 | test_rule_integration.py | → | D_GOV_RULE 规则治理: RuleLoader — 规则加载核心 API (rule_engine.py) | 测试依赖 / test_depends |
+| 94 | Re-export shim — ComplianceRule 真源已合并至 z... | → | D_INFRASTRUCTURE: compliance_rule.py | 导入依赖 / import_depends |
+| 95 | test_gate_types.py | → | D_INTEGRATION 管线路由: schemas.py | 测试依赖 / test_depends |
+| 96 | pre_flight_gate.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 97 | pre_flight_gate.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 98 | test_capacity_budget_root.py | → | D_ORCHESTRATOR 代理编排器: 全局容量预算控制器（Capacity Budget Controller... | 测试依赖 / test_depends |
+| 99 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 100 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN... | 导入依赖 / import_depends |
+| 101 | session_claim.py — AI 对话并发声明 helper（FP-... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 102 | session_worktree.py — AI 对话 worktree 物理隔.... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 103 | test_guard_layers_root.py | → | D_SECURITY 对抗验证: GuardLayers — 权限守卫层组件. (guard_layers.py) | 测试依赖 / test_depends |
+| 104 | test_rule_injection_guard.py | → | D_SECURITY 对抗验证: RuleInjectionGuard — 规则注入守卫. (rule_injec... | 测试依赖 / test_depends |
+| 105 | GateEventAdapter — GateRepo 事件适配器（DW-000... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 106 | gpu_consensus_scheduler.py | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 107 | session_lifecycle.py | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 导入依赖 / import_depends |
+| 108 | session_lifecycle.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 109 | session_lifecycle.py | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 110 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
+| 111 | GitCommitGateway — 全项目唯一合法 git commit .... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 112 | session_claim.py — AI 对话并发声明 helper（FP-... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 113 | session_worktree.py — AI 对话 worktree 物理隔.... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 114 | worktree_manager.py — session worktree 物理隔.... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 115 | PostDocReviewScanner — Session 关门时文档内容.... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 116 | RuleWatcher — YAML 规则文件变更检测与自动同步 ... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 117 | test_circuit_breaker_types.py | → | D_SHARED 共享服务: severity_types.py | 测试依赖 / test_depends |
+| 118 | test_resilience_circuit_breaker.py | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
+| 119 | test_resilience_circuit_breaker.py | → | D_SHARED 共享服务: circuit_breaker.py —— 轻量熔断器状态机（Phase... | 测试依赖 / test_depends |
+| 120 | test_rule_integration.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
+| 121 | test_rule_red_blue.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUDITTEST 审计测试套件: test_auto_bootstrap.py | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 2 | D_AUDITTEST 审计测试套件: test_capability_overlap_gate.py — CAPABILITY-O... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 3 | D_AUDITTEST 审计测试套件: test_e_gov_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
-| 4 | D_AUDITTEST 审计测试套件: test_e_slo_contract.py | → | SLO-Driven Escalation Contract — D-022-12. (sl... | 测试依赖 / test_depends |
-| 5 | D_AUDITTEST 审计测试套件: test_escalation_gov_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
-| 6 | D_AUDITTEST 审计测试套件: test_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
-| 7 | D_AUDITTEST 审计测试套件: test_pre_flight_gate.py | → | pre_flight_gate.py | 测试依赖 / test_depends |
-| 8 | D_AUDITTEST 审计测试套件: test_bare_getenv_gate.py — NO-BARE-GETENV 门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 9 | D_AUDITTEST 审计测试套件: test_bare_sql_gate.py — NO-BARE-SQL 门禁单测 (... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 10 | D_AUDITTEST 审计测试套件: test_capability_overlap_gate.py — CAPABILITY-O... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 11 | D_AUDITTEST 审计测试套件: test_claim_required_gate.py — claim_files 前置... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 12 | D_AUDITTEST 审计测试套件: test_datetime_now_forbidden_gate.py — 生成器代... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 13 | D_AUDITTEST 审计测试套件: test_directory_contract_gate.py — DCR-001~007 ... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 14 | D_AUDITTEST 审计测试套件: test_doc_ref_broken_gate.py — DOC-REF-BROKEN .... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 15 | D_AUDITTEST 审计测试套件: test_empty_handler_gate.py — EMPTY-HANDLER 门.... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 16 | D_AUDITTEST 审计测试套件: test_exempt_zone_frontmatter_gate.py — EXEMPT-... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 17 | D_AUDITTEST 审计测试套件: test_file_copy_gate.py — FILE-COPY 门禁单测 (t... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 18 | D_AUDITTEST 审计测试套件: test_foreign_change_gate.py — 外来变更检测门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 19 | D_AUDITTEST 审计测试套件: test_function_dup_gate.py — FUNCTION-DUP 门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 20 | D_AUDITTEST 审计测试套件: test_god_class_gate.py — NO-GOD-CLASS 门禁单测... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 21 | D_AUDITTEST 审计测试套件: test_hardcoded_url_gate.py — NO-HARDCODED-URL ... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 22 | D_AUDITTEST 审计测试套件: test_held_overlap_gate.py — 搭便车防护门禁单测... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 23 | D_AUDITTEST 审计测试套件: test_high_complexity_gate.py — NO-HIGH-COMPLEX... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 24 | D_AUDITTEST 审计测试套件: test_id_uniqueness_gate.py — ID-UNIQUENESS 门.... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 25 | D_AUDITTEST 审计测试套件: test_import_direction_gate.py — NO-UPWARD-IMPO... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 26 | D_AUDITTEST 审计测试套件: test_long_param_list_gate.py — NO-LONG-PARAM-L... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 27 | D_AUDITTEST 审计测试套件: test_msg_exposure_gate.py — MSG-EXPOSURE 门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 28 | D_AUDITTEST 审计测试套件: test_msg_style_gate.py — MSG-STYLE 门禁单测 (t... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 29 | D_AUDITTEST 审计测试套件: test_orphan_module_gate.py — ORPHAN-MODULE 门.... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 30 | D_AUDITTEST 审计测试套件: test_perm_trigger_gate.py — PERM-TRIGGER 门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 31 | D_AUDITTEST 审计测试套件: test_rule_four_way_alignment_gate.py — RULE-FO... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 32 | D_AUDITTEST 审计测试套件: test_session_required_gate.py — SESSION-REQUIR... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 33 | D_AUDITTEST 审计测试套件: test_ssot_redefinition_gate.py — SSoT 符号重复... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 34 | D_AUDITTEST 审计测试套件: test_test_source_consistency_gate.py — TEST-SO... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 35 | D_AUDITTEST 审计测试套件: test_tests_coverage_gate.py — META-TESTS-COVER... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 36 | D_AUDITTEST 审计测试套件: test_ttl_gate.py — ttl 字段校验门禁单元测试。 ... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 37 | D_AUDITTEST 审计测试套件: test_unsafe_dict_spread_gate.py — ``**data`` .... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 38 | D_AUDITTEST 审计测试套件: test_vocab_hardcode_gate.py — VOCAB-HARDCODE .... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 39 | D_AUDITTEST 审计测试套件: test_slo_contract.py | → | SLO-Driven Escalation Contract — D-022-12. (sl... | 测试依赖 / test_depends |
-| 40 | D_AUDITTEST 审计测试套件: test_commit_gate_registry.py — CommitGateRegis... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
-| 41 | D_AUDITTEST 审计测试套件: test_session_worktree.py — worktree 物理隔离端... | → | session_worktree.py — AI 对话 worktree 物理隔.... | 测试依赖 / test_depends |
-| 42 | D_AUDITTEST 审计测试套件: test_session_worktree.py — worktree 物理隔离端... | → | worktree_manager.py — session worktree 物理隔.... | 测试依赖 / test_depends |
-| 43 | D_AUDITTEST 审计测试套件: test_ssot_gate — SSoT 创建门禁红蓝变异测试。 (... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
-| 44 | D_AUDITTEST 审计测试套件: test_post_doc_review.py | → | PostDocReviewScanner — Session 关门时文档内容.... | 测试依赖 / test_depends |
-| 45 | D_AUDITTEST 审计测试套件: test_output_quality_gate.py | → | output_quality_gate.py | 测试依赖 / test_depends |
-| 46 | D_AUDITTEST 审计测试套件: test_rule_canary_manager.py | → | Rule Canary Manager — v0.10.0 规则金丝雀: 1%用... | 测试依赖 / test_depends |
-| 47 | D_AUDITTEST 审计测试套件: test_rule_debt_auditor.py | → | Rule Debt Auditor — v0.7.0 规则债务审计器: 分.... | 测试依赖 / test_depends |
-| 48 | D_AUDITTEST 审计测试套件: test_rule_shadow_runner.py | → | Rule Shadow Runner — v0.10.0 规则影子模式: 新.... | 测试依赖 / test_depends |
-| 49 | D_AUDITTEST 审计测试套件: tests.test_trading_session_lifecycle — F1 Sess... | → | session_lifecycle.py | 测试依赖 / test_depends |
-| 50 | D_AUTONOMY_CORE 自治核心: file_autoregister.py | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 51 | D_DATA: D_DATA Data Source (__init__.py) | → | D_DATA — Data Quality Gate (quality_gate.py) | 导入依赖 / import_depends |
-| 52 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | default_security_gateway.py | runtime / runtime |
-| 53 | D_GOVERNANCE 生命周期管理: git_commit.py — GitCommitGateway CLI 封装（OPS... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 导入依赖 / import_depends |
-| 54 | D_GOVERNANCE 生命周期管理: AI写入前强制门禁钩子: lock协议检查+GateEngine P... | → | ZephyrAlpha 门禁子包 (__init__.py) | 导入依赖 / import_depends |
-| 55 | D_GOVERNANCE 生命周期管理: concurrent_commit_test.py — 幽灵提交红蓝对抗脚... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 导入依赖 / import_depends |
-| 56 | D_GOVERNANCE 生命周期管理: ZephyrAlpha — D_COMPLIANCE Compliance Layer —... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
-| 57 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 导入依赖 / import_depends |
-| 58 | D_GOVERNANCE 生命周期管理: zephyr.trading.trading_contracts — trading-dom... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
-| 59 | D_GOVERNANCE 生命周期管理: session 隔离 stash 红蓝对抗极限测试。 (test_ses... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
-| 60 | D_GOVERNANCE 生命周期管理: test_git_commit_concurrent.py — 幽灵提交红蓝对... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
-| 61 | D_GOVERNANCE 生命周期管理: test_git_commit_extreme.py — GitCommitGateway ... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
-| 62 | D_GOVERNANCE 生命周期管理: test_git_commit_gateway.py — GitCommitGateway ... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
-| 63 | D_GOVERNANCE 生命周期管理: test_task_repo_gateway_e2e.py — 端到端链路测试... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
-| 64 | D_GOV_CODE_QUALITY 代码质量治理: arch_reference_gate.py — #ARCH-NNN 悬空引用自.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 65 | D_GOV_CODE_QUALITY 代码质量治理: bare_getenv_gate.py — 裸 os.getenv 读密钥阻断.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 66 | D_GOV_CODE_QUALITY 代码质量治理: bare_sql_gate.py — 裸SQL字面量阻断门禁（NO-BAR... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 67 | D_GOV_CODE_QUALITY 代码质量治理: capability_overlap_gate.py — 新建 .py 文件 Cap... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 68 | D_GOV_CODE_QUALITY 代码质量治理: ch_batch_size_gate.py — CH 批量写入防回退门禁.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 69 | D_GOV_CODE_QUALITY 代码质量治理: claim_required_gate.py — claim_files 前置检查.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 70 | D_GOV_CODE_QUALITY 代码质量治理: create_guard.py — 新建 .py / 非 rules/ .yaml .... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 71 | D_GOV_CODE_QUALITY 代码质量治理: dangling_reference_gate.py — AGENTS.md §X.Y .... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 72 | D_GOV_CODE_QUALITY 代码质量治理: datetime_now_forbidden_gate.py — 生成器代码 da... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 73 | D_GOV_CODE_QUALITY 代码质量治理: directory_contract_gate.py — DCR-001~007 等效.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 74 | D_GOV_CODE_QUALITY 代码质量治理: doc_ref_broken_gate.py — 文档相对路径断裂引用.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 75 | D_GOV_CODE_QUALITY 代码质量治理: empty_handler_gate.py — 空事件 handler 函数阻.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 76 | D_GOV_CODE_QUALITY 代码质量治理: exempt_zone_frontmatter_gate.py — 豁免区 front... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 77 | D_GOV_CODE_QUALITY 代码质量治理: file_copy_gate.py — 新增 .py 文件复制检测阻断.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 78 | D_GOV_CODE_QUALITY 代码质量治理: file_placement_ttl_gate.py — 文件放置与 TTL 一... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 79 | D_GOV_CODE_QUALITY 代码质量治理: foreign_change_gate.py — 外来变更检测门禁（FOR... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 80 | D_GOV_CODE_QUALITY 代码质量治理: function_dup_gate.py — 重复函数实现阻断门禁（F... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 81 | D_GOV_CODE_QUALITY 代码质量治理: god_class_gate.py — God Class 阻断门禁（NO-GOD... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 82 | D_GOV_CODE_QUALITY 代码质量治理: hardcoded_url_gate.py — 硬编码 localhost URL .... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 83 | D_GOV_CODE_QUALITY 代码质量治理: held_overlap_gate.py — 搭便车防护门禁（HELD-OV... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 84 | D_GOV_CODE_QUALITY 代码质量治理: high_complexity_gate.py — 高循环复杂度阻断门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 85 | D_GOV_CODE_QUALITY 代码质量治理: id_uniqueness_gate.py — pre-commit hook ID 唯.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 86 | D_GOV_CODE_QUALITY 代码质量治理: import_direction_gate.py — shared 层向上依赖阻... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 87 | D_GOV_CODE_QUALITY 代码质量治理: long_param_list_gate.py — 长参数列表阻断门禁（... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 88 | D_GOV_CODE_QUALITY 代码质量治理: module_id_consistency_gate.py — module_id 三声... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 89 | D_GOV_CODE_QUALITY 代码质量治理: msg_exposure_gate.py — 错误消息暴露敏感信息阻.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 90 | D_GOV_CODE_QUALITY 代码质量治理: msg_style_gate.py — 错误消息标点/箭头风格阻断.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 91 | D_GOV_CODE_QUALITY 代码质量治理: orphan_module_gate.py — 孤儿模块（无 import 引... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 92 | D_GOV_CODE_QUALITY 代码质量治理: panorama_alignment_gate.py — 三图模块对齐门禁.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 93 | D_GOV_CODE_QUALITY 代码质量治理: perm_trigger_gate.py — 永久系统脚本时间触发模.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 94 | D_GOV_CODE_QUALITY 代码质量治理: r5_digit_suffix_gate.py — R5 数字后缀目录禁止.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 95 | D_GOV_CODE_QUALITY 代码质量治理: rule_four_way_alignment_gate.py — 规则四方对齐... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 96 | D_GOV_CODE_QUALITY 代码质量治理: session_required_gate.py — session 注册强制门.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 97 | D_GOV_CODE_QUALITY 代码质量治理: ssot_redefinition_gate.py — SSoT 符号重复定义.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 98 | D_GOV_CODE_QUALITY 代码质量治理: test_source_consistency_gate.py — 测试-源码符.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 99 | D_GOV_CODE_QUALITY 代码质量治理: tests_coverage_gate.py — Gate 测试覆盖率校验 m... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 100 | D_GOV_CODE_QUALITY 代码质量治理: ttl_gate.py — ttl 字段校验门禁（治本：弥补 --n... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 101 | D_GOV_CODE_QUALITY 代码质量治理: unsafe_dict_spread_gate.py — ``**data`` 直接展... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 102 | D_GOV_CODE_QUALITY 代码质量治理: vocab_hardcode_gate.py — 新增 .py 文件词表硬编... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
-| 103 | D_GOV_DOCS 架构文档治理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
-| 104 | D_GOV_DOCS 架构文档治理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
-| 105 | D_GOV_DOCS 架构文档治理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
-| 106 | D_GOV_DOCS 架构文档治理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 107 | D_GOV_DRIFT 漂移检测: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 108 | D_GOV_OPS_RESILIENCE 运维弹性治理: D_COMPLIANCE — Governance & Compliance Layer (... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
-| 109 | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | → | PostDocReviewScanner — Session 关门时文档内容.... | 导入依赖 / import_depends |
-| 110 | D_GOV_RULE 规则治理: rule_engine package — 规则引擎模块集合（ARCH-0... | → | Rule Canary Manager — v0.10.0 规则金丝雀: 1%用... | config_depends / config_depends |
-| 111 | D_PF_CORE 组合核心: Re-export wrapper: compliance_rule has migrated... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
-| 112 | D_TRADING 交易运营: zephyr.trading.trading_contracts — trading-dom... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
-| 113 | D_TRADING 交易运营: trading-contracts.risk — risk management domai... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 1 | D_AUTONOMY_CORE 自治核心: test_escalation_gov_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
+| 2 | D_COMPLIANCE 合规: Re-export wrapper: behavioral-admission has mig... | → | __init__.py | 导入依赖 / import_depends |
+| 3 | D_DATA: D_DATA Data Source (__init__.py) | → | D_DATA — Data Quality Gate (quality_gate.py) | 导入依赖 / import_depends |
+| 4 | D_GOVERNANCE 生命周期管理: git_commit.py — GitCommitGateway CLI 封装（OPS... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 导入依赖 / import_depends |
+| 5 | D_GOVERNANCE 生命周期管理: AI写入前强制门禁钩子: lock协议检查+GateEngine P... | → | ZephyrAlpha 门禁子包 (__init__.py) | 导入依赖 / import_depends |
+| 6 | D_GOVERNANCE 生命周期管理: concurrent_commit_test.py — 幽灵提交红蓝对抗脚... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 导入依赖 / import_depends |
+| 7 | D_GOVERNANCE 生命周期管理: ZephyrAlpha — D_COMPLIANCE Compliance Layer —... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 8 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 导入依赖 / import_depends |
+| 9 | D_GOVERNANCE 生命周期管理: session 隔离 stash 红蓝对抗极限测试。 (test_ses... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
+| 10 | D_GOVERNANCE 生命周期管理: test_capability_overlap_gate.py — CAPABILITY-O... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 11 | D_GOVERNANCE 生命周期管理: test_git_commit_concurrent.py — 幽灵提交红蓝对... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
+| 12 | D_GOVERNANCE 生命周期管理: test_git_commit_extreme.py — GitCommitGateway ... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
+| 13 | D_GOVERNANCE 生命周期管理: test_git_commit_gateway.py — GitCommitGateway ... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
+| 14 | D_GOVERNANCE 生命周期管理: test_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
+| 15 | D_GOVERNANCE 生命周期管理: test_pre_flight_gate.py | → | pre_flight_gate.py | 测试依赖 / test_depends |
+| 16 | D_GOVERNANCE 生命周期管理: test_bare_getenv_gate.py — NO-BARE-GETENV 门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 17 | D_GOVERNANCE 生命周期管理: test_bare_sql_gate.py — NO-BARE-SQL 门禁单测 (... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 18 | D_GOVERNANCE 生命周期管理: test_capability_overlap_gate.py — CAPABILITY-O... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 19 | D_GOVERNANCE 生命周期管理: test_claim_required_gate.py — claim_files 前置... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 20 | D_GOVERNANCE 生命周期管理: test_datetime_now_forbidden_gate.py — 生成器代... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 21 | D_GOVERNANCE 生命周期管理: test_directory_contract_gate.py — DCR-001~007 ... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 22 | D_GOVERNANCE 生命周期管理: test_doc_ref_broken_gate.py — DOC-REF-BROKEN .... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 23 | D_GOVERNANCE 生命周期管理: test_empty_handler_gate.py — EMPTY-HANDLER 门.... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 24 | D_GOVERNANCE 生命周期管理: test_exempt_zone_frontmatter_gate.py — EXEMPT-... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 25 | D_GOVERNANCE 生命周期管理: test_file_copy_gate.py — FILE-COPY 门禁单测 (t... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 26 | D_GOVERNANCE 生命周期管理: test_foreign_change_gate.py — 外来变更检测门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 27 | D_GOVERNANCE 生命周期管理: test_function_dup_gate.py — FUNCTION-DUP 门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 28 | D_GOVERNANCE 生命周期管理: test_god_class_gate.py — NO-GOD-CLASS 门禁单测... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 29 | D_GOVERNANCE 生命周期管理: test_hardcoded_url_gate.py — NO-HARDCODED-URL ... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 30 | D_GOVERNANCE 生命周期管理: test_held_overlap_gate.py — 搭便车防护门禁单测... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 31 | D_GOVERNANCE 生命周期管理: test_high_complexity_gate.py — NO-HIGH-COMPLEX... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 32 | D_GOVERNANCE 生命周期管理: test_id_uniqueness_gate.py — ID-UNIQUENESS 门.... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 33 | D_GOVERNANCE 生命周期管理: test_import_direction_gate.py — NO-UPWARD-IMPO... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 34 | D_GOVERNANCE 生命周期管理: test_long_param_list_gate.py — NO-LONG-PARAM-L... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 35 | D_GOVERNANCE 生命周期管理: test_msg_exposure_gate.py — MSG-EXPOSURE 门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 36 | D_GOVERNANCE 生命周期管理: test_msg_style_gate.py — MSG-STYLE 门禁单测 (t... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 37 | D_GOVERNANCE 生命周期管理: test_orphan_module_gate.py — ORPHAN-MODULE 门.... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 38 | D_GOVERNANCE 生命周期管理: test_perm_trigger_gate.py — PERM-TRIGGER 门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 39 | D_GOVERNANCE 生命周期管理: test_rule_four_way_alignment_gate.py — RULE-FO... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 40 | D_GOVERNANCE 生命周期管理: test_session_required_gate.py — SESSION-REQUIR... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 41 | D_GOVERNANCE 生命周期管理: test_ssot_redefinition_gate.py — SSoT 符号重复... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 42 | D_GOVERNANCE 生命周期管理: test_test_source_consistency_gate.py — TEST-SO... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 43 | D_GOVERNANCE 生命周期管理: test_tests_coverage_gate.py — META-TESTS-COVER... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 44 | D_GOVERNANCE 生命周期管理: test_ttl_gate.py — ttl 字段校验门禁单元测试。 ... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 45 | D_GOVERNANCE 生命周期管理: test_unsafe_dict_spread_gate.py — ``**data`` .... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 46 | D_GOVERNANCE 生命周期管理: test_vocab_hardcode_gate.py — VOCAB-HARDCODE .... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 47 | D_GOVERNANCE 生命周期管理: test_slo_contract.py | → | SLO-Driven Escalation Contract — D-022-12. (sl... | 测试依赖 / test_depends |
+| 48 | D_GOVERNANCE 生命周期管理: test_commit_gate_registry.py — CommitGateRegis... | → | commit_gate_registry.py — GitCommitGateway pre... | 测试依赖 / test_depends |
+| 49 | D_GOVERNANCE 生命周期管理: test_session_worktree.py — worktree 物理隔离端... | → | session_worktree.py — AI 对话 worktree 物理隔.... | 测试依赖 / test_depends |
+| 50 | D_GOVERNANCE 生命周期管理: test_session_worktree.py — worktree 物理隔离端... | → | worktree_manager.py — session worktree 物理隔.... | 测试依赖 / test_depends |
+| 51 | D_GOVERNANCE 生命周期管理: test_ssot_gate — SSoT 创建门禁红蓝变异测试。 (... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
+| 52 | D_GOVERNANCE 生命周期管理: test_post_doc_review.py | → | PostDocReviewScanner — Session 关门时文档内容.... | 测试依赖 / test_depends |
+| 53 | D_GOVERNANCE 生命周期管理: test_output_quality_gate.py | → | output_quality_gate.py | 测试依赖 / test_depends |
+| 54 | D_GOVERNANCE 生命周期管理: test_task_repo_gateway_e2e.py — 端到端链路测试... | → | GitCommitGateway — 全项目唯一合法 git commit .... | 测试依赖 / test_depends |
+| 55 | D_GOV_AUDIT 审计追踪: zephyr.trading.trading_contracts — trading-dom... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 56 | D_GOV_CODE_QUALITY 代码质量治理: arch_reference_gate.py — #ARCH-NNN 悬空引用自.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 57 | D_GOV_CODE_QUALITY 代码质量治理: bare_getenv_gate.py — 裸 os.getenv 读密钥阻断.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 58 | D_GOV_CODE_QUALITY 代码质量治理: bare_sql_gate.py — 裸SQL字面量阻断门禁（NO-BAR... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 59 | D_GOV_CODE_QUALITY 代码质量治理: capability_overlap_gate.py — 新建 .py 文件 Cap... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 60 | D_GOV_CODE_QUALITY 代码质量治理: ch_batch_size_gate.py — CH 批量写入防回退门禁.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 61 | D_GOV_CODE_QUALITY 代码质量治理: claim_required_gate.py — claim_files 前置检查.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 62 | D_GOV_CODE_QUALITY 代码质量治理: create_guard.py — 新建 .py / 非 rules/ .yaml .... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 63 | D_GOV_CODE_QUALITY 代码质量治理: dangling_reference_gate.py — AGENTS.md §X.Y .... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 64 | D_GOV_CODE_QUALITY 代码质量治理: datetime_now_forbidden_gate.py — 生成器代码 da... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 65 | D_GOV_CODE_QUALITY 代码质量治理: directory_contract_gate.py — DCR-001~007 等效.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 66 | D_GOV_CODE_QUALITY 代码质量治理: doc_ref_broken_gate.py — 文档相对路径断裂引用.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 67 | D_GOV_CODE_QUALITY 代码质量治理: empty_handler_gate.py — 空事件 handler 函数阻.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 68 | D_GOV_CODE_QUALITY 代码质量治理: exempt_zone_frontmatter_gate.py — 豁免区 front... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 69 | D_GOV_CODE_QUALITY 代码质量治理: file_copy_gate.py — 新增 .py 文件复制检测阻断.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 70 | D_GOV_CODE_QUALITY 代码质量治理: file_placement_ttl_gate.py — 文件放置与 TTL 一... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 71 | D_GOV_CODE_QUALITY 代码质量治理: foreign_change_gate.py — 外来变更检测门禁（FOR... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 72 | D_GOV_CODE_QUALITY 代码质量治理: function_dup_gate.py — 重复函数实现阻断门禁（F... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 73 | D_GOV_CODE_QUALITY 代码质量治理: god_class_gate.py — God Class 阻断门禁（NO-GOD... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 74 | D_GOV_CODE_QUALITY 代码质量治理: hardcoded_url_gate.py — 硬编码 localhost URL .... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 75 | D_GOV_CODE_QUALITY 代码质量治理: held_overlap_gate.py — 搭便车防护门禁（HELD-OV... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 76 | D_GOV_CODE_QUALITY 代码质量治理: high_complexity_gate.py — 高循环复杂度阻断门禁... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 77 | D_GOV_CODE_QUALITY 代码质量治理: id_uniqueness_gate.py — pre-commit hook ID 唯.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 78 | D_GOV_CODE_QUALITY 代码质量治理: import_direction_gate.py — shared 层向上依赖阻... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 79 | D_GOV_CODE_QUALITY 代码质量治理: long_param_list_gate.py — 长参数列表阻断门禁（... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 80 | D_GOV_CODE_QUALITY 代码质量治理: module_id_consistency_gate.py — module_id 三声... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 81 | D_GOV_CODE_QUALITY 代码质量治理: msg_exposure_gate.py — 错误消息暴露敏感信息阻.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 82 | D_GOV_CODE_QUALITY 代码质量治理: msg_style_gate.py — 错误消息标点/箭头风格阻断.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 83 | D_GOV_CODE_QUALITY 代码质量治理: orphan_module_gate.py — 孤儿模块（无 import 引... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 84 | D_GOV_CODE_QUALITY 代码质量治理: panorama_alignment_gate.py — 三图模块对齐门禁.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 85 | D_GOV_CODE_QUALITY 代码质量治理: perm_trigger_gate.py — 永久系统脚本时间触发模.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 86 | D_GOV_CODE_QUALITY 代码质量治理: r5_digit_suffix_gate.py — R5 数字后缀目录禁止.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 87 | D_GOV_CODE_QUALITY 代码质量治理: rule_four_way_alignment_gate.py — 规则四方对齐... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 88 | D_GOV_CODE_QUALITY 代码质量治理: session_required_gate.py — session 注册强制门.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 89 | D_GOV_CODE_QUALITY 代码质量治理: ssot_redefinition_gate.py — SSoT 符号重复定义.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 90 | D_GOV_CODE_QUALITY 代码质量治理: test_source_consistency_gate.py — 测试-源码符.... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 91 | D_GOV_CODE_QUALITY 代码质量治理: tests_coverage_gate.py — Gate 测试覆盖率校验 m... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 92 | D_GOV_CODE_QUALITY 代码质量治理: ttl_gate.py — ttl 字段校验门禁（治本：弥补 --n... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 93 | D_GOV_CODE_QUALITY 代码质量治理: unsafe_dict_spread_gate.py — ``**data`` 直接展... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 94 | D_GOV_CODE_QUALITY 代码质量治理: vocab_hardcode_gate.py — 新增 .py 文件词表硬编... | → | commit_gate_registry.py — GitCommitGateway pre... | 导入依赖 / import_depends |
+| 95 | D_GOV_OPS_RESILIENCE 运维弹性治理: D_COMPLIANCE — Governance & Compliance Layer (... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 96 | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | → | PostDocReviewScanner — Session 关门时文档内容.... | 导入依赖 / import_depends |
+| 97 | D_GOV_RULE 规则治理: rule_engine package — 规则引擎模块集合（ARCH-0... | → | Rule Canary Manager — v0.10.0 规则金丝雀: 1%用... | config_depends / config_depends |
+| 98 | D_PF_CORE 组合核心: Re-export wrapper: compliance_rule has migrated... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 99 | D_SHARED 共享服务: test_e_gov_approval.py | → | G-CT-004 — Backward-compat re-export of Approv... | 测试依赖 / test_depends |
+| 100 | D_SHARED 共享服务: test_e_slo_contract.py | → | SLO-Driven Escalation Contract — D-022-12. (sl... | 测试依赖 / test_depends |
+| 101 | D_TRADING 交易运营: zephyr.trading.trading_contracts — trading-dom... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 102 | D_TRADING 交易运营: trading-contracts.risk — risk management domai... | → | Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 103 | D_TRADING 交易运营: tests.test_trading_session_lifecycle — F1 Sess... | → | session_lifecycle.py | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 18 个外部域直接连接（出边 98 条 + 入边 113 条 = 211 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 19 个外部域直接连接（出边 121 条 + 入边 103 条 = 224 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
     D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
-    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
-    D_SHARED["D_SHARED<br/>共享服务"]
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
+    D_SHARED["D_SHARED<br/>共享服务"]
+    D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
+    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
-    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
-    D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
-    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
+    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_OPS["D_OPS<br/>反馈循环"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
-    D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
-    D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
-    D_TRADING["D_TRADING<br/>交易运营"]
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
+    D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
+    D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_TRADING["D_TRADING<br/>交易运营"]
+    D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
+    D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
     D_DATA["D_DATA"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_GOV_ENFORCEMENT -->|41条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_CODE_QUALITY
-    D_GOV_ENFORCEMENT -->|13条 导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOV_ENFORCEMENT -->|12条 导入依赖 / import_depends| D_SHARED
-    D_GOV_ENFORCEMENT -->|8条 导入依赖 / import_depends| D_GOV_RULE
-    D_GOV_ENFORCEMENT -->|6条 导入依赖 / import_depends| D_SECURITY
-    D_GOV_ENFORCEMENT -->|6条 导入依赖 / import_depends, runtime / runtime| D_GOV_DRIFT
-    D_GOV_ENFORCEMENT -->|4条 导入依赖 / import_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_GOV_ENFORCEMENT -->|2条 contract / contract, runtime / runtime| D_GOV_DOCS
+    D_GOV_ENFORCEMENT -->|18条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_RULE
+    D_GOV_ENFORCEMENT -->|17条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
+    D_GOV_ENFORCEMENT -->|14条 测试依赖 / test_depends| D_FBL_VERIFICATION
+    D_GOV_ENFORCEMENT -->|9条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT -->|6条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SECURITY
+    D_GOV_ENFORCEMENT -->|6条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_DRIFT
+    D_GOV_ENFORCEMENT -->|3条 导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_ENFORCEMENT -->|2条 导入依赖 / import_depends| D_OPS
+    D_GOV_ENFORCEMENT -->|2条 测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_GOV_ENFORCEMENT -->|1条 测试依赖 / test_depends| D_INTEGRATION
+    D_GOV_ENFORCEMENT -->|1条 测试依赖 / test_depends| D_ORCHESTRATOR
     D_GOV_ENFORCEMENT -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_GOV_ENFORCEMENT -->|1条 runtime / runtime| D_FBL_VERIFICATION
-    D_AUDITTEST -->|49条 runtime / runtime, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
+    D_GOVERNANCE -->|51条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
     D_GOV_CODE_QUALITY -->|39条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    D_GOVERNANCE -->|11条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
-    D_GOV_DOCS -->|4条 contract / contract, runtime / runtime| D_GOV_ENFORCEMENT
+    D_TRADING -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
+    D_SHARED -->|2条 测试依赖 / test_depends| D_GOV_ENFORCEMENT
     D_GOV_RULE -->|2条 config_depends / config_depends, 导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    D_TRADING -->|2条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    D_AUTONOMY_CORE -->|1条 runtime / runtime| D_GOV_ENFORCEMENT
-    D_GOV_DRIFT -->|1条 runtime / runtime| D_GOV_ENFORCEMENT
-    D_FEEDBACK_LOOP -->|1条 runtime / runtime| D_GOV_ENFORCEMENT
-    D_PF_CORE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_GOV_OPS_RESILIENCE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_PF_CORE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_DATA -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_AUTONOMY_CORE -->|1条 测试依赖 / test_depends| D_GOV_ENFORCEMENT
+    D_GOV_AUDIT -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
 ```
 
 ## 说明 / Notes

@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 仓位管理（D_POSITION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 04:28:29
+> 最后更新: 2026-07-13 05:28:08
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -81,16 +81,17 @@ graph TD
         src_zephyr_position_services_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_position_init_py -.->|config_depends / config_depends| src_zephyr_position_position_reconciler_py
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
+    D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
+    D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_position_position_reconciler_py production
     class src_zephyr_position_init_py,src_zephyr_position_extensions_init_py,src_zephyr_position_api_init_py,src_zephyr_position_core_init_py,src_zephyr_position_infrastructure_init_py,src_zephyr_position_models_init_py,src_zephyr_position_services_init_py design
-    class D_AUDITTEST external_design
+    class D_SHARED,D_INFRA_RECOVERY external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -102,15 +103,16 @@ graph TD
     subgraph D_POSITION["D_POSITION 仓位管理"]
         src_zephyr_position_position_reconciler_py["(生产态 / production) Position Reconciler — v0.10.1 持仓对账: execut...<br/>文件: position_reconciler.py"]
     end
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
+    D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
+    D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_position_position_reconciler_py production
-    class D_AUDITTEST external_design
+    class D_SHARED,D_INFRA_RECOVERY external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -151,18 +153,20 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUDITTEST 审计测试套件: test_e_position_reconciler.py | → | Position Reconciler — v0.10.1 持仓对账: execut... | 测试依赖 / test_depends |
-| 2 | D_AUDITTEST 审计测试套件: test_position_reconciler.py | → | Position Reconciler — v0.10.1 持仓对账: execut... | 测试依赖 / test_depends |
+| 1 | D_INFRA_RECOVERY 回滚恢复: test_position_reconciler.py | → | Position Reconciler — v0.10.1 持仓对账: execut... | 测试依赖 / test_depends |
+| 2 | D_SHARED 共享服务: test_e_position_reconciler.py | → | Position Reconciler — v0.10.1 持仓对账: execut... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 1 个外部域直接连接（出边 0 条 + 入边 2 条 = 2 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 2 个外部域直接连接（出边 0 条 + 入边 2 条 = 2 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_POSITION["D_POSITION<br/>仓位管理"]
-    D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
-    D_AUDITTEST -->|2条 测试依赖 / test_depends| D_POSITION
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复"]
+    D_SHARED["D_SHARED<br/>共享服务"]
+    D_INFRA_RECOVERY -->|1条 测试依赖 / test_depends| D_POSITION
+    D_SHARED -->|1条 测试依赖 / test_depends| D_POSITION
 ```
 
 ## 说明 / Notes

@@ -1,5 +1,5 @@
 %% D_POSITION 域全景依赖图
-%% 生成时间: 2026-07-13 04:28:36
+%% 生成时间: 2026-07-13 05:28:17
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 8, 依赖边数: 3
 
@@ -21,9 +21,10 @@ graph TD
     src_zephyr_position___init___py -->|config_depends| src_zephyr_position_position_reconciler_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_POSITION (2 条)
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_position_position_reconciler_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_position_position_reconciler_py
+    %% D_INFRA_RECOVERY -> D_POSITION (1 条)
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|test_depends| src_zephyr_position_position_reconciler_py
+    %% D_SHARED -> D_POSITION (1 条)
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_position_position_reconciler_py
 
     %% 跨域依赖（出）- 最多显示 30 条
 

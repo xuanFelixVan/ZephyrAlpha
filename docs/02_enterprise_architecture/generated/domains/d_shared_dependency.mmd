@@ -1,17 +1,14 @@
 %% D_SHARED 域全景依赖图
-%% 生成时间: 2026-07-13 04:28:36
+%% 生成时间: 2026-07-13 05:28:17
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 204, 依赖边数: 901
+%% 模块数: 325, 依赖边数: 999
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_SHARED[shared_services]
-        src_zephyr_shared___init___py["src/zephyr/shared/__init__.py [prototype]"]
         src_zephyr_shared___version___py["src/zephyr/shared/__version__.py [production]"]
-        src_zephyr_shared__cross_layer___init___py["...ephyr/shared/_cross_layer/__init__.py [prototype]"]
         src_zephyr_shared__cross_layer_ml_experiment_pipeline_py["...cross_layer/ml_experiment_pipeline.py [prototype]"]
-        src_zephyr_shared_adaptation___init___py["src/zephyr/shared/adaptation/__init__.py [prototype]"]
         src_zephyr_shared_ai_guards_ai_audit_guard_py["...yr/shared/ai_guards/ai_audit_guard.py [production]"]
         src_zephyr_shared_ai_guards_combinatorial_gate_py["...hared/ai_guards/combinatorial_gate.py [production]"]
         src_zephyr_shared_ai_guards_core_integrity_guard_py["...red/ai_guards/core_integrity_guard.py [production]"]
@@ -20,16 +17,12 @@ graph TD
         src_zephyr_shared_alerts_alert_precision_tracker_py["...red/alerts/alert_precision_tracker.py [production]"]
         src_zephyr_shared_alerts_dual_channel_alert_py["...r/shared/alerts/dual_channel_alert.py [production]"]
         src_zephyr_shared_alerts_heartbeat_server_py["...hyr/shared/alerts/heartbeat_server.py [production]"]
-        src_zephyr_shared_api___init___py["src/zephyr/shared/api/__init__.py [prototype]"]
         src_zephyr_shared_api_api_client_py["src/zephyr/shared/api/api_client.py [prototype]"]
         src_zephyr_shared_api_api_index_py["src/zephyr/shared/api/api_index.py [prototype]"]
         src_zephyr_shared_api_dos_launcher_py["src/zephyr/shared/api/dos_launcher.py [production]"]
-        src_zephyr_shared_api_shared_quickref_yaml["...ephyr/shared/api/shared_quickref.yaml [production]"]
-        src_zephyr_shared_blueprint_tools___init___py["...yr/shared/blueprint_tools/__init__.py [prototype]"]
         src_zephyr_shared_blueprint_to___rstandability_constraint_py["...ls/ai_understandability_constraint.py [production]"]
         src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py["...print_tools/blueprint_code_auditor.py [production]"]
         src_zephyr_shared_blueprint_tools_blueprint_scorer_py["...d/blueprint_tools/blueprint_scorer.py [prototype]"]
-        src_zephyr_shared_capacity_governance___init___py["...hared/capacity_governance/__init__.py [prototype]"]
         src_zephyr_shared_capacity_governance_adaptive_sampler_py["...pacity_governance/adaptive_sampler.py [production]"]
         src_zephyr_shared_capacity_governance_budget_aware_prompt_py["...ity_governance/budget_aware_prompt.py [production]"]
         src_zephyr_shared_capacity_governance_capacity_calibrator_py["...ity_governance/capacity_calibrator.py [production]"]
@@ -39,16 +32,12 @@ graph TD
         src_zephyr_shared_capacity_governance_cost_estimator_py["...capacity_governance/cost_estimator.py [production]"]
         src_zephyr_shared_capacity_gov___ependency_capacity_guard_py["...vernance/dependency_capacity_guard.py [production]"]
         src_zephyr_shared_capacity_gov___nce_model_capacity_probe_py["...ty_governance/model_capacity_probe.py [production]"]
-        src_zephyr_shared_compensation___init___py["...ephyr/shared/compensation/__init__.py [prototype]"]
-        src_zephyr_shared_contracts___init___py["src/zephyr/shared/contracts/__init__.py [prototype]"]
-        src_zephyr_shared_contracts_backpressure___init___py["...ed/contracts/backpressure/__init__.py [prototype]"]
         src_zephyr_shared_contracts_backpressure__types_py["...ared/contracts/backpressure/_types.py [prototype]"]
         src_zephyr_shared_contracts_backpressure_pause_py["...hared/contracts/backpressure/pause.py [prototype]"]
         src_zephyr_shared_contracts_backpressure_resume_py["...ared/contracts/backpressure/resume.py [prototype]"]
         src_zephyr_shared_contracts_backpressure_throttle_py["...ed/contracts/backpressure/throttle.py [prototype]"]
         src_zephyr_shared_contracts_contract_bus_py["...phyr/shared/contracts/contract_bus.py [prototype]"]
         src_zephyr_shared_contracts_contract_tester_py["...r/shared/contracts/contract_tester.py [prototype]"]
-        src_zephyr_shared_contracts_core___init___py["...hyr/shared/contracts/core/__init__.py [prototype]"]
         src_zephyr_shared_contracts_core_base_event_py["...r/shared/contracts/core/base_event.py [prototype]"]
         src_zephyr_shared_contracts_core_enforcer_py["...hyr/shared/contracts/core/enforcer.py [production]"]
         src_zephyr_shared_contracts_core_factories_py["...yr/shared/contracts/core/factories.py [prototype]"]
@@ -60,34 +49,27 @@ graph TD
         src_zephyr_shared_contracts_core_trace_context_py["...hared/contracts/core/trace_context.py [production]"]
         src_zephyr_shared_contracts_enums___init___py["...yr/shared/contracts/enums/__init__.py [prototype]"]
         src_zephyr_shared_contracts_enums_order_enums_py["...shared/contracts/enums/order_enums.py [prototype]"]
-        src_zephyr_shared_contracts_errors___init___py["...r/shared/contracts/errors/__init__.py [prototype]"]
         src_zephyr_shared_contracts_er___contract_violation_error_py["...ts/errors/contract_violation_error.py [prototype]"]
         src_zephyr_shared_contracts_errors_data_quality_error_py["...ontracts/errors/data_quality_error.py [prototype]"]
         src_zephyr_shared_contracts_er___xecution_rejection_error_py["...s/errors/execution_rejection_error.py [prototype]"]
         src_zephyr_shared_contracts_er___factor_computation_error_py["...ts/errors/factor_computation_error.py [prototype]"]
         src_zephyr_shared_contracts_er___sk_limit_violation_error_py[".../errors/risk_limit_violation_error.py [prototype]"]
         src_zephyr_shared_contracts_er___gnal_degradation_warning_py[".../errors/signal_degradation_warning.py [prototype]"]
-        src_zephyr_shared_contracts_escalation___init___py["...ared/contracts/escalation/__init__.py [prototype]"]
         src_zephyr_shared_contracts_escalation_budget_alert_py[".../contracts/escalation/budget_alert.py [production]"]
-        src_zephyr_shared_contracts_execution___init___py["...hared/contracts/execution/__init__.py [prototype]"]
         src_zephyr_shared_contracts_ex___apital_allocation_result_py["...xecution/capital_allocation_result.py [prototype]"]
         src_zephyr_shared_contracts_execution_execution_report_py["...ntracts/execution/execution_report.py [prototype]"]
         src_zephyr_shared_contracts_execution_fill_py["...yr/shared/contracts/execution/fill.py [prototype]"]
         src_zephyr_shared_contracts_ex___on_model_serving_request_py["...ts/execution/model_serving_request.py [prototype]"]
         src_zephyr_shared_contracts_execution_order_py["...r/shared/contracts/execution/order.py [prototype]"]
-        src_zephyr_shared_contracts_experiment___init___py["...ared/contracts/experiment/__init__.py [prototype]"]
         src_zephyr_shared_contracts_experiment_experiment_result_py["...racts/experiment/experiment_result.py [prototype]"]
         src_zephyr_shared_contracts_ex___t_model_serving_response_py[".../experiment/model_serving_response.py [prototype]"]
-        src_zephyr_shared_contracts_external___init___py["...shared/contracts/external/__init__.py [prototype]"]
         src_zephyr_shared_contracts_external_ext_001_py[".../shared/contracts/external/ext_001.py [prototype]"]
         src_zephyr_shared_contracts_external_ext_002_py[".../shared/contracts/external/ext_002.py [prototype]"]
         src_zephyr_shared_contracts_external_ext_003_py[".../shared/contracts/external/ext_003.py [prototype]"]
         src_zephyr_shared_contracts_external_ext_004_py[".../shared/contracts/external/ext_004.py [prototype]"]
-        src_zephyr_shared_contracts_identity___init___py["...shared/contracts/identity/__init__.py [prototype]"]
         src_zephyr_shared_contracts_identity_agent_identity_py[".../contracts/identity/agent_identity.py [production]"]
         src_zephyr_shared_contracts_identity_permission_py["...ared/contracts/identity/permission.py [production]"]
         src_zephyr_shared_contracts_llm_gateway_protocol_py["...red/contracts/llm_gateway_protocol.py [prototype]"]
-        src_zephyr_shared_contracts_market___init___py["...r/shared/contracts/market/__init__.py [prototype]"]
         src_zephyr_shared_contracts_market_factor_monitor_report_py["...racts/market/factor_monitor_report.py [prototype]"]
         src_zephyr_shared_contracts_market_factor_signal_py["...red/contracts/market/factor_signal.py [prototype]"]
         src_zephyr_shared_contracts_market_instrument_py["...shared/contracts/market/instrument.py [prototype]"]
@@ -95,23 +77,40 @@ graph TD
         src_zephyr_shared_contracts_market_market_data_py["...hared/contracts/market/market_data.py [prototype]"]
         src_zephyr_shared_contracts_market_synthesized_signal_py["...ontracts/market/synthesized_signal.py [prototype]"]
         src_zephyr_shared_contracts_orchestration_protocol_py["...d/contracts/orchestration_protocol.py [prototype]"]
-        src_zephyr_shared_contracts_portfolio___init___py["...hared/contracts/portfolio/__init__.py [prototype]"]
         src_zephyr_shared_contracts_portfolio_money_py["...r/shared/contracts/portfolio/money.py [production]"]
         src_zephyr_shared_contracts_po___mance_attribution_report_py["...lio/performance_attribution_report.py [prototype]"]
         src_zephyr_shared_contracts_portfolio_position_py["...hared/contracts/portfolio/position.py [prototype]"]
         src_zephyr_shared_contracts_po___strategy_lifecycle_event_py["...portfolio/strategy_lifecycle_event.py [prototype]"]
-        src_zephyr_shared_contracts_risk___init___py["...hyr/shared/contracts/risk/__init__.py [prototype]"]
         src_zephyr_shared_contracts_risk_compliance_rule_py["...red/contracts/risk/compliance_rule.py [prototype]"]
         src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py["...racts/risk/risk_dashboard_snapshot.py [prototype]"]
         src_zephyr_shared_contracts_risk_risk_limits_py[".../shared/contracts/risk/risk_limits.py [prototype]"]
         src_zephyr_shared_contracts_risk_risk_metrics_py["...shared/contracts/risk/risk_metrics.py [prototype]"]
         src_zephyr_shared_contracts_risk_risk_validator_protocol_py["...racts/risk/risk_validator_protocol.py [prototype]"]
-        src_zephyr_shared_contracts_security___init___py["...shared/contracts/security/__init__.py [prototype]"]
-        %% ... 还有 104 个模块未显示
+        src_zephyr_shared_contracts_security_security_decision_py["...ntracts/security/security_decision.py [production]"]
+        src_zephyr_shared_contracts_skill_protocol_py["...yr/shared/contracts/skill_protocol.py [prototype]"]
+        src_zephyr_shared_contracts_task_repository_protocol_py["...contracts/task_repository_protocol.py [prototype]"]
+        src_zephyr_shared_database___init___py["src/zephyr/shared/database/__init__.py [prototype]"]
+        src_zephyr_shared_database_database_crud_mixin_py["...hared/database/database_crud_mixin.py [prototype]"]
+        src_zephyr_shared_event_bus_py["src/zephyr/shared/event_bus.py [production]"]
+        src_zephyr_shared_events_dlq_py["src/zephyr/shared/events/dlq.py [prototype]"]
+        src_zephyr_shared_events_dlq_bridge_py["src/zephyr/shared/events/dlq_bridge.py [prototype]"]
+        src_zephyr_shared_events_event_bus_upgrade_py["...yr/shared/events/event_bus_upgrade.py [production]"]
+        src_zephyr_shared_events_event_schemas_py["...zephyr/shared/events/event_schemas.py [prototype]"]
+        src_zephyr_shared_events_observer_py["src/zephyr/shared/events/observer.py [prototype]"]
+        src_zephyr_shared_events_outbox_py["src/zephyr/shared/events/outbox.py [prototype]"]
+        src_zephyr_shared_events_upgrade_strategy_py["...hyr/shared/events/upgrade_strategy.py [prototype]"]
+        src_zephyr_shared_foundation_constants_py["...zephyr/shared/foundation/constants.py [prototype]"]
+        src_zephyr_shared_foundation_deprecation_py["...phyr/shared/foundation/deprecation.py [production]"]
+        src_zephyr_shared_foundation_env_py["src/zephyr/shared/foundation/env.py [prototype]"]
+        src_zephyr_shared_foundation_errors_py["src/zephyr/shared/foundation/errors.py [production]"]
+        src_zephyr_shared_foundation_flags_py["src/zephyr/shared/foundation/flags.py [production]"]
+        src_zephyr_shared_foundation_migration_py["...zephyr/shared/foundation/migration.py [production]"]
+        src_zephyr_shared_foundation_types_py["src/zephyr/shared/foundation/types.py [prototype]"]
+        src_zephyr_shared_infra_cache_py["src/zephyr/shared/infra/cache.py [production]"]
+        %% ... 还有 225 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_shared_event_bus_py -->|import_depends| src_zephyr_shared___init___py
     src_zephyr_shared_alerts_alert_escalation_py -->|import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_api_api_client_py -->|import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_api_api_client_py -->|import_depends| src_zephyr_shared_io_serialization_py
@@ -119,113 +118,83 @@ graph TD
     src_zephyr_shared_api_api_client_py -->|import_depends| src_zephyr_shared_resilience_retry_py
     src_zephyr_shared_api_dos_launcher_py -->|import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_api_dos_launcher_py -->|import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_core_enforcer_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_core_factories_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_core_registry_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_core_system_configuration_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_core_timestamp_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_errors___init___py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_escalation___init___py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_experiment_experiment_result_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_identity___init___py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_portfolio_money_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_po___mance_attribution_report_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_po___strategy_lifecycle_event_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_skill_protocol_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_backpressure___init___py
     src_zephyr_shared_contracts_backpressure_pause_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_resume_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_throttle_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure__types_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_backpressure___init___py -->|import_depends| src_zephyr_shared_contracts_backpressure_pause_py
-    src_zephyr_shared_contracts_backpressure___init___py -->|import_depends| src_zephyr_shared_contracts_backpressure_resume_py
-    src_zephyr_shared_contracts_backpressure___init___py -->|import_depends| src_zephyr_shared_contracts_backpressure_throttle_py
-    src_zephyr_shared_contracts_core_timestamp_py -->|import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_contracts_core_registry_py -->|import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_contracts_core_registry_py -->|import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_contracts_core_registry_py -->|import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_contracts_core___init___py -->|import_depends| src_zephyr_shared_contracts_core_base_event_py
-    src_zephyr_shared_contracts_core___init___py -->|import_depends| src_zephyr_shared_contracts_core_gate_types_py
+    src_zephyr_shared_contracts_core_timestamp_py -->|import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_contracts_enums___init___py -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
-    src_zephyr_shared_contracts_errors_data_quality_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_er___contract_violation_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_er___sk_limit_violation_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_data_quality_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_er___xecution_rejection_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_er___factor_computation_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_er___gnal_degradation_warning_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_er___sk_limit_violation_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors___init___py -->|import_depends| src_zephyr_shared_contracts_er___contract_violation_error_py
-    src_zephyr_shared_contracts_errors___init___py -->|import_depends| src_zephyr_shared_contracts_errors_data_quality_error_py
-    src_zephyr_shared_contracts_errors___init___py -->|import_depends| src_zephyr_shared_contracts_er___xecution_rejection_error_py
-    src_zephyr_shared_contracts_errors___init___py -->|import_depends| src_zephyr_shared_contracts_er___factor_computation_error_py
-    src_zephyr_shared_contracts_errors___init___py -->|import_depends| src_zephyr_shared_contracts_er___sk_limit_violation_error_py
-    src_zephyr_shared_contracts_errors___init___py -->|import_depends| src_zephyr_shared_contracts_er___gnal_degradation_warning_py
-    src_zephyr_shared_contracts_escalation___init___py -->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     src_zephyr_shared_contracts_experiment_experiment_result_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_identity___init___py -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
-    src_zephyr_shared_contracts_identity___init___py -->|import_depends| src_zephyr_shared_contracts_identity_permission_py
-    src_zephyr_shared_contracts_market___init___py -->|import_depends| src_zephyr_shared_contracts_market_factor_monitor_report_py
-    src_zephyr_shared_contracts_market___init___py -->|import_depends| src_zephyr_shared_contracts_market_factor_signal_py
-    src_zephyr_shared_contracts_market___init___py -->|import_depends| src_zephyr_shared_contracts_market_instrument_py
-    src_zephyr_shared_contracts_market___init___py -->|import_depends| src_zephyr_shared_contracts_market_macro_factor_signal_py
-    src_zephyr_shared_contracts_market___init___py -->|import_depends| src_zephyr_shared_contracts_market_market_data_py
-    src_zephyr_shared_contracts_market___init___py -->|import_depends| src_zephyr_shared_contracts_market_synthesized_signal_py
-    src_zephyr_shared_contracts_portfolio___init___py -->|import_depends| src_zephyr_shared_contracts_portfolio_position_py
-    src_zephyr_shared_contracts_risk___init___py -->|import_depends| src_zephyr_shared_contracts_risk_compliance_rule_py
-    src_zephyr_shared_contracts_risk___init___py -->|import_depends| src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py
-    src_zephyr_shared_contracts_risk___init___py -->|import_depends| src_zephyr_shared_contracts_risk_risk_limits_py
-    src_zephyr_shared_contracts_risk___init___py -->|import_depends| src_zephyr_shared_contracts_risk_risk_metrics_py
-    src_zephyr_shared_contracts_risk___init___py -->|import_depends| src_zephyr_shared_contracts_risk_risk_validator_protocol_py
-    src_zephyr_shared_contracts_security___init___py -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     src_zephyr_shared_events_dlq_py -->|import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_events_dlq_py -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
     src_zephyr_shared_events_dlq_py -->|import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_dlq_bridge_py -->|import_depends| src_zephyr_shared_events_dlq_py
-    src_zephyr_shared_events_observer_py -->|import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_event_schemas_py -->|import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_event_schemas_py -->|import_depends| src_zephyr_shared_schema_base_config_py
+    src_zephyr_shared_events_upgrade_strategy_py -->|import_depends| src_zephyr_shared_events_observer_py
     src_zephyr_shared_events_outbox_py -->|import_depends| src_zephyr_shared_infra_outbox_py
-    src_zephyr_shared_events___init___py -->|import_depends| src_zephyr_shared_events_dlq_bridge_py
-    %% ... 还有 73 条域内依赖未显示
+    src_zephyr_shared_events_observer_py -->|import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_foundation_constants_py -->|import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
+    src_zephyr_shared_foundation_constants_py -->|import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_foundation_constants_py -->|import_depends| src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_foundation_migration_py -->|import_depends| src_zephyr_shared_utils_migration_py
+    src_zephyr_shared_foundation_flags_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_cache_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_outbox_py -->|import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_infra_outbox_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_idempotency_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_lock_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_limiter_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_io_yaml_utils_py -->|import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_sqlite_factory_py -->|import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_serialization_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_lifecycle_health_py -->|import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_lifecycle_state_machine_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_observability_metrics_py -->|import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_observability_tracing_py -->|import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_protocols_capability_py -->|import_depends| src_zephyr_shared_security_capability_py
+    src_zephyr_shared_protocols_a2a_a2a_schemas_py -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_resilience_circuit_breaker_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_resilience_fallback_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_resilience_limiter_py -->|import_depends| src_zephyr_shared_infra_limiter_py
+    src_zephyr_shared_resilience_retry_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_schema_schema_registry_py -->|import_depends| src_zephyr_shared___version___py
+    src_zephyr_shared_schema_schema_registry_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_schema_schemas_py -->|import_depends| src_zephyr_shared_schema_base_config_py
+    src_zephyr_shared_schema_schemas_py -->|import_depends| src_zephyr_shared_schema_severity_types_py
+    src_zephyr_shared_security_lock_py -->|import_depends| src_zephyr_shared_infra_lock_py
+    src_zephyr_shared_security_capability_py -->|import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_security_idempotency_py -->|import_depends| src_zephyr_shared_infra_idempotency_py
+    src_zephyr_shared_security_secrets_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_security_ssot_guard_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_utils_logging_py -->|import_depends| src_zephyr_shared_io_serialization_py
+    src_zephyr_shared_utils_testing_py -->|import_depends| src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_utils_zephyr_logger_py -->|import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared__cross_layer_ml_experiment_pipeline_py -->|import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared__cross_layer_ml_experiment_pipeline_py -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    tests_e_test_e_gov_budget_handler_py -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    tests_e_test_e_gov_contracts_py -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    tests_path_test_path_tree_generator_design_protection_py -->|test_depends| src_zephyr_shared_io_paths_py
+    tests_utils_test_foundation_deprecation_py -->|test_depends| src_zephyr_shared_foundation_deprecation_py
+    tests_utils_test_foundation_errors_py -->|test_depends| src_zephyr_shared_foundation_errors_py
+    tests_utils_test_foundation_flags_py -->|test_depends| src_zephyr_shared_foundation_flags_py
+    tests_utils_test_foundation_flags_py -->|test_depends| src_zephyr_shared_foundation_errors_py
+    tests_utils_test_resilience_fallback_py -->|test_depends| src_zephyr_shared_resilience_fallback_py
+    tests_utils_test_resilience_fallback_py -->|test_depends| src_zephyr_shared_foundation_errors_py
+    %% ... 还有 19 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_SHARED (173 条)
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_io_paths_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_io_paths_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_io_paths_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_io_paths_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_infra_observer_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_event_bus_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_event_bus_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_identity_agent_identity_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_identity_agent_identity_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_io_paths_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_io_paths_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_io_paths_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_contracts_identity_permission_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_io_paths_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_io_paths_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_lifecycle_health_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_event_bus_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_lifecycle_longevity_monitor_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_lifecycle_health_discovery_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_observability_metrics_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_maintenance_autonomy_monitor_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_lifecycle_health_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_lifecycle_health_py
-    %% D_AUTONOMY_CORE -> D_SHARED (17 条)
+    %% D_AUTONOMY_CORE -> D_SHARED (24 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_shared_io_serialization_py
@@ -242,11 +211,18 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_shared_security_capability_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_shared_infra_observer_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_shared_contracts_identity_permission_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_shared_event_bus_py
     %% D_BACKTEST -> D_SHARED (2 条)
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    %% D_DATA -> D_SHARED (10 条)
+    %% D_DATA -> D_SHARED (21 条)
     D_DATA[D_DATA] -->|import_depends| src_zephyr_shared_io_paths_py
     D_DATA[D_DATA] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_DATA[D_DATA] -->|import_depends| src_zephyr_shared_io_paths_py
@@ -257,35 +233,45 @@ graph TD
     D_DATA[D_DATA] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_DATA[D_DATA] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_DATA[D_DATA] -->|import_depends| src_zephyr_shared_security_secrets_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_frontmatter_utils_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_serialization_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_foundation_errors_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_content_fingerprint_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_file_utils_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_shared_io_paths_py
     %% D_EX_CORE -> D_SHARED (2 条)
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    %% D_FEEDBACK_LOOP -> D_SHARED (18 条)
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_io_serialization_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    %% D_FEEDBACK_LOOP -> D_SHARED (17 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_event_bus_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_io_paths_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_event_bus_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_io_paths_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_security_secrets_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|runtime| src_zephyr_shared_protocols_capability_py
     %% D_FRONTEND -> D_SHARED (3 条)
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    %% D_GOVERNANCE -> D_SHARED (82 条)
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_serialization_py
+    %% D_GOVERNANCE -> D_SHARED (107 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_security_secrets_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
@@ -303,8 +289,8 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_database_database_crud_mixin_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_database_database_crud_mixin_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
@@ -313,20 +299,22 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_event_bus_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
-    %% D_GOV_AUDIT -> D_SHARED (33 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
+    %% D_GOV_AUDIT -> D_SHARED (50 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_contracts_er___xecution_rejection_error_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_event_bus_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_serialization_py
@@ -343,8 +331,6 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_schema_schemas_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_shared_io_serialization_py
     %% D_GOV_CODE_QUALITY -> D_SHARED (6 条)
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_shared_security_secrets_py
@@ -352,25 +338,47 @@ graph TD
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_shared_utils_db_utils_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_shared_io_paths_py
-    %% D_GOV_DRIFT -> D_SHARED (5 条)
+    %% D_GOV_DRIFT -> D_SHARED (22 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_event_bus_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_utils_async_utils_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_event_bus_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_schema_schemas_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_io_paths_py
-    %% D_GOV_ENFORCEMENT -> D_SHARED (12 条)
+    %% D_GOV_ENFORCEMENT -> D_SHARED (17 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_foundation_errors_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_infra_process_pool_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_shared_schema_severity_types_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_shared_resilience_circuit_breaker_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_shared_foundation_errors_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_shared_io_paths_py
     %% D_GOV_KB -> D_SHARED (17 条)
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_utils_async_utils_py
@@ -381,10 +389,10 @@ graph TD
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_schema_schemas_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_shared_schema_schemas_py
@@ -399,10 +407,10 @@ graph TD
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     %% D_GOV_RULE -> D_SHARED (12 条)
-    D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_security_capability_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_utils_db_utils_py
@@ -411,27 +419,38 @@ graph TD
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_shared_io_paths_py
-    %% D_GOV_SCRIPTS -> D_SHARED (18 条)
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_io_paths_py
-    %% D_INFRASTRUCTURE -> D_SHARED (12 条)
-    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    %% D_GOV_SCRIPTS -> D_SHARED (48 条)
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|test_depends| src_zephyr_shared_io_paths_py
+    %% D_INFRASTRUCTURE -> D_SHARED (56 条)
     D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
@@ -440,18 +459,44 @@ graph TD
     D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|config_depends| src_zephyr_shared_contracts___init___py
-    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|config_depends| src_zephyr_shared_contracts___init___py
-    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|config_depends| src_zephyr_shared_contracts___init___py
-    %% D_INFRA_A2A -> D_SHARED (3 条)
-    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a___init___py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_enforcer_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_factories_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_registry_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_system_configuration_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_timestamp_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_experiment_experiment_result_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_portfolio_money_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_po___mance_attribution_report_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_po___strategy_lifecycle_event_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_skill_protocol_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_backpressure_pause_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_backpressure_resume_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_backpressure_throttle_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_base_event_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_gate_types_py
+    %% D_INFRA_A2A -> D_SHARED (10 条)
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_coordination_py
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     %% D_INFRA_RECOVERY -> D_SHARED (18 条)
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_file_utils_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_event_bus_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
@@ -466,7 +511,7 @@ graph TD
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_serialization_py
-    %% D_INFRA_RUNTIME -> D_SHARED (128 条)
+    %% D_INFRA_RUNTIME -> D_SHARED (164 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
@@ -474,17 +519,8 @@ graph TD
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_security_secrets_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_events_upgrade_strategy_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_coordination_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
@@ -493,16 +529,23 @@ graph TD
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_security_secrets_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_serialization_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
     %% D_INFRA_TELEMETRY -> D_SHARED (2 条)
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared_io_paths_py
-    %% D_INTEGRATION -> D_SHARED (59 条)
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_event_bus_py
+    %% D_INTEGRATION -> D_SHARED (56 条)
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_utils_time_utils_py
@@ -510,44 +553,49 @@ graph TD
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_event_bus_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_infra_observer_py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_security___init___py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_protocols_a2___r3_coordination___init___py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_event_bus_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_protocols_a2___r3_coordination___init___py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_security_secrets_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_schema_schemas_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_schema_schemas_py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_yaml_utils_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_utils_async_utils_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_schema_severity_types_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    %% D_INTELLIGENCE -> D_SHARED (16 条)
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_utils_async_utils_py
+    %% D_INTELLIGENCE -> D_SHARED (19 条)
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_security_capability_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_io_serialization_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_security_secrets_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_security_secrets_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_foundation_constants_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_shared_event_bus_py
     %% D_ML_TRAIN -> D_SHARED (3 条)
     D_ML_TRAIN[D_ML_TRAIN] -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
     D_ML_TRAIN[D_ML_TRAIN] -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
@@ -563,16 +611,15 @@ graph TD
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_io_paths_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_contracts_security___init___py
-    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_db_utils_py
-    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_db_utils_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_db_utils_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_io_sqlite_factory_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_infra_observer_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_io_paths_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_io_paths_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
@@ -587,11 +634,13 @@ graph TD
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_io_paths_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_db_utils_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|test_depends| src_zephyr_shared_infra_observer_py
     %% D_PF_ALLOC -> D_SHARED (1 条)
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
-    %% D_RISK -> D_SHARED (1 条)
+    %% D_RISK -> D_SHARED (2 条)
     D_RISK[D_RISK] -->|import_depends| src_zephyr_shared__cross_layer_ml_experiment_pipeline_py
-    %% D_SECURITY -> D_SHARED (27 条)
+    D_RISK[D_RISK] -->|test_depends| src_zephyr_shared_io_paths_py
+    %% D_SECURITY -> D_SHARED (29 条)
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_io_paths_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_io_paths_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_utils_time_utils_py
@@ -606,7 +655,6 @@ graph TD
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_io_paths_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
@@ -616,51 +664,193 @@ graph TD
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_security_secrets_py
-    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_utils_async_utils_py
+    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_utils_async_utils_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_shared_io_paths_py
+    %% D_SECURITY_LLM -> D_SHARED (19 条)
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_io_paths_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_security_secrets_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_foundation_errors_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_security_ssot_guard_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_foundation_errors_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_shared_security_capability_py
     %% D_SIGLEGACY -> D_SHARED (2 条)
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_shared_foundation_errors_py
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    %% D_TRADING -> D_SHARED (10 条)
+    %% D_TRADING -> D_SHARED (12 条)
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_event_bus_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_foundation_constants_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_io_paths_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_io_paths_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
+    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_shared_foundation_errors_py
+    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_shared_foundation_errors_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_SHARED -> D_AUTONOMY_CORE (1 条)
-    src_zephyr_shared_dependency___init___py -->|config_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    %% D_SHARED -> D_FEEDBACK_LOOP (1 条)
+    %% D_SHARED -> D_DATA (3 条)
+    tests_zephyr_data_test_cli_py -->|test_depends| D_DATA[D_DATA]
+    tests_zephyr_data_test_cli_py -->|test_depends| D_DATA[D_DATA]
+    tests_zephyr_data_test_scheduler_py -->|test_depends| D_DATA[D_DATA]
+    %% D_SHARED -> D_FBL_VERIFICATION (3 条)
+    tests_cross_test_cross_blueprint_contract_drift_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_cross_test_cross_module_integration_root_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_cross_test_cross_session_knowledge_integrity_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    %% D_SHARED -> D_FEEDBACK_LOOP (4 条)
     src_zephyr_shared_security_secrets_py -->|import_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    %% D_SHARED -> D_GOVERNANCE (2 条)
-    src_zephyr_shared_protocols_a2___r3_coordination___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_shared_protocols_a2a___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_SHARED -> D_GOV_AUDIT (1 条)
+    tests_cross_test_cross_gen_validation_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_multi_test_multi_instance_coord_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_multi_test_multi_agent_orchestrator_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    %% D_SHARED -> D_FUNDAMENTAL_SIGNAL (1 条)
+    tests_cross_test_cross_layer_py -->|test_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
+    %% D_SHARED -> D_GOVERNANCE (23 条)
+    tests_cross_test_cross_assistant_adapter_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_cross_test_cross_guard_conflict_detector_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_cross_test_cross_session_correlator_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_cross_test_cross_session_consistency_validator_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_cross_test_cross_signal_validator_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_cross_test_cross_system_correlator_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_confidence_estimator_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_context_package_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_exchange_partition_detector_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_flash_crash_guard_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_gap_analyzer_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_gov_a2a_failure_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_gov_rbac_bridge_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_objective_tracker_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_meta_confidence_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_protocol_state_store_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_risk_matrix_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_self_test_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_self_validator_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_e_test_e_strategy_scoper_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_multi_test_multi_signal_correlator_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_multi_test_multi_turn_intent_analyzer_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_path_test_path_tree_generator_design_protection_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_SHARED -> D_GOV_AUDIT (4 条)
     src_zephyr_shared_session_session_audit_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    %% D_SHARED -> D_GOV_RULE (1 条)
+    tests_e_test_e_forensic_package_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_e_test_e_integrity_verifier_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_e_test_e_merkle_audit_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_SHARED -> D_GOV_CODE_QUALITY (3 条)
+    tests_cross_test_cross_boundary_detector_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_file_test_file_creator_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_path_test_path_index_validator_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    %% D_SHARED -> D_GOV_DRIFT (4 条)
+    tests_cross_test_cross_module_score_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    tests_e_test_e_reward_hacking_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    tests_e_test_e_silence_detector_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    tests_file_test_file_attr_checker_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    %% D_SHARED -> D_GOV_ENFORCEMENT (2 条)
+    tests_e_test_e_gov_approval_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_e_test_e_slo_contract_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_SHARED -> D_GOV_OPS_RESILIENCE (13 条)
+    tests_e_test_e_clock_guard_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_circuit_breaker_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_consequence_manager_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_decision_fatigue_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_error_budget_burst_limiter_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_deadlock_detector_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_escalation_api_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_escalation_metrics_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_escalation_models_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_ghost_scan_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_gov_contracts_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_identity_verifier_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_e_test_e_interrupt_handler_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    %% D_SHARED -> D_GOV_RULE (3 条)
     src_zephyr_shared_protocols_a2a_a2a_coordination_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    %% D_SHARED -> D_INFRASTRUCTURE (2 条)
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    tests_file_test_file_task_mapper_root_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_utils_test_utils_testing_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    %% D_SHARED -> D_INFRASTRUCTURE (12 条)
     src_zephyr_shared_contracts_po___mance_attribution_report_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    %% D_SHARED -> D_INFRA_RUNTIME (4 条)
+    src_zephyr_shared_contracts_contract_bus_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_contract_tester_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_ex___apital_allocation_result_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_execution_fill_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_execution_execution_report_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_ex___on_model_serving_request_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_execution_order_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_external_ext_001_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_external_ext_002_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_external_ext_003_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_shared_contracts_external_ext_004_py -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    %% D_SHARED -> D_INFRA_A2A (1 条)
+    tests_multi_test_multi_agent_root_py -->|test_depends| D_INFRA_A2A[D_INFRA_A2A]
+    %% D_SHARED -> D_INFRA_RECOVERY (1 条)
+    tests_cross_test_cross_platform_shell_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    %% D_SHARED -> D_INFRA_RUNTIME (26 条)
+    src_zephyr_shared_event_bus_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_shared_infra_process_pool_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_shared_io_io_cache_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_shared_lifecycle_health_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_file_test_file_watcher_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_budget_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_budget_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_diff_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_diff_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_health_check_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_health_check_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_reliability_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_reliability_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_pattern_miner_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_pattern_miner_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_safety_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_safety_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_report_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_report_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_scheduler_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_fix_test_fix_scheduler_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_utils_test_foundation_env_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_shared_api_api_index_py -->|config_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_shared_blueprint_tools_blueprint_scorer_py -->|config_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_shared_foundation_types_py -->|config_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    %% D_SHARED -> D_INTEGRATION (2 条)
+    tests_utils_test_utils_testing_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
+    tests_utils_test_utils_testing_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
+    %% D_SHARED -> D_INTELLIGENCE (1 条)
+    tests_cross_test_cross_layer_py -->|test_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     %% D_SHARED -> D_ML_TRAIN (2 条)
     src_zephyr_shared__cross_layer_ml_experiment_pipeline_py -->|import_depends| D_ML_TRAIN[D_ML_TRAIN]
     src_zephyr_shared__cross_layer_ml_experiment_pipeline_py -->|import_depends| D_ML_TRAIN[D_ML_TRAIN]
-    %% D_SHARED -> D_SIMULATION (1 条)
+    %% D_SHARED -> D_OPS (1 条)
+    tests_e_test_e_gov_budget_handler_py -->|test_depends| D_OPS[D_OPS]
+    %% D_SHARED -> D_ORCHESTRATOR (2 条)
+    tests_file_test_file_task_mapper_root_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
+    tests_path_test_path_index_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
+    %% D_SHARED -> D_POSITION (1 条)
+    tests_e_test_e_position_reconciler_py -->|test_depends| D_POSITION[D_POSITION]
+    %% D_SHARED -> D_SECURITY (4 条)
+    tests_cross_test_cross_cutting_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_cross_test_cross_session_detector_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_multi_test_multi_agent_collusion_detector_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_path_test_path_guard_py -->|test_depends| D_SECURITY[D_SECURITY]
+    %% D_SHARED -> D_SIMULATION (2 条)
     src_zephyr_shared__cross_layer_ml_experiment_pipeline_py -->|import_depends| D_SIMULATION[D_SIMULATION]
+    tests_cross_test_cross_layer_py -->|test_depends| D_SIMULATION[D_SIMULATION]
 
     %% 统计
-    %% 域内依赖: 153 条
-    %% 跨域入边: 733 条
-    %% 跨域出边: 15 条
+    %% 域内依赖: 99 条
+    %% 跨域入边: 782 条
+    %% 跨域出边: 118 条

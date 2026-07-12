@@ -1,5 +1,5 @@
 %% D_SIMULATION 域全景依赖图
-%% 生成时间: 2026-07-13 04:28:36
+%% 生成时间: 2026-07-13 05:28:17
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 11, 依赖边数: 6
 
@@ -25,12 +25,11 @@ graph TD
     src_zephyr_simulation_implementations___init___py -->|config_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_SIMULATION (1 条)
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_simulation_pipeline_base_py
     %% D_GOVERNANCE -> D_SIMULATION (1 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_simulation___init___py
-    %% D_SHARED -> D_SIMULATION (1 条)
+    %% D_SHARED -> D_SIMULATION (2 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_simulation_pipeline_base_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_simulation_pipeline_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_SIMULATION -> D_INFRASTRUCTURE (1 条)
