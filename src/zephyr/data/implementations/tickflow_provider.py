@@ -21,7 +21,7 @@
 - 60 次/分钟限流（必须 _call_with_policy 包裹以触发 RPM 限流）
 - 美股日/周/月/季/年 K 线
 - 用 SPY.US/DIA.US/QQQ.US ETF 替代真实美股指数
-- 当前能力：us_daily_kline（美股日K线）/ us_index（美股指数，ETF替代）
+- 当前能力：kline_us_daily（美股日K线）/ us_index（美股指数，ETF替代）
 
 关键设计：
 - connect() 仅验证 SDK 可导入
@@ -83,7 +83,7 @@ class TickFlowProvider(DataSourceBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=60,
-        capabilities=["us_daily_kline", "us_index"],
+        capabilities=["kline_us_daily", "us_index"],
         known_issues=["60次/分钟限流", "ETF替代真实指数"],
     )
 
@@ -117,8 +117,8 @@ class TickFlowProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由到具体获取方法。"""
         cap = (payload.extra or {}).get("capability")
-        if cap == "us_daily_kline":
-            yield from self._fetch_us_daily_kline(payload, policy)
+        if cap == "kline_us_daily":
+            yield from self._fetch_kline_us_daily(payload, policy)
         elif cap == "us_index":
             yield from self._fetch_us_index(payload, policy)
         else:
@@ -130,7 +130,7 @@ class TickFlowProvider(DataSourceBase):
 
     # ---- 美股日K线 ----
 
-    def _fetch_us_daily_kline(
+    def _fetch_kline_us_daily(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
         """获取美股日K线（TickFlow free klines.get）。
@@ -138,7 +138,7 @@ class TickFlowProvider(DataSourceBase):
         每个标的作为一批 yield FetchResult。
         免费版支持 A股/美股/港股日K线，用 period+count 参数（不支持 start_time/end_time）。
         """
-        table = payload.table or "c1_market.us_daily_kline"
+        table = payload.table or "c1_market.kline_us_daily"
         columns = ["trade_date", "code", "open", "high", "low", "close", "volume"]
         symbols = payload.symbols or _DEFAULT_US_SYMBOLS
         start = (payload.start or datetime.date.today() - datetime.timedelta(days=365))
@@ -158,16 +158,7 @@ class TickFlowProvider(DataSourceBase):
                 )
                 rows: list[tuple] = []
                 if df is not None and not df.empty:
-                    for _, row in df.iterrows():
-                        rows.append((
-                            str(row.get("trade_date", "")),
-                            symbol,
-                            float(row.get("open", 0) or 0),
-                            float(row.get("high", 0) or 0),
-                            float(row.get("low", 0) or 0),
-                            float(row.get("close", 0) or 0),
-                            int(row.get("volume", 0) or 0),
-                        ))
+                    rows = self._build_us_kline_rows(df, symbol)
                 self._log.info(f"美股K线 {symbol}: {len(rows)} 行")
                 if rows:
                     yield FetchResult(
@@ -180,6 +171,22 @@ class TickFlowProvider(DataSourceBase):
                     table=table, columns=columns, rows=[],
                     last_key="", elapsed_sec=time.time() - t0, error=str(e),
                 )
+
+    @staticmethod
+    def _build_us_kline_rows(df, symbol: str) -> list:
+        """从 DataFrame 构造美股K线行列表。"""
+        rows = []
+        for _, row in df.iterrows():
+            rows.append((
+                str(row.get("trade_date", "")),
+                symbol,
+                float(row.get("open", 0) or 0),
+                float(row.get("high", 0) or 0),
+                float(row.get("low", 0) or 0),
+                float(row.get("close", 0) or 0),
+                int(row.get("volume", 0) or 0),
+            ))
+        return rows
 
     # ---- 美股指数（ETF替代）----
 

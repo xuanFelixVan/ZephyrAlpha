@@ -58,14 +58,14 @@ class MiniQMTProvider(DataSourceBase):
             "kline_5min",
             "financial_statement",
             "index_constituent",
-            "index_kline",
+            "kline_index",
             "adj_factor",
             "kline_daily_hfq",
             "kline_weekly",
             "kline_monthly",
             # 以下为新增能力（MOD-L00-004 fetch 路由扩展）
-            "hk_daily_kline",
-            "futures_kline",
+            "kline_hk_daily",
+            "kline_futures",
             "futures_position",
             "shareholder",
             "earnings_forecast",
@@ -79,14 +79,14 @@ class MiniQMTProvider(DataSourceBase):
             "index_quote",
             "stock_list",
             # 以下为第二批新增能力（15 个数据下载能力）
-            "cb_kline",
+            "kline_cb",
             "option_kline",
             "option_greeks",
             "index_weight",
             "sector_list",
             "l2_tick",
             "auction_data",
-            "futures_kline_qmt",
+            "kline_futures_qmt",
             "hk_kline",
             "us_kline",
             "etf_nav",
@@ -95,16 +95,16 @@ class MiniQMTProvider(DataSourceBase):
             "dragon_tiger_qmt",
             "block_trade_qmt",
             # 以下为第三批新增能力（ETF/LOF分钟K线 + 后复权周月K）
-            "etf_kline_1min",
-            "etf_kline_5min",
-            "etf_kline_15min",
-            "etf_kline_30min",
-            "etf_kline_60min",
-            "lof_kline_1min",
-            "lof_kline_5min",
-            "lof_kline_15min",
-            "lof_kline_30min",
-            "lof_kline_60min",
+            "kline_etf_1min",
+            "kline_etf_5min",
+            "kline_etf_15min",
+            "kline_etf_30min",
+            "kline_etf_60min",
+            "kline_lof_1min",
+            "kline_lof_5min",
+            "kline_lof_15min",
+            "kline_lof_30min",
+            "kline_lof_60min",
             "kline_weekly_hfq",
             "kline_monthly_hfq",
         ],
@@ -169,16 +169,16 @@ class MiniQMTProvider(DataSourceBase):
             "kline_15min": ("15m", "沪深A股"),
             "kline_30min": ("30m", "沪深A股"),
             "kline_60min": ("1h", "沪深A股"),
-            "etf_kline_1min": ("1m", "ETF"),
-            "etf_kline_5min": ("5m", "ETF"),
-            "etf_kline_15min": ("15m", "ETF"),
-            "etf_kline_30min": ("30m", "ETF"),
-            "etf_kline_60min": ("1h", "ETF"),
-            "lof_kline_1min": ("1m", "LOF"),
-            "lof_kline_5min": ("5m", "LOF"),
-            "lof_kline_15min": ("15m", "LOF"),
-            "lof_kline_30min": ("30m", "LOF"),
-            "lof_kline_60min": ("1h", "LOF"),
+            "kline_etf_1min": ("1m", "ETF"),
+            "kline_etf_5min": ("5m", "ETF"),
+            "kline_etf_15min": ("15m", "ETF"),
+            "kline_etf_30min": ("30m", "ETF"),
+            "kline_etf_60min": ("1h", "ETF"),
+            "kline_lof_1min": ("1m", "LOF"),
+            "kline_lof_5min": ("5m", "LOF"),
+            "kline_lof_15min": ("15m", "LOF"),
+            "kline_lof_30min": ("30m", "LOF"),
+            "kline_lof_60min": ("1h", "LOF"),
         }
         # 财务报表类能力统一路由到 _fetch_financial_statement，按 table_list 区分
         _FINANCIAL_CAPABILITIES = {
@@ -212,13 +212,13 @@ class MiniQMTProvider(DataSourceBase):
             yield from self._fetch_financial_statement(payload, policy, _FINANCIAL_CAPABILITIES[capability])
         elif capability == "index_constituent":
             yield from self._fetch_index_constituent(payload, policy)
-        elif capability == "index_kline":
-            yield from self._fetch_index_kline(payload, policy)
+        elif capability == "kline_index":
+            yield from self._fetch_kline_index(payload, policy)
         # ---- 新增能力路由（MOD-L00-004 fetch 路由扩展）----
-        elif capability == "hk_daily_kline":
+        elif capability == "kline_hk_daily":
             # 港股日K：复用 _fetch_kline，symbols 格式如 '00700.HK'
             yield from self._fetch_kline(payload, policy, "1d")
-        elif capability == "futures_kline":
+        elif capability == "kline_futures":
             # 期货K线：复用 _fetch_kline，symbols 格式如 'IF2406.CF'
             yield from self._fetch_kline(payload, policy, "1d")
         elif capability == "futures_position":
@@ -246,9 +246,9 @@ class MiniQMTProvider(DataSourceBase):
         elif capability == "stock_list":
             yield from self._fetch_stock_list(payload, policy)
         # ---- 第二批新增能力路由（15 个数据下载能力）----
-        elif capability == "cb_kline":
+        elif capability == "kline_cb":
             # 可转债K线：get_market_data_ex，symbols 格式如 '113001.SH'
-            yield from self._fetch_cb_kline(payload, policy)
+            yield from self._fetch_kline_cb(payload, policy)
         elif capability == "option_kline":
             # 期权K线：get_market_data_ex，symbols 格式如 '10000001.SH'
             yield from self._fetch_option_kline(payload, policy)
@@ -267,9 +267,9 @@ class MiniQMTProvider(DataSourceBase):
         elif capability == "auction_data":
             # 集合竞价：get_full_tick 实时快照（写入 auction_snapshot 表）
             yield from self._fetch_auction_data(payload, policy)
-        elif capability == "futures_kline_qmt":
+        elif capability == "kline_futures_qmt":
             # 期货K线：get_market_data_ex，symbols 格式如 'IF2407.CFFEX'
-            yield from self._fetch_futures_kline_qmt(payload, policy)
+            yield from self._fetch_kline_futures_qmt(payload, policy)
         elif capability == "hk_kline":
             # 港股K线：get_market_data_ex，symbols 格式如 '00700.HK'
             yield from self._fetch_hk_kline(payload, policy)
@@ -694,7 +694,7 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 指数K线 ==============
 
-    def _fetch_index_kline(
+    def _fetch_kline_index(
         self,
         payload: FetchPayload,
         policy: SourcePolicy,
@@ -719,7 +719,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.index_kline"
+        table = payload.table or "c1_market.kline_index"
         columns = [
             "trade_date", "symbol", "name",
             "open", "high", "low", "close",
@@ -781,34 +781,7 @@ class MiniQMTProvider(DataSourceBase):
                 rows = []
                 df = data.get(index_code) if data else None
                 if df is not None and len(df) > 0:
-                    times = [int(ts) for ts in df.index]
-                    opens = df["open"].tolist()
-                    highs = df["high"].tolist()
-                    lows = df["low"].tolist()
-                    closes = df["close"].tolist()
-                    volumes = df["volume"].tolist()
-                    amounts = df["amount"].tolist()
-                    for i in range(len(times)):
-                        s = str(times[i])
-                        # 日K索引 YYYYMMDD（8位）-> YYYY-MM-DD
-                        trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
-                        vol = self.safe_float(volumes[i])
-                        # volume 是 UInt64，负值（某些计算指数）转为 0
-                        if vol is not None and vol < 0:
-                            vol = 0
-                        vol = int(vol) if vol is not None else 0
-                        rows.append((
-                            trade_date,
-                            symbol,
-                            name,
-                            self.safe_float(opens[i]),
-                            self.safe_float(highs[i]),
-                            self.safe_float(lows[i]),
-                            self.safe_float(closes[i]),
-                            vol,
-                            self.safe_float(amounts[i]),
-                            "miniqmt",  # data_source
-                        ))
+                    rows = self._parse_index_kline_rows(df, symbol, name)
 
                 yield FetchResult(
                     table=table,
@@ -826,6 +799,42 @@ class MiniQMTProvider(DataSourceBase):
                     elapsed_sec=time.time() - t0,
                     error=f"{index_code} 指数K线抓取失败: {e}",
                 )
+
+    @staticmethod
+    def _parse_index_kline_rows(df, symbol, name) -> list:
+        """从 DataFrame 构造指数K线行列表。
+
+        日K索引 YYYYMMDD（8位）-> YYYY-MM-DD；
+        volume 是 UInt64，负值（某些计算指数）转为 0。
+        """
+        rows = []
+        times = [int(ts) for ts in df.index]
+        opens = df["open"].tolist()
+        highs = df["high"].tolist()
+        lows = df["low"].tolist()
+        closes = df["close"].tolist()
+        volumes = df["volume"].tolist()
+        amounts = df["amount"].tolist()
+        for i in range(len(times)):
+            s = str(times[i])
+            trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
+            vol = MiniQMTProvider.safe_float(volumes[i])
+            if vol is not None and vol < 0:
+                vol = 0
+            vol = int(vol) if vol is not None else 0
+            rows.append((
+                trade_date,
+                symbol,
+                name,
+                MiniQMTProvider.safe_float(opens[i]),
+                MiniQMTProvider.safe_float(highs[i]),
+                MiniQMTProvider.safe_float(lows[i]),
+                MiniQMTProvider.safe_float(closes[i]),
+                vol,
+                MiniQMTProvider.safe_float(amounts[i]),
+                "miniqmt",  # data_source
+            ))
+        return rows
 
     # ============== 复权因子 ==============
 
@@ -1417,48 +1426,383 @@ class MiniQMTProvider(DataSourceBase):
                     error=f"抓取失败: {e}",
                 )
 
-    # ============== 期权波动率曲面（占位） ==============
+    # ============== 期权波动率曲面 ==============
 
     def _fetch_option_iv_surface(
         self,
         payload: FetchPayload,
         policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
-        """期权波动率曲面数据占位方法。
+        """抓取期权隐含波动率（IV）曲面数据。
 
-        xtquant 不直接支持期权 IV 曲面数据，需通过 xtquant 订阅获取，
-        暂未实现。返回 error 占位。
+        使用 xtdata.get_option_detail_data 获取期权合约详情（行权价/到期日/
+        标的/期权类型），用 xtdata.get_market_data_ex 获取期权与标的收盘价，
+        结合 Black-Scholes 模型 + Newton-Raphson 迭代反解隐含波动率。
+        表 schema: (trade_date, symbol, underlying, strike, expiry, opt_type,
+                    iv, data_source)
+
+        Args:
+            payload: 下载请求（symbols为期权合约代码列表）
+            policy: 调用策略
 
         Yields:
-            FetchResult: 含 error 的占位结果
+            FetchResult: 每个期权一批
         """
-        yield FetchResult(
-            table=payload.table or "c1_market.option_iv_surface",
-            columns=[], rows=[], last_key="",
-            elapsed_sec=0.0,
-            error="期权波动率曲面数据需通过xtquant订阅获取，暂未实现",
-        )
+        import math
 
-    # ============== 可转债波动率（占位） ==============
+        table = payload.table or "c1_market.option_iv_surface"
+        columns = [
+            "trade_date", "symbol", "underlying", "strike", "expiry",
+            "opt_type", "iv", "data_source",
+        ]
+        trade_date = payload.end.isoformat()
+        symbols = payload.symbols or []
+        last_key = self._date_to_str(payload.end)
+
+        try:
+            start_str = self._date_to_str(payload.start)
+            end_str = self._date_to_str(payload.end)
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+            )
+            return
+
+        # 标准正态分布 PDF / CDF
+        def _pdf(x):
+            return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
+
+        def _cdf(x):
+            return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+        def _bs_price(S, K, T, r, sigma, opt_type):
+            """Black-Scholes 期权理论价格。"""
+            if S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
+                return None
+            d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+            d2 = d1 - sigma * math.sqrt(T)
+            if opt_type == "call":
+                return S * _cdf(d1) - K * math.exp(-r * T) * _cdf(d2)
+            return K * math.exp(-r * T) * _cdf(-d2) - S * _cdf(-d1)
+
+        def _solve_iv(S, K, T, r, market_price, opt_type):
+            """Newton-Raphson 迭代反解隐含波动率。
+
+            初始 IV=0.3，迭代 100 次，精度 1e-6。
+            不收敛或 vega 过小时返回 None。
+            """
+            if (S is None or K is None or market_price is None
+                    or S <= 0 or K <= 0 or T <= 0 or market_price <= 0):
+                return None
+            sigma = 0.3
+            for _ in range(100):
+                price = _bs_price(S, K, T, r, sigma, opt_type)
+                if price is None:
+                    return None
+                d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+                vega = S * _pdf(d1) * math.sqrt(T)
+                if vega < 1e-8:
+                    return None
+                diff = price - market_price
+                if abs(diff) < 1e-6:
+                    return round(sigma, 6)
+                sigma = sigma - diff / vega
+                # 防止 sigma 跑出合理范围
+                if sigma <= 0:
+                    sigma = 1e-4
+                elif sigma > 5:
+                    sigma = 5
+            return None
+
+        for opt_code in symbols:
+            t0 = time.time()
+            try:
+                from xtquant import xtdata
+                detail = self._call_with_policy(
+                    xtdata.get_option_detail_data, policy, opt_code,
+                )
+                rows = []
+                if detail:
+                    symbol = self._stock_to_symbol(opt_code)
+                    underlying = detail.get("Underlying", "")
+                    strike = self.safe_float(detail.get("ExercisePrice"))
+                    expiry = detail.get("EndDelivDate", "")
+                    opt_type = "call" if detail.get("OptType", 0) == 1 else "put"
+                    # 无风险利率（与 option_greeks 一致）
+                    r = 0.03
+                    # 剩余期限（年）：从到期日计算
+                    T = 0.25  # 默认3个月
+                    if expiry:
+                        try:
+                            exp_str = str(expiry)
+                            if len(exp_str) >= 8:
+                                exp_date = datetime.date(
+                                    int(exp_str[:4]), int(exp_str[4:6]), int(exp_str[6:8])
+                                )
+                                days = (exp_date - payload.end).days
+                                T = max(days / 365.0, 0.001)
+                        except Exception:
+                            pass
+                    # 1. 期权收盘价（不活跃期权可能拿不到，此时跳过）
+                    opt_data = self._call_with_policy(
+                        xtdata.get_market_data_ex, policy,
+                        [], [opt_code], "1d", start_str, end_str,
+                    )
+                    opt_df = opt_data.get(opt_code) if opt_data else None
+                    if opt_df is None or len(opt_df) == 0:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=[],
+                            last_key=last_key, elapsed_sec=time.time() - t0,
+                        )
+                        continue
+                    opt_close = self.safe_float(opt_df["close"].iloc[-1])
+                    if opt_close is None or opt_close <= 0:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=[],
+                            last_key=last_key, elapsed_sec=time.time() - t0,
+                        )
+                        continue
+                    # 2. 标的收盘价
+                    spot = None
+                    if underlying:
+                        ul_data = self._call_with_policy(
+                            xtdata.get_market_data_ex, policy,
+                            [], [underlying], "1d", start_str, end_str,
+                        )
+                        ul_df = ul_data.get(underlying) if ul_data else None
+                        if ul_df is not None and len(ul_df) > 0:
+                            spot = self.safe_float(ul_df["close"].iloc[-1])
+                    if spot is None or spot <= 0:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=[],
+                            last_key=last_key, elapsed_sec=time.time() - t0,
+                        )
+                        continue
+                    # 3. Newton-Raphson 反解 IV（不收敛或 vega 过小时 iv=None）
+                    iv = _solve_iv(spot, strike, T, r, opt_close, opt_type)
+                    rows.append((
+                        trade_date, symbol, underlying, strike,
+                        str(expiry)[:10] if expiry else None,
+                        opt_type,
+                        iv,
+                        "miniqmt",
+                    ))
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    error=f"{opt_code} IV曲面抓取失败: {e}",
+                )
+
+    # ============== 可转债波动率 ==============
 
     def _fetch_convertible_bond_iv(
         self,
         payload: FetchPayload,
         policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
-        """可转债波动率数据占位方法。
+        """抓取可转债隐含波动率数据。
 
-        xtquant 不直接支持可转债 IV 数据，暂未实现。返回 error 占位。
+        使用 xtdata.get_instrument_detail 获取可转债详情（转股价/到期日/
+        票面利率/正股代码），用 xtdata.get_market_data_ex 获取可转债与正股
+        收盘价，结合简化模型（max(纯债价值, 转换价值) + BS 期权价值）+
+        Newton-Raphson 迭代反解隐含波动率。
+        表 schema: (trade_date, symbol, cb_price, underlying, underlying_price,
+                    convert_price, convert_value, bond_value, iv, data_source)
+
+        Args:
+            payload: 下载请求（symbols为可转债代码列表）
+            policy: 调用策略
 
         Yields:
-            FetchResult: 含 error 的占位结果
+            FetchResult: 每只可转债一批
         """
-        yield FetchResult(
-            table=payload.table or "c1_market.convertible_bond_iv",
-            columns=[], rows=[], last_key="",
-            elapsed_sec=0.0,
-            error="可转债波动率数据暂未实现",
-        )
+        import math
+
+        table = payload.table or "c1_market.convertible_bond_iv"
+        columns = [
+            "trade_date", "symbol", "cb_price", "underlying", "underlying_price",
+            "convert_price", "convert_value", "bond_value", "iv", "data_source",
+        ]
+        trade_date = payload.end.isoformat()
+        symbols = payload.symbols or []
+        last_key = self._date_to_str(payload.end)
+
+        try:
+            start_str = self._date_to_str(payload.start)
+            end_str = self._date_to_str(payload.end)
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error=f"日期转换失败: {e}",
+            )
+            return
+
+        # 标准正态分布 PDF / CDF
+        def _pdf(x):
+            return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
+
+        def _cdf(x):
+            return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+        def _bs_call(S, K, T, r, sigma):
+            """Black-Scholes 看涨期权理论价格。"""
+            if S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
+                return None
+            d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+            d2 = d1 - sigma * math.sqrt(T)
+            return S * _cdf(d1) - K * math.exp(-r * T) * _cdf(d2)
+
+        def _bond_value(coupon_rate, T, r, face_value=100.0):
+            """纯债价值：现金流贴现（票面利率年化，到期还本100元）。"""
+            if T <= 0:
+                return face_value
+            annual_coupon = coupon_rate * face_value
+            n = max(1, int(math.ceil(T)))
+            if r <= 0:
+                return face_value + annual_coupon * n
+            pv = 0.0
+            for t in range(1, n + 1):
+                pv += annual_coupon / ((1 + r) ** t)
+            pv += face_value / ((1 + r) ** n)
+            return pv
+
+        def _solve_cb_iv(S, K, T, r, market_price, coupon_rate):
+            """Newton-Raphson 反解可转债隐含波动率。
+
+            模型：理论价 = max(纯债价值, 转换价值) + BS_call(S, K, T, r, σ)
+            初始 σ=0.3，迭代 100 次，精度 1e-6。
+            vega = S * sqrt(T) * N'(d1)（原始 dPrice/dσ，不除100）。
+            不收敛或 vega 过小时 iv 返回 None。
+
+            Returns:
+                tuple: (iv, bond_value, convert_value)
+            """
+            if (S is None or K is None or market_price is None
+                    or S <= 0 or K <= 0 or T <= 0 or market_price <= 0):
+                return None, None, None
+            bond_val = _bond_value(coupon_rate, T, r)
+            convert_val = S / K * 100.0  # 转换价值 = 正股价 / 转股价 × 100
+            floor_value = max(bond_val, convert_val)
+            sigma = 0.3
+            for _ in range(100):
+                opt_price = _bs_call(S, K, T, r, sigma)
+                if opt_price is None:
+                    return None, bond_val, convert_val
+                theory_price = floor_value + opt_price
+                d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+                vega = S * _pdf(d1) * math.sqrt(T)  # 原始 vega，不除100
+                if vega < 1e-8:
+                    return None, bond_val, convert_val
+                diff = theory_price - market_price
+                if abs(diff) < 1e-6:
+                    return round(sigma, 6), bond_val, convert_val
+                sigma = sigma - diff / vega
+                if sigma <= 0:
+                    sigma = 1e-4
+                elif sigma > 5:
+                    sigma = 5
+            return None, bond_val, convert_val
+
+        for cb_code in symbols:
+            t0 = time.time()
+            try:
+                from xtquant import xtdata
+                detail = self._call_with_policy(
+                    xtdata.get_instrument_detail, policy, cb_code,
+                )
+                rows = []
+                if detail:
+                    symbol = self._stock_to_symbol(cb_code)
+                    convert_price = self.safe_float(detail.get("ConvertPrice"))
+                    end_date = detail.get("EndDate", "")
+                    coupon_rate = self.safe_float(detail.get("CouponRate"))
+                    underlying = (detail.get("UnderlyingSymbol", "")
+                                  or detail.get("Underlying", ""))
+                    # 票面利率默认 0.5%
+                    if coupon_rate is None:
+                        coupon_rate = 0.005
+                    # 无风险利率
+                    r = 0.03
+                    # 剩余期限（年）：从到期日计算，默认3个月
+                    T = 0.25
+                    if end_date:
+                        try:
+                            ed_str = str(end_date)
+                            if len(ed_str) >= 8:
+                                ed = datetime.date(
+                                    int(ed_str[:4]), int(ed_str[4:6]), int(ed_str[6:8])
+                                )
+                                days = (ed - payload.end).days
+                                T = max(days / 365.0, 0.001)
+                        except Exception:
+                            pass
+                    # 1. 可转债收盘价
+                    cb_data = self._call_with_policy(
+                        xtdata.get_market_data_ex, policy,
+                        [], [cb_code], "1d", start_str, end_str,
+                    )
+                    cb_df = cb_data.get(cb_code) if cb_data else None
+                    if cb_df is None or len(cb_df) == 0:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=[],
+                            last_key=last_key, elapsed_sec=time.time() - t0,
+                        )
+                        continue
+                    cb_price = self.safe_float(cb_df["close"].iloc[-1])
+                    if cb_price is None or cb_price <= 0:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=[],
+                            last_key=last_key, elapsed_sec=time.time() - t0,
+                        )
+                        continue
+                    # 2. 正股收盘价
+                    spot = None
+                    if underlying:
+                        ul_data = self._call_with_policy(
+                            xtdata.get_market_data_ex, policy,
+                            [], [underlying], "1d", start_str, end_str,
+                        )
+                        ul_df = ul_data.get(underlying) if ul_data else None
+                        if ul_df is not None and len(ul_df) > 0:
+                            spot = self.safe_float(ul_df["close"].iloc[-1])
+                    if spot is None or spot <= 0:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=[],
+                            last_key=last_key, elapsed_sec=time.time() - t0,
+                        )
+                        continue
+                    # 3. 转股价必须 > 0
+                    if convert_price is None or convert_price <= 0:
+                        yield FetchResult(
+                            table=table, columns=columns, rows=[],
+                            last_key=last_key, elapsed_sec=time.time() - t0,
+                        )
+                        continue
+                    # 4. Newton-Raphson 反解 IV（不收敛时 iv=None）
+                    iv, bond_val, convert_val = _solve_cb_iv(
+                        spot, convert_price, T, r, cb_price, coupon_rate,
+                    )
+                    rows.append((
+                        trade_date, symbol, cb_price, underlying, spot,
+                        convert_price, convert_val, bond_val,
+                        iv, "miniqmt",
+                    ))
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    error=f"{cb_code} 可转债IV抓取失败: {e}",
+                )
 
     # ============== 期货期限结构 ==============
 
@@ -1573,11 +1917,11 @@ class MiniQMTProvider(DataSourceBase):
         payload: FetchPayload,
         policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
-        """抓取分笔（Tick）数据，写入 c1_market.tick_history。
+        """抓取分笔（Tick）数据，写入 c1_market.tick_data。
 
         使用 xtdata.get_market_data_ex(period='tick') 获取分笔行情。
         tick 数据量很大，每次只取 1 只股票 1 天。
-        统一写入 tick_history 表（百度云历史 + QMT 增量），百度云历史无 bid/ask 列为 NULL。
+        统一写入 tick_data 表（百度云历史 + QMT 增量），百度云历史无 bid/ask 列为 NULL。
         表 schema: (trade_date, timestamp, symbol, market_type, price, volume,
                     amount, direction, data_source, bid_price, ask_price,
                     bid_volume, ask_volume, quality_flag)
@@ -1591,7 +1935,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.tick_history"
+        table = payload.table or "c1_market.tick_data"
         columns = [
             "trade_date", "timestamp", "symbol", "market_type", "price",
             "volume", "amount", "direction", "data_source",
@@ -1640,7 +1984,7 @@ class MiniQMTProvider(DataSourceBase):
     def _parse_tick_rows(self, df, stock_code: str, end_date) -> list[tuple]:
         """解析 tick DataFrame 为行列表（降低 _fetch_tick_data 复杂度）。
 
-        行格式对齐 tick_history 表：
+        行格式对齐 tick_data 表：
         (trade_date, timestamp, symbol, market_type, price, volume, amount,
          direction, data_source, bid_price, ask_price, bid_volume, ask_volume)
 
@@ -2019,7 +2363,7 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 可转债K线 ==============
 
-    def _fetch_cb_kline(
+    def _fetch_kline_cb(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取可转债日K线数据。
@@ -2052,7 +2396,7 @@ class MiniQMTProvider(DataSourceBase):
             except Exception as e:
                 self._log.warning(f"获取可转债板块失败: {e}")
 
-        yield from self._fetch_simple_kline(payload, policy, "c1_market.cb_kline")
+        yield from self._fetch_simple_kline(payload, policy, "c1_market.kline_cb")
 
     # ============== 期权K线 ==============
 
@@ -2528,7 +2872,7 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 期货K线（QMT） ==============
 
-    def _fetch_futures_kline_qmt(
+    def _fetch_kline_futures_qmt(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取期货日K线数据（QMT 专用表）。
@@ -2564,7 +2908,7 @@ class MiniQMTProvider(DataSourceBase):
             except Exception as e:
                 self._log.warning(f"获取期货合约列表失败: {e}")
 
-        yield from self._fetch_simple_kline(payload, policy, "c1_market.futures_kline_qmt")
+        yield from self._fetch_simple_kline(payload, policy, "c1_market.kline_futures_qmt")
 
     # ============== 港股K线 ==============
 

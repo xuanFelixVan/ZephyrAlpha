@@ -64,10 +64,10 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
     ("ifind", "daily_valuation", "c1_market.daily_valuation",
      {"capability": "daily_valuation", "snapshot_dates": SAMPLE_SNAPSHOT_DATES}, None, None, None),
 
-    # index_kline 两源对比
-    ("miniqmt", "index_kline", "c1_market.index_kline", {"capability": "index_kline"},
+    # kline_index 两源对比
+    ("miniqmt", "kline_index", "c1_market.kline_index", {"capability": "kline_index"},
      ["000300.SH", "000905.SH", "000001.SH"], None, None),
-    ("ifind", "index_kline", "c1_market.index_kline", {"capability": "index_kline"},
+    ("ifind", "kline_index", "c1_market.kline_index", {"capability": "kline_index"},
      ["000300.SH", "000905.SH", "000001.SH"], None, None),
 
     # index_constituent 两源对比
@@ -129,8 +129,8 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
 
     # ===== 4 个未验证源（P2）=====
     # tickflow 美股数据
-    ("tickflow", "us_daily_kline", "c1_market.us_daily_kline",
-     {"capability": "us_daily_kline"}, ["SPY.US", "AAPL.US"], None, None),
+    ("tickflow", "kline_us_daily", "c1_market.kline_us_daily",
+     {"capability": "kline_us_daily"}, ["SPY.US", "AAPL.US"], None, None),
     ("tickflow", "us_index", "c1_market.us_index",
      {"capability": "us_index"}, None, None, None),
 
@@ -152,39 +152,39 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
      {"capability": "research_report"}, ["000001.SZ", "600000.SH"], None, None),
     ("akshare", "hk_connect_flow", "c1_market.hk_connect_flow",
      {"capability": "hk_connect_flow"}, None, None, None),
-    ("akshare", "futures_kline", "c1_market.futures_kline",
-     {"capability": "futures_kline"}, None, None, None),
+    ("akshare", "kline_futures", "c1_market.kline_futures",
+     {"capability": "kline_futures"}, None, None, None),
 
     # tdx 通达信板块数据
     ("tdx", "industry_class", "c1_market.industry_class",
      {"capability": "industry_class"}, None, None, None),
-    ("tdx", "sector_kline", "c1_market.sector_kline",
-     {"capability": "sector_kline"}, ["sh.000001"], None, None),
+    ("tdx", "kline_sector", "c1_market.kline_sector",
+     {"capability": "kline_sector"}, ["sh.000001"], None, None),
 
     # ===== 新增能力测速（2026-07-11）=====
     # ETF 分钟K线（数据量大，用 1 只样本）
-    ("miniqmt", "etf_kline_1min", "c1_market.etf_kline_1min",
-     {"capability": "etf_kline_1min"}, ["510050.SH"], None, None),
-    ("miniqmt", "etf_kline_5min", "c1_market.etf_kline_5min",
-     {"capability": "etf_kline_5min"}, ["510050.SH"], None, None),
-    ("miniqmt", "etf_kline_15min", "c1_market.etf_kline_15min",
-     {"capability": "etf_kline_15min"}, ["510050.SH"], None, None),
-    ("miniqmt", "etf_kline_30min", "c1_market.etf_kline_30min",
-     {"capability": "etf_kline_30min"}, ["510050.SH"], None, None),
-    ("miniqmt", "etf_kline_60min", "c1_market.etf_kline_60min",
-     {"capability": "etf_kline_60min"}, ["510050.SH"], None, None),
+    ("miniqmt", "kline_etf_1min", "c1_market.kline_etf_1min",
+     {"capability": "kline_etf_1min"}, ["510050.SH"], None, None),
+    ("miniqmt", "kline_etf_5min", "c1_market.kline_etf_5min",
+     {"capability": "kline_etf_5min"}, ["510050.SH"], None, None),
+    ("miniqmt", "kline_etf_15min", "c1_market.kline_etf_15min",
+     {"capability": "kline_etf_15min"}, ["510050.SH"], None, None),
+    ("miniqmt", "kline_etf_30min", "c1_market.kline_etf_30min",
+     {"capability": "kline_etf_30min"}, ["510050.SH"], None, None),
+    ("miniqmt", "kline_etf_60min", "c1_market.kline_etf_60min",
+     {"capability": "kline_etf_60min"}, ["510050.SH"], None, None),
 
     # LOF 分钟K线（数据量大，用 1 只样本）
-    ("miniqmt", "lof_kline_1min", "c1_market.lof_kline_1min",
-     {"capability": "lof_kline_1min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "lof_kline_5min", "c1_market.lof_kline_5min",
-     {"capability": "lof_kline_5min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "lof_kline_15min", "c1_market.lof_kline_15min",
-     {"capability": "lof_kline_15min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "lof_kline_30min", "c1_market.lof_kline_30min",
-     {"capability": "lof_kline_30min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "lof_kline_60min", "c1_market.lof_kline_60min",
-     {"capability": "lof_kline_60min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "kline_lof_1min", "c1_market.kline_lof_1min",
+     {"capability": "kline_lof_1min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "kline_lof_5min", "c1_market.kline_lof_5min",
+     {"capability": "kline_lof_5min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "kline_lof_15min", "c1_market.kline_lof_15min",
+     {"capability": "kline_lof_15min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "kline_lof_30min", "c1_market.kline_lof_30min",
+     {"capability": "kline_lof_30min"}, ["161725.SZ"], None, None),
+    ("miniqmt", "kline_lof_60min", "c1_market.kline_lof_60min",
+     {"capability": "kline_lof_60min"}, ["161725.SZ"], None, None),
 
     # 后复权周/月K线（日K聚合）
     ("miniqmt", "kline_weekly_hfq", "c1_market.kline_weekly_hfq",

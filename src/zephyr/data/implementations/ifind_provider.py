@@ -21,7 +21,7 @@
 支持的能力（capability，通过 payload.extra["capability"] 路由）：
 - daily_valuation: 日频估值（PE/PB/PS/PCF），写入 c1_market.daily_valuation
 - kline_daily: 日K线（前复权，THS_HistoryQuotes），写入 c1_market.kline_daily
-- index_kline: 指数日K线（THS_HistoryQuotes），写入 c1_market.index_kline
+- kline_index: 指数日K线（THS_HistoryQuotes），写入 c1_market.kline_index
 - money_flow: 资金流向（THS_iwencai i问财），写入 c1_market.money_flow
 
 设计要点：
@@ -58,10 +58,10 @@ class IFindProvider(DataSourceBase):
         requires_process=False,
         thread_safety="thread_local",
         rate_limit_default=0,
-        capabilities=["kline_daily", "daily_valuation", "money_flow", "index_kline",
-                      "edb_data", "industry_class_ifind",
+        capabilities=["kline_daily", "daily_valuation", "money_flow", "kline_index",
+                      "edb_data", "industry_class_suppl",
                       "concept_sector", "realtime_snapshot",
-                      "tdx_sector_info"],
+                      "sector_meta"],
         known_issues=["月度配额-4318", "试用账号不支持沪深港通"],
     )
 
@@ -87,13 +87,13 @@ class IFindProvider(DataSourceBase):
                       "turnover", "data_source"]
     _KLINE_TABLE = "c1_market.kline_daily"
 
-    # ---- index_kline 能力 ----
+    # ---- kline_index 能力 ----
     _INDEX_KLINE_INDICATORS = "open,high,low,close,volume,amount"
     _INDEX_KLINE_PARAMS = "Interval:D,CPS:0,baseDate:1900-01-01,Currency:YSHB,fill:Previous"
     _INDEX_KLINE_COLUMNS = ["trade_date", "symbol", "name", "open", "high", "low",
                             "close", "volume", "amount", "advance_count",
                             "decline_count", "data_source", "quality_flag"]
-    _INDEX_KLINE_TABLE = "c1_market.index_kline"
+    _INDEX_KLINE_TABLE = "c1_market.kline_index"
     # 主要指数代码 -> 名称 映射（iFind 格式）
     _INDEX_NAME_MAP = {
         "000001.SH": "上证指数",
@@ -205,21 +205,21 @@ class IFindProvider(DataSourceBase):
             yield from self._fetch_daily_valuation(payload, policy)
         elif capability == "kline_daily":
             yield from self._fetch_kline_daily(payload, policy)
-        elif capability == "index_kline":
-            yield from self._fetch_index_kline(payload, policy)
+        elif capability == "kline_index":
+            yield from self._fetch_kline_index(payload, policy)
         elif capability == "money_flow":
             yield from self._fetch_money_flow(payload, policy)
         # ---- 新增能力路由（MOD-L00-004 fetch 路由扩展）----
         elif capability == "edb_data":
             yield from self._fetch_edb_data(payload, policy)
-        elif capability == "industry_class_ifind":
-            yield from self._fetch_industry_class_ifind(payload, policy)
+        elif capability == "industry_class_suppl":
+            yield from self._fetch_industry_class_suppl(payload, policy)
         elif capability == "concept_sector":
             yield from self._fetch_concept_sector(payload, policy)
         elif capability == "realtime_snapshot":
             yield from self._fetch_realtime_snapshot(payload, policy)
-        elif capability == "tdx_sector_info":
-            yield from self._fetch_tdx_sector_info(payload, policy)
+        elif capability == "sector_meta":
+            yield from self._fetch_sector_meta(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -524,12 +524,12 @@ class IFindProvider(DataSourceBase):
                 elapsed_sec=time.time() - start_ts,
             )
 
-    # ============== index_kline 能力 ==============
+    # ============== kline_index 能力 ==============
 
-    def _fetch_index_kline(
+    def _fetch_kline_index(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """拉取指数日K线，写入 c1_market.index_kline。
+        """拉取指数日K线，写入 c1_market.kline_index。
 
         使用 THS_HistoryQuotes（Interval:D, CPS:0 不复权）。
         payload.symbols 为指数代码列表（如 ["000300.SH"]）；
@@ -595,23 +595,9 @@ class IFindProvider(DataSourceBase):
                 if not trade_date:
                     continue
 
-                open_ = self.safe_float(row.get("open"))
-                high = self.safe_float(row.get("high"))
-                low = self.safe_float(row.get("low"))
-                close = self.safe_float(row.get("close"))
-                volume = self.safe_float(row.get("volume"))
-                amount = self.safe_float(row.get("amount"))
-
-                batch_rows.append((
-                    trade_date, ts_code, name,
-                    open_ or 0.0, high or 0.0, low or 0.0, close or 0.0,
-                    int(volume) if volume else 0,
-                    amount or 0.0,
-                    0,  # advance_count（iFind 不提供）
-                    0,  # decline_count
-                    "ifind",
-                    1,  # quality_flag
-                ))
+                batch_rows.append(
+                    self._build_index_kline_row(trade_date, ts_code, name, row)
+                )
 
                 if len(batch_rows) >= self._BATCH_SIZE:
                     yield FetchResult(
@@ -630,6 +616,26 @@ class IFindProvider(DataSourceBase):
                 rows=batch_rows[:], last_key=last_key,
                 elapsed_sec=time.time() - start_ts,
             )
+
+    @staticmethod
+    def _build_index_kline_row(trade_date, ts_code, name, row) -> tuple:
+        """构造 kline_index 行元组（open/high/low/close/volume/amount）。"""
+        open_ = IFindProvider.safe_float(row.get("open"))
+        high = IFindProvider.safe_float(row.get("high"))
+        low = IFindProvider.safe_float(row.get("low"))
+        close = IFindProvider.safe_float(row.get("close"))
+        volume = IFindProvider.safe_float(row.get("volume"))
+        amount = IFindProvider.safe_float(row.get("amount"))
+        return (
+            trade_date, ts_code, name,
+            open_ or 0.0, high or 0.0, low or 0.0, close or 0.0,
+            int(volume) if volume else 0,
+            amount or 0.0,
+            0,  # advance_count（iFind 不提供）
+            0,  # decline_count
+            "ifind",
+            1,  # quality_flag
+        )
 
     # ============== money_flow 能力 ==============
 
@@ -1072,12 +1078,12 @@ class IFindProvider(DataSourceBase):
                 break
         return (report_date, ind_code, ind_name, ind_value, "ifind")
 
-    # ============== industry_class_ifind 能力（同花顺板块分类） ==============
+    # ============== industry_class_suppl 能力（同花顺板块分类） ==============
 
-    def _fetch_industry_class_ifind(
+    def _fetch_industry_class_suppl(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """拉取同花顺行业分类，写入 c3_fundamental.industry_class_ifind。
+        """拉取同花顺行业分类，写入 c3_fundamental.industry_class_suppl。
 
         使用 THS_BasicData 逐股查询申万行业（ths_the_sw_industry）和中证行业
         （ths_the_zs_industry）分类。
@@ -1093,7 +1099,7 @@ class IFindProvider(DataSourceBase):
         """
         from iFinDPy import THS_BasicData, THS_Trans2DataFrame
 
-        table = payload.table or "c3_fundamental.industry_class_ifind"
+        table = payload.table or "c3_fundamental.industry_class_suppl"
         columns = ["symbol", "industry_sw", "industry_zsi", "industry_level", "data_source"]
 
         symbols = payload.symbols
@@ -1150,7 +1156,7 @@ class IFindProvider(DataSourceBase):
     def _query_symbol_industries(
         self, ts_code: str, today_str: str, policy: "SourcePolicy",
     ) -> tuple[str, str, str | None]:
-        """查询单只股票的申万/中证行业分类（降低 _fetch_industry_class_ifind 复杂度）。
+        """查询单只股票的申万/中证行业分类（降低 _fetch_industry_class_suppl 复杂度）。
 
         Args:
             ts_code: 标的代码
@@ -1758,12 +1764,12 @@ class IFindProvider(DataSourceBase):
             return f"{suffix_lower}{code}"
         return ""
 
-    # ============== tdx_sector_info 能力（同花顺881二级行业板块） ==============
+    # ============== sector_meta 能力（同花顺881二级行业板块） ==============
 
-    def _fetch_tdx_sector_info(
+    def _fetch_sector_meta(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """拉取同花顺881二级行业板块信息，写入 c1_market.tdx_sector_info。
+        """拉取同花顺881二级行业板块信息，写入 c1_market.sector_meta。
 
         通过 THS_WC 问财接口查询881二级行业板块的：
         - 板块代码(sector_code)、板块名称(sector_name)
@@ -1775,7 +1781,7 @@ class IFindProvider(DataSourceBase):
         """
         from iFinDPy import THS_WC
 
-        table = "c1_market.tdx_sector_info"
+        table = "c1_market.sector_meta"
         columns = [
             "sector_code", "trade_date", "sector_name", "sector_type",
             "constituent_num", "total_share", "float_share",
@@ -1840,9 +1846,9 @@ class IFindProvider(DataSourceBase):
                         self.safe_float(_safe_get(float_mv, i)) or 0.0,
                     ))
         except Exception as e:
-            self._log.warning(f"tdx_sector_info 解析失败: {e}")
+            self._log.warning(f"sector_meta 解析失败: {e}")
 
-        self._log.info(f"tdx_sector_info: {len(rows)} 行")
+        self._log.info(f"sector_meta: {len(rows)} 行")
         yield FetchResult(
             table=table, columns=columns, rows=rows,
             last_key=today_str, elapsed_sec=time.time() - t0,
