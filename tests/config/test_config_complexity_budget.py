@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.config_complexity_budget import ConfigComplexityBudget, ConfigMetric
+from zephyr.feedback_loop.gates.config_complexity_budget import ConfigComplexityBudget, ConfigMetric
 
 
 class TestConfigMetric:

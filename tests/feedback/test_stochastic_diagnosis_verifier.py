@@ -3,7 +3,7 @@
 # [MODULE] tests.test_stochastic_diagnosis_verifier
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.verifiers.stochastic_diagnosis_verifier
+# [CONSUMERS] zephyr.feedback_loop.verifiers.stochastic_diagnosis_verifier
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.verifiers.stochastic_diagnosis_verifier import (
+from zephyr.feedback_loop.verifiers.stochastic_diagnosis_verifier import (
     StochasticDiagnosisVerifier,
 )
 

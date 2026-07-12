@@ -3,7 +3,7 @@
 # [MODULE] tests.test_statistical_hygiene_auditor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.statistical_hygiene_auditor
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.statistical_hygiene_auditor
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.statistical_hygiene_auditor import (
+from zephyr.feedback_loop.diagnosers.statistical_hygiene_auditor import (
     StatisticalHygieneAuditor,
     StatViolation,
 )

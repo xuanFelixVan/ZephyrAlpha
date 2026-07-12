@@ -3,7 +3,7 @@
 # [MODULE] tests.test_teacher_transfer
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.teacher_transfer
+# [CONSUMERS] zephyr.feedback_loop.evolution.teacher_transfer
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.evolution.teacher_transfer import TeacherTransfer
+from zephyr.feedback_loop.evolution.teacher_transfer import TeacherTransfer
 
 
 class TestTeacherTransferInstantiation:

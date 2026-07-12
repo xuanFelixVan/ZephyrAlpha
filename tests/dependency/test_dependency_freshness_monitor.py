@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.trading.feedback_loop.detectors.dependency_freshness_monitor import (
+from zephyr.feedback_loop.detectors.dependency_freshness_monitor import (
     DependencyFreshnessMonitor,
     FreshnessStatus,
 )

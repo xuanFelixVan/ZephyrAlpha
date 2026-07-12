@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.feedback_loop.verifiers.ai_comment_veracity import (
+from zephyr.feedback_loop.verifiers.ai_comment_veracity import (
     AICommentVeracity,
     VeracityLevel,
 )

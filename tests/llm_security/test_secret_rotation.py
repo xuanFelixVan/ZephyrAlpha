@@ -3,7 +3,7 @@
 # [MODULE] tests.test_secret_rotation
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.security.secret_rotation
+# [CONSUMERS] zephyr.feedback_loop.security.secret_rotation
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ import time
 
 import pytest
 
-from zephyr.trading.feedback_loop.security.secret_rotation import (
+from zephyr.feedback_loop.security.secret_rotation import (
     SecretEntry,
     SecretRotation,
 )

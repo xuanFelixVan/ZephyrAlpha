@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_financial_stratification
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.financial_stratification
+# [CONSUMERS] zephyr.feedback_loop.collectors.financial_stratification
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.collectors.financial_stratification import FinancialStratification
+from zephyr.feedback_loop.collectors.financial_stratification import FinancialStratification
 
 
 class TestFinancialStratificationInstantiation:

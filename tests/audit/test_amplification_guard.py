@@ -3,7 +3,7 @@
 # [MODULE] tests.test_amplification_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.amplification_guard
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.amplification_guard
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_amplification_guard.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.diagnosers.amplification_guard import AmplificationGuard
+from zephyr.feedback_loop.diagnosers.amplification_guard import AmplificationGuard
 
 
 class TestAmplificationGuard:

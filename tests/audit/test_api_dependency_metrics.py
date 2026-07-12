@@ -3,7 +3,7 @@
 # [MODULE] tests.test_api_dependency_metrics
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.api_dependency_metrics
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.api_dependency_metrics
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_api_dependency_metrics.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.diagnosers.api_dependency_metrics import (
+from zephyr.feedback_loop.diagnosers.api_dependency_metrics import (
     APIDependencyMetrics,
     DependencyStatusRecord,
 )

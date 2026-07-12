@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.license_compliance import (
+from zephyr.feedback_loop.gates.license_compliance import (
     DependencyLicense,
     LicenseCompliance,
     LicenseRisk,

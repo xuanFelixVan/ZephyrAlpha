@@ -41,7 +41,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from zephyr.trading.feedback_loop.auto_evolution import (
+from zephyr.feedback_loop.auto_evolution import (
     DEFAULT_AUTO_CONFIG,
     AutoEvolutionConfig,
     AutoEvolutionEngine,
@@ -49,13 +49,13 @@ from zephyr.trading.feedback_loop.auto_evolution import (
     AutoTrigger,
     AutoTriggerType,
 )
-from zephyr.trading.feedback_loop.evolution_engine import (
+from zephyr.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionProposal,
     Severity,
 )
-from zephyr.trading.feedback_loop.feedback_collector import FeedbackCollector
-from zephyr.trading.feedback_loop.fitness_functions import (
+from zephyr.feedback_loop.feedback_collector import FeedbackCollector
+from zephyr.feedback_loop.fitness_functions import (
     FitnessFunctionFramework,
     FitnessInputs,
     FitnessReport,

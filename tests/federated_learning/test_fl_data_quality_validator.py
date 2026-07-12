@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_data_quality_validator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.data_quality_validator
+# [CONSUMERS] zephyr.feedback_loop.collectors.data_quality_validator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.collectors.data_quality_validator import DataQualityValidator
+from zephyr.feedback_loop.collectors.data_quality_validator import DataQualityValidator
 
 
 class TestDataQualityValidatorInstantiation:

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_socratic_questions
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.socratic_questions
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.socratic_questions
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.socratic_questions import SocraticQuestions
+from zephyr.feedback_loop.diagnosers.socratic_questions import SocraticQuestions
 
 
 class TestSocraticQuestionsInstantiation:

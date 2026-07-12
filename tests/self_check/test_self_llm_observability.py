@@ -3,7 +3,7 @@
 # [MODULE] tests.test_self_llm_observability
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.self_llm_observability
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.self_llm_observability
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.self_llm_observability import SelfLLMObservability
+from zephyr.feedback_loop.diagnosers.self_llm_observability import SelfLLMObservability
 
 
 class TestSelfLLMObservabilityInstantiation:

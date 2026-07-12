@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.resilience_governance.f5_event_subscriber
 # [DOMAIN]
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.f5_boot_integration; zephyr.trading.boot_hooks; zephyr.trading.feedback_loop.scheduler
+# [CONSUMERS] zephyr.governance.f5_boot_integration; zephyr.trading.boot_hooks; zephyr.feedback_loop.scheduler
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] subscribe is idempotent; handle_event never raises; unsubscribe_all restores clean state; rule bindings are deterministic

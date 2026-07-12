@@ -3,7 +3,7 @@
 # [MODULE] tests.test_hypernetwork
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.hypernetwork
+# [CONSUMERS] zephyr.feedback_loop.evolution.hypernetwork
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.evolution.hypernetwork import HyperNetwork
+from zephyr.feedback_loop.evolution.hypernetwork import HyperNetwork
 
 
 class TestHyperNetworkInstantiation:

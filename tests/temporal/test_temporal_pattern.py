@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.temporal_pattern import TemporalPattern
+from zephyr.feedback_loop.detectors.temporal_pattern import TemporalPattern
 
 
 class TestTemporalPatternInstantiation:

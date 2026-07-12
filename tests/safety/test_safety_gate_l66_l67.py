@@ -13,8 +13,8 @@
 
 from unittest.mock import patch
 
-from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
-from zephyr.trading.feedback_loop.gates.safety_gate_l66_l67 import SafetyGateL66L67
+from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
+from zephyr.feedback_loop.gates.safety_gate_l66_l67 import SafetyGateL66L67
 
 
 class TestSafetyGateL66L67Instantiation:

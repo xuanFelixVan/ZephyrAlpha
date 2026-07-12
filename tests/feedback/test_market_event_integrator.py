@@ -3,7 +3,7 @@
 # [MODULE] tests.test_market_event_integrator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.market_event_integrator
+# [CONSUMERS] zephyr.feedback_loop.collectors.market_event_integrator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_market_event_integrator.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.collectors.market_event_integrator import (
+from zephyr.feedback_loop.collectors.market_event_integrator import (
     MarketEvent,
     MarketEventIntegrator,
     MarketMode,

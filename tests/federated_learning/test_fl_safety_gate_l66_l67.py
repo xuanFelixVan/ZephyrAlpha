@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_safety_gate_L66_L67
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.safety_gate_L66_L67
+# [CONSUMERS] zephyr.feedback_loop.gates.safety_gate_L66_L67
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -13,8 +13,8 @@
 
 from unittest.mock import patch
 
-from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
-from zephyr.trading.feedback_loop.gates.safety_gate_l66_l67 import SafetyGateL66L67
+from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
+from zephyr.feedback_loop.gates.safety_gate_l66_l67 import SafetyGateL66L67
 
 
 def _ctx(**overrides) -> ActionContext:

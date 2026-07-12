@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.cross_signal_validator import CrossSignalValidator
+from zephyr.feedback_loop.detectors.cross_signal_validator import CrossSignalValidator
 
 
 class TestCrossSignalValidatorInstantiation:

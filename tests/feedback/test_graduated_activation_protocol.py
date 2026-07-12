@@ -3,7 +3,7 @@
 # [MODULE] tests.test_graduated_activation_protocol
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.graduated_activation_protocol
+# [CONSUMERS] zephyr.feedback_loop.evolution.graduated_activation_protocol
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.feedback_loop.evolution.graduated_activation_protocol import (
+from zephyr.feedback_loop.evolution.graduated_activation_protocol import (
     GraduatedActivationProtocol,
 )
 

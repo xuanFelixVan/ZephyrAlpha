@@ -17,8 +17,8 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
-from zephyr.trading.feedback_loop.actors.action_selector import ActionRecord, ActionSelector
-from zephyr.trading.feedback_loop.protocols import ActionType
+from zephyr.feedback_loop.actors.action_selector import ActionRecord, ActionSelector
+from zephyr.feedback_loop.protocols import ActionType
 
 
 @dataclass

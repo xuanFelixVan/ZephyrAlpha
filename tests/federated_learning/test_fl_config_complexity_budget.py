@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_config_complexity_budget
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.config_complexity_budget
+# [CONSUMERS] zephyr.feedback_loop.gates.config_complexity_budget
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_config_complexity_budget.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.config_complexity_budget import ConfigComplexityBudget
+from zephyr.feedback_loop.gates.config_complexity_budget import ConfigComplexityBudget
 
 
 class TestConfigComplexityBudgetInstantiation:

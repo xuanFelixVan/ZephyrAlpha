@@ -15,18 +15,18 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.trading.feedback_loop.detectors.anomaly_detector import (
+from zephyr.feedback_loop.detectors.anomaly_detector import (
     AnomalyDetector,
     AnomalyEvent,
 )
-from zephyr.trading.feedback_loop.feedback_collector import (
+from zephyr.feedback_loop.feedback_collector import (
     FeedbackCollector,
 )
-from zephyr.trading.feedback_loop.metrics_collector import (
+from zephyr.feedback_loop.metrics_collector import (
     MetricsCollector,
     MetricSnapshot,
 )
-from zephyr.trading.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
+from zephyr.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
 
 
 def _make_snapshot(

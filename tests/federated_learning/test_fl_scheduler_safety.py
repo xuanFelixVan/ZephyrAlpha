@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_scheduler_safety
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.scheduler_safety
+# [CONSUMERS] zephyr.feedback_loop.scheduler_safety
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.trading.feedback_loop.scheduler_safety import SafetyGateManager
+from zephyr.feedback_loop.scheduler_safety import SafetyGateManager
 
 
 class TestSafetyGateManagerInstantiation:

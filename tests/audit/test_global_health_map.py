@@ -3,7 +3,7 @@
 # [MODULE] tests.test_global_health_map
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.global_health_map
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.global_health_map
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.global_health_map import GlobalHealthMap
+from zephyr.feedback_loop.diagnosers.global_health_map import GlobalHealthMap
 
 
 class TestGlobalHealthMapInstantiation:

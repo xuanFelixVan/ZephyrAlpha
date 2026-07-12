@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.flapping_detector import (
+from zephyr.feedback_loop.detectors.flapping_detector import (
     AlertState,
     FlappingDetector,
     FlappingSeverity,

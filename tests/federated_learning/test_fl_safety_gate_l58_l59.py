@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_safety_gate_L58_L59
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.safety_gate_L58_L59
+# [CONSUMERS] zephyr.feedback_loop.gates.safety_gate_L58_L59
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,8 +11,8 @@
 # [TESTS] tests/test_fl_safety_gate_L58_L59.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
-from zephyr.trading.feedback_loop.gates.safety_gate_l58_l59 import SafetyGateL58L59
+from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
+from zephyr.feedback_loop.gates.safety_gate_l58_l59 import SafetyGateL58L59
 
 
 def _ctx(**overrides) -> ActionContext:

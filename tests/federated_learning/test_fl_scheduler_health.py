@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_scheduler_health
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.scheduler_health
+# [CONSUMERS] zephyr.feedback_loop.scheduler_health
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.scheduler_health import HealthReporter
+from zephyr.feedback_loop.scheduler_health import HealthReporter
 
 
 class TestHealthReporterInstantiation:

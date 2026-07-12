@@ -3,7 +3,7 @@
 # [MODULE] tests.test_nonstationary_effectiveness
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.nonstationary_effectiveness
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.nonstationary_effectiveness
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.nonstationary_effectiveness import (
+from zephyr.feedback_loop.diagnosers.nonstationary_effectiveness import (
     EffectivenessState,
     NonstationaryEffectiveness,
 )

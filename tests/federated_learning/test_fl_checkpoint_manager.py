@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_checkpoint_manager
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.checkpoint_manager
+# [CONSUMERS] zephyr.feedback_loop.gates.checkpoint_manager
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_checkpoint_manager.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.checkpoint_manager import CheckpointManager
+from zephyr.feedback_loop.gates.checkpoint_manager import CheckpointManager
 
 
 class TestCheckpointManagerInstantiation:

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_prompt_factory_governance
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.prompt_factory_governance
+# [CONSUMERS] zephyr.feedback_loop.evolution.prompt_factory_governance
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.evolution.prompt_factory_governance import (
+from zephyr.feedback_loop.evolution.prompt_factory_governance import (
     PromptFactoryGovernance,
 )
 

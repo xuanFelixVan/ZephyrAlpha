@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.verifiers.dry_run_sandbox import DryRunSandbox
+from zephyr.feedback_loop.verifiers.dry_run_sandbox import DryRunSandbox
 
 
 class TestDryRunSandboxInstantiation:

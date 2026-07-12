@@ -21,7 +21,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.trading.feedback_loop.feedback_collector import (
+from zephyr.feedback_loop.feedback_collector import (
     FeedbackCollector,
     FeedbackEntry,
 )

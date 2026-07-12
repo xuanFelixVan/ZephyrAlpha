@@ -12,8 +12,8 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
-from zephyr.trading.feedback_loop.gates.safety_gate_l46_l47 import SafetyGateL46L47
+from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
+from zephyr.feedback_loop.gates.safety_gate_l46_l47 import SafetyGateL46L47
 
 
 class TestSafetyGateL46L47Instantiation:

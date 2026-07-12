@@ -3,7 +3,7 @@
 # [MODULE] tests.test_self_upgrade_canary
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.self_upgrade_canary
+# [CONSUMERS] zephyr.feedback_loop.evolution.self_upgrade_canary
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.evolution.self_upgrade_canary import (
+from zephyr.feedback_loop.evolution.self_upgrade_canary import (
     CanaryPhase,
     SelfUpgradeCanary,
 )

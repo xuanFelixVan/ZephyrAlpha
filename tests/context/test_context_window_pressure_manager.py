@@ -3,7 +3,7 @@
 # [MODULE] tests.test_context_window_pressure_manager
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.context_window_pressure_manager
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.context_window_pressure_manager
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.context_window_pressure_manager import (
+from zephyr.feedback_loop.diagnosers.context_window_pressure_manager import (
     ContextEntry,
     ContextWindowPressureManager,
 )

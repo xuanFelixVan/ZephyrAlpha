@@ -3,7 +3,7 @@
 # [MODULE] tests.test_dynamic_threshold
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.dynamic_threshold
+# [CONSUMERS] zephyr.feedback_loop.evolution.dynamic_threshold
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.feedback_loop.evolution.dynamic_threshold import DynamicThreshold
+from zephyr.feedback_loop.evolution.dynamic_threshold import DynamicThreshold
 
 
 class TestDynamicThresholdInstantiation:

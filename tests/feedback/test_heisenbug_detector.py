@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.heisenbug_detector import (
+from zephyr.feedback_loop.detectors.heisenbug_detector import (
     HeisenbugDetector,
     ObservationMode,
 )

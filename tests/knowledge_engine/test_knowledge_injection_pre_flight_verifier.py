@@ -3,7 +3,7 @@
 # [MODULE] tests.test_knowledge_injection_pre_flight_verifier
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.forensic.knowledge_injection_pre_flight_verifier
+# [CONSUMERS] zephyr.feedback_loop.forensic.knowledge_injection_pre_flight_verifier
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.forensic.knowledge_injection_pre_flight_verifier import (
+from zephyr.feedback_loop.forensic.knowledge_injection_pre_flight_verifier import (
     DryRunResult,
     KnowledgeInjectionPreFlightVerifier,
 )

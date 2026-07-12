@@ -3,7 +3,7 @@
 # [MODULE] tests.test_known_unknown_registry
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.known_unknown_registry
+# [CONSUMERS] zephyr.feedback_loop.collectors.known_unknown_registry
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_known_unknown_registry.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.collectors.known_unknown_registry import (
+from zephyr.feedback_loop.collectors.known_unknown_registry import (
     KnownUnknown,
     KnownUnknownRegistry,
     KnownUnknownState,

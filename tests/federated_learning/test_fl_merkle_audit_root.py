@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_merkle_audit_root
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.merkle_audit_root
+# [CONSUMERS] zephyr.feedback_loop.gates.merkle_audit_root
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_merkle_audit_root.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.merkle_audit_root import MerkleAuditRoot
+from zephyr.feedback_loop.gates.merkle_audit_root import MerkleAuditRoot
 
 
 class TestMerkleAuditRootInstantiation:

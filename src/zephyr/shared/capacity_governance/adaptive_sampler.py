@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.capacity_governance.adaptive_sampler
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.trading.feedback_loop.__init___from_obs; tests.unit.shared.test_orphan_integration
+# [CONSUMERS] zephyr.feedback_loop.__init___from_obs; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.template import SKELETONS
+from zephyr.feedback_loop.template import SKELETONS
 
 
 class TestSkeletons:

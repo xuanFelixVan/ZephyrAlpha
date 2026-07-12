@@ -19,7 +19,7 @@ from unittest.mock import MagicMock, patch
 from zephyr.shared.contracts.runtime_types import RuntimeConfig
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.dream_cycle import DreamCycle
-from zephyr.trading.feedback_loop import FeedbackLoop
+from zephyr.feedback_loop import FeedbackLoop
 from zephyr.trading.finalizer import Finalizer
 from zephyr.trading.health_monitor import HealthMonitor
 from zephyr.trading.integration_registry import IntegrationRegistry

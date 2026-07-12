@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.flag_lifecycle import FlagLifecycle
+from zephyr.feedback_loop.detectors.flag_lifecycle import FlagLifecycle
 
 
 class TestFlagLifecycleInstantiation:

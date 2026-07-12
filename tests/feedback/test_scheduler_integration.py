@@ -30,7 +30,7 @@ def scheduler():
         "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
     ) as vms_cls:
         vms_cls.return_value = MagicMock()
-        from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+        from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
         FeedbackLoopScheduler.reset_instance()
         s = FeedbackLoopScheduler(poll_interval=0.1)
@@ -192,7 +192,7 @@ class TestSchedulerSingleton:
         with patch(
             "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
         ):
-            from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+            from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
             FeedbackLoopScheduler.reset_instance()
             inst1 = FeedbackLoopScheduler.get_instance(poll_interval=0.1)
@@ -205,7 +205,7 @@ class TestSchedulerSingleton:
         with patch(
             "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
         ):
-            from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+            from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
             FeedbackLoopScheduler.reset_instance()
             inst1 = FeedbackLoopScheduler.get_instance(poll_interval=0.1)
@@ -245,7 +245,7 @@ class TestPersistFailurePattern:
     """
 
     def _make_bare_scheduler(self):
-        from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+        from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
         s = object.__new__(FeedbackLoopScheduler)
         return s
 

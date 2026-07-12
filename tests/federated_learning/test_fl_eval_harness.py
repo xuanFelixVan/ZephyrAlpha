@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_eval_harness
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.eval_harness
+# [CONSUMERS] zephyr.feedback_loop.eval_harness
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.feedback_loop.eval_harness import (
+from zephyr.feedback_loop.eval_harness import (
     CATEGORY_INTENT,
     EvalCase,
     EvalHarness,

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.log_anomaly import LogAnomaly
+from zephyr.feedback_loop.detectors.log_anomaly import LogAnomaly
 
 
 class TestLogAnomaly:

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_config
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.config
+# [CONSUMERS] zephyr.feedback_loop.config
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.config import FLEConfig
+from zephyr.feedback_loop.config import FLEConfig
 
 
 class TestFLEConfigInstantiation:

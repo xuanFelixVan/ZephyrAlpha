@@ -3,7 +3,7 @@
 # [MODULE] tests.test_cross_gen_validation
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.cross_gen_validation
+# [CONSUMERS] zephyr.feedback_loop.evolution.cross_gen_validation
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.evolution.cross_gen_validation import CrossGenValidation
+from zephyr.feedback_loop.evolution.cross_gen_validation import CrossGenValidation
 
 
 class TestCrossGenValidationInstantiation:

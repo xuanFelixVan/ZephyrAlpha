@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_deployment_suppression
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.deployment_suppression
+# [CONSUMERS] zephyr.feedback_loop.gates.deployment_suppression
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_deployment_suppression.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.deployment_suppression import DeployGateState, DeploymentSuppression
+from zephyr.feedback_loop.gates.deployment_suppression import DeployGateState, DeploymentSuppression
 
 
 class TestDeploymentSuppressionInstantiation:

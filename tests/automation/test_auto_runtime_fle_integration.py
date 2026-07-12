@@ -141,7 +141,7 @@ class TestStartFleSchedulerCreatesAndStarts:
         ) as mock_vms_cls:
             mock_vms_cls.return_value = MagicMock()
 
-            from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+            from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
             FeedbackLoopScheduler.reset_instance()
             scheduler = FeedbackLoopScheduler(poll_interval=0.1)

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_agent_skill_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.security.agent_skill_guard
+# [CONSUMERS] zephyr.feedback_loop.security.agent_skill_guard
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.security.agent_skill_guard import (
+from zephyr.feedback_loop.security.agent_skill_guard import (
     AgentSkillGuard,
     SkillRecord,
     SkillSecurityStatus,

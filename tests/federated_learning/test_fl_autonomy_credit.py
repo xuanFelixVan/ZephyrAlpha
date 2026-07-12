@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_autonomy_credit
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.autonomy_credit
+# [CONSUMERS] zephyr.feedback_loop.gates.autonomy_credit
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_autonomy_credit.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.autonomy_credit import AutonomyCredit
+from zephyr.feedback_loop.gates.autonomy_credit import AutonomyCredit
 
 
 class TestAutonomyCreditInstantiation:

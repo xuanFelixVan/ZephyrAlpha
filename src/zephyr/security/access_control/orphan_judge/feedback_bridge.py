@@ -30,7 +30,7 @@ class FeedbackBridge:
         self._loop = None
         self._available = False
         try:
-            from zephyr.trading.feedback_loop import FeedbackLoop
+            from zephyr.feedback_loop import FeedbackLoop
 
             # 5.133.6 修复：mkdtemp 创建系统临时目录从不清理，改为项目托管临时目录；
             # 同时开放 storage_path 参数支持依赖注入（测试可 mock）

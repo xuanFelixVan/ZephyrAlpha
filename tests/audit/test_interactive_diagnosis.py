@@ -3,7 +3,7 @@
 # [MODULE] tests.test_interactive_diagnosis
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.interactive_diagnosis
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.interactive_diagnosis
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.interactive_diagnosis import InteractiveDiagnosis
+from zephyr.feedback_loop.diagnosers.interactive_diagnosis import InteractiveDiagnosis
 
 
 class TestInteractiveDiagnosisInstantiation:

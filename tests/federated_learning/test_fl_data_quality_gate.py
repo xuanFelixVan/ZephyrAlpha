@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_data_quality_gate
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.data_quality_gate
+# [CONSUMERS] zephyr.feedback_loop.gates.data_quality_gate
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_data_quality_gate.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.data_quality_gate import DataQualityGate
+from zephyr.feedback_loop.gates.data_quality_gate import DataQualityGate
 
 
 class TestDataQualityGateInstantiation:

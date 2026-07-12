@@ -12,7 +12,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.self_diagnosis import (
+from zephyr.feedback_loop.self_diagnosis import (
     DiagnosisNode,
     DiagnosisReport,
     SelfDiagnosis,

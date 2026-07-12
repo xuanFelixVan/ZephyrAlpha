@@ -3,7 +3,7 @@
 # [MODULE] tests.test_failure_replay
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.failure_replay
+# [CONSUMERS] zephyr.feedback_loop.evolution.failure_replay
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.evolution.failure_replay import FailureReplay
+from zephyr.feedback_loop.evolution.failure_replay import FailureReplay
 
 
 class TestFailureReplayInstantiation:

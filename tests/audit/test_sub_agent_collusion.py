@@ -3,7 +3,7 @@
 # [MODULE] tests.test_sub_agent_collusion
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.forensic.sub_agent_collusion
+# [CONSUMERS] zephyr.feedback_loop.forensic.sub_agent_collusion
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.forensic.sub_agent_collusion import SubAgentCollusion, VotePair
+from zephyr.feedback_loop.forensic.sub_agent_collusion import SubAgentCollusion, VotePair
 
 
 class TestVotePair:

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_external_verifier
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.forensic.external_verifier
+# [CONSUMERS] zephyr.feedback_loop.forensic.external_verifier
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.forensic.external_verifier import (
+from zephyr.feedback_loop.forensic.external_verifier import (
     ExternalAudit,
     ExternalVerifier,
     Verdict,

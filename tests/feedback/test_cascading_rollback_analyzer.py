@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.feedback_loop.verifiers.cascading_rollback_analyzer import (
+from zephyr.feedback_loop.verifiers.cascading_rollback_analyzer import (
     CascadingRollbackAnalyzer,
     RollbackSafety,
 )

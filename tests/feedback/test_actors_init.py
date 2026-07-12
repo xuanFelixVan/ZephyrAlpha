@@ -11,7 +11,7 @@
 # [TESTS] python -m pytest tests/test_actors_init.py -q
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.actors import __all__
+from zephyr.feedback_loop.actors import __all__
 
 
 class TestActorsInitInstantiation:
@@ -66,17 +66,17 @@ class TestAllExports:
 
 class TestModuleImportability:
     def test_alert_router_importable(self):
-        from zephyr.trading.feedback_loop.actors import alert_router
+        from zephyr.feedback_loop.actors import alert_router
 
         assert alert_router is not None
 
     def test_saga_compensator_importable(self):
-        from zephyr.trading.feedback_loop.actors import saga_compensator
+        from zephyr.feedback_loop.actors import saga_compensator
 
         assert saga_compensator is not None
 
     def test_agent_lifecycle_importable(self):
-        from zephyr.trading.feedback_loop.actors import agent_lifecycle
+        from zephyr.feedback_loop.actors import agent_lifecycle
 
         assert agent_lifecycle is not None
 

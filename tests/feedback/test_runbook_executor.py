@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.runbook_executor import RunbookExecutor
+from zephyr.feedback_loop.detectors.runbook_executor import RunbookExecutor
 
 
 class TestRunbookExecutorInstantiation:

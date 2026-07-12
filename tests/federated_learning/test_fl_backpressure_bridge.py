@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_backpressure_bridge
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.backpressure_bridge
+# [CONSUMERS] zephyr.feedback_loop.backpressure_bridge
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from unittest.mock import MagicMock, patch
 
-from zephyr.trading.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure
+from zephyr.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure
 
 
 @dataclass
@@ -35,7 +35,7 @@ class TestSyncEvolutionProposalsToBackpressure:
         assert result["skipped"] is True
 
     def test_skips_when_no_critical_proposals(self):
-        from zephyr.trading.feedback_loop.evolution_engine import Severity
+        from zephyr.feedback_loop.evolution_engine import Severity
 
         proposals = [FakeProposal(severity=Severity.HIGH)]
         result = sync_evolution_proposals_to_backpressure(proposals, MagicMock())
@@ -43,7 +43,7 @@ class TestSyncEvolutionProposalsToBackpressure:
         assert result["critical_count"] == 0
 
     def test_throttles_on_critical_proposals(self):
-        from zephyr.trading.feedback_loop.evolution_engine import Severity
+        from zephyr.feedback_loop.evolution_engine import Severity
 
         proposals = [FakeProposal(severity=Severity.CRITICAL)]
         mock_bp = MagicMock()

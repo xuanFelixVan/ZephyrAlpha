@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_calendar_adapter
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.calendar_adapter
+# [CONSUMERS] zephyr.feedback_loop.collectors.calendar_adapter
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.collectors.calendar_adapter import CalendarAdapter
+from zephyr.feedback_loop.collectors.calendar_adapter import CalendarAdapter
 
 
 class TestCalendarAdapterInstantiation:

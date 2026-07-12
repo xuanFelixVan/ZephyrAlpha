@@ -3,7 +3,7 @@
 # [MODULE] tests.test_remote_attestation
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.security.remote_attestation
+# [CONSUMERS] zephyr.feedback_loop.security.remote_attestation
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.security.remote_attestation import (
+from zephyr.feedback_loop.security.remote_attestation import (
     AttestationReport,
     RemoteAttestation,
 )

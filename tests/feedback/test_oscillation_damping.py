@@ -3,7 +3,7 @@
 # [MODULE] tests.test_oscillation_damping
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.resilience.oscillation_damping
+# [CONSUMERS] zephyr.feedback_loop.resilience.oscillation_damping
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.resilience.oscillation_damping import (
+from zephyr.feedback_loop.resilience.oscillation_damping import (
     DampingState,
     OscillationDamping,
 )

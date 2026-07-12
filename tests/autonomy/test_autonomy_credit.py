@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.autonomy_credit import AutonomyCredit
+from zephyr.feedback_loop.gates.autonomy_credit import AutonomyCredit
 
 
 class TestAutonomyCreditInstantiation:

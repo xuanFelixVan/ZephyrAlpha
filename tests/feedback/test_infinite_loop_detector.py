@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.infinite_loop_detector import (
+from zephyr.feedback_loop.detectors.infinite_loop_detector import (
     InfiniteLoopDetector,
     LoopAction,
 )

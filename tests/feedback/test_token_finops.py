@@ -3,7 +3,7 @@
 # [MODULE] tests.test_token_finops
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.token_finops
+# [CONSUMERS] zephyr.feedback_loop.collectors.token_finops
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.collectors.token_finops import TokenFinOps
+from zephyr.feedback_loop.collectors.token_finops import TokenFinOps
 
 
 class TestTokenFinOpsInstantiation:

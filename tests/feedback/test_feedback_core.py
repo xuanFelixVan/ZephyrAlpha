@@ -15,7 +15,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.trading.feedback_loop.feedback_collector import (
+from zephyr.feedback_loop.feedback_collector import (
     FeedbackCollector,
     FeedbackEntry,
 )
@@ -236,7 +236,7 @@ class TestFeedbackLoopScheduler:
             patch("zephyr.trading.feedback_loop.scheduler.TimezoneSemanticReasoner") as tsr_cls,
             patch("zephyr.trading.feedback_loop.scheduler.ActionSelector") as as_cls,
         ):
-            from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+            from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
             mock_hr = MagicMock()
             mock_hr.numerical_guard = MagicMock()
@@ -304,7 +304,7 @@ class TestFeedbackLoopScheduler:
         assert mock_scheduler._running is False
 
     def test_get_instance_creates_singleton(self):
-        from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+        from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
         FeedbackLoopScheduler.reset_instance()
         with (
@@ -335,7 +335,7 @@ class TestFeedbackLoopScheduler:
             FeedbackLoopScheduler.reset_instance()
 
     def test_fle_pipeline_event_to_dict(self):
-        from zephyr.trading.feedback_loop.scheduler import FLEPipelineEvent
+        from zephyr.feedback_loop.scheduler import FLEPipelineEvent
 
         event = FLEPipelineEvent(
             run_id="abc123",
@@ -349,7 +349,7 @@ class TestFeedbackLoopScheduler:
         assert d["g6_gate_pass"] is True
 
     def test_max_events_trimming(self, mock_scheduler):
-        from zephyr.trading.feedback_loop.scheduler import FLEPipelineEvent
+        from zephyr.feedback_loop.scheduler import FLEPipelineEvent
 
         mock_scheduler.max_events = 5
         for i in range(8):

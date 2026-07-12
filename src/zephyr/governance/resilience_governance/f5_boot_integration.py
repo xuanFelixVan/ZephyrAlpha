@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.resilience_governance.f5_boot_integration
 # [DOMAIN]
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.trading.boot_hooks; zephyr.trading.feedback_loop.scheduler
+# [CONSUMERS] zephyr.trading.boot_hooks; zephyr.feedback_loop.scheduler
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] register_startup_hook is idempotent; on_startup initializes F5四组件; on_shutdown clears F5 state; run_health_checks never raises

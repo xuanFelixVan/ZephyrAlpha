@@ -16,7 +16,7 @@ from __future__ import annotations
 from unittest.mock import MagicMock
 
 from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
-from zephyr.trading.feedback_loop.protocols import AgentCapability
+from zephyr.feedback_loop.protocols import AgentCapability
 
 
 class TestRecordAgentSpec:

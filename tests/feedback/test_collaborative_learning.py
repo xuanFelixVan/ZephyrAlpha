@@ -3,7 +3,7 @@
 # [MODULE] tests.test_collaborative_learning
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.collaborative_learning
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.collaborative_learning
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.collaborative_learning import CollaborativeLearning
+from zephyr.feedback_loop.diagnosers.collaborative_learning import CollaborativeLearning
 
 
 class TestCollaborativeLearningInstantiation:

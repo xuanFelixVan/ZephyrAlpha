@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.verifiers.attack_simulator import AttackSimulator
+from zephyr.feedback_loop.verifiers.attack_simulator import AttackSimulator
 
 
 class TestAttackSimulatorInstantiation:

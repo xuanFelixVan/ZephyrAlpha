@@ -3,7 +3,7 @@
 # [MODULE] tests.test_config_hot_reload_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.resilience.config_hot_reload_guard
+# [CONSUMERS] zephyr.feedback_loop.resilience.config_hot_reload_guard
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.resilience.config_hot_reload_guard import (
+from zephyr.feedback_loop.resilience.config_hot_reload_guard import (
     ConfigConsistency,
     ConfigHotReloadGuard,
 )

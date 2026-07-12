@@ -3,7 +3,7 @@
 # [MODULE] tests.test_self_health_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.self_health_monitor
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.self_health_monitor
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.self_health_monitor import (
+from zephyr.feedback_loop.diagnosers.self_health_monitor import (
     HealthStatus,
     SelfHealthMonitor,
 )

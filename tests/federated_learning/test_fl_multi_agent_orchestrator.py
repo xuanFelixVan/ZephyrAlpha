@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_multi_agent_orchestrator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.actors.multi_agent_orchestrator
+# [CONSUMERS] zephyr.feedback_loop.actors.multi_agent_orchestrator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.actors.multi_agent_orchestrator import MultiAgentOrchestrator
+from zephyr.feedback_loop.actors.multi_agent_orchestrator import MultiAgentOrchestrator
 
 
 class TestMultiAgentOrchestratorInstantiation:

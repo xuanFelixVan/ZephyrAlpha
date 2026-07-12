@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/session_simulator.py | §
 # [MODULE] scripts.governance.session_simulator
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
+# [DEPENDENCIES] zephyr.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype

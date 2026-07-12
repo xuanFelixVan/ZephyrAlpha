@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_autonomy_maturity
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.autonomy_maturity
+# [CONSUMERS] zephyr.feedback_loop.gates.autonomy_maturity
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_autonomy_maturity.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.autonomy_maturity import AutonomyMaturity
+from zephyr.feedback_loop.gates.autonomy_maturity import AutonomyMaturity
 
 
 class TestAutonomyMaturityInstantiation:

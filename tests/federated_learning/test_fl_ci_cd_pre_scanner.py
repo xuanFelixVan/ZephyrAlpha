@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_ci_cd_pre_scanner
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.ci_cd_pre_scanner
+# [CONSUMERS] zephyr.feedback_loop.gates.ci_cd_pre_scanner
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.feedback_loop.gates.ci_cd_pre_scanner import CICDPreScanner
+from zephyr.feedback_loop.gates.ci_cd_pre_scanner import CICDPreScanner
 
 
 class TestCICDPreScannerInstantiation:

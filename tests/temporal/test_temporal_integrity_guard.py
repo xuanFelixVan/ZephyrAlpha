@@ -3,7 +3,7 @@
 # [MODULE] tests.test_temporal_integrity_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.temporal_integrity_guard
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.temporal_integrity_guard
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.trading.feedback_loop.diagnosers.temporal_integrity_guard import (
+from zephyr.feedback_loop.diagnosers.temporal_integrity_guard import (
     TemporalIntegrityGuard,
     TimeAnomaly,
 )

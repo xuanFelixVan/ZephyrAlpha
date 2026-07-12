@@ -34,7 +34,7 @@ import json
 
 import pytest
 
-from zephyr.trading.feedback_loop.fitness_functions import (
+from zephyr.feedback_loop.fitness_functions import (
     METRIC_COMPLIANCE_RATE,
     METRIC_HALLUCINATION_INTERCEPTION,
     METRIC_KNOWLEDGE_ACTIVATION,

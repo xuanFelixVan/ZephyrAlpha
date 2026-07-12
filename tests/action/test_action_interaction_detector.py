@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import time
 
-from zephyr.trading.feedback_loop.detectors.action_interaction_detector import (
+from zephyr.feedback_loop.detectors.action_interaction_detector import (
     ActionInteractionDetector,
 )
 

@@ -40,7 +40,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 from zephyr.trading.ai_audit_logger import AiAuditLogger
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.dream_cycle import DreamCycle
-from zephyr.trading.feedback_loop import FeedbackLoop
+from zephyr.feedback_loop import FeedbackLoop
 from zephyr.trading.finalizer import Finalizer
 from zephyr.trading.health_monitor import HealthMonitor
 from zephyr.trading.integration_registry import IntegrationRegistry

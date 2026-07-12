@@ -3,7 +3,7 @@
 # [MODULE] tests.test_interrupt_coherence_validator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.forensic.interrupt_coherence_validator
+# [CONSUMERS] zephyr.feedback_loop.forensic.interrupt_coherence_validator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.forensic.interrupt_coherence_validator import (
+from zephyr.feedback_loop.forensic.interrupt_coherence_validator import (
     CoherenceStatus,
     InterruptCoherenceValidator,
 )

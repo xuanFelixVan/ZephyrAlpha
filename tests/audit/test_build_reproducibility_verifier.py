@@ -3,7 +3,7 @@
 # [MODULE] tests.test_build_reproducibility_verifier
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.verifiers.build_reproducibility_verifier
+# [CONSUMERS] zephyr.feedback_loop.verifiers.build_reproducibility_verifier
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.verifiers.build_reproducibility_verifier import (
+from zephyr.feedback_loop.verifiers.build_reproducibility_verifier import (
     BuildIntegrity,
     BuildReproducibilityVerifier,
 )

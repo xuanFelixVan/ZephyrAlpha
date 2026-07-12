@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.orchestrator.execution.trigger_router
 # [DOMAIN] D_ORCHESTRATOR
-# [DEPENDENCIES] zephyr.trading.__init__; zephyr.governance.rule_enforcement.drift_detector; zephyr.trading.feedback_loop.__init__
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.governance.rule_enforcement.drift_detector; zephyr.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -696,7 +696,7 @@ def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     对标 MOD-CONTEXT_ENGINE (feedback-loop) §4。
     """
     try:
-        from zephyr.trading.feedback_loop.decision_engine import reflect_on_blueprint
+        from zephyr.feedback_loop.decision_engine import reflect_on_blueprint
 
         result = reflect_on_blueprint(payload)
         return {

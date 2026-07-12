@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_dynamic_llm_cost_router
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.dynamic_llm_cost_router
+# [CONSUMERS] zephyr.feedback_loop.gates.dynamic_llm_cost_router
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_dynamic_llm_cost_router.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.dynamic_llm_cost_router import DynamicLLMCostRouter
+from zephyr.feedback_loop.gates.dynamic_llm_cost_router import DynamicLLMCostRouter
 
 
 class TestDynamicLLMCostRouterInstantiation:

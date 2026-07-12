@@ -3,7 +3,7 @@
 # [MODULE] tests.test_feedback_collector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.feedback_collector
+# [CONSUMERS] zephyr.feedback_loop.feedback_collector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.feedback_loop.feedback_collector import (
+from zephyr.feedback_loop.feedback_collector import (
     ActionResult,
     FeedbackChannel,
     FeedbackCollector,

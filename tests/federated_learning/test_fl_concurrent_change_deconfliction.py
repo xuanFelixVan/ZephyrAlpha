@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_concurrent_change_deconfliction
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.concurrent_change_deconfliction
+# [CONSUMERS] zephyr.feedback_loop.gates.concurrent_change_deconfliction
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_concurrent_change_deconfliction.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.concurrent_change_deconfliction import (
+from zephyr.feedback_loop.gates.concurrent_change_deconfliction import (
     ChangeSource,
     ConcurrentChangeDeconfliction,
 )

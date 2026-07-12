@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.positive_feedback_defense import PositiveFeedbackDefense
+from zephyr.feedback_loop.detectors.positive_feedback_defense import PositiveFeedbackDefense
 
 
 class TestPositiveFeedbackDefense:

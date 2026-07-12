@@ -3,7 +3,7 @@
 # [MODULE] tests.test_schema_evolution
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.schema_evolution
+# [CONSUMERS] zephyr.feedback_loop.collectors.schema_evolution
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.collectors.schema_evolution import SchemaEvolution
+from zephyr.feedback_loop.collectors.schema_evolution import SchemaEvolution
 
 
 class TestSchemaEvolutionInstantiation:

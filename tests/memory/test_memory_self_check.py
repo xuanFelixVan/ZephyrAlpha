@@ -3,7 +3,7 @@
 # [MODULE] tests.test_memory_self_check
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.memory_self_check
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.memory_self_check
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.memory_self_check import MemorySelfCheck
+from zephyr.feedback_loop.diagnosers.memory_self_check import MemorySelfCheck
 
 
 class TestMemorySelfCheckInstantiation:

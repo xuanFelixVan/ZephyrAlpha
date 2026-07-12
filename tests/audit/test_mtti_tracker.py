@@ -3,7 +3,7 @@
 # [MODULE] tests.test_mtti_tracker
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.mtti_tracker
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.mtti_tracker
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.trading.feedback_loop.diagnosers.mtti_tracker import MTTIEvent, MTTITracker
+from zephyr.feedback_loop.diagnosers.mtti_tracker import MTTIEvent, MTTITracker
 
 
 class TestMTTIEvent:

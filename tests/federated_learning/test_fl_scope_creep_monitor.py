@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_scope_creep_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.scope_creep_monitor
+# [CONSUMERS] zephyr.feedback_loop.gates.scope_creep_monitor
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_scope_creep_monitor.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.scope_creep_monitor import ScopeCreepMonitor, ScopeEvent
+from zephyr.feedback_loop.gates.scope_creep_monitor import ScopeCreepMonitor, ScopeEvent
 
 
 class TestScopeCreepMonitorInstantiation:

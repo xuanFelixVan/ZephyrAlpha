@@ -15,29 +15,29 @@ from datetime import UTC, datetime
 
 import pytest
 
-from zephyr.trading.feedback_loop.diagnosers.action_composition_health_monitor import ActionCompositionHealthMonitor
-from zephyr.trading.feedback_loop.diagnosers.adaptive_param_tuning import AdaptiveParamTuning, TuningMode
-from zephyr.trading.feedback_loop.diagnosers.amplification_guard import AmplificationGuard
-from zephyr.trading.feedback_loop.diagnosers.api_dependency_metrics import APIDependencyMetrics, DependencyStatusRecord
-from zephyr.trading.feedback_loop.diagnosers.auto_diagnosis import AutoDiagnosis
-from zephyr.trading.feedback_loop.diagnosers.burn_rate_alerter import BurnRateAlerter
-from zephyr.trading.feedback_loop.diagnosers.burnout_alarm import BurnoutAlarm
-from zephyr.trading.feedback_loop.diagnosers.capacity_aware_repair import CapacityAwareRepair
-from zephyr.trading.feedback_loop.diagnosers.causal_inference_engine import CausalGraph, CausalInferenceEngine
-from zephyr.trading.feedback_loop.diagnosers.cognitive_load import CognitiveLoad
-from zephyr.trading.feedback_loop.diagnosers.cognitive_load_budget import CognitiveLoadBudget
-from zephyr.trading.feedback_loop.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode, ColdStartPhase
-from zephyr.trading.feedback_loop.diagnosers.collaborative_learning import CollaborativeLearning
-from zephyr.trading.feedback_loop.diagnosers.confidence_decomposer import ConfidenceDecomposer
-from zephyr.trading.feedback_loop.diagnosers.context_truncation import ContextTruncation
-from zephyr.trading.feedback_loop.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
-from zephyr.trading.feedback_loop.diagnosers.timezone_semantic_reasoner import TimezoneSemanticReasoner
-from zephyr.trading.feedback_loop.diagnosers.toil_quantification import ActionClass, ToilQuantification
-from zephyr.trading.feedback_loop.diagnosers.tone_adapter import ToneAdapter
-from zephyr.trading.feedback_loop.diagnosers.tone_adapter_v2 import ToneAdapterV2
-from zephyr.trading.feedback_loop.diagnosers.value_added_baseline import ValueAddedBaseline
-from zephyr.trading.feedback_loop.diagnosers.vertical_self_assessment import VerticalSelfAssessment
-from zephyr.trading.feedback_loop.diagnosers.zombie_fle_detector import CognitiveState, ZombieFLEDetector
+from zephyr.feedback_loop.diagnosers.action_composition_health_monitor import ActionCompositionHealthMonitor
+from zephyr.feedback_loop.diagnosers.adaptive_param_tuning import AdaptiveParamTuning, TuningMode
+from zephyr.feedback_loop.diagnosers.amplification_guard import AmplificationGuard
+from zephyr.feedback_loop.diagnosers.api_dependency_metrics import APIDependencyMetrics, DependencyStatusRecord
+from zephyr.feedback_loop.diagnosers.auto_diagnosis import AutoDiagnosis
+from zephyr.feedback_loop.diagnosers.burn_rate_alerter import BurnRateAlerter
+from zephyr.feedback_loop.diagnosers.burnout_alarm import BurnoutAlarm
+from zephyr.feedback_loop.diagnosers.capacity_aware_repair import CapacityAwareRepair
+from zephyr.feedback_loop.diagnosers.causal_inference_engine import CausalGraph, CausalInferenceEngine
+from zephyr.feedback_loop.diagnosers.cognitive_load import CognitiveLoad
+from zephyr.feedback_loop.diagnosers.cognitive_load_budget import CognitiveLoadBudget
+from zephyr.feedback_loop.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode, ColdStartPhase
+from zephyr.feedback_loop.diagnosers.collaborative_learning import CollaborativeLearning
+from zephyr.feedback_loop.diagnosers.confidence_decomposer import ConfidenceDecomposer
+from zephyr.feedback_loop.diagnosers.context_truncation import ContextTruncation
+from zephyr.feedback_loop.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
+from zephyr.feedback_loop.diagnosers.timezone_semantic_reasoner import TimezoneSemanticReasoner
+from zephyr.feedback_loop.diagnosers.toil_quantification import ActionClass, ToilQuantification
+from zephyr.feedback_loop.diagnosers.tone_adapter import ToneAdapter
+from zephyr.feedback_loop.diagnosers.tone_adapter_v2 import ToneAdapterV2
+from zephyr.feedback_loop.diagnosers.value_added_baseline import ValueAddedBaseline
+from zephyr.feedback_loop.diagnosers.vertical_self_assessment import VerticalSelfAssessment
+from zephyr.feedback_loop.diagnosers.zombie_fle_detector import CognitiveState, ZombieFLEDetector
 
 
 class TestAutoDiagnosis:

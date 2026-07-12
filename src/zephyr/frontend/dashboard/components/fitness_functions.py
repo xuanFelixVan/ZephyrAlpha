@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.fitness_functions
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
+# [DEPENDENCIES] zephyr.feedback_loop.__init__
 # [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] imported
 # [MATURITY] production
@@ -37,7 +37,7 @@ try:
 except ImportError:  # 测试环境无 panel
     pn = None
 
-from zephyr.trading.feedback_loop.fitness_functions import (
+from zephyr.feedback_loop.fitness_functions import (
     FitnessFunctionFramework,
     FitnessInputs,
     FitnessReport,

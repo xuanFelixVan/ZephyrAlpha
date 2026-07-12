@@ -3,7 +3,7 @@
 # [MODULE] tests.test_capacity_aware_repair
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.capacity_aware_repair
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.capacity_aware_repair
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_capacity_aware_repair.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.diagnosers.capacity_aware_repair import CapacityAwareRepair
+from zephyr.feedback_loop.diagnosers.capacity_aware_repair import CapacityAwareRepair
 
 
 class TestCapacityAwareRepair:

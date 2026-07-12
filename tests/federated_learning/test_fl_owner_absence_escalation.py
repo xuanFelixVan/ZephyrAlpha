@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_owner_absence_escalation
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.actors.owner_absence_escalation
+# [CONSUMERS] zephyr.feedback_loop.actors.owner_absence_escalation
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import time
 
-from zephyr.trading.feedback_loop.actors.owner_absence_escalation import (
+from zephyr.feedback_loop.actors.owner_absence_escalation import (
     AbsenceState,
     OwnerAbsenceEscalation,
 )

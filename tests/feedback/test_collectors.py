@@ -15,42 +15,42 @@ import time
 
 import pytest
 
-from zephyr.trading.feedback_loop.collectors.calendar_adapter import CalendarAdapter
-from zephyr.trading.feedback_loop.collectors.config_timeline import ConfigTimeline
-from zephyr.trading.feedback_loop.collectors.data_quality_validator import DataQualityValidator
-from zephyr.trading.feedback_loop.collectors.financial_stratification import FinancialStratification
-from zephyr.trading.feedback_loop.collectors.kb_provenance import KBProvenance
-from zephyr.trading.feedback_loop.collectors.knowledge_capture import KnowledgeCapture
-from zephyr.trading.feedback_loop.collectors.knowledge_freshness import KnowledgeFreshness
-from zephyr.trading.feedback_loop.collectors.knowledge_injection import KnowledgeInjection
-from zephyr.trading.feedback_loop.collectors.knowledge_packaging import KnowledgePackaging
-from zephyr.trading.feedback_loop.collectors.known_unknown_registry import (
+from zephyr.feedback_loop.collectors.calendar_adapter import CalendarAdapter
+from zephyr.feedback_loop.collectors.config_timeline import ConfigTimeline
+from zephyr.feedback_loop.collectors.data_quality_validator import DataQualityValidator
+from zephyr.feedback_loop.collectors.financial_stratification import FinancialStratification
+from zephyr.feedback_loop.collectors.kb_provenance import KBProvenance
+from zephyr.feedback_loop.collectors.knowledge_capture import KnowledgeCapture
+from zephyr.feedback_loop.collectors.knowledge_freshness import KnowledgeFreshness
+from zephyr.feedback_loop.collectors.knowledge_injection import KnowledgeInjection
+from zephyr.feedback_loop.collectors.knowledge_packaging import KnowledgePackaging
+from zephyr.feedback_loop.collectors.known_unknown_registry import (
     KnownUnknownRegistry,
     KnownUnknownState,
 )
-from zephyr.trading.feedback_loop.collectors.llm_cost_accounting import LLMCostAccounting
-from zephyr.trading.feedback_loop.collectors.market_calendar import MarketCalendar
-from zephyr.trading.feedback_loop.collectors.market_event_integrator import (
+from zephyr.feedback_loop.collectors.llm_cost_accounting import LLMCostAccounting
+from zephyr.feedback_loop.collectors.market_calendar import MarketCalendar
+from zephyr.feedback_loop.collectors.market_event_integrator import (
     MarketEventIntegrator,
     MarketMode,
 )
-from zephyr.trading.feedback_loop.collectors.notification_feedback import NotificationFeedback
-from zephyr.trading.feedback_loop.collectors.schema_evolution import SchemaEvolution
-from zephyr.trading.feedback_loop.collectors.schema_migration import (
+from zephyr.feedback_loop.collectors.notification_feedback import NotificationFeedback
+from zephyr.feedback_loop.collectors.schema_evolution import SchemaEvolution
+from zephyr.feedback_loop.collectors.schema_migration import (
     MigrationStatus,
     MigrationStep,
     SchemaMigration,
 )
-from zephyr.trading.feedback_loop.collectors.temporal_event_store import TemporalEventStore
-from zephyr.trading.feedback_loop.collectors.token_finops import TokenFinOps
-from zephyr.trading.feedback_loop.feedback_collector import (
+from zephyr.feedback_loop.collectors.temporal_event_store import TemporalEventStore
+from zephyr.feedback_loop.collectors.token_finops import TokenFinOps
+from zephyr.feedback_loop.feedback_collector import (
     ActionResult,
     FeedbackChannel,
     FeedbackCollector,
     OwnerAck,
     OwnerResponse,
 )
-from zephyr.trading.feedback_loop.metrics_collector import EMABaseline, MetricsCollector, MetricSnapshot
+from zephyr.feedback_loop.metrics_collector import EMABaseline, MetricsCollector, MetricSnapshot
 
 
 class TestMetricSnapshot:

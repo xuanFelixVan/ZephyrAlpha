@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.feedback_loop.verifiers.build_reproducibility_verifier import (
+from zephyr.feedback_loop.verifiers.build_reproducibility_verifier import (
     BuildIntegrity,
     BuildReproducibilityVerifier,
 )

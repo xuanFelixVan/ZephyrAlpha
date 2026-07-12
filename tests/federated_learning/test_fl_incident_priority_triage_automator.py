@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_incident_priority_triage_automator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.actors.incident_priority_triage_automator
+# [CONSUMERS] zephyr.feedback_loop.actors.incident_priority_triage_automator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.actors.incident_priority_triage_automator import (
+from zephyr.feedback_loop.actors.incident_priority_triage_automator import (
     IncidentPriorityTriageAutomator,
     Severity,
 )

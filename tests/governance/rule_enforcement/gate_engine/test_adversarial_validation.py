@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.adversarial_validation import AdversarialValidation
+from zephyr.feedback_loop.gates.adversarial_validation import AdversarialValidation
 
 
 class TestAdversarialValidationInstantiation:

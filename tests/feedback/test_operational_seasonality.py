@@ -3,7 +3,7 @@
 # [MODULE] tests.test_operational_seasonality
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.operational_seasonality
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.operational_seasonality
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -14,7 +14,7 @@
 from datetime import datetime
 from unittest.mock import patch
 
-from zephyr.trading.feedback_loop.diagnosers.operational_seasonality import (
+from zephyr.feedback_loop.diagnosers.operational_seasonality import (
     OperationalSeasonality,
     OpMode,
 )

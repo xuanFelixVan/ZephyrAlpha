@@ -43,28 +43,28 @@ class TestDocsPackageImport:
 
 class TestColdStartManual:
     def test_cold_start_manual_importable_via_package(self):
-        from zephyr.trading.feedback_loop.docs import cold_start_manual
+        from zephyr.feedback_loop.docs import cold_start_manual
 
         assert cold_start_manual is not None
 
     def test_cold_start_manual_has_guide_constant(self):
-        from zephyr.trading.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
+        from zephyr.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
 
         assert isinstance(COLD_START_GUIDE, str)
         assert len(COLD_START_GUIDE) > 0
 
     def test_cold_start_guide_contains_protocol(self):
-        from zephyr.trading.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
+        from zephyr.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
 
         assert "Cold Start Protocol" in COLD_START_GUIDE
 
     def test_cold_start_guide_mentions_observe_only(self):
-        from zephyr.trading.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
+        from zephyr.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
 
         assert "OBSERVE_ONLY" in COLD_START_GUIDE
 
     def test_cold_start_guide_mentions_graduated_autonomy(self):
-        from zephyr.trading.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
+        from zephyr.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
 
         assert "Graduated autonomy" in COLD_START_GUIDE
 
@@ -80,7 +80,7 @@ class TestDocsBoundary:
             assert isinstance(name, str), f"__all__ entry '{name}' is not a string"
 
     def test_cold_start_guide_is_non_empty_multiline(self):
-        from zephyr.trading.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
+        from zephyr.feedback_loop.docs.cold_start_manual import COLD_START_GUIDE
 
         lines = COLD_START_GUIDE.strip().splitlines()
         assert len(lines) >= 3

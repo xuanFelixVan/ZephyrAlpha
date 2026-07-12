@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.conflict_arbitration import ConflictArbitration
+from zephyr.feedback_loop.gates.conflict_arbitration import ConflictArbitration
 
 
 class TestConflictArbitrationInstantiation:

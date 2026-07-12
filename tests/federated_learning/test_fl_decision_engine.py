@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_decision_engine
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.decision_engine
+# [CONSUMERS] zephyr.feedback_loop.decision_engine
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,13 +15,13 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.trading.feedback_loop.decision_engine import (
+from zephyr.feedback_loop.decision_engine import (
     AnomalyReport,
     AnomalySeverity,
     DecisionEngine,
     reflect_on_blueprint,
 )
-from zephyr.trading.feedback_loop.protocols import ActionType
+from zephyr.feedback_loop.protocols import ActionType
 
 
 class TestDecisionEngineInstantiation:

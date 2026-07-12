@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_action_reversibility
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.action_reversibility
+# [CONSUMERS] zephyr.feedback_loop.gates.action_reversibility
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_action_reversibility.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.action_reversibility import ActionReversibility, Reversibility
+from zephyr.feedback_loop.gates.action_reversibility import ActionReversibility, Reversibility
 
 
 class TestActionReversibilityInstantiation:

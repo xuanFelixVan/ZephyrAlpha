@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.detectors.chaos_engineering import ChaosEngineering
+from zephyr.feedback_loop.detectors.chaos_engineering import ChaosEngineering
 
 
 class TestChaosEngineeringInstantiation:

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_knowledge_market
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.knowledge_market
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.knowledge_market
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.knowledge_market import KnowledgeMarket
+from zephyr.feedback_loop.diagnosers.knowledge_market import KnowledgeMarket
 
 
 class TestKnowledgeMarketInstantiation:

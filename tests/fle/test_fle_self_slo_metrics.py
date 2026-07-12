@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fle_self_slo_metrics
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.fle_self_slo_metrics
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.fle_self_slo_metrics
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.trading.feedback_loop.diagnosers.fle_self_slo_metrics import (
+from zephyr.feedback_loop.diagnosers.fle_self_slo_metrics import (
     FLESelfSLO,
     FLESLOMetric,
 )

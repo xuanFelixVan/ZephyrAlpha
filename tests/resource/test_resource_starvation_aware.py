@@ -3,7 +3,7 @@
 # [MODULE] tests.test_resource_starvation_aware
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.resilience.resource_starvation_aware
+# [CONSUMERS] zephyr.feedback_loop.resilience.resource_starvation_aware
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.resilience.resource_starvation_aware import (
+from zephyr.feedback_loop.resilience.resource_starvation_aware import (
     ResourceBudget,
     ResourceStarvationAware,
 )

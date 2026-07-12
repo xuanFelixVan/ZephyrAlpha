@@ -3,7 +3,7 @@
 # [MODULE] tests.test_self_reflection
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.self_reflection
+# [CONSUMERS] zephyr.feedback_loop.evolution.self_reflection
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.evolution.self_reflection import SelfReflection
+from zephyr.feedback_loop.evolution.self_reflection import SelfReflection
 
 
 class TestSelfReflectionInstantiation:

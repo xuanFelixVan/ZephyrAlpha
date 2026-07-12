@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.llm_cost_router import LLMCostRouter
+from zephyr.feedback_loop.gates.llm_cost_router import LLMCostRouter
 
 
 class TestLLMCostRouterInstantiation:

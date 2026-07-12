@@ -3,7 +3,7 @@
 # [MODULE] tests.test_guard_complexity_budget
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.forensic.guard_complexity_budget
+# [CONSUMERS] zephyr.feedback_loop.forensic.guard_complexity_budget
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.forensic.guard_complexity_budget import GuardComplexityBudget
+from zephyr.feedback_loop.forensic.guard_complexity_budget import GuardComplexityBudget
 
 
 class TestGuardComplexityBudget:

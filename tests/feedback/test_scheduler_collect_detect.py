@@ -14,15 +14,15 @@
 import time
 from unittest.mock import MagicMock
 
-from zephyr.trading.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
-from zephyr.trading.feedback_loop.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
-from zephyr.trading.feedback_loop.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
-from zephyr.trading.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
-from zephyr.trading.feedback_loop.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
-from zephyr.trading.feedback_loop.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
-from zephyr.trading.feedback_loop.feedback_collector import FeedbackCollector
-from zephyr.trading.feedback_loop.metrics_collector import MetricsCollector
-from zephyr.trading.feedback_loop.scheduler_collect_detect import CollectDetectHandler
+from zephyr.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
+from zephyr.feedback_loop.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
+from zephyr.feedback_loop.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
+from zephyr.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
+from zephyr.feedback_loop.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
+from zephyr.feedback_loop.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
+from zephyr.feedback_loop.feedback_collector import FeedbackCollector
+from zephyr.feedback_loop.metrics_collector import MetricsCollector
+from zephyr.feedback_loop.scheduler_collect_detect import CollectDetectHandler
 
 
 def make_handler():

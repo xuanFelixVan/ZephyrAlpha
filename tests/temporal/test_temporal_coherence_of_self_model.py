@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.temporal_coherence_of_self_model import (
+from zephyr.feedback_loop.detectors.temporal_coherence_of_self_model import (
     SelfModelSnapshot,
     TemporalCoherenceOfSelfModel,
 )

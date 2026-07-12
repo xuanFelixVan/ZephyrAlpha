@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_conflict_arbitration
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.conflict_arbitration
+# [CONSUMERS] zephyr.feedback_loop.gates.conflict_arbitration
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_conflict_arbitration.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.conflict_arbitration import ConflictArbitration
+from zephyr.feedback_loop.gates.conflict_arbitration import ConflictArbitration
 
 
 class TestConflictArbitrationInstantiation:

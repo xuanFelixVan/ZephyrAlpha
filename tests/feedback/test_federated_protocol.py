@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.verifiers.federated_protocol import FederatedProtocol
+from zephyr.feedback_loop.verifiers.federated_protocol import FederatedProtocol
 
 
 class TestFederatedProtocolInstantiation:

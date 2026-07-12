@@ -3,7 +3,7 @@
 # [MODULE] tests.test_cognitive_load_budget
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.cognitive_load_budget
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.cognitive_load_budget
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.cognitive_load_budget import (
+from zephyr.feedback_loop.diagnosers.cognitive_load_budget import (
     CognitiveLoadBudget,
     DecisionRecord,
 )

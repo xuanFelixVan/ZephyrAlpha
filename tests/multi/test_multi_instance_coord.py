@@ -3,7 +3,7 @@
 # [MODULE] tests.test_multi_instance_coord
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.resilience.multi_instance_coord
+# [CONSUMERS] zephyr.feedback_loop.resilience.multi_instance_coord
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.resilience.multi_instance_coord import (
+from zephyr.feedback_loop.resilience.multi_instance_coord import (
     InstanceInfo,
     InstanceRole,
     MultiInstanceCoord,

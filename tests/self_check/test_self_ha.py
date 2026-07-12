@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.self_ha import SelfHA
+from zephyr.feedback_loop.detectors.self_ha import SelfHA
 
 
 class TestSelfHAInstantiation:

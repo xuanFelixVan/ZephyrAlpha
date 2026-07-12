@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_db_bridge
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.db_bridge
+# [CONSUMERS] zephyr.feedback_loop.db_bridge
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.db_bridge import bulk_record_via_db_contract, record_via_db_contract
+from zephyr.feedback_loop.db_bridge import bulk_record_via_db_contract, record_via_db_contract
 
 
 class TestRecordViaDbContract:

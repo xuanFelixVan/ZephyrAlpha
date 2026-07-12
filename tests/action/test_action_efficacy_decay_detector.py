@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.feedback_loop.detectors.action_efficacy_decay_detector import (
+from zephyr.feedback_loop.detectors.action_efficacy_decay_detector import (
     ActionEfficacyDecayDetector,
     ActionEfficacyRecord,
 )

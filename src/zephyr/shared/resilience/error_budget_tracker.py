@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.resilience.error_budget_tracker
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.infrastructure.capacity_assurance.modules.__init__; zephyr.trading.feedback_loop.auto_evolution; tests.unit.shared.test_orphan_integration
+# [CONSUMERS] zephyr.infrastructure.capacity_assurance.modules.__init__; zephyr.feedback_loop.auto_evolution; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_wireheading_prevention
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.security.wireheading_prevention
+# [CONSUMERS] zephyr.feedback_loop.security.wireheading_prevention
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.security.wireheading_prevention import (
+from zephyr.feedback_loop.security.wireheading_prevention import (
     WireheadingPrevention,
     WireheadState,
 )

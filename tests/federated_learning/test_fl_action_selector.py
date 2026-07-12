@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_action_selector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.actors.action_selector
+# [CONSUMERS] zephyr.feedback_loop.actors.action_selector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -17,8 +17,8 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
-from zephyr.trading.feedback_loop.actors.action_selector import ActionSelector
-from zephyr.trading.feedback_loop.protocols import ActionType
+from zephyr.feedback_loop.actors.action_selector import ActionSelector
+from zephyr.feedback_loop.protocols import ActionType
 
 
 @dataclass

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.feedback_loop.verifiers.digital_twin_sandbox import DigitalTwinSandbox
+from zephyr.feedback_loop.verifiers.digital_twin_sandbox import DigitalTwinSandbox
 
 
 class TestDigitalTwinSandboxInstantiation:

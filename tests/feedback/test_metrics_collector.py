@@ -3,7 +3,7 @@
 # [MODULE] tests.test_metrics_collector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.metrics_collector
+# [CONSUMERS] zephyr.feedback_loop.metrics_collector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -16,7 +16,7 @@ from dataclasses import fields
 
 import pytest
 
-from zephyr.trading.feedback_loop.metrics_collector import (
+from zephyr.feedback_loop.metrics_collector import (
     EMABaseline,
     MetricsCollector,
     MetricSnapshot,

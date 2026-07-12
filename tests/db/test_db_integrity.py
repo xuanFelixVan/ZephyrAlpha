@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.db_integrity import DBIntegrity
+from zephyr.feedback_loop.gates.db_integrity import DBIntegrity
 
 
 class TestDBIntegrityInstantiation:

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_cognitive_load
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.cognitive_load
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.cognitive_load
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.feedback_loop.diagnosers.cognitive_load import CognitiveLoad
+from zephyr.feedback_loop.diagnosers.cognitive_load import CognitiveLoad
 
 
 class TestCognitiveLoad:

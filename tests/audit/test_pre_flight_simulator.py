@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.verifiers.pre_flight_simulator import PreFlightSimulator
+from zephyr.feedback_loop.verifiers.pre_flight_simulator import PreFlightSimulator
 
 
 class TestPreFlightSimulatorInstantiation:

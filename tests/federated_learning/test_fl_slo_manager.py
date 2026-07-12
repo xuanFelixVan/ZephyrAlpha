@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_slo_manager
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.slo_manager
+# [CONSUMERS] zephyr.feedback_loop.slo_manager
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.slo_manager import SLOManager
+from zephyr.feedback_loop.slo_manager import SLOManager
 
 
 class TestSLOManagerInstantiation:

@@ -21,7 +21,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from zephyr.trading.feedback_loop.evolution_engine import (
+from zephyr.feedback_loop.evolution_engine import (
     DEFAULT_THRESHOLDS,
     EvolutionEngine,
     EvolutionProposal,
@@ -30,10 +30,10 @@ from zephyr.trading.feedback_loop.evolution_engine import (
     FeedbackLayer,
     evolve,
 )
-from zephyr.trading.feedback_loop.evolution_engine import (
+from zephyr.feedback_loop.evolution_engine import (
     Severity as EvolutionSeverity,
 )
-from zephyr.trading.feedback_loop.feedback_collector import FeedbackCollector
+from zephyr.feedback_loop.feedback_collector import FeedbackCollector
 
 FIXED_NOW = datetime(2026, 4, 24, 0, 0, 0, tzinfo=UTC)
 
@@ -361,7 +361,7 @@ class TestEvolveEntry:
 
 
 def test_exports_present() -> None:
-    from zephyr.trading.feedback_loop.feedback_loop import evolution_engine as m
+    from zephyr.feedback_loop.feedback_loop import evolution_engine as m
 
     for name in [
         "EvolutionSignal",

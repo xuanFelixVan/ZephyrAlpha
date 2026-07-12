@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.feedback_loop.verifiers.cross_blueprint_contract_drift import (
+from zephyr.feedback_loop.verifiers.cross_blueprint_contract_drift import (
     ContractStatus,
     CrossBlueprintContractDrift,
 )

@@ -47,7 +47,7 @@ from zephyr.infrastructure.pipeline.models import (
     ModuleStatus,
     PipelineStatus,
 )
-from zephyr.trading.feedback_loop.error_budget import ErrorBudget, ErrorBudgetManager
+from zephyr.feedback_loop.error_budget import ErrorBudget, ErrorBudgetManager
 
 
 # ---------------------------------------------------------------------------
@@ -491,7 +491,7 @@ class TestFeedbackLoopDetectionFailure:
             "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
         ) as vms_cls:
             vms_cls.return_value = MagicMock()
-            from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+            from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
             FeedbackLoopScheduler.reset_instance()
             s = FeedbackLoopScheduler(poll_interval=0.05)
@@ -528,7 +528,7 @@ class TestFeedbackLoopDetectionFailure:
 
     def test_scheduler_singleton_thread_safe(self, scheduler):
         """蓝队验证：get_instance 单例 + reset_instance 线程安全。"""
-        from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
+        from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
 
         instances: list[FeedbackLoopScheduler] = []
 

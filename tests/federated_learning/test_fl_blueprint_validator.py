@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_blueprint_validator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.blueprint_validator
+# [CONSUMERS] zephyr.feedback_loop.gates.blueprint_validator
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_blueprint_validator.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.blueprint_validator import BlueprintValidator
+from zephyr.feedback_loop.gates.blueprint_validator import BlueprintValidator
 
 
 class TestBlueprintValidatorInstantiation:

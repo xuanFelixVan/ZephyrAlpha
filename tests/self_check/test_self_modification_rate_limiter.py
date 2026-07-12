@@ -3,7 +3,7 @@
 # [MODULE] tests.test_self_modification_rate_limiter
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter
+# [CONSUMERS] zephyr.feedback_loop.evolution.self_modification_rate_limiter
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter import (
+from zephyr.feedback_loop.evolution.self_modification_rate_limiter import (
     SelfModificationRateLimiter,
 )
 

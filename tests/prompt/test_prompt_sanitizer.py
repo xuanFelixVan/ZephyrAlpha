@@ -3,7 +3,7 @@
 # [MODULE] tests.test_prompt_sanitizer
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.prompt_sanitizer
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.prompt_sanitizer
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.feedback_loop.diagnosers.prompt_sanitizer import PromptSanitizer
+from zephyr.feedback_loop.diagnosers.prompt_sanitizer import PromptSanitizer
 
 
 class TestPromptSanitizerInstantiation:

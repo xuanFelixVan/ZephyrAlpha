@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.trading.feedback_loop.decision_engine import (
+from zephyr.feedback_loop.decision_engine import (
     _ANOMALY_TO_ACTION,
     _DEVIATION_THRESHOLDS,
     AnomalyReport,
@@ -24,7 +24,7 @@ from zephyr.trading.feedback_loop.decision_engine import (
     ScheduleAdjustment,
     reflect_on_blueprint,
 )
-from zephyr.trading.feedback_loop.protocols import ActionType
+from zephyr.feedback_loop.protocols import ActionType
 
 
 class TestAnomalySeverity:

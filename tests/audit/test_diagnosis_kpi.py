@@ -3,7 +3,7 @@
 # [MODULE] tests.test_diagnosis_kpi
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.diagnosis_kpi
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.diagnosis_kpi
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.diagnosis_kpi import DiagnosisKPI
+from zephyr.feedback_loop.diagnosers.diagnosis_kpi import DiagnosisKPI
 
 
 class TestDiagnosisKPIInstantiation:

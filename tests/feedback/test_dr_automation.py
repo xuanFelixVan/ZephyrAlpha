@@ -3,7 +3,7 @@
 # [MODULE] tests.test_dr_automation
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.resilience.dr_automation
+# [CONSUMERS] zephyr.feedback_loop.resilience.dr_automation
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.trading.feedback_loop.resilience.dr_automation import (
+from zephyr.feedback_loop.resilience.dr_automation import (
     DRAutomation,
     DRDrillResult,
 )

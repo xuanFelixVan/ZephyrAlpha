@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_evolution_engine
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution_engine
+# [CONSUMERS] zephyr.feedback_loop.evolution_engine
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.trading.feedback_loop.evolution_engine import (
+from zephyr.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionReport,
     evolve,

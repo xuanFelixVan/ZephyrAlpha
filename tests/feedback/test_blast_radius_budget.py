@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.detectors.blast_radius_budget import BlastRadiusBudget
+from zephyr.feedback_loop.detectors.blast_radius_budget import BlastRadiusBudget
 
 
 class TestBlastRadiusBudgetInstantiation:

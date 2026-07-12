@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_db_integrity
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.db_integrity
+# [CONSUMERS] zephyr.feedback_loop.gates.db_integrity
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_db_integrity.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.db_integrity import DBIntegrity
+from zephyr.feedback_loop.gates.db_integrity import DBIntegrity
 
 
 class TestDBIntegrityInstantiation:

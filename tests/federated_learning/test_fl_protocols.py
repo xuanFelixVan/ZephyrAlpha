@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_protocols
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.protocols
+# [CONSUMERS] zephyr.feedback_loop.protocols
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from zephyr.trading.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
+from zephyr.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
 
 
 class TestActionType:

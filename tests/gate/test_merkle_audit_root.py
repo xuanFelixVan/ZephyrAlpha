@@ -13,7 +13,7 @@
 
 import hashlib
 
-from zephyr.trading.feedback_loop.gates.merkle_audit_root import MerkleAuditRoot
+from zephyr.feedback_loop.gates.merkle_audit_root import MerkleAuditRoot
 
 
 class TestMerkleAuditRootInstantiation:

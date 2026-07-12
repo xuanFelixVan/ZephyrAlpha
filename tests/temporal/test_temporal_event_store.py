@@ -3,7 +3,7 @@
 # [MODULE] tests.test_temporal_event_store
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.temporal_event_store
+# [CONSUMERS] zephyr.feedback_loop.collectors.temporal_event_store
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.collectors.temporal_event_store import TemporalEventStore
+from zephyr.feedback_loop.collectors.temporal_event_store import TemporalEventStore
 
 
 class TestTemporalEventStoreInstantiation:

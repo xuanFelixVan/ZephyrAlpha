@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_agent_lifecycle
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.actors.agent_lifecycle
+# [CONSUMERS] zephyr.feedback_loop.actors.agent_lifecycle
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.actors.agent_lifecycle import AgentLifecycle
+from zephyr.feedback_loop.actors.agent_lifecycle import AgentLifecycle
 
 
 class TestAgentLifecycleInstantiation:

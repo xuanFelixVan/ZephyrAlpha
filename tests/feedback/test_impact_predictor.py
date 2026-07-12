@@ -3,7 +3,7 @@
 # [MODULE] tests.test_impact_predictor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.impact_predictor
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.impact_predictor
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.impact_predictor import ImpactPredictor
+from zephyr.feedback_loop.diagnosers.impact_predictor import ImpactPredictor
 
 
 class TestImpactPredictorInstantiation:

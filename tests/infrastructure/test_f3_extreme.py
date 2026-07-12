@@ -592,7 +592,7 @@ class TestFeedbackLoopAnomaly:
 
     def test_feedback_loop_empty_input(self):
         """空输入不崩溃。"""
-        from zephyr.trading.feedback_loop import FeedbackLoop
+        from zephyr.feedback_loop import FeedbackLoop
 
         tmp_dir = tempfile.mkdtemp(prefix="fl_empty_")
         fl = FeedbackLoop(Path(tmp_dir))
@@ -603,7 +603,7 @@ class TestFeedbackLoopAnomaly:
 
     def test_feedback_loop_malformed_input(self):
         """异常格式输入不崩溃。"""
-        from zephyr.trading.feedback_loop import FeedbackLoop
+        from zephyr.feedback_loop import FeedbackLoop
 
         tmp_dir = tempfile.mkdtemp(prefix="fl_malformed_")
         fl = FeedbackLoop(Path(tmp_dir))
@@ -629,7 +629,7 @@ class TestFeedbackLoopAnomaly:
 
     def test_feedback_loop_massive_proposals(self):
         """大量proposal不崩溃。"""
-        from zephyr.trading.feedback_loop import FeedbackLoop
+        from zephyr.feedback_loop import FeedbackLoop
 
         tmp_dir = tempfile.mkdtemp(prefix="fl_massive_")
         fl = FeedbackLoop(Path(tmp_dir))
@@ -651,7 +651,7 @@ class TestFeedbackLoopAnomaly:
 
     def test_feedback_loop_concurrent_access(self):
         """多线程并发访问FeedbackLoop。"""
-        from zephyr.trading.feedback_loop import FeedbackLoop
+        from zephyr.feedback_loop import FeedbackLoop
 
         tmp_dir = tempfile.mkdtemp(prefix="fl_concurrent_")
         fl = FeedbackLoop(Path(tmp_dir))
@@ -680,7 +680,7 @@ class TestFeedbackLoopAnomaly:
 
     def test_feedback_loop_review_proposals_persistence(self):
         """验证proposal持久化到磁盘。"""
-        from zephyr.trading.feedback_loop import EvolutionProposal, FeedbackLoop
+        from zephyr.feedback_loop import EvolutionProposal, FeedbackLoop
 
         tmp_dir = tempfile.mkdtemp(prefix="fl_persist_")
         fl = FeedbackLoop(Path(tmp_dir))

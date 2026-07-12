@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.system_telemetry.metrics_bridge
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.__init__
-# [CONSUMERS] zephyr.trading.feedback_loop.metrics_collector; zephyr.trading.health_monitor
+# [CONSUMERS] zephyr.feedback_loop.metrics_collector; zephyr.trading.health_monitor
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] source_system 必须在枚举中; value 必须是 float; tag 值只允许 str/int/float/bool/None

@@ -15,7 +15,7 @@ import time
 
 import pytest
 
-from zephyr.trading.feedback_loop.metrics_collector import MetricsCollector, MetricType
+from zephyr.feedback_loop.metrics_collector import MetricsCollector, MetricType
 
 
 class TestMetricsCollectorInstantiation:

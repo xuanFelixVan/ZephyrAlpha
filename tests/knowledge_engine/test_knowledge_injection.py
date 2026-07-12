@@ -3,7 +3,7 @@
 # [MODULE] tests.test_knowledge_injection
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.knowledge_injection
+# [CONSUMERS] zephyr.feedback_loop.collectors.knowledge_injection
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.collectors.knowledge_injection import KnowledgeInjection
+from zephyr.feedback_loop.collectors.knowledge_injection import KnowledgeInjection
 
 
 class TestKnowledgeInjectionInstantiation:

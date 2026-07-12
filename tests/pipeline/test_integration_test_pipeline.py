@@ -11,7 +11,7 @@
 # [TESTS] tests/test_integration_test_pipeline.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.tests.e2e.integration_test_pipeline import IntegrationTestPipeline
+from zephyr.feedback_loop.tests.e2e.integration_test_pipeline import IntegrationTestPipeline
 
 
 class TestIntegrationTestPipelineInit:

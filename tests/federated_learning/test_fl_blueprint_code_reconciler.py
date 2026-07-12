@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_blueprint_code_reconciler
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.blueprint_code_reconciler
+# [CONSUMERS] zephyr.feedback_loop.gates.blueprint_code_reconciler
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -14,7 +14,7 @@
 import os
 import tempfile
 
-from zephyr.trading.feedback_loop.gates.blueprint_code_reconciler import BlueprintCodeReconciler, DriftReport
+from zephyr.feedback_loop.gates.blueprint_code_reconciler import BlueprintCodeReconciler, DriftReport
 
 
 class TestBlueprintCodeReconcilerInstantiation:

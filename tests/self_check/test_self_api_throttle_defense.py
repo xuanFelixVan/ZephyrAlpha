@@ -3,7 +3,7 @@
 # [MODULE] tests.test_self_api_throttle_defense
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.resilience.self_api_throttle_defense
+# [CONSUMERS] zephyr.feedback_loop.resilience.self_api_throttle_defense
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.resilience.self_api_throttle_defense import (
+from zephyr.feedback_loop.resilience.self_api_throttle_defense import (
     SelfAPIThrottleDefense,
     ThrottleState,
 )

@@ -36,7 +36,7 @@ from typing import Any
 
 import pytest
 
-from zephyr.trading.feedback_loop.db_bridge import (
+from zephyr.feedback_loop.db_bridge import (
     FLE_METRICS_TABLE_DDL,
     _ensure_table,
     bulk_record_via_db_contract,

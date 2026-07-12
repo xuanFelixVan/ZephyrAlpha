@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.regime_detector import RegimeDetector
+from zephyr.feedback_loop.detectors.regime_detector import RegimeDetector
 
 
 class TestRegimeDetector:

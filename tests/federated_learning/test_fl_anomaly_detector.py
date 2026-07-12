@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_anomaly_detector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.detectors.anomaly_detector
+# [CONSUMERS] zephyr.feedback_loop.detectors.anomaly_detector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,18 +13,18 @@
 
 from unittest.mock import MagicMock
 
-from zephyr.trading.feedback_loop.detectors.anomaly_detector import (
+from zephyr.feedback_loop.detectors.anomaly_detector import (
     AnomalyDetector,
     AnomalyEvent,
 )
-from zephyr.trading.feedback_loop.feedback_collector import (
+from zephyr.feedback_loop.feedback_collector import (
     FeedbackCollector,
 )
-from zephyr.trading.feedback_loop.metrics_collector import (
+from zephyr.feedback_loop.metrics_collector import (
     MetricsCollector,
     MetricSnapshot,
 )
-from zephyr.trading.feedback_loop.protocols import ActionType
+from zephyr.feedback_loop.protocols import ActionType
 
 
 def _make_snapshot(**overrides):

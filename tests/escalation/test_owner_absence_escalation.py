@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import time
 
-from zephyr.trading.feedback_loop.actors.owner_absence_escalation import (
+from zephyr.feedback_loop.actors.owner_absence_escalation import (
     AbsenceState,
     OwnerAbsenceEscalation,
 )

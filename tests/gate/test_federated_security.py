@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.federated_security import FederatedSecurity
+from zephyr.feedback_loop.gates.federated_security import FederatedSecurity
 
 
 class TestFederatedSecurityInstantiation:

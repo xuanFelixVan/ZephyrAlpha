@@ -13,7 +13,7 @@
 
 import os
 
-from zephyr.trading.feedback_loop._gen_inherited import BASE, SKELETONS
+from zephyr.feedback_loop._gen_inherited import BASE, SKELETONS
 
 
 class TestGenInheritedInstantiation:

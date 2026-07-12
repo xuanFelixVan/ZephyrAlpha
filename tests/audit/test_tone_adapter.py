@@ -3,7 +3,7 @@
 # [MODULE] tests.test_tone_adapter
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.tone_adapter
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.tone_adapter
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.tone_adapter import ToneAdapter
+from zephyr.feedback_loop.diagnosers.tone_adapter import ToneAdapter
 
 
 class TestToneAdapterInstantiation:

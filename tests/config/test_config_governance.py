@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.config_governance import ConfigGovernance
+from zephyr.feedback_loop.gates.config_governance import ConfigGovernance
 
 
 class TestConfigGovernanceInstantiation:

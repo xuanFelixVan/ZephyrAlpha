@@ -3,7 +3,7 @@
 # [MODULE] tests.test_chaos_engineering
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.detectors.chaos_engineering
+# [CONSUMERS] zephyr.feedback_loop.detectors.chaos_engineering
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_chaos_engineering.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.detectors.chaos_engineering import ChaosEngineering
+from zephyr.feedback_loop.detectors.chaos_engineering import ChaosEngineering
 
 
 class TestChaosEngineeringInstantiation:

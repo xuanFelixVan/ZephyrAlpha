@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.scheduler_health import HealthReporter
+from zephyr.feedback_loop.scheduler_health import HealthReporter
 
 
 class TestHealthReporter:

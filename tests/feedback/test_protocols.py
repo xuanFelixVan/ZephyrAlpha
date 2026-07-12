@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-1879 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-from zephyr.trading.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
+from zephyr.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
 
 
 class TestActionType:

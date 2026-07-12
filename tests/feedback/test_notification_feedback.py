@@ -3,7 +3,7 @@
 # [MODULE] tests.test_notification_feedback
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.notification_feedback
+# [CONSUMERS] zephyr.feedback_loop.collectors.notification_feedback
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.collectors.notification_feedback import NotificationFeedback
+from zephyr.feedback_loop.collectors.notification_feedback import NotificationFeedback
 
 
 class TestNotificationFeedbackInstantiation:

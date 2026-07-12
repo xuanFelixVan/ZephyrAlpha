@@ -82,7 +82,7 @@ logger = logging.getLogger(__name__)
 # TYPE_CHECKING 仅用于类型提示。
 
 if TYPE_CHECKING:
-    from zephyr.trading.feedback_loop.security.secret_rotation import SecretRotation
+    from zephyr.feedback_loop.security.secret_rotation import SecretRotation
 
 _rotation_registry: "SecretRotation | None" = None
 

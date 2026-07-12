@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.ensemble_drift import EnsembleDrift
+from zephyr.feedback_loop.detectors.ensemble_drift import EnsembleDrift
 
 
 class TestEnsembleDriftInstantiation:

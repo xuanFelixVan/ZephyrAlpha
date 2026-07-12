@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_exceptions
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.exceptions
+# [CONSUMERS] zephyr.feedback_loop.exceptions
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.feedback_loop.exceptions import (
+from zephyr.feedback_loop.exceptions import (
     AutonomyViolationError,
     DiagnosisError,
     FLEBaseException,

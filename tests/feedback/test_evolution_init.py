@@ -71,27 +71,27 @@ class TestEvolutionPackageImport:
 
 class TestAutoReward:
     def test_auto_reward_instantiation(self):
-        from zephyr.trading.feedback_loop.evolution.auto_reward import AutoReward
+        from zephyr.feedback_loop.evolution.auto_reward import AutoReward
 
         ar = AutoReward()
         assert ar is not None
 
     def test_compute_positive_delta(self):
-        from zephyr.trading.feedback_loop.evolution.auto_reward import AutoReward
+        from zephyr.feedback_loop.evolution.auto_reward import AutoReward
 
         ar = AutoReward()
         result = ar.compute(pre_state=0.2, post_state=0.8)
         assert result == pytest.approx(0.6)
 
     def test_compute_negative_delta(self):
-        from zephyr.trading.feedback_loop.evolution.auto_reward import AutoReward
+        from zephyr.feedback_loop.evolution.auto_reward import AutoReward
 
         ar = AutoReward()
         result = ar.compute(pre_state=0.9, post_state=0.3)
         assert result == pytest.approx(-0.6)
 
     def test_compute_zero_delta(self):
-        from zephyr.trading.feedback_loop.evolution.auto_reward import AutoReward
+        from zephyr.feedback_loop.evolution.auto_reward import AutoReward
 
         ar = AutoReward()
         result = ar.compute(pre_state=0.5, post_state=0.5)
@@ -100,13 +100,13 @@ class TestAutoReward:
 
 class TestConformalPrediction:
     def test_conformal_prediction_instantiation(self):
-        from zephyr.trading.feedback_loop.evolution.conformal_prediction import ConformalPrediction
+        from zephyr.feedback_loop.evolution.conformal_prediction import ConformalPrediction
 
         cp = ConformalPrediction()
         assert cp is not None
 
     def test_predict_interval_default_alpha(self):
-        from zephyr.trading.feedback_loop.evolution.conformal_prediction import ConformalPrediction
+        from zephyr.feedback_loop.evolution.conformal_prediction import ConformalPrediction
 
         cp = ConformalPrediction()
         low, high = cp.predict_interval(score=1.0)
@@ -114,7 +114,7 @@ class TestConformalPrediction:
         assert high == pytest.approx(1.2)
 
     def test_predict_interval_custom_alpha(self):
-        from zephyr.trading.feedback_loop.evolution.conformal_prediction import ConformalPrediction
+        from zephyr.feedback_loop.evolution.conformal_prediction import ConformalPrediction
 
         cp = ConformalPrediction()
         low, high = cp.predict_interval(score=5.0, alpha=0.1)
@@ -122,7 +122,7 @@ class TestConformalPrediction:
         assert high == pytest.approx(6.0)
 
     def test_predict_interval_zero_score(self):
-        from zephyr.trading.feedback_loop.evolution.conformal_prediction import ConformalPrediction
+        from zephyr.feedback_loop.evolution.conformal_prediction import ConformalPrediction
 
         cp = ConformalPrediction()
         low, high = cp.predict_interval(score=0.0)
@@ -130,7 +130,7 @@ class TestConformalPrediction:
         assert high == pytest.approx(0.0)
 
     def test_predict_interval_negative_score(self):
-        from zephyr.trading.feedback_loop.evolution.conformal_prediction import ConformalPrediction
+        from zephyr.feedback_loop.evolution.conformal_prediction import ConformalPrediction
 
         cp = ConformalPrediction()
         low, high = cp.predict_interval(score=-1.0)
@@ -140,27 +140,27 @@ class TestConformalPrediction:
 
 class TestSelfReflection:
     def test_self_reflection_instantiation(self):
-        from zephyr.trading.feedback_loop.evolution.self_reflection import SelfReflection
+        from zephyr.feedback_loop.evolution.self_reflection import SelfReflection
 
         sr = SelfReflection()
         assert sr is not None
 
     def test_reflect_returns_list(self):
-        from zephyr.trading.feedback_loop.evolution.self_reflection import SelfReflection
+        from zephyr.feedback_loop.evolution.self_reflection import SelfReflection
 
         sr = SelfReflection()
         result = sr.reflect(recent_diagnoses=[{"id": 1}])
         assert isinstance(result, list)
 
     def test_reflect_returns_non_empty(self):
-        from zephyr.trading.feedback_loop.evolution.self_reflection import SelfReflection
+        from zephyr.feedback_loop.evolution.self_reflection import SelfReflection
 
         sr = SelfReflection()
         result = sr.reflect(recent_diagnoses=[{"id": 1}])
         assert len(result) > 0
 
     def test_reflect_returns_strings(self):
-        from zephyr.trading.feedback_loop.evolution.self_reflection import SelfReflection
+        from zephyr.feedback_loop.evolution.self_reflection import SelfReflection
 
         sr = SelfReflection()
         result = sr.reflect(recent_diagnoses=[{"id": 1}])
@@ -168,7 +168,7 @@ class TestSelfReflection:
             assert isinstance(item, str)
 
     def test_reflect_with_empty_diagnoses(self):
-        from zephyr.trading.feedback_loop.evolution.self_reflection import SelfReflection
+        from zephyr.feedback_loop.evolution.self_reflection import SelfReflection
 
         sr = SelfReflection()
         result = sr.reflect(recent_diagnoses=[])
@@ -177,21 +177,21 @@ class TestSelfReflection:
 
 class TestDynamicThreshold:
     def test_dynamic_threshold_instantiation_default(self):
-        from zephyr.trading.feedback_loop.evolution.dynamic_threshold import DynamicThreshold
+        from zephyr.feedback_loop.evolution.dynamic_threshold import DynamicThreshold
 
         dt = DynamicThreshold()
         assert dt.base == pytest.approx(2.5)
         assert dt.current == pytest.approx(2.5)
 
     def test_dynamic_threshold_custom_values(self):
-        from zephyr.trading.feedback_loop.evolution.dynamic_threshold import DynamicThreshold
+        from zephyr.feedback_loop.evolution.dynamic_threshold import DynamicThreshold
 
         dt = DynamicThreshold(base=5.0, current=3.0)
         assert dt.base == pytest.approx(5.0)
         assert dt.current == pytest.approx(3.0)
 
     def test_dynamic_threshold_zero_values(self):
-        from zephyr.trading.feedback_loop.evolution.dynamic_threshold import DynamicThreshold
+        from zephyr.feedback_loop.evolution.dynamic_threshold import DynamicThreshold
 
         dt = DynamicThreshold(base=0.0, current=0.0)
         assert dt.base == pytest.approx(0.0)
@@ -200,7 +200,7 @@ class TestDynamicThreshold:
 
 class TestSelfModificationRateLimiter:
     def test_instantiation_default(self):
-        from zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+        from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
 
         limiter = SelfModificationRateLimiter()
         assert limiter.max_burst == 5
@@ -208,7 +208,7 @@ class TestSelfModificationRateLimiter:
         assert limiter.tokens == pytest.approx(5.0)
 
     def test_instantiation_custom_burst(self):
-        from zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+        from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
 
         limiter = SelfModificationRateLimiter(max_burst=10, refill_rate_per_hour=20)
         assert limiter.max_burst == 10
@@ -216,7 +216,7 @@ class TestSelfModificationRateLimiter:
         assert limiter.tokens == pytest.approx(10.0)
 
     def test_request_modification_allowed(self):
-        from zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+        from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
 
         limiter = SelfModificationRateLimiter()
         result = limiter.request_modification(change_type="config", severity="low")
@@ -225,7 +225,7 @@ class TestSelfModificationRateLimiter:
         assert result["change_type"] == "config"
 
     def test_request_modification_exhausts_tokens(self):
-        from zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+        from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
 
         limiter = SelfModificationRateLimiter(max_burst=2)
         limiter.request_modification(change_type="a", severity="low")
@@ -235,7 +235,7 @@ class TestSelfModificationRateLimiter:
         assert result["blocked_count"] == 1
 
     def test_get_status_returns_dict(self):
-        from zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+        from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
 
         limiter = SelfModificationRateLimiter()
         status = limiter.get_status()
@@ -245,7 +245,7 @@ class TestSelfModificationRateLimiter:
         assert "block_rate" in status
 
     def test_emergency_override_resets_tokens(self):
-        from zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+        from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
 
         limiter = SelfModificationRateLimiter(max_burst=3)
         limiter.request_modification(change_type="a", severity="low")
@@ -268,14 +268,14 @@ class TestEvolutionBoundary:
             importlib.import_module("zephyr.trading.feedback_loop.evolution.nonexistent_module")
 
     def test_auto_reward_compute_large_values(self):
-        from zephyr.trading.feedback_loop.evolution.auto_reward import AutoReward
+        from zephyr.feedback_loop.evolution.auto_reward import AutoReward
 
         ar = AutoReward()
         result = ar.compute(pre_state=1e6, post_state=1e6 + 1.0)
         assert result == pytest.approx(1.0)
 
     def test_conformal_prediction_interval_low_less_than_high(self):
-        from zephyr.trading.feedback_loop.evolution.conformal_prediction import ConformalPrediction
+        from zephyr.feedback_loop.evolution.conformal_prediction import ConformalPrediction
 
         cp = ConformalPrediction()
         low, high = cp.predict_interval(score=10.0)

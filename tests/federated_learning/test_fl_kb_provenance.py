@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_kb_provenance
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.kb_provenance
+# [CONSUMERS] zephyr.feedback_loop.collectors.kb_provenance
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.collectors.kb_provenance import KBProvenance
+from zephyr.feedback_loop.collectors.kb_provenance import KBProvenance
 
 
 class TestKBProvenanceInstantiation:

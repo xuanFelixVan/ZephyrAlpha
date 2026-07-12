@@ -3,7 +3,7 @@
 # [MODULE] tests.test_value_added_baseline
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.value_added_baseline
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.value_added_baseline
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.diagnosers.value_added_baseline import ValueAddedBaseline
+from zephyr.feedback_loop.diagnosers.value_added_baseline import ValueAddedBaseline
 
 
 class TestValueAddedBaselineInstantiation:

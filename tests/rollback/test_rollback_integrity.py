@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.verifiers.rollback_integrity import RollbackIntegrity
+from zephyr.feedback_loop.verifiers.rollback_integrity import RollbackIntegrity
 
 
 class TestRollbackIntegrityInstantiation:

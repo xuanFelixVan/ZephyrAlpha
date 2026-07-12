@@ -14,7 +14,7 @@
 import os
 from unittest.mock import patch
 
-from zephyr.trading.feedback_loop.validator import BASE, missing_files, validate_all, validate_one
+from zephyr.feedback_loop.validator import BASE, missing_files, validate_all, validate_one
 
 
 class TestValidatorInstantiation:
@@ -61,7 +61,7 @@ class TestMissingFiles:
             assert isinstance(item, str)
 
     def test_missing_subset_of_skeletons(self):
-        from zephyr.trading.feedback_loop.template import SKELETONS
+        from zephyr.feedback_loop.template import SKELETONS
 
         result = missing_files()
         for path in result:

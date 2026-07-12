@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-1872 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-from zephyr.trading.feedback_loop.config import FLEConfig
+from zephyr.feedback_loop.config import FLEConfig
 
 
 class TestFLEConfig:

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.actors.global_action_scheduler import (
+from zephyr.feedback_loop.actors.global_action_scheduler import (
     ActionState,
     GlobalActionScheduler,
     ScheduledAction,

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_online_feature_importance
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.evolution.online_feature_importance
+# [CONSUMERS] zephyr.feedback_loop.evolution.online_feature_importance
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.feedback_loop.evolution.online_feature_importance import OnlineFeatureImportance
+from zephyr.feedback_loop.evolution.online_feature_importance import OnlineFeatureImportance
 
 
 class TestOnlineFeatureImportanceInstantiation:

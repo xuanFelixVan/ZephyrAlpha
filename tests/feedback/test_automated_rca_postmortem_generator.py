@@ -3,7 +3,7 @@
 # [MODULE] tests.test_automated_rca_postmortem_generator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.forensic.automated_rca_postmortem_generator
+# [CONSUMERS] zephyr.feedback_loop.forensic.automated_rca_postmortem_generator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.forensic.automated_rca_postmortem_generator import (
+from zephyr.feedback_loop.forensic.automated_rca_postmortem_generator import (
     AutomatedRCAPostmortemGenerator,
     IncidentSeverity,
 )

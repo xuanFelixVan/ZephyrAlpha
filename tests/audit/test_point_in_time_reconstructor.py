@@ -3,7 +3,7 @@
 # [MODULE] tests.test_point_in_time_reconstructor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.forensic.point_in_time_reconstructor
+# [CONSUMERS] zephyr.feedback_loop.forensic.point_in_time_reconstructor
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import time
 
-from zephyr.trading.feedback_loop.forensic.point_in_time_reconstructor import PointInTimeReconstructor
+from zephyr.feedback_loop.forensic.point_in_time_reconstructor import PointInTimeReconstructor
 
 
 class TestPointInTimeReconstructor:

@@ -48,15 +48,15 @@ from zephyr.integration.mcp.doc_guard_server import DocGuardServer
 from zephyr.integration.mcp.gate_engine_server import GateEngineServer
 from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
 from zephyr.integration.mcp.sentinel_server import SentinelServer
-from zephyr.trading.feedback_loop.evolution_engine import (
+from zephyr.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionSignal,
     FeedbackLayer,
     Severity,
     evolve,
 )
-from zephyr.trading.feedback_loop.feedback_collector import FeedbackCollector
-from zephyr.trading.feedback_loop.fitness_functions import (
+from zephyr.feedback_loop.feedback_collector import FeedbackCollector
+from zephyr.feedback_loop.fitness_functions import (
     FitnessFunctionFramework,
     FitnessInputs,
     FitnessThresholds,

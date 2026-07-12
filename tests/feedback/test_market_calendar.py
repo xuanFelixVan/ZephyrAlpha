@@ -3,7 +3,7 @@
 # [MODULE] tests.test_market_calendar
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.market_calendar
+# [CONSUMERS] zephyr.feedback_loop.collectors.market_calendar
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_market_calendar.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.collectors.market_calendar import MarketCalendar
+from zephyr.feedback_loop.collectors.market_calendar import MarketCalendar
 
 
 class TestMarketCalendarInstantiation:

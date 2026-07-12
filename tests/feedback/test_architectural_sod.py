@@ -3,7 +3,7 @@
 # [MODULE] tests.test_architectural_sod
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.forensic.architectural_sod
+# [CONSUMERS] zephyr.feedback_loop.forensic.architectural_sod
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.forensic.architectural_sod import (
+from zephyr.feedback_loop.forensic.architectural_sod import (
     ArchitecturalSoD,
     SoDConflict,
     SoDRole,

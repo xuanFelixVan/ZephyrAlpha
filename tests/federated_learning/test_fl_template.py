@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_template
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.template
+# [CONSUMERS] zephyr.feedback_loop.template
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.template import SKELETONS
+from zephyr.feedback_loop.template import SKELETONS
 
 
 class TestSkeletonsInstantiation:

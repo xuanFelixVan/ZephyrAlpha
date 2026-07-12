@@ -23,13 +23,13 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.trading.feedback_loop.evolution_engine import (
+from zephyr.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionSignal,
     FeedbackLayer,
     evolve,
 )
-from zephyr.trading.feedback_loop.feedback_collector import FeedbackCollector
+from zephyr.feedback_loop.feedback_collector import FeedbackCollector
 
 
 def _fixed_now() -> datetime:

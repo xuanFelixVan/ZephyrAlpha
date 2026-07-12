@@ -17,7 +17,7 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.trading.feedback_loop import EvolutionProposal, FeedbackLoop
+from zephyr.feedback_loop import EvolutionProposal, FeedbackLoop
 
 
 class TestEvolutionProposal:

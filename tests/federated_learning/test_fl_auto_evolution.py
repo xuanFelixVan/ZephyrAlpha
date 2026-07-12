@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_auto_evolution
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.auto_evolution
+# [CONSUMERS] zephyr.feedback_loop.auto_evolution
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -16,7 +16,7 @@ from __future__ import annotations
 from datetime import datetime
 from unittest.mock import MagicMock
 
-from zephyr.trading.feedback_loop.auto_evolution import (
+from zephyr.feedback_loop.auto_evolution import (
     AutoEvolutionConfig,
     AutoEvolutionEngine,
     AutoTriggerType,
@@ -24,7 +24,7 @@ from zephyr.trading.feedback_loop.auto_evolution import (
     _count_consecutive_below,
     _extract_metric,
 )
-from zephyr.trading.feedback_loop.evolution_engine import EvolutionEngine
+from zephyr.feedback_loop.evolution_engine import EvolutionEngine
 
 
 class TestAutoEvolutionConfigInstantiation:

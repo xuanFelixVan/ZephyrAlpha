@@ -3,7 +3,7 @@
 # [MODULE] tests.test_dep_cve_correlator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.security.dep_cve_correlator
+# [CONSUMERS] zephyr.feedback_loop.security.dep_cve_correlator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.security.dep_cve_correlator import (
+from zephyr.feedback_loop.security.dep_cve_correlator import (
     CVEAlert,
     CVESeverity,
     DepCVECorrelator,

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_emergency_takeover
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.emergency_takeover
+# [CONSUMERS] zephyr.feedback_loop.gates.emergency_takeover
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_emergency_takeover.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.emergency_takeover import EmergencyTakeover
+from zephyr.feedback_loop.gates.emergency_takeover import EmergencyTakeover
 
 
 class TestEmergencyTakeoverInstantiation:

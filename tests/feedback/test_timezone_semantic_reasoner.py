@@ -3,7 +3,7 @@
 # [MODULE] tests.test_timezone_semantic_reasoner
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.timezone_semantic_reasoner
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.timezone_semantic_reasoner
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from datetime import UTC, datetime
 
-from zephyr.trading.feedback_loop.diagnosers.timezone_semantic_reasoner import (
+from zephyr.feedback_loop.diagnosers.timezone_semantic_reasoner import (
     TimezoneSemanticReasoner,
     VenueTZ,
 )

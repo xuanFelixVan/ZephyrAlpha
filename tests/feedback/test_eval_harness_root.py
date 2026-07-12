@@ -15,7 +15,7 @@ import json
 
 import pytest
 
-from zephyr.trading.feedback_loop.eval_harness import (
+from zephyr.feedback_loop.eval_harness import (
     CATEGORY_EVOLUTION,
     CATEGORY_HALLUCINATION,
     CATEGORY_INTENT,

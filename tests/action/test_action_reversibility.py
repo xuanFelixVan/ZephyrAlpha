@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.action_reversibility import ActionReversibility, Reversibility
+from zephyr.feedback_loop.gates.action_reversibility import ActionReversibility, Reversibility
 
 
 class TestReversibility:

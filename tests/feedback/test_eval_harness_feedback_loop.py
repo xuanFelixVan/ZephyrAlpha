@@ -39,7 +39,7 @@ from typing import Any
 
 import pytest
 
-from zephyr.trading.feedback_loop.eval_harness import (
+from zephyr.feedback_loop.eval_harness import (
     CATEGORIES,
     CATEGORY_EVOLUTION,
     CATEGORY_HALLUCINATION,

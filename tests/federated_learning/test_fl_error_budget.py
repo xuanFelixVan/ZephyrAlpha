@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_error_budget
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.error_budget
+# [CONSUMERS] zephyr.feedback_loop.error_budget
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.feedback_loop.error_budget import ErrorBudget, ErrorBudgetManager
+from zephyr.feedback_loop.error_budget import ErrorBudget, ErrorBudgetManager
 
 
 class TestErrorBudgetInstantiation:

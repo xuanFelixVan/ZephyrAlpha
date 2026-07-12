@@ -14,7 +14,7 @@
 import os
 import tempfile
 
-from zephyr.trading.feedback_loop.gates.blueprint_code_reconciler import BlueprintCodeReconciler, DriftReport
+from zephyr.feedback_loop.gates.blueprint_code_reconciler import BlueprintCodeReconciler, DriftReport
 
 
 class TestDriftReport:

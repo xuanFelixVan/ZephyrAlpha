@@ -3,7 +3,7 @@
 # [MODULE] tests.test_knowledge_capture
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.collectors.knowledge_capture
+# [CONSUMERS] zephyr.feedback_loop.collectors.knowledge_capture
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.collectors.knowledge_capture import KnowledgeCapture
+from zephyr.feedback_loop.collectors.knowledge_capture import KnowledgeCapture
 
 
 class TestKnowledgeCaptureInstantiation:

@@ -16,7 +16,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.trading.feedback_loop.evolution_engine import (
+from zephyr.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionProposal,
     EvolutionReport,

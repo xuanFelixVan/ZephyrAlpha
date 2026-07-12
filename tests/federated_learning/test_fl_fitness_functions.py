@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_fitness_functions
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.fitness_functions
+# [CONSUMERS] zephyr.feedback_loop.fitness_functions
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.fitness_functions import (
+from zephyr.feedback_loop.fitness_functions import (
     FitnessFunctionFramework,
     FitnessInputs,
     FitnessThresholds,

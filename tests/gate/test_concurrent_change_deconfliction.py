@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.concurrent_change_deconfliction import (
+from zephyr.feedback_loop.gates.concurrent_change_deconfliction import (
     ChangeSource,
     ConcurrentChangeDeconfliction,
 )

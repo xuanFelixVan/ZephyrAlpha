@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_cve_scanner
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.cve_scanner
+# [CONSUMERS] zephyr.feedback_loop.gates.cve_scanner
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_cve_scanner.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.cve_scanner import CVEScanner
+from zephyr.feedback_loop.gates.cve_scanner import CVEScanner
 
 
 class TestCVEScannerInstantiation:

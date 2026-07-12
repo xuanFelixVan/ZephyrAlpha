@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_config_governance
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.config_governance
+# [CONSUMERS] zephyr.feedback_loop.gates.config_governance
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_config_governance.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.config_governance import ConfigGovernance
+from zephyr.feedback_loop.gates.config_governance import ConfigGovernance
 
 
 class TestConfigGovernanceInstantiation:

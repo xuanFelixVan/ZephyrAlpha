@@ -3,7 +3,7 @@
 # [MODULE] tests.test_crypto_bootstrap
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.forensic.crypto_bootstrap
+# [CONSUMERS] zephyr.feedback_loop.forensic.crypto_bootstrap
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -16,7 +16,7 @@ from __future__ import annotations
 import hashlib
 import json
 
-from zephyr.trading.feedback_loop.forensic.crypto_bootstrap import CryptoBootstrap, HashLink
+from zephyr.feedback_loop.forensic.crypto_bootstrap import CryptoBootstrap, HashLink
 
 
 class TestHashLink:

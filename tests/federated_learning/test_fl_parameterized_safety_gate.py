@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_parameterized_safety_gate
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.gates.parameterized_safety_gate
+# [CONSUMERS] zephyr.feedback_loop.gates.parameterized_safety_gate
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_parameterized_safety_gate.py
 # [TTL] task_bound
 
-from zephyr.trading.feedback_loop.gates.parameterized_safety_gate import (
+from zephyr.feedback_loop.gates.parameterized_safety_gate import (
     ActionContext,
     GateVerdict,
     ParameterizedSafetyGate,

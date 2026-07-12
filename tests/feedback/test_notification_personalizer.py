@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.actors.notification_personalizer import NotificationPersonalizer
+from zephyr.feedback_loop.actors.notification_personalizer import NotificationPersonalizer
 
 
 class TestNotificationPersonalizerInstantiation:

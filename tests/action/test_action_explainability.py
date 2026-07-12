@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.feedback_loop.verifiers.action_explainability import ActionExplainability
+from zephyr.feedback_loop.verifiers.action_explainability import ActionExplainability
 
 
 class TestActionExplainabilityInstantiation:

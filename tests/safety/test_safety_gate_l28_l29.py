@@ -13,8 +13,8 @@
 
 import time
 
-from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
-from zephyr.trading.feedback_loop.gates.safety_gate_l28_l29 import SafetyGateL28L29
+from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
+from zephyr.feedback_loop.gates.safety_gate_l28_l29 import SafetyGateL28L29
 
 
 class TestSafetyGateL28L29Instantiation:

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.detectors.maintenance_coordinator import MaintenanceCoordinator
+from zephyr.feedback_loop.detectors.maintenance_coordinator import MaintenanceCoordinator
 
 
 class TestMaintenanceCoordinator:

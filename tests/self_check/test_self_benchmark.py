@@ -3,7 +3,7 @@
 # [MODULE] tests.test_self_benchmark
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.self_benchmark
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.self_benchmark
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.trading.feedback_loop.diagnosers.self_benchmark import SelfBenchmark
+from zephyr.feedback_loop.diagnosers.self_benchmark import SelfBenchmark
 
 
 class TestSelfBenchmarkInstantiation:
