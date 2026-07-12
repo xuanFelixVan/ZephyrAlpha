@@ -25,7 +25,7 @@ ttl: permanent
 | 基础设施组件 | 14 | infrastructure_components.yaml |
 | 契约资产 | 65 | cross_layer_contracts.yaml |
 | 配置项 | 33 | config/*.yaml |
-| 数据流作业 | 153 | dataflow_graph_registry.yaml |
+| 数据流作业 | 63 | dataflow_graph_registry.yaml |
 | 数据集 | 14 | dataflow_graph_registry.yaml |
 | **合计** | **258** | |
 
@@ -167,7 +167,7 @@ ttl: permanent
 | `config/budget_policy.yaml` | 3.1 | 2026-06-12 |
 | `config/capabilities.yaml` | 0.9 | 2026-06-12 |
 | `config/capacity_params.yaml` | 7.2 | 2026-06-24 |
-| `config/capacity_slo.yaml` | 4.6 | 2026-07-04 |
+| `config/capacity_slo.yaml` | 4.6 | 2026-07-10 |
 | `config/compression_policy.yaml` | 2.5 | 2026-07-04 |
 | `config/context_rules.yaml` | 5.6 | 2026-06-29 |
 | `config/degradation_chain.yaml` | 1.3 | 2026-07-02 |

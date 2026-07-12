@@ -3,7 +3,7 @@
 # [DOMAIN] D_DATA
 # [TTL] permanent
 # 派生物（#183）：由 generate_policies.py 从 data_sources_registry.yaml 派生
-# 真源：architecture_model/data/data_sources_registry.yaml v2.0.0
+# 真源：architecture_model/data/data_sources_registry.yaml v2.1.0
 # 禁止手工修改此文件——改真源后由 reconciler 自动重生
 # policy_registry.py 的 maybe_reload 会在 mtime 变化时热更新
 
@@ -20,10 +20,17 @@ ifind:
   session_ttl_sec: 86400
   relogin_on_auth_error: true
   extra:
-    monthly_quota_alert: true
+    weekly_quota_alert: true
     quota_error_codes:
     - '-4318'
     - '-4309'
+    - '-4210'
+    - '-5100'
+    - '-4216'
+    edb_quota_per_week: 50000
+    quota_reset_cycle: weekly_monday
+    quota_unit: cell
+    trial_equals_formal_edb: true
 miniqmt:
   rpm: 0
   concurrency: 1

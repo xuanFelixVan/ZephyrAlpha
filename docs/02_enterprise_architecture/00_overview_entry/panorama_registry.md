@@ -17,9 +17,9 @@
 | 维度 | 值 |
 |------|:---:|
 | 已建全景图总数 | 22 |
-| 待建全景图总数 | 22 |
-| 全景图总数 | 44 |
-| 已建覆盖率 | 50.0% |
+| 待建全景图总数 | 16 |
+| 全景图总数 | 38 |
+| 已建覆盖率 | 57.9% |
 
 | 已建产物存在 | 22/22 |
 
@@ -29,17 +29,17 @@
 
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
-| 依赖图 depgraph | `domains` | 50 | 功能域清单——50 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 4941 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4941 个 |
-| 依赖图 depgraph | `edges` | 5989 | 依赖边——节点间的依赖关系（import/契约/事件订阅），5989 条 |
+| 依赖图 depgraph | `domains` | 61 | 功能域清单——61 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
+| 依赖图 depgraph | `nodes` | 5007 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5007 个 |
+| 依赖图 depgraph | `edges` | 6000 | 依赖边——节点间的依赖关系（import/契约/事件订阅），6000 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 153 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 63 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
 | 数据流图 dataflowgraph | `dataflow_runs` | 0 | 运行记录——job 执行历史（status/耗时/参数），0 行（0=无运行时观测，依赖观测系统回填） |
 | 决策流图 decisiongraph | `decision_tracks` | 5 | 决策轨——5 条正交决策轨（价值/动量/风险/组合），优先级+激活条件 |
-| 决策流图 decisiongraph | `decision_layers` | 152 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
+| 决策流图 decisiongraph | `decision_layers` | 174 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
 | 决策流图 decisiongraph | `decision_nodes` | 214 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
 | 决策流图 decisiongraph | `decision_edges` | 213 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），213 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 65 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，65 条 |
@@ -97,14 +97,14 @@
 | PAN-BUILT-09 | 能力热力图（53域×10能力） | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capability_heatmap.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/global_capability_heatmap.md) | ✅存在 |
 | PAN-BUILT-10 | 资产清单配置 | 资产 | depgraph | depgraph (PostgreSQL) | `generate_asset_catalog.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/asset_catalog.md) | ✅存在 |
 | PAN-BUILT-11 | 契约目录配置 | 资产 | depgraph | depgraph (PostgreSQL) | `generate_contract_catalog.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/contract_catalog.md) | ✅存在 |
-| PAN-BUILT-20 | 域架构文档（50 域 + domain_index） | 域架构文档 | depgraph | depgraph (PostgreSQL) | `generate_domain_doc.py` | `02_domain_architecture_docs/` | ✅存在(51文件) |
+| PAN-BUILT-20 | 域架构文档（50 域 + domain_index） | 域架构文档 | depgraph | depgraph (PostgreSQL) | `generate_domain_doc.py` | `02_domain_architecture_docs/` | ✅存在(62文件) |
 | PAN-BUILT-12 | 容量报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capacity_report.py` | [`03_governance_reports`](../03_governance_reports/capacity_report.md) | ✅存在 |
 | PAN-BUILT-13 | 约束违规报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_constraint_violations.py` | [`03_governance_reports`](../03_governance_reports/constraint_violations.md) | ✅存在 |
 | PAN-BUILT-14 | 设计态 vs 运营态 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_design_vs_production.py` | [`03_governance_reports`](../03_governance_reports/design_vs_production.md) | ✅存在 |
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | 治理健康度 | 手工 | 手工 | `(手工维护)` | [`04_architecture_principles_decisions`](../04_architecture_principles_decisions/dependency_path_panorama.md) | ✅存在 |
 | PAN-BUILT-18 | 数据流图（dataflowgraph Dataset/Job/Edge） | 数据流 | dataflowgraph | depgraph (PostgreSQL) (dataflow_* 表) | `generate_dataflow_diagram.py` | [`05_dataflow_architecture`](../05_dataflow_architecture/dataflow_index.md) | ✅存在 |
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
-| PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `generate_domain_dependency_diagram.py` | `generated/domains/` | ✅存在(50文件) |
+| PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `generate_domain_dependency_diagram.py` | `generated/domains/` | ✅存在(61文件) |
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-21 | 样板/模板区（7 个样板文件） | 样板 | 手工 | 手工 | `(手工维护)` | `sample/` | ✅存在(7文件) |
 | PAN-BUILT-01 | TOGAF 4视图 + 6正交视图 | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/overview.md) | ✅存在 |
@@ -116,7 +116,7 @@
 
 ## 待建全景图清单
 
-> 共 22 项待建全景图，分布在 6 个新目录（08-13）。
+> 共 16 项待建全景图，分布在 6 个新目录（08-13）。
 >
 > **重要说明**：
 > - 真源类型（DB/YAML）逐个建设时再裁定，记录在 `data_source_tbd` 字段
@@ -129,19 +129,13 @@
 | PAN-ASSET-02 | API 契约目录 | 资产全景 | `08_asset_panorama/` | `generate_api_contract_catalog.py (待建)` | 高 | 待裁定：扩展现有 depgraph contracts 表 vs 独立 api_contracts 表。现有 PA... |
 | PAN-ASSET-03 | 数据目录 Data Catalog | 资产全景 | `08_asset_panorama/` | `generate_data_catalog.py (待建)` | 高 | 待裁定：扩展现有 dataflow_datasets 表加完整性/延迟/质量字段 vs 独立 data_catal... |
 | PAN-ASSET-04 | 数据血缘图 Data Lineage | 资产全景 | `08_asset_panorama/` | `generate_data_lineage.py (待建)` | 高 | 待裁定：扩展 dataflow_edges 表加字段级血缘 vs 独立 column_lineage 表。data... |
-| PAN-RUN-06 | 性能基准全景图 | 运行时观测 | `09_runtime_panorama/` | `generate_performance_benchmark.py (待建)` | 高 | 待裁定：从 benchmark 产物（pytest-benchmark/json）派生 vs 独立 perform... |
 | PAN-RISK-01 | 风险敞口全景图 | 风险全景 | `11_risk_panorama/` | `generate_risk_exposure.py (待建)` | 高 | 待裁定：从 D_RISK/D_PORTFOLIO 域派生 vs 独立 risk_exposure 表。量化特有：因... |
-| PAN-QUANT-05 | 特征存储全景图 | 量化全景 | `12_quant_panorama/` | `generate_feature_store_panorama.py (待建)` | 高 | 待裁定：从 D_FACTOR/D_DATA 域派生 vs 独立 feature_store_registry 表。... |
 | PAN-RUN-01 | 实时调用链拓扑 + SLO 看板 | 运行时观测 | `09_runtime_panorama/` | `generate_runtime_topology.py (待建)` | 中 | 待裁定：OpenTelemetry / Prometheus 采集 vs 独立 runtime_calls 表。有... |
 | PAN-RUN-02 | 告警热力图 | 运行时观测 | `09_runtime_panorama/` | `generate_alert_heatmap.py (待建)` | 中 | 待裁定：AlertManager API 实时拉取 vs 独立 alert_history 表 |
 | PAN-RUN-03 | CI/CD 流水线图 | 运行时观测 | `09_runtime_panorama/` | `generate_cicd_pipeline.py (待建)` | 中 | 待裁定：GitHub Actions API 拉取 vs 独立 cicd_pipelines 表。有 fronte... |
 | PAN-RUN-04 | 服务依赖运行时视图 | 运行时观测 | `09_runtime_panorama/` | `generate_runtime_dependency.py (待建)` | 中 | 待裁定：OpenTelemetry trace 聚合 vs 独立 runtime_calls 表。现有依赖图是静态... |
-| PAN-RUN-05 | 测试覆盖全景图 | 运行时观测 | `09_runtime_panorama/` | `generate_test_coverage_panorama.py (待建)` | 中 | 待裁定：从 coverage.py/pytest-cov 产物扫描派生 vs 独立 test_coverage 表... |
-| PAN-RUN-07 | 成本/资源消耗全景图 | 运行时观测 | `09_runtime_panorama/` | `generate_cost_resource_panorama.py (待建)` | 中 | 待裁定：从 BudgetEngine 运行时快照派生 vs 独立 cost_consumption 表。现有 Bu... |
-| PAN-RUN-08 | 灾备/高可用全景图 | 运行时观测 | `09_runtime_panorama/` | `generate_dr_ha_panorama.py (待建)` | 中 | 待裁定：从基础设施配置（docker-compose/备份策略）派生 vs 独立 dr_ha_topology 表... |
 | PAN-SEC-01 | 威胁模型图 STRIDE | 安全全景 | `10_security_panorama/` | `generate_stride_threat_model.py (待建)` | 中 | 待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。有 security_arch... |
 | PAN-SEC-02 | 合规矩阵 | 安全全景 | `10_security_panorama/` | `generate_compliance_matrix.py (待建)` | 中 | 待裁定：扩展现有 compliance 域 916 模块元信息 vs 独立 compliance_matrix 表... |
-| PAN-QUANT-06 | 模型注册表 | 量化全景 | `12_quant_panorama/` | `generate_model_registry.py (待建)` | 中 | 待裁定：从 D_MACHINE_LEARNING_TRAIN 域派生 vs 独立 model_registry 表... |
 | PAN-VIS-01 | 可视化前端架构文档 | 可视化前端 | `13_visualization_architecture/` | `(手工维护 + 部分自动生成)` | 中 | 待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_componen... |
 | PAN-QUANT-01 | 因子全景图 | 量化全景 | `12_quant_panorama/` | `generate_factor_panorama.py (待建)` | 可选 | 待裁定：从 D_FACTOR 域派生 vs 独立 factor_registry 表。D_FACTOR 只有依赖图... |
 | PAN-QUANT-02 | 策略谱系图 | 量化全景 | `12_quant_panorama/` | `generate_strategy_lineage.py (待建)` | 可选 | 待裁定：从 decisiongraph L0-L6 派生 vs 独立 strategy_registry 表。策略... |
@@ -152,10 +146,10 @@
 
 ## 表级缺口清单
 
-> 共 10 项表级缺口。与上方 22 项待建全景图区分：全景图是最终产物，表级缺口是底层 DB 真源的实际状态。
+> 共 10 项表级缺口。与上方 16 项待建全景图区分：全景图是最终产物，表级缺口是底层 DB 真源的实际状态。
 >
 > **两类缺口的区别**：
-> - 待建全景图（22 项）= 最终要给 AI/人看的产物目录，真源类型待裁定
+> - 待建全景图（16 项）= 最终要给 AI/人看的产物目录，真源类型待裁定
 > - 表级缺口（10 项）= 底层 DB 表的真实状态（空表/部分缺失/完全缺失/数据污染/字段值缺失），真源类型已确定
 > - 一个表级缺口对应一个待建全景图（见 panorama_ref 列），但反过来不一定
 
@@ -185,29 +179,25 @@
 | 架构图来源 | 全景图数量 | 说明 |
 |------|:---:|------|
 | depgraph | 11 | 依赖图——模块节点和依赖边，生成域文档/矩阵/拓扑/热力图/容量/违规等 |
-| 待裁定（depgraph 域派生 vs 独立表） | 6 | 待裁定真源类型 |
 | 手工 | 6 | 人工维护的架构文档，无自动生成器 |
+| 待裁定（depgraph 域派生 vs 独立表） | 4 | 待裁定真源类型 |
 | 文件系统扫描 | 2 | 扫描实际文件系统派生，无 DB 真源 |
 | dataflowgraph | 1 | 数据流图——Dataset/Job/Edge，生成数据流图 |
 | decisiongraph | 1 | 决策流图——L0-L6 四轨，生成决策流图 |
 | depgraph + dataflowgraph + decisiongraph | 1 | 综合三个架构图派生（如本总表） |
 | 待裁定（AlertManager API vs 独立表） | 1 | 待裁定真源类型 |
-| 待裁定（BudgetEngine 派生 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（GitHub Actions API vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（OpenTelemetry trace 聚合 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（OpenTelemetry 采集 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（YAML 威胁建模 vs 独立表） | 1 | 待裁定真源类型 |
-| 待裁定（benchmark 产物扫描 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（dataflowgraph 字段级扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（dataflowgraph 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（decisiongraph 派生 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（depgraph compliance 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（depgraph contracts 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（depgraph 扩展 vs 独立表） | 1 | 待裁定真源类型 |
-| 待裁定（代码扫描 + CI/CD 产物 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（代码扫描派生 vs 独立表） | 1 | 待裁定真源类型 |
-| 待裁定（基础设施配置派生 vs 独立表） | 1 | 待裁定真源类型 |
-| **合计** | **44** | 已建 22 + 待建 22 |
+| **合计** | **38** | 已建 22 + 待建 16 |
 
 ---
 
@@ -286,9 +276,9 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-ASSET-01 | 资产清单 / CMDB | ⏳待建 | 待裁定（depgraph 扩展 vs 独立表） | 一张图看完所有运行中服务/数据流/契约的总览。量化系统有大量外部数据源/券商接口，资产清单是风险管理基础 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_asset_panorama.py (待建)`<br>真源待裁定：待裁定：PostgreSQL 表 asset_registry（运行时服务/数据流/契约总览）vs YAML 静态配置。现有 asset_inventory.yaml 只是配置，不构成全景图<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md) |
+| PAN-ASSET-01 | 资产清单 / CMDB | ⏳待建 | 待裁定（depgraph 扩展 vs 独立表） | 一张图看完所有运行中服务/数据流/契约的总览。量化系统有大量外部数据源/券商接口，资产清单是风险管理基础 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_asset_panorama.py (待建)`<br>真源待裁定：待裁定：PostgreSQL 表 asset_registry（运行时服务/数据流/契约总览）vs YAML 静态配置。现有 asset_inventory.yaml 只是配置，不构成全景图<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md) / [`data_inventory.md`](../../03_modules/_domain_data/data_inventory.md) |
 | PAN-ASSET-02 | API 契约目录 | ⏳待建 | 待裁定（depgraph contracts 扩展 vs 独立表） | 面向人类的 API 契约目录全景图（谁提供什么/谁消费什么/版本号/Owner）。量化系统接口众多（行情/交易/风控），契约目录是接入新策略的入口 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_api_contract_catalog.py (待建)`<br>真源待裁定：待裁定：扩展现有 depgraph contracts 表 vs 独立 api_contracts 表。现有 PAN-BUILT-11 契约目录配置只是静态派生，缺版本号/Owner/消费方<br>相关蓝图：[`contracts_blueprint.md`](../../03_modules/_cross_layer/shared_core/contracts_blueprint.md) / [`blueprint.md`](../../03_modules/_domain_integration/blueprint.md) |
-| PAN-ASSET-03 | 数据目录 Data Catalog | ⏳待建 | 待裁定（dataflowgraph 扩展 vs 独立表） | 从全景图派生的数据目录，含数据完整性/延迟/质量的实时视图。量化强依赖数据质量，PIT/幸存者偏差/数据缺口必须可视化 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_data_catalog.py (待建)`<br>真源待裁定：待裁定：扩展现有 dataflow_datasets 表加完整性/延迟/质量字段 vs 独立 data_catalog 表。现有 data_acquisition_plan.md 不是从全景图派生<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_data/blueprint.md) / [`data_acquisition_plan.md`](../../03_modules/_domain_data/data_acquisition_plan.md) |
+| PAN-ASSET-03 | 数据目录 Data Catalog | ⏳待建 | 待裁定（dataflowgraph 扩展 vs 独立表） | 从全景图派生的数据目录，含数据完整性/延迟/质量的实时视图。量化强依赖数据质量，PIT/幸存者偏差/数据缺口必须可视化 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_data_catalog.py (待建)`<br>真源待裁定：待裁定：扩展现有 dataflow_datasets 表加完整性/延迟/质量字段 vs 独立 data_catalog 表。现有 data_acquisition_plan.md / data_catalog.md 不是从全景图派生<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_data/blueprint.md) / [`data_catalog.md`](../../03_modules/_domain_data/data_catalog.md) / [`data_acquisition_plan.md`](../../03_modules/_domain_data/data_acquisition_plan.md) |
 | PAN-ASSET-04 | 数据血缘图 Data Lineage | ⏳待建 | 待裁定（dataflowgraph 字段级扩展 vs 独立表） | 字段级血缘图（某个因子字段上游来自哪些原始表）。因子可解释性、监管追溯、数据问题定位必备 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_data_lineage.py (待建)`<br>真源待裁定：待裁定：扩展 dataflow_edges 表加字段级血缘 vs 独立 column_lineage 表。dataflowgraph 是作业级流图，缺字段级血缘<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_data/blueprint.md) / [`blueprint.md`](../../03_modules/_cross_layer/database/blueprint.md) |
 
 ### 09 运行时全景（待建）
@@ -299,10 +289,6 @@
 | PAN-RUN-02 | 告警热力图 | ⏳待建 | 待裁定（AlertManager API vs 独立表） | 告警热力图，量化系统盘后/盘中运维刚需 | 规划目录：`09_runtime_panorama/`<br>生成器：`generate_alert_heatmap.py (待建)`<br>真源待裁定：待裁定：AlertManager API 实时拉取 vs 独立 alert_history 表<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md) |
 | PAN-RUN-03 | CI/CD 流水线图 | ⏳待建 | 待裁定（GitHub Actions API vs 独立表） | 全项目构建/发布/部署流水线总览图 | 规划目录：`09_runtime_panorama/`<br>生成器：`generate_cicd_pipeline.py (待建)`<br>真源待裁定：待裁定：GitHub Actions API 拉取 vs 独立 cicd_pipelines 表。有 frontend_build_pipeline.mmd 但缺全项目构建/发布/部署流水线总览<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_governance/blueprint.md) / [`blueprint.md`](../../03_modules/_cross_layer/pipeline/blueprint.md) |
 | PAN-RUN-04 | 服务依赖运行时视图 | ⏳待建 | 待裁定（OpenTelemetry trace 聚合 vs 独立表） | 运行时实际调用频次/延迟/失败率加权的动态依赖图 | 规划目录：`09_runtime_panorama/`<br>生成器：`generate_runtime_dependency.py (待建)`<br>真源待裁定：待裁定：OpenTelemetry trace 聚合 vs 独立 runtime_calls 表。现有依赖图是静态 import，缺运行时实际调用频次/延迟/失败率加权<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| PAN-RUN-05 | 测试覆盖全景图 | ⏳待建 | 待裁定（代码扫描 + CI/CD 产物 vs 独立表） | 各域测试覆盖率矩阵 + PIT 合规验证覆盖度热力图。量化系统回测引擎合规验证必须可追溯 | 规划目录：`09_runtime_panorama/`<br>生成器：`generate_test_coverage_panorama.py (待建)`<br>真源待裁定：待裁定：从 coverage.py/pytest-cov 产物扫描派生 vs 独立 test_coverage 表。现有 depgraph 只有模块节点，缺各域测试覆盖率矩阵；回测引擎 PIT 合规验证（pit_consistency_test）覆盖度未可视化<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_governance/blueprint.md) / [`blueprint.md`](../../03_modules/_cross_layer/pipeline/blueprint.md) / [`blueprint.md`](../../03_modules/_domain_backtest/blueprint.md) |
-| PAN-RUN-06 | 性能基准全景图 | ⏳待建 | 待裁定（benchmark 产物扫描 vs 独立表） | 因子计算/回测/下单延迟基准看板。量化对延迟敏感，下单延迟超阈值直接影响成交滑点 | 规划目录：`09_runtime_panorama/`<br>生成器：`generate_performance_benchmark.py (待建)`<br>真源待裁定：待裁定：从 benchmark 产物（pytest-benchmark/json）派生 vs 独立 performance_benchmarks 表。量化对延迟敏感（因子计算/回测/下单），缺各环节延迟基准看板<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_backtest/blueprint.md) / [`blueprint.md`](../../03_modules/_domain_execution_core/blueprint.md) / [`blueprint.md`](../../03_modules/_domain_factor/blueprint.md) |
-| PAN-RUN-07 | 成本/资源消耗全景图 | ⏳待建 | 待裁定（BudgetEngine 派生 vs 独立表） | LLM token 消耗/数据源费用/算力占用全景。项目已有 BudgetEngine，可派生成本消耗看板 | 规划目录：`09_runtime_panorama/`<br>生成器：`generate_cost_resource_panorama.py (待建)`<br>真源待裁定：待裁定：从 BudgetEngine 运行时快照派生 vs 独立 cost_consumption 表。现有 BudgetEngine 已采集 token/算力消耗，缺全景可视化（LLM token/数据源费用/算力占用）<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_governance/blueprint.md) / [`blueprint.md`](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
-| PAN-RUN-08 | 灾备/高可用全景图 | ⏳待建 | 待裁定（基础设施配置派生 vs 独立表） | DR 切换链路 + 数据备份拓扑 + 故障域隔离图。量化系统盘后批处理容错必须可视化 | 规划目录：`09_runtime_panorama/`<br>生成器：`generate_dr_ha_panorama.py (待建)`<br>真源待裁定：待裁定：从基础设施配置（docker-compose/备份策略）派生 vs 独立 dr_ha_topology 表。现有 depgraph 只有模块依赖，缺 DR 切换链路/数据备份拓扑/故障域隔离图<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md) / [`blueprint.md`](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
 
 ### 10 安全全景（待建）
 
@@ -325,8 +311,6 @@
 | PAN-QUANT-02 | 策略谱系图 | ⏳待建 | 待裁定（decisiongraph 派生 vs 独立表） | 策略→因子→数据 的血缘链 | 规划目录：`12_quant_panorama/`<br>生成器：`generate_strategy_lineage.py (待建)`<br>真源待裁定：待裁定：从 decisiongraph L0-L6 派生 vs 独立 strategy_registry 表。策略→因子→数据的血缘链，目前只在 decisiongraph 里有 L0-L6 链路<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_signal/blueprint.md) / [`blueprint.md`](../../03_modules/_domain_research/blueprint.md) |
 | PAN-QUANT-03 | 回测对比看板 | ⏳待建 | 待裁定（depgraph 域派生 vs 独立表） | 多策略回测结果对比（Sharpe/回撤/胜率）全景 | 规划目录：`12_quant_panorama/`<br>生成器：`generate_backtest_comparison.py (待建)`<br>真源待裁定：待裁定：从 D_BACKTEST 域派生 vs 独立 backtest_results 表。多策略回测结果对比（Sharpe/回撤/胜率），目前各回测孤立<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_backtest/blueprint.md) |
 | PAN-QUANT-04 | 订单生命周期图 | ⏳待建 | 待裁定（depgraph 域派生 vs 独立表） | 订单状态机 + 成交分布 + 拒单热力图 | 规划目录：`12_quant_panorama/`<br>生成器：`generate_order_lifecycle.py (待建)`<br>真源待裁定：待裁定：从 D_TRADING/D_EX_CORE 派生 vs 独立 order_lifecycle 表。目前只有时序图 seq_order_submit.mmd，缺订单状态机 + 成交分布 + 拒单热力图<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_execution_core/blueprint.md) |
-| PAN-QUANT-05 | 特征存储全景图 | ⏳待建 | 待裁定（depgraph 域派生 vs 独立表） | 特征存储全景图（特征定义 + PIT 一致性标注 + 特征复用矩阵）。量化特有，Feature Store PIT 一致性可视化是回测零前瞻偏差基础 | 规划目录：`12_quant_panorama/`<br>生成器：`generate_feature_store_panorama.py (待建)`<br>真源待裁定：待裁定：从 D_FACTOR/D_DATA 域派生 vs 独立 feature_store_registry 表。项目有 pit_consistency_test 但无 Feature Store 全景图，缺特征定义/PIT 一致性标注/特征复用矩阵<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_factor/blueprint.md) / [`blueprint.md`](../../03_modules/_domain_data/blueprint.md) / [`blueprint.md`](../../03_modules/_domain_backtest/blueprint.md) |
-| PAN-QUANT-06 | 模型注册表 | ⏳待建 | 待裁定（depgraph 域派生 vs 独立表） | ML 模型版本/上线/退役状态 + 训练数据快照。D_ML_TRAIN/D_ML_SERVE 有依赖图，缺模型生命周期视图 | 规划目录：`12_quant_panorama/`<br>生成器：`generate_model_registry.py (待建)`<br>真源待裁定：待裁定：从 D_MACHINE_LEARNING_TRAIN 域派生 vs 独立 model_registry 表。D_MACHINE_LEARNING_TRAIN 有依赖图，缺模型版本/上线/退役状态/训练数据快照视图<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_machine_learning_train/blueprint.md) |
 
 ### 13 可视化前端架构（待建）
 

@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-09T19:34:15
+> 生成时间: 2026-07-13T05:29:56
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -17,12 +17,12 @@
 | 类型 | 数量 |
 |------|------|
 | Track（轨） | 5 |
-| Layer（层） | 152 |
+| Layer（层） | 174 |
 | Node（节点） | 214 |
 | Edge（边） | 213 |
-| 运营态 Layer（design_maturity=production） | 21 |
-| 设计态 Layer（design_maturity=design） | 43 |
-| 原型态 Layer（design_maturity=prototype） | 88 |
+| 运营态 Layer（design_maturity=production） | 17 |
+| 设计态 Layer（design_maturity=design） | 57 |
+| 原型态 Layer（design_maturity=prototype） | 100 |
 | 运营态 Node（design_maturity=production） | 0 |
 | 设计态 Node（design_maturity=design） | 214 |
 
@@ -487,26 +487,36 @@ flowchart TD
         LCFG_rule_registry_collection["[production]CFG-rule-registry-collection: CFG-rule-registry-collection<br/>蓝图: 规则注册表集 / Rule Registry Collection — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LCFG_scripts_registry["[production]CFG-scripts-registry: CFG-scripts-registry<br/>蓝图: 脚本集 / Script Collection — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LCFG_test_suite_registry["[production]CFG-test-suite-registry: CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
+        LD_GOV_ENFORCEMENT["[prototype]D-GOV-ENFORCEMENT: D-GOV-ENFORCEMENT<br/>蓝图: D-GOV-ENFORCEMENT<br/>build: generated"]:::bsGenerated
         LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
         LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: zephyr-chroma-vector-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
         LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: zephyr-depgraph-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
         LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: zephyr-clickhouse-c1-market — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LMOD_013["[design]MOD-013: MOD-013<br/>build: planned"]:::bsPlanned
         LMOD_014["[production]MOD-014: MOD-014<br/>蓝图: MOD-014<br/>build: generated"]:::bsGenerated
+        LMOD_015["[design]MOD-015: MOD-015<br/>build: stable"]:::bsStable
+        LMOD_ALT_DATA["[prototype]MOD-ALT_DATA: MOD-ALT_DATA<br/>蓝图: MOD-ALT_DATA<br/>build: generated"]:::bsGenerated
+        LMOD_ARCH_BIZDB["[design]MOD-ARCH-BIZDB: MOD-ARCH-BIZDB<br/>build: planned"]:::bsPlanned
         LMOD_AUTONOMY_CORE["[production]MOD-AUTONOMY_CORE: MOD-AUTONOMY_CORE<br/>蓝图: MOD-AUTONOMY_CORE<br/>build: generated"]:::bsGenerated
         LMOD_AUTONOMY_PERM["[prototype]MOD-AUTONOMY_PERM: MOD-AUTONOMY_PERM<br/>蓝图: MOD-AUTONOMY_PERM<br/>build: generated"]:::bsGenerated
         LMOD_BIZ_002["[prototype]MOD-BIZ-002: MOD-BIZ-002<br/>蓝图: MOD-BIZ-002<br/>build: generated"]:::bsGenerated
         LMOD_BT_001["[design]MOD-BT-001: MOD-BT-001<br/>build: generated"]:::bsGenerated
+        LMOD_C1_MARKETCH["[design]MOD-C1-MARKETCH: MOD-C1-MARKETCH<br/>build: planned"]:::bsPlanned
         LMOD_CONTEXT_ENGINE["[design]MOD-CONTEXT_ENGINE: MOD-CONTEXT_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_CROSS_ASSET["[design]MOD-CROSS_ASSET: MOD-CROSS_ASSET<br/>build: planned"]:::bsPlanned
         LMOD_D5_ARCH_TOOLS["[prototype]MOD-D5-ARCH-TOOLS: MOD-D5-ARCH-TOOLS<br/>蓝图: MOD-D5-ARCH-TOOLS<br/>build: generated"]:::bsGenerated
         LMOD_DATABASE["[prototype]MOD-DATABASE: MOD-DATABASE<br/>蓝图: MOD-DATABASE<br/>build: generated"]:::bsGenerated
+        LMOD_DATA_ENG["[prototype]MOD-DATA_ENG: MOD-DATA_ENG<br/>蓝图: MOD-DATA_ENG<br/>build: generated"]:::bsGenerated
+        LMOD_DATA_GOV["[prototype]MOD-DATA_GOV: MOD-DATA_GOV<br/>蓝图: MOD-DATA_GOV<br/>build: generated"]:::bsGenerated
+        LMOD_DATA_SEC["[prototype]MOD-DATA_SEC: MOD-DATA_SEC<br/>蓝图: MOD-DATA_SEC<br/>build: generated"]:::bsGenerated
         LMOD_DIGITAL_TWIN["[design]MOD-DIGITAL_TWIN: MOD-DIGITAL_TWIN<br/>build: planned"]:::bsPlanned
+        LMOD_EXEC_SIM["[prototype]MOD-EXEC_SIM: MOD-EXEC_SIM<br/>蓝图: MOD-EXEC_SIM<br/>build: generated"]:::bsGenerated
+        LMOD_EX_SOR["[prototype]MOD-EX_SOR: MOD-EX_SOR<br/>蓝图: MOD-EX_SOR<br/>build: generated"]:::bsGenerated
         LMOD_FEEDBACK_LOOP["[design]MOD-FEEDBACK_LOOP: MOD-FEEDBACK_LOOP<br/>build: planned"]:::bsPlanned
         LMOD_GATE_ENGINE["[design]MOD-GATE_ENGINE: MOD-GATE_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_GOV_019["[prototype]MOD-GOV-019: MOD-GOV-019<br/>蓝图: MOD-GOV-019<br/>build: generated"]:::bsGenerated
         LMOD_GOV_ALIGN_PANORAMAS["[design]MOD-GOV-ALIGN-PANORAMAS: MOD-GOV-ALIGN-PANORAMAS<br/>build: stable"]:::bsStable
         LMOD_GOV_DOCS["[production]MOD-GOV-DOCS: MOD-GOV-DOCS<br/>蓝图: MOD-GOV-DOCS<br/>build: generated"]:::bsGenerated
-        LMOD_GOV_ENFORCEMENT["[production]MOD-GOV-ENFORCEMENT: MOD-GOV-ENFORCEMENT<br/>蓝图: MOD-GOV-ENFORCEMENT<br/>build: generated"]:::bsGenerated
         LMOD_GOV_REPAIR["[prototype]MOD-GOV-REPAIR: MOD-GOV-REPAIR<br/>蓝图: MOD-GOV-REPAIR<br/>build: generated"]:::bsGenerated
         LMOD_GOV_SCRIPTS["[prototype]MOD-GOV-SCRIPTS: MOD-GOV-SCRIPTS<br/>蓝图: MOD-GOV-SCRIPTS<br/>build: generated"]:::bsGenerated
         LMOD_GOV_SCRIPTS_ARCH["[prototype]MOD-GOV-SCRIPTS-ARCH: MOD-GOV-SCRIPTS-ARCH<br/>蓝图: MOD-GOV-SCRIPTS-ARCH<br/>build: generated"]:::bsGenerated
@@ -521,6 +531,7 @@ flowchart TD
         LMOD_GOV_commit_gates["[prototype]MOD-GOV-commit_gates: MOD-GOV-commit_gates<br/>蓝图: MOD-GOV-commit_gates<br/>build: generated"]:::bsGenerated
         LMOD_GOV_create_guard["[prototype]MOD-GOV-create_guard: MOD-GOV-create_guard<br/>蓝图: MOD-GOV-create_guard<br/>build: generated"]:::bsGenerated
         LMOD_GOV_dangling_reference_gate["[prototype]MOD-GOV-dangling_reference_gate: MOD-GOV-dangling_reference_gate<br/>蓝图: MOD-GOV-dangling_reference_gate<br/>build: generated"]:::bsGenerated
+        LMOD_GOV_diff_helpers["[prototype]MOD-GOV-diff_helpers: MOD-GOV-diff_helpers<br/>蓝图: MOD-GOV-diff_helpers<br/>build: generated"]:::bsGenerated
         LMOD_GOV_doc_ref_broken_gate["[prototype]MOD-GOV-doc_ref_broken_gate: MOD-GOV-doc_ref_broken_gate<br/>蓝图: MOD-GOV-doc_ref_broken_gate<br/>build: generated"]:::bsGenerated
         LMOD_GOV_empty_handler_gate["[prototype]MOD-GOV-empty_handler_gate: MOD-GOV-empty_handler_gate<br/>蓝图: MOD-GOV-empty_handler_gate<br/>build: generated"]:::bsGenerated
         LMOD_GOV_exempt_zone_frontmatter_gate["[prototype]MOD-GOV-exempt_zone_frontmatter_gate: MOD-GOV-exempt_zone_frontmatter_gate<br/>蓝图: MOD-GOV-exempt_zone_frontmatter_gate<br/>build: generated"]:::bsGenerated
@@ -546,10 +557,11 @@ flowchart TD
         LMOD_GOV_session_required_gate["[prototype]MOD-GOV-session_required_gate: MOD-GOV-session_required_gate<br/>蓝图: MOD-GOV-session_required_gate<br/>build: generated"]:::bsGenerated
         LMOD_GOV_session_worktree["[prototype]MOD-GOV-session_worktree: MOD-GOV-session_worktree<br/>蓝图: MOD-GOV-session_worktree<br/>build: generated"]:::bsGenerated
         LMOD_GOV_ssot_redefinition_gate["[prototype]MOD-GOV-ssot_redefinition_gate: MOD-GOV-ssot_redefinition_gate<br/>蓝图: MOD-GOV-ssot_redefinition_gate<br/>build: generated"]:::bsGenerated
-        LMOD_GOV_tests_coverage_gate["[prototype]MOD-GOV-tests_coverage_gate: MOD-GOV-tests_coverage_gate<br/>蓝图: MOD-GOV-tests_coverage_gate<br/>build: generated"]:::bsGenerated
+        LMOD_GOV_test_source_consistency_gate["[prototype]MOD-GOV-test_source_consistency_gate: MOD-GOV-test_source_consistency_gate<br/>蓝图: MOD-GOV-test_source_consistency_gate<br/>build: generated"]:::bsGenerated
         LMOD_GOV_vocab_hardcode_gate["[prototype]MOD-GOV-vocab_hardcode_gate: MOD-GOV-vocab_hardcode_gate<br/>蓝图: MOD-GOV-vocab_hardcode_gate<br/>build: generated"]:::bsGenerated
         LMOD_GOV_worktree_manager["[production]MOD-GOV-worktree_manager: MOD-GOV-worktree_manager<br/>蓝图: MOD-GOV-worktree_manager<br/>build: generated"]:::bsGenerated
-        LMOD_GOVERNANCE["[design]MOD-GOVERNANCE: MOD-GOVERNANCE<br/>build: planned"]:::bsPlanned
+        LMOD_GOVERNANCE["[design]MOD-GOVERNANCE: MOD-GOVERNANCE<br/>build: generated"]:::bsGenerated
+        LMOD_GOV_behavioral_admission["[prototype]MOD-GOV_behavioral_admission: MOD-GOV_behavioral_admission<br/>蓝图: MOD-GOV_behavioral_admission<br/>build: generated"]:::bsGenerated
         LMOD_GOV_commit_gates["[prototype]MOD-GOV_commit_gates: MOD-GOV_commit_gates<br/>蓝图: MOD-GOV_commit_gates<br/>build: generated"]:::bsGenerated
         LMOD_GOV_resilience_governance["[prototype]MOD-GOV_resilience_governance: MOD-GOV_resilience_governance<br/>蓝图: MOD-GOV_resilience_governance<br/>build: generated"]:::bsGenerated
         LMOD_GOV_security_governance["[prototype]MOD-GOV_security_governance: MOD-GOV_security_governance<br/>蓝图: MOD-GOV_security_governance<br/>build: generated"]:::bsGenerated
@@ -563,12 +575,12 @@ flowchart TD
         LMOD_INF_016["[design]MOD-INF-016: MOD-INF-016<br/>build: planned"]:::bsPlanned
         LMOD_INF_017["[design]MOD-INF-017: MOD-INF-017<br/>build: planned"]:::bsPlanned
         LMOD_INF_018["[prototype]MOD-INF-018: MOD-INF-018<br/>蓝图: MOD-INF-018<br/>build: generated"]:::bsGenerated
-        LMOD_INF_019["[production]MOD-INF-019: MOD-INF-019<br/>蓝图: docs__03_modules___domain_autonomy_core__agent_spec__blueprint_md<br/>build: generated"]:::bsGenerated
-        LMOD_INF_020["[prototype]MOD-INF-020: MOD-INF-020<br/>蓝图: docs__03_modules___domain_governance__audit_trail__blueprint_md<br/>build: generated"]:::bsGenerated
+        LMOD_INF_019["[design]MOD-INF-019: MOD-INF-019<br/>build: planned"]:::bsPlanned
+        LMOD_INF_020["[design]MOD-INF-020: MOD-INF-020<br/>build: planned"]:::bsPlanned
         LMOD_INF_021["[design]MOD-INF-021: MOD-INF-021<br/>build: planned"]:::bsPlanned
-        LMOD_INF_022["[prototype]MOD-INF-022: MOD-INF-022<br/>蓝图: docs__03_modules___domain_autonomy_perm__escalation_protocol__blueprint_md<br/>build: generated"]:::bsGenerated
+        LMOD_INF_022["[design]MOD-INF-022: MOD-INF-022<br/>build: planned"]:::bsPlanned
         LMOD_INF_023["[design]MOD-INF-023: MOD-INF-023<br/>build: planned"]:::bsPlanned
-        LMOD_INF_024["[design]MOD-INF-024: MOD-INF-024<br/>build: planned"]:::bsPlanned
+        LMOD_INF_024["[design]MOD-INF-024: MOD-INF-024<br/>build: generated"]:::bsGenerated
         LMOD_INF_025["[prototype]MOD-INF-025: MOD-INF-025<br/>蓝图: MOD-INF-025<br/>build: generated"]:::bsGenerated
         LMOD_INF_026["[prototype]MOD-INF-026: MOD-INF-026<br/>蓝图: MOD-INF-026<br/>build: generated"]:::bsGenerated
         LMOD_INF_027["[design]MOD-INF-027: MOD-INF-027<br/>build: planned"]:::bsPlanned
@@ -580,7 +592,7 @@ flowchart TD
         LMOD_INF_034["[design]MOD-INF-034: MOD-INF-034<br/>build: planned"]:::bsPlanned
         LMOD_INF_035["[prototype]MOD-INF-035: MOD-INF-035<br/>蓝图: MOD-INF-035<br/>build: generated"]:::bsGenerated
         LMOD_INF_036["[design]MOD-INF-036: MOD-INF-036<br/>build: planned"]:::bsPlanned
-        LMOD_INF_037["[design]MOD-INF-037: MOD-INF-037<br/>build: planned"]:::bsPlanned
+        LMOD_INF_037["[design]MOD-INF-037: MOD-INF-037<br/>build: generated"]:::bsGenerated
         LMOD_INF_038["[prototype]MOD-INF-038: MOD-INF-038<br/>蓝图: MOD-INF-038<br/>build: generated"]:::bsGenerated
         LMOD_INF_039["[design]MOD-INF-039: MOD-INF-039<br/>build: planned"]:::bsPlanned
         LMOD_INF_042["[prototype]MOD-INF-042: MOD-INF-042<br/>蓝图: MOD-INF-042<br/>build: generated"]:::bsGenerated
@@ -589,31 +601,40 @@ flowchart TD
         LMOD_INFRA_RUNTIME["[prototype]MOD-INFRA_RUNTIME: MOD-INFRA_RUNTIME<br/>蓝图: MOD-INFRA_RUNTIME<br/>build: generated"]:::bsGenerated
         LMOD_INTEGRATION["[prototype]MOD-INTEGRATION: MOD-INTEGRATION<br/>蓝图: MOD-INTEGRATION<br/>build: generated"]:::bsGenerated
         LMOD_KB_001["[design]MOD-KB-001: MOD-KB-001<br/>build: planned"]:::bsPlanned
-        LMOD_L00_001["[design]MOD-L00-001: MOD-L00-001<br/>build: stable"]:::bsStable
+        LMOD_KNOWLEDGE["[prototype]MOD-KNOWLEDGE: MOD-KNOWLEDGE<br/>蓝图: MOD-KNOWLEDGE<br/>build: generated"]:::bsGenerated
+        LMOD_L00_001["[design]MOD-L00-001: MOD-L00-001<br/>build: generated"]:::bsGenerated
+        LMOD_L00_002["[design]MOD-L00-002: MOD-L00-002<br/>build: stable"]:::bsStable
+        LMOD_L00_003["[design]MOD-L00-003: MOD-L00-003<br/>build: stable"]:::bsStable
         LMOD_L00_004["[prototype]MOD-L00-004: MOD-L00-004<br/>蓝图: MOD-L00-004<br/>build: generated"]:::bsGenerated
         LMOD_L02_001["[prototype]MOD-L02-001: MOD-L02-001<br/>蓝图: MOD-L02-001<br/>build: generated"]:::bsGenerated
         LMOD_L03_001["[prototype]MOD-L03-001: MOD-L03-001<br/>蓝图: MOD-L03-001<br/>build: generated"]:::bsGenerated
         LMOD_L04_001["[prototype]MOD-L04-001: MOD-L04-001<br/>蓝图: MOD-L04-001<br/>build: generated"]:::bsGenerated
         LMOD_L05_001["[prototype]MOD-L05-001: MOD-L05-001<br/>蓝图: MOD-L05-001<br/>build: generated"]:::bsGenerated
-        LMOD_L06_001["[prototype]MOD-L06-001: MOD-L06-001<br/>蓝图: MOD-L06-001<br/>build: generated"]:::bsGenerated
+        LMOD_L06_001["[design]MOD-L06-001: MOD-L06-001<br/>build: generated"]:::bsGenerated
         LMOD_L07_001["[prototype]MOD-L07-001: MOD-L07-001<br/>蓝图: MOD-L07-001<br/>build: generated"]:::bsGenerated
         LMOD_L08_001["[design]MOD-L08-001: MOD-L08-001<br/>build: generated"]:::bsGenerated
         LMOD_L09_001["[prototype]MOD-L09-001: MOD-L09-001<br/>蓝图: MOD-L09-001<br/>build: generated"]:::bsGenerated
         LMOD_L10_001["[prototype]MOD-L10-001: MOD-L10-001<br/>蓝图: MOD-L10-001<br/>build: generated"]:::bsGenerated
         LMOD_L11_001["[prototype]MOD-L11-001: MOD-L11-001<br/>蓝图: MOD-L11-001<br/>build: generated"]:::bsGenerated
         LMOD_L13_001["[prototype]MOD-L13-001: MOD-L13-001<br/>蓝图: MOD-L13-001<br/>build: generated"]:::bsGenerated
-        LMOD_LLM_SECURITY["[production]MOD-LLM_SECURITY: MOD-LLM_SECURITY<br/>蓝图: MOD-LLM_SECURITY<br/>build: generated"]:::bsGenerated
-        LMOD_MASTER_BLUEPRINT["[design]MOD-MASTER_BLUEPRINT: MOD-MASTER_BLUEPRINT<br/>build: planned"]:::bsPlanned
+        LMOD_LLM_SECURITY["[prototype]MOD-LLM_SECURITY: MOD-LLM_SECURITY<br/>蓝图: MOD-LLM_SECURITY<br/>build: generated"]:::bsGenerated
+        LMOD_MASTER_001["[design]MOD-MASTER-001: MOD-MASTER-001<br/>build: stable"]:::bsStable
+        LMOD_MASTER_002["[design]MOD-MASTER-002: MOD-MASTER-002<br/>build: stable"]:::bsStable
+        LMOD_MASTER_003["[design]MOD-MASTER-003: MOD-MASTER-003<br/>build: planned"]:::bsPlanned
+        LMOD_MASTER_BLUEPRINT["[design]MOD-MASTER_BLUEPRINT: MOD-MASTER_BLUEPRINT<br/>build: deprecated"]:::bsDeprecated
         LMOD_MKT_DATA["[prototype]MOD-MKT_DATA: MOD-MKT_DATA<br/>蓝图: MOD-MKT_DATA<br/>build: generated"]:::bsGenerated
+        LMOD_ML_SERVE["[prototype]MOD-ML_SERVE: MOD-ML_SERVE<br/>蓝图: MOD-ML_SERVE<br/>build: generated"]:::bsGenerated
         LMOD_PF_ALLOC["[design]MOD-PF_ALLOC: MOD-PF_ALLOC<br/>build: planned"]:::bsPlanned
         LMOD_RESOURCE_OPTIMIZATION_ENGINE["[design]MOD-RESOURCE_OPTIMIZATION_ENGINE: MOD-RESOURCE_OPTIMIZATION_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_RULE_ENGINE["[prototype]MOD-RULE_ENGINE: MOD-RULE_ENGINE<br/>蓝图: MOD-RULE_ENGINE<br/>build: generated"]:::bsGenerated
         LMOD_SEC_030["[prototype]MOD-SEC-030: MOD-SEC-030<br/>蓝图: MOD-SEC-030<br/>build: generated"]:::bsGenerated
-        LMOD_SECURITY["[production]MOD-SECURITY: MOD-SECURITY<br/>蓝图: MOD-SECURITY<br/>build: generated"]:::bsGenerated
+        LMOD_SECURITY["[prototype]MOD-SECURITY: MOD-SECURITY<br/>蓝图: MOD-SECURITY<br/>build: generated"]:::bsGenerated
         LMOD_SECURITY_LLM["[production]MOD-SECURITY-LLM: MOD-SECURITY-LLM<br/>蓝图: MOD-SECURITY-LLM<br/>build: generated"]:::bsGenerated
+        LMOD_SELL_DECISION["[prototype]MOD-SELL_DECISION: MOD-SELL_DECISION<br/>蓝图: MOD-SELL_DECISION<br/>build: generated"]:::bsGenerated
         LMOD_SHARED_001["[prototype]MOD-SHARED-001: MOD-SHARED-001<br/>蓝图: MOD-SHARED-001<br/>build: generated"]:::bsGenerated
         LMOD_SHARED_002["[prototype]MOD-SHARED-002: MOD-SHARED-002<br/>蓝图: MOD-SHARED-002<br/>build: generated"]:::bsGenerated
         LMOD_SHR_io_yaml["[prototype]MOD-SHR-io-yaml: MOD-SHR-io-yaml<br/>蓝图: MOD-SHR-io-yaml<br/>build: generated"]:::bsGenerated
+        LMOD_SIGNAL_ASHARE["[prototype]MOD-SIGNAL_ASHARE: MOD-SIGNAL_ASHARE<br/>蓝图: MOD-SIGNAL_ASHARE<br/>build: generated"]:::bsGenerated
         LMOD_SIGQC_001["[prototype]MOD-SIGQC-001: MOD-SIGQC-001<br/>蓝图: MOD-SIGQC-001<br/>build: generated"]:::bsGenerated
         LMOD_SIMULATION["[design]MOD-SIMULATION: MOD-SIMULATION<br/>build: planned"]:::bsPlanned
         LMOD_TASK_SYSTEM["[prototype]MOD-TASK_SYSTEM: MOD-TASK_SYSTEM<br/>蓝图: MOD-TASK_SYSTEM<br/>build: generated"]:::bsGenerated
@@ -625,11 +646,13 @@ flowchart TD
         LSH_DB_002["[prototype]SH-DB-002: SH-DB-002<br/>蓝图: SH-DB-002<br/>build: generated"]:::bsGenerated
         LSH_GOV_003["[prototype]SH-GOV-003: SH-GOV-003<br/>蓝图: SH-GOV-003<br/>build: generated"]:::bsGenerated
         LSH_MAIN_001["[prototype]SH-MAIN-001: SH-MAIN-001<br/>蓝图: SH-MAIN-001<br/>build: generated"]:::bsGenerated
+        LSYS_MASTER_001["[design]SYS-MASTER-001: SYS-MASTER-001<br/>build: stable"]:::bsStable
     end
     LCFG_rule_enforcement_registry -.->|triggering| LCFG_rule_registry_collection
     LCFG_rule_registry_collection -.->|triggering| LCFG_scripts_registry
     LCFG_scripts_registry -.->|triggering| LCFG_test_suite_registry
-    LCFG_test_suite_registry -.->|triggering| LINFRA_DB_001
+    LCFG_test_suite_registry -.->|triggering| LD_GOV_ENFORCEMENT
+    LD_GOV_ENFORCEMENT -.->|triggering| LINFRA_DB_001
     LINFRA_DB_001 -.->|triggering| LINFRA_DB_002
     LINFRA_DB_002 -.->|triggering| LINFRA_DB_003
     LINFRA_DB_003 -.->|triggering| LINFRA_DB_006
@@ -643,23 +666,32 @@ flowchart TD
     LL3 -.->|triggering| LL4
     LL4 -.->|triggering| LL5
     LL5 -.->|triggering| LL6
-    LL6 -.->|triggering| LMOD_014
-    LMOD_014 -.->|triggering| LMOD_AUTONOMY_CORE
+    LL6 -.->|triggering| LMOD_013
+    LMOD_013 -.->|triggering| LMOD_014
+    LMOD_014 -.->|triggering| LMOD_015
+    LMOD_015 -.->|triggering| LMOD_ALT_DATA
+    LMOD_ALT_DATA -.->|triggering| LMOD_ARCH_BIZDB
+    LMOD_ARCH_BIZDB -.->|triggering| LMOD_AUTONOMY_CORE
     LMOD_AUTONOMY_CORE -.->|triggering| LMOD_AUTONOMY_PERM
     LMOD_AUTONOMY_PERM -.->|triggering| LMOD_BIZ_002
     LMOD_BIZ_002 -.->|triggering| LMOD_BT_001
-    LMOD_BT_001 -.->|triggering| LMOD_CONTEXT_ENGINE
+    LMOD_BT_001 -.->|triggering| LMOD_C1_MARKETCH
+    LMOD_C1_MARKETCH -.->|triggering| LMOD_CONTEXT_ENGINE
     LMOD_CONTEXT_ENGINE -.->|triggering| LMOD_CROSS_ASSET
     LMOD_CROSS_ASSET -.->|triggering| LMOD_D5_ARCH_TOOLS
     LMOD_D5_ARCH_TOOLS -.->|triggering| LMOD_DATABASE
-    LMOD_DATABASE -.->|triggering| LMOD_DIGITAL_TWIN
-    LMOD_DIGITAL_TWIN -.->|triggering| LMOD_FEEDBACK_LOOP
+    LMOD_DATABASE -.->|triggering| LMOD_DATA_ENG
+    LMOD_DATA_ENG -.->|triggering| LMOD_DATA_GOV
+    LMOD_DATA_GOV -.->|triggering| LMOD_DATA_SEC
+    LMOD_DATA_SEC -.->|triggering| LMOD_DIGITAL_TWIN
+    LMOD_DIGITAL_TWIN -.->|triggering| LMOD_EXEC_SIM
+    LMOD_EXEC_SIM -.->|triggering| LMOD_EX_SOR
+    LMOD_EX_SOR -.->|triggering| LMOD_FEEDBACK_LOOP
     LMOD_FEEDBACK_LOOP -.->|triggering| LMOD_GATE_ENGINE
     LMOD_GATE_ENGINE -.->|triggering| LMOD_GOV_019
     LMOD_GOV_019 -.->|triggering| LMOD_GOV_ALIGN_PANORAMAS
     LMOD_GOV_ALIGN_PANORAMAS -.->|triggering| LMOD_GOV_DOCS
-    LMOD_GOV_DOCS -.->|triggering| LMOD_GOV_ENFORCEMENT
-    LMOD_GOV_ENFORCEMENT -.->|triggering| LMOD_GOV_REPAIR
+    LMOD_GOV_DOCS -.->|triggering| LMOD_GOV_REPAIR
     LMOD_GOV_REPAIR -.->|triggering| LMOD_GOV_SCRIPTS
     LMOD_GOV_SCRIPTS -.->|triggering| LMOD_GOV_SCRIPTS_ARCH
     LMOD_GOV_SCRIPTS_ARCH -.->|triggering| LMOD_GOV_SYNC_PANORAMA
@@ -673,7 +705,8 @@ flowchart TD
     LMOD_GOV_commit_gate_registry -.->|triggering| LMOD_GOV_commit_gates
     LMOD_GOV_commit_gates -.->|triggering| LMOD_GOV_create_guard
     LMOD_GOV_create_guard -.->|triggering| LMOD_GOV_dangling_reference_gate
-    LMOD_GOV_dangling_reference_gate -.->|triggering| LMOD_GOV_doc_ref_broken_gate
+    LMOD_GOV_dangling_reference_gate -.->|triggering| LMOD_GOV_diff_helpers
+    LMOD_GOV_diff_helpers -.->|triggering| LMOD_GOV_doc_ref_broken_gate
     LMOD_GOV_doc_ref_broken_gate -.->|triggering| LMOD_GOV_empty_handler_gate
     LMOD_GOV_empty_handler_gate -.->|triggering| LMOD_GOV_exempt_zone_frontmatter_gate
     LMOD_GOV_exempt_zone_frontmatter_gate -.->|triggering| LMOD_GOV_file_copy_gate
@@ -698,11 +731,12 @@ flowchart TD
     LMOD_GOV_session_claim -.->|triggering| LMOD_GOV_session_required_gate
     LMOD_GOV_session_required_gate -.->|triggering| LMOD_GOV_session_worktree
     LMOD_GOV_session_worktree -.->|triggering| LMOD_GOV_ssot_redefinition_gate
-    LMOD_GOV_ssot_redefinition_gate -.->|triggering| LMOD_GOV_tests_coverage_gate
-    LMOD_GOV_tests_coverage_gate -.->|triggering| LMOD_GOV_vocab_hardcode_gate
+    LMOD_GOV_ssot_redefinition_gate -.->|triggering| LMOD_GOV_test_source_consistency_gate
+    LMOD_GOV_test_source_consistency_gate -.->|triggering| LMOD_GOV_vocab_hardcode_gate
     LMOD_GOV_vocab_hardcode_gate -.->|triggering| LMOD_GOV_worktree_manager
     LMOD_GOV_worktree_manager -.->|triggering| LMOD_GOVERNANCE
-    LMOD_GOVERNANCE -.->|triggering| LMOD_GOV_commit_gates
+    LMOD_GOVERNANCE -.->|triggering| LMOD_GOV_behavioral_admission
+    LMOD_GOV_behavioral_admission -.->|triggering| LMOD_GOV_commit_gates
     LMOD_GOV_commit_gates -.->|triggering| LMOD_GOV_resilience_governance
     LMOD_GOV_resilience_governance -.->|triggering| LMOD_GOV_security_governance
     LMOD_GOV_security_governance -.->|triggering| LMOD_INF_001
@@ -741,8 +775,11 @@ flowchart TD
     LMOD_INFRA_OPS -.->|triggering| LMOD_INFRA_RUNTIME
     LMOD_INFRA_RUNTIME -.->|triggering| LMOD_INTEGRATION
     LMOD_INTEGRATION -.->|triggering| LMOD_KB_001
-    LMOD_KB_001 -.->|triggering| LMOD_L00_001
-    LMOD_L00_001 -.->|triggering| LMOD_L00_004
+    LMOD_KB_001 -.->|triggering| LMOD_KNOWLEDGE
+    LMOD_KNOWLEDGE -.->|triggering| LMOD_L00_001
+    LMOD_L00_001 -.->|triggering| LMOD_L00_002
+    LMOD_L00_002 -.->|triggering| LMOD_L00_003
+    LMOD_L00_003 -.->|triggering| LMOD_L00_004
     LMOD_L00_004 -.->|triggering| LMOD_L02_001
     LMOD_L02_001 -.->|triggering| LMOD_L03_001
     LMOD_L03_001 -.->|triggering| LMOD_L04_001
@@ -755,18 +792,24 @@ flowchart TD
     LMOD_L10_001 -.->|triggering| LMOD_L11_001
     LMOD_L11_001 -.->|triggering| LMOD_L13_001
     LMOD_L13_001 -.->|triggering| LMOD_LLM_SECURITY
-    LMOD_LLM_SECURITY -.->|triggering| LMOD_MASTER_BLUEPRINT
+    LMOD_LLM_SECURITY -.->|triggering| LMOD_MASTER_001
+    LMOD_MASTER_001 -.->|triggering| LMOD_MASTER_002
+    LMOD_MASTER_002 -.->|triggering| LMOD_MASTER_003
+    LMOD_MASTER_003 -.->|triggering| LMOD_MASTER_BLUEPRINT
     LMOD_MASTER_BLUEPRINT -.->|triggering| LMOD_MKT_DATA
-    LMOD_MKT_DATA -.->|triggering| LMOD_PF_ALLOC
+    LMOD_MKT_DATA -.->|triggering| LMOD_ML_SERVE
+    LMOD_ML_SERVE -.->|triggering| LMOD_PF_ALLOC
     LMOD_PF_ALLOC -.->|triggering| LMOD_RESOURCE_OPTIMIZATION_ENGINE
     LMOD_RESOURCE_OPTIMIZATION_ENGINE -.->|triggering| LMOD_RULE_ENGINE
     LMOD_RULE_ENGINE -.->|triggering| LMOD_SEC_030
     LMOD_SEC_030 -.->|triggering| LMOD_SECURITY
     LMOD_SECURITY -.->|triggering| LMOD_SECURITY_LLM
-    LMOD_SECURITY_LLM -.->|triggering| LMOD_SHARED_001
+    LMOD_SECURITY_LLM -.->|triggering| LMOD_SELL_DECISION
+    LMOD_SELL_DECISION -.->|triggering| LMOD_SHARED_001
     LMOD_SHARED_001 -.->|triggering| LMOD_SHARED_002
     LMOD_SHARED_002 -.->|triggering| LMOD_SHR_io_yaml
-    LMOD_SHR_io_yaml -.->|triggering| LMOD_SIGQC_001
+    LMOD_SHR_io_yaml -.->|triggering| LMOD_SIGNAL_ASHARE
+    LMOD_SIGNAL_ASHARE -.->|triggering| LMOD_SIGQC_001
     LMOD_SIGQC_001 -.->|triggering| LMOD_SIMULATION
     LMOD_SIMULATION -.->|triggering| LMOD_TASK_SYSTEM
     LMOD_TASK_SYSTEM -.->|triggering| LMOD_TRADING
@@ -777,6 +820,7 @@ flowchart TD
     LSH_DB_001 -.->|triggering| LSH_DB_002
     LSH_DB_002 -.->|triggering| LSH_GOV_003
     LSH_GOV_003 -.->|triggering| LSH_MAIN_001
+    LSH_MAIN_001 -.->|triggering| LSYS_MASTER_001
     N192 -->|informing| N193
     N193 -->|informing| N194
     N194 -->|informing| N190
@@ -1000,7 +1044,7 @@ flowchart TD
 
 ### 运营态全景图（仅 design_maturity=production 的 layer/node）
 
-> 仅展示已实现稳定运行的决策层/节点（共 21 层，0 边）。
+> 仅展示已实现稳定运行的决策层/节点（共 17 层，0 边）。
 
 ```mermaid
 flowchart TD
@@ -1027,11 +1071,7 @@ flowchart TD
         LMOD_014["[production]MOD-014: MOD-014<br/>蓝图: MOD-014<br/>build: generated"]:::bsGenerated
         LMOD_AUTONOMY_CORE["[production]MOD-AUTONOMY_CORE: MOD-AUTONOMY_CORE<br/>蓝图: MOD-AUTONOMY_CORE<br/>build: generated"]:::bsGenerated
         LMOD_GOV_DOCS["[production]MOD-GOV-DOCS: MOD-GOV-DOCS<br/>蓝图: MOD-GOV-DOCS<br/>build: generated"]:::bsGenerated
-        LMOD_GOV_ENFORCEMENT["[production]MOD-GOV-ENFORCEMENT: MOD-GOV-ENFORCEMENT<br/>蓝图: MOD-GOV-ENFORCEMENT<br/>build: generated"]:::bsGenerated
         LMOD_GOV_worktree_manager["[production]MOD-GOV-worktree_manager: MOD-GOV-worktree_manager<br/>蓝图: MOD-GOV-worktree_manager<br/>build: generated"]:::bsGenerated
-        LMOD_INF_019["[production]MOD-INF-019: MOD-INF-019<br/>蓝图: docs__03_modules___domain_autonomy_core__agent_spec__blueprint_md<br/>build: generated"]:::bsGenerated
-        LMOD_LLM_SECURITY["[production]MOD-LLM_SECURITY: MOD-LLM_SECURITY<br/>蓝图: MOD-LLM_SECURITY<br/>build: generated"]:::bsGenerated
-        LMOD_SECURITY["[production]MOD-SECURITY: MOD-SECURITY<br/>蓝图: MOD-SECURITY<br/>build: generated"]:::bsGenerated
         LMOD_SECURITY_LLM["[production]MOD-SECURITY-LLM: MOD-SECURITY-LLM<br/>蓝图: MOD-SECURITY-LLM<br/>build: generated"]:::bsGenerated
         LMOD_TRADING["[production]MOD-TRADING: MOD-TRADING<br/>蓝图: MOD-TRADING<br/>build: generated"]:::bsGenerated
     end
@@ -1048,12 +1088,8 @@ flowchart TD
     LL4 -.->|triggering| LMOD_014
     LMOD_014 -.->|triggering| LMOD_AUTONOMY_CORE
     LMOD_AUTONOMY_CORE -.->|triggering| LMOD_GOV_DOCS
-    LMOD_GOV_DOCS -.->|triggering| LMOD_GOV_ENFORCEMENT
-    LMOD_GOV_ENFORCEMENT -.->|triggering| LMOD_GOV_worktree_manager
-    LMOD_GOV_worktree_manager -.->|triggering| LMOD_INF_019
-    LMOD_INF_019 -.->|triggering| LMOD_LLM_SECURITY
-    LMOD_LLM_SECURITY -.->|triggering| LMOD_SECURITY
-    LMOD_SECURITY -.->|triggering| LMOD_SECURITY_LLM
+    LMOD_GOV_DOCS -.->|triggering| LMOD_GOV_worktree_manager
+    LMOD_GOV_worktree_manager -.->|triggering| LMOD_SECURITY_LLM
     LMOD_SECURITY_LLM -.->|triggering| LMOD_TRADING
 
     classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
@@ -1065,7 +1101,7 @@ flowchart TD
 
 ### 设计态全景图（仅 design_maturity=design 的 layer/node）
 
-> 仅展示蓝图规划中尚未实现的决策层/节点（共 43 层，137 边）。
+> 仅展示蓝图规划中尚未实现的决策层/节点（共 57 层，137 边）。
 
 ```mermaid
 flowchart TD
@@ -1361,22 +1397,29 @@ flowchart TD
     subgraph track_emergency["应急保命轨（Emergency Track）"]
     end
     subgraph track_placeholder["占位轨（Placeholder Track）"]
+        LMOD_013["[design]MOD-013: MOD-013<br/>build: planned"]:::bsPlanned
+        LMOD_015["[design]MOD-015: MOD-015<br/>build: stable"]:::bsStable
+        LMOD_ARCH_BIZDB["[design]MOD-ARCH-BIZDB: MOD-ARCH-BIZDB<br/>build: planned"]:::bsPlanned
         LMOD_BT_001["[design]MOD-BT-001: MOD-BT-001<br/>build: generated"]:::bsGenerated
+        LMOD_C1_MARKETCH["[design]MOD-C1-MARKETCH: MOD-C1-MARKETCH<br/>build: planned"]:::bsPlanned
         LMOD_CONTEXT_ENGINE["[design]MOD-CONTEXT_ENGINE: MOD-CONTEXT_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_CROSS_ASSET["[design]MOD-CROSS_ASSET: MOD-CROSS_ASSET<br/>build: planned"]:::bsPlanned
         LMOD_DIGITAL_TWIN["[design]MOD-DIGITAL_TWIN: MOD-DIGITAL_TWIN<br/>build: planned"]:::bsPlanned
         LMOD_FEEDBACK_LOOP["[design]MOD-FEEDBACK_LOOP: MOD-FEEDBACK_LOOP<br/>build: planned"]:::bsPlanned
         LMOD_GATE_ENGINE["[design]MOD-GATE_ENGINE: MOD-GATE_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_GOV_ALIGN_PANORAMAS["[design]MOD-GOV-ALIGN-PANORAMAS: MOD-GOV-ALIGN-PANORAMAS<br/>build: stable"]:::bsStable
-        LMOD_GOVERNANCE["[design]MOD-GOVERNANCE: MOD-GOVERNANCE<br/>build: planned"]:::bsPlanned
+        LMOD_GOVERNANCE["[design]MOD-GOVERNANCE: MOD-GOVERNANCE<br/>build: generated"]:::bsGenerated
         LMOD_INF_005["[design]MOD-INF-005: MOD-INF-005<br/>build: planned"]:::bsPlanned
         LMOD_INF_009["[design]MOD-INF-009: MOD-INF-009<br/>build: planned"]:::bsPlanned
         LMOD_INF_011["[design]MOD-INF-011: MOD-INF-011<br/>build: planned"]:::bsPlanned
         LMOD_INF_016["[design]MOD-INF-016: MOD-INF-016<br/>build: planned"]:::bsPlanned
         LMOD_INF_017["[design]MOD-INF-017: MOD-INF-017<br/>build: planned"]:::bsPlanned
+        LMOD_INF_019["[design]MOD-INF-019: MOD-INF-019<br/>build: planned"]:::bsPlanned
+        LMOD_INF_020["[design]MOD-INF-020: MOD-INF-020<br/>build: planned"]:::bsPlanned
         LMOD_INF_021["[design]MOD-INF-021: MOD-INF-021<br/>build: planned"]:::bsPlanned
+        LMOD_INF_022["[design]MOD-INF-022: MOD-INF-022<br/>build: planned"]:::bsPlanned
         LMOD_INF_023["[design]MOD-INF-023: MOD-INF-023<br/>build: planned"]:::bsPlanned
-        LMOD_INF_024["[design]MOD-INF-024: MOD-INF-024<br/>build: planned"]:::bsPlanned
+        LMOD_INF_024["[design]MOD-INF-024: MOD-INF-024<br/>build: generated"]:::bsGenerated
         LMOD_INF_027["[design]MOD-INF-027: MOD-INF-027<br/>build: planned"]:::bsPlanned
         LMOD_INF_028["[design]MOD-INF-028: MOD-INF-028<br/>build: planned"]:::bsPlanned
         LMOD_INF_029["[design]MOD-INF-029: MOD-INF-029<br/>build: planned"]:::bsPlanned
@@ -1385,18 +1428,25 @@ flowchart TD
         LMOD_INF_033["[design]MOD-INF-033: MOD-INF-033<br/>build: planned"]:::bsPlanned
         LMOD_INF_034["[design]MOD-INF-034: MOD-INF-034<br/>build: planned"]:::bsPlanned
         LMOD_INF_036["[design]MOD-INF-036: MOD-INF-036<br/>build: planned"]:::bsPlanned
-        LMOD_INF_037["[design]MOD-INF-037: MOD-INF-037<br/>build: planned"]:::bsPlanned
+        LMOD_INF_037["[design]MOD-INF-037: MOD-INF-037<br/>build: generated"]:::bsGenerated
         LMOD_INF_039["[design]MOD-INF-039: MOD-INF-039<br/>build: planned"]:::bsPlanned
         LMOD_INFRA_OPS["[design]MOD-INFRA_OPS: MOD-INFRA_OPS<br/>build: planned"]:::bsPlanned
         LMOD_KB_001["[design]MOD-KB-001: MOD-KB-001<br/>build: planned"]:::bsPlanned
-        LMOD_L00_001["[design]MOD-L00-001: MOD-L00-001<br/>build: stable"]:::bsStable
+        LMOD_L00_001["[design]MOD-L00-001: MOD-L00-001<br/>build: generated"]:::bsGenerated
+        LMOD_L00_002["[design]MOD-L00-002: MOD-L00-002<br/>build: stable"]:::bsStable
+        LMOD_L00_003["[design]MOD-L00-003: MOD-L00-003<br/>build: stable"]:::bsStable
+        LMOD_L06_001["[design]MOD-L06-001: MOD-L06-001<br/>build: generated"]:::bsGenerated
         LMOD_L08_001["[design]MOD-L08-001: MOD-L08-001<br/>build: generated"]:::bsGenerated
-        LMOD_MASTER_BLUEPRINT["[design]MOD-MASTER_BLUEPRINT: MOD-MASTER_BLUEPRINT<br/>build: planned"]:::bsPlanned
+        LMOD_MASTER_001["[design]MOD-MASTER-001: MOD-MASTER-001<br/>build: stable"]:::bsStable
+        LMOD_MASTER_002["[design]MOD-MASTER-002: MOD-MASTER-002<br/>build: stable"]:::bsStable
+        LMOD_MASTER_003["[design]MOD-MASTER-003: MOD-MASTER-003<br/>build: planned"]:::bsPlanned
+        LMOD_MASTER_BLUEPRINT["[design]MOD-MASTER_BLUEPRINT: MOD-MASTER_BLUEPRINT<br/>build: deprecated"]:::bsDeprecated
         LMOD_PF_ALLOC["[design]MOD-PF_ALLOC: MOD-PF_ALLOC<br/>build: planned"]:::bsPlanned
         LMOD_RESOURCE_OPTIMIZATION_ENGINE["[design]MOD-RESOURCE_OPTIMIZATION_ENGINE: MOD-RESOURCE_OPTIMIZATION_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_SIMULATION["[design]MOD-SIMULATION: MOD-SIMULATION<br/>build: planned"]:::bsPlanned
         LPLACEHOLDER_MOD_GOV_SYNC_PANORAMA["[design]PLACEHOLDER-MOD-GOV-SYNC-PANORAMA: PLACEHOLDER-MOD-GOV-SYNC-PANORAMA<br/>build: planned"]:::bsPlanned
         LSH_DB_001["[design]SH-DB-001: SH-DB-001<br/>build: planned"]:::bsPlanned
+        LSYS_MASTER_001["[design]SYS-MASTER-001: SYS-MASTER-001<br/>build: stable"]:::bsStable
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -1404,8 +1454,12 @@ flowchart TD
     LL2D -.->|triggering| LL3
     LL3 -.->|triggering| LL5
     LL5 -.->|triggering| LL6
-    LL6 -.->|triggering| LMOD_BT_001
-    LMOD_BT_001 -.->|triggering| LMOD_CONTEXT_ENGINE
+    LL6 -.->|triggering| LMOD_013
+    LMOD_013 -.->|triggering| LMOD_015
+    LMOD_015 -.->|triggering| LMOD_ARCH_BIZDB
+    LMOD_ARCH_BIZDB -.->|triggering| LMOD_BT_001
+    LMOD_BT_001 -.->|triggering| LMOD_C1_MARKETCH
+    LMOD_C1_MARKETCH -.->|triggering| LMOD_CONTEXT_ENGINE
     LMOD_CONTEXT_ENGINE -.->|triggering| LMOD_CROSS_ASSET
     LMOD_CROSS_ASSET -.->|triggering| LMOD_DIGITAL_TWIN
     LMOD_DIGITAL_TWIN -.->|triggering| LMOD_FEEDBACK_LOOP
@@ -1417,8 +1471,11 @@ flowchart TD
     LMOD_INF_009 -.->|triggering| LMOD_INF_011
     LMOD_INF_011 -.->|triggering| LMOD_INF_016
     LMOD_INF_016 -.->|triggering| LMOD_INF_017
-    LMOD_INF_017 -.->|triggering| LMOD_INF_021
-    LMOD_INF_021 -.->|triggering| LMOD_INF_023
+    LMOD_INF_017 -.->|triggering| LMOD_INF_019
+    LMOD_INF_019 -.->|triggering| LMOD_INF_020
+    LMOD_INF_020 -.->|triggering| LMOD_INF_021
+    LMOD_INF_021 -.->|triggering| LMOD_INF_022
+    LMOD_INF_022 -.->|triggering| LMOD_INF_023
     LMOD_INF_023 -.->|triggering| LMOD_INF_024
     LMOD_INF_024 -.->|triggering| LMOD_INF_027
     LMOD_INF_027 -.->|triggering| LMOD_INF_028
@@ -1433,13 +1490,20 @@ flowchart TD
     LMOD_INF_039 -.->|triggering| LMOD_INFRA_OPS
     LMOD_INFRA_OPS -.->|triggering| LMOD_KB_001
     LMOD_KB_001 -.->|triggering| LMOD_L00_001
-    LMOD_L00_001 -.->|triggering| LMOD_L08_001
-    LMOD_L08_001 -.->|triggering| LMOD_MASTER_BLUEPRINT
+    LMOD_L00_001 -.->|triggering| LMOD_L00_002
+    LMOD_L00_002 -.->|triggering| LMOD_L00_003
+    LMOD_L00_003 -.->|triggering| LMOD_L06_001
+    LMOD_L06_001 -.->|triggering| LMOD_L08_001
+    LMOD_L08_001 -.->|triggering| LMOD_MASTER_001
+    LMOD_MASTER_001 -.->|triggering| LMOD_MASTER_002
+    LMOD_MASTER_002 -.->|triggering| LMOD_MASTER_003
+    LMOD_MASTER_003 -.->|triggering| LMOD_MASTER_BLUEPRINT
     LMOD_MASTER_BLUEPRINT -.->|triggering| LMOD_PF_ALLOC
     LMOD_PF_ALLOC -.->|triggering| LMOD_RESOURCE_OPTIMIZATION_ENGINE
     LMOD_RESOURCE_OPTIMIZATION_ENGINE -.->|triggering| LMOD_SIMULATION
     LMOD_SIMULATION -.->|triggering| LPLACEHOLDER_MOD_GOV_SYNC_PANORAMA
     LPLACEHOLDER_MOD_GOV_SYNC_PANORAMA -.->|triggering| LSH_DB_001
+    LSH_DB_001 -.->|triggering| LSYS_MASTER_001
     N192 -->|informing| N193
     N193 -->|informing| N194
     N194 -->|informing| N190
@@ -1593,6 +1657,7 @@ flowchart LR
     LCFG_rule_registry_collection["[production] CFG-rule-registry-collection CFG-rule-registry-collection<br/>CFG-rule-registry-collection<br/>蓝图: 规则注册表集 / Rule Registry Collection — ARCH-052 聚合节点 production<br/>成熟度: production<br/>build: stable"]:::bsStable
     LCFG_scripts_registry["[production] CFG-scripts-registry CFG-scripts-registry<br/>CFG-scripts-registry<br/>蓝图: 脚本集 / Script Collection — ARCH-052 聚合节点 production<br/>成熟度: production<br/>build: stable"]:::bsStable
     LCFG_test_suite_registry["[production] CFG-test-suite-registry CFG-test-suite-registry<br/>CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LD_GOV_ENFORCEMENT["[prototype] D-GOV-ENFORCEMENT D-GOV-ENFORCEMENT<br/>D-GOV-ENFORCEMENT<br/>蓝图: D-GOV-ENFORCEMENT<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LINFRA_DB_001["[production] INFRA-DB-001 INFRA-DB-001<br/>INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
     LINFRA_DB_002["[production] INFRA-DB-002 INFRA-DB-002<br/>INFRA-DB-002<br/>蓝图: zephyr-chroma-vector-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
     LINFRA_DB_003["[production] INFRA-DB-003 INFRA-DB-003<br/>INFRA-DB-003<br/>蓝图: zephyr-depgraph-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
@@ -1607,22 +1672,31 @@ flowchart LR
     LL4["[production] L4 风控层<br/>Risk Control<br/>蓝图: MOD-L04-001<br/>功能: Pre/Post-Trade 风控校验…<br/>频率: realtime<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL5["[design] L5 学习层<br/>Learning & Optimization<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LL6["[design] L6 自评估层<br/>Self Evaluation<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LMOD_013["[design] MOD-013 MOD-013<br/>MOD-013<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_014["[production] MOD-014 MOD-014<br/>MOD-014<br/>蓝图: MOD-014<br/>成熟度: production<br/>build: generated"]:::bsGenerated
+    LMOD_015["[design] MOD-015 MOD-015<br/>MOD-015<br/>成熟度: design<br/>build: stable"]:::bsStable
+    LMOD_ALT_DATA["[prototype] MOD-ALT_DATA MOD-ALT_DATA<br/>MOD-ALT_DATA<br/>蓝图: MOD-ALT_DATA<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_ARCH_BIZDB["[design] MOD-ARCH-BIZDB MOD-ARCH-BIZDB<br/>MOD-ARCH-BIZDB<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_AUTONOMY_CORE["[production] MOD-AUTONOMY_CORE MOD-AUTONOMY_CORE<br/>MOD-AUTONOMY_CORE<br/>蓝图: MOD-AUTONOMY_CORE<br/>成熟度: production<br/>build: generated"]:::bsGenerated
     LMOD_AUTONOMY_PERM["[prototype] MOD-AUTONOMY_PERM MOD-AUTONOMY_PERM<br/>MOD-AUTONOMY_PERM<br/>蓝图: MOD-AUTONOMY_PERM<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_BIZ_002["[prototype] MOD-BIZ-002 MOD-BIZ-002<br/>MOD-BIZ-002<br/>蓝图: MOD-BIZ-002<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_BT_001["[design] MOD-BT-001 MOD-BT-001<br/>MOD-BT-001<br/>成熟度: design<br/>build: generated"]:::bsGenerated
+    LMOD_C1_MARKETCH["[design] MOD-C1-MARKETCH MOD-C1-MARKETCH<br/>MOD-C1-MARKETCH<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_CONTEXT_ENGINE["[design] MOD-CONTEXT_ENGINE MOD-CONTEXT_ENGINE<br/>MOD-CONTEXT_ENGINE<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_CROSS_ASSET["[design] MOD-CROSS_ASSET MOD-CROSS_ASSET<br/>MOD-CROSS_ASSET<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_D5_ARCH_TOOLS["[prototype] MOD-D5-ARCH-TOOLS MOD-D5-ARCH-TOOLS<br/>MOD-D5-ARCH-TOOLS<br/>蓝图: MOD-D5-ARCH-TOOLS<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_DATABASE["[prototype] MOD-DATABASE MOD-DATABASE<br/>MOD-DATABASE<br/>蓝图: MOD-DATABASE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_DATA_ENG["[prototype] MOD-DATA_ENG MOD-DATA_ENG<br/>MOD-DATA_ENG<br/>蓝图: MOD-DATA_ENG<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_DATA_GOV["[prototype] MOD-DATA_GOV MOD-DATA_GOV<br/>MOD-DATA_GOV<br/>蓝图: MOD-DATA_GOV<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_DATA_SEC["[prototype] MOD-DATA_SEC MOD-DATA_SEC<br/>MOD-DATA_SEC<br/>蓝图: MOD-DATA_SEC<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_DIGITAL_TWIN["[design] MOD-DIGITAL_TWIN MOD-DIGITAL_TWIN<br/>MOD-DIGITAL_TWIN<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LMOD_EXEC_SIM["[prototype] MOD-EXEC_SIM MOD-EXEC_SIM<br/>MOD-EXEC_SIM<br/>蓝图: MOD-EXEC_SIM<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_EX_SOR["[prototype] MOD-EX_SOR MOD-EX_SOR<br/>MOD-EX_SOR<br/>蓝图: MOD-EX_SOR<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_FEEDBACK_LOOP["[design] MOD-FEEDBACK_LOOP MOD-FEEDBACK_LOOP<br/>MOD-FEEDBACK_LOOP<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_GATE_ENGINE["[design] MOD-GATE_ENGINE MOD-GATE_ENGINE<br/>MOD-GATE_ENGINE<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_GOV_019["[prototype] MOD-GOV-019 MOD-GOV-019<br/>MOD-GOV-019<br/>蓝图: MOD-GOV-019<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_ALIGN_PANORAMAS["[design] MOD-GOV-ALIGN-PANORAMAS MOD-GOV-ALIGN-PANORAMAS<br/>MOD-GOV-ALIGN-PANORAMAS<br/>成熟度: design<br/>build: stable"]:::bsStable
     LMOD_GOV_DOCS["[production] MOD-GOV-DOCS MOD-GOV-DOCS<br/>MOD-GOV-DOCS<br/>蓝图: MOD-GOV-DOCS<br/>成熟度: production<br/>build: generated"]:::bsGenerated
-    LMOD_GOV_ENFORCEMENT["[production] MOD-GOV-ENFORCEMENT MOD-GOV-ENFORCEMENT<br/>MOD-GOV-ENFORCEMENT<br/>蓝图: MOD-GOV-ENFORCEMENT<br/>成熟度: production<br/>build: generated"]:::bsGenerated
     LMOD_GOV_REPAIR["[prototype] MOD-GOV-REPAIR MOD-GOV-REPAIR<br/>MOD-GOV-REPAIR<br/>蓝图: MOD-GOV-REPAIR<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_SCRIPTS["[prototype] MOD-GOV-SCRIPTS MOD-GOV-SCRIPTS<br/>MOD-GOV-SCRIPTS<br/>蓝图: MOD-GOV-SCRIPTS<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_SCRIPTS_ARCH["[prototype] MOD-GOV-SCRIPTS-ARCH MOD-GOV-SCRIPTS-ARCH<br/>MOD-GOV-SCRIPTS-ARCH<br/>蓝图: MOD-GOV-SCRIPTS-ARCH<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -1637,6 +1711,7 @@ flowchart LR
     LMOD_GOV_commit_gates["[prototype] MOD-GOV-commit_gates MOD-GOV-commit_gates<br/>MOD-GOV-commit_gates<br/>蓝图: MOD-GOV-commit_gates<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_create_guard["[prototype] MOD-GOV-create_guard MOD-GOV-create_guard<br/>MOD-GOV-create_guard<br/>蓝图: MOD-GOV-create_guard<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_dangling_reference_gate["[prototype] MOD-GOV-dangling_reference_gate MOD-GOV-dangling_reference_gate<br/>MOD-GOV-dangling_reference_gate<br/>蓝图: MOD-GOV-dangling_reference_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_diff_helpers["[prototype] MOD-GOV-diff_helpers MOD-GOV-diff_helpers<br/>MOD-GOV-diff_helpers<br/>蓝图: MOD-GOV-diff_helpers<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_doc_ref_broken_gate["[prototype] MOD-GOV-doc_ref_broken_gate MOD-GOV-doc_ref_broken_gate<br/>MOD-GOV-doc_ref_broken_gate<br/>蓝图: MOD-GOV-doc_ref_broken_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_empty_handler_gate["[prototype] MOD-GOV-empty_handler_gate MOD-GOV-empty_handler_gate<br/>MOD-GOV-empty_handler_gate<br/>蓝图: MOD-GOV-empty_handler_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_exempt_zone_frontmatter_gate["[prototype] MOD-GOV-exempt_zone_frontmatter_gate MOD-GOV-exempt_zone_frontmatter_gate<br/>MOD-GOV-exempt_zone_frontmatter_gate<br/>蓝图: MOD-GOV-exempt_zone_frontmatter_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -1662,10 +1737,11 @@ flowchart LR
     LMOD_GOV_session_required_gate["[prototype] MOD-GOV-session_required_gate MOD-GOV-session_required_gate<br/>MOD-GOV-session_required_gate<br/>蓝图: MOD-GOV-session_required_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_session_worktree["[prototype] MOD-GOV-session_worktree MOD-GOV-session_worktree<br/>MOD-GOV-session_worktree<br/>蓝图: MOD-GOV-session_worktree<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_ssot_redefinition_gate["[prototype] MOD-GOV-ssot_redefinition_gate MOD-GOV-ssot_redefinition_gate<br/>MOD-GOV-ssot_redefinition_gate<br/>蓝图: MOD-GOV-ssot_redefinition_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LMOD_GOV_tests_coverage_gate["[prototype] MOD-GOV-tests_coverage_gate MOD-GOV-tests_coverage_gate<br/>MOD-GOV-tests_coverage_gate<br/>蓝图: MOD-GOV-tests_coverage_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_test_source_consistency_gate["[prototype] MOD-GOV-test_source_consistency_gate MOD-GOV-test_source_consistency_gate<br/>MOD-GOV-test_source_consistency_gate<br/>蓝图: MOD-GOV-test_source_consistency_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_vocab_hardcode_gate["[prototype] MOD-GOV-vocab_hardcode_gate MOD-GOV-vocab_hardcode_gate<br/>MOD-GOV-vocab_hardcode_gate<br/>蓝图: MOD-GOV-vocab_hardcode_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_worktree_manager["[production] MOD-GOV-worktree_manager MOD-GOV-worktree_manager<br/>MOD-GOV-worktree_manager<br/>蓝图: MOD-GOV-worktree_manager<br/>成熟度: production<br/>build: generated"]:::bsGenerated
-    LMOD_GOVERNANCE["[design] MOD-GOVERNANCE MOD-GOVERNANCE<br/>MOD-GOVERNANCE<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LMOD_GOVERNANCE["[design] MOD-GOVERNANCE MOD-GOVERNANCE<br/>MOD-GOVERNANCE<br/>成熟度: design<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_behavioral_admission["[prototype] MOD-GOV_behavioral_admission MOD-GOV_behavioral_admission<br/>MOD-GOV_behavioral_admission<br/>蓝图: MOD-GOV_behavioral_admission<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_commit_gates["[prototype] MOD-GOV_commit_gates MOD-GOV_commit_gates<br/>MOD-GOV_commit_gates<br/>蓝图: MOD-GOV_commit_gates<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_resilience_governance["[prototype] MOD-GOV_resilience_governance MOD-GOV_resilience_governance<br/>MOD-GOV_resilience_governance<br/>蓝图: MOD-GOV_resilience_governance<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_security_governance["[prototype] MOD-GOV_security_governance MOD-GOV_security_governance<br/>MOD-GOV_security_governance<br/>蓝图: MOD-GOV_security_governance<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -1679,12 +1755,12 @@ flowchart LR
     LMOD_INF_016["[design] MOD-INF-016 MOD-INF-016<br/>MOD-INF-016<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_INF_017["[design] MOD-INF-017 MOD-INF-017<br/>MOD-INF-017<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_INF_018["[prototype] MOD-INF-018 MOD-INF-018<br/>MOD-INF-018<br/>蓝图: MOD-INF-018<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LMOD_INF_019["[production] MOD-INF-019 MOD-INF-019<br/>MOD-INF-019<br/>蓝图: docs__03_modules___domain_autonomy_core__agent_spec__blueprint_md<br/>成熟度: production<br/>build: generated"]:::bsGenerated
-    LMOD_INF_020["[prototype] MOD-INF-020 MOD-INF-020<br/>MOD-INF-020<br/>蓝图: docs__03_modules___domain_governance__audit_trail__blueprint_md<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_INF_019["[design] MOD-INF-019 MOD-INF-019<br/>MOD-INF-019<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LMOD_INF_020["[design] MOD-INF-020 MOD-INF-020<br/>MOD-INF-020<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_INF_021["[design] MOD-INF-021 MOD-INF-021<br/>MOD-INF-021<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LMOD_INF_022["[prototype] MOD-INF-022 MOD-INF-022<br/>MOD-INF-022<br/>蓝图: docs__03_modules___domain_autonomy_perm__escalation_protocol__blueprint_md<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_INF_022["[design] MOD-INF-022 MOD-INF-022<br/>MOD-INF-022<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_INF_023["[design] MOD-INF-023 MOD-INF-023<br/>MOD-INF-023<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LMOD_INF_024["[design] MOD-INF-024 MOD-INF-024<br/>MOD-INF-024<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LMOD_INF_024["[design] MOD-INF-024 MOD-INF-024<br/>MOD-INF-024<br/>成熟度: design<br/>build: generated"]:::bsGenerated
     LMOD_INF_025["[prototype] MOD-INF-025 MOD-INF-025<br/>MOD-INF-025<br/>蓝图: MOD-INF-025<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_026["[prototype] MOD-INF-026 MOD-INF-026<br/>MOD-INF-026<br/>蓝图: MOD-INF-026<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_027["[design] MOD-INF-027 MOD-INF-027<br/>MOD-INF-027<br/>成熟度: design<br/>build: planned"]:::bsPlanned
@@ -1696,7 +1772,7 @@ flowchart LR
     LMOD_INF_034["[design] MOD-INF-034 MOD-INF-034<br/>MOD-INF-034<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_INF_035["[prototype] MOD-INF-035 MOD-INF-035<br/>MOD-INF-035<br/>蓝图: MOD-INF-035<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_036["[design] MOD-INF-036 MOD-INF-036<br/>MOD-INF-036<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LMOD_INF_037["[design] MOD-INF-037 MOD-INF-037<br/>MOD-INF-037<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LMOD_INF_037["[design] MOD-INF-037 MOD-INF-037<br/>MOD-INF-037<br/>成熟度: design<br/>build: generated"]:::bsGenerated
     LMOD_INF_038["[prototype] MOD-INF-038 MOD-INF-038<br/>MOD-INF-038<br/>蓝图: MOD-INF-038<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_039["[design] MOD-INF-039 MOD-INF-039<br/>MOD-INF-039<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_INF_042["[prototype] MOD-INF-042 MOD-INF-042<br/>MOD-INF-042<br/>蓝图: MOD-INF-042<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -1705,31 +1781,40 @@ flowchart LR
     LMOD_INFRA_RUNTIME["[prototype] MOD-INFRA_RUNTIME MOD-INFRA_RUNTIME<br/>MOD-INFRA_RUNTIME<br/>蓝图: MOD-INFRA_RUNTIME<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INTEGRATION["[prototype] MOD-INTEGRATION MOD-INTEGRATION<br/>MOD-INTEGRATION<br/>蓝图: MOD-INTEGRATION<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_KB_001["[design] MOD-KB-001 MOD-KB-001<br/>MOD-KB-001<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LMOD_L00_001["[design] MOD-L00-001 MOD-L00-001<br/>MOD-L00-001<br/>成熟度: design<br/>build: stable"]:::bsStable
+    LMOD_KNOWLEDGE["[prototype] MOD-KNOWLEDGE MOD-KNOWLEDGE<br/>MOD-KNOWLEDGE<br/>蓝图: MOD-KNOWLEDGE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_L00_001["[design] MOD-L00-001 MOD-L00-001<br/>MOD-L00-001<br/>成熟度: design<br/>build: generated"]:::bsGenerated
+    LMOD_L00_002["[design] MOD-L00-002 MOD-L00-002<br/>MOD-L00-002<br/>成熟度: design<br/>build: stable"]:::bsStable
+    LMOD_L00_003["[design] MOD-L00-003 MOD-L00-003<br/>MOD-L00-003<br/>成熟度: design<br/>build: stable"]:::bsStable
     LMOD_L00_004["[prototype] MOD-L00-004 MOD-L00-004<br/>MOD-L00-004<br/>蓝图: MOD-L00-004<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L02_001["[prototype] MOD-L02-001 MOD-L02-001<br/>MOD-L02-001<br/>蓝图: MOD-L02-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L03_001["[prototype] MOD-L03-001 MOD-L03-001<br/>MOD-L03-001<br/>蓝图: MOD-L03-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L04_001["[prototype] MOD-L04-001 MOD-L04-001<br/>MOD-L04-001<br/>蓝图: MOD-L04-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L05_001["[prototype] MOD-L05-001 MOD-L05-001<br/>MOD-L05-001<br/>蓝图: MOD-L05-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LMOD_L06_001["[prototype] MOD-L06-001 MOD-L06-001<br/>MOD-L06-001<br/>蓝图: MOD-L06-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_L06_001["[design] MOD-L06-001 MOD-L06-001<br/>MOD-L06-001<br/>成熟度: design<br/>build: generated"]:::bsGenerated
     LMOD_L07_001["[prototype] MOD-L07-001 MOD-L07-001<br/>MOD-L07-001<br/>蓝图: MOD-L07-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L08_001["[design] MOD-L08-001 MOD-L08-001<br/>MOD-L08-001<br/>成熟度: design<br/>build: generated"]:::bsGenerated
     LMOD_L09_001["[prototype] MOD-L09-001 MOD-L09-001<br/>MOD-L09-001<br/>蓝图: MOD-L09-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L10_001["[prototype] MOD-L10-001 MOD-L10-001<br/>MOD-L10-001<br/>蓝图: MOD-L10-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L11_001["[prototype] MOD-L11-001 MOD-L11-001<br/>MOD-L11-001<br/>蓝图: MOD-L11-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L13_001["[prototype] MOD-L13-001 MOD-L13-001<br/>MOD-L13-001<br/>蓝图: MOD-L13-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LMOD_LLM_SECURITY["[production] MOD-LLM_SECURITY MOD-LLM_SECURITY<br/>MOD-LLM_SECURITY<br/>蓝图: MOD-LLM_SECURITY<br/>成熟度: production<br/>build: generated"]:::bsGenerated
-    LMOD_MASTER_BLUEPRINT["[design] MOD-MASTER_BLUEPRINT MOD-MASTER_BLUEPRINT<br/>MOD-MASTER_BLUEPRINT<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LMOD_LLM_SECURITY["[prototype] MOD-LLM_SECURITY MOD-LLM_SECURITY<br/>MOD-LLM_SECURITY<br/>蓝图: MOD-LLM_SECURITY<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_MASTER_001["[design] MOD-MASTER-001 MOD-MASTER-001<br/>MOD-MASTER-001<br/>成熟度: design<br/>build: stable"]:::bsStable
+    LMOD_MASTER_002["[design] MOD-MASTER-002 MOD-MASTER-002<br/>MOD-MASTER-002<br/>成熟度: design<br/>build: stable"]:::bsStable
+    LMOD_MASTER_003["[design] MOD-MASTER-003 MOD-MASTER-003<br/>MOD-MASTER-003<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LMOD_MASTER_BLUEPRINT["[design] MOD-MASTER_BLUEPRINT MOD-MASTER_BLUEPRINT<br/>MOD-MASTER_BLUEPRINT<br/>成熟度: design<br/>build: deprecated"]:::bsDeprecated
     LMOD_MKT_DATA["[prototype] MOD-MKT_DATA MOD-MKT_DATA<br/>MOD-MKT_DATA<br/>蓝图: MOD-MKT_DATA<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_ML_SERVE["[prototype] MOD-ML_SERVE MOD-ML_SERVE<br/>MOD-ML_SERVE<br/>蓝图: MOD-ML_SERVE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_PF_ALLOC["[design] MOD-PF_ALLOC MOD-PF_ALLOC<br/>MOD-PF_ALLOC<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_RESOURCE_OPTIMIZATION_ENGINE["[design] MOD-RESOURCE_OPTIMIZATION_ENGINE MOD-RESOURCE_OPTIMIZATION_ENGINE<br/>MOD-RESOURCE_OPTIMIZATION_ENGINE<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_RULE_ENGINE["[prototype] MOD-RULE_ENGINE MOD-RULE_ENGINE<br/>MOD-RULE_ENGINE<br/>蓝图: MOD-RULE_ENGINE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SEC_030["[prototype] MOD-SEC-030 MOD-SEC-030<br/>MOD-SEC-030<br/>蓝图: MOD-SEC-030<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LMOD_SECURITY["[production] MOD-SECURITY MOD-SECURITY<br/>MOD-SECURITY<br/>蓝图: MOD-SECURITY<br/>成熟度: production<br/>build: generated"]:::bsGenerated
+    LMOD_SECURITY["[prototype] MOD-SECURITY MOD-SECURITY<br/>MOD-SECURITY<br/>蓝图: MOD-SECURITY<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SECURITY_LLM["[production] MOD-SECURITY-LLM MOD-SECURITY-LLM<br/>MOD-SECURITY-LLM<br/>蓝图: MOD-SECURITY-LLM<br/>成熟度: production<br/>build: generated"]:::bsGenerated
+    LMOD_SELL_DECISION["[prototype] MOD-SELL_DECISION MOD-SELL_DECISION<br/>MOD-SELL_DECISION<br/>蓝图: MOD-SELL_DECISION<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SHARED_001["[prototype] MOD-SHARED-001 MOD-SHARED-001<br/>MOD-SHARED-001<br/>蓝图: MOD-SHARED-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SHARED_002["[prototype] MOD-SHARED-002 MOD-SHARED-002<br/>MOD-SHARED-002<br/>蓝图: MOD-SHARED-002<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SHR_io_yaml["[prototype] MOD-SHR-io-yaml MOD-SHR-io-yaml<br/>MOD-SHR-io-yaml<br/>蓝图: MOD-SHR-io-yaml<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_SIGNAL_ASHARE["[prototype] MOD-SIGNAL_ASHARE MOD-SIGNAL_ASHARE<br/>MOD-SIGNAL_ASHARE<br/>蓝图: MOD-SIGNAL_ASHARE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SIGQC_001["[prototype] MOD-SIGQC-001 MOD-SIGQC-001<br/>MOD-SIGQC-001<br/>蓝图: MOD-SIGQC-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SIMULATION["[design] MOD-SIMULATION MOD-SIMULATION<br/>MOD-SIMULATION<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_TASK_SYSTEM["[prototype] MOD-TASK_SYSTEM MOD-TASK_SYSTEM<br/>MOD-TASK_SYSTEM<br/>蓝图: MOD-TASK_SYSTEM<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -1741,10 +1826,12 @@ flowchart LR
     LSH_DB_002["[prototype] SH-DB-002 SH-DB-002<br/>SH-DB-002<br/>蓝图: SH-DB-002<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LSH_GOV_003["[prototype] SH-GOV-003 SH-GOV-003<br/>SH-GOV-003<br/>蓝图: SH-GOV-003<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LSH_MAIN_001["[prototype] SH-MAIN-001 SH-MAIN-001<br/>SH-MAIN-001<br/>蓝图: SH-MAIN-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LSYS_MASTER_001["[design] SYS-MASTER-001 SYS-MASTER-001<br/>SYS-MASTER-001<br/>成熟度: design<br/>build: stable"]:::bsStable
     LCFG_rule_enforcement_registry -->|triggering| LCFG_rule_registry_collection
     LCFG_rule_registry_collection -->|triggering| LCFG_scripts_registry
     LCFG_scripts_registry -->|triggering| LCFG_test_suite_registry
-    LCFG_test_suite_registry -->|triggering| LINFRA_DB_001
+    LCFG_test_suite_registry -->|triggering| LD_GOV_ENFORCEMENT
+    LD_GOV_ENFORCEMENT -->|triggering| LINFRA_DB_001
     LINFRA_DB_001 -->|triggering| LINFRA_DB_002
     LINFRA_DB_002 -->|triggering| LINFRA_DB_003
     LINFRA_DB_003 -->|triggering| LINFRA_DB_006
@@ -1758,23 +1845,32 @@ flowchart LR
     LL3 -->|triggering| LL4
     LL4 -->|triggering| LL5
     LL5 -->|triggering| LL6
-    LL6 -->|triggering| LMOD_014
-    LMOD_014 -->|triggering| LMOD_AUTONOMY_CORE
+    LL6 -->|triggering| LMOD_013
+    LMOD_013 -->|triggering| LMOD_014
+    LMOD_014 -->|triggering| LMOD_015
+    LMOD_015 -->|triggering| LMOD_ALT_DATA
+    LMOD_ALT_DATA -->|triggering| LMOD_ARCH_BIZDB
+    LMOD_ARCH_BIZDB -->|triggering| LMOD_AUTONOMY_CORE
     LMOD_AUTONOMY_CORE -->|triggering| LMOD_AUTONOMY_PERM
     LMOD_AUTONOMY_PERM -->|triggering| LMOD_BIZ_002
     LMOD_BIZ_002 -->|triggering| LMOD_BT_001
-    LMOD_BT_001 -->|triggering| LMOD_CONTEXT_ENGINE
+    LMOD_BT_001 -->|triggering| LMOD_C1_MARKETCH
+    LMOD_C1_MARKETCH -->|triggering| LMOD_CONTEXT_ENGINE
     LMOD_CONTEXT_ENGINE -->|triggering| LMOD_CROSS_ASSET
     LMOD_CROSS_ASSET -->|triggering| LMOD_D5_ARCH_TOOLS
     LMOD_D5_ARCH_TOOLS -->|triggering| LMOD_DATABASE
-    LMOD_DATABASE -->|triggering| LMOD_DIGITAL_TWIN
-    LMOD_DIGITAL_TWIN -->|triggering| LMOD_FEEDBACK_LOOP
+    LMOD_DATABASE -->|triggering| LMOD_DATA_ENG
+    LMOD_DATA_ENG -->|triggering| LMOD_DATA_GOV
+    LMOD_DATA_GOV -->|triggering| LMOD_DATA_SEC
+    LMOD_DATA_SEC -->|triggering| LMOD_DIGITAL_TWIN
+    LMOD_DIGITAL_TWIN -->|triggering| LMOD_EXEC_SIM
+    LMOD_EXEC_SIM -->|triggering| LMOD_EX_SOR
+    LMOD_EX_SOR -->|triggering| LMOD_FEEDBACK_LOOP
     LMOD_FEEDBACK_LOOP -->|triggering| LMOD_GATE_ENGINE
     LMOD_GATE_ENGINE -->|triggering| LMOD_GOV_019
     LMOD_GOV_019 -->|triggering| LMOD_GOV_ALIGN_PANORAMAS
     LMOD_GOV_ALIGN_PANORAMAS -->|triggering| LMOD_GOV_DOCS
-    LMOD_GOV_DOCS -->|triggering| LMOD_GOV_ENFORCEMENT
-    LMOD_GOV_ENFORCEMENT -->|triggering| LMOD_GOV_REPAIR
+    LMOD_GOV_DOCS -->|triggering| LMOD_GOV_REPAIR
     LMOD_GOV_REPAIR -->|triggering| LMOD_GOV_SCRIPTS
     LMOD_GOV_SCRIPTS -->|triggering| LMOD_GOV_SCRIPTS_ARCH
     LMOD_GOV_SCRIPTS_ARCH -->|triggering| LMOD_GOV_SYNC_PANORAMA
@@ -1788,7 +1884,8 @@ flowchart LR
     LMOD_GOV_commit_gate_registry -->|triggering| LMOD_GOV_commit_gates
     LMOD_GOV_commit_gates -->|triggering| LMOD_GOV_create_guard
     LMOD_GOV_create_guard -->|triggering| LMOD_GOV_dangling_reference_gate
-    LMOD_GOV_dangling_reference_gate -->|triggering| LMOD_GOV_doc_ref_broken_gate
+    LMOD_GOV_dangling_reference_gate -->|triggering| LMOD_GOV_diff_helpers
+    LMOD_GOV_diff_helpers -->|triggering| LMOD_GOV_doc_ref_broken_gate
     LMOD_GOV_doc_ref_broken_gate -->|triggering| LMOD_GOV_empty_handler_gate
     LMOD_GOV_empty_handler_gate -->|triggering| LMOD_GOV_exempt_zone_frontmatter_gate
     LMOD_GOV_exempt_zone_frontmatter_gate -->|triggering| LMOD_GOV_file_copy_gate
@@ -1813,11 +1910,12 @@ flowchart LR
     LMOD_GOV_session_claim -->|triggering| LMOD_GOV_session_required_gate
     LMOD_GOV_session_required_gate -->|triggering| LMOD_GOV_session_worktree
     LMOD_GOV_session_worktree -->|triggering| LMOD_GOV_ssot_redefinition_gate
-    LMOD_GOV_ssot_redefinition_gate -->|triggering| LMOD_GOV_tests_coverage_gate
-    LMOD_GOV_tests_coverage_gate -->|triggering| LMOD_GOV_vocab_hardcode_gate
+    LMOD_GOV_ssot_redefinition_gate -->|triggering| LMOD_GOV_test_source_consistency_gate
+    LMOD_GOV_test_source_consistency_gate -->|triggering| LMOD_GOV_vocab_hardcode_gate
     LMOD_GOV_vocab_hardcode_gate -->|triggering| LMOD_GOV_worktree_manager
     LMOD_GOV_worktree_manager -->|triggering| LMOD_GOVERNANCE
-    LMOD_GOVERNANCE -->|triggering| LMOD_GOV_commit_gates
+    LMOD_GOVERNANCE -->|triggering| LMOD_GOV_behavioral_admission
+    LMOD_GOV_behavioral_admission -->|triggering| LMOD_GOV_commit_gates
     LMOD_GOV_commit_gates -->|triggering| LMOD_GOV_resilience_governance
     LMOD_GOV_resilience_governance -->|triggering| LMOD_GOV_security_governance
     LMOD_GOV_security_governance -->|triggering| LMOD_INF_001
@@ -1856,8 +1954,11 @@ flowchart LR
     LMOD_INFRA_OPS -->|triggering| LMOD_INFRA_RUNTIME
     LMOD_INFRA_RUNTIME -->|triggering| LMOD_INTEGRATION
     LMOD_INTEGRATION -->|triggering| LMOD_KB_001
-    LMOD_KB_001 -->|triggering| LMOD_L00_001
-    LMOD_L00_001 -->|triggering| LMOD_L00_004
+    LMOD_KB_001 -->|triggering| LMOD_KNOWLEDGE
+    LMOD_KNOWLEDGE -->|triggering| LMOD_L00_001
+    LMOD_L00_001 -->|triggering| LMOD_L00_002
+    LMOD_L00_002 -->|triggering| LMOD_L00_003
+    LMOD_L00_003 -->|triggering| LMOD_L00_004
     LMOD_L00_004 -->|triggering| LMOD_L02_001
     LMOD_L02_001 -->|triggering| LMOD_L03_001
     LMOD_L03_001 -->|triggering| LMOD_L04_001
@@ -1870,18 +1971,24 @@ flowchart LR
     LMOD_L10_001 -->|triggering| LMOD_L11_001
     LMOD_L11_001 -->|triggering| LMOD_L13_001
     LMOD_L13_001 -->|triggering| LMOD_LLM_SECURITY
-    LMOD_LLM_SECURITY -->|triggering| LMOD_MASTER_BLUEPRINT
+    LMOD_LLM_SECURITY -->|triggering| LMOD_MASTER_001
+    LMOD_MASTER_001 -->|triggering| LMOD_MASTER_002
+    LMOD_MASTER_002 -->|triggering| LMOD_MASTER_003
+    LMOD_MASTER_003 -->|triggering| LMOD_MASTER_BLUEPRINT
     LMOD_MASTER_BLUEPRINT -->|triggering| LMOD_MKT_DATA
-    LMOD_MKT_DATA -->|triggering| LMOD_PF_ALLOC
+    LMOD_MKT_DATA -->|triggering| LMOD_ML_SERVE
+    LMOD_ML_SERVE -->|triggering| LMOD_PF_ALLOC
     LMOD_PF_ALLOC -->|triggering| LMOD_RESOURCE_OPTIMIZATION_ENGINE
     LMOD_RESOURCE_OPTIMIZATION_ENGINE -->|triggering| LMOD_RULE_ENGINE
     LMOD_RULE_ENGINE -->|triggering| LMOD_SEC_030
     LMOD_SEC_030 -->|triggering| LMOD_SECURITY
     LMOD_SECURITY -->|triggering| LMOD_SECURITY_LLM
-    LMOD_SECURITY_LLM -->|triggering| LMOD_SHARED_001
+    LMOD_SECURITY_LLM -->|triggering| LMOD_SELL_DECISION
+    LMOD_SELL_DECISION -->|triggering| LMOD_SHARED_001
     LMOD_SHARED_001 -->|triggering| LMOD_SHARED_002
     LMOD_SHARED_002 -->|triggering| LMOD_SHR_io_yaml
-    LMOD_SHR_io_yaml -->|triggering| LMOD_SIGQC_001
+    LMOD_SHR_io_yaml -->|triggering| LMOD_SIGNAL_ASHARE
+    LMOD_SIGNAL_ASHARE -->|triggering| LMOD_SIGQC_001
     LMOD_SIGQC_001 -->|triggering| LMOD_SIMULATION
     LMOD_SIMULATION -->|triggering| LMOD_TASK_SYSTEM
     LMOD_TASK_SYSTEM -->|triggering| LMOD_TRADING
@@ -1892,6 +1999,7 @@ flowchart LR
     LSH_DB_001 -->|triggering| LSH_DB_002
     LSH_DB_002 -->|triggering| LSH_GOV_003
     LSH_GOV_003 -->|triggering| LSH_MAIN_001
+    LSH_MAIN_001 -->|triggering| LSYS_MASTER_001
     L6 -.->|feedback| CFG_rule_registry_collection
     L6 -.->|feedback| L5
 
@@ -1952,6 +2060,7 @@ flowchart TD
 | CFG-rule-registry-collection | CFG-rule-registry-collection | CFG-rule-registry-collection | placeholder | CFG-rule-registry-collection | 规则注册表集 / Rule Registry Collection — ARCH-052 聚合节点 production | - | - | - | production | stable |
 | CFG-scripts-registry | CFG-scripts-registry | CFG-scripts-registry | placeholder | CFG-scripts-registry | 脚本集 / Script Collection — ARCH-052 聚合节点 production | - | - | - | production | stable |
 | CFG-test-suite-registry | CFG-test-suite-registry | CFG-test-suite-registry | placeholder | CFG-test-suite-registry | 测试集 / Test Suite — ARCH-052 聚合节点 production | - | - | - | production | stable |
+| D-GOV-ENFORCEMENT | D-GOV-ENFORCEMENT | D-GOV-ENFORCEMENT | placeholder | D-GOV-ENFORCEMENT | - | - | - | - | prototype | generated |
 | INFRA-DB-001 | INFRA-DB-001 | INFRA-DB-001 | placeholder | INFRA-DB-001 | zephyr-sqlite-task-db — database 节点 (ARCH-053) | - | - | - | production | stable |
 | INFRA-DB-002 | INFRA-DB-002 | INFRA-DB-002 | placeholder | INFRA-DB-002 | zephyr-chroma-vector-db — database 节点 (ARCH-053) | - | - | - | production | stable |
 | INFRA-DB-003 | INFRA-DB-003 | INFRA-DB-003 | placeholder | INFRA-DB-003 | zephyr-depgraph-db — database 节点 (ARCH-053) | - | - | - | production | stable |
@@ -1966,22 +2075,31 @@ flowchart TD
 | L4 | 风控层 | Risk Control | model_driven | MOD-L04-001 | - | - | Pre/Post-Trade 风控校验 + Kill Switch 熔断 + 止损评估 产出：risk_check（RiskDecision: approve/veto/adjust） | realtime | production | stable |
 | L5 | 学习层 | Learning & Optimization | model_driven | - | - | - | 7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环 产出：learning_feedback（策略优化建议） | weekly | design | planned |
 | L6 | 自评估层 | Self Evaluation | model_driven | - | - | - | LLM 自评估(Judge+交叉验证) + 多模态金融推理 + VeNRA零幻觉锚定 产出：self_evaluation（决策质量评估） | weekly | design | planned |
+| MOD-013 | MOD-013 | MOD-013 | placeholder | MOD-013 | - | - | - | - | design | planned |
 | MOD-014 | MOD-014 | MOD-014 | placeholder | MOD-014 | - | - | - | - | production | generated |
+| MOD-015 | MOD-015 | MOD-015 | placeholder | MOD-015 | - | - | - | - | design | stable |
+| MOD-ALT_DATA | MOD-ALT_DATA | MOD-ALT_DATA | placeholder | MOD-ALT_DATA | - | - | - | - | prototype | generated |
+| MOD-ARCH-BIZDB | MOD-ARCH-BIZDB | MOD-ARCH-BIZDB | placeholder | MOD-ARCH-BIZDB | - | - | - | - | design | planned |
 | MOD-AUTONOMY_CORE | MOD-AUTONOMY_CORE | MOD-AUTONOMY_CORE | placeholder | MOD-AUTONOMY_CORE | - | - | - | - | production | generated |
 | MOD-AUTONOMY_PERM | MOD-AUTONOMY_PERM | MOD-AUTONOMY_PERM | placeholder | MOD-AUTONOMY_PERM | - | - | - | - | prototype | generated |
 | MOD-BIZ-002 | MOD-BIZ-002 | MOD-BIZ-002 | placeholder | MOD-BIZ-002 | - | - | - | - | prototype | generated |
 | MOD-BT-001 | MOD-BT-001 | MOD-BT-001 | placeholder | MOD-BT-001 | - | - | - | - | design | generated |
+| MOD-C1-MARKETCH | MOD-C1-MARKETCH | MOD-C1-MARKETCH | placeholder | MOD-C1-MARKETCH | - | - | - | - | design | planned |
 | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | placeholder | MOD-CONTEXT_ENGINE | docs__03_modules___cross_layer__context_engine__blueprint_md | - | - | - | design | planned |
 | MOD-CROSS_ASSET | MOD-CROSS_ASSET | MOD-CROSS_ASSET | placeholder | MOD-CROSS_ASSET | 跨资产域 | - | - | - | design | planned |
 | MOD-D5-ARCH-TOOLS | MOD-D5-ARCH-TOOLS | MOD-D5-ARCH-TOOLS | placeholder | MOD-D5-ARCH-TOOLS | - | - | - | - | prototype | generated |
 | MOD-DATABASE | MOD-DATABASE | MOD-DATABASE | placeholder | MOD-DATABASE | - | - | - | - | prototype | generated |
+| MOD-DATA_ENG | MOD-DATA_ENG | MOD-DATA_ENG | placeholder | MOD-DATA_ENG | - | - | - | - | prototype | generated |
+| MOD-DATA_GOV | MOD-DATA_GOV | MOD-DATA_GOV | placeholder | MOD-DATA_GOV | - | - | - | - | prototype | generated |
+| MOD-DATA_SEC | MOD-DATA_SEC | MOD-DATA_SEC | placeholder | MOD-DATA_SEC | - | - | - | - | prototype | generated |
 | MOD-DIGITAL_TWIN | MOD-DIGITAL_TWIN | MOD-DIGITAL_TWIN | placeholder | MOD-DIGITAL_TWIN | 数字孪生域 | - | - | - | design | planned |
+| MOD-EXEC_SIM | MOD-EXEC_SIM | MOD-EXEC_SIM | placeholder | MOD-EXEC_SIM | - | - | - | - | prototype | generated |
+| MOD-EX_SOR | MOD-EX_SOR | MOD-EX_SOR | placeholder | MOD-EX_SOR | - | - | - | - | prototype | generated |
 | MOD-FEEDBACK_LOOP | MOD-FEEDBACK_LOOP | MOD-FEEDBACK_LOOP | placeholder | MOD-FEEDBACK_LOOP | docs__03_modules___cross_layer__feedback_loop__blueprint_md | - | - | - | design | planned |
 | MOD-GATE_ENGINE | MOD-GATE_ENGINE | MOD-GATE_ENGINE | placeholder | MOD-GATE_ENGINE | docs__03_modules___cross_layer__gate_engine__blueprint_md | - | - | - | design | planned |
 | MOD-GOV-019 | MOD-GOV-019 | MOD-GOV-019 | placeholder | MOD-GOV-019 | - | - | - | - | prototype | generated |
 | MOD-GOV-ALIGN-PANORAMAS | MOD-GOV-ALIGN-PANORAMAS | MOD-GOV-ALIGN-PANORAMAS | placeholder | MOD-GOV-ALIGN-PANORAMAS | - | - | - | - | design | stable |
 | MOD-GOV-DOCS | MOD-GOV-DOCS | MOD-GOV-DOCS | placeholder | MOD-GOV-DOCS | - | - | - | - | production | generated |
-| MOD-GOV-ENFORCEMENT | MOD-GOV-ENFORCEMENT | MOD-GOV-ENFORCEMENT | placeholder | MOD-GOV-ENFORCEMENT | - | - | - | - | production | generated |
 | MOD-GOV-REPAIR | MOD-GOV-REPAIR | MOD-GOV-REPAIR | placeholder | MOD-GOV-REPAIR | - | - | - | - | prototype | generated |
 | MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | placeholder | MOD-GOV-SCRIPTS | - | - | - | - | prototype | generated |
 | MOD-GOV-SCRIPTS-ARCH | MOD-GOV-SCRIPTS-ARCH | MOD-GOV-SCRIPTS-ARCH | placeholder | MOD-GOV-SCRIPTS-ARCH | - | - | - | - | prototype | generated |
@@ -1996,6 +2114,7 @@ flowchart TD
 | MOD-GOV-commit_gates | MOD-GOV-commit_gates | MOD-GOV-commit_gates | placeholder | MOD-GOV-commit_gates | - | - | - | - | prototype | generated |
 | MOD-GOV-create_guard | MOD-GOV-create_guard | MOD-GOV-create_guard | placeholder | MOD-GOV-create_guard | - | - | - | - | prototype | generated |
 | MOD-GOV-dangling_reference_gate | MOD-GOV-dangling_reference_gate | MOD-GOV-dangling_reference_gate | placeholder | MOD-GOV-dangling_reference_gate | - | - | - | - | prototype | generated |
+| MOD-GOV-diff_helpers | MOD-GOV-diff_helpers | MOD-GOV-diff_helpers | placeholder | MOD-GOV-diff_helpers | - | - | - | - | prototype | generated |
 | MOD-GOV-doc_ref_broken_gate | MOD-GOV-doc_ref_broken_gate | MOD-GOV-doc_ref_broken_gate | placeholder | MOD-GOV-doc_ref_broken_gate | - | - | - | - | prototype | generated |
 | MOD-GOV-empty_handler_gate | MOD-GOV-empty_handler_gate | MOD-GOV-empty_handler_gate | placeholder | MOD-GOV-empty_handler_gate | - | - | - | - | prototype | generated |
 | MOD-GOV-exempt_zone_frontmatter_gate | MOD-GOV-exempt_zone_frontmatter_gate | MOD-GOV-exempt_zone_frontmatter_gate | placeholder | MOD-GOV-exempt_zone_frontmatter_gate | - | - | - | - | prototype | generated |
@@ -2021,10 +2140,11 @@ flowchart TD
 | MOD-GOV-session_required_gate | MOD-GOV-session_required_gate | MOD-GOV-session_required_gate | placeholder | MOD-GOV-session_required_gate | - | - | - | - | prototype | generated |
 | MOD-GOV-session_worktree | MOD-GOV-session_worktree | MOD-GOV-session_worktree | placeholder | MOD-GOV-session_worktree | - | - | - | - | prototype | generated |
 | MOD-GOV-ssot_redefinition_gate | MOD-GOV-ssot_redefinition_gate | MOD-GOV-ssot_redefinition_gate | placeholder | MOD-GOV-ssot_redefinition_gate | - | - | - | - | prototype | generated |
-| MOD-GOV-tests_coverage_gate | MOD-GOV-tests_coverage_gate | MOD-GOV-tests_coverage_gate | placeholder | MOD-GOV-tests_coverage_gate | - | - | - | - | prototype | generated |
+| MOD-GOV-test_source_consistency_gate | MOD-GOV-test_source_consistency_gate | MOD-GOV-test_source_consistency_gate | placeholder | MOD-GOV-test_source_consistency_gate | - | - | - | - | prototype | generated |
 | MOD-GOV-vocab_hardcode_gate | MOD-GOV-vocab_hardcode_gate | MOD-GOV-vocab_hardcode_gate | placeholder | MOD-GOV-vocab_hardcode_gate | - | - | - | - | prototype | generated |
 | MOD-GOV-worktree_manager | MOD-GOV-worktree_manager | MOD-GOV-worktree_manager | placeholder | MOD-GOV-worktree_manager | - | - | - | - | production | generated |
-| MOD-GOVERNANCE | MOD-GOVERNANCE | MOD-GOVERNANCE | placeholder | MOD-GOVERNANCE | docs__03_modules___domain_governance__blueprint_md | - | - | - | design | planned |
+| MOD-GOVERNANCE | MOD-GOVERNANCE | MOD-GOVERNANCE | placeholder | MOD-GOVERNANCE | docs__03_modules___domain_governance__blueprint_md | - | - | - | design | generated |
+| MOD-GOV_behavioral_admission | MOD-GOV_behavioral_admission | MOD-GOV_behavioral_admission | placeholder | MOD-GOV_behavioral_admission | - | - | - | - | prototype | generated |
 | MOD-GOV_commit_gates | MOD-GOV_commit_gates | MOD-GOV_commit_gates | placeholder | MOD-GOV_commit_gates | - | - | - | - | prototype | generated |
 | MOD-GOV_resilience_governance | MOD-GOV_resilience_governance | MOD-GOV_resilience_governance | placeholder | MOD-GOV_resilience_governance | - | - | - | - | prototype | generated |
 | MOD-GOV_security_governance | MOD-GOV_security_governance | MOD-GOV_security_governance | placeholder | MOD-GOV_security_governance | - | - | - | - | prototype | generated |
@@ -2038,12 +2158,12 @@ flowchart TD
 | MOD-INF-016 | MOD-INF-016 | MOD-INF-016 | placeholder | MOD-INF-016 | docs__03_modules___cross_layer__shared_core__blueprint_md | - | - | - | design | planned |
 | MOD-INF-017 | MOD-INF-017 | MOD-INF-017 | placeholder | MOD-INF-017 | docs__03_modules___domain_governance__code_dedup_engine__blueprint_md | - | - | - | design | planned |
 | MOD-INF-018 | MOD-INF-018 | MOD-INF-018 | placeholder | MOD-INF-018 | - | - | - | - | prototype | generated |
-| MOD-INF-019 | MOD-INF-019 | MOD-INF-019 | placeholder | MOD-INF-019 | docs__03_modules___domain_autonomy_core__agent_spec__blueprint_md | - | - | - | production | generated |
-| MOD-INF-020 | MOD-INF-020 | MOD-INF-020 | placeholder | MOD-INF-020 | docs__03_modules___domain_governance__audit_trail__blueprint_md | - | - | - | prototype | generated |
+| MOD-INF-019 | MOD-INF-019 | MOD-INF-019 | placeholder | MOD-INF-019 | docs__03_modules___domain_autonomy_core__agent_spec__blueprint_md | - | - | - | design | planned |
+| MOD-INF-020 | MOD-INF-020 | MOD-INF-020 | placeholder | MOD-INF-020 | docs__03_modules___domain_governance__audit_trail__blueprint_md | - | - | - | design | planned |
 | MOD-INF-021 | MOD-INF-021 | MOD-INF-021 | placeholder | MOD-INF-021 | docs__03_modules___domain_autonomy_core__rollback_system__blueprint_md | - | - | - | design | planned |
-| MOD-INF-022 | MOD-INF-022 | MOD-INF-022 | placeholder | MOD-INF-022 | docs__03_modules___domain_autonomy_perm__escalation_protocol__blueprint_md | - | - | - | prototype | generated |
+| MOD-INF-022 | MOD-INF-022 | MOD-INF-022 | placeholder | MOD-INF-022 | docs__03_modules___domain_autonomy_perm__escalation_protocol__blueprint_md | - | - | - | design | planned |
 | MOD-INF-023 | MOD-INF-023 | MOD-INF-023 | placeholder | MOD-INF-023 | docs__03_modules___domain_governance__drift_detector__blueprint_md | - | - | - | design | planned |
-| MOD-INF-024 | MOD-INF-024 | MOD-INF-024 | placeholder | MOD-INF-024 | docs__03_modules___domain_autonomy_perm__budget_enforcer__blueprint_md | - | - | - | design | planned |
+| MOD-INF-024 | MOD-INF-024 | MOD-INF-024 | placeholder | MOD-INF-024 | docs__03_modules___domain_autonomy_perm__budget_enforcer__blueprint_md | - | - | - | design | generated |
 | MOD-INF-025 | MOD-INF-025 | MOD-INF-025 | placeholder | MOD-INF-025 | - | - | - | - | prototype | generated |
 | MOD-INF-026 | MOD-INF-026 | MOD-INF-026 | placeholder | MOD-INF-026 | - | - | - | - | prototype | generated |
 | MOD-INF-027 | MOD-INF-027 | MOD-INF-027 | placeholder | MOD-INF-027 | docs__03_modules___cross_layer__audit_orchestrator__blueprint_md | - | - | - | design | planned |
@@ -2055,7 +2175,7 @@ flowchart TD
 | MOD-INF-034 | MOD-INF-034 | MOD-INF-034 | placeholder | MOD-INF-034 | docs__03_modules___cross_layer__model_profiler__blueprint_md | - | - | - | design | planned |
 | MOD-INF-035 | MOD-INF-035 | MOD-INF-035 | placeholder | MOD-INF-035 | - | - | - | - | prototype | generated |
 | MOD-INF-036 | MOD-INF-036 | MOD-INF-036 | placeholder | MOD-INF-036 | docs__03_modules___cross_layer__model_capability_exam__blueprint_md | - | - | - | design | planned |
-| MOD-INF-037 | MOD-INF-037 | MOD-INF-037 | placeholder | MOD-INF-037 | docs__03_modules___domain_governance__registry_governance__blueprint_md | - | - | - | design | planned |
+| MOD-INF-037 | MOD-INF-037 | MOD-INF-037 | placeholder | MOD-INF-037 | docs__03_modules___domain_governance__registry_governance__blueprint_md | - | - | - | design | generated |
 | MOD-INF-038 | MOD-INF-038 | MOD-INF-038 | placeholder | MOD-INF-038 | - | - | - | - | prototype | generated |
 | MOD-INF-039 | MOD-INF-039 | MOD-INF-039 | placeholder | MOD-INF-039 | docs__03_modules___cross_layer__agent_orchestrator__blueprint_md | - | - | - | design | planned |
 | MOD-INF-042 | MOD-INF-042 | MOD-INF-042 | placeholder | MOD-INF-042 | - | - | - | - | prototype | generated |
@@ -2064,31 +2184,40 @@ flowchart TD
 | MOD-INFRA_RUNTIME | MOD-INFRA_RUNTIME | MOD-INFRA_RUNTIME | placeholder | MOD-INFRA_RUNTIME | - | - | - | - | prototype | generated |
 | MOD-INTEGRATION | MOD-INTEGRATION | MOD-INTEGRATION | placeholder | MOD-INTEGRATION | - | - | - | - | prototype | generated |
 | MOD-KB-001 | MOD-KB-001 | MOD-KB-001 | placeholder | MOD-KB-001 | docs__03_modules___domain_knowledge__knowledge_base__blueprint_md | - | - | - | design | planned |
-| MOD-L00-001 | MOD-L00-001 | MOD-L00-001 | placeholder | MOD-L00-001 | - | - | - | - | design | stable |
+| MOD-KNOWLEDGE | MOD-KNOWLEDGE | MOD-KNOWLEDGE | placeholder | MOD-KNOWLEDGE | - | - | - | - | prototype | generated |
+| MOD-L00-001 | MOD-L00-001 | MOD-L00-001 | placeholder | MOD-L00-001 | - | - | - | - | design | generated |
+| MOD-L00-002 | MOD-L00-002 | MOD-L00-002 | placeholder | MOD-L00-002 | - | - | - | - | design | stable |
+| MOD-L00-003 | MOD-L00-003 | MOD-L00-003 | placeholder | MOD-L00-003 | - | - | - | - | design | stable |
 | MOD-L00-004 | MOD-L00-004 | MOD-L00-004 | placeholder | MOD-L00-004 | - | - | - | - | prototype | generated |
 | MOD-L02-001 | MOD-L02-001 | MOD-L02-001 | placeholder | MOD-L02-001 | - | - | - | - | prototype | generated |
 | MOD-L03-001 | MOD-L03-001 | MOD-L03-001 | placeholder | MOD-L03-001 | - | - | - | - | prototype | generated |
 | MOD-L04-001 | MOD-L04-001 | MOD-L04-001 | placeholder | MOD-L04-001 | - | - | - | - | prototype | generated |
 | MOD-L05-001 | MOD-L05-001 | MOD-L05-001 | placeholder | MOD-L05-001 | - | - | - | - | prototype | generated |
-| MOD-L06-001 | MOD-L06-001 | MOD-L06-001 | placeholder | MOD-L06-001 | - | - | - | - | prototype | generated |
+| MOD-L06-001 | MOD-L06-001 | MOD-L06-001 | placeholder | MOD-L06-001 | - | - | - | - | design | generated |
 | MOD-L07-001 | MOD-L07-001 | MOD-L07-001 | placeholder | MOD-L07-001 | - | - | - | - | prototype | generated |
 | MOD-L08-001 | MOD-L08-001 | MOD-L08-001 | placeholder | MOD-L08-001 | - | - | - | - | design | generated |
 | MOD-L09-001 | MOD-L09-001 | MOD-L09-001 | placeholder | MOD-L09-001 | - | - | - | - | prototype | generated |
 | MOD-L10-001 | MOD-L10-001 | MOD-L10-001 | placeholder | MOD-L10-001 | - | - | - | - | prototype | generated |
 | MOD-L11-001 | MOD-L11-001 | MOD-L11-001 | placeholder | MOD-L11-001 | - | - | - | - | prototype | generated |
 | MOD-L13-001 | MOD-L13-001 | MOD-L13-001 | placeholder | MOD-L13-001 | - | - | - | - | prototype | generated |
-| MOD-LLM_SECURITY | MOD-LLM_SECURITY | MOD-LLM_SECURITY | placeholder | MOD-LLM_SECURITY | - | - | - | - | production | generated |
-| MOD-MASTER_BLUEPRINT | MOD-MASTER_BLUEPRINT | MOD-MASTER_BLUEPRINT | placeholder | MOD-MASTER_BLUEPRINT | docs__03_modules___master_blueprint__blueprint_md | - | - | - | design | planned |
+| MOD-LLM_SECURITY | MOD-LLM_SECURITY | MOD-LLM_SECURITY | placeholder | MOD-LLM_SECURITY | - | - | - | - | prototype | generated |
+| MOD-MASTER-001 | MOD-MASTER-001 | MOD-MASTER-001 | placeholder | MOD-MASTER-001 | - | - | - | - | design | stable |
+| MOD-MASTER-002 | MOD-MASTER-002 | MOD-MASTER-002 | placeholder | MOD-MASTER-002 | - | - | - | - | design | stable |
+| MOD-MASTER-003 | MOD-MASTER-003 | MOD-MASTER-003 | placeholder | MOD-MASTER-003 | - | - | - | - | design | planned |
+| MOD-MASTER_BLUEPRINT | MOD-MASTER_BLUEPRINT | MOD-MASTER_BLUEPRINT | placeholder | MOD-MASTER_BLUEPRINT | docs__03_modules___master_blueprint__blueprint_md | - | - | - | design | deprecated |
 | MOD-MKT_DATA | MOD-MKT_DATA | MOD-MKT_DATA | placeholder | MOD-MKT_DATA | - | - | - | - | prototype | generated |
+| MOD-ML_SERVE | MOD-ML_SERVE | MOD-ML_SERVE | placeholder | MOD-ML_SERVE | - | - | - | - | prototype | generated |
 | MOD-PF_ALLOC | MOD-PF_ALLOC | MOD-PF_ALLOC | placeholder | MOD-PF_ALLOC | 组合分配域 | - | - | - | design | planned |
 | MOD-RESOURCE_OPTIMIZATION_ENGINE | MOD-RESOURCE_OPTIMIZATION_ENGINE | MOD-RESOURCE_OPTIMIZATION_ENGINE | placeholder | MOD-RESOURCE_OPTIMIZATION_ENGINE | docs__03_modules___cross_layer__resource_optimization_engine__blueprint_md | - | - | - | design | planned |
 | MOD-RULE_ENGINE | MOD-RULE_ENGINE | MOD-RULE_ENGINE | placeholder | MOD-RULE_ENGINE | - | - | - | - | prototype | generated |
 | MOD-SEC-030 | MOD-SEC-030 | MOD-SEC-030 | placeholder | MOD-SEC-030 | - | - | - | - | prototype | generated |
-| MOD-SECURITY | MOD-SECURITY | MOD-SECURITY | placeholder | MOD-SECURITY | - | - | - | - | production | generated |
+| MOD-SECURITY | MOD-SECURITY | MOD-SECURITY | placeholder | MOD-SECURITY | - | - | - | - | prototype | generated |
 | MOD-SECURITY-LLM | MOD-SECURITY-LLM | MOD-SECURITY-LLM | placeholder | MOD-SECURITY-LLM | - | - | - | - | production | generated |
+| MOD-SELL_DECISION | MOD-SELL_DECISION | MOD-SELL_DECISION | placeholder | MOD-SELL_DECISION | - | - | - | - | prototype | generated |
 | MOD-SHARED-001 | MOD-SHARED-001 | MOD-SHARED-001 | placeholder | MOD-SHARED-001 | - | - | - | - | prototype | generated |
 | MOD-SHARED-002 | MOD-SHARED-002 | MOD-SHARED-002 | placeholder | MOD-SHARED-002 | - | - | - | - | prototype | generated |
 | MOD-SHR-io-yaml | MOD-SHR-io-yaml | MOD-SHR-io-yaml | placeholder | MOD-SHR-io-yaml | - | - | - | - | prototype | generated |
+| MOD-SIGNAL_ASHARE | MOD-SIGNAL_ASHARE | MOD-SIGNAL_ASHARE | placeholder | MOD-SIGNAL_ASHARE | - | - | - | - | prototype | generated |
 | MOD-SIGQC-001 | MOD-SIGQC-001 | MOD-SIGQC-001 | placeholder | MOD-SIGQC-001 | - | - | - | - | prototype | generated |
 | MOD-SIMULATION | MOD-SIMULATION | MOD-SIMULATION | placeholder | MOD-SIMULATION | 仿真核心域 | - | - | - | design | planned |
 | MOD-TASK_SYSTEM | MOD-TASK_SYSTEM | MOD-TASK_SYSTEM | placeholder | MOD-TASK_SYSTEM | - | - | - | - | prototype | generated |
@@ -2100,6 +2229,7 @@ flowchart TD
 | SH-DB-002 | SH-DB-002 | SH-DB-002 | placeholder | SH-DB-002 | - | - | - | - | prototype | generated |
 | SH-GOV-003 | SH-GOV-003 | SH-GOV-003 | placeholder | SH-GOV-003 | - | - | - | - | prototype | generated |
 | SH-MAIN-001 | SH-MAIN-001 | SH-MAIN-001 | placeholder | SH-MAIN-001 | - | - | - | - | prototype | generated |
+| SYS-MASTER-001 | SYS-MASTER-001 | SYS-MASTER-001 | placeholder | SYS-MASTER-001 | - | - | - | - | design | stable |
 
 ## Node 清单（运行时决策节点）
 
