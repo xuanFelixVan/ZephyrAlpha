@@ -60,7 +60,7 @@ class TDXProvider(DataSourceBase):
         requires_process=False,
         thread_safety="single_thread",
         rate_limit_default=0,
-        capabilities=["industry_class", "sector_kline"],
+        capabilities=["industry_class", "kline_sector"],
         known_issues=["单线程串行", "无板块分笔Tick", "需bestip选最快服务器"],
     )
 
@@ -112,8 +112,8 @@ class TDXProvider(DataSourceBase):
         cap = (payload.extra or {}).get("capability")
         if cap == "industry_class":
             yield from self._fetch_industry_class(payload, policy)
-        elif cap == "sector_kline":
-            yield from self._fetch_sector_kline(payload, policy)
+        elif cap == "kline_sector":
+            yield from self._fetch_kline_sector(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
@@ -157,7 +157,7 @@ class TDXProvider(DataSourceBase):
 
     # ---- 板块指数K线 ----
 
-    def _fetch_sector_kline(
+    def _fetch_kline_sector(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
         """获取板块指数K线（client.index_bars）。
@@ -165,7 +165,7 @@ class TDXProvider(DataSourceBase):
         mootdx index_bars(symbol, frequency=9, start, offset) 返回 DataFrame。
         frequency: 9=日线。
         """
-        table = payload.table or "c1_market.sector_kline"
+        table = payload.table or "c1_market.kline_sector"
         columns = ["trade_date", "code", "open", "high", "low", "close", "volume", "amount"]
         symbols = payload.symbols or []
         count = int(payload.extra.get("count", 100)) if payload.extra else 100
@@ -173,11 +173,7 @@ class TDXProvider(DataSourceBase):
         for code in symbols:
             t0 = time.time()
             try:
-                # 提取纯代码：sh.000001 -> 000001, 881101.TI -> 881101
-                if "." in code:
-                    raw_code = code.split(".")[0] if code[0].isdigit() else code.split(".")[-1]
-                else:
-                    raw_code = code
+                raw_code = self._extract_raw_code(code)
 
                 bars = self._call_with_policy(
                     self._client.index_bars,
@@ -189,20 +185,7 @@ class TDXProvider(DataSourceBase):
                 )
                 rows: list[tuple] = []
                 if bars is not None and not bars.empty:
-                    for _, bar in bars.iterrows():
-                        # datetime 格式 "2026-02-06 15:00"，截取日期部分
-                        dt = str(bar.get("datetime", ""))
-                        trade_date = dt[:10] if len(dt) >= 10 else dt
-                        rows.append((
-                            trade_date,
-                            code,
-                            float(bar.get("open", 0) or 0),
-                            float(bar.get("high", 0) or 0),
-                            float(bar.get("low", 0) or 0),
-                            float(bar.get("close", 0) or 0),
-                            int(bar.get("vol", 0) or 0),
-                            float(bar.get("amount", 0) or 0),
-                        ))
+                    rows = self._build_sector_kline_rows(bars, code)
                 self._log.info(f"板块K线 {code}: {len(rows)} 行")
                 if rows:
                     yield FetchResult(
@@ -216,3 +199,32 @@ class TDXProvider(DataSourceBase):
                     table=table, columns=columns, rows=[],
                     last_key="", elapsed_sec=time.time() - t0, error=str(e),
                 )
+
+    @staticmethod
+    def _extract_raw_code(code: str) -> str:
+        """提取纯代码：sh.000001 -> 000001, 881101.TI -> 881101。"""
+        if "." not in code:
+            return code
+        return code.split(".")[0] if code[0].isdigit() else code.split(".")[-1]
+
+    @staticmethod
+    def _build_sector_kline_rows(bars, code: str) -> list:
+        """从 bars DataFrame 构造板块K线行列表。
+
+        datetime 格式 "2026-02-06 15:00"，截取日期部分。
+        """
+        rows = []
+        for _, bar in bars.iterrows():
+            dt = str(bar.get("datetime", ""))
+            trade_date = dt[:10] if len(dt) >= 10 else dt
+            rows.append((
+                trade_date,
+                code,
+                float(bar.get("open", 0) or 0),
+                float(bar.get("high", 0) or 0),
+                float(bar.get("low", 0) or 0),
+                float(bar.get("close", 0) or 0),
+                int(bar.get("vol", 0) or 0),
+                float(bar.get("amount", 0) or 0),
+            ))
+        return rows

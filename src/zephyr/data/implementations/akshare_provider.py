@@ -80,7 +80,7 @@ class AKShareProvider(DataSourceBase):
             # 分析师预期 & 配股
             "analyst_forecast", "rights_issue",
             # 研报 & 北向资金 & 期货主力合约
-            "research_report", "hk_connect_flow", "futures_kline",
+            "research_report", "hk_connect_flow", "kline_futures",
             # 涨跌停 & 股本变动 & ST股票 & 概念板块 & 指标 & 大宗交易明细
             "limit_up_down", "share_change", "st_stock_list",
             "concept_board", "stock_indicator", "block_trade_detail",
@@ -168,8 +168,8 @@ class AKShareProvider(DataSourceBase):
             yield from self._fetch_research_report(payload, policy)
         elif cap == "hk_connect_flow":
             yield from self._fetch_hk_connect_flow(payload, policy)
-        elif cap == "futures_kline":
-            yield from self._fetch_futures_kline(payload, policy)
+        elif cap == "kline_futures":
+            yield from self._fetch_kline_futures(payload, policy)
         elif cap == "limit_up_down":
             yield from self._fetch_limit_up_down(payload, policy)
         elif cap == "share_change":
@@ -1279,7 +1279,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.analyst_forecast"
+        table = "c3_fundamental.analyst_forecast"
         columns = [
             "symbol", "forecast_date", "report_year",
             "eps_forecast", "pe_forecast", "net_profit_forecast",
@@ -1878,14 +1878,15 @@ class AKShareProvider(DataSourceBase):
     def _fetch_block_trade_detail(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取大宗交易每日统计，写入 c1_market.block_trade。
+        """获取大宗交易每日统计，写入 c1_market.block_trade_detail。
 
         调用 ak.stock_dzjy_mrtj(start_date, end_date) 获取每日统计。
         buyer/seller 每日统计无营业部明细，填空字符串。
+        与 block_trade（明细，含营业部）分离到独立表，避免数据粒度混淆。
         """
         import akshare as ak
 
-        table = "c1_market.block_trade"
+        table = "c1_market.block_trade_detail"
         columns = [
             "trade_date", "symbol", "price", "volume", "amount",
             "buyer", "seller",
@@ -1917,10 +1918,10 @@ class AKShareProvider(DataSourceBase):
             last_key=last_key, elapsed_sec=time.time() - t0,
         )
 
-    # ---- 22. 期货主力合约K线（futures_kline） ----
+    # ---- 22. 期货主力合约K线（kline_futures） ----
 
     @staticmethod
-    def _parse_futures_kline_row(row, contract_sym: str, start_str: str, end_str: str) -> tuple | None:
+    def _parse_kline_futures_row(row, contract_sym: str, start_str: str, end_str: str) -> tuple | None:
         """解析单行期货K线数据，不在日期范围内返回 None。"""
         trade_date = AKShareProvider._norm_date_str(row.get("日期"))
         if not trade_date or trade_date < start_str or trade_date > end_str:
@@ -1942,17 +1943,17 @@ class AKShareProvider(DataSourceBase):
             "akshare",
         )
 
-    def _fetch_futures_kline(
+    def _fetch_kline_futures(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取期货主力合约K线，写入 c1_market.futures_kline。
+        """获取期货主力合约K线，写入 c1_market.kline_futures。
 
         1. 调用 ak.futures_display_main_sina() 获取当前主力合约列表
         2. 对每个主力合约调用 ak.futures_main_sina(symbol) 获取历史K线
         """
         import akshare as ak
 
-        table = "c1_market.futures_kline"
+        table = "c1_market.kline_futures"
         columns = [
             "trade_date", "timestamp", "symbol", "open", "high", "low",
             "close", "volume", "amount", "open_interest", "period",
@@ -1992,7 +1993,7 @@ class AKShareProvider(DataSourceBase):
         # 步骤2：逐合约获取K线
         for idx, contract_sym in enumerate(contract_list):
             if (idx + 1) % 20 == 0:
-                self._log.info(f"futures_kline 进度: {idx+1}/{len(contract_list)}")
+                self._log.info(f"kline_futures 进度: {idx+1}/{len(contract_list)}")
             try:
                 df = self._call_with_policy(
                     ak.futures_main_sina, policy, symbol=contract_sym,
@@ -2003,7 +2004,7 @@ class AKShareProvider(DataSourceBase):
             if df is None or len(df) == 0:
                 continue
             for _, row in df.iterrows():
-                parsed = self._parse_futures_kline_row(row, contract_sym, start_str, end_str)
+                parsed = self._parse_kline_futures_row(row, contract_sym, start_str, end_str)
                 if parsed:
                     batch_rows.append(parsed)
 
