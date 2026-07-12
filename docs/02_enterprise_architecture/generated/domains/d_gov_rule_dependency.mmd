@@ -1,5 +1,5 @@
 %% D_GOV_RULE 域全景依赖图
-%% 生成时间: 2026-07-13 00:56:30
+%% 生成时间: 2026-07-13 01:56:15
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 33, 依赖边数: 215
 
@@ -51,9 +51,9 @@ graph TD
     src_zephyr_governance_rule_enf____gate_engine_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enf___3_contract_compatibility_py
     src_zephyr_governance_rule_enf____gate_engine_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enf___iants_zero_residue_check_py
     src_zephyr_governance_rule_enf____gate_engine_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
+    src_zephyr_governance_rule_enf___ate_engine_gate_pipeline_py -->|import_depends| src_zephyr_governance_rule_enf___gate_engine_gate_context_py
     src_zephyr_governance_rule_enf___te_engine_gate_simulator_py -->|import_depends| src_zephyr_governance_rule_enf___gate_engine_gate_context_py
     src_zephyr_governance_rule_enf___te_engine_gate_simulator_py -->|import_depends| src_zephyr_governance_rule_enf___ate_engine_gate_pipeline_py
-    src_zephyr_governance_rule_enf___ate_engine_gate_pipeline_py -->|import_depends| src_zephyr_governance_rule_enf___gate_engine_gate_context_py
     src_zephyr_governance_rule_enf___ent_gate_engine___init___py -->|config_depends| src_zephyr_governance_rule_enf___e_adversarial_validation_py
 
     %% 跨域依赖（入）- 最多显示 30 条
@@ -67,24 +67,24 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_task_types_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___gate_engine_gate_context_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___ate_engine_gate_override_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_gate_types_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___gate_engine_gate_context_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___ate_engine_gate_pipeline_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_gate_types_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___gate_engine_gate_context_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___ate_engine_gate_pipeline_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___te_engine_gate_simulator_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___t_adversarial_strategies_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_kiss_enforcer_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___t_end_to_end_walkthrough_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf____integration_test_runner_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_kiss_enforcer_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_triple_alignment_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_secrets_guard_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___t_adversarial_strategies_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___e_adversarial_validation_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___e_adversarial_validation_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf____001_circular_dependency_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___e_adversarial_validation_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___3_contract_compatibility_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___rocess_lifecycle_gateway_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enf___iants_zero_residue_check_py
@@ -171,9 +171,9 @@ graph TD
     src_zephyr_governance_rule_enf____gate_engine_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf____gate_engine_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf____gate_engine_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_enf___rocess_lifecycle_gateway_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf____001_circular_dependency_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf___3_contract_compatibility_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_rule_enf___rocess_lifecycle_gateway_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf___iants_zero_residue_check_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计

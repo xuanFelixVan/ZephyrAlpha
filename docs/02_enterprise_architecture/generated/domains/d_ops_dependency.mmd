@@ -1,5 +1,5 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-13 00:56:31
+%% 生成时间: 2026-07-13 01:56:16
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 8, 依赖边数: 55
 
@@ -25,15 +25,15 @@ graph TD
     %% D_AUDITTEST -> D_OPS (25 条)
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_gove___e_budget_profile_manager_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
@@ -43,8 +43,8 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_ops_governance_meta_observability_py

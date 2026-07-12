@@ -1,5 +1,5 @@
 %% D_INTELLIGENCE 域全景依赖图
-%% 生成时间: 2026-07-13 00:56:31
+%% 生成时间: 2026-07-13 01:56:16
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 45, 依赖边数: 127
 
@@ -58,10 +58,6 @@ graph TD
     src_zephyr_intelligence_model____implementations___init___py -->|import_depends| src_zephyr_intelligence_model____default_inference_engine_py
     src_zephyr_intelligence_model_profiling_cli_py -->|import_depends| src_zephyr_intelligence_model_profiling___init___py
     src_zephyr_intelligence_model_profiling_cli_py -->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    src_zephyr_intelligence_model_profiling_profiler_py -->|import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
-    src_zephyr_intelligence_model_profiling_profiler_py -->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
-    src_zephyr_intelligence_model_profiling_model_discovery_py -->|import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
-    src_zephyr_intelligence_model_profiling_exam_test_cases_py -->|import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model____ling_capability_passport_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
@@ -70,6 +66,10 @@ graph TD
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_profiling_job_matcher_py -->|import_depends| src_zephyr_intelligence_model____ling_capability_passport_py
+    src_zephyr_intelligence_model_profiling_exam_test_cases_py -->|import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
+    src_zephyr_intelligence_model_profiling_model_discovery_py -->|import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
+    src_zephyr_intelligence_model_profiling_profiler_py -->|import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
+    src_zephyr_intelligence_model_profiling_profiler_py -->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model_profiling_results_writer_py -->|import_depends| src_zephyr_intelligence_model_profiling_profiler_py
     src_zephyr_intelligence_model_profiling___init___py -->|import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
     src_zephyr_intelligence_model_profiling___init___py -->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
@@ -78,9 +78,9 @@ graph TD
     src_zephyr_intelligence_model____ing_pipeline_routing_cli_py -->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model____ing_pipeline_routing_cli_py -->|import_depends| src_zephyr_intelligence_model____ipeline_routing_profiler_py
     src_zephyr_intelligence_model____ing_pipeline_routing_cli_py -->|import_depends| src_zephyr_intelligence_model____e_routing_results_writer_py
-    src_zephyr_intelligence_model____e_routing_results_writer_py -->|import_depends| src_zephyr_intelligence_model____ipeline_routing_profiler_py
     src_zephyr_intelligence_model____ipeline_routing_profiler_py -->|import_depends| src_zephyr_intelligence_model_____routing_benchmark_suite_py
     src_zephyr_intelligence_model____ipeline_routing_profiler_py -->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
+    src_zephyr_intelligence_model____e_routing_results_writer_py -->|import_depends| src_zephyr_intelligence_model____ipeline_routing_profiler_py
     src_zephyr_intelligence_model____ipeline_routing___init___py -->|import_depends| src_zephyr_intelligence_model_____routing_benchmark_suite_py
     src_zephyr_intelligence_model____ipeline_routing___init___py -->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model____ipeline_routing___init___py -->|import_depends| src_zephyr_intelligence_model____ipeline_routing_profiler_py
@@ -91,7 +91,7 @@ graph TD
     scripts_quick_profile_py -->|import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
     scripts_quick_profile_py -->|import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     src_zephyr_intelligence___init___py -->|config_depends| src_zephyr_intelligence_model_drift_detector_py
-    src_zephyr_intelligence_model_evaluation___init___py -->|config_depends| src_zephyr_intelligence_model_evaluation_activate_py
+    src_zephyr_intelligence_model_evaluation___init___py -->|config_depends| src_zephyr_intelligence_model_evaluation_reranker_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_INTELLIGENCE (31 条)
@@ -106,10 +106,10 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model____ation_unified_memory_api_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_____routing_benchmark_suite_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_profiling_cli_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| scripts_calibrate_model_diff_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model____ling_capability_passport_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model____ling_capability_passport_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
@@ -119,11 +119,11 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_drift_detector_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_____routing_benchmark_suite_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model____ipeline_routing_profiler_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model____ipeline_routing_profiler_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model____e_routing_results_writer_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model_____routing_benchmark_suite_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model____ipeline_routing_profiler_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_intelligence_model____ling_capability_passport_py
     %% D_AUTONOMY_CORE -> D_INTELLIGENCE (2 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_intelligence_model____ation_unified_memory_api_py
@@ -161,8 +161,8 @@ graph TD
     src_zephyr_intelligence_model_evaluation_sync_engine_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     %% D_INTELLIGENCE -> D_BACKTEST (3 条)
     src_zephyr_intelligence_model____eriment_tracker___init___py -->|import_depends| D_BACKTEST[D_BACKTEST]
-    src_zephyr_intelligence_model____implementations___init___py -->|import_depends| D_BACKTEST[D_BACKTEST]
     src_zephyr_intelligence_model____ook_integration___init___py -->|import_depends| D_BACKTEST[D_BACKTEST]
+    src_zephyr_intelligence_model____implementations___init___py -->|import_depends| D_BACKTEST[D_BACKTEST]
     %% D_INTELLIGENCE -> D_GOVERNANCE (1 条)
     src_zephyr_intelligence_model_evaluation_sync_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_INTELLIGENCE -> D_GOV_KB (3 条)
@@ -185,20 +185,20 @@ graph TD
     %% D_INTELLIGENCE -> D_SHARED (16 条)
     src_zephyr_intelligence_model_drift_detector_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_intelligence_model____ation_unified_memory_api_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_intelligence_model____ling_capability_passport_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_intelligence_model____ling_capability_passport_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_intelligence_model____ling_capability_passport_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_intelligence_model_profiling_case_assembler_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_intelligence_model____ling_capability_passport_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_intelligence_model____ling_capability_passport_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_intelligence_model____ling_capability_passport_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_intelligence_model_profiling_profiler_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_intelligence_model_profiling_profiler_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_intelligence_model_profiling_model_discovery_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_intelligence_model_profiling_job_matcher_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_intelligence_model_profiling_model_discovery_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_intelligence_model_profiling_profiler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_intelligence_model_profiling_profiler_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_intelligence_model_profiling_results_writer_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_intelligence_model____e_routing_results_writer_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_intelligence_model____ipeline_routing_profiler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_intelligence_model____e_routing_results_writer_py -->|import_depends| D_SHARED[D_SHARED]
     %% D_INTELLIGENCE -> D_TRADING (1 条)
     src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_TRADING[D_TRADING]
 

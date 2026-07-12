@@ -1,7 +1,7 @@
 %% D_GOV_ENFORCEMENT 域全景依赖图
-%% 生成时间: 2026-07-13 00:56:30
+%% 生成时间: 2026-07-13 01:56:15
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 50, 依赖边数: 203
+%% 模块数: 57, 依赖边数: 237
 
 graph TD
 
@@ -32,6 +32,13 @@ graph TD
         src_zephyr_compliance_security_gateway_base_py["...r/compliance/security_gateway_base.py [prototype]"]
         src_zephyr_compliance_services___init___py["...ephyr/compliance/services/__init__.py [prototype]"]
         src_zephyr_compliance_zero_knowledge_audit_stub___init___py["...zero_knowledge_audit_stub/__init__.py [prototype]"]
+        src_zephyr_gov_enforcement_behavioral_admission___init___py["...ment/behavioral_admission/__init__.py [prototype]"]
+        src_zephyr_gov_enforcement_beh___ion_admission_controller_py["...ral_admission/admission_controller.py [prototype]"]
+        src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py["...ioral_admission/gate_event_adapter.py [prototype]"]
+        src_zephyr_gov_enforcement_beh____gpu_consensus_scheduler_py["..._admission/gpu_consensus_scheduler.py [prototype]"]
+        src_zephyr_gov_enforcement_beh___mission_protection_index_py["...avioral_admission/protection_index.py [prototype]"]
+        src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py["...vioral_admission/session_lifecycle.py [production]"]
+        src_zephyr_gov_enforcement_beh___admission_verdict_engine_py["...ehavioral_admission/verdict_engine.py [prototype]"]
         src_zephyr_governance_rule_bridge___init___py["...yr/governance/rule_bridge/__init__.py [prototype]"]
         src_zephyr_governance_rule_bridge_commit_gate_registry_py["...e/rule_bridge/commit_gate_registry.py [production]"]
         src_zephyr_governance_rule_bridge_git_commit_gateway_py["...nce/rule_bridge/git_commit_gateway.py [production]"]
@@ -60,6 +67,7 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
+    src_zephyr_compliance_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_behavioral_admission___init___py
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| src_zephyr_governance_rule_bridge_worktree_manager_py
     src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_governance_rule_bridge_worktree_manager_py
@@ -67,13 +75,22 @@ graph TD
     src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
     src_zephyr_governance_rule_enf___ent_default_quality_gate_py -->|import_depends| src_zephyr_governance_rule_enforcement_quality_gate_py
     src_zephyr_governance_rule_enf___ment_invariants___init___py -->|import_depends| src_zephyr_governance_rule_enf___ts_post_doc_review_check_py
+    src_zephyr_gov_enforcement_beh____gpu_consensus_scheduler_py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_verdict_engine_py
+    src_zephyr_gov_enforcement_beh___mission_protection_index_py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_verdict_engine_py
+    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___ion_admission_controller_py
+    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh____gpu_consensus_scheduler_py
+    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___mission_protection_index_py
+    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py
+    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_verdict_engine_py
+    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py
     tests_governance_commit_gates_test_create_guard_py -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
     tests_governance_commit_gates_test_r5_digit_suffix_gate_py -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    src_zephyr_compliance___init___py -->|config_depends| src_zephyr_compliance_aisg_sandbox_py
-    src_zephyr_governance_rule_bridge___init___py -->|config_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
+    src_zephyr_compliance___init___py -->|config_depends| src_zephyr_compliance_artifact_scanner_py
+    src_zephyr_governance_rule_bridge___init___py -->|config_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|contract| src_zephyr_governance_rule_enforcement_compliance_rule_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_GOV_ENFORCEMENT (47 条)
+    %% D_AUDITTEST -> D_GOV_ENFORCEMENT (48 条)
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_approval_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_enforcement_slo_contract_py
@@ -104,7 +121,11 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
-    %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (12 条)
+    %% D_AUTONOMY_CORE -> D_GOV_ENFORCEMENT (3 条)
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|contract| src_zephyr_governance_rule_enforcement_compliance_rule_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
+    %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (14 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_rule_enforcement_quality_gate_py
@@ -117,7 +138,9 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_rule_bridge_git_commit_gateway_py
-    %% D_GOV_CODE_QUALITY -> D_GOV_ENFORCEMENT (39 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
+    D_GOVERNANCE[D_GOVERNANCE] -->|data| src_zephyr_governance_rule_enforcement_compliance_rule_py
+    %% D_GOV_CODE_QUALITY -> D_GOV_ENFORCEMENT (40 条)
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
@@ -148,11 +171,20 @@ graph TD
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_bridge_commit_gate_registry_py
+    %% D_GOV_DOCS -> D_GOV_ENFORCEMENT (5 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_compliance_default_security_gateway_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_compliance_audit_trail_bridges___init___py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_compliance_audit_trail_bridges___init___py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_governance_rule_enforcement_compliance_rule_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_compliance_audit_trail_bridges___init___py
+    %% D_GOV_DRIFT -> D_GOV_ENFORCEMENT (2 条)
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| src_zephyr_compliance_audit_trail_bridges___init___py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| src_zephyr_governance_rule_enforcement_compliance_rule_py
     %% D_GOV_OPS_RESILIENCE -> D_GOV_ENFORCEMENT (1 条)
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
     %% D_GOV_RULE -> D_GOV_ENFORCEMENT (2 条)
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_governance_rule_enf___ts_post_doc_review_check_py
-    D_GOV_RULE[D_GOV_RULE] -->|config_depends| src_zephyr_governance_rule_enf___engine_rule_debt_auditor_py
+    D_GOV_RULE[D_GOV_RULE] -->|config_depends| src_zephyr_governance_rule_enf___gine_rule_canary_manager_py
     %% D_PF_CORE -> D_GOV_ENFORCEMENT (1 条)
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
     %% D_TRADING -> D_GOV_ENFORCEMENT (2 条)
@@ -160,12 +192,13 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_compliance_rule_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_ENFORCEMENT -> D_GOVERNANCE (4 条)
+    %% D_GOV_ENFORCEMENT -> D_GOVERNANCE (5 条)
     src_zephyr_compliance_aisg_sandbox_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_compliance_manager_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_evidence_pack_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_rule_enforcement_dlq_retry_policy_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_GOV_ENFORCEMENT -> D_GOV_AUDIT (13 条)
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_GOV_ENFORCEMENT -> D_GOV_AUDIT (15 条)
     src_zephyr_compliance_merkle_hourly_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_compliance_audit_orchestrator___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_compliance_audit_trail___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -179,7 +212,9 @@ graph TD
     src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_compliance_zero_knowledge_audit_stub___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    %% D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY (41 条)
+    src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    src_zephyr_gov_enforcement_beh___admission_verdict_engine_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY (42 条)
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
@@ -210,12 +245,13 @@ graph TD
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    %% D_GOV_ENFORCEMENT -> D_GOV_DRIFT (5 条)
+    %% D_GOV_ENFORCEMENT -> D_GOV_DRIFT (6 条)
     src_zephyr_compliance_artifact_scanner_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_compliance_integrity_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_governance_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_GOV_ENFORCEMENT -> D_GOV_OPS_RESILIENCE (2 条)
     src_zephyr_compliance_default_security_gateway_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     src_zephyr_compliance_security_gateway_base_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
@@ -238,7 +274,7 @@ graph TD
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_rule_bridge_session_claim_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_rule_bridge_session_worktree_py -->|import_depends| D_SECURITY[D_SECURITY]
-    %% D_GOV_ENFORCEMENT -> D_SHARED (7 条)
+    %% D_GOV_ENFORCEMENT -> D_SHARED (12 条)
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_bridge_session_claim_py -->|import_depends| D_SHARED[D_SHARED]
@@ -246,8 +282,13 @@ graph TD
     src_zephyr_governance_rule_bridge_worktree_manager_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf___ts_post_doc_review_check_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf___rule_engine_rule_watcher_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_beh____gpu_consensus_scheduler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 11 条
-    %% 跨域入边: 104 条
-    %% 跨域出边: 88 条
+    %% 域内依赖: 21 条
+    %% 跨域入边: 118 条
+    %% 跨域出边: 98 条

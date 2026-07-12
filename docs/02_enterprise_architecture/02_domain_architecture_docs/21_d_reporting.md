@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 00:56:26
+> 最后更新: 2026-07-13 01:56:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
-| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 9 | Prototype Modules | 9 |
@@ -87,9 +87,9 @@ graph TD
     src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_init_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
+    D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -98,8 +98,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_reporting_analytics_base_py production
     class src_zephyr_reporting_init_py,src_zephyr_reporting_extensions_init_py,src_zephyr_reporting_api_init_py,src_zephyr_reporting_core_init_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_infrastructure_init_py,src_zephyr_reporting_models_init_py,src_zephyr_reporting_services_init_py design
-    class D_GOV_AUDIT external_prod
-    class D_GOVERNANCE external_design
+    class D_GOV_AUDIT,D_GOVERNANCE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -144,15 +143,15 @@ graph TD
         src_zephyr_reporting_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_reporting_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
+    D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_reporting_init_py,src_zephyr_reporting_extensions_init_py,src_zephyr_reporting_api_init_py,src_zephyr_reporting_core_init_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_infrastructure_init_py,src_zephyr_reporting_models_init_py,src_zephyr_reporting_services_init_py design
-    class D_GOV_AUDIT external_prod
+    class D_GOV_AUDIT external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -171,14 +170,16 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 2 个外部域直接连接（出边 0 条 + 入边 3 条 = 3 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 3 个外部域直接连接（出边 0 条 + 入边 4 条 = 4 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_REPORTING["D_REPORTING<br/>报告"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
+    D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_AUDIT -->|2条 导入依赖 / import_depends| D_REPORTING
+    D_AUDITTEST -->|1条 测试依赖 / test_depends| D_REPORTING
     D_GOVERNANCE -->|1条 导入依赖 / import_depends| D_REPORTING
 ```
 

@@ -1,5 +1,5 @@
 %% D_FBL_VERIFICATION 域全景依赖图
-%% 生成时间: 2026-07-13 00:56:30
+%% 生成时间: 2026-07-13 01:56:15
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 55, 依赖边数: 113
 
@@ -100,8 +100,8 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___s_adversarial_validation_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_credit_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_autonomy_maturity_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_loop_gates_checkpoint_manager_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___lueprint_code_reconciler_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_trading_feedback_lo___ates_blueprint_validator_py
     %% D_FEEDBACK_LOOP -> D_FBL_VERIFICATION (30 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___iers_verification_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_trading_feedback_lo___cading_rollback_analyzer_py

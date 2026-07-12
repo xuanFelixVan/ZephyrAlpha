@@ -1,5 +1,5 @@
 %% D_GOV_SCRIPTS 域全景依赖图
-%% 生成时间: 2026-07-13 00:56:30
+%% 生成时间: 2026-07-13 01:56:15
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 89, 依赖边数: 310
 
@@ -106,32 +106,32 @@ graph TD
     scripts_governance_d5_architec___eckers_check_src_no_data_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
     scripts_governance_d5_architec___tors_domain_name_mapping_py -->|config_depends| scripts_governance_d5_architecture_generators___init___py
     scripts_governance__archive_one_off_check_rule_coverage_py -->|config_depends| scripts_governance__archive_on___analyze_orphan_consumers_py
-    scripts_governance__archive_on___grate_clean_build_status_py -->|config_depends| scripts_governance__archive_on___analyze_orphan_consumers_py
     scripts_governance__archive_one_off_group_orphan_modules_py -->|config_depends| scripts_governance__archive_on___analyze_orphan_consumers_py
+    scripts_governance__archive_on___grate_clean_build_status_py -->|config_depends| scripts_governance__archive_on___analyze_orphan_consumers_py
     scripts_governance__archive_on____id_hyphen_to_underscore_py -->|config_depends| scripts_governance__archive_on___analyze_orphan_consumers_py
-    scripts_governance_meta_drill_schedule_yaml -->|config_depends| scripts_governance_meta___init___py
-    scripts_governance_meta_burn_rate_acceleration_yaml -->|config_depends| scripts_governance_meta___init___py
     scripts_governance_meta_compliance_framework_map_yaml -->|config_depends| scripts_governance_meta___init___py
+    scripts_governance_meta_burn_rate_acceleration_yaml -->|config_depends| scripts_governance_meta___init___py
+    scripts_governance_meta_drill_schedule_yaml -->|config_depends| scripts_governance_meta___init___py
     scripts_governance_meta_error_budget_state_yaml -->|config_depends| scripts_governance_meta___init___py
-    scripts_governance_meta_risk_mitigation_matrix_yaml -->|config_depends| scripts_governance_meta___init___py
-    scripts_governance_meta_kill_switch_state_yaml -->|config_depends| scripts_governance_meta___init___py
     scripts_governance_meta_model_compatibility_matrix_yaml -->|config_depends| scripts_governance_meta___init___py
-    scripts_governance_meta_quality_enforcement_matrix_yaml -->|config_depends| scripts_governance_meta___init___py
+    scripts_governance_meta_kill_switch_state_yaml -->|config_depends| scripts_governance_meta___init___py
     scripts_governance_meta_milestone_gate_matrix_yaml -->|config_depends| scripts_governance_meta___init___py
-    scripts_governance_meta_script_retirement_state_yaml -->|config_depends| scripts_governance_meta___init___py
-    scripts_governance_meta_trust_tier_policy_yaml -->|config_depends| scripts_governance_meta___init___py
+    scripts_governance_meta_risk_mitigation_matrix_yaml -->|config_depends| scripts_governance_meta___init___py
+    scripts_governance_meta_quality_enforcement_matrix_yaml -->|config_depends| scripts_governance_meta___init___py
     scripts_governance_meta_shadow_mode_state_yaml -->|config_depends| scripts_governance_meta___init___py
+    scripts_governance_meta_script_retirement_state_yaml -->|config_depends| scripts_governance_meta___init___py
     scripts_governance_meta_standalone_risk_matrix_yaml -->|config_depends| scripts_governance_meta___init___py
+    scripts_governance_meta_trust_tier_policy_yaml -->|config_depends| scripts_governance_meta___init___py
+    scripts_governance_meta_false____ses_data_quality_cases_yaml -->|config_depends| scripts_governance_meta_false_negative_cases___init___py
     scripts_governance_meta_false____ses_architecture_cases_yaml -->|config_depends| scripts_governance_meta_false_negative_cases___init___py
     scripts_governance_meta_false____cases_governance_cases_yaml -->|config_depends| scripts_governance_meta_false_negative_cases___init___py
-    scripts_governance_meta_false____liation_registry_cases_yaml -->|config_depends| scripts_governance_meta_false_negative_cases___init___py
-    scripts_governance_meta_false____ses_data_quality_cases_yaml -->|config_depends| scripts_governance_meta_false_negative_cases___init___py
     scripts_governance_meta_false____e_cases_security_cases_yaml -->|config_depends| scripts_governance_meta_false_negative_cases___init___py
+    scripts_governance_meta_false____liation_registry_cases_yaml -->|config_depends| scripts_governance_meta_false_negative_cases___init___py
     scripts_governance__shared_plugin_contract_schema_yaml -->|config_depends| scripts_governance__shared___init___py
     scripts_governance__shared_thresholds_yaml -->|config_depends| scripts_governance__shared___init___py
     scripts_governance__shared_deprecated_paths_yaml -->|config_depends| scripts_governance__shared___init___py
-    scripts_governance_test_concurrent_safety_ps1 -->|config_depends| scripts_governance___init___py
     scripts_governance_d5_architecture_pre_commit_hook_ps1 -->|config_depends| scripts_governance_d5_architecture___init___py
+    scripts_governance_test_concurrent_safety_ps1 -->|config_depends| scripts_governance___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_GOV_SCRIPTS (3 条)
@@ -140,12 +140,11 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| scripts_governance___init___py
     %% D_AUTONOMY_PERM -> D_GOV_SCRIPTS (1 条)
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|config_depends| scripts_governance_meta___init___py
-    %% D_GOVERNANCE -> D_GOV_SCRIPTS (247 条)
+    %% D_GOVERNANCE -> D_GOV_SCRIPTS (246 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance___init___py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d10_performance___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d11_compliance___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d11_compliance___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d11_compliance___init___py
@@ -163,6 +162,7 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d12_ai_hallucination___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d12_ai_hallucination___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d12_ai_hallucination___init___py
+    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d1_structure___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d12_ai_hallucination___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d1_structure___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d1_structure___init___py
@@ -175,12 +175,13 @@ graph TD
     D_GOV_RULE[D_GOV_RULE] -->|config_depends| scripts_governance_generators___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_SCRIPTS -> D_GOVERNANCE (5 条)
+    %% D_GOV_SCRIPTS -> D_GOVERNANCE (6 条)
     scripts_governance_sync_panorama_module_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_sync_panorama_module_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_sync_panorama_module_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d5_architec___t_frontmatter_reconciler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_repair_p2_pg_concurrent_test_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_governance_d10_performance___init___py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_GOV_SCRIPTS -> D_GOV_AUDIT (1 条)
     scripts_governance_repair_apply_verification_results_py -->|config_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     %% D_GOV_SCRIPTS -> D_INFRA_RUNTIME (1 条)
@@ -189,13 +190,13 @@ graph TD
     scripts_governance_d11_compliance_check_test_structure_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architecture_dm200916_write_direct_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architecture_dm200912_query_domains_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts_governance_d5_architec___erate_capability_heatmap_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___te_constraint_violations_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___generate_capacity_report_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_d5_architec___erate_capability_heatmap_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___rate_cross_domain_matrix_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_d5_architec___ate_design_vs_production_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_d5_architec___omain_dependency_diagram_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___tors_generate_domain_doc_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts_governance_d5_architec___omain_dependency_diagram_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts_governance_d5_architec___ate_design_vs_production_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___rs_generate_domain_index_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___ate_integration_topology_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___enerate_navigation_index_py -->|import_depends| D_SHARED[D_SHARED]
@@ -207,5 +208,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 33 条
-    %% 跨域入边: 252 条
-    %% 跨域出边: 25 条
+    %% 跨域入边: 251 条
+    %% 跨域出边: 26 条

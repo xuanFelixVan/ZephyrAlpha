@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 56 |
-| 模块总数 | 4722 |
-| 生产态模块 | 1460 |
+| 模块总数 | 4792 |
+| 生产态模块 | 1478 |
 | 设计态模块 | 64 |
-| 原型态模块 | 3198 |
+| 原型态模块 | 3250 |
 
 ## 域清单（按架构层分组）
 
@@ -47,7 +47,7 @@ ttl: permanent
 | D_DATA_ENG | 数据工程 / Data Engineering | 7 | 0 | 0 | 7 | 7/150 (OK) | [08_d_data_eng.md](08_d_data_eng.md) |
 | D_DATA_GOV | 数据治理 / Data Governance | 7 | 0 | 0 | 7 | 7/150 (OK) | [09_d_data_gov.md](09_d_data_gov.md) |
 | D_DATA_SEC | 数据安全与契约 / Data Security & Contracts | 7 | 0 | 0 | 7 | 7/150 (OK) | [10_d_data_sec.md](10_d_data_sec.md) |
-| D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 55 | 50 | 0 | 5 | 55/150 (OK) | [11_d_fbl_verification.md](11_d_fbl_verification.md) |
+| D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 72 | 67 | 0 | 5 | 72/150 (OK) | [11_d_fbl_verification.md](11_d_fbl_verification.md) |
 | D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 264 | 111 | 0 | 153 | 264/150 (超容) | [12_d_feedback_loop.md](12_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 31 | 13 | 6 | 12 | 31/150 (OK) | [13_d_frontend.md](13_d_frontend.md) |
 | D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 107 | 100 | 0 | 7 | 107/150 (OK) | [14_d_gov_code_quality.md](14_d_gov_code_quality.md) |
@@ -67,7 +67,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_ASHARE_SIGNAL | ashare_signal / A-Share Signal | 7 | 0 | 0 | 7 | 7/150 (OK) | [25_d_ashare_signal.md](25_d_ashare_signal.md) |
-| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1657 | 49 | 0 | 1608 | 1657/150 (超容) | [26_d_audittest.md](26_d_audittest.md) |
+| D_AUDITTEST | audit_test_suite / Audit Test Suite | 1703 | 49 | 0 | 1654 | 1703/150 (超容) | [26_d_audittest.md](26_d_audittest.md) |
 | D_AUTONOMY_PERM | budget_enforcement / Autonomy Protection | 16 | 0 | 0 | 16 | 16/150 (OK) | [27_d_autonomy_perm.md](27_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 33 | 9 | 8 | 16 | 33/150 (OK) | [28_d_backtest.md](28_d_backtest.md) |
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 8 | 1 | 1 | 6 | 8/150 (OK) | [29_d_cross_asset.md](29_d_cross_asset.md) |
@@ -81,7 +81,7 @@ ttl: permanent
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 103 | 63 | 2 | 38 | 103/150 (OK) | [37_d_gov_audit.md](37_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 96 | 68 | 28 | 0 | 96/150 (OK) | [38_d_gov_docs.md](38_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 26 | 22 | 1 | 3 | 26/150 (OK) | [39_d_gov_drift.md](39_d_gov_drift.md) |
-| D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 50 | 15 | 0 | 35 | 50/150 (OK) | [40_d_gov_enforcement.md](40_d_gov_enforcement.md) |
+| D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 57 | 16 | 0 | 41 | 57/150 (OK) | [40_d_gov_enforcement.md](40_d_gov_enforcement.md) |
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 34 | 16 | 0 | 18 | 34/150 (OK) | [41_d_gov_kb.md](41_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 0 | 0 | 0 | 0 | 0/200 (OK) | [42_d_gov_repair.md](42_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 33 | 30 | 0 | 3 | 33/200 (OK) | [43_d_gov_rule.md](43_d_gov_rule.md) |
