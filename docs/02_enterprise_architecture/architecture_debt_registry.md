@@ -162,7 +162,7 @@
   - [5.174 导入循环/模块耦合（17个，第30轮新增）](#5174-导入循环模块耦合17个第30轮新增)
   - [5.176 SQL注入风险（27个，第31轮新增）](#5176-sql注入风险27个第31轮新增)
   - [5.177 命名规范违反（24个，第31轮新增）](#5177-命名规范违反24个第31轮新增)
-  - [5.178 测试-源码一致性门禁缺失（DEFERRED专项工程）](#5178-测试-源码一致性门禁缺失deferred专项工程)
+  - [5.178 测试-源码一致性门禁缺失（已实现名称漂移检测）](#5178-测试-源码一致性门禁缺失deferred专项工程)
 - [六、治本施工方案（4期）](#六治本施工方案4期)
 - [七、客观立场声明](#七客观立场声明)
 
@@ -4142,7 +4142,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ### 5.178 测试-源码一致性门禁缺失（DEFERRED专项工程）
 
-> **裁定状态（2026-07-12）**：DEFERRED=1（测试-源码一致性 commit-time 门禁未实现）
+> **裁定状态（2026-07-13）**：RESOLVED=1（TEST-SOURCE-CONSISTENCY gate 已实现并注册到 GitCommitGateway，priority=96）
 > **发现背景**：5.176.1 三阶段治本施工（删除 check_types/ 35 源文件死代码）后发现 43 个测试失败，根因分析确认为测试漂移（Test Drift）——源码进化后测试未同步更新。
 
 **5 种测试漂移类型（本次修复中确认）**：
@@ -4174,13 +4174,16 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - `test_gate_persistence.py`：`_db_path` 从全局 `governance.db` 改为 `drift_events.db` 独立库（commit `cfc8b7e4c1`）
 - `test_governance_db.py`：5 处 schema 漂移修复 + 幂等性（前置清理）+ `sys.exit()` 改为 `AssertionError`（本次 commit）
 
-**治本方案（DEFERRED）**：
-新增 `TEST-SOURCE-CONSISTENCY` commit-time gate，在 pre-commit 阶段检测：
-- 测试文件 import 的符号在源码中不存在（名称漂移）
-- 测试 mock 的属性/方法在源码类中不存在（mock 漂移）
-- 测试 INSERT 的 DB 列名在实际 schema 中不存在（schema 漂移）
-- 测试断言的阈值与源码常量不一致（阈值漂移）
+**治本方案（已实现 2026-07-13）**：
+新增 `TEST-SOURCE-CONSISTENCY` commit-time gate（priority=96），在 pre-commit 阶段检测：
+- 测试文件 import 的符号在源码中不存在（名称漂移）——**已实现**
+- 测试 mock 的属性/方法在源码类中不存在（mock 漂移）——DEFERRED（需类内省）
+- 测试 INSERT 的 DB 列名在实际 schema 中不存在（schema 漂移）——DEFERRED（需 DB introspection）
+- 测试断言的阈值与源码常量不一致（阈值漂移）——DEFERRED（需常量交叉引用）
 
-**DEFERRED 理由**：实现需 AST 解析 + DB schema introspection + 符号表交叉引用，属专项工程。当前通过手动修复已消除现有漂移，但无自动化防止未来复发。
+**实现范围**：本次实现名称漂移检测（5 种漂移类型中最常见的类型），覆盖 `from zephyr.* import yyy` 的符号级 AST 交叉验证。其余 3 种漂移类型（mock/schema/阈值）因需更复杂的 introspection 机制，保留为后续专项工程。
 
-**解锁条件**：人类架构师发起"测试-源码一致性门禁专项"或 AI 在后续 cycle 中实现 AST gate。
+**实现文件**：`src/zephyr/governance/commit_gates/test_source_consistency_gate.py`
+**测试文件**：`tests/governance/commit_gates/test_test_source_consistency_gate.py`（36 tests passed）
+**注册位置**：`git_commit_gateway.py` L321 `self._gate_registry.register(make_test_source_consistency_gate())`
+**capability 登记**：`capability_canonical_file_registry.yaml` capability_id=test_source_consistency_gate
