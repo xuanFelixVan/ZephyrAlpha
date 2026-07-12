@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 61 |
-| 模块总数 | 5007 |
+| 模块总数 | 5010 |
 | 生产态模块 | 1652 |
 | 设计态模块 | 64 |
-| 原型态模块 | 3291 |
+| 原型态模块 | 3294 |
 
 ## 域清单（按架构层分组）
 
@@ -50,7 +50,7 @@ ttl: permanent
 | D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 71 | 67 | 0 | 4 | 71/150 (OK) | [11_d_fbl_verification.md](11_d_fbl_verification.md) |
 | D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 358 | 107 | 0 | 251 | 358/150 (超容) | [12_d_feedback_loop.md](12_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 46 | 13 | 6 | 27 | 46/150 (OK) | [13_d_frontend.md](13_d_frontend.md) |
-| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 107 | 100 | 0 | 7 | 107/150 (OK) | [14_d_gov_code_quality.md](14_d_gov_code_quality.md) |
+| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 109 | 100 | 0 | 9 | 109/150 (OK) | [14_d_gov_code_quality.md](14_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 79 | 76 | 0 | 3 | 79/150 (OK) | [15_d_gov_ops_resilience.md](15_d_gov_ops_resilience.md) |
 | D_INTEGRATION | pipeline_routing / Pipeline Routing | 92 | 46 | 0 | 46 | 92/150 (OK) | [16_d_integration.md](16_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 2 | 1 | 0 | 1 | 2/150 (OK) | [17_d_integration_gateway.md](17_d_integration_gateway.md) |
@@ -84,7 +84,7 @@ ttl: permanent
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 164 | 100 | 0 | 64 | 164/150 (超容) | [40_d_gov_enforcement.md](40_d_gov_enforcement.md) |
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 30 | 16 | 0 | 14 | 30/150 (OK) | [41_d_gov_kb.md](41_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 0 | 0 | 0 | 0 | 0/200 (OK) | [42_d_gov_repair.md](42_d_gov_repair.md) |
-| D_GOV_RULE | rule_governance / Rule Governance | 33 | 30 | 0 | 3 | 33/200 (OK) | [43_d_gov_rule.md](43_d_gov_rule.md) |
+| D_GOV_RULE | rule_governance / Rule Governance | 34 | 30 | 0 | 4 | 34/200 (OK) | [43_d_gov_rule.md](43_d_gov_rule.md) |
 | D_GOV_SCRIPTS | script_governance / Script Governance | 74 | 3 | 0 | 71 | 74/150 (OK) | [44_d_gov_scripts.md](44_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 109 | 22 | 0 | 87 | 109/150 (OK) | [45_d_intelligence.md](45_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 43 | 0 | 2 | 41 | 43/150 (OK) | [46_d_knowledge.md](46_d_knowledge.md) |

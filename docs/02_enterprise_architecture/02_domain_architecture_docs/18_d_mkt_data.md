@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行情数据（D_MKT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 05:29:25
+> 最后更新: 2026-07-13 05:43:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -162,8 +162,8 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_DATA: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §... | → |  | data / data |
-| 2 | D_DATA: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §... | → |  | data / data |
+| 1 | D_DATA: 批量聚合写入器（MOD-L00-004 §18.3 裁定 #ARCH-C... | → |  | data / data |
+| 2 | D_DATA: 批量聚合写入器（MOD-L00-004 §18.3 裁定 #ARCH-C... | → |  | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
