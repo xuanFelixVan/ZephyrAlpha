@@ -25,8 +25,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Callable
 
-UTC: Final[timezone] = UTC
-
 
 @dataclass
 class CacheVersion:

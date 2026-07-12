@@ -76,6 +76,7 @@ RATIONALE_LOG_PATH: Final[Path] = REPO_ROOT / "docs" / "02_enterprise_architectu
 
 VECTOR_INDEX_DIR: Final[Path] = REPO_ROOT / ".audit_cache" / "vector_index"
 MODELS_CACHE_DIR: Final[Path] = REPO_ROOT / ".audit_cache" / "models"
+VMS_PERSIST_DIR: Final[Path] = REPO_ROOT / "data" / "vector_db"
 
 
 def get_tmp_dir() -> Path:
@@ -120,6 +121,7 @@ __all__ = [
     "REPO_ROOT",
     "SNAPSHOTS_DIR",
     "VECTOR_INDEX_DIR",
+    "VMS_PERSIST_DIR",
     "find_repo_root",
     "get_config_dir",
     "get_data_dir",
