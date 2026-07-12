@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination._core_coordination
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_INFRA_A2A
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer3_coordination.supervisor; zephyr.infrastructure.a2a_protocol.layer3_coordination.construction_verifier; zephyr.infrastructure.a2a_protocol.layer3_coordination.deadlock_guard; zephyr.infrastructure.a2a_protocol.layer3_coordination.livelock_detector; zephyr.infrastructure.a2a_protocol.layer3_coordination.cascade_guard; zephyr.infrastructure.a2a_protocol.layer3_coordination.conflict_detector; zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator; zephyr.infrastructure.a2a_protocol.layer3_coordination.semantic_diff
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STARTUP] imported

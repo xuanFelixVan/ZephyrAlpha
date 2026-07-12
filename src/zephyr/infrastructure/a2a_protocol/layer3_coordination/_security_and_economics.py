@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination._security_and_economics
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_INFRA_A2A
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_economics; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_forgetting; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_delegation_chain; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_idempotency; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_temporal_admission; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_idle_guard; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_red_team; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_security; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_anomaly_detector; zephyr.infrastructure.a2a_protocol.layer3_coordination.session_smuggling_defense
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STARTUP] imported

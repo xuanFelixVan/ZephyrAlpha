@@ -3842,6 +3842,12 @@ capabilities:
 # ============================================================================
 creation_tokens:
 
+  # --- Phase E1: sync完整性校验脚本（2026-07-13）---
+  - file: "scripts/governance/verify_sync_integrity.py"
+    token: "auto-verify-sync-integrity-20260713"
+    created_by: "session-sess-2600-20260713050906"
+    capability: "panorama_module_sync"
+
   # --- ARCH-056 四图模块同步引擎（2026-07-09）---
   - file: "scripts/governance/sync_panorama_module.py"
     token: "auto-sync-panorama-module-20260709"
@@ -4768,6 +4774,16 @@ creation_tokens:
     token: "migration-domain-init-gov-enforcement-20260713"
     created_by: "session-fix-phase2-remainder"
     capability: "gov_enforcement"
+
+  # --- Phase 2 Batch 11: domain package init for gov_rule/ and gov_code_quality/ (2026-07-13) ---
+  - file: "src/zephyr/gov_code_quality/__init__.py"
+    token: "migration-batch11-gov-code-quality-init-20260713"
+    created_by: "session-sess-30428-20260713044652"
+    capability: "code_quality_governance"
+  - file: "src/zephyr/gov_rule/__init__.py"
+    token: "migration-batch11-gov-rule-init-20260713"
+    created_by: "session-sess-30428-20260713044652"
+    capability: "rule_governance"
 
 # ============================================================================
 # 维护日志
