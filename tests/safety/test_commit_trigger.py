@@ -20,7 +20,7 @@ import pytest
 
 # 直接加载 commit_trigger，绕过 zephyr 包 __init__ import 链断裂风险
 import importlib.util as _ilu
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 _spec = _ilu.spec_from_file_location(
     "_commit_trigger_under_test",

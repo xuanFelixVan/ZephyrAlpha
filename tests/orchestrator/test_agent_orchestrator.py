@@ -7,7 +7,7 @@
 # [TESTS] —
 # [TTL] task_bound
 from __future__ import annotations
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 """
 Unit tests for agent_orchestrator.py (T-3-10, A22)

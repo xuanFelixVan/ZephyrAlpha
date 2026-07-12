@@ -95,7 +95,6 @@ class TestExitCodeConstants:
     def test_exit_constants_defined(self):
         sys.path.insert(0, str(GOV_DIR / "_shared"))
 
-from _shared.constants import REPO_ROOT
         from constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
         assert EXIT_PASS == 0

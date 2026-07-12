@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 ANCHORS = REPO_ROOT / "tests/contract/contract-test-anchors.yaml"
 

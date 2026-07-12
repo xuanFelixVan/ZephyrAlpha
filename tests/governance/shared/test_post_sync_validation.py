@@ -44,7 +44,7 @@ import sys
 from pathlib import Path
 
 import pytest
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 # ----------------------------------------------------------------------------
 # SSoT 加载（绕过 zephyr.governance.__init__ import 链断裂）

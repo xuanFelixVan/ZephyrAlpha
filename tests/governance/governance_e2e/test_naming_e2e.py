@@ -20,7 +20,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 PROJECT_ROOT = REPO_ROOT
 CHECK_SCRIPT = PROJECT_ROOT / "scripts" / "governance" / "d3_metadata" / "check_naming_convention.py"

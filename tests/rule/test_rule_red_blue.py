@@ -19,7 +19,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 _PROJECT_ROOT = REPO_ROOT
 _REPORT_DIR = _PROJECT_ROOT / "data" / "databases" / "governance_metadata"

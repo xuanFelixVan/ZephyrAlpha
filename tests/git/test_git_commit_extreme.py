@@ -46,7 +46,7 @@ from unittest.mock import patch
 
 import pytest
 
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.governance.rule_bridge.git_commit_gateway import (
     CommitStatus,
     GatewayError,

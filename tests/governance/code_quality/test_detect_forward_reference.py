@@ -21,7 +21,7 @@ from pathlib import Path
 import pytest
 
 import importlib.util
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 # 用 importlib 直接加载，绕过 governance 命名冲突
 #（src/zephyr/governance/ 与 scripts/governance/ 同名导致包解析歧义）

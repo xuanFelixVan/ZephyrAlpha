@@ -7,7 +7,7 @@
 # [TESTS] —
 # [TTL] task_bound
 from __future__ import annotations
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 """demo_e2e_pipeline.py 语法自检（不执行全链路——需网络与 akshare）。"""
 

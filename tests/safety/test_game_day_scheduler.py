@@ -16,7 +16,7 @@ import yaml
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, patch
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 scheduler_mod = pytest.importorskip(
     "zephyr.security.adversarial_validation.game_day_scheduler",
