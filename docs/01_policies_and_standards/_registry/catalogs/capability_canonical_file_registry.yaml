@@ -1465,6 +1465,26 @@ capabilities:
       - make_hardcoded_url_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: test_source_consistency_gate
+    aliases:
+      - TEST-SOURCE-CONSISTENCY
+      - test-source-consistency
+      - make_test_source_consistency_gate
+      - test_symbol_drift_blocker
+    description: >-
+      测试-源码符号漂移阻断门禁（TEST-SOURCE-CONSISTENCY，§5.178 防复发）。检测 staged
+      tests/ .py 文件中 from zephyr.* import yyy 的 yyy 符号在源码中是否存在——不存在
+      则硬阻断 commit（名称漂移检测）。module-level pytest.skip/importorskip 豁免（已标记
+      漂移的测试文件不重复检测）；检查所有顶层符号（class/def/assign/annassign），不依赖
+      __all__（Python 允许显式 import 任何顶层符号）；源码文件不存在/解析失败 fail-open；
+      相对导入/通配符 import 跳过。priority=96（在 TESTS-COVERAGE=95 之后）。
+      canonical basename test_source_consistency_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "测试符号漂移/import符号不存在/TEST-SOURCE-CONSISTENCY" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类测试-源码一致性检测脚本。
+    integrity_anchors:
+      - make_test_source_consistency_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: import_direction_gate
     aliases:
       - NO-UPWARD-IMPORT
@@ -4201,6 +4221,10 @@ creation_tokens:
     token: "auto-tests-coverage-gate-20260709"
     created_by: "session-sess-21156-20260709165417"
     capability: "tests_coverage_gate"
+  - file: "src/zephyr/governance/commit_gates/test_source_consistency_gate.py"
+    token: "auto-test-source-consistency-gate-20260713"
+    created_by: "session-sess-50808-20260713002135"
+    capability: "test_source_consistency_gate"
   - file: "src/zephyr/governance/commit_gates/long_param_list_gate.py"
     token: "auto-long-param-list-gate-20260709"
     created_by: "session-sess-15832-20260709055056"
