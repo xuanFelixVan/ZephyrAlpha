@@ -1,7 +1,7 @@
 # zephyr.governance.persistence 包
 #
 # 本包仅保留 olap_engine.py 真源（DuckDB OLAP 分析引擎）。
-# 其他原代理模块已删除，真源统一在 zephyr.governance.* 或 zephyr.trading.feedback_loop.* 下。
+# 其他原代理模块已删除，真源统一在 zephyr.governance.* 或 zephyr.feedback_loop.* 下。
 # 详见 commit 消息（代理层消除）。
 #
 # ARCH-051（2026-07-06）：新增 dataflowgraph_schema.py（数据流图 schema，同库不同表）

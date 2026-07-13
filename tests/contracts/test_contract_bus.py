@@ -13,7 +13,7 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.contract_bus", reason="contract_bus not available")
+mod = pytest.importorskip("zephyr.feedback_loop.capacity_assurance.contract_bus", reason="contract_bus not available")
 ContractBusLoader = mod.ContractBusLoader
 get_contract_bus_loader = mod.get_contract_bus_loader
 

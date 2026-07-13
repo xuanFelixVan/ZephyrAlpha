@@ -399,8 +399,8 @@ secrets:
   anti_patterns:
   - os.getenv() 直接读取密钥——用 get_secret() 确保非空+脱敏（NO-BARE-GETENV 门禁硬阻断）
 secret_rotation:
-  file: src/zephyr/trading/feedback_loop/security/secret_rotation.py
-  entry_point: from zephyr.trading.feedback_loop.security.secret_rotation import SecretRotation, auto_configure
+  file: src/zephyr/feedback_loop/security/secret_rotation.py
+  entry_point: from zephyr.feedback_loop.security.secret_rotation import SecretRotation, auto_configure
   key_exports:
   - symbol: SecretRotation
     note: 密钥轮换 registry——register/rotate/pending_rotations 管理 secret 生命周期

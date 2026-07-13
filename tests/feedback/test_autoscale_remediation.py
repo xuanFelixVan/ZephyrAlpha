@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.feedback_loop.detectors.autoscale_remediation import AutoscaleRemediation
+from zephyr.feedback_loop.detectors.reliability.autoscale_remediation import AutoscaleRemediation
 
 
 class TestAutoscaleRemediationInstantiation:

@@ -30,9 +30,9 @@ class TestActResult:
 
 class TestActPhaseHandlerInstantiation:
     def test_creates_with_dependencies(self):
-        from zephyr.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
-        from zephyr.feedback_loop.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
-        from zephyr.feedback_loop.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
+        from zephyr.feedback_loop.detectors.guard.guard_oscillation_detector import GuardOscillationDetector
+        from zephyr.feedback_loop.diagnosers.reliability.context_window_pressure_manager import ContextWindowPressureManager
+        from zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector import SelfBottleneckDetector
         from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
         from zephyr.feedback_loop.resilience.graceful_degradation_planner import GracefulDegradationPlanner
         from zephyr.feedback_loop.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
@@ -51,9 +51,9 @@ class TestActPhaseHandlerInstantiation:
 
 class TestActPhaseHandlerRunAct:
     def test_skips_without_action_selector(self):
-        from zephyr.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
-        from zephyr.feedback_loop.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
-        from zephyr.feedback_loop.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
+        from zephyr.feedback_loop.detectors.guard.guard_oscillation_detector import GuardOscillationDetector
+        from zephyr.feedback_loop.diagnosers.reliability.context_window_pressure_manager import ContextWindowPressureManager
+        from zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector import SelfBottleneckDetector
         from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
         from zephyr.feedback_loop.resilience.graceful_degradation_planner import GracefulDegradationPlanner
         from zephyr.feedback_loop.resilience.self_api_throttle_defense import SelfAPIThrottleDefense

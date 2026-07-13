@@ -274,7 +274,7 @@ class TestDispatchFleGates:
         fake_file = fake_src / "scheduler_safety.py"
         fake_file.write_text("", encoding="utf-8")
 
-        with patch("zephyr.trading.feedback_loop.scheduler_safety.__file__", str(fake_file)):
+        with patch("zephyr.feedback_loop.scheduler_safety.__file__", str(fake_file)):
             result = mgr._dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}
@@ -294,7 +294,7 @@ class TestDispatchFleGates:
         registry_file = gates_dir / "_registry.yaml"
         registry_file.write_text("{{invalid yaml content", encoding="utf-8")
 
-        with patch("zephyr.trading.feedback_loop.scheduler_safety.__file__", str(fake_file)):
+        with patch("zephyr.feedback_loop.scheduler_safety.__file__", str(fake_file)):
             result = mgr._dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}
@@ -314,7 +314,7 @@ class TestDispatchFleGates:
         registry_file = gates_dir / "_registry.yaml"
         registry_file.write_text("gates: []\n", encoding="utf-8")
 
-        with patch("zephyr.trading.feedback_loop.scheduler_safety.__file__", str(fake_file)):
+        with patch("zephyr.feedback_loop.scheduler_safety.__file__", str(fake_file)):
             result = mgr._dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}
@@ -340,7 +340,7 @@ class TestDispatchFleGates:
             encoding="utf-8",
         )
 
-        with patch("zephyr.trading.feedback_loop.scheduler_safety.__file__", str(fake_file)):
+        with patch("zephyr.feedback_loop.scheduler_safety.__file__", str(fake_file)):
             result = mgr._dispatch_fle_gates(anomaly, diagnosis)
 
         assert "FLE-DEPLOYMENT-SUPPRESSION" not in result
@@ -366,7 +366,7 @@ class TestDispatchFleGates:
             encoding="utf-8",
         )
 
-        with patch("zephyr.trading.feedback_loop.scheduler_safety.__file__", str(fake_file)):
+        with patch("zephyr.feedback_loop.scheduler_safety.__file__", str(fake_file)):
             with patch.object(mgr, "_invoke_fle_gate", side_effect=RuntimeError("boom")):
                 result = mgr._dispatch_fle_gates(anomaly, diagnosis)
 
@@ -393,7 +393,7 @@ class TestDispatchFleGates:
             encoding="utf-8",
         )
 
-        with patch("zephyr.trading.feedback_loop.scheduler_safety.__file__", str(fake_file)):
+        with patch("zephyr.feedback_loop.scheduler_safety.__file__", str(fake_file)):
             result = mgr._dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}
@@ -416,7 +416,7 @@ class TestDispatchFleGates:
             encoding="utf-8",
         )
 
-        with patch("zephyr.trading.feedback_loop.scheduler_safety.__file__", str(fake_file)):
+        with patch("zephyr.feedback_loop.scheduler_safety.__file__", str(fake_file)):
             result = mgr._dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}

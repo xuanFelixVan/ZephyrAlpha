@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.ebpf_monitor import EBPFMonitor
+from zephyr.feedback_loop.detectors.reliability.ebpf_monitor import EBPFMonitor
 
 
 class TestEBPFMonitorInstantiation:

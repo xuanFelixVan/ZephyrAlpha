@@ -70,21 +70,21 @@ class TestMissingFiles:
 
 class TestValidatorWithMockedSKELETONS:
     def test_validate_all_with_empty_skeletons(self):
-        with patch("zephyr.trading.feedback_loop.validator.SKELETONS", {}):
+        with patch("zephyr.feedback_loop.validator.SKELETONS", {}):
             result = validate_all()
             assert result == {}
 
     def test_missing_files_with_empty_skeletons(self):
-        with patch("zephyr.trading.feedback_loop.validator.SKELETONS", {}):
+        with patch("zephyr.feedback_loop.validator.SKELETONS", {}):
             result = missing_files()
             assert result == []
 
     def test_validate_one_with_mocked_path(self):
-        with patch("zephyr.trading.feedback_loop.validator.os.path.exists", return_value=True):
+        with patch("zephyr.feedback_loop.validator.os.path.exists", return_value=True):
             result = validate_one("mocked_file.py")
             assert result is True
 
     def test_validate_one_with_mocked_nonexistent(self):
-        with patch("zephyr.trading.feedback_loop.validator.os.path.exists", return_value=False):
+        with patch("zephyr.feedback_loop.validator.os.path.exists", return_value=False):
             result = validate_one("mocked_file.py")
             assert result is False

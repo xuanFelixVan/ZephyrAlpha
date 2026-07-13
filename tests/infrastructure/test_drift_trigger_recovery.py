@@ -69,7 +69,7 @@ def test_handle_drift_detected_fallback_on_import_error():
             side_effect=ImportError("test import error"),
         ),
         patch(
-            "zephyr.trading.orchestrator.trigger_router._stub_response",
+            "zephyr.orchestrator.trigger_router._stub_response",
             return_value={"stub": True},
         ),
     ):

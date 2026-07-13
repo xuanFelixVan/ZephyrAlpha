@@ -281,7 +281,7 @@ def l3_cross_reference(yaml_data: dict) -> tuple[list[str], list[str]]:
         except ImportError:
             if is_stub:
                 try:
-                    rt = __import__("zephyr.trading.orchestrator.trigger_router", fromlist=[attr])
+                    rt = __import__("zephyr.orchestrator.execution.trigger_router", fromlist=[attr])
                     if not hasattr(rt, attr):
                         errors.append(f'[L3] trigger "{ttype}": stub "{attr}" 不在 trigger_router 模块中')
                 except ImportError:

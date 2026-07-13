@@ -13,7 +13,7 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.tech_stack", reason="tech_stack not available")
+mod = pytest.importorskip("zephyr.feedback_loop.capacity_assurance.tech_stack", reason="tech_stack not available")
 TechStackValidator = mod.TechStackValidator
 ComponentStatus = mod.ComponentStatus
 

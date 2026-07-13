@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.feedback_loop.detectors.action_side_effect_cumulative_detector import (
+from zephyr.feedback_loop.detectors.correlation.action_side_effect_cumulative_detector import (
     ActionSideEffectCumulativeDetector,
 )
 

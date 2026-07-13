@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.feedback_loop.detectors.intermittent_failure_pattern import (
+from zephyr.feedback_loop.detectors.anomaly.intermittent_failure_pattern import (
     IntermittentFailurePattern,
     PatternConfidence,
 )

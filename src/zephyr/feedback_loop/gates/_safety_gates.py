@@ -8,12 +8,12 @@ from typing import Final
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] backward_compat: all exports must remain available from feedback-loop.gates
-# [MODIFY-GUARD] zephyr.trading.feedback_loop.gates.__init__
+# [MODIFY-GUARD] zephyr.feedback_loop.gates.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
-# [TESTS] python -c "import zephyr.trading.feedback_loop.gates"
+# [TESTS] python -c "import zephyr.feedback_loop.gates"
 # [A_module] module_id=MOD-UNK__safety_gates | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

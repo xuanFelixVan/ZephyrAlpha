@@ -3,7 +3,7 @@
 # [MODULE] tests.test_guard_self_consistency_auditor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.guard_self_consistency_auditor
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.guard_self_consistency_auditor
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.feedback_loop.diagnosers.guard_self_consistency_auditor import (
+from zephyr.feedback_loop.diagnosers.reliability.guard_self_consistency_auditor import (
     GuardHealthRecord,
     GuardSelfConsistencyAuditor,
 )

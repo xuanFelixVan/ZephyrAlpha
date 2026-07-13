@@ -40,31 +40,31 @@ EXPECTED_SUBMODULES = [
 
 class TestEvolutionPackageImport:
     def test_package_imports_successfully(self):
-        pkg = importlib.import_module("zephyr.trading.feedback_loop.evolution")
+        pkg = importlib.import_module("zephyr.feedback_loop.evolution")
         assert pkg is not None
 
     def test_package_has_docstring(self):
-        pkg = importlib.import_module("zephyr.trading.feedback_loop.evolution")
+        pkg = importlib.import_module("zephyr.feedback_loop.evolution")
         assert isinstance(pkg.__doc__, str)
         assert len(pkg.__doc__) > 0
 
     def test_dunder_all_defined(self):
-        pkg = importlib.import_module("zephyr.trading.feedback_loop.evolution")
+        pkg = importlib.import_module("zephyr.feedback_loop.evolution")
         assert hasattr(pkg, "__all__")
         assert isinstance(pkg.__all__, list)
 
     def test_dunder_all_contains_all_expected_submodules(self):
-        pkg = importlib.import_module("zephyr.trading.feedback_loop.evolution")
+        pkg = importlib.import_module("zephyr.feedback_loop.evolution")
         for name in EXPECTED_SUBMODULES:
             assert name in pkg.__all__, f"'{name}' missing from __all__"
 
     def test_dunder_all_entries_are_accessible(self):
-        pkg = importlib.import_module("zephyr.trading.feedback_loop.evolution")
+        pkg = importlib.import_module("zephyr.feedback_loop.evolution")
         for name in pkg.__all__:
             assert hasattr(pkg, name), f"__all__ entry '{name}' not accessible on package"
 
     def test_dunder_all_entries_are_strings(self):
-        pkg = importlib.import_module("zephyr.trading.feedback_loop.evolution")
+        pkg = importlib.import_module("zephyr.feedback_loop.evolution")
         for name in pkg.__all__:
             assert isinstance(name, str), f"__all__ entry '{name}' is not a string"
 
@@ -260,12 +260,12 @@ class TestSelfModificationRateLimiter:
 
 class TestEvolutionBoundary:
     def test_dunder_all_length_matches_expected(self):
-        pkg = importlib.import_module("zephyr.trading.feedback_loop.evolution")
+        pkg = importlib.import_module("zephyr.feedback_loop.evolution")
         assert len(pkg.__all__) == len(EXPECTED_SUBMODULES)
 
     def test_import_nonexistent_submodule_raises(self):
         with pytest.raises(ImportError):
-            importlib.import_module("zephyr.trading.feedback_loop.evolution.nonexistent_module")
+            importlib.import_module("zephyr.feedback_loop.evolution.nonexistent_module")
 
     def test_auto_reward_compute_large_values(self):
         from zephyr.feedback_loop.evolution.auto_reward import AutoReward

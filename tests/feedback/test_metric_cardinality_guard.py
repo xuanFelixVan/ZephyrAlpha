@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.metric_cardinality_guard import (
+from zephyr.feedback_loop.detectors.reliability.metric_cardinality_guard import (
     CardinalityStatus,
     MetricCardinalityGuard,
 )

@@ -84,7 +84,7 @@ class TestUpdateFromFleState:
         ds = DeploymentSuppression(sustain_window=0.0)
         ds.update_from_fle_state("DEGRADED")
         now = time.time()
-        with patch("zephyr.trading.feedback_loop.gates.deployment_suppression.time") as mock_time:
+        with patch("zephyr.feedback_loop.gates.deployment_suppression.time") as mock_time:
             mock_time.time.return_value = now - 1.0
             ds.update_from_fle_state("NOMINAL")
         result = ds.update_from_fle_state("NOMINAL")

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.feedback_loop.gates.parameterized_safety_gate
 # [DOMAIN] D_FBL_VERIFICATION
 # [DEPENDENCIES] zephyr.feedback_loop.gates.__init__
-# [CONSUMERS] blueprint.md §0; zephyr.trading.feedback_loop 内部模块; zephyr.trading
+# [CONSUMERS] blueprint.md §0; zephyr.feedback_loop 内部模块; zephyr.trading
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] MOD-FEEDBACK_LOOP 检测-诊断-动作链不可绕过; GateQueue 全局串行; 原子写入 temp-file+os.replace()

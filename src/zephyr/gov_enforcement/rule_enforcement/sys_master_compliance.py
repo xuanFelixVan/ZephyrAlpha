@@ -335,7 +335,7 @@ def check_version_consistency() -> list[dict]:
 def check_sli_data_sources() -> list[dict]:
     results = []
     sli_sources = [
-        ("SLI-01", "E2E AI 请求延迟", "zephyr.trading.feedback_loop.slo_manager", "SLOManager"),
+        ("SLI-01", "E2E AI 请求延迟", "zephyr.feedback_loop.slo_manager", "SLOManager"),
         ("SLI-02", "蓝图读取耗时", "zephyr.autonomy_core.dispatch_table", "SystemDispatch"),
         ("SLI-03", "门禁执行总延迟", "zephyr.governance.rule_enforcement.gate_engine", "GateEngine"),
         (

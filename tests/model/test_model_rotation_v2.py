@@ -3,7 +3,7 @@
 # [MODULE] tests.test_model_rotation_v2
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.model_rotation_v2
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.model_rotation_v2
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.model_rotation_v2 import ModelRotationV2
+from zephyr.feedback_loop.diagnosers.reliability.model_rotation_v2 import ModelRotationV2
 
 
 class TestModelRotationV2Instantiation:

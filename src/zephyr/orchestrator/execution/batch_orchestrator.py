@@ -30,7 +30,7 @@ Usage（每个 TRAE AI 对话侧）::
 
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
     from zephyr.governance.persistence.task_repo import TaskRepository
-    from zephyr.trading.orchestrator.execution.batch_orchestrator import BatchOrchestrator
+    from zephyr.orchestrator.execution.batch_orchestrator import BatchOrchestrator
 
     repo = TaskRepository(DB_PATH)
     bo = BatchOrchestrator(repo, batch_id="construction-20260507",

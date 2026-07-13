@@ -608,7 +608,7 @@ CROSS_MODULE_SYNC: list[CrossModuleSyncEntry] = [
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="src/zephyr/trading/orchestrator/trigger_router.py",  # 5.12.4 修复：路径漂移 orchestrator/->trading/orchestrator/
+        file_path="src/zephyr/orchestrator/execution/trigger_router.py",  # ARCH-058: trading/orchestrator -> orchestrator/
         sync_content="blueprint_lookup handler 可用",
         last_synced="2026-05-07",
     ),

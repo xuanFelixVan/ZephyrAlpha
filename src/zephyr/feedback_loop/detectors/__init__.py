@@ -13,8 +13,8 @@
 # [TTL] permanent
 """feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分为5个逻辑子包(anomaly/correlation/drift/guard/reliability)。
 
-兼容垫片：旧导入路径 ``zephyr.trading.feedback_loop.detectors.<leaf>`` 继续可用，
-实际模块已迁移到 ``zephyr.trading.feedback_loop.detectors.<subpkg>.<leaf>``。
+兼容垫片：旧导入路径 ``zephyr.feedback_loop.detectors.<leaf>`` 继续可用，
+实际模块已迁移到 ``zephyr.feedback_loop.detectors.<subpkg>.<leaf>``。
 ``__getattr__`` 处理 ``from detectors import <leaf>`` 形式；
 ``_LeafAliasFinder`` 处理 ``from detectors.<leaf> import X`` / ``import detectors.<leaf>`` 形式。
 """
@@ -48,7 +48,7 @@ _LEAF_TO_SUBPKG = {
 
 _SUBMODULES = _ANOMALY_SUBS + _DRIFT_SUBS + _GUARD_SUBS + _RELIABILITY_SUBS + _CORRELATION_SUBS
 
-_PREFIX = "zephyr.trading.feedback_loop.detectors."
+_PREFIX = "zephyr.feedback_loop.detectors."
 
 
 class _LeafAliasLoader(importlib.abc.Loader):
@@ -87,7 +87,7 @@ sys.meta_path.append(_LeafAliasFinder())
 def __getattr__(name):
     if name in _LEAF_TO_SUBPKG:
         mod = importlib.import_module(
-            f"zephyr.trading.feedback_loop.detectors.{_LEAF_TO_SUBPKG[name]}.{name}"
+            f"zephyr.feedback_loop.detectors.{_LEAF_TO_SUBPKG[name]}.{name}"
         )
         globals()[name] = mod
         return mod

@@ -27,7 +27,7 @@ AUDIT-08 H6 修复：不再直接导入 PipelineOrchestrator，改用 Protocol �
 打破 pipeline ↔ orchestrator 双向循环依赖。
 
 Usage:
-    from zephyr.trading.orchestrator.core.task_queue import ActiveTaskQueue
+    from zephyr.orchestrator.core.task_queue import ActiveTaskQueue
 
     queue = ActiveTaskQueue(repo, orchestrator)
     queue.start()

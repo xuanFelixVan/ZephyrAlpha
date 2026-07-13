@@ -73,12 +73,12 @@ def create_shadow_canary() -> ShadowCanaryProtocol:
 
 
 def create_chaos_engine() -> ChaosEngineProtocol:
-    _mod = importlib.import_module("zephyr.trading.orchestrator.chaos_engine")
+    _mod = importlib.import_module("zephyr.orchestrator.fault_tolerance.chaos_engine")
     _ChaosEngine = _mod.ChaosEngine
     return _ChaosEngine()
 
 
 def create_batch_orchestrator(repo: Any, batch_id: str, worker_id: str, **kwargs: Any) -> BatchOrchestratorProtocol:
-    _mod = importlib.import_module("zephyr.trading.orchestrator.batch_orchestrator")
+    _mod = importlib.import_module("zephyr.orchestrator.execution.batch_orchestrator")
     _BatchOrchestrator = _mod.BatchOrchestrator
     return _BatchOrchestrator(repo, batch_id, worker_id, **kwargs)

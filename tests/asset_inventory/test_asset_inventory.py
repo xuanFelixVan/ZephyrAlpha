@@ -164,7 +164,7 @@ class TestDependencyEdge:
     def test_create(self):
         edge = dependency.DependencyEdge(
             from_file="a.py",
-            to_module="zephyr.trading.orchestrator.core",
+            to_module="zephyr.orchestrator.core",
         )
         assert edge.import_type == "absolute"
         assert edge.line_number == 0
@@ -203,10 +203,10 @@ class TestDependencyExtractor:
 
     def test_extract_from_import(self):
         ext = dependency.DependencyExtractor()
-        code = "from zephyr.trading.orchestrator.core import foo\n"
+        code = "from zephyr.orchestrator.core import foo\n"
         edges = ext.extract("test.py", code)
         assert len(edges) == 1
-        assert edges[0].to_module == "zephyr.trading.orchestrator.core.foo"
+        assert edges[0].to_module == "zephyr.orchestrator.core.foo"
         assert edges[0].import_type == "absolute"
 
     def test_extract_syntax_error_returns_empty(self):
@@ -226,7 +226,7 @@ class TestDependencyExtractor:
 
     def test_classify_project_import(self):
         ext = dependency.DependencyExtractor()
-        result = ext._classify_import("zephyr.trading.orchestrator.core")
+        result = ext._classify_import("zephyr.orchestrator.core")
         assert result == "absolute"
 
     def test_classify_third_party(self):

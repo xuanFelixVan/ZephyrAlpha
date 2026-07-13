@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.placebo_action_detector import PlaceboActionDetector
+from zephyr.feedback_loop.detectors.guard.placebo_action_detector import PlaceboActionDetector
 
 
 class TestPlaceboActionDetector:

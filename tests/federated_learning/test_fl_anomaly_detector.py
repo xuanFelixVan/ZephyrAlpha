@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_anomaly_detector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.detectors.anomaly_detector
+# [CONSUMERS] zephyr.feedback_loop.detectors.anomaly.anomaly_detector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from unittest.mock import MagicMock
 
-from zephyr.feedback_loop.detectors.anomaly_detector import (
+from zephyr.feedback_loop.detectors.anomaly.anomaly_detector import (
     AnomalyDetector,
     AnomalyEvent,
 )

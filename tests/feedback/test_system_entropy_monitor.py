@@ -3,7 +3,7 @@
 # [MODULE] tests.test_system_entropy_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.system_entropy_monitor
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.system_entropy_monitor
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.system_entropy_monitor import (
+from zephyr.feedback_loop.diagnosers.reliability.system_entropy_monitor import (
     EntropySnapshot,
     SystemEntropyMonitor,
 )

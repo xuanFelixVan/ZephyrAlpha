@@ -310,10 +310,10 @@ class TestCovDriftResultInstantiation:
 
     def test_custom_fields(self):
         r = CovDriftResult(
-            module_coverage_ratio={"zephyr.trading.orchestrator.core": 0.45},
-            degradation_warnings=["zephyr.trading.orchestrator.core below 30%"],
+            module_coverage_ratio={"zephyr.orchestrator.core": 0.45},
+            degradation_warnings=["zephyr.orchestrator.core below 30%"],
         )
-        assert r.module_coverage_ratio["zephyr.trading.orchestrator.core"] == 0.45
+        assert r.module_coverage_ratio["zephyr.orchestrator.core"] == 0.45
         assert len(r.degradation_warnings) == 1
 
 

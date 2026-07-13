@@ -13,8 +13,8 @@
 # [TTL] permanent
 """feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognitive/diagnosis/health/reliability)。
 
-兼容垫片：旧导入路径 ``zephyr.trading.feedback_loop.diagnosers.<leaf>`` 继续可用，
-实际模块已迁移到 ``zephyr.trading.feedback_loop.diagnosers.<subpkg>.<leaf>``。
+兼容垫片：旧导入路径 ``zephyr.feedback_loop.diagnosers.<leaf>`` 继续可用，
+实际模块已迁移到 ``zephyr.feedback_loop.diagnosers.<subpkg>.<leaf>``。
 ``__getattr__`` 处理 ``from diagnosers import <leaf>`` 形式；
 ``_LeafAliasFinder`` 处理 ``from diagnosers.<leaf> import X`` / ``import diagnosers.<leaf>`` 形式。
 """
@@ -46,7 +46,7 @@ _LEAF_TO_SUBPKG = {
 
 _SUBMODULES = _COGNITIVE_SUBS + _DIAGNOSIS_SUBS + _HEALTH_SUBS + _RELIABILITY_SUBS
 
-_PREFIX = "zephyr.trading.feedback_loop.diagnosers."
+_PREFIX = "zephyr.feedback_loop.diagnosers."
 
 
 class _LeafAliasLoader(importlib.abc.Loader):
@@ -85,7 +85,7 @@ sys.meta_path.append(_LeafAliasFinder())
 def __getattr__(name):
     if name in _LEAF_TO_SUBPKG:
         mod = importlib.import_module(
-            f"zephyr.trading.feedback_loop.diagnosers.{_LEAF_TO_SUBPKG[name]}.{name}"
+            f"zephyr.feedback_loop.diagnosers.{_LEAF_TO_SUBPKG[name]}.{name}"
         )
         globals()[name] = mod
         return mod

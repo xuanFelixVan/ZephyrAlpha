@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.synthetic_anomaly_generator import (
+from zephyr.feedback_loop.detectors.anomaly.synthetic_anomaly_generator import (
     SyntheticAnomalyGenerator,
 )
 

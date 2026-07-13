@@ -173,7 +173,7 @@ class TestReportFinding:
         mock_result.findings_processed = 1
         mock_result.tasks_created = 0
         mock_result.tasks_failed = 0
-        with patch("zephyr.trading.orchestrator.finding_bridge.report_findings", return_value=mock_result) as mock_rf:
+        with patch("zephyr.orchestrator.finding_bridge.report_findings", return_value=mock_result) as mock_rf:
             finding = SimpleNamespace(
                 dimension="test",
                 severity="LOW",
@@ -198,8 +198,8 @@ class TestReportFindings:
         mock_bridge_result.tasks_failed = 0
 
         with (
-            patch("zephyr.trading.orchestrator.finding_bridge.FindingTaskBridge") as mock_bridge_cls,
-            patch("zephyr.trading.orchestrator.finding_bridge.TaskRepository") as mock_repo_cls,
+            patch("zephyr.orchestrator.finding_bridge.FindingTaskBridge") as mock_bridge_cls,
+            patch("zephyr.orchestrator.finding_bridge.TaskRepository") as mock_repo_cls,
         ):
             mock_repo = MagicMock()
             mock_repo_cls.return_value = mock_repo

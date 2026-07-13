@@ -3,7 +3,7 @@
 # [MODULE] tests.test_adaptive_param_tuning
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.adaptive_param_tuning
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.cognitive.adaptive_param_tuning
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_adaptive_param_tuning.py
 # [TTL] task_bound
 
-from zephyr.feedback_loop.diagnosers.adaptive_param_tuning import (
+from zephyr.feedback_loop.diagnosers.cognitive.adaptive_param_tuning import (
     AdaptiveParamTuning,
     TuningMode,
 )

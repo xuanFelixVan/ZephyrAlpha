@@ -3,7 +3,7 @@
 # [MODULE] tests.test_burnout_alarm
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.burnout_alarm
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.burnout_alarm
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_burnout_alarm.py
 # [TTL] task_bound
 
-from zephyr.feedback_loop.diagnosers.burnout_alarm import BurnoutAlarm
+from zephyr.feedback_loop.diagnosers.reliability.burnout_alarm import BurnoutAlarm
 
 
 class TestBurnoutAlarm:

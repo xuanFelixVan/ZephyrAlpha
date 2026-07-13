@@ -16,14 +16,14 @@ import sqlite3
 import pytest
 
 schema_mod = pytest.importorskip(
-    "zephyr.trading.feedback_loop.capacity_assurance.schema", reason="capacity-assurance.schema not available"
+    "zephyr.feedback_loop.capacity_assurance.schema", reason="capacity-assurance.schema not available"
 )
 SchemaManager = schema_mod.SchemaManager
 MetricsWriteBuffer = schema_mod.MetricsWriteBuffer
 compute_hash = SchemaManager.compute_hash
 
 sli_mod = pytest.importorskip(
-    "zephyr.trading.feedback_loop.capacity_assurance.sli_instrumentation", reason="capacity-assurance.sli_instrumentation not available"
+    "zephyr.feedback_loop.capacity_assurance.sli_instrumentation", reason="capacity-assurance.sli_instrumentation not available"
 )
 SLIInstrumentation = sli_mod.SLIInstrumentation
 SLIStats = sli_mod.SLIStats

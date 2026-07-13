@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.gradual_poisoning_detector import (
+from zephyr.feedback_loop.detectors.drift.gradual_poisoning_detector import (
     GradualPoisoningDetector,
     PoisoningSignal,
 )

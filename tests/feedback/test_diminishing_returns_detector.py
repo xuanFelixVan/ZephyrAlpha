@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.diminishing_returns_detector import (
+from zephyr.feedback_loop.detectors.drift.diminishing_returns_detector import (
     DiminishingReturnsDetector,
     GuardValueRecord,
 )

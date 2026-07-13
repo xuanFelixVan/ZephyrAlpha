@@ -3,7 +3,7 @@
 # [MODULE] tests.test_model_health
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.model_health
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.health.model_health
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.feedback_loop.diagnosers.model_health import ModelHealth
+from zephyr.feedback_loop.diagnosers.health.model_health import ModelHealth
 
 
 class TestModelHealthInstantiation:

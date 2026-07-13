@@ -25,7 +25,7 @@ _SUBMODULES = sorted(set(_safety_submodules + _governance_submodules + _security
 
 def __getattr__(name):
     if name in _SUBMODULES:
-        mod = importlib.import_module(f"zephyr.trading.feedback_loop.gates.{name}")
+        mod = importlib.import_module(f"zephyr.feedback_loop.gates.{name}")
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
