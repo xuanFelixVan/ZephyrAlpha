@@ -60,100 +60,37 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "global_capability_heatmap.md"
 
-# 10 capability domains (能力域) - 7 business + 3 cross-cutting
-# Source: capability_heatmap.yaml v3.0.0 + capability_heatmap.md §3.1
-CAPABILITY_DOMAINS: list[dict] = [
-    {
-        "id": "C1",
-        "name": "数据接入",
-        "name_en": "Data Ingestion",
-        "type": "业务",
-        "domains": ["D_MKT_DATA", "D_ALT_DATA", "D_DATA_ENG"],
-    },
-    {
-        "id": "C2",
-        "name": "因子研究",
-        "name_en": "Factor & Signal",
-        "type": "业务",
-        "domains": ["D_FACTOR", "D_SIGLEGACY", "D_FUNDAMENTAL_SIGNAL", "D_ASHARE_SIGNAL", "D_SIGQC"],
-    },
-    {
-        "id": "C3",
-        "name": "风险控制",
-        "name_en": "Risk Control",
-        "type": "业务",
-        "domains": ["D_RISK", "D_COMPLIANCE"],
-    },
-    {
-        "id": "C4",
-        "name": "策略决策",
-        "name_en": "Strategy Decision",
-        "type": "业务",
-        "domains": ["D_PF_CORE", "D_PF_ALLOC", "D_SELL_DECISION", "D_CROSS_ASSET"],
-    },
-    {
-        "id": "C5",
-        "name": "执行交易",
-        "name_en": "Execution & Trading",
-        "type": "业务",
-        "domains": ["D_EX_CORE", "D_EX_SOR", "D_TRADING", "D_POSITION"],
-    },
-    {
-        "id": "C6",
-        "name": "ML平台",
-        "name_en": "ML Platform",
-        "type": "业务",
-        "domains": ["D_ML_TRAIN", "D_ML_SERVE"],
-    },
-    {
-        "id": "C7",
-        "name": "回测仿真",
-        "name_en": "Backtest & Simulation",
-        "type": "业务",
-        "domains": ["D_BACKTEST", "D_SIMULATION", "D_EXEC_SIM", "D_DIGITAL_TWIN"],
-    },
-    {
-        "id": "CC1",
-        "name": "治理合规",
-        "name_en": "Governance & Compliance",
-        "type": "横切",
-        "domains": [
-            "D_GOVERNANCE",
-            "D_GOV_RULE",
-            "D_GOV_AUDIT",
-            "D_GOV_DRIFT",
-            "D_GOV_ENFORCEMENT",
-            "D_GOV_REPAIR",
-            "D_GOV_SCRIPTS",
-        ],
-    },
-    {
-        "id": "CC2",
-        "name": "安全防护",
-        "name_en": "Security",
-        "type": "横切",
-        "domains": ["D_SECURITY", "D_SECURITY_LLM", "D_BEHAVIORAL_AUDIT", "D_DATA_SEC", "D_AUTONOMY_PERM"],
-    },
-    {
-        "id": "CC3",
-        "name": "基础设施",
-        "name_en": "Infrastructure",
-        "type": "横切",
-        "domains": [
-            "D_INFRA_OPS",
-            "D_INFRA_RUNTIME",
-            "D_INTEGRATION",
-            "D_INTEGRATION_GATEWAY",
-            "D_SHARED",
-            "D_FRONTEND",
-            "D_REPORTING",
-            "D_KNOWLEDGE",
-            "D_INTELLIGENCE",
-            "D_AUTONOMY_CORE",
-            "D_OPS",
-        ],
-    },
-]
+# 能力域映射真源：architecture_model/cross_cutting/capability_heatmap.yaml
+# 裁定#210：硬编码列表已删除，改为从 YAML 动态读取，消除 SSoT 分歧
+YAML_PATH = REPO_ROOT / "architecture_model" / "cross_cutting" / "capability_heatmap.yaml"
+
+
+def _load_capability_domains() -> list[dict]:
+    """从 capability_heatmap.yaml 加载能力域映射（SSoT）。
+
+    YAML 字段 -> 脚本字段映射：
+      id              -> id
+      name            -> name
+      name_en         -> name_en
+      type            -> type（business -> 业务，cross_cutting -> 横切）
+      primary_domains -> domains
+    """
+    import yaml
+    with open(YAML_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    result: list[dict] = []
+    for cd in data.get("capability_domains", []):
+        result.append({
+            "id": cd["id"],
+            "name": cd["name"],
+            "name_en": cd.get("name_en", cd["name"]),
+            "type": "横切" if cd.get("type") == "cross_cutting" else "业务",
+            "domains": cd.get("primary_domains", []),
+        })
+    return result
+
+
+CAPABILITY_DOMAINS: list[dict] = _load_capability_domains()
 
 # Maturity levels (L0-L3, 4-level simplified) - Source: capability_heatmap.yaml v3.0.0
 # symbol: maturity symbol; coverage: ✅/🟡/❌; name_en: English name
