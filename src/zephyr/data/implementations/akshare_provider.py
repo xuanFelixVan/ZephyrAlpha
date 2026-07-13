@@ -54,6 +54,14 @@ def safe_float(v) -> float | None:
         return None
 
 
+# CH fallback: 从 stock_list 获取 A 股 6 位代码（SQL_ 前缀豁免 NO-BARE-SQL gate）
+SQL_STOCK_CODE_FROM_LIST = (
+    "SELECT splitByChar('.', ts_code)[1] AS code "
+    "FROM c1_market.stock_list "
+    "WHERE list_status = '上市' ORDER BY ts_code FORMAT TabSeparated"
+)
+
+
 class AKShareProvider(DataSourceBase):
     """AKShare 免费开源数据源 Provider。
 
@@ -380,11 +388,25 @@ class AKShareProvider(DataSourceBase):
         return s[:10]
 
     def _get_all_a_symbols(self, ak, policy: SourcePolicy) -> list[str]:
-        """获取全 A 股 6 位代码列表（用 ak.stock_zh_a_spot_em）。"""
-        df = self._call_with_policy(ak.stock_zh_a_spot_em, policy)
-        if df is None or len(df) == 0:
+        """获取全 A 股 6 位代码列表。
+
+        优先用 ak.stock_zh_a_spot_em，失败时回退到 ClickHouse stock_list。
+        """
+        try:
+            df = self._call_with_policy(ak.stock_zh_a_spot_em, policy)
+            if df is not None and len(df) > 0:
+                return [str(c).zfill(6) for c in df["代码"].tolist()]
+        except Exception as e:
+            self._log.warning(f"stock_zh_a_spot_em 失败（东财反爬），回退到 CH stock_list: {e}")
+
+        # CH fallback
+        from zephyr.data import ch_writer as _chw
+        out = _chw.query(SQL_STOCK_CODE_FROM_LIST)
+        if not out.strip():
             return []
-        return [str(c).zfill(6) for c in df["代码"].tolist()]
+        codes = [line.strip().zfill(6) for line in out.split("\n") if line.strip()]
+        self._log.info(f"从 CH stock_list 获取 {len(codes)} 只 A 股（akshare fallback）")
+        return codes
 
     # ---- 1. 每日估值（daily_valuation） ----
 
