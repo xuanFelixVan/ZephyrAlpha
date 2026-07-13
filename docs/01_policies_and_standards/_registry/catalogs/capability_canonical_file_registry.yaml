@@ -3828,6 +3828,18 @@ capabilities:
       解决发现性：新 AI 搜 "CRUD mixin/get_task/get_node/database_crud" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重复创建 CRUD mixin。
 
+  - capability_id: realtime_tick_ingestion
+    aliases:
+      - tick_subscriber
+      - TickSubscriber
+    description: >-
+      实时 Tick 数据订阅与落盘——QMT subscribe_quote 回调 → queue.Queue 解耦 →
+      BufferedWriter 攒批 → ClickHouse c1_market.tick_data（3秒粒度，14字段）。
+      canonical = src/zephyr/data/tick_subscriber.py（auto 派生：basename
+      tick_subscriber 匹配 alias）。区别于 governance/data_governance/
+      miniqmt_provider.py 的 subscribe_realtime（回测/盘口展示用，24字段 DataFrame），
+      本能力专注高频落盘（14字段 tuple，queue 解耦 callback 线程）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -4806,6 +4818,12 @@ creation_tokens:
     token: "migration-batch11-gov-rule-init-20260713"
     created_by: "session-sess-30428-20260713044652"
     capability: "rule_governance"
+
+  # --- tick_subscriber: 实时 Tick 订阅落盘（2026-07-13）---
+  - file: "src/zephyr/data/tick_subscriber.py"
+    token: "auto-tick-subscriber-20260713"
+    created_by: "session-sess-36780-20260713111728"
+    capability: "realtime_tick_ingestion"
 
 # ============================================================================
 # 维护日志
