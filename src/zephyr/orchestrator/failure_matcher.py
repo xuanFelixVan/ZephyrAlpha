@@ -24,7 +24,7 @@ Blueprint: MOD-TASK_SYSTEM 盲点#22
 通过 EventHook 订阅 task FAILED，分析失败原因并生成纠正建议。
 
 Usage:
-    from zephyr.trading.orchestrator.failure_matcher import FailurePatternMatcher
+    from zephyr.orchestrator.failure_matcher import FailurePatternMatcher
     matcher = FailurePatternMatcher()
     matcher.activate()
 """

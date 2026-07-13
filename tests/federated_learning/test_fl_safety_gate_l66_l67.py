@@ -25,14 +25,14 @@ def _ctx(**overrides) -> ActionContext:
 
 class TestSafetyGateL66L67Instantiation:
     def test_default_construction(self):
-        with patch("zephyr.trading.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
+        with patch("zephyr.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
             gate = SafetyGateL66L67()
             assert gate.audit_log == []
 
 
 class TestEvaluateDefaultPass:
     def test_default_context_passes(self):
-        with patch("zephyr.trading.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
+        with patch("zephyr.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
             gate = SafetyGateL66L67()
             results = gate.evaluate(_ctx())
             assert all(r.verdict == GateVerdict.PASS for r in results)
@@ -40,7 +40,7 @@ class TestEvaluateDefaultPass:
 
 class TestEvaluateReject:
     def test_l66_compliance_fail_rejects(self):
-        with patch("zephyr.trading.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
+        with patch("zephyr.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
             gate = SafetyGateL66L67()
             ctx = _ctx(compliance_ok=False)
             results = gate.evaluate(ctx)
@@ -48,7 +48,7 @@ class TestEvaluateReject:
             assert l66[0].verdict == GateVerdict.REJECT
 
     def test_l67_rejects_when_upstream_rejects(self):
-        with patch("zephyr.trading.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
+        with patch("zephyr.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
             gate = SafetyGateL66L67()
             ctx = _ctx(compliance_ok=False)
             results = gate.evaluate(ctx)
@@ -58,13 +58,13 @@ class TestEvaluateReject:
 
 class TestAuditLog:
     def test_evaluate_creates_audit_entries(self):
-        with patch("zephyr.trading.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
+        with patch("zephyr.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
             gate = SafetyGateL66L67()
             gate.evaluate(_ctx())
             assert len(gate.audit_log) == 2
 
     def test_full_audit_trace(self):
-        with patch("zephyr.trading.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
+        with patch("zephyr.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
             gate = SafetyGateL66L67()
             gate.evaluate(_ctx())
             trace = gate.full_audit_trace()
@@ -74,7 +74,7 @@ class TestAuditLog:
 
 class TestBoundaries:
     def test_l66_pass_l67_pass(self):
-        with patch("zephyr.trading.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
+        with patch("zephyr.feedback_loop.gates.safety_gate_L66_L67.write_to_core"):
             gate = SafetyGateL66L67()
             results = gate.evaluate(_ctx())
             assert results[0].verdict == GateVerdict.PASS

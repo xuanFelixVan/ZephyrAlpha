@@ -3,7 +3,7 @@
 # [MODULE] tests.test_context_truncation
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.context_truncation
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.context_truncation
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.feedback_loop.diagnosers.context_truncation import ContextTruncation
+from zephyr.feedback_loop.diagnosers.reliability.context_truncation import ContextTruncation
 
 
 class TestContextTruncationInstantiation:

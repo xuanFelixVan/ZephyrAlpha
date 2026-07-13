@@ -3,7 +3,7 @@
 # [MODULE] tests.test_counterfactual
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.counterfactual
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.diagnosis.counterfactual
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.counterfactual import CounterfactualEngine
+from zephyr.feedback_loop.diagnosers.diagnosis.counterfactual import CounterfactualEngine
 
 
 class TestCounterfactualEngineInstantiation:

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.feedback_loop.detectors.alert_desensitization_curve import (
+from zephyr.feedback_loop.detectors.guard.alert_desensitization_curve import (
     AlertDesensitizationCurve,
 )
 

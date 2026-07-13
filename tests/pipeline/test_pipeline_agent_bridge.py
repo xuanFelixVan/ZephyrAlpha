@@ -172,7 +172,7 @@ class TestPipelineAgentBridgeBridge:
     def test_returns_dict_with_pipeline_task_id(self):
         mock_orc = _MockAgentOrchestrator(return_value=None)
         bridge = PipelineAgentBridge(mock_orc)
-        with patch("zephyr.trading.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
+        with patch("zephyr.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
             result = bridge.bridge(self._make_pipeline_result())
         assert isinstance(result, dict)
         assert "pipeline_task_id" in result
@@ -181,7 +181,7 @@ class TestPipelineAgentBridgeBridge:
     def test_returns_module_bridges(self):
         mock_orc = _MockAgentOrchestrator(return_value=None)
         bridge = PipelineAgentBridge(mock_orc)
-        with patch("zephyr.trading.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
+        with patch("zephyr.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
             result = bridge.bridge(self._make_pipeline_result())
         assert "module_bridges" in result
         assert isinstance(result["module_bridges"], list)
@@ -190,7 +190,7 @@ class TestPipelineAgentBridgeBridge:
     def test_module_bridge_has_required_keys(self):
         mock_orc = _MockAgentOrchestrator(return_value=None)
         bridge = PipelineAgentBridge(mock_orc)
-        with patch("zephyr.trading.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
+        with patch("zephyr.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
             result = bridge.bridge(self._make_pipeline_result())
         for mb in result["module_bridges"]:
             assert "module_id" in mb
@@ -202,7 +202,7 @@ class TestPipelineAgentBridgeBridge:
     def test_role_mapping_in_bridge_result(self):
         mock_orc = _MockAgentOrchestrator(return_value=None)
         bridge = PipelineAgentBridge(mock_orc)
-        with patch("zephyr.trading.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
+        with patch("zephyr.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
             result = bridge.bridge(self._make_pipeline_result())
         roles = {mb["module_id"]: mb["role"] for mb in result["module_bridges"]}
         assert roles["M1"] == "architect"
@@ -211,7 +211,7 @@ class TestPipelineAgentBridgeBridge:
     def test_domain_mapping_in_bridge_result(self):
         mock_orc = _MockAgentOrchestrator(return_value=None)
         bridge = PipelineAgentBridge(mock_orc)
-        with patch("zephyr.trading.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
+        with patch("zephyr.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
             result = bridge.bridge(self._make_pipeline_result())
         for mb in result["module_bridges"]:
             assert mb["domain"] == "D1"
@@ -219,7 +219,7 @@ class TestPipelineAgentBridgeBridge:
     def test_orchestrate_called_for_each_module(self):
         mock_orc = _MockAgentOrchestrator(return_value=None)
         bridge = PipelineAgentBridge(mock_orc)
-        with patch("zephyr.trading.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
+        with patch("zephyr.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
             bridge.bridge(self._make_pipeline_result())
         assert len(mock_orc.orchestrate_calls) == 2
 
@@ -239,7 +239,7 @@ class TestPipelineAgentBridgeBridge:
         mock_orc = _MockAgentOrchestrator(return_value=None)
         bridge = PipelineAgentBridge(mock_orc)
         pr = self._make_pipeline_result()
-        with patch("zephyr.trading.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
+        with patch("zephyr.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
             result = bridge.bridge(pr)
         assert "pipeline_result" in result
         assert result["pipeline_result"] is pr
@@ -249,7 +249,7 @@ class TestPipelineAgentBridgeBridge:
         mock_orc.orchestrate.side_effect = RuntimeError("agent failure")
         bridge = PipelineAgentBridge(mock_orc)
         pr = self._make_pipeline_result()
-        with patch("zephyr.trading.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
+        with patch("zephyr.orchestrator.agent_orchestrator.AgentRole", _patched_agent_role()):
             result = bridge.bridge(pr)
         for mb in result["module_bridges"]:
             assert mb["orchestration"] is None

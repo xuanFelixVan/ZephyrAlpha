@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.external_health import (
+from zephyr.feedback_loop.detectors.correlation.external_health import (
     DependencyHealth,
     DependencyStatus,
     ExternalHealth,

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.openfeature import OpenFeature
+from zephyr.feedback_loop.detectors.reliability.openfeature import OpenFeature
 
 
 class TestOpenFeature:

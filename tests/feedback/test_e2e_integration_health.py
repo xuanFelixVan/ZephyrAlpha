@@ -3,7 +3,7 @@
 # [MODULE] tests.test_e2e_integration_health
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.e2e_integration_health
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.health.e2e_integration_health
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.e2e_integration_health import (
+from zephyr.feedback_loop.diagnosers.health.e2e_integration_health import (
     E2EIntegrationHealth,
     IntegrationHealth,
 )

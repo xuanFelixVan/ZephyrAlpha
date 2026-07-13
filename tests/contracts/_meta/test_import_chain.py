@@ -55,7 +55,7 @@ CONSUMERS: list[Consumer] = [
 
 
 def _extract_shared_imports(file_path: pathlib.Path) -> list[str]:
-    """从源文件中提取所有 zephyr.shared / zephyr.trading.orchestrator.core 导入语句。
+    """从源文件中提取所有 zephyr.shared / zephyr.orchestrator.core 导入语句。
 
     如果是 package 消费者（is_package=True），递归扫描整个包目录。
     """

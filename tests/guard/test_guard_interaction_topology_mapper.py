@@ -3,7 +3,7 @@
 # [MODULE] tests.test_guard_interaction_topology_mapper
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.guard_interaction_topology_mapper
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.guard_interaction_topology_mapper
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.guard_interaction_topology_mapper import (
+from zephyr.feedback_loop.diagnosers.reliability.guard_interaction_topology_mapper import (
     GuardEdge,
     GuardInteractionTopologyMapper,
 )

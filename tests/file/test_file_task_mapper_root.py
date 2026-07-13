@@ -107,12 +107,12 @@ class TestSyncReport:
 
 class TestFileTaskMapperInstantiation:
     def test_create_with_default_db(self):
-        with patch("zephyr.trading.orchestrator.file_task_mapper.init_db"):
+        with patch("zephyr.orchestrator.file_task_mapper.init_db"):
             mapper = FileTaskMapper()
             assert mapper is not None
 
     def test_create_with_custom_db(self):
-        with patch("zephyr.trading.orchestrator.file_task_mapper.init_db"):
+        with patch("zephyr.orchestrator.file_task_mapper.init_db"):
             mapper = FileTaskMapper(db_path=Path("/tmp/test.db"))
             assert mapper is not None
 
@@ -126,8 +126,8 @@ class TestFileTaskMapperResolve:
         mock_conn.__enter__ = MagicMock(return_value=mock_conn)
         mock_conn.__exit__ = MagicMock(return_value=False)
         with (
-            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
-            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+            patch("zephyr.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.orchestrator.file_task_mapper.init_db"),
         ):
             mapper = FileTaskMapper()
             result = mapper.resolve("nonexistent.md")
@@ -139,8 +139,8 @@ class TestFileTaskMapperResolve:
         mock_cursor.fetchall.return_value = [{"task_id": "SRC-1"}, {"task_id": "SRC-2"}]
         mock_conn.execute.return_value = mock_cursor
         with (
-            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
-            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+            patch("zephyr.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.orchestrator.file_task_mapper.init_db"),
         ):
             mapper = FileTaskMapper()
             result = mapper.resolve("src/zephyr/module.py")
@@ -154,8 +154,8 @@ class TestFileTaskMapperResolveReverse:
         mock_cursor.fetchall.return_value = []
         mock_conn.execute.return_value = mock_cursor
         with (
-            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
-            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+            patch("zephyr.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.orchestrator.file_task_mapper.init_db"),
         ):
             mapper = FileTaskMapper()
             result = mapper.resolve_reverse("NONEXISTENT-1")
@@ -170,8 +170,8 @@ class TestFileTaskMapperResolveReverse:
         ]
         mock_conn.execute.return_value = mock_cursor
         with (
-            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
-            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+            patch("zephyr.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.orchestrator.file_task_mapper.init_db"),
         ):
             mapper = FileTaskMapper()
             result = mapper.resolve_reverse("SRC-1")
@@ -187,8 +187,8 @@ class TestFileTaskMapperGetTasksForFile:
         mock_cursor.fetchall.return_value = [{"task_id": "SRC-1"}]
         mock_conn.execute.return_value = mock_cursor
         with (
-            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
-            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+            patch("zephyr.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.orchestrator.file_task_mapper.init_db"),
         ):
             mapper = FileTaskMapper()
             result = mapper.get_tasks_for_file("src/zephyr/mod.py")
@@ -199,8 +199,8 @@ class TestFileTaskMapperRollback:
     def test_rollback_executes_deletes(self):
         mock_conn = MagicMock()
         with (
-            patch("zephyr.trading.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
-            patch("zephyr.trading.orchestrator.file_task_mapper.init_db"),
+            patch("zephyr.orchestrator.file_task_mapper.get_db_connection", return_value=mock_conn),
+            patch("zephyr.orchestrator.file_task_mapper.init_db"),
         ):
             mapper = FileTaskMapper()
             mapper.rollback("SRC-1")

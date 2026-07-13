@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.feedback_loop.detectors.agent_trajectory_anomaly_detector import (
+from zephyr.feedback_loop.detectors.correlation.agent_trajectory_anomaly_detector import (
     AgentTrajectoryAnomalyDetector,
     TrajectoryAnomalyType,
     TrajectoryEvent,

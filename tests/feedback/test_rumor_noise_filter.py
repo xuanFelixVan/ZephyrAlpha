@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.rumor_noise_filter import (
+from zephyr.feedback_loop.detectors.correlation.rumor_noise_filter import (
     RumorNoiseFilter,
     SignalCredibility,
 )

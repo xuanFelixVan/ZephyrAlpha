@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.ensemble_detector import EnsembleDetector
+from zephyr.feedback_loop.detectors.correlation.ensemble_detector import EnsembleDetector
 
 
 class TestEnsembleDetectorInstantiation:

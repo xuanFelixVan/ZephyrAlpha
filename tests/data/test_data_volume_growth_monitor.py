@@ -3,7 +3,7 @@
 # [MODULE] tests.test_data_volume_growth_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.data_volume_growth_monitor
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.data_volume_growth_monitor
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.trading.feedback_loop.diagnosers.data_volume_growth_monitor import (
+from zephyr.feedback_loop.diagnosers.reliability.data_volume_growth_monitor import (
     DataVolumeGrowthMonitor,
     GrowthModel,
 )

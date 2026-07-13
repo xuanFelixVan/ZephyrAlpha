@@ -83,7 +83,7 @@ class TestSyncAll:
     def test_sync_all_no_tasks(self):
         mock_conn = MagicMock()
         mock_conn.execute.return_value.fetchall.return_value = []
-        with patch("zephyr.trading.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn):
+        with patch("zephyr.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn):
             sync = StateSynchronizer()
             result = sync.sync_all()
             assert result == []
@@ -94,8 +94,8 @@ class TestSyncAll:
             {"task_id": "T-1", "files_in_scope": '["nonexistent.md"]', "status": "PENDING"},
         ]
         with (
-            patch("zephyr.trading.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn),
-            patch("zephyr.trading.orchestrator.state_synchronizer.REPO_ROOT", Path("/nonexistent")),
+            patch("zephyr.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn),
+            patch("zephyr.orchestrator.state_synchronizer.REPO_ROOT", Path("/nonexistent")),
         ):
             sync = StateSynchronizer()
             result = sync.sync_all(auto_fix=False)
@@ -106,7 +106,7 @@ class TestSyncTask:
     def test_sync_task_not_found(self):
         mock_conn = MagicMock()
         mock_conn.execute.return_value.fetchone.return_value = None
-        with patch("zephyr.trading.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn):
+        with patch("zephyr.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn):
             sync = StateSynchronizer()
             result = sync.sync_task("NONEXISTENT-1")
             assert result is None
@@ -116,7 +116,7 @@ class TestDetectGhosts:
     def test_detect_ghosts_no_tasks(self):
         mock_conn = MagicMock()
         mock_conn.execute.return_value.fetchall.return_value = []
-        with patch("zephyr.trading.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn):
+        with patch("zephyr.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn):
             sync = StateSynchronizer()
             result = sync.detect_ghosts()
             assert result == []
@@ -127,8 +127,8 @@ class TestDetectGhosts:
             {"task_id": "T-1", "files_in_scope": '["nonexistent_file.md"]', "status": "COMPLETED"},
         ]
         with (
-            patch("zephyr.trading.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn),
-            patch("zephyr.trading.orchestrator.state_synchronizer.REPO_ROOT", Path("/nonexistent")),
+            patch("zephyr.orchestrator.state_synchronizer.get_db_connection", return_value=mock_conn),
+            patch("zephyr.orchestrator.state_synchronizer.REPO_ROOT", Path("/nonexistent")),
         ):
             sync = StateSynchronizer()
             result = sync.detect_ghosts()

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.feedback_loop.detectors.anomaly_clustering import AnomalyClustering
+from zephyr.feedback_loop.detectors.anomaly.anomaly_clustering import AnomalyClustering
 
 
 class TestAnomalyClusteringInstantiation:

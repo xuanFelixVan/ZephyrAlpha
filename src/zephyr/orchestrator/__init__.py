@@ -82,7 +82,7 @@ def __getattr__(name: str):
     if name in _SUBMODULES:
         import importlib
 
-        mod = importlib.import_module(f"zephyr.trading.orchestrator.{name}")
+        mod = importlib.import_module(f"zephyr.orchestrator.{name}")
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

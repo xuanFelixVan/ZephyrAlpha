@@ -13,7 +13,7 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.batch2_governance", reason="batch2_governance not available")
+mod = pytest.importorskip("zephyr.feedback_loop.capacity_assurance.batch2_governance", reason="batch2_governance not available")
 BATCH2_CONTRACTS = mod.BATCH2_CONTRACTS
 
 

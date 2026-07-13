@@ -3,7 +3,7 @@
 # [MODULE] tests.test_knowledge_bus_factor_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.knowledge_bus_factor_monitor
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.diagnosis.knowledge_bus_factor_monitor
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.knowledge_bus_factor_monitor import KnowledgeBusFactorMonitor
+from zephyr.feedback_loop.diagnosers.diagnosis.knowledge_bus_factor_monitor import KnowledgeBusFactorMonitor
 
 
 class TestKnowledgeBusFactorMonitorInstantiation:

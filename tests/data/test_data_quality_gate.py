@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.feedback_loop.gates.data_quality_gate import DataQualityGate
+from zephyr.feedback_loop.gates.data_quality_gate import DataQualityGate
 
 
 class TestDataQualityGateInstantiation:

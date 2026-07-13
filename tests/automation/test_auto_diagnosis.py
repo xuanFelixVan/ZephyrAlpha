@@ -3,7 +3,7 @@
 # [MODULE] tests.test_auto_diagnosis
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.auto_diagnosis
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.diagnosis.auto_diagnosis
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_auto_diagnosis.py
 # [TTL] task_bound
 
-from zephyr.feedback_loop.diagnosers.auto_diagnosis import AutoDiagnosis
+from zephyr.feedback_loop.diagnosers.diagnosis.auto_diagnosis import AutoDiagnosis
 
 
 class TestAutoDiagnosis:

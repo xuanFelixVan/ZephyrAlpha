@@ -3,7 +3,7 @@
 # [MODULE] tests.test_gamification
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.gamification
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.cognitive.gamification
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.gamification import Gamification
+from zephyr.feedback_loop.diagnosers.cognitive.gamification import Gamification
 
 
 class TestGamificationInstantiation:

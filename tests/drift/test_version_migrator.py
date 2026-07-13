@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.version_migrator import VersionMigrator
+from zephyr.feedback_loop.detectors.reliability.version_migrator import VersionMigrator
 
 
 class TestVersionMigratorInstantiation:

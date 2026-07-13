@@ -52,7 +52,7 @@ from typing import Any
 
 from zephyr.infrastructure.pipeline.models import M_MODULE_SPECS, ModuleResult, PipelineResult
 
-_mod = importlib.import_module("zephyr.trading.orchestrator.agent_orchestrator")
+_mod = importlib.import_module("zephyr.orchestrator.agent_orchestrator")
 AgentOrchestrator = _mod.AgentOrchestrator
 AgentRole = _mod.AgentRole
 OrchestrationResult = _mod.OrchestrationResult
@@ -195,7 +195,7 @@ class PipelineAgentBridge:
             domain = domain_for_pipeline(mr.pipeline)
             directive_chain = _build_directive_chain(mr.module_id)
 
-            _mod = importlib.import_module("zephyr.trading.orchestrator.agent_orchestrator")
+            _mod = importlib.import_module("zephyr.orchestrator.agent_orchestrator")
             AgentRole = _mod.AgentRole
 
             required = AgentRole(role_name.upper()) if role_name.upper() in AgentRole.__members__ else None
@@ -248,7 +248,7 @@ class PipelineAgentBridge:
         domain = domain_for_pipeline(module_result.pipeline)
         directive_chain = _build_directive_chain(module_result.module_id)
 
-        _mod = importlib.import_module("zephyr.trading.orchestrator.agent_orchestrator")
+        _mod = importlib.import_module("zephyr.orchestrator.agent_orchestrator")
         AgentRole = _mod.AgentRole
 
         required = AgentRole(role_name.upper()) if role_name.upper() in AgentRole.__members__ else None

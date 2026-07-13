@@ -3,7 +3,7 @@
 # [MODULE] tests.test_retirement_planner
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.retirement_planner
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.retirement_planner
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.retirement_planner import RetirementPlanner
+from zephyr.feedback_loop.diagnosers.reliability.retirement_planner import RetirementPlanner
 
 
 class TestRetirementPlannerInstantiation:

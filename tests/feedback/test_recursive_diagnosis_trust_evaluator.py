@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.recursive_diagnosis_trust_evaluator import (
+from zephyr.feedback_loop.detectors.guard.recursive_diagnosis_trust_evaluator import (
     ExternalSignal,
     RecursiveDiagnosisTrustEvaluator,
 )

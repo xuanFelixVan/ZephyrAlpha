@@ -76,7 +76,7 @@ def test_blindspot_coverage() -> None:
         module_name, class_name = module_path.rsplit(".", 1)
 
         try:
-            importlib.import_module(f"zephyr.trading.orchestrator.core.{module_name}")
+            importlib.import_module(f"zephyr.orchestrator.core.{module_name}")
             resolved += 1
         except ImportError:
             unresolved.append(f"{blindspot_id} → {module_path}")

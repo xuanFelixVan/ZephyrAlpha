@@ -3,7 +3,7 @@
 # [MODULE] tests.test_latency_slo
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.latency_slo
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.latency_slo
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.latency_slo import LatencySLO, LatencyWindow
+from zephyr.feedback_loop.diagnosers.reliability.latency_slo import LatencySLO, LatencyWindow
 
 
 class TestLatencyWindowInstantiation:

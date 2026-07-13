@@ -3,7 +3,7 @@
 # [MODULE] tests.test_human_anomaly_flood_detector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.human_anomaly_flood_detector
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.human_anomaly_flood_detector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.diagnosers.human_anomaly_flood_detector import (
+from zephyr.feedback_loop.diagnosers.reliability.human_anomaly_flood_detector import (
     FloodLevel,
     HumanAnomalyFloodDetector,
 )

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.trace_causal_bridge import TraceCausalBridge
+from zephyr.feedback_loop.detectors.correlation.trace_causal_bridge import TraceCausalBridge
 
 
 class TestTraceCausalBridgeInstantiation:

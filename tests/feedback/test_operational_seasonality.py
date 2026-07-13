@@ -3,7 +3,7 @@
 # [MODULE] tests.test_operational_seasonality
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.operational_seasonality
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.operational_seasonality
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -14,7 +14,7 @@
 from datetime import datetime
 from unittest.mock import patch
 
-from zephyr.feedback_loop.diagnosers.operational_seasonality import (
+from zephyr.feedback_loop.diagnosers.reliability.operational_seasonality import (
     OperationalSeasonality,
     OpMode,
 )
@@ -61,7 +61,7 @@ class TestOperationalSeasonalityInstantiation:
 class TestAutoMode:
     def test_auto_mode_weekday(self):
         os_ = OperationalSeasonality()
-        with patch("zephyr.trading.feedback_loop.diagnosers.operational_seasonality.datetime") as mock_dt:
+        with patch("zephyr.feedback_loop.diagnosers.reliability.operational_seasonality.datetime") as mock_dt:
             mock_now = datetime(2026, 5, 20, 10, 0, 0)
             mock_dt.now.return_value = mock_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -70,7 +70,7 @@ class TestAutoMode:
 
     def test_auto_mode_weekend(self):
         os_ = OperationalSeasonality()
-        with patch("zephyr.trading.feedback_loop.diagnosers.operational_seasonality.datetime") as mock_dt:
+        with patch("zephyr.feedback_loop.diagnosers.reliability.operational_seasonality.datetime") as mock_dt:
             mock_now = datetime(2026, 5, 23, 10, 0, 0)
             mock_dt.now.return_value = mock_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -79,7 +79,7 @@ class TestAutoMode:
 
     def test_auto_mode_month_end(self):
         os_ = OperationalSeasonality()
-        with patch("zephyr.trading.feedback_loop.diagnosers.operational_seasonality.datetime") as mock_dt:
+        with patch("zephyr.feedback_loop.diagnosers.reliability.operational_seasonality.datetime") as mock_dt:
             mock_now = datetime(2026, 5, 28, 10, 0, 0)
             mock_dt.now.return_value = mock_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -88,7 +88,7 @@ class TestAutoMode:
 
     def test_auto_mode_quarter_end(self):
         os_ = OperationalSeasonality()
-        with patch("zephyr.trading.feedback_loop.diagnosers.operational_seasonality.datetime") as mock_dt:
+        with patch("zephyr.feedback_loop.diagnosers.reliability.operational_seasonality.datetime") as mock_dt:
             mock_now = datetime(2026, 6, 28, 10, 0, 0)
             mock_dt.now.return_value = mock_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -97,7 +97,7 @@ class TestAutoMode:
 
     def test_auto_mode_year_end(self):
         os_ = OperationalSeasonality()
-        with patch("zephyr.trading.feedback_loop.diagnosers.operational_seasonality.datetime") as mock_dt:
+        with patch("zephyr.feedback_loop.diagnosers.reliability.operational_seasonality.datetime") as mock_dt:
             mock_now = datetime(2026, 12, 28, 10, 0, 0)
             mock_dt.now.return_value = mock_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -106,7 +106,7 @@ class TestAutoMode:
 
     def test_auto_mode_updates_internal_mode(self):
         os_ = OperationalSeasonality()
-        with patch("zephyr.trading.feedback_loop.diagnosers.operational_seasonality.datetime") as mock_dt:
+        with patch("zephyr.feedback_loop.diagnosers.reliability.operational_seasonality.datetime") as mock_dt:
             mock_now = datetime(2026, 5, 23, 10, 0, 0)
             mock_dt.now.return_value = mock_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)

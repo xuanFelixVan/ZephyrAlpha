@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.otel_adapter import OTelAdapter
+from zephyr.feedback_loop.detectors.reliability.otel_adapter import OTelAdapter
 
 
 class TestOTelAdapter:

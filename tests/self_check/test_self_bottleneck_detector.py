@@ -3,7 +3,7 @@
 # [MODULE] tests.test_self_bottleneck_detector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.self_bottleneck_detector
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.feedback_loop.diagnosers.self_bottleneck_detector import (
+from zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector import (
     PipelineStage,
     SelfBottleneckDetector,
 )

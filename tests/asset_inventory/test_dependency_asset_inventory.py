@@ -24,7 +24,7 @@ _SIMPLE_IMPORTS = """\
 import os
 import sys
 from pathlib import Path
-from zephyr.trading.orchestrator.core import BaseModel
+from zephyr.orchestrator.core import BaseModel
 from .utils import helper
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 """
@@ -52,7 +52,7 @@ class TestDependencyExtractor:
         assert "os" in imports
         assert "pathlib.Path" in imports
         assert "sys" in imports
-        assert "zephyr.trading.orchestrator.core.BaseModel" in imports
+        assert "zephyr.orchestrator.core.BaseModel" in imports
         assert "utils.helper" in imports
 
     def test_extract_no_imports(self) -> None:

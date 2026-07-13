@@ -17,7 +17,7 @@ import time
 
 import pytest
 
-mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.risk_mitigation", reason="risk_mitigation not available")
+mod = pytest.importorskip("zephyr.feedback_loop.capacity_assurance.risk_mitigation", reason="risk_mitigation not available")
 enable_wal_mode = mod.enable_wal_mode
 perform_wal_checkpoint = mod.perform_wal_checkpoint
 DeadlockDetector = mod.DeadlockDetector

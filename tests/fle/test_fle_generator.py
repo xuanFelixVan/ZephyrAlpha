@@ -65,7 +65,7 @@ class TestGenerate:
 
 class TestGenerateBoundary:
     def test_generate_with_none_uses_default_skeletons(self):
-        with patch("zephyr.trading.feedback_loop.generator.SKELETONS", {}):
+        with patch("zephyr.feedback_loop.generator.SKELETONS", {}):
             created, skipped, errors = generate(skeletons=None)
             assert created == 0
 
@@ -86,5 +86,5 @@ class TestGenerateBoundary:
 
 class TestMain:
     def test_main_runs_without_error(self):
-        with patch("zephyr.trading.feedback_loop.generator.generate", return_value=(0, 0, 0)):
+        with patch("zephyr.feedback_loop.generator.generate", return_value=(0, 0, 0)):
             main()

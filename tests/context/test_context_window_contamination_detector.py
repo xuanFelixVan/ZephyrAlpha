@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.feedback_loop.detectors.context_window_contamination_detector import (
+from zephyr.feedback_loop.detectors.drift.context_window_contamination_detector import (
     ContextWindowContaminationDetector,
     TokenSource,
 )

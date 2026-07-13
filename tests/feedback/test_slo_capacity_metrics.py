@@ -3,7 +3,7 @@
 # [MODULE] tests.test_slo_capacity_metrics
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.slo_capacity_metrics
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.slo_capacity_metrics
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.feedback_loop.diagnosers.slo_capacity_metrics import (
+from zephyr.feedback_loop.diagnosers.reliability.slo_capacity_metrics import (
     SLOCapacityMetrics,
     SLOWindow,
 )
@@ -144,7 +144,7 @@ class TestExhaustionAlerts:
         assert scm.exhaustion_alerts() == []
 
     def test_alerts_with_low_target_burn_rate(self):
-        from zephyr.feedback_loop.diagnosers.slo_capacity_metrics import SLOWindow
+        from zephyr.feedback_loop.diagnosers.reliability.slo_capacity_metrics import SLOWindow
 
         scm = SLOCapacityMetrics(windows={"1h": SLOWindow(1.0, target_burn_rate=0.5)})
         for _ in range(10):

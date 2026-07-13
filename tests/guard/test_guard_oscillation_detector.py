@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.guard_oscillation_detector import (
+from zephyr.feedback_loop.detectors.guard.guard_oscillation_detector import (
     GuardOscillationDetector,
     GuardStateChange,
 )

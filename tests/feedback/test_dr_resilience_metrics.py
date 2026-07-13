@@ -3,7 +3,7 @@
 # [MODULE] tests.test_dr_resilience_metrics
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.feedback_loop.diagnosers.dr_resilience_metrics
+# [CONSUMERS] zephyr.feedback_loop.diagnosers.health.dr_resilience_metrics
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.feedback_loop.diagnosers.dr_resilience_metrics import (
+from zephyr.feedback_loop.diagnosers.health.dr_resilience_metrics import (
     DRDrillRecord,
     DRResilienceMetrics,
 )

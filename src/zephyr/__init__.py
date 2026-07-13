@@ -207,7 +207,7 @@ register_lazy(
     "_cross_layer", "zephyr.risk.cross_asset.cross_market_data_adapter"
 )  # MOD-FEEDBACK_LOOP FLE cross-layer pipelines (AlphaSignal + MLExperiment)
 register_lazy(
-    "contract_registry", "zephyr.trading.orchestrator.contracts.contract_registry"
+    "contract_registry", "zephyr.orchestrator.contracts.contract_registry"
 )  # MOD-MASTER_BLUEPRINT CT-* contract registry
 register_lazy(
     "truth_source", "zephyr.governance.rule_enforcement.truth_source_validator"

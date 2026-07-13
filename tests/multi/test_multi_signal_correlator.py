@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.feedback_loop.detectors.multi_signal_correlator import MultiSignalCorrelator
+from zephyr.feedback_loop.detectors.correlation.multi_signal_correlator import MultiSignalCorrelator
 
 
 class TestMultiSignalCorrelator:
