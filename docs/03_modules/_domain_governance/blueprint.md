@@ -20,6 +20,7 @@ actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\bluepr
 template_for: blueprint
 generation: 2
 functional_domain: governance
+responsibility_domain: D_GOVERNANCE
 parent_module: "SYS-MASTER-001"
 belongs_to: "SYS-MASTER-001"
 rule_form: structural
@@ -92,8 +93,8 @@ ssot_claims:
   - claim: "治理域Phase施工路线图与进度"
     scope: layer
 responsibility_domain: 
-build_status: generated
 design_maturity: design
+build_status: generated
 ---
 
 # Governance Domain 蓝图 — Agent治理八件套跨模块集成契约

@@ -4,13 +4,11 @@ title: "四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 
 doc_type: blueprint
 status: Active
 version: "1.1.0"
+ttl: permanent
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
-responsibility_domain: 
-ttl: permanent
-construction_progress: partially_implemented
-date: "2026-07-10"
+responsibility_domain: D_GOV_SCRIPTS
 tags:
   - panorama-alignment
   - four-way-alignment

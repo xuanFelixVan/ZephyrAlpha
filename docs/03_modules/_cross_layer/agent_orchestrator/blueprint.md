@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-039
-submodule_path: src/zephyr/trading/orchestrator
+submodule_path: src/zephyr/orchestrator
 title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"
 doc_type: blueprint
 template_for: blueprint
@@ -15,10 +15,11 @@ date: "2026-05-19"
 valid_from: "2026-05-19"
 ttl: permanent
 construction_progress: completed
-actual_disk_path: "src/zephyr/trading/orchestrator/"
+actual_disk_path: "src/zephyr/orchestrator/"
 belongs_to: "MOD-INF-035"
 generation: 1
 functional_domain: operations
+responsibility_domain: D_ORCHESTRATOR
 summary: "Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。遥测跨层支撑层·Vibe Coding 2.0 五大核心服务之一。"
 last_updated: "2026-05-19"
 last_verified: "2026-05-19"
@@ -32,9 +33,6 @@ priority: P0
 runtime_plane: hot
 blueprint_level: module
 responsibility_domain: 
-  - {target: "MOD-FEEDBACK_LOOP", at: "§2", why: "Feedback Loop——质量数据上报"}
-  - {target: "MOD-INF-021", at: "§2", why: "Rollback——操作失败触发回滚"}
-references:
   - {id: "MOD-INF-009", at: "§2", why: "Pipeline——管线编排下游消费"}
   - {id: "MOD-INF-018", at: "§2", why: "Agent RBAC——操作权限校验"}
   - {id: "MOD-INF-022", at: "§2", why: "Escalation Protocol——异常升级路径"}

@@ -1,6 +1,6 @@
 ---
 module_id: MOD-FEEDBACK_LOOP
-submodule_path: src/zephyr/trading/feedback_loop
+submodule_path: src/zephyr/feedback_loop
 title: "Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心"
 doc_type: blueprint
 template_for: blueprint
@@ -15,7 +15,7 @@ date: "2026-05-06"
 valid_from: "2026-05-06"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: "src/zephyr/trading/feedback_loop/"
+actual_disk_path: "src/zephyr/feedback_loop/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 rule_form: structural
@@ -29,6 +29,7 @@ priority: P0
 runtime_plane: hot
 generation: 1
 functional_domain: operations
+responsibility_domain: D_FEEDBACK_LOOP
 last_verified: "2026-05-13"
 depends_on:
   - {target: "MOD-MASTER_BLUEPRINT", at: "all", why: "FLE→Orc异常调度+联邦协调+自治边界"}
@@ -46,8 +47,8 @@ references:
   - {id: "MOD-INF-020", at: "all", why: "Audit Trail——运行期写入；DAG 上不保留 depends_on"}
 last_updated: "2026-05-19"
 responsibility_domain: 
-build_status: planned
 design_maturity: design
+build_status: planned
 ---
 
 # Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心
