@@ -1,5 +1,5 @@
 %% D_DATA_GOV 域全景依赖图
-%% 生成时间: 2026-07-13 22:43:09
+%% 生成时间: 2026-07-13 23:42:33
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 30, 依赖边数: 22
 
@@ -40,28 +40,28 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    data_asset_index_archive_migration_scripts_apply_rulings_py -->|config_depends| data_asset_index_archive_migra___ripts_create_target_dirs_py
-    data_asset_index_archive_migra___domain_prefix_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra____cross_domain_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___erate_migration_registry_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
     data_asset_index_archive_migration_scripts_check_coverage_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___e_path_migration_mapping_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___comprehensive_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migration_scripts_lock_batch_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___pts_inject_domain_fields_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migration_scripts_execute_move_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migration_scripts_rollback_batch_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra____scripts_test_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___cripts_shared_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migration_scripts_update_imports_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___s_unnest_from_mcp_server_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra____scripts_preflight_check_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___s_update_non_import_refs_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___ripts_scan_import_impact_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___cripts__migration_shared_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migra___scripts__verify_manifest_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migration_scripts__verify_step4_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    data_asset_index_archive_migration_scripts_verify_batch_py -->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
+    data_asset_index_archive_migra___ripts_create_target_dirs_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___comprehensive_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_execute_move_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___domain_prefix_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra____cross_domain_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___e_path_migration_mapping_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___pts_inject_domain_fields_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___ripts_scan_import_impact_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___erate_migration_registry_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___cripts_shared_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_lock_batch_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_rollback_batch_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_update_imports_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___s_unnest_from_mcp_server_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra____scripts_test_import_fix_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___s_update_non_import_refs_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra____scripts_preflight_check_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___cripts__migration_shared_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_verify_batch_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts__verify_step4_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migra___scripts__verify_manifest_py -->|config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
 
     %% 跨域依赖（入）- 最多显示 30 条
 
