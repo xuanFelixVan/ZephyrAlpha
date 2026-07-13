@@ -1,12 +1,12 @@
 registry:
   version: 2.7.0
   created: '2026-05-02'
-  last_updated: '2026-07-05'
-  total_blueprints: 55
+  last_updated: '2026-07-13'
+  total_blueprints: 57
   scope: 03_modules/
-  note: Auto-synced from 55 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 57 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-07-05'
+  generated_at: '2026-07-13'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -162,6 +162,24 @@ blueprints:
   last_updated: '2026-05-18'
   file_path: 03_modules/_cross_layer/gate_engine/blueprint.md
   construction_progress: partially_implemented
+- module_id: MOD-GOV-SYNC-PANORAMA
+  name: panorama_alignment_engine
+  title: 四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐
+  summary: '四图模块对齐引擎——depgraph/dataflowgraph/decisiongraph/blueprint.md 四图模块对齐。 4
+    核心字段（module_id/domain_id/design_maturity/build_status）跨四图同步。 单模块同步+全量同步+transition
+    触发+blueprint 缺失标记+多数投票聚合。
+
+    '
+  layer: L1_foundation
+  functional_domain: governance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 1.1.0
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md
+  construction_progress: not_started
 - module_id: MOD-GOVERNANCE
   name: _domain_governance
   title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
@@ -356,7 +374,9 @@ blueprints:
 - module_id: MOD-INF-021
   name: rollback_system
   title: Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性
-  summary: Git-native+SQLite dump双轨回滚+auto_guard后验自动触发+四级回滚操作+130盲点覆盖+8层防御架构+容量升级至1500模块。62代码文件，completed。v7.0.0模板v3.5/v3.6升级。
+  summary: 'Git-native+SQLite dump双轨回滚+auto_guard后验自动触发+四级回滚操作+130盲点覆盖+8层防御架构+容量升级至1500模块。62代码文件，completed。v7.0.0模板v3.5/v3.6升级。
+
+    '
   layer: L0_infrastructure
   functional_domain: execution
   blueprint_status: Active
@@ -397,7 +417,7 @@ blueprints:
   generation: 4
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/drift_detector/blueprint.md
-  construction_progress: completed
+  construction_progress: partially_implemented
 - module_id: MOD-INF-024
   name: budget_enforcer
   title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根 + 抗对抗
@@ -462,6 +482,21 @@ blueprints:
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/audit_orchestrator/blueprint.md
   construction_progress: partially_implemented
+- module_id: MOD-INF-027
+  name: disaster_recovery_backup
+  title: 灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告
+  summary: 灾备备份系统——事件触发的Restic去重备份流水线，post-commit reconciler自动驱动（重要文件变更+8小时间隔保护，日均1-2次），覆盖代码+配置+数据库+不可替代数据，目标盘F:(SanDisk
+    2TB)，遵循3-2-1原则与数据最小化原则
+  layer: L0_infrastructure
+  functional_domain: operations
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 1.1.0
+  generation: 1
+  last_updated: '2026-07-09'
+  file_path: 03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md
+  construction_progress: planned
 - module_id: MOD-INF-028
   name: semantic_auditor
   title: Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
@@ -607,8 +642,7 @@ blueprints:
 - module_id: MOD-INF-039
   name: agent_orchestrator
   title: Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎
-  summary: Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。遥测跨层支撑层·Vibe Coding
-    2.0 五大核心服务之一。
+  summary: ''
   layer: L1_foundation
   functional_domain: operations
   blueprint_status: Active
@@ -907,9 +941,9 @@ blueprints:
   blueprint_status: Active
   blueprint_level: domain
   priority: P1
-  version: 4.3.1
+  version: 4.3.2
   generation: 3
-  last_updated: '2026-07-01'
+  last_updated: '2026-07-07'
   file_path: 03_modules/_cross_layer/database/blueprint.md
   construction_progress: completed
 - module_id: SYS-MASTER-001
@@ -927,24 +961,43 @@ blueprints:
   file_path: 03_modules/_system_master/blueprint.md
   construction_progress: completed
 summary:
-  total: 55
+  total: 57
   by_blueprint_status:
-    Active: 49
+    Active: 51
     Draft: 6
   by_layer:
     L2_domain: 11
-    L1_foundation: 27
-    L0_infrastructure: 16
+    L1_foundation: 28
+    L0_infrastructure: 17
     L3_application: 1
   by_construction_progress:
-    partially_implemented: 33
+    partially_implemented: 34
     design_only: 8
-    completed: 11
+    not_started: 1
+    completed: 10
+    planned: 1
     mostly_implemented: 1
     scaffold: 2
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
-  last_recomputed: '2026-07-05'
+  last_recomputed: '2026-07-13'
 changelog:
+- version: 2.7.8
+  date: '2026-07-13'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 57 份 blueprint.md；登记项相对上一版有
+    10 条差异摘要'
+  - 新增 MOD-GOV-SYNC-PANORAMA → 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md
+  - 'MOD-INF-023.construction_progress: [completed] → [partially_implemented]'
+  - 'MOD-INF-027.title: [Audit Orchestrator 蓝图 — 审计编排器·三子系统架构] → [灾备备份系统蓝图 — 事件触发→DB
+    dump→Restic去重备份→保留清理→校验→报告]'
+  - 'MOD-INF-027.version: [6.1.0] → [1.1.0]'
+  - 'MOD-INF-027.last_updated: [2026-05-14] → [2026-07-09]'
+  - 'MOD-INF-027.layer: [L1_foundation] → [L0_infrastructure]'
+  - 'MOD-INF-027.file_path: [03_modules/_cross_layer/audit_orchestrator/blueprint.md]
+    → [03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md]'
+  - 'MOD-INF-027.construction_progress: [partially_implemented] → [planned]'
+  - 'SH-DB-001.version: [4.3.1] → [4.3.2]'
+  - 'SH-DB-001.last_updated: [2026-07-01] → [2026-07-07]'
 - version: 2.7.7
   date: '2026-07-04'
   changes:
