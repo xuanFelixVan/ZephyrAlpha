@@ -1,3 +1,4 @@
+# [DOMAIN] D_FEEDBACK_LOOP
 # [A_module] module_id=MOD-UNK_gates | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.feedback_loop.gates
