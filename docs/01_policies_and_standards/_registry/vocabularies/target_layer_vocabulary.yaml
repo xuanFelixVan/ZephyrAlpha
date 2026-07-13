@@ -166,6 +166,14 @@ values:
     definition: "反馈验证域——反馈循环门禁/结果验证器/安全门禁/AB测试验证"
     is_foundation: false
     ai_keywords: ["反馈验证", "feedback verification", "safety gates", "安全门禁", "verifiers"]
+  - value: D_FBL_DIAGNOSERS
+    definition: "反馈诊断器域——异常根因诊断/模型健康监控/可靠性诊断/上下文窗口压力管理"
+    is_foundation: false
+    ai_keywords: ["反馈诊断", "feedback diagnosers", "diagnosis", "诊断", "model health", "模型健康", "reliability"]
+  - value: D_FBL_DETECTORS
+    definition: "反馈检测器域——异常检测/漂移检测/反馈信号检测/可靠性监控"
+    is_foundation: false
+    ai_keywords: ["反馈检测", "feedback detectors", "detection", "检测", "anomaly", "异常", "drift detector"]
 
   # === 基础设施域（来源：functional_domain_registry.yaml）===
   - value: D_INFRA_RUNTIME

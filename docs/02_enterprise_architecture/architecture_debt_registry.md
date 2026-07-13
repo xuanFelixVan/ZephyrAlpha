@@ -4054,7 +4054,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 #### MEDIUM（6个）
 
-1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:31` — 顶层 `try: from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType; ... except ImportError: _HAS_AUDIT_ENTRY = False`。**严重度理由**：try/except ImportError反模式——既掩盖了真实的循环依赖，又使审计功能在import失败时静默降级（无日志、无告警）。
+1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:34` — 顶层 `try: from zephyr.gov_audit.models import AuditEntryV1, AuditEventType; ... except ImportError: _HAS_AUDIT_ENTRY = False`。**严重度理由**：try/except ImportError反模式——既掩盖了真实的循环依赖，又使审计功能在import失败时静默降级（无日志、无告警）。**路径更新**：2026-07-12 裁定#200 将 audit_trail 从 governance.audit_trail 合并为 gov_audit，import路径由 zephyr.governance.audit_trail.models 变更为 zephyr.gov_audit.models。
 
 2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\gov_audit\feedback_bridge.py:36` 与 `:98` — 函数内延迟导入 `zephyr.feedback_loop.{FeedbackLoop, EvolutionProposal}`。**严重度理由**：延迟导入规避循环，运行时耦合仍存在。**路径更新**：2026-07-12 裁定#200 将 feedback_loop 从 trading.feedback_loop 移至顶层 zephyr.feedback_loop，audit 模块由 governance/audit_orchestrator+audit_trail 合并为 gov_audit，重复副本已消除（仅剩1份）。
 
@@ -4091,7 +4091,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 #### 5.176.2 [MEDIUM] rule_enforcement 容量治理（ARCH-CAP-002 单域 ≤150 节点）
 
-- **文件**：`src/zephyr/governance/rule_enforcement/` 整域
+- **文件**：`src/zephyr/gov_enforcement/rule_enforcement/` 整域
 - **问题**：rule_enforcement 域 production_nodes 数量接近 ARCH-CAP-002 单域 ≤150 上限，需评估是否拆分为 rule_enforcement_core + rule_enforcement_invariants + rule_enforcement_gates 等子域。当前未触发硬阻断（<150），但需前瞻性容量规划。
 - **修复方向**：(1) 运行 `generate_project_depgraph.py` 量化当前节点数；(2) 若 >120 则启动拆分评估；(3) 拆分时遵循"功能域平级，能平铺绝不嵌套"原则。
 - **专项工程计划**：先量化 → 再评估 → 最后拆分（如需）。
