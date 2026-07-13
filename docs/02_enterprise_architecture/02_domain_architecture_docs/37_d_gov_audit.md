@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 07:00:15
+> 最后更新: 2026-07-13 11:37:43
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 292 | Module Count | 292 |
 | 域内依赖 | 101 | Internal Dependencies | 101 |
-| 跨域入边 | 110 | Cross-domain Incoming | 110 |
+| 跨域入边 | 111 | Cross-domain Incoming | 111 |
 | 跨域出边 | 314 | Cross-domain Outgoing | 314 |
 | 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 224 | Prototype Modules | 224 |
@@ -312,12 +312,12 @@ graph TD
     src_zephyr_gov_audit_bridges_audit_drift_bridge_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
     src_zephyr_gov_audit_bridges_audit_feedback_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
     src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_anomaly_py
+    src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_delegation_bridge_py
     src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_contracts_py
     src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_drift_bridge_py
-    src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_delegation_bridge_py
-    src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_feedback_bridge_py
-    src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_tiered_storage_bridge_py
     src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_trust_bridge_py
+    src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_tiered_storage_bridge_py
+    src_zephyr_gov_audit_bridges_init_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_feedback_bridge_py
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     docs_03_modules_cross_layer_audit_orchestrator_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -341,6 +341,8 @@ graph TD
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
     D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_init_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_init_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_anomaly_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_contracts_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_delegation_bridge_py
@@ -348,8 +350,6 @@ graph TD
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_feedback_bridge_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_tiered_storage_bridge_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_trust_bridge_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_init_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_init_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_gov_audit_audit_schema_py
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     D_GOV_RULE -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
@@ -409,25 +409,25 @@ graph TD
     src_zephyr_gov_audit_pipeline_runner_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_gov_audit_delegation_bridge_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_gov_audit_event_store_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_gov_audit_event_store_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_audit_evidence_pack_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_gov_audit_evidence_pack_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_gov_audit_feedback_bridge_py -->|导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     src_zephyr_gov_audit_feedback_bridge_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
+    src_zephyr_gov_audit_event_store_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_gov_audit_event_store_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_audit_finding_ingest_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_audit_forensic_package_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_gov_audit_finding_model_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_gov_audit_finding_ingest_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_audit_indexer_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_audit_indexer_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_audit_log_rotation_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_audit_genesis_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_forensic_package_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_indexer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_indexer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_integrity_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_kb_gate_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    src_zephyr_gov_audit_merkle_audit_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     D_GOV_DRIFT -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_gov_audit_event_store_py
     D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
@@ -454,8 +454,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_gov_audit_delegation_auditor_py,src_zephyr_gov_audit_dora_metrics_py,src_zephyr_gov_audit_event_store_py,src_zephyr_gov_audit_evidence_pack_py,src_zephyr_gov_audit_external_tool_audit_py,src_zephyr_gov_audit_feedback_bridge_py,src_zephyr_gov_audit_feedback_policy_py,src_zephyr_gov_audit_feedback_self_audit_py,src_zephyr_gov_audit_forensic_package_py,src_zephyr_gov_audit_genesis_py,src_zephyr_gov_audit_glossary_matrix_py,src_zephyr_gov_audit_incremental_review_py,src_zephyr_gov_audit_indexer_py,src_zephyr_gov_audit_integrity_verifier_py,src_zephyr_gov_audit_kb_gate_py,src_zephyr_gov_audit_log_rotation_py,src_zephyr_gov_audit_merkle_audit_py,src_zephyr_gov_audit_models_py,src_zephyr_gov_audit_observability_dashboard_py,src_zephyr_gov_audit_pipeline_runner_py,src_zephyr_gov_audit_privacy_py,src_zephyr_gov_audit_provenance_tracker_py,src_zephyr_gov_audit_query_py,src_zephyr_gov_audit_replay_engine_py production
     class src_zephyr_gov_audit_delegation_bridge_py,src_zephyr_gov_audit_finding_ingest_py,src_zephyr_gov_audit_finding_model_py,src_zephyr_gov_audit_integrity_py,src_zephyr_gov_audit_merkle_hourly_py,src_zephyr_gov_audit_resource_aware_pool_py design
-    class D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_SHARED,D_FEEDBACK_LOOP,D_INTEGRATION,D_GOV_DRIFT,D_INFRA_RUNTIME,D_INFRA_RECOVERY,D_SECURITY,D_TRADING external_prod
-    class D_GOV_ENFORCEMENT external_design
+    class D_GOV_OPS_RESILIENCE,D_SHARED,D_FEEDBACK_LOOP,D_INTEGRATION,D_GOV_DRIFT,D_INFRA_RUNTIME,D_INFRA_RECOVERY,D_SECURITY,D_TRADING external_prod
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT external_design
 ```
 
 #### 第 3 页 / 共 10 页
@@ -495,8 +495,8 @@ graph TD
         src_zephyr_governance_intelligence_governance_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_governance_audit_reconciliation_registry_py -.->|导入依赖 / import_depends| src_zephyr_governance_audit_init_py
-    src_zephyr_gov_audit_trust_bridge_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_trust_engine_py
     src_zephyr_gov_audit_tiered_storage_bridge_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_tiered_storage_py
+    src_zephyr_gov_audit_trust_bridge_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_trust_engine_py
     src_zephyr_gov_enforcement_rule_enforcement_audit_chain_verifier_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_governance_adapters_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
@@ -504,8 +504,8 @@ graph TD
     src_zephyr_governance_adapters_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_agent_spec_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_REPORTING["(原型态 / prototype) D_REPORTING"]
-    src_zephyr_governance_audit_default_attribution_engine_py -.->|导入依赖 / import_depends| D_REPORTING
     src_zephyr_governance_audit_default_tca_engine_py -.->|导入依赖 / import_depends| D_REPORTING
+    src_zephyr_governance_audit_default_attribution_engine_py -.->|导入依赖 / import_depends| D_REPORTING
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_governance_audit_snapshot_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_audit_snapshot_manager_py -->|导入依赖 / import_depends| D_GOVERNANCE
@@ -586,25 +586,25 @@ graph TD
         src_zephyr_governance_trading_contracts_market_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_governance_trading_contracts_portfolio_contracts_init_py["(原型态 / prototype) __init__.py"]
     end
+    src_zephyr_governance_semantic_audit_feedback_self_audit_py -.->|config_depends / config_depends| src_zephyr_governance_semantic_audit_init_py
     src_zephyr_governance_semantic_audit_alignment_engine_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_alignment_engine_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
-    src_zephyr_governance_semantic_audit_feedback_self_audit_py -.->|config_depends / config_depends| src_zephyr_governance_semantic_audit_init_py
     src_zephyr_governance_semantic_audit_fix_result_prioritizer_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_issue_aggregator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_fix_prioritizer_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_llm_bridge_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_reference_extractor_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_safety_boundary_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_alignment_engine_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_issue_aggregator_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_fix_prioritizer_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_llm_bridge_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_healer_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_safety_boundary_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_healer_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_health_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_trigger_engine_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_health_py
+    src_zephyr_governance_semantic_audit_reference_extractor_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_safety_boundary_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_trigger_engine_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_trigger_engine_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_spec_auditor_py -.->|config_depends / config_depends| src_zephyr_governance_semantic_audit_init_py
@@ -616,7 +616,6 @@ graph TD
     src_zephyr_governance_semantic_audit_kb_gate_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_semantic_audit_privacy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_services_init_py -.->|config_depends / config_depends| D_GOVERNANCE
-    src_zephyr_governance_strategies_init_py -.->|config_depends / config_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_TRADING["(原型态 / prototype) D_TRADING"]
@@ -625,6 +624,7 @@ graph TD
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -697,13 +697,14 @@ graph TD
     tests_audit_test_ab_test_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     tests_audit_test_absence_manager_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_audit_test_amplification_guard_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_audit_test_api_dependency_metrics_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     tests_audit_test_audit_chain_verifier_py -.->|测试依赖 / test_depends| D_GOV_RULE
     D_SECURITY["(生产态 / production) D_SECURITY"]
     tests_audit_test_audit_log_guard_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_audit_test_audit_integrity_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_audit_test_amplification_guard_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_audit_test_audit_orphan_judge_e2e_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_audit_test_audit_orphan_judge_e2e_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_audit_test_audit_orphan_judge_e2e_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -711,7 +712,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_trading_contracts_risk_init_py,tests_audit_test_ab_test_py,tests_audit_test_absence_manager_py,tests_audit_test_amplification_guard_py,tests_audit_test_api_dependency_metrics_py,tests_audit_test_architecture_contracts_py,tests_audit_test_architecture_principles_py,tests_audit_test_audit_anomaly_py,tests_audit_test_audit_api_lifecycle_py,tests_audit_test_audit_bridge_py,tests_audit_test_audit_chain_verifier_py,tests_audit_test_audit_cli_py,tests_audit_test_audit_contracts_py,tests_audit_test_audit_dim_d1_d4_e2e_py,tests_audit_test_audit_dim_d5_d8_e2e_py,tests_audit_test_audit_dim_d9_d12_e2e_py,tests_audit_test_audit_financial_compliance_py,tests_audit_test_audit_full_closure_e2e_py,tests_audit_test_audit_full_pipeline_e2e_py,tests_audit_test_audit_incremental_review_py,tests_audit_test_audit_indexer_py,tests_audit_test_audit_integrity_py,tests_audit_test_audit_log_guard_py,tests_audit_test_audit_models_py,tests_audit_test_audit_observability_dashboard_py,tests_audit_test_audit_orchestrator_e2e_py,tests_audit_test_audit_orphan_judge_e2e_py,tests_audit_test_audit_provenance_tracker_py,tests_audit_test_audit_red_blue_e2e_py,tests_audit_test_audit_registry_gate_e2e_py design
-    class D_FBL_VERIFICATION,D_GOV_DRIFT,D_GOV_RULE,D_SECURITY external_prod
+    class D_FBL_VERIFICATION,D_GOV_DRIFT,D_GOV_RULE,D_SECURITY,D_FEEDBACK_LOOP external_prod
     class D_GOVERNANCE external_design
 ```
 
@@ -754,28 +755,27 @@ graph TD
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     tests_audit_test_audit_spec_auditor_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_audit_test_backcompat_checker_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_audit_test_baseline_manager_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_audit_test_benchmark_integrity_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_audit_test_brain_integration_root_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_audit_test_baseline_poisoning_guard_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_audit_test_brain_integration_root_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     tests_audit_test_build_reproducibility_verifier_v2_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_audit_test_benchmark_integrity_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_audit_test_backcompat_checker_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_audit_test_build_reproducibility_verifier_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_audit_test_burnout_alarm_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_audit_test_burn_rate_alerter_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_audit_test_baseline_manager_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_audit_test_cascade_detector_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_audit_test_causal_inference_engine_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_audit_test_cognitive_load_budget_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_audit_test_credibility_engine_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_audit_test_correlation_engine_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_audit_test_crypto_bootstrap_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_audit_test_deterministic_replay_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_audit_test_detector_dispatcher_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_audit_test_detector_dispatcher_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_audit_test_audit_self_healer_e2e_py,tests_audit_test_audit_spec_auditor_py,tests_audit_test_audit_supply_chain_security_py,tests_audit_test_audit_write_failure_protector_py,tests_audit_test_backcompat_checker_py,tests_audit_test_baseline_manager_py,tests_audit_test_baseline_poisoning_guard_py,tests_audit_test_benchmark_integrity_py,tests_audit_test_brain_integration_root_py,tests_audit_test_build_reproducibility_verifier_py,tests_audit_test_build_reproducibility_verifier_v2_py,tests_audit_test_burn_rate_alerter_py,tests_audit_test_burnout_alarm_py,tests_audit_test_cascade_detector_py,tests_audit_test_causal_inference_engine_py,tests_audit_test_code_review_ai_py,tests_audit_test_cognitive_load_budget_py,tests_audit_test_correlation_engine_py,tests_audit_test_credibility_engine_py,tests_audit_test_crypto_bootstrap_py,tests_audit_test_detector_dispatcher_py,tests_audit_test_deterministic_replay_py,tests_audit_test_diagnosis_kpi_py,tests_audit_test_emergent_behavior_detector_py,tests_audit_test_events_ba_py,tests_audit_test_forensics_engine_py,tests_audit_test_gitignore_auditor_py,tests_audit_test_global_health_map_py,tests_audit_test_handoff_manager_py,tests_audit_test_headless_scanner_py design
-    class D_FEEDBACK_LOOP,D_GOV_DRIFT,D_FBL_VERIFICATION,D_GOVERNANCE external_prod
+    class D_FEEDBACK_LOOP,D_GOV_DRIFT,D_FBL_VERIFICATION external_prod
 ```
 
 #### 第 7 页 / 共 10 页
@@ -814,31 +814,30 @@ graph TD
         tests_audit_test_toctou_revalidation_py["(原型态 / prototype) test_toctou_revalidation.py"]
         tests_audit_test_toil_quantification_py["(原型态 / prototype) test_toil_quantification.py"]
     end
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_audit_test_human_anomaly_flood_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_audit_test_incremental_scanner_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_audit_test_ml_engineering_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_audit_test_interactive_diagnosis_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_audit_test_latency_slo_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_audit_test_intermittent_failure_pattern_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_audit_test_incremental_scanner_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_audit_test_naming_magic_checker_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_audit_test_orphan_scanner_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_audit_test_mtti_tracker_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    tests_audit_test_point_in_time_reconstructor_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_audit_test_performance_baseline_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_audit_test_orphan_scanner_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_audit_test_human_anomaly_flood_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_audit_test_point_in_time_reconstructor_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     tests_audit_test_preventive_repair_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     tests_audit_test_pre_flight_simulator_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_audit_test_regime_gain_scheduling_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_audit_test_regime_detector_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_audit_test_python_compat_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_audit_test_mtti_tracker_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_audit_test_roi_engine_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_audit_test_intermittent_failure_pattern_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_audit_test_scan_mutex_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_audit_test_scan_mutex_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_audit_test_human_anomaly_flood_detector_py,tests_audit_test_incremental_scanner_py,tests_audit_test_interactive_diagnosis_py,tests_audit_test_intermittent_failure_pattern_py,tests_audit_test_latency_slo_py,tests_audit_test_ml_engineering_py,tests_audit_test_mtti_tracker_py,tests_audit_test_naming_magic_checker_py,tests_audit_test_orphan_scanner_py,tests_audit_test_performance_baseline_py,tests_audit_test_point_in_time_reconstructor_py,tests_audit_test_pre_flight_simulator_py,tests_audit_test_preventive_repair_py,tests_audit_test_python_compat_py,tests_audit_test_regime_detector_py,tests_audit_test_regime_gain_scheduling_py,tests_audit_test_roi_engine_py,tests_audit_test_scan_mutex_py,tests_audit_test_serialization_format_tracker_py,tests_audit_test_sim2real_calibration_py,tests_audit_test_socratic_questions_py,tests_audit_test_state_machine_py,tests_audit_test_statistical_hygiene_auditor_py,tests_audit_test_sub_agent_collusion_py,tests_audit_test_suppression_learner_py,tests_audit_test_symlink_checker_py,tests_audit_test_tamper_proof_audit_py,tests_audit_test_test_fixture_checker_py,tests_audit_test_toctou_revalidation_py,tests_audit_test_toil_quantification_py design
-    class D_GOVERNANCE,D_GOV_DRIFT,D_FEEDBACK_LOOP,D_FBL_VERIFICATION external_prod
+    class D_GOV_DRIFT,D_FEEDBACK_LOOP,D_FBL_VERIFICATION external_prod
 ```
 
 #### 第 8 页 / 共 10 页
@@ -877,23 +876,23 @@ graph TD
         tests_drift_test_drift_training_py["(原型态 / prototype) test_drift_training.py"]
         tests_drift_test_schema_evolution_root_py["(原型态 / prototype) test_schema_evolution_root.py"]
     end
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_audit_test_traffic_replay_validator_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_audit_test_tone_adapter_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_audit_test_tone_adapter_v2_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     tests_audit_test_trend_analyzer_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_audit_test_value_added_baseline_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     tests_audit_test_verification_engine_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_audit_test_zombie_fle_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_audit_test_tone_adapter_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_audit_test_traffic_replay_validator_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_audit_test_tone_adapter_v2_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_audit_test_value_added_baseline_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_audit_test_zombie_fle_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_ba_test_ba_canary_controller_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_ba_test_ba_chaos_injector_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_ba_test_ba_dashboard_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_ba_test_ba_canary_controller_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    D_SECURITY["(生产态 / production) D_SECURITY"]
-    tests_ba_test_ba_events_py -.->|测试依赖 / test_depends| D_SECURITY
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     tests_ba_test_ba_integration_test_runner_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_ba_test_ba_events_py -.->|测试依赖 / test_depends| D_SECURITY
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     tests_ba_test_ba_main_py -.->|测试依赖 / test_depends| D_AUTONOMY_CORE
     tests_ba_test_ba_handoff_manager_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
@@ -903,7 +902,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_audit_test_tone_adapter_py,tests_audit_test_tone_adapter_v2_py,tests_audit_test_traffic_replay_validator_py,tests_audit_test_trend_analyzer_py,tests_audit_test_value_added_baseline_py,tests_audit_test_verification_engine_py,tests_audit_test_zombie_fle_detector_py,tests_ba_test_ba_canary_controller_py,tests_ba_test_ba_chaos_injector_py,tests_ba_test_ba_dashboard_py,tests_ba_test_ba_data_lifecycle_py,tests_ba_test_ba_dependency_manager_py,tests_ba_test_ba_events_py,tests_ba_test_ba_handoff_manager_py,tests_ba_test_ba_integration_test_runner_py,tests_ba_test_ba_main_py,tests_ba_test_ba_state_machine_py,tests_drift_test_concept_drift_py,tests_drift_test_drift_bridge_py,tests_drift_test_drift_detector_ee_py,tests_drift_test_drift_detector_gate_py,tests_drift_test_drift_engine_py,tests_drift_test_drift_fix_py,tests_drift_test_drift_fixer_py,tests_drift_test_drift_hotfix_bypass_py,tests_drift_test_drift_infrastructure_py,tests_drift_test_drift_models_py,tests_drift_test_drift_result_types_py,tests_drift_test_drift_training_py,tests_drift_test_schema_evolution_root_py design
-    class D_GOVERNANCE,D_GOV_DRIFT,D_FBL_VERIFICATION,D_SECURITY,D_GOV_RULE,D_AUTONOMY_CORE external_prod
+    class D_GOV_DRIFT,D_FBL_VERIFICATION,D_FEEDBACK_LOOP,D_GOV_RULE,D_SECURITY,D_AUTONOMY_CORE external_prod
 ```
 
 #### 第 9 页 / 共 10 页
@@ -942,13 +941,14 @@ graph TD
         tests_self_check_test_self_diagnosis_data_leak_detector_py["(原型态 / prototype) test_self_diagnosis_data_leak_detector.py"]
         tests_self_check_test_self_evolution_fidelity_gate_py["(原型态 / prototype) test_self_evolution_fidelity_gate.py"]
     end
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_drift_test_version_migrator_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_drift_test_version_migrator_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     tests_f_lifecycle_test_f10_red_blue_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
     tests_f_lifecycle_test_f10_red_blue_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
     tests_f_lifecycle_test_f10_red_blue_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
     tests_f_lifecycle_test_f10_red_blue_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     tests_f_lifecycle_test_f18_automation_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_SHARED["(生产态 / production) D_SHARED"]
     tests_f_lifecycle_test_f18_automation_py -.->|测试依赖 / test_depends| D_SHARED
@@ -957,18 +957,18 @@ graph TD
     tests_f_lifecycle_test_f18_redblue_py -.->|测试依赖 / test_depends| D_SHARED
     tests_f_lifecycle_test_f18_redblue_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_f_lifecycle_test_f21_auto_run_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    D_TRADING["(生产态 / production) D_TRADING"]
-    tests_f_lifecycle_test_f21_auto_run_py -.->|测试依赖 / test_depends| D_TRADING
     tests_f_lifecycle_test_f21_auto_shutdown_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_f_lifecycle_test_f21_auto_shutdown_py -.->|测试依赖 / test_depends| D_SHARED
     tests_f_lifecycle_test_f21_auto_shutdown_py -.->|测试依赖 / test_depends| D_SHARED
+    D_TRADING["(生产态 / production) D_TRADING"]
+    tests_f_lifecycle_test_f21_auto_shutdown_py -.->|测试依赖 / test_depends| D_TRADING
+    tests_f_lifecycle_test_f21_auto_run_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_drift_test_version_migrator_py,tests_f_lifecycle_test_f10_red_blue_py,tests_f_lifecycle_test_f18_automation_py,tests_f_lifecycle_test_f18_redblue_py,tests_f_lifecycle_test_f21_auto_run_py,tests_f_lifecycle_test_f21_auto_shutdown_py,tests_f_lifecycle_test_f21_auto_startup_py,tests_f_lifecycle_test_f21_event_driven_py,tests_f_lifecycle_test_f5_auto_shutdown_py,tests_f_lifecycle_test_f5_auto_startup_py,tests_f_lifecycle_test_f5_e2e_lifecycle_py,tests_f_lifecycle_test_f5_event_startup_py,tests_f_lifecycle_test_f5_red_team_extreme_py,tests_f_lifecycle_test_flag_lifecycle_py,tests_f_lifecycle_test_lifecycle_hooks_py,tests_f_lifecycle_test_openfeature_py,tests_phase_test_phase_check_registry_py,tests_phase_test_phase_executor_root_py,tests_phase_test_phase_hold_py,tests_phase_test_phase_manager_py,tests_phase_test_phase_planner_py,tests_self_check_test_self_api_throttle_defense_py,tests_self_check_test_self_audit_py,tests_self_check_test_self_benchmark_py,tests_self_check_test_self_bottleneck_detector_py,tests_self_check_test_self_budget_tracker_py,tests_self_check_test_self_check_py,tests_self_check_test_self_diagnosis_py,tests_self_check_test_self_diagnosis_data_leak_detector_py,tests_self_check_test_self_evolution_fidelity_gate_py design
-    class D_GOVERNANCE,D_INTELLIGENCE,D_SHARED,D_GOV_OPS_RESILIENCE,D_INFRA_RUNTIME,D_TRADING external_prod
+    class D_FEEDBACK_LOOP,D_INTELLIGENCE,D_GOVERNANCE,D_SHARED,D_GOV_OPS_RESILIENCE,D_INFRA_RUNTIME,D_TRADING external_prod
 ```
 
 #### 第 10 页 / 共 10 页
@@ -1000,33 +1000,34 @@ graph TD
         tests_semantic_auditor_test_semantic_similar_detector_py["(原型态 / prototype) test_semantic_similar_detector.py"]
     end
     tests_semantic_auditor_test_semantic_diff_py -.->|config_depends / config_depends| tests_semantic_auditor_init_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_self_check_test_self_health_monitor_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_self_check_test_self_ha_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_SECURITY["(生产态 / production) D_SECURITY"]
     tests_self_check_test_self_heal_agent_py -.->|测试依赖 / test_depends| D_SECURITY
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    tests_self_check_test_self_modification_audit_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_self_check_test_self_llm_observability_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     tests_self_check_test_self_modification_rate_limiter_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     tests_self_check_test_self_monitor_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     tests_self_check_test_self_test_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_self_check_test_self_modification_audit_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_self_check_test_self_reflection_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_self_check_test_self_test_verifier_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     tests_self_check_test_self_scanner_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    tests_self_check_test_self_ha_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_self_check_test_self_validator_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_self_check_test_self_test_verifier_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_self_check_test_self_upgrade_canary_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    tests_semantic_auditor_test_blast_radius_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    tests_semantic_auditor_test_blast_radius_red_team_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     tests_semantic_auditor_test_semantic_intent_preservation_guard_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_INFRA_RECOVERY["(生产态 / production) D_INFRA_RECOVERY"]
+    tests_semantic_auditor_test_semantic_similar_detector_py -.->|测试依赖 / test_depends| D_INFRA_RECOVERY
+    tests_self_check_test_self_llm_observability_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_self_check_test_self_ha_py,tests_self_check_test_self_heal_agent_py,tests_self_check_test_self_health_monitor_py,tests_self_check_test_self_llm_observability_py,tests_self_check_test_self_modification_audit_py,tests_self_check_test_self_modification_rate_limiter_py,tests_self_check_test_self_monitor_py,tests_self_check_test_self_reflection_py,tests_self_check_test_self_scanner_py,tests_self_check_test_self_test_py,tests_self_check_test_self_test_verifier_py,tests_self_check_test_self_upgrade_canary_py,tests_self_check_test_self_validator_py,tests_semantic_auditor_init_py,tests_semantic_auditor_test_blast_radius_py,tests_semantic_auditor_test_blast_radius_red_team_py,tests_semantic_auditor_test_semantic_auditor_py,tests_semantic_auditor_test_semantic_cache_py,tests_semantic_auditor_test_semantic_diff_py,tests_semantic_auditor_test_semantic_intent_preservation_guard_py,tests_semantic_auditor_test_semantic_rollback_tag_py,tests_semantic_auditor_test_semantic_similar_detector_py design
-    class D_GOVERNANCE,D_SECURITY,D_FEEDBACK_LOOP,D_GOV_DRIFT,D_GOV_CODE_QUALITY,D_GOV_OPS_RESILIENCE external_prod
+    class D_SECURITY,D_FEEDBACK_LOOP,D_GOV_DRIFT,D_GOVERNANCE,D_GOV_CODE_QUALITY,D_GOV_OPS_RESILIENCE,D_INFRA_RECOVERY external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -1113,16 +1114,16 @@ graph TD
     src_zephyr_gov_audit_indexer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
+    src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
+    src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
+    src_zephyr_gov_audit_bridges_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
     src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
     src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_indexer_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_query_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
-    src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
-    src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
-    src_zephyr_gov_audit_bridges_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_bridges_audit_feedback_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
     src_zephyr_gov_audit_bridges_audit_feedback_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_query_py
     src_zephyr_gov_enforcement_rule_enforcement_audit_chain_verifier_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
@@ -1153,12 +1154,12 @@ graph TD
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
     D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_governance_merkle_hourly_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_init_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_init_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_delegation_bridge_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_feedback_bridge_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_tiered_storage_bridge_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_trust_bridge_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_init_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_init_py
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     D_GOV_DRIFT -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     D_GOV_DRIFT -->|导入依赖 / import_depends| src_zephyr_governance_merkle_hourly_py
@@ -1425,21 +1426,21 @@ graph TD
         tests_semantic_auditor_test_semantic_rollback_tag_py["(原型态 / prototype) test_semantic_rollback_tag.py"]
         tests_semantic_auditor_test_semantic_similar_detector_py["(原型态 / prototype) test_semantic_similar_detector.py"]
     end
-    src_zephyr_governance_semantic_audit_alignment_engine_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_feedback_self_audit_py -.->|config_depends / config_depends| src_zephyr_governance_semantic_audit_init_py
+    src_zephyr_governance_semantic_audit_alignment_engine_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_alignment_engine_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_issue_aggregator_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_fix_prioritizer_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_llm_bridge_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_healer_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_safety_boundary_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_healer_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_health_py
     src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_trigger_engine_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_health_py
     src_zephyr_governance_semantic_audit_trigger_engine_py -.->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_spec_auditor_py -.->|config_depends / config_depends| src_zephyr_governance_semantic_audit_init_py
-    src_zephyr_gov_audit_audit_admission_controller_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_audit_admission_controller_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_ingest_py
+    src_zephyr_gov_audit_audit_admission_controller_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_finding_ingest_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_merkle_hourly_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
     src_zephyr_gov_audit_text_to_finding_adapter_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
@@ -1463,29 +1464,30 @@ graph TD
     src_zephyr_governance_semantic_audit_kb_gate_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_semantic_audit_privacy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_services_init_py -.->|config_depends / config_depends| D_GOVERNANCE
-    src_zephyr_governance_strategies_init_py -.->|config_depends / config_depends| D_GOVERNANCE
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
-    D_SECURITY["(原型态 / prototype) D_SECURITY"]
-    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
-    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
-    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_ingest_py
-    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_audit_trust_bridge_py
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
     D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_anomaly_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_contracts_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_audit_bridges_audit_drift_bridge_py
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_audit_trust_bridge_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_ingest_py
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
+    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
+    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_repair_red_blue_test_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_repair_audit_design_completeness_py,scripts_governance_repair_red_blue_test_py,scripts_governance_repair_rollback_depgraph_py,src_zephyr_gov_audit_audit_admission_controller_py,src_zephyr_gov_audit_bridges_init_py,src_zephyr_gov_audit_bridges_audit_anomaly_py,src_zephyr_gov_audit_bridges_audit_contracts_py,src_zephyr_gov_audit_bridges_audit_drift_bridge_py,src_zephyr_gov_audit_delegation_bridge_py,src_zephyr_gov_audit_finding_ingest_py,src_zephyr_gov_audit_finding_model_py,src_zephyr_gov_audit_integrity_py,src_zephyr_gov_audit_merkle_hourly_py,src_zephyr_gov_audit_resource_aware_pool_py,src_zephyr_gov_audit_text_to_finding_adapter_py,src_zephyr_gov_audit_tiered_storage_bridge_py,src_zephyr_gov_audit_trust_bridge_py,src_zephyr_governance_adapters_init_py,src_zephyr_governance_agent_spec_init_py,src_zephyr_governance_architecture_governance_init_py,src_zephyr_governance_audit_init_py,src_zephyr_governance_audit_default_attribution_engine_py,src_zephyr_governance_bridges_init_py,src_zephyr_governance_context_governance_init_py,src_zephyr_governance_data_governance_init_py,src_zephyr_governance_engine_init_py,src_zephyr_governance_financial_governance_init_py,src_zephyr_governance_intelligence_governance_init_py,src_zephyr_governance_lifecycle_governance_init_py,src_zephyr_governance_semantic_audit_init_py,src_zephyr_governance_semantic_audit_alignment_engine_py,src_zephyr_governance_semantic_audit_compliance_map_py,src_zephyr_governance_semantic_audit_feedback_self_audit_py,src_zephyr_governance_semantic_audit_fix_prioritizer_py,src_zephyr_governance_semantic_audit_fix_result_prioritizer_py,src_zephyr_governance_semantic_audit_issue_aggregator_py,src_zephyr_governance_semantic_audit_kb_gate_py,src_zephyr_governance_semantic_audit_llm_bridge_py,src_zephyr_governance_semantic_audit_orchestrator_py,src_zephyr_governance_semantic_audit_privacy_py,src_zephyr_governance_semantic_audit_reference_extractor_py,src_zephyr_governance_semantic_audit_safety_boundary_py,src_zephyr_governance_semantic_audit_self_healer_py,src_zephyr_governance_semantic_audit_self_health_py,src_zephyr_governance_semantic_audit_spec_auditor_py,src_zephyr_governance_semantic_audit_trigger_engine_py,src_zephyr_governance_services_init_py,src_zephyr_governance_strategies_init_py,src_zephyr_governance_trading_contracts_init_py,src_zephyr_governance_trading_contracts_execution_init_py,src_zephyr_governance_trading_contracts_market_init_py,src_zephyr_governance_trading_contracts_portfolio_contracts_init_py,src_zephyr_governance_trading_contracts_risk_init_py,tests_audit_test_ab_test_py,tests_audit_test_absence_manager_py,tests_audit_test_amplification_guard_py,tests_audit_test_api_dependency_metrics_py,tests_audit_test_architecture_contracts_py,tests_audit_test_architecture_principles_py,tests_audit_test_audit_anomaly_py,tests_audit_test_audit_api_lifecycle_py,tests_audit_test_audit_bridge_py,tests_audit_test_audit_chain_verifier_py,tests_audit_test_audit_cli_py,tests_audit_test_audit_contracts_py,tests_audit_test_audit_dim_d1_d4_e2e_py,tests_audit_test_audit_dim_d5_d8_e2e_py,tests_audit_test_audit_dim_d9_d12_e2e_py,tests_audit_test_audit_financial_compliance_py,tests_audit_test_audit_full_closure_e2e_py,tests_audit_test_audit_full_pipeline_e2e_py,tests_audit_test_audit_incremental_review_py,tests_audit_test_audit_indexer_py,tests_audit_test_audit_integrity_py,tests_audit_test_audit_log_guard_py,tests_audit_test_audit_models_py,tests_audit_test_audit_observability_dashboard_py,tests_audit_test_audit_orchestrator_e2e_py,tests_audit_test_audit_orphan_judge_e2e_py,tests_audit_test_audit_provenance_tracker_py,tests_audit_test_audit_red_blue_e2e_py,tests_audit_test_audit_registry_gate_e2e_py,tests_audit_test_audit_self_healer_e2e_py,tests_audit_test_audit_spec_auditor_py,tests_audit_test_audit_supply_chain_security_py,tests_audit_test_audit_write_failure_protector_py,tests_audit_test_backcompat_checker_py,tests_audit_test_baseline_manager_py,tests_audit_test_baseline_poisoning_guard_py,tests_audit_test_benchmark_integrity_py,tests_audit_test_brain_integration_root_py,tests_audit_test_build_reproducibility_verifier_py,tests_audit_test_build_reproducibility_verifier_v2_py,tests_audit_test_burn_rate_alerter_py,tests_audit_test_burnout_alarm_py,tests_audit_test_cascade_detector_py,tests_audit_test_causal_inference_engine_py,tests_audit_test_code_review_ai_py,tests_audit_test_cognitive_load_budget_py,tests_audit_test_correlation_engine_py,tests_audit_test_credibility_engine_py,tests_audit_test_crypto_bootstrap_py,tests_audit_test_detector_dispatcher_py,tests_audit_test_deterministic_replay_py,tests_audit_test_diagnosis_kpi_py,tests_audit_test_emergent_behavior_detector_py,tests_audit_test_events_ba_py,tests_audit_test_forensics_engine_py,tests_audit_test_gitignore_auditor_py,tests_audit_test_global_health_map_py,tests_audit_test_handoff_manager_py,tests_audit_test_headless_scanner_py,tests_audit_test_human_anomaly_flood_detector_py,tests_audit_test_incremental_scanner_py,tests_audit_test_interactive_diagnosis_py,tests_audit_test_intermittent_failure_pattern_py,tests_audit_test_latency_slo_py,tests_audit_test_ml_engineering_py,tests_audit_test_mtti_tracker_py,tests_audit_test_naming_magic_checker_py,tests_audit_test_orphan_scanner_py,tests_audit_test_performance_baseline_py,tests_audit_test_point_in_time_reconstructor_py,tests_audit_test_pre_flight_simulator_py,tests_audit_test_preventive_repair_py,tests_audit_test_python_compat_py,tests_audit_test_regime_detector_py,tests_audit_test_regime_gain_scheduling_py,tests_audit_test_roi_engine_py,tests_audit_test_scan_mutex_py,tests_audit_test_serialization_format_tracker_py,tests_audit_test_sim2real_calibration_py,tests_audit_test_socratic_questions_py,tests_audit_test_state_machine_py,tests_audit_test_statistical_hygiene_auditor_py,tests_audit_test_sub_agent_collusion_py,tests_audit_test_suppression_learner_py,tests_audit_test_symlink_checker_py,tests_audit_test_tamper_proof_audit_py,tests_audit_test_test_fixture_checker_py,tests_audit_test_toctou_revalidation_py,tests_audit_test_toil_quantification_py,tests_audit_test_tone_adapter_py,tests_audit_test_tone_adapter_v2_py,tests_audit_test_traffic_replay_validator_py,tests_audit_test_trend_analyzer_py,tests_audit_test_value_added_baseline_py,tests_audit_test_verification_engine_py,tests_audit_test_zombie_fle_detector_py,tests_ba_test_ba_canary_controller_py,tests_ba_test_ba_chaos_injector_py,tests_ba_test_ba_dashboard_py,tests_ba_test_ba_data_lifecycle_py,tests_ba_test_ba_dependency_manager_py,tests_ba_test_ba_events_py,tests_ba_test_ba_handoff_manager_py,tests_ba_test_ba_integration_test_runner_py,tests_ba_test_ba_main_py,tests_ba_test_ba_state_machine_py,tests_drift_test_concept_drift_py,tests_drift_test_drift_bridge_py,tests_drift_test_drift_detector_ee_py,tests_drift_test_drift_detector_gate_py,tests_drift_test_drift_engine_py,tests_drift_test_drift_fix_py,tests_drift_test_drift_fixer_py,tests_drift_test_drift_hotfix_bypass_py,tests_drift_test_drift_infrastructure_py,tests_drift_test_drift_models_py,tests_drift_test_drift_result_types_py,tests_drift_test_drift_training_py,tests_drift_test_schema_evolution_root_py,tests_drift_test_version_migrator_py,tests_f_lifecycle_test_f10_red_blue_py,tests_f_lifecycle_test_f18_automation_py,tests_f_lifecycle_test_f18_redblue_py,tests_f_lifecycle_test_f21_auto_run_py,tests_f_lifecycle_test_f21_auto_shutdown_py,tests_f_lifecycle_test_f21_auto_startup_py,tests_f_lifecycle_test_f21_event_driven_py,tests_f_lifecycle_test_f5_auto_shutdown_py,tests_f_lifecycle_test_f5_auto_startup_py,tests_f_lifecycle_test_f5_e2e_lifecycle_py,tests_f_lifecycle_test_f5_event_startup_py,tests_f_lifecycle_test_f5_red_team_extreme_py,tests_f_lifecycle_test_flag_lifecycle_py,tests_f_lifecycle_test_lifecycle_hooks_py,tests_f_lifecycle_test_openfeature_py,tests_phase_test_phase_check_registry_py,tests_phase_test_phase_executor_root_py,tests_phase_test_phase_hold_py,tests_phase_test_phase_manager_py,tests_phase_test_phase_planner_py,tests_self_check_test_self_api_throttle_defense_py,tests_self_check_test_self_audit_py,tests_self_check_test_self_benchmark_py,tests_self_check_test_self_bottleneck_detector_py,tests_self_check_test_self_budget_tracker_py,tests_self_check_test_self_check_py,tests_self_check_test_self_diagnosis_py,tests_self_check_test_self_diagnosis_data_leak_detector_py,tests_self_check_test_self_evolution_fidelity_gate_py,tests_self_check_test_self_ha_py,tests_self_check_test_self_heal_agent_py,tests_self_check_test_self_health_monitor_py,tests_self_check_test_self_llm_observability_py,tests_self_check_test_self_modification_audit_py,tests_self_check_test_self_modification_rate_limiter_py,tests_self_check_test_self_monitor_py,tests_self_check_test_self_reflection_py,tests_self_check_test_self_scanner_py,tests_self_check_test_self_test_py,tests_self_check_test_self_test_verifier_py,tests_self_check_test_self_upgrade_canary_py,tests_self_check_test_self_validator_py,tests_semantic_auditor_init_py,tests_semantic_auditor_test_blast_radius_py,tests_semantic_auditor_test_blast_radius_red_team_py,tests_semantic_auditor_test_semantic_auditor_py,tests_semantic_auditor_test_semantic_cache_py,tests_semantic_auditor_test_semantic_diff_py,tests_semantic_auditor_test_semantic_intent_preservation_guard_py,tests_semantic_auditor_test_semantic_rollback_tag_py,tests_semantic_auditor_test_semantic_similar_detector_py design
-    class D_SHARED,D_TRADING,D_INFRA_RUNTIME,D_GOV_DRIFT external_prod
-    class D_GOVERNANCE,D_REPORTING,D_SECURITY,D_COMPLIANCE external_design
+    class D_SHARED,D_TRADING,D_GOV_DRIFT,D_INFRA_RUNTIME,D_SECURITY external_prod
+    class D_GOVERNANCE,D_REPORTING,D_COMPLIANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -1507,100 +1509,100 @@ graph TD
 | 11 | test_toctou_revalidation.py | → | D_FBL_VERIFICATION 反馈验证: TOCTOU Revalidation — v0.37.0 R458 (toctou_rev... | 测试依赖 / test_depends |
 | 12 | test_verification_engine.py | → | D_FBL_VERIFICATION 反馈验证: verification_engine.py | 测试依赖 / test_depends |
 | 13 | feedback_bridge.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
-| 14 | test_audit_spec_auditor.py | → | D_FEEDBACK_LOOP 反馈循环引擎: protocols.py | 测试依赖 / test_depends |
-| 15 | test_crypto_bootstrap.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Cryptographic Bootstrap — v0.15.0 R204 (crypto... | 测试依赖 / test_depends |
-| 16 | test_deterministic_replay.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Deterministic Replay — v0.15.0 R206 (determini... | 测试依赖 / test_depends |
-| 17 | test_point_in_time_reconstructor.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Point-in-Time Reconstructor — v0.37.0 R465 (po... | 测试依赖 / test_depends |
-| 18 | test_serialization_format_tracker.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Serialization Format Tracker — v0.39.0 R488 (s... | 测试依赖 / test_depends |
-| 19 | test_sub_agent_collusion.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Sub-Agent Collusion Detector — v0.15.0 R213 (s... | 测试依赖 / test_depends |
-| 20 | test_schema_evolution_root.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Schema Evolution — v0.9.0 R111 (schema_evoluti... | 测试依赖 / test_depends |
-| 21 | test_self_api_throttle_defense.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self API Throttle Defense — v0.39.0 R491 (self... | 测试依赖 / test_depends |
-| 22 | test_self_diagnosis.py | → | D_FEEDBACK_LOOP 反馈循环引擎: self_diagnosis.py — 自我诊断 (DD120, TASK-020)... | 测试依赖 / test_depends |
-| 23 | test_self_modification_audit.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self-Modification Audit — v0.15.0 R218 (self_m... | 测试依赖 / test_depends |
-| 24 | test_self_modification_rate_limiter.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R522: SelfModificationRateLimiter (self_modific... | 测试依赖 / test_depends |
-| 25 | test_self_reflection.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self Reflection — v0.7.0 R75 (self_reflection.py) | 测试依赖 / test_depends |
-| 26 | test_self_upgrade_canary.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self Upgrade Canary — v0.14.0 R194 (self_upgra... | 测试依赖 / test_depends |
-| 27 | test_semantic_intent_preservation_guard.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R505: SemanticIntentPreservationGuard (semantic... | 测试依赖 / test_depends |
-| 28 | [INVARIANTS] 按path精确匹配+按功能名模糊匹配; .... | → | D_GOVERNANCE 生命周期管理: apply_verification_results.py — 第32轮验证结果... | config_depends / config_depends |
-| 29 | audit_schema — 审计视图与查询入口（SH-DB-001 v... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
-| 30 | EventStore — Event Sourcing 事件追加与回放（DW... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
-| 31 | audit-trail.evidence_pack — MOD-INF-020 · 证.... | → | D_GOVERNANCE 生命周期管理: evidence_pack.py | 导入依赖 / import_depends |
-| 32 | audit-trail.kb_gate — MOD-INF-020 · KB 审计门... | → | D_GOVERNANCE 生命周期管理: rule_patterns.py — 治理规则正则 + 安全审计模式... | 导入依赖 / import_depends |
-| 33 | audit-trail.privacy — MOD-INF-020 · PII 检测... | → | D_GOVERNANCE 生命周期管理: rule_patterns.py — 治理规则正则 + 安全审计模式... | 导入依赖 / import_depends |
-| 34 | spec_auditor.py | → | D_GOVERNANCE 生命周期管理: G-CT-003 契约：Agent Spec -> RBAC 能力检查. (re... | 导入依赖 / import_depends |
-| 35 | __init__.py | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-... | 导入依赖 / import_depends |
-| 36 | __init__.py | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (... | 导入依赖 / import_depends |
-| 37 | __init__.py | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — BrokerInterface (broker_int... | 导入依赖 / import_depends |
-| 38 | Agent Spec — MOD-INF-019 (__init__.py) | → | D_GOVERNANCE 生命周期管理: G-CT-003 契约：Agent Spec -> RBAC 能力检查. (re... | 导入依赖 / import_depends |
-| 39 | reconciliation_registry.py — GitCommitGateway ... | → | D_GOVERNANCE 生命周期管理: depgraph Schema DDL + 版本化迁移框架 (depgraph_... | 导入依赖 / import_depends |
-| 40 | SnapshotManager — Event Sourcing 快照管理（DW-... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
-| 41 | __init__.py | → | D_GOVERNANCE 生命周期管理: G-CT-006 — BudgetAlert re-exported from shared... | config_depends / config_depends |
-| 42 | __init__.py | → | D_GOVERNANCE 生命周期管理: Command Chain Length Gate — v0.13.0 命令体积De... | config_depends / config_depends |
-| 43 | D_FACTOR — Factors Package (__init__.py) | → | D_GOVERNANCE 生命周期管理: 实验 — Experimentation Pipeline Layer (pipelin... | config_depends / config_depends |
-| 44 | __init__.py | → | D_GOVERNANCE 生命周期管理: Arbitrage Asymmetry Detector — v0.11.0 跨交易.... | config_depends / config_depends |
-| 45 | budget_enforcement.py | → | D_GOVERNANCE 生命周期管理: model_router.py | 导入依赖 / import_depends |
-| 46 | __init__.py | → | D_GOVERNANCE 生命周期管理: dataflowgraph Schema DDL + 连接入口 (dataflowgr... | 导入依赖 / import_depends |
-| 47 | audit-trail.kb_gate — MOD-INF-020 · KB 审计门... | → | D_GOVERNANCE 生命周期管理: rule_patterns.py — 治理规则正则 + 安全审计模式... | 导入依赖 / import_depends |
-| 48 | audit-trail.privacy — MOD-INF-020 · PII 检测... | → | D_GOVERNANCE 生命周期管理: rule_patterns.py — 治理规则正则 + 安全审计模式... | 导入依赖 / import_depends |
-| 49 | __init__.py | → | D_GOVERNANCE 生命周期管理: Cross-Session Correlator — v0.9.0 跨会话Corese... | config_depends / config_depends |
-| 50 | Re-export wrapper: true source is zephyr.pf_cor... | → | D_GOVERNANCE 生命周期管理: StrategyRegistry 卫星模块（OCP-002） (strategy_... | config_depends / config_depends |
-| 51 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 52 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 53 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 54 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 55 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 56 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 57 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 58 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 59 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 60 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 61 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 62 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 63 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 64 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 65 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 66 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 67 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 68 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 69 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 70 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 71 | test_amplification_guard.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 72 | test_api_dependency_metrics.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 73 | test_burn_rate_alerter.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 74 | test_burnout_alarm.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 75 | test_causal_inference_engine.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 76 | test_cognitive_load_budget.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 77 | test_diagnosis_kpi.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 78 | test_emergent_behavior_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 79 | test_global_health_map.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 80 | test_human_anomaly_flood_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 81 | test_interactive_diagnosis.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 82 | test_intermittent_failure_pattern.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 83 | test_latency_slo.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 84 | test_mtti_tracker.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 85 | test_regime_gain_scheduling.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 86 | test_socratic_questions.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 87 | test_statistical_hygiene_auditor.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 88 | test_toil_quantification.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 89 | test_tone_adapter.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 90 | test_tone_adapter_v2.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 91 | test_traffic_replay_validator.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 92 | test_value_added_baseline.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 93 | test_zombie_fle_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 94 | test_concept_drift.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 95 | test_version_migrator.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 96 | F18 治理脚本系统自动化测试. (test_f18_automatio... | → | D_GOVERNANCE 生命周期管理: depgraph Schema DDL + 版本化迁移框架 (depgraph_... | 测试依赖 / test_depends |
-| 97 | F5 端到端集成测试 — boot→run→shutdown→resta... | → | D_GOVERNANCE 生命周期管理: Delegation Engine — MOD-INF-022 (delegation_en... | 测试依赖 / test_depends |
-| 98 | F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | D_GOVERNANCE 生命周期管理: Delegation Engine — MOD-INF-022 (delegation_en... | 测试依赖 / test_depends |
-| 99 | test_flag_lifecycle.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 100 | test_openfeature.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 101 | test_self_audit.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 102 | test_self_benchmark.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 103 | test_self_bottleneck_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 104 | test_self_diagnosis_data_leak_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 105 | test_self_ha.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 106 | test_self_health_monitor.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 107 | test_self_llm_observability.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
+| 14 | test_amplification_guard.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Amplification Guard — v0.10.0 R134 (amplificat... | 测试依赖 / test_depends |
+| 15 | test_api_dependency_metrics.py | → | D_FEEDBACK_LOOP 反馈循环引擎: API Dependency Metrics — v0.17.0+ R237-R242 (a... | 测试依赖 / test_depends |
+| 16 | test_audit_spec_auditor.py | → | D_FEEDBACK_LOOP 反馈循环引擎: protocols.py | 测试依赖 / test_depends |
+| 17 | test_burn_rate_alerter.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Burn Rate Alerter — v0.14.0 R200 (burn_rate_al... | 测试依赖 / test_depends |
+| 18 | test_burnout_alarm.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Burnout Alarm — v0.8.0 R100 (burnout_alarm.py) | 测试依赖 / test_depends |
+| 19 | test_causal_inference_engine.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Causal Inference Engine — v0.3.0 R5-R7 (causal... | 测试依赖 / test_depends |
+| 20 | test_cognitive_load_budget.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Cognitive Load Budget — v0.16.0 R223 (cognitiv... | 测试依赖 / test_depends |
+| 21 | test_crypto_bootstrap.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Cryptographic Bootstrap — v0.15.0 R204 (crypto... | 测试依赖 / test_depends |
+| 22 | test_deterministic_replay.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Deterministic Replay — v0.15.0 R206 (determini... | 测试依赖 / test_depends |
+| 23 | test_diagnosis_kpi.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Diagnosis KPI — v0.9.0 R116 (diagnosis_kpi.py) | 测试依赖 / test_depends |
+| 24 | test_emergent_behavior_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Emergent Behavior Detector — v0.38.0 R473 (eme... | 测试依赖 / test_depends |
+| 25 | test_global_health_map.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Global Health Map — v0.8.0 R103 (global_health... | 测试依赖 / test_depends |
+| 26 | test_human_anomaly_flood_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Human Anomaly Flood Detector — v0.40.0 R500 (h... | 测试依赖 / test_depends |
+| 27 | test_interactive_diagnosis.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Interactive Diagnosis — v0.7.0 R80 (interactiv... | 测试依赖 / test_depends |
+| 28 | test_intermittent_failure_pattern.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Intermittent Failure Pattern Detector — v0.40.... | 测试依赖 / test_depends |
+| 29 | test_latency_slo.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Latency SLO Monitor — v0.14.0 R192 (latency_sl... | 测试依赖 / test_depends |
+| 30 | test_mtti_tracker.py | → | D_FEEDBACK_LOOP 反馈循环引擎: MTTI Tracker — v0.16.0 R221 (mtti_tracker.py) | 测试依赖 / test_depends |
+| 31 | test_point_in_time_reconstructor.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Point-in-Time Reconstructor — v0.37.0 R465 (po... | 测试依赖 / test_depends |
+| 32 | test_regime_gain_scheduling.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Regime Gain Scheduling — v0.37.0 R453 (regime_... | 测试依赖 / test_depends |
+| 33 | test_serialization_format_tracker.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Serialization Format Tracker — v0.39.0 R488 (s... | 测试依赖 / test_depends |
+| 34 | test_socratic_questions.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Socratic Questions — v0.7.0 R81 (socratic_ques... | 测试依赖 / test_depends |
+| 35 | test_statistical_hygiene_auditor.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Statistical Hygiene Auditor — v0.38.0 R476 (st... | 测试依赖 / test_depends |
+| 36 | test_sub_agent_collusion.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Sub-Agent Collusion Detector — v0.15.0 R213 (s... | 测试依赖 / test_depends |
+| 37 | test_toil_quantification.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Toil Quantification — v0.37.0 R457 (toil_quant... | 测试依赖 / test_depends |
+| 38 | test_tone_adapter.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Tone Adapter — v0.9.0 R127 (tone_adapter.py) | 测试依赖 / test_depends |
+| 39 | test_tone_adapter_v2.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Tone Adapter v2 — v0.10.0 R141 (tone_adapter_v... | 测试依赖 / test_depends |
+| 40 | test_traffic_replay_validator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Traffic Replay Validator — v0.14.0 R202 (traff... | 测试依赖 / test_depends |
+| 41 | test_value_added_baseline.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Value Added Baseline — v0.10.0 R138 (value_add... | 测试依赖 / test_depends |
+| 42 | test_zombie_fle_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Zombie FLE Detector — v0.16.0 R222 (zombie_fle... | 测试依赖 / test_depends |
+| 43 | test_concept_drift.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Concept Drift Detector — v0.5.0 R42 (concept_d... | 测试依赖 / test_depends |
+| 44 | test_schema_evolution_root.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Schema Evolution — v0.9.0 R111 (schema_evoluti... | 测试依赖 / test_depends |
+| 45 | test_version_migrator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Version Migrator — v0.12.0 R169 (version_migra... | 测试依赖 / test_depends |
+| 46 | test_flag_lifecycle.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Flag Lifecycle Detector — v0.13.0 R180 (flag_l... | 测试依赖 / test_depends |
+| 47 | test_openfeature.py | → | D_FEEDBACK_LOOP 反馈循环引擎: OpenFeature Integration — v0.13.0 R181 (openfe... | 测试依赖 / test_depends |
+| 48 | test_self_api_throttle_defense.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self API Throttle Defense — v0.39.0 R491 (self... | 测试依赖 / test_depends |
+| 49 | test_self_audit.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self Audit — v0.13.0 R183 (self_audit.py) | 测试依赖 / test_depends |
+| 50 | test_self_benchmark.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self Benchmark — v0.9.0 R115 (self_benchmark.py) | 测试依赖 / test_depends |
+| 51 | test_self_bottleneck_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self-Bottleneck Detector — v0.38.0 R479 (self_... | 测试依赖 / test_depends |
+| 52 | test_self_diagnosis.py | → | D_FEEDBACK_LOOP 反馈循环引擎: self_diagnosis.py — 自我诊断 (DD120, TASK-020)... | 测试依赖 / test_depends |
+| 53 | test_self_diagnosis_data_leak_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R530: SelfDiagnosisDataLeakDetector (self_diagn... | 测试依赖 / test_depends |
+| 54 | test_self_ha.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self HA — v0.13.0 R173 (self_ha.py) | 测试依赖 / test_depends |
+| 55 | test_self_health_monitor.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self Health Monitor — v0.4.0 R29 (self_health_... | 测试依赖 / test_depends |
+| 56 | test_self_llm_observability.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self LLM Observability — v0.12.0 R160 (self_ll... | 测试依赖 / test_depends |
+| 57 | test_self_modification_audit.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self-Modification Audit — v0.15.0 R218 (self_m... | 测试依赖 / test_depends |
+| 58 | test_self_modification_rate_limiter.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R522: SelfModificationRateLimiter (self_modific... | 测试依赖 / test_depends |
+| 59 | test_self_reflection.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self Reflection — v0.7.0 R75 (self_reflection.py) | 测试依赖 / test_depends |
+| 60 | test_self_upgrade_canary.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Self Upgrade Canary — v0.14.0 R194 (self_upgra... | 测试依赖 / test_depends |
+| 61 | test_semantic_intent_preservation_guard.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R505: SemanticIntentPreservationGuard (semantic... | 测试依赖 / test_depends |
+| 62 | [INVARIANTS] 按path精确匹配+按功能名模糊匹配; .... | → | D_GOVERNANCE 生命周期管理: apply_verification_results.py — 第32轮验证结果... | config_depends / config_depends |
+| 63 | audit_schema — 审计视图与查询入口（SH-DB-001 v... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
+| 64 | EventStore — Event Sourcing 事件追加与回放（DW... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
+| 65 | audit-trail.evidence_pack — MOD-INF-020 · 证.... | → | D_GOVERNANCE 生命周期管理: evidence_pack.py | 导入依赖 / import_depends |
+| 66 | audit-trail.kb_gate — MOD-INF-020 · KB 审计门... | → | D_GOVERNANCE 生命周期管理: rule_patterns.py — 治理规则正则 + 安全审计模式... | 导入依赖 / import_depends |
+| 67 | audit-trail.privacy — MOD-INF-020 · PII 检测... | → | D_GOVERNANCE 生命周期管理: rule_patterns.py — 治理规则正则 + 安全审计模式... | 导入依赖 / import_depends |
+| 68 | spec_auditor.py | → | D_GOVERNANCE 生命周期管理: G-CT-003 契约：Agent Spec -> RBAC 能力检查. (re... | 导入依赖 / import_depends |
+| 69 | __init__.py | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-... | 导入依赖 / import_depends |
+| 70 | __init__.py | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (... | 导入依赖 / import_depends |
+| 71 | __init__.py | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — BrokerInterface (broker_int... | 导入依赖 / import_depends |
+| 72 | Agent Spec — MOD-INF-019 (__init__.py) | → | D_GOVERNANCE 生命周期管理: G-CT-003 契约：Agent Spec -> RBAC 能力检查. (re... | 导入依赖 / import_depends |
+| 73 | reconciliation_registry.py — GitCommitGateway ... | → | D_GOVERNANCE 生命周期管理: depgraph Schema DDL + 版本化迁移框架 (depgraph_... | 导入依赖 / import_depends |
+| 74 | SnapshotManager — Event Sourcing 快照管理（DW-... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
+| 75 | __init__.py | → | D_GOVERNANCE 生命周期管理: G-CT-006 — BudgetAlert re-exported from shared... | config_depends / config_depends |
+| 76 | __init__.py | → | D_GOVERNANCE 生命周期管理: Command Chain Length Gate — v0.13.0 命令体积De... | config_depends / config_depends |
+| 77 | D_FACTOR — Factors Package (__init__.py) | → | D_GOVERNANCE 生命周期管理: 实验 — Experimentation Pipeline Layer (pipelin... | config_depends / config_depends |
+| 78 | __init__.py | → | D_GOVERNANCE 生命周期管理: Arbitrage Asymmetry Detector — v0.11.0 跨交易.... | config_depends / config_depends |
+| 79 | budget_enforcement.py | → | D_GOVERNANCE 生命周期管理: model_router.py | 导入依赖 / import_depends |
+| 80 | __init__.py | → | D_GOVERNANCE 生命周期管理: dataflowgraph Schema DDL + 连接入口 (dataflowgr... | 导入依赖 / import_depends |
+| 81 | audit-trail.kb_gate — MOD-INF-020 · KB 审计门... | → | D_GOVERNANCE 生命周期管理: rule_patterns.py — 治理规则正则 + 安全审计模式... | 导入依赖 / import_depends |
+| 82 | audit-trail.privacy — MOD-INF-020 · PII 检测... | → | D_GOVERNANCE 生命周期管理: rule_patterns.py — 治理规则正则 + 安全审计模式... | 导入依赖 / import_depends |
+| 83 | __init__.py | → | D_GOVERNANCE 生命周期管理: Cross-Session Correlator — v0.9.0 跨会话Corese... | config_depends / config_depends |
+| 84 | Re-export wrapper: true source is zephyr.pf_cor... | → | D_GOVERNANCE 生命周期管理: StrategyRegistry 卫星模块（OCP-002） (strategy_... | config_depends / config_depends |
+| 85 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 86 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 87 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 88 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 89 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 90 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 91 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 92 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 93 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 94 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 95 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 96 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 97 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 98 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 99 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 100 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 101 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 102 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 103 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 104 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 105 | F18 治理脚本系统自动化测试. (test_f18_automatio... | → | D_GOVERNANCE 生命周期管理: depgraph Schema DDL + 版本化迁移框架 (depgraph_... | 测试依赖 / test_depends |
+| 106 | F5 端到端集成测试 — boot→run→shutdown→resta... | → | D_GOVERNANCE 生命周期管理: Delegation Engine — MOD-INF-022 (delegation_en... | 测试依赖 / test_depends |
+| 107 | F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | D_GOVERNANCE 生命周期管理: Delegation Engine — MOD-INF-022 (delegation_en... | 测试依赖 / test_depends |
 | 108 | test_self_test.py | → | D_GOVERNANCE 生命周期管理: Escalation Protocol Self-Test — MOD-INF-022. (... | 测试依赖 / test_depends |
 | 109 | test_self_validator.py | → | D_GOVERNANCE 生命周期管理: Self Validator — v0.10.0 升级协议自验证器: pro... | 测试依赖 / test_depends |
 | 110 | test_self_scanner.py | → | D_GOV_CODE_QUALITY 代码质量治理: 引擎自扫描器 — Dogfooding 检测引擎自身源码重复... | 测试依赖 / test_depends |
@@ -1835,107 +1837,108 @@ graph TD
 | 20 | D_GOVERNANCE 生命周期管理: Red/Blue Team Adversarial Test v3: SYS-MASTER-0... | → | SYS-MASTER-001 Compliance Checker (sys_master_c... | 导入依赖 / import_depends |
 | 21 | D_GOVERNANCE 生命周期管理: scripts/governance/rebuild_audit_index.py — 重... | → | indexer.py | 导入依赖 / import_depends |
 | 22 | D_GOVERNANCE 生命周期管理: [INVARIANTS] 预算健康检查不可跳过;检查结果必须.... | → | budget_enforcement.py | 导入依赖 / import_depends |
-| 23 | D_GOVERNANCE 生命周期管理: ProjectionEngine — 事件折叠为当前状态（DW-0003... | → | EventStore — Event Sourcing 事件追加与回放（DW... | 导入依赖 / import_depends |
-| 24 | D_GOVERNANCE 生命周期管理: DatabaseManager — 连接池 + 健康检查 + 自动备份... | → | audit_schema — 审计视图与查询入口（SH-DB-001 v... | 导入依赖 / import_depends |
-| 25 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (governance... | → | writer.py | 导入依赖 / import_depends |
-| 26 | D_GOVERNANCE 生命周期管理: test_anomaly.py | → | anomaly.py | 测试依赖 / test_depends |
-| 27 | D_GOVERNANCE 生命周期管理: test_anomaly.py | → | models.py | 测试依赖 / test_depends |
-| 28 | D_GOVERNANCE 生命周期管理: test_bridge.py | → | bridge.py | 测试依赖 / test_depends |
-| 29 | D_GOVERNANCE 生命周期管理: test_changelog_manager.py | → | changelog_manager.py | 测试依赖 / test_depends |
-| 30 | D_GOVERNANCE 生命周期管理: test_code_archaeology.py | → | code_archaeology.py | 测试依赖 / test_depends |
-| 31 | D_GOVERNANCE 生命周期管理: test_compliance_map.py | → | audit-trail.compliance_map — MOD-INF-020 · 合... | 测试依赖 / test_depends |
-| 32 | D_GOVERNANCE 生命周期管理: test_compliance_map.py | → | models.py | 测试依赖 / test_depends |
-| 33 | D_GOVERNANCE 生命周期管理: test_corporate_actions.py | → | corporate_actions.py | 测试依赖 / test_depends |
-| 34 | D_GOVERNANCE 生命周期管理: test_delegation_auditor.py | → | delegation_auditor.py | 测试依赖 / test_depends |
-| 35 | D_GOVERNANCE 生命周期管理: test_delegation_bridge.py | → | Audit ↔ DelegationManager 委托链审计桥接. (aud... | 测试依赖 / test_depends |
-| 36 | D_GOVERNANCE 生命周期管理: test_dora_metrics.py | → | dora_metrics.py | 测试依赖 / test_depends |
-| 37 | D_GOVERNANCE 生命周期管理: test_evidence_pack.py | → | audit-trail.evidence_pack — MOD-INF-020 · 证.... | 测试依赖 / test_depends |
-| 38 | D_GOVERNANCE 生命周期管理: test_forensic_package.py | → | Forensic Package — v0.8.0 取证就绪: escalation... | 测试依赖 / test_depends |
-| 39 | D_GOVERNANCE 生命周期管理: test_genesis.py | → | genesis.py | 测试依赖 / test_depends |
-| 40 | D_GOVERNANCE 生命周期管理: test_glossary_matrix.py | → | glossary_matrix.py | 测试依赖 / test_depends |
-| 41 | D_GOVERNANCE 生命周期管理: test_indexer.py | → | indexer.py | 测试依赖 / test_depends |
-| 42 | D_GOVERNANCE 生命周期管理: test_integrity_verifier.py | → | Integrity Verifier — v0.8.0 代码完整性验证器: ... | 测试依赖 / test_depends |
-| 43 | D_GOVERNANCE 生命周期管理: test_log_rotation.py | → | log_rotation.py | 测试依赖 / test_depends |
-| 44 | D_GOVERNANCE 生命周期管理: test_merkle_audit.py | → | Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.g... | 测试依赖 / test_depends |
-| 45 | D_GOVERNANCE 生命周期管理: test_merkle_hourly.py | → | merkle_hourly.py | 测试依赖 / test_depends |
-| 46 | D_GOVERNANCE 生命周期管理: test_orchestrator.py | → | audit-orchestrator 兼容重导出层（ARCH-042 阶段4... | 测试依赖 / test_depends |
-| 47 | D_GOVERNANCE 生命周期管理: test_privacy.py | → | audit-trail.privacy — MOD-INF-020 · PII 检测... | 测试依赖 / test_depends |
-| 48 | D_GOVERNANCE 生命周期管理: test_query.py | → | __init__.py | 测试依赖 / test_depends |
-| 49 | D_GOVERNANCE 生命周期管理: test_query.py | → | models.py | 测试依赖 / test_depends |
-| 50 | D_GOVERNANCE 生命周期管理: test_query.py | → | query.py | 测试依赖 / test_depends |
-| 51 | D_GOVERNANCE 生命周期管理: test_replay_engine.py | → | replay_engine.py | 测试依赖 / test_depends |
-| 52 | D_GOVERNANCE 生命周期管理: test_retention.py | → | retention.py | 测试依赖 / test_depends |
-| 53 | D_GOVERNANCE 生命周期管理: test_sbom_generator.py | → | __init__.py | 测试依赖 / test_depends |
-| 54 | D_GOVERNANCE 生命周期管理: test_sbom_generator.py | → | LicenseType 枚举——许可证类型定义（P3 价值审判... | 测试依赖 / test_depends |
-| 55 | D_GOVERNANCE 生命周期管理: test_spec_auditor.py | → | spec_auditor.py | 测试依赖 / test_depends |
-| 56 | D_GOVERNANCE 生命周期管理: test_supply_chain.py | → | audit-trail.supply_chain — MOD-INF-020 · 供应... | 测试依赖 / test_depends |
-| 57 | D_GOVERNANCE 生命周期管理: test_tiered_storage.py | → | tiered_storage.py | 测试依赖 / test_depends |
-| 58 | D_GOVERNANCE 生命周期管理: test_tiered_storage_bridge.py | → | Audit ↔ WarmHotGate 三层存储桥接. (audit_tiere... | 测试依赖 / test_depends |
-| 59 | D_GOVERNANCE 生命周期管理: test_trust_bridge.py | → | Audit ↔ ContinuousTrust 信任分数桥接. (audit_t... | 测试依赖 / test_depends |
-| 60 | D_GOVERNANCE 生命周期管理: test_trust_engine.py | → | trust_engine.py | 测试依赖 / test_depends |
-| 61 | D_GOVERNANCE 生命周期管理: test_verdict_engine.py | → | models.py | 测试依赖 / test_depends |
-| 62 | D_GOVERNANCE 生命周期管理: test_wqa_scorer.py | → | wqa_scorer.py | 测试依赖 / test_depends |
-| 63 | D_GOVERNANCE 生命周期管理: test_writer.py | → | writer.py | 测试依赖 / test_depends |
-| 64 | D_GOVERNANCE 生命周期管理: test_trust_ring_manager.py | → | trust_ring_manager.py | 测试依赖 / test_depends |
-| 65 | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (d... | → | finding_ingest.py | 导入依赖 / import_depends |
-| 66 | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (d... | → | finding_model.py | 导入依赖 / import_depends |
-| 67 | D_GOV_DRIFT 漂移检测: 真源优先级裁决器（Truth Source Validator） (tru... | → | bridge.py | 导入依赖 / import_depends |
-| 68 | D_GOV_DRIFT 漂移检测: integrity.py | → | models.py | 导入依赖 / import_depends |
-| 69 | D_GOV_DRIFT 漂移检测: integrity.py | → | trust_bridge.py | 导入依赖 / import_depends |
-| 70 | D_GOV_DRIFT 漂移检测: integrity.py | → | merkle_hourly.py | 导入依赖 / import_depends |
-| 71 | D_GOV_ENFORCEMENT 规则执行: GateEventAdapter — GateRepo 事件适配器（DW-000... | → | EventStore — Event Sourcing 事件追加与回放（DW... | 导入依赖 / import_depends |
-| 72 | D_GOV_ENFORCEMENT 规则执行: verdict_engine.py | → | models.py | 导入依赖 / import_depends |
-| 73 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit .... | → | reconciliation_registry.py — GitCommitGateway ... | 导入依赖 / import_depends |
-| 74 | D_GOV_OPS_RESILIENCE 运维弹性治理: blast_radius — MOD-INF-028 §3.1 Stage 9 (blas... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 (mode... | 导入依赖 / import_depends |
-| 75 | D_GOV_OPS_RESILIENCE 运维弹性治理: tamper_evident_log.py | → | writer.py | 导入依赖 / import_depends |
-| 76 | D_GOV_RULE 规则治理: 能力检查器（Capability Checker） (capability_ch... | → | bridge.py | 导入依赖 / import_depends |
-| 77 | D_GOV_RULE 规则治理: Owner 紧急旁路——时间限定的门禁临时绕过 + 审计... | → | bridge.py | 导入依赖 / import_depends |
-| 78 | D_INFRA_A2A A2A通信: test_bridges_anomaly.py | → | anomaly.py | 测试依赖 / test_depends |
-| 79 | D_INFRA_A2A A2A通信: test_bridges_contracts.py | → | contracts.py | 测试依赖 / test_depends |
-| 80 | D_INFRA_A2A A2A通信: test_bridges_delegation_bridge.py | → | Audit ↔ DelegationManager 委托链审计桥接. (aud... | 测试依赖 / test_depends |
-| 81 | D_INFRA_A2A A2A通信: test_bridges_feedback_bridge.py | → | Audit ↔ Feedback Loop 三角闭环桥接. (audit_fee... | 测试依赖 / test_depends |
-| 82 | D_INFRA_A2A A2A通信: test_bridges_spec_auditor.py | → | spec_auditor.py | 测试依赖 / test_depends |
-| 83 | D_INFRA_A2A A2A通信: test_bridges_tiered_storage_bridge.py | → | Audit ↔ WarmHotGate 三层存储桥接. (audit_tiere... | 测试依赖 / test_depends |
-| 84 | D_INFRA_A2A A2A通信: test_bridges_trust_bridge.py | → | Audit ↔ ContinuousTrust 信任分数桥接. (audit_t... | 测试依赖 / test_depends |
-| 85 | D_INFRA_RECOVERY 回滚恢复: G-CT-004 契约：Rollback -> Audit 记录回滚操作. ... | → | contracts.py | 导入依赖 / import_depends |
-| 86 | D_INFRA_RECOVERY 回滚恢复: G-CT-002 Rollback 消费端 — on_audit_anomaly() ... | → | anomaly.py | 导入依赖 / import_depends |
-| 87 | D_INFRA_RECOVERY 回滚恢复: RollbackAbuseDetector — 回滚滥用检测。 (rollba... | → | query.py | 导入依赖 / import_depends |
-| 88 | D_INFRA_RECOVERY 回滚恢复: RollbackAuditNexus — 回滚审计记录聚合到 Nexus ... | → | writer.py | 导入依赖 / import_depends |
-| 89 | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | writer.py | 导入依赖 / import_depends |
-| 90 | D_INFRA_RUNTIME 运行时集成: AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自... | → | writer.py | 导入依赖 / import_depends |
-| 91 | D_INFRA_RUNTIME 运行时集成: engine.py | → | finding_model.py | 导入依赖 / import_depends |
-| 92 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | bridge.py | 导入依赖 / import_depends |
-| 93 | D_INFRA_RUNTIME 运行时集成: test_cold_start.py | → | cold_start.py | 测试依赖 / test_depends |
-| 94 | D_INFRA_RUNTIME 运行时集成: test_event_store_stress.py — Event Store 压力.... | → | EventStore — Event Sourcing 事件追加与回放（DW... | 测试依赖 / test_depends |
-| 95 | D_INFRA_RUNTIME 运行时集成: test_event_store_stress.py — Event Store 压力.... | → | SnapshotManager — Event Sourcing 快照管理（DW-... | 测试依赖 / test_depends |
-| 96 | D_INTEGRATION 管线路由: 接收 RED 问题,生成修复文本。LLM 只润色不做判断.... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 (mode... | 导入依赖 / import_depends |
-| 97 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step... | → | writer.py | 导入依赖 / import_depends |
-| 98 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | writer.py | 导入依赖 / import_depends |
-| 99 | D_INTEGRATION 管线路由: test_external_tool_audit.py | → | external_tool_audit.py | 测试依赖 / test_depends |
-| 100 | D_KNOWLEDGE 知识管理: test_kb_gate.py | → | audit-trail.kb_gate — MOD-INF-020 · KB 审计门... | 测试依赖 / test_depends |
-| 101 | D_SECURITY 对抗验证: judge.py | → | finding_model.py | 导入依赖 / import_depends |
-| 102 | D_SECURITY 对抗验证: defense_runner.py | → | finding_model.py | 导入依赖 / import_depends |
-| 103 | D_SECURITY 对抗验证: behavior_audit_logger.py | → | bridge.py | 导入依赖 / import_depends |
-| 104 | D_SECURITY 对抗验证: isolation.py | → | bridge.py | 导入依赖 / import_depends |
-| 105 | D_SHARED 共享服务: session_audit.py —— Session 审计轨迹（Phase 1... | → | writer.py | 导入依赖 / import_depends |
-| 106 | D_SHARED 共享服务: test_e_forensic_package.py | → | Forensic Package — v0.8.0 取证就绪: escalation... | 测试依赖 / test_depends |
-| 107 | D_SHARED 共享服务: test_e_integrity_verifier.py | → | Integrity Verifier — v0.8.0 代码完整性验证器: ... | 测试依赖 / test_depends |
-| 108 | D_SHARED 共享服务: test_e_merkle_audit.py | → | Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.g... | 测试依赖 / test_depends |
-| 109 | D_TRADING 交易运营: verdict_engine.py | → | models.py | 导入依赖 / import_depends |
+| 23 | D_GOVERNANCE 生命周期管理: apply_verification_results.py — 第32轮验证结果... | → | [INVARIANTS] 20项红蓝对抗测试 (red_blue_test.py) | config_depends / config_depends |
+| 24 | D_GOVERNANCE 生命周期管理: ProjectionEngine — 事件折叠为当前状态（DW-0003... | → | EventStore — Event Sourcing 事件追加与回放（DW... | 导入依赖 / import_depends |
+| 25 | D_GOVERNANCE 生命周期管理: DatabaseManager — 连接池 + 健康检查 + 自动备份... | → | audit_schema — 审计视图与查询入口（SH-DB-001 v... | 导入依赖 / import_depends |
+| 26 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (governance... | → | writer.py | 导入依赖 / import_depends |
+| 27 | D_GOVERNANCE 生命周期管理: test_anomaly.py | → | anomaly.py | 测试依赖 / test_depends |
+| 28 | D_GOVERNANCE 生命周期管理: test_anomaly.py | → | models.py | 测试依赖 / test_depends |
+| 29 | D_GOVERNANCE 生命周期管理: test_bridge.py | → | bridge.py | 测试依赖 / test_depends |
+| 30 | D_GOVERNANCE 生命周期管理: test_changelog_manager.py | → | changelog_manager.py | 测试依赖 / test_depends |
+| 31 | D_GOVERNANCE 生命周期管理: test_code_archaeology.py | → | code_archaeology.py | 测试依赖 / test_depends |
+| 32 | D_GOVERNANCE 生命周期管理: test_compliance_map.py | → | audit-trail.compliance_map — MOD-INF-020 · 合... | 测试依赖 / test_depends |
+| 33 | D_GOVERNANCE 生命周期管理: test_compliance_map.py | → | models.py | 测试依赖 / test_depends |
+| 34 | D_GOVERNANCE 生命周期管理: test_corporate_actions.py | → | corporate_actions.py | 测试依赖 / test_depends |
+| 35 | D_GOVERNANCE 生命周期管理: test_delegation_auditor.py | → | delegation_auditor.py | 测试依赖 / test_depends |
+| 36 | D_GOVERNANCE 生命周期管理: test_delegation_bridge.py | → | Audit ↔ DelegationManager 委托链审计桥接. (aud... | 测试依赖 / test_depends |
+| 37 | D_GOVERNANCE 生命周期管理: test_dora_metrics.py | → | dora_metrics.py | 测试依赖 / test_depends |
+| 38 | D_GOVERNANCE 生命周期管理: test_evidence_pack.py | → | audit-trail.evidence_pack — MOD-INF-020 · 证.... | 测试依赖 / test_depends |
+| 39 | D_GOVERNANCE 生命周期管理: test_forensic_package.py | → | Forensic Package — v0.8.0 取证就绪: escalation... | 测试依赖 / test_depends |
+| 40 | D_GOVERNANCE 生命周期管理: test_genesis.py | → | genesis.py | 测试依赖 / test_depends |
+| 41 | D_GOVERNANCE 生命周期管理: test_glossary_matrix.py | → | glossary_matrix.py | 测试依赖 / test_depends |
+| 42 | D_GOVERNANCE 生命周期管理: test_indexer.py | → | indexer.py | 测试依赖 / test_depends |
+| 43 | D_GOVERNANCE 生命周期管理: test_integrity_verifier.py | → | Integrity Verifier — v0.8.0 代码完整性验证器: ... | 测试依赖 / test_depends |
+| 44 | D_GOVERNANCE 生命周期管理: test_log_rotation.py | → | log_rotation.py | 测试依赖 / test_depends |
+| 45 | D_GOVERNANCE 生命周期管理: test_merkle_audit.py | → | Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.g... | 测试依赖 / test_depends |
+| 46 | D_GOVERNANCE 生命周期管理: test_merkle_hourly.py | → | merkle_hourly.py | 测试依赖 / test_depends |
+| 47 | D_GOVERNANCE 生命周期管理: test_orchestrator.py | → | audit-orchestrator 兼容重导出层（ARCH-042 阶段4... | 测试依赖 / test_depends |
+| 48 | D_GOVERNANCE 生命周期管理: test_privacy.py | → | audit-trail.privacy — MOD-INF-020 · PII 检测... | 测试依赖 / test_depends |
+| 49 | D_GOVERNANCE 生命周期管理: test_query.py | → | __init__.py | 测试依赖 / test_depends |
+| 50 | D_GOVERNANCE 生命周期管理: test_query.py | → | models.py | 测试依赖 / test_depends |
+| 51 | D_GOVERNANCE 生命周期管理: test_query.py | → | query.py | 测试依赖 / test_depends |
+| 52 | D_GOVERNANCE 生命周期管理: test_replay_engine.py | → | replay_engine.py | 测试依赖 / test_depends |
+| 53 | D_GOVERNANCE 生命周期管理: test_retention.py | → | retention.py | 测试依赖 / test_depends |
+| 54 | D_GOVERNANCE 生命周期管理: test_sbom_generator.py | → | __init__.py | 测试依赖 / test_depends |
+| 55 | D_GOVERNANCE 生命周期管理: test_sbom_generator.py | → | LicenseType 枚举——许可证类型定义（P3 价值审判... | 测试依赖 / test_depends |
+| 56 | D_GOVERNANCE 生命周期管理: test_spec_auditor.py | → | spec_auditor.py | 测试依赖 / test_depends |
+| 57 | D_GOVERNANCE 生命周期管理: test_supply_chain.py | → | audit-trail.supply_chain — MOD-INF-020 · 供应... | 测试依赖 / test_depends |
+| 58 | D_GOVERNANCE 生命周期管理: test_tiered_storage.py | → | tiered_storage.py | 测试依赖 / test_depends |
+| 59 | D_GOVERNANCE 生命周期管理: test_tiered_storage_bridge.py | → | Audit ↔ WarmHotGate 三层存储桥接. (audit_tiere... | 测试依赖 / test_depends |
+| 60 | D_GOVERNANCE 生命周期管理: test_trust_bridge.py | → | Audit ↔ ContinuousTrust 信任分数桥接. (audit_t... | 测试依赖 / test_depends |
+| 61 | D_GOVERNANCE 生命周期管理: test_trust_engine.py | → | trust_engine.py | 测试依赖 / test_depends |
+| 62 | D_GOVERNANCE 生命周期管理: test_verdict_engine.py | → | models.py | 测试依赖 / test_depends |
+| 63 | D_GOVERNANCE 生命周期管理: test_wqa_scorer.py | → | wqa_scorer.py | 测试依赖 / test_depends |
+| 64 | D_GOVERNANCE 生命周期管理: test_writer.py | → | writer.py | 测试依赖 / test_depends |
+| 65 | D_GOVERNANCE 生命周期管理: test_trust_ring_manager.py | → | trust_ring_manager.py | 测试依赖 / test_depends |
+| 66 | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (d... | → | finding_ingest.py | 导入依赖 / import_depends |
+| 67 | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (d... | → | finding_model.py | 导入依赖 / import_depends |
+| 68 | D_GOV_DRIFT 漂移检测: 真源优先级裁决器（Truth Source Validator） (tru... | → | bridge.py | 导入依赖 / import_depends |
+| 69 | D_GOV_DRIFT 漂移检测: integrity.py | → | models.py | 导入依赖 / import_depends |
+| 70 | D_GOV_DRIFT 漂移检测: integrity.py | → | trust_bridge.py | 导入依赖 / import_depends |
+| 71 | D_GOV_DRIFT 漂移检测: integrity.py | → | merkle_hourly.py | 导入依赖 / import_depends |
+| 72 | D_GOV_ENFORCEMENT 规则执行: GateEventAdapter — GateRepo 事件适配器（DW-000... | → | EventStore — Event Sourcing 事件追加与回放（DW... | 导入依赖 / import_depends |
+| 73 | D_GOV_ENFORCEMENT 规则执行: verdict_engine.py | → | models.py | 导入依赖 / import_depends |
+| 74 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit .... | → | reconciliation_registry.py — GitCommitGateway ... | 导入依赖 / import_depends |
+| 75 | D_GOV_OPS_RESILIENCE 运维弹性治理: blast_radius — MOD-INF-028 §3.1 Stage 9 (blas... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 (mode... | 导入依赖 / import_depends |
+| 76 | D_GOV_OPS_RESILIENCE 运维弹性治理: tamper_evident_log.py | → | writer.py | 导入依赖 / import_depends |
+| 77 | D_GOV_RULE 规则治理: 能力检查器（Capability Checker） (capability_ch... | → | bridge.py | 导入依赖 / import_depends |
+| 78 | D_GOV_RULE 规则治理: Owner 紧急旁路——时间限定的门禁临时绕过 + 审计... | → | bridge.py | 导入依赖 / import_depends |
+| 79 | D_INFRA_A2A A2A通信: test_bridges_anomaly.py | → | anomaly.py | 测试依赖 / test_depends |
+| 80 | D_INFRA_A2A A2A通信: test_bridges_contracts.py | → | contracts.py | 测试依赖 / test_depends |
+| 81 | D_INFRA_A2A A2A通信: test_bridges_delegation_bridge.py | → | Audit ↔ DelegationManager 委托链审计桥接. (aud... | 测试依赖 / test_depends |
+| 82 | D_INFRA_A2A A2A通信: test_bridges_feedback_bridge.py | → | Audit ↔ Feedback Loop 三角闭环桥接. (audit_fee... | 测试依赖 / test_depends |
+| 83 | D_INFRA_A2A A2A通信: test_bridges_spec_auditor.py | → | spec_auditor.py | 测试依赖 / test_depends |
+| 84 | D_INFRA_A2A A2A通信: test_bridges_tiered_storage_bridge.py | → | Audit ↔ WarmHotGate 三层存储桥接. (audit_tiere... | 测试依赖 / test_depends |
+| 85 | D_INFRA_A2A A2A通信: test_bridges_trust_bridge.py | → | Audit ↔ ContinuousTrust 信任分数桥接. (audit_t... | 测试依赖 / test_depends |
+| 86 | D_INFRA_RECOVERY 回滚恢复: G-CT-004 契约：Rollback -> Audit 记录回滚操作. ... | → | contracts.py | 导入依赖 / import_depends |
+| 87 | D_INFRA_RECOVERY 回滚恢复: G-CT-002 Rollback 消费端 — on_audit_anomaly() ... | → | anomaly.py | 导入依赖 / import_depends |
+| 88 | D_INFRA_RECOVERY 回滚恢复: RollbackAbuseDetector — 回滚滥用检测。 (rollba... | → | query.py | 导入依赖 / import_depends |
+| 89 | D_INFRA_RECOVERY 回滚恢复: RollbackAuditNexus — 回滚审计记录聚合到 Nexus ... | → | writer.py | 导入依赖 / import_depends |
+| 90 | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | writer.py | 导入依赖 / import_depends |
+| 91 | D_INFRA_RUNTIME 运行时集成: AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自... | → | writer.py | 导入依赖 / import_depends |
+| 92 | D_INFRA_RUNTIME 运行时集成: engine.py | → | finding_model.py | 导入依赖 / import_depends |
+| 93 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | bridge.py | 导入依赖 / import_depends |
+| 94 | D_INFRA_RUNTIME 运行时集成: test_cold_start.py | → | cold_start.py | 测试依赖 / test_depends |
+| 95 | D_INFRA_RUNTIME 运行时集成: test_event_store_stress.py — Event Store 压力.... | → | EventStore — Event Sourcing 事件追加与回放（DW... | 测试依赖 / test_depends |
+| 96 | D_INFRA_RUNTIME 运行时集成: test_event_store_stress.py — Event Store 压力.... | → | SnapshotManager — Event Sourcing 快照管理（DW-... | 测试依赖 / test_depends |
+| 97 | D_INTEGRATION 管线路由: 接收 RED 问题,生成修复文本。LLM 只润色不做判断.... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 (mode... | 导入依赖 / import_depends |
+| 98 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step... | → | writer.py | 导入依赖 / import_depends |
+| 99 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | writer.py | 导入依赖 / import_depends |
+| 100 | D_INTEGRATION 管线路由: test_external_tool_audit.py | → | external_tool_audit.py | 测试依赖 / test_depends |
+| 101 | D_KNOWLEDGE 知识管理: test_kb_gate.py | → | audit-trail.kb_gate — MOD-INF-020 · KB 审计门... | 测试依赖 / test_depends |
+| 102 | D_SECURITY 对抗验证: judge.py | → | finding_model.py | 导入依赖 / import_depends |
+| 103 | D_SECURITY 对抗验证: defense_runner.py | → | finding_model.py | 导入依赖 / import_depends |
+| 104 | D_SECURITY 对抗验证: behavior_audit_logger.py | → | bridge.py | 导入依赖 / import_depends |
+| 105 | D_SECURITY 对抗验证: isolation.py | → | bridge.py | 导入依赖 / import_depends |
+| 106 | D_SHARED 共享服务: session_audit.py —— Session 审计轨迹（Phase 1... | → | writer.py | 导入依赖 / import_depends |
+| 107 | D_SHARED 共享服务: test_e_forensic_package.py | → | Forensic Package — v0.8.0 取证就绪: escalation... | 测试依赖 / test_depends |
+| 108 | D_SHARED 共享服务: test_e_integrity_verifier.py | → | Integrity Verifier — v0.8.0 代码完整性验证器: ... | 测试依赖 / test_depends |
+| 109 | D_SHARED 共享服务: test_e_merkle_audit.py | → | Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.g... | 测试依赖 / test_depends |
+| 110 | D_TRADING 交易运营: verdict_engine.py | → | models.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 25 个外部域直接连接（出边 314 条 + 入边 110 条 = 424 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 25 个外部域直接连接（出边 314 条 + 入边 111 条 = 425 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
-    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
     D_SHARED["D_SHARED<br/>共享服务"]
+    D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
+    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_TRADING["D_TRADING<br/>交易运营"]
-    D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
@@ -1955,12 +1958,12 @@ graph LR
     D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
     D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理"]
     D_DATA["D_DATA"]
-    D_GOV_AUDIT -->|82条 config_depends / config_depends, 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOVERNANCE
     D_GOV_AUDIT -->|58条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_DRIFT
     D_GOV_AUDIT -->|50条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
+    D_GOV_AUDIT -->|49条 导入依赖 / import_depends, 测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_GOV_AUDIT -->|48条 config_depends / config_depends, 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOVERNANCE
     D_GOV_AUDIT -->|27条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_GOV_AUDIT -->|16条 导入依赖 / import_depends, 测试依赖 / test_depends| D_TRADING
-    D_GOV_AUDIT -->|15条 导入依赖 / import_depends, 测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_GOV_AUDIT -->|13条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SECURITY
     D_GOV_AUDIT -->|8条 测试依赖 / test_depends| D_FBL_VERIFICATION
     D_GOV_AUDIT -->|8条 测试依赖 / test_depends| D_INFRA_RUNTIME
@@ -1977,7 +1980,7 @@ graph LR
     D_GOV_AUDIT -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_GOV_AUDIT -->|1条 测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_GOV_AUDIT -->|1条 runtime / runtime| D_GOV_DOCS
-    D_GOVERNANCE -->|45条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_AUDIT
+    D_GOVERNANCE -->|46条 config_depends / config_depends, 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_AUDIT
     D_COMPLIANCE -->|10条 导入依赖 / import_depends| D_GOV_AUDIT
     D_INFRA_A2A -->|7条 测试依赖 / test_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME -->|6条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_AUDIT

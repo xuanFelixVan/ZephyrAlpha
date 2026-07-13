@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 61 |
-| 模块总数 | 5010 |
-| 生产态模块 | 1652 |
+| 模块总数 | 5012 |
+| 生产态模块 | 1782 |
 | 设计态模块 | 64 |
-| 原型态模块 | 3294 |
+| 原型态模块 | 3166 |
 
 ## 域清单（按架构层分组）
 
@@ -48,7 +48,7 @@ ttl: permanent
 | D_DATA_GOV | 数据治理 / Data Governance | 30 | 0 | 0 | 30 | 30/150 (OK) | [09_d_data_gov.md](09_d_data_gov.md) |
 | D_DATA_SEC | 数据安全与契约 / Data Security & Contracts | 7 | 0 | 0 | 7 | 7/150 (OK) | [10_d_data_sec.md](10_d_data_sec.md) |
 | D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 71 | 67 | 0 | 4 | 71/150 (OK) | [11_d_fbl_verification.md](11_d_fbl_verification.md) |
-| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 358 | 107 | 0 | 251 | 358/150 (超容) | [12_d_feedback_loop.md](12_d_feedback_loop.md) |
+| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 370 | 240 | 0 | 130 | 370/150 (超容) | [12_d_feedback_loop.md](12_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 46 | 13 | 6 | 27 | 46/150 (OK) | [13_d_frontend.md](13_d_frontend.md) |
 | D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 109 | 100 | 0 | 9 | 109/150 (OK) | [14_d_gov_code_quality.md](14_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 79 | 76 | 0 | 3 | 79/150 (OK) | [15_d_gov_ops_resilience.md](15_d_gov_ops_resilience.md) |
@@ -56,7 +56,7 @@ ttl: permanent
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 2 | 1 | 0 | 1 | 2/150 (OK) | [17_d_integration_gateway.md](17_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [18_d_mkt_data.md](18_d_mkt_data.md) |
 | D_OPS | telemetry / Feedback Loop | 8 | 7 | 0 | 1 | 8/150 (OK) | [19_d_ops.md](19_d_ops.md) |
-| D_ORCHESTRATOR | agent_orchestrator / Agent Orchestrator | 79 | 58 | 0 | 21 | 79/150 (OK) | [20_d_orchestrator.md](20_d_orchestrator.md) |
+| D_ORCHESTRATOR | agent_orchestrator / Agent Orchestrator | 82 | 59 | 0 | 23 | 82/150 (OK) | [20_d_orchestrator.md](20_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 10 | 1 | 0 | 9 | 10/150 (OK) | [21_d_reporting.md](21_d_reporting.md) |
 | D_SECURITY | orphan_judge / Adversarial Validation | 212 | 101 | 0 | 111 | 212/150 (超容) | [22_d_security.md](22_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 63 | 5 | 0 | 58 | 63/150 (OK) | [23_d_security_llm.md](23_d_security_llm.md) |
@@ -77,7 +77,7 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [33_d_ex_sor.md](33_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 14 | 4 | 0 | 10 | 14/150 (OK) | [34_d_factor.md](34_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 9 | 3 | 0 | 6 | 9/150 (OK) | [35_d_fundamental_signal.md](35_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 1074 | 134 | 3 | 937 | 1074/150 (超容) | [36_d_governance.md](36_d_governance.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 1059 | 129 | 3 | 927 | 1059/150 (超容) | [36_d_governance.md](36_d_governance.md) |
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 292 | 66 | 2 | 224 | 292/150 (超容) | [37_d_gov_audit.md](37_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 96 | 68 | 28 | 0 | 96/150 (OK) | [38_d_gov_docs.md](38_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [39_d_gov_drift.md](39_d_gov_drift.md) |
@@ -105,6 +105,6 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_BEHAVIORAL_AUDIT | drift_detector_core / Behavioral Audit | 0 | 0 | 0 | 0 | 0/200 (OK) | [57_d_behavioral_audit.md](57_d_behavioral_audit.md) |
 | D_COMPLIANCE | compliance_gate / Compliance | 24 | 0 | 0 | 24 | 24/200 (OK) | [58_d_compliance.md](58_d_compliance.md) |
-| D_DATA | data_source_integrator / D_DATA | 53 | 6 | 0 | 47 | 53/200 (OK) | [59_d_data.md](59_d_data.md) |
+| D_DATA | data_source_integrator / D_DATA | 55 | 7 | 0 | 48 | 55/200 (OK) | [59_d_data.md](59_d_data.md) |
 | D_INFRASTRUCTURE | shared_contracts / D_INFRASTRUCTURE | 61 | 9 | 0 | 52 | 61/200 (OK) | [60_d_infrastructure.md](60_d_infrastructure.md) |
 | D_SIGLEGACY | signal_legacy / Signal Legacy (Design) | 16 | 1 | 0 | 15 | 16/200 (OK) | [61_d_siglegacy.md](61_d_siglegacy.md) |

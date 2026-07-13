@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识库治理（D_GOV_KB）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 07:00:29
+> 最后更新: 2026-07-13 11:37:59
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -128,35 +128,35 @@ graph TD
     src_zephyr_gov_kb_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_ingest_py
     src_zephyr_gov_kb_ingest_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_unified_memory_api_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_storage_unified_memory_api_py
-    src_zephyr_gov_kb_vms_memory_backend_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_backend_protocol_py
-    src_zephyr_gov_kb_init_py -.->|config_depends / config_depends| src_zephyr_gov_kb_batch_ingest_py
     src_zephyr_gov_kb_backend_protocol_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_storage_backend_protocol_py
     src_zephyr_gov_kb_kb_engine_kb_gate_task_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_vms_memory_backend_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_backend_protocol_py
+    src_zephyr_gov_kb_init_py -.->|config_depends / config_depends| src_zephyr_gov_kb_batch_ingest_py
     src_zephyr_gov_kb_migration_kb_gate_task_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
-    src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_extract_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_pipeline_analyze_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_ingest_py
     src_zephyr_gov_kb_storage_unified_memory_api_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_vms_memory_backend_py
     src_zephyr_gov_kb_storage_unified_memory_api_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_storage_backend_protocol_py
-    src_zephyr_gov_kb_pipeline_extract_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_gov_kb_embedding_migrate_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_kb_freeze_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_graph_validator_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_graph_validator_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_graph_validator_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_gov_kb_ingest_py -->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_gov_kb_ingest_py -->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_gov_kb_ingest_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_graph_validator_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_graph_validator_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_graph_validator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_kb_gate_task_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_gov_kb_integrity_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_gov_kb_ke_tombstone_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_gov_kb_ke_tombstone_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_integrity_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_load_bearing_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_quiet_period_monitor_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_safety_brake_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_quiet_period_monitor_py -->|导入依赖 / import_depends| D_SHARED
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_gov_kb_bootstrap_py
@@ -171,11 +171,11 @@ graph TD
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_gov_kb_backend_protocol_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_gov_kb_vms_memory_backend_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_kb_self_test_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_quiet_period_monitor_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_load_bearing_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_quiet_period_monitor_py
     D_KNOWLEDGE["(原型态 / prototype) D_KNOWLEDGE"]
+    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_pipeline_extract_py
     D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_pipeline_analyze_py
-    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_bootstrap_py
     D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_freeze_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -214,27 +214,27 @@ graph TD
     src_zephyr_gov_kb_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_ingest_py
     src_zephyr_gov_kb_ingest_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_vms_memory_backend_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_backend_protocol_py
-    src_zephyr_gov_kb_pipeline_analyze_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_pipeline_extract_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_analyze_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_gov_kb_embedding_migrate_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_kb_freeze_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_graph_validator_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_graph_validator_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_graph_validator_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_ingest_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_gov_kb_ingest_py -->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_gov_kb_ingest_py -->|导入依赖 / import_depends| D_GOV_RULE
-    src_zephyr_gov_kb_ingest_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_graph_validator_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_graph_validator_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_graph_validator_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_kb_gate_task_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_gov_kb_ke_tombstone_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_gov_kb_ke_tombstone_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_gov_kb_ke_tombstone_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_load_bearing_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_safety_brake_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_quiet_period_monitor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_quiet_period_monitor_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_self_test_py -->|导入依赖 / import_depends| D_SHARED
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_gov_kb_bootstrap_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
@@ -245,15 +245,15 @@ graph TD
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_gov_kb_backend_protocol_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_gov_kb_vms_memory_backend_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_kb_self_test_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_quiet_period_monitor_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_load_bearing_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_quiet_period_monitor_py
     D_KNOWLEDGE["(原型态 / prototype) D_KNOWLEDGE"]
+    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_pipeline_extract_py
     D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_pipeline_analyze_py
-    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_bootstrap_py
     D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_freeze_py
     D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_embedding_migrate_py
-    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_pipeline_extract_py
-    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_graph_validator_py
+    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_bootstrap_py
+    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_gov_kb_kb_gate_task_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -297,12 +297,12 @@ graph TD
     src_zephyr_gov_kb_storage_unified_memory_api_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_storage_backend_protocol_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_kb_integrity_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_storage_unified_memory_api_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| D_GOV_RULE
-    src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_storage_unified_memory_api_py -.->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_gov_kb_unified_memory_api_py
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_gov_kb_unified_memory_api_py
@@ -310,7 +310,6 @@ graph TD
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|config_depends / config_depends| src_zephyr_gov_kb_kb_engine_kb_gate_task_py
     D_GOVERNANCE -.->|config_depends / config_depends| src_zephyr_gov_kb_migration_kb_gate_task_py
-    D_GOVERNANCE -.->|config_depends / config_depends| src_zephyr_gov_kb_pipeline_activate_py
     D_GOVERNANCE -.->|config_depends / config_depends| src_zephyr_gov_kb_storage_unified_memory_api_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -367,7 +366,7 @@ graph TD
 | 2 | D_GOVERNANCE 生命周期管理: KB 13项一键体检 — CLI入口薄包装 (self_test.py) | → | KB 13项一键体检 + --self-test入口 (self_test.py) | 导入依赖 / import_depends |
 | 3 | D_GOVERNANCE 生命周期管理: __init__.py | → | Re-export shim — 真源在 zephyr.governance.kb.k... | config_depends / config_depends |
 | 4 | D_GOVERNANCE 生命周期管理: kb.migration — auto-generated package init. (_... | → | Re-export shim — 真源在 zephyr.governance.kb.k... | config_depends / config_depends |
-| 5 | D_GOVERNANCE 生命周期管理: kb.pipeline — auto-generated package init. (__... | → | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | config_depends / config_depends |
+| 5 | D_GOVERNANCE 生命周期管理: kb.pipeline — auto-generated package init. (__... | → | G5 Extract 门禁 — 知识升格（T-2-13-E） (extrac... | config_depends / config_depends |
 | 6 | D_GOVERNANCE 生命周期管理: kb.storage — auto-generated package init. (__i... | → | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | config_depends / config_depends |
 | 7 | D_GOVERNANCE 生命周期管理: test_load_bearing.py | → | 承重KE不可变性 + 承重墙自检 (load_bearing.py) | 测试依赖 / test_depends |
 | 8 | D_GOVERNANCE 生命周期管理: test_quiet_period_monitor.py | → | 每日静默期检测 + 管道健康自检 (quiet_period_mon... | 测试依赖 / test_depends |

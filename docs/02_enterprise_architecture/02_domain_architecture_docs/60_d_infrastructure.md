@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 shared_contracts（D_INFRASTRUCTURE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 07:00:34
+> 最后更新: 2026-07-13 11:38:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -173,8 +173,8 @@ graph TD
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_init_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_market_data_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
@@ -188,9 +188,9 @@ graph TD
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| D_SHARED
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
+    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
+    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
@@ -254,42 +254,42 @@ graph TD
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_shared_contracts_synthesized_signal_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_security_init_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_config_test_config_consistency_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_config_test_config_drift_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
-    tests_config_test_config_root_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     tests_config_test_config_complexity_budget_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    tests_config_test_config_consistency_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_config_test_config_governance_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
+    tests_config_test_config_root_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     tests_config_test_config_hot_reload_guard_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_config_test_config_governance_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     tests_config_test_config_safety_guard_py -.->|测试依赖 / test_depends| D_AUTONOMY_CORE
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     tests_config_test_config_validator_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     tests_config_test_config_scanner_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    tests_config_test_config_drift_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_SECURITY["(生产态 / production) D_SECURITY"]
     tests_contracts_test_abac_guard_root_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_contracts_test_abac_guard_root_py -.->|测试依赖 / test_depends| D_SHARED
     tests_contracts_test_alerts_bridge_py -.->|测试依赖 / test_depends| D_SHARED
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     tests_contracts_test_alerts_bridge_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_security_init_py
-    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
-    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_security_init_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_contracts_telemetry_emitter_py
     D_TRADING["(生产态 / production) D_TRADING"]
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_trace_context_py
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_security_init_py
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_security_init_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_contracts_telemetry_emitter_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_telemetry_emitter_py production
     class src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_security_init_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_trace_context_py,tests_config_test_config_complexity_budget_py,tests_config_test_config_consistency_py,tests_config_test_config_drift_py,tests_config_test_config_fixer_py,tests_config_test_config_governance_py,tests_config_test_config_hot_reload_guard_py,tests_config_test_config_root_py,tests_config_test_config_safety_guard_py,tests_config_test_config_scanner_py,tests_config_test_config_validator_py,tests_contracts_meta_init_py,tests_contracts_test_abac_guard_root_py,tests_contracts_test_alerts_bridge_py,tests_contracts_test_api_version_contract_py,tests_contracts_test_contract_bus_py,tests_contracts_test_contract_consistency_checker_py,tests_contracts_test_contract_drift_detector_py,tests_contracts_test_contract_metrics_root_py,tests_contracts_test_contract_registry_root_py,tests_contracts_test_contract_router_root_py,tests_contracts_test_contract_tester_py,tests_contracts_test_contract_verifier_py,tests_contracts_test_ct_pipe_routing_root_py design
-    class D_SHARED,D_GOV_DRIFT,D_GOVERNANCE,D_GOV_CODE_QUALITY,D_FBL_VERIFICATION,D_FEEDBACK_LOOP,D_AUTONOMY_CORE,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_SECURITY,D_INTEGRATION,D_ORCHESTRATOR,D_TRADING external_prod
+    class D_SHARED,D_FBL_VERIFICATION,D_GOV_DRIFT,D_GOV_CODE_QUALITY,D_FEEDBACK_LOOP,D_AUTONOMY_CORE,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_SECURITY,D_GOVERNANCE,D_TRADING,D_ORCHESTRATOR,D_INTEGRATION external_prod
 ```
 
 #### 第 3 页 / 共 3 页
@@ -430,8 +430,8 @@ graph TD
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_escalation_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_init_py
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_market_data_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
@@ -446,8 +446,8 @@ graph TD
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| D_SHARED
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
+    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
@@ -481,9 +481,9 @@ graph TD
 | 1 | test_config_safety_guard.py | → | D_AUTONOMY_CORE 自治核心: config_safety_guard.py — 配置自毁防护 (B16, DD... | 测试依赖 / test_depends |
 | 2 | test_config_complexity_budget.py | → | D_FBL_VERIFICATION 反馈验证: Config Complexity Budget — v0.16.0 R227 (confi... | 测试依赖 / test_depends |
 | 3 | test_config_governance.py | → | D_FBL_VERIFICATION 反馈验证: Config Governance — v0.3.0 R8 (config_governan... | 测试依赖 / test_depends |
-| 4 | test_config_hot_reload_guard.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Config Hot-Reload Guard — v0.40.0 R498 (config... | 测试依赖 / test_depends |
-| 5 | test_api_version_contract.py | → | D_FEEDBACK_LOOP 反馈循环引擎: API Version Contract — v0.14.0 R188 (api_versi... | 测试依赖 / test_depends |
-| 6 | test_config_drift.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
+| 4 | test_config_drift.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Config Drift Detector — v0.13.0 R182 (config_d... | 测试依赖 / test_depends |
+| 5 | test_config_hot_reload_guard.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Config Hot-Reload Guard — v0.40.0 R498 (config... | 测试依赖 / test_depends |
+| 6 | test_api_version_contract.py | → | D_FEEDBACK_LOOP 反馈循环引擎: API Version Contract — v0.14.0 R188 (api_versi... | 测试依赖 / test_depends |
 | 7 | test_alerts_bridge.py | → | D_GOVERNANCE 生命周期管理: G-CT-006 — BudgetAlert re-exported from shared... | 测试依赖 / test_depends |
 | 8 | test_config_root.py | → | D_GOV_CODE_QUALITY 代码质量治理: 配置管理 — 策略树 YAML 加载 + 项目规模感知四 T... | 测试依赖 / test_depends |
 | 9 | test_contract_consistency_checker.py | → | D_GOV_CODE_QUALITY 代码质量治理: API契约一致性检查器 — 存在性·行为·契约三维. ... | 测试依赖 / test_depends |
@@ -625,13 +625,13 @@ graph LR
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
-    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
+    D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
     D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
-    D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
-    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
+    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
+    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_REPORTING["D_REPORTING<br/>报告"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
@@ -646,13 +646,13 @@ graph LR
     D_INFRASTRUCTURE -->|4条 测试依赖 / test_depends| D_INFRA_RUNTIME
     D_INFRASTRUCTURE -->|3条 测试依赖 / test_depends| D_SECURITY
     D_INFRASTRUCTURE -->|3条 测试依赖 / test_depends| D_ORCHESTRATOR
-    D_INFRASTRUCTURE -->|2条 测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    D_INFRASTRUCTURE -->|3条 测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_INFRASTRUCTURE -->|2条 测试依赖 / test_depends| D_GOV_DRIFT
     D_INFRASTRUCTURE -->|2条 测试依赖 / test_depends| D_FBL_VERIFICATION
-    D_INFRASTRUCTURE -->|2条 测试依赖 / test_depends| D_FEEDBACK_LOOP
-    D_INFRASTRUCTURE -->|2条 测试依赖 / test_depends| D_GOVERNANCE
+    D_INFRASTRUCTURE -->|2条 测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_INFRASTRUCTURE -->|1条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_INFRASTRUCTURE -->|1条 测试依赖 / test_depends| D_AUTONOMY_CORE
+    D_INFRASTRUCTURE -->|1条 测试依赖 / test_depends| D_GOVERNANCE
     D_GOVERNANCE -->|13条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED -->|12条 config_depends / config_depends, 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_REPORTING -->|6条 导入依赖 / import_depends| D_INFRASTRUCTURE

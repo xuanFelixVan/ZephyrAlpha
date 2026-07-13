@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 07:00:08
+> 最后更新: 2026-07-13 11:37:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -160,34 +160,34 @@ graph TD
     src_zephyr_frontend_dashboard_components_chart_factory_py_1 -.->|runtime / runtime| src_zephyr_frontend_dashboard_components_chart_factory_py_1
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_init_py -.->|config_depends / config_depends| src_zephyr_frontend_interface_base_py
+    src_zephyr_frontend_dashboard_app_panel_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    src_zephyr_frontend_dashboard_app_panel_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     src_zephyr_frontend_dashboard_components_olap_trend_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_backtest_results_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_gate_statistics_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_order_book_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_gate_statistics_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_position_monitor_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_trade_panel_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_tick_replay_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_init_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_init_py
-    src_zephyr_frontend_dashboard_components_trade_panel_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     scripts_tests_test_frontend_components_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     scripts_tests_test_frontend_components_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     scripts_tests_test_frontend_components_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
-    scripts_tests_test_frontend_components_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     scripts_tests_test_frontend_components_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
+    scripts_tests_test_frontend_components_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     D_BACKTEST["(设计态 / design) D_BACKTEST"]
     src_zephyr_frontend_dashboard_components_backtest_results_py_1 -.->|import / import| D_BACKTEST
     src_zephyr_frontend_dashboard_components_tick_replay_py_1 -.->|导入依赖 / import_depends| D_BACKTEST
@@ -201,14 +201,14 @@ graph TD
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_frontend_dashboard_components_chart_factory_py -.->|导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
-    src_zephyr_frontend_dashboard_components_task_progress_py -.->|导入依赖 / import_depends| D_SHARED
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_frontend_dashboard_components_chart_factory_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_frontend_dashboard_components_task_progress_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_app_panel_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
@@ -222,7 +222,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_app_panel_py,src_zephyr_frontend_dashboard_components_backtest_results_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_gate_statistics_py,src_zephyr_frontend_dashboard_components_knowledge_overview_py,src_zephyr_frontend_dashboard_components_olap_trend_py,src_zephyr_frontend_dashboard_components_order_book_py,src_zephyr_frontend_dashboard_components_position_monitor_py,src_zephyr_frontend_dashboard_components_task_progress_py,src_zephyr_frontend_dashboard_components_tick_replay_py,src_zephyr_frontend_dashboard_components_trade_panel_py,src_zephyr_frontend_interface_base_py production
     class scripts_tests_test_frontend_components_py,src_zephyr_frontend_init_py,src_zephyr_frontend_extensions_init_py,src_zephyr_frontend_api_init_py,src_zephyr_frontend_core_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_dashboard_components_backtest_performance_py,src_zephyr_frontend_dashboard_components_backtest_results_py_1,src_zephyr_frontend_dashboard_components_chart_factory_py,src_zephyr_frontend_dashboard_components_chart_factory_py_1,src_zephyr_frontend_dashboard_components_order_book_py_1,src_zephyr_frontend_dashboard_components_position_monitor_py_1,src_zephyr_frontend_dashboard_components_tick_replay_py_1,src_zephyr_frontend_dashboard_components_trade_panel_py_1,src_zephyr_frontend_infrastructure_init_py,src_zephyr_frontend_models_init_py design
-    class D_SHARED,D_FEEDBACK_LOOP,D_TRADING external_prod
+    class D_FEEDBACK_LOOP,D_SHARED,D_TRADING external_prod
     class D_BACKTEST,D_GOVERNANCE,D_EX_CORE external_design
 ```
 
@@ -249,28 +249,27 @@ graph TD
         tests_fle_test_fle_validator_py["(原型态 / prototype) test_fle_validator.py"]
     end
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_fle_test_fle_chaos_engineering_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_fle_test_fle_exceptions_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_fle_test_fle_config_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_dogfood_monitor_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     tests_fle_test_fle_feedback_collector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_generator_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_performance_regression_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_fle_test_fle_protocols_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_fle_test_fle_metrics_collector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_self_slo_metrics_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_fle_test_fle_exceptions_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_protocols_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_regime_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_upgrade_safety_validator_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_fle_test_fle_template_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_dogfood_monitor_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_generator_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_chaos_engineering_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_frontend_services_init_py,tests_fle_test_fle_anomaly_detector_py,tests_fle_test_fle_chaos_engineering_py,tests_fle_test_fle_config_py,tests_fle_test_fle_dogfood_monitor_py,tests_fle_test_fle_exceptions_py,tests_fle_test_fle_feedback_collector_py,tests_fle_test_fle_generator_py,tests_fle_test_fle_metrics_collector_py,tests_fle_test_fle_performance_regression_detector_py,tests_fle_test_fle_protocols_py,tests_fle_test_fle_regime_detector_py,tests_fle_test_fle_self_slo_metrics_py,tests_fle_test_fle_template_py,tests_fle_test_fle_upgrade_safety_validator_py,tests_fle_test_fle_validator_py design
-    class D_FEEDBACK_LOOP,D_GOVERNANCE external_prod
+    class D_FEEDBACK_LOOP external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -296,19 +295,19 @@ graph TD
     end
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| D_GOVERNANCE
@@ -316,25 +315,24 @@ graph TD
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_frontend_dashboard_components_task_progress_py -.->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| D_TRADING
+    D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_frontend_dashboard_components_task_progress_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_app_panel_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_order_book_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_app_panel_py,src_zephyr_frontend_dashboard_components_backtest_results_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_gate_statistics_py,src_zephyr_frontend_dashboard_components_knowledge_overview_py,src_zephyr_frontend_dashboard_components_olap_trend_py,src_zephyr_frontend_dashboard_components_order_book_py,src_zephyr_frontend_dashboard_components_position_monitor_py,src_zephyr_frontend_dashboard_components_task_progress_py,src_zephyr_frontend_dashboard_components_tick_replay_py,src_zephyr_frontend_dashboard_components_trade_panel_py,src_zephyr_frontend_interface_base_py production
-    class D_GOVERNANCE,D_FEEDBACK_LOOP,D_TRADING external_prod
-    class D_SHARED external_design
+    class D_GOVERNANCE,D_FEEDBACK_LOOP,D_TRADING,D_SHARED external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -412,28 +410,27 @@ graph TD
     src_zephyr_frontend_dashboard_components_init_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_init_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_frontend_dashboard_components_chart_factory_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_chaos_engineering_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_fle_test_fle_exceptions_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_fle_test_fle_config_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_dogfood_monitor_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     tests_fle_test_fle_feedback_collector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_generator_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_performance_regression_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_fle_test_fle_protocols_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_fle_test_fle_metrics_collector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_fle_test_fle_self_slo_metrics_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_fle_test_fle_exceptions_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_protocols_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_regime_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_upgrade_safety_validator_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_template_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_dogfood_monitor_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_generator_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_fle_test_fle_anomaly_detector_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_tests_test_frontend_components_py,src_zephyr_frontend_init_py,src_zephyr_frontend_extensions_init_py,src_zephyr_frontend_api_init_py,src_zephyr_frontend_core_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_dashboard_components_backtest_performance_py,src_zephyr_frontend_dashboard_components_chart_factory_py,src_zephyr_frontend_infrastructure_init_py,src_zephyr_frontend_models_init_py,src_zephyr_frontend_services_init_py,tests_fle_test_fle_anomaly_detector_py,tests_fle_test_fle_chaos_engineering_py,tests_fle_test_fle_config_py,tests_fle_test_fle_dogfood_monitor_py,tests_fle_test_fle_exceptions_py,tests_fle_test_fle_feedback_collector_py,tests_fle_test_fle_generator_py,tests_fle_test_fle_metrics_collector_py,tests_fle_test_fle_performance_regression_detector_py,tests_fle_test_fle_protocols_py,tests_fle_test_fle_regime_detector_py,tests_fle_test_fle_self_slo_metrics_py,tests_fle_test_fle_template_py,tests_fle_test_fle_upgrade_safety_validator_py,tests_fle_test_fle_validator_py design
-    class D_SHARED,D_GOVERNANCE,D_FEEDBACK_LOOP external_prod
+    class D_SHARED,D_FEEDBACK_LOOP external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -447,31 +444,31 @@ graph TD
 | 3 |  | → | D_EX_CORE 执行核心:  | 导入依赖 / import_depends |
 | 4 |  | → | D_EX_CORE 执行核心:  | 导入依赖 / import_depends |
 | 5 | fitness_functions · Fitness Functions 仪表盘组... | → | D_FEEDBACK_LOOP 反馈循环引擎: fitness_functions.py | 导入依赖 / import_depends |
-| 6 | test_fle_anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: FeedbackCollector: collect task execution feedb... | 测试依赖 / test_depends |
-| 7 | test_fle_anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: MetricsCollector: append-only metrics recording... | 测试依赖 / test_depends |
-| 8 | test_fle_anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: protocols.py | 测试依赖 / test_depends |
-| 9 | test_fle_config.py | → | D_FEEDBACK_LOOP 反馈循环引擎: config.py | 测试依赖 / test_depends |
-| 10 | test_fle_exceptions.py | → | D_FEEDBACK_LOOP 反馈循环引擎: exceptions.py | 测试依赖 / test_depends |
-| 11 | test_fle_feedback_collector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: FeedbackCollector: collect task execution feedb... | 测试依赖 / test_depends |
-| 12 | test_fle_generator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: generator.py | 测试依赖 / test_depends |
-| 13 | test_fle_metrics_collector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: MetricsCollector: append-only metrics recording... | 测试依赖 / test_depends |
-| 14 | test_fle_protocols.py | → | D_FEEDBACK_LOOP 反馈循环引擎: protocols.py | 测试依赖 / test_depends |
-| 15 | test_fle_template.py | → | D_FEEDBACK_LOOP 反馈循环引擎: template.py | 测试依赖 / test_depends |
-| 16 | test_fle_upgrade_safety_validator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R529: FLEUpgradeSafetyValidator (fle_upgrade_sa... | 测试依赖 / test_depends |
-| 17 | test_fle_validator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: template.py | 测试依赖 / test_depends |
-| 18 | test_fle_validator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: validator.py | 测试依赖 / test_depends |
-| 19 | ZephyrAlpha Dashboard · Streamlit 仪表盘 (app.py) | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
-| 20 | ZephyrAlpha Dashboard · Streamlit 仪表盘 (app.py) | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | 导入依赖 / import_depends |
-| 21 | app_panel · Panel 仪表盘主应用入口（v3.1.0, #A... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
-| 22 | app_panel · Panel 仪表盘主应用入口（v3.1.0, #A... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | 导入依赖 / import_depends |
-| 23 |  | → | D_GOVERNANCE 生命周期管理:  | 导入依赖 / import_depends |
-| 24 |  | → | D_GOVERNANCE 生命周期管理:  | 导入依赖 / import_depends |
-| 25 | test_fle_anomaly_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 26 | test_fle_chaos_engineering.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 27 | test_fle_dogfood_monitor.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
-| 28 | test_fle_performance_regression_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 29 | test_fle_regime_detector.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
-| 30 | test_fle_self_slo_metrics.py | → | D_GOVERNANCE 生命周期管理: feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 测试依赖 / test_depends |
+| 6 | test_fle_anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: anomaly_detector.py | 测试依赖 / test_depends |
+| 7 | test_fle_anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: FeedbackCollector: collect task execution feedb... | 测试依赖 / test_depends |
+| 8 | test_fle_anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: MetricsCollector: append-only metrics recording... | 测试依赖 / test_depends |
+| 9 | test_fle_anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: protocols.py | 测试依赖 / test_depends |
+| 10 | test_fle_chaos_engineering.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Chaos Engineering — v0.13.0 R172 (chaos_engine... | 测试依赖 / test_depends |
+| 11 | test_fle_config.py | → | D_FEEDBACK_LOOP 反馈循环引擎: config.py | 测试依赖 / test_depends |
+| 12 | test_fle_dogfood_monitor.py | → | D_FEEDBACK_LOOP 反馈循环引擎: FLE Dogfood Monitor — v0.38.0 R480 (fle_dogfoo... | 测试依赖 / test_depends |
+| 13 | test_fle_exceptions.py | → | D_FEEDBACK_LOOP 反馈循环引擎: exceptions.py | 测试依赖 / test_depends |
+| 14 | test_fle_feedback_collector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: FeedbackCollector: collect task execution feedb... | 测试依赖 / test_depends |
+| 15 | test_fle_generator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: generator.py | 测试依赖 / test_depends |
+| 16 | test_fle_metrics_collector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: MetricsCollector: append-only metrics recording... | 测试依赖 / test_depends |
+| 17 | test_fle_performance_regression_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R532: FLEPerformanceRegressionDetector (fle_per... | 测试依赖 / test_depends |
+| 18 | test_fle_protocols.py | → | D_FEEDBACK_LOOP 反馈循环引擎: protocols.py | 测试依赖 / test_depends |
+| 19 | test_fle_regime_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 测试依赖 / test_depends |
+| 20 | test_fle_self_slo_metrics.py | → | D_FEEDBACK_LOOP 反馈循环引擎: FLE Self SLO Metrics — v0.17.0+ R249-R254 (fle... | 测试依赖 / test_depends |
+| 21 | test_fle_template.py | → | D_FEEDBACK_LOOP 反馈循环引擎: template.py | 测试依赖 / test_depends |
+| 22 | test_fle_upgrade_safety_validator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R529: FLEUpgradeSafetyValidator (fle_upgrade_sa... | 测试依赖 / test_depends |
+| 23 | test_fle_validator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: template.py | 测试依赖 / test_depends |
+| 24 | test_fle_validator.py | → | D_FEEDBACK_LOOP 反馈循环引擎: validator.py | 测试依赖 / test_depends |
+| 25 | ZephyrAlpha Dashboard · Streamlit 仪表盘 (app.py) | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
+| 26 | ZephyrAlpha Dashboard · Streamlit 仪表盘 (app.py) | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | 导入依赖 / import_depends |
+| 27 | app_panel · Panel 仪表盘主应用入口（v3.1.0, #A... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
+| 28 | app_panel · Panel 仪表盘主应用入口（v3.1.0, #A... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | 导入依赖 / import_depends |
+| 29 |  | → | D_GOVERNANCE 生命周期管理:  | 导入依赖 / import_depends |
+| 30 |  | → | D_GOVERNANCE 生命周期管理:  | 导入依赖 / import_depends |
 | 31 | chart_factory · 图表统一工厂（v3.0.0新增, #ARC... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
 | 32 | task_progress · 任务进度看板组件（v3.1.0 Panel... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
 | 33 | trade_panel · 实盘交易面板组件（v3.0.0 Panel+H... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
@@ -503,8 +500,8 @@ graph LR
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
-    D_FRONTEND -->|14条 导入依赖 / import_depends, 测试依赖 / test_depends| D_FEEDBACK_LOOP
-    D_FRONTEND -->|12条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOVERNANCE
+    D_FRONTEND -->|20条 导入依赖 / import_depends, 测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_FRONTEND -->|6条 导入依赖 / import_depends| D_GOVERNANCE
     D_FRONTEND -->|3条 导入依赖 / import_depends| D_SHARED
     D_FRONTEND -->|2条 import / import, 导入依赖 / import_depends| D_BACKTEST
     D_FRONTEND -->|2条 导入依赖 / import_depends| D_EX_CORE
