@@ -10,10 +10,11 @@ tier: tier_1_governance
 status: active
 version: 0.4.0
 created: '2026-05-16'
-last_updated: '2026-06-25'
+last_updated: '2026-07-13'
 # 裁定#201: 补写 D-SIGNAL_ASHARE/FUNDAMENTAL/QUALITY registry 条目
 # 裁定#202: 补写 D_GOV_RULE registry 条目
 # 裁定#204: D-SIGNAL* 4 域改名（D-SIGNAL_ASHARE→D_ASHARE_SIGNAL, D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL, D-SIGNAL_QUALITY→D_SIGQC, D-SIGNAL→D_SIGLEGACY）
+# 裁定#200(2026-07-13修正): 14个ssot_path更新以反映D_GOVERNANCE/D_TRADING/D_FEEDBACK_LOOP域拆分后的实际物理路径（orchestrator/feedback_loop移至顶层、gov_*子域独立、audit_trail合并入gov_audit）
 unique_key:
 - domain
 - subdomain
@@ -30,7 +31,7 @@ entries:
 - domain: D_GOV_ENFORCEMENT
   subdomain: rule_enforcement
   ssot_module: MOD-GATE_ENGINE
-  ssot_path: src/zephyr/governance/rule_enforcement/
+  ssot_path: src/zephyr/gov_enforcement/rule_enforcement/
   covers:
   - 门禁引擎流程编排(GatePipeline/GateEngine)
   - 准入门禁(MAD-001~004)
@@ -57,7 +58,7 @@ entries:
 - domain: D_GOV_SCRIPTS
   subdomain: script_governance
   ssot_module: MOD-INF-005
-  ssot_path: src/zephyr/governance/script_governance/
+  ssot_path: scripts/governance/
   covers:
   - Phase Manager阶段管理
   - 脚本审计注册(audit_registration)
@@ -76,7 +77,7 @@ entries:
 - domain: D_GOV_DRIFT
   subdomain: drift_detection
   ssot_module: MOD-INF-023
-  ssot_path: src/zephyr/governance/drift_detection/
+  ssot_path: src/zephyr/gov_drift/
   covers:
   - 39个漂移检测器注册与调度
   - 基线管理(BaselineManager)
@@ -119,7 +120,7 @@ entries:
 - domain: D_GOV_KB
   subdomain: knowledge_base_governance
   ssot_module: MOD-KB-001
-  ssot_path: src/zephyr/governance/kb/
+  ssot_path: src/zephyr/gov_kb/
   covers:
   - 知识管线(ingest/triage/extract/activate/analyze)
   - 知识仓库(kb_repo)
@@ -140,7 +141,7 @@ entries:
 - domain: D_GOVERNANCE
   subdomain: registry_management
   ssot_module: MOD-INF-037
-  ssot_path: src/zephyr/governance/registry_management/
+  ssot_path: architecture_model/
   covers:
   - 注册表总索引(registry_of_registries)
   - 模块登记表(module-registry)
@@ -182,7 +183,7 @@ entries:
 - domain: D_GOV_AUDIT
   subdomain: audit_orchestration
   ssot_module: MOD-INF-027
-  ssot_path: src/zephyr/governance/
+  ssot_path: src/zephyr/gov_audit/
   covers:
   - 审计管线编排
   - 多维度审计调度
@@ -484,7 +485,7 @@ entries:
 - domain: D_GOV_AUDIT
   subdomain: audit-trail
   ssot_module: MOD-INF-020
-  ssot_path: src/zephyr/governance/audit_trail/
+  ssot_path: src/zephyr/gov_audit/
   covers:
   - Merkle小时级完整性(merkle_hourly)
   - 审计日志写入(writer)
@@ -546,7 +547,7 @@ entries:
 - domain: D_OPS
   subdomain: feedback-loop
   ssot_module: MOD-FEEDBACK_LOOP
-  ssot_path: src/zephyr/trading/feedback_loop/
+  ssot_path: src/zephyr/feedback_loop/
   covers:
   - 反馈收集器(collectors)
   - 反馈检测器(detectors)
@@ -834,7 +835,7 @@ entries:
 - domain: D_GOV_SCRIPTS
   subdomain: code_dedup
   ssot_module: MOD-INF-017
-  ssot_path: src/zephyr/governance/
+  ssot_path: src/zephyr/gov_code_quality/code_dedup/
   covers:
   - 代码去重检测
   - 重复造轮子识别
@@ -963,7 +964,7 @@ entries:
 - domain: D_GOV_CODE_QUALITY
   subdomain: code_quality_governance
   ssot_module: MOD-INF-024
-  ssot_path: src/zephyr/governance/code_dedup/
+  ssot_path: src/zephyr/gov_code_quality/code_dedup/
   covers:
   - 代码去重引擎(code_dedup)
   - 提交门禁引擎(commit_gates)
@@ -1007,7 +1008,7 @@ entries:
 - domain: D_FBL_VERIFICATION
   subdomain: feedback_verification
   ssot_module: MOD-FEEDBACK_LOOP
-  ssot_path: src/zephyr/trading/feedback_loop/gates/
+  ssot_path: src/zephyr/feedback_loop/verifiers/
   covers:
   - 反馈循环门禁(feedback_loop/gates)
   - 结果验证器(feedback_loop/verifiers)
@@ -1091,7 +1092,7 @@ entries:
 - domain: D_FEEDBACK_LOOP
   subdomain: feedback_loop_engine
   ssot_module: MOD-FEEDBACK_LOOP
-  ssot_path: src/zephyr/trading/feedback_loop/
+  ssot_path: src/zephyr/feedback_loop/
   covers:
   - 反馈收集器(collectors)
   - 反馈检测器(detectors)
@@ -1124,7 +1125,7 @@ entries:
 - domain: D_ORCHESTRATOR
   subdomain: agent_orchestrator
   ssot_module: MOD-INF-039
-  ssot_path: src/zephyr/trading/orchestrator/
+  ssot_path: src/zephyr/orchestrator/
   covers:
   - Agent全生命周期编排
   - 任务队列(task_queue)
@@ -1163,7 +1164,7 @@ entries:
 - domain: D_BEHAVIORAL_AUDIT
   subdomain: drift_detector_core
   ssot_module: MOD-INF-023
-  ssot_path: src/zephyr/governance/drift_detector_core/
+  ssot_path: src/zephyr/gov_drift/detector_core/
   covers:
   - AI决策行为可追溯审计
   - 漂移检测核心子集(benchmark_integrity/ml_engineering/model_drift_monitor)
