@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.diagnosers.reliability.cross_guard_conflict_detector
-# [DOMAIN] D_FEEDBACK_LOOP
+# [DOMAIN] D_FBL_DIAGNOSERS
 # [DEPENDENCIES] zephyr.feedback_loop.diagnosers.__init__
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,4 +1,4 @@
-# [DOMAIN] D_FEEDBACK_LOOP
+# [DOMAIN] D_FBL_DIAGNOSERS
 # [A_module] module_id=MOD-UNK_diagnosers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.diagnosers

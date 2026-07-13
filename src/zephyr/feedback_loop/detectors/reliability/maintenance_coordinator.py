@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.detectors.reliability.maintenance_coordinator
-# [DOMAIN] D_FEEDBACK_LOOP
+# [DOMAIN] D_FBL_DETECTORS
 # [DEPENDENCIES] zephyr.feedback_loop.detectors.__init__
 # [CONSUMERS]
 # [STARTUP] imported
