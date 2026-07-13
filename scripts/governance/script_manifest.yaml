@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-13T15:42:44Z
+# 自动生成于 2026-07-13T15:59:59Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-13T15:42:44Z'
+generated_at: '2026-07-13T15:59:59Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 339
@@ -1337,7 +1337,7 @@ scripts:
   - --json
   - --package
   warn_only: false
-  description: 蓝图↔代码双向对齐检测——代码[BLUEPRINT]头部module_id与蓝图注册表一致性+蓝图§4文件落地验证
+  description: 蓝图↔代码双向对齐检测——代码[BLUEPRINT]头部module_id双源验证(registry+depgraph)+蓝图§4文件清单depgraph派生(裁定#211)
   tags:
   - Critical
   - Quick
