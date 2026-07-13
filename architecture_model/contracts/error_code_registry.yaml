@@ -843,60 +843,60 @@ error_codes:
   file: src/zephyr/trading/staging_area.py
 - code: ZA-TR-0005
   class: TriggerRouterConfigError
-  module: zephyr.trading.orchestrator.execution.trigger_router
-  file: src/zephyr/trading/orchestrator/execution/trigger_router.py
+  module: zephyr.orchestrator.execution.trigger_router
+  file: src/zephyr/orchestrator/execution/trigger_router.py
 - code: ZA-TR-0006
   class: FLEBaseException
-  module: zephyr.trading.feedback_loop.exceptions
-  file: src/zephyr/trading/feedback_loop/exceptions.py
+  module: zephyr.feedback_loop.exceptions
+  file: src/zephyr/feedback_loop/exceptions.py
 - code: ZA-TR-0007
   class: DiagnosisError
-  module: zephyr.trading.feedback_loop.exceptions
-  file: src/zephyr/trading/feedback_loop/exceptions.py
+  module: zephyr.feedback_loop.exceptions
+  file: src/zephyr/feedback_loop/exceptions.py
 - code: ZA-TR-0008
   class: RepairError
-  module: zephyr.trading.feedback_loop.exceptions
-  file: src/zephyr/trading/feedback_loop/exceptions.py
+  module: zephyr.feedback_loop.exceptions
+  file: src/zephyr/feedback_loop/exceptions.py
 - code: ZA-TR-0009
   class: GateBlockedError
-  module: zephyr.trading.feedback_loop.exceptions
-  file: src/zephyr/trading/feedback_loop/exceptions.py
+  module: zephyr.feedback_loop.exceptions
+  file: src/zephyr/feedback_loop/exceptions.py
 - code: ZA-TR-0010
   class: AutonomyViolationError
-  module: zephyr.trading.feedback_loop.exceptions
-  file: src/zephyr/trading/feedback_loop/exceptions.py
+  module: zephyr.feedback_loop.exceptions
+  file: src/zephyr/feedback_loop/exceptions.py
 - code: ZA-TR-0011
   class: SessionTransitionError
-  module: zephyr.trading.orchestrator.lifecycle.session_manager
-  file: src/zephyr/trading/orchestrator/lifecycle/session_manager.py
+  module: zephyr.orchestrator.lifecycle.session_manager
+  file: src/zephyr/orchestrator/lifecycle/session_manager.py
 - code: ZA-TR-0012
   class: CoVeStepError
-  module: zephyr.trading.orchestrator.hallucination_detector
-  file: src/zephyr/trading/orchestrator/hallucination_detector.py
+  module: zephyr.orchestrator.hallucination_detector
+  file: src/zephyr/orchestrator/hallucination_detector.py
 - code: ZA-TR-0013
   class: FaultTypeNotFoundError
-  module: zephyr.trading.orchestrator.fault_tolerance.fault_types
-  file: src/zephyr/trading/orchestrator/fault_tolerance/fault_types.py
+  module: zephyr.orchestrator.fault_tolerance.fault_types
+  file: src/zephyr/orchestrator/fault_tolerance/fault_types.py
 - code: ZA-TR-0014
   class: ChaosHookError
-  module: zephyr.trading.orchestrator.fault_tolerance.chaos_hooks
-  file: src/zephyr/trading/orchestrator/fault_tolerance/chaos_hooks.py
+  module: zephyr.orchestrator.fault_tolerance.chaos_hooks
+  file: src/zephyr/orchestrator/fault_tolerance/chaos_hooks.py
 - code: ZA-TR-0015
   class: ChaosInjectError
-  module: zephyr.trading.orchestrator.fault_tolerance.chaos_engine
-  file: src/zephyr/trading/orchestrator/fault_tolerance/chaos_engine.py
+  module: zephyr.orchestrator.fault_tolerance.chaos_engine
+  file: src/zephyr/orchestrator/fault_tolerance/chaos_engine.py
 - code: ZA-TR-0016
   class: ChaosRecoverError
-  module: zephyr.trading.orchestrator.fault_tolerance.chaos_engine
-  file: src/zephyr/trading/orchestrator/fault_tolerance/chaos_engine.py
+  module: zephyr.orchestrator.fault_tolerance.chaos_engine
+  file: src/zephyr/orchestrator/fault_tolerance/chaos_engine.py
 - code: ZA-TR-0017
   class: RedBlueImportError
-  module: zephyr.trading.feedback_loop.gates.adversarial_validation
-  file: src/zephyr/trading/feedback_loop/gates/adversarial_validation.py
+  module: zephyr.feedback_loop.gates.adversarial_validation
+  file: src/zephyr/feedback_loop/gates/adversarial_validation.py
 - code: ZA-TR-0018
   class: DispatchError
-  module: zephyr.trading.feedback_loop.alert_dispatcher
-  file: src/zephyr/trading/feedback_loop/alert_dispatcher.py
+  module: zephyr.feedback_loop.alert_dispatcher
+  file: src/zephyr/feedback_loop/alert_dispatcher.py
 - code: ZA-XC-0001
   class: MiniQmtBrokerError
   module: zephyr.ex_core.adapters.miniqmt_broker
