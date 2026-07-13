@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D_DATA_ENG 数据工程架构文档
+title: D_SELL_DECISION 卖出决策架构文档
 version: "1.0"
 status: active
 date: 2026-07-13
@@ -8,24 +8,24 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 08_d_data_eng / 数据工程 / 数据工程 / Data Engineering
+# 55_d_sell_decision / 卖出决策 / 卖出决策 / Sell Decision
 
-> **功能简介 / Overview**: 数据工程，负责数据管道编排、ETL 流程和数据质量监控
+> **功能简介 / Overview**: 卖出决策，负责卖出信号生成、卖出时机判断和退出策略
 
-> **文档作用 / Purpose**: 展示 数据工程（D_DATA_ENG）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 卖出决策（D_SELL_DECISION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 14:26:58
+> 最后更新: 2026-07-13 14:27:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 编号 | 08 | Number | 08 |
-| 域ID | D_DATA_ENG | Domain ID | D_DATA_ENG |
-| 域名称 | 数据工程 | Domain Name | Data Engineering |
-| 层级 | L1 基础平台层 | Layer | L1 Foundation |
+| 编号 | 55 | Number | 55 |
+| 域ID | D_SELL_DECISION | Domain ID | D_SELL_DECISION |
+| 域名称 | 卖出决策 | Domain Name | Sell Decision |
+| 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
@@ -34,23 +34,23 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 数据工程域。负责数据增值处理、多源数据融合与知识提取，包括ETL管线、特征工程、数据融合引擎、知识图谱构建。拆分自原D-DATA域。 | Description | 数据工程域。负责数据增值处理、多源数据融合与知识提取，包括ETL管线、特征工程、数据融合引擎、知识图谱构建。拆分自原D-DATA域。 |
+| 描述 | 卖出决策域。负责卖出时机判断与卖出策略执行，包括止盈止损策略、持仓时间优化、卖出信号聚合。 | Description | 卖出决策域。负责卖出时机判断与卖出策略执行，包括止盈止损策略、持仓时间优化、卖出信号聚合。 |
 
 ## 模块分层清单 / Module Layered List
 
 > 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
 
-### L1 基础层 / Foundation Layer (7 modules)
+### L2 领域层 / Domain Layer (7 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/data_eng/__init__.py | __init__.py | 原型态 / prototype |  |
-| 2 | src/zephyr/data_eng/_extensions/__init__.py | __init__.py | 原型态 / prototype |  |
-| 3 | src/zephyr/data_eng/api/__init__.py | __init__.py | 原型态 / prototype |  |
-| 4 | src/zephyr/data_eng/core/__init__.py | __init__.py | 原型态 / prototype |  |
-| 5 | src/zephyr/data_eng/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
-| 6 | src/zephyr/data_eng/models/__init__.py | __init__.py | 原型态 / prototype |  |
-| 7 | src/zephyr/data_eng/services/__init__.py | __init__.py | 原型态 / prototype |  |
+| 1 | src/zephyr/sell_decision/__init__.py | __init__.py | 原型态 / prototype |  |
+| 2 | src/zephyr/sell_decision/_extensions/__init__.py | __init__.py | 原型态 / prototype |  |
+| 3 | src/zephyr/sell_decision/api/__init__.py | __init__.py | 原型态 / prototype |  |
+| 4 | src/zephyr/sell_decision/core/__init__.py | __init__.py | 原型态 / prototype |  |
+| 5 | src/zephyr/sell_decision/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
+| 6 | src/zephyr/sell_decision/models/__init__.py | __init__.py | 原型态 / prototype |  |
+| 7 | src/zephyr/sell_decision/services/__init__.py | __init__.py | 原型态 / prototype |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -69,20 +69,20 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_DATA_ENG["D_DATA_ENG 数据工程"]
-        src_zephyr_data_eng_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_extensions_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_api_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_infrastructure_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_models_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_services_init_py["(原型态 / prototype) __init__.py"]
+    subgraph D_SELL_DECISION["D_SELL_DECISION 卖出决策"]
+        src_zephyr_sell_decision_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_services_init_py["(原型态 / prototype) __init__.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_data_eng_init_py,src_zephyr_data_eng_extensions_init_py,src_zephyr_data_eng_api_init_py,src_zephyr_data_eng_core_init_py,src_zephyr_data_eng_infrastructure_init_py,src_zephyr_data_eng_models_init_py,src_zephyr_data_eng_services_init_py design
+    class src_zephyr_sell_decision_init_py,src_zephyr_sell_decision_extensions_init_py,src_zephyr_sell_decision_api_init_py,src_zephyr_sell_decision_core_init_py,src_zephyr_sell_decision_infrastructure_init_py,src_zephyr_sell_decision_models_init_py,src_zephyr_sell_decision_services_init_py design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -103,20 +103,20 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_DATA_ENG["D_DATA_ENG 数据工程"]
-        src_zephyr_data_eng_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_extensions_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_api_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_infrastructure_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_models_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_data_eng_services_init_py["(原型态 / prototype) __init__.py"]
+    subgraph D_SELL_DECISION["D_SELL_DECISION 卖出决策"]
+        src_zephyr_sell_decision_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_extensions_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_api_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_core_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_infrastructure_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_models_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_sell_decision_services_init_py["(原型态 / prototype) __init__.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_data_eng_init_py,src_zephyr_data_eng_extensions_init_py,src_zephyr_data_eng_api_init_py,src_zephyr_data_eng_core_init_py,src_zephyr_data_eng_infrastructure_init_py,src_zephyr_data_eng_models_init_py,src_zephyr_data_eng_services_init_py design
+    class src_zephyr_sell_decision_init_py,src_zephyr_sell_decision_extensions_init_py,src_zephyr_sell_decision_api_init_py,src_zephyr_sell_decision_core_init_py,src_zephyr_sell_decision_infrastructure_init_py,src_zephyr_sell_decision_models_init_py,src_zephyr_sell_decision_services_init_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

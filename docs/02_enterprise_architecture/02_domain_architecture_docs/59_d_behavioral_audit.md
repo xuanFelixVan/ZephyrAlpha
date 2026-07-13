@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D_INFRA_OPS 基础设施运维架构文档
+title: D_BEHAVIORAL_AUDIT 行为审计架构文档
 version: "1.0"
 status: active
 date: 2026-07-13
@@ -8,43 +8,39 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 02_d_infra_ops / asset-inventory / 基础设施运维 / Asset Inventory
+# 59_d_behavioral_audit / drift_detector_core / 行为审计 / Behavioral Audit
 
-> **功能简介 / Overview**: 资产清单与运维扫描，负责运行时资产盘点、基础设施配置管理和运维自动化
+> **功能简介 / Overview**: 行为审计，负责 AI 决策行为的可追溯审计和合规检查
 
-> **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 行为审计（D_BEHAVIORAL_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 14:27:38
+> 最后更新: 2026-07-13 14:26:56
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 编号 | 02 | Number | 02 |
-| 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
-| 域名称 | 基础设施运维 | Domain Name | Asset Inventory |
-| 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
-| 模块数 | 1 | Module Count | 1 |
+| 编号 | 59 | Number | 59 |
+| 域ID | D_BEHAVIORAL_AUDIT | Domain ID | D_BEHAVIORAL_AUDIT |
+| 域名称 | 行为审计 | Domain Name | Behavioral Audit |
+| 层级 |  | Layer |  |
+| 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
-| 设计态模块 | 1 | Design Modules | 1 |
+| 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 资产扫描器(scanner) | Description | 资产扫描器(scanner) |
+| 描述 | AI决策行为可追溯审计 | Description | AI决策行为可追溯审计 |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 1 个模块 / 1 modules）。
+> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
 
-### L0 基础设施层 / Infrastructure Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/database/business_data_archi... |  | 设计态 / design |  |
+（无模块 / No modules）
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -59,18 +55,16 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 1 个模块（生产态 0 + 设计态 1 + 原型态 0），标签标注成熟度。
+> 展示全部 0 个模块（生产态 0 + 设计态 0 + 原型态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
-        docs_03_modules_cross_layer_database_business_data_architecture_md["(设计态 / design) "]
+    subgraph D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT 行为审计"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_cross_layer_database_business_data_architecture_md design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -81,19 +75,9 @@ graph TD
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 1 个，0 条域内依赖）。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
 
-```mermaid
-graph TD
-    subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
-        docs_03_modules_cross_layer_database_business_data_architecture_md["(设计态 / design) "]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_cross_layer_database_business_data_architecture_md design
-```
+> （无设计态模块 / No design modules）
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
