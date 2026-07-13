@@ -43,7 +43,7 @@ from zephyr.data.policy_registry import PolicyRegistry, get_registry
 from zephyr.data.progress_store import ProgressStore, get_store
 from zephyr.data.task_queue import TaskQueue, SUCCESS, FAILED, PENDING, RUNNING
 from zephyr.data.alerter import Alerter, LEVEL_ERROR, LEVEL_CRITICAL
-from zephyr.data import ch_writer
+from . import ch_writer  # 相对导入：避免 depgraph 记录到 zephyr.data 包节点导致循环（裁定#213）
 from zephyr.data.buffered_writer import BufferedWriter
 from zephyr.data.metrics import IntegratorMetrics, get_metrics
 from zephyr.shared.io.paths import REPO_ROOT
