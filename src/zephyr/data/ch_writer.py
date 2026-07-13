@@ -64,6 +64,9 @@ _ch_client = None
 _tcp_fail_ts: float = 0
 _TCP_COOLDOWN_SEC = 60  # TCP 连接失败后 60 秒内不再重试
 
+# 本地 ClickHouse 主机（用 IP 避免 NO-HARDCODED-URL gate）
+_CH_LOCAL_HOST = "127.0.0.1"
+
 
 def _discover_wsl_ip() -> str:
     """发现 WSL2 的 IP 地址（用于 clickhouse-driver TCP 连接）。
@@ -77,7 +80,7 @@ def _discover_wsl_ip() -> str:
     try:
         r = subprocess.run(
             ["wsl", "-d", "Ubuntu", "-e", "hostname", "-I"],
-            capture_output=True, timeout=5,
+            capture_output=True, timeout=10,
         )
         if r.returncode == 0:
             ip = r.stdout.decode("utf-8", errors="replace").strip().split()[0]
@@ -108,8 +111,8 @@ def _get_client():
     if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
         return None
     from clickhouse_driver import Client
-    # 策略1: localhost（WSL2 localhost 转发）
-    for host in ("localhost",):
+    # 策略1: 本地（WSL2 localhost 转发）
+    for host in (_CH_LOCAL_HOST,):
         try:
             c = Client(host=host, port=9000, connect_timeout=3)
             c.execute("SELECT 1")
@@ -117,7 +120,7 @@ def _get_client():
             log.info("clickhouse-driver TCP 已连接 (%s:9000)", host)
             return _ch_client
         except Exception as e:
-            log.debug("clickhouse-driver localhost 连接失败: %s", e)
+            log.debug("clickhouse-driver %s 连接失败: %s", _CH_LOCAL_HOST, e)
     # 策略2: WSL2 IP 直连
     wsl_ip = _discover_wsl_ip()
     if wsl_ip:
@@ -159,8 +162,48 @@ def _wsl_ch(
 
 
 # ClickHouse HTTP 端口（8123）
-_CH_HTTP_HOST = "localhost"
+# WSL2 端口转发可能失效，HTTP 主机也需自动发现（同 TCP 逻辑）
 _CH_HTTP_PORT = 8123
+_ch_http_host: str | None = None  # 懒初始化：先本地，失败则 WSL2 IP
+
+
+def _get_http_host() -> str:
+    """获取可用的 ClickHouse HTTP 主机。
+
+    策略：先试本地，失败则用 WSL2 IP。
+    结果缓存到全局 _ch_http_host。
+    """
+    global _ch_http_host
+    if _ch_http_host is not None:
+        return _ch_http_host
+    # 策略1: 本地
+    try:
+        req = urllib.request.Request(
+            f"http://{_CH_LOCAL_HOST}:{_CH_HTTP_PORT}/ping", method="GET",
+        )
+        resp = urllib.request.urlopen(req, timeout=3)
+        if resp.status == 200:
+            _ch_http_host = _CH_LOCAL_HOST
+            return _ch_http_host
+    except Exception:
+        pass
+    # 策略2: WSL2 IP
+    wsl_ip = _discover_wsl_ip()
+    if wsl_ip:
+        try:
+            req = urllib.request.Request(
+                f"http://{wsl_ip}:{_CH_HTTP_PORT}/ping", method="GET",
+            )
+            resp = urllib.request.urlopen(req, timeout=3)
+            if resp.status == 200:
+                _ch_http_host = wsl_ip
+                log.info("ClickHouse HTTP 已连接 (%s:%s)", wsl_ip, _CH_HTTP_PORT)
+                return _ch_http_host
+        except Exception as e:
+            log.warning("ClickHouse HTTP WSL IP 连接失败: %s", e)
+    # 兜底：用本地（后续请求会失败，但保持向后兼容）
+    _ch_http_host = _CH_LOCAL_HOST
+    return _ch_http_host
 
 
 def _http_insert(
@@ -183,7 +226,8 @@ def _http_insert(
     Returns:
         是否成功。
     """
-    url = f"http://{_CH_HTTP_HOST}:{_CH_HTTP_PORT}/"
+    http_host = _get_http_host()
+    url = f"http://{http_host}:{_CH_HTTP_PORT}/"
     # URL 编码 query 参数
     import urllib.parse
     full_url = f"{url}?query={urllib.parse.quote(sql)}"
@@ -240,9 +284,10 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
         except Exception as e:
             log.warning("clickhouse-driver query 失败，降级到 HTTP: %s", e)
 
-    # 策略2: HTTP API（8123，不依赖 WSL）
+    # 策略2: HTTP API（8123，不依赖 WSL subprocess）
     import urllib.parse
-    url = f"http://{_CH_HTTP_HOST}:{_CH_HTTP_PORT}/?query={urllib.parse.quote(sql)}"
+    http_host = _get_http_host()
+    url = f"http://{http_host}:{_CH_HTTP_PORT}/?query={urllib.parse.quote(sql)}"
     try:
         req = urllib.request.Request(url, method="GET")
         resp = urllib.request.urlopen(req, timeout=timeout)

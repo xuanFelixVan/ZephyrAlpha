@@ -1756,9 +1756,11 @@ class MiniQMTProvider(DataSourceBase):
         使用 xtdata.get_instrument_detail 获取可转债详情（转股价/到期日/
         票面利率/正股代码），用 xtdata.get_market_data_ex 获取可转债与正股
         收盘价，结合简化模型（max(纯债价值, 转换价值) + BS 期权价值）+
-        Newton-Raphson 迭代反解隐含波动率。
-        表 schema: (trade_date, symbol, cb_price, underlying, underlying_price,
-                    convert_price, convert_value, bond_value, iv, data_source)
+        Newton-Raphson 迭代反解隐含波动率，并计算 BS Greeks (delta/gamma/theta/vega)
+        和转股溢价率。
+        表 schema: (trade_date, symbol, underlying, iv,
+                    delta, gamma, theta, vega, conversion_premium,
+                    data_source)
 
         Args:
             payload: 下载请求（symbols为可转债代码列表）
@@ -1771,8 +1773,9 @@ class MiniQMTProvider(DataSourceBase):
 
         table = payload.table or "c1_market.convertible_bond_iv"
         columns = [
-            "trade_date", "symbol", "cb_price", "underlying", "underlying_price",
-            "convert_price", "convert_value", "bond_value", "iv", "data_source",
+            "trade_date", "symbol", "underlying", "iv",
+            "delta", "gamma", "theta", "vega", "conversion_premium",
+            "data_source",
         ]
         trade_date = payload.end.isoformat()
         symbols = payload.symbols or []
@@ -1818,7 +1821,7 @@ class MiniQMTProvider(DataSourceBase):
             return pv
 
         def _solve_cb_iv(S, K, T, r, market_price, coupon_rate):
-            """Newton-Raphson 反解可转债隐含波动率。
+            """Newton-Raphson 反解可转债隐含波动率，并计算 BS Greeks。
 
             模型：理论价 = max(纯债价值, 转换价值) + BS_call(S, K, T, r, σ)
             初始 σ=0.3，迭代 100 次，精度 1e-6。
@@ -1826,33 +1829,68 @@ class MiniQMTProvider(DataSourceBase):
             不收敛或 vega 过小时 iv 返回 None。
 
             Returns:
-                tuple: (iv, bond_value, convert_value)
+                tuple: (iv, bond_value, convert_value, delta, gamma, theta, vega)
+                其中 Greeks 基于收敛后的 σ 计算；iv=None 时 Greeks 也为 None。
             """
             if (S is None or K is None or market_price is None
                     or S <= 0 or K <= 0 or T <= 0 or market_price <= 0):
-                return None, None, None
+                return None, None, None, None, None, None, None
             bond_val = _bond_value(coupon_rate, T, r)
             convert_val = S / K * 100.0  # 转换价值 = 正股价 / 转股价 × 100
             floor_value = max(bond_val, convert_val)
             sigma = 0.3
+            sqrt_T = math.sqrt(T)
             for _ in range(100):
                 opt_price = _bs_call(S, K, T, r, sigma)
                 if opt_price is None:
-                    return None, bond_val, convert_val
+                    return None, bond_val, convert_val, None, None, None, None
                 theory_price = floor_value + opt_price
-                d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
-                vega = S * _pdf(d1) * math.sqrt(T)  # 原始 vega，不除100
-                if vega < 1e-8:
-                    return None, bond_val, convert_val
+                d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * sqrt_T)
+                d2 = d1 - sigma * sqrt_T
+                pdf_d1 = _pdf(d1)
+                vega_raw = S * pdf_d1 * sqrt_T  # 原始 vega，不除100
+                if vega_raw < 1e-8:
+                    return None, bond_val, convert_val, None, None, None, None
                 diff = theory_price - market_price
                 if abs(diff) < 1e-6:
-                    return round(sigma, 6), bond_val, convert_val
-                sigma = sigma - diff / vega
+                    delta = _cdf(d1)
+                    denom = S * sigma * sqrt_T
+                    gamma = pdf_d1 / denom if denom > 0 else None
+                    theta = (-S * pdf_d1 * sigma / (2 * sqrt_T)) - r * K * math.exp(-r * T) * _cdf(d2)
+                    return (round(sigma, 6), bond_val, convert_val,
+                            round(delta, 6), round(gamma, 6) if gamma is not None else None,
+                            round(theta, 6), round(vega_raw, 6))
+                sigma = sigma - diff / vega_raw
                 if sigma <= 0:
                     sigma = 1e-4
                 elif sigma > 5:
                     sigma = 5
-            return None, bond_val, convert_val
+            return None, bond_val, convert_val, None, None, None, None
+
+        # 从 akshare 获取可转债详情（转股价/正股代码），miniQMT 不提供这些字段
+        cb_details_map = {}
+        try:
+            import akshare as ak
+            cov_df = self._call_with_policy(ak.bond_zh_cov, policy)
+            for _, row in cov_df.iterrows():
+                bond_code = str(row.get("债券代码", "")).strip()
+                stock_code = str(row.get("正股代码", "")).strip()
+                conv_price = self.safe_float(row.get("转股价"))
+                if not bond_code or not stock_code:
+                    continue
+                # 转换正股代码为 miniQMT 格式
+                if stock_code.startswith(("60", "68")):
+                    ul = stock_code + ".SH"
+                elif stock_code.startswith(("00", "30")):
+                    ul = stock_code + ".SZ"
+                elif stock_code.startswith(("8", "4")):
+                    ul = stock_code + ".BJ"
+                else:
+                    ul = stock_code
+                cb_details_map[bond_code] = {"underlying": ul, "convert_price": conv_price}
+            self._log.info(f"获取 {len(cb_details_map)} 只可转债详情（akshare bond_zh_cov）")
+        except Exception as e:
+            self._log.warning(f"akshare bond_zh_cov 失败: {e}")
 
         for cb_code in symbols:
             t0 = time.time()
@@ -1864,13 +1902,15 @@ class MiniQMTProvider(DataSourceBase):
                 rows = []
                 if detail:
                     symbol = self._stock_to_symbol(cb_code)
-                    convert_price = self.safe_float(detail.get("ConvertPrice"))
-                    end_date = detail.get("EndDate", "")
-                    coupon_rate = self.safe_float(detail.get("CouponRate"))
-                    underlying = (detail.get("UnderlyingSymbol", "")
-                                  or detail.get("Underlying", ""))
-                    if coupon_rate is None:
-                        coupon_rate = 0.005
+                    # miniQMT 字段名是 ExpireDate（非 EndDate）
+                    end_date = detail.get("ExpireDate", "")
+                    # 从 akshare 映射获取转股价和正股代码
+                    code_6 = cb_code.split(".")[0]
+                    cb_info = cb_details_map.get(code_6, {})
+                    convert_price = cb_info.get("convert_price")
+                    underlying = cb_info.get("underlying", "")
+                    # coupon_rate miniQMT/akshare 均不提供，使用默认值 0.5%
+                    coupon_rate = 0.005
                     r = 0.03
                     # 解析到期日（T 在遍历时逐日计算）
                     exp_date = None
@@ -1944,14 +1984,19 @@ class MiniQMTProvider(DataSourceBase):
                             T = max(days / 365.0, 0.001)
                         else:
                             T = 0.25
-                        iv, bond_val, convert_val = _solve_cb_iv(
+                        iv, bond_val, convert_val, delta, gamma, theta, vega_val = _solve_cb_iv(
                             spot, convert_price, T, r, cb_price, coupon_rate,
                         )
+                        # 转股溢价率 = (可转债价 / 转换价值 - 1) × 100
+                        if convert_val and convert_val > 0:
+                            conversion_premium = round((cb_price / convert_val - 1) * 100, 4)
+                        else:
+                            conversion_premium = None
                         rows.append((
                             pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                            symbol, cb_price, underlying, spot,
-                            convert_price, convert_val, bond_val,
-                            iv, "miniqmt",
+                            symbol, underlying, iv,
+                            delta, gamma, theta, vega_val,
+                            conversion_premium, "miniqmt",
                         ))
                 yield FetchResult(
                     table=table, columns=columns, rows=rows,

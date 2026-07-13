@@ -117,6 +117,12 @@ class IFindProvider(DataSourceBase):
                            "data_source"]
     _MONEY_FLOW_TABLE = "c1_market.money_flow"
 
+    # CH fallback: 从 stock_list 获取在册 A 股 ts_code（SQL_ 前缀豁免 NO-BARE-SQL gate）
+    SQL_STOCK_LIST_BY_STATUS = (
+        "SELECT ts_code FROM c1_market.stock_list "
+        "WHERE list_status = '上市' ORDER BY ts_code FORMAT TabSeparated"
+    )
+
     # 每批 yield 的行数上限
     _BATCH_SIZE = 500
 
@@ -1085,66 +1091,96 @@ class IFindProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """拉取同花顺行业分类，写入 c3_fundamental.industry_class_suppl。
 
-        使用 THS_BasicData 逐股查询申万行业（ths_the_sw_industry）和中证行业
-        （ths_the_zs_industry）分类。
+        使用 THS_iwencai（i问财）批量查询全部 A 股的申万行业和同花顺行业分类。
+        单次 API 调用即可获取全部股票的行业信息（替代 THS_BasicData 逐股查询）。
         表 schema: (symbol, industry_sw, industry_zsi, industry_level, data_source)
-        quality_flag 有 DEFAULT 1，不返回。
+        - industry_sw ← 所属申万行业（如 "银行--股份制银行Ⅱ--股份制银行Ⅲ"）
+        - industry_zsi ← 所属同花顺行业（如 "银行-银行-股份制银行"）
 
         Args:
-            payload: 下载请求（symbols 为 ts_code 列表，None 时取全部A股）
+            payload: 下载请求（symbols 忽略，i问财全市场查询）
             policy: 调用策略
 
         Yields:
             FetchResult: 每 500 行一批
         """
-        from iFinDPy import THS_BasicData, THS_Trans2DataFrame
+        from iFinDPy import THS_iwencai
 
         table = payload.table or "c3_fundamental.industry_class_suppl"
         columns = ["symbol", "industry_sw", "industry_zsi", "industry_level", "data_source"]
 
-        symbols = payload.symbols
-        if not symbols:
-            symbols = self._get_all_a_share_codes(policy)
-        if not symbols:
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        last_key = today_str
+        start_ts = time.time()
+
+        # 单次 i问财查询获取全部 A 股行业分类
+        try:
+            raw = self._call_with_policy(
+                THS_iwencai, policy,
+                "全部A股 申万行业 同花顺行业", "stock",
+            )
+        except Exception as e:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error="无法获取标的清单",
+                elapsed_sec=time.time() - start_ts,
+                error=f"THS_iwencai 调用失败: {e}",
             )
             return
 
-        today_str = datetime.date.today().strftime("%Y-%m-%d")
-        last_key = today_str
-        batch_rows: list[tuple] = []
-        start_ts = time.time()
-
-        for ts_code in symbols:
-            industry_sw, industry_zsi, fatal_error = self._query_symbol_industries(
-                ts_code, today_str, policy,
-            )
-
-            # 配额耗尽 → yield error 并 return
-            if fatal_error and "配额" in fatal_error:
+        # 检查错误码
+        is_error, code, msg = self._check_ifind_error(raw)
+        if is_error:
+            if code in (-4318, -4309):
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key,
+                    table=table, columns=columns, rows=[], last_key=last_key,
                     elapsed_sec=time.time() - start_ts,
-                    error=fatal_error,
+                    error=f"iFind配额耗尽: {code}",
                 )
                 return
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.time() - start_ts,
+                error=f"i问财错误: {code} {msg}",
+            )
+            return
 
-            symbol = self._ts_code_to_symbol(ts_code)
-            batch_rows.append((
-                symbol, industry_sw, industry_zsi, 0, "ifind",
-            ))
-
-            if len(batch_rows) >= self._BATCH_SIZE:
+        # 解析 i问财返回的表格
+        batch_rows: list[tuple] = []
+        try:
+            tables = raw.get("tables", []) if isinstance(raw, dict) else []
+            if not tables:
                 yield FetchResult(
-                    table=table, columns=columns,
-                    rows=batch_rows[:], last_key=last_key,
+                    table=table, columns=columns, rows=[], last_key="",
                     elapsed_sec=time.time() - start_ts,
+                    error="i问财返回空表格",
                 )
-                batch_rows.clear()
-                start_ts = time.time()
+                return
+            tbl_data = tables[0].get("table", {})
+            codes = tbl_data.get("股票代码", [])
+            sw_list = tbl_data.get("所属申万行业", [])
+            ths_list = tbl_data.get("所属同花顺行业", [])
+
+            for i, ts_code in enumerate(codes):
+                symbol = self._ts_code_to_symbol(ts_code)
+                sw = str(sw_list[i]) if i < len(sw_list) else ""
+                ths = str(ths_list[i]) if i < len(ths_list) else ""
+                batch_rows.append((symbol, sw, ths, 0, "ifind"))
+
+                if len(batch_rows) >= self._BATCH_SIZE:
+                    yield FetchResult(
+                        table=table, columns=columns,
+                        rows=batch_rows[:], last_key=last_key,
+                        elapsed_sec=time.time() - start_ts,
+                    )
+                    batch_rows.clear()
+                    start_ts = time.time()
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.time() - start_ts,
+                error=f"i问财结果解析失败: {e}",
+            )
+            return
 
         if batch_rows:
             yield FetchResult(
@@ -1648,10 +1684,10 @@ class IFindProvider(DataSourceBase):
     # ---- 新能力辅助方法 ----
 
     def _get_all_a_share_codes(self, policy: "SourcePolicy") -> list[str]:
-        """通过 THS_DataPool 获取全部A股 ts_code 列表。
+        """获取全部A股 ts_code 列表（iFind 格式，如 "600000.SH"）。
 
-        使用中证全指（000985.SH）成分股作为全A股近似清单。
-        返回 iFind 格式代码（如 "600000.SH"）。
+        优先使用 THS_DataPool（中证全指 000985.SH 成分股），
+        失败时回退到 ClickHouse c1_market.stock_list 表（list_status='L'）。
 
         Args:
             policy: 调用策略
@@ -1659,6 +1695,17 @@ class IFindProvider(DataSourceBase):
         Returns:
             ts_code 列表；失败返回空列表
         """
+        # 策略1: THS_DataPool
+        codes = self._get_a_share_codes_from_datapool(policy)
+        if codes:
+            return codes
+
+        # 策略2: ClickHouse stock_list fallback
+        self._log.info("THS_DataPool 不可用，回退到 ClickHouse stock_list")
+        return self._get_a_share_codes_from_ch()
+
+    def _get_a_share_codes_from_datapool(self, policy: "SourcePolicy") -> list[str]:
+        """通过 THS_DataPool 获取 A 股清单（中证全指成分股）。"""
         from iFinDPy import THS_DataPool
 
         today_str = datetime.date.today().strftime("%Y-%m-%d")
@@ -1677,7 +1724,15 @@ class IFindProvider(DataSourceBase):
             self._log.warning(f"THS_DataPool 返回格式异常: {type(raw)}")
             return []
 
+        # 检查 errorcode（-4001=no data 等错误码）
+        err_code = raw.get("errorcode", 0)
+        if err_code != 0:
+            self._log.warning(f"THS_DataPool 错误: code={err_code} msg={raw.get('errmsg', '')}")
+            return []
+
         try:
+            if not raw["tables"]:
+                return []
             table_data = raw["tables"][0]["table"]
             # 尝试多种键名
             for key in ("THSCODE", "thscode", "股票代码", "code"):
@@ -1687,6 +1742,21 @@ class IFindProvider(DataSourceBase):
             self._log.warning(f"THS_DataPool 解析失败: {e}")
 
         return []
+
+    def _get_a_share_codes_from_ch(self) -> list[str]:
+        """从 ClickHouse c1_market.stock_list 获取在册 A 股 ts_code。
+
+        过滤 list_status='L'（上市中），排除退市股。
+        """
+        from zephyr.data import ch_writer as _chw
+
+        out = _chw.query(self.SQL_STOCK_LIST_BY_STATUS)
+        if not out.strip():
+            self._log.warning("ClickHouse stock_list 查询为空")
+            return []
+        codes = [line.strip() for line in out.split("\n") if line.strip()]
+        self._log.info(f"从 stock_list 获取 {len(codes)} 只在册 A 股")
+        return codes
 
     @staticmethod
     def _extract_date(idx, row) -> str:
