@@ -91,6 +91,7 @@ logger = logging.getLogger(__name__)
 import psycopg2
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.io.yaml_utils import load_vocabulary_values  # 词表 SSoT 加载（trae_060 §2 治本，2026-07-13）
 
 # 治本（2026-06-27）：删除 DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源）。
 # P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()。
@@ -132,6 +133,8 @@ SQL_DEPRECATE_NODE = "UPDATE nodes SET build_status='deprecated' WHERE node_id=%
 SQL_DELETE_EDGE_BY_ID = "DELETE FROM edges WHERE edge_id=%s"
 SQL_DELETE_DOMAIN_BY_ID = "DELETE FROM domains WHERE domain_id=%s"
 SQL_UPDATE_NODE_PATH_BY_ID = "UPDATE nodes SET path=%s, file_path=%s WHERE node_id=%s"
+# 5.179 治本（2026-07-13）：add_design_node UPDATE 提取为常量，消除 NO-BARE-SQL gate 违规
+SQL_UPDATE_DESIGN_NODE_BY_ID = "UPDATE nodes SET blueprint_id=%s, domain_id=%s, build_status=%s, blueprint_path=%s, granularity=%s, node_type=%s WHERE node_id=%s"
 
 # Phase 7c-2: 重复 f-string SQL 提取为 .format() 模板（2026-07-09）
 SQL_UPDATE_TBL_REPLACE_LIKE = "UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s"
@@ -563,22 +566,51 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 
 
 def add_design_node(
-    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned", db_path: str = None
+    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned",
+    granularity: str = "directory", node_type: str | None = None, db_path: str = None,
 ) -> int:
     """
-    新增设计态节点（功能级，目录 path）。
+    新增设计态节点（支持 file/directory/module 粒度，2026-07-13 治本）。
     返回：新分配的 node_id
     校验：
-    - path 必须以 / 结尾（目录路径）
+    - granularity 必须在 granularity_vocabulary.yaml 合法值中（trae_060 §2 动态加载）
+    - path 格式必须匹配粒度：directory 要求以 / 结尾，file/module 禁止以 / 结尾
     - blueprint_id 必须指向存在的蓝图文件
     - domain_id 必须在 domains 表中存在
     - build_status 必须符合 §12.6 状态机规则（5态：planned/generated/testing/stable/deprecated）
-    写入字段：design_maturity='design', blueprint_path=机械推导
+    写入字段：design_maturity='design', granularity=参数, node_type=参数或推导, blueprint_path=机械推导
+
+    治本（2026-07-13，trae_060 §2 + trae_056 §phase_2_design_state）：
+    - 原 add_design_node 硬编码 granularity='directory' → 单文件模块无法走设计态登记
+      → trae_056 铁律系统性不可执行
+    - 现参数化 granularity + 动态加载词表校验，支持 file 粒度设计态（32 个先例已验证数据库支持）
+    - node_type 默认按 granularity 推导：directory→blueprint，file/module→module（可覆盖）
     """
-    # 校验path以/结尾
-    if not path.endswith("/"):
-        print(f"ERROR: path必须以/结尾（目录路径）: {path}", file=sys.stderr)
+    # 动态加载 granularity 合法值（SSoT：granularity_vocabulary.yaml，trae_060 §2 治本）
+    valid_granularities = load_vocabulary_values("granularity_vocabulary.yaml", strict=False)  # noqa: gate-vocab  SSoT 动态加载，非硬编码
+    if not valid_granularities:
+        # strict=False 时词表缺失返回空 set → fail-closed（禁止无校验写入）
+        print("ERROR: granularity_vocabulary.yaml 加载失败（空集），禁止无校验写入", file=sys.stderr)
         return -1
+    if granularity not in valid_granularities:
+        print(f"ERROR: granularity 必须是 {valid_granularities} 之一: {granularity}", file=sys.stderr)
+        return -1
+
+    # path 格式校验：根据粒度匹配（directory 要求 / 结尾，其他禁止）
+    if granularity == "directory":
+        if not path.endswith("/"):
+            print(f"ERROR: granularity=directory 时 path 必须以 / 结尾（目录路径）: {path}", file=sys.stderr)
+            return -1
+    else:
+        # file/module 粒度：path 是文件/模块路径，不应以 / 结尾
+        if path.endswith("/"):
+            print(f"ERROR: granularity={granularity} 时 path 禁止以 / 结尾（非目录粒度）: {path}", file=sys.stderr)
+            return -1
+
+    # node_type 推导：未显式传入时按 granularity 推导默认值
+    # directory→blueprint（蓝图级设计态），file/module→module（代码/模块级设计态）
+    if node_type is None:
+        node_type = "blueprint" if granularity == "directory" else "module"
 
     # 校验build_status（5态枚举）
     valid_status = {"planned", "generated", "testing", "stable", "deprecated"}  # noqa: gate-vocab  build_status 5态，非 module_lifecycle_status
@@ -611,23 +643,23 @@ def add_design_node(
             if existing:
                 print(f"WARNING: path '{path}' 已有设计态节点 node_id={existing['node_id']}，执行UPDATE", file=sys.stderr)
                 conn.execute(
-                    "UPDATE nodes SET blueprint_id=%s, domain_id=%s, build_status=%s, blueprint_path=%s WHERE node_id=%s",
-                    (blueprint_id, domain_id, build_status, blueprint_path, existing["node_id"]),
+                    SQL_UPDATE_DESIGN_NODE_BY_ID,
+                    (blueprint_id, domain_id, build_status, blueprint_path, granularity, node_type, existing["node_id"]),
                 )
                 conn.commit()
                 return existing["node_id"]
 
-            # 插入新节点（design_node 已废弃，迁移到 blueprint，见 node_type_vocabulary.yaml）
+            # 插入新节点（granularity/node_type 参数化，消除硬编码 trae_060 §2）
             cur = conn.execute(
                 """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
                    build_status, design_maturity, blueprint_path, can_build)
-                   VALUES (%s, %s, 'directory', %s, %s, %s, 'design', %s, 1)
+                   VALUES (%s, %s, %s, %s, %s, %s, 'design', %s, 1)
                    RETURNING node_id""",
-                ("blueprint", path, domain_id, blueprint_id, build_status, blueprint_path),
+                (node_type, path, granularity, domain_id, blueprint_id, build_status, blueprint_path),
             )
             node_id = cur.fetchone()["node_id"]
             conn.commit()
-            print(f"[OK] 新增设计态节点 node_id={node_id} path={path}", file=sys.stderr)
+            print(f"[OK] 新增设计态节点 node_id={node_id} path={path} granularity={granularity}", file=sys.stderr)
             return node_id
         except Exception as e:
             conn.rollback()
@@ -3713,7 +3745,15 @@ def main() -> None:
         type=str,
         nargs="+",
         metavar="ARG",
-        help="新增设计态节点: PATH BLUEPRINT_ID DOMAIN_ID [BUILD_STATUS]",
+        help="新增设计态节点: PATH BLUEPRINT_ID DOMAIN_ID [BUILD_STATUS]（粒度由 --granularity 指定，默认 directory）",
+    )
+    parser.add_argument(
+        "--granularity",
+        type=str,
+        default="directory",
+        help="--add-design-node 的粒度（file/directory/module/aggregated，默认 directory）。"
+             "file=单文件设计态（path 不以 / 结尾），directory=目录级设计态（path 以 / 结尾）。"
+             "合法值由 granularity_vocabulary.yaml 动态定义（trae_060 §2 治本，2026-07-13）",
     )
     parser.add_argument(
         "--add-design-edge",
@@ -4019,7 +4059,7 @@ def main() -> None:
         blueprint_id = parts[1] if len(parts) > 1 else ""
         domain_id = parts[2] if len(parts) > 2 else ""
         build_status = parts[3] if len(parts) > 3 else "planned"
-        node_id = add_design_node(path, blueprint_id, domain_id, build_status)
+        node_id = add_design_node(path, blueprint_id, domain_id, build_status, granularity=args.granularity)
         if node_id < 0:
             sys.exit(4)
         print(f"node_id={node_id}")
