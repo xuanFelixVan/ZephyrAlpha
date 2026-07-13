@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈验证（D_FBL_VERIFICATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 18:30:33
+> 最后更新: 2026-07-13 22:42:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -153,26 +153,26 @@ graph TD
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     src_zephyr_feedback_loop_gates_adversarial_validation_py -.->|导入依赖 / import_depends| D_SECURITY
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
-    D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
-    D_COMPLIANCE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_COMPLIANCE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
-    D_GOV_DOCS -.->|contract / contract| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
+    D_GOV_DOCS -.->|contract / contract| src_zephyr_feedback_loop_gates_safety_gates_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_gates_adversarial_validation_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_deployment_suppression_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_governance_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_operational_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_security_gates_py
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -212,32 +212,34 @@ graph TD
         src_zephyr_feedback_loop_verifiers_toctou_revalidation_py["(生产态 / production) TOCTOU Revalidation — v0.37.0 R458<br/>文件: toctou_revalidation.py"]
         src_zephyr_feedback_loop_verifiers_verification_engine_py["(生产态 / production) verification_engine.py"]
     end
+    D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
+    D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_canary_repair_py
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_golden_test_external_py
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_golden_test_external_py
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_verifiers_golden_test_external_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_federated_protocol_py
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_federated_protocol_py
+    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_canary_repair_py
+    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_verifiers_canary_repair_py
     D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
     D_GOV_ENFORCEMENT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_gates_scope_creep_monitor_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_gates_scope_creep_monitor_py
-    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_ab_test_py
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_ab_test_py
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_action_explainability_py
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_action_explainability_py
     D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
     D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_action_explainability_py
+    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_action_explainability_py
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_ab_test_py
+    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_ab_test_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_auto_rollback_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_auto_rollback_py
+    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    D_SECURITY -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_verifiers_attack_simulator_py
+    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_attack_simulator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_gates_scope_creep_monitor_py,src_zephyr_feedback_loop_verifiers_ab_test_py,src_zephyr_feedback_loop_verifiers_action_explainability_py,src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py,src_zephyr_feedback_loop_verifiers_attack_simulator_py,src_zephyr_feedback_loop_verifiers_auto_rollback_py,src_zephyr_feedback_loop_verifiers_build_reproducibility_verifier_py,src_zephyr_feedback_loop_verifiers_canary_repair_py,src_zephyr_feedback_loop_verifiers_cascading_rollback_analyzer_py,src_zephyr_feedback_loop_verifiers_cross_blueprint_contract_drift_py,src_zephyr_feedback_loop_verifiers_cross_module_integration_py,src_zephyr_feedback_loop_verifiers_cross_session_knowledge_integrity_py,src_zephyr_feedback_loop_verifiers_digital_twin_sandbox_py,src_zephyr_feedback_loop_verifiers_dry_run_sandbox_py,src_zephyr_feedback_loop_verifiers_federated_protocol_py,src_zephyr_feedback_loop_verifiers_golden_test_external_py,src_zephyr_feedback_loop_verifiers_no_llm_degradation_py,src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py,src_zephyr_feedback_loop_verifiers_preventive_repair_py,src_zephyr_feedback_loop_verifiers_rollback_integrity_py,src_zephyr_feedback_loop_verifiers_sim2real_calibration_py,src_zephyr_feedback_loop_verifiers_stochastic_diagnosis_verifier_py,src_zephyr_feedback_loop_verifiers_toctou_revalidation_py,src_zephyr_feedback_loop_verifiers_verification_engine_py production
-    class D_FEEDBACK_LOOP,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE,D_GOV_AUDIT,D_INTELLIGENCE external_design
+    class D_INFRA_RECOVERY,D_FEEDBACK_LOOP,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE,D_INTELLIGENCE,D_GOV_AUDIT,D_SECURITY external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -301,7 +303,9 @@ graph TD
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     src_zephyr_feedback_loop_gates_adversarial_validation_py -.->|导入依赖 / import_depends| D_SECURITY
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_verifiers_golden_test_external_py
+    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_verifiers_canary_repair_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_gates_adversarial_validation_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_cascading_rollback_analyzer_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_stochastic_diagnosis_verifier_py
@@ -315,13 +319,12 @@ graph TD
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_attack_simulator_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_auto_rollback_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_build_reproducibility_verifier_py
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_canary_repair_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_gates_action_reversibility_py,src_zephyr_feedback_loop_gates_adversarial_validation_py,src_zephyr_feedback_loop_gates_autonomy_credit_py,src_zephyr_feedback_loop_gates_autonomy_maturity_py,src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py,src_zephyr_feedback_loop_gates_blueprint_validator_py,src_zephyr_feedback_loop_gates_checkpoint_manager_py,src_zephyr_feedback_loop_gates_ci_cd_pre_scanner_py,src_zephyr_feedback_loop_gates_concurrent_change_deconfliction_py,src_zephyr_feedback_loop_gates_config_complexity_budget_py,src_zephyr_feedback_loop_gates_config_governance_py,src_zephyr_feedback_loop_gates_conflict_arbitration_py,src_zephyr_feedback_loop_gates_cve_scanner_py,src_zephyr_feedback_loop_gates_data_quality_gate_py,src_zephyr_feedback_loop_gates_db_integrity_py,src_zephyr_feedback_loop_gates_deployment_suppression_py,src_zephyr_feedback_loop_gates_dynamic_llm_cost_router_py,src_zephyr_feedback_loop_gates_emergency_takeover_py,src_zephyr_feedback_loop_gates_federated_security_py,src_zephyr_feedback_loop_gates_flag_lifecycle_manager_py,src_zephyr_feedback_loop_gates_license_compliance_py,src_zephyr_feedback_loop_gates_llm_cost_router_py,src_zephyr_feedback_loop_gates_merkle_audit_root_py,src_zephyr_feedback_loop_gates_meta_performance_gate_py,src_zephyr_feedback_loop_gates_parameterized_safety_gate_py,src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py,src_zephyr_feedback_loop_gates_scope_creep_monitor_py,src_zephyr_feedback_loop_verifiers_ab_test_py,src_zephyr_feedback_loop_verifiers_action_explainability_py,src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py,src_zephyr_feedback_loop_verifiers_attack_simulator_py,src_zephyr_feedback_loop_verifiers_auto_rollback_py,src_zephyr_feedback_loop_verifiers_build_reproducibility_verifier_py,src_zephyr_feedback_loop_verifiers_canary_repair_py,src_zephyr_feedback_loop_verifiers_cascading_rollback_analyzer_py,src_zephyr_feedback_loop_verifiers_cross_blueprint_contract_drift_py,src_zephyr_feedback_loop_verifiers_cross_module_integration_py,src_zephyr_feedback_loop_verifiers_cross_session_knowledge_integrity_py,src_zephyr_feedback_loop_verifiers_digital_twin_sandbox_py,src_zephyr_feedback_loop_verifiers_dry_run_sandbox_py,src_zephyr_feedback_loop_verifiers_federated_protocol_py,src_zephyr_feedback_loop_verifiers_golden_test_external_py,src_zephyr_feedback_loop_verifiers_no_llm_degradation_py,src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py,src_zephyr_feedback_loop_verifiers_preventive_repair_py,src_zephyr_feedback_loop_verifiers_rollback_integrity_py,src_zephyr_feedback_loop_verifiers_sim2real_calibration_py,src_zephyr_feedback_loop_verifiers_stochastic_diagnosis_verifier_py,src_zephyr_feedback_loop_verifiers_toctou_revalidation_py,src_zephyr_feedback_loop_verifiers_verification_engine_py production
-    class D_SECURITY,D_FEEDBACK_LOOP external_design
+    class D_SECURITY,D_FEEDBACK_LOOP,D_GOVERNANCE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -343,19 +346,19 @@ graph TD
         src_zephyr_feedback_loop_gates_security_gates_py["(原型态 / prototype) _security_gates.py"]
     end
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
-    D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
-    D_COMPLIANCE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_COMPLIANCE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
-    D_GOV_DOCS -.->|contract / contract| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
+    D_GOV_DOCS -.->|contract / contract| src_zephyr_feedback_loop_gates_safety_gates_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_operational_gates_py
+    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_governance_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_operational_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gates_py
@@ -380,7 +383,7 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUTONOMY_CORE 自治核心: Agent Spec -> Pipeline 集成桥接层 (__init__.py) | → | _operational_gates.py | runtime / runtime |
+| 1 | D_AUTONOMY_CORE 自治核心: Agent Spec -> Pipeline 集成桥接层 (__init__.py) | → | _safety_gates.py | runtime / runtime |
 | 2 | D_AUTONOMY_CORE 自治核心: test_action_explainability.py | → | Action Explainability — v0.3.0 R15 (action_exp... | 测试依赖 / test_depends |
 | 3 | D_AUTONOMY_CORE 自治核心: test_action_reversibility.py | → | Action Reversibility — v0.15.0 R208 (action_re... | 测试依赖 / test_depends |
 | 4 | D_AUTONOMY_CORE 自治核心: test_auto_rollback.py | → | Auto Rollback — v0.8.0 R93 (auto_rollback.py) | 测试依赖 / test_depends |
@@ -413,11 +416,11 @@ graph TD
 | 31 | D_AUTONOMY_CORE 自治核心: test_fl_parameterized_safety_gate.py | → | GateVerdict — GateVerdict (parameterized_safet... | 测试依赖 / test_depends |
 | 32 | D_AUTONOMY_CORE 自治核心: test_fl_safety_gate_l1_l27.py | → | Safety Gates L1-L27 — Unified Pipeline (MOD-FE... | 测试依赖 / test_depends |
 | 33 | D_AUTONOMY_CORE 自治核心: test_fl_scope_creep_monitor.py | → | Scope Creep Monitor — v0.15.0 R220 (scope_cree... | 测试依赖 / test_depends |
-| 34 | D_COMPLIANCE 合规: Audit Trail — MOD-INF-020 (__init__.py) | → | _operational_gates.py | runtime / runtime |
+| 34 | D_COMPLIANCE 合规: Audit Trail — MOD-INF-020 (__init__.py) | → | _safety_gates.py | runtime / runtime |
 | 35 | D_DATA: test_data_quality_gate.py | → | Data Quality Gate — v0.11.0 R143 (data_quality... | 测试依赖 / test_depends |
 | 36 | D_DATA: test_db_integrity.py | → | DB Integrity Gate — v0.3.0 R17 (db_integrity.py) | 测试依赖 / test_depends |
-| 37 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | _operational_gates.py | runtime / runtime |
-| 38 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | Golden Test External — v0.15.0 R214 (golden_te... | runtime / runtime |
+| 37 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | _safety_gates.py | runtime / runtime |
+| 38 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | Canary Repair — v0.8.0 R104b (canary_repair.py) | runtime / runtime |
 | 39 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _governance_gates.py | 导入依赖 / import_depends |
 | 40 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _operational_gates.py | 导入依赖 / import_depends |
 | 41 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _safety_gates.py | 导入依赖 / import_depends |
@@ -460,7 +463,7 @@ graph TD
 | 78 | D_FEEDBACK_LOOP 反馈循环引擎: test_no_llm_degradation.py | → | No-LLM Degradation Mode — v0.8.0 R94 (no_llm_d... | 测试依赖 / test_depends |
 | 79 | D_FEEDBACK_LOOP 反馈循环引擎: test_stochastic_diagnosis_verifier.py | → | Stochastic Diagnosis Verifier — v0.38.0 R483 (... | 测试依赖 / test_depends |
 | 80 | D_FEEDBACK_LOOP 反馈循环引擎: test_stochastic_diagnosis_verifier_v2.py | → | Stochastic Diagnosis Verifier — v0.38.0 R483 (... | 测试依赖 / test_depends |
-| 81 | D_GOVERNANCE 生命周期管理: Self-Benchmark (W3-7) — 5 组已知对自验证 + 引.... | → | _operational_gates.py | runtime / runtime |
+| 81 | D_GOVERNANCE 生命周期管理: Self-Benchmark (W3-7) — 5 组已知对自验证 + 引.... | → | _safety_gates.py | runtime / runtime |
 | 82 | D_GOVERNANCE 生命周期管理: test_adversarial_validation.py | → | Adversarial Validation Gate — FLE-ADVERSARIAL-... | 测试依赖 / test_depends |
 | 83 | D_GOV_AUDIT 审计追踪: test_ab_test.py | → | A/B Test Verifier — v0.9.0 R117 (ab_test.py) | 测试依赖 / test_depends |
 | 84 | D_GOV_AUDIT 审计追踪: test_build_reproducibility_verifier.py | → | Build Reproducibility Verifier — v0.38.0 R484 ... | 测试依赖 / test_depends |
@@ -470,10 +473,10 @@ graph TD
 | 88 | D_GOV_AUDIT 审计追踪: test_sim2real_calibration.py | → | Sim2Real Calibration — v0.6.0 R56 (sim2real_ca... | 测试依赖 / test_depends |
 | 89 | D_GOV_AUDIT 审计追踪: test_toctou_revalidation.py | → | TOCTOU Revalidation — v0.37.0 R458 (toctou_rev... | 测试依赖 / test_depends |
 | 90 | D_GOV_AUDIT 审计追踪: test_verification_engine.py | → | verification_engine.py | 测试依赖 / test_depends |
-| 91 | D_GOV_DOCS 架构文档治理: blueprint.md | → | _operational_gates.py | runtime / runtime |
-| 92 | D_GOV_DOCS 架构文档治理: blueprint.md | → | _operational_gates.py | contract / contract |
-| 93 | D_GOV_DOCS 架构文档治理: blueprint.md | → | _operational_gates.py | runtime / runtime |
-| 94 | D_GOV_DRIFT 漂移检测: blueprint.md | → | _operational_gates.py | runtime / runtime |
+| 91 | D_GOV_DOCS 架构文档治理: blueprint.md | → | _safety_gates.py | runtime / runtime |
+| 92 | D_GOV_DOCS 架构文档治理: blueprint.md | → | _safety_gates.py | contract / contract |
+| 93 | D_GOV_DOCS 架构文档治理: blueprint.md | → | _safety_gates.py | runtime / runtime |
+| 94 | D_GOV_DRIFT 漂移检测: blueprint.md | → | _safety_gates.py | runtime / runtime |
 | 95 | D_GOV_ENFORCEMENT 规则执行: test_ci_cd_pre_scanner.py | → | CI/CD Pre-Scanner — v0.8.0 R107 (ci_cd_pre_sca... | 测试依赖 / test_depends |
 | 96 | D_GOV_ENFORCEMENT 规则执行: test_concurrent_change_deconfliction.py | → | Concurrent Change Deconfliction — v0.16.0 R230... | 测试依赖 / test_depends |
 | 97 | D_GOV_ENFORCEMENT 规则执行: test_conflict_arbitration.py | → | Conflict Arbitration — v0.10.0 R130 (conflict_... | 测试依赖 / test_depends |

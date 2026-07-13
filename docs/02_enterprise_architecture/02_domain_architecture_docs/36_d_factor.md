@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 18:30:32
+> 最后更新: 2026-07-13 22:42:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -92,10 +92,10 @@ graph TD
         src_zephyr_factor_services_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_factor_value_factor_py["(原型态 / prototype) D_FACTOR — Value Factor<br/>文件: value_factor.py"]
     end
-    src_zephyr_factor_base_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_momentum_factor_py -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_value_factor_py -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_base_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_init_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_value_factor_py -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|runtime / runtime| D_GOVERNANCE
     D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
@@ -103,7 +103,8 @@ graph TD
     D_SIGLEGACY["(生产态 / production) D_SIGLEGACY"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|导入依赖 / import_depends| D_SIGLEGACY
     D_GOVERNANCE -.->|runtime / runtime| src_zephyr_factor_alpha_signal_pipeline_py
-    D_SIGLEGACY -.->|contract / contract| src_zephyr_factor_momentum_factor_py
+    D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL -.->|contract / contract| src_zephyr_factor_momentum_factor_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_SIGLEGACY -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -113,7 +114,7 @@ graph TD
     class src_zephyr_factor_init_py,src_zephyr_factor_base_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_factor_base_py production
     class src_zephyr_factor_extensions_init_py,src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_api_init_py,src_zephyr_factor_core_init_py,src_zephyr_factor_ctr_001_consumer_init_py,src_zephyr_factor_engine_init_py,src_zephyr_factor_infrastructure_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_services_init_py,src_zephyr_factor_value_factor_py design
     class D_SIGLEGACY external_prod
-    class D_GOVERNANCE,D_INFRA_RUNTIME external_design
+    class D_GOVERNANCE,D_INFRA_RUNTIME,D_FUNDAMENTAL_SIGNAL external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -174,14 +175,15 @@ graph TD
     D_SIGLEGACY["(生产态 / production) D_SIGLEGACY"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|导入依赖 / import_depends| D_SIGLEGACY
     D_GOVERNANCE -.->|runtime / runtime| src_zephyr_factor_alpha_signal_pipeline_py
-    D_SIGLEGACY -.->|contract / contract| src_zephyr_factor_momentum_factor_py
+    D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL -.->|contract / contract| src_zephyr_factor_momentum_factor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_factor_extensions_init_py,src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_api_init_py,src_zephyr_factor_core_init_py,src_zephyr_factor_ctr_001_consumer_init_py,src_zephyr_factor_engine_init_py,src_zephyr_factor_infrastructure_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_services_init_py,src_zephyr_factor_value_factor_py design
     class D_SIGLEGACY external_prod
-    class D_GOVERNANCE,D_INFRA_RUNTIME external_design
+    class D_GOVERNANCE,D_INFRA_RUNTIME,D_FUNDAMENTAL_SIGNAL external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -198,14 +200,14 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOVERNANCE 生命周期管理: post_sync_validator — post_sync_standard 命令.... | → | alpha_signal_pipeline.py | runtime / runtime |
-| 2 | D_GOVERNANCE 生命周期管理: ZephyrAlpha — governance.base re-export shim. ... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (fac... | 导入依赖 / import_depends |
-| 3 | D_SIGLEGACY 信号遗留设计态: D_SIGNAL Signal Domain (__init__.py) | → | D_FACTOR — Momentum Factor (momentum_factor.py) | contract / contract |
+| 1 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator（兼容 re-... | → | D_FACTOR — Momentum Factor (momentum_factor.py) | contract / contract |
+| 2 | D_GOVERNANCE 生命周期管理: post_sync_validator — post_sync_standard 命令.... | → | alpha_signal_pipeline.py | runtime / runtime |
+| 3 | D_GOVERNANCE 生命周期管理: ZephyrAlpha — governance.base re-export shim. ... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (fac... | 导入依赖 / import_depends |
 | 4 | D_SIGLEGACY 信号遗留设计态: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (fac... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 3 个外部域直接连接（出边 3 条 + 入边 4 条 = 7 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 3 条 + 入边 4 条 = 7 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -213,11 +215,13 @@ graph LR
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_SIGLEGACY["D_SIGLEGACY<br/>信号遗留设计态"]
+    D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_FACTOR -->|1条 runtime / runtime| D_GOVERNANCE
     D_FACTOR -->|1条 runtime / runtime| D_INFRA_RUNTIME
     D_FACTOR -->|1条 导入依赖 / import_depends| D_SIGLEGACY
     D_GOVERNANCE -->|2条 导入依赖 / import_depends, runtime / runtime| D_FACTOR
-    D_SIGLEGACY -->|2条 contract / contract, 导入依赖 / import_depends| D_FACTOR
+    D_FUNDAMENTAL_SIGNAL -->|1条 contract / contract| D_FACTOR
+    D_SIGLEGACY -->|1条 导入依赖 / import_depends| D_FACTOR
 ```
 
 ## 说明 / Notes

@@ -1,5 +1,5 @@
 %% D_FACTOR 域全景依赖图
-%% 生成时间: 2026-07-13 18:31:29
+%% 生成时间: 2026-07-13 22:43:09
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 14, 依赖边数: 11
 
@@ -24,18 +24,19 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_factor_base_py -->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_momentum_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_value_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_base_py -->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor___init___py -->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_value_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
+    %% D_FUNDAMENTAL_SIGNAL -> D_FACTOR (1 条)
+    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|contract| src_zephyr_factor_momentum_factor_py
     %% D_GOVERNANCE -> D_FACTOR (2 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_factor_factor_base_py
     D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_factor_alpha_signal_pipeline_py
-    %% D_SIGLEGACY -> D_FACTOR (2 条)
+    %% D_SIGLEGACY -> D_FACTOR (1 条)
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_factor_factor_base_py
-    D_SIGLEGACY[D_SIGLEGACY] -->|contract| src_zephyr_factor_momentum_factor_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_FACTOR -> D_GOVERNANCE (1 条)
