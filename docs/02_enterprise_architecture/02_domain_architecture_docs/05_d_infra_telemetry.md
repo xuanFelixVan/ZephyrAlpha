@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 可观测性（D_INFRA_TELEMETRY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 14:27:42
+> 最后更新: 2026-07-13 18:31:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,8 +28,8 @@ ttl: permanent
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 8 | Internal Dependencies | 8 |
-| 跨域入边 | 7 | Cross-domain Incoming | 7 |
-| 跨域出边 | 12 | Cross-domain Outgoing | 12 |
+| 跨域入边 | 9 | Cross-domain Incoming | 9 |
+| 跨域出边 | 24 | Cross-domain Outgoing | 24 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 2 | Prototype Modules | 2 |
 | 生产态模块 | 8 | Production Modules | 8 |
@@ -85,27 +85,36 @@ graph TD
         src_zephyr_infrastructure_system_telemetry_traces_init_py["(生产态 / production) 遥测 · traces — 分布式链路追踪（W3C TraceContext）<br/>文件: __init__.py"]
     end
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_archive_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_logs_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_profiles_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_schema_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_traces_init_py
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_archive_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_infrastructure_system_telemetry_alerts_init_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_archive_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_schema_init_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_traces_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|data / data| D_GOVERNANCE
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|runtime / runtime| D_GOVERNANCE
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|runtime / runtime| D_GOVERNANCE
+    D_INFRA_A2A["(原型态 / prototype) D_INFRA_A2A"]
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|contract / contract| D_INFRA_A2A
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|contract / contract| D_GOVERNANCE
+    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|runtime / runtime| D_SECURITY
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_infrastructure_system_telemetry_logs_init_py
+    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_infrastructure_system_telemetry_logs_init_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_init_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
@@ -119,8 +128,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_system_telemetry_init_py,src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py,src_zephyr_infrastructure_system_telemetry_alerts_init_py,src_zephyr_infrastructure_system_telemetry_archive_init_py,src_zephyr_infrastructure_system_telemetry_health_init_py,src_zephyr_infrastructure_system_telemetry_logs_init_py,src_zephyr_infrastructure_system_telemetry_metrics_init_py,src_zephyr_infrastructure_system_telemetry_traces_init_py production
     class src_zephyr_infrastructure_system_telemetry_profiles_init_py,src_zephyr_infrastructure_system_telemetry_schema_init_py design
-    class D_SHARED external_prod
-    class D_INFRA_RUNTIME external_design
+    class D_INFRA_RUNTIME,D_SHARED external_prod
+    class D_GOVERNANCE,D_INFRA_A2A,D_SECURITY,D_GOV_DOCS external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -140,24 +149,34 @@ graph TD
         src_zephyr_infrastructure_system_telemetry_traces_init_py["(生产态 / production) 遥测 · traces — 分布式链路追踪（W3C TraceContext）<br/>文件: __init__.py"]
     end
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py
-    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_archive_init_py
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_logs_init_py
     src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_traces_init_py
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_archive_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_infrastructure_system_telemetry_alerts_init_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_system_telemetry_archive_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_system_telemetry_traces_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|data / data| D_GOVERNANCE
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|runtime / runtime| D_GOVERNANCE
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|runtime / runtime| D_GOVERNANCE
+    D_INFRA_A2A["(原型态 / prototype) D_INFRA_A2A"]
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|contract / contract| D_INFRA_A2A
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|contract / contract| D_GOVERNANCE
+    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    src_zephyr_infrastructure_system_telemetry_logs_init_py -.->|runtime / runtime| D_SECURITY
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_infrastructure_system_telemetry_logs_init_py
+    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_infrastructure_system_telemetry_logs_init_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_init_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_alerts_init_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_init_py
@@ -168,8 +187,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_system_telemetry_init_py,src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py,src_zephyr_infrastructure_system_telemetry_alerts_init_py,src_zephyr_infrastructure_system_telemetry_archive_init_py,src_zephyr_infrastructure_system_telemetry_health_init_py,src_zephyr_infrastructure_system_telemetry_logs_init_py,src_zephyr_infrastructure_system_telemetry_metrics_init_py,src_zephyr_infrastructure_system_telemetry_traces_init_py production
-    class D_SHARED external_prod
-    class D_INFRA_RUNTIME external_design
+    class D_INFRA_RUNTIME,D_SHARED external_prod
+    class D_GOVERNANCE,D_INFRA_A2A,D_SECURITY,D_GOV_DOCS external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -208,43 +227,75 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: auto_bootstrap — 全自动遥测注入钩子（MOD-INF-0... | 导入依赖 / import_depends |
-| 2 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: ZephyrAlpha — system-telemetry/contract_metric... | 导入依赖 / import_depends |
-| 3 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | 导入依赖 / import_depends |
-| 4 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: 三态健康探针协议（Health Probes — CT-HEALTH-00... | 导入依赖 / import_depends |
-| 5 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: TELE->FLE 指标桥接 — emit_metrics() 生产者 (me... | 导入依赖 / import_depends |
-| 6 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: 三冗余 Watchdog（CT-WATCHDOG-001）——互检+Pani... | 导入依赖 / import_depends |
-| 7 | 遥测 · ai_behavior — AI 行为遥测（7维度 + Err... | → | D_INFRA_RUNTIME 运行时集成: 遥测 · ai_behavior/event_sink — AI 行为遥测事... | 导入依赖 / import_depends |
-| 8 | 遥测 · archive — 冷存储归档管道（TTL + gzip +... | → | D_INFRA_RUNTIME 运行时集成: 遥测 · archive/cold_stub — 冷存储归档管道。 (... | 导入依赖 / import_depends |
-| 9 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_INFRA_RUNTIME 运行时集成: logs/structured_sink — 结构化日志管道（D_SYSTE... | 导入依赖 / import_depends |
-| 10 | 遥测 · traces — 分布式链路追踪（W3C TraceCont... | → | D_INFRA_RUNTIME 运行时集成: 遥测 · traces/span_stub — W3C TraceContext 分... | 导入依赖 / import_depends |
-| 11 | AlertSubsystem — 告警规则评估引擎（MOD-INF-015... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 12 | SchemaSubsystem — Schema 版本管理与兼容性校验.... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 1 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_AUTONOMY_CORE 自治核心: memory_bank.py — AI 读写结构化持久上下文 (DD: ... | runtime / runtime |
+| 2 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_COMPLIANCE 合规: Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 3 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | runtime / runtime |
+| 4 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_GOVERNANCE 生命周期管理: Construction Verifier — 施工验证器: 任务卡完成... | runtime / runtime |
+| 5 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_GOVERNANCE 生命周期管理: model_provider_data.py | runtime / runtime |
+| 6 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_GOVERNANCE 生命周期管理: dataflowgraph Schema DDL + 连接入口 (dataflowgr... | data / data |
+| 7 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | contract / contract |
+| 8 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_GOVERNANCE 生命周期管理: Batch2 治理层契约 — 15条 Pydantic v2 Schema（P... | runtime / runtime |
+| 9 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_GOV_DOCS 架构文档治理: blueprint.md | runtime / runtime |
+| 10 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
+| 11 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_INFRA_A2A A2A通信: test_a2a_check.py | contract / contract |
+| 12 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: auto_bootstrap — 全自动遥测注入钩子（MOD-INF-0... | 导入依赖 / import_depends |
+| 13 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: ZephyrAlpha — system-telemetry/contract_metric... | 导入依赖 / import_depends |
+| 14 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | 导入依赖 / import_depends |
+| 15 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: 三态健康探针协议（Health Probes — CT-HEALTH-00... | 导入依赖 / import_depends |
+| 16 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: TELE->FLE 指标桥接 — emit_metrics() 生产者 (me... | 导入依赖 / import_depends |
+| 17 | system-telemetry — 系统遥测模块（MOD-INF-015 v... | → | D_INFRA_RUNTIME 运行时集成: 三冗余 Watchdog（CT-WATCHDOG-001）——互检+Pani... | 导入依赖 / import_depends |
+| 18 | 遥测 · ai_behavior — AI 行为遥测（7维度 + Err... | → | D_INFRA_RUNTIME 运行时集成: 遥测 · ai_behavior/event_sink — AI 行为遥测事... | 导入依赖 / import_depends |
+| 19 | 遥测 · archive — 冷存储归档管道（TTL + gzip +... | → | D_INFRA_RUNTIME 运行时集成: 遥测 · archive/cold_stub — 冷存储归档管道。 (... | 导入依赖 / import_depends |
+| 20 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_INFRA_RUNTIME 运行时集成: logs/structured_sink — 结构化日志管道（D_SYSTE... | 导入依赖 / import_depends |
+| 21 | 遥测 · traces — 分布式链路追踪（W3C TraceCont... | → | D_INFRA_RUNTIME 运行时集成: 遥测 · traces/span_stub — W3C TraceContext 分... | 导入依赖 / import_depends |
+| 22 | logs — 结构化日志流（structlog + JSONL + trace... | → | D_SECURITY 对抗验证: LLM Security Gateway - Streamlit Dashboard. (ap... | runtime / runtime |
+| 23 | AlertSubsystem — 告警规则评估引擎（MOD-INF-015... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 24 | SchemaSubsystem — Schema 版本管理与兼容性校验.... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_INFRA_RUNTIME 运行时集成: auto_bootstrap — 全自动遥测注入钩子（MOD-INF-0... | → | 遥测 · metrics — SLI/SLO 与业务指标流 (__init... | 导入依赖 / import_depends |
-| 2 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | AlertSubsystem — 告警规则评估引擎（MOD-INF-015... | 导入依赖 / import_depends |
-| 3 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | 遥测 · archive — 冷存储归档管道（TTL + gzip +... | 导入依赖 / import_depends |
-| 4 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | health subsystem — 模块健康注册与 LifecycleMan... | 导入依赖 / import_depends |
-| 5 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | ProfileSubsystem — 系统资源画像（MOD-INF-015 .... | 导入依赖 / import_depends |
-| 6 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | SchemaSubsystem — Schema 版本管理与兼容性校验.... | 导入依赖 / import_depends |
-| 7 | D_INFRA_RUNTIME 运行时集成: test_observability_health.py | → | health subsystem — 模块健康注册与 LifecycleMan... | 测试依赖 / test_depends |
+| 1 | D_GOVERNANCE 生命周期管理: model_provider_data.py | → | logs — 结构化日志流（structlog + JSONL + trace... | runtime / runtime |
+| 2 | D_GOV_DOCS 架构文档治理: blueprint.md | → | logs — 结构化日志流（structlog + JSONL + trace... | runtime / runtime |
+| 3 | D_INFRA_RUNTIME 运行时集成: auto_bootstrap — 全自动遥测注入钩子（MOD-INF-0... | → | 遥测 · metrics — SLI/SLO 与业务指标流 (__init... | 导入依赖 / import_depends |
+| 4 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | AlertSubsystem — 告警规则评估引擎（MOD-INF-015... | 导入依赖 / import_depends |
+| 5 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | 遥测 · archive — 冷存储归档管道（TTL + gzip +... | 导入依赖 / import_depends |
+| 6 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | health subsystem — 模块健康注册与 LifecycleMan... | 导入依赖 / import_depends |
+| 7 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | ProfileSubsystem — 系统资源画像（MOD-INF-015 .... | 导入依赖 / import_depends |
+| 8 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0... | → | SchemaSubsystem — Schema 版本管理与兼容性校验.... | 导入依赖 / import_depends |
+| 9 | D_INFRA_RUNTIME 运行时集成: test_observability_health.py | → | health subsystem — 模块健康注册与 LifecycleMan... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 2 个外部域直接连接（出边 12 条 + 入边 7 条 = 19 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 10 个外部域直接连接（出边 24 条 + 入边 9 条 = 33 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>可观测性"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
+    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_SHARED["D_SHARED<br/>共享服务"]
+    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
+    D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信"]
+    D_SECURITY["D_SECURITY<br/>对抗验证"]
+    D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
+    D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
+    D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_INFRA_TELEMETRY -->|10条 导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_INFRA_TELEMETRY -->|5条 contract / contract, data / data, runtime / runtime| D_GOVERNANCE
     D_INFRA_TELEMETRY -->|2条 导入依赖 / import_depends| D_SHARED
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_GOV_DOCS
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_AUTONOMY_CORE
+    D_INFRA_TELEMETRY -->|1条 contract / contract| D_INFRA_A2A
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_SECURITY
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_GOV_DRIFT
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_COMPLIANCE
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_FEEDBACK_LOOP
     D_INFRA_RUNTIME -->|7条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRA_TELEMETRY
+    D_GOVERNANCE -->|1条 runtime / runtime| D_INFRA_TELEMETRY
+    D_GOV_DOCS -->|1条 runtime / runtime| D_INFRA_TELEMETRY
 ```
 
 ## 说明 / Notes

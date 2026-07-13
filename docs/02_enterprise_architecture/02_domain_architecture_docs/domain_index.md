@@ -47,8 +47,8 @@ ttl: permanent
 | D_DATA_ENG | 数据工程 / Data Engineering | 7 | 0 | 0 | 7 | 7/150 (OK) | [08_d_data_eng.md](08_d_data_eng.md) |
 | D_DATA_GOV | 数据治理 / Data Governance | 30 | 0 | 0 | 30 | 30/150 (OK) | [09_d_data_gov.md](09_d_data_gov.md) |
 | D_DATA_SEC | 数据安全与契约 / Data Security & Contracts | 7 | 0 | 0 | 7 | 7/150 (OK) | [10_d_data_sec.md](10_d_data_sec.md) |
-| D_FBL_DETECTORS | feedback_detectors / D_FBL_DETECTORS | 65 | 60 | 0 | 5 | 65/150 (OK) | [11_d_fbl_detectors.md](11_d_fbl_detectors.md) |
-| D_FBL_DIAGNOSERS | feedback_diagnosers / D_FBL_DIAGNOSERS | 76 | 71 | 0 | 5 | 76/150 (OK) | [12_d_fbl_diagnosers.md](12_d_fbl_diagnosers.md) |
+| D_FBL_DETECTORS | feedback_detectors / Feedback Detectors | 65 | 60 | 0 | 5 | 65/150 (OK) | [11_d_fbl_detectors.md](11_d_fbl_detectors.md) |
+| D_FBL_DIAGNOSERS | feedback_diagnosers / Feedback Diagnosers | 76 | 71 | 0 | 5 | 76/150 (OK) | [12_d_fbl_diagnosers.md](12_d_fbl_diagnosers.md) |
 | D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 71 | 67 | 0 | 4 | 71/150 (OK) | [13_d_fbl_verification.md](13_d_fbl_verification.md) |
 | D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 229 | 109 | 0 | 120 | 229/150 (超容) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 46 | 13 | 6 | 27 | 46/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
@@ -79,15 +79,15 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [35_d_ex_sor.md](35_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 14 | 4 | 0 | 10 | 14/150 (OK) | [36_d_factor.md](36_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 9 | 3 | 0 | 6 | 9/150 (OK) | [37_d_fundamental_signal.md](37_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 1059 | 129 | 3 | 927 | 1059/150 (超容) | [38_d_governance.md](38_d_governance.md) |
-| D_GOV_AUDIT | audit_orchestration / Audit Trail | 292 | 66 | 2 | 224 | 292/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 1029 | 125 | 3 | 901 | 1029/150 (超容) | [38_d_governance.md](38_d_governance.md) |
+| D_GOV_AUDIT | audit_orchestration / Audit Trail | 272 | 63 | 2 | 207 | 272/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 96 | 68 | 28 | 0 | 96/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 164 | 100 | 0 | 64 | 164/150 (超容) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 30 | 16 | 0 | 14 | 30/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
-| D_GOV_REPAIR | rollback / Governance Repair | 0 | 0 | 0 | 0 | 0/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
+| D_GOV_REPAIR | rollback / Governance Repair | 20 | 3 | 0 | 17 | 20/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 35 | 30 | 0 | 5 | 35/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |
-| D_GOV_SCRIPTS | script_governance / Script Governance | 74 | 3 | 0 | 71 | 74/150 (OK) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | script_governance / Script Governance | 104 | 7 | 0 | 97 | 104/150 (OK) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 109 | 22 | 0 | 87 | 109/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 43 | 0 | 2 | 41 | 43/150 (OK) | [48_d_knowledge.md](48_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [49_d_ml_serve.md](49_d_ml_serve.md) |

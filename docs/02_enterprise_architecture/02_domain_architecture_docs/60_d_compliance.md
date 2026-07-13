@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 合规（D_COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 14:26:56
+> 最后更新: 2026-07-13 18:30:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -112,30 +112,30 @@ graph TD
         src_zephyr_compliance_services_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
-    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_compliance_manager_py
+    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_default_security_gateway_py
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_compliance_compliance_manager_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_aisg_sandbox_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_compliance_artifact_scanner_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    src_zephyr_compliance_compliance_manager_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_evidence_pack_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_compliance_merkle_hourly_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_compliance_audit_trail_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_compliance_audit_orchestrator_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_GOVERNANCE
-    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
+    D_FBL_VERIFICATION["(原型态 / prototype) D_FBL_VERIFICATION"]
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_FBL_VERIFICATION
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|contract / contract| D_GOV_DOCS
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|contract / contract| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_GOV_DRIFT
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_compliance_default_security_gateway_py
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
     D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
@@ -143,14 +143,15 @@ graph TD
     D_GOVERNANCE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_INFRA_TELEMETRY["(生产态 / production) D_INFRA_TELEMETRY"]
+    D_INFRA_TELEMETRY -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_init_py,src_zephyr_compliance_extensions_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_api_init_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_core_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_infrastructure_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_merkle_hourly_py,src_zephyr_compliance_models_init_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_services_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
-    class D_GOVERNANCE,D_GOV_DRIFT,D_GOV_OPS_RESILIENCE,D_GOV_AUDIT,D_FBL_VERIFICATION external_prod
-    class D_GOV_DOCS,D_FEEDBACK_LOOP,D_AUTONOMY_CORE external_design
+    class D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_GOV_DRIFT,D_GOV_AUDIT,D_INFRA_TELEMETRY external_prod
+    class D_FBL_VERIFICATION,D_FEEDBACK_LOOP,D_GOV_DOCS,D_AUTONOMY_CORE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -197,30 +198,30 @@ graph TD
         src_zephyr_compliance_services_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
-    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_compliance_manager_py
+    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_default_security_gateway_py
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_compliance_compliance_manager_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_aisg_sandbox_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_compliance_artifact_scanner_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    src_zephyr_compliance_compliance_manager_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_compliance_evidence_pack_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_compliance_merkle_hourly_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_compliance_integrity_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_compliance_audit_trail_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_compliance_audit_orchestrator_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_GOVERNANCE
-    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
+    D_FBL_VERIFICATION["(原型态 / prototype) D_FBL_VERIFICATION"]
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_FBL_VERIFICATION
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|contract / contract| D_GOV_DOCS
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|contract / contract| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime / runtime| D_GOV_DRIFT
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_compliance_default_security_gateway_py
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
     D_GOV_DRIFT -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     D_GOV_DOCS -.->|contract / contract| src_zephyr_compliance_audit_trail_bridges_init_py
@@ -228,14 +229,15 @@ graph TD
     D_GOVERNANCE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
-    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_INFRA_TELEMETRY["(生产态 / production) D_INFRA_TELEMETRY"]
+    D_INFRA_TELEMETRY -.->|runtime / runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_init_py,src_zephyr_compliance_extensions_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_api_init_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_core_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_infrastructure_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_merkle_hourly_py,src_zephyr_compliance_models_init_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_services_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
-    class D_GOVERNANCE,D_GOV_DRIFT,D_GOV_OPS_RESILIENCE,D_GOV_AUDIT,D_FBL_VERIFICATION external_prod
-    class D_GOV_DOCS,D_FEEDBACK_LOOP,D_AUTONOMY_CORE external_design
+    class D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_GOV_DRIFT,D_GOV_AUDIT,D_INFRA_TELEMETRY external_prod
+    class D_FBL_VERIFICATION,D_FEEDBACK_LOOP,D_GOV_DOCS,D_AUTONOMY_CORE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -244,22 +246,22 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_FBL_VERIFICATION 反馈验证: GateVerdict — GateVerdict (parameterized_safet... | runtime / runtime |
+| 1 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_FBL_VERIFICATION 反馈验证: _operational_gates.py | runtime / runtime |
 | 2 | Re-export wrapper: aisg_sandbox has migrated to... | → | D_GOVERNANCE 生命周期管理: AISG Sandbox Testing — AI Security Gateway 沙.... | 导入依赖 / import_depends |
 | 3 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOVERNANCE 生命周期管理: dataflowgraph Schema DDL + 连接入口 (dataflowgr... | runtime / runtime |
-| 4 | Re-export wrapper: compliance_manager has migra... | → | D_GOVERNANCE 生命周期管理: ZephyrAlpha — D_COMPLIANCE Compliance Layer —... | 导入依赖 / import_depends |
-| 5 | Re-export wrapper: evidence_pack has migrated t... | → | D_GOVERNANCE 生命周期管理: evidence_pack.py | 导入依赖 / import_depends |
-| 6 | Re-export wrapper: audit-orchestrator has migra... | → | D_GOV_AUDIT 审计追踪: __init__.py | 导入依赖 / import_depends |
-| 7 | Re-export wrapper: audit-trail has migrated to ... | → | D_GOV_AUDIT 审计追踪: __init__.py | 导入依赖 / import_depends |
-| 8 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: G-CT-002 Audit 异常检测器 — AnomalyEvent Pydan... | 导入依赖 / import_depends |
-| 9 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: G-CT-001 契约消费端 — Audit.write() 公共接口. ... | 导入依赖 / import_depends |
-| 10 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ DelegationManager 委托链审计桥接. (aud... | 导入依赖 / import_depends |
-| 11 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: G-CT-007 Audit ↔ Drift 双向桥接 — MOD-INF-020... | 导入依赖 / import_depends |
-| 12 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ Feedback Loop 三角闭环桥接. (audit_fee... | 导入依赖 / import_depends |
-| 13 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ WarmHotGate 三层存储桥接. (audit_tiere... | 导入依赖 / import_depends |
-| 14 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ ContinuousTrust 信任分数桥接. (audit_t... | 导入依赖 / import_depends |
-| 15 | Re-export wrapper: merkle_hourly has migrated t... | → | D_GOV_AUDIT 审计追踪: merkle_hourly.py | 导入依赖 / import_depends |
-| 16 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_DOCS 架构文档治理: blueprint.md | contract / contract |
+| 4 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | contract / contract |
+| 5 | Re-export wrapper: compliance_manager has migra... | → | D_GOVERNANCE 生命周期管理: ZephyrAlpha — D_COMPLIANCE Compliance Layer —... | 导入依赖 / import_depends |
+| 6 | Re-export wrapper: evidence_pack has migrated t... | → | D_GOVERNANCE 生命周期管理: evidence_pack.py | 导入依赖 / import_depends |
+| 7 | Re-export wrapper: audit-orchestrator has migra... | → | D_GOV_AUDIT 审计追踪: __init__.py | 导入依赖 / import_depends |
+| 8 | Re-export wrapper: audit-trail has migrated to ... | → | D_GOV_AUDIT 审计追踪: __init__.py | 导入依赖 / import_depends |
+| 9 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: G-CT-002 Audit 异常检测器 — AnomalyEvent Pydan... | 导入依赖 / import_depends |
+| 10 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: G-CT-001 契约消费端 — Audit.write() 公共接口. ... | 导入依赖 / import_depends |
+| 11 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ DelegationManager 委托链审计桥接. (aud... | 导入依赖 / import_depends |
+| 12 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: G-CT-007 Audit ↔ Drift 双向桥接 — MOD-INF-020... | 导入依赖 / import_depends |
+| 13 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ Feedback Loop 三角闭环桥接. (audit_fee... | 导入依赖 / import_depends |
+| 14 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ WarmHotGate 三层存储桥接. (audit_tiere... | 导入依赖 / import_depends |
+| 15 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_AUDIT 审计追踪: Audit ↔ ContinuousTrust 信任分数桥接. (audit_t... | 导入依赖 / import_depends |
+| 16 | Re-export wrapper: merkle_hourly has migrated t... | → | D_GOV_AUDIT 审计追踪: merkle_hourly.py | 导入依赖 / import_depends |
 | 17 | Re-export wrapper: artifact_scanner has migrate... | → | D_GOV_DRIFT 漂移检测: ArtifactScanner — SSRF / Path Traversal / Cred... | 导入依赖 / import_depends |
 | 18 | Audit Trail — MOD-INF-020 (__init__.py) | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
 | 19 | __init__.py | → | D_GOV_DRIFT 漂移检测: Owner Absence Manager — Owner缺席模式 §6.32。... | 导入依赖 / import_depends |
@@ -323,17 +325,17 @@ graph TD
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | D_AUTONOMY_CORE 自治核心: Agent Spec -> Pipeline 集成桥接层 (__init__.py) | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 2 | D_AUTONOMY_CORE 自治核心: test_auto_bootstrap.py | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
-| 3 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | default_security_gateway.py | runtime / runtime |
-| 4 | D_GOVERNANCE 生命周期管理: model_provider_data.py | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | default_security_gateway.py | runtime / runtime |
+| 3 | D_GOVERNANCE 生命周期管理: model_provider_data.py | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 4 | D_GOV_DOCS 架构文档治理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
 | 5 | D_GOV_DOCS 架构文档治理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
 | 6 | D_GOV_DOCS 架构文档治理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
-| 7 | D_GOV_DOCS 架构文档治理: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
-| 8 | D_GOV_DRIFT 漂移检测: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 7 | D_GOV_DRIFT 漂移检测: blueprint.md | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
+| 8 | D_INFRA_TELEMETRY 可观测性: logs — 结构化日志流（structlog + JSONL + trace... | → | Audit Trail — MOD-INF-020 (__init__.py) | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 11 个外部域直接连接（出边 73 条 + 入边 8 条 = 81 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 12 个外部域直接连接（出边 73 条 + 入边 8 条 = 81 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -343,26 +345,27 @@ graph LR
     D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
-    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
+    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>可观测性"]
     D_COMPLIANCE -->|46条 导入依赖 / import_depends, runtime / runtime| D_GOV_DRIFT
     D_COMPLIANCE -->|10条 导入依赖 / import_depends| D_GOV_AUDIT
     D_COMPLIANCE -->|7条 导入依赖 / import_depends| D_SECURITY
-    D_COMPLIANCE -->|4条 导入依赖 / import_depends, runtime / runtime| D_GOVERNANCE
+    D_COMPLIANCE -->|5条 contract / contract, 导入依赖 / import_depends, runtime / runtime| D_GOVERNANCE
     D_COMPLIANCE -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_COMPLIANCE -->|1条 contract / contract| D_GOV_DOCS
     D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_COMPLIANCE -->|1条 runtime / runtime| D_FBL_VERIFICATION
+    D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_DOCS -->|3条 contract / contract| D_COMPLIANCE
-    D_AUTONOMY_CORE -->|2条 runtime / runtime| D_COMPLIANCE
+    D_AUTONOMY_CORE -->|1条 runtime / runtime| D_COMPLIANCE
     D_FEEDBACK_LOOP -->|1条 runtime / runtime| D_COMPLIANCE
     D_GOVERNANCE -->|1条 runtime / runtime| D_COMPLIANCE
     D_GOV_DRIFT -->|1条 runtime / runtime| D_COMPLIANCE
+    D_INFRA_TELEMETRY -->|1条 runtime / runtime| D_COMPLIANCE
 ```
 
 ## 说明 / Notes

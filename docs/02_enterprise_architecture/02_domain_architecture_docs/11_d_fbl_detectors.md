@@ -8,12 +8,14 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 11_d_fbl_detectors / feedback_detectors / feedback_detectors / D_FBL_DETECTORS
+# 11_d_fbl_detectors / feedback_detectors / feedback_detectors / Feedback Detectors
+
+> **功能简介 / Overview**: 反馈检测器，负责异常检测、漂移检测、反馈信号检测和可靠性监控
 
 > **文档作用 / Purpose**: 展示 feedback_detectors（D_FBL_DETECTORS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 14:26:58
+> 最后更新: 2026-07-13 18:30:32
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +24,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 11 | Number | 11 |
 | 域ID | D_FBL_DETECTORS | Domain ID | D_FBL_DETECTORS |
-| 域名称 | feedback_detectors | Domain Name | D_FBL_DETECTORS |
+| 域名称 | feedback_detectors | Domain Name | Feedback Detectors |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 65 | Module Count | 65 |
 | 域内依赖 | 5 | Internal Dependencies | 5 |
@@ -275,8 +277,8 @@ graph TD
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_version_migrator_py
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_otel_adapter_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_regulatory_audit_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_runbook_executor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

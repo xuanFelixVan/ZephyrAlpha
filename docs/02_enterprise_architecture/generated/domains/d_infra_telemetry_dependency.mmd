@@ -1,7 +1,7 @@
 %% D_INFRA_TELEMETRY 域全景依赖图
-%% 生成时间: 2026-07-13 14:19:07
+%% 生成时间: 2026-07-13 18:31:29
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 10, 依赖边数: 27
+%% 模块数: 10, 依赖边数: 41
 
 graph TD
 
@@ -30,6 +30,10 @@ graph TD
     src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| src_zephyr_infrastructure_syst___elemetry_traces___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
+    %% D_GOVERNANCE -> D_INFRA_TELEMETRY (1 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_system_telemetry_logs___init___py
+    %% D_GOV_DOCS -> D_INFRA_TELEMETRY (1 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_infrastructure_system_telemetry_logs___init___py
     %% D_INFRA_RUNTIME -> D_INFRA_TELEMETRY (7 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_infrastructure_syst___lemetry_metrics___init___py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_infrastructure_syst___elemetry_alerts___init___py
@@ -40,22 +44,42 @@ graph TD
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|test_depends| src_zephyr_infrastructure_syst___elemetry_health___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
+    %% D_INFRA_TELEMETRY -> D_AUTONOMY_CORE (1 条)
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|runtime| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    %% D_INFRA_TELEMETRY -> D_COMPLIANCE (1 条)
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|runtime| D_COMPLIANCE[D_COMPLIANCE]
+    %% D_INFRA_TELEMETRY -> D_FEEDBACK_LOOP (1 条)
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    %% D_INFRA_TELEMETRY -> D_GOVERNANCE (5 条)
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|data| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|contract| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_INFRA_TELEMETRY -> D_GOV_DOCS (1 条)
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|runtime| D_GOV_DOCS[D_GOV_DOCS]
+    %% D_INFRA_TELEMETRY -> D_GOV_DRIFT (1 条)
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
+    %% D_INFRA_TELEMETRY -> D_INFRA_A2A (1 条)
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|contract| D_INFRA_A2A[D_INFRA_A2A]
     %% D_INFRA_TELEMETRY -> D_INFRA_RUNTIME (10 条)
+    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_infrastructure_syst___try_ai_behavior___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    src_zephyr_infrastructure_system_telemetry___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_infrastructure_syst___lemetry_archive___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_infrastructure_system_telemetry_logs___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_infrastructure_syst___elemetry_traces___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    %% D_INFRA_TELEMETRY -> D_SECURITY (1 条)
+    src_zephyr_infrastructure_system_telemetry_logs___init___py -->|runtime| D_SECURITY[D_SECURITY]
     %% D_INFRA_TELEMETRY -> D_SHARED (2 条)
     src_zephyr_infrastructure_syst___elemetry_alerts___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_syst___elemetry_schema___init___py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 8 条
-    %% 跨域入边: 7 条
-    %% 跨域出边: 12 条
+    %% 跨域入边: 9 条
+    %% 跨域出边: 24 条

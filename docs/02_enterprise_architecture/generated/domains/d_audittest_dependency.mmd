@@ -1,5 +1,5 @@
 %% D_AUDITTEST 域全景依赖图
-%% 生成时间: 2026-07-13 14:19:06
+%% 生成时间: 2026-07-13 18:31:29
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 10, 依赖边数: 17
 
@@ -31,17 +31,17 @@ graph TD
     tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_miniqmt_broker_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_tick_replay_data_handler_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_tick_replay_data_handler_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_tick_replay_data_handler_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     %% D_AUDITTEST -> D_GOVERNANCE (3 条)
-    tests_test_decision_graph_reader_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
-    tests_test_decision_graph_reader_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     tests_test_extract_decisiongraph_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_test_decision_graph_reader_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
+    tests_test_decision_graph_reader_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_AUDITTEST -> D_TRADING (1 条)
     tests_test_miniqmt_broker_py -->|test_depends| D_TRADING[D_TRADING]
 

@@ -1,5 +1,5 @@
 %% D_RISK 域全景依赖图
-%% 生成时间: 2026-07-13 14:19:07
+%% 生成时间: 2026-07-13 18:31:29
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 28, 依赖边数: 34
 
@@ -74,8 +74,8 @@ graph TD
     %% D_RISK -> D_GOV_RULE (1 条)
     tests_risk_test_risk_ssot_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_RISK -> D_INFRASTRUCTURE (2 条)
-    src_zephyr_risk_risk_limits_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_risk_risk_manager_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_risk_risk_limits_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_RISK -> D_ORCHESTRATOR (1 条)
     tests_risk_test_risk_registry_root_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     %% D_RISK -> D_SHARED (2 条)
