@@ -193,22 +193,33 @@ class TickSubscriber:
         """xtdata 回调入口——把 tick 放入队列（QMT 线程调用）。
 
         Args:
-            datas: {stock_code: tick_dict}
+            datas: {stock_code: tick_data}
+                subscribe_quote 回调: tick_data 是 list[dict]（每3秒推送，通常 len=1）
+                subscribe_whole_quote 回调: tick_data 是 dict（快照，向后兼容）
         """
         if not self._running:
             return
-        for symbol, tick in datas.items():
-            try:
-                if tick:
+        for symbol, tick_data in datas.items():
+            # QMT subscribe_quote 回调: tick_data 是 list[dict]
+            if isinstance(tick_data, list):
+                ticks = tick_data
+            elif isinstance(tick_data, dict):
+                ticks = [tick_data]
+            else:
+                continue
+            for tick in ticks:
+                if not tick:
+                    continue
+                try:
                     self._tick_queue.put_nowait((symbol, tick))
                     with self._lock:
                         self._stats["received"] += 1
-            except queue.Full:
-                log.warning("tick 队列已满，丢弃 tick symbol=%s", symbol)
-            except Exception as e:
-                log.error("入队失败 symbol=%s: %s", symbol, e, exc_info=True)
-                with self._lock:
-                    self._stats["errors"] += 1
+                except queue.Full:
+                    log.warning("tick 队列已满，丢弃 tick symbol=%s", symbol)
+                except Exception as e:
+                    log.error("入队失败 symbol=%s: %s", symbol, e, exc_info=True)
+                    with self._lock:
+                        self._stats["errors"] += 1
 
     def _flush_once(self, timeout: float = 1.0) -> None:
         """从队列取一批 tick，转换并写入 BufferedWriter。"""
@@ -302,11 +313,11 @@ class TickSubscriber:
         self._running = False
         if self._flush_thread:
             self._flush_thread.join(timeout=30)
-        # 取消订阅
+        # 取消订阅（unsubscribe_quote 不接受 period 参数，与 subscribe_quote 签名不一致）
         if self._xtdata:
             for symbol in self._subscribed:
                 try:
-                    self._xtdata.unsubscribe_quote(symbol, period="tick", callback=self._on_tick)
+                    self._xtdata.unsubscribe_quote(symbol, callback=self._on_tick)
                 except Exception:
                     pass
         log.info("TickSubscriber 已停止: stats=%s", self._stats)

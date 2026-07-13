@@ -108,7 +108,26 @@ class TestInferMarketType:
 
 class TestTickSubscriber:
     def test_callback_puts_to_queue(self):
-        """QMT callback 把 tick 放入队列"""
+        """QMT callback 把 tick 放入队列（list[dict] 格式，subscribe_quote 实际回调）"""
+        from zephyr.data.tick_subscriber import TickSubscriber
+        sub = TickSubscriber.__new__(TickSubscriber)
+        sub._tick_queue = queue.Queue()
+        sub._running = True
+        sub._stats = {"received": 0, "written": 0, "errors": 0}
+        sub._lock = threading.Lock()
+
+        # QMT subscribe_quote 回调: tick_data 是 list[dict]
+        datas = {"000001.SZ": [{"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}]}
+        TickSubscriber._on_tick(sub, datas)
+
+        assert not sub._tick_queue.empty()
+        symbol, tick = sub._tick_queue.get_nowait()
+        assert symbol == "000001.SZ"
+        assert tick["lastPrice"] == 10.5
+        assert sub._stats["received"] == 1
+
+    def test_callback_handles_dict_format(self):
+        """dict 格式 tick 向后兼容（subscribe_whole_quote 快照）"""
         from zephyr.data.tick_subscriber import TickSubscriber
         sub = TickSubscriber.__new__(TickSubscriber)
         sub._tick_queue = queue.Queue()
@@ -124,6 +143,24 @@ class TestTickSubscriber:
         assert symbol == "000001.SZ"
         assert tick["lastPrice"] == 10.5
         assert sub._stats["received"] == 1
+
+    def test_callback_handles_multi_tick_list(self):
+        """list 包含多个 tick 时全部入队"""
+        from zephyr.data.tick_subscriber import TickSubscriber
+        sub = TickSubscriber.__new__(TickSubscriber)
+        sub._tick_queue = queue.Queue()
+        sub._running = True
+        sub._stats = {"received": 0, "written": 0, "errors": 0}
+        sub._lock = threading.Lock()
+
+        datas = {"000001.SZ": [
+            {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050},
+            {"time": 1720838406000, "lastPrice": 10.6, "volume": 200, "amount": 2120},
+        ]}
+        TickSubscriber._on_tick(sub, datas)
+
+        assert sub._tick_queue.qsize() == 2
+        assert sub._stats["received"] == 2
 
     def test_flush_thread_processes_queue(self):
         """flush 线程从队列取数据，调用 BufferedWriter"""
