@@ -1,5 +1,5 @@
 %% D_INFRASTRUCTURE 域全景依赖图
-%% 生成时间: 2026-07-13 11:38:27
+%% 生成时间: 2026-07-13 14:19:07
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 61, 依赖边数: 139
 
@@ -88,10 +88,10 @@ graph TD
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_fill_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_order_py
     %% D_GOVERNANCE -> D_INFRASTRUCTURE (13 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_fill_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_position_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_fill_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_position_py
@@ -146,18 +146,19 @@ graph TD
     %% D_SIMULATION -> D_INFRASTRUCTURE (1 条)
     D_SIMULATION[D_SIMULATION] -->|import_depends| src_zephyr_shared_contracts_experiment_result_py
     %% D_TRADING -> D_INFRASTRUCTURE (2 条)
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_trace_context_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_INFRASTRUCTURE -> D_AUTONOMY_CORE (1 条)
     tests_config_test_config_safety_guard_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    %% D_INFRASTRUCTURE -> D_FBL_DETECTORS (1 条)
+    tests_config_test_config_drift_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
     %% D_INFRASTRUCTURE -> D_FBL_VERIFICATION (2 条)
     tests_config_test_config_complexity_budget_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     tests_config_test_config_governance_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    %% D_INFRASTRUCTURE -> D_FEEDBACK_LOOP (3 条)
+    %% D_INFRASTRUCTURE -> D_FEEDBACK_LOOP (2 条)
     tests_config_test_config_hot_reload_guard_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_config_test_config_drift_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_contracts_test_api_version_contract_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     %% D_INFRASTRUCTURE -> D_GOVERNANCE (1 条)
     tests_contracts_test_alerts_bridge_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]

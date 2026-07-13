@@ -1,7 +1,7 @@
 %% D_INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-07-13 11:38:27
+%% 生成时间: 2026-07-13 14:19:07
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 302, 依赖边数: 718
+%% 模块数: 302, 依赖边数: 720
 
 graph TD
 
@@ -114,14 +114,14 @@ graph TD
     src_zephyr___init___py -->|import_depends| src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py
     src_zephyr_infrastructure_warm_hot_gate_py -->|import_depends| src_zephyr_infrastructure_contract_tester_py
     src_zephyr_infrastructure_warm_hot_gate_py -->|import_depends| src_zephyr_infrastructure_config_validator_py
+    src_zephyr_infrastructure_asset_inventory_classifier_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_dashboard_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_index_generator_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_classifier_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_scanner_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asse___ventory_registry_adapter_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
+    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_telemetry_py -->|import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
+    src_zephyr_infrastructure_asset_inventory_scanner_py -->|import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory___main___py -->|import_depends| src_zephyr_infrastructure_asset_inventory_classifier_py
     src_zephyr_infrastructure_asset_inventory___main___py -->|import_depends| src_zephyr_infrastructure_asset_inventory_dashboard_py
     src_zephyr_infrastructure_asset_inventory___main___py -->|import_depends| src_zephyr_infrastructure_asset_inventory_index_generator_py
@@ -132,12 +132,15 @@ graph TD
     src_zephyr_infrastructure_asset_inventory___main___py -->|import_depends| src_zephyr_infrastructure_asset_inventory_dependency_py
     src_zephyr_infrastructure_asset_inventory___main___py -->|import_depends| src_zephyr_infrastructure_asse___ventory_registry_adapter_py
     src_zephyr_infrastructure_auto____engine_alignment_syncer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
     src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
     src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto___ngine_compliance_auditor_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_config_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto___engine_dep_version_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto___ngine_compliance_auditor_py
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto___engine_escalation_bridge_py
@@ -151,19 +154,22 @@ graph TD
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure_auto____engine_shadow_workspace_py
     src_zephyr_infrastructure_auto___engine_escalation_bridge_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_config_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto___engine_dep_version_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
-    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto____engine_fix_health_check_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto___engine_fix_pattern_miner_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_report_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_diff_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto____engine_fix_health_check_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto___engine_fix_pattern_miner_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_report_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_import_fixer_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
+    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto___ngine_scaffold_registrar_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto____engine_shadow_workspace_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| src_zephyr_infrastructure_auto____engine_alignment_syncer_py
     src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_all_completer_py
     src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py
@@ -185,37 +191,33 @@ graph TD
     src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| src_zephyr_infrastructure_auto___ngine_scaffold_registrar_py
     src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py
     src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| src_zephyr_infrastructure_auto____engine_shadow_workspace_py
-    src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
-    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
-    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto____engine_shadow_workspace_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto___ngine_scaffold_registrar_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    %% ... 还有 141 条域内依赖未显示
+    %% ... 还有 142 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUTONOMY_CORE -> D_INFRA_RUNTIME (48 条)
+    %% D_AUTONOMY_CORE -> D_INFRA_RUNTIME (49 条)
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_kill_switch_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_action_dispatcher_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_infrastructure_auto_diagnostics_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_auto_integrator_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_capability_card_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_capability_registry_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_module_onboarding_scanner_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_infrastructure_auto____engine_shadow_workspace_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_auto_integrator_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_capability_card_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_capability_registry_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_module_onboarding_scanner_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_auto_runtime_core_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_runtime_config_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_auto_runtime_core_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_lifecycle_manager_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_runtime_config_py
@@ -223,8 +225,6 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_runtime_config_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_capability_registry_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_dream_cycle_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_health_monitor_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_trading_work_orchestrator_py
     %% D_AUTONOMY_PERM -> D_INFRA_RUNTIME (2 条)
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_trading_auto_runtime_core_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_trading_boot_hooks_py
@@ -232,6 +232,8 @@ graph TD
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_infrastructure_database_service_py
     %% D_COMPLIANCE -> D_INFRA_RUNTIME (1 条)
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_state_machine_py
+    %% D_FACTOR -> D_INFRA_RUNTIME (1 条)
+    D_FACTOR[D_FACTOR] -->|runtime| docs_03_modules__cross_layer_agent_orchestrator_blueprint_md
     %% D_FEEDBACK_LOOP -> D_INFRA_RUNTIME (4 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_infrastructure_pipeline_backpressure_manager_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
@@ -243,9 +245,9 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_runtime___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_runtime___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_auto_runtime_core_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_auto_task_generator_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_runtime___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_script_system_finding_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_finding_task_bridge_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
@@ -257,9 +259,9 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_trading_capability_card_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_trading_capability_card_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_trading_capability_registry_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_trading_capability_sync_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_trading_capability_card_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_trading_capability_registry_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_trading_capability_sync_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_infrastructure_capacity_assurance_kill_switch_py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr___init___py
     %% D_GOV_AUDIT -> D_INFRA_RUNTIME (8 条)
@@ -267,8 +269,8 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_state_machine_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_trading_finalizer_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_trading_health_monitor_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_trading_finalizer_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_trading_finalizer_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_shared_lifecycle_hooks_py
     %% D_GOV_CODE_QUALITY -> D_INFRA_RUNTIME (1 条)
@@ -286,14 +288,14 @@ graph TD
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a___init___py
     %% D_INFRA_TELEMETRY -> D_INFRA_RUNTIME (10 条)
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_syst___y_ai_behavior_event_sink_py
-    D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_syst___emetry_archive_cold_stub_py
-    D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_syst___try_logs_structured_sink_py
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_syst___lemetry_contract_metrics_py
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_system_telemetry_watchdog_py
+    D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_syst___emetry_archive_cold_stub_py
+    D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_syst___try_logs_structured_sink_py
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure_syst___lemetry_traces_span_stub_py
     %% D_INTEGRATION -> D_INFRA_RUNTIME (14 条)
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_infrastructure_pipe____circuit_breaker_manager_py
@@ -317,13 +319,13 @@ graph TD
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_trading_boot_hooks_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_model_router_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_models_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_models_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_pipeline_lock_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_pipeline_roadmap_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_cost_tracker_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_models_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_pipeline_lock_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_models_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_models_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_infrastructure_pipeline_pipeline_roadmap_py
     %% D_KNOWLEDGE -> D_INFRA_RUNTIME (1 条)
     D_KNOWLEDGE[D_KNOWLEDGE] -->|runtime| docs_03_modules__cross_layer_agent_orchestrator_blueprint_md
     %% D_ORCHESTRATOR -> D_INFRA_RUNTIME (3 条)
@@ -342,22 +344,22 @@ graph TD
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_interrupt_guard_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_pipeline_llm_gateway_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_pipeline_llm_gateway_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_trading_module_onboarding_scanner_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine___init___py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto___ngine_scaffold_registrar_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_trading_module_onboarding_scanner_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto____engine_shadow_workspace_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py
     %% D_SHARED -> D_INFRA_RUNTIME (26 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared___init___py
-    D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
+    D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_hooks_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_file_watcher_py
@@ -365,17 +367,17 @@ graph TD
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto____engine_fix_health_check_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto___engine_fix_pattern_miner_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_report_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto____engine_fix_health_check_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_shared_foundation___init___py
     D_SHARED[D_SHARED] -->|config_depends| src_zephyr_shared_api___init___py
@@ -410,29 +412,30 @@ graph TD
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_infrastructure_pipeline_ct_pipe_routing_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_infrastructure_pipeline_models_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_infrastructure_pipeline_routing_plugins_py
-    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_trading_staging_area_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_trading_runtime_config_py
+    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_trading_staging_area_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_INFRA_RUNTIME -> D_AUTONOMY_CORE (4 条)
+    %% D_INFRA_RUNTIME -> D_AUTONOMY_CORE (3 条)
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_cold_test_cold_start_booster_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    src_zephyr_shared_io___init___py -->|config_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    %% D_INFRA_RUNTIME -> D_FEEDBACK_LOOP (13 条)
+    %% D_INFRA_RUNTIME -> D_FBL_DETECTORS (3 条)
+    tests_observability_test_trace_causal_bridge_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
+    tests_temporal_test_temporal_coherence_of_self_model_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
+    tests_temporal_test_temporal_pattern_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
+    %% D_INFRA_RUNTIME -> D_FBL_DIAGNOSERS (2 条)
+    tests_cold_test_cold_start_conservative_mode_py -->|test_depends| D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS]
+    tests_temporal_test_temporal_integrity_guard_py -->|test_depends| D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS]
+    %% D_INFRA_RUNTIME -> D_FEEDBACK_LOOP (8 条)
     src_zephyr___init___py -->|import_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_cold_test_cold_start_conservative_mode_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_infrastructure_test_graceful_degradation_planner_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_infrastructure_test_split_brain_quorum_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_observability_test_trace_causal_bridge_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_resource_test_resource_starvation_aware_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_temporal_test_temporal_event_store_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_temporal_test_temporal_integrity_guard_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_temporal_test_temporal_pattern_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_temporal_test_temporal_coherence_of_self_model_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     %% D_INFRA_RUNTIME -> D_GOVERNANCE (18 条)
     src_zephyr_infrastructure_database_service_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_database_service_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -442,10 +445,10 @@ graph TD
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_shared_protocols_a2a___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_shared_protocols_a2___r3_coordination___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     tests_event_test_event_store_stress_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     tests_event_test_event_store_stress_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -464,12 +467,12 @@ graph TD
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     tests_resource_test_resource_guard_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_INFRA_RUNTIME -> D_GOV_OPS_RESILIENCE (3 条)
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_event_test_event_hook_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     %% D_INFRA_RUNTIME -> D_GOV_RULE (3 条)
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     tests_infrastructure_test_preemption_manager_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_INFRA_RUNTIME -> D_INFRASTRUCTURE (1 条)
     src_zephyr_trading_health_monitor_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
@@ -495,80 +498,80 @@ graph TD
     tests_infrastructure_test_topology_change_log_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_temporal_test_temporal_context_adapter_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     %% D_INFRA_RUNTIME -> D_INFRA_TELEMETRY (7 条)
-    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
-    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
-    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
-    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
-    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
+    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
+    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
+    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
+    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
+    src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
     tests_observability_test_observability_health_py -->|test_depends| D_INFRA_TELEMETRY[D_INFRA_TELEMETRY]
     %% D_INFRA_RUNTIME -> D_INTEGRATION (17 条)
     src_zephyr_infrastructure_event_bus_upgrade_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_infrastructure_script_system_finding_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_trading_ai_audit_logger_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_trading_capability_card_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_trading_dream_cycle_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_trading_health_monitor_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    src_zephyr_trading_night_shift_queue_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_trading_integration_registry_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_trading_night_shift_queue_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_trading_runtime_config_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_trading_work_dag_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     %% D_INFRA_RUNTIME -> D_INTELLIGENCE (5 条)
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
-    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     src_zephyr_trading_task_gate_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     %% D_INFRA_RUNTIME -> D_OPS (1 条)
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_OPS[D_OPS]
     %% D_INFRA_RUNTIME -> D_ORCHESTRATOR (1 条)
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     %% D_INFRA_RUNTIME -> D_SECURITY (8 条)
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SECURITY[D_SECURITY]
     tests_cold_test_cold_start_lock_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_cold_test_cold_start_lock_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_observability_test_observability_root_py -->|test_depends| D_SECURITY[D_SECURITY]
     %% D_INFRA_RUNTIME -> D_SHARED (162 条)
     src_zephyr___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_database_service_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_database_service_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_database_service_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_event_store_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_event_store_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_cost_tracker_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_cost_tracker_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_database_service_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_database_service_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_database_service_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_event_bus_upgrade_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_event_store_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_event_store_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_kill_switch_sim_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_asset_inventory_classifier_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_asset_inventory_dashboard_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_asset_inventory_index_generator_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_asset_inventory_classifier_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_asset_inventory_scanner_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_asset_inventory_mcp_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_asset_inventory_index_generator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_asse___ventory_registry_adapter_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_asse___ventory_registry_adapter_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_asset_inventory_telemetry_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_asset_inventory_trust_anchor_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_asset_inventory_scanner_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_asset_inventory___main___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_asset_inventory___main___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_auto____engine_alignment_syncer_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_auto___ngine_compliance_auditor_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_auto___ngine_compliance_auditor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_auto___ngine_compliance_auditor_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_auto___ngine_compliance_auditor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -->|import_depends| D_SHARED[D_SHARED]
     %% D_INFRA_RUNTIME -> D_TRADING (5 条)
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_TRADING[D_TRADING]
@@ -578,6 +581,6 @@ graph TD
     tests_infrastructure_test_mcp_full_lifecycle_e2e_py -->|test_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 221 条
-    %% 跨域入边: 221 条
-    %% 跨域出边: 276 条
+    %% 域内依赖: 222 条
+    %% 跨域入边: 223 条
+    %% 跨域出边: 275 条
