@@ -538,6 +538,7 @@ class IntegratorScheduler:
                 "default": ThreadPoolExecutor(8),    # 通用任务（可并行源）
                 "heavy": ThreadPoolExecutor(2),      # 串行源（iFind/QMT）
                 "realtime": ThreadPoolExecutor(4),   # 盘中实时层（独立线程池，不与批量争抢）
+                "intraday_minute": ThreadPoolExecutor(4),  # 盘中分钟K线层（schedule.yaml intraday_minute 时段专用）
             },
             job_defaults={
                 "coalesce": True,                  # 错过多次只跑一次
