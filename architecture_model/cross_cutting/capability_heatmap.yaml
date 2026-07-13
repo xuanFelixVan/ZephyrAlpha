@@ -63,16 +63,20 @@ maturity_scale:
     description: 对标顶级机构业界领先实现
 capability_domains:
 - id: C1
-  name: 数据能力
+  name: 数据接入
+  name_en: Data Ingestion
   description: Market data ingestion / quality / PIT / survivorship / lineage
   primary_domains:
   - D_MKT_DATA
   - D_ALT_DATA
   - D_DATA_ENG
+  - D_DATA
+  type: business
   investment_intensity: Critical
   investment_rationale: ''
 - id: C2
-  name: 因子&信号能力
+  name: 因子研究
+  name_en: Factor & Signal
   description: Alpha factor / sentiment / signal extraction / factor registry / IC-IR
   primary_domains:
   - D_FACTOR
@@ -80,75 +84,122 @@ capability_domains:
   - D_FUNDAMENTAL_SIGNAL
   - D_ASHARE_SIGNAL
   - D_SIGQC
+  type: business
   investment_intensity: Critical
   investment_rationale: ''
 - id: C3
-  name: 风控能力
+  name: 风险控制
+  name_en: Risk Control
   description: Pre-trade / at-trade / post-trade / VaR-CVaR / limits / stop-loss
   primary_domains:
   - D_RISK
+  - D_COMPLIANCE
+  type: business
   investment_intensity: Critical
   investment_rationale: ''
 - id: C4
-  name: 组合构建能力
+  name: 策略决策
+  name_en: Strategy Decision
   description: Optimization / rebalancing / backtest / strategic allocation / meta-router
   primary_domains:
   - D_PF_CORE
   - D_PF_ALLOC
+  - D_SELL_DECISION
   - D_CROSS_ASSET
+  type: business
   investment_intensity: Critical
   investment_rationale: ''
 - id: C5
-  name: 执行&交易后能力
+  name: 执行交易
+  name_en: Execution & Trading
   description: OMS / SOR / execution / attribution / TCA / review
   primary_domains:
   - D_EX_CORE
   - D_EX_SOR
   - D_TRADING
   - D_POSITION
+  type: business
   investment_intensity: High
   investment_rationale: ''
 - id: C6
-  name: ML/AI平台能力
+  name: ML平台
+  name_en: ML Platform
   description: Model lifecycle / training / serving / scout / experimentation
   primary_domains:
   - D_ML_TRAIN
   - D_ML_SERVE
+  type: business
   investment_intensity: High
   investment_rationale: ''
 - id: C7
-  name: 治理&合规能力
-  description: Compliance runtime / governance three-layer / AISG / audit trail
+  name: 回测仿真
+  name_en: Backtest & Simulation
+  description: Backtest engine / simulation / digital twin / execution simulation
   primary_domains:
-  - D_GOV_ENFORCEMENT
+  - D_BACKTEST
+  - D_SIMULATION
+  - D_EXEC_SIM
+  - D_DIGITAL_TWIN
+  type: business
+  investment_intensity: High
+  investment_rationale: ''
+- id: CC1
+  name: 治理合规
+  name_en: Governance & Compliance
+  description: Governance three-layer / rule enforcement / audit / drift / feedback loop / code quality
+  primary_domains:
   - D_GOVERNANCE
   - D_GOV_RULE
   - D_GOV_AUDIT
   - D_GOV_DRIFT
+  - D_GOV_ENFORCEMENT
+  - D_GOV_REPAIR
+  - D_GOV_CODE_QUALITY
+  - D_GOV_DOCS
+  - D_GOV_KB
+  - D_GOV_OPS_RESILIENCE
+  - D_DATA_GOV
+  - D_FEEDBACK_LOOP
+  - D_FBL_DIAGNOSERS
+  - D_FBL_DETECTORS
+  - D_FBL_VERIFICATION
+  type: cross_cutting
   investment_intensity: Low
   investment_rationale: ''
-- id: CC1
-  name: 人机交互&研究
-  description: Human-AI interface / research notebooks / CLI
-  primary_domains:
-  - D_FRONTEND
-  type: cross_cutting
-  investment_intensity: High
-  investment_rationale: ''
 - id: CC2
-  name: 可观测性
-  description: Metrics / logs / traces / ai_behavior
+  name: 安全防护
+  name_en: Security
+  description: Security / LLM defense / behavioral audit / data security / autonomy permission
   primary_domains:
-  - D_OPS
+  - D_SECURITY
+  - D_SECURITY_LLM
+  - D_BEHAVIORAL_AUDIT
+  - D_DATA_SEC
+  - D_AUTONOMY_PERM
   type: cross_cutting
   investment_intensity: Medium
   investment_rationale: ''
 - id: CC3
-  name: AI自治
-  description: D家族系统 / ai_operator预留口子 / decision engine
+  name: 基础设施
+  name_en: Infrastructure
+  description: Infrastructure / integration / shared / frontend / reporting / knowledge / intelligence / autonomy core / ops / orchestrator
   primary_domains:
+  - D_INFRA_OPS
+  - D_INFRA_RUNTIME
+  - D_INFRASTRUCTURE
+  - D_INFRA_A2A
+  - D_INFRA_RECOVERY
+  - D_INFRA_TELEMETRY
+  - D_INTEGRATION
+  - D_INTEGRATION_GATEWAY
+  - D_SHARED
+  - D_FRONTEND
+  - D_REPORTING
+  - D_KNOWLEDGE
+  - D_INTELLIGENCE
   - D_AUTONOMY_CORE
-  - D_AUTONOMY_PERM
+  - D_OPS
+  - D_ORCHESTRATOR
   type: cross_cutting
   investment_intensity: High
   investment_rationale: ''
