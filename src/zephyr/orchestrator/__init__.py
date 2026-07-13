@@ -1,3 +1,4 @@
+# [DOMAIN] D_ORCHESTRATOR
 # [A_module] module_id=MOD-ORC_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from zephyr.orchestrator.contracts.alert_handler import AlertHandler
 from zephyr.orchestrator.execution.context_bridge import ContextBridge
