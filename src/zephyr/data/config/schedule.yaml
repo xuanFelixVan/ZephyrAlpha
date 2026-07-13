@@ -20,13 +20,13 @@
 schedules:
   # L1 盘中实时层：每5分钟在交易时段轮询（9:00-15:59，周一至周五）
   intraday_realtime:
-    cron: "*/5 9-15 * * 0-4"
+    cron: "*/5 9-15 * * 1-5"
     executor: realtime
     description: "盘中实时层——Tick/L2/Greeks/IV/期货/涨跌停/集合竞价/港股K线"
 
   # L2 盘中分钟K线层：每5分钟在交易时段滚动更新（9:00-15:59，周一至周五）
   intraday_minute:
-    cron: "*/5 9-15 * * 0-4"
+    cron: "*/5 9-15 * * 1-5"
     executor: intraday_minute
     description: "盘中分钟K线层——A股/ETF/LOF分钟K线盘中滚动更新"
 
@@ -38,25 +38,25 @@ schedules:
 
   # L4 盘后日K线层：16:30 周一至周五
   daily_kline:
-    cron: "30 16 * * 0-4"
+    cron: "30 16 * * 1-5"
     executor: heavy
     description: "盘后日K线层——日/周/月K线+复权+估值+指标+ETF净值"
 
   # L5 盘后资金面层：18:00 周一至周五
   daily_capital:
-    cron: "00 18 * * 0-4"
+    cron: "00 18 * * 1-5"
     executor: default
     description: "盘后资金面层——资金流向/龙虎榜/大宗/期货/股本变动/限售解禁/美股"
 
   # L6 盘后事件层：19:00 周一至周五（从daily_capital拆分，错峰执行）
   daily_event:
-    cron: "00 19 * * 0-4"
+    cron: "00 19 * * 1-5"
     executor: default
     description: "盘后事件层——分析师预期/财报快报/审计/分红配股/质押/披露计划"
 
   # L7 夜间财务层：22:00 周一至周五（融资融券T+1此时已发布）
   nightly_financial:
-    cron: "00 22 * * 0-4"
+    cron: "00 22 * * 1-5"
     executor: heavy
     description: "夜间财务层——财报/财务指标/十大股东/融资融券(T+1)"
 
