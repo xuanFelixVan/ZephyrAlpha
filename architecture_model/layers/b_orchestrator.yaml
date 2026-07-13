@@ -11,7 +11,7 @@ modules:
   - id: orc-core
     module_id: MOD-INF-039
     name: Agent Orchestrator Core
-    submodule_path: src/zephyr/trading/orchestrator/
+    submodule_path: src/zephyr/orchestrator/
     status: implemented
     priority: P0
     runtime_plane: warm

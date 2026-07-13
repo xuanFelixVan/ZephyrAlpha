@@ -313,7 +313,7 @@ routes:
       - "src/zephyr/infrastructure/runtime_integration/pipeline/**"
       - "src/zephyr/infra_runtime/pipeline/**"
       - "config/trigger_router.yaml"
-      - "src/zephyr/trading/orchestrator/trigger_router.py"
+      - "src/zephyr/orchestrator/execution/trigger_router.py"
     task_keywords:
       - "管线"
       - "pipeline"

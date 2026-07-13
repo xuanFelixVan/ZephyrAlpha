@@ -1508,7 +1508,7 @@ directories:
 
 
 
-  - path: "src/zephyr/trading/feedback_loop/"
+  - path: "src/zephyr/feedback_loop/"
 
     responsibility: "反馈闭环——自动进?/ 评估 / 指标收集 / 适应?"
     parent: "src/zephyr/"

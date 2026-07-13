@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-004
 title: Feedback Loop Engine Interface / 反馈闭环引擎接口规范
 doc_type: architecture_view
@@ -516,7 +516,7 @@ EMA_t = α · value_t + (1-α) · EMA_{t-1}
 
 | 前置项 | 状态 |
 |-------|:----:|
-| `src/zephyr/trading/feedback_loop/` 包创建 | ⏳ 待建 |
+| `src/zephyr/feedback_loop/` 包创建 | ⏳ 待建 |
 | SQLite 时间序列 schema | ⏳ experimental T-1-XX |
 | 上游 metrics sink 接线（Orchestrator/VMS/LSG/CE 都要调 FLE） | ⏳ beta 接入 |
 | 下游 Action Protocol 适配器实现 | ⏳ beta 接入 |
