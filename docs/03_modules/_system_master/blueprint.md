@@ -56,8 +56,8 @@ references:
     why: "压缩工作流标准"
 tags: [system-master, blueprint, architecture, topology, cold-start, capacity-upgrade, level-0, meta, ai-entry-point, 102-chapters, system-blueprint, three-tier-pyramid]
 responsibility_domain: 
-build_status: stable
 design_maturity: design
+build_status: stable
 ---
 
 # System Master 蓝图 — 三级金字塔架构·全部子系统拓扑
@@ -663,7 +663,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | Gate Engine | MOD-GATE_ENGINE | 35% | G0-G7门禁+断路器 | `src/zephyr/governance/rule_enforcement/` | 部分实现 |
 | Context Engine | MOD-CONTEXT_ENGINE | 95% | 上下文四阶段流水线 | `src/zephyr/context_engine/` | 已实现 |
 | Pipeline | MOD-INF-009 | 95% | M1-M11双管线 | `src/zephyr/pipeline/` | 已实现 |
-| Feedback Loop | MOD-FEEDBACK_LOOP | 95% | 系统自调节闭环 | `src/zephyr/trading/feedback_loop/` | 已实现 |
+| Feedback Loop | MOD-FEEDBACK_LOOP | 95% | 系统自调节闭环 | `src/zephyr/feedback_loop/` | 已实现 |
 | Vector Memory | MOD-INF-011 | 95% | 向量化存储检索 | `src/zephyr/vector_memory/` | 已实现 |
 | Database | MOD-DATABASE | 95% | SQLite+DuckDB双引擎元数据 | `src/zephyr/db/` | 已实现 |
 | MCP Servers | MOD-INF-013 | 95% | MCP协议服务端 | `src/zephyr/integration/mcp/` | 已实现 |

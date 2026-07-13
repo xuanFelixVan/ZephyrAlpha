@@ -55,8 +55,8 @@ depends_on:
 priority: P0
 runtime_plane: hot
 responsibility_domain: 
-build_status: generated
 design_maturity: prototype
+build_status: generated
 ---
 
 # Task System 蓝图 — 全链路任务卡生命周期管理
@@ -103,7 +103,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = partially_implemented → 代码文件清单100%存在 | `ls src/zephyr/governance/task_repo.py` + `ls src/zephyr/trading/orchestrator/` | ☐ |
+| construction_progress = partially_implemented → 代码文件清单100%存在 | `ls src/zephyr/governance/task_repo.py` + `ls src/zephyr/orchestrator/` | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class/|def" src/zephyr/governance/task_repo.py` | ☐ |
 
 ### §0.3 版本-代码映射
@@ -129,7 +129,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 | 目录 | 归属蓝图 | 说明 |
 |------|---------|------|
 | src/zephyr/governance/task_repo.py | MOD-TASK_SYSTEM | 主代码目录 |
-| src/zephyr/trading/orchestrator/ | MOD-TASK_SYSTEM + MOD-INF-009 | BatchOrchestrator/file_task_mapper 归 MOD-TASK_SYSTEM；PipelineOrchestrator 归 MOD-INF-009 |
+| src/zephyr/orchestrator/ | MOD-TASK_SYSTEM + MOD-INF-009 | BatchOrchestrator/file_task_mapper 归 MOD-TASK_SYSTEM；PipelineOrchestrator 归 MOD-INF-009 |
 | src/zephyr/governance/task_repo.py | MOD-TASK_SYSTEM（业务接口）/ MOD-DATABASE（物理存储） | 业务接口定义权归 MOD-TASK_SYSTEM |
 | src/zephyr/shared/shared_services/models.py | MOD-TASK_SYSTEM | TaskCard 模型 |
 | src/zephyr/shared/shared_services/blueprint_decomposer.py | MOD-TASK_SYSTEM | 蓝图拆解器 |
@@ -726,7 +726,7 @@ class TaskLifecycleManager:
 |----------|---------------|:---:|------|
 | 蓝图文件 | `docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md` | 0 | 本文件 |
 | 业务代码 | `src/zephyr/governance/task_repo.py` | 1 | TaskSystem 包 |
-| 业务代码 | `src/zephyr/trading/orchestrator/` | 1 | 管线调度器 |
+| 业务代码 | `src/zephyr/orchestrator/` | 1 | 管线调度器 |
 | 业务代码 | `src/zephyr/shared/shared_services/models.py` | 1 | TaskCard 模型 |
 | 业务代码 | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | 1 | 蓝图拆解器 |
 | 数据层 | `src/zephyr/governance/task_repo.py` | 5 | SQLite CRUD + 状态机 |

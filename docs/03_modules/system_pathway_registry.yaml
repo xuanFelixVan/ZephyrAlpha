@@ -226,7 +226,7 @@ pathways:
     name: "feedback_loop"
     layer: "B-Track"
     blueprint: "docs/03_modules/_cross_layer/feedback_loop/blueprint.md"
-    source_dir: "src/zephyr/trading/feedback_loop/"
+    source_dir: "src/zephyr/feedback_loop/"
     test_dir: "tests/"
     config: ""
     status: "implemented"
