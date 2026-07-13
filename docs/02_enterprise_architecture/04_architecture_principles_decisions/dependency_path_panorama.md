@@ -2086,6 +2086,58 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 阶段3 | 拆分 D_INFRA_RUNTIME（411 节点→4 域） | cd85c37b10 |
 | 阶段4 | 刷新 15 域缓存 + 文档同步 | 02b3903ea6 |
 
+> **裁定#200 修正记录（2026-07-13 补登）**：原裁定声称"全部 53 个域 production_nodes ≤ 150"为时过早。
+> 2026-06-25 拆分后，D_GOVERNANCE 仍有 506 production 节点（超限 3.37x）、D_TRADING 仍有 280 production 节点（超限 1.87x），
+> 两域均未达标。实际全域合规迟至 2026-07-12/13 经下列补充拆分方才达成。
+
+##### 裁定#200 修正-A：D_GOVERNANCE + D_TRADING 补充拆分（2026-07-12）
+
+- **执行日期**: 2026-07-12
+- **规则依据**: ARCH-CAP-002 v1.0.8（单域 production_nodes ≤ 150）
+- **拆分方案**: [domain_split_proposal_d_governance_d_trading.md](file:///d:/ZephyrAlpha/docs/_working/domain_split_proposal_d_governance_d_trading.md)
+- **关联债务**: #ARCH-052（phase1_progress 已于 2026-07-12 更新）
+
+**D_GOVERNANCE 拆分结果**（原 506 prod → 拆分后 D_GOVERNANCE 保留 129 prod）:
+
+| 原域 | 原 prod 数 | → | 拆分后域 | prod 数 | 说明 |
+|------|--------:|---|---------|------:|------|
+| D_GOVERNANCE (506) | | → | D_GOVERNANCE (保留) | 129 | 治理核心（registry_management） |
+| | | → | D_GOV_AUDIT (扩充) | 66 | 审计编排（AUDIT_TRAIL 子域） |
+| | | → | D_GOV_DRIFT (扩充) | 71 | 漂移检测（DRIFT_DETECTION 子域） |
+| | | → | D_GOV_ENFORCEMENT (扩充) | 100 | 规则执行（RULE_ENFORCEMENT 子域） |
+| | | → | **D_GOV_KB** (新建) | 16 | 知识库治理（KB 子域） |
+| | | → | D_GOV_SCRIPTS (扩充) | 3 | 脚本治理（SCRIPT_GOVERNANCE 子域） |
+
+**D_TRADING 拆分结果**（原 280 prod → 拆分后 D_TRADING 保留 19 prod）:
+
+| 原域 | 原 prod 数 | → | 拆分后域 | prod 数 | 说明 |
+|------|--------:|---|---------|------:|------|
+| D_TRADING (280) | | → | D_TRADING (保留) | 19 | 真正的交易运营 |
+| | | → | **D_FEEDBACK_LOOP** (新建) | 109 | 反馈循环引擎（原 trading/feedback_loop/） |
+| | | → | **D_ORCHESTRATOR** (新建) | 59 | 代理编排器（原 trading/orchestrator/） |
+
+**新建域**: 3 个（D_GOV_KB, D_FEEDBACK_LOOP, D_ORCHESTRATOR）
+**扩充域**: 4 个（D_GOV_AUDIT, D_GOV_DRIFT, D_GOV_ENFORCEMENT, D_GOV_SCRIPTS）
+**物理路径迁移**: feedback_loop/ 和 orchestrator/ 已从 trading/ 移出到 src/zephyr/ 顶层（二期项提前完成）
+
+**验证**: D_GOVERNANCE=129 ≤ 150 ✓，D_TRADING=19 ≤ 150 ✓，ARCH-CAP-002 合规
+
+##### 裁定#200 修正-B：D_FEEDBACK_LOOP 进一步拆分（2026-07-13）
+
+- **执行日期**: 2026-07-13
+- **规则依据**: ARCH-CAP-002 v1.0.8（D_FEEDBACK_LOOP 229 总节点超容，按 production_nodes=109 已合规，但为进一步降低总量做二分）
+
+**D_FEEDBACK_LOOP 拆分结果**:
+
+| 原域 | prod 数 | → | 拆分后域 | prod 数 | 说明 |
+|------|--------:|---|---------|------:|------|
+| D_FEEDBACK_LOOP (109) | | → | D_FEEDBACK_LOOP (保留) | 109 | 反馈循环核心（verification + 其他） |
+| | | → | **D_FBL_DIAGNOSERS** (新建) | 71 | 诊断器子包（diagnosers/） |
+| | | → | **D_FBL_DETECTORS** (新建) | 60 | 检测器子包（detectors/） |
+| | | → | D_FBL_VERIFICATION (扩充) | 67 | 验证子包 |
+
+**最终状态（2026-07-13）**: 全部 63 个域 production_nodes ≤ 150，ARCH-CAP-002 v1.0.8 合规。原裁定#200 的"53 域合规"声明至此方真正达成（域数增至 63）。
+
 #### 裁定#201：D_SIGLEGACY 拆分补裁定（追溯正式记录）
 
 - **执行日期**: 2026-06-25（补裁定，实际拆分发生在裁定#200前后但未记录）
