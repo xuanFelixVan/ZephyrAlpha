@@ -44,7 +44,7 @@ ttl: permanent
 
 triggers:
   onboarding:
-    handler: "zephyr.trading.orchestrator.trigger_router.handle_onboarding_stub"
+    handler: "zephyr.orchestrator.execution.trigger_router.handle_onboarding_stub"
     description: "新会话或 Agent 注册时加载上下文与历史"
     safety: "M"
     enabled: true
@@ -54,7 +54,7 @@ triggers:
     notes: "v0.2.0 — onboarding stub（layer_router 已于阶段1清除，14层概念废弃）"
 
   drift_detected:
-    handler: "zephyr.trading.orchestrator.trigger_router.handle_drift_detected"
+    handler: "zephyr.orchestrator.execution.trigger_router.handle_drift_detected"
     description: "Drift Detector 报告偏移时触发恢复流程"
     safety: "H"
     enabled: true
@@ -74,7 +74,7 @@ triggers:
     notes: "Phase C — 真实实现已兑现"
 
   cleanup_due:
-    handler: "zephyr.trading.orchestrator.trigger_router.handle_cleanup_stub"
+    handler: "zephyr.orchestrator.execution.trigger_router.handle_cleanup_stub"
     description: "周期性清理任务（孤儿快照 / 过期审计日志等）"
     safety: "L"
     enabled: true
@@ -84,7 +84,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 archive_drafts_zone.py 真实脚本，fallback 到 stub"
 
   blueprint_published:
-    handler: "zephyr.trading.orchestrator.trigger_router.handle_blueprint_stub"
+    handler: "zephyr.orchestrator.execution.trigger_router.handle_blueprint_stub"
     description: "新蓝图发布后触发反思循环与 KE 索引"
     safety: "M"
     enabled: true
@@ -94,7 +94,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 feedback_loop.decision_engine.reflect_on_blueprint() 真实实现，fallback 到 stub"
 
   blueprint_lookup:
-    handler: "zephyr.trading.orchestrator.trigger_router.handle_blueprint_lookup_stub"
+    handler: "zephyr.orchestrator.execution.trigger_router.handle_blueprint_lookup_stub"
     description: "AI Agent 查询当前任务该读哪份蓝图——路由到 config/blueprint_routing.yaml"
     safety: "L"
     enabled: true

@@ -2160,12 +2160,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **修复**：将ComplianceRule等从trading_contracts导出中移除
 - **状态**：STILL_VALID（保留）— 需将ComplianceRule等从trading_contracts导出中移除，影响双向循环依赖
 
-#### 5.60.2 [MEDIUM] 循环依赖——governance → trading.orchestrator（延迟导入）
-- **文件**：[phase_check_registry.py](file:///D:/ZephyrAlpha/src/zephyr/governance/ops_governance/phase_check_registry.py#L329)
-- **证据**：函数内`from zephyr.trading.orchestrator.contract_registry import ContractRegistry`等——延迟导入规避import时循环但运行时耦合存在
-- **问题**：governance门禁检查依赖trading.orchestrator具体实现，无法独立测试
-- **修复**：定义抽象接口（Protocol），trading.orchestrator实现该接口
-- **状态**：STILL_VALID（保留）— 需定义抽象接口（Protocol），trading.orchestrator实现该接口
+#### 5.60.2 [MEDIUM] 循环依赖——governance → orchestrator（延迟导入）
+- **文件**：[phase_check_registry.py](file:///D:/ZephyrAlpha/src/zephyr/governance/ops_governance/phase_check_registry.py#L402)
+- **证据**：函数内`from zephyr.orchestrator.contracts.contract_registry import ContractRegistry`等——延迟导入规避import时循环但运行时耦合存在
+- **问题**：governance门禁检查依赖orchestrator具体实现，无法独立测试
+- **修复**：定义抽象接口（Protocol），orchestrator实现该接口
+- **状态**：STILL_VALID（保留）— 需定义抽象接口（Protocol），orchestrator实现该接口
+- **路径更新**：2026-07-12 裁定#200 将 orchestrator 从 trading.orchestrator 移至顶层 zephyr.orchestrator，contract_registry 路径由 zephyr.trading.orchestrator.contract_registry 变更为 zephyr.orchestrator.contracts.contract_registry
 
 #### 5.60.3 [HIGH] 跨层引用——shared(L1) → trading(L2)，违反分层架构
 - **文件**：[order.py](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/order.py#L8), [enforcer.py](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/core/enforcer.py#L41)
@@ -4055,9 +4056,9 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:31` — 顶层 `try: from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType; ... except ImportError: _HAS_AUDIT_ENTRY = False`。**严重度理由**：try/except ImportError反模式——既掩盖了真实的循环依赖，又使审计功能在import失败时静默降级（无日志、无告警）。
 
-2. **[MEDIUM]** 2处：`d:\ZephyrAlpha\src\zephyr\governance\audit_orchestrator\feedback_bridge.py:35` 与 `:95` / `d:\ZephyrAlpha\src\zephyr\governance\audit_trail\feedback_bridge.py:35` 与 `:95` — governance两个feedback_bridge副本均在函数内延迟导入 `zephyr.trading.feedback_loop.{FeedbackLoop, EvolutionProposal}`。**严重度理由**：重复代码+延迟导入规避循环，运行时耦合仍存在。
+2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\gov_audit\feedback_bridge.py:36` 与 `:98` — 函数内延迟导入 `zephyr.feedback_loop.{FeedbackLoop, EvolutionProposal}`。**严重度理由**：延迟导入规避循环，运行时耦合仍存在。**路径更新**：2026-07-12 裁定#200 将 feedback_loop 从 trading.feedback_loop 移至顶层 zephyr.feedback_loop，audit 模块由 governance/audit_orchestrator+audit_trail 合并为 gov_audit，重复副本已消除（仅剩1份）。
 
-3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\alert_handler.py:87` — `_record_event` 函数内延迟 `from zephyr.governance.sqlite_schema import get_db_connection`。**严重度理由**：trading直接获取governance的SQLite连接，绕过了数据访问层抽象。
+3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\orchestrator\contracts\alert_handler.py:87` — `_record_event` 函数内延迟 `from zephyr.governance.sqlite_schema import get_db_connection`。**严重度理由**：orchestrator直接获取governance的SQLite连接，绕过了数据访问层抽象。**路径更新**：2026-07-12 裁定#200 将 alert_handler.py 从 trading/orchestrator/ 移至 orchestrator/contracts/。
 
 4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\boot_hooks.py:207,:273,:277,:298,:317,:322,:363,:390,:415,:426,:437,:448,:462,:476` — 13+处函数内延迟导入 `governance.task_repo / governance.budget_engine / governance.rule_enforcement.triple_alignment` 等。**严重度理由**：单文件13处延迟导入是"循环依赖workaround堆叠"的典型反模式。
 

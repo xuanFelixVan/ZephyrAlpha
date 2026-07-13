@@ -482,15 +482,15 @@ path_facts:
         reason: "zephyr.pipeline 包不存在，实际在 zephyr.integration.pipeline_orchestrator"
 
   - id: agent_orchestrator_package
-    fact: "zephyr.trading.orchestrator"
-    description: "AgentOrchestrator 包路径（trading.orchestrator，非 orchestrator）"
-    ssot_source: "src/zephyr/trading/orchestrator/agent_orchestrator.py"
+    fact: "zephyr.orchestrator"
+    description: "AgentOrchestrator 包路径（2026-07-12 裁定#200 从 trading.orchestrator 移出至顶层 orchestrator）"
+    ssot_source: "src/zephyr/orchestrator/agent_orchestrator.py"
     must_appear_in:
       - "AGENTS.md"
     must_not_appear_as:
       - file: "AGENTS.md"
-        pattern: "zephyr.orchestrator"
-        reason: "zephyr.orchestrator 包不存在，实际在 zephyr.trading.orchestrator"
+        pattern: "zephyr.trading.orchestrator"
+        reason: "zephyr.trading.orchestrator 包已移出（裁定#200），实际在 zephyr.orchestrator"
 
   - id: functional_domain_registry_underscore
     fact: "functional_domain_registry.yaml"

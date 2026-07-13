@@ -119,7 +119,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 |------|------|------|
 | AutoRuntime Core | `python -m zephyr.trading` | 系统大脑，调度所有 AI 运行时 |
 | PipelineOrchestrator | `zephyr.integration.pipeline_orchestrator` | 管线编排（M1-M11） |
-| AgentOrchestrator | `zephyr.trading.orchestrator` | Agent 生命周期管理 |
+| AgentOrchestrator | `zephyr.orchestrator` | Agent 生命周期管理（2026-07-12 裁定#200 从 trading.orchestrator 移出至顶层） |
 | TaskRepository | `zephyr.governance.task_repo` | 任务状态机（10 状态） |
 | GitCommitGateway | `zephyr.governance.rule_bridge.git_commit_gateway` | 全项目唯一合法 git commit 入口（串行锁+stash隔离+GW标记） |
 | A2A Protocol | `zephyr.infrastructure.a2a_protocol` | Agent 间通信与冲突解决（MOD-INF-025） |
