@@ -496,6 +496,40 @@ FROM cycle_nodes c
 JOIN nodes n ON c.node_id = n.node_id
 ORDER BY n.domain_id, n.node_id;
 
+-- dep_import_cycles: 仅检测 import_depends 双向边的真实循环依赖视图（裁定#213）
+-- 与 dep_cycles 的区别：dep_cycles 不区分 dep_type，将 contract/data/runtime 等非
+-- import 边也计入循环，产生虚假循环告警。dep_import_cycles 仅检测 import_depends
+-- 双向边，反映真实的 Python 模块级循环导入。原 dep_cycles 视图保留以兼容历史引用。
+CREATE OR REPLACE VIEW dep_import_cycles AS
+WITH RECURSIVE
+cycle_nodes AS (
+    SELECT DISTINCT from_node_id AS node_id FROM edges e1
+    WHERE e1.dep_type = 'import_depends'
+    AND EXISTS (
+        SELECT 1 FROM edges e2
+        WHERE e2.dep_type = 'import_depends'
+        AND e2.from_node_id = e1.to_node_id
+        AND e2.to_node_id = e1.from_node_id
+    )
+    UNION
+    SELECT DISTINCT to_node_id AS node_id FROM edges e1
+    WHERE e1.dep_type = 'import_depends'
+    AND EXISTS (
+        SELECT 1 FROM edges e2
+        WHERE e2.dep_type = 'import_depends'
+        AND e2.from_node_id = e1.to_node_id
+        AND e2.to_node_id = e1.from_node_id
+    )
+)
+SELECT
+    n.node_id,
+    n.path,
+    n.domain_id,
+    n.design_maturity
+FROM cycle_nodes c
+JOIN nodes n ON c.node_id = n.node_id
+ORDER BY n.domain_id, n.node_id;
+
 -- ========== 4. 触发器函数 ==========
 
 -- 4.1 只读表保护函数（8个只读表 × 3 操作 = 24个触发器复用此函数。blueprint_links 于 2026-07-02 移除——它是 nodes 派生物化视图）

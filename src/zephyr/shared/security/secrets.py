@@ -82,6 +82,9 @@ logger = logging.getLogger(__name__)
 # TYPE_CHECKING 仅用于类型提示。
 
 if TYPE_CHECKING:
+    # TYPE_CHECKING 块在运行时为 False，不触发运行时循环。
+    # 注：depgraph 生成器用 ast.walk 遍历整个 AST，仍会记录此 import 边，
+    # 故 dep_import_cycles 视图仍会显示 secrets ↔ secret_rotation 循环——属合法循环。
     from zephyr.feedback_loop.security.secret_rotation import SecretRotation
 
 _rotation_registry: "SecretRotation | None" = None

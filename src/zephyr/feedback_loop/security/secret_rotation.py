@@ -102,6 +102,9 @@ def auto_configure(interval_days: int = 90) -> int:
     """
     import os
 
+    # lazy import 打破运行时循环（secrets.py ↔ secret_rotation.py）。
+    # 注：depgraph 生成器用 ast.walk 遍历整个 AST，仍会记录此 import 边，
+    # 故 dep_import_cycles 视图仍会显示此循环——属合法循环（运行时无循环）。
     from zephyr.shared.security.secrets import SECRET_INDICATOR_PATTERNS, configure_secret_rotation
 
     registry = SecretRotation()
