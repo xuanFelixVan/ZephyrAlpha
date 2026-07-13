@@ -44,12 +44,12 @@ import argparse
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, REPO_ROOT, get_depgraph_pg_connection
 from _shared.walk import iter_files
 
 __manifest__ = """
 args: [--warn-only, --json, --package]
-description: 蓝图↔代码双向对齐检测——代码[BLUEPRINT]头部module_id与蓝图注册表一致性+蓝图§4文件落地验证
+description: 蓝图↔代码双向对齐检测——代码[BLUEPRINT]头部module_id双源验证(registry+depgraph)+蓝图§4文件清单depgraph派生(裁定#211)
 dimensions:
 - D5
 - D1
@@ -64,6 +64,43 @@ MODULE_REGISTRY = BLUEPRINTS_DIR / "module-registry.yaml"
 
 BLUEPRINT_HEADER_RE = re.compile(r"\[BLUEPRINT\]\s+(\S+)")
 MODULE_ID_RE = re.compile(r'(?:-\s*)?module_id:\s*["\']?(\S+?)["\']?\s*$')
+
+# 裁定#211：depgraph 查询 SQL（提取为模块级常量，遵循 §5.160.2 SQL 集中化原则）
+_SQL_LOAD_DEPGRAPH_MODULE_INDEX = (
+    "SELECT blueprint_id, path FROM nodes "
+    "WHERE blueprint_id IS NOT NULL AND blueprint_id != '' "
+    "AND path LIKE '%%.py'"
+)
+
+
+# 裁定#211：蓝图§4文件清单改为 depgraph 派生
+# 蓝图§0.1 已声明 SSoT 是 depgraph（见 agent_orchestrator/blueprint.md L53-58），
+# check 脚本不再解析蓝图§4 markdown 表格，改为从 depgraph 查询。
+def load_depgraph_module_index() -> tuple[set[str], dict[str, set[str]]]:
+    """从 depgraph 加载 module_id 索引。
+
+    Returns:
+        (module_ids, files_by_module)
+        - module_ids: depgraph 中所有 blueprint_id 的集合（用于 ORPHAN_MODULE_ID 验证）
+        - files_by_module: {blueprint_id: {path1, path2, ...}}（用于 CODE_NOT_IN_BLUEPRINT 验证）
+    """
+    module_ids: set[str] = set()
+    files_by_module: dict[str, set[str]] = {}
+    try:
+        conn = get_depgraph_pg_connection(autocommit=True)
+    except Exception as e:
+        print(f"[WARN] depgraph 连接失败，跳过 depgraph 派生检查: {e}", file=sys.stderr)
+        return module_ids, files_by_module
+    try:
+        cur = conn.execute(_SQL_LOAD_DEPGRAPH_MODULE_INDEX)
+        for r in cur.fetchall():
+            bid = r["blueprint_id"]
+            path = r["path"].replace("\\", "/")
+            module_ids.add(bid)
+            files_by_module.setdefault(bid, set()).add(path)
+    finally:
+        conn.close()
+    return module_ids, files_by_module
 
 
 def load_blueprint_registry() -> dict[str, dict]:
@@ -142,20 +179,30 @@ def check_header_vs_registry(
     code_headers: list[dict],
     blueprint_registry: dict[str, dict],
     pkg_to_modid: dict[str, str],
+    depgraph_module_ids: set[str] | None = None,
 ) -> list[dict]:
+    """检查代码头部 module_id 是否在 registry 或 depgraph 中登记。
+
+    裁定#211：ORPHAN_MODULE_ID 改为双源验证——
+    - blueprint_registry.yaml（从 blueprint.md frontmatter 同步，57个）
+    - depgraph.nodes.blueprint_id（从代码扫描，166个）
+    两者有其一即通过。只有两者都无才报 orphan。
+    这样合理 MOD-XXX（depgraph 有）通过，SRC-XXX 旧格式（两者都无）仍报 drift。
+    """
     drifts: list[dict] = []
+    depgraph_module_ids = depgraph_module_ids or set()
     for entry in code_headers:
         header_modid = entry["header_modid"]
         pkg_name = entry["package"]
         expected_modid = pkg_to_modid.get(pkg_name)
 
-        if header_modid not in blueprint_registry:
+        if header_modid not in blueprint_registry and header_modid not in depgraph_module_ids:
             drifts.append(
                 {
                     "type": "ORPHAN_MODULE_ID",
                     "severity": "HIGH",
                     "file": entry["file"],
-                    "detail": f"[BLUEPRINT] 引用 {header_modid} 不在 blueprint_registry.yaml 中",
+                    "detail": f"[BLUEPRINT] 引用 {header_modid} 不在 blueprint_registry.yaml 或 depgraph 中",
                 }
             )
 
@@ -174,121 +221,47 @@ def check_header_vs_registry(
 
 def check_blueprint_file_list(
     blueprint_registry: dict[str, dict],
+    depgraph_files_by_module: dict[str, set[str]] | None = None,
 ) -> list[dict]:
-    drifts: list[dict] = []
-    for bp_file in iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md"):
-        try:
-            content = bp_file.read_text(encoding="utf-8")
-        except OSError:
-            continue
+    """裁定#211：蓝图§4文件清单改为 depgraph 派生。
 
-        fm_modid = None
-        if content.startswith("---"):
-            end = content.find("---", 3)
-            if end > 0:
-                fm_text = content[3:end]
-                for line in fm_text.splitlines():
-                    m = MODULE_ID_RE.match(line.strip())
-                    if m:
-                        fm_modid = m.group(1).strip('"').strip("'")
-                        break
-
-        actual_disk_path = None
-        if content.startswith("---"):
-            end = content.find("---", 3)
-            if end > 0:
-                fm_text = content[3:end]
-                for line in fm_text.splitlines():
-                    if "actual_disk_path:" in line:
-                        _, _, val = line.partition(":")
-                        actual_disk_path = val.strip().strip('"').strip("'").rstrip("/")
-                        break
-
-        if not actual_disk_path:
-            continue
-
-        src_base = REPO_ROOT / actual_disk_path
-        if not src_base.exists():
-            continue
-
-        file_table_re = re.compile(r"\|\s*`([^`]+\.py)`\s*\|[^|]*\|[^|]*\|[^|]*\|\s*已实现\s*\|")
-        for match in file_table_re.finditer(content):
-            filename = match.group(1)
-            full_path = src_base / filename
-            if not full_path.exists():
-                drifts.append(
-                    {
-                        "type": "BLUEPRINT_FILE_MISSING",
-                        "severity": "MEDIUM",
-                        "file": str(full_path.relative_to(REPO_ROOT)),
-                        "detail": f"蓝图 {fm_modid} §4 声明已实现，但磁盘不存在: {filename}",
-                    }
-                )
-
-    return drifts
+    原逻辑：解析蓝图§4 markdown 表格中"已实现"的文件，检查磁盘是否存在。
+    新逻辑：depgraph 只记录实际存在的文件，此检查冗余，返回空列表。
+    保留函数签名以维持向后兼容。
+    """
+    return []
 
 
 def check_code_not_in_blueprint(
     code_headers: list[dict],
     blueprint_registry: dict[str, dict],
+    depgraph_files_by_module: dict[str, set[str]] | None = None,
 ) -> list[dict]:
+    """裁定#211：蓝图§4文件清单改为 depgraph 派生。
+
+    原逻辑：遍历 actual_disk_path 下的 .py 文件，如果有 [BLUEPRINT] 头部但不在蓝图§4表格，报 drift。
+    新逻辑：检查代码文件是否在 depgraph 该 blueprint_id 的 path 列表中。
+    如果不在，说明 depgraph 未扫描到该文件（depgraph 不完整或文件新创建未同步）。
+
+    蓝图§0.1 已声明 SSoT 是 depgraph（见 agent_orchestrator/blueprint.md L53-58）：
+      > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-039`
+    """
     drifts: list[dict] = []
-    pkg_files: dict[str, list[str]] = {}
+    depgraph_files_by_module = depgraph_files_by_module or {}
+
     for entry in code_headers:
-        pkg_files.setdefault(entry["package"], []).append(entry["file"])
-
-    for bp_file in iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md"):
-        try:
-            content = bp_file.read_text(encoding="utf-8")
-        except OSError:
-            continue
-
-        actual_disk_path = None
-        fm_modid = None
-        if content.startswith("---"):
-            end = content.find("---", 3)
-            if end > 0:
-                fm_text = content[3:end]
-                for line in fm_text.splitlines():
-                    if "actual_disk_path:" in line:
-                        _, _, val = line.partition(":")
-                        actual_disk_path = val.strip().strip('"').strip("'").rstrip("/")
-                    m = MODULE_ID_RE.match(line.strip())
-                    if m:
-                        fm_modid = m.group(1).strip('"').strip("'")
-
-        if not actual_disk_path:
-            continue
-
-        pkg_name = actual_disk_path.split("/")[-1] if "/" in actual_disk_path else actual_disk_path
-        src_base = REPO_ROOT / actual_disk_path
-        if not src_base.exists():
-            continue
-
-        listed_files: set[str] = set()
-        file_table_re = re.compile(r"\|\s*`([^`]+\.py)`\s*\|")
-        for match in file_table_re.finditer(content):
-            listed_files.add(match.group(1))
-
-        for py_file in src_base.glob("*.py"):
-            if py_file.name == "__pycache__":
-                continue
-            if py_file.name not in listed_files and py_file.name != "__init__.py":
-                has_header = False
-                try:
-                    fc = py_file.read_text(encoding="utf-8")
-                    has_header = bool(BLUEPRINT_HEADER_RE.search(fc))
-                except OSError:
-                    pass
-                if has_header:
-                    drifts.append(
-                        {
-                            "type": "CODE_NOT_IN_BLUEPRINT",
-                            "severity": "LOW",
-                            "file": str(py_file.relative_to(REPO_ROOT)),
-                            "detail": f"代码文件有[BLUEPRINT]头部但不在蓝图 {fm_modid} §4 文件清单中",
-                        }
-                    )
+        header_modid = entry["header_modid"]
+        file_rel = entry["file"].replace("\\", "/")
+        depgraph_files = depgraph_files_by_module.get(header_modid, set())
+        if file_rel not in depgraph_files:
+            drifts.append(
+                {
+                    "type": "CODE_NOT_IN_DEPGRAPH",
+                    "severity": "LOW",
+                    "file": entry["file"],
+                    "detail": f"代码文件有[BLUEPRINT]头部 {header_modid}，但不在 depgraph 该模块节点列表中（depgraph 可能未更新）",
+                }
+            )
 
     return drifts
 
@@ -305,9 +278,16 @@ def main() -> None:
 
     code_headers = scan_code_blueprint_headers(package_filter=args.package)
 
-    drift_findings = check_header_vs_registry(code_headers, blueprint_registry, pkg_to_modid)
-    file_missing_findings = check_blueprint_file_list(blueprint_registry)
-    code_not_in_bp_findings = check_code_not_in_blueprint(code_headers, blueprint_registry)
+    # 裁定#211：加载 depgraph 模块索引（ORPHAN 验证 + 文件清单派生）
+    depgraph_module_ids, depgraph_files_by_module = load_depgraph_module_index()
+
+    drift_findings = check_header_vs_registry(
+        code_headers, blueprint_registry, pkg_to_modid, depgraph_module_ids
+    )
+    file_missing_findings = check_blueprint_file_list(blueprint_registry, depgraph_files_by_module)
+    code_not_in_bp_findings = check_code_not_in_blueprint(
+        code_headers, blueprint_registry, depgraph_files_by_module
+    )
 
     all_findings = drift_findings + file_missing_findings + code_not_in_bp_findings
 
@@ -328,6 +308,7 @@ def main() -> None:
                     "findings": all_findings,
                     "code_headers_scanned": len(code_headers),
                     "blueprints_in_registry": len(blueprint_registry),
+                    "depgraph_module_ids": len(depgraph_module_ids),
                 },
                 ensure_ascii=False,
                 indent=2,
@@ -339,6 +320,7 @@ def main() -> None:
         print("=" * 60)
         print(f"扫描: {len(code_headers)} 个代码文件有[BLUEPRINT]头部")
         print(f"蓝图注册表: {len(blueprint_registry)} 个 module_id")
+        print(f"depgraph 模块索引: {len(depgraph_module_ids)} 个 blueprint_id（裁定#211 depgraph 派生）")
         print()
 
         if not all_findings:
