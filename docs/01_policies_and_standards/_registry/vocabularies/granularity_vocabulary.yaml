@@ -1,0 +1,57 @@
+# [A_config] module_id=CFG-granularity_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# granularity 受控词表
+# depgraph nodes.granularity 字段唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-07-13
+#
+# 本词表定义 depgraph nodes 表 granularity 字段的全项目合法值。
+# 治本（2026-07-13，trae_060 §2 唯一真源原则）：
+#   原先 granularity 合法值散落在 apply_depgraph.py（add_design_node 硬编码 'directory'、
+#   add_file_node 硬编码 'file'）和 generate_project_depgraph.py（默认 'file'）= 多真源 = 必漂移。
+#   现统一由本词表 SSoT，脚本动态加载。
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-035
+version: "1.0.0"
+title: "granularity 受控词表"
+status: active
+ttl: permanent
+owner: ZephyrAlpha-Owner
+vocabulary_name: granularity
+total_values: 4
+depends_on: []
+
+values:
+  - value: file
+    path_suffix_rule: forbid
+    default_node_type: module
+    definition: "文件粒度——1 文件 = 1 节点（生成器扫描产出、add_file_node 补登记孤儿文件）"
+    ai_keywords: ["文件", "file", "单文件", "扫描"]
+
+  - value: directory
+    path_suffix_rule: require
+    default_node_type: blueprint
+    definition: "目录粒度——1 目录 = 1 节点（蓝图级设计态，path 必须以 / 结尾）"
+    ai_keywords: ["目录", "directory", "蓝图", "设计态"]
+
+  - value: module
+    path_suffix_rule: forbid
+    default_node_type: module
+    definition: "模块粒度——跨多文件的逻辑模块（域级聚合，非单文件）"
+    ai_keywords: ["模块", "module", "逻辑模块", "跨文件"]
+
+  - value: aggregated
+    path_suffix_rule: forbid
+    default_node_type: module
+    definition: "聚合粒度——多文件聚合到单一节点（特殊聚合场景，如 test_suite/script_collection）"
+    ai_keywords: ["聚合", "aggregated", "多文件聚合", "test_suite"]

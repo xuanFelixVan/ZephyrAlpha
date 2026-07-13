@@ -4187,3 +4187,63 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 **测试文件**：`tests/governance/commit_gates/test_test_source_consistency_gate.py`（36 tests passed）
 **注册位置**：`git_commit_gateway.py` L321 `self._gate_registry.register(make_test_source_consistency_gate())`
 **capability 登记**：`capability_canonical_file_registry.yaml` capability_id=test_source_consistency_gate
+
+---
+
+### 5.179 add_design_node granularity 硬编码 bug（trae_060 §2 + trae_056 §phase_2 铁律死锁）
+
+> **裁定状态（2026-07-13）**：RESOLVED=1（add_design_node 已参数化 + granularity_vocabulary.yaml 词表真源已建立 + CLI --granularity 参数已扩展）
+> **发现背景**：tick_subscriber.py commit 被 CREATE-GUARD gate 阻断，根因分析追溯发现 add_design_node 函数硬编码 granularity='directory'，导致单文件模块无法走 trae_056 §phase_2_design_state 设计态登记。
+
+**病根分析（3 层）**：
+
+1. **硬编码违规（trae_060 §2）**：`add_design_node`（apply_depgraph.py L622-624）硬编码 `granularity='directory'`，造第二真源——granularity 合法值无 YAML 词表真源，散落在 add_design_node/add_file_node/generate_project_depgraph.py 三处硬编码，必然漂移。
+
+2. **铁律死锁（trae_056 §phase_2_design_state）**：trae_056 L203 `applies_when: 创建长期使用的代码/脚本/模块` + L209 `在depgraph创建design_maturity=design的节点` + L247 `禁止直接SQL写入depgraph——使用apply_depgraph.py --add-design-node`。但 add_design_node 只支持 directory 粒度 → 单文件模块（如 tick_subscriber.py）无法走设计态登记 → 铁律系统性不可执行。
+
+3. **100% AI 开发场景放大**：AGENTS.md L908 「100% AI 开发无常驻监听者」。人类开发者可手动 SQL 绕过（但 L247 禁止），AI 不会自主发明绕过路径 → 工具链 bug = 铁律系统性死锁 → 每次 AI 新建单文件模块都累积违规。
+
+**事实证据（数据库查询验证）**：
+
+- nodes 表无 UNIQUE(path, design_maturity) 约束（仅 idx_nodes_path 非唯一索引）
+- CHECK 约束仅校验 design_maturity ∈ {design, production, prototype}，不限制 granularity
+- granularity 字段无 CHECK 约束，可取任意值
+- **已有 32 个 design+file 先例**（node_type=module, build_status=planned）——证明数据库支持，仅函数实现有 bug
+- 28 个 design+directory 节点出现 path 语义混乱（如 `src/zephyr/backtest/core/data_handler.py/`——文件路径强行加 `/` 当目录）——bug 的副作用
+
+**本次修复（2026-07-13，3 项治本）**：
+
+1. **新建 granularity_vocabulary.yaml 词表真源**（`docs/01_policies_and_standards/_registry/vocabularies/granularity_vocabulary.yaml`，PS-VOC-035）
+   - 登记 4 个合法值：file/directory/module/aggregated
+   - 字段：path_suffix_rule（directory=require / 其他=forbid）、default_node_type、definition、ai_keywords
+   - 消除三处硬编码的真源缺失（trae_060 §2 治本）
+
+2. **add_design_node 函数参数化**（`scripts/governance/apply_depgraph.py` L566-668）
+   - 新增 `granularity: str = "directory"` 参数（默认 directory 保持向后兼容）
+   - 新增 `node_type: str | None = None` 参数（默认按 granularity 推导：directory→blueprint，file/module→module）
+   - 动态加载 granularity_vocabulary.yaml 校验合法值（`load_vocabulary_values("granularity_vocabulary.yaml", strict=False)`，SSoT 函数）
+   - path 格式校验改为按粒度匹配（directory 要求 `/` 结尾，file/module 禁止）
+   - INSERT 语句用参数化的 granularity/node_type，消除硬编码
+   - UPDATE SQL 提取为模块级常量 SQL_UPDATE_DESIGN_NODE_BY_ID（消除 NO-BARE-SQL gate 违规）
+
+3. **CLI --granularity 参数扩展**（`scripts/governance/apply_depgraph.py` L3749-3756）
+   - 新增 `--granularity` 独立参数（default="directory"）
+   - 用法：`apply_depgraph.py --add-design-node src/foo.py MOD-X D_DATA --granularity file`
+   - 合法值由 granularity_vocabulary.yaml 动态定义（非 argparse choices 硬编码）
+
+**验证**：
+- 语法检查通过（ast.parse）
+- 6 个前置校验测试用例全通过（非法 granularity 拒绝、directory path 规则、file path 规则、默认 directory 兼容）
+- transition_sync 现有测试 4 passed 无回归
+- CLI --help 正确显示 --granularity 参数
+- 非法 granularity 调用正确 exit=4 拒绝
+
+**遗留项（后续清理，不阻断本次）**：
+- 28 个历史 design+directory 节点的 path 语义混乱（如 `data_handler.py/`）——需要单独的迁移脚本清理（评估是否转为 file 粒度或修正 path）
+- `add_file_node` 和 `generate_project_depgraph.py` 的 granularity 硬编码未迁移到动态加载——本次仅治本 add_design_node，其余两处保留为后续架构债（优先级低，因为它们只创建 production 节点，不影响设计态铁律执行）
+
+**实现文件**：
+- `docs/01_policies_and_standards/_registry/vocabularies/granularity_vocabulary.yaml`（新建，词表真源）
+- `scripts/governance/apply_depgraph.py` L93-94（新增 import）、L136-137（SQL 常量）、L568-663（函数参数化）、L3750-3757（CLI 参数）、L4062（处理逻辑）
+
+**关联规则**：trae_060 §2（唯一真源）、trae_056 §phase_2_design_state（设计态先行）、trae_054 RULE-SIXTEEN（程序化访问）

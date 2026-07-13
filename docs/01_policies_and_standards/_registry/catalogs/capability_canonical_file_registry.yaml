@@ -4825,6 +4825,13 @@ creation_tokens:
     created_by: "session-sess-36780-20260713111728"
     capability: "realtime_tick_ingestion"
 
+  # --- granularity 词表真源（2026-07-13，trae_060 §2 治本）---
+  # add_design_node granularity 硬编码 bug 修复配套：新建词表消除三处硬编码
+  - file: "docs/01_policies_and_standards/_registry/vocabularies/granularity_vocabulary.yaml"
+    token: "auto-granularity-vocab-20260713"
+    created_by: "session-sess-36780-20260713111728"
+    capability: "depgraph_granularity_vocab"
+
 # ============================================================================
 # 维护日志
 # ============================================================================
