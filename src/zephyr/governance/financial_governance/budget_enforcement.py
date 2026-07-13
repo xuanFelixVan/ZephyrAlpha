@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
 # [MODULE] zephyr.governance.financial_governance.budget_enforcement
-# [DOMAIN]
+# [DOMAIN] D_GOV_REPAIR
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

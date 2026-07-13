@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md
 # [MODULE] zephyr.governance.ops_governance.auto_runner
-# [DOMAIN]
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES]
 # [CONSUMERS] phase_manager; gate_engine; session_manager
 # [STARTUP] manual

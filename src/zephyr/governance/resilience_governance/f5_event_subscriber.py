@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §3
 # [MODULE] zephyr.governance.resilience_governance.f5_event_subscriber
-# [DOMAIN]
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.f5_boot_integration; zephyr.trading.boot_hooks; zephyr.feedback_loop.scheduler
 # [STARTUP] imported

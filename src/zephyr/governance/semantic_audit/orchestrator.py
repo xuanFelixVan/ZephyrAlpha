@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3,§4
 # [MODULE] zephyr.governance.semantic_audit.orchestrator
-# [DOMAIN]
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS] audit_orchestrator; cli; gates
 # [STARTUP] manual
