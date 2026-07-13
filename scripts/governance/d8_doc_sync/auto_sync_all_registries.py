@@ -65,11 +65,11 @@ REGISTRIES = {
     / "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml",
 }
 
-# ARCH-036: 路径修正 — 真实物理路径为 src/zephyr/trading/feedback_loop/（下划线，在 trading 下）；
+# ARCH-036: 路径修正 — 真实物理路径为 src/zephyr/feedback_loop/（下划线，已从 trading/ 迁出至顶层）；
 # 旧路径 src/zephyr/feedback-loop/（短横线）从未存在，导致 _discover_fle_gates 静默返回空列表。
-FLE_GATES_DIR = PROJECT_ROOT / "src" / "zephyr" / "trading" / "feedback_loop" / "gates"
+FLE_GATES_DIR = PROJECT_ROOT / "src" / "zephyr" / "feedback_loop" / "gates"
 FLE_BLUEPRINT = PROJECT_ROOT / "docs" / "03_modules" / "_cross_layer" / "feedback_loop" / "blueprint.md"
-FEEDBACK_LOOP_DIR = PROJECT_ROOT / "src" / "zephyr" / "trading" / "feedback_loop"
+FEEDBACK_LOOP_DIR = PROJECT_ROOT / "src" / "zephyr" / "feedback_loop"
 
 FLE_GATE_CATEGORY = "fle_self_defense"
 FLE_MODULE_ID = "MOD-FEEDBACK_LOOP"
@@ -127,12 +127,12 @@ def _discover_fle_gates() -> list[dict]:
                 "title": f"{gate_id} {title}",
                 "category": FLE_GATE_CATEGORY,
                 # ARCH-036: 相对路径基准为 _registry.yaml 所在的 rule_enforcement/，
-                # 到 trading/feedback_loop/gates/ 需上溯两级再进入 trading/。
-                "file": f"../../trading/feedback_loop/gates/{py_file.name}",
+                # 到 feedback_loop/gates/ 需上溯两级再进入 feedback_loop/。
+                "file": f"../../feedback_loop/gates/{py_file.name}",
                 "status": "active",
                 "scope": "fle",
                 "execution_plane": "warm",
-                "note": f"Auto-registered by auto_sync_all_registries.py — FLE self-defense gate (physical: src/zephyr/trading/feedback_loop/gates/{py_file.name})",
+                "note": f"Auto-registered by auto_sync_all_registries.py — FLE self-defense gate (physical: src/zephyr/feedback_loop/gates/{py_file.name})",
             }
         )
     return gates

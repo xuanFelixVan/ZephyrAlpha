@@ -2923,7 +2923,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: secret_rotation
-    canonical_override: src/zephyr/trading/feedback_loop/security/secret_rotation.py
+    canonical_override: src/zephyr/feedback_loop/security/secret_rotation.py
     aliases:
       - SecretRotation
       - SecretEntry
@@ -4079,7 +4079,7 @@ creation_tokens:
     created_by: "session-sess-11632-20260704044247"
     capability: "rule_four_way_alignment_checker"
 
-  - file: "src/zephyr/trading/feedback_loop/security/secret_rotation.py"
+  - file: "src/zephyr/feedback_loop/security/secret_rotation.py"
     token: "auto-secret-rotation-20260703"
     created_by: "session-sess-20844-20260703190715"
     capability: "secret_rotation"
@@ -4180,27 +4180,27 @@ creation_tokens:
     capability: "code_dedup_trackers"
 
   # --- GOV-DOC-018 orchestrator/ 拆分：6个新建子目录 __init__.py 包标记 ---
-  - file: "src/zephyr/trading/orchestrator/contracts/__init__.py"
+  - file: "src/zephyr/orchestrator/contracts/__init__.py"
     token: "auto-orch-contracts-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_contracts_package_marker"
-  - file: "src/zephyr/trading/orchestrator/execution/__init__.py"
+  - file: "src/zephyr/orchestrator/execution/__init__.py"
     token: "auto-orch-execution-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_execution_package_marker"
-  - file: "src/zephyr/trading/orchestrator/fault_tolerance/__init__.py"
+  - file: "src/zephyr/orchestrator/fault_tolerance/__init__.py"
     token: "auto-orch-fault-tolerance-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_fault_tolerance_package_marker"
-  - file: "src/zephyr/trading/orchestrator/governance/__init__.py"
+  - file: "src/zephyr/orchestrator/governance/__init__.py"
     token: "auto-orch-governance-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_governance_package_marker"
-  - file: "src/zephyr/trading/orchestrator/lifecycle/__init__.py"
+  - file: "src/zephyr/orchestrator/lifecycle/__init__.py"
     token: "auto-orch-lifecycle-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_lifecycle_package_marker"
-  - file: "src/zephyr/trading/orchestrator/quality/__init__.py"
+  - file: "src/zephyr/orchestrator/quality/__init__.py"
     token: "auto-orch-quality-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_quality_package_marker"

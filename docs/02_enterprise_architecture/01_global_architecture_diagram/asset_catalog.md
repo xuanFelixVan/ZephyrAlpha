@@ -129,7 +129,7 @@ ttl: permanent
 | CT-002 | config/embedding_model_registry.yaml | declarative | D_DATA_SEC | resolved |
 | CT-003 | config/session_state_machine.yaml | declarative | D_DATA_SEC | resolved |
 | CT-004 | config/capabilities.yaml | declarative | D_DATA_SEC | resolved_as_not_supported |
-| CT-005 | src/zephyr/trading/orchestrator/trigger_router.py + config/trigger_router.yaml | declarative | D_INTELLIGENCE | resolved |
+| CT-005 | src/zephyr/orchestrator/execution/trigger_router.py + config/trigger_router.yaml | declarative | D_INTELLIGENCE | resolved |
 | CT-006 | config/compression_policy.yaml | declarative | D_DATA_SEC | resolved |
 | CT-007 | MOD-INF-005 §13.1 (script_system/blueprint.md V3.0.0) | declarative | D_GOV_SCRIPTS | resolved |
 | CT-008 | MOD-INF-005 §13.2 (script_system/blueprint.md V3.0.0) | declarative | D_GOV_SCRIPTS | resolved |

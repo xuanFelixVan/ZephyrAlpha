@@ -38,8 +38,8 @@ PATH_REPLACEMENTS = [
     (r"src[/\\]zephyr[/\\]behavioral_audit[/\\]", r"src/zephyr/governance/drift_detection/"),
     (r"src\\zephyr\\behavioral_audit\\", r"src/zephyr/governance/drift_detection/"),
     # ops/ → trading/feedback_loop/ (仅限特定子目录，ops/observability单独处理)
-    (r"src/zephyr/ops/evolution_engine", r"src/zephyr/trading/feedback_loop/evolution_engine"),
-    (r"src/zephyr/ops/scheduler", r"src/zephyr/trading/feedback_loop/scheduler"),
+    (r"src/zephyr/ops/evolution_engine", r"src/zephyr/feedback_loop/evolution_engine"),
+    (r"src/zephyr/ops/scheduler", r"src/zephyr/feedback_loop/scheduler"),
     (r"src/zephyr/ops/metrics_collector", r"src/zephyr/governance/metrics_collector"),
     (r"src/zephyr/ops/slo_manager", r"src/zephyr/governance/slo_manager"),
     (r"src/zephyr/ops/gates/", r"src/zephyr/infrastructure/system_telemetry/gates/"),
