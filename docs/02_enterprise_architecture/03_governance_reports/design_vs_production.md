@@ -20,19 +20,19 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 1782 | 35.6% |
+| production（生产态） | 1779 | 35.5% |
 | design（设计态） | 64 | 1.3% |
 | prototype（原型态） | 3166 | 63.2% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **5012** | **100%** |
+| **总计** | **5009** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4947 | 98.7% |
+| generated | 4947 | 98.8% |
 | planned | 39 | 0.8% |
-| stable | 24 | 0.5% |
+| stable | 21 | 0.4% |
 | deprecated | 2 | 0.0% |
 
 ## 各域设计成熟度统计
@@ -63,22 +63,22 @@ ttl: permanent
 | D_FEEDBACK_LOOP | feedback_loop_engine | 229 | 109 | 0 | 120 | 0 | 47.6% |
 | D_FRONTEND | 前端 | 46 | 13 | 6 | 27 | 0 | 28.3% |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | 9 | 3 | 0 | 6 | 0 | 33.3% |
-| D_GOVERNANCE | registry_management | 1059 | 129 | 3 | 927 | 0 | 12.2% |
-| D_GOV_AUDIT | audit_orchestration | 292 | 66 | 2 | 224 | 0 | 22.6% |
+| D_GOVERNANCE | registry_management | 1029 | 125 | 3 | 901 | 0 | 12.1% |
+| D_GOV_AUDIT | audit_orchestration | 272 | 63 | 2 | 207 | 0 | 23.2% |
 | D_GOV_CODE_QUALITY | code_quality_governance | 109 | 100 | 0 | 9 | 0 | 91.7% |
 | D_GOV_DOCS | architecture_docs | 96 | 68 | 28 | 0 | 0 | 70.8% |
 | D_GOV_DRIFT | drift_detection | 77 | 71 | 1 | 5 | 0 | 92.2% |
 | D_GOV_ENFORCEMENT | rule_enforcement | 164 | 100 | 0 | 64 | 0 | 61.0% |
 | D_GOV_KB | knowledge_base_governance | 30 | 16 | 0 | 14 | 0 | 53.3% |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance | 79 | 76 | 0 | 3 | 0 | 96.2% |
-| D_GOV_REPAIR | rollback | 0 | 0 | 0 | 0 | 0 | N/A |
+| D_GOV_REPAIR | rollback | 20 | 3 | 0 | 17 | 0 | 15.0% |
 | D_GOV_RULE | rule_governance | 35 | 30 | 0 | 5 | 0 | 85.7% |
-| D_GOV_SCRIPTS | script_governance | 74 | 3 | 0 | 71 | 0 | 4.1% |
+| D_GOV_SCRIPTS | script_governance | 104 | 7 | 0 | 97 | 0 | 6.7% |
 | D_INFRASTRUCTURE | shared_contracts | 61 | 9 | 0 | 52 | 0 | 14.8% |
 | D_INFRA_A2A | a2a_communication | 133 | 29 | 0 | 104 | 0 | 21.8% |
 | D_INFRA_OPS | asset-inventory | 2 | 0 | 2 | 0 | 0 | 0.0% |
 | D_INFRA_RECOVERY | rollback_recovery | 89 | 48 | 0 | 41 | 0 | 53.9% |
-| D_INFRA_RUNTIME | runtime_core | 302 | 135 | 3 | 164 | 0 | 44.7% |
+| D_INFRA_RUNTIME | runtime_core | 299 | 132 | 3 | 164 | 0 | 44.1% |
 | D_INFRA_TELEMETRY | observability_profiling | 10 | 8 | 0 | 2 | 0 | 80.0% |
 | D_INTEGRATION | pipeline_routing | 92 | 46 | 0 | 46 | 0 | 50.0% |
 | D_INTEGRATION_GATEWAY | mcp_servers | 2 | 1 | 0 | 1 | 0 | 50.0% |

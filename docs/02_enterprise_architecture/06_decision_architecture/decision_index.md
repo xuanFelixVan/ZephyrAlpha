@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-13T14:20:01
+> 生成时间: 2026-07-13T23:42:47
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -489,9 +489,9 @@ flowchart TD
         LCFG_test_suite_registry["[production]CFG-test-suite-registry: CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LD_GOV_ENFORCEMENT["[prototype]D-GOV-ENFORCEMENT: D-GOV-ENFORCEMENT<br/>蓝图: D-GOV-ENFORCEMENT<br/>build: generated"]:::bsGenerated
         LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
-        LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: zephyr-chroma-vector-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
-        LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: zephyr-depgraph-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
-        LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: zephyr-clickhouse-c1-market — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: INFRA-DB-002<br/>build: stable"]:::bsStable
+        LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: INFRA-DB-003<br/>build: stable"]:::bsStable
+        LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: INFRA-DB-006<br/>build: stable"]:::bsStable
         LMOD_013["[design]MOD-013: MOD-013<br/>build: planned"]:::bsPlanned
         LMOD_014["[production]MOD-014: MOD-014<br/>蓝图: MOD-014<br/>build: generated"]:::bsGenerated
         LMOD_015["[design]MOD-015: MOD-015<br/>build: stable"]:::bsStable
@@ -1075,9 +1075,9 @@ flowchart TD
         LCFG_scripts_registry["[production]CFG-scripts-registry: CFG-scripts-registry<br/>蓝图: 脚本集 / Script Collection — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LCFG_test_suite_registry["[production]CFG-test-suite-registry: CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
-        LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: zephyr-chroma-vector-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
-        LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: zephyr-depgraph-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
-        LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: zephyr-clickhouse-c1-market — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: INFRA-DB-002<br/>build: stable"]:::bsStable
+        LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: INFRA-DB-003<br/>build: stable"]:::bsStable
+        LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: INFRA-DB-006<br/>build: stable"]:::bsStable
         LMOD_014["[production]MOD-014: MOD-014<br/>蓝图: MOD-014<br/>build: generated"]:::bsGenerated
         LMOD_AUTONOMY_CORE["[production]MOD-AUTONOMY_CORE: MOD-AUTONOMY_CORE<br/>蓝图: MOD-AUTONOMY_CORE<br/>build: generated"]:::bsGenerated
         LMOD_GOV_DOCS["[production]MOD-GOV-DOCS: MOD-GOV-DOCS<br/>蓝图: MOD-GOV-DOCS<br/>build: generated"]:::bsGenerated
@@ -1669,9 +1669,9 @@ flowchart LR
     LCFG_test_suite_registry["[production] CFG-test-suite-registry CFG-test-suite-registry<br/>CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>成熟度: production<br/>build: stable"]:::bsStable
     LD_GOV_ENFORCEMENT["[prototype] D-GOV-ENFORCEMENT D-GOV-ENFORCEMENT<br/>D-GOV-ENFORCEMENT<br/>蓝图: D-GOV-ENFORCEMENT<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LINFRA_DB_001["[production] INFRA-DB-001 INFRA-DB-001<br/>INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LINFRA_DB_002["[production] INFRA-DB-002 INFRA-DB-002<br/>INFRA-DB-002<br/>蓝图: zephyr-chroma-vector-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LINFRA_DB_003["[production] INFRA-DB-003 INFRA-DB-003<br/>INFRA-DB-003<br/>蓝图: zephyr-depgraph-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LINFRA_DB_006["[production] INFRA-DB-006 INFRA-DB-006<br/>INFRA-DB-006<br/>蓝图: zephyr-clickhouse-c1-market — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LINFRA_DB_002["[production] INFRA-DB-002 INFRA-DB-002<br/>INFRA-DB-002<br/>蓝图: INFRA-DB-002<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LINFRA_DB_003["[production] INFRA-DB-003 INFRA-DB-003<br/>INFRA-DB-003<br/>蓝图: INFRA-DB-003<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LINFRA_DB_006["[production] INFRA-DB-006 INFRA-DB-006<br/>INFRA-DB-006<br/>蓝图: INFRA-DB-006<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL0["[production] L0 数据接入与预处理层<br/>Data Ingestion & Preprocessing<br/>蓝图: MOD-MKT_DATA<br/>功能: miniQMT + iFind + t…<br/>频率: tick<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL1["[production] L1 因子计算层<br/>Factor Calculation<br/>蓝图: MOD-L02-001<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>频率: daily<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL2A["[design] L2A 信号层<br/>Signal Generation<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
@@ -2082,9 +2082,9 @@ flowchart TD
 | CFG-test-suite-registry | CFG-test-suite-registry | CFG-test-suite-registry | placeholder | CFG-test-suite-registry | 测试集 / Test Suite — ARCH-052 聚合节点 production | - | - | - | production | stable |
 | D-GOV-ENFORCEMENT | D-GOV-ENFORCEMENT | D-GOV-ENFORCEMENT | placeholder | D-GOV-ENFORCEMENT | - | - | - | - | prototype | generated |
 | INFRA-DB-001 | INFRA-DB-001 | INFRA-DB-001 | placeholder | INFRA-DB-001 | zephyr-sqlite-task-db — database 节点 (ARCH-053) | - | - | - | production | stable |
-| INFRA-DB-002 | INFRA-DB-002 | INFRA-DB-002 | placeholder | INFRA-DB-002 | zephyr-chroma-vector-db — database 节点 (ARCH-053) | - | - | - | production | stable |
-| INFRA-DB-003 | INFRA-DB-003 | INFRA-DB-003 | placeholder | INFRA-DB-003 | zephyr-depgraph-db — database 节点 (ARCH-053) | - | - | - | production | stable |
-| INFRA-DB-006 | INFRA-DB-006 | INFRA-DB-006 | placeholder | INFRA-DB-006 | zephyr-clickhouse-c1-market — database 节点 (ARCH-053) | - | - | - | production | stable |
+| INFRA-DB-002 | INFRA-DB-002 | INFRA-DB-002 | placeholder | INFRA-DB-002 | - | - | - | - | production | stable |
+| INFRA-DB-003 | INFRA-DB-003 | INFRA-DB-003 | placeholder | INFRA-DB-003 | - | - | - | - | production | stable |
+| INFRA-DB-006 | INFRA-DB-006 | INFRA-DB-006 | placeholder | INFRA-DB-006 | - | - | - | - | production | stable |
 | L0 | 数据接入与预处理层 | Data Ingestion & Preprocessing | model_driven | MOD-MKT_DATA | - | - | miniQMT + iFind + tushare + 另类数据源 → 事件总线 → 分层时序存储 产出：tick_data / ohlc_bar / factor_input_data | tick | production | stable |
 | L1 | 因子计算层 | Factor Calculation | model_driven | MOD-L02-001 | - | - | 因子工厂全生命周期管理 → 盘前全量/盘中增量双模计算 → 因子池 产出：factor_value（带 PIT 合规标记） | daily | production | stable |
 | L2A | 信号层 | Signal Generation | model_driven | - | - | - | 信号工厂 → 多策略投票 → 收益率条件密度预测 → Transformer/Mamba时序增强 → 共形预测 产出：signal（Insight: direction/confidence/horizon） | daily | design | planned |

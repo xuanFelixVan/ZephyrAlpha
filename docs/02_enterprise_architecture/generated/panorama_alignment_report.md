@@ -1,21 +1,25 @@
 # 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-07-13 14:20:16
+- 生成时间: 2026-07-13 23:42:56
 - 数据源: depgraph (PostgreSQL)
-- 四图节点数: depgraph=169 / dataflow=75 / decision=323 / blueprint=73
-- 问题总数: 0
-  - 孤儿（仅一图）: 0
-  - 状态漂移（blueprint 缺 design_maturity）: 0
+- 四图节点数: depgraph=166 / dataflow=194 / decision=323 / blueprint=74
+- 问题总数: 2
+  - 孤儿（仅一图）: 1
+  - 状态漂移（blueprint 缺 design_maturity）: 1
   - 域不一致（domain_id 不一致）: 0
   - 设计态孤立（design 仅一图）: 0
 
 ## 1. 孤儿节点（仅一图存在）
 
-> 无孤儿节点，四图在 module_id 维度对齐。
+| module_id | graph | entity_name |
+|---|---|---|
+| MOD-004 | blueprint | _cross_layer/_b_track_interfaces/feedback_loop_engine_interface.md |
 
 ## 2. 状态漂移（blueprint 缺 design_maturity 字段）
 
-> 无状态漂移。
+| module_id | depgraph | dataflow | decision | blueprint |
+|---|---|---|---|---|
+| MOD-004 | - | - | - | - |
 
 ## 3. 域不一致（domain_id 不一致）
 
