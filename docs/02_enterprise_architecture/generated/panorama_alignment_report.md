@@ -1,8 +1,8 @@
 # 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-07-13 05:30:10
+- 生成时间: 2026-07-13 14:20:16
 - 数据源: depgraph (PostgreSQL)
-- 四图节点数: depgraph=164 / dataflow=75 / decision=318 / blueprint=73
+- 四图节点数: depgraph=169 / dataflow=75 / decision=323 / blueprint=73
 - 问题总数: 0
   - 孤儿（仅一图）: 0
   - 状态漂移（blueprint 缺 design_maturity）: 0

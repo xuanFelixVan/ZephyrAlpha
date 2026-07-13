@@ -29,9 +29,9 @@
 
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
-| 依赖图 depgraph | `domains` | 61 | 功能域清单——61 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 5007 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5007 个 |
-| 依赖图 depgraph | `edges` | 6000 | 依赖边——节点间的依赖关系（import/契约/事件订阅），6000 条 |
+| 依赖图 depgraph | `domains` | 63 | 功能域清单——63 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
+| 依赖图 depgraph | `nodes` | 5012 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5012 个 |
+| 依赖图 depgraph | `edges` | 5911 | 依赖边——节点间的依赖关系（import/契约/事件订阅），5911 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
 | 数据流图 dataflowgraph | `dataflow_jobs` | 63 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
@@ -39,7 +39,7 @@
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
 | 数据流图 dataflowgraph | `dataflow_runs` | 0 | 运行记录——job 执行历史（status/耗时/参数），0 行（0=无运行时观测，依赖观测系统回填） |
 | 决策流图 decisiongraph | `decision_tracks` | 5 | 决策轨——5 条正交决策轨（价值/动量/风险/组合），优先级+激活条件 |
-| 决策流图 decisiongraph | `decision_layers` | 174 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
+| 决策流图 decisiongraph | `decision_layers` | 179 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
 | 决策流图 decisiongraph | `decision_nodes` | 214 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
 | 决策流图 decisiongraph | `decision_edges` | 213 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），213 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 65 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，65 条 |
@@ -97,14 +97,14 @@
 | PAN-BUILT-09 | 能力热力图（53域×10能力） | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capability_heatmap.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/global_capability_heatmap.md) | ✅存在 |
 | PAN-BUILT-10 | 资产清单配置 | 资产 | depgraph | depgraph (PostgreSQL) | `generate_asset_catalog.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/asset_catalog.md) | ✅存在 |
 | PAN-BUILT-11 | 契约目录配置 | 资产 | depgraph | depgraph (PostgreSQL) | `generate_contract_catalog.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/contract_catalog.md) | ✅存在 |
-| PAN-BUILT-20 | 域架构文档（50 域 + domain_index） | 域架构文档 | depgraph | depgraph (PostgreSQL) | `generate_domain_doc.py` | `02_domain_architecture_docs/` | ✅存在(62文件) |
+| PAN-BUILT-20 | 域架构文档（50 域 + domain_index） | 域架构文档 | depgraph | depgraph (PostgreSQL) | `generate_domain_doc.py` | `02_domain_architecture_docs/` | ✅存在(64文件) |
 | PAN-BUILT-12 | 容量报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capacity_report.py` | [`03_governance_reports`](../03_governance_reports/capacity_report.md) | ✅存在 |
 | PAN-BUILT-13 | 约束违规报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_constraint_violations.py` | [`03_governance_reports`](../03_governance_reports/constraint_violations.md) | ✅存在 |
 | PAN-BUILT-14 | 设计态 vs 运营态 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_design_vs_production.py` | [`03_governance_reports`](../03_governance_reports/design_vs_production.md) | ✅存在 |
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | 治理健康度 | 手工 | 手工 | `(手工维护)` | [`04_architecture_principles_decisions`](../04_architecture_principles_decisions/dependency_path_panorama.md) | ✅存在 |
 | PAN-BUILT-18 | 数据流图（dataflowgraph Dataset/Job/Edge） | 数据流 | dataflowgraph | depgraph (PostgreSQL) (dataflow_* 表) | `generate_dataflow_diagram.py` | [`05_dataflow_architecture`](../05_dataflow_architecture/dataflow_index.md) | ✅存在 |
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
-| PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `generate_domain_dependency_diagram.py` | `generated/domains/` | ✅存在(61文件) |
+| PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `generate_domain_dependency_diagram.py` | `generated/domains/` | ✅存在(63文件) |
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-21 | 样板/模板区（7 个样板文件） | 样板 | 手工 | 手工 | `(手工维护)` | `sample/` | ✅存在(7文件) |
 | PAN-BUILT-01 | TOGAF 4视图 + 6正交视图 | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/overview.md) | ✅存在 |

@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-13T05:29:56
+> 生成时间: 2026-07-13T14:20:01
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -17,12 +17,12 @@
 | 类型 | 数量 |
 |------|------|
 | Track（轨） | 5 |
-| Layer（层） | 174 |
+| Layer（层） | 179 |
 | Node（节点） | 214 |
 | Edge（边） | 213 |
 | 运营态 Layer（design_maturity=production） | 17 |
 | 设计态 Layer（design_maturity=design） | 57 |
-| 原型态 Layer（design_maturity=prototype） | 100 |
+| 原型态 Layer（design_maturity=prototype） | 105 |
 | 运营态 Node（design_maturity=production） | 0 |
 | 设计态 Node（design_maturity=design） | 214 |
 
@@ -561,9 +561,14 @@ flowchart TD
         LMOD_GOV_vocab_hardcode_gate["[prototype]MOD-GOV-vocab_hardcode_gate: MOD-GOV-vocab_hardcode_gate<br/>蓝图: MOD-GOV-vocab_hardcode_gate<br/>build: generated"]:::bsGenerated
         LMOD_GOV_worktree_manager["[production]MOD-GOV-worktree_manager: MOD-GOV-worktree_manager<br/>蓝图: MOD-GOV-worktree_manager<br/>build: generated"]:::bsGenerated
         LMOD_GOVERNANCE["[design]MOD-GOVERNANCE: MOD-GOVERNANCE<br/>build: generated"]:::bsGenerated
+        LMOD_GOV_DRIFT_bridges["[prototype]MOD-GOV_DRIFT_bridges: MOD-GOV_DRIFT_bridges<br/>蓝图: MOD-GOV_DRIFT_bridges<br/>build: generated"]:::bsGenerated
+        LMOD_GOV_DRIFT_det_bridge["[prototype]MOD-GOV_DRIFT_det_bridge: MOD-GOV_DRIFT_det_bridge<br/>蓝图: MOD-GOV_DRIFT_det_bridge<br/>build: generated"]:::bsGenerated
+        LMOD_GOV_DRIFT_detector_core["[prototype]MOD-GOV_DRIFT_detector_core: MOD-GOV_DRIFT_detector_core<br/>蓝图: MOD-GOV_DRIFT_detector_core<br/>build: generated"]:::bsGenerated
         LMOD_GOV_behavioral_admission["[prototype]MOD-GOV_behavioral_admission: MOD-GOV_behavioral_admission<br/>蓝图: MOD-GOV_behavioral_admission<br/>build: generated"]:::bsGenerated
+        LMOD_GOV_code_quality_domain["[prototype]MOD-GOV_code_quality_domain: MOD-GOV_code_quality_domain<br/>蓝图: MOD-GOV_code_quality_domain<br/>build: generated"]:::bsGenerated
         LMOD_GOV_commit_gates["[prototype]MOD-GOV_commit_gates: MOD-GOV_commit_gates<br/>蓝图: MOD-GOV_commit_gates<br/>build: generated"]:::bsGenerated
         LMOD_GOV_resilience_governance["[prototype]MOD-GOV_resilience_governance: MOD-GOV_resilience_governance<br/>蓝图: MOD-GOV_resilience_governance<br/>build: generated"]:::bsGenerated
+        LMOD_GOV_rule_domain["[prototype]MOD-GOV_rule_domain: MOD-GOV_rule_domain<br/>蓝图: MOD-GOV_rule_domain<br/>build: generated"]:::bsGenerated
         LMOD_GOV_security_governance["[prototype]MOD-GOV_security_governance: MOD-GOV_security_governance<br/>蓝图: MOD-GOV_security_governance<br/>build: generated"]:::bsGenerated
         LMOD_INF_001["[prototype]MOD-INF-001: MOD-INF-001<br/>蓝图: MOD-INF-001<br/>build: generated"]:::bsGenerated
         LMOD_INF_002["[prototype]MOD-INF-002: MOD-INF-002<br/>蓝图: MOD-INF-002<br/>build: generated"]:::bsGenerated
@@ -735,10 +740,15 @@ flowchart TD
     LMOD_GOV_test_source_consistency_gate -.->|triggering| LMOD_GOV_vocab_hardcode_gate
     LMOD_GOV_vocab_hardcode_gate -.->|triggering| LMOD_GOV_worktree_manager
     LMOD_GOV_worktree_manager -.->|triggering| LMOD_GOVERNANCE
-    LMOD_GOVERNANCE -.->|triggering| LMOD_GOV_behavioral_admission
-    LMOD_GOV_behavioral_admission -.->|triggering| LMOD_GOV_commit_gates
+    LMOD_GOVERNANCE -.->|triggering| LMOD_GOV_DRIFT_bridges
+    LMOD_GOV_DRIFT_bridges -.->|triggering| LMOD_GOV_DRIFT_det_bridge
+    LMOD_GOV_DRIFT_det_bridge -.->|triggering| LMOD_GOV_DRIFT_detector_core
+    LMOD_GOV_DRIFT_detector_core -.->|triggering| LMOD_GOV_behavioral_admission
+    LMOD_GOV_behavioral_admission -.->|triggering| LMOD_GOV_code_quality_domain
+    LMOD_GOV_code_quality_domain -.->|triggering| LMOD_GOV_commit_gates
     LMOD_GOV_commit_gates -.->|triggering| LMOD_GOV_resilience_governance
-    LMOD_GOV_resilience_governance -.->|triggering| LMOD_GOV_security_governance
+    LMOD_GOV_resilience_governance -.->|triggering| LMOD_GOV_rule_domain
+    LMOD_GOV_rule_domain -.->|triggering| LMOD_GOV_security_governance
     LMOD_GOV_security_governance -.->|triggering| LMOD_INF_001
     LMOD_INF_001 -.->|triggering| LMOD_INF_002
     LMOD_INF_002 -.->|triggering| LMOD_INF_005
@@ -1741,9 +1751,14 @@ flowchart LR
     LMOD_GOV_vocab_hardcode_gate["[prototype] MOD-GOV-vocab_hardcode_gate MOD-GOV-vocab_hardcode_gate<br/>MOD-GOV-vocab_hardcode_gate<br/>蓝图: MOD-GOV-vocab_hardcode_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_worktree_manager["[production] MOD-GOV-worktree_manager MOD-GOV-worktree_manager<br/>MOD-GOV-worktree_manager<br/>蓝图: MOD-GOV-worktree_manager<br/>成熟度: production<br/>build: generated"]:::bsGenerated
     LMOD_GOVERNANCE["[design] MOD-GOVERNANCE MOD-GOVERNANCE<br/>MOD-GOVERNANCE<br/>成熟度: design<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_DRIFT_bridges["[prototype] MOD-GOV_DRIFT_bridges MOD-GOV_DRIFT_bridges<br/>MOD-GOV_DRIFT_bridges<br/>蓝图: MOD-GOV_DRIFT_bridges<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_DRIFT_det_bridge["[prototype] MOD-GOV_DRIFT_det_bridge MOD-GOV_DRIFT_det_bridge<br/>MOD-GOV_DRIFT_det_bridge<br/>蓝图: MOD-GOV_DRIFT_det_bridge<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_DRIFT_detector_core["[prototype] MOD-GOV_DRIFT_detector_core MOD-GOV_DRIFT_detector_core<br/>MOD-GOV_DRIFT_detector_core<br/>蓝图: MOD-GOV_DRIFT_detector_core<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_behavioral_admission["[prototype] MOD-GOV_behavioral_admission MOD-GOV_behavioral_admission<br/>MOD-GOV_behavioral_admission<br/>蓝图: MOD-GOV_behavioral_admission<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_code_quality_domain["[prototype] MOD-GOV_code_quality_domain MOD-GOV_code_quality_domain<br/>MOD-GOV_code_quality_domain<br/>蓝图: MOD-GOV_code_quality_domain<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_commit_gates["[prototype] MOD-GOV_commit_gates MOD-GOV_commit_gates<br/>MOD-GOV_commit_gates<br/>蓝图: MOD-GOV_commit_gates<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_resilience_governance["[prototype] MOD-GOV_resilience_governance MOD-GOV_resilience_governance<br/>MOD-GOV_resilience_governance<br/>蓝图: MOD-GOV_resilience_governance<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_rule_domain["[prototype] MOD-GOV_rule_domain MOD-GOV_rule_domain<br/>MOD-GOV_rule_domain<br/>蓝图: MOD-GOV_rule_domain<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_security_governance["[prototype] MOD-GOV_security_governance MOD-GOV_security_governance<br/>MOD-GOV_security_governance<br/>蓝图: MOD-GOV_security_governance<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_001["[prototype] MOD-INF-001 MOD-INF-001<br/>MOD-INF-001<br/>蓝图: MOD-INF-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_002["[prototype] MOD-INF-002 MOD-INF-002<br/>MOD-INF-002<br/>蓝图: MOD-INF-002<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -1914,10 +1929,15 @@ flowchart LR
     LMOD_GOV_test_source_consistency_gate -->|triggering| LMOD_GOV_vocab_hardcode_gate
     LMOD_GOV_vocab_hardcode_gate -->|triggering| LMOD_GOV_worktree_manager
     LMOD_GOV_worktree_manager -->|triggering| LMOD_GOVERNANCE
-    LMOD_GOVERNANCE -->|triggering| LMOD_GOV_behavioral_admission
-    LMOD_GOV_behavioral_admission -->|triggering| LMOD_GOV_commit_gates
+    LMOD_GOVERNANCE -->|triggering| LMOD_GOV_DRIFT_bridges
+    LMOD_GOV_DRIFT_bridges -->|triggering| LMOD_GOV_DRIFT_det_bridge
+    LMOD_GOV_DRIFT_det_bridge -->|triggering| LMOD_GOV_DRIFT_detector_core
+    LMOD_GOV_DRIFT_detector_core -->|triggering| LMOD_GOV_behavioral_admission
+    LMOD_GOV_behavioral_admission -->|triggering| LMOD_GOV_code_quality_domain
+    LMOD_GOV_code_quality_domain -->|triggering| LMOD_GOV_commit_gates
     LMOD_GOV_commit_gates -->|triggering| LMOD_GOV_resilience_governance
-    LMOD_GOV_resilience_governance -->|triggering| LMOD_GOV_security_governance
+    LMOD_GOV_resilience_governance -->|triggering| LMOD_GOV_rule_domain
+    LMOD_GOV_rule_domain -->|triggering| LMOD_GOV_security_governance
     LMOD_GOV_security_governance -->|triggering| LMOD_INF_001
     LMOD_INF_001 -->|triggering| LMOD_INF_002
     LMOD_INF_002 -->|triggering| LMOD_INF_005
@@ -2144,9 +2164,14 @@ flowchart TD
 | MOD-GOV-vocab_hardcode_gate | MOD-GOV-vocab_hardcode_gate | MOD-GOV-vocab_hardcode_gate | placeholder | MOD-GOV-vocab_hardcode_gate | - | - | - | - | prototype | generated |
 | MOD-GOV-worktree_manager | MOD-GOV-worktree_manager | MOD-GOV-worktree_manager | placeholder | MOD-GOV-worktree_manager | - | - | - | - | production | generated |
 | MOD-GOVERNANCE | MOD-GOVERNANCE | MOD-GOVERNANCE | placeholder | MOD-GOVERNANCE | docs__03_modules___domain_governance__blueprint_md | - | - | - | design | generated |
+| MOD-GOV_DRIFT_bridges | MOD-GOV_DRIFT_bridges | MOD-GOV_DRIFT_bridges | placeholder | MOD-GOV_DRIFT_bridges | - | - | - | - | prototype | generated |
+| MOD-GOV_DRIFT_det_bridge | MOD-GOV_DRIFT_det_bridge | MOD-GOV_DRIFT_det_bridge | placeholder | MOD-GOV_DRIFT_det_bridge | - | - | - | - | prototype | generated |
+| MOD-GOV_DRIFT_detector_core | MOD-GOV_DRIFT_detector_core | MOD-GOV_DRIFT_detector_core | placeholder | MOD-GOV_DRIFT_detector_core | - | - | - | - | prototype | generated |
 | MOD-GOV_behavioral_admission | MOD-GOV_behavioral_admission | MOD-GOV_behavioral_admission | placeholder | MOD-GOV_behavioral_admission | - | - | - | - | prototype | generated |
+| MOD-GOV_code_quality_domain | MOD-GOV_code_quality_domain | MOD-GOV_code_quality_domain | placeholder | MOD-GOV_code_quality_domain | - | - | - | - | prototype | generated |
 | MOD-GOV_commit_gates | MOD-GOV_commit_gates | MOD-GOV_commit_gates | placeholder | MOD-GOV_commit_gates | - | - | - | - | prototype | generated |
 | MOD-GOV_resilience_governance | MOD-GOV_resilience_governance | MOD-GOV_resilience_governance | placeholder | MOD-GOV_resilience_governance | - | - | - | - | prototype | generated |
+| MOD-GOV_rule_domain | MOD-GOV_rule_domain | MOD-GOV_rule_domain | placeholder | MOD-GOV_rule_domain | - | - | - | - | prototype | generated |
 | MOD-GOV_security_governance | MOD-GOV_security_governance | MOD-GOV_security_governance | placeholder | MOD-GOV_security_governance | - | - | - | - | prototype | generated |
 | MOD-INF-001 | MOD-INF-001 | MOD-INF-001 | placeholder | MOD-INF-001 | - | - | - | - | prototype | generated |
 | MOD-INF-002 | MOD-INF-002 | MOD-INF-002 | placeholder | MOD-INF-002 | - | - | - | - | prototype | generated |

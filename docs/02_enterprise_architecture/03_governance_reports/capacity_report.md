@@ -20,7 +20,7 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 域总数 | 61 |
+| 域总数 | 63 |
 | 超容域 | 0 |
 | 接近超容域（>80%） | 4 |
 | 空域（0模块） | 19 |
@@ -30,7 +30,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage |
 |------|--------|:---:|:---:|:---:|
 | D_AUTONOMY_CORE | agent_lifecycle | 133 | 150 | 88.7% |
-| D_GOVERNANCE | registry_management | 134 | 150 | 89.3% |
+| D_GOVERNANCE | registry_management | 129 | 150 | 86.0% |
 | D_INFRA_RUNTIME | runtime_core | 135 | 150 | 90.0% |
 | D_SHARED | shared_services | 132 | 150 | 88.0% |
 
@@ -71,7 +71,7 @@ ttl: permanent
 | D_BEHAVIORAL_AUDIT | drift_detector_core |  | 0 | 150 | 0.0% | 空 |
 | D_COMPLIANCE | compliance_gate |  | 0 | 150 | 0.0% | 空 |
 | D_CROSS_ASSET | 跨资产 | L2_domain | 1 | 150 | 0.7% | 正常 |
-| D_DATA | data_source_integrator |  | 6 | 150 | 4.0% | 正常 |
+| D_DATA | data_source_integrator |  | 7 | 150 | 4.7% | 正常 |
 | D_DATA_ENG | 数据工程 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_DATA_GOV | 数据治理 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_DATA_SEC | 数据安全与契约 | L1_foundation | 0 | 150 | 0.0% | 空 |
@@ -80,11 +80,13 @@ ttl: permanent
 | D_EX_CORE | 执行核心 | L2_domain | 6 | 150 | 4.0% | 正常 |
 | D_EX_SOR | 执行路由 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_FACTOR | 因子 | L2_domain | 4 | 150 | 2.7% | 正常 |
+| D_FBL_DETECTORS | feedback_detectors | L1_foundation | 60 | 150 | 40.0% | 正常 |
+| D_FBL_DIAGNOSERS | feedback_diagnosers | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D_FBL_VERIFICATION | feedback_verification | L1_foundation | 67 | 150 | 44.7% | 正常 |
-| D_FEEDBACK_LOOP | feedback_loop_engine | L1_foundation | 107 | 150 | 71.3% | 正常 |
+| D_FEEDBACK_LOOP | feedback_loop_engine | L1_foundation | 109 | 150 | 72.7% | 正常 |
 | D_FRONTEND | 前端 | L1_foundation | 13 | 150 | 8.7% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | L2_domain | 3 | 150 | 2.0% | 正常 |
-| D_GOVERNANCE | registry_management | L2_domain | 134 | 150 | 89.3% | 接近超容 |
+| D_GOVERNANCE | registry_management | L2_domain | 129 | 150 | 86.0% | 接近超容 |
 | D_GOV_AUDIT | audit_orchestration | L2_domain | 66 | 150 | 44.0% | 正常 |
 | D_GOV_CODE_QUALITY | code_quality_governance | L1_foundation | 100 | 150 | 66.7% | 正常 |
 | D_GOV_DOCS | architecture_docs | L2_domain | 68 | 150 | 45.3% | 正常 |
@@ -109,7 +111,7 @@ ttl: permanent
 | D_ML_SERVE | 推理 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_ML_TRAIN | model_evaluation | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_OPS | telemetry | L1_foundation | 7 | 150 | 4.7% | 正常 |
-| D_ORCHESTRATOR | agent_orchestrator | L1_foundation | 58 | 150 | 38.7% | 正常 |
+| D_ORCHESTRATOR | agent_orchestrator | L1_foundation | 59 | 150 | 39.3% | 正常 |
 | D_PF_ALLOC | 组合分配 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_PF_CORE | 组合核心 | L2_domain | 3 | 150 | 2.0% | 正常 |
 | D_POSITION | 仓位管理 | L2_domain | 1 | 150 | 0.7% | 正常 |

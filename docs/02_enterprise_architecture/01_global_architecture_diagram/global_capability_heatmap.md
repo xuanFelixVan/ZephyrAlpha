@@ -10,7 +10,7 @@ ttl: permanent
 
 # 能力热力图 / Capability Heatmap
 
-> **文档作用 / Purpose**: 以矩阵形式展示59个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。
+> **文档作用 / Purpose**: 以矩阵形式展示61个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。
 
 > 本文档由 generate_capability_heatmap.py 从 depgraph (PostgreSQL) 自动生成
 > 最后更新以 git log 为准
@@ -20,15 +20,15 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 域总数 / Total Domains | 59 |
+| 域总数 / Total Domains | 61 |
 | 能力域数 / Capability Domains | 10 |
-| L0 缺失 / Missing | 1 |
-| L1 设计中 / Designing | 18 |
-| L2 可用未验证 / Usable | 37 |
+| L0 缺失 / Missing | 2 |
+| L1 设计中 / Designing | 17 |
+| L2 可用未验证 / Usable | 39 |
 | L3 生产已验证 / Verified | 3 |
 | ✅ 完全覆盖 / Full Coverage (L3) | 3 |
-| 🟡 部分覆盖 / Partial Coverage (L1-L2) | 55 |
-| ❌ 无覆盖 / No Coverage (L0) | 1 |
+| 🟡 部分覆盖 / Partial Coverage (L1-L2) | 56 |
+| ❌ 无覆盖 / No Coverage (L0) | 2 |
 
 ## 成熟度图例 / Maturity Legend
 
@@ -56,8 +56,8 @@ ttl: permanent
 
 ## 能力热力图矩阵 / Capability Heatmap Matrix
 
-> 行：架构域（59域） | 列：能力域（10能力域）
-> Rows: Architecture Domains (59) | Columns: Capability Domains (10)
+> 行：架构域（61域） | 列：能力域（10能力域）
+> Rows: Architecture Domains (61) | Columns: Capability Domains (10)
 > 单元格：成熟度符号（属于该能力域时显示，否则显示 —）
 > Cell: Maturity symbol (shown when domain belongs to capability, otherwise —)
 
@@ -94,7 +94,7 @@ ttl: permanent
 | D_GOV_REPAIR | rollback | — | — | — | — | — | — | — | ⚪ | — | — | L0 |
 | D_GOV_RULE | rule_governance | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
 | D_AUTONOMY_PERM | budget_enforcement | — | — | — | — | — | — | — | — | 🔵 | — | L1 |
-| D_BEHAVIORAL_AUDIT | drift_detector_core | — | — | — | — | — | — | — | — | 🔵 | — | L1 |
+| D_BEHAVIORAL_AUDIT | drift_detector_core | — | — | — | — | — | — | — | — | ⚪ | — | L0 |
 | D_DATA_SEC | 数据安全与契约 | — | — | — | — | — | — | — | — | 🔵 | — | L1 |
 | D_SECURITY | orphan_judge | — | — | — | — | — | — | — | — | 🟡 | — | L2 |
 | D_SECURITY_LLM | llm_defense | — | — | — | — | — | — | — | — | 🟡 | — | L2 |
@@ -111,6 +111,8 @@ ttl: permanent
 | D_SHARED | shared_services | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
 | D_DATA | data_source_integrator | — | — | — | — | — | — | — | — | — | — | L2 |
 | D_DATA_GOV | 数据治理 | — | — | — | — | — | — | — | — | — | — | L1 |
+| D_FBL_DETECTORS | feedback_detectors | — | — | — | — | — | — | — | — | — | — | L2 |
+| D_FBL_DIAGNOSERS | feedback_diagnosers | — | — | — | — | — | — | — | — | — | — | L2 |
 | D_FBL_VERIFICATION | feedback_verification | — | — | — | — | — | — | — | — | — | — | L2 |
 | D_FEEDBACK_LOOP | feedback_loop_engine | — | — | — | — | — | — | — | — | — | — | L2 |
 | D_GOV_CODE_QUALITY | code_quality_governance | — | — | — | — | — | — | — | — | — | — | L2 |
@@ -134,8 +136,8 @@ ttl: permanent
 | C5 | 执行交易 | 4 | 74 | 26 | 1 | 47 | 1.75 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 12 | 0 | 1 | 11 | 1.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 59 | 11 | 10 | 38 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 6 | 538 | 389 | 6 | 143 | 2.00 | 🟡 部分覆盖 / Partial |
-| CC2 | 安全防护 | 5 | 215 | 106 | 0 | 109 | 1.40 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 6 | 525 | 384 | 6 | 135 | 2.00 | 🟡 部分覆盖 / Partial |
+| CC2 | 安全防护 | 5 | 214 | 106 | 0 | 108 | 1.20 | 🟡 部分覆盖 / Partial |
 | CC3 | 基础设施 | 11 | 766 | 489 | 13 | 264 | 1.91 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
@@ -166,14 +168,14 @@ ttl: permanent
 | D_DIGITAL_TWIN | 数字孪生 | C7 | L2_domain | 8 | 0 | 1 | 7 | 0 | L1 🔵 | 🟡 |
 | D_EXEC_SIM | 执行仿真 | C7 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_SIMULATION | 仿真 | C7 | L2_domain | 11 | 2 | 1 | 8 | 0 | L2 🟡 | 🟡 |
-| D_GOVERNANCE | registry_management | CC1 | L2_domain | 199 | 126 | 3 | 70 | 1 | L3 🟢 | ✅ |
-| D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 119 | 66 | 2 | 51 | 0 | L2 🟡 | 🟡 |
-| D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 72 | 67 | 1 | 4 | 0 | L2 🟡 | 🟡 |
+| D_GOVERNANCE | registry_management | CC1 | L2_domain | 184 | 121 | 3 | 60 | 1 | L3 🟢 | ✅ |
+| D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 118 | 66 | 2 | 50 | 0 | L2 🟡 | 🟡 |
+| D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 73 | 67 | 1 | 5 | 0 | L2 🟡 | 🟡 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 116 | 100 | 0 | 16 | 1 | L3 🟢 | ✅ |
 | D_GOV_REPAIR | rollback | CC1 | L2_domain | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
-| D_GOV_RULE | rule_governance | CC1 | L2_domain | 32 | 30 | 0 | 2 | 0 | L2 🟡 | 🟡 |
+| D_GOV_RULE | rule_governance | CC1 | L2_domain | 34 | 30 | 0 | 4 | 0 | L2 🟡 | 🟡 |
 | D_AUTONOMY_PERM | budget_enforcement | CC2 | L2_domain | 14 | 0 | 0 | 14 | 0 | L1 🔵 | 🟡 |
-| D_BEHAVIORAL_AUDIT | drift_detector_core | CC2 |  | 1 | 0 | 0 | 1 | 0 | L1 🔵 | 🟡 |
+| D_BEHAVIORAL_AUDIT | drift_detector_core | CC2 |  | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_DATA_SEC | 数据安全与契约 | CC2 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_SECURITY | orphan_judge | CC2 | L1_foundation | 180 | 101 | 0 | 79 | 0 | L2 🟡 | 🟡 |
 | D_SECURITY_LLM | llm_defense | CC2 | L1_foundation | 13 | 5 | 0 | 8 | 0 | L2 🟡 | 🟡 |
@@ -188,11 +190,13 @@ ttl: permanent
 | D_OPS | telemetry | CC3 | L1_foundation | 8 | 7 | 0 | 1 | 0 | L2 🟡 | 🟡 |
 | D_REPORTING | 报告 | CC3 | L1_foundation | 10 | 1 | 0 | 9 | 0 | L2 🟡 | 🟡 |
 | D_SHARED | shared_services | CC3 | L1_foundation | 212 | 132 | 0 | 80 | 0 | L2 🟡 | 🟡 |
-| D_DATA | data_source_integrator | — |  | 29 | 6 | 0 | 23 | 0 | L2 🟡 | 🟡 |
+| D_DATA | data_source_integrator | — |  | 30 | 7 | 0 | 23 | 0 | L2 🟡 | 🟡 |
 | D_DATA_GOV | 数据治理 | — | L1_foundation | 30 | 0 | 0 | 30 | 0 | L1 🔵 | 🟡 |
+| D_FBL_DETECTORS | feedback_detectors | — | L1_foundation | 65 | 60 | 0 | 5 | 0 | L2 🟡 | 🟡 |
+| D_FBL_DIAGNOSERS | feedback_diagnosers | — | L1_foundation | 76 | 71 | 0 | 5 | 0 | L2 🟡 | 🟡 |
 | D_FBL_VERIFICATION | feedback_verification | — | L1_foundation | 71 | 67 | 0 | 4 | 0 | L2 🟡 | 🟡 |
-| D_FEEDBACK_LOOP | feedback_loop_engine | — | L1_foundation | 253 | 107 | 0 | 146 | 0 | L2 🟡 | 🟡 |
-| D_GOV_CODE_QUALITY | code_quality_governance | — | L1_foundation | 107 | 100 | 0 | 7 | 0 | L2 🟡 | 🟡 |
+| D_FEEDBACK_LOOP | feedback_loop_engine | — | L1_foundation | 124 | 109 | 0 | 15 | 0 | L2 🟡 | 🟡 |
+| D_GOV_CODE_QUALITY | code_quality_governance | — | L1_foundation | 108 | 100 | 0 | 8 | 0 | L2 🟡 | 🟡 |
 | D_GOV_DOCS | architecture_docs | — | L2_domain | 96 | 68 | 28 | 0 | 0 | L2 🟡 | 🟡 |
 | D_GOV_KB | knowledge_base_governance | — | L2_domain | 30 | 16 | 0 | 14 | 0 | L2 🟡 | 🟡 |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance | — | L1_foundation | 79 | 76 | 0 | 3 | 0 | L2 🟡 | 🟡 |
@@ -200,7 +204,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication | — | L0_infrastructure | 77 | 29 | 0 | 48 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_RECOVERY | rollback_recovery | — | L0_infrastructure | 54 | 48 | 0 | 6 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_TELEMETRY | observability_profiling | — | L0_infrastructure | 10 | 8 | 0 | 2 | 0 | L2 🟡 | 🟡 |
-| D_ORCHESTRATOR | agent_orchestrator | — | L1_foundation | 70 | 58 | 0 | 12 | 0 | L2 🟡 | 🟡 |
+| D_ORCHESTRATOR | agent_orchestrator | — | L1_foundation | 73 | 59 | 0 | 14 | 0 | L2 🟡 | 🟡 |
 
 ## 差距分析 / Gap Analysis
 
@@ -222,7 +226,7 @@ ttl: permanent
 | D_EXEC_SIM | 执行仿真 | C7 | L1 | 7 |
 | D_GOV_REPAIR | rollback | CC1 | L0 | 0 |
 | D_AUTONOMY_PERM | budget_enforcement | CC2 | L1 | 14 |
-| D_BEHAVIORAL_AUDIT | drift_detector_core | CC2 | L1 | 1 |
+| D_BEHAVIORAL_AUDIT | drift_detector_core | CC2 | L0 | 0 |
 | D_DATA_SEC | 数据安全与契约 | CC2 | L1 | 7 |
 | D_INFRA_OPS | asset-inventory | CC3 | L1 | 2 |
 | D_KNOWLEDGE | vector_storage | CC3 | L1 | 9 |
@@ -244,9 +248,9 @@ ttl: permanent
 | D_TRADING | 交易运营 | C5 | L2 | 43 |
 | D_BACKTEST | 回测 | C7 | L2 | 33 |
 | D_SIMULATION | 仿真 | C7 | L2 | 11 |
-| D_GOV_AUDIT | audit_orchestration | CC1 | L2 | 119 |
-| D_GOV_DRIFT | drift_detection | CC1 | L2 | 72 |
-| D_GOV_RULE | rule_governance | CC1 | L2 | 32 |
+| D_GOV_AUDIT | audit_orchestration | CC1 | L2 | 118 |
+| D_GOV_DRIFT | drift_detection | CC1 | L2 | 73 |
+| D_GOV_RULE | rule_governance | CC1 | L2 | 34 |
 | D_SECURITY | orphan_judge | CC2 | L2 | 180 |
 | D_SECURITY_LLM | llm_defense | CC2 | L2 | 13 |
 | D_AUTONOMY_CORE | agent_lifecycle | CC3 | L2 | 137 |
@@ -257,10 +261,12 @@ ttl: permanent
 | D_OPS | telemetry | CC3 | L2 | 8 |
 | D_REPORTING | 报告 | CC3 | L2 | 10 |
 | D_SHARED | shared_services | CC3 | L2 | 212 |
-| D_DATA | data_source_integrator | — | L2 | 29 |
+| D_DATA | data_source_integrator | — | L2 | 30 |
+| D_FBL_DETECTORS | feedback_detectors | — | L2 | 65 |
+| D_FBL_DIAGNOSERS | feedback_diagnosers | — | L2 | 76 |
 | D_FBL_VERIFICATION | feedback_verification | — | L2 | 71 |
-| D_FEEDBACK_LOOP | feedback_loop_engine | — | L2 | 253 |
-| D_GOV_CODE_QUALITY | code_quality_governance | — | L2 | 107 |
+| D_FEEDBACK_LOOP | feedback_loop_engine | — | L2 | 124 |
+| D_GOV_CODE_QUALITY | code_quality_governance | — | L2 | 108 |
 | D_GOV_DOCS | architecture_docs | — | L2 | 96 |
 | D_GOV_KB | knowledge_base_governance | — | L2 | 30 |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance | — | L2 | 79 |
@@ -268,13 +274,13 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication | — | L2 | 77 |
 | D_INFRA_RECOVERY | rollback_recovery | — | L2 | 54 |
 | D_INFRA_TELEMETRY | observability_profiling | — | L2 | 10 |
-| D_ORCHESTRATOR | agent_orchestrator | — | L2 | 70 |
+| D_ORCHESTRATOR | agent_orchestrator | — | L2 | 73 |
 
 ### 已就绪（L3，生产已验证）/ Ready (L3, verified)
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | registry_management | CC1 | L3 | 199 |
+| D_GOVERNANCE | registry_management | CC1 | L3 | 184 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L3 | 116 |
 | D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 219 |
 
@@ -285,11 +291,13 @@ ttl: permanent
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 架构层 / Layer | 节点数 / Nodes | 成熟度 / Maturity |
 |--------|--------|--------|:---:|:---:|
-| D_DATA | data_source_integrator |  | 29 | L2 |
+| D_DATA | data_source_integrator |  | 30 | L2 |
 | D_DATA_GOV | 数据治理 | L1_foundation | 30 | L1 |
+| D_FBL_DETECTORS | feedback_detectors | L1_foundation | 65 | L2 |
+| D_FBL_DIAGNOSERS | feedback_diagnosers | L1_foundation | 76 | L2 |
 | D_FBL_VERIFICATION | feedback_verification | L1_foundation | 71 | L2 |
-| D_FEEDBACK_LOOP | feedback_loop_engine | L1_foundation | 253 | L2 |
-| D_GOV_CODE_QUALITY | code_quality_governance | L1_foundation | 107 | L2 |
+| D_FEEDBACK_LOOP | feedback_loop_engine | L1_foundation | 124 | L2 |
+| D_GOV_CODE_QUALITY | code_quality_governance | L1_foundation | 108 | L2 |
 | D_GOV_DOCS | architecture_docs | L2_domain | 96 | L2 |
 | D_GOV_KB | knowledge_base_governance | L2_domain | 30 | L2 |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance | L1_foundation | 79 | L2 |
@@ -297,4 +305,4 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication | L0_infrastructure | 77 | L2 |
 | D_INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 54 | L2 |
 | D_INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 10 | L2 |
-| D_ORCHESTRATOR | agent_orchestrator | L1_foundation | 70 | L2 |
+| D_ORCHESTRATOR | agent_orchestrator | L1_foundation | 73 | L2 |
