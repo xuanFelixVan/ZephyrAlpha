@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 shared_contracts（D_INFRASTRUCTURE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 23:42:18
+> 最后更新: 2026-07-13 23:59:30
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 |  | Layer |  |
 | 模块数 | 61 | Module Count | 61 |
 | 域内依赖 | 9 | Internal Dependencies | 9 |
-| 跨域入边 | 52 | Cross-domain Incoming | 52 |
-| 跨域出边 | 79 | Cross-domain Outgoing | 79 |
+| 跨域入边 | 53 | Cross-domain Incoming | 53 |
+| 跨域出边 | 78 | Cross-domain Outgoing | 78 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 52 | Prototype Modules | 52 |
 | 生产态模块 | 9 | Production Modules | 9 |
@@ -168,15 +168,15 @@ graph TD
     src_zephyr_infrastructure_config_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     src_zephyr_shared_contracts_risk_dashboard_snapshot_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_init_py
-    src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_escalation_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_init_py
+    src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_escalation_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_init_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_market_data_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| D_SHARED
@@ -255,29 +255,28 @@ graph TD
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_shared_contracts_synthesized_signal_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_security_init_py -.->|导入依赖 / import_depends| D_SHARED
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    tests_config_test_config_consistency_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
-    tests_config_test_config_governance_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    tests_config_test_config_hot_reload_guard_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_config_test_config_complexity_budget_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_FBL_DETECTORS["(生产态 / production) D_FBL_DETECTORS"]
     tests_config_test_config_drift_py -.->|测试依赖 / test_depends| D_FBL_DETECTORS
-    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
-    tests_config_test_config_root_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_config_test_config_consistency_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
-    tests_config_test_config_safety_guard_py -.->|测试依赖 / test_depends| D_AUTONOMY_CORE
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_config_test_config_validator_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_config_test_config_governance_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     tests_config_test_config_scanner_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
-    tests_contracts_test_api_version_contract_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    D_SECURITY["(生产态 / production) D_SECURITY"]
-    tests_contracts_test_abac_guard_root_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_contracts_test_abac_guard_root_py -.->|测试依赖 / test_depends| D_SHARED
+    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
+    tests_config_test_config_root_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    tests_config_test_config_safety_guard_py -.->|测试依赖 / test_depends| D_AUTONOMY_CORE
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_config_test_config_hot_reload_guard_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    tests_config_test_config_validator_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     tests_contracts_test_alerts_bridge_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_contracts_test_alerts_bridge_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_contracts_test_api_version_contract_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_contracts_test_contract_consistency_checker_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_TRADING["(生产态 / production) D_TRADING"]
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_trace_context_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
@@ -291,7 +290,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_telemetry_emitter_py production
     class src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_security_init_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_trace_context_py,tests_config_test_config_complexity_budget_py,tests_config_test_config_consistency_py,tests_config_test_config_drift_py,tests_config_test_config_fixer_py,tests_config_test_config_governance_py,tests_config_test_config_hot_reload_guard_py,tests_config_test_config_root_py,tests_config_test_config_safety_guard_py,tests_config_test_config_scanner_py,tests_config_test_config_validator_py,tests_contracts_meta_init_py,tests_contracts_test_abac_guard_root_py,tests_contracts_test_alerts_bridge_py,tests_contracts_test_api_version_contract_py,tests_contracts_test_contract_bus_py,tests_contracts_test_contract_consistency_checker_py,tests_contracts_test_contract_drift_detector_py,tests_contracts_test_contract_metrics_root_py,tests_contracts_test_contract_registry_root_py,tests_contracts_test_contract_router_root_py,tests_contracts_test_contract_tester_py,tests_contracts_test_contract_verifier_py,tests_contracts_test_ct_pipe_routing_root_py design
-    class D_SHARED,D_FBL_VERIFICATION,D_FEEDBACK_LOOP,D_FBL_DETECTORS,D_GOV_CODE_QUALITY,D_GOV_DRIFT,D_AUTONOMY_CORE,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_SECURITY,D_GOVERNANCE,D_TRADING,D_INTEGRATION,D_ORCHESTRATOR external_prod
+    class D_SHARED,D_GOV_DRIFT,D_FBL_VERIFICATION,D_FBL_DETECTORS,D_GOV_OPS_RESILIENCE,D_GOV_CODE_QUALITY,D_AUTONOMY_CORE,D_FEEDBACK_LOOP,D_INFRA_RUNTIME,D_GOVERNANCE,D_TRADING,D_INTEGRATION,D_ORCHESTRATOR external_prod
 ```
 
 #### 第 3 页 / 共 3 页
@@ -426,11 +425,11 @@ graph TD
     end
     src_zephyr_shared_contracts_risk_dashboard_snapshot_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_risk_metrics_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
-    src_zephyr_shared_contracts_system_configuration_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_backpressure_init_py
-    src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_escalation_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_init_py
+    src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_escalation_init_py
     src_zephyr_shared_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_init_py
+    src_zephyr_shared_contracts_system_configuration_py -.->|config_depends / config_depends| src_zephyr_shared_contracts_init_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_init_py -.->|导入依赖 / import_depends| D_SHARED
@@ -533,35 +532,34 @@ graph TD
 | 48 | Auto-generated contracts package — errors (__i... | → | D_SHARED 共享服务: risk_limit_violation_error.py | 导入依赖 / import_depends |
 | 49 | Auto-generated contracts package — errors (__i... | → | D_SHARED 共享服务: signal_degradation_warning.py | 导入依赖 / import_depends |
 | 50 | __init__.py | → | D_SHARED 共享服务: budget_alert.py | 导入依赖 / import_depends |
-| 51 | shared.contracts.experiment — auto-generated p... | → | D_SHARED 共享服务: model_serving_response.py | config_depends / config_depends |
+| 51 | shared.contracts.experiment — auto-generated p... | → | D_SHARED 共享服务: experiment_result.py | config_depends / config_depends |
 | 52 | experiment_result.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
-| 53 | Auto-generated contracts package — external (_... | → | D_SHARED 共享服务: ext_002.py | config_depends / config_depends |
-| 54 | factor_signal.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
-| 55 | fill.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
-| 56 | __init__.py | → | D_SHARED 共享服务: agent_identity.py | 导入依赖 / import_depends |
-| 57 | __init__.py | → | D_SHARED 共享服务: permission.py | 导入依赖 / import_depends |
+| 53 | factor_signal.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
+| 54 | fill.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
+| 55 | __init__.py | → | D_SHARED 共享服务: agent_identity.py | 导入依赖 / import_depends |
+| 56 | __init__.py | → | D_SHARED 共享服务: permission.py | 导入依赖 / import_depends |
+| 57 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
 | 58 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
 | 59 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
 | 60 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
 | 61 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
 | 62 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
-| 63 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
-| 64 | market_data.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
-| 65 | order.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
-| 66 | order.py | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
-| 67 | shared.contracts.portfolio — auto-generated pa... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
-| 68 | position.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
+| 63 | market_data.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
+| 64 | order.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
+| 65 | order.py | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
+| 66 | shared.contracts.portfolio — auto-generated pa... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
+| 67 | position.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
+| 68 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
 | 69 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
 | 70 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
 | 71 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
 | 72 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
-| 73 | Backward-compat shim — canonical location is z... | → | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | 导入依赖 / import_depends |
-| 74 | risk_limits.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
-| 75 | __init__.py | → | D_SHARED 共享服务: security_decision.py | 导入依赖 / import_depends |
-| 76 | synthesized_signal.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
-| 77 | test_abac_guard_root.py | → | D_SHARED 共享服务: agent_identity.py | 测试依赖 / test_depends |
-| 78 | test_alerts_bridge.py | → | D_SHARED 共享服务: budget_alert.py | 测试依赖 / test_depends |
-| 79 | test_rbac_guard_root.py | → | D_SHARED 共享服务: agent_identity.py | 测试依赖 / test_depends |
+| 73 | risk_limits.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
+| 74 | __init__.py | → | D_SHARED 共享服务: security_decision.py | 导入依赖 / import_depends |
+| 75 | synthesized_signal.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
+| 76 | test_abac_guard_root.py | → | D_SHARED 共享服务: agent_identity.py | 测试依赖 / test_depends |
+| 77 | test_alerts_bridge.py | → | D_SHARED 共享服务: budget_alert.py | 测试依赖 / test_depends |
+| 78 | test_rbac_guard_root.py | → | D_SHARED 共享服务: agent_identity.py | 测试依赖 / test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -612,16 +610,17 @@ graph TD
 | 43 | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | → | Backward-compat shim — canonical location is z... | config_depends / config_depends |
 | 44 | D_SHARED 共享服务: Backward-compat shim — canonical location is z... | → | Backward-compat shim — canonical location is z... | config_depends / config_depends |
 | 45 | D_SHARED 共享服务: ext_001.py | → | Auto-generated contracts package — external (_... | config_depends / config_depends |
-| 46 | D_SHARED 共享服务: ext_003.py | → | Auto-generated contracts package — external (_... | config_depends / config_depends |
-| 47 | D_SHARED 共享服务: ext_004.py | → | Auto-generated contracts package — external (_... | config_depends / config_depends |
-| 48 | D_SHARED 共享服务: Re-export shim — 真源已收敛至 zephyr.shared.co... | → | performance_attribution_report.py | 导入依赖 / import_depends |
-| 49 | D_SIMULATION 仿真: 实验 — Experimentation Pipeline Layer (pipelin... | → | experiment_result.py | 导入依赖 / import_depends |
-| 50 | D_TRADING 交易运营: risk_limit_violation_error.py | → | trace_context.py | 导入依赖 / import_depends |
-| 51 | D_TRADING 交易运营: risk_validator_protocol.py | → | risk_limits.py | 导入依赖 / import_depends |
+| 46 | D_SHARED 共享服务: ext_002.py | → | Auto-generated contracts package — external (_... | config_depends / config_depends |
+| 47 | D_SHARED 共享服务: ext_003.py | → | Auto-generated contracts package — external (_... | config_depends / config_depends |
+| 48 | D_SHARED 共享服务: ext_004.py | → | Auto-generated contracts package — external (_... | config_depends / config_depends |
+| 49 | D_SHARED 共享服务: Re-export shim — 真源已收敛至 zephyr.shared.co... | → | performance_attribution_report.py | 导入依赖 / import_depends |
+| 50 | D_SIMULATION 仿真: 实验 — Experimentation Pipeline Layer (pipelin... | → | experiment_result.py | 导入依赖 / import_depends |
+| 51 | D_TRADING 交易运营: risk_limit_violation_error.py | → | trace_context.py | 导入依赖 / import_depends |
+| 52 | D_TRADING 交易运营: risk_validator_protocol.py | → | risk_limits.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 22 个外部域直接连接（出边 79 条 + 入边 52 条 = 131 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 22 个外部域直接连接（出边 78 条 + 入边 53 条 = 131 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -648,7 +647,7 @@ graph LR
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
     D_SIMULATION["D_SIMULATION<br/>仿真"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
-    D_INFRASTRUCTURE -->|57条 config_depends / config_depends, 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
+    D_INFRASTRUCTURE -->|56条 config_depends / config_depends, 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
     D_INFRASTRUCTURE -->|4条 测试依赖 / test_depends| D_INFRA_RUNTIME
     D_INFRASTRUCTURE -->|3条 测试依赖 / test_depends| D_SECURITY
     D_INFRASTRUCTURE -->|3条 测试依赖 / test_depends| D_ORCHESTRATOR
@@ -661,7 +660,7 @@ graph LR
     D_INFRASTRUCTURE -->|1条 测试依赖 / test_depends| D_GOVERNANCE
     D_INFRASTRUCTURE -->|1条 测试依赖 / test_depends| D_FBL_DETECTORS
     D_GOVERNANCE -->|13条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_SHARED -->|11条 config_depends / config_depends, 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SHARED -->|12条 config_depends / config_depends, 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_REPORTING -->|6条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_REPAIR -->|6条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_EX_CORE -->|4条 导入依赖 / import_depends| D_INFRASTRUCTURE
