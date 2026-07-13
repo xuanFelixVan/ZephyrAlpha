@@ -257,7 +257,8 @@ CREATE TABLE IF NOT EXISTS nodes (
     blueprint_id_invalid    INTEGER DEFAULT 0,
     blueprint_path          TEXT,
     entry_point             BOOLEAN DEFAULT FALSE,
-    public_api              TEXT
+    public_api              TEXT,
+    content_hash            TEXT  -- 裁定#209 Stage 3：文件内容哈希，增量模式跳过未变更文件
     -- 注意：blueprint_id 双轨制+历史兼容检查（MOD-*/D-*/SH-*/PLACEHOLDER*）由触发器实现，
     -- 而非 CHECK 约束。原因：SQLite 历史数据存在不符合双轨制+历史兼容的 blueprint_id
     -- （如 GOV-FSTR-001），CHECK 约束会阻止迁移。触发器只对新 INSERT/UPDATE 生效，
@@ -460,7 +461,7 @@ CREATE INDEX IF NOT EXISTS idx_nodes_can_build                 ON nodes(can_buil
 CREATE INDEX IF NOT EXISTS idx_nodes_change_policy             ON nodes(change_policy);
 CREATE INDEX IF NOT EXISTS idx_nodes_domain                    ON nodes(domain_id);
 CREATE INDEX IF NOT EXISTS idx_nodes_file_path                 ON nodes(file_path);
-CREATE INDEX IF NOT EXISTS idx_nodes_path                      ON nodes(path);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_nodes_path               ON nodes(path);
 CREATE INDEX IF NOT EXISTS idx_nodes_type                      ON nodes(node_type);
 -- 裁定#209 Stage 2：metadata 表索引
 CREATE INDEX IF NOT EXISTS idx_nodes_metadata_bp               ON nodes_metadata(blueprint_id);

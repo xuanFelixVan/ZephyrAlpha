@@ -189,7 +189,8 @@ CREATE TABLE IF NOT EXISTS nodes (
     blueprint_id_invalid     INTEGER DEFAULT 0,
     blueprint_path           TEXT,
     entry_point              BOOLEAN DEFAULT FALSE,
-    public_api               TEXT
+    public_api               TEXT,
+    content_hash             TEXT  -- 裁定#209 Stage 3：文件内容哈希，增量模式跳过未变更文件
 )
 """
 
