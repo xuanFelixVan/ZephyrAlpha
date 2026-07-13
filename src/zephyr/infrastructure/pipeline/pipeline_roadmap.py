@@ -623,7 +623,7 @@ CROSS_MODULE_SYNC: list[CrossModuleSyncEntry] = [
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="src/zephyr/trading/orchestrator/deferred_queue.py",  # 5.12.4 修复：路径漂移 orchestrator/->trading/orchestrator/
+        file_path="src/zephyr/orchestrator/deferred_queue.py",  # 5.12.4 修复：路径漂移 orchestrator/->trading/orchestrator/；裁定#200 迁出 trading/ 至顶层
         sync_content="waiting_for 条件 lock_release:* 正确",
         last_synced="2026-05-07",
     ),

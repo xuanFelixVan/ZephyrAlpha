@@ -188,7 +188,7 @@ permission_table:
       permission: Human-Gated
       reason: 路由策略影响 Agent 行为
     - module: feedback-loop
-      path: src/zephyr/trading/feedback_loop/
+      path: src/zephyr/feedback_loop/
       permission: Human-Gated
       reason: 进化策略影响系统演化方向
     - module: gates
@@ -406,17 +406,17 @@ permission_table:
       reason: 检索阈值影响 Agent 决策质量（Wave 1 修正：原草稿 AI-Modifiable 偏松）
       approval: Owner 审批
     - module: RI-03 FileWatchRouter
-      path: src/zephyr/trading/orchestrator/trigger_router.py
+      path: src/zephyr/orchestrator/execution/trigger_router.py
       permission: Human-Gated
       reason: 路由策略影响 Agent 行为（Wave 1 修正：原草稿 AI-Modifiable 偏松）
       approval: Owner 审批
     - module: RI-04 FeedbackEngine M4-A decide
-      path: src/zephyr/trading/feedback_loop/decision_engine.py
+      path: src/zephyr/feedback_loop/decision_engine.py
       permission: Human-Gated
       reason: 评估标准影响所有质量门禁
       approval: Owner 审批
     - module: RI-04 FeedbackEngine M4-B auto_repair
-      path: src/zephyr/trading/feedback_loop/auto_repair.py
+      path: src/zephyr/feedback_loop/auto_repair.py
       permission: Immutable Core
       reason: Self-Modification 递归风险（Wave 0 R76 已锁，Wave 1 维持）
       approval: Owner + R-XXX
@@ -474,7 +474,7 @@ permission_table:
       reason: 状态历史不可改写
       approval: Owner
     - component: AlignmentMonitor
-      path: src/zephyr/trading/feedback_loop/alignment_monitor.py
+      path: src/zephyr/feedback_loop/alignment_monitor.py
       permission: Human-Gated
       reason: 评估算法可演进，阈值需审批
       approval: Owner 审批

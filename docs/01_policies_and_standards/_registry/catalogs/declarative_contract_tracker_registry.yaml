@@ -63,9 +63,9 @@ contracts:
   risk: 无——已加代码防护，含花括号的 pattern 会触发 warning
   last_reviewed: '2026-05-02'
 - contract_id: CT-005
-  source: src/zephyr/trading/orchestrator/trigger_router.py + config/trigger_router.yaml
+  source: src/zephyr/orchestrator/execution/trigger_router.py + config/trigger_router.yaml
   promise: 5 个触发器全部接真实 handler（当前 4 stubs + 1 已兑现）
-  actual_consumer: src/zephyr/trading/orchestrator/trigger_router.py (4 real handlers with fallback)
+  actual_consumer: src/zephyr/orchestrator/execution/trigger_router.py (4 real handlers with fallback)
   gap: 已兑现——onboarding/drift/cleanup/blueprint_published 4 个 stub 已替换为真实 handler
   status: resolved
   target_phase: beta

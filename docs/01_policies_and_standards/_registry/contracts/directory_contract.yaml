@@ -807,7 +807,7 @@ deprecated_directories:
   # ARCH-032: src/zephyr/ops/ 已废弃——所有文件迁移至 trading/feedback_loop/
   - path: "src/zephyr/ops"
     reason: "ops/ 目录向内收治理（ARCH-032）——75个feedback_loop文件迁移至src/zephyr/trading/feedback_loop/，10个MOD-OPS死代码文件删除，ops/目录已清空。禁止新建任何文件。"
-    migrated_to: "src/zephyr/trading/feedback_loop/"
+    migrated_to: "src/zephyr/feedback_loop/"
     severity: error
     history_lesson: "src/zephyr/ops/ 原为FLE调度和gate引擎的存放位置，但文件[MODULE]声明实际指向zephyr.trading.feedback_loop.*，物理位置与模块声明不一致。ARCH-032将物理位置向内收至trading/feedback_loop/，与[MODULE]声明对齐。MOD-OPS蓝图不存在，9个死代码文件无外部引用已删除。"
     consumers:
