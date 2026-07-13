@@ -1301,39 +1301,70 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """获取分析师盈利预测，写入 c3_fundamental.analyst_forecast。
 
-        调用 ak.stock_profit_forecast_em(symbol) 逐只获取。
+        调用 ak.stock_profit_forecast_em(symbol="") 一次获取全市场数据。
+        symbol 参数是行业名称过滤（如"白酒"），不是股票代码；
+        传空字符串获取全市场，每只股票返回4年预测（EPS），展开为4行。
+
+        表 schema: report_date, symbol, forecast_year, forecast_eps,
+                   forecast_pe, rating, analyst_count
         """
         import akshare as ak
 
         table = "c3_fundamental.analyst_forecast"
         columns = [
-            "symbol", "forecast_date", "report_year",
-            "eps_forecast", "pe_forecast", "net_profit_forecast",
-            "org_count", "data_source",
+            "report_date", "symbol", "forecast_year",
+            "forecast_eps", "forecast_pe", "rating", "analyst_count",
         ]
-        symbols = payload.symbols
-        if not symbols:
-            symbols = self._get_all_a_symbols(ak, policy)
-        last_key = payload.end.isoformat()
-        batch_rows: list[tuple] = []
+        last_key = (
+            payload.end.isoformat() if payload.end
+            else datetime.date.today().isoformat()
+        )
         t0 = time.time()
 
-        for idx, sym in enumerate(symbols):
-            code = str(sym).split(".")[0].zfill(6)
-            if (idx + 1) % 100 == 0:
-                self._log.info(f"analyst_forecast 进度: {idx+1}/{len(symbols)}")
-            try:
-                df = self._call_with_policy(
-                    ak.stock_profit_forecast_em, policy,
-                    symbol=code,
-                )
-            except Exception as e:
-                self._log.debug(f"stock_profit_forecast_em({code}) 失败: {e}")
+        try:
+            df = self._call_with_policy(
+                ak.stock_profit_forecast_em, policy,
+                symbol="",
+            )
+        except Exception as e:
+            self._log.warning(f"stock_profit_forecast_em 失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        if df is None or len(df) == 0:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0,
+            )
+            return
+
+        self._log.info(f"analyst_forecast 获取 {len(df)} 行（覆盖 {df['代码'].nunique()} 只股票）")
+
+        today = datetime.date.today().isoformat()
+        batch_rows: list[tuple] = []
+        year_cols = [
+            "2025预测每股收益", "2026预测每股收益",
+            "2027预测每股收益", "2028预测每股收益",
+        ]
+
+        for _, row in df.iterrows():
+            code = str(row.get("代码", "")).zfill(6)
+            if not code:
                 continue
-            if df is None or len(df) == 0:
-                continue
-            for _, row in df.iterrows():
-                batch_rows.append(self._parse_forecast_row(code, row))
+            analyst_count = safe_float(row.get("研报数"))
+            rating_str = self._build_forecast_rating(row)
+            for year_col in year_cols:
+                eps = safe_float(row.get(year_col))
+                if eps is None:
+                    continue
+                year = year_col.replace("预测每股收益", "")
+                batch_rows.append((
+                    today, code, year, eps, None, rating_str,
+                    int(analyst_count) if analyst_count else 0,
+                ))
 
         yield FetchResult(
             table=table, columns=columns, rows=batch_rows,
@@ -1341,18 +1372,21 @@ class AKShareProvider(DataSourceBase):
         )
 
     @staticmethod
-    def _parse_forecast_row(code: str, row) -> tuple:
-        """解析单行分析师预测数据。"""
-        return (
-            code,
-            AKShareProvider._norm_date_str(row.get("预测日期")),
-            str(row.get("年度", "")),
-            safe_float(row.get("每股收益预测", row.get("EPS"))),
-            safe_float(row.get("市盈率预测", row.get("PE"))),
-            safe_float(row.get("净利润预测", row.get("净利润"))),
-            safe_float(row.get("机构数", row.get("机构家数"))),
-            "akshare",
-        )
+    def _build_forecast_rating(row) -> str:
+        """从评级数量组合 rating 字符串（如"买入37/增持7"）。"""
+        parts = []
+        rating_map = [
+            ("机构投资评级(近六个月)-买入", "买入"),
+            ("机构投资评级(近六个月)-增持", "增持"),
+            ("机构投资评级(近六个月)-中性", "中性"),
+            ("机构投资评级(近六个月)-减持", "减持"),
+            ("机构投资评级(近六个月)-卖出", "卖出"),
+        ]
+        for col, label in rating_map:
+            val = safe_float(row.get(col))
+            if val:
+                parts.append(f"{label}{int(val)}")
+        return "/".join(parts) if parts else ""
 
     # ---- 19. 配股（rights_issue） ----
 
@@ -2065,6 +2099,18 @@ class AKShareProvider(DataSourceBase):
 
     # ---- 23. 十大股东（top10_shareholders） ----
 
+    @staticmethod
+    def _ts_code_to_em(ts_code: str) -> str:
+        """将 ts_code (600519.SH) 转为东财格式 (SH600519)。
+
+        东财 API 的 stock_gdfx_top_10_em / stock_gdfx_free_top_10_em
+        需要带市场前缀的代码（如 SH600519），而非纯数字。
+        """
+        parts = ts_code.split(".")
+        if len(parts) == 2:
+            return parts[1].upper() + parts[0]
+        return ts_code
+
     def _fetch_top10_shareholders(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
@@ -2072,6 +2118,9 @@ class AKShareProvider(DataSourceBase):
 
         调用 ak.stock_gdfx_top_10_em(symbol, date) 逐股票逐季度拉取。
         date 为季度末日期：0331/0630/0930/1231。
+        symbol 需为东财格式（如 SH600519），由 _ts_code_to_em 转换。
+
+        东财返回列: 名次, 股东名称, 股份类型, 持股数, 占总股本持股比例, 增减, 变动比率
         """
         import akshare as ak
 
@@ -2097,15 +2146,16 @@ class AKShareProvider(DataSourceBase):
 
         for ts_code in symbols:
             sym = ts_code.split(".")[0].zfill(6) if "." in ts_code else ts_code.zfill(6)
+            em_code = self._ts_code_to_em(ts_code)
             for qe in quarter_ends:
                 date_str = qe.strftime("%Y%m%d")
                 try:
                     df = self._call_with_policy(
                         ak.stock_gdfx_top_10_em, policy,
-                        symbol=sym, date=date_str,
+                        symbol=em_code, date=date_str,
                     )
                 except Exception as e:
-                    self._log.debug(f"stock_gdfx_top_10_em({sym},{date_str}) 失败: {e}")
+                    self._log.debug(f"stock_gdfx_top_10_em({em_code},{date_str}) 失败: {e}")
                     continue
                 if df is None or len(df) == 0:
                     continue
@@ -2115,11 +2165,11 @@ class AKShareProvider(DataSourceBase):
                         qe,
                         qe,
                         str(row.get("股东名称", "") or ""),
-                        safe_float(row.get("持股数量")),
-                        safe_float(row.get("持股比例")),
-                        safe_float(row.get("流通股占比")),
-                        safe_float(row.get("增减")),
-                        str(row.get("每股股份性质", "") or ""),
+                        safe_float(row.get("持股数")),
+                        safe_float(row.get("占总股本持股比例")),
+                        safe_float(row.get("变动比率")),
+                        str(row.get("增减", "") or ""),
+                        str(row.get("股份类型", "") or ""),
                         "akshare",
                         1,
                     ))
@@ -2144,6 +2194,9 @@ class AKShareProvider(DataSourceBase):
         """获取十大流通股东，写入 c3_fundamental.top10_circulating_shareholders。
 
         调用 ak.stock_gdfx_free_top_10_em(symbol, date) 逐股票逐季度拉取。
+        symbol 需为东财格式（如 SH600519）。
+
+        东财返回列: 名次, 股东名称, 股东性质, 股份类型, 持股数, 占总流通股本持股比例, 增减, 变动比率
         """
         import akshare as ak
 
@@ -2168,15 +2221,16 @@ class AKShareProvider(DataSourceBase):
 
         for ts_code in symbols:
             sym = ts_code.split(".")[0].zfill(6) if "." in ts_code else ts_code.zfill(6)
+            em_code = self._ts_code_to_em(ts_code)
             for qe in quarter_ends:
                 date_str = qe.strftime("%Y%m%d")
                 try:
                     df = self._call_with_policy(
                         ak.stock_gdfx_free_top_10_em, policy,
-                        symbol=sym, date=date_str,
+                        symbol=em_code, date=date_str,
                     )
                 except Exception as e:
-                    self._log.debug(f"stock_gdfx_free_top_10_em({sym},{date_str}) 失败: {e}")
+                    self._log.debug(f"stock_gdfx_free_top_10_em({em_code},{date_str}) 失败: {e}")
                     continue
                 if df is None or len(df) == 0:
                     continue
@@ -2186,11 +2240,11 @@ class AKShareProvider(DataSourceBase):
                         qe,
                         qe,
                         str(row.get("股东名称", "") or ""),
-                        safe_float(row.get("持股数量")),
-                        safe_float(row.get("持股比例")),
-                        safe_float(row.get("流通股占比")),
-                        safe_float(row.get("增减")),
-                        str(row.get("股份种类", "") or ""),
+                        safe_float(row.get("持股数")),
+                        safe_float(row.get("占总流通股本持股比例")),
+                        safe_float(row.get("变动比率")),
+                        str(row.get("增减", "") or ""),
+                        str(row.get("股东性质", "") or ""),
                         "akshare",
                         1,
                     ))
