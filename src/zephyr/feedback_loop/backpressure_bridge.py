@@ -36,7 +36,7 @@ __all__ = ["sync_evolution_proposals_to_backpressure"]
 
 def sync_evolution_proposals_to_backpressure(
     proposals: list[Any],
-    backpressure_manager: Any | None,
+    backpressure_manager: object | None,
     *,
     symbol: str = "__fle_global__",
 ) -> dict[str, Any]:

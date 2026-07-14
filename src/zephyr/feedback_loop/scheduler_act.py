@@ -22,6 +22,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
@@ -143,7 +144,7 @@ class ActPhaseHandler:
 
         return ActResult(action_record=action_record, action_type=action_type)
 
-    def _escalate_on_failure(self, anomaly: Any, action_type: Any) -> None:
+    def _escalate_on_failure(self, anomaly: object, action_type: str) -> None:
         try:
             from zephyr.governance.escalation.escalation_engine import EscalationEngine
             from zephyr.governance.escalation.escalation_models import RuleCategory
@@ -160,7 +161,7 @@ class ActPhaseHandler:
         except Exception as e:
             logger.warning("suppressed error in scheduler_act", exc_info=True)
 
-    def _auto_rollback_on_escalation(self, anomaly: Any, escalation_level: str) -> None:
+    def _auto_rollback_on_escalation(self, anomaly: object, escalation_level: str) -> None:
         try:
             from zephyr.infrastructure.rollback.rollback_executor import RollbackExecutor
 
@@ -197,11 +198,11 @@ class ActPhaseHandler:
 
     def run_verify(
         self,
-        anomaly: Any,
-        diagnosis: Any,
+        anomaly: object,
+        diagnosis: object,
         run_id: str,
-        get_current_metric: Any,
-    ) -> Any:
+        get_current_metric: Callable[..., object],
+    ) -> object:
         verification = self.verification_engine.verify(
             anomaly_id=anomaly.anomaly_id,
             pre_value=anomaly.evidence.get("value", 0.0),

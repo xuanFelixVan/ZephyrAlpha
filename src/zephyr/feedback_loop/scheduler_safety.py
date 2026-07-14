@@ -38,7 +38,7 @@ class SafetyGateManager:
     boot_attestation: BootIntegrityAttestation = field(default_factory=BootIntegrityAttestation)
     _fle_gate_cache: dict[str, Any] = field(default_factory=dict, init=False)
 
-    def run_safety_gates(self, anomaly: Any, diagnosis: Any) -> dict[str, bool]:
+    def run_safety_gates(self, anomaly: object, diagnosis: object) -> dict[str, bool]:
         gates: dict[str, bool] = {}
 
         metric_name = anomaly.evidence.get("metric_name", "")
@@ -63,7 +63,7 @@ class SafetyGateManager:
 
         return gates
 
-    def _dispatch_fle_gates(self, anomaly: Any, diagnosis: Any) -> dict[str, bool]:
+    def _dispatch_fle_gates(self, anomaly: object, diagnosis: object) -> dict[str, bool]:
         results: dict[str, bool] = {}
         registry_path = GATES_DIR / "_registry.yaml"
         if not registry_path.exists():

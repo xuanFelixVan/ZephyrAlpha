@@ -124,7 +124,7 @@ class EvolutionEngine:
 
     def __init__(
         self,
-        collector: Any = None,
+        collector: object = None,
         *,
         on_low_score: LowScoreHook | None = None,
         apply_fn: ApplyFn | None = None,
@@ -379,7 +379,7 @@ class EvolutionEngine:
 
 
 def evolve(
-    collector: Any,
+    collector: object,
     *,
     baseline_avg_score: float | None = None,
     baseline_low_score_rate: float | None = None,
