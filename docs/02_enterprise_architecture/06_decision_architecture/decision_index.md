@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-13T23:42:47
+> 生成时间: 2026-07-15T00:49:22
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -488,7 +488,7 @@ flowchart TD
         LCFG_scripts_registry["[production]CFG-scripts-registry: CFG-scripts-registry<br/>蓝图: 脚本集 / Script Collection — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LCFG_test_suite_registry["[production]CFG-test-suite-registry: CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LD_GOV_ENFORCEMENT["[prototype]D-GOV-ENFORCEMENT: D-GOV-ENFORCEMENT<br/>蓝图: D-GOV-ENFORCEMENT<br/>build: generated"]:::bsGenerated
-        LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: INFRA-DB-001<br/>build: stable"]:::bsStable
         LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: INFRA-DB-002<br/>build: stable"]:::bsStable
         LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: INFRA-DB-003<br/>build: stable"]:::bsStable
         LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: INFRA-DB-006<br/>build: stable"]:::bsStable
@@ -1074,7 +1074,7 @@ flowchart TD
         LCFG_rule_registry_collection["[production]CFG-rule-registry-collection: CFG-rule-registry-collection<br/>蓝图: 规则注册表集 / Rule Registry Collection — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LCFG_scripts_registry["[production]CFG-scripts-registry: CFG-scripts-registry<br/>蓝图: 脚本集 / Script Collection — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LCFG_test_suite_registry["[production]CFG-test-suite-registry: CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
-        LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: INFRA-DB-001<br/>build: stable"]:::bsStable
         LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: INFRA-DB-002<br/>build: stable"]:::bsStable
         LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: INFRA-DB-003<br/>build: stable"]:::bsStable
         LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: INFRA-DB-006<br/>build: stable"]:::bsStable
@@ -1668,7 +1668,7 @@ flowchart LR
     LCFG_scripts_registry["[production] CFG-scripts-registry CFG-scripts-registry<br/>CFG-scripts-registry<br/>蓝图: 脚本集 / Script Collection — ARCH-052 聚合节点 production<br/>成熟度: production<br/>build: stable"]:::bsStable
     LCFG_test_suite_registry["[production] CFG-test-suite-registry CFG-test-suite-registry<br/>CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>成熟度: production<br/>build: stable"]:::bsStable
     LD_GOV_ENFORCEMENT["[prototype] D-GOV-ENFORCEMENT D-GOV-ENFORCEMENT<br/>D-GOV-ENFORCEMENT<br/>蓝图: D-GOV-ENFORCEMENT<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LINFRA_DB_001["[production] INFRA-DB-001 INFRA-DB-001<br/>INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LINFRA_DB_001["[production] INFRA-DB-001 INFRA-DB-001<br/>INFRA-DB-001<br/>蓝图: INFRA-DB-001<br/>成熟度: production<br/>build: stable"]:::bsStable
     LINFRA_DB_002["[production] INFRA-DB-002 INFRA-DB-002<br/>INFRA-DB-002<br/>蓝图: INFRA-DB-002<br/>成熟度: production<br/>build: stable"]:::bsStable
     LINFRA_DB_003["[production] INFRA-DB-003 INFRA-DB-003<br/>INFRA-DB-003<br/>蓝图: INFRA-DB-003<br/>成熟度: production<br/>build: stable"]:::bsStable
     LINFRA_DB_006["[production] INFRA-DB-006 INFRA-DB-006<br/>INFRA-DB-006<br/>蓝图: INFRA-DB-006<br/>成熟度: production<br/>build: stable"]:::bsStable
@@ -2081,7 +2081,7 @@ flowchart TD
 | CFG-scripts-registry | CFG-scripts-registry | CFG-scripts-registry | placeholder | CFG-scripts-registry | 脚本集 / Script Collection — ARCH-052 聚合节点 production | - | - | - | production | stable |
 | CFG-test-suite-registry | CFG-test-suite-registry | CFG-test-suite-registry | placeholder | CFG-test-suite-registry | 测试集 / Test Suite — ARCH-052 聚合节点 production | - | - | - | production | stable |
 | D-GOV-ENFORCEMENT | D-GOV-ENFORCEMENT | D-GOV-ENFORCEMENT | placeholder | D-GOV-ENFORCEMENT | - | - | - | - | prototype | generated |
-| INFRA-DB-001 | INFRA-DB-001 | INFRA-DB-001 | placeholder | INFRA-DB-001 | zephyr-sqlite-task-db — database 节点 (ARCH-053) | - | - | - | production | stable |
+| INFRA-DB-001 | INFRA-DB-001 | INFRA-DB-001 | placeholder | INFRA-DB-001 | - | - | - | - | production | stable |
 | INFRA-DB-002 | INFRA-DB-002 | INFRA-DB-002 | placeholder | INFRA-DB-002 | - | - | - | - | production | stable |
 | INFRA-DB-003 | INFRA-DB-003 | INFRA-DB-003 | placeholder | INFRA-DB-003 | - | - | - | - | production | stable |
 | INFRA-DB-006 | INFRA-DB-006 | INFRA-DB-006 | placeholder | INFRA-DB-006 | - | - | - | - | production | stable |
