@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "9cd7aaaac10ed947",
+      "hash": "212ec239fe1dd922",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "bbdf5d1d0a372add",
+      "hash": "9dd082561850eb49",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -56,11 +56,11 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "a38969ca995a461e",
+      "hash": "8c07636853f7871b",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     }
   },
-  "registered_at": "2026-07-12T21:49:34.876620+00:00",
+  "registered_at": "2026-07-14T08:18:50.266019+00:00",
   "last_check_at": "2026-07-12T05:07:45.509500+00:00"
 }

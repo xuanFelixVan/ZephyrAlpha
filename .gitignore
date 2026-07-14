@@ -176,6 +176,12 @@ data/drift_handoffs/*
 data/audit/
 data/audit_trail/
 
+# Scheduler runtime failure snapshots (regenerable, one per failed task run)
+data/failures/
+
+# Prometheus metrics export (runtime, regenerable)
+data/metrics.prom
+
 # Secret leak scan results (runtime, regenerable, large files ~55-170MB each)
 # These are scan outputs from scan_secret_leak.py; must not be committed to git
 **/sec_leak_*.json
