@@ -4,7 +4,7 @@ submodule_path: data/databases/c1_market_clickhouse
 title: "C1 market_clickhouse 行情仓库施工蓝图"
 doc_type: blueprint
 status: Active
-version: "1.0.1"
+version: "1.0.3"
 layer: L2_domain
 layer_name: market_warehouse
 functional_domain: data
@@ -20,7 +20,7 @@ actual_disk_path: "data/databases/c1_market_clickhouse/"
 belongs_to: "ARCH-BIZDB-001"
 parent_module: "ARCH-BIZDB-001"
 codification_level: L1
-last_updated: "2026-07-05"
+last_updated: "2026-07-15"
 generation: 1
 rule_form: structural
 scope: module
@@ -304,10 +304,18 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 > 原蓝图设计"数据源唯一不需要去重"的假设在增量回填场景不成立（同一日期重复下载是常态）；
 > "先删后插"在 5204 只股票场景 = 5204 次 ALTER DELETE mutation + 5204 次 INSERT = 双倍 data parts。
 > 详见 MOD-L00-004 §18.2 裁定记录。
+>
+> **架构裁定 #ARCH-CH-009（2026-07-15）**：version 列语义修复——`quality_flag` 是质量标记位（1=正常 0=异常），
+> 100% 行值为 1，作 version 列等同无参数 ReplacingMergeTree，后台 merge 无法按写入时序去重。
+> 所有 `ReplacingMergeTree` 表新增 `ingest_ts DateTime DEFAULT now()` 作为 version 列，
+> 引擎改为 `ReplacingMergeTree(ingest_ts)`。详见 architecture_issue_registry.yaml #ARCH-CH-009。
+> **注意**：以下 §4.1-§4.8 DDL 示例中的 `quality_flag` 列是质量标记位，**不是 version 列**；
+> version 列是 `ingest_ts`（DDL 示例省略，实际建表时必须包含）。
 
 | 策略项 | 设计 | 理由 |
 |--------|------|------|
-| 引擎 | **全部 ReplacingMergeTree**（裁定 #ARCH-CH-002） | 直接 INSERT，CH 后台去重，零 mutation 开销；增量回填幂等 |
+| 引擎 | **全部 ReplacingMergeTree(ingest_ts)**（裁定 #ARCH-CH-002 + #ARCH-CH-009） | 直接 INSERT，CH 后台按 ingest_ts 去重保留最新版本，零 mutation 开销；增量回填幂等 |
+| version 列 | **ingest_ts DateTime DEFAULT now()**（裁定 #ARCH-CH-009） | quality_flag 语义误用修复，ingest_ts 按写入时序去重 |
 | 分区策略 | PARTITION BY toYYYYMMDD(trade_date)（高频表）/ toYYYYMM(trade_date)（日频表） | 按天/月分区，方便分区裁剪 |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp)（高频）/ ORDER BY (symbol, trade_date)（日频） | 回测主要查单只股票历史数据，symbol 前缀 |
 | TTL | **无TTL**（INV-RET-003 铁律：所有表 Hot 层无 TTL，永久保留） | 数据保留契约 PS-CTR-003 §1 INV-RET-003 |
@@ -339,7 +347,7 @@ CREATE TABLE IF NOT EXISTS c1_market.tick_data
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
     INDEX idx_ts timestamp TYPE minmax GRANULARITY 1
 )
-ENGINE = MergeTree
+ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMMDD(trade_date)
 ORDER BY (symbol, trade_date, timestamp)
 COMMENT 'A股3秒Tick行情(原料,replay)'
@@ -353,7 +361,7 @@ COMMENT 'A股3秒Tick行情(原料,replay)'
 | 性质 | 原料 |
 | 频率 | 3秒 |
 | 数据源 | miniQMT |
-| 引擎 | MergeTree |
+| 引擎 | ReplacingMergeTree(ingest_ts) |
 | 分区 | PARTITION BY toYYYYMMDD(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp) |
 | 索引 | INDEX idx_ts timestamp TYPE minmax GRANULARITY 1 |
@@ -388,7 +396,7 @@ CREATE TABLE IF NOT EXISTS c1_market.daily_kline
     data_source  LowCardinality(String)  COMMENT '数据来源(AkShare/miniQMT/iFind)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)'
 )
-ENGINE = MergeTree
+ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '日线OHLCV(成品聚合,preload)'
@@ -402,7 +410,7 @@ COMMENT '日线OHLCV(成品聚合,preload)'
 | 性质 | 成品(聚合) |
 | 频率 | 日频 |
 | 数据源 | miniQMT/iFind |
-| 引擎 | MergeTree |
+| 引擎 | ReplacingMergeTree(ingest_ts) |
 | 分区 | PARTITION BY toYYYYMM(trade_date)（日线按月分区） |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | TTL | 无（日线永久保留） |
@@ -430,7 +438,7 @@ CREATE TABLE IF NOT EXISTS c1_market.auction_snapshot
     data_source     LowCardinality(String)  COMMENT '数据来源(miniQMT)',
     quality_flag    UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = MergeTree
+ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '集合竞价快照(原料,preload)'
@@ -444,7 +452,7 @@ COMMENT '集合竞价快照(原料,preload)'
 | 性质 | 原料 |
 | 频率 | 9:15-9:25 |
 | 数据源 | miniQMT |
-| 引擎 | MergeTree |
+| 引擎 | ReplacingMergeTree(ingest_ts) |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | calc_mode | **preload** |
@@ -469,7 +477,7 @@ CREATE TABLE IF NOT EXISTS c1_market.index_quote
     data_source  LowCardinality(String)  COMMENT '数据来源(miniQMT)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = MergeTree
+ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMMDD(trade_date)
 ORDER BY (symbol, trade_date, timestamp)
 COMMENT '指数行情(原料,replay)'
@@ -483,7 +491,7 @@ COMMENT '指数行情(原料,replay)'
 | 性质 | 原料 |
 | 频率 | 3秒 |
 | 数据源 | miniQMT |
-| 引擎 | MergeTree |
+| 引擎 | ReplacingMergeTree(ingest_ts) |
 | 分区 | PARTITION BY toYYYYMMDD(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp) |
 | TTL | **无TTL**（永久保留，INV-RET-003 铁律） |
@@ -514,7 +522,7 @@ CREATE TABLE IF NOT EXISTS c1_market.option_iv_surface
     data_source  LowCardinality(String)  COMMENT '数据来源(iFind/AkShare)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = MergeTree
+ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (underlying, trade_date, strike, expiry)
 COMMENT '期权IV曲面(原料衍生,preload)'
@@ -528,7 +536,7 @@ COMMENT '期权IV曲面(原料衍生,preload)'
 | 性质 | 原料(衍生) |
 | 频率 | 日频 |
 | 数据源 | iFind/AkShare |
-| 引擎 | MergeTree |
+| 引擎 | ReplacingMergeTree(ingest_ts) |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (underlying, trade_date, strike, expiry) |
 | calc_mode | **preload** |
@@ -554,7 +562,7 @@ CREATE TABLE IF NOT EXISTS c1_market.futures_position
     data_source    LowCardinality(String)  COMMENT '数据来源(CZCE/DCE)',
     quality_flag   UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = MergeTree
+ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '期货持仓(原料衍生,preload)'
@@ -568,7 +576,7 @@ COMMENT '期货持仓(原料衍生,preload)'
 | 性质 | 原料(衍生) |
 | 频率 | 日频 |
 | 数据源 | CZCE/DCE |
-| 引擎 | MergeTree |
+| 引擎 | ReplacingMergeTree(ingest_ts) |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | calc_mode | **preload** |
@@ -594,7 +602,7 @@ CREATE TABLE IF NOT EXISTS c1_market.futures_term_structure
     data_source    LowCardinality(String)  COMMENT '数据来源(交易所)',
     quality_flag   UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = MergeTree
+ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '期货期限结构(原料衍生,preload)'
@@ -608,7 +616,7 @@ COMMENT '期货期限结构(原料衍生,preload)'
 | 性质 | 原料(衍生) |
 | 频率 | 日频 |
 | 数据源 | 交易所 |
-| 引擎 | MergeTree |
+| 引擎 | ReplacingMergeTree(ingest_ts) |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | calc_mode | **preload** |
@@ -636,7 +644,7 @@ CREATE TABLE IF NOT EXISTS c1_market.convertible_bond_iv
     data_source         LowCardinality(String)  COMMENT '数据来源(iFind)',
     quality_flag        UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = MergeTree
+ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '可转债隐含波动率(成品算,preload)'
@@ -650,7 +658,7 @@ COMMENT '可转债隐含波动率(成品算,preload)'
 | 性质 | 成品(算) |
 | 频率 | 日频 |
 | 数据源 | iFind |
-| 引擎 | MergeTree |
+| 引擎 | ReplacingMergeTree(ingest_ts) |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | calc_mode | **preload** |
@@ -700,7 +708,7 @@ class C1MarketWriter:
             写入行数
 
         Note:
-            MergeTree 不支持 UPSERT，采用"先删后插"模式（按 symbol+trade_date 删除后批量插入）
+            ReplacingMergeTree(ingest_ts) 直接 INSERT，CH 后台按 ingest_ts 去重保留最新版本（裁定 #ARCH-CH-002 + #ARCH-CH-009）
         """
         ...
 ```
@@ -830,7 +838,7 @@ class C1BacktestLoader:
 
 | # | 约束 | 值 |
 |---|------|-----|
-| 1 | 全部表使用 MergeTree 引擎 | 数据源唯一，不需要 ReplacingMergeTree 去重 |
+| 1 | 全部表使用 ReplacingMergeTree(ingest_ts) 引擎 | 裁定 #ARCH-CH-002 + #ARCH-CH-009，ingest_ts 作 version 列按写入时序去重 |
 | 2 | 高频表按天分区 / 日频表按月分区 | PARTITION BY toYYYYMMDD / toYYYYMM |
 | 3 | 排序键 symbol 前缀 | 回测主要查单只股票历史数据 |
 | 4 | 8 张表 calc_mode 必须标注 | replay/preload（母蓝图 §7.5） |
@@ -1032,14 +1040,14 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | # | 表名 | 性质 | 频率 | 数据源 | 引擎 | 分区 | 排序键 | TTL | calc_mode | category_id |
 |---|------|------|:----:|--------|------|------|--------|:---:|:---------:|-------------|
-| 1 | tick_data | 原料 | 3秒 | miniQMT | MergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_tick |
-| 2 | daily_kline | 成品(聚合) | 日频 | miniQMT/iFind | MergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_daily_kline |
-| 3 | auction_snapshot | 原料 | 9:15-9:25 | miniQMT | MergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_auction |
-| 4 | index_quote | 原料 | 3秒 | miniQMT | MergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_index |
-| 5 | option_iv_surface | 原料(衍生) | 日频 | iFind/AkShare | MergeTree | toYYYYMM | underlying,trade_date,strike,expiry | 无 | preload | market_option_iv |
-| 6 | futures_position | 原料(衍生) | 日频 | CZCE/DCE | MergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_position |
-| 7 | futures_term_structure | 原料(衍生) | 日频 | 交易所 | MergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_term |
-| 8 | convertible_bond_iv | 成品(算) | 日频 | iFind | MergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_cb_iv |
+| 1 | tick_data | 原料 | 3秒 | miniQMT | ReplacingMergeTree(ingest_ts) | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_tick |
+| 2 | daily_kline | 成品(聚合) | 日频 | miniQMT/iFind | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_daily_kline |
+| 3 | auction_snapshot | 原料 | 9:15-9:25 | miniQMT | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_auction |
+| 4 | index_quote | 原料 | 3秒 | miniQMT | ReplacingMergeTree(ingest_ts) | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_index |
+| 5 | option_iv_surface | 原料(衍生) | 日频 | iFind/AkShare | ReplacingMergeTree(ingest_ts) | toYYYYMM | underlying,trade_date,strike,expiry | 无 | preload | market_option_iv |
+| 6 | futures_position | 原料(衍生) | 日频 | CZCE/DCE | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_position |
+| 7 | futures_term_structure | 原料(衍生) | 日频 | 交易所 | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_term |
+| 8 | convertible_bond_iv | 成品(算) | 日频 | iFind | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_cb_iv |
 
 ### §13.2 品类注册表条目模板
 
@@ -1113,7 +1121,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 2 | D_DATA 仅支持 OHLCV，7张表无数据源 | 高 | 7张表空置 | 待 D_DATA 步骤3 多品类扩展 | 风险 |
 | 3 | tick_data 内存占用过大（100标的48GB） | 中 | 回测内存溢出 | 热层分层加载 + 限制标的数量 | 风险 |
 | 4 | ClickHouse 无 AS OF JOIN | 中 | 多频率时间对齐困难 | 内存工作台完成对齐（母蓝图 §7.3） | 风险 |
-| 5 | MergeTree 不支持 UPSERT | — | 中 | daily_kline 先删后插模式 | 负面后果 |
+| 5 | ~~MergeTree 不支持 UPSERT~~（已修复，裁定 #ARCH-CH-002） | — | 中 | ReplacingMergeTree(ingest_ts) 直接 INSERT 去重 | 负面后果 |
 | 6 | ~~TTL 归档 Parquet 需额外存储~~（已废弃） | — | — | INV-RET-003 铁律：无TTL，不归档 | 负面后果 |
 | 7 | ClickHouse 部署需新建 INFRA-DB-006 | — | 中 | Docker 部署，对接 MOD-INF-012A | 负面后果 |
 
@@ -1259,7 +1267,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | 冲突场景 | 检测方式 | 解决策略 | 合并规则 |
 |---------|---------|---------|---------|
-| 同 symbol 并发写入 | 无检测 | MergeTree 追加写 | 后到者追加 |
+| 同 symbol 并发写入 | 无检测 | ReplacingMergeTree(ingest_ts) 直接 INSERT | 后台 merge 按 ingest_ts 保留最新 |
 | 回测加载与实盘查询并发 | 无冲突 | ClickHouse MVCC | 读不阻塞写 |
 | 多 AI Session 同时修改 DDL | 锁检测 | RULE-ZERO 文件锁 | FIFO |
 
@@ -1310,18 +1318,29 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
 |---|--------|------|------|------|------|------|
-| 1 | D-C1-01 | 全部表使用 MergeTree 引擎 | MergeTree/ReplacingMergeTree | MergeTree | 数据源唯一(D_DATA)，不需要去重 | 2026-07-01 |
+| 1 | D-C1-01 | ~~全部表使用 MergeTree 引擎~~（已废弃→裁定#ARCH-CH-002+#ARCH-CH-009） | MergeTree/ReplacingMergeTree | ReplacingMergeTree(ingest_ts) | ~~数据源唯一不需要去重~~→增量回填需去重 | 2026-07-01 |
 | 2 | D-C1-02 | 高频表按天分区/日频表按月分区 | 统一按天/混合 | 混合 | 高频表分区裁剪+日频表减少分区数 | 2026-07-01 |
 | 3 | D-C1-03 | 排序键 symbol 前缀 | symbol前缀/时间前缀 | symbol前缀 | 回测主要查单只股票历史数据 | 2026-07-01 |
 | 4 | D-C1-04 | ~~tick_data/index_quote TTL 90天~~（已废弃） | 永久保留/TTL归档 | **永久保留** | INV-RET-003 铁律：无TTL，永久保留 | 2026-07-14 |
 | 5 | D-C1-05 | daily_kline 永久保留 | TTL/永久 | 永久 | 日线数据体积小且高频查询 | 2026-07-01 |
 | 6 | D-C1-06 | calc_mode 二值(replay/preload) | 三值含hybrid/二值 | 二值 | C1行情数据无hybrid需求 | 2026-07-01 |
 | 7 | D-C1-07 | market_type 字段预留硬边界品类 | 不预留/预留字段 | 预留字段 | 对接母蓝图 §8.2 硬边界 | 2026-07-01 |
-| 8 | D-C1-08 | daily_kline 先删后插(非UPSERT) | ReplacingMergeTree/先删后插 | 先删后插 | MergeTree不支持UPSERT | 2026-07-01 |
+| 8 | D-C1-08 | ~~daily_kline 先删后插(非UPSERT)~~（已废弃→裁定#ARCH-CH-002） | ReplacingMergeTree/先删后插 | ReplacingMergeTree(ingest_ts) 直接INSERT | ~~MergeTree不支持UPSERT~~→ReplacingMergeTree去重 | 2026-07-01 |
 | 9 | D-C1-09 | 回测分层加载(热层/温层) | 全量加载/分层 | 分层 | 对接母蓝图 §7.1 内存预算64G | 2026-07-01 |
 | 10 | D-C1-10 | ClickHouse 新建 INFRA-DB-006 | 复用duckdb/新建ClickHouse | 新建ClickHouse | 母蓝图 §8.1 直接上目标引擎 | 2026-07-01 |
 
 ### 变更记录
+
+### v1.0.3 (2026-07-15) version 列语义修复（裁定 #ARCH-CH-009）
+- **引擎策略修复**：§4.1-§4.8 DDL 示例 ENGINE 从 `MergeTree` → `ReplacingMergeTree(ingest_ts)`
+- **version 列修复**：新增 `ingest_ts DateTime DEFAULT now()` 作 version 列（quality_flag 语义误用修复）
+- **§4.0 引擎策略**：新增 #ARCH-CH-009 裁定说明 + version 列策略行
+- **§5.1 约束 #1**：从"全部 MergeTree 不需要去重"更新为"ReplacingMergeTree(ingest_ts)"
+- **§5.2 风险矩阵 #5**：MergeTree 不支持 UPSERT 标记为已废弃
+- **§16.4 并发模型**：MergeTree 追加写 → ReplacingMergeTree(ingest_ts) 去重
+- **§18 决策记录**：D-C1-01/D-C1-08 标记为已废弃，选中项更新
+- **术语表**：ReplacingMergeTree(ingest_ts) 定义修正
+- **实际 DDL 已变更**：16 张表 ALTER TABLE + DETACH/ATTACH 元数据修复完成
 
 ### v1.0.2 (2026-07-14) TTL 铁律合规修复
 - **契约对齐**：对接 data_retention_contract.yaml (PS-CTR-003) INV-RET-003 铁律"所有表 Hot 层无 TTL"
@@ -1349,7 +1368,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 术语 | 精确定义 | 易混淆术语 | 区别 |
 |------|---------|-----------|------|
 | C1 market_clickhouse | 行情仓库，存 L1 标准化行情数据 | — | 业务数据库仓库层之一 |
-| MergeTree | ClickHouse 引擎，追加写不去重 | ReplacingMergeTree | C1 数据源唯一不需要去重 |
+| ReplacingMergeTree(ingest_ts) | ClickHouse 引擎，后台按 ingest_ts 去重保留最新版本（裁定 #ARCH-CH-009） | MergeTree | MergeTree 追加写不去重，ReplacingMergeTree(ingest_ts) 按写入时序去重 |
 | replay | 回测时逐笔实时重算（母蓝图 §7.5） | preload | replay 用于 tick/index 高频原料 |
 | preload | 回测时预加载到内存（母蓝图 §7.5） | replay | preload 用于日线/指标等成品 |
 | 热层/温层 | 回测分层加载（母蓝图 §7.1） | 冷层 | C1 无冷层（冷层属 C3） |
