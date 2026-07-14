@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
@@ -54,13 +55,13 @@ from __future__ import annotations
 #
 # 新AI使用指引（对应向内收原则④：如何发现+如何不重造）：
 #   1. 定位符号：查 _SYMBOL_SOURCE 字典（符号->聚合映射），再 import 对应聚合
-#   2. 定位模块：本地图按文件名前缀归位，直接 import zephyr.governance.drift_detection.<module>
+#   2. 定位模块：本地图按文件名前缀归位，直接 import zephyr.gov_drift.<module>
 #   3. 新增功能前：先 CapabilityLookup.find("<关键词>") 反查是否已有实现（防重造）
 #   4. 新增文件：按命名规则命名，并更新对应聚合的 _SUBMODULES + 本地图 + 能力卡
 # ============================================================================
 
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
-# [MODULE] zephyr.governance.drift_detection
+# [MODULE] zephyr.gov_drift
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增子模块须同步更新_SUBMODULES和__all__
 # [CONSUMERS] orchestrator; gates; runtime; pipeline
@@ -345,7 +346,7 @@ def _init_submodules():
     _SUBMODULES = []
     for src in ("_core", "_drift", "_scanners", "_infrastructure", "_analysis"):
         try:
-            mod = importlib.import_module(f"zephyr.governance.drift_detection.{src}")
+            mod = importlib.import_module(f"zephyr.gov_drift.{src}")
             _SUBMODULES.extend(mod._SUBMODULES)
         except ImportError:
             pass
@@ -356,7 +357,7 @@ def __getattr__(name):
     if name in _SYMBOL_SOURCE:
         import importlib
 
-        mod = importlib.import_module(f"zephyr.governance.drift_detection.{_SYMBOL_SOURCE[name]}")
+        mod = importlib.import_module(f"zephyr.gov_drift.{_SYMBOL_SOURCE[name]}")
         val = getattr(mod, name)
         globals()[name] = val
         return val
@@ -364,18 +365,18 @@ def __getattr__(name):
     if name in subs:
         import importlib
 
-        mod = importlib.import_module(f"zephyr.governance.drift_detection.{name}")
+        mod = importlib.import_module(f"zephyr.gov_drift.{name}")
         globals()[name] = mod
         return mod
     try:
         import importlib
 
-        mod = importlib.import_module(f"zephyr.governance.drift_detection.{name}")
+        mod = importlib.import_module(f"zephyr.gov_drift.{name}")
         globals()[name] = mod
         return mod
     except ImportError:
         pass
-    raise AttributeError(f"module 'zephyr.governance.drift_detection' has no attribute {name!r}")
+    raise AttributeError(f"module 'zephyr.gov_drift' has no attribute {name!r}")
 
 
 __all__ = [
