@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-14T09:43:52.937769+00:00",
+  "timestamp": "2026-07-14T15:10:49.328362+00:00",
   "dashboard": "architecture_health",
   "phase": "第0期-自动化检测基线",
   "metrics": [
@@ -61,7 +61,7 @@
         "簇(26): src\\zephyr\\gov_enforcement\\rule_enforcement\\gate_engine\\gate_engine.py:_add() L575 | src\\zephyr\\gov_enforcement\\rule_enforcement\\gate_engine\\gate_engine.py:_add() L596 | src\\zephyr\\gov_enforcement\\rule_enforcement\\gate_engine\\gate_engine.py:_add() L617",
         "簇(19): src\\zephyr\\governance\\intelligence_governance\\cross_agent_conflict_detector.py:__init__() L50 | src\\zephyr\\infrastructure\\impact\\impact_propagator.py:__init__() L51 | src\\zephyr\\infrastructure\\impact\\llm_impact_analyzer.py:__init__() L51",
         "簇(17): src\\zephyr\\shared\\contracts\\execution\\capital_allocation_result.py:__getattr__() L24 | src\\zephyr\\shared\\contracts\\execution\\execution_report.py:__getattr__() L24 | src\\zephyr\\shared\\contracts\\execution\\fill.py:__getattr__() L24",
-        "簇(16): src\\zephyr\\governance\\merkle_hourly.py:is_available() L63 | src\\zephyr\\governance\\semantic_audit\\llm_bridge.py:is_available() L121 | src\\zephyr\\gov_audit\\delegation_auditor.py:is_available() L97",
+        "簇(16): src\\zephyr\\governance\\semantic_audit\\llm_bridge.py:is_available() L121 | src\\zephyr\\gov_audit\\delegation_auditor.py:is_available() L97 | src\\zephyr\\gov_audit\\delegation_bridge.py:is_available() L80",
         "簇(15): src\\zephyr\\ex_core\\execution_engine.py:__str__() L62 | src\\zephyr\\ex_core\\order_manager.py:__str__() L56 | src\\zephyr\\feedback_loop\\evolution_engine.py:__str__() L36",
         "簇(13): src\\zephyr\\backtest\\core\\decision_gate.py:__init__() L45 | src\\zephyr\\backtest\\core\\metrics.py:__init__() L66 | src\\zephyr\\backtest\\core\\overfitting_detector.py:__init__() L61",
         "簇(10): src\\zephyr\\governance\\audit\\snapshot_manager.py:__exit__() L100 | src\\zephyr\\governance\\financial_governance\\atomic_transaction_manager.py:__exit__() L615 | src\\zephyr\\governance\\persistence\\decision_graph_reader.py:__exit__() L131",
@@ -110,7 +110,7 @@
     {
       "metric_id": "M07",
       "name": "死代码数(orphan模块)",
-      "count": 983,
+      "count": 982,
       "target": 0,
       "details": [
         "src\\zephyr\\gov_drift\\_analysis.py",
@@ -158,7 +158,7 @@
     {
       "metric_id": "M10",
       "name": "时间触发残留数",
-      "count": 24,
+      "count": 23,
       "target": 0,
       "details": [
         "src\\zephyr\\__init__.py 命中: threading\\.Timer\\b",
@@ -176,11 +176,11 @@
         "src\\zephyr\\gov_enforcement\\rule_enforcement\\integration_test_runner.py 命中: \\bcron\\b",
         "src\\zephyr\\infrastructure\\pipeline\\pipeline_lock.py 命中: \\bwhile\\s+True\\s*:.*?time\\.sle",
         "src\\zephyr\\infrastructure\\rollback\\s3_snapshot_lifecycle.py 命中: \\bcron\\b",
-        "src\\zephyr\\infrastructure\\system_telemetry\\logs\\structured_sink.py 命中: threading\\.Timer\\b",
         "src\\zephyr\\integration\\pipeline_orchestrator.py 命中: \\bwhile\\s+True\\s*:.*?time\\.sle",
         "src\\zephyr\\integration\\mcp\\rate_limiter.py 命中: \\bwhile\\s+True\\s*:.*?time\\.sle",
         "src\\zephyr\\integration\\shared\\events\\event_schemas.py 命中: \\bcron\\b",
-        "src\\zephyr\\orchestrator\\fault_tolerance\\chaos_engine.py 命中: threading\\.Timer\\b"
+        "src\\zephyr\\orchestrator\\fault_tolerance\\chaos_engine.py 命中: threading\\.Timer\\b",
+        "src\\zephyr\\position\\position_reconciler.py 命中: \\bcron\\b"
       ],
       "source": "inline",
       "error": ""
@@ -198,7 +198,7 @@
       "error": ""
     }
   ],
-  "total_auto": 1898,
+  "total_auto": 1896,
   "manual_baseline_total": 3193,
   "note": "自动化检测基线（第0期）。total_auto 为自动化检出总数；manual_baseline_total=3193 为手动调研基线。二者差异源于自动化覆盖度（部分病根需 AST 门禁第1期才覆盖）。"
 }
