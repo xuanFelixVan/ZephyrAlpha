@@ -27,13 +27,12 @@ import logging
 import time
 from collections import deque
 from datetime import UTC, datetime
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
 class EscalationAPI:
-    def __init__(self, engine: Any = None, rate_limit_per_hour: int = 100):
+    def __init__(self, engine: object = None, rate_limit_per_hour: int = 100):
         self._api_keys: dict[str, str] = {}
         self._engine = engine
         self._rate_limit_per_hour = rate_limit_per_hour

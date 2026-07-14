@@ -1177,7 +1177,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
 ]
 
 
-def _get_current_version(conn: Any) -> int:
+def _get_current_version(conn: object) -> int:
     """获取 PG schema 版本。
 
     P2迁移后：PG schema 由 02_create_pg_schema.sql 创建，_schema_version 表已填充。
@@ -1207,7 +1207,7 @@ def _get_current_version(conn: Any) -> int:
 
 
 def _run_migration(
-    conn: Any,
+    conn: object,
     version: int,
     description: str,
     statements: list[str],

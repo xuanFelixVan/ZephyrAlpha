@@ -424,7 +424,7 @@ class SelfBenchmark:
         return f.name
 
     @staticmethod
-    def _exec_function(source: str) -> Any | None:
+    def _exec_function(source: str) -> object | None:
         # 5.45.3 修复：受限命名空间 + AST 白名单校验，阻断 LLM 生成代码中的危险操作
         ns: dict[str, Any] = {"__builtins__": _SAFE_BUILTINS}
         try:

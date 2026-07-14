@@ -35,7 +35,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.risk_limits import RiskLimits
@@ -112,7 +112,7 @@ class RiskValidationBridge:
         return [self._convert(v) for v in raw_violations]
 
     @staticmethod
-    def _convert(v: Any) -> RiskViolation:
+    def _convert(v: object) -> RiskViolation:
         if isinstance(v, RiskViolation):
             return v
         return RiskViolation(

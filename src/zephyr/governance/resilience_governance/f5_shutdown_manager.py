@@ -93,7 +93,7 @@ class F5ShutdownManager:
 
     def __init__(
         self,
-        integration: Any = None,
+        integration: object = None,
         project_root: Path | None = None,
         db_path: Path | None = None,
         idle_timeout_seconds: float | None = None,
@@ -369,7 +369,7 @@ class F5ShutdownManager:
         finally:
             conn.close()
 
-    def _serialize_record(self, record: Any) -> dict:
+    def _serialize_record(self, record: object) -> dict:
         """将 DelegationRecord (dataclass) 序列化为 dict。"""
         if hasattr(record, "__dict__"):
             result = {}
@@ -452,7 +452,7 @@ class F5ShutdownManager:
         finally:
             conn.close()
 
-    def _restore_deadlock_state(self, deadlock: Any, state: dict) -> None:
+    def _restore_deadlock_state(self, deadlock: object, state: dict) -> None:
         """恢复 DeadlockDetector 状态。"""
         wait_graph = state.get("wait_graph", {})
         locks = state.get("locks", {})
@@ -578,7 +578,7 @@ class F5ShutdownManager:
 
 
 def register_f5_shutdown_hook(
-    integration: Any = None,
+    integration: object = None,
     project_root: Path | None = None,
     db_path: Path | None = None,
 ) -> F5ShutdownManager:

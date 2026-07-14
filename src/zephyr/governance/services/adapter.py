@@ -91,7 +91,7 @@ _engine_cache: dict[str, Any] = {}
 _cache_lock: threading.Lock | None = None
 
 
-def _get_engine(name: str = "adapter") -> Any:
+def _get_engine(name: str = "adapter") -> object:
     global _cache_lock
     if name in _engine_cache:
         return _engine_cache[name]
