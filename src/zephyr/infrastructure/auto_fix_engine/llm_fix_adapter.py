@@ -49,7 +49,7 @@ class LLMFixAdapter(BaseFixer):
         self._secret_guard = SecretLeakGuard()
         self._llm_bridge: LLMGateway | None = None
 
-    def _get_llm_bridge(self) -> Any:
+    def _get_llm_bridge(self) -> object:
         if self._llm_bridge is not None:
             return self._llm_bridge
         try:
@@ -131,7 +131,7 @@ class LLMFixAdapter(BaseFixer):
             f"Return ONLY the fixed file content, no explanations."
         )
 
-    def _call_llm(self, bridge: Any, prompt: str) -> str:
+    def _call_llm(self, bridge: object, prompt: str) -> str:
         try:
             if hasattr(bridge, "generate"):
                 result = bridge.generate(prompt)

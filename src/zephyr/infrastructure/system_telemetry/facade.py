@@ -235,7 +235,7 @@ class _Span:
     def __exit__(self, *exc: Any) -> None:
         self.end()
 
-    def set_attribute(self, key: str, value: Any) -> None:
+    def set_attribute(self, key: str, value: object) -> None:
         self._attributes[key] = value
 
     def set_metadata(self, **kwargs: Any) -> None:
@@ -275,7 +275,7 @@ class TracesFacade:
 
 
 class _RealSpanBridge:
-    def __init__(self, operation_name: str, factory: Any):
+    def __init__(self, operation_name: str, factory: object):
         self._name = operation_name
         self._factory = factory
         self._ctx: object = None
@@ -299,7 +299,7 @@ class _RealSpanBridge:
             return ctx.__exit__(*args)
         return None
 
-    def set_attribute(self, key: str, value: Any) -> None:
+    def set_attribute(self, key: str, value: object) -> None:
         self._attributes[key] = value
 
     def end(self) -> dict:

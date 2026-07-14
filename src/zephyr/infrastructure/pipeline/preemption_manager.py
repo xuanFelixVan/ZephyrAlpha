@@ -89,7 +89,7 @@ class PreemptionManager:
         cur = str(current_priority or "").upper().strip()
         return new in ("P0", "P1") and cur in self._PREEMPTIBLE_PRIORITIES
 
-    def preempt(self, task_card: Any) -> list[PreemptionRecord]:
+    def preempt(self, task_card: object) -> list[PreemptionRecord]:
         """检查并执行优先级抢占.
 
         仅当 task_card 优先级为 P0/P1 时才执行抢占逻辑.

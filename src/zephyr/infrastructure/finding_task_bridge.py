@@ -150,7 +150,7 @@ class FindingTaskBridge:
 
     def __init__(
         self,
-        task_repo: Any | None = None,
+        task_repo: object | None = None,
         default_namespace: TaskNamespace = TaskNamespace.CP,
         min_severity_for_bridge: FindingSeverity = "medium",
         dry_run: bool = False,

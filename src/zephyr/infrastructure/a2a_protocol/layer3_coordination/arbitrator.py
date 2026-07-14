@@ -35,7 +35,6 @@ logger = logging.getLogger(__name__)
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import IntEnum
-from typing import Any
 
 
 class ArbitrationVerdict(IntEnum):
@@ -121,8 +120,8 @@ class Arbitrator:
     def __init__(
         self,
         ownership_rules: list[FileOwnership] | None = None,
-        escalation_engine: Any = None,
-        deadlock_detector: Any = None,
+        escalation_engine: object = None,
+        deadlock_detector: object = None,
     ):
         self._ownership = ownership_rules or _DEFAULT_OWNERSHIP
         self._escalation_engine = escalation_engine

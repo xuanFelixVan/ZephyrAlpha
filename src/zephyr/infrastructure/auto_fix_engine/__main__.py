@@ -23,7 +23,7 @@ import sys
 from typing import Any
 
 
-def _get_engine() -> Any:
+def _get_engine() -> object:
     from zephyr.infrastructure.auto_fix_engine.engine import AutoFixEngine
 
     return AutoFixEngine()

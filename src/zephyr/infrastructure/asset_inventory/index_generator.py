@@ -200,7 +200,7 @@ def _to_yaml_list_item(item: dict[str, Any], indent: int) -> str:
     return "\n".join(lines)
 
 
-def _repr_value(value: Any) -> str:
+def _repr_value(value: object) -> str:
     if isinstance(value, str):
         if any(ch in value for ch in ('"', "\\", "\n", ":", "#")):
             escaped = value.replace("\\", "\\\\").replace('"', '\\"')

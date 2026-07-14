@@ -128,19 +128,19 @@ class ClassifiedAsset(BaseModel):
 
     @field_validator("tags", "registered_in", mode="before")
     @classmethod
-    def _none_to_list(cls, v: Any) -> Any:
+    def _none_to_list(cls, v: object) -> object:
         """容忍旧版 index 中的 None 值，转为空列表。"""
         return v if v is not None else []
 
     @field_validator("custom_metadata", mode="before")
     @classmethod
-    def _none_to_dict(cls, v: Any) -> Any:
+    def _none_to_dict(cls, v: object) -> object:
         """容忍旧版 index 中的 None 值，转为空字典。"""
         return v if v is not None else {}
 
     @field_validator("tags_last_updated", mode="before")
     @classmethod
-    def _none_str_to_none(cls, v: Any) -> Any:
+    def _none_str_to_none(cls, v: object) -> object:
         """容忍旧版 index 中的 'None' 字符串，转为 None。"""
         if v in (None, "None"):
             return None

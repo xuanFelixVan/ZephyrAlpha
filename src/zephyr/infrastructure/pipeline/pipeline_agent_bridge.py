@@ -243,7 +243,7 @@ class PipelineAgentBridge:
         task_context: dict[str, Any] | None = None,
         token_budget: int | None = None,
         task_id_prefix: str = "",
-    ) -> Any:
+    ) -> object:
         role_name = role_for_module(module_result.module_id)
         domain = domain_for_pipeline(module_result.pipeline)
         directive_chain = _build_directive_chain(module_result.module_id)

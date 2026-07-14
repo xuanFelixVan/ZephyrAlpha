@@ -70,8 +70,8 @@ class RollbackScheduler:
     def __init__(
         self,
         project_root: Path | None = None,
-        wal: Any | None = None,
-        drill: Any | None = None,
+        wal: object | None = None,
+        drill: object | None = None,
     ) -> None:
         self._project_root = project_root or Path.cwd()
         self._wal = wal
@@ -85,7 +85,7 @@ class RollbackScheduler:
         self._gc_count: int = 0
         self._drill_count: int = 0
 
-    def _get_wal(self) -> Any:
+    def _get_wal(self) -> object:
         if self._wal is not None:
             return self._wal
         try:
@@ -95,7 +95,7 @@ class RollbackScheduler:
             logger.error("Failed to initialize RollbackWAL: %s", e, exc_info=True)
         return self._wal
 
-    def _get_drill(self) -> Any:
+    def _get_drill(self) -> object:
         if self._drill is not None:
             return self._drill
         try:

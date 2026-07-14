@@ -28,7 +28,7 @@ def set_telemetry_getter(getter: Callable[[], Any]) -> None:
     _telemetry_getter = getter
 
 
-def get_telemetry() -> Any:
+def get_telemetry() -> object:
     if _telemetry_getter is not None:
         return _telemetry_getter()
     return None
