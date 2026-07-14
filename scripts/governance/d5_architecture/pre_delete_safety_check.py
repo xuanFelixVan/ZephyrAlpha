@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/pre_delete_safety_check.py | §
 # [MODULE] scripts.governance.d5_architecture.pre_delete_safety_check
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] RULE-THREE删除审判; pre_write_gate.py --delete; migration pipeline
 # [STARTUP] manual

@@ -2,7 +2,7 @@
 """
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/create_alignment_tasks.py | §7
 # [MODULE] scripts.governance.create_alignment_tasks
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.persistence.task_repo
 # [CONSUMERS] governance automation; alignment workflow
 # [STARTUP] manual

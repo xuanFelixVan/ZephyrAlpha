@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # [MODULE] scripts.governance.run_gate_chain
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [STARTUP] manual
 # [MATURITY] prototype
 # [STABILITY] evolving

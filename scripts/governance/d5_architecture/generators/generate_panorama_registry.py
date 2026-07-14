@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS | docs/03_modules/_domain_governance/blueprint.md | §panorama-registry
 # [MODULE] scripts.governance.d5_architecture.generators.generate_panorama_registry
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] _shared.constants (get_depgraph_pg_connection, REPO_ROOT); _common (DB_DISPLAY_NAME)
 # [CONSUMERS] CI自动触发(GATE-ARCH-DIAGRAM reconciler post-commit);人工查看 00_overview_entry/panorama_registry.md
 # [STARTUP] event_driven

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/analyzers/measure_deprecation_cascade.py | §
 # [MODULE] scripts.governance.d5_architecture.analyzers.measure_deprecation_cascade
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.analyzers.__init__
 # [CONSUMERS]
 # [STARTUP] manual

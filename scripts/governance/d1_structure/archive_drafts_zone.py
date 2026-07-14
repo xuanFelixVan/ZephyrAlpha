@@ -10,7 +10,7 @@ warn_only: false
 
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.d1_structure.archive_drafts_zone
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS] tests.unit.test_drafts_zone_archiver_unit; tests.unit.governance.test_drafts_zone_archiver_governance
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/rebuild_audit_index.py | §
 # [MODULE] scripts.governance.rebuild_audit_index
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.gov_audit.indexer
 # [CONSUMERS]
 # [STARTUP] manual

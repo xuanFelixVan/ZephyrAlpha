@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/backup_runtime_state.py | §
 # [MODULE] scripts.governance.meta.backup_runtime_state
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.meta.__init__; zephyr.governance.depgraph_schema (_build_pg_dsn, backup_pg_depgraph 函数)
 # [CONSUMERS] scripts.governance.apply_depgraph (backup_pg_depgraph 事件触发入口)
 # [STARTUP] manual

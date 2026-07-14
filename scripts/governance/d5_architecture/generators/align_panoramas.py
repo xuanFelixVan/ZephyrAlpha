@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-ALIGN-PANORAMAS | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §panorama-alignment
 # [MODULE] scripts.governance.d5_architecture.generators.align_panoramas
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.depgraph_schema; zephyr.governance.persistence.dataflowgraph_schema; zephyr.governance.persistence.decisiongraph_schema; _common (DB_DISPLAY_NAME)
 # [CONSUMERS] CI自动触发;人工审查四图对齐报告
 # [STARTUP] manual

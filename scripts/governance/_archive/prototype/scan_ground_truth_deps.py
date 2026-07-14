@@ -2,7 +2,7 @@
 """
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/scan_ground_truth_deps.py | §7
 # [MODULE] scripts.governance.scan_ground_truth_deps
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] Task card system; governance automation; architecture refactoring
 # [STARTUP] manual

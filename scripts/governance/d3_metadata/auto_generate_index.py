@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/auto_generate_index.py | §
 # [MODULE] scripts.governance.d3_metadata.auto_generate_index
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] _shared.constants; _shared.encoding
 # [CONSUMERS] test_concurrent_safety.ps1; CI 门禁 GATE-INDEX
 # [STARTUP] manual

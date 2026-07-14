@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/migrate_illegal_doctype.py | §gate-15
 # [MODULE] governance.d3_metadata.migrate_illegal_doctype
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants; _shared.encoding; _shared.yaml_utils
 # [CONSUMERS] manual batch migration; stage-2 of doc_type root-cause fix
 # [STARTUP] imported

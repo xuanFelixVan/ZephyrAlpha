@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/backfill_doctype_metadata.py | §gate-15
 # [MODULE] governance.d3_metadata.backfill_doctype_metadata
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants; _shared.encoding
 # [CONSUMERS] manual batch backfill; stage-2 of doc_type root-cause fix
 # [STARTUP] imported

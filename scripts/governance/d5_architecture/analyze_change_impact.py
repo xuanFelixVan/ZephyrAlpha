@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] GOV-070 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.analyze_change_impact
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] run_incremental.py;phase_manager.py
 # [STARTUP] manual

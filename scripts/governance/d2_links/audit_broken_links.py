@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d2_links/audit_broken_links.py | §
 # [MODULE] scripts.governance.d2_links.audit_broken_links
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d2_links.__init__
 # [CONSUMERS]
 # [STARTUP] manual

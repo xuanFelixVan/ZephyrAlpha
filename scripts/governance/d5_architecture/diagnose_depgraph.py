@@ -2,7 +2,7 @@
 """
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py | §7
 # [MODULE] scripts.governance.diagnose_depgraph
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] governance automation; structural optimization planning
 # [STARTUP] manual

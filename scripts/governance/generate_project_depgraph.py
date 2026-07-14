@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """# [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7
 # [MODULE] scripts.governance.generate_project_depgraph
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] CI pipeline; governance automation; PostgreSQL depgraph
 # [STARTUP] manual

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d9_knowledge/detect_orphan_documents.py | §
 # [MODULE] scripts.governance.governance.d9_knowledge.detect_orphan_documents
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d9_knowledge.__init__
 # [CONSUMERS]
 # [STARTUP] manual

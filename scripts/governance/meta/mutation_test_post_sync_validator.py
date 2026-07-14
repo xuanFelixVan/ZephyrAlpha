@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] scripts.governance.meta.mutation_test_post_sync_validator
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] (none — stdlib only)
 # [CONSUMERS] CI 门禁 / 手动回归
 # [STARTUP] manual

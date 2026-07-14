@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] scripts.governance.generators.check_gate_inventory_drift
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT)
 # [CONSUMERS] zephyr.governance.audit.reconciliation_registry.make_gate_inventory_sync_reconciler
 # [STARTUP] manual

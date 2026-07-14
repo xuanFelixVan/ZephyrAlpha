@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_naming_convention.py | §
 # [MODULE] scripts.governance.d3_metadata.check_naming_convention
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS] .pre_commit-config.yaml GATE-11; .github/workflows/governance.yml; tests/test_gate11_naming_convention.py
 # [STARTUP] manual

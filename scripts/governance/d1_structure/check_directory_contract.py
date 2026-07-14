@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/check_directory_contract.py | §
 # [MODULE] scripts.governance.d1_structure.check_directory_contract
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] _shared.constants; _shared.frontmatter; _shared.walk
 # [CONSUMERS] .pre-commit-config.yaml GATE-DIRECTORY-CONTRACT (pre-commit hook，已启用)
 # [STARTUP] event_driven
