@@ -1587,6 +1587,28 @@ capabilities:
       - make_blueprint_format_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: data_task_completeness_gate
+    aliases:
+      - DATA-TASK-COMPLETENESS
+      - data-task-completeness
+      - make_data_task_completeness_gate
+      - fallback_sources_warning_gate
+      - tasks_yaml_completeness_checker
+    description: >-
+      数据任务完整性门禁(DATA-TASK-COMPLETENESS, 数据韧性三层机制§4, 2026-07-15).
+      warn 级(不阻断 commit)检测 tasks.yaml 新增 task_id 是否配置 fallback_sources.
+      git diff HEAD 提取新增 task_id, 解析 tasks.yaml 检查 fallback_sources 字段.
+      未配置则返回 passed=True + WARN detail(提醒型, 不阻碍开发——有些表确实无副源).
+      病根: AI 新增表时容易遗漏 fallback_sources(认知盲区), 无门禁提醒→遗漏直到
+      数据源故障才发现无 fallback→数据缺失. 治本: warn 在 commit 输出形成
+      "AI增加表→门禁提醒→AI补充fallback_sources"闭环. priority=80.
+      canonical basename data_task_completeness_gate 匹配 capability_id, 可 auto 派生.
+      解决发现性: 新 AI 搜 "fallback_sources/tasks.yaml完整性/数据韧性门禁" 可定位真源.
+      解决防重建: check_file_canonical() 反查阻止重建同类 tasks.yaml 完整性检测脚本.
+    integrity_anchors:
+      - make_data_task_completeness_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: ch_batch_size_gate
     aliases:
       - CH-BATCH-SIZE
@@ -4897,6 +4919,18 @@ creation_tokens:
     token: "auto-backfill-checker-20260715"
     created_by: "session-sess-33112-20260715005712"
     capability: "backfill_checker"
+  # --- error_classifier 数据源错误分类器（数据韧性三层机制§1, 2026-07-15）---
+  # 不可恢复错误（配额/认证）立即fallback，可恢复错误（超时/网络）重试用完才fallback
+  - file: "src/zephyr/data/error_classifier.py"
+    token: "auto-error-classifier-20260715"
+    created_by: "session-sess-33176-20260715021455"
+    capability: "error_classifier"
+  # --- integrity_checker 每日盘后数据完整性巡检（数据韧性三层机制§3, 2026-07-15）---
+  # 动态发现 tasks.yaml 全表，检测当日数据行数是否达标，不达标告警
+  - file: "src/zephyr/data/integrity_checker.py"
+    token: "auto-integrity-checker-20260715"
+    created_by: "session-sess-33176-20260715021455"
+    capability: "integrity_checker"
 
 # ============================================================================
 # 维护日志
