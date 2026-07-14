@@ -1,7 +1,7 @@
 %% D_SECURITY 域全景依赖图
-%% 生成时间: 2026-07-13 23:59:46
+%% 生成时间: 2026-07-14 15:51:02
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 195, 依赖边数: 527
+%% 模块数: 212, 依赖边数: 561
 
 graph TD
 
@@ -107,16 +107,16 @@ graph TD
         src_zephyr_security_access_control_orphan_judge_kb_bridge_py["...ess_control/orphan_judge/kb_bridge.py [prototype]"]
         src_zephyr_security_access_con___an_judge_mcp_integration_py["...ntrol/orphan_judge/mcp_integration.py [prototype]"]
         src_zephyr_security_access_control_orphan_judge_models_py["...access_control/orphan_judge/models.py [prototype]"]
-        %% ... 还有 95 个模块未显示
+        %% ... 还有 112 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_gov_drift__analysis_py -->|import_depends| src_zephyr_gov_drift_reconciler_py
-    src_zephyr_gov_drift__analysis_py -->|import_depends| src_zephyr_gov_drift_runbook_generator_py
     src_zephyr_gov_drift__core_py -->|import_depends| src_zephyr_gov_drift_events_py
     src_zephyr_gov_drift__core_py -->|import_depends| src_zephyr_gov_drift_state_machine_py
     src_zephyr_gov_drift__infrastructure_py -->|import_depends| src_zephyr_gov_drift_alert_router_py
     src_zephyr_gov_drift__infrastructure_py -->|import_depends| src_zephyr_gov_drift_cold_start_py
+    src_zephyr_gov_drift__analysis_py -->|import_depends| src_zephyr_gov_drift_reconciler_py
+    src_zephyr_gov_drift__analysis_py -->|import_depends| src_zephyr_gov_drift_runbook_generator_py
     src_zephyr_security___init___py -->|import_depends| src_zephyr_security_access_control___init___py
     src_zephyr_security___init___py -->|import_depends| src_zephyr_security_adversarial_validation___init___py
     src_zephyr_security_access_control_derive_rbac_roles_py -->|import_depends| src_zephyr_security_access_control_identity_py
@@ -134,20 +134,20 @@ graph TD
     src_zephyr_security_access_control_orphan_judge_db_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_con___phan_judge_config_loader_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_control_orphan_judge_judge_py -->|import_depends| src_zephyr_security_access_con___judge_duplicate_detector_py
-    src_zephyr_security_access_con___orphan_judge_rbac_bridge_py -->|import_depends| src_zephyr_security_access_con____guards_permission_guard_py
     src_zephyr_security_access_control_orphan_judge_models_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
-    src_zephyr_security_access_con___dge_registration_checker_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
-    src_zephyr_security_access_con___e_reference_graph_engine_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_con___an_judge_mcp_integration_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
+    src_zephyr_security_access_con___orphan_judge_rbac_bridge_py -->|import_depends| src_zephyr_security_access_con____guards_permission_guard_py
     src_zephyr_security_access_con___n_judge_orphan_collector_py -->|import_depends| src_zephyr_security_access_con___n_judge_cascade_analyzer_py
     src_zephyr_security_access_con___n_judge_orphan_collector_py -->|import_depends| src_zephyr_security_access_con___han_judge_decision_table_py
     src_zephyr_security_access_con___n_judge_orphan_collector_py -->|import_depends| src_zephyr_security_access_con___rphan_judge_safety_fence_py
     src_zephyr_security_access_con___n_judge_orphan_collector_py -->|import_depends| src_zephyr_security_access_con___udge_deprecation_tracker_py
     src_zephyr_security_access_con___n_judge_report_generator_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_db_py
     src_zephyr_security_access_con___n_judge_report_generator_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_models_py
+    src_zephyr_security_access_con___e_reference_graph_engine_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
+    src_zephyr_security_access_con___dge_registration_checker_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
+    src_zephyr_security_access_con___dge_standalone_evaluator_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_orphan_judge_swid_tag_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_con___an_judge_unique_analyzer_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
-    src_zephyr_security_access_con___dge_standalone_evaluator_py -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_orphan_judge___init___py -->|import_depends| src_zephyr_security_access_control_orphan_judge___main___py
     src_zephyr_security_access_control_orphan_judge___init___py -->|import_depends| src_zephyr_security_access_con___n_judge_cascade_analyzer_py
     src_zephyr_security_access_control_orphan_judge___init___py -->|import_depends| src_zephyr_security_access_con___phan_judge_config_loader_py
@@ -170,27 +170,27 @@ graph TD
     src_zephyr_security_adversarial_validation_async_monitor_py -->|import_depends| src_zephyr_security_adversaria___lidation_circuit_breaker_py
     src_zephyr_security_adversarial_validation_async_monitor_py -->|import_depends| src_zephyr_security_adversarial_validation_cleanup_py
     src_zephyr_security_adversarial_validation_blast_radius_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversaria___lidation_bypass_recorder_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversaria___lidation_circuit_breaker_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_cli_py -->|import_depends| src_zephyr_security_adversarial_validation_cold_start_py
     src_zephyr_security_adversarial_validation_cli_py -->|import_depends| src_zephyr_security_adversaria___lidation_game_day_runner_py
     src_zephyr_security_adversarial_validation_cli_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_cli_py -->|import_depends| src_zephyr_security_adversaria___lidation_scenario_loader_py
     src_zephyr_security_adversarial_validation_cli_py -->|import_depends| src_zephyr_security_adversarial_validation_validator_py
-    src_zephyr_security_adversaria___lidation_bypass_recorder_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversaria___tion_convergence_checker_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversaria___ation_constitution_guard_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversaria___tion_constitution_engine_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversaria___ation_game_day_scheduler_py -->|import_depends| src_zephyr_security_adversaria___lidation_game_day_runner_py
-    src_zephyr_security_adversarial_validation_defense_runner_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversaria___lidation_game_day_runner_py -->|import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
-    src_zephyr_security_adversaria___lidation_game_day_runner_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversaria___lidation_game_day_runner_py -->|import_depends| src_zephyr_security_adversarial_validation_validator_py
-    src_zephyr_security_adversaria___idation_injection_engine_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_commit_trigger_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_commit_trigger_py -->|import_depends| src_zephyr_security_adversaria___lidation_circuit_breaker_py
     src_zephyr_security_adversarial_validation_commit_trigger_py -->|import_depends| src_zephyr_security_adversarial_validation_validator_py
+    src_zephyr_security_adversaria___tion_convergence_checker_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversaria___lidation_game_day_runner_py -->|import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
+    src_zephyr_security_adversaria___lidation_game_day_runner_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversaria___lidation_game_day_runner_py -->|import_depends| src_zephyr_security_adversarial_validation_validator_py
+    src_zephyr_security_adversarial_validation_defense_runner_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversaria___ation_game_day_scheduler_py -->|import_depends| src_zephyr_security_adversaria___lidation_game_day_runner_py
+    src_zephyr_security_adversaria___idation_injection_engine_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversaria___lidation_scenario_loader_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -->|import_depends| src_zephyr_security_adversaria___tion_convergence_checker_py
-    src_zephyr_security_adversarial_validation_mcp_endpoints_py -->|import_depends| src_zephyr_security_adversarial_validation_models_py
     %% ... 还有 85 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
@@ -208,40 +208,40 @@ graph TD
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___lidation_bypass_recorder_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___ation_constitution_guard_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___tion_convergence_checker_py
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___lidation_attack_registry_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___lidation_bypass_recorder_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___ation_constitution_guard_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___tion_convergence_checker_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___lidation_game_day_runner_py
-    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___lidation_game_day_runner_py
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_guards_abac_guard_py
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_identity_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_con___s_cross_session_detector_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_con___ards_replay_attack_guard_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_monotonic_clock_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_non_repudiation_py
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_con___tectors_anomaly_detector_py
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_blueprint_fidelity_py
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_guards_memory_guard_py
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_con____guards_native_api_guard_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_derive_rbac_roles_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_identity_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_immutable_core_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_integrity_self_check_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_con____guards_permission_guard_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_guards_rbac_guard_py
-    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_guards_abac_guard_py
-    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_identity_py
-    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_con___ards_cybersec_2026_guard_py
-    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_con___tectors_anomaly_detector_py
-    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_blueprint_fidelity_py
-    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_guards_memory_guard_py
-    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_con____guards_native_api_guard_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_adversarial_resilience_py
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_con___ards_cybersec_2026_guard_py
     %% D_COMPLIANCE -> D_SECURITY (7 条)
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_gov_drift_alert_router_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_gov_drift_cold_start_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_gov_drift_events_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_gov_drift_reconciler_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_gov_drift_runbook_generator_py
-    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_implementations___init___py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_compliance_gate_a6___init___py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_implementations___init___py
     %% D_FBL_VERIFICATION -> D_SECURITY (1 条)
     D_FBL_VERIFICATION[D_FBL_VERIFICATION] -->|import_depends| src_zephyr_security_adversarial_validation___init___py
     %% D_FEEDBACK_LOOP -> D_SECURITY (1 条)
@@ -259,20 +259,20 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_drift_events_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_security_access_control_a2a_check_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_security_access_control_approver_check_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_security_access_control_capability_check_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_security_access_control_bootstrap_superadmin_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_security_access_control_approver_check_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_security_access_control_contracts_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_security_access_control_capability_check_py
     %% D_GOV_AUDIT -> D_SECURITY (13 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_security_adversarial_validation_validator_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_security_access_control_guards_audit_log_guard_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_security_access_con___n_judge_cascade_analyzer_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_security_access_con___han_judge_decision_table_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_security_access_con___udge_deprecation_tracker_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_security_access_con___rphan_judge_safety_fence_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_security_access_control_guards_audit_log_guard_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_events_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_events_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_events_py
@@ -284,8 +284,8 @@ graph TD
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_gov_drift_reconciler_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_gov_drift_events_py
     %% D_GOV_ENFORCEMENT -> D_SECURITY (6 条)
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_security_adversarial_validation_commit_trigger_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_security_access_control_guard_layers_py
@@ -332,31 +332,31 @@ graph TD
     D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_security_llm_defens___security_input_sanitizer_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_security_llm_defens___security_process_sandbox_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___rotection_code_integrity_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___tion_adversarial_mutator_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___ty_behavior_audit_logger_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___rotection_code_integrity_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___security_input_sanitizer_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___terns_injection_patterns_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___security_layers_l1_input_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___elf_protection_isolation_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___security_input_sanitizer_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___terns_injection_patterns_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___y_layers_l0_supply_chain_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___yers_l2a_process_sandbox_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___ecurity_layers_l3_output_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___security_layers_l1_input_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___ers_l2_prompt_protection_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___security_input_sanitizer_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___elf_protection_isolation_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___ecurity_layers_l3_output_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___security_layers_l4_agent_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___s_l5_resource_protection_py
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___tection_red_team_scanner_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens____layers_l6_observability_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_security_llm_defens___ty_layers_l8_multi_agent_py
     %% D_SHARED -> D_SECURITY (4 条)
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_security_access_control_cross_cutting_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_security_access_con___s_cross_session_detector_py
@@ -364,9 +364,37 @@ graph TD
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_security_access_control_guards_path_guard_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_SECURITY -> D_FBL_VERIFICATION (2 条)
+    %% D_SECURITY -> D_FBL_VERIFICATION (36 条)
     tests_safety_test_attack_simulator_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     tests_safety_test_safety_gate_l1_l27_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l38_l39_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l38_l39_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l36_l37_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l36_l37_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l42_l43_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l42_l43_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l28_l29_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l28_l29_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l40_l41_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l40_l41_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l46_l47_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l46_l47_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l44_l45_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l44_l45_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l48_l49_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l48_l49_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l50_l51_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l50_l51_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l54_l55_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l54_l55_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l52_l53_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l52_l53_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l58_l59_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l58_l59_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l62_l63_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l62_l63_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l60_l61_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_safety_test_safety_gate_l60_l61_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     %% D_SECURITY -> D_FEEDBACK_LOOP (2 条)
     src_zephyr_security_access_con___an_judge_feedback_bridge_py -->|import_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_safety_test_scheduler_safety_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
@@ -384,32 +412,32 @@ graph TD
     src_zephyr_gov_drift_reconciler_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_drift_runbook_generator_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_drift_state_machine_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_drift__core_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_drift__core_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_drift__core_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_gov_drift__analysis_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_drift__drift_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_drift__drift_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_drift__drift_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__drift_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__drift_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    src_zephyr_gov_drift__infrastructure_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_SECURITY -> D_GOV_KB (1 条)
     tests_safety_test_safety_brake_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     %% D_SECURITY -> D_GOV_OPS_RESILIENCE (1 条)
@@ -434,8 +462,8 @@ graph TD
     src_zephyr_security_llm_defens___m_security_dashboard_app_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     src_zephyr_security_llm_defens___m_security_dashboard_app_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     src_zephyr_security_llm_defens___tection_red_team_scanner_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
-    src_zephyr_security_llm_defens___rity_layers_l6_data_flow_py -->|config_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     src_zephyr_security_llm_defens___ity_layers_l8_compliance_py -->|config_depends| D_SECURITY_LLM[D_SECURITY_LLM]
+    src_zephyr_security_llm_defens___rity_layers_l6_data_flow_py -->|config_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     %% D_SECURITY -> D_SHARED (29 条)
     src_zephyr_gov_drift_cold_start_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_access_control_immutable_core_py -->|import_depends| D_SHARED[D_SHARED]
@@ -449,19 +477,19 @@ graph TD
     src_zephyr_security_adversaria___n_validator_event_bridge_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___ty_behavior_audit_logger_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___security_process_sandbox_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___m_security_dashboard_app_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defense_llm_security_protocol_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___security_layers_l1_input_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___m_security_dashboard_app_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___y_layers_l0_supply_chain_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___ecurity_layers_l3_output_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___ers_l2_prompt_protection_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___security_layers_l4_agent_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens____layers_l6_observability_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___security_layers_l1_input_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___yers_l2a_process_sandbox_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___ers_l2_prompt_protection_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___ecurity_layers_l3_output_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___s_l5_resource_protection_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___ecurity_patterns_secrets_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_security_llm_defens___tion_adversarial_mutator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens____layers_l6_observability_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___security_layers_l4_agent_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___ty_layers_l8_multi_agent_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___tion_adversarial_mutator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_security_llm_defens___ecurity_patterns_secrets_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___protection_l7_validation_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_security_llm_defens___tection_red_team_scanner_py -->|import_depends| D_SHARED[D_SHARED]
     tests_safety_test_commit_trigger_py -->|test_depends| D_SHARED[D_SHARED]
@@ -470,4 +498,4 @@ graph TD
     %% 统计
     %% 域内依赖: 165 条
     %% 跨域入边: 259 条
-    %% 跨域出边: 103 条
+    %% 跨域出边: 137 条

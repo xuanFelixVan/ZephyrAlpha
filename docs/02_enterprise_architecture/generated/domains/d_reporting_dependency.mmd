@@ -1,7 +1,7 @@
 %% D_REPORTING 域全景依赖图
-%% 生成时间: 2026-07-13 23:59:46
+%% 生成时间: 2026-07-14 15:51:02
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 10, 依赖边数: 12
+%% 模块数: 10, 依赖边数: 13
 
 graph TD
 
@@ -20,9 +20,9 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_reporting_default_attribution_engine_py -->|import_depends| src_zephyr_reporting_analytics_base_py
-    src_zephyr_reporting_default_tca_engine_py -->|import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting___init___py -->|import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_tca_engine_py -->|import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_attribution_engine_py -->|import_depends| src_zephyr_reporting_analytics_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_GOVERNANCE -> D_REPORTING (1 条)
@@ -30,6 +30,8 @@ graph TD
     %% D_GOV_AUDIT -> D_REPORTING (2 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_reporting_default_attribution_engine_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_reporting_default_tca_engine_py
+    %% D_TRADING -> D_REPORTING (1 条)
+    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_reporting_analytics_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_REPORTING -> D_INFRASTRUCTURE (6 条)
@@ -42,5 +44,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 3 条
-    %% 跨域入边: 3 条
+    %% 跨域入边: 4 条
     %% 跨域出边: 6 条

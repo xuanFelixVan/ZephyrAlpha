@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_ASHARE_SIGNAL A股特色信号架构文档
 version: "1.0"
 status: active
-date: 2026-07-13
+date: 2026-07-14
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 A股特色信号（D_ASHARE_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 23:59:00
+> 最后更新: 2026-07-14 15:50:04
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,21 +26,21 @@ ttl: permanent
 | 域ID | D_ASHARE_SIGNAL | Domain ID | D_ASHARE_SIGNAL |
 | 域名称 | A股特色信号 | Domain Name | A-Share Signal |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 7 | Module Count | 7 |
+| 模块数 | 8 | Module Count | 8 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 7 | Prototype Modules | 7 |
+| 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | A股特色信号生成 | Description | A股特色信号生成 |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
+> 按 architecture_layer 分组的模块清单（共 8 个模块 / 8 modules）。
 
-### L2 领域层 / Domain Layer (7 modules)
+### L2 领域层 / Domain Layer (8 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
@@ -51,6 +51,7 @@ ttl: permanent
 | 5 | src/zephyr/signal_ashare/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
 | 6 | src/zephyr/signal_ashare/models/__init__.py | __init__.py | 原型态 / prototype |  |
 | 7 | src/zephyr/signal_ashare/services/__init__.py | __init__.py | 原型态 / prototype |  |
+| 8 | tests/alpha_signal/test_l02_alpha_factor.py | test_l02_alpha_factor.py | 原型态 / prototype | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -65,7 +66,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 7 个模块（生产态 0 + 设计态 0 + 原型态 7），标签标注成熟度。
+> 展示全部 8 个模块（生产态 0 + 设计态 0 + 原型态 8），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -77,12 +78,13 @@ graph TD
         src_zephyr_signal_ashare_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_ashare_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_ashare_services_init_py["(原型态 / prototype) __init__.py"]
+        tests_alpha_signal_test_l02_alpha_factor_py["(原型态 / prototype) test_l02_alpha_factor.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_signal_ashare_init_py,src_zephyr_signal_ashare_extensions_init_py,src_zephyr_signal_ashare_api_init_py,src_zephyr_signal_ashare_core_init_py,src_zephyr_signal_ashare_infrastructure_init_py,src_zephyr_signal_ashare_models_init_py,src_zephyr_signal_ashare_services_init_py design
+    class src_zephyr_signal_ashare_init_py,src_zephyr_signal_ashare_extensions_init_py,src_zephyr_signal_ashare_api_init_py,src_zephyr_signal_ashare_core_init_py,src_zephyr_signal_ashare_infrastructure_init_py,src_zephyr_signal_ashare_models_init_py,src_zephyr_signal_ashare_services_init_py,tests_alpha_signal_test_l02_alpha_factor_py design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -99,7 +101,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 7 个，0 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 8 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -111,12 +113,13 @@ graph TD
         src_zephyr_signal_ashare_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_ashare_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_ashare_services_init_py["(原型态 / prototype) __init__.py"]
+        tests_alpha_signal_test_l02_alpha_factor_py["(原型态 / prototype) test_l02_alpha_factor.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_signal_ashare_init_py,src_zephyr_signal_ashare_extensions_init_py,src_zephyr_signal_ashare_api_init_py,src_zephyr_signal_ashare_core_init_py,src_zephyr_signal_ashare_infrastructure_init_py,src_zephyr_signal_ashare_models_init_py,src_zephyr_signal_ashare_services_init_py design
+    class src_zephyr_signal_ashare_init_py,src_zephyr_signal_ashare_extensions_init_py,src_zephyr_signal_ashare_api_init_py,src_zephyr_signal_ashare_core_init_py,src_zephyr_signal_ashare_infrastructure_init_py,src_zephyr_signal_ashare_models_init_py,src_zephyr_signal_ashare_services_init_py,tests_alpha_signal_test_l02_alpha_factor_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

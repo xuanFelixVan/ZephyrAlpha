@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_OPS 反馈循环架构文档
 version: "1.0"
 status: active
-date: 2026-07-13
+date: 2026-07-14
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈循环（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 23:59:38
+> 最后更新: 2026-07-14 15:50:49
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 8 | Module Count | 8 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
-| 跨域入边 | 44 | Cross-domain Incoming | 44 |
+| 跨域入边 | 45 | Cross-domain Incoming | 45 |
 | 跨域出边 | 10 | Cross-domain Outgoing | 10 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 1 | Prototype Modules | 1 |
@@ -80,49 +80,48 @@ graph TD
         src_zephyr_governance_ops_governance_meta_observability_py["(生产态 / production) Meta Observability — v0.10.0 协议自身可观测性:...<br/>文件: meta_observability.py"]
         src_zephyr_governance_ops_governance_token_budget_py["(原型态 / prototype) token_budget.py"]
     end
-    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
+    src_zephyr_governance_ops_governance_budget_tracker_py -.->|导入依赖 / import_depends| D_INFRA_RECOVERY
+    src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
-    src_zephyr_governance_ops_governance_budget_tracker_py -.->|导入依赖 / import_depends| D_INFRA_RECOVERY
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_handler_py
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_cost_budget_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
-    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_handler_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
+    D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_token_budget_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_tracker_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_meta_observability_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_ops_governance_budget_engine_py,src_zephyr_governance_ops_governance_budget_handler_py,src_zephyr_governance_ops_governance_budget_models_py,src_zephyr_governance_ops_governance_budget_profile_manager_py,src_zephyr_governance_ops_governance_budget_tracker_py,src_zephyr_governance_ops_governance_cost_budget_py,src_zephyr_governance_ops_governance_meta_observability_py production
     class src_zephyr_governance_ops_governance_token_budget_py design
-    class D_GOVERNANCE,D_SHARED,D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_INTEGRATION,D_GOV_ENFORCEMENT external_prod
-    class D_INFRA_RECOVERY,D_AUTONOMY_CORE external_design
+    class D_SHARED,D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_GOVERNANCE,D_GOV_REPAIR external_prod
+    class D_INFRA_RECOVERY,D_INTELLIGENCE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -140,48 +139,47 @@ graph TD
         src_zephyr_governance_ops_governance_cost_budget_py["(生产态 / production) cost_budget.py —— AI 成本预算与强制熔断（Phas...<br/>文件: cost_budget.py"]
         src_zephyr_governance_ops_governance_meta_observability_py["(生产态 / production) Meta Observability — v0.10.0 协议自身可观测性:...<br/>文件: meta_observability.py"]
     end
-    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
+    src_zephyr_governance_ops_governance_budget_tracker_py -.->|导入依赖 / import_depends| D_INFRA_RECOVERY
+    src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
-    src_zephyr_governance_ops_governance_budget_tracker_py -.->|导入依赖 / import_depends| D_INFRA_RECOVERY
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_handler_py
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_cost_budget_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_tracker_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_meta_observability_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
-    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_budget_handler_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_ops_governance_budget_engine_py,src_zephyr_governance_ops_governance_budget_handler_py,src_zephyr_governance_ops_governance_budget_models_py,src_zephyr_governance_ops_governance_budget_profile_manager_py,src_zephyr_governance_ops_governance_budget_tracker_py,src_zephyr_governance_ops_governance_cost_budget_py,src_zephyr_governance_ops_governance_meta_observability_py production
-    class D_GOVERNANCE,D_SHARED,D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_INTEGRATION,D_GOV_ENFORCEMENT external_prod
-    class D_INFRA_RECOVERY,D_AUTONOMY_CORE external_design
+    class D_SHARED,D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_GOVERNANCE,D_GOV_REPAIR external_prod
+    class D_INFRA_RECOVERY,D_INTELLIGENCE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -199,11 +197,14 @@ graph TD
     subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_governance_ops_governance_token_budget_py["(原型态 / prototype) token_budget.py"]
     end
+    D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
+    D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_token_budget_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_ops_governance_token_budget_py design
+    class D_GOV_REPAIR external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -249,32 +250,33 @@ graph TD
 | 20 | D_GOV_OPS_RESILIENCE 运维弹性治理: degradation_manager.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
 | 21 | D_GOV_OPS_RESILIENCE 运维弹性治理: adversarial_tester.py | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
 | 22 | D_GOV_OPS_RESILIENCE 运维弹性治理: adversarial_tester.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 23 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 24 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 25 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | budget_tracker.py | 导入依赖 / import_depends |
-| 26 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 27 | D_INTEGRATION 管线路由: DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 28 | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 29 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 30 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 31 | D_INTELLIGENCE 上下文管理: test_budget_engine_root.py | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 32 | D_INTELLIGENCE 上下文管理: test_budget_engine_root.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 33 | D_INTELLIGENCE 上下文管理: DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 34 | D_INTELLIGENCE 上下文管理: DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 35 | D_INTELLIGENCE 上下文管理: test_budget_handler.py | → | G-CT-006 消费端 — Escalation.on_budget_alert()... | 测试依赖 / test_depends |
-| 36 | D_INTELLIGENCE 上下文管理: DM-201505: F4 自动化集成测试——完整生命周期端... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 37 | D_INTELLIGENCE 上下文管理: DM-201505: F4 自动化集成测试——完整生命周期端... | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 38 | D_INTELLIGENCE 上下文管理: test_budget_models.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 39 | D_INTELLIGENCE 上下文管理: test_budget_profile_manager.py | → | budget_profile_manager.py | 测试依赖 / test_depends |
-| 40 | D_INTELLIGENCE 上下文管理: DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 41 | D_INTELLIGENCE 上下文管理: DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 42 | D_INTELLIGENCE 上下文管理: test_budget_tracker.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 43 | D_INTELLIGENCE 上下文管理: test_budget_tracker.py | → | budget_tracker.py | 测试依赖 / test_depends |
-| 44 | D_SHARED 共享服务: test_e_gov_budget_handler.py | → | G-CT-006 消费端 — Escalation.on_budget_alert()... | 测试依赖 / test_depends |
+| 23 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | token_budget.py | 导入依赖 / import_depends |
+| 24 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 25 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 26 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | budget_tracker.py | 导入依赖 / import_depends |
+| 27 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 28 | D_INTEGRATION 管线路由: DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 29 | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 30 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 31 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 32 | D_INTELLIGENCE 上下文管理: test_budget_engine_root.py | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 33 | D_INTELLIGENCE 上下文管理: test_budget_engine_root.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 34 | D_INTELLIGENCE 上下文管理: DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 35 | D_INTELLIGENCE 上下文管理: DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 36 | D_INTELLIGENCE 上下文管理: test_budget_handler.py | → | G-CT-006 消费端 — Escalation.on_budget_alert()... | 测试依赖 / test_depends |
+| 37 | D_INTELLIGENCE 上下文管理: DM-201505: F4 自动化集成测试——完整生命周期端... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 38 | D_INTELLIGENCE 上下文管理: DM-201505: F4 自动化集成测试——完整生命周期端... | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 39 | D_INTELLIGENCE 上下文管理: test_budget_models.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 40 | D_INTELLIGENCE 上下文管理: test_budget_profile_manager.py | → | budget_profile_manager.py | 测试依赖 / test_depends |
+| 41 | D_INTELLIGENCE 上下文管理: DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 42 | D_INTELLIGENCE 上下文管理: DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 43 | D_INTELLIGENCE 上下文管理: test_budget_tracker.py | → | Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 44 | D_INTELLIGENCE 上下文管理: test_budget_tracker.py | → | budget_tracker.py | 测试依赖 / test_depends |
+| 45 | D_SHARED 共享服务: test_e_gov_budget_handler.py | → | G-CT-006 消费端 — Escalation.on_budget_alert()... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 11 个外部域直接连接（出边 10 条 + 入边 44 条 = 54 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 11 个外部域直接连接（出边 10 条 + 入边 45 条 = 55 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -299,7 +301,7 @@ graph LR
     D_INTELLIGENCE -->|13条 测试依赖 / test_depends| D_OPS
     D_GOV_OPS_RESILIENCE -->|5条 导入依赖 / import_depends| D_OPS
     D_INTEGRATION -->|4条 导入依赖 / import_depends| D_OPS
-    D_GOV_REPAIR -->|3条 导入依赖 / import_depends| D_OPS
+    D_GOV_REPAIR -->|4条 导入依赖 / import_depends| D_OPS
     D_GOV_ENFORCEMENT -->|2条 导入依赖 / import_depends| D_OPS
     D_SHARED -->|1条 测试依赖 / test_depends| D_OPS
     D_INFRA_RUNTIME -->|1条 导入依赖 / import_depends| D_OPS

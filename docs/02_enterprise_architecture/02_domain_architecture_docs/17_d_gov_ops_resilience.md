@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_GOV_OPS_RESILIENCE 运维弹性治理架构文档
 version: "1.0"
 status: active
-date: 2026-07-13
+date: 2026-07-14
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运维弹性治理（D_GOV_OPS_RESILIENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-13 23:59:27
+> 最后更新: 2026-07-14 15:50:38
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,21 +26,21 @@ ttl: permanent
 | 域ID | D_GOV_OPS_RESILIENCE | Domain ID | D_GOV_OPS_RESILIENCE |
 | 域名称 | 运维弹性治理 | Domain Name | Ops Resilience Governance |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
-| 模块数 | 79 | Module Count | 79 |
+| 模块数 | 80 | Module Count | 80 |
 | 域内依赖 | 17 | Internal Dependencies | 17 |
-| 跨域入边 | 134 | Cross-domain Incoming | 134 |
+| 跨域入边 | 144 | Cross-domain Incoming | 144 |
 | 跨域出边 | 31 | Cross-domain Outgoing | 31 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 3 | Prototype Modules | 3 |
-| 生产态模块 | 76 | Production Modules | 76 |
-| 容量 | 76/150 (正常) | Capacity | 76/150 (正常) |
+| 生产态模块 | 77 | Production Modules | 77 |
+| 容量 | 77/150 (正常) | Capacity | 77/150 (正常) |
 | 描述 | 运维治理(ops_governance) | Description | 运维治理(ops_governance) |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 79 个模块 / 79 modules）。
+> 按 architecture_layer 分组的模块清单（共 80 个模块 / 80 modules）。
 
-### L1 基础层 / Foundation Layer (79 modules)
+### L1 基础层 / Foundation Layer (80 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
@@ -59,70 +59,71 @@ ttl: permanent
 | 13 | src/zephyr/governance/escalation/human_factors.py | Human Factors — v0.7.0 人因工程: 通知疲劳管理+... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
 | 14 | src/zephyr/governance/escalation/identity_verifier.py | Identity Verifier — D-022-12 Agent身份验证器: ... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
 | 15 | src/zephyr/governance/escalation/incident_response.py | incident_response.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 16 | src/zephyr/governance/escalation/result_types.py | G-CT-003 — RollbackResult backward-compat re-e... | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 17 | src/zephyr/governance/escalation/spof_checker.py | spof_checker.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 18 | src/zephyr/governance/escalation/triage.py | G2 Triage 门禁 — 知识分类评分（T-2-13-B） | 生产态 / production | [MOD-KB-001](../../03_modules/_domain_knowledge/knowledge_base/blueprint.md) |
-| 19 | src/zephyr/governance/ops_governance/__init__.py | __init__.py | 原型态 / prototype |  |
-| 20 | src/zephyr/governance/ops_governance/auto_runner.py | GovernanceAutoRunner — 治理脚本自动运行/自动关... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 21 | src/zephyr/governance/ops_governance/bandwidth_optimizer.py | bandwidth_optimizer.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 22 | src/zephyr/governance/ops_governance/burn_rate_monitor.py | Burn Rate Monitor — MOD-INF-024 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 23 | src/zephyr/governance/ops_governance/clock_guard.py | Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 24 | src/zephyr/governance/ops_governance/coldstart_manager.py | Coldstart Manager — v0.7.0 冷启动管理器: escal... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 25 | src/zephyr/governance/ops_governance/cost_attributor.py | cost_attributor.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 26 | src/zephyr/governance/ops_governance/cost_router.py | cost_router.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 27 | src/zephyr/governance/ops_governance/daily_ops.py | daily_ops.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 28 | src/zephyr/governance/ops_governance/degradation_manager.py | degradation_manager.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 29 | src/zephyr/governance/ops_governance/error_budget_burst_l... | Error Budget Burst Limiter — v0.11.0 错误预算B... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 30 | src/zephyr/governance/ops_governance/event_hook.py | EventHook — 声明式任务系统事件订阅 | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 31 | src/zephyr/governance/ops_governance/interrupt_handler.py | Interrupt Handler — D-022-06 硬中断处理器: Own... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 32 | src/zephyr/governance/ops_governance/maintenance_window_a... | Maintenance Window Adapter — v0.10.0 计划维护... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 33 | src/zephyr/governance/ops_governance/ops_foundation.py | ops_foundation.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 34 | src/zephyr/governance/ops_governance/parent_child_attribu... | parent_child_attributor.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 35 | src/zephyr/governance/ops_governance/roi_calculator.py | roi_calculator.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 36 | src/zephyr/governance/ops_governance/self_budget_tracker.py | self_budget_tracker.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 37 | src/zephyr/governance/ops_governance/stream_abort_guard.py | StreamAbortGuard — 流式中断守卫 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 38 | src/zephyr/governance/ops_governance/tco_model.py | tco_model.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 39 | src/zephyr/governance/ops_governance/time_sync.py | time_sync.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 40 | src/zephyr/governance/ops_governance/timeout_guard.py | timeout_guard.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 41 | src/zephyr/governance/resilience_governance/__init__.py | __init__.py | 原型态 / prototype |  |
-| 42 | src/zephyr/governance/resilience_governance/account_isola... | Account Isolator — v0.10.0 多账户升级隔离器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 43 | src/zephyr/governance/resilience_governance/blast_radius.py | blast_radius — MOD-INF-028 §3.1 Stage 9 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 44 | src/zephyr/governance/resilience_governance/broker_resili... | broker_resilience.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 45 | src/zephyr/governance/resilience_governance/circuit_break... | Circuit Breaker — MOD-INF-022 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 46 | src/zephyr/governance/resilience_governance/deadlock_dete... | Deadlock Detector — D-022-04 多Agent死锁+循环... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 47 | src/zephyr/governance/resilience_governance/decision_fati... | decision_fatigue.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 48 | src/zephyr/governance/resilience_governance/decision_fati... | decision_fatigue_cli.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 49 | src/zephyr/governance/resilience_governance/engine_sandbo... | EngineSandbox — D-022-08 OS-level sandboxing f... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 50 | src/zephyr/governance/resilience_governance/f5_boot_integ... | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 51 | src/zephyr/governance/resilience_governance/f5_event_subs... | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 52 | src/zephyr/governance/resilience_governance/f5_shutdown_m... | F5ShutdownManager — F5 自动关闭/状态持久化/信... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 53 | src/zephyr/governance/resilience_governance/fail_mode_man... | fail_mode_manager.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 54 | src/zephyr/governance/resilience_governance/last_resort_w... | Last Resort Watchdog — v0.8.0 终极逃生舱: 所有... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 55 | src/zephyr/governance/resilience_governance/policy_sandbo... | policy_sandbox.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 56 | src/zephyr/governance/resilience_governance/process_isola... | Process Isolator — v0.6.0 进程隔离器: engine运... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 57 | src/zephyr/governance/resilience_governance/witness_isola... | Witness Isolation — v0.8.0 Witness隔离: N版本d... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 58 | src/zephyr/governance/security_governance/__init__.py | __init__.py | 原型态 / prototype |  |
-| 59 | src/zephyr/governance/security_governance/adversarial_tes... | adversarial_tester.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 60 | src/zephyr/governance/security_governance/anti_automation... | Anti-Automation Bias — D-022-09 mandatory huma... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 61 | src/zephyr/governance/security_governance/api_response_sa... | API Response Sanitizer — v0.9.0 API响应清洗器:... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 62 | src/zephyr/governance/security_governance/bare_repo_scann... | Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 63 | src/zephyr/governance/security_governance/compositional_s... | Compositional Safety Tester — v0.14.0 组合性不... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 64 | src/zephyr/governance/security_governance/config_scanner.py | Config Scanner — v0.9.0 AI配置文件注入扫描器: ... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 65 | src/zephyr/governance/security_governance/credential_guar... | Credential Guard — v0.7.0 密钥泄露防护: env检... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 66 | src/zephyr/governance/security_governance/default_securit... | DefaultSecurityGateway — SecurityGateway 三层... | 生产态 / production | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 67 | src/zephyr/governance/security_governance/ghost_scan.py | Ghost Scan — v0.8.0 幽灵进程检测: lingering pr... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 68 | src/zephyr/governance/security_governance/github_api_guar... | GitHub API Guard — v0.9.0 Comment and Control... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 69 | src/zephyr/governance/security_governance/hooks_integrity... | Hooks Integrity Guard — v0.11.0 Hooks自编辑防... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 70 | src/zephyr/governance/security_governance/ipi_defense.py | ipi_defense.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 71 | src/zephyr/governance/security_governance/memory_poison_g... | Memory Poison Guard — v0.9.0 记忆投毒防护: Mem... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 72 | src/zephyr/governance/security_governance/persuasion_dete... | Persuasion Detector — D-022-09 心理说服检测: ... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 73 | src/zephyr/governance/security_governance/poison_cascade_... | poison_cascade_detector.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 74 | src/zephyr/governance/security_governance/sbom_guard.py | SBOM Guard — v0.8.0 SBOM供应链防护: 依赖版本锁... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 75 | src/zephyr/governance/security_governance/security_config... | Security Config Scanner — v0.13.0 缺失安全配置... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 76 | src/zephyr/governance/security_governance/security_gatewa... | D_COMPLIANCE — Governance & Compliance Layer | 生产态 / production | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 77 | src/zephyr/governance/security_governance/tamper_evident_... | tamper_evident_log.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 78 | src/zephyr/governance/security_governance/vibe_security_v... | Vibe Security Verifier — v0.9.0 Vibe Coding安... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 79 | src/zephyr/governance/security_governance/vibe_verify_int... | VibeVerify Integration — v0.9.0 VibeVerify集成... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 16 | src/zephyr/governance/escalation/owner_absent.py | Owner Absent — 人力缺席分级处置。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 17 | src/zephyr/governance/escalation/result_types.py | G-CT-003 — RollbackResult backward-compat re-e... | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
+| 18 | src/zephyr/governance/escalation/spof_checker.py | spof_checker.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 19 | src/zephyr/governance/escalation/triage.py | G2 Triage 门禁 — 知识分类评分（T-2-13-B） | 生产态 / production | [MOD-KB-001](../../03_modules/_domain_knowledge/knowledge_base/blueprint.md) |
+| 20 | src/zephyr/governance/ops_governance/__init__.py | __init__.py | 原型态 / prototype |  |
+| 21 | src/zephyr/governance/ops_governance/auto_runner.py | GovernanceAutoRunner — 治理脚本自动运行/自动关... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
+| 22 | src/zephyr/governance/ops_governance/bandwidth_optimizer.py | bandwidth_optimizer.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 23 | src/zephyr/governance/ops_governance/burn_rate_monitor.py | Burn Rate Monitor — MOD-INF-024 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 24 | src/zephyr/governance/ops_governance/clock_guard.py | Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 25 | src/zephyr/governance/ops_governance/coldstart_manager.py | Coldstart Manager — v0.7.0 冷启动管理器: escal... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 26 | src/zephyr/governance/ops_governance/cost_attributor.py | cost_attributor.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 27 | src/zephyr/governance/ops_governance/cost_router.py | cost_router.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 28 | src/zephyr/governance/ops_governance/daily_ops.py | daily_ops.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 29 | src/zephyr/governance/ops_governance/degradation_manager.py | degradation_manager.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 30 | src/zephyr/governance/ops_governance/error_budget_burst_l... | Error Budget Burst Limiter — v0.11.0 错误预算B... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 31 | src/zephyr/governance/ops_governance/event_hook.py | EventHook — 声明式任务系统事件订阅 | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
+| 32 | src/zephyr/governance/ops_governance/interrupt_handler.py | Interrupt Handler — D-022-06 硬中断处理器: Own... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 33 | src/zephyr/governance/ops_governance/maintenance_window_a... | Maintenance Window Adapter — v0.10.0 计划维护... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 34 | src/zephyr/governance/ops_governance/ops_foundation.py | ops_foundation.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 35 | src/zephyr/governance/ops_governance/parent_child_attribu... | parent_child_attributor.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 36 | src/zephyr/governance/ops_governance/roi_calculator.py | roi_calculator.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 37 | src/zephyr/governance/ops_governance/self_budget_tracker.py | self_budget_tracker.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 38 | src/zephyr/governance/ops_governance/stream_abort_guard.py | StreamAbortGuard — 流式中断守卫 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 39 | src/zephyr/governance/ops_governance/tco_model.py | tco_model.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 40 | src/zephyr/governance/ops_governance/time_sync.py | time_sync.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 41 | src/zephyr/governance/ops_governance/timeout_guard.py | timeout_guard.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 42 | src/zephyr/governance/resilience_governance/__init__.py | __init__.py | 原型态 / prototype |  |
+| 43 | src/zephyr/governance/resilience_governance/account_isola... | Account Isolator — v0.10.0 多账户升级隔离器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 44 | src/zephyr/governance/resilience_governance/blast_radius.py | blast_radius — MOD-INF-028 §3.1 Stage 9 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
+| 45 | src/zephyr/governance/resilience_governance/broker_resili... | broker_resilience.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 46 | src/zephyr/governance/resilience_governance/circuit_break... | Circuit Breaker — MOD-INF-022 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 47 | src/zephyr/governance/resilience_governance/deadlock_dete... | Deadlock Detector — D-022-04 多Agent死锁+循环... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 48 | src/zephyr/governance/resilience_governance/decision_fati... | decision_fatigue.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 49 | src/zephyr/governance/resilience_governance/decision_fati... | decision_fatigue_cli.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 50 | src/zephyr/governance/resilience_governance/engine_sandbo... | EngineSandbox — D-022-08 OS-level sandboxing f... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 51 | src/zephyr/governance/resilience_governance/f5_boot_integ... | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 52 | src/zephyr/governance/resilience_governance/f5_event_subs... | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 53 | src/zephyr/governance/resilience_governance/f5_shutdown_m... | F5ShutdownManager — F5 自动关闭/状态持久化/信... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 54 | src/zephyr/governance/resilience_governance/fail_mode_man... | fail_mode_manager.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 55 | src/zephyr/governance/resilience_governance/last_resort_w... | Last Resort Watchdog — v0.8.0 终极逃生舱: 所有... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 56 | src/zephyr/governance/resilience_governance/policy_sandbo... | policy_sandbox.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 57 | src/zephyr/governance/resilience_governance/process_isola... | Process Isolator — v0.6.0 进程隔离器: engine运... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 58 | src/zephyr/governance/resilience_governance/witness_isola... | Witness Isolation — v0.8.0 Witness隔离: N版本d... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 59 | src/zephyr/governance/security_governance/__init__.py | __init__.py | 原型态 / prototype |  |
+| 60 | src/zephyr/governance/security_governance/adversarial_tes... | adversarial_tester.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 61 | src/zephyr/governance/security_governance/anti_automation... | Anti-Automation Bias — D-022-09 mandatory huma... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 62 | src/zephyr/governance/security_governance/api_response_sa... | API Response Sanitizer — v0.9.0 API响应清洗器:... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 63 | src/zephyr/governance/security_governance/bare_repo_scann... | Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 64 | src/zephyr/governance/security_governance/compositional_s... | Compositional Safety Tester — v0.14.0 组合性不... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 65 | src/zephyr/governance/security_governance/config_scanner.py | Config Scanner — v0.9.0 AI配置文件注入扫描器: ... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 66 | src/zephyr/governance/security_governance/credential_guar... | Credential Guard — v0.7.0 密钥泄露防护: env检... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 67 | src/zephyr/governance/security_governance/default_securit... | DefaultSecurityGateway — SecurityGateway 三层... | 生产态 / production | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
+| 68 | src/zephyr/governance/security_governance/ghost_scan.py | Ghost Scan — v0.8.0 幽灵进程检测: lingering pr... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 69 | src/zephyr/governance/security_governance/github_api_guar... | GitHub API Guard — v0.9.0 Comment and Control... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 70 | src/zephyr/governance/security_governance/hooks_integrity... | Hooks Integrity Guard — v0.11.0 Hooks自编辑防... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 71 | src/zephyr/governance/security_governance/ipi_defense.py | ipi_defense.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 72 | src/zephyr/governance/security_governance/memory_poison_g... | Memory Poison Guard — v0.9.0 记忆投毒防护: Mem... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 73 | src/zephyr/governance/security_governance/persuasion_dete... | Persuasion Detector — D-022-09 心理说服检测: ... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 74 | src/zephyr/governance/security_governance/poison_cascade_... | poison_cascade_detector.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 75 | src/zephyr/governance/security_governance/sbom_guard.py | SBOM Guard — v0.8.0 SBOM供应链防护: 依赖版本锁... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 76 | src/zephyr/governance/security_governance/security_config... | Security Config Scanner — v0.13.0 缺失安全配置... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 77 | src/zephyr/governance/security_governance/security_gatewa... | D_COMPLIANCE — Governance & Compliance Layer | 生产态 / production | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
+| 78 | src/zephyr/governance/security_governance/tamper_evident_... | tamper_evident_log.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 79 | src/zephyr/governance/security_governance/vibe_security_v... | Vibe Security Verifier — v0.9.0 Vibe Coding安... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 80 | src/zephyr/governance/security_governance/vibe_verify_int... | VibeVerify Integration — v0.9.0 VibeVerify集成... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -137,7 +138,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 79 个模块（生产态 76 + 设计态 0 + 原型态 3），标签标注成熟度。
+> 展示全部 80 个模块（生产态 77 + 设计态 0 + 原型态 3），标签标注成熟度。
 
 #### 第 1 页 / 共 3 页
 
@@ -159,6 +160,7 @@ graph TD
         src_zephyr_governance_escalation_human_factors_py["(生产态 / production) Human Factors — v0.7.0 人因工程: 通知疲劳管理+...<br/>文件: human_factors.py"]
         src_zephyr_governance_escalation_identity_verifier_py["(生产态 / production) Identity Verifier — D-022-12 Agent身份验证器: ...<br/>文件: identity_verifier.py"]
         src_zephyr_governance_escalation_incident_response_py["(生产态 / production) incident_response.py"]
+        src_zephyr_governance_escalation_owner_absent_py["(生产态 / production) Owner Absent — 人力缺席分级处置。<br/>文件: owner_absent.py"]
         src_zephyr_governance_escalation_result_types_py["(生产态 / production) G-CT-003 — RollbackResult backward-compat re-e...<br/>文件: result_types.py"]
         src_zephyr_governance_escalation_spof_checker_py["(生产态 / production) spof_checker.py"]
         src_zephyr_governance_escalation_triage_py["(生产态 / production) G2 Triage 门禁 — 知识分类评分（T-2-13-B）<br/>文件: triage.py"]
@@ -173,11 +175,10 @@ graph TD
         src_zephyr_governance_ops_governance_daily_ops_py["(生产态 / production) daily_ops.py"]
         src_zephyr_governance_ops_governance_degradation_manager_py["(生产态 / production) degradation_manager.py"]
         src_zephyr_governance_ops_governance_error_budget_burst_limiter_py["(生产态 / production) Error Budget Burst Limiter — v0.11.0 错误预算B...<br/>文件: error_budget_burst_limiter.py"]
-        src_zephyr_governance_ops_governance_event_hook_py["(生产态 / production) EventHook — 声明式任务系统事件订阅<br/>文件: event_hook.py"]
     end
-    src_zephyr_governance_escalation_escalation_api_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_metrics_py
+    src_zephyr_governance_escalation_escalation_api_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_init_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_escalation_init_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -185,46 +186,46 @@ graph TD
     D_SECURITY["(生产态 / production) D_SECURITY"]
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_governance_escalation_escalation_engine_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_governance_escalation_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_escalation_triage_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_RULE
     D_GOV_KB["(生产态 / production) D_GOV_KB"]
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_KB
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_KB
+    src_zephyr_governance_escalation_triage_py -.->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_governance_escalation_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_OPS["(生产态 / production) D_OPS"]
-    src_zephyr_governance_ops_governance_burn_rate_monitor_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_ops_governance_cost_attributor_py -->|导入依赖 / import_depends| D_OPS
+    src_zephyr_governance_ops_governance_burn_rate_monitor_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_ops_governance_degradation_manager_py -->|导入依赖 / import_depends| D_OPS
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_api_py
-    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_auto_runner_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_auto_runner_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_engine_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_loop_detector_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_git_hook_pre_scanner_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_burn_rate_monitor_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_cost_router_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_escalation_contracts_py
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_api_py
+    D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_incident_response_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_loop_detector_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_bandwidth_optimizer_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_cost_attributor_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_degradation_manager_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_error_budget_burst_limiter_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_escalation_consequence_manager_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_escalation_incident_response_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_escalation_spof_checker_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_burn_rate_monitor_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_governance_escalation_init_py,src_zephyr_governance_escalation_alternative_path_blocker_py,src_zephyr_governance_escalation_consequence_manager_py,src_zephyr_governance_escalation_contracts_py,src_zephyr_governance_escalation_escalation_api_py,src_zephyr_governance_escalation_escalation_engine_py,src_zephyr_governance_escalation_escalation_fatigue_manager_py,src_zephyr_governance_escalation_escalation_loop_detector_py,src_zephyr_governance_escalation_escalation_metrics_py,src_zephyr_governance_escalation_escalation_models_py,src_zephyr_governance_escalation_escalation_smoke_tests_py,src_zephyr_governance_escalation_git_hook_pre_scanner_py,src_zephyr_governance_escalation_human_factors_py,src_zephyr_governance_escalation_identity_verifier_py,src_zephyr_governance_escalation_incident_response_py,src_zephyr_governance_escalation_result_types_py,src_zephyr_governance_escalation_spof_checker_py,src_zephyr_governance_escalation_triage_py,src_zephyr_governance_ops_governance_auto_runner_py,src_zephyr_governance_ops_governance_bandwidth_optimizer_py,src_zephyr_governance_ops_governance_burn_rate_monitor_py,src_zephyr_governance_ops_governance_clock_guard_py,src_zephyr_governance_ops_governance_coldstart_manager_py,src_zephyr_governance_ops_governance_cost_attributor_py,src_zephyr_governance_ops_governance_cost_router_py,src_zephyr_governance_ops_governance_daily_ops_py,src_zephyr_governance_ops_governance_degradation_manager_py,src_zephyr_governance_ops_governance_error_budget_burst_limiter_py,src_zephyr_governance_ops_governance_event_hook_py production
+    class src_zephyr_governance_escalation_init_py,src_zephyr_governance_escalation_alternative_path_blocker_py,src_zephyr_governance_escalation_consequence_manager_py,src_zephyr_governance_escalation_contracts_py,src_zephyr_governance_escalation_escalation_api_py,src_zephyr_governance_escalation_escalation_engine_py,src_zephyr_governance_escalation_escalation_fatigue_manager_py,src_zephyr_governance_escalation_escalation_loop_detector_py,src_zephyr_governance_escalation_escalation_metrics_py,src_zephyr_governance_escalation_escalation_models_py,src_zephyr_governance_escalation_escalation_smoke_tests_py,src_zephyr_governance_escalation_git_hook_pre_scanner_py,src_zephyr_governance_escalation_human_factors_py,src_zephyr_governance_escalation_identity_verifier_py,src_zephyr_governance_escalation_incident_response_py,src_zephyr_governance_escalation_owner_absent_py,src_zephyr_governance_escalation_result_types_py,src_zephyr_governance_escalation_spof_checker_py,src_zephyr_governance_escalation_triage_py,src_zephyr_governance_ops_governance_auto_runner_py,src_zephyr_governance_ops_governance_bandwidth_optimizer_py,src_zephyr_governance_ops_governance_burn_rate_monitor_py,src_zephyr_governance_ops_governance_clock_guard_py,src_zephyr_governance_ops_governance_coldstart_manager_py,src_zephyr_governance_ops_governance_cost_attributor_py,src_zephyr_governance_ops_governance_cost_router_py,src_zephyr_governance_ops_governance_daily_ops_py,src_zephyr_governance_ops_governance_degradation_manager_py,src_zephyr_governance_ops_governance_error_budget_burst_limiter_py production
     class src_zephyr_governance_ops_governance_init_py design
-    class D_SHARED,D_SECURITY,D_GOVERNANCE,D_GOV_RULE,D_GOV_KB,D_OPS,D_FEEDBACK_LOOP external_prod
-    class D_GOV_AUDIT,D_GOV_SCRIPTS external_design
+    class D_SHARED,D_SECURITY,D_GOV_RULE,D_GOV_KB,D_GOVERNANCE,D_OPS,D_GOV_REPAIR external_prod
+    class D_GOV_AUDIT,D_AUTONOMY_CORE external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -232,6 +233,7 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE 运维弹性治理"]
+        src_zephyr_governance_ops_governance_event_hook_py["(生产态 / production) EventHook — 声明式任务系统事件订阅<br/>文件: event_hook.py"]
         src_zephyr_governance_ops_governance_interrupt_handler_py["(生产态 / production) Interrupt Handler — D-022-06 硬中断处理器: Own...<br/>文件: interrupt_handler.py"]
         src_zephyr_governance_ops_governance_maintenance_window_adapter_py["(生产态 / production) Maintenance Window Adapter — v0.10.0 计划维护...<br/>文件: maintenance_window_adapter.py"]
         src_zephyr_governance_ops_governance_ops_foundation_py["(生产态 / production) ops_foundation.py"]
@@ -261,51 +263,52 @@ graph TD
         src_zephyr_governance_resilience_governance_witness_isolation_py["(生产态 / production) Witness Isolation — v0.8.0 Witness隔离: N版本d...<br/>文件: witness_isolation.py"]
         src_zephyr_governance_security_governance_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_governance_security_governance_adversarial_tester_py["(生产态 / production) adversarial_tester.py"]
-        src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) Anti-Automation Bias — D-022-09 mandatory huma...<br/>文件: anti_automation_bias.py"]
     end
-    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
     src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
-    src_zephyr_governance_resilience_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_resilience_governance_blast_radius_py
+    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    src_zephyr_governance_resilience_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_resilience_governance_account_isolator_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
-    src_zephyr_governance_security_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_security_governance_anti_automation_bias_py
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_governance_resilience_governance_blast_radius_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_governance_resilience_governance_blast_radius_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
-    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_governance_resilience_governance_blast_radius_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_resilience_governance_f5_shutdown_manager_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
+    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
     src_zephyr_governance_resilience_governance_f5_shutdown_manager_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_resilience_governance_f5_shutdown_manager_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_INFRA_A2A
-    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     D_OPS["(生产态 / production) D_OPS"]
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| D_OPS
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_f5_boot_integration_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_f5_shutdown_manager_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_f5_boot_integration_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_f5_shutdown_manager_py
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_account_isolator_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_anti_automation_bias_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_adversarial_tester_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_tco_model_py
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_roi_calculator_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_fail_mode_manager_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_policy_sandbox_py
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_interrupt_handler_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_self_budget_tracker_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_blast_radius_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_tco_model_py
+    D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_broker_resilience_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_cli_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_ops_foundation_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_circuit_breaker_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_parent_child_attributor_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_engine_sandbox_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_interrupt_handler_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_process_isolator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_governance_ops_governance_interrupt_handler_py,src_zephyr_governance_ops_governance_maintenance_window_adapter_py,src_zephyr_governance_ops_governance_ops_foundation_py,src_zephyr_governance_ops_governance_parent_child_attributor_py,src_zephyr_governance_ops_governance_roi_calculator_py,src_zephyr_governance_ops_governance_self_budget_tracker_py,src_zephyr_governance_ops_governance_stream_abort_guard_py,src_zephyr_governance_ops_governance_tco_model_py,src_zephyr_governance_ops_governance_time_sync_py,src_zephyr_governance_ops_governance_timeout_guard_py,src_zephyr_governance_resilience_governance_account_isolator_py,src_zephyr_governance_resilience_governance_blast_radius_py,src_zephyr_governance_resilience_governance_broker_resilience_py,src_zephyr_governance_resilience_governance_circuit_breaker_py,src_zephyr_governance_resilience_governance_deadlock_detector_py,src_zephyr_governance_resilience_governance_decision_fatigue_py,src_zephyr_governance_resilience_governance_decision_fatigue_cli_py,src_zephyr_governance_resilience_governance_engine_sandbox_py,src_zephyr_governance_resilience_governance_f5_boot_integration_py,src_zephyr_governance_resilience_governance_f5_event_subscriber_py,src_zephyr_governance_resilience_governance_f5_shutdown_manager_py,src_zephyr_governance_resilience_governance_fail_mode_manager_py,src_zephyr_governance_resilience_governance_last_resort_watchdog_py,src_zephyr_governance_resilience_governance_policy_sandbox_py,src_zephyr_governance_resilience_governance_process_isolator_py,src_zephyr_governance_resilience_governance_witness_isolation_py,src_zephyr_governance_security_governance_adversarial_tester_py,src_zephyr_governance_security_governance_anti_automation_bias_py production
+    class src_zephyr_governance_ops_governance_event_hook_py,src_zephyr_governance_ops_governance_interrupt_handler_py,src_zephyr_governance_ops_governance_maintenance_window_adapter_py,src_zephyr_governance_ops_governance_ops_foundation_py,src_zephyr_governance_ops_governance_parent_child_attributor_py,src_zephyr_governance_ops_governance_roi_calculator_py,src_zephyr_governance_ops_governance_self_budget_tracker_py,src_zephyr_governance_ops_governance_stream_abort_guard_py,src_zephyr_governance_ops_governance_tco_model_py,src_zephyr_governance_ops_governance_time_sync_py,src_zephyr_governance_ops_governance_timeout_guard_py,src_zephyr_governance_resilience_governance_account_isolator_py,src_zephyr_governance_resilience_governance_blast_radius_py,src_zephyr_governance_resilience_governance_broker_resilience_py,src_zephyr_governance_resilience_governance_circuit_breaker_py,src_zephyr_governance_resilience_governance_deadlock_detector_py,src_zephyr_governance_resilience_governance_decision_fatigue_py,src_zephyr_governance_resilience_governance_decision_fatigue_cli_py,src_zephyr_governance_resilience_governance_engine_sandbox_py,src_zephyr_governance_resilience_governance_f5_boot_integration_py,src_zephyr_governance_resilience_governance_f5_event_subscriber_py,src_zephyr_governance_resilience_governance_f5_shutdown_manager_py,src_zephyr_governance_resilience_governance_fail_mode_manager_py,src_zephyr_governance_resilience_governance_last_resort_watchdog_py,src_zephyr_governance_resilience_governance_policy_sandbox_py,src_zephyr_governance_resilience_governance_process_isolator_py,src_zephyr_governance_resilience_governance_witness_isolation_py,src_zephyr_governance_security_governance_adversarial_tester_py production
     class src_zephyr_governance_resilience_governance_init_py,src_zephyr_governance_security_governance_init_py design
-    class D_SHARED,D_GOV_AUDIT,D_INFRA_A2A,D_GOVERNANCE,D_OPS external_prod
+    class D_GOV_AUDIT,D_SHARED,D_GOVERNANCE,D_INFRA_A2A,D_OPS,D_ORCHESTRATOR,D_GOV_REPAIR external_prod
 ```
 
 #### 第 3 页 / 共 3 页
@@ -313,6 +316,7 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE 运维弹性治理"]
+        src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) Anti-Automation Bias — D-022-09 mandatory huma...<br/>文件: anti_automation_bias.py"]
         src_zephyr_governance_security_governance_api_response_sanitizer_py["(生产态 / production) API Response Sanitizer — v0.9.0 API响应清洗器:...<br/>文件: api_response_sanitizer.py"]
         src_zephyr_governance_security_governance_bare_repo_scanner_py["(生产态 / production) Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。<br/>文件: bare_repo_scanner.py"]
         src_zephyr_governance_security_governance_compositional_safety_tester_py["(生产态 / production) Compositional Safety Tester — v0.14.0 组合性不...<br/>文件: compositional_safety_tester.py"]
@@ -336,49 +340,46 @@ graph TD
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_security_gateway_base_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SHARED
     D_SECURITY["(生产态 / production) D_SECURITY"]
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SECURITY
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_security_governance_default_security_gateway_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SECURITY
     D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
     src_zephyr_governance_security_governance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_governance_security_governance_tamper_evident_log_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_compositional_safety_tester_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_credential_guard_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_api_response_sanitizer_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_anti_automation_bias_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_bare_repo_scanner_py
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_config_scanner_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_bare_repo_scanner_py
-    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_governance_security_governance_default_security_gateway_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_governance_security_governance_default_security_gateway_py
-    D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_default_security_gateway_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_compositional_safety_tester_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_credential_guard_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_ghost_scan_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_ghost_scan_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_memory_poison_guard_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_ipi_defense_py
-    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
-    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_ipi_defense_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_github_api_guard_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_ipi_defense_py
     D_OPS["(生产态 / production) D_OPS"]
     D_OPS -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
+    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_ipi_defense_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_ipi_defense_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_poison_cascade_detector_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_governance_security_governance_default_security_gateway_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_governance_security_governance_api_response_sanitizer_py,src_zephyr_governance_security_governance_bare_repo_scanner_py,src_zephyr_governance_security_governance_compositional_safety_tester_py,src_zephyr_governance_security_governance_config_scanner_py,src_zephyr_governance_security_governance_credential_guard_py,src_zephyr_governance_security_governance_default_security_gateway_py,src_zephyr_governance_security_governance_ghost_scan_py,src_zephyr_governance_security_governance_github_api_guard_py,src_zephyr_governance_security_governance_hooks_integrity_guard_py,src_zephyr_governance_security_governance_ipi_defense_py,src_zephyr_governance_security_governance_memory_poison_guard_py,src_zephyr_governance_security_governance_persuasion_detector_py,src_zephyr_governance_security_governance_poison_cascade_detector_py,src_zephyr_governance_security_governance_sbom_guard_py,src_zephyr_governance_security_governance_security_config_scanner_py,src_zephyr_governance_security_governance_security_gateway_base_py,src_zephyr_governance_security_governance_tamper_evident_log_py,src_zephyr_governance_security_governance_vibe_security_verify_py,src_zephyr_governance_security_governance_vibe_verify_integration_py production
-    class D_GOVERNANCE,D_SHARED,D_SECURITY,D_GOV_AUDIT,D_OPS external_prod
-    class D_GOV_ENFORCEMENT,D_INFRASTRUCTURE,D_COMPLIANCE,D_SECURITY_LLM,D_AUTONOMY_CORE,D_INTELLIGENCE external_design
+    class src_zephyr_governance_security_governance_anti_automation_bias_py,src_zephyr_governance_security_governance_api_response_sanitizer_py,src_zephyr_governance_security_governance_bare_repo_scanner_py,src_zephyr_governance_security_governance_compositional_safety_tester_py,src_zephyr_governance_security_governance_config_scanner_py,src_zephyr_governance_security_governance_credential_guard_py,src_zephyr_governance_security_governance_default_security_gateway_py,src_zephyr_governance_security_governance_ghost_scan_py,src_zephyr_governance_security_governance_github_api_guard_py,src_zephyr_governance_security_governance_hooks_integrity_guard_py,src_zephyr_governance_security_governance_ipi_defense_py,src_zephyr_governance_security_governance_memory_poison_guard_py,src_zephyr_governance_security_governance_persuasion_detector_py,src_zephyr_governance_security_governance_poison_cascade_detector_py,src_zephyr_governance_security_governance_sbom_guard_py,src_zephyr_governance_security_governance_security_config_scanner_py,src_zephyr_governance_security_governance_security_gateway_base_py,src_zephyr_governance_security_governance_tamper_evident_log_py,src_zephyr_governance_security_governance_vibe_security_verify_py,src_zephyr_governance_security_governance_vibe_verify_integration_py production
+    class D_GOVERNANCE,D_SECURITY,D_SHARED,D_GOV_AUDIT,D_OPS external_prod
+    class D_GOV_ENFORCEMENT,D_INFRASTRUCTURE,D_INTELLIGENCE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 76 个，15 条域内依赖）。
+> 仅展示已上线运行的模块（共 77 个，15 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -398,6 +399,7 @@ graph TD
         src_zephyr_governance_escalation_human_factors_py["(生产态 / production) Human Factors — v0.7.0 人因工程: 通知疲劳管理+...<br/>文件: human_factors.py"]
         src_zephyr_governance_escalation_identity_verifier_py["(生产态 / production) Identity Verifier — D-022-12 Agent身份验证器: ...<br/>文件: identity_verifier.py"]
         src_zephyr_governance_escalation_incident_response_py["(生产态 / production) incident_response.py"]
+        src_zephyr_governance_escalation_owner_absent_py["(生产态 / production) Owner Absent — 人力缺席分级处置。<br/>文件: owner_absent.py"]
         src_zephyr_governance_escalation_result_types_py["(生产态 / production) G-CT-003 — RollbackResult backward-compat re-e...<br/>文件: result_types.py"]
         src_zephyr_governance_escalation_spof_checker_py["(生产态 / production) spof_checker.py"]
         src_zephyr_governance_escalation_triage_py["(生产态 / production) G2 Triage 门禁 — 知识分类评分（T-2-13-B）<br/>文件: triage.py"]
@@ -460,68 +462,69 @@ graph TD
         src_zephyr_governance_security_governance_vibe_security_verify_py["(生产态 / production) Vibe Security Verifier — v0.9.0 Vibe Coding安...<br/>文件: vibe_security_verify.py"]
         src_zephyr_governance_security_governance_vibe_verify_integration_py["(生产态 / production) VibeVerify Integration — v0.9.0 VibeVerify集成...<br/>文件: vibe_verify_integration.py"]
     end
-    src_zephyr_governance_escalation_escalation_api_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_metrics_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_circuit_breaker_py
+    src_zephyr_governance_escalation_escalation_api_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_init_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_escalation_init_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_init_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_circuit_breaker_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_security_gateway_base_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_governance_escalation_triage_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
+    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
+    D_OPS["(生产态 / production) D_OPS"]
+    src_zephyr_governance_ops_governance_degradation_manager_py -->|导入依赖 / import_depends| D_OPS
+    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_INFRA_A2A
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_governance_ops_governance_cost_attributor_py -->|导入依赖 / import_depends| D_OPS
+    src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| D_OPS
     D_GOV_KB["(生产态 / production) D_GOV_KB"]
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_KB
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_KB
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_RULE
-    D_OPS["(生产态 / production) D_OPS"]
     src_zephyr_governance_ops_governance_burn_rate_monitor_py -->|导入依赖 / import_depends| D_OPS
+    src_zephyr_governance_resilience_governance_f5_shutdown_manager_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_governance_security_governance_tamper_evident_log_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
-    src_zephyr_governance_security_governance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_governance_ops_governance_degradation_manager_py -->|导入依赖 / import_depends| D_OPS
-    src_zephyr_governance_resilience_governance_blast_radius_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_governance_resilience_governance_f5_shutdown_manager_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
-    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_INFRA_A2A
-    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_SECURITY["(生产态 / production) D_SECURITY"]
-    src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SECURITY
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_escalation_contracts_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_api_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_auto_runner_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_auto_runner_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_f5_boot_integration_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_f5_shutdown_manager_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_f5_boot_integration_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_f5_shutdown_manager_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_engine_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_loop_detector_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_vibe_verify_integration_py
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_incident_response_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_governance_escalation_escalation_loop_detector_py
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_bandwidth_optimizer_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_security_governance_ipi_defense_py
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_cost_attributor_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_degradation_manager_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_roi_calculator_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_error_budget_burst_limiter_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_governance_escalation_init_py,src_zephyr_governance_escalation_alternative_path_blocker_py,src_zephyr_governance_escalation_consequence_manager_py,src_zephyr_governance_escalation_contracts_py,src_zephyr_governance_escalation_escalation_api_py,src_zephyr_governance_escalation_escalation_engine_py,src_zephyr_governance_escalation_escalation_fatigue_manager_py,src_zephyr_governance_escalation_escalation_loop_detector_py,src_zephyr_governance_escalation_escalation_metrics_py,src_zephyr_governance_escalation_escalation_models_py,src_zephyr_governance_escalation_escalation_smoke_tests_py,src_zephyr_governance_escalation_git_hook_pre_scanner_py,src_zephyr_governance_escalation_human_factors_py,src_zephyr_governance_escalation_identity_verifier_py,src_zephyr_governance_escalation_incident_response_py,src_zephyr_governance_escalation_result_types_py,src_zephyr_governance_escalation_spof_checker_py,src_zephyr_governance_escalation_triage_py,src_zephyr_governance_ops_governance_auto_runner_py,src_zephyr_governance_ops_governance_bandwidth_optimizer_py,src_zephyr_governance_ops_governance_burn_rate_monitor_py,src_zephyr_governance_ops_governance_clock_guard_py,src_zephyr_governance_ops_governance_coldstart_manager_py,src_zephyr_governance_ops_governance_cost_attributor_py,src_zephyr_governance_ops_governance_cost_router_py,src_zephyr_governance_ops_governance_daily_ops_py,src_zephyr_governance_ops_governance_degradation_manager_py,src_zephyr_governance_ops_governance_error_budget_burst_limiter_py,src_zephyr_governance_ops_governance_event_hook_py,src_zephyr_governance_ops_governance_interrupt_handler_py,src_zephyr_governance_ops_governance_maintenance_window_adapter_py,src_zephyr_governance_ops_governance_ops_foundation_py,src_zephyr_governance_ops_governance_parent_child_attributor_py,src_zephyr_governance_ops_governance_roi_calculator_py,src_zephyr_governance_ops_governance_self_budget_tracker_py,src_zephyr_governance_ops_governance_stream_abort_guard_py,src_zephyr_governance_ops_governance_tco_model_py,src_zephyr_governance_ops_governance_time_sync_py,src_zephyr_governance_ops_governance_timeout_guard_py,src_zephyr_governance_resilience_governance_account_isolator_py,src_zephyr_governance_resilience_governance_blast_radius_py,src_zephyr_governance_resilience_governance_broker_resilience_py,src_zephyr_governance_resilience_governance_circuit_breaker_py,src_zephyr_governance_resilience_governance_deadlock_detector_py,src_zephyr_governance_resilience_governance_decision_fatigue_py,src_zephyr_governance_resilience_governance_decision_fatigue_cli_py,src_zephyr_governance_resilience_governance_engine_sandbox_py,src_zephyr_governance_resilience_governance_f5_boot_integration_py,src_zephyr_governance_resilience_governance_f5_event_subscriber_py,src_zephyr_governance_resilience_governance_f5_shutdown_manager_py,src_zephyr_governance_resilience_governance_fail_mode_manager_py,src_zephyr_governance_resilience_governance_last_resort_watchdog_py,src_zephyr_governance_resilience_governance_policy_sandbox_py,src_zephyr_governance_resilience_governance_process_isolator_py,src_zephyr_governance_resilience_governance_witness_isolation_py,src_zephyr_governance_security_governance_adversarial_tester_py,src_zephyr_governance_security_governance_anti_automation_bias_py,src_zephyr_governance_security_governance_api_response_sanitizer_py,src_zephyr_governance_security_governance_bare_repo_scanner_py,src_zephyr_governance_security_governance_compositional_safety_tester_py,src_zephyr_governance_security_governance_config_scanner_py,src_zephyr_governance_security_governance_credential_guard_py,src_zephyr_governance_security_governance_default_security_gateway_py,src_zephyr_governance_security_governance_ghost_scan_py,src_zephyr_governance_security_governance_github_api_guard_py,src_zephyr_governance_security_governance_hooks_integrity_guard_py,src_zephyr_governance_security_governance_ipi_defense_py,src_zephyr_governance_security_governance_memory_poison_guard_py,src_zephyr_governance_security_governance_persuasion_detector_py,src_zephyr_governance_security_governance_poison_cascade_detector_py,src_zephyr_governance_security_governance_sbom_guard_py,src_zephyr_governance_security_governance_security_config_scanner_py,src_zephyr_governance_security_governance_security_gateway_base_py,src_zephyr_governance_security_governance_tamper_evident_log_py,src_zephyr_governance_security_governance_vibe_security_verify_py,src_zephyr_governance_security_governance_vibe_verify_integration_py production
-    class D_GOV_KB,D_GOV_RULE,D_OPS,D_GOV_AUDIT,D_GOVERNANCE,D_SHARED,D_INFRA_A2A,D_SECURITY,D_FEEDBACK_LOOP external_prod
-    class D_GOV_ENFORCEMENT external_design
+    class src_zephyr_governance_escalation_init_py,src_zephyr_governance_escalation_alternative_path_blocker_py,src_zephyr_governance_escalation_consequence_manager_py,src_zephyr_governance_escalation_contracts_py,src_zephyr_governance_escalation_escalation_api_py,src_zephyr_governance_escalation_escalation_engine_py,src_zephyr_governance_escalation_escalation_fatigue_manager_py,src_zephyr_governance_escalation_escalation_loop_detector_py,src_zephyr_governance_escalation_escalation_metrics_py,src_zephyr_governance_escalation_escalation_models_py,src_zephyr_governance_escalation_escalation_smoke_tests_py,src_zephyr_governance_escalation_git_hook_pre_scanner_py,src_zephyr_governance_escalation_human_factors_py,src_zephyr_governance_escalation_identity_verifier_py,src_zephyr_governance_escalation_incident_response_py,src_zephyr_governance_escalation_owner_absent_py,src_zephyr_governance_escalation_result_types_py,src_zephyr_governance_escalation_spof_checker_py,src_zephyr_governance_escalation_triage_py,src_zephyr_governance_ops_governance_auto_runner_py,src_zephyr_governance_ops_governance_bandwidth_optimizer_py,src_zephyr_governance_ops_governance_burn_rate_monitor_py,src_zephyr_governance_ops_governance_clock_guard_py,src_zephyr_governance_ops_governance_coldstart_manager_py,src_zephyr_governance_ops_governance_cost_attributor_py,src_zephyr_governance_ops_governance_cost_router_py,src_zephyr_governance_ops_governance_daily_ops_py,src_zephyr_governance_ops_governance_degradation_manager_py,src_zephyr_governance_ops_governance_error_budget_burst_limiter_py,src_zephyr_governance_ops_governance_event_hook_py,src_zephyr_governance_ops_governance_interrupt_handler_py,src_zephyr_governance_ops_governance_maintenance_window_adapter_py,src_zephyr_governance_ops_governance_ops_foundation_py,src_zephyr_governance_ops_governance_parent_child_attributor_py,src_zephyr_governance_ops_governance_roi_calculator_py,src_zephyr_governance_ops_governance_self_budget_tracker_py,src_zephyr_governance_ops_governance_stream_abort_guard_py,src_zephyr_governance_ops_governance_tco_model_py,src_zephyr_governance_ops_governance_time_sync_py,src_zephyr_governance_ops_governance_timeout_guard_py,src_zephyr_governance_resilience_governance_account_isolator_py,src_zephyr_governance_resilience_governance_blast_radius_py,src_zephyr_governance_resilience_governance_broker_resilience_py,src_zephyr_governance_resilience_governance_circuit_breaker_py,src_zephyr_governance_resilience_governance_deadlock_detector_py,src_zephyr_governance_resilience_governance_decision_fatigue_py,src_zephyr_governance_resilience_governance_decision_fatigue_cli_py,src_zephyr_governance_resilience_governance_engine_sandbox_py,src_zephyr_governance_resilience_governance_f5_boot_integration_py,src_zephyr_governance_resilience_governance_f5_event_subscriber_py,src_zephyr_governance_resilience_governance_f5_shutdown_manager_py,src_zephyr_governance_resilience_governance_fail_mode_manager_py,src_zephyr_governance_resilience_governance_last_resort_watchdog_py,src_zephyr_governance_resilience_governance_policy_sandbox_py,src_zephyr_governance_resilience_governance_process_isolator_py,src_zephyr_governance_resilience_governance_witness_isolation_py,src_zephyr_governance_security_governance_adversarial_tester_py,src_zephyr_governance_security_governance_anti_automation_bias_py,src_zephyr_governance_security_governance_api_response_sanitizer_py,src_zephyr_governance_security_governance_bare_repo_scanner_py,src_zephyr_governance_security_governance_compositional_safety_tester_py,src_zephyr_governance_security_governance_config_scanner_py,src_zephyr_governance_security_governance_credential_guard_py,src_zephyr_governance_security_governance_default_security_gateway_py,src_zephyr_governance_security_governance_ghost_scan_py,src_zephyr_governance_security_governance_github_api_guard_py,src_zephyr_governance_security_governance_hooks_integrity_guard_py,src_zephyr_governance_security_governance_ipi_defense_py,src_zephyr_governance_security_governance_memory_poison_guard_py,src_zephyr_governance_security_governance_persuasion_detector_py,src_zephyr_governance_security_governance_poison_cascade_detector_py,src_zephyr_governance_security_governance_sbom_guard_py,src_zephyr_governance_security_governance_security_config_scanner_py,src_zephyr_governance_security_governance_security_gateway_base_py,src_zephyr_governance_security_governance_tamper_evident_log_py,src_zephyr_governance_security_governance_vibe_security_verify_py,src_zephyr_governance_security_governance_vibe_verify_integration_py production
+    class D_INFRA_A2A,D_OPS,D_GOVERNANCE,D_SECURITY,D_GOV_KB,D_GOV_RULE,D_GOV_AUDIT,D_GOV_REPAIR,D_ORCHESTRATOR external_prod
+    class D_SHARED,D_AUTONOMY_CORE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -639,95 +642,105 @@ graph TD
 | 47 | D_GOVERNANCE 生命周期管理: test_roi_calculator.py | → | roi_calculator.py | 测试依赖 / test_depends |
 | 48 | D_GOVERNANCE 生命周期管理: test_tco_model.py | → | tco_model.py | 测试依赖 / test_depends |
 | 49 | D_GOVERNANCE 生命周期管理: test_human_factors.py | → | Human Factors — v0.7.0 人因工程: 通知疲劳管理+... | 测试依赖 / test_depends |
-| 50 | D_GOVERNANCE 生命周期管理: test_delegation_engine.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
-| 51 | D_GOVERNANCE 生命周期管理: test_parent_child_attributor.py | → | parent_child_attributor.py | 测试依赖 / test_depends |
-| 52 | D_GOVERNANCE 生命周期管理: test_ghost_scan.py | → | Ghost Scan — v0.8.0 幽灵进程检测: lingering pr... | 测试依赖 / test_depends |
-| 53 | D_GOVERNANCE 生命周期管理: test_alternative_path_blocker.py | → | Alternative Path Blocker — v0.13.0 替代工具路.... | 测试依赖 / test_depends |
-| 54 | D_GOVERNANCE 生命周期管理: test_result_types.py | → | G-CT-003 — RollbackResult backward-compat re-e... | 测试依赖 / test_depends |
-| 55 | D_GOVERNANCE 生命周期管理: test_bare_repo_scanner.py | → | Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器... | 测试依赖 / test_depends |
-| 56 | D_GOVERNANCE 生命周期管理: test_governance_result_types.py | → | G-CT-003 — RollbackResult backward-compat re-e... | 测试依赖 / test_depends |
-| 57 | D_GOVERNANCE 生命周期管理: test_api_response_sanitizer.py | → | API Response Sanitizer — v0.9.0 API响应清洗器:... | 测试依赖 / test_depends |
-| 58 | D_GOVERNANCE 生命周期管理: test_bandwidth_optimizer.py | → | bandwidth_optimizer.py | 测试依赖 / test_depends |
-| 59 | D_GOVERNANCE 生命周期管理: test_coldstart_manager.py | → | Coldstart Manager — v0.7.0 冷启动管理器: escal... | 测试依赖 / test_depends |
-| 60 | D_GOVERNANCE 生命周期管理: test_maintenance_window_adapter.py | → | Maintenance Window Adapter — v0.10.0 计划维护.... | 测试依赖 / test_depends |
-| 61 | D_GOVERNANCE 生命周期管理: test_time_sync.py | → | time_sync.py | 测试依赖 / test_depends |
-| 62 | D_GOVERNANCE 生命周期管理: test_clock_guard.py | → | Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检... | 测试依赖 / test_depends |
-| 63 | D_GOVERNANCE 生命周期管理: test_daily_ops.py | → | daily_ops.py | 测试依赖 / test_depends |
-| 64 | D_GOVERNANCE 生命周期管理: EngineSandbox — filesystem/network/boundary is... | → | EngineSandbox — D-022-08 OS-level sandboxing f... | 测试依赖 / test_depends |
-| 65 | D_GOVERNANCE 生命周期管理: test_deadlock_detector.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
-| 66 | D_GOVERNANCE 生命周期管理: test_deadlock_detector.py | → | Deadlock Detector — D-022-04 多Agent死锁+循环.... | 测试依赖 / test_depends |
-| 67 | D_GOVERNANCE 生命周期管理: test_fail_mode_manager.py | → | fail_mode_manager.py | 测试依赖 / test_depends |
-| 68 | D_GOVERNANCE 生命周期管理: test_interrupt_handler.py | → | Interrupt Handler — D-022-06 硬中断处理器: Own... | 测试依赖 / test_depends |
-| 69 | D_GOVERNANCE 生命周期管理: test_last_resort_watchdog.py | → | Last Resort Watchdog — v0.8.0 终极逃生舱: 所有... | 测试依赖 / test_depends |
-| 70 | D_GOVERNANCE 生命周期管理: test_policy_sandbox.py | → | policy_sandbox.py | 测试依赖 / test_depends |
-| 71 | D_GOVERNANCE 生命周期管理: test_process_isolator.py | → | Process Isolator — v0.6.0 进程隔离器: engine运... | 测试依赖 / test_depends |
-| 72 | D_GOVERNANCE 生命周期管理: test_stream_abort_guard.py | → | StreamAbortGuard — 流式中断守卫 (stream_abort_... | 测试依赖 / test_depends |
-| 73 | D_GOVERNANCE 生命周期管理: test_timeout_guard.py | → | timeout_guard.py | 测试依赖 / test_depends |
-| 74 | D_GOVERNANCE 生命周期管理: test_witness_isolation.py | → | Witness Isolation — v0.8.0 Witness隔离: N版本d... | 测试依赖 / test_depends |
-| 75 | D_GOVERNANCE 生命周期管理: test_github_api_guard.py | → | GitHub API Guard — v0.9.0 Comment and Control.... | 测试依赖 / test_depends |
-| 76 | D_GOVERNANCE 生命周期管理: test_hooks_integrity_guard.py | → | Hooks Integrity Guard — v0.11.0 Hooks自编辑防.... | 测试依赖 / test_depends |
-| 77 | D_GOVERNANCE 生命周期管理: test_ipi_defense.py | → | ipi_defense.py | 测试依赖 / test_depends |
-| 78 | D_GOVERNANCE 生命周期管理: test_sbom_guard.py | → | SBOM Guard — v0.8.0 SBOM供应链防护: 依赖版本锁... | 测试依赖 / test_depends |
-| 79 | D_GOVERNANCE 生命周期管理: test_security_config_scanner.py | → | Security Config Scanner — v0.13.0 缺失安全配置... | 测试依赖 / test_depends |
-| 80 | D_GOV_AUDIT 审计追踪: delegation_bridge.py | → | Escalation Engine — MOD-INF-022 (escalation_en... | 导入依赖 / import_depends |
-| 81 | D_GOV_AUDIT 审计追踪: F18 治理脚本系统自动化测试. (test_f18_automatio... | → | GovernanceAutoRunner — 治理脚本自动运行/自动关... | 测试依赖 / test_depends |
-| 82 | D_GOV_AUDIT 审计追踪: F18 红蓝极限对抗测试. (test_f18_redblue.py) | → | GovernanceAutoRunner — 治理脚本自动运行/自动关... | 测试依赖 / test_depends |
-| 83 | D_GOV_AUDIT 审计追踪: test_f5_auto_shutdown.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
-| 84 | D_GOV_AUDIT 审计追踪: test_f5_auto_shutdown.py | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 测试依赖 / test_depends |
-| 85 | D_GOV_AUDIT 审计追踪: test_f5_auto_shutdown.py | → | F5ShutdownManager — F5 自动关闭/状态持久化/信.... | 测试依赖 / test_depends |
-| 86 | D_GOV_AUDIT 审计追踪: test_f5_auto_startup.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
-| 87 | D_GOV_AUDIT 审计追踪: test_f5_auto_startup.py | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 测试依赖 / test_depends |
-| 88 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | Escalation Engine — MOD-INF-022 (escalation_en... | 测试依赖 / test_depends |
-| 89 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | Deadlock Detector — D-022-04 多Agent死锁+循环.... | 测试依赖 / test_depends |
-| 90 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 测试依赖 / test_depends |
-| 91 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | 测试依赖 / test_depends |
-| 92 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | F5ShutdownManager — F5 自动关闭/状态持久化/信.... | 测试依赖 / test_depends |
-| 93 | D_GOV_AUDIT 审计追踪: test_f5_event_startup.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
-| 94 | D_GOV_AUDIT 审计追踪: test_f5_event_startup.py | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 测试依赖 / test_depends |
-| 95 | D_GOV_AUDIT 审计追踪: test_f5_event_startup.py | → | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | 测试依赖 / test_depends |
-| 96 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Escalation API — v0.7.0 Service Account API: .... | 测试依赖 / test_depends |
-| 97 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Escalation Engine — MOD-INF-022 (escalation_en... | 测试依赖 / test_depends |
-| 98 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Escalation Loop Detector — v0.10.0 跨模块升级.... | 测试依赖 / test_depends |
-| 99 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
-| 100 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Deadlock Detector — D-022-04 多Agent死锁+循环.... | 测试依赖 / test_depends |
-| 101 | D_GOV_AUDIT 审计追踪: test_self_budget_tracker.py | → | self_budget_tracker.py | 测试依赖 / test_depends |
-| 102 | D_GOV_AUDIT 审计追踪: blast_radius 单元测试 — BlastRadiusAnalyzer 全... | → | blast_radius — MOD-INF-028 §3.1 Stage 9 (blas... | 测试依赖 / test_depends |
-| 103 | D_GOV_AUDIT 审计追踪: blast_radius 红蓝对抗测试 — 对抗性场景覆盖. (t... | → | blast_radius — MOD-INF-028 §3.1 Stage 9 (blas... | 测试依赖 / test_depends |
-| 104 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | Burn Rate Monitor — MOD-INF-024 (burn_rate_mon... | 导入依赖 / import_depends |
-| 105 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | degradation_manager.py | 导入依赖 / import_depends |
-| 106 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | timeout_guard.py | 导入依赖 / import_depends |
-| 107 | D_GOV_SCRIPTS 脚本治理: test_git_hook_pre_scanner.py | → | Git Hook Pre-Scanner — v0.14.0 Git操作Hook预扫... | 测试依赖 / test_depends |
-| 108 | D_INFRASTRUCTURE: test_config_scanner.py | → | Config Scanner — v0.9.0 AI配置文件注入扫描器: ... | 测试依赖 / test_depends |
-| 109 | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalat... | → | Escalation Protocol data models — MOD-INF-022 ... | 导入依赖 / import_depends |
-| 110 | D_INFRA_RECOVERY 回滚恢复: RollbackBootIntegration — 回滚系统自动启动/关.... | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
-| 111 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | Coldstart Manager — v0.7.0 冷启动管理器: escal... | 导入依赖 / import_depends |
-| 112 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
-| 113 | D_INFRA_RUNTIME 运行时集成: test_event_hook.py | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 测试依赖 / test_depends |
-| 114 | D_INTELLIGENCE 上下文管理: DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | ipi_defense.py | 测试依赖 / test_depends |
-| 115 | D_KNOWLEDGE 知识管理: test_kb_triage.py | → | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | 测试依赖 / test_depends |
-| 116 | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | → | ipi_defense.py | 导入依赖 / import_depends |
-| 117 | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert()... | → | G-CT-003 消费端 — Escalation.on_rollback_failu... | 导入依赖 / import_depends |
-| 118 | D_ORCHESTRATOR 代理编排器: FailurePatternMatcher — 任务失败模式识别与纠正... | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
-| 119 | D_ORCHESTRATOR 代理编排器: FailurePatternMatcher — 任务失败模式识别与纠正... | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
-| 120 | D_SECURITY 对抗验证: escalation_bridge.py | → | Escalation Engine — MOD-INF-022 (escalation_en... | 导入依赖 / import_depends |
-| 121 | D_SECURITY_LLM LLM防御: test_cross_module_integration_llm_security.py | → | DefaultSecurityGateway — SecurityGateway 三层.... | 测试依赖 / test_depends |
-| 122 | D_SHARED 共享服务: test_e_circuit_breaker.py | → | Circuit Breaker — MOD-INF-022 (circuit_breaker.py) | 测试依赖 / test_depends |
-| 123 | D_SHARED 共享服务: test_e_clock_guard.py | → | Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检... | 测试依赖 / test_depends |
-| 124 | D_SHARED 共享服务: test_e_consequence_manager.py | → | consequence_manager.py | 测试依赖 / test_depends |
-| 125 | D_SHARED 共享服务: test_e_deadlock_detector.py | → | Deadlock Detector — D-022-04 多Agent死锁+循环.... | 测试依赖 / test_depends |
-| 126 | D_SHARED 共享服务: test_e_decision_fatigue.py | → | decision_fatigue.py | 测试依赖 / test_depends |
-| 127 | D_SHARED 共享服务: test_e_error_budget_burst_limiter.py | → | Error Budget Burst Limiter — v0.11.0 错误预算B... | 测试依赖 / test_depends |
-| 128 | D_SHARED 共享服务: test_e_escalation_api.py | → | Escalation API — v0.7.0 Service Account API: .... | 测试依赖 / test_depends |
-| 129 | D_SHARED 共享服务: test_e_escalation_metrics.py | → | Escalation Metrics — D-022-07 指标收集器: 升级... | 测试依赖 / test_depends |
-| 130 | D_SHARED 共享服务: test_e_escalation_models.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
-| 131 | D_SHARED 共享服务: test_e_ghost_scan.py | → | Ghost Scan — v0.8.0 幽灵进程检测: lingering pr... | 测试依赖 / test_depends |
-| 132 | D_SHARED 共享服务: test_e_gov_contracts.py | → | G-CT-003 消费端 — Escalation.on_rollback_failu... | 测试依赖 / test_depends |
-| 133 | D_SHARED 共享服务: test_e_identity_verifier.py | → | Identity Verifier — D-022-12 Agent身份验证器: ... | 测试依赖 / test_depends |
-| 134 | D_SHARED 共享服务: test_e_interrupt_handler.py | → | Interrupt Handler — D-022-06 硬中断处理器: Own... | 测试依赖 / test_depends |
+| 50 | D_GOVERNANCE 生命周期管理: test_owner_absent.py | → | Owner Absent — 人力缺席分级处置。 (owner_absen... | 测试依赖 / test_depends |
+| 51 | D_GOVERNANCE 生命周期管理: test_delegation_engine.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
+| 52 | D_GOVERNANCE 生命周期管理: test_parent_child_attributor.py | → | parent_child_attributor.py | 测试依赖 / test_depends |
+| 53 | D_GOVERNANCE 生命周期管理: test_ghost_scan.py | → | Ghost Scan — v0.8.0 幽灵进程检测: lingering pr... | 测试依赖 / test_depends |
+| 54 | D_GOVERNANCE 生命周期管理: test_alternative_path_blocker.py | → | Alternative Path Blocker — v0.13.0 替代工具路.... | 测试依赖 / test_depends |
+| 55 | D_GOVERNANCE 生命周期管理: test_result_types.py | → | G-CT-003 — RollbackResult backward-compat re-e... | 测试依赖 / test_depends |
+| 56 | D_GOVERNANCE 生命周期管理: test_bare_repo_scanner.py | → | Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器... | 测试依赖 / test_depends |
+| 57 | D_GOVERNANCE 生命周期管理: test_governance_result_types.py | → | G-CT-003 — RollbackResult backward-compat re-e... | 测试依赖 / test_depends |
+| 58 | D_GOVERNANCE 生命周期管理: test_api_response_sanitizer.py | → | API Response Sanitizer — v0.9.0 API响应清洗器:... | 测试依赖 / test_depends |
+| 59 | D_GOVERNANCE 生命周期管理: test_bandwidth_optimizer.py | → | bandwidth_optimizer.py | 测试依赖 / test_depends |
+| 60 | D_GOVERNANCE 生命周期管理: test_coldstart_manager.py | → | Coldstart Manager — v0.7.0 冷启动管理器: escal... | 测试依赖 / test_depends |
+| 61 | D_GOVERNANCE 生命周期管理: test_maintenance_window_adapter.py | → | Maintenance Window Adapter — v0.10.0 计划维护.... | 测试依赖 / test_depends |
+| 62 | D_GOVERNANCE 生命周期管理: test_time_sync.py | → | time_sync.py | 测试依赖 / test_depends |
+| 63 | D_GOVERNANCE 生命周期管理: test_clock_guard.py | → | Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检... | 测试依赖 / test_depends |
+| 64 | D_GOVERNANCE 生命周期管理: test_daily_ops.py | → | daily_ops.py | 测试依赖 / test_depends |
+| 65 | D_GOVERNANCE 生命周期管理: EngineSandbox — filesystem/network/boundary is... | → | EngineSandbox — D-022-08 OS-level sandboxing f... | 测试依赖 / test_depends |
+| 66 | D_GOVERNANCE 生命周期管理: test_deadlock_detector.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
+| 67 | D_GOVERNANCE 生命周期管理: test_deadlock_detector.py | → | Deadlock Detector — D-022-04 多Agent死锁+循环.... | 测试依赖 / test_depends |
+| 68 | D_GOVERNANCE 生命周期管理: test_fail_mode_manager.py | → | fail_mode_manager.py | 测试依赖 / test_depends |
+| 69 | D_GOVERNANCE 生命周期管理: test_interrupt_handler.py | → | Interrupt Handler — D-022-06 硬中断处理器: Own... | 测试依赖 / test_depends |
+| 70 | D_GOVERNANCE 生命周期管理: test_last_resort_watchdog.py | → | Last Resort Watchdog — v0.8.0 终极逃生舱: 所有... | 测试依赖 / test_depends |
+| 71 | D_GOVERNANCE 生命周期管理: test_policy_sandbox.py | → | policy_sandbox.py | 测试依赖 / test_depends |
+| 72 | D_GOVERNANCE 生命周期管理: test_process_isolator.py | → | Process Isolator — v0.6.0 进程隔离器: engine运... | 测试依赖 / test_depends |
+| 73 | D_GOVERNANCE 生命周期管理: test_stream_abort_guard.py | → | StreamAbortGuard — 流式中断守卫 (stream_abort_... | 测试依赖 / test_depends |
+| 74 | D_GOVERNANCE 生命周期管理: test_timeout_guard.py | → | timeout_guard.py | 测试依赖 / test_depends |
+| 75 | D_GOVERNANCE 生命周期管理: test_witness_isolation.py | → | Witness Isolation — v0.8.0 Witness隔离: N版本d... | 测试依赖 / test_depends |
+| 76 | D_GOVERNANCE 生命周期管理: test_github_api_guard.py | → | GitHub API Guard — v0.9.0 Comment and Control.... | 测试依赖 / test_depends |
+| 77 | D_GOVERNANCE 生命周期管理: test_hooks_integrity_guard.py | → | Hooks Integrity Guard — v0.11.0 Hooks自编辑防.... | 测试依赖 / test_depends |
+| 78 | D_GOVERNANCE 生命周期管理: test_ipi_defense.py | → | ipi_defense.py | 测试依赖 / test_depends |
+| 79 | D_GOVERNANCE 生命周期管理: test_sbom_guard.py | → | SBOM Guard — v0.8.0 SBOM供应链防护: 依赖版本锁... | 测试依赖 / test_depends |
+| 80 | D_GOVERNANCE 生命周期管理: test_security_config_scanner.py | → | Security Config Scanner — v0.13.0 缺失安全配置... | 测试依赖 / test_depends |
+| 81 | D_GOV_AUDIT 审计追踪: delegation_bridge.py | → | Escalation Engine — MOD-INF-022 (escalation_en... | 导入依赖 / import_depends |
+| 82 | D_GOV_AUDIT 审计追踪: F18 治理脚本系统自动化测试. (test_f18_automatio... | → | GovernanceAutoRunner — 治理脚本自动运行/自动关... | 测试依赖 / test_depends |
+| 83 | D_GOV_AUDIT 审计追踪: F18 红蓝极限对抗测试. (test_f18_redblue.py) | → | GovernanceAutoRunner — 治理脚本自动运行/自动关... | 测试依赖 / test_depends |
+| 84 | D_GOV_AUDIT 审计追踪: test_f5_auto_shutdown.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
+| 85 | D_GOV_AUDIT 审计追踪: test_f5_auto_shutdown.py | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 测试依赖 / test_depends |
+| 86 | D_GOV_AUDIT 审计追踪: test_f5_auto_shutdown.py | → | F5ShutdownManager — F5 自动关闭/状态持久化/信.... | 测试依赖 / test_depends |
+| 87 | D_GOV_AUDIT 审计追踪: test_f5_auto_startup.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
+| 88 | D_GOV_AUDIT 审计追踪: test_f5_auto_startup.py | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 测试依赖 / test_depends |
+| 89 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | Escalation Engine — MOD-INF-022 (escalation_en... | 测试依赖 / test_depends |
+| 90 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | Deadlock Detector — D-022-04 多Agent死锁+循环.... | 测试依赖 / test_depends |
+| 91 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 测试依赖 / test_depends |
+| 92 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | 测试依赖 / test_depends |
+| 93 | D_GOV_AUDIT 审计追踪: F5 端到端集成测试 — boot→run→shutdown→resta... | → | F5ShutdownManager — F5 自动关闭/状态持久化/信.... | 测试依赖 / test_depends |
+| 94 | D_GOV_AUDIT 审计追踪: test_f5_event_startup.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
+| 95 | D_GOV_AUDIT 审计追踪: test_f5_event_startup.py | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | 测试依赖 / test_depends |
+| 96 | D_GOV_AUDIT 审计追踪: test_f5_event_startup.py | → | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | 测试依赖 / test_depends |
+| 97 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Escalation API — v0.7.0 Service Account API: .... | 测试依赖 / test_depends |
+| 98 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Escalation Engine — MOD-INF-022 (escalation_en... | 测试依赖 / test_depends |
+| 99 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Escalation Loop Detector — v0.10.0 跨模块升级.... | 测试依赖 / test_depends |
+| 100 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
+| 101 | D_GOV_AUDIT 审计追踪: F5 红蓝对抗极端测试 — DM-201513 (test_f5_red_t... | → | Deadlock Detector — D-022-04 多Agent死锁+循环.... | 测试依赖 / test_depends |
+| 102 | D_GOV_AUDIT 审计追踪: test_self_budget_tracker.py | → | self_budget_tracker.py | 测试依赖 / test_depends |
+| 103 | D_GOV_AUDIT 审计追踪: blast_radius 单元测试 — BlastRadiusAnalyzer 全... | → | blast_radius — MOD-INF-028 §3.1 Stage 9 (blas... | 测试依赖 / test_depends |
+| 104 | D_GOV_AUDIT 审计追踪: blast_radius 红蓝对抗测试 — 对抗性场景覆盖. (t... | → | blast_radius — MOD-INF-028 §3.1 Stage 9 (blas... | 测试依赖 / test_depends |
+| 105 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | consequence_manager.py | 导入依赖 / import_depends |
+| 106 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | Escalation Engine — MOD-INF-022 (escalation_en... | 导入依赖 / import_depends |
+| 107 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | incident_response.py | 导入依赖 / import_depends |
+| 108 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | spof_checker.py | 导入依赖 / import_depends |
+| 109 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | bandwidth_optimizer.py | 导入依赖 / import_depends |
+| 110 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | ops_foundation.py | 导入依赖 / import_depends |
+| 111 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | broker_resilience.py | 导入依赖 / import_depends |
+| 112 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | decision_fatigue.py | 导入依赖 / import_depends |
+| 113 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | decision_fatigue_cli.py | 导入依赖 / import_depends |
+| 114 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | Burn Rate Monitor — MOD-INF-024 (burn_rate_mon... | 导入依赖 / import_depends |
+| 115 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | degradation_manager.py | 导入依赖 / import_depends |
+| 116 | D_GOV_REPAIR 治理修复: budget_enforcement.py | → | timeout_guard.py | 导入依赖 / import_depends |
+| 117 | D_GOV_SCRIPTS 脚本治理: test_git_hook_pre_scanner.py | → | Git Hook Pre-Scanner — v0.14.0 Git操作Hook预扫... | 测试依赖 / test_depends |
+| 118 | D_INFRASTRUCTURE: test_config_scanner.py | → | Config Scanner — v0.9.0 AI配置文件注入扫描器: ... | 测试依赖 / test_depends |
+| 119 | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalat... | → | Escalation Protocol data models — MOD-INF-022 ... | 导入依赖 / import_depends |
+| 120 | D_INFRA_RECOVERY 回滚恢复: RollbackBootIntegration — 回滚系统自动启动/关.... | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
+| 121 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | Coldstart Manager — v0.7.0 冷启动管理器: escal... | 导入依赖 / import_depends |
+| 122 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
+| 123 | D_INFRA_RUNTIME 运行时集成: test_event_hook.py | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 测试依赖 / test_depends |
+| 124 | D_INTELLIGENCE 上下文管理: DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | ipi_defense.py | 测试依赖 / test_depends |
+| 125 | D_KNOWLEDGE 知识管理: test_kb_triage.py | → | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | 测试依赖 / test_depends |
+| 126 | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | → | ipi_defense.py | 导入依赖 / import_depends |
+| 127 | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert()... | → | G-CT-003 消费端 — Escalation.on_rollback_failu... | 导入依赖 / import_depends |
+| 128 | D_ORCHESTRATOR 代理编排器: FailurePatternMatcher — 任务失败模式识别与纠正... | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
+| 129 | D_ORCHESTRATOR 代理编排器: FailurePatternMatcher — 任务失败模式识别与纠正... | → | EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
+| 130 | D_SECURITY 对抗验证: escalation_bridge.py | → | Escalation Engine — MOD-INF-022 (escalation_en... | 导入依赖 / import_depends |
+| 131 | D_SECURITY_LLM LLM防御: test_cross_module_integration_llm_security.py | → | DefaultSecurityGateway — SecurityGateway 三层.... | 测试依赖 / test_depends |
+| 132 | D_SHARED 共享服务: test_e_circuit_breaker.py | → | Circuit Breaker — MOD-INF-022 (circuit_breaker.py) | 测试依赖 / test_depends |
+| 133 | D_SHARED 共享服务: test_e_clock_guard.py | → | Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检... | 测试依赖 / test_depends |
+| 134 | D_SHARED 共享服务: test_e_consequence_manager.py | → | consequence_manager.py | 测试依赖 / test_depends |
+| 135 | D_SHARED 共享服务: test_e_deadlock_detector.py | → | Deadlock Detector — D-022-04 多Agent死锁+循环.... | 测试依赖 / test_depends |
+| 136 | D_SHARED 共享服务: test_e_decision_fatigue.py | → | decision_fatigue.py | 测试依赖 / test_depends |
+| 137 | D_SHARED 共享服务: test_e_error_budget_burst_limiter.py | → | Error Budget Burst Limiter — v0.11.0 错误预算B... | 测试依赖 / test_depends |
+| 138 | D_SHARED 共享服务: test_e_escalation_api.py | → | Escalation API — v0.7.0 Service Account API: .... | 测试依赖 / test_depends |
+| 139 | D_SHARED 共享服务: test_e_escalation_metrics.py | → | Escalation Metrics — D-022-07 指标收集器: 升级... | 测试依赖 / test_depends |
+| 140 | D_SHARED 共享服务: test_e_escalation_models.py | → | Escalation Protocol data models — MOD-INF-022 ... | 测试依赖 / test_depends |
+| 141 | D_SHARED 共享服务: test_e_ghost_scan.py | → | Ghost Scan — v0.8.0 幽灵进程检测: lingering pr... | 测试依赖 / test_depends |
+| 142 | D_SHARED 共享服务: test_e_gov_contracts.py | → | G-CT-003 消费端 — Escalation.on_rollback_failu... | 测试依赖 / test_depends |
+| 143 | D_SHARED 共享服务: test_e_identity_verifier.py | → | Identity Verifier — D-022-12 Agent身份验证器: ... | 测试依赖 / test_depends |
+| 144 | D_SHARED 共享服务: test_e_interrupt_handler.py | → | Interrupt Handler — D-022-06 硬中断处理器: Own... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 22 个外部域直接连接（出边 31 条 + 入边 134 条 = 165 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 22 个外部域直接连接（出边 31 条 + 入边 144 条 = 175 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -741,19 +754,19 @@ graph LR
     D_GOV_KB["D_GOV_KB<br/>知识库治理"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
-    D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
-    D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
-    D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复"]
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
+    D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
+    D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
     D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理"]
     D_SECURITY_LLM["D_SECURITY_LLM<br/>LLM防御"]
     D_AUTONOMY_PERM["D_AUTONOMY_PERM<br/>自治保护"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复"]
     D_GOV_OPS_RESILIENCE -->|8条 导入依赖 / import_depends| D_SHARED
     D_GOV_OPS_RESILIENCE -->|6条 导入依赖 / import_depends| D_GOVERNANCE
     D_GOV_OPS_RESILIENCE -->|5条 导入依赖 / import_depends| D_OPS
@@ -763,25 +776,25 @@ graph LR
     D_GOV_OPS_RESILIENCE -->|2条 导入依赖 / import_depends| D_GOV_KB
     D_GOV_OPS_RESILIENCE -->|2条 导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_OPS_RESILIENCE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    D_GOVERNANCE -->|64条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    D_GOVERNANCE -->|65条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_GOV_AUDIT -->|24条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_SHARED -->|13条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    D_GOV_REPAIR -->|12条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_AUTONOMY_CORE -->|10条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
-    D_GOV_REPAIR -->|3条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_INFRA_RUNTIME -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
-    D_FEEDBACK_LOOP -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_COMPLIANCE -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_OPS -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_ORCHESTRATOR -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_INFRA_RECOVERY -->|1条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_GOV_SCRIPTS -->|1条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    D_COMPLIANCE -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    D_FEEDBACK_LOOP -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_INTELLIGENCE -->|1条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_KNOWLEDGE -->|1条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    D_SECURITY -->|1条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_SECURITY_LLM -->|1条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_AUTONOMY_PERM -->|1条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
-    D_SECURITY -->|1条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    D_GOV_SCRIPTS -->|1条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_INFRASTRUCTURE -->|1条 测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_INFRA_A2A -->|1条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    D_INFRA_RECOVERY -->|1条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
 ```
 
 ## 说明 / Notes

@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 5009 |
-| 生产态模块 | 1779 |
+| 模块总数 | 5022 |
+| 生产态模块 | 1788 |
 | 设计态模块 | 64 |
-| 原型态模块 | 3166 |
+| 原型态模块 | 3170 |
 
 ## 域清单（按架构层分组）
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 89 | 48 | 0 | 41 | 89/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 299 | 132 | 3 | 164 | 299/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 303 | 134 | 3 | 166 | 303/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -52,8 +52,8 @@ ttl: permanent
 | D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 71 | 67 | 0 | 4 | 71/150 (OK) | [13_d_fbl_verification.md](13_d_fbl_verification.md) |
 | D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 229 | 109 | 0 | 120 | 229/150 (超容) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 46 | 13 | 6 | 27 | 46/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
-| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 109 | 100 | 0 | 9 | 109/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
-| D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 79 | 76 | 0 | 3 | 79/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
+| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 110 | 100 | 0 | 10 | 110/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
+| D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 80 | 77 | 0 | 3 | 80/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
 | D_INTEGRATION | pipeline_routing / Pipeline Routing | 92 | 46 | 0 | 46 | 92/150 (OK) | [18_d_integration.md](18_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 2 | 1 | 0 | 1 | 2/150 (OK) | [19_d_integration_gateway.md](19_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [20_d_mkt_data.md](20_d_mkt_data.md) |
@@ -79,13 +79,13 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [35_d_ex_sor.md](35_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 14 | 4 | 0 | 10 | 14/150 (OK) | [36_d_factor.md](36_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 9 | 3 | 0 | 6 | 9/150 (OK) | [37_d_fundamental_signal.md](37_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 1029 | 125 | 3 | 901 | 1029/150 (超容) | [38_d_governance.md](38_d_governance.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 1034 | 129 | 3 | 902 | 1034/150 (超容) | [38_d_governance.md](38_d_governance.md) |
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 272 | 63 | 2 | 207 | 272/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 96 | 68 | 28 | 0 | 96/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 164 | 100 | 0 | 64 | 164/150 (超容) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 30 | 16 | 0 | 14 | 30/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
-| D_GOV_REPAIR | rollback / Governance Repair | 20 | 3 | 0 | 17 | 20/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
+| D_GOV_REPAIR | rollback / Governance Repair | 21 | 4 | 0 | 17 | 21/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 35 | 30 | 0 | 5 | 35/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |
 | D_GOV_SCRIPTS | script_governance / Script Governance | 104 | 7 | 0 | 97 | 104/150 (OK) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 109 | 22 | 0 | 87 | 109/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
@@ -99,7 +99,7 @@ ttl: permanent
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 7 | 0 | 0 | 7 | 7/150 (OK) | [55_d_sell_decision.md](55_d_sell_decision.md) |
 | D_SIGQC | signal_quality / Signal Quality Control | 8 | 0 | 0 | 8 | 8/150 (OK) | [56_d_sigqc.md](56_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 11 | 2 | 1 | 8 | 11/150 (OK) | [57_d_simulation.md](57_d_simulation.md) |
-| D_TRADING | 交易运营 / Trading Operations | 101 | 19 | 0 | 82 | 101/150 (OK) | [58_d_trading.md](58_d_trading.md) |
+| D_TRADING | 交易运营 / Trading Operations | 102 | 20 | 0 | 82 | 102/150 (OK) | [58_d_trading.md](58_d_trading.md) |
 
 ### 未分类 / 未分类 (5 个域 / 5 domains)
 
