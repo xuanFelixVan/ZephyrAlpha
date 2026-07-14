@@ -1770,6 +1770,38 @@ entries:
   - '#ARCH-CH-005'
   created: '2026-07-15'
   last_updated: '2026-07-15'
+- issue_id: '#ARCH-CH-011'
+  title: 健康检查端点解耦阻塞式数据库查询（异步探活缓存）
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    /health 端点原在 get_health() 中同步调用 ch_reader.query("SELECT 1")，
+    当 ClickHouse 连接异常时三级降级链（TCP→HTTP→WSL）逐个超时，
+    最坏情况 _DEFAULT_TIMEOUT=600s，导致 /health 请求阻塞 10 分钟。
+    而 /status 和 /metrics 端点只读内存数据，始终正常响应。
+    根因：健康检查设计违反第一性原理——应快速/无副作用/可靠，
+    实际却成了同步阻塞源，ClickHouse 异常时监控自身不可用。
+
+    裁定（三层修复）：
+    (1) Layer 1 异步探活缓存：后台守护线程每 30 秒探活一次 ClickHouse，
+        结果写入内存缓存，get_health() 只读缓存（非阻塞）；
+    (2) Layer 2 探活专用短超时：探活线程用 timeout=3s，禁止使用 _DEFAULT_TIMEOUT=600s；
+    (3) Layer 3 SLA 保障：/health 端点 100ms 内响应（硬性 SLA），
+        缓存超过 3 个间隔未更新 → 判定探活线程死亡，状态标记为 stale。
+    新增返回字段 clickhouse_latency_ms（探活延迟，毫秒）。
+    本裁定是 #ARCH-CH-005（混合传输架构）的深化修复——#ARCH-CH-005 定义了
+    三级降级链用于业务查询，但未考虑健康检查场景的超时敏感性。
+  impact:
+  - src/zephyr/data/scheduler.py（__init__新增缓存字段 + _start_ch_health_probe() + get_health改读缓存 + start调用探活）
+  - get_health() 返回值新增 clickhouse_latency_ms 字段
+  fix_phase: 已完成
+  status: resolved
+  related_rules:
+  - '#ARCH-CH-005'
+  - '#ARCH-CH-010'
+  created: '2026-07-15'
+  last_updated: '2026-07-15'
 
 # --- #ARCH-REN-001: 域 ID 命名统一裁定（回溯登记自 dependency_path_panorama.md §20.13） ---
 - issue_id: '#ARCH-REN-001'

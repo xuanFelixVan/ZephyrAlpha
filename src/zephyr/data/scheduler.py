@@ -126,6 +126,12 @@ class IntegratorScheduler:
             "shutdown": [],
             "task_completed": [],
         }
+        # ClickHouse 健康探活缓存（裁定 #ARCH-CH-011）
+        # /health 端点禁止同步阻塞式 DB 查询，改为后台探活线程定期更新缓存
+        # get_health() 只读缓存（非阻塞），保证 100ms 内响应
+        self._ch_health_cache: dict[str, Any] = {"status": "unknown", "last_check": 0.0, "latency_ms": 0}
+        self._ch_health_lock = threading.Lock()
+        self._ch_health_interval = 30  # 秒：每 30 秒探活一次
         # 注册内部默认事件处理器（config_changed -> 策略热更新）
         self.subscribe("config_changed", self._on_config_changed)
 
@@ -161,6 +167,49 @@ class IntegratorScheduler:
             log.info("config_changed 事件触发策略热更新")
         except Exception as e:
             log.error("config_changed 事件处理异常: %s", e)
+
+    # ============== ClickHouse 健康探活（裁定 #ARCH-CH-011） ==============
+
+    def _start_ch_health_probe(self) -> None:
+        """启动 ClickHouse 健康探活后台守护线程。
+
+        问题背景：/health 端点原同步调用 ch_reader.query("SELECT 1")，
+        当 ClickHouse 连接异常时三级降级链（TCP→HTTP→WSL）逐个超时，
+        最坏情况 _DEFAULT_TIMEOUT=600s，导致 /health 请求阻塞 10 分钟。
+
+        治本方案（裁定 #ARCH-CH-011）：
+        - 后台守护线程每 _ch_health_interval 秒探活一次
+        - 探活用独立短超时 timeout=3（禁止使用 _DEFAULT_TIMEOUT=600）
+        - get_health() 只读缓存（非阻塞），保证 100ms 内响应
+        - 缓存超过 3 个间隔未更新 → 判定探活线程死亡
+        """
+        def _probe_loop() -> None:
+            while self._started:
+                t0 = time.time()
+                try:
+                    result = ch_reader.query("SELECT 1", timeout=3)
+                    latency = (time.time() - t0) * 1000
+                    with self._ch_health_lock:
+                        self._ch_health_cache = {
+                            "status": "ok" if result.strip() else "error: empty response",
+                            "last_check": time.time(),
+                            "latency_ms": round(latency, 1),
+                        }
+                except Exception as e:
+                    latency = (time.time() - t0) * 1000
+                    with self._ch_health_lock:
+                        self._ch_health_cache = {
+                            "status": f"error: {e}",
+                            "last_check": time.time(),
+                            "latency_ms": round(latency, 1),
+                        }
+                    log.warning("CH 健康探活失败: %s", e)
+                # 等待下次探活（用 Event 实现可中断的 sleep 更优雅，但此处简单实现）
+                time.sleep(self._ch_health_interval)
+
+        t = threading.Thread(target=_probe_loop, daemon=True, name="ch-health-probe")
+        t.start()
+        log.info("ClickHouse 健康探活线程已启动（间隔 %ds，timeout=3s）", self._ch_health_interval)
 
     # ============== 配置加载 ==============
 
@@ -666,6 +715,8 @@ class IntegratorScheduler:
 
             self._scheduler.start()
             self._started = True
+            # 启动 ClickHouse 健康探活后台线程（裁定 #ARCH-CH-011）
+            self._start_ch_health_probe()
             # 注册为全局单例（供 _run_schedule_callback 使用）
             global _global_scheduler
             _global_scheduler = self
@@ -753,14 +804,16 @@ class IntegratorScheduler:
         """
         self._metrics.update_uptime()
 
-        # ClickHouse 连接检查
-        ch_status = "ok"
-        try:
-            result = ch_reader.query("SELECT 1")
-            if not result.strip():
-                ch_status = "error: empty response"
-        except Exception as e:
-            ch_status = f"error: {e}"
+        # ClickHouse 连接状态：读取探活缓存（裁定 #ARCH-CH-011，非阻塞）
+        # 原实现同步调用 ch_reader.query("SELECT 1")，连接异常时最坏阻塞 600s
+        with self._ch_health_lock:
+            ch_status = self._ch_health_cache.get("status", "unknown")
+            ch_last_check = self._ch_health_cache.get("last_check", 0.0)
+            ch_latency = self._ch_health_cache.get("latency_ms", 0)
+        # 缓存过期判断：超过 3 个间隔未更新 → 探活线程可能死亡
+        cache_age = time.time() - ch_last_check if ch_last_check else 999
+        if cache_age > self._ch_health_interval * 3:
+            ch_status = "stale: probe thread may be dead"
 
         # APScheduler job 信息
         jobs: list[dict] = []
@@ -794,6 +847,7 @@ class IntegratorScheduler:
             "jobs_registered": len(self._schedules),
             "jobs": jobs,
             "clickhouse": ch_status,
+            "clickhouse_latency_ms": ch_latency,
             "providers": list(self._providers.keys()),
             "task_summary": self._task_queue.summary(),
             "task_stats": task_stats,
