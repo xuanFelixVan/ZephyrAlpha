@@ -80,7 +80,7 @@ class SkillFeedback:
     def record_module_result(
         self,
         skill_id: str,
-        module_result: Any,
+        module_result: object,
         task_id: str,
     ) -> dict[str, Any]:
         error_count = 0
