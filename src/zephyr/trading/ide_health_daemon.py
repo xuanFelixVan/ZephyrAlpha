@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 
 # 5.97.13 修复：抽取 _collect_drift_metrics 内嵌 try-except 的 helper
-def _safe_unlink(path: Path) -> None:
+def _safe_unlink(path: object) -> None:
     """安全删除文件，忽略 OSError（文件不存在/权限不足等）。"""
     try:
         path.unlink()
@@ -302,7 +302,7 @@ def kill_task_processes(task_id: str) -> list[int]:
 _COMPLETED_STATUSES = [TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED]
 
 
-def _list_completed_tasks(repo: TaskRepositoryProtocol, statuses: list[str]) -> list[Any]:
+def _list_completed_tasks(repo: object, statuses: list[str]) -> list[Any]:
     """按状态列表聚合查询已完成任务，单个状态查询失败时记录并继续。"""
     tasks: list[Any] = []
     for s in statuses:

@@ -57,12 +57,12 @@ class ModelTrainerBase(abc.ABC):
     _registry: ClassVar[dict[str, type[ModelTrainerBase]]] = {}
 
     @abc.abstractmethod
-    def train(self, features: dict[str, Any], target: Any, idempotency_key: str) -> dict[str, float]:
+    def train(self, features: dict[str, Any], target: object, idempotency_key: str) -> dict[str, float]:
         """训练模型，返回训练指标"""
         ...
 
     @abc.abstractmethod
-    def validate(self, features: dict[str, Any], target: Any) -> dict[str, float]:
+    def validate(self, features: dict[str, Any], target: object) -> dict[str, float]:
         """验证模型，返回验证指标"""
         ...
 

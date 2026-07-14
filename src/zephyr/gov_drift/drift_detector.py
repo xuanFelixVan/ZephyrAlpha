@@ -28,7 +28,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 import math
-from typing import Any
 
 
 class DriftDetector:
@@ -67,5 +66,5 @@ class DriftDetector:
         return drifting
 
 
-def trigger_recovery(drift_event: Any, strategy: str | None = None) -> bool:
+def trigger_recovery(drift_event: object, strategy: str | None = None) -> bool:
     return True
