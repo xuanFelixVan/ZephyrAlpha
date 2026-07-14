@@ -32,7 +32,7 @@ tags: [auto-runtime, brain, core, orchestrator, mape-k, circadian, dream-cycle, 
 priority: P0
 runtime_plane: hot
 blueprint_level: module
-responsibility_domain: 
+depends_on: 
   - {target: "MOD-FEEDBACK_LOOP", at: "§2", why: "Feedback Loop——大脑异常上报反馈闭环"}
 references:
   - {id: "MOD-INF-019", at: "§2", why: "Agent Spec——大脑通过 Skill 注册发现新能力"}

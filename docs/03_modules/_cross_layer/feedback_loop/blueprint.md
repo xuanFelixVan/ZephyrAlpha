@@ -29,7 +29,7 @@ priority: P0
 runtime_plane: hot
 generation: 1
 functional_domain: operations
-responsibility_domain: 
+depends_on: 
   - {target: "MOD-MASTER_BLUEPRINT", at: "all", why: "FLE→Orc异常调度+联邦协调+自治边界"}
   - {target: "MOD-TASK_SYSTEM", at: "all", why: "任务系统→检测输入"}
   - {target: "MOD-GATE_ENGINE", at: "all", why: "门禁引擎→ADJUST_GATE"}
@@ -44,7 +44,6 @@ responsibility_domain:
 references:
   - {id: "MOD-INF-020", at: "all", why: "Audit Trail——运行期写入；DAG 上不保留 depends_on"}
 last_updated: "2026-05-19"
-responsibility_domain: 
 build_status: planned
 design_maturity: design
 ---

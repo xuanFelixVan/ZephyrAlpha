@@ -32,7 +32,7 @@ tags: [agent-orchestrator, task-queue, state-machine, sandbox, hallucination-det
 priority: P0
 runtime_plane: hot
 blueprint_level: module
-responsibility_domain: 
+depends_on: 
   - {id: "MOD-INF-009", at: "§2", why: "Pipeline——管线编排下游消费"}
   - {id: "MOD-INF-018", at: "§2", why: "Agent RBAC——操作权限校验"}
   - {id: "MOD-INF-022", at: "§2", why: "Escalation Protocol——异常升级路径"}
