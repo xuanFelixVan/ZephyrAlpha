@@ -119,5 +119,5 @@ class MetaAuditLogger:
         return {}
 
 
-def _sanitize_for_ai_context(data: Any) -> Any:
+def _sanitize_for_ai_context(data: object) -> object:
     return data

@@ -70,12 +70,12 @@ class BootstrapCache:
         self._loaded = True
         return dict(self._cache)
 
-    def get(self, key: str, default: Any = None) -> Any:
+    def get(self, key: str, default: object = None) -> object:
         if not self._loaded:
             self.load()
         return self._cache.get(key, default)
 
-    def set(self, key: str, value: Any) -> None:
+    def set(self, key: str, value: object) -> None:
         if not self._loaded:
             self.load()
         self._cache[key] = value

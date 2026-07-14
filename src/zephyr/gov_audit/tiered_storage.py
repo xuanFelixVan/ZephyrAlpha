@@ -131,7 +131,7 @@ class TieredStorageManager:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
         self.config = config or {}
 
-    def migrate(self, entry: Any, target_tier: str) -> MigrationRecord:
+    def migrate(self, entry: object, target_tier: str) -> MigrationRecord:
         return MigrationRecord(target_tier=target_tier, entry_id=getattr(entry, "entry_id", ""))
 
     def get_tier(self, entry_id: str) -> str:

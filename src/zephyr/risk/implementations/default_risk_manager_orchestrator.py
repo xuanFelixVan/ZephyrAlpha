@@ -46,7 +46,6 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any
 
 from zephyr.risk.implementations.default_position_limit_checker import (
     DefaultPositionLimitChecker,
@@ -97,7 +96,7 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
         self._daily_pnl: Decimal = Decimal("0")
         self._loss_limit: Decimal = Decimal("50000")
 
-    def pre_trade_check(self, order: Any, limits: Any, positions: Any) -> RiskCheckResult:
+    def pre_trade_check(self, order: object, limits: object, positions: object) -> RiskCheckResult:
         if self._active_limits is None:
             self._active_limits = (isinstance(limits, RiskLimits) and limits) or self._compute_limits(positions)
 
@@ -144,7 +143,7 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
 
         return result
 
-    def post_trade_check(self, fill: Any, positions: Any) -> RiskCheckResult:
+    def post_trade_check(self, fill: object, positions: object) -> RiskCheckResult:
         check_id = f"post-{int(datetime.now(UTC).timestamp())}"
         result = RiskCheckResult(
             check_id=check_id,
@@ -212,7 +211,7 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
             idempotency_key=f"snap-{int(datetime.now(UTC).timestamp())}",
         )
 
-    def _compute_limits(self, positions: Any) -> RiskLimits:
+    def _compute_limits(self, positions: object) -> RiskLimits:
         positions_dict = {}
         market_values = {}
         total_nav = Decimal("1000000")

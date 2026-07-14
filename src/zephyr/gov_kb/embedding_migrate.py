@@ -143,7 +143,7 @@ class EmbeddingMigrator:
 
     def __init__(
         self,
-        chroma_client: Any | None = None,
+        chroma_client: object | None = None,
         registry_path: Path | str | None = None,
         recall_threshold: float = 0.70,
     ) -> None:

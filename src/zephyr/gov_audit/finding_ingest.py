@@ -22,7 +22,7 @@ import os
 import threading
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.gov_audit.writer import AuditWriter
@@ -52,7 +52,7 @@ class FindingIngest:
         self._writer_initialized = False
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 MEDIUM）：_get_writer lazy init 线程安全
 
-    def _get_writer(self) -> Any:
+    def _get_writer(self) -> object:
         if self._writer_initialized:
             return self._writer
         with self._lock:

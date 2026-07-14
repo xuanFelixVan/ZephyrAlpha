@@ -41,7 +41,6 @@ from __future__ import annotations
 
 import logging
 import threading
-from typing import Any
 
 from zephyr.gov_kb._backend_protocol import (
     InMemoryMemoryBackend,
@@ -68,7 +67,7 @@ class VMSMemoryBackend:
 
     def __init__(
         self,
-        vms: Any | None = None,
+        vms: object | None = None,
         fallback: MemoryBackend | None = None,
     ) -> None:
         self._vms = vms
@@ -77,7 +76,7 @@ class VMSMemoryBackend:
         self._vms_available: bool = vms is not None
 
     @property
-    def vms(self) -> Any:
+    def vms(self) -> object:
         return self._vms
 
     @property
