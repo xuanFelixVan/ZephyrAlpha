@@ -46,7 +46,7 @@ architecture_debt §5.178：源码进化后测试未同步更新（名称漂移�
 
 Usage::
 
-    from zephyr.governance.commit_gates.test_source_consistency_gate import make_test_source_consistency_gate
+    from zephyr.gov_enforcement.commit_gates.test_source_consistency_gate import make_test_source_consistency_gate
 
     registry.register(make_test_source_consistency_gate())
 """
