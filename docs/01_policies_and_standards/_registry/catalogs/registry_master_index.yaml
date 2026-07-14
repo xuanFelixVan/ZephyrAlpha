@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-14T09:18:05Z
+# 自动生成于 2026-07-14T09:27:57Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-14T09:18:05Z'
+generated_at: '2026-07-14T09:27:57Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 27
@@ -181,7 +181,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 157
+  entry_count: 158
   status: active
 - registry_id: CFG-rule-enforcement-registry
   name: 门禁规则集登记表
