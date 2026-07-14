@@ -560,7 +560,9 @@ class IntegratorScheduler:
         for t in schedule_tasks:
             self._task_queue.add_task(t)
 
-        # DAG 顺序执行
+        # DAG 并行执行——同一批就绪任务并行，批次间串行（保证依赖）
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
         results: dict[str, bool] = {}
         while not self._task_queue.is_done():
             ready = self._task_queue.get_ready_tasks()
@@ -570,9 +572,24 @@ class IntegratorScheduler:
                 if blocked:
                     log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
                 break
-            for task_id in ready:
-                success = self.run_task(task_id)
-                results[task_id] = success
+            if len(ready) == 1:
+                # 单任务直接执行（避免线程池开销）
+                results[ready[0]] = self.run_task(ready[0])
+            else:
+                # 多任务并行执行（利用线程池，最多8并发）
+                max_workers = min(len(ready), 8)
+                with ThreadPoolExecutor(max_workers=max_workers) as pool:
+                    future_map = {
+                        pool.submit(self.run_task, tid): tid
+                        for tid in ready
+                    }
+                    for future in as_completed(future_map):
+                        tid = future_map[future]
+                        try:
+                            results[tid] = future.result()
+                        except Exception as e:
+                            log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
+                            results[tid] = False
 
         # 汇总
         success_count = sum(1 for v in results.values() if v)
