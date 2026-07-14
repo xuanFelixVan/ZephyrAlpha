@@ -55,7 +55,7 @@ CREATE INDEX IF NOT EXISTS idx_fle_metrics_collected ON fle_metrics(collected_at
 """
 
 
-def _ensure_table(conn: Any) -> None:
+def _ensure_table(conn: object) -> None:
     conn.executescript(FLE_METRICS_TABLE_DDL)
 
 

@@ -551,7 +551,7 @@ class FeedbackLoopScheduler:
         except Exception:
             logger.debug("[FLE-ORC] alert dispatch skipped", exc_info=True)
 
-    def _persist_alert_and_log(self, alert: AlertEvent, dispatch_result: Any) -> None:
+    def _persist_alert_and_log(self, alert: AlertEvent, dispatch_result: object) -> None:
         try:
             from zephyr.feedback_loop.db_writer import FLEWriter
 

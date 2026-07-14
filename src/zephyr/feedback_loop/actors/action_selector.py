@@ -49,7 +49,7 @@ class ActionSelector:
     learning_rate: float = 0.1
     discount_factor: float = 0.9
 
-    def select_action(self, diagnosis: Any) -> ActionType | None:
+    def select_action(self, diagnosis: object) -> ActionType | None:
         now = time.time()
         for at in self.action_priority:
             if at.value in self.retired_actions:

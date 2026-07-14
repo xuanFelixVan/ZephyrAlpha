@@ -107,7 +107,7 @@ class AutoEvolutionEngine:
         if self.config is None:
             self.config = AutoEvolutionConfig()
 
-    def record_fitness(self, report: Any) -> FitnessSnapshot:
+    def record_fitness(self, report: object) -> FitnessSnapshot:
         ka_val = _extract_metric(report, "METRIC_KNOWLEDGE_ACTIVATION", "knowledge_activation")
         cr_val = _extract_metric(report, "METRIC_COMPLIANCE_RATE", "compliance_rate")
         hi_val = _extract_metric(report, "METRIC_HALLUCINATION_INTERCEPTION", "hallucination_interception")
@@ -186,7 +186,7 @@ class AutoEvolutionEngine:
     def run_auto_cycle(
         self,
         *,
-        fitness_report: Any = None,
+        fitness_report: object = None,
         owner_approved_high: bool = False,
         apply_evolution_proposals: bool = True,
     ) -> AutoEvolutionOutcome:
@@ -258,7 +258,7 @@ class AutoEvolutionEngine:
         ]
 
 
-def _extract_metric(report: Any, metric_name: str, fallback_attr: str) -> float:
+def _extract_metric(report: object, metric_name: str, fallback_attr: str) -> float:
     if hasattr(report, "get_metric"):
         m = report.get_metric(metric_name)
         if m is not None:

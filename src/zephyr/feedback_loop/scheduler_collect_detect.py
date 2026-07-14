@@ -17,7 +17,6 @@
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import Any
 
 from zephyr.feedback_loop.collectors.feedback_collector import FeedbackCollector
 from zephyr.feedback_loop.collectors.metrics_collector import MetricsCollector, MetricSnapshot
@@ -68,7 +67,7 @@ class CollectDetectHandler:
             feedback_collector=self.feedback_collector,
         )
 
-    def run_collect(self, event: Any, now: float, run_id: str, metrics_collector: Any) -> Any:
+    def run_collect(self, event: object, now: float, run_id: str, metrics_collector: object) -> object:
         phase_start = time.time()
         self.cold_start.tick()
 
@@ -112,7 +111,7 @@ class CollectDetectHandler:
         self.bottleneck_detector.record_stage_latency(PipelineStage.COLLECT, (time.time() - phase_start) * 1000)
         return snapshot
 
-    def run_detect(self, event: Any, snapshot: Any, run_id: str) -> bool:
+    def run_detect(self, event: object, snapshot: object, run_id: str) -> bool:
         phase_start = time.time()
 
         self.trajectory_detector.record_step(
@@ -148,7 +147,7 @@ class CollectDetectHandler:
         self.bottleneck_detector.record_stage_latency(PipelineStage.DETECT, (time.time() - phase_start) * 1000)
         return False
 
-    def run_diagnose(self, event: Any, metrics_collector: Any) -> bool:
+    def run_diagnose(self, event: object, metrics_collector: object) -> bool:
         phase_start = time.time()
         anomaly = event.anomaly
 
