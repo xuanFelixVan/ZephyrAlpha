@@ -2898,7 +2898,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
     conn = None  # DM-3004: 预初始化None，防御性编程
 
     try:
-        conn = get_depgraph_pg_connection(autocommit=False)  # P2 PG 迁移
+        conn = get_depgraph_pg_connection(autocommit=False, read_only=False)  # P2 PG 迁移
         cursor = conn.cursor()
         # 裁定#209 阶段1：pg_advisory_xact_lock 互斥保护
         # 与 apply_depgraph.py._db_write_lock 共享 lock key 424242
@@ -2921,8 +2921,12 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             # Validate table name format before using in DDL
             if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", bt_name):
                 continue
-            cursor.execute(f'DROP TABLE IF EXISTS "{bt_name}"')
-            print(f"[DEPGRAPH-DB] Cleaned up backup table: {bt_name}")
+            try:
+                cursor.execute(f'DROP TABLE IF EXISTS "{bt_name}"')
+                print(f"[DEPGRAPH-DB] Cleaned up backup table: {bt_name}")
+            except psycopg2.Error as e:
+                # depgraph_writer 角色无权 DROP owner(zephyr) 创建的表，跳过清理
+                print(f"[DEPGRAPH-DB] SKIP backup table cleanup ({bt_name}): {e}".strip()[:120])
 
         # 裁定#209 Stage 2: UPSERT 保护字段到 metadata 表（DELETE 前保存）
         # 替代 Python 端 load_production_state_from_db + apply_production_metadata_protection

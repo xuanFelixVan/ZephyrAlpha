@@ -1989,7 +1989,7 @@ def sync_all() -> bool:
     # P2 PG 迁移：删除 os.path.exists(DB_PATH) 检查（PG 无文件路径概念）
     # P2 PG 迁移：删除 lock_files 跨进程文件锁（PG 用 MVCC）
     try:
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, superuser=True)  # 需 DDL: DISABLE TRIGGER + CREATE TABLE
     except psycopg2.Error as e:
         print(f"[ERROR] 无法连接 PostgreSQL: {e}")
         return False
