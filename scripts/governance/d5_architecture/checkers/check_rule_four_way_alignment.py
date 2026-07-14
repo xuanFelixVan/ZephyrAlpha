@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_rule_four_way_alignment.py | §
 # [MODULE] scripts.governance.d5_architecture.checkers.check_rule_four_way_alignment
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.checkers.__init__
 # [CONSUMERS]
 # [STARTUP] manual

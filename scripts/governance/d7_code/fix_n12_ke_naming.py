@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_n12_ke_naming.py | §
 # [MODULE] scripts.governance.d7_code.fix_n12_ke_naming
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS] OPS-2026062103
 # [STARTUP] manual

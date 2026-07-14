@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §acquisition-flow
 # [MODULE] scripts.governance.d5_architecture.generators.generate_data_acquisition_flow
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] _common (DB_DISPLAY_NAME)
 # [CONSUMERS] 人工查看data_acquisition_flow.md
 # [STARTUP] manual

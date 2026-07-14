@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/check_drift_e2e.py | §
 # [MODULE] scripts.governance.d5_architecture.check_drift_e2e
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.__init__
 # [CONSUMERS]
 # [STARTUP] manual

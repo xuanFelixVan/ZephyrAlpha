@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d12_ai_hallucination/validate_session_budget.py | §
 # [MODULE] scripts.governance.d12_ai_hallucination.validate_session_budget
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d12_ai_hallucination.__init__
 # [CONSUMERS]
 # [STARTUP] manual

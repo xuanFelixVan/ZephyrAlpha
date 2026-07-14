@@ -1,6 +1,6 @@
 # [BLUEPRINT]
 # [MODULE] scripts.governance.d5_architecture.generators.generate_asset_catalog
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.shared.io.paths; _common; _shared.constants.get_depgraph_pg_connection
 # [CONSUMERS] 人工查看01_global_architecture_diagram/asset_catalog.md
 # [STARTUP] manual

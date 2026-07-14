@@ -1,6 +1,6 @@
 # [BLUEPRINT] ARCH-FUNC-DEP-001 | docs/02_enterprise_architecture/core_function_dependency_design.md | §十一
 # [MODULE] scripts.governance.migrate_arch_f_functions
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.apply_depgraph
 # [CONSUMERS] 架构升级AI session
 # [STABILITY] evolving

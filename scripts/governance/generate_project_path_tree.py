@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
 # [MODULE] scripts.governance.generate_project_path_tree
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] AI cold-start; depgraph generator; migration tasks
 # [STARTUP] manual

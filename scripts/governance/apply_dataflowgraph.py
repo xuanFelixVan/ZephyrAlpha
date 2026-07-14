@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-GOV-003 | docs/03_modules/_domain-governance/blueprint.md | §dataflowgraph
 # [MODULE] scripts.governance.apply_dataflowgraph
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.dataflowgraph_schema; psycopg2
 # [CONSUMERS] (manual CLI, invoked by AI/human for dataflowgraph modifications)
 # [STARTUP] manual

@@ -1,6 +1,6 @@
 # [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/_working/architecture_diagram_construction_plan.md | §generator-common
 # [MODULE] scripts.governance.d5_architecture.generators._common
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] (none — pure stdlib)
 # [CONSUMERS] generate_domain_doc.py; generate_domain_architecture_diagram.py
 # [STARTUP] imported

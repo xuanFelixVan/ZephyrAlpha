@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS | docs/03_modules/_domain_governance/blueprint.md | §decisiongraph
 # [MODULE] scripts.governance.apply_decisiongraph
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); zephyr.governance.persistence.decision_graph_reader (DecisionGraphReader)
 # [CONSUMERS] AI 写入 decisiongraph 节点/边时调用（设计态→运营态迁移）
 # [STARTUP] manual

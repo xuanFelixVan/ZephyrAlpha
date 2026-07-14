@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §5.2 P3-T2
 # [MODULE] scripts.governance.meta.mutation_test_reconciliation_registry
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] (none — stdlib only)
 # [CONSUMERS] CI 门禁 / 手动回归（GATE-MUT 达标前手动，达标后事件驱动）
 # [STARTUP] manual

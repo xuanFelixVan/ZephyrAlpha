@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/create_task_from_finding.py | §
 # [MODULE] scripts.governance.meta.create_task_from_finding
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.integration.__init__; zephyr.shared.models; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] manual

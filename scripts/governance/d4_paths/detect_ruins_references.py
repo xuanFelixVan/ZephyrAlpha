@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/detect_ruins_references.py | §
 # [MODULE] scripts.governance.d4_paths.detect_ruins_references
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d4_paths.__init__
 # [CONSUMERS]
 # [STARTUP] manual

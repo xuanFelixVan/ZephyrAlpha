@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/audit_agent_spec.py | §
 # [MODULE] scripts.governance.d5_architecture.audit_agent_spec
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]
 # [STARTUP] imported

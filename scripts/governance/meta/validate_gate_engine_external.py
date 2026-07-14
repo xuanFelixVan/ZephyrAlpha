@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_gate_engine_external.py | §
 # [MODULE] scripts.governance.meta.validate_gate_engine_external
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.integration.__init__; zephyr.gov_enforcement.rule_enforcement.circuit_breaker
 # [CONSUMERS]
 # [STARTUP] manual

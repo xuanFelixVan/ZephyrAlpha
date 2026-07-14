@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # [BLUEPRINT] MOD-INF-011 | scripts/governance/d5_architecture/checkers/check_vms_ssot.py | §
 # [MODULE] scripts.governance.d5_architecture.checkers.check_vms_ssot
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS] .pre-commit-config.yaml GATE-VMS-SSOT
 # [STARTUP] manual

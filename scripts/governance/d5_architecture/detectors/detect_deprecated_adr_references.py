@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/detectors/detect_deprecated_adr_references.py | §
 # [MODULE] scripts.governance.d5_architecture.detectors.detect_deprecated_adr_references
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.detectors.__init__
 # [CONSUMERS]
 # [STARTUP] manual

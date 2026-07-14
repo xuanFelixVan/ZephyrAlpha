@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/classify_ttl_by_content.py | §gate-15
 # [MODULE] governance.d3_metadata.classify_ttl_by_content
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] _shared.frontmatter; _shared.constants
 # [CONSUMERS] manual ttl audit; pre-rejudge content scan
 # [STARTUP] manual

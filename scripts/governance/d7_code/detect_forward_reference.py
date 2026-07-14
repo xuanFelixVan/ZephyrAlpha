@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] scripts.governance.d7_code.detect_forward_reference
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] _shared.constants; _shared.encoding; _shared.walk
 # [CONSUMERS] gate_engine; phase_manager
 # [STARTUP] manual

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS | scripts/governance/d7_code/check_pure_shim.py | §
 # [MODULE] scripts.governance.d7_code.check_pure_shim
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d7_code.__init__
 # [CONSUMERS] GATE-NO-PURE-SHIM pre-commit hook; GitCommitGateway._check_pure_shim（--no-verify 补偿校验）
 # [STARTUP] manual

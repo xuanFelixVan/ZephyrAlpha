@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE | scripts/governance/check_ssot_gate.py | §ssot_gate
 # [MODULE] scripts.governance.check_ssot_gate
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.capability_lookup
 # [CONSUMERS] pre-commit GATE-SSOT hook; GitCommitGateway._check_ssot_canonical（主防线）
 # [STARTUP] manual

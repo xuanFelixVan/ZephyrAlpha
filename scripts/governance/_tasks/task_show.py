@@ -8,7 +8,7 @@ Usage:
 
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/task_show.py | §
 # [MODULE] zephyr.governance.persistence.task_repo.TaskRepository
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS] AI session 冷启动查询任务卡详情
 # [STARTUP] manual

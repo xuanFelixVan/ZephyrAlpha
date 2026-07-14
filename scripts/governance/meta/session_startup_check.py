@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/session_startup_check.py | §
 # [MODULE] scripts.governance.meta.session_startup_check
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.ops_governance.phase_manager; zephyr.governance.ops_governance.phase_check_registry
 # [CONSUMERS]
 # [STARTUP] manual

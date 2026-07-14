@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/constants.py | §
 # [MODULE] scripts.governance._shared.constants
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.__init__
 # [CONSUMERS]
 # [STARTUP] imported

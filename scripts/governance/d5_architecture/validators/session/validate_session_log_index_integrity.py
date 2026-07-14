@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/session/validate_session_log_index_integrity.py | §
 # [MODULE] scripts.governance.d5_architecture.validators.session.validate_session_log_index_integrity
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.session.__init__
 # [CONSUMERS]
 # [STARTUP] manual

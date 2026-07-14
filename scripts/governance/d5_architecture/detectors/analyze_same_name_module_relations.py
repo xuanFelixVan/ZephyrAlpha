@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/detectors/analyze_same_name_module_relations.py | §
 # [MODULE] scripts.governance.d5_architecture.detectors.analyze_same_name_module_relations
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.detectors.__init__
 # [CONSUMERS]
 # [STARTUP] manual

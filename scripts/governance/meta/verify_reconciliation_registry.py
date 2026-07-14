@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/verify_reconciliation_registry.py | §
 # [MODULE] scripts.governance.meta.verify_reconciliation_registry
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] _shared.constants
 # [CONSUMERS] validate_mutation_testing.py（false_negative_cases/reconciliation_registry_cases.yaml 的 verifier）
 # [STARTUP] imported

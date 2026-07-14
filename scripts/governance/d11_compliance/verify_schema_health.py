@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.verify_schema_health
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.constants
 # [CONSUMERS] .pre-commit-config.yaml gate-schema-health
 # [STARTUP] manual
