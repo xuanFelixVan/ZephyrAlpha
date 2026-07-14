@@ -54,6 +54,7 @@ depgraph:
     - _temp
     - .audit_cache
     - session_logs
+    - fixtures          # 测试 mock 数据(yaml/json)，0 依赖边，非架构组件，不纳入全景图
 
   # 节点类型过滤 — 以下类型的节点不进入依赖图
   # 排除原因: node_type (零 import_depends 边，只有噪音引用)
@@ -146,3 +147,4 @@ path_tree:
 #   - scripts/governance/_archive/  — 归档脚本，非活跃代码
 #   - scripts/governance/repair/    — 修复脚本，临时性
 #   - scripts/governance/_shared/   — 共享内部工具，非 depgraph 相关
+#   - tests/fixtures/     — 测试 mock 数据(54 文件)，0 依赖边，非架构组件
