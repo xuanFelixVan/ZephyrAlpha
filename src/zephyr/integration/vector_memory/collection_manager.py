@@ -42,12 +42,15 @@ from typing import Final
 import json
 import logging
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from pydantic import BaseModel, Field
 
 from zephyr.shared.io.paths import VMS_PERSIST_DIR
 from zephyr.shared.schema.schemas import BASE_CONFIG
+
+if TYPE_CHECKING:
+    from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
 
 _logger = logging.getLogger(__name__)
 
@@ -272,14 +275,14 @@ class CollectionManager:
     VMS_COLLECTION_NAMES: ClassVar[tuple[str, ...]] = COLLECTION_NAMES
     VMS_SCHEMAS: ClassVar[dict[str, dict[str, Any]]] = COLLECTION_SCHEMAS
 
-    def __init__(self, persist_dir: Path | str | None = None, embedding_router: Any | None = None) -> None:
+    def __init__(self, persist_dir: Path | str | None = None, embedding_router: EmbeddingRouterProtocol | None = None) -> None:
         self._persist_dir = Path(persist_dir) if persist_dir is not None else VMS_PERSIST_DIR
         self._persist_dir.mkdir(parents=True, exist_ok=True)
         self._client: Any | None = None
         self._embedding_router = embedding_router
 
     @property
-    def client(self) -> Any:
+    def client(self) -> object:
         if self._client is None:
             import chromadb
 
@@ -341,7 +344,7 @@ class CollectionManager:
             exists=True,
         )
 
-    def get_collection(self, name: str) -> Any:
+    def get_collection(self, name: str) -> object:
         if name not in COLLECTION_SCHEMAS:
             raise KeyError(f"未知 Collection: {name}")
         return self.client.get_collection(name=name)

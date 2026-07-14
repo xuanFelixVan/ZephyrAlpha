@@ -16,7 +16,7 @@
 # [TTL] permanent
 from __future__ import annotations
 from enum import Enum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -24,6 +24,9 @@ from zephyr.trading.admission_controller import (
     AdmissionDecision,
     AdmissionResult,
 )
+
+if TYPE_CHECKING:
+    from zephyr.trading.admission_controller import AdmissionController
 
 
 class AdmissionResponseStatus(str, Enum):
@@ -44,7 +47,7 @@ _DECISION_TO_STATUS: dict[AdmissionDecision, AdmissionResponseStatus] = {
 class InvalidDecisionError(ValueError):
     error_code = "ZA-IG-0017"
 
-    def __init__(self, decision: Any, error_code: str | None = None) -> None:
+    def __init__(self, decision: AdmissionDecision | str, error_code: str | None = None) -> None:
         self.decision = decision
         super().__init__(
             f"Cannot map decision '{decision}' to AdmissionResponseStatus. "
@@ -98,7 +101,7 @@ class AdmissionResponse(BaseModel):
 
 
 class AdmissionResponseBuilder:
-    def __init__(self, admission_controller: Any = None) -> None:
+    def __init__(self, admission_controller: AdmissionController | None = None) -> None:
         self._controller = admission_controller
 
     def build_response(

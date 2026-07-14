@@ -150,7 +150,7 @@ class LocalModelScheduler:
         self,
         task_id: str,
         capability: str,
-        payload: Any = None,
+        payload: object | None = None,
     ) -> None:
         if capability not in ALL_LOCAL_CAPABILITIES:
             raise ValueError(f"未知本地能力: {capability}，支持: {ALL_LOCAL_CAPABILITIES}")

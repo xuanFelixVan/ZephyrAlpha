@@ -111,7 +111,7 @@ class BridgeLayer:
         self._kb_client: Any | None = None
 
     @property
-    def kb_client(self) -> Any:
+    def kb_client(self) -> object:
         if self._kb_client is None:
             import chromadb
 

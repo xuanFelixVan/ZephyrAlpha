@@ -32,11 +32,15 @@ from __future__ import annotations
 import hashlib
 import logging
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
+
+if TYPE_CHECKING:
+    from zephyr.integration.vector_memory.hybrid_retriever import RetrievalTrace
+    from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
 _logger = logging.getLogger(__name__)
 
@@ -52,7 +56,7 @@ class FeedbackEntry(BaseModel):
 
 
 class RetrievalFeedback:
-    def __init__(self, vms: Any = None) -> None:
+    def __init__(self, vms: InProcessVectorMemory | None = None) -> None:
         self._vms = vms
         self._feedback_log: list[FeedbackEntry] = []
         self._long_tail: dict[str, int] = {}
@@ -92,7 +96,7 @@ class RetrievalFeedback:
 
     def log_feedback(
         self,
-        trace: Any,
+        trace: RetrievalTrace,
         user_rating: float | None = None,
     ) -> FeedbackEntry:
         entry = FeedbackEntry(

@@ -377,7 +377,7 @@ class MCPGateway(BaseMCPServer):
     # Override tools/list — 聚合
     # ------------------------------------------------------------------
 
-    def _handle_tools_list(self, _rid: Any) -> dict[str, Any]:
+    def _handle_tools_list(self, _rid: str | int) -> dict[str, Any]:
         """聚合所有就绪 Server 的 tool 目录（关闭 B7）。
 
         自动排除 OPEN circuit breaker 的 Server 工具。

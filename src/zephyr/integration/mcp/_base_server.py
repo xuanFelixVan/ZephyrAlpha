@@ -117,7 +117,7 @@ class MCPError(Exception):
         self,
         code: int,
         message: str,
-        data: Any | None = None,
+        data: dict[str, Any] | None = None,
         error_code: str | None = None,
     ) -> None:
         self.code = code
@@ -363,15 +363,15 @@ class BaseMCPServer:
     # JSON-RPC 响应构造
     # ------------------------------------------------------------------
 
-    def _ok(self, req_id: Any, result: Any) -> dict[str, Any]:
+    def _ok(self, req_id: str | int, result: dict[str, Any]) -> dict[str, Any]:
         return {"jsonrpc": JSONRPC_VERSION, "id": req_id, "result": result}
 
     def _err(
         self,
-        req_id: Any,
+        req_id: str | int,
         code: int,
         message: str,
-        data: Any | None = None,
+        data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         error: dict[str, Any] = {"code": code, "message": message}
         if data is not None:
@@ -400,7 +400,7 @@ class BaseMCPServer:
             return self._handle_tools_call(req_id, params)
         return self._err(req_id, ERR_METHOD_NOT_FOUND, f"Unknown method: {method!r}")
 
-    def _handle_initialize(self, req_id: Any) -> dict[str, Any]:
+    def _handle_initialize(self, req_id: str | int) -> dict[str, Any]:
         return self._ok(
             req_id,
             {
@@ -414,7 +414,7 @@ class BaseMCPServer:
             },
         )
 
-    def _handle_tools_list(self, req_id: Any) -> dict[str, Any]:
+    def _handle_tools_list(self, req_id: str | int) -> dict[str, Any]:
         tools = [
             {
                 "name": t.name,
@@ -430,7 +430,7 @@ class BaseMCPServer:
         ]
         return self._ok(req_id, {"tools": tools})
 
-    def _handle_tools_call(self, req_id: Any, params: dict[str, Any]) -> dict[str, Any]:
+    def _handle_tools_call(self, req_id: str | int, params: dict[str, Any]) -> dict[str, Any]:
         tool_name: str = params.get("name", "")
         arguments: dict[str, Any] = params.get("arguments") or {}
 

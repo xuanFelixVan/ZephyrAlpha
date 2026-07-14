@@ -111,7 +111,7 @@ class FAISSCollectionManager:
         return self._persist_dir
 
     @property
-    def client(self) -> Any:
+    def client(self) -> object:
         return self
 
     @property
