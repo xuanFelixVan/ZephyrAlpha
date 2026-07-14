@@ -56,7 +56,7 @@ def fetch_knowledge_overview() -> KnowledgeOverviewData:
     return KnowledgeOverviewData()
 
 
-def _metric_card(label: str, value: str, color: str = "#333") -> Any:
+def _metric_card(label: str, value: str, color: str = "#333") -> object:
     if pn is None:
         return {"label": label, "value": value, "color": color}
     return pn.pane.Markdown(

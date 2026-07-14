@@ -81,7 +81,7 @@ class PositionMonitorData:
     timestamp: str = ""
 
 
-def _to_float(v: Any, default: float = 0.0) -> float:
+def _to_float(v: object, default: float = 0.0) -> float:
     if v is None:
         return default
     try:
@@ -90,7 +90,7 @@ def _to_float(v: Any, default: float = 0.0) -> float:
         return default
 
 
-def _to_int(v: Any, default: int = 0) -> int:
+def _to_int(v: object, default: int = 0) -> int:
     if v is None:
         return default
     try:
@@ -100,7 +100,7 @@ def _to_int(v: Any, default: int = 0) -> int:
 
 
 def fetch_position_monitor(
-    miniqmt_broker: Any,
+    miniqmt_broker: object,
     today_bought_map: Optional[dict[str, int]] = None,
     last_prices: Optional[dict[str, float]] = None,
     cost_prices: Optional[dict[str, float]] = None,

@@ -87,7 +87,7 @@ def _status_color(status: str) -> str:
     return "#6c757d"
 
 
-def _metric_card(label: str, value: str, color: str = "#333") -> Any:
+def _metric_card(label: str, value: str, color: str = "#333") -> object:
     """生成单个指标卡片（Panel Card 或 dict）"""
     if pn is None:
         return {"label": label, "value": value, "color": color}

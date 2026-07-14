@@ -74,7 +74,7 @@ class GateStatisticsData:
     by_gate: list[GateStat] = field(default_factory=list)
 
 
-def fetch_gate_statistics(olap_engine: Any = None) -> GateStatisticsData:
+def fetch_gate_statistics(olap_engine: object = None) -> GateStatisticsData:
     data = GateStatisticsData()
     if olap_engine is None:
         return data
@@ -90,7 +90,7 @@ def fetch_gate_statistics(olap_engine: Any = None) -> GateStatisticsData:
     return data
 
 
-def _metric_card(label: str, value: str, color: str = "#333") -> Any:
+def _metric_card(label: str, value: str, color: str = "#333") -> object:
     if pn is None:
         return {"label": label, "value": value, "color": color}
     return pn.pane.Markdown(

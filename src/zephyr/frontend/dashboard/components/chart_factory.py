@@ -48,7 +48,7 @@ from __future__ import annotations
 from typing import Final
 from zephyr.shared.io.serialization import dumps
 
-from typing import Any, Optional
+from typing import Optional
 
 try:
     import holoviews as hv
@@ -99,7 +99,7 @@ def make_equity(
     color: str = "#1f77b4",
     width: int = 800,
     height: int = 400,
-) -> Any:
+) -> object:
     """生成净值曲线图（HoloViews Curve）
 
     蓝图 §16.7.1: HoloViews(净值曲线)
@@ -148,7 +148,7 @@ def make_drawdown(
     color: str = "#d62728",
     width: int = 800,
     height: int = 300,
-) -> Any:
+) -> object:
     """生成回撤曲线图（plotly_resampler）
 
     蓝图 §16.7.1: plotly_resampler(回撤)
@@ -208,7 +208,7 @@ def make_kline(
     kline_data: list[dict],
     title: str = "K-Line",
     height: int = 400,
-) -> Any:
+) -> object:
     """生成K线图（Lightweight Charts v5.2, pn.pane.HTML+原生JS）
 
     蓝图 §16.7.1: Lightweight Charts(K线, HTML Pane+原生JS), 不依赖Python封装包
@@ -278,7 +278,7 @@ def make_tick(
     color: str = "#1f77b4",
     width: int = 800,
     height: int = 400,
-) -> Any:
+) -> object:
     """生成Tick回放图（Plotly+plotly_resampler, Datashader阈值触发）
 
     蓝图 §16.7.2: Plotly+plotly_resampler默认 / Datashader阈值触发(>50万点)
@@ -346,7 +346,7 @@ def make_heatmap(
     colorscale: str = "RdYlGn",
     width: int = 800,
     height: int = 400,
-) -> Any:
+) -> object:
     """生成热力图（Plotly Heatmap）
 
     蓝图 §3.1: make_heatmap（通用热力图工厂）
@@ -402,7 +402,7 @@ def make_orderbook(
     title: str = "Order Book",
     width: int = 800,
     height: int = 400,
-) -> Any:
+) -> object:
     """生成5档盘口可视化（Plotly 水平条形图）
 
     蓝图 §16.7.3: 5档盘口展示, ask红/bid绿, 压力比仪表盘
@@ -484,7 +484,7 @@ def make_position(
     title: str = "Position Monitor",
     width: int = 1000,
     height: int = 400,
-) -> Any:
+) -> object:
     """生成持仓表格（Plotly Table）
 
     蓝图 §16.7.4: 持仓表格(symbol/名称/持仓/可用/冻结/成本/最新价/盈亏/盈亏%/T+1标记)
@@ -563,7 +563,7 @@ def make_orderflow(
     title: str = "Order Flow",
     width: int = 1000,
     height: int = 400,
-) -> Any:
+) -> object:
     """生成订单流可视化（Plotly Table + 状态颜色编码）
 
     蓝图 §16.7.5: 订单列表(实时状态更新, 支持撤单按钮, Lightweight Charts订单流HTML Pane)
@@ -657,7 +657,7 @@ def make_gate_chart(
     title: str = "Gate Statistics",
     width: int = 800,
     height: int = 400,
-) -> Any:
+) -> object:
     """生成门禁统计条形图（Plotly 堆叠条形图, pass绿/block红）
 
     蓝图 §3.1: make_gate_chart（v3.1.0新增, 旧Streamlit页面迁移Panel用）
@@ -712,7 +712,7 @@ def make_trend_line(
     width: int = 800,
     height: int = 400,
     y_title: str = "Value",
-) -> Any:
+) -> object:
     """生成趋势折线图（Plotly Line, 大数据量自动 plotly_resampler 降采样）
 
     蓝图 §3.1: make_trend_line（v3.1.0新增, OLAP趋势页迁移Panel用）

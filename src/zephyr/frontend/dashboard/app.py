@@ -94,8 +94,8 @@ class DashboardApp:
 
     def __init__(
         self,
-        task_repo: Any | None = None,
-        olap_engine: Any | None = None,
+        task_repo: object | None = None,
+        olap_engine: object | None = None,
     ) -> None:
         self._task_repo = task_repo
         self._olap_engine = olap_engine
@@ -136,8 +136,8 @@ class DashboardApp:
 
 
 def create_app(
-    task_repo: Any | None = None,
-    olap_engine: Any | None = None,
+    task_repo: object | None = None,
+    olap_engine: object | None = None,
 ) -> DashboardApp:
     return DashboardApp(task_repo=task_repo, olap_engine=olap_engine)
 

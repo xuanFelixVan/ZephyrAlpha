@@ -88,21 +88,21 @@ class TickReplayData:
     total_ticks: int = 0
 
 
-def _to_float_list(values: Any) -> list[float]:
+def _to_float_list(values: object) -> list[float]:
     if values is None:
         return []
     return [float(v) for v in values]
 
 
-def _to_int_list(values: Any) -> list[int]:
+def _to_int_list(values: object) -> list[int]:
     if values is None:
         return []
     return [int(v) for v in values]
 
 
-def _normalize_tick(raw: Any) -> TickSnapshotView:
+def _normalize_tick(raw: object) -> TickSnapshotView:
     """把异构 Tick 对象（dataclass / dict / DataFrame row）归一化为 TickSnapshotView"""
-    def _get(key: str, default: Any = 0) -> Any:
+    def _get(key: str, default: object = 0) -> object:
         if hasattr(raw, key):
             return getattr(raw, key)
         if isinstance(raw, dict):

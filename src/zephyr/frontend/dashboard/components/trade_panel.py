@@ -40,11 +40,12 @@ A股约束:
 """
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Final
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 try:
     import panel as pn
@@ -198,15 +199,15 @@ def build_risk_warning(
 # ----- Broker 抽象（依赖注入，支持 MiniQmtBroker 或 mock） -----
 
 class _BrokerLike(Protocol):
-    def submit_order(self, order: Any) -> str: ...
+    def submit_order(self, order: object) -> str: ...
     def cancel_order(self, broker_order_id: str) -> bool: ...
-    def query_order(self, broker_order_id: str) -> Optional[Any]: ...
+    def query_order(self, broker_order_id: str) -> object | None: ...
 
 
 # ----- 下单/撤单 -----
 
 def submit_order(
-    execution_engine: Any,
+    execution_engine: object,
     order_submission: OrderSubmission,
     available_cash: float = 0.0,
     grey_capital: float = DEFAULT_GREY_CAPITAL,
@@ -287,7 +288,7 @@ def submit_order(
         return False, f"下单异常: {e}", risk_text
 
 
-def cancel_order(execution_engine: Any, broker_order_id: str) -> tuple[bool, str]:
+def cancel_order(execution_engine: object, broker_order_id: str) -> tuple[bool, str]:
     """撤单"""
     if execution_engine is None:
         return False, "execution_engine 未注入"
@@ -304,7 +305,7 @@ def cancel_order(execution_engine: Any, broker_order_id: str) -> tuple[bool, str
 
 
 def emergency_stop(
-    execution_engine: Any,
+    execution_engine: object,
     orders: list[OrderItem],
 ) -> tuple[int, list[str]]:
     """紧急停止：立即撤单所有非终态订单
@@ -330,10 +331,10 @@ def emergency_stop(
 
 def render_trade_panel(
     data: TradePanelData,
-    execution_engine: Any = None,
-    on_submit: Any = None,
-    on_cancel: Any = None,
-    on_emergency_stop: Any = None,
+    execution_engine: object = None,
+    on_submit: Callable[..., object] | None = None,
+    on_cancel: Callable[..., object] | None = None,
+    on_emergency_stop: Callable[..., object] | None = None,
     enable_grey: bool = True,
 ) -> dict[str, Any]:
     """Panel+HoloViz 渲染实盘交易面板（v3.0.0, #ARCH-047）
@@ -396,7 +397,7 @@ def render_trade_panel(
         width=300,
     )
     if on_emergency_stop is not None:
-        def _on_emergency(event: Any) -> None:
+        def _on_emergency(event: object) -> None:
             cancelled, errs = on_emergency_stop()
             # 结果通过 Alert 展示（简化实现，实际 app 层可扩展）
         emergency_btn.on_click(_on_emergency)
@@ -449,13 +450,13 @@ def render_trade_panel(
         width=200,
     )
 
-    def _on_confirm(event: Any) -> None:
+    def _on_confirm(event: object) -> None:
         submit_btn.disabled = not confirm_checkbox.value
 
     confirm_checkbox.param.watch(_on_confirm, "value")
 
     if on_submit is not None:
-        def _on_submit(event: Any) -> None:
+        def _on_submit(event: object) -> None:
             sub = OrderSubmission(
                 symbol=symbol_input.value,
                 side=side_select.value,

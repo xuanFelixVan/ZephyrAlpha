@@ -56,7 +56,7 @@ class OLAPTrendData:
     knowledge_activation: list[dict[str, Any]] = field(default_factory=list)
 
 
-def fetch_olap_trends(olap_engine: Any = None, period: str = "day", limit: int = 30) -> OLAPTrendData:
+def fetch_olap_trends(olap_engine: object = None, period: str = "day", limit: int = 30) -> OLAPTrendData:
     data = OLAPTrendData()
     if olap_engine is None:
         return data
