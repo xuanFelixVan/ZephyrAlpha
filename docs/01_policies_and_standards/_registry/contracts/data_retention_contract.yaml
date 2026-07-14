@@ -1,0 +1,376 @@
+# [A_config] module_id=CFG-data_retention_contract | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §19
+# module_id: MOD-L00-004
+# stability: evolving
+# safety_level: L
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
+# ============================================================
+# ZephyrAlpha 数据保留与回测分层契约（Data Retention Contract）
+# ============================================================
+#
+# 用途：数据保留策略 + 10层分层体系的唯一真源
+#   1. 定义所有业务数据的保留起点、Hot/Cold/Delete 策略
+#   2. 定义10层量化数据分层架构（信号层/工具层/基础层）
+#   3. 定义多频共振策略的数据依赖关系
+#
+# 铁律（用户裁决，不可变更）：
+#   1. 所有数据永不删除——只保留或归档，不 DROP
+#   2. 进 Cold 层必须手动触发——不自动迁移
+#   3. 所有表 Hot 层无 TTL——ClickHouse 永久保留
+#
+# 消费者：
+#   - data_source_integrator_blueprint.md §19（引用本契约）
+#   - tasks.yaml（每个任务的 retention 字段从本契约查表）
+#   - ClickHouse DDL（TTL 表达式从本契约校验，index_quote 90天TTL已删除）
+#   - 未来 archiver.py（Cold 层手动归档工具，从本契约读取归档规则）
+#
+# 对标标准：
+#   - 机构实践：kdb+ 三层（Hot内存/Warm磁盘/Cold归档），10年Tick保留
+#   - 量化社区：Parquet 分区存储，Tick 5年起，日K永久
+#   - 证监会合规：交易数据保留≥7年
+#
+# 依赖（本契约引用的真源文件）：
+#   - vocabularies/ttl_vocabulary.yaml → 文档级 ttl（permanent/task_bound）
+#   - data_acquisition_matrix.md → 61 个任务清单
+# ============================================================
+
+schema_version: "1.0.0"
+doc_type: contract
+module_id: PS-CTR-003
+version: "1.0.0"
+title: "Data Retention & Backtest Layering Contract"
+status: active
+ttl: permanent
+contract_version: "1.0.0"
+
+# ============================================================
+# §1 不变原则（铁律）
+# ============================================================
+invariants:
+  - id: INV-RET-001
+    rule: "所有数据永不删除"
+    description: "业务数据只保留或归档，禁止 DROP TABLE / DELETE WHERE / TTL 自动删除"
+    scope: all_business_tables
+
+  - id: INV-RET-002
+    rule: "进 Cold 层必须手动触发"
+    description: "ClickHouse → E盘 Parquet 归档由人工 CLI 触发，不自动迁移"
+    enforcement: "archiver.py 仅提供手动 CLI，不接入 scheduler 自动任务"
+
+  - id: INV-RET-003
+    rule: "所有表 Hot 层无 TTL"
+    description: "ClickHouse 所有业务表不设 TTL 表达式，永久保留"
+    enforcement: "DDL 校验器检查 CREATE TABLE 语句不含 TTL 子句（已存在TTL的表必须删除）"
+
+  - id: INV-RET-004
+    rule: "有效验证起点受限于最短木板"
+    description: "回测有效验证起点 = max(各层保留起点)，即受限于最早可用数据的时间"
+    example: "新闻保留起点2000年，但日K从2010年起，则新闻有效验证起点=2010年"
+
+# ============================================================
+# §2 10层量化数据分层体系
+# ============================================================
+# 分层逻辑：
+#   - 信号层（L1-L6, L8-L9）：独立产生买卖信号，各自独立回测优化
+#   - 工具层（L7）：不产生信号，增强信号传导（产业链图谱）
+#   - 基础层（L10）：不产生信号，被所有层依赖（标的池/日历）
+# ============================================================
+layers:
+
+  # ── 信号层 ──
+
+  - layer_id: L1
+    name: "Tick执行层"
+    category: signal
+    frequency: "3秒"
+    description: "逐笔成交/指数快照/集合竞价，用于做T回测和滑点建模"
+    backtest_independence: "完全独立——Tick自身含成交价，可独立验证做T收益"
+    retention_start: "2022-01-01"
+    valid_backtest_start: "2022-01-01"
+    hot_ttl: null  # 无TTL，永久保留
+    cold_policy: "手动归档（≥2年后人工触发）"
+    tables:
+      - c1_market.tick_data
+      - c1_market.index_quote
+      - c1_market.auction_snapshot
+    note: "Tick数据从2022年1月起（百度云有完整历史，硬盘限制只装到2022）；覆盖熊市+牛市，满足做T回测需求"
+
+  - layer_id: L2
+    name: "分钟时机层"
+    category: signal
+    frequency: "1min/5min/15min/30min/60min"
+    description: "分钟K线，用于日内入场时机和动量信号"
+    backtest_independence: "完全独立——分钟K自身含价格，可独立验证日内策略"
+    retention_start: "2010-01-01"
+    valid_backtest_start: "2010-01-01"
+    hot_ttl: null
+    cold_policy: "手动归档（≥5年后人工触发）"
+    tables:
+      - c1_market.kline_1min
+      - c1_market.kline_5min
+      - c1_market.kline_15min
+      - c1_market.kline_30min
+      - c1_market.kline_60min
+
+  - layer_id: L3
+    name: "日K趋势层"
+    category: signal
+    frequency: "日/周/月"
+    description: "日K线/复权因子/估值/指数K线，用于择时、趋势、选股"
+    backtest_independence: "完全独立——日K自身含价格，可独立验证趋势策略；同时作为L4/L5/L6/L9的验证基准"
+    retention_start: "2010-01-01"
+    valid_backtest_start: "2010-01-01"
+    hot_ttl: null
+    cold_policy: "手动归档（≥10年后人工触发）"
+    tables:
+      - c1_market.kline_daily
+      - c1_market.kline_daily_hfq
+      - c1_market.kline_weekly
+      - c1_market.kline_monthly
+      - c1_market.index_kline
+      - c1_market.adj_factor
+      - c1_market.daily_valuation
+    note: "2010年是机构标准起点（融资融券试点+股指期货上市），覆盖2-3轮牛熊"
+
+  - layer_id: L4
+    name: "资金面层"
+    category: signal
+    frequency: "日"
+    description: "融资融券/大宗交易/龙虎榜/资金流向，用于主力资金动向分析"
+    backtest_independence: "半独立——能独立产生信号，但验证收益需借L3日K"
+    retention_start: "2010-01-01"
+    valid_backtest_start: "2010-01-01"
+    hot_ttl: null
+    cold_policy: "手动归档（≥5年后人工触发）"
+    tables:
+      - c1_market.margin_trading
+      - c1_market.block_trade
+      - c1_market.dragon_tiger
+      - c1_market.money_flow
+      - c1_market.hk_connect_flow
+
+  - layer_id: L5
+    name: "基本面层"
+    category: signal
+    frequency: "季度"
+    description: "财务三表/财务指标/主营业务/业绩预告/分红配股/股权质押/股东户数"
+    backtest_independence: "半独立——能独立产生选股信号，但验证收益需借L3日K"
+    retention_start: "2010-01-01"
+    valid_backtest_start: "2010-01-01"
+    hot_ttl: null
+    cold_policy: "不归档（体积小，永久Hot）"
+    tables:
+      - c3_fundamental.balance_sheet
+      - c3_fundamental.income_statement
+      - c3_fundamental.cashflow_statement
+      - c3_fundamental.financial_indicator
+      - c3_fundamental.main_business
+      - c3_fundamental.earnings_forecast
+      - c3_fundamental.express_report
+      - c3_fundamental.audit_opinion
+      - c3_fundamental.dividend
+      - c3_fundamental.rights_issue
+      - c3_fundamental.equity_pledge_detail
+      - c3_fundamental.equity_pledge_summary
+      - c3_fundamental.shareholder_count
+
+  - layer_id: L6
+    name: "新闻事件层"
+    category: signal
+    frequency: "实时"
+    description: "新闻/证券公告/分析师预测/解禁计划/披露计划，用于事件驱动和情绪分析"
+    backtest_independence: "半独立——能独立产生事件信号，但验证股价反应需借L3/L2"
+    retention_start: "2000-01-01"  # 已有数据从2000年起
+    valid_backtest_start: "2010-01-01"  # 受限于日K起点
+    hot_ttl: null
+    cold_policy: "不归档（体积小，永久Hot）"
+    tables:
+      - c3_fundamental.news_data
+      - c3_fundamental.share_unlock
+      - c3_fundamental.analyst_forecast
+      - c3_fundamental.disclosure_plan
+    note: "news_data 已有2000年起961万行历史数据（百度云下载）；2000-2009保留但无法用股价验证（日K从2010起）"
+
+  # ── 工具层 ──
+
+  - layer_id: L7
+    name: "产业链关联层"
+    category: tool
+    frequency: "季度/年"
+    description: "产业链全景图/行业分类/板块指数，用于上下游传导分析和行业轮动"
+    backtest_independence: "不独立——是传导工具，不产生信号，配合L6新闻或L3日K使用"
+    retention_start: "latest"  # 按需获取，保持最新
+    valid_backtest_start: "2010-01-01"
+    hot_ttl: null
+    cold_policy: "不归档（关系图谱，体积小）"
+    tables:
+      - c3_fundamental.industry_class
+      - c3_fundamental.industry_class_ifind
+      - c3_fundamental.sector_constituent
+      - c1_market.sector_kline
+      - pending: c1_market.industry_chain_graph  # 万得产业链全景图（待接入）
+    note: "万得产业链全景图归此层；本质是关系图谱（节点+边），不是时间序列；新闻事件→产业链→上下游传导分析"
+
+  # ── 信号层（续） ──
+
+  - layer_id: L8
+    name: "衍生品跨市场层"
+    category: signal
+    frequency: "日"
+    description: "期货/期权/港股/美股，用于跨市场套利、对冲和波动率分析"
+    backtest_independence: "完全独立——衍生品自身含价格，可独立验证套利/对冲策略"
+    retention_start: "2010-01-01"
+    valid_backtest_start: "2010-01-01"
+    hot_ttl: null
+    cold_policy: "手动归档（≥5年后人工触发）"
+    tables:
+      - c1_market.futures_kline
+      - c1_market.futures_position
+      - c1_market.futures_term_structure
+      - c1_market.hk_daily_kline
+      - c1_market.us_daily_kline
+      - c1_market.us_index
+      - c1_market.option_iv_surface
+      - c1_market.convertible_bond_iv
+
+  - layer_id: L9
+    name: "宏观层"
+    category: signal
+    frequency: "月/季"
+    description: "CPI/PMI/M2/社融/LPR等宏观经济指标，用于大类资产配置和宏观择时"
+    backtest_independence: "半独立——能独立产生择时信号，但验证需借L3指数"
+    retention_start: "2010-01-01"
+    valid_backtest_start: "2010-01-01"
+    hot_ttl: null
+    cold_policy: "不归档（体积小，永久Hot）"
+    tables:
+      - c1_market.macro_data
+
+  # ── 基础层 ──
+
+  - layer_id: L10
+    name: "静态元数据层"
+    category: infrastructure
+    frequency: "月/年"
+    description: "标的列表/交易日历/指数成分，所有层的基础设施"
+    backtest_independence: "不独立——不产生信号，被所有层依赖"
+    retention_start: "latest"  # 保持最新
+    valid_backtest_start: "2010-01-01"
+    hot_ttl: null
+    cold_policy: "不归档（体积极小）"
+    tables:
+      - c1_market.stock_list
+      - c1_market.trade_calendar
+      - c1_market.index_constituent
+
+# ============================================================
+# §3 多频共振策略架构
+# ============================================================
+resonance_strategy:
+  description: "多指标、多时间周期共振产生买点——非单一事件触发"
+  flow:
+    - step: 1
+      layer: L9
+      action: "宏观择时——判断牛熊周期，决定仓位"
+    - step: 2
+      layers: [L4, L3]
+      action: "资金面+日K趋势——选股+择时（买什么+什么时候买）"
+    - step: 3
+      layers: [L6, L7]
+      action: "新闻事件+产业链传导——事件催化（为什么现在买）"
+    - step: 4
+      layers: [L2, L5]
+      action: "分钟K+基本面——入场时机（具体什么点买）"
+    - step: 5
+      layer: L1
+      action: "Tick执行——滑点控制（怎么买）"
+    - step: 6
+      layer: L8
+      action: "衍生品对冲——买入后保护"
+    - step: 7
+      layer: L10
+      action: "全程依赖——标的池/日历/成分"
+  resonance_rule: "多层信号同时满足（AND门）→ 触发共振买点"
+  optimization: "各层独立回测优化参数 → 融合共振决策（避免全参数空间过拟合）"
+
+# ============================================================
+# §4 层间依赖关系
+# ============================================================
+dependencies:
+  - layer: L1
+    depends_on: [L10]
+    validates_with: []  # 完全独立
+  - layer: L2
+    depends_on: [L10]
+    validates_with: []
+  - layer: L3
+    depends_on: [L10]
+    validates_with: []  # 完全独立，且作为其他层的验证基准
+  - layer: L4
+    depends_on: [L10]
+    validates_with: [L3]  # 信号独立，验证借L3
+  - layer: L5
+    depends_on: [L10]
+    validates_with: [L3]
+  - layer: L6
+    depends_on: [L10]
+    validates_with: [L3, L2]
+  - layer: L7
+    depends_on: [L10]
+    validates_with: [L6, L3]  # 工具层，配合使用
+  - layer: L8
+    depends_on: [L10]
+    validates_with: []
+  - layer: L9
+    depends_on: [L10]
+    validates_with: [L3]
+  - layer: L10
+    depends_on: []
+    validates_with: []  # 基础层，被依赖
+
+# ============================================================
+# §5 Hot/Cold/Delete 策略矩阵
+# ============================================================
+storage_matrix:
+  - table_pattern: "c1_market.tick_data / index_quote / auction_snapshot"
+    hot: "ClickHouse，无TTL，永久保留"
+    cold: "E盘Parquet，手动CLI触发（≥2年后）"
+    delete: "永不"
+
+  - table_pattern: "c1_market.kline_*"
+    hot: "ClickHouse，无TTL，永久保留"
+    cold: "E盘Parquet，手动CLI触发（≥5-10年后）"
+    delete: "永不"
+
+  - table_pattern: "c3_fundamental.*（财务/新闻/事件）"
+    hot: "ClickHouse，无TTL，永久保留"
+    cold: "不归档（体积小）"
+    delete: "永不"
+
+  - table_pattern: "c1_market.macro_data"
+    hot: "ClickHouse，无TTL，永久保留"
+    cold: "不归档（体积小）"
+    delete: "永不"
+
+  - table_pattern: "c1_market.stock_list / trade_calendar / index_constituent"
+    hot: "ClickHouse，无TTL，保持最新"
+    cold: "不归档"
+    delete: "永不"
+
+# ============================================================
+# §6 变更历史
+# ============================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-07-14"
+    author: "ZephyrAlpha-Owner"
+    changes:
+      - "初始版本——10层分层体系定稿"
+      - "铁律确立：所有数据不删除、Cold层手动触发、Hot层无TTL"
+      - "时间起点：L1 Tick=2022-01, L2-L9=2010-01, L6新闻保留起点=2000-01"
+      - "删除 index_quote 表90天TTL（违反INV-RET-003）"
+      - "万得产业链全景图归L7层"
+      - "多频共振策略架构定义"

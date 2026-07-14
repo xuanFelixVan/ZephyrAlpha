@@ -472,7 +472,6 @@ CREATE TABLE IF NOT EXISTS c1_market.index_quote
 ENGINE = MergeTree
 PARTITION BY toYYYYMMDD(trade_date)
 ORDER BY (symbol, trade_date, timestamp)
-TTL trade_date + INTERVAL 90 DAY
 COMMENT '指数行情(原料,replay)'
 """
 ```
@@ -487,7 +486,7 @@ COMMENT '指数行情(原料,replay)'
 | 引擎 | MergeTree |
 | 分区 | PARTITION BY toYYYYMMDD(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp) |
-| TTL | trade_date + INTERVAL 90 DAY |
+| TTL | **无TTL**（永久保留，INV-RET-003 铁律） |
 | calc_mode | **replay** |
 | category_id | **market_index** |
 
@@ -837,7 +836,7 @@ class C1BacktestLoader:
 | 4 | 8 张表 calc_mode 必须标注 | replay/preload（母蓝图 §7.5） |
 | 5 | 8 张表 category_id 必须注册 | 母蓝图 §6 第1层 |
 | 6 | market_type 字段预留硬边界品类 | 港股/美股/期货 DEFAULT 'A_share'，enabled=false（母蓝图 §8.2） |
-| 7 | tick_data/index_quote TTL 90天 | 高频数据超期归档 Parquet |
+| 7 | tick_data/index_quote **无TTL** | INV-RET-003 铁律：永久保留，不归档 |
 | 8 | daily_kline 永久保留 | 日线数据不 TTL |
 | 9 | DDL-as-Code 格式 | Python 类定义表结构（母蓝图 §6 第2层） |
 | 10 | ClickHouse 已部署（2026-07-01），前置阻塞已解除 | INFRA-DB-006 已上线 |
@@ -873,7 +872,7 @@ class C1BacktestLoader:
 | 1 | ClickHouse 连接失败 | 连接超时 | 重试 + 告警 | 写入/查询不可用 |
 | 2 | 批量写入失败 | ClickHouseException | 记录失败批次 + 重试 | 数据延迟 |
 | 3 | 分区裁剪失效 | 查询计划分析 | 检查 WHERE 条件含 trade_date | 查询性能下降 |
-| 4 | TTL 归档失败 | 归档任务日志 | 重试归档 + 保留原数据 | 磁盘占用增长 |
+| 4 | ~~TTL 归档失败~~（已废弃） | — | INV-RET-003 铁律：无TTL，不归档 | — |
 | 5 | DDL 执行失败 | apply_schema.py 报错 | 检查表已存在 + 字段冲突 | 建表阻塞 |
 | 6 | 数据质量标记 quality_flag=0 | 写入前校验 | 标记后写入 + 告警 | 下游收到异常标记数据 |
 
@@ -936,7 +935,7 @@ class C1BacktestLoader:
 | 3 | tick_data 热层加载 | symbols=[000001], 全量 | DataFrame dict | 内存占用<500MB |
 | 4 | daily_kline 温层加载 | symbols=[000001], 1年 | DataFrame dict | 加载时间<10s |
 | 5 | DDL 建表 | apply_schema.py | 8张表创建成功 | 表结构正确 |
-| 6 | TTL 归档 | 91天前 tick_data | 归档 Parquet | 原数据删除 |
+| 6 | ~~TTL 归档~~（已废弃） | — | — | INV-RET-003 铁律：无TTL，不归档 |
 
 ---
 
@@ -1033,10 +1032,10 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | # | 表名 | 性质 | 频率 | 数据源 | 引擎 | 分区 | 排序键 | TTL | calc_mode | category_id |
 |---|------|------|:----:|--------|------|------|--------|:---:|:---------:|-------------|
-| 1 | tick_data | 原料 | 3秒 | miniQMT | MergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 90天 | replay | market_tick |
+| 1 | tick_data | 原料 | 3秒 | miniQMT | MergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_tick |
 | 2 | daily_kline | 成品(聚合) | 日频 | miniQMT/iFind | MergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_daily_kline |
 | 3 | auction_snapshot | 原料 | 9:15-9:25 | miniQMT | MergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_auction |
-| 4 | index_quote | 原料 | 3秒 | miniQMT | MergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 90天 | replay | market_index |
+| 4 | index_quote | 原料 | 3秒 | miniQMT | MergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_index |
 | 5 | option_iv_surface | 原料(衍生) | 日频 | iFind/AkShare | MergeTree | toYYYYMM | underlying,trade_date,strike,expiry | 无 | preload | market_option_iv |
 | 6 | futures_position | 原料(衍生) | 日频 | CZCE/DCE | MergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_position |
 | 7 | futures_term_structure | 原料(衍生) | 日频 | 交易所 | MergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_term |
@@ -1055,7 +1054,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
   table: tick_data
   schema_file: schemas/categories/market_tick.py
   data_type: 原料
-  lifecycle: hot_warm  # 热层90天+归档
+  lifecycle: hot_only  # INV-RET-003 铁律：无TTL，永久Hot保留
   sla_level: P0
   enabled: true
   hard_constraint: ""
@@ -1115,7 +1114,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 3 | tick_data 内存占用过大（100标的48GB） | 中 | 回测内存溢出 | 热层分层加载 + 限制标的数量 | 风险 |
 | 4 | ClickHouse 无 AS OF JOIN | 中 | 多频率时间对齐困难 | 内存工作台完成对齐（母蓝图 §7.3） | 风险 |
 | 5 | MergeTree 不支持 UPSERT | — | 中 | daily_kline 先删后插模式 | 负面后果 |
-| 6 | TTL 归档 Parquet 需额外存储 | — | 低 | 对象存储归档 | 负面后果 |
+| 6 | ~~TTL 归档 Parquet 需额外存储~~（已废弃） | — | — | INV-RET-003 铁律：无TTL，不归档 | 负面后果 |
 | 7 | ClickHouse 部署需新建 INFRA-DB-006 | — | 中 | Docker 部署，对接 MOD-INF-012A | 负面后果 |
 
 ---
@@ -1284,7 +1283,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | GAP-C1-001 | ClickHouse 已部署，GAP 已解除 | Docker 部署 INFRA-DB-006 | P0 | C1施工前置 | v1.0.0 | 已解除 |
 | GAP-C1-002 | D_DATA 仅支持 OHLCV | D_DATA 步骤3 多品类扩展 | P0 | 7张表无数据源 | v1.1.0 | 待施工 |
 | GAP-C1-003 | tick_data 内存占用大 | 热层分层加载 + 标的数量限制 | P1 | 100标的48GB | v1.0.0 | 设计完成 |
-| GAP-C1-004 | TTL 归档无存储 | 对象存储(Parquet归档) | P2 | 90天数据到期 | v1.1.0 | 待施工 |
+| GAP-C1-004 | ~~TTL 归档无存储~~（已废弃） | INV-RET-003 铁律：无TTL，不归档 | — | — | — | 已废弃 |
 
 ### §17.3 升级版本矩阵
 
@@ -1314,7 +1313,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 1 | D-C1-01 | 全部表使用 MergeTree 引擎 | MergeTree/ReplacingMergeTree | MergeTree | 数据源唯一(D_DATA)，不需要去重 | 2026-07-01 |
 | 2 | D-C1-02 | 高频表按天分区/日频表按月分区 | 统一按天/混合 | 混合 | 高频表分区裁剪+日频表减少分区数 | 2026-07-01 |
 | 3 | D-C1-03 | 排序键 symbol 前缀 | symbol前缀/时间前缀 | symbol前缀 | 回测主要查单只股票历史数据 | 2026-07-01 |
-| 4 | D-C1-04 | tick_data/index_quote TTL 90天 | 永久保留/TTL归档 | TTL 90天 | 高频数据体积大，超期归档Parquet | 2026-07-01 |
+| 4 | D-C1-04 | ~~tick_data/index_quote TTL 90天~~（已废弃） | 永久保留/TTL归档 | **永久保留** | INV-RET-003 铁律：无TTL，永久保留 | 2026-07-14 |
 | 5 | D-C1-05 | daily_kline 永久保留 | TTL/永久 | 永久 | 日线数据体积小且高频查询 | 2026-07-01 |
 | 6 | D-C1-06 | calc_mode 二值(replay/preload) | 三值含hybrid/二值 | 二值 | C1行情数据无hybrid需求 | 2026-07-01 |
 | 7 | D-C1-07 | market_type 字段预留硬边界品类 | 不预留/预留字段 | 预留字段 | 对接母蓝图 §8.2 硬边界 | 2026-07-01 |

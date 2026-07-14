@@ -4854,6 +4854,14 @@ creation_tokens:
     created_by: "session-sess-25580-20260714144742"
     capability: "blueprint_format_gate"
 
+  # --- 数据保留与回测分层契约（PS-CTR-003，2026-07-14）---
+  # 10层量化数据分层体系 + Hot/Cold/Delete 策略 + 多频共振策略架构
+  # 被 data_source_integrator_blueprint.md §19 引用
+  - file: "docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml"
+    token: "auto-data-retention-contract-20260714"
+    created_by: "session-sess-9444-20260714212810"
+    capability: "data_retention_contract"
+
 # ============================================================================
 # 维护日志
 # ============================================================================
