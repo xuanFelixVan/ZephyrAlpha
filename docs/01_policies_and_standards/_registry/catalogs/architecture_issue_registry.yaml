@@ -8,9 +8,9 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.2.0
+version: 1.3.0
 created: '2026-06-26'
-last_updated: '2026-07-09'
+last_updated: '2026-07-15'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -22,12 +22,13 @@ last_updated: '2026-07-09'
 # 4. status 四值：open(待施工) / decided(已裁定待施工) / deprecated(已废弃不施工) / superseded(已被新议题取代)
 # 5. 编号预留：#ARCH-001/003 永久保留为预留段（未立项任何议题，登记为 deprecated 条目以占位）；#ARCH-002/004/005/006/007 已回溯补录（2026-07-05，源自 dependency_path_panorama.md 裁定#203 早期议题）
 # 6. 登记强制：任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位
+# 7. 域前缀编号：跨子系统的专题裁定使用 #ARCH-{DOMAIN}-NNN 格式（如 #ARCH-CH-007 ClickHouse、#ARCH-MM-001 Maturity、#ARCH-REN-001 域重命名、#ARCH-CAP-001 容量、#ARCH-BACKFILL-001 补下载）。DOMAIN 为大写字母子系统工程缩写，各 DOMAIN 内 NNN 独立连续分配。纯数字 #ARCH-NNN 保留给全局架构议题
 
 unique_key:
 - issue_id
 
 entry_schema:
-  issue_id: str              # #ARCH-NNN
+  issue_id: str              # #ARCH-NNN（全局）或 #ARCH-{DOMAIN}-NNN（域专题，如 #ARCH-CH-007）
   title: str                 # 议题标题
   severity: str              # P0致命 | P1高 | P2中 | P3低
   adjudication: str          # 裁定/修复方案描述
@@ -1662,3 +1663,114 @@ entries:
   - architecture_issue_registry.yaml#ARCH-035（生成器是运营态唯一真源）
   created: '2026-07-06'
   last_updated: '2026-07-06'
+
+# --- #ARCH-CH-001~007: ClickHouse 数据架构裁定（2026-07-10~15，回溯登记自 data_source_integrator_blueprint.md §18） ---
+- issue_id: '#ARCH-CH-001'
+  title: ch_writer 逐个写入架构是 CH 不稳定根因
+  severity: P1高
+  adjudication: 'ch_writer 逐个写入（无批量聚合层）导致每次 INSERT 创建 1 个 data part，5204 只股票逐个写入时 data parts 爆炸，是 ClickHouse 不稳定的根本原因。裁定引入 BufferedWriter 批量聚合层（见 #ARCH-CH-003）。'
+  fix_phase: 已完成（BufferedWriter 已实现，见 #ARCH-CH-003）
+  status: superseded
+  superseded_by: '#ARCH-CH-003'
+  created: '2026-07-10'
+  last_updated: '2026-07-10'
+- issue_id: '#ARCH-CH-002'
+  title: 引擎统一为 ReplacingMergeTree
+  severity: P1高
+  adjudication: '废弃"MergeTree 先删后插"策略，全部表统一 ReplacingMergeTree + 直接 INSERT。ReplacingMergeTree 后台 merge 自动去重，零 mutation 开销，增量回填幂等。get_table_engine/is_replacing_engine 辅助幂等性决策。'
+  fix_phase: 已完成（73 张表全部统一为 ReplacingMergeTree，265 亿行无丢失）
+  status: resolved
+  created: '2026-07-10'
+  last_updated: '2026-07-15'
+- issue_id: '#ARCH-CH-003'
+  title: 必须引入 BufferedWriter 批量聚合层
+  severity: P1高
+  adjudication: 'ch_writer 逐个写入是 CH 不稳定根因，蓝图 §16"每批≥1万行"从未实现。裁定引入 BufferedWriter 强制攒批（每批 ≥ 50000 行或 ≥ 30 秒触发 flush），禁止绕过 BufferedWriter 在 for 循环内直接调用 ch_writer.write_result。CH-BATCH-SIZE 门禁强制执行。'
+  fix_phase: 已完成（buffered_writer.py 实现 + CH-BATCH-SIZE gate 防复发）
+  status: resolved
+  created: '2026-07-10'
+  last_updated: '2026-07-10'
+- issue_id: '#ARCH-CH-004'
+  title: 100% AI 开发模式需蓝图约束运行时门禁 + 混合传输架构
+  severity: P1高
+  adjudication: '100% AI 开发模式下 AI 不会自觉回查蓝图约束，需运行时门禁（commit gate）强制。ch_writer 混合传输架构（clickhouse-driver TCP + WSL fallback）亦属本裁定：query/delete_where 走 TCP 2.9x 加速，write_tsv 保留 WSL 类型自动转换，driver 不可用自动降级 WSL。'
+  fix_phase: 已完成（CH-BATCH-SIZE + CH-FINAL-GATE 门禁 + ch_writer 混合传输实现）
+  status: resolved
+  created: '2026-07-10'
+  last_updated: '2026-07-15'
+- issue_id: '#ARCH-CH-005'
+  title: ch_writer 混合传输架构（clickhouse-driver TCP + WSL fallback）
+  severity: P2中
+  adjudication: 'ch_writer 混合传输：query/delete_where 走 clickhouse-driver TCP（2.9x 加速），write_tsv 保留 WSL TSV（类型自动转换）。driver 不可用时自动降级 WSL。三级降级链：TCP→HTTP→WSL subprocess。'
+  fix_phase: 已完成（ch_writer.py 混合传输实现）
+  status: resolved
+  created: '2026-07-10'
+  last_updated: '2026-07-10'
+- issue_id: '#ARCH-CH-007'
+  title: ch_reader 统一查询层 + CH-FINAL-GATE 门禁
+  severity: P1高
+  adjudication: 'ReplacingMergeTree 去重是异步的（后台 merge 时才去重），查询时需加 FINAL 强制去重。100% AI 开发模式下 AI 不会主动加 FINAL。裁定：(1) 创建 ch_reader.query() 统一查询层自动注入 FINAL；(2) 迁移所有查询点走 ch_reader；(3) 注册 CH-FINAL-GATE 门禁阻断 ch_writer.query() 直接调用。B4 providers 迁移 + B5 门禁 + B6 version 列评估均属本裁定施工阶段。'
+  fix_phase: '已完成（ch_reader.py 创建 + akshare_provider/ifind_provider/news_dedup/scheduler/data_handler/backfill_checker 迁移 + CH-FINAL-GATE 门禁注册 + capability 登记）'
+  status: resolved
+  created: '2026-07-15'
+  last_updated: '2026-07-15'
+
+# --- #ARCH-REN-001: 域 ID 命名统一裁定（回溯登记自 dependency_path_panorama.md §20.13） ---
+- issue_id: '#ARCH-REN-001'
+  title: 域 ID 连字符→下划线统一
+  severity: P2中
+  adjudication: '2026-06-26 裁定：6 个域 ID 从连字符格式改为下划线格式（如 D-SIG-LEGACY→D_SIGLEGACY），符合项目 snake_case 命名铁律。'
+  fix_phase: 已完成（6 个域 ID 已重命名，depgraph 已同步）
+  status: resolved
+  created: '2026-06-26'
+  last_updated: '2026-06-26'
+
+# --- #ARCH-CAP-001/002: 容量治理裁定（回溯登记） ---
+- issue_id: '#ARCH-CAP-001'
+  title: 容量治理二元规则建立
+  severity: P2中
+  adjudication: '建立容量治理二元规则：单域 production_nodes ≤150 通过，>150 必须拆分，无例外。'
+  fix_phase: 已完成（ARCH-CAP-002 v1.0.8 容量门禁实现）
+  status: resolved
+  created: '2026-07-04'
+  last_updated: '2026-07-04'
+- issue_id: '#ARCH-CAP-002'
+  title: 容量治理门禁 v1.0.8
+  severity: P2中
+  adjudication: 'ARCH-CAP-002 v1.0.8 容量门禁实现，单域 production_nodes >150 硬阻断。'
+  fix_phase: 已完成（门禁已注册）
+  status: resolved
+  created: '2026-07-04'
+  last_updated: '2026-07-04'
+
+# --- #ARCH-BACKFILL-001: L10 周末补下载层（tick_data 缺失自动检测+补下载） ---
+- issue_id: '#ARCH-BACKFILL-001'
+  title: L10 周末补下载层——tick_data 缺失自动检测与精准补下载
+  category: data_architecture
+  severity: P2中
+  status: decided
+  description: |
+    问题背景：scheduler 中断或 QMT 断连时，tick_data 出现全天0行的缺失。
+    现有 L1-L7 增量拉取依赖 last_key，若 last_key 被错误更新到今天，
+    中间日期会被跳过，无法发现已跳过的缺失。
+    L8 全量校准耗时长，不适合频繁执行。
+
+    裁定：新增 L10 weekend_backfill 调度层（周日 02:00），不依赖 last_key，
+    直接查 ClickHouse 实际行数检测缺失，对缺失日期精准补下载。
+    与 L8 互补：L8 校准数据准确性，L10 补完整性。
+
+    实现文件：src/zephyr/data/backfill_checker.py
+    调度配置：schedule.yaml weekend_backfill（cron "00 2 * * 0"）
+    任务登记：tasks.yaml tick_backfill_weekly（source=backfill）
+    集成入口：scheduler.py run_schedule() 特殊路由
+  impact:
+  - src/zephyr/data/backfill_checker.py（新建）
+  - src/zephyr/data/config/schedule.yaml（新增 weekend_backfill）
+  - src/zephyr/data/config/tasks.yaml（新增 tick_backfill_weekly）
+  - src/zephyr/data/scheduler.py（run_schedule 特殊分支）
+  status: resolved
+  related_rules:
+  - schedule.yaml weekend_backfill
+  - tasks.yaml tick_backfill_weekly
+  created: '2026-07-15'
+  last_updated: '2026-07-15'

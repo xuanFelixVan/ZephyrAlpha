@@ -175,6 +175,10 @@ build_status: planned
 | `commit_gates/high_complexity_gate.py` | §0.1 | 高循环复杂度阻断门禁（NO-HIGH-COMPLEXITY，§5.158防复发，AST检测McCabe复杂度>15） | 已实现 | | 本模块 |
 | `commit_gates/tests_coverage_gate.py` | §0.1 | Gate测试覆盖率校验meta-gate（META-TESTS-COVERAGE，#ARCH-057，守卫者的守卫者） | 已实现 | | 本模块 |
 | `commit_gates/gate_repo.py` | §0.1 | gate仓库（已正确指向MOD-GATE_ENGINE） | 已实现 | | 本模块 |
+| `commit_gates/blueprint_format_gate.py` | §0.1 | [BLUEPRINT]头部module_id格式阻断门禁（BLUEPRINT-FORMAT，裁定#214 Phase 0防蔓延，裁定#208双轨制MOD-/SH-前缀校验） | 已实现 | | 本模块 |
+| `commit_gates/ch_batch_size_gate.py` | §0.1 | CH批量写入防回退门禁（CH-BATCH-SIZE，§18.4防复发，AST检测write_result在循环内直接调用） | 已实现 | | 本模块 |
+| `commit_gates/ch_final_gate.py` | §0.1 | ch_writer.query()直接调用阻断门禁（CH-FINAL-GATE，裁定#ARCH-CH-007 B5防复发，强制走ch_reader.query()自动注入FINAL） | 已实现 | | 本模块 |
+| `commit_gates/test_source_consistency_gate.py` | §0.1 | 测试-源码符号一致性门禁（TEST-SOURCE-CONSISTENCY，§5.178防复发，检测tests/中import的符号在源码是否存在） | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
