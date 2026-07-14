@@ -1323,6 +1323,18 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 ### 变更记录
 
+### v1.0.2 (2026-07-14) TTL 铁律合规修复
+- **契约对齐**：对接 data_retention_contract.yaml (PS-CTR-003) INV-RET-003 铁律"所有表 Hot 层无 TTL"
+- **蓝图修复**：删除 tick_data/index_quote DDL 中的 `TTL trade_date + INTERVAL 90 DAY` 行
+- **属性表修复**：TTL 列从"90天"改为"无TTL（永久保留，INV-RET-003 铁律）"
+- **决策记录**：D-C1-04 标记为"已废弃"，选中项改为"永久保留"
+- **异常场景/测试用例/GAP/风险表**：TTL 归档相关条目标记为"已废弃"
+- **待执行 DDL**（ClickHouse 服务恢复后执行）：
+  ```sql
+  ALTER TABLE c1_market.tick_data REMOVE TTL;
+  ALTER TABLE c1_market.index_quote REMOVE TTL;
+  ```
+
 ### v1.0.1 (2026-07-05) 状态同步修复
 - construction_progress: not_started → partially_implemented（ClickHouse 已于 2026-07-01 部署）
 - 解除所有"ClickHouse 未部署"前置阻塞描述
