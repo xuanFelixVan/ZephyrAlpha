@@ -179,7 +179,7 @@ jobs:
           python -c "
           import os, yaml
           from pathlib import Path
-          from zephyr.governance.commit_gates.arch_reference_gate import _extract_refs, _extract_registered_nums
+          from zephyr.gov_enforcement.commit_gates.arch_reference_gate import _extract_refs, _extract_registered_nums
           root = Path('.')
           reg_path = root / 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml'
           reg = yaml.safe_load(reg_path.read_text(encoding='utf-8'))
