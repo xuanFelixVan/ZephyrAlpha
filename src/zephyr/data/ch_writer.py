@@ -18,8 +18,9 @@
 
 混合传输架构（裁定 #ARCH-CH-004，2026-07-10，2026-07-12 修订）：
 - query/delete_where → clickhouse-driver TCP（9000端口，2.9x 加速，连接复用）
-- write_tsv → HTTP API（8123端口，POST TSV body）优先，WSL subprocess fallback
+- write_tsv → HTTP API（18123端口，POST TSV body）优先，WSL subprocess fallback
   （2026-07-12 修订：WSL 服务不稳定会导致 write_tsv 卡 600 秒超时，改用 HTTP API 主路径）
+  （2026-07-15 修订：8123 端口落在 Windows Hyper-V 排除范围 8114-8213 内导致无法绑定，改用 18123）
 
 提供：
 - write_result(result): 把 FetchResult.rows 转 TSV 写入 CH
@@ -161,10 +162,14 @@ def _wsl_ch(
     )
 
 
-# ClickHouse HTTP 端口（8123）
-# WSL2 端口转发可能失效，HTTP 主机也需自动发现（同 TCP 逻辑）
-_CH_HTTP_PORT = 8123
+# ClickHouse HTTP 端口（18123）
+# 2026-07-15：原 8123 落在 Windows Hyper-V 端口排除范围 8114-8213 内，ClickHouse 无法绑定
+# 改用 18123 避开排除范围（裁定 #ARCH-CH-010）
+_CH_HTTP_PORT = 18123
 _ch_http_host: str | None = None  # 懒初始化：先本地，失败则 WSL2 IP
+# HTTP 失败冷却时间戳（避免 HTTP 不可用时每次都重复超时等待）
+_http_fail_ts: float = 0
+_HTTP_COOLDOWN_SEC = 300  # HTTP 失败后 300 秒内不再重试（HTTP 服务不常变，冷却期比 TCP 长）
 
 
 def _get_http_host() -> str:
@@ -172,10 +177,15 @@ def _get_http_host() -> str:
 
     策略：先试本地，失败则用 WSL2 IP。
     结果缓存到全局 _ch_http_host。
+    HTTP 失败后 300 秒冷却期内返回空字符串（调用方应跳过 HTTP 降级到 WSL）。
     """
-    global _ch_http_host
+    global _ch_http_host, _http_fail_ts
     if _ch_http_host is not None:
         return _ch_http_host
+    # HTTP 冷却期内跳过 HTTP 连接尝试
+    import time as _time
+    if _http_fail_ts and (_time.time() - _http_fail_ts) < _HTTP_COOLDOWN_SEC:
+        return ""
     # 策略1: 本地
     try:
         req = urllib.request.Request(
@@ -201,9 +211,11 @@ def _get_http_host() -> str:
                 return _ch_http_host
         except Exception as e:
             log.warning("ClickHouse HTTP WSL IP 连接失败: %s", e)
-    # 兜底：用本地（后续请求会失败，但保持向后兼容）
-    _ch_http_host = _CH_LOCAL_HOST
-    return _ch_http_host
+    # 兜底：HTTP 完全不可用，设置冷却时间戳，返回空字符串
+    import time as _time
+    _http_fail_ts = _time.time()
+    log.warning("ClickHouse HTTP 不可用，%ds 内跳过 HTTP 降级", _HTTP_COOLDOWN_SEC)
+    return ""
 
 
 def _http_insert(
@@ -211,7 +223,7 @@ def _http_insert(
     tsv_bytes: bytes,
     timeout: int = _DEFAULT_TIMEOUT,
 ) -> bool:
-    """通过 ClickHouse HTTP API（8123端口）执行 INSERT。
+    """通过 ClickHouse HTTP API（18123端口）执行 INSERT。
 
     HTTP API 比 WSL subprocess 更稳定：
     - 不依赖 WSL 服务（WSL 可能卡住导致 600 秒超时）
@@ -227,6 +239,8 @@ def _http_insert(
         是否成功。
     """
     http_host = _get_http_host()
+    if not http_host:
+        return False  # HTTP 不可用（冷却期内或探测失败），调用方降级到 WSL
     url = f"http://{http_host}:{_CH_HTTP_PORT}/"
     # URL 编码 query 参数
     import urllib.parse
@@ -259,7 +273,9 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
     - SELECT/DESCRIBE → clickhouse-driver TCP → HTTP API → WSL（三级降级）
     - DDL → clickhouse-driver TCP → HTTP API → WSL（三级降级）
     - 2026-07-12 修订：TCP 连接可能被拒绝（端口 9000 不稳定），WSL 可能卡住，
-      新增 HTTP API(8123) 作为中间路径
+      新增 HTTP API(18123) 作为中间路径
+    - 2026-07-15 修订：8123 端口落在 Windows Hyper-V 排除范围 8114-8213 内，
+      改用 18123；新增 HTTP 冷却期避免死路径超时浪费
 
     失败时 log 错误并返回空字符串（不抛异常）。
     """
@@ -284,18 +300,19 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
         except Exception as e:
             log.warning("clickhouse-driver query 失败，降级到 HTTP: %s", e)
 
-    # 策略2: HTTP API（8123，不依赖 WSL subprocess）
-    import urllib.parse
+    # 策略2: HTTP API（18123，不依赖 WSL subprocess）
     http_host = _get_http_host()
-    url = f"http://{http_host}:{_CH_HTTP_PORT}/?query={urllib.parse.quote(sql)}"
-    try:
-        req = urllib.request.Request(url, method="GET")
-        resp = urllib.request.urlopen(req, timeout=timeout)
-        if resp.status == 200:
-            return resp.read().decode("utf-8", errors="replace")
-        log.warning("HTTP query 失败: status=%s，降级到 WSL", resp.status)
-    except Exception as e:
-        log.warning("HTTP query 失败，降级到 WSL: %s", e)
+    if http_host:
+        import urllib.parse
+        url = f"http://{http_host}:{_CH_HTTP_PORT}/?query={urllib.parse.quote(sql)}"
+        try:
+            req = urllib.request.Request(url, method="GET")
+            resp = urllib.request.urlopen(req, timeout=timeout)
+            if resp.status == 200:
+                return resp.read().decode("utf-8", errors="replace")
+            log.warning("HTTP query 失败: status=%s，降级到 WSL", resp.status)
+        except Exception as e:
+            log.warning("HTTP query 失败，降级到 WSL: %s", e)
 
     # 策略3: WSL subprocess（最终 fallback）
     try:
@@ -437,7 +454,7 @@ def write_tsv(
     """TSV 批量写入表。
 
     传输优先级（2026-07-12 修订）：
-    1. HTTP API（8123端口）— 主路径，不依赖 WSL
+    1. HTTP API（18123端口）— 主路径，不依赖 WSL
     2. WSL subprocess — fallback（HTTP 不可用时降级）
 
     Args:
@@ -571,17 +588,19 @@ def delete_where(
             return True
         except Exception as e:
             log.warning("clickhouse-driver delete 失败，降级到 HTTP: %s", e)
-    # 策略2: HTTP API
-    import urllib.parse
-    url = f"http://{_CH_HTTP_HOST}:{_CH_HTTP_PORT}/?query={urllib.parse.quote(sql)}"
-    try:
-        req = urllib.request.Request(url, method="POST")
-        resp = urllib.request.urlopen(req, timeout=timeout)
-        if resp.status == 200:
-            return True
-        log.warning("HTTP delete 失败: status=%s，降级到 WSL", resp.status)
-    except Exception as e:
-        log.warning("HTTP delete 失败，降级到 WSL: %s", e)
+    # 策略2: HTTP API（含冷却期检查）
+    http_host = _get_http_host()
+    if http_host:
+        import urllib.parse
+        url = f"http://{http_host}:{_CH_HTTP_PORT}/?query={urllib.parse.quote(sql)}"
+        try:
+            req = urllib.request.Request(url, method="POST")
+            resp = urllib.request.urlopen(req, timeout=timeout)
+            if resp.status == 200:
+                return True
+            log.warning("HTTP delete 失败: status=%s，降级到 WSL", resp.status)
+        except Exception as e:
+            log.warning("HTTP delete 失败，降级到 WSL: %s", e)
     # 策略3: WSL subprocess
     try:
         r = _wsl_ch(["--query", sql], timeout=timeout)
