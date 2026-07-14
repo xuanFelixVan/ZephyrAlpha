@@ -36,13 +36,16 @@ from zephyr.shared.io.serialization import dumps
 import hashlib
 import logging
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
 _logger = logging.getLogger(__name__)
 
 
 class VectorBridge:
-    def __init__(self, vms: Any) -> None:
+    def __init__(self, vms: InProcessVectorMemory) -> None:
         self._vms = vms
 
     def search_for_ce(self, query: str, collections: list[str] | None = None, k: int = 5) -> list[dict[str, Any]]:

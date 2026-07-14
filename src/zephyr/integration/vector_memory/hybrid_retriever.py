@@ -153,8 +153,8 @@ class BM25Index:
 class HybridRetriever:
     def __init__(
         self,
-        collection_manager: Any,
-        embedding_router: Any,
+        collection_manager: CollectionManager,
+        embedding_router: EmbeddingRouterProtocol,
     ) -> None:
         self._collection_manager = collection_manager
         self._embedding_router = embedding_router
@@ -343,7 +343,7 @@ class HybridRetriever:
         query: str,
         collection_name: str,
         k: int = 5,
-        reranker: Any = None,
+        reranker: RerankerProtocol | None = None,
     ) -> RetrievalTrace:
         trace = self.search(query, collection_name, k=max(k * 2, 10))
         if reranker is not None and len(trace.hits) > 0:

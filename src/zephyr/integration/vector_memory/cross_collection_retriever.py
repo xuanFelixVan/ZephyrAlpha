@@ -29,13 +29,16 @@ CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.integration.vector_memory.hybrid_retriever import HybridRetriever
 
 _logger = logging.getLogger(__name__)
 
 
 class CrossCollectionRetriever:
-    def __init__(self, hybrid_retriever: Any) -> None:
+    def __init__(self, hybrid_retriever: HybridRetriever) -> None:
         self._hybrid_retriever = hybrid_retriever
 
     def knead(

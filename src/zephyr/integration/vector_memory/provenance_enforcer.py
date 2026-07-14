@@ -66,7 +66,7 @@ class ProvenanceEnforcer:
         return meta
 
     @staticmethod
-    def cbau_check(collection: str, operation: str, ai_session: Any = None) -> bool:
+    def cbau_check(collection: str, operation: str, ai_session: object | None = None) -> bool:
         from zephyr.integration.vector_memory.collection_manager import COLLECTION_SCHEMAS
 
         schema = COLLECTION_SCHEMAS.get(collection, {})

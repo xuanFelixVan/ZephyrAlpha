@@ -171,6 +171,8 @@ if TYPE_CHECKING:
     from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
     from zephyr.shared.protocols.ports import RerankerProtocol
     from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
+    from zephyr.autonomy_core.integration.pipeline_bridge import PipelineSkillBridge
+    from zephyr.shared.lifecycle.hooks import LifecycleManager
 
 __all__ = ["PipelineOrchestrator"]
 
@@ -1297,7 +1299,7 @@ class PipelineOrchestrator:
         token_divisor: int | None = None,
         prior_artifacts: list | None = None,
         dry_run: bool = False,
-        skill_injection: Any | None = None,
+        skill_injection: PipelineSkillBridge | None = None,
     ) -> ModuleResult:
         started = now_utc().isoformat()
         last_error: str | None = None
@@ -1401,7 +1403,7 @@ class PipelineOrchestrator:
             except Exception as exc:
                 self._log("WARN", f"Local model warmup failed: {exc}")
 
-    def embed_text(self, text: str, collection_name: str) -> Any:
+    def embed_text(self, text: str, collection_name: str) -> list[float]:
         self._ensure_local_models()
         if self._embedding_router is None:
             self._log("ERROR", "EmbeddingRouter not available, returning zero vector")
@@ -1423,7 +1425,7 @@ class PipelineOrchestrator:
         return self._reranker_instance.rerank(query, documents)
 
     @staticmethod
-    def _zero_vector(dim: int) -> Any:
+    def _zero_vector(dim: int) -> list[float]:
         import numpy as np
 
         return np.zeros(dim, dtype=np.float32)
@@ -1492,7 +1494,7 @@ class PipelineOrchestrator:
         token_divisor: int,
         prior_artifacts: list | None = None,
         dry_run: bool = False,
-        skill_injection: Any | None = None,
+        skill_injection: PipelineSkillBridge | None = None,
     ) -> dict:
         """调用 AI 模型执行模块
 
@@ -1651,7 +1653,7 @@ class PipelineOrchestrator:
     # LifecycleAware 协议 —— B68
     # ------------------------------------------------------------------
 
-    def on_init(self, lifecycle_mgr: Any) -> None:
+    def on_init(self, lifecycle_mgr: LifecycleManager) -> None:
         """LifecycleManager 回调：初始化后注册 Pipeline 组件。"""
         self._lifecycle_mgr = lifecycle_mgr
         try:

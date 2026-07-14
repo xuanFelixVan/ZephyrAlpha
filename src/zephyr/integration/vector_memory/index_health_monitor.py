@@ -32,11 +32,14 @@ from __future__ import annotations
 
 import logging
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
+
+if TYPE_CHECKING:
+    from zephyr.integration.vector_memory.collection_manager import CollectionManager
 
 _logger = logging.getLogger(__name__)
 
@@ -71,7 +74,7 @@ class TTLExpiryReport(BaseModel):
 
 
 class IndexHealthMonitor:
-    def __init__(self, collection_manager: Any) -> None:
+    def __init__(self, collection_manager: CollectionManager) -> None:
         self._collection_manager = collection_manager
 
     def inspect_all(self) -> HealthReport:

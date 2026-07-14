@@ -49,7 +49,14 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
 if TYPE_CHECKING:
+    from zephyr.integration.local_model.cache_layer import CacheLayer
     from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
+    from zephyr.integration.vector_memory.bridge_layer import BridgeLayer
+    from zephyr.integration.vector_memory.chunk_strategy_router import ChunkStrategyRouter
+    from zephyr.integration.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
+    from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
+    from zephyr.integration.vector_memory.retrieval_feedback import RetrievalFeedback
+    from zephyr.integration.vector_memory.vector_bridge import VectorBridge
 
 from zephyr.integration.vector_memory.collection_manager import (
     COLLECTION_NAMES,
@@ -86,25 +93,25 @@ class InProcessVectorMemory:
         self._maintenance_thread: threading.Thread | None = None
 
     @staticmethod
-    def _init_chunk_router() -> Any:
+    def _init_chunk_router() -> ChunkStrategyRouter:
         from zephyr.integration.vector_memory.chunk_strategy_router import ChunkStrategyRouter
 
         return ChunkStrategyRouter()
 
     @staticmethod
-    def _init_provenance_enforcer() -> Any:
+    def _init_provenance_enforcer() -> ProvenanceEnforcer:
         from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         return ProvenanceEnforcer()
 
     @staticmethod
-    def _init_retrieval_feedback() -> Any:
+    def _init_retrieval_feedback() -> RetrievalFeedback:
         from zephyr.integration.vector_memory.retrieval_feedback import RetrievalFeedback
 
         return RetrievalFeedback()
 
     @staticmethod
-    def _init_cache_layer() -> Any:
+    def _init_cache_layer() -> CacheLayer:
         from zephyr.integration.local_model.cache_layer import CacheLayer
 
         return CacheLayer()
@@ -122,11 +129,11 @@ class InProcessVectorMemory:
         return self._embedding_router
 
     @property
-    def bridge_layer(self) -> Any:
+    def bridge_layer(self) -> BridgeLayer | None:
         return self._bridge_layer
 
     @property
-    def vector_bridge(self) -> Any:
+    def vector_bridge(self) -> VectorBridge | None:
         return self._vector_bridge
 
     @property
@@ -202,7 +209,7 @@ class InProcessVectorMemory:
     def list_collections(self) -> list[CollectionInfo]:
         return self._collection_manager.list_collections()
 
-    def get_collection(self, name: str) -> Any:
+    def get_collection(self, name: str) -> object:
         return self._collection_manager.get_collection(name=name)
 
     def create_collection(
@@ -241,7 +248,7 @@ class InProcessVectorMemory:
             doc_id=doc_id,
         )
 
-    def _get_in_memory_backend(self) -> Any:
+    def _get_in_memory_backend(self) -> InMemoryMemoryBackend:
         """惰性创建 InMemoryMemoryBackend——仅在所有检索路径失败时才实例化。
 
         对标 Netflix Hystrix：fallback 按需触发，不预先创建。
