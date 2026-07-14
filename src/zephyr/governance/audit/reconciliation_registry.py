@@ -76,6 +76,7 @@ __all__ = [
     "make_path_tree_reconciler",
     "make_path_ownership_reconciler",
     "make_depgraph_ops_reconciler",
+    "make_drift_scan_reconciler",
     "make_yaml_sync_reconciler",
     "make_precommit_id_uniqueness_reconciler",
     "make_vocab_change_reconciler",
@@ -108,6 +109,26 @@ def _run_subprocess(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
     kwargs.setdefault("text", True)
     kwargs.setdefault("errors", "replace")
     return subprocess.run(cmd, **kwargs)
+
+
+# SQL 集中化（§5.160.2 NO-BARE-SQL gate 合规）
+SQL_CREATE_DRIFT_SCAN_RESULTS = """CREATE TABLE IF NOT EXISTS drift_scan_results (
+    scan_id TEXT PRIMARY KEY,
+    scan_time TEXT NOT NULL,
+    trigger_event TEXT NOT NULL,
+    total_drifts INTEGER NOT NULL,
+    high_count INTEGER NOT NULL,
+    low_count INTEGER NOT NULL,
+    auto_fixable INTEGER NOT NULL,
+    details_json TEXT
+)"""
+
+SQL_INSERT_DRIFT_SCAN_RESULT = (
+    "INSERT INTO drift_scan_results "
+    "(scan_id, scan_time, trigger_event, total_drifts, "
+    "high_count, low_count, auto_fixable, details_json) "
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+)
 
 
 @dataclass
@@ -587,6 +608,120 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=130,
+    )
+
+
+def make_drift_scan_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 merge/commit 事件触发的全量 drift 扫描 reconciler（MOD-GOV-ALIGNMENT-LOOP §4.S1）。
+
+    commit .py 文件后，跑 check_blueprint_code_alignment.py 全量检测
+    蓝图↔代码对齐 drift，结果写入 governance.db drift_scan_results 表。
+
+    对标 make_depgraph_ops_reconciler 的 subprocess 模式。
+    区别：
+    - depgraph_ops 同步代码→DB（generate_project_depgraph.py）
+    - drift_scan 检测对齐 drift（check_blueprint_code_alignment.py）并入库
+    - priority=140（在 depgraph_ops=130 之后，确保 depgraph 已同步再扫描 drift）
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-DRIFT-SCAN", priority=140)。
+    """
+    import json
+    import os
+    import sqlite3
+    import sys
+    import time
+    import uuid
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.endswith(".py"):
+                return True
+        return False
+
+    def _ensure_table(conn: sqlite3.Connection) -> None:
+        conn.execute(SQL_CREATE_DRIFT_SCAN_RESULTS)
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        start = time.time()
+        scan_result = _run_subprocess(
+            [
+                sys.executable,
+                "scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py",
+                "--json",
+                "--warn-only",
+            ],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+        )
+        elapsed = time.time() - start
+        if scan_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"drift scan failed in {elapsed:.1f}s (rc={scan_result.returncode}): "
+                       f"{scan_result.stderr.strip()[:200]}",
+            )
+
+        try:
+            data = json.loads(scan_result.stdout)
+        except json.JSONDecodeError as e:
+            return ReconcileResult(
+                action="warn",
+                detail=f"drift scan JSON parse failed: {e}; stdout[:200]={scan_result.stdout[:200]}",
+            )
+
+        total = data.get("total_findings", 0)
+        high = data.get("high", 0)
+        low = data.get("low", 0)
+        findings = data.get("findings", [])
+        auto_fixable = sum(
+            1 for f in findings
+            if f.get("type") in ("CODE_NOT_IN_DEPGRAPH", "ORPHAN_MODULE_ID")
+        )
+
+        db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
+        try:
+            conn = sqlite3.connect(db_path, timeout=30.0)
+            _ensure_table(conn)
+            scan_id = f"scan-{uuid.uuid4().hex[:12]}"
+            conn.execute(
+                SQL_INSERT_DRIFT_SCAN_RESULT,
+                (scan_id, now_utc(), "merge.completed",
+                 total, high, low, auto_fixable,
+                 json.dumps(data, ensure_ascii=False)),
+            )
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            logger.warning("drift_scan_reconciler: DB write failed: %s", e)
+
+        if total == 0:
+            return ReconcileResult(
+                action="clean",
+                detail=f"drift scan clean in {elapsed:.1f}s (0 drifts, "
+                       f"scanned {data.get('code_headers_scanned', 0)} files)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"drift scan found {total} drifts (HIGH:{high} LOW:{low}, "
+                   f"auto_fixable:{auto_fixable}) in {elapsed:.1f}s",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-DRIFT-SCAN",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=140,
     )
 
 
