@@ -217,7 +217,7 @@ _CH_HTTP_PORT = 18123
 _ch_http_host: str | None = None  # 懒初始化：先本地，失败则 WSL2 IP
 # HTTP 失败冷却时间戳（避免 HTTP 不可用时每次都重复超时等待）
 _http_fail_ts: float = 0
-_HTTP_COOLDOWN_SEC = 300  # HTTP 失败后 300 秒内不再重试（HTTP 服务不常变，冷却期比 TCP 长）
+_HTTP_COOLDOWN_SEC = 60  # HTTP 失败后 60 秒内不再重试（缩短冷却期避免长时间静默失败）
 
 
 def _get_http_host() -> str:

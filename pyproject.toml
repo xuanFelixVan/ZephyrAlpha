@@ -54,6 +54,8 @@ dependencies = [
     # MOD-L00-004 数据源集成器：APScheduler 调度器 + SQLAlchemy JobStore
     "apscheduler>=3.10.0,<4.0.0",
     "sqlalchemy>=2.0.0,<3.0.0",
+    # MOD-L00-004 交易日历守卫：exchange_calendars XSHG 日历（节假日/调休精确判断）
+    "exchange_calendars>=4.13,<5.0",
 ]
 
 # 5.31.7 修复：原无 [project.scripts]，pip install 后无 CLI 命令
