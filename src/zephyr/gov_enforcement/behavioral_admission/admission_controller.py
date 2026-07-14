@@ -237,7 +237,7 @@ class AdmissionController:
         self._rejected: int = 0
         self._last_admit_time: float = 0.0
 
-    def admit(self, event: Any) -> AdmissionResult:
+    def admit(self, event: object) -> AdmissionResult:
         with self._metrics_lock:
             self._total_requests += 1
 
@@ -322,7 +322,7 @@ class AdmissionController:
             "type_bucket_tokens": {k: round(v.tokens, 2) for k, v in self._type_buckets.items()},
         }
 
-    def _extract_event_type(self, event: Any) -> str:
+    def _extract_event_type(self, event: object) -> str:
         if isinstance(event, dict):
             raw = event.get("event_type", "")
         elif hasattr(event, "event_type"):

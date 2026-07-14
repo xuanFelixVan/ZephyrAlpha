@@ -99,7 +99,7 @@ def require_capability(
 
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             caller_file = _get_caller_file() or "unknown"
 
             import os

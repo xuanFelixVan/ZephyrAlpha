@@ -66,7 +66,7 @@ class PushStatus(str, Enum):
     CALLBACK_ERROR = "callback_error"
 
 
-def _atomic_write_json(path: Path, data: Any) -> None:
+def _atomic_write_json(path: Path, data: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     content = json.dumps(data, ensure_ascii=False, indent=2)
     tmp_path = f"{path}.{os.getpid()}.tmp"

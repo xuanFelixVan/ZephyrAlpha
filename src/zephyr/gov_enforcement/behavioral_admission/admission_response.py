@@ -47,7 +47,7 @@ _DECISION_TO_STATUS: dict[AdmissionDecision, AdmissionResponseStatus] = {
 class InvalidDecisionError(ValueError):
     error_code = "ZA-GV-0005"
 
-    def __init__(self, decision: Any, *, error_code: str | None = None) -> None:
+    def __init__(self, decision: object, *, error_code: str | None = None) -> None:
         self.decision = decision
         super().__init__(
             f"Cannot map decision '{decision}' to AdmissionResponseStatus. "
@@ -103,7 +103,7 @@ class AdmissionResponse(BaseModel):
 
 # class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
 class AdmissionResponseBuilder:
-    def __init__(self, admission_controller: Any = None) -> None:
+    def __init__(self, admission_controller: object = None) -> None:
         self._controller = admission_controller
 
     def build_response(

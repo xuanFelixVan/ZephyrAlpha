@@ -469,7 +469,7 @@ def circuit_breaker(
         _resolved_caller = caller_module or func.__module__ or _CALLER_UNKNOWN
 
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             # CBAC 前置检查（deny 时直接抛出 CapabilityDenied，不写熔断统计）
             capability_check(
                 action="call",
