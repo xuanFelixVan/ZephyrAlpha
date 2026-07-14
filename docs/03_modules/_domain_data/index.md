@@ -20,7 +20,6 @@ ttl: permanent
 |-----------|--------|-----------|--------|-----------------------|
 | MOD-L00-001 | Datasource Core | [blueprint](blueprint.md) | Draft | partially_implemented |
 | MOD-L00-002 | 数据源操作手册 | [data_source_operation_manual](data_source_operation_manual.md) | Active | verified |
-| MOD-L00-003 | 数据获取需求清单 | [data_acquisition_plan](data_acquisition_plan.md) | Active | verified |
 | MOD-L00-004 | 数据源集成器 | [data_source_integrator_blueprint](data_source_integrator_blueprint.md) | Active | in_progress |
 
 ## 参考文档
@@ -28,15 +27,14 @@ ttl: permanent
 | 文档 | 说明 | SSoT 范围 |
 |------|------|----------|
 | [数据源操作手册](data_source_operation_manual.md) | iFind + miniQMT 可获取数据完整清单与获取方法，所有 API 调用方法均已实测验证固化 | 数据源 API 操作唯一真源——"怎么调用+参数坑" |
-| [数据获取需求清单](data_acquisition_plan.md) | 数据库现状对照 + 需补充数据清单（P0/P1/P2/P3优先级）+ 执行计划 | 数据获取需求唯一真源——"需要什么+现状如何+缺什么" |
 | [实盘数据清单](realtime_data_inventory.md) | 35 项实盘交易实时数据能力索引（数据源/延迟/限流/稳定性/读取速度），生成器 `tmp/generate_realtime_inventory.py` | 实盘数据能力唯一真源——"实盘能拿什么+多快" |
 
 **架构模型真源**：`docs/03_modules/_domain_data/blueprint.md`（Provider 抽象部分已移交 MOD-L00-004）
 **数据源集成器真源**：`docs/03_modules/_domain_data/data_source_integrator_blueprint.md`（Provider 抽象 + 调度编排 + 策略注册表）
 **数据源资产真源**：`architecture_model/data/data_sources_registry.yaml` → 同步到 PostgreSQL `data_source_assets` 表（12 个数据源元数据 + account_type + policy JSONB）
 **数据源 API 操作真源**：`docs/03_modules/_domain_data/data_source_operation_manual.md`
-**数据获取需求真源**：`docs/03_modules/_domain_data/data_acquisition_plan.md`
-**业务数据现状真源**：ClickHouse 实时扫描（c1_market/c2_factor/c3_fundamental/c4_reference）
+**数据获取需求真源**：`docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_requirements.yaml`（P0-P3需求，已合并进 data_inventory.md 的"需补充"列）
+**业务数据现状真源**：`docs/02_enterprise_architecture/05_dataflow_architecture/data_inventory.md`（ClickHouse 实时扫描生成）
 **任务调度真源**：`src/zephyr/data/config/tasks.yaml`（61 个采集任务）
 
 ## 导航

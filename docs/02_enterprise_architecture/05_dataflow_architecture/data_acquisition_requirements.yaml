@@ -1,0 +1,126 @@
+# data_acquisition_requirements.yaml
+# 真源：数据获取需求（P0-P3优先级+可获取性）
+# 从 data_acquisition_plan.md §三 迁移（2026-07-15）
+# 生成器 generate_data_inventory.py 读取此文件，在 data_inventory.md 表格中追加"需补充"和"可获取性"列
+# SSoT分类：规则数据 → YAML是真源
+# 维护方式：修改此文件后重新运行 generate_data_inventory.py 刷新 data_inventory.md
+
+# 通用需求（适用于所有已有表，非特定表）
+general_notes:
+  - priority: P0
+    need: "全部已有表增量更新（截止2025.11→至今增量）"
+    availability: "已验证(iFind+QMT均可)"
+
+# 按表名的需求清单（key=表名，不含库名前缀）
+requirements:
+  # === P0-紧急（数据严重缺失或已过期）===
+  money_flow:
+    priority: P0
+    need: "全量重建（仅98只/7个月→全市场~5500只×8年）"
+    availability: "已验证(iFind i问财)"
+  daily_valuation:
+    priority: P0
+    need: "补缺1800只股票的PE/PB/PS"
+    availability: "已验证(iFind THS_BasicData)"
+  kline_5min:
+    priority: P0
+    need: "补2000-2018年5分钟K线历史"
+    availability: "已验证(QMT)；历史需淘宝"
+
+  # === P1-重要（空表填充）===
+  option_iv_surface:
+    priority: P1
+    need: "50ETF/300ETF期权IV+Greeks全历史"
+    availability: "需计算(QMT 662期权+Greeks；iFind正式账号)"
+  convertible_bond_iv:
+    priority: P1
+    need: "可转债IV+转股溢价率全历史"
+    availability: "需计算(QMT 152可转债；iFind正式账号)"
+  futures_position:
+    priority: P1
+    need: "4大交易所多空持仓"
+    availability: "已验证(QMT期货K线含openInterest)"
+  futures_term_structure:
+    priority: P1
+    need: "期货期限结构/基差"
+    availability: "需计算(期货K线可获取，基差需计算)"
+  tick_data:
+    priority: P1
+    need: "3秒Tick(含买卖一价量)，从现在积累"
+    availability: "已验证(QMT 4998行含五档)"
+  auction_snapshot:
+    priority: P1
+    need: "集合竞价快照(9:15-9:25)，从现在积累"
+    availability: "API可用(QMT subscribe_quote)"
+  index_quote:
+    priority: P1
+    need: "指数3秒实时行情，从现在积累"
+    availability: "已验证(QMT 指数K线)"
+
+  # === P2-一般（扩展数据）===
+  dragon_tiger:
+    priority: P2
+    need: "龙虎榜历史（营业部/席位买卖明细）"
+    availability: "已验证(iFind i问财)"
+  block_trade:
+    priority: P2
+    need: "大宗交易历史（成交价/量/买卖双方）"
+    availability: "已验证(iFind i问财)"
+  margin_trading:
+    priority: P2
+    need: "融资融券历史（两融余额/买入/偿还）"
+    availability: "已验证(iFind i问财)"
+  share_unlock:
+    priority: P2
+    need: "限售解禁历史（解禁日期/数量/比例）"
+    availability: "已验证(iFind i问财)"
+  futures_kline:
+    priority: P2
+    need: "商品期货日/分钟K线"
+    availability: "已验证(QMT 4大交易所合约)"
+  macro_data:
+    priority: P2
+    need: "GDP/CPI/PMI/利率/汇率"
+    availability: "免费源实测9/10通过(AKShare)"
+  edb_data:
+    priority: P2
+    need: "EDB宏观数据（iFind经济数据库）"
+    availability: "已验证(iFind EDB)"
+  trade_calendar:
+    priority: P2
+    need: "SSE/SZSE交易日历"
+    availability: "已验证(QMT get_trading_calendar)"
+  stock_list:
+    priority: P2
+    need: "代码/名称/上市日期/行业"
+    availability: "已验证(QMT 5207只)"
+  industry_class:
+    priority: P2
+    need: "申万/中证行业分类"
+    availability: "已验证(iFind THS_DataPool)"
+  index_constituent:
+    priority: P2
+    need: "沪深300/中证500成分变动"
+    availability: "已验证(iFind THS_DataPool 300行)"
+  news_data:
+    priority: P2
+    need: "财经新闻/公告/研报"
+    availability: "免费源实测3/5通过(AKShare)"
+  analyst_forecast:
+    priority: P2
+    need: "一致预期EPS/评级"
+    availability: "免费源实测通过(AKShare stock_profit_forecast_ths)"
+
+  # === P3-远期（美股/港股）===
+  us_daily_kline:
+    priority: P3
+    need: "美股主要股票日K线"
+    availability: "免费源替代(TickFlow AAPL.US实测通过)"
+  us_index:
+    priority: P3
+    need: "道琼斯/纳指/标普500（ETF替代）"
+    availability: "免费源替代(TickFlow SPY/DIA/QQQ)"
+  hk_daily_kline:
+    priority: P3
+    need: "港股通标的日K线"
+    availability: "已验证(QMT 957只)"
