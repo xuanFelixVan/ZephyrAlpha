@@ -8,10 +8,10 @@
 $ErrorActionPreference = "Stop"
 
 $taskName = "ZephyrAlpha_DataScheduler"
-$batPath = "d:\ZephyrAlpha\scripts\start_scheduler.bat"
+$ps1Path = "d:\ZephyrAlpha\scripts\start_scheduler.ps1"
 
-# 创建动作（启动 bat 脚本）
-$action = New-ScheduledTaskAction -Execute $batPath -WorkingDirectory "d:\ZephyrAlpha"
+# 创建动作（用 powershell.exe 启动 ps1 脚本，避免 .bat 不在 scripts/ 目录契约允许清单）
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$ps1Path`"" -WorkingDirectory "d:\ZephyrAlpha"
 
 # 创建触发器（开机自启）
 $trigger = New-ScheduledTaskTrigger -AtStartup
