@@ -1571,6 +1571,22 @@ capabilities:
       - make_bare_sql_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: blueprint_format_gate
+    aliases:
+      - BLUEPRINT-FORMAT
+      - blueprint-format
+      - make_blueprint_format_gate
+      - blueprint_header_module_id_validator
+    description: >-
+      [BLUEPRINT] 头部 module_id 格式阻断门禁(BLUEPRINT-FORMAT, 裁定#214 Phase 0 防蔓延).
+      检测 staged .py added 行中的 [BLUEPRINT] 头部, 校验 module_id 格式是否符合
+      裁定#208 双轨制(MOD-/SH- 前缀). diff-based 检测, tests/ 豁免,
+      存量基线违规 grandfathered(只检 added 行), git diff 不可达 fail-open,
+      检出违规则 fail-closed (passed=False). priority=77.
+    integrity_anchors:
+      - make_blueprint_format_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: ch_batch_size_gate
     aliases:
       - CH-BATCH-SIZE
@@ -4831,6 +4847,12 @@ creation_tokens:
     token: "auto-granularity-vocab-20260713"
     created_by: "session-sess-36780-20260713111728"
     capability: "depgraph_granularity_vocab"
+
+  # --- BLUEPRINT-FORMAT commit gate（裁定#214 Phase 0 防蔓延，2026-07-14）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py"
+    token: "auto-blueprint-format-gate-20260714"
+    created_by: "session-sess-25580-20260714144742"
+    capability: "blueprint_format_gate"
 
 # ============================================================================
 # 维护日志
