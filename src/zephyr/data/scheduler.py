@@ -515,6 +515,22 @@ class IntegratorScheduler:
         Returns:
             {task_id: success_bool} 字典
         """
+        # interval trigger 时间窗口过滤（集合竞价等高频场景）
+        # IntervalTrigger 会 7×24 每隔 N 秒触发，需在此过滤非交易时段
+        sched_config = self._schedules.get(schedule_name, {})
+        if sched_config.get("type") == "interval":
+            now = datetime.datetime.now()
+            # 周末不执行（0=周一 ... 6=周日）
+            if now.weekday() >= 5:
+                return {}
+            # 时间窗口检查（如 9:15-9:25）
+            start_time = sched_config.get("start_time")
+            end_time = sched_config.get("end_time")
+            if start_time and end_time:
+                now_str = now.strftime("%H:%M:%S")
+                if not (start_time <= now_str <= end_time):
+                    return {}
+
         # L10 周末补下载层：不走常规 run_task，调用 backfill_checker 独立处理
         if schedule_name == "weekend_backfill":
             from zephyr.data.backfill_checker import run_weekend_backfill
@@ -585,10 +601,27 @@ class IntegratorScheduler:
             self._load_config()
             self._init_scheduler()
 
-            # 注册 cron job（每个时段一个 job）
+            # 注册 cron/interval job（每个时段一个 job）
             for sched_name, sched_config in self._schedules.items():
                 cron_expr = sched_config.get("cron", "")
                 executor = sched_config.get("executor", "default")
+                sched_type = sched_config.get("type", "cron")
+                # interval trigger：高频场景（如集合竞价3秒抓取五档盘口）
+                # 时间窗口过滤在 run_schedule() 中实现（start_time/end_time + 周末）
+                if sched_type == "interval":
+                    seconds = int(sched_config.get("seconds", 3))
+                    from apscheduler.triggers.interval import IntervalTrigger
+                    trigger = IntervalTrigger(seconds=seconds)
+                    self._scheduler.add_job(
+                        _run_schedule_callback,
+                        trigger,
+                        args=[sched_name],
+                        id=sched_name,
+                        executor=executor,
+                        replace_existing=True,
+                    )
+                    log.info("已注册调度: %s interval=%ss executor=%s", sched_name, seconds, executor)
+                    continue
                 if not cron_expr:
                     continue
                 # 解析 cron 表达式 "30 16 * * 1-5" -> minute/hour/day/month/day_of_week

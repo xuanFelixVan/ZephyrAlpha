@@ -8,6 +8,14 @@
 # dependencies 是同批次内的前置任务 task_id（DAG 依赖，蓝图 §6.3）
 # source 字段引用 data_sources_registry.yaml 的 runtime_id（如 ifind → DS-IFIND.runtime_id）
 # 数据源调用策略不在本文件维护，真源在 data_sources_registry.yaml 的 policy 字段（派生 policies.yaml）
+#
+# fallback_sources 配置模板（数据韧性三层机制§1，2026-07-15）：
+#   fallback_sources:
+#     - source: <副数据源runtime_id>      # 引用 data_sources_registry.yaml
+#       capability: <capability名>         # 副源的capability（可能与主源不同）
+# 主源失败后自动按 fallback_sources 顺序尝试副源（不可恢复错误立即切，可恢复错误重试用完才切）
+# 注意：某些任务天然无副源（如 tick_data 只有 miniqmt），可不配置
+# 门禁提醒：DATA-TASK-COMPLETENESS gate 会在 commit 时检测新增任务是否配置 fallback_sources（warn级）
 
 tasks:
   # ============== 盘后日K时段（16:30 周一-五）==============
@@ -1205,7 +1213,7 @@ tasks:
   - task_id: auction_book_snapshot
     table: c1_market.auction_book
     source: miniqmt
-    schedule: intraday_realtime
+    schedule: auction_highfreq  # 3秒高频层（9:15-9:25 interval trigger）
     incremental: true
     date_col: trade_date
     dependencies: []
