@@ -40,7 +40,7 @@ _LAZY_IMPORTS = {
     "DefaultEquityStrategy": ("zephyr.pf_core.default_equity_strategy", "DefaultEquityStrategy"),
     "RebalanceMode": ("zephyr.pf_core.default_equity_strategy", "RebalanceMode"),
     "ComplianceRule": ("zephyr.pf_core.compliance_rule", "ComplianceRule"),
-    "PerformanceAttributionReport": ("zephyr.pf_core.performance_attribution_report", "PerformanceAttributionReport"),
+    "PerformanceAttributionReport": ("zephyr.shared.contracts.performance_attribution_report", "PerformanceAttributionReport"),
     "RiskLimits": ("zephyr.pf_core.risk_limits", "RiskLimits"),
 }
 

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §12
 # [MODULE] zephyr.gov_audit.bridge
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.gov_audit.drift_bridge; zephyr.gov_audit.feedback_bridge; zephyr.gov_audit.delegation_bridge; zephyr.governance.merkle_hourly; zephyr.gov_audit.trust_bridge; zephyr.gov_audit.tiered_storage_bridge
+# [DEPENDENCIES] zephyr.gov_audit.drift_bridge; zephyr.gov_audit.feedback_bridge; zephyr.gov_audit.delegation_bridge; zephyr.gov_audit.merkle_hourly; zephyr.gov_audit.trust_bridge; zephyr.gov_audit.tiered_storage_bridge
 # [CONSUMERS] audit-orchestrator.*; pipeline_runner
 # [STARTUP] imported
 # [MATURITY] production
@@ -59,7 +59,7 @@ class OrchestratorBridge:
             logger.warning("DelegationBridge init failed: %s", exc, exc_info=True)
 
         try:
-            from zephyr.governance.merkle_hourly import MerkleHourlyBridge
+            from zephyr.gov_audit.merkle_hourly import MerkleHourlyBridge
 
             self._merkle_bridge = MerkleHourlyBridge()
         except Exception as exc:

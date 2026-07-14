@@ -100,7 +100,7 @@ def __getattr__(name):
 try:
     from zephyr.gov_audit.agent_signer import AgentSigner
     from zephyr.governance.data_governance.akshare_provider import AkshareProvider
-    from zephyr.governance.base import FactorMeta
+    from zephyr.factor.factor_base import FactorMeta
     from zephyr.gov_code_quality.code_dedup.trackers.blind_spot_tracker import BlindSpotStatus
     from zephyr.governance.capability_lookup import CapabilityLookup
     from zephyr.gov_code_quality.code_dedup.canary_manager import CanaryFile

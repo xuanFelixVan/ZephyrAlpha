@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_audit.merkle_hourly
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.gov_audit.integrity
-# [CONSUMERS] zephyr.governance.merkle_hourly(MerkleHourlyBridge桥接真实实现)
+# [CONSUMERS] zephyr.governance.integrity(IntegrityGuard); zephyr.gov_audit.bridge(AuditBridge); zephyr.gov_audit.__init__(lazy re-export)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -189,3 +189,49 @@ class HourlyMerkleAggregator:
                     continue
 
         return events
+
+
+class MerkleHourlyBridge:
+    """Merkle hourly 桥接器——封装 HourlyMerkleAggregator 的错误处理与可用性检查。
+
+    从 zephyr.governance.merkle_hourly 迁入（域拆分 shim 消除，2026-07-14）。
+    不实现 Merkle 逻辑，仅桥接 HourlyMerkleAggregator，桥接失败返回空结果。
+    """
+
+    def __init__(self) -> None:
+        self._aggregator: HourlyMerkleAggregator | None = None
+        self._available = False
+        try:
+            self._aggregator = HourlyMerkleAggregator()
+            self._available = True
+        except ImportError:
+            _logger.warning("HourlyMerkleAggregator not available")
+        except Exception as exc:
+            _logger.warning("HourlyMerkleAggregator init failed: %s", exc, exc_info=True)
+
+    def aggregate(self, hour_key: str | None = None) -> dict[str, Any] | None:
+        if not self._available or self._aggregator is None:
+            return None
+        try:
+            result = self._aggregator.aggregate(hour_key)
+            if result is None:
+                return None
+            return result.model_dump()
+        except Exception as exc:
+            _logger.error("MerkleHourlyBridge.aggregate failed: %s", exc, exc_info=True)
+            return None
+
+    def verify(self, hour_key: str, expected_root: str) -> bool:
+        if not self._available or self._aggregator is None:
+            return False
+        try:
+            result = self._aggregator.aggregate(hour_key)
+            if result is None:
+                return False
+            return result.merkle_root == expected_root
+        except Exception as exc:
+            _logger.error("MerkleHourlyBridge.verify failed: %s", exc, exc_info=True)
+            return False
+
+    def is_available(self) -> bool:
+        return self._available

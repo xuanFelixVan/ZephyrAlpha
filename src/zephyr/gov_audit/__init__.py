@@ -129,7 +129,7 @@ _LAZY_IMPORTS = {
     # ARCH-031: root canonical (governance/evidence_pack.py / integrity.py / merkle_hourly.py)
     "EvidencePack": ("zephyr.governance.evidence_pack", "EvidencePack"),
     "IntegrityGuard": ("zephyr.governance.integrity", "IntegrityGuard"),
-    "MerkleHourlyBridge": ("zephyr.governance.merkle_hourly", "MerkleHourlyBridge"),
+    "MerkleHourlyBridge": ("zephyr.gov_audit.merkle_hourly", "MerkleHourlyBridge"),
 }
 
 

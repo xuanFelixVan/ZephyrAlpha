@@ -52,7 +52,7 @@ from zephyr.reporting.analytics_base import (
     AttributionEngineBase,
     TCAEngineBase,
 )
-from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
 
 __all__ = [
     "AttributionEngineBase",

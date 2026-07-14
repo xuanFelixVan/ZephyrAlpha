@@ -107,12 +107,12 @@ def attack_02_weight_bypass() -> dict[str, Any]:
 
 @attack("A3", "Look-Ahead Bias: 因子计算中偷用未来数据")
 def attack_03_lookahead_bias() -> dict[str, Any]:
-    _has_factor_base = _try_import("zephyr.factor.base")
+    _has_factor_base = _try_import("zephyr.factor.factor_base")
     if not _has_factor_base:
         return {"detected": True, "status": "blocked_by_infrastructure: L02 not available"}
 
     try:
-        from zephyr.factor.base import FactorBase, FactorMeta
+        from zephyr.factor.factor_base import FactorBase, FactorMeta
 
         class LookAheadFactor(FactorBase):
             meta = FactorMeta(
@@ -205,7 +205,7 @@ def attack_05_degradation_suppression() -> dict[str, Any]:
 
 @attack("A6", "因子注册表投毒: 注入恶意因子类污染registry")
 def attack_06_registry_poisoning() -> dict[str, Any]:
-    _has_factor_base = _try_import("zephyr.factor.base")
+    _has_factor_base = _try_import("zephyr.factor.factor_base")
     if not _has_factor_base:
         return {
             "detected": True,
@@ -224,7 +224,7 @@ def attack_06_registry_poisoning() -> dict[str, Any]:
         pipeline = AlphaSignalPipeline()
         clean_snapshot = pipeline._snapshot_builtins()
 
-        from zephyr.factor.base import FactorBase, FactorMeta
+        from zephyr.factor.factor_base import FactorBase, FactorMeta
 
         class PoisonFactor(FactorBase):
             meta = FactorMeta(

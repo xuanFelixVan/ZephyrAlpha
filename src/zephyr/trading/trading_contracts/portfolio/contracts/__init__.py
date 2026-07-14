@@ -11,7 +11,7 @@
 # [TESTS] tests/trading/
 # [TTL] permanent
 
-from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
 from zephyr.trading.trading_contracts.portfolio.contracts.money import (
     Money,
     MoneyCurrencyMismatchError,

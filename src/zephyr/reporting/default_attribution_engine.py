@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain_reporting/blueprint.md
 # [MODULE] zephyr.reporting.default_attribution_engine
 # [DOMAIN] D_REPORTING
-# [DEPENDENCIES] zephyr.governance.observability_governance.analytics_base; zephyr.governance.performance_attribution_report
+# [DEPENDENCIES] zephyr.governance.observability_governance.analytics_base; zephyr.shared.contracts.performance_attribution_report
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -38,7 +38,7 @@ from __future__ import annotations
 import logging
 
 from zephyr.reporting.analytics_base import AttributionEngineBase
-from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
 
 _logger = logging.getLogger(__name__)
 

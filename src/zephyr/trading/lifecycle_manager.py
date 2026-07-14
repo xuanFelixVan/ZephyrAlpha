@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.lifecycle_manager
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.trading.__init__; zephyr.governance.merkle_hourly; zephyr.gov_audit.log_rotation; zephyr.gov_audit.retention; zephyr.gov_audit.tiered_storage; zephyr.gov_audit.self_monitor; zephyr.governance.integrity; zephyr.infrastructure.auto_fix_engine.engine; zephyr.governance.semantic_audit.self_healer; zephyr.security.adversarial_validation.game_day_runner; zephyr.security.access_control.orphan_judge.judge
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.gov_audit.merkle_hourly; zephyr.gov_audit.log_rotation; zephyr.gov_audit.retention; zephyr.gov_audit.tiered_storage; zephyr.gov_audit.self_monitor; zephyr.governance.integrity; zephyr.infrastructure.auto_fix_engine.engine; zephyr.governance.semantic_audit.self_healer; zephyr.security.adversarial_validation.game_day_runner; zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype

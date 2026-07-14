@@ -47,13 +47,12 @@ __all__ = [
     "FactorRegistry",
     "alpha_signal_pipeline",
     "autodiscover_factors",
-    "base",
     "factor_base",
     "momentum_factor",
     "value_factor",
 'bus_factor_defense']
 
 # CODEGEN-GUARD: __init__-manual-exports
-# 包级导出以 factor_base 为 SSoT（base.py 为 codegen 占位；禁止混用两套 FactorBase）
+# 包级导出以 factor_base 为 SSoT（base.py 已删除，2026-07-14 shim 消除）
 # CODEGEN-GUARD: CTR-declarations-manual
 # DO NOT regenerate: CTR declarations are manually curated SSoT annotations

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §8
 # [MODULE] zephyr.governance.integrity
 # [DOMAIN] D_GOV_DRIFT
-# [DEPENDENCIES] zephyr.gov_audit.models; zephyr.governance.merkle_hourly; zephyr.gov_audit.trust_bridge
+# [DEPENDENCIES] zephyr.gov_audit.models; zephyr.gov_audit.merkle_hourly; zephyr.gov_audit.trust_bridge
 # [CONSUMERS] audit-orchestrator.pipeline_runner; cli
 # [STARTUP] imported
 # [MATURITY] production
@@ -46,7 +46,7 @@ class IntegrityGuard:
         self._trust_bridge = None
         self._available = False
         try:
-            from zephyr.governance.merkle_hourly import MerkleHourlyBridge
+            from zephyr.gov_audit.merkle_hourly import MerkleHourlyBridge
 
             self._merkle_bridge = MerkleHourlyBridge()
             self._available = True

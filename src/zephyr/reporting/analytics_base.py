@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain_reporting/blueprint.md
 # [MODULE] zephyr.reporting.analytics_base
 # [DOMAIN] D_REPORTING
-# [DEPENDENCIES] zephyr.trading.trading_contracts.execution.execution_report; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.governance.performance_attribution_report
+# [DEPENDENCIES] zephyr.trading.trading_contracts.execution.execution_report; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.shared.contracts.performance_attribution_report
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -45,7 +45,7 @@ from __future__ import annotations
 import abc
 from typing import ClassVar
 
-from zephyr.governance.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
 from zephyr.shared.contracts.execution_report import ExecutionReport
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order

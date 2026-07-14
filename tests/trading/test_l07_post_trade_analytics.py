@@ -24,7 +24,7 @@ from zephyr.reporting.analytics_base import (
     AttributionEngineBase,
     TCAEngineBase,
 )
-from zephyr.pf_core.performance_attribution_report import (
+from zephyr.shared.contracts.performance_attribution_report import (
     PerformanceAttributionReport,
 )
 from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
