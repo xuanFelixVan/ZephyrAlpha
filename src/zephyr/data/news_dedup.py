@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.news_dedup
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.ch_writer; zephyr.data.provider_base
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.provider_base
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -32,7 +32,7 @@ import hashlib
 import logging
 from datetime import datetime
 
-from . import ch_writer
+from . import ch_reader
 from .provider_base import FetchResult
 
 log = logging.getLogger(__name__)
@@ -134,7 +134,7 @@ def _get_existing_hashes(days: int = _DEDUP_WINDOW_DAYS) -> set[str]:
         标题 MD5 哈希集合，查询失败时返回空集合（fail-open）。
     """
     sql = _SQL_DEDUP_QUERY_TEMPLATE.format(days=days)
-    result = ch_writer.query(sql)
+    result = ch_reader.query(sql)
     if not result:
         return set()
     hashes: set[str] = set()

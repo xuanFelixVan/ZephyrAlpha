@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.implementations.ifind_provider
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] iFinDPy SDK (THS_iFinDLogin/THS_BasicData/THS_Trans2DataFrame)
+# [DEPENDENCIES] iFinDPy SDK (THS_iFinDLogin/THS_BasicData/THS_Trans2DataFrame); zephyr.data.ch_reader
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -1748,9 +1748,9 @@ class IFindProvider(DataSourceBase):
 
         过滤 list_status='L'（上市中），排除退市股。
         """
-        from zephyr.data import ch_writer as _chw
+        from zephyr.data import ch_reader as _chr
 
-        out = _chw.query(self.SQL_STOCK_LIST_BY_STATUS)
+        out = _chr.query(self.SQL_STOCK_LIST_BY_STATUS)
         if not out.strip():
             self._log.warning("ClickHouse stock_list 查询为空")
             return []
