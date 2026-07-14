@@ -430,8 +430,12 @@ class IntegratorScheduler:
         Returns:
             {task_id: success_bool} 字典
         """
-        # 过滤该时段的任务
-        schedule_tasks = [t for t in self._tasks if t.get("schedule") == schedule_name]
+        # 过滤该时段的任务（跳过 extra.disabled=true 的退役/暂停任务）
+        schedule_tasks = [
+            t for t in self._tasks
+            if t.get("schedule") == schedule_name
+            and not (t.get("extra") or {}).get("disabled")
+        ]
         if not schedule_tasks:
             log.warning("时段 %s 无任务", schedule_name)
             return {}

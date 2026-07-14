@@ -1128,7 +1128,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """获取个股新闻，写入 c3_fundamental.news_data。
 
-        调用 ak.stock_news_em(symbol) 逐只获取。
+        调用 ak.stock_news_em(symbol) 逐只获取。symbols 为空时自动取全A股。
         """
         import akshare as ak
 
@@ -1136,9 +1136,11 @@ class AKShareProvider(DataSourceBase):
         columns = NEWS_DATA_COLUMNS
         symbols = payload.symbols
         if not symbols:
+            symbols = self._get_all_a_symbols(ak, policy)
+        if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error="stock_news_em 需提供 symbols 列表",
+                elapsed_sec=0.0, error="stock_news_em 无法获取标的列表（akshare + CH stock_list 均为空）",
             )
             return
         last_key = datetime.date.today().isoformat()
@@ -1474,7 +1476,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """获取东方财富个股研报，写入 c3_fundamental.news_data。
 
-        调用 ak.stock_research_report_em(symbol) 逐只获取。
+        调用 ak.stock_research_report_em(symbol) 逐只获取。symbols 为空时自动取全A股。
         映射：报告名称→title，机构+评级+行业→summary，PDF链接→link，日期→pub_date
         """
         import akshare as ak
@@ -1483,9 +1485,11 @@ class AKShareProvider(DataSourceBase):
         columns = NEWS_DATA_COLUMNS
         symbols = payload.symbols
         if not symbols:
+            symbols = self._get_all_a_symbols(ak, policy)
+        if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error="research_report 需提供 symbols 列表",
+                elapsed_sec=0.0, error="research_report 无法获取标的列表（akshare + CH stock_list 均为空）",
             )
             return
 
