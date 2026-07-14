@@ -142,6 +142,12 @@ SQL_COUNT_TBL_BY_COL_LIKE = "SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE %s"
 SQL_COUNT_TBL_BY_COL_EQ = "SELECT COUNT(*) FROM {tbl} WHERE {col}=%s"
 SQL_UPDATE_TBL_COL_EQ = "UPDATE {tbl} SET {col}=%s WHERE {col}=%s"
 
+# cmd_delete_nodes: 动态 IN (...) 占位符模板（2026-07-15，SSoT §11.4 治本）
+SQL_DELETE_NODES_SELECT_BY_IDS = "SELECT node_id, path, domain_id FROM nodes WHERE node_id IN ({0})"
+SQL_DELETE_NODES_COUNT_IN_EDGES = "SELECT COUNT(*) AS cnt FROM edges WHERE to_node_id IN ({0})"
+SQL_DELETE_NODES_DELETE_EDGES_BY_IDS = "DELETE FROM edges WHERE from_node_id IN ({0}) OR to_node_id IN ({0})"
+SQL_DELETE_NODES_DELETE_BY_IDS = "DELETE FROM nodes WHERE node_id IN ({0})"
+
 
 
 @contextlib.contextmanager
@@ -3197,6 +3203,92 @@ def cmd_migrate_nodes(
                 conn.close()
 
 
+def cmd_delete_nodes(
+    node_ids: list[int], force: bool = False, dry_run: bool = False,
+    db_path: str = None, conn=None
+) -> int:
+    """按 node_id 列表精确删除节点（含关联 edges）。
+
+    安全门：检查入边（被依赖），有入边则阻断（除非 --force）。
+    用途：删除测试 mock 数据等噪声节点（如 tests/fixtures/）。
+    返回：删除的节点数，-1=失败。
+
+    注意：改 depgraph 前须 git commit 备份（trae_054 STEP0）。
+    """
+    if not node_ids:
+        print("ERROR: node_ids 列表为空", file=sys.stderr)
+        return -1
+    own_conn = conn is None
+    with _optional_db_lock(own_conn, task="cmd_delete_nodes", db_path=db_path):
+        if own_conn:
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
+        try:
+            cur = conn.cursor()
+            placeholders = ",".join(["%s"] * len(node_ids))
+            ids_tuple = tuple(node_ids)
+
+            # 查询节点信息
+            cur.execute(
+                SQL_DELETE_NODES_SELECT_BY_IDS.format(placeholders),
+                ids_tuple,
+            )
+            rows = cur.fetchall()
+            if not rows:
+                print(f"ERROR: node_ids {node_ids} 未找到匹配节点", file=sys.stderr)
+                return -1
+
+            # 安全门：检查入边（被依赖）
+            cur.execute(
+                SQL_DELETE_NODES_COUNT_IN_EDGES.format(placeholders),
+                ids_tuple,
+            )
+            in_edge_count = cur.fetchone()["cnt"]
+            if in_edge_count > 0 and not force:
+                print(
+                    f"ERROR: {in_edge_count} 条入边引用目标节点（被依赖），拒绝删除。"
+                    f"请先清理依赖关系或使用 --force",
+                    file=sys.stderr,
+                )
+                return -1
+
+            if dry_run:
+                for r in rows:
+                    print(
+                        f"[DRY RUN] 将 DELETE node_id={r['node_id']} "
+                        f"domain_id={r['domain_id']} path={r['path']}",
+                        file=sys.stderr,
+                    )
+                return len(rows)
+
+            # 先删除关联 edges（出边+入边）
+            cur.execute(
+                SQL_DELETE_NODES_DELETE_EDGES_BY_IDS.format(placeholders),
+                ids_tuple + ids_tuple,
+            )
+            edge_count = cur.rowcount
+            # 再删除 nodes
+            cur.execute(
+                SQL_DELETE_NODES_DELETE_BY_IDS.format(placeholders),
+                ids_tuple,
+            )
+            deleted = cur.rowcount
+            if own_conn:
+                conn.commit()
+            print(
+                f"[OK] DELETE {deleted} 个节点（及 {edge_count} 条关联 edges）",
+                file=sys.stderr,
+            )
+            return deleted
+        except Exception as e:
+            if own_conn:
+                conn.rollback()
+            logger.error("cmd_delete_nodes失败: %s", e)
+            return -1
+        finally:
+            if own_conn:
+                conn.close()
+
+
 def cmd_update_path(
     module_id: str, old_prefix: str, new_prefix: str, dry_run: bool = False, db_path: str = None, conn=None
 ) -> int:
@@ -3891,6 +3983,14 @@ def main() -> None:
         help="按 node_id 列表精确迁移 domain_id（JSON文件: [id1, id2, ...]）",
     )
     parser.add_argument(
+        "--delete-nodes",
+        type=str,
+        metavar="NODE_IDS_FILE",
+        help="按 node_id 列表删除节点（JSON文件: [id1, id2, ...]）。"
+        "安全门：有入边（被依赖）则阻断，--force 可跳过。先删关联 edges 再删 nodes。"
+        "改 depgraph 前须 git commit 备份。",
+    )
+    parser.add_argument(
         "--update-domain-ssot-path",
         type=str,
         nargs=2,
@@ -3917,7 +4017,8 @@ def main() -> None:
     parser.add_argument(
         "--force",
         action="store_true",
-        help="强制删除（跳过 nodes 安全门，级联删除 nodes 引用）。仅与 --delete-domain 配合使用。",
+        help="强制删除（跳过安全门）。与 --delete-domain（级联删除 nodes 引用）"
+        "或 --delete-nodes（跳过入边检查）配合使用。",
     )
     # 裁定#ARCH-target_layer_v1.0.0：废弃域归并——将 old_id 引用迁移到已存在的 new_id
     parser.add_argument(
@@ -4285,6 +4386,13 @@ def main() -> None:
         with open(node_ids_file) as f:
             node_ids = json.load(f)
         count = cmd_migrate_nodes(node_ids=node_ids, new_domain_id=new_domain_id, dry_run=args.dry_run)
+        sys.exit(0 if count >= 0 else 4)
+
+    if args.delete_nodes:
+        node_ids_file = args.delete_nodes
+        with open(node_ids_file) as f:
+            node_ids = json.load(f)
+        count = cmd_delete_nodes(node_ids=node_ids, force=args.force, dry_run=args.dry_run)
         sys.exit(0 if count >= 0 else 4)
 
     if args.update_domain_ssot_path:
