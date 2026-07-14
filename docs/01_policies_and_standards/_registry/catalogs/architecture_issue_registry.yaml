@@ -1770,35 +1770,33 @@ entries:
   - '#ARCH-CH-005'
   created: '2026-07-15'
   last_updated: '2026-07-15'
-- issue_id: '#ARCH-CH-011'
-  title: 健康检查端点解耦阻塞式数据库查询（异步探活缓存）
-  severity: P1高
+
+# --- #ARCH-CH-012: ch_writer 锁分层——连接创建锁与 execute 串行化锁分离 ---
+- issue_id: '#ARCH-CH-012'
+  title: ch_writer 锁分层——_connect_lock（连接创建）与 _ch_lock（execute 串行化）分离
+  severity: P2中
   category: data_architecture
   adjudication: |
     问题背景：
-    /health 端点原在 get_health() 中同步调用 ch_reader.query("SELECT 1")，
-    当 ClickHouse 连接异常时三级降级链（TCP→HTTP→WSL）逐个超时，
-    最坏情况 _DEFAULT_TIMEOUT=600s，导致 /health 请求阻塞 10 分钟。
-    而 /status 和 /metrics 端点只读内存数据，始终正常响应。
-    根因：健康检查设计违反第一性原理——应快速/无副作用/可靠，
-    实际却成了同步阻塞源，ClickHouse 异常时监控自身不可用。
+    run_schedule 并行化后（13 个 event_driven 任务并行），ch_writer 的 _ch_lock 同时保护
+    两个完全不同层级的操作：(1) 连接创建（_get_client 内，含 _discover_wsl_ip subprocess 10s
+    + TCP connect 3s，最坏 16s）；(2) execute 串行化（query/delete_where 内，毫秒级）。
+    导致连接创建期间（16s）阻塞所有 execute。触发条件：冷启动首次 query + TCP 冷却期过期
+    后重连（每 60s 一次周期性阻塞窗口）。
 
-    裁定（三层修复）：
-    (1) Layer 1 异步探活缓存：后台守护线程每 30 秒探活一次 ClickHouse，
-        结果写入内存缓存，get_health() 只读缓存（非阻塞）；
-    (2) Layer 2 探活专用短超时：探活线程用 timeout=3s，禁止使用 _DEFAULT_TIMEOUT=600s；
-    (3) Layer 3 SLA 保障：/health 端点 100ms 内响应（硬性 SLA），
-        缓存超过 3 个间隔未更新 → 判定探活线程死亡，状态标记为 stale。
-    新增返回字段 clickhouse_latency_ms（探活延迟，毫秒）。
-    本裁定是 #ARCH-CH-005（混合传输架构）的深化修复——#ARCH-CH-005 定义了
-    三级降级链用于业务查询，但未考虑健康检查场景的超时敏感性。
+    裁定（治本方案）：
+    (1) 新增 _connect_lock 保护 _ch_client/_ch_http_host 单例创建（秒级临界区）；
+    (2) _ch_lock 仅保护 client.execute 串行化（毫秒级临界区）；
+    (3) 两锁独立，连接创建不阻塞已有 client 的 execute；
+    (4) 冷却期检查移到锁外快速路径，冷却期内不争抢锁立即返回 None 降级 HTTP API；
+    (5) _get_http_host() 一并加 _connect_lock double-check locking（修复原无锁竞态）。
+    锁顺序：_cache_lock → _connect_lock → _ch_lock（单向，无死锁）。
   impact:
-  - src/zephyr/data/scheduler.py（__init__新增缓存字段 + _start_ch_health_probe() + get_health改读缓存 + start调用探活）
-  - get_health() 返回值新增 clickhouse_latency_ms 字段
+  - src/zephyr/data/ch_writer.py（新增 _connect_lock + _get_client/_get_http_host 改用 _connect_lock）
   fix_phase: 已完成
   status: resolved
   related_rules:
-  - '#ARCH-CH-005'
+  - '#ARCH-CH-004'
   - '#ARCH-CH-010'
   created: '2026-07-15'
   last_updated: '2026-07-15'

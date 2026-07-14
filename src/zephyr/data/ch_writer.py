@@ -70,6 +70,10 @@ _TCP_COOLDOWN_SEC = 60  # TCP 连接失败后 60 秒内不再重试
 # 线程安全锁（run_schedule 并行化后多任务共用 ch_writer 全局状态）
 # clickhouse-driver Client 非线程安全（TCP 长连接并发 execute 会导致协议错乱）
 _ch_lock = threading.Lock()
+# 连接创建锁（保护 _ch_client/_ch_http_host 单例创建，秒级临界区）
+# 与 _ch_lock 分离：连接创建（含 _discover_wsl_ip subprocess 10s）不阻塞 execute 串行化
+# 锁顺序：_cache_lock → _connect_lock → _ch_lock（单向，无死锁）
+_connect_lock = threading.Lock()
 # 表列/引擎缓存读写保护（防 TOCTOU 竞态，避免多线程重复查询）
 _cache_lock = threading.Lock()
 
@@ -134,17 +138,25 @@ def _get_client():
     2. 失败则发现 WSL2 IP 直连（绕过 localhost 转发）
     3. 均失败则返回 None（触发 HTTP API fallback）
     4. TCP 失败后 60 秒冷却，避免每次 query 都重试
+
+    线程安全（裁定 #ARCH-CH-012，2026-07-15）：
+    - 用 _connect_lock 保护单例创建（秒级临界区，含 subprocess + TCP connect）
+    - 与 _ch_lock（execute 串行化，毫秒级）分离，连接创建不阻塞 execute
+    - 冷却期检查在锁外快速路径，冷却期内不争抢锁，立即返回 None 降级 HTTP API
     """
     global _ch_client, _tcp_fail_ts
-    # 快速路径（无锁读，CPython GIL 保证引用读原子）
+    # 快速路径1（无锁读，CPython GIL 保证引用读原子）
     if _ch_client is not None:
         return _ch_client
-    with _ch_lock:
+    # 快速路径2：冷却期内跳过 TCP 连接尝试（无锁读，避免争抢 _connect_lock）
+    import time as _time
+    if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
+        return None
+    with _connect_lock:
         # double-check（防止竞态期间其他线程已创建）
         if _ch_client is not None:
             return _ch_client
-        # 冷却期内跳过 TCP 连接尝试
-        import time as _time
+        # 锁内二次检查冷却期（防止竞态期间其他线程已设置）
         if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
             return None
         from clickhouse_driver import Client
@@ -215,46 +227,56 @@ def _get_http_host() -> str:
     mirrored 模式下只试本地（localhost 直通）。
     结果缓存到全局 _ch_http_host。
     HTTP 失败后 300 秒冷却期内返回空字符串（调用方应跳过 HTTP 降级到 WSL）。
+
+    线程安全（裁定 #ARCH-CH-012，2026-07-15）：
+    - 用 _connect_lock double-check locking 保护单例创建（与 _get_client 共用 _connect_lock）
+    - 冷却期检查在锁外快速路径，冷却期内不争抢锁，立即返回空字符串降级 WSL
     """
     global _ch_http_host, _http_fail_ts
+    # 快速路径1（无锁读）
     if _ch_http_host is not None:
         return _ch_http_host
-    # HTTP 冷却期内跳过 HTTP 连接尝试
+    # 快速路径2：冷却期内跳过（无锁读，避免争抢 _connect_lock）
     import time as _time
     if _http_fail_ts and (_time.time() - _http_fail_ts) < _HTTP_COOLDOWN_SEC:
         return ""
-    # 策略1: 本地（mirrored 模式下 localhost 直通）
-    try:
-        conn = http.client.HTTPConnection(_CH_LOCAL_HOST, _CH_HTTP_PORT, timeout=3)
-        conn.request("GET", "/ping")
-        resp = conn.getresponse()
-        if resp.status == 200:
-            _ch_http_host = _CH_LOCAL_HOST
-            conn.close()
+    with _connect_lock:
+        # double-check
+        if _ch_http_host is not None:
             return _ch_http_host
-        conn.close()
-    except Exception:
-        pass
-    # 策略2: WSL2 IP（仅 NAT 模式，mirrored 模式 _discover_wsl_ip 返回空）
-    wsl_ip = _discover_wsl_ip()
-    if wsl_ip:
+        if _http_fail_ts and (_time.time() - _http_fail_ts) < _HTTP_COOLDOWN_SEC:
+            return ""
+        # 策略1: 本地（mirrored 模式下 localhost 直通）
         try:
-            conn = http.client.HTTPConnection(wsl_ip, _CH_HTTP_PORT, timeout=3)
+            conn = http.client.HTTPConnection(_CH_LOCAL_HOST, _CH_HTTP_PORT, timeout=3)
             conn.request("GET", "/ping")
             resp = conn.getresponse()
             if resp.status == 200:
-                _ch_http_host = wsl_ip
+                _ch_http_host = _CH_LOCAL_HOST
                 conn.close()
-                log.info("ClickHouse HTTP 已连接 (%s:%s)", wsl_ip, _CH_HTTP_PORT)
                 return _ch_http_host
             conn.close()
-        except Exception as e:
-            log.warning("ClickHouse HTTP WSL IP 连接失败: %s", e)
-    # 兜底：HTTP 完全不可用，设置冷却时间戳，返回空字符串
-    import time as _time
-    _http_fail_ts = _time.time()
-    log.warning("ClickHouse HTTP 不可用，%ds 内跳过 HTTP 降级", _HTTP_COOLDOWN_SEC)
-    return ""
+        except Exception:
+            pass
+        # 策略2: WSL2 IP（仅 NAT 模式，mirrored 模式 _discover_wsl_ip 返回空）
+        wsl_ip = _discover_wsl_ip()
+        if wsl_ip:
+            try:
+                conn = http.client.HTTPConnection(wsl_ip, _CH_HTTP_PORT, timeout=3)
+                conn.request("GET", "/ping")
+                resp = conn.getresponse()
+                if resp.status == 200:
+                    _ch_http_host = wsl_ip
+                    conn.close()
+                    log.info("ClickHouse HTTP 已连接 (%s:%s)", wsl_ip, _CH_HTTP_PORT)
+                    return _ch_http_host
+                conn.close()
+            except Exception as e:
+                log.warning("ClickHouse HTTP WSL IP 连接失败: %s", e)
+        # 兜底：HTTP 完全不可用，设置冷却时间戳，返回空字符串
+        _http_fail_ts = _time.time()
+        log.warning("ClickHouse HTTP 不可用，%ds 内跳过 HTTP 降级", _HTTP_COOLDOWN_SEC)
+        return ""
 
 
 def _http_insert(
