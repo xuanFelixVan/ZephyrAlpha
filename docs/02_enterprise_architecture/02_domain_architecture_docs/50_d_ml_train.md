@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 训练（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-15 03:02:20
+> 最后更新: 2026-07-15 04:35:01
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -84,18 +84,18 @@ graph TD
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends / config_depends| D_INTELLIGENCE
+    D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_SHARED
+    D_TRADING["(生产态 / production) D_TRADING"]
+    src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_SHARED -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|config_depends / config_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
@@ -106,7 +106,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_intelligence_model_evaluation_init_py,src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_trainer_base_py,tests_ml_experiment_test_l13_experimentation_py design
-    class D_TRADING,D_INTELLIGENCE external_prod
+    class D_INTELLIGENCE,D_TRADING external_prod
     class D_SHARED external_design
 ```
 
@@ -148,21 +148,21 @@ graph TD
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends / config_depends| D_INTELLIGENCE
+    D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_SHARED
+    D_TRADING["(生产态 / production) D_TRADING"]
+    src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -.->|config_depends / config_depends| src_zephyr_ml_train_inference_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -170,7 +170,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_intelligence_model_evaluation_init_py,src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_trainer_base_py,tests_ml_experiment_test_l13_experimentation_py design
-    class D_TRADING,D_INTELLIGENCE external_prod
+    class D_INTELLIGENCE,D_TRADING external_prod
     class D_SHARED external_design
 ```
 

@@ -1,5 +1,5 @@
 %% D_SECURITY_LLM 域全景依赖图
-%% 生成时间: 2026-07-15 03:02:34
+%% 生成时间: 2026-07-15 04:35:14
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 63, 依赖边数: 117
 
@@ -73,11 +73,11 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_security_llm_defens___ads_leak_probe_phrases_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
-    src_zephyr_security_llm_defens___ads_injection_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
-    src_zephyr_security_llm_defens___oads_red_team_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
-    src_zephyr_security_llm_defens___ads_tool_call_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
     src_zephyr_security_llm_defens___curity_red_team_corpus_yaml -->|config_depends| src_zephyr_security_llm_defense_llm_security___init___py
+    src_zephyr_security_llm_defens___ads_injection_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
+    src_zephyr_security_llm_defens___ads_leak_probe_phrases_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
+    src_zephyr_security_llm_defens___ads_tool_call_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
+    src_zephyr_security_llm_defens___oads_red_team_payloads_yaml -->|config_depends| src_zephyr_security_llm_defens___curity_payloads___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_GOVERNANCE -> D_SECURITY_LLM (1 条)
@@ -117,31 +117,31 @@ graph TD
     %% D_SECURITY_LLM -> D_INFRA_A2A (1 条)
     tests_llm_security_test_cross____integration_llm_security_py -->|test_depends| D_INFRA_A2A[D_INFRA_A2A]
     %% D_SECURITY_LLM -> D_INFRA_RUNTIME (19 条)
+    tests_llm_security_test_dep_version_fixer_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_llm_security_test_dep_version_fixer_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_llm_security_test_dep_version_fixer_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_cross____integration_llm_security_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_llm_security_test_dep_version_fixer_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_llm_security_test_dep_version_fixer_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_llm_security_test_dep_version_fixer_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_engine_root_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_engine_root_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_interrupt_guard_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_llm_security_test_llm_fix_adapter_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_llm_security_test_llm_fix_adapter_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_llm_gateway_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_llm_security_test_llm_fix_adapter_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_llm_security_test_llm_fix_adapter_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_llm_security_test_models_root_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_orphan_detector_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_llm_security_test_models_root_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_scaffold_registrar_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_scaffold_registrar_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_scaffold_registrar_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_llm_security_test_zombie_cleaner_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_llm_security_test_zombie_cleaner_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_shadow_workspace_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_shadow_workspace_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_llm_security_test_zombie_cleaner_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_llm_security_test_zombie_cleaner_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     %% D_SECURITY_LLM -> D_INTEGRATION (5 条)
+    tests_llm_security_test_db_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
+    tests_llm_security_test_db_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
+    tests_llm_security_test_db_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
     tests_llm_security_test_cross____integration_llm_security_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
     tests_llm_security_test_cross____integration_llm_security_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
-    tests_llm_security_test_db_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
-    tests_llm_security_test_db_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
-    tests_llm_security_test_db_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
     %% D_SECURITY_LLM -> D_ORCHESTRATOR (1 条)
     tests_llm_security_test_cross____integration_llm_security_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     %% D_SECURITY_LLM -> D_SECURITY (41 条)
@@ -151,49 +151,49 @@ graph TD
     src_zephyr_security_llm_defense_llm_security___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_security_llm_defense_llm_security___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_adversarial_mutator_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_behavior_audit_logger_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_code_integrity_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_behavior_audit_logger_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_db_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_injection_patterns_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_gateway_e2e_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_fail_closed_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_fail_closed_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_input_sanitizer_llm_security_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_isolation_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_l1_input_defense_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_l1_input_defense_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_injection_patterns_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l0_supply_chain_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l0_supply_chain_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_l3_output_security_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_l3_output_security_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l1_input_defense_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l1_input_defense_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l2a_process_sandbox_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_l6_observability_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_l6_observability_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_l5_resource_protection_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_l5_resource_protection_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l3_output_security_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l3_output_security_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l4_agent_security_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l4_agent_security_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l2_prompt_protection_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l2_prompt_protection_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l7_red_team_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_llm_security_test_l4_agent_security_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l6_observability_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l6_observability_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l5_resource_protection_py -->|test_depends| D_SECURITY[D_SECURITY]
     %% D_SECURITY_LLM -> D_SHARED (20 条)
     tests_llm_security_test_code_integrity_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_db_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_gateway_e2e_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_fail_closed_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_interrupt_guard_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_llm_security_test_l1_input_defense_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_l0_supply_chain_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_llm_security_test_l1_input_defense_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_l3_output_security_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_llm_security_test_l4_agent_security_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_llm_security_test_l2_prompt_protection_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_l6_observability_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_l5_resource_protection_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_llm_security_test_l2_prompt_protection_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_llm_security_test_l4_agent_security_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_l7_validation_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_process_sandbox_llm_security_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_runtime_interceptor_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_llm_security_test_security_secrets_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_llm_security_test_security_secrets_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_security_capability_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_llm_security_test_security_secrets_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_llm_security_test_security_secrets_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_security_ssot_guard_py -->|test_depends| D_SHARED[D_SHARED]
     tests_llm_security_test_security_ssot_guard_py -->|test_depends| D_SHARED[D_SHARED]
 
