@@ -164,7 +164,7 @@ class CodeIntegrityGuard:
                 status=IntegrityStatus.CLEAN,
             )
 
-    def check_integrity(self, file_path: str) -> Any:
+    def check_integrity(self, file_path: str) -> object:
         """Verify the current on-disk content hash against the registered baseline.
 
         Returns an object with ``passed`` (bool) and ``actual_sha256`` (str)

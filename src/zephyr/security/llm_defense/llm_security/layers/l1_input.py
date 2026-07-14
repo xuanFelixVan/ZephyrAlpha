@@ -191,7 +191,7 @@ class InputDefenseLayer:
     def layer_index(self) -> int:
         return 1
 
-    async def evaluate(self, ctx: Any) -> Any:
+    async def evaluate(self, ctx: object) -> object:
         """评估输入安全：恶意注入 -> DENY。"""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
@@ -291,7 +291,7 @@ class ToolResultTransformGuard:
         return {"hits_count": hits, "risk": risk}
 
     # 兼容旧接口
-    def validate_tool_result(self, result: Any):
+    def validate_tool_result(self, result: object):
         r = self.scan(str(result))
         return DefenseResult(passed=r["hits_count"] == 0)
 

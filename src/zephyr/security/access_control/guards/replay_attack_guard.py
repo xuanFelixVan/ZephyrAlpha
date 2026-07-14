@@ -33,7 +33,7 @@ class ReplayAttackGuard:
     def __init__(self) -> None:
         self._seen_nonces: set[Any] = set()
 
-    def check(self, nonce: Any, timestamp: float | None = None) -> dict:
+    def check(self, nonce: object, timestamp: float | None = None) -> dict:
         """检查重放攻击.
 
         返回 {"allowed": bool, "reason": str}。

@@ -44,7 +44,7 @@ class MultiAgentSecurityLayer:
             return (False, "admin scope requires explicit grant")
         return (True, "default allow for scope: " + str(scope))
 
-    def isolate_agent_communications(self, item: Any) -> Any:
+    def isolate_agent_communications(self, item: object) -> object:
         """Verify and sign an agent communication item.
 
         Returns an object with ``verified`` (bool) and ``signature`` (str).
@@ -109,7 +109,7 @@ class AgentCommunicationItem:
         source_id: str = "",
         target_id: str = "",
         message_type: str = "",
-        content: Any = None,
+        content: object = None,
         timestamp: str = "",
         sender_id: str = "",
         receiver_id: str = "",
@@ -133,7 +133,7 @@ class AgentIdentityResolver:
     def resolve(self, agent_id: str) -> dict[str, Any]:
         return {"id": agent_id, "verified": True}
 
-    def verify_identity(self, agent_id: str, credentials: Any) -> bool:
+    def verify_identity(self, agent_id: str, credentials: object) -> bool:
         return True
 
     def register_agent(self, agent_id: str) -> str:
@@ -180,9 +180,9 @@ class CrossAgentPermission:
         self,
         from_agent_id: str = "",
         to_agent_id: str = "",
-        scope: Any = None,
+        scope: object = None,
         granted: bool = False,
-        expires_at: Any = None,
+        expires_at: object = None,
     ):
         self.from_agent_id = from_agent_id
         self.to_agent_id = to_agent_id
@@ -225,7 +225,7 @@ class TrustScoreCalculator:
     def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
 
-    def calculate(self, agent_id: str, scores: Any) -> Any:
+    def calculate(self, agent_id: str, scores: object) -> object:
         """Calculate a weighted trust score.
 
         Returns ``{"total_score": float, "tier": str}`` when given a scores
@@ -247,7 +247,7 @@ class TrustScoreCalculator:
             tier = TrustTier.UNTRUSTED.value
         return {"total_score": total, "tier": tier}
 
-    def update_score(self, agent_id: str, event: Any) -> float:
+    def update_score(self, agent_id: str, event: object) -> float:
         return 1.0
 
 

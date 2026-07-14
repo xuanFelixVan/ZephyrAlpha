@@ -47,7 +47,7 @@ class ValidationLayer:
         passed = sum(1 for r in results if r.get("passed"))
         return {"total": total, "passed": passed, "all_passed": passed == total and total > 0}
 
-    def trigger_security_regression(self, regression_type: Any, gateway: Any = None) -> Any:
+    def trigger_security_regression(self, regression_type: str, gateway: object = None) -> object:
         from types import SimpleNamespace as _NS
 
         report = _NS(
@@ -60,7 +60,7 @@ class ValidationLayer:
         self.regression_history.append(report)
         return report
 
-    def auto_trigger_if_due(self, gateway: Any = None) -> list[Any]:
+    def auto_trigger_if_due(self, gateway: object = None) -> list[Any]:
         return [
             self.trigger_security_regression(RegressionType.WEEKLY, gateway=gateway),
             self.trigger_security_regression(RegressionType.SECURITY, gateway=gateway),
@@ -159,10 +159,10 @@ class LiteLLMProviderIsolator:
     def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
 
-    def isolate_request(self, request: Any) -> Any:
+    def isolate_request(self, request: object) -> object:
         return request
 
-    def validate_response(self, response: Any) -> bool:
+    def validate_response(self, response: object) -> bool:
         return True
 
     def run_provider_security_check(self, provider: str) -> dict[str, Any]:
@@ -182,11 +182,11 @@ class ProviderFailClosedAdapter:
         "deepseek": {"strategy": "block_and_alert", "fail_closed": True},
     }
 
-    def __init__(self, provider: Any = None, default_safe_response: Any = None):
+    def __init__(self, provider: object = None, default_safe_response: object = None):
         self._provider = provider
         self._default_safe_response = default_safe_response
 
-    def call(self, request: Any) -> Any:
+    def call(self, request: object) -> object:
         try:
             if self._provider is not None:
                 return self._provider(request)

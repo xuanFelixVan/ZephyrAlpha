@@ -317,7 +317,7 @@ class ProcessSandboxLayer:
     def layer_index(self) -> int:
         return 2
 
-    async def evaluate(self, ctx: Any) -> Any:
+    async def evaluate(self, ctx: object) -> object:
         """Pass-through evaluation — sandbox layer does not block the gateway chain.
 
         Code-execution guarding happens at ``execute_in_sandbox`` time;
