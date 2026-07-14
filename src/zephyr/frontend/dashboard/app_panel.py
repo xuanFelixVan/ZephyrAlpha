@@ -157,13 +157,13 @@ class DashboardPanelApp:
 
     def __init__(
         self,
-        task_repo: Any | None = None,
-        olap_engine: Any | None = None,
-        backtest_result: Any | None = None,
+        task_repo: object | None = None,
+        olap_engine: object | None = None,
+        backtest_result: object | None = None,
         tick_data: Optional[list] = None,
-        miniqmt_provider: Any | None = None,
-        miniqmt_broker: Any | None = None,
-        execution_engine: Any | None = None,
+        miniqmt_provider: object | None = None,
+        miniqmt_broker: object | None = None,
+        execution_engine: object | None = None,
     ) -> None:
         self._task_repo = task_repo
         self._olap_engine = olap_engine
@@ -175,57 +175,57 @@ class DashboardPanelApp:
 
     # ===== 治理类 Tab =====
 
-    def _tab_task_progress(self) -> Any:
+    def _tab_task_progress(self) -> object:
         data = fetch_task_progress(self._task_repo)
         payload = render_task_progress(data)
         return payload.get("_layout") or pn.pane.Markdown("任务进度渲染失败")
 
-    def _tab_knowledge_overview(self) -> Any:
+    def _tab_knowledge_overview(self) -> object:
         data = fetch_knowledge_overview()
         payload = render_knowledge_overview(data)
         return payload.get("_layout") or pn.pane.Markdown("知识库概览渲染失败")
 
-    def _tab_gate_statistics(self) -> Any:
+    def _tab_gate_statistics(self) -> object:
         data = fetch_gate_statistics(self._olap_engine)
         payload = render_gate_statistics(data)
         return payload.get("_layout") or pn.pane.Markdown("门禁统计渲染失败")
 
-    def _tab_fitness_functions(self) -> Any:
+    def _tab_fitness_functions(self) -> object:
         data = fetch_fitness_data()
         payload = render_fitness_dashboard(data)
         return payload.get("_layout") or pn.pane.Markdown("Fitness 渲染失败")
 
-    def _tab_olap_trends(self) -> Any:
+    def _tab_olap_trends(self) -> object:
         data = fetch_olap_trends(self._olap_engine)
         payload = render_olap_trends(data)
         return payload.get("_layout") or pn.pane.Markdown("OLAP 趋势渲染失败")
 
     # ===== 交易/回测类 Tab =====
 
-    def _tab_backtest_results(self) -> Any:
+    def _tab_backtest_results(self) -> object:
         # v3.2.0: 掘金风格 5-Tab 绩效分析 (bt-visualizer + 掘金量化)
         # 5 子 Tab: 绩效概览 / 持仓分析 / 交易统计 / 每日明细 / 信号分析
         perf_data = generate_demo_performance_data()
         payload = render_backtest_performance(perf_data)
         return payload.get("_layout") or pn.pane.Markdown("回测绩效分析渲染失败")
 
-    def _tab_tick_replay(self) -> Any:
+    def _tab_tick_replay(self) -> object:
         ticks = self._tick_data if self._tick_data is not None else []
         data = fetch_tick_replay(ticks, symbol="demo", replay_speed=ReplaySpeed.MAX_SPEED)
         payload = render_tick_replay(data)
         return payload.get("_layout") or pn.pane.Markdown("Tick 回放渲染失败")
 
-    def _tab_order_book(self) -> Any:
+    def _tab_order_book(self) -> object:
         data = fetch_order_book(self._miniqmt_provider, symbol="demo")
         payload = render_order_book(data)
         return payload.get("_layout") or pn.pane.Markdown("盘口渲染失败")
 
-    def _tab_position_monitor(self) -> Any:
+    def _tab_position_monitor(self) -> object:
         data = fetch_position_monitor(self._miniqmt_broker)
         payload = render_position_monitor(data)
         return payload.get("_layout") or pn.pane.Markdown("持仓监控渲染失败")
 
-    def _tab_trade_panel(self) -> Any:
+    def _tab_trade_panel(self) -> object:
         data = TradePanelData()
         payload = render_trade_panel(data, execution_engine=self._execution_engine)
         return payload.get("_layout") or pn.pane.Markdown("交易面板渲染失败")
@@ -269,7 +269,7 @@ class DashboardPanelApp:
 
     # ===== 组装 =====
 
-    def build_tabs(self) -> Any:
+    def build_tabs(self) -> object:
         """构建 10 个 Tab 的 pn.Tabs 布局"""
         tabs_spec = [
             ("任务进度", self._tab_task_progress),
@@ -299,10 +299,10 @@ class DashboardPanelApp:
 
 
 def create_dashboard(
-    task_repo: Any | None = None,
-    olap_engine: Any | None = None,
+    task_repo: object | None = None,
+    olap_engine: object | None = None,
     **kwargs: Any,
-) -> Any:
+) -> object:
     """创建仪表盘顶层布局（pn.Column: 标题 + Tabs）
 
     可在 panel serve 模式下 .servable()，也可在 python 模式下传给 pn.serve()。

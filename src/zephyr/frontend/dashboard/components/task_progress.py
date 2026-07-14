@@ -73,7 +73,7 @@ class TaskProgressData:
         return self.total_completed / self.total_tasks
 
 
-def fetch_task_progress(task_repo: Any = None) -> TaskProgressData:
+def fetch_task_progress(task_repo: object = None) -> TaskProgressData:
     data = TaskProgressData()
     for phase in range(5):
         pp = PhaseProgress(phase=phase)
@@ -93,7 +93,7 @@ def fetch_task_progress(task_repo: Any = None) -> TaskProgressData:
     return data
 
 
-def _metric_card(label: str, value: str, color: str = "#333") -> Any:
+def _metric_card(label: str, value: str, color: str = "#333") -> object:
     if pn is None:
         return {"label": label, "value": value, "color": color}
     return pn.pane.Markdown(

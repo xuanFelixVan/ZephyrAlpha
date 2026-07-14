@@ -91,7 +91,7 @@ class BacktestResultData:
 
 
 def fetch_backtest_results(
-    backtest_result: Any,
+    backtest_result: object,
     nav_series: Optional[list[float]] = None,
     drawdown_series: Optional[list[float]] = None,
     timestamps: Optional[list[str]] = None,
@@ -153,7 +153,7 @@ def fetch_backtest_results(
     )
 
 
-def _metric_card(label: str, value: str, color: str = "#333") -> Any:
+def _metric_card(label: str, value: str, color: str = "#333") -> object:
     """生成单个指标卡片（Panel Card 或 dict）"""
     if pn is None:
         return {"label": label, "value": value, "color": color}
@@ -164,7 +164,7 @@ def _metric_card(label: str, value: str, color: str = "#333") -> Any:
     )
 
 
-def _gate_indicator(label: str, passed: bool) -> Any:
+def _gate_indicator(label: str, passed: bool) -> object:
     """生成门控状态指示器（绿色=PASS / 红色=FAIL）"""
     status = "PASS" if passed else "FAIL"
     color = "#28a745" if passed else "#dc3545"
