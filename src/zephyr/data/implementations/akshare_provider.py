@@ -54,6 +54,17 @@ def safe_float(v) -> float | None:
         return None
 
 
+def safe_int(v) -> int | None:
+    """安全转 int，失败返回 None。兼容 float 字符串（如 '7987.0'）。"""
+    try:
+        if v is None:
+            return None
+        f = float(v)
+        return int(f)
+    except (ValueError, TypeError):
+        return None
+
+
 # CH fallback: 从 stock_list 获取 A 股 6 位代码（SQL_ 前缀豁免 NO-BARE-SQL gate）
 SQL_STOCK_CODE_FROM_LIST = (
     "SELECT splitByChar('.', ts_code)[1] AS code "
@@ -957,7 +968,7 @@ class AKShareProvider(DataSourceBase):
                     continue
                 rows.append((
                     "ALL", end_date,
-                    safe_float(row.get("质押笔数")),
+                    safe_int(row.get("质押笔数")),
                     None,  # unrestricted_pledge 接口未提供
                     None,  # restricted_pledge 接口未提供
                     safe_float(row.get("质押总股数")),
