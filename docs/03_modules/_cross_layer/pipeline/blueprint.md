@@ -28,7 +28,7 @@ parent_module: ""
 rule_form: structural
 scope: global
 stability: evolving
-responsibility_domain: 
+depends_on: 
   - {target: "MOD-INF-001", at: "§Kill Switch+§Token Budget", why: "Capacity Assurance——Kill Switch前置检查+Token Budget扣减"}
 references:
   - {id: "MOD-INF-020", at: "全篇", why: "Decision Log——仅存 references（打破 009↔020↔022 环）"}

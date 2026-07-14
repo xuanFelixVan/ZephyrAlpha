@@ -85,7 +85,10 @@ def _update_frontmatter(content: str, updates: dict) -> str:
         return content
     fm_text = match.group(1)
     for key, val in updates.items():
-        pattern = re.compile(rf"^{re.escape(key)}:\s*.*$", re.MULTILINE)
+        # Fix 2026-07-14: \s* matches newlines, causing cross-line swallowing when
+        # the key has an empty value (e.g., "responsibility_domain:\n  - {...}").
+        # Use [ \t]* to match only same-line whitespace (spaces/tabs) after colon.
+        pattern = re.compile(rf"^{re.escape(key)}:[ \t]*.*$", re.MULTILINE)
         new_line = f"{key}: {val}"
         if pattern.search(fm_text):
             fm_text = pattern.sub(new_line, fm_text)

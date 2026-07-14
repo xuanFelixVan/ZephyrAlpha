@@ -92,7 +92,6 @@ ssot_claims:
     note: "D-GAP-01~12设计真源在MOD-GOV-CAP-001，本蓝图仅保留索引+引用"
   - claim: "治理域Phase施工路线图与进度"
     scope: layer
-responsibility_domain: 
 design_maturity: design
 build_status: generated
 ---
