@@ -37,7 +37,10 @@ import datetime
 import logging
 import subprocess
 import time
+from pathlib import Path
 from time import sleep
+
+import yaml
 
 from zephyr.data import ch_reader
 from zephyr.data.tick_subscriber import _safe_int
@@ -171,6 +174,155 @@ def detect_missing_dates(
             missing.append(d)
         else:
             log.debug("正常: %s %s 行数=%d", table, d_str, count)
+    return missing
+
+
+# ========== 动态发现（从 tasks.yaml 自动检测所有表） ==========
+
+# tasks.yaml 路径
+_TASKS_YAML_PATH = Path(__file__).parent / "config" / "tasks.yaml"
+
+# 日期列名优先级（按常见命名排序）
+_DATE_COLUMN_PRIORITIES = [
+    "trade_date", "end_date", "report_date", "unlock_date",
+    "announce_date", "date", "fdate",
+]
+
+# SQL 模板（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
+_SQL_DESCRIBE = "DESCRIBE TABLE {table}"
+_SQL_AVG_ROWS_7D = (
+    "SELECT avg(cnt) FROM ("
+    "SELECT count() AS cnt FROM {table} "
+    "WHERE {date_col} >= toDate(today() - 7) "
+    "AND {date_col} < today() "
+    "GROUP BY {date_col})"
+)
+_SQL_COUNT_BY_CUSTOM_DATE = (
+    "SELECT count() FROM {table} WHERE {date_col}=toDate('{d_str}')"
+)
+
+
+def _load_tasks_yaml() -> list[dict]:
+    """加载 tasks.yaml 中的任务列表。"""
+    if not _TASKS_YAML_PATH.exists():
+        log.warning("tasks.yaml 不存在: %s", _TASKS_YAML_PATH)
+        return []
+    with open(_TASKS_YAML_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    return data.get("tasks", [])
+
+
+def _infer_date_column(table: str) -> str:
+    """从 DESCRIBE TABLE 推断日期列名。
+
+    优先选 trade_date/end_date/report_date 等常见命名，
+    否则取第一个 Date 类型列。
+
+    Returns:
+        日期列名。推断失败返回空字符串。
+    """
+    out = ch_reader.query(_SQL_DESCRIBE.format(table=table))
+    if not out or not out.strip():
+        return ""
+    date_cols = []
+    for line in out.strip().split("\n"):
+        parts = line.split("\t")
+        if len(parts) < 2:
+            continue
+        name, col_type = parts[0], parts[1]
+        if "Date" in col_type or "DateTime" in col_type:
+            date_cols.append(name)
+    if not date_cols:
+        return ""
+    # 按优先级选
+    for priority_name in _DATE_COLUMN_PRIORITIES:
+        if priority_name in date_cols:
+            return priority_name
+    return date_cols[0]
+
+
+def _infer_threshold(table: str, date_col: str) -> int:
+    """从历史7天平均行数推断缺失阈值。
+
+    阈值 = 过去7天日均行数 × 0.5（低于均值50%视为缺失）。
+    无历史数据或表为空时返回 0（跳过巡检）。
+
+    Returns:
+        阈值行数。
+    """
+    if not date_col:
+        return 0
+    out = ch_reader.query(_SQL_AVG_ROWS_7D.format(table=table, date_col=date_col))
+    try:
+        avg = float(out.strip()) if out and out.strip() else 0.0
+    except (ValueError, TypeError):
+        return 0
+    if avg <= 0:
+        return 0
+    return int(avg * 0.5)
+
+
+def _discover_backfill_tables() -> list[dict]:
+    """从 tasks.yaml 动态发现所有需要补下载的表。
+
+    新增表只需在 tasks.yaml 注册任务，即可自动纳入补下载覆盖范围。
+    同表多任务去重，取第一个非 disabled 任务。
+
+    Returns:
+        表信息列表，每项含 table/task_id/source/capability/date_column/threshold。
+    """
+    tasks = _load_tasks_yaml()
+    tables: dict[str, dict] = {}
+    for task in tasks:
+        if (task.get("extra") or {}).get("disabled"):
+            continue
+        table = task.get("table", "")
+        if not table or table.startswith("_"):  # 跳过治理表
+            continue
+        if table not in tables:
+            tables[table] = {
+                "table": table,
+                "task_id": task.get("task_id", ""),
+                "source": task.get("source", ""),
+                "capability": task.get("capability", ""),
+            }
+    # 推断日期列和阈值
+    for info in tables.values():
+        info["date_column"] = _infer_date_column(info["table"])
+        info["threshold"] = _infer_threshold(info["table"], info["date_column"])
+    return list(tables.values())
+
+
+def detect_missing_dates_generic(
+    table: str, date_col: str, dates: list[datetime.date], threshold: int,
+) -> list[datetime.date]:
+    """通用缺失检测（支持任意日期列名）。
+
+    Args:
+        table: 表名（如 kline_daily）
+        date_col: 日期列名（如 trade_date）
+        dates: 待检测的日期列表
+        threshold: 行数低于此值视为缺失
+
+    Returns:
+        缺失日期列表
+    """
+    if not date_col or threshold <= 0:
+        return []
+    missing = []
+    for d in dates:
+        d_str = d.isoformat()
+        cnt = ch_reader.query(
+            _SQL_COUNT_BY_CUSTOM_DATE.format(table=table, date_col=date_col, d_str=d_str)
+        )
+        try:
+            count = int(cnt.strip()) if cnt and cnt.strip() else 0
+        except ValueError:
+            count = 0
+        if count < threshold:
+            log.info("检测到缺失: %s[%s] %s 行数=%d 阈值=%d",
+                     table, date_col, d_str, count, threshold)
+            missing.append(d)
     return missing
 
 
@@ -362,56 +514,103 @@ def _backfill_tick_range(
 # ========== 主入口 ==========
 
 def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> dict:
-    """L10 周末补下载主入口。
+    """L10 周末补下载主入口（全表覆盖）。
 
     流程：
     1. 获取过去N天的交易日列表
-    2. 检测 tick_data 缺失日期
-    3. 对缺失日期补下载 tick 数据
-    4. 记录结果到 progress_store（如果 scheduler 可用）
+    2. 动态发现所有表（从 tasks.yaml 自动读取，新增表自动纳入）
+    3. 逐表检测缺失日期
+    4. tick_data 用专门的 backfill_tick_data() 补下载
+    5. 其他表用 scheduler.run_task(task_id) 重跑
+    6. 记录结果到 progress_store（如果 scheduler 可用）
 
     Args:
         scheduler: IntegratorScheduler 实例（可选，用于记录进度和告警）
         days: 回溯天数（默认7天）
 
     Returns:
-        {"missing_dates": [...], "total_rows": int, "success": bool}
+        {"missing_tables": [...], "total_rows": int, "success": bool}
     """
     log.info("=" * 60)
-    log.info("L10 周末补下载开始 (回溯%d天)", days)
+    log.info("L10 周末补下载开始 (回溯%d天, 全表覆盖)", days)
     log.info("=" * 60)
 
     # 1. 获取交易日
     trade_dates = get_trade_dates(days)
     if not trade_dates:
         log.error("无法获取交易日列表，退出")
-        return {"missing_dates": [], "total_rows": 0, "success": False}
+        return {"missing_tables": [], "total_rows": 0, "success": False}
     log.info("过去%d天交易日: %s", days, [d.isoformat() for d in trade_dates])
 
-    # 2. 检测 tick_data 缺失
-    missing = detect_missing_dates("tick_data", trade_dates, _TICK_THRESHOLD)
-    if not missing:
-        log.info("tick_data 无缺失，跳过补下载")
-        return {"missing_dates": [], "total_rows": 0, "success": True}
-    log.info("tick_data 缺失日期: %s", [d.isoformat() for d in missing])
+    # 2. 动态发现所有表
+    tables_info = _discover_backfill_tables()
+    log.info("动态发现 %d 张表需要检测", len(tables_info))
 
-    # 3. 补下载
-    total_rows = backfill_tick_data(missing)
+    # 3. 逐表检测缺失并补下载
+    all_missing_tables = []
+    total_rows = 0
 
-    # 4. 验证
-    log.info("验证补下载结果:")
-    for d in missing:
-        d_str = d.isoformat()
-        cnt = _ch_query(_SQL_COUNT_BY_DATE.format(table="tick_data", d_str=d_str))
-        log.info("  %s: %s行", d_str, cnt or "0")
+    for info in tables_info:
+        table = info["table"]
+        date_col = info.get("date_column", "")
+        threshold = info.get("threshold", 0)
+        task_id = info.get("task_id", "")
 
-    # 5. 记录到 progress_store（如果 scheduler 可用）
+        # tick_data 用专门的补下载逻辑（分时段+批量写入）
+        if table == "tick_data" or table.endswith(".tick_data"):
+            missing = detect_missing_dates("tick_data", trade_dates, _TICK_THRESHOLD)
+            if missing:
+                log.info("tick_data 缺失日期: %s", [d.isoformat() for d in missing])
+                rows = backfill_tick_data(missing)
+                total_rows += rows
+                all_missing_tables.append({
+                    "table": "tick_data",
+                    "missing_dates": [d.isoformat() for d in missing],
+                    "rows_backfilled": rows,
+                })
+                # 验证
+                for d in missing:
+                    d_str = d.isoformat()
+                    cnt = _ch_query(_SQL_COUNT_BY_DATE.format(table="tick_data", d_str=d_str))
+                    log.info("  tick_data %s: %s行", d_str, cnt or "0")
+            continue
+
+        # 其他表用通用检测
+        if not date_col or threshold <= 0:
+            log.debug("表 %s 跳过（无日期列或阈值为0）", table)
+            continue
+
+        missing = detect_missing_dates_generic(table, date_col, trade_dates, threshold)
+        if not missing:
+            log.debug("表 %s 无缺失", table)
+            continue
+
+        log.info("表 %s 缺失日期: %s", table, [d.isoformat() for d in missing])
+        all_missing_tables.append({
+            "table": table,
+            "missing_dates": [d.isoformat() for d in missing],
+            "rows_backfilled": 0,
+        })
+
+        # 通过 scheduler 重跑任务补下载
+        if scheduler is not None and task_id:
+            log.info("通过 scheduler.run_task(%s) 补下载 %s", task_id, table)
+            try:
+                success = scheduler.run_task(task_id)
+                if success:
+                    log.info("表 %s 补下载成功", table)
+                else:
+                    log.warning("表 %s 补下载失败", table)
+            except Exception as e:
+                log.error("表 %s 补下载异常: %s", table, e)
+
+    # 4. 记录到 progress_store（如果 scheduler 可用）
     if scheduler is not None:
         try:
             scheduler._progress_store.save_progress(
                 "tick_backfill_weekly", "backfill",
                 datetime.date.today().isoformat(),
-                "SUCCESS" if total_rows > 0 else "SKIPPED",
+                "SUCCESS" if total_rows > 0 or not all_missing_tables else "PARTIAL",
                 total_rows,
             )
         except Exception:
@@ -420,7 +619,7 @@ def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> 
         try:
             scheduler._alerter.notify(
                 "tick_backfill_weekly",
-                f"L10补下载完成: 缺失={len(missing)}天 行数={total_rows}",
+                f"L10补下载完成: 缺失表={len(all_missing_tables)} 行数={total_rows}",
                 level="INFO",
                 source="backfill",
             )
@@ -428,11 +627,11 @@ def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> 
             pass
 
     log.info("=" * 60)
-    log.info("L10 周末补下载完成: 缺失=%d天 行数=%d", len(missing), total_rows)
+    log.info("L10 周末补下载完成: 缺失表=%d 总行数=%d", len(all_missing_tables), total_rows)
     log.info("=" * 60)
 
     return {
-        "missing_dates": [d.isoformat() for d in missing],
+        "missing_tables": all_missing_tables,
         "total_rows": total_rows,
         "success": True,
     }
