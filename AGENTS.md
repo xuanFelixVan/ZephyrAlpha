@@ -67,6 +67,12 @@
 >
 > **施工前 MUST 登记**：任何模块施工前（写第1行业务代码前），MUST先通过 `apply_depgraph.py --add-design-node` 将该模块登记到 depgraph 设计态（`design_maturity='design'`）。禁止"先施工后补登记"或"施工中临时编造依赖"。
 >
+> **AI开发模式合规路径**（2026-07-15裁定）：
+> - 人工开发模式：施工前MUST先登记planned设计态（原L1铁律不变）
+> - AI开发模式：AI直接写代码→commit→reconciler(GATE-DEPGRAPH-OPS)自动同步depgraph(generated)→GATE-DRIFT-SCAN检测drift→transition_build_status转stable。此路径为合规路径，不视为L1违规
+> - 理由：reconciler自动同步已确保depgraph与代码一致，强制"施工前先登记"在AI模式不可执行
+> - 补偿控制：GATE-DRIFT-SCAN(priority=140) + GATE-DRIFT-FIX(priority=150) 自动检测修复drift
+>
 > **写入设计态前 MUST 检查运营态**：`apply_depgraph.py --add-design-node` 写入时，内置门闸自动检查 depgraph 运营态（production 节点）是否就绪。运营态为空→阻断，提示先手动运行 `generate_project_depgraph.py` 刷新；运营态就绪→允许写入设计态。设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。逃生通道：`--skip-refresh`（仅限故障时使用，正常流程禁止）。
 >
 > **为什么**：depgraph 是依赖关系唯一真源。AI 从 depgraph 查询依赖=零幻觉空间；AI 绕过 depgraph 自行推断依赖=幻觉/漂移根源。未登记依赖在拓扑验证时自动阻断。
@@ -78,6 +84,13 @@
 > 4. 施工（代码引用 depgraph 契约名）
 > 5. 验证依赖一致性
 > 6. `apply_depgraph.py --transition-design-maturity NODE_ID production` 转正（design → production）
+>
+> **AI开发模式流程**（与上面等价的合规路径）：
+> 1. AI直接写代码（含[BLUEPRINT]头部）
+> 2. commit（GitCommitGateway）
+> 3. post-commit reconciler自动同步：GATE-DEPGRAPH-OPS跑generate_project_depgraph.py→节点+边自动入库(generated)
+> 4. GATE-DRIFT-SCAN检测蓝图↔代码drift
+> 5. `apply_depgraph.py --transition-build-status NODE_ID stable`（generated→testing→stable）转正
 
 ## RULE-REGISTRY：第四件事（ARCH-053 AI 可发现性，2026-07-06）
 
