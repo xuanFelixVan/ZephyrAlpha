@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-122 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.utils.cli_summary
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]

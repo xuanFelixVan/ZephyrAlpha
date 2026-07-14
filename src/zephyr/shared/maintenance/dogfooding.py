@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-117 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] SH-MAIN-001 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.maintenance.dogfooding
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]

@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-021 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.gov_enforcement.behavioral_admission.code_review_ai
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES]

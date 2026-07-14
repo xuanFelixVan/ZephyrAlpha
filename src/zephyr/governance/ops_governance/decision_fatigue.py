@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-056 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.ops_governance.decision_fatigue
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES]

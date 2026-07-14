@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-019 | docs/03_modules/_domain_governance/blueprint.md | §3.9
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] zephyr.gov_enforcement.behavioral_admission.admission_response
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.gov_enforcement.behavioral_admission.admission_controller

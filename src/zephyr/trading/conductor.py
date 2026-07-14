@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-194 | docs/03_modules/_cross_layer/database/blueprint.md | §conductor
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §conductor
 # [MODULE] zephyr.trading.conductor
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.shared.models; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo

@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-120 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.foundation.models
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
@@ -23,7 +23,7 @@ DecompositionResult/GateCheckResult: 本模块本地定义
 
 ⚠️  AI SESSION NOTICE — 防漂移标识 ⚠️
 TaskCard = Task 是纯别名，不是第二个模型。禁止对 TaskCard 做任何修改。
-SSoT 唯一入口: from zephyr.governance.rule_enforcement.task_types import Task
+SSoT 唯一入口: from zephyr.gov_enforcement.rule_enforcement.task_types import Task
 若需修改任务卡字段 -> 改 gates/task_types.py Task 模型 -> 同步 migration + INSERT + TEMPLATE_REQUIRED_FIELDS
 """
 
@@ -58,7 +58,7 @@ from zephyr.shared.utils.time_utils import now_utc
 
 
 def _lazy_import_governance(name: str):
-    _tt = importlib.import_module("zephyr.governance.rule_enforcement.task_types")
+    _tt = importlib.import_module("zephyr.gov_enforcement.rule_enforcement.task_types")
     return getattr(_tt, name)
 
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-048 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.lifecycle_governance.migration_strategy
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.lifecycle_governance.__init__

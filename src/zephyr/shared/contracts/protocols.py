@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-183 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.shared.contracts.protocols
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_types

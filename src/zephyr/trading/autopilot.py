@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-193 | docs/03_modules/_cross_layer/database/blueprint.md | §auto-pilot
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §auto-pilot
 # [MODULE] zephyr.trading.autopilot
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.shared.models; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo

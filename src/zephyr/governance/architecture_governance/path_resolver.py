@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-016 | docs/03_modules/_domain_governance/blueprint.md
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.architecture_governance.path_resolver
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
