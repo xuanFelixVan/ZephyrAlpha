@@ -21,9 +21,13 @@ import asyncio
 import logging
 import time
 from enum import Enum, IntEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, ConfigDict, Field
+
+if TYPE_CHECKING:
+    from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
+    from zephyr.trading.protection_index import ProtectionIndex
 
 logger = logging.getLogger(__name__)
 
@@ -163,8 +167,8 @@ _YELLOW_VIOLATION_THRESHOLD: int = 3
 class VerdictEngine:
     def __init__(
         self,
-        protection_index: Any = None,
-        gpu_scheduler: Any = None,
+        protection_index: ProtectionIndex | None = None,
+        gpu_scheduler: LocalModelScheduler | None = None,
         verdict_timeout_s: float = 10.0,
         max_batch_size: int = 100,
         batch_timeout_s: float = 300.0,

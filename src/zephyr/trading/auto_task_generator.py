@@ -41,7 +41,10 @@ import logging
 import time
 from collections import deque
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
 
 _log = logging.getLogger(__name__)
 
@@ -77,7 +80,7 @@ class AutoTaskGenerator:
 
     def generate_and_submit(
         self,
-        scheduler: Any,
+        scheduler: LocalModelScheduler | None,
         *,
         force: bool = False,
     ) -> int:
@@ -129,7 +132,7 @@ class AutoTaskGenerator:
             len(self._file_queue),
         )
 
-    def _drain_queue(self, scheduler: Any) -> int:
+    def _drain_queue(self, scheduler: LocalModelScheduler | None) -> int:
         """从文件队列中消耗，生成推理任务提交到调度器。"""
         if scheduler is None:
             return 0
@@ -266,7 +269,7 @@ _scheduler_ref: Any = None
 _subscribed = False
 
 
-def set_scheduler(scheduler: Any) -> None:
+def set_scheduler(scheduler: LocalModelScheduler | None) -> None:
     """注入 LocalModelScheduler 实例（由 AutoRuntimeCore/PipelineOrchestrator 启动时调用）。
 
     AutoTaskGenerator.generate_and_submit 需要 scheduler.enqueue(task_id, capability, payload)
