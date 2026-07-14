@@ -16,6 +16,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: adj_factor
     symbols: null  # null=全市场
@@ -27,6 +28,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_daily_hfq
     capability: kline_daily_hfq
     symbols: null
@@ -38,6 +40,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []  # kline_daily 独立，不依赖 hfq
     capability: kline_daily
     symbols: null
@@ -49,6 +52,7 @@ tasks:
     source: ifind
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: ["kline_daily_incremental"]  # DAG: kline_daily -> daily_valuation
     capability: daily_valuation
     symbols: null
@@ -60,6 +64,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_index
     symbols: null
@@ -72,6 +77,7 @@ tasks:
     source: akshare
     schedule: nightly_financial
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: margin_trading
     symbols: null
@@ -83,6 +89,7 @@ tasks:
     source: akshare
     schedule: daily_capital
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: block_trade
     symbols: null
@@ -94,6 +101,7 @@ tasks:
     source: akshare
     schedule: daily_capital
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: dragon_tiger
     symbols: null
@@ -105,6 +113,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_hk_daily
     symbols: null
@@ -116,6 +125,7 @@ tasks:
     source: akshare
     schedule: event_driven
     incremental: true
+    date_col: report_date
     dependencies: []
     capability: macro_data
     symbols: null
@@ -127,6 +137,7 @@ tasks:
     source: ifind
     schedule: daily_capital
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: money_flow
     symbols: null
@@ -149,6 +160,7 @@ tasks:
     source: miniqmt
     schedule: daily_capital
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_futures
     symbols: null
@@ -160,6 +172,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: ["kline_futures_incremental"]
     capability: futures_position
     symbols: null
@@ -171,6 +184,7 @@ tasks:
     source: tickflow
     schedule: weekend_calibration
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_us_daily
     symbols: null  # 默认在 Provider 内置 10 美股标的
@@ -182,6 +196,7 @@ tasks:
     source: tickflow
     schedule: weekend_calibration
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: us_index
     symbols: null
@@ -194,6 +209,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_weekly
     symbols: null
@@ -205,6 +221,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_monthly
     symbols: null
@@ -216,6 +233,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_1min
     symbols: null
@@ -227,6 +245,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_time
     dependencies: []
     capability: kline_5min
     symbols: null
@@ -238,6 +257,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_15min
     symbols: null
@@ -249,6 +269,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_30min
     symbols: null
@@ -260,6 +281,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_60min
     symbols: null
@@ -272,6 +294,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_etf_1min
     symbols: null  # null=自动取ETF板块
@@ -283,6 +306,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_etf_5min
     symbols: null
@@ -294,6 +318,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_etf_15min
     symbols: null
@@ -305,6 +330,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_etf_30min
     symbols: null
@@ -316,6 +342,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_etf_60min
     symbols: null
@@ -327,6 +354,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_lof_1min
     symbols: null  # null=自动取LOF板块
@@ -338,6 +366,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_lof_5min
     symbols: null
@@ -349,6 +378,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_lof_15min
     symbols: null
@@ -360,6 +390,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_lof_30min
     symbols: null
@@ -371,6 +402,7 @@ tasks:
     source: miniqmt
     schedule: intraday_minute
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_lof_60min
     symbols: null
@@ -383,6 +415,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_weekly_hfq
     capability: kline_weekly_hfq
     symbols: null
@@ -394,6 +427,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_monthly_hfq
     capability: kline_monthly_hfq
     symbols: null
@@ -406,6 +440,7 @@ tasks:
     source: rss
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: news_data
     symbols: null  # 默认 12 个财经 RSS 源（2直连+10 RSSHub）
@@ -417,6 +452,7 @@ tasks:
     source: akshare
     schedule: daily_capital
     incremental: true
+    date_col: unlock_date
     dependencies: []
     capability: share_unlock
     symbols: null
@@ -428,6 +464,7 @@ tasks:
     source: miniqmt
     schedule: daily_event
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: shareholder
     symbols: null
@@ -439,6 +476,7 @@ tasks:
     source: akshare
     schedule: daily_event
     incremental: true
+    date_col: report_date
     dependencies: []
     capability: analyst_forecast
     symbols: null
@@ -450,6 +488,7 @@ tasks:
     source: miniqmt
     schedule: daily_event
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: earnings_forecast
     symbols: null
@@ -461,6 +500,7 @@ tasks:
     source: miniqmt
     schedule: daily_event
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: express_report
     symbols: null
@@ -472,6 +512,7 @@ tasks:
     source: akshare
     schedule: daily_event
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: audit_opinion
     symbols: null
@@ -483,6 +524,7 @@ tasks:
     source: miniqmt
     schedule: daily_event
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: dividend
     symbols: null
@@ -494,6 +536,7 @@ tasks:
     source: akshare
     schedule: daily_event
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: rights_issue
     symbols: null
@@ -505,6 +548,7 @@ tasks:
     source: akshare
     schedule: daily_event
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: equity_pledge
     symbols: null
@@ -516,6 +560,7 @@ tasks:
     source: akshare
     schedule: daily_event
     incremental: true
+    date_col: end_date
     dependencies: []
     capability: equity_pledge_summary
     symbols: null
@@ -528,6 +573,7 @@ tasks:
     source: miniqmt
     schedule: nightly_financial
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: balance_sheet
     symbols: null
@@ -539,6 +585,7 @@ tasks:
     source: miniqmt
     schedule: nightly_financial
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: income_statement
     symbols: null
@@ -550,6 +597,7 @@ tasks:
     source: miniqmt
     schedule: nightly_financial
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: cashflow_statement
     symbols: null
@@ -561,6 +609,7 @@ tasks:
     source: miniqmt
     schedule: nightly_financial
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: financial_indicator
     symbols: null
@@ -572,6 +621,7 @@ tasks:
     source: miniqmt
     schedule: nightly_financial
     incremental: true
+    date_col: report_period
     dependencies: []
     capability: main_business
     symbols: null
@@ -594,6 +644,7 @@ tasks:
     source: tdx
     schedule: weekend_calibration
     incremental: true
+    date_col: trade_date
     dependencies: ["industry_class_refresh"]
     capability: kline_sector
     symbols: null  # 由 industry_class_refresh 提供板块代码列表
@@ -606,6 +657,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: option_iv_surface
     symbols: null
@@ -617,6 +669,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: convertible_bond_iv
     symbols: null
@@ -628,6 +681,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: ["kline_futures_incremental"]
     capability: futures_term_structure
     symbols: null
@@ -639,6 +693,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: tick_data
     symbols: null
@@ -653,6 +708,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: index_quote
     symbols: null
@@ -664,6 +720,7 @@ tasks:
     source: ifind
     schedule: event_driven
     incremental: true
+    date_col: report_date
     dependencies: []
     capability: edb_data
     symbols: null  # 关键指标列表在 Provider 内配置（约 50-100 个，CPI/PPI/PMI/M0/M1/M2/GDP/社融/利率等）
@@ -688,6 +745,7 @@ tasks:
     source: ifind
     schedule: daily_kline  # 盘后时段写入当日收盘快照
     incremental: true
+    date_col: snapshot_time
     dependencies: []
     capability: realtime_snapshot
     symbols: null  # null=全A股（THS_DataPool），也可指定标的列表
@@ -826,6 +884,7 @@ tasks:
     source: cls
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: news_data
     symbols: null
@@ -837,6 +896,7 @@ tasks:
     source: eastmoney_news
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: news_data
     symbols: null
@@ -848,6 +908,7 @@ tasks:
     source: rss
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: news_data
     symbols: null
@@ -859,6 +920,7 @@ tasks:
     source: akshare
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: stock_news_em
     symbols: null
@@ -870,6 +932,7 @@ tasks:
     source: akshare
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: news_cctv
     symbols: null
@@ -881,6 +944,7 @@ tasks:
     source: akshare
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: news_economic_baidu
     symbols: null
@@ -892,6 +956,7 @@ tasks:
     source: akshare
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: news_baidu
     symbols: null
@@ -903,6 +968,7 @@ tasks:
     source: akshare
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: news_stock
     symbols: null
@@ -915,6 +981,7 @@ tasks:
     source: tushare
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: news_data
     symbols: null
@@ -928,6 +995,7 @@ tasks:
     source: akshare
     schedule: daily_capital
     incremental: true
+    date_col: unlock_date
     dependencies: []
     capability: restricted_shares
     symbols: null
@@ -940,6 +1008,7 @@ tasks:
     source: akshare
     schedule: event_driven
     incremental: true
+    date_col: publish_time
     dependencies: []
     capability: research_report
     symbols: null
@@ -951,6 +1020,7 @@ tasks:
     source: akshare
     schedule: daily_capital
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: hk_connect_flow
     symbols: null
@@ -962,6 +1032,7 @@ tasks:
     source: akshare
     schedule: weekend_calibration
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_futures
     symbols: null
@@ -974,6 +1045,7 @@ tasks:
     source: akshare
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: limit_up_down
     symbols: null
@@ -985,6 +1057,7 @@ tasks:
     source: akshare
     schedule: daily_capital
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: share_change
     symbols: null
@@ -1018,6 +1091,7 @@ tasks:
     source: akshare
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: stock_indicator
     symbols: null
@@ -1029,6 +1103,7 @@ tasks:
     source: akshare
     schedule: daily_capital
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: block_trade_detail
     symbols: null
@@ -1041,6 +1116,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_cb
     symbols: null  # null=自动取可转债板块
@@ -1052,6 +1128,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: option_kline
     symbols: null  # null=自动取50ETF期权列表
@@ -1063,6 +1140,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: ["option_kline_incremental"]
     capability: option_greeks
     symbols: null
@@ -1096,6 +1174,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: l2_tick
     symbols: null  # 需指定标的（L2数据量大）
@@ -1107,6 +1186,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: auction_data
     symbols: null
@@ -1118,6 +1198,7 @@ tasks:
     source: miniqmt
     schedule: daily_capital
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: futures_kline_qmt
     symbols: null  # 需指定合约代码如IF2407.CFFEX
@@ -1129,6 +1210,7 @@ tasks:
     source: miniqmt
     schedule: intraday_realtime
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: hk_kline
     symbols: null  # 需指定港股代码如00700.HK
@@ -1140,6 +1222,7 @@ tasks:
     source: miniqmt
     schedule: daily_capital
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: kline_us_daily
     symbols: null  # 需指定美股代码如AAPL.US
@@ -1151,6 +1234,7 @@ tasks:
     source: miniqmt
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: etf_nav
     symbols: null  # 需指定ETF代码如510050.SH
@@ -1210,6 +1294,7 @@ tasks:
     source: akshare
     schedule: nightly_financial
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: top10_shareholders
     symbols: null  # null=全市场（scheduler从stock_list取标的列表）
@@ -1221,6 +1306,7 @@ tasks:
     source: akshare
     schedule: nightly_financial
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: top10_circulating_shareholders
     symbols: null
@@ -1232,6 +1318,7 @@ tasks:
     source: akshare
     schedule: daily_event
     incremental: true
+    date_col: announce_date
     dependencies: []
     capability: disclosure_plan
     symbols: null
@@ -1322,6 +1409,7 @@ tasks:
     source: ifind
     schedule: daily_kline
     incremental: true
+    date_col: trade_date
     dependencies: []
     capability: sector_meta
     symbols: null

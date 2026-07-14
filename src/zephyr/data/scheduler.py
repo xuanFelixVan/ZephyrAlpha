@@ -348,6 +348,21 @@ class IntegratorScheduler:
         latest_key = last_key or ""
 
         try:
+            # MergeTree 幂等性：写入前 DELETE WHERE date_col IN (start..end)
+            # date_col 来自 tasks.yaml（SSoT），避免硬编码列名导致 AI 猜错
+            date_col = task.get("date_col")
+            if date_col and incremental and not ch_writer.is_replacing_engine(table):
+                dates_to_clean = []
+                d = start
+                while d <= today:
+                    dates_to_clean.append(d.isoformat())
+                    d += datetime.timedelta(days=1)
+                if dates_to_clean:
+                    date_list = ", ".join(f"toDate('{dd}')" for dd in dates_to_clean)
+                    log.info("任务 %s 幂等DELETE: %s WHERE toDate(%s) IN (%d dates)",
+                             task_id, table, date_col, len(dates_to_clean))
+                    ch_writer.delete_where(table, f"toDate({date_col}) IN ({date_list})")
+
             # BufferedWriter 批量聚合写入（裁定 #ARCH-CH-003）：
             # 攒批后一次性 write_tsv，避免逐个 FetchResult = 1 次 INSERT 导致 data parts 爆炸
             writer = BufferedWriter(table)
