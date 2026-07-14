@@ -171,6 +171,7 @@ build_status: planned
 | `commit_gates/panorama_alignment_gate.py` | §0.1 | 三图模块对齐warn-only门禁（GATE-PANORAMA-ALIGNMENT，四图模块对齐Step 4） | 已实现 | | 本模块 |
 | `commit_gates/long_param_list_gate.py` | §0.1 | 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150防复发，AST检测新增函数参数数>7） | 已实现 | | 本模块 |
 | `commit_gates/bare_sql_gate.py` | §0.1 | 裸SQL字面量阻断门禁（NO-BARE-SQL，§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE） | 已实现 | | 本模块 |
+| `commit_gates/depgraph_write_path_gate.py` | §0.1 | depgraph写入路径白名单门禁（DEPGRAPH-WRITE-PATH，裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，diff检测非白名单文件中的writable-params） | 已实现 | | 本模块 |
 | `commit_gates/god_class_gate.py` | §0.1 | God Class阻断门禁（NO-GOD-CLASS，§5.150防复发，AST检测新增类方法数>20） | 已实现 | | 本模块 |
 | `commit_gates/high_complexity_gate.py` | §0.1 | 高循环复杂度阻断门禁（NO-HIGH-COMPLEXITY，§5.158防复发，AST检测McCabe复杂度>15） | 已实现 | | 本模块 |
 | `commit_gates/tests_coverage_gate.py` | §0.1 | Gate测试覆盖率校验meta-gate（META-TESTS-COVERAGE，#ARCH-057，守卫者的守卫者） | 已实现 | | 本模块 |
