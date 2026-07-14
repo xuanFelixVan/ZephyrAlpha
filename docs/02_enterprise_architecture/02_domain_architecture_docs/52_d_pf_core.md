@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 16:46:51
+> 最后更新: 2026-07-14 17:49:17
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -29,7 +29,7 @@ ttl: permanent
 | 模块数 | 13 | Module Count | 13 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 2 | Cross-domain Incoming | 2 |
-| 跨域出边 | 5 | Cross-domain Outgoing | 5 |
+| 跨域出边 | 6 | Cross-domain Outgoing | 6 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 10 | Prototype Modules | 10 |
 | 生产态模块 | 3 | Production Modules | 3 |
@@ -90,8 +90,9 @@ graph TD
         src_zephyr_pf_core_strategy_engine_init_py["(原型态 / prototype) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
         src_zephyr_pf_core_strategy_registry_py["(原型态 / prototype) Re-export wrapper: strategy_registry has migrat...<br/>文件: strategy_registry.py"]
     end
-    src_zephyr_pf_core_init_py -.->|config_depends / config_depends| src_zephyr_pf_core_compliance_rule_py
+    src_zephyr_pf_core_init_py -.->|config_depends / config_depends| src_zephyr_pf_core_risk_limits_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    src_zephyr_pf_core_performance_attribution_report_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_pf_core_risk_limits_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_registry_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
@@ -124,6 +125,7 @@ graph TD
         src_zephyr_pf_core_strategy_base_py["(生产态 / production) Re-export wrapper: strategy_base has migrated t...<br/>文件: strategy_base.py"]
     end
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    src_zephyr_pf_core_performance_attribution_report_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_base_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
     src_zephyr_pf_core_compliance_rule_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
@@ -146,7 +148,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 10 个，0 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 10 个，1 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -162,6 +164,7 @@ graph TD
         src_zephyr_pf_core_strategy_engine_init_py["(原型态 / prototype) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
         src_zephyr_pf_core_strategy_registry_py["(原型态 / prototype) Re-export wrapper: strategy_registry has migrat...<br/>文件: strategy_registry.py"]
     end
+    src_zephyr_pf_core_init_py -.->|config_depends / config_depends| src_zephyr_pf_core_risk_limits_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_pf_core_risk_limits_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_registry_py -.->|导入依赖 / import_depends| D_GOVERNANCE
@@ -182,11 +185,12 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Re-export wrapper: risk_limits canonical at zep... | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
-| 2 | Re-export wrapper: strategy_base has migrated t... | → | D_GOVERNANCE 生命周期管理: D_PORTFOLIO_CORE — StrategyBase + StrategyMeta... | 导入依赖 / import_depends |
-| 3 | Re-export wrapper: strategy_registry has migrat... | → | D_GOVERNANCE 生命周期管理: StrategyRegistry 卫星模块（OCP-002） (strategy_... | 导入依赖 / import_depends |
-| 4 | Re-export wrapper: compliance_rule has migrated... | → | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
-| 5 | D_PORTFOLIO_CORE — Portfolio Construction Stra... | → | D_PF_ALLOC 组合分配: D_PORTFOLIO_CORE — Default Equity Long-Only St... | 导入依赖 / import_depends |
+| 1 | Re-export wrapper: performance_attribution_repo... | → | D_GOVERNANCE 生命周期管理: performance_attribution_report.py | 导入依赖 / import_depends |
+| 2 | Re-export wrapper: risk_limits canonical at zep... | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
+| 3 | Re-export wrapper: strategy_base has migrated t... | → | D_GOVERNANCE 生命周期管理: D_PORTFOLIO_CORE — StrategyBase + StrategyMeta... | 导入依赖 / import_depends |
+| 4 | Re-export wrapper: strategy_registry has migrat... | → | D_GOVERNANCE 生命周期管理: StrategyRegistry 卫星模块（OCP-002） (strategy_... | 导入依赖 / import_depends |
+| 5 | Re-export wrapper: compliance_rule has migrated... | → | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
+| 6 | D_PORTFOLIO_CORE — Portfolio Construction Stra... | → | D_PF_ALLOC 组合分配: D_PORTFOLIO_CORE — Default Equity Long-Only St... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -197,7 +201,7 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 5 条 + 入边 2 条 = 7 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 6 条 + 入边 2 条 = 8 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -206,7 +210,7 @@ graph LR
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
     D_PF_ALLOC["D_PF_ALLOC<br/>组合分配"]
     D_TRADING["D_TRADING<br/>交易运营"]
-    D_PF_CORE -->|3条 导入依赖 / import_depends| D_GOVERNANCE
+    D_PF_CORE -->|4条 导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_PF_ALLOC
     D_TRADING -->|2条 测试依赖 / test_depends| D_PF_CORE

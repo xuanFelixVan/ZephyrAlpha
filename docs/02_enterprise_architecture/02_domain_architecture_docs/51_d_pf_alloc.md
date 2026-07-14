@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 16:46:51
+> 最后更新: 2026-07-14 17:49:17
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,21 +26,21 @@ ttl: permanent
 | 域ID | D_PF_ALLOC | Domain ID | D_PF_ALLOC |
 | 域名称 | 组合分配 | Domain Name | Portfolio Allocation |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 9 | Module Count | 9 |
-| 域内依赖 | 0 | Internal Dependencies | 0 |
+| 模块数 | 10 | Module Count | 10 |
+| 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 3 | Cross-domain Outgoing | 3 |
+| 跨域出边 | 4 | Cross-domain Outgoing | 4 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 7 | Prototype Modules | 7 |
+| 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 资产组合分配优化 | Description | 资产组合分配优化 |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 9 个模块 / 9 modules）。
+> 按 architecture_layer 分组的模块清单（共 10 个模块 / 10 modules）。
 
-### L2 领域层 / Domain Layer (9 modules)
+### L2 领域层 / Domain Layer (10 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
@@ -52,7 +52,8 @@ ttl: permanent
 | 6 | src/zephyr/pf_alloc/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
 | 7 | src/zephyr/pf_alloc/models/__init__.py | __init__.py | 原型态 / prototype |  |
 | 8 | src/zephyr/pf_alloc/services/__init__.py | __init__.py | 原型态 / prototype |  |
-| 9 | src/zephyr/pf_core/default_equity_strategy.py | D_PORTFOLIO_CORE — Default Equity Long-Only St... | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
+| 9 | src/zephyr/pf_alloc/strategy_lifecycle_event.py | strategy_lifecycle_event.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 10 | src/zephyr/pf_core/default_equity_strategy.py | D_PORTFOLIO_CORE — Default Equity Long-Only St... | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -67,7 +68,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 9 个模块（生产态 1 + 设计态 1 + 原型态 7），标签标注成熟度。
+> 展示全部 10 个模块（生产态 1 + 设计态 1 + 原型态 8），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -80,9 +81,12 @@ graph TD
         src_zephyr_pf_alloc_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_alloc_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_alloc_services_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_alloc_strategy_lifecycle_event_py["(原型态 / prototype) strategy_lifecycle_event.py"]
         src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only St...<br/>文件: default_equity_strategy.py"]
     end
+    src_zephyr_pf_alloc_init_py -.->|config_depends / config_depends| src_zephyr_pf_alloc_strategy_lifecycle_event_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -95,7 +99,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_default_equity_strategy_py production
-    class src_zephyr_pf_alloc,src_zephyr_pf_alloc_init_py,src_zephyr_pf_alloc_extensions_init_py,src_zephyr_pf_alloc_api_init_py,src_zephyr_pf_alloc_core_init_py,src_zephyr_pf_alloc_infrastructure_init_py,src_zephyr_pf_alloc_models_init_py,src_zephyr_pf_alloc_services_init_py design
+    class src_zephyr_pf_alloc,src_zephyr_pf_alloc_init_py,src_zephyr_pf_alloc_extensions_init_py,src_zephyr_pf_alloc_api_init_py,src_zephyr_pf_alloc_core_init_py,src_zephyr_pf_alloc_infrastructure_init_py,src_zephyr_pf_alloc_models_init_py,src_zephyr_pf_alloc_services_init_py,src_zephyr_pf_alloc_strategy_lifecycle_event_py design
     class D_SHARED,D_INFRASTRUCTURE,D_GOVERNANCE,D_PF_CORE external_design
 ```
 
@@ -142,7 +146,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 7 个，0 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 8 个，1 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -154,12 +158,17 @@ graph TD
         src_zephyr_pf_alloc_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_alloc_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_alloc_services_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_pf_alloc_strategy_lifecycle_event_py["(原型态 / prototype) strategy_lifecycle_event.py"]
     end
+    src_zephyr_pf_alloc_init_py -.->|config_depends / config_depends| src_zephyr_pf_alloc_strategy_lifecycle_event_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_alloc_init_py,src_zephyr_pf_alloc_extensions_init_py,src_zephyr_pf_alloc_api_init_py,src_zephyr_pf_alloc_core_init_py,src_zephyr_pf_alloc_infrastructure_init_py,src_zephyr_pf_alloc_models_init_py,src_zephyr_pf_alloc_services_init_py design
+    class src_zephyr_pf_alloc_init_py,src_zephyr_pf_alloc_extensions_init_py,src_zephyr_pf_alloc_api_init_py,src_zephyr_pf_alloc_core_init_py,src_zephyr_pf_alloc_infrastructure_init_py,src_zephyr_pf_alloc_models_init_py,src_zephyr_pf_alloc_services_init_py,src_zephyr_pf_alloc_strategy_lifecycle_event_py design
+    class D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -170,7 +179,8 @@ graph TD
 |:--:|---------|:--:|---------|---------|
 | 1 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_GOVERNANCE 生命周期管理: D_PORTFOLIO_CORE — StrategyBase + StrategyMeta... | 导入依赖 / import_depends |
 | 2 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
-| 3 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
+| 3 | strategy_lifecycle_event.py | → | D_SHARED 共享服务: strategy_lifecycle_event.py | 导入依赖 / import_depends |
+| 4 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -180,18 +190,18 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 3 条 + 入边 1 条 = 4 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 4 条 + 入边 1 条 = 5 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_PF_ALLOC["D_PF_ALLOC<br/>组合分配"]
+    D_SHARED["D_SHARED<br/>共享服务"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
-    D_SHARED["D_SHARED<br/>共享服务"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
+    D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_SHARED
     D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_GOVERNANCE
     D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_SHARED
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_PF_ALLOC
 ```
 
