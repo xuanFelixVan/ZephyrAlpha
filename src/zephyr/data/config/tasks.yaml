@@ -669,6 +669,7 @@ tasks:
     symbols: null  # 关键指标列表在 Provider 内配置（约 50-100 个，CPI/PPI/PMI/M0/M1/M2/GDP/社融/利率等）
     extra:
       description: "EDB宏观数据增量（iFind THS_EDBQuery，约50-100个关键指标，配额5万条/周）"
+      disabled: true  # iFind月度配额耗尽(-4318)，等下月配额重置后移除本行启用
 
   # ============== iFind 新增能力（concept_sector / realtime_snapshot，2026-07-11）==============
   - task_id: concept_sector_refresh
@@ -919,6 +920,7 @@ tasks:
     symbols: null
     extra:
       description: "Tushare新闻增量（pro.news_info 快讯 + pro.news 证券新闻，统一写入 news_data，历史数据截止2024-08）"
+      disabled: true  # API已废弃（数据截止2024-08，pro.news/pro.news_info 返回"请指定正确的接口名"），由 RSS/cls/eastmoney 覆盖实时新闻
 
   # --- 限售股明细增量（2026-07-11 新增）---
   - task_id: restricted_shares_incremental

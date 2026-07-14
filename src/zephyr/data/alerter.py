@@ -49,6 +49,9 @@ log = logging.getLogger(__name__)
 
 _DEFAULT_FAILURES_DIR = REPO_ROOT / "data" / "failures"
 
+# 同一 task_id 失败文件的最小间隔（秒）：防止 crash-restart 循环刷出海量 failure 文件
+_FAILURE_COOLDOWN_SEC: Final[int] = 300
+
 # 告警级别
 LEVEL_INFO: Final[str] = "INFO"
 LEVEL_WARN: Final[str] = "WARN"
@@ -75,6 +78,8 @@ class Alerter:
         """
         self._failures_dir = Path(failures_dir) if failures_dir else _DEFAULT_FAILURES_DIR
         self._lock = threading.Lock()
+        # 失败去重：task_id -> 上次写 failure 文件的 UTC 时间戳（秒）
+        self._last_failure_ts: dict[str, float] = {}
 
     def notify(
         self,
@@ -107,7 +112,7 @@ class Alerter:
         else:
             log.info(msg)
 
-        # 2. 写失败汇总文件（ERROR 及以上）
+        # 2. 写失败汇总文件（ERROR 及以上），同一 task_id 冷却期内只写一次
         if level in (LEVEL_ERROR, LEVEL_CRITICAL):
             return self._write_failure_file(task_id, error, level, source, extra)
         return True
@@ -123,8 +128,19 @@ class Alerter:
         """写失败汇总文件到 failures/ 目录。
 
         文件名格式：{date}_{task_id}_{timestamp}.json
+        同一 task_id 在 _FAILURE_COOLDOWN_SEC 秒内重复失败只写第一个文件，
+        防止 crash-restart 循环刷出海量 failure 文件（2026-07-13 曾 40 分钟刷出 3000+ 文件）。
         """
         now = now_utc()
+        now_ts = now.timestamp()
+
+        with self._lock:
+            last_ts = self._last_failure_ts.get(task_id, 0.0)
+            if now_ts - last_ts < _FAILURE_COOLDOWN_SEC:
+                log.debug("失败汇总跳过（冷却期内）: task=%s", task_id)
+                return False
+            self._last_failure_ts[task_id] = now_ts
+
         date_str = now.strftime("%Y%m%d")
         ts_str = now.strftime("%H%M%S")
         filename = f"{date_str}_{task_id}_{ts_str}.json"
