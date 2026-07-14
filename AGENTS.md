@@ -129,6 +129,8 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | Dashboard (Panel) | `src/zephyr/frontend/dashboard/app_panel.py` | Panel+HoloViz 仪表盘主入口（v3.1.0, #ARCH-047），10 Tab 治理+交易/回测；`panel serve app_panel.py --show --port 5006` |
 | Data Source Integrator | `integrator` / `python -m zephyr.data` | 数据源集成器 CLI（MOD-L00-004 §8.4），7 子命令：`status`/`list`/`run`/`rerun-failed`/`pause <source>`/`resume <source>`/`start`；统一管理 8 源 61 任务的自动下载+断点续传+熔断 |
 
+> **date_col 铁律（2026-07-15）**：`tasks.yaml` 中每个 `incremental: true` 任务必须声明 `date_col` 字段（表→日期列映射 SSoT）。**禁止硬编码日期列名**（如 ann_date / trade_date / unlock_date），必须从 `tasks.yaml` 的 `date_col` 字段读取。原因：不同表日期列名不一致，AI 凭记忆推断会猜错（如 share_unlock 用 unlock_date 而非 ann_date）。使用方：`scheduler.py run_task()` 和补跑脚本。详见 [blueprint §7.3.1](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/data_source_integrator_blueprint.md)。
+
 ### 基础设施层（D_INFRA_RUNTIME / D_INFRA_RECOVERY / D_GOV_ENFORCEMENT）
 
 | 模块 | 入口 | 职责 |
@@ -751,6 +753,8 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 5. **ARCH-046 数据库节点全景图登记三铁律**（2026-07-04 固化）：(1) 粒度铁律——数据库在全景图中有且仅有一个点（`infrastructure_components` 表），不展开内部表/schema；(2) 运营态/设计态语义铁律——数据库存在并使用=运营态（status=connected），不存在=设计态（status=planned），禁止 status 漂移；(3) 动态更新铁律——数据库节点随项目实况增删，不保留墓碑，生成器（generate_project_depgraph.py）MUST NOT 碰 `infrastructure_components` 表。详见 [ARCH-046](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)。
 
 > **业务数据表清单**（2026-07-06）：想知道 ClickHouse c1_market/c3_fundamental 各业务表有什么数据、起止时间、标的数、新鲜度 → 读 [`docs/03_modules/_domain_data/data_inventory.md`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/data_inventory.md)。生成器 [`tmp/generate_data_inventory.py`](file:///d:/ZephyrAlpha/tmp/generate_data_inventory.py) 可随时运行刷新（`python tmp\generate_data_inventory.py`）。禁止手工同步业务表清单到其它文档——一律用纯指针指向此文档。
+
+> **L10 周末补下载层**（2026-07-15，#ARCH-BACKFILL-001）：每周日 02:00 自动检测过去 7 天 tick_data 缺失并精准补下载。不依赖 last_key，直接查 ClickHouse 实际行数判定缺失（阈值 500 万行/天），对缺失日期通过 QMT 下载 + WSL subprocess 写入。入口 [`backfill_checker.py`](file:///d:/ZephyrAlpha/src/zephyr/data/backfill_checker.py) `run_weekend_backfill()`，调度配置 `schedule.yaml` weekend_backfill（cron `"00 2 * * 0"`），任务登记 `tasks.yaml` tick_backfill_weekly。与 L8 全量校准互补：L8 校准准确性，L10 补完整性。
 
 ### 11.0.2 ⚠️ YAML 真源 vs DB 真源分类铁律（SSoT Classification，2026-07-06）
 
