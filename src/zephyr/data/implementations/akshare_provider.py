@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.implementations.akshare_provider
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] akshare SDK (ak.macro_china_gdp/cpi/pmi/money_supply)
+# [DEPENDENCIES] akshare SDK (ak.macro_china_gdp/cpi/pmi/money_supply); zephyr.data.ch_reader
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -400,8 +400,8 @@ class AKShareProvider(DataSourceBase):
             self._log.warning(f"stock_zh_a_spot_em 失败（东财反爬），回退到 CH stock_list: {e}")
 
         # CH fallback
-        from zephyr.data import ch_writer as _chw
-        out = _chw.query(SQL_STOCK_CODE_FROM_LIST)
+        from zephyr.data import ch_reader as _chr
+        out = _chr.query(SQL_STOCK_CODE_FROM_LIST)
         if not out.strip():
             return []
         codes = [line.strip().zfill(6) for line in out.split("\n") if line.strip()]
