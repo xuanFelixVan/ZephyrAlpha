@@ -150,7 +150,7 @@ class BatchIngestor:
         entries = [self._normalize_candidate(c) for c in candidates]
         return self._process_entries(entries)
 
-    def _extract_candidates(self, data: Any) -> list[BatchIngestEntry]:
+    def _extract_candidates(self, data: object) -> list[BatchIngestEntry]:
         if isinstance(data, list):
             return [self._normalize_candidate(item) for item in data if isinstance(item, dict)]
 

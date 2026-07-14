@@ -127,10 +127,10 @@ class ExamOrchestrator:
 
     def __init__(
         self,
-        chat: Any,
+        chat: object,
         model_id: str = "",
         randomize_order: bool = False,
-        judge_chat: Any = None,
+        judge_chat: object = None,
         depth_samples_per_case: int | None = None,
     ) -> None:
         self._chat = chat
@@ -1581,7 +1581,7 @@ class ExamOrchestrator:
             )
         return self.run_full_exam(skip_drift=skip_drift)
 
-    def run_deep_exam(self, *, judge_chat: Any = None) -> CapabilityPassport:
+    def run_deep_exam(self, *, judge_chat: object = None) -> CapabilityPassport:
         """P2 Deep Mode: 旗舰深评 (2-3 小时)。
 
         = run_full_exam(skip_drift=False) + 强制 n>=3 + 可选 LLM judge。

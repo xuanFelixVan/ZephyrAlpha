@@ -95,12 +95,12 @@ class RiskManagerOrchestratorBase(abc.ABC):
     _registry: ClassVar[dict[str, type[RiskManagerOrchestratorBase]]] = {}
 
     @abc.abstractmethod
-    def pre_trade_check(self, order: Any, limits: Any, positions: Any) -> RiskCheckResult:
+    def pre_trade_check(self, order: object, limits: object, positions: object) -> RiskCheckResult:
         """事前风控：订单级限额检查（CTR-003 + CTR-004）"""
         ...
 
     @abc.abstractmethod
-    def post_trade_check(self, fill: Any, positions: Any) -> RiskCheckResult:
+    def post_trade_check(self, fill: object, positions: object) -> RiskCheckResult:
         """事后风控：成交后风险敞口检查（CTR-005 + CTR-006）"""
         ...
 

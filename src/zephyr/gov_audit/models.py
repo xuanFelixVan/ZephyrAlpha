@@ -119,7 +119,7 @@ class AuditChain:
         self.entries: list[Any] = []
         self.chain_hash: str = ""
 
-    def add_entry(self, entry: Any) -> None:
+    def add_entry(self, entry: object) -> None:
         self.entries.append(entry)
 
     def verify(self) -> bool:
@@ -360,5 +360,5 @@ def _generate_entry_id() -> str:
     return str(uuid.uuid4())
 
 
-def audit_entry_sort_key(entry: Any) -> Any:
+def audit_entry_sort_key(entry: object) -> object:
     return getattr(entry, "timestamp", None) or 0

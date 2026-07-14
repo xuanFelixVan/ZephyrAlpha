@@ -154,8 +154,8 @@ class PatternLibrary:
 
     def __init__(
         self,
-        persist_dir: Any | None = None,
-        chroma_client: Any | None = None,
+        persist_dir: object | None = None,
+        chroma_client: object | None = None,
     ) -> None:
         self._persist_dir = persist_dir
         self._chroma_client = chroma_client

@@ -79,10 +79,10 @@ class ExamJudge:
         - 仅对 OLYMPIAD 题和开放式题启用（控制成本）
     """
 
-    def __init__(self, judge_chat: Any) -> None:
+    def __init__(self, judge_chat: object) -> None:
         self._chat = judge_chat
 
-    def judge(self, case: Any, candidate_answer: str) -> JudgeResult:
+    def judge(self, case: object, candidate_answer: str) -> JudgeResult:
         """对候选答案进行多维评分。
 
         Args:
@@ -110,7 +110,7 @@ class ExamJudge:
             _log.warning("ExamJudge: judge failed: %s", e, exc_info=True)
             return JudgeResult(reasoning=f"judge_error: {e}")
 
-    def _build_reference(self, case: Any) -> str:
+    def _build_reference(self, case: object) -> str:
         """从 ExamTestCase 构建参考答案。"""
         parts = []
         if case.expected_contains:
@@ -161,7 +161,7 @@ class ExamJudge:
         if not isinstance(data, dict):
             return JudgeResult(reasoning=f"parse_error: not a dict: {type(data)}")
 
-        def _clamp(v: Any, default: float = 0.0) -> float:
+        def _clamp(v: object, default: float = 0.0) -> float:
             try:
                 f = float(v)
             except (TypeError, ValueError):
